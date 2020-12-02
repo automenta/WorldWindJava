@@ -630,7 +630,7 @@ public abstract class AbstractFileStore extends WWObjectImpl implements FileStor
 
     protected void doListFileNames(StoreLocation location, File dir, FileStoreFilter filter,
         boolean recurse, boolean exitBranchOnFirstMatch, Collection<String> names) {
-        List<File> subDirs = new ArrayList<>();
+        Collection<File> subDirs = new ArrayList<>();
 
         // Search the children of the specified directory. If the child is a directory, append it to the list of sub
         // directories to search later. Otherwise, try to list the file as a match. If the file is a match and

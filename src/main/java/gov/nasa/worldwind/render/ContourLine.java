@@ -277,7 +277,8 @@ public class ContourLine implements Renderable {
      * @param list the list of <code>Intersection</code> to be filtered.
      * @return the filtered list.
      */
-    protected ArrayList<Intersection> filterIntersectionsOnViewFrustum(DrawContext dc, ArrayList<Intersection> list) {
+    protected static ArrayList<Intersection> filterIntersectionsOnViewFrustum(DrawContext dc,
+        ArrayList<Intersection> list) {
         Frustum vf = dc.getView().getFrustumInModelCoordinates();
         int i = 0;
         while (i < list.size()) {

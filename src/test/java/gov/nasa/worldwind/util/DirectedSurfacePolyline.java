@@ -303,7 +303,7 @@ public class DirectedSurfacePolyline extends SurfacePolyline {
 
         // Add the arrowhead's geometry to the global surface shape vertex buffer, compensating for arrowheads that span
         // the anti-meridian
-        List<List<LatLon>> drawLocations = this.repeatAroundDateline(Arrays.asList(tip, left, right));
+        List<List<LatLon>> drawLocations = AbstractSurfaceShape.repeatAroundDateline(Arrays.asList(tip, left, right));
         LatLon referenceLocation = this.getReferencePosition();
 
         for (List<LatLon> list : drawLocations) {

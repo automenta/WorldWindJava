@@ -55,7 +55,7 @@ class GDALLibraryFinder extends GDALAbstractFileFilter {
      * @param pathToLibrary - the file to load
      * @return TRUE if the file is loadable library
      */
-    protected boolean canLoad(String pathToLibrary) {
+    protected static boolean canLoad(String pathToLibrary) {
         try {
             System.load(pathToLibrary);
 

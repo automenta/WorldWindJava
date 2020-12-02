@@ -56,7 +56,7 @@ public class SurfaceIcons extends SurfaceIcon {
         Angle minLon = sector.lonMin().subtractRadians(padLonRadians);
         Angle maxLon = sector.lonMax().addRadians(padLatRadians);
 
-        return this.computeNormalizedSectors(new Sector(minLat, maxLat, minLon, maxLon));
+        return AbstractSurfaceRenderable.computeNormalizedSectors(new Sector(minLat, maxLat, minLon, maxLon));
     }
 
     protected void drawIcon(DrawContext dc, SurfaceTileDrawContext sdc) {
@@ -88,7 +88,7 @@ public class SurfaceIcons extends SurfaceIcon {
     }
 
     protected Iterable<? extends LatLon> computeDrawLocations(DrawContext dc, SurfaceTileDrawContext sdc) {
-        List<LatLon> drawList = new ArrayList<>();
+        Collection<LatLon> drawList = new ArrayList<>();
         double safeDistanceDegreesSquared = Math.pow(this.computeSafeRadius(dc, sdc).degrees, 2);
         for (LatLon location : this.getLocations()) {
             if (this.computeLocationDistanceDegreesSquared(sdc.getSector(), location) <= safeDistanceDegreesSquared)
@@ -98,13 +98,13 @@ public class SurfaceIcons extends SurfaceIcon {
     }
 
     protected Angle computeSafeRadius(DrawContext dc, SurfaceTileDrawContext sdc) {
-        double regionPixelSize = this.computeDrawPixelSize(dc, sdc);
-        Angle sectorRadius = this.computeSectorRadius(sdc.getSector());
+        double regionPixelSize = AbstractSurfaceRenderable.computeDrawPixelSize(dc, sdc);
+        Angle sectorRadius = SurfaceIcons.computeSectorRadius(sdc.getSector());
         Angle iconRadius = this.computeIconRadius(dc, regionPixelSize, sdc.getSector());
         return sectorRadius.add(iconRadius);
     }
 
-    protected Angle computeSectorRadius(Sector sector) {
+    protected static Angle computeSectorRadius(Sector sector) {
         double dLat = sector.getDeltaLatRadians();
         double dLon = sector.getDeltaLonRadians();
         return Angle.fromRadians(Math.sqrt(dLat * dLat + dLon * dLon) / 2);
@@ -121,7 +121,7 @@ public class SurfaceIcons extends SurfaceIcon {
         return Angle.fromRadians(Math.sqrt(dLat * dLat + dLon * dLon) / 2);
     }
 
-    protected double computeLocationDistanceDegreesSquared(Sector drawSector, LatLon location) {
+    protected static double computeLocationDistanceDegreesSquared(Sector drawSector, LatLon location) {
         double lonOffset = computeHemisphereOffset(drawSector, location);
         double dLat = location.getLatitude().degrees - drawSector.getCentroid().getLatitude().degrees;
         double dLon = location.getLongitude().degrees - drawSector.getCentroid().getLongitude().degrees + lonOffset;

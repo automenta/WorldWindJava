@@ -107,8 +107,8 @@ public class PlaceNameLayerBulkDownloader extends BulkRetrievalThread {
         }
     }
 
-    protected void transferMissingTiles(ArrayList<PlaceNameLayer.Tile> source,
-        List<PlaceNameLayer.Tile> destination, int maxCount) {
+    protected static void transferMissingTiles(ArrayList<PlaceNameLayer.Tile> source,
+        Collection<PlaceNameLayer.Tile> destination, int maxCount) {
         int i = 0;
         while (i < maxCount && !source.isEmpty()) {
             destination.add(source.remove(0));
@@ -191,7 +191,7 @@ public class PlaceNameLayerBulkDownloader extends BulkRetrievalThread {
             PlaceNameService service = this.layer.getPlaceNameServiceSet().getService(i);
             if (service.getMaxDisplayDistance() > this.resolution) {
                 // get tiles in sector
-                List<PlaceNameLayer.Tile> baseTiles = new ArrayList<>();
+                Collection<PlaceNameLayer.Tile> baseTiles = new ArrayList<>();
 
                 PlaceNameLayer.NavigationTile navTile = this.layer.navTiles.get(i);
                 // drill down into tiles to find bottom level navTiles visible

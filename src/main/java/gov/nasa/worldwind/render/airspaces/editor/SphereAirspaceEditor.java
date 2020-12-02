@@ -149,7 +149,7 @@ public class SphereAirspaceEditor extends AbstractAirspaceEditor {
         }
     }
 
-    protected Vec4 getCenterPoint(WorldWindow wwd, Airspace airspace) {
+    protected static Vec4 getCenterPoint(WorldWindow wwd, Airspace airspace) {
         if (!(airspace instanceof SphereAirspace)) {
             return null;
         }
@@ -195,7 +195,7 @@ public class SphereAirspaceEditor extends AbstractAirspaceEditor {
 
         double altitude = this.getAirspace().getAltitudes()[LOWER_ALTITUDE];
         boolean terrainConforming = this.getAirspace().isTerrainConforming()[LOWER_ALTITUDE];
-        Vec4 centerPoint = this.getCenterPoint(wwd, airspace);
+        Vec4 centerPoint = SphereAirspaceEditor.getCenterPoint(wwd, airspace);
 
         Vec4 surfaceNormal = wwd.model().getGlobe().computeSurfaceNormalAtPoint(centerPoint);
         Line verticalRay = new Line(centerPoint, surfaceNormal);
@@ -251,7 +251,7 @@ public class SphereAirspaceEditor extends AbstractAirspaceEditor {
         // Find the closest points between the rays through each screen point, and the ray from the sphere center to the
         // control point. Compute the signed difference between these two points, and use that as the change in radius.
 
-        Vec4 centerPoint = this.getCenterPoint(wwd, this.getSphere());
+        Vec4 centerPoint = SphereAirspaceEditor.getCenterPoint(wwd, this.getSphere());
 
         Line screenRay = wwd.view().computeRayFromScreenPoint(previousMousePoint.getX(), previousMousePoint.getY());
         Line previousScreenRay = wwd.view().computeRayFromScreenPoint(mousePoint.getX(), mousePoint.getY());

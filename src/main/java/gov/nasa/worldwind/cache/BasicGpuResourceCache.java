@@ -45,7 +45,7 @@ public class BasicGpuResourceCache implements GpuResourceCache {
     }
 
     @SuppressWarnings("UnusedParameters")
-    protected void onEntryRemoved(Object key, Object clientObject) {
+    protected static void onEntryRemoved(Object key, Object clientObject) {
         GLContext context = GLContext.getCurrent();
         if (context == null || context.getGL() == null)
             return;
@@ -77,7 +77,7 @@ public class BasicGpuResourceCache implements GpuResourceCache {
     }
 
     public void put(Object key, Object resource, String resourceType, long size) {
-        CacheEntry te = this.createCacheEntry(resource, resourceType, size);
+        CacheEntry te = BasicGpuResourceCache.createCacheEntry(resource, resourceType, size);
         this.resources.add(key, te);
     }
 
@@ -88,7 +88,7 @@ public class BasicGpuResourceCache implements GpuResourceCache {
         return entry;
     }
 
-    protected CacheEntry createCacheEntry(Object resource, String resourceType, long size) {
+    protected static CacheEntry createCacheEntry(Object resource, String resourceType, long size) {
         CacheEntry entry = new CacheEntry(resource, resourceType, size);
         entry.resourceSize = size;
 
@@ -172,12 +172,12 @@ public class BasicGpuResourceCache implements GpuResourceCache {
 
     protected long computeEntrySize(CacheEntry entry) {
         if (entry.resourceType == TEXTURE)
-            return this.computeTextureSize(entry);
+            return BasicGpuResourceCache.computeTextureSize(entry);
 
         return 0;
     }
 
-    protected long computeTextureSize(CacheEntry entry) {
+    protected static long computeTextureSize(CacheEntry entry) {
         Texture texture = (Texture) entry.resource;
 
         long size = texture.getEstimatedMemorySize();

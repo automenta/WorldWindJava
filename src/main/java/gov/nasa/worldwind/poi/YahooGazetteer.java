@@ -47,10 +47,10 @@ public class YahooGazetteer implements Gazetteer {
             return null;
         }
 
-        return this.parseLocationString(locationString);
+        return YahooGazetteer.parseLocationString(locationString);
     }
 
-    protected boolean isNumber(String lookupString) {
+    protected static boolean isNumber(String lookupString) {
         lookupString = lookupString.trim();
 
         return !lookupString.isEmpty() && lookupString.charAt(0) == '-'
@@ -58,7 +58,7 @@ public class YahooGazetteer implements Gazetteer {
             lookupString.charAt(0));
     }
 
-    protected ArrayList<PointOfInterest> parseLocationString(String locationString) throws WWRuntimeException {
+    protected static ArrayList<PointOfInterest> parseLocationString(String locationString) throws WWRuntimeException {
         try {
             DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
             docBuilderFactory.setNamespaceAware(false);

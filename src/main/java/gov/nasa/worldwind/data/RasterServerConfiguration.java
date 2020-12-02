@@ -30,7 +30,7 @@ public class RasterServerConfiguration extends AbstractXMLEventParser {
     public RasterServerConfiguration(Object docSource) {
         super(namespaceURI);
 
-        this.eventReader = this.createReader(docSource);
+        this.eventReader = RasterServerConfiguration.createReader(docSource);
 
         this.initialize();
     }
@@ -39,7 +39,7 @@ public class RasterServerConfiguration extends AbstractXMLEventParser {
         this.parserContext = this.createParserContext(this.eventReader);
     }
 
-    protected XMLEventReader createReader(Object docSource) {
+    protected static XMLEventReader createReader(Object docSource) {
         return WWXML.openEventReader(docSource);
     }
 

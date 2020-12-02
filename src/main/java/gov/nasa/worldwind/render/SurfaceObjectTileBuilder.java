@@ -426,7 +426,7 @@ public class SurfaceObjectTileBuilder {
 
         // We've cleared any tile assembly state from the last rendering pass. Determine if we can assemble and update
         // the tiles. If not, we're done.
-        if (this.currentSurfaceObjects.isEmpty() || !this.canAssembleTiles(dc))
+        if (this.currentSurfaceObjects.isEmpty() || !SurfaceObjectTileBuilder.canAssembleTiles(dc))
             return;
 
         // Assemble the current visible tiles and update their associated textures if necessary.
@@ -745,7 +745,7 @@ public class SurfaceObjectTileBuilder {
      * @param tileHeight the tile height, in pixels.
      * @return a LevelSet with the specified tile dimensions.
      */
-    protected LevelSet getLevelSet(int tileWidth, int tileHeight) {
+    protected static LevelSet getLevelSet(int tileWidth, int tileHeight) {
         // If we already have a LevelSet for the dimension, just return it. Otherwise create it and put it in a map for
         // use during subsequent calls.
         Dimension key = new Dimension(tileWidth, tileHeight);
@@ -768,7 +768,7 @@ public class SurfaceObjectTileBuilder {
      * @param dc the DrawContext to test.
      * @return true if the DrawContext's has a non-zero viewport; false otherwise.
      */
-    protected boolean canAssembleTiles(DrawContext dc) {
+    protected static boolean canAssembleTiles(DrawContext dc) {
         Rectangle viewport = dc.getView().getViewport();
         return viewport.getWidth() > 0 && viewport.getHeight() > 0;
     }
@@ -836,7 +836,7 @@ public class SurfaceObjectTileBuilder {
                         Angle t2;
                         t2 = t1.add(dLon);
 
-                        Object tileKey = this.createTileKey(level, row, col, tileCacheName);
+                        Object tileKey = SurfaceObjectTileBuilder.createTileKey(level, row, col, tileCacheName);
 
                         // Ignore this tile if the surface renderable has already been added to it. This handles
                         // dateline spanning surface renderables which have two sectors that share a common boundary.
@@ -845,7 +845,7 @@ public class SurfaceObjectTileBuilder {
 
                         SurfaceObjectTile tile = (SurfaceObjectTile) memoryCache.getObject(tileKey);
                         if (tile == null) {
-                            tile = this.createTile(new Sector(p1, p2, t1, t2), level, row, col, tileCacheName);
+                            tile = SurfaceObjectTileBuilder.createTile(new Sector(p1, p2, t1, t2), level, row, col, tileCacheName);
                             memoryCache.add(tileKey, tile);
                         }
 
@@ -888,13 +888,13 @@ public class SurfaceObjectTileBuilder {
      */
     protected void addTileOrDescendants(DrawContext dc, LevelSet levelSet, SurfaceObjectTile parent, SurfaceObjectTile tile) {
 
-        if (!this.intersectsVisibleSector(dc, tile) || !this.intersectsFrustum(dc, tile)) {
+        if (!SurfaceObjectTileBuilder.intersectsVisibleSector(dc, tile) || !SurfaceObjectTileBuilder.intersectsFrustum(dc, tile)) {
             return;
         }
 
         // If the parent tile is not null, add any parent surface renderables that intersect this tile.
         if (parent != null)
-            this.addIntersectingObjects(dc, parent, tile);
+            SurfaceObjectTileBuilder.addIntersectingObjects(dc, parent, tile);
 
         // Ignore tiles that do not intersect any surface renderables.
         if (tile.hasObjects()) {
@@ -927,7 +927,7 @@ public class SurfaceObjectTileBuilder {
      * @param parent the tile's parent.
      * @param tile   the tile to add intersecting surface renderables to.
      */
-    protected void addIntersectingObjects(DrawContext dc, SurfaceObjectTile parent, final SurfaceObjectTile tile) {
+    protected static void addIntersectingObjects(DrawContext dc, SurfaceObjectTile parent, final SurfaceObjectTile tile) {
         // If the parent has no objects, then there's nothing to add to this tile and we exit immediately.
         if (!parent.hasObjects())
             return;
@@ -989,7 +989,7 @@ public class SurfaceObjectTileBuilder {
      * @param tile the tile to test for intersection.
      * @return true if the tile intersects the draw context's frustum; false otherwise.
      */
-    protected boolean intersectsFrustum(DrawContext dc, SurfaceTile tile) {
+    protected static boolean intersectsFrustum(DrawContext dc, SurfaceTile tile) {
         Extent extent = tile.getExtent(dc);
         if (extent == null)
             return false;
@@ -1008,7 +1008,7 @@ public class SurfaceObjectTileBuilder {
      * @param tile the tile to test for intersection.
      * @return true if the tile intersects the draw context's visible sector; false otherwise.
      */
-    protected boolean intersectsVisibleSector(DrawContext dc, TextureTile tile) {
+    protected static boolean intersectsVisibleSector(DrawContext dc, TextureTile tile) {
         return dc.getVisibleSector() != null && dc.getVisibleSector().intersects(tile.sector);
     }
 
@@ -1100,7 +1100,7 @@ public class SurfaceObjectTileBuilder {
         // Use a LevelSet shared by all instances of this class to save memory and prevent a conflict in the tile and
         // texture caches. Use a cache name unique to this tile info instance.
         Dimension tileDimension = this.computeTextureTileDimension(dc);
-        LevelSet levelSet = this.getLevelSet(tileDimension.width, tileDimension.height);
+        LevelSet levelSet = SurfaceObjectTileBuilder.getLevelSet(tileDimension.width, tileDimension.height);
         String cacheName = this.uniqueCacheName();
         return new TileInfo(levelSet, cacheName, tileDimension.width, tileDimension.height);
     }
@@ -1157,7 +1157,7 @@ public class SurfaceObjectTileBuilder {
      * @param cacheName Tile tile's cache name.
      * @return a new SurfaceObjectTile.
      */
-    protected SurfaceObjectTile createTile(Sector sector, Level level, int row, int column, String cacheName) {
+    protected static SurfaceObjectTile createTile(Sector sector, Level level, int row, int column, String cacheName) {
         return new SurfaceObjectTile(sector, level, row, column, cacheName);
     }
 
@@ -1171,7 +1171,7 @@ public class SurfaceObjectTileBuilder {
      * @param cacheName Tile tile's cache name.
      * @return a tile key.
      */
-    protected Object createTileKey(Level level, int row, int column, String cacheName) {
+    protected static Object createTileKey(Level level, int row, int column, String cacheName) {
         return new TileKey(level.getLevelNumber(), row, column, cacheName);
     }
 
@@ -1213,7 +1213,7 @@ public class SurfaceObjectTileBuilder {
     }
 
     protected static class TileInfo {
-        public final List<SurfaceObjectTile> tiles = new ArrayList<>();
+        public final Collection<SurfaceObjectTile> tiles = new ArrayList<>();
         public final ArrayList<PickedObject> pickCandidates = new ArrayList<>();
         public final LevelSet levelSet;
         public final String cacheName;

@@ -173,36 +173,36 @@ public class NmeaWriter {
         doFlush();
     }
 
-    private String formatTime(String time) {
+    private static String formatTime(String time) {
         // Format time as "HHMMSS"
         return (time != null) ? time : "";
     }
 
-    private String formatLatitude(double degrees) {
+    private static String formatLatitude(double degrees) {
         int d = (int) Math.floor(Math.abs(degrees));
         double m = 60 * (Math.abs(degrees) - d);
         // Format latitude as "DDMM.MMM[N|S]"
         return String.format("%02d%06.3f,%s", d, m, degrees < 0 ? "S" : "N");
     }
 
-    private String formatLongitude(double degrees) {
+    private static String formatLongitude(double degrees) {
         int d = (int) Math.floor(Math.abs(degrees));
         double m = 60 * (Math.abs(degrees) - d);
         // Format longitude as "DDDMM.MMM[N|S]"
         return String.format("%03d%06.3f,%s", d, m, degrees < 0 ? "W" : "E");
     }
 
-    private String formatElevation(double metersElevation) {
+    private static String formatElevation(double metersElevation) {
         // Format elevation with 1 digit of precision.
         // This provides decimeter resolution.
         return String.format("%.1f,M", metersElevation);
     }
 
-    private String formatChecksum(int checksum) {
+    private static String formatChecksum(int checksum) {
         return Integer.toHexString(checksum);
     }
 
-    private int computeChecksum(CharSequence s, int start, int end) {
+    private static int computeChecksum(CharSequence s, int start, int end) {
         int chksum = 0;
         for (int i = start; i < end; i++) {
             int c = 0xFF & s.charAt(i);

@@ -118,7 +118,7 @@ public class VPFDatabase extends AVListImpl {
     }
 
     protected static Collection<VPFLibrary> createLibraries(VPFDatabase db, Iterable<VPFRecord> table) {
-        List<VPFLibrary> list = new ArrayList<>();
+        Collection<VPFLibrary> list = new ArrayList<>();
 
         for (VPFRecord row : table) {
             String name = (String) row.getValue("library_name");
@@ -192,7 +192,7 @@ public class VPFDatabase extends AVListImpl {
         return Collections.unmodifiableCollection(this.libraryMap.values());
     }
 
-    public void setLibraries(Collection<? extends VPFLibrary> collection) {
+    public void setLibraries(Iterable<? extends VPFLibrary> collection) {
         this.removeAllLibraries();
 
         if (collection != null)

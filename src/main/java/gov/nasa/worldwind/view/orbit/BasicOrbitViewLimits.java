@@ -299,7 +299,7 @@ public class BasicOrbitViewLimits extends BasicViewPropertyLimits implements Orb
         double minZoom = this.minZoom;
         double maxZoom = this.maxZoom;
 
-        if (this.is2DGlobe(view.getGlobe())) // limit zoom to ~360 degrees of visible longitude on 2D globes
+        if (BasicViewPropertyLimits.is2DGlobe(view.getGlobe())) // limit zoom to ~360 degrees of visible longitude on 2D globes
         {
             double max2DZoom = Math.PI * view.getGlobe().getEquatorialRadius() / view.getFieldOfView().tanHalfAngle();
             if (minZoom > max2DZoom)

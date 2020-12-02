@@ -113,9 +113,9 @@ public class MarkerRenderer {
 
         Marker m1 = markerList.get(0);
         Vec4 p1 = this.computeSurfacePoint(dc, m1.getPosition());
-        double r1 = this.computeMarkerRadius(dc, p1, m1);
+        double r1 = MarkerRenderer.computeMarkerRadius(dc, p1, m1);
 
-        if (this.intersectsFrustum(dc, p1, r1))
+        if (MarkerRenderer.intersectsFrustum(dc, p1, r1))
             dc.addOrderedRenderable(new OrderedMarker(0, m1, p1, r1, parentLayer, eyePoint.distanceTo3(p1)));
 
         if (markerList.size() < 2)
@@ -124,9 +124,9 @@ public class MarkerRenderer {
         int im2 = markerList.size() - 1;
         Marker m2 = markerList.get(im2);
         Vec4 p2 = this.computeSurfacePoint(dc, m2.getPosition());
-        double r2 = this.computeMarkerRadius(dc, p2, m2);
+        double r2 = MarkerRenderer.computeMarkerRadius(dc, p2, m2);
 
-        if (this.intersectsFrustum(dc, p2, r2))
+        if (MarkerRenderer.intersectsFrustum(dc, p2, r2))
             dc.addOrderedRenderable(new OrderedMarker(im2, m2, p2, r2, parentLayer, eyePoint.distanceTo3(p2)));
 
         if (markerList.size() < 3)
@@ -146,7 +146,7 @@ public class MarkerRenderer {
         int im = (im1 + im2) / 2;
         Marker m = markerList.get(im);
         Vec4 p = this.computeSurfacePoint(dc, m.getPosition());
-        double r = this.computeMarkerRadius(dc, p, m);
+        double r = MarkerRenderer.computeMarkerRadius(dc, p, m);
 
         boolean b1 = false, b2 = false;
         if (p.distanceTo3(p1) > r + r1) {
@@ -159,7 +159,7 @@ public class MarkerRenderer {
             b2 = true;
         }
 
-        if (b1 && b2 && this.intersectsFrustum(dc, p, r))
+        if (b1 && b2 && MarkerRenderer.intersectsFrustum(dc, p, r))
             dc.addOrderedRenderable(new OrderedMarker(im, m, p, r, parentLayer, eyePoint.distanceTo3(p)));
     }
 
@@ -233,11 +233,11 @@ public class MarkerRenderer {
             if (point == null)
                 continue;
 
-            double radius = this.computeMarkerRadius(dc, point, marker);
+            double radius = MarkerRenderer.computeMarkerRadius(dc, point, marker);
 
             // If we're in picking mode, cull the marker against the draw context's pick frustums. At this point we've
             // only culled against the viewing frustum.
-            if (dc.isPickingMode() && !this.intersectsFrustum(dc, point, radius))
+            if (dc.isPickingMode() && !MarkerRenderer.intersectsFrustum(dc, point, radius))
                 continue;
 
             dc.addOrderedRenderable(new OrderedMarker(index, marker, point, radius, parentLayer,
@@ -250,7 +250,7 @@ public class MarkerRenderer {
         Vec4 cameraPosition = dc.getView().getEyePoint();
 
         if (dc.isPickingMode()) {
-            this.pickSupport.beginPicking(dc);
+            PickSupport.beginPicking(dc);
 
             gl.glPushAttrib(GL2.GL_ENABLE_BIT | GL2.GL_CURRENT_BIT | GL2.GL_TRANSFORM_BIT);
             gl.glDisable(GL2.GL_COLOR_MATERIAL);
@@ -310,7 +310,7 @@ public class MarkerRenderer {
         gl.glPopMatrix();
 
         if (dc.isPickingMode()) {
-            this.pickSupport.endPicking(dc);
+            PickSupport.endPicking(dc);
         }
         else {
             gl.glDisable(GL2.GL_LIGHT1);
@@ -326,7 +326,7 @@ public class MarkerRenderer {
     //********************  Rendering Utilities  *******************//
     //**************************************************************//
 
-    protected boolean intersectsFrustum(DrawContext dc, Vec4 point, double radius) {
+    protected static boolean intersectsFrustum(DrawContext dc, Vec4 point, double radius) {
         if (dc.isPickingMode())
             return dc.getPickFrustums().intersectsAny(new Sphere(point, radius));
 
@@ -350,7 +350,7 @@ public class MarkerRenderer {
         return dc.getGlobe().computePointFromPosition(pos.getLatitude(), pos.getLongitude(), effectiveElevation * ve);
     }
 
-    protected double computeMarkerRadius(DrawContext dc, Vec4 point, Marker marker) {
+    protected static double computeMarkerRadius(DrawContext dc, Vec4 point, Marker marker) {
         double d = point.distanceTo3(dc.getView().getEyePoint());
         double radius = marker.getAttributes().getMarkerPixels() * dc.getView().computePixelSizeAtDistance(d);
         if (radius < marker.getAttributes().getMinMarkerSize() && marker.getAttributes().getMinMarkerSize() > 0)

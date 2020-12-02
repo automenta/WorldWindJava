@@ -76,7 +76,7 @@ public class VPFWingedEdgeTraverser {
         // edge (face is both left and right of the edge), then travel to the next edge which does not cause us to
         // backtrack.
 
-        Orientation o = this.getOrientation(faceId, curEdgeId, edgeInfoArray);
+        Orientation o = VPFWingedEdgeTraverser.getOrientation(faceId, curEdgeId, edgeInfoArray);
         if (o == null) {
             return -1;
         }
@@ -84,12 +84,12 @@ public class VPFWingedEdgeTraverser {
         return switch (o) {
             case LEFT -> getEdgeInfo(edgeInfoArray, curEdgeId).getLeftEdge();
             case RIGHT -> getEdgeInfo(edgeInfoArray, curEdgeId).getRightEdge();
-            case LEFT_AND_RIGHT -> (prevEdgeId > 0) ? this.auxiliaryNextEdgeId(prevEdgeId, curEdgeId, edgeInfoArray)
+            case LEFT_AND_RIGHT -> (prevEdgeId > 0) ? VPFWingedEdgeTraverser.auxiliaryNextEdgeId(prevEdgeId, curEdgeId, edgeInfoArray)
                 : -1;
         };
     }
 
-    protected Orientation getOrientation(int faceId, int edgeId, VPFPrimitiveData.PrimitiveInfo[] edgeInfo) {
+    protected static Orientation getOrientation(int faceId, int edgeId, VPFPrimitiveData.PrimitiveInfo[] edgeInfo) {
         VPFPrimitiveData.EdgeInfo thisInfo = getEdgeInfo(edgeInfo, edgeId);
         boolean matchLeft = thisInfo.getLeftFace() == faceId;
         boolean matchRight = thisInfo.getRightFace() == faceId;
@@ -117,20 +117,20 @@ public class VPFWingedEdgeTraverser {
         // 2. If the edge is an auxiliary edge (a connecting edge between an inner and outer loop which), then
         // we *may* travel backwards along this edge.
 
-        Orientation o = this.getOrientation(faceId, curEdgeId, edgeInfo);
+        Orientation o = VPFWingedEdgeTraverser.getOrientation(faceId, curEdgeId, edgeInfo);
         if (o == null) {
             return false;
         }
 
         return switch (o) {
             case LEFT -> true;
-            case LEFT_AND_RIGHT -> (prevEdgeId > 0) && this.auxiliaryMustReverseCoordinates(prevEdgeId, curEdgeId,
+            case LEFT_AND_RIGHT -> (prevEdgeId > 0) && VPFWingedEdgeTraverser.auxiliaryMustReverseCoordinates(prevEdgeId, curEdgeId,
                 edgeInfo);
             default -> false;
         };
     }
 
-    protected int auxiliaryNextEdgeId(int prevEdgeId, int curEdgeId,
+    protected static int auxiliaryNextEdgeId(int prevEdgeId, int curEdgeId,
         VPFPrimitiveData.PrimitiveInfo[] edgeInfoArray) {
         // Note: an edge which has the same face for both its left and right faces is known to be an "auxiliary edge".
         // Using auxiliary edges is a solution to defining a face (polygon) with holes. The face becomes a single loop,
@@ -154,7 +154,7 @@ public class VPFWingedEdgeTraverser {
         }
     }
 
-    protected boolean auxiliaryMustReverseCoordinates(int prevEdgeId, int curEdgeId,
+    protected static boolean auxiliaryMustReverseCoordinates(int prevEdgeId, int curEdgeId,
         VPFPrimitiveData.PrimitiveInfo[] edgeInfoArray) {
         VPFPrimitiveData.EdgeInfo prevInfo = getEdgeInfo(edgeInfoArray, prevEdgeId);
         VPFPrimitiveData.EdgeInfo curInfo = getEdgeInfo(edgeInfoArray, curEdgeId);

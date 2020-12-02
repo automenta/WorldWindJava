@@ -443,7 +443,7 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
         this.srs = null;
     }
 
-    protected Dataset createMaskDataset(int width, int height, Sector sector) {
+    protected static Dataset createMaskDataset(int width, int height, Sector sector) {
         if (width <= 0) {
             String message = Logging.getMessage("generic.InvalidWidth", width);
             Logging.logger().severe(message);
@@ -986,7 +986,7 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
                 // check if image fully contains the ROI, in this case we do not need mask
                 // if (null == this.area || null == this.srs || !this.area.contains(new GDAL.Area(this.srs, roiSector)))
                 {
-                    maskDS = this.createMaskDataset(roiWidth, roiHeight, roiSector);
+                    maskDS = GDALDataRaster.createMaskDataset(roiWidth, roiHeight, roiSector);
                 }
 
                 long projTime = 0L, maskTime = 0L, cropTime = 0L, totalTime = System.currentTimeMillis();

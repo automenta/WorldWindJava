@@ -64,7 +64,7 @@ public class ColladaVisualScene extends ColladaAbstractObject implements Collada
             throw new IllegalArgumentException(message);
         }
 
-        List<Box> extents = new ArrayList<>();
+        Collection<Box> extents = new ArrayList<>();
         for (ColladaNode node : this.getNodes()) {
             Box extent = node.getLocalExtent(tc);
             if (extent != null)

@@ -447,7 +447,7 @@ public class SurfaceText extends AbstractSurfaceObject implements GeographicText
      */
     protected void computeGeometry(DrawContext dc, SurfaceTileDrawContext sdc) {
         // Determine the geographic size of a pixel in the tile
-        this.pixelSizeInMeters = this.computePixelSize(dc, sdc);
+        this.pixelSizeInMeters = SurfaceText.computePixelSize(dc, sdc);
 
         // Determine how big the text would be without scaling
         double fullHeightInMeters = this.pixelSizeInMeters * this.textBounds.getHeight();
@@ -497,7 +497,7 @@ public class SurfaceText extends AbstractSurfaceObject implements GeographicText
      * @param sdc Current surface tile draw context.
      * @return The size of a tile pixel in meters.
      */
-    protected double computePixelSize(DrawContext dc, SurfaceTileDrawContext sdc) {
+    protected static double computePixelSize(DrawContext dc, SurfaceTileDrawContext sdc) {
         return dc.getGlobe().getRadius() * sdc.getSector().getDeltaLatRadians() / sdc.getViewport().height;
     }
 
@@ -515,7 +515,7 @@ public class SurfaceText extends AbstractSurfaceObject implements GeographicText
             return bgColor;
 
         // Otherwise compute a color that contrasts with the text color.
-        return this.computeBackgroundColor(color);
+        return SurfaceText.computeBackgroundColor(color);
     }
 
     /**
@@ -524,7 +524,7 @@ public class SurfaceText extends AbstractSurfaceObject implements GeographicText
      * @param color text color.
      * @return a color that contrasts with the text color.
      */
-    protected Color computeBackgroundColor(Color color) {
+    protected static Color computeBackgroundColor(Color color) {
         // Otherwise compute a color that contrasts with the text color.
         float[] colorArray = new float[4];
         Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), colorArray);

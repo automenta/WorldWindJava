@@ -42,7 +42,7 @@ public class BasicJSONEventParser implements JSONEventParser {
             return this.parseArray(ctx, event);
 
         else if (event.isScalarValue())
-            return this.parseScalarContent(ctx, event);
+            return BasicJSONEventParser.parseScalarContent(ctx, event);
 
         else {
             Logging.logger().warning(Logging.getMessage("generic.UnexpectedEvent", event));
@@ -50,7 +50,7 @@ public class BasicJSONEventParser implements JSONEventParser {
         }
     }
 
-    protected JSONEventParser allocate(JSONEventParserContext ctx, JSONEvent event) {
+    protected static JSONEventParser allocate(JSONEventParserContext ctx, JSONEvent event) {
         if (ctx == null) {
             String message = Logging.getMessage("nullValue.ParserContextIsNull");
             Logging.logger().severe(message);
@@ -110,7 +110,7 @@ public class BasicJSONEventParser implements JSONEventParser {
                 this.addFieldContent(ctx, this.parseComplexContent(ctx, valueEvent));
 
             else if (valueEvent.isScalarValue())
-                this.addFieldContent(ctx, this.parseScalarContent(ctx, valueEvent));
+                this.addFieldContent(ctx, BasicJSONEventParser.parseScalarContent(ctx, valueEvent));
 
             else {
                 Logging.logger().warning(Logging.getMessage("generic.UnexpectedEvent", valueEvent));
@@ -163,7 +163,7 @@ public class BasicJSONEventParser implements JSONEventParser {
             this.addArrayEntry(this.parseComplexContent(ctx, event));
 
         else if (event.isScalarValue())
-            this.addArrayEntry(this.parseScalarContent(ctx, event));
+            this.addArrayEntry(BasicJSONEventParser.parseScalarContent(ctx, event));
 
         else {
             Logging.logger().warning(Logging.getMessage("generic.UnexpectedEvent", event));
@@ -186,7 +186,7 @@ public class BasicJSONEventParser implements JSONEventParser {
     //**************************************************************//
 
     protected Object parseComplexContent(JSONEventParserContext ctx, JSONEvent event) throws IOException {
-        JSONEventParser parser = this.allocate(ctx, event);
+        JSONEventParser parser = BasicJSONEventParser.allocate(ctx, event);
 
         if (parser == null)
             parser = ctx.getUnrecognizedParser();
@@ -195,7 +195,7 @@ public class BasicJSONEventParser implements JSONEventParser {
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    protected Object parseScalarContent(JSONEventParserContext ctx, JSONEvent event) {
+    protected static Object parseScalarContent(JSONEventParserContext ctx, JSONEvent event) {
         return event.asScalarValue();
     }
 }

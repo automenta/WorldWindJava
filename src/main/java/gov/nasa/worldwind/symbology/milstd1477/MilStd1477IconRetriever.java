@@ -35,7 +35,7 @@ public class MilStd1477IconRetriever extends AbstractIconRetriever {
 
         // SymbolCode symbolCode = new SymbolCode(symbolIdentifier);
 
-        String filename = this.getFilename(symbolId);
+        String filename = MilStd1477IconRetriever.getFilename(symbolId);
         BufferedImage img = this.readImage(filename);
 
         if (img == null) {
@@ -47,7 +47,7 @@ public class MilStd1477IconRetriever extends AbstractIconRetriever {
         return img;
     }
 
-    protected String getFilename(String code) {
+    protected static String getFilename(String code) {
         return code.toLowerCase() + ".png";
     }
 }

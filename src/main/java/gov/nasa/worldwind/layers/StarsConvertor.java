@@ -13,7 +13,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 import java.nio.*;
-import java.util.List;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -98,7 +97,7 @@ public class StarsConvertor {
      */
     public static ByteBuffer convertTsvToByteBuffer(String starsFileName, float radius) {
         try {
-            List<Float> tmpBuffer = new ArrayList<>();
+            Collection<Float> tmpBuffer = new ArrayList<>();
 
             InputStream starsStream = StarsConvertor.class.getResourceAsStream("/" + starsFileName);
 

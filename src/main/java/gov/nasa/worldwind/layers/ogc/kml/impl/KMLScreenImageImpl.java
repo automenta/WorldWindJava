@@ -149,7 +149,7 @@ public class KMLScreenImageImpl extends ScreenImage implements KMLRenderable {
 
             // Evict the resource from the file store if there is a cached resource older than the icon update time.
             // This prevents fetching a stale resource out of the cache when the Icon is updated.
-            this.parent.getRoot().evictIfExpired(path, this.iconRetrievalTime);
+            KMLRoot.evictIfExpired(path, this.iconRetrievalTime);
 
             this.setImageSource(path);
         }
@@ -187,7 +187,7 @@ public class KMLScreenImageImpl extends ScreenImage implements KMLRenderable {
      * @return One of {@link Size#NATIVE_DIMENSION}, {@link Size#MAINTAIN_ASPECT_RATIO},
      * or {@link Size#EXPLICIT_DIMENSION}.
      */
-    protected String getSizeMode(Double size) {
+    protected static String getSizeMode(Double size) {
         // KML spec requires a value, but if there isn't one, use the image's native size.
         if (size == null)
             return Size.NATIVE_DIMENSION;

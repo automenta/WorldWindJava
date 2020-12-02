@@ -68,7 +68,7 @@ public class VPFSurfaceLine extends SurfacePolyline // TODO: consolidate with Su
     }
 
     protected void drawOutline(DrawContext dc, SurfaceTileDrawContext sdc) {
-        this.applyOutlineState(dc, this.getActiveAttributes());
+        AbstractSurfaceShape.applyOutlineState(dc, this.getActiveAttributes());
 
         int drawMode = (this.isClosed() ? GL.GL_LINE_LOOP : GL.GL_LINE_STRIP);
         this.buffer.bindAsVertexBuffer(dc);

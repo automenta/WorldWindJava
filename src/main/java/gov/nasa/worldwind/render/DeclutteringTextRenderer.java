@@ -43,7 +43,7 @@ public class DeclutteringTextRenderer {
         return !checkPosition || text.getPosition() != null;
     }
 
-    public Font getDefaultFont() {
+    public static Font getDefaultFont() {
         return DEFAULT_FONT;
     }
 
@@ -54,7 +54,7 @@ public class DeclutteringTextRenderer {
      * @param font the text font.
      * @return a text renderer.
      */
-    public TextRenderer getTextRenderer(DrawContext dc, Font font) {
+    public static TextRenderer getTextRenderer(DrawContext dc, Font font) {
         return OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(), font);
     }
 
@@ -170,7 +170,7 @@ public class DeclutteringTextRenderer {
         gl.glAlphaFunc(GL2.GL_GREATER, 0.001f);
     }
 
-    protected void endRendering(DrawContext dc) {
+    protected static void endRendering(DrawContext dc) {
         if (dc == null) {
             String msg = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().fine(msg);
@@ -211,19 +211,19 @@ public class DeclutteringTextRenderer {
         if (font == null)
             font = DEFAULT_FONT;
 
-        TextRenderer textRenderer = this.getTextRenderer(dc, font);
+        TextRenderer textRenderer = DeclutteringTextRenderer.getTextRenderer(dc, font);
 
         this.beginRendering(dc);
         try {
             textRenderer.begin3DRendering();
 
-            this.setDepthFunc(dc, screenPoint);
+            DeclutteringTextRenderer.setDepthFunc(dc, screenPoint);
 
             Rectangle2D textBounds = uText.getBounds(dc);
             if (textBounds == null)
                 return null;
 
-            Point.Float drawPoint = this.computeDrawPoint(textBounds, screenPoint);
+            Point.Float drawPoint = DeclutteringTextRenderer.computeDrawPoint(textBounds, screenPoint);
 
             if (drawPoint != null) {
                 if (scale != 1.0d) {
@@ -234,11 +234,11 @@ public class DeclutteringTextRenderer {
                 Color color = geographicText.getColor();
                 if (color == null)
                     color = DEFAULT_COLOR;
-                color = this.applyOpacity(color, opacity);
+                color = DeclutteringTextRenderer.applyOpacity(color, opacity);
 
                 Color background = geographicText.getBackgroundColor();
                 if (background != null) {
-                    background = this.applyOpacity(background, opacity);
+                    background = DeclutteringTextRenderer.applyOpacity(background, opacity);
                     textRenderer.setColor(background);
                     textRenderer.draw3D(charSequence, drawPoint.x + 1, drawPoint.y - 1, 0, 1);
                 }
@@ -256,13 +256,13 @@ public class DeclutteringTextRenderer {
         }
         finally {
             textRenderer.end3DRendering();
-            this.endRendering(dc);
+            DeclutteringTextRenderer.endRendering(dc);
         }
 
         return screenPoint;
     }
 
-    protected void setDepthFunc(DrawContext dc, Vec4 screenPoint) {
+    protected static void setDepthFunc(DrawContext dc, Vec4 screenPoint) {
         GL gl = dc.getGL();
 
         Position eyePos = dc.getView().getEyePosition();
@@ -291,11 +291,11 @@ public class DeclutteringTextRenderer {
      * @param screenPoint the projected screen point the text relates to.
      * @return the final draw point for the given rectangle lower left corner or <code>null</code>.
      */
-    protected Point.Float computeDrawPoint(Rectangle2D rect, Vec4 screenPoint) {
+    protected static Point.Float computeDrawPoint(Rectangle2D rect, Vec4 screenPoint) {
         return new Point.Float((float) (screenPoint.x - rect.getWidth() / 2.0d), (float) (screenPoint.y));
     }
 
-    protected Color applyOpacity(Color color, double opacity) {
+    protected static Color applyOpacity(Color color, double opacity) {
         if (opacity >= 1)
             return color;
 
@@ -316,10 +316,10 @@ public class DeclutteringTextRenderer {
 
         Font font = geographicText.getFont();
         if (font == null)
-            font = this.getDefaultFont();
+            font = DeclutteringTextRenderer.getDefaultFont();
 
         try {
-            TextRenderer textRenderer = this.getTextRenderer(dc, font);
+            TextRenderer textRenderer = DeclutteringTextRenderer.getTextRenderer(dc, font);
 
             Rectangle2D textBound = textRenderer.getBounds(charSequence);
             double x = screenPoint.x - textBound.getWidth() / 2.0d;

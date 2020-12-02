@@ -157,7 +157,7 @@ public class VPFSurfaceArea extends SurfacePolygon // TODO: consolidate with Sur
     }
 
     protected void drawOutline(DrawContext dc, SurfaceTileDrawContext sdc) {
-        this.applyOutlineState(dc, this.getActiveAttributes());
+        AbstractSurfaceShape.applyOutlineState(dc, this.getActiveAttributes());
 
         // Edges features are not necessarily closed loops, therefore each edge must be rendered as separate line strip.
         this.buffer.bindAsVertexBuffer(dc);

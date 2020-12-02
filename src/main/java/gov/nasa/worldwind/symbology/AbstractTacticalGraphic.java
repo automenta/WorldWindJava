@@ -572,7 +572,7 @@ public abstract class AbstractTacticalGraphic extends AVListImpl implements Tact
                 this.activeOverrides.copy(highlightAttributes);
 
                 // Apply overrides specified by application
-                this.applyOverrideAttributes(highlightAttributes, this.activeShapeAttributes);
+                AbstractTacticalGraphic.applyOverrideAttributes(highlightAttributes, this.activeShapeAttributes);
             }
             else {
                 // If no highlight attributes have been specified we need to use the normal attributes but adjust them
@@ -588,7 +588,7 @@ public abstract class AbstractTacticalGraphic extends AVListImpl implements Tact
             TacticalGraphicAttributes normalAttributes = this.getAttributes();
             if (normalAttributes != null) {
                 this.activeOverrides.copy(normalAttributes);
-                this.applyOverrideAttributes(normalAttributes, this.activeShapeAttributes);
+                AbstractTacticalGraphic.applyOverrideAttributes(normalAttributes, this.activeShapeAttributes);
             }
         }
 
@@ -612,7 +612,7 @@ public abstract class AbstractTacticalGraphic extends AVListImpl implements Tact
 
         // Compute an interior opacity for the label. Note that not all tactical graphic labels are drawn with an
         // interior.
-        double labelInteriorOpacity = this.computeLabelInteriorOpacity(opacity);
+        double labelInteriorOpacity = AbstractTacticalGraphic.computeLabelInteriorOpacity(opacity);
 
         for (TacticalGraphicLabel label : this.labels) {
             label.setMaterial(labelMaterial);
@@ -635,7 +635,7 @@ public abstract class AbstractTacticalGraphic extends AVListImpl implements Tact
      * @param textOpacity Opacity of the label text.
      * @return Opacity of the label interior as a floating point number between 0.0 and 1.0.
      */
-    protected double computeLabelInteriorOpacity(double textOpacity) {
+    protected static double computeLabelInteriorOpacity(double textOpacity) {
         return textOpacity * DEFAULT_LABEL_INTERIOR_OPACITY;
     }
 
@@ -700,7 +700,7 @@ public abstract class AbstractTacticalGraphic extends AVListImpl implements Tact
      * @param graphicAttributes Override attributes.
      * @param shapeAttributes   Shape attributes to receive overrides.
      */
-    protected void applyOverrideAttributes(TacticalGraphicAttributes graphicAttributes,
+    protected static void applyOverrideAttributes(TacticalGraphicAttributes graphicAttributes,
         ShapeAttributes shapeAttributes) {
         Material material = graphicAttributes.getInteriorMaterial();
         if (material != null) {

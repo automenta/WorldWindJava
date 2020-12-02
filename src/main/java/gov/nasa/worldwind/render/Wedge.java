@@ -42,7 +42,7 @@ public class Wedge extends RigidShape {
      * Construct a wedge with default parameters
      */
     public Wedge() {
-        this.setUpGeometryCache();
+        RigidShape.setUpGeometryCache();
     }
 
     /**
@@ -92,7 +92,7 @@ public class Wedge extends RigidShape {
         this.verticalRadius = height / 2;
         this.eastWestRadius = radius;
 
-        this.setUpGeometryCache();
+        RigidShape.setUpGeometryCache();
     }
 
     /**
@@ -138,7 +138,7 @@ public class Wedge extends RigidShape {
         this.verticalRadius = verticalRadius;
         this.eastWestRadius = eastWestRadius;
 
-        this.setUpGeometryCache();
+        RigidShape.setUpGeometryCache();
     }
 
     /**
@@ -191,7 +191,7 @@ public class Wedge extends RigidShape {
         this.tilt = tilt;
         this.roll = roll;
 
-        this.setUpGeometryCache();
+        RigidShape.setUpGeometryCache();
     }
 
     @Override
@@ -337,7 +337,7 @@ public class Wedge extends RigidShape {
         // attempt to retrieve a cached unit wedge with the same angle and number of subdivisions
         Object cacheKey = new Geometry.CacheKey(this.getClass(), "Wedge0-" + this.wedgeAngle.toString(),
             this.subdivisions);
-        Geometry geom = (Geometry) this.getGeometryCache().getObject(cacheKey);
+        Geometry geom = (Geometry) RigidShape.getGeometryCache().getObject(cacheKey);
         if (geom == null) {
             // if none exists, create a new one
             makeUnitWedge(this.subdivisions, shapeData.getMeshes());
@@ -347,7 +347,7 @@ public class Wedge extends RigidShape {
                 // add the new mesh pieces to the cache
                 cacheKey = new Geometry.CacheKey(this.getClass(), "Wedge" + piece + "-" + this.wedgeAngle.toString(),
                     this.subdivisions);
-                this.getGeometryCache().add(cacheKey, shapeData.getMesh(piece));
+                RigidShape.getGeometryCache().add(cacheKey, shapeData.getMesh(piece));
             }
         }
         else {
@@ -357,7 +357,7 @@ public class Wedge extends RigidShape {
                     offsets.put(piece, new OffsetsList());
                 cacheKey = new Geometry.CacheKey(this.getClass(), "Wedge" + piece + "-" + this.wedgeAngle.toString(),
                     this.subdivisions);
-                geom = (Geometry) this.getGeometryCache().getObject(cacheKey);
+                geom = (Geometry) RigidShape.getGeometryCache().getObject(cacheKey);
                 shapeData.addMesh(piece, geom);
             }
         }
@@ -434,7 +434,7 @@ public class Wedge extends RigidShape {
             gb.makeIndexedTriangleBufferNormals(itb, normalBuffer);
 
             FloatBuffer textureCoordBuffer = Buffers.newDirectFloatBuffer(2 * itb.getVertexCount());
-            gb.makeUnitWedgeTextureCoordinates(index, textureCoordBuffer, subdivisions, this.wedgeAngle);
+            GeometryBuilder.makeUnitWedgeTextureCoordinates(index, textureCoordBuffer, subdivisions, this.wedgeAngle);
 
             dest = new Geometry();
 

@@ -128,7 +128,7 @@ public class GraticuleSupport {
         this.defaultParams = defaultParams;
     }
 
-    private AVList initRenderingParams(AVList params) {
+    private static AVList initRenderingParams(AVList params) {
         if (params == null) {
             String message = Logging.getMessage("nullValue.AVListIsNull");
             Logging.logger().severe(message);
@@ -160,7 +160,7 @@ public class GraticuleSupport {
         return params;
     }
 
-    private void applyRenderingParams(AVList params, GeographicText text, double opacity) {
+    private static void applyRenderingParams(AVList params, GeographicText text, double opacity) {
         if (params != null && text != null) {
             // Apply "label" properties to the GeographicText.
             Object o = params.get(GraticuleRenderingParams.KEY_LABEL_COLOR);
@@ -195,7 +195,7 @@ public class GraticuleSupport {
         return attrs;
     }
 
-    private ShapeAttributes createLineShapeAttributes(AVList params, double opacity) {
+    private static ShapeAttributes createLineShapeAttributes(AVList params, double opacity) {
         ShapeAttributes attrs = new BasicShapeAttributes();
         attrs.setDrawInterior(false);
         attrs.setDrawOutline(true);
@@ -234,7 +234,7 @@ public class GraticuleSupport {
         return attrs;
     }
 
-    private Color applyOpacity(Color color, double opacity) {
+    private static Color applyOpacity(Color color, double opacity) {
         if (opacity >= 1)
             return color;
 

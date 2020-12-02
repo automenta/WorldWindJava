@@ -40,7 +40,7 @@ public class SubHotSpot extends AbstractHotSpot {
      * @param event The event to handle.
      */
     public void selected(SelectEvent event) {
-        if (event == null || this.isConsumed(event))
+        if (event == null || AbstractHotSpot.isConsumed(event))
             return;
 
         if (this.parent != null)

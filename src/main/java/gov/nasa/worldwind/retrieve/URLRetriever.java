@@ -262,7 +262,7 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever {
         }
 
         if (this.connection instanceof HttpsURLConnection)
-            this.configureSSLContext((HttpsURLConnection) this.connection);
+            URLRetriever.configureSSLContext((HttpsURLConnection) this.connection);
 
         final int cTimeOut = this.connectTimeout;
         final int rTimeOut = this.readTimeout;
@@ -275,7 +275,7 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever {
         return connection;
     }
 
-    protected void configureSSLContext(HttpsURLConnection connection) {
+    protected static void configureSSLContext(HttpsURLConnection connection) {
         SSLContext sslContext = (SSLContext) WorldWind.getValue(AVKey.HTTP_SSL_CONTEXT);
 
         if (sslContext != null)
@@ -334,7 +334,7 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever {
 
         try {
             this.contentLength = this.connection.getContentLength();
-            this.expiration.set(this.getExpiration(connection));
+            this.expiration.set(URLRetriever.getExpiration(connection));
 
             // The legacy WW servers send data with application/zip as the content type, and the retrieval initiator is
             // expected to know what type the unzipped content is. This is a kludge, but we have to deal with it. So
@@ -460,7 +460,7 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever {
      * @return The expiration time, in milliseconds since the Epoch, specified by the HTTP headers, or zero if there is
      * no expiration time.
      */
-    protected long getExpiration(URLConnection connection) {
+    protected static long getExpiration(URLConnection connection) {
         // Read the expiration time from either the Cache-Control header or the Expires header. Cache-Control has
         // priority if both headers are specified.
         String cacheControl = connection.getHeaderField("cache-control");

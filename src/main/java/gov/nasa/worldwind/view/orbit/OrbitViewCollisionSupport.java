@@ -193,7 +193,7 @@ public class OrbitViewCollisionSupport {
         return newPitch;
     }
 
-    private double computeViewHeightAboveSurface(DrawContext dc, Matrix modelviewInv,
+    private static double computeViewHeightAboveSurface(DrawContext dc, Matrix modelviewInv,
         Angle fieldOfView, Rectangle viewport, double nearDistance) {
         double height = Double.POSITIVE_INFINITY;
         if (dc != null && modelviewInv != null && fieldOfView != null && viewport != null && nearDistance >= 0) {
@@ -212,7 +212,7 @@ public class OrbitViewCollisionSupport {
         return height;
     }
 
-    private double computePointHeightAboveSurface(DrawContext dc, Vec4 point) {
+    private static double computePointHeightAboveSurface(DrawContext dc, Vec4 point) {
         double height = Double.POSITIVE_INFINITY;
         if (dc != null && dc.getGlobe() != null && point != null) {
             Globe globe = dc.getGlobe();
@@ -231,7 +231,7 @@ public class OrbitViewCollisionSupport {
         return height;
     }
 
-    private Matrix getModelviewInverse(Globe globe,
+    private static Matrix getModelviewInverse(Globe globe,
         Position centerPosition, Angle heading, Angle pitch, Angle roll, double zoom) {
         if (globe != null && centerPosition != null && heading != null && pitch != null) {
             Matrix modelview = OrbitViewInputSupport.computeTransformMatrix(globe,
@@ -242,11 +242,11 @@ public class OrbitViewCollisionSupport {
         return null;
     }
 
-    private Vec4 getEyePoint(Matrix modelviewInv) {
+    private static Vec4 getEyePoint(Matrix modelviewInv) {
         return modelviewInv != null ? Vec4.UNIT_W.transformBy4(modelviewInv) : null;
     }
 
-    private Vec4 getPointOnNearPlane(Matrix modelviewInv, Angle fieldOfView, Rectangle viewport,
+    private static Vec4 getPointOnNearPlane(Matrix modelviewInv, Angle fieldOfView, Rectangle viewport,
         double nearDistance) {
         if (modelviewInv != null && fieldOfView != null && viewport != null && nearDistance >= 0) {
             // If either either the viewport width or height is zero, then fall back to an aspect ratio of 1. 

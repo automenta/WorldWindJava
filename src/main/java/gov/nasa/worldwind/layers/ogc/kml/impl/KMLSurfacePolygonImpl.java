@@ -212,7 +212,7 @@ public class KMLSurfacePolygonImpl extends SurfacePolygon implements KMLRenderab
      * @return the new attributes.
      */
     protected ShapeAttributes makeAttributesCurrent(String attrType) {
-        ShapeAttributes attrs = this.getInitialAttributes(
+        ShapeAttributes attrs = KMLSurfacePolygonImpl.getInitialAttributes(
             this.isHighlighted() ? KMLConstants.HIGHLIGHT : KMLConstants.NORMAL);
 
         // Get the KML sub-style for Line attributes. Map them to Shape attributes.
@@ -239,7 +239,7 @@ public class KMLSurfacePolygonImpl extends SurfacePolygon implements KMLRenderab
         return attrs;
     }
 
-    protected ShapeAttributes getInitialAttributes(String attrType) {
+    protected static ShapeAttributes getInitialAttributes(String attrType) {
         ShapeAttributes attrs = new BasicShapeAttributes();
 
         if (KMLConstants.HIGHLIGHT.equals(attrType)) {

@@ -395,13 +395,13 @@ public class SphereAirspace extends AbstractAirspace {
 
     protected void drawUnitSphere(DrawContext dc, int subdivisions) {
         Object cacheKey = new Geometry.CacheKey(dc.getGlobe(), this.getClass(), "Sphere", subdivisions);
-        Geometry geom = (Geometry) this.getGeometryCache().getObject(cacheKey);
-        if (geom == null || this.isExpired(dc, geom)) {
+        Geometry geom = (Geometry) AbstractAirspace.getGeometryCache().getObject(cacheKey);
+        if (geom == null || AbstractAirspace.isExpired(dc, geom)) {
             if (geom == null)
                 geom = new Geometry();
             this.makeSphere(1.0, subdivisions, geom);
             this.updateExpiryCriteria(dc, geom);
-            this.getGeometryCache().add(cacheKey, geom);
+            AbstractAirspace.getGeometryCache().add(cacheKey, geom);
         }
 
         this.drawGeometry(dc, geom, geom);

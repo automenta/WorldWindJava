@@ -139,7 +139,7 @@ public class RPFTiledImageProcessor {
         this.doStop = true;
     }
 
-    private String makeWaveletCachePath(RPFFileIndex fileIndex, long rpfFileKey) {
+    private static String makeWaveletCachePath(RPFFileIndex fileIndex, long rpfFileKey) {
         String path = null;
         if (fileIndex != null && fileIndex.getIndexProperties() != null && rpfFileKey != -1) {
             File rpfFile = fileIndex.getRPFFile(rpfFileKey);
@@ -273,7 +273,7 @@ public class RPFTiledImageProcessor {
         }
     }
 
-    private WaveletCodec createWavelet(BufferedImage image, int waveletWidth, int waveletHeight) {
+    private static WaveletCodec createWavelet(BufferedImage image, int waveletWidth, int waveletHeight) {
         int waveletImgType = switch (image.getType()) {
             case BufferedImage.TYPE_BYTE_GRAY -> BufferedImage.TYPE_BYTE_GRAY;
             case BufferedImage.TYPE_INT_ARGB -> BufferedImage.TYPE_4BYTE_ABGR;
@@ -285,7 +285,7 @@ public class RPFTiledImageProcessor {
         return WaveletCodec.encode(scaledImage);
     }
 
-    private BufferedImage scaleImage(BufferedImage srcImage, BufferedImage destImage) {
+    private static BufferedImage scaleImage(BufferedImage srcImage, BufferedImage destImage) {
         double sx = (double) destImage.getWidth() / srcImage.getWidth();
         double sy = (double) destImage.getHeight() / srcImage.getHeight();
         Graphics2D g2d = (Graphics2D) destImage.getGraphics();
@@ -295,7 +295,7 @@ public class RPFTiledImageProcessor {
         return destImage;
     }
 
-    private Sector getFileSector(RPFFile rpfFile) {
+    private static Sector getFileSector(RPFFile rpfFile) {
         // Attempt to get the file's coverage from the RPFFile.
         Sector sector = null;
         if (rpfFile != null) {
@@ -314,7 +314,7 @@ public class RPFTiledImageProcessor {
         return sector;
     }
 
-    private Sector sectorFromHeader(RPFFile rpfFile) {
+    private static Sector sectorFromHeader(RPFFile rpfFile) {
         Sector sector = null;
         try {
             if (rpfFile != null) {
@@ -347,7 +347,7 @@ public class RPFTiledImageProcessor {
         return sector;
     }
 
-    private Sector sectorFromFilename(File file) {
+    private static Sector sectorFromFilename(File file) {
         Sector sector = null;
         try {
             if (file != null) {
@@ -464,7 +464,7 @@ public class RPFTiledImageProcessor {
         }
     }
 
-    private void saveFileIndex(RPFFileIndex fileIndex, File file) {
+    private static void saveFileIndex(RPFFileIndex fileIndex, File file) {
         try {
             ByteBuffer buffer = null;
             if (fileIndex != null) {
@@ -481,7 +481,7 @@ public class RPFTiledImageProcessor {
         }
     }
 
-    private BufferedImage deproject(File file, BufferedImage image) {
+    private static BufferedImage deproject(File file, BufferedImage image) {
         // Need a RPFFrameTransform object and a frame-number to perform the deprojection...
         RPFFrameFilename fframe = RPFFrameFilename.parseFilename(file.getName().toUpperCase());
         RPFDataSeries ds = RPFDataSeries.dataSeriesFor(fframe.getDataSeriesCode());

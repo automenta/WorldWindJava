@@ -46,7 +46,7 @@ public class GDALUtils {
     // This is an OLD default libname request by WW build of GDAL
     protected static final String gdalalljni = Configuration.isMacOS()
         ? "gdalalljni" : (is32bitArchitecture() ? "gdalalljni32" : "gdalalljni64");
-    protected static final Set<String> loadedLibraries = new CopyOnWriteArraySet<>();
+    protected static final Collection<String> loadedLibraries = new CopyOnWriteArraySet<>();
 //    protected static final CopyOnWriteArraySet<String> failedLibraries = new CopyOnWriteArraySet<>();
 //    protected static byte ALPHA_OPAQUE = (byte) 0xFF;
     private static Class newClassLoader = null;

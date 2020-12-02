@@ -194,7 +194,7 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
     @Override
     public void assignAttributes(ShapefileRecord shapefileRecord, ShapefileRenderable.Record renderableRecord) {
         if (this.dBaseMappings != null) {
-            AVList mappings = this.applyMappings(shapefileRecord.getAttributes(), this.dBaseMappings);
+            AVList mappings = ShapefileLayerFactory.applyMappings(shapefileRecord.getAttributes(), this.dBaseMappings);
             if (mappings != null)
                 renderableRecord.setValues(mappings);
         }
@@ -397,19 +397,19 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
         XPathFactory xpFactory = XPathFactory.newInstance();
         XPath xpath = xpFactory.newXPath();
 
-        this.setDBaseMappings(this.collectDBaseMappings(domElement, xpath));
+        this.setDBaseMappings(ShapefileLayerFactory.collectDBaseMappings(domElement, xpath));
 
         Element element = WWXML.getElement(domElement, "NormalShapeAttributes", xpath);
-        this.setNormalShapeAttributes(element != null ? this.collectShapeAttributes(element) : null);
+        this.setNormalShapeAttributes(element != null ? ShapefileLayerFactory.collectShapeAttributes(element) : null);
 
         element = WWXML.getElement(domElement, "HighlightShapeAttributes", xpath);
-        this.setHighlightShapeAttributes(element != null ? this.collectShapeAttributes(element) : null);
+        this.setHighlightShapeAttributes(element != null ? ShapefileLayerFactory.collectShapeAttributes(element) : null);
 
         element = WWXML.getElement(domElement, "NormalPointAttributes", xpath);
-        this.setNormalPointAttributes(element != null ? this.collectPointAttributes(element) : null);
+        this.setNormalPointAttributes(element != null ? ShapefileLayerFactory.collectPointAttributes(element) : null);
 
         element = WWXML.getElement(domElement, "HighlightPointAttributes", xpath);
-        this.setHighlightPointAttributes(element != null ? this.collectPointAttributes(element) : null);
+        this.setHighlightPointAttributes(element != null ? ShapefileLayerFactory.collectPointAttributes(element) : null);
 
         Double d = (Double) params.get(AVKey.OPACITY);
         if (d != null)
@@ -472,16 +472,16 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
         });
     }
 
-    protected Shapefile loadShapefile(Object shapefileSource) {
+    protected static Shapefile loadShapefile(Object shapefileSource) {
         return (shapefileSource instanceof Shapefile) ? (Shapefile) shapefileSource : new Shapefile(shapefileSource);
     }
 
     protected void assembleShapefileLayer(Shapefile shp, RenderableLayer layer) {
         this.addRenderablesForShapefile(shp, layer);
-        this.addPropertiesForShapefile(shp, layer);
+        ShapefileLayerFactory.addPropertiesForShapefile(shp, layer);
     }
 
-    protected AVList collectDBaseMappings(Element domElement, XPath xpath) {
+    protected static AVList collectDBaseMappings(Element domElement, XPath xpath) {
         try {
             Element[] elements = WWXML.getElements(domElement, "AttributeMapping", xpath);
             if (elements == null || elements.length == 0)
@@ -508,7 +508,7 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
         }
     }
 
-    protected PointPlacemarkAttributes collectPointAttributes(Element attrElement) {
+    protected static PointPlacemarkAttributes collectPointAttributes(Element attrElement) {
         XPathFactory xpFactory = XPathFactory.newInstance();
         XPath xpath = xpFactory.newXPath();
 
@@ -549,7 +549,7 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
         return attributes;
     }
 
-    protected ShapeAttributes collectShapeAttributes(Element attrElement) {
+    protected static ShapeAttributes collectShapeAttributes(Element attrElement) {
         XPathFactory xpFactory = XPathFactory.newInstance();
         XPath xpath = xpFactory.newXPath();
 
@@ -627,7 +627,7 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
             if (!Shapefile.isPointType(record.getShapeType()))
                 continue;
 
-            AVList mappings = this.applyMappings(record.getAttributes(), this.dBaseMappings);
+            AVList mappings = ShapefileLayerFactory.applyMappings(record.getAttributes(), this.dBaseMappings);
 
             double[] point = ((ShapefileRecordPoint) record).getPoint();
             layer.add(this.createPoint(record, point[1], point[0], mappings));
@@ -641,7 +641,7 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
             if (!Shapefile.isMultiPointType(record.getShapeType()))
                 continue;
 
-            AVList mappings = this.applyMappings(record.getAttributes(), this.dBaseMappings);
+            AVList mappings = ShapefileLayerFactory.applyMappings(record.getAttributes(), this.dBaseMappings);
 
             Iterable<double[]> iterable = ((ShapefileRecordMultiPoint) record).getPoints(0);
 
@@ -701,7 +701,7 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
         layer.add(shape);
     }
 
-    protected AVList applyMappings(AVList attrRecord, AVList attrMappings) {
+    protected static AVList applyMappings(AVList attrRecord, AVList attrMappings) {
         if (attrRecord == null || attrMappings == null)
             return null;
 
@@ -715,7 +715,7 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
         return !mappings.getEntries().isEmpty() ? mappings : null;
     }
 
-    protected void addPropertiesForShapefile(Shapefile shp, AVList layer) {
+    protected static void addPropertiesForShapefile(Shapefile shp, AVList layer) {
         if (layer.get(AVKey.DISPLAY_NAME) == null) // use the shapefile's display name when the layer is unnamed
         {
             layer.set(AVKey.DISPLAY_NAME, shp.get(AVKey.DISPLAY_NAME));

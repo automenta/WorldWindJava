@@ -49,7 +49,7 @@ public class ShapeCombiner {
         CombineContext cc = this.createContext();
 
         try {
-            this.union(cc, shapes);
+            ShapeCombiner.union(cc, shapes);
         }
         finally {
             cc.dispose(); // releases GLU tessellator resources
@@ -69,7 +69,7 @@ public class ShapeCombiner {
 
         try {
             if (shapes.length == 1)
-                this.union(cc, shapes); // equivalent to the identity of the first shape
+                ShapeCombiner.union(cc, shapes); // equivalent to the identity of the first shape
             else if (shapes.length > 1)
                 this.intersection(cc, shapes);
         }
@@ -90,7 +90,7 @@ public class ShapeCombiner {
         CombineContext cc = this.createContext();
         try {
             if (shapes.length == 1)
-                this.union(cc, shapes); // equivalent to the identity of the first shape
+                ShapeCombiner.union(cc, shapes); // equivalent to the identity of the first shape
             else if (shapes.length > 1)
                 this.difference(cc, shapes);
         }
@@ -105,7 +105,7 @@ public class ShapeCombiner {
         return new CombineContext(this.globe, this.resolution);
     }
 
-    protected void union(CombineContext cc, Combinable... shapes) {
+    protected static void union(CombineContext cc, Combinable... shapes) {
         GLUtessellator tess = cc.getTessellator();
 
         try {
@@ -121,7 +121,7 @@ public class ShapeCombiner {
         }
     }
 
-    protected void reverseUnion(CombineContext cc, Combinable... shapes) {
+    protected static void reverseUnion(CombineContext cc, Combinable... shapes) {
         GLUtessellator tess = cc.getTessellator();
 
         try {
@@ -141,7 +141,7 @@ public class ShapeCombiner {
     protected void intersection(CombineContext cc, Combinable... shapes) {
         // Limit this operation to the intersection of the bounding regions. Since this is an intersection operation,
         // shapes outside of this region can be ignored or simplified.
-        this.assembleBoundingSectors(cc, shapes);
+        ShapeCombiner.assembleBoundingSectors(cc, shapes);
 
         // Exit immediately if the bounding regions do not intersect.
         Sector sector = Sector.intersection(cc.getBoundingSectors());
@@ -151,7 +151,7 @@ public class ShapeCombiner {
         cc.setSector(sector);
 
         // Compute the intersection of the first two shapes.
-        this.intersection(cc, shapes[0], shapes[1]);
+        ShapeCombiner.intersection(cc, shapes[0], shapes[1]);
 
         // When the caller has specified more than two shapes, repeatedly compute the intersection of the current
         // contours with the next shape. This has the effect of progressively computing the intersection of all shapes.
@@ -160,12 +160,12 @@ public class ShapeCombiner {
                 Combinable result = new ContourList(cc.getContours());
                 cc.removeAllContours();
 
-                this.intersection(cc, result, shapes[i]);
+                ShapeCombiner.intersection(cc, result, shapes[i]);
             }
         }
     }
 
-    protected void intersection(CombineContext cc, Combinable a, Combinable b) {
+    protected static void intersection(CombineContext cc, Combinable a, Combinable b) {
         GLUtessellator tess = cc.getTessellator();
 
         try {
@@ -184,7 +184,7 @@ public class ShapeCombiner {
         // Limit this operation to the region bounding the shape that we're subtracting from. Since this is a difference
         // operation, shapes outside of this region can be ignored or simplified.
         Combinable a = shapes[0];
-        this.assembleBoundingSectors(cc, a);
+        ShapeCombiner.assembleBoundingSectors(cc, a);
 
         // Exit immediately if the first shape has no bounding region.
         if (cc.getBoundingSectors().isEmpty())
@@ -193,7 +193,7 @@ public class ShapeCombiner {
         cc.setSector(cc.getBoundingSectors().get(0));
 
         // Compute the union of all shapes except the first, but reverse the winding order of the resultant contours.
-        this.reverseUnion(cc, Arrays.copyOfRange(shapes, 1, shapes.length));
+        ShapeCombiner.reverseUnion(cc, Arrays.copyOfRange(shapes, 1, shapes.length));
         Combinable b = new ContourList(cc.getContours());
         cc.removeAllContours(); // clear the context's contour list; we use it to store the final contours below
 
@@ -213,7 +213,7 @@ public class ShapeCombiner {
         }
     }
 
-    protected void assembleBoundingSectors(CombineContext cc, Combinable... shapes) {
+    protected static void assembleBoundingSectors(CombineContext cc, Combinable... shapes) {
         try {
             cc.setBoundingSectorMode(true);
 

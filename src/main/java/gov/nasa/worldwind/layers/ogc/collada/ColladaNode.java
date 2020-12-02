@@ -65,7 +65,7 @@ public class ColladaNode extends ColladaAbstractObject implements ColladaRendera
             tc.multiplyMatrix(this.getMatrix());
         }
 
-        List<Box> extents = new ArrayList<>();
+        Collection<Box> extents = new ArrayList<>();
 
         for (ColladaMeshShape shape : this.shapes) {
             Box extent = shape.getLocalExtent(tc);
@@ -257,7 +257,7 @@ public class ColladaNode extends ColladaAbstractObject implements ColladaRendera
         String matrixAsString = matrix.getCharacters();
         String linesCleaned = matrixAsString.replaceAll("\n", " ");
 
-        double[] doubles = this.parseDoubleArray(linesCleaned);
+        double[] doubles = ColladaNode.parseDoubleArray(linesCleaned);
 
         this.matrix = Matrix.fromArray(doubles, 0, true);
         return this.matrix;
@@ -269,7 +269,7 @@ public class ColladaNode extends ColladaAbstractObject implements ColladaRendera
      * @param doubleArrayString String of doubles, separated by whitespace.
      * @return Parsed double[]
      */
-    protected double[] parseDoubleArray(String doubleArrayString) {
+    protected static double[] parseDoubleArray(String doubleArrayString) {
         String[] arrayOfNumbers = doubleArrayString.trim().split("\\s+");
         double[] doubles = new double[arrayOfNumbers.length];
 

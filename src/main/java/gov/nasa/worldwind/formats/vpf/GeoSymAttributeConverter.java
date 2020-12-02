@@ -12,7 +12,6 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
-import java.util.List;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -199,11 +198,11 @@ public class GeoSymAttributeConverter {
                 this.scale = getScaleValue(line);
         }
 
-        protected int getIntegerValue(String line) {
+        protected static int getIntegerValue(String line) {
             return Integer.parseInt(getStringValue(line));
         }
 
-        protected int[] getIntegerValues(String line) {
+        protected static int[] getIntegerValues(String line) {
             line = line.substring(0, line.length() - 1); // remove end line ";"
             String[] values = line.split(" ");
             int[] ints = new int[values.length - 1];
@@ -215,18 +214,18 @@ public class GeoSymAttributeConverter {
             return ints;
         }
 
-        protected String getStringValue(String line) {
+        protected static String getStringValue(String line) {
             line = line.substring(0, line.length() - 1); // remove end line ";"
             return line.split(" ")[1];
         }
 
-        protected double getScaleValue(String line) {
+        protected static double getScaleValue(String line) {
             line = line.substring(0, line.length() - 1); // remove end line ";"
             String[] values = line.split(" ");
             return Double.parseDouble(values[2]);
         }
 
-        protected int getNumValues(String line) {
+        protected static int getNumValues(String line) {
             return line.split(" ").length - 1;
         }
 
@@ -260,7 +259,7 @@ public class GeoSymAttributeConverter {
             //String elementType = "";
             double elementLength = 0;
             double totalLength = 0;
-            List<Double> lengths = new ArrayList<>();
+            Collection<Double> lengths = new ArrayList<>();
             String[] lines = this.content.split("\n");
             // Gather pattern segments
             for (String line : lines) {
@@ -315,7 +314,7 @@ public class GeoSymAttributeConverter {
             //System.out.println("");
         }
 
-        protected String getLastValue(String line) {
+        protected static String getLastValue(String line) {
             String[] tokens = line.replaceAll("\"", "").replaceAll(";", "").split("\\s");
             return tokens[tokens.length - 1];
         }
@@ -368,7 +367,7 @@ public class GeoSymAttributeConverter {
                 stippleFactor, fillColor);
         }
 
-        public String readTextFile(File file) {
+        public static String readTextFile(File file) {
             if (file == null) {
                 String msg = Logging.getMessage("nullValue.FileIsNull");
                 Logging.logger().severe(msg);

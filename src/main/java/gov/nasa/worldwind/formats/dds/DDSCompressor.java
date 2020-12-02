@@ -367,7 +367,7 @@ public class DDSCompressor {
             throw new IllegalArgumentException(message);
         }
 
-        DXTCompressor compressor = this.getDXTCompressor(image, attributes);
+        DXTCompressor compressor = DDSCompressor.getDXTCompressor(image, attributes);
         return this.doCompressImage(compressor, image, attributes);
     }
 
@@ -438,7 +438,7 @@ public class DDSCompressor {
     protected ByteBuffer doCompressImage(DXTCompressor compressor, BufferedImage image,
         DXTCompressionAttributes attributes) {
         // Create the DDS header structure that describes the specified image, compressor, and compression attributes.
-        DDSHeader header = this.createDDSHeader(compressor, image, attributes);
+        DDSHeader header = DDSCompressor.createDDSHeader(compressor, image, attributes);
 
         // Compute the DDS file size and mip map levels. If the attributes specify to build mip maps, then we compute
         // the total file size including mip maps, create a chain of mip map images, and update the DDS header to
@@ -448,7 +448,7 @@ public class DDSCompressor {
         int fileSize = 4 + header.getSize();
 
         if (attributes.isBuildMipmaps()) {
-            mipMapLevels = this.buildMipMaps(image, attributes);
+            mipMapLevels = DDSCompressor.buildMipMaps(image, attributes);
             for (BufferedImage mipMapImage : mipMapLevels) {
                 fileSize += compressor.getCompressedSize(mipMapImage, attributes);
             }
@@ -462,7 +462,7 @@ public class DDSCompressor {
         }
 
         // Create a little endian buffer that holds the bytes of the DDS file.
-        ByteBuffer buffer = this.createBuffer(fileSize);
+        ByteBuffer buffer = DDSCompressor.createBuffer(fileSize);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
 
         // Write the DDS magic number and DDS header to the file.
@@ -485,7 +485,7 @@ public class DDSCompressor {
         return buffer;
     }
 
-    protected DXTCompressor getDXTCompressor(RenderedImage image, DXTCompressionAttributes attributes) {
+    protected static DXTCompressor getDXTCompressor(RenderedImage image, DXTCompressionAttributes attributes) {
         // If the caller specified a DXT format in the attributes, then we return a compressor matching that format.
         // Otherwise, we choose one automatically from the image type. If no choice can be made from the image type,
         // we default to using a DXT3 compressor.
@@ -505,12 +505,12 @@ public class DDSCompressor {
         }
     }
 
-    protected ByteBuffer createBuffer(int size) {
+    protected static ByteBuffer createBuffer(int size) {
         return ByteBuffer.allocateDirect(size);
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    protected BufferedImage[] buildMipMaps(BufferedImage image,
+    protected static BufferedImage[] buildMipMaps(BufferedImage image,
         DXTCompressionAttributes attributes) {
         // Build the mipmap chain using a premultiplied alpha image format. This is necessary to ensure that
         // transparent colors do not bleed into the opaque colors. For example, without premultiplied alpha the colors
@@ -529,7 +529,7 @@ public class DDSCompressor {
         return ImageUtil.buildMipmaps(image, mipmapImageType, maxLevel);
     }
 
-    protected DDSHeader createDDSHeader(DXTCompressor compressor, BufferedImage image,
+    protected static DDSHeader createDDSHeader(DXTCompressor compressor, BufferedImage image,
         DXTCompressionAttributes attributes) {
         DDSPixelFormat pixelFormat = new DDSPixelFormat();
         pixelFormat.setFlags(pixelFormat.getFlags()
@@ -569,7 +569,7 @@ public class DDSCompressor {
         buffer.putInt(header.getDepth());           // dwDepth
         buffer.putInt(header.getMipMapCount());     // dwMipMapCount
         buffer.position(buffer.position() + 44);    // dwReserved1[11] (unused)
-        this.writeDDSPixelFormat(header.getPixelFormat(), buffer); // ddpf
+        DDSCompressor.writeDDSPixelFormat(header.getPixelFormat(), buffer); // ddpf
         buffer.putInt(header.getCaps());            // dwCaps
         buffer.putInt(header.getCaps2());           // dwCaps2
         buffer.putInt(header.getCaps3());           // dwCaps3
@@ -585,7 +585,7 @@ public class DDSCompressor {
      * @param pixelFormat pixel format structure to write.
      * @param buffer      buffer that receives the pixel format structure bytes.
      */
-    protected void writeDDSPixelFormat(DDSPixelFormat pixelFormat, ByteBuffer buffer) {
+    protected static void writeDDSPixelFormat(DDSPixelFormat pixelFormat, ByteBuffer buffer) {
         int pos = buffer.position();
 
         buffer.putInt(pixelFormat.getSize());           // dwSize

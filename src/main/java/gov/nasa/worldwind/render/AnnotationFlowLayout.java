@@ -179,10 +179,10 @@ public class AnnotationFlowLayout extends AbstractAnnotationLayout {
         super.beginDrawAnnotations(dc, bounds);
 
         if (this.orientation == AVKey.HORIZONTAL) {
-            this.beginHorizontal(dc, bounds);
+            AnnotationFlowLayout.beginHorizontal(dc, bounds);
         }
         else if (this.orientation == AVKey.VERTICAL) {
-            this.beginVertical(dc, bounds);
+            AnnotationFlowLayout.beginVertical(dc, bounds);
         }
     }
 
@@ -196,7 +196,7 @@ public class AnnotationFlowLayout extends AbstractAnnotationLayout {
 
         while (iter.hasNext()) {
             Annotation annotation = iter.next();
-            Dimension size = this.getAnnotationSize(dc, annotation);
+            Dimension size = AbstractAnnotationLayout.getAnnotationSize(dc, annotation);
             if (size != null) {
                 preferredWidth += size.width;
 
@@ -221,7 +221,7 @@ public class AnnotationFlowLayout extends AbstractAnnotationLayout {
 
         while (iter.hasNext()) {
             Annotation annotation = iter.next();
-            Dimension size = this.getAnnotationSize(dc, annotation);
+            Dimension size = AbstractAnnotationLayout.getAnnotationSize(dc, annotation);
             if (size != null) {
                 preferredHeight += size.height;
 
@@ -250,7 +250,7 @@ public class AnnotationFlowLayout extends AbstractAnnotationLayout {
             Dimension size = annotation.getPreferredSize(dc);
 
             stackHandler.pushModelview(gl);
-            this.alignHorizontal(dc, bounds, size, align);
+            AnnotationFlowLayout.alignHorizontal(dc, bounds, size, align);
             this.drawAnnotation(dc, annotation, size.width, size.height, opacity, pickPosition);
             stackHandler.pop(gl);
 
@@ -274,7 +274,7 @@ public class AnnotationFlowLayout extends AbstractAnnotationLayout {
             gl.glTranslated(0, -size.height, 0);
 
             stackHandler.pushModelview(gl);
-            this.alignVertical(dc, bounds, size, align);
+            AnnotationFlowLayout.alignVertical(dc, bounds, size, align);
             this.drawAnnotation(dc, annotation, size.width, size.height, opacity, pickPosition);
             stackHandler.pop(gl);
 
@@ -283,7 +283,7 @@ public class AnnotationFlowLayout extends AbstractAnnotationLayout {
     }
 
     @SuppressWarnings("StringEquality")
-    protected void alignHorizontal(DrawContext dc, Rectangle bounds, Dimension size, String align) {
+    protected static void alignHorizontal(DrawContext dc, Rectangle bounds, Dimension size, String align) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         if (align == AVKey.BOTTOM) {
@@ -300,7 +300,7 @@ public class AnnotationFlowLayout extends AbstractAnnotationLayout {
     }
 
     @SuppressWarnings("StringEquality")
-    protected void alignVertical(DrawContext dc, Rectangle bounds, Dimension size, String align) {
+    protected static void alignVertical(DrawContext dc, Rectangle bounds, Dimension size, String align) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         if (align == AVKey.LEFT) {
@@ -316,12 +316,12 @@ public class AnnotationFlowLayout extends AbstractAnnotationLayout {
         }
     }
 
-    protected void beginHorizontal(DrawContext dc, Rectangle bounds) {
+    protected static void beginHorizontal(DrawContext dc, Rectangle bounds) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glTranslated(bounds.getMinX(), bounds.getMinY(), 0);
     }
 
-    protected void beginVertical(DrawContext dc, Rectangle bounds) {
+    protected static void beginVertical(DrawContext dc, Rectangle bounds) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glTranslated(bounds.getMinX(), bounds.getMaxY(), 0);
     }

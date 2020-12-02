@@ -26,7 +26,7 @@ public class DoubleXMLEventParser extends AbstractXMLEventParser {
     }
 
     public Object parse(XMLEventParserContext ctx, XMLEvent doubleEvent, Object... args) throws XMLStreamException {
-        String s = this.parseCharacterContent(ctx, doubleEvent);
+        String s = AbstractXMLEventParser.parseCharacterContent(ctx, doubleEvent);
         return s != null ? WWUtil.convertStringToDouble(s) : null;
     }
 

@@ -244,12 +244,12 @@ public class ToolTipRenderer {
     protected void doRender(DrawContext dc, String text, int x, int y) {
         OGLStackHandler stackHandler = new OGLStackHandler();
 
-        this.beginRendering(dc, stackHandler);
+        ToolTipRenderer.beginRendering(dc, stackHandler);
         try {
             this.draw(dc, dc.getView().getViewport(), text, x, y);
         }
         finally {
-            this.endRendering(dc, stackHandler);
+            ToolTipRenderer.endRendering(dc, stackHandler);
         }
     }
 
@@ -263,11 +263,11 @@ public class ToolTipRenderer {
     protected void drawToolTip(DrawContext dc, Rectangle viewport, String text, int x, int y,
         ToolTipAttributes attributes) {
         Rectangle2D textBounds = this.computeTextBounds(dc, text, attributes.getFont());
-        Rectangle2D bgBounds = this.computeBackgroundBounds(dc,
+        Rectangle2D bgBounds = ToolTipRenderer.computeBackgroundBounds(dc,
             textBounds.getWidth(), textBounds.getHeight(), attributes.getInsets());
 
-        Point screenPoint = this.adjustDrawPointToViewport(x, y, bgBounds, viewport);
-        Point2D textTranslation = this.computeTextTranslation(dc, textBounds, attributes.getInsets());
+        Point screenPoint = ToolTipRenderer.adjustDrawPointToViewport(x, y, bgBounds, viewport);
+        Point2D textTranslation = ToolTipRenderer.computeTextTranslation(dc, textBounds, attributes.getInsets());
 
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         OGLStackHandler stackHandler = new OGLStackHandler();
@@ -286,7 +286,7 @@ public class ToolTipRenderer {
         }
     }
 
-    protected void beginRendering(DrawContext dc, OGLStackHandler stackHandler) {
+    protected static void beginRendering(DrawContext dc, OGLStackHandler stackHandler) {
         if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().fine(message);
@@ -322,7 +322,7 @@ public class ToolTipRenderer {
         gl.glDisable(GL.GL_TEXTURE_2D);
     }
 
-    protected void endRendering(DrawContext dc, OGLStackHandler stackHandler) {
+    protected static void endRendering(DrawContext dc, OGLStackHandler stackHandler) {
         if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().fine(message);
@@ -341,7 +341,7 @@ public class ToolTipRenderer {
     protected void drawToolTipInterior(DrawContext dc, double width, double height, ToolTipAttributes attributes) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
-        this.applyColor(dc, attributes.getInteriorColor(), attributes.getInteriorOpacity());
+        ToolTipRenderer.applyColor(dc, attributes.getInteriorColor(), attributes.getInteriorOpacity());
 
         // Draw a filled rectangle with the background dimensions.
         gl.glRectd(0, 0, width, height);
@@ -350,7 +350,7 @@ public class ToolTipRenderer {
     protected void drawToolTipOutline(DrawContext dc, double width, double height, ToolTipAttributes attributes) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
-        this.applyColor(dc, attributes.getOutlineColor(), attributes.getOutlineOpacity());
+        ToolTipRenderer.applyColor(dc, attributes.getOutlineColor(), attributes.getOutlineOpacity());
         gl.glLineWidth((float) getOutlineWidth());
 
         // Draw a line loop around the background rectangle. Inset the lines slightly to compensate for OpenGL's line
@@ -369,10 +369,10 @@ public class ToolTipRenderer {
     //**************************************************************//
 
     protected void drawToolTipText(DrawContext dc, String text, int x, int y, ToolTipAttributes attributes) {
-        Color textColor = this.modulateColorOpacity(attributes.getTextColor(),
+        Color textColor = ToolTipRenderer.modulateColorOpacity(attributes.getTextColor(),
             attributes.getTextOpacity());
 
-        TextRenderer textRenderer = this.getTextRenderer(dc, attributes.getFont());
+        TextRenderer textRenderer = ToolTipRenderer.getTextRenderer(dc, attributes.getFont());
         textRenderer.begin3DRendering();
         textRenderer.setColor(textColor);
         textRenderer.draw(text, x, y);
@@ -383,11 +383,11 @@ public class ToolTipRenderer {
     //********************  Rendering Utilities  *******************//
     //**************************************************************//
 
-    protected TextRenderer getTextRenderer(DrawContext dc, Font font) {
+    protected static TextRenderer getTextRenderer(DrawContext dc, Font font) {
         return OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(), font);
     }
 
-    protected void applyColor(DrawContext dc, Color color, double opacity) {
+    protected static void applyColor(DrawContext dc, Color color, double opacity) {
         if (dc.isPickingMode())
             return;
 
@@ -396,7 +396,7 @@ public class ToolTipRenderer {
         OGLUtil.applyColor(gl, color, finalOpacity, true);
     }
 
-    protected Color modulateColorOpacity(Color color, double opacity) {
+    protected static Color modulateColorOpacity(Color color, double opacity) {
         float[] compArray = new float[4];
         color.getRGBComponents(compArray);
         compArray[3] *= (float) opacity;
@@ -409,12 +409,12 @@ public class ToolTipRenderer {
     //**************************************************************//
 
     protected Rectangle2D computeTextBounds(DrawContext dc, String text, Font font) {
-        TextRenderer textRenderer = this.getTextRenderer(dc, font);
+        TextRenderer textRenderer = ToolTipRenderer.getTextRenderer(dc, font);
         return textRenderer.getBounds(text);
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    protected Point2D computeTextTranslation(DrawContext dc, Rectangle2D textBounds,
+    protected static Point2D computeTextTranslation(DrawContext dc, Rectangle2D textBounds,
         Insets insets) {
         // The text bounds are assumed to come from the return value of a call to TextRenderer.getBounds(). The bounds
         // place the origin in the upper left hand corner, with the y axis increasing downward. The y
@@ -426,7 +426,7 @@ public class ToolTipRenderer {
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    protected Rectangle2D computeBackgroundBounds(DrawContext dc, double width, double height,
+    protected static Rectangle2D computeBackgroundBounds(DrawContext dc, double width, double height,
         Insets insets) {
         return new Rectangle2D.Double(
             0, 0,
@@ -434,7 +434,7 @@ public class ToolTipRenderer {
             height + (insets.top + insets.bottom));
     }
 
-    protected Point adjustDrawPointToViewport(int x, int y, Rectangle2D bounds,
+    protected static Point adjustDrawPointToViewport(int x, int y, Rectangle2D bounds,
         Rectangle viewport) {
         if (x + bounds.getMaxX() > viewport.getWidth())
             x = (int) (viewport.getWidth() - bounds.getWidth()) - 1;

@@ -319,7 +319,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
     /**
      * @return Instance of the custom renderable layer to use of our internal layers
      */
-    protected CustomRenderableLayer createCustomRenderableLayer() {
+    protected static CustomRenderableLayer createCustomRenderableLayer() {
         return new CustomRenderableLayer();
     }
 
@@ -777,7 +777,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
         this.wwd.redraw();
     }
 
-    protected String getPathType(Collection<? extends Position> positions) {
+    protected static String getPathType(Collection<? extends Position> positions) {
         return positions.size() > 2 ? SHAPE_PATH : SHAPE_LINE;
     }
 
@@ -856,7 +856,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
         return isRegularShape(this.measureShapeType);
     }
 
-    protected boolean isRegularShape(String shape) {
+    protected static boolean isRegularShape(String shape) {
         return (shape.equals(SHAPE_CIRCLE)
             || shape.equals(SHAPE_ELLIPSE)
             || shape.equals(SHAPE_QUAD)
@@ -880,18 +880,18 @@ public class MeasureTool extends AVListImpl implements Disposable {
         }
     }
 
-    public boolean isCenterControl(AVList controlPoint) {
+    public static boolean isCenterControl(AVList controlPoint) {
         String control = controlPoint.getStringValue(CONTROL_TYPE_REGULAR_SHAPE);
         return control != null && control.equals(CENTER);
     }
 
-    public boolean isSideControl(AVList controlPoint) {
+    public static boolean isSideControl(AVList controlPoint) {
         String control = controlPoint.getStringValue(CONTROL_TYPE_REGULAR_SHAPE);
         return control != null && (control.equals(NORTH) || control.equals(EAST)
             || control.equals(SOUTH) || control.equals(WEST));
     }
 
-    public boolean isCornerControl(AVList controlPoint) {
+    public static boolean isCornerControl(AVList controlPoint) {
         String control = controlPoint.getStringValue(CONTROL_TYPE_REGULAR_SHAPE);
         return control != null && (control.equals(NORTHEAST) || control.equals(SOUTHEAST)
             || control.equals(SOUTHWEST) || control.equals(NORTHWEST));
@@ -1190,7 +1190,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
 
     protected void updateShapeOrientation(String control, Position newPosition) {
         // Compute the control point's azimuth in shape local coordinates.
-        Angle controlAzimuth = this.computeControlPointAzimuth(control, this.shapeRectangle.width,
+        Angle controlAzimuth = MeasureTool.computeControlPointAzimuth(control, this.shapeRectangle.width,
             this.shapeRectangle.height);
 
         // Compute the shape's new azimuth as the difference between the great arc azimuth from the shape's
@@ -1206,7 +1206,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
         if (this.measureShapeType.equals(SHAPE_ELLIPSE) || this.measureShapeType.equals(SHAPE_CIRCLE)) {
             // Compute azimuth and arc length which define the great arc spanning the shape's center position and the
             // control point's position.
-            Angle refAzimiuth = this.computeControlPointAzimuth(control, 1.0d, 1.0d).add(this.shapeOrientation);
+            Angle refAzimiuth = MeasureTool.computeControlPointAzimuth(control, 1.0d, 1.0d).add(this.shapeOrientation);
             Angle controlAzimuth = LatLon.greatCircleAzimuth(this.shapeCenterPosition, newPosition);
             Angle controlArcLength = LatLon.greatCircleDistance(this.shapeCenterPosition, newPosition);
             // Compute the arc length in meters of the great arc between the shape's center position and the control
@@ -1533,8 +1533,8 @@ public class MeasureTool extends AVListImpl implements Disposable {
 
     protected LatLon computeControlPointLocation(String control, Globe globe, Angle heading, LatLon center,
         double width, double height) {
-        Angle azimuth = this.computeControlPointAzimuth(control, width, height);
-        Angle pathLength = this.computeControlPointPathLength(control, width, height, globe.getRadiusAt(center));
+        Angle azimuth = MeasureTool.computeControlPointAzimuth(control, width, height);
+        Angle pathLength = MeasureTool.computeControlPointPathLength(control, width, height, globe.getRadiusAt(center));
 
         if (control.equals(CENTER)) {
             return center;
@@ -1571,7 +1571,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
     }
 
     @SuppressWarnings("SuspiciousNameCombination")
-    protected Angle computeControlPointAzimuth(String control, double width, double height) {
+    protected static Angle computeControlPointAzimuth(String control, double width, double height) {
         Angle azimuth = null;
 
         switch (control) {
@@ -1624,7 +1624,8 @@ public class MeasureTool extends AVListImpl implements Disposable {
         return null;
     }
 
-    protected Angle computeControlPointPathLength(String control, double width, double height, double globeRadius) {
+    protected static Angle computeControlPointPathLength(String control, double width, double height,
+        double globeRadius) {
         Angle pathLength = null;
 
         switch (control) {
@@ -2157,7 +2158,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
         return pathLengthRadians * this.wwd.model().getGlobe().getRadius();
     }
 
-    protected Angle computeAngleBetween(LatLon a, LatLon b, LatLon c) {
+    protected static Angle computeAngleBetween(LatLon a, LatLon b, LatLon c) {
         Vec4 v0 = new Vec4(
             b.getLatitude().radians - a.getLatitude().radians,
             b.getLongitude().radians - a.getLongitude().radians, 0);
@@ -2169,7 +2170,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
         return v0.angleBetween3(v1);
     }
 
-    protected boolean lengthsEssentiallyEqual(Double l1, Double l2) {
+    protected static boolean lengthsEssentiallyEqual(Double l1, Double l2) {
         return Math.abs(l1 - l2) / l1 < 0.001; // equal to within a milimeter
     }
 

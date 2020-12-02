@@ -297,7 +297,7 @@ public class WCSElevationModel extends BasicElevationModel {
             sector, this.getLevels().getLastLevel(),
             tileWidth, latlons.size() / tileWidth);
 
-        this.downloadElevations(tile);
+        WCSElevationModel.downloadElevations(tile);
         tile.setElevations(this.readElevations(tile.getFile().toURI().toURL()), this);
 
         for (int i = 0; i < latlons.size(); i++) {
@@ -318,7 +318,7 @@ public class WCSElevationModel extends BasicElevationModel {
     //********************  Restorable Support  ********************//
     //**************************************************************//
 
-    protected void downloadElevations(WMSBasicElevationModel.ElevationCompositionTile tile) throws Exception {
+    protected static void downloadElevations(WMSBasicElevationModel.ElevationCompositionTile tile) throws Exception {
         URL url = tile.getResourceURL();
 
         Retriever retriever = new HTTPRetriever(url,

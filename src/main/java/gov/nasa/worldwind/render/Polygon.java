@@ -216,7 +216,7 @@ public class Polygon extends AbstractShape {
             throw new IllegalArgumentException(message);
         }
 
-        this.boundaries.set(0, this.fillBoundary(corners));
+        this.boundaries.set(0, Polygon.fillBoundary(corners));
         if (this.surfaceShape != null)
             this.setSurfacePolygonBoundaries(this.surfaceShape);
 
@@ -243,7 +243,7 @@ public class Polygon extends AbstractShape {
      * @param corners the boundary's positions.
      * @return a list of the boundary positions.
      */
-    protected List<? extends Position> fillBoundary(Iterable<? extends Position> corners) {
+    protected static List<? extends Position> fillBoundary(Iterable<? extends Position> corners) {
         ArrayList<Position> list = new ArrayList<>();
 
         for (Position corner : corners) {
@@ -281,7 +281,7 @@ public class Polygon extends AbstractShape {
             throw new IllegalArgumentException(message);
         }
 
-        this.boundaries.add(this.fillBoundary(corners));
+        this.boundaries.add(Polygon.fillBoundary(corners));
         if (this.surfaceShape != null)
             this.setSurfacePolygonBoundaries(this.surfaceShape);
 
@@ -367,7 +367,7 @@ public class Polygon extends AbstractShape {
             throw new IllegalArgumentException(message);
         }
 
-        this.texture = this.makeTexture(imageSource);
+        this.texture = AbstractShape.makeTexture(imageSource);
 
         // Determine whether the tex-coord list needs to be closed.
         boolean closeIt = texCoords[0] != texCoords[texCoordCount - 2] || texCoords[1] != texCoords[texCoordCount - 1];
@@ -469,7 +469,7 @@ public class Polygon extends AbstractShape {
      * @param refPoint the shape's reference point.
      * @return the boundary's extent. Returns null if the boundary's vertices have not been computed.
      */
-    protected Extent computeExtent(BoundaryInfo boundary, Vec4 refPoint) {
+    protected static Extent computeExtent(BoundaryInfo boundary, Vec4 refPoint) {
         if (boundary == null || boundary.vertices == null)
             return null;
 
@@ -716,10 +716,10 @@ public class Polygon extends AbstractShape {
             shapeData.getReferencePoint(), rotationMatrix);
 
         if (shapeData.getExtent() == null || this.getAltitudeMode() != WorldWind.ABSOLUTE)
-            shapeData.setExtent(this.computeExtent(shapeData.getOuterBoundaryInfo(),
+            shapeData.setExtent(Polygon.computeExtent(shapeData.getOuterBoundaryInfo(),
                 shapeData.getReferencePoint()));
 
-        shapeData.setEyeDistance(this.computeEyeDistance(dc, shapeData));
+        shapeData.setEyeDistance(Polygon.computeEyeDistance(dc, shapeData));
         shapeData.setGlobeStateKey(dc.getGlobe().getGlobeStateKey(dc));
         shapeData.setVerticalExaggeration(dc.getVerticalExaggeration());
     }
@@ -733,7 +733,7 @@ public class Polygon extends AbstractShape {
      * @param shapeData the current shape data for this shape.
      * @return the minimum distance from the shape to the eye point.
      */
-    protected double computeEyeDistance(DrawContext dc, ShapeData shapeData) {
+    protected static double computeEyeDistance(DrawContext dc, ShapeData shapeData) {
         double minDistance = Double.MAX_VALUE;
         Vec4 eyePoint = dc.getView().getEyePoint();
 
@@ -863,7 +863,7 @@ public class Polygon extends AbstractShape {
         shapeData.normalBuffer = shapeData.coordBuffer.slice();
 
         for (BoundaryInfo boundary : shapeData) {
-            this.computeBoundaryNormals(boundary, shapeData.normalBuffer);
+            Polygon.computeBoundaryNormals(boundary, shapeData.normalBuffer);
         }
     }
 
@@ -919,7 +919,7 @@ public class Polygon extends AbstractShape {
      * @return the buffer specified as input, with its limit incremented by the number of vertices copied, and its
      * position set to 0.
      */
-    protected FloatBuffer computeBoundaryNormals(BoundaryInfo boundary, FloatBuffer nBuf) {
+    protected static FloatBuffer computeBoundaryNormals(BoundaryInfo boundary, FloatBuffer nBuf) {
         int nVerts = boundary.positions.size();
         Vec4[] verts = boundary.vertices;
         double avgX, avgY, avgZ;
@@ -978,7 +978,7 @@ public class Polygon extends AbstractShape {
                 return;
             }
 
-            this.tessellatePolygon(shapeData, normal.normalize3());
+            Polygon.tessellatePolygon(shapeData, normal.normalize3());
         }
         catch (OutOfMemoryError e) {
             String message = Logging.getMessage("generic.ExceptionWhileTessellating", this);
@@ -1018,7 +1018,7 @@ public class Polygon extends AbstractShape {
      * @param normal    a unit normal vector for the plane containing the polygon vertices. Even though the the vertices
      *                  might not be coplanar, only one representative normal is used for tessellation.
      */
-    protected void tessellatePolygon(ShapeData shapeData, Vec4 normal) {
+    protected static void tessellatePolygon(ShapeData shapeData, Vec4 normal) {
         GLUTessellatorSupport glts = new GLUTessellatorSupport();
         shapeData.cb = new GLUTessellatorSupport.CollectIndexListsCallback();
 
@@ -1054,7 +1054,7 @@ public class Polygon extends AbstractShape {
 
     protected void generateInteriorIndices(ShapeData shapeData) {
         GLUTessellatorSupport.CollectIndexListsCallback cb = shapeData.cb;
-        int size = this.countTriangleVertices(cb.getPrims(), cb.getPrimTypes());
+        int size = AbstractShape.countTriangleVertices(cb.getPrims(), cb.getPrimTypes());
 
         if (shapeData.interiorIndicesBuffer == null || shapeData.interiorIndicesBuffer.capacity() < size)
             shapeData.interiorIndicesBuffer = Buffers.newDirectIntBuffer(size);
@@ -1134,7 +1134,7 @@ public class Polygon extends AbstractShape {
             line.direction);
         List<Intersection> intersections = new ArrayList<>();
 
-        this.intersect(localLine, highResShapeData, intersections);
+        Polygon.intersect(localLine, highResShapeData, intersections);
 
         if (intersections.isEmpty())
             return null;
@@ -1173,7 +1173,7 @@ public class Polygon extends AbstractShape {
         return shapeData;
     }
 
-    protected void intersect(Line line, ShapeData shapeData, Collection<Intersection> intersections) {
+    protected static void intersect(Line line, ShapeData shapeData, Collection<Intersection> intersections) {
         if (shapeData.cb.getPrims() == null)
             return;
 
@@ -1322,7 +1322,7 @@ public class Polygon extends AbstractShape {
      * @param boundary  the boundary to write.
      * @throws XMLStreamException if an error occurs during writing.
      */
-    protected void exportBoundaryAsLinearRing(XMLStreamWriter xmlWriter, Iterable<? extends LatLon> boundary)
+    protected static void exportBoundaryAsLinearRing(XMLStreamWriter xmlWriter, Iterable<? extends LatLon> boundary)
         throws XMLStreamException {
         xmlWriter.writeStartElement("LinearRing");
         xmlWriter.writeStartElement("coordinates");

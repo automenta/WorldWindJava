@@ -304,20 +304,21 @@ public class OGLRenderToTextureSupport {
                 // the texture using framebuffer objects, automatic mipmap generation is not invoked, and the texture's
                 // mipmap chain contents are undefined until we explicitly update them.
                 if (this.colorTarget.isUsingAutoMipmapGeneration())
-                    this.updateMipmaps(dc, this.colorTarget);
+                    OGLRenderToTextureSupport.updateMipmaps(dc, this.colorTarget);
             }
         }
         // If framebuffer objects are not enabled, then we've been rendering into the read buffer associated with the
         // windowing system (likely the onscreen back buffer). Explicitly copy the read buffer contents to the texture.
         else {
             if (this.colorTarget != null) {
-                this.copyScreenPixelsToTexture(dc, this.drawRegion.x, this.drawRegion.y,
+                OGLRenderToTextureSupport.copyScreenPixelsToTexture(dc, this.drawRegion.x, this.drawRegion.y,
                     this.drawRegion.width, this.drawRegion.height, this.colorTarget);
             }
         }
     }
 
-    protected void copyScreenPixelsToTexture(DrawContext dc, int x, int y, int width, int height, Texture texture) {
+    protected static void copyScreenPixelsToTexture(DrawContext dc, int x, int y, int width, int height,
+        Texture texture) {
         int w = width;
         int h = height;
 
@@ -355,7 +356,7 @@ public class OGLRenderToTextureSupport {
         }
     }
 
-    protected void updateMipmaps(DrawContext dc, Texture texture) {
+    protected static void updateMipmaps(DrawContext dc, Texture texture) {
         GL gl = dc.getGL();
 
         try {
@@ -408,7 +409,7 @@ public class OGLRenderToTextureSupport {
         if (texture != null) {
             gl.glFramebufferTexture2D(GL.GL_FRAMEBUFFER, GL.GL_COLOR_ATTACHMENT0, GL.GL_TEXTURE_2D,
                 texture.getTextureObject(gl), 0);
-            this.checkFramebufferStatus(dc);
+            OGLRenderToTextureSupport.checkFramebufferStatus(dc);
         }
         // If the texture is null, detach color attachment 0 from the framebuffer.
         else {
@@ -416,7 +417,7 @@ public class OGLRenderToTextureSupport {
         }
     }
 
-    protected void checkFramebufferStatus(DrawContext dc) {
+    protected static void checkFramebufferStatus(DrawContext dc) {
         int status = dc.getGL().glCheckFramebufferStatus(GL.GL_FRAMEBUFFER);
 
         switch (status) {

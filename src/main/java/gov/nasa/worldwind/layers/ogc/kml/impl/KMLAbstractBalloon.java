@@ -87,7 +87,7 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
      * @param balloon The balloon contained in this wrapper object.
      */
     protected void initialize(Balloon balloon) {
-        balloon.setTextDecoder(this.createTextDecoder(this.parent));
+        balloon.setTextDecoder(KMLAbstractBalloon.createTextDecoder(this.parent));
         balloon.set(AVKey.CONTEXT, this.parent);
 
         // Configure this balloon to resolve relative paths in the KML balloon HTML via its resolve() method.
@@ -164,7 +164,7 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
         if (displayMode != null)
             this.setDisplayMode(displayMode);
 
-        this.assembleBalloonAttributes(balloonStyle, attrs);
+        KMLAbstractBalloon.assembleBalloonAttributes(balloonStyle, attrs);
         attrs.setUnresolved(balloonStyle.hasField(AVKey.UNRESOLVED));
 
         if (KMLConstants.NORMAL.equals(attrType)) {
@@ -175,16 +175,16 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
             // text if the style cannot be resolved.
             String text = balloonStyle.getText();
             if (text != null) {
-                if (this.mustAddHyperlinks(text))
-                    text = this.addHyperlinks(text);
+                if (KMLAbstractBalloon.mustAddHyperlinks(text))
+                    text = KMLAbstractBalloon.addHyperlinks(text);
 
                 this.getBalloon().setText(text);
                 this.normalText = text;
             }
             else if (!this.usingDefaultText) {
                 text = this.createDefaultBalloonText();
-                if (this.mustAddHyperlinks(text))
-                    text = this.addHyperlinks(text);
+                if (KMLAbstractBalloon.mustAddHyperlinks(text))
+                    text = KMLAbstractBalloon.addHyperlinks(text);
 
                 this.getBalloon().setText(text);
                 this.usingDefaultText = true;
@@ -198,8 +198,8 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
             this.getBalloon().setHighlightAttributes(attrs);
 
             String text = balloonStyle.getText();
-            if (this.mustAddHyperlinks(text))
-                text = this.addHyperlinks(text);
+            if (KMLAbstractBalloon.mustAddHyperlinks(text))
+                text = KMLAbstractBalloon.addHyperlinks(text);
 
             this.highlightText = text;
 
@@ -229,7 +229,7 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
         if (extendedData != null) {
             List<KMLData> data = extendedData.getData();
             if (data != null && !data.isEmpty()) {
-                this.createDefaultExtendedDataText(sb, data);
+                KMLAbstractBalloon.createDefaultExtendedDataText(sb, data);
             }
 
             List<KMLSchemaData> schemaData = extendedData.getSchemaData();
@@ -248,7 +248,7 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
      * @param sb   Extended data string will be appended to this StringBuilder.
      * @param data The feature's extended data.
      */
-    protected void createDefaultExtendedDataText(StringBuilder sb, Iterable<KMLData> data) {
+    protected static void createDefaultExtendedDataText(StringBuilder sb, Iterable<KMLData> data) {
         sb.append("<p/><table border=\"1\">");
         for (KMLData item : data) {
             String value = item.getValue();
@@ -302,7 +302,7 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
      * @param text Balloon text to process.
      * @return True if URLs should be converted links. Returns true if a &lt;html&gt; tag is found in the text.
      */
-    protected boolean mustAddHyperlinks(String text) {
+    protected static boolean mustAddHyperlinks(String text) {
         return text != null
             && !text.contains("<html")
             && !text.contains("<HTML");
@@ -322,7 +322,7 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
      *             &lt;/a&gt;
      * @return Text with hyperlinks added.
      */
-    protected String addHyperlinks(CharSequence text) {
+    protected static String addHyperlinks(CharSequence text) {
         // Regular expression to match a http(s) URL, or an entire anchor tag. Note that this does not match all valid
         // URLs. It is designed to match obvious URLs that occur in KML balloons, with minimal chance of matching text
         // the user did not intend to be a link.
@@ -385,7 +385,7 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
      * @param style             KML style to apply.
      * @param balloonAttributes Attributes to modify.
      */
-    protected void assembleBalloonAttributes(KMLBalloonStyle style, BalloonAttributes balloonAttributes) {
+    protected static void assembleBalloonAttributes(KMLBalloonStyle style, BalloonAttributes balloonAttributes) {
         // Attempt to use the bgColor property. This is the preferred method for encoding a BalloonStyle's background
         // color since KML 2.1, therefore we give it priority.
         String bgColor = style.getBgColor();
@@ -409,7 +409,7 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
      * @param feature Feature to decode text for.
      * @return New text decoder.
      */
-    protected TextDecoder createTextDecoder(KMLAbstractFeature feature) {
+    protected static TextDecoder createTextDecoder(KMLAbstractFeature feature) {
         return new KMLBalloonTextDecoder(feature);
     }
 

@@ -108,7 +108,7 @@ public class AnnotationNullLayout extends AbstractAnnotationLayout {
     }
 
     protected Rectangle getAnnotationBounds(DrawContext dc, Annotation annotation) {
-        Dimension size = this.getAnnotationSize(dc, annotation);
+        Dimension size = AbstractAnnotationLayout.getAnnotationSize(dc, annotation);
         if (size == null)
             return null;
 

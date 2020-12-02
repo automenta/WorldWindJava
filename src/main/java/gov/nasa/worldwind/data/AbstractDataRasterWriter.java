@@ -25,8 +25,8 @@ public abstract class AbstractDataRasterWriter implements DataRasterWriter {
      * @param suffixes  Suffixes (extensions) as array of<code>Strings</code>
      */
     public AbstractDataRasterWriter(String[] mimeTypes, String[] suffixes) {
-        this.mimeTypes = this.copyAndConvertToLowerCase(mimeTypes);
-        this.suffixes = this.copyAndConvertToLowerCase(suffixes);
+        this.mimeTypes = AbstractDataRasterWriter.copyAndConvertToLowerCase(mimeTypes);
+        this.suffixes = AbstractDataRasterWriter.copyAndConvertToLowerCase(suffixes);
     }
 
     /**
@@ -103,7 +103,7 @@ public abstract class AbstractDataRasterWriter implements DataRasterWriter {
      * @param array string array
      * @return cloned string array
      */
-    protected String[] copyAndConvertToLowerCase(String[] array) {
+    protected static String[] copyAndConvertToLowerCase(String[] array) {
         if (null == array)
             return null;
 

@@ -112,7 +112,7 @@ public class TiledElevationProducer extends TiledRasterProducer {
                 return Logging.getMessage("TiledRasterProducer.UnrecognizedDataSource", raster);
             }
 
-            return this.validateDataSourceParams(raster, String.valueOf(raster));
+            return TiledElevationProducer.validateDataSourceParams(raster, String.valueOf(raster));
         }
         // For any other data source, attempt to find a reader for the data source. If the reader know's the data
         // source's raster type, then check that it's elevation data.
@@ -133,11 +133,11 @@ public class TiledElevationProducer extends TiledRasterProducer {
                 return Logging.getMessage("TiledRasterProducer.ExceptionWhileReading", source, e.getMessage());
             }
 
-            return this.validateDataSourceParams(params, String.valueOf(source));
+            return TiledElevationProducer.validateDataSourceParams(params, String.valueOf(source));
         }
     }
 
-    protected String validateDataSourceParams(AVList params, String name) {
+    protected static String validateDataSourceParams(AVList params, String name) {
         if (params.hasKey(AVKey.PIXEL_FORMAT) && params.get(AVKey.PIXEL_FORMAT) != AVKey.ELEVATION) {
             return Logging.getMessage("TiledRasterProducer.UnrecognizedRasterType",
                 params.get(AVKey.PIXEL_FORMAT), name);

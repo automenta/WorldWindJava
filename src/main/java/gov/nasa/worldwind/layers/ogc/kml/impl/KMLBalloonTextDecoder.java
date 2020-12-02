@@ -135,7 +135,7 @@ public class KMLBalloonTextDecoder extends BasicTextDecoder {
         KMLAbstractFeature feature = this.getFeature();
 
         if ("geDirections".equals(pattern))
-            return this.getGeDirectionsText();
+            return KMLBalloonTextDecoder.getGeDirectionsText();
 
         // First look for a field in the Feature
         Object replacement = feature.getField(pattern);
@@ -233,7 +233,7 @@ public class KMLBalloonTextDecoder extends BasicTextDecoder {
      *
      * @return Text to replace the $[geDirections] entity.
      */
-    protected String getGeDirectionsText() {
+    protected static String getGeDirectionsText() {
         return "";
     }
 }

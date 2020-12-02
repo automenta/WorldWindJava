@@ -63,7 +63,7 @@ public class BasicMemoryCacheSet implements MemoryCacheSet {
     }
 
     public Collection<PerformanceStatistic> getPerformanceStatistics() {
-        List<PerformanceStatistic> stats = new ArrayList<>();
+        Collection<PerformanceStatistic> stats = new ArrayList<>();
 
         for (MemoryCache cache : this.caches.values()) {
             stats.add(new PerformanceStatistic(PerformanceStatistic.MEMORY_CACHE, "Cache Size (Kb): " + cache.getName(),

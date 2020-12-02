@@ -51,11 +51,11 @@ class RPFFrameStructure {
         return boundaryArray[index];
     }
 
-    public final int getPixelRowsPerFrame() {
+    public static int getPixelRowsPerFrame() {
         return PIXEL_ROWS_PER_FRAME;
     }
 
-    public final int getSubframeRowsPerFrame() {
+    public static int getSubframeRowsPerFrame() {
         return SUBFRAME_ROWS_PER_FRAME;
     }
 }

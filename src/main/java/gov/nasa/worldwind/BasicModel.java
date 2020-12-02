@@ -45,12 +45,12 @@ public class BasicModel extends WWObjectImpl implements Model {
             // Usage of this deprecated method is intentional. It provides backwards compatibility for deprecated
             // functionality.
             //noinspection deprecation
-            layers = this.createLayersFromProperties(layerNames);
+            layers = BasicModel.createLayersFromProperties(layerNames);
         }
         else {
             Element el = Configuration.getElement("./LayerList");
             if (el != null)
-                layers = this.createLayersFromElement(el);
+                layers = BasicModel.createLayersFromElement(el);
         }
 
         this.setLayers(layers != null ? layers : new LayerList(/*empty list*/)); // an empty list is ok
@@ -67,7 +67,7 @@ public class BasicModel extends WWObjectImpl implements Model {
      * @param element the configuration description.
      * @return a new layer list matching the specified description.
      */
-    protected LayerList createLayersFromElement(Element element) {
+    protected static LayerList createLayersFromElement(Element element) {
         Object o = BasicFactory.create(AVKey.LAYER_FACTORY, element);
 
         if (o instanceof LayerList)
@@ -93,7 +93,7 @@ public class BasicModel extends WWObjectImpl implements Model {
      * @deprecated Use {@link #createLayersFromElement(Element)} instead.
      */
     @Deprecated
-    protected LayerList createLayersFromProperties(String layerNames) {
+    protected static LayerList createLayersFromProperties(String layerNames) {
         LayerList layers = new LayerList();
         if (layerNames == null)
             return null;

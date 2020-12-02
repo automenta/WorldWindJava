@@ -333,7 +333,7 @@ public class ViewControlsSelectListener implements SelectListener {
                 LatLon newViewCenter = LatLon.greatCircleEndPosition(view.getCenterPosition(),
                     heading, distance);
                 // Turn around if passing by a pole - TODO: better handling of the pole crossing situation
-                if (this.isPathCrossingAPole(newViewCenter, view.getCenterPosition()))
+                if (ViewControlsSelectListener.isPathCrossingAPole(newViewCenter, view.getCenterPosition()))
                     view.setHeading(Angle.POS180.subtract(view.getHeading()));
                 // Set new center pos
                 view.setCenterPosition(new Position(newViewCenter, view.getCenterPosition().getElevation()));
@@ -403,12 +403,12 @@ public class ViewControlsSelectListener implements SelectListener {
         view.firePropertyChange(AVKey.VIEW, null, view);
     }
 
-    protected boolean isPathCrossingAPole(LatLon p1, LatLon p2) {
+    protected static boolean isPathCrossingAPole(LatLon p1, LatLon p2) {
         return Math.abs(p1.getLongitude().degrees - p2.getLongitude().degrees) > 20
             && Math.abs(p1.getLatitude().degrees - 90 * Math.signum(p1.getLatitude().degrees)) < 10;
     }
 
-    protected double computeNewZoom(OrbitView view, double amount) {
+    protected static double computeNewZoom(OrbitView view, double amount) {
         double coeff = 0.05;
         double change = coeff * amount;
         double logZoom = view.getZoom() != 0 ? Math.log(view.getZoom()) : 0;

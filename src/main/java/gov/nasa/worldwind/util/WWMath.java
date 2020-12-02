@@ -1443,8 +1443,8 @@ public class WWMath {
      * @throws IllegalArgumentException if any of the lists are null, the number of control positions is less than 2, or
      *                                  the globe is null.
      */
-    public static void generateParallelLines(Collection<Position> controlPositions, List<Position> leftPositions,
-        List<Position> rightPositions, double distance, Globe globe) {
+    public static void generateParallelLines(Collection<Position> controlPositions, Collection<Position> leftPositions,
+        Collection<Position> rightPositions, double distance, Globe globe) {
         if (controlPositions == null || leftPositions == null || rightPositions == null) {
             String message = Logging.getMessage("nullValue.PositionsListIsNull");
             Logging.logger().severe(message);

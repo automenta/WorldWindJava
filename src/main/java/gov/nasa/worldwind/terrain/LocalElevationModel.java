@@ -14,7 +14,7 @@ import gov.nasa.worldwind.util.*;
 
 import java.io.*;
 import java.nio.ByteBuffer;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -31,7 +31,7 @@ public class LocalElevationModel extends AbstractElevationModel {
     /**
      * The list of elevation rasters, one per file specified.
      */
-    protected final List<LocalTile> tiles = new CopyOnWriteArrayList<>();
+    protected final Collection<LocalTile> tiles = new CopyOnWriteArrayList<>();
     /**
      * The min and max elevations.
      */

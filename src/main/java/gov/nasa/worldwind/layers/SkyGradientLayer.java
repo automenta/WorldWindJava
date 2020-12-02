@@ -158,8 +158,8 @@ public class SkyGradientLayer extends AbstractLayer {
             gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
             gl.glEnable(GL.GL_BLEND);
 
-            this.applyDrawProjection(dc, ogsh);
-            this.applyDrawTransform(dc, ogsh);
+            SkyGradientLayer.applyDrawProjection(dc, ogsh);
+            SkyGradientLayer.applyDrawTransform(dc, ogsh);
 
             // Draw sky
             this.updateSkyDome(dc);
@@ -172,7 +172,7 @@ public class SkyGradientLayer extends AbstractLayer {
         }
     }
 
-    protected void applyDrawTransform(DrawContext dc, OGLStackHandler ogsh) {
+    protected static void applyDrawTransform(DrawContext dc, OGLStackHandler ogsh) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         View view = dc.getView();
         ogsh.pushModelview(gl);
@@ -185,7 +185,7 @@ public class SkyGradientLayer extends AbstractLayer {
         gl.glTranslatef(0.0f, (float) (view.getEyePoint().getLength3()), 0.0f);
     }
 
-    protected void applyDrawProjection(DrawContext dc, OGLStackHandler ogsh) {
+    protected static void applyDrawProjection(DrawContext dc, OGLStackHandler ogsh) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         View view = dc.getView();
         double viewportWidth = view.getViewport().getWidth();

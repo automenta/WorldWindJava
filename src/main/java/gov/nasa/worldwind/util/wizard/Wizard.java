@@ -265,19 +265,19 @@ public class Wizard {
         this.dialog.getContentPane().add(buttonPanel, BorderLayout.SOUTH);
     }
 
-    private void setButtonText(JButton button, Object value) {
+    private static void setButtonText(JButton button, Object value) {
         if (button != null) {
             button.setText(value != null ? value.toString() : null);
         }
     }
 
-    private void setButtonEnabled(JButton button, Object value) {
+    private static void setButtonEnabled(JButton button, Object value) {
         if (button != null) {
             button.setEnabled(value != null && Boolean.parseBoolean(value.toString()));
         }
     }
 
-    private void setButtonIcon(JButton button, Object value) {
+    private static void setButtonIcon(JButton button, Object value) {
         if (button != null) {
             button.setIcon((value instanceof Icon) ? (Icon) value : null);
         }

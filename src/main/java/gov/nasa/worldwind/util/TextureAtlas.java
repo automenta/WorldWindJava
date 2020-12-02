@@ -44,7 +44,7 @@ public class TextureAtlas {
      * Indicates the maximum amount of vertical fragmentation this texture atlas allows before compacting its elements.
      * Initialized to DEFAULT_MAX_VERTICAL_FRAGMENTATION.
      */
-    protected final double maxVerticalFragmentation = DEFAULT_MAX_VERTICAL_FRAGMENTATION;
+    protected static final double maxVerticalFragmentation = DEFAULT_MAX_VERTICAL_FRAGMENTATION;
     /**
      * Maps element keys to their corresponding entry. This enables the texture atlas to access the information about
      * each element in constant time using its key. Initialized to a new HashMap.
@@ -370,7 +370,7 @@ public class TextureAtlas {
         // mark the entry as used at the current time. We offset the image by 1 pixel within its rectangle to provide a
         // 1 pixel border around the image
         entry = new Entry(key, rect, 1, 1, image.getWidth(), image.getHeight());
-        this.markUsed(entry);
+        TextureAtlas.markUsed(entry);
         this.entryMap.put(key, entry);
 
         // Add the element's rectangle to the rectangle packer, expanding or rearranging the existing elements as needed
@@ -384,7 +384,7 @@ public class TextureAtlas {
         // to avoid sampling pixels from neighboring atlas elements when an OpenGL box filter is applied to this image.
         int imageX = rect.x() + entry.imageOffsetX;
         int imageY = rect.y() + entry.imageOffsetY;
-        this.drawImage((BufferedImage) this.rectPacker.getBackingStore(), image, imageX, imageY, true);
+        TextureAtlas.drawImage((BufferedImage) this.rectPacker.getBackingStore(), image, imageX, imageY, true);
 
         // Mark the rectangle associated with this entry as dirty so the OpenGL texture is synchronized with the backing
         // image upon the next call to bind.
@@ -478,7 +478,7 @@ public class TextureAtlas {
             return null;
 
         // Mark that the entry has been used at the current time.
-        this.markUsed(entry);
+        TextureAtlas.markUsed(entry);
 
         return new Dimension(entry.imageWidth, entry.imageHeight);
     }
@@ -506,7 +506,7 @@ public class TextureAtlas {
             return null;
 
         // Mark that the entry has been used at the current time.
-        this.markUsed(entry);
+        TextureAtlas.markUsed(entry);
 
         // Compute the lower-left and upper-right pixels corresponding to the element's image. We use the image width
         // and height instead of the rectangle's width and height because the image may be smaller than its rectangle.
@@ -517,7 +517,7 @@ public class TextureAtlas {
 
         // Compute the lower-left and upper-right OpenGL texture coordinates corresponding to the element's image. This
         // step converts pixel locations in the range [0, width] or [0, height] to the range [0, 1].
-        BufferedImage backingImage = (BufferedImage) this.rectPacker.getBackingStore();
+        RenderedImage backingImage = (BufferedImage) this.rectPacker.getBackingStore();
         float tx1 = x1 / backingImage.getWidth();
         float tx2 = x2 / backingImage.getWidth();
         float ty1 = y1 / backingImage.getHeight();
@@ -646,7 +646,7 @@ public class TextureAtlas {
      * @param drawBorder   <code>true</code> this copy the image's outer pixels into 1 pixel border surrounding the
      *                     original image, or <code>false</code> to draw only the image.
      */
-    protected void drawImage(BufferedImage backingImage, BufferedImage image, int x, int y, boolean drawBorder) {
+    protected static void drawImage(BufferedImage backingImage, BufferedImage image, int x, int y, boolean drawBorder) {
         int w = image.getWidth();
         int h = image.getHeight();
 
@@ -793,7 +793,7 @@ public class TextureAtlas {
      *
      * @param entry the entry who's last used time is marked.
      */
-    protected void markUsed(Entry entry) {
+    protected static void markUsed(Entry entry) {
         entry.lastUsed = System.nanoTime();
     }
 

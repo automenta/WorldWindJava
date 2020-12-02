@@ -76,8 +76,8 @@ public class DBaseField {
         int pos = buffer.position();
 
         byte[] bytes = new byte[FIELD_NAME_LENGTH];
-        int numRead = dbaseFile.readZeroTerminatedString(buffer, bytes, FIELD_NAME_LENGTH);
-        this.name = dbaseFile.decodeString(bytes, numRead);
+        int numRead = DBaseFile.readZeroTerminatedString(buffer, bytes, FIELD_NAME_LENGTH);
+        this.name = DBaseFile.decodeString(bytes, numRead);
 
         this.typeCode = (char) buffer.get();
         this.type = getFieldType(this.typeCode);

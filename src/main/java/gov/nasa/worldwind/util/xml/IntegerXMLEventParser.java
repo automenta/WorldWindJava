@@ -24,7 +24,7 @@ public class IntegerXMLEventParser extends AbstractXMLEventParser {
     }
 
     public Object parse(XMLEventParserContext ctx, XMLEvent integerEvent, Object... args) throws XMLStreamException {
-        String s = this.parseCharacterContent(ctx, integerEvent);
+        String s = AbstractXMLEventParser.parseCharacterContent(ctx, integerEvent);
         return s != null ? WWUtil.convertStringToInteger(s) : null;
     }
 }

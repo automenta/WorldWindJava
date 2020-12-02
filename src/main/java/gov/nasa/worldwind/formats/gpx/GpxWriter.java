@@ -65,7 +65,7 @@ public class GpxWriter {
         // as a placeholder for future functionality.
     }
 
-    private void createGpxDocument(Document doc) {
+    private static void createGpxDocument(Document doc) {
         // Create the GPX document root when the document
         // doesn't already have a root element.
         if (doc != null) {

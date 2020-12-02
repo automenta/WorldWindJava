@@ -69,7 +69,7 @@ public class LayerTreeModel extends BasicTreeModel {
      *                            the tree. Otherwise hidden layers will not be included in the tree.
      * @throws IllegalArgumentException if the <code>layerList</code> is <code>null</code>.
      */
-    public LayerTreeModel(LayerList layerList, boolean includeHiddenLayers) {
+    public LayerTreeModel(Iterable<Layer> layerList, boolean includeHiddenLayers) {
         if (layerList == null) {
             String message = Logging.getMessage("nullValue.LayersListArrayIsNull");
             Logging.logger().severe(message);
@@ -107,7 +107,7 @@ public class LayerTreeModel extends BasicTreeModel {
      * Initializes this tree model with the default root node.
      */
     protected void initialize() {
-        this.setRoot(this.createRootNode());
+        this.setRoot(LayerTreeModel.createRootNode());
     }
 
     /**
@@ -115,7 +115,7 @@ public class LayerTreeModel extends BasicTreeModel {
      *
      * @return a new <code>TreeNode</code>.
      */
-    protected TreeNode createRootNode() {
+    protected static TreeNode createRootNode() {
         return new BasicTreeNode(DEFAULT_ROOT_NAME);
     }
 
@@ -153,7 +153,7 @@ public class LayerTreeModel extends BasicTreeModel {
             throw new IllegalArgumentException(message);
         }
 
-        LayerTreeNode layerNode = this.createLayerNode(layer);
+        LayerTreeNode layerNode = LayerTreeModel.createLayerNode(layer);
         if (layerNode == null)
             return layerNode;
 
@@ -168,7 +168,7 @@ public class LayerTreeModel extends BasicTreeModel {
      * @param layer the <code>Layer</code> to create a new <code>LayerTreeNode</code> for.
      * @return a new <code>LayerTreeNode</code>.
      */
-    protected LayerTreeNode createLayerNode(Layer layer) {
+    protected static LayerTreeNode createLayerNode(Layer layer) {
         return new LayerTreeNode(layer);
     }
 

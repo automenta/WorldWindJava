@@ -377,7 +377,7 @@ public class WorldMapLayer extends AbstractLayer {
                 gl.glColor4d(colorRGB[0], colorRGB[1], colorRGB[2], this.getOpacity());
 
                 // Draw crosshair
-                Position groundPos = this.computeGroundPosition(dc, dc.getView());
+                Position groundPos = WorldMapLayer.computeGroundPosition(dc, dc.getView());
                 if (groundPos != null) {
                     int x = (int) (width * (groundPos.getLongitude().degrees + 180) / 360);
                     int y = (int) (height * (groundPos.getLatitude().degrees + 90) / 180);
@@ -395,7 +395,7 @@ public class WorldMapLayer extends AbstractLayer {
 
                 // Draw view footprint in map icon space
                 if (!dc.is2DGlobe() && this.showFootprint) {
-                    this.footPrintPositions = this.computeViewFootPrint(dc, 32);
+                    this.footPrintPositions = WorldMapLayer.computeViewFootPrint(dc, 32);
                     if (this.footPrintPositions != null) {
                         gl.glBegin(GL2.GL_LINE_STRIP);
                         LatLon p1 = this.footPrintPositions.get(0);
@@ -428,7 +428,7 @@ public class WorldMapLayer extends AbstractLayer {
             else {
                 // Picking
                 this.pickSupport.clearPickList();
-                this.pickSupport.beginPicking(dc);
+                PickSupport.beginPicking(dc);
                 // Where in the world are we picking ?
                 Position pickPosition =
                     computePickPosition(dc, locationSW, new Dimension((int) (width * scale), (int) (height * scale)));
@@ -437,7 +437,7 @@ public class WorldMapLayer extends AbstractLayer {
                 this.pickSupport.addPickableObject(colorCode, this, pickPosition, false);
                 gl.glColor3ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
                 dc.drawUnitQuad();
-                this.pickSupport.endPicking(dc);
+                PickSupport.endPicking(dc);
                 this.pickSupport.resolvePick(dc, dc.getPickPoint(), this);
             }
         }
@@ -557,7 +557,7 @@ public class WorldMapLayer extends AbstractLayer {
      * @param view the current View
      * @return the ground position of the view center or null
      */
-    protected Position computeGroundPosition(DrawContext dc, View view) {
+    protected static Position computeGroundPosition(DrawContext dc, View view) {
         if (view == null)
             return null;
 
@@ -581,7 +581,7 @@ public class WorldMapLayer extends AbstractLayer {
      * @param mapSize    the world map screen dimension in pixels
      * @return the picked Position
      */
-    protected Position computePickPosition(DrawContext dc, Vec4 locationSW, Dimension mapSize) {
+    protected static Position computePickPosition(DrawContext dc, Vec4 locationSW, Dimension mapSize) {
         Position pickPosition = null;
         Point pickPoint = dc.getPickPoint();
         if (pickPoint != null) {
@@ -607,7 +607,7 @@ public class WorldMapLayer extends AbstractLayer {
      * @param steps the number of steps.
      * @return an array list of <code>LatLon</code> forming a closed shape.
      */
-    protected ArrayList<LatLon> computeViewFootPrint(DrawContext dc, int steps) {
+    protected static ArrayList<LatLon> computeViewFootPrint(DrawContext dc, int steps) {
         ArrayList<LatLon> positions = new ArrayList<>();
         Position eyePos = dc.getView().getEyePosition();
         Angle distance = Angle.fromRadians(

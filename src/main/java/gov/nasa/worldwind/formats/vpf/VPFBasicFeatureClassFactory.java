@@ -63,18 +63,18 @@ public class VPFBasicFeatureClassFactory implements VPFFeatureClassFactory {
         // just like other features.  For instance, if a text feature has a height attribute, software can retrieve
         // 'all text with HEIGHT > 0.5'.
 
-        VPFFeatureClass cls = this.doCreateFeatureClass(coverage, schema);
+        VPFFeatureClass cls = VPFBasicFeatureClassFactory.doCreateFeatureClass(coverage, schema);
         if (cls != null)
             return cls;
 
         cls = this.doCreateFromFeatureType(coverage, schema);
-        this.initFeatureClass(cls);
+        VPFBasicFeatureClassFactory.initFeatureClass(cls);
 
         return cls;
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    protected VPFFeatureClass doCreateFeatureClass(VPFCoverage coverage, VPFFeatureClassSchema schema) {
+    protected static VPFFeatureClass doCreateFeatureClass(VPFCoverage coverage, VPFFeatureClassSchema schema) {
         return null;
     }
 
@@ -85,11 +85,11 @@ public class VPFBasicFeatureClassFactory implements VPFFeatureClassFactory {
             case AREA -> this.createAreaFeatureClass(coverage, schema);
             case TEXT -> this.createTextFeatureClass(coverage, schema);
             case COMPLEX -> this.createComplexFeatureClass(coverage, schema);
-            default -> this.createUnknownFeatureClass(coverage, schema);
+            default -> VPFBasicFeatureClassFactory.createUnknownFeatureClass(coverage, schema);
         };
     }
 
-    protected void initFeatureClass(VPFFeatureClass cls) {
+    protected static void initFeatureClass(VPFFeatureClass cls) {
         VPFRelation[] rels = cls.getCoverage().getFeatureClassRelations(cls.getClassName());
         if (rels != null) {
             cls.setRelations(rels);
@@ -100,10 +100,10 @@ public class VPFBasicFeatureClassFactory implements VPFFeatureClassFactory {
     //********************  Feature Class Assembly  ****************//
     //**************************************************************//
 
-    protected VPFFeatureClass createPointFeatureClass(VPFCoverage coverage, VPFFeatureClassSchema schema) {
+    protected static VPFFeatureClass createPointFeatureClass(VPFCoverage coverage, VPFFeatureClassSchema schema) {
         return new VPFFeatureClass(coverage, schema,
-            this.getJoinTableName(coverage, schema, VPFConstants.POINT_JOIN_TABLE),
-            this.getPointFeaturePrimitiveTable(coverage, schema)) {
+            VPFBasicFeatureClassFactory.getJoinTableName(coverage, schema, VPFConstants.POINT_JOIN_TABLE),
+            VPFBasicFeatureClassFactory.getPointFeaturePrimitiveTable(coverage, schema)) {
             public Collection<? extends VPFFeature> createFeatures(VPFFeatureFactory factory) {
                 return factory.createPointFeatures(this);
             }
@@ -114,9 +114,9 @@ public class VPFBasicFeatureClassFactory implements VPFFeatureClassFactory {
         };
     }
 
-    protected VPFFeatureClass createLineFeatureClass(VPFCoverage coverage, VPFFeatureClassSchema schema) {
+    protected static VPFFeatureClass createLineFeatureClass(VPFCoverage coverage, VPFFeatureClassSchema schema) {
         return new VPFFeatureClass(coverage, schema,
-            this.getJoinTableName(coverage, schema, VPFConstants.LINE_JOIN_TABLE),
+            VPFBasicFeatureClassFactory.getJoinTableName(coverage, schema, VPFConstants.LINE_JOIN_TABLE),
             VPFConstants.EDGE_PRIMITIVE_TABLE) {
             public Collection<? extends VPFFeature> createFeatures(VPFFeatureFactory factory) {
                 return factory.createLineFeatures(this);
@@ -128,9 +128,9 @@ public class VPFBasicFeatureClassFactory implements VPFFeatureClassFactory {
         };
     }
 
-    protected VPFFeatureClass createAreaFeatureClass(VPFCoverage coverage, VPFFeatureClassSchema schema) {
+    protected static VPFFeatureClass createAreaFeatureClass(VPFCoverage coverage, VPFFeatureClassSchema schema) {
         return new VPFFeatureClass(coverage, schema,
-            this.getJoinTableName(coverage, schema, VPFConstants.AREA_JOIN_TABLE),
+            VPFBasicFeatureClassFactory.getJoinTableName(coverage, schema, VPFConstants.AREA_JOIN_TABLE),
             VPFConstants.FACE_PRIMITIVE_TABLE) {
             public Collection<? extends VPFFeature> createFeatures(VPFFeatureFactory factory) {
                 return factory.createAreaFeatures(this);
@@ -142,9 +142,9 @@ public class VPFBasicFeatureClassFactory implements VPFFeatureClassFactory {
         };
     }
 
-    protected VPFFeatureClass createTextFeatureClass(VPFCoverage coverage, VPFFeatureClassSchema schema) {
+    protected static VPFFeatureClass createTextFeatureClass(VPFCoverage coverage, VPFFeatureClassSchema schema) {
         return new VPFFeatureClass(coverage, schema,
-            this.getJoinTableName(coverage, schema, VPFConstants.TEXT_FEATURE_JOIN_TABLE),
+            VPFBasicFeatureClassFactory.getJoinTableName(coverage, schema, VPFConstants.TEXT_FEATURE_JOIN_TABLE),
             VPFConstants.TEXT_PRIMITIVE_TABLE) {
             public Collection<? extends VPFFeature> createFeatures(VPFFeatureFactory factory) {
                 return factory.createTextFeatures(this);
@@ -156,9 +156,9 @@ public class VPFBasicFeatureClassFactory implements VPFFeatureClassFactory {
         };
     }
 
-    protected VPFFeatureClass createComplexFeatureClass(VPFCoverage coverage, VPFFeatureClassSchema schema) {
+    protected static VPFFeatureClass createComplexFeatureClass(VPFCoverage coverage, VPFFeatureClassSchema schema) {
         return new VPFFeatureClass(coverage, schema,
-            this.getJoinTableName(coverage, schema, VPFConstants.TEXT_FEATURE_JOIN_TABLE), null) {
+            VPFBasicFeatureClassFactory.getJoinTableName(coverage, schema, VPFConstants.TEXT_FEATURE_JOIN_TABLE), null) {
             public Collection<? extends VPFFeature> createFeatures(VPFFeatureFactory factory) {
                 return factory.createComplexFeatures(this);
             }
@@ -169,7 +169,7 @@ public class VPFBasicFeatureClassFactory implements VPFFeatureClassFactory {
         };
     }
 
-    protected VPFFeatureClass createUnknownFeatureClass(VPFCoverage coverage, VPFFeatureClassSchema schema) {
+    protected static VPFFeatureClass createUnknownFeatureClass(VPFCoverage coverage, VPFFeatureClassSchema schema) {
         return new VPFFeatureClass(coverage, schema, null, null);
     }
 
@@ -177,7 +177,7 @@ public class VPFBasicFeatureClassFactory implements VPFFeatureClassFactory {
     //********************  Utility Methods  ***********************//
     //**************************************************************//
 
-    protected String getJoinTableName(VPFCoverage coverage, VPFFeatureClassSchema schema, String suffix) {
+    protected static String getJoinTableName(VPFCoverage coverage, VPFFeatureClassSchema schema, String suffix) {
         StringBuilder sb = new StringBuilder();
         sb.append(schema.getClassName());
         sb.append(suffix);
@@ -188,7 +188,7 @@ public class VPFBasicFeatureClassFactory implements VPFFeatureClassFactory {
         return file.exists() ? tableName : null;
     }
 
-    protected String getPointFeaturePrimitiveTable(VPFCoverage coverage, VPFFeatureClassSchema schema) {
+    protected static String getPointFeaturePrimitiveTable(VPFCoverage coverage, VPFFeatureClassSchema schema) {
         String primitiveTableName = null;
 
         VPFRelation[] rels = coverage.getFeatureClassRelations(schema.getClassName());

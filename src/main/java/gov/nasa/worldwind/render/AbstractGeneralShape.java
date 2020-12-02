@@ -227,7 +227,7 @@ public abstract class AbstractGeneralShape extends AbstractShape {
      * @param shapeData the current shape data for this shape.
      * @return the minimum distance from the shape to the eye point.
      */
-    protected double computeEyeDistance(DrawContext dc, ShapeData shapeData) {
+    protected static double computeEyeDistance(DrawContext dc, ShapeData shapeData) {
         Vec4 eyePoint = dc.getView().getEyePoint();
 
         // TODO: compute distance using extent.getEffectiveRadius(Plane)

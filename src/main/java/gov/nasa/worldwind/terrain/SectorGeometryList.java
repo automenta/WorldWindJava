@@ -68,7 +68,7 @@ public class SectorGeometryList extends ArrayList<SectorGeometry> {
      *
      * @param dc the  current draw context.
      */
-    public void beginRendering(DrawContext dc) {
+    public static void beginRendering(DrawContext dc) {
         if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
@@ -77,7 +77,7 @@ public class SectorGeometryList extends ArrayList<SectorGeometry> {
 
         // TODO: add the beginRendering interface to Tessellator in order to eliminate this type test
         if (dc.getGlobe().getTessellator() instanceof RectangularTessellator)
-            ((RectangularTessellator) dc.getGlobe().getTessellator()).beginRendering(dc);
+            RectangularTessellator.beginRendering(dc);
     }
 
     /**
@@ -85,7 +85,7 @@ public class SectorGeometryList extends ArrayList<SectorGeometry> {
      *
      * @param dc the current draw context.
      */
-    public void endRendering(DrawContext dc) {
+    public static void endRendering(DrawContext dc) {
         if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
@@ -93,7 +93,7 @@ public class SectorGeometryList extends ArrayList<SectorGeometry> {
         }
 
         if (dc.getGlobe().getTessellator() instanceof RectangularTessellator)
-            ((RectangularTessellator) dc.getGlobe().getTessellator()).endRendering(dc);
+            RectangularTessellator.endRendering(dc);
     }
 
     /**
@@ -116,14 +116,14 @@ public class SectorGeometryList extends ArrayList<SectorGeometry> {
             return;
 
         this.pickSupport.clearPickList();
-        this.pickSupport.beginPicking(dc);
+        PickSupport.beginPicking(dc);
 
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glShadeModel(GL2.GL_FLAT);
 
         try {
             // render each sector in unique color
-            this.beginRendering(dc);
+            SectorGeometryList.beginRendering(dc);
             for (SectorGeometry sector : this) {
                 Color color = dc.getUniquePickColor();
                 gl.glColor3ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
@@ -136,16 +136,16 @@ public class SectorGeometryList extends ArrayList<SectorGeometry> {
             if (pickedSector == null || pickedSector.getObject() == null)
                 return; // no sector picked
 
-            this.beginSectorGeometryPicking(dc);
+            SectorGeometryList.beginSectorGeometryPicking(dc);
             SectorGeometry sector = (SectorGeometry) pickedSector.getObject();
             sector.pick(dc, pickPoint);
         }
         finally {
-            this.endSectorGeometryPicking(dc);
-            this.endRendering(dc);
+            SectorGeometryList.endSectorGeometryPicking(dc);
+            SectorGeometryList.endRendering(dc);
             gl.glShadeModel(GL2.GL_SMOOTH); // restore to default explicitly to avoid more expensive pushAttrib
 
-            this.pickSupport.endPicking(dc);
+            PickSupport.endPicking(dc);
             this.pickSupport.clearPickList();
         }
     }
@@ -172,14 +172,14 @@ public class SectorGeometryList extends ArrayList<SectorGeometry> {
             return null;
 
         this.pickSupport.clearPickList();
-        this.pickSupport.beginPicking(dc);
+        PickSupport.beginPicking(dc);
 
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glShadeModel(GL2.GL_FLAT);
 
         try {
             // render each sector in a unique color
-            this.beginRendering(dc);
+            SectorGeometryList.beginRendering(dc);
             for (SectorGeometry sector : this) {
                 Color color = dc.getUniquePickColor();
                 gl.glColor3ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
@@ -212,7 +212,7 @@ public class SectorGeometryList extends ArrayList<SectorGeometry> {
                 return null;
 
             // Now have each sector determine the pick position for each intersecting pick point.
-            this.beginSectorGeometryPicking(dc);
+            SectorGeometryList.beginSectorGeometryPicking(dc);
             List<PickedObject> pickedObjects = new ArrayList<>();
             for (Map.Entry<SectorGeometry, ArrayList<Point>> sector : this.pickSectors.entrySet()) {
                 ArrayList<Point> sectorPickPoints = sector.getValue();
@@ -229,11 +229,11 @@ public class SectorGeometryList extends ArrayList<SectorGeometry> {
             return pickedObjects;
         }
         finally {
-            this.endSectorGeometryPicking(dc);
-            this.endRendering(dc);
+            SectorGeometryList.endSectorGeometryPicking(dc);
+            SectorGeometryList.endRendering(dc);
             gl.glShadeModel(GL2.GL_SMOOTH); // restore to default explicitly to avoid more expensive pushAttrib
 
-            this.pickSupport.endPicking(dc);
+            PickSupport.endPicking(dc);
             this.pickSupport.clearPickList();
         }
     }
@@ -245,7 +245,7 @@ public class SectorGeometryList extends ArrayList<SectorGeometry> {
      *
      * @param dc the current draw context.
      */
-    protected void beginSectorGeometryPicking(DrawContext dc) {
+    protected static void beginSectorGeometryPicking(DrawContext dc) {
         GL gl = dc.getGL();
 
         gl.glDepthFunc(GL.GL_LEQUAL);
@@ -266,7 +266,7 @@ public class SectorGeometryList extends ArrayList<SectorGeometry> {
      *
      * @param dc the current draw context.
      */
-    protected void endSectorGeometryPicking(DrawContext dc) {
+    protected static void endSectorGeometryPicking(DrawContext dc) {
         GL gl = dc.getGL();
 
         gl.glDepthFunc(GL.GL_LESS); // restore to default explicitly to avoid more expensive pushAttrib
@@ -357,7 +357,7 @@ public class SectorGeometryList extends ArrayList<SectorGeometry> {
         Iterable<SectorGeometry> sglist = new ArrayList<>(this);
 
         Intersection[] hits;
-        List<Intersection> list = new ArrayList<>();
+        Collection<Intersection> list = new ArrayList<>();
         for (SectorGeometry sg : sglist) {
             if (sg.getExtent().intersects(line))
                 if ((hits = sg.intersect(line)) != null)
@@ -412,7 +412,7 @@ public class SectorGeometryList extends ArrayList<SectorGeometry> {
         Iterable<SectorGeometry> sglist = new ArrayList<>(this);
 
         Intersection[] hits;
-        List<Intersection> list = new ArrayList<>();
+        Collection<Intersection> list = new ArrayList<>();
         for (SectorGeometry sg : sglist) {
             if (sector.intersects(sg.getSector()))
                 if ((hits = sg.intersect(elevation)) != null)

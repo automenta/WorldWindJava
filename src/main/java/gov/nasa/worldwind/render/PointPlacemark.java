@@ -272,7 +272,7 @@ public class PointPlacemark extends WWObjectImpl
      *
      * @return the default attributes.
      */
-    public PointPlacemarkAttributes getDefaultAttributes() {
+    public static PointPlacemarkAttributes getDefaultAttributes() {
         return defaultAttributes;
     }
 
@@ -516,11 +516,11 @@ public class PointPlacemark extends WWObjectImpl
 
         this.pickSupport.clearPickList();
         try {
-            this.pickSupport.beginPicking(dc);
+            PickSupport.beginPicking(dc);
             this.drawOrderedRenderable(dc, opm);
         }
         finally {
-            this.pickSupport.endPicking(dc);
+            PickSupport.endPicking(dc);
             this.pickSupport.resolvePick(dc, pickPoint, this.pickLayer);
         }
     }
@@ -659,7 +659,7 @@ public class PointPlacemark extends WWObjectImpl
      *
      * @param dc the current draw context.
      */
-    protected void beginDrawing(DrawContext dc) {
+    protected static void beginDrawing(DrawContext dc) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         int attrMask =
@@ -685,7 +685,7 @@ public class PointPlacemark extends WWObjectImpl
      *
      * @param dc the current draw context.
      */
-    protected void endDrawing(DrawContext dc) {
+    protected static void endDrawing(DrawContext dc) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
         gl.glPopAttrib();
@@ -698,7 +698,7 @@ public class PointPlacemark extends WWObjectImpl
      * @param opm The object to draw.
      */
     protected void drawOrderedRenderable(DrawContext dc, OrderedPlacemark opm) {
-        this.beginDrawing(dc);
+        PointPlacemark.beginDrawing(dc);
         try {
             this.doDrawOrderedRenderable(dc, this.pickSupport, opm);
 
@@ -706,7 +706,7 @@ public class PointPlacemark extends WWObjectImpl
                 this.drawBatched(dc);
         }
         finally {
-            this.endDrawing(dc);
+            PointPlacemark.endDrawing(dc);
         }
     }
 
@@ -1664,7 +1664,7 @@ public class PointPlacemark extends WWObjectImpl
      * @throws XMLStreamException if exception occurs writing XML.
      * @throws IOException        if exception occurs exporting data.
      */
-    private void exportAttributesAsKML(XMLStreamWriter xmlWriter, String styleType, Exportable attributes)
+    private static void exportAttributesAsKML(XMLStreamWriter xmlWriter, String styleType, Exportable attributes)
         throws XMLStreamException, IOException {
         if (attributes != null) {
             xmlWriter.writeStartElement("Pair");

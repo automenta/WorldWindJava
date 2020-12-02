@@ -844,7 +844,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
             else {
                 // Picking
                 this.pickSupport.clearPickList();
-                this.pickSupport.beginPicking(dc);
+                PickSupport.beginPicking(dc);
                 // Draw unique color across the rectangle
                 Color color = dc.getUniquePickColor();
                 int colorCode = color.getRGB();
@@ -867,7 +867,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
                     gl.glEnd();
                 }
                 // Done picking
-                this.pickSupport.endPicking(dc);
+                PickSupport.endPicking(dc);
                 this.pickSupport.resolvePick(dc, dc.getPickPoint(), this);
             }
         }
@@ -976,7 +976,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
                 eyeY = (this.objectPosition.getElevation() - min) * stepY;
             }
             if (eyeX >= 0 && eyeY >= 0) {
-                this.drawFilledRectangle(dc, new Vec4(eyeX - 2, eyeY - 2, 0), new Dimension(5, 5), this.color);
+                TerrainProfileLayer.drawFilledRectangle(dc, new Vec4(eyeX - 2, eyeY - 2, 0), new Dimension(5, 5), this.color);
             }
             // Vertical line at object position when follow path
             if (this.follow.equals(FOLLOW_PATH) && eyeX >= 0) {
@@ -1098,15 +1098,15 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
         }
     }
 
-    protected void drawHorizontalLine(DrawContext dc, Dimension dimension, double y) {
+    protected static void drawHorizontalLine(DrawContext dc, Dimension dimension, double y) {
         drawLine(dc, 0, y, dimension.getWidth(), y);
     }
 
-    protected void drawVerticalLine(DrawContext dc, Dimension dimension, double x) {
+    protected static void drawVerticalLine(DrawContext dc, Dimension dimension, double x) {
         drawLine(dc, x, 0, x, dimension.getHeight());
     }
 
-    protected void drawFilledRectangle(DrawContext dc, Vec4 origin, Dimension dimension, Color color) {
+    protected static void drawFilledRectangle(DrawContext dc, Vec4 origin, Dimension dimension, Color color) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glColor4ub((byte) color.getRed(), (byte) color.getGreen(),
             (byte) color.getBlue(), (byte) color.getAlpha());
@@ -1120,7 +1120,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
         gl.glEnd();
     }
 
-    protected void drawLine(DrawContext dc, double x1, double y1, double x2, double y2) {
+    protected static void drawLine(DrawContext dc, double x1, double y1, double x2, double y2) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glBegin(GL2.GL_LINE_STRIP);
         gl.glVertex3d(x1, y1, 0);
@@ -1394,7 +1394,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
             Position groundPos = null;
             switch (this.follow) {
                 case FOLLOW_VIEW:
-                    groundPos = this.computeViewCenterPosition(dc);
+                    groundPos = TerrainProfileLayer.computeViewCenterPosition(dc);
                     break;
                 case FOLLOW_CURSOR:
                     groundPos = this.computeCursorPosition(dc);
@@ -1451,7 +1451,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
 
     // ** Profile data collection ************************************************************
 
-    protected Position computeViewCenterPosition(DrawContext dc) {
+    protected static Position computeViewCenterPosition(DrawContext dc) {
         View view = dc.getView();
         Line ray = view.computeRayFromScreenPoint(view.getViewport().getWidth() / 2,
             view.getViewport().getHeight() / 2);

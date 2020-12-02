@@ -35,7 +35,7 @@ public abstract class OWSCapabilities extends AbstractXMLEventParser {
     public OWSCapabilities(String namespaceURI, Object docSource) {
         super(namespaceURI);
 
-        this.eventReader = this.createReader(docSource);
+        this.eventReader = OWSCapabilities.createReader(docSource);
 
         this.initialize();
     }
@@ -46,7 +46,7 @@ public abstract class OWSCapabilities extends AbstractXMLEventParser {
         this.parserContext = this.createParserContext(this.eventReader);
     }
 
-    protected XMLEventReader createReader(Object docSource) {
+    protected static XMLEventReader createReader(Object docSource) {
         return WWXML.openEventReader(docSource);
     }
 

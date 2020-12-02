@@ -127,12 +127,12 @@ public class DataChooserPanelDescriptor extends DefaultPanelDescriptor {
                 if (!sb.isEmpty())
                     sb.append(" - ");
                 sb.append("Disk space required: ~");
-                sb.append(sf.formatEstimate(estimatedBytes));
+                sb.append(SizeFormatter.formatEstimate(estimatedBytes));
                 TimeFormatter tf = new TimeFormatter();
                 if (!sb.isEmpty())
                     sb.append(" - ");
                 sb.append("Processing time: ");
-                sb.append(tf.formatEstimate(estimatedMillis));
+                sb.append(TimeFormatter.formatEstimate(estimatedMillis));
             }
             else {
                 sb.append("No files selected");

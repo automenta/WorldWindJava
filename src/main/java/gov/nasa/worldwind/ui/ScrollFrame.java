@@ -1100,7 +1100,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
         this.minimizeButton = new SubHotSpot(this) {
             @Override
             public void selected(SelectEvent event) {
-                if (event == null || this.isConsumed(event))
+                if (event == null || AbstractHotSpot.isConsumed(event))
                     return;
 
                 if (event.isLeftClick()) {
@@ -1185,7 +1185,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
         Size size = this.getActiveSize();
 
         // If the frame size is relative to the content size, compute the content size and then set the frame size.
-        if (this.isRelativeSize(size)) {
+        if (ScrollFrame.isRelativeSize(size)) {
             // Pass null for the frame bounds because the frame size depends on the content size.
             contentSize = this.contents.getSize(dc, null);
             Dimension frameSizeForContentSize = this.computeFrameRectForContentRect(contentSize);
@@ -1322,7 +1322,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
      */
     // TODO try to eliminate this dependence on size modes. This would break if an app subclassed Size and implemented
     // TODO different modes.
-    protected boolean isRelativeSize(Size size) {
+    protected static boolean isRelativeSize(Size size) {
         String heightMode = size.getHeightMode();
         String widthMode = size.getWidthMode();
 
@@ -1995,13 +1995,13 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
 
         if (dc.isPickingMode()) {
             this.pickSupport.clearPickList();
-            this.pickSupport.beginPicking(dc);
+            PickSupport.beginPicking(dc);
         }
     }
 
     protected void endDrawing(DrawContext dc) {
         if (dc.isPickingMode()) {
-            this.pickSupport.endPicking(dc);
+            PickSupport.endPicking(dc);
             this.pickSupport.resolvePick(dc, dc.getPickPoint(), dc.getCurrentLayer());
         }
 
@@ -2133,7 +2133,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
 
     @Override
     public void selected(SelectEvent event) {
-        if (event == null || this.isConsumed(event))
+        if (event == null || AbstractHotSpot.isConsumed(event))
             return;
 
         super.selected(event);

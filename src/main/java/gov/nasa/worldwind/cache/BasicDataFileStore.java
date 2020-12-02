@@ -291,7 +291,7 @@ public class BasicDataFileStore extends AbstractFileStore {
         if (address.trim().startsWith("jar:")) {
             URL jarUrl = WWIO.makeURL(address); // retrieval URL may be other than the address' URL
             if (WWIO.isLocalJarAddress(jarUrl)) {
-                if (this.getJarLength(jarUrl) > 0)
+                if (BasicDataFileStore.getJarLength(jarUrl) > 0)
                     cacheFileUrl = jarUrl;
                 else {
                     getAbsentResourceList().markResourceAbsent(address);
@@ -365,7 +365,7 @@ public class BasicDataFileStore extends AbstractFileStore {
      * @param jarUrl the jar URL.
      * @return the jar file's content length, or -1 if a connection to the URL can't be formed or queried.
      */
-    protected int getJarLength(URL jarUrl) {
+    protected static int getJarLength(URL jarUrl) {
         try {
             return jarUrl.openConnection().getContentLength();
         }
@@ -473,7 +473,7 @@ public class BasicDataFileStore extends AbstractFileStore {
             // Remove private query parameters from the query string, and replace any illegal filename characters with
             // an underscore. This avoids exposing private parameters to other users by writing them to the cache as
             // part of the cache name.
-            String query = this.removePrivateQueryParameters(url.getQuery());
+            String query = BasicDataFileStore.removePrivateQueryParameters(url.getQuery());
             query = WWIO.replaceIllegalFileNameCharacters(query);
 
             // If the query string is not empty after removing private parameters and illegal filename characters, we
@@ -498,7 +498,7 @@ public class BasicDataFileStore extends AbstractFileStore {
         sb.append(File.separator);
         sb.append(filename);
 
-        String suffix = this.makeSuffix(filename, contentType);
+        String suffix = BasicDataFileStore.makeSuffix(filename, contentType);
         if (suffix != null)
             sb.append(suffix);
 
@@ -529,7 +529,7 @@ public class BasicDataFileStore extends AbstractFileStore {
         sb.append(File.separator);
         sb.append(path);
 
-        String suffix = this.makeSuffix(path, contentType);
+        String suffix = BasicDataFileStore.makeSuffix(path, contentType);
         if (suffix != null)
             sb.append(suffix);
 
@@ -549,7 +549,7 @@ public class BasicDataFileStore extends AbstractFileStore {
         // Use a suffix based on the content type if the content type and the URL's suffix do not match. Otherwise
         // attempt to use the URL's suffix. If neither of these attempts produce a non-null suffix, File.createTmpFile
         // uses the default suffix ".tmp".
-        String suffix = this.makeSuffix(url.toString(), contentType); // null if the URL suffix and content type match.
+        String suffix = BasicDataFileStore.makeSuffix(url.toString(), contentType); // null if the URL suffix and content type match.
         if (suffix == null)
             suffix = WWIO.getSuffix(url.toString());
 
@@ -579,7 +579,7 @@ public class BasicDataFileStore extends AbstractFileStore {
      * @return a suffix appropriate to the content type, or null if the specified path already has an appropriate
      * suffix.
      */
-    protected String makeSuffix(String path, String contentType) {
+    protected static String makeSuffix(String path, String contentType) {
         // If the cache path does not end in a suffix that matches the specified content type, we append the appropriate
         // suffix. If the content type is not known, we do not append any suffix. If the caller does not know the
         // content type used to create a cache file path, it must attempt to use known mime types until it finds a
@@ -612,7 +612,7 @@ public class BasicDataFileStore extends AbstractFileStore {
      * @return a new string with the private query parameters removed. This string is empty if the query string is
      * empty, or if the query string contains only private parameters.
      */
-    protected String removePrivateQueryParameters(String queryString) {
+    protected static String removePrivateQueryParameters(String queryString) {
         if (WWUtil.isEmpty(queryString))
             return queryString;
 

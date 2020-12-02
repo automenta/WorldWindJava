@@ -590,7 +590,7 @@ public class Configuration // Singleton
         }
     }
 
-    private Properties initializeDefaults() {
+    private static Properties initializeDefaults() {
         Properties defaults = new Properties();
         TimeZone tz = Calendar.getInstance().getTimeZone();
         if (tz != null)

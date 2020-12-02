@@ -625,7 +625,7 @@ public class BasicOrbitView extends BasicView implements OrbitView {
         }
     }
 
-    protected boolean validateModelCoordinates(OrbitViewInputSupport.OrbitViewState modelCoords) {
+    protected static boolean validateModelCoordinates(OrbitViewInputSupport.OrbitViewState modelCoords) {
         return (modelCoords != null
             && modelCoords.getCenterPosition() != null
             && modelCoords.getCenterPosition().getLatitude().degrees >= -90

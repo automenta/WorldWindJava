@@ -80,7 +80,7 @@ public class Geometry extends AVListImpl implements Cacheable {
             this.buffer[type] = Buffers.newDirectIntBuffer(numCoords);
         }
 
-        this.bufferCopy(src, srcPos, (IntBuffer) this.buffer[type], 0, numCoords);
+        Geometry.bufferCopy(src, srcPos, (IntBuffer) this.buffer[type], 0, numCoords);
     }
 
     public void setData(int type, int size, int stride, int count, float[] src, int srcPos) {
@@ -96,7 +96,7 @@ public class Geometry extends AVListImpl implements Cacheable {
             this.buffer[type] = Buffers.newDirectFloatBuffer(numCoords);
         }
 
-        this.bufferCopy(src, srcPos, (FloatBuffer) this.buffer[type], 0, numCoords);
+        Geometry.bufferCopy(src, srcPos, (FloatBuffer) this.buffer[type], 0, numCoords);
     }
 
     // version using float buffer instead of array
@@ -184,11 +184,11 @@ public class Geometry extends AVListImpl implements Cacheable {
     private long bufferSize(int bufferType) {
         long size = 0L;
         if (this.buffer[bufferType] != null)
-            size = this.sizeOf(this.glType[bufferType]) * this.buffer[bufferType].capacity();
+            size = Geometry.sizeOf(this.glType[bufferType]) * this.buffer[bufferType].capacity();
         return size;
     }
 
-    private long sizeOf(int glType) {
+    private static long sizeOf(int glType) {
         return switch (glType) {
             case GL2.GL_BYTE -> 1L;
             case GL2.GL_SHORT, GL2.GL_UNSIGNED_SHORT -> 2L;
@@ -198,13 +198,13 @@ public class Geometry extends AVListImpl implements Cacheable {
         };
     }
 
-    private void bufferCopy(int[] src, int srcPos, IntBuffer dest, int destPos, int length) {
+    private static void bufferCopy(int[] src, int srcPos, IntBuffer dest, int destPos, int length) {
         dest.position(destPos);
         dest.put(src, srcPos, length);
         dest.position(destPos);
     }
 
-    private void bufferCopy(float[] src, int srcPos, FloatBuffer dest, int destPos, int length) {
+    private static void bufferCopy(float[] src, int srcPos, FloatBuffer dest, int destPos, int length) {
         dest.position(destPos);
         dest.put(src, srcPos, length);
         dest.position(destPos);

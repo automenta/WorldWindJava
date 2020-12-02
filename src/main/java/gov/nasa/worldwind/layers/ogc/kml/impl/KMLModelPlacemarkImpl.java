@@ -85,7 +85,7 @@ public class KMLModelPlacemarkImpl extends WWObjectImpl implements KMLRenderable
         this.model = (KMLModel) geom;
         this.parent = placemark;
 
-        this.resourceMap = this.createResourceMap(this.model);
+        this.resourceMap = KMLModelPlacemarkImpl.createResourceMap(this.model);
     }
 
     /**
@@ -94,7 +94,7 @@ public class KMLModelPlacemarkImpl extends WWObjectImpl implements KMLRenderable
      * @param model Model from which to create the resource map.
      * @return Map that relates relative paths in the COLLADA document to paths relative to the KML document.
      */
-    protected Map<String, String> createResourceMap(KMLModel model) {
+    protected static Map<String, String> createResourceMap(KMLModel model) {
         Map<String, String> map = new HashMap<>();
 
         KMLResourceMap resourceMap = model.getResourceMap();

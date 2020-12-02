@@ -177,7 +177,7 @@ public abstract class RigidShape extends AbstractShape {
                 }
             }
 
-            this.setTexture(index, newTexture == null ? this.makeTexture(imageSource) : newTexture);
+            this.setTexture(index, newTexture == null ? AbstractShape.makeTexture(imageSource) : newTexture);
             this.imageSources.put(index, imageSource);
         }
     }
@@ -526,7 +526,7 @@ public abstract class RigidShape extends AbstractShape {
     /**
      * Create the geometry cache supporting the Level of Detail system.
      */
-    protected void setUpGeometryCache() {
+    protected static void setUpGeometryCache() {
         if (!WorldWind.getMemoryCacheSet().containsCache(GEOMETRY_CACHE_KEY)) {
             long size = Configuration.getLongValue(AVKey.AIRSPACE_GEOMETRY_CACHE_SIZE, DEFAULT_GEOMETRY_CACHE_SIZE);
             MemoryCache cache = new BasicMemoryCache((long) (0.85 * size), size);
@@ -540,7 +540,7 @@ public abstract class RigidShape extends AbstractShape {
      *
      * @return the geometry cache.
      */
-    protected MemoryCache getGeometryCache() {
+    protected static MemoryCache getGeometryCache() {
         return WorldWind.cache(GEOMETRY_CACHE_KEY);
     }
 
@@ -753,7 +753,7 @@ public abstract class RigidShape extends AbstractShape {
         Matrix matrix = computeRenderMatrix(dc);
 
         // create a list of vertices representing the extrema of the unit sphere
-        List<Vec4> extrema = new Vector<>(4);
+        Collection<Vec4> extrema = new Vector<>(4);
         // transform the extrema by the render matrix to get their final positions
         Vec4 point = Matrix.transformBy3(matrix, -1, 1, -1);   // far upper left
         extrema.add(point);
@@ -789,7 +789,7 @@ public abstract class RigidShape extends AbstractShape {
         Matrix matrix = computeRenderMatrix(globe, verticalExaggeration);
 
         // create a list of vertices representing the extrema of the unit sphere
-        List<Vec4> extrema = new Vector<>(4);
+        Collection<Vec4> extrema = new Vector<>(4);
         // transform the extrema by the render matrix to get their final positions
         Vec4 point = Matrix.transformBy3(matrix, -1, 1, -1);   // far upper left
         extrema.add(point);
@@ -1326,8 +1326,8 @@ public abstract class RigidShape extends AbstractShape {
         List<Intersection> shapeIntersections = new ArrayList<>();
 
         for (int i = 0; i < getFaceCount(); i++) {
-            List<Intersection> intersections = new ArrayList<>();
-            this.intersect(localLine, highResShapeData, intersections, index);
+            Collection<Intersection> intersections = new ArrayList<>();
+            RigidShape.intersect(localLine, highResShapeData, intersections, index);
 
             if (intersections.isEmpty())
                 continue;
@@ -1351,7 +1351,7 @@ public abstract class RigidShape extends AbstractShape {
         return shapeIntersections;
     }
 
-    protected void intersect(Line line, ShapeData shapeData, Collection<Intersection> intersections, int index) {
+    protected static void intersect(Line line, ShapeData shapeData, Collection<Intersection> intersections, int index) {
 
         IntBuffer indices = (IntBuffer) shapeData.getMesh(index).getBuffer(Geometry.ELEMENT);
         indices.rewind();

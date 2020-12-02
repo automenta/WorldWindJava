@@ -8,8 +8,8 @@ package gov.nasa.worldwind.examples.symbology;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.examples.milstd2525.*;
 import gov.nasa.worldwind.symbology.*;
+import gov.nasa.worldwind.symbology.milstd2525.*;
 
 import javax.swing.*;
 import java.awt.*;

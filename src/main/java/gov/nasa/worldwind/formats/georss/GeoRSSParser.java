@@ -141,8 +141,8 @@ public class GeoRSSParser {
             throw new IllegalArgumentException(message);
         }
 
-        ArrayList<Node> shapeNodes = new ArrayList<>();
-        ArrayList<Node> attributeNodes = new ArrayList<>();
+        List<Node> shapeNodes = new ArrayList<>();
+        List<Node> attributeNodes = new ArrayList<>();
 
         // Shapes
         NodeList nodes = xmlDoc.getElementsByTagNameNS(GEORSS_URI, "where");
@@ -218,7 +218,7 @@ public class GeoRSSParser {
         return shapes;
     }
 
-    private static void addNodes(List<Node> nodeList, NodeList nodes) {
+    private static void addNodes(Collection<Node> nodeList, NodeList nodes) {
         for (int i = 0; i < nodes.getLength(); i++) {
             nodeList.add(nodes.item(i));
         }

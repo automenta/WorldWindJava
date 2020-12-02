@@ -274,7 +274,7 @@ public class GlobeAnnotation extends AbstractAnnotation implements Locatable, Mo
         Rectangle frameRect = new Rectangle((int) x, (int) y, (int) width, (int) height);
 
         // Include reference point in bounds
-        return this.computeBoundingRectangle(frameRect, (int) screenPoint.x, (int) screenPoint.y);
+        return AbstractAnnotation.computeBoundingRectangle(frameRect, (int) screenPoint.x, (int) screenPoint.y);
     }
 
     protected void doRenderNow(DrawContext dc) {
@@ -298,7 +298,7 @@ public class GlobeAnnotation extends AbstractAnnotation implements Locatable, Mo
         // Scale and opacity depending on distance from eye
         double[] scaleAndOpacity = computeDistanceScaleAndOpacity(dc, point, size);
 
-        this.setDepthFunc(dc, screenPoint);
+        GlobeAnnotation.setDepthFunc(dc, screenPoint);
         this.drawTopLevelAnnotation(dc, (int) screenPoint.x, (int) screenPoint.y, size.width, size.height,
             scaleAndOpacity[0], scaleAndOpacity[1], pos);
     }
@@ -308,7 +308,7 @@ public class GlobeAnnotation extends AbstractAnnotation implements Locatable, Mo
 
         if (this.heightInMeter <= 0) {
             // Determine scale and opacity factors based on distance from eye vs the distance to the look at point.
-            Double lookAtDistance = this.computeLookAtDistance(dc);
+            Double lookAtDistance = GlobeAnnotation.computeLookAtDistance(dc);
             if (lookAtDistance != null) {
                 double eyeDistance = dc.getView().getEyePoint().distanceTo3(point);
                 double distanceFactor = Math.sqrt(lookAtDistance / eyeDistance);
@@ -330,7 +330,7 @@ public class GlobeAnnotation extends AbstractAnnotation implements Locatable, Mo
         return new double[] {scale, opacity};
     }
 
-    protected Double computeLookAtDistance(DrawContext dc) {
+    protected static Double computeLookAtDistance(DrawContext dc) {
         // TODO: Remove this method once the new mechanism for scaling and opacity is in place.
         View view = dc.getView();
 
@@ -355,7 +355,7 @@ public class GlobeAnnotation extends AbstractAnnotation implements Locatable, Mo
             return null;
     }
 
-    protected void setDepthFunc(DrawContext dc, Vec4 screenPoint) {
+    protected static void setDepthFunc(DrawContext dc, Vec4 screenPoint) {
         GL gl = dc.getGL();
 
         Position eyePos = dc.getView().getEyePosition();

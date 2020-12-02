@@ -304,7 +304,7 @@ public class KMLRegion extends KMLAbstractObject {
 
         // TODO: Regions outside of the normal lat/lon bounds ([-90, 90], [-180, 180]) are not supported. Remove
         // TODO: this warning when such regions are supported. See WWJINT-482.
-        if (!this.isSectorSupported(sector)) {
+        if (!KMLRegion.isSectorSupported(sector)) {
             String message = Logging.getMessage("KML.UnsupportedRegion", sector);
             Logging.logger().warning(message);
             return;
@@ -338,7 +338,7 @@ public class KMLRegion extends KMLAbstractObject {
         if (sector == null)
             return;
 
-        if (!this.isSectorSupported(sector)) {
+        if (!KMLRegion.isSectorSupported(sector)) {
             String message = Logging.getMessage("KML.UnsupportedRegion", sector);
             Logging.logger().warning(message);
             return;
@@ -372,7 +372,7 @@ public class KMLRegion extends KMLAbstractObject {
         if (sector == null)
             return;
 
-        if (!this.isSectorSupported(sector)) {
+        if (!KMLRegion.isSectorSupported(sector)) {
             String message = Logging.getMessage("KML.UnsupportedRegion", sector);
             Logging.logger().warning(message);
             return;
@@ -399,7 +399,7 @@ public class KMLRegion extends KMLAbstractObject {
      * @param sector Sector to test.
      * @return {@code true} if {@code sector} is with [-90, 90] latitude and [-180, 180] longitude.
      */
-    protected boolean isSectorSupported(Sector sector) {
+    protected static boolean isSectorSupported(Sector sector) {
         return sector.isWithinLatLonLimits();
     }
 

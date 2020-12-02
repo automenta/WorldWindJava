@@ -245,12 +245,12 @@ public class SegmentPlaneRenderer {
             throw new IllegalArgumentException(message);
         }
 
-        this.pickSupport.beginPicking(dc);
+        PickSupport.beginPicking(dc);
         try {
             this.draw(dc, segmentPlane, pickPoint, layer);
         }
         finally {
-            this.pickSupport.endPicking(dc);
+            PickSupport.endPicking(dc);
             this.pickSupport.clearPickList();
         }
     }
@@ -1383,26 +1383,26 @@ public class SegmentPlaneRenderer {
     // TODO: investigate necessary changes to create a general-use cylinder with caps, a height, and a radius.
 
     @SuppressWarnings("UnusedDeclaration")
-    protected void createBorderGeometry(Globe globe, SegmentPlane segmentPlane, RenderInfo renderInfo) {
+    protected static void createBorderGeometry(Globe globe, SegmentPlane segmentPlane, RenderInfo renderInfo) {
         int slices = 16;
         int stacks = 32;
         int loops = 8;
 
         GeometryBuilder gb = new GeometryBuilder();
 
-        renderInfo.borderCylinderIndexCount = gb.getCylinderIndexCount(slices, stacks);
+        renderInfo.borderCylinderIndexCount = GeometryBuilder.getCylinderIndexCount(slices, stacks);
         if (renderInfo.borderCylinderIndices == null
             || renderInfo.borderCylinderIndices.capacity() < renderInfo.borderCylinderIndexCount) {
             renderInfo.borderCylinderIndices = Buffers.newDirectIntBuffer(renderInfo.borderCylinderIndexCount);
         }
 
-        renderInfo.borderCapIndexCount = gb.getDiskIndexCount(slices, loops);
+        renderInfo.borderCapIndexCount = GeometryBuilder.getDiskIndexCount(slices, loops);
         if (renderInfo.borderCapIndices == null
             || renderInfo.borderCapIndices.capacity() < renderInfo.borderCapIndexCount) {
             renderInfo.borderCapIndices = Buffers.newDirectIntBuffer(renderInfo.borderCapIndexCount);
         }
 
-        int cylinderVertexCount = gb.getCylinderVertexCount(slices, stacks);
+        int cylinderVertexCount = GeometryBuilder.getCylinderVertexCount(slices, stacks);
         int cylinderCoordCount = 3 * cylinderVertexCount;
         if (renderInfo.borderCylinderVertices == null
             || renderInfo.borderCylinderVertices.capacity() < cylinderCoordCount) {
@@ -1413,7 +1413,7 @@ public class SegmentPlaneRenderer {
             renderInfo.borderCylinderNormals = Buffers.newDirectFloatBuffer(cylinderCoordCount);
         }
 
-        int capVertexCount = gb.getDiskVertexCount(slices, loops);
+        int capVertexCount = GeometryBuilder.getDiskVertexCount(slices, loops);
         int capCoordCount = 3 * capVertexCount;
         if (renderInfo.borderCapVertices == null
             || renderInfo.borderCapVertices.capacity() < capCoordCount) {

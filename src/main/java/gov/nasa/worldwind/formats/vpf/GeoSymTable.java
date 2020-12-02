@@ -24,7 +24,7 @@ public class GeoSymTable {
     }
 
     public static void selectMatchingRows(String columnName, Object value, boolean acceptNullValue,
-        Collection<AVList> outRows) {
+        Iterable<AVList> outRows) {
         Iterator<AVList> iter = outRows.iterator();
         if (!iter.hasNext())
             return;
@@ -43,7 +43,7 @@ public class GeoSymTable {
     }
 
     public static void selectMatchingStringRows(String columnName, String value, boolean acceptNullValue,
-        Collection<AVList> outRows) {
+        Iterable<AVList> outRows) {
         Iterator<AVList> iter = outRows.iterator();
         if (!iter.hasNext())
             return;

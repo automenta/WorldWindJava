@@ -39,14 +39,14 @@ public class PolylineTessellator {
     public void addVertex(double x, double y, double z, int index) {
         if (this.lastIndex >= 0) {
             IntBuffer i = indices;
-            i =            this.addIndex(i, this.lastIndex);
-            this.indices = this.addIndex(i, index);
+            i =            PolylineTessellator.addIndex(i, this.lastIndex);
+            this.indices = PolylineTessellator.addIndex(i, index);
         }
 
         this.lastIndex = index;
     }
 
-    protected IntBuffer addIndex(IntBuffer buffer, int index) {
+    protected static IntBuffer addIndex(IntBuffer buffer, int index) {
         if (!buffer.hasRemaining()) {
             int newCapacity = buffer.capacity() + buffer.capacity() / 2; // increase capacity by 50%
             IntBuffer newBuffer = IntBuffer.allocate(newCapacity);

@@ -206,7 +206,7 @@ public class CachedRenderableLayer extends AbstractLayer {
     }
 
     protected void doPreRender(DrawContext dc) {
-        this.doPreRender(dc, this.getAllRenderables());
+        CachedRenderableLayer.doPreRender(dc, this.getAllRenderables());
     }
 
     protected void doPick(DrawContext dc, Point pickPoint) {
@@ -214,10 +214,10 @@ public class CachedRenderableLayer extends AbstractLayer {
     }
 
     protected void doRender(DrawContext dc) {
-        this.doRender(dc, this.getAllRenderables());
+        CachedRenderableLayer.doRender(dc, this.getAllRenderables());
     }
 
-    protected void doPreRender(DrawContext dc, Iterable<? extends Renderable> renderables) {
+    protected static void doPreRender(DrawContext dc, Iterable<? extends Renderable> renderables) {
         for (Renderable renderable : renderables) {
             try {
                 // If the caller has specified their own Iterable,
@@ -236,7 +236,7 @@ public class CachedRenderableLayer extends AbstractLayer {
     protected void doPick(DrawContext dc, Iterable<? extends Renderable> renderables, Point pickPoint) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         this.pickSupport.clearPickList();
-        this.pickSupport.beginPicking(dc);
+        PickSupport.beginPicking(dc);
 
         try {
             for (Renderable renderable : renderables) {
@@ -272,11 +272,11 @@ public class CachedRenderableLayer extends AbstractLayer {
             this.pickSupport.resolvePick(dc, pickPoint, this);
         }
         finally {
-            this.pickSupport.endPicking(dc);
+            PickSupport.endPicking(dc);
         }
     }
 
-    protected void doRender(DrawContext dc, Iterable<? extends Renderable> renderables) {
+    protected static void doRender(DrawContext dc, Iterable<? extends Renderable> renderables) {
         for (Renderable renderable : renderables) {
             try {
                 // If the caller has specified their own Iterable,

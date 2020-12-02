@@ -145,7 +145,7 @@ public class Curtain extends AbstractAirspace {
     }
 
     public Position getReferencePosition() {
-        return this.computeReferencePosition(this.locations, this.getAltitudes());
+        return AbstractAirspace.computeReferencePosition(this.locations, this.getAltitudes());
     }
 
     protected Extent computeExtent(Globe globe, double verticalExaggeration) {
@@ -332,14 +332,14 @@ public class Curtain extends AbstractAirspace {
             locations, pathType, altitudes[0], altitudes[1], terrainConformant[0], terrainConformant[1],
             splitThreshold, referenceCenter);
 
-        CurtainGeometry geom = (CurtainGeometry) this.getGeometryCache().getObject(cacheKey);
-        if (geom == null || this.isExpired(dc, geom.getVertexGeometry())) {
+        CurtainGeometry geom = (CurtainGeometry) AbstractAirspace.getGeometryCache().getObject(cacheKey);
+        if (geom == null || AbstractAirspace.isExpired(dc, geom.getVertexGeometry())) {
             if (geom == null)
                 geom = new CurtainGeometry();
             this.makeCurtainGeometry(dc, count, locations, pathType, splitThreshold, altitudes, terrainConformant,
                 referenceCenter, geom);
             this.updateExpiryCriteria(dc, geom.getVertexGeometry());
-            this.getGeometryCache().add(cacheKey, geom);
+            AbstractAirspace.getGeometryCache().add(cacheKey, geom);
         }
 
         return geom;
@@ -375,8 +375,8 @@ public class Curtain extends AbstractAirspace {
         SectionRenderInfo[] ri = new SectionRenderInfo[sections];
         this.makeSectionInfo(dc, count, locations, pathType, splitThreshold, ri, counts);
 
-        int fillDrawMode = this.getSectionFillDrawMode();
-        int outlineDrawMode = this.getSectionOutlineDrawMode();
+        int fillDrawMode = Curtain.getSectionFillDrawMode();
+        int outlineDrawMode = Curtain.getSectionOutlineDrawMode();
 
         int[] fillIndices = new int[counts[0]];
         int[] outlineIndices = new int[counts[1]];
@@ -384,8 +384,8 @@ public class Curtain extends AbstractAirspace {
         float[] norms = new float[3 * counts[2]];
 
         for (int s = 0; s < sections; s++) {
-            this.makeSectionFillIndices(ri[s].pillars, ri[s].firstVertex, ri[s].firstFillIndex, fillIndices);
-            this.makeSectionOutlineIndices(ri[s].pillars, ri[s].firstVertex, ri[s].firstOutlineIndex, outlineIndices);
+            Curtain.makeSectionFillIndices(ri[s].pillars, ri[s].firstVertex, ri[s].firstFillIndex, fillIndices);
+            Curtain.makeSectionOutlineIndices(ri[s].pillars, ri[s].firstVertex, ri[s].firstOutlineIndex, outlineIndices);
 
             this.makeSectionVertices(dc, ri[s].begin, ri[s].end, ri[s].pathType, altitudes, terrainConformant,
                 ri[s].pillars, ri[s].firstVertex, verts, referenceCenter);
@@ -406,13 +406,13 @@ public class Curtain extends AbstractAirspace {
 
         for (int i = 0; i < sectionCount; i++) {
             ri[i] = new SectionRenderInfo(locations[i], locations[i + 1], pathType);
-            ri[i].pillars = this.getSectionPillarCount(dc, ri[i].begin, ri[i].end, ri[i].pathType, splitThreshold);
+            ri[i].pillars = Curtain.getSectionPillarCount(dc, ri[i].begin, ri[i].end, ri[i].pathType, splitThreshold);
             ri[i].firstFillIndex = counts[0];
             ri[i].firstOutlineIndex = counts[1];
             ri[i].firstVertex = counts[2];
-            ri[i].fillIndexCount = this.getSectionFillIndexCount(ri[i].pillars);
-            ri[i].outlineIndexCount = this.getSectionOutlineIndexCount(ri[i].pillars);
-            ri[i].vertexCount = this.getSectionVertexCount(ri[i].pillars);
+            ri[i].fillIndexCount = Curtain.getSectionFillIndexCount(ri[i].pillars);
+            ri[i].outlineIndexCount = Curtain.getSectionOutlineIndexCount(ri[i].pillars);
+            ri[i].vertexCount = Curtain.getSectionVertexCount(ri[i].pillars);
             counts[0] += ri[i].fillIndexCount;
             counts[1] += ri[i].outlineIndexCount;
             counts[2] += ri[i].vertexCount;
@@ -423,7 +423,7 @@ public class Curtain extends AbstractAirspace {
     //********************  Section             ********************//
     //**************************************************************//
 
-    protected int getSectionPillarCount(DrawContext dc, LatLon begin, LatLon end, String pathType,
+    protected static int getSectionPillarCount(DrawContext dc, LatLon begin, LatLon end, String pathType,
         double splitThreshold) {
         Globe globe;
         double arcLength, distance;
@@ -446,27 +446,27 @@ public class Curtain extends AbstractAirspace {
         return pillars;
     }
 
-    protected int getSectionFillDrawMode() {
+    protected static int getSectionFillDrawMode() {
         return GL.GL_TRIANGLE_STRIP;
     }
 
-    protected int getSectionOutlineDrawMode() {
+    protected static int getSectionOutlineDrawMode() {
         return GL.GL_LINES;
     }
 
-    protected int getSectionFillIndexCount(int pillars) {
+    protected static int getSectionFillIndexCount(int pillars) {
         return 2 * (pillars + 1);
     }
 
-    protected int getSectionOutlineIndexCount(int pillars) {
+    protected static int getSectionOutlineIndexCount(int pillars) {
         return 4 * (pillars + 1);
     }
 
-    protected int getSectionVertexCount(int pillars) {
+    protected static int getSectionVertexCount(int pillars) {
         return 2 * (pillars + 1);
     }
 
-    protected void makeSectionFillIndices(int pillars, int vertexPos, int indexPos, int[] dest) {
+    protected static void makeSectionFillIndices(int pillars, int vertexPos, int indexPos, int[] dest) {
         int p;
         int index, vertex;
 
@@ -478,7 +478,7 @@ public class Curtain extends AbstractAirspace {
         }
     }
 
-    protected void makeSectionOutlineIndices(int pillars, int vertexPos, int indexPos, int[] dest) {
+    protected static void makeSectionOutlineIndices(int pillars, int vertexPos, int indexPos, int[] dest) {
         int p;
         int index, vertex;
         index = indexPos;
@@ -552,7 +552,7 @@ public class Curtain extends AbstractAirspace {
         }
     }
 
-    protected void makeTessellatedLocations(Globe globe, List<LatLon> tessellatedLocations) {
+    protected void makeTessellatedLocations(Extent globe, Collection<LatLon> tessellatedLocations) {
         if (this.getLocations() == null)
             return;
 

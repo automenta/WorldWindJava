@@ -55,8 +55,8 @@ public class NmeaTrackPoint implements TrackPoint {
         }
 
         this.time = words[1];
-        this.latitude = this.parseLatitude(words[2], words[3]);
-        this.longitude = this.parseLongitude(words[4], words[5]);
+        this.latitude = NmeaTrackPoint.parseLatitude(words[2], words[3]);
+        this.longitude = NmeaTrackPoint.parseLongitude(words[4], words[5]);
         if (words.length >= 11)
             this.altitude = this.parseElevation(words[9], words[10]);
         if (words.length >= 13)
@@ -66,7 +66,7 @@ public class NmeaTrackPoint implements TrackPoint {
     private void doRMC(String[] words) {
     }
 
-    private double parseLatitude(String angle, String direction) {
+    private static double parseLatitude(String angle, String direction) {
         if (angle.isEmpty())
             return 0;
 
@@ -76,7 +76,7 @@ public class NmeaTrackPoint implements TrackPoint {
         return direction.equalsIgnoreCase("S") ? -degrees : degrees;
     }
 
-    private double parseLongitude(String angle, String direction) {
+    private static double parseLongitude(String angle, String direction) {
         if (angle.isEmpty())
             return 0;
 
@@ -86,14 +86,14 @@ public class NmeaTrackPoint implements TrackPoint {
         return direction.equalsIgnoreCase("W") ? -degrees : degrees;
     }
 
-    private double parseElevation(String height, String units) {
+    private static double parseElevation(String height, String units) {
         if (height.isEmpty())
             return 0;
 
         return Double.parseDouble(height) * unitsToMeters(units);
     }
 
-    private double unitsToMeters(String units) {
+    private static double unitsToMeters(String units) {
         // meters
 // feet
         // fathoms

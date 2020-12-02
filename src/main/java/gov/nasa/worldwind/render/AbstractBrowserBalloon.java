@@ -538,11 +538,11 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
 
         this.pickSupport.clearPickList();
         try {
-            this.pickSupport.beginPicking(dc);
+            PickSupport.beginPicking(dc);
             this.drawOrderedRenderable(dc, obb);
         }
         finally {
-            this.pickSupport.endPicking(dc);
+            PickSupport.endPicking(dc);
             this.pickSupport.resolvePick(dc, pickPoint, this.pickLayer);
         }
     }
@@ -675,7 +675,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         if (this.webViewContentSize != null && this.webViewContentSize.width != 0
             && this.webViewContentSize.height != 0) {
             // Convert the WebView's content size to a balloon frame size.
-            nativeSize = this.computeFrameRectForWebViewRect(activeAttrs,
+            nativeSize = AbstractBrowserBalloon.computeFrameRectForWebViewRect(activeAttrs,
                 new Rectangle(this.webViewContentSize)).getSize();
         }
         else {
@@ -699,7 +699,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    protected Point computeOffset(DrawContext dc, BalloonAttributes activeAttrs, int width, int height) {
+    protected static Point computeOffset(DrawContext dc, BalloonAttributes activeAttrs, int width, int height) {
         Point2D.Double offset = activeAttrs.getOffset().computeOffset(width, height, 1.0d, 1.0d);
         return new Point((int) offset.getX(), (int) offset.getY());
     }
@@ -788,7 +788,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         }
         else // Default to AVKey.SHAPE_NONE
         {
-            return gb.makeRectangle(x, y, obb.webViewRect.width, obb.webViewRect.height);
+            return GeometryBuilder.makeRectangle(x, y, obb.webViewRect.width, obb.webViewRect.height);
         }
     }
 
@@ -813,7 +813,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         }
         else // Default to AVKey.SHAPE_NONE
         {
-            return gb.makeEllipse(x, y, majorRadius, minorRadius, FRAME_GEOMETRY_ELLIPSE_SLICES);
+            return GeometryBuilder.makeEllipse(x, y, majorRadius, minorRadius, FRAME_GEOMETRY_ELLIPSE_SLICES);
         }
     }
 
@@ -1250,7 +1250,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         }
     }
 
-    protected Rectangle computeWebViewRectForFrameRect(BalloonAttributes activeAttrs, Rectangle frameRect) {
+    protected static Rectangle computeWebViewRectForFrameRect(BalloonAttributes activeAttrs, Rectangle frameRect) {
         // Compute the WebView rectangle as an inset of the balloon's screen rectangle, given the current inset values.
         Insets insets = activeAttrs.getInsets();
         return new Rectangle(
@@ -1260,7 +1260,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
             frameRect.height - (insets.bottom + insets.top));
     }
 
-    protected Rectangle computeFrameRectForWebViewRect(BalloonAttributes activeAttrs, Rectangle webViewRect) {
+    protected static Rectangle computeFrameRectForWebViewRect(BalloonAttributes activeAttrs, Rectangle webViewRect) {
         Insets insets = activeAttrs.getInsets();
         return new Rectangle(
             webViewRect.x - insets.left,

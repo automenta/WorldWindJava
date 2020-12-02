@@ -61,7 +61,7 @@ public class DXT3Compressor implements DXTCompressor {
         }
 
         ColorBlock4x4 colorBlock = new ColorBlock4x4();
-        ColorBlockExtractor colorBlockExtractor = this.getColorBlockExtractor(image);
+        ColorBlockExtractor colorBlockExtractor = DXT3Compressor.getColorBlockExtractor(image);
 
         BlockDXT3 dxt3Block = new BlockDXT3();
         BlockDXT3Compressor dxt3Compressor = new BlockDXT3Compressor();
@@ -85,7 +85,7 @@ public class DXT3Compressor implements DXTCompressor {
         }
     }
 
-    protected ColorBlockExtractor getColorBlockExtractor(BufferedImage image) {
+    protected static ColorBlockExtractor getColorBlockExtractor(BufferedImage image) {
         return new BasicColorBlockExtractor(image);
     }
 }

@@ -164,7 +164,7 @@ public class FramebufferTexture implements WWTexture {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         OGLStackHandler ogsh = new OGLStackHandler();
 
-        Matrix geoToCartesian = this.computeGeographicToCartesianTransform(this.sector);
+        Matrix geoToCartesian = FramebufferTexture.computeGeographicToCartesianTransform(this.sector);
 
         try {
             ogsh.pushAttrib(gl, GL2.GL_COLOR_BUFFER_BIT
@@ -217,7 +217,7 @@ public class FramebufferTexture implements WWTexture {
         return true;
     }
 
-    protected Matrix computeGeographicToCartesianTransform(Sector sector) {
+    protected static Matrix computeGeographicToCartesianTransform(Sector sector) {
         // Compute a transform that will map the geographic region defined by sector onto a cartesian region of width
         // and height 2.0 centered at the origin.
 
@@ -235,29 +235,29 @@ public class FramebufferTexture implements WWTexture {
         return transform;
     }
 
-    protected Vec4 transformToQuadCoordinates(Matrix geoToCartesian, LatLon latLon) {
+    protected static Vec4 transformToQuadCoordinates(Matrix geoToCartesian, LatLon latLon) {
         return new Vec4(latLon.getLongitude().degrees, latLon.getLatitude().degrees, 0.0).transformBy4(geoToCartesian);
     }
 
     protected void drawQuad(DrawContext dc, Matrix geoToCartesian, int slices, int stacks) {
-        Vec4 ll = this.transformToQuadCoordinates(geoToCartesian, this.corners.get(0));
-        Vec4 lr = this.transformToQuadCoordinates(geoToCartesian, this.corners.get(1));
-        Vec4 ur = this.transformToQuadCoordinates(geoToCartesian, this.corners.get(2));
-        Vec4 ul = this.transformToQuadCoordinates(geoToCartesian, this.corners.get(3));
+        Vec4 ll = FramebufferTexture.transformToQuadCoordinates(geoToCartesian, this.corners.get(0));
+        Vec4 lr = FramebufferTexture.transformToQuadCoordinates(geoToCartesian, this.corners.get(1));
+        Vec4 ur = FramebufferTexture.transformToQuadCoordinates(geoToCartesian, this.corners.get(2));
+        Vec4 ul = FramebufferTexture.transformToQuadCoordinates(geoToCartesian, this.corners.get(3));
         BilinearInterpolator interp = new BilinearInterpolator(ll, lr, ur, ul);
 
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glBegin(GL2.GL_TRIANGLE_STRIP);
         try {
-            this.drawQuad(dc, interp, slices, stacks);
+            FramebufferTexture.drawQuad(dc, interp, slices, stacks);
         }
         finally {
             gl.glEnd();
         }
     }
 
-    protected void drawQuad(DrawContext dc, BilinearInterpolator interp, int slices, int stacks) {
+    protected static void drawQuad(DrawContext dc, BilinearInterpolator interp, int slices, int stacks) {
         double[] compArray = new double[4];
         double du = 1.0f / slices;
         double dv = 1.0f / stacks;

@@ -235,14 +235,14 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
 
         this.pickSupport.clearPickList();
         try {
-            this.pickSupport.beginPicking(dc);
+            PickSupport.beginPicking(dc);
             this.pickOrderedRenderable(dc, this.pickSupport);
 
             if (this.isEnableBatchPicking())
                 this.pickBatched(dc, this.pickSupport);
         }
         finally {
-            this.pickSupport.endPicking(dc);
+            PickSupport.endPicking(dc);
             this.pickSupport.resolvePick(dc, pickPoint, this.pickLayer);
         }
     }
@@ -314,7 +314,7 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
         if (sectors == null)
             return null;
 
-        return this.computeExtent(dc.getGlobe(), dc.getVerticalExaggeration(), sectors);
+        return AbstractSurfaceObject.computeExtent(dc.getGlobe(), dc.getVerticalExaggeration(), sectors);
     }
 
     /**
@@ -329,7 +329,7 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
      * @param sectors              the sectors to bound.
      * @return an extent for the specified sectors on the specified Globe.
      */
-    protected Extent computeExtent(Globe globe, double verticalExaggeration, List<Sector> sectors) {
+    protected static Extent computeExtent(Globe globe, double verticalExaggeration, List<Sector> sectors) {
         // This should never happen, but we check anyway.
         if (sectors==null) {
             return null;
@@ -344,7 +344,7 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
             // This surface crosses the international dateline, and its bounding sectors are split along the dateline.
             // Return a box which contains the corners of the boxes bounding each sector.
             else {
-                List<Vec4> boxCorners = new ArrayList<>(n);
+                Collection<Vec4> boxCorners = new ArrayList<>(n);
 
                 for (Sector s : sectors) {
                     boxCorners.addAll(List.of(
@@ -606,7 +606,7 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
         // SurfaceObjectTileBuilder used to build the tiles because it acts as a cache key to the tiles and determines
         // when the tiles must be updated.
         if (this.pickTileBuilder == null)
-            this.pickTileBuilder = this.createPickTileBuilder();
+            this.pickTileBuilder = AbstractSurfaceObject.createPickTileBuilder();
 
         // Build the pickable representation of this surface object as a list of surface tiles. Set the DrawContext into
         // ordered picking mode while the surface object's pickable representation is built. During ordered picking mode
@@ -668,7 +668,7 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
      *
      * @return a SurfaceObjectTileBuilder used for building and drawing the surface object's pickable representation.
      */
-    protected SurfaceObjectTileBuilder createPickTileBuilder() {
+    protected static SurfaceObjectTileBuilder createPickTileBuilder() {
         return new SurfaceObjectTileBuilder(new Dimension(512, 512), GL2.GL_ALPHA8, false, false);
     }
 

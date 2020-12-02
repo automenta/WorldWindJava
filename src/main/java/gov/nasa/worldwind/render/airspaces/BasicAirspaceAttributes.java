@@ -170,7 +170,7 @@ public class BasicAirspaceAttributes extends BasicShapeAttributes implements Air
             throw new IllegalArgumentException(message);
         }
 
-        this.applyMaterial(dc, this.getInteriorMaterial(), this.getInteriorOpacity(), enableMaterial);
+        BasicAirspaceAttributes.applyMaterial(dc, this.getInteriorMaterial(), this.getInteriorOpacity(), enableMaterial);
     }
 
     /**
@@ -186,7 +186,7 @@ public class BasicAirspaceAttributes extends BasicShapeAttributes implements Air
             throw new IllegalArgumentException(message);
         }
 
-        this.applyMaterial(dc, this.getOutlineMaterial(), this.getOutlineOpacity(), enableMaterial);
+        BasicAirspaceAttributes.applyMaterial(dc, this.getOutlineMaterial(), this.getOutlineOpacity(), enableMaterial);
 
         GL gl = dc.getGL();
         gl.glLineWidth((float) this.getOutlineWidth());
@@ -213,7 +213,7 @@ public class BasicAirspaceAttributes extends BasicShapeAttributes implements Air
             this.setInteriorOpacity(d);
     }
 
-    protected void applyMaterial(DrawContext dc, Material material, double opacity, boolean enableMaterial) {
+    protected static void applyMaterial(DrawContext dc, Material material, double opacity, boolean enableMaterial) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         if (material != null) {

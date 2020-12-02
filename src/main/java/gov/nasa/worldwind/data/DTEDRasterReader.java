@@ -35,7 +35,7 @@ public class DTEDRasterReader extends AbstractDataRasterReader {
 
     @Override
     protected boolean doCanRead(Object source, AVList params) {
-        File file = this.getFile(source);
+        File file = DTEDRasterReader.getFile(source);
         if (null == file) {
             return false;
         }
@@ -72,7 +72,7 @@ public class DTEDRasterReader extends AbstractDataRasterReader {
 
     @Override
     protected DataRaster[] doRead(Object source, AVList params) throws IOException {
-        File file = this.getFile(source);
+        File file = DTEDRasterReader.getFile(source);
         if (null == file) {
             String message = Logging.getMessage("generic.UnrecognizedSourceTypeOrUnavailableSource", source);
             Logging.logger().severe(message);
@@ -90,7 +90,7 @@ public class DTEDRasterReader extends AbstractDataRasterReader {
 
     @Override
     protected void doReadMetadata(Object source, AVList params) throws IOException {
-        File file = this.getFile(source);
+        File file = DTEDRasterReader.getFile(source);
         if (null == file) {
             String message = Logging.getMessage("generic.UnrecognizedSourceTypeOrUnavailableSource", source);
             Logging.logger().severe(message);
@@ -103,7 +103,7 @@ public class DTEDRasterReader extends AbstractDataRasterReader {
         }
     }
 
-    protected File getFile(Object source) {
+    protected static File getFile(Object source) {
         if (null == source) {
             return null;
         }

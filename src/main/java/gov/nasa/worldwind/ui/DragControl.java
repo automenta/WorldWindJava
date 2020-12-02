@@ -48,7 +48,7 @@ public abstract class DragControl extends SubHotSpot {
      */
     @Override
     public void selected(SelectEvent event) {
-        if (event == null || this.isConsumed(event))
+        if (event == null || AbstractHotSpot.isConsumed(event))
             return;
 
         Point pickPoint = event.getPickPoint();

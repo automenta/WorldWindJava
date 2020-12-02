@@ -128,7 +128,7 @@ public class SurfaceMultiPolygon extends AbstractSurfaceShape {
             return;
 
         for (int i = 0; i < this.boundaries.getContourCount(); i++) {
-            List<LatLon> newLocations = new ArrayList<>();
+            Collection<LatLon> newLocations = new ArrayList<>();
 
             for (LatLon ll : this.boundaries.getContour(i)) {
                 Angle heading = LatLon.greatCircleAzimuth(oldReferencePosition, ll);
@@ -180,7 +180,7 @@ public class SurfaceMultiPolygon extends AbstractSurfaceShape {
         if (this.boundaries.getContourCount() == 0)
             return null;
 
-        List<LatLon> combinedBoundaries = new ArrayList<>();
+        Collection<LatLon> combinedBoundaries = new ArrayList<>();
 
         for (int i = 0; i < this.boundaries.getContourCount(); i++) {
             for (LatLon location : this.boundaries.getContour(i)) {

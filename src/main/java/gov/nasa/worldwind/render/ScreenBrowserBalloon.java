@@ -95,7 +95,7 @@ public class ScreenBrowserBalloon extends AbstractBrowserBalloon implements Scre
         Dimension size = this.computeSize(dc, activeAttrs);
 
         // Cache the screen offset computed from the active attributes.
-        this.screenOffset = this.computeOffset(dc, activeAttrs, size.width, size.height);
+        this.screenOffset = AbstractBrowserBalloon.computeOffset(dc, activeAttrs, size.width, size.height);
         // Compute the screen rectangle given the current screen point, the current screen offset, and the current
         // screen size. Translate the screen y from AWT coordinates (origin at upper left) to GL coordinates (origin at
         // bottom left). Note: The screen offset denotes how to place the screen reference point relative to the frame.
@@ -112,7 +112,7 @@ public class ScreenBrowserBalloon extends AbstractBrowserBalloon implements Scre
         // balloon's screen extent.
         obb.screenPickExtent = this.computeFramePickRect(obb.screenExtent);
         // Compute the WebView rectangle as an inset of the screen rectangle, given the current inset values.
-        obb.webViewRect = this.computeWebViewRectForFrameRect(activeAttrs, obb.screenRect);
+        obb.webViewRect = AbstractBrowserBalloon.computeWebViewRectForFrameRect(activeAttrs, obb.screenRect);
         // The screen balloon has no eye distance; assign it to zero.
         obb.eyeDistance = 0;
     }

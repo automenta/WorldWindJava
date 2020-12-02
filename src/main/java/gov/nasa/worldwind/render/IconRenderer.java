@@ -279,11 +279,11 @@ public class IconRenderer {
             dc.addOrderedRenderable(new OrderedIcon(icon, iconPoint, layer, eyeDistance, horizon));
 
             if (icon.isShowToolTip())
-                this.addToolTip(dc, icon, iconPoint);
+                IconRenderer.addToolTip(dc, icon, iconPoint);
         }
     }
 
-    protected void addToolTip(DrawContext dc, WWIcon icon, Vec4 iconPoint) {
+    protected static void addToolTip(DrawContext dc, WWIcon icon, Vec4 iconPoint) {
         if (icon.getToolTipFont() == null && icon.getToolTipText() == null)
             return;
 
@@ -331,7 +331,7 @@ public class IconRenderer {
         this.oglStackHandler.pushTexture(gl);
 
         if (dc.isPickingMode()) {
-            this.pickSupport.beginPicking(dc);
+            PickSupport.beginPicking(dc);
 
             // Set up to replace the non-transparent texture colors with the single pick color.
             gl.glEnable(GL.GL_TEXTURE_2D);
@@ -348,7 +348,7 @@ public class IconRenderer {
 
     protected void endDrawIcons(DrawContext dc) {
         if (dc.isPickingMode())
-            this.pickSupport.endPicking(dc);
+            PickSupport.endPicking(dc);
 
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
@@ -479,7 +479,7 @@ public class IconRenderer {
         }
 
         if (icon.getBackgroundTexture() != null)
-            this.applyBackground(dc, icon, screenPoint, width, height, pedestalSpacing, pedestalScale);
+            IconRenderer.applyBackground(dc, icon, screenPoint, width, height, pedestalSpacing, pedestalScale);
 
         if (icon.getImageTexture().bind(dc)) {
             TextureCoords texCoords = icon.getImageTexture().getTexCoords();
@@ -504,7 +504,7 @@ public class IconRenderer {
         return screenPoint;
     }
 
-    protected void applyBackground(DrawContext dc, WWIcon icon, Vec4 screenPoint, double width, double height,
+    protected static void applyBackground(DrawContext dc, WWIcon icon, Vec4 screenPoint, double width, double height,
         double pedestalSpacing, double pedestalScale) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
@@ -577,7 +577,7 @@ public class IconRenderer {
      * @param icon the WWIcon to record feedback information for.
      * @return true to record feedback; false otherwise.
      */
-    protected boolean isFeedbackEnabled(DrawContext dc, WWIcon icon) {
+    protected static boolean isFeedbackEnabled(DrawContext dc, WWIcon icon) {
         if (dc.isPickingMode())
             return false;
 
@@ -595,10 +595,10 @@ public class IconRenderer {
      * @param screenRect the icon's bounding rectangle in screen coordinates.
      */
     protected void recordFeedback(DrawContext dc, WWIcon icon, Vec4 modelPoint, Rectangle screenRect) {
-        if (!this.isFeedbackEnabled(dc, icon))
+        if (!IconRenderer.isFeedbackEnabled(dc, icon))
             return;
 
-        this.doRecordFeedback(dc, icon, modelPoint, screenRect);
+        IconRenderer.doRecordFeedback(dc, icon, modelPoint, screenRect);
     }
 
     //**************************************************************//
@@ -614,7 +614,7 @@ public class IconRenderer {
      * @param screenRect the icon's bounding rectangle in screen coordinates.
      */
     @SuppressWarnings("UnusedDeclaration")
-    protected void doRecordFeedback(DrawContext dc, AVList icon, Vec4 modelPoint, Rectangle screenRect) {
+    protected static void doRecordFeedback(DrawContext dc, AVList icon, Vec4 modelPoint, Rectangle screenRect) {
         icon.set(AVKey.FEEDBACK_REFERENCE_POINT, modelPoint);
         icon.set(AVKey.FEEDBACK_SCREEN_BOUNDS, screenRect);
     }

@@ -179,7 +179,7 @@ public abstract class AbstractIconRetriever implements IconRetriever {
      * @param dest Image to draw into.
      * @return {@code dest} BufferedImage.
      */
-    protected BufferedImage drawImage(BufferedImage src, BufferedImage dest) {
+    protected static BufferedImage drawImage(BufferedImage src, BufferedImage dest) {
         if (src == null) {
             String msg = Logging.getMessage("nullValue.SourceIsNull");
             Logging.logger().severe(msg);
@@ -213,7 +213,7 @@ public abstract class AbstractIconRetriever implements IconRetriever {
      * @param color Color to multiply by.
      * @see #replaceColor(BufferedImage, Color)
      */
-    protected void multiply(BufferedImage image, Color color) {
+    protected static void multiply(BufferedImage image, Color color) {
         if (image == null) {
             String msg = Logging.getMessage("nullValue.ImageIsNull");
             Logging.logger().severe(msg);
@@ -273,7 +273,7 @@ public abstract class AbstractIconRetriever implements IconRetriever {
      * @param color Color to apply to to each pixel.
      * @see #multiply(BufferedImage, Color)
      */
-    protected void replaceColor(BufferedImage image, Color color) {
+    protected static void replaceColor(BufferedImage image, Color color) {
         if (image == null) {
             String msg = Logging.getMessage("nullValue.ImageIsNull");
             Logging.logger().severe(msg);

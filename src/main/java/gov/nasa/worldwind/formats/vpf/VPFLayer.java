@@ -30,8 +30,8 @@ public class VPFLayer extends AbstractLayer {
     protected final int maxTilesToDraw = 4;
     protected final boolean drawTileExtents = false;
     protected final List<VPFSymbol> symbols = new ArrayList<>();
-    protected final List<GeographicText> textObjects = new ArrayList<>();
-    protected final List<Renderable> renderableObjects = new ArrayList<>();
+    protected final Collection<GeographicText> textObjects = new ArrayList<>();
+    protected final Collection<Renderable> renderableObjects = new ArrayList<>();
     // Renderers
     protected final GeographicTextRenderer textRenderer = new GeographicTextRenderer();
     protected final VPFSymbolSupport symbolSupport = new VPFSymbolSupport(GeoSymConstants.GEOSYM, "image/png");
@@ -180,7 +180,7 @@ public class VPFLayer extends AbstractLayer {
             lr.assembleSymbols(dc, this.drawDistance, this.maxTilesToDraw);
         }
 
-        this.sortSymbols(this.symbols);
+        VPFLayer.sortSymbols(this.symbols);
 
         // Dispatch renderable according to its class
         for (VPFSymbol symbol : this.symbols) {
@@ -194,7 +194,7 @@ public class VPFLayer extends AbstractLayer {
         this.requestQ.clear();
     }
 
-    protected void sortSymbols(List<VPFSymbol> list) {
+    protected static void sortSymbols(List<VPFSymbol> list) {
         list.sort(new VPFSymbolComparator());
     }
 
@@ -217,7 +217,7 @@ public class VPFLayer extends AbstractLayer {
     protected static class VPFLibraryRenderable {
         protected final VPFLayer layer;
         protected final VPFLibrary library;
-        protected final List<VPFCoverageRenderable> coverages = new ArrayList<>();
+        protected final Collection<VPFCoverageRenderable> coverages = new ArrayList<>();
         protected final List<VPFTile> currentTiles = new ArrayList<>();
         protected boolean enabled = false;
         protected VPFCoverageRenderable referenceCoverage;
@@ -363,7 +363,7 @@ public class VPFLayer extends AbstractLayer {
     protected static class VPFSymbolCollection implements Disposable {
         public static final VPFSymbolCollection EMPTY_SYMBOL_COLLECTION = new VPFSymbolCollection(null);
 
-        protected final List<VPFSymbol> symbols = new ArrayList<>();
+        protected final Collection<VPFSymbol> symbols = new ArrayList<>();
 
         public VPFSymbolCollection(Collection<? extends VPFSymbol> symbols) {
             if (symbols != null)

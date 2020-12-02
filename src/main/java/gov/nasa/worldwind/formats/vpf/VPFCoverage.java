@@ -192,7 +192,7 @@ public class VPFCoverage extends AVListImpl {
             throw new IllegalArgumentException(message);
         }
 
-        List<VPFRelation> rels = new ArrayList<>();
+        Collection<VPFRelation> rels = new ArrayList<>();
 
         for (VPFRecord row : this.featureClassSchemaTable) {
             Object o = row.getValue("feature_class");

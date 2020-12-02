@@ -221,7 +221,7 @@ public class PlaceNameService {
         this.backgroundColor = backgroundColor;
     }
 
-    private Color suggestBackgroundColor(Color foreground) {
+    private static Color suggestBackgroundColor(Color foreground) {
         float[] compArray = new float[4];
         Color.RGBtoHSB(foreground.getRed(), foreground.getGreen(), foreground.getBlue(), compArray);
         int colorValue = compArray[2] < 0.5f ? 255 : 0;

@@ -139,7 +139,7 @@ public class FileSearchPanelDescriptor extends DefaultPanelDescriptor {
         }
     }
 
-    private List<File> searchSelectedFile(File fileToSearch, FileFilter fileFilter) {
+    private static List<File> searchSelectedFile(File fileToSearch, FileFilter fileFilter) {
         if (Thread.interrupted())
             return null;
 
@@ -157,7 +157,7 @@ public class FileSearchPanelDescriptor extends DefaultPanelDescriptor {
         return fileList;
     }
 
-    private List<FileSet> makeFileSetList(Iterable<File> fileList) {
+    private static List<FileSet> makeFileSetList(Iterable<File> fileList) {
         List<FileSet> result = null;
         if (fileList != null) {
             Map<String, FileSet> map = new HashMap<>();
@@ -185,7 +185,7 @@ public class FileSearchPanelDescriptor extends DefaultPanelDescriptor {
         return result;
     }
 
-    private void makeDefaultSelections(List<FileSet> fileSetList) {
+    private static void makeDefaultSelections(List<FileSet> fileSetList) {
         // If only one FileSet is available, select it.
         if (fileSetList != null
             && fileSetList.size() == 1
@@ -194,7 +194,7 @@ public class FileSearchPanelDescriptor extends DefaultPanelDescriptor {
         }
     }
 
-    private void makeTitles(Iterable<FileSet> fileSetList) {
+    private static void makeTitles(Iterable<FileSet> fileSetList) {
         if (fileSetList != null) {
             for (FileSet set : fileSetList) {
                 makeTitle(set);
@@ -202,7 +202,7 @@ public class FileSearchPanelDescriptor extends DefaultPanelDescriptor {
         }
     }
 
-    private void makeTitle(FileSet set) {
+    private static void makeTitle(FileSet set) {
         if (set != null && set.getIdentifier() != null) {
             String id = set.getIdentifier();
             RPFDataSeries ds;
@@ -225,7 +225,7 @@ public class FileSearchPanelDescriptor extends DefaultPanelDescriptor {
         }
     }
 
-    private void sortFileSetList(List<FileSet> fileSetList) {
+    private static void sortFileSetList(List<FileSet> fileSetList) {
         Comparator<FileSet> comparator = (o1, o2) -> {
             // Don't care about ordering in this case.
             if (o1 == null || o2 == null)

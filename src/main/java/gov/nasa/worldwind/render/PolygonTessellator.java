@@ -119,20 +119,20 @@ public class PolygonTessellator {
         // documentation we can assume that the tessellator is providing interiorIndices because it's configured with the
         // edgeFlag callback.
         int index = (Integer) vertexData;
-        this.interiorIndices = this.addIndex(this.interiorIndices, index);
+        this.interiorIndices = PolygonTessellator.addIndex(this.interiorIndices, index);
 
         // Accumulate outline indices appropriate for use as GL_boundaryIndices. The tessBoundaryEdge flag indicates whether or
         // not the triangle edge starting with the current vertex is a boundary edge.
         if ((this.boundaryIndices.position() % 2) == 1) {
-            this.boundaryIndices = this.addIndex(this.boundaryIndices, index);
+            this.boundaryIndices = PolygonTessellator.addIndex(this.boundaryIndices, index);
         }
         if (this.isBoundaryEdge) {
-            this.boundaryIndices = this.addIndex(this.boundaryIndices, index);
+            this.boundaryIndices = PolygonTessellator.addIndex(this.boundaryIndices, index);
 
             int interiorCount = this.interiorIndices.position();
             if (interiorCount > 0 && (interiorCount % 3) == 0) {
                 int firstTriIndex = this.interiorIndices.get(interiorCount - 3);
-                this.boundaryIndices = this.addIndex(this.boundaryIndices, firstTriIndex);
+                this.boundaryIndices = PolygonTessellator.addIndex(this.boundaryIndices, firstTriIndex);
             }
         }
     }
@@ -145,7 +145,7 @@ public class PolygonTessellator {
         // TODO: Implement the combine callback to handle complex polygons.
     }
 
-    protected IntBuffer addIndex(IntBuffer buffer, int index) {
+    protected static IntBuffer addIndex(IntBuffer buffer, int index) {
         if (!buffer.hasRemaining()) {
             int newCapacity = buffer.capacity() + buffer.capacity() / 2; // increase capacity by 50%
             IntBuffer newBuffer = IntBuffer.allocate(newCapacity);

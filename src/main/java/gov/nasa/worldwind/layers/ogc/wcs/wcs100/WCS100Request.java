@@ -43,7 +43,7 @@ public class WCS100Request extends AbstractXMLEventParser {
 
     protected void doParseEventContent(XMLEventParserContext ctx, XMLEvent event, Object... args)
         throws XMLStreamException {
-        String requestName = this.isRequestName(ctx, event);
+        String requestName = WCS100Request.isRequestName(ctx, event);
         if (requestName != null) {
             XMLEventParser parser = this.allocate(ctx, event);
             if (parser != null) {
@@ -59,7 +59,7 @@ public class WCS100Request extends AbstractXMLEventParser {
         }
     }
 
-    protected String isRequestName(XMLEventParserContext ctx, XMLEvent event) {
+    protected static String isRequestName(XMLEventParserContext ctx, XMLEvent event) {
         for (String requestName : rNames) {
             if (ctx.isStartElement(event, requestName))
                 return requestName;

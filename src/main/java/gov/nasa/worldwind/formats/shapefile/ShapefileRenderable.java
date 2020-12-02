@@ -144,7 +144,7 @@ public abstract class ShapefileRenderable extends WWObjectImpl
         // Intentionally left empty. May be overridden by subclass.
     }
 
-    protected ShapeAttributes determineActiveAttributes(ShapefileRenderable.Record record) {
+    protected static ShapeAttributes determineActiveAttributes(ShapefileRenderable.Record record) {
         if (record.highlighted) {
             return record.highlightAttrs != null ? record.highlightAttrs : defaultHighlightAttributes;
         }

@@ -126,7 +126,7 @@ public class BasicElevationModelBulkDownloader extends BulkRetrievalThread {
                     continue;
 
                 int div = this.computeRegionDivisions(this.sector, levelNumber, MAX_TILE_COUNT_PER_REGION);
-                Iterator<Sector> regionsIterator = this.getRegionIterator(this.sector, div);
+                Iterator<Sector> regionsIterator = BasicElevationModelBulkDownloader.getRegionIterator(this.sector, div);
 
                 Sector region;
                 while (regionsIterator.hasNext()) {
@@ -436,7 +436,7 @@ public class BasicElevationModelBulkDownloader extends BulkRetrievalThread {
         return (int) Math.ceil(Math.sqrt((float) tileCount / maxCount));
     }
 
-    protected Sector[] computeRandomRegions(Sector sector, int div, int numRegions) {
+    protected static Sector[] computeRandomRegions(Sector sector, int div, int numRegions) {
         if (numRegions > div * div)
             return sector.subdivide(div);
 
@@ -465,7 +465,7 @@ public class BasicElevationModelBulkDownloader extends BulkRetrievalThread {
         return regions.toArray(new Sector[numRegions]);
     }
 
-    protected Iterator<Sector> getRegionIterator(final Sector sector, final int div) {
+    protected static Iterator<Sector> getRegionIterator(final Sector sector, final int div) {
         final double dLat = sector.getDeltaLat().degrees / div;
         final double dLon = sector.getDeltaLon().degrees / div;
 
@@ -508,7 +508,7 @@ public class BasicElevationModelBulkDownloader extends BulkRetrievalThread {
 
         URL url = this.fileStore.findFile(tile.getPath(), false);
 
-        return url != null && !this.elevationModel.isFileExpired(tile, url, this.fileStore);
+        return url != null && !BasicElevationModel.isFileExpired(tile, url, this.fileStore);
     }
 
     protected class BulkDownloadPostProcessor extends BasicElevationModel.DownloadPostProcessor {

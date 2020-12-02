@@ -60,7 +60,7 @@ public class ShapefileRecordPolygon extends ShapefileRecordPolyline {
     @Override
     public void exportAsKML(XMLStreamWriter xmlWriter) throws XMLStreamException {
         Iterable<? extends LatLon> outerBoundary = null;
-        List<Iterable<? extends LatLon>> innerBoundaries = new ArrayList<>();
+        Collection<Iterable<? extends LatLon>> innerBoundaries = new ArrayList<>();
 
         // If the polygon has a "height" attribute, export as an extruded polygon.
         Double height = ShapefileUtils.extractHeightAttribute(this);

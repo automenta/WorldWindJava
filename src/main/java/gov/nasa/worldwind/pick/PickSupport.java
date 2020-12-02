@@ -94,7 +94,7 @@ public class PickSupport {
         if (!this.hasPickableObjects()) // avoid reading the current GL color when no pickable objects are registered
             return null;
 
-        int colorCode = this.getTopColor(dc, pickPoint);
+        int colorCode = PickSupport.getTopColor(dc, pickPoint);
         if (colorCode == 0) // getTopColor returns 0 if the pick point selects the clear color.
             return null;
 
@@ -208,13 +208,13 @@ public class PickSupport {
      * @param pickPoint the point to return a color for, in AWT screen coordinates.
      * @return the RGB color corresponding to the specified point.
      */
-    public int getTopColor(DrawContext dc, Point pickPoint) {
+    public static int getTopColor(DrawContext dc, Point pickPoint) {
         // This method's implementation has been moved into DrawContext.getPickColor in order to consolidate this logic
         // into one place. We've left this method here to avoid removing an interface that applications may rely on.
         return pickPoint != null ? dc.getPickColorAtPoint(pickPoint) : 0;
     }
 
-    public void beginPicking(DrawContext dc) {
+    public static void beginPicking(DrawContext dc) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glPushAttrib(GL2.GL_ENABLE_BIT | GL2.GL_CURRENT_BIT);
@@ -229,7 +229,7 @@ public class PickSupport {
             gl.glDisable(GL.GL_DEPTH_TEST);
     }
 
-    public void endPicking(DrawContext dc) {
+    public static void endPicking(DrawContext dc) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glPopAttrib();
 

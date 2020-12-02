@@ -388,13 +388,13 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
         }
 
         OGLStackHandler stackHandler = new OGLStackHandler();
-        this.beginDraw(dc, stackHandler);
+        AbstractAnnotation.beginDraw(dc, stackHandler);
         try {
             this.applyScreenTransform(dc, x, y, width, height, scale);
             this.draw(dc, width, height, opacity, pickPosition);
         }
         finally {
-            this.endDraw(dc, stackHandler);
+            AbstractAnnotation.endDraw(dc, stackHandler);
         }
     }
 
@@ -497,12 +497,12 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
         this.drawText(dc, width, height, opacity, pickPosition);
     }
 
-    protected void beginDraw(DrawContext dc, OGLStackHandler stackHandler) {
+    protected static void beginDraw(DrawContext dc, OGLStackHandler stackHandler) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         stackHandler.pushModelviewIdentity(gl);
     }
 
-    protected void endDraw(DrawContext dc, OGLStackHandler stackHandler) {
+    protected static void endDraw(DrawContext dc, OGLStackHandler stackHandler) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         stackHandler.pop(gl);
     }
@@ -516,7 +516,7 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
             this.bindPickableObject(dc, pickPosition);
         }
 
-        this.applyColor(dc, this.getAttributes().getBackgroundColor(), opacity, true);
+        AbstractAnnotation.applyColor(dc, this.getAttributes().getBackgroundColor(), opacity, true);
         this.drawCallout(dc, GL.GL_TRIANGLE_FAN, width, height, false);
     }
 
@@ -552,7 +552,7 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
                 // Apply texture transform state. This must be done before the texture state is applied, because
                 // applying the texture's internal transform potentially loads the texture, and sets the texture
                 // parameter's we need to override in applyBackgroundTextureState().
-                this.transformImageCoordsToBackgroundImageCoords(dc, texture);
+                AbstractAnnotation.transformImageCoordsToBackgroundImageCoords(dc, texture);
                 this.transformBackgroundImageCoordsToAnnotationCoords(dc, width, height, texture);
 
                 // Apply texture parameter and environment state.
@@ -591,7 +591,7 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
 
         // Apply blending and color state.
         double imageOpacity = opacity * this.getAttributes().getImageOpacity();
-        this.applyColor(dc, Color.WHITE, imageOpacity, true);
+        AbstractAnnotation.applyColor(dc, Color.WHITE, imageOpacity, true);
     }
 
     /**
@@ -605,7 +605,7 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
      * @param texture the texture to transform from standard GL image coordinates to Annotation background image
      *                coordinates.
      */
-    protected void transformImageCoordsToBackgroundImageCoords(DrawContext dc, WWTexture texture) {
+    protected static void transformImageCoordsToBackgroundImageCoords(DrawContext dc, WWTexture texture) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         // Apply texture's internal transform state. This ensures we start with standard GL coordinates: the origin is
@@ -692,7 +692,7 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
         gl.glLineWidth((float) this.getAttributes().getBorderWidth());
 
         // Apply blending and color state.
-        this.applyColor(dc, this.getAttributes().getBorderColor(), opacity, false);
+        AbstractAnnotation.applyColor(dc, this.getAttributes().getBorderColor(), opacity, false);
 
         this.drawCallout(dc, GL.GL_LINE_STRIP, width, height, false);
     }
@@ -716,8 +716,8 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
             if (dc.getPickPoint() == null)
                 return;
 
-            Rectangle screenInsetBounds = this.transformByModelview(dc, insetBounds);
-            Point glPickPoint = this.glPointFromAWTPoint(dc, dc.getPickPoint());
+            Rectangle screenInsetBounds = AbstractAnnotation.transformByModelview(dc, insetBounds);
+            Point glPickPoint = AbstractAnnotation.glPointFromAWTPoint(dc, dc.getPickPoint());
             if (!screenInsetBounds.contains(glPickPoint))
                 return;
         }
@@ -770,8 +770,8 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
         AnnotationAttributes attribs = this.getAttributes();
         MultiLineTextRenderer mltr = this.getMultiLineTextRenderer(dc, attribs.getFont(), attribs.getTextAlign());
 
-        Color textColor = this.modulateColorOpacity(attribs.getTextColor(), opacity);
-        Color backColor = this.modulateColorOpacity(attribs.getBackgroundColor(), opacity);
+        Color textColor = AbstractAnnotation.modulateColorOpacity(attribs.getTextColor(), opacity);
+        Color backColor = AbstractAnnotation.modulateColorOpacity(attribs.getBackgroundColor(), opacity);
         mltr.setTextColor(textColor);
         mltr.setBackColor(backColor);
 
@@ -795,8 +795,8 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
         AnnotationAttributes attribs = this.getAttributes();
         MultiLineTextRenderer mltr = this.getMultiLineTextRenderer(dc, attribs.getFont(), attribs.getTextAlign());
 
-        Color textColor = this.modulateColorOpacity(attribs.getTextColor(), opacity);
-        Color backColor = this.modulateColorOpacity(attribs.getBackgroundColor(), opacity);
+        Color textColor = AbstractAnnotation.modulateColorOpacity(attribs.getTextColor(), opacity);
+        Color backColor = AbstractAnnotation.modulateColorOpacity(attribs.getBackgroundColor(), opacity);
         mltr.setTextColor(textColor);
         mltr.setBackColor(backColor);
 
@@ -891,7 +891,7 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
         }
     }
 
-    protected void applyColor(DrawContext dc, Color color, double opacity, boolean premultiplyColors) {
+    protected static void applyColor(DrawContext dc, Color color, double opacity, boolean premultiplyColors) {
         if (dc.isPickingMode())
             return;
 
@@ -903,7 +903,7 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
         OGLUtil.applyColor(gl, color, finalOpacity, premultiplyColors);
     }
 
-    protected Color modulateColorOpacity(Color color, double opacity) {
+    protected static Color modulateColorOpacity(Color color, double opacity) {
         float[] compArray = new float[4];
         color.getRGBComponents(compArray);
         compArray[3] *= (float) opacity;
@@ -911,7 +911,7 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
         return new Color(compArray[0], compArray[1], compArray[2], compArray[3]);
     }
 
-    protected Rectangle transformByModelview(DrawContext dc, Rectangle rectangle) {
+    protected static Rectangle transformByModelview(DrawContext dc, Rectangle rectangle) {
         double[] compArray = new double[16];
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glGetDoublev(GL2.GL_MODELVIEW_MATRIX, compArray, 0);
@@ -925,7 +925,7 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
         return new Rectangle((int) origin.x, (int) origin.y, (int) size.x, (int) size.y);
     }
 
-    protected Point glPointFromAWTPoint(DrawContext dc, Point awtPoint) {
+    protected static Point glPointFromAWTPoint(DrawContext dc, Point awtPoint) {
         if (dc.getView() == null || dc.getView().getViewport() == null)
             return null;
 
@@ -937,12 +937,12 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
     //********************  Text Utilities  ************************//
     //**************************************************************//
 
-    protected TextRenderer getTextRenderer(DrawContext dc, Font font) {
+    protected static TextRenderer getTextRenderer(DrawContext dc, Font font) {
         return OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(), font);
     }
 
     protected MultiLineTextRenderer getMultiLineTextRenderer(DrawContext dc, Font font, String align) {
-        TextRenderer tr = this.getTextRenderer(dc, font);
+        TextRenderer tr = AbstractAnnotation.getTextRenderer(dc, font);
 
         MultiLineTextRenderer mltr = new MultiLineTextRenderer(tr);
         // Tighten lines together a bit
@@ -1080,7 +1080,7 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
         return new Dimension(width, height);
     }
 
-    protected Rectangle computeBoundingRectangle(Rectangle rect, int px, int py) {
+    protected static Rectangle computeBoundingRectangle(Rectangle rect, int px, int py) {
         if (rect.contains(px, py))
             return rect;
 

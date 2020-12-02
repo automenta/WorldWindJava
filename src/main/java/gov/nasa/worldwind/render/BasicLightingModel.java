@@ -118,7 +118,7 @@ public class BasicLightingModel implements LightingModel {
         applyStandardLightDirection(gl, GL2.GL_LIGHT0, this.lightDirection);
     }
 
-    protected void applyStandardLightModel(GL2 gl) {
+    protected static void applyStandardLightModel(GL2 gl) {
         float[] modelAmbient = new float[4];
         modelAmbient[0] = 1.0f;
         modelAmbient[1] = 1.0f;
@@ -131,11 +131,11 @@ public class BasicLightingModel implements LightingModel {
         gl.glLightModeli(GL2.GL_LIGHT_MODEL_TWO_SIDE, GL2.GL_TRUE);
     }
 
-    protected void applyStandardShadeModel(GLLightingFunc gl) {
+    protected static void applyStandardShadeModel(GLLightingFunc gl) {
         gl.glShadeModel(GL2.GL_SMOOTH);
     }
 
-    protected void applyStandardLightDirection(GL2 gl, int light, Vec4 direction) {
+    protected static void applyStandardLightDirection(GL2 gl, int light, Vec4 direction) {
         // Setup the light as a directional light coming from the viewpoint. This requires two state changes
         // (a) Set the light position as direction x, y, z, and set the w-component to 0, which tells OpenGL this is
         //     a directional light.

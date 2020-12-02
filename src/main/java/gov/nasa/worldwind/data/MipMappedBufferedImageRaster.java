@@ -88,7 +88,7 @@ public class MipMappedBufferedImageRaster extends BufferedImageRaster {
     }
 
     protected BufferedImageRaster chooseRasterForCanvas(DataRaster canvas) {
-        int level = this.computeMipmapLevel(
+        int level = MipMappedBufferedImageRaster.computeMipmapLevel(
             this.getWidth(), this.getHeight(), this.getSector(),
             canvas.getWidth(), canvas.getHeight(), canvas.getSector());
 
@@ -98,7 +98,7 @@ public class MipMappedBufferedImageRaster extends BufferedImageRaster {
         return this.levelRasters[level];
     }
 
-    protected int computeMipmapLevel(int sourceWidth, int sourceHeight, Sector sourceSector,
+    protected static int computeMipmapLevel(int sourceWidth, int sourceHeight, Sector sourceSector,
         int destWidth, int destHeight, Sector destSector) {
         double sy = ((double) sourceHeight / destHeight)
             * (destSector.getDeltaLatDegrees() / sourceSector.getDeltaLatDegrees());

@@ -303,7 +303,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
 
     @Override
     protected void doRender(DrawContext dc) {
-        this.referencePoint = this.computeReferencePoint(dc);
+        this.referencePoint = PlaceNameLayer.computeReferencePoint(dc);
 
         int serviceCount = this.placeNameServiceSet.getServiceCount();
         for (int i = 0; i < serviceCount; i++) {
@@ -315,7 +315,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
             double maxDistSquared = placeNameService.getMaxDisplayDistance() * placeNameService.getMaxDisplayDistance();
 
             if (isSectorVisible(dc, placeNameService.getMaskingSector(), minDistSquared, maxDistSquared)) {
-                List<Tile> baseTiles = new ArrayList<>();
+                Collection<Tile> baseTiles = new ArrayList<>();
                 NavigationTile navTile = this.navTiles.get(i);
                 //drill down into tiles to find bottom level navTiles visible
                 List<NavigationTile> list = navTile.navTilesVisible(dc, minDistSquared, maxDistSquared);
@@ -340,7 +340,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
         this.requestQ.clear();
     }
 
-    protected Vec4 computeReferencePoint(DrawContext dc) {
+    protected static Vec4 computeReferencePoint(DrawContext dc) {
         if (dc.getViewportCenterPosition() != null)
             return dc.getGlobe().computePointFromPosition(dc.getViewportCenterPosition());
 
@@ -767,7 +767,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
         protected Iterable<GeographicText> makeIterable(DrawContext dc) {
             //get dispay dist for this service for use in label annealing
             double maxDisplayDistance = this.getPlaceNameService().getMaxDisplayDistance();
-            List<GeographicText> list = new ArrayList<>();
+            Collection<GeographicText> list = new ArrayList<>();
             for (int i = 0; i < this.numEntries; i++) {
                 CharSequence str = getText(i);
                 Position pos = getPosition(i);
@@ -884,8 +884,8 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
         }
 
         protected void endEntry() {
-            double lat = this.parseDouble(this.latBuffer);
-            double lon = this.parseDouble(this.lonBuffer);
+            double lat = GMLPlaceNameSAXHandler.parseDouble(this.latBuffer);
+            double lon = GMLPlaceNameSAXHandler.parseDouble(this.lonBuffer);
             int numLatLon = 2 * this.numEntries;
             this.latlonArray = this.append(this.latlonArray, numLatLon, lat);
             numLatLon++;
@@ -897,7 +897,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
             this.numEntries++;
         }
 
-        protected double parseDouble(CharSequence sb) {
+        protected static double parseDouble(CharSequence sb) {
             double value = 0;
             try {
                 value = Double.parseDouble(sb.toString());
@@ -911,12 +911,12 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
 
         protected int[] append(int[] array, int index, int value) {
             if (index >= array.length)
-                array = this.resizeArray(array);
+                array = GMLPlaceNameSAXHandler.resizeArray(array);
             array[index] = value;
             return array;
         }
 
-        protected int[] resizeArray(int[] oldArray) {
+        protected static int[] resizeArray(int[] oldArray) {
             int newSize = 2 * oldArray.length;
             int[] newArray = new int[newSize];
             System.arraycopy(oldArray, 0, newArray, 0, oldArray.length);
@@ -925,12 +925,12 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
 
         protected double[] append(double[] array, int index, double value) {
             if (index >= array.length)
-                array = this.resizeArray(array);
+                array = GMLPlaceNameSAXHandler.resizeArray(array);
             array[index] = value;
             return array;
         }
 
-        protected double[] resizeArray(double[] oldArray) {
+        protected static double[] resizeArray(double[] oldArray) {
             int newSize = 2 * oldArray.length;
             double[] newArray = new double[newSize];
             System.arraycopy(oldArray, 0, newArray, 0, oldArray.length);

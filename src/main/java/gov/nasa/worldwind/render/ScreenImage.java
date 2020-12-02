@@ -579,7 +579,7 @@ public class ScreenImage extends WWObjectImpl implements Renderable, Exportable 
             }
             else {
                 this.pickSupport.clearPickList();
-                this.pickSupport.beginPicking(dc);
+                PickSupport.beginPicking(dc);
                 Color color = dc.getUniquePickColor();
                 int colorCode = color.getRGB();
                 this.pickSupport.addPickableObject(colorCode, this.delegateOwner != null ? this.delegateOwner : this,
@@ -587,7 +587,7 @@ public class ScreenImage extends WWObjectImpl implements Renderable, Exportable 
                 gl.glColor3ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
                 gl.glScaled(xscale * this.originalImageWidth, yscale * this.originalImageHeight, 1.0d);
                 dc.drawUnitQuad();
-                this.pickSupport.endPicking(dc);
+                PickSupport.endPicking(dc);
                 this.pickSupport.resolvePick(dc, dc.getPickPoint(), this.pickLayer);
             }
         }

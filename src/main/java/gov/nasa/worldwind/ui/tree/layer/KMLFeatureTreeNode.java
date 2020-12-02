@@ -156,7 +156,7 @@ public class KMLFeatureTreeNode extends BasicTreeNode {
     public String getText() {
         String name = feature.getName();
 
-        return name != null ? this.stripHtmlTags(name) : feature.getClass().getSimpleName();
+        return name != null ? KMLFeatureTreeNode.stripHtmlTags(name) : feature.getClass().getSimpleName();
     }
 
     @Override
@@ -188,7 +188,7 @@ public class KMLFeatureTreeNode extends BasicTreeNode {
             text = this.getFeature().getDescription();
         }
 
-        return EntityMap.replaceAll(this.stripHtmlTags(text));
+        return EntityMap.replaceAll(KMLFeatureTreeNode.stripHtmlTags(text));
     }
 
     /**
@@ -198,7 +198,7 @@ public class KMLFeatureTreeNode extends BasicTreeNode {
      * @return The input string with HTML tags removed, and runs of whitespace collapsed to a single space. Returns
      * {@code null} if {@code input} is {@code null}.
      */
-    protected String stripHtmlTags(CharSequence input) {
+    protected static String stripHtmlTags(CharSequence input) {
         if (input == null)
             return null;
 

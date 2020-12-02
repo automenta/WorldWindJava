@@ -67,7 +67,7 @@ public class DeclutterableText implements Declutterable {
     public Rectangle2D getBounds(DrawContext dc) {
         Font font = this.getText().getFont();
         if (font == null)
-            font = this.textRenderer.getDefaultFont();
+            font = DeclutteringTextRenderer.getDefaultFont();
 
         if (this.textBounds != null && this.boundsFont == font)
             return this.textBounds;

@@ -332,7 +332,7 @@ public class Size {
      * @param containerDimension The viewport dimension.
      * @return Size in pixels
      */
-    protected double computeSize(double size, String units, double containerDimension) {
+    protected static double computeSize(double size, String units, double containerDimension) {
         if (AVKey.FRACTION.equals(units))
             return size * containerDimension;
         else  // Default to pixel
@@ -427,7 +427,7 @@ public class Size {
      * @param string the legacy size mode <code>String</code> to convert to a size mode.
      * @return a size mode constant, or the input string if <code>string</code> is not a legacy size mode.
      */
-    protected String convertLegacyModeString(String string) {
+    protected static String convertLegacyModeString(String string) {
         if ("NativeDimension".equals(string))
             return NATIVE_DIMENSION;
         else if ("MaintainAspectRatio".equals(string))

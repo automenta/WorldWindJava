@@ -283,10 +283,10 @@ public class ScalebarLayer extends AbstractLayer {
         // Capture the current reference position and pixel size and create an ordered renderable to defer drawing.
 
         Position referencePosition = dc.getViewportCenterPosition();
-        dc.addOrderedRenderable(new OrderedImage(referencePosition, this.computePixelSize(dc, referencePosition)));
+        dc.addOrderedRenderable(new OrderedImage(referencePosition, ScalebarLayer.computePixelSize(dc, referencePosition)));
     }
 
-    protected double computePixelSize(DrawContext dc, Position referencePosition) {
+    protected static double computePixelSize(DrawContext dc, Position referencePosition) {
         if (referencePosition == null)
             return -1;
 
@@ -377,12 +377,12 @@ public class ScalebarLayer extends AbstractLayer {
                         gl.glColor4d(colorRGB[0], colorRGB[1], colorRGB[2], backColor.getAlpha() / 255.0d
                             * this.getOpacity());
                         gl.glTranslated((width - divWidth) / 2, 0.0d, 0.0d);
-                        this.drawScale(dc, divWidth, height);
+                        ScalebarLayer.drawScale(dc, divWidth, height);
 
                         colorRGB = this.color.getRGBColorComponents(null);
                         gl.glColor4d(colorRGB[0], colorRGB[1], colorRGB[2], this.getOpacity());
                         gl.glTranslated(-1.0d / scale, 1.0d / scale, 0.0d);
-                        this.drawScale(dc, divWidth, height);
+                        ScalebarLayer.drawScale(dc, divWidth, height);
 
                         // Draw label
                         String label = String.format("%.0f ", divSize) + unitLabel;
@@ -395,7 +395,7 @@ public class ScalebarLayer extends AbstractLayer {
                     else {
                         // Picking
                         this.pickSupport.clearPickList();
-                        this.pickSupport.beginPicking(dc);
+                        PickSupport.beginPicking(dc);
                         // Draw unique color across the map
                         Color color = dc.getUniquePickColor();
                         int colorCode = color.getRGB();
@@ -403,9 +403,9 @@ public class ScalebarLayer extends AbstractLayer {
                         this.pickSupport.addPickableObject(colorCode, this, orderedImage.referencePosition, false);
                         gl.glColor3ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
                         gl.glTranslated((width - divWidth) / 2, 0.0d, 0.0d);
-                        this.drawRectangle(dc, divWidth, height);
+                        ScalebarLayer.drawRectangle(dc, divWidth, height);
                         // Done picking
-                        this.pickSupport.endPicking(dc);
+                        PickSupport.endPicking(dc);
                         this.pickSupport.resolvePick(dc, dc.getPickPoint(), this);
                     }
                 }
@@ -425,7 +425,7 @@ public class ScalebarLayer extends AbstractLayer {
     }
 
     // Draw scale rectangle
-    private void drawRectangle(DrawContext dc, double width, double height) {
+    private static void drawRectangle(DrawContext dc, double width, double height) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glBegin(GL2.GL_POLYGON);
         gl.glVertex3d(0, height, 0);
@@ -437,7 +437,7 @@ public class ScalebarLayer extends AbstractLayer {
     }
 
     // Draw scale graphic
-    private void drawScale(DrawContext dc, double width, double height) {
+    private static void drawScale(DrawContext dc, double width, double height) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glBegin(GL2.GL_LINE_STRIP);
         gl.glVertex3d(0, height, 0);

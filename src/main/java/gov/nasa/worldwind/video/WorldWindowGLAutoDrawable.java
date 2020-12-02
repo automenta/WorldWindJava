@@ -161,15 +161,15 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
         return this.drawable.getContext();
     }
 
-    protected boolean isGLContextCompatible(GLContext context) {
+    protected static boolean isGLContextCompatible(GLContext context) {
         return context != null && context.isGL2();
     }
 
-    protected String[] getRequiredOglFunctions() {
+    protected static String[] getRequiredOglFunctions() {
         return new String[] {"glActiveTexture", "glClientActiveTexture"};
     }
 
-    protected String[] getRequiredOglExtensions() {
+    protected static String[] getRequiredOglExtensions() {
         return new String[] {};
     }
 
@@ -179,20 +179,20 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
      * @param glAutoDrawable the drawable
      */
     public void init(GLAutoDrawable glAutoDrawable) {
-        if (!this.isGLContextCompatible(glAutoDrawable.getContext())) {
+        if (!WorldWindowGLAutoDrawable.isGLContextCompatible(glAutoDrawable.getContext())) {
             String msg = Logging.getMessage("WorldWindowGLAutoDrawable.IncompatibleGLContext",
                 glAutoDrawable.getContext());
             this.callRenderingExceptionListeners(new WWAbsentRequirementException(msg));
         }
 
-        for (String funcName : this.getRequiredOglFunctions()) {
+        for (String funcName : WorldWindowGLAutoDrawable.getRequiredOglFunctions()) {
             if (!glAutoDrawable.getGL().isFunctionAvailable(funcName)) {
                 //noinspection ThrowableInstanceNeverThrown
                 this.callRenderingExceptionListeners(new WWAbsentRequirementException(funcName + " not available"));
             }
         }
 
-        for (String extName : this.getRequiredOglExtensions()) {
+        for (String extName : WorldWindowGLAutoDrawable.getRequiredOglExtensions()) {
             if (!glAutoDrawable.getGL().isExtensionAvailable(extName)) {
                 //noinspection ThrowableInstanceNeverThrown
                 this.callRenderingExceptionListeners(new WWAbsentRequirementException(extName + " not available"));
@@ -302,7 +302,7 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
                     Logging.getMessage("WorldWindowGLAutoDrawable.ExceptionDuringGLEventListenerDisplay"), e);
             }
 
-            this.doSwapBuffers(this.drawable);
+            WorldWindowGLAutoDrawable.doSwapBuffers(this.drawable);
 
             SceneController sc = this.sceneControl();
 //            if (sc == null) {
@@ -398,7 +398,7 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
      *
      * @param drawable the window's associated drawable.
      */
-    protected void doSwapBuffers(GLDrawable drawable) {
+    protected static void doSwapBuffers(GLDrawable drawable) {
         drawable.swapBuffers();
     }
 

@@ -269,7 +269,7 @@ public class ColladaRoot extends ColladaAbstractObject
      */
     protected void initialize() throws IOException {
         this.eventStream = new BufferedInputStream(this.getColladaDoc().getInputStream());
-        this.eventReader = this.createReader(this.eventStream);
+        this.eventReader = ColladaRoot.createReader(this.eventStream);
         if (this.eventReader == null) {
             throw new WWRuntimeException(Logging.getMessage("XML.UnableToOpenDocument", this.getColladaDoc()));
         }
@@ -464,7 +464,7 @@ public class ColladaRoot extends ColladaAbstractObject
      * @throws IllegalArgumentException if the address is null.
      */
     public Object resolveReference(String link) {
-        return this.getColladaDoc().resolveReference(this, link, false);
+        return XMLDoc.resolveReference(this, link, false);
     }
 
     /**
@@ -568,14 +568,14 @@ public class ColladaRoot extends ColladaAbstractObject
                 }
             }
 
-            if (!this.canParseContentType(contentType)) {
+            if (!ColladaRoot.canParseContentType(contentType)) {
                 return url;
             }
 
             // If the file is a COLLADA document, attempt to open it. We can't open it as a File with createAndParse
             // because the ColladaRoot that will be created needs to have the remote address in order to resolve any
             // relative references within it.
-            ColladaRoot refRoot = this.parseCachedColladaFile(url, linkBase);
+            ColladaRoot refRoot = ColladaRoot.parseCachedColladaFile(url, linkBase);
 
             // Add the parsed file to the session cache so it doesn't have to be parsed again.
             WorldWind.getSessionCache().put(linkBase, refRoot);
@@ -602,7 +602,7 @@ public class ColladaRoot extends ColladaAbstractObject
      * @param mimeType Type to test. May be null.
      * @return {@code true} if {@code mimeType} can be parsed as COLLADA.
      */
-    protected boolean canParseContentType(String mimeType) {
+    protected static boolean canParseContentType(String mimeType) {
         return ColladaConstants.COLLADA_MIME_TYPE.equals(mimeType)
             || "text/plain".equals(mimeType) || "text/xml".equals(mimeType);
     }
@@ -616,7 +616,7 @@ public class ColladaRoot extends ColladaAbstractObject
      * @throws IOException        if an I/O error occurs during opening and parsing.
      * @throws XMLStreamException if a server parsing error is encountered.
      */
-    protected ColladaRoot parseCachedColladaFile(URL url, String linkBase)
+    protected static ColladaRoot parseCachedColladaFile(URL url, String linkBase)
         throws IOException, XMLStreamException {
         XMLDoc colladaDoc;
 
@@ -642,7 +642,7 @@ public class ColladaRoot extends ColladaAbstractObject
      *                  WWXML#openEventReader(Object)}.
      * @return a new event reader, or null if the source type cannot be determined.
      */
-    protected XMLEventReader createReader(Object docSource) {
+    protected static XMLEventReader createReader(Object docSource) {
         return WWXML.openEventReader(docSource, true);
     }
 

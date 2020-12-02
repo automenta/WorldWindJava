@@ -394,7 +394,7 @@ public class BlockDXT1Compressor {
 //            throw new IllegalArgumentException(message);
 //        }
 
-        this.chooseMinMaxColors(colorBlock, attributes, this.minColor, this.maxColor);
+        BlockDXT1Compressor.chooseMinMaxColors(colorBlock, attributes, this.minColor, this.maxColor);
         int color0 = short565FromColor32(this.maxColor);
         int color1 = short565FromColor32(this.minColor);
 
@@ -441,7 +441,7 @@ public class BlockDXT1Compressor {
             throw new IllegalArgumentException(message);
         }
 
-        this.chooseMinMaxColors(colorBlock, attributes, this.minColor, this.maxColor);
+        BlockDXT1Compressor.chooseMinMaxColors(colorBlock, attributes, this.minColor, this.maxColor);
         int color0 = short565FromColor32(this.maxColor);
         int color1 = short565FromColor32(this.minColor);
 
@@ -459,7 +459,7 @@ public class BlockDXT1Compressor {
         dxtBlock.colorIndexMask = computePaletteIndices3(colorBlock, attributes, this.palette);
     }
 
-    protected void chooseMinMaxColors(ColorBlock4x4 block, DXTCompressionAttributes attributes,
+    protected static void chooseMinMaxColors(ColorBlock4x4 block, DXTCompressionAttributes attributes,
         Color32 minColor, Color32 maxColor) {
         //noinspection StringEquality
         if (attributes.getColorBlockCompressionType() == DXTCompressionAttributes.COLOR_BLOCK_COMPRESSION_BBOX) {

@@ -74,7 +74,7 @@ public class FlatGlobe extends EllipsoidalGlobe implements Globe2D {
         return new FlatStateKey(dc);
     }
 
-    private final FlatStateKey stateKey = new FlatStateKey();
+    private final GlobeStateKey stateKey = new FlatStateKey();
 
     public final GlobeStateKey getGlobeStateKey() {
         return stateKey;

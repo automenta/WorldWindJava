@@ -73,7 +73,7 @@ public class GeoSymTableHeader {
         return Collections.unmodifiableCollection(this.columnMap.values());
     }
 
-    public void setColumns(Collection<? extends GeoSymColumn> collection) {
+    public void setColumns(Iterable<? extends GeoSymColumn> collection) {
         this.removeAllColumns();
 
         if (collection != null)

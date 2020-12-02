@@ -33,7 +33,7 @@ public class HTTPFileUpload {
     protected static final String TWO_HYPHENS = "--";
     protected static final String BOUNDARY = "*********NASA_World_Wind_HTTP_File_Upload_Separator**********";
     protected final URL url;
-    protected final List<FileInfo> filesToUpload = new ArrayList<>();
+    protected final Collection<FileInfo> filesToUpload = new ArrayList<>();
     protected final AVList requestProperties = new AVListImpl();
     private final PropertyChangeSupport propertyChangeSupport;
     protected int maxBufferSize = 1024 * 1024; // default is 1M
@@ -221,7 +221,7 @@ public class HTTPFileUpload {
 
             this.writeProperties(dos, params);
 
-            this.writeContentDisposition(dos, uploadName);
+            HTTPFileUpload.writeContentDisposition(dos, uploadName);
 
             // create a buffer of maximum size
             fis = new FileInputStream(fileToUpload);
@@ -243,19 +243,19 @@ public class HTTPFileUpload {
                 bytesRead = fis.read(buffer, 0, bufferSize);
             }
 
-            this.writeContentSeparator(dos);
+            HTTPFileUpload.writeContentSeparator(dos);
             dos.flush();
 
-            this.handleResponse(conn);
+            HTTPFileUpload.handleResponse(conn);
         }
         finally {
             WWIO.closeStream(fis, null);
             WWIO.closeStream(dos, null);
-            this.disconnect(conn, this.url.toString());
+            HTTPFileUpload.disconnect(conn, this.url.toString());
         }
     }
 
-    protected void handleResponse(HttpURLConnection conn) throws IOException {
+    protected static void handleResponse(HttpURLConnection conn) throws IOException {
         if (null != conn) {
             int code = conn.getResponseCode();
             String message = conn.getResponseMessage();
@@ -270,7 +270,7 @@ public class HTTPFileUpload {
         }
     }
 
-    protected void disconnect(HttpURLConnection conn, String name) {
+    protected static void disconnect(HttpURLConnection conn, String name) {
         if (null != conn) {
             try {
                 conn.disconnect();
@@ -321,7 +321,7 @@ public class HTTPFileUpload {
 
             this.writeProperties(dos, params);
 
-            this.writeContentDisposition(dos, fileName);
+            HTTPFileUpload.writeContentDisposition(dos, fileName);
 
             int bytesAvailable = bufferToUpload.rewind().remaining();
 
@@ -339,14 +339,14 @@ public class HTTPFileUpload {
                 this.notifyProgress();
             }
 
-            this.writeContentSeparator(dos);
+            HTTPFileUpload.writeContentSeparator(dos);
             dos.flush();
 
-            this.handleResponse(conn);
+            HTTPFileUpload.handleResponse(conn);
         }
         finally {
             WWIO.closeStream(dos, null);
-            this.disconnect(conn, this.url.toString());
+            HTTPFileUpload.disconnect(conn, this.url.toString());
         }
     }
 
@@ -383,30 +383,30 @@ public class HTTPFileUpload {
 
             this.writeProperties(dos, params);
 
-            this.writeContentDisposition(dos, fileName);
+            HTTPFileUpload.writeContentDisposition(dos, fileName);
 
             byte[] buffer = stringToUpload.getBytes(StandardCharsets.UTF_8);
             dos.write(buffer, 0, buffer.length);
             this.totalBytesUploaded += stringToUpload.length();
             this.notifyProgress();
 
-            this.writeContentSeparator(dos);
+            HTTPFileUpload.writeContentSeparator(dos);
             dos.flush();
 
-            this.handleResponse(conn);
+            HTTPFileUpload.handleResponse(conn);
         }
         finally {
             WWIO.closeStream(dos, null);
-            this.disconnect(conn, this.url.toString());
+            HTTPFileUpload.disconnect(conn, this.url.toString());
         }
     }
 
-    protected void writeProperties(DataOutputStream dos, AVList params) throws IOException {
+    protected void writeProperties(DataOutput dos, AVList params) throws IOException {
         if (null != dos && null != params) {
             for (Map.Entry<String, Object> param : params.getEntries()) {
                 String name = param.getKey();
                 String value = AVListImpl.getStringValue(params, name, "");
-                this.writeContentDisposition(dos, name, value);
+                HTTPFileUpload.writeContentDisposition(dos, name, value);
             }
         }
     }
@@ -426,7 +426,7 @@ public class HTTPFileUpload {
         }
     }
 
-    protected void writeContentDisposition(DataOutput dos, String filename) throws IOException {
+    protected static void writeContentDisposition(DataOutput dos, String filename) throws IOException {
         if (null != dos) {
             dos.writeBytes(TWO_HYPHENS + BOUNDARY + CR_LF);
             dos.writeBytes("Content-Disposition: attachment; filename=\"" + filename + "\"" + CR_LF);
@@ -435,7 +435,7 @@ public class HTTPFileUpload {
         }
     }
 
-    protected void writeContentDisposition(DataOutput dos, String paramName, String paramValue)
+    protected static void writeContentDisposition(DataOutput dos, String paramName, String paramValue)
         throws IOException {
         if (null != dos && null != paramName) {
             dos.writeBytes(TWO_HYPHENS + BOUNDARY + CR_LF);
@@ -444,7 +444,7 @@ public class HTTPFileUpload {
         }
     }
 
-    protected void writeContentSeparator(DataOutput dos) throws IOException {
+    protected static void writeContentSeparator(DataOutput dos) throws IOException {
         if (null != dos) {
             // send multipart form data necesssary after file data...
             dos.writeBytes(CR_LF + TWO_HYPHENS + BOUNDARY + TWO_HYPHENS + CR_LF);

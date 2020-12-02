@@ -156,7 +156,7 @@ public class SurfacePolyline extends AbstractSurfaceShape implements Exportable 
         if (this.locations == null)
             return;
 
-        List<LatLon> newLocations = new ArrayList<>();
+        Collection<LatLon> newLocations = new ArrayList<>();
 
         for (LatLon ll : this.locations) {
             Angle heading = LatLon.greatCircleAzimuth(oldReferencePosition, ll);

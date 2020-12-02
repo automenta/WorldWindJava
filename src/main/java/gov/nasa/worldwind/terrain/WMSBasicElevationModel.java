@@ -328,7 +328,7 @@ public class WMSBasicElevationModel extends BasicElevationModel {
         ElevationCompositionTile tile = new ElevationCompositionTile(sector, this.getLevels().getLastLevel(),
             tileWidth, latlons.size() / tileWidth);
 
-        this.downloadElevations(tile);
+        WMSBasicElevationModel.downloadElevations(tile);
         tile.setElevations(this.readElevations(tile.getFile().toURI().toURL()), this);
 
         for (int i = 0; i < latlons.size(); i++) {
@@ -345,7 +345,7 @@ public class WMSBasicElevationModel extends BasicElevationModel {
         }
     }
 
-    protected void downloadElevations(ElevationCompositionTile tile) throws Exception {
+    protected static void downloadElevations(ElevationCompositionTile tile) throws Exception {
         URL url = tile.getResourceURL();
 
         Retriever retriever = new HTTPRetriever(url, new CompositionRetrievalPostProcessor(tile.getFile()));

@@ -242,7 +242,7 @@ public class TrackRenderer implements Disposable {
         Vec4 cameraPosition = dc.getView().getEyePoint();
 
         if (dc.isPickingMode()) {
-            this.pickSupport.beginPicking(dc);
+            PickSupport.beginPicking(dc);
 
             gl.glPushAttrib(GL2.GL_ENABLE_BIT | GL2.GL_CURRENT_BIT | GL2.GL_TRANSFORM_BIT);
             gl.glDisable(GL.GL_TEXTURE_2D);
@@ -282,7 +282,7 @@ public class TrackRenderer implements Disposable {
         gl.glPopMatrix();
 
         if (dc.isPickingMode()) {
-            this.pickSupport.endPicking(dc);
+            PickSupport.endPicking(dc);
         }
         else {
             gl.glDisable(GL2.GL_LIGHT1);

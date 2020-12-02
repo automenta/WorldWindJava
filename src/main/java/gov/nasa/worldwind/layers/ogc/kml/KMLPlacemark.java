@@ -189,7 +189,7 @@ public class KMLPlacemark extends KMLAbstractFeature implements KMLMutable {
         if (shape.getOuterBoundary().getCoordinates() == null)
             return null;
 
-        if ("clampToGround".equals(shape.getAltitudeMode()) || !this.isValidAltitudeMode(shape.getAltitudeMode()))
+        if ("clampToGround".equals(shape.getAltitudeMode()) || !KMLPlacemark.isValidAltitudeMode(shape.getAltitudeMode()))
             return new KMLSurfacePolygonImpl(tc, this, geom);
         else if (shape.isExtrude())
             return new KMLExtrudedPolygonImpl(tc, this, geom);
@@ -203,7 +203,7 @@ public class KMLPlacemark extends KMLAbstractFeature implements KMLMutable {
      * @param altMode Altitude mode test.
      * @return True if {@code altMode} is one of "clampToGround", "relativeToGround", or "absolute".
      */
-    protected boolean isValidAltitudeMode(String altMode) {
+    protected static boolean isValidAltitudeMode(String altMode) {
         return "clampToGround".equals(altMode)
             || "relativeToGround".equals(altMode)
             || "absolute".equals(altMode);

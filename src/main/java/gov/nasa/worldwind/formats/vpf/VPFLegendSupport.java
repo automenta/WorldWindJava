@@ -61,7 +61,7 @@ public class VPFLegendSupport {
     }
 
     protected void drawLineLegend(VPFSymbolAttributes attr, Graphics2D g2, int width, int height, int margin) {
-        g2.setStroke(this.getStroke(attr));
+        g2.setStroke(VPFLegendSupport.getStroke(attr));
         g2.setPaint(attr.getOutlineMaterial().getDiffuse());
         g2.drawLine(margin, height / 2, width - margin, height / 2);
     }
@@ -74,13 +74,13 @@ public class VPFLegendSupport {
         }
         // Outline if any
         if (attr.isDrawOutline()) {
-            g2.setStroke(this.getStroke(attr));
+            g2.setStroke(VPFLegendSupport.getStroke(attr));
             g2.setPaint(attr.getOutlineMaterial().getDiffuse());
             g2.drawRect(margin, margin, width - margin * 2, height - margin * 2);
         }
     }
 
-    protected Stroke getStroke(VPFSymbolAttributes attr) {
+    protected static Stroke getStroke(VPFSymbolAttributes attr) {
         BasicStroke stroke;
         float lineWidth = (float) attr.getOutlineWidth() + 0.5f; // Exagerate a bit line width
         if (attr.getOutlineStippleFactor() > 0) {

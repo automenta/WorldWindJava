@@ -243,7 +243,7 @@ public class Orbit extends AbstractAirspace {
         LatLon[] center = this.getAdjustedLocations(globe);
         double radius = this.getWidth() / 2.0;
         GeometryBuilder gb = this.getGeometryBuilder();
-        LatLon[] locations = gb.makeLongDiskLocations(globe, center[0], center[1], 0, radius,
+        LatLon[] locations = GeometryBuilder.makeLongDiskLocations(globe, center[0], center[1], 0, radius,
             MINIMAL_GEOMETRY_ARC_SLICES, MINIMAL_GEOMETRY_LENGTH_SLICES, MINIMAL_GEOMETRY_LOOPS);
 
         List<Vec4> points = new ArrayList<>();
@@ -313,7 +313,7 @@ public class Orbit extends AbstractAirspace {
         LatLon[] center = this.getAdjustedLocations(dc.getGlobe());
         double radius = this.getWidth() / 2.0;
         GeometryBuilder gb = this.getGeometryBuilder();
-        LatLon[] locations = gb.makeLongCylinderLocations(dc.getGlobe(), center[0], center[1], radius, this.arcSlices,
+        LatLon[] locations = GeometryBuilder.makeLongCylinderLocations(dc.getGlobe(), center[0], center[1], radius, this.arcSlices,
             this.lengthSlices);
         ((SurfacePolygon) shape).setOuterBoundary(Arrays.asList(locations));
     }
@@ -525,11 +525,11 @@ public class Orbit extends AbstractAirspace {
 
         Object cacheKey = new Geometry.CacheKey(this.getClass(), "LongCylinder.Indices", arcSlices, lengthSlices,
             stacks, orientation);
-        Geometry indexGeom = (Geometry) this.getGeometryCache().getObject(cacheKey);
+        Geometry indexGeom = (Geometry) AbstractAirspace.getGeometryCache().getObject(cacheKey);
         if (indexGeom == null) {
             indexGeom = new Geometry();
             this.makeLongCylinderIndices(arcSlices, lengthSlices, stacks, orientation, indexGeom);
-            this.getGeometryCache().add(cacheKey, indexGeom);
+            AbstractAirspace.getGeometryCache().add(cacheKey, indexGeom);
         }
 
         this.drawGeometry(dc, indexGeom, vertexGeom);
@@ -547,11 +547,11 @@ public class Orbit extends AbstractAirspace {
 
         Object cacheKey = new Geometry.CacheKey(this.getClass(), "LongCylinder.OutlineIndices", arcSlices, lengthSlices,
             stacks, orientation);
-        Geometry outlineIndexGeom = (Geometry) this.getGeometryCache().getObject(cacheKey);
+        Geometry outlineIndexGeom = (Geometry) AbstractAirspace.getGeometryCache().getObject(cacheKey);
         if (outlineIndexGeom == null) {
             outlineIndexGeom = new Geometry();
             this.makeLongCylinderOutlineIndices(arcSlices, lengthSlices, stacks, orientation, outlineIndexGeom);
-            this.getGeometryCache().add(cacheKey, outlineIndexGeom);
+            AbstractAirspace.getGeometryCache().add(cacheKey, outlineIndexGeom);
         }
 
         this.drawGeometry(dc, outlineIndexGeom, vertexGeom);
@@ -563,14 +563,14 @@ public class Orbit extends AbstractAirspace {
         Object cacheKey = new Geometry.CacheKey(dc.getGlobe(), this.getClass(), "LongCylinder.Vertices",
             center1, center2, radius, altitudes[0], altitudes[1], terrainConformant[0], terrainConformant[1], arcSlices,
             lengthSlices, stacks, orientation, referenceCenter);
-        Geometry vertexGeom = (Geometry) this.getGeometryCache().getObject(cacheKey);
-        if (vertexGeom == null || this.isExpired(dc, vertexGeom)) {
+        Geometry vertexGeom = (Geometry) AbstractAirspace.getGeometryCache().getObject(cacheKey);
+        if (vertexGeom == null || AbstractAirspace.isExpired(dc, vertexGeom)) {
             if (vertexGeom == null)
                 vertexGeom = new Geometry();
             this.makeLongCylinder(dc, center1, center2, radius, altitudes, terrainConformant, arcSlices, lengthSlices,
                 stacks, orientation, referenceCenter, vertexGeom);
             this.updateExpiryCriteria(dc, vertexGeom);
-            this.getGeometryCache().add(cacheKey, vertexGeom);
+            AbstractAirspace.getGeometryCache().add(cacheKey, vertexGeom);
         }
 
         return vertexGeom;
@@ -582,7 +582,7 @@ public class Orbit extends AbstractAirspace {
         GeometryBuilder gb = this.getGeometryBuilder();
         gb.setOrientation(orientation);
 
-        int count = gb.getLongCylinderVertexCount(arcSlices, lengthSlices, stacks);
+        int count = GeometryBuilder.getLongCylinderVertexCount(arcSlices, lengthSlices, stacks);
         float[] verts = new float[3 * count];
         float[] norms = new float[3 * count];
         gb.makeLongCylinderVertices(dc.getTerrain(), center1, center2, radius, altitudes, terrainConformant, arcSlices,
@@ -597,8 +597,8 @@ public class Orbit extends AbstractAirspace {
         GeometryBuilder gb = this.getGeometryBuilder();
         gb.setOrientation(orientation);
 
-        int mode = gb.getLongCylinderDrawMode();
-        int count = gb.getLongCylinderIndexCount(arcSlices, lengthSlices, stacks);
+        int mode = GeometryBuilder.getLongCylinderDrawMode();
+        int count = GeometryBuilder.getLongCylinderIndexCount(arcSlices, lengthSlices, stacks);
         int[] indices = new int[count];
         gb.makeLongCylinderIndices(arcSlices, lengthSlices, stacks, indices);
 
@@ -610,8 +610,8 @@ public class Orbit extends AbstractAirspace {
         GeometryBuilder gb = this.getGeometryBuilder();
         gb.setOrientation(orientation);
 
-        int mode = gb.getLongCylinderOutlineDrawMode();
-        int count = gb.getLongCylinderOutlineIndexCount(arcSlices, lengthSlices, stacks);
+        int mode = GeometryBuilder.getLongCylinderOutlineDrawMode();
+        int count = GeometryBuilder.getLongCylinderOutlineIndexCount(arcSlices, lengthSlices, stacks);
         int[] indices = new int[count];
         gb.makeLongCylinderOutlineIndices(arcSlices, lengthSlices, stacks, indices);
 
@@ -623,23 +623,23 @@ public class Orbit extends AbstractAirspace {
         Object cacheKey = new Geometry.CacheKey(dc.getGlobe(), this.getClass(), "LongDisk.Vertices", center1, center2,
             radii[0], radii[1], altitude, terrainConformant, arcSlices, lengthSlices, loops, orientation,
             referenceCenter);
-        Geometry vertexGeom = (Geometry) this.getGeometryCache().getObject(cacheKey);
-        if (vertexGeom == null || this.isExpired(dc, vertexGeom)) {
+        Geometry vertexGeom = (Geometry) AbstractAirspace.getGeometryCache().getObject(cacheKey);
+        if (vertexGeom == null || AbstractAirspace.isExpired(dc, vertexGeom)) {
             if (vertexGeom == null)
                 vertexGeom = new Geometry();
             this.makeLongDisk(dc, center1, center2, radii, altitude, terrainConformant, arcSlices, lengthSlices, loops,
                 orientation, referenceCenter, vertexGeom);
             this.updateExpiryCriteria(dc, vertexGeom);
-            this.getGeometryCache().add(cacheKey, vertexGeom);
+            AbstractAirspace.getGeometryCache().add(cacheKey, vertexGeom);
         }
 
         cacheKey = new Geometry.CacheKey(this.getClass(), "LongDisk.Indices", arcSlices, lengthSlices, loops,
             orientation);
-        Geometry indexGeom = (Geometry) this.getGeometryCache().getObject(cacheKey);
+        Geometry indexGeom = (Geometry) AbstractAirspace.getGeometryCache().getObject(cacheKey);
         if (indexGeom == null) {
             indexGeom = new Geometry();
             this.makeLongDiskIndices(arcSlices, lengthSlices, loops, orientation, indexGeom);
-            this.getGeometryCache().add(cacheKey, indexGeom);
+            AbstractAirspace.getGeometryCache().add(cacheKey, indexGeom);
         }
 
         this.drawGeometry(dc, indexGeom, vertexGeom);
@@ -655,7 +655,7 @@ public class Orbit extends AbstractAirspace {
         GeometryBuilder gb = this.getGeometryBuilder();
         gb.setOrientation(orientation);
 
-        int count = gb.getLongDiskVertexCount(arcSlices, lengthSlices, loops);
+        int count = GeometryBuilder.getLongDiskVertexCount(arcSlices, lengthSlices, loops);
         float[] verts = new float[3 * count];
         float[] norms = new float[3 * count];
         gb.makeLongDiskVertices(dc.getTerrain(), center1, center2, radii[0], radii[1], altitude, terrainConformant,
@@ -671,8 +671,8 @@ public class Orbit extends AbstractAirspace {
         GeometryBuilder gb = this.getGeometryBuilder();
         gb.setOrientation(orientation);
 
-        int mode = gb.getLongDiskDrawMode();
-        int count = gb.getLongDiskIndexCount(arcSlices, lengthSlices, loops);
+        int mode = GeometryBuilder.getLongDiskDrawMode();
+        int count = GeometryBuilder.getLongDiskIndexCount(arcSlices, lengthSlices, loops);
         int[] indices = new int[count];
         gb.makeLongDiskIndices(arcSlices, lengthSlices, loops, indices);
 

@@ -315,7 +315,7 @@ public abstract class Capabilities {
         return l != null ? l.element : null;
     }
 
-    public Long getLayerLatestLastUpdateTime(Capabilities caps, String[] layerNames) {
+    public static Long getLayerLatestLastUpdateTime(Capabilities caps, String[] layerNames) {
         if (caps == null) {
             String message = Logging.getMessage("nullValue.WMSCapabilities");
             Logging.logger().severe(message);
@@ -355,7 +355,7 @@ public abstract class Capabilities {
 
     // ********* Document Items ********* //
 
-    public Double[] getLayerExtremeElevations(Capabilities caps, String[] layerNames) {
+    public static Double[] getLayerExtremeElevations(Capabilities caps, String[] layerNames) {
         if (caps == null) {
             String message = Logging.getMessage("nullValue.WMSCapabilities");
             Logging.logger().severe(message);
@@ -580,7 +580,7 @@ public abstract class Capabilities {
             return null;
 
         ArrayList<Element> uniqueDims = new ArrayList<>();
-        List<String> dimNames = new ArrayList<>();
+        Collection<String> dimNames = new ArrayList<>();
         for (Element e : dims) {
             // Filter out dimensions with same name.
             // Keep all those with a null name, even though wms says they're invalid. Let the app decide.
@@ -602,7 +602,7 @@ public abstract class Capabilities {
             return null;
 
         ArrayList<Element> uniqueExtents = new ArrayList<>();
-        List<String> extentNames = new ArrayList<>();
+        Collection<String> extentNames = new ArrayList<>();
         for (Element e : extents) {
             // Filter out dimensions with same name.
             // Keep all those with a null name, even though wms says they're invalid. Let the app decide.

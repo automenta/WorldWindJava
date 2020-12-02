@@ -39,25 +39,25 @@ public class CSVTrackPoint implements TrackPoint {
     }
 
     private void doValues(String[] words) {
-        this.latitude = this.parseLatitude(words[1]);
-        this.longitude = this.parseLongitude(words[2]);
+        this.latitude = CSVTrackPoint.parseLatitude(words[1]);
+        this.longitude = CSVTrackPoint.parseLongitude(words[2]);
         if (words.length > 3)
             this.altitude = this.parseElevation(words[3], "M");
     }
 
-    private double parseLatitude(String angle) {
+    private static double parseLatitude(String angle) {
         return angle.isEmpty() ? 0 : Double.parseDouble(angle);
     }
 
-    private double parseLongitude(String angle) {
+    private static double parseLongitude(String angle) {
         return angle.isEmpty() ? 0 : Double.parseDouble(angle);
     }
 
-    private double parseElevation(String alt, String units) {
+    private static double parseElevation(String alt, String units) {
         return alt.isEmpty() ? 0 : Double.parseDouble(alt) * unitsToMeters(units);
     }
 
-    private double unitsToMeters(String units) {
+    private static double unitsToMeters(String units) {
         // meters
 // feet
         // fathoms

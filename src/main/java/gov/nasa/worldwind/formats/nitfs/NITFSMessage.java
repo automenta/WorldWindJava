@@ -20,7 +20,7 @@ import java.util.*;
 public class NITFSMessage {
     private final ByteBuffer buffer;
     private final NITFSFileHeader fileHeader;
-    private final List<NITFSSegment> segments = new ArrayList<>();
+    private final Collection<NITFSSegment> segments = new ArrayList<>();
 
     private NITFSMessage(ByteBuffer buffer) {
         this.buffer = buffer;

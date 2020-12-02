@@ -103,8 +103,8 @@ public class VPFSymbolComparator implements Comparator<VPFSymbol> {
         if (i != 0)
             return i;
 
-        aPriority = this.getFeatureTypePriority(a.getAttributes().getFeatureType());
-        bPriority = this.getFeatureTypePriority(b.getAttributes().getFeatureType());
+        aPriority = VPFSymbolComparator.getFeatureTypePriority(a.getAttributes().getFeatureType());
+        bPriority = VPFSymbolComparator.getFeatureTypePriority(b.getAttributes().getFeatureType());
         i = Double.compare(aPriority, bPriority);
         if (i != 0)
             return i;
@@ -115,7 +115,7 @@ public class VPFSymbolComparator implements Comparator<VPFSymbol> {
         return i;
     }
 
-    protected int getFeatureTypePriority(VPFFeatureType type) {
+    protected static int getFeatureTypePriority(VPFFeatureType type) {
         return switch (type) {
             case POINT -> 3;
             case LINE -> 2;

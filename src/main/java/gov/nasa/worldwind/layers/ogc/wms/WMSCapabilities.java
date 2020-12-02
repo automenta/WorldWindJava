@@ -177,7 +177,7 @@ public class WMSCapabilities extends OGCCapabilities {
      * @param layerCaps The layer's capabilities taken from the server's capabilities document.
      * @return A string representation of the epoch time for the last update string, if any, otherwise null.
      */
-    protected String getLayerLastUpdate(WMSLayerCapabilities layerCaps) {
+    protected static String getLayerLastUpdate(WMSLayerCapabilities layerCaps) {
         // See if there's an explicit element. This is what the original WW servers contained in their caps docs.
         String update = layerCaps.getLastUpdate();
         if (update != null)
@@ -201,7 +201,7 @@ public class WMSCapabilities extends OGCCapabilities {
      * @return A string representation of the epoch time for the last update string, of null if the string can't be
      * parsed as a date.
      */
-    protected String parseLastUpdate(String lastUpdateString) {
+    protected static String parseLastUpdate(String lastUpdateString) {
         String[] splitKeyword = lastUpdateString.split("=");
         if (splitKeyword.length != 2)
             return null;

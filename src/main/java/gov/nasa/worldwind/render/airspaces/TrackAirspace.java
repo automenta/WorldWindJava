@@ -252,7 +252,7 @@ public class TrackAirspace extends AbstractAirspace {
             locations.add(ll[1]);
         }
 
-        return this.computeReferencePosition(locations, this.getAltitudes());
+        return AbstractAirspace.computeReferencePosition(locations, this.getAltitudes());
     }
 
     @Override
@@ -273,7 +273,7 @@ public class TrackAirspace extends AbstractAirspace {
             return null;
         }
         else {
-            List<gov.nasa.worldwind.geom.Box> extents = new ArrayList<>();
+            Collection<gov.nasa.worldwind.geom.Box> extents = new ArrayList<>();
 
             for (Box leg : trackLegs) {
                 extents.add(leg.computeExtent(globe, verticalExaggeration));
@@ -372,7 +372,7 @@ public class TrackAirspace extends AbstractAirspace {
 
             // If the two legs have equivalent locations, altitude, and altitude mode where they meet, then adjust each
             // leg's corner azimuths so the two legs appear to make a continuous shape.
-            if (this.mustJoinLegs(leg, nextLeg)) {
+            if (TrackAirspace.mustJoinLegs(leg, nextLeg)) {
                 this.joinLegs(leg, nextLeg);
             }
         }
@@ -391,7 +391,7 @@ public class TrackAirspace extends AbstractAirspace {
      * @param leg2 the second leg.
      * @return <code>true</code> if the legs must be joined, otherwise <code>false</code>.
      */
-    protected boolean mustJoinLegs(
+    protected static boolean mustJoinLegs(
         gov.nasa.worldwind.render.airspaces.Box leg1, gov.nasa.worldwind.render.airspaces.Box leg2) {
         return leg1.getLocations()[1].equals(leg2.getLocations()[0]) // leg1 end == leg2 begin
             && Arrays.equals(leg1.getAltitudes(), leg2.getAltitudes())
@@ -550,7 +550,7 @@ public class TrackAirspace extends AbstractAirspace {
         if (lsos == null || lsos.length == 0)
             return;
 
-        List<gov.nasa.worldwind.render.airspaces.Box> legList = new ArrayList<>(lsos.length);
+        Collection<Box> legList = new ArrayList<>(lsos.length);
 
         for (RestorableSupport.StateObject lso : lsos) {
             if (lso != null) {

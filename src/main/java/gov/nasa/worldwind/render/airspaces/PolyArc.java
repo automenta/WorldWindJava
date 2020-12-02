@@ -168,8 +168,8 @@ public class PolyArc extends Polygon {
         List<Boolean> arcFlags = new ArrayList<>();
         this.makePolyArcLocations(globe, locations, 8, arcLocations, arcFlags);
 
-        List<LatLon> tessellatedLocations = new ArrayList<>();
-        this.makeTessellatedLocations(globe, MINIMAL_GEOMETRY_SUBDIVISIONS, arcLocations, tessellatedLocations);
+        Collection<LatLon> tessellatedLocations = new ArrayList<>();
+        Polygon.makeTessellatedLocations(globe, MINIMAL_GEOMETRY_SUBDIVISIONS, arcLocations, tessellatedLocations);
 
         List<Vec4> points = new ArrayList<>();
         this.makeExtremePoints(globe, verticalExaggeration, tessellatedLocations, points);
@@ -179,7 +179,7 @@ public class PolyArc extends Polygon {
 
     @Override
     protected void regenerateSurfaceShape(DrawContext dc, SurfaceShape shape) {
-        List<LatLon> arcLocations = new ArrayList<>();
+        Collection<LatLon> arcLocations = new ArrayList<>();
         List<Boolean> arcFlags = new ArrayList<>();
         this.makePolyArcLocations(dc.getGlobe(), this.getLocationList(), this.slices, arcLocations, arcFlags);
 
@@ -191,8 +191,8 @@ public class PolyArc extends Polygon {
     //**************************************************************//
 
     protected double[] computeAngles() {
-        Angle startAngle = this.normalizedAzimuth(this.leftAzimuth);
-        Angle stopAngle = this.normalizedAzimuth(this.rightAzimuth);
+        Angle startAngle = PolyArc.normalizedAzimuth(this.leftAzimuth);
+        Angle stopAngle = PolyArc.normalizedAzimuth(this.rightAzimuth);
         Angle sweepAngle;
         if (startAngle.compareTo(stopAngle) <= 0)
             sweepAngle = stopAngle.subtract(startAngle);
@@ -232,7 +232,7 @@ public class PolyArc extends Polygon {
             double[] angles = this.computeAngles();
             double radius = this.radius;
             LatLon first = locations.get(0);
-            LatLon[] arcLocations = this.makeArc(globe, first, radius, slices, angles[0], angles[2]);
+            LatLon[] arcLocations = PolyArc.makeArc(globe, first, radius, slices, angles[0], angles[2]);
 
             for (LatLon ll : arcLocations) {
                 polyArcLocations.add(ll);
@@ -251,7 +251,7 @@ public class PolyArc extends Polygon {
                 GeometryBuilder gb = this.getGeometryBuilder();
                 Vec4[] polyPoints = new Vec4[locationCount + 1];
                 Matrix[] polyTransform = new Matrix[1];
-                int polyCount = this.computeEllipsoidalPolygon(globe, locations, null, polyPoints, null, polyTransform);
+                int polyCount = Polygon.computeEllipsoidalPolygon(globe, locations, null, polyPoints, null, polyTransform);
                 int polyWinding = gb.computePolygonWindingOrder2(0, polyCount, polyPoints);
 
                 if (polyWinding == GeometryBuilder.COUNTER_CLOCKWISE) {
@@ -271,7 +271,7 @@ public class PolyArc extends Polygon {
         }
     }
 
-    private LatLon[] makeArc(Extent globe, LatLon center, double radius, int slices, double start, double sweep) {
+    private static LatLon[] makeArc(Extent globe, LatLon center, double radius, int slices, double start, double sweep) {
         double da = sweep / slices;
         double r = radius / globe.getRadius();
         LatLon[] locations = new LatLon[slices + 1];
@@ -284,7 +284,7 @@ public class PolyArc extends Polygon {
         return locations;
     }
 
-    private Angle normalizedAzimuth(Angle azimuth) {
+    private static Angle normalizedAzimuth(Angle azimuth) {
         double degrees = azimuth.degrees;
         double normalizedDegrees = degrees < 0.0 ? degrees + 360.0 : (degrees >= 360.0 ? degrees - 360.0 : degrees);
         return Angle.fromDegrees(normalizedDegrees);

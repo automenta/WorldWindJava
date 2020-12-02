@@ -44,7 +44,7 @@ public class ColladaTextureOrColor extends ColladaAbstractObject {
             return null;
 
         String colorString = color.getCharacters();
-        float[] values = this.parseFloatArray(colorString);
+        float[] values = ColladaTextureOrColor.parseFloatArray(colorString);
 
         float r = values[0];
         float g = values[1];
@@ -60,7 +60,7 @@ public class ColladaTextureOrColor extends ColladaAbstractObject {
      * @param floatArrayString String of floats, separated by whitespace.
      * @return Parsed float[].
      */
-    protected float[] parseFloatArray(String floatArrayString) {
+    protected static float[] parseFloatArray(String floatArrayString) {
         String[] arrayOfNumbers = floatArrayString.trim().split("\\s+");
         float[] floats = new float[arrayOfNumbers.length];
 

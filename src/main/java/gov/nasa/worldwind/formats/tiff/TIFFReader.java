@@ -109,7 +109,7 @@ class TIFFReader {
         return pixels;
     }
 
-    public byte[] lzwUncompress(byte[] input, int rowNumPixels) {
+    public static byte[] lzwUncompress(byte[] input, int rowNumPixels) {
         if (input == null || input.length == 0)
             return input;
         byte[][] symbolTable = new byte[4096][1];

@@ -84,7 +84,7 @@ public class TiledImageProducer extends TiledRasterProducer {
             if (!(raster instanceof BufferedImageRaster))
                 return Logging.getMessage("TiledRasterProducer.UnrecognizedDataSource", raster);
 
-            return this.validateDataSourceParams(raster, String.valueOf(raster));
+            return TiledImageProducer.validateDataSourceParams(raster, String.valueOf(raster));
         }
         // For any other data source, attempt to find a reader for the data source. If the reader knows the data
         // source's raster type, then check that it's a color image or a monochromatic image.
@@ -102,11 +102,11 @@ public class TiledImageProducer extends TiledRasterProducer {
                 return null;
             }
 
-            String errMsg = this.validateDataSourceParams(params, String.valueOf(source));
+            String errMsg = TiledImageProducer.validateDataSourceParams(params, String.valueOf(source));
             if (!WWUtil.isEmpty(errMsg)) {
                 try {
                     reader.readMetadata(source, params);
-                    errMsg = this.validateDataSourceParams(params, String.valueOf(source));
+                    errMsg = TiledImageProducer.validateDataSourceParams(params, String.valueOf(source));
                 }
                 catch (IOException e) {
                     return Logging.getMessage("TiledRasterProducer.ExceptionWhileReading", source, e.getMessage());
@@ -120,7 +120,7 @@ public class TiledImageProducer extends TiledRasterProducer {
         return null;
     }
 
-    protected String validateDataSourceParams(AVList params, String name) {
+    protected static String validateDataSourceParams(AVList params, String name) {
         if (params.hasKey(AVKey.PIXEL_FORMAT) && params.get(AVKey.PIXEL_FORMAT) != AVKey.IMAGE) {
             return Logging.getMessage("TiledRasterProducer.UnrecognizedRasterType",
                 params.get(AVKey.PIXEL_FORMAT), name);

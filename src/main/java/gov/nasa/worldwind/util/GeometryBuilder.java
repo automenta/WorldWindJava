@@ -1568,28 +1568,28 @@ public class GeometryBuilder {
     //********************       Cylinder        *******************//
     //**************************************************************//
 
-    public int getCylinderVertexCount(int slices, int stacks) {
+    public static int getCylinderVertexCount(int slices, int stacks) {
         return slices * (stacks + 1);
     }
 
-    public int getCylinderIndexCount(int slices, int stacks) {
+    public static int getCylinderIndexCount(int slices, int stacks) {
         return stacks * 2 * (slices + 1) + 2 * (stacks - 1);
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    public int getCylinderOutlineIndexCount(int slices, int stacks) {
+    public static int getCylinderOutlineIndexCount(int slices, int stacks) {
         return slices * 4;
     }
 
-    public int getCylinderDrawMode() {
+    public static int getCylinderDrawMode() {
         return GL.GL_TRIANGLE_STRIP;
     }
 
-    public int getCylinderOutlineDrawMode() {
+    public static int getCylinderOutlineDrawMode() {
         return GL.GL_LINES;
     }
 
-    public LatLon[] makeCylinderLocations(Extent globe, LatLon center, double radius, int slices) {
+    public static LatLon[] makeCylinderLocations(Extent globe, LatLon center, double radius, int slices) {
         if (globe == null) {
             String message = Logging.getMessage("nullValue.GlobeIsNull");
             Logging.logger().severe(message);
@@ -1618,7 +1618,7 @@ public class GeometryBuilder {
         return dest;
     }
 
-    public LatLon[] makeCylinderLocations(Extent globe, LatLon center, double minorRadius, double majorRadius,
+    public static LatLon[] makeCylinderLocations(Extent globe, LatLon center, double minorRadius, double majorRadius,
         Angle heading, int slices) {
         if (globe == null) {
             String message = Logging.getMessage("nullValue.GlobeIsNull");
@@ -1654,7 +1654,7 @@ public class GeometryBuilder {
 
     public void makeCylinderVertices(Terrain terrain, LatLon center, double radius, double[] altitudes,
         boolean[] terrainConformant, int slices, int stacks, Vec4 refPoint, float[] dest) {
-        int numPoints = this.getCylinderVertexCount(slices, stacks);
+        int numPoints = GeometryBuilder.getCylinderVertexCount(slices, stacks);
         int numCoords = 3 * numPoints;
 
         if (terrain == null) {
@@ -1697,7 +1697,7 @@ public class GeometryBuilder {
             LatLon ll = LatLon.greatCircleEndPosition(center, a, r);
 
             for (int j = 0; j <= stacks; j++) {
-                this.append(terrain, ll, altitudes[j], terrainConformant[j], refPoint, destBuffer);
+                GeometryBuilder.append(terrain, ll, altitudes[j], terrainConformant[j], refPoint, destBuffer);
             }
         }
     }
@@ -1705,7 +1705,7 @@ public class GeometryBuilder {
     public void makeCylinderVertices(Terrain terrain, LatLon center, double minorRadius, double majorRadius,
         Angle heading, double[] altitudes,
         boolean[] terrainConformant, int slices, int stacks, Vec4 refPoint, float[] dest) {
-        int numPoints = this.getCylinderVertexCount(slices, stacks);
+        int numPoints = GeometryBuilder.getCylinderVertexCount(slices, stacks);
         int numCoords = 3 * numPoints;
 
         if (terrain == null) {
@@ -1754,13 +1754,13 @@ public class GeometryBuilder {
             LatLon ll = LatLon.greatCircleEndPosition(center, azimuth, distance / globeRadius);
 
             for (int j = 0; j <= stacks; j++) {
-                this.append(terrain, ll, altitudes[j], terrainConformant[j], refPoint, destBuffer);
+                GeometryBuilder.append(terrain, ll, altitudes[j], terrainConformant[j], refPoint, destBuffer);
             }
         }
     }
 
     public void makeCylinderVertices(float radius, float height, int slices, int stacks, float[] dest) {
-        int numPoints = this.getCylinderVertexCount(slices, stacks);
+        int numPoints = GeometryBuilder.getCylinderVertexCount(slices, stacks);
         int numCoords = 3 * numPoints;
 
         if (numPoints < 0) {
@@ -1808,7 +1808,7 @@ public class GeometryBuilder {
     }
 
     public void makeCylinderNormals(int slices, int stacks, float[] dest) {
-        int numPoints = this.getCylinderVertexCount(slices, stacks);
+        int numPoints = GeometryBuilder.getCylinderVertexCount(slices, stacks);
         int numCoords = 3 * numPoints;
 
         if (numPoints < 0) {
@@ -1846,7 +1846,7 @@ public class GeometryBuilder {
             norm[0] = x * nsign;
             norm[1] = y * nsign;
             norm[2] = 0.0f;
-            this.norm3AndSet(norm, 0);
+            GeometryBuilder.norm3AndSet(norm, 0);
 
             for (j = 0; j <= stacks; j++) {
                 index = j + i * (stacks + 1);
@@ -1858,7 +1858,7 @@ public class GeometryBuilder {
 
     public void makeEllipticalCylinderNormals(int slices, int stacks, double minorRadius, double majorRadius,
         Angle heading, float[] dest) {
-        int numPoints = this.getCylinderVertexCount(slices, stacks);
+        int numPoints = GeometryBuilder.getCylinderVertexCount(slices, stacks);
         int numCoords = 3 * numPoints;
 
         if (numPoints < 0) {
@@ -1900,7 +1900,7 @@ public class GeometryBuilder {
             norm[0] = (float) ((x / d) * nsign);
             norm[1] = (float) ((y / d) * nsign);
             norm[2] = 0.0f;
-            this.norm3AndSet(norm, 0);
+            GeometryBuilder.norm3AndSet(norm, 0);
 
             for (j = 0; j <= stacks; j++) {
                 index = j + i * (stacks + 1);
@@ -1911,7 +1911,7 @@ public class GeometryBuilder {
     }
 
     public void makeCylinderIndices(int slices, int stacks, int[] dest) {
-        int numIndices = this.getCylinderIndexCount(slices, stacks);
+        int numIndices = GeometryBuilder.getCylinderIndexCount(slices, stacks);
 
         if (numIndices < 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "slices=" + slices + " stacks=" + stacks);
@@ -1961,7 +1961,7 @@ public class GeometryBuilder {
     }
 
     public void makeCylinderOutlineIndices(int slices, int stacks, int[] dest) {
-        int numIndices = this.getCylinderOutlineIndexCount(slices, stacks);
+        int numIndices = GeometryBuilder.getCylinderOutlineIndexCount(slices, stacks);
 
         if (numIndices < 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "slices=" + slices + " stacks=" + stacks);
@@ -2008,28 +2008,29 @@ public class GeometryBuilder {
     //********************  Partial Cylinder    ********************//
     //**************************************************************//
 
-    public int getPartialCylinderVertexCount(int slices, int stacks) {
+    public static int getPartialCylinderVertexCount(int slices, int stacks) {
         return (slices + 1) * (stacks + 1);
     }
 
-    public int getPartialCylinderIndexCount(int slices, int stacks) {
+    public static int getPartialCylinderIndexCount(int slices, int stacks) {
         return stacks * 2 * (slices + 1) + 2 * (stacks - 1);
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    public int getPartialCylinderOutlineIndexCount(int slices, int stacks) {
+    public static int getPartialCylinderOutlineIndexCount(int slices, int stacks) {
         return slices * 4;
     }
 
-    public int getPartialCylinderDrawMode() {
+    public static int getPartialCylinderDrawMode() {
         return GL.GL_TRIANGLE_STRIP;
     }
 
-    public int getPartialCylinderOutlineDrawMode() {
+    public static int getPartialCylinderOutlineDrawMode() {
         return GL.GL_LINES;
     }
 
-    public LatLon[] makePartialCylinderLocations(Extent globe, LatLon center, double radius, int slices, double start,
+    public static LatLon[] makePartialCylinderLocations(Extent globe, LatLon center, double radius, int slices,
+        double start,
         double sweep) {
         if (globe == null) {
             String message = Logging.getMessage("nullValue.GlobeIsNull");
@@ -2061,7 +2062,7 @@ public class GeometryBuilder {
 
     public void makePartialCylinderVertices(Terrain terrain, LatLon center, double radius, double[] altitudes,
         boolean[] terrainConformant, int slices, int stacks, double start, double sweep, Vec4 refPoint, float[] dest) {
-        int numPoints = this.getPartialCylinderVertexCount(slices, stacks);
+        int numPoints = GeometryBuilder.getPartialCylinderVertexCount(slices, stacks);
         int numCoords = 3 * numPoints;
 
         if (terrain == null) {
@@ -2104,14 +2105,14 @@ public class GeometryBuilder {
             LatLon ll = LatLon.greatCircleEndPosition(center, a, r);
 
             for (int j = 0; j <= stacks; j++) {
-                this.append(terrain, ll, altitudes[j], terrainConformant[j], refPoint, destBuffer);
+                GeometryBuilder.append(terrain, ll, altitudes[j], terrainConformant[j], refPoint, destBuffer);
             }
         }
     }
 
     public void makePartialCylinderVertices(float radius, float height, int slices, int stacks,
         float start, float sweep, float[] dest) {
-        int numPoints = this.getPartialCylinderVertexCount(slices, stacks);
+        int numPoints = GeometryBuilder.getPartialCylinderVertexCount(slices, stacks);
         int numCoords = 3 * numPoints;
 
         if (numPoints < 0) {
@@ -2161,7 +2162,7 @@ public class GeometryBuilder {
     @SuppressWarnings("UnusedDeclaration")
     public void makePartialCylinderNormals(float radius, float height, int slices, int stacks,
         float start, float sweep, float[] dest) {
-        int numPoints = this.getPartialCylinderVertexCount(slices, stacks);
+        int numPoints = GeometryBuilder.getPartialCylinderVertexCount(slices, stacks);
         int numCoords = 3 * numPoints;
 
         if (numPoints < 0) {
@@ -2199,7 +2200,7 @@ public class GeometryBuilder {
             norm[0] = x * nsign;
             norm[1] = y * nsign;
             norm[2] = 0.0f;
-            this.norm3AndSet(norm, 0);
+            GeometryBuilder.norm3AndSet(norm, 0);
 
             for (j = 0; j <= stacks; j++) {
                 index = j + i * (stacks + 1);
@@ -2210,7 +2211,7 @@ public class GeometryBuilder {
     }
 
     public void makePartialCylinderIndices(int slices, int stacks, int[] dest) {
-        int numIndices = this.getPartialCylinderIndexCount(slices, stacks);
+        int numIndices = GeometryBuilder.getPartialCylinderIndexCount(slices, stacks);
 
         if (numIndices < 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "slices=" + slices + " stacks=" + stacks);
@@ -2263,7 +2264,7 @@ public class GeometryBuilder {
     }
 
     public void makePartialCylinderOutlineIndices(int slices, int stacks, int[] dest) {
-        int numIndices = this.getPartialCylinderOutlineIndexCount(slices, stacks);
+        int numIndices = GeometryBuilder.getPartialCylinderOutlineIndexCount(slices, stacks);
 
         if (numIndices < 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "slices=" + slices + " stacks=" + stacks);
@@ -2303,19 +2304,20 @@ public class GeometryBuilder {
     //********************  Disk                ********************//
     //**************************************************************//
 
-    public int getDiskVertexCount(int slices, int loops) {
+    public static int getDiskVertexCount(int slices, int loops) {
         return slices * (loops + 1);
     }
 
-    public int getDiskIndexCount(int slices, int loops) {
+    public static int getDiskIndexCount(int slices, int loops) {
         return loops * 2 * (slices + 1) + 2 * (loops - 1);
     }
 
-    public int getDiskDrawMode() {
+    public static int getDiskDrawMode() {
         return GL.GL_TRIANGLE_STRIP;
     }
 
-    public LatLon[] makeDiskLocations(Extent globe, LatLon center, double innerRadius, double outerRadius, int slices,
+    public static LatLon[] makeDiskLocations(Extent globe, LatLon center, double innerRadius, double outerRadius,
+        int slices,
         int loops) {
         if (globe == null) {
             String message = Logging.getMessage("nullValue.GlobeIsNull");
@@ -2355,7 +2357,7 @@ public class GeometryBuilder {
         return dest;
     }
 
-    public LatLon[] makeDiskLocations(Extent globe, LatLon center, double[] radii, Angle heading, int slices,
+    public static LatLon[] makeDiskLocations(Extent globe, LatLon center, double[] radii, Angle heading, int slices,
         int loops) {
         if (globe == null) {
             String message = Logging.getMessage("nullValue.GlobeIsNull");
@@ -2408,7 +2410,7 @@ public class GeometryBuilder {
 
     public void makeDiskVertices(Terrain terrain, LatLon center, double innerRadius, double outerRadius,
         double altitude, boolean terrainConformant, int slices, int loops, Vec4 refPoint, float[] dest) {
-        int numPoints = this.getDiskVertexCount(slices, loops);
+        int numPoints = GeometryBuilder.getDiskVertexCount(slices, loops);
         int numCoords = 3 * numPoints;
 
         if (terrain == null) {
@@ -2453,14 +2455,14 @@ public class GeometryBuilder {
             for (int l = 0; l <= loops; l++) {
                 double r = (innerRadius + l * dr) / globeRadius;
                 LatLon ll = LatLon.greatCircleEndPosition(center, a, r);
-                this.append(terrain, ll, altitude, terrainConformant, refPoint, destBuffer);
+                GeometryBuilder.append(terrain, ll, altitude, terrainConformant, refPoint, destBuffer);
             }
         }
     }
 
     public void makeDiskVertices(Terrain terrain, LatLon center, double[] radii, Angle heading,
         double altitude, boolean terrainConformant, int slices, int loops, Vec4 refPoint, float[] dest) {
-        int numPoints = this.getDiskVertexCount(slices, loops);
+        int numPoints = GeometryBuilder.getDiskVertexCount(slices, loops);
         int numCoords = 3 * numPoints;
 
         if (terrain == null) {
@@ -2517,13 +2519,13 @@ public class GeometryBuilder {
                 double r = Math.sqrt(xLength * xLength + yLength * yLength);
                 double azimuth = (Math.PI / 2) - (Math.acos(xLength / r) * Math.signum(yLength) - heading.radians);
                 LatLon ll = LatLon.greatCircleEndPosition(center, azimuth, r / globeRadius);
-                this.append(terrain, ll, altitude, terrainConformant, refPoint, destBuffer);
+                GeometryBuilder.append(terrain, ll, altitude, terrainConformant, refPoint, destBuffer);
             }
         }
     }
 
     public void makeDiskVertices(float innerRadius, float outerRadius, int slices, int loops, float[] dest) {
-        int numPoints = this.getDiskVertexCount(slices, loops);
+        int numPoints = GeometryBuilder.getDiskVertexCount(slices, loops);
         int numCoords = 3 * numPoints;
 
         if (numPoints < 0) {
@@ -2567,7 +2569,7 @@ public class GeometryBuilder {
     }
 
     public void makeDiskNormals(int slices, int loops, float[] dest) {
-        int numPoints = this.getDiskVertexCount(slices, loops);
+        int numPoints = GeometryBuilder.getDiskVertexCount(slices, loops);
         int numCoords = 3 * numPoints;
 
         if (numPoints < 0) {
@@ -2610,7 +2612,7 @@ public class GeometryBuilder {
     @SuppressWarnings("UnusedDeclaration")
     public void makeDiskVertexNormals(double innerMinorRadius, double outerMinorRadius, int slices, int loops,
         float[] srcVerts, float[] dest) {
-        int numPoints = this.getDiskVertexCount(slices, loops);
+        int numPoints = GeometryBuilder.getDiskVertexCount(slices, loops);
         int numCoords = 3 * numPoints;
 
         if (numPoints < 0) {
@@ -2660,10 +2662,10 @@ public class GeometryBuilder {
                             nextSlice = l;
                         adjacentLoop = index + 1;
                         this.facenorm(srcVerts, index, nextSlice + 1, adjacentLoop, tmp);
-                        this.add3AndSet(norm, 0, tmp, 0);
+                        GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                     }
-                    this.mul3AndSet(norm, 0, nsign);
-                    this.norm3AndSet(norm, 0);
+                    GeometryBuilder.mul3AndSet(norm, 0, nsign);
+                    GeometryBuilder.norm3AndSet(norm, 0);
                     // Copy common normal to the first point of each slice.
                     for (s = 0; s < slices; s++) {
                         index = l + s * (loops + 1);
@@ -2696,17 +2698,17 @@ public class GeometryBuilder {
                             this.facenorm(srcVerts, index, nextSlice, adjacentLoop, tmp);
                         else
                             this.facenorm(srcVerts, index, adjacentLoop, nextSlice, tmp);
-                        this.add3AndSet(norm, 0, tmp, 0);
+                        GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                         // Add counter-clockwise adjacent face.
                         if (l == 0)
                             this.facenorm(srcVerts, index, adjacentLoop, prevSlice, tmp);
                         else
                             this.facenorm(srcVerts, index, prevSlice, adjacentLoop, tmp);
-                        this.add3AndSet(norm, 0, tmp, 0);
+                        GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
 
                         // Normalize and place in output.
-                        this.mul3AndSet(norm, 0, nsign);
-                        this.norm3AndSet(norm, 0);
+                        GeometryBuilder.mul3AndSet(norm, 0, nsign);
+                        GeometryBuilder.norm3AndSet(norm, 0);
                         System.arraycopy(norm, 0, dest, 3 * index, 3);
                     }
                 }
@@ -2732,28 +2734,28 @@ public class GeometryBuilder {
 
                     // Add lower-left adjacent face.
                     this.facenorm(srcVerts, index, prevSlice, prevSlice - 1, tmp);
-                    this.add3AndSet(norm, 0, tmp, 0);
+                    GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                     this.facenorm(srcVerts, index, prevSlice - 1, prevLoop, tmp);
-                    this.add3AndSet(norm, 0, tmp, 0);
+                    GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                     // Add lower-right adjacent face.
                     this.facenorm(srcVerts, index, prevLoop, nextSlice - 1, tmp);
-                    this.add3AndSet(norm, 0, tmp, 0);
+                    GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                     this.facenorm(srcVerts, index, nextSlice - 1, nextSlice, tmp);
-                    this.add3AndSet(norm, 0, tmp, 0);
+                    GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                     // Add upper-right adjacent face.
                     this.facenorm(srcVerts, index, nextSlice, nextSlice + 1, tmp);
-                    this.add3AndSet(norm, 0, tmp, 0);
+                    GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                     this.facenorm(srcVerts, index, nextSlice + 1, nextLoop, tmp);
-                    this.add3AndSet(norm, 0, tmp, 0);
+                    GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                     // Add upper-left adjacent face.
                     this.facenorm(srcVerts, index, nextLoop, prevSlice + 1, tmp);
-                    this.add3AndSet(norm, 0, tmp, 0);
+                    GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                     this.facenorm(srcVerts, index, prevSlice + 1, prevSlice, tmp);
-                    this.add3AndSet(norm, 0, tmp, 0);
+                    GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
 
                     // Normalize and place in output.
-                    this.mul3AndSet(norm, 0, nsign);
-                    this.norm3AndSet(norm, 0);
+                    GeometryBuilder.mul3AndSet(norm, 0, nsign);
+                    GeometryBuilder.norm3AndSet(norm, 0);
                     System.arraycopy(norm, 0, dest, 3 * index, 3);
                 }
             }
@@ -2761,7 +2763,7 @@ public class GeometryBuilder {
     }
 
     public void makeDiskIndices(int slices, int loops, int[] dest) {
-        int numIndices = this.getDiskIndexCount(slices, loops);
+        int numIndices = GeometryBuilder.getDiskIndexCount(slices, loops);
 
         if (numIndices < 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "slices=" + slices + " loops=" + loops);
@@ -2819,15 +2821,15 @@ public class GeometryBuilder {
     //********************  Partial Disk        ********************//
     //**************************************************************//
 
-    public int getPartialDiskVertexCount(int slices, int loops) {
+    public static int getPartialDiskVertexCount(int slices, int loops) {
         return (slices + 1) * (loops + 1);
     }
 
-    public int getPartialDiskIndexCount(int slices, int loops) {
+    public static int getPartialDiskIndexCount(int slices, int loops) {
         return loops * 2 * (slices + 1) + 2 * (loops - 1);
     }
 
-    public int getPartialDiskDrawMode() {
+    public static int getPartialDiskDrawMode() {
         return GL.GL_TRIANGLE_STRIP;
     }
 
@@ -2856,7 +2858,7 @@ public class GeometryBuilder {
 
         double da = sweep / slices;
         double dr = (outerRadius - innerRadius) / loops;
-        int count = this.getPartialDiskVertexCount(slices, loops);
+        int count = GeometryBuilder.getPartialDiskVertexCount(slices, loops);
         LatLon[] dest = new LatLon[count];
         int index = 0;
 
@@ -2875,7 +2877,7 @@ public class GeometryBuilder {
     public void makePartialDiskVertices(Terrain terrain, LatLon center, double innerRadius, double outerRadius,
         double altitude, boolean terrainConformant, int slices, int loops, double start, double sweep, Vec4 refPoint,
         float[] dest) {
-        int numPoints = this.getPartialDiskVertexCount(slices, loops);
+        int numPoints = GeometryBuilder.getPartialDiskVertexCount(slices, loops);
         int numCoords = 3 * numPoints;
 
         if (terrain == null) {
@@ -2920,14 +2922,14 @@ public class GeometryBuilder {
             for (int l = 0; l <= loops; l++) {
                 double r = (innerRadius + l * dr) / globeRadius;
                 LatLon ll = LatLon.greatCircleEndPosition(center, a, r);
-                this.append(terrain, ll, altitude, terrainConformant, refPoint, destBuffer);
+                GeometryBuilder.append(terrain, ll, altitude, terrainConformant, refPoint, destBuffer);
             }
         }
     }
 
     public void makePartialDiskVertices(float innerRadius, float outerRadius, int slices, int loops,
         float start, float sweep, float[] dest) {
-        int numPoints = this.getPartialDiskVertexCount(slices, loops);
+        int numPoints = GeometryBuilder.getPartialDiskVertexCount(slices, loops);
         int numCoords = 3 * numPoints;
 
         if (numPoints < 0) {
@@ -2971,7 +2973,7 @@ public class GeometryBuilder {
     }
 
     public void makePartialDiskNormals(int slices, int loops, float[] dest) {
-        int numPoints = this.getPartialDiskVertexCount(slices, loops);
+        int numPoints = GeometryBuilder.getPartialDiskVertexCount(slices, loops);
         int numCoords = 3 * numPoints;
 
         if (numPoints < 0) {
@@ -3014,7 +3016,7 @@ public class GeometryBuilder {
     @SuppressWarnings("UnusedDeclaration")
     public void makePartialDiskVertexNormals(float innerRadius, float outerRadius, int slices, int loops,
         float start, float sweep, float[] srcVerts, float[] dest) {
-        int numPoints = this.getPartialDiskVertexCount(slices, loops);
+        int numPoints = GeometryBuilder.getPartialDiskVertexCount(slices, loops);
         int numCoords = 3 * numPoints;
 
         if (numPoints < 0) {
@@ -3062,10 +3064,10 @@ public class GeometryBuilder {
                         nextSlice = l + (s + 1) * (loops + 1);
                         adjacentLoop = index + 1;
                         this.facenorm(srcVerts, index, nextSlice + 1, adjacentLoop, tmp);
-                        this.add3AndSet(norm, 0, tmp, 0);
+                        GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                     }
-                    this.mul3AndSet(norm, 0, nsign);
-                    this.norm3AndSet(norm, 0);
+                    GeometryBuilder.mul3AndSet(norm, 0, nsign);
+                    GeometryBuilder.norm3AndSet(norm, 0);
                     // Copy common normal to the first point of each slice.
                     for (s = 0; s <= slices; s++) {
                         index = l + s * (loops + 1);
@@ -3093,7 +3095,7 @@ public class GeometryBuilder {
                                 this.facenorm(srcVerts, index, adjacentLoop, prevSlice, tmp);
                             else
                                 this.facenorm(srcVerts, index, prevSlice, adjacentLoop, tmp);
-                            this.add3AndSet(norm, 0, tmp, 0);
+                            GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                         }
                         if (s < slices) {
                             nextSlice = l + (s + 1) * (loops + 1);
@@ -3102,12 +3104,12 @@ public class GeometryBuilder {
                                 this.facenorm(srcVerts, index, nextSlice, adjacentLoop, tmp);
                             else
                                 this.facenorm(srcVerts, index, adjacentLoop, nextSlice, tmp);
-                            this.add3AndSet(norm, 0, tmp, 0);
+                            GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                         }
 
                         // Normalize and place in output.
-                        this.mul3AndSet(norm, 0, nsign);
-                        this.norm3AndSet(norm, 0);
+                        GeometryBuilder.mul3AndSet(norm, 0, nsign);
+                        GeometryBuilder.norm3AndSet(norm, 0);
                         System.arraycopy(norm, 0, dest, 3 * index, 3);
                     }
                 }
@@ -3126,32 +3128,32 @@ public class GeometryBuilder {
                         prevSlice = l + (s - 1) * (loops + 1);
                         // Add lower-left adjacent face.
                         this.facenorm(srcVerts, index, prevSlice, prevSlice - 1, tmp);
-                        this.add3AndSet(norm, 0, tmp, 0);
+                        GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                         this.facenorm(srcVerts, index, prevSlice - 1, prevLoop, tmp);
-                        this.add3AndSet(norm, 0, tmp, 0);
+                        GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                         // Add upper-left adjacent face.
                         this.facenorm(srcVerts, index, nextLoop, prevSlice + 1, tmp);
-                        this.add3AndSet(norm, 0, tmp, 0);
+                        GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                         this.facenorm(srcVerts, index, prevSlice + 1, prevSlice, tmp);
-                        this.add3AndSet(norm, 0, tmp, 0);
+                        GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                     }
                     if (s < slices) {
                         nextSlice = l + (s + 1) * (loops + 1);
                         // Add lower-right adjacent face.
                         this.facenorm(srcVerts, index, prevLoop, nextSlice - 1, tmp);
-                        this.add3AndSet(norm, 0, tmp, 0);
+                        GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                         this.facenorm(srcVerts, index, nextSlice - 1, nextSlice, tmp);
-                        this.add3AndSet(norm, 0, tmp, 0);
+                        GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                         // Add upper-right adjacent face.
                         this.facenorm(srcVerts, index, nextSlice, nextSlice + 1, tmp);
-                        this.add3AndSet(norm, 0, tmp, 0);
+                        GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                         this.facenorm(srcVerts, index, nextSlice + 1, nextLoop, tmp);
-                        this.add3AndSet(norm, 0, tmp, 0);
+                        GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                     }
 
                     // Normalize and place in output.
-                    this.mul3AndSet(norm, 0, nsign);
-                    this.norm3AndSet(norm, 0);
+                    GeometryBuilder.mul3AndSet(norm, 0, nsign);
+                    GeometryBuilder.norm3AndSet(norm, 0);
                     System.arraycopy(norm, 0, dest, 3 * index, 3);
                 }
             }
@@ -3159,7 +3161,7 @@ public class GeometryBuilder {
     }
 
     public void makePartialDiskIndices(int slices, int loops, int[] dest) {
-        int numIndices = this.getPartialDiskIndexCount(slices, loops);
+        int numIndices = GeometryBuilder.getPartialDiskIndexCount(slices, loops);
 
         if (numIndices < 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "slices=" + slices + " loops=" + loops);
@@ -3216,31 +3218,31 @@ public class GeometryBuilder {
     //********************  Radial Wall         ********************//
     //**************************************************************//
 
-    public int getRadialWallVertexCount(int pillars, int stacks) {
+    public static int getRadialWallVertexCount(int pillars, int stacks) {
         return (pillars + 1) * (stacks + 1);
     }
 
-    public int getRadialWallIndexCount(int pillars, int stacks) {
+    public static int getRadialWallIndexCount(int pillars, int stacks) {
         return stacks * 2 * (pillars + 1) + 2 * (stacks - 1);
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    public int getRadialWallOutlineIndexCount(int pillars, int stacks) {
+    public static int getRadialWallOutlineIndexCount(int pillars, int stacks) {
         return pillars * 4;
     }
 
-    public int getRadialWallDrawMode() {
+    public static int getRadialWallDrawMode() {
         return GL.GL_TRIANGLE_STRIP;
     }
 
-    public int getRadialWallOutlineDrawMode() {
+    public static int getRadialWallOutlineDrawMode() {
         return GL.GL_LINES;
     }
 
     public void makeRadialWallVertices(Terrain terrain, LatLon center, double innerRadius, double outerRadius,
         double angle, double[] altitudes, boolean[] terrainConformant, int pillars, int stacks, Vec4 refPoint,
         float[] dest) {
-        int numPoints = this.getRadialWallVertexCount(pillars, stacks);
+        int numPoints = GeometryBuilder.getRadialWallVertexCount(pillars, stacks);
         int numCoords = 3 * numPoints;
 
         if (terrain == null) {
@@ -3283,14 +3285,14 @@ public class GeometryBuilder {
             for (int p = 0; p <= pillars; p++) {
                 double r = (innerRadius + p * dr) / globeRadius;
                 LatLon ll = LatLon.greatCircleEndPosition(center, angle, r);
-                this.append(terrain, ll, altitudes[s], terrainConformant[s], refPoint, destBuffer);
+                GeometryBuilder.append(terrain, ll, altitudes[s], terrainConformant[s], refPoint, destBuffer);
             }
         }
     }
 
     public void makeRadialWallVertices(float innerRadius, float outerRadius, float height, float angle,
         int pillars, int stacks, float[] dest) {
-        int numPoints = this.getRadialWallVertexCount(pillars, stacks);
+        int numPoints = GeometryBuilder.getRadialWallVertexCount(pillars, stacks);
         int numCoords = 3 * numPoints;
 
         if (numPoints < 0) {
@@ -3343,7 +3345,7 @@ public class GeometryBuilder {
     @SuppressWarnings("UnusedDeclaration")
     public void makeRadialWallNormals(float innerRadius, float outerRadius, float height, float angle,
         int pillars, int stacks, float[] dest) {
-        int numPoints = this.getRadialWallVertexCount(pillars, stacks);
+        int numPoints = GeometryBuilder.getRadialWallVertexCount(pillars, stacks);
         int numCoords = 3 * numPoints;
 
         if (numPoints < 0) {
@@ -3379,7 +3381,7 @@ public class GeometryBuilder {
         norm[0] = x * nsign;
         norm[1] = y * nsign;
         norm[2] = 0.0f;
-        this.norm3AndSet(norm, 0);
+        GeometryBuilder.norm3AndSet(norm, 0);
 
         for (s = 0; s <= stacks; s++) {
             for (p = 0; p <= pillars; p++) {
@@ -3391,7 +3393,7 @@ public class GeometryBuilder {
     }
 
     public void makeRadialWallIndices(int pillars, int stacks, int[] dest) {
-        int numIndices = this.getRadialWallIndexCount(pillars, stacks);
+        int numIndices = GeometryBuilder.getRadialWallIndexCount(pillars, stacks);
 
         if (numIndices < 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "pillars=" + pillars
@@ -3445,7 +3447,7 @@ public class GeometryBuilder {
     }
 
     public void makeRadialWallOutlineIndices(int pillars, int stacks, int[] dest) {
-        int numIndices = this.getRadialWallOutlineIndexCount(pillars, stacks);
+        int numIndices = GeometryBuilder.getRadialWallOutlineIndexCount(pillars, stacks);
 
         if (numIndices < 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "pillars=" + pillars
@@ -3484,30 +3486,30 @@ public class GeometryBuilder {
     //********************  Long Cylinder       ********************//
     //**************************************************************//
 
-    public int getLongCylinderVertexCount(int arcSlices, int lengthSlices, int stacks) {
+    public static int getLongCylinderVertexCount(int arcSlices, int lengthSlices, int stacks) {
         int slices = 2 * (arcSlices + 1) + 2 * (lengthSlices - 1);
         return slices * (stacks + 1);
     }
 
-    public int getLongCylinderIndexCount(int arcSlices, int lengthSlices, int stacks) {
+    public static int getLongCylinderIndexCount(int arcSlices, int lengthSlices, int stacks) {
         int slices = 2 * (arcSlices + 1) + 2 * (lengthSlices - 1);
         return stacks * 2 * (slices + 1) + 2 * (stacks - 1);
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    public int getLongCylinderOutlineIndexCount(int arcSlices, int lengthSlices, int stacks) {
+    public static int getLongCylinderOutlineIndexCount(int arcSlices, int lengthSlices, int stacks) {
         return (arcSlices + lengthSlices) * 2 * 4;
     }
 
-    public int getLongCylinderDrawMode() {
+    public static int getLongCylinderDrawMode() {
         return GL.GL_TRIANGLE_STRIP;
     }
 
-    public int getLongCylinderOutlineDrawMode() {
+    public static int getLongCylinderOutlineDrawMode() {
         return GL.GL_LINES;
     }
 
-    public LatLon[] makeLongCylinderLocations(Extent globe, LatLon center1, LatLon center2, double radius,
+    public static LatLon[] makeLongCylinderLocations(Extent globe, LatLon center1, LatLon center2, double radius,
         int arcSlices,
         int lengthSlices) {
         if (globe == null) {
@@ -3580,7 +3582,7 @@ public class GeometryBuilder {
     public void makeLongCylinderVertices(Terrain terrain, LatLon center1, LatLon center2, double radius,
         double[] altitudes, boolean[] terrainConformant, int arcSlices, int lengthSlices, int stacks,
         Vec4 refPoint, float[] dest) {
-        int numPoints = this.getLongCylinderVertexCount(arcSlices, lengthSlices, stacks);
+        int numPoints = GeometryBuilder.getLongCylinderVertexCount(arcSlices, lengthSlices, stacks);
         int numCoords = 3 * numPoints;
 
         if (terrain == null) {
@@ -3636,35 +3638,35 @@ public class GeometryBuilder {
             {
                 double a = i * da + az1 + (Math.PI / 2);
                 LatLon ll = LatLon.greatCircleEndPosition(center1, a, r);
-                this.append(terrain, ll, altitudes[j], terrainConformant[j], refPoint, destBuffer);
+                GeometryBuilder.append(terrain, ll, altitudes[j], terrainConformant[j], refPoint, destBuffer);
             }
 
             for (int i = 1; i < lengthSlices; i++) // right side
             {
                 double a = azimuths[i] + (Math.PI / 2);
                 LatLon ll = LatLon.greatCircleEndPosition(locations[i], a, r);
-                this.append(terrain, ll, altitudes[j], terrainConformant[j], refPoint, destBuffer);
+                GeometryBuilder.append(terrain, ll, altitudes[j], terrainConformant[j], refPoint, destBuffer);
             }
 
             for (int i = 0; i <= arcSlices; i++) // bottom arc
             {
                 double a = i * da + az2 + (Math.PI / 2);
                 LatLon ll = LatLon.greatCircleEndPosition(center2, a, r);
-                this.append(terrain, ll, altitudes[j], terrainConformant[j], refPoint, destBuffer);
+                GeometryBuilder.append(terrain, ll, altitudes[j], terrainConformant[j], refPoint, destBuffer);
             }
 
             for (int i = lengthSlices - 1; i >= 1; i--) // left side
             {
                 double a = azimuths[i] - (Math.PI / 2);
                 LatLon ll = LatLon.greatCircleEndPosition(locations[i], a, r);
-                this.append(terrain, ll, altitudes[j], terrainConformant[j], refPoint, destBuffer);
+                GeometryBuilder.append(terrain, ll, altitudes[j], terrainConformant[j], refPoint, destBuffer);
             }
         }
     }
 
     public void makeLongCylinderVertices(float radius, float length, float height,
         int arcSlices, int lengthSlices, int stacks, float[] dest) {
-        int numPoints = this.getLongCylinderVertexCount(arcSlices, lengthSlices, stacks);
+        int numPoints = GeometryBuilder.getLongCylinderVertexCount(arcSlices, lengthSlices, stacks);
         int numCoords = 3 * numPoints;
 
         if (numPoints < 0) {
@@ -3735,7 +3737,7 @@ public class GeometryBuilder {
     }
 
     public void makeLongCylinderNormals(int arcSlices, int lengthSlices, int stacks, float[] dest) {
-        int numPoints = this.getLongCylinderVertexCount(arcSlices, lengthSlices, stacks);
+        int numPoints = GeometryBuilder.getLongCylinderVertexCount(arcSlices, lengthSlices, stacks);
         int numCoords = 3 * numPoints;
 
         if (numPoints < 0) {
@@ -3801,7 +3803,7 @@ public class GeometryBuilder {
     }
 
     public void makeLongCylinderIndices(int arcSlices, int lengthSlices, int stacks, int[] dest) {
-        int numIndices = this.getLongCylinderIndexCount(arcSlices, lengthSlices, stacks);
+        int numIndices = GeometryBuilder.getLongCylinderIndexCount(arcSlices, lengthSlices, stacks);
 
         if (numIndices < 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "arcSlices=" + arcSlices
@@ -3861,7 +3863,7 @@ public class GeometryBuilder {
     }
 
     public void makeLongCylinderOutlineIndices(int arcSlices, int lengthSlices, int stacks, int[] dest) {
-        int numIndices = this.getLongCylinderOutlineIndexCount(arcSlices, lengthSlices, stacks);
+        int numIndices = GeometryBuilder.getLongCylinderOutlineIndexCount(arcSlices, lengthSlices, stacks);
 
         if (numIndices < 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "arcSlices=" + arcSlices
@@ -3903,21 +3905,21 @@ public class GeometryBuilder {
     //********************  Long Disk           ********************//
     //**************************************************************//
 
-    public int getLongDiskVertexCount(int arcSlices, int lengthSlices, int loops) {
+    public static int getLongDiskVertexCount(int arcSlices, int lengthSlices, int loops) {
         int slices = 2 * (arcSlices + 1) + 2 * (lengthSlices - 1);
         return slices * (loops + 1);
     }
 
-    public int getLongDiskIndexCount(int arcSlices, int lengthSlices, int loops) {
+    public static int getLongDiskIndexCount(int arcSlices, int lengthSlices, int loops) {
         int slices = 2 * (arcSlices + 1) + 2 * (lengthSlices - 1);
         return loops * 2 * (slices + 1) + 2 * (loops - 1);
     }
 
-    public int getLongDiskDrawMode() {
+    public static int getLongDiskDrawMode() {
         return GL.GL_TRIANGLE_STRIP;
     }
 
-    public LatLon[] makeLongDiskLocations(Extent globe, LatLon center1, LatLon center2, double innerRadius,
+    public static LatLon[] makeLongDiskLocations(Extent globe, LatLon center1, LatLon center2, double innerRadius,
         double outerRadius, int arcSlices, int lengthSlices, int loops) {
         if (globe == null) {
             String message = Logging.getMessage("nullValue.GlobeIsNull");
@@ -4000,7 +4002,7 @@ public class GeometryBuilder {
     public void makeLongDiskVertices(Terrain terrain, LatLon center1, LatLon center2, double innerRadius,
         double outerRadius, double altitude, boolean terrainConformant, int arcSlices, int lengthSlices, int loops,
         Vec4 refPoint, float[] dest) {
-        int numPoints = this.getLongDiskVertexCount(arcSlices, lengthSlices, loops);
+        int numPoints = GeometryBuilder.getLongDiskVertexCount(arcSlices, lengthSlices, loops);
         int numCoords = 3 * numPoints;
 
         if (terrain == null) {
@@ -4059,35 +4061,35 @@ public class GeometryBuilder {
             {
                 double a = i * da + az1 + (Math.PI / 2);
                 LatLon ll = LatLon.greatCircleEndPosition(center1, a, r);
-                this.append(terrain, ll, altitude, terrainConformant, refPoint, destBuffer);
+                GeometryBuilder.append(terrain, ll, altitude, terrainConformant, refPoint, destBuffer);
             }
 
             for (int i = 1; i < lengthSlices; i++) // right side
             {
                 double a = azimuths[i] + (Math.PI / 2);
                 LatLon ll = LatLon.greatCircleEndPosition(locations[i], a, r);
-                this.append(terrain, ll, altitude, terrainConformant, refPoint, destBuffer);
+                GeometryBuilder.append(terrain, ll, altitude, terrainConformant, refPoint, destBuffer);
             }
 
             for (int i = 0; i <= arcSlices; i++) // bottom arc
             {
                 double a = i * da + az2 + (Math.PI / 2);
                 LatLon ll = LatLon.greatCircleEndPosition(center2, a, r);
-                this.append(terrain, ll, altitude, terrainConformant, refPoint, destBuffer);
+                GeometryBuilder.append(terrain, ll, altitude, terrainConformant, refPoint, destBuffer);
             }
 
             for (int i = lengthSlices - 1; i >= 1; i--) // left side
             {
                 double a = azimuths[i] - (Math.PI / 2);
                 LatLon ll = LatLon.greatCircleEndPosition(locations[i], a, r);
-                this.append(terrain, ll, altitude, terrainConformant, refPoint, destBuffer);
+                GeometryBuilder.append(terrain, ll, altitude, terrainConformant, refPoint, destBuffer);
             }
         }
     }
 
     public void makeLongDiskVertices(float innerRadius, float outerRadius, float length,
         int arcSlices, int lengthSlices, int loops, float[] dest) {
-        int numPoints = this.getLongDiskVertexCount(arcSlices, lengthSlices, loops);
+        int numPoints = GeometryBuilder.getLongDiskVertexCount(arcSlices, lengthSlices, loops);
         int numCoords = 3 * numPoints;
 
         if (numPoints < 0) {
@@ -4154,7 +4156,7 @@ public class GeometryBuilder {
     }
 
     public void makeLongDiskNormals(int arcSlices, int lengthSlices, int loops, float[] dest) {
-        int numPoints = this.getLongDiskVertexCount(arcSlices, lengthSlices, loops);
+        int numPoints = GeometryBuilder.getLongDiskVertexCount(arcSlices, lengthSlices, loops);
         int numCoords = 3 * numPoints;
 
         if (numPoints < 0) {
@@ -4202,7 +4204,7 @@ public class GeometryBuilder {
     public void makeLongDiskVertexNormals(float innerRadius, float outerRadius, float length,
         int arcSlices, int lengthSlices, int loops,
         float[] srcVerts, float[] dest) {
-        int numPoints = this.getLongDiskVertexCount(arcSlices, lengthSlices, loops);
+        int numPoints = GeometryBuilder.getLongDiskVertexCount(arcSlices, lengthSlices, loops);
         int numCoords = 3 * numPoints;
 
         if (numPoints < 0) {
@@ -4251,16 +4253,16 @@ public class GeometryBuilder {
                         for (s = 0; s <= arcSlices; s++) {
                             index = s;
                             this.facenorm(srcVerts, index, index + slices + 1, index + slices, tmp);
-                            this.add3AndSet(norm, 0, tmp, 0);
+                            GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                         }
                         index = arcSlices;
                         this.facenorm(srcVerts, index, index + 1, index + slices, tmp);
-                        this.add3AndSet(norm, 0, tmp, 0);
+                        GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                         index = 0;
                         this.facenorm(srcVerts, index, index + slices, index + slices - 1, tmp);
-                        this.add3AndSet(norm, 0, tmp, 0);
-                        this.mul3AndSet(norm, 0, nsign);
-                        this.norm3AndSet(norm, 0);
+                        GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
+                        GeometryBuilder.mul3AndSet(norm, 0, nsign);
+                        GeometryBuilder.norm3AndSet(norm, 0);
                         // Copy common normal to the first point of each slice.
                         for (s = 0; s <= arcSlices; s++) {
                             index = s;
@@ -4276,19 +4278,19 @@ public class GeometryBuilder {
                             leftSideIndex = slices - s;
                             System.arraycopy(zero, 0, norm, 0, 3);
                             this.facenorm(srcVerts, index, index + slices, index - 1, tmp);
-                            this.add3AndSet(norm, 0, tmp, 0);
+                            GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                             this.facenorm(srcVerts, index, index + 1, index + slices, tmp);
-                            this.add3AndSet(norm, 0, tmp, 0);
+                            GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                             if (s == 1)
                                 this.facenorm(srcVerts, leftSideIndex, leftSideIndex - slices + 1,
                                     leftSideIndex + slices, tmp);
                             else
                                 this.facenorm(srcVerts, leftSideIndex, leftSideIndex + 1, leftSideIndex + slices, tmp);
-                            this.add3AndSet(norm, 0, tmp, 0);
+                            GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                             this.facenorm(srcVerts, leftSideIndex, leftSideIndex + slices, leftSideIndex - 1, tmp);
-                            this.add3AndSet(norm, 0, tmp, 0);
-                            this.mul3AndSet(norm, 0, nsign);
-                            this.norm3AndSet(norm, 0);
+                            GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
+                            GeometryBuilder.mul3AndSet(norm, 0, nsign);
+                            GeometryBuilder.norm3AndSet(norm, 0);
                             // Copy common normal to the first point of each slice.
                             System.arraycopy(norm, 0, dest, 3 * index, 3);
                             System.arraycopy(norm, 0, dest, 3 * leftSideIndex, 3);
@@ -4301,16 +4303,16 @@ public class GeometryBuilder {
                         for (s = 0; s <= arcSlices; s++) {
                             index = s + arcSlices + lengthSlices;
                             this.facenorm(srcVerts, index, index + slices + 1, index + slices, tmp);
-                            this.add3AndSet(norm, 0, tmp, 0);
+                            GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                         }
                         index = arcSlices + lengthSlices;
                         this.facenorm(srcVerts, index, index + slices, index - 1, tmp);
-                        this.add3AndSet(norm, 0, tmp, 0);
+                        GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                         index = (2 * arcSlices) + lengthSlices;
                         this.facenorm(srcVerts, index, index + 1, index + slices, tmp);
-                        this.add3AndSet(norm, 0, tmp, 0);
-                        this.mul3AndSet(norm, 0, nsign);
-                        this.norm3AndSet(norm, 0);
+                        GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
+                        GeometryBuilder.mul3AndSet(norm, 0, nsign);
+                        GeometryBuilder.norm3AndSet(norm, 0);
                         // Copy common normal to the first point of each slice.
                         for (s = 0; s <= arcSlices; s++) {
                             index = s + arcSlices + lengthSlices;
@@ -4344,17 +4346,17 @@ public class GeometryBuilder {
                             this.facenorm(srcVerts, index, nextSlice, adjacentLoop, tmp);
                         else
                             this.facenorm(srcVerts, index, adjacentLoop, nextSlice, tmp);
-                        this.add3AndSet(norm, 0, tmp, 0);
+                        GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                         // Add counter-clockwise adjacent face.
                         if (l == 0)
                             this.facenorm(srcVerts, index, adjacentLoop, prevSlice, tmp);
                         else
                             this.facenorm(srcVerts, index, prevSlice, adjacentLoop, tmp);
-                        this.add3AndSet(norm, 0, tmp, 0);
+                        GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
 
                         // Normalize and place in output.
-                        this.mul3AndSet(norm, 0, nsign);
-                        this.norm3AndSet(norm, 0);
+                        GeometryBuilder.mul3AndSet(norm, 0, nsign);
+                        GeometryBuilder.norm3AndSet(norm, 0);
                         System.arraycopy(norm, 0, dest, 3 * index, 3);
                     }
                 }
@@ -4380,28 +4382,28 @@ public class GeometryBuilder {
 
                     // Add lower-left adjacent face.
                     this.facenorm(srcVerts, index, prevSlice, prevSlice - slices, tmp);
-                    this.add3AndSet(norm, 0, tmp, 0);
+                    GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                     this.facenorm(srcVerts, index, prevSlice - slices, prevLoop, tmp);
-                    this.add3AndSet(norm, 0, tmp, 0);
+                    GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                     // Add lower-right adjacent face.
                     this.facenorm(srcVerts, index, prevLoop, nextSlice - slices, tmp);
-                    this.add3AndSet(norm, 0, tmp, 0);
+                    GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                     this.facenorm(srcVerts, index, nextSlice - slices, nextSlice, tmp);
-                    this.add3AndSet(norm, 0, tmp, 0);
+                    GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                     // Add upper-right adjacent face.
                     this.facenorm(srcVerts, index, nextSlice, nextSlice + slices, tmp);
-                    this.add3AndSet(norm, 0, tmp, 0);
+                    GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                     this.facenorm(srcVerts, index, nextSlice + slices, nextLoop, tmp);
-                    this.add3AndSet(norm, 0, tmp, 0);
+                    GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                     // Add upper-left adjacent face.
                     this.facenorm(srcVerts, index, nextLoop, prevSlice + slices, tmp);
-                    this.add3AndSet(norm, 0, tmp, 0);
+                    GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                     this.facenorm(srcVerts, index, prevSlice + slices, prevSlice, tmp);
-                    this.add3AndSet(norm, 0, tmp, 0);
+                    GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
 
                     // Normalize and place in output.
-                    this.mul3AndSet(norm, 0, nsign);
-                    this.norm3AndSet(norm, 0);
+                    GeometryBuilder.mul3AndSet(norm, 0, nsign);
+                    GeometryBuilder.norm3AndSet(norm, 0);
                     System.arraycopy(norm, 0, dest, 3 * index, 3);
                 }
             }
@@ -4409,7 +4411,7 @@ public class GeometryBuilder {
     }
 
     public void makeLongDiskIndices(int arcSlices, int lengthSlices, int loops, int[] dest) {
-        int numIndices = this.getLongDiskIndexCount(arcSlices, lengthSlices, loops);
+        int numIndices = GeometryBuilder.getLongDiskIndexCount(arcSlices, lengthSlices, loops);
 
         if (numIndices < 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "arcSlices=" + arcSlices
@@ -4476,7 +4478,7 @@ public class GeometryBuilder {
         float area;
         int order;
 
-        area = this.computePolygonArea2(pos, count, points);
+        area = GeometryBuilder.computePolygonArea2(pos, count, points);
         if (area < 0.0f)
             order = CLOCKWISE;
         else
@@ -4485,7 +4487,7 @@ public class GeometryBuilder {
         return order;
     }
 
-    public float computePolygonArea2(int pos, int count, Vec4[] points) {
+    public static float computePolygonArea2(int pos, int count, Vec4[] points) {
         if (pos < 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "pos=" + pos);
             Logging.logger().severe(message);
@@ -4595,7 +4597,7 @@ public class GeometryBuilder {
         return this.tessellatePolygon(pos, count, vertices, Vec4.UNIT_Z);
     }
 
-    public int getIndexedTriangleBufferDrawMode() {
+    public static int getIndexedTriangleBufferDrawMode() {
         return GL.GL_TRIANGLES;
     }
 
@@ -4727,15 +4729,15 @@ public class GeometryBuilder {
             // Add this face normal to the normal at each vertex.
             for (v = 0; v < 3; v++) {
                 index = 3 * faceIndices[v];
-                this.add3AndSet(dest, index, norm, 0);
+                GeometryBuilder.add3AndSet(dest, index, norm, 0);
             }
         }
 
         // Scale and normalize each vertex normal.
         for (v = 0; v < vertexCount; v++) {
             index = 3 * (vertexPos + v);
-            this.mul3AndSet(dest, index, nsign);
-            this.norm3AndSet(dest, index);
+            GeometryBuilder.mul3AndSet(dest, index, nsign);
+            GeometryBuilder.norm3AndSet(dest, index);
         }
 
         dest.rewind();
@@ -4748,7 +4750,7 @@ public class GeometryBuilder {
         minCapacity = 3 * (itb.getVertexCount() + 1);
         while (minCapacity > oldCapacity) {
             newCapacity = 2 * oldCapacity;
-            itb.vertices = this.copyOf(itb.vertices, newCapacity);
+            itb.vertices = GeometryBuilder.copyOf(itb.vertices, newCapacity);
             oldCapacity = newCapacity;
         }
 
@@ -4838,8 +4840,8 @@ public class GeometryBuilder {
         // Scale and normalize each vertex normal.
         for (v = 0; v < vertexCount; v++) {
             index = 3 * (vertexPos + v);
-            this.mul3AndSet(dest, index, nsign);
-            this.norm3AndSet(dest, index);
+            GeometryBuilder.mul3AndSet(dest, index, nsign);
+            GeometryBuilder.norm3AndSet(dest, index);
         }
 
         dest.rewind();
@@ -4922,8 +4924,8 @@ public class GeometryBuilder {
         // Scale and normalize each vertex normal.
         for (v = 0; v < vertexCount; v++) {
             index = 3 * (vertexPos + v);
-            this.mul3AndSet(dest, index, nsign);
-            this.norm3AndSet(dest, index);
+            GeometryBuilder.mul3AndSet(dest, index, nsign);
+            GeometryBuilder.norm3AndSet(dest, index);
         }
 
         dest.rewind();
@@ -4939,7 +4941,7 @@ public class GeometryBuilder {
         minCapacity = itb.getIndexCount() + 9;
         while (minCapacity > oldCapacity) {
             newCapacity = 2 * oldCapacity;
-            itb.indices = this.copyOf(itb.indices, newCapacity);
+            itb.indices = GeometryBuilder.copyOf(itb.indices, newCapacity);
             oldCapacity = newCapacity;
         }
 
@@ -5050,7 +5052,7 @@ public class GeometryBuilder {
         minCapacity = 3 * itb.getVertexCount() + 3;
         while (minCapacity > oldCapacity) {
             newCapacity = 2 * oldCapacity;
-            itb.vertices = this.copyOf(itb.vertices, newCapacity);
+            itb.vertices = GeometryBuilder.copyOf(itb.vertices, newCapacity);
             oldCapacity = newCapacity;
         }
 
@@ -5094,7 +5096,7 @@ public class GeometryBuilder {
             throw new IllegalArgumentException(message);
         }
 
-        this.makeUnitSphereTextureCoordinates(itb.getVertexCount(), itb.getVertices(), texCoords, -1);
+        GeometryBuilder.makeUnitSphereTextureCoordinates(itb.getVertexCount(), itb.getVertices(), texCoords, -1);
     }
 
     // append copy of vertex at sourceIndex to end of vertices buffer
@@ -5120,11 +5122,11 @@ public class GeometryBuilder {
             throw new IllegalArgumentException(message);
         }
 
-        this.makeUnitSphereTextureCoordinates(itb.getVertexCount(), itb.getVertices(),
+        GeometryBuilder.makeUnitSphereTextureCoordinates(itb.getVertexCount(), itb.getVertices(),
             texCoords, seamVerticesIndex);
     }
 
-    public void makeUnitSphereTextureCoordinates(int vertexCount, FloatBuffer vertices,
+    public static void makeUnitSphereTextureCoordinates(int vertexCount, FloatBuffer vertices,
         FloatBuffer texCoords, int seamVerticesIndex) {
         if (vertices == null) {
             String message = "nullValue.VertexArrayIsNull";
@@ -5187,7 +5189,7 @@ public class GeometryBuilder {
     // allow for correction of seam caused by triangles that wrap across tecture bounds
 
     // single texture version
-    public void makeUnitBoxTextureCoordinates(FloatBuffer texCoords, int vertexCount) {
+    public static void makeUnitBoxTextureCoordinates(FloatBuffer texCoords, int vertexCount) {
         if (texCoords == null) {
             String message = "nullValue.DestinationArrayIsNull";
             Logging.logger().severe(message);
@@ -5219,7 +5221,7 @@ public class GeometryBuilder {
     }
 
     // multi-texture version
-    public void makeUnitBoxTextureCoordinates(int index, FloatBuffer texCoords, int vertexCount) {
+    public static void makeUnitBoxTextureCoordinates(int index, FloatBuffer texCoords, int vertexCount) {
         if (texCoords == null) {
             String message = "nullValue.DestinationArrayIsNull";
             Logging.logger().severe(message);
@@ -5250,7 +5252,7 @@ public class GeometryBuilder {
         texCoords.rewind();
     }
 
-    public void makeUnitPyramidTextureCoordinates(FloatBuffer texCoords, int vertexCount) {
+    public static void makeUnitPyramidTextureCoordinates(FloatBuffer texCoords, int vertexCount) {
         if (texCoords == null) {
             String message = "nullValue.DestinationArrayIsNull";
             Logging.logger().severe(message);
@@ -5297,7 +5299,7 @@ public class GeometryBuilder {
         texCoords.rewind();
     }
 
-    public void makeUnitPyramidTextureCoordinates(int index, FloatBuffer texCoords, int vertexCount) {
+    public static void makeUnitPyramidTextureCoordinates(int index, FloatBuffer texCoords, int vertexCount) {
         if (texCoords == null) {
             String message = "nullValue.DestinationArrayIsNull";
             Logging.logger().severe(message);
@@ -5347,7 +5349,7 @@ public class GeometryBuilder {
         texCoords.rewind();
     }
 
-    public void makeUnitCylinderTextureCoordinates(int face, FloatBuffer texCoords, int subdivisions) {
+    public static void makeUnitCylinderTextureCoordinates(int face, FloatBuffer texCoords, int subdivisions) {
         if (texCoords == null) {
             String message = "nullValue.DestinationArrayIsNull";
             Logging.logger().severe(message);
@@ -5421,7 +5423,7 @@ public class GeometryBuilder {
         texCoords.rewind();
     }
 
-    public void makeWedgeTextureCoordinates(FloatBuffer texCoords, int subdivisions, Angle angle) {
+    public static void makeWedgeTextureCoordinates(FloatBuffer texCoords, int subdivisions, Angle angle) {
         if (texCoords == null) {
             String message = "nullValue.DestinationArrayIsNull";
             Logging.logger().severe(message);
@@ -5501,7 +5503,7 @@ public class GeometryBuilder {
         texCoords.rewind();
     }
 
-    public void makeUnitWedgeTextureCoordinates(int face, FloatBuffer texCoords, int subdivisions, Angle angle) {
+    public static void makeUnitWedgeTextureCoordinates(int face, FloatBuffer texCoords, int subdivisions, Angle angle) {
         if (texCoords == null) {
             String message = "nullValue.DestinationArrayIsNull";
             Logging.logger().severe(message);
@@ -5606,7 +5608,7 @@ public class GeometryBuilder {
         texCoords.rewind();
     }
 
-    public void makeUnitConeTextureCoordinates(FloatBuffer texCoords, int subdivisions) {
+    public static void makeUnitConeTextureCoordinates(FloatBuffer texCoords, int subdivisions) {
         if (texCoords == null) {
             String message = "nullValue.DestinationArrayIsNull";
             Logging.logger().severe(message);
@@ -5667,7 +5669,7 @@ public class GeometryBuilder {
         texCoords.rewind();
     }
 
-    public void makeUnitConeTextureCoordinates(int face, FloatBuffer texCoords, int subdivisions) {
+    public static void makeUnitConeTextureCoordinates(int face, FloatBuffer texCoords, int subdivisions) {
         if (texCoords == null) {
             String message = "nullValue.DestinationArrayIsNull";
             Logging.logger().severe(message);
@@ -5738,7 +5740,7 @@ public class GeometryBuilder {
         texCoords.rewind();
     }
 
-    public int getIndexedTriangleArrayDrawMode() {
+    public static int getIndexedTriangleArrayDrawMode() {
         return GL.GL_TRIANGLES;
     }
 
@@ -5900,15 +5902,15 @@ public class GeometryBuilder {
             // Add this face normal to the normal at each vertex.
             for (v = 0; v < 3; v++) {
                 index = 3 * faceIndices[v];
-                this.add3AndSet(dest, index, norm, 0);
+                GeometryBuilder.add3AndSet(dest, index, norm, 0);
             }
         }
 
         // Scale and normalize each vertex normal.
         for (v = 0; v < vertexCount; v++) {
             index = 3 * (vertexPos + v);
-            this.mul3AndSet(dest, index, nsign);
-            this.norm3AndSet(dest, index);
+            GeometryBuilder.mul3AndSet(dest, index, nsign);
+            GeometryBuilder.norm3AndSet(dest, index);
         }
     }
 
@@ -5972,15 +5974,15 @@ public class GeometryBuilder {
             // Add this face normal to the normal at each vertex.
             for (v = 0; v < 3; v++) {
                 index = 3 * faceIndices[v];
-                this.add3AndSet(dest, index, norm, 0);
+                GeometryBuilder.add3AndSet(dest, index, norm, 0);
             }
         }
 
         // Scale and normalize each vertex normal.
         for (v = 0; v < vertexCount; v++) {
             index = 3 * (vertexPos + v);
-            this.mul3AndSet(dest, index, nsign);
-            this.norm3AndSet(dest, index);
+            GeometryBuilder.mul3AndSet(dest, index, nsign);
+            GeometryBuilder.norm3AndSet(dest, index);
         }
     }
 
@@ -5991,7 +5993,7 @@ public class GeometryBuilder {
         minCapacity = 3 * (ita.vertexCount + 1);
         while (minCapacity > oldCapacity) {
             newCapacity = 2 * oldCapacity;
-            ita.vertices = this.copyOf(ita.vertices, newCapacity);
+            ita.vertices = GeometryBuilder.copyOf(ita.vertices, newCapacity);
             oldCapacity = newCapacity;
         }
 
@@ -6017,7 +6019,7 @@ public class GeometryBuilder {
         minCapacity = ita.indexCount + 9;
         while (minCapacity > oldCapacity) {
             newCapacity = 2 * oldCapacity;
-            ita.indices = this.copyOf(ita.indices, newCapacity);
+            ita.indices = GeometryBuilder.copyOf(ita.indices, newCapacity);
             oldCapacity = newCapacity;
         }
 
@@ -6043,13 +6045,13 @@ public class GeometryBuilder {
         ita.indices[ita.indexCount++] = c;
     }
 
-    public int getSubdivisionPointsVertexCount(int subdivisions) {
+    public static int getSubdivisionPointsVertexCount(int subdivisions) {
         return (1 << subdivisions) + 1;
     }
 
     public void makeSubdivisionPoints(float x1, float y1, float z1, float x2, float y2, float z2,
         int subdivisions, float[] dest) {
-        int numPoints = this.getSubdivisionPointsVertexCount(subdivisions);
+        int numPoints = GeometryBuilder.getSubdivisionPointsVertexCount(subdivisions);
         int numCoords = 3 * numPoints;
 
         if (numPoints < 0) {
@@ -6111,7 +6113,7 @@ public class GeometryBuilder {
         }
     }
 
-    public int getBilinearSurfaceFillIndexCount(int uStacks, int vStacks) {
+    public static int getBilinearSurfaceFillIndexCount(int uStacks, int vStacks) {
         return vStacks * 2 * (uStacks + 1) + 2 * (vStacks - 1);
     }
 
@@ -6119,7 +6121,7 @@ public class GeometryBuilder {
     //********************  Subdivision Points  ********************//
     //**************************************************************//
 
-    public int getBilinearSurfaceOutlineIndexCount(int uStacks, int vStacks, int mask) {
+    public static int getBilinearSurfaceOutlineIndexCount(int uStacks, int vStacks, int mask) {
         int count = 0;
         if ((mask & TOP) != 0)
             count += 2 * uStacks;
@@ -6133,11 +6135,11 @@ public class GeometryBuilder {
         return count;
     }
 
-    public int getBilinearSurfaceVertexCount(int uStacks, int vStacks) {
+    public static int getBilinearSurfaceVertexCount(int uStacks, int vStacks) {
         return (uStacks + 1) * (vStacks + 1);
     }
 
-    public int getBilinearSurfaceFillDrawMode() {
+    public static int getBilinearSurfaceFillDrawMode() {
         return GL.GL_TRIANGLE_STRIP;
     }
 
@@ -6145,12 +6147,12 @@ public class GeometryBuilder {
     //********************  Bilinear Surface ********************//
     //**************************************************************//
 
-    public int getBilinearSurfaceOutlineDrawMode() {
+    public static int getBilinearSurfaceOutlineDrawMode() {
         return GL.GL_LINES;
     }
 
     public void makeBilinearSurfaceFillIndices(int vertexPos, int uStacks, int vStacks, int destPos, int[] dest) {
-        int numIndices = this.getBilinearSurfaceFillIndexCount(uStacks, vStacks);
+        int numIndices = GeometryBuilder.getBilinearSurfaceFillIndexCount(uStacks, vStacks);
 
         if (numIndices < 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "uStacks=" + uStacks
@@ -6205,7 +6207,7 @@ public class GeometryBuilder {
 
     public void makeBilinearSurfaceOutlineIndices(int vertexPos, int uStacks, int vStacks, int mask, int destPos,
         int[] dest) {
-        int numIndices = this.getBilinearSurfaceOutlineIndexCount(uStacks, vStacks, mask);
+        int numIndices = GeometryBuilder.getBilinearSurfaceOutlineIndexCount(uStacks, vStacks, mask);
 
         if (numIndices < 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "uStacks=" + uStacks
@@ -6267,7 +6269,7 @@ public class GeometryBuilder {
     }
 
     public void makeBilinearSurfaceVertices(float[] control, int destPos, int uStacks, int vStacks, float[] dest) {
-        int numPoints = this.getBilinearSurfaceVertexCount(uStacks, vStacks);
+        int numPoints = GeometryBuilder.getBilinearSurfaceVertexCount(uStacks, vStacks);
         int numCoords = 3 * numPoints;
 
         if (control == null) {
@@ -6336,7 +6338,7 @@ public class GeometryBuilder {
 
     public void makeBilinearSurfaceVertexNormals(int srcPos, int uStacks, int vStacks, float[] srcVerts,
         int destPos, float[] dest) {
-        int numPoints = this.getBilinearSurfaceVertexCount(uStacks, vStacks);
+        int numPoints = GeometryBuilder.getBilinearSurfaceVertexCount(uStacks, vStacks);
         int numCoords = 3 * numPoints;
 
         if (numPoints < 0) {
@@ -6386,16 +6388,16 @@ public class GeometryBuilder {
                     // Adjacent faces below and to the left.
                     if (ui > 0) {
                         this.facenorm(srcVerts, index, index - 1, vprev - 1, tmp);
-                        this.add3AndSet(norm, 0, tmp, 0);
+                        GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                         this.facenorm(srcVerts, index, vprev - 1, vprev, tmp);
-                        this.add3AndSet(norm, 0, tmp, 0);
+                        GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                     }
                     // Adjacent faces below and to the right.
                     if (ui < uStacks) {
                         this.facenorm(srcVerts, index, vprev, vprev + 1, tmp);
-                        this.add3AndSet(norm, 0, tmp, 0);
+                        GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                         this.facenorm(srcVerts, index, vprev + 1, index + 1, tmp);
-                        this.add3AndSet(norm, 0, tmp, 0);
+                        GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                     }
                 }
 
@@ -6404,22 +6406,22 @@ public class GeometryBuilder {
                     // Adjacent faces above and to the left.
                     if (ui > 0) {
                         this.facenorm(srcVerts, index, vnext, vnext - 1, tmp);
-                        this.add3AndSet(norm, 0, tmp, 0);
+                        GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                         this.facenorm(srcVerts, index, vnext - 1, index - 1, tmp);
-                        this.add3AndSet(norm, 0, tmp, 0);
+                        GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                     }
                     // Adjacent faces above and to the right.
                     if (ui < uStacks) {
                         this.facenorm(srcVerts, index, index + 1, vnext + 1, tmp);
-                        this.add3AndSet(norm, 0, tmp, 0);
+                        GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                         this.facenorm(srcVerts, index, vnext + 1, vnext, tmp);
-                        this.add3AndSet(norm, 0, tmp, 0);
+                        GeometryBuilder.add3AndSet(norm, 0, tmp, 0);
                     }
                 }
 
                 // Normalize and place in output.
-                this.mul3AndSet(norm, 0, nsign);
-                this.norm3AndSet(norm, 0);
+                GeometryBuilder.mul3AndSet(norm, 0, nsign);
+                GeometryBuilder.norm3AndSet(norm, 0);
                 System.arraycopy(norm, 0, dest, 3 * index, 3);
             }
         }
@@ -6446,7 +6448,7 @@ public class GeometryBuilder {
      * @throws IllegalArgumentException if any of <code>majorRadius</code>, <code>minorRadius</code>, or
      *                                  <code>slices</code> are less than zero.
      */
-    public FloatBuffer makeEllipse(float x, float y, float majorRadius, float minorRadius, int slices) {
+    public static FloatBuffer makeEllipse(float x, float y, float majorRadius, float minorRadius, int slices) {
         if (majorRadius < 0) {
             String message = Logging.getMessage("Geom.RadiusIsNegative");
             Logging.logger().severe(message);
@@ -6548,14 +6550,14 @@ public class GeometryBuilder {
 
         // Return an ellipse without a leader if the leader width is zero.
         if (leaderWidth == 0)
-            return this.makeEllipse(x, y, majorRadius, minorRadius, slices);
+            return GeometryBuilder.makeEllipse(x, y, majorRadius, minorRadius, slices);
 
-        int leaderCode = this.computeLeaderLocationCode(x - majorRadius, y - minorRadius, x + majorRadius,
+        int leaderCode = GeometryBuilder.computeLeaderLocationCode(x - majorRadius, y - minorRadius, x + majorRadius,
             y + minorRadius, leaderX, leaderY);
 
         // Return an ellipse without a leader if the leader point is inside the rectangle.
         if (leaderCode == LEADER_LOCATION_INSIDE)
-            return this.makeEllipse(x, y, majorRadius, minorRadius, slices);
+            return GeometryBuilder.makeEllipse(x, y, majorRadius, minorRadius, slices);
 
         // Return a buffer with only the first point at angle 0 if the number of slices is zero or one.
         if (slices <= 1) {
@@ -6611,7 +6613,7 @@ public class GeometryBuilder {
         else {
             // Return an ellipse without a leader if the leader location code is unrecognized. This should never happen,
             // but we check anyway.
-            return this.makeEllipse(x, y, majorRadius, minorRadius, slices);
+            return GeometryBuilder.makeEllipse(x, y, majorRadius, minorRadius, slices);
         }
 
         float step = (float) (Math.PI * 2.0f - leaderAngle) / slices;
@@ -6658,7 +6660,7 @@ public class GeometryBuilder {
      * @return a buffer containing the rectangle's x and y locations.
      * @throws IllegalArgumentException if either <code>width</code> or <code>height</code> are less than zero.
      */
-    public FloatBuffer makeRectangle(float x, float y, float width, float height) {
+    public static FloatBuffer makeRectangle(float x, float y, float width, float height) {
         if (width < 0) {
             String message = Logging.getMessage("Geom.WidthIsNegative");
             Logging.logger().severe(message);
@@ -6751,7 +6753,7 @@ public class GeometryBuilder {
 
         // Create a rectangle with sharp corners if either the corner radius or the number of corner slices is 0.
         if (cornerRadius == 0.0f || cornerSlices == 0)
-            return this.makeRectangle(x, y, width, height);
+            return GeometryBuilder.makeRectangle(x, y, width, height);
 
         float piOver2 = (float) Math.PI / 2.0f;
 
@@ -6760,28 +6762,28 @@ public class GeometryBuilder {
         // Lower left corner.
         buffer.put(x);
         buffer.put(y + cornerRadius);
-        this.addRectangleRoundedCorner(x + cornerRadius, x + cornerRadius, cornerRadius, (float) Math.PI, piOver2,
+        GeometryBuilder.addRectangleRoundedCorner(x + cornerRadius, x + cornerRadius, cornerRadius, (float) Math.PI, piOver2,
             cornerSlices, buffer);
         buffer.put(x + cornerRadius);
         buffer.put(y);
         // Lower right corner.
         buffer.put(x + width - cornerRadius);
         buffer.put(y);
-        this.addRectangleRoundedCorner(x + width - cornerRadius, y + cornerRadius, cornerRadius, -piOver2, piOver2,
+        GeometryBuilder.addRectangleRoundedCorner(x + width - cornerRadius, y + cornerRadius, cornerRadius, -piOver2, piOver2,
             cornerSlices, buffer);
         buffer.put(x + width);
         buffer.put(y + cornerRadius);
         // Upper right corner.
         buffer.put(x + width);
         buffer.put(y + height - cornerRadius);
-        this.addRectangleRoundedCorner(x + width - cornerRadius, y + height - cornerRadius, cornerRadius, 0.0f, piOver2,
+        GeometryBuilder.addRectangleRoundedCorner(x + width - cornerRadius, y + height - cornerRadius, cornerRadius, 0.0f, piOver2,
             cornerSlices, buffer);
         buffer.put(x + width - cornerRadius);
         buffer.put(y + height);
         // Upper left corner.
         buffer.put(x + cornerRadius);
         buffer.put(y + height);
-        this.addRectangleRoundedCorner(x + cornerRadius, y + height - cornerRadius, cornerRadius, piOver2, piOver2,
+        GeometryBuilder.addRectangleRoundedCorner(x + cornerRadius, y + height - cornerRadius, cornerRadius, piOver2, piOver2,
             cornerSlices, buffer);
         buffer.put(x);
         buffer.put(y + height - cornerRadius);
@@ -6846,13 +6848,13 @@ public class GeometryBuilder {
 
         // Return a rectangle without a leader if the leader width is zero.
         if (leaderWidth == 0)
-            return this.makeRectangle(x, y, width, height);
+            return GeometryBuilder.makeRectangle(x, y, width, height);
 
-        int leaderCode = this.computeLeaderLocationCode(x, y, x + width, y + height, leaderX, leaderY);
+        int leaderCode = GeometryBuilder.computeLeaderLocationCode(x, y, x + width, y + height, leaderX, leaderY);
 
         // Return a rectangle without a leader if the leader point is inside the rectangle.
         if (leaderCode == LEADER_LOCATION_INSIDE)
-            return this.makeRectangle(x, y, width, height);
+            return GeometryBuilder.makeRectangle(x, y, width, height);
 
         if ((leaderCode & LEADER_LOCATION_BOTTOM) != 0) {
             // Limit the leader's width by the rectangle's width.
@@ -6989,7 +6991,7 @@ public class GeometryBuilder {
         else {
             // Return a rectangle without a leader if the leader location code is unrecognized. This should never
             // happen, but we check anyway.
-            return this.makeRectangle(x, y, width, height);
+            return GeometryBuilder.makeRectangle(x, y, width, height);
         }
     }
 
@@ -7078,7 +7080,7 @@ public class GeometryBuilder {
         if (leaderWidth == 0)
             return this.makeRectangle(x, y, width, height, cornerRadius, cornerSlices);
 
-        int leaderCode = this.computeLeaderLocationCode(x, y, x + width, y + height, leaderX, leaderY);
+        int leaderCode = GeometryBuilder.computeLeaderLocationCode(x, y, x + width, y + height, leaderX, leaderY);
 
         // Return a rectangle without a leader if the leader point is inside the rectangle.
         if (leaderCode == LEADER_LOCATION_INSIDE)
@@ -7101,14 +7103,14 @@ public class GeometryBuilder {
             // Lower right corner.
             buffer.put(x + width - cornerRadius);
             buffer.put(y);
-            this.addRectangleRoundedCorner(x + width - cornerRadius, y + cornerRadius, cornerRadius, -piOver2, piOver2,
+            GeometryBuilder.addRectangleRoundedCorner(x + width - cornerRadius, y + cornerRadius, cornerRadius, -piOver2, piOver2,
                 cornerSlices, buffer);
             buffer.put(x + width);
             buffer.put(y + cornerRadius);
             // Upper right corner.
             buffer.put(x + width);
             buffer.put(y + height - cornerRadius);
-            this.addRectangleRoundedCorner(x + width - cornerRadius, y + height - cornerRadius, cornerRadius, 0.0f,
+            GeometryBuilder.addRectangleRoundedCorner(x + width - cornerRadius, y + height - cornerRadius, cornerRadius, 0.0f,
                 piOver2,
                 cornerSlices, buffer);
             buffer.put(x + width - cornerRadius);
@@ -7116,14 +7118,14 @@ public class GeometryBuilder {
             // Upper left corner.
             buffer.put(x + cornerRadius);
             buffer.put(y + height);
-            this.addRectangleRoundedCorner(x + cornerRadius, y + height - cornerRadius, cornerRadius, piOver2, piOver2,
+            GeometryBuilder.addRectangleRoundedCorner(x + cornerRadius, y + height - cornerRadius, cornerRadius, piOver2, piOver2,
                 cornerSlices, buffer);
             buffer.put(x);
             buffer.put(y + height - cornerRadius);
             // Lower left corner.
             buffer.put(x);
             buffer.put(y + cornerRadius);
-            this.addRectangleRoundedCorner(x + cornerRadius, x + cornerRadius, cornerRadius, (float) Math.PI, piOver2,
+            GeometryBuilder.addRectangleRoundedCorner(x + cornerRadius, x + cornerRadius, cornerRadius, (float) Math.PI, piOver2,
                 cornerSlices, buffer);
             buffer.put(x + cornerRadius);
             buffer.put(y);
@@ -7152,28 +7154,28 @@ public class GeometryBuilder {
             // Upper left corner.
             buffer.put(x + cornerRadius);
             buffer.put(y + height);
-            this.addRectangleRoundedCorner(x + cornerRadius, y + height - cornerRadius, cornerRadius, piOver2, piOver2,
+            GeometryBuilder.addRectangleRoundedCorner(x + cornerRadius, y + height - cornerRadius, cornerRadius, piOver2, piOver2,
                 cornerSlices, buffer);
             buffer.put(x);
             buffer.put(y + height - cornerRadius);
             // Lower left corner.
             buffer.put(x);
             buffer.put(y + cornerRadius);
-            this.addRectangleRoundedCorner(x + cornerRadius, x + cornerRadius, cornerRadius, (float) Math.PI, piOver2,
+            GeometryBuilder.addRectangleRoundedCorner(x + cornerRadius, x + cornerRadius, cornerRadius, (float) Math.PI, piOver2,
                 cornerSlices, buffer);
             buffer.put(x + cornerRadius);
             buffer.put(y);
             // Lower right corner.
             buffer.put(x + width - cornerRadius);
             buffer.put(y);
-            this.addRectangleRoundedCorner(x + width - cornerRadius, y + cornerRadius, cornerRadius, -piOver2, piOver2,
+            GeometryBuilder.addRectangleRoundedCorner(x + width - cornerRadius, y + cornerRadius, cornerRadius, -piOver2, piOver2,
                 cornerSlices, buffer);
             buffer.put(x + width);
             buffer.put(y + cornerRadius);
             // Upper right corner.
             buffer.put(x + width);
             buffer.put(y + height - cornerRadius);
-            this.addRectangleRoundedCorner(x + width - cornerRadius, y + height - cornerRadius, cornerRadius, 0.0f,
+            GeometryBuilder.addRectangleRoundedCorner(x + width - cornerRadius, y + height - cornerRadius, cornerRadius, 0.0f,
                 piOver2,
                 cornerSlices, buffer);
             buffer.put(x + width - cornerRadius);
@@ -7203,21 +7205,21 @@ public class GeometryBuilder {
             // Lower left corner.
             buffer.put(x);
             buffer.put(y + cornerRadius);
-            this.addRectangleRoundedCorner(x + cornerRadius, x + cornerRadius, cornerRadius, (float) Math.PI, piOver2,
+            GeometryBuilder.addRectangleRoundedCorner(x + cornerRadius, x + cornerRadius, cornerRadius, (float) Math.PI, piOver2,
                 cornerSlices, buffer);
             buffer.put(x + cornerRadius);
             buffer.put(y);
             // Lower right corner.
             buffer.put(x + width - cornerRadius);
             buffer.put(y);
-            this.addRectangleRoundedCorner(x + width - cornerRadius, y + cornerRadius, cornerRadius, -piOver2, piOver2,
+            GeometryBuilder.addRectangleRoundedCorner(x + width - cornerRadius, y + cornerRadius, cornerRadius, -piOver2, piOver2,
                 cornerSlices, buffer);
             buffer.put(x + width);
             buffer.put(y + cornerRadius);
             // Upper right corner.
             buffer.put(x + width);
             buffer.put(y + height - cornerRadius);
-            this.addRectangleRoundedCorner(x + width - cornerRadius, y + height - cornerRadius, cornerRadius, 0.0f,
+            GeometryBuilder.addRectangleRoundedCorner(x + width - cornerRadius, y + height - cornerRadius, cornerRadius, 0.0f,
                 piOver2,
                 cornerSlices, buffer);
             buffer.put(x + width - cornerRadius);
@@ -7225,7 +7227,7 @@ public class GeometryBuilder {
             // Upper left corner.
             buffer.put(x + cornerRadius);
             buffer.put(y + height);
-            this.addRectangleRoundedCorner(x + cornerRadius, y + height - cornerRadius, cornerRadius, piOver2, piOver2,
+            GeometryBuilder.addRectangleRoundedCorner(x + cornerRadius, y + height - cornerRadius, cornerRadius, piOver2, piOver2,
                 cornerSlices, buffer);
             buffer.put(x);
             buffer.put(y + height - cornerRadius);
@@ -7254,7 +7256,7 @@ public class GeometryBuilder {
             // Upper right corner.
             buffer.put(x + width);
             buffer.put(y + height - cornerRadius);
-            this.addRectangleRoundedCorner(x + width - cornerRadius, y + height - cornerRadius, cornerRadius, 0.0f,
+            GeometryBuilder.addRectangleRoundedCorner(x + width - cornerRadius, y + height - cornerRadius, cornerRadius, 0.0f,
                 piOver2,
                 cornerSlices, buffer);
             buffer.put(x + width - cornerRadius);
@@ -7262,21 +7264,21 @@ public class GeometryBuilder {
             // Upper left corner.
             buffer.put(x + cornerRadius);
             buffer.put(y + height);
-            this.addRectangleRoundedCorner(x + cornerRadius, y + height - cornerRadius, cornerRadius, piOver2, piOver2,
+            GeometryBuilder.addRectangleRoundedCorner(x + cornerRadius, y + height - cornerRadius, cornerRadius, piOver2, piOver2,
                 cornerSlices, buffer);
             buffer.put(x);
             buffer.put(y + height - cornerRadius);
             // Lower left corner.
             buffer.put(x);
             buffer.put(y + cornerRadius);
-            this.addRectangleRoundedCorner(x + cornerRadius, x + cornerRadius, cornerRadius, (float) Math.PI, piOver2,
+            GeometryBuilder.addRectangleRoundedCorner(x + cornerRadius, x + cornerRadius, cornerRadius, (float) Math.PI, piOver2,
                 cornerSlices, buffer);
             buffer.put(x + cornerRadius);
             buffer.put(y);
             // Lower right corner.
             buffer.put(x + width - cornerRadius);
             buffer.put(y);
-            this.addRectangleRoundedCorner(x + width - cornerRadius, y + cornerRadius, cornerRadius, -piOver2, piOver2,
+            GeometryBuilder.addRectangleRoundedCorner(x + width - cornerRadius, y + cornerRadius, cornerRadius, -piOver2, piOver2,
                 cornerSlices, buffer);
             buffer.put(x + width);
             buffer.put(y + cornerRadius);
@@ -7311,7 +7313,8 @@ public class GeometryBuilder {
      * @param slices the number of slices in the corner.
      * @param buffer the buffer the corner's xy coordinates are added to.
      */
-    protected void addRectangleRoundedCorner(float x, float y, float radius, float start, float sweep, int slices,
+    protected static void addRectangleRoundedCorner(float x, float y, float radius, float start, float sweep,
+        int slices,
         FloatBuffer buffer) {
         if (slices == 0.0f)
             return;
@@ -7341,14 +7344,14 @@ public class GeometryBuilder {
      * @param leaderY the leader's y-coordinate.
      * @return a four bit code indicating the leader's location relative to the rectangle.
      */
-    protected int computeLeaderLocationCode(float x1, float y1, float x2, float y2, float leaderX, float leaderY) {
+    protected static int computeLeaderLocationCode(float x1, float y1, float x2, float y2, float leaderX, float leaderY) {
         return (leaderY > y2 ? LEADER_LOCATION_TOP : 0)   // bit 0: top
             | (leaderY < y1 ? LEADER_LOCATION_BOTTOM : 0) // bit 1: bottom
             | (leaderX > x2 ? LEADER_LOCATION_RIGHT : 0)  // bit 2: right
             | (leaderX < x1 ? LEADER_LOCATION_LEFT : 0);  // bit 3: left
     }
 
-    public <T> void reversePoints(int pos, int count, T[] points) {
+    public static <T> void reversePoints(int pos, int count, T[] points) {
         if (pos < 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "pos=" + pos);
             Logging.logger().severe(message);
@@ -7380,7 +7383,7 @@ public class GeometryBuilder {
         }
     }
 
-    private int[] copyOf(int[] original, int newLength) {
+    private static int[] copyOf(int[] original, int newLength) {
         int[] copy;
 
         copy = new int[newLength];
@@ -7389,7 +7392,7 @@ public class GeometryBuilder {
         return copy;
     }
 
-    private float[] copyOf(float[] original, int newLength) {
+    private static float[] copyOf(float[] original, int newLength) {
         float[] copy;
 
         copy = new float[newLength];
@@ -7398,7 +7401,7 @@ public class GeometryBuilder {
         return copy;
     }
 
-    private IntBuffer copyOf(IntBuffer original, int newLength) {
+    private static IntBuffer copyOf(IntBuffer original, int newLength) {
         IntBuffer copy;
 
         copy = Buffers.newDirectIntBuffer(newLength);
@@ -7412,7 +7415,7 @@ public class GeometryBuilder {
     //********************  Geometry Support    ********************//
     //**************************************************************//
 
-    private FloatBuffer copyOf(FloatBuffer original, int newLength) {
+    private static FloatBuffer copyOf(FloatBuffer original, int newLength) {
         FloatBuffer copy;
 
         copy = Buffers.newDirectFloatBuffer(newLength);
@@ -7432,10 +7435,10 @@ public class GeometryBuilder {
         ab = new float[3];
         ac = new float[3];
 
-        this.sub3(srcVerts, ib, srcVerts, ia, ab, 0);
-        this.sub3(srcVerts, ic, srcVerts, ia, ac, 0);
-        this.cross3(ab, ac, dest);
-        this.norm3AndSet(dest, 0);
+        GeometryBuilder.sub3(srcVerts, ib, srcVerts, ia, ab, 0);
+        GeometryBuilder.sub3(srcVerts, ic, srcVerts, ia, ac, 0);
+        GeometryBuilder.cross3(ab, ac, dest);
+        GeometryBuilder.norm3AndSet(dest, 0);
     }
 
     private void facenorm(FloatBuffer srcVerts, int vertA, int vertB, int vertC, float[] dest) {
@@ -7448,59 +7451,59 @@ public class GeometryBuilder {
         ab = new float[3];
         ac = new float[3];
 
-        this.sub3(srcVerts, ib, srcVerts, ia, ab, 0);
-        this.sub3(srcVerts, ic, srcVerts, ia, ac, 0);
-        this.cross3(ab, ac, dest);
-        this.norm3AndSet(dest, 0);
+        GeometryBuilder.sub3(srcVerts, ib, srcVerts, ia, ab, 0);
+        GeometryBuilder.sub3(srcVerts, ic, srcVerts, ia, ac, 0);
+        GeometryBuilder.cross3(ab, ac, dest);
+        GeometryBuilder.norm3AndSet(dest, 0);
     }
 
-    private void add3AndSet(float[] a, int aPos, float[] b, int bPos) {
+    private static void add3AndSet(float[] a, int aPos, float[] b, int bPos) {
         a[aPos] = a[aPos] + b[bPos];
         a[aPos + 1] = a[aPos + 1] + b[bPos + 1];
         a[aPos + 2] = a[aPos + 2] + b[bPos + 2];
     }
 
-    private void add3AndSet(FloatBuffer a, int aPos, float[] b, int bPos) {
+    private static void add3AndSet(FloatBuffer a, int aPos, float[] b, int bPos) {
         a.put(aPos, a.get(aPos) + b[bPos]);
         a.put(aPos + 1, a.get(aPos + 1) + b[bPos + 1]);
         a.put(aPos + 2, a.get(aPos + 2) + b[bPos + 2]);
     }
 
-    private void sub3(float[] a, int aPos, float[] b, int bPos, float[] dest, int destPos) {
+    private static void sub3(float[] a, int aPos, float[] b, int bPos, float[] dest, int destPos) {
         dest[destPos] = a[aPos] - b[bPos];
         dest[destPos + 1] = a[aPos + 1] - b[bPos + 1];
         dest[destPos + 2] = a[aPos + 2] - b[bPos + 2];
     }
 
-    private void sub3(FloatBuffer a, int aPos, FloatBuffer b, int bPos, float[] dest, int destPos) {
+    private static void sub3(FloatBuffer a, int aPos, FloatBuffer b, int bPos, float[] dest, int destPos) {
         dest[destPos] = a.get(aPos) - b.get(bPos);
         dest[destPos + 1] = a.get(aPos + 1) - b.get(bPos + 1);
         dest[destPos + 2] = a.get(aPos + 2) - b.get(bPos + 2);
     }
 
-    private void cross3(float[] a, float[] b, float[] dest) {
+    private static void cross3(float[] a, float[] b, float[] dest) {
         dest[0] = a[1] * b[2] - a[2] * b[1];
         dest[1] = a[2] * b[0] - a[0] * b[2];
         dest[2] = a[0] * b[1] - a[1] * b[0];
     }
 
-    private void mul3AndSet(float[] src, int srcPos, float c) {
+    private static void mul3AndSet(float[] src, int srcPos, float c) {
         src[srcPos] *= c;
         src[srcPos + 1] *= c;
         src[srcPos + 2] *= c;
     }
 
-    private void mul3AndSet(FloatBuffer src, int srcPos, float c) {
+    private static void mul3AndSet(FloatBuffer src, int srcPos, float c) {
         src.put(srcPos, src.get(srcPos) * c);
         src.put(srcPos + 1, src.get(srcPos + 1) * c);
         src.put(srcPos + 2, src.get(srcPos + 2) * c);
     }
 
-    private void mulAndSet(FloatBuffer src, int srcPos, float b, int offset) {
+    private static void mulAndSet(FloatBuffer src, int srcPos, float b, int offset) {
         src.put(srcPos + offset, src.get(srcPos + offset) * b);
     }
 
-    private void norm3AndSet(float[] src, int srcPos) {
+    private static void norm3AndSet(float[] src, int srcPos) {
         float len;
 
         len = src[srcPos] * src[srcPos] + src[srcPos + 1] * src[srcPos + 1] + src[srcPos + 2] * src[srcPos + 2];
@@ -7512,7 +7515,7 @@ public class GeometryBuilder {
         }
     }
 
-    private void norm3AndSet(FloatBuffer src, int srcPos) {
+    private static void norm3AndSet(FloatBuffer src, int srcPos) {
         float len;
 
         len = src.get(srcPos) * src.get(srcPos)
@@ -7526,7 +7529,7 @@ public class GeometryBuilder {
         }
     }
 
-    private int nextPowerOfTwo(int n) {
+    private static int nextPowerOfTwo(int n) {
         int i = 1;
         while (i < n) {
             i <<= 1;
@@ -7534,7 +7537,7 @@ public class GeometryBuilder {
         return i;
     }
 
-    private void append(Terrain terrain, LatLon ll, double altitude, boolean terrainConformant, Vec4 refPoint,
+    private static void append(Terrain terrain, LatLon ll, double altitude, boolean terrainConformant, Vec4 refPoint,
         FloatBuffer dest) {
         Vec4 point = terrainConformant ?
             terrain.getSurfacePoint(ll.latitude, ll.longitude, altitude) :
@@ -7562,10 +7565,10 @@ public class GeometryBuilder {
             this.primIndexCount = 0;
             this.vertexCount = vertexCount;
 
-            int initialCapacity = this.gb.nextPowerOfTwo(3 * vertexCount);
+            int initialCapacity = GeometryBuilder.nextPowerOfTwo(3 * vertexCount);
             this.indices = new int[initialCapacity];
             this.primIndices = new int[initialCapacity];
-            this.vertices = this.gb.copyOf(vertices, initialCapacity);
+            this.vertices = GeometryBuilder.copyOf(vertices, initialCapacity);
         }
 
         public int getIndexCount() {
@@ -7594,7 +7597,7 @@ public class GeometryBuilder {
             oldCapacity = this.indices.length;
             while (minCapacity > oldCapacity) {
                 newCapacity = 2 * oldCapacity;
-                this.indices = this.gb.copyOf(this.indices, newCapacity);
+                this.indices = GeometryBuilder.copyOf(this.indices, newCapacity);
                 oldCapacity = minCapacity;
             }
 
@@ -7623,7 +7626,7 @@ public class GeometryBuilder {
             minCapacity = this.primIndexCount + 1;
             while (minCapacity > oldCapacity) {
                 newCapacity = 2 * oldCapacity;
-                this.primIndices = this.gb.copyOf(this.primIndices, newCapacity);
+                this.primIndices = GeometryBuilder.copyOf(this.primIndices, newCapacity);
                 oldCapacity = newCapacity;
             }
 

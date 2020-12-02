@@ -334,7 +334,7 @@ public class CachedDataRaster extends AVListImpl implements DataRaster {
         return sb.toString();
     }
 
-    protected long getSizeInBytes(DataRaster[] rasters) {
+    protected static long getSizeInBytes(DataRaster[] rasters) {
         long totalBytes = 0L;
 
         if (rasters != null) {

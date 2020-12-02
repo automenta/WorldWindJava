@@ -225,7 +225,7 @@ public class PreprocessPanelDescriptor extends DefaultPanelDescriptor {
                 TimeFormatter tf = new TimeFormatter();
                 if (!sb.isEmpty())
                     sb.append(" - ");
-                sb.append(tf.formatEstimate(remainingMillis));
+                sb.append(TimeFormatter.formatEstimate(remainingMillis));
             }
             this.panelComponent.setProgressDescription2(sb.toString());
         }
@@ -240,7 +240,7 @@ public class PreprocessPanelDescriptor extends DefaultPanelDescriptor {
         this.panelComponent.setProgressDescription1(message);
     }
 
-    private String formatFileCount(int n) {
+    private static String formatFileCount(int n) {
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("%,d", n));
         sb.append(" file");
@@ -249,7 +249,7 @@ public class PreprocessPanelDescriptor extends DefaultPanelDescriptor {
         return sb.toString();
     }
 
-    private String makeDescription(FileSet set, int value, int max) {
+    private static String makeDescription(FileSet set, int value, int max) {
         StringBuilder sb = new StringBuilder();
         sb.append("Importing ");
         if (set != null && set.getTitle() != null) {
@@ -263,7 +263,7 @@ public class PreprocessPanelDescriptor extends DefaultPanelDescriptor {
         return sb.toString();
     }
 
-    private String makeSubStepDescription(String description, String subDescription) {
+    private static String makeSubStepDescription(String description, String subDescription) {
         StringBuilder sb = new StringBuilder();
         sb.append("<br>");
         sb.append(description);

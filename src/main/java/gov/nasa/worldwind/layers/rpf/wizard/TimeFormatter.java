@@ -24,12 +24,12 @@ public class TimeFormatter {
             (long) (Math.floor(millis / (double) ONE_SECOND) % 60.0d)}; // seconds
     }
 
-    public String formatPrecise(long millis) {
+    public static String formatPrecise(long millis) {
         long[] hms = millisToHMS(millis);
         return String.format("%02d:%02d:%02d", hms[0], hms[1], hms[2]);
     }
 
-    public String formatEstimate(long millis) {
+    public static String formatEstimate(long millis) {
         String result;
 
         // Less than a minute.

@@ -301,7 +301,8 @@ public class ShapeEditingExtension extends ApplicationTemplate {
                 Collection<Marker> markerList = new ArrayList<>(1);
                 double altitude = this.getControlPointAltitude(locations[1]);
                 Position cpPosition = new Position(locations[1], altitude);
-                markerList.add(this.makeControlPoint(cpPosition, this.getAngleControlPointAttributes(), 0, ROTATION));
+                markerList.add(
+                    ShapeEditor.makeControlPoint(cpPosition, this.getAngleControlPointAttributes(), 0, ROTATION));
 
                 this.getControlPointLayer().setMarkers(markerList);
             }
@@ -315,7 +316,7 @@ public class ShapeEditingExtension extends ApplicationTemplate {
             // Update the control point field that indicates the current heading of the shape.
             Angle arrowHeading = LatLon.greatCircleAzimuth(locations[0], locations[1]);
             Iterator<Marker> markerIterator = this.getControlPointLayer().getMarkers().iterator();
-            ((ControlPointMarker) markerIterator.next()).setRotation(this.normalizedHeading(arrowHeading, Angle.ZERO));
+            ((ControlPointMarker) markerIterator.next()).setRotation(ShapeEditor.normalizedHeading(arrowHeading, Angle.ZERO));
         }
 
         protected void updateAnnotation(ControlPointMarker controlPoint) {

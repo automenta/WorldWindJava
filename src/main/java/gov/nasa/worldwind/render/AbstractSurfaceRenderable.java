@@ -35,14 +35,14 @@ public abstract class AbstractSurfaceRenderable extends AbstractSurfaceObject {
 
     // *** Utility methods
 
-    protected Angle getViewHeading(DrawContext dc) {
+    protected static Angle getViewHeading(DrawContext dc) {
         Angle heading = Angle.ZERO;
         if (dc.getView() instanceof OrbitView)
             heading = dc.getView().getHeading();
         return heading;
     }
 
-    protected double computePixelSizeAtLocation(DrawContext dc, LatLon location) {
+    protected static double computePixelSizeAtLocation(DrawContext dc, LatLon location) {
         Globe globe = dc.getGlobe();
         Vec4 locationPoint = globe.computePointFromPosition(location.getLatitude(), location.getLongitude(),
             globe.getElevation(location.getLatitude(), location.getLongitude()));
@@ -50,16 +50,16 @@ public abstract class AbstractSurfaceRenderable extends AbstractSurfaceObject {
         return dc.getView().computePixelSizeAtDistance(distance);
     }
 
-    protected double computeDrawPixelSize(DrawContext dc, SurfaceTileDrawContext sdc) {
+    protected static double computeDrawPixelSize(DrawContext dc, SurfaceTileDrawContext sdc) {
         return dc.getGlobe().getRadius() * sdc.getSector().getDeltaLatRadians() / sdc.getViewport().height;
     }
 
-    protected Vec4 computeDrawPoint(LatLon location, SurfaceTileDrawContext sdc) {
+    protected static Vec4 computeDrawPoint(LatLon location, SurfaceTileDrawContext sdc) {
         Vec4 point = new Vec4(location.getLongitude().degrees, location.getLatitude().degrees, 1);
         return point.transformBy4(sdc.getModelviewMatrix());
     }
 
-    protected Sector computeRotatedSectorBounds(Sector sector, LatLon location, Angle heading) {
+    protected static Sector computeRotatedSectorBounds(Sector sector, LatLon location, Angle heading) {
         if (Math.abs(heading.degrees) < 0.001)
             return sector;
 
@@ -79,7 +79,7 @@ public abstract class AbstractSurfaceRenderable extends AbstractSurfaceObject {
         return Sector.boundingSector(Arrays.asList(corners));
     }
 
-    protected List<Sector> computeNormalizedSectors(Sector sector) {
+    protected static List<Sector> computeNormalizedSectors(Sector sector) {
         Angle minLat = sector.latMin();
         Angle maxLat = sector.latMax();
         Angle minLon = sector.lonMin();
@@ -119,7 +119,7 @@ public abstract class AbstractSurfaceRenderable extends AbstractSurfaceObject {
         return sectors;
     }
 
-    protected int computeHemisphereOffset(Sector sector, LatLon location) {
+    protected static int computeHemisphereOffset(Sector sector, LatLon location) {
         Angle sectorLon = sector.getCentroid().getLongitude();
         Angle locationLon = location.getLongitude();
         if (Math.abs(locationLon.degrees - sectorLon.degrees) > 180
@@ -130,7 +130,7 @@ public abstract class AbstractSurfaceRenderable extends AbstractSurfaceObject {
         return 0;
     }
 
-    protected void applyPremultipliedAlphaColor(GL2 gl, Color color, double opacity) {
+    protected static void applyPremultipliedAlphaColor(GL2 gl, Color color, double opacity) {
         float[] compArray = new float[4];
         color.getRGBComponents(compArray);
         compArray[3] = (float) WWMath.clamp(opacity, 0, 1);
@@ -140,7 +140,7 @@ public abstract class AbstractSurfaceRenderable extends AbstractSurfaceObject {
         gl.glColor4fv(compArray, 0);
     }
 
-    protected void applyNonPremultipliedAlphaColor(GL2 gl, Color color, double opacity) {
+    protected static void applyNonPremultipliedAlphaColor(GL2 gl, Color color, double opacity) {
         float[] compArray = new float[4];
         color.getRGBComponents(compArray);
         compArray[3] = (float) WWMath.clamp(opacity, 0, 1);

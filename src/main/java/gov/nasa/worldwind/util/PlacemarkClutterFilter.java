@@ -172,11 +172,11 @@ public class PlacemarkClutterFilter implements ClutterFilter {
 
                 this.pickSupport.clearPickList();
                 try {
-                    this.pickSupport.beginPicking(dc);
+                    PickSupport.beginPicking(dc);
                     this.render(dc);
                 }
                 finally {
-                    this.pickSupport.endPicking(dc);
+                    PickSupport.endPicking(dc);
                     this.pickSupport.resolvePick(dc, pickPoint, opm.getPickLayer());
                 }
             }
@@ -238,7 +238,7 @@ public class PlacemarkClutterFilter implements ClutterFilter {
                     double d2 = dx * dx + dy * dy;
                     if (d2 < d1)
                         endPoint = textPoint;
-                    this.drawDeclutterLine(dc, startPoint, endPoint);
+                    DeclutteredLabel.drawDeclutterLine(dc, startPoint, endPoint);
                 }
             }
             finally {
@@ -246,7 +246,7 @@ public class PlacemarkClutterFilter implements ClutterFilter {
             }
         }
 
-        protected void drawDeclutterLabel(DrawContext dc, Font font, Vec4 textPoint, String labelText) {
+        protected void drawDeclutterLabel(DrawContext dc, Font font, Vec4 textPoint, CharSequence labelText) {
             GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
             if (dc.isPickingMode()) {
@@ -286,7 +286,7 @@ public class PlacemarkClutterFilter implements ClutterFilter {
             }
         }
 
-        protected void drawDeclutterLine(DrawContext dc, Vec4 startPoint, Vec4 endPoint) {
+        protected static void drawDeclutterLine(DrawContext dc, Vec4 startPoint, Vec4 endPoint) {
             GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
             gl.glLineWidth(1);

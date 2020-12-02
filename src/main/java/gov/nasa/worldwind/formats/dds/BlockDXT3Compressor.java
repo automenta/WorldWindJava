@@ -126,10 +126,10 @@ public class BlockDXT3Compressor {
         this.dxt1Compressor.compressBlockDXT1(colorBlock, attributes, dxtBlock.colorBlock);
 
         // The DXT3 alpha block can be compressed separately.
-        this.compressBlockDXT3a(colorBlock, dxtBlock.alphaBlock);
+        BlockDXT3Compressor.compressBlockDXT3a(colorBlock, dxtBlock.alphaBlock);
     }
 
-    protected void compressBlockDXT3a(ColorBlock4x4 colorBlock, AlphaBlockDXT3 dxtBlock) {
+    protected static void compressBlockDXT3a(ColorBlock4x4 colorBlock, AlphaBlockDXT3 dxtBlock) {
         dxtBlock.alphaValueMask = computeAlphaValueMask(colorBlock);
     }
 }

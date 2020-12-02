@@ -129,7 +129,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         if (this.levels.getSector() != null && this.get(AVKey.SECTOR) == null)
             this.set(AVKey.SECTOR, this.levels.getSector());
 
-        this.memoryCache = this.createMemoryCache(ElevationTile.class.getName());
+        this.memoryCache = BasicElevationModel.createMemoryCache(ElevationTile.class.getName());
 
         this.set(AVKey.CONSTRUCTION_PARAMETERS, params.copy());
 
@@ -534,7 +534,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         return memoryCache;
     }
 
-    protected MemoryCache createMemoryCache(String cacheName) {
+    protected static MemoryCache createMemoryCache(String cacheName) {
         if (WorldWind.getMemoryCacheSet().containsCache(cacheName)) {
             return WorldWind.cache(cacheName);
         }
@@ -703,7 +703,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
     // Read elevations from the file cache. Don't be confused by the use of a URL here: it's used so that files can
     // be read using System.getResource(URL), which will draw the data from a jar file in the classpath.
 
-    protected boolean isFileExpired(Tile tile, URL fileURL, FileStore fileStore) {
+    protected static boolean isFileExpired(Tile tile, URL fileURL, FileStore fileStore) {
         if (!WWIO.isFileOutOfDate(fileURL, tile.level.getExpiryTime()))
             return false;
 
@@ -1482,7 +1482,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
             // Higher-res levels compare lower than lower-res
             return t1.getLevelNumber() > t2.getLevelNumber() ? -1 : 1;
         });
-        List<TileKey> requested = new ArrayList<>();
+        Collection<TileKey> requested = new ArrayList<>();
 
         boolean missingTargetTiles = false;
         boolean missingLevelZeroTiles = false;
@@ -1611,7 +1611,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
     //**************************************************************//
 
     @SuppressWarnings("UnusedDeclaration")
-    public ByteBuffer generateExtremeElevations(int levelNumber) {
+    public static ByteBuffer generateExtremeElevations(int levelNumber) {
         return null;
         //Level level = this.levels.getLevel(levelNumber);
         //Sector sector = this.levels.getSector();
@@ -2087,7 +2087,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
 
         URL url = this.getDataFileStore().findFile(tile.getPath(), false);
 
-        return url != null && !this.isFileExpired(tile, url, this.getDataFileStore());
+        return url != null && !BasicElevationModel.isFileExpired(tile, url, this.getDataFileStore());
     }
 
     protected static class RequestTask implements Runnable {
@@ -2110,7 +2110,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
 
                 ElevationTile tile = this.elevationModel.createTile(this.tileKey);
                 final URL url = this.elevationModel.getDataFileStore().findFile(tile.getPath(), false);
-                if (url != null && !this.elevationModel.isFileExpired(tile, url,
+                if (url != null && !BasicElevationModel.isFileExpired(tile, url,
                     this.elevationModel.getDataFileStore())) {
                     if (this.elevationModel.loadElevations(tile, url)) {
                         this.elevationModel.levels.has(tile);

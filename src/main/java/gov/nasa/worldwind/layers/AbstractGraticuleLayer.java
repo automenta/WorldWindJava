@@ -14,7 +14,6 @@ import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.view.orbit.OrbitView;
 
 import java.awt.*;
-import java.util.List;
 import java.util.*;
 
 /**
@@ -580,7 +579,7 @@ public class AbstractGraticuleLayer extends AbstractLayer {
             this.lastProjection = ((Globe2D) dc.getGlobe()).getProjection();
     }
 
-    protected double computeTerrainConformance(DrawContext dc) {
+    protected static double computeTerrainConformance(DrawContext dc) {
         int value = 100;
         double alt = dc.getView().getEyePosition().getElevation();
         if (alt < 10.0e3)
@@ -595,7 +594,7 @@ public class AbstractGraticuleLayer extends AbstractLayer {
         return value;
     }
 
-    protected LatLon computeLabelOffset(DrawContext dc) {
+    protected static LatLon computeLabelOffset(DrawContext dc) {
         LatLon labelPos;
         // Compute labels offset from view center
         if (dc.getView() instanceof OrbitView) {
@@ -616,7 +615,7 @@ public class AbstractGraticuleLayer extends AbstractLayer {
         return labelPos;
     }
 
-    protected Object createLineRenderable(Iterable<? extends Position> positions, String pathType) {
+    protected static Object createLineRenderable(Iterable<? extends Position> positions, String pathType) {
         Path path = new Path(positions);
         path.setPathType(pathType);
         path.setSurfacePath(true);
@@ -624,7 +623,7 @@ public class AbstractGraticuleLayer extends AbstractLayer {
         return path;
     }
 
-    protected Vec4 getSurfacePoint(DrawContext dc, Angle latitude, Angle longitude) {
+    protected static Vec4 getSurfacePoint(DrawContext dc, Angle latitude, Angle longitude) {
         Vec4 surfacePoint = dc.getSurfaceGeometry().getSurfacePoint(latitude, longitude);
         if (surfacePoint == null)
             surfacePoint = dc.getGlobe().computePointFromPosition(new Position(latitude, longitude,
@@ -635,7 +634,7 @@ public class AbstractGraticuleLayer extends AbstractLayer {
 
     // === Support methods ===
 
-    protected double computeAltitudeAboveGround(DrawContext dc) {
+    protected static double computeAltitudeAboveGround(DrawContext dc) {
         View view = dc.getView();
         Position eyePosition = view.getEyePosition();
         Vec4 surfacePoint = getSurfacePoint(dc, eyePosition.getLatitude(), eyePosition.getLongitude());
@@ -643,7 +642,7 @@ public class AbstractGraticuleLayer extends AbstractLayer {
         return view.getEyePoint().distanceTo3(surfacePoint);
     }
 
-    protected void computeTruncatedSegment(Position p1, Position p2, Sector sector, List<Position> positions) {
+    protected void computeTruncatedSegment(Position p1, Position p2, Sector sector, Collection<Position> positions) {
         if (p1 == null || p2 == null)
             return;
 
@@ -705,7 +704,7 @@ public class AbstractGraticuleLayer extends AbstractLayer {
      * @param longitude the meridian longitude <code>Angle</code>
      * @return the intersection <code>Position</code> or null if there was no intersection found.
      */
-    protected LatLon greatCircleIntersectionAtLongitude(LatLon p1, LatLon p2, Angle longitude) {
+    protected static LatLon greatCircleIntersectionAtLongitude(LatLon p1, LatLon p2, Angle longitude) {
         if (p1.getLongitude().degrees == longitude.degrees)
             return p1;
         if (p2.getLongitude().degrees == longitude.degrees)
@@ -745,7 +744,7 @@ public class AbstractGraticuleLayer extends AbstractLayer {
      * @param latitude the parallel latitude <code>Angle</code>
      * @return the intersection <code>Position</code> or null if there was no intersection found.
      */
-    protected LatLon greatCircleIntersectionAtLatitude(LatLon p1, LatLon p2, Angle latitude) {
+    protected static LatLon greatCircleIntersectionAtLatitude(LatLon p1, LatLon p2, Angle latitude) {
         LatLon pos = null;
         if (Math.signum(p1.getLatitude().degrees - latitude.degrees)
             != Math.signum(p2.getLatitude().degrees - latitude.degrees)) {
@@ -773,13 +772,13 @@ public class AbstractGraticuleLayer extends AbstractLayer {
         return pos;
     }
 
-    protected LatLon greatCircleMidPoint(LatLon p1, LatLon p2) {
+    protected static LatLon greatCircleMidPoint(LatLon p1, LatLon p2) {
         Angle azimuth = LatLon.greatCircleAzimuth(p1, p2);
         Angle distance = LatLon.greatCircleDistance(p1, p2);
         return LatLon.greatCircleEndPosition(p1, azimuth.radians, distance.radians / 2);
     }
 
-    protected Angle getDeltaLongitude(LatLon p1, Angle longitude) {
+    protected static Angle getDeltaLongitude(LatLon p1, Angle longitude) {
         double deltaLon = Math.abs(p1.getLongitude().degrees - longitude.degrees);
         return Angle.fromDegrees(deltaLon < 180 ? deltaLon : 360 - deltaLon);
     }

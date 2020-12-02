@@ -119,7 +119,7 @@ public class BasicElevationModelFactory extends BasicFactory {
         if (elements != null && elements.length > 0)
             return this.createCompoundModel(elements, params);
         else if (localName != null && localName.equals("ElevationModel"))
-            return this.createNonCompoundModel(domElement, params);
+            return BasicElevationModelFactory.createNonCompoundModel(domElement, params);
 
         return null;
     }
@@ -167,7 +167,7 @@ public class BasicElevationModelFactory extends BasicFactory {
      * @return a new elevation model
      * @throws WWUnrecognizedException if the service type given in the describing element is unrecognized.
      */
-    protected ElevationModel createNonCompoundModel(Element domElement, AVList params) {
+    protected static ElevationModel createNonCompoundModel(Element domElement, AVList params) {
         ElevationModel em;
 
         String serviceName = WWXML.getText(domElement, "Service/@serviceName");

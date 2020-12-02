@@ -122,7 +122,7 @@ public class NmeaReader implements Track, TrackSegment {
 
         try {
             do {
-                sentence = this.readSentence(stream);
+                sentence = NmeaReader.readSentence(stream);
                 if (sentence != null) {
                     ++this.sentenceNumber;
                     this.parseSentence(sentence);
@@ -176,7 +176,7 @@ public class NmeaReader implements Track, TrackSegment {
 //        }
 //    }
 
-    private String readSentence(InputStream stream) throws IOException, InterruptedException {
+    private static String readSentence(InputStream stream) throws IOException, InterruptedException {
         StringBuilder sb = null;
         boolean endOfSentence = false;
 
@@ -199,7 +199,7 @@ public class NmeaReader implements Track, TrackSegment {
         return sb != null ? sb.toString() : null;
     }
 
-    private String readSentence(ByteBuffer buffer) {
+    private static String readSentence(ByteBuffer buffer) {
         StringBuilder sb = new StringBuilder(100);
         boolean endOfSentence = false;
         while (!endOfSentence) {

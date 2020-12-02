@@ -24,7 +24,7 @@ public class BooleanXMLEventParser extends AbstractXMLEventParser {
     }
 
     public Object parse(XMLEventParserContext ctx, XMLEvent booleanEvent, Object... args) throws XMLStreamException {
-        String s = this.parseCharacterContent(ctx, booleanEvent);
+        String s = AbstractXMLEventParser.parseCharacterContent(ctx, booleanEvent);
         if (s == null)
             return false;
 

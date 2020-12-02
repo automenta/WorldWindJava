@@ -102,7 +102,7 @@ public class SurfacePolylines extends AbstractSurfaceShape {
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    public void setLocations(Iterable<? extends LatLon> iterable) {
+    public static void setLocations(Iterable<? extends LatLon> iterable) {
         throw new UnsupportedOperationException();
     }
 
@@ -189,7 +189,7 @@ public class SurfacePolylines extends AbstractSurfaceShape {
             return;
 
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
-        this.applyOutlineState(dc, this.getActiveAttributes());
+        AbstractSurfaceShape.applyOutlineState(dc, this.getActiveAttributes());
         gl.glCallList(dlResource[0]);
 
         if (this.crossesDateLine) {
@@ -216,7 +216,7 @@ public class SurfacePolylines extends AbstractSurfaceShape {
             // Tessellate each part, note if crossing date line
             for (int i = 0; i < n; i++) {
                 VecBuffer subBuffer = this.buffer.subBuffer(i);
-                if (this.tessellatePart(gl, subBuffer, referenceLocation))
+                if (SurfacePolylines.tessellatePart(gl, subBuffer, referenceLocation))
                     this.crossesDateLine = true;
             }
         }
@@ -233,7 +233,7 @@ public class SurfacePolylines extends AbstractSurfaceShape {
         return dlResource;
     }
 
-    protected boolean tessellatePart(GL2 gl, VecBuffer vecBuffer, final LatLon referenceLocation) {
+    protected static boolean tessellatePart(GL2 gl, VecBuffer vecBuffer, final LatLon referenceLocation) {
         Iterable<double[]> iterable = vecBuffer.getCoords(3);
         boolean dateLineCrossed = false;
 

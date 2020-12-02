@@ -164,7 +164,7 @@ public class MultiResolutionPath extends Path {
             if (iter.hasNext()) // if this is not the final position
             {
                 // If the segment is very small or not visible, don't use it.
-                if (this.isSmall(dc, ptA, ptB, 8) || !this.isSegmentVisible(dc, posA, posB, ptA, ptB))
+                if (Path.isSmall(dc, ptA, ptB, 8) || !this.isSegmentVisible(dc, posA, posB, ptA, ptB))
                     continue;
             }
 

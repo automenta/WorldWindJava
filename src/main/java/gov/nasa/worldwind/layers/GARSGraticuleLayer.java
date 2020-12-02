@@ -14,7 +14,6 @@ import gov.nasa.worldwind.util.Logging;
 
 import java.awt.*;
 import java.awt.geom.*;
-import java.util.List;
 import java.util.*;
 
 /**
@@ -52,8 +51,8 @@ public class GARSGraticuleLayer extends AbstractGraticuleLayer {
     }
 
     protected final GraticuleTile[][] gridTiles = new GraticuleTile[18][36]; // 10 degrees row/col
-    protected final List<Double> latitudeLabels = new ArrayList<>();
-    protected final List<Double> longitudeLabels = new ArrayList<>();
+    protected final Collection<Double> latitudeLabels = new ArrayList<>();
+    protected final Collection<Double> longitudeLabels = new ArrayList<>();
     /**
      * Indicates the eye altitudes in meters below which each level should be displayed.
      */
@@ -181,7 +180,7 @@ public class GARSGraticuleLayer extends AbstractGraticuleLayer {
         setRenderingParams(GRATICULE_GARS_LEVEL_3, params);
     }
 
-    protected String[] getOrderedTypes() {
+    protected static String[] getOrderedTypes() {
         return new String[] {
             GRATICULE_GARS_LEVEL_0,
             GRATICULE_GARS_LEVEL_1,
@@ -190,7 +189,7 @@ public class GARSGraticuleLayer extends AbstractGraticuleLayer {
         };
     }
 
-    protected String getTypeFor(double resolution) {
+    protected static String getTypeFor(double resolution) {
         if (resolution >= 10)
             return GRATICULE_GARS_LEVEL_0;
         else if (resolution >= 0.5)
@@ -254,7 +253,7 @@ public class GARSGraticuleLayer extends AbstractGraticuleLayer {
         return tileList;
     }
 
-    private Rectangle2D getGridRectangleForSector(Sector sector) {
+    private static Rectangle2D getGridRectangleForSector(Sector sector) {
         int x1 = getGridColumn(sector.lonMin().degrees);
         int x2 = getGridColumn(sector.lonMax().degrees);
         int y1 = getGridRow(sector.latMin().degrees);
@@ -262,7 +261,7 @@ public class GARSGraticuleLayer extends AbstractGraticuleLayer {
         return new Rectangle(x1, y1, x2 - x1, y2 - y1);
     }
 
-    private Sector getGridSector(int row, int col) {
+    private static Sector getGridSector(int row, int col) {
         int minLat = -90 + row * 10;
         int maxLat = minLat + 10;
         int minLon = -180 + col * 10;
@@ -270,12 +269,12 @@ public class GARSGraticuleLayer extends AbstractGraticuleLayer {
         return Sector.fromDegrees(minLat, maxLat, minLon, maxLon);
     }
 
-    private int getGridColumn(Double longitude) {
+    private static int getGridColumn(Double longitude) {
         int col = (int) Math.floor((longitude + 180) / 10.0d);
         return Math.min(col, 35);
     }
 
-    private int getGridRow(Double latitude) {
+    private static int getGridRow(Double latitude) {
         int row = (int) Math.floor((latitude + 90) / 10.0d);
         return Math.min(row, 17);
     }
@@ -362,7 +361,7 @@ public class GARSGraticuleLayer extends AbstractGraticuleLayer {
         }
     }
 
-    protected String makeLabel(Sector sector, String graticuleType) {
+    protected static String makeLabel(Sector sector, String graticuleType) {
         if (graticuleType.equals(GRATICULE_GARS_LEVEL_1)) {
             int iLat = (int) ((90 + sector.getCentroid().getLatitude().degrees) * 60 / 30);
             int iLon = (int) ((180 + sector.getCentroid().getLongitude().degrees) * 60 / 30);
@@ -527,7 +526,7 @@ public class GARSGraticuleLayer extends AbstractGraticuleLayer {
             while (lon < sector.lonMax().degrees - step / 2) {
                 Angle longitude = Angle.fromDegrees(lon);
                 // Meridian
-                List<Position> positions = new ArrayList<>(2);
+                Collection<Position> positions = new ArrayList<>(2);
                 positions.add(new Position(this.sector.latMin(), longitude, 0));
                 positions.add(new Position(this.sector.latMax(), longitude, 0));
 
@@ -548,7 +547,7 @@ public class GARSGraticuleLayer extends AbstractGraticuleLayer {
             double lat = this.sector.latMin().degrees + (this.level == 0 ? 0 : step);
             while (lat < this.sector.latMax().degrees - step / 2) {
                 Angle latitude = Angle.fromDegrees(lat);
-                List<Position> positions = new ArrayList<>(2);
+                Collection<Position> positions = new ArrayList<>(2);
                 positions.add(new Position(latitude, this.sector.lonMin(), 0));
                 positions.add(new Position(latitude, this.sector.lonMax(), 0));
 
@@ -567,7 +566,7 @@ public class GARSGraticuleLayer extends AbstractGraticuleLayer {
 
             // Draw and label a parallel at the top of the graticule. The line is apparent only on 2D globes.
             if (this.sector.latMax().equals(Angle.POS90)) {
-                List<Position> positions = new ArrayList<>(2);
+                Collection<Position> positions = new ArrayList<>(2);
                 positions.add(new Position(Angle.POS90, this.sector.lonMin(), 0));
                 positions.add(new Position(Angle.POS90, this.sector.lonMax(), 0));
 

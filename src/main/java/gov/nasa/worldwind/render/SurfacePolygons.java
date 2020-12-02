@@ -302,9 +302,9 @@ public class SurfacePolygons extends SurfacePolylines // TODO: Review
 
     protected boolean tessellateRing(GLUtessellator tess, VecBuffer vecBuffer, LatLon referenceLocation) {
         // Check for pole wrapping shape
-        List<double[]> dateLineCrossingPoints = this.computeDateLineCrossingPoints(vecBuffer);
+        List<double[]> dateLineCrossingPoints = SurfacePolygons.computeDateLineCrossingPoints(vecBuffer);
         int pole = this.computePole(dateLineCrossingPoints);
-        double[] poleWrappingPoint = this.computePoleWrappingPoint(pole, dateLineCrossingPoints);
+        double[] poleWrappingPoint = SurfacePolygons.computePoleWrappingPoint(pole, dateLineCrossingPoints);
 
         GLU.gluTessBeginContour(tess);
         Iterable<double[]> iterable = vecBuffer.getCoords(3);
@@ -317,7 +317,7 @@ public class SurfacePolygons extends SurfacePolylines // TODO: Review
                 previousPoint = coords.clone();
 
                 // Wrapping a pole
-                double[] dateLinePoint1 = this.computeDateLineEntryPoint(poleWrappingPoint, coords);
+                double[] dateLinePoint1 = SurfacePolygons.computeDateLineEntryPoint(poleWrappingPoint, coords);
                 double[] polePoint1 = new double[] {180 * Math.signum(poleWrappingPoint[0]), 90.0d * pole, 0};
                 double[] dateLinePoint2 = dateLinePoint1.clone();
                 double[] polePoint2 = polePoint1.clone();
@@ -357,7 +357,7 @@ public class SurfacePolygons extends SurfacePolylines // TODO: Review
 
     // --- Pole wrapping shapes handling ---
 
-    protected List<double[]> computeDateLineCrossingPoints(VecBuffer vecBuffer) {
+    protected static List<double[]> computeDateLineCrossingPoints(VecBuffer vecBuffer) {
         // Shapes that include a pole will yield an odd number of points
         List<double[]> list = new ArrayList<>();
         Iterable<double[]> iterable = vecBuffer.getCoords(3);
@@ -385,7 +385,7 @@ public class SurfacePolygons extends SurfacePolylines // TODO: Review
         return this.getWindingRule().equals(AVKey.CLOCKWISE) && sign < 0 ? 1 : -1;
     }
 
-    protected double[] computePoleWrappingPoint(int pole, List<double[]> dateLineCrossingPoints) {
+    protected static double[] computePoleWrappingPoint(int pole, List<double[]> dateLineCrossingPoints) {
         if (pole == 0)
             return null;
 
@@ -409,7 +409,7 @@ public class SurfacePolygons extends SurfacePolylines // TODO: Review
         return dateLineCrossingPoints.get(idx);
     }
 
-    protected double[] computeDateLineEntryPoint(double[] from, double[] to) {
+    protected static double[] computeDateLineEntryPoint(double[] from, double[] to) {
         // Linear interpolation between from and to at the date line
         double dLat = to[1] - from[1];
         double dLon = 360 - Math.abs(to[0] - from[0]);

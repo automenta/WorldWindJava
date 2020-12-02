@@ -39,7 +39,7 @@ public class Cone extends RigidShape {
      * Construct a cone with default parameters
      */
     public Cone() {
-        this.setUpGeometryCache();
+        RigidShape.setUpGeometryCache();
     }
 
     /**
@@ -74,7 +74,7 @@ public class Cone extends RigidShape {
         this.verticalRadius = height / 2;
         this.eastWestRadius = radius;
 
-        this.setUpGeometryCache();
+        RigidShape.setUpGeometryCache();
     }
 
     /**
@@ -103,7 +103,7 @@ public class Cone extends RigidShape {
         this.verticalRadius = verticalRadius;
         this.eastWestRadius = eastWestRadius;
 
-        this.setUpGeometryCache();
+        RigidShape.setUpGeometryCache();
     }
 
     /**
@@ -140,7 +140,7 @@ public class Cone extends RigidShape {
         this.tilt = tilt;
         this.roll = roll;
 
-        this.setUpGeometryCache();
+        RigidShape.setUpGeometryCache();
     }
 
     @Override
@@ -241,7 +241,7 @@ public class Cone extends RigidShape {
     protected void makeGeometry(ShapeData shapeData) {
         // attempt to retrieve a cached unit box with the same number of subdivisions
         Object cacheKey = new Geometry.CacheKey(this.getClass(), "Cone0", this.subdivisions);
-        Geometry geom = (Geometry) this.getGeometryCache().getObject(cacheKey);
+        Geometry geom = (Geometry) RigidShape.getGeometryCache().getObject(cacheKey);
         if (geom == null) {
             // if none exists, create a new one
             makeUnitCone(this.subdivisions, shapeData.getMeshes());
@@ -250,7 +250,7 @@ public class Cone extends RigidShape {
                     offsets.put(piece, new OffsetsList());
                 // add the new mesh pieces to the cache
                 cacheKey = new Geometry.CacheKey(this.getClass(), "Cone" + piece, this.subdivisions);
-                this.getGeometryCache().add(cacheKey, shapeData.getMesh(piece));
+                RigidShape.getGeometryCache().add(cacheKey, shapeData.getMesh(piece));
             }
         }
         else {
@@ -259,7 +259,7 @@ public class Cone extends RigidShape {
                 if (offsets.get(piece) == null)  // if texture offsets don't exist, set default values to 0
                     offsets.put(piece, new OffsetsList());
                 cacheKey = new Geometry.CacheKey(this.getClass(), "Cone" + piece, this.subdivisions);
-                geom = (Geometry) this.getGeometryCache().getObject(cacheKey);
+                geom = (Geometry) RigidShape.getGeometryCache().getObject(cacheKey);
                 shapeData.addMesh(piece, geom);
             }
         }
@@ -320,7 +320,7 @@ public class Cone extends RigidShape {
             gb.makeIndexedTriangleBufferNormals(itb, normalBuffer);
 
             FloatBuffer textureCoordBuffer = Buffers.newDirectFloatBuffer(2 * itb.getVertexCount());
-            gb.makeUnitConeTextureCoordinates(index, textureCoordBuffer, subdivisions);
+            GeometryBuilder.makeUnitConeTextureCoordinates(index, textureCoordBuffer, subdivisions);
 
             dest = new Geometry();
 

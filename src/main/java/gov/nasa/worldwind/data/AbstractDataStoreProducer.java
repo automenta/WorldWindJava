@@ -51,7 +51,7 @@ public abstract class AbstractDataStoreProducer extends WWObjectImpl implements 
     }
 
     public Iterable<Object> getDataSources() {
-        List<Object> list = new ArrayList<>(dataSourceList.size());
+        Collection<Object> list = new ArrayList<>(dataSourceList.size());
 
         for (SourceInfo info : this.dataSourceList) {
             list.add(info.source);

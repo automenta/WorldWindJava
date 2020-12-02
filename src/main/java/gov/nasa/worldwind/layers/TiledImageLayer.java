@@ -35,7 +35,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
     // Infrastructure
     protected static final Comparator<TextureTile> levelComparer = new LevelComparer();
     protected final LevelSet levels;
-    protected final double detailHintOrigin = 2.8;
+    protected static final double detailHintOrigin = 2.8;
     protected final ArrayList<String> supportedImageFormats = new ArrayList<>();
     // Stuff computed each frame
     protected final ArrayList<TextureTile> currentTiles = new ArrayList<>();
@@ -548,7 +548,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
         this.currentTiles.clear();
 
         for (TextureTile tile : this.getTopLevels()) {
-            if (this.isTileVisible(dc, tile)) {
+            if (TiledImageLayer.isTileVisible(dc, tile)) {
                 this.currentResourceTile = null;
                 this.addTileOrDescendants(dc, tile);
             }
@@ -606,7 +606,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
 
             TextureTile[] subTiles = tile.createSubTiles(this.levels.getLevel(tile.getLevelNumber() + 1));
             for (TextureTile child : subTiles) {
-                if (this.getLevels().getSector().intersects(child.sector) && this.isTileVisible(dc, child))
+                if (this.getLevels().getSector().intersects(child.sector) && TiledImageLayer.isTileVisible(dc, child))
                     this.addTileOrDescendants(dc, child);
             }
         }
@@ -658,7 +658,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
         this.currentTiles.add(tile);
     }
 
-    protected boolean isTileVisible(DrawContext dc, TextureTile tile) {
+    protected static boolean isTileVisible(DrawContext dc, TextureTile tile) {
         return tile.getExtent(dc).intersects(dc.getView().getFrustumInModelCoordinates()) &&
             (dc.getVisibleSector() == null || dc.getVisibleSector().intersects(tile.sector));
     }
@@ -814,7 +814,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
             gl.glPopAttrib();
 
             if (this.drawTileIDs)
-                this.drawTileIDs(dc, this.currentTiles);
+                TiledImageLayer.drawTileIDs(dc, this.currentTiles);
 
             if (this.drawBoundingVolumes)
                 this.drawBoundingVolumes(dc, this.currentTiles);
@@ -871,7 +871,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
         return !(visibleSector != null && !this.levels.getSector().intersects(visibleSector));
     }
 
-    protected Vec4 computeReferencePoint(DrawContext dc) {
+    protected static Vec4 computeReferencePoint(DrawContext dc) {
         final Globe globe = dc.getGlobe();
         if (dc.getViewportCenterPosition() != null)
             return globe.computePointFromPosition(dc.getViewportCenterPosition());
@@ -893,10 +893,10 @@ public abstract class TiledImageLayer extends AbstractLayer {
     //**************************************************************//
 
     protected Vec4 getReferencePoint(DrawContext dc) {
-        return this.computeReferencePoint(dc);
+        return TiledImageLayer.computeReferencePoint(dc);
     }
 
-    protected void drawTileIDs(DrawContext dc, Iterable<TextureTile> tiles) {
+    protected static void drawTileIDs(DrawContext dc, Iterable<TextureTile> tiles) {
         Rectangle viewport = dc.getView().getViewport();
         TextRenderer textRenderer = OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(),
             Font.decode("Arial-Plain-13"));

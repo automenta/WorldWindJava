@@ -9,7 +9,7 @@ import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.texture.*;
 import gov.nasa.worldwind.Disposable;
-import gov.nasa.worldwind.terrain.SectorGeometry;
+import gov.nasa.worldwind.terrain.*;
 import gov.nasa.worldwind.util.*;
 
 import java.nio.ByteBuffer;
@@ -93,7 +93,7 @@ public abstract class SurfaceTileRenderer implements Disposable {
             throw new IllegalStateException(message);
         }
 
-        List<SurfaceTile> al = new ArrayList<>(1);
+        Collection<SurfaceTile> al = new ArrayList<>(1);
         al.add(tile);
         this.renderTiles(dc, al);
         al.clear();
@@ -181,7 +181,7 @@ public abstract class SurfaceTileRenderer implements Disposable {
             gl.glPushMatrix();
             gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
 
-            dc.getSurfaceGeometry().beginRendering(dc);
+            SectorGeometryList.beginRendering(dc);
 
             // For each current geometry tile, find the intersecting image tiles and render the geometry
             // tile once for each intersecting image tile.
@@ -250,7 +250,7 @@ public abstract class SurfaceTileRenderer implements Disposable {
                 Logging.getMessage("generic.ExceptionWhileRenderingLayer", this.getClass().getName()), e);
         }
         finally {
-            dc.getSurfaceGeometry().endRendering(dc);
+            SectorGeometryList.endRendering(dc);
 
             gl.glActiveTexture(alphaTextureUnit);
             gl.glMatrixMode(GL2.GL_TEXTURE);

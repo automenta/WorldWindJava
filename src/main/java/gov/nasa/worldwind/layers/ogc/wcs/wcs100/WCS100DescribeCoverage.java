@@ -30,7 +30,7 @@ public class WCS100DescribeCoverage extends AbstractXMLEventParser {
     public WCS100DescribeCoverage(Object docSource) {
         super(OGCConstants.WCS_1_0_0_NAMESPACE_URI);
 
-        this.eventReader = this.createReader(docSource);
+        this.eventReader = WCS100DescribeCoverage.createReader(docSource);
 
         this.initialize();
     }
@@ -53,7 +53,7 @@ public class WCS100DescribeCoverage extends AbstractXMLEventParser {
         this.parserContext = this.createParserContext(this.eventReader);
     }
 
-    protected XMLEventReader createReader(Object docSource) {
+    protected static XMLEventReader createReader(Object docSource) {
         return WWXML.openEventReader(docSource);
     }
 

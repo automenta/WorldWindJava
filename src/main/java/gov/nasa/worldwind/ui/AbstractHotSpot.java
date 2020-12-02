@@ -169,7 +169,7 @@ public abstract class AbstractHotSpot extends AVListImpl implements HotSpot {
      * @return {@code true} if {@code event} has been consumed, or if {@code event} was triggered by a mouse event, and
      * that mouse event has been consumed.
      */
-    protected boolean isConsumed(SelectEvent event) {
+    protected static boolean isConsumed(SelectEvent event) {
         return event.isConsumed() || (event.getMouseEvent() != null && event.getMouseEvent().isConsumed());
     }
 }

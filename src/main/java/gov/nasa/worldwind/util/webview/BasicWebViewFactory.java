@@ -39,12 +39,12 @@ public class BasicWebViewFactory implements WebViewFactory {
             return this.createLinuxWebView(frameSize);
 
         else if (Configuration.isMacOS())
-            return this.createMacWebView(frameSize);
+            return BasicWebViewFactory.createMacWebView(frameSize);
 
         else if (Configuration.isWindowsOS())
-            return this.createWindowsWebView(frameSize);
+            return BasicWebViewFactory.createWindowsWebView(frameSize);
 
-        return this.createUnknownOSWebView(frameSize);
+        return BasicWebViewFactory.createUnknownOSWebView(frameSize);
     }
 
     /**
@@ -56,7 +56,7 @@ public class BasicWebViewFactory implements WebViewFactory {
      * @throws UnsupportedOperationException Linux WebView is not supported at this time.
      */
     protected WebView createLinuxWebView(Dimension frameSize) {
-        return this.createUnknownOSWebView(frameSize); // TODO: implement native WebView for Linux.
+        return BasicWebViewFactory.createUnknownOSWebView(frameSize); // TODO: implement native WebView for Linux.
     }
 
     /**
@@ -65,7 +65,7 @@ public class BasicWebViewFactory implements WebViewFactory {
      * @param frameSize The size in pixels of the WebView's window frame.
      * @return WebView instance for Mac.
      */
-    protected WebView createMacWebView(Dimension frameSize) {
+    protected static WebView createMacWebView(Dimension frameSize) {
         return new MacWebView(frameSize);
     }
 
@@ -75,7 +75,7 @@ public class BasicWebViewFactory implements WebViewFactory {
      * @param frameSize The size in pixels of the WebView's window frame.
      * @return WebView instance for Windows.
      */
-    protected WebView createWindowsWebView(Dimension frameSize) {
+    protected static WebView createWindowsWebView(Dimension frameSize) {
         return new WindowsWebView(frameSize);
     }
 
@@ -89,7 +89,7 @@ public class BasicWebViewFactory implements WebViewFactory {
      * @throws UnsupportedOperationException WebView is only implemented for Windows and Mac at this time.
      */
     @SuppressWarnings("UnusedDeclaration")
-    protected WebView createUnknownOSWebView(Dimension frameSize) {
+    protected static WebView createUnknownOSWebView(Dimension frameSize) {
         String message = Logging.getMessage("NativeLib.UnsupportedOperatingSystem", "WebView",
             System.getProperty("os.name"));
         Logging.logger().severe(message);

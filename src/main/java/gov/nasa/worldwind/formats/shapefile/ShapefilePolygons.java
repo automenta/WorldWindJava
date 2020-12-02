@@ -22,6 +22,7 @@ import java.awt.*;
 import java.beans.*;
 import java.nio.*;
 import java.util.List;
+import java.util.Queue;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -40,9 +41,9 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
     }
 
     protected final double detailHintOrigin = 2.8;
-    protected final List<ShapefileTile> topLevelTiles = new ArrayList<>();
-    protected final List<ShapefileTile> currentTiles = new ArrayList<>();
-    protected final PriorityQueue<Runnable> requestQueue = new PriorityQueue<>();
+    protected final Collection<ShapefileTile> topLevelTiles = new ArrayList<>();
+    protected final Collection<ShapefileTile> currentTiles = new ArrayList<>();
+    protected final Queue<Runnable> requestQueue = new PriorityQueue<>();
     protected final MemoryCache cache = WorldWind.cache(ShapefileGeometry.class.getName());
     // Properties supporting picking and rendering.
     protected final PickSupport pickSupport = new PickSupport();
@@ -254,7 +255,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
             try {
                 // Setup the draw context state and GL state for creating pick tiles.
                 dc.enablePickingMode();
-                this.pickSupport.beginPicking(dc);
+                PickSupport.beginPicking(dc);
                 // Assemble the tiles intersecting the pick frustums, then draw them with unique pick colors.
                 this.assembleTiles(dc);
                 this.pickTileBuilder.setForceTileUpdates(true);
@@ -264,7 +265,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
                 // Clear pick color map in order to use different pick colors for each globe.
                 this.pickColorMap.clear();
                 // Restore the draw context state and GL state.
-                this.pickSupport.endPicking(dc);
+                PickSupport.endPicking(dc);
                 dc.disablePickingMode();
             }
         }
@@ -290,7 +291,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         try {
-            this.pickSupport.beginPicking(dc);
+            PickSupport.beginPicking(dc);
             gl.glEnable(GL.GL_CULL_FACE);
             dc.getGeographicSurfaceTileRenderer().setUseImageTilePickColors(true);
             dc.getGeographicSurfaceTileRenderer().renderTiles(dc, this.pickTileBuilder.getTiles(dc));
@@ -302,7 +303,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
         finally {
             dc.getGeographicSurfaceTileRenderer().setUseImageTilePickColors(false);
             gl.glDisable(GL.GL_CULL_FACE);
-            this.pickSupport.endPicking(dc);
+            PickSupport.endPicking(dc);
             this.pickSupport.resolvePick(dc, pickPoint, this.layer);
             this.pickTileBuilder.clearTiles(dc);
             this.pickTileBuilder.clearPickCandidates(dc);
@@ -355,7 +356,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
         for (ShapefileTile tile : this.topLevelTiles) {
             this.currentAncestorTile = null;
 
-            if (this.isTileVisible(dc, tile)) {
+            if (ShapefilePolygons.isTileVisible(dc, tile)) {
                 this.addTileOrDescendants(dc, tile);
             }
         }
@@ -384,7 +385,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
         }
     }
 
-    protected boolean isTileVisible(DrawContext dc, ShapefileTile tile) {
+    protected static boolean isTileVisible(DrawContext dc, ShapefileTile tile) {
         Extent extent = Sector.computeBoundingBox(dc.getGlobe(), dc.getVerticalExaggeration(), tile.sector);
 
         if (dc.isPickingMode()) {
@@ -412,7 +413,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
 
             ShapefileTile[] children = tile.subdivide();
             for (ShapefileTile child : children) {
-                if (child.sector.intersects(this.sector) && this.isTileVisible(dc, child)) {
+                if (child.sector.intersects(this.sector) && ShapefilePolygons.isTileVisible(dc, child)) {
                     this.addTileOrDescendants(dc, child);
                 }
             }
@@ -536,7 +537,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
             if (effectiveArea < minEffectiveArea)
                 continue;  // ignore records that don't meet the resolution criteria
 
-            this.computeRecordMetrics(record, generalizer);
+            ShapefilePolygons.computeRecordMetrics(record, generalizer);
             this.tessellateRecord(geom, record, tess);
         }
 
@@ -551,7 +552,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
         geom.vertexOffset = new Vec4(xOffset, yOffset, 0);
     }
 
-    protected void computeRecordMetrics(Record record, PolylineGeneralizer generalizer) {
+    protected static void computeRecordMetrics(Record record, PolylineGeneralizer generalizer) {
         synchronized (record) // synchronize access to checking and computing a record's effective area
         {
             if (record.boundaryEffectiveArea != null)
@@ -599,7 +600,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
         tess.beginPolygon();
 
         for (int i = 0; i < record.getBoundaryCount(); i++) {
-            this.tessellateBoundary(record, i, minEffectiveArea, new TessBoundaryCallback() {
+            ShapefilePolygons.tessellateBoundary(record, i, minEffectiveArea, new TessBoundaryCallback() {
                 @Override
                 public void beginBoundary() {
                     tess.beginContour();
@@ -655,7 +656,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
             if (!record.isVisible()) // ignore records marked as not visible
                 continue;
 
-            ShapeAttributes attrs = this.determineActiveAttributes(record);
+            ShapeAttributes attrs = ShapefileRenderable.determineActiveAttributes(record);
             RecordGroup group = attrMap.get(attrs);
 
             if (group == null) // create a new group if one doesn't already exist
@@ -699,7 +700,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
 
     protected void render(DrawContext dc, ShapefileTile tile) {
         try {
-            this.beginDrawing(dc);
+            ShapefilePolygons.beginDrawing(dc);
             this.draw(dc, tile);
         }
         finally {
@@ -707,7 +708,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
         }
     }
 
-    protected void beginDrawing(DrawContext dc) {
+    protected static void beginDrawing(DrawContext dc) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glDisable(GL.GL_DEPTH_TEST);
         gl.glEnableClientState(GL2.GL_VERTEX_ARRAY); // all drawing uses vertex arrays
@@ -900,7 +901,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
                 if (effectiveArea < minEffectiveArea)
                     continue; // ignore records that don't meet the resolution criteria
 
-                this.computeRecordMetrics(record, generalizer);
+                ShapefilePolygons.computeRecordMetrics(record, generalizer);
                 this.doCombineRecord(tess, cc.getSector(), minEffectiveArea, record);
             }
         }
@@ -920,7 +921,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
         int boundaryIndex) {
         final ClippingTessellator clipTess = new ClippingTessellator(tess, sector);
 
-        this.tessellateBoundary(record, boundaryIndex, minEffectiveArea, new TessBoundaryCallback() {
+        ShapefilePolygons.tessellateBoundary(record, boundaryIndex, minEffectiveArea, new TessBoundaryCallback() {
             @Override
             public void beginBoundary() {
                 clipTess.beginContour();
@@ -938,7 +939,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
         });
     }
 
-    protected void tessellateBoundary(Record record, int boundaryIndex, double minEffectiveArea,
+    protected static void tessellateBoundary(Record record, int boundaryIndex, double minEffectiveArea,
         TessBoundaryCallback callback) {
         VecBuffer boundaryCoords = record.getBoundaryPoints(boundaryIndex);
         double[] boundaryEffectiveArea = record.getBoundaryEffectiveArea(boundaryIndex);
@@ -958,7 +959,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
         else {
             // Copy the boundary locations into a list of LatLon instances in order to utilize existing code that
             // handles locations that cross the antimeridian.
-            List<LatLon> locations = new ArrayList<>();
+            Collection<LatLon> locations = new ArrayList<>();
             for (int j = 0; j < boundaryCoords.getSize(); j++) {
                 if (boundaryEffectiveArea[j] < minEffectiveArea)
                     continue; // ignore vertices that don't meet the resolution criteria
@@ -1137,7 +1138,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
         protected final ShapefileRenderable shape;
         protected final Sector sector;
         protected final double resolution;
-        protected final List<RecordIndices> recordIndices = new ArrayList<>();
+        protected final Collection<RecordIndices> recordIndices = new ArrayList<>();
         protected final List<RecordGroup> attributeGroups = new ArrayList<>();
         // Properties supporting geometry tessellation.
         protected MemoryCache memoryCache;

@@ -377,7 +377,7 @@ public class Box extends AbstractAirspace {
         this.stacks = stacks;
     }
 
-    protected int getHeightStacks() {
+    protected static int getHeightStacks() {
         return 1;
     }
 
@@ -510,9 +510,9 @@ public class Box extends AbstractAirspace {
         int lengthSegments, int widthSegments) {
         Object cacheKey = new Geometry.CacheKey(dc.getGlobe(), this.getClass(), "Box.Geometry", this.geometryCacheKey,
             altitudes, terrainConformant, lengthSegments, widthSegments);
-        BoxGeometry geom = (BoxGeometry) this.getGeometryCache().getObject(cacheKey);
+        BoxGeometry geom = (BoxGeometry) AbstractAirspace.getGeometryCache().getObject(cacheKey);
 
-        if (geom != null && !this.isExpired(dc, geom.sideGeometry))
+        if (geom != null && !AbstractAirspace.isExpired(dc, geom.sideGeometry))
             return geom;
 
         if (geom == null)
@@ -520,7 +520,7 @@ public class Box extends AbstractAirspace {
 
         this.makeBoxGeometry(dc, altitudes, terrainConformant, lengthSegments, widthSegments, geom);
         this.updateExpiryCriteria(dc, geom.sideGeometry);
-        this.getGeometryCache().add(cacheKey, geom);
+        AbstractAirspace.getGeometryCache().add(cacheKey, geom);
 
         return geom;
     }
@@ -678,12 +678,12 @@ public class Box extends AbstractAirspace {
         geom.centerLineIndices.setElementData(GL.GL_LINES, centerLineCount, centerLineArray);
     }
 
-    private List<LatLon> makeSideLocations(Globe globe, int lengthSegments, int widthSegments) {
+    private List<LatLon> makeSideLocations(Extent globe, int lengthSegments, int widthSegments) {
         List<LatLon> locations = new ArrayList<>();
         BoxCorners corners = this.computeBoxCorners(globe);
 
         // begin side
-        this.appendLocations(corners.beginLeft, this.beginLocation, corners.beginRight, widthSegments, locations);
+        Box.appendLocations(corners.beginLeft, this.beginLocation, corners.beginRight, widthSegments, locations);
 
         // right side
         locations.add(corners.beginRight);
@@ -697,7 +697,7 @@ public class Box extends AbstractAirspace {
         locations.add(corners.endRight);
 
         // end side
-        this.appendLocations(corners.endRight, this.endLocation, corners.endLeft, widthSegments, locations);
+        Box.appendLocations(corners.endRight, this.endLocation, corners.endLeft, widthSegments, locations);
 
         // left side
         locations.add(corners.endLeft);
@@ -713,12 +713,12 @@ public class Box extends AbstractAirspace {
         return locations;
     }
 
-    private List<LatLon> makeCapLocations(Globe globe, int lengthSegments, int widthSegments) {
+    private List<LatLon> makeCapLocations(Extent globe, int lengthSegments, int widthSegments) {
         List<LatLon> locations = new ArrayList<>();
         BoxCorners corners = this.computeBoxCorners(globe);
 
         // begin row
-        this.appendLocations(corners.beginLeft, this.beginLocation, corners.beginRight, widthSegments, locations);
+        Box.appendLocations(corners.beginLeft, this.beginLocation, corners.beginRight, widthSegments, locations);
 
         // interior rows
         for (int i = 1; i < lengthSegments; i++) {
@@ -731,11 +731,11 @@ public class Box extends AbstractAirspace {
             LatLon left = LatLon.greatCircleEndPosition(leftProj, leftAzimuth, corners.leftArcLength);
             LatLon right = LatLon.greatCircleEndPosition(rightProj, rightAzimuth, corners.rightArcLength);
 
-            this.appendLocations(left, center, right, widthSegments, locations);
+            Box.appendLocations(left, center, right, widthSegments, locations);
         }
 
         // end row
-        this.appendLocations(corners.endLeft, this.endLocation, corners.endRight, widthSegments, locations);
+        Box.appendLocations(corners.endLeft, this.endLocation, corners.endRight, widthSegments, locations);
 
         return locations;
     }
@@ -807,7 +807,8 @@ public class Box extends AbstractAirspace {
         return corners;
     }
 
-    private void appendLocations(LatLon begin, LatLon middle, LatLon end, int numSegments, Collection<LatLon> result) {
+    private static void appendLocations(LatLon begin, LatLon middle, LatLon end, int numSegments,
+        Collection<LatLon> result) {
         for (int i = 0; i <= numSegments; i++) {
             double amount = (double) i / numSegments;
             result.add(LatLon.interpolateGreatCircle(amount, begin, middle));

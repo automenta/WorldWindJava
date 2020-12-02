@@ -167,7 +167,7 @@ public class AVListImpl implements AVList {
         }
     }
 
-    private Map<String, Object> newAvList() {
+    private static Map<String, Object> newAvList() {
         return new ConcurrentHashMap<>(1);
                //Collections.synchronizedMap(new HashMap<>(1));
     }
@@ -181,7 +181,7 @@ public class AVListImpl implements AVList {
     private Map<String, Object> avList(boolean createIfNone) {
         Map<String, Object> l = avList;
         if (createIfNone && l==null)
-             l = (this.avList = this.newAvList());
+             l = (this.avList = AVListImpl.newAvList());
 
         return l;
     }

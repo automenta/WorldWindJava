@@ -32,7 +32,7 @@ abstract class GDALAbstractFileFilter implements FileFilter {
         this.searchPattern = searchPattern;
     }
 
-    protected boolean isHidden(String path) {
+    protected static boolean isHidden(String path) {
         if (!WWUtil.isEmpty(path)) {
             String[] folders = path.split(Pattern.quote(File.separator));
             if (!WWUtil.isEmpty(folders)) {

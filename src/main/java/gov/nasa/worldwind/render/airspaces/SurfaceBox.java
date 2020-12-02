@@ -160,10 +160,10 @@ public class SurfaceBox extends AbstractSurfaceShape {
         String pole = this.containsPole(interior);
         if (pole != null) // interior compensates for poles and dateline crossing, see WWJ-284
         {
-            this.activeGeometry.add(this.cutAlongDateLine(interior, pole, dc.getGlobe()));
+            this.activeGeometry.add(AbstractSurfaceShape.cutAlongDateLine(interior, pole, dc.getGlobe()));
         }
         else if (LatLon.locationsCrossDateLine(interior)) {
-            this.activeGeometry.addAll(this.repeatAroundDateline(interior));
+            this.activeGeometry.addAll(AbstractSurfaceShape.repeatAroundDateline(interior));
         }
         else {
             this.activeGeometry.add(interior);
@@ -174,7 +174,7 @@ public class SurfaceBox extends AbstractSurfaceShape {
             List<LatLon> outline = geom.get(index);
             if (LatLon.locationsCrossDateLine(outline)) // outlines compensate for dateline crossing, see WWJ-452
             {
-                this.activeOutlineGeometry.addAll(this.repeatAroundDateline(outline));
+                this.activeOutlineGeometry.addAll(AbstractSurfaceShape.repeatAroundDateline(outline));
             }
             else {
                 this.activeOutlineGeometry.add(outline);
@@ -186,7 +186,7 @@ public class SurfaceBox extends AbstractSurfaceShape {
             List<LatLon> centerLine = geom.get(index);
             if (LatLon.locationsCrossDateLine(centerLine)) // outlines compensate for dateline crossing, see WWJ-452
             {
-                this.activeCenterLineGeometry.addAll(this.repeatAroundDateline(centerLine));
+                this.activeCenterLineGeometry.addAll(AbstractSurfaceShape.repeatAroundDateline(centerLine));
             }
             else {
                 this.activeCenterLineGeometry.add(centerLine);
@@ -206,14 +206,14 @@ public class SurfaceBox extends AbstractSurfaceShape {
         if (this.activeCenterLineGeometry.isEmpty())
             return;
 
-        this.applyCenterLineState(dc, this.getActiveAttributes());
+        SurfaceBox.applyCenterLineState(dc, this.getActiveAttributes());
 
         for (List<LatLon> drawLocations : this.activeCenterLineGeometry) {
             this.drawLineStrip(dc, drawLocations);
         }
     }
 
-    protected void applyCenterLineState(DrawContext dc, ShapeAttributes attributes) {
+    protected static void applyCenterLineState(DrawContext dc, ShapeAttributes attributes) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         if (!dc.isPickingMode() && attributes.getOutlineStippleFactor() <= 0) // don't override stipple in attributes

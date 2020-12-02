@@ -64,13 +64,13 @@ public class BILRasterWriter extends AbstractDataRasterWriter {
     }
 
     protected void doWrite(DataRaster raster, String formatSuffix, File file) throws IOException {
-        this.writeRaster(raster, file);
+        BILRasterWriter.writeRaster(raster, file);
 
         if (this.isWriteGeoreferenceFiles()) {
             AVList worldFileParams = new AVListImpl();
-            this.initWorldFileParams(raster, worldFileParams);
+            BILRasterWriter.initWorldFileParams(raster, worldFileParams);
 
-            String message = this.validate(worldFileParams, raster);
+            String message = BILRasterWriter.validate(worldFileParams, raster);
             if (message != null) {
                 Logging.logger().severe(message);
                 throw new IOException(message);
@@ -79,12 +79,12 @@ public class BILRasterWriter extends AbstractDataRasterWriter {
             File dir = file.getParentFile();
             String base = WWIO.replaceSuffix(file.getName(), "");
 
-            this.writeWorldFile(worldFileParams, new File(dir, base + ".blw"));
-            this.writeHdrFile(worldFileParams, new File(dir, base + ".hdr"));
+            BILRasterWriter.writeWorldFile(worldFileParams, new File(dir, base + ".blw"));
+            BILRasterWriter.writeHdrFile(worldFileParams, new File(dir, base + ".hdr"));
         }
     }
 
-    protected void writeRaster(DataRaster raster, File file) throws IOException {
+    protected static void writeRaster(DataRaster raster, File file) throws IOException {
         ByteBufferRaster byteBufferRaster = (ByteBufferRaster) raster;
         ByteBuffer byteBuffer = byteBufferRaster.getByteBuffer();
 
@@ -93,7 +93,7 @@ public class BILRasterWriter extends AbstractDataRasterWriter {
         WWIO.saveBuffer(byteBuffer, file, false);
     }
 
-    protected void writeWorldFile(AVList values, File file) throws IOException {
+    protected static void writeWorldFile(AVList values, File file) throws IOException {
         Sector sector = (Sector) values.get(AVKey.SECTOR);
         int[] size = (int[]) values.get(WorldFile.WORLD_FILE_IMAGE_SIZE);
 
@@ -117,7 +117,7 @@ public class BILRasterWriter extends AbstractDataRasterWriter {
         }
     }
 
-    protected void writeHdrFile(AVList values, File file) throws IOException {
+    protected static void writeHdrFile(AVList values, File file) throws IOException {
         int[] size = (int[]) values.get(WorldFile.WORLD_FILE_IMAGE_SIZE);
         Object byteOrder = values.get(AVKey.BYTE_ORDER);
         Object dataType = values.get(AVKey.DATA_TYPE);
@@ -151,7 +151,7 @@ public class BILRasterWriter extends AbstractDataRasterWriter {
         }
     }
 
-    protected void initWorldFileParams(DataRaster raster, AVList worldFileParams) {
+    protected static void initWorldFileParams(DataRaster raster, AVList worldFileParams) {
         ByteBufferRaster byteBufferRaster = (ByteBufferRaster) raster;
 
         int[] size = new int[2];
@@ -171,7 +171,7 @@ public class BILRasterWriter extends AbstractDataRasterWriter {
             worldFileParams.set(AVKey.MISSING_DATA_REPLACEMENT, d);
     }
 
-    protected String validate(AVList worldFileParams, Object dataSource) {
+    protected static String validate(AVList worldFileParams, Object dataSource) {
         StringBuilder sb = new StringBuilder();
 
         Object o = worldFileParams.get(WorldFile.WORLD_FILE_IMAGE_SIZE);

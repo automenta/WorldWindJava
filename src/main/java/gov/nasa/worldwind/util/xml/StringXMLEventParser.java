@@ -24,7 +24,7 @@ public class StringXMLEventParser extends AbstractXMLEventParser {
     }
 
     public Object parse(XMLEventParserContext ctx, XMLEvent stringEvent, Object... args) throws XMLStreamException {
-        String s = this.parseCharacterContent(ctx, stringEvent, args);
+        String s = AbstractXMLEventParser.parseCharacterContent(ctx, stringEvent, args);
         return s != null ? s.trim() : null;
     }
 

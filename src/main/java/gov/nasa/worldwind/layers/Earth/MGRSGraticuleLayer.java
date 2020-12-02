@@ -653,7 +653,7 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer {
         setRenderingParams(GRATICULE_1M, params);
     }
 
-    protected String[] getOrderedTypes() {
+    protected static String[] getOrderedTypes() {
         return new String[] {
             GRATICULE_UTM_GRID,
             GRATICULE_100000M,
@@ -704,13 +704,13 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer {
         }
     }
 
-    protected Sector computeVisibleSector(DrawContext dc) {
+    protected static Sector computeVisibleSector(DrawContext dc) {
         return dc.getVisibleSector();
     }
 
     protected void selectRenderables(DrawContext dc) {
         if (dc.getView().getEyePosition().getElevation() <= this.zoneMaxAltitude) {
-            this.selectMGRSRenderables(dc, this.computeVisibleSector(dc));
+            this.selectMGRSRenderables(dc, MGRSGraticuleLayer.computeVisibleSector(dc));
             this.metricScaleSupport.selectRenderables(dc);
         }
         else {
@@ -774,7 +774,7 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer {
         return zoneList;
     }
 
-    private Rectangle2D getGridRectangleForSector(Sector sector) {
+    private static Rectangle2D getGridRectangleForSector(Sector sector) {
         Rectangle2D rectangle = null;
         if (sector.latMin().degrees < 84 && sector.latMax().degrees > -80) {
             Sector gridSector = Sector.fromDegrees(
@@ -807,17 +807,17 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer {
         return rectangle;
     }
 
-    private int getGridColumn(Double longitude) {
+    private static int getGridColumn(Double longitude) {
         int col = (int) Math.floor((longitude + 180) / 6.0d);
         return Math.min(col, 59);
     }
 
-    private int getGridRow(Double latitude) {
+    private static int getGridRow(Double latitude) {
         int row = (int) Math.floor((latitude + 80) / 8.0d);
         return Math.min(row, 19);
     }
 
-    private Sector getGridSector(int row, int col) {
+    private static Sector getGridSector(int row, int col) {
         int minLat = -80 + row * 8;
         int maxLat = minLat + (minLat != 72 ? 8 : 12);
         int minLon = -180 + col * 6;

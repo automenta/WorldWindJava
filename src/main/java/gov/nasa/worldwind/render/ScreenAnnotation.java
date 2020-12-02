@@ -146,10 +146,10 @@ public class ScreenAnnotation extends AbstractAnnotation {
      */
     @SuppressWarnings("UnusedDeclaration")
     protected Point getScreenPoint(DrawContext dc) {
-        return this.position != null ? this.computeAnnotationPosition(dc, this.position) : this.screenPoint;
+        return this.position != null ? ScreenAnnotation.computeAnnotationPosition(dc, this.position) : this.screenPoint;
     }
 
-    protected Point computeAnnotationPosition(DrawContext dc, Position pos) {
+    protected static Point computeAnnotationPosition(DrawContext dc, Position pos) {
         Vec4 surfacePoint = dc.getTerrain().getSurfacePoint(pos);
         if (surfacePoint == null) {
             Globe globe = dc.getGlobe();
@@ -203,7 +203,7 @@ public class ScreenAnnotation extends AbstractAnnotation {
         Rectangle frameRect = new Rectangle((int) x, (int) y, (int) width, (int) height);
 
         // Include reference point in bounds
-        return this.computeBoundingRectangle(frameRect, sp.x, sp.y);
+        return AbstractAnnotation.computeBoundingRectangle(frameRect, sp.x, sp.y);
     }
 
     protected Point computeSize(DrawContext dc) {

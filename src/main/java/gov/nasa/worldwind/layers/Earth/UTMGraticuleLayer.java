@@ -110,7 +110,7 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
         setRenderingParams(GRATICULE_1M, params);
     }
 
-    protected String[] getOrderedTypes() {
+    protected static String[] getOrderedTypes() {
         return new String[] {
             GRATICULE_UTM_GRID,
             GRATICULE_100000M,
@@ -197,7 +197,7 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
         return tileList;
     }
 
-    private Rectangle2D getGridRectangleForSector(Sector sector) {
+    private static Rectangle2D getGridRectangleForSector(Sector sector) {
         int x1 = getGridColumn(sector.lonMin().degrees);
         int x2 = getGridColumn(sector.lonMax().degrees);
         int y1 = getGridRow(sector.latMin().degrees);
@@ -205,7 +205,7 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
         return new Rectangle(x1, y1, x2 - x1, y2 - y1);
     }
 
-    private Sector getGridSector(int row, int col) {
+    private static Sector getGridSector(int row, int col) {
         double deltaLat = UTM_MAX_LATITUDE * 2.0f / GRID_ROWS;
         double deltaLon = 360.0 / GRID_COLS;
         double minLat = row == 0 ? UTM_MIN_LATITUDE : -UTM_MAX_LATITUDE + deltaLat * row;
@@ -215,13 +215,13 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
         return Sector.fromDegrees(minLat, maxLat, minLon, maxLon);
     }
 
-    private int getGridColumn(double longitude) {
+    private static int getGridColumn(double longitude) {
         double deltaLon = 360.0 / GRID_COLS;
         int col = (int) Math.floor((longitude + 180) / deltaLon);
         return Math.min(col, GRID_COLS - 1);
     }
 
-    private int getGridRow(double latitude) {
+    private static int getGridRow(double latitude) {
         double deltaLat = UTM_MAX_LATITUDE * 2 / GRID_ROWS;
         int row = (int) Math.floor((latitude + UTM_MAX_LATITUDE) / deltaLat);
         return Math.max(0, Math.min(row, GRID_ROWS - 1));

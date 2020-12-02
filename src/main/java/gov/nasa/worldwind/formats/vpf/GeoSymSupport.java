@@ -175,7 +175,7 @@ public class GeoSymSupport {
 
     protected static Collection<AVList> selectSymbolAssignments(GeoSymTable table, int pid, String fcode, int delin,
         String cov) {
-        List<AVList> rows = new ArrayList<>(Arrays.asList(table.getRecords()));
+        Collection<AVList> rows = new ArrayList<>(Arrays.asList(table.getRecords()));
 
         // The fcode field contains the 5-character feature code as defined in the applicable VPF product specification.
         GeoSymTable.selectMatchingStringRows("fcode", fcode, false, rows);
@@ -213,7 +213,7 @@ public class GeoSymSupport {
     }
 
     protected static void selectMatchingCoverages(String columnName, String value, boolean acceptNullValue,
-        Collection<AVList> outRows) {
+        Iterable<AVList> outRows) {
         Iterator<AVList> iter = outRows.iterator();
         if (!iter.hasNext())
             return;
@@ -342,7 +342,7 @@ public class GeoSymSupport {
 
         List<? extends VPFSymbolKey> symbols = symbolKeys;
         if (symbolKeys != null && symbolKeys.isEmpty()) {
-            symbols = this.doGetUnknownSymbolKeys();
+            symbols = GeoSymSupport.doGetUnknownSymbolKeys();
         }
 
         return symbols;
@@ -401,7 +401,7 @@ public class GeoSymSupport {
     }
 
     protected void loadAssignment(String filePath) {
-        String geoSymPath = this.getAssignmentPath(filePath);
+        String geoSymPath = GeoSymSupport.getAssignmentPath(filePath);
 
         if (!GeoSymAssignment.isGeoSymAssignment(geoSymPath)) {
             String message = Logging.getMessage("VPF.GeoSymNotFound");
@@ -497,7 +497,7 @@ public class GeoSymSupport {
 
     protected void loadProductTypes() {
         GeoSymTable codeTable = this.getAssignment().getTable(GeoSymConstants.CODE_VALUE_DESCRIPTION_FILE);
-        List<AVList> rows = new ArrayList<>(Arrays.asList(codeTable.getRecords()));
+        Collection<AVList> rows = new ArrayList<>(Arrays.asList(codeTable.getRecords()));
         GeoSymTable.selectMatchingRows("file", GeoSymConstants.FULL_SYMBOL_ASSIGNMENT_FILE, false, rows);
         GeoSymTable.selectMatchingRows("attribute", "pid", false, rows);
 
@@ -512,7 +512,7 @@ public class GeoSymSupport {
 
     protected void loadFeatureTypes() {
         GeoSymTable codeTable = this.getAssignment().getTable(GeoSymConstants.CODE_VALUE_DESCRIPTION_FILE);
-        List<AVList> rows = new ArrayList<>(Arrays.asList(codeTable.getRecords()));
+        Collection<AVList> rows = new ArrayList<>(Arrays.asList(codeTable.getRecords()));
         GeoSymTable.selectMatchingRows("file", GeoSymConstants.FULL_SYMBOL_ASSIGNMENT_FILE, false, rows);
         GeoSymTable.selectMatchingRows("attribute", "delin", false, rows);
 
@@ -530,7 +530,7 @@ public class GeoSymSupport {
         this.featureName.put(VPFFeatureType.AREA, "AREA");
     }
 
-    protected String getAssignmentPath(String filePath) {
+    protected static String getAssignmentPath(String filePath) {
         StringBuilder sb = new StringBuilder();
         sb.append(filePath);
         sb.append("/");
@@ -543,7 +543,7 @@ public class GeoSymSupport {
 
     protected String getPathForAssignmentFile(String filePath, String fileName) {
         StringBuilder sb = new StringBuilder();
-        sb.append(this.getAssignmentPath(filePath));
+        sb.append(GeoSymSupport.getAssignmentPath(filePath));
         sb.append("/");
         sb.append(fileName);
         return sb.toString();
@@ -588,7 +588,7 @@ public class GeoSymSupport {
      * @return a single element list containing a reference to the unknown symbol key {@link
      * VPFSymbolKey#UNKNOWN_SYMBOL_KEY}.
      */
-    protected List<? extends VPFSymbolKey> doGetUnknownSymbolKeys() {
+    protected static List<? extends VPFSymbolKey> doGetUnknownSymbolKeys() {
         return Collections.singletonList(VPFSymbolKey.UNKNOWN_SYMBOL_KEY);
     }
 
@@ -615,7 +615,7 @@ public class GeoSymSupport {
     protected Collection<AVList> selectSymbolRows(VPFFeatureClass featureClass, String featureCode) {
         // Get the product id associated with the feature class. A value of -1 indicates that no id is available.
         int pid = -1;
-        String productName = this.getProductName(featureClass);
+        String productName = GeoSymSupport.getProductName(featureClass);
         if (productName != null) {
             Integer i = this.productTypes.get(productName.toUpperCase());
             if (i != null)
@@ -642,7 +642,7 @@ public class GeoSymSupport {
         return selectSymbolAssignments(symbolTable, pid, featureCode, delin, cov);
     }
 
-    protected String getProductName(VPFFeatureClass featureClass) {
+    protected static String getProductName(VPFFeatureClass featureClass) {
         String s = featureClass.getCoverage().getLibrary().getProductType();
 
         // 'TADS', or Terrain Analysis Data Set is an alias for 'VITD', or 'Vector Product Interim Terrain Data'.
@@ -685,7 +685,7 @@ public class GeoSymSupport {
 
         if (attr != null) {
             // Assemble the common symbol attributes.
-            this.assembleCommonSymbolAttributes(symbolRow, attr);
+            GeoSymSupport.assembleCommonSymbolAttributes(symbolRow, attr);
         }
 
         return Collections.singletonList(attr);
@@ -697,7 +697,7 @@ public class GeoSymSupport {
 
     protected Iterable<? extends VPFSymbolAttributes> doGetUnknownSymbolAttributes(VPFFeatureClass featureClass,
         VPFSymbolKey key) {
-        List<VPFSymbolAttributes> list = new ArrayList<>();
+        Collection<VPFSymbolAttributes> list = new ArrayList<>();
 
         if (featureClass.getType() == VPFFeatureType.POINT || featureClass.getType() == VPFFeatureType.AREA) {
             VPFSymbolAttributes attr = new VPFSymbolAttributes(featureClass.getType(), key);
@@ -714,7 +714,7 @@ public class GeoSymSupport {
         return list;
     }
 
-    protected void assembleCommonSymbolAttributes(AVList symbolRow, VPFSymbolAttributes attr) {
+    protected static void assembleCommonSymbolAttributes(AVList symbolRow, VPFSymbolAttributes attr) {
         Integer i = AVListImpl.getIntegerValue(symbolRow, "dispri");
         if (i != null)
             attr.setDisplayPriority(i);

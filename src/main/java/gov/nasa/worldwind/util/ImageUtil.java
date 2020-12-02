@@ -536,7 +536,7 @@ public class ImageUtil {
         BarycentricTriangle sourceLatLon = new BarycentricTriangle(geoPoints[0], geoPoints[1], geoPoints[2]);
         BarycentricPlanarShape sourcePixels = new BarycentricTriangle(imagePoints[0], imagePoints[1], imagePoints[2]);
 
-        List<LatLon> extremes = new ArrayList<>(4);
+        Collection<LatLon> extremes = new ArrayList<>(4);
         // Lower left corner.
         double[] bc = sourcePixels.getBarycentricCoords(new Vec4(0, sourceImage.getHeight(), 0));
         extremes.add(sourceLatLon.getLocation(bc));
@@ -583,7 +583,7 @@ public class ImageUtil {
         BarycentricPlanarShape sourcePixels = new BarycentricQuadrilateral(imagePoints[0], imagePoints[1],
             imagePoints[2], imagePoints[3]);
 
-        List<LatLon> extremes = new ArrayList<>(4);
+        Collection<LatLon> extremes = new ArrayList<>(4);
         // Lower left corner.
         double[] bc = sourcePixels.getBarycentricCoords(new Vec4(0, sourceImage.getHeight(), 0));
         extremes.add(sourceLatLon.getLocation(bc));

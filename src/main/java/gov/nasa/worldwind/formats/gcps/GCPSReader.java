@@ -9,7 +9,7 @@ package gov.nasa.worldwind.formats.gcps;
 import gov.nasa.worldwind.util.*;
 
 import java.io.*;
-import java.util.List;
+import java.util.*;
 import java.util.regex.*;
 
 /**
@@ -202,7 +202,7 @@ public class GCPSReader {
 
         try {
             BufferedReader br = new BufferedReader(reader);
-            String line = this.nextLine(br);
+            String line = GCPSReader.nextLine(br);
             Pattern pattern = this.createPattern();
 
             return pattern.matcher(line).matches();
@@ -212,7 +212,7 @@ public class GCPSReader {
         }
     }
 
-    protected void doRead(Reader reader, RasterControlPointList controlPoints) throws IOException {
+    protected void doRead(Reader reader, List<RasterControlPointList.ControlPoint> controlPoints) throws IOException {
         if (reader == null) {
             String message = Logging.getMessage("nullValue.ReaderIsNull");
             Logging.logger().severe(message);
@@ -229,7 +229,7 @@ public class GCPSReader {
     }
 
     protected void readControlPoints(BufferedReader reader,
-        List<RasterControlPointList.ControlPoint> controlPoints)
+        Collection<RasterControlPointList.ControlPoint> controlPoints)
         throws IOException {
         if (reader == null) {
             String message = Logging.getMessage("nullValue.ReaderIsNull");
@@ -246,7 +246,7 @@ public class GCPSReader {
 
         String line;
         Matcher matcher;
-        while ((line = this.nextLine(reader)) != null && (matcher = pattern.matcher(line)).matches()) {
+        while ((line = GCPSReader.nextLine(reader)) != null && (matcher = pattern.matcher(line)).matches()) {
             String swx = matcher.group(1);
             String swy = matcher.group(2);
             String srx = matcher.group(3);
@@ -280,7 +280,7 @@ public class GCPSReader {
         return Pattern.compile(sb.toString());
     }
 
-    protected String nextLine(BufferedReader reader) throws IOException {
+    protected static String nextLine(BufferedReader reader) throws IOException {
         // Read until the next non-whitespace line.
 
         String line;

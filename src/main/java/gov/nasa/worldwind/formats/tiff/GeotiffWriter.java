@@ -225,7 +225,7 @@ public class GeotiffWriter {
             params = new AVListImpl();
         }
         else {
-            this.validateParameters(params, image.getWidth(), image.getHeight());
+            GeotiffWriter.validateParameters(params, image.getWidth(), image.getHeight());
         }
 
         // how we proceed in part depends upon the image type...
@@ -350,7 +350,7 @@ public class GeotiffWriter {
         for (int i = 0; i < numBands; i++) {
             bps[i] = Tiff.BitsPerSample.MONOCHROME_BYTE;
         }
-        this.theChannel.write(ByteBuffer.wrap(this.getBytes(bps)));
+        this.theChannel.write(ByteBuffer.wrap(GeotiffWriter.getBytes(bps)));
         ifds.add(new TiffIFDEntry(Tiff.Tag.BITS_PER_SAMPLE, Tiff.Type.SHORT, numBands, offset));
 
         offset = this.theChannel.position();
@@ -407,12 +407,12 @@ public class GeotiffWriter {
 
             if (BufferedImage.TYPE_USHORT_GRAY == type) {
                 for (int j = 0; j < numCols * numBands; j++) {
-                    this.putUnsignedShort(dataBuff, rowData[j]);
+                    GeotiffWriter.putUnsignedShort(dataBuff, rowData[j]);
                 }
             }
             else if (BufferedImage.TYPE_BYTE_GRAY == type) {
                 for (int j = 0; j < numCols * numBands; j++) {
-                    this.putUnsignedByte(dataBuff, rowData[j]);
+                    GeotiffWriter.putUnsignedByte(dataBuff, rowData[j]);
                 }
             }
             dataBuff.flip();
@@ -475,7 +475,7 @@ public class GeotiffWriter {
         this.theChannel.write(ByteBuffer.wrap(tiffHeader));
     }
 
-    private void appendGeoTiff(ArrayList<TiffIFDEntry> ifds, AVList params)
+    private void appendGeoTiff(List<TiffIFDEntry> ifds, AVList params)
         throws IOException, IllegalArgumentException {
         if (null == params || params.getEntries().isEmpty()) {
             String reason = Logging.getMessage("nullValue.AVListIsNull");
@@ -534,7 +534,7 @@ public class GeotiffWriter {
                         (Double) params.get(AVKey.PIXEL_HEIGHT),
                         isElevation(params) ? 1.0d : 0.0d
                     };
-                byte[] bytes = this.getBytes(values);
+                byte[] bytes = GeotiffWriter.getBytes(values);
                 this.theChannel.write(ByteBuffer.wrap(bytes));
                 ifds.add(new TiffIFDEntry(GeoTiff.Tag.MODEL_PIXELSCALE, Tiff.Type.DOUBLE, values.length, offset));
             }
@@ -555,7 +555,7 @@ public class GeotiffWriter {
                         0.0d, h - 1, 0.0d, sec.lonMin().degrees, sec.latMin().degrees, 0.0d,
                     };
 
-                byte[] bytes = this.getBytes(values);
+                byte[] bytes = GeotiffWriter.getBytes(values);
                 this.theChannel.write(ByteBuffer.wrap(bytes));
                 ifds.add(new TiffIFDEntry(GeoTiff.Tag.MODEL_TIEPOINT, Tiff.Type.DOUBLE, values.length, offset));
             }
@@ -599,7 +599,7 @@ public class GeotiffWriter {
         }
     }
 
-    protected void validateParameters(AVList list, int srcWidth, int srcHeight) throws IllegalArgumentException {
+    protected static void validateParameters(AVList list, int srcWidth, int srcHeight) throws IllegalArgumentException {
         if (null == list || list.isEmpty()) {
             String reason = Logging.getMessage("nullValue.AVListIsNull");
             String msg = Logging.getMessage("GeotiffWriter.GeoKeysMissing", reason);
@@ -750,7 +750,7 @@ public class GeotiffWriter {
         }
     }
 
-    private void writeGeographicImageGeoKeys(List<TiffIFDEntry> ifds, AVList params) throws IOException {
+    private void writeGeographicImageGeoKeys(Collection<TiffIFDEntry> ifds, AVList params) throws IOException {
         long offset = this.theChannel.position();
 
         if (isImage(params) && isGeographic(params)) {
@@ -783,13 +783,13 @@ public class GeotiffWriter {
             // IMPORTANT!! update count - number of geokeys
             values[3] = (short) (values.length / 4);
 
-            byte[] bytes = this.getBytes(values);
+            byte[] bytes = GeotiffWriter.getBytes(values);
             this.theChannel.write(ByteBuffer.wrap(bytes));
             ifds.add(new TiffIFDEntry(GeoTiff.Tag.GEO_KEY_DIRECTORY, Tiff.Type.SHORT, values.length, offset));
         }
     }
 
-    private void writeGeographicElevationGeoKeys(List<TiffIFDEntry> ifds, AVList params) throws IOException {
+    private void writeGeographicElevationGeoKeys(Collection<TiffIFDEntry> ifds, AVList params) throws IOException {
         long offset = this.theChannel.position();
 
         if (isElevation(params) && isGeographic(params)) {
@@ -838,7 +838,7 @@ public class GeotiffWriter {
             // IMPORTANT!! update count - number of geokeys
             values[3] = (short) (values.length / 4);
 
-            byte[] bytes = this.getBytes(values);
+            byte[] bytes = GeotiffWriter.getBytes(values);
             this.theChannel.write(ByteBuffer.wrap(bytes));
             ifds.add(new TiffIFDEntry(GeoTiff.Tag.GEO_KEY_DIRECTORY, Tiff.Type.SHORT, values.length, offset));
         }
@@ -892,19 +892,19 @@ public class GeotiffWriter {
         this.theChannel.write(dataBuff);
     }
 
-    private void putUnsignedByte(ByteBuffer buff, int value) {
+    private static void putUnsignedByte(ByteBuffer buff, int value) {
         buff.put((byte) (value & 0xff));
     }
 
-    private void putUnsignedShort(ByteBuffer buff, int value) {
+    private static void putUnsignedShort(ByteBuffer buff, int value) {
         buff.putShort((short) (value & 0xffff));
     }
 
-    private void putUnsignedInt(ByteBuffer buff, long value) {
+    private static void putUnsignedInt(ByteBuffer buff, long value) {
         buff.putInt((int) (value & 0xffffffffL));
     }
 
-    private byte[] getBytes(double[] array) {
+    private static byte[] getBytes(double[] array) {
         try {
             ByteArrayOutputStream bytestream = new ByteArrayOutputStream();
             DataOutputStream datastream = new DataOutputStream(bytestream);
@@ -921,7 +921,7 @@ public class GeotiffWriter {
         return null;
     }
 
-    private byte[] getBytes(short[] array) {
+    private static byte[] getBytes(short[] array) {
         try {
             ByteArrayOutputStream bytestream = new ByteArrayOutputStream();
             DataOutputStream datastream = new DataOutputStream(bytestream);
@@ -950,7 +950,7 @@ public class GeotiffWriter {
             throw new IllegalArgumentException(msg);
         }
 
-        this.validateParameters(raster, raster.getWidth(), raster.getHeight());
+        GeotiffWriter.validateParameters(raster, raster.getWidth(), raster.getHeight());
 
         int bitsPerSample, samplesPerPixel, sampleFormat, photometric, numBands;
 
@@ -1107,7 +1107,7 @@ public class GeotiffWriter {
             for (int i = 0; i < numBands; i++) {
                 bps[i] = Tiff.BitsPerSample.MONOCHROME_BYTE;
             }
-            this.theChannel.write(ByteBuffer.wrap(this.getBytes(bps)));
+            this.theChannel.write(ByteBuffer.wrap(GeotiffWriter.getBytes(bps)));
             ifds.add(new TiffIFDEntry(Tiff.Tag.BITS_PER_SAMPLE, Tiff.Type.SHORT, numBands, offset));
         }
         else

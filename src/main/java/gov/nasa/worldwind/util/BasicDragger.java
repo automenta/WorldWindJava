@@ -86,7 +86,7 @@ public class BasicDragger implements SelectListener {
      * @deprecated the {@link Draggable} provides the object being dragged complete control over the dragging behavior.
      */
     @Deprecated
-    public boolean isUseTerrain() {
+    public static boolean isUseTerrain() {
         return false;
     }
 

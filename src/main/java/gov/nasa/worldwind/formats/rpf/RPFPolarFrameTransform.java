@@ -104,9 +104,9 @@ class RPFPolarFrameTransform extends RPFFrameTransform {
             throw new IllegalArgumentException(message);
         }
 
-        int originX = pixelColumn(0, frameNumber, this.frameStructure.getPixelRowsPerFrame(),
+        int originX = pixelColumn(0, frameNumber, RPFFrameStructure.getPixelRowsPerFrame(),
             this.frameStructure.getPolarFrames());
-        int originY = pixelRow(0, frameNumber, this.frameStructure.getPixelRowsPerFrame(),
+        int originY = pixelRow(0, frameNumber, RPFFrameStructure.getPixelRowsPerFrame(),
             this.frameStructure.getPolarFrames());
 
         double lat, lon;
@@ -125,15 +125,15 @@ class RPFPolarFrameTransform extends RPFFrameTransform {
             throw new IllegalArgumentException(message);
         }
 
-        int minX = pixelColumn(0, frameNumber, this.frameStructure.getPixelRowsPerFrame(),
+        int minX = pixelColumn(0, frameNumber, RPFFrameStructure.getPixelRowsPerFrame(),
             this.frameStructure.getPolarFrames());
-        int maxY = pixelRow(0, frameNumber, this.frameStructure.getPixelRowsPerFrame(),
+        int maxY = pixelRow(0, frameNumber, RPFFrameStructure.getPixelRowsPerFrame(),
             this.frameStructure.getPolarFrames());
 
-        int maxX = pixelColumn(this.frameStructure.getPixelRowsPerFrame(), frameNumber,
-            this.frameStructure.getPixelRowsPerFrame(), this.frameStructure.getPolarFrames());
-        int minY = pixelRow(this.frameStructure.getPixelRowsPerFrame(), frameNumber,
-            this.frameStructure.getPixelRowsPerFrame(), this.frameStructure.getPolarFrames());
+        int maxX = pixelColumn(RPFFrameStructure.getPixelRowsPerFrame(), frameNumber,
+            RPFFrameStructure.getPixelRowsPerFrame(), this.frameStructure.getPolarFrames());
+        int minY = pixelRow(RPFFrameStructure.getPixelRowsPerFrame(), frameNumber,
+            RPFFrameStructure.getPixelRowsPerFrame(), this.frameStructure.getPolarFrames());
 
         // we'll need these below...
         int midX = (minX + maxX) / 2;
@@ -225,14 +225,14 @@ class RPFPolarFrameTransform extends RPFFrameTransform {
         RPFImage[] images = new RPFImage[2];
 
         // Compute a tight bounds for western half...
-        int minX = pixelColumn(0, frameNumber, this.frameStructure.getPixelRowsPerFrame(),
+        int minX = pixelColumn(0, frameNumber, RPFFrameStructure.getPixelRowsPerFrame(),
             this.frameStructure.getPolarFrames());
-        int maxX = pixelColumn(this.frameStructure.getPixelRowsPerFrame(), frameNumber,
-            this.frameStructure.getPixelRowsPerFrame(), this.frameStructure.getPolarFrames());
-        int minY = pixelRow(0, frameNumber, this.frameStructure.getPixelRowsPerFrame(),
+        int maxX = pixelColumn(RPFFrameStructure.getPixelRowsPerFrame(), frameNumber,
+            RPFFrameStructure.getPixelRowsPerFrame(), this.frameStructure.getPolarFrames());
+        int minY = pixelRow(0, frameNumber, RPFFrameStructure.getPixelRowsPerFrame(),
             this.frameStructure.getPolarFrames());
-        int maxY = pixelRow(this.frameStructure.getPixelRowsPerFrame(), frameNumber,
-            this.frameStructure.getPixelRowsPerFrame(), this.frameStructure.getPolarFrames());
+        int maxY = pixelRow(RPFFrameStructure.getPixelRowsPerFrame(), frameNumber,
+            RPFFrameStructure.getPixelRowsPerFrame(), this.frameStructure.getPolarFrames());
         int midX = (minX + maxX) / 2;
         int midY = (minY + maxY) / 2;
 
@@ -289,14 +289,14 @@ class RPFPolarFrameTransform extends RPFFrameTransform {
         RPFImage[] images = new RPFImage[2];
 
         // Compute a tight bounds for western half...
-        int minX = pixelColumn(0, frameNumber, this.frameStructure.getPixelRowsPerFrame(),
+        int minX = pixelColumn(0, frameNumber, RPFFrameStructure.getPixelRowsPerFrame(),
             this.frameStructure.getPolarFrames());
-        int maxX = pixelColumn(this.frameStructure.getPixelRowsPerFrame(), frameNumber,
-            this.frameStructure.getPixelRowsPerFrame(), this.frameStructure.getPolarFrames());
-        int minY = pixelRow(0, frameNumber, this.frameStructure.getPixelRowsPerFrame(),
+        int maxX = pixelColumn(RPFFrameStructure.getPixelRowsPerFrame(), frameNumber,
+            RPFFrameStructure.getPixelRowsPerFrame(), this.frameStructure.getPolarFrames());
+        int minY = pixelRow(0, frameNumber, RPFFrameStructure.getPixelRowsPerFrame(),
             this.frameStructure.getPolarFrames());
-        int maxY = pixelRow(this.frameStructure.getPixelRowsPerFrame(), frameNumber,
-            this.frameStructure.getPixelRowsPerFrame(), this.frameStructure.getPolarFrames());
+        int maxY = pixelRow(RPFFrameStructure.getPixelRowsPerFrame(), frameNumber,
+            RPFFrameStructure.getPixelRowsPerFrame(), this.frameStructure.getPolarFrames());
         int midX = (minX + maxX) / 2;
         int midY = (minY + maxY) / 2;
 
@@ -350,9 +350,9 @@ class RPFPolarFrameTransform extends RPFFrameTransform {
 
     private void resampleFrameFile(Sector sector, BufferedImage srcImage, BufferedImage destImage, int frameNumber,
         PixelTransformer pt) {
-        int frameULX = pixelColumn(0, frameNumber, this.frameStructure.getPixelRowsPerFrame(),
+        int frameULX = pixelColumn(0, frameNumber, RPFFrameStructure.getPixelRowsPerFrame(),
             this.frameStructure.getPolarFrames());
-        int frameULY = pixelRow(0, frameNumber, this.frameStructure.getPixelRowsPerFrame(),
+        int frameULY = pixelRow(0, frameNumber, RPFFrameStructure.getPixelRowsPerFrame(),
             this.frameStructure.getPolarFrames());
 
         int width = destImage.getWidth();

@@ -206,7 +206,7 @@ public class AirspaceLayer extends AbstractLayer {
      * instance in the layer.
      */
     @Deprecated
-    public boolean isEnableAntialiasing() {
+    public static boolean isEnableAntialiasing() {
         return false; // deprecated method
     }
 
@@ -230,7 +230,7 @@ public class AirspaceLayer extends AbstractLayer {
      * other objects in the scene.
      */
     @Deprecated
-    public boolean isEnableBlending() {
+    public static boolean isEnableBlending() {
         return false; // deprecated method
     }
 
@@ -254,7 +254,7 @@ public class AirspaceLayer extends AbstractLayer {
      * instance in the layer.
      */
     @Deprecated
-    public boolean isEnableDepthOffset() {
+    public static boolean isEnableDepthOffset() {
         return false; // deprecated method
     }
 
@@ -278,7 +278,7 @@ public class AirspaceLayer extends AbstractLayer {
      * the layer.
      */
     @Deprecated
-    public boolean isEnableLighting() {
+    public static boolean isEnableLighting() {
         return false; // deprecated method
     }
 
@@ -301,7 +301,7 @@ public class AirspaceLayer extends AbstractLayer {
      * @deprecated Control over drawing Airspace extents is no longer supported.
      */
     @Deprecated
-    public boolean isDrawExtents() {
+    public static boolean isDrawExtents() {
         return false; // deprecated method
     }
 
@@ -323,7 +323,7 @@ public class AirspaceLayer extends AbstractLayer {
      * @deprecated Control over drawing Airspace in wireframe mode is no longer supported.
      */
     @Deprecated
-    public boolean isDrawWireframe() {
+    public static boolean isDrawWireframe() {
         return false; // deprecated method
     }
 
@@ -346,7 +346,7 @@ public class AirspaceLayer extends AbstractLayer {
      * Airspace#setEnableDepthOffset(boolean)}.
      */
     @Deprecated
-    public Double getDepthOffsetFactor() {
+    public static Double getDepthOffsetFactor() {
         return 0.0d; // deprecated method
     }
 
@@ -370,7 +370,7 @@ public class AirspaceLayer extends AbstractLayer {
      * Airspace#setEnableDepthOffset(boolean)}.
      */
     @Deprecated
-    public Double getDepthOffsetUnits() {
+    public static Double getDepthOffsetUnits() {
         return 0.0d; // deprecated method
     }
 
@@ -394,7 +394,7 @@ public class AirspaceLayer extends AbstractLayer {
      * instance in the layer.
      */
     @Deprecated
-    public boolean isEnableBatchRendering() {
+    public static boolean isEnableBatchRendering() {
         return false; // deprecated method
     }
 
@@ -418,7 +418,7 @@ public class AirspaceLayer extends AbstractLayer {
      * instance in the layer.
      */
     @Deprecated
-    public boolean isEnableBatchPicking() {
+    public static boolean isEnableBatchPicking() {
         return false; // deprecated method
     }
 

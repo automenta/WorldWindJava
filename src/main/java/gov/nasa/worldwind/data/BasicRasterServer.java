@@ -68,7 +68,7 @@ public class BasicRasterServer extends WWObjectImpl implements RasterServer {
      *
      * @return an instance of the MemoryCache that contains DataRasters and their properties
      */
-    public MemoryCache getCache() {
+    public static MemoryCache getCache() {
         return cache;
     }
 
@@ -253,7 +253,7 @@ public class BasicRasterServer extends WWObjectImpl implements RasterServer {
                     if (null != sector) {
                         extent = Sector.union(extent, sector);
                         this.dataRasterList.add(
-                            new CachedDataRaster(rasterSourceFile, rasterMetadata, rasterReader, this.getCache())
+                            new CachedDataRaster(rasterSourceFile, rasterMetadata, rasterReader, BasicRasterServer.getCache())
                         );
                     }
                     else {

@@ -28,8 +28,8 @@ import java.util.logging.Level;
  */
 public class BasicAnnotationRenderer implements AnnotationRenderer {
     protected final PickSupport pickSupport = new PickSupport();
-    protected final Set<Annotation> currentPickAnnotations = new HashSet<>();
-    protected final Set<Annotation> currentDrawAnnotations = new HashSet<>();
+    protected final Collection<Annotation> currentPickAnnotations = new HashSet<>();
+    protected final Collection<Annotation> currentDrawAnnotations = new HashSet<>();
     protected long currentFrameTime;
 
     protected static boolean isAnnotationValid(Annotation annotation, boolean checkPosition) {
@@ -111,7 +111,7 @@ public class BasicAnnotationRenderer implements AnnotationRenderer {
                 continue;
 
             // Do not draw the pick pass if not at pick point range;
-            if (dc.isPickingMode() && !this.isAtPickRange(dc, annotation))
+            if (dc.isPickingMode() && !BasicAnnotationRenderer.isAtPickRange(dc, annotation))
                 continue;
 
             if (altitude < annotation.getMinActiveAltitude() || altitude > annotation.getMaxActiveAltitude())
@@ -182,7 +182,7 @@ public class BasicAnnotationRenderer implements AnnotationRenderer {
             return;
 
         // Do not draw the pick pass if not at pick point range;
-        if (dc.isPickingMode() && !this.isAtPickRange(dc, annotation))
+        if (dc.isPickingMode() && !BasicAnnotationRenderer.isAtPickRange(dc, annotation))
             return;
 
         if (dc.isContinuous2DGlobe() && annotation instanceof ScreenAnnotation) {
@@ -240,7 +240,7 @@ public class BasicAnnotationRenderer implements AnnotationRenderer {
         }
     }
 
-    protected boolean isAtPickRange(DrawContext dc, Annotation annotation) {
+    protected static boolean isAtPickRange(DrawContext dc, Annotation annotation) {
         Rectangle screenBounds = annotation.getBounds(dc);
         return screenBounds != null && dc.getPickFrustums().intersectsAny(screenBounds);
     }
@@ -254,7 +254,7 @@ public class BasicAnnotationRenderer implements AnnotationRenderer {
      * @param annotation the annotation
      * @return the annotation draw cartesian point
      */
-    protected Vec4 getAnnotationDrawPoint(DrawContext dc, Annotation annotation) {
+    protected static Vec4 getAnnotationDrawPoint(DrawContext dc, Annotation annotation) {
         Vec4 drawPoint = null;
         if (annotation instanceof Locatable) {
             Position pos = ((Locatable) annotation).getPosition();
@@ -307,7 +307,7 @@ public class BasicAnnotationRenderer implements AnnotationRenderer {
             OGLUtil.applyBlending(gl, true);
         }
         else {
-            this.pickSupport.beginPicking(dc);
+            PickSupport.beginPicking(dc);
         }
     }
 
@@ -315,7 +315,7 @@ public class BasicAnnotationRenderer implements AnnotationRenderer {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         if (dc.isPickingMode()) {
-            this.pickSupport.endPicking(dc);
+            PickSupport.endPicking(dc);
         }
 
         stackHandler.pop(gl);

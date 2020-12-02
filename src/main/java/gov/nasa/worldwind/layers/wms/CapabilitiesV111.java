@@ -38,7 +38,7 @@ public class CapabilitiesV111 extends Capabilities {
             return null;
 
         ArrayList<BoundingBox> bboxes = new ArrayList<>();
-        List<String> crses = new ArrayList<>();
+        Collection<String> crses = new ArrayList<>();
 
         for (Element e : es) {
             if (e == null)

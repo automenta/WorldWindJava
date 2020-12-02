@@ -60,7 +60,7 @@ public class VPFTableReader {
         }
 
         try {
-            ByteBuffer buffer = this.readFileToBuffer(file);
+            ByteBuffer buffer = VPFTableReader.readFileToBuffer(file);
             return this.doRead(file, buffer);
         }
         catch (Exception e) {
@@ -74,7 +74,7 @@ public class VPFTableReader {
     //********************  Header  ********************************//
     //**************************************************************//
 
-    protected ByteBuffer readFileToBuffer(File file) throws IOException {
+    protected static ByteBuffer readFileToBuffer(File file) throws IOException {
         ByteBuffer buffer = WWIO.readFileToBuffer(file, true); // Read VPF table to a direct ByteBuffer.
         buffer.order(ByteOrder.LITTLE_ENDIAN); // Default to least significant byte first order.
         return buffer;
@@ -94,7 +94,7 @@ public class VPFTableReader {
             recordIndex = this.readRecordIndex(recordIndexFile);
         // If the record index is null, then attempt to compute it from the header's column definitions.
         if (recordIndex == null)
-            recordIndex = this.computeRecordIndex(buffer, header);
+            recordIndex = VPFTableReader.computeRecordIndex(buffer, header);
         // If the record index is still null, then we the column definitions are variable length, and there is no
         // variable-length record index associated with this table. In this case, we cannot read the table body.
         if (recordIndex == null) {
@@ -104,7 +104,7 @@ public class VPFTableReader {
         }
 
         // Read the table record data.
-        return this.readRecordData(buffer, header.columns, recordIndex);
+        return VPFTableReader.readRecordData(buffer, header.columns, recordIndex);
     }
 
     protected Header readHeader(ByteBuffer buffer) {
@@ -134,10 +134,10 @@ public class VPFTableReader {
         if (s != null && s.charAt(0) != '-')
             header.narrativeTableName = s.trim();
 
-        List<Column> columnList = new ArrayList<>();
+        Collection<Column> columnList = new ArrayList<>();
 
         while (buffer.position() < (offset + length)) {
-            Column col = this.readColumnDescription(buffer);
+            Column col = VPFTableReader.readColumnDescription(buffer);
             columnList.add(col);
         }
 
@@ -150,7 +150,7 @@ public class VPFTableReader {
         return header;
     }
 
-    protected Column readColumnDescription(ByteBuffer buffer) {
+    protected static Column readColumnDescription(ByteBuffer buffer) {
         String s = VPFUtils.readDelimitedText(buffer, '=');
         if (s == null) {
             String message = Logging.getMessage("VPF.MissingColumnName");
@@ -197,7 +197,8 @@ public class VPFTableReader {
         return col;
     }
 
-    protected VPFBufferedRecordData readRecordData(ByteBuffer byteBuffer, Column[] columns, RecordIndex recordIndex) {
+    protected static VPFBufferedRecordData readRecordData(ByteBuffer byteBuffer, Column[] columns,
+        RecordIndex recordIndex) {
         int numRows = recordIndex.numEntries;
         int numColumns = columns.length;
 
@@ -244,7 +245,7 @@ public class VPFTableReader {
 
     protected RecordIndex readRecordIndex(File file) {
         try {
-            ByteBuffer buffer = this.readFileToBuffer(file);
+            ByteBuffer buffer = VPFTableReader.readFileToBuffer(file);
             buffer.order(ByteOrder.LITTLE_ENDIAN); // Default to least significant byte first order.
 
             RecordIndex index = new RecordIndex();
@@ -267,7 +268,7 @@ public class VPFTableReader {
         }
     }
 
-    protected RecordIndex computeRecordIndex(ByteBuffer buffer, Header header) {
+    protected static RecordIndex computeRecordIndex(ByteBuffer buffer, Header header) {
         // Compute a fixed length record size by summing the sizes of individual columns. Assume that the bytes of row
         // values are tightly packed.
         int recordLength = 0;

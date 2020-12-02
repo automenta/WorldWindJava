@@ -89,7 +89,7 @@ public class ColladaController implements Renderable, PreRenderable {
      * {@inheritDoc}
      */
     public void preRender(DrawContext dc) {
-        this.initializeTraversalContext(this.getTraversalContext());
+        ColladaController.initializeTraversalContext(this.getTraversalContext());
         this.colladaRoot.preRender(this.getTraversalContext(), dc);
     }
 
@@ -97,7 +97,7 @@ public class ColladaController implements Renderable, PreRenderable {
      * {@inheritDoc}
      */
     public void render(DrawContext dc) {
-        this.initializeTraversalContext(this.getTraversalContext());
+        ColladaController.initializeTraversalContext(this.getTraversalContext());
         this.colladaRoot.render(this.getTraversalContext(), dc);
     }
 
@@ -108,7 +108,7 @@ public class ColladaController implements Renderable, PreRenderable {
      *
      * @param tc the COLLADA traversal context to initialize.
      */
-    protected void initializeTraversalContext(ColladaTraversalContext tc) {
+    protected static void initializeTraversalContext(ColladaTraversalContext tc) {
         tc.initialize();
     }
 }

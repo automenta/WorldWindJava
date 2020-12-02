@@ -350,7 +350,7 @@ public class GeographicTextRenderer {
         }
     }
 
-    protected Rectangle2D computeScaledBounds(Rectangle2D bounds, double scale) {
+    protected static Rectangle2D computeScaledBounds(Rectangle2D bounds, double scale) {
         if (scale == 1)
             return bounds;
 
@@ -361,7 +361,7 @@ public class GeographicTextRenderer {
         return bounds;
     }
 
-    protected Rectangle2D computeExpandedBounds(Rectangle2D bounds, int margin) {
+    protected static Rectangle2D computeExpandedBounds(Rectangle2D bounds, int margin) {
         if (margin == 0)
             return bounds;
 
@@ -499,7 +499,7 @@ public class GeographicTextRenderer {
 
             Rectangle2D textBounds = textRenderer.getBounds(
                 charSequence);//note:may already be calculated during culling
-            textBounds = this.computeScaledBounds(textBounds, scale);
+            textBounds = GeographicTextRenderer.computeScaledBounds(textBounds, scale);
             Point.Float drawPoint = computeDrawPoint(dc, textBounds, screenPoint);
 
             if (drawPoint != null) {
@@ -511,11 +511,11 @@ public class GeographicTextRenderer {
                 Color color = geographicText.getColor();
                 if (color == null)
                     color = DEFAULT_COLOR;
-                color = this.applyOpacity(color, opacity);
+                color = GeographicTextRenderer.applyOpacity(color, opacity);
 
                 Color background = geographicText.getBackgroundColor();
                 if (background != null) {
-                    background = this.applyOpacity(background, opacity);
+                    background = GeographicTextRenderer.applyOpacity(background, opacity);
                     textRenderer.setColor(background);
                     if (this.effect.equals(AVKey.TEXT_EFFECT_SHADOW)) {
                         textRenderer.draw3D(charSequence, drawPoint.x + 1, drawPoint.y - 1, 0, 1);
@@ -543,7 +543,7 @@ public class GeographicTextRenderer {
         return screenPoint;
     }
 
-    protected Color applyOpacity(Color color, double opacity) {
+    protected static Color applyOpacity(Color color, double opacity) {
         if (opacity >= 1)
             return color;
 
@@ -575,7 +575,7 @@ public class GeographicTextRenderer {
      * @return the final draw point for the given rectangle lower left corner or <code>null</code>.
      */
     @SuppressWarnings("UnusedDeclaration")
-    protected Point.Float computeDrawPoint(DrawContext dc, Rectangle2D rect, Vec4 screenPoint) {
+    protected static Point.Float computeDrawPoint(DrawContext dc, Rectangle2D rect, Vec4 screenPoint) {
         return new Point.Float((float) (screenPoint.x - rect.getWidth() / 2.0d), (float) (screenPoint.y));
     }
 
@@ -661,7 +661,7 @@ public class GeographicTextRenderer {
 
                     Collections.sort(textList); // sort for rendering priority then front to back
 
-                    List<Rectangle2D> textBounds = new ArrayList<>();
+                    Collection<Rectangle2D> textBounds = new ArrayList<>();
                     for (OrderedText ot : textList) {
                         double[] scaleAndOpacity = GeographicTextRenderer.this.computeDistanceScaleAndOpacity(dc, ot);
                         Rectangle2D newBounds = GeographicTextRenderer.this.computeTextBounds(dc, ot,
@@ -670,7 +670,7 @@ public class GeographicTextRenderer {
                             continue;
 
                         boolean overlap = false;
-                        newBounds = GeographicTextRenderer.this.computeExpandedBounds(newBounds, cullTextMargin);
+                        newBounds = GeographicTextRenderer.computeExpandedBounds(newBounds, cullTextMargin);
                         for (Rectangle2D rect : textBounds) {
                             if (rect.intersects(newBounds))
                                 overlap = true;

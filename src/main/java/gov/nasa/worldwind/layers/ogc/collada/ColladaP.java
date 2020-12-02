@@ -55,7 +55,7 @@ public class ColladaP extends ColladaAbstractObject {
         if (this.hasField(CHARACTERS_CONTENT)) {
             String s = (String) this.getField(CHARACTERS_CONTENT);
             if (!WWUtil.isEmpty(s))
-                this.indices = this.parseInts(s);
+                this.indices = ColladaP.parseInts(s);
 
             // Don't need to keep string version of the ints
             this.removeField(CHARACTERS_CONTENT);
@@ -70,7 +70,7 @@ public class ColladaP extends ColladaAbstractObject {
      * @param intArrayString String of integers separated by spaces.
      * @return Array of integers parsed from the input string.
      */
-    protected int[] parseInts(String intArrayString) {
+    protected static int[] parseInts(String intArrayString) {
         String[] arrayOfNumbers = intArrayString.split("\\s");
         int[] ints = new int[arrayOfNumbers.length];
 

@@ -47,7 +47,7 @@ abstract public class OGCCapabilities extends AbstractXMLEventParser {
     public OGCCapabilities(String namespaceURI, Object docSource) {
         super(namespaceURI);
 
-        this.eventReader = this.createReader(docSource);
+        this.eventReader = OGCCapabilities.createReader(docSource);
         this.initialize();
     }
 
@@ -79,7 +79,7 @@ abstract public class OGCCapabilities extends AbstractXMLEventParser {
         // Capability parser is registered by subclass.
     }
 
-    protected XMLEventReader createReader(Object docSource) {
+    protected static XMLEventReader createReader(Object docSource) {
         return WWXML.openEventReader(docSource);
     }
 

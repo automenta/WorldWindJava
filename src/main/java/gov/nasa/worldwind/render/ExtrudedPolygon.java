@@ -418,7 +418,7 @@ public class ExtrudedPolygon extends AbstractShape {
             throw new IllegalArgumentException(message);
         }
 
-        this.getBoundaries().set(0, this.fillBoundary(corners));
+        this.getBoundaries().set(0, ExtrudedPolygon.fillBoundary(corners));
 
         if (height != null)
             this.height = height;
@@ -426,7 +426,7 @@ public class ExtrudedPolygon extends AbstractShape {
         this.reset();
     }
 
-    protected List<? extends LatLon> fillBoundary(Iterable<? extends LatLon> corners) {
+    protected static List<? extends LatLon> fillBoundary(Iterable<? extends LatLon> corners) {
         ArrayList<LatLon> list = new ArrayList<>();
         for (LatLon corner : corners) {
             if (corner != null)
@@ -461,7 +461,7 @@ public class ExtrudedPolygon extends AbstractShape {
             throw new IllegalArgumentException(message);
         }
 
-        this.getBoundaries().add(this.fillBoundary(corners));
+        this.getBoundaries().add(ExtrudedPolygon.fillBoundary(corners));
 
         this.reset();
     }
@@ -482,7 +482,7 @@ public class ExtrudedPolygon extends AbstractShape {
             throw new IllegalArgumentException(message);
         }
 
-        this.getBoundaries().add(this.fillBoundary(corners));
+        this.getBoundaries().add(ExtrudedPolygon.fillBoundary(corners));
 
         if (imageSources != null) {
             if (this.sideTextures == null) {
@@ -519,7 +519,7 @@ public class ExtrudedPolygon extends AbstractShape {
 
         for (Object source : imageSources) {
             if (source != null)
-                textures.add(this.makeTexture(source));
+                textures.add(AbstractShape.makeTexture(source));
             else
                 textures.add(null);
         }
@@ -569,7 +569,7 @@ public class ExtrudedPolygon extends AbstractShape {
             throw new IllegalArgumentException(message);
         }
 
-        this.capTexture = this.makeTexture(imageSource);
+        this.capTexture = AbstractShape.makeTexture(imageSource);
 
         // Determine whether the tex-coord list needs to be closed.
         boolean closeIt = texCoords[0] != texCoords[texCoordCount - 2] || texCoords[1] != texCoords[texCoordCount - 1];
@@ -985,14 +985,14 @@ public class ExtrudedPolygon extends AbstractShape {
      * @param refPoint      a reference point to which the extent is translated. May be null.
      * @return the computed extent, or null if the extent cannot be computed.
      */
-    protected Extent computeExtent(ExtrudedBoundaryInfo outerBoundary, Vec4 refPoint) {
+    protected static Extent computeExtent(ExtrudedBoundaryInfo outerBoundary, Vec4 refPoint) {
         if (outerBoundary == null || outerBoundary.capVertices == null || outerBoundary.baseVertices == null)
             return null;
 
         Vec4[] topVertices = outerBoundary.capVertices;
         Vec4[] botVertices = outerBoundary.baseVertices;
 
-        List<Vec4> allVertices = new ArrayList<>(2 * topVertices.length);
+        Collection<Vec4> allVertices = new ArrayList<>(2 * topVertices.length);
         allVertices.addAll(Arrays.asList(topVertices));
         allVertices.addAll(Arrays.asList(botVertices));
 
@@ -1279,9 +1279,9 @@ public class ExtrudedPolygon extends AbstractShape {
         this.computeBoundaryVertices(dc.getTerrain(), shapeData.getOuterBoundaryInfo(), shapeData.getReferencePoint());
 
         if (this.getExtent() == null || this.getAltitudeMode() != WorldWind.ABSOLUTE)
-            shapeData.setExtent(this.computeExtent(shapeData.getOuterBoundaryInfo(), shapeData.getReferencePoint()));
+            shapeData.setExtent(ExtrudedPolygon.computeExtent(shapeData.getOuterBoundaryInfo(), shapeData.getReferencePoint()));
 
-        shapeData.setEyeDistance(this.computeEyeDistance(dc, shapeData));
+        shapeData.setEyeDistance(ExtrudedPolygon.computeEyeDistance(dc, shapeData));
         shapeData.setGlobeStateKey(dc.getGlobe().getGlobeStateKey(dc));
         shapeData.setVerticalExaggeration(dc.getVerticalExaggeration());
     }
@@ -1293,7 +1293,7 @@ public class ExtrudedPolygon extends AbstractShape {
      * @param shapeData this shape's current globe-specific data.
      * @return the minimum distance from the shape to the eye point.
      */
-    protected double computeEyeDistance(DrawContext dc, ShapeData shapeData) {
+    protected static double computeEyeDistance(DrawContext dc, ShapeData shapeData) {
         double minDistance = Double.MAX_VALUE;
         Vec4 eyePoint = dc.getView().getEyePoint();
 
@@ -1332,9 +1332,9 @@ public class ExtrudedPolygon extends AbstractShape {
     protected void createFullGeometry(DrawContext dc, Terrain terrain, ShapeData shapeData,
         boolean skipOuterBoundary) {
         for (ExtrudedBoundaryInfo boundary : shapeData) {
-            boundary.capEdgeIndices = this.getCapEdgeIndices(boundary.locations.size());
-            boundary.sideIndices = this.getSideIndices(boundary.locations.size());
-            boundary.sideEdgeIndices = this.getSideEdgeIndices(boundary.locations.size());
+            boundary.capEdgeIndices = ExtrudedPolygon.getCapEdgeIndices(boundary.locations.size());
+            boundary.sideIndices = ExtrudedPolygon.getSideIndices(boundary.locations.size());
+            boundary.sideEdgeIndices = ExtrudedPolygon.getSideEdgeIndices(boundary.locations.size());
         }
 
         if (this.isEnableSides() || this.isEnableCap())
@@ -1470,7 +1470,7 @@ public class ExtrudedPolygon extends AbstractShape {
 
         // Create individual buffer slices for each boundary.
         for (ExtrudedBoundaryInfo boundary : shapeData) {
-            boundary.sideVertexBuffer = this.fillSideVertexBuffer(boundary.capVertices, boundary.baseVertices,
+            boundary.sideVertexBuffer = ExtrudedPolygon.fillSideVertexBuffer(boundary.capVertices, boundary.baseVertices,
                 shapeData.sideVertexBuffer.slice());
             shapeData.sideVertexBuffer.position(
                 shapeData.sideVertexBuffer.position() + boundary.sideVertexBuffer.limit());
@@ -1487,7 +1487,7 @@ public class ExtrudedPolygon extends AbstractShape {
 
         // Create individual buffer slices for each boundary.
         for (ExtrudedBoundaryInfo boundary : shapeData) {
-            boundary.sideNormalBuffer = this.fillSideNormalBuffer(boundary.capVertices, boundary.baseVertices,
+            boundary.sideNormalBuffer = ExtrudedPolygon.fillSideNormalBuffer(boundary.capVertices, boundary.baseVertices,
                 shapeData.sideNormalBuffer.slice());
             shapeData.sideNormalBuffer.position(
                 shapeData.sideNormalBuffer.position() + boundary.sideNormalBuffer.limit());
@@ -1512,7 +1512,7 @@ public class ExtrudedPolygon extends AbstractShape {
                 else
                     boundary.sideTextureCoords = Buffers.newDirectFloatBuffer(texCoordSize);
 
-                this.fillSideTexCoordBuffer(boundary.capVertices, boundary.baseVertices,
+                ExtrudedPolygon.fillSideTexCoordBuffer(boundary.capVertices, boundary.baseVertices,
                     boundary.sideTextureCoords);
             }
         }
@@ -1544,7 +1544,7 @@ public class ExtrudedPolygon extends AbstractShape {
         if (shapeData.cb == null) // need to tessellate only once
             this.createTessllationGeometry(dc, shapeData);
 
-        this.generateCapInteriorIndices(shapeData);
+        ExtrudedPolygon.generateCapInteriorIndices(shapeData);
     }
 
     protected void createCapNormals(ShapeData shapeData) {
@@ -1555,7 +1555,7 @@ public class ExtrudedPolygon extends AbstractShape {
             shapeData.capNormalBuffer = Buffers.newDirectFloatBuffer(shapeData.capVertexBuffer.capacity());
 
         for (ExtrudedBoundaryInfo boundary : shapeData) {
-            boundary.capNormalBuffer = this.computeCapNormals(boundary, shapeData.capNormalBuffer.slice());
+            boundary.capNormalBuffer = ExtrudedPolygon.computeCapNormals(boundary, shapeData.capNormalBuffer.slice());
             shapeData.capNormalBuffer.position(
                 shapeData.capNormalBuffer.position() + boundary.capNormalBuffer.limit());
         }
@@ -1570,7 +1570,7 @@ public class ExtrudedPolygon extends AbstractShape {
      * @return the buffer specified as input, with its limit incremented by the number of vertices copied, and its
      * position set to 0.
      */
-    protected FloatBuffer computeCapNormals(ExtrudedBoundaryInfo boundary, FloatBuffer nBuf) {
+    protected static FloatBuffer computeCapNormals(ExtrudedBoundaryInfo boundary, FloatBuffer nBuf) {
         int nVerts = boundary.locations.size();
         Vec4[] verts = boundary.capVertices;
         double avgX, avgY, avgZ;
@@ -1605,7 +1605,7 @@ public class ExtrudedPolygon extends AbstractShape {
         return nBuf;
     }
 
-    protected FloatBuffer fillSideVertexBuffer(Vec4[] topVerts, Vec4[] bottomVerts, FloatBuffer vBuf) {
+    protected static FloatBuffer fillSideVertexBuffer(Vec4[] topVerts, Vec4[] bottomVerts, FloatBuffer vBuf) {
         // Forms the polygon's faces from its vertices, simultaneously copying the Cartesian coordinates from a Vec4
         // array to a FloatBuffer.
 
@@ -1632,7 +1632,7 @@ public class ExtrudedPolygon extends AbstractShape {
         return vBuf;
     }
 
-    protected FloatBuffer fillSideNormalBuffer(Vec4[] topVerts, Vec4[] bottomVerts, FloatBuffer nBuf) {
+    protected static FloatBuffer fillSideNormalBuffer(Vec4[] topVerts, Vec4[] bottomVerts, FloatBuffer nBuf) {
         // This method parallels fillVertexBuffer. The normals are stored in exactly the same order.
 
         int faceCount = topVerts.length - 1;
@@ -1662,7 +1662,7 @@ public class ExtrudedPolygon extends AbstractShape {
      * @param bottomVerts the boundary's bottom Cartesian coordinates.
      * @param tBuf        the buffer in which to place the computed texture coordinates.
      */
-    protected void fillSideTexCoordBuffer(Vec4[] topVerts, Vec4[] bottomVerts, FloatBuffer tBuf) {
+    protected static void fillSideTexCoordBuffer(Vec4[] topVerts, Vec4[] bottomVerts, FloatBuffer tBuf) {
         int faceCount = topVerts.length - 1;
         double[] lengths = new double[faceCount + 1];
 
@@ -1696,7 +1696,7 @@ public class ExtrudedPolygon extends AbstractShape {
      * @param n the number of positions in the polygon.
      * @return a buffer of indices that can be passed to OpenGL to draw all the shape's edges.
      */
-    protected IntBuffer getCapEdgeIndices(int n) {
+    protected static IntBuffer getCapEdgeIndices(int n) {
         IntBuffer ib = capEdgeIndexBuffers.get(n);
         if (ib != null)
             return ib;
@@ -1718,7 +1718,7 @@ public class ExtrudedPolygon extends AbstractShape {
      * @param n the number of positions in this extruded polygon.
      * @return a buffer of indices that can be passed to OpenGL to draw all face of the shape.
      */
-    protected IntBuffer getSideIndices(int n) {
+    protected static IntBuffer getSideIndices(int n) {
         IntBuffer ib = sideFillIndexBuffers.get(n);
         if (ib != null)
             return ib;
@@ -1742,7 +1742,7 @@ public class ExtrudedPolygon extends AbstractShape {
      * @param n the number of positions in the boundary.
      * @return a buffer of indices that can be passed to OpenGL to draw all the boundary's edges.
      */
-    protected IntBuffer getSideEdgeIndices(int n) {
+    protected static IntBuffer getSideEdgeIndices(int n) {
         IntBuffer ib = sideEdgeIndexBuffers.get(n);
         if (ib != null)
             return ib;
@@ -1801,7 +1801,7 @@ public class ExtrudedPolygon extends AbstractShape {
                 return;
             }
 
-            this.tessellatePolygon(shapeData, normal.normalize3());
+            ExtrudedPolygon.tessellatePolygon(shapeData, normal.normalize3());
         }
         catch (OutOfMemoryError e) {
             String message = Logging.getMessage("generic.ExceptionWhileTessellating", this);
@@ -1839,7 +1839,7 @@ public class ExtrudedPolygon extends AbstractShape {
      * @param normal    a unit normal vector for the plane containing the polygon vertices. Even though the the vertices
      *                  might not be coplanar, only one representative normal is used for tessellation.
      */
-    protected void tessellatePolygon(ShapeData shapeData, Vec4 normal) {
+    protected static void tessellatePolygon(ShapeData shapeData, Vec4 normal) {
         GLUTessellatorSupport glts = new GLUTessellatorSupport();
         shapeData.cb = new GLUTessellatorSupport.CollectIndexListsCallback();
 
@@ -1878,7 +1878,7 @@ public class ExtrudedPolygon extends AbstractShape {
      *
      * @param shapeData the current shape data.
      */
-    protected void generateCapInteriorIndices(ShapeData shapeData) {
+    protected static void generateCapInteriorIndices(ShapeData shapeData) {
         GLUTessellatorSupport.CollectIndexListsCallback cb = shapeData.cb;
 
         if (shapeData.capFillIndices == null || shapeData.capFillIndices.capacity() < cb.getNumIndices())
@@ -1959,14 +1959,14 @@ public class ExtrudedPolygon extends AbstractShape {
         List<Intersection> intersections = new ArrayList<>();
 
         for (ExtrudedBoundaryInfo boundary : highResShapeData) {
-            List<Intersection> boundaryIntersections = this.intersectBoundarySides(localLine, boundary);
+            List<Intersection> boundaryIntersections = ExtrudedPolygon.intersectBoundarySides(localLine, boundary);
 
             if (boundaryIntersections != null && !boundaryIntersections.isEmpty())
                 intersections.addAll(boundaryIntersections);
         }
 
         if (this.isEnableCap())
-            this.intersectCap(localLine, highResShapeData, intersections);
+            ExtrudedPolygon.intersectCap(localLine, highResShapeData, intersections);
 
         if (intersections.isEmpty())
             return null;
@@ -2004,7 +2004,7 @@ public class ExtrudedPolygon extends AbstractShape {
         if (this.isEnableCap())
             this.createCapGeometry(null, shapeData);
 
-        shapeData.setExtent(this.computeExtent(shapeData.getOuterBoundaryInfo(), shapeData.getReferencePoint()));
+        shapeData.setExtent(ExtrudedPolygon.computeExtent(shapeData.getOuterBoundaryInfo(), shapeData.getReferencePoint()));
 
         return shapeData;
     }
@@ -2016,7 +2016,7 @@ public class ExtrudedPolygon extends AbstractShape {
      * @param boundary the boundary to intersect.
      * @return the computed intersections, or null if there are no intersections.
      */
-    protected List<Intersection> intersectBoundarySides(Line line, ExtrudedBoundaryInfo boundary) {
+    protected static List<Intersection> intersectBoundarySides(Line line, ExtrudedBoundaryInfo boundary) {
         List<Intersection> intersections = new ArrayList<>();
         Vec4[] topVertices = boundary.capVertices;
         Vec4[] bottomVertices = boundary.baseVertices;
@@ -2040,7 +2040,7 @@ public class ExtrudedPolygon extends AbstractShape {
         return !intersections.isEmpty() ? intersections : null;
     }
 
-    protected void intersectCap(Line line, ShapeData shapeData, Collection<Intersection> intersections) {
+    protected static void intersectCap(Line line, ShapeData shapeData, Collection<Intersection> intersections) {
         if (shapeData.cb.getPrimTypes() == null)
             return;
 
@@ -2123,7 +2123,7 @@ public class ExtrudedPolygon extends AbstractShape {
         if (outerBoundary != null) {
             xmlWriter.writeStartElement("outerBoundaryIs");
             if (outerBoundary.iterator().hasNext() && outerBoundary.iterator().next() instanceof Position)
-                this.exportBoundaryAsLinearRing(xmlWriter, outerBoundary);
+                ExtrudedPolygon.exportBoundaryAsLinearRing(xmlWriter, outerBoundary);
             else
                 KMLExportUtil.exportBoundaryAsLinearRing(xmlWriter, outerBoundary, getHeight());
             xmlWriter.writeEndElement(); // outerBoundaryIs
@@ -2139,7 +2139,7 @@ public class ExtrudedPolygon extends AbstractShape {
 
             xmlWriter.writeStartElement("innerBoundaryIs");
             if (boundary.iterator().hasNext() && boundary.iterator().next() instanceof Position)
-                this.exportBoundaryAsLinearRing(xmlWriter, outerBoundary);
+                ExtrudedPolygon.exportBoundaryAsLinearRing(xmlWriter, outerBoundary);
             else
                 KMLExportUtil.exportBoundaryAsLinearRing(xmlWriter, boundary, getHeight());
             xmlWriter.writeEndElement(); // innerBoundaryIs
@@ -2154,7 +2154,7 @@ public class ExtrudedPolygon extends AbstractShape {
      * @param boundary  the boundary to write.
      * @throws XMLStreamException if an error occurs during writing.
      */
-    protected void exportBoundaryAsLinearRing(XMLStreamWriter xmlWriter, Iterable<? extends LatLon> boundary)
+    protected static void exportBoundaryAsLinearRing(XMLStreamWriter xmlWriter, Iterable<? extends LatLon> boundary)
         throws XMLStreamException {
         xmlWriter.writeStartElement("LinearRing");
         xmlWriter.writeStartElement("coordinates");

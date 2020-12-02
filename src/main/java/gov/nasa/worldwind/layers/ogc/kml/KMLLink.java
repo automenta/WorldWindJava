@@ -149,7 +149,7 @@ public class KMLLink extends KMLAbstractObject {
 
             if (time != 0) {
                 long refreshDelay = time - System.currentTimeMillis();
-                this.refreshTask = this.scheduleDelayedTask(new RefreshTask(), refreshDelay, TimeUnit.MILLISECONDS);
+                this.refreshTask = KMLLink.scheduleDelayedTask(new RefreshTask(), refreshDelay, TimeUnit.MILLISECONDS);
             }
         }
     }
@@ -176,7 +176,7 @@ public class KMLLink extends KMLAbstractObject {
         // task will be scheduled after the interval expires.
         if (intervalElapsed || this.refreshTask == null || this.refreshTask.isDone()) {
             long refreshDelay = refreshTime - System.currentTimeMillis();
-            this.refreshTask = this.scheduleDelayedTask(new RefreshTask(), refreshDelay, TimeUnit.MILLISECONDS);
+            this.refreshTask = KMLLink.scheduleDelayedTask(new RefreshTask(), refreshDelay, TimeUnit.MILLISECONDS);
         }
     }
 
@@ -214,7 +214,7 @@ public class KMLLink extends KMLAbstractObject {
         if (View.VIEW_STOPPED.equals(msg.getName()) && KMLConstants.ON_STOP.equals(viewRefreshMode)) {
             Double refreshTime = this.getViewRefreshTime();
             if (refreshTime != null) {
-                this.scheduleDelayedTask(new RefreshTask(), refreshTime.longValue(), TimeUnit.SECONDS);
+                KMLLink.scheduleDelayedTask(new RefreshTask(), refreshTime.longValue(), TimeUnit.SECONDS);
             }
         }
     }
@@ -227,7 +227,7 @@ public class KMLLink extends KMLAbstractObject {
      * @param timeUnit The time unit of {@code delay}.
      * @return Future that represents the scheduled task.
      */
-    protected ScheduledFuture scheduleDelayedTask(Runnable task, long delay, TimeUnit timeUnit) {
+    protected static ScheduledFuture scheduleDelayedTask(Runnable task, long delay, TimeUnit timeUnit) {
         return WorldWind.scheduler().addScheduledTask(task, delay, timeUnit);
     }
 
@@ -312,7 +312,7 @@ public class KMLLink extends KMLAbstractObject {
         // "file" or "jar".
         // See OGC KML specification 2.2.0, section 13.1.2.
         URL url = this.hrefURL != null ? this.hrefURL : WWIO.makeURL(href);
-        if (url == null || this.isLocalReference(url)) {
+        if (url == null || KMLLink.isLocalReference(url)) {
             this.finalHref = href; // don't need to parse the href anymore
             return href;
         }
@@ -342,7 +342,7 @@ public class KMLLink extends KMLAbstractObject {
      * @param url the URL to test.
      * @return <code>true</code> if the <code>url</code> specifies a local resource, otherwise <code>false</code>.
      */
-    protected boolean isLocalReference(URL url) {
+    protected static boolean isLocalReference(URL url) {
         return url.getProtocol() == null || "file".equals(url.getProtocol()) || "jar".equals(url.getProtocol());
     }
 

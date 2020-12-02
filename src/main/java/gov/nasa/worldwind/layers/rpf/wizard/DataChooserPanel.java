@@ -75,7 +75,7 @@ public class DataChooserPanel extends JPanel {
                 checkBox.setSelected(set.isSelected());
                 checkBox.setText(makeTitle(set));
                 checkBox.setAlignmentX(Component.LEFT_ALIGNMENT);
-                checkBox.addItemListener(this::fileSetClicked);
+                checkBox.addItemListener(DataChooserPanel::fileSetClicked);
                 box.add(checkBox);
 
                 this.selectButtons.put(set, checkBox);
@@ -92,7 +92,7 @@ public class DataChooserPanel extends JPanel {
         fileSetSelectionChanged(null);
     }
 
-    private String makeTitle(FileSet set) {
+    private static String makeTitle(FileSet set) {
         String title = null;
         if (set != null) {
             StringBuilder sb = new StringBuilder();
@@ -117,7 +117,7 @@ public class DataChooserPanel extends JPanel {
         return title;
     }
 
-    private void fileSetClicked(ItemEvent e) {
+    private static void fileSetClicked(ItemEvent e) {
         if (e != null) {
             FileSet set = null;
             if (e.getItem() != null && e.getItem() instanceof JComponent) {

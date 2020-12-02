@@ -39,7 +39,7 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject {
         super(layerList);
     }
 
-    public static List<Layer> getListDifference(List<Layer> oldList, Iterable<Layer> newList) {
+    public static List<Layer> getListDifference(Collection<Layer> oldList, Iterable<Layer> newList) {
         List<Layer> deltaList = new ArrayList<>();
 
         for (Layer layer : newList) {
@@ -80,11 +80,11 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject {
         return list;
     }
 
-    public static List<Layer> getLayersAdded(LayerList oldList, LayerList newList) {
+    public static List<Layer> getLayersAdded(List<Layer> oldList, Iterable<Layer> newList) {
         return getListDifference(oldList, newList);
     }
 
-    public static List<Layer> getLayersRemoved(LayerList oldList, LayerList newList) {
+    public static List<Layer> getLayersRemoved(Iterable<Layer> oldList, List<Layer> newList) {
         return getListDifference(newList, oldList);
     }
 
@@ -96,7 +96,7 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject {
         this.set(AVKey.DISPLAY_NAME, displayName);
     }
 
-    protected LayerList makeShallowCopy(LayerList sourceList) {
+    protected static LayerList makeShallowCopy(LayerList sourceList) {
         return new LayerList(sourceList);
     }
 
@@ -314,8 +314,8 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject {
     }
 
     public void replaceAll(Iterable<? extends Layer> layers) {
-        List<Layer> toDelete = new ArrayList<>();
-        List<Layer> toKeep = new ArrayList<>();
+        Collection<Layer> toDelete = new ArrayList<>();
+        Collection<Layer> toKeep = new ArrayList<>();
 
         for (Layer layer : layers) {
             if (!this.contains(layer))

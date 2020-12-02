@@ -29,7 +29,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
     protected final int tileMaxLevel = 3;
     protected final int tileMaxCapacity = 10000;
     // Data structures supporting polygon tessellation and drawing.
-    protected final List<Tile> currentTiles = new ArrayList<>();
+    protected final Collection<Tile> currentTiles = new ArrayList<>();
     protected final PolygonTessellator tess = new PolygonTessellator();
     protected final byte[] colorByteArray = new byte[6];
     protected final float[] colorFloatArray = new float[3];
@@ -176,7 +176,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
         Tile tile = ((ShapefileExtrudedPolygons.Record) record).tile;
         if (tile != null) // tile is null when attributes are specified during construction
         {
-            this.invalidateTileAttributeGroups(tile);
+            ShapefileExtrudedPolygons.invalidateTileAttributeGroups(tile);
         }
     }
 
@@ -275,12 +275,12 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
         // Add the tile to the list of tiles to draw, regenerating the tile's geometry and the tile's attribute groups
         // as necessary.
         if (!tile.records.isEmpty()) {
-            this.adjustTileExpiration(dc, tile); // reduce the remaining expiration time as the eye distance decreases
-            if (this.mustRegenerateTileGeometry(dc, tile)) {
+            ShapefileExtrudedPolygons.adjustTileExpiration(dc, tile); // reduce the remaining expiration time as the eye distance decreases
+            if (ShapefileExtrudedPolygons.mustRegenerateTileGeometry(dc, tile)) {
                 this.regenerateTileGeometry(dc, tile);
             }
 
-            if (this.mustAssembleTileAttributeGroups(tile)) {
+            if (ShapefileExtrudedPolygons.mustAssembleTileAttributeGroups(tile)) {
                 this.assembleTileAttributeGroups(tile);
             }
 
@@ -309,11 +309,11 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
         return dc.getView().getFrustumInModelCoordinates().intersects(extent);
     }
 
-    protected boolean mustRegenerateTileGeometry(DrawContext dc, Tile tile) {
+    protected static boolean mustRegenerateTileGeometry(DrawContext dc, Tile tile) {
         return tile.currentData.isExpired(dc) || !tile.currentData.isValid(dc);
     }
 
-    protected void adjustTileExpiration(DrawContext dc, Tile tile) {
+    protected static void adjustTileExpiration(DrawContext dc, Tile tile) {
         // If the new eye distance is significantly closer than cached data's the current eye distance, reduce the
         // timer's remaining time by 50%. This reduction is performed only once each time the timer is reset.
         if (tile.currentData.referencePoint != null) {
@@ -322,7 +322,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
         }
     }
 
-    protected void invalidateTileGeometry(Tile tile) {
+    protected static void invalidateTileGeometry(Tile tile) {
         tile.dataCache.setAllExpired(true); // force the tile vertices to be regenerated
 
         synchronized (tile) // synchronize access to tile intersection data
@@ -337,7 +337,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
 
         Tile t;
         while ((t = q.poll()) != null) {
-            this.invalidateTileGeometry(t);
+            ShapefileExtrudedPolygons.invalidateTileGeometry(t);
 
             if (t.children != null) {
                 q.addAll(Arrays.asList(t.children));
@@ -450,7 +450,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
             }
 
             this.tess.endPolygon();
-            this.assembleRecordIndices(this.tess, record);
+            ShapefileExtrudedPolygons.assembleRecordIndices(this.tess, record);
         }
 
         shapeData.vertices = vertices.rewind();
@@ -459,7 +459,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
         shapeData.vboExpired = true;
     }
 
-    protected void assembleRecordIndices(PolygonTessellator tessellator, Record record) {
+    protected static void assembleRecordIndices(PolygonTessellator tessellator, Record record) {
         if (!tessellator.isEnabled())
             return;
 
@@ -505,11 +505,11 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
         record.outlineIndices = outlineIndices.rewind();
     }
 
-    protected boolean mustAssembleTileAttributeGroups(Tile tile) {
+    protected static boolean mustAssembleTileAttributeGroups(Tile tile) {
         return tile.attributeGroups.isEmpty();
     }
 
-    protected void invalidateTileAttributeGroups(Tile tile) {
+    protected static void invalidateTileAttributeGroups(Tile tile) {
         tile.attributeGroups.clear();
     }
 
@@ -526,7 +526,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
             if (!record.isVisible()) // ignore records marked as not visible
                 continue;
 
-            ShapeAttributes attrs = this.determineActiveAttributes(record);
+            ShapeAttributes attrs = ShapefileRenderable.determineActiveAttributes(record);
             RecordGroup group = attrMap.get(attrs);
 
             if (group == null) // create a new group if one doesn't already exist
@@ -571,8 +571,8 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
     protected void pickOrderedSurfaceRenderable(DrawContext dc, Point pickPoint) {
         try {
             this.pickSupport.clearPickList();
-            this.pickSupport.beginPicking(dc);
-            this.beginDrawing(dc);
+            PickSupport.beginPicking(dc);
+            ShapefileExtrudedPolygons.beginDrawing(dc);
 
             for (Tile tile : this.currentTiles) {
                 Color color = dc.getUniquePickColor();
@@ -590,15 +590,15 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
             }
         }
         finally {
-            this.endDrawing(dc);
-            this.pickSupport.endPicking(dc);
+            ShapefileExtrudedPolygons.endDrawing(dc);
+            PickSupport.endPicking(dc);
             this.pickSupport.clearPickList();
         }
     }
 
     protected void drawOrderedSurfaceRenderable(DrawContext dc) {
         try {
-            this.beginDrawing(dc);
+            ShapefileExtrudedPolygons.beginDrawing(dc);
 
             for (Tile tile : this.currentTiles) {
                 if (dc.isPickingMode()) {
@@ -612,11 +612,11 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
             }
         }
         finally {
-            this.endDrawing(dc);
+            ShapefileExtrudedPolygons.endDrawing(dc);
         }
     }
 
-    protected void beginDrawing(DrawContext dc) {
+    protected static void beginDrawing(DrawContext dc) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glEnable(GL.GL_CULL_FACE);
         gl.glEnableClientState(GL2.GL_VERTEX_ARRAY); // all drawing uses vertex arrays
@@ -632,7 +632,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
         }
     }
 
-    protected void endDrawing(DrawContext dc) {
+    protected static void endDrawing(DrawContext dc) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glDisable(GL.GL_CULL_FACE);
         gl.glDisableClientState(GL2.GL_VERTEX_ARRAY);
@@ -872,7 +872,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
             for (Record record : tile.records) {
                 if (record.isVisible()) // records marked as not visible don't intersect anything
                 {
-                    this.intersectRecordInterior(localLine, terrain, record, shapeData, results);
+                    ShapefileExtrudedPolygons.intersectRecordInterior(localLine, terrain, record, shapeData, results);
                 }
             }
         }
@@ -885,7 +885,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
         }
     }
 
-    protected void intersectTileRecord(Line line, Terrain terrain, Record record, List<Intersection> results) {
+    protected void intersectTileRecord(Line line, Terrain terrain, Record record, Collection<Intersection> results) {
         // Regenerate the tile's intersection geometry as necessary. Synchronized simultaneous read/write access to the
         // tile's intersection data between calls to intersect or Record.intersect on separate threads.
         ShapeData shapeData;
@@ -900,7 +900,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
         // Intersect the line with the record. Translate the line from model coordinates to tile local coordinates,
         // then translate intersection points back into model coordinates.
         Line localLine = new Line(line.origin.subtract3(shapeData.referencePoint), line.direction);
-        this.intersectRecordInterior(localLine, terrain, record, shapeData, results);
+        ShapefileExtrudedPolygons.intersectRecordInterior(localLine, terrain, record, shapeData, results);
     }
 
     protected ShapeData prepareTileIntersectionData(Line line, Terrain terrain, Tile tile) {
@@ -939,7 +939,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
         return shapeData;
     }
 
-    protected void intersectRecordInterior(Line localLine, Terrain terrain, Record record, ShapeData shapeData,
+    protected static void intersectRecordInterior(Line localLine, Terrain terrain, Record record, ShapeData shapeData,
         Collection<Intersection> results) {
         FloatBuffer vertices = shapeData.vertices;
         IntBuffer indices = record.interiorIndices;
@@ -1029,7 +1029,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
         public final int level;
         // Tile records, attribute groups and child tiles.
         public final ArrayList<Record> records = new ArrayList<>();
-        public final List<RecordGroup> attributeGroups = new ArrayList<>();
+        public final Collection<RecordGroup> attributeGroups = new ArrayList<>();
         // Tile shape data.
         public final ShapeDataCache dataCache = new ShapeDataCache(60000);
         public final IntersectionData intersectionData = new IntersectionData();

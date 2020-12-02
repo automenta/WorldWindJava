@@ -168,7 +168,7 @@ public class VPFLibrary extends AVListImpl {
     }
 
     protected static Collection<VPFCoverage> createCoverages(VPFLibrary library, Iterable<VPFRecord> table) {
-        List<VPFCoverage> list = new ArrayList<>();
+        Collection<VPFCoverage> list = new ArrayList<>();
 
         for (VPFRecord row : table) {
             String name = (String) row.getValue("coverage_name");
@@ -325,7 +325,7 @@ public class VPFLibrary extends AVListImpl {
         return Collections.unmodifiableCollection(this.coverageMap.values());
     }
 
-    public void setCoverages(Collection<? extends VPFCoverage> collection) {
+    public void setCoverages(Iterable<? extends VPFCoverage> collection) {
         this.removeAllCoverages();
 
         if (collection != null)

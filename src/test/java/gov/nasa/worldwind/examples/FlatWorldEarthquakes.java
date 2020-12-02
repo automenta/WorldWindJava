@@ -469,7 +469,7 @@ public class FlatWorldEarthquakes extends ApplicationTemplate {
                     this.bindPickableObject(dc, pickPosition);
                 }
 
-                this.applyColor(dc, this.getAttributes().getTextColor(), 0.6 * opacity, true);
+                AbstractAnnotation.applyColor(dc, this.getAttributes().getTextColor(), 0.6 * opacity, true);
 
                 // Draw 32x32 shape from its bottom left corner
                 int size = 32;

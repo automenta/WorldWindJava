@@ -88,7 +88,7 @@ public class ColladaMeshShape extends AbstractGeneralShape {
      * @param geometries Geometries to render. All geometries must be of the same type (either {@link ColladaTriangles}
      *                   or {@link ColladaLines}.
      */
-    protected ColladaMeshShape(List<? extends ColladaAbstractGeometry> geometries) {
+    protected ColladaMeshShape(Collection<? extends ColladaAbstractGeometry> geometries) {
         if (WWUtil.isEmpty(geometries)) {
             String message = Logging.getMessage("generic.ListIsEmpty");
             Logging.logger().severe(message);
@@ -237,11 +237,11 @@ public class ColladaMeshShape extends AbstractGeneralShape {
 
         this.pickSupport.clearPickList();
         try {
-            this.pickSupport.beginPicking(dc);
+            PickSupport.beginPicking(dc);
             this.render(dc, matrix);
         }
         finally {
-            this.pickSupport.endPicking(dc);
+            PickSupport.endPicking(dc);
             this.pickSupport.resolvePick(dc, pickPoint, this.pickLayer);
         }
     }
@@ -557,7 +557,7 @@ public class ColladaMeshShape extends AbstractGeneralShape {
             return;
         shapeData.setReferencePoint(refPt);
 
-        shapeData.setEyeDistance(this.computeEyeDistance(dc, shapeData));
+        shapeData.setEyeDistance(AbstractGeneralShape.computeEyeDistance(dc, shapeData));
         shapeData.setGlobeStateKey(dc.getGlobe().getGlobeStateKey(dc));
         shapeData.setVerticalExaggeration(dc.getVerticalExaggeration());
 
@@ -1014,7 +1014,7 @@ public class ColladaMeshShape extends AbstractGeneralShape {
         if (texture == null)
             return null;
 
-        String imageRef = this.getImageRef(myEffect, texture);
+        String imageRef = ColladaMeshShape.getImageRef(myEffect, texture);
         if (imageRef == null)
             return null;
 
@@ -1039,7 +1039,7 @@ public class ColladaMeshShape extends AbstractGeneralShape {
      * @param texture Texture for which to find the image reference.
      * @return The image reference, or null if it cannot be resolved.
      */
-    protected String getImageRef(ColladaEffect effect, ColladaTexture texture) {
+    protected static String getImageRef(ColladaEffect effect, ColladaTexture texture) {
         String sid = texture.getTexture();
 
         ColladaNewParam param = effect.getParam(sid);

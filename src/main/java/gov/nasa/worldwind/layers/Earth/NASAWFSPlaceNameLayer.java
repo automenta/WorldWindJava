@@ -300,7 +300,7 @@ public class NASAWFSPlaceNameLayer extends PlaceNameLayer {
         return placeNameServiceSet;
     }
 
-    public void setPlaceNameSetsVisible(List names) {
+    public static void setPlaceNameSetsVisible(List names) {
         activeNamesList = names;
         makePlaceNameServiceSet();
     }

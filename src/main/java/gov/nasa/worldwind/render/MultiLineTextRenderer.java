@@ -343,7 +343,7 @@ public class MultiLineTextRenderer {
      * @param tr the TextRenderer.
      * @return the maximum line height.
      */
-    public double getMaxLineHeight(TextRenderer tr) {
+    public static double getMaxLineHeight(TextRenderer tr) {
         // Check underscore + capital E with acute accent
         return tr.getBounds("_\u00c9").getHeight();
     }
@@ -732,7 +732,7 @@ public class MultiLineTextRenderer {
         return new Rectangle2D.Double(0, 0, width, height);
     }
 
-    protected Rectangle2D getWordBoundsHTML(String word, DrawState ds) {
+    protected static Rectangle2D getWordBoundsHTML(String word, DrawState ds) {
         double width = 0;
         double height = getMaxLineHeight(ds.textRenderer);
         int start = 0;
@@ -1049,7 +1049,7 @@ public class MultiLineTextRenderer {
         // Extend pick rectangle width to fill a bit more then half a space before and after the word.
         // Extend height a little too.
         double spaceWidth = ds.textRenderer.getCharWidth(' ') * 1.5;
-        double height = this.getMaxLineHeight(ds.textRenderer);
+        double height = MultiLineTextRenderer.getMaxLineHeight(ds.textRenderer);
         Rectangle2D pickBounds;
         if (expandStart) {
             pickBounds = new Rectangle2D.Double(0, 0, partBounds.getWidth() + partBounds.getX() + spaceWidth,
@@ -1065,7 +1065,7 @@ public class MultiLineTextRenderer {
             this.drawContext, this.pickSupport, this.pickObject, this.pickPosition);
     }
 
-    protected void pickWord(String word, String hyperlink, double drawX, double drawY, Rectangle2D wordBounds,
+    protected static void pickWord(String word, String hyperlink, double drawX, double drawY, Rectangle2D wordBounds,
         DrawContext dc, PickSupport pickSupport, Object refObject, Position refPosition) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
@@ -1084,7 +1084,7 @@ public class MultiLineTextRenderer {
     }
 
     // Draw a filled rectangle
-    protected void drawFilledRectangle(DrawContext dc, double x, double y, double width, double height) {
+    protected static void drawFilledRectangle(DrawContext dc, double x, double y, double width, double height) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glBegin(GL2.GL_POLYGON);
         gl.glVertex3d(x, y, 0);

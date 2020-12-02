@@ -717,7 +717,7 @@ public abstract class AbstractShape extends WWObjectImpl
      * @return the new <code>WWTexture</code>.
      * @throws IllegalArgumentException if the image source is null.
      */
-    protected WWTexture makeTexture(Object imageSource) {
+    protected static WWTexture makeTexture(Object imageSource) {
         return new LazilyLoadedTexture(imageSource, true);
     }
 
@@ -771,11 +771,11 @@ public abstract class AbstractShape extends WWObjectImpl
 
         this.pickSupport.clearPickList();
         try {
-            this.pickSupport.beginPicking(dc);
+            PickSupport.beginPicking(dc);
             this.render(dc);
         }
         finally {
-            this.pickSupport.endPicking(dc);
+            PickSupport.endPicking(dc);
             this.pickSupport.resolvePick(dc, pickPoint, this.pickLayer);
         }
     }
@@ -1368,7 +1368,7 @@ public abstract class AbstractShape extends WWObjectImpl
         dc.getGpuResourceCache().remove(this.getCurrentData().getVboCacheKey());
     }
 
-    protected int countTriangleVertices(java.util.List<List<Integer>> prims,
+    protected static int countTriangleVertices(java.util.List<List<Integer>> prims,
         List<Integer> primTypes) {
         int numVertices = 0;
 

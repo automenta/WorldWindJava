@@ -241,8 +241,8 @@ public abstract class ShapefileRecord {
         // Read shape type - little endian
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         int type = buffer.getInt();
-        String shapeType = shapefile.getShapeType(type);
-        this.validateShapeType(shapefile, shapeType);
+        String shapeType = Shapefile.getShapeType(type);
+        ShapefileRecord.validateShapeType(shapefile, shapeType);
 
         this.shapeType = shapeType;
         this.shapeFile = shapefile;
@@ -264,7 +264,7 @@ public abstract class ShapefileRecord {
      * @throws WWRuntimeException       if the shape types do not match.
      * @throws IllegalArgumentException if the specified shape type is null.
      */
-    protected void validateShapeType(Shapefile shapefile, String shapeType) {
+    protected static void validateShapeType(Shapefile shapefile, String shapeType) {
         if (shapeType == null) {
             String message = Logging.getMessage("nullValue.ShapeType");
             Logging.logger().severe(message);

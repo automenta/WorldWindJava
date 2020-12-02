@@ -65,7 +65,7 @@ public class PolylineGeneralizer {
         for (int i = 1; i < this.heapSize - 1; i++) {
             this.heap[i].prev = this.heap[i - 1];
             this.heap[i].next = this.heap[i + 1];
-            this.heap[i].area = this.computeEffectiveArea(this.heap[i]);
+            this.heap[i].area = PolylineGeneralizer.computeEffectiveArea(this.heap[i]);
         }
 
         this.heap[this.heapSize - 1].area = Double.MAX_VALUE; // assign the end point the maximum area
@@ -111,7 +111,7 @@ public class PolylineGeneralizer {
     }
 
     // TODO: Modify computeEffectiveArea to correctly compute area when z != 0
-    protected double computeEffectiveArea(Element e) {
+    protected static double computeEffectiveArea(Element e) {
         Element p = e.prev;
         Element n = e.next;
 
@@ -120,7 +120,7 @@ public class PolylineGeneralizer {
 
     protected void updateEffectiveArea(Element e) {
         double oldArea = e.area;
-        double newArea = this.computeEffectiveArea(e);
+        double newArea = PolylineGeneralizer.computeEffectiveArea(e);
         e.area = newArea;
 
         if (newArea < oldArea)

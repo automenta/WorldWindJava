@@ -367,7 +367,7 @@ public class SurfaceIcon extends AbstractSurfaceRenderable implements Movable, D
         if (texture == null)
             return;
 
-        this.beginDraw(dc);
+        SurfaceIcon.beginDraw(dc);
         try {
             if (texture.bind(dc)) {
                 // Update image width and height
@@ -391,7 +391,7 @@ public class SurfaceIcon extends AbstractSurfaceRenderable implements Movable, D
         }
         finally {
             // Restore gl state
-            this.endDraw(dc);
+            SurfaceIcon.endDraw(dc);
         }
     }
 
@@ -448,7 +448,7 @@ public class SurfaceIcon extends AbstractSurfaceRenderable implements Movable, D
         return getViewHeading(dc);
     }
 
-    protected void beginDraw(DrawContext dc) {
+    protected static void beginDraw(DrawContext dc) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         int attributeMask = GL2.GL_TRANSFORM_BIT // for modelview
@@ -481,7 +481,7 @@ public class SurfaceIcon extends AbstractSurfaceRenderable implements Movable, D
         }
     }
 
-    protected void endDraw(DrawContext dc) {
+    protected static void endDraw(DrawContext dc) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         if (dc.isPickingMode()) {
@@ -526,7 +526,7 @@ public class SurfaceIcon extends AbstractSurfaceRenderable implements Movable, D
     protected double computeDrawScale(DrawContext dc, SurfaceTileDrawContext sdc, LatLon location) {
         // Compute scaling to maintain apparent size
         double drawPixelSize;
-        double regionPixelSize = this.computeDrawPixelSize(dc, sdc);
+        double regionPixelSize = AbstractSurfaceRenderable.computeDrawPixelSize(dc, sdc);
         if (this.isMaintainAppearance())
             // Compute precise size depending on eye distance
             drawPixelSize = this.computeDrawDimension(dc, location).width / this.imageWidth;

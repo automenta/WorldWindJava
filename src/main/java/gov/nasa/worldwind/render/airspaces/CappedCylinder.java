@@ -251,7 +251,7 @@ public class CappedCylinder extends AbstractAirspace {
     @Override
     protected List<Vec4> computeMinimalGeometry(Globe globe, double verticalExaggeration) {
         GeometryBuilder gb = new GeometryBuilder();
-        LatLon[] locations = gb.makeDiskLocations(globe, this.center, this.innerRadius, this.outerRadius,
+        LatLon[] locations = GeometryBuilder.makeDiskLocations(globe, this.center, this.innerRadius, this.outerRadius,
             MINIMAL_GEOMETRY_SLICES, MINIMAL_GEOMETRY_LOOPS);
 
         List<Vec4> points = new ArrayList<>();
@@ -316,12 +316,12 @@ public class CappedCylinder extends AbstractAirspace {
     @Override
     protected void regenerateSurfaceShape(DrawContext dc, SurfaceShape shape) {
         GeometryBuilder gb = new GeometryBuilder();
-        LatLon[] locations = gb.makeCylinderLocations(dc.getGlobe(), this.center, this.outerRadius, this.slices);
+        LatLon[] locations = GeometryBuilder.makeCylinderLocations(dc.getGlobe(), this.center, this.outerRadius, this.slices);
         ((SurfacePolygon) shape).getBoundaries().clear();
         ((SurfacePolygon) shape).setOuterBoundary(Arrays.asList(locations));
 
         if (this.innerRadius > 0) {
-            locations = gb.makeCylinderLocations(dc.getGlobe(), this.center, this.innerRadius, this.slices);
+            locations = GeometryBuilder.makeCylinderLocations(dc.getGlobe(), this.center, this.innerRadius, this.slices);
             ((SurfacePolygon) shape).addInnerBoundary(Arrays.asList(locations));
         }
     }
@@ -502,11 +502,11 @@ public class CappedCylinder extends AbstractAirspace {
             slices, stacks, orientation, referenceCenter);
 
         Object cacheKey = new Geometry.CacheKey(this.getClass(), "Cylinder.Indices", slices, stacks, orientation);
-        Geometry indexGeom = (Geometry) this.getGeometryCache().getObject(cacheKey);
+        Geometry indexGeom = (Geometry) AbstractAirspace.getGeometryCache().getObject(cacheKey);
         if (indexGeom == null) {
             indexGeom = new Geometry();
             this.makeCylinderIndices(slices, stacks, orientation, indexGeom);
-            this.getGeometryCache().add(cacheKey, indexGeom);
+            AbstractAirspace.getGeometryCache().add(cacheKey, indexGeom);
         }
 
         this.drawGeometry(dc, indexGeom, vertexGeom);
@@ -519,11 +519,11 @@ public class CappedCylinder extends AbstractAirspace {
 
         Object cacheKey = new Geometry.CacheKey(this.getClass(), "Cylinder.OutlineIndices", slices, stacks,
             orientation);
-        Geometry outlineIndexGeom = (Geometry) this.getGeometryCache().getObject(cacheKey);
+        Geometry outlineIndexGeom = (Geometry) AbstractAirspace.getGeometryCache().getObject(cacheKey);
         if (outlineIndexGeom == null) {
             outlineIndexGeom = new Geometry();
             this.makeCylinderOutlineIndices(slices, stacks, orientation, outlineIndexGeom);
-            this.getGeometryCache().add(cacheKey, outlineIndexGeom);
+            AbstractAirspace.getGeometryCache().add(cacheKey, outlineIndexGeom);
         }
 
         this.drawGeometry(dc, outlineIndexGeom, vertexGeom);
@@ -534,14 +534,14 @@ public class CappedCylinder extends AbstractAirspace {
         Object cacheKey = new Geometry.CacheKey(dc.getGlobe(), this.getClass(), "Cylinder.Vertices", center, radius,
             altitudes[0], altitudes[1], terrainConformant[0], terrainConformant[1], slices, stacks, orientation,
             referenceCenter);
-        Geometry vertexGeom = (Geometry) this.getGeometryCache().getObject(cacheKey);
-        if (vertexGeom == null || this.isExpired(dc, vertexGeom)) {
+        Geometry vertexGeom = (Geometry) AbstractAirspace.getGeometryCache().getObject(cacheKey);
+        if (vertexGeom == null || AbstractAirspace.isExpired(dc, vertexGeom)) {
             if (vertexGeom == null)
                 vertexGeom = new Geometry();
             this.makeCylinder(dc, center, radius, altitudes, terrainConformant, slices, stacks, orientation,
                 referenceCenter, vertexGeom);
             this.updateExpiryCriteria(dc, vertexGeom);
-            this.getGeometryCache().add(cacheKey, vertexGeom);
+            AbstractAirspace.getGeometryCache().add(cacheKey, vertexGeom);
         }
 
         return vertexGeom;
@@ -552,7 +552,7 @@ public class CappedCylinder extends AbstractAirspace {
         GeometryBuilder gb = this.getGeometryBuilder();
         gb.setOrientation(orientation);
 
-        int count = gb.getCylinderVertexCount(slices, stacks);
+        int count = GeometryBuilder.getCylinderVertexCount(slices, stacks);
         float[] verts = new float[3 * count];
         float[] norms = new float[3 * count];
         gb.makeCylinderVertices(dc.getTerrain(), center, radius, altitudes, terrainConformant, slices, stacks,
@@ -567,8 +567,8 @@ public class CappedCylinder extends AbstractAirspace {
         GeometryBuilder gb = this.getGeometryBuilder();
         gb.setOrientation(orientation);
 
-        int mode = gb.getCylinderDrawMode();
-        int count = gb.getCylinderIndexCount(slices, stacks);
+        int mode = GeometryBuilder.getCylinderDrawMode();
+        int count = GeometryBuilder.getCylinderIndexCount(slices, stacks);
         int[] indices = new int[count];
         gb.makeCylinderIndices(slices, stacks, indices);
 
@@ -579,8 +579,8 @@ public class CappedCylinder extends AbstractAirspace {
         GeometryBuilder gb = this.getGeometryBuilder();
         gb.setOrientation(orientation);
 
-        int mode = gb.getCylinderOutlineDrawMode();
-        int count = gb.getCylinderOutlineIndexCount(slices, stacks);
+        int mode = GeometryBuilder.getCylinderOutlineDrawMode();
+        int count = GeometryBuilder.getCylinderOutlineIndexCount(slices, stacks);
         int[] indices = new int[count];
         gb.makeCylinderOutlineIndices(slices, stacks, indices);
 
@@ -596,22 +596,22 @@ public class CappedCylinder extends AbstractAirspace {
         Object cacheKey = new Geometry.CacheKey(dc.getGlobe(), this.getClass(), "Disk.Vertices",
             center, radii[0], radii[1], altitude, terrainConformant,
             slices, loops, orientation, referenceCenter);
-        Geometry vertexGeom = (Geometry) this.getGeometryCache().getObject(cacheKey);
-        if (vertexGeom == null || this.isExpired(dc, vertexGeom)) {
+        Geometry vertexGeom = (Geometry) AbstractAirspace.getGeometryCache().getObject(cacheKey);
+        if (vertexGeom == null || AbstractAirspace.isExpired(dc, vertexGeom)) {
             if (vertexGeom == null)
                 vertexGeom = new Geometry();
             this.makeDisk(dc, center, radii, altitude, terrainConformant,
                 slices, loops, orientation, referenceCenter, vertexGeom);
             this.updateExpiryCriteria(dc, vertexGeom);
-            this.getGeometryCache().add(cacheKey, vertexGeom);
+            AbstractAirspace.getGeometryCache().add(cacheKey, vertexGeom);
         }
 
         cacheKey = new Geometry.CacheKey(this.getClass(), "Disk.Indices", slices, loops, orientation);
-        Geometry indexGeom = (Geometry) this.getGeometryCache().getObject(cacheKey);
+        Geometry indexGeom = (Geometry) AbstractAirspace.getGeometryCache().getObject(cacheKey);
         if (indexGeom == null) {
             indexGeom = new Geometry();
             this.makeDiskIndices(slices, loops, orientation, indexGeom);
-            this.getGeometryCache().add(cacheKey, indexGeom);
+            AbstractAirspace.getGeometryCache().add(cacheKey, indexGeom);
         }
 
         this.drawGeometry(dc, indexGeom, vertexGeom);
@@ -622,7 +622,7 @@ public class CappedCylinder extends AbstractAirspace {
         GeometryBuilder gb = this.getGeometryBuilder();
         gb.setOrientation(orientation);
 
-        int count = gb.getDiskVertexCount(slices, loops);
+        int count = GeometryBuilder.getDiskVertexCount(slices, loops);
         float[] verts = new float[3 * count];
         float[] norms = new float[3 * count];
         gb.makeDiskVertices(dc.getTerrain(), center, radii[0], radii[1], altitude, terrainConformant, slices, loops,
@@ -637,8 +637,8 @@ public class CappedCylinder extends AbstractAirspace {
         GeometryBuilder gb = this.getGeometryBuilder();
         gb.setOrientation(orientation);
 
-        int mode = gb.getCylinderDrawMode();
-        int count = gb.getDiskIndexCount(slices, loops);
+        int mode = GeometryBuilder.getCylinderDrawMode();
+        int count = GeometryBuilder.getDiskIndexCount(slices, loops);
         int[] indices = new int[count];
         gb.makeDiskIndices(slices, loops, indices);
 

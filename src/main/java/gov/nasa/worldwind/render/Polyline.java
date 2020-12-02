@@ -556,7 +556,7 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
             locations = this.getPositions();
         }
         else {
-            List<Position> temp = new ArrayList<>();
+            Collection<Position> temp = new ArrayList<>();
             Position firstPosition = null;
             for (Position pos : this.getPositions()) {
                 temp.add(pos);
@@ -604,11 +604,11 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
 
         this.pickSupport.clearPickList();
         try {
-            this.pickSupport.beginPicking(dc);
+            PickSupport.beginPicking(dc);
             this.render(dc);
         }
         finally {
-            this.pickSupport.endPicking(dc);
+            PickSupport.endPicking(dc);
             this.pickSupport.resolvePick(dc, pickPoint, this.pickLayer);
         }
     }
@@ -1205,7 +1205,7 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
         // Get the base "positions" state object.
         RestorableSupport.StateObject positionsStateObj = restorableSupport.getStateObject("positions");
         if (positionsStateObj != null) {
-            List<Position> newPositions = new ArrayList<>();
+            Collection<Position> newPositions = new ArrayList<>();
             // Get the nested "position" states beneath the base "positions".
             RestorableSupport.StateObject[] positionStateArray =
                 restorableSupport.getAllStateObjects(positionsStateObj, "position");

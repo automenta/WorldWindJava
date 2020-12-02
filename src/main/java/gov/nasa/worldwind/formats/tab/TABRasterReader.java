@@ -9,7 +9,7 @@ import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.util.*;
 
 import java.io.*;
-import java.util.List;
+import java.util.Collection;
 import java.util.regex.*;
 
 /**
@@ -199,7 +199,7 @@ public class TABRasterReader {
         }
     }
 
-    protected boolean doCanRead(Reader reader, RasterControlPointList controlPoints) {
+    protected boolean doCanRead(Reader reader, AVList controlPoints) {
         if (reader == null) {
             String message = Logging.getMessage("nullValue.ReaderIsNull");
             Logging.logger().severe(message);
@@ -215,7 +215,7 @@ public class TABRasterReader {
             BufferedReader br = new BufferedReader(reader);
             this.readHeader(br, controlPoints);
 
-            String s = this.validateHeaderValues(controlPoints);
+            String s = TABRasterReader.validateHeaderValues(controlPoints);
             return (s == null);
         }
         catch (Exception e) {
@@ -240,14 +240,14 @@ public class TABRasterReader {
         this.readHeader(br, controlPoints);
         this.readDefinitionTable(br, workingDirectory, controlPoints);
 
-        String s = this.validateHeaderValues(controlPoints);
+        String s = TABRasterReader.validateHeaderValues(controlPoints);
         if (s != null) {
             String message = Logging.getMessage("TABReader.MissingHeaderValues", s);
             Logging.logger().severe(message);
             throw new IOException(message);
         }
 
-        s = this.validateRasterControlPoints(controlPoints);
+        s = TABRasterReader.validateRasterControlPoints(controlPoints);
         if (s != null) {
             String message = Logging.getMessage("TABReader.MissingRasterData", s);
             Logging.logger().severe(message);
@@ -275,13 +275,13 @@ public class TABRasterReader {
             throw new IOException(message);
         }
 
-        line = this.nextLine(reader);
+        line = TABRasterReader.nextLine(reader);
         if (line != null && line.startsWith(TAG_HEADER_VERSION)) {
             if (controlPoints.get(VERSION) == null)
                 setProperty(line, VERSION, controlPoints);
         }
 
-        line = this.nextLine(reader);
+        line = TABRasterReader.nextLine(reader);
         if (line != null && line.startsWith(TAG_HEADER_CHARSET)) {
             if (controlPoints.get(CHARSET) == null)
                 setProperty(line, CHARSET, controlPoints);
@@ -305,7 +305,7 @@ public class TABRasterReader {
         if (line == null || !line.equalsIgnoreCase(TAG_TABLE))
             return;
 
-        line = this.nextLine(reader);
+        line = TABRasterReader.nextLine(reader);
         if (line != null && line.startsWith(TAG_FILE)) {
             if (controlPoints.getStringValue(IMAGE_PATH) == null
                 || controlPoints.getStringValue(IMAGE_PATH).isEmpty()) {
@@ -317,19 +317,19 @@ public class TABRasterReader {
             }
         }
 
-        line = this.nextLine(reader);
+        line = TABRasterReader.nextLine(reader);
         if (line != null && line.startsWith(TAG_TYPE)) {
             if (controlPoints.get(TYPE) == null)
                 setProperty(line, TYPE, controlPoints);
         }
 
         this.readControlPoints(reader, controlPoints);
-        this.readCoordSys(reader, controlPoints);
-        this.readRasterStyle(reader, controlPoints);
+        TABRasterReader.readCoordSys(reader, controlPoints);
+        TABRasterReader.readRasterStyle(reader, controlPoints);
     }
 
     protected void readControlPoints(BufferedReader reader,
-        List<RasterControlPointList.ControlPoint> controlPoints)
+        Collection<RasterControlPointList.ControlPoint> controlPoints)
         throws IOException {
         if (reader == null) {
             String message = Logging.getMessage("nullValue.ReaderIsNull");
@@ -347,7 +347,7 @@ public class TABRasterReader {
 
         String line;
         Matcher matcher;
-        while ((line = this.nextLine(reader)) != null && (matcher = pattern.matcher(line)).matches()) {
+        while ((line = TABRasterReader.nextLine(reader)) != null && (matcher = pattern.matcher(line)).matches()) {
             String swx = matcher.group(1);
             String swy = matcher.group(2);
             String srx = matcher.group(3);
@@ -368,7 +368,7 @@ public class TABRasterReader {
         }
     }
 
-    protected void readCoordSys(BufferedReader reader, RasterControlPointList controlPoints) {
+    protected static void readCoordSys(BufferedReader reader, RasterControlPointList controlPoints) {
         if (reader == null) {
             String message = Logging.getMessage("nullValue.ReaderIsNull");
             Logging.logger().severe(message);
@@ -384,7 +384,7 @@ public class TABRasterReader {
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    protected void readRasterStyle(BufferedReader reader, RasterControlPointList controlPoints) {
+    protected static void readRasterStyle(BufferedReader reader, RasterControlPointList controlPoints) {
         if (controlPoints == null) {
             String message = Logging.getMessage("nullValue.RasterControlPointListIsNull");
             Logging.logger().severe(message);
@@ -395,11 +395,11 @@ public class TABRasterReader {
     }
 
     protected String skipToHeader(BufferedReader reader) throws IOException {
-        return this.nextLine(reader);
+        return TABRasterReader.nextLine(reader);
     }
 
     protected String skipToDefinition(BufferedReader reader) throws IOException {
-        String line = this.nextLine(reader);
+        String line = TABRasterReader.nextLine(reader);
 
         if (line == null || line.isEmpty())
             return null;
@@ -411,7 +411,7 @@ public class TABRasterReader {
         return (tokens[1] != null) ? tokens[1].trim() : null;
     }
 
-    protected String nextLine(BufferedReader reader) throws IOException {
+    protected static String nextLine(BufferedReader reader) throws IOException {
         // Read until the next non-whitespace line.
 
         String line;
@@ -421,7 +421,7 @@ public class TABRasterReader {
         return (line != null) ? line.trim() : null;
     }
 
-    protected String validateHeaderValues(AVList values) {
+    protected static String validateHeaderValues(AVList values) {
         StringBuilder sb = new StringBuilder();
 
         String s = values.getStringValue(VERSION);
@@ -444,7 +444,7 @@ public class TABRasterReader {
         return null;
     }
 
-    protected String validateRasterControlPoints(RasterControlPointList controlPoints) {
+    protected static String validateRasterControlPoints(RasterControlPointList controlPoints) {
         StringBuilder sb = new StringBuilder();
 
         if (controlPoints.getStringValue(IMAGE_PATH) == null && controlPoints.getStringValue(IMAGE_PATH).isEmpty()) {

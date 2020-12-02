@@ -123,7 +123,7 @@ public class PolygonEditor extends AbstractAirspaceEditor {
             : newPosition.getElevation() + DEFAULT_POLYGON_HEIGHT;
         this.getPolygon().setAltitudes(altitudes[LOWER_ALTITUDE], altitudes[UPPER_ALTITUDE]);
 
-        List<LatLon> locationList = new ArrayList<>();
+        Collection<LatLon> locationList = new ArrayList<>();
         locationList.add(new LatLon(newPosition));
 
         // If rubber banding is enabled, add a second entry at the same location.

@@ -243,11 +243,11 @@ public class CombineContext implements Disposable {
     }
 
     @SuppressWarnings("UnusedParameters")
-    protected void tessCombine(double[] coords, Object[] vertexData, float[] weight, Object[] outData) {
+    protected static void tessCombine(double[] coords, Object[] vertexData, float[] weight, Object[] outData) {
         outData[0] = coords;
     }
 
-    protected void tessError(int errno) {
+    protected static void tessError(int errno) {
         String errstr = GLUTessellatorSupport.convertGLUTessErrorToString(errno);
         String msg = Logging.getMessage("generic.ExceptionWhileTessellating", errstr);
         Logging.logger().severe(msg);
@@ -368,7 +368,7 @@ public class CombineContext implements Disposable {
          */
         @Override
         public void combine(double[] coords, Object[] vertexData, float[] weight, Object[] outData) {
-            this.cc.tessCombine(coords, vertexData, weight, outData);
+            CombineContext.tessCombine(coords, vertexData, weight, outData);
         }
 
         /**
@@ -378,7 +378,7 @@ public class CombineContext implements Disposable {
          */
         @Override
         public void error(int errno) {
-            this.cc.tessError(errno);
+            CombineContext.tessError(errno);
         }
     }
 }

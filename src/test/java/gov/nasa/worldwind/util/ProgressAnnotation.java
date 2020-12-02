@@ -134,7 +134,7 @@ public class ProgressAnnotation extends ScreenAnnotation {
         gl.glHint(GL.GL_LINE_SMOOTH_HINT, GL.GL_NICEST);
         gl.glLineWidth(1);
 
-        this.applyColor(dc, this.getOutlineColor(), opacity, false);
+        AbstractAnnotation.applyColor(dc, this.getOutlineColor(), opacity, false);
         this.drawCallout(dc, GL.GL_LINE_STRIP, bounds, false);
     }
 
@@ -143,7 +143,7 @@ public class ProgressAnnotation extends ScreenAnnotation {
         Position pickPosition) {
         Rectangle bounds = this.computeProgressBarBounds(width, height);
 
-        this.applyColor(dc, this.getInteriorColor(), opacity, true);
+        AbstractAnnotation.applyColor(dc, this.getInteriorColor(), opacity, true);
         this.drawCallout(dc, GL.GL_TRIANGLE_FAN, bounds, false);
     }
 

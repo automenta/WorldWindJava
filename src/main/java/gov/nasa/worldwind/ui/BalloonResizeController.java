@@ -71,7 +71,7 @@ public class BalloonResizeController extends AbstractResizeHotSpot {
 
         PickedObjectList pickedObjects = wwd.objectsAtPosition();
         if (pickedObjects != null) {
-            Rectangle rect = this.getBounds(pickedObjects.getTopPickedObject());
+            Rectangle rect = BalloonResizeController.getBounds(pickedObjects.getTopPickedObject());
             if (rect != null) {
                 this.setBounds(rect);
             }
@@ -162,7 +162,7 @@ public class BalloonResizeController extends AbstractResizeHotSpot {
      *                     AVKey.BOUNDS.
      * @return Bounds or {@code null} if no bounds are found in the top PickedObject.
      */
-    protected Rectangle getBounds(AVList pickedObject) {
+    protected static Rectangle getBounds(AVList pickedObject) {
         if (pickedObject != null) {
             Object bounds = pickedObject.get(AVKey.BOUNDS);
             if (bounds instanceof Rectangle) {

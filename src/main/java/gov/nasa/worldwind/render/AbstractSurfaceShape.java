@@ -386,7 +386,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         if (sectors == null)
             return null;
 
-        return this.computeExtent(globe, verticalExaggeration, WWUtil.arrayList(sectors));
+        return AbstractSurfaceObject.computeExtent(globe, verticalExaggeration, WWUtil.arrayList(sectors));
     }
 
     public String getRestorableState() {
@@ -743,13 +743,13 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
             String pole = this.containsPole(drawLocations);
             if (pole != null) {
                 // Wrap the shape interior around the pole and along the anti-meridian. See WWJ-284.
-                List<LatLon> poleLocations = this.cutAlongDateLine(drawLocations, pole, dc.getGlobe());
+                List<LatLon> poleLocations = AbstractSurfaceShape.cutAlongDateLine(drawLocations, pole, dc.getGlobe());
                 this.activeGeometry.add(poleLocations);
                 // The outline need only compensate for dateline crossing. See WWJ-452.
-                this.activeOutlineGeometry.addAll(this.repeatAroundDateline(drawLocations));
+                this.activeOutlineGeometry.addAll(AbstractSurfaceShape.repeatAroundDateline(drawLocations));
             }
             else if (LatLon.locationsCrossDateLine(drawLocations)) {
-                List<List<LatLon>> datelineLocations = this.repeatAroundDateline(drawLocations);
+                List<List<LatLon>> datelineLocations = AbstractSurfaceShape.repeatAroundDateline(drawLocations);
                 this.activeGeometry.addAll(datelineLocations);
                 this.activeOutlineGeometry.addAll(datelineLocations);
             }
@@ -798,7 +798,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
      * @param globe     Current globe.
      * @return New location list with locations added to correctly handle date line intersection.
      */
-    protected List<LatLon> cutAlongDateLine(List<LatLon> locations, String pole, Globe globe) {
+    protected static List<LatLon> cutAlongDateLine(List<LatLon> locations, String pole, Globe globe) {
         // If the locations do not contain a pole, then there's nothing to do.
         return pole == null ? locations : LatLon.cutLocationsAlongDateLine(locations, pole, globe);
     }
@@ -811,7 +811,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
      * @param locations Locations to repeat. This is list not modified.
      * @return A list containing two new location lists, one copy for either side of the date line.
      */
-    protected List<List<LatLon>> repeatAroundDateline(Iterable<LatLon> locations) {
+    protected static List<List<LatLon>> repeatAroundDateline(Iterable<LatLon> locations) {
         return LatLon.repeatLocationsAroundDateline(locations);
     }
 
@@ -837,7 +837,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         if (this.activeOutlineGeometry.isEmpty())
             return;
 
-        this.applyOutlineState(dc, this.getActiveAttributes());
+        AbstractSurfaceShape.applyOutlineState(dc, this.getActiveAttributes());
 
         for (List<LatLon> drawLocations : this.activeOutlineGeometry)
             this.drawLineStrip(dc, drawLocations);
@@ -909,7 +909,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
     }
 
     @SuppressWarnings("UnnecessaryLocalVariable")
-    protected double computeEdgeIntervalsPerDegree(double resolution) {
+    protected static double computeEdgeIntervalsPerDegree(double resolution) {
         //return 1.0 / (resolution * WWMath.OneEightyOverPI);
         return WWMath.PiOverOneEighty / resolution;
     }
@@ -938,7 +938,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
     }
 
     protected void doCombineContours(CombineContext cc) {
-        double edgeIntervalsPerDegree = this.computeEdgeIntervalsPerDegree(cc.getResolution());
+        double edgeIntervalsPerDegree = AbstractSurfaceShape.computeEdgeIntervalsPerDegree(cc.getResolution());
         List<List<LatLon>> contours = this.createGeometry(cc.getGlobe(), edgeIntervalsPerDegree);
         if (contours == null)
             return; // shape has no caller specified data
@@ -947,22 +947,22 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
             String pole = this.containsPole(contour);
             if (pole != null) // Wrap the contour around the pole and along the anti-meridian. See WWJ-284.
             {
-                List<LatLon> poleContour = this.cutAlongDateLine(contour, pole, cc.getGlobe());
-                this.doCombineContour(cc, poleContour);
+                List<LatLon> poleContour = AbstractSurfaceShape.cutAlongDateLine(contour, pole, cc.getGlobe());
+                AbstractSurfaceShape.doCombineContour(cc, poleContour);
             }
             else if (LatLon.locationsCrossDateLine(contour)) // Split the contour along the anti-meridian.
             {
-                List<List<LatLon>> datelineContours = this.repeatAroundDateline(contour);
-                this.doCombineContour(cc, datelineContours.get(0));
-                this.doCombineContour(cc, datelineContours.get(1));
+                List<List<LatLon>> datelineContours = AbstractSurfaceShape.repeatAroundDateline(contour);
+                AbstractSurfaceShape.doCombineContour(cc, datelineContours.get(0));
+                AbstractSurfaceShape.doCombineContour(cc, datelineContours.get(1));
             }
             else {
-                this.doCombineContour(cc, contour);
+                AbstractSurfaceShape.doCombineContour(cc, contour);
             }
         }
     }
 
-    protected void doCombineContour(CombineContext cc, Iterable<? extends LatLon> contour) {
+    protected static void doCombineContour(CombineContext cc, Iterable<? extends LatLon> contour) {
         GLUtessellator tess = cc.getTessellator();
 
         try {
@@ -990,7 +990,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         if (texture != null && !dc.isPickingMode()) {
-            this.applyInteriorTextureState(dc, sdc, attributes, texture, refLocation);
+            AbstractSurfaceShape.applyInteriorTextureState(dc, sdc, attributes, texture, refLocation);
         }
         else {
             if (!dc.isPickingMode()) {
@@ -1010,7 +1010,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         }
     }
 
-    protected void applyOutlineState(DrawContext dc, ShapeAttributes attributes) {
+    protected static void applyOutlineState(DrawContext dc, ShapeAttributes attributes) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         // Apply line width state
@@ -1056,7 +1056,8 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         gl.glDisable(GL2.GL_TEXTURE_GEN_T);
     }
 
-    protected void applyInteriorTextureState(DrawContext dc, SurfaceTileDrawContext sdc, ShapeAttributes attributes,
+    protected static void applyInteriorTextureState(DrawContext dc, SurfaceTileDrawContext sdc,
+        ShapeAttributes attributes,
         WWTexture texture, LatLon refLocation) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
@@ -1117,7 +1118,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
     //**************************************************************//
 
     protected void generateIntermediateLocations(Iterable<? extends LatLon> iterable, double edgeIntervalsPerDegree,
-        boolean makeClosedPath, List<LatLon> locations) {
+        boolean makeClosedPath, Collection<LatLon> locations) {
         LatLon firstLocation = null;
         LatLon lastLocation = null;
 
@@ -1352,7 +1353,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
 
         String s = rs.getStateValueAsString(context, "pathType");
         if (s != null) {
-            String pathType = this.pathTypeFromString(s);
+            String pathType = AbstractSurfaceShape.pathTypeFromString(s);
             if (pathType != null)
                 this.setPathType(pathType);
         }
@@ -1465,7 +1466,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         //    this.positions = locations;
     }
 
-    protected String pathTypeFromString(String s) {
+    protected static String pathTypeFromString(String s) {
         if (s == null)
             return null;
 

@@ -273,7 +273,7 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable {
         }
 
         if (attrs.isDrawOutline()) {
-            this.applyOutlineState(dc, attrs);
+            AbstractSurfaceShape.applyOutlineState(dc, attrs);
             IntBuffer indices = shapeData.outlineIndices;
             gl.glDrawElements(GL.GL_LINES, indices.remaining(), GL.GL_UNSIGNED_INT, indices);
         }
@@ -324,7 +324,7 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable {
             }
 
             // Interpolate the contour vertices according to this polygon's path type and number of edge intervals.
-            this.closeContour(contour);
+            SurfacePolygon.closeContour(contour);
             this.subdivideContour(contour, maxEdgeLength);
 
             // Modify the contour vertices to compensate for the spherical nature of geographic coordinates.
@@ -333,7 +333,7 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable {
                 result.add(this.clipWithPole(contour, pole, maxEdgeLength));
             }
             else if (LatLon.locationsCrossDateLine(contour)) {
-                result.addAll(this.clipWithDateline(contour));
+                result.addAll(SurfacePolygon.clipWithDateline(contour));
             }
             else {
                 result.add(contour);
@@ -343,7 +343,7 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable {
         return result;
     }
 
-    protected void closeContour(List<Vertex> contour) {
+    protected static void closeContour(List<Vertex> contour) {
         if (!contour.get(0).equals(contour.get(contour.size() - 1))) {
             contour.add(contour.get(0));
         }
@@ -420,7 +420,7 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable {
                     in.u = out.u = WWMath.mix(a, vertex.u, nextVertex.u);
                     in.v = out.v = WWMath.mix(a, vertex.v, nextVertex.v);
 
-                    double[] uv = this.uvWeightedAverage(contour, centerPole);
+                    double[] uv = SurfacePolygon.uvWeightedAverage(contour, centerPole);
                     inPole.u = outPole.u = centerPole.u = uv[0];
                     inPole.v = outPole.v = centerPole.v = uv[1];
 
@@ -440,7 +440,7 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable {
         return newVertices;
     }
 
-    protected double[] uvWeightedAverage(List<Vertex> contour, Vertex vertex) {
+    protected static double[] uvWeightedAverage(List<Vertex> contour, Vertex vertex) {
         double[] weight = new double[contour.size()];
         double sumOfWeights = 0;
         for (int i = 0; i < contour.size(); i++) {
@@ -460,7 +460,7 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable {
         return new double[] {u, v};
     }
 
-    protected List<List<Vertex>> clipWithDateline(Iterable<Vertex> contour) {
+    protected static List<List<Vertex>> clipWithDateline(Iterable<Vertex> contour) {
         List<Vertex> result = new ArrayList<>();
         Vertex prev = null;
         Angle offset = null;
@@ -622,7 +622,7 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable {
             return;
 
         for (int i = 0; i < this.boundaries.size(); i++) {
-            List<LatLon> newLocations = new ArrayList<>();
+            Collection<LatLon> newLocations = new ArrayList<>();
 
             for (LatLon ll : this.boundaries.get(i)) {
                 Angle heading = LatLon.greatCircleAzimuth(oldReferencePosition, ll);

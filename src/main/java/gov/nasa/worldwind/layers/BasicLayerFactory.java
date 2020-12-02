@@ -142,7 +142,7 @@ public class BasicLayerFactory extends BasicFactory {
                         continue;
 
                     if (o instanceof Layer) {
-                        List<Layer> ll = new LayerList();
+                        Collection<Layer> ll = new LayerList();
                         ll.add((Layer) o);
                         o = ll;
                     }
@@ -255,10 +255,10 @@ public class BasicLayerFactory extends BasicFactory {
         else {
             String layerType = WWXML.getText(domElement, "@layerType");
             if (layerType != null && layerType.equals("TiledImageLayer")) {
-                layer = this.createTiledImageLayer(domElement, params);
+                layer = BasicLayerFactory.createTiledImageLayer(domElement, params);
             }
             else if (layerType != null && layerType.equals("ShapefileLayer")) {
-                layer = this.createShapefileLayer(domElement, params);
+                layer = BasicLayerFactory.createShapefileLayer(domElement, params);
             }
             else {
                 String msg = Logging.getMessage("generic.UnrecognizedLayerType", layerType);
@@ -285,7 +285,7 @@ public class BasicLayerFactory extends BasicFactory {
      * @return a new layer
      * @throws WWUnrecognizedException if the service type given in the describing element is unrecognized.
      */
-    protected Layer createTiledImageLayer(Element domElement, AVList params) {
+    protected static Layer createTiledImageLayer(Element domElement, AVList params) {
         Layer layer;
 
         String serviceName = WWXML.getText(domElement, "Service/@serviceName");
@@ -326,7 +326,7 @@ public class BasicLayerFactory extends BasicFactory {
      * @param params     any parameters to apply when creating the layer.
      * @return a new layer
      */
-    protected Layer createShapefileLayer(Element domElement, AVList params) {
+    protected static Layer createShapefileLayer(Element domElement, AVList params) {
         return (Layer) BasicFactory.create(AVKey.SHAPEFILE_LAYER_FACTORY, domElement, params);
     }
 }

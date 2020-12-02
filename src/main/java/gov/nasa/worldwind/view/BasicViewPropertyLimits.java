@@ -374,7 +374,7 @@ public class BasicViewPropertyLimits implements ViewPropertyLimits {
             throw new IllegalArgumentException(message);
         }
 
-        if (this.isNonContinous2DGlobe(view.getGlobe())) {
+        if (BasicViewPropertyLimits.isNonContinous2DGlobe(view.getGlobe())) {
             return angle; // ignore the heading limit on non-continuous 2D globes
         }
 
@@ -398,7 +398,7 @@ public class BasicViewPropertyLimits implements ViewPropertyLimits {
             throw new IllegalArgumentException(message);
         }
 
-        if (this.is2DGlobe(view.getGlobe())) {
+        if (BasicViewPropertyLimits.is2DGlobe(view.getGlobe())) {
             return Angle.ZERO; // keep the view looking straight down on 2D globes
         }
 
@@ -425,11 +425,11 @@ public class BasicViewPropertyLimits implements ViewPropertyLimits {
         return Angle.clamp(angle, this.minRoll, this.maxRoll);
     }
 
-    protected boolean is2DGlobe(Globe globe) {
+    protected static boolean is2DGlobe(Globe globe) {
         return globe instanceof Globe2D;
     }
 
-    protected boolean isNonContinous2DGlobe(Globe globe) {
+    protected static boolean isNonContinous2DGlobe(Globe globe) {
         return globe instanceof Globe2D && !((Globe2D) globe).isContinuous();
     }
 

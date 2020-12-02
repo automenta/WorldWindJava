@@ -275,7 +275,7 @@ public class VecBufferSequence extends CompoundVecBuffer {
 
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
-        if (this.haveMultiDrawArrays(dc)) {
+        if (VecBufferSequence.haveMultiDrawArrays(dc)) {
             gl.glMultiDrawArrays(drawMode, this.offsets, this.lengths, this.count);
         }
         else {
@@ -285,7 +285,7 @@ public class VecBufferSequence extends CompoundVecBuffer {
         }
     }
 
-    protected boolean haveMultiDrawArrays(DrawContext dc) {
+    protected static boolean haveMultiDrawArrays(DrawContext dc) {
         return dc.getGL().isFunctionAvailable("glMultiDrawArrays");
     }
 }

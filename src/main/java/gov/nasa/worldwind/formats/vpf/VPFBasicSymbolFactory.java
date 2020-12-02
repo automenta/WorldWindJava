@@ -324,7 +324,7 @@ public class VPFBasicSymbolFactory implements VPFSymbolFactory {
 
         for (VPFFeature subFeature : feature) {
             String primitiveName = feature.getFeatureClass().getPrimitiveTableName();
-            Angle heading = this.getPointSymbolHeading(attr, subFeature);
+            Angle heading = VPFBasicSymbolFactory.getPointSymbolHeading(attr, subFeature);
 
             for (int id : subFeature.getPrimitiveIds()) {
                 CompoundVecBuffer combinedCoords = this.primitiveData.getPrimitiveCoords(primitiveName);
@@ -346,7 +346,7 @@ public class VPFBasicSymbolFactory implements VPFSymbolFactory {
             for (int i = 0; i < numSymbols; i++) {
                 SurfaceIcon o = new SurfaceIcon("", locations.get(i));
                 o.setHeading(headings.get(i));
-                this.applyPointSymbolAttributes(attr, o);
+                VPFBasicSymbolFactory.applyPointSymbolAttributes(attr, o);
                 outCollection.add(new VPFSymbol(feature, attr, o));
             }
         }
@@ -354,7 +354,7 @@ public class VPFBasicSymbolFactory implements VPFSymbolFactory {
             SurfaceIcons o = new SurfaceIcons("", locations);
             if (headings.get(0) != null)
                 o.setHeading(headings.get(0));
-            this.applyPointSymbolAttributes(attr, o);
+            VPFBasicSymbolFactory.applyPointSymbolAttributes(attr, o);
             outCollection.add(new VPFSymbol(feature, attr, o));
         }
     }
@@ -362,14 +362,14 @@ public class VPFBasicSymbolFactory implements VPFSymbolFactory {
     protected void addLineSymbol(CombinedFeature feature, VPFSymbolAttributes attr,
         Collection<VPFSymbol> outCollection) {
         SurfaceShape o = new VPFSurfaceLine(feature, this.primitiveData);
-        this.applySymbolAttributes(attr, o);
+        VPFBasicSymbolFactory.applySymbolAttributes(attr, o);
         outCollection.add(new VPFSymbol(feature, attr, o));
     }
 
     protected void addAreaSymbol(CombinedFeature feature, VPFSymbolAttributes attr,
         Collection<VPFSymbol> outCollection) {
         SurfaceShape o = new VPFSurfaceArea(feature, this.primitiveData);
-        this.applySymbolAttributes(attr, o);
+        VPFBasicSymbolFactory.applySymbolAttributes(attr, o);
         outCollection.add(new VPFSymbol(feature, attr, o));
     }
 
@@ -387,7 +387,7 @@ public class VPFBasicSymbolFactory implements VPFSymbolFactory {
                 text = WWUtil.trimCharSequence(text);
 
             GeographicText o = new UserFacingText(text, coords.getPosition(0));
-            this.applyTextAttributes(attr, o);
+            VPFBasicSymbolFactory.applyTextAttributes(attr, o);
             outCollection.add(new VPFSymbol(feature, attr, o));
         }
     }
@@ -429,7 +429,7 @@ public class VPFBasicSymbolFactory implements VPFSymbolFactory {
         }
 
         SurfaceIcons o = new SurfaceIcons("", locations);
-        this.applyPointSymbolAttributes(attr, o);
+        VPFBasicSymbolFactory.applyPointSymbolAttributes(attr, o);
         outCollection.add(new VPFSymbol(feature, attr, o));
     }
 
@@ -442,7 +442,7 @@ public class VPFBasicSymbolFactory implements VPFSymbolFactory {
         return this.symbolSupport.getSymbolAttributes(feature.getFeatureClass(), symbolKey);
     }
 
-    protected void applyPointSymbolAttributes(VPFSymbolAttributes attr, SurfaceIcon icon) {
+    protected static void applyPointSymbolAttributes(VPFSymbolAttributes attr, SurfaceIcon icon) {
         if (attr.getIconImageSource() != null)
             icon.setImageSource(attr.getIconImageSource());
         icon.setUseMipMaps(attr.isMipMapIconImage());
@@ -450,7 +450,7 @@ public class VPFBasicSymbolFactory implements VPFSymbolFactory {
         icon.setMaxSize(DEFAULT_ICON_MAX_SIZE);
     }
 
-    protected Angle getPointSymbolHeading(VPFSymbolAttributes attr, AVList featureAttributes) {
+    protected static Angle getPointSymbolHeading(VPFSymbolAttributes attr, AVList featureAttributes) {
         if (attr.getOrientationAttributeName() == null) {
             return null;
         }
@@ -469,11 +469,11 @@ public class VPFBasicSymbolFactory implements VPFSymbolFactory {
         return null;
     }
 
-    protected void applySymbolAttributes(ShapeAttributes attr, Attributable surfaceShape) {
+    protected static void applySymbolAttributes(ShapeAttributes attr, Attributable surfaceShape) {
         surfaceShape.setAttributes(attr);
     }
 
-    public void applyTextAttributes(VPFSymbolAttributes attr, GeographicText text) {
+    public static void applyTextAttributes(VPFSymbolAttributes attr, GeographicText text) {
         VPFSymbolAttributes.LabelAttributes[] labelAttr = attr.getLabelAttributes();
         if (labelAttr != null && labelAttr.length > 0) {
             text.setFont(labelAttr[0].getFont());
@@ -497,7 +497,7 @@ public class VPFBasicSymbolFactory implements VPFSymbolFactory {
         text.setColor(attr.getColor());
         text.setBackgroundColor(attr.getBackgroundColor());
 
-        LatLon location = this.computeLabelLocation(attr, feature);
+        LatLon location = VPFBasicSymbolFactory.computeLabelLocation(attr, feature);
         if (location != null)
             text.setPosition(new Position(location, 0));
 
@@ -506,7 +506,7 @@ public class VPFBasicSymbolFactory implements VPFSymbolFactory {
             text.setText(labelText);
     }
 
-    protected LatLon computeLabelLocation(VPFSymbolAttributes.LabelAttributes attr, VPFFeature feature) {
+    protected static LatLon computeLabelLocation(VPFSymbolAttributes.LabelAttributes attr, VPFFeature feature) {
         LatLon location = feature.getBounds().toSector().getCentroid();
 
         // If we are given label offset parameters, compute the label location using the offset azimuth and offset arc

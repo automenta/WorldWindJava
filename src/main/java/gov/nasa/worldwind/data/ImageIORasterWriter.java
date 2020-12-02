@@ -68,28 +68,28 @@ public class ImageIORasterWriter extends AbstractDataRasterWriter {
     }
 
     protected void doWrite(DataRaster raster, String formatSuffix, File file) throws IOException {
-        this.writeImage(raster, formatSuffix, file);
+        ImageIORasterWriter.writeImage(raster, formatSuffix, file);
 
         if (this.isWriteGeoreferenceFiles()) {
             AVList worldFileParams = new AVListImpl();
-            this.initWorldFileParams(raster, worldFileParams);
+            ImageIORasterWriter.initWorldFileParams(raster, worldFileParams);
 
             File dir = file.getParentFile();
             String base = WWIO.replaceSuffix(file.getName(), "");
             String suffix = WWIO.getSuffix(file.getName());
-            String worldFileSuffix = this.suffixForWorldFile(suffix);
+            String worldFileSuffix = ImageIORasterWriter.suffixForWorldFile(suffix);
 
-            this.writeImageMetadata(new File(dir, base + "." + worldFileSuffix), worldFileParams);
+            ImageIORasterWriter.writeImageMetadata(new File(dir, base + "." + worldFileSuffix), worldFileParams);
         }
     }
 
-    protected void writeImage(DataRaster raster, String formatSuffix, File file) throws IOException {
+    protected static void writeImage(DataRaster raster, String formatSuffix, File file) throws IOException {
         BufferedImageRaster bufferedImageRaster = (BufferedImageRaster) raster;
         BufferedImage image = bufferedImageRaster.getBufferedImage();
         ImageIO.write(image, formatSuffix, file);
     }
 
-    protected void writeImageMetadata(File file, AVList values) throws IOException {
+    protected static void writeImageMetadata(File file, AVList values) throws IOException {
         Sector sector = (Sector) values.get(AVKey.SECTOR);
         int[] size = (int[]) values.get(WorldFile.WORLD_FILE_IMAGE_SIZE);
 
@@ -113,7 +113,7 @@ public class ImageIORasterWriter extends AbstractDataRasterWriter {
         }
     }
 
-    protected String suffixForWorldFile(CharSequence suffix) {
+    protected static String suffixForWorldFile(CharSequence suffix) {
         int length = suffix.length();
         if (length < 2)
             return "";
@@ -126,7 +126,7 @@ public class ImageIORasterWriter extends AbstractDataRasterWriter {
         return sb.toString();
     }
 
-    protected void initWorldFileParams(DataRaster raster, AVList worldFileParams) {
+    protected static void initWorldFileParams(DataRaster raster, AVList worldFileParams) {
         int[] size = new int[2];
         size[0] = raster.getWidth();
         size[1] = raster.getHeight();

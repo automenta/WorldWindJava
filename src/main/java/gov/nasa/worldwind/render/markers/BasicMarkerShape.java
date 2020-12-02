@@ -261,7 +261,7 @@ public class BasicMarkerShape {
          * @param pitch   desired pitch
          * @return A vector pointing in the direction of the desired heading and pitch
          */
-        protected Vec4 computeOrientationVector(DrawContext dc, Vec4 point, Vec4 normal, Angle heading,
+        protected static Vec4 computeOrientationVector(DrawContext dc, Vec4 point, Vec4 normal, Angle heading,
             Angle pitch) {
             // To compute rotation of the shape toward the proper heading, find a second point in that direction.
             Globe globe = dc.getGlobe();
@@ -436,7 +436,7 @@ public class BasicMarkerShape {
             // around its axis. A heading with pitch spins the cone, and then tilts it in the direction of the
             // heading.
             if (this.isApplyOrientation() && marker.getPitch() != null) {
-                orientation = this.computeOrientationVector(dc, point, orientation,
+                orientation = Shape.computeOrientationVector(dc, point, orientation,
                     marker.getHeading() != null ? marker.getHeading() : Angle.ZERO,
                     marker.getPitch());
             }
@@ -496,7 +496,7 @@ public class BasicMarkerShape {
             // around its axis. A heading with pitch spins the cylinder, and then tilts it in the direction of the
             // heading.
             if (this.isApplyOrientation() && marker.getPitch() != null) {
-                orientation = this.computeOrientationVector(dc, point, orientation,
+                orientation = Shape.computeOrientationVector(dc, point, orientation,
                     marker.getHeading() != null ? marker.getHeading() : Angle.ZERO,
                     marker.getPitch());
             }

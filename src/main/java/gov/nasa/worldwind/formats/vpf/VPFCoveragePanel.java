@@ -73,7 +73,7 @@ public class VPFCoveragePanel extends JPanel {
     public void addDatabase(VPFDatabase db) {
         // Sort the library list alphabetically.
         List<VPFLibrary> sortedList = new ArrayList<>(db.getLibraries());
-        this.sortPropertyLists(sortedList, AVKey.DISPLAY_NAME);
+        VPFCoveragePanel.sortPropertyLists(sortedList, AVKey.DISPLAY_NAME);
 
         for (VPFLibrary lib : sortedList) {
             this.addLibrary(db, lib);
@@ -130,7 +130,7 @@ public class VPFCoveragePanel extends JPanel {
 
         // Sort the coverage list alphabetically.
         List<VPFCoverage> sortedList = new ArrayList<>(lib.getCoverages());
-        this.sortPropertyLists(sortedList, AVKey.DESCRIPTION);
+        VPFCoveragePanel.sortPropertyLists(sortedList, AVKey.DESCRIPTION);
 
         for (VPFCoverage cov : sortedList) {
             if (cov.isReferenceCoverage())
@@ -140,7 +140,7 @@ public class VPFCoveragePanel extends JPanel {
         }
     }
 
-    protected void sortPropertyLists(java.util.List<? extends AVList> propertyList, final String propertyName) {
+    protected static void sortPropertyLists(java.util.List<? extends AVList> propertyList, final String propertyName) {
         propertyList.sort((Comparator<AVList>) (a, b) -> {
             String aValue = (a.get(propertyName) != null) ? a.get(propertyName).toString() : "";
             String bValue = (b.get(propertyName) != null) ? b.get(propertyName).toString() : "";
@@ -194,7 +194,7 @@ public class VPFCoveragePanel extends JPanel {
             return;
 
         // Sort rendering attributes, and eliminate duplicate entries.
-        Iterable<SymbolInfo> symbolInfo = this.getUniqueSymbols(symbols);
+        Iterable<SymbolInfo> symbolInfo = VPFCoveragePanel.getUniqueSymbols(symbols);
 
         // Compose legend panel
         VPFLegendSupport legendSupport = new VPFLegendSupport();
@@ -228,7 +228,7 @@ public class VPFCoveragePanel extends JPanel {
         this.legendPanel.repaint();
     }
 
-    protected Iterable<SymbolInfo> getUniqueSymbols(Iterable<VPFSymbol> iterable) {
+    protected static Iterable<SymbolInfo> getUniqueSymbols(Iterable<VPFSymbol> iterable) {
         // Use a TreeSet to consolidate duplicate symbol attributes and simultaneously sort the attributes.
 
         Collection<SymbolInfo> set = new TreeSet<>((a, b) -> {

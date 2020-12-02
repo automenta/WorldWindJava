@@ -59,7 +59,7 @@ public class GeoSymAttributeExpressionProvider {
         // associated with that expression.
 
         for (Map.Entry<Integer, Set<AVList>> entry : map.entrySet()) {
-            Deque<Object> queue = new LinkedList<>();
+            Queue<Object> queue = new LinkedList<>();
 
             for (AVList row : entry.getValue()) {
                 // If no connector is specified, then assume the terminal connector '0'.
@@ -68,7 +68,7 @@ public class GeoSymAttributeExpressionProvider {
                 queue.add(LogicalOperator.values()[connector]);
             }
 
-            Expression expression = this.parseExpression(queue);
+            Expression expression = GeoSymAttributeExpressionProvider.parseExpression(queue);
             if (expression != null) {
                 this.expressionMap.put(entry.getKey(), expression);
             }
@@ -89,7 +89,7 @@ public class GeoSymAttributeExpressionProvider {
      * @param queue the queue of logical expression
      * @return a live Expression which may be evaluated against any set of attribute values.
      */
-    protected Expression parseExpression(Queue<?> queue) {
+    protected static Expression parseExpression(Queue<?> queue) {
         if (queue.isEmpty()) {
             return null;
         }

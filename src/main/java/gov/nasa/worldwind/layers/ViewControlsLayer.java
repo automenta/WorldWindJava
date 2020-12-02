@@ -519,7 +519,7 @@ public class ViewControlsLayer extends RenderableLayer {
      *                AVKey#VIEW_FOV_NARROW} or {@link AVKey#VIEW_FOV_WIDE}.
      * @return the image source associated with the given control type.
      */
-    protected Object getImageSource(String control) {
+    protected static Object getImageSource(String control) {
         return switch (control) {
             case AVKey.VIEW_PAN -> IMAGE_PAN;
             case AVKey.VIEW_LOOK -> IMAGE_LOOK;

@@ -42,7 +42,7 @@ public class Box extends RigidShape {
      * Construct a box with default parameters
      */
     public Box() {
-        this.setUpGeometryCache();
+        RigidShape.setUpGeometryCache();
     }
 
     /**
@@ -71,7 +71,7 @@ public class Box extends RigidShape {
         this.verticalRadius = verticalRadius;
         this.eastWestRadius = eastWestRadius;
 
-        this.setUpGeometryCache();
+        RigidShape.setUpGeometryCache();
     }
 
     /**
@@ -108,7 +108,7 @@ public class Box extends RigidShape {
         this.tilt = tilt;
         this.roll = roll;
 
-        this.setUpGeometryCache();
+        RigidShape.setUpGeometryCache();
     }
 
     @Override
@@ -143,7 +143,7 @@ public class Box extends RigidShape {
     protected void makeGeometry(ShapeData shapeData) {
         // attempt to retrieve a cached unit box with the same number of subdivisions
         Object cacheKey = new Geometry.CacheKey(this.getClass(), "Box0", this.subdivisions);
-        Geometry geom = (Geometry) this.getGeometryCache().getObject(cacheKey);
+        Geometry geom = (Geometry) RigidShape.getGeometryCache().getObject(cacheKey);
         if (geom == null) {
             // if none exists, create a new one
             makeUnitBox(this.subdivisions, shapeData.getMeshes());
@@ -152,7 +152,7 @@ public class Box extends RigidShape {
                     offsets.put(piece, new OffsetsList());
                 // add the new mesh pieces to the cache
                 cacheKey = new Geometry.CacheKey(this.getClass(), "Box" + piece, this.subdivisions);
-                this.getGeometryCache().add(cacheKey, shapeData.getMesh(piece));
+                RigidShape.getGeometryCache().add(cacheKey, shapeData.getMesh(piece));
             }
         }
         else {
@@ -161,7 +161,7 @@ public class Box extends RigidShape {
                 if (offsets.get(piece) == null)  // if texture offsets don't exist, set default values to 0
                     offsets.put(piece, new OffsetsList());
                 cacheKey = new Geometry.CacheKey(this.getClass(), "Box" + piece, this.subdivisions);
-                geom = (Geometry) this.getGeometryCache().getObject(cacheKey);
+                geom = (Geometry) RigidShape.getGeometryCache().getObject(cacheKey);
                 shapeData.addMesh(piece, geom);
             }
         }
@@ -222,7 +222,7 @@ public class Box extends RigidShape {
             gb.makeIndexedTriangleBufferNormals(itb, normalBuffer);
 
             FloatBuffer textureCoordBuffer = Buffers.newDirectFloatBuffer(2 * itb.getVertexCount());
-            gb.makeUnitBoxTextureCoordinates(index, textureCoordBuffer, itb.getVertexCount());
+            GeometryBuilder.makeUnitBoxTextureCoordinates(index, textureCoordBuffer, itb.getVertexCount());
 
             dest = new Geometry();
 

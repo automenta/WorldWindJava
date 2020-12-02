@@ -809,11 +809,11 @@ public class ScrollBar implements Renderable {
             try {
                 gl.glBegin(GL2.GL_QUADS);
                 // Draw scroll bar frame
-                this.drawQuad(dc, this.bounds);
+                ScrollBar.drawQuad(dc, this.bounds);
 
                 // Draw boxes for up and down arrows
-                this.drawQuad(dc, this.scrollDownControlBounds);
-                this.drawQuad(dc, this.scrollUpControlBounds);
+                ScrollBar.drawQuad(dc, this.scrollDownControlBounds);
+                ScrollBar.drawQuad(dc, this.scrollUpControlBounds);
             }
             finally {
                 gl.glEnd();
@@ -834,17 +834,17 @@ public class ScrollBar implements Renderable {
             OGLUtil.applyColor(gl, this.getLineColor(), this.getOpacity(), false);
 
             gl.glBegin(GL2.GL_LINE_LOOP);
-            this.drawQuad(dc, this.scrollKnobBounds);
+            ScrollBar.drawQuad(dc, this.scrollKnobBounds);
             gl.glEnd();
 
             gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);
             if (AVKey.VERTICAL.equals(this.getOrientation())) {
-                this.drawTriangle(dc, 90, this.scrollUpControlBounds, arrowInsets);
-                this.drawTriangle(dc, -90, this.scrollDownControlBounds, arrowInsets);
+                ScrollBar.drawTriangle(dc, 90, this.scrollUpControlBounds, arrowInsets);
+                ScrollBar.drawTriangle(dc, -90, this.scrollDownControlBounds, arrowInsets);
             }
             else {
-                this.drawTriangle(dc, 180, this.scrollUpControlBounds, arrowInsets);
-                this.drawTriangle(dc, 0, this.scrollDownControlBounds, arrowInsets);
+                ScrollBar.drawTriangle(dc, 180, this.scrollUpControlBounds, arrowInsets);
+                ScrollBar.drawTriangle(dc, 0, this.scrollDownControlBounds, arrowInsets);
             }
         }
         finally {
@@ -861,7 +861,7 @@ public class ScrollBar implements Renderable {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         try {
             this.pickSupport.clearPickList();
-            this.pickSupport.beginPicking(dc);
+            PickSupport.beginPicking(dc);
 
             gl.glBegin(GL2.GL_QUADS);
 
@@ -876,7 +876,7 @@ public class ScrollBar implements Renderable {
         finally {
             gl.glEnd();
 
-            this.pickSupport.endPicking(dc);
+            PickSupport.endPicking(dc);
             this.pickSupport.resolvePick(dc, dc.getPickPoint(), dc.getCurrentLayer());
         }
     }
@@ -897,7 +897,7 @@ public class ScrollBar implements Renderable {
         this.pickSupport.addPickableObject(colorCode, pickObject);
         gl.glColor3ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
 
-        this.drawQuad(dc, bounds);
+        ScrollBar.drawQuad(dc, bounds);
     }
 
     /**
@@ -907,7 +907,7 @@ public class ScrollBar implements Renderable {
      * @param dc     Current draw context.
      * @param bounds Bounds of the quad.
      */
-    protected void drawQuad(DrawContext dc, Rectangle bounds) {
+    protected static void drawQuad(DrawContext dc, Rectangle bounds) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         int minX = (int) bounds.getMinX();
@@ -930,7 +930,7 @@ public class ScrollBar implements Renderable {
      * @param bounds   The bounds of the scroll control. The arrow must be drawn within this rectangle.
      * @param insets   Insets to apply to the bounds.
      */
-    protected void drawTriangle(DrawContext dc, float rotation, Rectangle bounds, Insets insets) {
+    protected static void drawTriangle(DrawContext dc, float rotation, Rectangle bounds, Insets insets) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         try {

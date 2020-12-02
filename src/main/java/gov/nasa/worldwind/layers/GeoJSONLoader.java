@@ -74,12 +74,12 @@ public class GeoJSONLoader {
                         this.addGeoJSONGeometryToLayer((GeoJSONObject) o, layer);
                     }
                     else {
-                        this.handleUnrecognizedObject(o);
+                        GeoJSONLoader.handleUnrecognizedObject(o);
                     }
                 }
             }
             else {
-                this.handleUnrecognizedObject(doc.getRootObject());
+                GeoJSONLoader.handleUnrecognizedObject(doc.getRootObject());
             }
         }
         catch (IOException e) {
@@ -121,7 +121,7 @@ public class GeoJSONLoader {
             this.addRenderableForFeatureCollection(object.asFeatureCollection(), layer);
 
         else
-            this.handleUnrecognizedObject(object);
+            GeoJSONLoader.handleUnrecognizedObject(object);
     }
 
     /**
@@ -167,7 +167,7 @@ public class GeoJSONLoader {
     //********************  Geometry Conversion  *******************//
     //**************************************************************//
 
-    protected void handleUnrecognizedObject(Object o) {
+    protected static void handleUnrecognizedObject(Object o) {
         Logging.logger().warning(Logging.getMessage("generic.UnrecognizedObjectType", o));
     }
 
@@ -194,7 +194,7 @@ public class GeoJSONLoader {
             this.addRenderableForGeometryCollection(geom.asGeometryCollection(), layer, properties);
 
         else
-            this.handleUnrecognizedObject(geom);
+            GeoJSONLoader.handleUnrecognizedObject(geom);
     }
 
     protected void addRenderableForGeometryCollection(GeoJSONGeometryCollection c, RenderableLayer layer,
@@ -228,21 +228,21 @@ public class GeoJSONLoader {
     protected void addRenderableForPoint(GeoJSONPoint geom, RenderableLayer layer, AVList properties) {
         PointPlacemarkAttributes attrs = this.createPointAttributes(geom, layer);
 
-        layer.add(this.createPoint(geom, geom.getPosition(), attrs, properties));
+        layer.add(GeoJSONLoader.createPoint(geom, geom.getPosition(), attrs, properties));
     }
 
     protected void addRenderableForMultiPoint(GeoJSONMultiPoint geom, RenderableLayer layer, AVList properties) {
         PointPlacemarkAttributes attrs = this.createPointAttributes(geom, layer);
 
         for (int i = 0; i < geom.getPointCount(); i++) {
-            layer.add(this.createPoint(geom, geom.getPosition(i), attrs, properties));
+            layer.add(GeoJSONLoader.createPoint(geom, geom.getPosition(i), attrs, properties));
         }
     }
 
     protected void addRenderableForLineString(GeoJSONLineString geom, RenderableLayer layer, AVList properties) {
         ShapeAttributes attrs = this.createPolylineAttributes(geom, layer);
 
-        layer.add(this.createPolyline(geom, geom.getCoordinates(), attrs, properties));
+        layer.add(GeoJSONLoader.createPolyline(geom, geom.getCoordinates(), attrs, properties));
     }
 
     protected void addRenderableForMutiLineString(GeoJSONMultiLineString geom, RenderableLayer layer,
@@ -250,14 +250,14 @@ public class GeoJSONLoader {
         ShapeAttributes attrs = this.createPolylineAttributes(geom, layer);
 
         for (GeoJSONPositionArray coords : geom.getCoordinates()) {
-            layer.add(this.createPolyline(geom, coords, attrs, properties));
+            layer.add(GeoJSONLoader.createPolyline(geom, coords, attrs, properties));
         }
     }
 
     protected void addRenderableForPolygon(GeoJSONPolygon geom, RenderableLayer layer, AVList properties) {
         ShapeAttributes attrs = this.createPolygonAttributes(geom, layer);
 
-        layer.add(this.createPolygon(geom, geom.getExteriorRing(), geom.getInteriorRings(), attrs,
+        layer.add(GeoJSONLoader.createPolygon(geom, geom.getExteriorRing(), geom.getInteriorRings(), attrs,
             properties));
     }
 
@@ -270,12 +270,12 @@ public class GeoJSONLoader {
 
         for (int i = 0; i < geom.getPolygonCount(); i++) {
             layer.add(
-                this.createPolygon(geom, geom.getExteriorRing(i), geom.getInteriorRings(i), attrs, properties));
+                GeoJSONLoader.createPolygon(geom, geom.getExteriorRing(i), geom.getInteriorRings(i), attrs, properties));
         }
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    protected Renderable createPoint(GeoJSONGeometry owner, Position pos, PointPlacemarkAttributes attrs,
+    protected static Renderable createPoint(GeoJSONGeometry owner, Position pos, PointPlacemarkAttributes attrs,
         AVList properties) {
         PointPlacemark p = new PointPlacemark(pos);
         p.setAttributes(attrs);
@@ -294,7 +294,7 @@ public class GeoJSONLoader {
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    protected Renderable createPolyline(GeoJSONGeometry owner, Iterable<? extends Position> positions,
+    protected static Renderable createPolyline(GeoJSONGeometry owner, Iterable<? extends Position> positions,
         ShapeAttributes attrs, AVList properties) {
         if (positionsHaveNonzeroAltitude(positions)) {
             Path p = new Path();
@@ -318,7 +318,7 @@ public class GeoJSONLoader {
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    protected Renderable createPolygon(GeoJSONGeometry owner, Iterable<? extends Position> outerBoundary,
+    protected static Renderable createPolygon(GeoJSONGeometry owner, Iterable<? extends Position> outerBoundary,
         Iterable<? extends Position>[] innerBoundaries, ShapeAttributes attrs, AVList properties) {
         if (positionsHaveNonzeroAltitude(outerBoundary)) {
             Polygon poly = new Polygon(outerBoundary);

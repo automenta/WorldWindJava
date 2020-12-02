@@ -76,7 +76,7 @@ public class DDSDecompressor {
             raf = new RandomAccessFile(file, "r");
             channel = raf.getChannel();
 
-            MappedByteBuffer buffer = this.mapFile(channel, 0, channel.size());
+            MappedByteBuffer buffer = DDSDecompressor.mapFile(channel, 0, channel.size());
 
             buffer.position(0);
             DDSHeader header = DDSHeader.readFrom(source);
@@ -165,7 +165,7 @@ public class DDSDecompressor {
         }
     }
 
-    protected MappedByteBuffer mapFile(FileChannel channel, long offset, long length) throws Exception {
+    protected static MappedByteBuffer mapFile(FileChannel channel, long offset, long length) throws Exception {
         if (null == channel || !channel.isOpen()) {
             String message = Logging.getMessage("nullValue.ChannelIsNull");
             Logging.logger().fine(message);

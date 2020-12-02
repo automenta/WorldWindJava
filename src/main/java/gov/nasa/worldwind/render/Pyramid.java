@@ -28,7 +28,7 @@ public class Pyramid extends RigidShape {
     protected static final int DEFAULT_SUBDIVISIONS = 0;
 
     // Geometry.
-    protected final int faceCount = 5;   // number of separate Geometry pieces that comprise this Pyramid
+    protected static final int faceCount = 5;   // number of separate Geometry pieces that comprise this Pyramid
     // The faces are numbered as follows:
     // face 0: right triangular face
     // face 1: bottom triangular face
@@ -41,7 +41,7 @@ public class Pyramid extends RigidShape {
      * Construct a Pyramid with default parameters
      */
     public Pyramid() {
-        this.setUpGeometryCache();
+        RigidShape.setUpGeometryCache();
     }
 
     /**
@@ -69,7 +69,7 @@ public class Pyramid extends RigidShape {
         this.verticalRadius = height / 2;
         this.eastWestRadius = width / 2;
 
-        this.setUpGeometryCache();
+        RigidShape.setUpGeometryCache();
     }
 
     /**
@@ -98,7 +98,7 @@ public class Pyramid extends RigidShape {
         this.verticalRadius = verticalRadius;
         this.eastWestRadius = eastWestRadius;
 
-        this.setUpGeometryCache();
+        RigidShape.setUpGeometryCache();
     }
 
     /**
@@ -135,7 +135,7 @@ public class Pyramid extends RigidShape {
         this.tilt = tilt;
         this.roll = roll;
 
-        this.setUpGeometryCache();
+        RigidShape.setUpGeometryCache();
     }
 
     @Override
@@ -222,7 +222,7 @@ public class Pyramid extends RigidShape {
     protected void makeGeometry(ShapeData shapeData) {
         // attempt to retrieve a cached unit box with the same number of subdivisions
         Object cacheKey = new Geometry.CacheKey(this.getClass(), "Pyramid0", this.subdivisions);
-        Geometry geom = (Geometry) this.getGeometryCache().getObject(cacheKey);
+        Geometry geom = (Geometry) RigidShape.getGeometryCache().getObject(cacheKey);
         if (geom == null) {
             // if none exists, create a new one
             makeUnitPyramid(this.subdivisions, shapeData.getMeshes());
@@ -231,7 +231,7 @@ public class Pyramid extends RigidShape {
                     offsets.put(piece, new OffsetsList());
                 // add the new mesh pieces to the cache
                 cacheKey = new Geometry.CacheKey(this.getClass(), "Pyramid" + piece, this.subdivisions);
-                this.getGeometryCache().add(cacheKey, shapeData.getMesh(piece));
+                RigidShape.getGeometryCache().add(cacheKey, shapeData.getMesh(piece));
             }
         }
         else {
@@ -240,7 +240,7 @@ public class Pyramid extends RigidShape {
                 if (offsets.get(piece) == null)  // if texture offsets don't exist, set default values to 0
                     offsets.put(piece, new OffsetsList());
                 cacheKey = new Geometry.CacheKey(this.getClass(), "Pyramid" + piece, this.subdivisions);
-                geom = (Geometry) this.getGeometryCache().getObject(cacheKey);
+                geom = (Geometry) RigidShape.getGeometryCache().getObject(cacheKey);
                 shapeData.addMesh(piece, geom);
             }
         }
@@ -301,7 +301,7 @@ public class Pyramid extends RigidShape {
             gb.makeIndexedTriangleBufferNormals(itb, normalBuffer);
 
             FloatBuffer textureCoordBuffer = Buffers.newDirectFloatBuffer(2 * itb.getVertexCount());
-            gb.makeUnitPyramidTextureCoordinates(index, textureCoordBuffer, itb.getVertexCount());
+            GeometryBuilder.makeUnitPyramidTextureCoordinates(index, textureCoordBuffer, itb.getVertexCount());
 
             dest = new Geometry();
 

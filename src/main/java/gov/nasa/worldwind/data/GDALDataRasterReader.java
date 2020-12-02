@@ -93,7 +93,7 @@ public class GDALDataRasterReader extends AbstractDataRasterReader {
 
     @Override
     protected DataRaster[] doRead(Object source, AVList params) {
-        GDALDataRaster raster = this.readDataRaster(source, false);
+        GDALDataRaster raster = GDALDataRasterReader.readDataRaster(source, false);
         if (null != raster && null != params) {
             params.setValues(raster.getMetadata());
             WWUtil.copyValues(params, raster, new String[] {AVKey.SECTOR}, false);
@@ -104,7 +104,7 @@ public class GDALDataRasterReader extends AbstractDataRasterReader {
 
     @Override
     protected void doReadMetadata(Object source, AVList params) {
-        GDALDataRaster raster = this.readDataRaster(source, true);
+        GDALDataRaster raster = GDALDataRasterReader.readDataRaster(source, true);
         if (null != raster && null != params) {
             params.setValues(raster.getMetadata());
             WWUtil.copyValues(params, raster, new String[] {AVKey.SECTOR}, false);
@@ -112,7 +112,7 @@ public class GDALDataRasterReader extends AbstractDataRasterReader {
         }
     }
 
-    protected GDALDataRaster readDataRaster(Object source, boolean quickReadingMode) {
+    protected static GDALDataRaster readDataRaster(Object source, boolean quickReadingMode) {
         if (null == source) {
             String message = Logging.getMessage("nullValue.SourceIsNull");
             Logging.logger().severe(message);

@@ -69,7 +69,7 @@ public abstract class XMLDoc {
      * or the element are not found.
      * @throws IllegalArgumentException if the <code>link</code> is <code>null</code>.
      */
-    public Object resolveReference(XMLRoot root, String link, boolean cacheRemoteFile) {
+    public static Object resolveReference(XMLRoot root, String link, boolean cacheRemoteFile) {
         if (link == null) {
             String message = Logging.getMessage("nullValue.DocumentSourceIsNull");
             Logging.logger().severe(message);

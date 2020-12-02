@@ -185,7 +185,7 @@ public class DBaseFile extends AVListImpl {
         // or if it's an invalid Shapefile connection.
         URLConnection connection = url.openConnection();
 
-        String message = this.validateURLConnection(connection, DBASE_CONTENT_TYPES);
+        String message = DBaseFile.validateURLConnection(connection, DBASE_CONTENT_TYPES);
         if (message != null) {
             throw new IOException(message);
         }
@@ -223,7 +223,7 @@ public class DBaseFile extends AVListImpl {
         this.open = true;
     }
 
-    protected String validateURLConnection(URLConnection connection, String[] acceptedContentTypes) {
+    protected static String validateURLConnection(URLConnection connection, String[] acceptedContentTypes) {
         try {
             if (connection instanceof HttpURLConnection &&
                 ((HttpURLConnection) connection).getResponseCode() != HttpURLConnection.HTTP_OK) {
@@ -268,7 +268,7 @@ public class DBaseFile extends AVListImpl {
             throw new WWRuntimeException(Logging.getMessage("generic.InvalidFileLength", buffer.remaining()));
         }
 
-        return this.readHeaderFromBuffer(buffer);
+        return DBaseFile.readHeaderFromBuffer(buffer);
     }
 
     /**
@@ -280,7 +280,7 @@ public class DBaseFile extends AVListImpl {
      * @param buffer the Header @link java.nio.ByteBuffer} to read from.
      * @return a {@link Header} instances.
      */
-    protected Header readHeaderFromBuffer(ByteBuffer buffer) {
+    protected static Header readHeaderFromBuffer(ByteBuffer buffer) {
         int pos = buffer.position();
 
         buffer.order(ByteOrder.LITTLE_ENDIAN);
@@ -409,7 +409,7 @@ public class DBaseFile extends AVListImpl {
     //********************  String Parsing  ************************//
     //**************************************************************//
 
-    protected int readZeroTerminatedString(ByteBuffer buffer, byte[] bytes, int maxLength) {
+    protected static int readZeroTerminatedString(ByteBuffer buffer, byte[] bytes, int maxLength) {
         if (maxLength <= 0)
             return 0;
 
@@ -422,14 +422,14 @@ public class DBaseFile extends AVListImpl {
         return length;
     }
 
-    protected String decodeString(byte[] bytes, int length) {
+    protected static String decodeString(byte[] bytes, int length) {
         if (length <= 0)
             return null;
 
         return new String(bytes, 0, length, StandardCharsets.UTF_8);
     }
 
-    protected boolean isStringEmpty(byte[] bytes, int length) {
+    protected static boolean isStringEmpty(byte[] bytes, int length) {
         return length <= 0
             || isArrayFilled(bytes, length, (byte) 0x20)  // Space character.
             || isArrayFilled(bytes, length, (byte) 0x2A); // Asterisk character.

@@ -52,7 +52,7 @@ public class ColladaFloatArray extends ColladaAbstractObject {
         if (this.hasField(CHARACTERS_CONTENT)) {
             String s = (String) this.getField(CHARACTERS_CONTENT);
             if (!WWUtil.isEmpty(s))
-                this.floats = this.parseFloats(s);
+                this.floats = ColladaFloatArray.parseFloats(s);
 
             // Don't need to keep string version of the floats
             this.removeField(CHARACTERS_CONTENT);
@@ -67,7 +67,7 @@ public class ColladaFloatArray extends ColladaAbstractObject {
      * @param floatArrayString String of floats separated by whitespace.
      * @return Array of parsed floats.
      */
-    protected float[] parseFloats(String floatArrayString) {
+    protected static float[] parseFloats(String floatArrayString) {
         String[] arrayOfNumbers = floatArrayString.split("\\s");
         float[] ary = new float[arrayOfNumbers.length];
 

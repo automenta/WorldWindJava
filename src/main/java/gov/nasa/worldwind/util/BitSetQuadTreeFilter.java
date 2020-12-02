@@ -154,7 +154,7 @@ public abstract class BitSetQuadTreeFilter {
         if (this.stopped)
             return;
 
-        if (this.intersects(cellRegion, itemCoords) == 0)
+        if (BitSetQuadTreeFilter.intersects(cellRegion, itemCoords) == 0)
             return;
 
         this.path[level] = position;
@@ -206,7 +206,7 @@ public abstract class BitSetQuadTreeFilter {
      *                   the same layout as the <code>nodeRegion</code> argument.
      * @return non-zero if the item intersects the region. 0 if no intersection.
      */
-    protected int intersects(double[] cellRegion, double[] itemCoords) {
+    protected static int intersects(double[] cellRegion, double[] itemCoords) {
         if (itemCoords.length == 4) // treat test region as a sector
             return !(itemCoords[1] < cellRegion[0] || itemCoords[0] > cellRegion[1]
                 || itemCoords[3] < cellRegion[2] || itemCoords[2] > cellRegion[3]) ? 1 : 0;

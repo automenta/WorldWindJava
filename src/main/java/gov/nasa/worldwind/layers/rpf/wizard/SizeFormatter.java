@@ -25,12 +25,12 @@ public class SizeFormatter {
             (long) (bytes % 1024.0d)};
     }
 
-    public String formatPrecise(long bytes) {
+    public static String formatPrecise(long bytes) {
         long[] GbMbKbB = bytesToGbMbKbB(bytes);
         return String.format("%dGB %dMB %dKB %dbytes", GbMbKbB[0], GbMbKbB[1], GbMbKbB[2], GbMbKbB[3]);
     }
 
-    public String formatEstimate(long bytes) {
+    public static String formatEstimate(long bytes) {
         String result;
 
         double Gb = bytes / (double) ONE_GIGABYTE;

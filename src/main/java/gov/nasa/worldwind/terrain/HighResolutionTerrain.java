@@ -671,7 +671,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
             return null;
 
         Intersection[] hits;
-        List<Intersection> list = new ArrayList<>();
+        Collection<Intersection> list = new ArrayList<>();
         for (RectTile tile : tiles) {
             if ((hits = this.intersect(tile, line)) != null)
                 list.addAll(Arrays.asList(hits));
@@ -842,7 +842,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
             verts = tile.ri.vertices;
         }
 
-        ArrayList<LatLon> latlons = this.computeLocations(tile);
+        ArrayList<LatLon> latlons = HighResolutionTerrain.computeLocations(tile);
         double[] elevations = new double[latlons.size()];
 
         // In general, the best attainable resolution varies over the elevation model, so determine the best
@@ -922,7 +922,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
         for (int i = 0; i < targetResolution.length; i++) {
             actualResolution[i] = Double.MAX_VALUE;
         }
-        while (!this.resolutionsMeetCriteria(actualResolution, targetResolution)) {
+        while (!HighResolutionTerrain.resolutionsMeetCriteria(actualResolution, targetResolution)) {
             actualResolution = this.globe.getElevations(sector, latlons, targetResolution, elevations);
             if (resolutionsMeetCriteria(actualResolution, targetResolution))
                 break;
@@ -939,7 +939,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
         }
     }
 
-    protected boolean resolutionsMeetCriteria(double[] actualResolution, double[] targetResolution) {
+    protected static boolean resolutionsMeetCriteria(double[] actualResolution, double[] targetResolution) {
         for (int i = 0; i < actualResolution.length; i++) {
             if (actualResolution[i] > targetResolution[i])
                 return false;
@@ -968,7 +968,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
      * @param tile the tile to compute locations for.
      * @return the cell locations.
      */
-    protected ArrayList<LatLon> computeLocations(RectTile tile) {
+    protected static ArrayList<LatLon> computeLocations(RectTile tile) {
         int density = tile.density;
         int numVertices = (density + 1) * (density + 1);
 
@@ -1120,7 +1120,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
             return null;
 
         Intersection[] hits;
-        List<Intersection> list = new ArrayList<>();
+        Collection<Intersection> list = new ArrayList<>();
 
         double cx = tile.ri.referenceCenter.x;
         double cy = tile.ri.referenceCenter.y;
@@ -1269,7 +1269,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
      * @throws InterruptedException if the operation is interrupted before it completes.
      */
     public void intersectTriangle(Vec4[] triangleCoordinates, Position[] trianglePositions,
-        List<Position[]> intersectPositionsOut) throws InterruptedException {
+        Collection<Position[]> intersectPositionsOut) throws InterruptedException {
         // Get the tiles intersecting the specified sector. Compute the sector from geographic coordinates.
         Sector sector = Sector.boundingSector(Arrays.asList(trianglePositions));
         List<RectTile> tiles = this.getIntersectingTiles(sector);
@@ -1285,7 +1285,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
         tiles = this.eliminateLowAltitudeTiles(tiles, minAltitude);
 
         // Intersect triangles of remaining tiles with input triangle.
-        List<Vec4[]> intersections = new ArrayList<>();
+        Collection<Vec4[]> intersections = new ArrayList<>();
         for (RectTile tile : tiles) {
             List<Vec4[]> iSects = intersect(tile, triangleCoordinates);
             if (iSects != null)

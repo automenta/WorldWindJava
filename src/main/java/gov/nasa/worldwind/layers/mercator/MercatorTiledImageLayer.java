@@ -219,7 +219,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
         this.currentTiles.clear();
 
         for (MercatorTextureTile tile : this.topLevels) {
-            if (this.isTileVisible(dc, tile)) {
+            if (MercatorTiledImageLayer.isTileVisible(dc, tile)) {
                 this.currentResourceTile = null;
                 this.addTileOrDescendants(dc, tile);
             }
@@ -278,7 +278,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
             MercatorTextureTile[] subTiles = tile.createSubTiles(this.levels
                 .getLevel(tile.getLevelNumber() + 1));
             for (MercatorTextureTile child : subTiles) {
-                if (this.isTileVisible(dc, child))
+                if (MercatorTiledImageLayer.isTileVisible(dc, child))
                     this.addTileOrDescendants(dc, child);
             }
         }
@@ -337,7 +337,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
         this.currentTiles.add(tile);
     }
 
-    private boolean isTileVisible(DrawContext dc, MercatorTextureTile tile) {
+    private static boolean isTileVisible(DrawContext dc, MercatorTextureTile tile) {
         //        if (!(tile.getExtent(dc).intersects(dc.getView().getFrustumInModelCoordinates())
         //            && (dc.getVisibleSector() == null || dc.getVisibleSector().intersects(tile.getSector()))))
         //            return false;
@@ -480,7 +480,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
     }
 
     private void draw(DrawContext dc) {
-        this.referencePoint = this.computeReferencePoint(dc);
+        this.referencePoint = MercatorTiledImageLayer.computeReferencePoint(dc);
 
         this.assembleTiles(dc); // Determine the tiles to draw.
 
@@ -515,7 +515,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
             gl.glPopAttrib();
 
             if (this.drawTileIDs)
-                this.drawTileIDs(dc, this.currentTiles);
+                MercatorTiledImageLayer.drawTileIDs(dc, this.currentTiles);
 
             if (this.drawBoundingVolumes)
                 this.drawBoundingVolumes(dc, this.currentTiles);
@@ -544,7 +544,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
             .intersects(dc.getVisibleSector()));
     }
 
-    private Vec4 computeReferencePoint(DrawContext dc) {
+    private static Vec4 computeReferencePoint(DrawContext dc) {
         if (dc.getViewportCenterPosition() != null)
             return dc.getGlobe().computePointFromPosition(
                 dc.getViewportCenterPosition());
@@ -566,7 +566,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
         return this.referencePoint;
     }
 
-    private void drawTileIDs(DrawContext dc,
+    private static void drawTileIDs(DrawContext dc,
         Iterable<MercatorTextureTile> tiles) {
         Rectangle viewport = dc.getView().getViewport();
         TextRenderer textRenderer = OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(),

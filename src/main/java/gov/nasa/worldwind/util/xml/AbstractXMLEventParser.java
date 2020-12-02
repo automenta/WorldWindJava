@@ -356,7 +356,7 @@ abstract public class AbstractXMLEventParser implements XMLEventParser {
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    protected String parseCharacterContent(XMLEventParserContext ctx, XMLEvent stringEvent, Object... args)
+    protected static String parseCharacterContent(XMLEventParserContext ctx, XMLEvent stringEvent, Object... args)
         throws XMLStreamException {
         StringBuilder value = new StringBuilder();
 

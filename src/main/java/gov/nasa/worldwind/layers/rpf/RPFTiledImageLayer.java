@@ -125,7 +125,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
         int nLatTiles = lastRow - firstRow + 1;
         int nLonTiles = lastCol - firstCol + 1;
 
-        List<Tile> topLevels = new ArrayList<>(nLatTiles * nLonTiles);
+        Collection<Tile> topLevels = new ArrayList<>(nLatTiles * nLonTiles);
 
         Angle p1 = Tile.computeRowLatitude(firstRow, dLat, latOrigin);
         for (int row = firstRow; row <= lastRow; row++) {
@@ -545,12 +545,12 @@ public class RPFTiledImageLayer extends TiledImageLayer {
 
         tile.setTextureData(textureData);
         if (tile.getLevelNumber() != 0 || !this.isRetainLevelZeroTiles())
-            this.addTileToCache(tile);
+            RPFTiledImageLayer.addTileToCache(tile);
 
         return true;
     }
 
-    private void addTileToCache(TextureTile tile) {
+    private static void addTileToCache(TextureTile tile) {
         TextureTile.getMemoryCache().add(tile.tileKey, tile);
     }
 

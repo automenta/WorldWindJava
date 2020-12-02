@@ -372,7 +372,7 @@ public class RenderableLayer extends AbstractLayer {
     }
 
     protected void doPreRender(DrawContext dc) {
-        this.doPreRender(dc, this.active());
+        RenderableLayer.doPreRender(dc, this.active());
     }
 
     protected void doPick(DrawContext dc, Point pickPoint) {
@@ -380,10 +380,10 @@ public class RenderableLayer extends AbstractLayer {
     }
 
     protected void doRender(DrawContext dc) {
-        this.doRender(dc, this.active());
+        RenderableLayer.doRender(dc, this.active());
     }
 
-    protected void doPreRender(DrawContext dc, Iterable<? extends Renderable> renderables) {
+    protected static void doPreRender(DrawContext dc, Iterable<? extends Renderable> renderables) {
         for (Renderable renderable : renderables) {
             try {
                 // If the caller has specified their own Iterable,
@@ -402,7 +402,7 @@ public class RenderableLayer extends AbstractLayer {
     protected void doPick(DrawContext dc, Iterable<? extends Renderable> renderables, Point pickPoint) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         this.pickSupport.clearPickList();
-        this.pickSupport.beginPicking(dc);
+        PickSupport.beginPicking(dc);
 
         try {
             for (Renderable renderable : renderables) {
@@ -439,11 +439,11 @@ public class RenderableLayer extends AbstractLayer {
             this.pickSupport.resolvePick(dc, pickPoint, this);
         }
         finally {
-            this.pickSupport.endPicking(dc);
+            PickSupport.endPicking(dc);
         }
     }
 
-    protected void doRender(DrawContext dc, Iterable<? extends Renderable> renderables) {
+    protected static void doRender(DrawContext dc, Iterable<? extends Renderable> renderables) {
         for (Renderable renderable : renderables) {
             try {
                 // If the caller has specified their own Iterable,

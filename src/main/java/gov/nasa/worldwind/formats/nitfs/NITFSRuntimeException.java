@@ -44,7 +44,7 @@ public final class NITFSRuntimeException extends RuntimeException {
 
     // TODO: Calling the logger from here causes the wrong method to be listed in the log record. Must call the
     // logger from the site with the problem and generating the exception.
-    private void log(String s) {
+    private static void log(String s) {
         Logging.logger().fine(s);
     }
 }

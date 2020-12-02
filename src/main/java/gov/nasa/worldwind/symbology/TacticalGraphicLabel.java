@@ -654,7 +654,7 @@ public class TacticalGraphicLabel {
                 this.orientationPosition.getLongitude(), 0);
             Vec4 orientationScreenPoint = dc.getView().project(orientationPlacePoint);
 
-            olbl.rotation = this.computeRotation(olbl.screenPlacePoint, orientationScreenPoint);
+            olbl.rotation = TacticalGraphicLabel.computeRotation(olbl.screenPlacePoint, orientationScreenPoint);
 
             // The orientation is reversed if the orientation point falls to the right of the screen point. Text is
             // never drawn upside down, so when the orientation is reversed the text flips vertically to keep the text
@@ -727,7 +727,7 @@ public class TacticalGraphicLabel {
      * @param orientationScreenPoint Orientation position, projected onto the screen.
      * @return The rotation angle to apply when drawing the label.
      */
-    protected Angle computeRotation(Vec4 screenPoint, Vec4 orientationScreenPoint) {
+    protected static Angle computeRotation(Vec4 screenPoint, Vec4 orientationScreenPoint) {
         // Determine delta between the orientation position and the label position
         double deltaX = screenPoint.x - orientationScreenPoint.x;
         double deltaY = screenPoint.y - orientationScreenPoint.y;
@@ -773,11 +773,11 @@ public class TacticalGraphicLabel {
 
         this.pickSupport.clearPickList();
         try {
-            this.pickSupport.beginPicking(dc);
+            PickSupport.beginPicking(dc);
             this.drawOrderedRenderable(dc, olbl);
         }
         finally {
-            this.pickSupport.endPicking(dc);
+            PickSupport.endPicking(dc);
             this.pickSupport.resolvePick(dc, pickPoint, this.pickLayer);
         }
     }
@@ -1050,7 +1050,7 @@ public class TacticalGraphicLabel {
 
         if (!dc.isPickingMode()) {
             // Apply the frame background color and opacity if we're in normal rendering mode.
-            Color color = this.computeBackgroundColor(this.getMaterial().getDiffuse());
+            Color color = TacticalGraphicLabel.computeBackgroundColor(this.getMaterial().getDiffuse());
             gl.glColor4ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue(),
                 (byte) (this.interiorOpacity < 1 ? (int) (this.interiorOpacity * 255 + 0.5) : 255));
         }
@@ -1075,7 +1075,7 @@ public class TacticalGraphicLabel {
      */
     protected void doDrawText(TextRenderer textRenderer, OrderedLabel olbl) {
         Color color = this.material.getDiffuse();
-        Color backgroundColor = this.computeBackgroundColor(color);
+        Color backgroundColor = TacticalGraphicLabel.computeBackgroundColor(color);
         float opacity = (float) this.getOpacity();
 
         int x = olbl.screenPoint.x;
@@ -1242,7 +1242,7 @@ public class TacticalGraphicLabel {
 
         // Compute bounds of the rotated rectangle, if there is a rotation angle.
         if (olbl.rotation != null && olbl.rotation.degrees != 0) {
-            screenRect = this.computeRotatedScreenExtent(screenRect, x, y, olbl.rotation);
+            screenRect = TacticalGraphicLabel.computeRotatedScreenExtent(screenRect, x, y, olbl.rotation);
         }
 
         return screenRect;
@@ -1257,7 +1257,7 @@ public class TacticalGraphicLabel {
      * @param rotation Rotation angle.
      * @return The smallest rectangle that completely contains {@code rect} when rotated by the specified angle.
      */
-    protected Rectangle computeRotatedScreenExtent(Rectangle rect, int x, int y, Angle rotation) {
+    protected static Rectangle computeRotatedScreenExtent(Rectangle rect, int x, int y, Angle rotation) {
         Rectangle r = new Rectangle(rect);
 
         // Translate the rectangle to the rotation point.
@@ -1310,7 +1310,7 @@ public class TacticalGraphicLabel {
      * @param color Label color.
      * @return A color that contrasts with {@code color}.
      */
-    protected Color computeBackgroundColor(Color color) {
+    protected static Color computeBackgroundColor(Color color) {
         float[] colorArray = new float[4];
         Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), colorArray);
 

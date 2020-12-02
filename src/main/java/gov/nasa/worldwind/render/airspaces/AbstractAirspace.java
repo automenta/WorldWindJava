@@ -692,11 +692,11 @@ public abstract class AbstractAirspace extends WWObjectImpl
 
         this.pickSupport.clearPickList();
         try {
-            this.pickSupport.beginPicking(dc);
+            PickSupport.beginPicking(dc);
             this.render(dc);
         }
         finally {
-            this.pickSupport.endPicking(dc);
+            PickSupport.endPicking(dc);
             this.pickSupport.resolvePick(dc, pickPoint, this.pickLayer);
         }
     }
@@ -901,7 +901,7 @@ public abstract class AbstractAirspace extends WWObjectImpl
         this.setAltitudes(altitudes[0] + elevDelta, altitudes[1] + elevDelta);
     }
 
-    protected Position computeReferencePosition(List<? extends LatLon> locations, double[] altitudes) {
+    protected static Position computeReferencePosition(List<? extends LatLon> locations, double[] altitudes) {
         if (locations == null) {
             String message = "nullValue.LocationsIsNull";
             Logging.logger().severe(message);
@@ -1129,11 +1129,11 @@ public abstract class AbstractAirspace extends WWObjectImpl
         return level;
     }
 
-    protected MemoryCache getGeometryCache() {
+    protected static MemoryCache getGeometryCache() {
         return WorldWind.cache(GEOMETRY_CACHE_KEY);
     }
 
-    protected boolean isExpired(DrawContext dc, AVList geom) {
+    protected static boolean isExpired(DrawContext dc, AVList geom) {
         if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);

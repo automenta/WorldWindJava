@@ -356,13 +356,13 @@ public class Annotations extends ApplicationTemplate {
                     if (dc.isPickingMode())
                         return;
 
-                    TextRenderer textRenderer = this.getTextRenderer(dc, this.font);
+                    TextRenderer textRenderer = AbstractAnnotation.getTextRenderer(dc, this.font);
 
                     // Draw text centered just above the screen point - use annotation's colors
                     String text = getText().split("\n")[0]; // First line only
                     int textWidth = (int) textRenderer.getBounds(text).getWidth();
-                    Color textColor = this.modulateColorOpacity(this.getAttributes().getTextColor(), opacity);
-                    Color backColor = this.modulateColorOpacity(this.getAttributes().getBackgroundColor(), opacity);
+                    Color textColor = AbstractAnnotation.modulateColorOpacity(this.getAttributes().getTextColor(), opacity);
+                    Color backColor = AbstractAnnotation.modulateColorOpacity(this.getAttributes().getBackgroundColor(), opacity);
                     textRenderer.begin3DRendering();
                     textRenderer.setColor(backColor);
                     textRenderer.draw(text, -textWidth / 2 + 1, 12 - 1);   // Background 'shadow'
@@ -372,7 +372,7 @@ public class Annotations extends ApplicationTemplate {
 
                     // Draw little square around screen point - use annotation's color
                     Color borderColor = this.getAttributes().getBorderColor();
-                    this.applyColor(dc, borderColor, opacity, false);
+                    AbstractAnnotation.applyColor(dc, borderColor, opacity, false);
                     // Draw 3x3 shape from its bottom left corner
                     GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
                     gl.glDisable(GL.GL_LINE_SMOOTH);
@@ -418,7 +418,7 @@ public class Annotations extends ApplicationTemplate {
                     // Draw second light gray frame outside draw rectangle
                     // Refers to scaleFactor, alphaFactor, drawRectangle and freeRectangle which have been
                     // set during drawing.
-                    this.applyColor(dc, Color.BLACK, 0.5 * opacity, true);
+                    AbstractAnnotation.applyColor(dc, Color.BLACK, 0.5 * opacity, true);
                     // Translate to draw area bottom left corner, 3 pixels outside
                     GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
                     gl.glTranslated(insetBounds.x - 3, insetBounds.y - 3, 0);

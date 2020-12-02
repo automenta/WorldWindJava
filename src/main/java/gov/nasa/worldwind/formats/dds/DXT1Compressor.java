@@ -64,7 +64,7 @@ public class DXT1Compressor implements DXTCompressor {
         // four color palette. Otherwise, we use the three color palette (with the fourth color as transparent black).
 
         ColorBlock4x4 colorBlock = new ColorBlock4x4();
-        ColorBlockExtractor colorBlockExtractor = this.getColorBlockExtractor(image);
+        ColorBlockExtractor colorBlockExtractor = DXT1Compressor.getColorBlockExtractor(image);
 
         BlockDXT1 dxt1Block = new BlockDXT1();
         BlockDXT1Compressor dxt1Compressor = new BlockDXT1Compressor();
@@ -94,7 +94,7 @@ public class DXT1Compressor implements DXTCompressor {
         }
     }
 
-    protected boolean blockHasDXT1Alpha(ColorBlock4x4 colorBlock, int alphaThreshold) {
+    protected static boolean blockHasDXT1Alpha(ColorBlock4x4 colorBlock, int alphaThreshold) {
         // DXT1 provides support for binary alpha. Therefore we determine treat a color block as needing alpha support
         // if any of the alpha values are less than a certain threshold.
 
@@ -107,7 +107,7 @@ public class DXT1Compressor implements DXTCompressor {
         return false;
     }
 
-    protected ColorBlockExtractor getColorBlockExtractor(BufferedImage image) {
+    protected static ColorBlockExtractor getColorBlockExtractor(BufferedImage image) {
         return new BasicColorBlockExtractor(image);
     }
 }

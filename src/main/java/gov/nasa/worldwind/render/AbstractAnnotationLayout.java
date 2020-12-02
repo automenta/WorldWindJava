@@ -61,7 +61,7 @@ public abstract class AbstractAnnotationLayout implements AnnotationLayoutManage
         this.stackHandler.pop(gl);
     }
 
-    protected Dimension getAnnotationSize(DrawContext dc, Annotation annotation) {
+    protected static Dimension getAnnotationSize(DrawContext dc, Annotation annotation) {
         try {
             return annotation.getPreferredSize(dc);
         }

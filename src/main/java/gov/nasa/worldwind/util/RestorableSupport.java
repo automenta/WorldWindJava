@@ -376,7 +376,7 @@ public class RestorableSupport {
 
             // If the result is a NodeList, return an array of StateObjects for each Element node in that list.
             NodeList nodeList = (NodeList) result;
-            List<StateObject> stateObjectList = new ArrayList<>();
+            Collection<StateObject> stateObjectList = new ArrayList<>();
             for (int i = 0; i < nodeList.getLength(); i++) {
                 Node node = nodeList.item(i);
                 if (node instanceof Element) {
@@ -395,7 +395,7 @@ public class RestorableSupport {
     protected StateObject[] extractStateObjects(Node context) {
         NodeList nodeList = (context != null ? context : getDocumentElement()).getChildNodes();
 
-        List<StateObject> stateObjectList = new ArrayList<>();
+        Collection<StateObject> stateObjectList = new ArrayList<>();
         if (nodeList != null) {
             for (int i = 0; i < nodeList.getLength(); i++) {
                 Node node = nodeList.item(i);
@@ -412,7 +412,7 @@ public class RestorableSupport {
         return stateObjectArray;
     }
 
-    protected StateObject createStateObject(Element context, String name, String value) {
+    protected StateObject createStateObject(Node context, String name, String value) {
         return createStateObject(context, name, value, false);
     }
 

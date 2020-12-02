@@ -54,7 +54,7 @@ public class TextRendererCache implements Disposable {
         TextRenderer oldTextRenderer = this.textRendererMap.put(key, textRenderer);
 
         if (oldTextRenderer != null) {
-            this.dispose(oldTextRenderer);
+            TextRendererCache.dispose(oldTextRenderer);
         }
     }
 
@@ -68,7 +68,7 @@ public class TextRendererCache implements Disposable {
         TextRenderer textRenderer = this.textRendererMap.remove(key);
 
         if (textRenderer != null) {
-            this.dispose(textRenderer);
+            TextRendererCache.dispose(textRenderer);
         }
     }
 
@@ -87,7 +87,7 @@ public class TextRendererCache implements Disposable {
         this.textRendererMap.clear();
     }
 
-    protected void dispose(TextRenderer textRenderer) {
+    protected static void dispose(TextRenderer textRenderer) {
         if (textRenderer != null) {
             textRenderer.dispose();
         }
@@ -96,7 +96,7 @@ public class TextRendererCache implements Disposable {
     protected void disposeAll() {
         for (Map.Entry<Object, TextRenderer> e : this.textRendererMap.entrySet()) {
             if (e.getValue() != null) {
-                this.dispose(e.getValue());
+                TextRendererCache.dispose(e.getValue());
             }
         }
     }

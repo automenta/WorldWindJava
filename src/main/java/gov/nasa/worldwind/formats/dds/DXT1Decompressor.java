@@ -39,10 +39,10 @@ public class DXT1Decompressor implements DXTDecompressor {
 
         // TODO check buffer's remaining with image size
 
-        return this.decodeDxt1Buffer(buffer, width, height);
+        return DXT1Decompressor.decodeDxt1Buffer(buffer, width, height);
     }
 
-    protected BufferedImage decodeDxt1Buffer(ByteBuffer buffer, int width, int height)
+    protected static BufferedImage decodeDxt1Buffer(ByteBuffer buffer, int width, int height)
         throws IllegalArgumentException {
         if (null == buffer) {
             String message = Logging.getMessage("nullValue.ByteBufferIsNull");

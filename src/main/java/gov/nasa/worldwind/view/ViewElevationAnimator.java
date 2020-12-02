@@ -125,7 +125,7 @@ public class ViewElevationAnimator extends DoubleAnimator {
 
         if (this.useMidZoom) {
             double value;
-            zoomInterpolant = this.zoomInterpolant(interpolant, ZOOM_START, ZOOM_STOP, MAX_SMOOTHING);
+            zoomInterpolant = ViewElevationAnimator.zoomInterpolant(interpolant, ZOOM_START, ZOOM_STOP, MAX_SMOOTHING);
             if (interpolant <= 0.5) {
                 value = nextDouble(zoomInterpolant, this.begin, this.end);
             }
@@ -140,7 +140,7 @@ public class ViewElevationAnimator extends DoubleAnimator {
         }
     }
 
-    private double zoomInterpolant(double interpolant, double startInterpolant, double stopInterpolant,
+    private static double zoomInterpolant(double interpolant, double startInterpolant, double stopInterpolant,
         int maxSmoothing) {
         // Map interpolant in to range [start, stop].
         double normalizedInterpolant = AnimationSupport.interpolantNormalized(
@@ -223,7 +223,7 @@ public class ViewElevationAnimator extends DoubleAnimator {
      * @param midZoom   the elevation at the middle of the animation
      * @return true if it is appropriate to use the midZoom value.
      */
-    protected boolean useMidZoom(double beginZoom, double endZoom, double midZoom) {
+    protected static boolean useMidZoom(double beginZoom, double endZoom, double midZoom) {
         double a = Math.abs(endZoom - beginZoom);
         double b = Math.abs(midZoom - Math.max(beginZoom, endZoom));
         return a < b;

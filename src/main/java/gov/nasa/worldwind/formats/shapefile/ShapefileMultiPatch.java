@@ -257,7 +257,7 @@ public class ShapefileMultiPatch { //extends ShapefileRenderable implements Orde
 //            if (shapeNo>82000 && shapeNo<92000) {
                 //if (shapeNo>92000 && shapeNo<102000) {
                 //if (shapeNo>92000 && shapeNo<102000) {
-                if (this.mustAssembleRecord(shapefileRecord)) {
+                if (ShapefileMultiPatch.mustAssembleRecord(shapefileRecord)) {
                     this.assembleRecord(shapefileRecord);
                     shapeNo++;
                 }
@@ -268,7 +268,7 @@ public class ShapefileMultiPatch { //extends ShapefileRenderable implements Orde
         this.records.trimToSize(); // Reduce memory overhead from unused ArrayList capacity.
     }
 
-    protected boolean mustAssembleRecord(ShapefileRecord shapefileRecord) {
+    protected static boolean mustAssembleRecord(ShapefileRecord shapefileRecord) {
         double[] bounds = shapefileRecord.getBoundingRectangle();
         Sector aoi = new Sector(Angle.fromDegreesLatitude(42.36), Angle.fromDegreesLatitude(42.37),
             Angle.fromDegreesLongitude(-71.075), Angle.fromDegreesLongitude(-71.055));
@@ -304,14 +304,14 @@ public class ShapefileMultiPatch { //extends ShapefileRenderable implements Orde
     }
 
     protected void assembleRecord(ShapefileRecord shapefileRecord) {
-        Record record = this.createRecord(shapefileRecord);
+        Record record = ShapefileMultiPatch.createRecord(shapefileRecord);
         this.addRecord(shapefileRecord, record);
 
 //        this.rootTile.records.add(record);
 //        record.tile = this.rootTile;
     }
 
-    protected ShapefileMultiPatch.Record createRecord(ShapefileRecord shapefileRecord) {
+    protected static ShapefileMultiPatch.Record createRecord(ShapefileRecord shapefileRecord) {
         return new Record(shapefileRecord);
     }
 

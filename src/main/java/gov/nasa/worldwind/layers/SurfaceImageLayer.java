@@ -60,7 +60,7 @@ public class SurfaceImageLayer extends RenderableLayer {
      */
     public void addImage(final String imagePath) {
         DataRaster raster = this.openDataRaster(imagePath, null);
-        final BufferedImage image = this.getBufferedImage(raster);
+        final BufferedImage image = SurfaceImageLayer.getBufferedImage(raster);
 
         if (null != raster && image != null) {
             addImage(imagePath, image, raster.getSector());
@@ -72,7 +72,7 @@ public class SurfaceImageLayer extends RenderableLayer {
         }
     }
 
-    protected BufferedImage getBufferedImage(DataRaster raster) {
+    protected static BufferedImage getBufferedImage(DataRaster raster) {
         if (null == raster)
             return null;
 
@@ -177,7 +177,7 @@ public class SurfaceImageLayer extends RenderableLayer {
             params.set(AVKey.SECTOR, sector);
 
         DataRaster raster = this.openDataRaster(imagePath, params);
-        final BufferedImage image = this.getBufferedImage(raster);
+        final BufferedImage image = SurfaceImageLayer.getBufferedImage(raster);
 
         if (null != raster && image != null) {
             Sector rasterSector = raster.getSector();
@@ -267,7 +267,7 @@ public class SurfaceImageLayer extends RenderableLayer {
         }
 
         DataRaster raster = this.openDataRaster(imagePath, params);
-        final BufferedImage image = this.getBufferedImage(raster);
+        final BufferedImage image = SurfaceImageLayer.getBufferedImage(raster);
 
         if (null != raster && image != null) {
             this.addImage(imagePath, image, corners);

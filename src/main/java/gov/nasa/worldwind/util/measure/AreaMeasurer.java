@@ -226,7 +226,7 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
 
     // Compute triangle area in a sinusoidal projection centered at the triangle center.
     // Note sinusoidal projection is equivalent or equal erea.
-    protected double computeTriangleProjectedArea(Globe globe, float[] verts, int a, int b, int c) {
+    protected static double computeTriangleProjectedArea(Globe globe, float[] verts, int a, int b, int c) {
         // http://www.mathopenref.com/coordtrianglearea.html
         double area = Math.abs(verts[a] * (verts[b + 1] - verts[c + 1])
             + verts[b] * (verts[c + 1] - verts[a + 1])

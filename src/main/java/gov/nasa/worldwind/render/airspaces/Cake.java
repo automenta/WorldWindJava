@@ -117,7 +117,7 @@ public class Cake extends AbstractAirspace {
             locations.add(l.getCenter());
         }
 
-        return this.computeReferencePosition(locations, this.getAltitudes());
+        return AbstractAirspace.computeReferencePosition(locations, this.getAltitudes());
     }
 
     protected Extent computeExtent(Globe globe, double verticalExaggeration) {
@@ -130,7 +130,7 @@ public class Cake extends AbstractAirspace {
             return cakeLayers.get(0).computeExtent(globe, verticalExaggeration);
         }
         else {
-            List<Box> extents = new ArrayList<>();
+            Collection<Box> extents = new ArrayList<>();
 
             for (Layer layer : cakeLayers) {
                 extents.add(layer.computeExtent(globe, verticalExaggeration));
@@ -264,7 +264,7 @@ public class Cake extends AbstractAirspace {
         if (lsos == null || lsos.length == 0)
             return;
 
-        List<Layer> layerList = new ArrayList<>(lsos.length);
+        Collection<Layer> layerList = new ArrayList<>(lsos.length);
 
         for (RestorableSupport.StateObject lso : lsos) {
             if (lso != null) {

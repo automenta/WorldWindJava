@@ -39,9 +39,9 @@ public class RandomShapeAttributes {
         this.airspaceAttrs = new AirspaceAttributes[shapeColors.length];
 
         for (int i = 0; i < shapeColors.length; i++) {
-            this.pointAttrs[i] = this.createPointAttributes(shapeColors[i]);
-            this.shapeAttrs[i] = this.createShapeAttributes(shapeColors[i]);
-            this.airspaceAttrs[i] = this.createAirspaceAttributes(shapeColors[i]);
+            this.pointAttrs[i] = RandomShapeAttributes.createPointAttributes(shapeColors[i]);
+            this.shapeAttrs[i] = RandomShapeAttributes.createShapeAttributes(shapeColors[i]);
+            this.airspaceAttrs[i] = RandomShapeAttributes.createAirspaceAttributes(shapeColors[i]);
         }
     }
 
@@ -63,7 +63,7 @@ public class RandomShapeAttributes {
         return this.airspaceAttrs[this.attrIndex % this.airspaceAttrs.length];
     }
 
-    protected PointPlacemarkAttributes createPointAttributes(Color color) {
+    protected static PointPlacemarkAttributes createPointAttributes(Color color) {
         PointPlacemarkAttributes attrs = new PointPlacemarkAttributes();
         attrs.setUsePointAsDefaultImage(true);
         attrs.setLineMaterial(new Material(color));
@@ -71,7 +71,7 @@ public class RandomShapeAttributes {
         return attrs;
     }
 
-    protected ShapeAttributes createShapeAttributes(Color color) {
+    protected static ShapeAttributes createShapeAttributes(Color color) {
         ShapeAttributes attrs = new BasicShapeAttributes();
         attrs.setInteriorMaterial(new Material(color));
         attrs.setOutlineMaterial(new Material(WWUtil.makeColorBrighter(color)));
@@ -80,7 +80,7 @@ public class RandomShapeAttributes {
         return attrs;
     }
 
-    protected AirspaceAttributes createAirspaceAttributes(Color color) {
+    protected static AirspaceAttributes createAirspaceAttributes(Color color) {
         AirspaceAttributes attrs = new BasicAirspaceAttributes();
         attrs.setInteriorMaterial(new Material(color));
         attrs.setOutlineMaterial(new Material(WWUtil.makeColorBrighter(color)));

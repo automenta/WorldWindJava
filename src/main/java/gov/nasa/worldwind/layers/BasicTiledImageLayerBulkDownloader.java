@@ -90,7 +90,7 @@ public class BasicTiledImageLayerBulkDownloader extends BulkRetrievalThread {
                     continue;
 
                 int div = this.computeRegionDivisions(this.sector, levelNumber, MAX_TILE_COUNT_PER_REGION);
-                Iterator<Sector> regionsIterator = this.getRegionIterator(this.sector, div);
+                Iterator<Sector> regionsIterator = BasicTiledImageLayerBulkDownloader.getRegionIterator(this.sector, div);
 
                 Sector region;
                 while (regionsIterator.hasNext()) {
@@ -260,7 +260,7 @@ public class BasicTiledImageLayerBulkDownloader extends BulkRetrievalThread {
         return (int) Math.ceil(Math.sqrt((double) tileCount / maxCount));
     }
 
-    protected Sector[] computeRandomRegions(Sector sector, int div, int numRegions) {
+    protected static Sector[] computeRandomRegions(Sector sector, int div, int numRegions) {
         if (numRegions > div * div)
             return sector.subdivide(div);
 
@@ -283,7 +283,7 @@ public class BasicTiledImageLayerBulkDownloader extends BulkRetrievalThread {
         return regions.toArray(new Sector[numRegions]);
     }
 
-    protected Iterator<Sector> getRegionIterator(final Sector sector, final int div) {
+    protected static Iterator<Sector> getRegionIterator(final Sector sector, final int div) {
         final double dLat = sector.getDeltaLat().degrees / div;
         final double dLon = sector.getDeltaLon().degrees / div;
 
@@ -343,7 +343,7 @@ public class BasicTiledImageLayerBulkDownloader extends BulkRetrievalThread {
 
         URL url = this.fileStore.findFile(tile.getPath(), false);
 
-        return url != null && !this.layer.isTextureFileExpired(tile, url, fileStore);
+        return url != null && !BasicTiledImageLayer.isTextureFileExpired(tile, url, fileStore);
     }
 
     protected long estimateAverageTileSize() {
@@ -383,7 +383,7 @@ public class BasicTiledImageLayerBulkDownloader extends BulkRetrievalThread {
         return averageTileSize;
     }
 
-    protected long computeAverageTileSize(File dir) {
+    protected static long computeAverageTileSize(File dir) {
         long size = 0;
         int count = 0;
 

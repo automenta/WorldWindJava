@@ -36,7 +36,7 @@ public class Ellipsoid extends RigidShape {
      * Construct a default ellipsoid with centerPosition ZERO and radii all equal to one.
      */
     public Ellipsoid() {
-        this.setUpGeometryCache();
+        RigidShape.setUpGeometryCache();
     }
 
     /**
@@ -66,7 +66,7 @@ public class Ellipsoid extends RigidShape {
         this.verticalRadius = verticalRadius;
         this.eastWestRadius = eastWestRadius;
 
-        this.setUpGeometryCache();
+        RigidShape.setUpGeometryCache();
     }
 
     /**
@@ -103,7 +103,7 @@ public class Ellipsoid extends RigidShape {
         this.tilt = tilt;
         this.roll = roll;
 
-        this.setUpGeometryCache();
+        RigidShape.setUpGeometryCache();
     }
 
     public int getSubdivisions() {
@@ -200,13 +200,13 @@ public class Ellipsoid extends RigidShape {
     protected void makeGeometry(ShapeData shapeData) {
         // attempt to retrieve a cached unit ellipsoid with the same number of subdivisions
         Object cacheKey = new Geometry.CacheKey(this.getClass(), "Sphere", this.subdivisions);
-        Geometry geom = (Geometry) this.getGeometryCache().getObject(cacheKey);
+        Geometry geom = (Geometry) RigidShape.getGeometryCache().getObject(cacheKey);
         if (geom == null) {
             // if none exists, create a new one
             shapeData.addMesh(0, new Geometry());
             makeUnitSphere(this.subdivisions, shapeData.getMesh(0));
             //this.restart(dc, geom);
-            this.getGeometryCache().add(cacheKey, shapeData.getMesh(0));
+            RigidShape.getGeometryCache().add(cacheKey, shapeData.getMesh(0));
         }
         else {
             // otherwise, just use the one from the cache

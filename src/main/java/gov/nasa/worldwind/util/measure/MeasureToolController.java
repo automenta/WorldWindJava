@@ -442,14 +442,14 @@ public class MeasureToolController extends MouseAdapter
         }
         else {
             if (this.measureTool.isRegularShape()) {
-                if (this.measureTool.isCornerControl(controlPoint)) {
+                if (MeasureTool.isCornerControl(controlPoint)) {
                     Angle azimuth = LatLon.greatCircleAzimuth(controlPoint.getPosition(),
                         this.measureTool.getCenterPosition());
                     // Account for view heading in cursor selection
                     azimuth = azimuth.subtract(this.measureTool.getWwd().view().getHeading());
                     setComponentCursor(selectResizeCursor(azimuth));
                 }
-                else if (this.measureTool.isCenterControl(controlPoint)) {
+                else if (MeasureTool.isCenterControl(controlPoint)) {
                     setComponentCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
                 }
             }
@@ -460,7 +460,7 @@ public class MeasureToolController extends MouseAdapter
         }
     }
 
-    protected Cursor selectResizeCursor(Angle azimuth) {
+    protected static Cursor selectResizeCursor(Angle azimuth) {
         while (azimuth.degrees < 0) {
             azimuth = azimuth.addDegrees(360);
         }

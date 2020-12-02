@@ -267,7 +267,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
     protected void forceTextureLoad(TextureTile tile) {
         final URL textureURL = this.getDataFileStore().findFile(tile.getPath(), true);
 
-        if (textureURL != null && !this.isTextureFileExpired(tile, textureURL, this.getDataFileStore())) {
+        if (textureURL != null && !BasicTiledImageLayer.isTextureFileExpired(tile, textureURL, this.getDataFileStore())) {
             this.loadTexture(tile, textureURL);
         }
     }
@@ -285,7 +285,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
         return new RequestTask(tile, this);
     }
 
-    protected boolean isTextureFileExpired(TextureTile tile, URL textureURL, FileStore fileStore) {
+    protected static boolean isTextureFileExpired(TextureTile tile, URL textureURL, FileStore fileStore) {
         if (!WWIO.isFileOutOfDate(textureURL, tile.level.getExpiryTime()))
             return false;
 
@@ -308,7 +308,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
 
         tile.setTextureData(textureData);
         if (tile.getLevelNumber() != 0 || !this.isRetainLevelZeroTiles())
-            this.addTileToCache(tile);
+            BasicTiledImageLayer.addTileToCache(tile);
 
         return true;
     }
@@ -329,7 +329,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
      *                      and false to read the texture data without generating or using mip-maps.
      * @return TextureData the texture data from the specified URL, in the specified format and with mip-maps.
      */
-    protected TextureData readTexture(URL url, String textureFormat, boolean useMipMaps) {
+    protected static TextureData readTexture(URL url, String textureFormat, boolean useMipMaps) {
         try {
             // If the caller has enabled texture compression, and the texture data is not a DDS file, then use read the
             // texture data and convert it to DDS.
@@ -360,7 +360,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
     // *** Bulk download ***
     // *** Bulk download ***
 
-    protected void addTileToCache(TextureTile tile) {
+    protected static void addTileToCache(TextureTile tile) {
         TextureTile.getMemoryCache().add(tile.tileKey, tile);
     }
 
@@ -903,7 +903,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
 
             final URL textureURL = store.findFile(tile.getPath(), false);
             if (textureURL != null)
-                if (!this.layer.isTextureFileExpired(tile, textureURL, store)) {
+                if (!BasicTiledImageLayer.isTextureFileExpired(tile, textureURL, store)) {
                     if (this.layer.loadTexture(tile, textureURL)) {
                         layer.getLevels().has(tile);
                         this.layer.firePropertyChange(AVKey.LAYER, null, this);

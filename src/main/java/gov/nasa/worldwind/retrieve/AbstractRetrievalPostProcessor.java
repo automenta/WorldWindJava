@@ -174,8 +174,8 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
         if (this.isWMSException())
             this.handleWMSExceptionContent();
 
-        else if (this.isPrimaryContentType("text", this.getRetriever().getContentType()))
-            this.logTextBuffer(this.getRetriever().getBuffer()); // the buffer might contain error info, so log it
+        else if (AbstractRetrievalPostProcessor.isPrimaryContentType("text", this.getRetriever().getContentType()))
+            AbstractRetrievalPostProcessor.logTextBuffer(this.getRetriever().getBuffer()); // the buffer might contain error info, so log it
     }
 
     /**
@@ -271,7 +271,7 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
         return this;
     }
 
-    protected boolean isPrimaryContentType(String typeOfContent, String contentType) {
+    protected static boolean isPrimaryContentType(String typeOfContent, String contentType) {
         if (WWUtil.isEmpty(contentType) || WWUtil.isEmpty(typeOfContent))
             return false;
 
@@ -316,13 +316,13 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
         if (contentType.contains("zip"))
             return this.handleZipContent();
 
-        if (this.isPrimaryContentType("text", contentType))
+        if (AbstractRetrievalPostProcessor.isPrimaryContentType("text", contentType))
             return this.handleTextContent();
 
-        if (this.isPrimaryContentType("image", contentType))
+        if (AbstractRetrievalPostProcessor.isPrimaryContentType("image", contentType))
             return this.handleImageContent();
 
-        if (this.isPrimaryContentType("application", contentType))
+        if (AbstractRetrievalPostProcessor.isPrimaryContentType("application", contentType))
             return this.handleApplicationContent();
 
         return this.handleUnknownContentType();
@@ -377,7 +377,7 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
         if (contentType.contains("html"))
             return this.handleHTMLContent();
 
-        this.logTextBuffer(this.getRetriever().getBuffer());
+        AbstractRetrievalPostProcessor.logTextBuffer(this.getRetriever().getBuffer());
 
         return null;
     }
@@ -390,7 +390,7 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
      * @throws IOException if an IO error occurs while processing the data.
      */
     protected ByteBuffer handleXMLContent() throws IOException {
-        this.logTextBuffer(this.getRetriever().getBuffer());
+        AbstractRetrievalPostProcessor.logTextBuffer(this.getRetriever().getBuffer());
 
         return null;
     }
@@ -402,7 +402,7 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
      * @return a buffer containing the retrieved HTML.
      */
     protected ByteBuffer handleHTMLContent() {
-        this.logTextBuffer(this.getRetriever().getBuffer());
+        AbstractRetrievalPostProcessor.logTextBuffer(this.getRetriever().getBuffer());
 
         return null;
     }
@@ -413,7 +413,7 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
      *
      * @param buffer the content to log. The content is assumed to be of type "text".
      */
-    protected void logTextBuffer(ByteBuffer buffer) {
+    protected static void logTextBuffer(ByteBuffer buffer) {
         if (buffer == null || !buffer.hasRemaining())
             return;
 

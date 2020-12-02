@@ -62,7 +62,7 @@ public class FileChooserPanel extends JPanel {
         return getValueAsFile(this.fileField.getValue());
     }
 
-    private File getValueAsFile(Object value) {
+    private static File getValueAsFile(Object value) {
         if (value != null) {
             if (value instanceof File)
                 return (File) value;

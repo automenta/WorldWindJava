@@ -656,11 +656,11 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
 
         this.pickSupport.clearPickList();
         try {
-            this.pickSupport.beginPicking(dc);
+            PickSupport.beginPicking(dc);
             this.drawOrderedRenderable(dc, osym);
         }
         finally {
-            this.pickSupport.endPicking(dc);
+            PickSupport.endPicking(dc);
             this.pickSupport.resolvePick(dc, pickPoint, this.pickLayer);
         }
     }
@@ -846,7 +846,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             // Set the unresolved flag false. addGlyph will set it to true if there are still unresolved resources.
             this.unresolvedGlyph = false;
 
-            if (this.mustDrawIcon(dc))
+            if (AbstractTacticalSymbol.mustDrawIcon(dc))
                 this.layoutIcon(dc, iconSource, osym);
 
             if (mustDrawModifiers)
@@ -1163,7 +1163,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             // Compute where the label rectangle falls in the icon layout before scaling is applied. This is necessary
             // to layout graphic modifiers such as the ground direction of movement indicator that are scaled down with
             // the icon, but should not overlap text which is not scaled with the icon.
-            Rectangle scaledRect = this.computeScaledRect(rect, rect.getSize(), 1 / osym.sx, 1 / osym.sy);
+            Rectangle scaledRect = AbstractTacticalSymbol.computeScaledRect(rect, rect.getSize(), 1 / osym.sx, 1 / osym.sy);
             if (osym.layoutRect != null)
                 osym.layoutRect.add(scaledRect);
             else
@@ -1354,8 +1354,8 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
      */
     protected void computeScaledBounds(DrawContext dc, AVList modifiers, OrderedSymbol osym) {
         Dimension maxDimension = this.computeMinTextLayout(dc, modifiers);
-        osym.iconRectScaled = this.computeScaledRect(this.iconRect, maxDimension, osym.sx, osym.sy);
-        osym.layoutRectScaled = this.computeScaledRect(osym.layoutRect, maxDimension, osym.sx, osym.sy);
+        osym.iconRectScaled = AbstractTacticalSymbol.computeScaledRect(this.iconRect, maxDimension, osym.sx, osym.sy);
+        osym.layoutRectScaled = AbstractTacticalSymbol.computeScaledRect(osym.layoutRect, maxDimension, osym.sx, osym.sy);
     }
 
     /**
@@ -1389,7 +1389,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         return DEFAULT_LABEL_LINES;
     }
 
-    protected Rectangle computeScaledRect(Rectangle rect, Dimension maxDimension, double scaleX, double scaleY) {
+    protected static Rectangle computeScaledRect(Rectangle rect, Dimension maxDimension, double scaleX, double scaleY) {
         double x = rect.getX() * scaleX;
         double y = rect.getY() * scaleY;
         double width = rect.getWidth() * scaleX;
@@ -1439,7 +1439,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
      *
      * @return Maximum size of a symbol, in pixels.
      */
-    protected int getMaxSymbolDimension() {
+    protected static int getMaxSymbolDimension() {
         return MAX_SYMBOL_DIMENSION;
     }
 
@@ -1653,7 +1653,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             gl.glScaled(osym.sx, osym.sy, 1.0d);
             gl.glTranslated(osym.dx, osym.dy, 0.0d);
 
-            if (this.mustDrawIcon(dc))
+            if (AbstractTacticalSymbol.mustDrawIcon(dc))
                 this.drawIcon(dc);
 
             if (this.mustDrawGraphicModifiers(dc))
@@ -1679,7 +1679,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     }
 
     @SuppressWarnings("UnusedParameters")
-    protected boolean mustDrawIcon(DrawContext dc) {
+    protected static boolean mustDrawIcon(DrawContext dc) {
         return true;
     }
 

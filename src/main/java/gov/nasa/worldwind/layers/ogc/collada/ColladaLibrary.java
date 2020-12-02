@@ -56,7 +56,7 @@ public class ColladaLibrary<T> extends ColladaAbstractObject {
     public Object parse(XMLEventParserContext context, XMLEvent event, Object... args) throws XMLStreamException {
         if (event.isStartDocument()) {
             String name = event.asStartElement().getName().getLocalPart();
-            this.elementName = this.getElementName(name);
+            this.elementName = ColladaLibrary.getElementName(name);
         }
         return super.parse(context, event, args);
     }
@@ -75,7 +75,7 @@ public class ColladaLibrary<T> extends ColladaAbstractObject {
         }
     }
 
-    protected String getElementName(String libraryName) {
+    protected static String getElementName(String libraryName) {
         if ("library_nodes".equals(libraryName))
             return "node";
         else if ("library_effects".equals(libraryName))

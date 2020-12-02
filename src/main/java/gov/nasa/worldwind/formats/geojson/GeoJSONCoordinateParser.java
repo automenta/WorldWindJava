@@ -87,7 +87,7 @@ public class GeoJSONCoordinateParser extends GeoJSONEventParser {
             }
 
             if (this.posBuffer == null)
-                this.posBuffer = this.allocatePositionBuffer(INITIAL_POSITION_BUFFER_CAPACITY);
+                this.posBuffer = GeoJSONCoordinateParser.allocatePositionBuffer(INITIAL_POSITION_BUFFER_CAPACITY);
             else if (this.posBuffer.remaining() == 0)
                 this.expandPositionBuffer(1 + this.posBuffer.capacity());
 
@@ -105,7 +105,7 @@ public class GeoJSONCoordinateParser extends GeoJSONEventParser {
         return new GeoJSONPositionArray(positionSize, this.posBuffer, this.startPos, this.endPos);
     }
 
-    protected DoubleBuffer allocatePositionBuffer(int capacity) {
+    protected static DoubleBuffer allocatePositionBuffer(int capacity) {
         return Buffers.newDirectDoubleBuffer(capacity);
     }
 
@@ -123,7 +123,7 @@ public class GeoJSONCoordinateParser extends GeoJSONEventParser {
         }
 
         this.posBuffer.flip();
-        this.posBuffer = this.allocatePositionBuffer(newCapacity).put(this.posBuffer);
+        this.posBuffer = GeoJSONCoordinateParser.allocatePositionBuffer(newCapacity).put(this.posBuffer);
     }
 
     //**************************************************************//
@@ -240,10 +240,10 @@ public class GeoJSONCoordinateParser extends GeoJSONEventParser {
             list.add(o);
         }
 
-        return this.resolveArrayOfArrays(list);
+        return GeoJSONCoordinateParser.resolveArrayOfArrays(list);
     }
 
-    protected Object resolveArrayOfArrays(List<?> list) {
+    protected static Object resolveArrayOfArrays(List<?> list) {
         if (list == null || list.isEmpty())
             return null;
 

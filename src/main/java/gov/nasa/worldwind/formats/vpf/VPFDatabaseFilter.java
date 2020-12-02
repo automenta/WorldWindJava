@@ -35,7 +35,7 @@ public class VPFDatabaseFilter implements FileFilter {
         }
 
         // First check the file path, optionally returning false if the path cannot be accepted for any reason.
-        if (!this.acceptFilePath(file))
+        if (!VPFDatabaseFilter.acceptFilePath(file))
             return false;
 
         try {
@@ -49,7 +49,7 @@ public class VPFDatabaseFilter implements FileFilter {
         return false;
     }
 
-    protected boolean acceptFilePath(File file) {
+    protected static boolean acceptFilePath(File file) {
         if (file == null) {
             String msg = Logging.getMessage("nullValue.FileIsNull");
             Logging.logger().severe(msg);

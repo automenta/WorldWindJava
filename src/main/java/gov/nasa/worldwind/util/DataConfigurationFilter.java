@@ -42,7 +42,7 @@ public class DataConfigurationFilter implements FileFilter, FileStoreFilter {
         }
 
         // First check the file path, optionally returning false if the path cannot be accepted for any reason.
-        if (!this.acceptFilePath(file.getPath()))
+        if (!DataConfigurationFilter.acceptFilePath(file.getPath()))
             return false;
 
         Document doc = null;
@@ -168,7 +168,7 @@ public class DataConfigurationFilter implements FileFilter, FileStoreFilter {
             throw new IllegalArgumentException(message);
         }
 
-        return this.accept(doc.getDocumentElement());
+        return DataConfigurationFilter.accept(doc.getDocumentElement());
     }
 
     /**
@@ -178,7 +178,7 @@ public class DataConfigurationFilter implements FileFilter, FileStoreFilter {
      * @return true if the Document should be accepted; false otherwise.
      * @throws IllegalArgumentException if the document is null.
      */
-    public boolean accept(Element domElement) {
+    public static boolean accept(Element domElement) {
         if (domElement == null) {
             String message = Logging.getMessage("nullValue.DocumentIsNull");
             Logging.logger().severe(message);
@@ -188,7 +188,7 @@ public class DataConfigurationFilter implements FileFilter, FileStoreFilter {
         return DataConfigurationUtils.isDataConfig(domElement);
     }
 
-    protected boolean acceptFilePath(String filePath) {
+    protected static boolean acceptFilePath(String filePath) {
         if (filePath == null) {
             String message = Logging.getMessage("nullValue.FilePathIsNull");
             Logging.logger().severe(message);

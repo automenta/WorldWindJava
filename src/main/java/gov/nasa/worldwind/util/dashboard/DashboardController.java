@@ -63,7 +63,7 @@ public class DashboardController implements MouseListener, Disposable {
         }
     }
 
-    private Frame getParentFrame(Component comp) {
+    private static Frame getParentFrame(Component comp) {
         return comp != null ? (Frame) SwingUtilities.getAncestorOfClass(Frame.class, comp) : null;
     }
 

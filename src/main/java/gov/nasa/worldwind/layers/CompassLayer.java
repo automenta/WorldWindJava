@@ -298,8 +298,8 @@ public class CompassLayer extends AbstractLayer {
             ogsh.pushModelviewIdentity(gl);
             double scale = this.computeScale(viewport);
             Vec4 locationSW = this.computeLocation(viewport, scale);
-            double heading = this.computeHeading(dc.getView());
-            double pitch = this.computePitch(dc.getView());
+            double heading = CompassLayer.computeHeading(dc.getView());
+            double pitch = CompassLayer.computePitch(dc.getView());
 
             gl.glTranslated(locationSW.x, locationSW.y, locationSW.z);
             gl.glScaled(scale, scale, 1);
@@ -324,7 +324,7 @@ public class CompassLayer extends AbstractLayer {
             else {
                 // Picking
                 this.pickSupport.clearPickList();
-                this.pickSupport.beginPicking(dc);
+                PickSupport.beginPicking(dc);
                 try {
                     // Add a picked object for the compass to the list of pickable objects.
                     Color color = dc.getUniquePickColor();
@@ -351,7 +351,7 @@ public class CompassLayer extends AbstractLayer {
                 }
                 finally {
                     // Done picking
-                    this.pickSupport.endPicking(dc);
+                    PickSupport.endPicking(dc);
                     this.pickSupport.resolvePick(dc, dc.getPickPoint(), this);
                 }
             }
@@ -431,14 +431,14 @@ public class CompassLayer extends AbstractLayer {
         return new Vec4(x, y, 0);
     }
 
-    protected double computeHeading(View view) {
+    protected static double computeHeading(View view) {
         if (view == null)
             return 0.0;
 
         return view.getHeading().getDegrees();
     }
 
-    protected double computePitch(View view) {
+    protected static double computePitch(View view) {
         if (view == null)
             return 0.0;
 

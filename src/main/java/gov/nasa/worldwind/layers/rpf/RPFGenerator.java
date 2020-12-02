@@ -88,7 +88,7 @@ class RPFGenerator {
         return new RPFServiceInstance();
     }
 
-    private FrameFile[] loadFrameFiles(RPFFileIndex fileIndex) {
+    private static FrameFile[] loadFrameFiles(RPFFileIndex fileIndex) {
         Collection<FrameFile> list = new ArrayList<>();
 
         long frameId = -1;
@@ -121,7 +121,7 @@ class RPFGenerator {
     //
     // Find the global bounds for this collection of frame files (i.e., the union of their Sectors).
     //
-    private Sector computeGlobalBounds(RPFFileIndex fileIndex) {
+    private static Sector computeGlobalBounds(RPFFileIndex fileIndex) {
         Sector gb = null;
         if (fileIndex != null && fileIndex.getIndexProperties() != null)
             gb = fileIndex.getIndexProperties().getBoundingSector();

@@ -29,7 +29,7 @@ public class WCS100Capabilities extends AbstractXMLEventParser {
     public WCS100Capabilities(Object docSource) {
         super(OGCConstants.WCS_1_0_0_NAMESPACE_URI);
 
-        this.eventReader = this.createReader(docSource);
+        this.eventReader = WCS100Capabilities.createReader(docSource);
 
         this.initialize();
     }
@@ -58,7 +58,7 @@ public class WCS100Capabilities extends AbstractXMLEventParser {
         this.parserContext = this.createParserContext(this.eventReader);
     }
 
-    protected XMLEventReader createReader(Object docSource) {
+    protected static XMLEventReader createReader(Object docSource) {
         return WWXML.openEventReader(docSource);
     }
 

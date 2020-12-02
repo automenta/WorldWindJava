@@ -113,12 +113,12 @@ public class GeoSymTableReader {
             header.setDescription(s);
 
         while (!(string = scanner.nextLine()).equals(";")) {
-            GeoSymColumn col = this.readColumn(string);
+            GeoSymColumn col = GeoSymTableReader.readColumn(string);
             header.addColumn(col);
         }
     }
 
-    protected GeoSymColumn readColumn(String string) {
+    protected static GeoSymColumn readColumn(String string) {
         String[] tokens = string.split("[=,:]");
 
         String s = tokens[0].trim();
@@ -142,7 +142,7 @@ public class GeoSymTableReader {
     }
 
     protected void readRecords(Scanner scanner, GeoSymTable table) {
-        List<AVList> list = new ArrayList<>();
+        Collection<AVList> list = new ArrayList<>();
 
         while (scanner.hasNextLine()) {
             String s = scanner.nextLine().trim();
@@ -150,7 +150,7 @@ public class GeoSymTableReader {
                 continue;
 
             AVList record = new AVListImpl();
-            this.readRecord(s, table, record);
+            GeoSymTableReader.readRecord(s, table, record);
             list.add(record);
         }
 
@@ -160,7 +160,7 @@ public class GeoSymTableReader {
         table.setRecords(array);
     }
 
-    protected void readRecord(String string, GeoSymTable table, AVList record) {
+    protected static void readRecord(String string, GeoSymTable table, AVList record) {
         Collection<? extends GeoSymColumn> columns = table.getHeader().getColumns();
         String[] tokens = string.split("[|]");
 

@@ -527,7 +527,7 @@ public class GeotiffImageReader extends ImageReader {
      * Returns the (first!) IFD-Entry with the given tag, or null if not found.
      *
      */
-    private TiffIFDEntry getByTag(TiffIFDEntry[] ifds, int tag) {
+    private static TiffIFDEntry getByTag(TiffIFDEntry[] ifds, int tag) {
         for (TiffIFDEntry ifd : ifds) {
             if (ifd.tag == tag) {
                 return ifd;

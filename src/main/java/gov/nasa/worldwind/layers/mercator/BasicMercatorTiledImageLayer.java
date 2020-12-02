@@ -102,12 +102,12 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
 
         tile.setTextureData(textureData);
         if (tile.getLevelNumber() != 0 || !this.isRetainLevelZeroTiles())
-            this.addTileToCache(tile);
+            BasicMercatorTiledImageLayer.addTileToCache(tile);
 
         return true;
     }
 
-    private void addTileToCache(MercatorTextureTile tile) {
+    private static void addTileToCache(MercatorTextureTile tile) {
         WorldWind.cache(MercatorTextureTile.class.getName()).add(
             tile.tileKey, tile);
     }
@@ -170,18 +170,18 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
         }
     }
 
-    protected boolean isTileValid(BufferedImage image) {
+    protected static boolean isTileValid(BufferedImage image) {
         //override in subclass to check image tile
         //if false is returned, then tile is marked absent
         return true;
     }
 
-    protected BufferedImage modifyImage(BufferedImage image) {
+    protected static BufferedImage modifyImage(BufferedImage image) {
         //override in subclass to modify image tile
         return image;
     }
 
-    private BufferedImage convertBufferToImage(ByteBuffer buffer) {
+    private static BufferedImage convertBufferToImage(ByteBuffer buffer) {
         try {
             InputStream is = new ByteArrayInputStream(buffer.array());
             return ImageIO.read(is);
@@ -207,7 +207,7 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
         }
     }
 
-    private BufferedImage transform(BufferedImage image, MercatorSector sector) {
+    private static BufferedImage transform(BufferedImage image, MercatorSector sector) {
         int type = image.getType();
         if (type == 0)
             type = BufferedImage.TYPE_INT_RGB;
@@ -388,10 +388,10 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
 //                            this.layer.saveBuffer(buffer, outFile);
 //                    }
                     else if (contentType.contains("image")) {
-                        BufferedImage image = this.layer.convertBufferToImage(buffer);
+                        BufferedImage image = BasicMercatorTiledImageLayer.convertBufferToImage(buffer);
                         if (image != null) {
-                            image = this.layer.modifyImage(image);
-                            if (this.layer.isTileValid(image)) {
+                            image = BasicMercatorTiledImageLayer.modifyImage(image);
+                            if (BasicMercatorTiledImageLayer.isTileValid(image)) {
                                 if (!this.layer.transformAndSave(image, tile.getMercatorSector(), outFile))
                                     image = null;
                             }

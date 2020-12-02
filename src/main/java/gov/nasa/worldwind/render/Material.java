@@ -57,7 +57,7 @@ public class Material {
             throw new IllegalArgumentException(msg);
         }
 
-        this.ambient = this.makeDarker(color);
+        this.ambient = Material.makeDarker(color);
         this.diffuse = color;
         this.specular = new Color(255, 255, 255, color.getAlpha());
         this.emission = new Color(0, 0, 0, color.getAlpha());
@@ -71,7 +71,7 @@ public class Material {
             throw new IllegalArgumentException(msg);
         }
 
-        this.ambient = this.makeDarker(color);
+        this.ambient = Material.makeDarker(color);
         this.diffuse = color;
         this.specular = new Color(255, 255, 255, color.getAlpha());
         this.emission = new Color(0, 0, 0, color.getAlpha());
@@ -98,7 +98,7 @@ public class Material {
         return this.shininess;
     }
 
-    public void apply(GL2 gl, int face) {
+    public void apply(GLLightingFunc gl, int face) {
         if (gl == null) {
             String msg = Logging.getMessage("nullValue.GLIsNull");
             Logging.logger().severe(msg);
@@ -112,7 +112,7 @@ public class Material {
         gl.glMaterialf(face, GL2.GL_SHININESS, (float) this.shininess);
     }
 
-    public void apply(GL2 gl, int face, float alpha) {
+    public void apply(GLLightingFunc gl, int face, float alpha) {
         if (gl == null) {
             String msg = Logging.getMessage("nullValue.GLIsNull");
             Logging.logger().severe(msg);
@@ -128,7 +128,7 @@ public class Material {
         gl.glMaterialf(face, GL2.GL_SHININESS, (float) this.shininess);
     }
 
-    protected void glMaterial(GLLightingFunc gl, int face, int name, Color color) {
+    protected static void glMaterial(GLLightingFunc gl, int face, int name, Color color) {
         if (gl == null) {
             String msg = Logging.getMessage("nullValue.GLIsNull");
             Logging.logger().severe(msg);
@@ -145,7 +145,7 @@ public class Material {
         gl.glMaterialfv(face, name, compArray, 0);
     }
 
-    protected void glMaterial(GLLightingFunc gl, int face, int name, Color color, float alpha) {
+    protected static void glMaterial(GLLightingFunc gl, int face, int name, Color color, float alpha) {
         if (gl == null) {
             String msg = Logging.getMessage("nullValue.GLIsNull");
             Logging.logger().severe(msg);
@@ -184,7 +184,7 @@ public class Material {
     //    gl.glMaterialfv(face, name, compArray, 0);
     //}
 
-    protected Color makeDarker(Color color) {
+    protected static Color makeDarker(Color color) {
         if (color == null) {
             String msg = Logging.getMessage("nullValue.ColorIsNull");
             Logging.logger().severe(msg);

@@ -59,7 +59,7 @@ public class RPFRasterReader extends AbstractDataRasterReader {
         File file = (File) source;
         RPFFrameFilename filename = RPFFrameFilename.parseFilename(file.getName().toUpperCase());
         if (filename.getZoneCode() == '9' || filename.getZoneCode() == 'J') {
-            return this.readPolarImage(source, filename);
+            return RPFRasterReader.readPolarImage(source, filename);
         }
         else {
             return this.readNonPolarImage(source, params);
@@ -80,7 +80,7 @@ public class RPFRasterReader extends AbstractDataRasterReader {
         Object height = params.get(AVKey.HEIGHT);
         if (!(width instanceof Integer) || !(height instanceof Integer)) {
             rpfFile = RPFImageFile.load(file);
-            this.readFileSize(rpfFile, params);
+            RPFRasterReader.readFileSize(rpfFile, params);
         }
 
         Object sector = params.get(AVKey.SECTOR);
@@ -113,7 +113,7 @@ public class RPFRasterReader extends AbstractDataRasterReader {
         return new DataRaster[] {raster};
     }
 
-    private DataRaster[] readPolarImage(Object source, RPFFrameFilename filename) throws IOException {
+    private static DataRaster[] readPolarImage(Object source, RPFFrameFilename filename) throws IOException {
         File file = (File) source;
         RPFImageFile rpfFile = RPFImageFile.load(file);
 
@@ -133,7 +133,7 @@ public class RPFRasterReader extends AbstractDataRasterReader {
         return rasters;
     }
 
-    private void readFileSize(RPFImageFile rpfFile, AVList values) {
+    private static void readFileSize(RPFImageFile rpfFile, AVList values) {
         int width = rpfFile.getImageSegment().numSignificantCols;
         int height = rpfFile.getImageSegment().numSignificantRows;
         values.set(AVKey.WIDTH, width);
@@ -144,15 +144,15 @@ public class RPFRasterReader extends AbstractDataRasterReader {
         // We'll first attempt to compute the Sector, if possible, from the filename (if it exists) by using
         // the conventions for CADRG and CIB filenames. It has been observed that for polar frame files in
         // particular that coverage information in the file itself is sometimes unreliable.
-        Sector sector = this.sectorFromFilename(file);
+        Sector sector = RPFRasterReader.sectorFromFilename(file);
         // If the sector cannot be computed from the filename, then get it from the RPF file headers.
         if (sector == null)
-            sector = this.sectorFromHeader(file, rpfFile);
+            sector = RPFRasterReader.sectorFromHeader(file, rpfFile);
 
         values.set(AVKey.SECTOR, sector);
     }
 
-    private Sector sectorFromFilename(File file) {
+    private static Sector sectorFromFilename(File file) {
         Sector sector = null;
         try {
             // Parse the filename, using the conventions for CADRG and CIB filenames.
@@ -179,7 +179,7 @@ public class RPFRasterReader extends AbstractDataRasterReader {
         return sector;
     }
 
-    private Sector sectorFromHeader(File file, RPFFile rpfFile) {
+    private static Sector sectorFromHeader(File file, RPFFile rpfFile) {
         Sector sector;
         try {
             if (rpfFile == null)

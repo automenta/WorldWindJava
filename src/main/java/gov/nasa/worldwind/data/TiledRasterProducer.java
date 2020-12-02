@@ -124,7 +124,7 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
     }
 
     public void removeProductionState() {
-        File installLocation = this.installLocationFor(this.getStoreParameters());
+        File installLocation = TiledRasterProducer.installLocationFor(this.getStoreParameters());
 
         if (installLocation == null || !installLocation.exists()) {
             String message = Logging.getMessage("TiledRasterProducer.NoInstallLocation",
@@ -214,7 +214,7 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
     //********************  LevelSet Assembly  *********************//
     //**************************************************************//
 
-    protected File installLocationFor(AVList params) {
+    protected static File installLocationFor(AVList params) {
         String fileStoreLocation = params.getStringValue(AVKey.FILE_STORE_LOCATION);
         String dataCacheName = params.getStringValue(AVKey.DATA_CACHE_NAME);
         if (fileStoreLocation == null || dataCacheName == null)
@@ -238,7 +238,7 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
         if (sector == null) {
             // Compute a sector that bounds the data rasters. Make sure the sector does not exceed the limits of
             // latitude and longitude.
-            sector = this.computeBoundingSector(this.dataRasterList);
+            sector = TiledRasterProducer.computeBoundingSector(this.dataRasterList);
             if (sector != null)
                 sector = sector.intersection(Sector.FULL_SPHERE);
             params.set(AVKey.SECTOR, sector);
@@ -257,13 +257,13 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
         }
 
         LatLon rasterTileDelta = this.computeRasterTileDelta(tileWidth, tileHeight, this.dataRasterList);
-        LatLon desiredLevelZeroDelta = this.computeDesiredTileDelta(sector);
+        LatLon desiredLevelZeroDelta = TiledRasterProducer.computeDesiredTileDelta(sector);
 
         Integer numLevels = (Integer) params.get(AVKey.NUM_LEVELS);
         if (numLevels == null) {
             // If the data set is large, then use compute a number of levels for the full pyramid. Otherwise use a
             // single level.
-            numLevels = isDataSetLarge ? this.computeNumLevels(desiredLevelZeroDelta, rasterTileDelta) : 1;
+            numLevels = isDataSetLarge ? TiledRasterProducer.computeNumLevels(desiredLevelZeroDelta, rasterTileDelta) : 1;
             params.set(AVKey.NUM_LEVELS, numLevels);
         }
 
@@ -290,19 +290,19 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
 
         // If the default or caller-specified values define a level set that does not fit in the limits of latitude
         // and longitude, then we re-define the level set parameters using values known to fit in those limits.
-        if (!this.isWithinLatLonLimits(sector, levelZeroTileDelta, tileOrigin)) {
-            levelZeroTileDelta = this.computeIntegralLevelZeroTileDelta(levelZeroTileDelta);
+        if (!TiledRasterProducer.isWithinLatLonLimits(sector, levelZeroTileDelta, tileOrigin)) {
+            levelZeroTileDelta = TiledRasterProducer.computeIntegralLevelZeroTileDelta(levelZeroTileDelta);
             params.set(AVKey.LEVEL_ZERO_TILE_DELTA, levelZeroTileDelta);
 
             tileOrigin = new LatLon(Angle.NEG90, Angle.NEG180);
             params.set(AVKey.TILE_ORIGIN, tileOrigin);
 
-            numLevels = this.computeNumLevels(levelZeroTileDelta, rasterTileDelta);
+            numLevels = TiledRasterProducer.computeNumLevels(levelZeroTileDelta, rasterTileDelta);
             params.set(AVKey.NUM_LEVELS, numLevels);
         }
     }
 
-    protected LatLon computeIntegralLevelZeroTileDelta(LatLon originalDelta) {
+    protected static LatLon computeIntegralLevelZeroTileDelta(LatLon originalDelta) {
         // Find a level zero tile delta that's an integral factor of each dimension.
 
         double latDelta = Math.ceil(originalDelta.latitude.degrees);
@@ -320,14 +320,14 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
     }
 
     protected boolean isDataSetLarge(Iterable<? extends DataRaster> rasters, int largeThreshold) {
-        Sector sector = this.computeBoundingSector(rasters);
+        Sector sector = TiledRasterProducer.computeBoundingSector(rasters);
         LatLon pixelSize = this.computeSmallestPixelSize(rasters);
         int sectorWidth = (int) Math.ceil(sector.getDeltaLonDegrees() / pixelSize.getLongitude().degrees);
         int sectorHeight = (int) Math.ceil(sector.getDeltaLatDegrees() / pixelSize.getLatitude().degrees);
         return (sectorWidth >= largeThreshold) || (sectorHeight >= largeThreshold);
     }
 
-    protected boolean isWithinLatLonLimits(Sector sector, LatLon tileDelta, LatLon tileOrigin) {
+    protected static boolean isWithinLatLonLimits(Sector sector, LatLon tileDelta, LatLon tileOrigin) {
         double minLat = Math.floor((sector.latMin().degrees - tileOrigin.getLatitude().degrees)
             / tileDelta.getLatitude().degrees);
         minLat = tileOrigin.getLatitude().degrees + minLat * tileDelta.getLatitude().degrees;
@@ -343,7 +343,7 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
         return Sector.fromDegrees(minLat, maxLat, minLon, maxLon).isWithinLatLonLimits();
     }
 
-    protected Sector computeBoundingSector(Iterable<? extends DataRaster> rasters) {
+    protected static Sector computeBoundingSector(Iterable<? extends DataRaster> rasters) {
         Sector sector = null;
         for (DataRaster raster : rasters) {
             sector = (sector != null) ? raster.getSector().union(sector) : raster.getSector();
@@ -360,7 +360,7 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
         return LatLon.fromDegrees(latDelta, lonDelta);
     }
 
-    protected LatLon computeDesiredTileDelta(Sector sector) {
+    protected static LatLon computeDesiredTileDelta(Sector sector) {
         double levelZeroLat = Math.min(sector.getDeltaLatDegrees(), DEFAULT_LEVEL_ZERO_TILE_DELTA);
         double levelZeroLon = Math.min(sector.getDeltaLonDegrees(), DEFAULT_LEVEL_ZERO_TILE_DELTA);
         return LatLon.fromDegrees(levelZeroLat, levelZeroLon);
@@ -392,7 +392,7 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
     //********************  DataRaster Assembly  *******************//
     //**************************************************************//
 
-    protected int computeNumLevels(LatLon levelZeroDelta, LatLon lastLevelDelta) {
+    protected static int computeNumLevels(LatLon levelZeroDelta, LatLon lastLevelDelta) {
         // Compute the number of levels needed to achieve the given last level tile delta, starting from the given
         // level zero tile delta.
         double numLatLevels = 1 + WWMath.logBase2(levelZeroDelta.getLatitude().getDegrees())
@@ -515,7 +515,7 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
         DataRaster tileRaster = null;
 
         // Find the data sources that intersect this tile and intersect the LevelSet sector.
-        List<DataRaster> intersectingRasters = new ArrayList<>();
+        Collection<DataRaster> intersectingRasters = new ArrayList<>();
         for (DataRaster raster : dataRasters) {
             if (raster.getSector().intersects(tile.sector) && raster.getSector().intersects(levelSet.getSector()))
                 intersectingRasters.add(raster);
@@ -546,7 +546,7 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
         boolean hasDescendants = false;
 
         // Recursively create sub-tile rasters.
-        Tile[] subTiles = this.createSubTiles(tile, levelSet.getLevel(tile.getLevelNumber() + 1));
+        Tile[] subTiles = TiledRasterProducer.createSubTiles(tile, levelSet.getLevel(tile.getLevelNumber() + 1));
         DataRaster[] subRasters = new DataRaster[subTiles.length];
         for (int index = 0; index < subTiles.length; index++) {
             // If the sub-tile does not intersect the level set, then skip that sub-tile.
@@ -592,7 +592,7 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
         return tileRaster;
     }
 
-    protected Tile[] createSubTiles(Tile tile, Level nextLevel) {
+    protected static Tile[] createSubTiles(Tile tile, Level nextLevel) {
         Angle p0 = tile.sector.latMin();
         Angle p2 = tile.sector.latMax();
         Angle p1 = Angle.midAngle(p0, p2);
@@ -618,7 +618,7 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
             return true;
 
         int maxNumOfLevels = levelSet.getLastLevel().getLevelNumber();
-        int limit = this.extractMaxLevelLimit(params, maxNumOfLevels);
+        int limit = TiledRasterProducer.extractMaxLevelLimit(params, maxNumOfLevels);
         return (levelNumber >= limit);
     }
 
@@ -647,7 +647,7 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
      * @param maxNumOfLevels The actual maximum numbers of levels
      * @return A limit of numbers of levels that should producer generate.
      */
-    protected int extractMaxLevelLimit(AVList params, int maxNumOfLevels) {
+    protected static int extractMaxLevelLimit(AVList params, int maxNumOfLevels) {
         if (null != params && params.hasKey(AVKey.TILED_RASTER_PRODUCER_LIMIT_MAX_LEVEL)) {
             Object o = params.get(AVKey.TILED_RASTER_PRODUCER_LIMIT_MAX_LEVEL);
             if (o instanceof Integer) {
@@ -755,7 +755,7 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
         File installLocation;
 
         // Compute the install location of the tile.
-        Object result = this.installLocationForTile(params, tile);
+        Object result = TiledRasterProducer.installLocationForTile(params, tile);
         if (result instanceof File) {
             installLocation = (File) result;
         }
@@ -779,7 +779,7 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
         String formatSuffix = params.getStringValue(AVKey.FORMAT_SUFFIX);
         DataRasterWriter[] writers = this.getDataRasterWriters();
 
-        Object writer = this.findWriterFor(tileRaster, formatSuffix, installLocation, writers);
+        Object writer = TiledRasterProducer.findWriterFor(tileRaster, formatSuffix, installLocation, writers);
         if (writer instanceof DataRasterWriter) {
             try {
                 ((DataRasterWriter) writer).write(tileRaster, formatSuffix, installLocation);
@@ -791,7 +791,7 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
         }
     }
 
-    protected Object installLocationForTile(AVList installParams, Tile tile) {
+    protected static Object installLocationForTile(AVList installParams, Tile tile) {
         String path = null;
 
         String s = installParams.getStringValue(AVKey.FILE_STORE_LOCATION);
@@ -808,7 +808,7 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
         return new File(path);
     }
 
-    protected Object findWriterFor(DataRaster raster, String formatSuffix, File destination,
+    protected static Object findWriterFor(DataRaster raster, String formatSuffix, File destination,
         DataRasterWriter[] writers) {
         for (DataRasterWriter writer : writers) {
             if (writer.canWrite(raster, formatSuffix, destination))
@@ -860,7 +860,7 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
         if (this.isStopped())
             return;
 
-        File configFile = this.getConfigFileInstallLocation(params);
+        File configFile = TiledRasterProducer.getConfigFileInstallLocation(params);
         if (configFile == null) {
             String message = Logging.getMessage("TiledRasterProducer.NoConfigFileInstallLocation",
                 params.get(AVKey.DATASET_NAME));
@@ -914,7 +914,7 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
      * @return the configuration file install location, or null if the parameter list is null or does not contain the
      * required parameters.
      */
-    protected File getConfigFileInstallLocation(AVList params) {
+    protected static File getConfigFileInstallLocation(AVList params) {
         if (params == null)
             return null;
 
@@ -936,7 +936,7 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
     }
 
     protected void installRasterServerConfigFile(AVList productionParams) {
-        File configFile = this.getConfigFileInstallLocation(productionParams);
+        File configFile = TiledRasterProducer.getConfigFileInstallLocation(productionParams);
         String configFilePath = configFile.getAbsolutePath().replace(".xml", ".RasterServer.xml");
 
         Document configDoc = WWXML.createDocumentBuilder(true).newDocument();
@@ -963,7 +963,7 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
         for (DataRaster raster : this.getDataRasters()) {
             if (raster instanceof CachedDataRaster) {
                 try {
-                    this.appendSource(sources, (CachedDataRaster) raster);
+                    TiledRasterProducer.appendSource(sources, (CachedDataRaster) raster);
                 }
                 catch (Throwable t) {
                     String reason = WWUtil.extractExceptionReason(t);
@@ -983,7 +983,7 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
         String[] keysToCopy = new String[] {AVKey.DATA_CACHE_NAME, AVKey.DATASET_NAME, AVKey.DISPLAY_NAME};
         WWUtil.copyValues(productionParams, rasterServerProperties, keysToCopy, false);
 
-        this.appendProperties(root, rasterServerProperties);
+        TiledRasterProducer.appendProperties(root, rasterServerProperties);
 
         // add sources
         root.appendChild(sources);
@@ -991,7 +991,7 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
         WWXML.saveDocumentToFile(configDoc, configFilePath);
     }
 
-    protected void appendProperties(Element context, AVList properties) {
+    protected static void appendProperties(Element context, AVList properties) {
         if (null == context || properties == null) {
             return;
         }
@@ -1014,7 +1014,7 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
         }
     }
 
-    protected void appendSource(Element sources, CachedDataRaster raster) throws WWRuntimeException {
+    protected static void appendSource(Element sources, CachedDataRaster raster) throws WWRuntimeException {
         Object o = raster.getDataSource();
         if (WWUtil.isEmpty(o)) {
             String message = Logging.getMessage("nullValue.DataSourceIsNull");

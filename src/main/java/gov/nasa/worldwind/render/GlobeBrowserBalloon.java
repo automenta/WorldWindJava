@@ -145,7 +145,7 @@ public class GlobeBrowserBalloon extends AbstractBrowserBalloon implements Globe
         // Compute the screen place point as the projection of the place point into screen coordinates.
         ogpm.screenPlacePoint = dc.getView().project(ogpm.placePoint);
         // Cache the screen offset computed from the active attributes.
-        this.screenOffset = this.computeOffset(dc, activeAttrs, size.width, size.height);
+        this.screenOffset = AbstractBrowserBalloon.computeOffset(dc, activeAttrs, size.width, size.height);
         // Compute the screen rectangle given the screen projection of the place point, the current screen offset, and
         // the current screen size. Note: The screen offset denotes how to place the screen reference point relative to
         // the frame. For example, an offset of (-10, -10) in pixels places the reference point below and to the left
@@ -162,7 +162,7 @@ public class GlobeBrowserBalloon extends AbstractBrowserBalloon implements Globe
         // balloon's screen extent.
         obb.screenPickExtent = this.computeFramePickRect(obb.screenExtent);
         // Compute the WebView rectangle as an inset of the screen rectangle, given the current inset values.
-        obb.webViewRect = this.computeWebViewRectForFrameRect(activeAttrs, obb.screenRect);
+        obb.webViewRect = AbstractBrowserBalloon.computeWebViewRectForFrameRect(activeAttrs, obb.screenRect);
         // Compute the eye distance as the distance from the place point to the View's eye point.
         obb.eyeDistance = this.isAlwaysOnTop() ? 0 : dc.getView().getEyePoint().distanceTo3(ogpm.placePoint);
     }

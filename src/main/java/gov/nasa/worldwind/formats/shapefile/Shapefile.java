@@ -714,11 +714,11 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
         // thrown while attempting to open these optional resource streams. We wrap each source InputStream in a
         // BufferedInputStream because this increases read performance, even when the stream is wrapped in an NIO
         // Channel.
-        InputStream shxStream = this.getFileStream(WWIO.replaceSuffix(file.getPath(), INDEX_FILE_SUFFIX));
+        InputStream shxStream = Shapefile.getFileStream(WWIO.replaceSuffix(file.getPath(), INDEX_FILE_SUFFIX));
         if (shxStream != null)
             this.shxChannel = Channels.newChannel((shxStream));
 
-        InputStream prjStream = this.getFileStream(WWIO.replaceSuffix(file.getPath(), PROJECTION_FILE_SUFFIX));
+        InputStream prjStream = Shapefile.getFileStream(WWIO.replaceSuffix(file.getPath(), PROJECTION_FILE_SUFFIX));
         if (prjStream != null)
             this.prjChannel = Channels.newChannel((prjStream));
 
@@ -744,7 +744,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
         // or if it's an invalid Shapefile connection.
         URLConnection connection = url.openConnection();
 
-        String message = this.validateURLConnection(connection, SHAPE_CONTENT_TYPES);
+        String message = Shapefile.validateURLConnection(connection, SHAPE_CONTENT_TYPES);
         if (message != null) {
             throw new IOException(message);
         }
@@ -755,25 +755,25 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
         // thrown while attempting to open these optional resource streams, but log a warning if the URL connection is
         // invalid. We wrap each source InputStream in a BufferedInputStream because this increases read performance,
         // even when the stream is wrapped in an NIO Channel.
-        URLConnection shxConnection = this.getURLConnection(WWIO.replaceSuffix(url.toString(), INDEX_FILE_SUFFIX));
+        URLConnection shxConnection = Shapefile.getURLConnection(WWIO.replaceSuffix(url.toString(), INDEX_FILE_SUFFIX));
         if (shxConnection != null) {
-            message = this.validateURLConnection(shxConnection, INDEX_CONTENT_TYPES);
+            message = Shapefile.validateURLConnection(shxConnection, INDEX_CONTENT_TYPES);
             if (message != null)
                 Logging.logger().warning(message);
             else {
-                InputStream shxStream = this.getURLStream(shxConnection);
+                InputStream shxStream = Shapefile.getURLStream(shxConnection);
                 if (shxStream != null)
                     this.shxChannel = Channels.newChannel((shxStream));
             }
         }
 
-        URLConnection prjConnection = this.getURLConnection(WWIO.replaceSuffix(url.toString(), PROJECTION_FILE_SUFFIX));
+        URLConnection prjConnection = Shapefile.getURLConnection(WWIO.replaceSuffix(url.toString(), PROJECTION_FILE_SUFFIX));
         if (prjConnection != null) {
-            message = this.validateURLConnection(prjConnection, PROJECTION_CONTENT_TYPES);
+            message = Shapefile.validateURLConnection(prjConnection, PROJECTION_CONTENT_TYPES);
             if (message != null)
                 Logging.logger().warning(message);
             else {
-                InputStream prjStream = this.getURLStream(prjConnection);
+                InputStream prjStream = Shapefile.getURLStream(prjConnection);
                 if (prjStream != null)
                     this.prjChannel = Channels.newChannel((prjStream));
             }
@@ -931,7 +931,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
     //********************  Coordinate System  *********************//
     //**************************************************************//
 
-    protected InputStream getFileStream(String path) {
+    protected static InputStream getFileStream(String path) {
         try {
             return new FileInputStream(path);
         }
@@ -940,7 +940,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
         }
     }
 
-    protected URLConnection getURLConnection(String urlString) {
+    protected static URLConnection getURLConnection(String urlString) {
         try {
             URL url = new URL(urlString);
             return url.openConnection();
@@ -950,7 +950,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
         }
     }
 
-    protected InputStream getURLStream(URLConnection connection) {
+    protected static InputStream getURLStream(URLConnection connection) {
         try {
             return connection.getInputStream();
         }
@@ -963,7 +963,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
     //********************  Shape Records  *************************//
     //**************************************************************//
 
-    protected String validateURLConnection(URLConnection connection, String[] acceptedContentTypes) {
+    protected static String validateURLConnection(URLConnection connection, String[] acceptedContentTypes) {
         try {
             if (connection instanceof HttpURLConnection &&
                 ((HttpURLConnection) connection).getResponseCode() != HttpURLConnection.HTTP_OK) {
@@ -1171,7 +1171,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
             return null;
         }
         else if (AVKey.COORDINATE_SYSTEM_PROJECTED.equals(o)) {
-            return this.validateProjection(params);
+            return Shapefile.validateProjection(params);
         }
         else {
             return Logging.getMessage("generic.UnsupportedCoordinateSystem", o);
@@ -1185,7 +1185,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
      * @param params the Shapefile's projection parameters.
      * @return a non-empty string if the projection parameters are invalid; null otherwise.
      */
-    protected String validateProjection(AVList params) {
+    protected static String validateProjection(AVList params) {
         Object proj = params.get(AVKey.PROJECTION_NAME);
 
         if (AVKey.PROJECTION_UTM.equals(proj)) {
@@ -1447,7 +1447,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
 
         int type = buffer.getInt(buffer.position() + 2 * 4); // skip record number and length as ints
 
-        String shapeType = this.getShapeType(type);
+        String shapeType = Shapefile.getShapeType(type);
         if (shapeType == null) {
             // Let the caller catch and log the exception.
             throw new WWRuntimeException(Logging.getMessage("SHP.UnsupportedShapeType", type));
@@ -1466,7 +1466,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
      * @param type the integer shape type.
      * @return the mapped shape type.
      */
-    protected String getShapeType(int type) {
+    protected static String getShapeType(int type) {
         // Cases commented out indicate shape types not implemented
         return switch (type) {
             case 0 -> SHAPE_NULL;
@@ -1629,10 +1629,10 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
         Object o = this.get(AVKey.COORDINATE_SYSTEM);
 
         if (!this.hasKey(AVKey.COORDINATE_SYSTEM))
-            return this.readUnspecifiedPoints(record, buffer);
+            return Shapefile.readUnspecifiedPoints(record, buffer);
 
         else if (AVKey.COORDINATE_SYSTEM_GEOGRAPHIC.equals(o))
-            return this.readGeographicPoints(record, buffer);
+            return Shapefile.readGeographicPoints(record, buffer);
 
         else if (AVKey.COORDINATE_SYSTEM_PROJECTED.equals(o))
             return this.readProjectedPoints(record, buffer);
@@ -1653,7 +1653,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
      * @return a buffer containing the point coordinates.
      */
     @SuppressWarnings("UnusedDeclaration")
-    protected DoubleBuffer readUnspecifiedPoints(ShapefileRecord record, ByteBuffer buffer) {
+    protected static DoubleBuffer readUnspecifiedPoints(ShapefileRecord record, ByteBuffer buffer) {
         // Create a view of the buffer as a doubles.
         return buffer.asDoubleBuffer();
     }
@@ -1667,7 +1667,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
      * @param buffer the buffer to read point coordinates from.
      * @return a buffer containing the geographic point coordinates.
      */
-    protected DoubleBuffer readGeographicPoints(ShapefileRecord record, ByteBuffer buffer) {
+    protected static DoubleBuffer readGeographicPoints(ShapefileRecord record, ByteBuffer buffer) {
         // Create a view of the buffer as a doubles.
         DoubleBuffer doubleBuffer = buffer.asDoubleBuffer();
 
@@ -1760,7 +1760,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
     protected BoundingRectangle readUnspecifiedBoundingRectangle(ByteBuffer buffer) {
         // Read the bounding rectangle coordinates in the following order: minY, maxY, minX, maxX.
         BoundingRectangle rect = new BoundingRectangle();
-        rect.coords = this.readBoundingRectangleCoordinates(buffer);
+        rect.coords = Shapefile.readBoundingRectangleCoordinates(buffer);
         return rect;
     }
 
@@ -1778,7 +1778,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
     protected BoundingRectangle readGeographicBoundingRectangle(ByteBuffer buffer) {
         // Read the bounding rectangle coordinates in the following order: minLat, maxLat, minLon, maxLon.
         BoundingRectangle rect = new BoundingRectangle();
-        rect.coords = this.readBoundingRectangleCoordinates(buffer);
+        rect.coords = Shapefile.readBoundingRectangleCoordinates(buffer);
 
         // The bounding rectangle's min latitude exceeds -90. Set the min latitude to -90. Correct the max latitude if
         // the normalized min latitude is greater than the max latitude.
@@ -1859,7 +1859,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
      * @param buffer the buffer to read from.
      * @return a four-element array ordered as follows: (minY, maxY, minX, maxX).
      */
-    protected double[] readBoundingRectangleCoordinates(ByteBuffer buffer) {
+    protected static double[] readBoundingRectangleCoordinates(ByteBuffer buffer) {
         // Read the bounding rectangle coordinates in the following order: minX, minY, maxX, maxY.
         double minx = buffer.getDouble();
         double miny = buffer.getDouble();

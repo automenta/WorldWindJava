@@ -197,7 +197,7 @@ public class Route extends TrackAirspace {
     }
 
     public Position getReferencePosition() {
-        return this.computeReferencePosition(this.locations, this.getAltitudes());
+        return AbstractAirspace.computeReferencePosition(this.locations, this.getAltitudes());
     }
 
     protected void doMoveTo(Globe globe, Position oldRef, Position newRef) {

@@ -97,7 +97,7 @@ public class WindowsWebView extends AbstractWebView {
             instances.incrementAndGet();
 
             // Make sure that the message loop thread is running
-            this.ensureMessageLoopRunning();
+            WindowsWebView.ensureMessageLoopRunning();
 
             // Create the web view
             this.webViewWindowPtr = WindowsWebViewJNI.newWebViewWindow(webViewMessageLoop);
@@ -127,7 +127,7 @@ public class WindowsWebView extends AbstractWebView {
      */
     protected void handleWebViewCreationError() {
         try {
-            this.stopMessageLoopIfNoInstances();
+            WindowsWebView.stopMessageLoopIfNoInstances();
         }
         catch (Throwable t) {
             String message = Logging.getMessage("WebView.ExceptionStoppingWebViewThread", t);
@@ -160,7 +160,7 @@ public class WindowsWebView extends AbstractWebView {
             this.observerPtr = 0;
 
             // Terminate the message loop thread if this is the last active instance.
-            this.stopMessageLoopIfNoInstances();
+            WindowsWebView.stopMessageLoopIfNoInstances();
 
             this.disposed = true;
         }
@@ -174,7 +174,7 @@ public class WindowsWebView extends AbstractWebView {
      * creates a new thread if the message thread is not running. This method does not return until the message loop is
      * initialized and ready for use.
      */
-    protected void ensureMessageLoopRunning() {
+    protected static void ensureMessageLoopRunning() {
         synchronized (webViewUILock) {
             if (webViewUI == null || !webViewUI.isAlive()) {
                 webViewMessageLoop = 0;
@@ -221,7 +221,7 @@ public class WindowsWebView extends AbstractWebView {
      * Terminate the message loop thread if there are no active (non-disposed) WebView instances. Has no effect if there
      * are active instances.
      */
-    protected void stopMessageLoopIfNoInstances() {
+    protected static void stopMessageLoopIfNoInstances() {
         synchronized (webViewUILock) {
             if (instances.get() <= 0) {
                 WindowsWebViewJNI.releaseMessageLoop(webViewMessageLoop);

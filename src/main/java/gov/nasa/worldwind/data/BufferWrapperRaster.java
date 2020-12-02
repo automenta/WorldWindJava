@@ -179,7 +179,7 @@ public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable
 
     @Override
     DataRaster doGetSubRaster(int width, int height, Sector sector, AVList params) {
-        DataRaster canvas = this.createSubRaster(width, height, sector, params);
+        DataRaster canvas = BufferWrapperRaster.createSubRaster(width, height, sector, params);
         this.drawOnTo(canvas);
         return canvas;
     }
@@ -199,7 +199,7 @@ public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable
      * @return a new sub-raster initialized with the specified <code>width</code>, <code>height</code>,
      * <code>sector</code> and <code>params</code>.
      */
-    protected BufferWrapperRaster createSubRaster(int width, int height, Sector sector, AVList params) {
+    protected static BufferWrapperRaster createSubRaster(int width, int height, Sector sector, AVList params) {
         return new ByteBufferRaster(width, height, sector, params);
     }
 
@@ -229,7 +229,7 @@ public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable
 //        }
 
         // Precompute the interpolation values for each transformed x- and y-coordinate.
-        InterpolantLookupTable lut = this.createLookupTable(
+        InterpolantLookupTable lut = BufferWrapperRaster.createLookupTable(
             canvasWidth, canvasHeight,           // lookup table dimensions
             0, thisWidth - 1, 0, thisHeight - 1, // lookup table xMin, xMax, yMin, yMax
             canvasToThis);                       // lookup transform
@@ -344,7 +344,7 @@ public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable
         return transform;
     }
 
-    protected InterpolantLookupTable createLookupTable(int width, int height,
+    protected static InterpolantLookupTable createLookupTable(int width, int height,
         double xMin, double xMax, double yMin, double yMax, AffineTransform lookupTransform) {
         // Compute the interpolation values for each transformed x- and y-coordinate. This assumes that the transform
         // is composed of translations and scales (no rotations or shears). Therefore the transformed coordinates of

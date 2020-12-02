@@ -168,7 +168,7 @@ public class BasicAirspaceControlPointRenderer implements AirspaceControlPointRe
 
     protected void drawControlPoints(DrawContext dc, Iterable<? extends AirspaceControlPoint> controlPoints) {
         // Render the control points from back-to front.
-        SortedSet<AirspaceControlPoint> sortedPoints = this.sortControlPoints(dc, controlPoints);
+        SortedSet<AirspaceControlPoint> sortedPoints = BasicAirspaceControlPointRenderer.sortControlPoints(dc, controlPoints);
         this.drawMarkers(dc, sortedPoints);
     }
 
@@ -176,7 +176,7 @@ public class BasicAirspaceControlPointRenderer implements AirspaceControlPointRe
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         if (dc.isPickingMode()) {
-            this.pickSupport.beginPicking(dc);
+            PickSupport.beginPicking(dc);
             gl.glPushAttrib(GL2.GL_CURRENT_BIT | GL2.GL_DEPTH_BUFFER_BIT | GL2.GL_TRANSFORM_BIT);
         }
         else {
@@ -218,7 +218,7 @@ public class BasicAirspaceControlPointRenderer implements AirspaceControlPointRe
         gl.glPopAttrib();
 
         if (dc.isPickingMode()) {
-            this.pickSupport.endPicking(dc);
+            PickSupport.endPicking(dc);
         }
     }
 
@@ -232,7 +232,7 @@ public class BasicAirspaceControlPointRenderer implements AirspaceControlPointRe
 
     protected void drawMarkers(DrawContext dc, Iterable<? extends AirspaceControlPoint> controlPoints) {
         // Compute the maximum marker size as a function of the control points to render.
-        this.setMaxMarkerSize(this.computeMaxMarkerSize(controlPoints));
+        this.setMaxMarkerSize(BasicAirspaceControlPointRenderer.computeMaxMarkerSize(controlPoints));
 
         // Apply the marker attributes.
         if (!dc.isPickingMode()) {
@@ -299,7 +299,7 @@ public class BasicAirspaceControlPointRenderer implements AirspaceControlPointRe
         return radius;
     }
 
-    protected double computeMaxMarkerSize(Iterable<? extends AirspaceControlPoint> controlPoints) {
+    protected static double computeMaxMarkerSize(Iterable<? extends AirspaceControlPoint> controlPoints) {
         // Compute the maximum marker size as a fraction of the average distance between control points. This will
         // prevent all but the nearest control points from touching as the view moves away from the airspace.
 
@@ -378,7 +378,7 @@ public class BasicAirspaceControlPointRenderer implements AirspaceControlPointRe
         gl.glPopMatrix();
     }
 
-    protected SortedSet<AirspaceControlPoint> sortControlPoints(DrawContext dc,
+    protected static SortedSet<AirspaceControlPoint> sortControlPoints(DrawContext dc,
         Iterable<? extends AirspaceControlPoint> unsortedPoints) {
         final Vec4 eyePoint = dc.getView().getEyePoint();
 

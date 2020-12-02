@@ -101,7 +101,7 @@ public class KMLSurfaceImageImpl extends SurfaceImage implements KMLRenderable {
 
             // Evict the resource from the file store if there is a cached resource older than the icon update time.
             // This prevents fetching a stale resource out of the cache when the Icon is updated.
-            this.parent.getRoot().evictIfExpired(path, this.iconRetrievalTime);
+            KMLRoot.evictIfExpired(path, this.iconRetrievalTime);
 
             this.setImageSource(path, this.getCorners());
             this.iconRetrievalTime = System.currentTimeMillis();

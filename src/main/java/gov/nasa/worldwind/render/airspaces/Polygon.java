@@ -121,7 +121,7 @@ public class Polygon extends AbstractAirspace {
     }
 
     public Position getReferencePosition() {
-        return this.computeReferencePosition(this.locations, this.getAltitudes());
+        return AbstractAirspace.computeReferencePosition(this.locations, this.getAltitudes());
     }
 
     protected Extent computeExtent(Globe globe, double verticalExaggeration) {
@@ -146,8 +146,8 @@ public class Polygon extends AbstractAirspace {
             return null;
 
         List<LatLon> copyOfLocations = new ArrayList<>(locations);
-        List<LatLon> tessellatedLocations = new ArrayList<>();
-        this.makeTessellatedLocations(globe, MINIMAL_GEOMETRY_SUBDIVISIONS, copyOfLocations, tessellatedLocations);
+        Collection<LatLon> tessellatedLocations = new ArrayList<>();
+        Polygon.makeTessellatedLocations(globe, MINIMAL_GEOMETRY_SUBDIVISIONS, copyOfLocations, tessellatedLocations);
 
         List<Vec4> points = new ArrayList<>();
         this.makeExtremePoints(globe, verticalExaggeration, tessellatedLocations, points);
@@ -324,7 +324,8 @@ public class Polygon extends AbstractAirspace {
         this.adjustForGroundReference(dc, terrainConformant, altitudes, groundRef); // no-op if groudRef is null
     }
 
-    protected int computeEllipsoidalPolygon(Globe globe, List<? extends LatLon> locations, List<Boolean> edgeFlags,
+    protected static int computeEllipsoidalPolygon(Globe globe, List<? extends LatLon> locations,
+        List<Boolean> edgeFlags,
         Vec4[] points, Boolean[] edgeFlagArray, Matrix[] transform) {
         if (globe == null) {
             String message = Logging.getMessage("nullValue.GlobeIsNull");
@@ -399,7 +400,7 @@ public class Polygon extends AbstractAirspace {
         return locationCount;
     }
 
-    private void makePolygonVertices(int count, Vec4[] points, float[] vertices) {
+    private static void makePolygonVertices(int count, Vec4[] points, float[] vertices) {
         for (int i = 0; i < count; i++) {
             int index = 3 * i;
             vertices[index] = (float) points[i].x;
@@ -425,14 +426,14 @@ public class Polygon extends AbstractAirspace {
         // locations with an empty list to prevent subsequent tessellation attempts, and to avoid rendering a misleading
         // representation by omitting any part of the geometry.
         try {
-            PolygonGeometry geom = (PolygonGeometry) this.getGeometryCache().getObject(cacheKey);
-            if (geom == null || this.isExpired(dc, geom.getVertexGeometry())) {
+            PolygonGeometry geom = (PolygonGeometry) AbstractAirspace.getGeometryCache().getObject(cacheKey);
+            if (geom == null || AbstractAirspace.isExpired(dc, geom.getVertexGeometry())) {
                 if (geom == null)
                     geom = new PolygonGeometry();
                 this.makePolygon(dc, locations, edgeFlags, altitudes, terrainConformant, enableCaps, subdivisions,
                     referenceCenter, geom);
                 this.updateExpiryCriteria(dc, geom.getVertexGeometry());
-                this.getGeometryCache().add(cacheKey, geom);
+                AbstractAirspace.getGeometryCache().add(cacheKey, geom);
             }
 
             return geom;
@@ -494,19 +495,19 @@ public class Polygon extends AbstractAirspace {
         Vec4[] polyPoints = new Vec4[locations.size() + 1];
         Boolean[] polyEdgeFlags = new Boolean[locations.size() + 1];
         Matrix[] polyTransform = new Matrix[1];
-        int polyCount = this.computeEllipsoidalPolygon(dc.getGlobe(), locations, edgeFlags, polyPoints, polyEdgeFlags,
+        int polyCount = Polygon.computeEllipsoidalPolygon(dc.getGlobe(), locations, edgeFlags, polyPoints, polyEdgeFlags,
             polyTransform);
 
         // Compute the winding order of the planar cartesian points. If the order is not counter-clockwise, then
         // reverse the locations and points ordering.
         int winding = gb.computePolygonWindingOrder2(0, polyCount, polyPoints);
         if (winding != GeometryBuilder.COUNTER_CLOCKWISE) {
-            gb.reversePoints(0, polyCount, polyPoints);
-            gb.reversePoints(0, polyCount, polyEdgeFlags);
+            GeometryBuilder.reversePoints(0, polyCount, polyPoints);
+            GeometryBuilder.reversePoints(0, polyCount, polyEdgeFlags);
         }
 
         float[] polyVertices = new float[3 * polyCount];
-        this.makePolygonVertices(polyCount, polyPoints, polyVertices);
+        Polygon.makePolygonVertices(polyCount, polyPoints, polyVertices);
 
         int fillDrawMode = GL.GL_TRIANGLES;
         int outlineDrawMode = GL.GL_LINES;
@@ -572,7 +573,7 @@ public class Polygon extends AbstractAirspace {
         dest.getVertexGeometry().setNormalData(vertexCount, normals);
     }
 
-    protected void makeTessellatedLocations(Globe globe, int subdivisions, List<LatLon> locations,
+    protected static void makeTessellatedLocations(Globe globe, int subdivisions, List<LatLon> locations,
         Collection<LatLon> tessellatedLocations) {
         List<Vec4> points = new ArrayList<>();
         for (LatLon ll : locations) {
@@ -630,12 +631,12 @@ public class Polygon extends AbstractAirspace {
 
     private int getSectionFillIndexCount(int subdivisions) {
         GeometryBuilder gb = this.getGeometryBuilder();
-        return 6 * (gb.getSubdivisionPointsVertexCount(subdivisions) - 1);
+        return 6 * (GeometryBuilder.getSubdivisionPointsVertexCount(subdivisions) - 1);
     }
 
     private int getSectionOutlineIndexCount(int subdivisions, boolean beginEdgeFlag, boolean endEdgeFlag) {
         GeometryBuilder gb = this.getGeometryBuilder();
-        int count = 4 * (gb.getSubdivisionPointsVertexCount(subdivisions) - 1);
+        int count = 4 * (GeometryBuilder.getSubdivisionPointsVertexCount(subdivisions) - 1);
         if (beginEdgeFlag)
             count += 2;
         if (endEdgeFlag)
@@ -646,7 +647,7 @@ public class Polygon extends AbstractAirspace {
 
     private int getSectionVertexCount(int subdivisions) {
         GeometryBuilder gb = this.getGeometryBuilder();
-        return 2 * gb.getSubdivisionPointsVertexCount(subdivisions);
+        return 2 * GeometryBuilder.getSubdivisionPointsVertexCount(subdivisions);
     }
 
     private void makeEdge(DrawContext dc, int count, float[] locations, Boolean[] edgeFlags,
@@ -683,7 +684,7 @@ public class Polygon extends AbstractAirspace {
 
     private void makeSectionFillIndices(int subdivisions, int vertexPos, int indexPos, int[] indices) {
         GeometryBuilder gb = this.getGeometryBuilder();
-        int count = gb.getSubdivisionPointsVertexCount(subdivisions);
+        int count = GeometryBuilder.getSubdivisionPointsVertexCount(subdivisions);
 
         int index = indexPos;
         int pos, nextPos;
@@ -702,7 +703,7 @@ public class Polygon extends AbstractAirspace {
     private void makeSectionOutlineIndices(int subdivisions, int vertexPos, int indexPos, int[] indices,
         boolean beginEdgeFlag, boolean endEdgeFlag) {
         GeometryBuilder gb = this.getGeometryBuilder();
-        int count = gb.getSubdivisionPointsVertexCount(subdivisions);
+        int count = GeometryBuilder.getSubdivisionPointsVertexCount(subdivisions);
 
         int index = indexPos;
         int pos, nextPos;
@@ -736,7 +737,7 @@ public class Polygon extends AbstractAirspace {
         Vec4 referenceCenter,
         int vertexPos, float[] vertices) {
         GeometryBuilder gb = this.getGeometryBuilder();
-        int numPoints = gb.getSubdivisionPointsVertexCount(subdivisions);
+        int numPoints = GeometryBuilder.getSubdivisionPointsVertexCount(subdivisions);
 
         Globe globe = dc.getGlobe();
         int index1 = 3 * locationPos;
@@ -782,7 +783,7 @@ public class Polygon extends AbstractAirspace {
         int[] locationIndices = ita.getIndices();
         float[] locationVerts = ita.getVertices();
 
-        this.copyIndexArray(indexCount, (orientation == GeometryBuilder.INSIDE), locationIndices,
+        Polygon.copyIndexArray(indexCount, (orientation == GeometryBuilder.INSIDE), locationIndices,
             vertexPos, indexPos, indices);
 
         for (int i = 0; i < vertexCount; i++) {
@@ -808,7 +809,7 @@ public class Polygon extends AbstractAirspace {
     //********************  Polygon Cap         ********************//
     //**************************************************************//
 
-    private void copyIndexArray(int indexCount, boolean reverseWinding, int[] indices,
+    private static void copyIndexArray(int indexCount, boolean reverseWinding, int[] indices,
         int destVertexPos, int destIndexPos, int[] dest) {
         for (int i = 0; i < indexCount; i += 3) {
             if (reverseWinding) {

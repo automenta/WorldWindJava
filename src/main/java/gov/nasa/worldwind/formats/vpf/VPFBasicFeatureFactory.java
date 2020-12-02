@@ -116,7 +116,7 @@ public class VPFBasicFeatureFactory implements VPFFeatureFactory {
             throw new IllegalArgumentException(message);
         }
 
-        return this.doCreateComplexFeatures(featureClass);
+        return VPFBasicFeatureFactory.doCreateComplexFeatures(featureClass);
     }
 
     protected Collection<? extends VPFFeature> doCreateSimpleFeatures(VPFFeatureClass featureClass) {
@@ -126,14 +126,14 @@ public class VPFBasicFeatureFactory implements VPFFeatureFactory {
             throw new IllegalStateException(message);
         }
 
-        List<VPFFeature> results = new ArrayList<>();
+        Collection<VPFFeature> results = new ArrayList<>();
 
-        VPFBufferedRecordData featureTable = this.createFeatureTable(featureClass);
+        VPFBufferedRecordData featureTable = VPFBasicFeatureFactory.createFeatureTable(featureClass);
         if (featureTable == null)
             return null;
 
-        VPFBufferedRecordData joinTable = this.createJoinTable(featureClass);
-        Iterable<String> attributeKeys = this.getFeatureAttributeKeys(featureTable);
+        VPFBufferedRecordData joinTable = VPFBasicFeatureFactory.createJoinTable(featureClass);
+        Iterable<String> attributeKeys = VPFBasicFeatureFactory.getFeatureAttributeKeys(featureTable);
 
         for (VPFRecord featureRow : featureTable) {
             VPFFeature feature = this.doCreateSimpleFeature(featureClass, featureRow, joinTable, attributeKeys);
@@ -165,7 +165,7 @@ public class VPFBasicFeatureFactory implements VPFFeatureFactory {
         if (this.tile != null && !matchesTile(featureRow, this.tile))
             return null;
 
-        VPFRelation featureToPrimitive = this.getFeatureToPrimitiveRelation(featureClass);
+        VPFRelation featureToPrimitive = VPFBasicFeatureFactory.getFeatureToPrimitiveRelation(featureClass);
         if (featureToPrimitive == null)
             return null;
 
@@ -182,7 +182,7 @@ public class VPFBasicFeatureFactory implements VPFFeatureFactory {
     //**************************************************************//
 
     protected VPFFeature createCompoundSimpleFeature(VPFFeatureClass featureClass, VPFRecord featureRow,
-        VPFBufferedRecordData joinTable, Iterable<String> attributeKeys) {
+        Iterable<VPFRecord> joinTable, Iterable<String> attributeKeys) {
         // Feature has a direct 1:* relation to the primitive table through a join table.
 
         // Query the number of primitives which match the feature.
@@ -206,13 +206,13 @@ public class VPFBasicFeatureFactory implements VPFFeatureFactory {
         Iterable<String> attributeKeys,
         VPFBoundingBox bounds, int[] primitiveIds) {
         VPFFeature feature = new VPFFeature(featureClass, featureRow.getId(), bounds, primitiveIds);
-        this.setFeatureAttributes(featureRow, attributeKeys, feature);
+        VPFBasicFeatureFactory.setFeatureAttributes(featureRow, attributeKeys, feature);
 
         return feature;
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    protected Collection<? extends VPFFeature> doCreateComplexFeatures(VPFFeatureClass featureClass) {
+    protected static Collection<? extends VPFFeature> doCreateComplexFeatures(VPFFeatureClass featureClass) {
         throw new UnsupportedOperationException();
     }
 
@@ -226,11 +226,11 @@ public class VPFBasicFeatureFactory implements VPFFeatureFactory {
         // table, a sequential search of the feature_id column must still be performed to find all primitives associated
         // with a selected feature.
 
-        VPFRelation featureToJoin = this.getFeatureToJoinRelation(featureClass);
+        VPFRelation featureToJoin = VPFBasicFeatureFactory.getFeatureToJoinRelation(featureClass);
         if (featureToJoin == null)
             return null;
 
-        VPFRelation joinToPrimitive = this.getJoinToPrimitiveRelation(featureClass);
+        VPFRelation joinToPrimitive = VPFBasicFeatureFactory.getJoinToPrimitiveRelation(featureClass);
         if (joinToPrimitive == null)
             return null;
 
@@ -264,8 +264,8 @@ public class VPFBasicFeatureFactory implements VPFFeatureFactory {
         return query ? numPrimitives : bounds;
     }
 
-    protected Iterable<String> getFeatureAttributeKeys(VPFBufferedRecordData table) {
-        List<String> keys = new ArrayList<>();
+    protected static Iterable<String> getFeatureAttributeKeys(VPFBufferedRecordData table) {
+        Collection<String> keys = new ArrayList<>();
 
         for (String name : table.getRecordParameterNames()) {
             if (name.equalsIgnoreCase("id") ||
@@ -286,13 +286,13 @@ public class VPFBasicFeatureFactory implements VPFFeatureFactory {
         return keys;
     }
 
-    protected void setFeatureAttributes(VPFRecord row, Iterable<String> attributeKeys, AVList params) {
+    protected static void setFeatureAttributes(VPFRecord row, Iterable<String> attributeKeys, AVList params) {
         for (String key : attributeKeys) {
             VPFUtils.checkAndSetValue(row, key, key, params);
         }
     }
 
-    protected VPFBufferedRecordData createFeatureTable(VPFFeatureClass featureClass) {
+    protected static VPFBufferedRecordData createFeatureTable(VPFFeatureClass featureClass) {
         StringBuilder sb = new StringBuilder(featureClass.getCoverage().getFilePath());
         sb.append(File.separator);
         sb.append(featureClass.getFeatureTableName());
@@ -300,7 +300,7 @@ public class VPFBasicFeatureFactory implements VPFFeatureFactory {
         return VPFUtils.readTable(new File(sb.toString()));
     }
 
-    protected VPFBufferedRecordData createJoinTable(VPFFeatureClass featureClass) {
+    protected static VPFBufferedRecordData createJoinTable(VPFFeatureClass featureClass) {
         if (featureClass.getJoinTableName() == null)
             return null;
 
@@ -311,17 +311,17 @@ public class VPFBasicFeatureFactory implements VPFFeatureFactory {
         return VPFUtils.readTable(new File(sb.toString()));
     }
 
-    protected VPFRelation getFeatureToPrimitiveRelation(VPFFeatureClass featureClass) {
+    protected static VPFRelation getFeatureToPrimitiveRelation(VPFFeatureClass featureClass) {
         return findFirstRelation(featureClass.getFeatureTableName(), featureClass.getPrimitiveTableName(),
             featureClass.getRelations());
     }
 
-    protected VPFRelation getFeatureToJoinRelation(VPFFeatureClass featureClass) {
+    protected static VPFRelation getFeatureToJoinRelation(VPFFeatureClass featureClass) {
         return findFirstRelation(featureClass.getFeatureTableName(), featureClass.getJoinTableName(),
             featureClass.getRelations());
     }
 
-    protected VPFRelation getJoinToPrimitiveRelation(VPFFeatureClass featureClass) {
+    protected static VPFRelation getJoinToPrimitiveRelation(VPFFeatureClass featureClass) {
         return findFirstRelation(featureClass.getJoinTableName(), featureClass.getPrimitiveTableName(),
             featureClass.getRelations());
     }

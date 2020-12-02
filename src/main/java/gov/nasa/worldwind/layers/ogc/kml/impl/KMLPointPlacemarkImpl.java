@@ -161,7 +161,7 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
                 // Evict the resource from the file store if there is a cached resource older than the icon update
                 // time. This prevents fetching a stale resource out of the cache when the Icon is updated.
                 boolean highlighted = this.isHighlighted();
-                this.parent.getRoot().evictIfExpired(path,
+                KMLRoot.evictIfExpired(path,
                     highlighted ? this.highlightIconRetrievalTime : this.iconRetrievalTime);
                 this.textures.remove(path);
             }
@@ -257,7 +257,7 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
         boolean hasIconStyle = false;
         boolean hasLabelStyle = false;
 
-        PointPlacemarkAttributes attrs = this.getInitialAttributes(
+        PointPlacemarkAttributes attrs = KMLPointPlacemarkImpl.getInitialAttributes(
             this.isHighlighted() ? KMLConstants.HIGHLIGHT : KMLConstants.NORMAL);
 
         // Get the KML sub-style for Line attributes. Map them to Shape attributes.
@@ -265,7 +265,7 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
         KMLAbstractSubStyle subStyle = this.parent.getSubStyle(new KMLLineStyle(null), attrType);
         if (subStyle.hasFields() && (!this.isHighlighted() || KMLUtil.isHighlightStyleState(subStyle))) {
             hasLineStyle = true;
-            this.assembleLineAttributes(attrs, (KMLLineStyle) subStyle);
+            KMLPointPlacemarkImpl.assembleLineAttributes(attrs, (KMLLineStyle) subStyle);
             if (subStyle.hasField(AVKey.UNRESOLVED))
                 attrs.setUnresolved(true);
         }
@@ -281,7 +281,7 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
         subStyle = this.parent.getSubStyle(new KMLLabelStyle(null), attrType);
         if (subStyle.hasFields() && (!this.isHighlighted() || KMLUtil.isHighlightStyleState(subStyle))) {
             hasLabelStyle = true;
-            this.assembleLabelAttributes(attrs, (KMLLabelStyle) subStyle);
+            KMLPointPlacemarkImpl.assembleLabelAttributes(attrs, (KMLLabelStyle) subStyle);
             if (subStyle.hasField(AVKey.UNRESOLVED))
                 attrs.setUnresolved(true);
         }
@@ -348,7 +348,7 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
         return attrs;
     }
 
-    protected PointPlacemarkAttributes assembleLineAttributes(PointPlacemarkAttributes attrs, KMLLineStyle style) {
+    protected static PointPlacemarkAttributes assembleLineAttributes(PointPlacemarkAttributes attrs, KMLLineStyle style) {
         // Assign the attributes defined in the KML Feature element.
 
         if (style.getWidth() != null)
@@ -363,7 +363,8 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
         return attrs;
     }
 
-    protected PointPlacemarkAttributes assembleLabelAttributes(PointPlacemarkAttributes attrs, KMLLabelStyle style) {
+    protected static PointPlacemarkAttributes assembleLabelAttributes(PointPlacemarkAttributes attrs,
+        KMLLabelStyle style) {
         // Assign the attributes defined in the KML Feature element.
 
         if (style.getScale() != null)
@@ -385,7 +386,7 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
      * @return New placemark attributes.
      */
     @SuppressWarnings("UnusedDeclaration")
-    protected PointPlacemarkAttributes getInitialAttributes(String attrType) {
+    protected static PointPlacemarkAttributes getInitialAttributes(String attrType) {
         return new PointPlacemarkAttributes();
     }
 

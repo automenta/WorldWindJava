@@ -866,7 +866,7 @@ public class GeotiffReader implements Disposable {
      * Returns the (first!) IFD-Entry with the given tag, or null if not found.
      *
      */
-    private TiffIFDEntry getByTag(TiffIFDEntry[] ifd, int tag) {
+    private static TiffIFDEntry getByTag(TiffIFDEntry[] ifd, int tag) {
         for (TiffIFDEntry anIfd : ifd) {
             if (anIfd.tag == tag) {
                 return anIfd;

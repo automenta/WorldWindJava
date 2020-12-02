@@ -19,7 +19,7 @@ public class BasicSceneController extends AbstractSceneController {
     Sector visibleSectorC, visibleSectorL, visibleSectorR;
 
     public void doRepaint(DrawContext dc) {
-        this.initializeFrame(dc);
+        AbstractSceneController.initializeFrame(dc);
         try {
             if (dc.getGlobe() instanceof Globe2D && ((Globe2D) dc.getGlobe()).isContinuous())
                 this.do2DContiguousRepaint(dc);
@@ -27,31 +27,31 @@ public class BasicSceneController extends AbstractSceneController {
                 this.doNormalRepaint(dc);
         }
         finally {
-            this.finalizeFrame(dc);
+            AbstractSceneController.finalizeFrame(dc);
         }
     }
 
     protected void doNormalRepaint(DrawContext dc) {
-        this.applyView(dc);
-        this.createPickFrustum(dc);
-        this.createTerrain(dc);
+        AbstractSceneController.applyView(dc);
+        AbstractSceneController.createPickFrustum(dc);
+        AbstractSceneController.createTerrain(dc);
         this.preRender(dc);
-        this.clearFrame(dc);
+        AbstractSceneController.clearFrame(dc);
         this.pick(dc);
-        this.clearFrame(dc);
+        AbstractSceneController.clearFrame(dc);
         this.draw(dc);
     }
 
     protected void do2DContiguousRepaint(DrawContext dc) {
         ((Globe2D) dc.getGlobe()).setOffset(0);
 
-        this.applyView(dc);
-        this.createPickFrustum(dc);
+        AbstractSceneController.applyView(dc);
+        AbstractSceneController.createPickFrustum(dc);
         this.createTerrain2DContinuous(dc);
         this.preRender2DContiguous(dc);
-        this.clearFrame(dc);
+        AbstractSceneController.clearFrame(dc);
         this.pick2DContiguous(dc);
-        this.clearFrame(dc);
+        AbstractSceneController.clearFrame(dc);
         this.draw2DContiguous(dc);
     }
 

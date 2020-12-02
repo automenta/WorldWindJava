@@ -46,7 +46,7 @@ public class Level extends AVListImpl implements Comparable<Level> {
         }
 
         this.params = params.copy(); // Private copy to insulate from subsequent changes by the app
-        String message = this.validate(params);
+        String message = Level.validate(params);
         if (message != null) {
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -90,7 +90,7 @@ public class Level extends AVListImpl implements Comparable<Level> {
      * @param params the list of parameters to validate.
      * @return null if valid, otherwise a <code>String</code> containing a description of why it's invalid.
      */
-    protected String validate(AVList params) {
+    protected static String validate(AVList params) {
         StringBuilder sb = new StringBuilder();
 
         Object o = params.get(AVKey.LEVEL_NUMBER);

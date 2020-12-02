@@ -114,7 +114,7 @@ public class LayerTree extends BasicTree {
      */
     protected void initialize(LayerTreeModel model, Offset offset) {
         if (model == null)
-            model = this.createTreeModel();
+            model = LayerTree.createTreeModel();
 
         this.setModel(model);
         this.setLayout(this.createTreeLayout(offset));
@@ -126,7 +126,7 @@ public class LayerTree extends BasicTree {
      *
      * @return a new <code>LayerTreeModel</code>.
      */
-    protected LayerTreeModel createTreeModel() {
+    protected static LayerTreeModel createTreeModel() {
         return new LayerTreeModel();
     }
 

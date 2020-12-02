@@ -193,7 +193,7 @@ public class AWTInputHandler extends WWObjectImpl implements KeyListener, MouseL
 
     }
 
-    private MouseEvent mouseEvent(com.jogamp.newt.event.MouseEvent e, int mousePressed) {
+    private static MouseEvent mouseEvent(com.jogamp.newt.event.MouseEvent e, int mousePressed) {
         return new MouseEvent(dummySource, mousePressed, System.currentTimeMillis(),
             awtModifiers(e), e.getX(), e.getY(), e.getClickCount(), false, e.getButton());
     }
@@ -481,7 +481,7 @@ public class AWTInputHandler extends WWObjectImpl implements KeyListener, MouseL
         mouseDragged(mouseEvent(e, MouseEvent.MOUSE_DRAGGED));
     }
 
-    private int awtModifiers(com.jogamp.newt.event.MouseEvent e) {
+    private static int awtModifiers(com.jogamp.newt.event.MouseEvent e) {
         int modifiersEx = 0;
         if (e.isButtonDown(com.jogamp.newt.event.MouseEvent.BUTTON1))
             modifiersEx |= BUTTON1_DOWN_MASK;

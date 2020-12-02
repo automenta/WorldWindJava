@@ -294,7 +294,7 @@ public class SurfaceImage extends WWObjectImpl
             this.pickSupport = new PickSupport();
 
         try {
-            this.pickSupport.beginPicking(dc);
+            PickSupport.beginPicking(dc);
 
             Color color = dc.getUniquePickColor();
             dc.getGL().getGL2().glColor3ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
@@ -303,7 +303,7 @@ public class SurfaceImage extends WWObjectImpl
             this.draw(dc);
         }
         finally {
-            this.pickSupport.endPicking(dc);
+            PickSupport.endPicking(dc);
             this.pickSupport.resolvePick(dc, pickPoint, this.pickLayer);
         }
     }

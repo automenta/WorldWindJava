@@ -68,17 +68,17 @@ public class DBaseRecord extends AVListImpl {
         byte[] bytes = new byte[maxFieldLength];
 
         for (DBaseField field : fields) {
-            int numRead = dbaseFile.readZeroTerminatedString(buffer, bytes, field.getLength());
+            int numRead = DBaseFile.readZeroTerminatedString(buffer, bytes, field.getLength());
 
             // Add a null entry for this field if the field's value is null or the empty string. This enables
             // applications to treat the DBaseRecord a standard AVList without any knowledge of the DBase file's field
             // keys. Specifically, DBaseRecord.hasKey() returns true for all fields.
-            if (dbaseFile.isStringEmpty(bytes, numRead)) {
+            if (DBaseFile.isStringEmpty(bytes, numRead)) {
                 this.set(field.getName(), "");
                 continue;
             }
 
-            String value = dbaseFile.decodeString(bytes, numRead).trim();
+            String value = DBaseFile.decodeString(bytes, numRead).trim();
 
             try {
                 final String fieldType = field.getType();

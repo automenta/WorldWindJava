@@ -11,7 +11,6 @@ import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.util.WWUtil;
 
 import java.awt.*;
-import java.util.List;
 import java.util.*;
 
 /**
@@ -50,7 +49,7 @@ public class VPFSymbolSupport {
             return attr;
 
         if (key == VPFSymbolKey.UNKNOWN_SYMBOL_KEY) {
-            attr = this.assembleGenericAttributes(featureClass, key);
+            attr = VPFSymbolSupport.assembleGenericAttributes(featureClass, key);
         }
 
         return attr;
@@ -62,7 +61,7 @@ public class VPFSymbolSupport {
         if (keys == null)
             return null;
 
-        List<VPFSymbolAttributes> attrList = new ArrayList<>();
+        Collection<VPFSymbolAttributes> attrList = new ArrayList<>();
 
         for (VPFSymbolKey key : keys) {
             Iterable<? extends VPFSymbolAttributes> attr = this.getSymbolAttributes(featureClass, key);
@@ -112,7 +111,7 @@ public class VPFSymbolSupport {
     protected Iterable<? extends VPFSymbolKey> doGetSymbolKeys(VPFFeatureClass featureClass, String featureCode,
         AVList featureAttributes) {
         if (featureClass.getType() == VPFFeatureType.TEXT) {
-            Integer i = this.getSymbolId(featureAttributes);
+            Integer i = VPFSymbolSupport.getSymbolId(featureAttributes);
             if (i != null) {
                 return Collections.singletonList(new VPFSymbolKey(i));
             }
@@ -123,7 +122,7 @@ public class VPFSymbolSupport {
 
     protected Iterable<? extends VPFSymbolAttributes> doGetAttributes(VPFFeatureClass featureClass, VPFSymbolKey key) {
         if (featureClass.getType() == VPFFeatureType.TEXT) {
-            return this.assembleTextAttributes(featureClass, key);
+            return VPFSymbolSupport.assembleTextAttributes(featureClass, key);
         }
 
         return null;
@@ -133,7 +132,7 @@ public class VPFSymbolSupport {
     //********************  Text Attribute Assembly  ***************//
     //**************************************************************//
 
-    protected Iterable<? extends VPFSymbolAttributes> assembleTextAttributes(VPFFeatureClass featureClass,
+    protected static Iterable<? extends VPFSymbolAttributes> assembleTextAttributes(VPFFeatureClass featureClass,
         VPFSymbolKey key) {
         VPFBufferedRecordData symbolTable = featureClass.getCoverage().getSymbolRelatedAttributeTable();
         if (symbolTable == null) {
@@ -192,7 +191,7 @@ public class VPFSymbolSupport {
         return Collections.singletonList(attr);
     }
 
-    protected Integer getSymbolId(AVList params) {
+    protected static Integer getSymbolId(AVList params) {
         Object o = params.get("symbol_id");
         return (o instanceof Number) ? ((Number) o).intValue() : null;
     }
@@ -201,7 +200,7 @@ public class VPFSymbolSupport {
     //********************  Generic Attribute Assembly  ************//
     //**************************************************************//
 
-    protected Iterable<? extends VPFSymbolAttributes> assembleGenericAttributes(VPFFeatureClass featureClass,
+    protected static Iterable<? extends VPFSymbolAttributes> assembleGenericAttributes(VPFFeatureClass featureClass,
         VPFSymbolKey key) {
         VPFSymbolAttributes attr = new VPFSymbolAttributes(featureClass.getType(), key);
         attr.setDrawInterior(false);
