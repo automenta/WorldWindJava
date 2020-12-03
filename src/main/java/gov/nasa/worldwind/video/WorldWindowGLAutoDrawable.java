@@ -336,8 +336,7 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
             if (positionAtStart != null && positionAtEnd != null) {
                 if (!positionAtStart.equals(positionAtEnd))
                     this.callPositionListeners(new PositionEvent(drawable, sc.getPickPoint(), positionAtStart, positionAtEnd));
-            }
-            else
+            } else
                 this.callPositionListeners(new PositionEvent(drawable, sc.getPickPoint(), positionAtStart, positionAtEnd));
         }
 

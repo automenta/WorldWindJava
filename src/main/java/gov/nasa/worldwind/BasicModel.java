@@ -243,16 +243,16 @@ public class BasicModel extends WWObjectImpl implements Model {
     public void onMessage(Message msg) {
         if (this.getLayers() != null) {
             for (Layer layer : this.getLayers()) {
-                try {
+//                try {
                     if (layer != null) {
                         layer.onMessage(msg);
                     }
-                }
-                catch (Exception e) {
-                    String message = Logging.getMessage("generic.ExceptionInvokingMessageListener");
-                    Logging.logger().log(Level.SEVERE, message, e);
-                    // Don't abort; continue on to the next layer.
-                }
+//                }
+//                catch (Exception e) {
+//                    String message = Logging.getMessage("generic.ExceptionInvokingMessageListener");
+//                    Logging.logger().log(Level.SEVERE, message, e);
+//                    // Don't abort; continue on to the next layer.
+//                }
             }
         }
     }

@@ -1,1 +1,1 @@
-Fork of NASA WorldWind - (almost) NEVER A SOFTWARE ANSWER
+Fork of NASA WorldWind

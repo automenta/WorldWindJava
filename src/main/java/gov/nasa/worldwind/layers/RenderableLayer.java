@@ -27,9 +27,8 @@ import java.util.logging.Level;
  * @see Renderable
  */
 public class RenderableLayer extends AbstractLayer {
-    protected final Collection<Renderable> renderables =
-        new ArrayList();
-        //new ConcurrentLinkedQueue<>();
+    protected final Collection<Renderable> renderables = new ArrayList();
+
     protected final PickSupport pickSupport = new PickSupport();
     protected Iterable<Renderable> renderablesOverride;
 
@@ -170,12 +169,13 @@ public class RenderableLayer extends AbstractLayer {
             throw new IllegalStateException(msg);
         }
 
-        this.renderables.remove(renderable);
+        if (this.renderables.remove(renderable)) {
 
-        // Remove the layer as a property change listener of the renderable. This prevents the renderable from keeping a
-        // dangling reference to the layer.
-        if (renderable instanceof AVList)
-            ((AVList) renderable).removePropertyChangeListener(this);
+            // Remove the layer as a property change listener of the renderable. This prevents the renderable from keeping a
+            // dangling reference to the layer.
+            if (renderable instanceof AVList)
+                ((AVList) renderable).removePropertyChangeListener(this);
+        }
     }
 
     /**
@@ -278,11 +278,11 @@ public class RenderableLayer extends AbstractLayer {
     protected Iterable<Renderable> active() {
         if (this.renderablesOverride != null) {
             return this.renderablesOverride;
-        }
-        else {
+        } else {
             // Return an unmodifiable reference to the internal list of renderables.
             // This prevents callers from changing this list and invalidating any invariants we have established.
-            return Collections.unmodifiableCollection(this.renderables);
+            //return Collections.unmodifiableCollection(this.renderables);
+            return renderables;
         }
     }
 
@@ -365,17 +365,16 @@ public class RenderableLayer extends AbstractLayer {
 
     protected static void doPreRender(DrawContext dc, Iterable<? extends Renderable> renderables) {
         for (Renderable renderable : renderables) {
-            try {
+//            try {
                 // If the caller has specified their own Iterable,
                 // then we cannot make any guarantees about its contents.
                 if (renderable instanceof PreRenderable)
                     ((PreRenderable) renderable).preRender(dc);
-            }
-            catch (Exception e) {
-                String msg = Logging.getMessage("generic.ExceptionWhilePrerenderingRenderable");
-                Logging.logger().severe(msg);
-                // continue to next renderable
-            }
+//            } catch (Exception e) {
+//                String msg = Logging.getMessage("generic.ExceptionWhilePrerenderingRenderable");
+//                Logging.logger().severe(msg);
+//                // continue to next renderable
+//            }
         }
     }
 
@@ -392,15 +391,15 @@ public class RenderableLayer extends AbstractLayer {
                     Color color = dc.getUniquePickColor();
                     gl.glColor3ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
 
-                    try {
+//                    try {
                         renderable.render(dc);
-                    }
-                    catch (Exception e) {
-                        String msg = Logging.getMessage("generic.ExceptionWhilePickingRenderable");
-                        Logging.logger().severe(msg);
-                        Logging.logger().log(Level.FINER, msg, e); // show exception for this level
-                        continue; // go on to next renderable
-                    }
+//                    }
+//                    catch (Exception e) {
+//                        String msg = Logging.getMessage("generic.ExceptionWhilePickingRenderable");
+//                        Logging.logger().severe(msg);
+//                        Logging.logger().log(Level.FINER, msg, e); // show exception for this level
+//                        continue; // go on to next renderable
+//                    }
 //
 //                    gl.glColor4fv(inColor, 0);
 
@@ -415,25 +414,25 @@ public class RenderableLayer extends AbstractLayer {
             }
 
             this.pickSupport.resolvePick(dc, pickPoint, this);
-        }
-        finally {
+
+        } finally {
             PickSupport.endPicking(dc);
         }
     }
 
     protected static void doRender(DrawContext dc, Iterable<? extends Renderable> renderables) {
         for (Renderable renderable : renderables) {
-            try {
+//            try {
                 // If the caller has specified their own Iterable,
                 // then we cannot make any guarantees about its contents.
                 //if (renderable != null)
                     renderable.render(dc);
-            }
-            catch (Exception e) {
-                String msg = Logging.getMessage("generic.ExceptionWhileRenderingRenderable");
-                Logging.logger().log(Level.SEVERE, msg, e);
-                // continue to next renderable
-            }
+//            }
+//            catch (Exception e) {
+//                String msg = Logging.getMessage("generic.ExceptionWhileRenderingRenderable");
+//                Logging.logger().log(Level.SEVERE, msg, e);
+//                // continue to next renderable
+//            }
         }
     }
 
@@ -452,15 +451,15 @@ public class RenderableLayer extends AbstractLayer {
     @Override
     public void onMessage(Message message) {
         for (Renderable renderable : this.renderables) {
-            try {
+//            try {
                 if (renderable instanceof MessageListener)
                     ((MessageListener) renderable).onMessage(message);
-            }
-            catch (Exception e) {
-                String msg = Logging.getMessage("generic.ExceptionInvokingMessageListener");
-                Logging.logger().log(Level.SEVERE, msg, e);
-                // continue to next renderable
-            }
+//            }
+//            catch (Exception e) {
+//                String msg = Logging.getMessage("generic.ExceptionInvokingMessageListener");
+//                Logging.logger().log(Level.SEVERE, msg, e);
+//                // continue to next renderable
+//            }
         }
     }
 }

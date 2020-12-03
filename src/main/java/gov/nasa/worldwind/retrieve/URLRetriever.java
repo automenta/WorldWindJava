@@ -270,8 +270,7 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever {
             if (buffer == null)
                 this.contentLength = 0;
             return buffer;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             if (!(e instanceof SocketTimeoutException || e instanceof UnknownHostException
                 || e instanceof SocketException)) {
                 Logging.logger().log(Level.SEVERE,
