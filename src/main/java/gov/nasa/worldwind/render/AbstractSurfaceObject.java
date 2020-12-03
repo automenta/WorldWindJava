@@ -392,8 +392,8 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
         if (sectors == null)
             return false;
 
-        for (Sector s : sectors) {
-            if (s.intersects(visible))
+        for (int i = 0, sectorsSize = sectors.size(); i < sectorsSize; i++) {
+            if (sectors.get(i).intersects(visible))
                 return true;
         }
 

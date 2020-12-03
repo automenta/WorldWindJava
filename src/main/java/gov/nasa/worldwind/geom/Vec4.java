@@ -13,8 +13,7 @@ import gov.nasa.worldwind.util.*;
  * @version $Id: Vec4.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 public class Vec4 {
-    public static final Vec4 INFINITY =
-        new Vec4(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, 0);
+    public static final Vec4 INFINITY = new Vec4(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, 0);
     public static final Vec4 ZERO = new Vec4(0, 0, 0, 1);
     public static final Vec4 ONE = new Vec4(1, 1, 1, 1);
     public static final Vec4 UNIT_X = new Vec4(1, 0, 0, 0);
@@ -512,15 +511,10 @@ public class Vec4 {
     public final int hashCode() {
         if (this.hashCode == 0) {
             int result;
-            long tmp;
-            tmp = Double.doubleToLongBits(this.x);
-            result = (int) (tmp ^ (tmp >>> 32));
-            tmp = Double.doubleToLongBits(this.y);
-            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-            tmp = Double.doubleToLongBits(this.z);
-            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-            tmp = Double.doubleToLongBits(this.w);
-            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
+            result = Double.hashCode(x);
+            result = 29 * result + Double.hashCode(y);
+            result = 29 * result + Double.hashCode(z);
+            result = 29 * result + Double.hashCode(w);
             this.hashCode = result;
         }
         return this.hashCode;

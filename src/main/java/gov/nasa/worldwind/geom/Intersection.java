@@ -9,6 +9,8 @@ import gov.nasa.worldwind.util.Logging;
 
 import java.util.*;
 
+import static gov.nasa.worldwind.util.WWUtil.sizeEstimate;
+
 /**
  * @author Tom Gaskins
  * @version $Id: Intersection.java 1171 2013-02-11 21:45:02Z dcollins $
@@ -75,24 +77,27 @@ public final class Intersection // Instances are immutable
      * @param listB    the second list of intersections.
      * @return the merged list of intersections, sorted by increasing distance from the reference point.
      */
-    public static Queue<Intersection> sort(final Vec4 refPoint, Collection<Intersection> listA,
-        Collection<Intersection> listB) {
-        Queue<Intersection> sorted = new PriorityQueue<>(10, (losiA, losiB) -> {
-            if (losiA.intersectionPoint == null || losiB.intersectionPoint == null)
-                return 0;
+    public static List<Intersection> sort(final Vec4 refPoint, Collection<Intersection> listA, Collection<Intersection> listB) {
+        final int s = (listA!=null ? sizeEstimate(listA) : 0) + (listB!=null ? sizeEstimate(listB) : 0);
 
-            double dA = refPoint.distanceTo3(losiA.intersectionPoint);
-            double dB = refPoint.distanceTo3(losiB.intersectionPoint);
+        List<Intersection> sorted = new ArrayList<>(s);
 
-            return Double.compare(dA, dB);
-        });
-
-        if (listA != null) {
+        if (listA != null)
             sorted.addAll(listA);
-        }
 
-        if (listB != null) {
+        if (listB != null)
             sorted.addAll(listB);
+
+        if (sorted.size() > 1) {
+            sorted.sort((losiA, losiB) -> {
+                if (losiA.intersectionPoint == null || losiB.intersectionPoint == null)
+                    return 0;
+
+                double dA = refPoint.distanceTo3(losiA.intersectionPoint);
+                double dB = refPoint.distanceTo3(losiB.intersectionPoint);
+
+                return Double.compare(dA, dB);
+            });
         }
 
         return sorted;

@@ -152,11 +152,11 @@ public class Box implements Extent, Renderable {
      * @throws IllegalArgumentException if the axes array or one of its entries is null.
      */
     public Box(Vec4[] axes, double rMin, double rMax, double sMin, double sMax, double tMin, double tMax) {
-        if (axes == null || axes[0] == null || axes[1] == null || axes[2] == null) {
-            String msg = Logging.getMessage("nullValue.AxesIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (axes == null || axes[0] == null || axes[1] == null || axes[2] == null) {
+//            String msg = Logging.getMessage("nullValue.AxesIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         this.ru = axes[0];
         this.su = axes[1];
@@ -196,11 +196,11 @@ public class Box implements Extent, Renderable {
      * @throws IllegalArgumentException if the point is null.
      */
     public Box(Vec4 point) {
-        if (point == null) {
-            String msg = Logging.getMessage("nullValue.PointIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (point == null) {
+//            String msg = Logging.getMessage("nullValue.PointIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         this.ru = new Vec4(1, 0, 0, 1);
         this.su = new Vec4(0, 1, 0, 1);
@@ -241,18 +241,18 @@ public class Box implements Extent, Renderable {
      * @throws IllegalArgumentException if the point list is null or empty.
      */
     public static Box computeBoundingBox(Iterable<? extends Vec4> points) {
-        if (points == null) {
-            String msg = Logging.getMessage("nullValue.PointListIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (points == null) {
+//            String msg = Logging.getMessage("nullValue.PointListIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         Vec4[] axes = WWMath.computePrincipalAxes(points);
-        if (axes == null) {
-            String msg = Logging.getMessage("generic.ListIsEmpty");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (axes == null) {
+//            String msg = Logging.getMessage("generic.ListIsEmpty");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         Vec4 r = axes[0];
         Vec4 s = axes[1];
@@ -318,11 +318,11 @@ public class Box implements Extent, Renderable {
      * @throws IllegalArgumentException if the buffer is null or empty, or if the stride is less than three.
      */
     public static Box computeBoundingBox(BufferWrapper coordinates, int stride) {
-        if (coordinates == null) {
-            String msg = Logging.getMessage("nullValue.CoordinatesAreNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (coordinates == null) {
+//            String msg = Logging.getMessage("nullValue.CoordinatesAreNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         if (stride < 3) {
             String msg = Logging.getMessage("generic.StrideIsInvalid", stride);
@@ -420,7 +420,7 @@ public class Box implements Extent, Renderable {
             // overhead.
             Collection<Vec4> corners = new ArrayList<>(8 * boxes.size());
             for (Box box : boxes) {
-                corners.addAll(Arrays.asList(box.getCorners()));
+                Collections.addAll(corners, box.getCorners());
             }
 
             return computeBoundingBox(corners);
@@ -446,12 +446,8 @@ public class Box implements Extent, Renderable {
         // Compute and return the endpoints of the cylinder on the positive side of the plane.
         double t = (effectiveRadius + dq1) / plane.getNormal().dot3(e0.subtract3(e1));
 
-        Vec4 newEndPoint = e0.add3(e1.subtract3(e0).multiply3(t));
         // truncate the line to only that in the positive halfspace (e.g., inside the frustum)
-        if (bq1)
-            endpoints[0] = newEndPoint;
-        else
-            endpoints[1] = newEndPoint;
+        endpoints[bq1 ? 0 : 1] = e0.add3(e1.subtract3(e0).multiply3(t));
 
         return t;
     }
@@ -759,11 +755,11 @@ public class Box implements Extent, Renderable {
      * {@inheritDoc}
      */
     public boolean intersects(Line line) {
-        if (line == null) {
-            String message = Logging.getMessage("nullValue.LineIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (line == null) {
+//            String message = Logging.getMessage("nullValue.LineIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         return WWMath.polytopeIntersect(line, this.planes) != null;
     }
@@ -772,11 +768,11 @@ public class Box implements Extent, Renderable {
      * {@inheritDoc}
      */
     public double getProjectedArea(View view) {
-        if (view == null) {
-            String message = Logging.getMessage("nullValue.ViewIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (view == null) {
+//            String message = Logging.getMessage("nullValue.ViewIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         // Implementation based on "Real-time Bounding Box Area Computation" by Dieter Schmalstieg and Robert F. Tobler,
         // Vienna University of Technology:
@@ -867,11 +863,11 @@ public class Box implements Extent, Renderable {
      * @param dc the <code>DrawContext</code> to be used.
      */
     public void render(DrawContext dc) {
-        if (dc == null) {
-            String message = Logging.getMessage("nullValue.DocumentSourceIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (dc == null) {
+//            String message = Logging.getMessage("nullValue.DocumentSourceIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         if (dc.isPickingMode())
             return;

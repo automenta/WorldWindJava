@@ -364,15 +364,16 @@ public class LinesOfSight extends ApplicationTemplate {
                 return;
             }
 
-            Queue<Intersection> sortedIntersections = Intersection.sort(this.referencePoint, tIntersections,
+            List<Intersection> sortedIntersections = Intersection.sort(this.referencePoint, tIntersections,
                 sIntersections);
 
             if (sortedIntersections.isEmpty()) {
                 this.showSightLine(position);
             }
             else if (SHOW_ONLY_FIRST_INTERSECTIONS) {
-                this.showSightLine(sortedIntersections.peek().getIntersectionPosition());
-                this.showIntersection(sortedIntersections.peek());
+                Intersection first = sortedIntersections.get(0);
+                this.showSightLine(first.getIntersectionPosition());
+                this.showIntersection(first);
             }
             else {
                 this.showSightLine(position);

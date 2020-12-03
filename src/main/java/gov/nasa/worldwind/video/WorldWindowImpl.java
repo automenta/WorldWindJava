@@ -224,9 +224,8 @@ public abstract class WorldWindowImpl extends WWObjectImpl implements WorldWindo
     }
 
     protected void callRenderingListeners(RenderingEvent event) {
-        for (RenderingListener listener : this.eventListeners.getListeners(RenderingListener.class)) {
+        for (RenderingListener listener : eventListeners.getListeners(RenderingListener.class))
             listener.stageChanged(event);
-        }
     }
 
     public void addPositionListener(PositionListener listener) {

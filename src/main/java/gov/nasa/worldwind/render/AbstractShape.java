@@ -1045,19 +1045,19 @@ public abstract class AbstractShape extends WWObjectImpl
         dc.drawOutlinedShape(this.outlineShapeRenderer, this);
     }
 
-    /**
-     * Creates a {@link PickedObject} for this shape and the specified unique pick color. The
-     * PickedObject returned by this method will be added to the pick list to represent the current shape.
-     *
-     * @param dc        the current draw context.
-     * @param pickColor the unique color for this shape.
-     * @return a new picked object.
-     * @deprecated Use the more general {@link #createPickedObject(int)} instead.
-     */
-    @Deprecated
-    protected PickedObject createPickedObject(DrawContext dc, Color pickColor) {
-        return this.createPickedObject(pickColor.getRGB());
-    }
+//    /**
+//     * Creates a {@link PickedObject} for this shape and the specified unique pick color. The
+//     * PickedObject returned by this method will be added to the pick list to represent the current shape.
+//     *
+//     * @param dc        the current draw context.
+//     * @param pickColor the unique color for this shape.
+//     * @return a new picked object.
+//     * @deprecated Use the more general {@link #createPickedObject(int)} instead.
+//     */
+//    @Deprecated
+//    protected PickedObject createPickedObject(DrawContext dc, Color pickColor) {
+//        return this.createPickedObject(pickColor.getRGB());
+//    }
 
     /**
      * Creates a {@link PickedObject} for this shape and the specified unique pick color code.
@@ -1180,8 +1180,7 @@ public abstract class AbstractShape extends WWObjectImpl
 
                 gl.glEnable(GL2.GL_LIGHTING);
                 gl.glEnableClientState(GL2.GL_NORMAL_ARRAY);
-            }
-            else {
+            }else {
                 Color sc = material.getDiffuse();
                 double opacity = activeAttrs.getOutlineOpacity();
 
@@ -1203,8 +1202,7 @@ public abstract class AbstractShape extends WWObjectImpl
         if (activeAttrs.getOutlineStippleFactor() > 0) {
             gl.glEnable(GL2.GL_LINE_STIPPLE);
             gl.glLineStipple(activeAttrs.getOutlineStippleFactor(), activeAttrs.getOutlineStipplePattern());
-        }
-        else {
+        }else {
             gl.glDisable(GL2.GL_LINE_STIPPLE);
         }
 
@@ -1272,9 +1270,10 @@ public abstract class AbstractShape extends WWObjectImpl
      * @return the model-coordinate point corresponding to the position and this shape's shape type.
      */
     protected Vec4 computePoint(Terrain terrain, Position position) {
-        if (this.getAltitudeMode() == WorldWind.CLAMP_TO_GROUND)
+        final int altMode = this.getAltitudeMode();
+        if (altMode == WorldWind.CLAMP_TO_GROUND)
             return terrain.getSurfacePoint(position.getLatitude(), position.getLongitude(), 0.0d);
-        else if (this.getAltitudeMode() == WorldWind.RELATIVE_TO_GROUND)
+        else if (altMode == WorldWind.RELATIVE_TO_GROUND)
             return terrain.getSurfacePoint(position);
 
         // Raise the shape to accommodate vertical exaggeration applied to the terrain.
@@ -1293,9 +1292,10 @@ public abstract class AbstractShape extends WWObjectImpl
      * @return the model-coordinate point corresponding to the position and this shape's shape type.
      */
     protected Vec4 computePoint(DrawContext dc, Terrain terrain, Position position) {
-        if (this.getAltitudeMode() == WorldWind.CLAMP_TO_GROUND || dc.is2DGlobe())
+        final int altMode = this.getAltitudeMode();
+        if (altMode == WorldWind.CLAMP_TO_GROUND || dc.is2DGlobe())
             return terrain.getSurfacePoint(position.getLatitude(), position.getLongitude(), 0.0d);
-        else if (this.getAltitudeMode() == WorldWind.RELATIVE_TO_GROUND)
+        else if (altMode == WorldWind.RELATIVE_TO_GROUND)
             return terrain.getSurfacePoint(position);
 
         // Raise the shape to accommodate vertical exaggeration applied to the terrain.
@@ -1324,11 +1324,12 @@ public abstract class AbstractShape extends WWObjectImpl
 
         double[] extremes;
         double[] minAndMaxElevations = globe.getMinAndMaxElevations(mySector);
-        if (this.getAltitudeMode() != WorldWind.CLAMP_TO_GROUND) {
+        final int altMode = this.getAltitudeMode();
+        if (altMode != WorldWind.CLAMP_TO_GROUND) {
             extremes = new double[] {Double.MAX_VALUE, -Double.MAX_VALUE};
             for (LatLon pos : positions) {
                 double elevation = pos instanceof Position ? ((Position) pos).getElevation() : 0;
-                if (this.getAltitudeMode() == WorldWind.RELATIVE_TO_GROUND)
+                if (altMode == WorldWind.RELATIVE_TO_GROUND)
                     elevation += minAndMaxElevations[1];
 
                 if (extremes[0] > elevation)
@@ -1384,11 +1385,11 @@ public abstract class AbstractShape extends WWObjectImpl
     }
 
     public void move(Position delta) {
-        if (delta == null) {
-            String msg = Logging.getMessage("nullValue.PositionIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (delta == null) {
+//            String msg = Logging.getMessage("nullValue.PositionIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         Position refPos = this.getReferencePosition();
 
@@ -1439,17 +1440,17 @@ public abstract class AbstractShape extends WWObjectImpl
     }
 
     public void export(String mimeType, Object output) throws IOException, UnsupportedOperationException {
-        if (mimeType == null) {
-            String message = Logging.getMessage("nullValue.Format");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (mimeType == null) {
+//            String message = Logging.getMessage("nullValue.Format");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
-        if (output == null) {
-            String message = Logging.getMessage("nullValue.OutputBufferIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (output == null) {
+//            String message = Logging.getMessage("nullValue.OutputBufferIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         String supported = this.isExportFormatSupported(mimeType);
         if (FORMAT_NOT_SUPPORTED.equals(supported)) {
@@ -1579,17 +1580,16 @@ public abstract class AbstractShape extends WWObjectImpl
     }
 
     public void restoreState(String stateInXml) {
-        if (stateInXml == null) {
-            String message = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (stateInXml == null) {
+//            String message = Logging.getMessage("nullValue.StringIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         RestorableSupport rs;
         try {
             rs = RestorableSupport.parse(stateInXml);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             // Parsing the document specified by stateInXml failed.
             String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", stateInXml);
             Logging.logger().severe(message);

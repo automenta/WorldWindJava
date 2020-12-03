@@ -1116,5 +1116,34 @@ public class WWUtil {
         public int size() {
             return x.length;
         }
+
+        @Override
+        public Iterator<X> iterator() {
+            return new ArrayIterator<>(x);
+        }
     }
+
+    static class ArrayIterator<X> implements Iterator<X> {
+        private final X[] array;
+        private int currentIndex = 0;
+
+        public ArrayIterator(X[] array) {
+
+                this.array = array;
+
+        }
+
+        public boolean hasNext() {
+            return this.currentIndex < this.array.length;
+        }
+
+        public X next() {
+            return array[currentIndex++];
+        }
+
+        public void remove() {
+            throw new UnsupportedOperationException("cannot remove items from an array");
+        }
+    }
+
 }

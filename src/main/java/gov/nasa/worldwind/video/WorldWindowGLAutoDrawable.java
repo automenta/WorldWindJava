@@ -95,16 +95,20 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
         this.viewStopTime = time;
     }
 
-    public void initDrawable(GLAutoDrawable glAutoDrawable) {
-        if (glAutoDrawable == null) {
+    public void initDrawable(GLAutoDrawable drawable) {
+        if (drawable == null) {
             String msg = Logging.getMessage("nullValue.DrawableIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        this.drawable = glAutoDrawable;
-        this.drawable.setAutoSwapBufferMode(false);
-        this.drawable.addGLEventListener(this);
+        this.drawable = drawable;
+        BEFORE_RENDERING = new RenderingEvent(drawable, RenderingEvent.BEFORE_RENDERING);
+        BEFORE_BUFFER_SWAP = new RenderingEvent(drawable, RenderingEvent.BEFORE_BUFFER_SWAP);
+        AFTER_BUFFER_SWAP = new RenderingEvent(drawable, RenderingEvent.AFTER_BUFFER_SWAP);
+
+        drawable.setAutoSwapBufferMode(false);
+        drawable.addGLEventListener(this);
     }
 
     @Override
@@ -133,12 +137,17 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
         this.redraw(); // Invokes a repaint, where the rest of the shutdown work is done.
     }
 
-    protected void doShutdown() {
-        super.shutdown();
-        this.drawable.removeGLEventListener(this);
-        if (this.viewRefreshTask != null)
-            this.viewRefreshTask.cancel(false);
-        this.shuttingDown = false;
+    protected final void doShutdown() {
+        try {
+            super.shutdown();
+            this.drawable.removeGLEventListener(this);
+            if (this.viewRefreshTask != null)
+                this.viewRefreshTask.cancel(false);
+            this.shuttingDown = false;
+        } catch (Exception e) {
+            Logging.logger().log(Level.SEVERE, Logging.getMessage(
+                "WorldWindowGLCanvas.ExceptionWhileShuttingDownWorldWindow"), e);
+        }
     }
 
     @Override
@@ -244,108 +253,103 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
     public void display(GLAutoDrawable glAutoDrawable) {
         // Performing shutdown here in order to do so with a current GL context for GL resource disposal.
         if (this.shuttingDown) {
-            try {
-                this.doShutdown();
-            } catch (Exception e) {
-                Logging.logger().log(Level.SEVERE, Logging.getMessage(
-                    "WorldWindowGLCanvas.ExceptionWhileShuttingDownWorldWindow"), e);
-            }
+            this.doShutdown();
             return;
         }
+
         if (!redrawNecessary.getAndSet(false))
             return;
 
-
         try {
-
-
-            // Determine if the view has changed since the last frame.
-            this.checkForViewChange();
-
-            Position positionAtStart = this.position();
-            PickedObject selectionAtStart = this.getCurrentSelection();
-            PickedObjectList boxSelectionAtStart = this.getCurrentBoxSelection();
-
-            try {
-                this.callRenderingListeners(new RenderingEvent(this.drawable, RenderingEvent.BEFORE_RENDERING));
-            } catch (Exception e) {
-                Logging.logger().log(Level.SEVERE,
-                    Logging.getMessage("WorldWindowGLAutoDrawable.ExceptionDuringGLEventListenerDisplay"), e);
-            }
-
-            int redrawDelay = this.doDisplay();
-            if (redrawDelay > 0) {
-                if (this.redrawTimer == null) {
-                    this.redrawTimer = new Timer(redrawDelay, actionEvent -> {
-                        redraw();
-                        redrawTimer = null;
-                    });
-                    redrawTimer.setRepeats(false);
-                    redrawTimer.start();
-                }
-            }
-
-            try {
-                this.callRenderingListeners(new RenderingEvent(this.drawable, RenderingEvent.BEFORE_BUFFER_SWAP));
-            } catch (Exception e) {
-                Logging.logger().log(Level.SEVERE,
-                    Logging.getMessage("WorldWindowGLAutoDrawable.ExceptionDuringGLEventListenerDisplay"), e);
-            }
-
-            WorldWindowGLAutoDrawable.doSwapBuffers(this.drawable);
-
-            SceneController sc = this.sceneControl();
-
-            Double frameTime = sc.getFrameTime();
-            this.set(PerformanceStatistic.FRAME_TIME, frameTime);
-
-            Double frameRate = sc.getFramesPerSecond();
-            this.set(PerformanceStatistic.FRAME_RATE, frameRate);
-
-            // Dispatch the rendering exceptions accumulated by the SceneController during this frame to our
-            // RenderingExceptionListeners.
-            Iterable<Throwable> renderingExceptions = sc.getRenderingExceptions();
-            if (renderingExceptions != null) {
-                for (Throwable t : renderingExceptions) {
-//                    if (t != null)
-                    this.callRenderingExceptionListeners(t);
-                }
-            }
-
-            this.callRenderingListeners(new RenderingEvent(this.drawable, RenderingEvent.AFTER_BUFFER_SWAP));
-
-            // Position and selection notification occurs only on triggering conditions, not same-state conditions:
-            // start == null, end == null: nothing selected -- don't notify
-            // start == null, end != null: something now selected -- notify
-            // start != null, end == null: something was selected but no longer is -- notify
-            // start != null, end != null, start != end: something new was selected -- notify
-            // start != null, end != null, start == end: same thing is selected -- don't notify
-
-            Position positionAtEnd = this.position();
-            if (positionAtStart != null || positionAtEnd != null) {
-                // call the listener if both are not null or positions are the same
-                if (positionAtStart != null && positionAtEnd != null) {
-                    if (!positionAtStart.equals(positionAtEnd))
-                        this.callPositionListeners(new PositionEvent(drawable, sc.getPickPoint(), positionAtStart, positionAtEnd));
-                }
-                else {
-                    this.callPositionListeners(new PositionEvent(drawable, sc.getPickPoint(), positionAtStart, positionAtEnd));
-                }
-            }
-
-            PickedObject selectionAtEnd = this.getCurrentSelection();
-            if (selectionAtStart != null || selectionAtEnd != null) {
-                this.callSelectListeners(new SelectEvent(drawable, SelectEvent.ROLLOVER, sc.getPickPoint(), sc.getPickedObjectList()));
-            }
-
-            PickedObjectList boxSelectionAtEnd = this.getCurrentBoxSelection();
-            if (boxSelectionAtStart != null || boxSelectionAtEnd != null) {
-                this.callSelectListeners(new SelectEvent(drawable, SelectEvent.BOX_ROLLOVER,
-                    sc.getPickRectangle(), sc.getObjectsInPickRectangle()));
-            }
+            _display();
         } catch (Exception e) {
             Logging.logger().log(Level.SEVERE, Logging.getMessage("WorldWindowGLCanvas.ExceptionAttemptingRepaintWorldWindow"), e);
         }
+    }
+
+    private RenderingEvent BEFORE_RENDERING;
+    private RenderingEvent BEFORE_BUFFER_SWAP;
+    private RenderingEvent AFTER_BUFFER_SWAP;
+
+    private void _display() {
+        // Determine if the view has changed since the last frame.
+        this.checkForViewChange();
+
+        Position positionAtStart = this.position();
+        PickedObject selectionAtStart = this.getCurrentSelection();
+        PickedObjectList boxSelectionAtStart = this.getCurrentBoxSelection();
+
+        try {
+            this.callRenderingListeners(BEFORE_RENDERING);
+        } catch (Exception e) {
+            Logging.logger().log(Level.SEVERE,
+                Logging.getMessage("WorldWindowGLAutoDrawable.ExceptionDuringGLEventListenerDisplay"), e);
+        }
+
+        int redrawDelay = this.sceneControl().repaint();
+        if (redrawDelay > 0) {
+            if (this.redrawTimer == null) {
+                this.redrawTimer = new Timer(redrawDelay, actionEvent -> {
+                    redraw();
+                    redrawTimer = null;
+                });
+                redrawTimer.setRepeats(false);
+                redrawTimer.start();
+            }
+        }
+
+//        try {
+            this.callRenderingListeners(BEFORE_BUFFER_SWAP);
+//        } catch (Exception e) {
+//            Logging.logger().log(Level.SEVERE,
+//                Logging.getMessage("WorldWindowGLAutoDrawable.ExceptionDuringGLEventListenerDisplay"), e);
+//        }
+
+        WorldWindowGLAutoDrawable.doSwapBuffers(this.drawable);
+
+        SceneController sc = this.sceneControl();
+
+        this.set(PerformanceStatistic.FRAME_TIME, sc.getFrameTime());
+
+        this.set(PerformanceStatistic.FRAME_RATE, sc.getFramesPerSecond());
+
+        // Dispatch the rendering exceptions accumulated by the SceneController during this frame to our
+        // RenderingExceptionListeners.
+        Iterable<Throwable> renderingExceptions = sc.getRenderingExceptions();
+        if (renderingExceptions != null) {
+            for (Throwable t : renderingExceptions)
+                this.callRenderingExceptionListeners(t);
+        }
+
+        this.callRenderingListeners(AFTER_BUFFER_SWAP);
+
+        // Position and selection notification occurs only on triggering conditions, not same-state conditions:
+        // start == null, end == null: nothing selected -- don't notify
+        // start == null, end != null: something now selected -- notify
+        // start != null, end == null: something was selected but no longer is -- notify
+        // start != null, end != null, start != end: something new was selected -- notify
+        // start != null, end != null, start == end: same thing is selected -- don't notify
+
+        Position positionAtEnd = this.position();
+        if (positionAtStart != null || positionAtEnd != null) {
+            // call the listener if both are not null or positions are the same
+            if (positionAtStart != null && positionAtEnd != null) {
+                if (!positionAtStart.equals(positionAtEnd))
+                    this.callPositionListeners(new PositionEvent(drawable, sc.getPickPoint(), positionAtStart, positionAtEnd));
+            }
+            else
+                this.callPositionListeners(new PositionEvent(drawable, sc.getPickPoint(), positionAtStart, positionAtEnd));
+        }
+
+        PickedObject selectionAtEnd = this.getCurrentSelection();
+        if (selectionAtStart != null || selectionAtEnd != null)
+            this.callSelectListeners(new SelectEvent(drawable, SelectEvent.ROLLOVER, sc.getPickPoint(), sc.getPickedObjectList()));
+
+
+        PickedObjectList boxSelectionAtEnd = this.getCurrentBoxSelection();
+        if (boxSelectionAtStart != null || boxSelectionAtEnd != null)
+            this.callSelectListeners(new SelectEvent(drawable, SelectEvent.BOX_ROLLOVER, sc.getPickRectangle(), sc.getObjectsInPickRectangle()));
+
     }
 
     /**
@@ -366,16 +370,6 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
             // Cancel the previous view stop task and schedule a new one because the view has changed.
             this.scheduleViewStopTask(this.getViewStopTime());
         }
-    }
-
-    /**
-     * Performs the actual repaint. Provided so that subclasses may override the repaint steps.
-     *
-     * @return if greater than zero, the window should be automatically repainted again at the indicated number of
-     * milliseconds from this method's return.
-     */
-    protected int doDisplay() {
-        return this.sceneControl().repaint();
     }
 
     /**
@@ -410,10 +404,7 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
 
     private final Message viewStopMsg = new Message(View.VIEW_STOPPED, WorldWindowGLAutoDrawable.this);
 
-    private final Runnable viewStoppedTask = () -> {
-        //EventQueue.invokeLater(() ->
-        WorldWindowGLAutoDrawable.this.onMessage(viewStopMsg);
-    };
+    private final Runnable viewStoppedTask = () -> WorldWindowGLAutoDrawable.this.onMessage(viewStopMsg);
 
     /**
      * Schedule a task that will send a {@link View#VIEW_STOPPED} message to the Model when the task executes. If the
@@ -423,7 +414,7 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
      *
      * @param delay Delay in milliseconds until the task runs.
      */
-    protected void scheduleViewStopTask(long delay) {
+    protected synchronized void scheduleViewStopTask(long delay) {
 
         // Cancel the previous view stop task
         if (this.viewRefreshTask != null) {

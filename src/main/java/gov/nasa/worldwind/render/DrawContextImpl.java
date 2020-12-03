@@ -50,7 +50,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     protected final PickPointFrustumList pickFrustumList = new PickPointFrustumList();
     protected final DeclutteringTextRenderer declutteringTextRenderer = new DeclutteringTextRenderer();
     protected final PriorityQueue<OrderedRenderableEntry> orderedRenderables =
-        new PriorityQueue<>(100, (orA, orB) -> {
+        new PriorityQueue<>(1024, (orA, orB) -> {
             double eA = orA.distanceFromEye;
             double eB = orB.distanceFromEye;
 
@@ -613,11 +613,11 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public void addOrderedRenderable(OrderedRenderable orderedRenderable) {
-        if (null == orderedRenderable) {
-            String msg = Logging.getMessage("nullValue.OrderedRenderable");
-            Logging.logger().warning(msg);
-            return; // benign event
-        }
+//        if (null == orderedRenderable) {
+//            String msg = Logging.getMessage("nullValue.OrderedRenderable");
+//            Logging.logger().warning(msg);
+//            return; // benign event
+//        }
 
         this.orderedRenderables.add(new OrderedRenderableEntry(orderedRenderable, System.nanoTime(), this));
     }
@@ -708,11 +708,11 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
      * {@inheritDoc}
      */
     public void addOrderedSurfaceRenderable(OrderedRenderable orderedRenderable) {
-        if (orderedRenderable == null) {
-            String msg = Logging.getMessage("nullValue.OrderedRenderable");
-            Logging.logger().warning(msg);
-            return; // benign event
-        }
+//        if (orderedRenderable == null) {
+//            String msg = Logging.getMessage("nullValue.OrderedRenderable");
+//            Logging.logger().warning(msg);
+//            return; // benign event
+//        }
 
         this.orderedSurfaceRenderables.add(orderedRenderable);
     }
@@ -788,11 +788,11 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public Vec4 getPointOnTerrain(Angle latitude, Angle longitude) {
-        if (latitude == null || longitude == null) {
-            String message = Logging.getMessage("nullValue.LatitudeOrLongitudeIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (latitude == null || longitude == null) {
+//            String message = Logging.getMessage("nullValue.LatitudeOrLongitudeIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         if (this.getVisibleSector() == null)
             return null;
@@ -817,11 +817,11 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public void setPerFrameStatistics(Collection<PerformanceStatistic> stats) {
-        if (stats == null) {
-            String message = Logging.getMessage("nullValue.ListIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (stats == null) {
+//            String message = Logging.getMessage("nullValue.ListIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         if (this.perFrameStatistics == null || this.perFrameStatisticsKeys == null)
             return;
@@ -842,17 +842,17 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
         if (this.perFrameStatistics == null || this.perFrameStatisticsKeys == null)
             return;
 
-        if (key == null) {
-            String message = Logging.getMessage("nullValue.KeyIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (key == null) {
+//            String message = Logging.getMessage("nullValue.KeyIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
-        if (displayName == null) {
-            String message = Logging.getMessage("nullValue.DisplayNameIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (displayName == null) {
+//            String message = Logging.getMessage("nullValue.DisplayNameIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         if (this.perFrameStatisticsKeys.contains(key) || this.perFrameStatisticsKeys.contains(PerformanceStatistic.ALL))
             this.perFrameStatistics.add(new PerformanceStatistic(key, displayName, value));
@@ -867,11 +867,11 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public List<Sector> getVisibleSectors(double[] resolutions, long timeLimit, Sector sector) {
-        if (resolutions == null) {
-            String message = Logging.getMessage("nullValue.ArrayIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (resolutions == null) {
+//            String message = Logging.getMessage("nullValue.ArrayIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         if (timeLimit <= 0) {
             String message = Logging.getMessage("generic.TimeNegative", timeLimit);
@@ -908,11 +908,11 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public void addScreenCredit(ScreenCredit credit) {
-        if (credit == null) {
-            String message = Logging.getMessage("nullValue.ScreenCreditIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (credit == null) {
+//            String message = Logging.getMessage("nullValue.ScreenCreditIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         this.credits.put(credit, this.frameTimestamp);
     }
@@ -938,11 +938,11 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public void setPickPointFrustumDimension(Dimension dim) {
-        if (dim == null) {
-            String message = Logging.getMessage("nullValue.DimensionIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (dim == null) {
+//            String message = Logging.getMessage("nullValue.DimensionIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         if (dim.width < 3 || dim.height < 3) {
             String message = Logging.getMessage("DrawContext.PickPointFrustumDimensionTooSmall");
@@ -1058,11 +1058,11 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
         if (this.renderingExceptions == null)
             return;
 
-        if (t == null) {
-            String message = Logging.getMessage("nullValue.ThrowableIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (t == null) {
+//            String message = Logging.getMessage("nullValue.ThrowableIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         this.renderingExceptions.add(t);
     }
@@ -1218,8 +1218,9 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public void restoreDefaultBlending() {
-        this.getGL().glBlendFunc(GL.GL_ONE, GL.GL_ZERO);
-        this.getGL().glDisable(GL.GL_BLEND);
+        final GL gl = this.getGL();
+        gl.glBlendFunc(GL.GL_ONE, GL.GL_ZERO);
+        gl.glDisable(GL.GL_BLEND);
     }
 
     public void restoreDefaultCurrentColor() {
@@ -1228,31 +1229,32 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public void restoreDefaultDepthTesting() {
-        this.getGL().glEnable(GL.GL_DEPTH_TEST);
-        this.getGL().glDepthMask(true);
+        final GL gl = this.getGL();
+        gl.glEnable(GL.GL_DEPTH_TEST);
+        gl.glDepthMask(true);
     }
 
     public Vec4 computePointFromPosition(Position position, int altitudeMode) {
-        if (position == null) {
-            String msg = Logging.getMessage("nullValue.PositionIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (position == null) {
+//            String msg = Logging.getMessage("nullValue.PositionIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         Vec4 point;
 
+        final Angle lat = position.getLatitude();
+        final Angle lon = position.getLongitude();
         if (altitudeMode == WorldWind.CLAMP_TO_GROUND) {
-            point = this.computeTerrainPoint(position.getLatitude(), position.getLongitude(), 0);
+            point = this.computeTerrainPoint(lat, lon, 0);
         }
         else if (altitudeMode == WorldWind.RELATIVE_TO_GROUND) {
-            point = this.computeTerrainPoint(position.getLatitude(), position.getLongitude(),
-                position.getAltitude());
+            point = this.computeTerrainPoint(lat, lon, position.getAltitude());
         }
         else  // ABSOLUTE
         {
-            double height = position.getElevation() * this.getVerticalExaggeration();
-            point = this.getGlobe().computePointFromPosition(position.getLatitude(),
-                position.getLongitude(), height);
+            point = this.getGlobe().computePointFromPosition(lat, lon,
+                position.getElevation() * this.getVerticalExaggeration());
         }
 
         return point;
@@ -1275,8 +1277,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
             }
         }
 
-        public OrderedRenderableEntry(OrderedRenderable orderedRenderable, double distanceFromEye, long insertionTime,
-            DrawContext dc) {
+        public OrderedRenderableEntry(OrderedRenderable orderedRenderable, double distanceFromEye, long insertionTime, DrawContext dc) {
             this.or = orderedRenderable;
             this.distanceFromEye = distanceFromEye;
             this.time = insertionTime;
