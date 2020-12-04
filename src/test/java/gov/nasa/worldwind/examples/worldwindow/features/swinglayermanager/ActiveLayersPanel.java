@@ -11,6 +11,7 @@ import gov.nasa.worldwind.examples.worldwindow.core.layermanager.ActiveLayersMan
 import gov.nasa.worldwind.examples.worldwindow.features.AbstractFeaturePanel;
 import gov.nasa.worldwind.examples.worldwindow.util.*;
 import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.video.LayerList;
 
 import javax.swing.*;
 import javax.swing.border.*;

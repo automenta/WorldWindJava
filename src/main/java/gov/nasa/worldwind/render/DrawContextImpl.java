@@ -18,6 +18,7 @@ import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.pick.*;
 import gov.nasa.worldwind.terrain.*;
 import gov.nasa.worldwind.util.*;
+import gov.nasa.worldwind.video.LayerList;
 
 import java.awt.*;
 import java.nio.*;

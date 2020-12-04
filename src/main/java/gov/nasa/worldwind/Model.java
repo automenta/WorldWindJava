@@ -8,7 +8,7 @@ package gov.nasa.worldwind;
 
 import gov.nasa.worldwind.geom.Extent;
 import gov.nasa.worldwind.globes.Globe;
-import gov.nasa.worldwind.layers.LayerList;
+import gov.nasa.worldwind.video.LayerList;
 
 /**
  * Aggregates a globe and a set of layers. Through the globe it also indirectly includes the elevation model and the

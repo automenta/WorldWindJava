@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.examples.sar;
 
 import gov.nasa.worldwind.WorldWindow;
-import gov.nasa.worldwind.layers.Earth.*;
+import gov.nasa.worldwind.layers.earth.*;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.render.*;
 

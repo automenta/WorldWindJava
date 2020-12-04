@@ -786,11 +786,11 @@ public abstract class AbstractShape extends WWObjectImpl
         // time as an OrderedRenderable. The first two calls determine whether to add the shape to the ordered renderable
         // list during pick and render. The third call just draws the ordered renderable.
 
-        if (dc == null) {
-            String msg = Logging.getMessage("nullValue.DrawContextIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (dc == null) {
+//            String msg = Logging.getMessage("nullValue.DrawContextIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         if (dc.getGlobe() instanceof Globe2D && this.surfaceShape != null) {
             this.surfaceShape.render(dc);

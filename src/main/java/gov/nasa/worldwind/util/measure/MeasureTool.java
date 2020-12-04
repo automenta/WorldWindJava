@@ -199,9 +199,14 @@ public class MeasureTool extends AVListImpl implements Disposable {
         this.applicationLayer = applicationLayer; // can be null
 
         // Set up layers
-        this.layer = createCustomRenderableLayer();
-        this.shapeLayer = createCustomRenderableLayer();
-        this.controlPointsLayer = createCustomRenderableLayer();
+        this.layer = new CustomRenderableLayer();
+        this.shapeLayer = new CustomRenderableLayer();
+        this.controlPointsLayer = new CustomRenderableLayer() {
+            @Override
+            protected Iterable<Renderable> active() {
+                return controlPoints;
+            }
+        };
 
         this.shapeLayer.setPickEnabled(false);
         this.layer.setName("Measure Tool");
@@ -314,13 +319,6 @@ public class MeasureTool extends AVListImpl implements Disposable {
         }
 
         this.unitsFormat = unitsFormat;
-    }
-
-    /**
-     * @return Instance of the custom renderable layer to use of our internal layers
-     */
-    protected static CustomRenderableLayer createCustomRenderableLayer() {
-        return new CustomRenderableLayer();
     }
 
     public void setLabel(String labelName, String label) {
@@ -1044,7 +1042,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
                 this.controlPoints.remove(this.controlPoints.size() - 1);
             }
         }
-        this.controlPointsLayer.set(this.controlPoints);
+//        this.controlPointsLayer.set(this.controlPoints);
         // Update screen shapes
         updateMeasureShape();
         this.firePropertyChange(EVENT_POSITION_REMOVE, currentLastPosition, null);
@@ -1067,11 +1065,11 @@ public class MeasureTool extends AVListImpl implements Disposable {
      * @param mode  the shape edition mode.
      */
     public void moveControlPoint(ControlPoint point, String mode) {
-        if (point == null) {
-            String msg = Logging.getMessage("nullValue.PointIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (point == null) {
+//            String msg = Logging.getMessage("nullValue.PointIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
         if (point.get(CONTROL_TYPE_REGULAR_SHAPE) != null) {
             // Update shape properties
             updateShapeProperties((String) point.get(CONTROL_TYPE_REGULAR_SHAPE), point.getPosition(), mode);
@@ -1908,7 +1906,6 @@ public class MeasureTool extends AVListImpl implements Disposable {
 
     protected void doAddControlPoint(Renderable controlPoint) {
         this.controlPoints.add(controlPoint);
-        this.controlPointsLayer.set(this.controlPoints);
     }
 
     public void updateAnnotation(Position pos) {

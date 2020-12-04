@@ -10,6 +10,7 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.exception.WWAbsentRequirementException;
 import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.layers.tool.*;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.video.awt.WorldWindowGLCanvas;
 
@@ -162,7 +163,7 @@ public class ApplicationTemplate {
             // Create and install the view controls layer and register a controller for it with the WorldWindow.
             ViewControlsLayer viewControlsLayer = new ViewControlsLayer();
             WorldWindow.insertBeforeCompass(wwd(), viewControlsLayer);
-            this.wwd().addSelectListener(new ViewControlsSelectListener(this.wwd(), viewControlsLayer));
+            this.wwd().addSelectListener(new ViewControlsLayer.ViewControlsSelectListener(this.wwd(), viewControlsLayer));
 
             // Register a rendering exception listener that's notified when exceptions occur during rendering.
             this.wwjPanel.wwd().addRenderingExceptionListener((Throwable t) -> {

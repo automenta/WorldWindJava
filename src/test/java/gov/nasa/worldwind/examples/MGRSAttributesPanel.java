@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.layers.Earth.*;
+import gov.nasa.worldwind.layers.earth.*;
 import gov.nasa.worldwind.util.Logging;
 
 import javax.swing.*;

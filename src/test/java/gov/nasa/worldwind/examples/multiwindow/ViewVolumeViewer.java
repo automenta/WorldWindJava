@@ -14,6 +14,7 @@ import gov.nasa.worldwind.pick.*;
 import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.terrain.*;
 import gov.nasa.worldwind.util.*;
+import gov.nasa.worldwind.video.LayerList;
 import gov.nasa.worldwind.video.awt.WorldWindowGLCanvas;
 
 import javax.swing.*;

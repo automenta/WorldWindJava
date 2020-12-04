@@ -7,6 +7,7 @@ package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.layers.tool.*;
 
 import javax.swing.*;
 import javax.swing.border.*;
@@ -21,7 +22,7 @@ import java.awt.event.*;
  * @author Patrick Murris
  * @version $Id: ViewControls.java 2109 2014-06-30 16:52:38Z tgaskins $
  * @see ViewControlsLayer
- * @see ViewControlsSelectListener
+ * @see ViewControlsLayer.ViewControlsSelectListener
  * @see CompassLayer
  */
 public class ViewControls extends ApplicationTemplate {

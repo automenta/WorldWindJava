@@ -16,6 +16,7 @@ import gov.nasa.worldwind.layers.ogc.collada.ColladaRoot;
 import gov.nasa.worldwind.layers.ogc.collada.impl.ColladaController;
 import gov.nasa.worldwind.layers.ogc.kml.*;
 import gov.nasa.worldwind.layers.ogc.kml.impl.KMLController;
+import gov.nasa.worldwind.layers.tool.CrosshairLayer;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.render.airspaces.Polygon;
 import gov.nasa.worldwind.render.airspaces.*;

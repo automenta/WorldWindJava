@@ -11,6 +11,7 @@ import gov.nasa.worldwind.geom.Extent;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.util.Logging;
+import gov.nasa.worldwind.video.LayerList;
 import org.w3c.dom.Element;
 
 import java.util.logging.Level;

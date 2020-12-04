@@ -13,9 +13,11 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.layers.ogc.wms.*;
 import gov.nasa.worldwind.layers.placename.PlaceNameLayer;
+import gov.nasa.worldwind.layers.tool.*;
 import gov.nasa.worldwind.layers.wms.WMSTiledImageLayer;
 import gov.nasa.worldwind.terrain.WMSBasicElevationModel;
 import gov.nasa.worldwind.util.*;
+import gov.nasa.worldwind.video.LayerList;
 import gov.nasa.worldwind.video.awt.WorldWindowGLCanvas;
 
 import javax.swing.*;
@@ -366,7 +368,7 @@ public class DFWDemo {
             // Create and install the view controls layer and register a controller for it with the WorldWindow.
             ViewControlsLayer viewControlsLayer = new ViewControlsLayer();
             insertBeforeCompass(getWwd(), viewControlsLayer);
-            this.getWwd().addSelectListener(new ViewControlsSelectListener(this.getWwd(), viewControlsLayer));
+            this.getWwd().addSelectListener(new ViewControlsLayer.ViewControlsSelectListener(this.getWwd(), viewControlsLayer));
 
             // Register a rendering exception listener that's notified when exceptions occur during rendering.
             this.wwjPanel.getWwd().addRenderingExceptionListener((Throwable t) -> {

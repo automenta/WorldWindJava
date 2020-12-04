@@ -16,7 +16,6 @@ import gov.nasa.worldwind.util.Logging;
 import java.awt.*;
 import java.util.List;
 import java.util.*;
-import java.util.logging.Level;
 
 /**
  * The <code>RenderableLayer</code> class manages a collection of {@link Renderable} objects
@@ -30,7 +29,7 @@ public class RenderableLayer extends AbstractLayer {
     protected final Collection<Renderable> renderables = new ArrayList();
 
     protected final PickSupport pickSupport = new PickSupport();
-    protected Iterable<Renderable> renderablesOverride;
+//    protected Iterable<Renderable> renderablesOverride;
 
     /**
      * Creates a new <code>RenderableLayer</code> with a null <code>delegateOwner</code>
@@ -54,11 +53,7 @@ public class RenderableLayer extends AbstractLayer {
      */
     public void add(Renderable renderable) {
 
-        if (this.renderablesOverride != null) {
-            String msg = Logging.getMessage("generic.LayerIsUsingCustomIterable");
-            Logging.logger().severe(msg);
-            throw new IllegalStateException(msg);
-        }
+    
 
         this.renderables.add(renderable);
 
@@ -87,11 +82,6 @@ public class RenderableLayer extends AbstractLayer {
      */
     public void add(int index, Renderable renderable) {
 
-        if (this.renderablesOverride != null) {
-            String msg = Logging.getMessage("generic.LayerIsUsingCustomIterable");
-            Logging.logger().severe(msg);
-            throw new IllegalStateException(msg);
-        }
 
         if (index < 0 || index > this.renderables.size()) {
             String msg = Logging.getMessage("generic.indexOutOfRange", index);
@@ -129,11 +119,6 @@ public class RenderableLayer extends AbstractLayer {
      */
     public void addAll(Iterable<? extends Renderable> renderables) {
 
-        if (this.renderablesOverride != null) {
-            String msg = Logging.getMessage("generic.LayerIsUsingCustomIterable");
-            Logging.logger().severe(msg);
-            throw new IllegalStateException(msg);
-        }
 
         for (Renderable renderable : renderables) {
             // Internal list of renderables does not accept null values.
@@ -163,11 +148,6 @@ public class RenderableLayer extends AbstractLayer {
      */
     public void remove(Renderable renderable) {
 
-        if (this.renderablesOverride != null) {
-            String msg = Logging.getMessage("generic.LayerIsUsingCustomIterable");
-            Logging.logger().severe(msg);
-            throw new IllegalStateException(msg);
-        }
 
         if (this.renderables.remove(renderable)) {
 
@@ -190,11 +170,7 @@ public class RenderableLayer extends AbstractLayer {
      * @throws IllegalStateException If a custom Iterable has been specified by a call to <code>setRenderables</code>.
      */
     public void clear() {
-        if (this.renderablesOverride != null) {
-            String msg = Logging.getMessage("generic.LayerIsUsingCustomIterable");
-            Logging.logger().severe(msg);
-            throw new IllegalStateException(msg);
-        }
+
 
         this._clear();
     }
@@ -213,18 +189,18 @@ public class RenderableLayer extends AbstractLayer {
     }
 
     public int size() {
-        if (this.renderablesOverride != null) {
-            int size = 0;
-            //noinspection UnusedDeclaration
-            for (Renderable r : this.renderablesOverride) {
-                ++size;
-            }
-
-            return size;
-        }
-        else {
+//        if (this.renderablesOverride != null) {
+//            int size = 0;
+//            //noinspection UnusedDeclaration
+//            for (Renderable r : this.renderablesOverride) {
+//                ++size;
+//            }
+//
+//            return size;
+//        }
+//        else {
             return this.renderables.size();
-        }
+//        }
     }
 
     /**
@@ -239,33 +215,33 @@ public class RenderableLayer extends AbstractLayer {
         return this.active();
     }
 
-    /**
-     * Overrides the collection of currently active Renderables with the specified <code>renderableIterable</code>. This
-     * layer will maintain a reference to <code>renderableIterable</code> strictly for picking and rendering. This layer
-     * will not modify the reference, or dispose of its contents. This will also clear and dispose of the internal
-     * collection of Renderables, and will prevent any modification to its contents via <code>addRenderable,
-     * addRenderables, removeRenderables, or dispose</code>.
-     * <p>
-     * Unlike {@link #add(Renderable)} or {@link #addAll(Iterable)}, this
-     * does not forward any of the renderable's property change events to the layer's property change listeners. Since
-     * the layer is not in control of the iIterable's contents, attaching property change listeners to the renderables
-     * could cause the them to hold dangling references to the layer. If any of the renderables in the Iterable rely on
-     * forwarding property change events for proper operation - such as {@link AbstractBrowserBalloon}
-     * - use {@link #addAll(Iterable)} instead.
-     * <p>
-     * If the specified <code>renderableIterable</code> is null, this layer reverts to maintaining its internal
-     * collection.
-     *
-     * @param renderableIterable Iterable to use instead of this layer's internal collection, or null to use this
-     *                           layer's internal collection.
-     */
-    public void set(Iterable<Renderable> renderableIterable) {
-        this.renderablesOverride = renderableIterable;
-        // Dispose of the internal collection of Renderables.
-        this._dispose();
-        // Clear the internal collection of Renderables.
-        this._clear();
-    }
+//    /**
+//     * Overrides the collection of currently active Renderables with the specified <code>renderableIterable</code>. This
+//     * layer will maintain a reference to <code>renderableIterable</code> strictly for picking and rendering. This layer
+//     * will not modify the reference, or dispose of its contents. This will also clear and dispose of the internal
+//     * collection of Renderables, and will prevent any modification to its contents via <code>addRenderable,
+//     * addRenderables, removeRenderables, or dispose</code>.
+//     * <p>
+//     * Unlike {@link #add(Renderable)} or {@link #addAll(Iterable)}, this
+//     * does not forward any of the renderable's property change events to the layer's property change listeners. Since
+//     * the layer is not in control of the iIterable's contents, attaching property change listeners to the renderables
+//     * could cause the them to hold dangling references to the layer. If any of the renderables in the Iterable rely on
+//     * forwarding property change events for proper operation - such as {@link AbstractBrowserBalloon}
+//     * - use {@link #addAll(Iterable)} instead.
+//     * <p>
+//     * If the specified <code>renderableIterable</code> is null, this layer reverts to maintaining its internal
+//     * collection.
+//     *
+//     * @param renderableIterable Iterable to use instead of this layer's internal collection, or null to use this
+//     *                           layer's internal collection.
+//     */
+//    public void set(Iterable<Renderable> renderableIterable) {
+//        this.renderablesOverride = renderableIterable;
+//        // Dispose of the internal collection of Renderables.
+//        this._dispose();
+//        // Clear the internal collection of Renderables.
+//        this._clear();
+//    }
 
     /**
      * Returns the Iterable of currently active Renderables. If the caller has specified a custom Iterable via {@link
@@ -276,36 +252,16 @@ public class RenderableLayer extends AbstractLayer {
      * @return Iterable of currently active Renderables.
      */
     protected Iterable<Renderable> active() {
-        if (this.renderablesOverride != null) {
-            return this.renderablesOverride;
-        } else {
+//        if (this.renderablesOverride != null) {
+//            return this.renderablesOverride;
+//        } else {
             // Return an unmodifiable reference to the internal list of renderables.
             // This prevents callers from changing this list and invalidating any invariants we have established.
             //return Collections.unmodifiableCollection(this.renderables);
             return renderables;
-        }
+//        }
     }
 
-    /**
-     * Returns the layer's opacity value, which is ignored by this layer because each of its renderables typiically has
-     * its own opacity control.
-     *
-     * @return The layer opacity, a value between 0 and 1.
-     */
-    @Override
-    public double getOpacity() {
-        return super.getOpacity();
-    }
-
-    /**
-     * Opacity is not applied to layers of this type because each renderable typically has its own opacity control.
-     *
-     * @param opacity the current opacity value, which is ignored by this layer.
-     */
-    @Override
-    public void setOpacity(double opacity) {
-        super.setOpacity(opacity);
-    }
 
     /**
      * Disposes the contents of this layer's internal Renderable collection, but does not remove any elements from that
@@ -319,16 +275,12 @@ public class RenderableLayer extends AbstractLayer {
      * @throws IllegalStateException If a custom Iterable has been specified by a call to <code>setRenderables</code>.
      */
     @Override public void dispose() {
-        if (this.renderablesOverride != null) {
-            String msg = Logging.getMessage("generic.LayerIsUsingCustomIterable");
-            Logging.logger().severe(msg);
-            throw new IllegalStateException(msg);
-        }
+//        if (this.renderablesOverride != null) {
+//            String msg = Logging.getMessage("generic.LayerIsUsingCustomIterable");
+//            Logging.logger().severe(msg);
+//            throw new IllegalStateException(msg);
+//        }
 
-        this._dispose();
-    }
-
-    protected void _dispose() {
         if (this.renderables != null && !this.renderables.isEmpty()) {
             for (Renderable renderable : this.renderables) {
                 try {
@@ -406,8 +358,7 @@ public class RenderableLayer extends AbstractLayer {
                     if (renderable instanceof Locatable) {
                         this.pickSupport.addPickableObject(color.getRGB(), renderable,
                             ((Locatable) renderable).getPosition(), false);
-                    }
-                    else {
+                    }else {
                         this.pickSupport.addPickableObject(color.getRGB(), renderable);
                     }
                 }

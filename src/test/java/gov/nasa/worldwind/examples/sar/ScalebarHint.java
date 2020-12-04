@@ -9,6 +9,7 @@ import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.layers.tool.ScalebarLayer;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.render.markers.*;
 

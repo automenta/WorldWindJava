@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.WorldWindow;
-import gov.nasa.worldwind.layers.GARSGraticuleLayer;
+import gov.nasa.worldwind.layers.tool.GARSGraticuleLayer;
 
 import java.awt.*;
 

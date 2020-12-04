@@ -14,6 +14,7 @@ import gov.nasa.worldwind.pick.PickedObject;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.render.markers.*;
 import gov.nasa.worldwind.terrain.SectorGeometryList;
+import gov.nasa.worldwind.video.LayerList;
 
 import java.awt.*;
 import java.util.List;

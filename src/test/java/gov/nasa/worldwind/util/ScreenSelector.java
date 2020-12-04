@@ -11,6 +11,7 @@ import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.examples.worldwindow.util.Util;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.video.LayerList;
 
 import java.awt.*;
 import java.awt.event.*;

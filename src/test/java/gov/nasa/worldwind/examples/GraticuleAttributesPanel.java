@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.layers.Earth.MGRSGraticuleLayer;
+import gov.nasa.worldwind.layers.earth.MGRSGraticuleLayer;
 import gov.nasa.worldwind.util.Logging;
 
 import javax.swing.*;

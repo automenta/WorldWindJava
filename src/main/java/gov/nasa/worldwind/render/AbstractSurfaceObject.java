@@ -420,10 +420,11 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
     protected void makeOrderedPreRenderable(DrawContext dc) {
         // Test for visibility against the draw context's visible sector prior to preparing this object for
         // preRendering.
-        if (!this.intersectsVisibleSector(dc))
-            return;
+        if (!this.intersectsVisibleSector(dc)) return;
+        if (!this.intersectsFrustum(dc)) return;
 
-        // Create a representation of this object that can be used during picking. No need for a pickable representation
+
+            // Create a representation of this object that can be used during picking. No need for a pickable representation
         // if this object's parent layer isn't pickable or if this object doesn't intersect the pick frustum. We do not
         // test visibility against the view frustum, because it's possible for the pick frustum to slightly exceed the
         // view frustum when the cursor is on the viewport edge.
@@ -435,7 +436,7 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
         // representation of this object and any other SurfaceObject on the queue, and calls this object's preRender
         // method (we ignore this call with a conditional in preRender). While building a composite representation the
         // SceneController calls this object's render method in ordered rendering mode.
-        if (this.intersectsFrustum(dc))
+        //if (this.intersectsFrustum(dc))
             dc.addOrderedSurfaceRenderable(this);
     }
 
@@ -521,19 +522,18 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
      */
     protected void pickBatched(DrawContext dc, PickSupport pickSupport) {
         // Draw as many as we can in a batch to save pick resolution.
-        Object nextItem = dc.getOrderedSurfaceRenderables().peek();
+        final Queue<OrderedRenderable> q = dc.getOrderedSurfaceRenderables();
+        Object nextItem;
 
-        while (nextItem instanceof AbstractSurfaceObject) {
+        while ((nextItem = q.peek()) instanceof AbstractSurfaceObject) {
             AbstractSurfaceObject so = (AbstractSurfaceObject) nextItem;
 
             // Batch pick only within a single layer, and for objects which are enabled for batch picking.
             if (so.pickLayer != this.pickLayer || !so.isEnableBatchPicking())
                 break;
 
-            dc.getOrderedSurfaceRenderables().poll(); // take it off the queue
+            q.poll(); // take it off the queue
             so.pickOrderedRenderable(dc, pickSupport);
-
-            nextItem = dc.getOrderedSurfaceRenderables().peek();
         }
     }
 
@@ -555,10 +555,10 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
         // instead.
 
         SurfaceTileDrawContext sdc = (SurfaceTileDrawContext) dc.get(AVKey.SURFACE_TILE_DRAW_CONTEXT);
-        if (sdc == null) {
-            Logging.logger().warning(Logging.getMessage("nullValue.SurfaceTileDrawContextIsNull"));
-            return;
-        }
+//        if (sdc == null) {
+//            Logging.logger().warning(Logging.getMessage("nullValue.SurfaceTileDrawContextIsNull"));
+//            return;
+//        }
 
         this.drawGeographic(dc, sdc);
 
@@ -762,8 +762,7 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
 
         @Override
         public int hashCode() {
-            return 31 * (int) (this.uniqueId ^ (this.uniqueId >>> 32))
-                + (int) (this.modifiedTime ^ (this.modifiedTime >>> 32));
+            return 31 * Long.hashCode(uniqueId)  + Long.hashCode(modifiedTime);
         }
 
         /**

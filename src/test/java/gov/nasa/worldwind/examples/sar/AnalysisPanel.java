@@ -13,6 +13,7 @@ import gov.nasa.worldwind.examples.sar.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.layers.tool.CrosshairLayer;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.view.orbit.*;
 

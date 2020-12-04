@@ -481,19 +481,18 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
     }
 
     protected void selectVisibleTiles(DrawContext dc, RectTile tile) {
-        if (dc.is2DGlobe() && RectangularTessellator.skipTile(dc, tile.getSector())) {
+        if (dc.is2DGlobe() && RectangularTessellator.skipTile(dc, tile.getSector()))
             return;
-        }
+
 
         Extent extent = tile.getExtent();
-        if (extent != null && !extent.intersects(this.currentFrustum)) {
+        if (extent != null && !extent.intersects(this.currentFrustum))
             return;
-        }
+
 
         if (this.currentLevel < this.maxLevel - 1 && !RectangularTessellator.atBestResolution(dc, tile) && RectangularTessellator.needToSplit(dc, tile)) {
             ++this.currentLevel;
-            RectTile[] subtiles = this.split(dc, tile);
-            for (RectTile child : subtiles) {
+            for (RectTile child : this.split(dc, tile)) {
                 this.selectVisibleTiles(dc, child);
             }
             --this.currentLevel;
@@ -524,7 +523,8 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
         // 50% has the same effect on object size as decreasing the distance between the eye and the object by 50%.
         // The detail hint is reduced by 50% for tiles above 75 degrees north and below 75 degrees south.
         double s = RectangularTessellator.computeTileResolutionTarget(dc, tile);
-        if (tile.getSector().latMin().degrees >= 75 || tile.getSector().latMax().degrees <= -75) {
+        final Sector sector = tile.getSector();
+        if (sector.latMin().degrees >= 75 || sector.latMax().degrees <= -75) {
             s *= 0.5;
         }
         double detailScale = Math.pow(10, -s);
@@ -533,7 +533,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
 
         // Compute the distance between the eye point and the sector in meters, and compute a fraction of that distance
         // by multiplying the actual distance by the level of detail scale and the field of view scale.
-        double eyeDistanceMeters = tile.getSector().distanceTo(dc, dc.getView().getEyePoint());
+        double eyeDistanceMeters = sector.distanceTo(dc, dc.getView().getEyePoint());
         double scaledEyeDistanceMeters = eyeDistanceMeters * detailScale * fieldOfViewScale;
         // Split when the cell size in meters becomes greater than the specified fraction of the eye distance, also in
         // meters. Another way to say it is, use the current tile if its cell size is less than the specified fraction
@@ -573,7 +573,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
         MemoryCache cache = WorldWind.cache(CACHE_ID);
         CacheKey cacheKey = RectangularTessellator.createCacheKey(dc, tile);
         tile.ri = (RenderInfo) cache.getObject(cacheKey);
-        if (tile.ri != null && tile.ri.time >= System.currentTimeMillis() - this.getUpdateFrequency()) {
+        if (tile.ri != null && tile.ri.time >= System.nanoTime() - 1_000_000 * this.getUpdateFrequency()) {
             return;
         }
 
@@ -591,8 +591,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
         //Re-use the RenderInfo vertices buffer. If it has not been set or the density has changed, create a new buffer
         if (tile.ri == null || tile.ri.vertices == null || density != tile.ri.density) {
             verts = Buffers.newDirectFloatBuffer(numVertices * 3);
-        }
-        else {
+        }else {
             verts = tile.ri.vertices;
             verts.rewind();
         }
@@ -1191,13 +1190,15 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
         }
     }
 
+    private static final double PICK_EPSILON = Float.MIN_NORMAL;
+
     protected static PickedObject resolvePick(DrawContext dc, RectTile tile, Point pickPoint) {
         int colorCode = PickSupport.getTopColor(dc, pickPoint);
         if (colorCode < tile.minColorCode || colorCode > tile.maxColorCode) {
             return null;
         }
 
-        double EPSILON = 0.00001f;
+
 
         int triangleIndex = colorCode - tile.minColorCode - 1;
 
@@ -1236,7 +1237,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
         Vec4 w0 = ray.origin.subtract3(v0);
         double a = -N.dot3(w0);
         double b = N.dot3(ray.direction);
-        if (Math.abs(b) < EPSILON) // ray is parallel to triangle plane
+        if (Math.abs(b) < PICK_EPSILON) // ray is parallel to triangle plane
         {
             return null;                    // if a == 0 , ray lies in triangle plane
         }
@@ -1262,11 +1263,11 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
      * intersection was found.
      */
     protected Intersection[] intersect(RectTile tile, Line line) {
-        if (line == null) {
-            String msg = Logging.getMessage("nullValue.LineIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (line == null) {
+//            String msg = Logging.getMessage("nullValue.LineIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         if (tile.ri.vertices == null) {
             return null;
@@ -1513,11 +1514,11 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
     }
 
     protected static Vec4 getSurfacePoint(RectTile tile, Angle latitude, Angle longitude) {
-        if (latitude == null || longitude == null) {
-            String msg = Logging.getMessage("nullValue.LatLonIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (latitude == null || longitude == null) {
+//            String msg = Logging.getMessage("nullValue.LatLonIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         if (!tile.sector.contains(latitude, longitude)) {
             // not on this geometry
@@ -1551,36 +1552,33 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
         return result;
     }
 
-    protected static DoubleBuffer makeGeographicTexCoords(SectorGeometry sg,
-        SectorGeometry.GeographicTextureCoordinateComputer computer) {
-        if (sg == null) {
-            String msg = Logging.getMessage("nullValue.SectorGeometryIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+    protected static DoubleBuffer makeGeographicTexCoords(SectorGeometry sg, SectorGeometry.GeographicTextureCoordinateComputer computer) {
+//        if (sg == null) {
+//            String msg = Logging.getMessage("nullValue.SectorGeometryIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
-        if (computer == null) {
-            String msg = Logging.getMessage("nullValue.TextureCoordinateComputerIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (computer == null) {
+//            String msg = Logging.getMessage("nullValue.TextureCoordinateComputerIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         RectTile rt = (RectTile) sg;
 
-        int density = rt.density;
-        if (density < 1) {
-            density = 1;
-        }
+        int density = Math.max(1, rt.density);
 
         int coordCount = (density + 3) * (density + 3);
         DoubleBuffer p = Buffers.newDirectDoubleBuffer(2 * coordCount);
 
-        double deltaLat = rt.sector.getDeltaLatRadians() / density;
-        double deltaLon = rt.sector.getDeltaLonRadians() / density;
-        Angle minLat = rt.sector.latMin();
-        Angle maxLat = rt.sector.latMax();
-        Angle minLon = rt.sector.lonMin();
-        Angle maxLon = rt.sector.lonMax();
+        final Sector s = rt.sector;
+        double deltaLat = s.getDeltaLatRadians() / density;
+        double deltaLon = s.getDeltaLonRadians() / density;
+        Angle minLat = s.latMin();
+        Angle maxLat = s.latMax();
+        Angle minLon = s.lonMin();
+        Angle maxLon = s.lonMax();
 
         double[] uv; // for return values from computer
 
@@ -1594,8 +1592,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
 
             // interior columns
             for (int i = 0; i < density; i++) {
-                Angle lon = Angle.fromRadians(minLon.radians + i * deltaLon);
-                uv = computer.compute(lat, lon);
+                uv = computer.compute(lat, Angle.fromRadians(minLon.radians + i * deltaLon));
                 p.put(k++, uv[0]).put(k++, uv[1]);
             }
 
@@ -1612,8 +1609,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
         p.put(k++, uv[0]).put(k++, uv[1]);
 
         for (int i = 0; i < density; i++) {
-            Angle lon = Angle.fromRadians(minLon.radians + i * deltaLon); // u
-            uv = computer.compute(maxLat, lon);
+            uv = computer.compute(maxLat, Angle.fromRadians(minLon.radians + i * deltaLon));
             p.put(k++, uv[0]).put(k++, uv[1]);
         }
 
@@ -1663,7 +1659,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
             //Fill in the remaining variables from the stored buffers and buffer IDs for easier access
             this.indices = indexLists.get(this.density);
             this.texCoords = textureCoords.get(this.density);
-            this.time = System.currentTimeMillis();
+            this.time = System.nanoTime();
 
             if (dc.getGLRuntimeCapabilities().isUseVertexBufferObject()) {
                 this.fillVerticesVBO(dc);
@@ -1708,11 +1704,10 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
          * @param dc the current draw context.
          */
         protected void update(DrawContext dc) {
-            this.time = System.currentTimeMillis();
+            this.time = System.nanoTime();
 
-            if (dc.getGLRuntimeCapabilities().isUseVertexBufferObject()) {
+            if (dc.getGLRuntimeCapabilities().isUseVertexBufferObject())
                 this.fillVerticesVBO(dc);
-            }
         }
 
         protected long getSizeInBytes() {

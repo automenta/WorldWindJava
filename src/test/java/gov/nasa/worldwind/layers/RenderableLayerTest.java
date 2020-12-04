@@ -157,53 +157,53 @@ public class RenderableLayerTest
         assertFalse("", layer.all().iterator().hasNext());
     }
 
-    @Test
-    public void testSetRenderables()
-    {
-        Iterable<Renderable> renderables = createExampleIterable();
-
-        RenderableLayer layer = new RenderableLayer();
-        layer.set(renderables);
-
-        // Test that the layer points to the Iterable.
-        assertSame("", renderables, layer.all());
-    }
+//    @Test
+//    public void testSetRenderables()
+//    {
+//        Iterable<Renderable> renderables = createExampleIterable();
+//
+//        RenderableLayer layer = new RenderableLayer();
+//        layer.set(renderables);
+//
+//        // Test that the layer points to the Iterable.
+//        assertSame("", renderables, layer.all());
+//    }
 
     //////////////////////////////////////////////////////////
     // Edge Case Tests
     //////////////////////////////////////////////////////////
 
-    @Test
-    public void testSetRenderablesClearsRenderables()
-    {
-        Iterable<Renderable> renderables = createExampleIterable();
+//    @Test
+//    public void testSetRenderablesClearsRenderables()
+//    {
+//        Iterable<Renderable> renderables = createExampleIterable();
+//
+//        RenderableLayer layer = new RenderableLayer();
+//        layer.addAll(renderables);
+//        layer.set(renderables);
+//        layer.set(null);
+//
+//        // Test that the layer does not point to the Iterable.
+//        assertNotSame("", renderables, layer.all());
+//        // Test that the layer contains no renderables.
+//        assertFalse("", layer.all().iterator().hasNext());
+//    }
 
-        RenderableLayer layer = new RenderableLayer();
-        layer.addAll(renderables);
-        layer.set(renderables);
-        layer.set(null);
-
-        // Test that the layer does not point to the Iterable.
-        assertNotSame("", renderables, layer.all());
-        // Test that the layer contains no renderables.
-        assertFalse("", layer.all().iterator().hasNext());
-    }
-
-    @Test
-    public void testSetRenderablesThenAddRenderables()
-    {
-        Iterable<Renderable> renderables = createExampleIterable();
-
-        RenderableLayer layer = new RenderableLayer();
-        layer.set(renderables);
-        layer.set(null);
-        layer.addAll(renderables);
-
-        // Test that the layer does not point to the Iterable.
-        assertNotSame("", renderables, layer.all());
-        // Test that the layer contains the renderables.
-        assertEquals("", renderables, layer.all());
-    }
+//    @Test
+//    public void testSetRenderablesThenAddRenderables()
+//    {
+//        Iterable<Renderable> renderables = createExampleIterable();
+//
+//        RenderableLayer layer = new RenderableLayer();
+//        layer.set(renderables);
+//        layer.set(null);
+//        layer.addAll(renderables);
+//
+//        // Test that the layer does not point to the Iterable.
+//        assertNotSame("", renderables, layer.all());
+//        // Test that the layer contains the renderables.
+//        assertEquals("", renderables, layer.all());
+//    }
 
     @Test
     public void testMaliciousGetRenderables()
@@ -242,30 +242,30 @@ public class RenderableLayerTest
         assertEquals("", renderables, layer.all());
     }
 
-    @Test
-    public void testMaliciousSetRenderables()
-    {
-        // Create an Iterable with null elements.
-        java.util.List<Renderable> list = new java.util.ArrayList<>();
-        list.add(null);
-
-        RenderableLayer layer = new RenderableLayer();
-        layer.set(list);
-
-        DrawContext dc = new DrawContextImpl();
-        dc.setModel(new BasicModel());
-        dc.setView(new BasicOrbitView());
-
-        try
-        {
-            // Test that the layer does not fail when the Iterable is used.
-            layer.render(dc);
-        }
-        catch (NullPointerException e)
-        {
-            fail("Layer does not check for null elements in Iterable");
-        }
-    }
+//    @Test
+//    public void testMaliciousSetRenderables()
+//    {
+//        // Create an Iterable with null elements.
+//        java.util.List<Renderable> list = new java.util.ArrayList<>();
+//        list.add(null);
+//
+//        RenderableLayer layer = new RenderableLayer();
+//        layer.set(list);
+//
+//        DrawContext dc = new DrawContextImpl();
+//        dc.setModel(new BasicModel());
+//        dc.setView(new BasicOrbitView());
+//
+//        try
+//        {
+//            // Test that the layer does not fail when the Iterable is used.
+//            layer.render(dc);
+//        }
+//        catch (NullPointerException e)
+//        {
+//            fail("Layer does not check for null elements in Iterable");
+//        }
+//    }
 
     @Test
     public void testDisposeDoesNotClearRenderables()
@@ -285,125 +285,125 @@ public class RenderableLayerTest
     // Exceptional Condition Tests
     //////////////////////////////////////////////////////////
 
-    @Test
-    public void testAddRenderableFail()
-    {
-        Iterable<Renderable> renderables = createExampleIterable();
+//    @Test
+//    public void testAddRenderableFail()
+//    {
+//        Iterable<Renderable> renderables = createExampleIterable();
+//
+//        RenderableLayer layer = new RenderableLayer();
+//        layer.set(renderables);
+//
+//        try
+//        {
+//            // Expecting an IllegalStateException here.
+//            layer.add(new Path());
+//            fail("Should raise an IllegalStateException");
+//        }
+//        catch (IllegalStateException e)
+//        {
+//            e.printStackTrace();
+//        }
+//    }
 
-        RenderableLayer layer = new RenderableLayer();
-        layer.set(renderables);
-
-        try
-        {
-            // Expecting an IllegalStateException here.
-            layer.add(new Path());
-            fail("Should raise an IllegalStateException");
-        }
-        catch (IllegalStateException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    @Test
-    public void testAddRenderablesFail()
-    {
-        Iterable<Renderable> renderables = createExampleIterable();
-
-        RenderableLayer layer = new RenderableLayer();
-        layer.set(renderables);
-
-        try
-        {
-            // Expecting an IllegalStateException here.
-            layer.addAll(renderables);
-            fail("Should raise an IllegalStateException");
-        }
-        catch (IllegalStateException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    @Test
-    public void testInsertRenderableFail()
-    {
-        Iterable<Renderable> renderables = createExampleIterable();
-
-        RenderableLayer layer = new RenderableLayer();
-        layer.set(renderables);
-
-        try
-        {
-            // Expecting an IllegalStateException here.
-            layer.add(0, new Path());
-            fail("Should raise an IllegalStateException");
-        }
-        catch (IllegalStateException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    @Test
-    public void testRemoveRenderableFail()
-    {
-        Iterable<Renderable> renderables = createExampleIterable();
-
-        RenderableLayer layer = new RenderableLayer();
-        layer.set(renderables);
-
-        try
-        {
-            // Expecting an IllegalStateException here.
-            layer.remove(new Path());
-            fail("Should raise an IllegalStateException");
-        }
-        catch (IllegalStateException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    @Test
-    public void testRemoveAllRenderablesFail()
-    {
-        Iterable<Renderable> renderables = createExampleIterable();
-
-        RenderableLayer layer = new RenderableLayer();
-        layer.set(renderables);
-
-        try
-        {
-            // Expecting an IllegalStateException here.
-            layer.clear();
-            fail("Should raise an IllegalStateException");
-        }
-        catch (IllegalStateException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    @Test
-    public void testDisposeFail()
-    {
-        Iterable<Renderable> renderables = createExampleIterable();
-
-        RenderableLayer layer = new RenderableLayer();
-        layer.set(renderables);
-
-        try
-        {
-            // Expecting an IllegalStateException here.
-            layer.dispose();
-            fail("Should raise an IllegalStateException");
-        }
-        catch (IllegalStateException e)
-        {
-            e.printStackTrace();
-        }
-    }
+//    @Test
+//    public void testAddRenderablesFail()
+//    {
+//        Iterable<Renderable> renderables = createExampleIterable();
+//
+//        RenderableLayer layer = new RenderableLayer();
+//        layer.set(renderables);
+//
+//        try
+//        {
+//            // Expecting an IllegalStateException here.
+//            layer.addAll(renderables);
+//            fail("Should raise an IllegalStateException");
+//        }
+//        catch (IllegalStateException e)
+//        {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    @Test
+//    public void testInsertRenderableFail()
+//    {
+//        Iterable<Renderable> renderables = createExampleIterable();
+//
+//        RenderableLayer layer = new RenderableLayer();
+//        layer.set(renderables);
+//
+//        try
+//        {
+//            // Expecting an IllegalStateException here.
+//            layer.add(0, new Path());
+//            fail("Should raise an IllegalStateException");
+//        }
+//        catch (IllegalStateException e)
+//        {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    @Test
+//    public void testRemoveRenderableFail()
+//    {
+//        Iterable<Renderable> renderables = createExampleIterable();
+//
+//        RenderableLayer layer = new RenderableLayer();
+//        layer.set(renderables);
+//
+//        try
+//        {
+//            // Expecting an IllegalStateException here.
+//            layer.remove(new Path());
+//            fail("Should raise an IllegalStateException");
+//        }
+//        catch (IllegalStateException e)
+//        {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    @Test
+//    public void testRemoveAllRenderablesFail()
+//    {
+//        Iterable<Renderable> renderables = createExampleIterable();
+//
+//        RenderableLayer layer = new RenderableLayer();
+//        layer.set(renderables);
+//
+//        try
+//        {
+//            // Expecting an IllegalStateException here.
+//            layer.clear();
+//            fail("Should raise an IllegalStateException");
+//        }
+//        catch (IllegalStateException e)
+//        {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    @Test
+//    public void testDisposeFail()
+//    {
+//        Iterable<Renderable> renderables = createExampleIterable();
+//
+//        RenderableLayer layer = new RenderableLayer();
+//        layer.set(renderables);
+//
+//        try
+//        {
+//            // Expecting an IllegalStateException here.
+//            layer.dispose();
+//            fail("Should raise an IllegalStateException");
+//        }
+//        catch (IllegalStateException e)
+//        {
+//            e.printStackTrace();
+//        }
+//    }
 
     //////////////////////////////////////////////////////////
     // Helper Methods

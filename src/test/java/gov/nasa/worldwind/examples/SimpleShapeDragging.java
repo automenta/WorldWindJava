@@ -13,6 +13,7 @@ import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.layers.placename.PlaceNameLayer;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.BasicDragger;
+import gov.nasa.worldwind.video.LayerList;
 import gov.nasa.worldwind.video.awt.WorldWindowGLCanvas;
 
 import javax.swing.*;

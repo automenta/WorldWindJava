@@ -13,10 +13,12 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.*;
 import gov.nasa.worldwind.globes.projections.ProjectionSinusoidal;
 import gov.nasa.worldwind.layers.*;
-import gov.nasa.worldwind.layers.Earth.BMNGOneImage;
+import gov.nasa.worldwind.layers.earth.BMNGOneImage;
+import gov.nasa.worldwind.layers.tool.*;
 import gov.nasa.worldwind.render.Polygon;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
+import gov.nasa.worldwind.video.LayerList;
 import gov.nasa.worldwind.video.awt.WorldWindowGLCanvas;
 
 import javax.swing.*;
@@ -110,7 +112,7 @@ public class FlatAndRoundGlobes {
     protected void addViewControlLayer(WWFrame wwf) {
         ViewControlsLayer layer = new ViewControlsLayer();
         wwf.wwPanel.wwd.model().getLayers().add(layer);
-        wwf.wwPanel.wwd.addSelectListener(new ViewControlsSelectListener(wwf.wwPanel.wwd, layer));
+        wwf.wwPanel.wwd.addSelectListener(new ViewControlsLayer.ViewControlsSelectListener(wwf.wwPanel.wwd, layer));
     }
 
     protected Layer makePathLayer() {

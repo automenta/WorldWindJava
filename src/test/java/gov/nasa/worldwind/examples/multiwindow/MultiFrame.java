@@ -9,8 +9,11 @@ package gov.nasa.worldwind.examples.multiwindow;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.globes.*;
 import gov.nasa.worldwind.layers.*;
-import gov.nasa.worldwind.layers.Earth.*;
+import gov.nasa.worldwind.layers.earth.*;
+import gov.nasa.worldwind.layers.sky.StarsLayer;
+import gov.nasa.worldwind.layers.tool.*;
 import gov.nasa.worldwind.util.StatusBar;
+import gov.nasa.worldwind.video.LayerList;
 import gov.nasa.worldwind.video.awt.WorldWindowGLCanvas;
 
 import javax.swing.*;
@@ -76,11 +79,11 @@ public class MultiFrame {
             // Add view control layers, which the WorldWindows cannnot share.
             ViewControlsLayer viewControlsA = new ViewControlsLayer();
             frameA.wwp.wwd.model().getLayers().add(viewControlsA);
-            frameA.wwp.wwd.addSelectListener(new ViewControlsSelectListener(frameA.wwp.wwd, viewControlsA));
+            frameA.wwp.wwd.addSelectListener(new ViewControlsLayer.ViewControlsSelectListener(frameA.wwp.wwd, viewControlsA));
 
             ViewControlsLayer viewControlsB = new ViewControlsLayer();
             frameB.wwp.wwd.model().getLayers().add(viewControlsB);
-            frameB.wwp.wwd.addSelectListener(new ViewControlsSelectListener(frameB.wwp.wwd, viewControlsB));
+            frameB.wwp.wwd.addSelectListener(new ViewControlsLayer.ViewControlsSelectListener(frameB.wwp.wwd, viewControlsB));
         }
         catch (Exception e) {
             e.printStackTrace();

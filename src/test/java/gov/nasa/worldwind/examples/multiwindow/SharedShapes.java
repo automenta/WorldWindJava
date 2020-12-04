@@ -12,11 +12,14 @@ import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.*;
 import gov.nasa.worldwind.layers.*;
-import gov.nasa.worldwind.layers.Earth.*;
+import gov.nasa.worldwind.layers.earth.*;
+import gov.nasa.worldwind.layers.sky.StarsLayer;
+import gov.nasa.worldwind.layers.tool.*;
 import gov.nasa.worldwind.render.airspaces.Box;
 import gov.nasa.worldwind.render.airspaces.Polygon;
 import gov.nasa.worldwind.render.airspaces.*;
 import gov.nasa.worldwind.util.*;
+import gov.nasa.worldwind.video.LayerList;
 import gov.nasa.worldwind.video.awt.WorldWindowGLCanvas;
 
 import javax.swing.*;

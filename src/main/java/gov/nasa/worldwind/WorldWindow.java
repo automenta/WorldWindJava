@@ -14,9 +14,10 @@ import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.layers.placename.PlaceNameLayer;
+import gov.nasa.worldwind.layers.tool.CompassLayer;
 import gov.nasa.worldwind.pick.PickedObjectList;
 import gov.nasa.worldwind.util.PerformanceStatistic;
-import gov.nasa.worldwind.video.WorldWindowGLDrawable;
+import gov.nasa.worldwind.video.*;
 
 import java.beans.*;
 import java.util.*;

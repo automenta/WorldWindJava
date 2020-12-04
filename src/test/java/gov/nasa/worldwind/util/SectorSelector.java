@@ -14,6 +14,7 @@ import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.pick.*;
 import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.video.LayerList;
 
 import java.awt.*;
 import java.awt.event.*;

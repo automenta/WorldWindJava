@@ -15,6 +15,7 @@ import gov.nasa.worldwind.globes.EarthFlat;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
+import gov.nasa.worldwind.video.LayerList;
 import gov.nasa.worldwind.view.orbit.BasicOrbitView;
 
 import javax.swing.*;
@@ -23,7 +24,6 @@ import java.awt.*;
 import java.nio.DoubleBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.Level;
 
 /**
  * Using the EarthFlat and FlatOrbitView to display USGS latest earthquakes rss feed.
@@ -357,22 +357,13 @@ public class FlatWorldEarthquakes extends ApplicationTemplate {
         }
 
         private Layer buildEarthquakeLayer(String earthquakeFeedUrl) {
-            RenderableLayer layer = new RenderableLayer();
-            layer.setName("Earthquakes");
-            GeoJSONLoader loader = new GeoJSONLoader() {
-                @Override
-                protected void addRenderableForPoint(GeoJSONPoint geom, RenderableLayer layer, AVList properties) {
-                    try {
-                        addEarthquake(geom, layer, properties);
-                    }
-                    catch (Exception e) {
-                        Logging.logger().log(Level.WARNING, "Exception adding earthquake", e);
-                    }
+
+            Layer layer = new GeoJSON() {
+                @Override protected void addRenderableForPoint(GeoJSONPoint geom, RenderableLayer layer1, AVList properties) {
+                    addEarthquake(geom, layer1, properties);
                 }
-            };
-
-            loader.addSourceGeometryToLayer(earthquakeFeedUrl, layer);
-
+            }.layer(earthquakeFeedUrl);
+            layer.setName("Earthquakes");
             return layer;
         }
 

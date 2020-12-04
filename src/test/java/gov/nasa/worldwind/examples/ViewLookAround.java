@@ -7,7 +7,7 @@ package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.geom.*;
-import gov.nasa.worldwind.layers.CrosshairLayer;
+import gov.nasa.worldwind.layers.tool.CrosshairLayer;
 import gov.nasa.worldwind.view.firstperson.BasicFlyView;
 
 import javax.swing.*;

@@ -8,12 +8,13 @@ package gov.nasa.worldwind.examples.worldwindow.features;
 
 import gov.nasa.worldwind.examples.worldwindow.core.*;
 import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.layers.tool.LatLonGraticuleLayer;
 
 /**
  * @author tag
  * @version $Id: LatLonGraticule.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class LatLonGraticule extends GraticuleLayer {
+public class LatLonGraticule extends WWGraticuleLayer {
     public LatLonGraticule() {
         this(null);
     }

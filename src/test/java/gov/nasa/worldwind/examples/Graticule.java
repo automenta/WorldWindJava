@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.WorldWindow;
-import gov.nasa.worldwind.layers.LatLonGraticuleLayer;
+import gov.nasa.worldwind.layers.tool.LatLonGraticuleLayer;
 
 /**
  * Displays the globe with a latitude and longitude graticule (latitude and longitude grid). The graticule is its own

@@ -9,6 +9,7 @@ package gov.nasa.worldwind.examples.layermanager;
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.video.LayerList;
 
 import javax.swing.*;
 import javax.swing.border.*;

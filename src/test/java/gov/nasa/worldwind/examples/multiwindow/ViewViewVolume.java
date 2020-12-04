@@ -8,6 +8,7 @@ package gov.nasa.worldwind.examples.multiwindow;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.layers.tool.ViewControlsLayer;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.video.awt.WorldWindowGLCanvas;
 
@@ -25,7 +26,7 @@ import java.awt.*;
  * <p>
  * Most WorldWind {@link gov.nasa.worldwind.globes.Globe} and {@link gov.nasa.worldwind.layers.Layer} objects can be
  * shared among WorldWindows. Those that cannot be shared have an operational dependency on the WorldWindow they're
- * associated with. An example is the {@link gov.nasa.worldwind.layers.ViewControlsLayer} layer for on-screen
+ * associated with. An example is the {@link ViewControlsLayer} layer for on-screen
  * navigation. Because this layer responds to input events within a specific WorldWindow, it is not sharable. Refer to
  * the WorldWind Overview page for a list of layers that cannot be shared.
  *

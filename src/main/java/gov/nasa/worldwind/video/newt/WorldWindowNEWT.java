@@ -6,7 +6,7 @@ import com.jogamp.opengl.util.FPSAnimator;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.layers.WorldMapLayer;
+import gov.nasa.worldwind.layers.tool.WorldMapLayer;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.video.WorldWindowGLAutoDrawable;
 

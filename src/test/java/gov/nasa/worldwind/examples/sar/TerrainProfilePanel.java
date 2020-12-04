@@ -9,6 +9,7 @@ import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.layers.tool.ScalebarLayer;
 import gov.nasa.worldwind.util.*;
 
 import javax.swing.*;

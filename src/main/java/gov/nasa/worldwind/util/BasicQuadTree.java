@@ -26,7 +26,7 @@ import java.util.*;
 public class BasicQuadTree<T> extends BitSetQuadTreeFilter implements Iterable<T> {
     protected final HashMap<String, T> nameMap = new HashMap<>(); // maps names to items
     protected ArrayList<double[]> levelZeroCells;
-    protected Map<String, List<T>> items; // the tree's list of items
+    protected Map<Integer, List<T>> items; // the tree's list of items
     protected T currentItem; // used during add() to pass the added item to doOperation().
     protected String currentName; // used during add() to pass the optional name of the added item to doOperation().
     protected boolean allowDuplicates = true;
@@ -47,13 +47,11 @@ public class BasicQuadTree<T> extends BitSetQuadTreeFilter implements Iterable<T
      *                  created.
      * @throws IllegalArgumentException if <code>numLevels</code> is less than 1.
      */
-    public BasicQuadTree(int numLevels, Sector sector, Map<String, List<T>> itemMap) {
+    public BasicQuadTree(int numLevels, Sector sector, Map<Integer, List<T>> itemMap) {
         super(numLevels, null);
 
         if (sector == null) {
-            String message = Logging.getMessage("nullValue.SectorIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
+            sector = Sector.FULL_SPHERE;
         }
 
         this.makeLevelZeroCells(sector);
@@ -81,14 +79,14 @@ public class BasicQuadTree<T> extends BitSetQuadTreeFilter implements Iterable<T
      *                        by this class. Specifying <code>false</code> prevents this.
      * @throws IllegalArgumentException if <code>numLevels</code> is less than 1.
      */
-    public BasicQuadTree(int numLevels, Sector sector, Map<String, List<T>> itemMap, boolean allowDuplicates) {
+    public BasicQuadTree(int numLevels, Sector sector, Map<Integer, List<T>> itemMap, boolean allowDuplicates) {
         this(numLevels, sector, itemMap);
 
-        if (sector == null) {
-            String message = Logging.getMessage("nullValue.SectorIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (sector == null) {
+//            String message = Logging.getMessage("nullValue.SectorIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         this.allowDuplicates = allowDuplicates;
 
@@ -131,7 +129,7 @@ public class BasicQuadTree<T> extends BitSetQuadTreeFilter implements Iterable<T
         if (item == null)
             return false;
 
-        for (Map.Entry<String, List<T>> entry : this.items.entrySet()) {
+        for (Map.Entry<Integer, List<T>> entry : this.items.entrySet()) {
             List<T> itemList = entry.getValue();
             if (itemList == null)
                 continue;
@@ -172,24 +170,25 @@ public class BasicQuadTree<T> extends BitSetQuadTreeFilter implements Iterable<T
     }
 
     protected void addItem(T item, double[] itemCoords, String name) {
-        if (item == null) {
-            String message = Logging.getMessage("nullValue.ItemIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (itemCoords == null) {
-            String message = Logging.getMessage("nullValue.CoordinatesAreNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (item == null) {
+//            String message = Logging.getMessage("nullValue.ItemIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//
+//        if (itemCoords == null) {
+//            String message = Logging.getMessage("nullValue.CoordinatesAreNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         this.currentItem = item;
         this.currentName = name;
 
         this.start();
 
-        for (int i = 0; i < levelZeroCells.size(); i++) {
+        final int ls = levelZeroCells.size();
+        for (int i = 0; i < ls; i++) {
             this.testAndDo(0, i, levelZeroCells.get(i), itemCoords);
         }
     }
@@ -205,9 +204,9 @@ public class BasicQuadTree<T> extends BitSetQuadTreeFilter implements Iterable<T
         if (item == null)
             return;
 
-        Collection<String> bitsToClear = new ArrayList<>();
+        Collection<Integer> bitsToClear = new ArrayList<>();
 
-        for (Map.Entry<String, List<T>> entry : this.items.entrySet()) {
+        for (Map.Entry<Integer, List<T>> entry : this.items.entrySet()) {
             List<T> itemList = entry.getValue();
             if (itemList == null)
                 continue;
@@ -218,8 +217,8 @@ public class BasicQuadTree<T> extends BitSetQuadTreeFilter implements Iterable<T
                 bitsToClear.add(entry.getKey());
         }
 
-        for (String bitNum : bitsToClear) {
-            this.bits.clear(Integer.parseInt(bitNum));
+        for (Integer bitNum : bitsToClear) {
+            this.bits.clear(bitNum);
         }
     }
 
@@ -238,7 +237,7 @@ public class BasicQuadTree<T> extends BitSetQuadTreeFilter implements Iterable<T
         if (item == null)
             return;
 
-        for (Map.Entry<String, List<T>> entry : this.items.entrySet()) {
+        for (Map.Entry<Integer, List<T>> entry : this.items.entrySet()) {
             List<T> itemList = entry.getValue();
             if (itemList == null)
                 continue;
@@ -358,7 +357,7 @@ public class BasicQuadTree<T> extends BitSetQuadTreeFilter implements Iterable<T
 
         FindIntersectingBitsOp op = new FindIntersectingBitsOp(this);
 
-        List<Integer> bitIds = op.getOnBits(this.levelZeroCells, location.asDegreesArray(), new ArrayList<>());
+        BitSet bitIds = op.getOnBits(this.levelZeroCells, location.asDegreesArray(), new BitSet());
 
         return this.buildItemSet(bitIds, outItems);
     }
@@ -373,15 +372,15 @@ public class BasicQuadTree<T> extends BitSetQuadTreeFilter implements Iterable<T
      * @throws IllegalArgumentException if <code>locations</code> is null.
      */
     synchronized public Set<T> getItemsAtLocation(Iterable<LatLon> locations, Set<T> outItems) {
-        if (locations == null) {
-            String message = Logging.getMessage("nullValue.LatLonListIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (locations == null) {
+//            String message = Logging.getMessage("nullValue.LatLonListIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         FindIntersectingBitsOp op = new FindIntersectingBitsOp(this);
 
-        List<Integer> bitIds = new ArrayList<>();
+        BitSet bitIds = new BitSet();
         for (LatLon location : locations) {
             if (location != null)
                 bitIds = op.getOnBits(this.levelZeroCells, location.asDegreesArray(), bitIds);
@@ -400,15 +399,15 @@ public class BasicQuadTree<T> extends BitSetQuadTreeFilter implements Iterable<T
      * @throws IllegalArgumentException if <code>testSector</code> is null.
      */
     synchronized public Set<T> getItemsInRegion(Sector testSector, Set<T> outItems) {
-        if (testSector == null) {
-            String message = Logging.getMessage("nullValue.SectorIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (testSector == null) {
+//            String message = Logging.getMessage("nullValue.SectorIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         FindIntersectingBitsOp op = new FindIntersectingBitsOp(this);
 
-        List<Integer> bitIds = op.getOnBits(this.levelZeroCells, testSector, new ArrayList<>());
+        BitSet bitIds = op.getOnBits(this.levelZeroCells, testSector, new BitSet());
 
         return this.buildItemSet(bitIds, outItems);
     }
@@ -424,15 +423,15 @@ public class BasicQuadTree<T> extends BitSetQuadTreeFilter implements Iterable<T
      * @throws IllegalArgumentException if <code>geometryList</code> is null.
      */
     synchronized public Set<T> getItemsInRegions(Iterable<SectorGeometry> geometryList, Set<T> outItems) {
-        if (geometryList == null) {
-            String message = Logging.getMessage("nullValue.SectorGeometryListIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (geometryList == null) {
+//            String message = Logging.getMessage("nullValue.SectorGeometryListIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         FindIntersectingBitsOp op = new FindIntersectingBitsOp(this);
 
-        List<Integer> bitIds = new ArrayList<>();
+        BitSet bitIds = new BitSet();
         for (SectorGeometry testSector : geometryList) {
             if (testSector != null)
                 bitIds = op.getOnBits(this.levelZeroCells, testSector.getSector(), bitIds);
@@ -448,22 +447,25 @@ public class BasicQuadTree<T> extends BitSetQuadTreeFilter implements Iterable<T
      * @param outItems a {@link Set} in which to place the items. If null, a new set is created.
      * @return the set of items. The value passed as the <code>outItems</code> is returned.
      */
-    protected Set<T> buildItemSet(Iterable<Integer> bitIds, Set<T> outItems) {
+    protected Set<T> buildItemSet(BitSet bitIds, Set<T> outItems) {
         if (outItems == null)
             outItems = new HashSet<>();
 
         if (bitIds == null)
             return outItems;
 
-        for (Integer id : bitIds) {
-            List<T> regionItems = this.items.get(id.toString());
-            if (regionItems == null)
-                continue;
-
-            outItems.addAll(regionItems);
-        }
+        _buildItemSet(bitIds, outItems);
 
         return outItems;
+    }
+
+    private void _buildItemSet(BitSet bitIds, Set<T> outItems) {
+        bitIds.stream().forEach(id -> {
+        //for (Integer id : bitIds) {
+            List<T> regionItems = this.items.get(id);
+            if (regionItems != null)
+                outItems.addAll(regionItems);
+        });
     }
 
     /**
@@ -490,9 +492,7 @@ public class BasicQuadTree<T> extends BitSetQuadTreeFilter implements Iterable<T
         if (level < this.maxLevel)
             return true;
 
-        String bitName = Integer.toString(bitNum);
-
-        List<T> regionItems = this.items.computeIfAbsent(bitName, k -> new ArrayList<>());
+        List<T> regionItems = this.items.computeIfAbsent(bitNum, k -> new ArrayList<>());
 
         regionItems.add(this.currentItem);
 

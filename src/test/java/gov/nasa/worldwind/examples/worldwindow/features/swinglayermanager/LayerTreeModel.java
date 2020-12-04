@@ -12,6 +12,7 @@ import gov.nasa.worldwind.examples.worldwindow.core.layermanager.LayerPath;
 import gov.nasa.worldwind.examples.worldwindow.util.Util;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.util.WWUtil;
+import gov.nasa.worldwind.video.LayerList;
 
 import javax.swing.tree.*;
 import java.util.*;

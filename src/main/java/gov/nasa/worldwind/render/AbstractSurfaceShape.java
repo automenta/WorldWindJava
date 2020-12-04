@@ -44,8 +44,7 @@ import static gov.nasa.worldwind.geom.Sector.EMPTY_SECTOR;
  * @author dcollins
  * @version $Id: AbstractSurfaceShape.java 3240 2015-06-22 23:38:49Z tgaskins $
  */
-public abstract class AbstractSurfaceShape extends AbstractSurfaceObject implements SurfaceShape, Movable, Movable2,
-    Combinable, Draggable {
+public abstract class AbstractSurfaceShape extends AbstractSurfaceObject implements SurfaceShape, Movable, Movable2, Combinable, Draggable {
     /**
      * The default interior color.
      */

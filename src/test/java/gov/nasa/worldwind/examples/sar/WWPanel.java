@@ -8,6 +8,7 @@ package gov.nasa.worldwind.examples.sar;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.layers.tool.ScalebarLayer;
 import gov.nasa.worldwind.util.StatusBar;
 import gov.nasa.worldwind.video.awt.WorldWindowGLCanvas;
 
@@ -80,16 +81,14 @@ public class WWPanel extends JPanel {
     private void updateElevationUnit(Object newValue) {
         for (Layer layer : this.wwd.model().getLayers()) {
             if (layer instanceof ScalebarLayer) {
-                if (SAR2.UNIT_IMPERIAL.equals(newValue))
-                    ((ScalebarLayer) layer).setUnit(ScalebarLayer.UNIT_IMPERIAL);
-                else // Default to metric units.
-                    ((ScalebarLayer) layer).setUnit(ScalebarLayer.UNIT_METRIC);
-            }
-            else if (layer instanceof TerrainProfileLayer) {
-                if (SAR2.UNIT_IMPERIAL.equals(newValue))
-                    ((TerrainProfileLayer) layer).setUnit(TerrainProfileLayer.UNIT_IMPERIAL);
-                else // Default to metric units.
-                    ((TerrainProfileLayer) layer).setUnit(TerrainProfileLayer.UNIT_METRIC);
+                // Default to metric units.
+                ((ScalebarLayer) layer).setUnit(
+                    SAR2.UNIT_IMPERIAL.equals(newValue) ? ScalebarLayer.UNIT_IMPERIAL : ScalebarLayer.UNIT_METRIC);
+            }else if (layer instanceof TerrainProfileLayer) {
+                // Default to metric units.
+                ((TerrainProfileLayer) layer).setUnit(
+                    SAR2.UNIT_IMPERIAL.equals(newValue) ? TerrainProfileLayer.UNIT_IMPERIAL
+                        : TerrainProfileLayer.UNIT_METRIC);
             }
         }
 

@@ -28,7 +28,7 @@ import java.util.logging.Level;
  * @version $Id: SurfacePolygon.java 3436 2015-10-28 17:43:24Z tgaskins $
  */
 @SuppressWarnings("unchecked")
-public class SurfacePolygon extends AbstractSurfaceShape implements Exportable {
+public class SurfacePolygon extends AbstractSurfaceShape implements GeographicExtent, Exportable {
     protected static GLUtessellator tess;
     protected static GLUTessellatorSupport.CollectPrimitivesCallback tessCallback;
     /* The polygon's boundaries. */
@@ -80,11 +80,11 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable {
      * @throws IllegalArgumentException if the locations iterable is null.
      */
     public SurfacePolygon(Iterable<? extends LatLon> iterable) {
-        if (iterable == null) {
-            String message = Logging.getMessage("nullValue.IterableIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (iterable == null) {
+//            String message = Logging.getMessage("nullValue.IterableIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         this.setOuterBoundary(iterable);
     }
@@ -103,11 +103,11 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable {
     public SurfacePolygon(ShapeAttributes normalAttrs, Iterable<? extends LatLon> iterable) {
         super(normalAttrs);
 
-        if (iterable == null) {
-            String message = Logging.getMessage("nullValue.IterableIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (iterable == null) {
+//            String message = Logging.getMessage("nullValue.IterableIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         this.setOuterBoundary(iterable);
     }
@@ -121,13 +121,17 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable {
     }
 
     public void setLocations(Iterable<? extends LatLon> iterable) {
-        if (iterable == null) {
-            String message = Logging.getMessage("nullValue.IterableIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (iterable == null) {
+//            String message = Logging.getMessage("nullValue.IterableIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         this.setOuterBoundary(iterable);
+    }
+
+    @Override public Sector getSector() {
+        return Sector.boundingSector(this.getOuterBoundary());
     }
 
     public List<Iterable<? extends LatLon>> getBoundaries() {
@@ -138,12 +142,13 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable {
         return !this.boundaries.isEmpty() ? this.boundaries.get(0) : null;
     }
 
+
     public void setOuterBoundary(Iterable<? extends LatLon> iterable) {
-        if (iterable == null) {
-            String message = Logging.getMessage("nullValue.IterableIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (iterable == null) {
+//            String message = Logging.getMessage("nullValue.IterableIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         if (!this.boundaries.isEmpty())
             this.boundaries.set(0, iterable);
@@ -154,11 +159,11 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable {
     }
 
     public void addInnerBoundary(Iterable<? extends LatLon> iterable) {
-        if (iterable == null) {
-            String message = Logging.getMessage("nullValue.IterableIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (iterable == null) {
+//            String message = Logging.getMessage("nullValue.IterableIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         this.boundaries.add(iterable);
         this.onShapeChanged();
@@ -202,11 +207,11 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable {
             return;
         }
 
-        if (texCoords == null) {
-            String message = Logging.getMessage("generic.ListIsEmpty");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (texCoords == null) {
+//            String message = Logging.getMessage("generic.ListIsEmpty");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         if (texCoordCount < 3 || texCoords.length < 2 * texCoordCount) {
             String message = Logging.getMessage("generic.InsufficientPositions");
@@ -381,6 +386,7 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable {
             result.add(center);
         }
     }
+
 
     protected List<Vertex> clipWithPole(List<Vertex> contour, String pole, Angle maxEdgeLength) {
         List<Vertex> newVertices = new ArrayList<>();

@@ -12,6 +12,7 @@ import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.layers.ogc.wms.*;
 import gov.nasa.worldwind.terrain.CompoundElevationModel;
 import gov.nasa.worldwind.util.WWUtil;
+import gov.nasa.worldwind.video.LayerList;
 
 import javax.swing.*;
 import javax.swing.border.*;

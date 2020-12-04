@@ -15,6 +15,7 @@ import gov.nasa.worldwind.globes.*;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.util.*;
+import gov.nasa.worldwind.video.LayerList;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;

@@ -1095,11 +1095,11 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
     }
 
     public double getUnmappedLocalSourceElevation(Angle latitude, Angle longitude) {
-        if (latitude == null || longitude == null) {
-            String msg = Logging.getMessage("nullValue.AngleIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (latitude == null || longitude == null) {
+//            String msg = Logging.getMessage("nullValue.AngleIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         if (!this.contains(latitude, longitude))
             return this.getMissingDataSignal();
@@ -1141,26 +1141,27 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
 
     protected double getElevations(Sector sector, List<? extends LatLon> latlons, double targetResolution,
         double[] buffer, boolean mapMissingData) {
-        if (sector == null) {
-            String msg = Logging.getMessage("nullValue.SectorIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (sector == null) {
+//            String msg = Logging.getMessage("nullValue.SectorIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
+//
+//        if (latlons == null) {
+//            String msg = Logging.getMessage("nullValue.LatLonListIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
+//
+//        if (buffer == null) {
+//            String msg = Logging.getMessage("nullValue.ElevationsBufferIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
-        if (latlons == null) {
-            String msg = Logging.getMessage("nullValue.LatLonListIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        if (buffer == null) {
-            String msg = Logging.getMessage("nullValue.ElevationsBufferIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        if (buffer.length < latlons.size()) {
-            String msg = Logging.getMessage("ElevationModel.ElevationsBufferTooSmall", latlons.size());
+        final int n = latlons.size();
+        if (buffer.length < n) {
+            String msg = Logging.getMessage("ElevationModel.ElevationsBufferTooSmall", n);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
@@ -1180,7 +1181,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         // Mark the model as used this frame.
         this.set(AVKey.FRAME_TIMESTAMP, System.currentTimeMillis());
 
-        for (int i = 0; i < latlons.size(); i++) {
+        for (int i = 0; i < n; i++) {
             LatLon ll = latlons.get(i);
             if (ll == null)
                 continue;
@@ -1238,15 +1239,18 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         final double sLat = dLat / sectorDeltaLat;
         final double sLon = dLon / sectorDeltaLon;
 
-        int j = (int) ((tileHeight - 1) * sLat);
-        int i = (int) ((tileWidth - 1) * sLon);
+        int j =
+            (int) Math.round( ((tileHeight - 1) * sLat) );
+        int i =
+            (int) Math.round( ((tileWidth - 1) * sLon) );
         int k = j * tileWidth + i;
 
         double eLeft = elevations.getDouble(k);
         double eRight = i < (tileWidth - 1) ? elevations.getDouble(k + 1) : eLeft;
 
-        if (this.getMissingDataSignal() == eLeft || this.getMissingDataSignal() == eRight)
-            return this.getMissingDataSignal();
+        final double missing = this.getMissingDataSignal();
+        if (missing == eLeft || missing == eRight)
+            return missing;
 
         double dw = sectorDeltaLon / (tileWidth - 1);
         double dh = sectorDeltaLat / (tileHeight - 1);
@@ -1259,8 +1263,8 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
             eLeft = elevations.getDouble(k + tileWidth);
             eRight = elevations.getDouble(k + tileWidth + 1);
 
-            if (this.getMissingDataSignal() == eLeft || this.getMissingDataSignal() == eRight)
-                return this.getMissingDataSignal();
+            if (missing == eLeft || missing == eRight)
+                return missing;
         }
 
         double eBot = eLeft + ssLon * (eRight - eLeft);
@@ -1268,11 +1272,11 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
     }
 
     public double[] getExtremeElevations(Angle latitude, Angle longitude) {
-        if (latitude == null || longitude == null) {
-            String msg = Logging.getMessage("nullValue.AngleIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (latitude == null || longitude == null) {
+//            String msg = Logging.getMessage("nullValue.AngleIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         if (this.extremesLevel < 0 || this.extremes == null)
             return new double[] {this.getMinElevation(), this.getMaxElevation()};
@@ -1289,9 +1293,10 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
             double min = this.extremes.getDouble(index);
             double max = this.extremes.getDouble(index + 1);
 
-            if (min == this.getMissingDataSignal())
+            final double missing = this.getMissingDataSignal();
+            if (min == missing)
                 min = this.getMissingDataReplacement();
-            if (max == this.getMissingDataSignal())
+            if (max == missing)
                 max = this.getMissingDataReplacement();
 
             return new double[] {min, max};
@@ -1306,11 +1311,11 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
     }
 
     public double[] getExtremeElevations(Sector sector) {
-        if (sector == null) {
-            String message = Logging.getMessage("nullValue.SectorIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (sector == null) {
+//            String message = Logging.getMessage("nullValue.SectorIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         try {
             double[] extremes = this.extremesCachingEnabled
@@ -1338,11 +1343,11 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
     }
 
     public void loadExtremeElevations(String extremesFileName) {
-        if (extremesFileName == null) {
-            String message = Logging.getMessage("nullValue.ExtremeElevationsFileName");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (extremesFileName == null) {
+//            String message = Logging.getMessage("nullValue.ExtremeElevationsFileName");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         InputStream is = null;
         try {
@@ -1475,20 +1480,25 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         final int seCol = Tile.computeColumn(delta.getLongitude(), sector.lonMax(), origin.getLongitude());
 
         TreeSet<ElevationTile> tiles = new TreeSet<>((t1, t2) -> {
-            if (t2.getLevelNumber() == t1.getLevelNumber()
-                && t2.row == t1.row && t2.column == t1.column)
+            final int l2 = t2.getLevelNumber();
+            final int l1 = t1.getLevelNumber();
+            if (l2 == l1 && t2.row == t1.row && t2.column == t1.column)
                 return 0;
 
             // Higher-res levels compare lower than lower-res
-            return t1.getLevelNumber() > t2.getLevelNumber() ? -1 : 1;
+            return l1 > l2 ? -1 : 1;
         });
         Collection<TileKey> requested = new ArrayList<>();
+
+        final int targetLevelNum = targetLevel.getLevelNumber();
+        final String targetLevelCacheName = targetLevel.getCacheName();
 
         boolean missingTargetTiles = false;
         boolean missingLevelZeroTiles = false;
         for (int row = seRow; row <= nwRow; row++) {
             for (int col = nwCol; col <= seCol; col++) {
-                TileKey key = new TileKey(targetLevel.getLevelNumber(), row, col, targetLevel.getCacheName());
+
+                TileKey key = new TileKey(targetLevelNum, row, col, targetLevelCacheName);
                 ElevationTile tile = this.getTileFromMemory(key);
                 if (tile != null) {
                     tiles.add(tile);
@@ -1515,8 +1525,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
                     if (tile != null) {
                         tiles.add(tile);
                         break;
-                    }
-                    else {
+                    }else {
                         if (fallbackLevelNum == 0)
                             missingLevelZeroTiles = true;
                         fallbackToRequest = fallbackKey; // keep track of lowest level to request
@@ -2338,8 +2347,8 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
             final double sLat = dLat / sectorDeltaLat;
             final double sLon = dLon / sectorDeltaLon;
 
-            int j = (int) ((tileHeight - 1) * sLat);
-            int i = (int) ((tileWidth - 1) * sLon);
+            int j = (int)Math.round ((tileHeight - 1) * sLat);
+            int i = (int)Math.round ((tileWidth - 1) * sLon);
 
             return j * tileWidth + i;
         }

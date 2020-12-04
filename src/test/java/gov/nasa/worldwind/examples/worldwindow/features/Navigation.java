@@ -9,6 +9,7 @@ package gov.nasa.worldwind.examples.worldwindow.features;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.examples.worldwindow.core.*;
 import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.layers.tool.*;
 
 import java.beans.PropertyChangeEvent;
 
@@ -56,7 +57,7 @@ public class Navigation extends AbstractFeatureLayer {
 
         controller.addInternalLayer(layer);
 
-        ViewControlsSelectListener listener = new ViewControlsSelectListener(this.controller.getWWd(), layer);
+        ViewControlsLayer.ViewControlsSelectListener listener = new ViewControlsLayer.ViewControlsSelectListener(this.controller.getWWd(), layer);
         listener.setRepeatTimerDelay(30);
         listener.setZoomIncrement(0.5);
         listener.setPanIncrement(0.5);

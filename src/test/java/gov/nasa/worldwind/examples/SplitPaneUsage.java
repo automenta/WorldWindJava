@@ -8,7 +8,7 @@ package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.layers.WorldMapLayer;
+import gov.nasa.worldwind.layers.tool.WorldMapLayer;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.video.awt.WorldWindowGLCanvas;
 

@@ -10,8 +10,11 @@ import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.globes.*;
 import gov.nasa.worldwind.layers.*;
-import gov.nasa.worldwind.layers.Earth.*;
+import gov.nasa.worldwind.layers.earth.*;
+import gov.nasa.worldwind.layers.sky.StarsLayer;
+import gov.nasa.worldwind.layers.tool.*;
 import gov.nasa.worldwind.util.*;
+import gov.nasa.worldwind.video.LayerList;
 import gov.nasa.worldwind.video.awt.WorldWindowGLCanvas;
 
 import javax.swing.*;
@@ -75,7 +78,7 @@ public class CardLayoutUsage extends JFrame {
             // Add view control layers, which the WorldWindows cannot share.
             ViewControlsLayer viewControlsA = new ViewControlsLayer();
             wwpA.wwd.model().getLayers().add(viewControlsA);
-            wwpA.wwd.addSelectListener(new ViewControlsSelectListener(wwpA.wwd, viewControlsA));
+            wwpA.wwd.addSelectListener(new ViewControlsLayer.ViewControlsSelectListener(wwpA.wwd, viewControlsA));
 
             ViewControlsLayer viewControlsB = new ViewControlsLayer();
 
@@ -97,7 +100,7 @@ public class CardLayoutUsage extends JFrame {
             cardPanel.add(wwpB, "WorldWindow B");
             wwpB.wwd.setModel(modelForWindowB);
             wwpB.wwd.model().getLayers().add(viewControlsB);
-            wwpB.wwd.addSelectListener(new ViewControlsSelectListener(wwpB.wwd, viewControlsB));
+            wwpB.wwd.addSelectListener(new ViewControlsLayer.ViewControlsSelectListener(wwpB.wwd, viewControlsB));
 
             wwpA.wwd.redraw();
             wwpB.wwd.redraw();

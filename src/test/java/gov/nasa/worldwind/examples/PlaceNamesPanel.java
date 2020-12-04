@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.WorldWindow;
-import gov.nasa.worldwind.layers.LayerList;
+import gov.nasa.worldwind.video.LayerList;
 import gov.nasa.worldwind.layers.placename.*;
 
 import javax.swing.*;

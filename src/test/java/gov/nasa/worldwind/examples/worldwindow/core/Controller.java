@@ -15,6 +15,7 @@ import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.poi.PointOfInterest;
 import gov.nasa.worldwind.util.WWUtil;
+import gov.nasa.worldwind.video.LayerList;
 import gov.nasa.worldwind.view.orbit.*;
 
 import javax.swing.*;

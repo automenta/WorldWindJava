@@ -480,7 +480,7 @@ public class Polygon extends AbstractShape {
         return boundingBox.translate(refPoint);
     }
 
-    public Sector getSector() {
+    @Override public Sector getSector() {
         if (this.sector == null && this.isOuterBoundaryValid())
             this.sector = Sector.boundingSector(this.getOuterBoundary());
 

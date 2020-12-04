@@ -6,9 +6,10 @@
 package gov.nasa.worldwind.ui.tree.layer;
 
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.ui.tree.*;
 import gov.nasa.worldwind.util.Logging;
+import gov.nasa.worldwind.video.LayerList;
 
 /**
  * A tree model representing <code>{@link Layer}</code> objects and their content.
