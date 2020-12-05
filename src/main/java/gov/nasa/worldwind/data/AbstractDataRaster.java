@@ -140,14 +140,14 @@ public abstract class AbstractDataRaster extends AVListImpl implements DataRaste
         // to cover a finite area.
 
         double ty = destHeight * -(sourceSector.latMax().degrees - destSector.latMax().degrees)
-            / destSector.getDeltaLatDegrees();
+            / destSector.latDelta;
         double tx = destWidth * (sourceSector.lonMin().degrees - destSector.lonMin().degrees)
-            / destSector.getDeltaLonDegrees();
+            / destSector.lonDelta;
 
         double sy = ((double) destHeight / sourceHeight)
-            * (sourceSector.getDeltaLatDegrees() / destSector.getDeltaLatDegrees());
+            * (sourceSector.latDelta / destSector.latDelta);
         double sx = ((double) destWidth / sourceWidth)
-            * (sourceSector.getDeltaLonDegrees() / destSector.getDeltaLonDegrees());
+            * (sourceSector.lonDelta / destSector.lonDelta);
 
         AffineTransform transform = new AffineTransform();
         transform.translate(tx, ty);
@@ -162,8 +162,8 @@ public abstract class AbstractDataRaster extends AVListImpl implements DataRaste
         double ty = -sector.latMax().degrees;
         double tx = -sector.lonMin().degrees;
 
-        double sy = -(height / sector.getDeltaLatDegrees());
-        double sx = (width / sector.getDeltaLonDegrees());
+        double sy = -(height / sector.latDelta);
+        double sx = (width / sector.lonDelta);
 
         AffineTransform transform = new AffineTransform();
         transform.scale(sx, sy);

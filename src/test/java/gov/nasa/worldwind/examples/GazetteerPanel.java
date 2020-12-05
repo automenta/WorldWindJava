@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.*;
 import java.util.regex.*;
 
+import static java.lang.Math.toRadians;
+
 /**
  * Gazetteer search panel that allows the user to enter a search term in a text field. When a search is performed the
  * view will animate to the top search result.
@@ -254,7 +256,7 @@ public class GazetteerPanel extends JPanel {
         Globe globe = this.wwd.model().getGlobe();
 
         if (altitude == null || altitude == 0) {
-            double t = Math.min(sector.getDeltaLonRadians(), sector.getDeltaLonRadians());
+            double t = Math.min(toRadians(sector.lonDelta), toRadians(sector.lonDelta));
             double w = 0.5 * t * 6378137.0;
             altitude = w / this.wwd.view().getFieldOfView().tanHalfAngle();
         }

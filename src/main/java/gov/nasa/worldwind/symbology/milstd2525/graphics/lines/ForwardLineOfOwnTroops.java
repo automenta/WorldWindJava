@@ -15,6 +15,8 @@ import gov.nasa.worldwind.util.Logging;
 
 import java.util.*;
 
+import static java.lang.Math.toRadians;
+
 /**
  * Implementation of the Forward Line of Own Troops graphic (2.X.2.1.2.2).
  *
@@ -227,7 +229,7 @@ public class ForwardLineOfOwnTroops extends PhaseLine {
 
     protected static double computeDefaultWavelength(Iterable<? extends Position> positions, Extent globe) {
         Sector sector = Sector.boundingSector(positions);
-        double diagonal = Math.hypot(sector.getDeltaLatRadians(), sector.getDeltaLonRadians());
+        double diagonal = Math.hypot(toRadians(sector.latDelta), toRadians(sector.lonDelta));
 
         return (diagonal * globe.getRadius()) / DEFAULT_NUM_WAVES;
     }

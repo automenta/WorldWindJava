@@ -231,10 +231,10 @@ class RPFGenerator {
                     Sector frameSector = frame.sector;
 
                     // find size of the frame's footprint at the requested image resolution...
-                    int footprintX = (int) (frameSector.getDeltaLonDegrees() * reqImage.getWidth()
-                        / reqSector.getDeltaLonDegrees());
-                    int footprintY = (int) (frameSector.getDeltaLatDegrees() * reqImage.getHeight()
-                        / reqSector.getDeltaLatDegrees());
+                    int footprintX = (int) (frameSector.lonDelta * reqImage.getWidth()
+                        / reqSector.lonDelta);
+                    int footprintY = (int) (frameSector.latDelta * reqImage.getHeight()
+                        / reqSector.latDelta);
 
                     // Depending upon footprint, either get image from it RPF framefile, or reconstruct
                     // it from a wavelet encoding.
@@ -281,13 +281,13 @@ class RPFGenerator {
             Sector srcSector) {
 
             double tx = (srcSector.lonMin().degrees - reqSector.lonMin().degrees) * (
-                reqImage.getWidth() / reqSector.getDeltaLonDegrees());
+                reqImage.getWidth() / reqSector.lonDelta);
             double ty = (reqSector.latMax().degrees - srcSector.latMax().degrees) * (
-                reqImage.getHeight() / reqSector.getDeltaLatDegrees());
-            double sx = (reqImage.getWidth() / reqSector.getDeltaLonDegrees()) * (
-                srcSector.getDeltaLonDegrees() / srcImage.getWidth());
-            double sy = (reqImage.getHeight() / reqSector.getDeltaLatDegrees()) * (
-                srcSector.getDeltaLatDegrees() / srcImage.getHeight());
+                reqImage.getHeight() / reqSector.latDelta);
+            double sx = (reqImage.getWidth() / reqSector.lonDelta) * (
+                srcSector.lonDelta / srcImage.getWidth());
+            double sy = (reqImage.getHeight() / reqSector.latDelta) * (
+                srcSector.latDelta / srcImage.getHeight());
 
             Graphics2D g2d = (Graphics2D) reqImage.getGraphics();
             AffineTransform xform = g2d.getTransform();

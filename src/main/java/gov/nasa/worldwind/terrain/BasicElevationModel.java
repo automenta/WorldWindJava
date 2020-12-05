@@ -1232,8 +1232,8 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         Sector sector = tile.sector;
         final int tileHeight = tile.getHeight();
         final int tileWidth = tile.getWidth();
-        final double sectorDeltaLat = sector.getDeltaLat().radians;
-        final double sectorDeltaLon = sector.getDeltaLon().radians;
+        final double sectorDeltaLat = sector.latDelta().radians;
+        final double sectorDeltaLon = sector.lonDelta().radians;
         final double dLat = sector.latMax().radians - latitude.radians;
         final double dLon = longitude.radians - sector.lonMin().radians;
         final double sLat = dLat / sectorDeltaLat;
@@ -2338,8 +2338,8 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
             final int tileHeight = this.getHeight();
             final int tileWidth = this.getWidth();
 
-            final double sectorDeltaLat = sector.getDeltaLat().radians;
-            final double sectorDeltaLon = sector.getDeltaLon().radians;
+            final double sectorDeltaLat = sector.latDelta().radians;
+            final double sectorDeltaLon = sector.lonDelta().radians;
 
             final double dLat = sector.latMax().radians - location.getLatitude().radians;
             final double dLon = location.getLongitude().radians - sector.lonMin().radians;

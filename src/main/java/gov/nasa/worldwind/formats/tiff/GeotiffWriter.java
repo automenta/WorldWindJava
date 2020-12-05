@@ -671,7 +671,7 @@ public class GeotiffWriter {
         // will have different pixel size
         if (!list.hasKey(AVKey.PIXEL_WIDTH)) {
             if (isGeographic(list)) {
-                double pixelWidth = sector.getDeltaLonDegrees() / srcWidth;
+                double pixelWidth = sector.lonDelta / srcWidth;
                 list.set(AVKey.PIXEL_WIDTH, pixelWidth);
             }
             else {
@@ -685,7 +685,7 @@ public class GeotiffWriter {
         // because UTM images will have different pixel size
         if (!list.hasKey(AVKey.PIXEL_HEIGHT)) {
             if (isGeographic(list)) {
-                double pixelHeight = sector.getDeltaLatDegrees() / srcHeight;
+                double pixelHeight = sector.latDelta / srcHeight;
                 list.set(AVKey.PIXEL_HEIGHT, pixelHeight);
             }
             else {

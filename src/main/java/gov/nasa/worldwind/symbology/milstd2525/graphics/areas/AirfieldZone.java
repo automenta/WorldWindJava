@@ -99,7 +99,7 @@ public class AirfieldZone extends BasicArea {
         LatLon centroid = sector.getCentroid();
 
         // Size the symbol to fill about 30% of the polygon
-        Angle distance = sector.getDeltaLon().divide(6);
+        Angle distance = sector.lonDelta().divide(6);
 
         // Construct a path from East to West
         LatLon p1 = LatLon.greatCircleEndPosition(centroid, Angle.POS90, distance);

@@ -322,8 +322,8 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
     protected boolean isDataSetLarge(Iterable<? extends DataRaster> rasters, int largeThreshold) {
         Sector sector = TiledRasterProducer.computeBoundingSector(rasters);
         LatLon pixelSize = this.computeSmallestPixelSize(rasters);
-        int sectorWidth = (int) Math.ceil(sector.getDeltaLonDegrees() / pixelSize.getLongitude().degrees);
-        int sectorHeight = (int) Math.ceil(sector.getDeltaLatDegrees() / pixelSize.getLatitude().degrees);
+        int sectorWidth = (int) Math.ceil(sector.lonDelta / pixelSize.getLongitude().degrees);
+        int sectorHeight = (int) Math.ceil(sector.latDelta / pixelSize.getLatitude().degrees);
         return (sectorWidth >= largeThreshold) || (sectorHeight >= largeThreshold);
     }
 
@@ -361,8 +361,8 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
     }
 
     protected static LatLon computeDesiredTileDelta(Sector sector) {
-        double levelZeroLat = Math.min(sector.getDeltaLatDegrees(), DEFAULT_LEVEL_ZERO_TILE_DELTA);
-        double levelZeroLon = Math.min(sector.getDeltaLonDegrees(), DEFAULT_LEVEL_ZERO_TILE_DELTA);
+        double levelZeroLat = Math.min(sector.latDelta, DEFAULT_LEVEL_ZERO_TILE_DELTA);
+        double levelZeroLon = Math.min(sector.lonDelta, DEFAULT_LEVEL_ZERO_TILE_DELTA);
         return LatLon.fromDegrees(levelZeroLat, levelZeroLon);
     }
 
@@ -370,8 +370,8 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
         // Compute the raster's pixel dimension in latitude and longitude. In this computation a pixel is assumed to
         // cover a finite area.
         return LatLon.fromDegrees(
-            raster.getSector().getDeltaLatDegrees() / raster.getHeight(),
-            raster.getSector().getDeltaLonDegrees() / raster.getWidth());
+            raster.getSector().latDelta / raster.getHeight(),
+            raster.getSector().lonDelta / raster.getWidth());
     }
 
     protected LatLon computeSmallestPixelSize(Iterable<? extends DataRaster> rasters) {

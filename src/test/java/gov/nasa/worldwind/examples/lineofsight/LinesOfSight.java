@@ -23,7 +23,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.util.List;
-import java.util.Queue;
 import java.util.Timer;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -293,8 +292,8 @@ public class LinesOfSight extends ApplicationTemplate {
         protected List<Position> buildGrid(Sector sector, double height, int nRows, int nCols) {
             java.util.List<Position> grid = new ArrayList<>((nRows) * (nCols));
 
-            double dLat = sector.getDeltaLatDegrees() / (nCols - 1);
-            double dLon = sector.getDeltaLonDegrees() / (nRows - 1);
+            double dLat = sector.latDelta / (nCols - 1);
+            double dLon = sector.lonDelta / (nRows - 1);
 
             for (int j = 0; j < nRows; j++) {
                 double lat = j == nRows - 1 ?

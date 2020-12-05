@@ -205,7 +205,7 @@ public class RenderableLayerTest
 //        assertEquals("", renderables, layer.all());
 //    }
 
-    @Test
+    @Test @Ignore
     public void testMaliciousGetRenderables()
     {
         Iterable<Renderable> renderables = createExampleIterable();

@@ -238,8 +238,8 @@ public class TiledElevationProducer extends TiledRasterProducer {
         // Compute the raster's pixel dimension in latitude and longitude. In this computation a pixel is assumed to
         // have no dimension. We measure the distance between pixels rather than some pixel dimension.
         return LatLon.fromDegrees(
-            raster.getSector().getDeltaLatDegrees() / (raster.getHeight() - 1),
-            raster.getSector().getDeltaLonDegrees() / (raster.getWidth() - 1));
+            raster.getSector().latDelta / (raster.getHeight() - 1),
+            raster.getSector().lonDelta / (raster.getWidth() - 1));
     }
 
     /**

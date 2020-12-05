@@ -275,8 +275,8 @@ public class ExportableAnalyticSurface extends AnalyticSurface implements Export
                 colorGrid.add(gridPoint.getColor());
             }
 
-            double sectorHeight = this.sector.getDeltaLat().radians;
-            double sectorWidth = this.sector.getDeltaLon().radians;
+            double sectorHeight = this.sector.latDelta().radians;
+            double sectorWidth = this.sector.lonDelta().radians;
             double pixelWidth = sectorHeight / imageHeight;
             double pixelHeight = sectorWidth / imageWidth;
             double colorCellWidth = sectorWidth / (this.width - 1);

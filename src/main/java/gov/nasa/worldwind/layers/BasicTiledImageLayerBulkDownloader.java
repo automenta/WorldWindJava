@@ -10,7 +10,7 @@ import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.cache.FileStore;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.geom.Sector;
+import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.retrieve.*;
 import gov.nasa.worldwind.util.*;
 
@@ -250,18 +250,18 @@ public class BasicTiledImageLayerBulkDownloader extends BulkRetrievalThread {
         if (numRegions > div * div)
             return sector.subdivide(div);
 
-        final double dLat = sector.getDeltaLat().degrees / div;
-        final double dLon = sector.getDeltaLon().degrees / div;
+        final double dLat = sector.latDelta / div;
+        final double dLon = sector.lonDelta / div;
         ArrayList<Sector> regions = new ArrayList<>(numRegions);
         Random rand = new Random();
         while (regions.size() < numRegions) {
             int row = rand.nextInt(div);
             int col = rand.nextInt(div);
             Sector s = Sector.fromDegrees(
-                sector.latMin().degrees + dLat * row,
-                sector.latMin().degrees + dLat * row + dLat,
-                sector.lonMin().degrees + dLon * col,
-                sector.lonMin().degrees + dLon * col + dLon);
+                sector.latMin + dLat * row,
+                sector.latMin + dLat * row + dLat,
+                sector.lonMin + dLon * col,
+                sector.lonMin + dLon * col + dLon);
             if (!regions.contains(s))
                 regions.add(s);
         }
@@ -270,8 +270,8 @@ public class BasicTiledImageLayerBulkDownloader extends BulkRetrievalThread {
     }
 
     protected static Iterator<Sector> getRegionIterator(final Sector sector, final int div) {
-        final double dLat = sector.getDeltaLat().degrees / div;
-        final double dLon = sector.getDeltaLon().degrees / div;
+        final double dLat = sector.latDelta / div;
+        final double dLon = sector.lonDelta / div;
 
         return new Iterator<>() {
             int row = 0;
@@ -283,10 +283,10 @@ public class BasicTiledImageLayerBulkDownloader extends BulkRetrievalThread {
 
             public Sector next() {
                 Sector s = Sector.fromDegrees(
-                    sector.latMin().degrees + dLat * row,
-                    sector.latMin().degrees + dLat * row + dLat,
-                    sector.lonMin().degrees + dLon * col,
-                    sector.lonMin().degrees + dLon * col + dLon);
+                    sector.latMin + dLat * row,
+                    sector.latMin + dLat * row + dLat,
+                    sector.lonMin + dLon * col,
+                    sector.lonMin + dLon * col + dLon);
 
                 col++;
                 if (col >= div) {
@@ -380,8 +380,7 @@ public class BasicTiledImageLayerBulkDownloader extends BulkRetrievalThread {
                 size += fis.available();
                 fis.close();
                 count++;
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 count += 0;
             }
         }

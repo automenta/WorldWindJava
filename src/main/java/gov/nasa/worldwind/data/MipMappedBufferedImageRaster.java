@@ -101,9 +101,9 @@ public class MipMappedBufferedImageRaster extends BufferedImageRaster {
     protected static int computeMipmapLevel(int sourceWidth, int sourceHeight, Sector sourceSector,
         int destWidth, int destHeight, Sector destSector) {
         double sy = ((double) sourceHeight / destHeight)
-            * (destSector.getDeltaLatDegrees() / sourceSector.getDeltaLatDegrees());
+            * (destSector.latDelta / sourceSector.latDelta);
         double sx = ((double) sourceWidth / destWidth)
-            * (destSector.getDeltaLonDegrees() / sourceSector.getDeltaLonDegrees());
+            * (destSector.lonDelta / sourceSector.lonDelta);
         double scale = Math.max(sx, sy);
 
         if (scale < 1) {

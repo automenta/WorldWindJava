@@ -17,6 +17,8 @@ import java.awt.*;
 import java.awt.geom.*;
 import java.util.ArrayList;
 
+import static java.lang.Math.toRadians;
+
 /**
  * Displays the UTM graticule.
  *
@@ -271,7 +273,7 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
             Vec4 centerPoint = getSurfacePoint(dc, this.sector.getCentroid().getLatitude(),
                 this.sector.getCentroid().getLongitude());
             double distance = view.getEyePoint().distanceTo3(centerPoint);
-            double tileSizeMeter = this.sector.getDeltaLatRadians() * dc.getGlobe().getRadius();
+            double tileSizeMeter = toRadians(this.sector.latDelta) * dc.getGlobe().getRadius();
             return tileSizeMeter / view.computePixelSizeAtDistance(distance);
         }
 

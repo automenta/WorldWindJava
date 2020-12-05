@@ -12,6 +12,8 @@ import gov.nasa.worldwind.util.*;
 
 import java.util.ArrayList;
 
+import static java.lang.Math.toRadians;
+
 /**
  * Utility class to compute approximations of projected and surface (terrain following) area on a globe.
  *
@@ -148,7 +150,7 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
 
         Sector sector = getBoundingSector();
         if (sector != null) {
-            return globe.getRadiusAt(sector.getCentroid()) * sector.getDeltaLon().radians
+            return globe.getRadiusAt(sector.getCentroid()) * sector.lonDelta().radians
                 * Math.cos(sector.getCentroid().getLatitude().radians);
         }
 
@@ -160,7 +162,7 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
 
         Sector sector = getBoundingSector();
         if (sector != null) {
-            return globe.getRadiusAt(sector.getCentroid()) * sector.getDeltaLat().radians;
+            return globe.getRadiusAt(sector.getCentroid()) * sector.latDelta().radians;
         }
 
         return -1;
@@ -234,13 +236,13 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
             }
 
             // Sample the bounding sector with cells about the same length in side - squares
-            double stepRadians = Math.max(sector.getDeltaLatRadians() / steps, sector.getDeltaLonRadians() / steps);
-            int latSteps = (int) Math.round(sector.getDeltaLatRadians() / stepRadians);
+            double stepRadians = Math.max(toRadians(sector.latDelta) / steps, toRadians(sector.lonDelta) / steps);
+            int latSteps = (int) Math.round(toRadians(sector.latDelta) / stepRadians);
             final LatLon sectorCentroid = sector.getCentroid();
-            int lonSteps = (int) Math.round(sector.getDeltaLonRadians() / stepRadians
+            int lonSteps = (int) Math.round(toRadians(sector.lonDelta) / stepRadians
                 * Math.cos(sectorCentroid.getLatitude().radians));
-            double latStepRadians = sector.getDeltaLatRadians() / latSteps;
-            double lonStepRadians = sector.getDeltaLonRadians() / lonSteps;
+            double latStepRadians = toRadians(sector.latDelta) / latSteps;
+            double lonStepRadians = toRadians(sector.lonDelta) / lonSteps;
 
             if (this.sectorCells == null) {
                 this.sectorCells = new Cell[latSteps][lonSteps];

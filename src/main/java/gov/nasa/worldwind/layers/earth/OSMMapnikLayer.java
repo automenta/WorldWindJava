@@ -26,7 +26,10 @@ public class OSMMapnikLayer extends BasicMercatorTiledImageLayer {
         params.set(AVKey.TILE_WIDTH, 256);
         params.set(AVKey.TILE_HEIGHT, 256);
         params.set(AVKey.DATA_CACHE_NAME, "Earth/OSM-Mercator/OpenStreetMap Mapnik");
-        params.set(AVKey.SERVICE, "http://a.tile.openstreetmap.org/");
+        params.set(AVKey.SERVICE,
+            "http://a.tile.openstreetmap.org"
+//            "http://c.tile.stamen.com"
+        );
         params.set(AVKey.DATASET_NAME, "h");
         params.set(AVKey.FORMAT_SUFFIX, ".png");
         params.set(AVKey.NUM_LEVELS, 16);
@@ -47,9 +50,12 @@ public class OSMMapnikLayer extends BasicMercatorTiledImageLayer {
     private static class URLBuilder implements TileUrlBuilder {
         public URL getURL(Tile tile, String imageFormat)
             throws MalformedURLException {
-            return new URL(tile.level.getService()
-                + (tile.getLevelNumber() + 3) + "/" + tile.column + "/"
-                + ((1 << (tile.getLevelNumber()) + 3) - 1 - tile.row) + ".png");
+            final int x = tile.getLevelNumber() + 3;
+            final int y = tile.column;
+            final int z = (1 << (tile.getLevelNumber()) + 3) - 1 - tile.row;
+            return new URL(
+            tile.level.getService() + "/" + x + "/" + y + "/" + z + ".png"
+            );
         }
     }
 }

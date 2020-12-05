@@ -16,6 +16,8 @@ import gov.nasa.worldwind.util.Logging;
 
 import java.util.*;
 
+import static java.lang.Math.toRadians;
+
 /**
  * Represents the KML <i>Region</i> element and provides access to its contents. Regions define an area of interest
  * described by a geographic bounding box and an optional minimum and maximum altitude.
@@ -547,7 +549,7 @@ public class KMLRegion extends KMLAbstractObject {
         // of the area in radians to match the units of this Region's minLodPixels and maxLodPixels, which are the
         // square root of a screen area.
         double minDistance = d1;
-        double numRadians = Math.sqrt(sector.getDeltaLatRadians() * sector.getDeltaLonRadians());
+        double numRadians = Math.sqrt(toRadians(sector.latDelta) * toRadians(sector.lonDelta));
         double numMeters = points.get(0).getLength3() * numRadians;
 
         if (d2 < minDistance) {

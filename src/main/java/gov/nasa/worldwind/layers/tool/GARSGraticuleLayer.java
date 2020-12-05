@@ -16,6 +16,8 @@ import java.awt.*;
 import java.awt.geom.*;
 import java.util.*;
 
+import static java.lang.Math.toRadians;
+
 /**
  * Displays the geographic Global Area Reference System (GARS) graticule. The graticule has four levels. The first level
  * displays lines of latitude and longitude. The second level displays 30 minute square grid cells. The third level
@@ -420,7 +422,7 @@ public class GARSGraticuleLayer extends GraticuleLayer {
             Vec4 centerPoint = getSurfacePoint(dc, this.sector.getCentroid().getLatitude(),
                 this.sector.getCentroid().getLongitude());
             double distance = view.getEyePoint().distanceTo3(centerPoint);
-            double tileSizeMeter = this.sector.getDeltaLatRadians() * dc.getGlobe().getRadius();
+            double tileSizeMeter = toRadians(this.sector.latDelta) * dc.getGlobe().getRadius();
             return tileSizeMeter / view.computePixelSizeAtDistance(distance);
         }
 
@@ -428,7 +430,7 @@ public class GARSGraticuleLayer extends GraticuleLayer {
             if (this.gridElements == null)
                 this.createRenderables();
 
-            String graticuleType = getTypeFor(this.sector.getDeltaLatDegrees());
+            String graticuleType = getTypeFor(this.sector.latDelta);
             if (this.level == 0 && dc.getView().getEyePosition().getAltitude() > thresholds[0]) {
                 LatLon labelOffset = computeLabelOffset(dc);
 
@@ -442,7 +444,7 @@ public class GARSGraticuleLayer extends GraticuleLayer {
                                 || ge.type.equals(GridElement.TYPE_LINE_NORTH) ?
                                 GridElement.TYPE_LATITUDE_LABEL : GridElement.TYPE_LONGITUDE_LABEL;
                             GARSGraticuleLayer.this.addLevel0Label(ge.value, labelType, graticuleType,
-                                this.sector.getDeltaLatDegrees(), labelOffset);
+                                this.sector.latDelta, labelOffset);
                         }
                     }
                 }
@@ -457,7 +459,7 @@ public class GARSGraticuleLayer extends GraticuleLayer {
             if (this.level == 0 && eyeDistance <= thresholds[0]
                 || this.level == 1 && eyeDistance <= thresholds[1]
                 || this.level == 2) {
-                double resolution = this.sector.getDeltaLatDegrees() / this.divisions;
+                double resolution = this.sector.latDelta / this.divisions;
                 graticuleType = getTypeFor(resolution);
                 for (GridElement ge : this.gridElements) {
                     if (ge.isInView(dc)) {
@@ -519,7 +521,7 @@ public class GARSGraticuleLayer extends GraticuleLayer {
         private void createRenderables() {
             this.gridElements = new ArrayList<>();
 
-            double step = sector.getDeltaLatDegrees() / this.divisions;
+            double step = sector.latDelta / this.divisions;
 
             // Generate meridians with labels
             double lon = sector.lonMin().degrees + (this.level == 0 ? 0 : step);
@@ -578,7 +580,7 @@ public class GARSGraticuleLayer extends GraticuleLayer {
                 this.gridElements.add(ge);
             }
 
-            double resolution = this.sector.getDeltaLatDegrees() / this.divisions;
+            double resolution = this.sector.latDelta / this.divisions;
             if (this.level == 0) {
                 Sector[] sectors = this.sector.subdivide(20);
                 for (int j = 0; j < 20; j++) {

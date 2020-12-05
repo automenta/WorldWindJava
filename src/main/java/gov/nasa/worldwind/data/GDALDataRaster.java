@@ -186,12 +186,12 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
         this.set(AVKey.GDAL_AREA, this.area);
 
         if (this.width > 0) {
-            double dx = sector.getDeltaLonDegrees() / this.width;
+            double dx = sector.lonDelta / this.width;
             this.set(AVKey.PIXEL_WIDTH, dx);
         }
 
         if (this.height > 0) {
-            double dy = sector.getDeltaLatDegrees() / this.height;
+            double dy = sector.latDelta / this.height;
             this.set(AVKey.PIXEL_WIDTH, dy);
         }
 
@@ -529,8 +529,8 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
             return this.dsVRT;
         }
 
-        double reqWidthRes = Math.abs(reqSector.getDeltaLonDegrees() / reqWidth);
-        double reqHeightRes = Math.abs(reqSector.getDeltaLatDegrees() / reqHeight);
+        double reqWidthRes = Math.abs(reqSector.lonDelta / reqWidth);
+        double reqHeightRes = Math.abs(reqSector.latDelta / reqHeight);
 
         int bandCount = this.dsVRT.getRasterCount();
         if (bandCount == 0) {
@@ -566,7 +566,7 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
             }
 
 //          double ovWidthRes = Math.abs(extent.getDeltaLonDegrees() / (double) w);
-            double ovHeightRes = Math.abs(extent.getDeltaLatDegrees() / h);
+            double ovHeightRes = Math.abs(extent.latDelta / h);
 
             if (ovHeightRes <= reqHeightRes /*&& ovWidthRes <= reqWidthRes*/) {
                 bestOverviewIdx = i;
@@ -590,8 +590,8 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
                     double scale = Math.pow(2, i);
                     double h = Math.floor(this.getHeight() / scale);
                     double w = Math.floor(this.getWidth() / scale);
-                    double ovWidthRes = Math.abs(extent.getDeltaLonDegrees() / w);
-                    double ovHeightRes = Math.abs(extent.getDeltaLatDegrees() / h);
+                    double ovWidthRes = Math.abs(extent.lonDelta / w);
+                    double ovHeightRes = Math.abs(extent.latDelta / h);
                     if (ovHeightRes <= reqHeightRes && ovWidthRes <= reqWidthRes) {
                         srcWidth = (int) w;
                         srcHeight = (int) h;

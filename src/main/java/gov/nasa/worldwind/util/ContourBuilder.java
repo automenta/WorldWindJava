@@ -234,8 +234,8 @@ public class ContourBuilder {
 
         double maxLat = sector.latMax().degrees;
         double minLon = sector.lonMin().degrees;
-        double deltaLat = sector.getDeltaLatDegrees();
-        double deltaLon = sector.getDeltaLonDegrees();
+        double deltaLat = sector.latDelta;
+        double deltaLon = sector.lonDelta;
 
         List<List<Position>> result = new ArrayList<>();
 

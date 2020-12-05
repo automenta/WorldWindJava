@@ -426,8 +426,8 @@ public class BasicElevationModelBulkDownloader extends BulkRetrievalThread {
         if (numRegions > div * div)
             return sector.subdivide(div);
 
-        final double dLat = sector.getDeltaLat().degrees / div;
-        final double dLon = sector.getDeltaLon().degrees / div;
+        final double dLat = sector.latDelta().degrees / div;
+        final double dLon = sector.lonDelta().degrees / div;
         ArrayList<Sector> regions = new ArrayList<>(numRegions);
         Random rand = new Random();
         while (regions.size() < numRegions) {
@@ -452,8 +452,8 @@ public class BasicElevationModelBulkDownloader extends BulkRetrievalThread {
     }
 
     protected static Iterator<Sector> getRegionIterator(final Sector sector, final int div) {
-        final double dLat = sector.getDeltaLat().degrees / div;
-        final double dLon = sector.getDeltaLon().degrees / div;
+        final double dLat = sector.latDelta().degrees / div;
+        final double dLon = sector.lonDelta().degrees / div;
 
         return new Iterator<>() {
             int row = 0;

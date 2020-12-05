@@ -391,8 +391,8 @@ public class SectorSelector extends WWObjectImpl
             double dW = abs(s.lonMin().sub(p.getLongitude()).degrees);
             double dE = abs(s.lonMax().sub(p.getLongitude()).degrees);
 
-            double sLat = factor * s.getDeltaLatDegrees();
-            double sLon = factor * s.getDeltaLonDegrees();
+            double sLat = factor * s.latDelta;
+            double sLon = factor * s.lonDelta;
 
             if (dN < sLat && dW < sLon)
                 return NORTHWEST;

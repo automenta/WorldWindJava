@@ -6,6 +6,7 @@ import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.layers.earth.*;
+import gov.nasa.worldwind.render.Polygon;
 import gov.nasa.worldwind.video.LayerList;
 import gov.nasa.worldwind.layers.sky.SkyGradientLayer;
 import gov.nasa.worldwind.layers.sky.StarsLayer;
@@ -17,9 +18,9 @@ import gov.nasa.worldwind.video.newt.WorldWindowNEWT;
 
 import java.awt.*;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
+
+import static gov.nasa.worldwind.WorldWind.*;
 
 public class WorldWindOSM {
 
@@ -45,10 +46,9 @@ public class WorldWindOSM {
             l.add(new StarsLayer());
             l.add(new SkyGradientLayer());
 
-            l.add(new OSMMapnikLayer());
-            //l.add(new BMNGWMSLayer());
+//            l.add(new OSMMapnikLayer());
+            l.add(new BMNGWMSLayer());
 
-//            l.add(new ShapefileLayer(new Shapefile(new File("/tmp/shp1/roads.shp"))));
             l.add(new ShapefileLayer(new Shapefile(new File("/tmp/shp1/places.shp"))));
             l.add(new ShapefileLayer(new Shapefile(new File("/tmp/shp1/roads.shp"))));
             l.add(new ShapefileLayer(new Shapefile(new File("/tmp/shp1/waterways.shp"))));
@@ -72,9 +72,11 @@ public class WorldWindOSM {
         private final Shapefile shp;
 
         public ShapefileLayer(Shapefile shp) {
-            setMaxActiveAltitude(10000);
             this.shp = shp;
-            setPickEnabled(false);
+
+            setMaxActiveAltitude(20000);
+            setPickEnabled(true);
+
 
             while (shp.hasNext()) {
                 accept(shp.nextRecord());
@@ -112,12 +114,26 @@ public class WorldWindOSM {
 
             DBaseRecord attr = r.getAttributes();
 
+            final Set<Map.Entry<String, Object>> meta = attr.getEntries();
+            String metaString = meta.toString();
+
             if (r.isPolygonRecord()) {
+
+                Object type = attr.get("type");
+                if (type == null || type.toString().isEmpty())
+                    return; //type = "";
 
                 final ShapefileRecordPolygon R = r.asPolygonRecord();
                 int parts = R.getNumberOfParts();
                 for (int x = 0; x < parts; x++) {
-                    SurfacePolygon p = new SurfacePolygon(positions(R, x));
+                    Polygon p = new Polygon(positions(R, x, 1)) {
+                    //SurfacePolygon p = new SurfacePolygon(positions(R, x)) {
+                        @Override
+                        public void pick(DrawContext dc, Point pickPoint) {
+                            super.pick(dc, pickPoint);
+                            System.out.println(metaString);
+                        }
+                    };
                     //Polygon p = new Polygon(positions(R, x));
                     //SurfacePolygons p = new SurfacePolygons(r.asPolygonRecord().getCompoundPointBuffer());
                     p.setDragEnabled(false);
@@ -125,15 +141,23 @@ public class WorldWindOSM {
 
 //                    p.setOutlinePickWidth(0);
 
-//                    p.setAltitudeMode(1);
+                    p.setAltitudeMode(RELATIVE_TO_GROUND);
                     final ShapeAttributes aa = new BasicShapeAttributes();
                     //aa.setOutlineWidth(3);
                     aa.setInteriorOpacity(0.5f);
                     aa.setDrawInterior(true);
                     aa.setDrawOutline(false);
-                    aa.setInteriorMaterial(new Material(new Color(1, 1, 1f)));
+
+
+
+                    aa.setInteriorMaterial(new Material(
+                        Color.getHSBColor((Math.abs(type.hashCode()) % 1000)/1000f, 0.8f, 0.8f)
+                        //new Color(1, 1, 1f)
+                    ));
 
                     p.setAttributes(aa);
+//                    p.setHighlightAttributes(aa);
+//                    p.addPropertyChangeListener(e -> System.out.println(e));
 
                     add(p);
                 }
@@ -149,9 +173,15 @@ public class WorldWindOSM {
                     ArrayList<Position> l = positions(r, i);
 
                     if (l!=null) {
-                        P = new Path(l);
+                        P = new Path(l) {
+                            @Override
+                            public void pick(DrawContext dc, Point pickPoint) {
+                                super.pick(dc, pickPoint);
+                                System.out.println(metaString);
+                            }
+                        };
                         P.setDragEnabled(false);
-                        P.setOutlinePickWidth(0);
+                        P.setOutlinePickWidth(1);
                         P.setFollowTerrain(true);
                         P.setSurfacePath(true);
 //                        P.setShowPositions(true);
@@ -197,8 +227,8 @@ public class WorldWindOSM {
                     shapes = shapeArray[4];
 
                 String name = null;
-                if (attr.getEntries() != null) {
-                    for (Map.Entry<String, Object> e : attr.getEntries()) {
+                if (meta != null) {
+                    for (Map.Entry<String, Object> e : meta) {
                         if (e.getKey().equalsIgnoreCase("name")) {
                             name = (String) e.getValue();
                             break;
@@ -225,13 +255,17 @@ public class WorldWindOSM {
 
 
         static private ArrayList<Position> positions(ShapefileRecord r, int i) {
+            return positions(r, i, 0);
+        }
+
+        static private ArrayList<Position> positions(ShapefileRecord r, int i, float elevation) {
             ArrayList<Position> l;
             VecBuffer points = r.getPointBuffer(i);
             final int ps = points.getSize();
             if (ps > 0) {
+                l = new ArrayList<>(ps);
                 Iterable<LatLon> p = points.getLocations();
-                l = new ArrayList(ps);
-                p.forEach(q -> l.add(new Position(q, 0)));
+                p.forEach(q -> l.add(new Position(q, elevation)));
             }
             else l = null;
             return l;

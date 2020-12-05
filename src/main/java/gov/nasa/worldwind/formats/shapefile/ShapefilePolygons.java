@@ -26,6 +26,8 @@ import java.util.Queue;
 import java.util.*;
 import java.util.logging.Level;
 
+import static java.lang.Math.toRadians;
+
 /**
  * @author dcollins
  * @version $Id: ShapefilePolygons.java 3053 2015-04-28 19:15:46Z dcollins $
@@ -528,7 +530,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
             if (!record.sector.intersects(geom.sector))
                 continue; // the record quadtree may return entries outside the sector passed to getItemsInRegion
 
-            double effectiveArea = record.sector.getDeltaLatRadians() * record.sector.getDeltaLonRadians();
+            double effectiveArea = toRadians(record.sector.latDelta) * toRadians(record.sector.lonDelta);
             if (effectiveArea < minEffectiveArea)
                 continue;  // ignore records that don't meet the resolution criteria
 
@@ -892,7 +894,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
                 if (!record.sector.intersects(cc.getSector()))
                     continue; // the record quadtree may return entries outside the sector passed to getItemsInRegion
 
-                double effectiveArea = record.sector.getDeltaLatDegrees() * record.sector.getDeltaLonDegrees();
+                double effectiveArea = record.sector.latDelta * record.sector.lonDelta;
                 if (effectiveArea < minEffectiveArea)
                     continue; // ignore records that don't meet the resolution criteria
 

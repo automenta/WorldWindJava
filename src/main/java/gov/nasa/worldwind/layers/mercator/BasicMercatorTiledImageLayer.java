@@ -23,6 +23,8 @@ import java.nio.ByteBuffer;
 import java.util.Objects;
 import java.util.logging.Level;
 
+import static java.lang.Math.toRadians;
+
 /**
  * BasicTiledImageLayer modified 2009-02-03 to add support for Mercator projections.
  *
@@ -136,7 +138,8 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
 
         Retriever retriever;
 
-        if ("http".equalsIgnoreCase(url.getProtocol())) {
+        final String protocol = url.getProtocol();
+        if ("http".equalsIgnoreCase(protocol) || "https".equalsIgnoreCase(protocol)) {
             retriever = new HTTPRetriever(url, new DownloadPostProcessor(tile, this));
             retriever.set(URLRetriever.EXTRACT_ZIP_ENTRY, "true"); // supports legacy layers
         }
@@ -217,7 +220,7 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
         double maxy = sector.getMaxLatPercent();
         for (int y = 0; y < image.getHeight(); y++) {
             double sy = 1.0 - y / (double) (image.getHeight() - 1);
-            Angle lat = Angle.fromRadians(sy * sector.getDeltaLatRadians()
+            Angle lat = Angle.fromRadians(sy * toRadians(sector.latDelta)
                 + sector.latMin().radians);
             double dy = 1.0 - (MercatorSector.gudermannianInverse(lat) - miny)
                 / (maxy - miny);
@@ -274,11 +277,11 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
          * @throws IllegalArgumentException if <code>that</code> is null
          */
         public int compareTo(RequestTask that) {
-            if (that == null) {
-                String msg = Logging.getMessage("nullValue.RequestTaskIsNull");
-                Logging.logger().severe(msg);
-                throw new IllegalArgumentException(msg);
-            }
+//            if (that == null) {
+//                String msg = Logging.getMessage("nullValue.RequestTaskIsNull");
+//                Logging.logger().severe(msg);
+//                throw new IllegalArgumentException(msg);
+//            }
             return Double.compare(this.tile.getPriority(), that.tile.getPriority());
         }
 

@@ -14,6 +14,8 @@ import gov.nasa.worldwind.render.SurfaceQuad;
 
 import javax.swing.*;
 
+import static java.lang.Math.toRadians;
+
 /**
  * Illustrates rotating a {@link Sector} from standard position. A <code>Sector</code> is
  * created, its width and height computed, and a {@link SurfaceQuad} created from the
@@ -38,8 +40,8 @@ public class RotatedSector extends ApplicationTemplate {
                 // Create the Quad from a Sector
                 Globe globe = this.wwd().model().getGlobe();
                 double radius = globe.getRadiusAt(sector.getCentroid());
-                double quadWidth = sector.getDeltaLonRadians() * radius;
-                double quadHeight = sector.getDeltaLatRadians() * radius;
+                double quadWidth = toRadians(sector.lonDelta) * radius;
+                double quadHeight = toRadians(sector.latDelta) * radius;
                 final SurfaceQuad quad = new SurfaceQuad(sector.getCentroid(), quadWidth, quadHeight, Angle.ZERO);
 
                 // Create the layer to hold it

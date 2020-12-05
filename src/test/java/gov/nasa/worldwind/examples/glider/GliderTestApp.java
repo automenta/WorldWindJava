@@ -36,8 +36,8 @@ public class GliderTestApp extends ApplicationTemplate {
 
     protected static float[][] makeField(Iterable<LatLon> corners, int width, int height, Angle angle) {
         Sector sector = Sector.boundingSector(corners);
-        double dLat = sector.getDeltaLatDegrees() / (height - 1.0d);
-        double dLon = sector.getDeltaLonDegrees() / (width - 1.0d);
+        double dLat = sector.latDelta / (height - 1.0d);
+        double dLon = sector.lonDelta / (width - 1.0d);
 
         float[] lons = new float[width * height];
         float[] lats = new float[lons.length];

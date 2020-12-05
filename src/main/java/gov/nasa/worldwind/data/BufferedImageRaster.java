@@ -198,7 +198,7 @@ public class BufferedImageRaster extends AbstractDataRaster implements Cacheable
         // will have different pixel size
         if (!params.hasKey(AVKey.PIXEL_WIDTH)) {
             if (AVKey.COORDINATE_SYSTEM_GEOGRAPHIC.equals(cs)) {
-                double pixelWidth = sector.getDeltaLonDegrees() / image.getWidth();
+                double pixelWidth = sector.lonDelta / image.getWidth();
                 params.set(AVKey.PIXEL_WIDTH, pixelWidth);
             }
             else {
@@ -212,7 +212,7 @@ public class BufferedImageRaster extends AbstractDataRaster implements Cacheable
         // because UTM images will have different pixel size
         if (!params.hasKey(AVKey.PIXEL_HEIGHT)) {
             if (AVKey.COORDINATE_SYSTEM_GEOGRAPHIC.equals(cs)) {
-                double pixelHeight = sector.getDeltaLatDegrees() / image.getHeight();
+                double pixelHeight = sector.latDelta / image.getHeight();
                 params.set(AVKey.PIXEL_HEIGHT, pixelHeight);
             }
             else {

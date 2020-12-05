@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.*;
 import java.util.concurrent.PriorityBlockingQueue;
 
+import static java.lang.Math.toRadians;
+
 /**
  * TiledImageLayer modified 2009-02-03 to add support for Mercator projections.
  *
@@ -367,7 +369,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
         if (d5 < minDistance)
             minDistance = d5;
 
-        double cellSize = (Math.PI * sector.getDeltaLatRadians() * dc
+        double cellSize = (Math.PI * toRadians(sector.latDelta) * dc
             .getGlobe().getRadius()) / 20; // TODO
 
         return Math.log10(cellSize) > (Math.log10(minDistance) - this.splitScale);
@@ -711,21 +713,17 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
 
                     double sh = ((double) imageHeight / tileImage
                         .getHeight())
-                        * (tile.sector.getDeltaLat().divide(sector
-                        .getDeltaLat()));
+                        * (tile.sector.latDelta().divide(sector.latDelta()));
                     double sw = ((double) imageWidth / tileImage
                         .getWidth())
-                        * (tile.sector.getDeltaLon().divide(sector
-                        .getDeltaLon()));
+                        * (tile.sector.lonDelta().divide(sector.lonDelta()));
 
                     double dh = imageHeight
                         * (-tile.sector.latMax().sub(
-                        sector.latMax()).degrees / sector
-                        .getDeltaLat().degrees);
+                        sector.latMax()).degrees / sector.latDelta().degrees);
                     double dw = imageWidth
                         * (tile.sector.lonMin().sub(
-                        sector.lonMin()).degrees / sector
-                        .getDeltaLon().degrees);
+                        sector.lonMin()).degrees / sector.lonDelta().degrees);
 
                     AffineTransform txf = g.getTransform();
                     g.translate(dw, dh);

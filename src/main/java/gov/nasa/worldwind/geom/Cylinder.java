@@ -247,7 +247,7 @@ public class Cylinder implements Extent, Renderable {
         // two points (when deltaLat >= 180). So we compute a bounging cylinder that spans the equator and covers the
         // sector's latitude range. In some cases this cylinder may be too large, but we're typically not interested
         // in culling these cylinders since the sector will span most of the globe.
-        if (sector.getDeltaLatDegrees() >= 180.00d || sector.getDeltaLonDegrees() >= 180.00d) {
+        if (sector.latDelta >= 180.00d || sector.lonDelta >= 180.00d) {
             return computeVerticalBoundsFromSectorLatitudeRange(globe, sector, minHeight, maxHeight);
         }
         // Otherwise, create a standard bounding cylinder that minimally surrounds the specified sector and elevations.

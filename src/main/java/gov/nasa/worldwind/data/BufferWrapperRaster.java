@@ -312,14 +312,14 @@ public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable
         // to have no dimension. We measure the distance between pixels rather than some pixel dimension.
 
         double ty = (destHeight - 1) * -(sourceSector.latMax().degrees - destSector.latMax().degrees)
-            / destSector.getDeltaLatDegrees();
+            / destSector.latDelta;
         double tx = (destWidth - 1) * (sourceSector.lonMin().degrees - destSector.lonMin().degrees)
-            / destSector.getDeltaLonDegrees();
+            / destSector.lonDelta;
 
         double sy = ((double) (destHeight - 1) / (sourceHeight - 1))
-            * (sourceSector.getDeltaLatDegrees() / destSector.getDeltaLatDegrees());
+            * (sourceSector.latDelta / destSector.latDelta);
         double sx = ((double) (destWidth - 1) / (sourceWidth - 1))
-            * (sourceSector.getDeltaLonDegrees() / destSector.getDeltaLonDegrees());
+            * (sourceSector.lonDelta / destSector.lonDelta);
 
         AffineTransform transform = new AffineTransform();
         transform.translate(tx, ty);
@@ -335,8 +335,8 @@ public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable
         double ty = -sector.latMax().degrees;
         double tx = -sector.lonMin().degrees;
 
-        double sy = -((height - 1) / sector.getDeltaLatDegrees());
-        double sx = ((width - 1) / sector.getDeltaLonDegrees());
+        double sy = -((height - 1) / sector.latDelta);
+        double sx = ((width - 1) / sector.lonDelta);
 
         AffineTransform transform = new AffineTransform();
         transform.scale(sx, sy);

@@ -83,7 +83,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
         this.placeNameServiceSet = placeNameServiceSet.deepCopy();
         for (int i = 0; i < this.placeNameServiceSet.getServiceCount(); i++) {
             //todo do this for long as well and pick min
-            int calc1 = (int) (PlaceNameService.TILING_SECTOR.getDeltaLatDegrees()
+            int calc1 = (int) (PlaceNameService.TILING_SECTOR.latDelta
                 / this.placeNameServiceSet.getService(i).getTileDelta().getLatitude().getDegrees());
             int numLevels = (int) Math.log(calc1);
             navTiles.add(

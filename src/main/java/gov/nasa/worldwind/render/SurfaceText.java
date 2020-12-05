@@ -19,6 +19,8 @@ import java.awt.geom.*;
 import java.util.List;
 import java.util.*;
 
+import static java.lang.Math.toRadians;
+
 /**
  * Renders a string of text on the surface of the globe. The text will appear draped over terrain. Surface text is drawn
  * at a constant geographic size: it will appear larger when the view zooms in on the text and smaller when the view
@@ -498,7 +500,7 @@ public class SurfaceText extends AbstractSurfaceObject implements GeographicText
      * @return The size of a tile pixel in meters.
      */
     protected static double computePixelSize(DrawContext dc, SurfaceTileDrawContext sdc) {
-        return dc.getGlobe().getRadius() * sdc.getSector().getDeltaLatRadians() / sdc.getViewport().height;
+        return dc.getGlobe().getRadius() * toRadians(sdc.getSector().latDelta) / sdc.getViewport().height;
     }
 
     /**

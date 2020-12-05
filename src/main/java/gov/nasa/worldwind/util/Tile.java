@@ -102,8 +102,8 @@ public class Tile implements Comparable<Tile>, Cacheable {
 
         this.sector = sector;
         this.level = level;
-        this.row = Tile.computeRow(sector.getDeltaLat(), sector.latMin(), Angle.NEG90);
-        this.column = Tile.computeColumn(sector.getDeltaLon(), sector.lonMin(), Angle.NEG180);
+        this.row = Tile.computeRow(sector.latDelta(), sector.latMin(), Angle.NEG90);
+        this.column = Tile.computeColumn(sector.lonDelta(), sector.lonMin(), Angle.NEG180);
         this.cacheName = null;
         this.tileKey = new TileKey(this);
         this.path = null;

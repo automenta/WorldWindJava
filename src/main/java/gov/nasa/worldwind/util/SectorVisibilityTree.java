@@ -24,7 +24,7 @@ public class SectorVisibilityTree {
     protected final DecisionTree<Sector, Context> tree = new DecisionTree<>(
         new DecisionTree.Controller<>() {
             public boolean isTerminal(Sector s, Context context) {
-                if (s.getDeltaLat().degrees > context.sectorSize)
+                if (s.latDelta().degrees > context.sectorSize)
                     return false;
 
                 context.sectors.add(s);

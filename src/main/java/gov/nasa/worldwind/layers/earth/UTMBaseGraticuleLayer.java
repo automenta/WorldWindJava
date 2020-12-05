@@ -973,8 +973,8 @@ public class UTMBaseGraticuleLayer extends GraticuleLayer {
             // Label
             if (this.name != null) {
                 // Only add a label to squares above some dimension
-                if (this.boundingSector.getDeltaLon().degrees * Math.cos(this.centroid.getLatitude().radians) > 0.2
-                    && this.boundingSector.getDeltaLat().degrees > 0.2) {
+                if (this.boundingSector.lonDelta().degrees * Math.cos(this.centroid.getLatitude().radians) > 0.2
+                    && this.boundingSector.latDelta().degrees > 0.2) {
                     LatLon labelPos = null;
                     if (this.UTMZone != 0) // Not at poles
                     {

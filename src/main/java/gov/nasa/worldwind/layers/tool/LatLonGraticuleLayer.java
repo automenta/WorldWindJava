@@ -16,6 +16,8 @@ import java.awt.*;
 import java.awt.geom.*;
 import java.util.*;
 
+import static java.lang.Math.toRadians;
+
 /**
  * Displays the geographic latitude/longitude graticule.
  *
@@ -337,7 +339,7 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
             Vec4 centerPoint = getSurfacePoint(dc, this.sector.getCentroid().getLatitude(),
                 this.sector.getCentroid().getLongitude());
             double distance = view.getEyePoint().distanceTo3(centerPoint);
-            double tileSizeMeter = this.sector.getDeltaLatRadians() * dc.getGlobe().getRadius();
+            double tileSizeMeter = toRadians(this.sector.latDelta) * dc.getGlobe().getRadius();
             return tileSizeMeter / view.computePixelSizeAtDistance(distance);
         }
 
@@ -346,7 +348,7 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
                 this.createRenderables();
 
             LatLon labelOffset = computeLabelOffset(dc);
-            String graticuleType = getTypeFor(this.sector.getDeltaLatDegrees());
+            String graticuleType = getTypeFor(this.sector.latDelta);
             if (this.level == 0) {
                 for (GridElement ge : this.gridElements) {
                     if (ge.isInView(dc)) {
@@ -357,7 +359,7 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
                             String labelType = ge.type.equals(GridElement.TYPE_LINE_SOUTH)
                                 || ge.type.equals(GridElement.TYPE_LINE_NORTH) ?
                                 GridElement.TYPE_LATITUDE_LABEL : GridElement.TYPE_LONGITUDE_LABEL;
-                            addLabel(ge.value, labelType, graticuleType, this.sector.getDeltaLatDegrees(), labelOffset);
+                            addLabel(ge.value, labelType, graticuleType, this.sector.latDelta, labelOffset);
                         }
                     }
                 }
@@ -366,13 +368,13 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
             }
 
             // Select tile grid elements
-            double resolution = this.sector.getDeltaLatDegrees() / this.divisions;
+            double resolution = this.sector.latDelta / this.divisions;
             graticuleType = getTypeFor(resolution);
             for (GridElement ge : this.gridElements) {
                 if (ge.isInView(dc)) {
                     if (ge.type.equals(GridElement.TYPE_LINE)) {
                         addRenderable(ge.renderable, graticuleType);
-                        String labelType = ge.sector.getDeltaLatDegrees() == 0 ?
+                        String labelType = ge.sector.latDelta == 0 ?
                             GridElement.TYPE_LATITUDE_LABEL : GridElement.TYPE_LONGITUDE_LABEL;
                         addLabel(ge.value, labelType, graticuleType, resolution, labelOffset);
                     }
@@ -426,7 +428,7 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
         private void createRenderables() {
             this.gridElements = new ArrayList<>();
 
-            double step = sector.getDeltaLatDegrees() / this.divisions;
+            double step = sector.latDelta / this.divisions;
 
             // Generate meridians with labels
             double lon = sector.lonMin().degrees + (this.level == 0 ? 0 : step);

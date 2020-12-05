@@ -254,7 +254,7 @@ public class BasicRasterServer extends WWObjectImpl implements RasterServer {
                 }
             }
 
-            if (null != extent && extent.getDeltaLatDegrees() > 0.0d && extent.getDeltaLonDegrees() > 0.0d) {
+            if (null != extent && extent.latDelta > 0.0d && extent.lonDelta > 0.0d) {
                 this.set(AVKey.SECTOR, extent);
             }
         }
@@ -386,7 +386,7 @@ public class BasicRasterServer extends WWObjectImpl implements RasterServer {
                 Sector rasterSector = raster.getSector();
                 Sector overlap = reqSector.intersection(rasterSector);
                 // SKIP, if not intersection, or intersects only on edges
-                if (null == overlap || overlap.getDeltaLatDegrees() == 0.0d || overlap.getDeltaLonDegrees() == 0.0d) {
+                if (null == overlap || overlap.latDelta == 0.0d || overlap.lonDelta == 0.0d) {
                     continue;
                 }
 

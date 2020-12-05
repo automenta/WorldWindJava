@@ -262,7 +262,7 @@ public class DirectedSurfacePolyline extends SurfacePolyline {
     protected void computeArrowheadGeometry(DrawContext dc, SurfaceTileDrawContext sdc, LatLon begin, LatLon end) {
         // Don't draw an arrowhead if the arrow length is smaller than one pixel.
         double arrowLength = (this.arrowLength / dc.getGlobe().getRadius()) * (180 / Math.PI);
-        double pixelSize = sdc.getSector().getDeltaLatDegrees() / sdc.getViewport().getHeight();
+        double pixelSize = sdc.getSector().latDelta / sdc.getViewport().getHeight();
         if (arrowLength <= pixelSize) {
             return;
         }

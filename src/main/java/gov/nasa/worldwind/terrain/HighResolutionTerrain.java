@@ -17,6 +17,8 @@ import gov.nasa.worldwind.util.Logging;
 import java.util.*;
 import java.util.concurrent.*;
 
+import static java.lang.Math.toRadians;
+
 /**
  * Provides operations on the best available terrain. Operations such as line/terrain intersection and surface point
  * computation use the highest resolution terrain data available from the globe's elevation model. Because the best
@@ -528,11 +530,11 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
     protected void computeDimensions() {
         double resTarget = Math.max(this.globe.getElevationModel().getBestResolution(null), this.targetResolution);
 
-        this.numCols = (int) Math.ceil(this.sector.getDeltaLonRadians() / (this.density * resTarget));
-        this.numRows = (int) Math.ceil(this.sector.getDeltaLatRadians() / (this.density * resTarget));
+        this.numCols = (int) Math.ceil(toRadians(this.sector.lonDelta) / (this.density * resTarget));
+        this.numRows = (int) Math.ceil(toRadians(this.sector.latDelta) / (this.density * resTarget));
 
-        this.lonTileSize = this.sector.getDeltaLonDegrees() / (this.numCols - 1);
-        this.latTileSize = this.sector.getDeltaLatDegrees() / (this.numRows - 1);
+        this.lonTileSize = this.sector.lonDelta / (this.numCols - 1);
+        this.latTileSize = this.sector.latDelta / (this.numRows - 1);
 
         if (this.geometryCache != null)
             this.geometryCache.clear();
@@ -963,12 +965,12 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
         int numVertices = (density + 1) * (density + 1);
 
         Angle latMax = tile.sector.latMax();
-        Angle dLat = tile.sector.getDeltaLat().divide(density);
+        Angle dLat = tile.sector.latDelta().divide(density);
         Angle lat = tile.sector.latMin();
 
         Angle lonMin = tile.sector.lonMin();
         Angle lonMax = tile.sector.lonMax();
-        Angle dLon = tile.sector.getDeltaLon().divide(density);
+        Angle dLon = tile.sector.lonDelta().divide(density);
 
         ArrayList<LatLon> latlons = new ArrayList<>(numVertices);
         for (int j = 0; j <= density; j++) {

@@ -473,8 +473,8 @@ public class KMLLink extends KMLAbstractObject {
             // viewBoundScale.
             double centerLat = dc.getVisibleSector().getCentroid().getLatitude().degrees;
             double centerLon = dc.getVisibleSector().getCentroid().getLongitude().degrees;
-            double latDelta = dc.getVisibleSector().getDeltaLatDegrees();
-            double lonDelta = dc.getVisibleSector().getDeltaLonDegrees();
+            double latDelta = dc.getVisibleSector().latDelta;
+            double lonDelta = dc.getVisibleSector().lonDelta;
 
             // Limit the view bounding box to the standard LatLon range. This prevents a viewBoundScale greater than one
             // from creating a bounding box that extends beyond [-90,90] latitude or [-180,180] longitude. The factory

@@ -7,7 +7,7 @@ package gov.nasa.worldwind.retrieve;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.util.Logging;
+import gov.nasa.worldwind.util.*;
 
 import javax.net.ssl.SSLHandshakeException;
 import java.net.*;
@@ -86,7 +86,7 @@ private static final String IDLE_THREAD_NAME_PREFIX = Logging.getMessage(
 
         RetrievalTask x = new RetrievalTask(retrieval, priority);
 
-        return activeTasks.compute(x.name, (n,p) -> {
+        RetrievalTask X = activeTasks.compute(x.name, (n,p) -> {
             if (p!=null) {
                 if (p!=x) {
                     p.priority = Math.max(p.priority, x.priority);
@@ -95,11 +95,14 @@ private static final String IDLE_THREAD_NAME_PREFIX = Logging.getMessage(
                 }
                 return p;
             } else {
-                x.retriever.setSubmitEpochNow();
-                executor.execute(x);
                 return x;
             }
         });
+        if (X==x) {
+            X.retriever.setSubmitEpochNow();
+            executor.execute(X);
+        }
+        return X;
     }
 
     public int getRetrieverPoolSize() {
@@ -229,16 +232,22 @@ private static final String IDLE_THREAD_NAME_PREFIX = Logging.getMessage(
         public int compareTo(RetrievalTask that) {
             if (this==that) return 0;
 
-            if (this.priority > 0 == that.priority > 0) {
-                // Requests submitted within different time-granularity periods are ordered exclusive of their
-                // client-specified priority.
-                final long dSubmit = retriever.getSubmitEpoch() - that.retriever.getSubmitEpoch();
-                if (dSubmit!=0)
-                    return dSubmit > 0 ? -1 : +1; //prefer the newer task
-            }
 
-            // The client-specified priority is compared for requests submitted within the same granularity period.
-            return Double.compare(that.priority, this.priority);
+//            if (this.priority > 0 == that.priority > 0) {
+//                // Requests submitted within different time-granularity periods are ordered exclusive of their
+//                // client-specified priority.
+//                final long dSubmit = retriever.getSubmitEpoch() - that.retriever.getSubmitEpoch();
+//                if (dSubmit!=0)
+//                    return dSubmit > 0 ? -1 : +1; //prefer the newer task
+//            }
+//
+//            // The client-specified priority is compared for requests submitted within the same granularity period.
+//            int dp = Double.compare(that.priority, this.priority);
+
+            int dp = Double.compare(
+                that.priority + that.retriever.getSubmitEpoch(),
+                this.priority + this.retriever.getSubmitEpoch());
+            return dp!=0 ? dp : Integer.compare(System.identityHashCode(that), System.identityHashCode(this));
         }
 
         public final boolean equals(Object o) {
@@ -296,7 +305,8 @@ private static final String IDLE_THREAD_NAME_PREFIX = Logging.getMessage(
         protected void beforeExecute(Thread thread, Runnable runnable) {
 
             RetrievalTask task = (RetrievalTask) runnable;
-//
+
+
 //            task.retriever.setBeginTime(System.currentTimeMillis());
 //            long limit = task.retriever.getStaleRequestLimit() >= 0
 //                ? task.retriever.getStaleRequestLimit() : this.staleRequestLimit;

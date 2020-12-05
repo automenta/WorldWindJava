@@ -22,6 +22,8 @@ import java.nio.*;
 import java.util.List;
 import java.util.*;
 
+import static java.lang.Math.toRadians;
+
 /**
  * @author tag
  * @version $Id: RectangularTessellator.java 2922 2015-03-24 23:56:58Z tgaskins $
@@ -655,12 +657,12 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
         int numVertices = (density + 3) * (density + 3);
 
         Angle latMax = tile.sector.latMax();
-        Angle dLat = tile.sector.getDeltaLat().divide(density);
+        Angle dLat = tile.sector.latDelta().divide(density);
         Angle lat = tile.sector.latMin();
 
         Angle lonMin = tile.sector.lonMin();
         Angle lonMax = tile.sector.lonMax();
-        Angle dLon = tile.sector.getDeltaLon().divide(density);
+        Angle dLon = tile.sector.lonDelta().divide(density);
 
         ArrayList<LatLon> latlons = new ArrayList<>(numVertices);
         for (int j = 0; j <= density + 2; j++) {
@@ -1573,8 +1575,8 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
         DoubleBuffer p = Buffers.newDirectDoubleBuffer(2 * coordCount);
 
         final Sector s = rt.sector;
-        double deltaLat = s.getDeltaLatRadians() / density;
-        double deltaLon = s.getDeltaLonRadians() / density;
+        double deltaLat = toRadians(s.latDelta) / density;
+        double deltaLon = toRadians(s.lonDelta) / density;
         Angle minLat = s.latMin();
         Angle maxLat = s.latMax();
         Angle minLon = s.lonMin();
@@ -1757,7 +1759,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
             this.density = density;
             this.sector = sector;
             this.extent = extent;
-            this.cellSize = sector.getDeltaLatRadians() / density;
+            this.cellSize = toRadians(sector.latDelta) / density;
         }
 
         public Sector getSector() {
@@ -1870,7 +1872,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
         }
 
         public double getResolution() {
-            return this.sector.getDeltaLatRadians() / this.density;
+            return toRadians(this.sector.latDelta) / this.density;
         }
 
         public Intersection[] intersect(Line line) {

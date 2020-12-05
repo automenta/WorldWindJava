@@ -28,6 +28,7 @@ import java.util.*;
 import java.util.logging.Level;
 
 import static gov.nasa.worldwind.geom.Sector.EMPTY_SECTOR;
+import static java.lang.Math.toRadians;
 
 /**
  * Common superclass for surface conforming shapes such as {@link SurfacePolygon}, {@link
@@ -821,8 +822,8 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         final Rectangle viewport = sdc.getViewport();
         final Sector sector = sdc.getSector();
         double texelsPerDegree = Math.max(
-            viewport.width / sector.getDeltaLonDegrees(),
-            viewport.getHeight() / sector.getDeltaLatDegrees());
+            viewport.width / sector.lonDelta,
+            viewport.getHeight() / sector.latDelta);
         double intervalsPerTexel = 1.0 / this.getTexelsPerEdgeInterval();
         return intervalsPerTexel * texelsPerDegree;
     }
@@ -1013,7 +1014,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         double scale = attributes.getImageScale();
         transform = Matrix.fromScale(cosLat / scale, 1.0d / scale, 1.0d).multiply(transform);
         // To maintain the pattern apparent size, we scale it so that one texture pixel match one draw tile pixel.
-        double regionPixelSize = dc.getGlobe().getRadius() * sdc.getSector().getDeltaLatRadians()
+        double regionPixelSize = dc.getGlobe().getRadius() * toRadians(sdc.getSector().latDelta)
             / sdc.getViewport().height;
         double texturePixelSize = dc.getGlobe().getRadius() * Angle.fromDegrees(1).radians / texture.getHeight(dc);
         double drawScale = texturePixelSize / regionPixelSize;

@@ -13,6 +13,8 @@ import gov.nasa.worldwind.util.SurfaceTileDrawContext;
 import java.awt.geom.*;
 import java.util.*;
 
+import static java.lang.Math.toRadians;
+
 /**
  * Renders an icon image over the terrain surface in many locations.
  *
@@ -105,8 +107,8 @@ public class SurfaceIcons extends SurfaceIcon {
     }
 
     protected static Angle computeSectorRadius(Sector sector) {
-        double dLat = sector.getDeltaLatRadians();
-        double dLon = sector.getDeltaLonRadians();
+        double dLat = toRadians(sector.latDelta);
+        double dLon = toRadians(sector.lonDelta);
         return Angle.fromRadians(Math.sqrt(dLat * dLat + dLon * dLon) / 2);
     }
 

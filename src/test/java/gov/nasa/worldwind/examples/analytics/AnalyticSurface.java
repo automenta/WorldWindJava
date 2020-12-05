@@ -948,8 +948,8 @@ public class AnalyticSurface implements Renderable, PreRenderable {
     protected void updateSurfacePoints(DrawContext dc, RenderInfo outRenderInfo) {
         Iterator<? extends GridPointAttributes> iter = this.values.iterator();
 
-        double latStep = -this.sector.getDeltaLatDegrees() / (this.height - 1);
-        double lonStep = this.sector.getDeltaLonDegrees() / (this.width - 1);
+        double latStep = -this.sector.latDelta / (this.height - 1);
+        double lonStep = this.sector.lonDelta / (this.width - 1);
 
         double lat = this.sector.latMax().degrees;
         for (int y = 0; y < this.height; y++) {

@@ -15,6 +15,8 @@ import java.awt.*;
 import java.util.List;
 import java.util.*;
 
+import static java.lang.Math.toRadians;
+
 /**
  * Surface renderable.
  *
@@ -51,7 +53,7 @@ public abstract class AbstractSurfaceRenderable extends AbstractSurfaceObject {
     }
 
     protected static double computeDrawPixelSize(DrawContext dc, SurfaceTileDrawContext sdc) {
-        return dc.getGlobe().getRadius() * sdc.getSector().getDeltaLatRadians() / sdc.getViewport().height;
+        return dc.getGlobe().getRadius() * toRadians(sdc.getSector().latDelta) / sdc.getViewport().height;
     }
 
     protected static Vec4 computeDrawPoint(LatLon location, SurfaceTileDrawContext sdc) {

@@ -93,8 +93,8 @@ public class ImageIORasterWriter extends AbstractDataRasterWriter {
         Sector sector = (Sector) values.get(AVKey.SECTOR);
         int[] size = (int[]) values.get(WorldFile.WORLD_FILE_IMAGE_SIZE);
 
-        double xPixelSize = sector.getDeltaLonDegrees() / size[0];
-        double yPixelSize = -sector.getDeltaLatDegrees() / size[1];
+        double xPixelSize = sector.lonDelta / size[0];
+        double yPixelSize = -sector.latDelta / size[1];
         double xCoeff = 0.0;
         double yCoeff = 0.0;
         double xLocation = sector.lonMin().degrees + (xPixelSize * 0.5);

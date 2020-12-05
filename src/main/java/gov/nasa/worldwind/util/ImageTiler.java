@@ -111,8 +111,8 @@ public class ImageTiler {
 
             double t0 = (double) (y + this.getTileHeight()) / N;
             double t1 = (double) y / N;
-            Angle minLat = baseSector.latMax().sub(baseSector.getDeltaLat().multiply(t0));
-            Angle maxLat = baseSector.latMax().sub(baseSector.getDeltaLat().multiply(t1));
+            Angle minLat = baseSector.latMax().sub(baseSector.latDelta().multiply(t0));
+            Angle maxLat = baseSector.latMax().sub(baseSector.latDelta().multiply(t1));
 
             for (int i = 0; i < cols; i++) {
                 int x = i * a;
@@ -145,8 +145,8 @@ public class ImageTiler {
                     // Compute the sector for this tile
                     double s0 = (double) x / M;
                     double s1 = ((double) x + this.getTileWidth()) / M;
-                    Angle minLon = baseSector.lonMin().add(baseSector.getDeltaLon().multiply(s0));
-                    Angle maxLon = baseSector.lonMin().add(baseSector.getDeltaLon().multiply(s1));
+                    Angle minLon = baseSector.lonMin().add(baseSector.lonDelta().multiply(s0));
+                    Angle maxLon = baseSector.lonMin().add(baseSector.lonDelta().multiply(s1));
 
 //                    System.out.println(new Sector(minLat, maxLat, minLon, maxLon));
                     listener.newTile(image, new Sector(minLat, maxLat, minLon, maxLon));
@@ -167,12 +167,12 @@ public class ImageTiler {
                     // Compute the sector for this tile
                     double s0 = (double) x / M;
                     double s1 = ((double) x + image.getWidth()) / M;
-                    Angle minLon = baseSector.lonMin().add(baseSector.getDeltaLon().multiply(s0));
-                    Angle maxLon = baseSector.lonMin().add(baseSector.getDeltaLon().multiply(s1));
+                    Angle minLon = baseSector.lonMin().add(baseSector.lonDelta().multiply(s0));
+                    Angle maxLon = baseSector.lonMin().add(baseSector.lonDelta().multiply(s1));
 
                     // Must recalculate t0 to account for short tile height.
                     double t00 = (double) (y + image.getHeight()) / N;
-                    Angle minLat0 = baseSector.latMax().sub(baseSector.getDeltaLat().multiply(t00));
+                    Angle minLat0 = baseSector.latMax().sub(baseSector.latDelta().multiply(t00));
 
 //                    System.out.println(new Sector(minLat0, maxLat, minLon, maxLon));
                     listener.newTile(image, new Sector(minLat0, maxLat, minLon, maxLon));

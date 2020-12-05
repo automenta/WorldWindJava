@@ -136,7 +136,7 @@ public class ByteBufferRaster extends BufferWrapperRaster {
         // will have different pixel size
         if (!params.hasKey(AVKey.PIXEL_WIDTH)) {
             if (AVKey.COORDINATE_SYSTEM_GEOGRAPHIC.equals(cs)) {
-                double pixelWidth = sector.getDeltaLonDegrees() / width;
+                double pixelWidth = sector.lonDelta / width;
                 params.set(AVKey.PIXEL_WIDTH, pixelWidth);
             }
             else {
@@ -150,7 +150,7 @@ public class ByteBufferRaster extends BufferWrapperRaster {
         // because UTM images will have different pixel size
         if (!params.hasKey(AVKey.PIXEL_HEIGHT)) {
             if (AVKey.COORDINATE_SYSTEM_GEOGRAPHIC.equals(cs)) {
-                double pixelHeight = sector.getDeltaLatDegrees() / height;
+                double pixelHeight = sector.latDelta / height;
                 params.set(AVKey.PIXEL_HEIGHT, pixelHeight);
             }
             else {

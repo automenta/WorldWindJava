@@ -786,8 +786,8 @@ public class Matrix {
         // Transform from grid coordinates to geographic coordinates. Since the grid is parallel with lines of latitude
         // and longitude, this is a simple scale and translation.
 
-        double sx = sector.getDeltaLonDegrees() / imageWidth;
-        double sy = -sector.getDeltaLatDegrees() / imageHeight;
+        double sx = sector.lonDelta / imageWidth;
+        double sy = -sector.latDelta / imageHeight;
         double tx = sector.lonMin().degrees;
         double ty = sector.latMax().degrees;
 
@@ -1128,7 +1128,7 @@ public class Matrix {
         transform = transform.multiply(
             Matrix.fromTranslation(-x, -y, 0.0));
         transform = transform.multiply(
-            Matrix.fromScale(width / sector.getDeltaLonDegrees(), height / sector.getDeltaLatDegrees(), 1.0));
+            Matrix.fromScale(width / sector.lonDelta, height / sector.latDelta, 1.0));
         transform = transform.multiply(
             Matrix.fromTranslation(-sector.lonMin().degrees, -sector.latMin().degrees, 0.0));
 
@@ -1171,7 +1171,7 @@ public class Matrix {
         transform = transform.multiply(
             Matrix.fromTranslation(sector.lonMin().degrees, sector.latMin().degrees, 0.0));
         transform = transform.multiply(
-            Matrix.fromScale(sector.getDeltaLonDegrees() / width, sector.getDeltaLatDegrees() / height, 1.0));
+            Matrix.fromScale(sector.lonDelta / width, sector.latDelta / height, 1.0));
         transform = transform.multiply(
             Matrix.fromTranslation(x, y, 0.0));
 

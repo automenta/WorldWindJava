@@ -503,16 +503,16 @@ public class ImageUtil {
         double yShift = aspectRatio >= 1.0d ? (1.0d - 1.0d / aspectRatio) * canvas.getHeight() : 0.0d;
 
         double sh = ((double) subHeight / image.getHeight())
-            * (imageSector.getDeltaLat().divide(canvasSector.getDeltaLat()));
+            * (imageSector.latDelta().divide(canvasSector.latDelta()));
         double sw = ((double) subWidth / image.getWidth())
-            * (imageSector.getDeltaLon().divide(canvasSector.getDeltaLon()));
+            * (imageSector.lonDelta().divide(canvasSector.lonDelta()));
 
         double dh = subHeight *
             (-imageSector.latMax().sub(canvasSector.latMax()).degrees
-                / canvasSector.getDeltaLat().degrees);
+                / canvasSector.latDelta().degrees);
         double dw = subWidth *
             (imageSector.lonMin().sub(canvasSector.lonMin()).degrees
-                / canvasSector.getDeltaLon().degrees);
+                / canvasSector.lonDelta().degrees);
 
         Graphics2D g = canvas.createGraphics();
         g.translate(dw, dh + yShift);
@@ -1370,11 +1370,11 @@ public class ImageUtil {
         // extremely anisotriopic, causing severe aliasing in one dimension.
         if (dimension == null) {
             double maxDimension = Math.max(sourceWidth, sourceHeight);
-            double maxSectorDelta = Math.max(sector.getDeltaLonDegrees(), sector.getDeltaLatDegrees());
+            double maxSectorDelta = Math.max(sector.lonDelta, sector.latDelta);
             double pixelsPerDegree = maxDimension / maxSectorDelta;
             dimension = new Dimension(
-                (int) Math.round(pixelsPerDegree * sector.getDeltaLonDegrees()),
-                (int) Math.round(pixelsPerDegree * sector.getDeltaLatDegrees()));
+                (int) Math.round(pixelsPerDegree * sector.lonDelta),
+                (int) Math.round(pixelsPerDegree * sector.latDelta));
         }
 
         // Get a buffer containing the source image's pixels.
@@ -1384,8 +1384,8 @@ public class ImageUtil {
 
         // Compute the geographic dimensions of the aligned image's pixels. We divide by the dimension instead of
         // dimension-1 because we treat the aligned image pixels as having area.
-        double dLon = sector.getDeltaLonDegrees() / dimension.width;
-        double dLat = sector.getDeltaLatDegrees() / dimension.height;
+        double dLon = sector.lonDelta / dimension.width;
+        double dLat = sector.latDelta / dimension.height;
 
         // Compute each aligned image pixel's color by mapping its location into the source image. This treats the
         // aligned image pixel's as having area, and the location of each pixel's at its center. This loop begins in the

@@ -17,6 +17,8 @@ import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import static java.lang.Math.*;
+
 /**
  * Implements an elevation model for a local file or collection of files containing elevation data.
  * <p>
@@ -125,7 +127,7 @@ public class LocalElevationModel extends AbstractElevationModel {
             if (sector != null && !sector.intersects(tile.sector))
                 continue;
 
-            double r = tile.sector.getDeltaLatRadians() / tile.tileHeight;
+            double r = toRadians(tile.sector.latDelta) / tile.tileHeight;
             if (r < res)
                 res = r;
         }
@@ -491,12 +493,12 @@ public class LocalElevationModel extends AbstractElevationModel {
      * elevation model's missing data flag if that's the value at the specified location.
      */
     protected Double lookupElevation(final double latRadians, final double lonRadians) {
-        LocalTile tile = this.findTile(latRadians, lonRadians);
+        LocalTile tile = this.findTile(toDegrees(latRadians), toDegrees(lonRadians));
         if (tile == null)
             return null;
 
-        final double sectorDeltaLat = tile.sector.getDeltaLat().radians;
-        final double sectorDeltaLon = tile.sector.getDeltaLon().radians;
+        final double sectorDeltaLat = tile.sector.latDelta().radians;
+        final double sectorDeltaLon = tile.sector.lonDelta().radians;
         final double dLat = tile.sector.latMax().radians - latRadians;
         final double dLon = lonRadians - tile.sector.lonMin().radians;
         final double sLat = dLat / sectorDeltaLat;
@@ -536,13 +538,12 @@ public class LocalElevationModel extends AbstractElevationModel {
     /**
      * Finds the tile in this elevation model that contains a specified location.
      *
-     * @param latRadians the location's latitude, in radians.
-     * @param lonRadians the location's longitude, in radians.
+     * lat,lon in degrees
      * @return the tile that contains the location, or null if no tile contains it.
      */
-    protected LocalTile findTile(final double latRadians, final double lonRadians) {
+    protected LocalTile findTile(final double lat, final double lon) {
         for (LocalTile tile : this.tiles) {
-            if (tile.sector.containsRadians(latRadians, lonRadians))
+            if (tile.sector.containsDegrees(lat, lon))
                 return tile;
         }
 

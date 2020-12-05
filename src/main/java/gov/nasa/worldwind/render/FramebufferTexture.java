@@ -221,8 +221,8 @@ public class FramebufferTexture implements WWTexture {
         // Compute a transform that will map the geographic region defined by sector onto a cartesian region of width
         // and height 2.0 centered at the origin.
 
-        double sx = 2.0 / sector.getDeltaLonDegrees();
-        double sy = 2.0 / sector.getDeltaLatDegrees();
+        double sx = 2.0 / sector.lonDelta;
+        double sy = 2.0 / sector.latDelta;
 
         double tx = -sector.lonMin().degrees;
         double ty = -sector.latMin().degrees;

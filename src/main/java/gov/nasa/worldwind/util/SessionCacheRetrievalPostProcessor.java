@@ -150,18 +150,17 @@ public class SessionCacheRetrievalPostProcessor implements RetrievalPostProcesso
      * @return the retrieved data.
      */
     public ByteBuffer run(Retriever retriever) {
-        if (retriever == null) {
-            String message = Logging.getMessage("nullValue.RetrieverIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (retriever == null) {
+//            String message = Logging.getMessage("nullValue.RetrieverIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         String message = this.validate(retriever);
 
         if (message == null) {
             this.onRetrievalSuceeded(retriever);
-        }
-        else {
+        } else {
             this.onRetrievalFailed(retriever);
             Logging.logger().severe(message);
         }
@@ -211,8 +210,7 @@ public class SessionCacheRetrievalPostProcessor implements RetrievalPostProcesso
         String uppercaseName = retriever.getName().toUpperCase();
         if (uppercaseName.contains("SERVICE=WMS") && uppercaseName.contains("REQUEST=GETCAPABILITIES")) {
             this.handleWMSCapabilitiesContent(retriever);
-        }
-        else {
+        } else {
             this.handleUnknownContent(retriever);
         }
     }
@@ -231,8 +229,7 @@ public class SessionCacheRetrievalPostProcessor implements RetrievalPostProcesso
             Logging.logger().log(java.util.logging.Level.FINE,
                 Logging.getMessage("generic.OperationCancelled",
                     "retrieval post-processing for " + retriever.getName()), e);
-        }
-        else {
+        } else {
             this.onRetrievalFailed(retriever);
             Logging.logger().log(java.util.logging.Level.SEVERE,
                 Logging.getMessage("generic.ExceptionWhileSavingRetreivedData", retriever.getName()), e);
@@ -246,9 +243,7 @@ public class SessionCacheRetrievalPostProcessor implements RetrievalPostProcesso
      * @return String representation of this post processor.
      */
     public String toString() {
-        if (this.getName() != null)
-            return this.getName();
-
-        return super.toString();
+        final String n = this.getName();
+        return n != null ? n : super.toString();
     }
 }

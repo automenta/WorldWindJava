@@ -166,7 +166,10 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever {
     public final Retriever call() throws Exception {
 
         try {
-
+            if (WorldWind.getNetworkStatus().isHostUnavailable(url)) {
+                setState(RETRIEVER_STATE_NOT_STARTED);
+                return this;
+            }
 
             if (interrupted()) return this;
 
@@ -183,19 +186,16 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever {
             setState(RETRIEVER_STATE_SUCCESSFUL);
             WorldWind.getNetworkStatus().logAvailableHost(this.url);
 
+            if (this.postProcessor != null) {
+                this.byteBuffer = this.postProcessor.run(this);
+            }
+
         } catch (ClosedByInterruptException e) {
             this.interrupted();
-        } catch (IOException e) {
+        } catch (Exception e) {
             setState(RETRIEVER_STATE_ERROR);
             WorldWind.getNetworkStatus().logUnavailableHost(this.url);
             throw e;
-        } catch (Exception e) {
-            setState(RETRIEVER_STATE_ERROR);
-            Logging.logger().log(Level.SEVERE,
-                Logging.getMessage("URLRetriever.ErrorAttemptingToRetrieve", this.url.toString()), e);
-            throw e;
-        } finally {
-            this.end();
         }
 
         return this;
@@ -204,23 +204,15 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever {
     protected boolean interrupted() {
         if (Thread.currentThread().isInterrupted()) {
             setState(RETRIEVER_STATE_INTERRUPTED);
-            String message = Logging.getMessage("URLRetriever.RetrievalInterruptedFor", this.url.toString());
-            Logging.logger().fine(message);
+            Logging.logger().fine(Logging.getMessage("URLRetriever.RetrievalInterruptedFor", this.url.toString()));
             return true;
         }
         return false;
     }
 
     protected final URLConnection openConnection() throws IOException {
-        try {
-            Proxy proxy = WWIO.configureProxy();
-            this.connection = proxy != null ? this.url.openConnection(proxy) : this.url.openConnection();
-        }
-        catch (IOException e) {
-            Logging.logger().log(Level.SEVERE,
-                Logging.getMessage("URLRetriever.ErrorOpeningConnection", this.url.toString()), e);
-            throw e;
-        }
+        Proxy proxy = WWIO.configureProxy();
+        this.connection = proxy != null ? this.url.openConnection(proxy) : this.url.openConnection();
 
         if (this.connection == null) // java.net.URL docs imply that this won't happen. We check anyway.
         {
@@ -250,20 +242,6 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever {
             connection.setSSLSocketFactory(sslContext.getSocketFactory());
     }
 
-    protected void end() {
-        try {
-            if (this.postProcessor != null) {
-                this.byteBuffer = this.postProcessor.run(this);
-            }
-        }
-        catch (Exception e) {
-            setState(RETRIEVER_STATE_ERROR);
-            Logging.logger().log(Level.SEVERE,
-                Logging.getMessage("Retriever.ErrorPostProcessing", this.url), e);
-            throw e;
-        }
-    }
-
     protected ByteBuffer read() throws Exception {
         try {
             ByteBuffer buffer = this.doRead(this.connection);
@@ -287,6 +265,12 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever {
      * @throws IllegalArgumentException if <code>connection</code> is null
      */
     protected ByteBuffer doRead(URLConnection connection) throws Exception {
+
+//        Logging.logger().log(Level.FINE, "HTTPRetriever.response",
+//            new Object[] {this.responseCode,
+//                connection.getContentLength(),
+//                contentType != null ? contentType : "content type not returned",
+//                connection.getURL()});
 
         InputStream inputStream = this.connection.getInputStream();
         if (inputStream == null) {
