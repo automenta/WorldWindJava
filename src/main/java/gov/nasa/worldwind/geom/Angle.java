@@ -338,6 +338,10 @@ public class Angle implements Comparable<Angle> {
         return value.degrees < min.degrees ? min : (value.degrees > max.degrees ? max : value);
     }
 
+    public static double clamp(double value, double min, double max) {
+        return value < min ? min : (value > max ? max : value);
+    }
+
     /**
      * Linearly interpolates between two angles.
      *

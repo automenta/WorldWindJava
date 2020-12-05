@@ -952,10 +952,10 @@ private static Class newClassLoader = null;
 //        * geotransform[3] + 0.5 * geotransform[4] + 0.5 * geotransform[5] : y offset to center of top left pixel.
         double[] gx = new double[6];
 
-        gx[GDAL.GT_0_ORIGIN_LON] = sector.lonMin().degrees;
+        gx[GDAL.GT_0_ORIGIN_LON] = sector.lonMin;
         gx[GDAL.GT_1_PIXEL_WIDTH] = Math.abs(sector.lonDelta / width);
         gx[GDAL.GT_2_ROTATION_X] = 0.0d;
-        gx[GDAL.GT_3_ORIGIN_LAT] = sector.latMax().degrees;
+        gx[GDAL.GT_3_ORIGIN_LAT] = sector.latMax;
         gx[GDAL.GT_4_ROTATION_Y] = 0.0d;
         gx[GDAL.GT_5_PIXEL_HEIGHT] = -Math.abs(sector.latDelta / height);
 

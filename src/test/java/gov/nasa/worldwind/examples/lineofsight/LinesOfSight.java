@@ -297,11 +297,11 @@ public class LinesOfSight extends ApplicationTemplate {
 
             for (int j = 0; j < nRows; j++) {
                 double lat = j == nRows - 1 ?
-                    sector.latMax().degrees : sector.latMin().degrees + j * dLat;
+                    sector.latMax : sector.latMin + j * dLat;
 
                 for (int i = 0; i < nCols; i++) {
                     double lon = i == nCols - 1 ?
-                        sector.lonMax().degrees : sector.lonMin().degrees + i * dLon;
+                        sector.lonMax : sector.lonMin + i * dLon;
 
                     grid.add(Position.fromDegrees(lat, lon, height));
                 }

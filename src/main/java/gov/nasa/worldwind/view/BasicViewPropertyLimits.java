@@ -337,21 +337,21 @@ public class BasicViewPropertyLimits implements ViewPropertyLimits {
      */
     @Override
     public Position limitEyePosition(View view, Position position) {
-        if (view == null) {
-            String message = Logging.getMessage("nullValue.ViewIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (position == null) {
-            String message = Logging.getMessage("nullValue.PositionIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (view == null) {
+//            String message = Logging.getMessage("nullValue.ViewIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//
+//        if (position == null) {
+//            String message = Logging.getMessage("nullValue.PositionIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         Sector sector = this.eyeLocationLimits;
-        Angle lat = Angle.clamp(position.latitude, sector.latMin(), sector.latMax());
-        Angle lon = Angle.clamp(position.longitude, sector.lonMin(), sector.lonMax());
+        double lat = Angle.clamp(position.latitude, sector.latMin, sector.latMax);
+        double lon = Angle.clamp(position.longitude, sector.lonMin, sector.lonMax);
         double alt = WWMath.clamp(position.elevation, this.minEyeElevation, this.maxEyeElevation);
 
         return new Position(lat, lon, alt);
@@ -362,17 +362,17 @@ public class BasicViewPropertyLimits implements ViewPropertyLimits {
      */
     @Override
     public Angle limitHeading(View view, Angle angle) {
-        if (view == null) {
-            String message = Logging.getMessage("nullValue.ViewIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (angle == null) {
-            String message = Logging.getMessage("nullValue.AngleIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (view == null) {
+//            String message = Logging.getMessage("nullValue.ViewIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//
+//        if (angle == null) {
+//            String message = Logging.getMessage("nullValue.AngleIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         if (BasicViewPropertyLimits.isNonContinous2DGlobe(view.getGlobe())) {
             return angle; // ignore the heading limit on non-continuous 2D globes

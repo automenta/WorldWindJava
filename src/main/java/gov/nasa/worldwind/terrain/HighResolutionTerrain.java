@@ -568,10 +568,10 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
         if (row < 0 || col < 0 || row >= this.numRows || col >= this.numCols)
             return null;
 
-        double minLon = Math.max(this.sector.lonMin().degrees + col * this.lonTileSize, -180);
+        double minLon = Math.max(this.sector.lonMin + col * this.lonTileSize, -180);
         double maxLon = Math.min(minLon + this.lonTileSize, 180);
 
-        double minLat = Math.max(this.sector.latMin().degrees + row * this.latTileSize, -90);
+        double minLat = Math.max(this.sector.latMin + row * this.latTileSize, -90);
         double maxLat = Math.min(minLat + this.latTileSize, 90);
 
         return this.createTile(Sector.fromDegrees(minLat, maxLat, minLon, maxLon));
@@ -597,8 +597,8 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
      * @return the row index for the sector.
      */
     protected int computeRow(Sector range, Angle latitude) {
-        double top = range.latMax().degrees;
-        double bot = range.latMin().degrees;
+        double top = range.latMax;
+        double bot = range.latMin;
 
         double s = (latitude.degrees - bot) / (top - bot);
 
@@ -613,8 +613,8 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
      * @return the column index for the sector.
      */
     protected int computeColumn(Sector range, Angle longitude) {
-        double right = range.lonMax().degrees;
-        double left = range.lonMin().degrees;
+        double right = range.lonMax;
+        double left = range.lonMin;
 
         double s = (longitude.degrees - left) / (right - left);
 
@@ -760,10 +760,10 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
     }
 
     protected void doGetIntersectingTiles(int r0, int c0, int r1, int c1, Line line, List<RectTile> tiles) {
-        double minLat = this.sector.latMin().degrees + r0 * this.latTileSize;
-        double maxLat = this.sector.latMin().degrees + (r1 + 1) * this.latTileSize;
-        double minLon = this.sector.lonMin().degrees + c0 * this.lonTileSize;
-        double maxLon = this.sector.lonMin().degrees + (c1 + 1) * this.lonTileSize;
+        double minLat = this.sector.latMin + r0 * this.latTileSize;
+        double maxLat = this.sector.latMin + (r1 + 1) * this.latTileSize;
+        double minLon = this.sector.lonMin + c0 * this.lonTileSize;
+        double maxLon = this.sector.lonMin + (c1 + 1) * this.lonTileSize;
 
         Extent extent = Sector.computeBoundingBox(this.globe, this.verticalExaggeration,
             Sector.fromDegrees(minLat, maxLat, minLon, maxLon));
@@ -943,9 +943,10 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
     protected void getCachedElevations(List<LatLon> latlons, double[] elevations) {
         ElevationModel em = this.globe.getElevationModel();
 
-        for (int i = 0; i < latlons.size(); i++) {
+        final int n = latlons.size();
+        for (int i = 0; i < n; i++) {
             LatLon ll = latlons.get(i);
-            double elevation = em.getUnmappedLocalSourceElevation(ll.latitude, ll.longitude);
+            double elevation = em.getUnmappedLocalSourceElevation(ll.getLatitude(), ll.getLongitude());
             if (elevation == em.getMissingDataSignal()) {
                 elevation = em.getMissingDataReplacement();
             }

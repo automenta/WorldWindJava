@@ -319,11 +319,11 @@ public class TerrainIntersections extends ApplicationTemplate {
 
             for (int j = 0; j <= nLatCells; j++) {
                 double lat = j == nLatCells
-                    ? sector.latMax().degrees : sector.latMin().degrees + j * dLat;
+                    ? sector.latMax : sector.latMin + j * dLat;
 
                 for (int i = 0; i <= nLonCells; i++) {
                     double lon = i == nLonCells
-                        ? sector.lonMax().degrees : sector.lonMin().degrees + i * dLon;
+                        ? sector.lonMax : sector.lonMin + i * dLon;
 
                     grid.add(Position.fromDegrees(lat, lon, height));
                 }

@@ -8,7 +8,7 @@ package gov.nasa.worldwind.examples.multiwindow;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.globes.*;
-import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.earth.*;
 import gov.nasa.worldwind.layers.sky.StarsLayer;
 import gov.nasa.worldwind.layers.tool.*;

@@ -101,8 +101,8 @@ public class BILRasterWriter extends AbstractDataRasterWriter {
         double yPixelSize = -sector.latDelta / (size[1] - 1);
         double xCoeff = 0.0;
         double yCoeff = 0.0;
-        double xLocation = sector.lonMin().degrees;
-        double yLocation = sector.latMax().degrees;
+        double xLocation = sector.lonMin;
+        double yLocation = sector.latMax;
 
         try (PrintWriter out = new PrintWriter(file)) {
             out.println(xPixelSize);

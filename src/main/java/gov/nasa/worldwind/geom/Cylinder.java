@@ -324,7 +324,7 @@ public class Cylinder implements Extent, Renderable {
         // closest to the equator, then choose a third point from the opposite pair. We use maxHeight as elevation
         // because we want to bound the largest potential quadrilateral for the sector.
         Vec4 p0, p1, p2;
-        if (Math.abs(sector.latMin().degrees) <= Math.abs(sector.latMax().degrees)) {
+        if (Math.abs(sector.latMin) <= Math.abs(sector.latMax)) {
             p0 = globe.computePointFromPosition(sector.latMin(), sector.lonMax(), maxHeight); // SE
             p1 = globe.computePointFromPosition(sector.latMin(), sector.lonMin(), maxHeight); // SW
             p2 = globe.computePointFromPosition(sector.latMax(), sector.lonMin(), maxHeight); // NW

@@ -12,7 +12,6 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.pick.PickSupport;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
-import netvr.WorldWindOSM;
 
 import java.awt.*;
 import java.util.Collection;

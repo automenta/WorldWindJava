@@ -20,13 +20,13 @@ import java.util.*;
 public class HighResolutionTerrainTest {
     protected static ArrayList<Position> generateReferenceLocations(Sector sector, int numLats, int numLons) {
         ArrayList<Position> locations = new ArrayList<>();
-        double dLat = (sector.latMax().degrees - sector.latMin().degrees) / (numLats - 1);
-        double dLon = (sector.lonMax().degrees - sector.lonMin().degrees) / (numLons - 1);
+        double dLat = (sector.latMax - sector.latMin) / (numLats - 1);
+        double dLon = (sector.lonMax - sector.lonMin) / (numLons - 1);
         for (int j = 0; j < numLats; j++) {
-            double lat = sector.latMin().degrees + j * dLat;
+            double lat = sector.latMin + j * dLat;
 
             for (int i = 0; i < numLons; i++) {
-                double lon = sector.lonMin().degrees + i * dLon;
+                double lon = sector.lonMin + i * dLon;
 
                 // Specify angles to five decimal places.
                 locations.add(

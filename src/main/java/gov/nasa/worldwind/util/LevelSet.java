@@ -102,7 +102,7 @@ public class LevelSet extends WWObjectImpl {
                 sb1.append("&L=");
                 sb1.append(tile.level.getLevelName());
                 sb1.append("&X=");
-                sb1.append(tile.column);
+                sb1.append(tile.col);
                 sb1.append("&Y=");
                 sb1.append(tile.row);
 
@@ -288,7 +288,7 @@ public class LevelSet extends WWObjectImpl {
     }
 
     private long getTileNumber(Tile tile) {
-        return tile.row < 0 ? -1 : (long) tile.row * this.numColumnsInLevel(tile.level) + tile.column;
+        return tile.row < 0 ? -1 : (long) tile.row * this.numColumnsInLevel(tile.level) + tile.col;
     }
 
     private long getTileNumber(TileKey tileKey) {

@@ -8,7 +8,7 @@ package gov.nasa.worldwind.examples.worldwindow.core.layermanager;
 
 import gov.nasa.worldwind.examples.worldwindow.features.Feature;
 import gov.nasa.worldwind.examples.worldwindow.features.swinglayermanager.LayerNode;
-import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.video.LayerList;
 
 /**

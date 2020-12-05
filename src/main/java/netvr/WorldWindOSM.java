@@ -2,25 +2,21 @@ package netvr;
 
 import gov.nasa.worldwind.BasicModel;
 import gov.nasa.worldwind.formats.shapefile.*;
-import gov.nasa.worldwind.geom.LatLon;
-import gov.nasa.worldwind.geom.Position;
-import gov.nasa.worldwind.layers.*;
-import gov.nasa.worldwind.layers.earth.*;
+import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.layers.RenderableLayer;
+import gov.nasa.worldwind.layers.earth.OSMMapnikLayer;
+import gov.nasa.worldwind.layers.sky.*;
 import gov.nasa.worldwind.render.Polygon;
-import gov.nasa.worldwind.video.LayerList;
-import gov.nasa.worldwind.layers.sky.SkyGradientLayer;
-import gov.nasa.worldwind.layers.sky.StarsLayer;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.util.VecBuffer;
-import gov.nasa.worldwind.util.WWUtil;
+import gov.nasa.worldwind.util.*;
+import gov.nasa.worldwind.video.LayerList;
 import gov.nasa.worldwind.video.newt.WorldWindowNEWT;
-
 
 import java.awt.*;
 import java.io.File;
 import java.util.*;
 
-import static gov.nasa.worldwind.WorldWind.*;
+import static gov.nasa.worldwind.WorldWind.RELATIVE_TO_GROUND;
 
 public class WorldWindOSM {
 
@@ -46,15 +42,24 @@ public class WorldWindOSM {
             l.add(new StarsLayer());
             l.add(new SkyGradientLayer());
 
-//            l.add(new OSMMapnikLayer());
-            l.add(new BMNGWMSLayer());
+            l.add(new OSMMapnikLayer());
+//            l.add(new BMNGWMSLayer());
 
+/*
+    /tmp/shp1/buildings.shp  /tmp/shp1/places.shp    /tmp/shp1/roads.shp
+    /tmp/shp1/landuse.shp    /tmp/shp1/points.shp    /tmp/shp1/waterways.shp
+    /tmp/shp1/natural.shp    /tmp/shp1/railways.shp
+ */
+
+
+            l.add(new ShapefileLayer(new Shapefile(new File("/tmp/shp1/buildings.shp"))));
             l.add(new ShapefileLayer(new Shapefile(new File("/tmp/shp1/places.shp"))));
             l.add(new ShapefileLayer(new Shapefile(new File("/tmp/shp1/roads.shp"))));
-            l.add(new ShapefileLayer(new Shapefile(new File("/tmp/shp1/waterways.shp"))));
-            l.add(new ShapefileLayer(new Shapefile(new File("/tmp/shp1/buildings.shp"))));
-            l.add(new ShapefileLayer(new Shapefile(new File("/tmp/shp1/natural.shp"))));
             l.add(new ShapefileLayer(new Shapefile(new File("/tmp/shp1/landuse.shp"))));
+            l.add(new ShapefileLayer(new Shapefile(new File("/tmp/shp1/points.shp"))));
+            l.add(new ShapefileLayer(new Shapefile(new File("/tmp/shp1/waterways.shp"))));
+            l.add(new ShapefileLayer(new Shapefile(new File("/tmp/shp1/natural.shp"))));
+            l.add(new ShapefileLayer(new Shapefile(new File("/tmp/shp1/railways.shp"))));
             setLayers(l);
 
         }

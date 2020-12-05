@@ -6,13 +6,9 @@
 
 package gov.nasa.worldwind.examples.worldwindow.features;
 
-import gov.nasa.worldwind.avlist.AVListImpl;
 import gov.nasa.worldwind.examples.worldwindow.core.Registry;
 import gov.nasa.worldwind.examples.worldwindow.core.layermanager.LayerPath;
 import gov.nasa.worldwind.layers.Layer;
-import gov.nasa.worldwind.util.Logging;
-
-import java.awt.*;
 
 /**
  * @author tag

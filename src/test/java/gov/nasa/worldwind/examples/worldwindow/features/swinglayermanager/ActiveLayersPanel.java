@@ -10,7 +10,7 @@ import gov.nasa.worldwind.examples.worldwindow.core.*;
 import gov.nasa.worldwind.examples.worldwindow.core.layermanager.ActiveLayersManager;
 import gov.nasa.worldwind.examples.worldwindow.features.AbstractFeaturePanel;
 import gov.nasa.worldwind.examples.worldwindow.util.*;
-import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.video.LayerList;
 
 import javax.swing.*;

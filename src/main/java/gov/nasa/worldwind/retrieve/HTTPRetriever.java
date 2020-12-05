@@ -5,11 +5,9 @@
  */
 package gov.nasa.worldwind.retrieve;
 
-import gov.nasa.worldwind.util.Logging;
-
+import java.io.IOException;
 import java.net.*;
 import java.nio.ByteBuffer;
-import java.util.logging.Level;
 
 /**
  * @author Tom Gaskins
@@ -17,11 +15,20 @@ import java.util.logging.Level;
  */
 public class HTTPRetriever extends URLRetriever {
 
+    static final String userAgent_Default = "Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0";
+
     private int responseCode;
     private String responseMessage;
 
     public HTTPRetriever(URL url, RetrievalPostProcessor postProcessor) {
         super(url, postProcessor);
+    }
+
+    @Override
+    protected URLConnection connection() throws IOException {
+        URLConnection u = super.connection();
+        u.setRequestProperty("User-Agent", userAgent_Default);
+        return u;
     }
 
     public int getResponseCode() {

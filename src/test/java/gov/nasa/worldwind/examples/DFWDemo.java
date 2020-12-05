@@ -10,7 +10,7 @@ import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.exception.WWAbsentRequirementException;
 import gov.nasa.worldwind.geom.*;
-import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.ogc.wms.*;
 import gov.nasa.worldwind.layers.placename.PlaceNameLayer;
 import gov.nasa.worldwind.layers.tool.*;

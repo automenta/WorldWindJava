@@ -199,10 +199,10 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
     }
 
     private static Rectangle2D getGridRectangleForSector(Sector sector) {
-        int x1 = getGridColumn(sector.lonMin().degrees);
-        int x2 = getGridColumn(sector.lonMax().degrees);
-        int y1 = getGridRow(sector.latMin().degrees);
-        int y2 = getGridRow(sector.latMax().degrees);
+        int x1 = getGridColumn(sector.lonMin);
+        int x2 = getGridColumn(sector.lonMax);
+        int y1 = getGridRow(sector.latMin);
+        int y2 = getGridRow(sector.latMax);
         return new Rectangle(x1, y1, x2 - x1, y2 - y1);
     }
 
@@ -252,7 +252,7 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
         public GraticuleTile(Sector sector) {
             this.sector = sector;
             this.zone = getGridColumn(this.sector.getCentroid().getLongitude().degrees) + 1;
-            this.hemisphere = this.sector.getCentroid().latitude.degrees > 0 ? AVKey.NORTH : AVKey.SOUTH;
+            this.hemisphere = this.sector.getCentroid().latitude > 0 ? AVKey.NORTH : AVKey.SOUTH;
         }
 
         public Extent getExtent(Globe globe, double ve) {
@@ -358,11 +358,11 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
             Sector lineSector = new Sector(this.sector.latMin(), this.sector.latMax(),
                 this.sector.lonMin(), this.sector.lonMin());
             GridElement ge = new GridElement(lineSector, polyline, GridElement.TYPE_LINE);
-            ge.value = this.sector.lonMin().degrees;
+            ge.value = this.sector.lonMin;
             this.gridElements.add(ge);
 
             // Generate south parallel at south pole and equator
-            if (this.sector.latMin().degrees == UTM_MIN_LATITUDE || this.sector.latMin().degrees == 0) {
+            if (this.sector.latMin == UTM_MIN_LATITUDE || this.sector.latMin == 0) {
                 positions.clear();
                 positions.add(new Position(this.sector.latMin(), this.sector.lonMin(), 0));
                 positions.add(new Position(this.sector.latMin(), this.sector.lonMax(), 0));
@@ -370,12 +370,12 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
                 lineSector = new Sector(this.sector.latMin(), this.sector.latMin(),
                     this.sector.lonMin(), this.sector.lonMax());
                 ge = new GridElement(lineSector, polyline, GridElement.TYPE_LINE);
-                ge.value = this.sector.latMin().degrees;
+                ge.value = this.sector.latMin;
                 this.gridElements.add(ge);
             }
 
             // Generate north parallel at north pole
-            if (this.sector.latMax().degrees == UTM_MAX_LATITUDE) {
+            if (this.sector.latMax == UTM_MAX_LATITUDE) {
                 positions.clear();
                 positions.add(new Position(this.sector.latMax(), this.sector.lonMin(), 0));
                 positions.add(new Position(this.sector.latMax(), this.sector.lonMax(), 0));
@@ -383,7 +383,7 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
                 lineSector = new Sector(this.sector.latMax(), this.sector.latMax(),
                     this.sector.lonMin(), this.sector.lonMax());
                 ge = new GridElement(lineSector, polyline, GridElement.TYPE_LINE);
-                ge.value = this.sector.latMax().degrees;
+                ge.value = this.sector.latMax;
                 this.gridElements.add(ge);
             }
 
@@ -399,12 +399,12 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
         private boolean hasLabel() {
             // Has label if it contains hemisphere mid latitude
             double southLat = UTM_MIN_LATITUDE / 2;
-            boolean southLabel = this.sector.latMin().degrees < southLat
-                && southLat <= this.sector.latMax().degrees;
+            boolean southLabel = this.sector.latMin < southLat
+                && southLat <= this.sector.latMax;
 
             double northLat = UTM_MAX_LATITUDE / 2;
-            boolean northLabel = this.sector.latMin().degrees < northLat
-                && northLat <= this.sector.latMax().degrees;
+            boolean northLabel = this.sector.latMin < northLat
+                && northLat <= this.sector.latMax;
 
             return southLabel || northLabel;
         }

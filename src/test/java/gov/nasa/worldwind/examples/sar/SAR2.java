@@ -12,8 +12,8 @@ import gov.nasa.worldwind.examples.sar.actions.SARScreenShotAction;
 import gov.nasa.worldwind.examples.sar.tracks.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.Angle;
-import gov.nasa.worldwind.layers.earth.*;
 import gov.nasa.worldwind.layers.Layer;
+import gov.nasa.worldwind.layers.earth.*;
 import gov.nasa.worldwind.util.*;
 import org.w3c.dom.Document;
 

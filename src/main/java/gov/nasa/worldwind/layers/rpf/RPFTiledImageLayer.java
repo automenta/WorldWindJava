@@ -461,12 +461,12 @@ public class RPFTiledImageLayer extends TiledImageLayer {
                 rs.addStateValueAsDouble(p.getKey() + ".Longitude", ((LatLon) p.getValue()).getLongitude().degrees);
             }
             else if (p.getValue() instanceof Sector) {
-                rs.addStateValueAsDouble(p.getKey() + ".MinLatitude", ((Sector) p.getValue()).latMin().degrees);
-                rs.addStateValueAsDouble(p.getKey() + ".MaxLatitude", ((Sector) p.getValue()).latMax().degrees);
+                rs.addStateValueAsDouble(p.getKey() + ".MinLatitude", ((Sector) p.getValue()).latMin);
+                rs.addStateValueAsDouble(p.getKey() + ".MaxLatitude", ((Sector) p.getValue()).latMax);
                 rs.addStateValueAsDouble(p.getKey() + ".MinLongitude",
-                    ((Sector) p.getValue()).lonMin().degrees);
+                    ((Sector) p.getValue()).lonMin);
                 rs.addStateValueAsDouble(p.getKey() + ".MaxLongitude",
-                    ((Sector) p.getValue()).lonMax().degrees);
+                    ((Sector) p.getValue()).lonMax);
             }
             else if (p.getValue() instanceof URLBuilder) {
                 // Intentionally left blank. URLBuilder will be created from scratch in fromRestorableState().

@@ -51,28 +51,28 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
         this.polarRadius = polarRadius;
         this.es = es; // assume it's consistent with the two radii
         this.center = Vec4.ZERO;
-        this.elevationModel = em;
+        setElevationModel(em);
         this.tessellator = (Tessellator) WorldWind.createConfigurationComponent(AVKey.TESSELLATOR_CLASS_NAME);
     }
 
-    /**
-     * Create a new globe, and set the position of the globe's center. The globe will be tessellated using tessellator
-     * defined by the {@link AVKey#TESSELLATOR_CLASS_NAME} configuration parameter.
-     *
-     * @param equatorialRadius Radius of the globe at the equator.
-     * @param polarRadius      Radius of the globe at the poles.
-     * @param es               Square of the globe's eccentricity.
-     * @param em               Elevation model. May be null.
-     * @param center           Cartesian coordinates of the globe's center point.
-     */
-    public EllipsoidalGlobe(double equatorialRadius, double polarRadius, double es, ElevationModel em, Vec4 center) {
-        this.equatorialRadius = equatorialRadius;
-        this.polarRadius = polarRadius;
-        this.es = es; // assume it's consistent with the two radii
-        this.center = center;
-        this.elevationModel = em;
-        this.tessellator = (Tessellator) WorldWind.createConfigurationComponent(AVKey.TESSELLATOR_CLASS_NAME);
-    }
+//    /**
+//     * Create a new globe, and set the position of the globe's center. The globe will be tessellated using tessellator
+//     * defined by the {@link AVKey#TESSELLATOR_CLASS_NAME} configuration parameter.
+//     *
+//     * @param equatorialRadius Radius of the globe at the equator.
+//     * @param polarRadius      Radius of the globe at the poles.
+//     * @param es               Square of the globe's eccentricity.
+//     * @param em               Elevation model. May be null.
+//     * @param center           Cartesian coordinates of the globe's center point.
+//     */
+//    public EllipsoidalGlobe(double equatorialRadius, double polarRadius, double es, ElevationModel em, Vec4 center) {
+//        this.equatorialRadius = equatorialRadius;
+//        this.polarRadius = polarRadius;
+//        this.es = es; // assume it's consistent with the two radii
+//        this.center = center;
+//        this.elevationModel = em;
+//        this.tessellator = (Tessellator) WorldWind.createConfigurationComponent(AVKey.TESSELLATOR_CLASS_NAME);
+//    }
 
     static private double discriminant(double a, double b, double c) {
         return b * b - 4 * a * c;
@@ -86,10 +86,10 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
      * @return a new elevation model configured according to the configuration source.
      */
     public static ElevationModel makeElevationModel(String key, String defaultValue) {
-        if (key == null) {
-            String msg = Logging.getMessage("nullValue.KeyIsNull");
-            throw new IllegalArgumentException(msg);
-        }
+//        if (key == null) {
+//            String msg = Logging.getMessage("nullValue.KeyIsNull");
+//            throw new IllegalArgumentException(msg);
+//        }
 
         Object configSource = Configuration.getStringValue(key, defaultValue);
         return (ElevationModel) BasicFactory.create(AVKey.ELEVATION_MODEL_FACTORY, configSource);
@@ -157,7 +157,7 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
 
     public double getRadiusAt(LatLon location) {
 
-        return this.getRadiusAt(location.latitude, location.longitude);
+        return this.getRadiusAt(Angle.fromDegrees(location.latitude), Angle.fromDegrees(location.longitude));
     }
 
     public double getEccentricitySquared() {

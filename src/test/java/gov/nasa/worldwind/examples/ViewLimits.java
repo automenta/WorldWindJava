@@ -74,10 +74,10 @@ public class ViewLimits extends ApplicationTemplate {
 
             this.ignoreComponentEvents = true;
             try {
-                this.minLatitude.setValue(sector.latMin().degrees);
-                this.maxLatitude.setValue(sector.latMax().degrees);
-                this.minLongitude.setValue(sector.lonMin().degrees);
-                this.maxLongitude.setValue(sector.lonMax().degrees);
+                this.minLatitude.setValue(sector.latMin);
+                this.maxLatitude.setValue(sector.latMax);
+                this.minLongitude.setValue(sector.lonMin);
+                this.maxLongitude.setValue(sector.lonMax);
             }
             finally {
                 this.ignoreComponentEvents = false;

@@ -25,9 +25,9 @@
     <TileOrigin>
         <LatLon units="degrees" latitude="-90" longitude="-180"/>
     </TileOrigin>
-    <LevelZeroTileDelta>
-        <LatLon units="degrees" latitude="36" longitude="36"/>
-    </LevelZeroTileDelta>
+<!--    <LevelZeroTileDelta>-->
+<!--        <LatLon units="degrees" latitude="36" longitude="36"/>-->
+<!--    </LevelZeroTileDelta>-->
     <TileSize>
         <Dimension width="512" height="512"/>
     </TileSize>
@@ -39,13 +39,13 @@
             <LatLon units="degrees" latitude="90" longitude="180"/>
         </NorthEast>
     </Sector>
-    <UseTransparentTextures>false</UseTransparentTextures>
-    <RetrievalTimeouts>
-        <ReadTimeout>
-            <Time units="milliseconds" value="30000"/>
-        </ReadTimeout>
-    </RetrievalTimeouts>
+<!--    <UseTransparentTextures>false</UseTransparentTextures>-->
+<!--    <RetrievalTimeouts>-->
+<!--        <ReadTimeout>-->
+<!--            <Time units="milliseconds" value="30000"/>-->
+<!--        </ReadTimeout>-->
+<!--    </RetrievalTimeouts>-->
     <!-- The following lines are included just to show how to set the values to other than their defaults -->
-    <MaxAbsentTileAttempts>2</MaxAbsentTileAttempts>
-    <MinAbsentTileCheckInterval>1000</MinAbsentTileCheckInterval>
+<!--    <MaxAbsentTileAttempts>2</MaxAbsentTileAttempts>-->
+<!--    <MinAbsentTileCheckInterval>1000</MinAbsentTileCheckInterval>-->
 </Layer>

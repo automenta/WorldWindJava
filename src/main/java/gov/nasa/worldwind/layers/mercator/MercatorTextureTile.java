@@ -40,7 +40,7 @@ public class MercatorTextureTile extends TextureTile {
         String nextLevelCacheName = nextLevel.getCacheName();
         int nextLevelNum = nextLevel.getLevelNumber();
         int row = this.row;
-        int col = column;
+        int col = this.col;
 
         MercatorTextureTile[] subTiles = new MercatorTextureTile[4];
 

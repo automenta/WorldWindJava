@@ -340,8 +340,8 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
                 Sector s = sectors[i];
 
 
-                double minLatDegrees = s.latMin().degrees;
-                double maxLatDegrees = s.latMax().degrees;
+                double minLatDegrees = s.latMin;
+                double maxLatDegrees = s.latMax;
 
                 if (minLatDegrees > e0Lat) minLatDegrees = e0Lat;
                 if (maxLatDegrees < e1Lat) maxLatDegrees = e1Lat;
@@ -891,8 +891,8 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
             double[] vertex = new double[3];
             for (LatLon location : contour) {
                 //double[] vertex = {location.longitude.degrees, location.latitude.degrees, 0};
-                vertex[0] = location.longitude.degrees;
-                vertex[1] = location.latitude.degrees;
+                vertex[0] = location.longitude;
+                vertex[1] = location.latitude;
                 GLU.gluTessVertex(tess, vertex, 0, vertex);
             }
         }

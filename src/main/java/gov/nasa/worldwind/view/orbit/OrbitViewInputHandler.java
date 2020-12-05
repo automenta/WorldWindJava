@@ -47,8 +47,8 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
     }
 
     protected static Position computeNewPosition(OrbitView view, Position position) {
-        Angle newLat = Angle.fromDegrees(WWMath.clamp(position.latitude.degrees, -90, 90));
-        Angle newLon = Angle.lonNorm(position.longitude);
+        Angle newLat = Angle.fromDegrees(WWMath.clamp(position.latitude, -90, 90));
+        Angle newLon = Angle.lonNorm(position.getLongitude());
         Position newPosition = new Position(newLat, newLon, position.elevation);
         return view.getOrbitViewLimits().limitCenterPosition(view, newPosition);
     }
@@ -181,8 +181,8 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
             double lonDegrees = longitudeChange.degrees;
 
             Position centerPos = ((OrbitView) view).getCenterPosition();
-            latDegrees = WWMath.clamp(centerPos.latitude.degrees + latDegrees, -90, 90);
-            lonDegrees = Angle.normalizedDegreesLongitude(centerPos.longitude.degrees + lonDegrees);
+            latDegrees = WWMath.clamp(centerPos.latitude + latDegrees, -90, 90);
+            lonDegrees = Angle.normalizedDegreesLongitude(centerPos.longitude + lonDegrees);
             centerPos = Position.fromDegrees(latDegrees, lonDegrees, centerPos.elevation);
             this.setCenterPosition((BasicOrbitView) view, uiAnimControl, centerPos, actionAttribs);
         }
@@ -273,8 +273,8 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
             double lonDegrees = sinHeading * forwardChange.degrees + cosHeading * sideChange.degrees;
 
             Position centerPos = ((OrbitView) view).getCenterPosition();
-            latDegrees = WWMath.clamp(centerPos.latitude.degrees + latDegrees, -90, 90);
-            lonDegrees = Angle.normalizedDegreesLongitude(centerPos.longitude.degrees + lonDegrees);
+            latDegrees = WWMath.clamp(centerPos.latitude + latDegrees, -90, 90);
+            lonDegrees = Angle.normalizedDegreesLongitude(centerPos.longitude + lonDegrees);
             centerPos = Position.fromDegrees(latDegrees, lonDegrees, centerPos.elevation);
             this.setCenterPosition((BasicOrbitView) view, this.uiAnimControl, centerPos, actionAttribs);
         }

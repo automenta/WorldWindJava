@@ -75,19 +75,19 @@ public class HighResolutionTerrainTest2
     {
         int decimalPlaces = 5;
         ArrayList<Position> locations = new ArrayList<>();
-        double dLat = (sector.latMax().degrees - sector.latMin().degrees) / (numLats - 1);
-        double dLon = (sector.lonMax().degrees - sector.lonMin().degrees) / (numLons - 1);
+        double dLat = (sector.latMax - sector.latMin) / (numLats - 1);
+        double dLon = (sector.lonMax - sector.lonMin) / (numLons - 1);
 
         Position p0 = Position.fromDegrees(
-            round(decimalPlaces, sector.latMin().degrees),
-            round(decimalPlaces, sector.lonMin().degrees), 0);
+            round(decimalPlaces, sector.latMin),
+            round(decimalPlaces, sector.lonMin), 0);
         for (int j = 1; j < numLats; j++)
         {
-            double lat = sector.latMin().degrees + j * dLat;
+            double lat = sector.latMin + j * dLat;
 
             for (int i = 0; i < numLons; i++)
             {
-                double lon = sector.lonMin().degrees + i * dLon;
+                double lon = sector.lonMin + i * dLon;
 
                 locations.add(p0);
                 locations.add(Position.fromDegrees(round(decimalPlaces, lat), round(decimalPlaces, lon), 0));

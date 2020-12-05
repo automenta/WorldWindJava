@@ -14,7 +14,7 @@ import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.cache.GpuResourceCache;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.*;
-import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.pick.*;
 import gov.nasa.worldwind.terrain.*;
 import gov.nasa.worldwind.util.*;

@@ -475,23 +475,18 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
         for (Vertex cur : contour) {
             if (prev != null && LatLon.locationsCrossDateline(prev, cur)) {
                 if (offset == null)
-                    offset = (prev.longitude.degrees < 0 ? Angle.NEG360 : Angle.POS360);
+                    offset = (prev.longitude < 0 ? Angle.NEG360 : Angle.POS360);
                 applyOffset = !applyOffset;
             }
 
-            if (applyOffset) {
-                result.add(new Vertex(cur.latitude, cur.longitude.add(offset), cur.u, cur.v));
-            }
-            else {
-                result.add(cur);
-            }
+            result.add(applyOffset ? new Vertex(cur.getLatitude(), cur.getLongitude().add(offset), cur.u, cur.v) : cur);
 
             prev = cur;
         }
 
-        List<Vertex> mirror = new ArrayList<>();
+        List<Vertex> mirror = new ArrayList<>(result.size());
         for (Vertex cur : result) {
-            mirror.add(new Vertex(cur.latitude, cur.longitude.sub(offset), cur.u, cur.v));
+            mirror.add(new Vertex(cur.getLatitude(), cur.getLongitude().sub(offset), cur.u, cur.v));
         }
 
         return Arrays.asList(result, mirror);
@@ -540,8 +535,8 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
                 GLU.gluTessBeginContour(tess);
 
                 for (Vertex vertex : contour) {
-                    coords[0] = vertex.longitude.degrees;
-                    coords[1] = vertex.latitude.degrees;
+                    coords[0] = vertex.longitude;
+                    coords[1] = vertex.latitude;
                     int index = polygonData.size();
                     polygonData.add(vertex);
                     Object vertexData = new GLUTessellatorSupport.VertexData(index, vertex.edgeFlag);
@@ -570,11 +565,12 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
         shapeData.hasTexCoords = this.explicitTextureCoords != null;
         shapeData.vertexStride = shapeData.hasTexCoords ? 16 : 0;
         shapeData.vertices = Buffers.newDirectFloatBuffer(polygonData.size() * (shapeData.hasTexCoords ? 4 : 2));
-        double lonOffset = this.getReferencePosition().longitude.degrees;
-        double latOffset = this.getReferencePosition().latitude.degrees;
+        final Position refPos = this.getReferencePosition();
+        double lonOffset = refPos.longitude;
+        double latOffset = refPos.latitude;
         for (Vertex vertex : polygonData) {
-            shapeData.vertices.put((float) (vertex.longitude.degrees - lonOffset));
-            shapeData.vertices.put((float) (vertex.latitude.degrees - latOffset));
+            shapeData.vertices.put((float) (vertex.longitude - lonOffset));
+            shapeData.vertices.put((float) (vertex.latitude - latOffset));
 
             if (shapeData.hasTexCoords) {
                 shapeData.vertices.put((float) vertex.u);
@@ -627,7 +623,8 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
         if (this.boundaries.isEmpty())
             return;
 
-        for (int i = 0; i < this.boundaries.size(); i++) {
+        final int b = this.boundaries.size();
+        for (int i = 0; i < b; i++) {
             Collection<LatLon> newLocations = new ArrayList<>();
 
             for (LatLon ll : this.boundaries.get(i)) {
@@ -647,11 +644,10 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
         if (this.boundaries.isEmpty())
             return;
 
-        for (int i = 0; i < this.boundaries.size(); i++) {
-            List<LatLon> newLocations = LatLon.computeShiftedLocations(globe, oldReferencePosition,
-                newReferencePosition, this.boundaries.get(i));
-
-            this.boundaries.set(i, newLocations);
+        final int b = this.boundaries.size();
+        for (int i = 0; i < b; i++) {
+            this.boundaries.set(i, LatLon.computeShiftedLocations(globe, oldReferencePosition,
+                newReferencePosition, this.boundaries.get(i)));
         }
 
         // We've changed the polygon's list of boundaries; flag the shape as changed.

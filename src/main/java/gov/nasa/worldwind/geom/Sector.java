@@ -386,8 +386,9 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
 
         double halfDeltaLatRadians = radius / globe.getRadiusAt(center);
 
-        double minLat = center.getLatitude().radians - halfDeltaLatRadians;
-        double maxLat = center.getLatitude().radians + halfDeltaLatRadians;
+        final double latRad = center.getLatitude().radians;
+        double minLat = latRad - halfDeltaLatRadians;
+        double maxLat = latRad + halfDeltaLatRadians;
 
         double minLon;
         double maxLon;
@@ -423,18 +424,19 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
             // quarter of the globe diameter, and the circle is centered on the equator. tan(center lat) is always
             // defined because the center lat is in the range -90 to 90 exclusive. If it were equal to 90, then the
             // circle would cover a pole.
-            double az;
-            if (Math.abs(Angle.POS90.radians - halfDeltaLatRadians)
-                > 0.001) // Consider within 1/1000th of a radian to be equal
-                az = Math.acos(Math.tan(halfDeltaLatRadians) * Math.tan(center.latitude.radians));
-            else
-                az = Angle.POS90.radians;
+            // Consider within 1/1000th of a radian to be equal
+            double az = Math.abs(Angle.POS90.radians - halfDeltaLatRadians) > 0.001 ?
+                Math.acos(Math.tan(halfDeltaLatRadians) * Math.tan(latRad)) :
+                Angle.POS90.radians;
+
 
             LatLon east = LatLon.greatCircleEndPosition(center, az, halfDeltaLatRadians);
             LatLon west = LatLon.greatCircleEndPosition(center, -az, halfDeltaLatRadians);
 
-            minLon = min(east.longitude.radians, west.longitude.radians);
-            maxLon = max(east.longitude.radians, west.longitude.radians);
+            final double eastLonRad = east.getLongitude().radians;
+            final double westLonRad = west.getLongitude().radians;
+            minLon = min(eastLonRad, westLonRad);
+            maxLon = max(eastLonRad, westLonRad);
         }
         else {
             // If the circle crosses the pole then it spans the full circle of longitude
@@ -453,8 +455,7 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
 
         if (LatLon.locationsCrossDateLine(locations)) {
             return splitBoundingSectors(locations);
-        }
-        else {
+        }else {
             Sector s = boundingSector(locations);
             return (s != null && !s.equals(Sector.EMPTY_SECTOR)) ? new Sector[] {s} : null;
         }
@@ -473,19 +474,19 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
             latlons[i++] = ll;
         }
 
-        if (!latlons[0].getLatitude().equals(latlons[1].getLatitude()))
+        if (latlons[0].latitude != latlons[1].latitude)
             return false;
-        if (!latlons[2].getLatitude().equals(latlons[3].getLatitude()))
+        if (latlons[2].latitude != latlons[3].latitude)
             return false;
-        if (!latlons[0].getLongitude().equals(latlons[3].getLongitude()))
+        if (latlons[0].longitude != latlons[3].longitude)
             return false;
-        if (!latlons[1].getLongitude().equals(latlons[2].getLongitude()))
+        if (latlons[1].longitude != latlons[2].longitude)
             return false;
 
         if (i == 5 && !latlons[4].equals(latlons[0]))
             return false;
-
-        return true;
+        else
+            return true;
     }
 
     /**
@@ -593,8 +594,7 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
 
         try {
             return Box.computeBoundingBox(Arrays.asList(points));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return new Box(points[0]); // unit box around point
         }
     }
@@ -904,7 +904,7 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
      */
     public final boolean contains(LatLon latLon) {
 
-        return this.contains(latLon.getLatitude(), latLon.getLongitude());
+        return this.containsDegrees(latLon.latitude, latLon.longitude);
     }
 
 
@@ -948,6 +948,8 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
      * @return <code>true</code> if the sectors intersect, otherwise <code>false</code>.
      */
     public boolean intersects(Sector that) {
+        if (this==that)
+            return true;
         if (that == null)
             return false;
 
@@ -1219,7 +1221,7 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
      * @return a {@link Rectangle2D} corresponding to this Sector in degrees lat-lon coordinates.
      */
     public Rectangle2D toRectangleDegrees() {
-        return new Rectangle2D.Double(this.lonMin().degrees, this.latMin().degrees,
+        return new Rectangle2D.Double(this.lonMin, this.latMin,
             this.lonDelta, this.latDelta);
     }
 

@@ -751,7 +751,7 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer {
                 }
             }
             // Poles
-            if (vs.latMax().degrees > 84) {
+            if (vs.latMax > 84) {
                 // North pole
                 if (poleZones[2] == null)
                     poleZones[2] = new GridZone(Sector.fromDegrees(84, 90, -180, 0)); // Y
@@ -760,7 +760,7 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer {
                 zoneList.add(poleZones[2]);
                 zoneList.add(poleZones[3]);
             }
-            if (vs.latMin().degrees < -80) {
+            if (vs.latMin < -80) {
                 // South pole
                 if (poleZones[0] == null)
                     poleZones[0] = new GridZone(Sector.fromDegrees(-90, -80, -180, 0)); // B
@@ -775,14 +775,14 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer {
 
     private static Rectangle2D getGridRectangleForSector(Sector sector) {
         Rectangle2D rectangle = null;
-        if (sector.latMin().degrees < 84 && sector.latMax().degrees > -80) {
+        if (sector.latMin < 84 && sector.latMax > -80) {
             Sector gridSector = Sector.fromDegrees(
-                Math.max(sector.latMin().degrees, -80), Math.min(sector.latMax().degrees, 84),
-                sector.lonMin().degrees, sector.lonMax().degrees);
-            int x1 = getGridColumn(gridSector.lonMin().degrees);
-            int x2 = getGridColumn(gridSector.lonMax().degrees);
-            int y1 = getGridRow(gridSector.latMin().degrees);
-            int y2 = getGridRow(gridSector.latMax().degrees);
+                Math.max(sector.latMin, -80), Math.min(sector.latMax, 84),
+                sector.lonMin, sector.lonMax);
+            int x1 = getGridColumn(gridSector.lonMin);
+            int x2 = getGridColumn(gridSector.lonMax);
+            int y1 = getGridRow(gridSector.latMin);
+            int y2 = getGridRow(gridSector.latMax);
             // Adjust rectangle to include special zones
             if (y1 <= 17 && y2 >= 17 && x2 == 30) // 32V Norway
                 x2 = 31;
@@ -898,14 +898,14 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer {
 
         public GridZone(Sector sector) {
             this.sector = sector;
-            this.isUPS = (sector.latMax().degrees > UTM_MAX_LATITUDE
-                || sector.latMin().degrees < UTM_MIN_LATITUDE);
+            this.isUPS = (sector.latMax > UTM_MAX_LATITUDE
+                || sector.latMin < UTM_MIN_LATITUDE);
             try {
                 MGRSCoord MGRS = MGRSCoord.fromLatLon(sector.getCentroid().getLatitude(),
                     sector.getCentroid().getLongitude(), globe);
                 if (this.isUPS) {
                     this.name = MGRS.toString().substring(2, 3);
-                    this.hemisphere = sector.latMin().degrees > 0 ? AVKey.NORTH : AVKey.SOUTH;
+                    this.hemisphere = sector.latMin > 0 ? AVKey.NORTH : AVKey.SOUTH;
                 }
                 else {
                     this.name = MGRS.toString().substring(0, 3);
@@ -1079,46 +1079,44 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer {
             ArrayList<Position> positions = new ArrayList<>();
 
             // left meridian segment
-            positions.add(new Position(this.sector.latMin(), this.sector.lonMin(), 10.0e3));
-            positions.add(new Position(this.sector.latMax(), this.sector.lonMin(), 10.0e3));
+            final Sector s = this.sector;
+            positions.add(new Position(s.latMin, s.lonMin, 10.0e3));
+            positions.add(new Position(s.latMax, s.lonMin, 10.0e3));
             Object polyline = createLineRenderable(new ArrayList<>(positions), AVKey.LINEAR);
-            Sector lineSector = new Sector(this.sector.latMin(), this.sector.latMax(),
-                this.sector.lonMin(), this.sector.lonMin());
+            Sector lineSector = new Sector(s.latMin, s.latMax,
+                s.lonMin, s.lonMin);
             this.gridElements.add(new GridElement(lineSector, polyline, GridElement.TYPE_LINE_WEST));
 
             if (!this.isUPS) {
                 // right meridian segment
                 positions.clear();
-                positions.add(new Position(this.sector.latMin(), this.sector.lonMax(), 10.0e3));
-                positions.add(new Position(this.sector.latMax(), this.sector.lonMax(), 10.0e3));
+                positions.add(new Position(s.latMin, s.lonMax, 10.0e3));
+                positions.add(new Position(s.latMax, s.lonMax, 10.0e3));
                 polyline = createLineRenderable(new ArrayList<>(positions), AVKey.LINEAR);
-                lineSector = new Sector(this.sector.latMin(), this.sector.latMax(),
-                    this.sector.lonMax(), this.sector.lonMax());
+                lineSector = new Sector(s.latMin, s.latMax, s.lonMax, s.lonMax);
                 this.gridElements.add(new GridElement(lineSector, polyline, GridElement.TYPE_LINE_EAST));
 
                 // bottom parallel segment
                 positions.clear();
-                positions.add(new Position(this.sector.latMin(), this.sector.lonMin(), 10.0e3));
-                positions.add(new Position(this.sector.latMin(), this.sector.lonMax(), 10.0e3));
+                positions.add(new Position(s.latMin, s.lonMin, 10.0e3));
+                positions.add(new Position(s.latMin, s.lonMax, 10.0e3));
                 polyline = createLineRenderable(new ArrayList<>(positions), AVKey.LINEAR);
-                lineSector = new Sector(this.sector.latMin(), this.sector.latMin(),
-                    this.sector.lonMin(), this.sector.lonMax());
+                lineSector = new Sector(s.latMin, s.latMin, s.lonMin, s.lonMax);
                 this.gridElements.add(new GridElement(lineSector, polyline, GridElement.TYPE_LINE_SOUTH));
 
                 // top parallel segment
                 positions.clear();
-                positions.add(new Position(this.sector.latMax(), this.sector.lonMin(), 10.0e3));
-                positions.add(new Position(this.sector.latMax(), this.sector.lonMax(), 10.0e3));
+                positions.add(new Position(s.latMax, s.lonMin, 10.0e3));
+                positions.add(new Position(s.latMax, s.lonMax, 10.0e3));
                 polyline = createLineRenderable(new ArrayList<>(positions), AVKey.LINEAR);
-                lineSector = new Sector(this.sector.latMax(), this.sector.latMax(),
-                    this.sector.lonMin(), this.sector.lonMax());
+                lineSector = new Sector(s.latMax, s.latMax, s.lonMin, s.lonMax);
                 this.gridElements.add(new GridElement(lineSector, polyline, GridElement.TYPE_LINE_NORTH));
             }
 
             // Label
-            GeographicText text = new UserFacingText(this.name, new Position(this.sector.getCentroid(), 0));
+            GeographicText text = new UserFacingText(this.name, new Position(s.getCentroid(), 0));
             text.setPriority(10.0e6);
-            this.gridElements.add(new GridElement(this.sector, text, GridElement.TYPE_GRIDZONE_LABEL));
+            this.gridElements.add(new GridElement(s, text, GridElement.TYPE_GRIDZONE_LABEL));
         }
     }
 }

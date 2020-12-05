@@ -509,16 +509,17 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
         // Compute the minimum effective area for an entire record based on the geometry resolution. This suppresses
         // records that degenerate to one or two points.
         double minEffectiveArea = 4 * geom.resolution * geom.resolution;
-        double xOffset = geom.sector.getCentroid().longitude.degrees;
-        double yOffset = geom.sector.getCentroid().latitude.degrees;
+        final LatLon centroid = geom.sector.getCentroid();
+        double xOffset = centroid.longitude;
+        double yOffset = centroid.latitude;
 
         // Setup the polyline generalizer and the polygon tessellator that will be used to generalize and tessellate
         // each record intersecting the geometry's sector.
         PolylineGeneralizer generalizer = new PolylineGeneralizer(); // TODO: Consider using a ThreadLocal property.
         PolygonTessellator2 tess = new PolygonTessellator2(); // TODO: Consider using a ThreadLocal property.
         tess.setPolygonNormal(0, 0, 1); // tessellate in geographic coordinates
-        tess.setPolygonClipCoords(geom.sector.lonMin().degrees, geom.sector.lonMax().degrees,
-            geom.sector.latMin().degrees, geom.sector.latMax().degrees);
+        tess.setPolygonClipCoords(geom.sector.lonMin, geom.sector.lonMax,
+            geom.sector.latMin, geom.sector.latMax);
         tess.setVertexStride(2);
         tess.setVertexOffset(-xOffset, -yOffset, 0);
 
@@ -765,10 +766,10 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
     }
 
     protected void applyClipSector(DrawContext dc, Sector sector, Vec4 vertexOffset) {
-        fillArray4(this.clipPlaneArray, 0, 1, 0, 0, -(sector.lonMin().degrees - vertexOffset.x));
-        fillArray4(this.clipPlaneArray, 4, -1, 0, 0, sector.lonMax().degrees - vertexOffset.x);
-        fillArray4(this.clipPlaneArray, 8, 0, 1, 0, -(sector.latMin().degrees - vertexOffset.y));
-        fillArray4(this.clipPlaneArray, 12, 0, -1, 0, sector.latMax().degrees - vertexOffset.y);
+        fillArray4(this.clipPlaneArray, 0, 1, 0, 0, -(sector.lonMin - vertexOffset.x));
+        fillArray4(this.clipPlaneArray, 4, -1, 0, 0, sector.lonMax - vertexOffset.x);
+        fillArray4(this.clipPlaneArray, 8, 0, 1, 0, -(sector.latMin - vertexOffset.y));
+        fillArray4(this.clipPlaneArray, 12, 0, -1, 0, sector.latMax - vertexOffset.y);
 
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         for (int i = 0; i < 4; i++) {
@@ -970,7 +971,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
             {
                 callback.beginBoundary();
                 for (LatLon location : LatLon.cutLocationsAlongDateLine(locations, pole, null)) {
-                    callback.vertex(location.latitude.degrees, location.longitude.degrees);
+                    callback.vertex(location.latitude, location.longitude);
                 }
                 callback.endBoundary();
             }
@@ -979,7 +980,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
                 for (List<LatLon> antimeridianLocations : LatLon.repeatLocationsAroundDateline(locations)) {
                     callback.beginBoundary();
                     for (LatLon location : antimeridianLocations) {
-                        callback.vertex(location.latitude.degrees, location.longitude.degrees);
+                        callback.vertex(location.latitude, location.longitude);
                     }
                     callback.endBoundary();
                 }

@@ -211,8 +211,7 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever {
     }
 
     protected final URLConnection openConnection() throws IOException {
-        Proxy proxy = WWIO.configureProxy();
-        this.connection = proxy != null ? this.url.openConnection(proxy) : this.url.openConnection();
+        this.connection = connection();
 
         if (this.connection == null) // java.net.URL docs imply that this won't happen. We check anyway.
         {
@@ -235,6 +234,11 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever {
         return connection;
     }
 
+    protected URLConnection connection() throws IOException {
+        Proxy proxy = WWIO.configureProxy();
+        return proxy != null ? this.url.openConnection(proxy) : this.url.openConnection();
+    }
+
     protected static void configureSSLContext(HttpsURLConnection connection) {
         SSLContext sslContext = (SSLContext) WorldWind.getValue(AVKey.HTTP_SSL_CONTEXT);
 
@@ -243,19 +247,19 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever {
     }
 
     protected ByteBuffer read() throws Exception {
-        try {
+//        try {
             ByteBuffer buffer = this.doRead(this.connection);
             if (buffer == null)
                 this.contentLength = 0;
             return buffer;
-        } catch (Exception e) {
-            if (!(e instanceof SocketTimeoutException || e instanceof UnknownHostException
-                || e instanceof SocketException)) {
-                Logging.logger().log(Level.SEVERE,
-                    Logging.getMessage("URLRetriever.ErrorReadingFromConnection", this.url), e);
-            }
-            throw e;
-        }
+//        } catch (Exception e) {
+//            if (!(e instanceof SocketTimeoutException || e instanceof UnknownHostException
+//                || e instanceof SocketException)) {
+//                Logging.logger().log(Level.SEVERE,
+//                    Logging.getMessage("URLRetriever.ErrorReadingFromConnection", this.url), e);
+//            }
+//            throw e;
+//        }
     }
 
     /**

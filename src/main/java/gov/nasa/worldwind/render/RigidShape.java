@@ -871,12 +871,13 @@ public abstract class RigidShape extends AbstractShape {
         if (pos == null)
             return null;
 
-        double elevation = globe.getElevation(pos.latitude, pos.longitude);
+        double elevation = globe.getElevation(pos);
 
         double height;
-        if (this.getAltitudeMode() == WorldWind.CLAMP_TO_GROUND)
+        final int altMode = this.getAltitudeMode();
+        if (altMode == WorldWind.CLAMP_TO_GROUND)
             height = 0.0d + elevation * verticalExaggeration;
-        else if (this.getAltitudeMode() == WorldWind.RELATIVE_TO_GROUND)
+        else if (altMode == WorldWind.RELATIVE_TO_GROUND)
             height = pos.getAltitude() + elevation * verticalExaggeration;
         else    // ABSOLUTE elevation mode
         {
@@ -897,11 +898,11 @@ public abstract class RigidShape extends AbstractShape {
      * @throws IllegalArgumentException if globe is null
      */
     public Matrix computeRenderMatrix(Globe globe, double verticalExaggeration) {
-        if (globe == null) {
-            String message = Logging.getMessage("nullValue.GlobeIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (globe == null) {
+//            String message = Logging.getMessage("nullValue.GlobeIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         Matrix matrix = Matrix.IDENTITY;
 

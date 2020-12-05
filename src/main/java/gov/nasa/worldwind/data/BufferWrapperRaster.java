@@ -311,9 +311,9 @@ public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable
         // Compute the the transform from source to destination coordinates. In this computation a pixel is assumed
         // to have no dimension. We measure the distance between pixels rather than some pixel dimension.
 
-        double ty = (destHeight - 1) * -(sourceSector.latMax().degrees - destSector.latMax().degrees)
+        double ty = (destHeight - 1) * -(sourceSector.latMax - destSector.latMax)
             / destSector.latDelta;
-        double tx = (destWidth - 1) * (sourceSector.lonMin().degrees - destSector.lonMin().degrees)
+        double tx = (destWidth - 1) * (sourceSector.lonMin - destSector.lonMin)
             / destSector.lonDelta;
 
         double sy = ((double) (destHeight - 1) / (sourceHeight - 1))
@@ -332,8 +332,8 @@ public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable
         // Compute the the transform from geographic to raster coordinates. In this computation a pixel is assumed
         // to have no dimension. We measure the distance between pixels rather than some pixel dimension.
 
-        double ty = -sector.latMax().degrees;
-        double tx = -sector.lonMin().degrees;
+        double ty = -sector.latMax;
+        double tx = -sector.lonMin;
 
         double sy = -((height - 1) / sector.latDelta);
         double sx = ((width - 1) / sector.lonDelta);

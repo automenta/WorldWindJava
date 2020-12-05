@@ -78,11 +78,11 @@ public class Airhead extends BasicArea {
 
         Sector sector = Sector.boundingSector(locations);
 
-        Angle minLat = sector.latMin();
-        Angle avgLon = sector.getCentroid().longitude;
+        double minLat = sector.latMin;
+        double avgLon = sector.getCentroid().longitude;
 
         // Place the label at Southern edge of the area, at the average longitude.
-        return new Position(minLat, avgLon, 0);
+        return Position.fromDegrees(minLat, avgLon);
     }
 
     /**

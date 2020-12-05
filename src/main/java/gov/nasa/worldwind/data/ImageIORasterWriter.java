@@ -97,8 +97,8 @@ public class ImageIORasterWriter extends AbstractDataRasterWriter {
         double yPixelSize = -sector.latDelta / size[1];
         double xCoeff = 0.0;
         double yCoeff = 0.0;
-        double xLocation = sector.lonMin().degrees + (xPixelSize * 0.5);
-        double yLocation = sector.latMax().degrees + (yPixelSize * 0.5);
+        double xLocation = sector.lonMin + (xPixelSize * 0.5);
+        double yLocation = sector.latMax + (yPixelSize * 0.5);
 
         try (PrintWriter out = new PrintWriter(file)) {
             out.println(xPixelSize);

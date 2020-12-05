@@ -224,8 +224,8 @@ public class FramebufferTexture implements WWTexture {
         double sx = 2.0 / sector.lonDelta;
         double sy = 2.0 / sector.latDelta;
 
-        double tx = -sector.lonMin().degrees;
-        double ty = -sector.latMin().degrees;
+        double tx = -sector.lonMin;
+        double ty = -sector.latMin;
 
         Matrix transform = Matrix.IDENTITY;
         transform = transform.multiply(Matrix.fromTranslation(-1.0, -1.0, 0.0));

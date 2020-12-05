@@ -305,8 +305,8 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
     protected static LatLon computeIntegralLevelZeroTileDelta(LatLon originalDelta) {
         // Find a level zero tile delta that's an integral factor of each dimension.
 
-        double latDelta = Math.ceil(originalDelta.latitude.degrees);
-        double lonDelta = Math.ceil(originalDelta.longitude.degrees);
+        double latDelta = Math.ceil(originalDelta.latitude);
+        double lonDelta = Math.ceil(originalDelta.longitude);
 
         while (180 % latDelta != 0) {
             --latDelta;
@@ -328,16 +328,16 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
     }
 
     protected static boolean isWithinLatLonLimits(Sector sector, LatLon tileDelta, LatLon tileOrigin) {
-        double minLat = Math.floor((sector.latMin().degrees - tileOrigin.getLatitude().degrees)
+        double minLat = Math.floor((sector.latMin - tileOrigin.getLatitude().degrees)
             / tileDelta.getLatitude().degrees);
         minLat = tileOrigin.getLatitude().degrees + minLat * tileDelta.getLatitude().degrees;
-        double maxLat = Math.ceil((sector.latMax().degrees - tileOrigin.getLatitude().degrees)
+        double maxLat = Math.ceil((sector.latMax - tileOrigin.getLatitude().degrees)
             / tileDelta.getLatitude().degrees);
         maxLat = tileOrigin.getLatitude().degrees + maxLat * tileDelta.getLatitude().degrees;
-        double minLon = Math.floor((sector.lonMin().degrees - tileOrigin.getLongitude().degrees)
+        double minLon = Math.floor((sector.lonMin - tileOrigin.getLongitude().degrees)
             / tileDelta.getLongitude().degrees);
         minLon = tileOrigin.getLongitude().degrees + minLon * tileDelta.getLongitude().degrees;
-        double maxLon = Math.ceil((sector.lonMax().degrees - tileOrigin.getLongitude().degrees)
+        double maxLon = Math.ceil((sector.lonMax - tileOrigin.getLongitude().degrees)
             / tileDelta.getLongitude().degrees);
         maxLon = tileOrigin.getLongitude().degrees + maxLon * tileDelta.getLongitude().degrees;
         return Sector.fromDegrees(minLat, maxLat, minLon, maxLon).isWithinLatLonLimits();
@@ -602,7 +602,7 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
         Angle t1 = Angle.midAngle(t0, t2);
 
         int row = tile.row;
-        int col = tile.column;
+        int col = tile.col;
 
         Tile[] subTiles = new Tile[4];
         subTiles[0] = new Tile(new Sector(p0, p1, t0, t1), nextLevel, 2 * row, 2 * col);

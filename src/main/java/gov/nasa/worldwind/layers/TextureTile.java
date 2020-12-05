@@ -215,7 +215,7 @@ public class TextureTile extends Tile implements SurfaceTile {
         Angle t1 = Angle.midAngle(t0, t2);
 
         int row = this.row;
-        int col = column;
+        int col = this.col;
 
         TextureTile[] subTiles = new TextureTile[4];
 
@@ -345,7 +345,7 @@ public class TextureTile extends Tile implements SurfaceTile {
         // TODO: remove the latitude range restriction if a better tessellator fixes the problem.
 
         boolean useMipmapFilter = (this.hasMipmapData || t.isUsingAutoMipmapGeneration())
-            && sector.latMax().degrees < 80.0d && sector.latMin().degrees > -80;
+            && sector.latMax < 80.0d && sector.latMin > -80;
 
         // Set the texture minification filter. If the texture qualifies for mipmaps, apply a minification filter that
         // will access the mipmap data using the highest quality algorithm. If the anisotropic texture filter is
@@ -478,7 +478,7 @@ public class TextureTile extends Tile implements SurfaceTile {
         double twoToTheN = Math.pow(2, levelDelta);
         double oneOverTwoToTheN = 1 / twoToTheN;
 
-        double sShift = oneOverTwoToTheN * (column % twoToTheN);
+        double sShift = oneOverTwoToTheN * (col % twoToTheN);
         double tShift = oneOverTwoToTheN * (row % twoToTheN);
 
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.

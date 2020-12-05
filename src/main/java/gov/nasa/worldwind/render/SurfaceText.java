@@ -465,12 +465,12 @@ public class SurfaceText extends AbstractSurfaceObject implements GeographicText
      * @param sdc Current surface tile draw context.
      */
     protected void applyDrawTransform(DrawContext dc, SurfaceTileDrawContext sdc) {
-        Vec4 point = new Vec4(this.location.getLongitude().degrees, this.location.getLatitude().degrees, 1);
+        Vec4 point = new Vec4(this.location.getLongitude().degrees, this.location.latitude, 1);
         // If the text box spans the anti-meridian and we're drawing tiles to the right of the anti-meridian, then we
         // need to map the translation into coordinates relative to that side of the anti-meridian.
         if (this.spansAntimeridian &&
-            Math.signum(sdc.getSector().lonMin().degrees) != Math.signum(this.drawLocation.longitude.degrees)) {
-            point = new Vec4(this.location.getLongitude().degrees - 360, this.location.getLatitude().degrees, 1);
+            Math.signum(sdc.getSector().lonMin) != Math.signum(this.drawLocation.longitude)) {
+            point = new Vec4(this.location.getLongitude().degrees - 360, this.location.latitude, 1);
         }
         point = point.transformBy4(sdc.getModelviewMatrix());
 
@@ -566,10 +566,10 @@ public class SurfaceText extends AbstractSurfaceObject implements GeographicText
         double dxRadians = (point.getX() * metersPerPixel) / radius;
         double dyRadians = (point.getY() * metersPerPixel) / radius;
 
-        double minLat = this.location.latitude.addRadians(dyRadians).degrees;
-        double maxLat = this.location.latitude.addRadians(dyRadians + heightInRadians).degrees;
-        double minLon = this.location.longitude.addRadians(dxRadians).degrees;
-        double maxLon = this.location.longitude.addRadians(dxRadians + widthInRadians).degrees;
+        double minLat = this.location.getLatitude().addRadians(dyRadians).degrees;
+        double maxLat = this.location.getLatitude().addRadians(dyRadians + heightInRadians).degrees;
+        double minLon = this.location.getLongitude().addRadians(dxRadians).degrees;
+        double maxLon = this.location.getLongitude().addRadians(dxRadians + widthInRadians).degrees;
 
         this.drawLocation = LatLon.fromDegrees(minLat, minLon);
 

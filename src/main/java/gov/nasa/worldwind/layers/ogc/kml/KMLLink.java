@@ -385,10 +385,10 @@ public class KMLLink extends KMLAbstractObject {
             if (!WWUtil.isEmpty(s)) {
                 Sector viewBounds = this.computeVisibleBounds(dc);
                 //noinspection ConstantConditions
-                s = s.replaceAll("\\[bboxWest]", Double.toString(viewBounds.lonMin().degrees));
-                s = s.replaceAll("\\[bboxSouth]", Double.toString(viewBounds.latMin().degrees));
-                s = s.replaceAll("\\[bboxEast]", Double.toString(viewBounds.lonMax().degrees));
-                s = s.replaceAll("\\[bboxNorth]", Double.toString(viewBounds.latMax().degrees));
+                s = s.replaceAll("\\[bboxWest]", Double.toString(viewBounds.lonMin));
+                s = s.replaceAll("\\[bboxSouth]", Double.toString(viewBounds.latMin));
+                s = s.replaceAll("\\[bboxEast]", Double.toString(viewBounds.lonMax));
+                s = s.replaceAll("\\[bboxNorth]", Double.toString(viewBounds.latMax));
 
                 View view = dc.getView();
 

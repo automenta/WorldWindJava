@@ -177,7 +177,7 @@ public class TriangleWavePositionIterator implements Iterator {
                 LatLon ll = LatLon.interpolateGreatCircle(0.5, prevPos, this.waveEndPosition);
                 Vec4 midPoint = this.globe.computePointFromLocation(ll);
                 Vec4 vAB = pNext.subtract3(thisPoint);
-                Vec4 normal = this.globe.computeSurfaceNormalAtLocation(ll.latitude, ll.longitude);
+                Vec4 normal = this.globe.computeSurfaceNormalAtLocation(ll.getLatitude(), ll.getLongitude());
                 Vec4 perpendicular = vAB.cross3(normal);
                 perpendicular = perpendicular.normalize3().multiply3(this.amplitude);
                 Vec4 toothPoint = midPoint.add3(perpendicular);

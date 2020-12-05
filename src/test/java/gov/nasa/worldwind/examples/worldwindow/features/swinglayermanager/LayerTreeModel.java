@@ -10,7 +10,7 @@ import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.examples.worldwindow.core.Constants;
 import gov.nasa.worldwind.examples.worldwindow.core.layermanager.LayerPath;
 import gov.nasa.worldwind.examples.worldwindow.util.Util;
-import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.util.WWUtil;
 import gov.nasa.worldwind.video.LayerList;
 

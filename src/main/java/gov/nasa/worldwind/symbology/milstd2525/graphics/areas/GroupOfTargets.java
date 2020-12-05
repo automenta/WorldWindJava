@@ -65,7 +65,7 @@ public class GroupOfTargets extends BasicArea {
             LatLon mid = LatLon.interpolateGreatCircle(0.5, locA, locB);
 
             // Determine if the midpoint of the segment is farther North our North-most point
-            if (mid.latitude.compareTo(northMost.latitude) > 0) {
+            if (Double.compare(mid.latitude, northMost.latitude) > 0) {
                 northMost = mid;
             }
         }

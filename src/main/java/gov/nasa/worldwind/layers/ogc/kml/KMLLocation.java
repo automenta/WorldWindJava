@@ -57,8 +57,8 @@ public class KMLLocation extends KMLAbstractObject {
     }
 
     public void setPosition(Position pos) {
-        this.setField(LATITUDE_KEY, pos.latitude.degrees);
-        this.setField(LONGITUDE_KEY, pos.longitude.degrees);
+        this.setField(LATITUDE_KEY, pos.latitude);
+        this.setField(LONGITUDE_KEY, pos.longitude);
         this.setField(ALTITUDE_KEY, pos.elevation);
     }
 }

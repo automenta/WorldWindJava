@@ -1764,10 +1764,10 @@ public class RestorableSupport {
 
         RestorableSupport.StateObject pStateObj = addStateObject(context, name);
         if (pStateObj != null) {
-            addStateValueAsDouble(pStateObj, "minLatitudeDegrees", sector.latMin().degrees);
-            addStateValueAsDouble(pStateObj, "maxLatitudeDegrees", sector.latMax().degrees);
-            addStateValueAsDouble(pStateObj, "minLongitudeDegrees", sector.lonMin().degrees);
-            addStateValueAsDouble(pStateObj, "maxLongitudeDegrees", sector.lonMax().degrees);
+            addStateValueAsDouble(pStateObj, "minLatitudeDegrees", sector.latMin);
+            addStateValueAsDouble(pStateObj, "maxLatitudeDegrees", sector.latMax);
+            addStateValueAsDouble(pStateObj, "minLongitudeDegrees", sector.lonMin);
+            addStateValueAsDouble(pStateObj, "maxLongitudeDegrees", sector.lonMax);
         }
     }
 

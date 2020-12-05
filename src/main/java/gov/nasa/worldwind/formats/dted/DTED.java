@@ -330,7 +330,7 @@ public class DTED {
         metadata.set(AVKey.SECTOR, sector);
 
         // WW uses Upper Left corner as an Origin, let's calculate a new origin
-        LatLon wwOrigin = LatLon.fromDegrees(sector.latMax().degrees, sector.lonMin().degrees);
+        LatLon wwOrigin = LatLon.fromDegrees(sector.latMax, sector.lonMin);
         metadata.set(AVKey.ORIGIN, wwOrigin);
 
         String classLevel = readClassLevel(new String(uhl, 32, 3));

@@ -1047,7 +1047,7 @@ public class SurfaceObjectTileBuilder {
         // 50% has the same effect on object size as decreasing the distance between the eye and the object by 50%.
         // The detail hint is reduced for tiles above 75 degrees north and below 75 degrees south.
         double s = this.getSplitScale();
-        if (tile.sector.latMin().degrees >= 75 || tile.sector.latMax().degrees <= -75)
+        if (tile.sector.latMin >= 75 || tile.sector.latMax <= -75)
             s *= 0.85;
         double detailScale = Math.pow(10, -s);
         double fieldOfViewScale = dc.getView().getFieldOfView().tanHalfAngle() / Angle.fromDegrees(45).tanHalfAngle();

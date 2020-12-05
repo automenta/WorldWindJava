@@ -379,9 +379,9 @@ public class Orbit extends AbstractAirspace {
         Globe globe = dc.getGlobe();
         double[] altitudes = this.getAltitudes(dc.getVerticalExaggeration());
         Vec4 point1 = globe.computeEllipsoidalPointFromPosition(
-            this.location1.latitude, this.location1.longitude, altitudes[0]);
+            this.location1.getLatitude(), this.location1.getLongitude(), altitudes[0]);
         Vec4 point2 = globe.computeEllipsoidalPointFromPosition(
-            this.location2.latitude, this.location2.longitude, altitudes[0]);
+            this.location2.getLatitude(), this.location2.getLongitude(), altitudes[0]);
         Vec4 centerPoint = Vec4.mix3(0.5, point1, point2);
         Position centerPos = globe.computePositionFromEllipsoidalPoint(centerPoint);
         return globe.computePointFromPosition(centerPos.latitude, centerPos.longitude,
@@ -393,11 +393,11 @@ public class Orbit extends AbstractAirspace {
     //**************************************************************//
 
     protected Matrix computeEllipsoidalTransform(Globe globe, double verticalExaggeration) {
-        if (globe == null) {
-            String message = Logging.getMessage("nullValue.GlobeIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (globe == null) {
+//            String message = Logging.getMessage("nullValue.GlobeIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         double[] altitudes = this.getAltitudes(verticalExaggeration);
         double radius = this.width / 2.0;
@@ -408,7 +408,7 @@ public class Orbit extends AbstractAirspace {
             this.location2.getLatitude(), this.location2.getLongitude(), altitudes[0]);
         Vec4 centerPoint = Vec4.mix3(0.5, point1, point2);
         Position centerPos = globe.computePositionFromEllipsoidalPoint(centerPoint);
-        Vec4 upVec = globe.computeEllipsoidalNormalAtLocation(centerPos.latitude, centerPos.longitude);
+        Vec4 upVec = globe.computeEllipsoidalNormalAtLocation(centerPos.getLatitude(), centerPos.getLongitude());
         Vec4 axis = point2.subtract3(point1);
         axis = axis.normalize3();
 
@@ -422,21 +422,21 @@ public class Orbit extends AbstractAirspace {
     }
 
     protected void doRenderGeometry(DrawContext dc, String drawStyle) {
-        if (dc == null) {
-            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (dc.getGL() == null) {
-            String message = Logging.getMessage("nullValue.DrawingContextGLIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (dc.getGlobe() == null) {
-            String message = Logging.getMessage("nullValue.DrawingContextGlobeIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (dc == null) {
+//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//        if (dc.getGL() == null) {
+//            String message = Logging.getMessage("nullValue.DrawingContextGLIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//        if (dc.getGlobe() == null) {
+//            String message = Logging.getMessage("nullValue.DrawingContextGlobeIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         LatLon[] locations = this.getAdjustedLocations(dc.getGlobe());
         double[] altitudes = this.getAltitudes(dc.getVerticalExaggeration());

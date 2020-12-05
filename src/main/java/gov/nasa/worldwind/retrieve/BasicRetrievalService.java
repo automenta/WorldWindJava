@@ -7,7 +7,7 @@ package gov.nasa.worldwind.retrieve;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.util.*;
+import gov.nasa.worldwind.util.Logging;
 
 import javax.net.ssl.SSLHandshakeException;
 import java.net.*;

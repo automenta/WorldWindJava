@@ -426,23 +426,23 @@ public class BasicElevationModelBulkDownloader extends BulkRetrievalThread {
         if (numRegions > div * div)
             return sector.subdivide(div);
 
-        final double dLat = sector.latDelta().degrees / div;
-        final double dLon = sector.lonDelta().degrees / div;
+        final double dLat = sector.latDelta / div;
+        final double dLon = sector.lonDelta / div;
         ArrayList<Sector> regions = new ArrayList<>(numRegions);
         Random rand = new Random();
         while (regions.size() < numRegions) {
             int row = rand.nextInt(div);
             int col = rand.nextInt(div);
 
-            double maxLat = (row + 1 < div) ? sector.latMin().degrees + dLat * row + dLat
-                : sector.latMax().degrees;
+            double maxLat = (row + 1 < div) ? sector.latMin + dLat * row + dLat
+                : sector.latMax;
 
-            double maxLon = (col + 1 < div) ? sector.lonMin().degrees + dLon * col + dLon
-                : sector.lonMax().degrees;
+            double maxLon = (col + 1 < div) ? sector.lonMin + dLon * col + dLon
+                : sector.lonMax;
 
             Sector s = Sector.fromDegrees(
-                sector.latMin().degrees + dLat * row, maxLat,
-                sector.lonMin().degrees + dLon * col, maxLon);
+                sector.latMin + dLat * row, maxLat,
+                sector.lonMin + dLon * col, maxLon);
 
             if (!regions.contains(s))
                 regions.add(s);
@@ -452,8 +452,8 @@ public class BasicElevationModelBulkDownloader extends BulkRetrievalThread {
     }
 
     protected static Iterator<Sector> getRegionIterator(final Sector sector, final int div) {
-        final double dLat = sector.latDelta().degrees / div;
-        final double dLon = sector.lonDelta().degrees / div;
+        final double dLat = sector.latDelta / div;
+        final double dLon = sector.lonDelta / div;
 
         return new Iterator<>() {
             int row = 0;
@@ -464,15 +464,15 @@ public class BasicElevationModelBulkDownloader extends BulkRetrievalThread {
             }
 
             public Sector next() {
-                double maxLat = (row + 1 < div) ? sector.latMin().degrees + dLat * row + dLat
-                    : sector.latMax().degrees;
+                double maxLat = (row + 1 < div) ? sector.latMin + dLat * row + dLat
+                    : sector.latMax;
 
-                double maxLon = (col + 1 < div) ? sector.lonMin().degrees + dLon * col + dLon
-                    : sector.lonMax().degrees;
+                double maxLon = (col + 1 < div) ? sector.lonMin + dLon * col + dLon
+                    : sector.lonMax;
 
                 Sector s = Sector.fromDegrees(
-                    sector.latMin().degrees + dLat * row, maxLat,
-                    sector.lonMin().degrees + dLon * col, maxLon);
+                    sector.latMin + dLat * row, maxLat,
+                    sector.lonMin + dLon * col, maxLon);
 
                 col++;
                 if (col >= div) {

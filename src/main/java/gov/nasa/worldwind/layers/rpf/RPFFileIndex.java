@@ -216,10 +216,10 @@ public class RPFFileIndex {
 
         if (bs != null) {
             bs = Sector.fromDegrees(
-                clamp(bs.latMin().degrees, -90.0d, 90.0d),
-                clamp(bs.latMax().degrees, -90.0d, 90.0d),
-                clamp(bs.lonMin().degrees, -180.0d, 180.0d),
-                clamp(bs.lonMax().degrees, -180.0d, 180.0d));
+                clamp(bs.latMin, -90.0d, 90.0d),
+                clamp(bs.latMax, -90.0d, 90.0d),
+                clamp(bs.lonMin, -180.0d, 180.0d),
+                clamp(bs.lonMax, -180.0d, 180.0d));
         }
         this.properties.setBoundingSector(bs);
     }

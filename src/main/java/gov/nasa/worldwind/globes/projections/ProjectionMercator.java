@@ -34,13 +34,13 @@ public class ProjectionMercator extends AbstractGeographicProjection {
     @Override
     public Vec4 geographicToCartesian(Globe globe, Angle latitude, Angle longitude, double metersElevation,
         Vec4 offset) {
-        if (latitude.degrees > this.getProjectionLimits().latMax().degrees)
+        if (latitude.degrees > this.getProjectionLimits().latMax)
             latitude = this.getProjectionLimits().latMax();
-        if (latitude.degrees < this.getProjectionLimits().latMin().degrees)
+        if (latitude.degrees < this.getProjectionLimits().latMin)
             latitude = this.getProjectionLimits().latMin();
-        if (longitude.degrees > this.getProjectionLimits().lonMax().degrees)
+        if (longitude.degrees > this.getProjectionLimits().lonMax)
             longitude = this.getProjectionLimits().lonMax();
-        if (longitude.degrees < this.getProjectionLimits().lonMin().degrees)
+        if (longitude.degrees < this.getProjectionLimits().lonMin)
             longitude = this.getProjectionLimits().lonMin();
 
         double xOffset = offset != null ? offset.x : 0;

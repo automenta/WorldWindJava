@@ -7,8 +7,8 @@
 package gov.nasa.worldwind.examples.worldwindow.features;
 
 import gov.nasa.worldwind.examples.worldwindow.core.*;
-import gov.nasa.worldwind.layers.earth.UTMGraticuleLayer;
 import gov.nasa.worldwind.layers.Layer;
+import gov.nasa.worldwind.layers.earth.UTMGraticuleLayer;
 
 /**
  * @author tag

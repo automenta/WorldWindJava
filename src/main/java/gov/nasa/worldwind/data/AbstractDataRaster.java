@@ -119,10 +119,10 @@ public abstract class AbstractDataRaster extends AVListImpl implements DataRaste
         Point2D ul = new Point2D.Double();
         Point2D lr = new Point2D.Double();
 
-        geoPoint.setLocation(clipSector.lonMin().degrees, clipSector.latMax().degrees);
+        geoPoint.setLocation(clipSector.lonMin, clipSector.latMax);
         geographicToRaster.transform(geoPoint, ul);
 
-        geoPoint.setLocation(clipSector.lonMax().degrees, clipSector.latMin().degrees);
+        geoPoint.setLocation(clipSector.lonMax, clipSector.latMin);
         geographicToRaster.transform(geoPoint, lr);
 
         int x = (int) Math.floor(ul.getX());
@@ -139,9 +139,9 @@ public abstract class AbstractDataRaster extends AVListImpl implements DataRaste
         // Compute the the transform from source to destination coordinates. In this computation a pixel is assumed
         // to cover a finite area.
 
-        double ty = destHeight * -(sourceSector.latMax().degrees - destSector.latMax().degrees)
+        double ty = destHeight * -(sourceSector.latMax - destSector.latMax)
             / destSector.latDelta;
-        double tx = destWidth * (sourceSector.lonMin().degrees - destSector.lonMin().degrees)
+        double tx = destWidth * (sourceSector.lonMin - destSector.lonMin)
             / destSector.lonDelta;
 
         double sy = ((double) destHeight / sourceHeight)
@@ -159,8 +159,8 @@ public abstract class AbstractDataRaster extends AVListImpl implements DataRaste
         // Compute the the transform from geographic to raster coordinates. In this computation a pixel is assumed
         // to cover a finite area.
 
-        double ty = -sector.latMax().degrees;
-        double tx = -sector.lonMin().degrees;
+        double ty = -sector.latMax;
+        double tx = -sector.lonMin;
 
         double sy = -(height / sector.latDelta);
         double sx = (width / sector.lonDelta);

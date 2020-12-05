@@ -9,7 +9,7 @@ package gov.nasa.worldwind.examples.worldwindow.util;
 import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.examples.worldwindow.core.Controller;
 import gov.nasa.worldwind.examples.worldwindow.core.layermanager.LayerPath;
-import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.video.LayerList;
 
 import java.util.*;

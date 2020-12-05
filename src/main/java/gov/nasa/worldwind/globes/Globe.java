@@ -188,6 +188,10 @@ public interface Globe extends WWObject, Extent {
      */
     Vec4 computePointFromPosition(Angle latitude, Angle longitude, double metersElevation);
 
+    default Vec4 computePointFromPosition(double latitude, double longitude, double metersElevation) {
+        return computePointFromPosition(Angle.fromDegrees(latitude), Angle.fromDegrees(longitude), metersElevation);
+    }
+
     /**
      * Computes a cartesian point from a geographic location and elevation.
      *
@@ -528,4 +532,8 @@ public interface Globe extends WWObject, Extent {
      * @return true if the given point is above the given elevation, otherwise false.
      */
     boolean isPointAboveElevation(Vec4 point, double elevation);
+
+    default double getElevation(Position pos) {
+        return getElevation(pos.getLatitude(), pos.getLongitude());
+    }
 }

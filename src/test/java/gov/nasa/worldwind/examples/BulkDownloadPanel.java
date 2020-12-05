@@ -72,10 +72,10 @@ public class BulkDownloadPanel extends JPanel {
 
     public static String makeSectorDescription(Sector sector) {
         return String.format("S %7.4f\u00B0 W %7.4f\u00B0 N %7.4f\u00B0 E %7.4f\u00B0",
-            sector.latMin().degrees,
-            sector.lonMin().degrees,
-            sector.latMax().degrees,
-            sector.lonMax().degrees);
+            sector.latMin,
+            sector.lonMin,
+            sector.latMax,
+            sector.lonMax);
     }
 
     public static String makeSizeDescription(long size) {

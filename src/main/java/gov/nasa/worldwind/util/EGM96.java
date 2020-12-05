@@ -89,11 +89,11 @@ public class EGM96 {
     }
 
     public double getOffset(Angle latitude, Angle longitude) {
-        if (latitude == null || longitude == null) {
-            String msg = Logging.getMessage("nullValue.AngleIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (latitude == null || longitude == null) {
+//            String msg = Logging.getMessage("nullValue.AngleIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         // Return 0 for all offsets if the file failed to load. A log message of the failure will have been generated
         // by the load method.

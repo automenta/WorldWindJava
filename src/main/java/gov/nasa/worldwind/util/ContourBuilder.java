@@ -232,8 +232,8 @@ public class ContourBuilder {
         this.assembleContourCells(value);
         this.traverseContourCells();
 
-        double maxLat = sector.latMax().degrees;
-        double minLon = sector.lonMin().degrees;
+        double maxLat = sector.latMax;
+        double minLon = sector.lonMin;
         double deltaLat = sector.latDelta;
         double deltaLon = sector.lonDelta;
 

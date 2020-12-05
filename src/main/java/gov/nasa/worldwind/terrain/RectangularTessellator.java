@@ -526,7 +526,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
         // The detail hint is reduced by 50% for tiles above 75 degrees north and below 75 degrees south.
         double s = RectangularTessellator.computeTileResolutionTarget(dc, tile);
         final Sector sector = tile.getSector();
-        if (sector.latMin().degrees >= 75 || sector.latMax().degrees <= -75) {
+        if (sector.latMin >= 75 || sector.latMax <= -75) {
             s *= 0.5;
         }
         double detailScale = Math.pow(10, -s);
@@ -575,7 +575,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
         MemoryCache cache = WorldWind.cache(CACHE_ID);
         CacheKey cacheKey = RectangularTessellator.createCacheKey(dc, tile);
         tile.ri = (RenderInfo) cache.getObject(cacheKey);
-        if (tile.ri != null && tile.ri.time >= System.nanoTime() - 1_000_000 * this.getUpdateFrequency()) {
+        if (tile.ri != null && tile.ri.time >= System.currentTimeMillis() - this.getUpdateFrequency()) {
             return;
         }
 
@@ -1661,7 +1661,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
             //Fill in the remaining variables from the stored buffers and buffer IDs for easier access
             this.indices = indexLists.get(this.density);
             this.texCoords = textureCoords.get(this.density);
-            this.time = System.nanoTime();
+            this.time = System.currentTimeMillis();
 
             if (dc.getGLRuntimeCapabilities().isUseVertexBufferObject()) {
                 this.fillVerticesVBO(dc);
@@ -1706,7 +1706,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
          * @param dc the current draw context.
          */
         protected void update(DrawContext dc) {
-            this.time = System.nanoTime();
+            this.time = System.currentTimeMillis();
 
             if (dc.getGLRuntimeCapabilities().isUseVertexBufferObject())
                 this.fillVerticesVBO(dc);

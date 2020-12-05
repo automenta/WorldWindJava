@@ -10,7 +10,7 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.geom.coords.*;
 import gov.nasa.worldwind.globes.Globe;
-import gov.nasa.worldwind.layers.tool.*;
+import gov.nasa.worldwind.layers.tool.GraticuleLayer;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.Logging;
 import gov.nasa.worldwind.view.orbit.OrbitView;
@@ -454,22 +454,19 @@ public class UTMBaseGraticuleLayer extends GraticuleLayer {
         }
 
         public void computeZone(DrawContext dc) {
-            try {
+//            try {
                 Position centerPos = ((OrbitView) dc.getView()).getCenterPosition();
                 if (centerPos != null) {
-                    if (centerPos.latitude.degrees <= UTM_MAX_LATITUDE
-                        && centerPos.latitude.degrees >= UTM_MIN_LATITUDE) {
-                        UTMCoord UTM = UTMCoord.fromLatLon(centerPos.getLatitude(), centerPos.getLongitude(),
-                            dc.getGlobe());
-                        this.zone = UTM.getZone();
-                    }
-                    else
+                    if (centerPos.latitude <= UTM_MAX_LATITUDE
+                        && centerPos.latitude >= UTM_MIN_LATITUDE) {
+                        this.zone = UTMCoord.fromLatLon(centerPos.getLatitude(), centerPos.getLongitude(), dc.getGlobe()).getZone();
+                    } else
                         this.zone = 0;
                 }
-            }
-            catch (Exception ex) {
-                this.zone = 0;
-            }
+//            }
+//            catch (Exception ex) {
+//                this.zone = 0;
+//            }
         }
 
         public void clear() {
@@ -983,8 +980,8 @@ public class UTMBaseGraticuleLayer extends GraticuleLayer {
                     else if (this.isPositionInside(new Position(this.squareCenter, 0))) {
                         labelPos = this.squareCenter;
                     }
-                    else if (this.squareCenter.getLatitude().degrees <= this.UTMZoneSector.latMax().degrees
-                        && this.squareCenter.getLatitude().degrees >= this.UTMZoneSector.latMin().degrees) {
+                    else if (this.squareCenter.getLatitude().degrees <= this.UTMZoneSector.latMax
+                        && this.squareCenter.getLatitude().degrees >= this.UTMZoneSector.latMin) {
                         labelPos = this.centroid;
                     }
                     if (labelPos != null) {

@@ -95,6 +95,9 @@ public class MGRSCoord {
     public static MGRSCoord fromLatLon(Angle latitude, Angle longitude, Globe globe) {
         return fromLatLon(latitude, longitude, globe, 5);
     }
+    public static MGRSCoord fromLatLon(double latitude, double longitude, Globe globe) {
+        return fromLatLon(Angle.fromDegrees(latitude), Angle.fromDegrees(longitude), globe);
+    }
 
     /**
      * Create a MGRS coordinate from a pair of latitude and longitude <code>Angle</code> with the given precision or

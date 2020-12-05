@@ -265,21 +265,21 @@ public class BasicOrbitViewLimits extends BasicViewPropertyLimits implements Orb
      */
     @Override
     public Position limitCenterPosition(View view, Position position) {
-        if (view == null) {
-            String message = Logging.getMessage("nullValue.ViewIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (position == null) {
-            String message = Logging.getMessage("nullValue.PositionIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (view == null) {
+//            String message = Logging.getMessage("nullValue.ViewIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//
+//        if (position == null) {
+//            String message = Logging.getMessage("nullValue.PositionIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         Sector sector = this.centerLocationLimits;
-        Angle lat = Angle.clamp(position.latitude, sector.latMin(), sector.latMax());
-        Angle lon = Angle.clamp(position.longitude, sector.lonMin(), sector.lonMax());
+        double lat = Angle.clamp(position.latitude, sector.latMin, sector.latMax);
+        double lon = Angle.clamp(position.longitude, sector.lonMin, sector.lonMax);
         double alt = WWMath.clamp(position.elevation, this.minCenterElevation, this.maxCenterElevation);
 
         return new Position(lat, lon, alt);

@@ -280,9 +280,9 @@ class RPFGenerator {
         private void drawImageIntoRequest(BufferedImage reqImage, Sector reqSector, RenderedImage srcImage,
             Sector srcSector) {
 
-            double tx = (srcSector.lonMin().degrees - reqSector.lonMin().degrees) * (
+            double tx = (srcSector.lonMin - reqSector.lonMin) * (
                 reqImage.getWidth() / reqSector.lonDelta);
-            double ty = (reqSector.latMax().degrees - srcSector.latMax().degrees) * (
+            double ty = (reqSector.latMax - srcSector.latMax) * (
                 reqImage.getHeight() / reqSector.latDelta);
             double sx = (reqImage.getWidth() / reqSector.lonDelta) * (
                 srcSector.lonDelta / srcImage.getWidth());

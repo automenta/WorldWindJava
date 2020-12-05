@@ -142,8 +142,8 @@ public class EllipsoidalGlobeTest
                 String msg = "At x " + x + ", and z " + z;
                 assertEquals(msg, Math.sqrt(x * x + z * z) - a, p.elevation, THRESHOLD);
                 //noinspection SuspiciousNameCombination
-                assertEquals(msg, Math.atan2(x, z), p.longitude.radians, THRESHOLD);
-                assertEquals(msg, 0, p.latitude.radians, THRESHOLD);
+                assertEquals(msg, Math.atan2(x, z), p.getLongitude().radians, THRESHOLD);
+                assertEquals(msg, 0, p.getLatitude().radians, THRESHOLD);
 
                 // Make sure round trip works
                 Vec4 w = earth.computePointFromPosition(p);
@@ -179,8 +179,8 @@ public class EllipsoidalGlobeTest
 
                 // Make sure round trip works
                 Position q = earth.computePositionFromPoint(v);
-                assertEquals(msg, p.latitude.radians, q.latitude.radians, THRESHOLD);
-                assertEquals(msg, p.longitude.radians, q.longitude.radians, THRESHOLD);
+                assertEquals(msg, p.getLatitude().radians, q.getLatitude().radians, THRESHOLD);
+                assertEquals(msg, p.getLongitude().radians, q.getLongitude().radians, THRESHOLD);
                 assertEquals(msg, p.elevation, q.elevation, THRESHOLD);
             }
         }
@@ -206,7 +206,7 @@ public class EllipsoidalGlobeTest
             Position p = earth.computePositionFromPoint(v);
 
             // Longitude is unspecifiable along the axis
-            assertEquals(msg, Math.PI / 2 * Math.signum(y), p.latitude.radians, THRESHOLD);
+            assertEquals(msg, Math.PI / 2 * Math.signum(y), p.getLatitude().radians, THRESHOLD);
             // System.out.println("Relative error at y=\t"+y+"\t"+((Math.abs(y)-b)/(p.elevation)));
             assertEquals(msg, Math.abs(y) - b, p.elevation, THRESHOLD);
 
@@ -233,13 +233,13 @@ public class EllipsoidalGlobeTest
         // wrong.
         // case a: center considered as part of the equatorial plane
         // assertEquals(-earth.getEquatorialRadius(), p.elevation, THRESHOLD);
-        // assertEquals(0, p.latitude.radians, THRESHOLD);
+        // assertEquals(0, p..getLatitude().radians, THRESHOLD);
         // case b: center considered as part of the axis
         assertEquals("At center", -earth.getPolarRadius(), p.elevation, THRESHOLD);
         // case b1: part of northern axis
-        // assertEquals(Math.PI/2, p.latitude.radians, THRESHOLD);
+        // assertEquals(Math.PI/2, p..getLatitude().radians, THRESHOLD);
         // case b2: part of southern axis
-        // assertEquals(-Math.PI/2, p.latitude.radians, THRESHOLD);
+        // assertEquals(-Math.PI/2, p..getLatitude().radians, THRESHOLD);
         // It's largely because of the existence of b1 and b2 that I suspect a to be the proper solution.
         // I'm wrong - it's case b, and lat and lon are just wrong at the moment.  Perhaps fix?
     }
@@ -271,7 +271,7 @@ public class EllipsoidalGlobeTest
                     Position p = earth.computePositionFromPoint(new Vec4(x, y, z));
                     String msg = "At [x, y, z]=[" + x + ", " + y + ", " + z + "]";
                     // Check continuity
-                    assertEquals(msg, Math.signum(y), Math.signum(p.latitude.degrees), THRESHOLD);
+                    assertEquals(msg, Math.signum(y), Math.signum(p.latitude), THRESHOLD);
 
                     Vec4 v = earth.computePointFromPosition(p);
                     // Check consistency
@@ -309,7 +309,7 @@ public class EllipsoidalGlobeTest
 
             Position pos = earth.computePositionFromPoint(new Vec4(x, y, 0));
             // Check continuity
-            assertEquals(msg, Math.signum(y), Math.signum(pos.latitude.degrees), THRESHOLD);
+            assertEquals(msg, Math.signum(y), Math.signum(pos.latitude), THRESHOLD);
 
             Vec4 w = earth.computePointFromPosition(pos);
             // Check consistency

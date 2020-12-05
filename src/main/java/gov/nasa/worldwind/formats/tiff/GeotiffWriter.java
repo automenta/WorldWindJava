@@ -549,10 +549,10 @@ public class GeotiffWriter {
 
                 double[] values = new double[]
                     { // i ,  j, k=0, x, y, z=0
-                        0.0d, 0.0d, 0.0d, sec.lonMin().degrees, sec.latMax().degrees, 0.0d,
-                        w - 1, 0.0d, 0.0d, sec.lonMax().degrees, sec.latMax().degrees, 0.0d,
-                        w - 1, h - 1, 0.0d, sec.lonMax().degrees, sec.latMin().degrees, 0.0d,
-                        0.0d, h - 1, 0.0d, sec.lonMin().degrees, sec.latMin().degrees, 0.0d,
+                        0.0d, 0.0d, 0.0d, sec.lonMin, sec.latMax, 0.0d,
+                        w - 1, 0.0d, 0.0d, sec.lonMax, sec.latMax, 0.0d,
+                        w - 1, h - 1, 0.0d, sec.lonMax, sec.latMin, 0.0d,
+                        0.0d, h - 1, 0.0d, sec.lonMin, sec.latMin, 0.0d,
                     };
 
                 byte[] bytes = GeotiffWriter.getBytes(values);

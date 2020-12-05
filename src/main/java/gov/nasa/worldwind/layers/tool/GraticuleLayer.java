@@ -9,7 +9,7 @@ import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.*;
-import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.layers.AbstractLayer;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.view.orbit.OrbitView;
@@ -666,24 +666,24 @@ public class GraticuleLayer extends AbstractLayer {
             for (int i = 1; i <= 2; i++)  // there may be two intersections
             {
                 LatLon intersection = null;
-                if (outPoint.getLongitude().degrees > sector.lonMax().degrees
-                    || (sector.lonMax().degrees == 180 && outPoint.getLongitude().degrees < 0)) {
+                if (outPoint.getLongitude().degrees > sector.lonMax
+                    || (sector.lonMax == 180 && outPoint.getLongitude().degrees < 0)) {
                     // intersect with east meridian
                     intersection = greatCircleIntersectionAtLongitude(
                         inPoint, outPoint, sector.lonMax());
                 }
-                else if (outPoint.getLongitude().degrees < sector.lonMin().degrees
-                    || (sector.lonMin().degrees == -180 && outPoint.getLongitude().degrees > 0)) {
+                else if (outPoint.getLongitude().degrees < sector.lonMin
+                    || (sector.lonMin == -180 && outPoint.getLongitude().degrees > 0)) {
                     // intersect with west meridian
                     intersection = greatCircleIntersectionAtLongitude(
                         inPoint, outPoint, sector.lonMin());
                 }
-                else if (outPoint.getLatitude().degrees > sector.latMax().degrees) {
+                else if (outPoint.getLatitude().degrees > sector.latMax) {
                     // intersect with top parallel
                     intersection = greatCircleIntersectionAtLatitude(
                         inPoint, outPoint, sector.latMax());
                 }
-                else if (outPoint.getLatitude().degrees < sector.latMin().degrees) {
+                else if (outPoint.getLatitude().degrees < sector.latMin) {
                     // intersect with bottom parallel
                     intersection = greatCircleIntersectionAtLatitude(
                         inPoint, outPoint, sector.latMin());

@@ -66,5 +66,13 @@
             <version>${graphhopper-core.version}</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.semanticweb.yars/nxparser -->
+        <dependency>
+            <groupId>org.semanticweb.yars</groupId>
+            <artifactId>nxparser-parsers</artifactId>
+            <version>4.0.0</version>
+        </dependency>
+
+
     </dependencies>
 </project>

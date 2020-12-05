@@ -23,7 +23,11 @@ import java.util.List;
  */
 abstract public class AbstractElevationModel extends WWObjectImpl implements ElevationModel {
     protected FileStore dataFileStore = WorldWind.store();
-    protected double missingDataFlag = -Double.MAX_VALUE;
+
+    protected double missingDataFlag =
+        -9999.0;
+        //-Double.MAX_VALUE;
+
     protected double missingDataValue = 0;
 
     protected boolean networkRetrievalEnabled = true;
@@ -38,11 +42,11 @@ abstract public class AbstractElevationModel extends WWObjectImpl implements Ele
      * @throws IllegalArgumentException if document is null.
      */
     public static boolean isElevationModelConfigDocument(Element domElement) {
-        if (domElement == null) {
-            String message = Logging.getMessage("nullValue.DocumentIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (domElement == null) {
+//            String message = Logging.getMessage("nullValue.DocumentIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         XPath xpath = WWXML.makeXPath();
         Element[] elements = WWXML.getElements(domElement, "//ElevationModel", xpath);
@@ -67,17 +71,17 @@ abstract public class AbstractElevationModel extends WWObjectImpl implements Ele
      * @throws IllegalArgumentException if either the parameters or the context are null.
      */
     public static Element createElevationModelConfigElements(AVList params, Element context) {
-        if (params == null) {
-            String message = Logging.getMessage("nullValue.ParametersIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (context == null) {
-            String message = Logging.getMessage("nullValue.ContextIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (params == null) {
+//            String message = Logging.getMessage("nullValue.ParametersIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//
+//        if (context == null) {
+//            String message = Logging.getMessage("nullValue.ContextIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         WWXML.checkAndAppendTextElement(params, AVKey.DISPLAY_NAME, context, "DisplayName");
         WWXML.checkAndAppendBooleanElement(params, AVKey.NETWORK_RETRIEVAL_ENABLED, context, "NetworkRetrievalEnabled");
@@ -122,11 +126,11 @@ abstract public class AbstractElevationModel extends WWObjectImpl implements Ele
      * @throws IllegalArgumentException if the document is null.
      */
     public static AVList getElevationModelConfigParams(Element domElement, AVList params) {
-        if (domElement == null) {
-            String message = Logging.getMessage("nullValue.DocumentIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (domElement == null) {
+//            String message = Logging.getMessage("nullValue.DocumentIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         if (params == null)
             params = new AVListImpl();
@@ -208,11 +212,11 @@ abstract public class AbstractElevationModel extends WWObjectImpl implements Ele
     }
 
     public double getDetailHint(Sector sector) {
-        if (sector == null) {
-            String msg = Logging.getMessage("nullValue.SectorIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (sector == null) {
+//            String msg = Logging.getMessage("nullValue.SectorIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         return 0.0;
     }
@@ -226,14 +230,15 @@ abstract public class AbstractElevationModel extends WWObjectImpl implements Ele
     }
 
     public double getElevation(Angle latitude, Angle longitude) {
-        if (latitude == null || longitude == null) {
-            String msg = Logging.getMessage("nullValue.LatitudeOrLongitudeIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (latitude == null || longitude == null) {
+//            String msg = Logging.getMessage("nullValue.LatitudeOrLongitudeIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         double e = this.getUnmappedElevation(latitude, longitude);
-        return e == this.missingDataFlag ? this.missingDataValue : e;
+        return e;
+        //return e == this.missingDataFlag ? this.missingDataValue : e;
     }
 
     public double[] getElevations(Sector sector, List<? extends LatLon> latLons, double[] targetResolutions,
@@ -266,23 +271,23 @@ abstract public class AbstractElevationModel extends WWObjectImpl implements Ele
 
     public void composeElevations(Sector sector, List<? extends LatLon> latlons, int tileWidth, double[] buffer)
         throws Exception {
-        if (sector == null) {
-            String msg = Logging.getMessage("nullValue.SectorIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (sector == null) {
+//            String msg = Logging.getMessage("nullValue.SectorIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
-        if (latlons == null) {
-            String msg = Logging.getMessage("nullValue.LatLonListIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        if (buffer == null) {
-            String msg = Logging.getMessage("nullValue.ElevationsBufferIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (latlons == null) {
+//            String msg = Logging.getMessage("nullValue.LatLonListIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
+//
+//        if (buffer == null) {
+//            String msg = Logging.getMessage("nullValue.ElevationsBufferIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         if (tileWidth < 1) {
             String msg = Logging.getMessage("generic.SizeOutOfRange", tileWidth);
@@ -290,13 +295,14 @@ abstract public class AbstractElevationModel extends WWObjectImpl implements Ele
             throw new IllegalArgumentException(msg);
         }
 
-        if (buffer.length < latlons.size() || tileWidth > latlons.size()) {
-            String msg = Logging.getMessage("ElevationModel.ElevationsBufferTooSmall", latlons.size());
+        final int n = latlons.size();
+        if (buffer.length < n || tileWidth > n) {
+            String msg = Logging.getMessage("ElevationModel.ElevationsBufferTooSmall", n);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        for (int i = 0; i < latlons.size(); i++) {
+        for (int i = 0; i < n; i++) {
             LatLon ll = latlons.get(i);
             double e = this.getUnmappedElevation(ll.getLatitude(), ll.getLongitude());
             if (e != this.getMissingDataSignal() && !this.isTransparentValue(e))

@@ -195,10 +195,10 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
     }
 
     private static Rectangle2D getGridRectangleForSector(Sector sector) {
-        int x1 = getGridColumn(sector.lonMin().degrees);
-        int x2 = getGridColumn(sector.lonMax().degrees);
-        int y1 = getGridRow(sector.latMin().degrees);
-        int y2 = getGridRow(sector.latMax().degrees);
+        int x1 = getGridColumn(sector.lonMin);
+        int x2 = getGridColumn(sector.lonMax);
+        int y1 = getGridRow(sector.latMin);
+        int y2 = getGridRow(sector.latMax);
         return new Rectangle(x1, y1, x2 - x1, y2 - y1);
     }
 
@@ -431,8 +431,8 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
             double step = sector.latDelta / this.divisions;
 
             // Generate meridians with labels
-            double lon = sector.lonMin().degrees + (this.level == 0 ? 0 : step);
-            while (lon < sector.lonMax().degrees - step / 2) {
+            double lon = sector.lonMin + (this.level == 0 ? 0 : step);
+            while (lon < sector.lonMax - step / 2) {
                 Angle longitude = Angle.fromDegrees(lon);
                 // Meridian
                 Collection<Position> positions = new ArrayList<>(2);
@@ -441,8 +441,8 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
 
                 Object line = createLineRenderable(positions, AVKey.LINEAR);
                 Sector sector = Sector.fromDegrees(
-                    this.sector.latMin().degrees, this.sector.latMax().degrees, lon, lon);
-                String lineType = lon == this.sector.lonMin().degrees ?
+                    this.sector.latMin, this.sector.latMax, lon, lon);
+                String lineType = lon == this.sector.lonMin ?
                     GridElement.TYPE_LINE_WEST : GridElement.TYPE_LINE;
                 GridElement ge = new GridElement(sector, line, lineType);
                 ge.value = lon;
@@ -453,8 +453,8 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
             }
 
             // Generate parallels
-            double lat = this.sector.latMin().degrees + (this.level == 0 ? 0 : step);
-            while (lat < this.sector.latMax().degrees - step / 2) {
+            double lat = this.sector.latMin + (this.level == 0 ? 0 : step);
+            while (lat < this.sector.latMax - step / 2) {
                 Angle latitude = Angle.fromDegrees(lat);
                 Collection<Position> positions = new ArrayList<>(2);
                 positions.add(new Position(latitude, this.sector.lonMin(), 0));
@@ -462,8 +462,8 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
 
                 Object line = createLineRenderable(positions, AVKey.LINEAR);
                 Sector sector = Sector.fromDegrees(
-                    lat, lat, this.sector.lonMin().degrees, this.sector.lonMax().degrees);
-                String lineType = lat == this.sector.latMin().degrees ?
+                    lat, lat, this.sector.lonMin, this.sector.lonMax);
+                String lineType = lat == this.sector.latMin ?
                     GridElement.TYPE_LINE_SOUTH : GridElement.TYPE_LINE;
                 GridElement ge = new GridElement(sector, line, lineType);
                 ge.value = lat;
@@ -481,7 +481,7 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
 
                 Object line = createLineRenderable(positions, AVKey.LINEAR);
                 Sector sector = Sector.fromDegrees(
-                    90, 90, this.sector.lonMin().degrees, this.sector.lonMax().degrees);
+                    90, 90, this.sector.lonMin, this.sector.lonMax);
                 GridElement ge = new GridElement(sector, line, GridElement.TYPE_LINE_NORTH);
                 ge.value = 90;
                 this.gridElements.add(ge);

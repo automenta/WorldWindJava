@@ -8,7 +8,7 @@ package gov.nasa.worldwind.util;
 import gov.nasa.worldwind.geom.*;
 
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
 
 /**
  * @author Jeff Addison

@@ -788,8 +788,8 @@ public class Matrix {
 
         double sx = sector.lonDelta / imageWidth;
         double sy = -sector.latDelta / imageHeight;
-        double tx = sector.lonMin().degrees;
-        double ty = sector.latMax().degrees;
+        double tx = sector.lonMin;
+        double ty = sector.latMax;
 
         return new Matrix(
             sx, 0.0, tx, 0.0,
@@ -1130,7 +1130,7 @@ public class Matrix {
         transform = transform.multiply(
             Matrix.fromScale(width / sector.lonDelta, height / sector.latDelta, 1.0));
         transform = transform.multiply(
-            Matrix.fromTranslation(-sector.lonMin().degrees, -sector.latMin().degrees, 0.0));
+            Matrix.fromTranslation(-sector.lonMin, -sector.latMin, 0.0));
 
         return transform;
     }
@@ -1169,7 +1169,7 @@ public class Matrix {
 
         Matrix transform = Matrix.IDENTITY;
         transform = transform.multiply(
-            Matrix.fromTranslation(sector.lonMin().degrees, sector.latMin().degrees, 0.0));
+            Matrix.fromTranslation(sector.lonMin, sector.latMin, 0.0));
         transform = transform.multiply(
             Matrix.fromScale(sector.lonDelta / width, sector.latDelta / height, 1.0));
         transform = transform.multiply(

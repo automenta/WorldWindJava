@@ -38,10 +38,10 @@ public class RasterServerConfigurationTest
 
         Sector sector = config.getSector();
         assertNotNull("Configuration sector is null", sector);
-        assertEquals("Configuration sector min latitude is incorrect", -50.0, sector.latMin().degrees, 0.0);
-        assertEquals("Configuration sector max latitude is incorrect", -47.0, sector.latMax().degrees, 0.0);
-        assertEquals("Configuration sector min longitude is incorrect", 178.0, sector.lonMin().degrees, 0.0);
-        assertEquals("Configuration sector max longitude is incorrect", 180.0, sector.lonMax().degrees, 0.0);
+        assertEquals("Configuration sector min latitude is incorrect", -50.0, sector.latMin, 0.0);
+        assertEquals("Configuration sector max latitude is incorrect", -47.0, sector.latMax, 0.0);
+        assertEquals("Configuration sector min longitude is incorrect", 178.0, sector.lonMin, 0.0);
+        assertEquals("Configuration sector max longitude is incorrect", 180.0, sector.lonMax, 0.0);
 
         Map<String, String> props = config.getProperties();
         assertNotNull("Properties table is null", props);
@@ -73,10 +73,10 @@ public class RasterServerConfigurationTest
         assertEquals("Source type 1 is incorrect", "file", type);
         sector = source.getSector();
         assertNotNull("Source sector 1 is null", sector);
-        assertEquals("Source sector 1 min latitude is incorrect", -48.0, sector.latMin().degrees, 0.0);
-        assertEquals("Source sector 1 max latitude is incorrect", -47.0, sector.latMax().degrees, 0.0);
-        assertEquals("Source sector 1 min longitude is incorrect", 179.0, sector.lonMin().degrees, 0.0);
-        assertEquals("Source sector 1 max longitude is incorrect", 180.0, sector.lonMax().degrees, 0.0);
+        assertEquals("Source sector 1 min latitude is incorrect", -48.0, sector.latMin, 0.0);
+        assertEquals("Source sector 1 max latitude is incorrect", -47.0, sector.latMax, 0.0);
+        assertEquals("Source sector 1 min longitude is incorrect", 179.0, sector.lonMin, 0.0);
+        assertEquals("Source sector 1 max longitude is incorrect", 180.0, sector.lonMax, 0.0);
 
         source = sources.get(1);
         assertNotNull("Source 2 is null", source);
@@ -88,9 +88,9 @@ public class RasterServerConfigurationTest
         assertEquals("Source type 2 is incorrect", "file", type);
         sector = source.getSector();
         assertNotNull("Source sector 2 is null", sector);
-        assertEquals("Source sector 2 min latitude is incorrect", -50.0, sector.latMin().degrees, 0.0);
-        assertEquals("Source sector 2 max latitude is incorrect", -49.0, sector.latMax().degrees, 0.0);
-        assertEquals("Source sector 2 min longitude is incorrect", 178.0, sector.lonMin().degrees, 0.0);
-        assertEquals("Source sector 2 max longitude is incorrect", 179.0, sector.lonMax().degrees, 0.0);
+        assertEquals("Source sector 2 min latitude is incorrect", -50.0, sector.latMin, 0.0);
+        assertEquals("Source sector 2 max latitude is incorrect", -49.0, sector.latMax, 0.0);
+        assertEquals("Source sector 2 min longitude is incorrect", 178.0, sector.lonMin, 0.0);
+        assertEquals("Source sector 2 max longitude is incorrect", 179.0, sector.lonMax, 0.0);
     }
 }

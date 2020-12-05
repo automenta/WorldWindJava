@@ -51,7 +51,7 @@ public class OSMMapnikLayer extends BasicMercatorTiledImageLayer {
         public URL getURL(Tile tile, String imageFormat)
             throws MalformedURLException {
             final int x = tile.getLevelNumber() + 3;
-            final int y = tile.column;
+            final int y = tile.col;
             final int z = (1 << (tile.getLevelNumber()) + 3) - 1 - tile.row;
             return new URL(
             tile.level.getService() + "/" + x + "/" + y + "/" + z + ".png"

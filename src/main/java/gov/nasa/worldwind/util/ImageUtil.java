@@ -1399,10 +1399,10 @@ public class ImageUtil {
             // total CPU time.
             Thread.sleep(0);
 
-            float lat = (float) (sector.latMax().degrees - j * dLat - dLon / 2.0d);
+            float lat = (float) (sector.latMax - j * dLat - dLon / 2.0d);
 
             for (int i = 0; i < dimension.width; i++) {
-                float lon = (float) (sector.lonMin().degrees + i * dLon + dLat / 2.0d);
+                float lon = (float) (sector.lonMin + i * dLon + dLat / 2.0d);
 
                 // Search for a cell in the source image which contains this aligned image pixel's location.
                 ImageInterpolator.ContainingCell cell = grid.findContainingCell(lon, lat);

@@ -60,11 +60,11 @@ public abstract class TiledImageLayer extends AbstractLayer {
     private boolean drawTileIDs = false;
 
     public TiledImageLayer(LevelSet levelSet) {
-        if (levelSet == null) {
-            String message = Logging.getMessage("nullValue.LevelSetIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (levelSet == null) {
+//            String message = Logging.getMessage("nullValue.LevelSetIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         this.levels = new LevelSet(levelSet); // the caller's levelSet may change internally, so we copy it.
         this.set(AVKey.SECTOR, this.levels.getSector());
@@ -119,17 +119,17 @@ public abstract class TiledImageLayer extends AbstractLayer {
      * @throws IllegalArgumentException if either the parameters or the context are null.
      */
     public static Element createTiledImageLayerConfigElements(AVList params, Element context) {
-        if (params == null) {
-            String message = Logging.getMessage("nullValue.ParametersIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (context == null) {
-            String message = Logging.getMessage("nullValue.ContextIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (params == null) {
+//            String message = Logging.getMessage("nullValue.ParametersIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//
+//        if (context == null) {
+//            String message = Logging.getMessage("nullValue.ContextIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         XPath xpath = WWXML.makeXPath();
 
@@ -223,11 +223,11 @@ public abstract class TiledImageLayer extends AbstractLayer {
      * @throws IllegalArgumentException if the document is null.
      */
     public static AVList getTiledImageLayerConfigParams(Element domElement, AVList params) {
-        if (domElement == null) {
-            String message = Logging.getMessage("nullValue.DocumentIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (domElement == null) {
+//            String message = Logging.getMessage("nullValue.DocumentIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         if (params == null)
             params = new AVListImpl();
@@ -293,11 +293,11 @@ public abstract class TiledImageLayer extends AbstractLayer {
      * @throws IllegalArgumentException if the document is null.
      */
     protected static AVList getLegacyTiledImageLayerConfigParams(Element domElement, AVList params) {
-        if (domElement == null) {
-            String message = Logging.getMessage("nullValue.DocumentIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (domElement == null) {
+//            String message = Logging.getMessage("nullValue.DocumentIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         if (params == null)
             params = new AVListImpl();
@@ -598,13 +598,13 @@ public abstract class TiledImageLayer extends AbstractLayer {
                 // Issue a request for the parent before descending to the children.
             }
 
+            final Sector sector = this.getLevels().getSector();
             TextureTile[] subTiles = tile.createSubTiles(this.levels.getLevel(tile.getLevelNumber() + 1));
             for (TextureTile child : subTiles) {
-                if (this.getLevels().getSector().intersects(child.sector) && TiledImageLayer.isTileVisible(dc, child))
+                if (sector.intersects(child.sector) && TiledImageLayer.isTileVisible(dc, child))
                     this.addTileOrDescendants(dc, child);
             }
-        }
-        finally {
+        } finally {
             if (ancestorResource != null) // Pop this tile as the currentResource ancestor
                 this.currentResourceTile = ancestorResource;
         }
@@ -637,7 +637,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
         // Set up to use the currentResource tile's texture
         if (this.currentResourceTile != null) {
             if (this.currentResourceTile.getLevelNumber() == 0 && this.forceLevelZeroLoads &&
-                !this.currentResourceTile.isTextureInMemory(dc.getTextureCache()) &&
+                //!this.currentResourceTile.isTextureInMemory(dc.getTextureCache()) &&
                 !this.currentResourceTile.isTextureInMemory(dc.getTextureCache()))
                 this.forceTextureLoad(this.currentResourceTile);
 
@@ -684,7 +684,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
         // 50% has the same effect on object size as decreasing the distance between the eye and the object by 50%.
         // The detail hint is reduced for tiles above 75 degrees north and below 75 degrees south.
         double s = this.getDetailFactor();
-        if (sector.latMin().degrees >= 75 || sector.latMax().degrees <= -75)
+        if (sector.latMin >= 75 || sector.latMax <= -75)
             s *= 0.9;
         double detailScale = Math.pow(10, -s);
         double fieldOfViewScale = dc.getView().getFieldOfView().tanHalfAngle() / Angle.fromDegrees(45).tanHalfAngle();
@@ -1298,10 +1298,18 @@ public abstract class TiledImageLayer extends AbstractLayer {
 
     protected static class LevelComparer implements Comparator<TextureTile> {
         public int compare(TextureTile ta, TextureTile tb) {
-            int la = ta.getFallbackTile() == null ? ta.getLevelNumber() : ta.getFallbackTile().getLevelNumber();
-            int lb = tb.getFallbackTile() == null ? tb.getLevelNumber() : tb.getFallbackTile().getLevelNumber();
+            if (ta == tb) return 0;
 
-            return Integer.compare(la, lb);
+            final TextureTile taf = ta.getFallbackTile();
+            final TextureTile tbf = tb.getFallbackTile();
+            var la = taf == null ? ta : taf;
+            var lb = tbf == null ? tb : tbf;
+
+            int l = Integer.compare(la.getLevelNumber(), lb.getLevelNumber());
+            if (l!=0)
+                return l;
+            else
+                return Integer.compare(System.identityHashCode(ta), System.identityHashCode(tb));
         }
     }
 

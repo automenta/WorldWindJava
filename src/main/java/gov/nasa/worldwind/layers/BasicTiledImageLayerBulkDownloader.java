@@ -10,7 +10,7 @@ import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.cache.FileStore;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.retrieve.*;
 import gov.nasa.worldwind.util.*;
 

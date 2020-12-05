@@ -44,8 +44,8 @@ public class GliderTestApp extends ApplicationTemplate {
 
         for (int j = 0; j < height; j++) {
             for (int i = 0; i < width; i++) {
-                lons[j * width + i] = (float) (sector.lonMin().degrees + i * dLon);
-                lats[j * width + i] = (float) (sector.latMax().degrees - j * dLat);
+                lons[j * width + i] = (float) (sector.lonMin + i * dLon);
+                lats[j * width + i] = (float) (sector.latMax - j * dLat);
             }
         }
 

@@ -86,7 +86,7 @@ public class TileKey implements Comparable<TileKey> {
         }
         this.level = tile.getLevelNumber();
         this.row = tile.row;
-        this.col = tile.column;
+        this.col = tile.col;
         this.cacheName = tile.getCacheName();
         this.hash = this.computeHash();
     }

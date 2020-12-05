@@ -358,12 +358,12 @@ class RPFPolarFrameTransform extends RPFFrameTransform {
         int width = destImage.getWidth();
         int height = destImage.getHeight();
 
-        double deltaLon = (sector.lonMax().degrees - sector.lonMin().degrees) / width;
-        double deltaLat = (sector.latMax().degrees - sector.latMin().degrees) / height;
+        double deltaLon = (sector.lonMax - sector.lonMin) / width;
+        double deltaLat = (sector.latMax - sector.latMin) / height;
 
         // unbundle these values that are used in the nested loop below -- its compute intensive enough...
-        double minLon = sector.lonMin().degrees;
-        double minLat = sector.latMin().degrees;
+        double minLon = sector.lonMin;
+        double minLat = sector.latMin;
         double polarConstant = this.frameStructure.getPolarPixelConstant();
         int srcWidth = srcImage.getWidth();
         int srcHeight = srcImage.getHeight();

@@ -149,7 +149,7 @@ public class ContourList extends WWObjectImpl implements Combinable {
                 GLU.gluTessBeginContour(tess);
 
                 for (LatLon location : contour) {
-                    double[] vertex = {location.longitude.degrees, location.latitude.degrees, 0};
+                    double[] vertex = {location.longitude, location.latitude, 0};
                     GLU.gluTessVertex(tess, vertex, 0, vertex);
                 }
             }
