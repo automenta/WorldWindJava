@@ -40,23 +40,23 @@ public class SessionCacheUtils {
     public static void retrieveSessionData(URL url, SessionCache cache, Object cacheKey,
         AbsentResourceList absentResourceList, long resourceID, PropertyChangeListener propertyListener,
         String propertyName) {
-        if (url == null) {
-            String message = Logging.getMessage("nullValue.URLIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (url == null) {
+//            String message = Logging.getMessage("nullValue.URLIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
-        if (cache == null) {
-            String message = Logging.getMessage("nullValue.CacheIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (cache == null) {
+//            String message = Logging.getMessage("nullValue.CacheIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
-        if (cacheKey == null) {
-            String message = Logging.getMessage("nullValue.CacheKeyIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (cacheKey == null) {
+//            String message = Logging.getMessage("nullValue.CacheKeyIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         if (WorldWind.getNetworkStatus().isHostUnavailable(url)) {
             if (absentResourceList != null)
@@ -71,8 +71,6 @@ public class SessionCacheUtils {
         Retriever retriever = URLRetriever.createRetriever(url, postProcessor);
         try {
             retriever.call();
-        } catch (SocketTimeoutException e) {
-            /*throw e;*/
         } catch (Exception e) {
             String message = Logging.getMessage("layers.TiledImageLayer.ExceptionRetrievingResources", url.toString());
             Logging.logger().log(java.util.logging.Level.SEVERE, message, e);

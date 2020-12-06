@@ -136,59 +136,59 @@ private static final String IDLE_THREAD_NAME_PREFIX = Logging.getMessage(
 
 
 
-    public double getProgress() {
-        int totalContentLength = 0;
-        int totalBytesRead = 0;
-
-        for (RetrievalTask task : this.activeTasks.values()) {
-            if (task.isDone())
-                continue;
-
-            Retriever retriever = task.getRetriever();
-            try {
-                double tcl = retriever.getContentLength();
-                if (tcl > 0) {
-                    totalContentLength += tcl;
-                    totalBytesRead += retriever.getContentLengthRead();
-                }
-            }
-            catch (Exception e) {
-                Logging.logger().log(Level.FINE,
-                    Logging.getMessage("BasicRetrievalService.ExceptionRetrievingContentSizes",
-                        retriever.getName() != null ? retriever.getName() : ""), e);
-            }
-        }
-
-        for (Runnable runnable : this.executor.getQueue()) {
-            RetrievalFuture task =
-                (RetrievalFuture) runnable;
-
-            Retriever retriever = task.getRetriever();
-            try {
-                double tcl = retriever.getContentLength();
-                if (tcl > 0) {
-                    totalContentLength += tcl;
-                    totalBytesRead += retriever.getContentLengthRead();
-                }
-            }
-            catch (Exception e) {
-                String message = Logging.getMessage("BasicRetrievalService.ExceptionRetrievingContentSizes") + (
-                    retriever.getName() != null ? retriever.getName() : "");
-                Logging.logger().log(Level.FINE, message, e);
-            }
-        }
-
-        // Compute an aggregated progress notification.
-
-        double progress;
-
-        if (totalContentLength < 1)
-            progress = 0;
-        else
-            progress = Math.min(100.0, 100.0 * totalBytesRead / totalContentLength);
-
-        return progress;
-    }
+//    public double getProgress() {
+//        int totalContentLength = 0;
+//        int totalBytesRead = 0;
+//
+//        for (RetrievalTask task : this.activeTasks.values()) {
+//            if (task.isDone())
+//                continue;
+//
+//            Retriever retriever = task.getRetriever();
+//            try {
+//                double tcl = retriever.getContentLength();
+//                if (tcl > 0) {
+//                    totalContentLength += tcl;
+//                    totalBytesRead += retriever.getContentLengthRead();
+//                }
+//            }
+//            catch (Exception e) {
+//                Logging.logger().log(Level.FINE,
+//                    Logging.getMessage("BasicRetrievalService.ExceptionRetrievingContentSizes",
+//                        retriever.getName() != null ? retriever.getName() : ""), e);
+//            }
+//        }
+//
+//        for (Runnable runnable : this.executor.getQueue()) {
+//            RetrievalFuture task =
+//                (RetrievalFuture) runnable;
+//
+//            Retriever retriever = task.getRetriever();
+//            try {
+//                double tcl = retriever.getContentLength();
+//                if (tcl > 0) {
+//                    totalContentLength += tcl;
+//                    totalBytesRead += retriever.getContentLengthRead();
+//                }
+//            }
+//            catch (Exception e) {
+//                String message = Logging.getMessage("BasicRetrievalService.ExceptionRetrievingContentSizes") + (
+//                    retriever.getName() != null ? retriever.getName() : "");
+//                Logging.logger().log(Level.FINE, message, e);
+//            }
+//        }
+//
+//        // Compute an aggregated progress notification.
+//
+//        double progress;
+//
+//        if (totalContentLength < 1)
+//            progress = 0;
+//        else
+//            progress = Math.min(100.0, 100.0 * totalBytesRead / totalContentLength);
+//
+//        return progress;
+//    }
 
     /**
      * Encapsulates a single threaded retrieval as a {@link FutureTask}.

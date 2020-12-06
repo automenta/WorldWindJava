@@ -27,9 +27,9 @@ public interface Retriever extends WWObject, Callable<Retriever> {
 
     ByteBuffer getBuffer();
 
-    int getContentLength();
+//    int getContentLength();
 
-    int getContentLengthRead();
+//    int getContentLengthRead();
 
     String getName();
 

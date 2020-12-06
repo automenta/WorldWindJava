@@ -32,12 +32,12 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever {
      */
     public static final String EXTRACT_ZIP_ENTRY = "URLRetriever.ExtractZipEntry";
     private static final Pattern maxAge = Pattern.compile("max-age=(\\d+)");
-    protected final AtomicInteger contentLengthRead = new AtomicInteger(0);
+//    protected final AtomicInteger contentLengthRead = new AtomicInteger(0);
     protected final AtomicLong expiration = new AtomicLong(0);
     protected final URL url;
     protected final RetrievalPostProcessor postProcessor;
     protected volatile String state = RETRIEVER_STATE_NOT_STARTED;
-    protected volatile int contentLength = 0;
+//    protected volatile int contentLength = 0;
     protected volatile String contentType;
     protected volatile ByteBuffer byteBuffer;
     protected volatile URLConnection connection;
@@ -66,32 +66,27 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever {
      * @throws IllegalArgumentException if the url is null.
      */
     public static URLRetriever createRetriever(URL url, RetrievalPostProcessor postProcessor) {
-
-        String protocol = url.getProtocol();
-
-        if ("http".equalsIgnoreCase(protocol) || "https".equalsIgnoreCase(protocol))
-            return new HTTPRetriever(url, postProcessor);
-        else if ("jar".equalsIgnoreCase(protocol))
-            return new JarRetriever(url, postProcessor);
-        else
-            return null;
+        return switch (url.getProtocol().toLowerCase()) {
+            case "http", "https" -> new HTTPRetriever(url, postProcessor);
+            case "jar" -> new JarRetriever(url, postProcessor);
+            default -> null;
+        };
     }
 
     public final URL getUrl() {
         return url;
     }
 
-    public final int getContentLength() {
-        return this.contentLength;
-    }
-
-    public final int getContentLengthRead() {
-        return this.contentLengthRead.get();
-    }
-
-    protected void setContentLengthRead(int length) {
-        this.contentLengthRead.set(length);
-    }
+//    public final int getContentLength() {
+//        return this.contentLength;
+//    }
+//    public final int getContentLengthRead() {
+//        return this.contentLengthRead.get();
+//    }
+//
+//    protected void setContentLengthRead(int length) {
+//        this.contentLengthRead.set(length);
+//    }
 
     public final String getContentType() {
         return this.contentType;
@@ -178,24 +173,24 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever {
 
             if (interrupted()) return this;
 
-
             setState(RETRIEVER_STATE_READING);
 
-            this.byteBuffer = this.read();
-            
+            if ((this.byteBuffer = this.doRead(this.connection)) == null)
+                throw new IOException("empty");
+
+            if (this.postProcessor != null)
+                this.byteBuffer = this.postProcessor.run(this);
+
             setState(RETRIEVER_STATE_SUCCESSFUL);
             WorldWind.getNetworkStatus().logAvailableHost(this.url);
-
-            if (this.postProcessor != null) {
-                this.byteBuffer = this.postProcessor.run(this);
-            }
 
         } catch (ClosedByInterruptException e) {
             this.interrupted();
         } catch (Exception e) {
             setState(RETRIEVER_STATE_ERROR);
+//            this.contentLength = 0;
             WorldWind.getNetworkStatus().logUnavailableHost(this.url);
-            throw e;
+            //throw e;
         }
 
         return this;
@@ -204,6 +199,7 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever {
     protected boolean interrupted() {
         if (Thread.currentThread().isInterrupted()) {
             setState(RETRIEVER_STATE_INTERRUPTED);
+//            this.contentLength = 0;
             Logging.logger().fine(Logging.getMessage("URLRetriever.RetrievalInterruptedFor", this.url.toString()));
             return true;
         }
@@ -246,22 +242,6 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever {
             connection.setSSLSocketFactory(sslContext.getSocketFactory());
     }
 
-    protected ByteBuffer read() throws Exception {
-//        try {
-            ByteBuffer buffer = this.doRead(this.connection);
-            if (buffer == null)
-                this.contentLength = 0;
-            return buffer;
-//        } catch (Exception e) {
-//            if (!(e instanceof SocketTimeoutException || e instanceof UnknownHostException
-//                || e instanceof SocketException)) {
-//                Logging.logger().log(Level.SEVERE,
-//                    Logging.getMessage("URLRetriever.ErrorReadingFromConnection", this.url), e);
-//            }
-//            throw e;
-//        }
-    }
-
     /**
      * @param connection the connection to read from.
      * @return a buffer containing the content read from the connection
@@ -283,7 +263,7 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever {
         }
 
         try {
-            this.contentLength = this.connection.getContentLength();
+//            this.contentLength = this.connection.getContentLength();
             this.expiration.set(URLRetriever.getExpiration(connection));
 
             // The legacy WW servers send data with application/zip as the content type, and the retrieval initiator is
@@ -295,48 +275,49 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever {
                 // Assume single file in zip and decompress it
                 return this.readZipStream(inputStream, connection.getURL());
             else
-                return this.readStream(inputStream, connection);
+                return this.readStream(inputStream);
         } finally {
             WWIO.closeStream(inputStream, getName());
         }
     }
 
-    protected ByteBuffer readStream(InputStream inputStream, URLConnection connection) throws IOException {
+    protected ByteBuffer readStream(InputStream inputStream) throws IOException {
 
-        if (this.contentLength < 1) {
-            return readNonSpecificStreamUnknownLength(inputStream);
-        }
-
-        return ByteBuffer.wrap(inputStream.readNBytes(contentLength));
+        return ByteBuffer.wrap(inputStream.readAllBytes());
+//        if (this.contentLength < 1) {
+//            return readNonSpecificStreamUnknownLength(inputStream);
+//        }
+//
+//        return ByteBuffer.wrap(inputStream.readNBytes(contentLength));
     }
 
-    protected ByteBuffer readNonSpecificStreamUnknownLength(InputStream inputStream) throws IOException {
-        final int pageSize = (int) Math.ceil(Math.pow(2, 15));
-
-        ReadableByteChannel channel = Channels.newChannel(inputStream);
-
-        ByteBuffer buffer = ByteBuffer.allocate(pageSize);
-
-        int count = 0;
-//        int numBytesRead = 0;
-        while (!this.interrupted() && count >= 0) {
-            count = channel.read(buffer);
-            if (count > 0) {
-//                numBytesRead += count;
-                this.contentLengthRead.getAndAdd(count);
-            }
-
-            if (count > 0 && !buffer.hasRemaining()) {
-                ByteBuffer biggerBuffer = ByteBuffer.allocate(buffer.limit() + pageSize);
-                biggerBuffer.put(buffer.rewind());
-                buffer = biggerBuffer;
-            }
-        }
-
-        buffer.flip();
-
-        return buffer;
-    }
+//    protected ByteBuffer readNonSpecificStreamUnknownLength(InputStream inputStream) throws IOException {
+//        final int pageSize = (int) Math.ceil(Math.pow(2, 15));
+//
+//        ReadableByteChannel channel = Channels.newChannel(inputStream);
+//
+//        ByteBuffer buffer = ByteBuffer.allocate(pageSize);
+//
+//        int count = 0;
+////        int numBytesRead = 0;
+//        while (!this.interrupted() && count >= 0) {
+//            count = channel.read(buffer);
+//            if (count > 0) {
+////                numBytesRead += count;
+//                this.contentLengthRead.getAndAdd(count);
+//            }
+//
+//            if (count > 0 && !buffer.hasRemaining()) {
+//                ByteBuffer biggerBuffer = ByteBuffer.allocate(buffer.limit() + pageSize);
+//                biggerBuffer.put(buffer.rewind());
+//                buffer = biggerBuffer;
+//            }
+//        }
+//
+//        buffer.flip();
+//
+//        return buffer;
+//    }
 
     /**
      * @param inputStream a stream to the zip connection.
@@ -354,23 +335,24 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever {
             return null;
         }
 
-        ByteBuffer buffer = null;
-        if (ze.getSize() > 0) {
-            buffer = ByteBuffer.allocate((int) ze.getSize());
 
-            byte[] inputBuffer = new byte[8192];
-            while (buffer.hasRemaining()) {
-                int count = zis.read(inputBuffer);
-                if (count > 0) {
-                    buffer.put(inputBuffer, 0, count);
-                    this.contentLengthRead.getAndAdd(buffer.position() + 1);
-                }
-            }
-        }
-        if (buffer != null)
-            buffer.flip();
+//        if (ze.getSize() > 0) {
+        return ByteBuffer.wrap(zis.readNBytes((int)ze.getSize()));
+//
+//
+//            byte[] inputBuffer = new byte[8192];
+//            while (buffer.hasRemaining()) {
+//                int count = zis.read(inputBuffer);
+//                if (count > 0) {
+//                    buffer.put(inputBuffer, 0, count);
+////                    this.contentLengthRead.getAndAdd(buffer.position() + 1);
+//                }
+//            }
+//        }
+//        if (buffer != null)
+//            buffer.flip();
 
-        return buffer;
+//        return null;
     }
 
     /**

@@ -1,12 +1,12 @@
 //package netvr;
 //
-//import com.bulletphysics.collision.broadphase.DbvtAabbMm;
+////import com.bulletphysics.collision.broadphase.DbvtAabbMm;
 //import com.carrotsearch.hppc.LongContainer;
 //import com.graphhopper.coll.LongIntMap;
 //import com.graphhopper.util.PointAccess;
 //import com.jogamp.opengl.GL2;
 //
-//import javax.vecmath.Vector3f;
+////import javax.vecmath.Vector3f;
 //import java.util.*;
 //
 //public class WayVis extends Vis {
@@ -31,10 +31,10 @@
 //        return id < -2 ? -id - 3 : -1;
 //    }
 //
-//    @Override
-//    public DbvtAabbMm box() {
-//        return new DbvtAabbMm().merge(poly);
-//    }
+////    @Override
+////    public DbvtAabbMm box() {
+////        return new DbvtAabbMm().merge(poly);
+////    }
 //
 //    @Override
 //    public void draw(GL2 gl) {
