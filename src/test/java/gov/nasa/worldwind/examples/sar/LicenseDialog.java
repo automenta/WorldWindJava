@@ -123,7 +123,7 @@ public class LicenseDialog {
         return result;
     }
 
-    private String missingLicenseMessage() {
+    private static String missingLicenseMessage() {
         return "License Agreement is missing.";
     }
 

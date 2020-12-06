@@ -133,9 +133,6 @@ public abstract class LineIntersector implements Runnable {
             }
         }
 //        catch (InterruptedException e)
-//        {
-//            e.printStackTrace();
-//        }
     }
 
     protected void performIntersection(Position position) {
@@ -163,9 +160,6 @@ public abstract class LineIntersector implements Runnable {
                 performIntersection(position);
             }
 //            catch (InterruptedException e)
-//            {
-//                e.printStackTrace();
-//            }
         }
     }
 }

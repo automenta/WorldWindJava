@@ -215,7 +215,7 @@ public class PickSupport {
     }
 
     public static void beginPicking(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glPushAttrib(GL2.GL_ENABLE_BIT | GL2.GL_CURRENT_BIT);
 
@@ -230,7 +230,7 @@ public class PickSupport {
     }
 
     public static void endPicking(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glPopAttrib();
 
         // Some nvidia Quadro cards have a bug in which the current color is not restored. Restore it to the

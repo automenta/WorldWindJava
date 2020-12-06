@@ -199,7 +199,7 @@ public class BasicWWTexture implements WWTexture {
 
         if (t != null) {
             if (t.getMustFlipVertically()) {
-                GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+                GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
                 gl.glMatrixMode(GL2.GL_TEXTURE);
                 gl.glLoadIdentity();
                 gl.glScaled(1, -1, 1);

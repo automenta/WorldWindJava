@@ -1511,7 +1511,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     }
 
     protected void beginDrawing(DrawContext dc, int attrMask) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         attrMask |= GL2.GL_DEPTH_BUFFER_BIT // for depth test enable, depth func, depth mask
             | GL2.GL_COLOR_BUFFER_BIT // for alpha test enable, alpha func, blend enable, blend func
@@ -1575,7 +1575,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     }
 
     protected void endDrawing(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         // Restore the default OpenGL vertex array state.
         gl.glDisableClientState(GL2.GL_VERTEX_ARRAY);
@@ -1599,7 +1599,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     }
 
     protected void doDrawOrderedRenderable(DrawContext dc, PickSupport pickCandidates, OrderedSymbol osym) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         if (dc.isPickingMode()) {
             Color pickColor = dc.getUniquePickColor();
@@ -1641,13 +1641,13 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         // coordinate so that the symbol's depth values are appropriately computed by OpenGL according to its
         // distance from the eye. The orthographic projection matrix configured in beginRendering correctly maps
         // the screen point's Z coordinate to its corresponding depth value.
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glLoadIdentity(); // Assumes that the current matrix mode is GL_MODELVIEW.
         gl.glTranslated(osym.screenPoint.x, osym.screenPoint.y, osym.screenPoint.z);
     }
 
     protected void draw(DrawContext dc, OrderedSymbol osym) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         try {
             gl.glPushMatrix();
             gl.glScaled(osym.sx, osym.sy, 1.0d);
@@ -1700,7 +1700,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         if (!this.activeIconTexture.bind(dc))
             return;
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         try {
             gl.glPushMatrix();
             gl.glScaled(this.activeIconTexture.getWidth(dc), this.activeIconTexture.getHeight(dc), 1.0d);
@@ -1727,7 +1727,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         if (!this.glyphAtlas.bind(dc))
             return;
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         for (IconAtlasElement atlasElem : this.currentGlyphs) {
             Point point = atlasElem.getPoint();
@@ -1789,7 +1789,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             ? this.getActiveAttributes().getOpacity()
             : BasicTacticalSymbolAttributes.DEFAULT_OPACITY);
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         try {
             gl.glDisable(GL.GL_TEXTURE_2D);

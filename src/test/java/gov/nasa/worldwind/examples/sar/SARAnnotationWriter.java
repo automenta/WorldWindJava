@@ -78,7 +78,7 @@ public class SARAnnotationWriter {
         // as a placeholder for future functionality.
     }
 
-    private void createAnnotationsDocument(Document doc) {
+    private static void createAnnotationsDocument(Document doc) {
         // Create the GPX document root when the document
         // doesn't already have a root element.
         if (doc != null) {

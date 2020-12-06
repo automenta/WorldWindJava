@@ -45,14 +45,14 @@ public class OpenGLSupportTest implements GLEventListener {
     public void init(GLAutoDrawable glAutoDrawable) {
         int status = 0;
 
-        for (String funcName : this.getRequiredOglFunctions()) {
+        for (String funcName : OpenGLSupportTest.getRequiredOglFunctions()) {
             if (!glAutoDrawable.getGL().isFunctionAvailable(funcName)) {
                 System.out.println("OpenGL function " + funcName + " is not available.");
                 status = 1;
             }
         }
 
-        for (String extName : this.getRequiredOglExtensions()) {
+        for (String extName : OpenGLSupportTest.getRequiredOglExtensions()) {
             if (!glAutoDrawable.getGL().isExtensionAvailable(extName)) {
                 System.out.println("OpenGL extension " + extName + " is not available.");
                 status = 2;
@@ -90,11 +90,11 @@ public class OpenGLSupportTest implements GLEventListener {
     public void reshape(GLAutoDrawable glAutoDrawable, int i, int i1, int i2, int i3) {
     }
 
-    protected String[] getRequiredOglFunctions() {
+    protected static String[] getRequiredOglFunctions() {
         return new String[] {"glActiveTexture", "glClientActiveTexture"};
     }
 
-    protected String[] getRequiredOglExtensions() {
+    protected static String[] getRequiredOglExtensions() {
         return new String[] {"GL_EXT_texture_compression_s3tc"};
     }
 }

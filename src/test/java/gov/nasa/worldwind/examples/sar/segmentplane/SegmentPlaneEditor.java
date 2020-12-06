@@ -213,7 +213,7 @@ public class SegmentPlaneEditor extends AbstractLayer {
             return;
         }
 
-        newPosition = this.computePositionOnOrAboveSurface(wwd, newPosition);
+        newPosition = SegmentPlaneEditor.computePositionOnOrAboveSurface(wwd, newPosition);
 
         Position[] positions = this.getSegmentPlane().getSegmentPositions();
 
@@ -269,10 +269,10 @@ public class SegmentPlaneEditor extends AbstractLayer {
         LatLon[] locations = this.getSegmentPlane().getPlaneLocations();
 
         if (position.getElevation() < altitudes[0]) {
-            altitudes[0] = altitudes[0] + this.getNextGridStep(position.getElevation(), altitudes[0], gridSizes[1]);
+            altitudes[0] = altitudes[0] + SegmentPlaneEditor.getNextGridStep(position.getElevation(), altitudes[0], gridSizes[1]);
         }
         if (position.getElevation() > altitudes[1]) {
-            altitudes[1] = altitudes[0] + this.getNextGridStep(position.getElevation(), altitudes[0], gridSizes[1]);
+            altitudes[1] = altitudes[0] + SegmentPlaneEditor.getNextGridStep(position.getElevation(), altitudes[0], gridSizes[1]);
         }
 
         Vec4[] segment = new Vec4[2];
@@ -289,7 +289,7 @@ public class SegmentPlaneEditor extends AbstractLayer {
 
         // Resize only in the positive direction.
         if (dot > length) {
-            double nextLength = this.getNextGridStep(dot, 0.0, gridSizes[0]);
+            double nextLength = SegmentPlaneEditor.getNextGridStep(dot, 0.0, gridSizes[0]);
             Vec4 nextPoint = segment[0].add3(n.multiply3(nextLength));
             locations[1] = new LatLon(globe.computePositionFromPoint(nextPoint));
         }
@@ -406,7 +406,7 @@ public class SegmentPlaneEditor extends AbstractLayer {
     //********************  Utility Methods  ***********************//
     //**************************************************************//
 
-    protected Position moveSegmentAltitudeWithPlane(Position position, double[] minAndMaxElevation) {
+    protected static Position moveSegmentAltitudeWithPlane(Position position, double[] minAndMaxElevation) {
         double elevation = position.getElevation();
         if (elevation >= minAndMaxElevation[0] && elevation <= minAndMaxElevation[1]) {
             return null;
@@ -460,7 +460,7 @@ public class SegmentPlaneEditor extends AbstractLayer {
         return null;
     }
 
-    protected Position computePositionOnOrAboveSurface(WorldWindow wwd, Position position) {
+    protected static Position computePositionOnOrAboveSurface(WorldWindow wwd, Position position) {
         if (wwd.sceneControl().getTerrain() != null) {
             Vec4 point = wwd.sceneControl().getTerrain().getSurfacePoint(
                 position.getLatitude(), position.getLongitude());
@@ -479,7 +479,7 @@ public class SegmentPlaneEditor extends AbstractLayer {
         return position;
     }
 
-    protected double getNextGridStep(double value, double origin, double gridSize) {
+    protected static double getNextGridStep(double value, double origin, double gridSize) {
         double x = Math.ceil((value - origin) / gridSize);
         return gridSize * x;
     }

@@ -287,7 +287,7 @@ public class AntennaModel extends AbstractShape {
 
     public void drawModel(DrawContext dc, int displayMode, boolean showTexture) {
         ShapeData shapeData = this.getCurrent();
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         if (this.texture == null)
             this.makeTexture();

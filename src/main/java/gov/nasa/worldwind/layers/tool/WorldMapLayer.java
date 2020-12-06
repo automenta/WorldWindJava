@@ -308,7 +308,7 @@ public class WorldMapLayer extends AbstractLayer {
         if (this.getIconFilePath() == null)
             return;
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         OGLStackHandler ogsh = new OGLStackHandler();
 
         try {

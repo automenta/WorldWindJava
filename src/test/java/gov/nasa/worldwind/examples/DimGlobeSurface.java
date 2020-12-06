@@ -41,7 +41,7 @@ public class DimGlobeSurface extends ApplicationTemplate {
 
             // Create a surface image covering the full globe and set its initial opacity.
 
-            this.surfaceImage = new SurfaceImage(this.makeFilterImage(), Sector.FULL_SPHERE);
+            this.surfaceImage = new SurfaceImage(AppFrame.makeFilterImage(), Sector.FULL_SPHERE);
             this.surfaceImage.setOpacity(0.10);
 
             RenderableLayer layer = new RenderableLayer();
@@ -62,7 +62,7 @@ public class DimGlobeSurface extends ApplicationTemplate {
             this.getControlPanel().add(opacityPanel, BorderLayout.SOUTH);
         }
 
-        protected BufferedImage makeFilterImage() {
+        protected static BufferedImage makeFilterImage() {
             // A very small image can be used because it's all the same color.
             BufferedImage image = new BufferedImage(4, 4, BufferedImage.TYPE_INT_ARGB);
 

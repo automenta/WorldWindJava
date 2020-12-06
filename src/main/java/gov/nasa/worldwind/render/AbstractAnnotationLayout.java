@@ -46,7 +46,7 @@ public abstract class AbstractAnnotationLayout implements AnnotationLayoutManage
             throw new IllegalArgumentException(message);
         }
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         this.stackHandler.pushModelview(gl);
     }
 
@@ -57,7 +57,7 @@ public abstract class AbstractAnnotationLayout implements AnnotationLayoutManage
             throw new IllegalArgumentException(message);
         }
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         this.stackHandler.pop(gl);
     }
 

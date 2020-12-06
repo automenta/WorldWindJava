@@ -386,12 +386,12 @@ public class PointGrid extends WWObjectImpl implements OrderedRenderable, Highli
         if (this.currentPoints == null) // verify that we have something to draw
             return;
 
-        this.beginDrawing(dc);
+        PointGrid.beginDrawing(dc);
         try {
             this.doDrawOrderedRenderable(dc);
         }
         finally {
-            this.endDrawing(dc);
+            PointGrid.endDrawing(dc);
         }
     }
 
@@ -400,8 +400,8 @@ public class PointGrid extends WWObjectImpl implements OrderedRenderable, Highli
      *
      * @param dc the current draw context.
      */
-    protected void beginDrawing(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+    protected static void beginDrawing(DrawContext dc) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         int attrMask = GL2.GL_POINT_BIT
             | GL2.GL_CURRENT_BIT // for current color
@@ -428,8 +428,8 @@ public class PointGrid extends WWObjectImpl implements OrderedRenderable, Highli
      *
      * @param dc the current draw context.
      */
-    protected void endDrawing(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+    protected static void endDrawing(DrawContext dc) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glPopAttrib();
     }
 
@@ -446,7 +446,7 @@ public class PointGrid extends WWObjectImpl implements OrderedRenderable, Highli
     }
 
     protected void pickPoints(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         OGLStackHandler osh = new OGLStackHandler();
         try {
@@ -506,7 +506,7 @@ public class PointGrid extends WWObjectImpl implements OrderedRenderable, Highli
     }
 
     protected void drawPoints(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         this.setPointColor(dc, null);
         this.setPointSize(dc, null);
@@ -545,12 +545,12 @@ public class PointGrid extends WWObjectImpl implements OrderedRenderable, Highli
         if (color == null)
             color = DEFAULT_POINT_COLOR;
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glColor4ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue(), (byte) color.getAlpha());
     }
 
     protected void setPointSize(DrawContext dc, Double size) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         if (size == null)
             size = this.getActiveAttributes().getPointSize();

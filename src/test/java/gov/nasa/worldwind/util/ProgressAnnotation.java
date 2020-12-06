@@ -148,7 +148,7 @@ public class ProgressAnnotation extends ScreenAnnotation {
     }
 
     protected void drawCallout(DrawContext dc, int mode, Rectangle bounds, boolean useTexCoords) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         OGLStackHandler stackHandler = new OGLStackHandler();
         stackHandler.pushModelview(gl);

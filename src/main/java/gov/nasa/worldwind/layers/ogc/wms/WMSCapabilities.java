@@ -152,7 +152,7 @@ public class WMSCapabilities extends OGCCapabilities {
             if (layer == null)
                 continue;
 
-            String update = this.getLayerLastUpdate(layer);
+            String update = getLayerLastUpdate(layer);
             if (update != null && !update.isEmpty() && (lastUpdate == null || update.compareTo(lastUpdate) > 0))
                 lastUpdate = update;
         }

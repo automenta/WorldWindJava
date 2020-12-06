@@ -101,7 +101,7 @@ public class Symbology extends ApplicationTemplate {
 
             // Create point placemarks to mark each of the control points used to define the tactical graphic. This
             // provides a visualization of how the control point positions affect the displayed graphic.
-            this.addControlPoints(positions, layer);
+            AppFrame.addControlPoints(positions, layer);
 
             // Add the graphic layer to the WorldWind model.
             this.wwd().model().getLayers().add(layer);
@@ -113,7 +113,7 @@ public class Symbology extends ApplicationTemplate {
          * @param positions list of control points positions.
          * @param layer     layer to receive control point placemarks.
          */
-        protected void addControlPoints(Iterable<Position> positions, RenderableLayer layer) {
+        protected static void addControlPoints(Iterable<Position> positions, RenderableLayer layer) {
             PointPlacemarkAttributes attrs = new PointPlacemarkAttributes();
             attrs.setUsePointAsDefaultImage(true);
 

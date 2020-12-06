@@ -533,7 +533,7 @@ public class MultiLineTextRenderer {
 
     protected void drawLineWithUniqueColors(String text, int x, int y,
         DrawContext dc, PickSupport pickSupport, Object refObject, Position refPosition) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         //float spaceWidth = this.textRenderer.getCharWidth(' ');
         float drawX;
@@ -1067,7 +1067,7 @@ public class MultiLineTextRenderer {
 
     protected static void pickWord(String word, String hyperlink, double drawX, double drawY, Rectangle2D wordBounds,
         DrawContext dc, PickSupport pickSupport, Object refObject, Position refPosition) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         // Add pickable object
         Color color = dc.getUniquePickColor();
@@ -1085,7 +1085,7 @@ public class MultiLineTextRenderer {
 
     // Draw a filled rectangle
     protected static void drawFilledRectangle(DrawContext dc, double x, double y, double width, double height) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glBegin(GL2.GL_POLYGON);
         gl.glVertex3d(x, y, 0);
         gl.glVertex3d(x + width - 1, y, 0);

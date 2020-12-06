@@ -131,10 +131,10 @@ public class ToolBarImpl extends AbstractFeature implements ToolBar {
             super.paintChildren(g);
 
             if (this.rolloverComponent != null)
-                this.drawButtonLabel(this.rolloverComponent, (Graphics2D) g);
+                GradientToolBar.drawButtonLabel(this.rolloverComponent, (Graphics2D) g);
         }
 
-        public void drawButtonLabel(ToolBarButton c, Graphics2D g) {
+        public static void drawButtonLabel(ToolBarButton c, Graphics2D g) {
             Paint oldPaint = g.getPaint();
 
             Font font = Font.decode("Arial-Bold-14");

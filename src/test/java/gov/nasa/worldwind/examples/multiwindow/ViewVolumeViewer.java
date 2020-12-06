@@ -128,7 +128,7 @@ public class ViewVolumeViewer extends JFrame {
         @Override
         protected void doRender(DrawContext dc) {
             if (this.sg != null) {
-                Position currentPosition = this.getCurrentPosition(dc);
+                Position currentPosition = SectorGeometryLayer.getCurrentPosition(dc);
 
                 for (SectorGeometry sg : this.sg) {
                     sg.renderWireframe(dc, false, true);
@@ -140,7 +140,7 @@ public class ViewVolumeViewer extends JFrame {
             }
         }
 
-        public Position getCurrentPosition(DrawContext dc) {
+        public static Position getCurrentPosition(DrawContext dc) {
             PickedObjectList pos = dc.getPickedObjects();
             PickedObject terrainObject = pos != null ? pos.getTerrainObject() : null;
 

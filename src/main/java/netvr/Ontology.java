@@ -78,12 +78,11 @@ public class Ontology {
             private Category tag(Node node) {
                 String t = node.getLabel().substring(prefixLen);
                 if (!filter(t)) return null;
-                Category c = CAT.computeIfAbsent(t, (T) -> {
+                return CAT.computeIfAbsent(t, (T) -> {
                     final int nextID = TAGS.size();
                     TAGS.add(T);
                     return new Category(T, nextID);
                 });
-                return c;
             }
 
             private boolean filter(String t) {
@@ -92,14 +91,10 @@ public class Ontology {
                 if (t.startsWith("Pages_")) return false;
                 if (t.startsWith("Clean-up_categories_")) return false;
                 if (t.endsWith("_events")) return false;
-                if (t.startsWith("CS1_")) return false;
-
-                return true;
+                return !t.startsWith("CS1_");
             }
         });
-        CAT.entrySet().stream().sorted(Comparator.comparing(Map.Entry::getKey)).forEach(n -> {
-           System.out.println(n.getValue());
-        });
+        CAT.entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach(n -> System.out.println(n.getValue()));
         System.out.println(TAGS.size() + " total");
     }
 }

@@ -169,39 +169,6 @@ public class RenderableLayerTest
 
     //////////////////////////////////////////////////////////
     // Edge Case Tests
-    //////////////////////////////////////////////////////////
-
-//    @Test
-//    public void testSetRenderablesClearsRenderables()
-//    {
-//        Iterable<Renderable> renderables = createExampleIterable();
-//
-//        RenderableLayer layer = new RenderableLayer();
-//        layer.addAll(renderables);
-//        layer.set(renderables);
-//        layer.set(null);
-//
-//        // Test that the layer does not point to the Iterable.
-//        assertNotSame("", renderables, layer.all());
-//        // Test that the layer contains no renderables.
-//        assertFalse("", layer.all().iterator().hasNext());
-//    }
-
-//    @Test
-//    public void testSetRenderablesThenAddRenderables()
-//    {
-//        Iterable<Renderable> renderables = createExampleIterable();
-//
-//        RenderableLayer layer = new RenderableLayer();
-//        layer.set(renderables);
-//        layer.set(null);
-//        layer.addAll(renderables);
-//
-//        // Test that the layer does not point to the Iterable.
-//        assertNotSame("", renderables, layer.all());
-//        // Test that the layer contains the renderables.
-//        assertEquals("", renderables, layer.all());
-//    }
 
     @Test @Ignore
     public void testMaliciousGetRenderables()
@@ -239,31 +206,6 @@ public class RenderableLayerTest
         // Test that the layer contents do not change, even if the returned list can be modified.
         assertEquals("", renderables, layer.all());
     }
-
-//    @Test
-//    public void testMaliciousSetRenderables()
-//    {
-//        // Create an Iterable with null elements.
-//        java.util.List<Renderable> list = new java.util.ArrayList<>();
-//        list.add(null);
-//
-//        RenderableLayer layer = new RenderableLayer();
-//        layer.set(list);
-//
-//        DrawContext dc = new DrawContextImpl();
-//        dc.setModel(new BasicModel());
-//        dc.setView(new BasicOrbitView());
-//
-//        try
-//        {
-//            // Test that the layer does not fail when the Iterable is used.
-//            layer.render(dc);
-//        }
-//        catch (NullPointerException e)
-//        {
-//            fail("Layer does not check for null elements in Iterable");
-//        }
-//    }
 
     @Test
     public void testDisposeDoesNotClearRenderables()

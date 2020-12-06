@@ -169,7 +169,8 @@ public class WMSLayersPanel extends JPanel {
         return this.serverURI.getHost();
     }
 
-    protected LayerInfo createLayerInfo(WMSCapabilities caps, WMSLayerCapabilities layerCaps, WMSLayerStyle style) {
+    protected static LayerInfo createLayerInfo(WMSCapabilities caps, WMSLayerCapabilities layerCaps,
+        WMSLayerStyle style) {
         // Create the layer info specified by the layer's capabilities entry and the selected style.
 
         LayerInfo linfo = new LayerInfo();

@@ -166,7 +166,7 @@ public class StereoOptionSceneController extends BasicSceneController implements
         // If running on a stereo device but want to draw a normal image, both buffers must be filled or the
         // display will be blurry.
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glDrawBuffer(GL2.GL_BACK_LEFT);
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
@@ -183,7 +183,7 @@ public class StereoOptionSceneController extends BasicSceneController implements
      * @param dc the current draw context.
      */
     protected void doDrawStereoRedBlue(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         View dcView = dc.getView();
 
         // Draw the left eye
@@ -241,7 +241,7 @@ public class StereoOptionSceneController extends BasicSceneController implements
      * @param dc the current draw context.
      */
     protected void doDrawToStereoDevice(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         View dcView = dc.getView();
 
         // Draw the left eye

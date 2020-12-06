@@ -125,7 +125,7 @@ public class PositionTable extends JTable {
         ((AbstractTableModel) this.getModel()).fireTableRowsUpdated(row, row);
     }
 
-    protected Color getTableColorForTrack(SARTrack track) {
+    protected static Color getTableColorForTrack(SARTrack track) {
         if (track == null)
             return null;
 
@@ -145,7 +145,7 @@ public class PositionTable extends JTable {
     }
 
     protected void setTableColors(SARTrack track) {
-        Color tableBackground = this.getTableColorForTrack(track);
+        Color tableBackground = PositionTable.getTableColorForTrack(track);
         Color selectionBackground = (tableBackground != null) ? Color.DARK_GRAY : null;
         Color selectionForeground = (tableBackground != null) ? Color.WHITE : null;
 

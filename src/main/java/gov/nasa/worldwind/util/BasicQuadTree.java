@@ -82,12 +82,6 @@ public class BasicQuadTree<T> extends BitSetQuadTreeFilter implements Iterable<T
     public BasicQuadTree(int numLevels, Sector sector, Map<Integer, List<T>> itemMap, boolean allowDuplicates) {
         this(numLevels, sector, itemMap);
 
-//        if (sector == null) {
-//            String message = Logging.getMessage("nullValue.SectorIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-
         this.allowDuplicates = allowDuplicates;
 
         this.makeLevelZeroCells(sector);
@@ -170,17 +164,6 @@ public class BasicQuadTree<T> extends BitSetQuadTreeFilter implements Iterable<T
     }
 
     protected void addItem(T item, double[] itemCoords, String name) {
-//        if (item == null) {
-//            String message = Logging.getMessage("nullValue.ItemIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//
-//        if (itemCoords == null) {
-//            String message = Logging.getMessage("nullValue.CoordinatesAreNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         this.currentItem = item;
         this.currentName = name;
@@ -372,11 +355,6 @@ public class BasicQuadTree<T> extends BitSetQuadTreeFilter implements Iterable<T
      * @throws IllegalArgumentException if <code>locations</code> is null.
      */
     synchronized public Set<T> getItemsAtLocation(Iterable<LatLon> locations, Set<T> outItems) {
-//        if (locations == null) {
-//            String message = Logging.getMessage("nullValue.LatLonListIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         FindIntersectingBitsOp op = new FindIntersectingBitsOp(this);
 
@@ -399,11 +377,6 @@ public class BasicQuadTree<T> extends BitSetQuadTreeFilter implements Iterable<T
      * @throws IllegalArgumentException if <code>testSector</code> is null.
      */
     synchronized public Set<T> getItemsInRegion(Sector testSector, Set<T> outItems) {
-//        if (testSector == null) {
-//            String message = Logging.getMessage("nullValue.SectorIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         FindIntersectingBitsOp op = new FindIntersectingBitsOp(this);
 
@@ -423,11 +396,6 @@ public class BasicQuadTree<T> extends BitSetQuadTreeFilter implements Iterable<T
      * @throws IllegalArgumentException if <code>geometryList</code> is null.
      */
     synchronized public Set<T> getItemsInRegions(Iterable<SectorGeometry> geometryList, Set<T> outItems) {
-//        if (geometryList == null) {
-//            String message = Logging.getMessage("nullValue.SectorGeometryListIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         FindIntersectingBitsOp op = new FindIntersectingBitsOp(this);
 

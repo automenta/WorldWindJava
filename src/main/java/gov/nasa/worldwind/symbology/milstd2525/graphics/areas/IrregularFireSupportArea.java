@@ -100,7 +100,6 @@ public class IrregularFireSupportArea extends BasicArea {
 
     @Override
     protected void createLabels() {
-        FireSupportTextBuilder textBuilder = new FireSupportTextBuilder();
         String[] allText = FireSupportTextBuilder.createText(this);
 
         String text = allText[0];

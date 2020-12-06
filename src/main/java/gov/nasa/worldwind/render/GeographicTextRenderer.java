@@ -406,7 +406,7 @@ public class GeographicTextRenderer {
     }
 
     protected void beginRendering(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         int attribBits =
             GL2.GL_ENABLE_BIT // for enable/disable changes
                 | GL2.GL_COLOR_BUFFER_BIT // for alpha test func and ref, and blend
@@ -452,7 +452,7 @@ public class GeographicTextRenderer {
             this.lastTextRenderer = null;
         }
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glMatrixMode(GL2.GL_PROJECTION);
         gl.glPopMatrix();
@@ -472,7 +472,7 @@ public class GeographicTextRenderer {
         }
 
         GeographicText geographicText = uText.text;
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         final CharSequence charSequence = geographicText.getText();
         if (charSequence == null)

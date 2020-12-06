@@ -118,7 +118,7 @@ public class SectorGeometryList extends ArrayList<SectorGeometry> {
         this.pickSupport.clearPickList();
         PickSupport.beginPicking(dc);
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glShadeModel(GL2.GL_FLAT);
 
         try {
@@ -174,7 +174,7 @@ public class SectorGeometryList extends ArrayList<SectorGeometry> {
         this.pickSupport.clearPickList();
         PickSupport.beginPicking(dc);
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glShadeModel(GL2.GL_FLAT);
 
         try {

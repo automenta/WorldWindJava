@@ -59,7 +59,7 @@ public class GazetteerPanel extends JPanel {
         super(new BorderLayout());
 
         if (gazetteerClassName != null)
-            this.gazeteer = this.constructGazetteer(gazetteerClassName);
+            this.gazeteer = GazetteerPanel.constructGazetteer(gazetteerClassName);
         else
             this.gazeteer = new YahooGazetteer();
 
@@ -122,7 +122,7 @@ public class GazetteerPanel extends JPanel {
         this.add(resultsPanel, BorderLayout.EAST);
     }
 
-    private Gazetteer constructGazetteer(String className)
+    private static Gazetteer constructGazetteer(String className)
         throws ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException,
         InvocationTargetException {
         if (className == null || className.isEmpty()) {
@@ -217,7 +217,7 @@ public class GazetteerPanel extends JPanel {
     }
 
     //throws IllegalArgumentException
-    private PointOfInterest parseCoordinates(String[] coords) {
+    private static PointOfInterest parseCoordinates(String[] coords) {
         if (isDecimalDegrees(coords)) {
             double d1 = Double.parseDouble(coords[0].trim());
             double d2 = Double.parseDouble(coords[1].trim());
@@ -233,7 +233,7 @@ public class GazetteerPanel extends JPanel {
         }
     }
 
-    private boolean isDecimalDegrees(String[] coords) {
+    private static boolean isDecimalDegrees(String[] coords) {
         try {
             Double.parseDouble(coords[0].trim());
             Double.parseDouble(coords[1].trim());

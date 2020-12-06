@@ -311,7 +311,7 @@ public class TerrainIntersections extends ApplicationTemplate {
             }
         }
 
-        protected List<Position> buildGrid(Sector sector, double height, int nLatCells, int nLonCells) {
+        protected static List<Position> buildGrid(Sector sector, double height, int nLatCells, int nLonCells) {
             List<Position> grid = new ArrayList<>((nLatCells + 1) * (nLonCells + 1));
 
             double dLat = sector.latDelta / nLatCells;

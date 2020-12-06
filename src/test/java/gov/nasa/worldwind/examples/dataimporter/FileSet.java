@@ -151,7 +151,7 @@ public class FileSet extends AVListImpl {
         this.set(AVKey.COLOR, color);
     }
 
-    public int getMaxFilesForPreviewImage() {
+    public static int getMaxFilesForPreviewImage() {
         return MAX_FILES_FOR_PREVIEW_IMAGE;
     }
 
@@ -163,7 +163,7 @@ public class FileSet extends AVListImpl {
     }
 
     public BufferedImage getImage() {
-        if (!this.isImagery() || this.getLength() > this.getMaxFilesForPreviewImage())
+        if (!this.isImagery() || this.getLength() > FileSet.getMaxFilesForPreviewImage())
             return null;
 
         if (this.get(AVKey.IMAGE) != null)

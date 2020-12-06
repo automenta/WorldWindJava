@@ -11,7 +11,7 @@ import gov.nasa.worldwind.layers.ogc.wms.WMSCapabilities;
 import gov.nasa.worldwind.retrieve.*;
 
 import java.beans.PropertyChangeListener;
-import java.net.*;
+import java.net.URL;
 
 /**
  * A collection of utility methods for retrieving and managing data in the {@link SessionCache}.
@@ -40,23 +40,6 @@ public class SessionCacheUtils {
     public static void retrieveSessionData(URL url, SessionCache cache, Object cacheKey,
         AbsentResourceList absentResourceList, long resourceID, PropertyChangeListener propertyListener,
         String propertyName) {
-//        if (url == null) {
-//            String message = Logging.getMessage("nullValue.URLIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-
-//        if (cache == null) {
-//            String message = Logging.getMessage("nullValue.CacheIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-
-//        if (cacheKey == null) {
-//            String message = Logging.getMessage("nullValue.CacheKeyIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (WorldWind.getNetworkStatus().isHostUnavailable(url)) {
             if (absentResourceList != null)

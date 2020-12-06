@@ -376,18 +376,6 @@ public class DirectedPath extends Path {
             buffer.put((float) (midPoint.z - referencePoint.z));
         }
     }
-//
-//    /** {@inheritDoc} */
-//    @Override
-//    protected boolean mustRegenerateGeometry(DrawContext dc)
-//    {
-//        // Path never regenerates geometry for absolute altitude mode paths, but the direction arrows in DirectedPath
-//        // need to be recomputed because the view may have changed and the size of the arrows needs to be recalculated.
-//        if (this.getCurrentPathData().isExpired(dc))
-//            return true;
-//
-//        return super.mustRegenerateGeometry(dc);
-//    }
 
     /**
      * Determines if an direction arrow drawn a point will be less than a specified number of pixels.
@@ -436,7 +424,7 @@ public class DirectedPath extends Path {
             return;
         }
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         boolean projectionOffsetPushed = false; // keep track for error recovery
 
         try {

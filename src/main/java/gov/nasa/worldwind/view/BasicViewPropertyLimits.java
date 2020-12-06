@@ -337,17 +337,6 @@ public class BasicViewPropertyLimits implements ViewPropertyLimits {
      */
     @Override
     public Position limitEyePosition(View view, Position position) {
-//        if (view == null) {
-//            String message = Logging.getMessage("nullValue.ViewIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//
-//        if (position == null) {
-//            String message = Logging.getMessage("nullValue.PositionIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         Sector sector = this.eyeLocationLimits;
         double lat = Angle.clamp(position.latitude, sector.latMin, sector.latMax);
@@ -362,17 +351,6 @@ public class BasicViewPropertyLimits implements ViewPropertyLimits {
      */
     @Override
     public Angle limitHeading(View view, Angle angle) {
-//        if (view == null) {
-//            String message = Logging.getMessage("nullValue.ViewIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//
-//        if (angle == null) {
-//            String message = Logging.getMessage("nullValue.AngleIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (BasicViewPropertyLimits.isNonContinous2DGlobe(view.getGlobe())) {
             return angle; // ignore the heading limit on non-continuous 2D globes

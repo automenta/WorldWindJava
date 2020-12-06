@@ -127,7 +127,7 @@ public class TacticalGraphics extends ApplicationTemplate {
             layer.add(graphic);
 
             // Apply shared attributes to all graphics on this layer
-            this.setAttributes(layer, this.sharedAttrs, this.sharedPointAttrs);
+            AppFrame.setAttributes(layer, this.sharedAttrs, this.sharedPointAttrs);
         }
 
         protected void createLineGraphics(RenderableLayer layer) {
@@ -477,7 +477,7 @@ public class TacticalGraphics extends ApplicationTemplate {
             layer.add(graphic);
 
             // Apply shared attributes to all graphics on this layer
-            this.setAttributes(layer, this.sharedAttrs, this.sharedPointAttrs);
+            AppFrame.setAttributes(layer, this.sharedAttrs, this.sharedPointAttrs);
         }
 
         protected void createAreaGraphics(RenderableLayer layer) {
@@ -789,7 +789,7 @@ public class TacticalGraphics extends ApplicationTemplate {
             layer.add(graphic);
 
             // Apply shared attributes to all graphics on this layer
-            this.setAttributes(layer, this.sharedAttrs, this.sharedPointAttrs);
+            AppFrame.setAttributes(layer, this.sharedAttrs, this.sharedPointAttrs);
 
             //////////////////////////////////////////////////////////////
             // Battle Position, Prepared but not occupied (2.X.2.4.3.1.1)
@@ -892,7 +892,7 @@ public class TacticalGraphics extends ApplicationTemplate {
             layer.add(graphic);
 
             // Apply shared attributes to all graphics on this layer
-            this.setAttributes(layer, this.sharedAttrs, this.sharedPointAttrs);
+            AppFrame.setAttributes(layer, this.sharedAttrs, this.sharedPointAttrs);
         }
 
         /**
@@ -902,7 +902,7 @@ public class TacticalGraphics extends ApplicationTemplate {
          * @param attrs      Attributes to apply to non-point graphics.
          * @param pointAttrs Attributes to apply to TacticalPoint graphics graphics.
          */
-        protected void setAttributes(RenderableLayer layer, TacticalGraphicAttributes attrs,
+        protected static void setAttributes(RenderableLayer layer, TacticalGraphicAttributes attrs,
             TacticalGraphicAttributes pointAttrs) {
             for (Renderable renderable : layer.all()) {
                 if (renderable instanceof TacticalPoint) {

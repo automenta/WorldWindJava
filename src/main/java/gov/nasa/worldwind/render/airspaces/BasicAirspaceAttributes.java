@@ -214,7 +214,7 @@ public class BasicAirspaceAttributes extends BasicShapeAttributes implements Air
     }
 
     protected static void applyMaterial(DrawContext dc, Material material, double opacity, boolean enableMaterial) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         if (material != null) {
             if (enableMaterial) {

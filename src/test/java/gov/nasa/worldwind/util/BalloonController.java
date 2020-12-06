@@ -149,7 +149,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
         // Implementation note: handle the balloon with a mouse listener instead of a select listener so that the balloon
         // can be turned off if the user clicks on the terrain.
         try {
-            if (this.isBalloonTrigger(e)) {
+            if (BalloonController.isBalloonTrigger(e)) {
                 PickedObjectList pickedObjects = this.wwd.objectsAtPosition();
                 if (pickedObjects == null || pickedObjects.getTopPickedObject() == null) {
                     this.hideBalloon();
@@ -197,7 +197,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
         // Handle balloon resize events. Create a resize controller when the mouse enters the resize area.
         // While the mouse is in the resize area, the resize controller will handle select events to resize the
         // balloon. The controller will be destroyed when the mouse exists the resize area.
-        if (pickedObject != null && this.isResizeControl(pickedObject)) {
+        if (pickedObject != null && BalloonController.isResizeControl(pickedObject)) {
             this.createResizeController((Balloon) pickedObject.getObject());
         }
         else if (this.resizeController != null && !this.resizeController.isResizing()) {
@@ -230,14 +230,14 @@ public class BalloonController extends MouseAdapter implements SelectListener {
                 PickedObjectList list = this.wwd.objectsAtPosition();
                 po = list != null ? list.getTopPickedObject() : null;
 
-                if (!this.isResizeControl(po)) {
+                if (!BalloonController.isResizeControl(po)) {
                     this.destroyResizeController(event);
                 }
             }
 
             // Check to see if the event is a link activation or other balloon event
             if (event.isLeftClick()) {
-                String url = this.getUrl(pickedObject);
+                String url = BalloonController.getUrl(pickedObject);
                 if (url != null) {
                     this.onLinkActivated(event, url);
                 }
@@ -252,7 +252,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
                 // event is a left click. If we don't consume the event, the balloon may take action when a left press
                 // event occurs on a link that the balloon controller will handle (for example, a link to a KML file.)
                 // We avoid consuming left press events, since doing so prevents the WorldWindow from gaining focus.
-                String url = this.getUrl(pickedObject);
+                String url = BalloonController.getUrl(pickedObject);
                 if (url != null) {
                     this.onLinkActivated(event, url);
                 }
@@ -264,7 +264,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
         }
     }
 
-    protected boolean isResizeControl(PickedObject po) {
+    protected static boolean isResizeControl(PickedObject po) {
         return po != null
             && AVKey.RESIZE.equals(po.getStringValue(AVKey.ACTION))
             && po.getObject() instanceof Balloon;
@@ -277,7 +277,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
      * @param pickedObject PickedObject to inspect. May not be null.
      * @return The URL attached to the PickedObject, or null if there is no URL.
      */
-    protected String getUrl(AVList pickedObject) {
+    protected static String getUrl(AVList pickedObject) {
         return pickedObject.getStringValue(AVKey.URL);
     }
 
@@ -288,7 +288,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
      * @param pickedObject PickedObject to inspect for context. May not be null.
      * @return The KML feature associated with the picked object, or null if no KML feature is found.
      */
-    protected KMLAbstractFeature getContext(PickedObject pickedObject) {
+    protected static KMLAbstractFeature getContext(PickedObject pickedObject) {
         Object topObject = pickedObject.getObject();
 
         Object context = pickedObject.get(AVKey.CONTEXT);
@@ -425,21 +425,21 @@ public class BalloonController extends MouseAdapter implements SelectListener {
         KMLRoot contextDoc = null; // The local KML document that initiated the link
         KMLAbstractFeature kmlFeature;
 
-        boolean isKmlUrl = this.isKmlUrl(linkBase, type);
+        boolean isKmlUrl = BalloonController.isKmlUrl(linkBase, type);
         boolean foundLocalFeature = false;
 
         // Look for a KML feature attached to the picked object. If present, the link will be interpreted relative
         // to this feature.
-        kmlFeature = this.getContext(pickedObject);
+        kmlFeature = BalloonController.getContext(pickedObject);
         if (kmlFeature != null)
             contextDoc = kmlFeature.getRoot();
 
         // If this link is to a KML or KMZ document we will load the document into a new layer.
         if (isKmlUrl) {
-            targetDoc = this.findOpenKmlDocument(linkBase);
+            targetDoc = BalloonController.findOpenKmlDocument(linkBase);
             if (targetDoc == null) {
                 // Asynchronously request the document if the event is a link activation trigger.
-                if (this.isLinkActivationTrigger(event))
+                if (BalloonController.isLinkActivationTrigger(event))
                     this.requestDocument(linkBase, contextDoc, linkRef);
 
                 // We are opening a document, consume the event to prevent balloon from trying to load the document.
@@ -466,8 +466,8 @@ public class BalloonController extends MouseAdapter implements SelectListener {
             String target = pickedObject.getStringValue(AVKey.TARGET);
             if ("_blank".equalsIgnoreCase(target)) {
                 // Invoke the system browser to open the link if the event is link activation trigger.
-                if (this.isLinkActivationTrigger(event))
-                    this.openInNewBrowser(event, url);
+                if (BalloonController.isLinkActivationTrigger(event))
+                    BalloonController.openInNewBrowser(event, url);
                 event.consume();
             }
         }
@@ -480,7 +480,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
      * @return {@code true} if the event actives hyperlinks. This implementation returns {@code true} for left click
      * events.
      */
-    protected boolean isLinkActivationTrigger(SelectEvent event) {
+    protected static boolean isLinkActivationTrigger(SelectEvent event) {
         return event.isLeftClick();
     }
 
@@ -490,7 +490,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
      * @param event SelectEvent that triggered navigation. The event is consumed if URL can be parsed.
      * @param url   URL to open.
      */
-    protected void openInNewBrowser(SelectEvent event, String url) {
+    protected static void openInNewBrowser(SelectEvent event, String url) {
         try {
             BrowserOpener.browse(new URL(url));
             event.consume();
@@ -524,7 +524,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
             Object o = doc.resolveReference(featureId);
             if (o instanceof KMLAbstractFeature) {
                 // Perform the link action if the event is a link activation event.
-                if (event == null || this.isLinkActivationTrigger(event))
+                if (event == null || BalloonController.isLinkActivationTrigger(event))
                     this.doFeatureLinkActivated((KMLAbstractFeature) o, directive);
                 return true;
             }
@@ -558,7 +558,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
      * @return Return true if the URL refers to a file with a ".kml" or ".kmz" extension, or if the {@code contentType}
      * is the KML or KMZ mime type.
      */
-    protected boolean isKmlUrl(String url, String contentType) {
+    protected static boolean isKmlUrl(String url, String contentType) {
         if (WWUtil.isEmpty(url))
             return false;
 
@@ -596,7 +596,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
         Balloon balloon = feature.getBalloon();
 
         // Create a new balloon if the feature does not have one
-        if (balloon == null && this.canShowBalloon(feature))
+        if (balloon == null && BalloonController.canShowBalloon(feature))
             balloon = this.createBalloon(feature);
 
         // Don't change balloons that are already visible
@@ -636,7 +636,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
      * @param feature KML feature to test.
      * @return {@code true} if a balloon must be created for the feature. Otherwise {@code false}.
      */
-    public boolean canShowBalloon(KMLAbstractFeature feature) {
+    public static boolean canShowBalloon(KMLAbstractFeature feature) {
         KMLBalloonStyle style = (KMLBalloonStyle) feature.getSubStyle(new KMLBalloonStyle(null), KMLConstants.NORMAL);
 
         boolean isBalloonHidden = "hide".equals(style.getDisplayMode());
@@ -656,7 +656,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
      * @return {@code true} if the event is a balloon trigger. This implementation returns {@code true} if the event is
      * a left click.
      */
-    protected boolean isBalloonTrigger(MouseEvent e) {
+    protected static boolean isBalloonTrigger(MouseEvent e) {
         // Handle only left click
         return (e.getButton() == MouseEvent.BUTTON1) && (e.getClickCount() % 2 == 1);
     }
@@ -687,7 +687,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
                 balloonObj = feature.getBalloon();
 
                 // Create a new balloon if the feature does not have one
-                if (balloonObj == null && this.canShowBalloon(feature))
+                if (balloonObj == null && BalloonController.canShowBalloon(feature))
                     balloonObj = this.createBalloon(feature);
             }
         }
@@ -725,9 +725,9 @@ public class BalloonController extends MouseAdapter implements SelectListener {
         // Create the balloon based on the features attachment mode and the browser balloon settings. Wrap the balloon
         // in a KMLBalloonImpl to handle balloon style resolution.  
         KMLAbstractBalloon kmlBalloon;
-        if (AVKey.GLOBE.equals(this.getAttachmentMode(feature))) {
+        if (AVKey.GLOBE.equals(BalloonController.getAttachmentMode(feature))) {
             GlobeBalloon balloon;
-            if (this.isUseBrowserBalloon())
+            if (BalloonController.isUseBrowserBalloon())
                 balloon = new GlobeBrowserBalloon(text, Position.ZERO); // 0 is dummy position
             else
                 balloon = new GlobeAnnotationBalloon(text, Position.ZERO); // 0 is dummy position
@@ -736,7 +736,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
         }
         else {
             ScreenBalloon balloon;
-            if (this.isUseBrowserBalloon())
+            if (BalloonController.isUseBrowserBalloon())
                 balloon = new ScreenBrowserBalloon(text, new Point(0, 0)); // 0,0 is dummy position
             else
                 balloon = new ScreenAnnotationBalloon(text, new Point(0, 0)); // 0,0 is dummy position
@@ -750,7 +750,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
         // Attach the balloon to the feature
         feature.setBalloon(kmlBalloon);
 
-        this.configureBalloon(kmlBalloon, feature);
+        BalloonController.configureBalloon(kmlBalloon, feature);
 
         return kmlBalloon;
     }
@@ -761,7 +761,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
      * @param balloon Balloon to configure.
      * @param feature Feature that owns the Balloon.
      */
-    protected void configureBalloon(Balloon balloon, KMLAbstractFeature feature) {
+    protected static void configureBalloon(Balloon balloon, KMLAbstractFeature feature) {
         // Configure the balloon for a container to not have a leader. These balloons will display in the middle of the
         // viewport.
         if (feature instanceof KMLAbstractContainer) {
@@ -806,7 +806,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
      * @return {@link AVKey#GLOBE} if the feature is attached to a geographic location. Otherwise {@link AVKey#SCREEN}.
      * Container features (Document and Folder) are considered screen features.
      */
-    protected String getAttachmentMode(KMLAbstractFeature feature) {
+    protected static String getAttachmentMode(KMLAbstractFeature feature) {
         if (feature instanceof KMLPlacemark || feature instanceof KMLGroundOverlay)
             return AVKey.GLOBE;
         else
@@ -820,7 +820,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
      *
      * @return {@code true} if the controller will create BrowserBalloons.
      */
-    protected boolean isUseBrowserBalloon() {
+    protected static boolean isUseBrowserBalloon() {
         return Configuration.isWindowsOS() || Configuration.isMacOS();
     }
 
@@ -841,11 +841,11 @@ public class BalloonController extends MouseAdapter implements SelectListener {
             if (position != null) {
                 GlobeBalloon globeBalloon = (GlobeBalloon) balloon;
                 globeBalloon.setPosition(position);
-                globeBalloon.setAltitudeMode(this.getBalloonAltitudeMode(balloonObject));
+                globeBalloon.setAltitudeMode(BalloonController.getBalloonAltitudeMode(balloonObject));
             }
         }
 
-        if (this.mustAdjustPosition(balloon))
+        if (BalloonController.mustAdjustPosition(balloon))
             this.adjustPosition(balloon, point);
 
         this.balloon = balloon;
@@ -875,7 +875,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
             ((GlobeBalloon) balloon).setPosition(position);
         }
 
-        if (this.mustAdjustPosition(balloon))
+        if (BalloonController.mustAdjustPosition(balloon))
             this.adjustPosition(balloon, screenPoint);
 
         this.balloon = balloon;
@@ -888,7 +888,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
      * @param balloon Balloon to inspect.
      * @return {@code true} if the balloon position must be adjusted to make the balloon visible.
      */
-    protected boolean mustAdjustPosition(Balloon balloon) {
+    protected static boolean mustAdjustPosition(Balloon balloon) {
         // Look at the balloon leader shape. If there is no leader shape, assume that the balloon itself is positioned
         // over the point of interest, and cannot be moved. Otherwise, assume that the balloon must be adjusted.
         BalloonAttributes attrs = balloon.getAttributes();
@@ -1035,7 +1035,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
      * @return The altitude mode that should be applied to the balloon, one of {@link WorldWind#ABSOLUTE}, {@link
      * WorldWind#CLAMP_TO_GROUND}, or {@link WorldWind#RELATIVE_TO_GROUND}.
      */
-    protected int getBalloonAltitudeMode(Object balloonObject) {
+    protected static int getBalloonAltitudeMode(Object balloonObject) {
         // Balloons are often attached to PointPlacemarks, so handle this case specially. The balloon altitude mode
         // needs to match the placemark altitude mode. Shapes do not have this problem because an intersection calculation
         // can place the balloon.
@@ -1069,9 +1069,6 @@ public class BalloonController extends MouseAdapter implements SelectListener {
             return intersections.get(0).getIntersectionPosition();
 //        }
 //        catch (InterruptedException ignored)
-//        {
-//            // Do nothing
-//        }
 
         return null;
     }
@@ -1124,7 +1121,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
         {
             Sector sector = Sector.boundingSector(positions);
 
-            return new Position(sector.getCentroid(), this.findMaxAltitude(positions));
+            return new Position(sector.getCentroid(), BalloonController.findMaxAltitude(positions));
         }
         return null;
     }
@@ -1174,7 +1171,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
      * @return The maximum elevation in the list of positions. Returns {@code -Double.MAX_VALUE} if {@code positions} is
      * empty.
      */
-    protected double findMaxAltitude(Iterable<? extends Position> positions) {
+    protected static double findMaxAltitude(Iterable<? extends Position> positions) {
         double maxAltitude = -Double.MAX_VALUE;
         for (Position p : positions) {
             double altitude = p.getAltitude();
@@ -1196,7 +1193,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
      * @param url URL of the KML document.
      * @return KMLRoot for an already-parsed document, or null if the document was not found in the cache.
      */
-    protected KMLRoot findOpenKmlDocument(String url) {
+    protected static KMLRoot findOpenKmlDocument(String url) {
         Object o = WorldWind.getSessionCache().get(url);
         if (o instanceof KMLRoot)
             return (KMLRoot) o;
@@ -1251,7 +1248,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
      * @param url URL of the document that failed to load.
      * @param e   Exception that caused the failure.
      */
-    protected void onDocumentFailed(String url, Exception e) {
+    protected static void onDocumentFailed(String url, Exception e) {
         String message = Logging.getMessage("generic.ExceptionWhileReading", url + ": " + e.getMessage());
         Logging.logger().warning(message);
     }
@@ -1375,7 +1372,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
             }
             catch (final Exception e) {
                 // Schedule a callback on the EDT to report the error to the BalloonController
-                SwingUtilities.invokeLater(() -> BalloonController.this.onDocumentFailed(docUrl, e));
+                SwingUtilities.invokeLater(() -> BalloonController.onDocumentFailed(docUrl, e));
                 this.cancel();
             }
         }

@@ -1065,11 +1065,6 @@ public class MeasureTool extends AVListImpl implements Disposable {
      * @param mode  the shape edition mode.
      */
     public void moveControlPoint(ControlPoint point, String mode) {
-//        if (point == null) {
-//            String msg = Logging.getMessage("nullValue.PointIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
         if (point.get(CONTROL_TYPE_REGULAR_SHAPE) != null) {
             // Update shape properties
             updateShapeProperties((String) point.get(CONTROL_TYPE_REGULAR_SHAPE), point.getPosition(), mode);

@@ -113,7 +113,7 @@ public class BasicView extends WWObjectImpl implements View {
 
         double[] matrixArray = new double[16];
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         // Store the current matrix-mode state.
         OGLStackHandler ogsh = new OGLStackHandler();
 
@@ -684,7 +684,7 @@ public class BasicView extends WWObjectImpl implements View {
         if (modelview != null)
             matrix = modelview.multiply(Matrix.fromTranslation(referenceCenter));
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         // Store the current matrix-mode state.
         OGLStackHandler ogsh = new OGLStackHandler();
@@ -720,7 +720,7 @@ public class BasicView extends WWObjectImpl implements View {
         if (matrix == null)
             return null;
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glMatrixMode(GL2.GL_MODELVIEW);
 
@@ -740,7 +740,7 @@ public class BasicView extends WWObjectImpl implements View {
      */
     public void popReferenceCenter(DrawContext dc) {
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         // Store the current matrix-mode state.
         OGLStackHandler ogsh = new OGLStackHandler();

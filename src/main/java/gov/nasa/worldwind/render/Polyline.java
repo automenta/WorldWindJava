@@ -681,7 +681,7 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
     }
 
     protected void drawOrderedRenderable(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         int attrBits = GL2.GL_HINT_BIT | GL2.GL_CURRENT_BIT | GL2.GL_LINE_BIT;
         if (!dc.isPickingMode()) {
@@ -1035,11 +1035,6 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
     }
 
     public void moveTo(Position position) {
-//        if (position == null) {
-//            String msg = Logging.getMessage("nullValue.PositionIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         this.reset();
         this.extents.clear();

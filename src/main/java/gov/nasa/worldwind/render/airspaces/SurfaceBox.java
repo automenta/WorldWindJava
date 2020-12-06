@@ -214,7 +214,7 @@ public class SurfaceBox extends AbstractSurfaceShape {
     }
 
     protected static void applyCenterLineState(DrawContext dc, ShapeAttributes attributes) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         if (!dc.isPickingMode() && attributes.getOutlineStippleFactor() <= 0) // don't override stipple in attributes
         {

@@ -810,7 +810,7 @@ public class Cylinder implements Extent, Renderable {
         double[] matrixArray = new double[16];
         transformMatrix.toArray(matrixArray, 0, false);
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         OGLStackHandler ogsh = new OGLStackHandler();
         ogsh.pushAttrib(gl, GL2.GL_CURRENT_BIT | GL2.GL_ENABLE_BIT | GL2.GL_TRANSFORM_BIT | GL2.GL_DEPTH_BUFFER_BIT);

@@ -1085,7 +1085,7 @@ public class ExtrudedPolygon extends AbstractShape {
         if (!dc.isPickingMode()) {
             // Push an identity texture matrix. This prevents drawSides() from leaking GL texture matrix state. The
             // texture matrix stack is popped from OGLStackHandler.pop() within {@link #endRendering}.
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
             ogsh.pushTextureIdentity(gl);
         }
 
@@ -1132,7 +1132,7 @@ public class ExtrudedPolygon extends AbstractShape {
     public void drawCapOutline(DrawContext dc, Iterable<ExtrudedBoundaryInfo> shapeData) {
         this.prepareToDrawOutline(dc, this.getActiveCapAttributes(), defaultAttributes);
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         for (ExtrudedBoundaryInfo boundary : shapeData) {
             if (!dc.isPickingMode() && this.mustApplyLighting(dc, this.getActiveCapAttributes()))
@@ -1153,7 +1153,7 @@ public class ExtrudedPolygon extends AbstractShape {
     protected void drawSideOutline(DrawContext dc, Iterable<ExtrudedBoundaryInfo> shapeData) {
         this.prepareToDrawOutline(dc, this.getActiveSideAttributes(), defaultSideAttributes);
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         for (ExtrudedBoundaryInfo boundary : shapeData) {
             if (!dc.isPickingMode() && this.mustApplyLighting(dc, this.getActiveSideAttributes()))
@@ -1191,7 +1191,7 @@ public class ExtrudedPolygon extends AbstractShape {
     public void drawCapInterior(DrawContext dc, ShapeData shapeData) {
         super.prepareToDrawInterior(dc, this.getActiveCapAttributes(), defaultAttributes);
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         if (!dc.isPickingMode() && this.mustApplyLighting(dc, this.getActiveCapAttributes()))
             gl.glNormalPointer(GL.GL_FLOAT, 0, shapeData.capNormalBuffer.rewind());
@@ -1227,7 +1227,7 @@ public class ExtrudedPolygon extends AbstractShape {
     protected void drawSideInteriors(DrawContext dc, Iterable<ExtrudedBoundaryInfo> shapeData) {
         super.prepareToDrawInterior(dc, this.getActiveSideAttributes(), defaultSideAttributes);
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         for (ExtrudedBoundaryInfo boundary : shapeData) {
             if (!dc.isPickingMode() && this.mustApplyLighting(dc, this.getActiveSideAttributes()))

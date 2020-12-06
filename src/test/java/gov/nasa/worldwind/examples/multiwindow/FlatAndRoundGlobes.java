@@ -54,16 +54,16 @@ public class FlatAndRoundGlobes {
     public FlatAndRoundGlobes() {
         LayerList layers = this.makeCommonLayers();
 
-        Model roundModel = this.makeModel(new Earth(), layers);
-        Model flatModel = this.makeModel(new EarthFlat(), layers);
+        Model roundModel = FlatAndRoundGlobes.makeModel(new Earth(), layers);
+        Model flatModel = FlatAndRoundGlobes.makeModel(new EarthFlat(), layers);
         ((Globe2D) flatModel.getGlobe()).setProjection(new ProjectionSinusoidal());
 
         WWFrame roundFrame = new WWFrame(null, roundModel, "Round Globe", AVKey.LEFT_OF_CENTER);
 //        WWFrame flatFrame = new WWFrame(null, flatModel, "Flat Globe", AVKey.RIGHT_OF_CENTER);
         WWFrame flatFrame = new WWFrame(roundFrame.wwPanel.wwd, flatModel, "Flat Globe", AVKey.RIGHT_OF_CENTER);
 
-        this.addViewControlLayer(roundFrame);
-        this.addViewControlLayer(flatFrame);
+        FlatAndRoundGlobes.addViewControlLayer(roundFrame);
+        FlatAndRoundGlobes.addViewControlLayer(flatFrame);
 
         roundFrame.wwPanel.wwd.view().setEyePosition(new Position(START_LOCATION, 3.0e6));
         flatFrame.wwPanel.wwd.view().setEyePosition(new Position(START_LOCATION, 3.0e6));
@@ -98,7 +98,7 @@ public class FlatAndRoundGlobes {
         return layerList;
     }
 
-    protected Model makeModel(Globe globe, LayerList layers) {
+    protected static Model makeModel(Globe globe, LayerList layers) {
         Model model = new BasicModel(globe, new LayerList(layers));
 
         // Add per-window layers
@@ -109,7 +109,7 @@ public class FlatAndRoundGlobes {
         return model;
     }
 
-    protected void addViewControlLayer(WWFrame wwf) {
+    protected static void addViewControlLayer(WWFrame wwf) {
         ViewControlsLayer layer = new ViewControlsLayer();
         wwf.wwPanel.wwd.model().getLayers().add(layer);
         wwf.wwPanel.wwd.addSelectListener(new ViewControlsLayer.ViewControlsSelectListener(wwf.wwPanel.wwd, layer));
@@ -128,13 +128,13 @@ public class FlatAndRoundGlobes {
 
         for (int i = 0; i < numPaths; i++) {
             Angle heading = Angle.fromDegrees(i * dAngle);
-            layer.add(this.makePath(origin, heading, length, numPositions));
+            layer.add(FlatAndRoundGlobes.makePath(origin, heading, length, numPositions));
         }
 
         System.out.printf("%d paths, each with %d positions\n", NUM_PATHS, NUM_POSITIONS);
     }
 
-    protected Path makePath(Position startPosition, Angle heading, Angle length, int numPositions) {
+    protected static Path makePath(Position startPosition, Angle heading, Angle length, int numPositions) {
         double dLength = length.radians / (numPositions - 1);
         List<Position> positions = new ArrayList<>(numPositions);
 
@@ -163,7 +163,7 @@ public class FlatAndRoundGlobes {
         return path;
     }
 
-    protected Layer makePolygonLayer() {
+    protected static Layer makePolygonLayer() {
         RenderableLayer layer = new RenderableLayer();
         layer.setName("Polygons");
 
@@ -224,7 +224,7 @@ public class FlatAndRoundGlobes {
         return layer;
     }
 
-    protected Layer makeExtrudedPolygonLayer() {
+    protected static Layer makeExtrudedPolygonLayer() {
         RenderableLayer layer = new RenderableLayer();
         layer.setName("Extruded Polygons");
 

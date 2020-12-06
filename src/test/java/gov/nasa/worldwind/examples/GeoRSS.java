@@ -118,7 +118,7 @@ public class GeoRSS extends ApplicationTemplate {
             WorldWindow.insertBeforePlacenames(this.wwd(), layer);
         }
 
-        private RenderableLayer buildGeoRSSLayer() {
+        private static RenderableLayer buildGeoRSSLayer() {
             RenderableLayer layer = new RenderableLayer();
             List<Renderable> shapes;
 
@@ -140,7 +140,7 @@ public class GeoRSS extends ApplicationTemplate {
             return layer;
         }
 
-        private void addRenderables(RenderableLayer layer, Iterable<Renderable> renderables) {
+        private static void addRenderables(RenderableLayer layer, Iterable<Renderable> renderables) {
             for (Renderable r : renderables) {
                 layer.add(r);
             }

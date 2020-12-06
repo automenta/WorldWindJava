@@ -762,7 +762,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
             return;
         }
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         boolean attribsPushed = false;
         boolean modelviewPushed = false;
@@ -897,7 +897,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
             backColor.getGreen(), backColor.getBlue(), (int) (backColor.getAlpha() * 0.5))); // Increased transparency
         // Grid - minimal
         float[] colorRGB = this.color.getRGBColorComponents(null);
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glColor4d(colorRGB[0], colorRGB[1], colorRGB[2], this.getOpacity());
         drawVerticalLine(dc, dimension, 0);
         drawVerticalLine(dc, dimension, dimension.getWidth());
@@ -906,7 +906,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
 
     // Draw profile graphic
     protected void drawGraph(DrawContext dc, Dimension dimension) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         // Adjust min/max elevation for the graph
         double min = this.minElevation;
         double max = this.maxElevation;
@@ -1044,7 +1044,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
     }
 
     protected void drawGUI(DrawContext dc, Dimension dimension) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         int buttonSize = 16;
         int hs = buttonSize / 2;
         int buttonBorder = 4;
@@ -1107,7 +1107,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
     }
 
     protected static void drawFilledRectangle(DrawContext dc, Vec4 origin, Dimension dimension, Color color) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glColor4ub((byte) color.getRed(), (byte) color.getGreen(),
             (byte) color.getBlue(), (byte) color.getAlpha());
         gl.glDisable(GL.GL_TEXTURE_2D);        // no textures
@@ -1121,7 +1121,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
     }
 
     protected static void drawLine(DrawContext dc, double x1, double y1, double x2, double y2) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glBegin(GL2.GL_LINE_STRIP);
         gl.glVertex3d(x1, y1, 0);
         gl.glVertex3d(x2, y2, 0);

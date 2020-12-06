@@ -181,7 +181,7 @@ public class AudioPlayerAnnotation extends DialogAnnotation {
 
     protected void setupProgressBar(Annotation annotation) {
         AnnotationAttributes defaultAttribs = new AnnotationAttributes();
-        this.setupDefaultAttributes(defaultAttribs);
+        DialogAnnotation.setupDefaultAttributes(defaultAttribs);
         defaultAttribs.setSize(new Dimension(160, 10));
         annotation.getAttributes().setDefaults(defaultAttribs);
     }
@@ -191,10 +191,10 @@ public class AudioPlayerAnnotation extends DialogAnnotation {
     //**************************************************************//
 
     protected String formatTimeString(long millis) {
-        return this.formatAsMinutesSeconds(millis);
+        return AudioPlayerAnnotation.formatAsMinutesSeconds(millis);
     }
 
-    protected String formatAsMinutesSeconds(long millis) {
+    protected static String formatAsMinutesSeconds(long millis) {
         long minutes = (millis / 1000) / 60;
         long seconds = (millis / 1000);
         long remainderSeconds = seconds - minutes * 60;

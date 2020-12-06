@@ -49,8 +49,8 @@ public class PickFrustum extends ApplicationTemplate {
             dc.addOrderedRenderable(this.orderedImage);
         }
 
-        public void draw(DrawContext dc) {
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        public static void draw(DrawContext dc) {
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
             boolean attribsPushed = false;
             boolean modelviewPushed = false;
             boolean projectionPushed = false;
@@ -119,11 +119,11 @@ public class PickFrustum extends ApplicationTemplate {
             }
 
             public void pick(DrawContext dc, Point pickPoint) {
-                PickFrustumLayer.this.draw(dc);
+                PickFrustumLayer.draw(dc);
             }
 
             public void render(DrawContext dc) {
-                PickFrustumLayer.this.draw(dc);
+                PickFrustumLayer.draw(dc);
             }
         }
     }

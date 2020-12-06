@@ -90,7 +90,7 @@ public class AnnotationNullLayout extends AbstractAnnotationLayout {
             throw new IllegalArgumentException(message);
         }
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         OGLStackHandler stackHandler = new OGLStackHandler();
 
         for (Annotation annotation : annotations) {

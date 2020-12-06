@@ -86,7 +86,7 @@ public class GoToCoordinatePanel extends JPanel {
                 MGRSCoord MGRS = MGRSCoord.fromString(coordString, globe);
                 // NOTE: the MGRSCoord does not always report errors with invalide strings,
                 // but will have lat and lon set to zero
-                if (MGRS.getLatitude().degrees != 0 || MGRS.getLatitude().degrees != 0) {
+                if (MGRS.getLatitude().degrees != 0 || MGRS.getLongitude().degrees != 0) {
                     lat = MGRS.getLatitude();
                     lon = MGRS.getLongitude();
                 }

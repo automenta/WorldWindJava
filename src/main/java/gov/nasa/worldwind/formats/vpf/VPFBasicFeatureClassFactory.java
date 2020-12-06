@@ -80,11 +80,11 @@ public class VPFBasicFeatureClassFactory implements VPFFeatureClassFactory {
 
     protected VPFFeatureClass doCreateFromFeatureType(VPFCoverage coverage, VPFFeatureClassSchema schema) {
         return switch (schema.getType()) {
-            case POINT -> this.createPointFeatureClass(coverage, schema);
-            case LINE -> this.createLineFeatureClass(coverage, schema);
-            case AREA -> this.createAreaFeatureClass(coverage, schema);
-            case TEXT -> this.createTextFeatureClass(coverage, schema);
-            case COMPLEX -> this.createComplexFeatureClass(coverage, schema);
+            case POINT -> createPointFeatureClass(coverage, schema);
+            case LINE -> createLineFeatureClass(coverage, schema);
+            case AREA -> createAreaFeatureClass(coverage, schema);
+            case TEXT -> createTextFeatureClass(coverage, schema);
+            case COMPLEX -> createComplexFeatureClass(coverage, schema);
             default -> VPFBasicFeatureClassFactory.createUnknownFeatureClass(coverage, schema);
         };
     }

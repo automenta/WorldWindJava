@@ -1480,7 +1480,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
      * @param dc Current draw context.
      */
     protected void drawContentTiles(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         try {
             gl.glPolygonMode(GL2.GL_FRONT, GL2.GL_FILL);
@@ -1553,7 +1553,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
      * @param dc Current draw context.
      */
     protected void drawFrame(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         OGLStackHandler oglStack = new OGLStackHandler();
         try {
@@ -1697,7 +1697,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
      * @param dc Draw context
      */
     protected void drawTitleBar(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         FrameAttributes attributes = this.getActiveAttributes();
 
@@ -1743,7 +1743,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
     protected void drawIcon(DrawContext dc, Point drawPoint) {
         // This method is never called during picked, so picking mode is not handled here
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         FrameAttributes attributes = this.getActiveAttributes();
 
         int iconSpace = attributes.getIconSpace();
@@ -1791,7 +1791,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
     protected void drawTitleText(DrawContext dc, Point drawPoint) {
         // This method is never called during picked, so picking mode is not handled here
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         FrameAttributes attributes = this.getActiveAttributes();
 
         String frameTitle = this.getFrameTitle();
@@ -1908,7 +1908,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
      * @param dc Current draw context.
      */
     protected void drawMinimizeButton(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         OGLStackHandler oglStack = new OGLStackHandler();
         try {
@@ -1968,7 +1968,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
     }
 
     protected void beginDrawing(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         GLU glu = dc.getGLU();
 
         this.BEogsh.pushAttrib(gl, GL2.GL_DEPTH_BUFFER_BIT
@@ -2005,7 +2005,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
             this.pickSupport.resolvePick(dc, dc.getPickPoint(), dc.getCurrentLayer());
         }
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         this.BEogsh.pop(gl);
     }
 

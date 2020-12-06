@@ -80,11 +80,6 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
      * @throws IllegalArgumentException if the locations iterable is null.
      */
     public SurfacePolygon(Iterable<? extends LatLon> iterable) {
-//        if (iterable == null) {
-//            String message = Logging.getMessage("nullValue.IterableIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         this.setOuterBoundary(iterable);
     }
@@ -103,12 +98,6 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
     public SurfacePolygon(ShapeAttributes normalAttrs, Iterable<? extends LatLon> iterable) {
         super(normalAttrs);
 
-//        if (iterable == null) {
-//            String message = Logging.getMessage("nullValue.IterableIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-
         this.setOuterBoundary(iterable);
     }
 
@@ -121,11 +110,6 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
     }
 
     public void setLocations(Iterable<? extends LatLon> iterable) {
-//        if (iterable == null) {
-//            String message = Logging.getMessage("nullValue.IterableIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         this.setOuterBoundary(iterable);
     }
@@ -144,11 +128,6 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
 
 
     public void setOuterBoundary(Iterable<? extends LatLon> iterable) {
-//        if (iterable == null) {
-//            String message = Logging.getMessage("nullValue.IterableIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (!this.boundaries.isEmpty())
             this.boundaries.set(0, iterable);
@@ -159,11 +138,6 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
     }
 
     public void addInnerBoundary(Iterable<? extends LatLon> iterable) {
-//        if (iterable == null) {
-//            String message = Logging.getMessage("nullValue.IterableIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         this.boundaries.add(iterable);
         this.onShapeChanged();
@@ -206,12 +180,6 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
             this.onShapeChanged();
             return;
         }
-
-//        if (texCoords == null) {
-//            String message = Logging.getMessage("generic.ListIsEmpty");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (texCoordCount < 3 || texCoords.length < 2 * texCoordCount) {
             String message = Logging.getMessage("generic.InsufficientPositions");
@@ -262,7 +230,7 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
             this.shapeDataCache.put(key, shapeData);
         }
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glVertexPointer(2, GL.GL_FLOAT, shapeData.vertexStride, shapeData.vertices.position(0));
 
         if (shapeData.hasTexCoords) {
@@ -291,7 +259,7 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
     protected void applyInteriorState(DrawContext dc, SurfaceTileDrawContext sdc, ShapeAttributes attributes,
         WWTexture texture, LatLon refLocation) {
         if (this.explicitTexture != null && !dc.isPickingMode()) {
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
             OGLUtil.applyBlending(gl, true);
             OGLUtil.applyColor(gl, attributes.getInteriorMaterial().getDiffuse(), attributes.getInteriorOpacity(),
                 true);

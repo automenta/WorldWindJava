@@ -21,14 +21,14 @@ public class Crosshair extends AbstractOnDemandLayerFeature {
 
     @Override
     protected Layer createLayer() {
-        Layer layer = this.doCreateLayer();
+        Layer layer = Crosshair.doCreateLayer();
 
         layer.setPickEnabled(false);
 
         return layer;
     }
 
-    protected Layer doCreateLayer() {
+    protected static Layer doCreateLayer() {
         return new CrosshairLayer();
     }
 

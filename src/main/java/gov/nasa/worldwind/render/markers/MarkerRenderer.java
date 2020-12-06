@@ -176,7 +176,7 @@ public class MarkerRenderer {
             if (this.enablePickSizeReturn)
                 po.set(AVKey.PICKED_OBJECT_SIZE, 2 * radius);
             this.pickSupport.addPickableObject(po);
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
             gl.glColor3ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
         }
 
@@ -246,7 +246,7 @@ public class MarkerRenderer {
     }
 
     protected void begin(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         Vec4 cameraPosition = dc.getView().getEyePoint();
 
         if (dc.isPickingMode()) {
@@ -304,7 +304,7 @@ public class MarkerRenderer {
     }
 
     protected static void end(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glMatrixMode(GL2.GL_MODELVIEW);
         gl.glPopMatrix();

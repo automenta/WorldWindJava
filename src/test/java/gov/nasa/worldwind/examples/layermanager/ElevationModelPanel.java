@@ -62,9 +62,9 @@ public class ElevationModelPanel extends JPanel {
         buttonPanel.add(this.downButton);
         this.add(buttonPanel, BorderLayout.EAST);
 
-        int index = this.findElevationModelPosition(wwd, elevationModel);
+        int index = ElevationModelPanel.findElevationModelPosition(wwd, elevationModel);
         this.upButton.setEnabled(index != 0);
-        this.downButton.setEnabled(index != this.getNumElevationModels(wwd) - 1);
+        this.downButton.setEnabled(index != ElevationModelPanel.getNumElevationModels(wwd) - 1);
     }
 
     public ElevationModel getElevationModel() {
@@ -74,7 +74,7 @@ public class ElevationModelPanel extends JPanel {
     protected void moveElevationModel(WorldWindow wwd, ElevationModel elevationModel, int direction) {
         // Moves the model associated with this instance in the direction indicated relative to the other models.
 
-        int index = this.findElevationModelPosition(wwd, elevationModel);
+        int index = ElevationModelPanel.findElevationModelPosition(wwd, elevationModel);
         if (index < 0)
             return; // model not found or not a globe isn't using a CompoundElevationModel
 
@@ -99,7 +99,7 @@ public class ElevationModelPanel extends JPanel {
         wwd.redraw();
     }
 
-    protected int findElevationModelPosition(WorldWindow wwd, ElevationModel elevationModel) {
+    protected static int findElevationModelPosition(WorldWindow wwd, ElevationModel elevationModel) {
         // Determines the ordinal location of an elevation model in the globe's elevation models.
 
         if (!(wwd.model().getGlobe().getElevationModel() instanceof CompoundElevationModel))
@@ -115,7 +115,7 @@ public class ElevationModelPanel extends JPanel {
         return -1;
     }
 
-    protected int getNumElevationModels(WorldWindow wwd) {
+    protected static int getNumElevationModels(WorldWindow wwd) {
         // Determines the ordinal location of an elevation model in the globe's elevation models.
 
         if (!(wwd.model().getGlobe().getElevationModel() instanceof CompoundElevationModel))

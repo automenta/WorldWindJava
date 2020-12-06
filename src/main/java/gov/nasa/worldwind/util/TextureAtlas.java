@@ -436,7 +436,7 @@ public class TextureAtlas {
         // Compact the remaining entries if the vertical fragmentation ratio is larger than this texture atlas'
         // configured threshold. This avoids wasting texture space when many elements of different sizes are
         // subsequently added and removed.
-        if (this.rectPacker.verticalFragmentationRatio() > this.maxVerticalFragmentation)
+        if (this.rectPacker.verticalFragmentationRatio() > maxVerticalFragmentation)
             this.rectPacker.compact();
     }
 

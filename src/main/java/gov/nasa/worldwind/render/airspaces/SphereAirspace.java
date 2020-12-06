@@ -362,7 +362,7 @@ public class SphereAirspace extends AbstractAirspace {
 
         this.setExpiryTime(-1L); // Sphere geometry never expires.
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glPushAttrib(GL2.GL_POLYGON_BIT | GL2.GL_TRANSFORM_BIT);
         try {
             gl.glEnable(GL.GL_CULL_FACE);

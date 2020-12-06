@@ -194,10 +194,10 @@ public class ImageAnnotation extends ScreenAnnotation {
         if (point == null)
             return;
 
-        this.doDrawToolTip(dc, text, point.x, point.y);
+        ImageAnnotation.doDrawToolTip(dc, text, point.x, point.y);
     }
 
-    protected void doDrawToolTip(DrawContext dc, String text, int x, int y) {
+    protected static void doDrawToolTip(DrawContext dc, String text, int x, int y) {
         OrderedRenderable toolTip = new ToolTip(text, x, y);
         dc.addOrderedRenderable(toolTip);
     }
@@ -219,7 +219,7 @@ public class ImageAnnotation extends ScreenAnnotation {
 
     protected void transformBackgroundImageCoordsToAnnotationCoords(DrawContext dc, int width, int height,
         WWTexture texture) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         // Scale background image coordinates to fit the Annotation's dimensions.
         Dimension size = this.getImageSize(dc);

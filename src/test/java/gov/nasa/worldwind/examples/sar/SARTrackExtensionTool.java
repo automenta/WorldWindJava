@@ -172,9 +172,9 @@ public class SARTrackExtensionTool implements MouseListener, PositionListener, P
             this.segmentPlane.setSegmentPositions(segmentPositions[0], this.potentialNextPosition);
 
             this.segmentPlane.getAttributes().setGeometryAttributes(SegmentPlane.SEGMENT_END,
-                this.createPotentialNextPositionGeomAttributes());
+                SARTrackExtensionTool.createPotentialNextPositionGeomAttributes());
             this.segmentPlane.getAttributes().setLabelAttributes(SegmentPlane.SEGMENT_END,
-                this.createPotentialNextPositionLabelAttributes());
+                SARTrackExtensionTool.createPotentialNextPositionLabelAttributes());
 
             this.showSegmentEndPoint(true);
         }
@@ -418,7 +418,7 @@ public class SARTrackExtensionTool implements MouseListener, PositionListener, P
     //********************  Mouse Events  **************************//
     //**************************************************************//
 
-    protected SegmentPlaneAttributes.GeometryAttributes createPotentialNextPositionGeomAttributes() {
+    protected static SegmentPlaneAttributes.GeometryAttributes createPotentialNextPositionGeomAttributes() {
         SegmentPlaneAttributes.GeometryAttributes geometryAttributes = new SegmentPlaneAttributes.GeometryAttributes(
             Material.BLUE, 1.0);
         geometryAttributes.setSize(8);
@@ -427,7 +427,7 @@ public class SARTrackExtensionTool implements MouseListener, PositionListener, P
         return geometryAttributes;
     }
 
-    protected SegmentPlaneAttributes.LabelAttributes createPotentialNextPositionLabelAttributes() {
+    protected static SegmentPlaneAttributes.LabelAttributes createPotentialNextPositionLabelAttributes() {
         SARSegmentPlane.MessageLabelAttributes labelAttributes = new SARSegmentPlane.MessageLabelAttributes(
             Color.WHITE, Font.decode("Arial-18"), AVKey.LEFT, AVKey.CENTER, "Click to add");
         labelAttributes.setOffset(new Vec4(15, 0, 0));

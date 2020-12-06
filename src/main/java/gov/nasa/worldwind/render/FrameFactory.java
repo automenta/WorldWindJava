@@ -163,7 +163,7 @@ public class FrameFactory {
             throw new IllegalArgumentException(message);
         }
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         // Set up
         gl.glPushClientAttrib(GL2.GL_CLIENT_VERTEX_ARRAY_BIT);
         gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
@@ -196,7 +196,7 @@ public class FrameFactory {
             throw new IllegalArgumentException(message);
         }
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         // Set up
         gl.glPushClientAttrib(GL2.GL_CLIENT_VERTEX_ARRAY_BIT);
         gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);

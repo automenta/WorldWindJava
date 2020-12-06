@@ -116,8 +116,6 @@ public class FileSetTableModel extends AbstractTableModel implements PropertyCha
         fileSet.addPropertyChangeListener(AVKey.IMAGE, this);
 
         return null;
-//        return new ImageIcon(FileSetTableModel.class.getResource("/images/indicator-16.gif"));
-//        return new ImageIcon(FileSetTableModel.class.getResource("/images/32x32-icon-earth.png"));
     }
 
     @Override

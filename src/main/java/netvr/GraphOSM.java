@@ -1,16 +1,10 @@
 package netvr;
 
 import com.carrotsearch.hppc.LongArrayList;
-import com.graphhopper.reader.DataReader;
-import com.graphhopper.reader.ReaderNode;
-import com.graphhopper.reader.ReaderRelation;
-import com.graphhopper.reader.ReaderWay;
-import com.graphhopper.reader.osm.GraphHopperOSM;
-import com.graphhopper.reader.osm.OSMReader;
+import com.graphhopper.reader.*;
+import com.graphhopper.reader.osm.*;
 import com.graphhopper.routing.util.EncodingManager;
-import com.graphhopper.storage.GraphHopperStorage;
-import com.graphhopper.storage.NodeAccess;
-import com.graphhopper.storage.RAMDirectory;
+import com.graphhopper.storage.*;
 
 import java.io.File;
 
@@ -63,16 +57,9 @@ abstract public class GraphOSM extends GraphHopperOSM {
             if (wn.size() > 2
                     //way.getTag("building", null)!=null
             ) {
-//                final WayVis v = new WayVis(wn, getNodeMap(), nodeAccess);
-//                if (v.poly.size()>2)
-//                    add(v);
             }
         }
     }
 
     abstract public void add(Vis v);
-
-//    public void add(Vis v) {
-//        ways.put(v, v.box());
-//    }
 }

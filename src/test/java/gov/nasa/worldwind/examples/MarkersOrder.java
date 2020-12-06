@@ -326,7 +326,7 @@ public class MarkersOrder extends ApplicationTemplate {
             return null;
         }
 
-        protected PowerOfTwoPaddedImage createLegendForHours(MarkerAttributes[] attrs) {
+        protected static PowerOfTwoPaddedImage createLegendForHours(MarkerAttributes[] attrs) {
             BufferedImage image = new BufferedImage(64, 320, BufferedImage.TYPE_4BYTE_ABGR);
             Graphics g2 = image.getGraphics();
             int divisions = 24;
@@ -351,7 +351,7 @@ public class MarkersOrder extends ApplicationTemplate {
             return PowerOfTwoPaddedImage.fromBufferedImage(image);
         }
 
-        protected PowerOfTwoPaddedImage createLegendForDaysOfWeek(MarkerAttributes[] attrs) {
+        protected static PowerOfTwoPaddedImage createLegendForDaysOfWeek(MarkerAttributes[] attrs) {
             DateFormatSymbols dfs = new DateFormatSymbols();
             String[] dayNames = dfs.getShortWeekdays();
             BufferedImage image = new BufferedImage(64, 100, BufferedImage.TYPE_4BYTE_ABGR);

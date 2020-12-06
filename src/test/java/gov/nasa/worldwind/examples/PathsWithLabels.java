@@ -312,24 +312,24 @@ public class PathsWithLabels extends ApplicationTemplate {
             pathAttrs.setOutlineOpacity(0.8);
             pathAttrs.setOutlineWidth(3);
 
-            List<Position> positions = this.makePositionList(SAN_JUAN_COUNTY_1);
+            List<Position> positions = AppFrame.makePositionList(SAN_JUAN_COUNTY_1);
             SurfacePolyline path = new SurfacePolyline(pathAttrs, positions);
-            LabeledPath label = new LabeledPath(positions, this.makeLabelAnnotation("Waldron Island"));
+            LabeledPath label = new LabeledPath(positions, AppFrame.makeLabelAnnotation("Waldron Island"));
             label.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
             layer.add(path);
             layer.add(label);
 
-            positions = this.makePositionList(SAN_JUAN_COUNTY_2);
+            positions = AppFrame.makePositionList(SAN_JUAN_COUNTY_2);
             path = new SurfacePolyline(pathAttrs, positions);
             label = new LabeledPath(positions,
-                this.makeLabelAnnotation("Blakley, Center, Lopez, Orcas, Shaw & San Juan Islands"));
+                AppFrame.makeLabelAnnotation("Blakley, Center, Lopez, Orcas, Shaw & San Juan Islands"));
             label.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
             layer.add(path);
             layer.add(label);
 
-            positions = this.makePositionList(SAN_JUAN_COUNTY_3);
+            positions = AppFrame.makePositionList(SAN_JUAN_COUNTY_3);
             path = new SurfacePolyline(pathAttrs, positions);
-            label = new LabeledPath(positions, this.makeLabelAnnotation("Spieden & Stuart Islands"));
+            label = new LabeledPath(positions, AppFrame.makeLabelAnnotation("Spieden & Stuart Islands"));
             label.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
             layer.add(path);
             layer.add(label);
@@ -337,7 +337,7 @@ public class PathsWithLabels extends ApplicationTemplate {
             this.wwd().model().getLayers().add(layer);
         }
 
-        protected List<Position> makePositionList(double[] src) {
+        protected static List<Position> makePositionList(double[] src) {
             int numCoords = src.length / 2;
             Position[] array = new Position[numCoords];
 
@@ -350,7 +350,7 @@ public class PathsWithLabels extends ApplicationTemplate {
             return Arrays.asList(array);
         }
 
-        protected ScreenAnnotation makeLabelAnnotation(String text) {
+        protected static ScreenAnnotation makeLabelAnnotation(String text) {
             ScreenAnnotation ga = new ScreenAnnotation(text, new Point());
             ga.setPickEnabled(false);
 

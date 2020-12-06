@@ -133,21 +133,21 @@ public class ButtonAnnotation extends ImageAnnotation implements SelectListener 
 
         Object topObject = e.getTopObject();
         if (topObject == this) {
-            this.setPressed(this.isButtonPressed(e));
+            this.setPressed(ButtonAnnotation.isButtonPressed(e));
 
-            if (this.isButtonTrigger(e)) {
+            if (ButtonAnnotation.isButtonTrigger(e)) {
                 this.onButtonPressed(e);
             }
         }
     }
 
     @SuppressWarnings("StringEquality")
-    protected boolean isButtonPressed(SelectEvent e) {
+    protected static boolean isButtonPressed(SelectEvent e) {
         return e.getEventAction() == SelectEvent.LEFT_PRESS;
     }
 
     @SuppressWarnings("StringEquality")
-    protected boolean isButtonTrigger(SelectEvent e) {
+    protected static boolean isButtonTrigger(SelectEvent e) {
         return e.getEventAction() == SelectEvent.LEFT_CLICK;
     }
 
@@ -208,7 +208,7 @@ public class ButtonAnnotation extends ImageAnnotation implements SelectListener 
         // Setup the mask to modulate with the existing fragment color. This will have the effect of multiplying
         // the button depressed mask colors with the button colors.
         if (this.getPressedMaskTexture() == texture) {
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
             gl.glEnable(GL.GL_BLEND);
             gl.glBlendFunc(GL.GL_ZERO, GL.GL_SRC_COLOR);
             gl.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
@@ -223,7 +223,7 @@ public class ButtonAnnotation extends ImageAnnotation implements SelectListener 
 
         // Push state for blend enable, blending function, and current color. We set these OGL states in
         // applyBackgroundTextureState(), which is invoked by doDrawBackgroundTexture().
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         OGLStackHandler ogsh = new OGLStackHandler();
         ogsh.pushAttrib(gl, GL2.GL_COLOR_BUFFER_BIT | GL2.GL_CURRENT_BIT);
         try {

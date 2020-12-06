@@ -373,7 +373,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
             poly.set(AVKey.DISPLAY_NAME, getNextName(toString()));
             poly.setAltitudes(0.0, 0.0);
             poly.setTerrainConforming(true, false);
-            this.initializePolygon(wwd, poly, fitShapeToViewport);
+            PolygonAirspaceFactory.initializePolygon(wwd, poly, fitShapeToViewport);
 
             return poly;
         }
@@ -386,7 +386,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
             return editor;
         }
 
-        protected void initializePolygon(WorldWindow wwd, Polygon polygon, boolean fitShapeToViewport) {
+        protected static void initializePolygon(WorldWindow wwd, Polygon polygon, boolean fitShapeToViewport) {
             // Creates a rectangle in the center of the viewport. Attempts to guess at a reasonable size and height.
 
             Position position = ShapeUtils.getNewShapePosition(wwd);
@@ -429,7 +429,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
             sphere.set(AVKey.DISPLAY_NAME, getNextName(toString()));
             sphere.setAltitude(0.0);
             sphere.setTerrainConforming(true);
-            this.initializeSphere(wwd, sphere, fitShapeToViewport);
+            SphereAirspaceFactory.initializeSphere(wwd, sphere, fitShapeToViewport);
 
             return sphere;
         }
@@ -442,7 +442,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
             return editor;
         }
 
-        protected void initializeSphere(WorldWindow wwd, SphereAirspace sphere, boolean fitShapeToViewport) {
+        protected static void initializeSphere(WorldWindow wwd, SphereAirspace sphere, boolean fitShapeToViewport) {
             // Creates a sphere in the center of the viewport. Attempts to guess at a reasonable size and height.
             Position position = ShapeUtils.getNewShapePosition(wwd);
             double sizeInMeters = fitShapeToViewport
@@ -1092,7 +1092,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
             t.start();
         }
 
-        protected void loadAirspacesFromPath(String path, Collection<Airspace> airspaces) {
+        protected static void loadAirspacesFromPath(String path, Collection<Airspace> airspaces) {
             File file = ExampleUtil.saveResourceToTempFile(path, ".zip");
             if (file == null) {
                 return;

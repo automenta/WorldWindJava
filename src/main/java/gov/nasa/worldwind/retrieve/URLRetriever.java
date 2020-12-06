@@ -13,8 +13,8 @@ import javax.net.ssl.*;
 import java.io.*;
 import java.net.*;
 import java.nio.ByteBuffer;
-import java.nio.channels.*;
-import java.util.concurrent.atomic.*;
+import java.nio.channels.ClosedByInterruptException;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import java.util.regex.*;
 import java.util.zip.*;
@@ -76,17 +76,6 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever {
     public final URL getUrl() {
         return url;
     }
-
-//    public final int getContentLength() {
-//        return this.contentLength;
-//    }
-//    public final int getContentLengthRead() {
-//        return this.contentLengthRead.get();
-//    }
-//
-//    protected void setContentLengthRead(int length) {
-//        this.contentLengthRead.set(length);
-//    }
 
     public final String getContentType() {
         return this.contentType;
@@ -158,7 +147,7 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever {
         this.submitEpoch = e;
     }
 
-    public final Retriever call() throws Exception {
+    public final Retriever call() {
 
         try {
             if (WorldWind.getNetworkStatus().isHostUnavailable(url)) {
@@ -250,12 +239,6 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever {
      */
     protected ByteBuffer doRead(URLConnection connection) throws Exception {
 
-//        Logging.logger().log(Level.FINE, "HTTPRetriever.response",
-//            new Object[] {this.responseCode,
-//                connection.getContentLength(),
-//                contentType != null ? contentType : "content type not returned",
-//                connection.getURL()});
-
         InputStream inputStream = this.connection.getInputStream();
         if (inputStream == null) {
             Logging.logger().log(Level.SEVERE, "URLRetriever.InputStreamFromConnectionNull", connection.getURL());
@@ -273,51 +256,18 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever {
             if (this.contentType != null && this.contentType.equalsIgnoreCase("application/zip")
                 && !WWUtil.isEmpty(this.get(EXTRACT_ZIP_ENTRY)))
                 // Assume single file in zip and decompress it
-                return this.readZipStream(inputStream, connection.getURL());
+                return URLRetriever.readZipStream(inputStream, connection.getURL());
             else
-                return this.readStream(inputStream);
+                return URLRetriever.readStream(inputStream);
         } finally {
             WWIO.closeStream(inputStream, getName());
         }
     }
 
-    protected ByteBuffer readStream(InputStream inputStream) throws IOException {
+    protected static ByteBuffer readStream(InputStream inputStream) throws IOException {
 
         return ByteBuffer.wrap(inputStream.readAllBytes());
-//        if (this.contentLength < 1) {
-//            return readNonSpecificStreamUnknownLength(inputStream);
-//        }
-//
-//        return ByteBuffer.wrap(inputStream.readNBytes(contentLength));
     }
-
-//    protected ByteBuffer readNonSpecificStreamUnknownLength(InputStream inputStream) throws IOException {
-//        final int pageSize = (int) Math.ceil(Math.pow(2, 15));
-//
-//        ReadableByteChannel channel = Channels.newChannel(inputStream);
-//
-//        ByteBuffer buffer = ByteBuffer.allocate(pageSize);
-//
-//        int count = 0;
-////        int numBytesRead = 0;
-//        while (!this.interrupted() && count >= 0) {
-//            count = channel.read(buffer);
-//            if (count > 0) {
-////                numBytesRead += count;
-//                this.contentLengthRead.getAndAdd(count);
-//            }
-//
-//            if (count > 0 && !buffer.hasRemaining()) {
-//                ByteBuffer biggerBuffer = ByteBuffer.allocate(buffer.limit() + pageSize);
-//                biggerBuffer.put(buffer.rewind());
-//                buffer = biggerBuffer;
-//            }
-//        }
-//
-//        buffer.flip();
-//
-//        return buffer;
-//    }
 
     /**
      * @param inputStream a stream to the zip connection.
@@ -327,7 +277,7 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever {
      *                                  reading.
      * @throws IllegalArgumentException if <code>inputStream</code> is null
      */
-    protected ByteBuffer readZipStream(InputStream inputStream, URL url) throws IOException {
+    protected static ByteBuffer readZipStream(InputStream inputStream, URL url) throws IOException {
         ZipInputStream zis = new ZipInputStream(inputStream);
         ZipEntry ze = zis.getNextEntry();
         if (ze == null) {
@@ -349,10 +299,7 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever {
 //                }
 //            }
 //        }
-//        if (buffer != null)
-//            buffer.flip();
 
-//        return null;
     }
 
     /**

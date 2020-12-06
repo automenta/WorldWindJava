@@ -671,7 +671,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      * @param nodes Visible nodes.
      */
     protected void pickTextAndIcon(DrawContext dc, Iterable<NodeLayout> nodes) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         try {
             gl.glBegin(GL2.GL_QUADS);
@@ -706,7 +706,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      * @param nodes List of visible nodes.
      */
     protected void drawText(DrawContext dc, Iterable<NodeLayout> nodes) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         TreeAttributes attributes = this.getActiveAttributes();
         Color color = attributes.getColor();
@@ -781,7 +781,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      * @param nodes List of visible nodes.
      */
     protected void drawIcons(DrawContext dc, Iterable<NodeLayout> nodes) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         try {
             gl.glPolygonMode(GL2.GL_FRONT, GL2.GL_FILL);
@@ -855,7 +855,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
         // 2) Draw check marks for selected nodes
         // 3) Draw checkbox outlines
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         Dimension symbolSize;
 
@@ -938,7 +938,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
         Dimension selectedSymbolSize = BasicTreeLayout.getSelectedSymbolSize();
         TreeAttributes attributes = this.getActiveAttributes();
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         Color[] colors = attributes.getCheckBoxColor();
 
@@ -986,7 +986,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
 
         Color color = attributes.getColor();
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         // Draw checkmarks for selected nodes
         OGLUtil.applyColor(gl, color, 1, false);
@@ -1025,7 +1025,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      * @param nodes Visible nodes.
      */
     protected void drawTriangles(DrawContext dc, Iterable<NodeLayout> nodes) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         Dimension symbolSize = BasicTreeLayout.getNodeStateSymbolSize();
 

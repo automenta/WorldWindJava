@@ -94,11 +94,11 @@ public class FileSetFinder {
 
         // Attach metadata to the file sets.
         for (FileSet fileSet : this.fileSetMap.values()) {
-            this.attachMetadata(fileSet);
+            FileSetFinder.attachMetadata(fileSet);
         }
     }
 
-    public void attachMetadata(FileSet fileSet) {
+    public static void attachMetadata(FileSet fileSet) {
         // Open the data set and extract metadata needed by the data installer panel.
 
         DataRasterReaderFactory readerFactory = DataInstaller.getReaderFactory();
@@ -152,7 +152,7 @@ public class FileSetFinder {
         }
     }
 
-    public List<FileSet> consolidateFileSets(List<FileSet> fileSets) {
+    public static List<FileSet> consolidateFileSets(List<FileSet> fileSets) {
         if (fileSets.size() <= 1)
             return fileSets;
 

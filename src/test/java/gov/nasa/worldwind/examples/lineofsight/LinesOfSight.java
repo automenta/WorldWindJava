@@ -214,9 +214,6 @@ public class LinesOfSight extends ApplicationTemplate {
 //                    System.out.println("Operation was interrupted");
 //                }
 //                catch (Exception e)
-//                {
-//                    e.printStackTrace();
-//                }
             });
 
             this.calculationDispatchThread.start();
@@ -229,7 +226,7 @@ public class LinesOfSight extends ApplicationTemplate {
             this.referencePoint = this.terrain.getSurfacePoint(this.referencePosition);
 
             // Form the grid.
-            Sector sector = this.computeGridSector(curPos, GRID_RADIUS.degrees);
+            Sector sector = AppFrame.computeGridSector(curPos, GRID_RADIUS.degrees);
             this.grid = buildGrid(sector, GRID_POSITION_HEIGHT, GRID_DIMENSION, GRID_DIMENSION);
 
             // Set the line definitions.
@@ -283,13 +280,13 @@ public class LinesOfSight extends ApplicationTemplate {
             }
         }
 
-        protected Sector computeGridSector(Position curPos, double gridRadius) {
+        protected static Sector computeGridSector(Position curPos, double gridRadius) {
             return Sector.fromDegrees(
                 curPos.getLatitude().degrees - gridRadius, curPos.getLatitude().degrees + gridRadius,
                 curPos.getLongitude().degrees - gridRadius, curPos.getLongitude().degrees + gridRadius);
         }
 
-        protected List<Position> buildGrid(Sector sector, double height, int nRows, int nCols) {
+        protected static List<Position> buildGrid(Sector sector, double height, int nRows, int nCols) {
             java.util.List<Position> grid = new ArrayList<>((nRows) * (nCols));
 
             double dLat = sector.latDelta / (nCols - 1);

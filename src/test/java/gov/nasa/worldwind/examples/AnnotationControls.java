@@ -359,7 +359,7 @@ public class AnnotationControls extends ApplicationTemplate {
             this.wwd().redraw();
         }
 
-        protected void closeResource(ContentAnnotation content) {
+        protected static void closeResource(ContentAnnotation content) {
             if (content == null)
                 return;
 
@@ -413,7 +413,7 @@ public class AnnotationControls extends ApplicationTemplate {
                 return;
 
             if (e.getActionCommand() == AVKey.CLOSE) {
-                this.getAppFrame().closeResource(this);
+                AppFrame.closeResource(this);
             }
         }
 
@@ -455,7 +455,7 @@ public class AnnotationControls extends ApplicationTemplate {
             // Stop any threads or timers the controller may be actively running.
             AudioPlayerAnnotationController controller = (AudioPlayerAnnotationController) this.getController();
             if (controller != null) {
-                this.stopController(controller);
+                AudioContentAnnotation.stopController(controller);
             }
 
             // Stop any threads that may be reading the audio source.
@@ -463,7 +463,7 @@ public class AnnotationControls extends ApplicationTemplate {
         }
 
         @SuppressWarnings("StringEquality")
-        protected void stopController(AudioPlayerAnnotationController controller) {
+        protected static void stopController(AudioPlayerAnnotationController controller) {
             String status = controller.getClipStatus();
             if (status == AVKey.PLAY) {
                 controller.stopClip();
@@ -480,7 +480,7 @@ public class AnnotationControls extends ApplicationTemplate {
                 appFrame.wwd().redraw();
             });
 
-            final Clip clip = this.readClip(source);
+            final Clip clip = AudioContentAnnotation.readClip(source);
 
             SwingUtilities.invokeLater(() -> {
                 AudioPlayerAnnotationController controller = (AudioPlayerAnnotationController) getController();
@@ -500,7 +500,7 @@ public class AnnotationControls extends ApplicationTemplate {
             });
         }
 
-        protected Clip readClip(Object source) {
+        protected static Clip readClip(Object source) {
             InputStream stream = null;
             try {
                 stream = WWIO.openStream(source);
@@ -544,12 +544,12 @@ public class AnnotationControls extends ApplicationTemplate {
             // Stop any threads or timers the controller may be actively running.
             SlideShowAnnotationController controller = (SlideShowAnnotationController) this.getController();
             if (controller != null) {
-                this.stopController(controller);
+                ImageContentAnnotation.stopController(controller);
             }
         }
 
         @SuppressWarnings("StringEquality")
-        protected void stopController(SlideShowAnnotationController controller) {
+        protected static void stopController(SlideShowAnnotationController controller) {
             String state = controller.getState();
             if (state == AVKey.PLAY) {
                 controller.stopSlideShow();

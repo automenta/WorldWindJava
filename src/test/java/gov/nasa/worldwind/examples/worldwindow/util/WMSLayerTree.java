@@ -57,7 +57,7 @@ public class WMSLayerTree extends LayerTree {
 
         // Create an image layer if this is a named layer.
         if (layerCaps.getName() != null) {
-            TiledImageLayer layer = tree.createImageLayer(capsDoc, layerCaps, commonLayerParams);
+            TiledImageLayer layer = WMSLayerTree.createImageLayer(capsDoc, layerCaps, commonLayerParams);
             if (layer == null)
                 return null;
 
@@ -68,7 +68,7 @@ public class WMSLayerTree extends LayerTree {
         if (layerCaps.getLayers() != null) {
             for (WMSLayerCapabilities subLayerCaps : layerCaps.getLayers()) {
                 if (subLayerCaps.isLeaf()) {
-                    TiledImageLayer layer = tree.createImageLayer(capsDoc, subLayerCaps, commonLayerParams);
+                    TiledImageLayer layer = WMSLayerTree.createImageLayer(capsDoc, subLayerCaps, commonLayerParams);
                     if (layer != null)
                         tree.getLayers().add(layer);
                 }
@@ -83,7 +83,7 @@ public class WMSLayerTree extends LayerTree {
         return tree;
     }
 
-    protected TiledImageLayer createImageLayer(WMSCapabilities capsDoc, WMSLayerCapabilities layerCaps,
+    protected static TiledImageLayer createImageLayer(WMSCapabilities capsDoc, WMSLayerCapabilities layerCaps,
         AVList commonLayerParams) {
         AVList layerParams = new AVListImpl();
         if (commonLayerParams != null)

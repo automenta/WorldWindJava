@@ -88,7 +88,8 @@ public class InstallElevations extends ApplicationTemplate {
             });
         }
 
-        protected ElevationModel installElevations(String displayName, Object elevationSource, FileStore fileStore) {
+        protected static ElevationModel installElevations(String displayName, Object elevationSource,
+            FileStore fileStore) {
             // Use the FileStore's install location as the destination for the imported elevation tiles. The install
             // location is an area in the data file store for permanent storage.
             File fileStoreLocation = DataInstallUtil.getDefaultInstallLocation(fileStore);

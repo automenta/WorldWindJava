@@ -642,7 +642,7 @@ public abstract class RigidShape extends AbstractShape {
         if (!dc.isPickingMode()) {
             // Push an identity texture matrix. This prevents drawGeometry() from leaking GL texture matrix state. The
             // texture matrix stack is popped from OGLStackHandler.pop().
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
             ogsh.pushTextureIdentity(gl);
         }
 
@@ -669,7 +669,7 @@ public abstract class RigidShape extends AbstractShape {
 
     @Override
     protected void doDrawInterior(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         // render extent if specified
         if (this.renderExtent) {
@@ -898,11 +898,6 @@ public abstract class RigidShape extends AbstractShape {
      * @throws IllegalArgumentException if globe is null
      */
     public Matrix computeRenderMatrix(Globe globe, double verticalExaggeration) {
-//        if (globe == null) {
-//            String message = Logging.getMessage("nullValue.GlobeIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         Matrix matrix = Matrix.IDENTITY;
 
@@ -1034,7 +1029,7 @@ public abstract class RigidShape extends AbstractShape {
         Matrix matrix = dc.getView().getModelviewMatrix();
         matrix = matrix.multiply(computeRenderMatrix(dc));
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         // Were applying a scale transform on the modelview matrix, so the normal vectors must be re-normalized
         // before lighting is computed.

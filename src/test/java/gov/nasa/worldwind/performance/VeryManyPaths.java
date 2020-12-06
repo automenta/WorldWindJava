@@ -54,13 +54,13 @@ public class VeryManyPaths extends ApplicationTemplate {
 
             for (int i = 0; i < numPaths; i++) {
                 Angle heading = Angle.fromDegrees(i * dAngle);
-                layer.add(this.makePath(origin, heading, length, numPositions));
+                layer.add(AppFrame.makePath(origin, heading, length, numPositions));
             }
 
             System.out.printf("%d paths, each with %d positions\n", NUM_PATHS, NUM_POSITIONS);
         }
 
-        protected Path makePath(Position startPosition, Angle heading, Angle length, int numPositions) {
+        protected static Path makePath(Position startPosition, Angle heading, Angle length, int numPositions) {
             double dLength = length.radians / (numPositions - 1);
             List<Position> positions = new ArrayList<>(numPositions);
 

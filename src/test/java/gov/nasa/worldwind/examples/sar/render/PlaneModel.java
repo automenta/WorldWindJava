@@ -175,39 +175,4 @@ public class PlaneModel implements Renderable {
 
         return positions;
     }
-    /*
-    private void renderPlane(DrawContext dc)
-    {
-        GL gl = dc.getGL();
-        // Save gl state
-        gl.glPushAttrib(GL.GL_TEXTURE_BIT | GL.GL_ENABLE_BIT | GL.GL_CURRENT_BIT);
-        gl.glMatrixMode(GL.GL_MODELVIEW);
-        gl.glPushMatrix();
-
-        gl.glDisable(com.jogamp.opengl.GL.GL_TEXTURE_2D);
-        gl.glColor3d(this.color.getRed() / 255d, this.color.getGreen() / 255d, this.color.getBlue() / 255d);
-
-        // Placement and orientation
-        Vec4 pos = dc.getGlobe().computePointFromPosition(this.position);
-        gl.glTranslated(pos.x, pos.y, pos.z);
-        gl.glRotated(this.position.getLongitude().degrees, 0, 1, 0);
-        gl.glRotated(-this.position.getLatitude().degrees, 1, 0, 0);
-        gl.glRotated(-this.heading.degrees, 0, 0, 1);
-
-        // Draw
-        Double hw = this.width / 2;
-        Double hl = this.length / 2;
-        gl.glBegin(GL.GL_LINE_STRIP);
-        gl.glVertex3d(-hw, -hl, 0);
-        gl.glVertex3d(0, hl, 0);
-        gl.glVertex3d(hw, -hl, 0);
-        gl.glVertex3d(-hw, -hl, 0);
-        gl.glEnd();
-
-        // Restore gl state
-        gl.glPopMatrix();
-        gl.glPopAttrib();
-
-    }
-     */
 }

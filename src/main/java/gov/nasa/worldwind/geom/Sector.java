@@ -125,17 +125,6 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
      * @throws IllegalArgumentException if <code>array</code> is null or if its length is less than 4.
      */
     public static Sector fromDegrees(double[] array) {
-//        if (array == null) {
-//            String message = Logging.getMessage("nullValue.ArrayIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//
-//        if (array.length < 4) {
-//            String message = Logging.getMessage("generic.ArrayInvalidLength", array.length);
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         return fromDegrees(array[0], array[1], array[2], array[3]);
     }
@@ -1080,23 +1069,6 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
             return this;
         else
             return new Sector(min(latMin, lat), max(latMax, lat), min(lonMin, lon), max(lonMax, lon));
-
-
-//        Angle minLat = this.latMin;
-//        Angle maxLat = this.latMax;
-//        Angle minLon = this.lonMin;
-//        Angle maxLon = this.lonMax;
-//
-//        if (latitude.degrees < this.latMin)
-//            minLat = latitude;
-//        if (latitude.degrees > this.latMax)
-//            maxLat = latitude;
-//        if (longitude.degrees < this.lonMin)
-//            minLon = longitude;
-//        if (longitude.degrees > this.lonMax)
-//            maxLon = longitude;
-//
-//        return new Sector(minLat, maxLat, minLon, maxLon);
     }
 
     public final Sector intersection(Sector that) {
@@ -1104,14 +1076,14 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
             return this;
 
         double minLat, maxLat;
-        minLat = (this.latMin > that.latMin) ? this.latMin : that.latMin;
-        maxLat = (this.latMax < that.latMax) ? this.latMax : that.latMax;
+        minLat = Math.max(this.latMin, that.latMin);
+        maxLat = Math.min(this.latMax, that.latMax);
         if (minLat > maxLat)
             return null;
 
         double minLon, maxLon;
-        minLon = (this.lonMin > that.lonMin) ? this.lonMin : that.lonMin;
-        maxLon = (this.lonMax < that.lonMax) ? this.lonMax : that.lonMax;
+        minLon = Math.max(this.lonMin, that.lonMin);
+        maxLon = Math.min(this.lonMax, that.lonMax);
         if (minLon > maxLon)
             return null;
 
@@ -1273,9 +1245,9 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
         { final int a = Double.compare(latMin, that.latMin); if (a != 0) return a;  }
         { final int a = Double.compare(lonMin, that.lonMin); if (a != 0) return a;  }
         { final int a = Double.compare(latMax, that.latMax); if (a != 0) return a;  }
-        { final int a = Double.compare(lonMax, that.lonMax); if (a != 0) return a;  }
-
-        return 0;
+        { final int a = Double.compare(lonMax, that.lonMax);
+            return a;
+        }
     }
 
     /**
@@ -1334,20 +1306,6 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
     public double[] asDegreesArray() {
         return new double[] {this.latMin, this.latMax, this.lonMin, this.lonMax};
     }
-
-//    /**
-//     * Returns the coordinates of the sector as an array of values in radians, in the order minLat, maxLat, minLon,
-//     * maxLon.
-//     *
-//     * @return the array of sector coordinates.
-//     */
-//    public double[] asRadiansArray() {
-//        return new double[]
-//            {
-//                this.latMin().radians, this.latMax().radians,
-//                this.lonMin().radians, this.lonMax().radians
-//            };
-//    }
 
     /**
      * Returns a list of the Lat/Lon coordinates of a Sector's corners.

@@ -39,7 +39,7 @@ public class LayerMenu extends JMenu {
         }
     }
 
-    private boolean isLayerMenuItem(Layer layer) {
+    private static boolean isLayerMenuItem(Layer layer) {
 
         if (layer instanceof RenderableLayer)    //detect surface image layers
         {

@@ -288,7 +288,7 @@ public class ExtentVisibilitySupport {
             throw new IllegalArgumentException(message);
         }
 
-        String message = this.validate(eyePoint, centerPoint, upVector, fieldOfView, viewport,
+        String message = ExtentVisibilitySupport.validate(eyePoint, centerPoint, upVector, fieldOfView, viewport,
             nearClipDistance, farClipDistance);
         if (message != null) {
             Logging.logger().severe(message);
@@ -300,7 +300,7 @@ public class ExtentVisibilitySupport {
         Iterable<? extends ScreenExtent> screenExtents = this.getScreenExtents();
 
         // Compute a new view center point optimal for viewing the extents on the specified Globe.
-        Vec4 newCenterPoint = this.computeCenterPoint(globe, verticalExaggeration, modelExtents, screenExtents);
+        Vec4 newCenterPoint = ExtentVisibilitySupport.computeCenterPoint(globe, verticalExaggeration, modelExtents, screenExtents);
         if (newCenterPoint == null)
             newCenterPoint = centerPoint;
 
@@ -333,7 +333,7 @@ public class ExtentVisibilitySupport {
         // change in modelview parameters.
         Matrix newModelview = Matrix.fromViewLookAt(newEyePoint, newCenterPoint, newUpVector);
         if (screenExtents != null)
-            screenExtents = this.translateScreenExtents(screenExtents, modelview, newModelview, projection, viewport);
+            screenExtents = ExtentVisibilitySupport.translateScreenExtents(screenExtents, modelview, newModelview, projection, viewport);
 
         // Compute the optimal eye point for viewing the extents on the specified Globe.
         Vec4 p = this.computeEyePoint(newEyePoint, newCenterPoint, newUpVector, fieldOfView, viewport, nearClipDistance,
@@ -385,7 +385,7 @@ public class ExtentVisibilitySupport {
             view.getFieldOfView(), view.getViewport(), view.getNearClipDistance(), view.getFarClipDistance());
     }
 
-    protected String validate(Vec4 eye, Vec4 center, Vec4 up, Comparable<Angle> fieldOfView, Rectangle viewport,
+    protected static String validate(Vec4 eye, Vec4 center, Vec4 up, Comparable<Angle> fieldOfView, Rectangle viewport,
         double nearClipDistance, double farClipDistance) {
         Vec4 f = center.subtract3(eye).normalize3();
         Vec4 u = up.normalize3();
@@ -412,7 +412,7 @@ public class ExtentVisibilitySupport {
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    protected Vec4 computeCenterPoint(Globe globe, double verticalExaggeration,
+    protected static Vec4 computeCenterPoint(Globe globe, double verticalExaggeration,
         Iterable<? extends Extent> modelExtents, Iterable<? extends ScreenExtent> screenExtents) {
         List<Vec4> list = new ArrayList<>();
 
@@ -457,7 +457,7 @@ public class ExtentVisibilitySupport {
 
         // Compute the eye point which contains the specified model coordinate extents. We compute the model coordinate
         // eye point first to provide a baseline eye point which the screen extent computation can be compared against.
-        Vec4 p = this.computeEyePointForModelExtents(eye, center, up, fieldOfView, viewport, modelExtents);
+        Vec4 p = ExtentVisibilitySupport.computeEyePointForModelExtents(eye, center, up, fieldOfView, viewport, modelExtents);
         if (p != null) {
             newEye = p;
 
@@ -465,7 +465,7 @@ public class ExtentVisibilitySupport {
             // change in modelview parameters.
             Matrix newModelview = Matrix.fromViewLookAt(newEye, center, up);
             if (screenExtents != null) {
-                screenExtents = this.translateScreenExtents(screenExtents, modelview, newModelview, projection,
+                screenExtents = ExtentVisibilitySupport.translateScreenExtents(screenExtents, modelview, newModelview, projection,
                     viewport);
             }
         }
@@ -485,7 +485,7 @@ public class ExtentVisibilitySupport {
     //********************  Eye Point Computation  *****************//
     //**************************************************************//
 
-    protected Vec4 computeEyePointForModelExtents(Vec4 eye, Vec4 center, Vec4 up, Angle fieldOfView,
+    protected static Vec4 computeEyePointForModelExtents(Vec4 eye, Vec4 center, Vec4 up, Angle fieldOfView,
         Rectangle viewport, Iterable<? extends Extent> modelExtents) {
         if (modelExtents == null)
             return null;
@@ -552,17 +552,17 @@ public class ExtentVisibilitySupport {
         // By first computing the nearest eye point containing the model coordinate reference points, we provide a
         // minimum distance eye point to the next computation. The final result is the nearest eye point which contains
         // the screen bounds.
-        newEye = this.computeEyePointForScreenReferencePoints(eye, center, up, fieldOfView, viewport, screenExtents);
+        newEye = ExtentVisibilitySupport.computeEyePointForScreenReferencePoints(eye, center, up, fieldOfView, viewport, screenExtents);
         if (newEye == null)
             return null;
 
         // Compute the new modelview matrix from the new look at parameters, and adjust the screen extents for the
         // change in modelview parameters.
         Matrix newModelview = Matrix.fromViewLookAt(newEye, center, up);
-        screenExtents = this.translateScreenExtents(screenExtents, modelview, newModelview, projection, viewport);
+        screenExtents = ExtentVisibilitySupport.translateScreenExtents(screenExtents, modelview, newModelview, projection, viewport);
 
         // Compute the eye point which contains the specified screen coordinate bounding rectangles.
-        Vec4 p = this.computeEyePointForScreenBounds(newEye, center, up, fieldOfView, viewport, nearClipDistance,
+        Vec4 p = ExtentVisibilitySupport.computeEyePointForScreenBounds(newEye, center, up, fieldOfView, viewport, nearClipDistance,
             farClipDistance, screenExtents);
         if (p != null)
             newEye = p;
@@ -574,7 +574,7 @@ public class ExtentVisibilitySupport {
     //********************  Screen Extent Support  *****************//
     //**************************************************************//
 
-    protected Vec4 computeEyePointForScreenReferencePoints(Vec4 eye, Vec4 center, Vec4 up, Angle fieldOfView,
+    protected static Vec4 computeEyePointForScreenReferencePoints(Vec4 eye, Vec4 center, Vec4 up, Angle fieldOfView,
         Rectangle viewport, Iterable<? extends ScreenExtent> screenExtents) {
         if (screenExtents == null)
             return null;
@@ -617,7 +617,7 @@ public class ExtentVisibilitySupport {
         return center.add3(f.multiply3(-maxDistance));
     }
 
-    protected Vec4 computeEyePointForScreenBounds(Vec4 eye, Vec4 center, Vec4 up, Angle fieldOfView,
+    protected static Vec4 computeEyePointForScreenBounds(Vec4 eye, Vec4 center, Vec4 up, Angle fieldOfView,
         Rectangle viewport, double nearClipDistance, double farClipDistance,
         Iterable<? extends ScreenExtent> screenExtents) {
         if (screenExtents == null)
@@ -680,7 +680,7 @@ public class ExtentVisibilitySupport {
         return center.add3(f.multiply3(-maxDistance));
     }
 
-    protected Iterable<ScreenExtent> translateScreenExtents(Iterable<? extends ScreenExtent> screenExtents,
+    protected static Iterable<ScreenExtent> translateScreenExtents(Iterable<? extends ScreenExtent> screenExtents,
         Matrix oldModelview, Matrix newModelview, Matrix projection, Rectangle viewport) {
         List<ScreenExtent> adjustedScreenExtents = new ArrayList<>(sizeEstimate(screenExtents));
 

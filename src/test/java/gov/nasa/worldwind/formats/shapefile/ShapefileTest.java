@@ -55,34 +55,6 @@ public class ShapefileTest
         shapefile.close();
     }
 
-//    @Test
-//    public void testOpenURL() throws MalformedURLException
-//    {
-//        Shapefile shapefile = new Shapefile(new URL(SPRINGFIELD_URBAN_GROWTH_URL));
-//        assertEquals("Shape type is not as expected", Shapefile.SHAPE_POLYGON, shapefile.getShapeType());
-//
-//        while (shapefile.hasNext())
-//        {
-//            assertRecordAppearsNormal(shapefile, shapefile.nextRecord());
-//        }
-//
-//        shapefile.close();
-//    }
-//
-//    @Test
-//    public void testOpenURLString()
-//    {
-//        Shapefile shapefile = new Shapefile(SPRINGFIELD_URBAN_GROWTH_URL);
-//        assertEquals("Shape type is not as expected", Shapefile.SHAPE_POLYGON, shapefile.getShapeType());
-//
-//        while (shapefile.hasNext())
-//        {
-//            assertRecordAppearsNormal(shapefile, shapefile.nextRecord());
-//        }
-//
-//        shapefile.close();
-//    }
-
     @Test
     public void testOpenSingleInputStream() {
         Shapefile shapefile = new Shapefile(testResourceStream(STATE_BOUNDS_PATH));

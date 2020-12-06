@@ -339,7 +339,7 @@ public class Angle implements Comparable<Angle> {
     }
 
     public static double clamp(double value, double min, double max) {
-        return value < min ? min : (value > max ? max : value);
+        return value < min ? min : (Math.min(value, max));
     }
 
     /**

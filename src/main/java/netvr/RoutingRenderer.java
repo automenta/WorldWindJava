@@ -43,9 +43,6 @@ interface RoutingRenderer {
 
         @Override
         public void updateBestPath(EdgeIteratorState es, SPTEntry bestEE, int currLoc) {
-//            if (g2 != null) {
-//                mg.plotEdge(g2, na.getLat(bestEE.parent.adjNode), na.getLon(bestEE.parent.adjNode), na.getLat(currLoc), na.getLon(currLoc), .8f);
-//            }
             super.updateBestPath(es, bestEE, currLoc);
         }
     }
@@ -63,9 +60,6 @@ interface RoutingRenderer {
 
         @Override
         public void updateBestPath(double edgeWeight, SPTEntry entry, int origEdgeId, int traversalId, boolean reverse) {
-//            if (g2 != null) {
-//                mg.plotNode(g2, traversalId, Color.YELLOW);
-//            }
             super.updateBestPath(edgeWeight, entry, origEdgeId, traversalId, reverse);
         }
 
@@ -90,10 +84,6 @@ interface RoutingRenderer {
 
         @Override
         public void updateBestPath(double edgeWeight, SPTEntry entry, int origEdgeId, int traversalId, boolean reverse) {
-//            if (g2 != null) {
-//                mg.plotEdge(g2, na.getLat(entry.parent.adjNode), na.getLon(entry.parent.adjNode), na.getLat(entry.adjNode), na.getLon(entry.adjNode), .8f);
-//            }
-            // System.out.println("new node:" + currLoc);
             super.updateBestPath(edgeWeight, entry, origEdgeId, traversalId, reverse);
         }
     }
@@ -111,9 +101,6 @@ interface RoutingRenderer {
 
         @Override
         public void updateBestPath(EdgeIteratorState es, SPTEntry bestEE, int currLoc) {
-//            if (g2 != null) {
-//                mg.plotNode(g2, currLoc, Color.YELLOW);
-//            }
             super.updateBestPath(es, bestEE, currLoc);
         }
     }
@@ -128,8 +115,6 @@ interface RoutingRenderer {
 
         @Override
         public void updateBestPath(double edgeWeight, SPTEntry entry, int origEdgeId, int traversalId, boolean reverse) {
-//            if (g2 != null)
-//                mg.plotNode(g2, traversalId, Color.YELLOW, 6);
 
             super.updateBestPath(edgeWeight, entry, origEdgeId, traversalId, reverse);
         }

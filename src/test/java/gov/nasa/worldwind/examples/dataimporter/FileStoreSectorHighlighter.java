@@ -98,12 +98,12 @@ public class FileStoreSectorHighlighter implements ListSelectionListener, Select
         RenderableLayer layer = new RenderableLayer();
         dataSet.set(SECTOR_LAYER, layer);
 
-        this.populateLayer(dataSet, layer);
+        FileStoreSectorHighlighter.populateLayer(dataSet, layer);
 
         return layer;
     }
 
-    protected void populateLayer(FileStoreDataSet dataSet, RenderableLayer layer) {
+    protected static void populateLayer(FileStoreDataSet dataSet, RenderableLayer layer) {
         Sector sector = (Sector) dataSet.get(AVKey.SECTOR);
         if (sector == null)
             return;

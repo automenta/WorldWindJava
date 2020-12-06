@@ -45,10 +45,10 @@ public class ToolTip implements OrderedRenderable {
     }
 
     protected void doRender(DrawContext dc) {
-        this.drawToolTip(dc, this.text, this.x, this.y);
+        ToolTip.drawToolTip(dc, this.text, this.x, this.y);
     }
 
-    protected void drawToolTip(DrawContext dc, String text, int x, int y) {
+    protected static void drawToolTip(DrawContext dc, String text, int x, int y) {
         ToolTipRenderer renderer = new ToolTipRenderer();
         renderer.setUseSystemLookAndFeel(true);
         renderer.render(dc, text, x, y);

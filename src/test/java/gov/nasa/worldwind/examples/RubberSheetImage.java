@@ -276,7 +276,7 @@ public class RubberSheetImage extends ApplicationTemplate {
         }
 
         protected void loadFile(final File file) {
-            final BufferedImage image = this.readImage(file);
+            final BufferedImage image = Controller.readImage(file);
             if (image == null)
                 return;
 
@@ -289,7 +289,7 @@ public class RubberSheetImage extends ApplicationTemplate {
             SwingUtilities.invokeLater(() -> addSurfaceImage(si, file.getName()));
         }
 
-        protected BufferedImage readImage(File file) {
+        protected static BufferedImage readImage(File file) {
             try {
                 return ImageIO.read(file);
             }
@@ -303,20 +303,20 @@ public class RubberSheetImage extends ApplicationTemplate {
             try {
                 SurfaceImage si = null;
 
-                File tabFile = this.getAssociatedTABFile(file);
+                File tabFile = getAssociatedTABFile(file);
                 if (tabFile != null)
                     si = this.createSurfaceImageFromTABFile(image, tabFile);
 
                 if (si == null) {
-                    File gcpsFile = this.getAssociatedGCPSFile(file);
+                    File gcpsFile = Controller.getAssociatedGCPSFile(file);
                     if (gcpsFile != null)
                         si = this.createSurfaceImageFromGCPSFile(image, gcpsFile);
                 }
 
                 if (si == null) {
-                    File[] worldFiles = this.getAssociatedWorldFiles(file);
+                    File[] worldFiles = Controller.getAssociatedWorldFiles(file);
                     if (worldFiles != null)
-                        si = this.createSurfaceImageFromWorldFiles(image, worldFiles);
+                        si = Controller.createSurfaceImageFromWorldFiles(image, worldFiles);
                 }
 
                 return si;
@@ -338,7 +338,7 @@ public class RubberSheetImage extends ApplicationTemplate {
             return null;
         }
 
-        public File getAssociatedGCPSFile(File file) {
+        public static File getAssociatedGCPSFile(File file) {
             File gcpsFile = GCPSReader.getGCPSFileFor(file);
             if (gcpsFile != null && gcpsFile.exists()) {
                 GCPSReader reader = new GCPSReader();
@@ -349,7 +349,7 @@ public class RubberSheetImage extends ApplicationTemplate {
             return null;
         }
 
-        public File[] getAssociatedWorldFiles(File file) {
+        public static File[] getAssociatedWorldFiles(File file) {
             try {
                 File[] worldFiles = WorldFile.getWorldFiles(file);
                 if (worldFiles != null && worldFiles.length > 0)
@@ -361,7 +361,7 @@ public class RubberSheetImage extends ApplicationTemplate {
             return null;
         }
 
-        protected SurfaceImage createSurfaceImageFromWorldFiles(BufferedImage image, File[] worldFiles)
+        protected static SurfaceImage createSurfaceImageFromWorldFiles(BufferedImage image, File[] worldFiles)
             throws IOException {
             AVList worldFileParams = new AVListImpl();
             WorldFile.decodeWorldFiles(worldFiles, worldFileParams);
@@ -377,7 +377,7 @@ public class RubberSheetImage extends ApplicationTemplate {
             TABRasterReader reader = new TABRasterReader();
             RasterControlPointList controlPoints = TABRasterReader.read(tabFile);
 
-            return this.createSurfaceImageFromControlPoints(image, controlPoints);
+            return Controller.createSurfaceImageFromControlPoints(image, controlPoints);
         }
 
         protected SurfaceImage createSurfaceImageFromGCPSFile(BufferedImage image, File gcpsFile)
@@ -385,10 +385,10 @@ public class RubberSheetImage extends ApplicationTemplate {
             GCPSReader reader = new GCPSReader();
             RasterControlPointList controlPoints = reader.read(gcpsFile);
 
-            return this.createSurfaceImageFromControlPoints(image, controlPoints);
+            return Controller.createSurfaceImageFromControlPoints(image, controlPoints);
         }
 
-        protected SurfaceImage createSurfaceImageFromControlPoints(BufferedImage image,
+        protected static SurfaceImage createSurfaceImageFromControlPoints(BufferedImage image,
             RasterControlPointList controlPoints) {
             int numControlPoints = controlPoints.size();
             Point2D[] imagePoints = new Point2D[numControlPoints];

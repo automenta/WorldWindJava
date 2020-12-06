@@ -98,7 +98,6 @@ public class RectangularFireSupportArea extends AbstractRectangularGraphic imple
      */
     @Override
     protected void createLabels() {
-        FireSupportTextBuilder textBuilder = new FireSupportTextBuilder();
         String[] allText = FireSupportTextBuilder.createText(this);
 
         String text = allText[0];

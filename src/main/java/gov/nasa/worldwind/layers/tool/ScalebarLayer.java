@@ -298,7 +298,7 @@ public class ScalebarLayer extends AbstractLayer {
 
     // Rendering
     public void draw(DrawContext dc, OrderedImage orderedImage) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         OGLStackHandler ogsh = new OGLStackHandler();
 
@@ -427,7 +427,7 @@ public class ScalebarLayer extends AbstractLayer {
 
     // Draw scale rectangle
     private static void drawRectangle(DrawContext dc, double width, double height) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glBegin(GL2.GL_POLYGON);
         gl.glVertex3d(0, height, 0);
         gl.glVertex3d(0, 0, 0);
@@ -439,7 +439,7 @@ public class ScalebarLayer extends AbstractLayer {
 
     // Draw scale graphic
     private static void drawScale(DrawContext dc, double width, double height) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glBegin(GL2.GL_LINE_STRIP);
         gl.glVertex3d(0, height, 0);
         gl.glVertex3d(0, 0, 0);

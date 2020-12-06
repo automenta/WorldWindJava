@@ -44,14 +44,14 @@ public class BasicLightingModel implements LightingModel {
         if (this.lightingStackHandler.isActive())
             return; // lighting is already enabled
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         this.lightingStackHandler.pushAttrib(gl, GL2.GL_LIGHTING_BIT);
 
         this.apply(dc);
     }
 
     public void endLighting(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         this.lightingStackHandler.pop(gl);
         this.lightingStackHandler.clear();
     }
@@ -107,7 +107,7 @@ public class BasicLightingModel implements LightingModel {
     }
 
     protected void apply(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glEnable(GL2.GL_LIGHTING);
         applyStandardLightModel(gl);

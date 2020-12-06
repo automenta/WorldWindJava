@@ -108,7 +108,7 @@ public class KMLReferenceTest
     {
         String url
             = "https://worldwind.arc.nasa.gov/kml-samples/morekml/Network_Links/Targets/Network_Links.Targets.Simple.kml";
-        Object o = this.resolveReferenceBlocking(this.root, url);
+        Object o = KMLReferenceTest.resolveReferenceBlocking(this.root, url);
         assertTrue("Cannot resolve reference to remote KML file", o instanceof KMLRoot);
     }
 
@@ -117,13 +117,13 @@ public class KMLReferenceTest
     public void testReferenceToRemoteKMZ()
     {
         String url = "https://worldwind.arc.nasa.gov/kml-samples/kml/kmz/simple/mimetype.kmz";
-        Object o = this.resolveReferenceBlocking(this.root, url);
+        Object o = KMLReferenceTest.resolveReferenceBlocking(this.root, url);
         assertTrue("Cannot resolve reference to remote KMZ file", o instanceof KMLRoot);
 
-        o = this.resolveRemoteReferenceBlocking(this.root, url, null);
+        o = KMLReferenceTest.resolveRemoteReferenceBlocking(this.root, url, null);
         assertTrue("Cannot resolve reference to remote KMZ file", o instanceof KMLRoot);
 
-        o = this.resolveNetworkLinkBlocking(this.root, url);
+        o = KMLReferenceTest.resolveNetworkLinkBlocking(this.root, url);
         assertTrue("Cannot resolve reference to remote KMZ file", o instanceof KMLRoot);
     }
 
@@ -133,10 +133,10 @@ public class KMLReferenceTest
     {
         String url
             = "https://worldwind.arc.nasa.gov/kml-samples/morekml/Network_Links/Targets/Network_Links.Targets.Simple.kml#networkLinkPlacemark";
-        Object o = this.resolveReferenceBlocking(this.root, url);
+        Object o = KMLReferenceTest.resolveReferenceBlocking(this.root, url);
         assertTrue("Cannot resolve reference to remote KML file", o instanceof KMLPlacemark);
 
-        o = this.resolveRemoteReferenceBlocking(this.root,
+        o = KMLReferenceTest.resolveRemoteReferenceBlocking(this.root,
             "https://worldwind.arc.nasa.gov/kml-samples/morekml/Network_Links/Targets/Network_Links.Targets.Simple.kml",
             "networkLinkPlacemark");
         assertTrue("Cannot resolve reference to remote KML file", o instanceof KMLPlacemark);
@@ -151,7 +151,7 @@ public class KMLReferenceTest
      *
      * @return File pointed to by {@code link}, or null if the link cannot be resolved, or the timeout elapses.
      */
-    private Object resolveReferenceBlocking(KMLRoot root, String link)
+    private static Object resolveReferenceBlocking(KMLRoot root, String link)
     {
         long timeout = 60000; // One minute
         long start = System.currentTimeMillis();
@@ -182,7 +182,7 @@ public class KMLReferenceTest
      *
      * @return File pointed to by {@code link}, or null if the link cannot be resolved, or the timeout elapses.
      */
-    private Object resolveRemoteReferenceBlocking(KMLRoot root, String linkBase, String linkRef)
+    private static Object resolveRemoteReferenceBlocking(KMLRoot root, String linkBase, String linkRef)
     {
         long timeout = 60000; // One minute
         long start = System.currentTimeMillis();
@@ -212,7 +212,7 @@ public class KMLReferenceTest
      *
      * @return File pointed to by {@code link}, or null if the link cannot be resolved, or the timeout elapses.
      */
-    private Object resolveNetworkLinkBlocking(KMLRoot root, String link)
+    private static Object resolveNetworkLinkBlocking(KMLRoot root, String link)
     {
         long timeout = 60000; // One minute
         long start = System.currentTimeMillis();

@@ -206,7 +206,7 @@ public class StarsLayer extends RenderableLayer {
         if (view.getViewport().getWidth() == 0 || view.getViewport().getHeight() == 0)
             return;
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         OGLStackHandler ogsh = new OGLStackHandler();
         double[] matrixArray = new double[16];
 
@@ -248,7 +248,7 @@ public class StarsLayer extends RenderableLayer {
     }
 
     protected void drawWithVertexArray(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glInterleavedArrays(GL2.GL_C3F_V3F, 0, this.starsBuffer);
         gl.glDrawArrays(GL.GL_POINTS, 0, this.numStars);
@@ -263,7 +263,7 @@ public class StarsLayer extends RenderableLayer {
                 return false;
         }
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboId[0]);
         gl.glInterleavedArrays(GL2.GL_C3F_V3F, 0, 0);

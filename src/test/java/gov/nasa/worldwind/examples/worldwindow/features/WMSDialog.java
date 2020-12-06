@@ -74,34 +74,11 @@ public class WMSDialog extends AbstractFeatureDialog {
         deleteButton.addActionListener(e -> deleteCurrentPanel());
         deleteButton.setEnabled(true);
         this.insertLeftDialogComponent(deleteButton);
-//
-//        JButton cancelButton = new JButton("Cancel");
-//        cancelButton.setToolTipText("Cancel capabilities retrieval from server");
-//        cancelButton.setOpaque(false);
-//        cancelButton.addActionListener(new ActionListener()
-//        {
-//            public void actionPerformed(ActionEvent actionEvent)
-//            {
-//                cancelCurrentRetrieval();
-//            }
-//        });
-//        this.insertRightDialogComponent(cancelButton);
 
         this.setTitle("WMS Servers");
         this.dialog.validate();
         this.dialog.pack();
     }
-//
-//    protected void cancelCurrentRetrieval()
-//    {
-//        JComponent tabPane = (JComponent) tabbedPane.getSelectedComponent();
-//        if (tabPane == null)
-//            return;
-//
-//        WMSPanel wmsPanel = (WMSPanel) tabPane.getClientProperty(Constants.FEATURE_OWNER_PROPERTY);
-//        if (wmsPanel != null)
-//            wmsPanel.cancel();
-//    }
 
     protected void deleteCurrentPanel() {
         JComponent tabPane = (JComponent) tabbedPane.getSelectedComponent();
@@ -135,21 +112,6 @@ public class WMSDialog extends AbstractFeatureDialog {
 
                 if (WWUtil.isEmpty(serverLocation))
                     return;
-//
-//                    // Check to see if it's already open.
-//                    for (int i = 0; i < tabbedPane.getTabCount(); i++)
-//                    {
-//                        JPanel jp = (JPanel) tabbedPane.getTabComponentAt(i);
-//                        if (jp != null)
-//                        {
-//                            WMSPanel wp = (WMSPanel) jp.getClientProperty("WMS_PANEL");
-//                            if (wp != null && wp.getURLString().equalsIgnoreCase(serverLocation))
-//                            {
-//                                tabbedPane.setSelectedIndex(i); // make it the visible one
-//                                return;
-//                            }
-//                        }
-//                    }
 
                 try {
 

@@ -9,11 +9,9 @@ import gov.nasa.worldwind.exception.*;
 import gov.nasa.worldwind.retrieve.*;
 import gov.nasa.worldwind.util.*;
 import org.w3c.dom.*;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.*;
-import java.io.*;
+import java.io.InputStream;
 import java.net.*;
 import java.util.*;
 import java.util.logging.Level;
@@ -129,19 +127,6 @@ public abstract class Capabilities {
         catch (URISyntaxException e) {
             Logging.logger().log(java.util.logging.Level.SEVERE,
                 Logging.getMessage("generic.URIInvalid", uri.toString()), e);
-            throw e;
-        }
-        catch (ParserConfigurationException e) {
-            Logging.logger().fine(Logging.getMessage("WMS.ParserConfigurationException", uri.toString()));
-            throw e;
-        }
-        catch (IOException e) {
-            Logging.logger().log(java.util.logging.Level.SEVERE,
-                Logging.getMessage("generic.ExceptionAttemptingToReadFrom", uri.toString()), e);
-            throw e;
-        }
-        catch (SAXException e) {
-            Logging.logger().fine(Logging.getMessage("WMS.ParsingError", uri.toString()));
             throw e;
         }
         finally {

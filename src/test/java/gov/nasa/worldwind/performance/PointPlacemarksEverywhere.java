@@ -47,8 +47,6 @@ public class PointPlacemarksEverywhere extends ApplicationTemplate {
 
                     PointPlacemark pm = new PointPlacemark(Position.fromDegrees(lat, lon, 5.0e4));
                     pm.setAltitudeMode(altitudeMode);
-//                    PointPlacemarkAttributes attrs = new PointPlacemarkAttributes();
-//                    pm.setAttributes(attrs);
                     layer.add(pm);
                     ++count;
                 }

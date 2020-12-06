@@ -234,7 +234,7 @@ public class ShapeEditing extends ApplicationTemplate {
             PickedObject topObject = event.getTopPickedObject();
 
             if (event.getEventAction().equals(SelectEvent.LEFT_CLICK)) {
-                if (topObject != null && this.isEditableShape(topObject.getObject())) {
+                if (topObject != null && AppFrame.isEditableShape(topObject.getObject())) {
                     if (this.editor == null) {
                         // Enable editing of the selected shape.
                         this.editor = new ShapeEditor(wwd(), (Renderable) topObject.getObject());
@@ -264,7 +264,7 @@ public class ShapeEditing extends ApplicationTemplate {
             }
         }
 
-        protected boolean isEditableShape(Object object) {
+        protected static boolean isEditableShape(Object object) {
             return object instanceof Airspace || object instanceof SurfaceShape;
         }
 

@@ -25,26 +25,4 @@ public class SARApp {
             System.setProperty("com.apple.mrj.application.growbox.intrudes", "false");
         }
     }
-
-//    private static boolean checkLicenseAgreement()
-//    {
-//        NOSALicenseAgreement licenseAgreement = new NOSALicenseAgreement(APP_NAME_AND_VERSION);
-//        String status = licenseAgreement.checkForLicenseAgreement(null);
-//        return (status.equals(NOSALicenseAgreement.LICENSE_ACCEPTED)
-//            || status.equals(NOSALicenseAgreement.LICENSE_ACCEPTED_AND_INSTALLED));
-//    }
-//
-//    public static void main(String[] args)
-//    {
-//        boolean licenseStatus = checkLicenseAgreement();
-//        if (licenseStatus)
-//        {
-//            SAR2 appFrame = new SAR2();
-//            appFrame.setVisible(true);
-//        }
-//        else
-//        {
-//            System.exit(0);
-//        }
-//    }
 }

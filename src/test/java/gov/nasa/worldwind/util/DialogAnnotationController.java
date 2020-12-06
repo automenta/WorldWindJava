@@ -191,13 +191,13 @@ public abstract class DialogAnnotationController implements ActionListener, Sele
         Point pickPoint = e.getPickPoint();
 
         if (e.getSource() instanceof Component) {
-            pickPoint = this.glPointFromAwt((Component) e.getSource(), pickPoint);
+            pickPoint = DialogAnnotationController.glPointFromAwt((Component) e.getSource(), pickPoint);
         }
 
         return new Point(pickPoint.x, pickPoint.y - 40);
     }
 
-    protected Point glPointFromAwt(Component c, Point p) {
+    protected static Point glPointFromAwt(Component c, Point p) {
         return new Point(p.x, c.getHeight() - p.y - 1);
     }
 }

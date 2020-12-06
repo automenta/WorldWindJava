@@ -55,10 +55,10 @@ public class KMLTest
     @Test
     public void testRootElement()
     {
-        StringBuilder sb = this.newDocument();
-        this.endDocument(sb);
+        StringBuilder sb = KMLTest.newDocument();
+        KMLTest.endDocument(sb);
 
-        KMLRoot root = this.newParsedRoot(sb);
+        KMLRoot root = KMLTest.newParsedRoot(sb);
 
         assertNotNull("KML root is null", root);
         assertNull("KML root hint is not null", root.getHint());
@@ -67,11 +67,11 @@ public class KMLTest
     @Test
     public void testRootHint()
     {
-        StringBuilder sb = this.newDocument();
+        StringBuilder sb = KMLTest.newDocument();
         sb = new StringBuilder(sb.toString().replace("<kml", "<kml hint=\"yes\""));
-        this.endDocument(sb);
+        KMLTest.endDocument(sb);
 
-        KMLRoot root = this.newParsedRoot(sb);
+        KMLRoot root = KMLTest.newParsedRoot(sb);
 
         assertNotNull("KML root is null", root);
         assertNotNull("KML root hint is null", root.getHint());
@@ -83,11 +83,11 @@ public class KMLTest
         String ID = "ABC123";
         String targetID = "DEF456";
 
-        StringBuilder sb = this.newDocument();
+        StringBuilder sb = KMLTest.newDocument();
         sb.append("<Document id=\"").append(ID).append("\" targetId=\"").append(targetID).append("\"></Document>");
-        this.endDocument(sb);
+        KMLTest.endDocument(sb);
 
-        KMLRoot root = this.newParsedRoot(sb);
+        KMLRoot root = KMLTest.newParsedRoot(sb);
         assertNotNull("KML root is null", root);
 
         KMLAbstractFeature feature = root.getFeature();
@@ -99,12 +99,12 @@ public class KMLTest
     @Test
     public void testUnassignedAbstractObjectAttributes()
     {
-        StringBuilder sb = this.newDocument();
+        StringBuilder sb = KMLTest.newDocument();
         sb.append("<Document>");
         sb.append("</Document>");
-        this.endDocument(sb);
+        KMLTest.endDocument(sb);
 
-        KMLRoot root = this.newParsedRoot(sb);
+        KMLRoot root = KMLTest.newParsedRoot(sb);
         assertNotNull("KML root is null", root);
 
         KMLAbstractFeature feature = root.getFeature();
@@ -134,7 +134,7 @@ public class KMLTest
         // TODO time
         // TODO extended data
 
-        StringBuilder sb = this.newDocument();
+        StringBuilder sb = KMLTest.newDocument();
         sb.append("<Document>");
         sb.append("<name>").append(name).append("</name>");
         sb.append("<visibility>").append(visibility ? "1" : "0").append("</visibility>");
@@ -176,9 +176,9 @@ public class KMLTest
         sb.append("</atom:author>");
 
         sb.append("</Document>");
-        this.endDocument(sb);
+        KMLTest.endDocument(sb);
 
-        KMLRoot root = this.newParsedRoot(sb);
+        KMLRoot root = KMLTest.newParsedRoot(sb);
         assertNotNull("KML root is null", root);
 
         KMLAbstractFeature feature = root.getFeature();
@@ -211,12 +211,12 @@ public class KMLTest
     @Test
     public void testUnassignedAbstractFeatureAttributes()
     {
-        StringBuilder sb = this.newDocument();
+        StringBuilder sb = KMLTest.newDocument();
         sb.append("<Document>");
         sb.append("</Document>");
-        this.endDocument(sb);
+        KMLTest.endDocument(sb);
 
-        KMLRoot root = this.newParsedRoot(sb);
+        KMLRoot root = KMLTest.newParsedRoot(sb);
         assertNotNull("KML root is null", root);
 
         KMLAbstractFeature feature = root.getFeature();
@@ -248,7 +248,7 @@ public class KMLTest
         boolean extrude = true;
         Position coords = Position.fromDegrees(23.56, -18.3, 9);
 
-        StringBuilder sb = this.newPrefixedDocument();
+        StringBuilder sb = KMLTest.newPrefixedDocument();
         sb.append("<kml:Placemark>");
         sb.append("<kml:Point>");
         sb.append("<kml:extrude>").append(extrude ? "1" : "0").append("</kml:extrude>");
@@ -260,9 +260,9 @@ public class KMLTest
         sb.append("</kml:coordinates>");
         sb.append("</kml:Point>");
         sb.append("</kml:Placemark>");
-        this.endPrefixedDocument(sb);
+        KMLTest.endPrefixedDocument(sb);
 
-        KMLRoot root = this.newParsedRoot(sb);
+        KMLRoot root = KMLTest.newParsedRoot(sb);
         assertNotNull("KML root is null", root);
 
         KMLAbstractFeature feature = root.getFeature();
@@ -300,7 +300,7 @@ public class KMLTest
         sb.append("</Placemark>");
         sb.append("</kml>");
 
-        KMLRoot root = this.newParsedRoot(sb);
+        KMLRoot root = KMLTest.newParsedRoot(sb);
         assertNotNull("KML root is null", root);
 
         KMLAbstractFeature feature = root.getFeature();
@@ -323,7 +323,7 @@ public class KMLTest
         boolean extrude = true;
         Position coords = Position.fromDegrees(23.56, -18.3, 9);
 
-        StringBuilder sb = this.newDocument();
+        StringBuilder sb = KMLTest.newDocument();
         sb.append("<Placemark>");
         sb.append("<Point>");
         sb.append("<extrude>").append(extrude ? "1" : "0").append("</extrude>");
@@ -335,9 +335,9 @@ public class KMLTest
         sb.append("</coordinates>");
         sb.append("</Point>");
         sb.append("</Placemark>");
-        this.endDocument(sb);
+        KMLTest.endDocument(sb);
 
-        KMLRoot root = this.newParsedRoot(sb);
+        KMLRoot root = KMLTest.newParsedRoot(sb);
         assertNotNull("KML root is null", root);
 
         KMLAbstractFeature feature = root.getFeature();
@@ -365,7 +365,7 @@ public class KMLTest
         coords.add(Position.fromDegrees(24.56, -19.3, 8));
         coords.add(Position.fromDegrees(25.56, -17.3, 99));
 
-        StringBuilder sb = this.newDocument();
+        StringBuilder sb = KMLTest.newDocument();
         sb.append("<Placemark>");
         sb.append("<LinearRing>");
         sb.append("<extrude>").append(extrude ? "1" : "0").append("</extrude>");
@@ -381,9 +381,9 @@ public class KMLTest
         sb.append("</coordinates>");
         sb.append("</LinearRing>");
         sb.append("</Placemark>");
-        this.endDocument(sb);
+        KMLTest.endDocument(sb);
 
-        KMLRoot root = this.newParsedRoot(sb);
+        KMLRoot root = KMLTest.newParsedRoot(sb);
         assertNotNull("KML root is null", root);
 
         KMLAbstractFeature feature = root.getFeature();
@@ -412,7 +412,7 @@ public class KMLTest
         coords.add(Position.fromDegrees(24.56, -19.3, 8));
         coords.add(Position.fromDegrees(25.56, -17.3, 99));
 
-        StringBuilder sb = this.newDocument();
+        StringBuilder sb = KMLTest.newDocument();
         sb.append("<Placemark>");
         sb.append("<LineString>");
         sb.append("<extrude>").append(extrude ? "1" : "0").append("</extrude>");
@@ -428,9 +428,9 @@ public class KMLTest
         sb.append("</coordinates>");
         sb.append("</LineString>");
         sb.append("</Placemark>");
-        this.endDocument(sb);
+        KMLTest.endDocument(sb);
 
-        KMLRoot root = this.newParsedRoot(sb);
+        KMLRoot root = KMLTest.newParsedRoot(sb);
         assertNotNull("KML root is null", root);
 
         KMLAbstractFeature feature = root.getFeature();
@@ -472,7 +472,7 @@ public class KMLTest
         innerCoords.add(Position.fromDegrees(21.56, -19.3, 2));
         innerCoords.add(Position.fromDegrees(20.56, -17.3, 3));
 
-        StringBuilder sb = this.newDocument();
+        StringBuilder sb = KMLTest.newDocument();
         sb.append("<Placemark>");
         sb.append("<Polygon>");
         sb.append("<extrude>").append(extrude ? "1" : "0").append("</extrude>");
@@ -513,9 +513,9 @@ public class KMLTest
 
         sb.append("</Polygon>");
         sb.append("</Placemark>");
-        this.endDocument(sb);
+        KMLTest.endDocument(sb);
 
-        KMLRoot root = this.newParsedRoot(sb);
+        KMLRoot root = KMLTest.newParsedRoot(sb);
         assertNotNull("KML root is null", root);
 
         KMLAbstractFeature feature = root.getFeature();
@@ -557,13 +557,13 @@ public class KMLTest
         String item = "Test a String";
         String name = "SimpleData Name";
 
-        StringBuilder sb = this.newDocument();
+        StringBuilder sb = KMLTest.newDocument();
         sb.append("<Placemark>");
         sb.append("<SimpleData name=\"").append(name).append("\">").append(item).append("</SimpleData>");
         sb.append("</Placemark>");
-        this.endDocument(sb);
+        KMLTest.endDocument(sb);
 
-        KMLRoot root = this.newParsedRoot(sb);
+        KMLRoot root = KMLTest.newParsedRoot(sb);
         assertNotNull("KML root is null", root);
 
         KMLAbstractFeature feature = root.getFeature();
@@ -581,15 +581,15 @@ public class KMLTest
         String item = "Test a String";
         String name = "SimpleData Name";
 
-        StringBuilder sb = this.newDocument();
+        StringBuilder sb = KMLTest.newDocument();
         sb.append("<Unrecognized>");
         sb.append("<Placemark>");
         sb.append("<SimpleData name=\"").append(name).append("\">").append(item).append("</SimpleData>");
         sb.append("</Placemark>");
         sb.append("</Unrecognized>");
-        this.endDocument(sb);
+        KMLTest.endDocument(sb);
 
-        KMLRoot root = this.newParsedRoot(sb, true);
+        KMLRoot root = KMLTest.newParsedRoot(sb, true);
         assertNotNull("KML root is null", root);
 
         for (Map.Entry<String, Object> field : root.getFields().getEntries())
@@ -624,7 +624,7 @@ public class KMLTest
         coords.add(Position.fromDegrees(24.56, -19.3, 8));
         coords.add(Position.fromDegrees(25.56, -17.3, 99));
 
-        StringBuilder sb = this.newDocument();
+        StringBuilder sb = KMLTest.newDocument();
         sb.append("<Placemark>");
         sb.append("<LinearRing>");
         sb.append("<coordinates>");
@@ -640,9 +640,9 @@ public class KMLTest
         sb.append("</coordinates>");
         sb.append("</LinearRing>");
         sb.append("</Placemark>");
-        this.endDocument(sb);
+        KMLTest.endDocument(sb);
 
-        KMLRoot root = this.newParsedRoot(sb);
+        KMLRoot root = KMLTest.newParsedRoot(sb);
         assertNotNull("KML root is null", root);
 
         KMLAbstractFeature feature = root.getFeature();
@@ -692,7 +692,7 @@ public class KMLTest
         String item = "Test a String";
         String name = "SimpleData Name";
 
-        StringBuilder sb = this.newDocument();
+        StringBuilder sb = KMLTest.newDocument();
         sb.append("<Document>");
         sb.append("<Unrecognized>");
         sb.append("<Placemark>");
@@ -700,9 +700,9 @@ public class KMLTest
         sb.append("</Placemark>");
         sb.append("</Unrecognized>");
         sb.append("</Document>");
-        this.endDocument(sb);
+        KMLTest.endDocument(sb);
 
-        KMLRoot root = this.newParsedRoot(sb, true);
+        KMLRoot root = KMLTest.newParsedRoot(sb, true);
         assertNotNull("KML root is null", root);
 
         KMLAbstractFeature doc = root.getFeature();
@@ -732,7 +732,7 @@ public class KMLTest
     @Test
     public void testGoogleTutorialExample01()
     {
-        KMLRoot root = this.openAndParseFile("KML/GoogleTutorialExample01.kml");
+        KMLRoot root = KMLTest.openAndParseFile("KML/GoogleTutorialExample01.kml");
 
         KMLAbstractFeature feature = root.getFeature();
         assertTrue("Root feature is not as expected", feature instanceof KMLPlacemark);
@@ -754,7 +754,7 @@ public class KMLTest
     @Test
     public void testGoogleTutorialExample02()
     {
-        KMLRoot root = this.openAndParseFile("KML/GoogleTutorialExample02.kml");
+        KMLRoot root = KMLTest.openAndParseFile("KML/GoogleTutorialExample02.kml");
 
         KMLAbstractFeature document = root.getFeature();
         assertTrue("Root feature is not as expected", document instanceof KMLDocument);
@@ -787,7 +787,7 @@ public class KMLTest
     @Test
     public void testGoogleTutorialExample03()
     {
-        KMLRoot root = this.openAndParseFile("KML/GoogleTutorialExample03.kml");
+        KMLRoot root = KMLTest.openAndParseFile("KML/GoogleTutorialExample03.kml");
 
         KMLAbstractFeature document = root.getFeature();
         assertTrue("Root feature is not as expected", document instanceof KMLDocument);
@@ -816,7 +816,7 @@ public class KMLTest
     @Test
     public void testGoogleTutorialExample04()
     {
-        KMLRoot root = this.openAndParseFile("KML/GoogleTutorialExample04.kml");
+        KMLRoot root = KMLTest.openAndParseFile("KML/GoogleTutorialExample04.kml");
 
         KMLAbstractFeature document = root.getFeature();
         assertTrue("Root feature is not as expected", document instanceof KMLFolder);
@@ -849,7 +849,7 @@ public class KMLTest
     @Test
     public void testStyleReference()
     {
-        KMLRoot root = this.openAndParseFile("KML/StyleReferences.kml");
+        KMLRoot root = KMLTest.openAndParseFile("KML/StyleReferences.kml");
 
         KMLAbstractFeature document = root.getFeature();
         assertTrue("Root feature is not as expected", document instanceof KMLDocument);
@@ -860,25 +860,6 @@ public class KMLTest
 
         List<KMLAbstractStyleSelector> styles = document.getStyleSelectors();
         assertEquals("Incorrect number of styles", 1, styles.size());
-// // TODO: re-enable w/o relying on getStyleUrlResolved
-//            KMLPlacemark placemark = (KMLPlacemark) features.get(0);
-//            assertEquals("Incorrect name", "Building 41", placemark.getName());
-//            assertEquals("Incorrect styleUrl", "#transBluePoly", placemark.getStyleUrl().getCharacters());
-//            assertNotNull("Style is  null", placemark.getStyleUrlResolved());
-//
-//            assertTrue("Placemark feature is not as expected", placemark.getGeometry() instanceof KMLPolygon);
-//            KMLPolygon pgon = (KMLPolygon) placemark.getGeometry();
-//            assertEquals("Incorrect extrude value", (Boolean) true, pgon.getExtrude());
-//            assertEquals("Incorrect altitude mode", "relativeToGround", pgon.getAltitudeMode());
-//
-//            KMLStyle style = placemark.getStyleUrlResolved();
-//            KMLLineStyle lineStyle = style.getLineStyle();
-//            assertNotNull("LineStyle is  null", lineStyle);
-//            assertEquals("Line style width is not as expected", 1.5, lineStyle.getWidth());
-//
-//            KMLPolyStyle polyStyle = style.getPolyStyle();
-//            assertNotNull("PolyStyle is  null", polyStyle);
-//            assertEquals("Poly style color is not as expected", "7dff0000", polyStyle.getColor());
     }
 
     @Test
@@ -918,7 +899,7 @@ public class KMLTest
         }
     }
 
-    private StringBuilder newDocument()
+    private static StringBuilder newDocument()
     {
         StringBuilder sb = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         sb.append("<kml");
@@ -931,7 +912,7 @@ public class KMLTest
         return sb;
     }
 
-    private StringBuilder newPrefixedDocument()
+    private static StringBuilder newPrefixedDocument()
     {
         StringBuilder sb = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         sb.append("<kml:kml");
@@ -944,17 +925,17 @@ public class KMLTest
         return sb;
     }
 
-    private void endDocument(StringBuilder sb)
+    private static void endDocument(StringBuilder sb)
     {
         sb.append("</kml>");
     }
 
-    private void endPrefixedDocument(StringBuilder sb)
+    private static void endPrefixedDocument(StringBuilder sb)
     {
         sb.append("</kml:kml>");
     }
 
-    private KMLRoot newParsedRoot(StringBuilder sb)
+    private static KMLRoot newParsedRoot(StringBuilder sb)
     {
         KMLRoot root;
         try
@@ -969,7 +950,7 @@ public class KMLTest
         }
     }
 
-    private KMLRoot newParsedRoot(StringBuilder sb, boolean suppressLogging)
+    private static KMLRoot newParsedRoot(StringBuilder sb, boolean suppressLogging)
     {
         KMLRoot root;
         try
@@ -992,7 +973,7 @@ public class KMLTest
         }
     }
 
-    private KMLRoot openAndParseFile(String sourceDoc)
+    private static KMLRoot openAndParseFile(String sourceDoc)
     {
         KMLRoot root;
         final StringBuilder parserMessage = new StringBuilder();

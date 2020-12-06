@@ -108,7 +108,7 @@ public class KMLExportTest
         pyramid.export(KMLConstants.KML_MIME_TYPE, new StringWriter());
     }
 
-    private boolean validateDocument(String doc)
+    private static boolean validateDocument(String doc)
     {
         try
         {

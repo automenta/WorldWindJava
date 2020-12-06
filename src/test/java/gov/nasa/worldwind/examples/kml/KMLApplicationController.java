@@ -242,7 +242,7 @@ public class KMLApplicationController implements SelectListener, PropertyChangeL
      * @return {@code true} if the controller can either animate the view or open a balloon for the feature.
      */
     protected boolean canSelect(KMLAbstractFeature feature) {
-        return this.canMoveTo(feature) || this.canShowBalloon(feature);
+        return KMLApplicationController.canMoveTo(feature) || this.canShowBalloon(feature);
     }
 
     /**
@@ -254,7 +254,7 @@ public class KMLApplicationController implements SelectListener, PropertyChangeL
      * example, features attached to screen (<i>ScreenOverlay</i>) and container features (<i>Document</i> and
      * <i>Folder</i>) do not have default views.
      */
-    protected boolean canMoveTo(KMLAbstractFeature feature) {
+    protected static boolean canMoveTo(KMLAbstractFeature feature) {
         return (feature.getView() != null) || feature instanceof KMLPlacemark || feature instanceof KMLGroundOverlay;
     }
 
@@ -266,6 +266,6 @@ public class KMLApplicationController implements SelectListener, PropertyChangeL
      */
     protected boolean canShowBalloon(KMLAbstractFeature feature) {
         BalloonController balloonController = this.getBalloonController();
-        return balloonController != null && balloonController.canShowBalloon(feature);
+        return balloonController != null && BalloonController.canShowBalloon(feature);
     }
 }

@@ -111,7 +111,7 @@ public abstract class DialogAnnotation extends GlobeAnnotation implements Action
 
     protected void setupContainer(Annotation annotation) {
         AnnotationAttributes defaultAttribs = new AnnotationAttributes();
-        this.setupDefaultAttributes(defaultAttribs);
+        DialogAnnotation.setupDefaultAttributes(defaultAttribs);
         defaultAttribs.setAdjustWidthToText(AVKey.SIZE_FIXED);
         defaultAttribs.setSize(new Dimension(0, 0));
 
@@ -121,14 +121,14 @@ public abstract class DialogAnnotation extends GlobeAnnotation implements Action
 
     protected void setupLabel(Annotation annotation) {
         AnnotationAttributes defaultAttribs = new AnnotationAttributes();
-        this.setupDefaultAttributes(defaultAttribs);
+        DialogAnnotation.setupDefaultAttributes(defaultAttribs);
         defaultAttribs.setAdjustWidthToText(AVKey.SIZE_FIT_TEXT);
 
         annotation.setPickEnabled(false);
         annotation.getAttributes().setDefaults(defaultAttribs);
     }
 
-    protected void setupDefaultAttributes(AnnotationAttributes attributes) {
+    protected static void setupDefaultAttributes(AnnotationAttributes attributes) {
         Color transparentBlack = new Color(0, 0, 0, 0);
 
         attributes.setBackgroundColor(transparentBlack);
@@ -195,7 +195,7 @@ public abstract class DialogAnnotation extends GlobeAnnotation implements Action
 
         protected void transformBackgroundImageCoordsToAnnotationCoords(DrawContext dc, int width, int height,
             WWTexture texture) {
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
             // Rotate around an axis originating from the center of the image and coming out of the screen.
             double hw = texture.getWidth(dc) / 2.0d;

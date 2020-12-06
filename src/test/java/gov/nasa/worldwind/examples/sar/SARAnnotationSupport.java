@@ -88,9 +88,6 @@ public class SARAnnotationSupport {
                             // Check for text or url
                             PickedObject po = event.getTopPickedObject();
                             if (po.get(AVKey.TEXT) != null) {
-                                //System.out.println("Text: \"" + po.getValue(AVKey.TEXT) + "\" Hyperlink: "  + po.getValue(AVKey.URL));
-                                //if(SARAnnotationSupport.this.currentAnnotation == event.getTopObject())
-                                //    return;
                             }
                             // Left click on an annotation - select
                             select(event.getTopObject());
@@ -270,7 +267,7 @@ public class SARAnnotationSupport {
      * @param text  the initial text.
      * @return the input text or null if the dialog was canceled.
      */
-    private String showAnnotationDialog(String title, String text) {
+    private static String showAnnotationDialog(String title, String text) {
         final JTextArea textArea = new JTextArea(5, 10);
         if (text != null)
             textArea.setText(text);

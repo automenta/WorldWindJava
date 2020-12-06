@@ -179,7 +179,7 @@ public class EchelonSymbol extends AbstractTacticalSymbol {
     @Override
     protected void drawIcon(DrawContext dc) {
         boolean matrixPushed = false;
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         try {
             if (this.rotation != null) {
                 gl.glPushMatrix();

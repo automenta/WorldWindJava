@@ -544,7 +544,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
     }
 
     protected void beginDrawing(DrawContext dc, SurfaceTileDrawContext sdc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         this.stackHandler.pushAttrib(gl,
             GL2.GL_COLOR_BUFFER_BIT      // For alpha test func and ref, blend func
@@ -583,7 +583,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
     }
 
     protected void endDrawing(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         if (texture != null && !dc.isPickingMode()) {
             gl.glTexGeni(GL2.GL_S, GL2.GL_TEXTURE_GEN_MODE, OGLUtil.DEFAULT_TEXTURE_GEN_MODE);
@@ -618,7 +618,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
             modelview = modelview.multiply(refMatrix);
         }
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glMultMatrixd(modelview.toArray(new double[16], 0, false), 0);
     }
 
@@ -785,7 +785,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         }
         vertexBuffer.flip();
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glVertexPointer(2, GL.GL_FLOAT, 0, vertexBuffer);
         gl.glDrawArrays(GL.GL_LINE_STRIP, 0, locations.size());
     }
@@ -907,7 +907,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
 
     protected void applyInteriorState(DrawContext dc, SurfaceTileDrawContext sdc, ShapeAttributes attributes,
         WWTexture texture, LatLon refLocation) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         if (texture != null && !dc.isPickingMode()) {
             AbstractSurfaceShape.applyInteriorTextureState(dc, sdc, attributes, texture, refLocation);
@@ -931,7 +931,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
     }
 
     protected static void applyOutlineState(DrawContext dc, ShapeAttributes attributes) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         // Apply line width state
         double lineWidth = attributes.getOutlineWidth();
@@ -979,7 +979,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
     protected static void applyInteriorTextureState(DrawContext dc, SurfaceTileDrawContext sdc,
         ShapeAttributes attributes,
         WWTexture texture, LatLon refLocation) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         if (!texture.bind(dc))
             return;
@@ -1136,7 +1136,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
     }
 
     protected Integer doTessellateInterior(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         GLUtessellatorCallback cb = GLUTessellatorSupport.createOGLDrawPrimitivesCallback(gl);
 
         // Create a tessellator with the default winding rule: GLU_TESS_WINDING_ODD. This winding rule produces the

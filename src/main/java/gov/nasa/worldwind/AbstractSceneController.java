@@ -399,7 +399,7 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
             throw new IllegalStateException(message);
         }
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glPushAttrib(GL2.GL_VIEWPORT_BIT | GL2.GL_ENABLE_BIT | GL2.GL_TRANSFORM_BIT);
 
@@ -421,7 +421,7 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
     }
 
     protected static void finalizeFrame(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glMatrixMode(GL2.GL_MODELVIEW);
         gl.glPopMatrix();
@@ -783,7 +783,7 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
                 Model model = dc.getModel();
 
                 float[] previousColor = new float[4];
-                GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+                GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
                 gl.glGetFloatv(GL2.GL_CURRENT_COLOR, previousColor, 0);
 
                 for (SectorGeometry sg : dc.getSurfaceGeometry()) {
@@ -929,7 +929,7 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
             GL2.GL_COLOR_BUFFER_BIT   // For alpha test enable, blend enable, alpha func, blend func, blend ref.
                 | GL2.GL_POLYGON_BIT; // For cull face enable, cull face, polygon mode.
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         OGLStackHandler ogsh = new OGLStackHandler();
         ogsh.pushAttrib(gl, attributeMask);
         try {

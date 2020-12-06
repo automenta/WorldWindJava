@@ -238,7 +238,7 @@ public class DFWDemo {
         public AppPanel(Dimension canvasSize, boolean includeStatusBar) {
             super(new BorderLayout());
 
-            this.wwd = this.createWorldWindow();
+            this.wwd = AppPanel.createWorldWindow();
             ((Component) this.wwd).setPreferredSize(canvasSize);
 
             // Create the default model as described in the current worldwind properties.
@@ -260,7 +260,7 @@ public class DFWDemo {
             this.highlightController = new HighlightController(this.getWwd(), SelectEvent.ROLLOVER);
         }
 
-        protected WorldWindow createWorldWindow() {
+        protected static WorldWindow createWorldWindow() {
             return new WorldWindowGLCanvas();
         }
 
@@ -295,7 +295,7 @@ public class DFWDemo {
             this.initialize(includeStatusBar, includeLayerPanel, includeStatsPanel);
         }
 
-        private DynamicLayerInfo loadDynamicLayer(String serverUrl, boolean imagery) throws Exception {
+        private static DynamicLayerInfo loadDynamicLayer(String serverUrl, boolean imagery) throws Exception {
             URI serverURI = new URI(serverUrl); // throws an exception if server name is not a valid uri.
             WMSCapabilities caps;
             caps = WMSCapabilities.retrieve(serverURI);
@@ -347,7 +347,7 @@ public class DFWDemo {
 
         protected void initialize(boolean includeStatusBar, boolean includeLayerPanel, boolean includeStatsPanel) {
             // Create the WorldWindow.
-            this.wwjPanel = this.createAppPanel(this.canvasSize, includeStatusBar);
+            this.wwjPanel = AppFrame.createAppPanel(this.canvasSize, includeStatusBar);
             this.wwjPanel.setPreferredSize(canvasSize);
 
             // Put the pieces together.
@@ -400,32 +400,9 @@ public class DFWDemo {
             Position eyePos = new Position(Angle.fromDegreesLatitude(32.897), Angle.fromDegreesLongitude(-97.04),
                 500.0); // DFW
             this.wwjPanel.getWwd().view().setEyePosition(eyePos);
-//            try
-//            {
-//                DynamicLayerInfo dfwImageryLayer = this.loadDynamicLayer(
-//                        "http://localhost/cgi-bin/mapserv?MAP=/home/mpeterson/d/gis-data/dfw-tiles/dfw.map", true /* imagery */);
-//                insertBeforeCompass(this.wwjPanel.getWwd(), dfwImageryLayer.getImageLayer());
-//                Globe globe = this.wwjPanel.getWwd().getModel().getGlobe();
-//                DynamicLayerInfo dfwLidar = this.loadDynamicLayer(
-//                        "http://localhost/cgi-bin/mapserv?MAP=/home/mpeterson/d/gis-data/dfw-lidar/dfw_lidar.map", false /* imagery */);
-//                ElevationModel currentElevationModel = globe.getElevationModel();
-//
-//                // Add the new elevation model to the globe.
-//                if (currentElevationModel instanceof CompoundElevationModel) {
-//                    CompoundElevationModel cem = (CompoundElevationModel) currentElevationModel;
-//                    for (ElevationModel em : cem.getElevationModels()) {
-//                        em.setEnabled(false);
-//                    }
-//                    cem.addElevationModel(dfwLidar.getElevationModel());
-//                }
-//            }
-//            catch (Exception ex)
-//            {
-//                ex.printStackTrace();
-//            }
         }
 
-        protected AppPanel createAppPanel(Dimension canvasSize, boolean includeStatusBar) {
+        protected static AppPanel createAppPanel(Dimension canvasSize, boolean includeStatusBar) {
             return new AppPanel(canvasSize, includeStatusBar);
         }
 

@@ -68,7 +68,7 @@ public class DDSCompressor {
             return null;
         }
 
-        DDSCompressor compressor = new DDSCompressor();
+        
         return DDSCompressor.compressImage(image, attributes);
     }
 
@@ -198,7 +198,7 @@ public class DDSCompressor {
             return null;
         }
 
-        DDSCompressor compressor = new DDSCompressor();
+        
         return DDSCompressor.compressImage(image, attributes);
     }
 
@@ -267,7 +267,7 @@ public class DDSCompressor {
             return null;
         }
 
-        DDSCompressor compressor = new DDSCompressor();
+        
         return DDSCompressor.compressImage(image, attributes);
     }
 
@@ -316,7 +316,7 @@ public class DDSCompressor {
             throw new IllegalArgumentException(message);
         }
 
-        DDSCompressor compressor = new DDSCompressor();
+        
         DXTCompressionAttributes attributes = getDefaultCompressionAttributes();
         return DDSCompressor.compressImage(image, attributes);
     }

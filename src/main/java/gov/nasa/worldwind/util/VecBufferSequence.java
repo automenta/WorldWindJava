@@ -273,7 +273,7 @@ public class VecBufferSequence extends CompoundVecBuffer {
             throw new IllegalArgumentException(message);
         }
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         if (VecBufferSequence.haveMultiDrawArrays(dc)) {
             gl.glMultiDrawArrays(drawMode, this.offsets, this.lengths, this.count);

@@ -107,7 +107,7 @@ public class ViewIteration extends ApplicationTemplate {
             return cp;
         }
 
-        protected Angle computeHeading(Position pa, Position pb) {
+        protected static Angle computeHeading(Position pa, Position pb) {
             return LatLon.greatCircleAzimuth(pa, pb);
         }
 

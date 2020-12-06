@@ -54,7 +54,7 @@ public class VPFSurfaceLine extends SurfacePolyline // TODO: consolidate with Su
     protected void applyModelviewTransform(DrawContext dc, SurfaceTileDrawContext sdc) {
         // Apply the geographic to surface tile coordinate transform.
         Matrix modelview = sdc.getModelviewMatrix();
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glMultMatrixd(modelview.toArray(new double[16], 0, false), 0);
     }
 

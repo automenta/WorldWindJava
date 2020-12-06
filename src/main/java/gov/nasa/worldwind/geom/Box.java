@@ -111,8 +111,8 @@ public class Box implements Extent, Renderable {
     protected final double sLength; // length of s axis
     protected final double tLength; // length of t axis
     protected final Plane[] planes; // the six planes, with positive normals facing outwards
-    public Vec4 bottomCenter; // point at center of box's longest axis
-    public Vec4 topCenter; // point at center of box's longest axis
+    public final Vec4 bottomCenter; // point at center of box's longest axis
+    public final Vec4 topCenter; // point at center of box's longest axis
 
     protected Box(Vec4 bottomCenter, Vec4 topCenter, Vec4 center, Vec4 r, Vec4 s, Vec4 t, Vec4 ru, Vec4 su, Vec4 tu,
         double rlength, double sLength, double tLength, Plane[] planes) {
@@ -152,11 +152,6 @@ public class Box implements Extent, Renderable {
      * @throws IllegalArgumentException if the axes array or one of its entries is null.
      */
     public Box(Vec4[] axes, double rMin, double rMax, double sMin, double sMax, double tMin, double tMax) {
-//        if (axes == null || axes[0] == null || axes[1] == null || axes[2] == null) {
-//            String msg = Logging.getMessage("nullValue.AxesIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         this.ru = axes[0];
         this.su = axes[1];
@@ -196,11 +191,6 @@ public class Box implements Extent, Renderable {
      * @throws IllegalArgumentException if the point is null.
      */
     public Box(Vec4 point) {
-//        if (point == null) {
-//            String msg = Logging.getMessage("nullValue.PointIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         this.ru = new Vec4(1, 0, 0, 1);
         this.su = new Vec4(0, 1, 0, 1);
@@ -241,18 +231,8 @@ public class Box implements Extent, Renderable {
      * @throws IllegalArgumentException if the point list is null or empty.
      */
     public static Box computeBoundingBox(Iterable<? extends Vec4> points) {
-//        if (points == null) {
-//            String msg = Logging.getMessage("nullValue.PointListIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         Vec4[] axes = WWMath.computePrincipalAxes(points);
-//        if (axes == null) {
-//            String msg = Logging.getMessage("generic.ListIsEmpty");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         Vec4 r = axes[0];
         Vec4 s = axes[1];
@@ -318,11 +298,6 @@ public class Box implements Extent, Renderable {
      * @throws IllegalArgumentException if the buffer is null or empty, or if the stride is less than three.
      */
     public static Box computeBoundingBox(BufferWrapper coordinates, int stride) {
-//        if (coordinates == null) {
-//            String msg = Logging.getMessage("nullValue.CoordinatesAreNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         if (stride < 3) {
             String msg = Logging.getMessage("generic.StrideIsInvalid", stride);
@@ -453,7 +428,7 @@ public class Box implements Extent, Renderable {
     }
 
     protected static void drawOutline(DrawContext dc, Vec4 a, Vec4 b, Vec4 c, Vec4 d) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glBegin(GL2.GL_LINE_LOOP);
         gl.glVertex3d(a.x, a.y, a.z);
         gl.glVertex3d(b.x, b.y, b.z);
@@ -755,11 +730,6 @@ public class Box implements Extent, Renderable {
      * {@inheritDoc}
      */
     public boolean intersects(Line line) {
-//        if (line == null) {
-//            String message = Logging.getMessage("nullValue.LineIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         return WWMath.polytopeIntersect(line, this.planes) != null;
     }
@@ -863,11 +833,6 @@ public class Box implements Extent, Renderable {
      * @param dc the <code>DrawContext</code> to be used.
      */
     public void render(DrawContext dc) {
-//        if (dc == null) {
-//            String message = Logging.getMessage("nullValue.DocumentSourceIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (dc.isPickingMode())
             return;
@@ -877,7 +842,7 @@ public class Box implements Extent, Renderable {
         Vec4 c = this.s.add3(this.t).multiply3(0.5);
         Vec4 d = this.t.subtract3(this.s).multiply3(0.5);
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         OGLStackHandler ogsh = new OGLStackHandler();
         ogsh.pushAttrib(gl, GL2.GL_COLOR_BUFFER_BIT // For alpha enable, blend enable, alpha func, blend func.
             | GL2.GL_CURRENT_BIT // For current color.
@@ -906,7 +871,7 @@ public class Box implements Extent, Renderable {
     protected void drawBox(DrawContext dc, Vec4 a, Vec4 b, Vec4 c, Vec4 d) {
         Vec4 e = a.add3(this.r);
         Vec4 f = d.add3(this.r);
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         dc.getView().pushReferenceCenter(dc, this.bottomCenter);
         OGLStackHandler ogsh = new OGLStackHandler();

@@ -214,7 +214,7 @@ public abstract class KMLViewController {
             double ve = this.wwd.sceneControl().getVerticalExaggeration();
 
             // Find the highest point in the geometry. Make sure that our bounding cylinder encloses this point.
-            double maxAltitude = this.findMaxAltitude(positions);
+            double maxAltitude = KMLViewController.findMaxAltitude(positions);
 
             double[] minAndMaxElevations = globe.getMinAndMaxElevations(sector);
             double minElevation = minAndMaxElevations[0];
@@ -237,7 +237,7 @@ public abstract class KMLViewController {
      * @return The maximum elevation in the list of positions. Returns {@code Double.MIN_VALUE} if {@code positions} is
      * empty.
      */
-    protected double findMaxAltitude(Iterable<? extends Position> positions) {
+    protected static double findMaxAltitude(Iterable<? extends Position> positions) {
         double maxAltitude = -Double.MAX_VALUE;
         for (Position p : positions) {
             double altitude = p.getAltitude();

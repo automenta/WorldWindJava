@@ -192,8 +192,6 @@ public class GeoSymAttributeConverter {
                 this.edgeVis = getStringValue(line);
             else if (line.startsWith("COLRTABLE "))
                 this.colorTable = getIntegerValues(line);
-            else if (line.startsWith("COLRTABLE "))
-                this.colorTable = getIntegerValues(line);
             else if (line.startsWith("SCALEMODE "))
                 this.scale = getScaleValue(line);
         }

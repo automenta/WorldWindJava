@@ -518,11 +518,6 @@ public class ExtrudedPolygonEditor extends AbstractShapeEditor {
     protected String formatMeasurements(Position pos) {
         StringBuilder sb = new StringBuilder();
 
-        /*
-        //sb.append(this.unitsFormat.areaNL(this.getLabel(AREA_LABEL), this.getArea()));
-        sb.append(this.unitsFormat.lengthNL(this.getLabel(PERIMETER_LABEL), this.getLength()));
-       */
-
         //sb.append(this.unitsFormat.lengthNL(this.getLabel(WIDTH_LABEL), this.shape.getEastWestRadius() * 2));
         //sb.append(this.unitsFormat.lengthNL(this.getLabel(LENGTH_LABEL), this.shape.getNorthSouthRadius() * 2));
         //sb.append(this.unitsFormat.lengthNL(this.getLabel(HEIGHT_LABEL), this.shape.getVerticalRadius() * 2));

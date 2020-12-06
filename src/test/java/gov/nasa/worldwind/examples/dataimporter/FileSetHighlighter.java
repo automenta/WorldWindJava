@@ -143,7 +143,7 @@ public class FileSetHighlighter implements ListSelectionListener, SelectListener
         }
 
         // Potentially add the preview image.
-        if (fileSet.isImagery() && fileSet.getLength() <= fileSet.getMaxFilesForPreviewImage())
+        if (fileSet.isImagery() && fileSet.getLength() <= FileSet.getMaxFilesForPreviewImage())
             this.addImage(fileSet);
     }
 

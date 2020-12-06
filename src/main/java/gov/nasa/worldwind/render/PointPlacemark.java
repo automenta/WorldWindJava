@@ -660,7 +660,7 @@ public class PointPlacemark extends WWObjectImpl
      * @param dc the current draw context.
      */
     protected static void beginDrawing(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         int attrMask =
             GL2.GL_DEPTH_BUFFER_BIT // for depth test, depth mask and depth func
@@ -686,7 +686,7 @@ public class PointPlacemark extends WWObjectImpl
      * @param dc the current draw context.
      */
     protected static void endDrawing(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
         gl.glPopAttrib();
     }
@@ -769,7 +769,7 @@ public class PointPlacemark extends WWObjectImpl
             return;
         }
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         OGLStackHandler osh = new OGLStackHandler();
         try {
@@ -960,7 +960,7 @@ public class PointPlacemark extends WWObjectImpl
         float x = (float) labelPoint.x;
         float y = (float) labelPoint.y;
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glMatrixMode(GL2.GL_MODELVIEW);
         gl.glLoadIdentity();
@@ -1019,7 +1019,7 @@ public class PointPlacemark extends WWObjectImpl
      * @param opm            The placemark to draw the line for.
      */
     protected void drawLine(DrawContext dc, PickSupport pickCandidates, OrderedPlacemark opm) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         if ((!dc.isDeepPickingEnabled()))
             gl.glEnable(GL.GL_DEPTH_TEST);
@@ -1051,7 +1051,7 @@ public class PointPlacemark extends WWObjectImpl
      * @param opm            The placemark to draw the point for.
      */
     protected void drawPoint(DrawContext dc, PickSupport pickCandidates, OrderedPlacemark opm) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         OGLStackHandler osh = new OGLStackHandler();
         try {
@@ -1144,7 +1144,7 @@ public class PointPlacemark extends WWObjectImpl
      * @param dc the current draw context.
      */
     protected void setPointSize(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         Double scale = this.getActiveAttributes().getScale();
         if (scale == null)
@@ -1168,7 +1168,7 @@ public class PointPlacemark extends WWObjectImpl
      * @param pickCandidates the pick support object to use when adding this as a pick candidate.
      */
     protected void setLineColor(DrawContext dc, PickSupport pickCandidates) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         if (!dc.isPickingMode()) {
             Color color = this.getActiveAttributes().getLineColor();

@@ -300,7 +300,7 @@ public class IconRenderer {
     }
 
     protected void beginDrawIcons(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         this.oglStackHandler.clear();
 
@@ -350,7 +350,7 @@ public class IconRenderer {
         if (dc.isPickingMode())
             PickSupport.endPicking(dc);
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         if (dc.isPickingMode()) {
             gl.glTexEnvf(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, OGLUtil.DEFAULT_TEX_ENV_MODE);
@@ -440,7 +440,7 @@ public class IconRenderer {
             pedestalSpacing = 0.0d;
         }
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         this.setDepthFunc(dc, uIcon, screenPoint);
 
@@ -506,7 +506,7 @@ public class IconRenderer {
 
     protected static void applyBackground(DrawContext dc, WWIcon icon, Vec4 screenPoint, double width, double height,
         double pedestalSpacing, double pedestalScale) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         double backgroundScale;
         backgroundScale = icon.getBackgroundScale();

@@ -150,11 +150,6 @@ public class SessionCacheRetrievalPostProcessor implements RetrievalPostProcesso
      * @return the retrieved data.
      */
     public ByteBuffer run(Retriever retriever) {
-//        if (retriever == null) {
-//            String message = Logging.getMessage("nullValue.RetrieverIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         String message = this.validate(retriever);
 

@@ -137,7 +137,7 @@ public class SurfacePolygons extends SurfacePolylines // TODO: Review
         if (dlResource == null)
             return;
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         this.applyInteriorState(dc, sdc, this.getActiveAttributes(), this.getTexture(), referencePos);
         gl.glCallList(dlResource[0]);
 
@@ -193,7 +193,7 @@ public class SurfacePolygons extends SurfacePolylines // TODO: Review
     }
 
     protected int[] doTessellateInterior(DrawContext dc, LatLon referenceLocation) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         GLUtessellatorCallback cb = GLUTessellatorSupport.createOGLDrawPrimitivesCallback(gl);
 
         int[] dlResource = new int[] {gl.glGenLists(1), 1};

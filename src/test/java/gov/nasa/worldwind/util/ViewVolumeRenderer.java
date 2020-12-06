@@ -34,7 +34,7 @@ public class ViewVolumeRenderer {
             new Vec4(viewport.width, viewport.height, 1));
         Vec4 far_ul = worldPointFromScreenPoint(dc, viewport, modelview, projection, new Vec4(0, viewport.height, 1));
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         // Draw the active view volume
         gl.glColor4ub((byte) 255, (byte) 255, (byte) 0, (byte) 128); // Above ground color is 50% transparent Yellow.
@@ -88,7 +88,7 @@ public class ViewVolumeRenderer {
     }
 
     protected static void drawLine(DrawContext dc, Vec4 a, Vec4 b) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glBegin(GL2.GL_LINES);
         gl.glVertex3d(a.x, a.y, a.z);
         gl.glVertex3d(b.x, b.y, b.z);
@@ -96,7 +96,7 @@ public class ViewVolumeRenderer {
     }
 
     protected static void drawQuad(DrawContext dc, Vec4 ll, Vec4 lr, Vec4 ur, Vec4 ul) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glBegin(GL2.GL_QUADS);
         gl.glVertex3d(ll.x, ll.y, ll.z);
         gl.glVertex3d(lr.x, lr.y, lr.z);
@@ -106,7 +106,7 @@ public class ViewVolumeRenderer {
     }
 
     protected static void drawTriangle(DrawContext dc, Vec4 a, Vec4 b, Vec4 c) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glBegin(GL2.GL_TRIANGLES);
         gl.glVertex3d(a.x, a.y, a.z);
         gl.glVertex3d(b.x, b.y, b.z);
@@ -153,7 +153,7 @@ public class ViewVolumeRenderer {
     }
 
     protected void draw(DrawContext dc, Matrix modelview, Matrix projection, Rectangle viewport) {
-        this.drawClipVolume(dc, modelview, projection, viewport);
+        ViewVolumeRenderer.drawClipVolume(dc, modelview, projection, viewport);
         this.drawAxes(dc, modelview);
     }
 
@@ -164,7 +164,7 @@ public class ViewVolumeRenderer {
         Vec4 y = origin.add3(Vec4.UNIT_Y.transformBy4(modelviewInv).multiply3(this.getSize()));
         Vec4 z = origin.add3(Vec4.UNIT_Z.transformBy4(modelviewInv).multiply3(this.getSize()));
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         OGLStackHandler ogsh = new OGLStackHandler();
         ogsh.pushAttrib(gl, GL2.GL_CURRENT_BIT
             | GL2.GL_LINE_BIT
@@ -192,8 +192,8 @@ public class ViewVolumeRenderer {
         }
     }
 
-    protected void drawClipVolume(DrawContext dc, Matrix modelview, Matrix projection, Rectangle viewport) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+    protected static void drawClipVolume(DrawContext dc, Matrix modelview, Matrix projection, Rectangle viewport) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         OGLStackHandler ogsh = new OGLStackHandler();
         ogsh.pushAttrib(gl,
             GL2.GL_CURRENT_BIT | GL2.GL_COLOR_BUFFER_BIT | GL2.GL_LINE_BIT | GL2.GL_ENABLE_BIT

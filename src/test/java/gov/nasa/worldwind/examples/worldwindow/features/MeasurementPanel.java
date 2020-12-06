@@ -116,7 +116,7 @@ public class MeasurementPanel extends AbstractFeaturePanel {
         }
 
         this.lineColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), (int) (0.3 * color.getAlpha()));
-        this.setShapeColor(this.measureTool.getShape(), this.lineColor, this.fillColor);
+        MeasurementPanel.setShapeColor(this.measureTool.getShape(), this.lineColor, this.fillColor);
     }
 
     public void setFillColor(Color color) {
@@ -125,10 +125,10 @@ public class MeasurementPanel extends AbstractFeaturePanel {
         }
 
         this.fillColor = color;
-        this.setShapeColor(this.measureTool.getShape(), this.lineColor, this.fillColor);
+        MeasurementPanel.setShapeColor(this.measureTool.getShape(), this.lineColor, this.fillColor);
     }
 
-    public void setShapeColor(Renderable shape, Color lineColor, Color fillColor) {
+    public static void setShapeColor(Renderable shape, Color lineColor, Color fillColor) {
         if (shape instanceof Path) {
             Attributable path = (Attributable) shape;
             if (path.getAttributes() == null) {
@@ -166,7 +166,7 @@ public class MeasurementPanel extends AbstractFeaturePanel {
     }
 
     protected void installNewMeasureTool(String shapeType) {
-        Renderable shape = this.makeMeasureShape(shapeType);
+        Renderable shape = MeasurementPanel.makeMeasureShape(shapeType);
         this.measureTool = new WWOMeasureTool(this.controller.getWWd(), shape,
             shapeType.equals(PATH) || shapeType.equals(FREEHAND) ? AVKey.SHAPE_PATH : null, this.controlPointsLayer);
         if (shapeType.equals(FREEHAND)) {
@@ -174,7 +174,7 @@ public class MeasurementPanel extends AbstractFeaturePanel {
         }
 
         this.measureTool.setUnitsFormat(this.controller.getUnits());
-        this.setShapeColor(this.measureTool.getShape(), this.lineColor, this.fillColor);
+        MeasurementPanel.setShapeColor(this.measureTool.getShape(), this.lineColor, this.fillColor);
         this.updatePanelValues();
         this.newButton.setEnabled(true);
         this.pauseButton.setEnabled(false);
@@ -197,7 +197,7 @@ public class MeasurementPanel extends AbstractFeaturePanel {
         this.measureTool = null;
     }
 
-    private Renderable makeMeasureShape(String shapeType) {
+    private static Renderable makeMeasureShape(String shapeType) {
         if (shapeType.equals(LINE) || shapeType.equals(PATH) || shapeType.equals(FREEHAND)) {
             Path line = new Path();
             line.setPositions(new ArrayList<>());
@@ -226,7 +226,7 @@ public class MeasurementPanel extends AbstractFeaturePanel {
         return null;
     }
 
-    private boolean layerContains(RenderableLayer layer, Renderable renderable) {
+    private static boolean layerContains(RenderableLayer layer, Renderable renderable) {
         for (Renderable r : layer.all()) {
             if (r == renderable) {
                 return true;

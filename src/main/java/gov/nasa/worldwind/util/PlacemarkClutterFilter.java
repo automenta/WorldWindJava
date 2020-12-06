@@ -183,7 +183,7 @@ public class PlacemarkClutterFilter implements ClutterFilter {
         }
 
         public void render(DrawContext dc) {
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
             PointPlacemarkAttributes attrs = this.opm.getPlacemark().getAttributes();
             Font font = attrs != null ? attrs.getLabelFont() : null;
             if (font == null)
@@ -247,7 +247,7 @@ public class PlacemarkClutterFilter implements ClutterFilter {
         }
 
         protected void drawDeclutterLabel(DrawContext dc, Font font, Vec4 textPoint, CharSequence labelText) {
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
             if (dc.isPickingMode()) {
                 // Pick the text box, not just the text.
@@ -287,7 +287,7 @@ public class PlacemarkClutterFilter implements ClutterFilter {
         }
 
         protected static void drawDeclutterLine(DrawContext dc, Vec4 startPoint, Vec4 endPoint) {
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
             gl.glLineWidth(1);
 

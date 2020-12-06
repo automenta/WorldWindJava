@@ -76,14 +76,7 @@ public class ObjectAnimations extends ApplicationTemplate {
             WorldWindow wwd = this.wwd();
             // Add view control panel to the layer panel
             this.vcp = new ViewControlPanel(wwd);
-            //BasicFlyView flyView = new BasicFlyView();
-            //getWwd().setView(flyView);
             this.getControlPanel().add(this.vcp, BorderLayout.SOUTH);
-//            flyView.setEyePosition(eyePos);
-//            flyView.setHeading(Angle.fromDegrees(0));
-//            flyView.setPitch(Angle.fromDegrees(90));
-//            flyView.setFieldOfView(Angle.fromDegrees(45));
-//            flyView.setRoll(Angle.fromDegrees(0));
             for (Layer layer : wwd.model().getLayers()) {
                 if (layer.getName().toLowerCase().contains("bing")) {
                     layer.setEnabled(true);
@@ -91,9 +84,6 @@ public class ObjectAnimations extends ApplicationTemplate {
             }
             try {
                 planesOverDFW(1);
-                //modelDisplay();
-                //messageDisplay();
-//                 this.addFpsText(layer);
                 wwd.setPerFrameStatisticsKeys(PerformanceStatistic.ALL_STATISTICS_SET);
             }
             catch (Exception ex) {
@@ -113,11 +103,6 @@ public class ObjectAnimations extends ApplicationTemplate {
                 new Position(Angle.fromDegreesLatitude(32.897), Angle.fromDegreesLongitude(-97.04), 1500.0));
             model1.setScale(new Vec4(200, 200, 200));
             layer.add(new KMLController(model1));
-//            KMLRoot model2 = openKML("/home/mpeterson/d/temp/aol-data/octocopter/Octocopter.kmz");
-//            model2.setPosition(new Position(Angle.fromDegreesLatitude(32.897), Angle.fromDegreesLongitude(-97.04), 2000.0));
-//            model2.setScale(new Vec4(1000, 1000, 1000));
-//            layer.addRenderable(new KMLController(model2));
-
         }
 
         private void messageDisplay() throws Exception {
@@ -208,13 +193,6 @@ public class ObjectAnimations extends ApplicationTemplate {
             double curAltitude = 2500;
             for (int i = 0; i < nFlights; i++) {
                 ColladaRoot planeModel = ColladaRoot.createAndParse("collada/airliner.dae");
-                //ColladaRoot planeModel = ColladaRoot.createAndParse("/home/mpeterson/d/foo/aol-data/airbus-popup/files/model0.dae");
-//                    ColladaRoot planeModel = null;
-//                    if (i == 0) {
-//                        KMLRoot kmzModel = openKML("/home/mpeterson/d/foo/aol-data/airbus-popup/Airbus_Popup.kmz");
-//                        System.out.println(kmzModel);
-//                    }
-//                    //printColladaTable(planeModel);
                 planeModel.setAltitudeMode(WorldWind.ABSOLUTE);
                 planeModel.setModelScale(new Vec4(4, 4, 4));
                 planeModel.setHeading(Angle.ZERO);
@@ -256,7 +234,7 @@ public class ObjectAnimations extends ApplicationTemplate {
             controller.startAnimations();
         }
 
-        private KMLRoot openKML(String source) throws Exception {
+        private static KMLRoot openKML(String source) throws Exception {
             KMLRoot kmlRoot = KMLRoot.create(source);
             kmlRoot.parse();
             return kmlRoot;
@@ -299,7 +277,7 @@ public class ObjectAnimations extends ApplicationTemplate {
             });
         }
 
-        private Position.PositionList getPositionsFromFeature(KMLAbstractFeature feature) {
+        private static Position.PositionList getPositionsFromFeature(KMLAbstractFeature feature) {
             if (feature instanceof KMLAbstractContainer) {
                 List<KMLAbstractFeature> childFeatures = ((KMLAbstractContainer) feature).getFeatures();
                 for (KMLAbstractFeature kaf : childFeatures) {
@@ -318,7 +296,7 @@ public class ObjectAnimations extends ApplicationTemplate {
             return null;
         }
 
-        private Position.PositionList getPositionsFromKml(String kmlFile) throws Exception {
+        private static Position.PositionList getPositionsFromKml(String kmlFile) throws Exception {
             KMLRoot kml = KMLRoot.createAndParse(kmlFile);
             return getPositionsFromFeature(kml.getFeature());
         }
@@ -383,15 +361,6 @@ public class ObjectAnimations extends ApplicationTemplate {
 
                 JButton resetBut = new JButton("Reset");
                 resetBut.addActionListener((ActionEvent e) -> {
-//                    pitchSlider.setValue(90);
-//                    rollSlider.setValue(0);
-//                    headingSlider.setValue(0);
-//                    fovSlider.setValue(45);
-//                    KMLRoot debugModel = model;
-//                    printIdTable(debugModel);
-//                    KMLController debugController=kmlController;
-//                    System.out.println(debugController);
-//                    updateView();
                 });
                 this.add(resetBut);
 

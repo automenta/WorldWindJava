@@ -92,9 +92,6 @@ public class SurfaceImageViewer extends ApplicationTemplate {
                         statusLabel.setText("status: ready");
                     }
 //                    catch (IOException e)
-//                    {
-//                        e.printStackTrace();
-//                    }
                 });
                 t.setPriority(Thread.MIN_PRIORITY);
                 t.start();

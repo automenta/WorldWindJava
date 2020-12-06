@@ -101,11 +101,6 @@ public class BasicAirspaceControlPointRenderer implements AirspaceControlPointRe
     }
 
     public void setLightDirection(Vec4 direction) {
-        if (direction != null) {
-            String message = Logging.getMessage("nullValue.DirectionIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         this.lightDirection = direction;
     }
@@ -173,7 +168,7 @@ public class BasicAirspaceControlPointRenderer implements AirspaceControlPointRe
     }
 
     protected void begin(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         if (dc.isPickingMode()) {
             PickSupport.beginPicking(dc);
@@ -211,7 +206,7 @@ public class BasicAirspaceControlPointRenderer implements AirspaceControlPointRe
     }
 
     protected static void end(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glPopMatrix();
 
@@ -243,7 +238,7 @@ public class BasicAirspaceControlPointRenderer implements AirspaceControlPointRe
                 float[] compArray = new float[4];
                 Color color = this.getControlPointMarker().getAttributes().getMaterial().getDiffuse();
                 color.getRGBComponents(compArray);
-                GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+                GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
                 gl.glColor4fv(compArray, 0);
             }
         }
@@ -262,7 +257,7 @@ public class BasicAirspaceControlPointRenderer implements AirspaceControlPointRe
             int colorCode = color.getRGB();
             PickedObject po = new PickedObject(colorCode, controlPoint);
             this.pickSupport.addPickableObject(po);
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
             gl.glColor3ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
         }
 
@@ -327,7 +322,7 @@ public class BasicAirspaceControlPointRenderer implements AirspaceControlPointRe
     //**************************************************************//
 
     protected void setupLighting(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         float[] modelAmbient = new float[4];
         modelAmbient[0] = 1.0f;

@@ -194,7 +194,7 @@ public class KMLLink extends KMLAbstractObject {
 
         KMLNetworkLinkControl linkControl = this.getRoot().getNetworkLinkControl();
         if (linkControl != null) {
-            Long minRefresh = (long) (linkControl.getMinRefreshPeriod() * 1000.0d);
+            long minRefresh = (long) (linkControl.getMinRefreshPeriod() * 1000.0d);
             if (minRefresh > refreshTime)
                 refreshTime = minRefresh;
         }

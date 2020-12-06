@@ -110,7 +110,7 @@ public class SkyColorLayer extends RenderableLayer {
         float fadeFactor = (alt < this.fadeBottomAltitude) ? 1.0f :
             (float) ((this.fadeTopAltitude - alt) / (this.fadeTopAltitude - this.fadeBottomAltitude));
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         boolean attribsPushed = false;
         boolean modelviewPushed = false;

@@ -190,7 +190,7 @@ public class FlatWorldEarthquakes extends ApplicationTemplate {
             Number time = (Number) eqAnnotation.get(USGS_EARTHQUAKE_TIME);
             if (time != null) {
                 long elapsed = this.updateTime - time.longValue();
-                sb.append(this.timePassedToString(elapsed));
+                sb.append(AppFrame.timePassedToString(elapsed));
                 sb.append("<br/>");
             }
 
@@ -203,7 +203,7 @@ public class FlatWorldEarthquakes extends ApplicationTemplate {
 
         // Earthquake layer ------------------------------------------------------------------
 
-        protected String timePassedToString(long duration) {
+        protected static String timePassedToString(long duration) {
             if (duration > MILLISECONDS_PER_DAY) {
                 long days = duration / MILLISECONDS_PER_DAY;
                 return days + (days > 1 ? " days ago" : " day ago");
@@ -449,7 +449,7 @@ public class FlatWorldEarthquakes extends ApplicationTemplate {
             protected void applyScreenTransform(DrawContext dc, int x, int y, int width, int height, double scale) {
                 double finalScale = scale * this.computeScale(dc);
 
-                GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+                GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
                 gl.glTranslated(x, y, 0);
                 gl.glScaled(finalScale, finalScale, 1);
             }
@@ -466,7 +466,7 @@ public class FlatWorldEarthquakes extends ApplicationTemplate {
                 int size = 32;
                 if (this.shapeBuffer == null)
                     this.shapeBuffer = FrameFactory.createShapeBuffer(AVKey.SHAPE_ELLIPSE, size, size, 0, null);
-                GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+                GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
                 gl.glTranslatef(-size / 2.0f, -size / 2.0f, 0);
                 FrameFactory.drawBuffer(dc, GL.GL_TRIANGLE_FAN, this.shapeBuffer);
             }

@@ -215,34 +215,6 @@ public class RenderableLayer extends AbstractLayer {
         return this.active();
     }
 
-//    /**
-//     * Overrides the collection of currently active Renderables with the specified <code>renderableIterable</code>. This
-//     * layer will maintain a reference to <code>renderableIterable</code> strictly for picking and rendering. This layer
-//     * will not modify the reference, or dispose of its contents. This will also clear and dispose of the internal
-//     * collection of Renderables, and will prevent any modification to its contents via <code>addRenderable,
-//     * addRenderables, removeRenderables, or dispose</code>.
-//     * <p>
-//     * Unlike {@link #add(Renderable)} or {@link #addAll(Iterable)}, this
-//     * does not forward any of the renderable's property change events to the layer's property change listeners. Since
-//     * the layer is not in control of the iIterable's contents, attaching property change listeners to the renderables
-//     * could cause the them to hold dangling references to the layer. If any of the renderables in the Iterable rely on
-//     * forwarding property change events for proper operation - such as {@link AbstractBrowserBalloon}
-//     * - use {@link #addAll(Iterable)} instead.
-//     * <p>
-//     * If the specified <code>renderableIterable</code> is null, this layer reverts to maintaining its internal
-//     * collection.
-//     *
-//     * @param renderableIterable Iterable to use instead of this layer's internal collection, or null to use this
-//     *                           layer's internal collection.
-//     */
-//    public void set(Iterable<Renderable> renderableIterable) {
-//        this.renderablesOverride = renderableIterable;
-//        // Dispose of the internal collection of Renderables.
-//        this._dispose();
-//        // Clear the internal collection of Renderables.
-//        this._clear();
-//    }
-
     /**
      * Returns the Iterable of currently active Renderables. If the caller has specified a custom Iterable via {@link
      * #set(Iterable)}, this will returns a reference to that Iterable. If the caller passed
@@ -275,11 +247,6 @@ public class RenderableLayer extends AbstractLayer {
      * @throws IllegalStateException If a custom Iterable has been specified by a call to <code>setRenderables</code>.
      */
     @Override public void dispose() {
-//        if (this.renderablesOverride != null) {
-//            String msg = Logging.getMessage("generic.LayerIsUsingCustomIterable");
-//            Logging.logger().severe(msg);
-//            throw new IllegalStateException(msg);
-//        }
 
         if (this.renderables != null && !this.renderables.isEmpty()) {
             for (Renderable renderable : this.renderables) {
@@ -331,7 +298,7 @@ public class RenderableLayer extends AbstractLayer {
     }
 
     protected void doPick(DrawContext dc, Iterable<? extends Renderable> renderables, Point pickPoint) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         this.pickSupport.clearPickList();
         PickSupport.beginPicking(dc);
 

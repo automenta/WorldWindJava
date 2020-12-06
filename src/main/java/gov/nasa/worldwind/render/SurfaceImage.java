@@ -297,7 +297,7 @@ public class SurfaceImage extends WWObjectImpl
             PickSupport.beginPicking(dc);
 
             Color color = dc.getUniquePickColor();
-            dc.getGL().getGL2().glColor3ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
+            dc.getGL2().glColor3ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
             this.pickSupport.addPickableObject(color.getRGB(), this);
 
             this.draw(dc);
@@ -309,7 +309,7 @@ public class SurfaceImage extends WWObjectImpl
     }
 
     protected void draw(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         try {
             if (!dc.isPickingMode()) {
                 double opacity = dc.getCurrentLayer() != null

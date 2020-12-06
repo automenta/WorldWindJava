@@ -43,10 +43,10 @@ public class FileSetFilter extends FileFilter implements java.io.FileFilter {
                 return false;
         }
 
-        return this.isDataRaster(file, null);
+        return FileSetFilter.isDataRaster(file, null);
     }
 
-    public boolean isDataRaster(Object source, AVList params) {
+    public static boolean isDataRaster(Object source, AVList params) {
         // This  method was taken from DataStoreUtils and modified with additional tests for determining whether the
         // source is a raster. In particular, that the raster has a Sector associated with it. This prevents simple
         // image files with no associated geo-location information from slipping through.

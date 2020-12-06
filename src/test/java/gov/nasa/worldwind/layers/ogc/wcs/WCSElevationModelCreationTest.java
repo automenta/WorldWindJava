@@ -25,7 +25,7 @@ public class WCSElevationModelCreationTest
     @Test
     public void test001()
     {
-        WCSElevationModel elevationModel = this.createWCSElevationModel(
+        WCSElevationModel elevationModel = WCSElevationModelCreationTest.createWCSElevationModel(
             new WCS100Capabilities("WCS/WCSCapabilities003.xml"),
             new WCS100DescribeCoverage("WCS/WCSDescribeCoverage001.xml"));
 
@@ -48,7 +48,7 @@ public class WCSElevationModelCreationTest
     @Test
     public void testRestoreState()
     {
-        WCSElevationModel origElevationModel = this.createWCSElevationModel(
+        WCSElevationModel origElevationModel = WCSElevationModelCreationTest.createWCSElevationModel(
             new WCS100Capabilities("WCS/WCSCapabilities003.xml"),
             new WCS100DescribeCoverage("WCS/WCSDescribeCoverage001.xml"));
 
@@ -81,7 +81,7 @@ public class WCSElevationModelCreationTest
             newElevationModel.getLevels().getFirstLevel().getCacheName());
     }
 
-    private WCSElevationModel createWCSElevationModel(WCS100Capabilities caps, WCS100DescribeCoverage coverage)
+    private static WCSElevationModel createWCSElevationModel(WCS100Capabilities caps, WCS100DescribeCoverage coverage)
     {
         try
         {

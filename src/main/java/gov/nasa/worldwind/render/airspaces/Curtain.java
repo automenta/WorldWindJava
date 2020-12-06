@@ -297,7 +297,7 @@ public class Curtain extends AbstractAirspace {
         this.setExpiryTime(this.nextExpiryTime(dc, terrainConformant));
         this.clearElevationMap();
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         int[] lightModelTwoSide = new int[1];
         try {
             gl.glGetIntegerv(GL2.GL_LIGHT_MODEL_TWO_SIDE, lightModelTwoSide, 0);

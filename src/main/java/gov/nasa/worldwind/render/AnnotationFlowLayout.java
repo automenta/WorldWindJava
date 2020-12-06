@@ -243,7 +243,7 @@ public class AnnotationFlowLayout extends AbstractAnnotationLayout {
             align = getDefaultAlignment(AVKey.HORIZONTAL);
         }
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         OGLStackHandler stackHandler = new OGLStackHandler();
 
         for (Annotation annotation : annotations) {
@@ -266,7 +266,7 @@ public class AnnotationFlowLayout extends AbstractAnnotationLayout {
             align = getDefaultAlignment(AVKey.VERTICAL);
         }
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         OGLStackHandler stackHandler = new OGLStackHandler();
 
         for (Annotation annotation : annotations) {
@@ -284,7 +284,7 @@ public class AnnotationFlowLayout extends AbstractAnnotationLayout {
 
     @SuppressWarnings("StringEquality")
     protected static void alignHorizontal(DrawContext dc, Rectangle bounds, Dimension size, String align) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         if (align == AVKey.BOTTOM) {
             // This is the default.
@@ -301,7 +301,7 @@ public class AnnotationFlowLayout extends AbstractAnnotationLayout {
 
     @SuppressWarnings("StringEquality")
     protected static void alignVertical(DrawContext dc, Rectangle bounds, Dimension size, String align) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         if (align == AVKey.LEFT) {
             // This is the default.
@@ -317,12 +317,12 @@ public class AnnotationFlowLayout extends AbstractAnnotationLayout {
     }
 
     protected static void beginHorizontal(DrawContext dc, Rectangle bounds) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glTranslated(bounds.getMinX(), bounds.getMinY(), 0);
     }
 
     protected static void beginVertical(DrawContext dc, Rectangle bounds) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glTranslated(bounds.getMinX(), bounds.getMaxY(), 0);
     }
 }

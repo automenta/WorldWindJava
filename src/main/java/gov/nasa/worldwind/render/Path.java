@@ -13,7 +13,7 @@ import gov.nasa.worldwind.cache.*;
 import gov.nasa.worldwind.geom.Box;
 import gov.nasa.worldwind.geom.Cylinder;
 import gov.nasa.worldwind.geom.*;
-import gov.nasa.worldwind.globes.Globe;
+import gov.nasa.worldwind.globes.*;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.ogc.kml.impl.KMLExportUtil;
 import gov.nasa.worldwind.pick.*;
@@ -109,7 +109,7 @@ public class Path extends AbstractShape {
      */
     protected static final double DEFAULT_DRAW_POSITIONS_SCALE = 10;
     protected static ByteBuffer pickPositionColors; // defines the colors used to resolve position point picking.
-    protected final LengthMeasurer measurer = new LengthMeasurer();
+    //    protected final LengthMeasurer measurer = new LengthMeasurer();
     protected Iterable<? extends Position> positions; // the positions as provided by the application
     protected int numPositions; // the number of positions in the positions field.
     protected PositionColors positionColors; // defines a color at each application-provided position.
@@ -129,18 +129,13 @@ public class Path extends AbstractShape {
      * Creates a path with no positions.
      */
     public Path() {
-        this.measurer.setFollowTerrain(this.followTerrain);
-        this.measurer.setPathType(this.pathType);
+
     }
 
     public Path(Path source) {
         super(source);
 
-        Collection<Position> copiedPositions = new ArrayList<>(sizeEstimate(source.positions));
-        for (Position position : source.positions)
-            copiedPositions.add(position);
-
-        this.setPositions(copiedPositions);
+        setPositions(source.positions);
         this.positionColors = source.positionColors;
         this.pathType = source.pathType;
         this.followTerrain = source.followTerrain;
@@ -151,8 +146,6 @@ public class Path extends AbstractShape {
         this.showPositions = source.showPositions;
         this.showPositionsThreshold = source.showPositionsThreshold;
         this.showPositionsScale = source.showPositionsScale;
-        this.measurer.setFollowTerrain(this.followTerrain);
-        this.measurer.setPathType(this.pathType);
     }
 
     /**
@@ -167,8 +160,6 @@ public class Path extends AbstractShape {
      */
     public Path(Iterable<? extends Position> positions) {
         this.setPositions(positions);
-        this.measurer.setFollowTerrain(this.followTerrain);
-        this.measurer.setPathType(this.pathType);
     }
 
     /**
@@ -183,11 +174,9 @@ public class Path extends AbstractShape {
      * @throws IllegalArgumentException if positions is null.
      */
     public Path(Iterable<? extends LatLon> coords, double elevation) {
-        ArrayList<Position> newPositions = new ArrayList<>();
-        coords.forEach((c) -> newPositions.add(new Position(c, elevation)));
+        ArrayList<Position> newPositions = new ArrayList<>(sizeEstimate(coords));
+        coords.forEach(c -> newPositions.add(new Position(c, elevation)));
         this.setPositions(newPositions);
-        this.measurer.setFollowTerrain(this.followTerrain);
-        this.measurer.setPathType(this.pathType);
     }
 
     /**
@@ -201,15 +190,8 @@ public class Path extends AbstractShape {
      * @throws IllegalArgumentException if positions is null.
      */
     public Path(Position.PositionList positions) {
-        if (positions == null) {
-            String message = Logging.getMessage("nullValue.PositionsListIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         this.setPositions(positions.list);
-        this.measurer.setFollowTerrain(this.followTerrain);
-        this.measurer.setPathType(this.pathType);
     }
 
     /**
@@ -220,18 +202,191 @@ public class Path extends AbstractShape {
      * @throws IllegalArgumentException if either position is null.
      */
     public Path(Position posA, Position posB) {
-        if (posA == null || posB == null) {
-            String message = Logging.getMessage("nullValue.PositionIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
+
+        this.setPositions(List.of(posA, posB));
+    }
+
+    protected static void drawVerticalOutlineVBO(DrawContext dc, int[] vboIds, PathData pathData) {
+        IntBuffer polePositions = pathData.polePositions;
+        if (polePositions == null || polePositions.limit() < 1) {
+            return;
         }
 
-        Collection<Position> endPoints = new ArrayList<>(2);
-        endPoints.add(posA);
-        endPoints.add(posB);
-        this.setPositions(endPoints);
-        this.measurer.setFollowTerrain(this.followTerrain);
-        this.measurer.setPathType(this.pathType);
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
+
+        // Convert stride from number of elements to number of bytes.
+        gl.glVertexPointer(3, GL.GL_FLOAT, 4 * pathData.vertexStride, 0);
+        gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vboIds[1]);
+        gl.glDrawElements(GL.GL_LINES, polePositions.limit(), GL.GL_UNSIGNED_INT, 0);
+
+        gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
+    }
+
+    /**
+     * Draws vertical lines at this path's specified positions.
+     *
+     * @param dc       the current draw context.
+     * @param pathData the current globe-specific path data.
+     */
+    protected static void drawVerticalOutlineVA(DrawContext dc, PathData pathData) {
+        IntBuffer polePositions = pathData.polePositions;
+        if (polePositions == null || polePositions.limit() < 1) {
+            return;
+        }
+
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
+
+        // Convert stride from number of elements to number of bytes.
+        gl.glVertexPointer(3, GL.GL_FLOAT, 4 * pathData.vertexStride, pathData.renderedPath.rewind());
+        gl.glDrawElements(GL.GL_LINES, polePositions.limit(), GL.GL_UNSIGNED_INT, polePositions.rewind());
+    }
+
+    protected static void doDrawInteriorVBO(DrawContext dc, int[] vboIds, PathData pathData) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
+
+        // Convert stride from number of elements to number of bytes.
+        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboIds[0]);
+        gl.glVertexPointer(3, GL.GL_FLOAT, 4 * pathData.vertexStride, 0);
+        gl.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, pathData.vertexCount);
+
+        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+    }
+
+    protected static void doDrawInteriorVA(DrawContext dc, PathData pathData) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
+
+        // Convert stride from number of elements to number of bytes.
+        gl.glVertexPointer(3, GL.GL_FLOAT, 4 * pathData.vertexStride, pathData.renderedPath.rewind());
+        gl.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, pathData.vertexCount);
+    }
+
+    /**
+     * Computes a point on a path and adds it to the renderable geometry. Used to generate extrusion vertices.
+     *
+     * @param dc       the current draw context.
+     * @param position the path position.
+     * @param color    an array of length 4 containing the position's corresponding color as RGBA values in the range
+     *                 [0, 1], or <code>null</code> if the position has no associated color.
+     * @param path     the path to append to. Assumes that the path has adequate capacity.
+     * @param pathData the current globe-specific path data.
+     */
+    protected static void appendTerrainPoint(DrawContext dc, Position position, float[] color, FloatBuffer path,
+        PathData pathData) {
+        Vec4 referencePoint = pathData.getReferencePoint();
+        Vec4 pt = dc.computeTerrainPoint(position.getLatitude(), position.getLongitude(), 0.0d);
+        path.put((float) (pt.x - referencePoint.x));
+        path.put((float) (pt.y - referencePoint.y));
+        path.put((float) (pt.z - referencePoint.z));
+
+        if (color != null) {
+            path.put(color);
+        }
+
+        pathData.hasExtrusionPoints = true;
+    }
+
+    /**
+     * Computes this Path's distance from the eye point, for use in determining when to show positions points. The value
+     * returned is only an approximation because the eye distance varies along the path.
+     *
+     * @param dc       the current draw context.
+     * @param pathData this path's current shape data.
+     * @return the distance of the shape from the eye point. If the eye distance cannot be computed, the eye position's
+     * elevation is returned instead.
+     */
+    protected static double getDistanceMetric(DrawContext dc, PathData pathData) {
+        return pathData.getExtent() != null
+            ? WWMath.computeDistanceFromEye(dc, pathData.getExtent())
+            : dc.getView().getEyePosition().getElevation();
+    }
+
+    protected static void makePath2DIndices(PathData pathData) {
+        int size = pathData.tessellatedPositions.size() * 2 - 2;
+        if (pathData.path2DIndices == null || pathData.path2DIndices.capacity() != size) {
+            pathData.path2DIndices = Buffers.newDirectIntBuffer(size);
+        }
+
+        int currentIndex = 0;
+        if (pathData.splitPositions != null) {
+            for (Integer splitIndex : pathData.splitPositions) {
+                for (int i = currentIndex; i < splitIndex - 1; i++) {
+                    pathData.path2DIndices.put(i).put(i + 1);
+                }
+                pathData.path2DIndices.put(splitIndex).put(splitIndex + 1);
+                currentIndex = splitIndex + 1;
+            }
+        }
+
+        for (int i = currentIndex; i < pathData.tessellatedPositions.size() - 1; i++) {
+            pathData.path2DIndices.put(i).put(i + 1);
+        }
+
+        pathData.path2DIndices.flip();
+    }
+
+    /**
+     * Computes the minimum distance between this Path and the eye point.
+     * <p>
+     * A {@link AbstractShape.AbstractShapeData} must be current when this method is called.
+     *
+     * @param dc       the draw context.
+     * @param pathData the current shape data for this shape.
+     * @return the minimum distance from the shape to the eye point.
+     */
+    protected static double computeEyeDistance(DrawContext dc, PathData pathData) {
+        double minDistanceSquared = Double.MAX_VALUE;
+        Vec4 eyePoint = dc.getView().getEyePoint();
+        Vec4 refPt = pathData.getReferencePoint();
+
+        pathData.renderedPath.rewind();
+        while (pathData.renderedPath.hasRemaining()) {
+            double x = eyePoint.x - (pathData.renderedPath.get() + refPt.x);
+            double y = eyePoint.y - (pathData.renderedPath.get() + refPt.y);
+            double z = eyePoint.z - (pathData.renderedPath.get() + refPt.z);
+
+            double d = x * x + y * y + z * z;
+            if (d < minDistanceSquared) {
+                minDistanceSquared = d;
+            }
+
+            // If the renderedPath contains RGBA color tuples in between each XYZ coordinate tuple, advance the
+            // renderedPath's position to the next XYZ coordinate tuple.
+            if (pathData.vertexStride > 3) {
+                pathData.renderedPath.position(pathData.renderedPath.position() + pathData.vertexStride - 3);
+            }
+        }
+
+        return Math.sqrt(minDistanceSquared);
+    }
+
+    /**
+     * Computes the path's bounding box from the current rendering path. Assumes the rendering path is up-to-date.
+     *
+     * @param current the current data for this shape.
+     * @return the computed extent.
+     */
+    protected static Extent computeExtent(PathData current) {
+        if (current.renderedPath == null) {
+            return null;
+        }
+
+        current.renderedPath.rewind();
+        Box box = Box.computeBoundingBox(new BufferWrapper.FloatBufferWrapper(current.renderedPath),
+            current.vertexStride);
+
+        // The path points are relative to the reference center, so translate the extent to the reference center.
+        box = box.translate(current.getReferencePoint());
+
+        return box;
+    }
+
+    protected static boolean isSmall(DrawContext dc, Vec4 ptA, Vec4 ptB, int numPixels) {
+        return ptA.distanceTo3(ptB) <= numPixels * dc.getView().computePixelSizeAtDistance(
+            dc.getView().getEyePoint().distanceTo3(ptA));
+    }
+
+    public LengthMeasurer measurer() {
+        return new LengthMeasurer().setPathType(pathType).setFollowTerrain(followTerrain).setPositions(positions);
     }
 
     @Override
@@ -285,7 +440,7 @@ public class Path extends AbstractShape {
      *
      * @return this path's positions. Will be null if no positions have been specified.
      */
-    public Iterable<? extends Position> getPositions() {
+    public final Iterable<? extends Position> getPositions() {
         return this.positions;
     }
 
@@ -300,9 +455,22 @@ public class Path extends AbstractShape {
     public void setPositions(Iterable<? extends Position> positions) {
 
         this.positions = positions;
-        this.computePositionCount();
+
+        if (positions instanceof Collection)
+            this.numPositions = ((Collection) positions).size();
+        else {
+            this.numPositions = 0;
+
+            if (this.positions != null) {
+                //noinspection UnusedDeclaration
+                for (Position pos : this.positions) {
+                    ++this.numPositions;
+                }
+            }
+        }
+
         this.positionsSpanDateline = LatLon.locationsCrossDateLine(this.positions);
-        this.measurer.setPositions(this.positions);
+//        this.measurer.setPositions(this.positions);
 
         this.reset();
     }
@@ -398,12 +566,10 @@ public class Path extends AbstractShape {
      * @param followTerrain true if terrain following, otherwise false. The default value is false.
      */
     public void setFollowTerrain(boolean followTerrain) {
-        if (this.followTerrain == followTerrain) {
+        if (this.followTerrain == followTerrain)
             return;
-        }
 
         this.followTerrain = followTerrain;
-        this.measurer.setFollowTerrain(followTerrain);
         this.reset();
     }
 
@@ -444,19 +610,17 @@ public class Path extends AbstractShape {
      */
     public double getLength() {
         PathData data = this.getCurrentPathData();
-        if (data != null && data.getGlobeStateKey() != null) {
-            return this.measurer.getLength(data.getGlobeStateKey().getGlobe());
+        if (data != null) {
+            final GlobeStateKey k = data.getGlobeStateKey();
+            if (k != null)
+                return getLength(k.getGlobe());
         }
         return 0;
     }
 
     public double getLength(Globe globe) {
         // The length measurer will throw an exception and log the error if globe is null
-        return this.measurer.getLength(globe);
-    }
-
-    public LengthMeasurer getMeasurer() {
-        return this.measurer;
+        return this.measurer().getLength(globe);
     }
 
     /**
@@ -479,8 +643,10 @@ public class Path extends AbstractShape {
      * @param terrainConformance the number of pixels between tessellation points.
      */
     public void setTerrainConformance(double terrainConformance) {
-        this.terrainConformance = terrainConformance;
-        this.reset();
+        if (terrainConformance != this.terrainConformance) {
+            this.terrainConformance = terrainConformance;
+            this.reset();
+        }
     }
 
     /**
@@ -501,9 +667,10 @@ public class Path extends AbstractShape {
      * @see <a href="{@docRoot}/overview-summary.html#path-types">Path Types</a>
      */
     public void setPathType(String pathType) {
-        this.pathType = pathType;
-        this.measurer.setPathType(pathType);
-        this.reset();
+        if (!pathType.equals(this.pathType)) {
+            this.pathType = pathType;
+            this.reset();
+        }
     }
 
     /**
@@ -522,8 +689,10 @@ public class Path extends AbstractShape {
      * @param drawVerticals true to draw the lines, otherwise false. The default value is true.
      */
     public void setDrawVerticals(boolean drawVerticals) {
-        this.drawVerticals = drawVerticals;
-        this.reset();
+        if (this.drawVerticals != drawVerticals) {
+            this.drawVerticals = drawVerticals;
+            this.reset();
+        }
     }
 
     /**
@@ -612,17 +781,17 @@ public class Path extends AbstractShape {
 
     @Override
     protected boolean mustRegenerateGeometry(DrawContext dc) {
-        if (this.getCurrentPathData() == null || this.getCurrentPathData().renderedPath == null) {
+        final PathData pathData = this.getCurrentPathData();
+        if (pathData == null || pathData.renderedPath == null) {
             return true;
         }
 
-        if (this.getCurrentPathData().tessellatedPositions == null) {
+        if (pathData.tessellatedPositions == null) {
             return true;
         }
 
-        if (dc.getVerticalExaggeration() != this.getCurrentPathData().getVerticalExaggeration()) {
+        if (dc.getVerticalExaggeration() != pathData.getVerticalExaggeration())
             return true;
-        }
 
         return super.mustRegenerateGeometry(dc);
     }
@@ -672,8 +841,7 @@ public class Path extends AbstractShape {
         if (surfacePath) {
             this.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
             this.setFollowTerrain(true);
-        }
-        else {
+        }else {
             this.setAltitudeMode(DEFAULT_ALTITUDE_MODE);
             this.setFollowTerrain(false);
         }
@@ -688,20 +856,6 @@ public class Path extends AbstractShape {
 
         if (this.activeAttributes != null && this.activeAttributes.isDrawInterior() != isDrawInterior) {
             this.getCurrentData().setExpired(true);
-        }
-    }
-
-    /**
-     * Counts the number of positions in this path's specified positions.
-     */
-    protected void computePositionCount() {
-        this.numPositions = 0;
-
-        if (this.positions != null) {
-            //noinspection UnusedDeclaration
-            for (Position pos : this.positions) {
-                ++this.numPositions;
-            }
         }
     }
 
@@ -735,7 +889,8 @@ public class Path extends AbstractShape {
         pathData.setExtent(Path.computeExtent(pathData));
 
         // If the shape is less that a pixel in size, don't render it.
-        if (this.getExtent() == null || dc.isSmall(this.getExtent(), 1)) {
+        final Extent extent = this.getExtent();
+        if (extent == null || dc.isSmall(extent, 1)) {
             return false;
         }
 
@@ -787,7 +942,8 @@ public class Path extends AbstractShape {
 
     @Override
     protected boolean isOrderedRenderableValid(DrawContext dc) {
-        return this.getCurrentPathData().renderedPath != null && this.getCurrentPathData().vertexCount >= 2;
+        final PathData pathData = this.getCurrentPathData();
+        return pathData.renderedPath != null && pathData.vertexCount >= 2;
     }
 
     /**
@@ -816,8 +972,7 @@ public class Path extends AbstractShape {
                 int[] vboIds = this.getVboIds(dc);
                 if (vboIds != null) {
                     this.doDrawOutlineVBO(dc, vboIds, this.getCurrentPathData());
-                }
-                else {
+                }else {
                     this.doDrawOutlineVA(dc, this.getCurrentPathData());
                 }
             }
@@ -834,7 +989,7 @@ public class Path extends AbstractShape {
     }
 
     protected void doDrawOutlineVBO(DrawContext dc, int[] vboIds, PathData pathData) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         try {
             int stride = pathData.hasExtrusionPoints ? 2 * pathData.vertexStride : pathData.vertexStride;
             int count = pathData.hasExtrusionPoints ? pathData.vertexCount / 2 : pathData.vertexCount;
@@ -879,7 +1034,7 @@ public class Path extends AbstractShape {
     }
 
     protected void doDrawOutlineVA(DrawContext dc, PathData pathData) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         int stride = pathData.hasExtrusionPoints ? 2 * pathData.vertexStride : pathData.vertexStride;
         int count = pathData.hasExtrusionPoints ? pathData.vertexCount / 2 : pathData.vertexCount;
         boolean useVertexColors = !dc.isPickingMode() && pathData.tessellatedColors != null;
@@ -918,41 +1073,6 @@ public class Path extends AbstractShape {
         }
     }
 
-    protected static void drawVerticalOutlineVBO(DrawContext dc, int[] vboIds, PathData pathData) {
-        IntBuffer polePositions = pathData.polePositions;
-        if (polePositions == null || polePositions.limit() < 1) {
-            return;
-        }
-
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
-
-        // Convert stride from number of elements to number of bytes.
-        gl.glVertexPointer(3, GL.GL_FLOAT, 4 * pathData.vertexStride, 0);
-        gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vboIds[1]);
-        gl.glDrawElements(GL.GL_LINES, polePositions.limit(), GL.GL_UNSIGNED_INT, 0);
-
-        gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
-    }
-
-    /**
-     * Draws vertical lines at this path's specified positions.
-     *
-     * @param dc       the current draw context.
-     * @param pathData the current globe-specific path data.
-     */
-    protected static void drawVerticalOutlineVA(DrawContext dc, PathData pathData) {
-        IntBuffer polePositions = pathData.polePositions;
-        if (polePositions == null || polePositions.limit() < 1) {
-            return;
-        }
-
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
-
-        // Convert stride from number of elements to number of bytes.
-        gl.glVertexPointer(3, GL.GL_FLOAT, 4 * pathData.vertexStride, pathData.renderedPath.rewind());
-        gl.glDrawElements(GL.GL_LINES, polePositions.limit(), GL.GL_UNSIGNED_INT, polePositions.rewind());
-    }
-
     /**
      * Draws vertical lines at this path's specified positions.
      *
@@ -970,7 +1090,7 @@ public class Path extends AbstractShape {
             return;
         }
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         // Convert stride from number of elements to number of bytes.
         gl.glVertexPointer(3, GL.GL_FLOAT, 4 * pathData.vertexStride, pathData.renderedPath.rewind());
@@ -1023,7 +1143,7 @@ public class Path extends AbstractShape {
             return;
         }
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         // Convert stride from number of elements to number of bytes.
         gl.glVertexPointer(3, GL.GL_FLOAT, 4 * pathData.vertexStride, 0);
@@ -1055,7 +1175,7 @@ public class Path extends AbstractShape {
     }
 
     protected void prepareToDrawPoints(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         if (dc.isPickingMode()) {
             // During picking, compute the GL point size as the product of the active outline width and the show
@@ -1098,33 +1218,12 @@ public class Path extends AbstractShape {
             int[] vboIds = this.getVboIds(dc);
             if (vboIds != null) {
                 Path.doDrawInteriorVBO(dc, vboIds, this.getCurrentPathData());
-            }
-            else {
+            }else {
                 Path.doDrawInteriorVA(dc, this.getCurrentPathData());
             }
-        }
-        else {
+        }else {
             Path.doDrawInteriorVA(dc, this.getCurrentPathData());
         }
-    }
-
-    protected static void doDrawInteriorVBO(DrawContext dc, int[] vboIds, PathData pathData) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
-
-        // Convert stride from number of elements to number of bytes.
-        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboIds[0]);
-        gl.glVertexPointer(3, GL.GL_FLOAT, 4 * pathData.vertexStride, 0);
-        gl.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, pathData.vertexCount);
-
-        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-    }
-
-    protected static void doDrawInteriorVA(DrawContext dc, PathData pathData) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
-
-        // Convert stride from number of elements to number of bytes.
-        gl.glVertexPointer(3, GL.GL_FLOAT, 4 * pathData.vertexStride, pathData.renderedPath.rewind());
-        gl.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, pathData.vertexCount);
     }
 
     /**
@@ -1142,11 +1241,9 @@ public class Path extends AbstractShape {
 
         if (this.getAltitudeMode() == WorldWind.CLAMP_TO_GROUND || dc.is2DGlobe()) {
             path = this.computePointsRelativeToTerrain(dc, positions, offset, path, pathData);
-        }
-        else if (this.getAltitudeMode() == WorldWind.RELATIVE_TO_GROUND) {
+        }else if (this.getAltitudeMode() == WorldWind.RELATIVE_TO_GROUND) {
             path = this.computePointsRelativeToTerrain(dc, positions, null, path, pathData);
-        }
-        else {
+        }else {
             path = this.computeAbsolutePoints(dc, positions, path, pathData);
         }
 
@@ -1281,31 +1378,6 @@ public class Path extends AbstractShape {
     }
 
     /**
-     * Computes a point on a path and adds it to the renderable geometry. Used to generate extrusion vertices.
-     *
-     * @param dc       the current draw context.
-     * @param position the path position.
-     * @param color    an array of length 4 containing the position's corresponding color as RGBA values in the range
-     *                 [0, 1], or <code>null</code> if the position has no associated color.
-     * @param path     the path to append to. Assumes that the path has adequate capacity.
-     * @param pathData the current globe-specific path data.
-     */
-    protected static void appendTerrainPoint(DrawContext dc, Position position, float[] color, FloatBuffer path,
-        PathData pathData) {
-        Vec4 referencePoint = pathData.getReferencePoint();
-        Vec4 pt = dc.computeTerrainPoint(position.getLatitude(), position.getLongitude(), 0.0d);
-        path.put((float) (pt.x - referencePoint.x));
-        path.put((float) (pt.y - referencePoint.y));
-        path.put((float) (pt.z - referencePoint.z));
-
-        if (color != null) {
-            path.put(color);
-        }
-
-        pathData.hasExtrusionPoints = true;
-    }
-
-    /**
      * Registers this Path's pickable position color codes with the specified pickCandidates. The pickCandidates must be
      * an instance of PathPickSupport. This does nothing if this Path's position points are not drawn.
      *
@@ -1343,9 +1415,8 @@ public class Path extends AbstractShape {
         for (int i = 0; i < pathData.vertexCount; i++) {
             if (i == nextPosition) {
                 if (posPoints.remaining() > 0) // Don't advance beyond the last position index.
-                {
                     nextPosition = posPoints.get();
-                }
+
                 pickColor = dc.getUniquePickColor();
                 maxColorCode = pickColor.getRGB();
             }
@@ -1435,21 +1506,6 @@ public class Path extends AbstractShape {
         }
     }
 
-    /**
-     * Computes this Path's distance from the eye point, for use in determining when to show positions points. The value
-     * returned is only an approximation because the eye distance varies along the path.
-     *
-     * @param dc       the current draw context.
-     * @param pathData this path's current shape data.
-     * @return the distance of the shape from the eye point. If the eye distance cannot be computed, the eye position's
-     * elevation is returned instead.
-     */
-    protected static double getDistanceMetric(DrawContext dc, PathData pathData) {
-        return pathData.getExtent() != null
-            ? WWMath.computeDistanceFromEye(dc, pathData.getExtent())
-            : dc.getView().getEyePosition().getElevation();
-    }
-
     protected void makePositions(DrawContext dc, PathData pathData) {
         if (pathData.splitPositions != null) {
             pathData.splitPositions.clear();
@@ -1463,16 +1519,17 @@ public class Path extends AbstractShape {
         this.addTessellatedPosition(posA, colorA, ordinalA, pathData); // add the first position of the path
 
         // Tessellate each segment of the path.
-        Vec4 ptA = this.computePoint(dc.getTerrain(), posA);
+        final Terrain terrain = dc.getTerrain();
+        Vec4 ptA = this.computePoint(terrain, posA);
 
         while (iter.hasNext()) {
             Position posB = iter.next();
             int ordinalB = ordinalA + 1;
             Color colorB = this.getColor(posB, ordinalB);
-            Vec4 ptB = this.computePoint(dc.getTerrain(), posB);
+            Vec4 ptB = this.computePoint(terrain, posB);
 
             if (this.positionsSpanDateline && dc.is2DGlobe()
-                && posA.getLongitude().degrees != posB.getLongitude().degrees
+                && posA.longitude != posB.longitude
                 && LatLon.locationsCrossDateline(posA, posB)) {
                 // Introduce two points at the dateline that cause the rendered path to break, with one side positive
                 // longitude and the other side negative longitude. This break causes the rendered path to break into
@@ -1480,9 +1537,9 @@ public class Path extends AbstractShape {
 
                 // Compute the split position on the dateline.
                 LatLon splitLocation = LatLon.intersectionWithMeridian(posA, posB, Angle.POS180, dc.getGlobe());
-                Position splitPosition = Position.fromDegrees(splitLocation.getLatitude().degrees,
-                    180 * Math.signum(posA.getLongitude().degrees), posA.getAltitude());
-                Vec4 splitPoint = this.computePoint(dc.getTerrain(), splitPosition);
+                Position splitPosition = Position.fromDegrees(splitLocation.latitude,
+                    180 * Math.signum(posA.longitude), posA.elevation);
+                Vec4 splitPoint = this.computePoint(terrain, splitPosition);
 
                 // Compute the color at the split position.
                 Color splitColor = null;
@@ -1504,19 +1561,17 @@ public class Path extends AbstractShape {
 
                 // Make the corresponding split position on the dateline side with opposite sign of the first split
                 // position.
-                splitPosition = Position.fromDegrees(splitPosition.getLatitude().degrees,
-                    -1 * splitPosition.getLongitude().degrees, splitPosition.getAltitude());
-                splitPoint = this.computePoint(dc.getTerrain(), splitPosition);
+                splitPosition = Position.fromDegrees(splitPosition.latitude,
+                    -1 * splitPosition.longitude, splitPosition.elevation);
+                splitPoint = this.computePoint(terrain, splitPosition);
 
                 // Create the tessellated-positions segment from the split position to the end position.
                 this.addTessellatedPosition(splitPosition, splitColor, -1, pathData);
                 this.makeSegment(dc, splitPosition, posB, splitPoint, ptB, splitColor, colorB, -1, ordinalB, pathData);
-            }
-            else if (Path.isSmall(dc, ptA, ptB, 8) || !this.isSegmentVisible(dc, posA, posB, ptA, ptB)) {
+            } else if (Path.isSmall(dc, ptA, ptB, 8) || !this.isSegmentVisible(dc, posA, posB, ptA, ptB)) {
                 // If the segment is very small or not visible, don't tessellate, just add the segment's end position.
                 this.addTessellatedPosition(posB, colorB, ordinalB, pathData);
-            }
-            else {
+            } else {
                 this.makeSegment(dc, posA, posB, ptA, ptB, colorA, colorB, ordinalA, ordinalB, pathData);
             }
 
@@ -1565,30 +1620,6 @@ public class Path extends AbstractShape {
         if (color != null) {
             pathData.tessellatedColors.add(color);
         }
-    }
-
-    protected static void makePath2DIndices(PathData pathData) {
-        int size = pathData.tessellatedPositions.size() * 2 - 2;
-        if (pathData.path2DIndices == null || pathData.path2DIndices.capacity() != size) {
-            pathData.path2DIndices = Buffers.newDirectIntBuffer(size);
-        }
-
-        int currentIndex = 0;
-        if (pathData.splitPositions != null) {
-            for (Integer splitIndex : pathData.splitPositions) {
-                for (int i = currentIndex; i < splitIndex - 1; i++) {
-                    pathData.path2DIndices.put(i).put(i + 1);
-                }
-                pathData.path2DIndices.put(splitIndex).put(splitIndex + 1);
-                currentIndex = splitIndex + 1;
-            }
-        }
-
-        for (int i = currentIndex; i < pathData.tessellatedPositions.size() - 1; i++) {
-            pathData.path2DIndices.put(i).put(i + 1);
-        }
-
-        pathData.path2DIndices.flip();
     }
 
     /**
@@ -1671,7 +1702,7 @@ public class Path extends AbstractShape {
 
         double r = Line.distanceToSegment(ptA, ptB, ptC);
         Extent cyl = new Cylinder(ptA, ptB, r == 0 ? 1 : r);
-        return cyl.intersects(dc.getView().getFrustumInModelCoordinates());
+        return cyl.intersects(f);
     }
 
     /**
@@ -1826,62 +1857,6 @@ public class Path extends AbstractShape {
 
         return dc.getGlobe().computePointFromPosition(pos.getLatitude(), pos.getLongitude(),
             dc.getVerticalExaggeration() * pos.getAltitude());
-    }
-
-    /**
-     * Computes the minimum distance between this Path and the eye point.
-     * <p>
-     * A {@link AbstractShape.AbstractShapeData} must be current when this method is called.
-     *
-     * @param dc       the draw context.
-     * @param pathData the current shape data for this shape.
-     * @return the minimum distance from the shape to the eye point.
-     */
-    protected static double computeEyeDistance(DrawContext dc, PathData pathData) {
-        double minDistanceSquared = Double.MAX_VALUE;
-        Vec4 eyePoint = dc.getView().getEyePoint();
-        Vec4 refPt = pathData.getReferencePoint();
-
-        pathData.renderedPath.rewind();
-        while (pathData.renderedPath.hasRemaining()) {
-            double x = eyePoint.x - (pathData.renderedPath.get() + refPt.x);
-            double y = eyePoint.y - (pathData.renderedPath.get() + refPt.y);
-            double z = eyePoint.z - (pathData.renderedPath.get() + refPt.z);
-
-            double d = x * x + y * y + z * z;
-            if (d < minDistanceSquared) {
-                minDistanceSquared = d;
-            }
-
-            // If the renderedPath contains RGBA color tuples in between each XYZ coordinate tuple, advance the
-            // renderedPath's position to the next XYZ coordinate tuple.
-            if (pathData.vertexStride > 3) {
-                pathData.renderedPath.position(pathData.renderedPath.position() + pathData.vertexStride - 3);
-            }
-        }
-
-        return Math.sqrt(minDistanceSquared);
-    }
-
-    /**
-     * Computes the path's bounding box from the current rendering path. Assumes the rendering path is up-to-date.
-     *
-     * @param current the current data for this shape.
-     * @return the computed extent.
-     */
-    protected static Extent computeExtent(PathData current) {
-        if (current.renderedPath == null) {
-            return null;
-        }
-
-        current.renderedPath.rewind();
-        Box box = Box.computeBoundingBox(new BufferWrapper.FloatBufferWrapper(current.renderedPath),
-            current.vertexStride);
-
-        // The path points are relative to the reference center, so translate the extent to the reference center.
-        box = box.translate(current.getReferencePoint());
-
-        return box;
     }
 
     @Override
@@ -2044,11 +2019,6 @@ public class Path extends AbstractShape {
         List<Position> newPositions = Position.computeShiftedPositions(globe, oldPosition, position, this.positions);
 
         this.setPositions(newPositions);
-    }
-
-    protected static boolean isSmall(DrawContext dc, Vec4 ptA, Vec4 ptB, int numPixels) {
-        return ptA.distanceTo3(ptB) <= numPixels * dc.getView().computePixelSizeAtDistance(
-            dc.getView().getEyePoint().distanceTo3(ptA));
     }
 
     /**

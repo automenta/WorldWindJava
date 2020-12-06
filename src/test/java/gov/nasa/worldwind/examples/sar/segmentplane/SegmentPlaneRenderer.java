@@ -334,8 +334,8 @@ public class SegmentPlaneRenderer {
             if (renderInfo == null)
                 renderInfo = new RenderInfo();
             this.createSegmentPlaneGeometry(globe, segmentPlane, renderInfo);
-            this.createBorderGeometry(globe, segmentPlane, renderInfo);
-            this.createControlPointGeometry(globe, segmentPlane, renderInfo);
+            createBorderGeometry(globe, segmentPlane, renderInfo);
+            SegmentPlaneRenderer.createControlPointGeometry(globe, segmentPlane, renderInfo);
 
             renderInfo.makeCurrent(globe, segmentPlane);
             this.renderInfoMap.put(segmentPlane, renderInfo);
@@ -344,7 +344,7 @@ public class SegmentPlaneRenderer {
         return renderInfo;
     }
 
-    protected MultiLineTextRenderer getTextRendererFor(DrawContext dc, Font font) {
+    protected static MultiLineTextRenderer getTextRendererFor(DrawContext dc, Font font) {
         TextRenderer tr = OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(), font);
         return new MultiLineTextRenderer(tr);
     }
@@ -357,12 +357,12 @@ public class SegmentPlaneRenderer {
 
         OGLStackHandler ogsh = new OGLStackHandler();
 
-        this.begin(dc, ogsh);
+        SegmentPlaneRenderer.begin(dc, ogsh);
         try {
             this.drawSegmentPlane(dc, segmentPlane, renderInfo, pickPoint, layer);
         }
         finally {
-            this.end(dc, ogsh);
+            SegmentPlaneRenderer.end(dc, ogsh);
         }
     }
 
@@ -379,8 +379,8 @@ public class SegmentPlaneRenderer {
         this.drawAxisLabels(dc, segmentPlane, renderInfo, pickPoint, layer);
     }
 
-    protected void begin(DrawContext dc, OGLStackHandler ogsh) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+    protected static void begin(DrawContext dc, OGLStackHandler ogsh) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
         gl.glEnableClientState(GL2.GL_NORMAL_ARRAY);
@@ -416,8 +416,8 @@ public class SegmentPlaneRenderer {
         }
     }
 
-    protected void end(DrawContext dc, OGLStackHandler ogsh) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+    protected static void end(DrawContext dc, OGLStackHandler ogsh) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         // Restore default GL client vertex array state.
         gl.glDisableClientState(GL2.GL_VERTEX_ARRAY);
@@ -463,7 +463,7 @@ public class SegmentPlaneRenderer {
         return true;
     }
 
-    protected boolean bindLabelAttributes(DrawContext dc, SegmentPlane segmentPlane, Object key) {
+    protected static boolean bindLabelAttributes(DrawContext dc, SegmentPlane segmentPlane, Object key) {
         if (dc.isPickingMode())
             return false;
 
@@ -482,7 +482,7 @@ public class SegmentPlaneRenderer {
     protected PickedObject bindPickableObject(DrawContext dc, Object userObject, Object objectId) {
         Color pickColor = dc.getUniquePickColor();
         int colorCode = pickColor.getRGB();
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glColor3ub((byte) pickColor.getRed(), (byte) pickColor.getGreen(), (byte) pickColor.getBlue());
 
         PickedObject po = new PickedObject(colorCode, userObject);
@@ -506,7 +506,7 @@ public class SegmentPlaneRenderer {
         return topObject;
     }
 
-    protected void registerPickedObject(DrawContext dc, PickedObject pickedObject, Layer layer) {
+    protected static void registerPickedObject(DrawContext dc, PickedObject pickedObject, Layer layer) {
         if (layer != null) {
             pickedObject.setParentLayer(layer);
         }
@@ -527,7 +527,7 @@ public class SegmentPlaneRenderer {
         double altitude;
 
         if (relativeToSurface) {
-            double surfaceElevation = this.computeSurfaceElevation(sgl, globe,
+            double surfaceElevation = SegmentPlaneRenderer.computeSurfaceElevation(sgl, globe,
                 location.getLatitude(), location.getLongitude());
             altitude = surfaceElevation + v * (altitudes[1] - surfaceElevation);
         }
@@ -538,7 +538,8 @@ public class SegmentPlaneRenderer {
         return new Position(location, altitude);
     }
 
-    protected double computeSurfaceElevation(SectorGeometryList sgl, Globe globe, Angle latitude, Angle longitude) {
+    protected static double computeSurfaceElevation(SectorGeometryList sgl, Globe globe, Angle latitude,
+        Angle longitude) {
         if (sgl != null) {
             Vec4 surfacePoint = sgl.getSurfacePoint(latitude, longitude);
             if (surfacePoint != null) {
@@ -550,7 +551,7 @@ public class SegmentPlaneRenderer {
         return globe.getElevation(latitude, longitude);
     }
 
-    protected void computePlaneParameterization(Extent globe, SegmentPlane segmentPlane,
+    protected static void computePlaneParameterization(Extent globe, SegmentPlane segmentPlane,
         int[] gridCellCounts, double[] gridCellParams) {
         double[] altitudes = segmentPlane.getPlaneAltitudes();
         LatLon[] locations = segmentPlane.getPlaneLocations();
@@ -575,13 +576,13 @@ public class SegmentPlaneRenderer {
 
         double minSize = this.getMinObjectSize();
         double maxSize = this.computeMaxSizeForPixels(globe, segmentPlane);
-        double sizeScale = this.computeSizeForPixels(view, point, 1.0, minSize, maxSize);
+        double sizeScale = SegmentPlaneRenderer.computeSizeForPixels(view, point, 1.0, minSize, maxSize);
 
         return sizeScale * (usePickSize ? attributes.getPicksize() : attributes.getSize());
     }
 
     // TODO: identical to a method in MarkerRenderer; consolidate usage in a general place
-    protected double computeSizeForPixels(View view, Vec4 point, double pixels, double minSize, double maxSize) {
+    protected static double computeSizeForPixels(View view, Vec4 point, double pixels, double minSize, double maxSize) {
         double d = point.distanceTo3(view.getEyePoint());
         double radius = pixels * view.computePixelSizeAtDistance(d);
         if (radius < minSize)
@@ -610,7 +611,7 @@ public class SegmentPlaneRenderer {
         Point pickPoint, Layer layer) {
         dc.getView().pushReferenceCenter(dc, renderInfo.planeReferenceCenter);
         try {
-            this.bindPlaneVertexGeometry(dc, renderInfo);
+            SegmentPlaneRenderer.bindPlaneVertexGeometry(dc, renderInfo);
             this.drawPlaneBackground(dc, segmentPlane, renderInfo, pickPoint, layer);
             this.drawPlaneGrid(dc, segmentPlane, renderInfo, pickPoint, layer);
             this.drawPlaneOutline(dc, segmentPlane, renderInfo, pickPoint, layer);
@@ -625,7 +626,7 @@ public class SegmentPlaneRenderer {
         if (!this.bindGeometryAttributes(dc, segmentPlane, SegmentPlane.PLANE_BACKGROUND, false))
             return;
 
-        this.drawPlaneFillElements(dc, renderInfo);
+        SegmentPlaneRenderer.drawPlaneFillElements(dc, renderInfo);
 
         if (dc.isPickingMode()) {
             this.resolvePlaneBackgroundPick(dc, segmentPlane, renderInfo, pickPoint, layer);
@@ -646,7 +647,7 @@ public class SegmentPlaneRenderer {
             dc.getGL().glDisable(GL2.GL_LIGHTING);
         }
 
-        this.drawPlaneOutlineElements(dc, renderInfo);
+        SegmentPlaneRenderer.drawPlaneOutlineElements(dc, renderInfo);
 
         if (!dc.isPickingMode()) {
             dc.getGL().glEnable(GL2.GL_LIGHTING);
@@ -662,7 +663,7 @@ public class SegmentPlaneRenderer {
             dc.getGL().glDisable(GL2.GL_LIGHTING);
         }
 
-        this.drawPlaneGridElements(dc, renderInfo);
+        SegmentPlaneRenderer.drawPlaneGridElements(dc, renderInfo);
 
         if (!dc.isPickingMode()) {
             dc.getGL().glEnable(GL2.GL_LIGHTING);
@@ -672,14 +673,14 @@ public class SegmentPlaneRenderer {
         }
     }
 
-    protected void bindPlaneVertexGeometry(DrawContext dc, RenderInfo renderInfo) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+    protected static void bindPlaneVertexGeometry(DrawContext dc, RenderInfo renderInfo) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glVertexPointer(3, GL2.GL_DOUBLE, 0, renderInfo.planeVertices);
         gl.glNormalPointer(GL2.GL_DOUBLE, 0, renderInfo.planeNormals);
     }
 
-    protected void drawPlaneFillElements(DrawContext dc, RenderInfo renderInfo) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+    protected static void drawPlaneFillElements(DrawContext dc, RenderInfo renderInfo) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
         gl.glPolygonOffset(1.0f, 1.0f);
         gl.glDrawElements(GL.GL_TRIANGLE_STRIP, renderInfo.planeFillIndexCount, GL.GL_UNSIGNED_INT,
@@ -691,14 +692,14 @@ public class SegmentPlaneRenderer {
     //********************  Segment Altimeter Rendering  ***********//
     //**************************************************************//
 
-    protected void drawPlaneOutlineElements(DrawContext dc, RenderInfo renderInfo) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+    protected static void drawPlaneOutlineElements(DrawContext dc, RenderInfo renderInfo) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glDrawElements(GL.GL_LINES, renderInfo.planeOutlineIndexCount, GL.GL_UNSIGNED_INT,
             renderInfo.planeOutlineIndices);
     }
 
-    protected void drawPlaneGridElements(DrawContext dc, RenderInfo renderInfo) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+    protected static void drawPlaneGridElements(DrawContext dc, RenderInfo renderInfo) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glDrawElements(GL.GL_LINES, renderInfo.planeGridIndexCount, GL.GL_UNSIGNED_INT,
             renderInfo.planeGridIndices);
     }
@@ -723,7 +724,7 @@ public class SegmentPlaneRenderer {
         Position pos = dc.getGlobe().computePositionFromPoint(point);
         topObject.setPosition(pos);
 
-        this.registerPickedObject(dc, topObject, layer);
+        SegmentPlaneRenderer.registerPickedObject(dc, topObject, layer);
     }
 
     //**************************************************************//
@@ -752,7 +753,7 @@ public class SegmentPlaneRenderer {
         Position pos = dc.getGlobe().computePositionFromPoint(outlinePoint);
         topObject.setPosition(pos);
 
-        this.registerPickedObject(dc, topObject, layer);
+        SegmentPlaneRenderer.registerPickedObject(dc, topObject, layer);
     }
 
     protected void resolvePlaneGridPick(DrawContext dc, SegmentPlane segmentPlane, RenderInfo renderInfo,
@@ -782,7 +783,7 @@ public class SegmentPlaneRenderer {
         Position pos = dc.getGlobe().computePositionFromPoint(gridPoint);
         topObject.setPosition(pos);
 
-        this.registerPickedObject(dc, topObject, layer);
+        SegmentPlaneRenderer.registerPickedObject(dc, topObject, layer);
     }
 
     @SuppressWarnings("UnusedDeclaration")
@@ -810,7 +811,7 @@ public class SegmentPlaneRenderer {
             dc.isPickingMode());
         double height = altitudes[1] - altitudes[0];
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         OGLStackHandler oglsh = new OGLStackHandler();
         oglsh.pushModelview(gl);
         try {
@@ -828,7 +829,7 @@ public class SegmentPlaneRenderer {
     }
 
     protected void drawBorder(DrawContext dc, RenderInfo renderInfo, Matrix modelview, double radius, double height) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         double[] compArray = new double[16];
 
         Matrix transform = Matrix.IDENTITY;
@@ -836,14 +837,14 @@ public class SegmentPlaneRenderer {
         transform = transform.multiply(Matrix.fromScale(radius, radius, height));
         transform.toArray(compArray, 0, false);
         gl.glLoadMatrixd(compArray, 0);
-        this.drawBorderCylinder(dc, renderInfo);
+        SegmentPlaneRenderer.drawBorderCylinder(dc, renderInfo);
 
         transform = Matrix.IDENTITY;
         transform = transform.multiply(modelview);
         transform = transform.multiply(Matrix.fromScale(radius));
         transform.toArray(compArray, 0, false);
         gl.glLoadMatrixd(compArray, 0);
-        this.drawBorderCap(dc, renderInfo);
+        SegmentPlaneRenderer.drawBorderCap(dc, renderInfo);
 
         transform = Matrix.IDENTITY;
         transform = transform.multiply(modelview);
@@ -851,11 +852,11 @@ public class SegmentPlaneRenderer {
         transform = transform.multiply(Matrix.fromScale(radius));
         transform.toArray(compArray, 0, false);
         gl.glLoadMatrixd(compArray, 0);
-        this.drawBorderCap(dc, renderInfo);
+        SegmentPlaneRenderer.drawBorderCap(dc, renderInfo);
     }
 
-    protected void drawBorderCylinder(DrawContext dc, RenderInfo renderInfo) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+    protected static void drawBorderCylinder(DrawContext dc, RenderInfo renderInfo) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glVertexPointer(3, GL.GL_FLOAT, 0, renderInfo.borderCylinderVertices);
         gl.glNormalPointer(GL.GL_FLOAT, 0, renderInfo.borderCylinderNormals);
         gl.glDrawElements(GL.GL_TRIANGLE_STRIP, renderInfo.borderCylinderIndexCount, GL.GL_UNSIGNED_INT,
@@ -866,8 +867,8 @@ public class SegmentPlaneRenderer {
     //********************  Axis Label Rendering  ******************//
     //**************************************************************//
 
-    protected void drawBorderCap(DrawContext dc, RenderInfo renderInfo) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+    protected static void drawBorderCap(DrawContext dc, RenderInfo renderInfo) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glVertexPointer(3, GL.GL_FLOAT, 0, renderInfo.borderCapVertices);
         gl.glNormalPointer(GL.GL_FLOAT, 0, renderInfo.borderCapNormals);
         gl.glDrawElements(GL.GL_TRIANGLE_STRIP, renderInfo.borderCapIndexCount, GL.GL_UNSIGNED_INT,
@@ -888,7 +889,7 @@ public class SegmentPlaneRenderer {
 
         Globe globe = dc.getGlobe();
         Position position = segmentPlane.getSegmentPositions()[1];
-        double surfaceElevation = this.computeSurfaceElevation(dc.getSurfaceGeometry(), globe,
+        double surfaceElevation = SegmentPlaneRenderer.computeSurfaceElevation(dc.getSurfaceGeometry(), globe,
             position.getLatitude(), position.getLongitude());
 
         Vec4 v1 = globe.computePointFromPosition(position.getLatitude(), position.getLongitude(),
@@ -903,7 +904,7 @@ public class SegmentPlaneRenderer {
             dc.getGL().glDisable(GL2.GL_LIGHTING);
         }
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         OGLStackHandler oglsh = new OGLStackHandler();
 
         // Modify the projection transform to shift the depth values slightly toward the camera in order to
@@ -935,13 +936,13 @@ public class SegmentPlaneRenderer {
     @SuppressWarnings("UnusedDeclaration")
     protected void drawSegmentAltimeterLabel(DrawContext dc, SegmentPlane segmentPlane,
         RenderInfo renderInfo, Point pickPoint, Layer layer) {
-        if (!this.bindLabelAttributes(dc, segmentPlane, SegmentPlane.ALTIMETER))
+        if (!SegmentPlaneRenderer.bindLabelAttributes(dc, segmentPlane, SegmentPlane.ALTIMETER))
             return;
 
         SectorGeometryList sgl = dc.getSurfaceGeometry();
         Globe globe = dc.getGlobe();
         Position position = segmentPlane.getSegmentPositions()[1];
-        double surfaceElevation = this.computeSurfaceElevation(sgl, globe,
+        double surfaceElevation = SegmentPlaneRenderer.computeSurfaceElevation(sgl, globe,
             position.getLatitude(), position.getLongitude());
         double height = position.getElevation() - surfaceElevation;
 
@@ -1008,14 +1009,14 @@ public class SegmentPlaneRenderer {
         if (attributes == null || !attributes.isVisible())
             return;
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         View view = dc.getView();
         Globe globe = dc.getGlobe();
 
         Vec4 point = globe.computePointFromPosition(controlPointInfo.position);
         double minSize = this.getMinObjectSize();
         double maxSize = this.computeMaxSizeForPixels(globe, segmentPlane);
-        double sizeScale = this.computeSizeForPixels(view, point, 1.0, minSize, maxSize);
+        double sizeScale = SegmentPlaneRenderer.computeSizeForPixels(view, point, 1.0, minSize, maxSize);
 
         // Apply the control point offset in the local coordinate system at the control point's position. Treat offset
         // coordinates as pixel sizes, so the final coordinate must also be scaled by the eye distance. Use the
@@ -1051,10 +1052,10 @@ public class SegmentPlaneRenderer {
 
     protected void drawControlPointLabel(DrawContext dc, SegmentPlane segmentPlane,
         SegmentPlane.ControlPoint controlPoint, Position position) {
-        if (!this.bindLabelAttributes(dc, segmentPlane, controlPoint.getKey()))
+        if (!SegmentPlaneRenderer.bindLabelAttributes(dc, segmentPlane, controlPoint.getKey()))
             return;
 
-        double surfaceElevation = this.computeSurfaceElevation(dc.getSurfaceGeometry(), dc.getGlobe(),
+        double surfaceElevation = SegmentPlaneRenderer.computeSurfaceElevation(dc.getSurfaceGeometry(), dc.getGlobe(),
             position.getLatitude(), position.getLongitude());
         double height = position.getElevation() - surfaceElevation;
 
@@ -1094,7 +1095,7 @@ public class SegmentPlaneRenderer {
         if (topObject == null)
             return;
 
-        this.registerPickedObject(dc, topObject, layer);
+        SegmentPlaneRenderer.registerPickedObject(dc, topObject, layer);
     }
 
     //**************************************************************//
@@ -1111,7 +1112,7 @@ public class SegmentPlaneRenderer {
     // TODO: consolidate the following geometry construction code with GeometryBuilder
 
     protected void drawHorizontalAxisLabels(DrawContext dc, SegmentPlane segmentPlane) {
-        if (!this.bindLabelAttributes(dc, segmentPlane, SegmentPlane.HORIZONTAL_AXIS_LABELS))
+        if (!SegmentPlaneRenderer.bindLabelAttributes(dc, segmentPlane, SegmentPlane.HORIZONTAL_AXIS_LABELS))
             return;
 
         SectorGeometryList sgl = dc.getSurfaceGeometry();
@@ -1119,7 +1120,7 @@ public class SegmentPlaneRenderer {
         double[] gridCellSizes = segmentPlane.getGridCellDimensions();
         int[] gridCellCounts = new int[2];
         double[] gridCellParams = new double[2];
-        this.computePlaneParameterization(globe, segmentPlane, gridCellCounts, gridCellParams);
+        SegmentPlaneRenderer.computePlaneParameterization(globe, segmentPlane, gridCellCounts, gridCellParams);
 
         int uStacks = gridCellCounts[0];
         double uStep = gridCellParams[0];
@@ -1136,21 +1137,21 @@ public class SegmentPlaneRenderer {
             values.set(AVKey.WIDTH, width);
 
             Position pos = this.computePositionOnPlane(sgl, globe, segmentPlane, u, 0, true);
-            double surfaceElevation = this.computeSurfaceElevation(sgl, globe, pos.getLatitude(), pos.getLongitude());
+            double surfaceElevation = SegmentPlaneRenderer.computeSurfaceElevation(sgl, globe, pos.getLatitude(), pos.getLongitude());
             if (pos.getElevation() < surfaceElevation)
                 pos = new Position(pos, surfaceElevation);
 
             labels[ui] = this.createLabel(dc, segmentPlane, pos, values, SegmentPlane.HORIZONTAL_AXIS_LABELS);
         }
 
-        Rectangle size = this.computeAverageLabelSize(labels, uStacks);
-        double d = this.computeMinDistanceBetweenLabels(dc, labels, uStacks);
+        Rectangle size = SegmentPlaneRenderer.computeAverageLabelSize(labels, uStacks);
+        double d = SegmentPlaneRenderer.computeMinDistanceBetweenLabels(dc, labels, uStacks);
 
-        this.drawAxisLabels(dc, labels, 1, uStacks, size.getWidth(), d);
+        SegmentPlaneRenderer.drawAxisLabels(dc, labels, 1, uStacks, size.getWidth(), d);
     }
 
     protected void drawVerticalAxisLabels(DrawContext dc, SegmentPlane segmentPlane) {
-        if (!this.bindLabelAttributes(dc, segmentPlane, SegmentPlane.VERTICAL_AXIS_LABELS))
+        if (!SegmentPlaneRenderer.bindLabelAttributes(dc, segmentPlane, SegmentPlane.VERTICAL_AXIS_LABELS))
             return;
 
         double[] gridCellSizes = segmentPlane.getGridCellDimensions();
@@ -1159,7 +1160,7 @@ public class SegmentPlaneRenderer {
         Globe globe = dc.getGlobe();
         int[] gridCellCounts = new int[2];
         double[] gridCellParams = new double[2];
-        this.computePlaneParameterization(globe, segmentPlane, gridCellCounts, gridCellParams);
+        SegmentPlaneRenderer.computePlaneParameterization(globe, segmentPlane, gridCellCounts, gridCellParams);
 
         int vStacks = gridCellCounts[1];
         double vStep = gridCellParams[1];
@@ -1176,20 +1177,20 @@ public class SegmentPlaneRenderer {
             values.set(AVKey.HEIGHT, height);
 
             Position pos = this.computePositionOnPlane(sgl, globe, segmentPlane, 1, v, false);
-            double surfaceElevation = this.computeSurfaceElevation(sgl, globe, pos.getLatitude(), pos.getLongitude());
+            double surfaceElevation = SegmentPlaneRenderer.computeSurfaceElevation(sgl, globe, pos.getLatitude(), pos.getLongitude());
             if (pos.getElevation() < surfaceElevation)
                 continue;
 
             labels[vi] = this.createLabel(dc, segmentPlane, pos, values, SegmentPlane.VERTICAL_AXIS_LABELS);
         }
 
-        Rectangle size = this.computeAverageLabelSize(labels, vStacks);
-        double d = this.computeMinDistanceBetweenLabels(dc, labels, vStacks);
+        Rectangle size = SegmentPlaneRenderer.computeAverageLabelSize(labels, vStacks);
+        double d = SegmentPlaneRenderer.computeMinDistanceBetweenLabels(dc, labels, vStacks);
 
-        this.drawAxisLabels(dc, labels, 1, vStacks, size.getHeight(), d);
+        SegmentPlaneRenderer.drawAxisLabels(dc, labels, 1, vStacks, size.getHeight(), d);
     }
 
-    protected void drawAxisLabels(DrawContext dc, OrderedText[] text, int startPos, int count,
+    protected static void drawAxisLabels(DrawContext dc, OrderedText[] text, int startPos, int count,
         double averageSize, double minDistance) {
         int step = (int) Math.round(1.5 * averageSize / minDistance);
         if (step < 1)
@@ -1224,12 +1225,12 @@ public class SegmentPlaneRenderer {
         }
 
         Font font = attributes.getFont();
-        MultiLineTextRenderer textRenderer = this.getTextRendererFor(dc, font);
+        MultiLineTextRenderer textRenderer = SegmentPlaneRenderer.getTextRendererFor(dc, font);
 
         return new OrderedText(segmentPlane, position, distanceFromEye, values, attributes, textRenderer);
     }
 
-    protected Rectangle computeAverageLabelSize(OrderedText[] text, int textCount) {
+    protected static Rectangle computeAverageLabelSize(OrderedText[] text, int textCount) {
         double width = 0;
         double height = 0;
         int count = 0;
@@ -1251,7 +1252,7 @@ public class SegmentPlaneRenderer {
         return new Rectangle((int) width, (int) height);
     }
 
-    protected double computeMinDistanceBetweenLabels(DrawContext dc, OrderedText[] text, int textCount) {
+    protected static double computeMinDistanceBetweenLabels(DrawContext dc, OrderedText[] text, int textCount) {
         double minDistance = Double.MAX_VALUE;
 
         for (int i = 0; i < textCount - 1; i++) {
@@ -1285,7 +1286,7 @@ public class SegmentPlaneRenderer {
 
         int[] gridCellCounts = new int[2];
         double[] gridCellParams = new double[2];
-        this.computePlaneParameterization(globe, segmentPlane, gridCellCounts, gridCellParams);
+        SegmentPlaneRenderer.computePlaneParameterization(globe, segmentPlane, gridCellCounts, gridCellParams);
 
         int uStacks = gridCellCounts[0];
         int vStacks = gridCellCounts[1];
@@ -1332,7 +1333,7 @@ public class SegmentPlaneRenderer {
             renderInfo.planeVertices);
         renderInfo.planeVertices.rewind();
 
-        this.computePlaneNormals(globe, segmentPlane, renderInfo.planeFillIndexCount, vertexCount,
+        SegmentPlaneRenderer.computePlaneNormals(globe, segmentPlane, renderInfo.planeFillIndexCount, vertexCount,
             renderInfo.planeFillIndices, renderInfo.planeVertices, renderInfo.planeNormals);
         renderInfo.planeNormals.rewind();
     }
@@ -1357,7 +1358,7 @@ public class SegmentPlaneRenderer {
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    protected void computePlaneNormals(Globe globe, SegmentPlane segmentPlane, int indexCount, int vertexCount,
+    protected static void computePlaneNormals(Globe globe, SegmentPlane segmentPlane, int indexCount, int vertexCount,
         IntBuffer indices, DoubleBuffer vertices, DoubleBuffer buffer) {
         double[] altitudes = segmentPlane.getPlaneAltitudes();
         LatLon[] locations = segmentPlane.getPlaneLocations();
@@ -1460,7 +1461,7 @@ public class SegmentPlaneRenderer {
     //**************************************************************//
 
     @SuppressWarnings("UnusedDeclaration")
-    protected void createControlPointGeometry(Globe globe, SegmentPlane segmentPlane, RenderInfo renderInfo) {
+    protected static void createControlPointGeometry(Globe globe, SegmentPlane segmentPlane, RenderInfo renderInfo) {
         if (renderInfo.markerShapeMap == null)
             renderInfo.markerShapeMap = new HashMap<>();
     }
@@ -1471,7 +1472,7 @@ public class SegmentPlaneRenderer {
 
     protected Vec4 intersectRayWithFill(Line ray, RenderInfo renderInfo) {
         if (renderInfo.planeFillIndices != null && renderInfo.planeVertices != null) {
-            return this.intersectRayWithTriangleStrip(ray,
+            return SegmentPlaneRenderer.intersectRayWithTriangleStrip(ray,
                 renderInfo.planeFillIndexCount, renderInfo.planeFillIndices,
                 renderInfo.planeVertices, renderInfo.planeReferenceCenter);
         }
@@ -1481,7 +1482,7 @@ public class SegmentPlaneRenderer {
 
     protected Vec4 computeNearestOutlineToPoint(Vec4 point, RenderInfo renderInfo) {
         if (renderInfo.planeOutlineIndices != null && renderInfo.planeVertices != null) {
-            return this.computeNearestLineToPoint(point,
+            return SegmentPlaneRenderer.computeNearestLineToPoint(point,
                 renderInfo.planeOutlineIndexCount, renderInfo.planeOutlineIndices,
                 renderInfo.planeVertices, renderInfo.planeReferenceCenter);
         }
@@ -1491,7 +1492,7 @@ public class SegmentPlaneRenderer {
 
     protected Vec4 computeNearestGridLineToPoint(Vec4 point, RenderInfo renderInfo) {
         if (renderInfo.planeGridIndices != null && renderInfo.planeVertices != null) {
-            return this.computeNearestLineToPoint(point,
+            return SegmentPlaneRenderer.computeNearestLineToPoint(point,
                 renderInfo.planeGridIndexCount, renderInfo.planeGridIndices,
                 renderInfo.planeVertices, renderInfo.planeReferenceCenter);
         }
@@ -1500,7 +1501,7 @@ public class SegmentPlaneRenderer {
     }
 
     // TODO: this method could be of general use
-    protected Vec4 computeNearestLineToPoint(Vec4 point, int count, IntBuffer indices, DoubleBuffer vertices,
+    protected static Vec4 computeNearestLineToPoint(Vec4 point, int count, IntBuffer indices, DoubleBuffer vertices,
         Vec4 referenceCenter) {
         Vec4 intersectionPoint = null;
         double nearestDistance = Double.MAX_VALUE;
@@ -1528,7 +1529,7 @@ public class SegmentPlaneRenderer {
     }
 
     // TODO: this method could be of general use
-    protected Vec4 intersectRayWithTriangleStrip(Line ray, int count, IntBuffer indices, DoubleBuffer vertices,
+    protected static Vec4 intersectRayWithTriangleStrip(Line ray, int count, IntBuffer indices, DoubleBuffer vertices,
         Vec4 referenceCenter) {
         Vec4 intersectionPoint = null;
         double nearestDistance = Double.MAX_VALUE;
@@ -1670,7 +1671,7 @@ public class SegmentPlaneRenderer {
             return dc.getView().project(modelPoint).add3(attributes.getOffset());
         }
 
-        protected Vec4 getScreenPoint(DrawContext dc, Position position) {
+        protected static Vec4 getScreenPoint(DrawContext dc, Position position) {
             if (dc.getGlobe() == null || dc.getView() == null)
                 return null;
 
@@ -1685,12 +1686,12 @@ public class SegmentPlaneRenderer {
         public void render(DrawContext dc) {
             OGLStackHandler ogsh = new OGLStackHandler();
 
-            this.begin(dc, ogsh);
+            OrderedText.begin(dc, ogsh);
             try {
                 this.draw(dc);
             }
             finally {
-                this.end(dc, ogsh);
+                OrderedText.end(dc, ogsh);
             }
         }
 
@@ -1714,26 +1715,26 @@ public class SegmentPlaneRenderer {
             this.textRenderer.setTextColor(color);
             this.textRenderer.setBackColor(Color.BLACK);
 
-            this.drawText(text, point, attributes, this.textRenderer);
+            OrderedText.drawText(text, point, attributes, this.textRenderer);
 
             this.textRenderer.getTextRenderer().endRendering();
         }
 
-        protected void begin(DrawContext dc, OGLStackHandler ogsh) {
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        protected static void begin(DrawContext dc, OGLStackHandler ogsh) {
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
             int attribBits = GL2.GL_CURRENT_BIT; // For current color.
 
             ogsh.pushAttrib(gl, attribBits);
         }
 
-        protected void end(DrawContext dc, OGLStackHandler ogsh) {
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        protected static void end(DrawContext dc, OGLStackHandler ogsh) {
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
             ogsh.pop(gl);
         }
 
-        protected void drawText(String text, Vec4 screenPoint,
+        protected static void drawText(String text, Vec4 screenPoint,
             SegmentPlaneAttributes.LabelAttributes attributes, MultiLineTextRenderer mltr) {
             double x = screenPoint.x;
             double y = screenPoint.y;

@@ -32,7 +32,7 @@ public class TreeFiltering extends ApplicationTemplate {
         public AppFrame() {
             super(true, true, false);
 
-            final MyMarkerLayer layer = new MyMarkerLayer(this.makeDatabase());
+            final MyMarkerLayer layer = new MyMarkerLayer(AppFrame.makeDatabase());
             layer.setKeepSeparated(false);
             layer.setPickEnabled(true);
             WorldWindow.insertBeforePlacenames(this.wwd(), layer);
@@ -40,7 +40,7 @@ public class TreeFiltering extends ApplicationTemplate {
             this.wwd().addPositionListener(event -> layer.setCursorLocation(event.getPosition()));
         }
 
-        private BasicQuadTree<Marker> makeDatabase() {
+        private static BasicQuadTree<Marker> makeDatabase() {
             int treeDepth = 5;
             int minLat = 23, maxLat = 50, latDelta = 3;
             int minLon = -130, maxLon = -70, lonDelta = 3;

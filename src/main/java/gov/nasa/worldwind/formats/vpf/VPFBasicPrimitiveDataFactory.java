@@ -279,7 +279,6 @@ public class VPFBasicPrimitiveDataFactory implements VPFPrimitiveDataFactory {
     protected static VPFPrimitiveData.Ring buildRing(VPFRecord row, VPFPrimitiveData.PrimitiveInfo[] edgeInfoArray) {
         int faceId = ((Number) row.getValue("face_id")).intValue();
         int startEdgeId = ((Number) row.getValue("start_edge")).intValue();
-        VPFWingedEdgeTraverser traverser = new VPFWingedEdgeTraverser();
 
         // Traverse the ring to collect the number of edges which define the ring.
         final int numEdges = VPFWingedEdgeTraverser.traverseRing(faceId, startEdgeId, edgeInfoArray, null);

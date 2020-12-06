@@ -85,14 +85,14 @@ public class ElevationPlane extends Polygon {
             super.doRenderGeometry(dc, drawStyle, locations, edgeFlags);
         }
         finally {
-            this.unApplyTextureState(dc);
+            ElevationPlane.unApplyTextureState(dc);
             this.endRendering(dc);
         }
     }
 
     protected void beginRendering(DrawContext dc) {
         // TODO: review attributes
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         osh.pushAttrib(gl, GL2.GL_COLOR_BUFFER_BIT // for alpha func
             | GL2.GL_ENABLE_BIT
             | GL2.GL_CURRENT_BIT
@@ -102,7 +102,7 @@ public class ElevationPlane extends Polygon {
     }
 
     protected void endRendering(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         osh.pop(gl);
     }
 
@@ -114,7 +114,7 @@ public class ElevationPlane extends Polygon {
         if (!texture.bind(dc))
             return;
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         // Texture coordinates generation
         double[][] planes = this.computePlanes(dc);
         if (planes == null)
@@ -138,8 +138,8 @@ public class ElevationPlane extends Polygon {
         // TODO: factor in polygon opacity?
     }
 
-    protected void unApplyTextureState(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+    protected static void unApplyTextureState(DrawContext dc) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glTexGeni(GL2.GL_S, GL2.GL_TEXTURE_GEN_MODE, OGLUtil.DEFAULT_TEXTURE_GEN_MODE);
         gl.glTexGeni(GL2.GL_T, GL2.GL_TEXTURE_GEN_MODE, OGLUtil.DEFAULT_TEXTURE_GEN_MODE);

@@ -75,11 +75,6 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
      * @throws IllegalArgumentException if the shapefile is null.
      */
     public ShapefilePolygons(Shapefile shapefile) {
-//        if (shapefile == null) {
-//            String msg = Logging.getMessage("nullValue.ShapefileIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         this.init(shapefile, null, null, null);
     }
@@ -102,11 +97,6 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
      */
     public ShapefilePolygons(Shapefile shapefile, ShapeAttributes normalAttrs, ShapeAttributes highlightAttrs,
         AttributeDelegate attributeDelegate) {
-//        if (shapefile == null) {
-//            String msg = Logging.getMessage("nullValue.ShapefileIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         this.init(shapefile, normalAttrs, highlightAttrs, attributeDelegate);
     }
@@ -285,7 +275,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
         if (this.getRecordCount() == 0) // shapefile is empty or contains only null records
             return;
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         try {
             PickSupport.beginPicking(dc);
@@ -707,7 +697,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
     }
 
     protected static void beginDrawing(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glDisable(GL.GL_DEPTH_TEST);
         gl.glEnableClientState(GL2.GL_VERTEX_ARRAY); // all drawing uses vertex arrays
         gl.glMatrixMode(GL2.GL_MODELVIEW);
@@ -721,7 +711,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
     }
 
     protected void endDrawing(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glEnable(GL.GL_DEPTH_TEST);
         gl.glDisableClientState(GL2.GL_VERTEX_ARRAY);
         gl.glDisableClientState(GL2.GL_COLOR_ARRAY);
@@ -743,7 +733,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
     }
 
     protected void draw(DrawContext dc, ShapefileTile tile) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         ShapefileGeometry geom = tile.getGeometry();
 
         SurfaceTileDrawContext sdc = (SurfaceTileDrawContext) dc.get(AVKey.SURFACE_TILE_DRAW_CONTEXT);
@@ -771,7 +761,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
         fillArray4(this.clipPlaneArray, 8, 0, 1, 0, -(sector.latMin - vertexOffset.y));
         fillArray4(this.clipPlaneArray, 12, 0, -1, 0, sector.latMax - vertexOffset.y);
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         for (int i = 0; i < 4; i++) {
             gl.glEnable(GL2.GL_CLIP_PLANE0 + i);
             gl.glClipPlane(GL2.GL_CLIP_PLANE0 + i, this.clipPlaneArray, 4 * i);
@@ -807,13 +797,13 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
             }
         }
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glEnableClientState(GL2.GL_COLOR_ARRAY);
         gl.glColorPointer(3, GL.GL_UNSIGNED_BYTE, 0, this.pickColors.flip());
     }
 
     protected void drawAttributeGroup(DrawContext dc, RecordGroup attributeGroup) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         ShapeAttributes attrs = attributeGroup.attributes;
 
         if (attrs.isDrawInterior() && (dc.isPickingMode() || attrs.getInteriorOpacity() > 0)) {

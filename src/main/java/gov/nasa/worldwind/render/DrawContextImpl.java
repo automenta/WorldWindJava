@@ -614,11 +614,6 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public void addOrderedRenderable(OrderedRenderable orderedRenderable) {
-//        if (null == orderedRenderable) {
-//            String msg = Logging.getMessage("nullValue.OrderedRenderable");
-//            Logging.logger().warning(msg);
-//            return; // benign event
-//        }
 
         this.orderedRenderables.add(new OrderedRenderableEntry(orderedRenderable, System.nanoTime(), this));
     }
@@ -709,11 +704,6 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
      * {@inheritDoc}
      */
     public void addOrderedSurfaceRenderable(OrderedRenderable orderedRenderable) {
-//        if (orderedRenderable == null) {
-//            String msg = Logging.getMessage("nullValue.OrderedRenderable");
-//            Logging.logger().warning(msg);
-//            return; // benign event
-//        }
 
         this.orderedSurfaceRenderables.add(orderedRenderable);
     }
@@ -726,7 +716,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public void drawUnitQuad() {
-        GL2 gl = this.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = this.getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glBegin(GL2.GL_QUADS);
         gl.glVertex2d(0.0d, 0.0d);
@@ -737,7 +727,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public void drawUnitQuad(TextureCoords texCoords) {
-        GL2 gl = this.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = this.getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glBegin(GL2.GL_QUADS);
         gl.glTexCoord2d(texCoords.left(), texCoords.bottom());
@@ -752,7 +742,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public void drawUnitQuadOutline() {
-        GL2 gl = this.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = this.getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glBegin(GL2.GL_LINE_LOOP);
         gl.glVertex2d(0.0d, 0.0d);
@@ -766,7 +756,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
         if (vBuf == null || nBuf == null)
             return;
 
-        GL2 gl = this.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = this.getGL2(); // GL initialization checks for GL2 compatibility.
 
         vBuf.rewind();
         nBuf.rewind();
@@ -789,11 +779,6 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public Vec4 getPointOnTerrain(Angle latitude, Angle longitude) {
-//        if (latitude == null || longitude == null) {
-//            String message = Logging.getMessage("nullValue.LatitudeOrLongitudeIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (this.getVisibleSector() == null)
             return null;
@@ -818,11 +803,6 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public void setPerFrameStatistics(Collection<PerformanceStatistic> stats) {
-//        if (stats == null) {
-//            String message = Logging.getMessage("nullValue.ListIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (this.perFrameStatistics == null || this.perFrameStatisticsKeys == null)
             return;
@@ -843,18 +823,6 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
         if (this.perFrameStatistics == null || this.perFrameStatisticsKeys == null)
             return;
 
-//        if (key == null) {
-//            String message = Logging.getMessage("nullValue.KeyIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-
-//        if (displayName == null) {
-//            String message = Logging.getMessage("nullValue.DisplayNameIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-
         if (this.perFrameStatisticsKeys.contains(key) || this.perFrameStatisticsKeys.contains(PerformanceStatistic.ALL))
             this.perFrameStatistics.add(new PerformanceStatistic(key, displayName, value));
     }
@@ -868,11 +836,6 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public List<Sector> getVisibleSectors(double[] resolutions, long timeLimit, Sector sector) {
-//        if (resolutions == null) {
-//            String message = Logging.getMessage("nullValue.ArrayIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (timeLimit <= 0) {
             String message = Logging.getMessage("generic.TimeNegative", timeLimit);
@@ -909,11 +872,6 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public void addScreenCredit(ScreenCredit credit) {
-//        if (credit == null) {
-//            String message = Logging.getMessage("nullValue.ScreenCreditIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         this.credits.put(credit, this.frameTimestamp);
     }
@@ -939,11 +897,6 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public void setPickPointFrustumDimension(Dimension dim) {
-//        if (dim == null) {
-//            String message = Logging.getMessage("nullValue.DimensionIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (dim.width < 3 || dim.height < 3) {
             String message = Logging.getMessage("DrawContext.PickPointFrustumDimensionTooSmall");
@@ -1059,19 +1012,13 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
         if (this.renderingExceptions == null)
             return;
 
-//        if (t == null) {
-//            String message = Logging.getMessage("nullValue.ThrowableIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-
         this.renderingExceptions.add(t);
     }
 
     public void pushProjectionOffest(Double offset) {
         // Modify the projection transform to shift the depth values slightly toward the camera in order to
         // ensure the lines are selected during depth buffering.
-        GL2 gl = this.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = this.getGL2(); // GL initialization checks for GL2 compatibility.
 
         float[] pm = new float[16];
         gl.glGetFloatv(GL2.GL_PROJECTION_MATRIX, pm, 0);
@@ -1084,7 +1031,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public void popProjectionOffest() {
-        GL2 gl = this.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = this.getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glMatrixMode(GL2.GL_PROJECTION);
         gl.glPopMatrix();
@@ -1103,7 +1050,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
         //
         // These issues are resolved by making several passes for the interior and outline, as follows:
 
-        GL2 gl = this.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = this.getGL2(); // GL initialization checks for GL2 compatibility.
 
         final boolean out = renderer.isDrawOutline(this, shape);
         final boolean in = renderer.isDrawInterior(this, shape);
@@ -1225,7 +1172,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public void restoreDefaultCurrentColor() {
-        GL2 gl = this.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = this.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glColor4f(1, 1, 1, 1);
     }
 
@@ -1236,11 +1183,6 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public Vec4 computePointFromPosition(Position position, int altitudeMode) {
-//        if (position == null) {
-//            String msg = Logging.getMessage("nullValue.PositionIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         Vec4 point;
 

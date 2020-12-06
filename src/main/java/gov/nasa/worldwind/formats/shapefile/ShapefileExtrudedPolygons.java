@@ -576,7 +576,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
 
             for (Tile tile : this.currentTiles) {
                 Color color = dc.getUniquePickColor();
-                dc.getGL().getGL2().glColor3ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
+                dc.getGL2().glColor3ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
                 this.pickSupport.addPickableObject(color.getRGB(), tile);
                 this.drawTile(dc, tile);
             }
@@ -603,7 +603,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
             for (Tile tile : this.currentTiles) {
                 if (dc.isPickingMode()) {
                     Color color = dc.getUniquePickColor();
-                    dc.getGL().getGL2().glColor3ub((byte) color.getRed(), (byte) color.getGreen(),
+                    dc.getGL2().glColor3ub((byte) color.getRed(), (byte) color.getGreen(),
                         (byte) color.getBlue());
                     this.pickSupport.addPickableObject(color.getRGB(), tile);
                 }
@@ -617,7 +617,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
     }
 
     protected static void beginDrawing(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glEnable(GL.GL_CULL_FACE);
         gl.glEnableClientState(GL2.GL_VERTEX_ARRAY); // all drawing uses vertex arrays
         gl.glDepthFunc(GL.GL_LEQUAL);
@@ -633,7 +633,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
     }
 
     protected static void endDrawing(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glDisable(GL.GL_CULL_FACE);
         gl.glDisableClientState(GL2.GL_VERTEX_ARRAY);
         gl.glColor4f(1, 1, 1, 1);
@@ -655,7 +655,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
     }
 
     protected void drawTile(DrawContext dc, Tile tile) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         ShapeData shapeData = tile.currentData;
 
         int[] vboId = null;
@@ -691,7 +691,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
     }
 
     protected void drawTileAttributeGroup(DrawContext dc, RecordGroup attributeGroup) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         int[] vboId = null;
         boolean useVbo = dc.getGLRuntimeCapabilities().isUseVertexBufferObject();
@@ -747,7 +747,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
     }
 
     protected void drawTileInUniqueColors(DrawContext dc, Tile tile) {
-        GL2 gl = dc.getGL().getGL2();
+        GL2 gl = dc.getGL2();
         ShapeData shapeData = tile.currentData;
 
         int pickColorsSize = shapeData.vertices.remaining(); // 1 RGB color for each XYZ vertex

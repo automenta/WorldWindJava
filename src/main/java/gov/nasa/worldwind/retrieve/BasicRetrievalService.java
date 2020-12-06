@@ -134,62 +134,6 @@ private static final String IDLE_THREAD_NAME_PREFIX = Logging.getMessage(
 //            && !WorldWind.getNetworkStatus().isNetworkUnavailable();
     }
 
-
-
-//    public double getProgress() {
-//        int totalContentLength = 0;
-//        int totalBytesRead = 0;
-//
-//        for (RetrievalTask task : this.activeTasks.values()) {
-//            if (task.isDone())
-//                continue;
-//
-//            Retriever retriever = task.getRetriever();
-//            try {
-//                double tcl = retriever.getContentLength();
-//                if (tcl > 0) {
-//                    totalContentLength += tcl;
-//                    totalBytesRead += retriever.getContentLengthRead();
-//                }
-//            }
-//            catch (Exception e) {
-//                Logging.logger().log(Level.FINE,
-//                    Logging.getMessage("BasicRetrievalService.ExceptionRetrievingContentSizes",
-//                        retriever.getName() != null ? retriever.getName() : ""), e);
-//            }
-//        }
-//
-//        for (Runnable runnable : this.executor.getQueue()) {
-//            RetrievalFuture task =
-//                (RetrievalFuture) runnable;
-//
-//            Retriever retriever = task.getRetriever();
-//            try {
-//                double tcl = retriever.getContentLength();
-//                if (tcl > 0) {
-//                    totalContentLength += tcl;
-//                    totalBytesRead += retriever.getContentLengthRead();
-//                }
-//            }
-//            catch (Exception e) {
-//                String message = Logging.getMessage("BasicRetrievalService.ExceptionRetrievingContentSizes") + (
-//                    retriever.getName() != null ? retriever.getName() : "");
-//                Logging.logger().log(Level.FINE, message, e);
-//            }
-//        }
-//
-//        // Compute an aggregated progress notification.
-//
-//        double progress;
-//
-//        if (totalContentLength < 1)
-//            progress = 0;
-//        else
-//            progress = Math.min(100.0, 100.0 * totalBytesRead / totalContentLength);
-//
-//        return progress;
-//    }
-
     /**
      * Encapsulates a single threaded retrieval as a {@link FutureTask}.
      */
@@ -231,18 +175,6 @@ private static final String IDLE_THREAD_NAME_PREFIX = Logging.getMessage(
          */
         public int compareTo(RetrievalTask that) {
             if (this==that) return 0;
-
-
-//            if (this.priority > 0 == that.priority > 0) {
-//                // Requests submitted within different time-granularity periods are ordered exclusive of their
-//                // client-specified priority.
-//                final long dSubmit = retriever.getSubmitEpoch() - that.retriever.getSubmitEpoch();
-//                if (dSubmit!=0)
-//                    return dSubmit > 0 ? -1 : +1; //prefer the newer task
-//            }
-//
-//            // The client-specified priority is compared for requests submitted within the same granularity period.
-//            int dp = Double.compare(that.priority, this.priority);
 
             int dp = Double.compare(
                 that.priority + that.retriever.getSubmitEpoch(),

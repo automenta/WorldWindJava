@@ -1036,11 +1036,6 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
     }
 
     public double getUnmappedElevation(Angle latitude, Angle longitude) {
-//        if (latitude == null || longitude == null) {
-//            String msg = Logging.getMessage("nullValue.AngleIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         if (!this.contains(latitude, longitude))
             return this.getMissingDataSignal();
@@ -1095,11 +1090,6 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
     }
 
     public double getUnmappedLocalSourceElevation(Angle latitude, Angle longitude) {
-//        if (latitude == null || longitude == null) {
-//            String msg = Logging.getMessage("nullValue.AngleIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         if (!this.contains(latitude, longitude))
             return this.getMissingDataSignal();
@@ -1141,23 +1131,6 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
 
     protected double getElevations(Sector sector, List<? extends LatLon> latlons, double targetResolution,
         double[] buffer, boolean mapMissingData) {
-//        if (sector == null) {
-//            String msg = Logging.getMessage("nullValue.SectorIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//
-//        if (latlons == null) {
-//            String msg = Logging.getMessage("nullValue.LatLonListIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//
-//        if (buffer == null) {
-//            String msg = Logging.getMessage("nullValue.ElevationsBufferIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         final int n = latlons.size();
         if (buffer.length < n) {
@@ -1272,11 +1245,6 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
     }
 
     public double[] getExtremeElevations(Angle latitude, Angle longitude) {
-//        if (latitude == null || longitude == null) {
-//            String msg = Logging.getMessage("nullValue.AngleIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         if (this.extremesLevel < 0 || this.extremes == null)
             return new double[] {this.getMinElevation(), this.getMaxElevation()};
@@ -1311,11 +1279,6 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
     }
 
     public double[] getExtremeElevations(Sector sector) {
-//        if (sector == null) {
-//            String message = Logging.getMessage("nullValue.SectorIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         try {
             double[] extremes = this.extremesCachingEnabled
@@ -1343,11 +1306,6 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
     }
 
     public void loadExtremeElevations(String extremesFileName) {
-//        if (extremesFileName == null) {
-//            String message = Logging.getMessage("nullValue.ExtremeElevationsFileName");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         InputStream is = null;
         try {
@@ -1478,14 +1436,6 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         final int nwCol = Tile.computeColumn(delta.getLongitude(), sector.lonMin(), origin.getLongitude());
         final int seRow = Tile.computeRow(delta.getLatitude(), sector.latMin(), origin.getLatitude());
         final int seCol = Tile.computeColumn(delta.getLongitude(), sector.lonMax(), origin.getLongitude());
-//        TreeSet<ElevationTile> tiles = new TreeSet<>((t1, t2) -> {
-//            if (t2.getLevelNumber() == t1.getLevelNumber()
-//                && t2.row == t1.row && t2.column == t1.column)
-//                return 0;
-//
-//            // Higher-res levels compare lower than lower-res
-//            return t1.getLevelNumber() > t2.getLevelNumber() ? -1 : 1;
-//        });
         TreeSet<ElevationTile> tiles = new TreeSet<>((t1, t2) -> {
             if (t1==t2) return 0;
 
@@ -1495,8 +1445,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
                 int dr = Integer.compare(t1.row, t2.row);
                 if (dr!=0) return dr;
                 int dc = Integer.compare(t1.col, t2.col);
-                if (dc!=0) return dc;
-                return 0;
+                return dc;
             } else
                 return l1 > l2 ? -1 : 1;             // Higher-res levels compare lower than lower-res
 
@@ -1705,17 +1654,6 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
      * @throws IllegalArgumentException if either the Capabilities or the parameter list is null.
      */
     protected void initFromOGCCapabilitiesResource(WMSCapabilities caps, AVList params) {
-//        if (caps == null) {
-//            String message = Logging.getMessage("nullValue.CapabilitiesIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//
-//        if (params == null) {
-//            String message = Logging.getMessage("nullValue.ParametersIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         String[] names = DataConfigurationUtils.getOGCLayerNames(params);
         if (names == null || names.length == 0)

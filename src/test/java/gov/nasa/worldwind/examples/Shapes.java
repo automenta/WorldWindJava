@@ -284,7 +284,7 @@ public class Shapes {
             this.wwjPanel.wwd().redraw();
         }
 
-        private Info[] buildSurfaceShapes() {
+        private static Info[] buildSurfaceShapes() {
             LatLon position = new LatLon(Angle.fromDegrees(38), Angle.fromDegrees(-105));
 
             ArrayList<LatLon> surfaceLinePositions = new ArrayList<>();
@@ -302,7 +302,7 @@ public class Shapes {
                 new Info("Polygon", new SurfacePolygon(surfaceLinePositions)),};
         }
 
-        private Info[] buildFreeShapes() {
+        private static Info[] buildFreeShapes() {
             double elevation = 10.0e3;
             ArrayList<Position> positions = new ArrayList<>();
             positions.add(new Position(Angle.fromDegrees(37.8484), Angle.fromDegrees(-119.9754), elevation));
@@ -340,7 +340,7 @@ public class Shapes {
         }
 
         private JPanel makeShapeSelectionPanel() {
-            final Info[] surfaceShapeInfos = this.buildSurfaceShapes();
+            final Info[] surfaceShapeInfos = AppFrame.buildSurfaceShapes();
             GridLayout layout = new GridLayout(surfaceShapeInfos.length, 1);
             JPanel ssPanel = new JPanel(layout);
             ButtonGroup group = new ButtonGroup();
@@ -356,9 +356,9 @@ public class Shapes {
                     b.setSelected(true);
                 }
             }
-            ssPanel.setBorder(this.createTitleBorder("Surface Shapes"));
+            ssPanel.setBorder(AppFrame.createTitleBorder("Surface Shapes"));
 
-            final Info[] freeShapeInfos = this.buildFreeShapes();
+            final Info[] freeShapeInfos = AppFrame.buildFreeShapes();
             layout = new GridLayout(freeShapeInfos.length, 1);
             JPanel fsPanel = new JPanel(layout);
             for (final Info info : freeShapeInfos) {
@@ -373,7 +373,7 @@ public class Shapes {
                     b.setSelected(true);
                 }
             }
-            fsPanel.setBorder(this.createTitleBorder("Path Shapes"));
+            fsPanel.setBorder(AppFrame.createTitleBorder("Path Shapes"));
 
             JPanel shapesPanel = new JPanel(new GridLayout(1, 2, 8, 1));
             shapesPanel.add(fsPanel);
@@ -382,7 +382,7 @@ public class Shapes {
             return shapesPanel;
         }
 
-        private Border createTitleBorder(String title) {
+        private static Border createTitleBorder(String title) {
             TitledBorder b = BorderFactory.createTitledBorder(title);
             return new CompoundBorder(b, BorderFactory.createEmptyBorder(10, 10, 10, 10));
         }
@@ -397,7 +397,7 @@ public class Shapes {
 
         private JPanel makePathAttributesPanel() {
             JPanel outerPanel = new JPanel(new BorderLayout(6, 6));
-            outerPanel.setBorder(this.createTitleBorder("Path Attributes"));
+            outerPanel.setBorder(AppFrame.createTitleBorder("Path Attributes"));
 
             GridLayout nameLayout = new GridLayout(0, 1, 6, 6);
             JPanel namePanel = new JPanel(nameLayout);
@@ -508,7 +508,7 @@ public class Shapes {
 
         private JPanel makeInteriorAttributesPanel() {
             JPanel outerPanel = new JPanel(new BorderLayout(6, 6));
-            outerPanel.setBorder(this.createTitleBorder("Surface Attributes"));
+            outerPanel.setBorder(AppFrame.createTitleBorder("Surface Attributes"));
 
             GridLayout nameLayout = new GridLayout(0, 1, 6, 6);
             JPanel namePanel = new JPanel(nameLayout);

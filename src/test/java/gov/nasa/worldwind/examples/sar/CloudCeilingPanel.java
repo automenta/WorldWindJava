@@ -97,7 +97,7 @@ public class CloudCeilingPanel extends JPanel implements Restorable {
 
     public void setTrack(SARTrack track) {
         this.track = track;
-        this.trackCurrentPositionNumber = this.clampTrackCurrentPosition(this.trackCurrentPositionNumber, track);
+        this.trackCurrentPositionNumber = CloudCeilingPanel.clampTrackCurrentPosition(this.trackCurrentPositionNumber, track);
         this.updateSegmentSpinnersList();
         this.updateCloudCeiling();
         this.cloudCeiling.relocateLayerOnTop();
@@ -110,8 +110,8 @@ public class CloudCeilingPanel extends JPanel implements Restorable {
         this.trackCurrentPositionNumber = positionNumber;
         if (this.currentSegmentCheckBox.isSelected()) {
             this.suspendEvents = true;
-            this.setSegmentSpinnerValue(this.segmentStartSpinner, positionNumber);
-            this.setSegmentSpinnerValue(this.segmentEndSpinner, positionNumber);
+            CloudCeilingPanel.setSegmentSpinnerValue(this.segmentStartSpinner, positionNumber);
+            CloudCeilingPanel.setSegmentSpinnerValue(this.segmentEndSpinner, positionNumber);
             this.suspendEvents = false;
             this.updateCloudCeiling();
         }
@@ -151,7 +151,7 @@ public class CloudCeilingPanel extends JPanel implements Restorable {
         }
     }
 
-    private int clampTrackCurrentPosition(int position, SARTrack track) {
+    private static int clampTrackCurrentPosition(int position, SARTrack track) {
         if (track.isEmpty())
             return 0;
 
@@ -280,7 +280,7 @@ public class CloudCeilingPanel extends JPanel implements Restorable {
         updateCloudCeiling();
     }
 
-    private Double getNumberValue(String s) {
+    private static Double getNumberValue(String s) {
         double value;
         try {
             value = Double.parseDouble(s);
@@ -320,7 +320,7 @@ public class CloudCeilingPanel extends JPanel implements Restorable {
         this.suspendEvents = false;
     }
 
-    private void setSegmentSpinnerValue(JSpinner spinner, int n) {
+    private static void setSegmentSpinnerValue(JSpinner spinner, int n) {
         spinner.setValue(String.format("%,4d", n));
     }
 

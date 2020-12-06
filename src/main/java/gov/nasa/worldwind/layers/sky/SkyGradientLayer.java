@@ -148,7 +148,7 @@ public class SkyGradientLayer extends AbstractLayer {
         if (dc.is2DGlobe())
             return; // Layer doesn't make sense in 2D
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         OGLStackHandler ogsh = new OGLStackHandler();
 
         try {
@@ -174,7 +174,7 @@ public class SkyGradientLayer extends AbstractLayer {
     }
 
     protected static void applyDrawTransform(DrawContext dc, OGLStackHandler ogsh) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         View view = dc.getView();
         ogsh.pushModelview(gl);
         // Place sky - TODO: find another ellipsoid friendlier way (the sky dome is not exactly normal...
@@ -187,7 +187,7 @@ public class SkyGradientLayer extends AbstractLayer {
     }
 
     protected static void applyDrawProjection(DrawContext dc, OGLStackHandler ogsh) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         View view = dc.getView();
         double viewportWidth = view.getViewport().getWidth();
         double viewportHeight = view.getViewport().getHeight();
@@ -268,7 +268,7 @@ public class SkyGradientLayer extends AbstractLayer {
         double latitude, longitude, latitudeTop = endLat;
 
         // GL setup
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         // TODO: Simplify code
         double linear, linearTop, k, kTop, colorFactorZ, colorFactorZTop = 0;

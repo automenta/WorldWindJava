@@ -383,7 +383,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             RigidShape shape = new Ellipsoid();
             shape.setAttributes(getDefaultAttributes());
             shape.set(AVKey.DISPLAY_NAME, getNextName(toString()));
-            this.initializeShape(wwd, shape, fitShapeToViewport);
+            EllipsoidFactory.initializeShape(wwd, shape, fitShapeToViewport);
 
             return shape;
         }
@@ -395,7 +395,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             return editor;
         }
 
-        protected void initializeShape(WorldWindow wwd, RigidShape shape, boolean fitShapeToViewport) {
+        protected static void initializeShape(WorldWindow wwd, RigidShape shape, boolean fitShapeToViewport) {
             // Creates a shape in the center of the viewport. Attempts to guess at a reasonable size and height.
 
             double radius = fitShapeToViewport ?
@@ -430,7 +430,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             RigidShape shape = new Box();
             shape.setAttributes(getDefaultAttributes());
             shape.set(AVKey.DISPLAY_NAME, getNextName(toString()));
-            this.initializeShape(wwd, shape, fitShapeToViewport);
+            BoxFactory.initializeShape(wwd, shape, fitShapeToViewport);
 
             return shape;
         }
@@ -442,7 +442,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             return editor;
         }
 
-        protected void initializeShape(WorldWindow wwd, RigidShape shape, boolean fitShapeToViewport) {
+        protected static void initializeShape(WorldWindow wwd, RigidShape shape, boolean fitShapeToViewport) {
             // Creates a shape in the center of the viewport. Attempts to guess at a reasonable size and height.
 
             double radius = fitShapeToViewport ?
@@ -477,7 +477,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             RigidShape shape = new Cylinder();
             shape.setAttributes(getDefaultAttributes());
             shape.set(AVKey.DISPLAY_NAME, getNextName(toString()));
-            this.initializeShape(wwd, shape, fitShapeToViewport);
+            CylinderFactory.initializeShape(wwd, shape, fitShapeToViewport);
 
             return shape;
         }
@@ -489,7 +489,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             return editor;
         }
 
-        protected void initializeShape(WorldWindow wwd, RigidShape shape, boolean fitShapeToViewport) {
+        protected static void initializeShape(WorldWindow wwd, RigidShape shape, boolean fitShapeToViewport) {
             // Creates a shape in the center of the viewport. Attempts to guess at a reasonable size and height.
 
             double radius = fitShapeToViewport ?
@@ -524,7 +524,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             RigidShape shape = new Pyramid();
             shape.setAttributes(getDefaultAttributes());
             shape.set(AVKey.DISPLAY_NAME, getNextName(toString()));
-            this.initializeShape(wwd, shape, fitShapeToViewport);
+            PyramidFactory.initializeShape(wwd, shape, fitShapeToViewport);
 
             return shape;
         }
@@ -536,7 +536,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             return editor;
         }
 
-        protected void initializeShape(WorldWindow wwd, RigidShape shape, boolean fitShapeToViewport) {
+        protected static void initializeShape(WorldWindow wwd, RigidShape shape, boolean fitShapeToViewport) {
             // Creates a shape in the center of the viewport. Attempts to guess at a reasonable size and height.
 
             double radius = fitShapeToViewport ?
@@ -573,7 +573,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             RigidShape shape = new Cone();
             shape.setAttributes(getDefaultAttributes());
             shape.set(AVKey.DISPLAY_NAME, getNextName(toString()));
-            this.initializeShape(wwd, shape, fitShapeToViewport);
+            ConeFactory.initializeShape(wwd, shape, fitShapeToViewport);
 
             return shape;
         }
@@ -585,7 +585,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             return editor;
         }
 
-        protected void initializeShape(WorldWindow wwd, RigidShape shape, boolean fitShapeToViewport) {
+        protected static void initializeShape(WorldWindow wwd, RigidShape shape, boolean fitShapeToViewport) {
             // Creates a shape in the center of the viewport. Attempts to guess at a reasonable size and height.
 
             double radius = fitShapeToViewport ?
@@ -620,7 +620,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             RigidShape shape = new Wedge();
             shape.setAttributes(getDefaultAttributes());
             shape.set(AVKey.DISPLAY_NAME, getNextName(toString()));
-            this.initializeShape(wwd, shape, fitShapeToViewport);
+            WedgeFactory.initializeShape(wwd, shape, fitShapeToViewport);
 
             return shape;
         }
@@ -632,7 +632,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             return editor;
         }
 
-        protected void initializeShape(WorldWindow wwd, RigidShape shape, boolean fitShapeToViewport) {
+        protected static void initializeShape(WorldWindow wwd, RigidShape shape, boolean fitShapeToViewport) {
             // Creates a shape in the center of the viewport. Attempts to guess at a reasonable size and height.
 
             double radius = fitShapeToViewport ?
@@ -676,7 +676,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             ExtrudedPolygon poly = new ExtrudedPolygon();
             poly.setAttributes(getDefaultAttributes());
             poly.set(AVKey.DISPLAY_NAME, getNextName(toString()));
-            this.initializePolygon(wwd, poly, fitShapeToViewport);
+            ExtrudedPolygonFactory.initializePolygon(wwd, poly, fitShapeToViewport);
 
             return poly;
         }
@@ -688,7 +688,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             return editor;
         }
 
-        protected void initializePolygon(WorldWindow wwd, ExtrudedPolygon polygon, boolean fitShapeToViewport) {
+        protected static void initializePolygon(WorldWindow wwd, ExtrudedPolygon polygon, boolean fitShapeToViewport) {
             // Creates a rectangle in the center of the viewport. Attempts to guess at a reasonable size and height.
 
             Position position = ShapeUtils.getNewShapePosition(wwd);
@@ -1501,7 +1501,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             });
         }
 
-        protected BufferedImage readImage(File file) {
+        protected static BufferedImage readImage(File file) {
             try {
                 return ImageIO.read(file);
             }

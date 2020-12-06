@@ -426,7 +426,7 @@ public class Box extends AbstractAirspace {
         this.setExpiryTime(this.nextExpiryTime(dc, this.isTerrainConforming()));
         this.clearElevationMap();
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         OGLStackHandler ogsh = new OGLStackHandler();
         try {
             if (this.forceCullFace || !this.enableStartCap || !this.enableEndCap) {
@@ -452,7 +452,7 @@ public class Box extends AbstractAirspace {
     }
 
     protected void applyCenterLineState(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         AirspaceAttributes attrs = this.getActiveAttributes();
 
         if (attrs.getOutlineStippleFactor() <= 0) // override stipple in attributes

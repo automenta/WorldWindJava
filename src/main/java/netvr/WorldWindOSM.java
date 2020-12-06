@@ -139,8 +139,6 @@ public class WorldWindOSM {
                             System.out.println(metaString);
                         }
                     };
-                    //Polygon p = new Polygon(positions(R, x));
-                    //SurfacePolygons p = new SurfacePolygons(r.asPolygonRecord().getCompoundPointBuffer());
                     p.setDragEnabled(false);
 
 
@@ -161,8 +159,6 @@ public class WorldWindOSM {
                     ));
 
                     p.setAttributes(aa);
-//                    p.setHighlightAttributes(aa);
-//                    p.addPropertyChangeListener(e -> System.out.println(e));
 
                     add(p);
                 }
@@ -282,77 +278,6 @@ public class WorldWindOSM {
 
     }
 
-//        public static Layer makeLayerFromOSMPlacesShapefile(Shapefile shp) {
-//
-//            TextAndShapesLayer layer = new TextAndShapesLayer();
-//            layer.setPickEnabled(false);
-//
-//
-//            while(true) {
-//                ShapefileRecord record;
-//                OSMShapes shapes;
-//                Label label;
-//                DBaseRecord attr = null;
-//                Object o;
-//                do {
-//                    do {
-//                        do {
-//                            if (!shp.hasNext()) {
-//
-//
-//                                return layer;
-//                            }
-//
-//                            record = shp.nextRecord();
-//                            if (record != null) {
-//
-//
-//                            }
-//                        } while(record == null);
-//                    } while(!record.getShapeType().equals("gov.nasa.worldwind.formats.shapefile.Shapefile.ShapePoint"));
-//
-//                    o = attr.get("type");
-//                } while(!(o instanceof String));
-//
-////                String type = (String)o;
-////                if (type.equalsIgnoreCase("hamlet")) {
-////                    shapes = shapeArray[0];
-////                } else if (type.equalsIgnoreCase("village")) {
-////                    shapes = shapeArray[1];
-////                } else if (type.equalsIgnoreCase("town")) {
-////                    shapes = shapeArray[2];
-////                } else if (type.equalsIgnoreCase("city")) {
-////                    shapes = shapeArray[3];
-////                } else
-////                    shapes = shapeArray[4];
-//
-////                String name = null;
-////                if (attr.getEntries() != null) {
-////                    for (Map.Entry<String, Object> e : attr.getEntries()) {
-////                        if (e.getKey().equalsIgnoreCase("name")) {
-////                            name = (String) e.getValue();
-////                            break;
-////                        }
-////                    }
-////                }
-//
-////                double[] pointCoords = ((ShapefileRecordPoint)record).getPoint();
-////                LatLon location = LatLon.fromDegrees(pointCoords[1], pointCoords[0]);
-////                if (!WWUtil.isEmpty(name)) {
-////                    label = new Label(name, new Position(location, 0.0D));
-////                    label.setFont(shapes.font);
-////                    label.setColor(shapes.foreground);
-////                    label.setBackgroundColor(shapes.background);
-////                    label.setMaxActiveAltitude(shapes.labelMaxAltitude);
-////                    label.setPriority(shapes.labelMaxAltitude);
-////                    shapes.labels.add(label);
-////                }
-//
-////                shapes.locations.add(location);
-//            }
-//        }
-
-
     protected static class OSMShapes {
         public final Collection<LatLon> locations = new ArrayList();
         public final Collection<Label> labels = new ArrayList();
@@ -425,22 +350,4 @@ public class WorldWindOSM {
 
         }
     }
-
-
-//    private static void mainAWT() {
-//        EventQueue.invokeLater(() -> {
-//            JFrame f = new JFrame();
-//
-//            WorldWindowGLCanvas wwd = new WorldWindowGLCanvas();
-//            wwd.setPreferredSize(new Dimension(1000, 800));
-//            f.getContentPane().add(wwd, BorderLayout.CENTER);
-//
-//            wwd.setModel(new OSMModel());
-//
-//            f.pack();
-//            f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//            f.setVisible(true);
-//
-//        });
-//    }
 }

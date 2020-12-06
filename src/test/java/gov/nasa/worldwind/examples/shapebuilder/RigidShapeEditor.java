@@ -499,19 +499,6 @@ public class RigidShapeEditor extends AbstractShapeEditor {
             //controlPoint.setValue(AVKey.ACTION, SKEW_NORTH_SOUTH_ACTION);
             controlPoint.setVisible(false);
             this.controlPoints.add(controlPoint);
-
-            /*
-            Box skewGuide = new Box(this.shape.getReferencePosition(),
-                this.shape.getNorthSouthRadius() * 1.5, radius / 2, this.shape.getEastWestRadius() * 1.5);
-            skewGuide.setHeading(this.shape.getHeading());
-            skewGuide.setTilt(this.shape.getTilt());
-            skewGuide.setRoll(this.shape.getRoll());
-            skewGuide.setAttributes(this.headingGuideAttributes);
-            skewGuide.setAltitudeMode(this.getAltitudeMode());
-            skewGuide.setValue(AVKey.ACTION, CHANGE_SKEW_ACTION);
-            skewGuide.setVisible(true);
-            this.controlPoints.add(skewGuide);
-            */
         }
     }
 
@@ -519,60 +506,6 @@ public class RigidShapeEditor extends AbstractShapeEditor {
     }
 
     protected void assembleVertexControlPoints(DrawContext dc) {
-        /*
-        Terrain terrain = dc.getTerrain();
-        RigidShape shape = this.getShape();
-
-        Position refPos = shape.getReferencePosition();
-        Vec4 refPoint = terrain.getSurfacePoint(refPos.getLatitude(), refPos.getLongitude(), 0);
-
-        int altitudeMode = shape.getAltitudeMode();
-        double height = shape.getHeight();
-
-        Vec4 vaa = null;
-        double vaaLength = 0; // used to compute independent length of each cap vertex
-        double vaLength = 0;
-
-        int i = 0;
-        for (LatLon location : shape.getOuterBoundary())
-        {
-            Vec4 vert;
-
-            // Compute the top/cap point.
-            if (altitudeMode == WorldWind.CONSTANT || !(location instanceof Position))
-            {
-                if (vaa == null)
-                {
-                    // Compute the vector lengths of the top and bottom points at the reference position.
-                    vaa = refPoint.multiply3(height / refPoint.getLength3());
-                    vaaLength = vaa.getLength3();
-                    vaLength = refPoint.getLength3();
-                }
-
-                // Compute the bottom point, which is on the terrain.
-                vert = terrain.getSurfacePoint(location.getLatitude(), location.getLongitude(), 0);
-
-                double delta = vaLength - vert.dot3(refPoint) / vaLength;
-                vert = vert.add3(vaa.multiply3(1d + delta / vaaLength));
-            }
-            else if (altitudeMode == WorldWind.ABSOLUTE)
-            {
-                vert = terrain.getSurfacePoint(location.getLatitude(), location.getLongitude(),
-                    ((Position) location).getAltitude());
-            }
-            else // WorldWind.ABSOLUTE
-            {
-                vert = terrain.getGlobe().computePointFromPosition(location.getLatitude(), location.getLongitude(),
-                    ((Position) location).getAltitude() * terrain.getVerticalExaggeration());
-            }
-
-            Position vertexPosition = this.wwd.getModel().getGlobe().computePositionFromPoint(vert);
-
-            this.controlPoints.add(new ControlPointMarker(MOVE_VERTEX_ACTION, vertexPosition, vert,
-                this.vertexControlAttributes, i));
-            i++;
-        }
-        */
     }
 
     @Override
@@ -1276,11 +1209,6 @@ public class RigidShapeEditor extends AbstractShapeEditor {
         Vec4 perpendicularVector = perpendicularPoint.subtract3(referencePoint);
 
         // TESTING
-        //Position planePos = this.wwd.getModel().getGlobe().computePositionFromPoint(pointOnPlane);
-        //Position prevPlanePos = this.wwd.getModel().getGlobe().computePositionFromPoint(previousPointOnPlane);
-        //this.tempPath = new Path(perpendicularPosition, referencePos);
-        //this.tempPath2 = new Path(planePos, referencePos);
-        //this.tempPath3 = new Path(prevPlanePos, referencePos);
 
         RigidShape shape = this.getShape();
 
@@ -1352,11 +1280,6 @@ public class RigidShapeEditor extends AbstractShapeEditor {
         Vec4 perpendicularVector = perpendicularPoint.subtract3(referencePoint);
 
         // TESTING
-        //Position planePos = this.wwd.getModel().getGlobe().computePositionFromPoint(pointOnPlane);
-        //Position prevPlanePos = this.wwd.getModel().getGlobe().computePositionFromPoint(previousPointOnPlane);
-        //this.tempPath = new Path(perpendicularPosition, referencePos);
-        //this.tempPath2 = new Path(planePos, referencePos);
-        //this.tempPath3 = new Path(prevPlanePos, referencePos);
 
         RigidShape shape = this.getShape();
 
@@ -1428,11 +1351,6 @@ public class RigidShapeEditor extends AbstractShapeEditor {
         Vec4 perpendicularVector = perpendicularPoint.subtract3(referencePoint);
 
         // TESTING
-        //Position planePos = this.wwd.getModel().getGlobe().computePositionFromPoint(pointOnPlane);
-        //Position prevPlanePos = this.wwd.getModel().getGlobe().computePositionFromPoint(previousPointOnPlane);
-        //this.tempPath = new Path(perpendicularPosition, referencePos);
-        //this.tempPath2 = new Path(planePos, referencePos);
-        //this.tempPath3 = new Path(prevPlanePos, referencePos);
 
         RigidShape shape = this.getShape();
 
@@ -1646,41 +1564,6 @@ public class RigidShapeEditor extends AbstractShapeEditor {
             this.shape.setSkewEastWest(Angle.fromDegrees(eastSkew + eastSkewChange));
         if (northSkew + northSkewChange >= 0 && northSkew + northSkewChange < 180)
             this.shape.setSkewNorthSouth(Angle.fromDegrees(northSkew + northSkewChange));
-
-/*
-        // get location of the control point
-        Vec4 controlVector = controlPoint.subtract3(referencePoint).normalize3();
-
-        // create front vector
-        Position frontPosition = this.controlPoints.get(4).getCenterPosition();
-        Vec4 frontPoint = this.wwd.getModel().getGlobe().computePointFromPosition(frontPosition);
-        Vec4 frontVector = frontPoint.subtract3(referencePoint).normalize3();
-
-        // get locations of 3 coplanar points
-        Vec4 p1 = referencePoint.add3(controlVector.multiply3(this.shape.getEastWestRadius()));
-        Vec4 p2 = p1.add3(northVector);
-        Vec4 p3 = p1.add3(frontVector);
-
-        // construct plane to determine skew direction
-        Plane splitPlane = Plane.fromPoints(p1, p2, p3);
-
-        Vec4 nearestPointOnLine = screenRay.nearestPointTo(p1);
-        Vec4 previousNearestPointOnLine = previousScreenRay.nearestPointTo(p1);
-
-        double distance = nearestPointOnLine.distanceTo3(p1);
-        double previousDistance = previousNearestPointOnLine.distanceTo3(p1);
-        double skewChange = (distance - previousDistance) / scale;
-        skewChange *= 1 - Math.abs(skew - 90) / 90;
-        skewChange *= 50;
-
-        // determine if mouse click is on same side of splitPlane as the referencePoint
-        int west = splitPlane.onSameSide(referencePoint, nearestPointOnLine);
-        if (west != 0)
-            skewChange *= -1;
-
-        if (skew + skewChange >= 0 && skew + skewChange < 180)
-            this.shape.setSkewEastWest(Angle.fromDegrees(skew + skewChange));
-*/
     }
 
     protected void moveTexture(Point previousMousePoint, Point mousePoint) {
@@ -1733,29 +1616,9 @@ public class RigidShapeEditor extends AbstractShapeEditor {
 //            System.out.println("Operation was interrupted");
 //        }
 //        catch (Exception e)
-//        {
-//            e.printStackTrace();
-//        }
     }
 
     protected void moveControlPoint(ControlPointMarker controlPoint, Point moveToPoint) {
-        /*
-        Position newPosition = this.wwd.getView().computePositionFromScreenPoint(moveToPoint.x, moveToPoint.y);
-
-        java.util.List<LatLon> boundary = new ArrayList<LatLon>();
-        for (LatLon ll : this.shape.getOuterBoundary())
-        {
-            boundary.add(ll);
-        }
-
-        boundary.set(controlPoint.getIndex(), new LatLon(newPosition));
-
-        // ExtrudedPolygon ensures that the last boundary position is the same as the first. Remove the last point
-        // before setting the boundary.
-        boundary.remove(boundary.size() - 1);
-
-        this.shape.setOuterBoundary(boundary);
-        */
     }
 
     /**
@@ -1765,49 +1628,6 @@ public class RigidShapeEditor extends AbstractShapeEditor {
      *                   this point, at the elevation of the polygon.
      */
     protected void addVertex(Point mousePoint) {
-        /*
-        // Try to find the edge that is closest to a ray passing through the screen point. We're trying to determine
-        // the user's intent as to which edge a new two control points should be added to.
-
-        Line ray = this.wwd.getView().computeRayFromScreenPoint(mousePoint.getX(), mousePoint.getY());
-        Vec4 pickPoint = this.intersectPolygonAltitudeAt(ray);
-
-        double nearestDistance = Double.MAX_VALUE;
-        int newVertexIndex = 0;
-
-        // Loop through the control points and determine which edge is closest to the pick point
-        for (int i = 0; i < this.controlPoints.size(); i++)
-        {
-            ControlPointMarker thisMarker = (ControlPointMarker) this.controlPoints.get(i);
-            ControlPointMarker nextMarker = (ControlPointMarker) this.controlPoints.get(
-                (i + 1) % this.controlPoints.size());
-
-            Vec4 pointOnEdge = AirspaceEditorUtil.nearestPointOnSegment(thisMarker.point, nextMarker.point, pickPoint);
-            if (!AirspaceEditorUtil.isPointBehindLineOrigin(ray, pointOnEdge))
-            {
-                double d = pointOnEdge.distanceTo3(pickPoint);
-                if (d < nearestDistance)
-                {
-                    newVertexIndex = i + 1;
-                    nearestDistance = d;
-                }
-            }
-        }
-
-        LatLon newLocation = new LatLon(this.wwd.getModel().getGlobe().computePositionFromPoint(pickPoint));
-
-        // Copy the outer boundary list
-        ArrayList<LatLon> locationList = new ArrayList<LatLon>(this.controlPoints.size());
-        for (LatLon latLon : this.getShape().getOuterBoundary())
-        {
-            locationList.add(latLon);
-        }
-
-        // Add the new vertex
-        locationList.add(newVertexIndex, newLocation);
-
-        this.getShape().setOuterBoundary(locationList);
-        */
     }
 
     /**
@@ -1816,18 +1636,6 @@ public class RigidShapeEditor extends AbstractShapeEditor {
      * @param vertexToRemove the vertex to remove.
      */
     protected void removeVertex(ControlPointMarker vertexToRemove) {
-        /*
-        RigidShape shape = this.getShape();
-        ArrayList<LatLon> locations = new ArrayList<LatLon>(this.controlPoints.size() - 1);
-
-        for (LatLon latLon : shape.getOuterBoundary())
-        {
-            locations.add(latLon);
-        }
-        locations.remove(vertexToRemove.getIndex());
-
-        shape.setOuterBoundary(locations);
-        */
     }
 
     /**
@@ -1902,11 +1710,6 @@ public class RigidShapeEditor extends AbstractShapeEditor {
 
     protected String formatMeasurements(Position pos) {
         StringBuilder sb = new StringBuilder();
-
-        /*
-        //sb.append(this.unitsFormat.areaNL(this.getLabel(AREA_LABEL), this.getArea()));
-        sb.append(this.unitsFormat.lengthNL(this.getLabel(PERIMETER_LABEL), this.getLength()));
-       */
 
         sb.append(this.unitsFormat.lengthNL(this.getLabel(WIDTH_LABEL), this.shape.getEastWestRadius() * 2));
         sb.append(this.unitsFormat.lengthNL(this.getLabel(LENGTH_LABEL), this.shape.getNorthSouthRadius() * 2));

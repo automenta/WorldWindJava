@@ -161,7 +161,7 @@ public class FramebufferTexture implements WWTexture {
     }
 
     protected boolean generateTexture(DrawContext dc, int width, int height) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         OGLStackHandler ogsh = new OGLStackHandler();
 
         Matrix geoToCartesian = FramebufferTexture.computeGeographicToCartesianTransform(this.sector);
@@ -246,7 +246,7 @@ public class FramebufferTexture implements WWTexture {
         Vec4 ul = FramebufferTexture.transformToQuadCoordinates(geoToCartesian, this.corners.get(3));
         BilinearInterpolator interp = new BilinearInterpolator(ll, lr, ur, ul);
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glBegin(GL2.GL_TRIANGLE_STRIP);
         try {
@@ -262,7 +262,7 @@ public class FramebufferTexture implements WWTexture {
         double du = 1.0f / slices;
         double dv = 1.0f / stacks;
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         for (int vi = 0; vi < stacks; vi++) {
             double v = vi * dv;

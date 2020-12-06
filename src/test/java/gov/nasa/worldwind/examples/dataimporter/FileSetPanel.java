@@ -155,7 +155,7 @@ public class FileSetPanel extends JPanel {
                         fileSetList.add(fileSet);
                 }
 
-                final List<FileSet> consolidatedFileSetList = fileSetFinder.consolidateFileSets(fileSetList);
+                final List<FileSet> consolidatedFileSetList = FileSetFinder.consolidateFileSets(fileSetList);
 
                 Thread t = new Thread(() -> performInstallation(consolidatedFileSetList));
                 t.start();

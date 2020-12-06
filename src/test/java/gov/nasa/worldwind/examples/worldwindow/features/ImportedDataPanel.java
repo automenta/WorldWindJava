@@ -77,8 +77,8 @@ public class ImportedDataPanel extends ShadedPanel {
 
         this.addToWorldWindow(domElement, params);
 
-        String description = this.getDescription(domElement);
-        Sector sector = this.getSector(domElement);
+        String description = ImportedDataPanel.getDescription(domElement);
+        Sector sector = ImportedDataPanel.getSector(domElement);
 
         Box box = Box.createHorizontalBox();
         box.setOpaque(false);
@@ -123,7 +123,7 @@ public class ImportedDataPanel extends ShadedPanel {
     //********************  DataConfiguration Utils  ***************//
     //**************************************************************//
 
-    protected String getDescription(Element domElement) {
+    protected static String getDescription(Element domElement) {
         String displayName = DataConfigurationUtils.getDataConfigDisplayName(domElement);
         String type = DataConfigurationUtils.getDataConfigType(domElement);
 
@@ -139,7 +139,7 @@ public class ImportedDataPanel extends ShadedPanel {
         return sb.toString();
     }
 
-    protected Sector getSector(Element domElement) {
+    protected static Sector getSector(Element domElement) {
         return WWXML.getSector(domElement, "Sector", null);
     }
 

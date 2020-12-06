@@ -765,7 +765,7 @@ public class VecBuffer {
             throw new IllegalArgumentException(message);
         }
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glColorPointer(this.coordsPerVec, this.buffer.getGLDataType(), 0, this.buffer.getBackingBuffer());
     }
 
@@ -792,7 +792,7 @@ public class VecBuffer {
             throw new IllegalArgumentException(message);
         }
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glNormalPointer(this.buffer.getGLDataType(), 0, this.buffer.getBackingBuffer());
     }
 
@@ -819,7 +819,7 @@ public class VecBuffer {
             throw new IllegalArgumentException(message);
         }
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glVertexPointer(this.coordsPerVec, this.buffer.getGLDataType(), 0, this.buffer.getBackingBuffer());
     }
 
@@ -847,7 +847,7 @@ public class VecBuffer {
             throw new IllegalArgumentException(message);
         }
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glTexCoordPointer(this.coordsPerVec, this.buffer.getGLDataType(), 0, this.buffer.getBackingBuffer());
     }
 

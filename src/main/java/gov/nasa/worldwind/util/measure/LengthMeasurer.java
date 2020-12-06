@@ -194,28 +194,29 @@ public class LengthMeasurer implements MeasurableLength {
         setPositions(newPositions);
     }
 
-    public void setPositions(Iterable<? extends Position> positions) {
+    public final LengthMeasurer setPositions(Iterable<? extends Position> positions) {
 
-        ArrayList<Position> newPositions = new ArrayList<>(sizeEstimate(positions));
-        for (Position p : positions)
-            newPositions.add(p);
+        if (positions instanceof ArrayList)
+            setPositions((ArrayList)positions);
+        else {
+            ArrayList<Position> newPositions = new ArrayList<>(sizeEstimate(positions));
+            for (Position p : positions)
+                newPositions.add(p);
 
-        setPositions(newPositions);
+            setPositions(newPositions);
+        }
+        return this;
     }
 
     public void setPositions(ArrayList<? extends Position> positions) {
-
-        this.positions = positions;
-        if (this.positions.size() > 2) {
-            this.sector = Sector.boundingSector(this.positions);
-        }else {
-            this.sector = null;
+        if (this.positions!=positions) {
+            clearCachedValues();
+            this.positions = positions;
+            this.sector = this.positions.size() > 2 ? Sector.boundingSector(this.positions) : null;
         }
-
-        clearCachedValues();
     }
 
-    public void setPositions(Iterable<? extends LatLon> positions, double elevation) {
+    public final void setPositions(Iterable<? extends LatLon> positions, double elevation) {
 
         ArrayList<Position> newPositions = new ArrayList<>(sizeEstimate(positions));
         positions.forEach(pos -> newPositions.add(new Position(pos, elevation)));
@@ -232,11 +233,12 @@ public class LengthMeasurer implements MeasurableLength {
      *
      * @param followTerrain set to true if measurements should account for terrain deformations.
      */
-    public void setFollowTerrain(boolean followTerrain) {
+    public LengthMeasurer setFollowTerrain(boolean followTerrain) {
         if (this.followTerrain != followTerrain) {
             this.followTerrain = followTerrain;
             clearCachedValues();
         }
+        return this;
     }
 
     /**
@@ -297,11 +299,12 @@ public class LengthMeasurer implements MeasurableLength {
      *
      * @param pathType the type of path to measure.
      */
-    public void setPathType(String pathType) {
+    public LengthMeasurer setPathType(String pathType) {
         if (!this.pathType.equals(pathType)) {
             this.pathType = pathType;
             clearCachedValues();
         }
+        return this;
     }
 
     /**

@@ -228,7 +228,7 @@ public class BasicMarkerShape {
             if (!this.isInitialized)
                 this.initialize(dc);
 
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
             if (!isRelative) {
                 dc.getView().pushReferenceCenter(dc, point);
@@ -281,7 +281,7 @@ public class BasicMarkerShape {
         }
 
         protected int[] createDisplayList(DrawContext dc, double radius) {
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
             int[] dlResource = new int[] {gl.glGenLists(1), 1};
 
             int size;
@@ -315,7 +315,7 @@ public class BasicMarkerShape {
 
         protected void doRender(DrawContext dc, Marker marker, Vec4 point, double radius, int[] dlResource) {
             // Sphere is symmetric about all axes, so no need to apply heading, pitch, or roll.
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
             gl.glScaled(radius, radius, radius);
             gl.glCallList(dlResource[0]);
         }
@@ -357,7 +357,7 @@ public class BasicMarkerShape {
             // Normal vectors for each face
             float[][] n = {{0, 1, 0}, {1, 0, 0}, {0, 0, 1}, {-1, 0, 0}, {0, 0, -1}, {0, -1, 0}};
 
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
             gl.glBegin(GL2.GL_QUADS);
 
@@ -379,7 +379,7 @@ public class BasicMarkerShape {
 
             // This performs the same operation as Vec4.axisAngle() but with a "v2" of <0, 0, 1>.
             // Compute rotation angle
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
             if (!(normal.equals(Vec4.UNIT_Z) || normal.equals(Vec4.UNIT_NEGATIVE_Z))) {
                 Angle angle = Angle.fromRadians(Math.acos(normal.z));
@@ -441,7 +441,7 @@ public class BasicMarkerShape {
                     marker.getPitch());
             }
 
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
             if (!(orientation.equals(Vec4.UNIT_Z) || orientation.equals(Vec4.UNIT_NEGATIVE_Z))) {
                 // This code performs the same operation as Vec4.axisAngle() but with a "v2" of <0, 0, 1>.
@@ -501,7 +501,7 @@ public class BasicMarkerShape {
                     marker.getPitch());
             }
 
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
             if (!(orientation.equals(Vec4.UNIT_Z) || orientation.equals(Vec4.UNIT_NEGATIVE_Z))) {
                 // This performs the same operation as Vec4.axisAngle() but with a "v2" of <0, 0, 1>.
@@ -525,7 +525,7 @@ public class BasicMarkerShape {
             int stacks = 1;
             int loops = 1;
 
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
             GLU glu = dc.getGLU();
 
             glu.gluCylinder(quadric, 1.0d, 1.0d, 2.0d, slices, (int) (2 * (Math.sqrt(stacks)) + 1));
@@ -552,7 +552,7 @@ public class BasicMarkerShape {
         }
 
         protected void doRender(DrawContext dc, Marker marker, Vec4 point, double size, int[] dlResource) {
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
             MarkerAttributes attrs = marker.getAttributes();
 
             if (marker.getHeading() == null)
@@ -594,7 +594,7 @@ public class BasicMarkerShape {
 
         @Override
         protected int drawShape(DrawContext dc, double radius) {
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
             gl.glBegin(GL2.GL_LINE_STRIP);
             gl.glNormal3f(0.0f, 0.0f, 1.0f);
             gl.glVertex3f(0, 0, 0);
@@ -620,7 +620,7 @@ public class BasicMarkerShape {
         }
 
         protected void doRender(DrawContext dc, Marker marker, Vec4 point, double size, int[] dlResource) {
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
             MarkerAttributes attrs = marker.getAttributes();
 
             if (marker.getHeading() == null)
@@ -662,7 +662,7 @@ public class BasicMarkerShape {
 
         @Override
         protected int drawShape(DrawContext dc, double radius) {
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
             gl.glBegin(GL2.GL_POLYGON);
             gl.glNormal3f(0.0f, 0.0f, 1.0f);
             gl.glVertex3f(-0.5f, 0, 0);

@@ -51,9 +51,6 @@ public class AnalysisPanel extends JPanel implements Restorable {
     private final PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
         @SuppressWarnings("StringEquality")
         public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-//            if (!(propertyChangeEvent.getPropertyName() == AVKey.VIEW
-//                || propertyChangeEvent.getPropertyName() == AVKey.VIEW_QUIET))
-//                System.out.println("AnalysisPanel.propertyChange() for " + propertyChangeEvent.getPropertyName() + " from " + propertyChangeEvent.getSource());
 
             if (propertyChangeEvent.getPropertyName() == TrackViewPanel.VIEW_CHANGE) {
                 // When the view mode has changed, update the view parameters gradually.
@@ -227,23 +224,23 @@ public class AnalysisPanel extends JPanel implements Restorable {
         }
     }
 
-    private Angle getControlHeading() {
+    private static Angle getControlHeading() {
         return Angle.ZERO;
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    private Angle getControlPitch() {
+    private static Angle getControlPitch() {
         return Angle.fromDegrees(80);
     }
 
-    private Angle getControlFOV() {
+    private static Angle getControlFOV() {
         return Angle.fromDegrees(45);
     }
 
     private void updateView(boolean goSmoothly) {
         //System.out.println("AnalysisPanel.updateView(" + goSmoothly + "): view mode: " + this.trackViewPanel.getViewMode());
         BasicOrbitView view = (BasicOrbitView) this.wwd.view();
-        view.setFieldOfView(this.getControlFOV());
+        view.setFieldOfView(AnalysisPanel.getControlFOV());
 
         Position pos = this.getPositionAlongSegment();
         if (TrackViewPanel.VIEW_MODE_EXAMINE.equals(this.lastUpdateViewMode)
@@ -254,7 +251,7 @@ public class AnalysisPanel extends JPanel implements Restorable {
         this.lastUpdateViewMode = this.trackViewPanel.getViewMode();
 
         if (pos != null) {
-            Angle heading = this.getHeading().add(this.getControlHeading());
+            Angle heading = this.getHeading().add(AnalysisPanel.getControlHeading());
 
             this.terrainProfilePanel.updatePosition(pos, heading);
             this.planeModel.setPosition(pos);
@@ -585,7 +582,7 @@ public class AnalysisPanel extends JPanel implements Restorable {
      * @param end   second position
      * @return Position in between begin and end
      */
-    private Position interpolateTrackPosition(double t, Position begin, Position end) {
+    private static Position interpolateTrackPosition(double t, Position begin, Position end) {
         if (begin == null || end == null)
             return null;
 

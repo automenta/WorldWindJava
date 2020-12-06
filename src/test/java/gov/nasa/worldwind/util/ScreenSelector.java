@@ -104,17 +104,17 @@ public class ScreenSelector extends WWObjectImpl implements MouseListener, Mouse
         }
 
         this.wwd = worldWindow;
-        this.layer = this.createLayer();
+        this.layer = ScreenSelector.createLayer();
         this.layer.setPickEnabled(false); // The screen selector is not pickable.
-        this.selectionRect = this.createSelectionRectangle();
+        this.selectionRect = ScreenSelector.createSelectionRectangle();
         ((RenderableLayer) this.layer).add(this.selectionRect);
     }
 
-    protected Layer createLayer() {
+    protected static Layer createLayer() {
         return new RenderableLayer();
     }
 
-    protected SelectionRectangle createSelectionRectangle() {
+    protected static SelectionRectangle createSelectionRectangle() {
         return new SelectionRectangle();
     }
 
@@ -496,7 +496,7 @@ public class ScreenSelector extends WWObjectImpl implements MouseListener, Mouse
             Rectangle viewport = dc.getView().getViewport();
             Rectangle selection = this.getSelection();
 
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
             this.BEogsh.pushAttrib(gl, attrs);
             this.BEogsh.pushClientAttrib(gl, GL2.GL_VERTEX_ARRAY);
             try {

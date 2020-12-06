@@ -177,8 +177,8 @@ public class FireSupportTextBuilder {
             return "DA";
         }
         else if (TacGrpSidc.FSUPP_ARS_C2ARS_ZOR_RTG.equalsIgnoreCase(sidc)
-            || TacGrpSidc.FSUPP_ARS_C2ARS_ZOR_CIRCLR.equalsIgnoreCase(sidc)
-            || TacGrpSidc.FSUPP_ARS_C2ARS_DA_IRR.equalsIgnoreCase(sidc)) {
+            || TacGrpSidc.FSUPP_ARS_C2ARS_ZOR_CIRCLR.equalsIgnoreCase(sidc)) {
+            //|| TacGrpSidc.FSUPP_ARS_C2ARS_DA_IRR.equalsIgnoreCase(sidc) {
             return "ZOR";
         }
         else if (TacGrpSidc.FSUPP_ARS_C2ARS_TBA_RTG.equalsIgnoreCase(sidc)

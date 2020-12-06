@@ -128,7 +128,7 @@ public class SlideShowAnnotationController extends DialogAnnotationController {
         if (this.getAnnotation() == null)
             return;
 
-        if (this.hasNextIndex() && this.getState() == AVKey.STOP) {
+        if (SlideShowAnnotationController.hasNextIndex() && this.getState() == AVKey.STOP) {
             this.state = AVKey.PLAY;
             SlideShowAnnotation slideShowAnnotation = (SlideShowAnnotation) this.getAnnotation();
             slideShowAnnotation.setPlayButtonState(AVKey.PAUSE);
@@ -169,12 +169,12 @@ public class SlideShowAnnotationController extends DialogAnnotationController {
         slideShowAnnotation.getImageAnnotation().getAttributes().setSize(size);
     }
 
-    protected boolean hasPreviousIndex() {
+    protected static boolean hasPreviousIndex() {
         // The slide show loops, so there's always a previous index.
         return true;
     }
 
-    protected boolean hasNextIndex() {
+    protected static boolean hasNextIndex() {
         // The slide show loops, so there's always a next index.
         return true;
     }
@@ -204,7 +204,7 @@ public class SlideShowAnnotationController extends DialogAnnotationController {
         int length = this.imageSources.size();
         Object imageSource = this.imageSources.get(index);
         String title = this.createTitle(imageSource);
-        String positionText = this.createPositionText(index, length);
+        String positionText = SlideShowAnnotationController.createPositionText(index, length);
 
         this.index = index;
         SlideShowAnnotation slideShowAnnotation = (SlideShowAnnotation) this.getAnnotation();
@@ -214,10 +214,10 @@ public class SlideShowAnnotationController extends DialogAnnotationController {
             image.getOriginalWidth(), image.getOriginalHeight());
 
         // Update next and previous button states.
-        slideShowAnnotation.getBeginButton().setEnabled(this.hasPreviousIndex());
-        slideShowAnnotation.getPreviousButton().setEnabled(this.hasPreviousIndex());
-        slideShowAnnotation.getNextButton().setEnabled(this.hasNextIndex());
-        slideShowAnnotation.getEndButton().setEnabled(this.hasNextIndex());
+        slideShowAnnotation.getBeginButton().setEnabled(SlideShowAnnotationController.hasPreviousIndex());
+        slideShowAnnotation.getPreviousButton().setEnabled(SlideShowAnnotationController.hasPreviousIndex());
+        slideShowAnnotation.getNextButton().setEnabled(SlideShowAnnotationController.hasNextIndex());
+        slideShowAnnotation.getEndButton().setEnabled(SlideShowAnnotationController.hasNextIndex());
 
         this.getWorldWindow().redraw();
     }
@@ -326,7 +326,7 @@ public class SlideShowAnnotationController extends DialogAnnotationController {
 
     @SuppressWarnings("UnusedDeclaration")
     protected void onPreviousPressed(ActionEvent e) {
-        if (!this.hasPreviousIndex())
+        if (!SlideShowAnnotationController.hasPreviousIndex())
             return;
 
         int newIndex = this.getPreviousIndex();
@@ -335,7 +335,7 @@ public class SlideShowAnnotationController extends DialogAnnotationController {
 
     @SuppressWarnings("UnusedDeclaration")
     protected void onNextPressed(ActionEvent e) {
-        if (!this.hasNextIndex())
+        if (!SlideShowAnnotationController.hasNextIndex())
             return;
 
         int newIndex = this.getNextIndex();
@@ -379,7 +379,7 @@ public class SlideShowAnnotationController extends DialogAnnotationController {
     //**************************************************************//
 
     protected void retrieveAndSetImage(Object source, int index) {
-        PowerOfTwoPaddedImage image = this.getImage(source);
+        PowerOfTwoPaddedImage image = SlideShowAnnotationController.getImage(source);
         if (image != null) {
             this.doSetImage(image, index);
             return;
@@ -398,8 +398,8 @@ public class SlideShowAnnotationController extends DialogAnnotationController {
             getWorldWindow().redraw();
         });
 
-        final PowerOfTwoPaddedImage image = this.readImage(source);
-        this.putImage(source, image);
+        final PowerOfTwoPaddedImage image = SlideShowAnnotationController.readImage(source);
+        SlideShowAnnotationController.putImage(source, image);
 
         SwingUtilities.invokeLater(() -> {
             doSetImage(image, index);
@@ -413,7 +413,7 @@ public class SlideShowAnnotationController extends DialogAnnotationController {
         });
     }
 
-    protected PowerOfTwoPaddedImage readImage(Object source) {
+    protected static PowerOfTwoPaddedImage readImage(Object source) {
         try {
             if (source instanceof BufferedImage) {
                 return PowerOfTwoPaddedImage.fromBufferedImage((BufferedImage) source);
@@ -452,11 +452,11 @@ public class SlideShowAnnotationController extends DialogAnnotationController {
         this.readThread = null;
     }
 
-    protected PowerOfTwoPaddedImage getImage(Object source) {
+    protected static PowerOfTwoPaddedImage getImage(Object source) {
         return (PowerOfTwoPaddedImage) WorldWind.cache(BUFFERED_IMAGE_CACHE_NAME).getObject(source);
     }
 
-    protected boolean putImage(Object source, PowerOfTwoPaddedImage image) {
+    protected static boolean putImage(Object source, PowerOfTwoPaddedImage image) {
         long sizeInBytes = ImageUtil.computeSizeInBytes(image.getPowerOfTwoImage());
         MemoryCache cache = WorldWind.cache(BUFFERED_IMAGE_CACHE_NAME);
         boolean addToCache = (sizeInBytes < cache.getCapacity());
@@ -477,12 +477,12 @@ public class SlideShowAnnotationController extends DialogAnnotationController {
         if (this.getAnnotation() == null)
             return false;
 
-        if (this.hasNextIndex()) {
+        if (SlideShowAnnotationController.hasNextIndex()) {
             int newIndex = this.getNextIndex();
             this.doGoToImage(newIndex);
         }
 
-        return this.hasNextIndex();
+        return SlideShowAnnotationController.hasNextIndex();
     }
 
     protected void onSlideShowUpdate() {
@@ -513,11 +513,11 @@ public class SlideShowAnnotationController extends DialogAnnotationController {
     //**************************************************************//
 
     protected String createTitle(Object imageSource) {
-        String imageName = this.getImageName(imageSource);
+        String imageName = SlideShowAnnotationController.getImageName(imageSource);
         return (imageName != null) ? imageName : "";
     }
 
-    protected String createPositionText(int position, int length) {
+    protected static String createPositionText(int position, int length) {
         if (length <= 1)
             return "";
 
@@ -526,7 +526,7 @@ public class SlideShowAnnotationController extends DialogAnnotationController {
         return sb.toString();
     }
 
-    protected String getImageName(Object imageSource) {
+    protected static String getImageName(Object imageSource) {
         if (imageSource == null)
             return null;
 

@@ -42,7 +42,7 @@ public class CSVTrackPoint implements TrackPoint {
         this.latitude = CSVTrackPoint.parseLatitude(words[1]);
         this.longitude = CSVTrackPoint.parseLongitude(words[2]);
         if (words.length > 3)
-            this.altitude = this.parseElevation(words[3], "M");
+            this.altitude = parseElevation(words[3], "M");
     }
 
     private static double parseLatitude(String angle) {

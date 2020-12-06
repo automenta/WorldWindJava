@@ -140,7 +140,7 @@ public class KMLFlyViewController extends KMLViewController {
      * @return Animator that will animate the view to look at {@code lookAtPosition} with the specified heading, pitch,
      * roll, and range.
      */
-    protected FlyToFlyViewAnimator createFlyToLookAtAnimator(BasicFlyView view, Position lookAtPosition,
+    protected static FlyToFlyViewAnimator createFlyToLookAtAnimator(BasicFlyView view, Position lookAtPosition,
         Angle heading, Angle pitch, double range, long timeToMove, int altitudeMode) {
         // Create a BasicOrbitView to let the OrbitView do the math of finding the eye position based on the LookAt
         // position. The OrbitView is never set to be the active view, but it will be used by the animator to

@@ -193,7 +193,7 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
 
     // Rendering
     public void draw(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         boolean attribsPushed = false;
         boolean modelviewPushed = false;
         boolean projectionPushed = false;
@@ -385,8 +385,8 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
         }
     }
 
-    private void drawFilledRectangle(DrawContext dc, Vec4 origin, Dimension dimension, Color color) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+    private static void drawFilledRectangle(DrawContext dc, Vec4 origin, Dimension dimension, Color color) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glColor4ub((byte) color.getRed(), (byte) color.getGreen(),
             (byte) color.getBlue(), (byte) color.getAlpha());
         gl.glBegin(GL2.GL_POLYGON);
@@ -398,7 +398,7 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
         gl.glEnd();
     }
 
-    protected String makeAngleDescription(String label, Angle angle, int places) {
+    protected static String makeAngleDescription(String label, Angle angle, int places) {
         return String.format("%s %s", label, angle.toDecimalDegreesString(places));
     }
 

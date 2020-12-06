@@ -314,10 +314,6 @@ public class GraticuleAttributesPanel extends JPanel {
             this.linePanel.setBorder(
                 new CompoundBorder(new TitledBorder("Graticule"), new EmptyBorder(10, 10, 10, 10)));
 
-            //this.lineEnabled.setAlignmentX(Component.LEFT_ALIGNMENT);
-            //this.linePanel.add(this.lineEnabled);
-            //this.linePanel.add(Box.createVerticalStrut(10));
-
             this.lineColorPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
             this.linePanel.add(this.lineColorPanel);
             this.linePanel.add(Box.createVerticalStrut(10));

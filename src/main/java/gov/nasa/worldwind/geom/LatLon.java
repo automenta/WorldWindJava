@@ -48,11 +48,6 @@ public class LatLon {
      * @throws IllegalArgumentException if <code>latitude</code> or <code>longitude</code> is null
      */
     @Deprecated public LatLon(Angle latitude, Angle longitude) {
-//        if (latitude == null || longitude == null) {
-//            String message = Logging.getMessage("nullValue.LatitudeOrLongitudeIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         this.latitude = latitude.degrees;
         this.longitude = longitude.degrees;
@@ -101,17 +96,6 @@ public class LatLon {
      * @throws IllegalArgumentException if the path type or either location is null.
      */
     public static LatLon interpolate(String pathType, double amount, LatLon value1, LatLon value2) {
-//        if (pathType == null) {
-//            String message = Logging.getMessage("nullValue.PathTypeIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//
-//        if (value1 == null || value2 == null) {
-//            String message = Logging.getMessage("nullValue.LatLonIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (pathType.equals(AVKey.GREAT_CIRCLE))
             return interpolateGreatCircle(amount, value1, value2);
@@ -133,11 +117,6 @@ public class LatLon {
      * @throws IllegalArgumentException if either location is null.
      */
     public static LatLon interpolate(double amount, LatLon value1, LatLon value2) {
-//        if (value1 == null || value2 == null) {
-//            String message = Logging.getMessage("nullValue.LatLonIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (LatLon.equals(value1, value2))
             return value1;
@@ -173,11 +152,6 @@ public class LatLon {
      * @throws IllegalArgumentException if either location is null.
      */
     public static LatLon interpolateGreatCircle(double amount, LatLon value1, LatLon value2) {
-//        if (value1 == null || value2 == null) {
-//            String message = Logging.getMessage("nullValue.LatLonIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (LatLon.equals(value1, value2))
             return value1;
@@ -205,11 +179,6 @@ public class LatLon {
      * @throws IllegalArgumentException if either location is null.
      */
     public static LatLon interpolateRhumb(double amount, LatLon value1, LatLon value2) {
-//        if (value1 == null || value2 == null) {
-//            String message = Logging.getMessage("nullValue.LatLonIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (LatLon.equals(value1, value2))
             return value1;
@@ -238,17 +207,6 @@ public class LatLon {
      * @throws IllegalArgumentException if the path type or either location is null.
      */
     public static Angle pathDistance(String pathType, LatLon value1, LatLon value2) {
-//        if (pathType == null) {
-//            String message = Logging.getMessage("nullValue.PathTypeIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//
-//        if (value1 == null || value2 == null) {
-//            String message = Logging.getMessage("nullValue.LatLonIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (pathType.equals(AVKey.GREAT_CIRCLE)) {
             return greatCircleDistance(value1, value2);
@@ -274,11 +232,6 @@ public class LatLon {
      * circle.
      */
     public static Angle greatCircleDistance(LatLon p1, LatLon p2) {
-//        if ((p1 == null) || (p2 == null)) {
-//            String message = Logging.getMessage("nullValue.LatLonIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         double lat1 = p1.getLatitude().radians;
         double lon1 = p1.getLongitude().radians;
@@ -985,11 +938,6 @@ public class LatLon {
     }
 
     public static boolean locationsCrossDateLine(Iterable<? extends LatLon> locations) {
-//        if (locations == null) {
-//            String msg = Logging.getMessage("nullValue.LocationsListIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         LatLon pos = null;
         for (LatLon posNext : locations) {
@@ -1159,17 +1107,6 @@ public class LatLon {
      */
     public static List<LatLon> cutLocationsAlongDateLine(Iterable<? extends LatLon> locations, String pole,
         Globe globe) {
-//        if (locations == null) {
-//            String msg = Logging.getMessage("nullValue.LocationsListIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//
-//        if (pole == null) {
-//            String msg = Logging.getMessage("nullValue.PoleIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         List<LatLon> newLocations = new ArrayList<>();
 
@@ -1219,12 +1156,6 @@ public class LatLon {
      * @throws IllegalArgumentException if the location list is null.
      */
     public static List<LatLon> makeDatelineCrossingLocationsPositive(Iterable<? extends LatLon> locations) {
-//        if (locations == null) {
-//            String msg = Logging.getMessage("nullValue.LocationsListIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-
 
         List<LatLon> newLocations = new ArrayList<>();
 
@@ -1256,17 +1187,6 @@ public class LatLon {
      * @throws IllegalArgumentException if either location is null, or if the meridian is null.
      */
     public static LatLon intersectionWithMeridian(LatLon p1, LatLon p2, Angle meridian, Globe globe) {
-//        if (p1 == null || p2 == null) {
-//            String msg = Logging.getMessage("nullValue.LocationIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//
-//        if (meridian == null) {
-//            String msg = Logging.getMessage("nullValue.MeridianIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         if (globe == null || globe instanceof Globe2D) {
             return intersectionWithMeridian(p1, p2, meridian);

@@ -269,7 +269,7 @@ public class ToolTipRenderer {
         Point screenPoint = ToolTipRenderer.adjustDrawPointToViewport(x, y, bgBounds, viewport);
         Point2D textTranslation = ToolTipRenderer.computeTextTranslation(dc, textBounds, attributes.getInsets());
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         OGLStackHandler stackHandler = new OGLStackHandler();
 
         stackHandler.pushModelview(gl);
@@ -293,7 +293,7 @@ public class ToolTipRenderer {
             throw new IllegalArgumentException(message);
         }
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         int attribMask = GL2.GL_COLOR_BUFFER_BIT // for alpha test func and ref, blend func
             | GL2.GL_CURRENT_BIT // for current color
@@ -329,7 +329,7 @@ public class ToolTipRenderer {
             throw new IllegalArgumentException(message);
         }
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         stackHandler.pop(gl);
     }
@@ -339,7 +339,7 @@ public class ToolTipRenderer {
     //**************************************************************//
 
     protected static void drawToolTipInterior(DrawContext dc, double width, double height, ToolTipAttributes attributes) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         ToolTipRenderer.applyColor(dc, attributes.getInteriorColor(), attributes.getInteriorOpacity());
 
@@ -348,7 +348,7 @@ public class ToolTipRenderer {
     }
 
     protected void drawToolTipOutline(DrawContext dc, double width, double height, ToolTipAttributes attributes) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         ToolTipRenderer.applyColor(dc, attributes.getOutlineColor(), attributes.getOutlineOpacity());
         gl.glLineWidth((float) getOutlineWidth());
@@ -392,7 +392,7 @@ public class ToolTipRenderer {
             return;
 
         double finalOpacity = opacity * (color.getAlpha() / 255.0);
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         OGLUtil.applyColor(gl, color, finalOpacity, true);
     }
 

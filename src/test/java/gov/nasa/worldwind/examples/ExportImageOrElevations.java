@@ -248,7 +248,7 @@ public class ExportImageOrElevations extends ApplicationTemplate {
             t.start();
         }
 
-        private int[] adjustSize(Sector sector, int desiredSize) {
+        private static int[] adjustSize(Sector sector, int desiredSize) {
             int[] size = new int[] {desiredSize, desiredSize};
 
             if (null != sector && desiredSize > 0) {
@@ -278,7 +278,7 @@ public class ExportImageOrElevations extends ApplicationTemplate {
 
         private BufferedImage captureImage(TiledImageLayer layer, Sector sector, int minSize)
             throws Exception {
-            int[] size = this.adjustSize(sector, minSize);
+            int[] size = AppFrame.adjustSize(sector, minSize);
             int width = size[0], height = size[1];
 
             String mimeType = layer.getDefaultImageFormat();
@@ -335,7 +335,7 @@ public class ExportImageOrElevations extends ApplicationTemplate {
             return elevations;
         }
 
-        private void writeImageToFile(Sector sector, BufferedImage image, File gtFile)
+        private static void writeImageToFile(Sector sector, BufferedImage image, File gtFile)
             throws IOException {
             AVList params = new AVListImpl();
 
@@ -353,7 +353,8 @@ public class ExportImageOrElevations extends ApplicationTemplate {
             }
         }
 
-        private void writeElevationsToFile(Sector sector, int width, int height, double[] elevations, File gtFile)
+        private static void writeElevationsToFile(Sector sector, int width, int height, double[] elevations,
+            File gtFile)
             throws IOException {
             // These parameters are required for writeElevation
             AVList elev32 = new AVListImpl();

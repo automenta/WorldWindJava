@@ -18,10 +18,6 @@ public class PickPointFrustumList extends ArrayList<PickPointFrustum> {
     public PickPointFrustumList() {
     }
 
-//    public PickPointFrustumList(Collection<PickPointFrustum> list) {
-//        super(list);
-//    }
-
     /**
      * Returns true if the specified point is inside the space enclosed by ALL of the frustums
      *
@@ -30,11 +26,6 @@ public class PickPointFrustumList extends ArrayList<PickPointFrustum> {
      * @throws IllegalArgumentException if the point is null.
      */
     public final boolean containsInAll(Vec4 point) {
-//        if (point == null) {
-//            String msg = Logging.getMessage("nullValue.PointIsNull");
-//            Logging.logger().fine(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         for (PickPointFrustum frustum : this) {
             if (!frustum.contains(point)) {
@@ -53,11 +44,6 @@ public class PickPointFrustumList extends ArrayList<PickPointFrustum> {
      * @throws IllegalArgumentException if the point is null.
      */
     public final boolean containsInAny(Vec4 point) {
-//        if (point == null) {
-//            String msg = Logging.getMessage("nullValue.PointIsNull");
-//            Logging.logger().fine(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         for (PickPointFrustum frustum : this) {
             if (frustum.contains(point)) {
@@ -76,11 +62,6 @@ public class PickPointFrustumList extends ArrayList<PickPointFrustum> {
      * @throws IllegalArgumentException if the point is null.
      */
     public final boolean containsInAll(Point point) {
-//        if (point == null) {
-//            String msg = Logging.getMessage("nullValue.PointIsNull");
-//            Logging.logger().fine(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         for (PickPointFrustum frustum : this) {
             if (!frustum.contains(point)) {
@@ -117,11 +98,6 @@ public class PickPointFrustumList extends ArrayList<PickPointFrustum> {
      * @throws IllegalArgumentException if the point is null.
      */
     public final boolean containsInAny(Point point) {
-//        if (point == null) {
-//            String msg = Logging.getMessage("nullValue.PointIsNull");
-//            Logging.logger().fine(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         for (PickPointFrustum frustum : this) {
             if (frustum.contains(point)) {
@@ -141,11 +117,6 @@ public class PickPointFrustumList extends ArrayList<PickPointFrustum> {
      * @throws IllegalArgumentException if the extent is null.
      */
     public final boolean intersectsAll(Extent extent) {
-//        if (extent == null) {
-//            String msg = Logging.getMessage("nullValue.ExtentIsNull");
-//            Logging.logger().fine(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         for (PickPointFrustum frustum : this) {
             if (!frustum.intersects(extent)) {
@@ -201,11 +172,6 @@ public class PickPointFrustumList extends ArrayList<PickPointFrustum> {
      * @throws IllegalArgumentException if the extent is null.
      */
     public final boolean intersectsAll(Rectangle rect) {
-//        if (rect == null) {
-//            String msg = Logging.getMessage("nullValue.RectangleIsNull");
-//            Logging.logger().fine(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         for (PickPointFrustum frustum : this) {
             if (!frustum.intersects(rect)) {
@@ -226,11 +192,6 @@ public class PickPointFrustumList extends ArrayList<PickPointFrustum> {
      * @throws IllegalArgumentException if the extent is null.
      */
     public final boolean intersectsAny(Rectangle rect) {
-//        if (rect == null) {
-//            String msg = Logging.getMessage("nullValue.RectangleIsNull");
-//            Logging.logger().fine(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         for (PickPointFrustum frustum : this) {
             if (frustum.intersects(rect)) {

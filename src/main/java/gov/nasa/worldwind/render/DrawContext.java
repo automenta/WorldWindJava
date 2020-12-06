@@ -984,4 +984,8 @@ public interface DrawContext extends WWObject, Disposable {
     boolean is2DGlobe();
 
     boolean isContinuous2DGlobe();
+
+    default GL2 getGL2() {
+        return getGL().getGL2();
+    }
 }

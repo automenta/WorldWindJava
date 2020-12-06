@@ -431,7 +431,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
             sortedTiles = this.currentTiles.toArray(sortedTiles);
             Arrays.sort(sortedTiles, levelComparer);
 
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
             if (this.isUseTransparentTextures() || this.getOpacity() < 1) {
                 gl.glPushAttrib(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_POLYGON_BIT
@@ -534,7 +534,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
 
     private void drawBoundingVolumes(DrawContext dc,
         Iterable<MercatorTextureTile> tiles) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         float[] previousColor = new float[4];
         gl.glGetFloatv(GL2.GL_CURRENT_COLOR, previousColor, 0);

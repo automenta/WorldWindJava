@@ -37,7 +37,8 @@ public class AnalyticSurfaceLegend implements Renderable {
         LabelAttributes titleLabel) {
         AnalyticSurfaceLegend legend = new AnalyticSurfaceLegend();
         legend.screenImage = new ScreenImage();
-        legend.screenImage.setImageSource(legend.createColorGradientLegendImage(width, height, minHue, maxHue,
+        legend.screenImage.setImageSource(
+            AnalyticSurfaceLegend.createColorGradientLegendImage(width, height, minHue, maxHue,
             borderColor));
         legend.labels = legend.createColorGradientLegendLabels(width, height, minValue, maxValue, labels, titleLabel);
 
@@ -262,7 +263,7 @@ public class AnalyticSurfaceLegend implements Renderable {
         }
     }
 
-    protected BufferedImage createColorGradientLegendImage(int width, int height, double minHue, double maxHue,
+    protected static BufferedImage createColorGradientLegendImage(int width, int height, double minHue, double maxHue,
         Color borderColor) {
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
         Graphics2D g2d = image.createGraphics();

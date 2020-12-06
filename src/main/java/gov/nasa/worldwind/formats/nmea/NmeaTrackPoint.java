@@ -58,9 +58,9 @@ public class NmeaTrackPoint implements TrackPoint {
         this.latitude = NmeaTrackPoint.parseLatitude(words[2], words[3]);
         this.longitude = NmeaTrackPoint.parseLongitude(words[4], words[5]);
         if (words.length >= 11)
-            this.altitude = this.parseElevation(words[9], words[10]);
+            this.altitude = parseElevation(words[9], words[10]);
         if (words.length >= 13)
-            this.geoidHeight = this.parseElevation(words[11], words[12]);
+            this.geoidHeight = parseElevation(words[11], words[12]);
     }
 
     private void doRMC(String[] words) {

@@ -219,7 +219,7 @@ public class DataInstaller extends AVListImpl {
         // Create a DataStoreProducer that is capable of processing the file.
         final DataStoreProducer producer = createDataStoreProducerFromFiles(fileSet);
 
-        File installLocation = this.getDefaultInstallLocation(WorldWind.store());
+        File installLocation = DataInstaller.getDefaultInstallLocation(WorldWind.store());
         if (installLocation == null) {
             String message = Logging.getMessage("generic.NoDefaultImportLocation");
             Logging.logger().severe(message);
@@ -282,7 +282,7 @@ public class DataInstaller extends AVListImpl {
 
         for (File file : fileSet.getFiles()) {
             AVList params = new AVListImpl();
-            if (this.isDataRaster(file, params)) {
+            if (DataInstaller.isDataRaster(file, params)) {
                 String pixelFormat = params.getStringValue(AVKey.PIXEL_FORMAT);
                 if (WWUtil.isEmpty(commonPixelFormat)) {
                     if (WWUtil.isEmpty(pixelFormat)) {
@@ -316,7 +316,7 @@ public class DataInstaller extends AVListImpl {
         return commonPixelFormat;
     }
 
-    protected Document createDataStore(FileSet fileSet, File installLocation, String datasetName,
+    protected static Document createDataStore(FileSet fileSet, File installLocation, String datasetName,
         DataStoreProducer producer) throws Exception {
         // Create the production parameters. These parameters instruct the DataStoreProducer where to install the
         // cached data, and what name to put in the data configuration document.
@@ -380,7 +380,7 @@ public class DataInstaller extends AVListImpl {
         return null;
     }
 
-    protected String askForDatasetName(String suggestedName) {
+    protected static String askForDatasetName(String suggestedName) {
 
         for (; ; ) {
             Object o = JOptionPane.showInputDialog(null, "Name:", "Enter dataset name",
@@ -399,7 +399,7 @@ public class DataInstaller extends AVListImpl {
         }
     }
 
-    protected String suggestDatasetName(FileSet fileSet) {
+    protected static String suggestDatasetName(FileSet fileSet) {
         if (null == fileSet || fileSet.getLength() == 0) {
             return null;
         }
@@ -467,7 +467,7 @@ public class DataInstaller extends AVListImpl {
         }
     }
 
-    public boolean isDataRaster(Object source, AVList params) {
+    public static boolean isDataRaster(Object source, AVList params) {
         if (source == null) {
             String message = Logging.getMessage("nullValue.SourceIsNull");
             Logging.logger().severe(message);
@@ -503,7 +503,7 @@ public class DataInstaller extends AVListImpl {
             || AVKey.ELEVATION.equals(params.getStringValue(AVKey.PIXEL_FORMAT));
     }
 
-    public File getDefaultInstallLocation(FileStore fileStore) {
+    public static File getDefaultInstallLocation(FileStore fileStore) {
         if (fileStore == null) {
             String message = Logging.getMessage("nullValue.FileStoreIsNull");
             Logging.logger().severe(message);

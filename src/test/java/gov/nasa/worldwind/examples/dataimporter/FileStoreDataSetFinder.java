@@ -29,13 +29,13 @@ public class FileStoreDataSetFinder {
             if (!fileStore.isInstallLocation(file.getPath()))
                 continue;
 
-            dataSets.addAll(this.findDataSets(file));
+            dataSets.addAll(FileStoreDataSetFinder.findDataSets(file));
         }
 
         return dataSets;
     }
 
-    protected List<FileStoreDataSet> findDataSets(File cacheRoot) {
+    protected static List<FileStoreDataSet> findDataSets(File cacheRoot) {
         if (cacheRoot == null) {
             String message = Logging.getMessage("nullValue.FileStorePathIsNull");
             Logging.logger().severe(message);

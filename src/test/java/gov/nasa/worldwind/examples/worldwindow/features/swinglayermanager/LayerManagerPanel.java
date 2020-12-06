@@ -172,7 +172,7 @@ public class LayerManagerPanel extends AbstractFeaturePanel implements LayerMana
     protected void handleLayerSelection(LayerTreeNode treeNode, LayerList layerList) {
         // Many layers do not exist until they're selected. This eliminates the overhead of layers never used.
         if (treeNode.getLayer() == null)
-            this.createLayer(treeNode);
+            LayerManagerPanel.createLayer(treeNode);
 
         if (treeNode.getLayer() == null) {
             // unable to create the layer
@@ -235,17 +235,17 @@ public class LayerManagerPanel extends AbstractFeaturePanel implements LayerMana
 
     // Insert a layer into the active layers list at its same position relative to its siblings in the layer tree.
     protected void performSmartInsertion(LayerTreeNode treeNode, LayerList layerList) {
-        if (this.insertAfterPreviousSibling(treeNode, layerList))
+        if (LayerManagerPanel.insertAfterPreviousSibling(treeNode, layerList))
             return;
 
-        if (this.insertBeforeSubsequentSibling(treeNode, layerList))
+        if (LayerManagerPanel.insertBeforeSubsequentSibling(treeNode, layerList))
             return;
 
         // No siblings found. Just append the layer to the layer list.
         layerList.add(treeNode.getLayer());
     }
 
-    protected boolean insertAfterPreviousSibling(LayerTreeNode treeNode, List<Layer> layerList) {
+    protected static boolean insertAfterPreviousSibling(LayerTreeNode treeNode, List<Layer> layerList) {
         LayerTreeNode previousTreeNode = (LayerTreeNode) treeNode.getPreviousSibling();
         while (previousTreeNode != null) {
             int index = layerList.indexOf(previousTreeNode.getLayer());
@@ -259,7 +259,7 @@ public class LayerManagerPanel extends AbstractFeaturePanel implements LayerMana
         return false;
     }
 
-    protected boolean insertBeforeSubsequentSibling(LayerTreeNode treeNode, List<Layer> layerList) {
+    protected static boolean insertBeforeSubsequentSibling(LayerTreeNode treeNode, List<Layer> layerList) {
         LayerTreeNode subsequentTreeNode = (LayerTreeNode) treeNode.getNextSibling();
         while (subsequentTreeNode != null) {
             int index = layerList.indexOf(subsequentTreeNode.getLayer());
@@ -453,7 +453,7 @@ public class LayerManagerPanel extends AbstractFeaturePanel implements LayerMana
         return layerNode != null && layerNode.getLayer() != null ? layerNode.getLayer() : null;
     }
 
-    protected void createLayer(LayerNode layerNode) {
+    protected static void createLayer(LayerNode layerNode) {
         if (layerNode == null) {
             String msg = "LayerNode is null";
             Util.getLogger().severe(msg);

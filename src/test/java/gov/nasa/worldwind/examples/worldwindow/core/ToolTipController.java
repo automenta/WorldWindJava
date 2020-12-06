@@ -33,12 +33,12 @@ public class ToolTipController extends AbstractFeature implements SelectListener
         this.controller.getWWd().addSelectListener(this);
     }
 
-    protected String getHoverText(SelectEvent event) {
+    protected static String getHoverText(SelectEvent event) {
         return event.getTopObject() != null && event.getTopObject() instanceof AVList ?
             ((AVList) event.getTopObject()).getStringValue(AVKey.HOVER_TEXT) : null;
     }
 
-    protected String getRolloverText(SelectEvent event) {
+    protected static String getRolloverText(SelectEvent event) {
         return event.getTopObject() != null && event.getTopObject() instanceof AVList ?
             ((AVList) event.getTopObject()).getStringValue(AVKey.ROLLOVER_TEXT) : null;
     }

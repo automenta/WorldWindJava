@@ -61,7 +61,7 @@ public class LayerPanel extends JPanel {
         buttonPanel.add(this.downButton);
         this.add(buttonPanel, BorderLayout.EAST);
 
-        int index = this.findLayerPosition(wwd, layer);
+        int index = LayerPanel.findLayerPosition(wwd, layer);
         this.upButton.setEnabled(index != 0);
         this.downButton.setEnabled(index != wwd.model().getLayers().size() - 1);
     }
@@ -81,7 +81,7 @@ public class LayerPanel extends JPanel {
     protected void moveLayer(WorldWindow wwd, Layer layer, int direction) {
         // Moves the layer associated with this instance in the direction indicated relative to the other layers.
 
-        int index = this.findLayerPosition(wwd, layer);
+        int index = LayerPanel.findLayerPosition(wwd, layer);
         if (index < 0)
             return; // layer not found
 
@@ -115,7 +115,7 @@ public class LayerPanel extends JPanel {
         wwd.redraw();
     }
 
-    protected int findLayerPosition(WorldWindow wwd, Layer layer) {
+    protected static int findLayerPosition(WorldWindow wwd, Layer layer) {
         // Determines the ordinal location of a layer in the layer list.
 
         for (int i = 0; i < wwd.model().getLayers().size(); i++) {

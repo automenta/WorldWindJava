@@ -29,7 +29,6 @@ public class VPFUtils {
         }
 
         try {
-            VPFTableReader tableReader = new VPFTableReader();
             return VPFTableReader.read(file);
         }
         catch (WWRuntimeException e) {

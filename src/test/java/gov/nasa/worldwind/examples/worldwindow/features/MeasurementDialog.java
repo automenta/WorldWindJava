@@ -109,7 +109,7 @@ public class MeasurementDialog extends AbstractFeatureDialog {
         super.setVisible(tf);
     }
 
-    private int countRenderables(RenderableLayer layer) {
+    private static int countRenderables(RenderableLayer layer) {
         int count = 0;
 
         //noinspection UnusedDeclaration

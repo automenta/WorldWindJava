@@ -786,12 +786,6 @@ public abstract class AbstractShape extends WWObjectImpl
         // time as an OrderedRenderable. The first two calls determine whether to add the shape to the ordered renderable
         // list during pick and render. The third call just draws the ordered renderable.
 
-//        if (dc == null) {
-//            String msg = Logging.getMessage("nullValue.DrawContextIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-
         if (dc.getGlobe() instanceof Globe2D && this.surfaceShape != null) {
             this.surfaceShape.render(dc);
             return;
@@ -1032,7 +1026,7 @@ public abstract class AbstractShape extends WWObjectImpl
     protected void doDrawOrderedRenderable(DrawContext dc, PickSupport pickCandidates) {
         this.currentData = (AbstractShapeData) this.shapeDataCache.getEntry(dc.getGlobe());
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         dc.getView().setReferenceCenter(dc, this.getCurrentData().getReferencePoint());
 
@@ -1044,20 +1038,6 @@ public abstract class AbstractShape extends WWObjectImpl
 
         dc.drawOutlinedShape(this.outlineShapeRenderer, this);
     }
-
-//    /**
-//     * Creates a {@link PickedObject} for this shape and the specified unique pick color. The
-//     * PickedObject returned by this method will be added to the pick list to represent the current shape.
-//     *
-//     * @param dc        the current draw context.
-//     * @param pickColor the unique color for this shape.
-//     * @return a new picked object.
-//     * @deprecated Use the more general {@link #createPickedObject(int)} instead.
-//     */
-//    @Deprecated
-//    protected PickedObject createPickedObject(DrawContext dc, Color pickColor) {
-//        return this.createPickedObject(pickColor.getRGB());
-//    }
 
     /**
      * Creates a {@link PickedObject} for this shape and the specified unique pick color code.
@@ -1083,7 +1063,7 @@ public abstract class AbstractShape extends WWObjectImpl
      * especially state indicated in the attribute mask argument.
      */
     protected OGLStackHandler beginDrawing(DrawContext dc, int attrMask) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         this.BEogsh.clear();
 
         // Note: While it's tempting to set each of these conditionally on whether the feature is actually enabled
@@ -1127,7 +1107,7 @@ public abstract class AbstractShape extends WWObjectImpl
      * @param dc the current draw context.
      */
     protected void endDrawing(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         dc.getView().popReferenceCenter(dc);
 
@@ -1168,7 +1148,7 @@ public abstract class AbstractShape extends WWObjectImpl
         if (activeAttrs == null || !activeAttrs.isDrawOutline())
             return;
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         if (!dc.isPickingMode()) {
             Material material = activeAttrs.getOutlineMaterial();
@@ -1234,7 +1214,7 @@ public abstract class AbstractShape extends WWObjectImpl
         if (!activeAttrs.isDrawInterior())
             return;
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         if (!dc.isPickingMode()) {
             Material material = activeAttrs.getInteriorMaterial();
@@ -1385,11 +1365,6 @@ public abstract class AbstractShape extends WWObjectImpl
     }
 
     public void move(Position delta) {
-//        if (delta == null) {
-//            String msg = Logging.getMessage("nullValue.PositionIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         Position refPos = this.getReferencePosition();
 
@@ -1440,17 +1415,6 @@ public abstract class AbstractShape extends WWObjectImpl
     }
 
     public void export(String mimeType, Object output) throws IOException, UnsupportedOperationException {
-//        if (mimeType == null) {
-//            String message = Logging.getMessage("nullValue.Format");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-
-//        if (output == null) {
-//            String message = Logging.getMessage("nullValue.OutputBufferIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         String supported = this.isExportFormatSupported(mimeType);
         if (FORMAT_NOT_SUPPORTED.equals(supported)) {
@@ -1580,11 +1544,6 @@ public abstract class AbstractShape extends WWObjectImpl
     }
 
     public void restoreState(String stateInXml) {
-//        if (stateInXml == null) {
-//            String message = Logging.getMessage("nullValue.StringIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         RestorableSupport rs;
         try {

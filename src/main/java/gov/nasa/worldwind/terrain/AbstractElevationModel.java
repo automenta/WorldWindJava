@@ -42,11 +42,6 @@ abstract public class AbstractElevationModel extends WWObjectImpl implements Ele
      * @throws IllegalArgumentException if document is null.
      */
     public static boolean isElevationModelConfigDocument(Element domElement) {
-//        if (domElement == null) {
-//            String message = Logging.getMessage("nullValue.DocumentIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         XPath xpath = WWXML.makeXPath();
         Element[] elements = WWXML.getElements(domElement, "//ElevationModel", xpath);
@@ -71,17 +66,6 @@ abstract public class AbstractElevationModel extends WWObjectImpl implements Ele
      * @throws IllegalArgumentException if either the parameters or the context are null.
      */
     public static Element createElevationModelConfigElements(AVList params, Element context) {
-//        if (params == null) {
-//            String message = Logging.getMessage("nullValue.ParametersIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//
-//        if (context == null) {
-//            String message = Logging.getMessage("nullValue.ContextIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         WWXML.checkAndAppendTextElement(params, AVKey.DISPLAY_NAME, context, "DisplayName");
         WWXML.checkAndAppendBooleanElement(params, AVKey.NETWORK_RETRIEVAL_ENABLED, context, "NetworkRetrievalEnabled");
@@ -126,11 +110,6 @@ abstract public class AbstractElevationModel extends WWObjectImpl implements Ele
      * @throws IllegalArgumentException if the document is null.
      */
     public static AVList getElevationModelConfigParams(Element domElement, AVList params) {
-//        if (domElement == null) {
-//            String message = Logging.getMessage("nullValue.DocumentIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (params == null)
             params = new AVListImpl();
@@ -212,11 +191,6 @@ abstract public class AbstractElevationModel extends WWObjectImpl implements Ele
     }
 
     public double getDetailHint(Sector sector) {
-//        if (sector == null) {
-//            String msg = Logging.getMessage("nullValue.SectorIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         return 0.0;
     }
@@ -230,14 +204,8 @@ abstract public class AbstractElevationModel extends WWObjectImpl implements Ele
     }
 
     public double getElevation(Angle latitude, Angle longitude) {
-//        if (latitude == null || longitude == null) {
-//            String msg = Logging.getMessage("nullValue.LatitudeOrLongitudeIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
-        double e = this.getUnmappedElevation(latitude, longitude);
-        return e;
+        return this.getUnmappedElevation(latitude, longitude);
         //return e == this.missingDataFlag ? this.missingDataValue : e;
     }
 
@@ -271,23 +239,6 @@ abstract public class AbstractElevationModel extends WWObjectImpl implements Ele
 
     public void composeElevations(Sector sector, List<? extends LatLon> latlons, int tileWidth, double[] buffer)
         throws Exception {
-//        if (sector == null) {
-//            String msg = Logging.getMessage("nullValue.SectorIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-
-//        if (latlons == null) {
-//            String msg = Logging.getMessage("nullValue.LatLonListIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//
-//        if (buffer == null) {
-//            String msg = Logging.getMessage("nullValue.ElevationsBufferIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         if (tileWidth < 1) {
             String msg = Logging.getMessage("generic.SizeOutOfRange", tileWidth);

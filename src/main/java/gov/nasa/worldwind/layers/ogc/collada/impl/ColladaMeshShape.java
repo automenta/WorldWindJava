@@ -165,7 +165,7 @@ public class ColladaMeshShape extends AbstractGeneralShape {
 
     @Override
     protected OGLStackHandler beginDrawing(DrawContext dc, int attrMask) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         OGLStackHandler ogsh = super.beginDrawing(dc, attrMask);
 
         if (!dc.isPickingMode()) {
@@ -353,7 +353,7 @@ public class ColladaMeshShape extends AbstractGeneralShape {
      */
     @Override
     protected void doDrawInterior(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         // Create an OpenGL stack handler to handle matrix stack push/pop. Explicitly track changes to the OpenGL
         // texture and cull face states in order to eliminate the need for attribute push/pop on a per mesh basis.
@@ -465,7 +465,7 @@ public class ColladaMeshShape extends AbstractGeneralShape {
      * @param geometry Geometry to draw.
      */
     protected void doDrawInteriorVA(DrawContext dc, Geometry geometry) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         if (geometry.offset == -1)
             return;
 
@@ -484,7 +484,7 @@ public class ColladaMeshShape extends AbstractGeneralShape {
      *                 contains vertex coordinates and normal vectors.
      */
     protected void doDrawInteriorVBO(DrawContext dc, Geometry geometry, int[] vboIds) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         if (geometry.offset == -1)
             return;
 
@@ -521,7 +521,7 @@ public class ColladaMeshShape extends AbstractGeneralShape {
         Matrix matrix = dc.getView().getModelviewMatrix();
         matrix = matrix.multiply(this.computeRenderMatrix(dc));
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glMatrixMode(GL2.GL_MODELVIEW);
 
         double[] matrixArray = new double[16];
@@ -860,7 +860,7 @@ public class ColladaMeshShape extends AbstractGeneralShape {
      * @param material Material to apply.
      */
     protected void applyMaterial(DrawContext dc, Material material) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         ShapeAttributes activeAttrs = this.getActiveAttributes();
         double opacity = activeAttrs.getInteriorOpacity();
 

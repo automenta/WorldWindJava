@@ -37,19 +37,6 @@ public class ApplicationTemplate {
         }
     }
 
-    //    public static void insertBeforeLayerName(WorldWindow wwd, Layer layer, CharSequence targetName) {
-//        // Insert the layer into the layer list just before the target layer.
-//        int targetPosition = 0;
-//        LayerList layers = wwd.getModel().getLayers();
-//        for (Layer l : layers) {
-//            if (l.getName().contains(targetName)) {
-//                targetPosition = layers.indexOf(l);
-//                break;
-//            }
-//        }
-//        layers.add(targetPosition, layer);
-//    }
-
     public static AppFrame start(String appName, Class<?> appFrameClass) {
         if (Configuration.isMacOS() && appName != null) {
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", appName);
@@ -79,7 +66,7 @@ public class ApplicationTemplate {
         protected final WorldWindow wwd;
         protected StatusBar statusBar;
         protected ToolTipController toolTipController;
-        protected HighlightController highlightController;
+        protected final HighlightController highlightController;
 
         public AppPanel(Dimension canvasSize, boolean includeStatusBar) {
             super(new BorderLayout());
@@ -230,13 +217,5 @@ public class ApplicationTemplate {
 
             this.wwjPanel.toolTipController = controller;
         }
-
-//        public void setHighlightController(HighlightController controller) {
-//            if (this.wwjPanel.highlightController != null) {
-//                this.wwjPanel.highlightController.dispose();
-//            }
-//
-//            this.wwjPanel.highlightController = controller;
-//        }
     }
 }

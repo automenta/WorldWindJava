@@ -225,7 +225,7 @@ public class OGLRenderToTextureSupport {
             throw new IllegalArgumentException(message);
         }
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         this.drawRegion = new Rectangle(x, y, width, height);
 
@@ -276,7 +276,7 @@ public class OGLRenderToTextureSupport {
             throw new IllegalArgumentException(message);
         }
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         this.flush(dc);
 

@@ -256,12 +256,12 @@ public class ExtrudedPolygonBuilder extends ApplicationTemplate {
             ExtrudedPolygon poly = new ExtrudedPolygon();
             poly.setAttributes(getDefaultAttributes());
             poly.set(AVKey.DISPLAY_NAME, getNextName(toString()));
-            this.initializePolygon(wwd, poly, fitShapeToViewport);
+            ExtrudedPolygonFactory.initializePolygon(wwd, poly, fitShapeToViewport);
 
             return poly;
         }
 
-        protected void initializePolygon(WorldWindow wwd, ExtrudedPolygon polygon, boolean fitShapeToViewport) {
+        protected static void initializePolygon(WorldWindow wwd, ExtrudedPolygon polygon, boolean fitShapeToViewport) {
             // Creates a rectangle in the center of the viewport. Attempts to guess at a reasonable size and height.
 
             Position position = ShapeUtils.getNewShapePosition(wwd);

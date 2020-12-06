@@ -109,9 +109,6 @@ public class AbstractShapeIntersection extends ApplicationTemplate {
                 }
             }
 //            catch (InterruptedException e)
-//            {
-//                e.printStackTrace();
-//            }
         }
 
         protected void drawLine(Position pA, Position pB) {

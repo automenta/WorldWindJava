@@ -92,7 +92,7 @@ public class AlarmIcons extends ApplicationTemplate {
         }
 
         // Create a blurred pattern bitmap
-        private BufferedImage createBitmap(String pattern, Color color) {
+        private static BufferedImage createBitmap(String pattern, Color color) {
             // Create bitmap with pattern
             BufferedImage image = PatternFactory.createPattern(pattern, new Dimension(128, 128), 0.7f,
                 color, new Color(color.getRed(), color.getGreen(), color.getBlue(), 0));

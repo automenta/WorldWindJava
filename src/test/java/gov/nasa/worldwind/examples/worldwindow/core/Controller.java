@@ -95,7 +95,7 @@ public class Controller {
         return appSize;
     }
 
-    public String getVersion() {
+    public static String getVersion() {
         return Version.getVersion();
     }
 
@@ -266,18 +266,19 @@ public class Controller {
     }
 
     public void showMessageDialog(Object message, String title, int messageType) {
-        this.showMessageDialog(this.getFrame(), message, title, messageType);
+        Controller.showMessageDialog(this.getFrame(), message, title, messageType);
     }
 
-    public void showMessageDialog(Component component, Object message, String title, int messageType) {
+    public static void showMessageDialog(Component component, Object message, String title, int messageType) {
         JOptionPane.showMessageDialog(component, message, title, messageType);
     }
 
     public void showMessageDialog(Object message, String title, int messageType, Object... args) {
-        this.showMessageDialog(this.getFrame(), message, title, messageType, args);
+        Controller.showMessageDialog(this.getFrame(), message, title, messageType, args);
     }
 
-    public void showMessageDialog(Component component, Object message, String title, int messageType, Object... args) {
+    public static void showMessageDialog(Component component, Object message, String title, int messageType,
+        Object... args) {
         JOptionPane.showMessageDialog(component, formatMessage(null, message, args), title, messageType);
     }
 

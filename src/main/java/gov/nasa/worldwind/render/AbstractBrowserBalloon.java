@@ -864,7 +864,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
     }
 
     protected void beginDrawing(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         int attrMask =
             GL2.GL_COLOR_BUFFER_BIT // For alpha enable, blend enable, alpha func, blend func.
@@ -893,12 +893,12 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
     }
 
     protected void endDrawing(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         this.osh.pop(gl);
     }
 
     protected void doDrawOrderedRenderable(DrawContext dc, OrderedBrowserBalloon obb) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         if (dc.isPickingMode()) {
             // Set up the pick color used during interior and outline rendering.
@@ -996,7 +996,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
 
         // Bind the balloon's vertex buffer as source of GL vertex coordinates. This buffer is used by both interior
         // and outline rendering. We bind it once here to avoid loading the buffer twice.
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glVertexPointer(2, GL.GL_FLOAT, 0, obb.frameInfo.vertexBuffer);
 
         if (this.isDrawInterior(dc)) {
@@ -1030,7 +1030,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         if (obb.frameInfo.vertexBuffer == null) // This should never happen, but we check anyway.
             return;
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         boolean textureApplied = false;
         try {
@@ -1081,7 +1081,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
     }
 
     protected void prepareToDrawInterior(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         if (!dc.isPickingMode()) {
             // Apply the balloon's background color and opacity if we're in normal rendering mode.
@@ -1093,7 +1093,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
     }
 
     protected void prepareToDrawOutline(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         if (!dc.isPickingMode()) {
             // Apply the balloon's outline color and opacity and apply the balloon's normal outline width if we're in
@@ -1280,7 +1280,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         if (!texture.bind(dc))
             return false;
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         // Set up the texture matrix to transform texture coordinates from the balloon's screen space vertex
         // coordinates into WebView texture space. This places the WebView's texture in the WebView's screen
@@ -1302,7 +1302,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
     }
 
     protected void drawWebViewLinks(DrawContext dc, OrderedBrowserBalloon obb) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         if (this.webView == null)
             return;
@@ -1364,7 +1364,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         if (obb.frameInfo.vertexBuffer == null) // This should never happen, but we check anyway.
             return;
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         // Compute the screen rectangle in AWT coordinates (origin top left).
         Rectangle awtScreenRect = new Rectangle(obb.screenRect.x,
@@ -1417,7 +1417,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         if (rect.isEmpty())
             return;
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         OGLStackHandler ogsh = new OGLStackHandler();
         ogsh.pushTextureIdentity(gl);
         ogsh.pushModelviewIdentity(gl);
@@ -1482,7 +1482,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
     }
 
     protected void drawTitleBar(DrawContext dc, OrderedBrowserBalloon obb) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         // Apply the balloon's outline color, but use the interior opacity.
         Color color = this.getActiveAttributes().getOutlineMaterial().getDiffuse();

@@ -130,47 +130,6 @@ public class PyramidEditor extends RigidShapeEditor {
             rod.setAltitudeMode(this.getAltitudeMode());
             rod.setAttributes(this.radiusRodAttributes);
             this.controlPointRods.add(rod);
-
-            /*
-            vert = matrix.transformBy3(matrix, -1, 1, -1).add3(refPt);   // top left corner
-            vertexPosition = this.wwd.getModel().getGlobe().computePositionFromPoint(vert);
-            controlPoint = new Ellipsoid(vertexPosition, radius, radius, radius);
-            controlPoint.setAttributes(this.scaleControlAttributes);
-            controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.setValue(AVKey.ACTION, SCALE_RADIUS_ACTION);
-            this.controlPoints.add(controlPoint);
-
-            rod = new Path(refPos, vertexPosition);
-            rod.setAltitudeMode(this.getAltitudeMode());
-            rod.setAttributes(this.scaleRodAttributes);
-            this.controlPointRods.add(rod);
-
-            vert = matrix.transformBy3(matrix, 1, -1, -1).add3(refPt);   // bottom right corner
-            vertexPosition = this.wwd.getModel().getGlobe().computePositionFromPoint(vert);
-            controlPoint = new Ellipsoid(vertexPosition, radius, radius, radius);
-            controlPoint.setAttributes(this.scaleControlAttributes);
-            controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.setValue(AVKey.ACTION, SCALE_RADIUS_ACTION);
-            this.controlPoints.add(controlPoint);
-
-            rod = new Path(refPos, vertexPosition);
-            rod.setAltitudeMode(this.getAltitudeMode());
-            rod.setAttributes(this.scaleRodAttributes);
-            this.controlPointRods.add(rod);
-
-            vert = matrix.transformBy3(matrix, -1, -1, -1).add3(refPt);   // bottom left corner
-            vertexPosition = this.wwd.getModel().getGlobe().computePositionFromPoint(vert);
-            controlPoint = new Ellipsoid(vertexPosition, radius, radius, radius);
-            controlPoint.setAttributes(this.scaleControlAttributes);
-            controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.setValue(AVKey.ACTION, SCALE_RADIUS_ACTION);
-            this.controlPoints.add(controlPoint);
-
-            rod = new Path(refPos, vertexPosition);
-            rod.setAltitudeMode(this.getAltitudeMode());
-            rod.setAttributes(this.scaleRodAttributes);
-            this.controlPointRods.add(rod);
-            */
         }
     }
 
@@ -477,72 +436,6 @@ public class PyramidEditor extends RigidShapeEditor {
         }
     }
 
-    /*
-    @Override
-    protected void scaleShapeNortheast(Point previousMousePoint, Point mousePoint)
-    {
-        scaleShapeNortheast(previousMousePoint, mousePoint, SCALE_NORTHEAST_ACTION);
-    }
-
-    @Override
-    protected void scaleShapeSouthwest(Point previousMousePoint, Point mousePoint)
-    {
-        scaleShapeNortheast(previousMousePoint, mousePoint, SCALE_SOUTHWEST_ACTION);
-    }
-
-    protected void scaleShapeNortheast(Point previousMousePoint, Point mousePoint, String scaleDirection)
-    {
-        Position referencePos = this.shape.getReferencePosition();
-        if (referencePos == null)
-            return;
-
-        Vec4 referencePoint = this.wwd.getModel().getGlobe().computePointFromPosition(referencePos);
-
-        Line screenRay = this.wwd.getView().computeRayFromScreenPoint(mousePoint.getX(), mousePoint.getY());
-        Line previousScreenRay = this.wwd.getView().computeRayFromScreenPoint(previousMousePoint.getX(),
-            previousMousePoint.getY());
-
-        Vec4 nearestPointOnLine = screenRay.nearestPointTo(referencePoint);
-        Vec4 previousNearestPointOnLine = previousScreenRay.nearestPointTo(referencePoint);
-
-        Position eastPosition = this.controlPoints.get(0).getCenterPosition();
-        Vec4 eastPoint = this.wwd.getModel().getGlobe().computePointFromPosition(eastPosition);
-
-        Position northPosition = this.controlPoints.get(1).getCenterPosition();
-        Vec4 northPoint = this.wwd.getModel().getGlobe().computePointFromPosition(northPosition);
-
-        Vec4 eastVector = eastPoint.subtract3(referencePoint);
-        Vec4 northVector = northPoint.subtract3(referencePoint);
-        Vec4 scaleVector = eastVector.add3(northVector).normalize3();
-
-        if (scaleDirection.equals(SCALE_SOUTHWEST_ACTION))
-            scaleVector = scaleVector.getNegative3();
-
-        double distance = nearestPointOnLine.distanceTo3(referencePoint);
-        double previousDistance = previousNearestPointOnLine.distanceTo3(referencePoint);
-        double radiusChange = distance - previousDistance;
-
-        RigidShape shape = this.getShape();
-        double eastWestRadius = shape.getEastWestRadius();
-        double northSouthRadius = shape.getVerticalRadius();
-        double average = (eastWestRadius + northSouthRadius) / 2;
-
-        double scalingRatio = (radiusChange + average) / average;
-
-        if (scalingRatio > 0)
-        {
-            this.shape.setNorthSouthRadius(northSouthRadius * scalingRatio);
-            this.shape.setEastWestRadius(eastWestRadius * scalingRatio);
-            double eastSquared = Math.pow(this.shape.getEastWestRadius() - eastWestRadius, 2);
-            double northSquared = Math.pow(this.shape.getNorthSouthRadius() - northSouthRadius, 2);
-            scaleVector = scaleVector.multiply3(Math.sqrt(eastSquared + northSquared));
-            Vec4 newCenterPt = referencePoint.add3(scaleVector);
-            Position newCenterPos = this.wwd.getModel().getGlobe().computePositionFromPoint(newCenterPt);
-            this.shape.setCenterPosition(newCenterPos);
-        }
-    }
-    */
-
     @Override
     protected void scaleShapeRadius(Point previousMousePoint, Point mousePoint) {
         Position referencePos = this.shape.getReferencePosition();
@@ -576,10 +469,6 @@ public class PyramidEditor extends RigidShapeEditor {
         if (scalingRatio > 0) {
             this.shape.setEastWestRadius(eastWestRadius * scalingRatio);
             this.shape.setNorthSouthRadius(northSouthRadius * scalingRatio);
-            //scaleVector = scaleVector.multiply3(this.shape.getVerticalRadius() - verticalRadius);
-            //Vec4 newCenterPt = referencePoint.add3(scaleVector);
-            //Position newCenterPos = this.wwd.getModel().getGlobe().computePositionFromPoint(newCenterPt);
-            //this.shape.setCenterPosition(newCenterPos);
         }
     }
 

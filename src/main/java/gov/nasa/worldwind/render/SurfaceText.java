@@ -391,7 +391,7 @@ public class SurfaceText extends AbstractSurfaceObject implements GeographicText
      * {@inheritDoc}
      */
     protected void drawGeographic(DrawContext dc, SurfaceTileDrawContext sdc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         OGLStackHandler ogsh = new OGLStackHandler();
         ogsh.pushAttrib(gl,
             GL2.GL_CURRENT_BIT       // For current color (used by JOGL TextRenderer).
@@ -474,7 +474,7 @@ public class SurfaceText extends AbstractSurfaceObject implements GeographicText
         }
         point = point.transformBy4(sdc.getModelviewMatrix());
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         // Translate to location point
         gl.glTranslated(point.x(), point.y(), point.z());

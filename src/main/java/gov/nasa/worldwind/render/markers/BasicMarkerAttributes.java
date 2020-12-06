@@ -272,7 +272,7 @@ public class BasicMarkerAttributes implements MarkerAttributes {
 
     public void apply(DrawContext dc) {
         if (!dc.isPickingMode() && this.material != null) {
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
             if (this.opacity < 1)
                 this.material.apply(gl, GL2.GL_FRONT, (float) this.opacity);

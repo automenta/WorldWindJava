@@ -168,7 +168,7 @@ public class SurfacePolylines extends AbstractSurfaceShape {
         if (dlResource == null)
             return;
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         AbstractSurfaceShape.applyOutlineState(dc, this.getActiveAttributes());
         gl.glCallList(dlResource[0]);
 
@@ -185,7 +185,7 @@ public class SurfacePolylines extends AbstractSurfaceShape {
     }
 
     protected int[] tessellateOutline(DrawContext dc, LatLon referenceLocation) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         this.crossesDateLine = false;
 
         int[] dlResource = new int[] {gl.glGenLists(1), 1};

@@ -56,7 +56,7 @@ public class PlacemarkDecluttering extends ApplicationTemplate {
 //            attrs.setImageOffset(new Offset(19d, 8d, AVKey.PIXELS, AVKey.PIXELS));
             attrs.setLabelOffset(new Offset(0.9d, 0.6d, AVKey.FRACTION, AVKey.FRACTION));
             pp.setAttributes(attrs);
-            this.setHighlightAttributes(pp);
+            AppFrame.setHighlightAttributes(pp);
             layer.add(pp);
 
             // Place a default pin placemark at the same location over the previous one.
@@ -80,7 +80,7 @@ public class PlacemarkDecluttering extends ApplicationTemplate {
             attrs.setImageOffset(new Offset(19.0d, 8.0d, AVKey.PIXELS, AVKey.PIXELS));
             attrs.setLabelOffset(new Offset(0.9d, 0.6d, AVKey.FRACTION, AVKey.FRACTION));
             pp.setAttributes(attrs);
-            this.setHighlightAttributes(pp);
+            AppFrame.setHighlightAttributes(pp);
             layer.add(pp);
 
             // Place a pin placemark at the same location over the previous one.
@@ -88,7 +88,7 @@ public class PlacemarkDecluttering extends ApplicationTemplate {
             pp.setEnableDecluttering(true);
             pp.set(AVKey.DISPLAY_NAME, "Clamp to ground, Default icon over rotated audio icon");
             pp.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
-            this.setHighlightAttributes(pp);
+            AppFrame.setHighlightAttributes(pp);
             layer.add(pp);
 
             // Use a new attributes instance.
@@ -109,7 +109,7 @@ public class PlacemarkDecluttering extends ApplicationTemplate {
             attrs.setLineWidth(2.0d);
             attrs.setImageAddress("images/pushpins/plain-red.png");
             pp.setAttributes(attrs);
-            this.setHighlightAttributes(pp);
+            AppFrame.setHighlightAttributes(pp);
             layer.add(pp);
 
             // Create a placemark without a leader line.
@@ -122,7 +122,7 @@ public class PlacemarkDecluttering extends ApplicationTemplate {
             attrs = new PointPlacemarkAttributes(attrs);
             attrs.setImageAddress("images/pushpins/plain-teal.png");
             pp.setAttributes(attrs);
-            this.setHighlightAttributes(pp);
+            AppFrame.setHighlightAttributes(pp);
             layer.add(pp);
 
             // Create a placemark clamped to ground.
@@ -136,7 +136,7 @@ public class PlacemarkDecluttering extends ApplicationTemplate {
             attrs.setLabelColor("ffff0000");
             attrs.setImageAddress("images/pushpins/plain-white.png");
             pp.setAttributes(attrs);
-            this.setHighlightAttributes(pp);
+            AppFrame.setHighlightAttributes(pp);
             layer.add(pp);
 
             // Create a placemark that uses all default values.
@@ -145,7 +145,7 @@ public class PlacemarkDecluttering extends ApplicationTemplate {
             pp.setEnableLabelPicking(true);
             pp.setLabelText("Placemark F");
             pp.set(AVKey.DISPLAY_NAME, "All defaults");
-            this.setHighlightAttributes(pp);
+            AppFrame.setHighlightAttributes(pp);
             layer.add(pp);
 
             // Create a placemark without an image.
@@ -161,7 +161,7 @@ public class PlacemarkDecluttering extends ApplicationTemplate {
             attrs.setUsePointAsDefaultImage(true);
             attrs.setScale(5.0d);
             pp.setAttributes(attrs);
-            this.setHighlightAttributes(pp);
+            AppFrame.setHighlightAttributes(pp);
             layer.add(pp);
 
             // Create a placemark off the surface and with a line.
@@ -179,7 +179,7 @@ public class PlacemarkDecluttering extends ApplicationTemplate {
             attrs.setUsePointAsDefaultImage(true);
             attrs.setScale(10.0d);
             pp.setAttributes(attrs);
-            this.setHighlightAttributes(pp);
+            AppFrame.setHighlightAttributes(pp);
             layer.add(pp);
 
             pp = new PointPlacemark(Position.fromDegrees(28, -103, 1.0e4));
@@ -199,7 +199,7 @@ public class PlacemarkDecluttering extends ApplicationTemplate {
             attrs.setLabelColor("ffffffff");
             attrs.setLabelOffset(new Offset(0.9d, 0.6d, AVKey.FRACTION, AVKey.FRACTION));
             pp.setAttributes(attrs);
-            this.setHighlightAttributes(pp);
+            AppFrame.setHighlightAttributes(pp);
             layer.add(pp);
 
             // Add the layer to the model.
@@ -224,7 +224,7 @@ public class PlacemarkDecluttering extends ApplicationTemplate {
             });
         }
 
-        protected void setHighlightAttributes(PointPlacemark pp) {
+        protected static void setHighlightAttributes(PointPlacemark pp) {
             // Change the label color to orange when the placemark is selected.
             PointPlacemarkAttributes highlightAttributes = new PointPlacemarkAttributes(pp.getAttributes());
             highlightAttributes.setLabelMaterial(Material.ORANGE);

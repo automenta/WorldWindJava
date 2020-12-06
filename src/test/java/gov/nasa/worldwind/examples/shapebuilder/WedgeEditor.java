@@ -540,9 +540,6 @@ public class WedgeEditor extends RigidShapeEditor {
         // TESTING
         Position planePos = this.wwd.model().getGlobe().computePositionFromPoint(pointOnPlane);
         Position prevPlanePos = this.wwd.model().getGlobe().computePositionFromPoint(previousPointOnPlane);
-        //this.tempPath = new Path(perpendicularPosition, referencePos);
-        //this.tempPath2 = new Path(planePos, referencePos);
-        //this.tempPath3 = new Path(prevPlanePos, referencePos);
 
         Wedge shape = (Wedge) this.getShape();
         Angle rotation = shape.getWedgeAngle();

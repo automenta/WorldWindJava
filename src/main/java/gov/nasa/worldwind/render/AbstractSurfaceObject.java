@@ -491,7 +491,7 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
 
         // Draw an individual representation of this object in a unique pick color. This representation is created
         // during the preRender pass in makeOrderedPreRenderable().
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glColor3ub((byte) pickColor.getRed(), (byte) pickColor.getGreen(), (byte) pickColor.getBlue());
         this.drawPickRepresentation(dc);
     }
@@ -556,10 +556,6 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
         // instead.
 
         SurfaceTileDrawContext sdc = (SurfaceTileDrawContext) dc.get(AVKey.SURFACE_TILE_DRAW_CONTEXT);
-//        if (sdc == null) {
-//            Logging.logger().warning(Logging.getMessage("nullValue.SurfaceTileDrawContextIsNull"));
-//            return;
-//        }
 
         this.drawGeographic(dc, sdc);
 
@@ -629,7 +625,7 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
             return;
 
         // Draw the pickable representation of this surface object created during preRendering.
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         OGLStackHandler ogsh = new OGLStackHandler();
         ogsh.pushAttrib(gl, GL2.GL_POLYGON_BIT); // For cull face enable, cull face, polygon mode.
         try {
@@ -677,7 +673,7 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
         if (sectors == null)
             return;
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         int attributeMask =
             GL2.GL_COLOR_BUFFER_BIT   // For alpha test enable, blend enable, alpha func, blend func.

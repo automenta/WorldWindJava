@@ -723,7 +723,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
     }
 
     public static void beginRendering(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glPushClientAttrib(GL2.GL_CLIENT_VERTEX_ARRAY_BIT);
         gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
@@ -734,7 +734,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
     }
 
     public static void endRendering(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         dc.getView().popReferenceCenter(dc);
         gl.glPopClientAttrib();
@@ -764,7 +764,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
     }
 
     protected static void renderVA(DrawContext dc, RectTile tile, int numTextureUnits) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glVertexPointer(3, GL.GL_FLOAT, 0, tile.ri.vertices.rewind());
 
@@ -804,7 +804,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
             }
         }
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         // Bind vertices
         gl.glBindBuffer(GL.GL_ARRAY_BUFFER, verticesVboId[0]);
@@ -915,7 +915,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
 
         dc.getView().pushReferenceCenter(dc, tile.ri.referenceCenter);
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glPushAttrib(
             GL2.GL_DEPTH_BUFFER_BIT | GL2.GL_POLYGON_BIT | GL2.GL_ENABLE_BIT | GL2.GL_CURRENT_BIT);
         gl.glEnable(GL.GL_BLEND);
@@ -953,7 +953,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
     }
 
     protected static void renderPatchBoundary(DrawContext dc, RectTile tile) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         OGLStackHandler ogsh = new OGLStackHandler();
 
         ogsh.pushAttrib(gl, GL2.GL_ENABLE_BIT | GL2.GL_CURRENT_BIT | GL2.GL_POLYGON_BIT);
@@ -997,7 +997,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
         TextRenderer textRenderer = OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(),
             Font.decode("Arial-Plain-15"));
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         OGLStackHandler ogsh = new OGLStackHandler();
 
         try {
@@ -1138,7 +1138,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
 
         tile.maxColorCode = dc.getUniquePickColor().getRGB();
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         try {
             if (null != tile.ri.referenceCenter) {
@@ -1265,11 +1265,6 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
      * intersection was found.
      */
     protected Intersection[] intersect(RectTile tile, Line line) {
-//        if (line == null) {
-//            String msg = Logging.getMessage("nullValue.LineIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         if (tile.ri.vertices == null) {
             return null;
@@ -1516,11 +1511,6 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
     }
 
     protected static Vec4 getSurfacePoint(RectTile tile, Angle latitude, Angle longitude) {
-//        if (latitude == null || longitude == null) {
-//            String msg = Logging.getMessage("nullValue.LatLonIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         if (!tile.sector.contains(latitude, longitude)) {
             // not on this geometry
@@ -1555,17 +1545,6 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
     }
 
     protected static DoubleBuffer makeGeographicTexCoords(SectorGeometry sg, SectorGeometry.GeographicTextureCoordinateComputer computer) {
-//        if (sg == null) {
-//            String msg = Logging.getMessage("nullValue.SectorGeometryIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-
-//        if (computer == null) {
-//            String msg = Logging.getMessage("nullValue.TextureCoordinateComputerIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         RectTile rt = (RectTile) sg;
 

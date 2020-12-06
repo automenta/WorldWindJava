@@ -60,11 +60,6 @@ public abstract class TiledImageLayer extends AbstractLayer {
     private boolean drawTileIDs = false;
 
     public TiledImageLayer(LevelSet levelSet) {
-//        if (levelSet == null) {
-//            String message = Logging.getMessage("nullValue.LevelSetIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         this.levels = new LevelSet(levelSet); // the caller's levelSet may change internally, so we copy it.
         this.set(AVKey.SECTOR, this.levels.getSector());
@@ -119,17 +114,6 @@ public abstract class TiledImageLayer extends AbstractLayer {
      * @throws IllegalArgumentException if either the parameters or the context are null.
      */
     public static Element createTiledImageLayerConfigElements(AVList params, Element context) {
-//        if (params == null) {
-//            String message = Logging.getMessage("nullValue.ParametersIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//
-//        if (context == null) {
-//            String message = Logging.getMessage("nullValue.ContextIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         XPath xpath = WWXML.makeXPath();
 
@@ -223,11 +207,6 @@ public abstract class TiledImageLayer extends AbstractLayer {
      * @throws IllegalArgumentException if the document is null.
      */
     public static AVList getTiledImageLayerConfigParams(Element domElement, AVList params) {
-//        if (domElement == null) {
-//            String message = Logging.getMessage("nullValue.DocumentIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (params == null)
             params = new AVListImpl();
@@ -293,11 +272,6 @@ public abstract class TiledImageLayer extends AbstractLayer {
      * @throws IllegalArgumentException if the document is null.
      */
     protected static AVList getLegacyTiledImageLayerConfigParams(Element domElement, AVList params) {
-//        if (domElement == null) {
-//            String message = Logging.getMessage("nullValue.DocumentIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (params == null)
             params = new AVListImpl();
@@ -662,7 +636,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
     }
 
     protected double getDetailFactor() {
-        return this.detailHintOrigin + this.getDetailHint();
+        return detailHintOrigin + this.getDetailHint();
     }
 
     // ============== Rendering ======================= //
@@ -787,7 +761,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
             sortedTiles = this.currentTiles.toArray(sortedTiles);
             Arrays.sort(sortedTiles, levelComparer);
 
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
             if (this.isUseTransparentTextures() || this.getOpacity() < 1) {
                 gl.glPushAttrib(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_POLYGON_BIT | GL2.GL_CURRENT_BIT);
@@ -840,7 +814,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
         // color as a premultiplied color, so that any incoming premultiplied color will be properly combined with the
         // base color.
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         double alpha = this.getOpacity();
         gl.glColor4d(alpha, alpha, alpha, alpha);
@@ -908,7 +882,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
     }
 
     protected void drawBoundingVolumes(DrawContext dc, Iterable<TextureTile> tiles) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         float[] previousColor = new float[4];
         gl.glGetFloatv(GL2.GL_CURRENT_COLOR, previousColor, 0);

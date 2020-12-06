@@ -211,7 +211,7 @@ public class DirectedSurfacePolyline extends SurfacePolyline {
     protected void drawOutline(DrawContext dc, SurfaceTileDrawContext sdc) {
         super.drawOutline(dc, sdc);
         this.computeDirectionArrows(dc, sdc);
-        this.drawDirectionArrows(dc);
+        DirectedSurfacePolyline.drawDirectionArrows(dc);
     }
 
     /**
@@ -332,10 +332,10 @@ public class DirectedSurfacePolyline extends SurfacePolyline {
      *
      * @param dc the current draw context.
      */
-    protected void drawDirectionArrows(DrawContext dc) {
+    protected static void drawDirectionArrows(DrawContext dc) {
         // Draw any arrowhead geometry accumulated in the global surface shape vertex buffer.
         if (vertexBuffer != null && vertexBuffer.remaining() > 0) {
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
             gl.glVertexPointer(2, GL.GL_FLOAT, 0, vertexBuffer);
             gl.glDrawArrays(GL.GL_TRIANGLES, 0, vertexBuffer.remaining() / 2);
         }

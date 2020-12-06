@@ -36,7 +36,7 @@ public class SimpleImporter {
         this.controller = controller;
     }
 
-    protected LayerPath getDefaultPathToParent() {
+    protected static LayerPath getDefaultPathToParent() {
         return new LayerPath(DEFAULT_GROUP);
     }
 
@@ -55,7 +55,7 @@ public class SimpleImporter {
         layerManager.expandPath(path.lastButOne());
     }
 
-    public String formName(Object source, String defaultName) {
+    public static String formName(Object source, String defaultName) {
         if (source instanceof File) {
             return ((File) source).getName();
         }
@@ -81,10 +81,10 @@ public class SimpleImporter {
             throw new IllegalStateException(message);
         }
 
-        if (this.isKML(this.source)) {
+        if (SimpleImporter.isKML(this.source)) {
             this.openKML(this.source);
         }
-        else if (this.isShapfile(this.source)) {
+        else if (SimpleImporter.isShapfile(this.source)) {
             this.openShapefile(this.source);
         }
         else {
@@ -93,7 +93,7 @@ public class SimpleImporter {
         }
     }
 
-    protected boolean isKML(Object source) {
+    protected static boolean isKML(Object source) {
         return source != null && (source.toString().endsWith(".kml") || source.toString().endsWith(".kmz"));
     }
 
@@ -120,7 +120,7 @@ public class SimpleImporter {
         }
     }
 
-    protected boolean isShapfile(Object source) {
+    protected static boolean isShapfile(Object source) {
         return source != null && source.toString().endsWith(".shp");
     }
 

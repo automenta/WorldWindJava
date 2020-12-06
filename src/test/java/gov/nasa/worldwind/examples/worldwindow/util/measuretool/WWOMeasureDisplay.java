@@ -110,7 +110,7 @@ public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay {
 
         this.annotation.setText(displayString);
 
-        Vec4 screenPoint = this.computeAnnotationPosition(position, this.measureTool);
+        Vec4 screenPoint = WWOMeasureDisplay.computeAnnotationPosition(position, this.measureTool);
         if (screenPoint != null)
             this.annotation.setScreenPoint(new Point((int) screenPoint.x, (int) screenPoint.y));
 
@@ -146,7 +146,7 @@ public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay {
         return displayString;
     }
 
-    protected Vec4 computeAnnotationPosition(Position pos, WWOMeasureTool mt) {
+    protected static Vec4 computeAnnotationPosition(Position pos, WWOMeasureTool mt) {
         Vec4 surfacePoint = mt.getWwd().sceneControl().getTerrain().getSurfacePoint(
             pos.getLatitude(), pos.getLongitude());
         if (surfacePoint == null) {
@@ -265,7 +265,7 @@ public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay {
         }
         else {   // See if it's a control point and show it if it is
             for (int i = 0; i < mt.getControlPoints().size(); i++) {
-                if (this.areLocationsRedundant(pos, mt.getControlPoints().get(i).getPosition(), mt.getUnitsFormat())) {
+                if (WWOMeasureDisplay.areLocationsRedundant(pos, mt.getControlPoints().get(i).getPosition(), mt.getUnitsFormat())) {
                     sb.append(mt.getUnitsFormat().angleNL(mt.getLabel(LATITUDE_LABEL), pos.getLatitude()));
                     sb.append(mt.getUnitsFormat().angleNL(mt.getLabel(LONGITUDE_LABEL), pos.getLongitude()));
                 }
@@ -298,12 +298,12 @@ public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay {
             pos1 = pos2;
         }
 
-        double gcPathLength = this.computePathLength(mt);
+        double gcPathLength = WWOMeasureDisplay.computePathLength(mt);
 
         return distanceFromStart < gcPathLength ? mt.getLength() * (distanceFromStart / gcPathLength) : null;
     }
 
-    protected double computePathLength(WWOMeasureTool mt) {
+    protected static double computePathLength(WWOMeasureTool mt) {
         double pathLengthRadians = 0;
 
         LatLon pos1 = null;
@@ -316,7 +316,7 @@ public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay {
         return pathLengthRadians * mt.getWwd().model().getGlobe().getRadius();
     }
 
-    protected Angle computeAngleBetween(LatLon a, LatLon b, LatLon c) {
+    protected static Angle computeAngleBetween(LatLon a, LatLon b, LatLon c) {
         Vec4 v0 = new Vec4(
             b.getLatitude().radians - a.getLatitude().radians,
             b.getLongitude().radians - a.getLongitude().radians, 0);
@@ -328,11 +328,11 @@ public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay {
         return v0.angleBetween3(v1);
     }
 
-    protected boolean lengthsEssentiallyEqual(double l1, double l2) {
+    protected static boolean lengthsEssentiallyEqual(double l1, double l2) {
         return Math.abs(l1 - l2) < 0.01; // equal to within a centimeter
     }
 
-    protected boolean areLocationsRedundant(LatLon locA, LatLon locB, UnitsFormat units) {
+    protected static boolean areLocationsRedundant(LatLon locA, LatLon locB, UnitsFormat units) {
         if (locA == null || locB == null)
             return false;
 

@@ -75,7 +75,7 @@ public class ContextMenusOnShapes extends ApplicationTemplate {
             }
         }
 
-        protected void showContextMenu(SelectEvent event) {
+        protected static void showContextMenu(SelectEvent event) {
             if (!(event.getTopObject() instanceof PointPlacemark)) {
                 return;
             }

@@ -711,7 +711,7 @@ public class RadarVolumeExample extends ApplicationTemplate {
 
         protected void drawModel(DrawContext dc, int displayMode) {
             ShapeData shapeData = this.getCurrent();
-            GL2 gl = dc.getGL().getGL2();
+            GL2 gl = dc.getGL2();
 
             gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, displayMode);
 

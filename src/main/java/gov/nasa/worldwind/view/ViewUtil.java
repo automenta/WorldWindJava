@@ -409,22 +409,7 @@ public class ViewUtil {
     }
 
     public static double computeElevationAboveSurface(DrawContext dc, Position position) {
-//        if (dc == null) {
-//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
         Globe globe = dc.getGlobe();
-//        if (globe == null) {
-//            String message = Logging.getMessage("nullValue.DrawingContextGlobeIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//        if (position == null) {
-//            String message = Logging.getMessage("nullValue.Vec4IsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         Position surfacePosition = null;
         // Look for the surface geometry point at 'position'.

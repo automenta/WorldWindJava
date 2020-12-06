@@ -792,7 +792,7 @@ public class ScrollBar implements Renderable {
      * @param dc Current draw context.
      */
     protected void draw(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         OGLStackHandler oglStack = new OGLStackHandler();
         try {
             oglStack.pushAttrib(gl,
@@ -858,7 +858,7 @@ public class ScrollBar implements Renderable {
      * @param dc Current draw context.
      */
     protected void doPick(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         try {
             this.pickSupport.clearPickList();
             PickSupport.beginPicking(dc);
@@ -890,7 +890,7 @@ public class ScrollBar implements Renderable {
      * @param bounds     Bounds of the quad.
      */
     protected void drawPickableQuad(DrawContext dc, Object pickObject, Rectangle bounds) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         Color color = dc.getUniquePickColor();
         int colorCode = color.getRGB();
@@ -908,7 +908,7 @@ public class ScrollBar implements Renderable {
      * @param bounds Bounds of the quad.
      */
     protected static void drawQuad(DrawContext dc, Rectangle bounds) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         int minX = (int) bounds.getMinX();
         int minY = (int) bounds.getMinY();
@@ -931,7 +931,7 @@ public class ScrollBar implements Renderable {
      * @param insets   Insets to apply to the bounds.
      */
     protected static void drawTriangle(DrawContext dc, float rotation, Rectangle bounds, Insets insets) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         try {
             gl.glPushMatrix();

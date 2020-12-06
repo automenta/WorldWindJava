@@ -171,7 +171,7 @@ public class Quadrilateral implements Renderable, Movable,
         if (this.vertices == null)
             this.intializeGeometry(dc);
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         boolean textureMatrixPushed = false;
 
         int attrBits = GL2.GL_HINT_BIT | GL2.GL_CURRENT_BIT | GL2.GL_COLOR_BUFFER_BIT;

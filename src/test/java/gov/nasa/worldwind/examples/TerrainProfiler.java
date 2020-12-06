@@ -137,8 +137,6 @@ public class TerrainProfiler extends ApplicationTemplate {
                 (int) (this.profileLengthFactor * 10));  // -5 - 5 in tenth
             s.setMajorTickSpacing(10);
             s.setMinorTickSpacing(1);
-            //s.setPaintTicks(true);
-            //s.setPaintLabels(true);
             s.setToolTipText("Profile length");
             s.addChangeListener((ChangeEvent event) -> {
                 JSlider s1 = (JSlider) event.getSource();

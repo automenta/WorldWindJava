@@ -126,8 +126,6 @@ public class ExampleUtil {
 
         // Configure OrbitView to look at the center of the sector from our estimated distance. This causes OrbitView to
         // animate to the specified position over several seconds. To affect this change immediately use the following:
-        // ((OrbitView) wwd.getView()).setCenterPosition(new Position(sector.getCentroid(), 0d));
-        // ((OrbitView) wwd.getView()).setZoom(zoom);
         wwd.view().goTo(new Position(sector.getCentroid(), 0.0d), zoom);
     }
 

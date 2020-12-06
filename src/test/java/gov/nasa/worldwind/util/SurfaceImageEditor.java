@@ -181,7 +181,7 @@ public class SurfaceImageEditor implements SelectListener {
         if (refPos == null)
             return;
 
-        double refElevation = this.computeSurfaceElevation(wwd, refPos);
+        double refElevation = SurfaceImageEditor.computeSurfaceElevation(wwd, refPos);
         refPos = new Position(refPos, refElevation);
         Vec4 refPoint = globe.computePointFromPosition(refPos);
         Vec4 screenRefPoint = view.project(refPoint);
@@ -250,7 +250,7 @@ public class SurfaceImageEditor implements SelectListener {
         this.controlPointLayer.setMarkers(handles);
     }
 
-    protected double computeSurfaceElevation(WorldWindow wwd, LatLon latLon) {
+    protected static double computeSurfaceElevation(WorldWindow wwd, LatLon latLon) {
         SectorGeometryList sgl = wwd.sceneControl().getTerrain();
         if (sgl != null) {
             Vec4 point = sgl.getSurfacePoint(latLon.getLatitude(), latLon.getLongitude(), 0.0);

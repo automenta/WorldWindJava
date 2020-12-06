@@ -497,7 +497,7 @@ public class ScreenImage extends WWObjectImpl implements Renderable, Exportable 
         if (this.screenLocation == null)
             return;
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         boolean attribsPushed = false;
         boolean modelviewPushed = false;

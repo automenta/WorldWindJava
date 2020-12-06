@@ -94,7 +94,7 @@ public class CoordinatesDisplay extends AbstractOnDemandLayerFeature {
         return layer;
     }
 
-    private Position getCurrentPosition(DrawContext dc) {
+    private static Position getCurrentPosition(DrawContext dc) {
         if (dc.getPickedObjects() == null)
             return null;
 
@@ -173,7 +173,7 @@ public class CoordinatesDisplay extends AbstractOnDemandLayerFeature {
         return sb.toString();
     }
 
-    private double computeHeading(View view) {
+    private static double computeHeading(View view) {
         if (view == null)
             return 0.0;
 
@@ -183,7 +183,7 @@ public class CoordinatesDisplay extends AbstractOnDemandLayerFeature {
         return view.getHeading().getDegrees();
     }
 
-    private double computePitch(View view) {
+    private static double computePitch(View view) {
         if (view == null)
             return 0.0;
 

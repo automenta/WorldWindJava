@@ -67,16 +67,16 @@ public class ParallelPaths extends ApplicationTemplate {
 
             // Create Path objects from the position lists, and add them to a layer.
             RenderableLayer layer = new RenderableLayer();
-            this.addPath(layer, positions, "Control Path");
-            this.addPath(layer, pathPositions1, "Path 1");
-            this.addPath(layer, pathPositions2, "Path 2");
-            this.addPath(layer, pathPositions3, "Path 3");
-            this.addPath(layer, pathPositions4, "Path 4");
+            AppFrame.addPath(layer, positions, "Control Path");
+            AppFrame.addPath(layer, pathPositions1, "Path 1");
+            AppFrame.addPath(layer, pathPositions2, "Path 2");
+            AppFrame.addPath(layer, pathPositions3, "Path 3");
+            AppFrame.addPath(layer, pathPositions4, "Path 4");
 
             WorldWindow.insertBeforePlacenames(wwd(), layer);
         }
 
-        protected void addPath(RenderableLayer layer, List<Position> positions, String displayName) {
+        protected static void addPath(RenderableLayer layer, List<Position> positions, String displayName) {
             ShapeAttributes attrs = new BasicShapeAttributes();
             attrs.setOutlineWidth(5);
 

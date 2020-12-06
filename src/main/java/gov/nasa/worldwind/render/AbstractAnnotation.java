@@ -403,7 +403,7 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
         double finalScale = scale * this.computeScale(dc);
         Point offset = this.getAttributes().getDrawOffset();
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glTranslated(x, y, 0);
         gl.glScaled(finalScale, finalScale, 1);
         gl.glTranslated(offset.x, offset.y, 0);
@@ -498,12 +498,12 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
     }
 
     protected static void beginDraw(DrawContext dc, OGLStackHandler stackHandler) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         stackHandler.pushModelviewIdentity(gl);
     }
 
     protected static void endDraw(DrawContext dc, OGLStackHandler stackHandler) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         stackHandler.pop(gl);
     }
 
@@ -538,7 +538,7 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
     @SuppressWarnings("UnusedDeclaration")
     protected void doDrawBackgroundTexture(DrawContext dc, int width, int height, double opacity, Position pickPosition,
         WWTexture texture) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         // Save the current texture matrix state, and configure the texture matrix with the identity matrix.
         gl.glMatrixMode(GL2.GL_TEXTURE);
@@ -606,7 +606,7 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
      *                coordinates.
      */
     protected static void transformImageCoordsToBackgroundImageCoords(DrawContext dc, WWTexture texture) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         // Apply texture's internal transform state. This ensures we start with standard GL coordinates: the origin is
         // in the texture's lower left corner, and the Y axis points up.
@@ -637,7 +637,7 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
     @SuppressWarnings("UnusedDeclaration")
     protected void transformBackgroundImageCoordsToAnnotationCoords(DrawContext dc, int width, int height,
         WWTexture texture) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         // Apply the Annotation's image scale. The scale is applied inversely because texture coordinates and the
         // texture's size on the Annotation are inversely related.
@@ -666,7 +666,7 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
         if (this.getAttributes().getBorderWidth() <= 0)
             return;
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         // Apply line smoothing state.
         if (dc.isPickingMode()) {
@@ -852,7 +852,7 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
         Object object = (this.delegateOwner != null) ? this.delegateOwner : this;
         this.pickSupport.addPickableObject(colorCode, object, position, false);
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glColor3ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
     }
 
@@ -897,7 +897,7 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
 
         double finalOpacity = opacity * (color.getAlpha() / 255.0);
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glEnable(GL.GL_BLEND);
         OGLUtil.applyBlending(gl, premultiplyColors);
         OGLUtil.applyColor(gl, color, finalOpacity, premultiplyColors);
@@ -913,7 +913,7 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
 
     protected static Rectangle transformByModelview(DrawContext dc, Rectangle rectangle) {
         double[] compArray = new double[16];
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glGetDoublev(GL2.GL_MODELVIEW_MATRIX, compArray, 0);
         Matrix modelview = Matrix.fromArray(compArray, 0, false);
 

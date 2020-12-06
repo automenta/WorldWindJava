@@ -108,12 +108,12 @@ public class TrackSegmentInfo implements Renderable {
 
     protected void drawSegmentLabel(DrawContext dc, SARTrack track, int index) {
         SARPosition pos = track.get(index);
-        Vec4 screenPoint = this.getScreenPoint(dc, pos);
+        Vec4 screenPoint = TrackSegmentInfo.getScreenPoint(dc, pos);
         this.drawLatLonLabel(dc, (int) screenPoint.x, (int) screenPoint.y, Font.decode("Arial-BOLD-12"),
             WWUtil.makeColorBrighter(track.getColor()), pos);
     }
 
-    protected Vec4 getScreenPoint(DrawContext dc, Position position) {
+    protected static Vec4 getScreenPoint(DrawContext dc, Position position) {
         if (dc.getGlobe() == null || dc.getView() == null)
             return null;
 
@@ -138,14 +138,14 @@ public class TrackSegmentInfo implements Renderable {
             heading = LatLon.rhumbAzimuth(track.get(index - 1), track.get(index));
         }
 
-        Vec4 screenPoint = this.getScreenPoint(dc, pos);
+        Vec4 screenPoint = TrackSegmentInfo.getScreenPoint(dc, pos);
         this.drawHeadingAltitudeLabel(dc, (int) screenPoint.x, (int) screenPoint.y, Font.decode("Arial-BOLD-12"),
             Color.YELLOW, heading, pos);
     }
 
     protected void drawHeadingAltitudeLabel(DrawContext dc, int x, int y, Font font, Color color, Angle heading,
         Position pos) {
-        double surfaceElevation = this.computeSurfaceElevation(dc, pos.getLatitude(), pos.getLongitude());
+        double surfaceElevation = TrackSegmentInfo.computeSurfaceElevation(dc, pos.getLatitude(), pos.getLongitude());
         double distanceFromEye = dc.getView().getEyePoint().distanceTo3(dc.getGlobe().computePointFromPosition(pos));
 
         StringBuilder sb = new StringBuilder();
@@ -160,7 +160,7 @@ public class TrackSegmentInfo implements Renderable {
         sb.append("AGL: ");
         sb.append(this.formatAltitude(pos.getElevation() - surfaceElevation));
 
-        this.drawText(dc, sb.toString(), x, y, font, color, distanceFromEye);
+        TrackSegmentInfo.drawText(dc, sb.toString(), x, y, font, color, distanceFromEye);
     }
 
     protected void drawLatLonLabel(DrawContext dc, int x, int y, Font font, Color color, Position pos) {
@@ -173,14 +173,15 @@ public class TrackSegmentInfo implements Renderable {
         sb.append(this.formatAngle(pos.getLongitude()));
         sb.append(")");
 
-        this.drawText(dc, sb.toString(), x, y, font, color, distanceFromEye);
+        TrackSegmentInfo.drawText(dc, sb.toString(), x, y, font, color, distanceFromEye);
     }
 
-    protected void drawText(DrawContext dc, String text, int x, int y, Font font, Color color, double distanceFromEye) {
+    protected static void drawText(DrawContext dc, String text, int x, int y, Font font, Color color,
+        double distanceFromEye) {
         dc.addOrderedRenderable(new OrderedText(text, x, y, font, color, distanceFromEye));
     }
 
-    protected double computeSurfaceElevation(DrawContext dc, Angle latitude, Angle longitude) {
+    protected static double computeSurfaceElevation(DrawContext dc, Angle latitude, Angle longitude) {
         if (dc.getSurfaceGeometry() != null) {
             Vec4 surfacePoint = dc.getSurfaceGeometry().getSurfacePoint(latitude, longitude);
             if (surfacePoint != null) {
@@ -228,13 +229,13 @@ public class TrackSegmentInfo implements Renderable {
         }
 
         protected void drawText(DrawContext dc, String text, int x, int y, Font font, Color color) {
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
             Rectangle viewport = dc.getView().getViewport();
 
             OGLStackHandler stackHandler = new OGLStackHandler();
             stackHandler.pushAttrib(gl, GL2.GL_CURRENT_BIT); // For current color.
             try {
-                MultiLineTextRenderer tr = this.getTextRendererFor(dc, font);
+                MultiLineTextRenderer tr = OrderedText.getTextRendererFor(dc, font);
                 tr.setTextAlign(AVKey.CENTER);
                 tr.getTextRenderer().beginRendering(viewport.width, viewport.height);
                 try {
@@ -256,7 +257,7 @@ public class TrackSegmentInfo implements Renderable {
         public void pick(DrawContext dc, Point pickPoint) {
         }
 
-        protected MultiLineTextRenderer getTextRendererFor(DrawContext dc, Font font) {
+        protected static MultiLineTextRenderer getTextRendererFor(DrawContext dc, Font font) {
             TextRenderer tr = OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(), font);
             return new MultiLineTextRenderer(tr);
         }

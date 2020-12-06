@@ -49,7 +49,7 @@ public class KMZDocumentBuilder {
      *
      * @return The name of the KML file inside of the KMZ.
      */
-    protected String getMainFileName() {
+    protected static String getMainFileName() {
         return "doc.kml";
     }
 
@@ -61,7 +61,7 @@ public class KMZDocumentBuilder {
      */
     protected void startDocument() throws XMLStreamException, IOException {
         // Create a zip entry for the main KML file
-        this.zipStream.putNextEntry(new ZipEntry(this.getMainFileName()));
+        this.zipStream.putNextEntry(new ZipEntry(KMZDocumentBuilder.getMainFileName()));
 
         this.writer = XMLOutputFactory.newInstance().createXMLStreamWriter(this.zipStream);
 

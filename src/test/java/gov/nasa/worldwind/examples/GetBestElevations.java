@@ -121,8 +121,6 @@ public class GetBestElevations extends ApplicationTemplate {
             while (actualResolution > targetResolution) {
                 actualResolution = globe.getElevations(sector, locations, targetResolution, elevations);
                 // Uncomment the two lines below if you want to watch the resolution converge
-//                System.out.printf("Target resolution = %s, Actual resolution = %s\n",
-//                    Double.toString(targetResolution), Double.toString(actualResolution));
                 try {
                     Thread.sleep(200); // give the system a chance to retrieve data from the disk cache or the server
                 }

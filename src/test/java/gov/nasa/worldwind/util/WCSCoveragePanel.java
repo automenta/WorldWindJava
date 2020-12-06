@@ -127,7 +127,7 @@ public class WCSCoveragePanel extends JPanel {
 
         try {
             for (WCS100CoverageOfferingBrief coverage : coverages) {
-                CoverageInfo coverageInfo = this.createCoverageInfo(caps, coverage);
+                CoverageInfo coverageInfo = WCSCoveragePanel.createCoverageInfo(caps, coverage);
                 WCSCoveragePanel.this.coverageInfos.add(coverageInfo);
             }
         }
@@ -177,7 +177,7 @@ public class WCSCoveragePanel extends JPanel {
         coveragesPanel.add(jcb);
     }
 
-    protected CoverageInfo createCoverageInfo(WCS100Capabilities caps, WCS100CoverageOfferingBrief coverage) {
+    protected static CoverageInfo createCoverageInfo(WCS100Capabilities caps, WCS100CoverageOfferingBrief coverage) {
         // Create the layer info specified by the coverage capabilities.
 
         CoverageInfo info = new CoverageInfo();

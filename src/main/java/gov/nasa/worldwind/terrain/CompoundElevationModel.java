@@ -462,29 +462,6 @@ public class CompoundElevationModel extends AbstractElevationModel {
 
     protected double[] doGetElevations(Sector sector, List<? extends LatLon> latlons, double[] targetResolution,
         double[] buffer, boolean mapMissingData) {
-//        if (sector == null) {
-//            String msg = Logging.getMessage("nullValue.SectorIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//
-//        if (latlons == null) {
-//            String msg = Logging.getMessage("nullValue.LatLonListIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//
-//        if (targetResolution == null) {
-//            String msg = Logging.getMessage("nullValue.TargetElevationsArrayIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//
-//        if (buffer == null) {
-//            String msg = Logging.getMessage("nullValue.ElevationsBufferIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         if (buffer.length < latlons.size()) {
             String msg = Logging.getMessage("ElevationModel.ElevationsBufferTooSmall", latlons.size());
@@ -522,23 +499,6 @@ public class CompoundElevationModel extends AbstractElevationModel {
 
     public void composeElevations(Sector sector, List<? extends LatLon> latlons, int tileWidth,
         double[] buffer) throws Exception {
-//        if (sector == null) {
-//            String msg = Logging.getMessage("nullValue.SectorIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//
-//        if (latlons == null) {
-//            String msg = Logging.getMessage("nullValue.LatLonListIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//
-//        if (buffer == null) {
-//            String msg = Logging.getMessage("nullValue.ElevationsBufferIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         if (buffer.length < latlons.size()) {
             String msg = Logging.getMessage("ElevationModel.ElevationsBufferTooSmall", latlons.size());

@@ -222,15 +222,6 @@ public class LatLonTest
         assertEquals("Trivial equivalent points A", 0.0, azimuth, AZIMUTH_THRESHOLD);
     }
 
-    //@Test
-    //@Test public void testGreatCircleAzimuth_TrivialEquivalentPointsB()
-    //{
-    //    LatLon begin = LatLon.fromDegrees(0.0, -180.0);
-    //    LatLon end   = LatLon.fromDegrees(0.0, 180.0);
-    //    double greatCircleAzimuth = LatLon.greatCircleAzimuth(begin, end).degrees;
-    //    assertEquals("Trivial equivalent points B", 0.0, greatCircleAzimuth, THRESHOLD);
-    //}
-
     @Test
     public void testGreatCircleAzimuth_TrivialEquivalentPointsC()
     {
@@ -239,15 +230,6 @@ public class LatLonTest
         double azimuth = LatLon.greatCircleAzimuth(begin, end).degrees;
         assertEquals("Trivial equivalent points C", 0.0, azimuth, AZIMUTH_THRESHOLD);
     }
-
-    //@Test
-    //@Test public void testGreatCircleAzimuth_TrivialEquivalentPointsD()
-    //{
-    //    LatLon begin = LatLon.fromDegrees(90.0, 0.0);
-    //    LatLon end   = LatLon.fromDegrees(90.0, 45.0);
-    //    double greatCircleAzimuth = LatLon.greatCircleAzimuth(begin, end).degrees;
-    //    assertEquals("Trivial equivalent points D", 0.0, greatCircleAzimuth, THRESHOLD);
-    //}
 
     @Test
     public void testGreatCircleAzimuth_EquivalentPoints()
@@ -580,15 +562,6 @@ public class LatLonTest
         assertEquals("Trivial equivalent points A", 0.0, azimuth, AZIMUTH_THRESHOLD);
     }
 
-    //@Test
-    //@Test public void testRhumbAzimuth_TrivialEquivalentPointsB()
-    //{
-    //    LatLon begin = LatLon.fromDegrees(0.0, -180.0);
-    //    LatLon end   = LatLon.fromDegrees(0.0, 180.0);
-    //    double rhumbAzimuth = LatLon.rhumbAzimuth(begin, end).degrees;
-    //    assertEquals("Trivial equivalent points B", 0.0, rhumbAzimuth, THRESHOLD);
-    //}
-
     @Test
     public void testRhumbAzimuth_TrivialEquivalentPointsC()
     {
@@ -597,15 +570,6 @@ public class LatLonTest
         double azimuth = LatLon.rhumbAzimuth(begin, end).degrees;
         assertEquals("Trivial equivalent points C", 0.0, azimuth, AZIMUTH_THRESHOLD);
     }
-
-    //@Test
-    //@Test public void testRhumbAzimuth_TrivialEquivalentPointsD()
-    //{
-    //    LatLon begin = LatLon.fromDegrees(90.0, 0.0);
-    //    LatLon end   = LatLon.fromDegrees(90.0, 45.0);
-    //    double rhumbAzimuth = LatLon.rhumbAzimuth(begin, end).degrees;
-    //    assertEquals("Trivial equivalent points D", 0.0, rhumbAzimuth, THRESHOLD);
-    //}
 
     @Test
     public void testRhumbAzimuth_EquivalentPoints()

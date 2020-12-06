@@ -370,7 +370,7 @@ public class SurfaceIcon extends AbstractSurfaceRenderable implements Movable, D
                 this.imageHeight = texture.getHeight(dc);
 
                 // Apply texture local transform
-                GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+                GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
                 gl.glMatrixMode(GL.GL_TEXTURE);
                 this.getTexture().applyInternalTransform(dc);
 
@@ -444,7 +444,7 @@ public class SurfaceIcon extends AbstractSurfaceRenderable implements Movable, D
     }
 
     protected static void beginDraw(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         int attributeMask = GL2.GL_TRANSFORM_BIT // for modelview
             | GL2.GL_CURRENT_BIT // for current color
@@ -477,7 +477,7 @@ public class SurfaceIcon extends AbstractSurfaceRenderable implements Movable, D
     }
 
     protected static void endDraw(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         if (dc.isPickingMode()) {
             gl.glTexEnvf(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, OGLUtil.DEFAULT_TEX_ENV_MODE);
@@ -504,7 +504,7 @@ public class SurfaceIcon extends AbstractSurfaceRenderable implements Movable, D
         Vec4 point = new Vec4(location.getLongitude().degrees + offset, location.getLatitude().degrees, 1);
         point = point.transformBy4(sdc.getModelviewMatrix());
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         // Translate to location point
         gl.glTranslated(point.x(), point.y(), point.z());
         // Add x scaling transform to maintain icon width and aspect ratio at any latitude
@@ -533,13 +533,13 @@ public class SurfaceIcon extends AbstractSurfaceRenderable implements Movable, D
 
     protected void applyDrawColor(DrawContext dc) {
         if (!dc.isPickingMode()) {
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
             applyPremultipliedAlphaColor(gl, this.color, getOpacity());
         }
     }
 
     protected void drawIcon(DrawContext dc, SurfaceTileDrawContext sdc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glMatrixMode(GL2.GL_MODELVIEW);
         double drawScale = this.computeDrawScale(dc, sdc, this.location);
         this.applyDrawTransform(dc, sdc, this.location, drawScale);

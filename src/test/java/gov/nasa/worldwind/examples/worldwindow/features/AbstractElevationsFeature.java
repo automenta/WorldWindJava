@@ -181,7 +181,7 @@ public abstract class AbstractElevationsFeature extends AbstractFeature implemen
         ((CompoundElevationModel) globeEM).addElevationModel(em);
     }
 
-    protected WMSCapabilities retrieveCapsDoc(String urlString) {
+    protected static WMSCapabilities retrieveCapsDoc(String urlString) {
         try {
             CapabilitiesRequest request = new CapabilitiesRequest(new URI(urlString));
 

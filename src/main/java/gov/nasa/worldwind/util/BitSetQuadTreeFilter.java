@@ -273,11 +273,6 @@ public abstract class BitSetQuadTreeFilter {
          * @throws IllegalArgumentException if either <code>topRegions</code> or <code>testSector</code> is null.
          */
         public BitSet getOnBits(List<double[]> topRegions, Sector testSector, BitSet outIds) {
-//            if (testSector == null) {
-//                String message = Logging.getMessage("nullValue.SectorIsNull");
-//                Logging.logger().severe(message);
-//                throw new IllegalArgumentException(message);
-//            }
 
             return this.getOnBits(topRegions, testSector.asDegreesArray(), outIds);
         }
@@ -298,17 +293,6 @@ public abstract class BitSetQuadTreeFilter {
          * @throws IllegalArgumentException if either <code>topRegions</code> or <code>testSector</code> is null.
          */
         public BitSet getOnBits(List<double[]> topRegions, double[] testRegion, BitSet outIds) {
-//            if (topRegions == null) {
-//                String message = Logging.getMessage("generic.DepthOutOfRange", numLevels);
-//                Logging.logger().severe(message);
-//                throw new IllegalArgumentException(message);
-//            }
-//
-//            if (testRegion == null) {
-//                String message = Logging.getMessage("nullValue.ArrayIsNull");
-//                Logging.logger().severe(message);
-//                throw new IllegalArgumentException(message);
-//            }
 
             this.intersectingBits = outIds != null ? outIds : new BitSet();
 

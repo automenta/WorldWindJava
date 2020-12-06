@@ -85,7 +85,7 @@ public class InstallImagery extends ApplicationTemplate {
             });
         }
 
-        protected Layer installSurfaceImage(String displayName, Object imageSource, FileStore fileStore) {
+        protected static Layer installSurfaceImage(String displayName, Object imageSource, FileStore fileStore) {
             // Use the FileStore's install location as the destination for the installed imagery. The default install
             // location is the FileStore's area for permanent storage.
             File fileStoreLocation = DataInstallUtil.getDefaultInstallLocation(fileStore);

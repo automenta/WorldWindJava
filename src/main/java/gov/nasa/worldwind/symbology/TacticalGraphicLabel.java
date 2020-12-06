@@ -847,7 +847,7 @@ public class TacticalGraphicLabel {
      * @param dc the current draw context.
      */
     protected void beginDrawing(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         int attrMask =
             GL2.GL_DEPTH_BUFFER_BIT // for depth test, depth mask and depth func
@@ -882,7 +882,7 @@ public class TacticalGraphicLabel {
      * @param dc the current draw context.
      */
     protected void endDrawing(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         this.BEogsh.pop(gl);
     }
@@ -895,7 +895,7 @@ public class TacticalGraphicLabel {
      * @param olbl        The ordered label to pick.
      */
     protected void doPick(DrawContext dc, PickSupport pickSupport, OrderedLabel olbl) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         Angle heading = olbl.rotation;
 
@@ -970,7 +970,7 @@ public class TacticalGraphicLabel {
      * @param olbl         The ordered label to draw.
      */
     protected void drawText(DrawContext dc, TextRenderer textRenderer, OrderedLabel olbl) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         Angle heading = olbl.rotation;
 
@@ -1023,7 +1023,7 @@ public class TacticalGraphicLabel {
      * @param olbl The ordered label to draw.
      */
     protected void drawInterior(DrawContext dc, OrderedLabel olbl) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         double width = this.bounds.getWidth();
         double height = this.bounds.getHeight();

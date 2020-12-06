@@ -109,7 +109,7 @@ public class VPFSurfaceArea extends SurfacePolygon // TODO: consolidate with Sur
     protected void applyModelviewTransform(DrawContext dc, SurfaceTileDrawContext sdc) {
         // Apply the geographic to surface tile coordinate transform.
         Matrix modelview = sdc.getModelviewMatrix();
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glMultMatrixd(modelview.toArray(new double[16], 0, false), 0);
     }
 
@@ -130,7 +130,7 @@ public class VPFSurfaceArea extends SurfacePolygon // TODO: consolidate with Sur
 
         // Apply interior attributes using a reference location of (0, 0), because VPFSurfaceArea's coordinates
         // are not offset with respect to a reference location.
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         this.applyInteriorState(dc, sdc, this.getActiveAttributes(), this.getInteriorTexture(), LatLon.ZERO);
 
         int[] dlResource = (int[]) dc.getGpuResourceCache().get(this.interiorDisplayListCacheKey);

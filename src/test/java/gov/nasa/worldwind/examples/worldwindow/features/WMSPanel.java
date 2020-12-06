@@ -37,11 +37,6 @@ import java.util.logging.Level;
 public class WMSPanel extends AbstractFeaturePanel implements TreeModelListener, NetworkActivitySignal.NetworkUser {
     protected static final String FEATURE_TITLE = "WMS Server Panel";
     protected static final String ICON_PATH = "gov/nasa/worldwind/examples/worldwindow/images/wms-64x64.png";
-//    protected static final String[] INITIAL_SERVER_LIST = new String[]
-//        {
-//            "http://neowms.sci.gsfc.nasa.gov/wms/wms",
-//            "http://giifmap.cnr.berkeley.edu/cgi-bin/naip.wms?",
-//            "http://wms.jpl.nasa.gov/wms.cgi"};
 
     protected LayerTree layerTree;
     protected JTextField nameField;
@@ -140,7 +135,7 @@ public class WMSPanel extends AbstractFeaturePanel implements TreeModelListener,
         if (layerNode.isSelected()) {
             if (layerNode.getLayer() == null)
                 try {
-                    this.createLayer(layerNode);
+                    WMSPanel.createLayer(layerNode);
                 }
                 catch (Exception e) {
                     String msg = "Error creating WMS layer " + layerNode.toString();
@@ -178,7 +173,7 @@ public class WMSPanel extends AbstractFeaturePanel implements TreeModelListener,
         this.layerTree.repaint();
     }
 
-    protected void createLayer(LayerNode layerNode) {
+    protected static void createLayer(LayerNode layerNode) {
         if (layerNode == null) {
             String msg = "LayerNode is null";
             Util.getLogger().severe(msg);
@@ -335,7 +330,7 @@ public class WMSPanel extends AbstractFeaturePanel implements TreeModelListener,
         return this.controller.getLayerManager().getNode(path);
     }
 
-    public void addItemToComboBox(JComboBox cmb, Object item) {
+    public static void addItemToComboBox(JComboBox cmb, Object item) {
         if (cmb == null || item == null)
             return;
 
@@ -361,7 +356,7 @@ public class WMSPanel extends AbstractFeaturePanel implements TreeModelListener,
      * @param groupNode the display group
      * @param model     the layer tree model
      */
-    protected void addLayer(WMSCapabilities caps, WMSLayerCapabilities layerCaps, LayerTreeGroupNode groupNode,
+    protected static void addLayer(WMSCapabilities caps, WMSLayerCapabilities layerCaps, LayerTreeGroupNode groupNode,
         LayerTreeModel model) {
         java.util.List<WMSLayerCapabilities> subLayers = layerCaps.getLayers();
         if (subLayers != null && !subLayers.isEmpty()) // it's a grouping layer

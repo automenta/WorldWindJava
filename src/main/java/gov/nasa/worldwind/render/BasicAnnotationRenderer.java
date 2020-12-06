@@ -268,7 +268,7 @@ public class BasicAnnotationRenderer implements AnnotationRenderer {
     }
 
     protected static void beginDrawAnnotations(DrawContext dc, OGLStackHandler stackHandler) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         int attributeMask = GL2.GL_COLOR_BUFFER_BIT // for alpha test func and ref, blend func
             | GL2.GL_CURRENT_BIT // for current color
@@ -312,7 +312,7 @@ public class BasicAnnotationRenderer implements AnnotationRenderer {
     }
 
     protected static void endDrawAnnotations(DrawContext dc, OGLStackHandler stackHandler) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         if (dc.isPickingMode()) {
             PickSupport.endPicking(dc);

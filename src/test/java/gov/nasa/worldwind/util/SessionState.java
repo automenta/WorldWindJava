@@ -197,11 +197,11 @@ public class SessionState {
             LayerList layers = worldWindow.model().getLayers();
 
             for (String filename : filenames) {
-                Layer layer = this.restoreLayerState(new File(stateFile, filename));
+                Layer layer = SessionState.restoreLayerState(new File(stateFile, filename));
                 if (layer == null)
                     continue;
 
-                Layer existingLayer = this.findLayer(layers, layer.getName());
+                Layer existingLayer = SessionState.findLayer(layers, layer.getName());
                 if (existingLayer != null)
                     layers.remove(existingLayer);
 
@@ -220,7 +220,7 @@ public class SessionState {
     protected void saveLayerState(Layer layer, File stateFile) {
         try {
             // There's nothing to do if the Layer cannot be restored.
-            if (!this.isLayerRestorable(layer))
+            if (!SessionState.isLayerRestorable(layer))
                 return;
 
             // There's nothing to do if the Layer does not provide restorable state. A null return value from
@@ -238,7 +238,7 @@ public class SessionState {
         }
     }
 
-    protected Layer restoreLayerState(File stateFile) {
+    protected static Layer restoreLayerState(File stateFile) {
         try {
             // Read the Layer's restorable state XML from the layer state path determined by this SessionState's session
             // key and the layer state sub-path.
@@ -269,7 +269,7 @@ public class SessionState {
         }
     }
 
-    protected boolean isLayerRestorable(Layer layer) {
+    protected static boolean isLayerRestorable(Layer layer) {
         try {
             return true;
         }
@@ -281,7 +281,7 @@ public class SessionState {
         return false;
     }
 
-    protected Layer findLayer(Iterable<Layer> layers, String layerName) {
+    protected static Layer findLayer(Iterable<Layer> layers, String layerName) {
         if (layerName == null)
             return null;
 

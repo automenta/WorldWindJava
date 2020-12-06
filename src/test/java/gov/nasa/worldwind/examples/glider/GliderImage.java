@@ -109,29 +109,6 @@ public class GliderImage extends AVListImpl {
             this.corners.add(c);
         }
     }
-//
-//    /**
-//     * Copy constructor. A shallow copy is performed.
-//     *
-//     * @param image the image to copy from.
-//     *
-//     * @throws IllegalArgumentException if <code>image</code> is null.
-//     */
-//    public GliderImage(GliderImage image)
-//    {
-//        if (image == null)
-//        {
-//            String message = Logging.getMessage("nullValue.ImageIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//
-//        this.name = image.getName();
-//        this.imageSource = image.getImageSource();
-//        this.sector = image.getSector();
-//        this.altitude = image.getAltitude();
-//        this.corners = image.corners;
-//    }
 
     /**
      * Reprojects an image into an aligned image, one with edges of constant latitude and longitude.
@@ -311,8 +288,6 @@ public class GliderImage extends AVListImpl {
             return false;
         if (!Objects.equals(corners, that.corners))
             return false;
-//        if (imageSource != null ? !imageSource.equals(that.imageSource) : that.imageSource != null)
-//            return false;
         if (!Objects.equals(name, that.name))
             return false;
         if (!Objects.equals(sector, that.sector))

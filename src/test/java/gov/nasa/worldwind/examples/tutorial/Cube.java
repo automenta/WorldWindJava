@@ -147,7 +147,7 @@ public class Cube extends ApplicationTemplate implements Renderable {
     protected void drawOrderedRenderable(DrawContext dc, PickSupport pickCandidates) {
         this.beginDrawing(dc);
         try {
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
             if (dc.isPickingMode()) {
                 Color pickColor = dc.getUniquePickColor();
                 pickCandidates.addPickableObject(pickColor.getRGB(), this, this.position);
@@ -156,10 +156,10 @@ public class Cube extends ApplicationTemplate implements Renderable {
 
             // Render a unit cube and apply a scaling factor to scale the cube to the appropriate size.
             gl.glScaled(this.size, this.size, this.size);
-            this.drawUnitCube(dc);
+            Cube.drawUnitCube(dc);
         }
         finally {
-            this.endDrawing(dc);
+            Cube.endDrawing(dc);
         }
     }
 
@@ -170,7 +170,7 @@ public class Cube extends ApplicationTemplate implements Renderable {
      * @param dc Active draw context.
      */
     protected void beginDrawing(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         int attrMask = GL2.GL_CURRENT_BIT | GL2.GL_COLOR_BUFFER_BIT;
 
@@ -204,8 +204,8 @@ public class Cube extends ApplicationTemplate implements Renderable {
      *
      * @param dc Active draw context.
      */
-    protected void endDrawing(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+    protected static void endDrawing(DrawContext dc) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         if (!dc.isPickingMode())
             dc.endStandardLighting();
@@ -218,7 +218,7 @@ public class Cube extends ApplicationTemplate implements Renderable {
      *
      * @param dc Current draw context.
      */
-    protected void drawUnitCube(DrawContext dc) {
+    protected static void drawUnitCube(DrawContext dc) {
         // Vertices of a unit cube, centered on the origin.
         float[][] v = {{-0.5f, 0.5f, -0.5f}, {-0.5f, 0.5f, 0.5f}, {0.5f, 0.5f, 0.5f}, {0.5f, 0.5f, -0.5f},
             {-0.5f, -0.5f, 0.5f}, {0.5f, -0.5f, 0.5f}, {0.5f, -0.5f, -0.5f}, {-0.5f, -0.5f, -0.5f}};
@@ -231,7 +231,7 @@ public class Cube extends ApplicationTemplate implements Renderable {
 
         // Note: draw the cube in OpenGL immediate mode for simplicity. Real applications should use vertex arrays
         // or vertex buffer objects to achieve better performance.
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glBegin(GL2.GL_QUADS);
         try {
             for (int i = 0; i < faces.length; i++) {

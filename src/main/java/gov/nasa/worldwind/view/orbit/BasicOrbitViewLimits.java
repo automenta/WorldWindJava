@@ -265,17 +265,6 @@ public class BasicOrbitViewLimits extends BasicViewPropertyLimits implements Orb
      */
     @Override
     public Position limitCenterPosition(View view, Position position) {
-//        if (view == null) {
-//            String message = Logging.getMessage("nullValue.ViewIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//
-//        if (position == null) {
-//            String message = Logging.getMessage("nullValue.PositionIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         Sector sector = this.centerLocationLimits;
         double lat = Angle.clamp(position.latitude, sector.latMin, sector.latMax);

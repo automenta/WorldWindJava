@@ -233,7 +233,7 @@ public class Ellipsoid extends RigidShape {
 
         // add extra vertices so that texture will not have a seam
         int seamVerticesIndex = itb.getVertexCount();
-        gb.fixSphereSeam(itb, (float) Math.PI);
+        GeometryBuilder.fixSphereSeam(itb, (float) Math.PI);
 
         FloatBuffer normalBuffer = Buffers.newDirectFloatBuffer(3 * itb.getVertexCount());
         gb.makeEllipsoidNormals(itb, normalBuffer);
@@ -274,7 +274,7 @@ public class Ellipsoid extends RigidShape {
             throw new IllegalArgumentException(message);
         }
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         int size, glType, stride;
         Buffer vertexBuffer, normalBuffer;

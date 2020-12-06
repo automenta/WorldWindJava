@@ -393,11 +393,6 @@ public class Orbit extends AbstractAirspace {
     //**************************************************************//
 
     protected Matrix computeEllipsoidalTransform(Globe globe, double verticalExaggeration) {
-//        if (globe == null) {
-//            String message = Logging.getMessage("nullValue.GlobeIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         double[] altitudes = this.getAltitudes(verticalExaggeration);
         double radius = this.width / 2.0;
@@ -422,21 +417,6 @@ public class Orbit extends AbstractAirspace {
     }
 
     protected void doRenderGeometry(DrawContext dc, String drawStyle) {
-//        if (dc == null) {
-//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//        if (dc.getGL() == null) {
-//            String message = Logging.getMessage("nullValue.DrawingContextGLIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//        if (dc.getGlobe() == null) {
-//            String message = Logging.getMessage("nullValue.DrawingContextGlobeIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         LatLon[] locations = this.getAdjustedLocations(dc.getGlobe());
         double[] altitudes = this.getAltitudes(dc.getVerticalExaggeration());
@@ -475,7 +455,7 @@ public class Orbit extends AbstractAirspace {
         this.setExpiryTime(this.nextExpiryTime(dc, terrainConformant));
         this.clearElevationMap();
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         OGLStackHandler ogsh = new OGLStackHandler();
         try {
             dc.getView().pushReferenceCenter(dc, referenceCenter);

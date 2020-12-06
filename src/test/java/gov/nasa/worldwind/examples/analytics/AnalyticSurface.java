@@ -736,7 +736,7 @@ public class AnalyticSurface implements Renderable, PreRenderable {
             this.doDrawOrderedRenderable(dc);
         }
         finally {
-            this.endDrawing(dc);
+            AnalyticSurface.endDrawing(dc);
         }
     }
 
@@ -760,7 +760,7 @@ public class AnalyticSurface implements Renderable, PreRenderable {
     }
 
     protected void bind(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
         gl.glVertexPointer(3, GL.GL_FLOAT, 0, this.surfaceRenderInfo.cartesianVertexBuffer);
@@ -775,7 +775,7 @@ public class AnalyticSurface implements Renderable, PreRenderable {
     }
 
     protected void drawInterior(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         if (!dc.isPickingMode()) {
             // Bind the shapes vertex colors as the diffuse material parameter.
@@ -793,7 +793,7 @@ public class AnalyticSurface implements Renderable, PreRenderable {
     }
 
     protected void drawOutline(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         if (!dc.isPickingMode()) {
             gl.glEnable(GL.GL_LINE_SMOOTH);
@@ -820,7 +820,7 @@ public class AnalyticSurface implements Renderable, PreRenderable {
     }
 
     protected void beginDrawing(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glPushAttrib(
             GL2.GL_COLOR_BUFFER_BIT // for alpha test func and ref, blend func
@@ -869,8 +869,8 @@ public class AnalyticSurface implements Renderable, PreRenderable {
         dc.getView().pushReferenceCenter(dc, this.referencePoint);
     }
 
-    protected void endDrawing(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+    protected static void endDrawing(DrawContext dc) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         dc.getView().popReferenceCenter(dc);
         gl.glPopAttrib();
@@ -942,7 +942,7 @@ public class AnalyticSurface implements Renderable, PreRenderable {
         }
 
         this.updateSurfacePoints(dc, this.surfaceRenderInfo);
-        this.updateSurfaceNormals(this.surfaceRenderInfo);
+        AnalyticSurface.updateSurfaceNormals(this.surfaceRenderInfo);
     }
 
     protected void updateSurfacePoints(DrawContext dc, RenderInfo outRenderInfo) {
@@ -1019,7 +1019,7 @@ public class AnalyticSurface implements Renderable, PreRenderable {
         }
     }
 
-    protected void updateSurfaceNormals(RenderInfo outRenderInfo) {
+    protected static void updateSurfaceNormals(RenderInfo outRenderInfo) {
         WWMath.computeNormalsForIndexedTriangleStrip(outRenderInfo.interiorIndexBuffer,
             outRenderInfo.cartesianVertexBuffer, outRenderInfo.cartesianNormalBuffer);
     }
@@ -1154,13 +1154,13 @@ public class AnalyticSurface implements Renderable, PreRenderable {
         }
 
         public void drawInterior(DrawContext dc) {
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
             gl.glDrawElements(GL.GL_TRIANGLE_STRIP, this.interiorIndexBuffer.remaining(), GL.GL_UNSIGNED_INT,
                 this.interiorIndexBuffer);
         }
 
         public void drawOutline(DrawContext dc) {
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
             gl.glDrawElements(GL.GL_LINE_LOOP, this.outlineIndexBuffer.remaining(), GL.GL_UNSIGNED_INT,
                 this.outlineIndexBuffer);
         }
@@ -1189,17 +1189,17 @@ public class AnalyticSurface implements Renderable, PreRenderable {
         }
 
         protected void drawGeographic(DrawContext dc, SurfaceTileDrawContext sdc) {
-            this.beginDrawing(dc);
+            AnalyticSurfaceObject.beginDrawing(dc);
             try {
                 this.doDrawGeographic(dc, sdc);
             }
             finally {
-                this.endDrawing(dc);
+                AnalyticSurfaceObject.endDrawing(dc);
             }
         }
 
-        protected void beginDrawing(DrawContext dc) {
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        protected static void beginDrawing(DrawContext dc) {
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
             gl.glPushAttrib(
                 GL2.GL_COLOR_BUFFER_BIT       // for alpha func and ref, blend func
@@ -1219,8 +1219,8 @@ public class AnalyticSurface implements Renderable, PreRenderable {
             }
         }
 
-        protected void endDrawing(DrawContext dc) {
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        protected static void endDrawing(DrawContext dc) {
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
             gl.glPopMatrix();
             gl.glPopAttrib();
@@ -1231,7 +1231,7 @@ public class AnalyticSurface implements Renderable, PreRenderable {
         }
 
         protected void doDrawGeographic(DrawContext dc, SurfaceTileDrawContext sdc) {
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
             Matrix modelview = sdc.getModelviewMatrix(this.analyticSurface.referencePos);
             gl.glMultMatrixd(modelview.toArray(new double[16], 0, false), 0);
@@ -1253,7 +1253,7 @@ public class AnalyticSurface implements Renderable, PreRenderable {
         }
 
         protected void drawOutline(DrawContext dc) {
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
             gl.glLineWidth((float) this.analyticSurface.surfaceAttributes.getOutlineWidth());
             this.analyticSurface.surfaceRenderInfo.drawOutline(dc);
@@ -1267,7 +1267,7 @@ public class AnalyticSurface implements Renderable, PreRenderable {
 
         @Override
         protected void bind(DrawContext dc) {
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
             gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
             gl.glVertexPointer(3, GL.GL_FLOAT, 0, this.analyticSurface.surfaceRenderInfo.geographicVertexBuffer);
@@ -1279,7 +1279,7 @@ public class AnalyticSurface implements Renderable, PreRenderable {
         }
 
         protected void drawOutline(DrawContext dc) {
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
             if (!dc.isPickingMode()) {
                 // Set the outline color.
@@ -1311,7 +1311,7 @@ public class AnalyticSurface implements Renderable, PreRenderable {
 
         @Override
         protected void bind(DrawContext dc) {
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
             gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
             gl.glVertexPointer(3, GL.GL_FLOAT, 0, this.analyticSurface.surfaceRenderInfo.geographicVertexBuffer);
@@ -1323,7 +1323,7 @@ public class AnalyticSurface implements Renderable, PreRenderable {
         }
 
         protected void drawOutline(DrawContext dc) {
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
             if (!dc.isPickingMode()) {
                 // Convert the floating point opacity from the range [0, 1] to the unsigned byte range [0, 255].

@@ -148,8 +148,8 @@ public class ActiveLayersPanel extends AbstractFeaturePanel implements ActiveLay
 
         // scroll list to changed layer
         if (event.getOldValue() instanceof LayerList && event.getNewValue() instanceof LayerList) {
-            java.util.List<Layer> delta = LayerList.getLayersAdded((LayerList) event.getOldValue(),
-                (LayerList) event.getNewValue());
+            java.util.List<Layer> delta = LayerList.getLayersAdded((Collection<Layer>) event.getOldValue(),
+                (Iterable<Layer>) event.getNewValue());
             if (!delta.isEmpty())
                 this.jlist.ensureIndexIsVisible(((List<Layer>) event.getNewValue()).indexOf(delta.get(delta.size() - 1)));
         }

@@ -134,7 +134,7 @@ public class SlideShowAnnotation extends DialogAnnotation {
 
         this.setupTitle(this.titleLabel);
         this.setupPositionLabel(this.positionLabel);
-        this.setupImage(this.imageAnnotation);
+        SlideShowAnnotation.setupImage(this.imageAnnotation);
 
         this.playButton.setActionCommand(AVKey.PLAY);
         this.previousButton.setActionCommand(AVKey.PREVIOUS);
@@ -209,7 +209,7 @@ public class SlideShowAnnotation extends DialogAnnotation {
         attribs.setFont(Font.decode("Arial-BOLD-12"));
     }
 
-    protected void setupImage(ImageAnnotation annotation) {
+    protected static void setupImage(ImageAnnotation annotation) {
         AnnotationAttributes attribs = annotation.getAttributes();
         attribs.setBorderWidth(2);
         attribs.setBorderColor(new Color(60, 60, 60));

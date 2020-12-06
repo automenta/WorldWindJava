@@ -129,7 +129,7 @@ public class InfoPanelController extends AbstractFeature implements SelectListen
      * @return the required panel size.
      */
     protected Dimension computePanelSize(String annoText) {
-        Dimension lengths = this.computeLengths(annoText);
+        Dimension lengths = InfoPanelController.computeLengths(annoText);
 
         // The numbers used below are the average width of a character and average height of a line in Arial-Plain-12.
         int width = 7 * Math.min(lengths.width, this.maxLineLength);
@@ -144,7 +144,7 @@ public class InfoPanelController extends AbstractFeature implements SelectListen
      * @param annoText the annotation text.
      * @return the length of the longest line (width) and number of lines (height).
      */
-    protected Dimension computeLengths(String annoText) {
+    protected static Dimension computeLengths(String annoText) {
         String[] lines = Util.splitLines(annoText);
         int lineLength = 0;
         for (String line : lines) {

@@ -109,7 +109,7 @@ public class TrackRenderer implements Disposable {
         if (!this.shape.isInitialized)
             this.shape.initialize(dc);
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         Vec4 lastPointDrawn = null;
 
         TrackRenderer.begin(dc);
@@ -238,7 +238,7 @@ public class TrackRenderer implements Disposable {
     }
 
     protected static void begin(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         Vec4 cameraPosition = dc.getView().getEyePoint();
 
         if (dc.isPickingMode()) {
@@ -276,7 +276,7 @@ public class TrackRenderer implements Disposable {
     }
 
     protected static void end(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glMatrixMode(GL2.GL_MODELVIEW);
         gl.glPopMatrix();
@@ -316,7 +316,7 @@ public class TrackRenderer implements Disposable {
         abstract protected void doRender(DrawContext dc, Vec4 point, double radius);
 
         protected void initialize(DrawContext dc) {
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
             GLU glu = dc.getGLU();
 
             this.glListId = gl.glGenLists(1);
@@ -360,7 +360,7 @@ public class TrackRenderer implements Disposable {
             int slices = 36;
             int stacks = 18;
 
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
             GLU glu = dc.getGLU();
 
             gl.glNewList(this.glListId, GL2.GL_COMPILE);
@@ -371,7 +371,7 @@ public class TrackRenderer implements Disposable {
         }
 
         protected void doRender(DrawContext dc, Vec4 point, double radius) {
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
             gl.glScaled(radius, radius, radius);
             gl.glCallList(this.glListId);
         }
@@ -386,7 +386,7 @@ public class TrackRenderer implements Disposable {
             int stacks = 30;
             int loops = 2;
 
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
             GLU glu = dc.getGLU();
 
             gl.glNewList(this.glListId, GL2.GL_COMPILE);
@@ -401,7 +401,7 @@ public class TrackRenderer implements Disposable {
         protected void doRender(DrawContext dc, Vec4 point, double size) {
             PolarPoint p = PolarPoint.fromCartesian(point);
 
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
             gl.glScaled(size, size, size);
             gl.glRotated(p.getLongitude().getDegrees(), 0, 1, 0);
@@ -419,7 +419,7 @@ public class TrackRenderer implements Disposable {
             int stacks = 1;
             int loops = 1;
 
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
             GLU glu = dc.getGLU();
 
             gl.glNewList(this.glListId, GL2.GL_COMPILE);
@@ -436,7 +436,7 @@ public class TrackRenderer implements Disposable {
         protected void doRender(DrawContext dc, Vec4 point, double size) {
             PolarPoint p = PolarPoint.fromCartesian(point);
 
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
             gl.glScaled(size, size, size);
             gl.glRotated(p.getLongitude().getDegrees(), 0, 1, 0);

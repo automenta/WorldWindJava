@@ -131,14 +131,6 @@ public class TerrainProfilePanel extends JPanel implements Restorable {
                 this.profileLengthSpinner.setEnabled(false);
             }
         } //else if (follow == TerrainProfileLayer.FOLLOW_EYE)
-        //{
-        //    if (!this.showEyeCheckBox.isEnabled())
-        //        this.showEyeCheckBox.setEnabled(true);
-        //    if (!this.profileWidthSlider.isEnabled())
-        //        this.profileWidthSlider.setEnabled(true);
-        //    if (!this.profileLengthSlider.isEnabled())
-        //        this.profileLengthSlider.setEnabled(true);
-        //}
         else if (follow == TerrainProfileLayer.FOLLOW_OBJECT) {
             if (!this.showEyeCheckBox.isEnabled()) {
                 this.showEyeCheckBox.setEnabled(true);

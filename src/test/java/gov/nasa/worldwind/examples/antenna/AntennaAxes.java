@@ -262,7 +262,7 @@ public class AntennaAxes extends AbstractShape {
 
     public void drawAxes(DrawContext dc) {
         ShapeData shapeData = this.getCurrent();
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);
 
@@ -288,19 +288,19 @@ public class AntennaAxes extends AbstractShape {
             gl.glNormalPointer(GL.GL_FLOAT, 0, shapeData.normals.rewind());
 
         // Draw the "Z axis
-        this.drawCylinder(dc, shapeData);
+        AntennaAxes.drawCylinder(dc, shapeData);
 
         // Draw the X axis
         gl.glMatrixMode(GL2.GL_MODELVIEW);
         gl.glPushMatrix();
         gl.glRotated(90.0d, 0, 0, -1);
-        this.drawCylinder(dc, shapeData);
+        AntennaAxes.drawCylinder(dc, shapeData);
         gl.glPopMatrix();
 
         // Draw the "Y axis
         gl.glPushMatrix();
         gl.glRotated(90.0d, +1, 0, 0);
-        this.drawCylinder(dc, shapeData);
+        AntennaAxes.drawCylinder(dc, shapeData);
         gl.glPopMatrix();
 
         // Draw the axis cones.
@@ -310,18 +310,18 @@ public class AntennaAxes extends AbstractShape {
             gl.glNormalPointer(GL.GL_FLOAT, 0, shapeData.coneNormals.rewind());
 
         // Draw the "Z axis cone
-        this.drawCone(dc, shapeData);
+        AntennaAxes.drawCone(dc, shapeData);
 
         // Draw the Y axis cone
         gl.glPushMatrix();
         gl.glRotated(90.0d, 0, 0, -1);
-        this.drawCone(dc, shapeData);
+        AntennaAxes.drawCone(dc, shapeData);
         gl.glPopMatrix();
 
         // Draw the "X" axis cone
         gl.glPushMatrix();
         gl.glRotated(90.0d, +1, 0, 0);
-        this.drawCone(dc, shapeData);
+        AntennaAxes.drawCone(dc, shapeData);
         gl.glPopMatrix();
 
         gl.glPopMatrix();
@@ -330,22 +330,22 @@ public class AntennaAxes extends AbstractShape {
             this.drawLabels(dc);
     }
 
-    protected void drawCylinder(DrawContext dc, ShapeData shapeData) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+    protected static void drawCylinder(DrawContext dc, ShapeData shapeData) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         for (IntBuffer iBuffer : shapeData.indices) {
             gl.glDrawElements(GL.GL_TRIANGLE_STRIP, iBuffer.limit(), GL.GL_UNSIGNED_INT, iBuffer.rewind());
         }
     }
 
-    protected void drawCone(DrawContext dc, ShapeData shapeData) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+    protected static void drawCone(DrawContext dc, ShapeData shapeData) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         IntBuffer iBuffer = shapeData.coneIndices;
         gl.glDrawElements(GL.GL_TRIANGLE_FAN, iBuffer.limit(), GL.GL_UNSIGNED_INT, iBuffer.rewind());
     }
 
     protected void drawLabels(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         // Compute the positioning transform.
         Matrix lat = Matrix.fromAxisAngle(Angle.POS90.sub(this.position.getLatitude()), Vec4.UNIT_X);
@@ -404,9 +404,9 @@ public class AntennaAxes extends AbstractShape {
             textRenderer.begin3DRendering();
 
             try {
-                this.drawLabel(textRenderer, this.getYAxisLabel(), screenPointX, textColor, backgroundColor);
-                this.drawLabel(textRenderer, this.getZAxisLabel(), screenPointY, textColor, backgroundColor);
-                this.drawLabel(textRenderer, this.getXAxisLabel(), screenPointZ, textColor, backgroundColor);
+                AntennaAxes.drawLabel(textRenderer, this.getYAxisLabel(), screenPointX, textColor, backgroundColor);
+                AntennaAxes.drawLabel(textRenderer, this.getZAxisLabel(), screenPointY, textColor, backgroundColor);
+                AntennaAxes.drawLabel(textRenderer, this.getXAxisLabel(), screenPointZ, textColor, backgroundColor);
             }
             finally {
                 textRenderer.end3DRendering();
@@ -418,7 +418,8 @@ public class AntennaAxes extends AbstractShape {
         }
     }
 
-    protected void drawLabel(TextRenderer textRenderer, String text, Vec4 screenPoint, Color textColor, Color bgColor) {
+    protected static void drawLabel(TextRenderer textRenderer, String text, Vec4 screenPoint, Color textColor,
+        Color bgColor) {
         textRenderer.setColor(bgColor);
         textRenderer.draw3D(text, (int) screenPoint.x + 1, (int) screenPoint.y - 1, 0, 1);
         textRenderer.setColor(textColor);

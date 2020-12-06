@@ -65,7 +65,7 @@ public class SurfaceIcons extends SurfaceIcon {
         if (this.locations == null)
             return;
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glMatrixMode(GL2.GL_MODELVIEW);
         double drawScale = 1;
         TextureCoords textureCoords = new TextureCoords(0, 0, 1, 1);
@@ -93,7 +93,7 @@ public class SurfaceIcons extends SurfaceIcon {
         Collection<LatLon> drawList = new ArrayList<>();
         double safeDistanceDegreesSquared = Math.pow(this.computeSafeRadius(dc, sdc).degrees, 2);
         for (LatLon location : this.getLocations()) {
-            if (this.computeLocationDistanceDegreesSquared(sdc.getSector(), location) <= safeDistanceDegreesSquared)
+            if (computeLocationDistanceDegreesSquared(sdc.getSector(), location) <= safeDistanceDegreesSquared)
                 drawList.add(location);
         }
         return drawList;

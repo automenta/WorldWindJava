@@ -794,7 +794,7 @@ public abstract class AbstractAirspace extends WWObjectImpl
 
     protected void doDrawOrderedRenderable(DrawContext dc, PickSupport pickCandidates) {
         if (dc.isPickingMode()) {
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
             Color pickColor = dc.getUniquePickColor();
             pickCandidates.addPickableObject(this.createPickedObject(pickColor.getRGB()));
             gl.glColor3ub((byte) pickColor.getRed(), (byte) pickColor.getGreen(), (byte) pickColor.getBlue());
@@ -951,7 +951,7 @@ public abstract class AbstractAirspace extends WWObjectImpl
     protected abstract void doRenderGeometry(DrawContext dc, String drawStyle);
 
     protected void beginRendering(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
 
@@ -978,7 +978,7 @@ public abstract class AbstractAirspace extends WWObjectImpl
     }
 
     protected void endRendering(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glDisableClientState(GL2.GL_VERTEX_ARRAY);
 
@@ -996,7 +996,7 @@ public abstract class AbstractAirspace extends WWObjectImpl
     }
 
     protected void drawInterior(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         AirspaceAttributes attrs = this.getActiveAttributes();
 
         if (!dc.isPickingMode()) {
@@ -1026,7 +1026,7 @@ public abstract class AbstractAirspace extends WWObjectImpl
     }
 
     protected void drawOutline(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         AirspaceAttributes attrs = this.getActiveAttributes();
 
         if (!dc.isPickingMode()) {
@@ -1063,7 +1063,7 @@ public abstract class AbstractAirspace extends WWObjectImpl
     }
 
     protected void drawGeometry(DrawContext dc, Geometry indices, Geometry vertices) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         AirspaceAttributes attrs = this.getActiveAttributes();
 
         int size = vertices.getSize(Geometry.VERTEX);

@@ -127,9 +127,6 @@ public class HighResolutionTerrainTest
         final HashMap<Position, Intersection[]> previousIntersections = new HashMap<>();
 
         Globe globe = new Earth();
-//            CompoundElevationModel cem = (CompoundElevationModel) globe.getElevationModel();
-//            cem.addElevationModel(EllipsoidalGlobe.makeElevationModel(
-//                "", "config/Earth/EarthMergedElevationModel.xml"));
 
         for (int i = 0; i < 5; i++)
         {

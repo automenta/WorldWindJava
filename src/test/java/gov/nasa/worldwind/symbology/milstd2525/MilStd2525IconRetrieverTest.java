@@ -156,22 +156,6 @@ public class MilStd2525IconRetrieverTest
         }
     }
 
-//        @Test
-//        public void testInvalidModifierCode()
-//        {
-//            IconRetriever symGen = new MilStd2525IconRetriever(LOCAL_SYMBOLS_ZIP);
-//            symGen.createIcon("SUAP------ZZ---", null);
-//            assertNull(img);
-//        }
-//
-//        @Test
-//        public void testInvalidCountryCode()
-//        {
-//            IconRetriever symGen = new MilStd2525IconRetriever(LOCAL_SYMBOLS_ZIP);
-//            symGen.createIcon("SUAPC-------ZZ-", null);
-//            assertNull(img);
-//        }
-
     @Test
     public void testInvalidOrderOfBattle()
     {
@@ -673,29 +657,6 @@ public class MilStd2525IconRetrieverTest
             assertNotNull("Icon " + "ehip" + s.toLowerCase() + "----- not found.", img);
         }
     }
-
-//        @Test
-//        public void testEmergencyManagement_NaturalEventFunctionIDRetrieval()
-//        {
-//            MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(LOCAL_SYMBOLS_ZIP);
-//            AVList params = new AVListImpl();
-//            BufferedImage img;
-//
-//            for (String s : EmergencyManagementNaturalEventsFunctionIDs)
-//            {
-//                img = symGen.createIcon("EUNP" + s + "-----", params);
-//                assertNotNull("Icon " + "eunp" + s.toLowerCase() + "----- not found.", img);
-//
-//                img = symGen.createIcon("EFNP" + s + "-----", params);
-//                assertNotNull("Icon " + "efnp" + s.toLowerCase() + "----- not found.", img);
-//
-//                img = symGen.createIcon("ENNP" + s + "-----", params);
-//                assertNotNull("Icon " + "ennp" + s.toLowerCase() + "----- not found.", img);
-//
-//                img = symGen.createIcon("EHNP" + s + "-----", params);
-//                assertNotNull("Icon " + "ehnp" + s.toLowerCase() + "----- not found.", img);
-//            }
-//        }
 
     @Test
     public void testEmergencyManagement_OperationFunctionIDRetrieval()
@@ -1865,26 +1826,6 @@ public class MilStd2525IconRetrieverTest
         "GB----",
         "H-----",
         "HA----"};
-
-//    private static final String[] EmergencyManagementNaturalEventsFunctionIDs = {//"------",
-//        //"A-----",     // icon not used
-//        "AA----",
-//        "AB----",
-//        "AC----",
-//        "AD----",
-//        "AE----",
-//        "AG----",
-//        //"B-----",     // icon not used
-//        "BB----",
-//        "BC----",
-//        "BF----",
-//        "BM----",
-//        //"C-----",     // icon not used
-//        "CA----",
-//        "CB----",
-//        "CC----",
-//        "CD----",
-//        "CE----"};
 
     private static final String[] EmergencyManagementOperationsFunctionIDs = {//"-----------",
         "A-----H----",

@@ -442,7 +442,7 @@ public class Wedge extends RigidShape {
             throw new IllegalArgumentException(message);
         }
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         int size, glType, stride;
         Buffer vertexBuffer, normalBuffer;

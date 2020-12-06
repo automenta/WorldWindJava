@@ -277,11 +277,6 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
          * @throws IllegalArgumentException if <code>that</code> is null
          */
         public int compareTo(RequestTask that) {
-//            if (that == null) {
-//                String msg = Logging.getMessage("nullValue.RequestTaskIsNull");
-//                Logging.logger().severe(msg);
-//                throw new IllegalArgumentException(msg);
-//            }
             return Double.compare(this.tile.getPriority(), that.tile.getPriority());
         }
 

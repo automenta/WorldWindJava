@@ -67,15 +67,5 @@ public class IconController extends AbstractFeature implements SelectListener, D
     }
 
     protected void showContextMenu(SelectEvent event) {
-//        if (!(event.getTopObject() instanceof UserFacingIcon))
-//            return;
-//
-//        UserFacingIcon icon = (UserFacingIcon) event.getTopObject();
-//        ContextMenuInfo menuInfo = (ContextMenuInfo) icon.getValue(Constants.CONTEXT_MENU_INFO);
-//        if (menuInfo == null)
-//            return;
-//
-//        ContextMenu menu = new ContextMenu(this.controller, menuInfo);
-//        menu.show(event.getMouseEvent());
     }
 }

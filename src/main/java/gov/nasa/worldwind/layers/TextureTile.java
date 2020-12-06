@@ -415,7 +415,7 @@ public class TextureTile extends Tile implements SurfaceTile {
             throw new IllegalStateException(message);
         }
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         Texture t;
         if (this.getTextureData() != null) // Reinitialize if new texture data
@@ -481,7 +481,7 @@ public class TextureTile extends Tile implements SurfaceTile {
         double sShift = oneOverTwoToTheN * (col % twoToTheN);
         double tShift = oneOverTwoToTheN * (row % twoToTheN);
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glTranslated(sShift, tShift, 0);
         gl.glScaled(oneOverTwoToTheN, oneOverTwoToTheN, 1);
     }

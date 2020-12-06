@@ -243,11 +243,6 @@ public abstract class AbstractDataRaster extends AVListImpl implements DataRaste
         }
 
         Sector roiSector = (Sector) params.get(AVKey.SECTOR);
-        if (null == roiSector || Sector.EMPTY_SECTOR.equals(roiSector)) {
-            String message = Logging.getMessage("nullValue.SectorIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         if (Sector.EMPTY_SECTOR.equals(roiSector)) {
             String message = Logging.getMessage("nullValue.SectorGeometryIsNull");

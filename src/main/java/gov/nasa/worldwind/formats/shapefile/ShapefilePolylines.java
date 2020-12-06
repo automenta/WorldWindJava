@@ -182,7 +182,7 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
         if (recordCount == 0) // Shapefile is empty or contains only null records.
             return;
 
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         try {
             // pick list cleared in preRender
@@ -499,7 +499,7 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
     }
 
     protected static void beginDrawing(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glDisable(GL.GL_DEPTH_TEST);
         gl.glEnableClientState(GL2.GL_VERTEX_ARRAY); // all drawing uses vertex arrays
         gl.glMatrixMode(GL2.GL_MODELVIEW);
@@ -513,7 +513,7 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
     }
 
     protected static void endDrawing(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glEnable(GL.GL_DEPTH_TEST);
         gl.glDisableClientState(GL2.GL_VERTEX_ARRAY);
         gl.glColor4f(1, 1, 1, 1);
@@ -533,7 +533,7 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
     }
 
     protected void drawTile(DrawContext dc, Tile tile) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         int[] vboId = null;
         boolean useVbo = dc.getGLRuntimeCapabilities().isUseVertexBufferObject();
@@ -565,7 +565,7 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
     }
 
     protected void drawTileAttributeGroup(DrawContext dc, RecordGroup attributeGroup) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         ShapeAttributes attrs = attributeGroup.attributes;
 
         if (!attrs.isDrawOutline())
@@ -606,7 +606,7 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
     }
 
     protected void drawTileInUniqueColors(DrawContext dc, Tile tile) {
-        GL2 gl = dc.getGL().getGL2();
+        GL2 gl = dc.getGL2();
 
         int pickColorsSize = 3 * (tile.vertices.remaining() / tile.vertexStride); // 1 RGB color for each XY vertex
         if (this.pickColors == null || this.pickColors.capacity() < pickColorsSize) {

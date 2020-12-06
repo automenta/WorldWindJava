@@ -129,7 +129,7 @@ public class SAR2 extends JFrame {
 
         // Preferences
         this.autoSaveTimer = new Timer(0, actionEvent -> onAutoSave());
-        this.initializeUserPreferences();
+        SAR2.initializeUserPreferences();
         this.loadUserPreferences();
         this.onUserPreferencesChanged();
     }
@@ -192,13 +192,13 @@ public class SAR2 extends JFrame {
         return s;
     }
 
-    public String getElevationUnit() {
+    public static String getElevationUnit() {
         return getUserPreferences().getStringValue(SARKey.ELEVATION_UNIT);
     }
 
     public void setElevationUnit(String unit) {
         getUserPreferences().set(SARKey.ELEVATION_UNIT, unit);
-        this.saveUserPreferences();
+        SAR2.saveUserPreferences();
         this.onUserPreferencesChanged();
     }
 
@@ -220,13 +220,13 @@ public class SAR2 extends JFrame {
         this.wwd.redraw();
     }
 
-    public String getAngleFormat() {
+    public static String getAngleFormat() {
         return getUserPreferences().getStringValue(SARKey.ANGLE_FORMAT);
     }
 
     public void setAngleFormat(String format) {
         getUserPreferences().set(SARKey.ANGLE_FORMAT, format);
-        this.saveUserPreferences();
+        SAR2.saveUserPreferences();
         this.onUserPreferencesChanged();
     }
 
@@ -358,7 +358,7 @@ public class SAR2 extends JFrame {
         File file = this.openFileChooser.getCurrentDirectory();
         getUserPreferences().set(SARKey.CURRENT_BROWSE_DIRECTORY, file.getPath());
         this.onUserPreferencesChanged();
-        this.saveUserPreferences();
+        SAR2.saveUserPreferences();
 
         return this.openFileChooser.getSelectedFiles();
     }
@@ -556,7 +556,7 @@ public class SAR2 extends JFrame {
             this.restoreState(state);
     }
 
-    private File getTrackStateFile(File trackFile) {
+    private static File getTrackStateFile(File trackFile) {
         String path = trackFile.getAbsolutePath();
         return new File(path + ".sts");  // SAR Track State
     }
@@ -625,7 +625,7 @@ public class SAR2 extends JFrame {
             track.firePropertyChange(TrackController.BEGIN_TRACK_POINT_ENTRY, null, extensionMode);
     }
 
-    public void showHelp() {
+    public static void showHelp() {
         try {
             BrowserOpener.browse(new URL(ONLINE_HELP_URL));
         }
@@ -650,7 +650,7 @@ public class SAR2 extends JFrame {
         return true;
     }
 
-    private File getAnnotationsPath(String trackFilePath) {
+    private static File getAnnotationsPath(String trackFilePath) {
         return (trackFilePath != null) ? new File(trackFilePath + ".sta") : null;
     }
 
@@ -1126,8 +1126,6 @@ public class SAR2 extends JFrame {
     }
 
     private void updateToolBar(PropertyChangeEvent event) {
-//        if (event != null)
-//            System.out.println("SAR2.updateToolBar for event: " + event.getPropertyName() + ", new value = " + (event.getNewValue() == null ? "" : "'" + event.getNewValue() + "'"));
 
         if (event == null)
             return;
@@ -1219,7 +1217,7 @@ public class SAR2 extends JFrame {
         this.angleFormatChanged(null, getUserPreferences().getStringValue(SARKey.ANGLE_FORMAT));
     }
 
-    protected void initializeUserPreferences() {
+    protected static void initializeUserPreferences() {
         UserPreferenceUtils.getDefaultUserPreferences(getUserPreferences());
     }
 
@@ -1254,7 +1252,7 @@ public class SAR2 extends JFrame {
         UserPreferenceUtils.getUserPreferences(doc.getDocumentElement(), getUserPreferences());
     }
 
-    protected void saveUserPreferences() {
+    protected static void saveUserPreferences() {
         File file = new File(UserPreferenceUtils.getDefaultUserPreferencesPath());
 
         // If the parent file does not exist, then attempt to create it. If creating the parent file fails, then abort

@@ -113,10 +113,6 @@ public class FileStoreDataSet extends AVListImpl {
 
     public String getName() {
         return this.getStringValue(AVKey.DISPLAY_NAME);
-//        // Strip all but the data set's root directory name.
-//        String name = this.cacheRootPath == null ? this.getPath() : this.getPath().replace(
-//            this.cacheRootPath.subSequence(0, this.cacheRootPath.length()), "".subSequence(0, 0));
-//        return name.startsWith("/") ? name.substring(1) : name;
     }
 
     public String getDatasetType() {

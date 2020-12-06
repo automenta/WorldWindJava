@@ -81,8 +81,8 @@ public class ContourBuilderExample extends ApplicationTemplate {
         }
 
         protected void addContourShapes(Iterable<List<Position>> contourList, double value, RenderableLayer layer) {
-            String text = this.textForValue(value);
-            Color color = this.colorForValue(value, 1.0); // color for value at 100% brightness
+            String text = AppFrame.textForValue(value);
+            Color color = AppFrame.colorForValue(value, 1.0); // color for value at 100% brightness
 
             ShapeAttributes attrs = new BasicShapeAttributes();
             attrs.setOutlineMaterial(new Material(color));
@@ -101,7 +101,7 @@ public class ContourBuilderExample extends ApplicationTemplate {
             List<AnalyticSurface.GridPointAttributes> pointAttrs =
                 new ArrayList<>();
             for (double value : this.arrayValues) {
-                Color color = this.colorForValue(value, 0.5); // color for value at 50% brightness
+                Color color = AppFrame.colorForValue(value, 0.5); // color for value at 50% brightness
                 pointAttrs.add(AnalyticSurface.createGridPointAttributes(value, color));
             }
 
@@ -118,11 +118,11 @@ public class ContourBuilderExample extends ApplicationTemplate {
             layer.add(surface);
         }
 
-        protected Color colorForValue(double value, double brightness) {
+        protected static Color colorForValue(double value, double brightness) {
             return Color.getHSBColor((float) value, 1.0f, (float) brightness); // use array value as hue
         }
 
-        protected String textForValue(double value) {
+        protected static String textForValue(double value) {
             return String.format("%.2f", value);
         }
     }

@@ -46,8 +46,6 @@ public class SectorSelection extends ApplicationTemplate {
             // Listen for changes to the sector selector's region. Could also just wait until the user finishes
             // and query the result using selector.getSector().
             this.selector.addPropertyChangeListener(SectorSelector.SECTOR_PROPERTY, evt -> {
-//                    Sector sector = (Sector) evt.getNewValue();
-//                    System.out.println(sector != null ? sector : "no sector");
             });
         }
 

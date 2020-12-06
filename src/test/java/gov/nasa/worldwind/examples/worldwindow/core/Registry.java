@@ -27,7 +27,7 @@ public class Registry {
      * @throws RuntimeException         if the <code>Object</code> could not be created
      * @throws IllegalArgumentException if <code>className</code> is null or zero length
      */
-    public Object createObject(String className) {
+    public static Object createObject(String className) {
         if (className == null || className.isEmpty()) {
             String msg = "Class name is null or zero length";
             Util.getLogger().severe(msg);
@@ -159,7 +159,7 @@ public class Registry {
         return list.toArray();
     }
 
-    protected boolean implementsInterface(Class interfaceClass, Class compareClass) {
+    protected static boolean implementsInterface(Class interfaceClass, Class compareClass) {
         Class<?>[] interfaces = compareClass.getInterfaces();
         for (Class i : interfaces) {
             if (i == interfaceClass)

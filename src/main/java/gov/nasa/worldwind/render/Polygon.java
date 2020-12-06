@@ -551,7 +551,7 @@ public class Polygon extends AbstractShape {
         if (!dc.isPickingMode()) {
             // Push an identity texture matrix. This prevents drawSides() from leaking GL texture matrix state. The
             // texture matrix stack is popped from OGLStackHandler.pop(), in the finally block below.
-            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
             ogsh.pushTextureIdentity(gl);
         }
 
@@ -572,7 +572,7 @@ public class Polygon extends AbstractShape {
     }
 
     protected void doDrawOutlineVA(DrawContext dc, ShapeData shapeData) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glVertexPointer(3, GL.GL_FLOAT, 0, shapeData.coordBuffer.rewind());
 
@@ -587,7 +587,7 @@ public class Polygon extends AbstractShape {
     }
 
     protected void doDrawOutlineVBO(DrawContext dc, int[] vboIds, ShapeData shapeData) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboIds[0]);
         gl.glVertexPointer(3, GL.GL_FLOAT, 0, 0);
@@ -606,7 +606,7 @@ public class Polygon extends AbstractShape {
     }
 
     protected void doDrawInterior(DrawContext dc) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         if (!dc.isPickingMode() && mustApplyTexture(dc) && this.getTexture().bind(dc)) // bind initiates retrieval
         {
@@ -634,7 +634,7 @@ public class Polygon extends AbstractShape {
     }
 
     protected void doDrawInteriorVA(DrawContext dc, ShapeData shapeData) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         if (!dc.isPickingMode() && this.mustApplyLighting(dc, null))
             gl.glNormalPointer(GL.GL_FLOAT, 0, shapeData.normalBuffer.rewind());
@@ -647,7 +647,7 @@ public class Polygon extends AbstractShape {
     }
 
     protected void doDrawInteriorVBO(DrawContext dc, int[] vboIds, ShapeData shapeData) {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboIds[0]);
         gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vboIds[1]);

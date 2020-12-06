@@ -40,11 +40,6 @@ public abstract class AbstractLayer extends WWObjectImpl implements Layer {
      * @throws IllegalArgumentException if document is null.
      */
     public static boolean isLayerConfigDocument(Element domElement) {
-//        if (domElement == null) {
-//            String message = Logging.getMessage("nullValue.DocumentIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         XPath xpath = WWXML.makeXPath();
         Element[] elements = WWXML.getElements(domElement, "//Layer", xpath);
@@ -69,17 +64,6 @@ public abstract class AbstractLayer extends WWObjectImpl implements Layer {
      * @throws IllegalArgumentException if either the parameters or the context are null.
      */
     public static Element createLayerConfigElements(AVList params, Element context) {
-//        if (params == null) {
-//            String message = Logging.getMessage("nullValue.ParametersIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//
-//        if (context == null) {
-//            String message = Logging.getMessage("nullValue.ContextIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         WWXML.checkAndAppendTextElement(params, AVKey.DISPLAY_NAME, context, "DisplayName");
         WWXML.checkAndAppendDoubleElement(params, AVKey.OPACITY, context, "Opacity");
@@ -121,11 +105,6 @@ public abstract class AbstractLayer extends WWObjectImpl implements Layer {
      * @throws IllegalArgumentException if the document is null.
      */
     public static AVList getLayerConfigParams(Element domElement, AVList params) {
-//        if (domElement == null) {
-//            String message = Logging.getMessage("nullValue.DocumentIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (params == null)
             params = new AVListImpl();
@@ -233,21 +212,11 @@ public abstract class AbstractLayer extends WWObjectImpl implements Layer {
     }
 
     public void setDataFileStore(FileStore fileStore) {
-//        if (fileStore == null) {
-//            String message = Logging.getMessage("nullValue.FileStoreIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
-//        }
 
         this.dataFileStore = fileStore;
     }
 
     public boolean isLayerInView(DrawContext dc) {
-//        if (dc == null) {
-//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
-//        }
 
         return true;
     }
@@ -277,24 +246,6 @@ public abstract class AbstractLayer extends WWObjectImpl implements Layer {
         if (!this.enabled)
             return; // Don't check for arg errors if we're disabled
 
-//        if (null == dc) {
-//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
-//        }
-//
-//        if (null == dc.getGlobe()) {
-//            String message = Logging.getMessage("layers.AbstractLayer.NoGlobeSpecifiedInDrawingContext");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
-//        }
-//
-//        if (null == dc.getView()) {
-//            String message = Logging.getMessage("layers.AbstractLayer.NoViewSpecifiedInDrawingContext");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
-//        }
-
         if (!this.isLayerActive(dc))
             return;
 
@@ -313,24 +264,6 @@ public abstract class AbstractLayer extends WWObjectImpl implements Layer {
         if (!this.enabled)
             return; // Don't check for arg errors if we're disabled
 
-//        if (null == dc) {
-//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
-//        }
-//
-//        if (null == dc.getGlobe()) {
-//            String message = Logging.getMessage("layers.AbstractLayer.NoGlobeSpecifiedInDrawingContext");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
-//        }
-//
-//        if (null == dc.getView()) {
-//            String message = Logging.getMessage("layers.AbstractLayer.NoViewSpecifiedInDrawingContext");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
-//        }
-
         if (this.isLayerActive(dc) && this.isLayerInView(dc))
             this.doRender(dc);
     }
@@ -338,24 +271,6 @@ public abstract class AbstractLayer extends WWObjectImpl implements Layer {
     public void pick(DrawContext dc, Point point) {
         if (!this.enabled)
             return; // Don't check for arg errors if we're disabled
-//
-//        if (null == dc) {
-//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
-//        }
-//
-//        if (null == dc.getGlobe()) {
-//            String message = Logging.getMessage("layers.AbstractLayer.NoGlobeSpecifiedInDrawingContext");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
-//        }
-//
-//        if (null == dc.getView()) {
-//            String message = Logging.getMessage("layers.AbstractLayer.NoViewSpecifiedInDrawingContext");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
-//        }
 
         if (this.isLayerActive(dc) && this.isLayerInView(dc))
             this.doPick(dc, point);
