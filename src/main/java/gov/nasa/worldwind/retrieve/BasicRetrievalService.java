@@ -23,17 +23,16 @@ import java.util.logging.Level;
  */
 public final class BasicRetrievalService extends WWObjectImpl
     implements RetrievalService, Thread.UncaughtExceptionHandler {
+    static final int DEFAULT_TIME_PRIORITY_GRANULARITY = 1000; // milliseconds
     // These constants are last-ditch values in case Configuration lacks defaults
     private static final int DEFAULT_QUEUE_SIZE = 1024;
     private static final int DEFAULT_POOL_SIZE = 8;
     private static final long DEFAULT_STALE_REQUEST_LIMIT = 30000; // milliseconds
-    static final int DEFAULT_TIME_PRIORITY_GRANULARITY = 500; // milliseconds
-
-private static final String IDLE_THREAD_NAME_PREFIX = Logging.getMessage(
+    private static final String IDLE_THREAD_NAME_PREFIX = Logging.getMessage(
         "BasicRetrievalService.IdleThreadNamePrefix");
 
     private final RetrievalExecutor executor; // thread pool for running retrievers
-    private final Map<String,RetrievalTask> activeTasks; // tasks currently allocated a thread
+    private final Map<String, RetrievalTask> activeTasks; // tasks currently allocated a thread
     private final int queueSize; // maximum queue size
     protected SSLExceptionListener sslExceptionListener;
 
@@ -70,7 +69,6 @@ private static final String IDLE_THREAD_NAME_PREFIX = Logging.getMessage(
         activeTasks.clear();
     }
 
-
     /**
      * @param retrieval the retriever to run
      * @param priority  the secondary priority of the retriever, or negative if it is to be the primary priority
@@ -86,19 +84,20 @@ private static final String IDLE_THREAD_NAME_PREFIX = Logging.getMessage(
 
         RetrievalTask x = new RetrievalTask(retrieval, priority);
 
-        RetrievalTask X = activeTasks.compute(x.name, (n,p) -> {
-            if (p!=null) {
-                if (p!=x) {
+        RetrievalTask X = activeTasks.compute(x.name, (n, p) -> {
+            if (p != null) {
+                if (p != x) {
                     p.priority = Math.max(p.priority, x.priority);
                     p.retriever.setSubmitEpochNow(); //boost existing
                     x.cancel(false); //already queued
                 }
                 return p;
-            } else {
+            }
+            else {
                 return x;
             }
         });
-        if (X==x) {
+        if (X == x) {
             X.retriever.setSubmitEpochNow();
             executor.execute(X);
         }
@@ -125,7 +124,7 @@ private static final String IDLE_THREAD_NAME_PREFIX = Logging.getMessage(
     }
 
     public boolean hasActiveTasks() {
-        return executor.getActiveCount()>0;
+        return executor.getActiveCount() > 0;
     }
 
     public boolean isAvailable() {
@@ -140,9 +139,9 @@ private static final String IDLE_THREAD_NAME_PREFIX = Logging.getMessage(
     private static class RetrievalTask extends FutureTask<Retriever>
         implements RetrievalFuture, Comparable<RetrievalTask> {
         private final Retriever retriever;
-        private double priority; // retrieval secondary priority (primary priority is submit time)
         private final String name;
         private final int hash;
+        private double priority; // retrieval secondary priority (primary priority is submit time)
 
         private RetrievalTask(Retriever retriever, double priority) {
             super(retriever);
@@ -174,12 +173,13 @@ private static final String IDLE_THREAD_NAME_PREFIX = Logging.getMessage(
          * @throws IllegalArgumentException if <code>that</code> is null
          */
         public int compareTo(RetrievalTask that) {
-            if (this==that) return 0;
+            if (this == that)
+                return 0;
 
             int dp = Double.compare(
                 that.priority + that.retriever.getSubmitEpoch(),
                 this.priority + this.retriever.getSubmitEpoch());
-            return dp!=0 ? dp : Integer.compare(System.identityHashCode(that), System.identityHashCode(this));
+            return dp != 0 ? dp : Integer.compare(System.identityHashCode(that), System.identityHashCode(this));
         }
 
         public final boolean equals(Object o) {
@@ -190,15 +190,13 @@ private static final String IDLE_THREAD_NAME_PREFIX = Logging.getMessage(
 
             // Tasks are equal if their retrievers are equivalent
             final RetrievalTask r = (RetrievalTask) o;
-            return hash==r.hash && name.equals(r.name);
+            return hash == r.hash && name.equals(r.name);
             // Priority and submit time are not factors in equality
         }
 
         public final int hashCode() {
             return hash;
         }
-
-
     }
 
     private class RetrievalExecutor extends ThreadPoolExecutor {
@@ -238,7 +236,6 @@ private static final String IDLE_THREAD_NAME_PREFIX = Logging.getMessage(
 
             RetrievalTask task = (RetrievalTask) runnable;
 
-
 //            task.retriever.setBeginTime(System.currentTimeMillis());
 //            long limit = task.retriever.getStaleRequestLimit() >= 0
 //                ? task.retriever.getStaleRequestLimit() : this.staleRequestLimit;
@@ -254,11 +251,11 @@ private static final String IDLE_THREAD_NAME_PREFIX = Logging.getMessage(
 //                task.cancel(true);
 //            } else {
 
-                thread.setName(task.name);
-                thread.setPriority(Thread.MIN_PRIORITY); // Subordinate thread priority to rendering
-                thread.setUncaughtExceptionHandler(BasicRetrievalService.this);
+            thread.setName(task.name);
+            thread.setPriority(Thread.MIN_PRIORITY); // Subordinate thread priority to rendering
+            thread.setUncaughtExceptionHandler(BasicRetrievalService.this);
 
-                super.beforeExecute(thread, runnable);
+            super.beforeExecute(thread, runnable);
 //            }
         }
 
@@ -271,8 +268,9 @@ private static final String IDLE_THREAD_NAME_PREFIX = Logging.getMessage(
 
             RetrievalTask task = (RetrievalTask) runnable;
 
-            boolean removed = BasicRetrievalService.this.activeTasks.remove(task.name)!=null;
-            if (!removed) throw new RuntimeException();
+            boolean removed = BasicRetrievalService.this.activeTasks.remove(task.name) != null;
+            if (!removed)
+                throw new RuntimeException();
 
 //            task.retriever.setEndTime(System.currentTimeMillis());
 

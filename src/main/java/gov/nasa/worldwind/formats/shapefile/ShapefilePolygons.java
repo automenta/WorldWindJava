@@ -587,7 +587,8 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
         tess.resetIndices(); // clear indices from previous records, but retain the accumulated vertices
         tess.beginPolygon();
 
-        for (int i = 0; i < record.getBoundaryCount(); i++) {
+        final int c = record.getBoundaryCount();
+        for (int i = 0; i < c; i++) {
             ShapefilePolygons.tessellateBoundary(record, i, minEffectiveArea, new TessBoundaryCallback() {
                 @Override
                 public void beginBoundary() {
@@ -613,8 +614,8 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
             return;
 
         IntBuffer interiorIndices = IntBuffer.allocate(tess.getInteriorIndexCount());
-        IntBuffer outlineIndices = IntBuffer.allocate(tess.getBoundaryIndexCount());
         tess.getInteriorIndices(interiorIndices);
+        IntBuffer outlineIndices = IntBuffer.allocate(tess.getBoundaryIndexCount());
         tess.getBoundaryIndices(outlineIndices);
 
         RecordIndices ri = new RecordIndices(record.ordinal);
@@ -933,9 +934,10 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
         double[] boundaryEffectiveArea = record.getBoundaryEffectiveArea(boundaryIndex);
         double[] coord = new double[2];
 
+        final int n = boundaryCoords.getSize();
         if (!record.isBoundaryCrossesAntimeridian(boundaryIndex)) {
             callback.beginBoundary();
-            for (int j = 0; j < boundaryCoords.getSize(); j++) {
+            for (int j = 0; j < n; j++) {
                 if (boundaryEffectiveArea[j] < minEffectiveArea)
                     continue; // ignore vertices that don't meet the resolution criteria
 
@@ -948,7 +950,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
             // Copy the boundary locations into a list of LatLon instances in order to utilize existing code that
             // handles locations that cross the antimeridian.
             Collection<LatLon> locations = new ArrayList<>();
-            for (int j = 0; j < boundaryCoords.getSize(); j++) {
+            for (int j = 0; j < n; j++) {
                 if (boundaryEffectiveArea[j] < minEffectiveArea)
                     continue; // ignore vertices that don't meet the resolution criteria
 
@@ -960,18 +962,16 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
             if (pole != null) // wrap the boundary around the pole and along the antimeridian
             {
                 callback.beginBoundary();
-                for (LatLon location : LatLon.cutLocationsAlongDateLine(locations, pole, null)) {
+                for (LatLon location : LatLon.cutLocationsAlongDateLine(locations, pole, null))
                     callback.vertex(location.latitude, location.longitude);
-                }
+
                 callback.endBoundary();
-            }
-            else // tessellate on both sides of the antimeridian
-            {
+            } else { // tessellate on both sides of the antimeridian
                 for (List<LatLon> antimeridianLocations : LatLon.repeatLocationsAroundDateline(locations)) {
                     callback.beginBoundary();
-                    for (LatLon location : antimeridianLocations) {
+                    for (LatLon location : antimeridianLocations)
                         callback.vertex(location.latitude, location.longitude);
-                    }
+
                     callback.endBoundary();
                 }
             }

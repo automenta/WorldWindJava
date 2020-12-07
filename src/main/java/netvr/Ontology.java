@@ -1,5 +1,8 @@
 package netvr;
 
+import com.carrotsearch.hppc.cursors.IntCursor;
+import com.carrotsearch.hppc.procedures.IntProcedure;
+import com.graphhopper.coll.GHIntHashSet;
 import org.semanticweb.yars.nx.*;
 import org.semanticweb.yars.nx.parser.*;
 import org.semanticweb.yars.turtle.TurtleParser;
@@ -7,6 +10,7 @@ import org.semanticweb.yars.turtle.TurtleParser;
 import java.io.*;
 import java.net.URI;
 import java.util.*;
+import java.util.function.IntPredicate;
 import java.util.zip.GZIPInputStream;
 
 /**
@@ -15,38 +19,46 @@ import java.util.zip.GZIPInputStream;
  * https://dumps.wikimedia.org/simplewiki/latest/ */
 public class Ontology {
 
-    static class Category {
-        final int id;
-        final Set<Integer> parent = new HashSet<>();
-        final Set<Integer> child = new HashSet<>();
-        private final String name;
+    List<Category> id = new ArrayList<>(64*1024);
 
-        Category(String name, int id) {
-            this.name = name;
-            this.id = id;
-        }
+    Map<String, Category> cat = new HashMap<>(64*1024);
 
-        @Override
-        public String toString() {
-            return name + "=" + parent;
-        }
-    }
-
-    public static void main(String[] args) throws IOException, ParseException, InterruptedException {
-        TurtleParser p = new TurtleParser(
+    public Ontology(String categoriesFile) throws Exception {
+        this(new TurtleParser(
             new GZIPInputStream(
-                new FileInputStream("/home/me/d/simplewiki-20201128-categories.ttl.gz"),
+                new FileInputStream(categoriesFile),
                 8 * 1024 * 1024
             ),
-            URI.create("http://_")
-        );
+            URI.create(
+                //"http://_"
+                "https://simple.wikipedia.org/wiki/"
+            )
+        ));
+    }
 
-        List<String> TAGS = new ArrayList(64*1024);
-        Map<String,Category> CAT = new HashMap<>(64*1024);
+    public Category get(int i) {
+        return id.get(i);
+    }
+
+    public Category get(String i) {
+        return cat.get(i);
+    }
+
+    public String name(int i) {
+        return get(i).name;
+    }
+
+    public GHIntHashSet ancestors(int i) {
+        return get(i).ancestors(this);
+    }
+
+    public Ontology(TurtleParser p) throws ParseException, InterruptedException {
+
 
         Resource category = new Resource(
-        "https://www.mediawiki.org/ontology#isInCategory"
+            "https://www.mediawiki.org/ontology#isInCategory"
         );
+
         p.parse(new Callback() {
             @Override
             protected void startDocumentInternal() {
@@ -73,15 +85,18 @@ public class Ontology {
                 }
             }
 
-            final int prefixLen = "https://simple.wikipedia.org/wiki/Category:".length();
-
             private Category tag(Node node) {
-                String t = node.getLabel().substring(prefixLen);
+                final String l = node.getLabel();
+                final int beginIndex = l.lastIndexOf(':' + 1);
+                if (beginIndex<0) return null;
+
+                String t = l.substring(beginIndex);
                 if (!filter(t)) return null;
-                return CAT.computeIfAbsent(t, (T) -> {
-                    final int nextID = TAGS.size();
-                    TAGS.add(T);
-                    return new Category(T, nextID);
+                return cat.computeIfAbsent(t, (T) -> {
+                    final int nextID = id.size();
+                    final Category y = new Category(T, nextID);
+                    id.add(y);
+                    return y;
                 });
             }
 
@@ -94,8 +109,63 @@ public class Ontology {
                 return !t.startsWith("CS1_");
             }
         });
-        CAT.entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach(n -> System.out.println(n.getValue()));
-        System.out.println(TAGS.size() + " total");
+
+    }
+
+    static class Category {
+        final int id;
+        final GHIntHashSet parent = new GHIntHashSet(0);
+        final GHIntHashSet child = new GHIntHashSet(0);
+        private final String name;
+
+        Category(String name, int id) {
+            this.name = name;
+            this.id = id;
+        }
+
+        @Override
+        public String toString() {
+            return name + "=" + parent;
+        }
+
+        /** dfs */
+        public GHIntHashSet ancestors(Ontology o) {
+            GHIntHashSet p = new GHIntHashSet();
+            ancestors(o, p);
+            return p;
+        }
+
+        public void ancestors(Ontology o, GHIntHashSet p) {
+            parent.forEach((IntProcedure) (int i) -> {
+                if (p.add(i)) {
+                    o.get(i).ancestors(o, p);
+                }
+            });
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+        final String categoriesFile =
+            "/home/me/d/simplewiki-20201128-categories.ttl.gz"
+//            "/home/me/d/enwiki-20201205-categories.ttl.gz"
+            ;
+        Ontology o = new Ontology(categoriesFile);
+//        o.cat.entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach(n -> System.out.println(n.getValue()));
+//        System.out.println(o.id.size() + " total");
+        for (Category c : o.cat.values()) {
+            System.out.println(c);
+            System.out.println("\t" + o.toString(c.ancestors(o)));
+        }
+
+    }
+
+    private String toString(GHIntHashSet ids) {
+        StringBuilder sb = new StringBuilder(ids.size() * 32);
+        sb.append('[');
+        ids.forEach((IntProcedure)((int i)-> sb.append(name(i)).append(',')));
+        sb.setLength(sb.length()-1);
+        sb.append(']');
+        return sb.toString();
     }
 }
 
