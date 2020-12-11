@@ -1029,11 +1029,11 @@ public abstract class TiledImageLayer extends AbstractLayer {
     }
 
     public int computeLevelForResolution(Sector sector, double resolution) {
-        if (sector == null) {
-            String message = Logging.getMessage("nullValue.SectorIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalStateException(message);
-        }
+//        if (sector == null) {
+//            String message = Logging.getMessage("nullValue.SectorIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalStateException(message);
+//        }
 
         // Find the first level exceeding the desired resolution
         double texelSize;
@@ -1097,11 +1097,11 @@ public abstract class TiledImageLayer extends AbstractLayer {
      */
     public BufferedImage composeImageForSector(Sector sector, int canvasWidth, int canvasHeight, double aspectRatio,
         int levelNumber, String mimeType, boolean abortOnError, BufferedImage image, int timeout) throws Exception {
-        if (sector == null) {
-            String message = Logging.getMessage("nullValue.SectorIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (sector == null) {
+//            String message = Logging.getMessage("nullValue.SectorIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         if (!this.levels.getSector().intersects(sector)) {
             Logging.logger().severe(Logging.getMessage("generic.SectorRequestedOutsideCoverageArea", sector,

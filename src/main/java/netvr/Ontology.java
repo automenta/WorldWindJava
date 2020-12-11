@@ -30,8 +30,8 @@ public class Ontology {
                 8 * 1024 * 1024
             ),
             URI.create(
-                //"http://_"
-                "https://simple.wikipedia.org/wiki/"
+                "http://_"
+                //"https://simple.wikipedia.org/wiki/"
             )
         ));
     }
@@ -57,6 +57,7 @@ public class Ontology {
 
         Resource category = new Resource(
             "https://www.mediawiki.org/ontology#isInCategory"
+            //"mediawiki:isInCategory"
         );
 
         p.parse(new Callback() {
@@ -87,7 +88,7 @@ public class Ontology {
 
             private Category tag(Node node) {
                 final String l = node.getLabel();
-                final int beginIndex = l.lastIndexOf(':' + 1);
+                final int beginIndex = l.lastIndexOf(':') + 1;
                 if (beginIndex<0) return null;
 
                 String t = l.substring(beginIndex);
@@ -101,6 +102,7 @@ public class Ontology {
             }
 
             private boolean filter(String t) {
+                if (t.isEmpty()) return false;
                 if (Character.isDigit(t.charAt(0))) return false; //ignore years, etc
                 if (t.startsWith("User_")) return false;
                 if (t.startsWith("Pages_")) return false;
@@ -146,7 +148,8 @@ public class Ontology {
 
     public static void main(String[] args) throws Exception {
         final String categoriesFile =
-            "/home/me/d/simplewiki-20201128-categories.ttl.gz"
+            //"/home/me/d/simplewiki-20201128-categories.ttl.gz"
+            "/home/me/d/enwiktionary-20201205-categories.ttl.gz"
 //            "/home/me/d/enwiki-20201205-categories.ttl.gz"
             ;
         Ontology o = new Ontology(categoriesFile);

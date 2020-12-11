@@ -68,11 +68,11 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
      * @throws IllegalArgumentException if the retriever is null.
      */
     public ByteBuffer run(Retriever retriever) {
-        if (retriever == null) {
-            String message = Logging.getMessage("nullValue.RetrieverIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (retriever == null) {
+//            String message = Logging.getMessage("nullValue.RetrieverIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         this.retriever = retriever;
 
@@ -116,8 +116,7 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
     protected ByteBuffer handleSuccessfulRetrieval() {
         try {
             return this.handleContent();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             this.handleContentException(e);
             return null;
         }
@@ -230,7 +229,7 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
      *
      * @return the output file, or null if a file could not be determined.
      */
-    protected File getOutputFile() {
+    public File getOutputFile() {
         File outFile = this.doGetOutputFile();
 
         if (outFile != null && this.isDeleteOnExit(outFile))

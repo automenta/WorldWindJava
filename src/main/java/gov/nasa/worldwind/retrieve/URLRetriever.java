@@ -23,7 +23,7 @@ import java.util.zip.*;
  * @author Tom Gaskins
  * @version $Id: URLRetriever.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public abstract class URLRetriever extends WWObjectImpl implements Retriever {
+public class URLRetriever extends WWObjectImpl implements Retriever {
     /**
      * Applications never need to use this constant. It provides compatibility with very old WorldWind tile servers that
      * deliver zipped content without identifying the content type as other than application/zip. In these cases, the
@@ -167,12 +167,12 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever {
             if ((this.byteBuffer = this.doRead(this.connection)) == null)
                 throw new IOException("empty");
 
+            setState(RETRIEVER_STATE_SUCCESSFUL);
+
             if (this.postProcessor != null)
                 this.byteBuffer = this.postProcessor.run(this);
 
-            setState(RETRIEVER_STATE_SUCCESSFUL);
             WorldWind.getNetworkStatus().logAvailableHost(this.url);
-
         } catch (ClosedByInterruptException e) {
             this.interrupted();
         } catch (Exception e) {

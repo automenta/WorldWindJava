@@ -34,7 +34,7 @@ abstract public class GraphOSM extends GraphHopperOSM {
 
 
     private class FullWayReader extends OSMReader {
-        final NodeAccess nodeAccess = getGraphHopperStorage().getNodeAccess();
+//        final NodeAccess nodeAccess = getGraphHopperStorage().getNodeAccess();
 
         public FullWayReader(GraphHopperStorage ghStorage) {
             super(ghStorage);
