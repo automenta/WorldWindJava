@@ -5,8 +5,10 @@ import com.graphhopper.reader.osm.*;
 import com.graphhopper.reader.osm.pbf.*;
 import com.jogamp.common.nio.ByteBufferInputStream;
 import gov.nasa.worldwind.WorldWind;
+import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.retrieve.*;
 import gov.nasa.worldwind.util.WWIO;
+import okhttp3.*;
 
 import javax.xml.stream.*;
 import java.io.*;
@@ -20,65 +22,81 @@ import static com.graphhopper.reader.osm.OSMXMLHelper.*;
 import static java.lang.Long.parseLong;
 
 public class OSMLoader {
+    static final OkHttpClient http = new OkHttpClient.Builder()
+        .cache(new Cache(
+            WorldWind.store().newFile("OSM"),
+            512 * 1024L * 1024L))
+        .build();
+
+    static final int CACHE_STALE_DAYS = 365;
+
     public static void main(String[] args) throws IOException, URISyntaxException, XMLStreamException, InterruptedException {
 
-        osm("bbox=7.18812,53.00521,7.19654,53.00820", z->{
+        osm(new Sector(53.00521,53.00820, 7.18812, 7.19654), z->{
             System.out.println(z);
         });
 
-        Thread.sleep(20000);
 
+    }
+
+    public static void osm(Sector s, Consumer<ReaderElement> each) throws IOException {
+        osm("bbox=" + s.lonMin + "," + s.latMin + "," + s.lonMax + "," + s.latMax, each);
     }
 
      /** https://overpass-api.de/api/map?bbox=left,bottom,right,top */
-     public static void osm(String request, Consumer<ReaderElement> each) throws MalformedURLException {
-        final URL u = new URL("https://overpass-api.de/api/map?" + request);
-//        OSMInputFile2 o = new OSMInputFile2(
-//            new URL(u)
-//        );
-        AbstractRetrievalPostProcessor pp = new AbstractRetrievalPostProcessor() {
-            @Override
-            protected boolean validateResponseCode() {
-                return true;
-            }
+     public static void osm(String request, Consumer<ReaderElement> each) throws IOException {
+         final String uu = "https://overpass-api.de/api/map?" + request;
+         Response response = http.newCall(new Request.Builder()
+             .cacheControl(new CacheControl.Builder()
+                 .maxStale(CACHE_STALE_DAYS, TimeUnit.DAYS)
+                 .build())
+             .url(HttpUrl.get(uu)).build()).execute();
+         read(response.body().byteStream(), each);
 
-            @Override
-            protected ByteBuffer handleContent() throws IOException {
-                saveBuffer();
-
-                return read(retriever.getBuffer(), each);
-            }
-
-            @Override
-            protected File doGetOutputFile() {
-                return WorldWind.store().newFile("OSM/" + request);
-            }
-        };
-        try {
-            ByteBuffer b = WWIO.readFileToBuffer(pp.getOutputFile());
-            if (b!=null) {
-                read(b, each);
-                return;
-            }
-        }
-        catch (IOException e) {
-        }
-        WorldWind.retrieveRemote().run(new URLRetriever(u, pp), 1);
+         //final URL u = new URL(uu);
+////        OSMInputFile2 o = new OSMInputFile2(
+////            new URL(u)
+////        );
+//        AbstractRetrievalPostProcessor pp = new AbstractRetrievalPostProcessor() {
+//            @Override
+//            protected boolean validateResponseCode() {
+//                return true;
+//            }
+//
+//            @Override
+//            protected ByteBuffer handleContent() throws IOException {
+//                saveBuffer();
+//
+//                return read(retriever.getBuffer(), each);
+//            }
+//
+//            @Override
+//            protected File doGetOutputFile() {
+//                return WorldWind.store().newFile("OSM/" + request);
+//            }
+//        };
+//        try {
+//            ByteBuffer b = WWIO.readFileToBuffer(pp.getOutputFile());
+//            if (b!=null) {
+//                read(b, each);
+//                return;
+//            }
+//        }
+//        catch (IOException e) {
+//        }
+//        WorldWind.retrieveRemote().run(new URLRetriever(u, pp), 1);
     }
 
-    private static ByteBuffer read(ByteBuffer buffer, Consumer<ReaderElement> each) throws IOException {
+    private static void read(InputStream i, Consumer<ReaderElement> each) throws IOException {
 
         try {
-            OSMInputFile2 o = new OSMInputFile2(
-                new ByteBufferInputStream(buffer)
-            );
+            OSMInputFile2 o = new OSMInputFile2(i);
 
             ReaderElement e;
             while ((e = o.getNext())!=null) {
                 each.accept(e);
             }
 
-            return buffer;
         } catch (XMLStreamException e) {
             throw new IOException(e);
         }
@@ -96,10 +114,6 @@ public class OSMLoader {
         private OSMFileHeader fileheader;
         final XMLInputFactory factory = XMLInputFactory.newInstance();
         static private final int BUFFER_SIZE = 32*1024;
-
-        public OSMInputFile2(URL u) throws IOException, XMLStreamException {
-            this(u.openStream());
-        }
 
         public OSMInputFile2(InputStream i) throws IOException, XMLStreamException {
             InputStream result;

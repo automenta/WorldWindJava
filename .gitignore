@@ -19,3 +19,4 @@ worldwind.jar
 target/
 .idea/
 *.iml
+hs_err*.log
