@@ -1,5 +1,6 @@
 package gov.nasa.worldwind.video.newt;
 
+import com.jogamp.common.os.Platform;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.FPSAnimator;
@@ -14,6 +15,9 @@ import java.beans.PropertyChangeListener;
 
 public class WorldWindowNEWT implements WorldWindow, GLEventListener {
 
+    static {
+        System.setProperty("java.awt.headless", "true");
+    }
     static final int FPS_DEFAULT = 60;
 
     private final GLWindow window;
@@ -26,7 +30,7 @@ public class WorldWindowNEWT implements WorldWindow, GLEventListener {
     }
 
     public WorldWindowNEWT(Model model) {
-        window = GLWindow.create(new GLCapabilities(GLProfile.getDefault()));
+        window = GLWindow.create(new GLCapabilities(GLProfile.getMaximum(true)));
 
         this.wwd = ((WorldWindowGLAutoDrawable) WorldWind.createConfigurationComponent(AVKey.WORLD_WINDOW_CLASS_NAME));
         setModel(model);

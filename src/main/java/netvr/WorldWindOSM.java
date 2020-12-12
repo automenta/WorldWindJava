@@ -31,7 +31,7 @@ public class WorldWindOSM {
     private static void mainNEWT() {
 
         final WorldWindowNEWT w = new WorldWindowNEWT(new OSMModel(), 1024, 800);
-//        w.view().goTo(new Position(LatLon.fromDegrees(24.907,54.854), 0), 400);
+        w.view().goTo(new Position(LatLon.fromDegrees(53.00820, 7.18812), 0), 400);
     }
 
     static class OSMModel extends BasicModel {
@@ -45,21 +45,25 @@ public class WorldWindOSM {
             l.add(new OSMMapnikLayer());
 //            l.add(new BMNGWMSLayer());
 
+            final AdaptiveOSMLayer o = new AdaptiveOSMLayer().focus(
+                new Sector(53.00521, 53.00820, 7.18812, 7.19654)
+            );
+            l.add(o);
+
+            //SHAPEFILE
 /*
     /tmp/shp1/buildings.shp  /tmp/shp1/places.shp    /tmp/shp1/roads.shp
     /tmp/shp1/landuse.shp    /tmp/shp1/points.shp    /tmp/shp1/waterways.shp
     /tmp/shp1/natural.shp    /tmp/shp1/railways.shp
  */
-
-
-            l.add(new ShapefileLayer(new Shapefile(new File("/tmp/shp1/buildings.shp"))));
-            l.add(new ShapefileLayer(new Shapefile(new File("/tmp/shp1/places.shp"))));
-            l.add(new ShapefileLayer(new Shapefile(new File("/tmp/shp1/roads.shp"))));
-            l.add(new ShapefileLayer(new Shapefile(new File("/tmp/shp1/landuse.shp"))));
-            l.add(new ShapefileLayer(new Shapefile(new File("/tmp/shp1/points.shp"))));
-            l.add(new ShapefileLayer(new Shapefile(new File("/tmp/shp1/waterways.shp"))));
-            l.add(new ShapefileLayer(new Shapefile(new File("/tmp/shp1/natural.shp"))));
-            l.add(new ShapefileLayer(new Shapefile(new File("/tmp/shp1/railways.shp"))));
+//            l.add(new ShapefileLayer(new Shapefile(new File("/tmp/shp1/buildings.shp"))));
+//            l.add(new ShapefileLayer(new Shapefile(new File("/tmp/shp1/places.shp"))));
+//            l.add(new ShapefileLayer(new Shapefile(new File("/tmp/shp1/roads.shp"))));
+//            l.add(new ShapefileLayer(new Shapefile(new File("/tmp/shp1/landuse.shp"))));
+//            l.add(new ShapefileLayer(new Shapefile(new File("/tmp/shp1/points.shp"))));
+//            l.add(new ShapefileLayer(new Shapefile(new File("/tmp/shp1/waterways.shp"))));
+//            l.add(new ShapefileLayer(new Shapefile(new File("/tmp/shp1/natural.shp"))));
+//            l.add(new ShapefileLayer(new Shapefile(new File("/tmp/shp1/railways.shp"))));
             setLayers(l);
 
         }

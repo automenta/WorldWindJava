@@ -41,11 +41,11 @@ public class BasicMarkerShape {
 
     @SuppressWarnings("StringEquality")
     public static MarkerShape createShapeInstance(String shapeType) {
-        if (shapeType == null) {
-            String message = Logging.getMessage("nullValue.ShapeType");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (shapeType == null) {
+//            String message = Logging.getMessage("nullValue.ShapeType");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         // String identity rather than equality is wanted here, to avoid a bunch of unnecessary string compares
         switch (shapeType) {

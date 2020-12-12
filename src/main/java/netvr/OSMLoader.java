@@ -30,14 +30,6 @@ public class OSMLoader {
 
     static final int CACHE_STALE_DAYS = 365;
 
-    public static void main(String[] args) throws IOException, URISyntaxException, XMLStreamException, InterruptedException {
-
-        osm(new Sector(53.00521,53.00820, 7.18812, 7.19654), z->{
-            System.out.println(z);
-        });
-
-
-    }
 
     public static void osm(Sector s, Consumer<ReaderElement> each) throws IOException {
         osm("bbox=" + s.lonMin + "," + s.latMin + "," + s.lonMax + "," + s.latMax, each);
