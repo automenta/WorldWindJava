@@ -266,25 +266,27 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
                 double cellArea = cellWidth * cellHeight;
 
                 final Angle latAngle = Angle.fromRadians(lat);
+                final Cell[] sectorI = this.sectorCells[i];
+                final Double[] sectorEleI = sectorElevations[i];
 
                 for (int j = 0; j < lonSteps; j++) {
                     double lon = sectorLonMinRadians + lonStepRadians * j;
                     Sector cellSector = Sector.fromRadians(lat, lat + latStepRadians, lon, lon + lonStepRadians);
                     // Select cells which center is inside the shape
                     if (WWMath.isLocationInside(cellSector.getCentroid(), this.subdividedPositions)) {
-                        Cell cell = this.sectorCells[i][j];
+                        Cell cell = sectorI[j];
                         if (cell == null || cell.surfaceArea == -1) {
-                            // Compute suface area using terrain normal in SW corner
+                            // Compute surface area using terrain normal in SW corner
                             // Corners elevation
-                            double eleSW = sectorElevations[i][j] != null ? sectorElevations[i][j]
+                            double eleSW = sectorEleI[j] != null ? sectorEleI[j]
                                 : globe.getElevation(latAngle, Angle.fromRadians(lon));
-                            double eleSE = sectorElevations[i][j + 1] != null ? sectorElevations[i][j + 1]
+                            double eleSE = sectorEleI[j + 1] != null ? sectorEleI[j + 1]
                                 : globe.getElevation(latAngle, Angle.fromRadians(lon + lonStepRadians));
                             double eleNW = sectorElevations[i + 1][j] != null ? sectorElevations[i + 1][j]
                                 : globe.getElevation(Angle.fromRadians(lat + latStepRadians), Angle.fromRadians(lon));
                             // Cache elevations
-                            sectorElevations[i][j] = eleSW;
-                            sectorElevations[i][j + 1] = eleSE;
+                            sectorEleI[j] = eleSW;
+                            sectorEleI[j + 1] = eleSE;
                             sectorElevations[i + 1][j] = eleNW;
                             // Compute normal
                             Vec4 vx = new Vec4(cellWidth, 0, eleSE - eleSW).normalize3();
@@ -295,7 +297,7 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
                             double slopeFactor = Math.sqrt(1 + tan * tan);
                             // Create and cache cell
                             cell = new Cell(cellSector, cellArea, cellArea * slopeFactor);
-                            this.sectorCells[i][j] = cell;
+                            sectorI[j] = cell;
                         }
                         // Add cell area
                         area += cell.surfaceArea;

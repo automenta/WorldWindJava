@@ -5,6 +5,7 @@
  */
 package gov.nasa.worldwind.render;
 
+import com.google.common.collect.Iterables;
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.glu.*;
@@ -28,6 +29,7 @@ import java.util.*;
 import java.util.logging.Level;
 
 import static gov.nasa.worldwind.geom.Sector.EMPTY_SECTOR;
+import static gov.nasa.worldwind.util.WWUtil.sizeEstimate;
 import static java.lang.Math.toRadians;
 
 /**
@@ -105,8 +107,8 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
     protected int maxEdgeIntervals = DEFAULT_MAX_EDGE_INTERVALS;
     protected WWTexture texture; // An optional texture.
     // Measurement properties.
-    protected AreaMeasurer areaMeasurer;
-    protected long areaMeasurerLastModifiedTime;
+//    protected AreaMeasurer areaMeasurer;
+//    protected long areaMeasurerLastModifiedTime;
 
     /**
      * Constructs a new surface shape with the default attributes.
@@ -1191,36 +1193,40 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
 
     protected AreaMeasurer setupAreaMeasurer(Globe globe) {
 
-        if (this.areaMeasurer == null) {
-            this.areaMeasurer = new AreaMeasurer();
-        }
+//        if (this.areaMeasurer == null) {
+            var areaMeasurer = new AreaMeasurer();
+//        }
 
         // Try to use the currently cached locations. If the AreaMeasurer is out of sync with this shape's state,
         // then update the AreaMeasurer's internal location list.
-        if (this.areaMeasurerLastModifiedTime < this.lastModifiedTime) {
+//        if (this.areaMeasurerLastModifiedTime < this.lastModifiedTime) {
             // The AreaMeasurer requires an ArrayList reference, but SurfaceShapes use an opaque iterable. Copy the
             // iterable contents into an ArrayList to satisfy AreaMeasurer without compromising the generality of the
             // shape's iterator.
-            ArrayList<LatLon> arrayList = new ArrayList<>();
 
+            ArrayList<LatLon> arrayList;
             Iterable<? extends LatLon> locations = this.getLocations(globe);
             if (locations != null) {
-                for (LatLon ll : locations) {
-                    arrayList.add(ll);
-                }
 
-                if (arrayList.size() > 1 && !arrayList.get(0).equals(arrayList.get(arrayList.size() - 1)))
+                arrayList = new ArrayList<>(sizeEstimate(locations)+1);
+                for (LatLon ll : locations)
+                    arrayList.add(ll);
+
+                int n = arrayList.size();
+                if (n > 1 && !arrayList.get(0).equals(arrayList.get(n - 1)))
                     arrayList.add(arrayList.get(0));
+            } else {
+                arrayList = new ArrayList(0); //HACK
             }
 
-            this.areaMeasurer.setPositions(arrayList, 0);
-            this.areaMeasurerLastModifiedTime = this.lastModifiedTime;
-        }
+            areaMeasurer.setPositions(arrayList, 0);
+//            this.areaMeasurerLastModifiedTime = this.lastModifiedTime;
+//        }
 
         // Surface shapes follow the terrain by definition.
-        this.areaMeasurer.setFollowTerrain(true);
+        areaMeasurer.setFollowTerrain(true);
 
-        return this.areaMeasurer;
+        return areaMeasurer;
     }
 
     //**************************************************************//

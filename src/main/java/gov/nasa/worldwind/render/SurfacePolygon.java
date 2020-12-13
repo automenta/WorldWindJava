@@ -143,14 +143,14 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
         this.onShapeChanged();
     }
 
-    /**
-     * Returns this polygon's texture image source.
-     *
-     * @return the texture image source, or null if no source has been specified.
-     */
-    public Object getTextureImageSource() {
-        return this.explicitTexture != null ? this.explicitTexture.getImageSource() : null;
-    }
+//    /**
+//     * Returns this polygon's texture image source.
+//     *
+//     * @return the texture image source, or null if no source has been specified.
+//     */
+//    public Object getTextureImageSource() {
+//        return this.explicitTexture != null ? this.explicitTexture.getImageSource() : null;
+//    }
 
     /**
      * Returns the texture coordinates for this polygon.
@@ -193,10 +193,11 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
     }
 
     public Position getReferencePosition() {
-        if (this.getOuterBoundary() == null)
+        final Iterable<? extends LatLon> outer = this.getOuterBoundary();
+        if (outer == null)
             return null;
 
-        Iterator<? extends LatLon> iterator = this.getOuterBoundary().iterator();
+        Iterator<? extends LatLon> iterator = outer.iterator();
         if (!iterator.hasNext())
             return null;
 
@@ -220,12 +221,12 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
             List<List<Vertex>> contours = this.assembleContours(degreesPerInterval);
             shapeData = this.tessellateContours(contours);
 
-            if (shapeData == null) {
-                String msg = Logging.getMessage("generic.ExceptionWhileTessellating", this);
-                dc.addRenderingException(new WWRuntimeException(msg));
-                this.handleUnsuccessfulInteriorTessellation(dc); // clears boundaries, preventing repeat attempts
-                return;
-            }
+//            if (shapeData == null) {
+//                String msg = Logging.getMessage("generic.ExceptionWhileTessellating", this);
+//                dc.addRenderingException(new WWRuntimeException(msg));
+//                this.handleUnsuccessfulInteriorTessellation(dc); // clears boundaries, preventing repeat attempts
+//                return;
+//            }
 
             this.shapeDataCache.put(key, shapeData);
         }
@@ -277,9 +278,10 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
     }
 
     protected List<List<Vertex>> assembleContours(Angle maxEdgeLength) {
+        final int n = this.boundaries.size();
         List<List<Vertex>> result = new ArrayList<>();
 
-        for (int b = 0; b < this.boundaries.size(); b++) {
+        for (int b = 0; b < n; b++) {
             Iterable<? extends LatLon> locations = this.boundaries.get(b);
             float[] texCoords = (b == 0) ? this.explicitTextureCoords : null;
             int c = 0;
@@ -303,12 +305,10 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
             // Modify the contour vertices to compensate for the spherical nature of geographic coordinates.
             String pole = LatLon.locationsContainPole(contour);
             if (pole != null) {
-                result.add(this.clipWithPole(contour, pole, maxEdgeLength));
-            }
-            else if (LatLon.locationsCrossDateLine(contour)) {
+                result.add(clipWithPole(contour, pole, maxEdgeLength));
+            } else if (LatLon.locationsCrossDateLine(contour)) {
                 result.addAll(SurfacePolygon.clipWithDateline(contour));
-            }
-            else {
+            } else {
                 result.add(contour);
             }
         }
@@ -317,8 +317,9 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
     }
 
     protected static void closeContour(List<Vertex> contour) {
-        if (!contour.get(0).equals(contour.get(contour.size() - 1))) {
-            contour.add(contour.get(0));
+        final Vertex x = contour.get(0);
+        if (!x.equals(contour.get(contour.size() - 1))) {
+            contour.add(x);
         }
     }
 
@@ -327,15 +328,15 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
         original.addAll(contour);
         contour.clear();
 
-        for (int i = 0; i < original.size() - 1; i++) {
+        final int n = original.size() - 1;
+        for (int i = 0; i < n; i++) {
             Vertex begin = original.get(i);
             Vertex end = original.get(i + 1);
             contour.add(begin);
             this.subdivideEdge(begin, end, maxEdgeLength, contour);
         }
 
-        Vertex last = original.get(original.size() - 1);
-        contour.add(last);
+        contour.add(original.get(n));
     }
 
     protected void subdivideEdge(Vertex begin, Vertex end, Angle maxEdgeLength, List<Vertex> result) {
@@ -344,13 +345,11 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
         center.v = 0.5 * (begin.v + end.v);
         center.edgeFlag = begin.edgeFlag || end.edgeFlag;
 
-        Angle edgeLength = LatLon.linearDistance(begin, end);
-        if (edgeLength.compareTo(maxEdgeLength) > 0) {
+        if (LatLon.linearDistance(begin, end).compareTo(maxEdgeLength) > 0) {
             this.subdivideEdge(begin, center, maxEdgeLength, result);
             result.add(center);
             this.subdivideEdge(center, end, maxEdgeLength, result);
-        }
-        else {
+        } else {
             result.add(center);
         }
     }
@@ -515,8 +514,7 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
             }
 
             GLU.gluTessEndPolygon(tess);
-        }
-        catch (Exception e) {
+        }  catch (Exception e) {
             String msg = Logging.getMessage("generic.ExceptionWhileTessellating", e.getMessage());
             Logging.logger().log(Level.SEVERE, msg, e);
             return null;
@@ -581,10 +579,7 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
             geom.add(drawLocations);
         }
 
-        if (geom.isEmpty() || geom.get(0).size() < 3)
-            return null;
-
-        return geom;
+        return geom.isEmpty() || geom.get(0).size() < 3 ? null : geom;
     }
 
     protected void doMoveTo(Position oldReferencePosition, Position newReferencePosition) {

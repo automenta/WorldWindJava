@@ -26,7 +26,7 @@ import java.util.*;
  * @see Renderable
  */
 public class RenderableLayer extends AbstractLayer {
-    protected final Collection<Renderable> renderables = new ArrayList();
+    protected final List<Renderable> renderables = new ArrayList();
 
     protected final PickSupport pickSupport = new PickSupport();
 //    protected Iterable<Renderable> renderablesOverride;

@@ -5,13 +5,18 @@ import com.graphhopper.reader.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.render.markers.BasicMarkerShape;
+import gov.nasa.worldwind.render.Polygon;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.*;
+import java.util.List;
+
+import static gov.nasa.worldwind.WorldWind.RELATIVE_TO_GROUND;
 
 public class AdaptiveOSMLayer extends RenderableLayer {
 
+    static final private Set<String> keysExcl = Set.of("area", "source", "image", "ref:bag", "source:date");
 
     public final AdaptiveOSMLayer focus(LatLon at, float radiusDegrees) {
         return focus(new Sector(
@@ -37,19 +42,77 @@ public class AdaptiveOSMLayer extends RenderableLayer {
                             LongArrayList wayNodes = w.getNodes();
 
                             final int n = wayNodes.size();
-                            List<LatLon> latlon = new ArrayList(n);
+                            List<Position> latlon = new ArrayList(n);
                             boolean closed = wayNodes.get(0)==wayNodes.get(n-1);
                             for (int i = 0; i < n; i++) {
                                 final long nodeId = wayNodes.get(i);
                                 final ReaderNode node = nodes.get(nodeId);
                                 //TODO ele
-                                latlon.add(LatLon.fromDegrees(node.getLat(), node.getLon()));
+
+                                double e = node.getEle();
+                                if (e!=e) e = 1;
+
+                                latlon.add(Position.fromDegrees(node.getLat(), node.getLon(), e));
                             }
                             if (closed) {
-                                SurfacePolygon p = new SurfacePolygon(latlon);
+                                //SurfacePolygon p = new SurfacePolygon(latlon);
+
+                                //TODO use VarHandle to access private field 'properties'
+                                Map<String,Object> properties = new HashMap();
+                                List<String> keys = w.getKeysWithPrefix("");
+                                for (String k : keys) {
+                                    if (!keysExcl.contains(k))
+                                        properties.put(k, w.getTag(k));
+                                }
+
+                                Polygon p = new Polygon(latlon) {
+                                    @Override
+                                    public void pick(DrawContext dc, Point pickPoint) {
+                                        super.pick(dc, pickPoint);
+                                        System.out.println(properties);
+                                    }
+                                };
+                                p.setAltitudeMode(RELATIVE_TO_GROUND);
+
+                                Material m = null;
+                                if (m!=null) {
+                                    switch ((String) properties.get("building")) {
+                                        case "house":
+                                            m = Material.CYAN;
+                                            break;
+                                        default:
+                                            m = Material.BLUE;
+                                            break;
+                                    }
+                                }
+                                if (m!=null) {
+                                    switch ((String) properties.get("landuse")) {
+                                        case "grass":
+                                        case "farmland":
+                                            m = Material.GREEN;
+                                            break;
+
+                                    }
+                                }
+                                if (m!=null) {
+                                    switch ((String) properties.get("surface")) {
+                                        case "grass":
+                                        case "cobblestone":
+                                            m = Material.BLACK;
+                                            break;
+
+                                    }
+                                }
+                                if (m == null)
+                                    m = Material.GRAY;
+
+                                final BasicShapeAttributes a = new BasicShapeAttributes();
+                                a.setInteriorOpacity(0.5f);
+                                a.setInteriorMaterial(m);
+                                p.setAttributes(a);
                                 add(p);
                             } else {
-                                Path p = new Path(latlon, 0);
+                                Path p = new Path(latlon);
                                 p.setFollowTerrain(true);
                                 p.setSurfacePath(true);
                                 add(p);
@@ -58,6 +121,21 @@ public class AdaptiveOSMLayer extends RenderableLayer {
                             break;
                     }
             });
+//
+//            Globe g =new EarthFlat();
+//
+//            renderables.sort((a,b) -> {
+//                if (a==b) return 0;
+//                if (a instanceof SurfacePolygon && b instanceof SurfacePolygon) {
+//                    int da = Double.compare(
+//                        ((SurfacePolygon)b).getArea(g),
+//                        ((SurfacePolygon)a).getArea(g)
+//                    );
+//                    if (da!=0) return da;
+//                }
+//
+//                return Integer.compare(System.identityHashCode(a), System.identityHashCode(b));
+//            });
         } catch (IOException e) {
             e.printStackTrace();
         }
