@@ -58,9 +58,8 @@ public class AdaptiveOSMLayer extends RenderableLayer {
                                 //SurfacePolygon p = new SurfacePolygon(latlon);
 
                                 //TODO use VarHandle to access private field 'properties'
-                                Map<String,Object> properties = new HashMap();
-                                List<String> keys = w.getKeysWithPrefix("");
-                                for (String k : keys) {
+                                Map<String,String> properties = new HashMap();
+                                for (String k : w.getKeysWithPrefix("")) {
                                     if (!keysExcl.contains(k))
                                         properties.put(k, w.getTag(k));
                                 }
@@ -75,32 +74,39 @@ public class AdaptiveOSMLayer extends RenderableLayer {
                                 p.setAltitudeMode(RELATIVE_TO_GROUND);
 
                                 Material m = null;
-                                if (m!=null) {
-                                    switch ((String) properties.get("building")) {
-                                        case "house":
-                                            m = Material.CYAN;
-                                            break;
-                                        default:
-                                            m = Material.BLUE;
-                                            break;
+                                if (m==null) {
+                                    final String building = properties.get("building");
+                                    if (building!=null) {
+                                        switch (building) {
+                                            case "house":
+                                                m = Material.RED;
+                                                break;
+                                            default:
+                                                m = Material.ORANGE;
+                                                break;
+                                        }
                                     }
                                 }
-                                if (m!=null) {
-                                    switch ((String) properties.get("landuse")) {
-                                        case "grass":
-                                        case "farmland":
-                                            m = Material.GREEN;
-                                            break;
-
+                                if (m==null) {
+                                    final String l = properties.get("landuse");
+                                    if (l!=null) {
+                                        switch (l) {
+                                            case "grass":
+                                            case "farmland":
+                                                m = Material.GREEN;
+                                                break;
+                                        }
                                     }
                                 }
-                                if (m!=null) {
-                                    switch ((String) properties.get("surface")) {
-                                        case "grass":
-                                        case "cobblestone":
-                                            m = Material.BLACK;
-                                            break;
-
+                                if (m==null) {
+                                    final String s = properties.get("surface");
+                                    if (s!=null) {
+                                        switch (s) {
+                                            case "grass":
+                                            case "cobblestone":
+                                                m = Material.BLACK;
+                                                break;
+                                        }
                                     }
                                 }
                                 if (m == null)
