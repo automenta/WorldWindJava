@@ -59,7 +59,7 @@ public class ScalebarHint {
             if (!event.getEventAction().equals(SelectEvent.ROLLOVER))
                 return;
 
-            marker.setPosition(event.getTopPickedObject().getPosition());
+            marker.setPosition(event.getTopPickedObject().position());
             layer.setEnabled(true);
             wwd.redraw();
         });

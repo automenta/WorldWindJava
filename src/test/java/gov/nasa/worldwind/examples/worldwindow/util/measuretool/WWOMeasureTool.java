@@ -903,7 +903,7 @@ public class WWOMeasureTool extends AVListImpl
             else if (measureDisplay.isAnnotation(event.getTopObject())) {
                 Position pos = null;
                 if (event.pickedObjects.getTerrainObject() != null) {
-                    pos = event.pickedObjects.getTerrainObject().getPosition();
+                    pos = event.pickedObjects.getTerrainObject().position();
                 }
 
                 if (isShowAnnotation()) {
@@ -917,7 +917,7 @@ public class WWOMeasureTool extends AVListImpl
 
                 Position pos = null;
                 if (event.pickedObjects.getTerrainObject() != null) {
-                    pos = event.pickedObjects.getTerrainObject().getPosition();
+                    pos = event.pickedObjects.getTerrainObject().position();
                 }
 
                 if (isShowAnnotation()) {

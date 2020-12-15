@@ -99,7 +99,7 @@ public class CoordinatesDisplay extends AbstractOnDemandLayerFeature {
             return null;
 
         PickedObject po = dc.getPickedObjects().getTerrainObject();
-        return po != null ? po.getPosition() : null;
+        return po != null ? po.position() : null;
     }
 
     private String formatText(DrawContext dc) {

@@ -2435,7 +2435,7 @@ public class Path extends AbstractShape {
         @Override
         public PickedObject getTopObject(DrawContext dc, Point pickPoint) {
 
-            if (this.getPickableObjects().isEmpty() && this.getPickablePositions().isEmpty()) {
+            if (this.pickableObjects.isEmpty() && this.getPickablePositions().isEmpty()) {
                 return null;
             }
 
@@ -2443,8 +2443,7 @@ public class Path extends AbstractShape {
             if (colorCode == DrawContext.CLEAR_COLOR)
                 return null;
 
-
-            PickedObject pickedObject = this.getPickableObjects().get(colorCode);
+            PickedObject pickedObject = this.pickableObjects.get(colorCode);
             if (pickedObject != null) {
                 return pickedObject;
             }

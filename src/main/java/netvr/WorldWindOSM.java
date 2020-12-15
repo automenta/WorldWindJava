@@ -1,12 +1,11 @@
 package netvr;
 
 import gov.nasa.worldwind.BasicModel;
-import gov.nasa.worldwind.formats.shapefile.*;
 import gov.nasa.worldwind.geom.*;
-import gov.nasa.worldwind.layers.RenderableLayer;
+import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.layers.earth.OSMMapnikLayer;
 import gov.nasa.worldwind.layers.sky.*;
-import gov.nasa.worldwind.render.Polygon;
+import gov.nasa.worldwind.pick.PickedObject;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.video.LayerList;
@@ -14,8 +13,6 @@ import gov.nasa.worldwind.video.newt.WorldWindowNEWT;
 
 import java.awt.*;
 import java.util.*;
-
-import static gov.nasa.worldwind.WorldWind.RELATIVE_TO_GROUND;
 
 public class WorldWindOSM {
 
@@ -35,13 +32,19 @@ public class WorldWindOSM {
 
         w.addSelectListener(s->{
             if (s.isLeftClick()) {
-                Object top = s.getTopObject();
-                System.out.println(top);
+                PickedObject top = s.getTopPickedObject();
+                if (top==null || top.isTerrain()) {
+                    System.out.println(top.position());
+                } else {
+                    System.out.println(top);
+                }
             }
         });
     }
 
     static class OSMModel extends BasicModel {
+
+        public final MarkerLayer markers;
 
         public OSMModel() {
 
@@ -56,6 +59,9 @@ public class WorldWindOSM {
                 new Sector(53.00521, 53.00820, 7.18812, 7.19654)
             );
             l.add(o);
+
+            markers = new MarkerLayer();
+            l.add(markers);
 
 
 /* //SHAPEFILE

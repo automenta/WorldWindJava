@@ -244,7 +244,7 @@ public class SARTrackExtensionTool implements MouseListener, PositionListener, P
                 Object id = po.get(AVKey.PICKED_OBJECT_ID);
                 if (id == SegmentPlane.PLANE_BACKGROUND ||
                     (this.segmentPlane.isSnapToGrid() && id == SegmentPlane.PLANE_GRID)) {
-                    nextPosition = po.getPosition();
+                    nextPosition = po.position();
                 }
             }
 

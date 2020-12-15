@@ -51,11 +51,11 @@ public class BasicDragger implements SelectListener {
      * @throws IllegalArgumentException if the provided {@link WorldWindow} is null.
      */
     public BasicDragger(WorldWindow wwd) {
-        if (wwd == null) {
-            String msg = Logging.getMessage("nullValue.WorldWindow");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (wwd == null) {
+//            String msg = Logging.getMessage("nullValue.WorldWindow");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
         this.wwd = wwd;
     }
 
@@ -101,11 +101,11 @@ public class BasicDragger implements SelectListener {
 
     @Override
     public void accept(SelectEvent event) {
-        if (event == null) {
-            String msg = Logging.getMessage("nullValue.EventIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (event == null) {
+//            String msg = Logging.getMessage("nullValue.EventIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         if (event.getEventAction().equals(SelectEvent.DRAG_END)) {
             this.dragContext.setDragState(AVKey.DRAG_ENDED);
@@ -146,18 +146,17 @@ public class BasicDragger implements SelectListener {
      * @throws IllegalArgumentException if the {@link DragContext} is null.
      */
     protected void fireDrag(DragSelectEvent dragEvent) {
-        if (dragEvent == null || dragEvent.getTopObject() == null) {
-            String msg = Logging.getMessage("nullValue.ObjectIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (dragEvent == null || dragEvent.getTopObject() == null) {
+//            String msg = Logging.getMessage("nullValue.ObjectIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         Object dragObject = dragEvent.getTopObject();
 
         if (dragObject instanceof Draggable) {
             ((Draggable) dragObject).drag(this.dragContext);
-        }
-        else if ((dragObject instanceof Movable2) || (dragObject instanceof Movable)) {
+        } else if ((dragObject instanceof Movable2) || (dragObject instanceof Movable)) {
             // Utilize the existing behavior
             this.dragLegacy(dragEvent);
         }
@@ -168,7 +167,7 @@ public class BasicDragger implements SelectListener {
      *
      * @param event the current {@link SelectEvent}.
      */
-    protected void dragLegacy(SelectEvent event) {
+    @Deprecated protected void dragLegacy(SelectEvent event) {
 
         DragSelectEvent dragEvent = (DragSelectEvent) event;
         Object dragObject = dragEvent.getTopObject();

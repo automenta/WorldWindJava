@@ -155,7 +155,7 @@ public class SegmentPlaneEditor extends AbstractLayer {
         Globe globe = wwd.model().getGlobe();
         LatLon[] locations = this.getSegmentPlane().getPlaneLocations();
 
-        Position pickedPos = pickedObject.getPosition();
+        Position pickedPos = pickedObject.position();
 
         Position refPos = new Position(locations[0], pickedPos.getElevation());
         Vec4 refPoint = globe.computePointFromPosition(refPos);
@@ -197,7 +197,7 @@ public class SegmentPlaneEditor extends AbstractLayer {
     @SuppressWarnings("UnusedDeclaration")
     protected void doMoveSegmentPoint(WorldWindow wwd, PickedObject pickedObject,
         Point mousePoint, Point previousMousePoint) {
-        Position oldPosition = pickedObject.getPosition();
+        Position oldPosition = pickedObject.position();
         Position newPosition = this.computeNewPositionFromPlaneGeometry(wwd);
 
         // If the mouse point is not on the plane geometry, we compute an intersection with the infinite plane
@@ -232,13 +232,13 @@ public class SegmentPlaneEditor extends AbstractLayer {
         if (this.isSnapToGrid()) {
             PickedObject gridObject = this.getPickedSegmentPlaneObject(wwd, SegmentPlane.PLANE_GRID);
             if (gridObject != null) {
-                return gridObject.getPosition();
+                return gridObject.position();
             }
         }
 
         PickedObject planeObject = this.getPickedSegmentPlaneObject(wwd, SegmentPlane.PLANE_BACKGROUND);
         if (planeObject != null) {
-            return planeObject.getPosition();
+            return planeObject.position();
         }
 
         return null;
@@ -315,7 +315,7 @@ public class SegmentPlaneEditor extends AbstractLayer {
         double[] altitudes = this.getSegmentPlane().getPlaneAltitudes();
         LatLon[] locations = this.getSegmentPlane().getPlaneLocations();
 
-        Position pos = pickedObject.getPosition();
+        Position pos = pickedObject.position();
         Line ray = view.computeRayFromScreenPoint(mousePoint.getX(), mousePoint.getY());
         Intersection[] intersection = globe.intersect(ray, pos.getElevation());
         if (intersection == null)
@@ -346,7 +346,7 @@ public class SegmentPlaneEditor extends AbstractLayer {
         double[] altitudes = this.getSegmentPlane().getPlaneAltitudes();
         Position[] segmentPositions = this.getSegmentPlane().getSegmentPositions();
 
-        Position pos = pickedObject.getPosition();
+        Position pos = pickedObject.position();
         Vec4 point = globe.computePointFromPosition(pos);
 
         Vec4 surfaceNormal = globe.computeSurfaceNormalAtPoint(point);
@@ -381,7 +381,7 @@ public class SegmentPlaneEditor extends AbstractLayer {
         LatLon[] locations = this.getSegmentPlane().getPlaneLocations();
         Position[] segmentPositions = this.getSegmentPlane().getSegmentPositions();
 
-        Position pos = pickedObject.getPosition();
+        Position pos = pickedObject.position();
         Line ray = view.computeRayFromScreenPoint(mousePoint.getX(), mousePoint.getY());
         Intersection[] intersection = globe.intersect(ray, pos.getElevation());
         if (intersection == null)

@@ -663,7 +663,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
                 if (objectsUnderCursor != null) {
                     PickedObject terrainObject = objectsUnderCursor.getTerrainObject();
                     if (terrainObject != null)
-                        this.previousPosition = terrainObject.getPosition();
+                        this.previousPosition = terrainObject.position();
                 }
             }
             case SelectEvent.LEFT_CLICK -> {
@@ -922,14 +922,14 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
             return;
 
         if (this.getPreviousPosition() == null) {
-            this.previousPosition = terrainObject.getPosition();
+            this.previousPosition = terrainObject.position();
             return;
         }
 
         // Perform the editing operation.
-        this.doReshapeShape(controlPoint, terrainObject.getPosition());
+        this.doReshapeShape(controlPoint, terrainObject.position());
 
-        this.previousPosition = terrainObject.getPosition();
+        this.previousPosition = terrainObject.position();
 
         this.adjustShape();
     }

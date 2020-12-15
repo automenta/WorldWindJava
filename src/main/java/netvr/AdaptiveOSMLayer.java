@@ -64,14 +64,14 @@ public class AdaptiveOSMLayer extends RenderableLayer {
                                         properties.put(k, w.getTag(k));
                                 }
 
-                                Polygon p = new Polygon(latlon) {
+                                Polygon p = new Polygon(latlon);/* {
                                     @Override
                                     public void pick(DrawContext dc, Point pickPoint) {
                                         super.pick(dc, pickPoint);
                                         if (!properties.isEmpty())
                                             System.out.println(properties);
                                     }
-                                };
+                                };*/
                                 p.setAltitudeMode(RELATIVE_TO_GROUND);
 
                                 Material m = null;

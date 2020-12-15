@@ -144,7 +144,7 @@ public class ViewVolumeViewer extends JFrame {
             PickedObjectList pos = dc.getPickedObjects();
             PickedObject terrainObject = pos != null ? pos.getTerrainObject() : null;
 
-            return terrainObject != null ? terrainObject.getPosition() : null;
+            return terrainObject != null ? terrainObject.position() : null;
         }
     }
 

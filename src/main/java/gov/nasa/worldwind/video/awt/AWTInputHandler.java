@@ -277,64 +277,49 @@ public class AWTInputHandler extends WWObjectImpl implements KeyListener, MouseL
         }
     }
 
-    public void mouseClicked(final MouseEvent mouseEvent) {
-        if (this.wwd == null) {
+    public void mouseClicked(final MouseEvent e) {
+        if (this.wwd == null || this.wwd.view() == null || e == null)
             return;
-        }
 
-        if (this.wwd.view() == null) {
-            return;
-        }
 
-        if (mouseEvent == null) {
-            return;
-        }
+        this.callMouseClickedListeners(e);
 
         PickedObjectList pickedObjects = this.wwd.objectsAtPosition();
 
-        this.callMouseClickedListeners(mouseEvent);
-
         if (pickedObjects != null && pickedObjects.getTopPickedObject() != null
-            && !pickedObjects.getTopPickedObject().isTerrain()) {
+            //&& !pickedObjects.getTopPickedObject().isTerrain()
+        ) {
             // Something is under the cursor, so it's deemed "selected".
-            if (MouseEvent.BUTTON1 == mouseEvent.getButton()) {
-                if (mouseEvent.getClickCount() <= 1) {
-                    this.callSelectListeners(new SelectEvent(this.wwd, SelectEvent.LEFT_CLICK,
-                        mouseEvent, pickedObjects));
-                }
-                else {
-                    this.callSelectListeners(new SelectEvent(this.wwd, SelectEvent.LEFT_DOUBLE_CLICK,
-                        mouseEvent, pickedObjects));
-                }
-            }
-            else if (MouseEvent.BUTTON3 == mouseEvent.getButton()) {
+            if (MouseEvent.BUTTON1 == e.getButton()) {
+                this.callSelectListeners(
+                    new SelectEvent(this.wwd,
+                        e.getClickCount() <= 1 ? SelectEvent.LEFT_CLICK : SelectEvent.LEFT_DOUBLE_CLICK,
+                        e, pickedObjects
+                    )
+                );
+            } else if (MouseEvent.BUTTON3 == e.getButton()) {
                 this.callSelectListeners(new SelectEvent(this.wwd, SelectEvent.RIGHT_CLICK,
-                    mouseEvent, pickedObjects));
+                    e, pickedObjects));
             }
 
             this.wwd.view().firePropertyChange(AVKey.VIEW, null, this.wwd.view());
-        }
-        else {
-            if (!mouseEvent.isConsumed()) {
-                this.wwd.view().getViewInputHandler().mouseClicked(mouseEvent);
+        } else {
+            if (!e.isConsumed()) {
+                this.wwd.view().getViewInputHandler().mouseClicked(e);
             }
         }
     }
 
-    public void mousePressed(MouseEvent mouseEvent) {
-        if (this.wwd == null) {
-            return;
-        }
-
-        if (mouseEvent == null) {
+    public void mousePressed(MouseEvent e) {
+        if (this.wwd == null || e == null) {
             return;
         }
 
         // Determine if the mouse point has changed since the last mouse move event. This can happen if user switches to
         // another window, moves the mouse, and then switches back to the WorldWind window.
-        boolean mousePointChanged = !mouseEvent.getPoint().equals(this.mousePoint);
+        boolean mousePointChanged = !e.getPoint().equals(this.mousePoint);
 
-        this.mousePoint = mouseEvent.getPoint();
+        this.mousePoint = e.getPoint();
         this.cancelHover();
         this.cancelDrag();
 
@@ -348,26 +333,26 @@ public class AWTInputHandler extends WWObjectImpl implements KeyListener, MouseL
 
         this.objectsAtButtonPress = this.wwd.objectsAtPosition();
 
-        this.callMousePressedListeners(mouseEvent);
+        this.callMousePressedListeners(e);
 
+        final int button = e.getButton();
         if (this.objectsAtButtonPress != null && objectsAtButtonPress.getTopPickedObject() != null
             && !this.objectsAtButtonPress.getTopPickedObject().isTerrain()) {
             // Something is under the cursor, so it's deemed "selected".
-            if (MouseEvent.BUTTON1 == mouseEvent.getButton()) {
+            if (MouseEvent.BUTTON1 == button) {
                 this.callSelectListeners(new SelectEvent(this.wwd, SelectEvent.LEFT_PRESS,
-                    mouseEvent, this.objectsAtButtonPress));
-            }
-            else if (MouseEvent.BUTTON3 == mouseEvent.getButton()) {
+                    e, this.objectsAtButtonPress));
+            } else if (MouseEvent.BUTTON3 == button) {
                 this.callSelectListeners(new SelectEvent(this.wwd, SelectEvent.RIGHT_PRESS,
-                    mouseEvent, this.objectsAtButtonPress));
+                    e, this.objectsAtButtonPress));
             }
 
             // Initiate a repaint.
             this.wwd.view().firePropertyChange(AVKey.VIEW, null, this.wwd.view());
         }
 
-        if (!mouseEvent.isConsumed()) {
-            this.wwd.view().getViewInputHandler().mousePressed(mouseEvent);
+        if (!e.isConsumed()) {
+            this.wwd.view().getViewInputHandler().mousePressed(e);
         }
 
         // GLJPanel does not take keyboard focus when the user clicks on it, thereby suppressing key events normally
@@ -375,7 +360,7 @@ public class AWTInputHandler extends WWObjectImpl implements KeyListener, MouseL
         // mouse on the GLJPanel, causing GLJPanel to take the focus in the same manner as GLCanvas. Note that focus is
         // passed only when the user clicks the primary mouse button. See
         // http://issues.worldwind.arc.nasa.gov/jira/browse/WWJ-272.
-        if (MouseEvent.BUTTON1 == mouseEvent.getButton() && this.wwd instanceof GLJPanel) {
+        if (MouseEvent.BUTTON1 == button && this.wwd instanceof GLJPanel) {
             ((Component) this.wwd).requestFocusInWindow();
         }
     }
@@ -399,11 +384,7 @@ public class AWTInputHandler extends WWObjectImpl implements KeyListener, MouseL
     }
 
     public void mouseEntered(MouseEvent mouseEvent) {
-        if (this.wwd == null) {
-            return;
-        }
-
-        if (mouseEvent == null) {
+        if (this.wwd == null || mouseEvent == null) {
             return;
         }
 
@@ -414,11 +395,7 @@ public class AWTInputHandler extends WWObjectImpl implements KeyListener, MouseL
     }
 
     public void mouseExited(MouseEvent mouseEvent) {
-        if (this.wwd == null) {
-            return;
-        }
-
-        if (mouseEvent == null) {
+        if (this.wwd == null || mouseEvent == null) {
             return;
         }
 
@@ -493,11 +470,7 @@ public class AWTInputHandler extends WWObjectImpl implements KeyListener, MouseL
     }
 
     public void mouseMoved(MouseEvent mouseEvent) {
-        if (this.wwd == null) {
-            return;
-        }
-
-        if (mouseEvent == null) {
+        if (this.wwd == null || mouseEvent == null) {
             return;
         }
 
@@ -516,11 +489,7 @@ public class AWTInputHandler extends WWObjectImpl implements KeyListener, MouseL
     }
 
     public void mouseWheelMoved(MouseWheelEvent mouseWheelEvent) {
-        if (this.wwd == null) {
-            return;
-        }
-
-        if (mouseWheelEvent == null) {
+        if (this.wwd == null || mouseWheelEvent == null) {
             return;
         }
 
@@ -531,11 +500,7 @@ public class AWTInputHandler extends WWObjectImpl implements KeyListener, MouseL
     }
 
     public void focusGained(FocusEvent focusEvent) {
-        if (this.wwd == null) {
-            return;
-        }
-
-        if (focusEvent == null) {
+        if (this.wwd == null || focusEvent == null) {
             return;
         }
 
@@ -543,11 +508,7 @@ public class AWTInputHandler extends WWObjectImpl implements KeyListener, MouseL
     }
 
     public void focusLost(FocusEvent focusEvent) {
-        if (this.wwd == null) {
-            return;
-        }
-
-        if (focusEvent == null) {
+        if (this.wwd == null || focusEvent == null) {
             return;
         }
 
@@ -566,10 +527,12 @@ public class AWTInputHandler extends WWObjectImpl implements KeyListener, MouseL
 
             Object oh = hover == null ? null : hover.getObject() != null ? hover.getObject() :
                 hover.getParentLayer();
-            Object ol = last == null ? null : last.getObject() != null ? last.getObject() :
-                last.getParentLayer();
-            if (oh != null && oh.equals(ol)) {
-                return; // object picked is the hover object. don't do anything but wait for the timer to expire.
+            if (oh!=null) {
+                Object ol = last == null ? null : last.getObject() != null ? last.getObject() :
+                    last.getParentLayer();
+                if (oh.equals(ol)) {
+                    return; // object picked is the hover object. don't do anything but wait for the timer to expire.
+                }
             }
         }
 
@@ -741,20 +704,12 @@ public class AWTInputHandler extends WWObjectImpl implements KeyListener, MouseL
     }
 
     public void propertyChange(PropertyChangeEvent event) {
-        if (this.wwd == null) {
+        if (this.wwd == null || this.wwd.view() == null || event == null) {
             return;
         }
 
-        if (this.wwd.view() == null) {
-            return;
-        }
-
-        if (event == null) {
-            return;
-        }
-
-        if (event.getPropertyName().equals(AVKey.VIEW) &&
-            (event.getSource() == this.getWorldWindow().sceneControl())) {
+        if ((event.getSource() == this.getWorldWindow().sceneControl())
+            && event.getPropertyName().equals(AVKey.VIEW)) {
             this.wwd.view().getViewInputHandler().setWorldWindow(this.wwd);
         }
     }

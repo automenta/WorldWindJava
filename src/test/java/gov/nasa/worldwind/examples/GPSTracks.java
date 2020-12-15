@@ -49,7 +49,7 @@ public class GPSTracks extends ApplicationTemplate {
                         //noinspection RedundantCast
                         System.out.printf("Track position %s, %s, size = %f\n",
                             po.get(AVKey.PICKED_OBJECT_ID).toString(),
-                            po.getPosition(), (Double) po.get(AVKey.PICKED_OBJECT_SIZE));
+                            po.position(), (Double) po.get(AVKey.PICKED_OBJECT_SIZE));
                     }
                 }
             });

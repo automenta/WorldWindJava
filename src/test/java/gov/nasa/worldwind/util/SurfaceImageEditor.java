@@ -214,7 +214,7 @@ public class SurfaceImageEditor implements SelectListener {
         if (terrainObject == null)
             return;
 
-        Position p = terrainObject.getPosition();
+        Position p = terrainObject.position();
 
         Angle dLat = p.getLatitude().sub(this.previousPosition.getLatitude());
         Angle dLon = p.getLongitude().sub(this.previousPosition.getLongitude());

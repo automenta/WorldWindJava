@@ -318,7 +318,7 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
         PickedObjectList pickedObjects = this.wwd.objectsAtPosition();
         if (pickedObjects != null) {
             if (pickedObjects.getTerrainObject() != null) {
-                return pickedObjects.getTerrainObject().getPosition();
+                return pickedObjects.getTerrainObject().position();
             }
         }
         return null;

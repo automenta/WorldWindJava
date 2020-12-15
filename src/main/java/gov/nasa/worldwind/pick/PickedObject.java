@@ -88,7 +88,7 @@ public class PickedObject extends AVListImpl {
         this.set(AVKey.PICKED_OBJECT_PARENT_LAYER, layer);
     }
 
-    public Position getPosition() {
+    public Position position() {
         return (Position) this.get(AVKey.POSITION);
     }
 

@@ -23,13 +23,13 @@ public class PickSupport {
      * The picked objects currently registered with this PickSupport, represented as a map of color codes to picked
      * objects. This maps provides constant time access to a picked object when its color code is known.
      */
-    protected final Map<Integer, PickedObject> pickableObjects = new HashMap<>();
+    public final Map<Integer, PickedObject> pickableObjects = new HashMap<>();
     /**
      * The picked object color code ranges currently registered with this PickSupport, represented as a map of color
      * code ranges to picked object factories. PickSupport uses these factories to delay PickedObject construction until
      * a matching pick color is identified.
      */
-    protected final Map<Range, PickedObjectFactory> pickableObjectRanges = new HashMap<>();
+    public final Map<Range, PickedObjectFactory> pickableObjectRanges = new HashMap<>();
     /**
      * Indicates the minimum and maximum color code associated with the picked objects in the pickableObjects map.
      * Initially <code>null</code>, indicating that the minimum and maximum color codes are unknown.
@@ -48,28 +48,28 @@ public class PickSupport {
     }
 
     public void clearPickList() {
-        this.getPickableObjects().clear();
-        this.getPickableObjectRanges().clear();
+        this.pickableObjects.clear();
+        this.pickableObjectRanges.clear();
         this.minAndMaxColorCodes = null; // Reset the min and max color codes.
     }
 
     public void addPickableObject(int colorCode, Object o, Position position, boolean isTerrain) {
-        this.getPickableObjects().put(colorCode, new PickedObject(colorCode, o, position, isTerrain));
+        this.pickableObjects.put(colorCode, new PickedObject(colorCode, o, position, isTerrain));
         this.adjustExtremeColorCodes(colorCode);
     }
 
     public void addPickableObject(int colorCode, Object o, Position position) {
-        this.getPickableObjects().put(colorCode, new PickedObject(colorCode, o, position, false));
+        this.pickableObjects.put(colorCode, new PickedObject(colorCode, o, position, false));
         this.adjustExtremeColorCodes(colorCode);
     }
 
     public void addPickableObject(int colorCode, Object o) {
-        this.getPickableObjects().put(colorCode, new PickedObject(colorCode, o));
+        this.pickableObjects.put(colorCode, new PickedObject(colorCode, o));
         this.adjustExtremeColorCodes(colorCode);
     }
 
     public void addPickableObject(PickedObject po) {
-        this.getPickableObjects().put(po.getColorCode(), po);
+        this.pickableObjects.put(po.getColorCode(), po);
         this.adjustExtremeColorCodes(po.getColorCode());
     }
 
@@ -238,31 +238,24 @@ public class PickSupport {
         gl.glColor3ub((byte) 255, (byte) 255, (byte) 255);
     }
 
-    protected Map<Integer, PickedObject> getPickableObjects() {
-        return this.pickableObjects;
-    }
-
-    protected Map<Range, PickedObjectFactory> getPickableObjectRanges() {
-        return this.pickableObjectRanges;
-    }
-
     protected boolean hasPickableObjects() {
-        return !this.getPickableObjects().isEmpty() || !this.getPickableObjectRanges().isEmpty();
+        return !this.pickableObjects.isEmpty() || !this.pickableObjectRanges.isEmpty();
     }
 
     protected PickedObject lookupPickableObject(int colorCode) {
         // Try looking up the color code in the pickable object map.
-        PickedObject po = this.getPickableObjects().get(colorCode);
+        PickedObject po = this.pickableObjects.get(colorCode);
         if (po != null)
             return po;
 
         // Try matching the color code to one of the pickable object ranges.
-        for (Map.Entry<Range, PickedObjectFactory> entry : this.getPickableObjectRanges().entrySet()) {
+        for (Map.Entry<Range, PickedObjectFactory> entry : this.pickableObjectRanges.entrySet()) {
             Range range = entry.getKey();
-            PickedObjectFactory factory = entry.getValue();
-
-            if (range.contains(colorCode) && factory != null)
-                return factory.createPickedObject(colorCode);
+            if (range.contains(colorCode)) {
+                PickedObjectFactory factory = entry.getValue();
+                if (factory != null)
+                    return factory.createPickedObject(colorCode);
+            }
         }
 
         return null;

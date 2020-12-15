@@ -62,7 +62,7 @@ public class ClickAndGoSelectListener implements SelectListener {
                 // There is a picked object with a position
                 if (event.getTopObject().getClass().equals(pickedObjClass)) {
                     // This object class we handle and we have an orbit view
-                    Position targetPos = event.getTopPickedObject().getPosition();
+                    Position targetPos = event.getTopPickedObject().position();
                     View view = this.wwd.view();
                     // Use a PanToIterator to iterate view to target position
                     if (view != null) {

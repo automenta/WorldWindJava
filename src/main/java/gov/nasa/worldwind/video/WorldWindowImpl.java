@@ -188,9 +188,9 @@ public abstract class WorldWindowImpl extends WWObjectImpl implements WorldWindo
         Position p = null;
         PickedObject top = pol.getTopPickedObject();
         if (top != null && top.hasPosition())
-            p = top.getPosition();
+            p = top.position();
         else if (pol.getTerrainObject() != null)
-            p = pol.getTerrainObject().getPosition();
+            p = pol.getTerrainObject().position();
 
         return p;
     }

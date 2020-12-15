@@ -507,7 +507,7 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
     protected PickedObject createPickedObject(DrawContext dc, Color pickColor) {
         Object pickedObject = this.getDelegateOwner() != null ? this.getDelegateOwner() : this;
         Position pickedPos = dc.getPickedObjects().getTerrainObject() != null
-            ? dc.getPickedObjects().getTerrainObject().getPosition() : null;
+            ? dc.getPickedObjects().getTerrainObject().position() : null;
 
         return new PickedObject(pickColor.getRGB(), pickedObject, pickedPos, false);
     }

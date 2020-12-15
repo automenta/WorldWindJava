@@ -520,7 +520,7 @@ public class PointGrid extends WWObjectImpl implements OrderedRenderable, Highli
         gl.glPopClientAttrib();
 
         if (dc.getPickedObjects().getTopObject() == this) {
-            Position pickedPosition = dc.getPickedObjects().getTopPickedObject().getPosition();
+            Position pickedPosition = dc.getPickedObjects().getTopPickedObject().position();
             if (pickedPosition != null) {
                 Vec4 highlightPoint = this.computePoint(dc, pickedPosition);
                 if (highlightPoint != null) {

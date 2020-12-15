@@ -86,7 +86,7 @@ public class GridOfPoints extends ApplicationTemplate {
                     // Intercept the selected position and assign its display name the position's data value.
                     if (event.getTopObject() instanceof PointGrid)
                         ((AVList) event.getTopObject()).set(AVKey.DISPLAY_NAME,
-                            positionInfo.get(event.getTopPickedObject().getPosition()).toString());
+                            positionInfo.get(event.getTopPickedObject().position()).toString());
 
                     super.accept(event);
                 }

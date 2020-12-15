@@ -323,7 +323,7 @@ public class MeasureToolController extends MouseAdapter
                 Position lastPosition = rubberBandTarget.getPosition();
                 PickedObjectList pol = measureTool.getWwd().objectsAtPosition();
                 PickedObject to = pol.getTerrainObject();
-                rubberBandTarget.setPosition(new Position(to.getPosition(), 0));
+                rubberBandTarget.setPosition(new Position(to.position(), 0));
                 measureTool.moveControlPoint(rubberBandTarget);
                 measureTool.firePropertyChange(MeasureTool.EVENT_POSITION_REPLACE,
                     lastPosition, rubberBandTarget.getPosition());

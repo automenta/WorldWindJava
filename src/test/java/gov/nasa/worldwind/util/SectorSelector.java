@@ -698,7 +698,7 @@ public class SectorSelector extends WWObjectImpl
                 return;
 
             if (this.getStartPosition() != null) {
-                Position end = terrainObject.getPosition();
+                Position end = terrainObject.position();
                 if (!this.getStartPosition().equals(end)) {
                     this.setEndPosition(end);
                     this.setSector(Sector.boundingSector(this.getStartPosition(), this.getEndPosition()));
@@ -706,7 +706,7 @@ public class SectorSelector extends WWObjectImpl
                 }
             }
             else {
-                this.setStartPosition(pos.getTerrainObject().getPosition());
+                this.setStartPosition(pos.getTerrainObject().position());
             }
         }
 

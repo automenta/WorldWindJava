@@ -37,12 +37,11 @@ public class Range {
      * this range if it's greater than or equal to <code>this.location</code> and less than <code>this.location +
      * this.length</code>.
      *
-     * @param location the location to test.
+     * @param loc the location to test.
      * @return true if the location is in this range, otherwise false.
      */
-    public boolean contains(int location) {
+    public boolean contains(int loc) {
         final int thisLocation = this.location;
-        return location >= thisLocation &&
-            location < thisLocation + this.length;
+        return loc >= thisLocation && loc < thisLocation + this.length;
     }
 }
