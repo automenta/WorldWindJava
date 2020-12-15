@@ -75,23 +75,23 @@ public class GlobeAnnotation extends AbstractAnnotation implements Locatable, Mo
      * @param defaults the default {@link AnnotationAttributes} set.
      */
     public GlobeAnnotation(String text, Position position, AnnotationAttributes defaults) {
-        if (text == null) {
-            String message = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (position == null) {
-            String message = Logging.getMessage("nullValue.PositionIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (defaults == null) {
-            String message = Logging.getMessage("nullValue.AnnotationAttributesIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (text == null) {
+//            String message = Logging.getMessage("nullValue.StringIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//
+//        if (position == null) {
+//            String message = Logging.getMessage("nullValue.PositionIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//
+//        if (defaults == null) {
+//            String message = Logging.getMessage("nullValue.AnnotationAttributesIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         this.setText(text);
         this.position = position;
@@ -99,17 +99,17 @@ public class GlobeAnnotation extends AbstractAnnotation implements Locatable, Mo
     }
 
     private void init(String text, Position position, Font font, Color textColor) {
-        if (text == null) {
-            String message = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (position == null) {
-            String message = Logging.getMessage("nullValue.PositionIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (text == null) {
+//            String message = Logging.getMessage("nullValue.StringIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//
+//        if (position == null) {
+//            String message = Logging.getMessage("nullValue.PositionIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         this.setText(text);
         this.position = position;
@@ -186,21 +186,21 @@ public class GlobeAnnotation extends AbstractAnnotation implements Locatable, Mo
     }
 
     public void move(Position position) {
-        if (position == null) {
-            String msg = Logging.getMessage("nullValue.PositionIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (position == null) {
+//            String msg = Logging.getMessage("nullValue.PositionIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         this.position = this.position.add(position);
     }
 
     public void moveTo(Position position) {
-        if (position == null) {
-            String msg = Logging.getMessage("nullValue.PositionIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (position == null) {
+//            String msg = Logging.getMessage("nullValue.PositionIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         this.position = position;
     }

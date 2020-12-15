@@ -7,12 +7,16 @@ import gov.nasa.worldwind.layers.earth.OSMMapnikLayer;
 import gov.nasa.worldwind.layers.sky.*;
 import gov.nasa.worldwind.pick.PickedObject;
 import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.render.markers.*;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.video.LayerList;
 import gov.nasa.worldwind.video.newt.WorldWindowNEWT;
 
 import java.awt.*;
 import java.util.*;
+import java.util.List;
+
+import static gov.nasa.worldwind.avlist.AVKey.SHAPE_NONE;
 
 public class WorldWindOSM {
 
@@ -26,7 +30,9 @@ public class WorldWindOSM {
 
     private static void mainNEWT() {
 
-        final WorldWindowNEWT w = new WorldWindowNEWT(new OSMModel(), 1024, 800);
+        final OSMModel world = new OSMModel();
+
+        final WorldWindowNEWT w = new WorldWindowNEWT(world, 1024, 800);
 
         w.view().goTo(new Position(LatLon.fromDegrees(53.00820, 7.18812), 0), 400);
 
@@ -34,7 +40,30 @@ public class WorldWindOSM {
             if (s.isLeftClick()) {
                 PickedObject top = s.getTopPickedObject();
                 if (top==null || top.isTerrain()) {
-                    System.out.println(top.position());
+                    //System.out.println(top.position());
+                    final Position where = top.position();
+                    final BasicMarker m = new BasicMarker(
+                        where,
+                        new BasicMarkerAttributes(Material.ORANGE, BasicMarkerShape.CUBE, 1.0d, 10, 10)
+                    );
+
+                    GlobeAnnotation a = new GlobeAnnotation("AGL Annotation", where);
+//                    a.getAttributes().setFrameShape(SHAPE_NONE);
+                    //a.getAttributes().setLeader();
+
+//                    a.setAlwaysOnTop(true);
+                    world.notes.removeAllAnnotations();
+                    world.notes.addAnnotation(a);
+
+//                    GlobeAnnotationBalloon a = new GlobeAnnotationBalloon("AGL Annotation", where);
+//                    a.setAlwaysOnTop(true);
+//                    world.renderables.add(a);
+
+
+                    world.markers.setMarkers(
+                        List.of(m)
+                    );
+
                 } else {
                     System.out.println(top);
                 }
@@ -44,6 +73,8 @@ public class WorldWindOSM {
 
     static class OSMModel extends BasicModel {
 
+        public final RenderableLayer renderables = new RenderableLayer();
+        public final AnnotationLayer notes;
         public final MarkerLayer markers;
 
         public OSMModel() {
@@ -62,6 +93,11 @@ public class WorldWindOSM {
 
             markers = new MarkerLayer();
             l.add(markers);
+
+            notes = new AnnotationLayer();
+            l.add(notes);
+
+            l.add(renderables);
 
 
 /* //SHAPEFILE

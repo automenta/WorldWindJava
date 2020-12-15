@@ -175,11 +175,11 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
     }
 
     public void setText(String text) {
-        if (text == null) {
-            String message = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (text == null) {
+//            String message = Logging.getMessage("nullValue.StringIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         this.text = text;
     }
@@ -189,11 +189,11 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
     }
 
     public void setAttributes(AnnotationAttributes attributes) {
-        if (attributes == null) {
-            String message = Logging.getMessage("nullValue.AnnotationAttributesIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (attributes == null) {
+//            String message = Logging.getMessage("nullValue.AnnotationAttributesIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         this.attributes = attributes;
     }
@@ -284,11 +284,11 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
      * @param dc the current DrawContext.
      */
     public void render(DrawContext dc) {
-        if (dc == null) {
-            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (dc == null) {
+//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         if (!this.getAttributes().isVisible())
             return;
@@ -454,11 +454,11 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
      * @throws IllegalArgumentException if <code>dc</code> is null.
      */
     public Rectangle getBounds(DrawContext dc) {
-        if (dc == null) {
-            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (dc == null) {
+//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         if (dc.getView().getViewport() == null)
             return null;

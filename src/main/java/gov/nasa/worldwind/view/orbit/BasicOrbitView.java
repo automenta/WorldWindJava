@@ -742,15 +742,15 @@ public class BasicOrbitView extends BasicView implements OrbitView {
             beginZoom, endZoom, timeToMove, endCenterOnSurface);
     }
 
-    public void addPanToAnimator(Position beginCenterPos, Position endCenterPos,
-        Angle beginHeading, Angle endHeading,
-        Angle beginPitch, Angle endPitch,
-        double beginZoom, double endZoom, boolean endCenterOnSurface) {
-
-        ((OrbitViewInputHandler) this.viewInputHandler).addPanToAnimator(
-            beginCenterPos, endCenterPos, beginHeading, endHeading, beginPitch, endPitch,
-            beginZoom, endZoom, endCenterOnSurface);
-    }
+//    public void addPanToAnimator(Position beginCenterPos, Position endCenterPos,
+//        Angle beginHeading, Angle endHeading,
+//        Angle beginPitch, Angle endPitch,
+//        double beginZoom, double endZoom, boolean endCenterOnSurface) {
+//
+//        ((OrbitViewInputHandler) this.viewInputHandler).addPanToAnimator(
+//            beginCenterPos, endCenterPos, beginHeading, endHeading, beginPitch, endPitch,
+//            beginZoom, endZoom, endCenterOnSurface);
+//    }
 
     public void addPanToAnimator(Position centerPos, Angle heading, Angle pitch, double zoom,
         long timeToMove, boolean endCenterOnSurface) {

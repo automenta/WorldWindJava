@@ -24,8 +24,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * @see AnnotationRenderer
  */
 public class AnnotationLayer extends AbstractLayer {
-    protected final Collection<Annotation> annotations =
-        new ConcurrentLinkedQueue<>();
+    protected final Collection<Annotation> annotations = new ConcurrentLinkedQueue<>();
     protected Iterable<Annotation> annotationsOverride;
     private AnnotationRenderer annotationRenderer = new BasicAnnotationRenderer();
 
@@ -44,12 +43,7 @@ public class AnnotationLayer extends AbstractLayer {
      * @throws IllegalStateException    If a custom Iterable has been specified by a call to <code>setAnnotations</code>.
      */
     public void addAnnotation(Annotation annotation) {
-        if (annotation == null) {
-            String msg = Logging.getMessage("nullValue.AnnotationIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-        if (this.annotationsOverride != null) {
+        if (null != this.annotationsOverride) {
             String msg = Logging.getMessage("generic.LayerIsUsingCustomIterable");
             Logging.logger().severe(msg);
             throw new IllegalStateException(msg);

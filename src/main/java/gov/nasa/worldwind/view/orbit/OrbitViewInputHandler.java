@@ -812,12 +812,11 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
     public void addPanToAnimator(Position beginCenterPos, Position endCenterPos,
         Angle beginHeading, Angle endHeading,
         Angle beginPitch, Angle endPitch,
-        double beginZoom, double endZoom, boolean endCenterOnSurface) {
+        double beginZoom, double endZoom, boolean endCenterOnSurface, long MIN_LENGTH_MILLIS, long MAX_LENGTH_MILLIS) {
         int altitudeMode = endCenterOnSurface ? WorldWind.CLAMP_TO_GROUND : WorldWind.ABSOLUTE;
 
         // TODO: scale on mid-altitude?
-        final long MIN_LENGTH_MILLIS = 2000;
-        final long MAX_LENGTH_MILLIS = 10000;
+
         long timeToMove = AnimationSupport.getScaledTimeMillisecs(
             beginCenterPos, endCenterPos,
             MIN_LENGTH_MILLIS, MAX_LENGTH_MILLIS);
@@ -827,7 +826,7 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
             beginZoom, endZoom, timeToMove, altitudeMode);
 
         this.gotoAnimControl.put(VIEW_ANIM_PAN, panAnimator);
-        this.getView().firePropertyChange(AVKey.VIEW, null, this.getView());
+        orbitView.firePropertyChange(AVKey.VIEW, null, orbitView);
     }
 
     public void addPanToAnimator(Position centerPos, Angle heading, Angle pitch, double zoom,
@@ -844,16 +843,15 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
         OrbitView view = (OrbitView) this.getView();
         addPanToAnimator(view.getCenterPosition(), centerPos,
             view.getHeading(), heading,
-            view.getPitch(), pitch, view.getZoom(), zoom, endCenterOnSurface);
+            view.getPitch(), pitch, view.getZoom(), zoom, endCenterOnSurface,
+        1000,
+                2000
+            );
         this.getView().firePropertyChange(AVKey.VIEW, null, this.getView());
     }
 
     public void addPanToAnimator(Position centerPos, Angle heading, Angle pitch, double zoom) {
-        OrbitView view = (OrbitView) this.getView();
-        addPanToAnimator(view.getCenterPosition(), centerPos,
-            view.getHeading(), heading,
-            view.getPitch(), pitch, view.getZoom(), zoom, false);
-        this.getView().firePropertyChange(AVKey.VIEW, null, this.getView());
+        addPanToAnimator(centerPos, heading, pitch, zoom, false);
     }
 
     public void addEyePositionAnimator(long timeToIterate, Position beginPosition, Position endPosition) {
@@ -951,11 +949,11 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
     }
 
     public void addCenterAnimator(Position begin, Position end, boolean smoothed) {
-        if (begin == null || end == null) {
-            String message = Logging.getMessage("nullValue.PositionIsNull");
-            Logging.logger().fine(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (begin == null || end == null) {
+//            String message = Logging.getMessage("nullValue.PositionIsNull");
+//            Logging.logger().fine(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         View view = this.getView();
         if (view instanceof OrbitView) {
@@ -966,11 +964,11 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
     }
 
     public void addCenterAnimator(Position begin, Position end, long lengthMillis, boolean smoothed) {
-        if (begin == null || end == null) {
-            String message = Logging.getMessage("nullValue.PositionIsNull");
-            Logging.logger().fine(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (begin == null || end == null) {
+//            String message = Logging.getMessage("nullValue.PositionIsNull");
+//            Logging.logger().fine(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         View view = this.getView();
         if (view instanceof OrbitView) {
@@ -985,7 +983,7 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
             Animator centerAnimator = new PositionAnimator(interpolator,
                 begin, end, OrbitViewPropertyAccessor.createCenterPositionAccessor(orbitView));
             this.gotoAnimControl.put(VIEW_ANIM_CENTER, centerAnimator);
-            orbitView.firePropertyChange(AVKey.VIEW, null, orbitView);
+            orbitView.firePropertyChange(AVKey.VIEW, null, view);
         }
     }
 

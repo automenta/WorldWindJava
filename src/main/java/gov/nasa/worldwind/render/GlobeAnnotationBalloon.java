@@ -33,11 +33,11 @@ public class GlobeAnnotationBalloon extends AbstractAnnotationBalloon implements
     public GlobeAnnotationBalloon(String text, Position position) {
         super(text);
 
-        if (position == null) {
-            String message = Logging.getMessage("nullValue.PositionIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (position == null) {
+//            String message = Logging.getMessage("nullValue.PositionIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         this.position = position;
 
