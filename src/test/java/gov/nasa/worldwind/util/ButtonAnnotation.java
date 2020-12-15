@@ -120,7 +120,7 @@ public class ButtonAnnotation extends ImageAnnotation implements SelectListener 
     //**************************************************************//
 
     @SuppressWarnings("StringEquality")
-    public void selected(SelectEvent e) {
+    public void accept(SelectEvent e) {
         if (e == null)
             return;
 
@@ -152,7 +152,7 @@ public class ButtonAnnotation extends ImageAnnotation implements SelectListener 
     }
 
     protected void onButtonPressed(SelectEvent e) {
-        MouseEvent mouseEvent = e.getMouseEvent();
+        MouseEvent mouseEvent = e.mouseEvent;
         this.fireActionPerformed(mouseEvent.getID(), mouseEvent.getWhen(), mouseEvent.getModifiersEx());
     }
 

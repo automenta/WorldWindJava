@@ -1099,7 +1099,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
 
         this.minimizeButton = new SubHotSpot(this) {
             @Override
-            public void selected(SelectEvent event) {
+            public void accept(SelectEvent event) {
                 if (event == null || AbstractHotSpot.isConsumed(event))
                     return;
 
@@ -1108,7 +1108,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
                     event.consume();
                 }
                 else {
-                    super.selected(event);
+                    super.accept(event);
                 }
             }
         };
@@ -2132,19 +2132,19 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
     }
 
     @Override
-    public void selected(SelectEvent event) {
+    public void accept(SelectEvent event) {
         if (event == null || AbstractHotSpot.isConsumed(event))
             return;
 
-        super.selected(event);
+        super.accept(event);
 
         // Minimize the frame if the title bar was double clicked.
         Rectangle titleBarBounds = new Rectangle((int) this.awtScreenPoint.getX() + this.frameBorder,
             (int) this.awtScreenPoint.getY() + this.frameBorder * 2, this.innerBounds.width, this.titleBarHeight);
 
         if (event.isLeftDoubleClick()) {
-            Point pickPoint = event.getPickPoint();
-            if (pickPoint != null && titleBarBounds.contains(event.getPickPoint())) {
+            Point pickPoint = event.pickPoint;
+            if (pickPoint != null && titleBarBounds.contains(event.pickPoint)) {
                 this.setMinimized(!this.isMinimized());
                 event.consume();
             }

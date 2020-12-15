@@ -210,9 +210,9 @@ public class BalloonController extends MouseAdapter implements SelectListener {
         }
     }
 
-    public void selected(SelectEvent event) {
+    public void accept(SelectEvent event) {
         if (event == null || event.isConsumed()
-            || (event.getMouseEvent() != null && event.getMouseEvent().isConsumed())) {
+            || (event.mouseEvent != null && event.mouseEvent.isConsumed())) {
             return;
         }
 
@@ -355,7 +355,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
             try {
                 // Pass the last event to the controller so that it can clean up internal state if it needs to.
                 if (event != null)
-                    this.resizeController.selected(event);
+                    this.resizeController.accept(event);
 
                 this.resizeController.detach();
                 this.resizeController = null;

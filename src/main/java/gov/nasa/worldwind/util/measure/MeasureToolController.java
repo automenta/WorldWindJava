@@ -275,7 +275,7 @@ public class MeasureToolController extends MouseAdapter
     }
 
     // Handle dragging of control points
-    public void selected(SelectEvent event) {
+    public void accept(SelectEvent event) {
         // Ignore select events if the tools is armed, or in a move/rotate action. In either case we don't
         // want to change the currently selected or hightlighted control point.
         if (measureTool == null || (this.isArmed() && this.isUseRubberBand()) || this.isMoving())
@@ -396,7 +396,7 @@ public class MeasureToolController extends MouseAdapter
                 (Integer) point.get(MeasureTool.CONTROL_TYPE_LOCATION_INDEX));
 
         // Delegate dragging computations to a dragger.
-        this.dragger.selected(event);
+        this.dragger.accept(event);
 
         measureTool.moveControlPoint(point);
         if (measureTool.isShowAnnotation())

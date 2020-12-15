@@ -100,7 +100,7 @@ public class BasicDragger implements SelectListener {
     }
 
     @Override
-    public void selected(SelectEvent event) {
+    public void accept(SelectEvent event) {
         if (event == null) {
             String msg = Logging.getMessage("nullValue.EventIsNull");
             Logging.logger().severe(msg);
@@ -118,7 +118,7 @@ public class BasicDragger implements SelectListener {
             if (this.dragContext == null)
                 this.dragContext = new DragContext();
 
-            this.dragContext.setPoint(event.getPickPoint());
+            this.dragContext.setPoint(event.pickPoint);
             this.dragContext.setPreviousPoint(((DragSelectEvent) event).getPreviousPickPoint());
             this.dragContext.setView(this.wwd.view());
             this.dragContext.setGlobe(this.wwd.model().getGlobe());
@@ -202,12 +202,12 @@ public class BasicDragger implements SelectListener {
         }
 
         // Compute screen-coord delta since drag started.
-        int dx = dragEvent.getPickPoint().x - this.dragRefCursorPoint.x;
-        int dy = dragEvent.getPickPoint().y - this.dragRefCursorPoint.y;
+        int dx = dragEvent.pickPoint.x - this.dragRefCursorPoint.x;
+        int dy = dragEvent.pickPoint.y - this.dragRefCursorPoint.y;
 
         // Find intersection of screen coord (refObjectPoint + delta) with globe.
         double x = this.dragRefObjectPoint.x + dx;
-        double y = event.getMouseEvent().getComponent().getSize().height - this.dragRefObjectPoint.y + dy - 1;
+        double y = event.mouseEvent.getComponent().getSize().height - this.dragRefObjectPoint.y + dy - 1;
         Line ray = view.computeRayFromScreenPoint(x, y);
         Position pickPos = null;
         // Use intersection with sphere at reference altitude.

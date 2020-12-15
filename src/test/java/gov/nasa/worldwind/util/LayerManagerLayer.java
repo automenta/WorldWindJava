@@ -479,7 +479,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
      *
      * @param event the current <code>SelectEvent</code>
      */
-    public void selected(SelectEvent event) {
+    public void accept(SelectEvent event) {
         if (event.hasObjects() && event.getTopObject() == this.annotation) {
             boolean update = false;
             if (event.getEventAction().equals(SelectEvent.ROLLOVER)
@@ -555,12 +555,12 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
                 || this.draggingComponent) {
                 // Dragging the whole list
                 if (!this.draggingComponent) {
-                    this.dragRefCursorPoint = event.getMouseEvent().getPoint();
+                    this.dragRefCursorPoint = event.mouseEvent.getPoint();
                     this.dragRefPoint = this.annotation.getScreenPoint();
                     this.draggingComponent = true;
                 }
-                Point cursorOffset = new Point(event.getMouseEvent().getPoint().x - this.dragRefCursorPoint.x,
-                    event.getMouseEvent().getPoint().y - this.dragRefCursorPoint.y);
+                Point cursorOffset = new Point(event.mouseEvent.getPoint().x - this.dragRefCursorPoint.x,
+                    event.mouseEvent.getPoint().y - this.dragRefCursorPoint.y);
                 Point targetPoint = new Point(this.dragRefPoint.x + cursorOffset.x,
                     this.dragRefPoint.y - cursorOffset.y);
                 this.moveTo(targetPoint);

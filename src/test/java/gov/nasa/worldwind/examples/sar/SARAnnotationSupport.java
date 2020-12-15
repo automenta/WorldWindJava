@@ -80,7 +80,7 @@ public class SARAnnotationSupport {
         this.wwd.addSelectListener(new SelectListener() {
             private final BasicDragger dragger = new BasicDragger(SARAnnotationSupport.this.wwd);
 
-            public void selected(SelectEvent event) {
+            public void accept(SelectEvent event) {
                 // Select/unselect on left click on annotations
                 if (event.getEventAction().equals(SelectEvent.LEFT_CLICK)) {
                     if (event.hasObjects()) {
@@ -112,7 +112,7 @@ public class SARAnnotationSupport {
                     if (event.hasObjects()) {
                         // If selected annotation delegate dragging computations to a dragger.
                         if (event.getTopObject() == SARAnnotationSupport.this.currentAnnotation) {
-                            this.dragger.selected(event);
+                            this.dragger.accept(event);
                             // Update help text when dragging
                             updateHelpMessage(SARAnnotationSupport.this.currentAnnotation);
                             // Mark the owner track as dirty.

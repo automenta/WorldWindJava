@@ -73,7 +73,7 @@ public class ToolTipController implements SelectListener, Disposable {
             ((AVList) event.getTopObject()).getStringValue(this.rolloverKey) : null;
     }
 
-    public void selected(SelectEvent event) {
+    public void accept(SelectEvent event) {
         try {
             if (event.isRollover() && this.rolloverKey != null)
                 this.handleRollover(event);
@@ -123,7 +123,7 @@ public class ToolTipController implements SelectListener, Disposable {
     protected void showToolTip(SelectEvent event, String text) {
         if (annotation != null) {
             annotation.setText(text);
-            annotation.setScreenPoint(event.getPickPoint());
+            annotation.setScreenPoint(event.pickPoint);
         }
         else {
             annotation = new ToolTipAnnotation(text);

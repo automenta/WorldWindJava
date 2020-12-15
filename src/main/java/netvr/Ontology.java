@@ -1,16 +1,14 @@
 package netvr;
 
-import com.carrotsearch.hppc.cursors.IntCursor;
 import com.carrotsearch.hppc.procedures.IntProcedure;
 import com.graphhopper.coll.GHIntHashSet;
 import org.semanticweb.yars.nx.*;
 import org.semanticweb.yars.nx.parser.*;
 import org.semanticweb.yars.turtle.TurtleParser;
 
-import java.io.*;
+import java.io.FileInputStream;
 import java.net.URI;
 import java.util.*;
-import java.util.function.IntPredicate;
 import java.util.zip.GZIPInputStream;
 
 /**

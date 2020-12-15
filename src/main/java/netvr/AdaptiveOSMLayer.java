@@ -4,13 +4,13 @@ import com.carrotsearch.hppc.*;
 import com.graphhopper.reader.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.render.Polygon;
+import gov.nasa.worldwind.render.*;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 import static gov.nasa.worldwind.WorldWind.RELATIVE_TO_GROUND;
 
@@ -68,7 +68,8 @@ public class AdaptiveOSMLayer extends RenderableLayer {
                                     @Override
                                     public void pick(DrawContext dc, Point pickPoint) {
                                         super.pick(dc, pickPoint);
-                                        System.out.println(properties);
+                                        if (!properties.isEmpty())
+                                            System.out.println(properties);
                                     }
                                 };
                                 p.setAltitudeMode(RELATIVE_TO_GROUND);

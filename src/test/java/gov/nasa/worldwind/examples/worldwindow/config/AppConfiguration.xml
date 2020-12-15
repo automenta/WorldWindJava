@@ -14,7 +14,7 @@
     <Feature className="gov.nasa.worldwind.examples.worldwindow.features.swinglayermanager.ControlsPanelImpl"/>
     <Feature className="gov.nasa.worldwind.examples.worldwindow.core.AppPanelImpl"/>
     <Feature className="gov.nasa.worldwind.examples.worldwindow.features.NetworkActivitySignal"/>
-    <Feature className="gov.nasa.worldwind.examples.worldwindow.features.StatusPanelImpl"/>
+<!--    <Feature className="gov.nasa.worldwind.examples.worldwindow.features.StatusPanelImpl"/>-->
     <Feature className="gov.nasa.worldwind.examples.worldwindow.core.AppFrameImpl"/>
     <Feature className="gov.nasa.worldwind.examples.worldwindow.core.ExternalLinkController"/>
     <Feature className="gov.nasa.worldwind.examples.worldwindow.core.IconController"/>

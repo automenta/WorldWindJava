@@ -255,7 +255,7 @@ public abstract class WorldWindowImpl extends WWObjectImpl implements WorldWindo
     protected void callSelectListeners(final SelectEvent event) {
         //EventQueue.invokeLater(() -> {
             for (SelectListener listener : eventListeners.getListeners(SelectListener.class)) {
-                listener.selected(event);
+                listener.accept(event);
             }
         //});
     }

@@ -228,7 +228,7 @@ public class ShapeEditing extends ApplicationTemplate {
         }
 
         @Override
-        public void selected(SelectEvent event) {
+        public void accept(SelectEvent event) {
             // This select method identifies the shape to edit.
 
             PickedObject topObject = event.getTopPickedObject();
@@ -251,8 +251,8 @@ public class ShapeEditing extends ApplicationTemplate {
                         this.keepShapeHighlighted(true);
                         event.consume();
                     }
-                    else if ((event.getMouseEvent().getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) == 0
-                        && (event.getMouseEvent().getModifiersEx() & MouseEvent.ALT_DOWN_MASK) == 0) {
+                    else if ((event.mouseEvent.getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) == 0
+                        && (event.mouseEvent.getModifiersEx() & MouseEvent.ALT_DOWN_MASK) == 0) {
                         // Disable editing of the current shape. Shift and Alt are used by the editor, so ignore
                         // events with those buttons down.
                         this.editor.setArmed(false);

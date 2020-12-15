@@ -1,6 +1,5 @@
 package gov.nasa.worldwind.video.newt;
 
-import com.jogamp.common.os.Platform;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.FPSAnimator;

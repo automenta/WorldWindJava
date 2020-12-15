@@ -82,13 +82,13 @@ public class GridOfPoints extends ApplicationTemplate {
             // Establish a select listener that causes the tooltip controller to show the picked position's data value.
             this.setToolTipController(new ToolTipController(wwd()) {
                 @Override
-                public void selected(SelectEvent event) {
+                public void accept(SelectEvent event) {
                     // Intercept the selected position and assign its display name the position's data value.
                     if (event.getTopObject() instanceof PointGrid)
                         ((AVList) event.getTopObject()).set(AVKey.DISPLAY_NAME,
                             positionInfo.get(event.getTopPickedObject().getPosition()).toString());
 
-                    super.selected(event);
+                    super.accept(event);
                 }
             });
         }

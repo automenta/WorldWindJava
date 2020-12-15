@@ -41,7 +41,7 @@ public class HighlightController implements SelectListener {
         this.wwd.removeSelectListener(this);
     }
 
-    public void selected(SelectEvent event) {
+    public void accept(SelectEvent event) {
         try {
             if (this.highlightEventType != null && event.getEventAction().equals(this.highlightEventType))
                 highlight(event.getTopObject());

@@ -12,7 +12,6 @@ import gov.nasa.worldwind.examples.ApplicationTemplate;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.ui.HotSpotController;
 import gov.nasa.worldwind.ui.tree.*;
-import gov.nasa.worldwind.video.WorldWindowGLAutoDrawable;
 import gov.nasa.worldwind.video.newt.WorldWindowNEWT;
 
 /**
@@ -33,7 +32,7 @@ public class TreeControl extends ApplicationTemplate {
                 HotSpotController controller = new HotSpotController(wwd());
             }
         };
-        WorldWindowGLAutoDrawable w = ww.wwd();
+        WorldWindow w = ww.wwd();
 
         RenderableLayer layer = new RenderableLayer();
 

@@ -42,9 +42,9 @@ public class SimpleShapeDragging extends JFrame {
         wwd.addSelectListener(new SelectListener() {
             private final SelectListener dragger = new BasicDragger(wwd);
 
-            public void selected(SelectEvent event) {
+            public void accept(SelectEvent event) {
                 // Delegate dragging computations to a dragger.
-                this.dragger.selected(event);
+                this.dragger.accept(event);
             }
         });
     }

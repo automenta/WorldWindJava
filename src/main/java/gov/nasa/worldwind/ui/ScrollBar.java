@@ -1013,7 +1013,7 @@ public class ScrollBar implements Renderable {
         }
 
         @Override
-        public void selected(SelectEvent event) {
+        public void accept(SelectEvent event) {
             // Overridden to prevent the super class passing the event to a parent component
 
             if (event == null || event.isConsumed())

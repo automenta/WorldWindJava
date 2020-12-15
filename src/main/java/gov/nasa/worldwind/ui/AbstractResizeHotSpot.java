@@ -195,11 +195,11 @@ public abstract class AbstractResizeHotSpot extends AbstractHotSpot {
      * @param event Select event.
      */
     @Override
-    public void selected(SelectEvent event) {
+    public void accept(SelectEvent event) {
         if (event == null || AbstractHotSpot.isConsumed(event))
             return;
 
-        Point pickPoint = event.getPickPoint();
+        Point pickPoint = event.pickPoint;
         if (pickPoint != null) {
             if (event.isDrag()) {
                 if (!this.isDragging()) {

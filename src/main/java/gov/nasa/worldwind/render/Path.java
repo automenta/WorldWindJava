@@ -2434,20 +2434,15 @@ public class Path extends AbstractShape {
          */
         @Override
         public PickedObject getTopObject(DrawContext dc, Point pickPoint) {
-            if (dc == null) {
-                String message = Logging.getMessage("nullValue.DrawContextIsNull");
-                Logging.logger().severe(message);
-                throw new IllegalArgumentException(message);
-            }
 
             if (this.getPickableObjects().isEmpty() && this.getPickablePositions().isEmpty()) {
                 return null;
             }
 
             int colorCode = PickSupport.getTopColor(dc, pickPoint);
-            if (colorCode == dc.getClearColor().getRGB()) {
+            if (colorCode == DrawContext.CLEAR_COLOR)
                 return null;
-            }
+
 
             PickedObject pickedObject = this.getPickableObjects().get(colorCode);
             if (pickedObject != null) {
@@ -2459,8 +2454,8 @@ public class Path extends AbstractShape {
                     // If the top color code matches a Path's position color, convert the color code to a position index
                     // and delegate to the Path to resolve the index to a PickedObject. minColorCode corresponds to
                     // index 0, and minColorCode+i corresponds to index i.
-                    int ordinal = colorCode - positions.minColorCode;
-                    return positions.path.resolvePickedPosition(colorCode, ordinal);
+                    return positions.path.resolvePickedPosition(colorCode,
+                        colorCode - positions.minColorCode);
                 }
             }
 

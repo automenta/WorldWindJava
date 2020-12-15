@@ -87,7 +87,7 @@ public class KMLApplicationController implements SelectListener, PropertyChangeL
      *
      * @param event Select event.
      */
-    public void selected(SelectEvent event) {
+    public void accept(SelectEvent event) {
         if (event.isLeftClick()) {
             Object topObject = event.getTopObject();
             if (topObject instanceof TreeNode) {

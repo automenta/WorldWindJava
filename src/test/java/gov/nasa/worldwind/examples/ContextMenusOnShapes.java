@@ -42,7 +42,7 @@ public class ContextMenusOnShapes extends ApplicationTemplate {
         protected PointPlacemark lastPickedPlacemark = null;
 
         @Override
-        public void selected(SelectEvent event) {
+        public void accept(SelectEvent event) {
             try {
                 if (event.getEventAction().equals(SelectEvent.ROLLOVER)) {
                     highlight(event, event.getTopObject());
@@ -95,7 +95,7 @@ public class ContextMenusOnShapes extends ApplicationTemplate {
                 }
 
                 ContextMenu menu = new ContextMenu((Component) event.getSource(), menuInfo);
-                menu.show(event.getMouseEvent());
+                menu.show(event.mouseEvent);
             }
         }
     }

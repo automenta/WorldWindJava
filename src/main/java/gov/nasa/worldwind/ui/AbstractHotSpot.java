@@ -51,7 +51,7 @@ public abstract class AbstractHotSpot extends AVListImpl implements HotSpot {
      *
      * @param event The event to handle.
      */
-    public void selected(SelectEvent event) {
+    public void accept(SelectEvent event) {
     }
 
     /**
@@ -170,6 +170,6 @@ public abstract class AbstractHotSpot extends AVListImpl implements HotSpot {
      * that mouse event has been consumed.
      */
     protected static boolean isConsumed(SelectEvent event) {
-        return event.isConsumed() || (event.getMouseEvent() != null && event.getMouseEvent().isConsumed());
+        return event.isConsumed() || (event.mouseEvent != null && event.mouseEvent.isConsumed());
     }
 }

@@ -5,6 +5,7 @@
  */
 package gov.nasa.worldwind.render;
 
+import com.graphhopper.coll.GHIntHashSet;
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.glu.GLU;
@@ -39,24 +40,32 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
      * empty PickedObjectList.
      */
     protected final PickedObjectList objectsInPickRect = new PickedObjectList();
-    protected final Color clearColor = new Color(0, 0, 0, 0);
+
+    private static final Comparator<OrderedRenderableEntry> distanceSort = (orA, orB) -> {
+        if (orA == orB)
+            return 0;
+
+        double eA = orA.eyeDistance, eB = orB.eyeDistance;
+        int eAD = Double.compare(eB, eA);
+        if (eAD != 0)
+            return eAD;
+
+        return Integer.compare(System.identityHashCode(orA), System.identityHashCode(orB));
+    };
+
     /**
      * Set of ints used by {@link #getPickColorsInRectangle(Rectangle, int[])} to identify the unique color
      * codes in the specified rectangle. This consolidates duplicate colors to a single entry. We use IntSet to achieve
      * constant time insertion, and to reduce overhead associated associated with storing integer primitives in a
      * HashSet.
      */
-    protected final IntSet uniquePixelColors = new IntSet();
+    //protected final IntSet uniquePixelColors = new IntSet();
+    protected final GHIntHashSet uniquePixelColors = new GHIntHashSet();
     protected final SurfaceTileRenderer geographicSurfaceTileRenderer = new GeographicSurfaceTileRenderer();
     protected final PickPointFrustumList pickFrustumList = new PickPointFrustumList();
     protected final DeclutteringTextRenderer declutteringTextRenderer = new DeclutteringTextRenderer();
     protected final PriorityQueue<OrderedRenderableEntry> orderedRenderables =
-        new PriorityQueue<>(1024, (orA, orB) -> {
-            double eA = orA.distanceFromEye;
-            double eB = orB.distanceFromEye;
-
-            return eA > eB ? -1 : eA == eB ? (Long.compare(orA.time, orB.time)) : 1;
-        });
+        new PriorityQueue<>(16 * 1024, distanceSort);
     // Use a standard Queue to store the ordered surface object renderables. Ordered surface renderables are processed
     // in the order they were submitted.
     protected final Queue<OrderedRenderable> orderedSurfaceRenderables = new ArrayDeque<>();
@@ -113,17 +122,13 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
         }
 
         public Intersection[] intersect(Position pA, Position pB) {
-            SectorGeometryList sectorGeometry = DrawContextImpl.this.getSurfaceGeometry();
-            if (sectorGeometry == null)
-                return null;
 
             Vec4 ptA = this.getSurfacePoint(pA);
+            if (ptA == null) return null;
             Vec4 ptB = this.getSurfacePoint(pB);
+            if (ptB == null) return null;
 
-            if (pA == null || pB == null)
-                return null;
-
-            return sectorGeometry.intersect(new Line(ptA, ptB.subtract3(ptA)));
+            return DrawContextImpl.this.getSurfaceGeometry().intersect(new Line(ptA, ptB.subtract3(ptA)));
         }
 
         public Intersection[] intersect(Position pA, Position pB, int altitudeMode) {
@@ -139,8 +144,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
             if (altitudeMode == WorldWind.ABSOLUTE) {
                 altitudeA -= this.getElevation(pA);
                 altitudeB -= this.getElevation(pB);
-            }
-            else if (altitudeMode == WorldWind.CLAMP_TO_GROUND) {
+            } else if (altitudeMode == WorldWind.CLAMP_TO_GROUND) {
                 altitudeA = 0;
                 altitudeB = 0;
             }
@@ -149,12 +153,6 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
         }
 
         public Double getElevation(LatLon location) {
-            if (location == null) {
-                String msg = Logging.getMessage("nullValue.LatLonIsNull");
-                Logging.logger().severe(msg);
-                throw new IllegalArgumentException(msg);
-            }
-
             Vec4 pt = this.getSurfacePoint(location.getLatitude(), location.getLongitude(), 0);
             if (pt == null)
                 return null;
@@ -366,19 +364,19 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
         this.standardLighting = standardLighting;
     }
 
-    public Point getPickPoint() {
+    public final Point getPickPoint() {
         return this.pickPoint;
     }
 
-    public void setPickPoint(Point pickPoint) {
+    public final void setPickPoint(Point pickPoint) {
         this.pickPoint = pickPoint;
     }
 
-    public Rectangle getPickRectangle() {
+    public final Rectangle getPickRectangle() {
         return this.pickRect;
     }
 
-    public void setPickRectangle(Rectangle pickRect) {
+    public final void setPickRectangle(Rectangle pickRect) {
         this.pickRect = pickRect;
     }
 
@@ -432,7 +430,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     public Color getUniquePickColor() {
         this.uniquePickNumber++;
 
-        int clearColorCode = this.getClearColor().getRGB();
+        int clearColorCode = CLEAR_COLOR;
         if (clearColorCode == this.uniquePickNumber) // skip the clear color
             this.uniquePickNumber++;
 
@@ -451,7 +449,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
 
         Range range = new Range(this.uniquePickNumber + 1, count); // compute the requested range
 
-        int clearColorCode = this.getClearColor().getRGB();
+        int clearColorCode = DrawContext.CLEAR_COLOR;
         if (range.contains(clearColorCode)) // skip the clear color when it's in the range
             range.location = clearColorCode + 1;
 
@@ -462,10 +460,6 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
         this.uniquePickNumber = maxColorCode; // set the unique color to the last color in the requested range
 
         return new Color(range.location, true); // return a pointer to the beginning of the requested range
-    }
-
-    public Color getClearColor() {
-        return this.clearColor;
     }
 
     /**
@@ -493,7 +487,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
             | ((this.pixelColors.get(1) & 0xff) << 8) // Green, bits 8-16
             | (this.pixelColors.get(2) & 0xff); // Blue, bits 0-7
 
-        return colorCode != this.clearColor.getRGB() ? colorCode : 0;
+        return colorCode != CLEAR_COLOR ? colorCode : 0;
     }
 
     /**
@@ -540,7 +534,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
         // specified range. We place each color in a set to consolidates duplicate pick colors to a single entry. This
         // reduces the number of colors we need to return to the caller, and ensures that callers creating picked
         // objects based on the returned colors do not create duplicates.
-        int clearColorCode = this.clearColor.getRGB();
+        int clearColorCode = CLEAR_COLOR;
         for (int i = 0; i < numPixels; i++) {
             int colorCode = ((this.pixelColors.get() & 0xff) << 16) // Red, bits 16-23
                 | ((this.pixelColors.get() & 0xff) << 8) // Green, bits 8-16
@@ -556,8 +550,8 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
 
         // Copy the unique color set to an int array that we return to the caller, then clear the set to ensure that the
         // colors computed during this call do not affect the next call.
-        int[] array = new int[this.uniquePixelColors.size()];
-        this.uniquePixelColors.toArray(array);
+        //int[] array = new int[this.uniquePixelColors.size()];
+        int[] array = this.uniquePixelColors.toArray();
         this.uniquePixelColors.clear();
 
         return array;
@@ -615,7 +609,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
 
     public void addOrderedRenderable(OrderedRenderable orderedRenderable) {
 
-        this.orderedRenderables.add(new OrderedRenderableEntry(orderedRenderable, System.nanoTime(), this));
+        this.orderedRenderables.add(new OrderedRenderableEntry(orderedRenderable, this));
     }
 
     /**
@@ -634,7 +628,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
         // are added.
         double eyeDistance = isBehind ? Double.MAX_VALUE : orderedRenderable.getDistanceFromEye();
         this.orderedRenderables.add(
-            new OrderedRenderableEntry(orderedRenderable, eyeDistance, System.nanoTime(), this));
+            new OrderedRenderableEntry(orderedRenderable, eyeDistance, this));
     }
 
     public OrderedRenderable peekOrderedRenderables() {
@@ -676,12 +670,8 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
         }
 
         // Sort the declutterables front-to-back.
-        declutterableArray.sort((orA, orB) -> {
-            double eA = orA.distanceFromEye;
-            double eB = orB.distanceFromEye;
 
-            return eA < eB ? -1 : eA == eB ? (Long.compare(orA.time, orB.time)) : 1;
-        });
+        declutterableArray.sort(distanceSort);
 
         if (declutterableArray.isEmpty())
             return;
@@ -719,25 +709,29 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
         GL2 gl = this.getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glBegin(GL2.GL_QUADS);
-        gl.glVertex2d(0.0d, 0.0d);
-        gl.glVertex2d(1, 0.0d);
-        gl.glVertex2d(1, 1);
-        gl.glVertex2d(0.0d, 1);
+        gl.glVertex2f(0, 0);
+        gl.glVertex2f(1, 0);
+        gl.glVertex2f(1, 1);
+        gl.glVertex2f(0, 1);
         gl.glEnd();
     }
 
-    public void drawUnitQuad(TextureCoords texCoords) {
+    public void drawUnitQuad(TextureCoords c) {
         GL2 gl = this.getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glBegin(GL2.GL_QUADS);
-        gl.glTexCoord2d(texCoords.left(), texCoords.bottom());
-        gl.glVertex2d(0.0d, 0.0d);
-        gl.glTexCoord2d(texCoords.right(), texCoords.bottom());
-        gl.glVertex2d(1, 0.0d);
-        gl.glTexCoord2d(texCoords.right(), texCoords.top());
-        gl.glVertex2d(1, 1);
-        gl.glTexCoord2d(texCoords.left(), texCoords.top());
-        gl.glVertex2d(0.0d, 1);
+        final float l = c.left();
+        final float b = c.bottom();
+        gl.glTexCoord2d(l, b);
+        gl.glVertex2f(0, 0);
+        final float r = c.right();
+        gl.glTexCoord2d(r, b);
+        gl.glVertex2f(1, 0);
+        final float t = c.top();
+        gl.glTexCoord2d(r, t);
+        gl.glVertex2f(1, 1);
+        gl.glTexCoord2d(l, t);
+        gl.glVertex2f(0, 1);
         gl.glEnd();
     }
 
@@ -745,10 +739,10 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
         GL2 gl = this.getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glBegin(GL2.GL_LINE_LOOP);
-        gl.glVertex2d(0.0d, 0.0d);
-        gl.glVertex2d(1, 0.0d);
-        gl.glVertex2d(1, 1);
-        gl.glVertex2d(0.0d, 1);
+        gl.glVertex2f(0, 0);
+        gl.glVertex2f(1, 0);
+        gl.glVertex2f(1, 1);
+        gl.glVertex2f(0, 1);
         gl.glEnd();
     }
 
@@ -1172,8 +1166,8 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public void restoreDefaultCurrentColor() {
-        GL2 gl = this.getGL2(); // GL initialization checks for GL2 compatibility.
-        gl.glColor4f(1, 1, 1, 1);
+
+        this.getGL2().glColor4f(1, 1, 1, 1);
     }
 
     public void restoreDefaultDepthTesting() {
@@ -1205,25 +1199,22 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
 
     protected static class OrderedRenderableEntry {
         protected final OrderedRenderable or;
-        protected final double distanceFromEye;
-        protected final long time;
+        protected final double eyeDistance;
         protected int globeOffset;
         protected SectorGeometryList surfaceGeometry;
 
-        public OrderedRenderableEntry(OrderedRenderable orderedRenderable, long insertionTime, DrawContext dc) {
+        public OrderedRenderableEntry(OrderedRenderable orderedRenderable, DrawContext dc) {
             this.or = orderedRenderable;
-            this.distanceFromEye = orderedRenderable.getDistanceFromEye();
-            this.time = insertionTime;
+            this.eyeDistance = orderedRenderable.getDistanceFromEye();
             if (dc.isContinuous2DGlobe()) {
                 this.globeOffset = ((Globe2D) dc.getGlobe()).getOffset();
                 this.surfaceGeometry = dc.getSurfaceGeometry();
             }
         }
 
-        public OrderedRenderableEntry(OrderedRenderable orderedRenderable, double distanceFromEye, long insertionTime, DrawContext dc) {
+        public OrderedRenderableEntry(OrderedRenderable orderedRenderable, double eyeDistance, DrawContext dc) {
             this.or = orderedRenderable;
-            this.distanceFromEye = distanceFromEye;
-            this.time = insertionTime;
+            this.eyeDistance = eyeDistance;
             if (dc.isContinuous2DGlobe()) {
                 this.globeOffset = ((Globe2D) dc.getGlobe()).getOffset();
                 this.surfaceGeometry = dc.getSurfaceGeometry();

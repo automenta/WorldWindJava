@@ -5,7 +5,6 @@
  */
 package gov.nasa.worldwind.render;
 
-import com.google.common.collect.Iterables;
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.glu.*;

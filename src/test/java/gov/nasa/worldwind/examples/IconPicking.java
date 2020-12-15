@@ -72,7 +72,7 @@ public class IconPicking extends ApplicationTemplate {
 
             this.wwd().addSelectListener(event -> {
                 if (event.getEventAction().equals(SelectEvent.ROLLOVER)) {
-                    PickedObjectList pol = event.getObjects();
+                    PickedObjectList pol = event.pickedObjects;
                     System.out.println(" Picked Objects Size " + pol.size());
                     for (PickedObject po : pol) {
                         System.out.println(

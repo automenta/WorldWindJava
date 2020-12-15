@@ -29,6 +29,9 @@ import java.util.*;
  * @version $Id: DrawContext.java 2281 2014-08-29 23:08:04Z dcollins $
  */
 public interface DrawContext extends WWObject, Disposable {
+    Color CLEAR_COLOR_COLOR = new Color(0, 0, 0, 0);
+    int CLEAR_COLOR = CLEAR_COLOR_COLOR.getRGB();
+
     /**
      * Retrieves this <code>DrawContext</code>s <code>com.jogamp.opengl.GLContext</code>. If this method returns null,
      * then there are potentially no active <code>GLContext</code>s and rendering should be aborted.
@@ -300,12 +303,12 @@ public interface DrawContext extends WWObject, Disposable {
      */
     Color getUniquePickColorRange(int count);
 
-    /**
-     * Returns the WorldWindow's background color.
-     *
-     * @return the WorldWindow's background color.
-     */
-    Color getClearColor();
+//    /**
+//     * Returns the WorldWindow's background color.
+//     *
+//     * @return the WorldWindow's background color.
+//     */
+//    Color getClearColor();
 
     /**
      * Returns the framebuffer RGB color for a point in AWT screen coordinates, formatted as a pick color code. The red,

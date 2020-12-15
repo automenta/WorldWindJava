@@ -92,7 +92,7 @@ public class PathPositionColors extends ApplicationTemplate {
             // ordinal.
             this.setToolTipController(new ToolTipController(this.wwd()) {
                 @Override
-                public void selected(SelectEvent event) {
+                public void accept(SelectEvent event) {
                     // Intercept the selected position and assign the selected object's display name to the picked
                     // ordinal.
                     PickedObject po = event.getTopPickedObject();
@@ -102,7 +102,7 @@ public class PathPositionColors extends ApplicationTemplate {
                         ((AVList) po.getObject()).set(AVKey.DISPLAY_NAME, name);
                     }
 
-                    super.selected(event);
+                    super.accept(event);
                 }
             });
         }

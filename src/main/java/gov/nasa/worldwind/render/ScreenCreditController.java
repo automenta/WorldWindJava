@@ -122,8 +122,8 @@ public class ScreenCreditController implements Renderable, SelectListener, Dispo
         }
     }
 
-    public void selected(SelectEvent event) {
-        if (event.getMouseEvent() != null && event.getMouseEvent().isConsumed())
+    public void accept(SelectEvent event) {
+        if (event.mouseEvent != null && event.mouseEvent.isConsumed())
             return;
 
         Object po = event.getTopObject();

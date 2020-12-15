@@ -1516,7 +1516,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
     protected HotSpot createTogglePathControl(final Tree tree, final TreeNode node) {
         return new SubHotSpot(this.getFrame()) {
             @Override
-            public void selected(SelectEvent event) {
+            public void accept(SelectEvent event) {
                 if (event == null || AbstractHotSpot.isConsumed(event))
                     return;
 
@@ -1525,7 +1525,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
                     event.consume();
                 }
                 else {
-                    super.selected(event);
+                    super.accept(event);
                 }
             }
         };
@@ -1543,7 +1543,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
     protected HotSpot createSelectControl(final TreeNode node) {
         return new SubHotSpot(this.getFrame()) {
             @Override
-            public void selected(SelectEvent event) {
+            public void accept(SelectEvent event) {
                 if (event == null || AbstractHotSpot.isConsumed(event))
                     return;
 
@@ -1552,7 +1552,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
                     event.consume();
                 }
                 else {
-                    super.selected(event);
+                    super.accept(event);
                 }
             }
         };

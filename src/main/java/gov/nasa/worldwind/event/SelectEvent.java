@@ -93,11 +93,11 @@ public class SelectEvent extends WWEvent {
      */
     public static final String BOX_ROLLOVER = "gov.nasa.worldwind.SelectEvent.BoxRollover";
 
-    private final String eventAction;
-    private final Point pickPoint;
-    private final Rectangle pickRect;
-    private final MouseEvent mouseEvent;
-    private final PickedObjectList pickedObjects;
+    public final String eventAction;
+    public final Point pickPoint;
+    public final Rectangle pickRect;
+    public final MouseEvent mouseEvent;
+    public final PickedObjectList pickedObjects;
 
     public SelectEvent(Object source, String eventAction, MouseEvent mouseEvent, PickedObjectList pickedObjects) {
         super(source);
@@ -130,32 +130,18 @@ public class SelectEvent extends WWEvent {
     public void consume() {
         super.consume();
 
-        if (this.getMouseEvent() != null)
-            this.getMouseEvent().consume();
+        final MouseEvent m = this.mouseEvent;
+        if (m != null)
+            m.consume();
     }
 
     public String getEventAction() {
-        return this.eventAction != null ? this.eventAction : "gov.nasa.worldwind.SelectEvent.UnknownEventAction";
-    }
-
-    public Point getPickPoint() {
-        return this.pickPoint;
-    }
-
-    public Rectangle getPickRectangle() {
-        return this.pickRect;
-    }
-
-    public MouseEvent getMouseEvent() {
-        return this.mouseEvent;
+        //return this.eventAction != null ? this.eventAction : "gov.nasa.worldwind.SelectEvent.UnknownEventAction";
+        return eventAction;
     }
 
     public boolean hasObjects() {
         return this.pickedObjects != null && !this.pickedObjects.isEmpty();
-    }
-
-    public PickedObjectList getObjects() {
-        return this.pickedObjects;
     }
 
     public PickedObject getTopPickedObject() {

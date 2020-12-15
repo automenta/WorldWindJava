@@ -129,7 +129,7 @@ public class FileStoreSectorHighlighter implements ListSelectionListener, Select
     }
 
     @Override
-    public void selected(SelectEvent event) {
+    public void accept(SelectEvent event) {
         // This method is called when the user picks a displayed sector. It ensures that the corresponding data set is
         // visible in the installed-data table.
 

@@ -638,7 +638,7 @@ public class AWTInputHandler extends WWObjectImpl implements KeyListener, MouseL
 
     private void callSelectListeners(SelectEvent event) {
         for (SelectListener listener : this.eventListeners.getListeners(SelectListener.class)) {
-            listener.selected(event);
+            listener.accept(event);
         }
     }
 

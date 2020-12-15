@@ -415,7 +415,7 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
     }
 
     protected static void clearFrame(DrawContext dc) {
-        Color cc = dc.getClearColor();
+        Color cc = DrawContext.CLEAR_COLOR_COLOR;
         dc.getGL().glClearColor(cc.getRed(), cc.getGreen(), cc.getBlue(), cc.getAlpha());
         dc.getGL().glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
     }
@@ -666,7 +666,8 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
 
     protected void doNonTerrainPick(DrawContext dc) {
         // Don't do the pick if there's no current pick point and no current pick rectangle.
-        if (dc.getPickPoint() == null && (dc.getPickRectangle() == null || dc.getPickRectangle().isEmpty()))
+        final Point p = dc.getPickPoint();
+        if (p == null && (dc.getPickRectangle() == null || dc.getPickRectangle().isEmpty()))
             return;
 
         // Pick against the layers.
@@ -680,14 +681,16 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
 
         // Pick against the screen credits.
         if (this.screenCreditController != null)
-            this.screenCreditController.pick(dc, dc.getPickPoint());
+            this.screenCreditController.pick(dc, p);
 
         // Pick against the deferred/ordered renderables.
         dc.setOrderedRenderingMode(true);
 //        dc.applyGroupingFilters();
         dc.applyClutterFilter();
-        while (dc.peekOrderedRenderables() != null) {
-            dc.pollOrderedRenderables().pick(dc, dc.getPickPoint());
+
+        OrderedRenderable next;
+        while ((next = dc.pollOrderedRenderables()) != null) {
+            next.pick(dc, p);
         }
         dc.setOrderedRenderingMode(false);
     }
@@ -732,22 +735,21 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
     }
 
     protected void draw(DrawContext dc) {
-        try {
             // Draw the layers.
             if (dc.getLayers() != null) {
                 for (Layer layer : dc.getLayers()) {
-                    try {
-                        if (layer != null) {
+//                    try {
+//                        if (layer != null) {
                             dc.setCurrentLayer(layer);
                             layer.render(dc);
-                        }
-                    }
-                    catch (Exception e) {
-                        String message = Logging.getMessage("SceneController.ExceptionWhileRenderingLayer",
-                            layer.getClass().getName());
-                        Logging.logger().log(Level.SEVERE, message, e);
-                        // Don't abort; continue on to the next layer.
-                    }
+//                        }
+//                    }
+//                    catch (Exception e) {
+//                        String message = Logging.getMessage("SceneController.ExceptionWhileRenderingLayer",
+//                            layer.getClass().getName());
+//                        Logging.logger().log(Level.SEVERE, message, e);
+//                        // Don't abort; continue on to the next layer.
+//                    }
                 }
 
                 dc.setCurrentLayer(null);
@@ -766,14 +768,9 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
             dc.setOrderedRenderingMode(true);
 //            dc.applyGroupingFilters();
             dc.applyClutterFilter();
-            while (dc.peekOrderedRenderables() != null) {
-                try {
-                    dc.pollOrderedRenderables().render(dc);
-                }
-                catch (Exception e) {
-                    Logging.logger().log(Level.WARNING,
-                        Logging.getMessage("BasicSceneController.ExceptionDuringRendering"), e);
-                }
+            OrderedRenderable next;
+            while ((next = dc.pollOrderedRenderables()) != null) {
+                next.render(dc);
             }
             dc.setOrderedRenderingMode(false);
 
@@ -798,10 +795,7 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
 
                 gl.glColor4fv(previousColor, 0);
             }
-        }
-        catch (Throwable e) {
-            Logging.logger().log(Level.SEVERE, Logging.getMessage("BasicSceneController.ExceptionDuringRendering"), e);
-        }
+
     }
 
     /**
@@ -839,18 +833,18 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
         // PreRender the individual deferred/ordered surface renderables.
         int logCount = 0;
         while (dc.getOrderedSurfaceRenderables().peek() != null) {
-            try {
+//            try {
                 OrderedRenderable or = dc.getOrderedSurfaceRenderables().poll();
                 if (or instanceof PreRenderable)
                     ((PreRenderable) or).preRender(dc);
-            } catch (Exception e) {
-                Logging.logger().log(Level.WARNING,
-                    Logging.getMessage("BasicSceneController.ExceptionDuringPreRendering"), e);
-
-                // Limit how many times we log a problem.
-                if (++logCount > Logging.getMaxMessageRepeatCount())
-                    break;
-            }
+//            } catch (Exception e) {
+//                Logging.logger().log(Level.WARNING,
+//                    Logging.getMessage("BasicSceneController.ExceptionDuringPreRendering"), e);
+//
+//                // Limit how many times we log a problem.
+//                if (++logCount > Logging.getMaxMessageRepeatCount())
+//                    break;
+//            }
         }
 
         dc.setOrderedRenderingMode(false);

@@ -27,8 +27,7 @@ public class OGLUtilTest
     private GLProfile glProfile;
 
     @Before
-    public void setUp()
-    {
+    public void setUp() {
         this.glProfile = Configuration.getMaxCompatibleGLProfile();
     }
 

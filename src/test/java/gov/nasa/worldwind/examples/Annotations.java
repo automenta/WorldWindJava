@@ -528,7 +528,7 @@ public class Annotations extends ApplicationTemplate {
             this.wwd().addSelectListener(new SelectListener() {
                 private final BasicDragger dragger = new BasicDragger(wwd());
 
-                public void selected(SelectEvent event) {
+                public void accept(SelectEvent event) {
                     if (event.hasObjects() && event.getTopObject() instanceof Annotation) {
                         // Handle cursor change on hyperlink
                         if (event.getTopPickedObject().get(AVKey.URL) != null)
@@ -597,7 +597,7 @@ public class Annotations extends ApplicationTemplate {
                         if (event.hasObjects()) {
                             // If selected annotation delegate dragging computations to a dragger.
                             if (event.getTopObject() == AppFrame.this.currentAnnotation)
-                                this.dragger.selected(event);
+                                this.dragger.accept(event);
                         }
 
                         // We missed any roll-over events while dragging, so highlight any under the cursor now,

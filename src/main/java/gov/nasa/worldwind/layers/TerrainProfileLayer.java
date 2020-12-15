@@ -1321,9 +1321,9 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
 
     // ** Select listener impl. ************************************************************
     @Override
-    public void selected(SelectEvent event) {
+    public void accept(SelectEvent event) {
         if (event.hasObjects() && event.getEventAction().equals(SelectEvent.LEFT_CLICK)) {
-            if (event.getMouseEvent() != null && event.getMouseEvent().isConsumed()) {
+            if (event.mouseEvent != null && event.mouseEvent.isConsumed()) {
                 return;
             }
 

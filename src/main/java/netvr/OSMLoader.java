@@ -3,17 +3,12 @@ package netvr;
 import com.graphhopper.reader.ReaderElement;
 import com.graphhopper.reader.osm.*;
 import com.graphhopper.reader.osm.pbf.*;
-import com.jogamp.common.nio.ByteBufferInputStream;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.geom.Sector;
-import gov.nasa.worldwind.retrieve.*;
-import gov.nasa.worldwind.util.WWIO;
 import okhttp3.*;
 
 import javax.xml.stream.*;
 import java.io.*;
-import java.net.*;
-import java.nio.ByteBuffer;
 import java.util.concurrent.*;
 import java.util.function.Consumer;
 import java.util.zip.*;

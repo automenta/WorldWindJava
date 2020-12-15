@@ -1535,7 +1535,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
      *
      * @param event The event to handle.
      */
-    public void selected(SelectEvent event) {
+    public void accept(SelectEvent event) {
         if (event == null || event.isConsumed())
             return;
 
@@ -1698,7 +1698,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         // Convert the mouse event's screen point to the WebView's local coordinate system. Note that we send the mouse
         // event to the WebView even when its screen point is outside the WebView's bounding rectangle. This gives the
         // WebView a chance to change its state or the cursor's state when the cursor it exits the WebView.
-        Point pickPoint = event.getPickPoint();
+        Point pickPoint = event.pickPoint;
 
         // The SelectEvent's pick point is null if its a drag end event. In this case, use pick point of the last
         // SelectEvent we received, which should be a drag event with a non-null pick point.
@@ -1756,7 +1756,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
                     MouseEvent.BUTTON1));
         }
 
-        this.lastPickPoint = event.getPickPoint();
+        this.lastPickPoint = event.pickPoint;
 
         // Consume the SelectEvent now that it has been passed on to the WebView as a mouse event. We avoid consuming
         // left press events, since doing so prevents the WorldWindow from gaining focus.

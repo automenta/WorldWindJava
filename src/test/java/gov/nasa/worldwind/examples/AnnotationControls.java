@@ -315,7 +315,7 @@ public class AnnotationControls extends ApplicationTemplate {
         }
 
         @SuppressWarnings("StringEquality")
-        public void selected(SelectEvent e) {
+        public void accept(SelectEvent e) {
             if (e == null)
                 return;
 
@@ -338,7 +338,7 @@ public class AnnotationControls extends ApplicationTemplate {
                 }
             }
             else if (e.getEventAction() == SelectEvent.DRAG || e.getEventAction() == SelectEvent.DRAG_END) {
-                this.dragger.selected(e);
+                this.dragger.accept(e);
             }
         }
 

@@ -89,7 +89,7 @@ public class AnimatedObjectController implements RenderingListener, SelectListen
     }
 
     @Override
-    public void selected(SelectEvent event) {
+    public void accept(SelectEvent event) {
         // System.out.println(event,event.);
         if (event.getEventAction().equals(SelectEvent.ROLLOVER)) {
             showMetadata(event.getTopObject());

@@ -589,7 +589,7 @@ public class Shapes {
                 private WWIcon lastToolTipIcon = null;
 
                 @Override
-                public void selected(SelectEvent event) {
+                public void accept(SelectEvent event) {
                     // Have hover selections show a picked icon's tool tip.
                     if (event.getEventAction().equals(SelectEvent.HOVER)) {
                         // If a tool tip is already showing, undisplay it.
@@ -614,7 +614,7 @@ public class Shapes {
                     else if (event.getEventAction().equals(SelectEvent.DRAG_END)
                         || event.getEventAction().equals(SelectEvent.DRAG)) {
                         // Delegate dragging computations to a dragger.
-                        this.dragger.selected(event);
+                        this.dragger.accept(event);
 
                         // We missed any roll-over events while dragging, so highlight any under the cursor now,
                         // or de-highlight the dragged shape if it's no longer under the cursor.

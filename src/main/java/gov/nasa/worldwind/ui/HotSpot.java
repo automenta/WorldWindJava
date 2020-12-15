@@ -38,7 +38,7 @@ public interface HotSpot extends SelectListener, KeyListener, MouseListener, Mou
      *
      * @param event The event to handle.
      */
-    void selected(SelectEvent event);
+    void accept(SelectEvent event);
 
     /**
      * Called when a key is typed and the HotSpot is active.

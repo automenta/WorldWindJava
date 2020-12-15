@@ -332,7 +332,7 @@ public class ScreenSelector extends WWObjectImpl implements MouseListener, Mouse
         return new Point(x, y);
     }
 
-    public void selected(SelectEvent event) {
+    public void accept(SelectEvent event) {
         try {
             // Respond to box rollover select events when armed.
             if (event.getEventAction().equals(SelectEvent.BOX_ROLLOVER) && this.armed)

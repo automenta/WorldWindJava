@@ -805,7 +805,7 @@ public class WWOMeasureTool extends AVListImpl
     }
 
     // Handle dragging of control points
-    public void selected(SelectEvent event) {
+    public void accept(SelectEvent event) {
         if ((this.isArmed() && this.useRubberBand)) {
             return;
         }
@@ -877,7 +877,7 @@ public class WWOMeasureTool extends AVListImpl
     protected void callSelectListeners(final SelectEvent event) {
         EventQueue.invokeLater(() -> {
             for (SelectListener listener : eventListeners.getListeners(SelectListener.class)) {
-                listener.selected(event);
+                listener.accept(event);
             }
         });
     }
@@ -902,8 +902,8 @@ public class WWOMeasureTool extends AVListImpl
             }
             else if (measureDisplay.isAnnotation(event.getTopObject())) {
                 Position pos = null;
-                if (event.getObjects().getTerrainObject() != null) {
-                    pos = event.getObjects().getTerrainObject().getPosition();
+                if (event.pickedObjects.getTerrainObject() != null) {
+                    pos = event.pickedObjects.getTerrainObject().getPosition();
                 }
 
                 if (isShowAnnotation()) {
@@ -912,12 +912,12 @@ public class WWOMeasureTool extends AVListImpl
             }
             else if (event.getTopObject() == shape) {
                 for (SelectListener listener : eventListeners.getListeners(SelectListener.class)) {
-                    listener.selected(event);
+                    listener.accept(event);
                 }
 
                 Position pos = null;
-                if (event.getObjects().getTerrainObject() != null) {
-                    pos = event.getObjects().getTerrainObject().getPosition();
+                if (event.pickedObjects.getTerrainObject() != null) {
+                    pos = event.pickedObjects.getTerrainObject().getPosition();
                 }
 
                 if (isShowAnnotation()) {
@@ -941,7 +941,7 @@ public class WWOMeasureTool extends AVListImpl
         }
 
         // Delegate dragging computations to a dragger.
-        this.dragger.selected(event);
+        this.dragger.accept(event);
 
         this.moveControlPoint(point);
         if (this.isShowAnnotation()) {

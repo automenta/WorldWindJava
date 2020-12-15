@@ -55,7 +55,7 @@ public class ClickAndGoSelectListener implements SelectListener {
      *
      * @param event the SelectEvent
      */
-    public void selected(SelectEvent event) {
+    public void accept(SelectEvent event) {
         if (event.getEventAction().equals(SelectEvent.LEFT_CLICK)) {
             // This is a left click
             if (event.hasObjects() && event.getTopPickedObject().hasPosition()) {

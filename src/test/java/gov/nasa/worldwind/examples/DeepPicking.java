@@ -37,10 +37,10 @@ public class DeepPicking extends Airspaces {
 
             // Register a select listener to print the class names of the items under the cursor.
             this.wwd().addSelectListener(event -> {
-                if (event.getEventAction().equals(SelectEvent.HOVER) && event.getObjects() != null) {
-                    System.out.printf("%d objects\n", event.getObjects().size());
-                    if (event.getObjects().size() > 1) {
-                        for (PickedObject po : event.getObjects()) {
+                if (event.getEventAction().equals(SelectEvent.HOVER) && event.pickedObjects != null) {
+                    System.out.printf("%d objects\n", event.pickedObjects.size());
+                    if (event.pickedObjects.size() > 1) {
+                        for (PickedObject po : event.pickedObjects) {
                             System.out.println(po.getObject().getClass().getName());
                         }
                     }

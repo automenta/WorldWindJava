@@ -98,7 +98,7 @@ public abstract class DialogAnnotationController implements ActionListener, Sele
     //********************  Select Listener  ***********************//
     //**************************************************************//
 
-    public void selected(SelectEvent e) {
+    public void accept(SelectEvent e) {
         if (e == null)
             return;
 
@@ -118,7 +118,7 @@ public abstract class DialogAnnotationController implements ActionListener, Sele
 
     protected void forwardToButtonAnnotations(Annotation annotation, SelectEvent e) {
         if (annotation instanceof ButtonAnnotation) {
-            ((SelectListener) annotation).selected(e);
+            ((SelectListener) annotation).accept(e);
         }
 
         for (Annotation child : annotation.getChildren()) {
@@ -188,7 +188,7 @@ public abstract class DialogAnnotationController implements ActionListener, Sele
     }
 
     protected Point getToolTipPoint(SelectEvent e) {
-        Point pickPoint = e.getPickPoint();
+        Point pickPoint = e.pickPoint;
 
         if (e.getSource() instanceof Component) {
             pickPoint = DialogAnnotationController.glPointFromAwt((Component) e.getSource(), pickPoint);

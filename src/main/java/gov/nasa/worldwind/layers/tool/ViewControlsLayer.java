@@ -922,7 +922,7 @@ public class ViewControlsLayer extends RenderableLayer {
             this.veStep = value;
         }
 
-        public void selected(SelectEvent event) {
+        public void accept(SelectEvent event) {
             if (this.wwd == null)
                 return;
 
@@ -936,7 +936,7 @@ public class ViewControlsLayer extends RenderableLayer {
                 this.wwd.redraw(); // must redraw so the de-highlight can take effect
             }
 
-            if (event.getMouseEvent() != null && event.getMouseEvent().isConsumed())
+            if (event.mouseEvent != null && event.mouseEvent.isConsumed())
                 return;
 
             if (event.getTopObject() == null || event.getTopPickedObject().getParentLayer() != this.getParentLayer()
@@ -949,7 +949,7 @@ public class ViewControlsLayer extends RenderableLayer {
 
             ScreenAnnotation selectedObject = (ScreenAnnotation) event.getTopObject();
 
-            this.lastPickPoint = event.getPickPoint();
+            this.lastPickPoint = event.pickPoint;
             if (event.getEventAction().equals(SelectEvent.ROLLOVER)) {
                 // Highlight on rollover
                 this.viewControlsLayer.highlight(selectedObject);

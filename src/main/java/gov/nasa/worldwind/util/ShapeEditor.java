@@ -612,7 +612,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
      *
      * @param event the select event indicating what was selected and the geographic location under the cursor.
      */
-    public void selected(SelectEvent event) {
+    public void accept(SelectEvent event) {
         if (event == null) {
             String msg = Logging.getMessage("nullValue.EventIsNull");
             Logging.logger().log(java.util.logging.Level.FINE, msg);
@@ -679,7 +679,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
                     event.consume();
                 }
                 else if ((event.getTopObject() == this.getShape()) &&
-                    (this.getCurrentEvent().getMouseEvent().getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) != 0) {
+                    (this.getCurrentEvent().mouseEvent.getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) != 0) {
                     this.reshapeShape(null);
                     this.updateControlPoints();
                     event.consume();
@@ -884,12 +884,12 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         Vec4 screenRefPoint = view.project(refPoint);
 
         // Compute screen-coord delta since last event.
-        int dx = dragEvent.getPickPoint().x - dragEvent.getPreviousPickPoint().x;
-        int dy = dragEvent.getPickPoint().y - dragEvent.getPreviousPickPoint().y;
+        int dx = dragEvent.pickPoint.x - dragEvent.getPreviousPickPoint().x;
+        int dy = dragEvent.pickPoint.y - dragEvent.getPreviousPickPoint().y;
 
         // Find intersection of screen coord ref-point with globe.
         double x = screenRefPoint.x + dx;
-        double y = dragEvent.getMouseEvent().getComponent().getSize().height - screenRefPoint.y + dy - 1;
+        double y = dragEvent.mouseEvent.getComponent().getSize().height - screenRefPoint.y + dy - 1;
         Line ray = view.computeRayFromScreenPoint(x, y);
         Intersection[] inters = globe.intersect(ray, refPos.getElevation());
 
@@ -1486,7 +1486,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         }
         else if (controlPoint != null) // location change or add/delete control point
         {
-            if ((this.getCurrentEvent().getMouseEvent().getModifiersEx() & MouseEvent.ALT_DOWN_MASK) != 0
+            if ((this.getCurrentEvent().mouseEvent.getModifiersEx() & MouseEvent.ALT_DOWN_MASK) != 0
                 && this.isExtensionEnabled()) {
                 int minSize = 2;
                 if (locations.size() > minSize) {
@@ -1495,7 +1495,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
                     this.getControlPointLayer().setMarkers(null);
                 }
             }
-            else if ((this.getCurrentEvent().getMouseEvent().getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) != 0
+            else if ((this.getCurrentEvent().mouseEvent.getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) != 0
                 && this.isExtensionEnabled()
                 && shape instanceof Curtain) {
                 // Add a new control point.
@@ -1507,7 +1507,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
                 this.moveLocation(controlPoint, terrainPosition, locations);
             }
         }
-        else if ((this.getCurrentEvent().getMouseEvent().getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) != 0
+        else if ((this.getCurrentEvent().mouseEvent.getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) != 0
             && this.isExtensionEnabled()) {
             // Insert a new location along an edge of the polygon.
             double altitude = ((Airspace) shape).getAltitudes()[1];
@@ -2089,7 +2089,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         }
         else if (controlPoint != null) // location change or add/delete control point
         {
-            if ((this.getCurrentEvent().getMouseEvent().getModifiersEx() & MouseEvent.ALT_DOWN_MASK) != 0
+            if ((this.getCurrentEvent().mouseEvent.getModifiersEx() & MouseEvent.ALT_DOWN_MASK) != 0
                 && this.isExtensionEnabled()) {
                 if (locations.size() > 2) {
                     // Delete the control point.
@@ -2097,7 +2097,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
                     this.getControlPointLayer().setMarkers(null);
                 }
             }
-            else if ((this.getCurrentEvent().getMouseEvent().getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) != 0
+            else if ((this.getCurrentEvent().mouseEvent.getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) != 0
                 && this.isExtensionEnabled()) {
                 this.appendLocation(controlPoint, locations);
                 this.getControlPointLayer().setMarkers(null);
@@ -2109,7 +2109,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
 
             route.setLocations(locations);
         }
-        else if ((this.getCurrentEvent().getMouseEvent().getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) != 0
+        else if ((this.getCurrentEvent().mouseEvent.getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) != 0
             && this.isExtensionEnabled()) {
             // Insert a new position into the shape.
             double altitude = ((Airspace) this.getShape()).getAltitudes()[1];
@@ -2267,7 +2267,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
             // Make a modifiable copy of the legs list.
             legs = new ArrayList<>(legs);
 
-            if ((this.getCurrentEvent().getMouseEvent().getModifiersEx() & MouseEvent.ALT_DOWN_MASK) != 0
+            if ((this.getCurrentEvent().mouseEvent.getModifiersEx() & MouseEvent.ALT_DOWN_MASK) != 0
                 && this.isExtensionEnabled()) {
                 // Remove a control point.
 
@@ -2299,7 +2299,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
                 this.determineTrackAdjacency();
                 this.getControlPointLayer().setMarkers(null);
             }
-            else if ((this.getCurrentEvent().getMouseEvent().getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) != 0
+            else if ((this.getCurrentEvent().mouseEvent.getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) != 0
                 && this.isExtensionEnabled()) {
                 // Append a location to the beginning or end of the track.
 
@@ -2353,7 +2353,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
                 track.setLegs(new ArrayList<>(track.getLegs()));
             }
         }
-        else if ((this.getCurrentEvent().getMouseEvent().getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) != 0
+        else if ((this.getCurrentEvent().mouseEvent.getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) != 0
             && this.isExtensionEnabled()) {
             // Make a modifiable copy of the legs list.
             legs = new ArrayList<>(legs);
@@ -2518,7 +2518,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         }
         else if (controlPoint != null) // control point location change or add/delete a control point
         {
-            if ((this.getCurrentEvent().getMouseEvent().getModifiersEx() & MouseEvent.ALT_DOWN_MASK) != 0
+            if ((this.getCurrentEvent().mouseEvent.getModifiersEx() & MouseEvent.ALT_DOWN_MASK) != 0
                 && this.isExtensionEnabled()) {
                 int minSize = this.getShape() instanceof SurfacePolygon ? 3 : 2;
                 if (locations.size() > minSize) {
@@ -2527,7 +2527,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
                     this.getControlPointLayer().setMarkers(null);
                 }
             }
-            else if ((this.getCurrentEvent().getMouseEvent().getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) != 0
+            else if ((this.getCurrentEvent().mouseEvent.getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) != 0
                 && this.isExtensionEnabled()
                 && this.getShape() instanceof SurfacePolyline) {
                 this.appendLocation(controlPoint, locations);
@@ -2538,7 +2538,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
                 this.moveLocation(controlPoint, terrainPosition, locations);
             }
         }
-        else if ((this.getCurrentEvent().getMouseEvent().getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) != 0
+        else if ((this.getCurrentEvent().mouseEvent.getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) != 0
             && this.isExtensionEnabled()) {
             this.addNearestLocation(terrainPosition, 0, locations);
         }

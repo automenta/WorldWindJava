@@ -177,7 +177,7 @@ public class RubberSheetImage extends ApplicationTemplate {
             }
         }
 
-        public void selected(SelectEvent e) {
+        public void accept(SelectEvent e) {
             PickedObject topObject = e.getTopPickedObject();
 
             if (e.getEventAction().equals(SelectEvent.LEFT_PRESS)) {

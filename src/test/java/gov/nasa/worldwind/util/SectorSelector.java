@@ -308,7 +308,7 @@ public class SectorSelector extends WWObjectImpl
     public void mouseMoved(MouseEvent e) {
     }
 
-    public void selected(SelectEvent event) {
+    public void accept(SelectEvent event) {
         if (event == null) {
             String msg = Logging.getMessage("nullValue.EventIsNull");
             Logging.logger().log(Level.FINE, msg);
@@ -481,12 +481,12 @@ public class SectorSelector extends WWObjectImpl
         Vec4 screenRefPoint = view.project(refPoint);
 
         // Compute screen-coord delta since last event.
-        int dx = dragEvent.getPickPoint().x - dragEvent.getPreviousPickPoint().x;
-        int dy = dragEvent.getPickPoint().y - dragEvent.getPreviousPickPoint().y;
+        int dx = dragEvent.pickPoint.x - dragEvent.getPreviousPickPoint().x;
+        int dy = dragEvent.pickPoint.y - dragEvent.getPreviousPickPoint().y;
 
         // Find intersection of screen coord ref-point with globe.
         double x = screenRefPoint.x + dx;
-        double y = dragEvent.getMouseEvent().getComponent().getSize().height - screenRefPoint.y + dy - 1;
+        double y = dragEvent.mouseEvent.getComponent().getSize().height - screenRefPoint.y + dy - 1;
         Line ray = view.computeRayFromScreenPoint(x, y);
         Intersection[] inters = globe.intersect(ray, refPos.getElevation());
 

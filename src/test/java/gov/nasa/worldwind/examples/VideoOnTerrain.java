@@ -110,7 +110,7 @@ public class VideoOnTerrain extends ApplicationTemplate {
             this.dragger = new BasicDragger(wwd);
         }
 
-        public void selected(SelectEvent event) {
+        public void accept(SelectEvent event) {
             // Have rollover events highlight the rolled-over object.
             if (event.getEventAction().equals(SelectEvent.ROLLOVER) && !this.dragger.isDragging()) {
                 this.highlight(event.getTopObject());
@@ -120,7 +120,7 @@ public class VideoOnTerrain extends ApplicationTemplate {
             // Drag the selected object.
             if (event.getEventAction().equals(SelectEvent.DRAG) ||
                 event.getEventAction().equals(SelectEvent.DRAG_END)) {
-                this.dragger.selected(event);
+                this.dragger.accept(event);
 
                 if (this.dragger.isDragging())
                     this.wwd.redraw();

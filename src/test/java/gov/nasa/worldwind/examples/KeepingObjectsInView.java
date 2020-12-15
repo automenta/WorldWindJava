@@ -193,9 +193,9 @@ public class KeepingObjectsInView extends ApplicationTemplate {
                 protected final SelectListener dragger = new BasicDragger(wwd());
 
                 @Override
-                public void selected(SelectEvent event) {
+                public void accept(SelectEvent event) {
                     // Delegate dragging computations to a dragger.
-                    this.dragger.selected(event);
+                    this.dragger.accept(event);
 
                     if (event.getEventAction().equals(SelectEvent.DRAG)) {
                         disableHelpAnnotation();

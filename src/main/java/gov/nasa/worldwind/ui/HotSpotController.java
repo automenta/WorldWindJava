@@ -60,7 +60,7 @@ public class HotSpotController implements SelectListener, MouseMotionListener {
      *
      * @param event A select event on the WorldWindow we're monitoring.
      */
-    public void selected(SelectEvent event) {
+    public void accept(SelectEvent event) {
         if (event == null)
             return;
 
@@ -89,7 +89,7 @@ public class HotSpotController implements SelectListener, MouseMotionListener {
             // We forward the drag end event here because the active HotSpot potentially changes on a drag end, and
             // the currently active HotSpot might need to know the drag ended.
             if (activeHotSpot != null)
-                activeHotSpot.selected(event);
+                activeHotSpot.accept(event);
 
             this.setDragging(false);
 
@@ -115,14 +115,14 @@ public class HotSpotController implements SelectListener, MouseMotionListener {
 
                 // Forward the drag event to the active HotSpot. If the HotSpot consumes the event, track that the
                 // HotSpot is dragging so that we can continue to deliver events to the HotSpot for the duration of the drag.
-                activeHotSpot.selected(event);
+                activeHotSpot.accept(event);
                 //noinspection ConstantConditions
                 this.setDragging(event.isConsumed() && !wasConsumed);
             }
             else if (!event.isDragEnd()) {
                 // Forward all other the select event (except drag end) to the active HotSpot. We ignore drag end events
                 // because we've already forwarded them to the previously active HotSpot in the logic above.
-                activeHotSpot.selected(event);
+                activeHotSpot.accept(event);
             }
         }
     }

@@ -6,11 +6,12 @@
 package gov.nasa.worldwind.event;
 
 import java.util.EventListener;
+import java.util.function.Consumer;
 
 /**
  * @author tag
  * @version $Id: SelectListener.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface SelectListener extends EventListener {
-    void selected(SelectEvent event);
+public interface SelectListener extends Consumer<SelectEvent>, EventListener {
+
 }
