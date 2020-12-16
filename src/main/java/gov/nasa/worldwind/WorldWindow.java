@@ -114,12 +114,6 @@ public interface WorldWindow extends AVList, PropertyChangeListener {
      */
     void redraw();
 
-    /**
-     * Returns the {@link GLContext} associated with this <code>WorldWindow</code>.
-     *
-     * @return the <code>GLContext</code> associated with this window. May be null.
-     */
-    GLContext getContext();
 
     /**
      * Indicates whether the GPU resource cache is reinitialized when this window is reinitialized.

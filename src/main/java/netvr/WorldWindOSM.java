@@ -1,6 +1,6 @@
 package netvr;
 
-import gov.nasa.worldwind.BasicModel;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.layers.earth.OSMMapnikLayer;
@@ -10,14 +10,16 @@ import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.render.markers.*;
 import gov.nasa.worldwind.util.WWUtil;
 import gov.nasa.worldwind.video.LayerList;
-import gov.nasa.worldwind.video.newt.WorldWindowNEWT;
+import gov.nasa.worldwind.video.newt.*;
 
 import java.awt.*;
 import java.util.List;
 import java.util.*;
 
 public class WorldWindOSM {
-
+    static {
+        System.setProperty("java.awt.headless", "true");
+    }
     public WorldWindOSM() {
     }
 
@@ -30,7 +32,9 @@ public class WorldWindOSM {
 
         final OSMModel world = new OSMModel();
 
-        final WorldWindowNEWT w = new WorldWindowNEWT(world, 1024, 800);
+        final WorldWindow w =
+            //new WorldWindowNEWT(world, 1024, 800);
+            new WorldWindowNEWT2(world, 1024, 800);
 
         w.view().goTo(new Position(LatLon.fromDegrees(53.00820, 7.18812), 0), 400);
 
