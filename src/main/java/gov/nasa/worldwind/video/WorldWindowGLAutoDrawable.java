@@ -70,7 +70,7 @@ public class WorldWindowGLAutoDrawable extends WWObjectImpl implements WorldWind
     private Timer redrawTimer;
     private boolean firstInit = true;
 
-    private final AtomicBoolean redrawNecessary = new AtomicBoolean(true);
+    public final AtomicBoolean redrawNecessary = new AtomicBoolean(true);
     //    private static final long FALLBACK_TEXTURE_CACHE_SIZE = 60000000;
         private EventListenerList eventListeners = null;
     private InputHandler inputHandler;
@@ -138,32 +138,21 @@ public class WorldWindowGLAutoDrawable extends WWObjectImpl implements WorldWind
 
         this.drawable = g;
 
-        BEFORE_RENDERING = new RenderingEvent(g, RenderingEvent.BEFORE_RENDERING);
-        BEFORE_BUFFER_SWAP = new RenderingEvent(g, RenderingEvent.BEFORE_BUFFER_SWAP);
-        AFTER_BUFFER_SWAP = new RenderingEvent(g, RenderingEvent.AFTER_BUFFER_SWAP);
+
+
 
         addPropertyChangeListener(w);
-        initGpuResourceCache(WorldWindow.createGpuResourceCache());
 
-        g.setAutoSwapBufferMode(false);
+        this.setGpuResourceCache(WorldWindow.createGpuResourceCache());
+
+
         g.addGLEventListener(this);
+
+        WorldWindow.configureIdentityPixelScale((ScalableSurface)g);
+
+        WorldWindow.createView(w);
+
     }
-
-    @Override
-    public boolean isEnableGpuCacheReinitialization() {
-        return enableGpuCacheReinitialization;
-    }
-
-    @Override
-    public void setEnableGpuCacheReinitialization(boolean enableGpuCacheReinitialization) {
-        this.enableGpuCacheReinitialization = enableGpuCacheReinitialization;
-    }
-
-    public void initGpuResourceCache(GpuResourceCache cache) {
-
-        this.setGpuResourceCache(cache);
-    }
-
 
     @Override
     public void shutdown() {
@@ -284,24 +273,27 @@ public class WorldWindowGLAutoDrawable extends WWObjectImpl implements WorldWind
     public void dispose(GLAutoDrawable glAutoDrawable) {
     }
 
-    public void display(GLAutoDrawable glAutoDrawable) {
-        if (this.shuttingDown) {
-            // Performing shutdown here in order to do so with a current GL context for GL resource disposal.
-            this.doShutdown();
-            return;
-        }
-
-        if (!redrawNecessary.getAndSet(false))
-            return;
-
-        _display();
+    @Override public void display(GLAutoDrawable g) {
+//        if (this.shuttingDown) {
+//            // Performing shutdown here in order to do so with a current GL context for GL resource disposal.
+//            this.doShutdown();
+//            return;
+//        }
+//
+//        if (!redrawNecessary.getAndSet(false))
+//            return;
+//
+//        render(g);
     }
 
-    private RenderingEvent BEFORE_RENDERING;
-    private RenderingEvent BEFORE_BUFFER_SWAP;
-    private RenderingEvent AFTER_BUFFER_SWAP;
 
-    private void _display() {
+
+    public void render(GLAutoDrawable g) {
+
+        redrawNecessary.setOpaque(false);
+
+        this.drawable = g;
+
         // Determine if the view has changed since the last frame.
         this.checkForViewChange();
 
@@ -309,10 +301,9 @@ public class WorldWindowGLAutoDrawable extends WWObjectImpl implements WorldWind
         PickedObject selectionAtStart = this.getCurrentSelection();
         PickedObjectList boxSelectionAtStart = this.getCurrentBoxSelection();
 
-        this.callRenderingListeners(BEFORE_RENDERING);
+        SceneController sc = this.sceneControl();
 
-
-        this.sceneControl().repaint();
+        sc.repaint();
 //        if (redrawDelay > 0) {
 //            if (this.redrawTimer == null) {
 //                this.redrawTimer = new Timer(redrawDelay, actionEvent -> {
@@ -324,11 +315,9 @@ public class WorldWindowGLAutoDrawable extends WWObjectImpl implements WorldWind
 //            }
 //        }
 
-        this.callRenderingListeners(BEFORE_BUFFER_SWAP);
+//        this.callRenderingListeners(BEFORE_BUFFER_SWAP);
 
-        WorldWindowGLAutoDrawable.doSwapBuffers(this.drawable);
-
-        SceneController sc = this.sceneControl();
+//        this.drawable.swapBuffers();
 
         this.set(PerformanceStatistic.FRAME_TIME, sc.getFrameTime());
 
@@ -342,7 +331,7 @@ public class WorldWindowGLAutoDrawable extends WWObjectImpl implements WorldWind
                 this.callRenderingExceptionListeners(t);
         }
 
-        this.callRenderingListeners(AFTER_BUFFER_SWAP);
+//        this.callRenderingListeners(AFTER_BUFFER_SWAP);
 
         // Position and selection notification occurs only on triggering conditions, not same-state conditions:
         // start == null, end == null: nothing selected -- don't notify
@@ -391,15 +380,6 @@ public class WorldWindowGLAutoDrawable extends WWObjectImpl implements WorldWind
             // Cancel the previous view stop task and schedule a new one because the view has changed.
             this.scheduleViewStopTask(this.getViewStopTime());
         }
-    }
-
-    /**
-     * Performs the actual buffer swap. Provided so that subclasses may override the swap steps.
-     *
-     * @param drawable the window's associated drawable.
-     */
-    protected static void doSwapBuffers(GLDrawable drawable) {
-        drawable.swapBuffers();
     }
 
     /**

@@ -25,7 +25,7 @@ public interface ViewInputHandler
      * @return the <code>WorldWindow</code> this ViewInputHandler is listening to, and will modify in response to
      * events.
      */
-    WorldWindow getWorldWindow();
+    WorldWindow wwd();
 
     /**
      * Sets the <code>WorldWindow</code> this ViewInputHandler should listen to for input events, and should modify in

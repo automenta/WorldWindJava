@@ -7,20 +7,21 @@
 package gov.nasa.worldwind;
 
 import com.jogamp.nativewindow.ScalableSurface;
-import com.jogamp.opengl.GLContext;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.cache.*;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.placename.PlaceNameLayer;
-import gov.nasa.worldwind.layers.tool.CompassLayer;
+import gov.nasa.worldwind.layers.tool.*;
 import gov.nasa.worldwind.pick.PickedObjectList;
-import gov.nasa.worldwind.util.PerformanceStatistic;
+import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.video.*;
 
 import java.beans.*;
 import java.util.*;
+
+import static gov.nasa.worldwind.avlist.AVKey.*;
 
 /**
  * The top-level interface common to all toolkit-specific WorldWind windows.
@@ -29,7 +30,7 @@ import java.util.*;
  * @version $Id: WorldWindow.java 2047 2014-06-06 22:48:33Z tgaskins $
  */
 public interface WorldWindow extends AVList, PropertyChangeListener {
-    long FALLBACK_TEXTURE_CACHE_SIZE = 60000000;
+//    long FALLBACK_TEXTURE_CACHE_SIZE = 60000000;
 
     /**
      * Configures JOGL's surface pixel scaling on the specified
@@ -45,9 +46,9 @@ public interface WorldWindow extends AVList, PropertyChangeListener {
      * @param surface The surface to configure.
      */
     static void configureIdentityPixelScale(ScalableSurface surface) {
-
-        float[] identityScale = new float[] {ScalableSurface.IDENTITY_PIXELSCALE, ScalableSurface.IDENTITY_PIXELSCALE};
-        surface.setSurfaceScale(identityScale);
+        surface.setSurfaceScale(new float[] {
+            ScalableSurface.IDENTITY_PIXELSCALE, ScalableSurface.IDENTITY_PIXELSCALE
+        });
     }
 
     static GpuResourceCache createGpuResourceCache() {
@@ -93,18 +94,18 @@ public interface WorldWindow extends AVList, PropertyChangeListener {
     /**
      * Constructs and attaches the {@link View} for this <code>WorldWindow</code>.
      */
-    default void createView() {
-        this.setView((View) WorldWind.createConfigurationComponent(AVKey.VIEW_CLASS_NAME));
-        this.createDefaultInputHandler();
-        WorldWind.addPropertyChangeListener(WorldWind.SHUTDOWN_EVENT, this);
+    static void createView(WorldWindow w) {
+        w.setView((View) WorldWind.createConfigurationComponent(VIEW_CLASS_NAME));
+        w.setInput((InputHandler) WorldWind.createConfigurationComponent(INPUT_HANDLER_CLASS_NAME));
 
-    }
+        WorldWind.addPropertyChangeListener(WorldWind.SHUTDOWN_EVENT, w);
 
-    /**
-     * Constructs and attaches the {@link InputHandler} for this <code>WorldWindow</code>.
-     */
-    default void createDefaultInputHandler() {
-        this.setInput((InputHandler) WorldWind.createConfigurationComponent(AVKey.INPUT_HANDLER_CLASS_NAME));
+        // Setup a select listener for the worldmap click-and-go feature
+        w.addSelectListener(new ClickAndGoSelectListener(w, WorldMapLayer.class));
+
+        // Add controllers to manage highlighting and tool tips.
+        var toolTipController = new ToolTipController(w, DISPLAY_NAME, null);
+        var highlightController = new HighlightController(w, SelectEvent.ROLLOVER);
     }
 
     /**
@@ -115,28 +116,28 @@ public interface WorldWindow extends AVList, PropertyChangeListener {
     void redraw();
 
 
-    /**
-     * Indicates whether the GPU resource cache is reinitialized when this window is reinitialized.
-     *
-     * @return <code>true</code> if reinitialization is enabled, otherwise <code>false</code>.
-     */
-    default boolean isEnableGpuCacheReinitialization() {
-        return this.wwd().isEnableGpuCacheReinitialization();
-    }
+//    /**
+//     * Indicates whether the GPU resource cache is reinitialized when this window is reinitialized.
+//     *
+//     * @return <code>true</code> if reinitialization is enabled, otherwise <code>false</code>.
+//     */
+//    default boolean isEnableGpuCacheReinitialization() {
+//        return this.wwd().isEnableGpuCacheReinitialization();
+//    }
 
-    /**
-     * Specifies whether to reinitialize the GPU resource cache when this window is reinitialized. A value of
-     * <code>true</code> indicates that the GPU resource cache this window is using should be cleared when its init()
-     * method is called, typically when re-parented. Set this to <code>false</code> when this window is sharing context
-     * with other windows and is likely to be re-parented. It prevents the flashing caused by clearing and re-populating
-     * the GPU resource cache during re-parenting. The default value is <code>true</code>.
-     *
-     * @param enableGpuCacheReinitialization <code>true</code> to enable reinitialization, otherwise
-     *                                       <code>false</code>.
-     */
-    default void setEnableGpuCacheReinitialization(boolean enableGpuCacheReinitialization) {
-        this.wwd().setEnableGpuCacheReinitialization(enableGpuCacheReinitialization);
-    }
+//    /**
+//     * Specifies whether to reinitialize the GPU resource cache when this window is reinitialized. A value of
+//     * <code>true</code> indicates that the GPU resource cache this window is using should be cleared when its init()
+//     * method is called, typically when re-parented. Set this to <code>false</code> when this window is sharing context
+//     * with other windows and is likely to be re-parented. It prevents the flashing caused by clearing and re-populating
+//     * the GPU resource cache during re-parenting. The default value is <code>true</code>.
+//     *
+//     * @param enableGpuCacheReinitialization <code>true</code> to enable reinitialization, otherwise
+//     *                                       <code>false</code>.
+//     */
+//    default void setEnableGpuCacheReinitialization(boolean enableGpuCacheReinitialization) {
+//        this.wwd().setEnableGpuCacheReinitialization(enableGpuCacheReinitialization);
+//    }
 
     WorldWindowGLDrawable wwd();
 

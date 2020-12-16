@@ -49,8 +49,11 @@ import java.beans.PropertyChangeListener;
  * @author Tom Gaskins
  * @version $Id: WorldWindowGLCanvas.java 2924 2015-03-26 01:32:02Z tgaskins $
  */
-public class WorldWindowGLCanvas extends GLCanvas implements WorldWindow, PropertyChangeListener {
-    private final WorldWindowGLDrawable wwd; // WorldWindow interface delegates to wwd
+@Deprecated public class WorldWindowGLCanvas extends GLCanvas implements WorldWindow, PropertyChangeListener {
+
+    private final WorldWindowGLDrawable wwd
+        = ((WorldWindowGLDrawable) WorldWind.createConfigurationComponent(AVKey.WORLD_WINDOW_CLASS_NAME));
+
     private DashboardController dashboard;
 
     /**
@@ -59,10 +62,7 @@ public class WorldWindowGLCanvas extends GLCanvas implements WorldWindow, Proper
     public WorldWindowGLCanvas() {
         super(Configuration.getRequiredGLCapabilities(), new BasicGLCapabilitiesChooser(), null);
 
-        this.wwd = ((WorldWindowGLDrawable) WorldWind.createConfigurationComponent(AVKey.WORLD_WINDOW_CLASS_NAME));
         this.wwd().initDrawable(this, this);
-        this.createView();
-        WorldWindow.configureIdentityPixelScale(this);
 
 //        initializeCreditsController();
         this.dashboard = new DashboardController(this, this);

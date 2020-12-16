@@ -15,9 +15,6 @@ import gov.nasa.worldwind.cache.GpuResourceCache;
  * @version $Id: WorldWindowGLDrawable.java 1855 2014-02-28 23:01:02Z tgaskins $
  */
 public interface WorldWindowGLDrawable extends WorldWindow {
-    void initDrawable(GLAutoDrawable g, WorldWindow worldWindowNEWT);
-
-    void initGpuResourceCache(GpuResourceCache cache);
-
+    void initDrawable(GLAutoDrawable g, WorldWindow w);
 
 }

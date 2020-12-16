@@ -13,7 +13,8 @@ import gov.nasa.worldwind.ui.HotSpotController;
 import gov.nasa.worldwind.ui.tree.BasicTree;
 import gov.nasa.worldwind.ui.tree.layer.LayerTree;
 import gov.nasa.worldwind.util.WWUtil;
-import gov.nasa.worldwind.video.newt.WorldWindowNEWT;
+import gov.nasa.worldwind.video.newt.*;
+import spacegraph.video.JoglWindow;
 
 import java.awt.*;
 
@@ -29,22 +30,29 @@ public class LayerTreeUsage extends ApplicationTemplate {
     }
     public static void main(String[] args) {
         final BasicModel m = new BasicModel();
-        WorldWindowNEWT w = new WorldWindowNEWT(m, 1024, 800);
 
-        LayerTree layerTree = new LayerTree();
-        layerTree.getModel().refresh(m.getLayers());
+        JoglWindow W = new JoglWindow(1024, 800);
+
+        WorldWindowNEWT2 w = new WorldWindowNEWT2(m);
+        w.setWindow(W);
+
+        W.runLater(()->{
+            //HACK
+            LayerTree layerTree = new LayerTree();
+            layerTree.getModel().refresh(m.getLayers());
 
 
-        // Set up a layer to display the on-screen layer tree in the WorldWindow.
-        RenderableLayer ui = new RenderableLayer();
-        ui.set(AVKey.HIDDEN, true);
-        ui.add(layerTree);
+            // Set up a layer to display the on-screen layer tree in the WorldWindow.
+            RenderableLayer ui = new RenderableLayer();
+            ui.set(AVKey.HIDDEN, true);
+            ui.add(layerTree);
 
-        // Add a controller to handle input events on the layer tree.
-        HotSpotController controller = new HotSpotController(w.wwd());
+            // Add a controller to handle input events on the layer tree.
+            HotSpotController controller = new HotSpotController(w.wwd());
 
-        //WorldWindow.insertBeforeCompass(w.wwd(), ui);
-        m.getLayers().add(ui);
+            //WorldWindow.insertBeforeCompass(w.wwd(), ui);
+            m.getLayers().add(ui);
+        });
     }
 
     public static class AppFrame extends ApplicationTemplate.AppFrame {

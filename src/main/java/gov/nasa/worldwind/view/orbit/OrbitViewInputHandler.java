@@ -106,7 +106,7 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
     }
 
     protected boolean isNonContinous2DGlobe() {
-        Globe globe = this.getWorldWindow().model().getGlobe();
+        Globe globe = this.wwd().model().getGlobe();
         return globe instanceof Globe2D && !((Globe2D) globe).isContinuous();
     }
 
@@ -150,7 +150,7 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
             return;
         }
 
-        Globe globe = this.getWorldWindow().model().getGlobe();
+        Globe globe = this.wwd().model().getGlobe();
         BasicOrbitView orbitView = (BasicOrbitView) view;
         Matrix modelview = OrbitViewInputSupport.computeTransformMatrix(globe, focalPosition, orbitView.getHeading(),
             orbitView.getPitch(), orbitView.getRoll(), orbitView.getZoom());
@@ -209,8 +209,8 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
                 sideInput /= length;
             }
 
-            Point point = constrainToSourceBounds(getMousePoint(), getWorldWindow());
-            Point lastPoint = constrainToSourceBounds(getLastMousePoint(), getWorldWindow());
+            Point point = constrainToSourceBounds(getMousePoint(), wwd());
+            Point lastPoint = constrainToSourceBounds(getLastMousePoint(), wwd());
             if (getSelectedPosition() == null) {
                 // Compute the current selected position if none exists. This happens if the user starts dragging when
                 // the cursor is off the globe, then drags the cursor onto the globe.
@@ -295,8 +295,8 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
         if (actionAttributes.getMouseActions() != null) {
             // Compute the model coordinate rays corresponding to the mouse down point and the current mouse point.
             View orbitView = this.getView();
-            Point p1 = constrainToSourceBounds(this.getMouseDownPoint(), this.getWorldWindow());
-            Point p2 = constrainToSourceBounds(this.getMousePoint(), this.getWorldWindow());
+            Point p1 = constrainToSourceBounds(this.getMouseDownPoint(), this.wwd());
+            Point p2 = constrainToSourceBounds(this.getMousePoint(), this.wwd());
             Line ray1 = ViewUtil.computeRayFromScreenPoint(orbitView, p1.x, p1.y, this.mouseDownModelview,
                 this.mouseDownProjection, this.mouseDownViewport);
             Line ray2 = ViewUtil.computeRayFromScreenPoint(orbitView, p2.x, p2.y, this.mouseDownModelview,
@@ -304,7 +304,7 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
 
             // Compute a model coordinate plane passing through the position under the cursor when the mouse button was
             // pressed. Fall back to a plane normal to the globe if the cursor was off the globe.
-            Globe globe = this.getWorldWindow().model().getGlobe();
+            Globe globe = this.wwd().model().getGlobe();
             Position pos = this.getSelectedPosition();
             Vec4 point = pos != null ? globe.computePointFromPosition(pos) : new Vec4(0, 0, 0);
             Vec4 normal = globe.computeSurfaceNormalAtPoint(point);
@@ -323,7 +323,7 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
         }
         else {
             // Convert the translation vector from a unitless direction to eye coordinates.
-            Globe globe = this.getWorldWindow().model().getGlobe();
+            Globe globe = this.wwd().model().getGlobe();
             double degreesPerUnit = this.getScaleValueHorizTransRel(deviceAttributes, actionAttributes);
             double radiansPerUnit = degreesPerUnit * Math.PI / 180.0;
             double metersPerUnit = radiansPerUnit * globe.getRadius();
@@ -401,8 +401,8 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
         if (actionAttributes.getMouseActions() != null) {
             // Switch the direction of heading change depending on whether the cursor is above or below
             // the center of the screen.
-            if (getWorldWindow() instanceof Component) {
-                if (getMousePoint().y < ((Component) getWorldWindow()).getHeight() / 2) {
+            if (wwd() instanceof Component) {
+                if (getMousePoint().y < ((Component) wwd()).getHeight() / 2) {
                     headingInput = -headingInput;
                 }
             }
@@ -566,7 +566,7 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
     }
 
     protected void setEyePoint(Vec4 eyePoint, ViewInputAttributes.ActionAttributes attrib) {
-        Globe globe = this.getWorldWindow().model().getGlobe();
+        Globe globe = this.wwd().model().getGlobe();
         BasicOrbitView view = (BasicOrbitView) this.getView();
 
         double smoothing = (this.isEnableSmoothing() && attrib.isEnableSmoothing()) ? attrib.getSmoothingValue() : 0;
@@ -743,7 +743,7 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
         if (view instanceof OrbitView) {
             double[] range = actionAttributes.getValues();
             // If this is an OrbitView, we use the zoom value to set the scale
-            double radius = this.getWorldWindow().model().getGlobe().getRadius();
+            double radius = this.wwd().model().getGlobe().getRadius();
             return (getScaleValue(range[0], range[1],
                 ((OrbitView) view).getZoom(), 3.0 * radius, true));
         }
@@ -767,7 +767,7 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
         if (view instanceof OrbitView) {
             double[] range = actionAttributes.getValues();
             // If this is an OrbitView, we use the zoom value to set the scale
-            double radius = this.getWorldWindow().model().getGlobe().getRadius();
+            double radius = this.wwd().model().getGlobe().getRadius();
             return (getScaleValue(range[0], range[1],
                 ((OrbitView) view).getZoom(), 3.0 * radius, false));
         }
@@ -786,7 +786,7 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
         if (view instanceof OrbitView) {
             double[] range = actionAttributes.getValues();
             // If this is an OrbitView, we use the zoom value to set the scale
-            double radius = this.getWorldWindow().model().getGlobe().getRadius();
+            double radius = this.wwd().model().getGlobe().getRadius();
             double t = ((OrbitView) view).getZoom() / (3.0 * radius);
             t = (t < 0 ? 0 : (t > 1 ? 1 : t));
             return range[0] * (1.0 - t) + range[1] * t;

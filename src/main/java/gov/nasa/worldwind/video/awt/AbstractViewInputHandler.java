@@ -116,7 +116,7 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
      * @return the <code>WorldWindow</code> this ViewInputHandler is listening to, and will modify in response to
      * events.
      */
-    public WorldWindow getWorldWindow() {
+    public WorldWindow wwd() {
         return this.wwd;
     }
 
@@ -623,7 +623,7 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
             this.handlePerFrameMouseState(this.keyEventState, GENERATE_EVENTS);
             AbstractViewInputHandler.handlePerFrameAnimation(GENERATE_EVENTS);
             this.lastPerFrameInputTime = now;
-            this.getWorldWindow().redraw();
+            this.wwd().redraw();
             return;
         }
 
@@ -632,7 +632,7 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
         if (this.handlePerFrameKeyState(this.keyEventState, QUERY_EVENTS) ||
             this.handlePerFrameMouseState(this.keyEventState, QUERY_EVENTS) ||
             AbstractViewInputHandler.handlePerFrameAnimation(QUERY_EVENTS)) {
-            this.getWorldWindow().redraw();
+            this.wwd().redraw();
         }
     }
 

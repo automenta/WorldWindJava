@@ -61,20 +61,7 @@ public class WorldWindowNEWT implements WorldWindow, GLEventListener {
 
     @Override
     public void init(GLAutoDrawable g) {
-
-        final WorldWindowGLDrawable w = this.wwd();
-
-        w.initDrawable(g, this);
-        createView();
-        WorldWindow.configureIdentityPixelScale(window);
-
-
-        // Setup a select listener for the worldmap click-and-go feature
-        w.addSelectListener(new ClickAndGoSelectListener(w, WorldMapLayer.class));
-
-        // Add controllers to manage highlighting and tool tips.
-        var toolTipController = new ToolTipController(w, AVKey.DISPLAY_NAME, null);
-        var highlightController = new HighlightController(w, SelectEvent.ROLLOVER);
+        wwd().initDrawable(g, this);
 
     }
 
@@ -98,11 +85,6 @@ public class WorldWindowNEWT implements WorldWindow, GLEventListener {
     @Override
     public void redraw() {
         wwd.redraw();
-    }
-
-    @Override
-    public GLContext getContext() {
-        return wwd().getContext();
     }
 
     @Override public WorldWindowGLAutoDrawable wwd() {

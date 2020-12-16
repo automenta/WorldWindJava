@@ -33,8 +33,8 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
     protected final DrawContext dc = new DrawContextImpl();
     /**
      * Map of integer color codes to picked objects used to quickly resolve the top picked objects in {@link
-     * #doResolveTopPick(DrawContext, Rectangle)}. This map is used only when a pick
-     * rectangle is specified. Initialized to a new HashMap.
+     * #doResolveTopPick(DrawContext, Rectangle)}. This map is used only when a pick rectangle is specified. Initialized
+     * to a new HashMap.
      */
     protected final Map<Integer, PickedObject> pickableObjects = new HashMap<>();
     protected final Set<String> perFrameStatisticsKeys = new HashSet<>();
@@ -87,6 +87,190 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
 
     public AbstractSceneController() {
         this.setVerticalExaggeration(Configuration.getDoubleValue(AVKey.VERTICAL_EXAGGERATION, 1.00d));
+    }
+
+    protected static Point getViewportCenter(DrawContext dc) {
+        View view = dc.getView();
+        if (view == null)
+            return null;
+
+        Rectangle viewport = view.getViewport();
+        if (viewport == null)
+            return null;
+
+        return new Point((int) (viewport.getCenterX() + 0.5), (int) (viewport.getCenterY() + 0.5));
+    }
+
+    protected static void initializeFrame(DrawContext dc) {
+//        if (dc.getGLContext() == null) {
+//            String message = Logging.getMessage("BasicSceneController.GLContextNullStartRedisplay");
+//            Logging.logger().severe(message);
+//            throw new IllegalStateException(message);
+//        }
+
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
+
+        gl.glPushAttrib(GL2.GL_VIEWPORT_BIT | GL2.GL_ENABLE_BIT | GL2.GL_TRANSFORM_BIT);
+
+        gl.glMatrixMode(GL2.GL_MODELVIEW);
+        gl.glPushMatrix();
+        gl.glLoadIdentity();
+
+        gl.glMatrixMode(GL2.GL_PROJECTION);
+        gl.glPushMatrix();
+        gl.glLoadIdentity();
+
+        gl.glEnable(GL.GL_DEPTH_TEST);
+    }
+
+    protected static void clearFrame(DrawContext dc) {
+        Color cc = DrawContext.CLEAR_COLOR_COLOR;
+        dc.getGL().glClearColor(cc.getRed(), cc.getGreen(), cc.getBlue(), cc.getAlpha());
+        dc.getGL().glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+    }
+
+    protected static void finalizeFrame(DrawContext dc) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
+
+        gl.glMatrixMode(GL2.GL_MODELVIEW);
+        gl.glPopMatrix();
+
+        gl.glMatrixMode(GL2.GL_PROJECTION);
+        gl.glPopMatrix();
+
+        gl.glPopAttrib();
+
+//        checkGLErrors(dc);
+    }
+
+    protected static void applyView(DrawContext dc) {
+        if (dc.getView() != null)
+            dc.getView().apply(dc);
+//
+//        this.resetGroupingFilters();
+    }
+
+    protected static void createPickFrustum(DrawContext dc) {
+        dc.addPickPointFrustum();
+        dc.addPickRectangleFrustum();
+    }
+
+    protected static void createTerrain(DrawContext dc) {
+        if (dc.getSurfaceGeometry() == null) {
+            if (dc.getModel() != null && dc.getModel().getGlobe() != null) {
+                SectorGeometryList sgl = dc.getModel().getGlobe().tessellate(dc);
+                dc.setSurfaceGeometry(sgl);
+                dc.setVisibleSector(sgl.getSector());
+            }
+
+            if (dc.getSurfaceGeometry() == null) {
+                Logging.logger().warning("generic.NoSurfaceGeometry");
+                dc.setPerFrameStatistic(PerformanceStatistic.TERRAIN_TILE_COUNT, "Terrain Tiles", 0);
+                // keep going because some layers, etc. may have meaning w/o surface geometry
+            }
+
+            dc.setPerFrameStatistic(PerformanceStatistic.TERRAIN_TILE_COUNT, "Terrain Tiles",
+                dc.getSurfaceGeometry().size());
+        }
+    }
+
+    protected static void pickLayers(DrawContext dc) {
+        if (dc.getLayers() != null) {
+            for (Layer layer : dc.getLayers()) {
+                try {
+                    if (layer != null && layer.isPickEnabled()) {
+                        dc.setCurrentLayer(layer);
+                        layer.pick(dc, dc.getPickPoint());
+                    }
+                }
+                catch (Exception e) {
+                    String message = Logging.getMessage("SceneController.ExceptionWhilePickingInLayer",
+                        layer.getClass().getName());
+                    Logging.logger().log(Level.SEVERE, message, e);
+                    // Don't abort; continue on to the next layer.
+                }
+            }
+
+            dc.setCurrentLayer(null);
+        }
+    }
+
+    protected static void doResolveTopPick(DrawContext dc, Point pickPoint) {
+        PickedObjectList pol = dc.getPickedObjects();
+        if (pol != null && pol.size() == 1) {
+            // If there is only one picked object, then it must be the top object so we're done.
+            pol.get(0).setOnTop();
+        }
+        else if (pol != null && pol.size() > 1) {
+            // If there is more than one picked object, then find the picked object corresponding to the top color at
+            // the pick point, and mark it as on top
+            int colorCode = dc.getPickColorAtPoint(pickPoint);
+            if (colorCode != 0) {
+                for (PickedObject po : pol) {
+                    if (po != null && po.getColorCode() == colorCode) {
+                        po.setOnTop();
+                        break; // No need to check the remaining picked objects.
+                    }
+                }
+            }
+        }
+    }
+
+    protected static PickedObjectList mergePickedObjectLists(PickedObjectList listA, PickedObjectList listB) {
+        if (listA == null || listB == null || !listA.hasNonTerrainObjects() || !listB.hasNonTerrainObjects())
+            return listA;
+
+        for (PickedObject pb : listB) {
+            if (pb.isTerrain())
+                continue;
+
+            boolean common = false; // cannot modify listA within its iterator, so use a flag to indicate commonality
+            for (PickedObject pa : listA) {
+                if (pa.isTerrain())
+                    continue;
+
+                if (pa.getObject() == pb.getObject()) {
+                    common = true;
+                    break;
+                }
+            }
+
+            if (!common)
+                listA.add(pb);
+        }
+
+        return listA;
+    }
+
+    /**
+     * Called to check for openGL errors. This method includes a "round-trip" between the application and renderer,
+     * which is slow. Therefore, this method is excluded from the "normal" render pass. It is here as a matter of
+     * convenience to developers, and is not part of the API.
+     *
+     * @param dc the relevant <code>DrawContext</code>
+     */
+    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
+    protected static void checkGLErrors(DrawContext dc) {
+        GL gl = dc.getGL();
+
+        for (int err = gl.glGetError(); err != GL.GL_NO_ERROR; err = gl.glGetError()) {
+            String msg = dc.getGLU().gluErrorString(err);
+            msg += err;
+            Logging.logger().severe(msg);
+        }
+    }
+
+    protected static void pickOrderedSurfaceRenderables(DrawContext dc) {
+        dc.setOrderedRenderingMode(true);
+
+        // Pick the individual deferred/ordered surface renderables. We don't use the composite representation of
+        // SurfaceObjects because we need to distinguish between individual objects. Therefore we let each object handle
+        // drawing and resolving picking.
+        while (dc.getOrderedSurfaceRenderables().peek() != null) {
+            dc.getOrderedSurfaceRenderables().poll().pick(dc, dc.getPickPoint());
+        }
+
+        dc.setOrderedRenderingMode(false);
     }
 
     public void reinitialize() {
@@ -302,7 +486,8 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
         this.deferOrderedRendering = deferOrderedRendering;
     }
 
-    @Override public void repaint() {
+    @Override
+    public void repaint() {
         this.beforePaint = System.nanoTime();
 
         this.perFrameStatistics.clear();
@@ -346,7 +531,6 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
             this.dc.setPerFrameStatistic(PerformanceStatistic.JVM_HEAP_USED,
                 "JVM used memory (Kb)", (totalMemory - Runtime.getRuntime().freeMemory()) / 1000);
         }
-
     }
 
     abstract protected void doRepaint(DrawContext dc);
@@ -379,123 +563,23 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
         this.set(AVKey.FRAME_TIMESTAMP, frameTimeStamp);
     }
 
-    protected static Point getViewportCenter(DrawContext dc) {
-        View view = dc.getView();
-        if (view == null)
-            return null;
-
-        Rectangle viewport = view.getViewport();
-        if (viewport == null)
-            return null;
-
-        return new Point((int) (viewport.getCenterX() + 0.5), (int) (viewport.getCenterY() + 0.5));
-    }
-
-    protected static void initializeFrame(DrawContext dc) {
-        if (dc.getGLContext() == null) {
-            String message = Logging.getMessage("BasicSceneController.GLContextNullStartRedisplay");
-            Logging.logger().severe(message);
-            throw new IllegalStateException(message);
-        }
-
-        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-
-        gl.glPushAttrib(GL2.GL_VIEWPORT_BIT | GL2.GL_ENABLE_BIT | GL2.GL_TRANSFORM_BIT);
-
-        gl.glMatrixMode(GL2.GL_MODELVIEW);
-        gl.glPushMatrix();
-        gl.glLoadIdentity();
-
-        gl.glMatrixMode(GL2.GL_PROJECTION);
-        gl.glPushMatrix();
-        gl.glLoadIdentity();
-
-        gl.glEnable(GL.GL_DEPTH_TEST);
-    }
-
-    protected static void clearFrame(DrawContext dc) {
-        Color cc = DrawContext.CLEAR_COLOR_COLOR;
-        dc.getGL().glClearColor(cc.getRed(), cc.getGreen(), cc.getBlue(), cc.getAlpha());
-        dc.getGL().glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-    }
-
-    protected static void finalizeFrame(DrawContext dc) {
-        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-
-        gl.glMatrixMode(GL2.GL_MODELVIEW);
-        gl.glPopMatrix();
-
-        gl.glMatrixMode(GL2.GL_PROJECTION);
-        gl.glPopMatrix();
-
-        gl.glPopAttrib();
-
-//        checkGLErrors(dc);
-    }
-
-    protected static void applyView(DrawContext dc) {
-        if (dc.getView() != null)
-            dc.getView().apply(dc);
-//
-//        this.resetGroupingFilters();
-    }
-
-    protected static void createPickFrustum(DrawContext dc) {
-        dc.addPickPointFrustum();
-        dc.addPickRectangleFrustum();
-    }
-
-    protected static void createTerrain(DrawContext dc) {
-        if (dc.getSurfaceGeometry() == null) {
-            if (dc.getModel() != null && dc.getModel().getGlobe() != null) {
-                SectorGeometryList sgl = dc.getModel().getGlobe().tessellate(dc);
-                dc.setSurfaceGeometry(sgl);
-                dc.setVisibleSector(sgl.getSector());
-            }
-
-            if (dc.getSurfaceGeometry() == null) {
-                Logging.logger().warning("generic.NoSurfaceGeometry");
-                dc.setPerFrameStatistic(PerformanceStatistic.TERRAIN_TILE_COUNT, "Terrain Tiles", 0);
-                // keep going because some layers, etc. may have meaning w/o surface geometry
-            }
-
-            dc.setPerFrameStatistic(PerformanceStatistic.TERRAIN_TILE_COUNT, "Terrain Tiles",
-                dc.getSurfaceGeometry().size());
-        }
-    }
-
     protected void preRender(DrawContext dc) {
-        try {
-            dc.setPreRenderMode(true);
+        dc.setPreRenderMode(true);
 
-            // Pre-render the layers.
-            if (dc.getLayers() != null) {
-                for (Layer layer : dc.getLayers()) {
-                    try {
-                        dc.setCurrentLayer(layer);
-                        layer.preRender(dc);
-                    }
-                    catch (Exception e) {
-                        String message = Logging.getMessage("SceneController.ExceptionWhilePreRenderingLayer",
-                            (layer != null ? layer.getClass().getName() : Logging.getMessage("term.unknown")));
-                        Logging.logger().log(Level.SEVERE, message, e);
-                        // Don't abort; continue on to the next layer.
-                    }
-                }
-
-                dc.setCurrentLayer(null);
+        // Pre-render the layers.
+        if (dc.getLayers() != null) {
+            for (Layer layer : dc.getLayers()) {
+                dc.setCurrentLayer(layer);
+                layer.preRender(dc);
             }
 
-            // Pre-render the deferred/ordered surface renderables.
-            this.preRenderOrderedSurfaceRenderables(dc);
+            dc.setCurrentLayer(null);
         }
-        catch (Exception e) {
-            Logging.logger().log(Level.SEVERE, Logging.getMessage("BasicSceneController.ExceptionDuringPreRendering"),
-                e);
-        }
-        finally {
-            dc.setPreRenderMode(false);
-        }
+
+        // Pre-render the deferred/ordered surface renderables.
+        this.preRenderOrderedSurfaceRenderables(dc);
+
+        dc.setPreRenderMode(false);
     }
 
     protected void pickTerrain(DrawContext dc) {
@@ -527,27 +611,6 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
         }
     }
 
-    protected static void pickLayers(DrawContext dc) {
-        if (dc.getLayers() != null) {
-            for (Layer layer : dc.getLayers()) {
-                try {
-                    if (layer != null && layer.isPickEnabled()) {
-                        dc.setCurrentLayer(layer);
-                        layer.pick(dc, dc.getPickPoint());
-                    }
-                }
-                catch (Exception e) {
-                    String message = Logging.getMessage("SceneController.ExceptionWhilePickingInLayer",
-                        layer.getClass().getName());
-                    Logging.logger().log(Level.SEVERE, message, e);
-                    // Don't abort; continue on to the next layer.
-                }
-            }
-
-            dc.setCurrentLayer(null);
-        }
-    }
-
     protected void resolveTopPick(DrawContext dc) {
         // Resolve the top object at the pick point, if the pick point is enabled.
         if (dc.getPickPoint() != null)
@@ -556,27 +619,6 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
         // Resolve the top objects in the pick rectangle, if the pick rectangle is enabled.
         if (dc.getPickRectangle() != null && !dc.getPickRectangle().isEmpty())
             this.doResolveTopPick(dc, dc.getPickRectangle());
-    }
-
-    protected static void doResolveTopPick(DrawContext dc, Point pickPoint) {
-        PickedObjectList pol = dc.getPickedObjects();
-        if (pol != null && pol.size() == 1) {
-            // If there is only one picked object, then it must be the top object so we're done.
-            pol.get(0).setOnTop();
-        }
-        else if (pol != null && pol.size() > 1) {
-            // If there is more than one picked object, then find the picked object corresponding to the top color at
-            // the pick point, and mark it as on top
-            int colorCode = dc.getPickColorAtPoint(pickPoint);
-            if (colorCode != 0) {
-                for (PickedObject po : pol) {
-                    if (po != null && po.getColorCode() == colorCode) {
-                        po.setOnTop();
-                        break; // No need to check the remaining picked objects.
-                    }
-                }
-            }
-        }
     }
 
     protected void doResolveTopPick(DrawContext dc, Rectangle pickRect) {
@@ -637,30 +679,24 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
         this.lastPickedObjects = null;
         this.lastObjectsInPickRect = null;
 
-        try {
-            dc.enablePickingMode();
-            this.pickTerrain(dc);
-            this.doNonTerrainPick(dc);
+        dc.enablePickingMode();
+        this.pickTerrain(dc);
+        this.doNonTerrainPick(dc);
 
-            if (this.isDeferOrderedRendering())
-                return;
+        if (this.isDeferOrderedRendering())
+            return;
 
-            this.resolveTopPick(dc);
-            this.lastPickedObjects = new PickedObjectList(dc.getPickedObjects());
-            this.lastObjectsInPickRect = new PickedObjectList(dc.getObjectsInPickRectangle());
+        this.resolveTopPick(dc);
+        this.lastPickedObjects = new PickedObjectList(dc.getPickedObjects());
+        this.lastObjectsInPickRect = new PickedObjectList(dc.getObjectsInPickRectangle());
 
-            if (this.isDeepPickEnabled() &&
-                (this.lastPickedObjects.hasNonTerrainObjects() || this.lastObjectsInPickRect.hasNonTerrainObjects())) {
-                this.doDeepPick(dc);
-            }
+        if (this.isDeepPickEnabled() &&
+            (this.lastPickedObjects.hasNonTerrainObjects() || this.lastObjectsInPickRect.hasNonTerrainObjects())) {
+            this.doDeepPick(dc);
         }
-        catch (Throwable e) {
-            Logging.logger().log(Level.SEVERE, Logging.getMessage("BasicSceneController.ExceptionDuringPick"), e);
-        }
-        finally {
-            dc.disablePickingMode();
-            this.pickTime = System.currentTimeMillis() - this.pickTime;
-        }
+
+        dc.disablePickingMode();
+        this.pickTime = System.currentTimeMillis() - this.pickTime;
     }
 
     protected void doNonTerrainPick(DrawContext dc) {
@@ -702,45 +738,24 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
         this.doNonTerrainPick(dc);
         dc.setDeepPickingEnabled(false);
 
-        this.lastPickedObjects = AbstractSceneController.mergePickedObjectLists(currentPickedObjects, dc.getPickedObjects());
+        this.lastPickedObjects = AbstractSceneController.mergePickedObjectLists(currentPickedObjects,
+            dc.getPickedObjects());
         this.lastObjectsInPickRect = AbstractSceneController.mergePickedObjectLists(currentObjectsInPickRect,
             dc.getObjectsInPickRectangle());
     }
 
-    protected static PickedObjectList mergePickedObjectLists(PickedObjectList listA, PickedObjectList listB) {
-        if (listA == null || listB == null || !listA.hasNonTerrainObjects() || !listB.hasNonTerrainObjects())
-            return listA;
-
-        for (PickedObject pb : listB) {
-            if (pb.isTerrain())
-                continue;
-
-            boolean common = false; // cannot modify listA within its iterator, so use a flag to indicate commonality
-            for (PickedObject pa : listA) {
-                if (pa.isTerrain())
-                    continue;
-
-                if (pa.getObject() == pb.getObject()) {
-                    common = true;
-                    break;
-                }
-            }
-
-            if (!common)
-                listA.add(pb);
-        }
-
-        return listA;
-    }
+    //**************************************************************//
+    //********************  Ordered Surface Renderable  ************//
+    //**************************************************************//
 
     protected void draw(DrawContext dc) {
-            // Draw the layers.
-            if (dc.getLayers() != null) {
-                for (Layer layer : dc.getLayers()) {
+        // Draw the layers.
+        if (dc.getLayers() != null) {
+            for (Layer layer : dc.getLayers()) {
 //                    try {
 //                        if (layer != null) {
-                            dc.setCurrentLayer(layer);
-                            layer.render(dc);
+                dc.setCurrentLayer(layer);
+                layer.render(dc);
 //                        }
 //                    }
 //                    catch (Exception e) {
@@ -749,75 +764,52 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
 //                        Logging.logger().log(Level.SEVERE, message, e);
 //                        // Don't abort; continue on to the next layer.
 //                    }
-                }
-
-                dc.setCurrentLayer(null);
             }
 
-            // Draw the deferred/ordered surface renderables.
-            this.drawOrderedSurfaceRenderables(dc);
+            dc.setCurrentLayer(null);
+        }
 
-            if (this.isDeferOrderedRendering())
-                return;
+        // Draw the deferred/ordered surface renderables.
+        this.drawOrderedSurfaceRenderables(dc);
 
-            if (this.screenCreditController != null)
-                this.screenCreditController.render(dc);
+        if (this.isDeferOrderedRendering())
+            return;
 
-            // Draw the deferred/ordered renderables.
-            dc.setOrderedRenderingMode(true);
+        if (this.screenCreditController != null)
+            this.screenCreditController.render(dc);
+
+        // Draw the deferred/ordered renderables.
+        dc.setOrderedRenderingMode(true);
 //            dc.applyGroupingFilters();
-            dc.applyClutterFilter();
-            OrderedRenderable next;
-            while ((next = dc.pollOrderedRenderables()) != null) {
-                next.render(dc);
-            }
-            dc.setOrderedRenderingMode(false);
+        dc.applyClutterFilter();
+        OrderedRenderable next;
+        while ((next = dc.pollOrderedRenderables()) != null) {
+            next.render(dc);
+        }
+        dc.setOrderedRenderingMode(false);
 
-            // Draw the diagnostic displays.
-            if (dc.getSurfaceGeometry() != null && dc.getModel() != null && (dc.getModel().isShowWireframeExterior() ||
-                dc.getModel().isShowWireframeInterior() || dc.getModel().isShowTessellationBoundingVolumes())) {
-                Model model = dc.getModel();
+        // Draw the diagnostic displays.
+        if (dc.getSurfaceGeometry() != null && dc.getModel() != null && (dc.getModel().isShowWireframeExterior() ||
+            dc.getModel().isShowWireframeInterior() || dc.getModel().isShowTessellationBoundingVolumes())) {
+            Model model = dc.getModel();
 
-                float[] previousColor = new float[4];
-                GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-                gl.glGetFloatv(GL2.GL_CURRENT_COLOR, previousColor, 0);
+            float[] previousColor = new float[4];
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
+            gl.glGetFloatv(GL2.GL_CURRENT_COLOR, previousColor, 0);
 
-                for (SectorGeometry sg : dc.getSurfaceGeometry()) {
-                    if (model.isShowWireframeInterior() || model.isShowWireframeExterior())
-                        sg.renderWireframe(dc, model.isShowWireframeInterior(), model.isShowWireframeExterior());
+            for (SectorGeometry sg : dc.getSurfaceGeometry()) {
+                if (model.isShowWireframeInterior() || model.isShowWireframeExterior())
+                    sg.renderWireframe(dc, model.isShowWireframeInterior(), model.isShowWireframeExterior());
 
-                    if (model.isShowTessellationBoundingVolumes()) {
-                        gl.glColor3d(1, 0, 0);
-                        sg.renderBoundingVolume(dc);
-                    }
+                if (model.isShowTessellationBoundingVolumes()) {
+                    gl.glColor3d(1, 0, 0);
+                    sg.renderBoundingVolume(dc);
                 }
-
-                gl.glColor4fv(previousColor, 0);
             }
 
-    }
-
-    /**
-     * Called to check for openGL errors. This method includes a "round-trip" between the application and renderer,
-     * which is slow. Therefore, this method is excluded from the "normal" render pass. It is here as a matter of
-     * convenience to developers, and is not part of the API.
-     *
-     * @param dc the relevant <code>DrawContext</code>
-     */
-    @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
-    protected static void checkGLErrors(DrawContext dc) {
-        GL gl = dc.getGL();
-
-        for (int err = gl.glGetError(); err != GL.GL_NO_ERROR; err = gl.glGetError()) {
-            String msg = dc.getGLU().gluErrorString(err);
-            msg += err;
-            Logging.logger().severe(msg);
+            gl.glColor4fv(previousColor, 0);
         }
     }
-
-    //**************************************************************//
-    //********************  Ordered Surface Renderable  ************//
-    //**************************************************************//
 
     protected void preRenderOrderedSurfaceRenderables(DrawContext dc) {
         if (dc.getOrderedSurfaceRenderables().isEmpty())
@@ -833,9 +825,9 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
         int logCount = 0;
         while (dc.getOrderedSurfaceRenderables().peek() != null) {
 //            try {
-                OrderedRenderable or = dc.getOrderedSurfaceRenderables().poll();
-                if (or instanceof PreRenderable)
-                    ((PreRenderable) or).preRender(dc);
+            OrderedRenderable or = dc.getOrderedSurfaceRenderables().poll();
+            if (or instanceof PreRenderable)
+                ((PreRenderable) or).preRender(dc);
 //            } catch (Exception e) {
 //                Logging.logger().log(Level.WARNING,
 //                    Logging.getMessage("BasicSceneController.ExceptionDuringPreRendering"), e);
@@ -844,19 +836,6 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
 //                if (++logCount > Logging.getMaxMessageRepeatCount())
 //                    break;
 //            }
-        }
-
-        dc.setOrderedRenderingMode(false);
-    }
-
-    protected static void pickOrderedSurfaceRenderables(DrawContext dc) {
-        dc.setOrderedRenderingMode(true);
-
-        // Pick the individual deferred/ordered surface renderables. We don't use the composite representation of
-        // SurfaceObjects because we need to distinguish between individual objects. Therefore we let each object handle
-        // drawing and resolving picking.
-        while (dc.getOrderedSurfaceRenderables().peek() != null) {
-            dc.getOrderedSurfaceRenderables().poll().pick(dc, dc.getPickPoint());
         }
 
         dc.setOrderedRenderingMode(false);
@@ -873,25 +852,19 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
         // SurfaceObject.render during preRendering, SurfaceObjects should not add themselves to the ordered surface
         // renderable queue for rendering. We assume this queue is not populated with SurfaceObjects that participated
         // in the composite representation created during preRender.
-        while (dc.getOrderedSurfaceRenderables().peek() != null) {
-            try {
-                dc.getOrderedSurfaceRenderables().poll().render(dc);
-            }
-            catch (Exception e) {
-                Logging.logger().log(Level.WARNING,
-                    Logging.getMessage("BasicSceneController.ExceptionDuringRendering"), e);
-            }
+        OrderedRenderable next;
+        while ((next = dc.getOrderedSurfaceRenderables().poll()) != null) {
+            next.render(dc);
         }
 
         dc.setOrderedRenderingMode(false);
     }
 
     /**
-     * Builds a composite representation for all {@link SurfaceObject} instances in the draw
-     * context's ordered surface renderable queue. While building the composite representation this invokes {@link
-     * SurfaceObject#render(DrawContext)} in ordered rendering mode.
-     * This does nothing if the ordered surface renderable queue is empty, or if it does not contain any
-     * SurfaceObjects.
+     * Builds a composite representation for all {@link SurfaceObject} instances in the draw context's ordered surface
+     * renderable queue. While building the composite representation this invokes {@link
+     * SurfaceObject#render(DrawContext)} in ordered rendering mode. This does nothing if the ordered surface renderable
+     * queue is empty, or if it does not contain any SurfaceObjects.
      * <p>
      * This method is called during the preRender phase, and is therefore free to modify the framebuffer contents to
      * create the composite representation.
@@ -906,10 +879,9 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
     }
 
     /**
-     * Causes the scene controller to draw the composite representation of all {@link
-     * SurfaceObject} instances in the draw context's ordered surface renderable queue. This
-     * representation was built during the preRender phase. This does nothing if the ordered surface renderable queue is
-     * empty, or if it does not contain any SurfaceObjects.
+     * Causes the scene controller to draw the composite representation of all {@link SurfaceObject} instances in the
+     * draw context's ordered surface renderable queue. This representation was built during the preRender phase. This
+     * does nothing if the ordered surface renderable queue is empty, or if it does not contain any SurfaceObjects.
      *
      * @param dc The drawing context containing the surface objects who's composite representation is drawn.
      */
@@ -925,19 +897,18 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         OGLStackHandler ogsh = new OGLStackHandler();
         ogsh.pushAttrib(gl, attributeMask);
-        try {
-            gl.glEnable(GL.GL_BLEND);
-            gl.glEnable(GL.GL_CULL_FACE);
-            gl.glCullFace(GL.GL_BACK);
-            gl.glPolygonMode(GL2.GL_FRONT, GL2.GL_FILL);
-            OGLUtil.applyBlending(gl, true); // the RGB colors in surface object tiles are premultiplied
 
-            dc.getGeographicSurfaceTileRenderer().renderTiles(dc, this.surfaceObjectTileBuilder.getTiles(dc));
-            dc.setPerFrameStatistic(PerformanceStatistic.IMAGE_TILE_COUNT, SURFACE_OBJECT_TILE_COUNT_NAME, tileCount);
-        }
-        finally {
-            ogsh.pop(gl);
-            this.surfaceObjectTileBuilder.clearTiles(dc);
-        }
+        gl.glEnable(GL.GL_BLEND);
+        gl.glEnable(GL.GL_CULL_FACE);
+        gl.glCullFace(GL.GL_BACK);
+        gl.glPolygonMode(GL2.GL_FRONT, GL2.GL_FILL);
+        OGLUtil.applyBlending(gl, true); // the RGB colors in surface object tiles are premultiplied
+
+        dc.getGeographicSurfaceTileRenderer().renderTiles(dc, this.surfaceObjectTileBuilder.getTiles(dc));
+        dc.setPerFrameStatistic(PerformanceStatistic.IMAGE_TILE_COUNT, SURFACE_OBJECT_TILE_COUNT_NAME, tileCount);
+
+        ogsh.pop(gl);
+        this.surfaceObjectTileBuilder.clearTiles(dc);
+
     }
 }

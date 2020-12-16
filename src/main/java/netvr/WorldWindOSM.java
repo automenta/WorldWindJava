@@ -1,5 +1,6 @@
 package netvr;
 
+import com.jogamp.opengl.*;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
@@ -11,6 +12,10 @@ import gov.nasa.worldwind.render.markers.*;
 import gov.nasa.worldwind.util.WWUtil;
 import gov.nasa.worldwind.video.LayerList;
 import gov.nasa.worldwind.video.newt.*;
+import spacegraph.space2d.container.grid.Gridding;
+import spacegraph.space2d.container.unit.Scale;
+import spacegraph.space2d.widget.button.PushButton;
+import spacegraph.video.*;
 
 import java.awt.*;
 import java.util.List;
@@ -29,49 +34,58 @@ public class WorldWindOSM {
     }
 
     private static void mainNEWT() {
+        JoglWindow w = new JoglWindow(1024, 800);
 
         final OSMModel world = new OSMModel();
 
-        final WorldWindow w =
+        final WorldWindowNEWT2 ww =
             //new WorldWindowNEWT(world, 1024, 800);
-            new WorldWindowNEWT2(world, 1024, 800);
+            new WorldWindowNEWT2(world);
 
-        w.view().goTo(new Position(LatLon.fromDegrees(53.00820, 7.18812), 0), 400);
-
-        w.addSelectListener(s->{
-            if (s.isLeftClick()) {
-                PickedObject top =
-                    s.getTopPickedObject();
-                if (top==null || top.isTerrain()) {
-                    //System.out.println(top.position());
-                    final Position where = top.position();
-                    final BasicMarker m = new BasicMarker(
-                        where,
-                        new BasicMarkerAttributes(Material.ORANGE, BasicMarkerShape.CUBE, 1.0d, 10, 10)
-                    );
-
-                    GlobeAnnotation a = new GlobeAnnotation("AGL Annotation", where);
-//                    a.getAttributes().setFrameShape(SHAPE_NONE);
-                    //a.getAttributes().setLeader();
-
-//                    a.setAlwaysOnTop(true);
-                    world.notes.removeAllAnnotations();
-                    world.notes.addAnnotation(a);
-
-//                    GlobeAnnotationBalloon a = new GlobeAnnotationBalloon("AGL Annotation", where);
-//                    a.setAlwaysOnTop(true);
-//                    world.renderables.add(a);
+        ww.setWindow(w);
 
 
-                    world.markers.setMarkers(
-                        List.of(m)
-                    );
+            new OrthoSurfaceGraph(new Scale(
+                new Gridding(new PushButton("xyz"),new PushButton("abc"),new PushButton("def")), 0.5f), w);
 
-                } else {
-                    System.out.println(top);
-                }
-            }
-        });
+
+
+//        ww.view().goTo(new Position(LatLon.fromDegrees(53.00820, 7.18812), 0), 400);
+//
+//        ww.addSelectListener(s->{
+//            if (s.isLeftClick()) {
+//                PickedObject top =
+//                    s.getTopPickedObject();
+//                if (top==null || top.isTerrain()) {
+//                    //System.out.println(top.position());
+//                    final Position where = top.position();
+//                    final BasicMarker m = new BasicMarker(
+//                        where,
+//                        new BasicMarkerAttributes(Material.ORANGE, BasicMarkerShape.CUBE, 1.0d, 10, 10)
+//                    );
+//
+//                    GlobeAnnotation a = new GlobeAnnotation("AGL Annotation", where);
+////                    a.getAttributes().setFrameShape(SHAPE_NONE);
+//                    //a.getAttributes().setLeader();
+//
+////                    a.setAlwaysOnTop(true);
+//                    world.notes.removeAllAnnotations();
+//                    world.notes.addAnnotation(a);
+//
+////                    GlobeAnnotationBalloon a = new GlobeAnnotationBalloon("AGL Annotation", where);
+////                    a.setAlwaysOnTop(true);
+////                    world.renderables.add(a);
+//
+//
+//                    world.markers.setMarkers(
+//                        List.of(m)
+//                    );
+//
+//                } else {
+//                    System.out.println(top);
+//                }
+//            }
+//        });
     }
 
     static class OSMModel extends BasicModel {

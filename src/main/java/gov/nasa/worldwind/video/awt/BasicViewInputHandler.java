@@ -497,9 +497,9 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler {
                 return false;
             }
 
-            Point point = constrainToSourceBounds(getMousePoint(), getWorldWindow());
-            Point lastPoint = constrainToSourceBounds(getLastMousePoint(), getWorldWindow());
-            Point mouseDownPoint = constrainToSourceBounds(getMouseDownPoint(), getWorldWindow());
+            Point point = constrainToSourceBounds(getMousePoint(), wwd());
+            Point lastPoint = constrainToSourceBounds(getLastMousePoint(), wwd());
+            Point mouseDownPoint = constrainToSourceBounds(getMouseDownPoint(), wwd());
             if (point == null || lastPoint == null) {
                 return false;
             }
@@ -533,9 +533,9 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler {
             if (!handleThisEvent) {
                 return false;
             }
-            Point point = constrainToSourceBounds(getMousePoint(), getWorldWindow());
-            Point lastPoint = constrainToSourceBounds(getLastMousePoint(), getWorldWindow());
-            Point mouseDownPoint = constrainToSourceBounds(getMouseDownPoint(), getWorldWindow());
+            Point point = constrainToSourceBounds(getMousePoint(), wwd());
+            Point lastPoint = constrainToSourceBounds(getLastMousePoint(), wwd());
+            Point mouseDownPoint = constrainToSourceBounds(getMouseDownPoint(), wwd());
             if (point == null || lastPoint == null) {
                 return false;
             }
@@ -576,9 +576,9 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler {
                 return false;
             }
             if (target == GENERATE_EVENTS) {
-                Point point = constrainToSourceBounds(getMousePoint(), getWorldWindow());
-                Point lastPoint = constrainToSourceBounds(getLastMousePoint(), getWorldWindow());
-                Point mouseDownPoint = constrainToSourceBounds(getMouseDownPoint(), getWorldWindow());
+                Point point = constrainToSourceBounds(getMousePoint(), wwd());
+                Point lastPoint = constrainToSourceBounds(getLastMousePoint(), wwd());
+                Point mouseDownPoint = constrainToSourceBounds(getMouseDownPoint(), wwd());
 
                 Point movement = ViewUtil.subtract(point, lastPoint);
                 if (point == null || lastPoint == null)
@@ -614,9 +614,9 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler {
             if (!handleThisEvent) {
                 return false;
             }
-            Point point = constrainToSourceBounds(getMousePoint(), getWorldWindow());
-            Point lastPoint = constrainToSourceBounds(getLastMousePoint(), getWorldWindow());
-            Point mouseDownPoint = constrainToSourceBounds(getMouseDownPoint(), getWorldWindow());
+            Point point = constrainToSourceBounds(getMousePoint(), wwd());
+            Point lastPoint = constrainToSourceBounds(getLastMousePoint(), wwd());
+            Point mouseDownPoint = constrainToSourceBounds(getMouseDownPoint(), wwd());
             if (point == null || lastPoint == null || mouseDownPoint == null) {
                 return (false);
             }
@@ -654,9 +654,9 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler {
                 return false;
             }
 
-            Point point = constrainToSourceBounds(getMousePoint(), getWorldWindow());
-            Point lastPoint = constrainToSourceBounds(getLastMousePoint(), getWorldWindow());
-            Point mouseDownPoint = constrainToSourceBounds(getMouseDownPoint(), getWorldWindow());
+            Point point = constrainToSourceBounds(getMousePoint(), wwd());
+            Point lastPoint = constrainToSourceBounds(getLastMousePoint(), wwd());
+            Point mouseDownPoint = constrainToSourceBounds(getMouseDownPoint(), wwd());
             if (point == null || lastPoint == null || mouseDownPoint == null) {
                 return false;
             }
@@ -689,9 +689,9 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler {
                 return false;
             }
 
-            Point point = constrainToSourceBounds(getMousePoint(), getWorldWindow());
-            Point lastPoint = constrainToSourceBounds(getLastMousePoint(), getWorldWindow());
-            Point mouseDownPoint = constrainToSourceBounds(getMouseDownPoint(), getWorldWindow());
+            Point point = constrainToSourceBounds(getMousePoint(), wwd());
+            Point lastPoint = constrainToSourceBounds(getLastMousePoint(), wwd());
+            Point mouseDownPoint = constrainToSourceBounds(getMouseDownPoint(), wwd());
             if (point == null || lastPoint == null) {
                 return false;
             }
