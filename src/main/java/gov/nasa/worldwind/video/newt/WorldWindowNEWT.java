@@ -8,7 +8,7 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.layers.tool.WorldMapLayer;
 import gov.nasa.worldwind.util.*;
-import gov.nasa.worldwind.video.WorldWindowGLAutoDrawable;
+import gov.nasa.worldwind.video.*;
 
 import java.beans.PropertyChangeListener;
 
@@ -29,7 +29,15 @@ public class WorldWindowNEWT implements WorldWindow, GLEventListener {
     }
 
     public WorldWindowNEWT(Model model) {
-        window = GLWindow.create(new GLCapabilities(GLProfile.getMaximum(true)));
+        this(model, glWindow());
+    }
+
+    private static GLWindow glWindow() {
+        return GLWindow.create(new GLCapabilities(GLProfile.getMaximum(true)));
+    }
+
+    public WorldWindowNEWT(Model model, GLWindow window) {
+        this.window = window;
 
         this.wwd = ((WorldWindowGLAutoDrawable) WorldWind.createConfigurationComponent(AVKey.WORLD_WINDOW_CLASS_NAME));
         setModel(model);
@@ -37,8 +45,7 @@ public class WorldWindowNEWT implements WorldWindow, GLEventListener {
         window.addGLEventListener(this);
         window.setVisible(true);
 
-        // Create a animator that drives canvas' display() at the specified FPS.
-        animator = new FPSAnimator(window, FPS_DEFAULT, true);
+        animator = new FPSAnimator(window, FPS_DEFAULT, false);
         animator.start();
 
     }
@@ -53,18 +60,14 @@ public class WorldWindowNEWT implements WorldWindow, GLEventListener {
     }
 
     @Override
-    public void init(GLAutoDrawable drawable) {
+    public void init(GLAutoDrawable g) {
 
-        final WorldWindowGLAutoDrawable w = this.wwd();
+        final WorldWindowGLDrawable w = this.wwd();
 
-        w.initDrawable(drawable);
-        w.addPropertyChangeListener(this);
-        w.initGpuResourceCache(WorldWindow.createGpuResourceCache());
-        this.createView();
-        this.createDefaultInputHandler();
-        WorldWind.addPropertyChangeListener(WorldWind.SHUTDOWN_EVENT, this);
+        w.initDrawable(g, this);
+        createView();
         WorldWindow.configureIdentityPixelScale(window);
-        w.endInitialization();
+
 
         // Setup a select listener for the worldmap click-and-go feature
         w.addSelectListener(new ClickAndGoSelectListener(w, WorldMapLayer.class));
@@ -82,13 +85,12 @@ public class WorldWindowNEWT implements WorldWindow, GLEventListener {
 
     @Override
     public void display(GLAutoDrawable drawable) {
-        //wwd().display(drawable);
     }
 
     @Override
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
-        window.setSize(width, height);
-        window.setPosition(x, y);
+//        window.setSize(width, height);
+//        window.setPosition(x, y);
         redraw();
     }
 

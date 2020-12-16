@@ -53,10 +53,8 @@ public interface SceneController extends WWObject, Disposable {
     /**
      * Cause the window to regenerate the frame, including pick resolution.
      *
-     * @return if greater than zero, the window should be automatically repainted again at the indicated number of
-     * milliseconds from this method's return.
      */
-    int repaint();
+    void repaint();
 
     /**
      * Indicates the current vertical exaggeration.

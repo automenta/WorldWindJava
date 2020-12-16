@@ -62,9 +62,9 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
      */
     protected PickedObjectList lastObjectsInPickRect;
     protected long frame = 0;
-    protected long timebase = System.currentTimeMillis();
+    protected long timebase = System.nanoTime();
     protected double framesPerSecond;
-    protected double frameTime;
+    protected double beforePaint;
     protected double pickTime;
     /**
      * The pick point in AWT screen coordinates, or <code>null</code> if the pick point is disabled. Initially
@@ -234,7 +234,7 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
     }
 
     public double getFrameTime() {
-        return this.frameTime;
+        return this.beforePaint;
     }
 
     public void setPerFrameStatisticsKeys(Set<String> keys) {
@@ -302,8 +302,8 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
         this.deferOrderedRendering = deferOrderedRendering;
     }
 
-    public int repaint() {
-        this.frameTime = System.currentTimeMillis();
+    @Override public void repaint() {
+        this.beforePaint = System.nanoTime();
 
         this.perFrameStatistics.clear();
         this.renderingExceptions.clear(); // Clear the rendering exceptions accumulated during the last frame.
@@ -312,21 +312,21 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
         this.doRepaint(this.dc);
 
         ++this.frame;
-        long time = System.currentTimeMillis();
-        this.frameTime = System.currentTimeMillis() - this.frameTime;
-        if (time - this.timebase > 2000) // recalculate every two seconds
+        long afterPaint = System.nanoTime();
+        this.beforePaint = afterPaint - this.beforePaint;
+        if (afterPaint - this.timebase > 2000) // recalculate every two seconds
         {
-            this.framesPerSecond = frame * 1000.00d / (time - timebase);
-            this.timebase = time;
+            this.framesPerSecond = frame * 1.0e9 / (afterPaint - timebase);
+            this.timebase = afterPaint;
             this.frame = 0;
         }
-        this.dc.setPerFrameStatistic(PerformanceStatistic.FRAME_TIME, "Frame Time (ms)", (int) this.frameTime);
+        this.dc.setPerFrameStatistic(PerformanceStatistic.FRAME_TIME, "Frame Time (ms)", (int) this.beforePaint);
         this.dc.setPerFrameStatistic(PerformanceStatistic.FRAME_RATE, "Frame Rate (fps)", (int) this.framesPerSecond);
         this.dc.setPerFrameStatistic(PerformanceStatistic.PICK_TIME, "Pick Time (ms)", (int) this.pickTime);
 
         Set<String> perfKeys = dc.getPerFrameStatisticsKeys();
         if (perfKeys == null)
-            return dc.getRedrawRequested();
+            return;
 
         if (perfKeys.contains(PerformanceStatistic.MEMORY_CACHE) || perfKeys.contains(PerformanceStatistic.ALL)) {
             this.dc.setPerFrameStatistics(WorldWind.getMemoryCacheSet().getPerformanceStatistics());
@@ -347,7 +347,6 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
                 "JVM used memory (Kb)", (totalMemory - Runtime.getRuntime().freeMemory()) / 1000);
         }
 
-        return dc.getRedrawRequested();
     }
 
     abstract protected void doRepaint(DrawContext dc);

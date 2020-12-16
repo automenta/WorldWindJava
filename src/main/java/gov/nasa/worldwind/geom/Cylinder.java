@@ -742,33 +742,33 @@ public class Cylinder implements Extent, Renderable {
         double intersectionPoint;
         Vec4[] endPoints = new Vec4[] {this.bottomCenter, this.topCenter};
 
-        double effectiveRadius = this.getEffectiveRadius(frustum.getNear());
-        intersectionPoint = Cylinder.intersectsAt(frustum.getNear(), effectiveRadius, endPoints);
+        double effectiveRadius = this.getEffectiveRadius(frustum.near);
+        intersectionPoint = Cylinder.intersectsAt(frustum.near, effectiveRadius, endPoints);
         if (intersectionPoint < 0)
             return false;
 
         // Near and far have the same effective radius.
-        intersectionPoint = Cylinder.intersectsAt(frustum.getFar(), effectiveRadius, endPoints);
+        intersectionPoint = Cylinder.intersectsAt(frustum.far, effectiveRadius, endPoints);
         if (intersectionPoint < 0)
             return false;
 
-        effectiveRadius = this.getEffectiveRadius(frustum.getLeft());
-        intersectionPoint = Cylinder.intersectsAt(frustum.getLeft(), effectiveRadius, endPoints);
+        effectiveRadius = this.getEffectiveRadius(frustum.left);
+        intersectionPoint = Cylinder.intersectsAt(frustum.left, effectiveRadius, endPoints);
         if (intersectionPoint < 0)
             return false;
 
-        effectiveRadius = this.getEffectiveRadius(frustum.getRight());
-        intersectionPoint = Cylinder.intersectsAt(frustum.getRight(), effectiveRadius, endPoints);
+        effectiveRadius = this.getEffectiveRadius(frustum.right);
+        intersectionPoint = Cylinder.intersectsAt(frustum.right, effectiveRadius, endPoints);
         if (intersectionPoint < 0)
             return false;
 
-        effectiveRadius = this.getEffectiveRadius(frustum.getTop());
-        intersectionPoint = Cylinder.intersectsAt(frustum.getTop(), effectiveRadius, endPoints);
+        effectiveRadius = this.getEffectiveRadius(frustum.top);
+        intersectionPoint = Cylinder.intersectsAt(frustum.top, effectiveRadius, endPoints);
         if (intersectionPoint < 0)
             return false;
 
-        effectiveRadius = this.getEffectiveRadius(frustum.getBottom());
-        intersectionPoint = Cylinder.intersectsAt(frustum.getBottom(), effectiveRadius, endPoints);
+        effectiveRadius = this.getEffectiveRadius(frustum.bottom);
+        intersectionPoint = Cylinder.intersectsAt(frustum.bottom, effectiveRadius, endPoints);
         return intersectionPoint >= 0;
     }
 

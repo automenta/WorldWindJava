@@ -27,8 +27,8 @@ public class TreeControl extends ApplicationTemplate {
         BasicModel m = new BasicModel();
         WorldWindowNEWT ww = new WorldWindowNEWT(m, 1024, 800) {
             @Override
-            public void init(GLAutoDrawable drawable) {
-                super.init(drawable);
+            public void init(GLAutoDrawable g) {
+                super.init(g);
                 HotSpotController controller = new HotSpotController(wwd());
             }
         };

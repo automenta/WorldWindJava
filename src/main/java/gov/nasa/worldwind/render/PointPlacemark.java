@@ -619,8 +619,8 @@ public class PointPlacemark extends WWObjectImpl
 
         // Test the placemark's model coordinate point against the near and far clipping planes.
         if (opm.placePoint != null
-            && (view.getFrustumInModelCoordinates().getNear().distanceTo(opm.placePoint) < 0
-            || view.getFrustumInModelCoordinates().getFar().distanceTo(opm.placePoint) < 0)) {
+            && (view.getFrustumInModelCoordinates().near.distanceTo(opm.placePoint) < 0
+            || view.getFrustumInModelCoordinates().far.distanceTo(opm.placePoint) < 0)) {
             return false;
         }
 

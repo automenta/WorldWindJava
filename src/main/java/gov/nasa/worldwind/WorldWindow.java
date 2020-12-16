@@ -51,8 +51,7 @@ public interface WorldWindow extends AVList, PropertyChangeListener {
     }
 
     static GpuResourceCache createGpuResourceCache() {
-        long cacheSize = Configuration.getLongValue(AVKey.TEXTURE_CACHE_SIZE, WorldWindow.FALLBACK_TEXTURE_CACHE_SIZE);
-        return new BasicGpuResourceCache((long) (0.8 * cacheSize), cacheSize);
+        return new BasicGpuResourceCache();
     }
 
     static void insertBeforeCompass(WorldWindow wwd, Layer layer) {
@@ -96,6 +95,9 @@ public interface WorldWindow extends AVList, PropertyChangeListener {
      */
     default void createView() {
         this.setView((View) WorldWind.createConfigurationComponent(AVKey.VIEW_CLASS_NAME));
+        this.createDefaultInputHandler();
+        WorldWind.addPropertyChangeListener(WorldWind.SHUTDOWN_EVENT, this);
+
     }
 
     /**

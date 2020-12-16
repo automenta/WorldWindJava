@@ -146,7 +146,7 @@ public class ScreenElevationLine implements Renderable {
         Vec4 point = dc.getGlobe().computePointFromPosition(
             new Position(dc.getView().getEyePosition(), this.elevation));
         Vec4 direction = dc.getView().getForwardVector().perpendicularTo3(point); // Round globe only
-        Vec4 intersection = dc.getView().getFrustumInModelCoordinates().getNear().intersect(new Line(point, direction));
+        Vec4 intersection = dc.getView().getFrustumInModelCoordinates().near.intersect(new Line(point, direction));
         if (intersection != null) {
             Vec4 screenPoint = dc.getView().project(intersection);
             if (screenPoint != null)

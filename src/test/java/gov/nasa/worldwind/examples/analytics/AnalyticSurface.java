@@ -1103,13 +1103,11 @@ public class AnalyticSurface implements Renderable, PreRenderable {
 
         public void pick(DrawContext dc, Point pickPoint) {
             PickSupport.beginPicking(dc);
-            try {
-                this.render(dc);
-            }
-            finally {
-                PickSupport.endPicking(dc);
-                this.surface.pickSupport.resolvePick(dc, dc.getPickPoint(), this.surface.getClientLayer());
-            }
+
+            this.render(dc);
+
+            PickSupport.endPicking(dc);
+            this.surface.pickSupport.resolvePick(dc, dc.getPickPoint(), this.surface.getClientLayer());
         }
 
         public void render(DrawContext dc) {

@@ -7,22 +7,17 @@ package gov.nasa.worldwind.cache;
 
 import gov.nasa.worldwind.util.Logging;
 
-import java.util.Arrays;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Eric Dalgliesh
  * @version $Id: BasicMemoryCache.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class BasicMemoryCache implements MemoryCache {
-    protected final ConcurrentHashMap<Object, CacheEntry> entries;
-    protected final CopyOnWriteArrayList<MemoryCache.CacheListener> listeners;
-    protected final AtomicLong capacity = new AtomicLong();
-    protected final AtomicLong currentUsedCapacity = new AtomicLong();
-    protected final Object lock = new Object();
+@Deprecated public class BasicMemoryCache extends AbstractMemoryCache {
+
+    protected final Map<Object, CacheEntry> entries;
     protected Long lowWater;
-    protected String name = "";
 
     /**
      * Constructs a new cache using <code>capacity</code> for maximum size, and <code>loWater</code> for the low water.
@@ -31,103 +26,33 @@ public class BasicMemoryCache implements MemoryCache {
      * @param capacity the maximum capacity.
      */
     public BasicMemoryCache(long loWater, long capacity) {
-        this.entries = new ConcurrentHashMap<>();
-        this.listeners = new CopyOnWriteArrayList<>();
-        this.capacity.set(capacity);
+        super(capacity);
         this.lowWater = loWater;
-        this.currentUsedCapacity.set(0);
+        this.entries = new ConcurrentHashMap<>();
     }
 
     /**
      * @return the number of objects currently stored in this cache.
      */
-    public int getNumObjects() {
+    @Override public int getNumObjects() {
         return this.entries.size();
     }
 
-    /**
-     * @return the capacity of the cache.
-     */
-    public long getCapacity() {
-        return this.capacity.get();
-    }
 
     /**
-     * Sets the new capacity for the cache. When decreasing cache size, it is recommended to check that the lowWater
-     * variable is suitable. If the capacity infringes on items stored in the cache, these items are removed. Setting a
-     * new low water is up to the user, that is, it remains unchanged and may be higher than the maximum capacity. When
-     * the low water level is higher than or equal to the maximum capacity, it is ignored, which can lead to poor
-     * performance when adding entries.
+     * Returns true if the cache contains the item referenced by key. No guarantee is made as to whether or not the item
+     * will remain in the cache for any period of time.
+     * <p>
+     * This function does not cause the object referenced by the key to be marked as accessed. <code>getObject()</code>
+     * should be used for that purpose.
      *
-     * @param newCapacity the new capacity of the cache.
+     * @param key The key of a specific object.
+     * @return true if the cache holds the item referenced by key.
+     * @throws IllegalArgumentException if <code>key</code> is null.
      */
-    public void setCapacity(long newCapacity) {
-//        this.makeSpace(this.capacity - newCapacity);
-        this.capacity.set(newCapacity);
+    @Override public boolean contains(Object key) {
+        return this.entries.containsKey(key);
     }
-
-    /**
-     * @return the number of cache units that the cache currently holds.
-     */
-    public long getUsedCapacity() {
-        return this.currentUsedCapacity.get();
-    }
-
-    /**
-     * @return the amount of free space left in the cache (in cache units).
-     */
-    public long getFreeCapacity() {
-        return Math.max(this.capacity.get() - this.currentUsedCapacity.get(), 0);
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name != null ? name : "";
-    }
-
-    /**
-     * Adds a  cache listener, MemoryCache listeners are used to notify classes when an item is removed from the cache.
-     *
-     * @param listener The new <code>CacheListener</code>.
-     * @throws IllegalArgumentException is <code>listener</code> is null.
-     */
-    public void addCacheListener(MemoryCache.CacheListener listener) {
-        if (listener == null) {
-            String message = Logging.getMessage("BasicMemoryCache.nullListenerAdded");
-            Logging.logger().warning(message);
-            throw new IllegalArgumentException(message);
-        }
-        this.listeners.add(listener);
-    }
-
-    /**
-     * Removes a cache listener, objects using this listener will no longer receive notification of cache events.
-     *
-     * @param listener The <code>CacheListener</code> to remove.
-     * @throws IllegalArgumentException if <code>listener</code> is null.
-     */
-    public void removeCacheListener(MemoryCache.CacheListener listener) {
-        if (listener == null) {
-            String message = Logging.getMessage("BasicMemoryCache.nullListenerRemoved");
-            Logging.logger().warning(message);
-            throw new IllegalArgumentException(message);
-        }
-        this.listeners.remove(listener);
-    }
-
-    /**
-     * Returns the low water level in cache units. When the cache fills, it removes items until it reaches the low water
-     * level.
-     *
-     * @return the low water level.
-     */
-    public long getLowWater() {
-        return this.lowWater;
-    }
-
     /**
      * Sets the new low water level in cache units, which controls how aggresively the cache discards items.
      * <p>
@@ -143,30 +68,6 @@ public class BasicMemoryCache implements MemoryCache {
             this.lowWater = loWater;
         }
     }
-
-    /**
-     * Returns true if the cache contains the item referenced by key. No guarantee is made as to whether or not the item
-     * will remain in the cache for any period of time.
-     * <p>
-     * This function does not cause the object referenced by the key to be marked as accessed. <code>getObject()</code>
-     * should be used for that purpose.
-     *
-     * @param key The key of a specific object.
-     * @return true if the cache holds the item referenced by key.
-     * @throws IllegalArgumentException if <code>key</code> is null.
-     */
-    public boolean contains(Object key) {
-        if (key == null) {
-            String msg = Logging.getMessage("nullValue.KeyIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        synchronized (this.lock) {
-            return this.entries.containsKey(key);
-        }
-    }
-
     /**
      * Adds an object to the cache. The add fails if the object or key is null, or if the size is zero, negative or
      * greater than the maximmum capacity.
@@ -217,9 +118,6 @@ public class BasicMemoryCache implements MemoryCache {
         return true;
     }
 
-    public boolean add(Object key, Cacheable clientObject) {
-        return this.add(key, clientObject, clientObject.getSizeInBytes());
-    }
 
     /**
      * Remove the object reference by key from the cache. If no object with the corresponding key is found, this method
@@ -229,11 +127,11 @@ public class BasicMemoryCache implements MemoryCache {
      * @throws IllegalArgumentException if <code>key</code> is null.
      */
     public void remove(Object key) {
-        if (key == null) {
-            Logging.logger().finer("nullValue.KeyIsNull");
-
-            return;
-        }
+//        if (key == null) {
+//            Logging.logger().finer("nullValue.KeyIsNull");
+//
+//            return;
+//        }
 
         synchronized (this.lock) {
             CacheEntry entry = this.entries.get(key);
@@ -251,14 +149,14 @@ public class BasicMemoryCache implements MemoryCache {
      * @throws IllegalArgumentException if <code>key</code> is null.
      */
     public Object getObject(Object key) {
-        if (key == null) {
-            Logging.logger().finer("nullValue.KeyIsNull");
-
-            return null;
-        }
+//        if (key == null) {
+//            Logging.logger().finer("nullValue.KeyIsNull");
+//
+//            return null;
+//        }
 
         CacheEntry entry; // don't need to lock because call is atomic
-        synchronized (this.lock) {
+
             entry = this.entries.get(key);
 
             if (entry == null)
@@ -267,7 +165,7 @@ public class BasicMemoryCache implements MemoryCache {
             entry.lastUsed = System.nanoTime(); // nanoTime overflows once every 292 years
             // which will result in a slowing of the cache
             // until ww is restarted or the cache is cleared.
-        }
+
 
         return entry.clientObject;
     }
@@ -341,31 +239,4 @@ public class BasicMemoryCache implements MemoryCache {
             + this.currentUsedCapacity.get() + " number of items: " + this.getNumObjects();
     }
 
-    protected static class CacheEntry implements Comparable<CacheEntry> {
-        protected final long clientObjectSize;
-        final Object key;
-        final Object clientObject;
-        protected long lastUsed;
-
-        CacheEntry(Object key, Object clientObject, long clientObjectSize) {
-            this.key = key;
-            this.clientObject = clientObject;
-            this.lastUsed = System.nanoTime();
-            this.clientObjectSize = clientObjectSize;
-        }
-
-        public int compareTo(CacheEntry that) {
-            if (that == null) {
-                String msg = Logging.getMessage("nullValue.CacheEntryIsNull");
-                Logging.logger().severe(msg);
-                throw new IllegalArgumentException(msg);
-            }
-
-            return Long.compare(this.lastUsed, that.lastUsed);
-        }
-
-        public String toString() {
-            return key.toString() + " " + clientObject.toString() + " " + lastUsed + " " + clientObjectSize;
-        }
-    }
 }

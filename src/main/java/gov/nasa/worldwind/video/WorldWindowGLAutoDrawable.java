@@ -6,20 +6,25 @@
 
 package gov.nasa.worldwind.video;
 
+import com.jogamp.nativewindow.ScalableSurface;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.AWTGLAutoDrawable;
 import com.jogamp.opengl.util.texture.TextureIO;
 import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.cache.GpuResourceCache;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.exception.WWAbsentRequirementException;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.pick.*;
 import gov.nasa.worldwind.util.*;
+import gov.nasa.worldwind.video.awt.AWTInputHandler;
 
-import javax.swing.*;
+import javax.swing.Timer;
+import javax.swing.event.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
@@ -31,7 +36,7 @@ import java.util.logging.Level;
  * @author Tom Gaskins
  * @version $Id: WorldWindowGLAutoDrawable.java 2047 2014-06-06 22:48:33Z tgaskins $
  */
-public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldWindowGLDrawable, GLEventListener {
+public class WorldWindowGLAutoDrawable extends WWObjectImpl implements WorldWindowGLDrawable, GLEventListener, WorldWindow {
 
     /**
      * Default time in milliseconds that the view must remain unchanged before the {@link View#VIEW_STOPPED} message is
@@ -50,6 +55,8 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
      * @see View#getViewStateID()
      */
     protected long lastViewID;
+    protected GpuResourceCache gpuResourceCache;
+    protected SceneController sceneController;
 
     /**
      * Schedule task to send the {@link View#VIEW_STOPPED} message after the view stop time elapses.
@@ -64,14 +71,46 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
     private boolean firstInit = true;
 
     private final AtomicBoolean redrawNecessary = new AtomicBoolean(true);
+    //    private static final long FALLBACK_TEXTURE_CACHE_SIZE = 60000000;
+        private EventListenerList eventListeners = null;
+    private InputHandler inputHandler;
 
     /**
      * Construct a new <code>WorldWindowGLCanvas</code> for a specified {@link GLDrawable}.
      */
     public WorldWindowGLAutoDrawable() {
+        this.sceneController = (SceneController) WorldWind.createConfigurationComponent(
+            AVKey.SCENE_CONTROLLER_CLASS_NAME);
+
+        // Set up to initiate a repaint whenever a file is retrieved and added to the local file store.
+        WorldWind.store().addPropertyChangeListener(this);
         SceneController sc = this.sceneControl();
         if (sc != null)
             sc.addPropertyChangeListener(this);
+    }
+
+    /**
+     * Configures JOGL's surface pixel scaling on the specified
+     * <code>ScalableSurface</code> to ensure backward compatibility with
+     * WorldWind applications developed prior to JOGL pixel scaling's introduction.This method is used by
+     * <code>GLCanvas</code> and
+     * <code>GLJPanel</code> to effectively disable JOGL's surface pixel scaling
+     * by requesting a 1:1 scale.<p> Since v2.2.0, JOGL defaults to using high-dpi pixel scales where possible. This
+     * causes WorldWind screen elements such as placemarks, the compass, the world map, the view controls, and the scale
+     * bar (plus many more) to appear smaller than they are intended to on screen. The high-dpi default also has the
+     * effect of degrading WorldWind rendering performance.
+     *
+     * @param surface The surface to configure.
+     */
+    public static void configureIdentityPixelScale(ScalableSurface surface) {
+        if (surface == null) {
+            String message = Logging.getMessage("nullValue.SurfaceIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        float[] identityScale = new float[] {ScalableSurface.IDENTITY_PIXELSCALE, ScalableSurface.IDENTITY_PIXELSCALE};
+        surface.setSurfaceScale(identityScale);
     }
 
     /**
@@ -95,20 +134,19 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
         this.viewStopTime = time;
     }
 
-    public void initDrawable(GLAutoDrawable drawable) {
-        if (drawable == null) {
-            String msg = Logging.getMessage("nullValue.DrawableIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+    public void initDrawable(GLAutoDrawable g, WorldWindow w) {
 
-        this.drawable = drawable;
-        BEFORE_RENDERING = new RenderingEvent(drawable, RenderingEvent.BEFORE_RENDERING);
-        BEFORE_BUFFER_SWAP = new RenderingEvent(drawable, RenderingEvent.BEFORE_BUFFER_SWAP);
-        AFTER_BUFFER_SWAP = new RenderingEvent(drawable, RenderingEvent.AFTER_BUFFER_SWAP);
+        this.drawable = g;
 
-        drawable.setAutoSwapBufferMode(false);
-        drawable.addGLEventListener(this);
+        BEFORE_RENDERING = new RenderingEvent(g, RenderingEvent.BEFORE_RENDERING);
+        BEFORE_BUFFER_SWAP = new RenderingEvent(g, RenderingEvent.BEFORE_BUFFER_SWAP);
+        AFTER_BUFFER_SWAP = new RenderingEvent(g, RenderingEvent.AFTER_BUFFER_SWAP);
+
+        addPropertyChangeListener(w);
+        initGpuResourceCache(WorldWindow.createGpuResourceCache());
+
+        g.setAutoSwapBufferMode(false);
+        g.addGLEventListener(this);
     }
 
     @Override
@@ -126,10 +164,6 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
         this.setGpuResourceCache(cache);
     }
 
-    @Override
-    public void endInitialization() {
-
-    }
 
     @Override
     public void shutdown() {
@@ -139,7 +173,7 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
 
     protected final void doShutdown() {
         try {
-            super.shutdown();
+            shutdown();
             this.drawable.removeGLEventListener(this);
             if (this.viewRefreshTask != null)
                 this.viewRefreshTask.cancel(false);
@@ -251,8 +285,8 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
     }
 
     public void display(GLAutoDrawable glAutoDrawable) {
-        // Performing shutdown here in order to do so with a current GL context for GL resource disposal.
         if (this.shuttingDown) {
+            // Performing shutdown here in order to do so with a current GL context for GL resource disposal.
             this.doShutdown();
             return;
         }
@@ -260,11 +294,7 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
         if (!redrawNecessary.getAndSet(false))
             return;
 
-        try {
-            _display();
-        } catch (Exception e) {
-            Logging.logger().log(Level.SEVERE, Logging.getMessage("WorldWindowGLCanvas.ExceptionAttemptingRepaintWorldWindow"), e);
-        }
+        _display();
     }
 
     private RenderingEvent BEFORE_RENDERING;
@@ -279,31 +309,22 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
         PickedObject selectionAtStart = this.getCurrentSelection();
         PickedObjectList boxSelectionAtStart = this.getCurrentBoxSelection();
 
-        try {
-            this.callRenderingListeners(BEFORE_RENDERING);
-        } catch (Exception e) {
-            Logging.logger().log(Level.SEVERE,
-                Logging.getMessage("WorldWindowGLAutoDrawable.ExceptionDuringGLEventListenerDisplay"), e);
-        }
+        this.callRenderingListeners(BEFORE_RENDERING);
 
-        int redrawDelay = this.sceneControl().repaint();
-        if (redrawDelay > 0) {
-            if (this.redrawTimer == null) {
-                this.redrawTimer = new Timer(redrawDelay, actionEvent -> {
-                    redraw();
-                    redrawTimer = null;
-                });
-                redrawTimer.setRepeats(false);
-                redrawTimer.start();
-            }
-        }
 
-//        try {
-            this.callRenderingListeners(BEFORE_BUFFER_SWAP);
-//        } catch (Exception e) {
-//            Logging.logger().log(Level.SEVERE,
-//                Logging.getMessage("WorldWindowGLAutoDrawable.ExceptionDuringGLEventListenerDisplay"), e);
+        this.sceneControl().repaint();
+//        if (redrawDelay > 0) {
+//            if (this.redrawTimer == null) {
+//                this.redrawTimer = new Timer(redrawDelay, actionEvent -> {
+//                    redraw();
+//                    redrawTimer = null;
+//                });
+//                redrawTimer.setRepeats(false);
+//                redrawTimer.start();
+//            }
 //        }
+
+        this.callRenderingListeners(BEFORE_BUFFER_SWAP);
 
         WorldWindowGLAutoDrawable.doSwapBuffers(this.drawable);
 
@@ -331,18 +352,19 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
         // start != null, end != null, start == end: same thing is selected -- don't notify
 
         Position positionAtEnd = this.position();
+        final Point pickPoint = sc.getPickPoint();
         if (positionAtStart != null || positionAtEnd != null) {
             // call the listener if both are not null or positions are the same
             if (positionAtStart != null && positionAtEnd != null) {
                 if (!positionAtStart.equals(positionAtEnd))
-                    this.callPositionListeners(new PositionEvent(drawable, sc.getPickPoint(), positionAtStart, positionAtEnd));
+                    this.callPositionListeners(new PositionEvent(drawable, pickPoint, positionAtStart, positionAtEnd));
             } else
-                this.callPositionListeners(new PositionEvent(drawable, sc.getPickPoint(), positionAtStart, positionAtEnd));
+                this.callPositionListeners(new PositionEvent(drawable, pickPoint, positionAtStart, positionAtEnd));
         }
 
         PickedObject selectionAtEnd = this.getCurrentSelection();
         if (selectionAtStart != null || selectionAtEnd != null)
-            this.callSelectListeners(new SelectEvent(drawable, SelectEvent.ROLLOVER, sc.getPickPoint(), sc.getPickedObjectList()));
+            this.callSelectListeners(new SelectEvent(drawable, SelectEvent.ROLLOVER, pickPoint, sc.getPickedObjectList()));
 
 
         PickedObjectList boxSelectionAtEnd = this.getCurrentBoxSelection();
@@ -450,5 +472,173 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
     @Override
     public WorldWindowGLDrawable wwd() {
         return this;
+    }
+
+    public GpuResourceCache resourceCache() {
+        return this.gpuResourceCache;
+    }
+
+    public void setGpuResourceCache(GpuResourceCache gpuResourceCache) {
+        this.gpuResourceCache = gpuResourceCache;
+        this.sceneController.setGpuResourceCache(this.gpuResourceCache);
+    }
+
+    public Model model() {
+        return this.sceneController != null ? this.sceneController.getModel() : null;
+    }
+
+    public void setModel(Model model) {
+        // model can be null, that's ok - it indicates no model.
+        if (this.sceneController != null)
+            this.sceneController.setModel(model);
+    }
+
+    public void setView(View view) {
+        // view can be null, that's ok - it indicates no view.
+        if (this.sceneController != null)
+            this.sceneController.setView(view);
+    }
+
+    public SceneController sceneControl() {
+        return this.sceneController;
+    }
+
+    public void setSceneControl(SceneController sc) {
+        if (sc != null && this.sceneControl() != null) {
+            sc.setGpuResourceCache(this.sceneController.getGpuResourceCache());
+        }
+
+        this.sceneController = sc;
+    }
+
+    public InputHandler input() {
+        return this.inputHandler;
+    }
+
+    public void setInput(InputHandler inputHandler) {
+        this.inputHandler = inputHandler;
+        //HACK share eventListeners
+        this.eventListeners = (inputHandler instanceof AWTInputHandler ?
+            ((AWTInputHandler)inputHandler).eventListeners : new EventListenerList());
+    }
+
+    public void setPerFrameStatisticsKeys(Set<String> keys) {
+        if (this.sceneController != null)
+            this.sceneController.setPerFrameStatisticsKeys(keys);
+    }
+
+    public Collection<PerformanceStatistic> getPerFrameStatistics() {
+        if (this.sceneController == null || this.sceneController.getPerFrameStatistics() == null)
+            return new ArrayList<>(0);
+
+        return this.sceneController.getPerFrameStatistics();
+    }
+
+    public PickedObjectList objectsAtPosition() {
+        return null;
+    }
+
+    public PickedObjectList objectsInSelectionBox() {
+        return null;
+    }
+
+    public Position position() {
+        if (this.sceneController == null)
+            return null;
+
+        PickedObjectList pol = this.sceneControl().getPickedObjectList();
+        if (pol == null || pol.size() < 1)
+            return null;
+
+        Position p = null;
+        PickedObject top = pol.getTopPickedObject();
+        if (top != null && top.hasPosition())
+            p = top.position();
+        else if (pol.getTerrainObject() != null)
+            p = pol.getTerrainObject().position();
+
+        return p;
+    }
+
+    protected PickedObject getCurrentSelection() {
+        if (this.sceneController == null)
+            return null;
+
+        PickedObjectList pol = this.sceneControl().getPickedObjectList();
+        if (pol == null || pol.size() < 1)
+            return null;
+
+        PickedObject top = pol.getTopPickedObject();
+        return top.isTerrain() ? null : top;
+    }
+
+    protected PickedObjectList getCurrentBoxSelection() {
+        if (this.sceneController == null)
+            return null;
+
+        PickedObjectList pol = this.sceneController.getObjectsInPickRectangle();
+        return pol != null && !pol.isEmpty() ? pol : null;
+    }
+
+    public void addRenderingListener(RenderingListener listener) {
+        this.eventListeners.add(RenderingListener.class, listener);
+    }
+
+    public void removeRenderingListener(RenderingListener listener) {
+        this.eventListeners.remove(RenderingListener.class, listener);
+    }
+
+    protected void callRenderingListeners(RenderingEvent event) {
+        for (RenderingListener listener : eventListeners.getListeners(RenderingListener.class))
+            listener.stageChanged(event);
+    }
+
+    public void addPositionListener(PositionListener listener) {
+        this.eventListeners.add(PositionListener.class, listener);
+    }
+
+    public void removePositionListener(PositionListener listener) {
+        this.eventListeners.remove(PositionListener.class, listener);
+    }
+
+    protected void callPositionListeners(final PositionEvent event) {
+        //EventQueue.invokeLater(() -> {
+            for (PositionListener listener : eventListeners.getListeners(PositionListener.class)) {
+                listener.moved(event);
+            }
+        //});
+    }
+
+    public void addSelectListener(SelectListener listener) {
+        this.eventListeners.add(SelectListener.class, listener);
+    }
+
+    public void removeSelectListener(SelectListener listener) {
+        this.eventListeners.remove(SelectListener.class, listener);
+    }
+
+    protected void callSelectListeners(final SelectEvent event) {
+        //EventQueue.invokeLater(() -> {
+            for (SelectListener listener : eventListeners.getListeners(SelectListener.class)) {
+                listener.accept(event);
+            }
+        //});
+    }
+
+    public void addRenderingExceptionListener(RenderingExceptionListener listener) {
+        this.eventListeners.add(RenderingExceptionListener.class, listener);
+    }
+
+    public void removeRenderingExceptionListener(RenderingExceptionListener listener) {
+        this.eventListeners.remove(RenderingExceptionListener.class, listener);
+    }
+
+    protected void callRenderingExceptionListeners(final Throwable exception) {
+        //EventQueue.invokeLater(() -> {
+            for (RenderingExceptionListener listener : eventListeners.getListeners(
+                RenderingExceptionListener.class)) {
+                listener.exceptionThrown(exception);
+            }
+        //});
     }
 }

@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.terrain;
 
 import com.jogamp.common.nio.Buffers;
-import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.cache.*;
 import gov.nasa.worldwind.data.*;
@@ -539,8 +539,9 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
             return WorldWind.cache(cacheName);
         }
         else {
-            long size = Configuration.getLongValue(AVKey.ELEVATION_TILE_CACHE_SIZE, 20000000L);
-            MemoryCache mc = new BasicMemoryCache((long) (0.85 * size), size);
+//            long size = Configuration.getLongValue(AVKey.ELEVATION_TILE_CACHE_SIZE, 20000000L);
+//            MemoryCache mc = new BasicMemoryCache((long) (0.85 * size), size);
+            MemoryCache mc = new SoftMemoryCache();
             mc.setName("Elevation Tiles");
             WorldWind.getMemoryCacheSet().addCache(cacheName, mc);
             return mc;
@@ -1417,8 +1418,9 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         // elevation model is reclaimed by the GC.
 
         if (this.extremesLookupCache == null) {
-            long size = Configuration.getLongValue(AVKey.ELEVATION_EXTREMES_LOOKUP_CACHE_SIZE, 20000000L);
-            this.extremesLookupCache = new BasicMemoryCache((long) (0.85 * size), size);
+//            long size = Configuration.getLongValue(AVKey.ELEVATION_EXTREMES_LOOKUP_CACHE_SIZE, 20000000L);
+//            this.extremesLookupCache = new BasicMemoryCache((long) (0.85 * size), size);
+            this.extremesLookupCache = new SoftMemoryCache();
         }
 
         return this.extremesLookupCache;

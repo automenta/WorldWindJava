@@ -294,18 +294,18 @@ public final class Sphere implements Extent, Renderable {
         Vec4 c = this.getCenter();
         double nr = -this.getRadius();
 
-        if (frustum.getFar().dot(c) <= nr)
+        if (frustum.far.dot(c) <= nr)
             return false;
-        if (frustum.getLeft().dot(c) <= nr)
+        if (frustum.left.dot(c) <= nr)
             return false;
-        if (frustum.getRight().dot(c) <= nr)
+        if (frustum.right.dot(c) <= nr)
             return false;
-        if (frustum.getTop().dot(c) <= nr)
+        if (frustum.top.dot(c) <= nr)
             return false;
-        if (frustum.getBottom().dot(c) <= nr)
+        if (frustum.bottom.dot(c) <= nr)
             return false;
         //noinspection RedundantIfStatement
-        if (frustum.getNear().dot(c) <= nr)
+        if (frustum.near.dot(c) <= nr)
             return false;
 
         return true;

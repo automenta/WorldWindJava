@@ -11,7 +11,7 @@ import java.util.Iterator;
 
 public class AnimatedObject {
 
-    private static final int DEFAULT_REDRAW_REQUESTED = 17; // ~ 60 FPS
+//    private static final int DEFAULT_REDRAW_REQUESTED = 17; // ~ 60 FPS
     private final Animatable object;
     private final AnimationController animationController;
     private Path route;
@@ -22,7 +22,7 @@ public class AnimatedObject {
     public AnimatedObject(Animatable object) {
         this.animationController = new AnimationController();
         this.object = object;
-        this.object.setRedrawRequested(DEFAULT_REDRAW_REQUESTED);
+//        this.object.setRedrawRequested(DEFAULT_REDRAW_REQUESTED);
     }
 
     public Animatable getObject() {

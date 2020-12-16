@@ -669,7 +669,7 @@ public class AnalysisPanel extends JPanel implements Restorable {
         segmentDistance = LatLon.rhumbDistance(posA, posB);
         // Iterate through segments to find intersection
         Globe globe = this.wwd.model().getGlobe();
-        Plane near = this.wwd.view().getFrustumInModelCoordinates().getNear();
+        Plane near = this.wwd.view().getFrustumInModelCoordinates().near;
         Position p1 = null, p2;
         for (double s = 0; s <= 1; s += step) {
             if (s == 0)

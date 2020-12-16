@@ -95,7 +95,9 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
 
         this.computeDimensions();
 
-        this.geometryCache = new BasicMemoryCache((long) (0.85 * DEFAULT_CACHE_CAPACITY), DEFAULT_CACHE_CAPACITY);
+        this.geometryCache =
+            new SoftMemoryCache();
+            //new BasicMemoryCache((long) (0.85 * DEFAULT_CACHE_CAPACITY), DEFAULT_CACHE_CAPACITY);
     }
 
     protected static double createPosition(int start, double decimal, int density) {

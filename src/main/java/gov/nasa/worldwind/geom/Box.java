@@ -624,34 +624,34 @@ public class Box implements Extent, Renderable {
         double intersectionPoint;
         Vec4[] endPoints = new Vec4[] {this.bottomCenter, this.topCenter};
 
-        double effectiveRadius = this.getEffectiveRadius2(frustum.getNear());
-        intersectionPoint = Box.intersectsAt(frustum.getNear(), effectiveRadius, endPoints);
+        double effectiveRadius = this.getEffectiveRadius2(frustum.near);
+        intersectionPoint = Box.intersectsAt(frustum.near, effectiveRadius, endPoints);
         if (intersectionPoint < 0)
             return false;
 
         // Near and far have the same effective radius.
-        effectiveRadius = this.getEffectiveRadius2(frustum.getFar());
-        intersectionPoint = Box.intersectsAt(frustum.getFar(), effectiveRadius, endPoints);
+        effectiveRadius = this.getEffectiveRadius2(frustum.far);
+        intersectionPoint = Box.intersectsAt(frustum.far, effectiveRadius, endPoints);
         if (intersectionPoint < 0)
             return false;
 
-        effectiveRadius = this.getEffectiveRadius2(frustum.getLeft());
-        intersectionPoint = Box.intersectsAt(frustum.getLeft(), effectiveRadius, endPoints);
+        effectiveRadius = this.getEffectiveRadius2(frustum.left);
+        intersectionPoint = Box.intersectsAt(frustum.left, effectiveRadius, endPoints);
         if (intersectionPoint < 0)
             return false;
 
-        effectiveRadius = this.getEffectiveRadius2(frustum.getRight());
-        intersectionPoint = Box.intersectsAt(frustum.getRight(), effectiveRadius, endPoints);
+        effectiveRadius = this.getEffectiveRadius2(frustum.right);
+        intersectionPoint = Box.intersectsAt(frustum.right, effectiveRadius, endPoints);
         if (intersectionPoint < 0)
             return false;
 
-        effectiveRadius = this.getEffectiveRadius2(frustum.getTop());
-        intersectionPoint = Box.intersectsAt(frustum.getTop(), effectiveRadius, endPoints);
+        effectiveRadius = this.getEffectiveRadius2(frustum.top);
+        intersectionPoint = Box.intersectsAt(frustum.top, effectiveRadius, endPoints);
         if (intersectionPoint < 0)
             return false;
 
-        effectiveRadius = this.getEffectiveRadius2(frustum.getBottom());
-        intersectionPoint = Box.intersectsAt(frustum.getBottom(), effectiveRadius, endPoints);
+        effectiveRadius = this.getEffectiveRadius2(frustum.bottom);
+        intersectionPoint = Box.intersectsAt(frustum.bottom, effectiveRadius, endPoints);
         return intersectionPoint >= 0;
     }
 

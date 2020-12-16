@@ -278,7 +278,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
         if (referencePoint != null)
             tile.setPriorityDistance(centroid.distanceTo3(referencePoint));
 
-        this.getRequestQ().add(this.createRequestTask(tile));
+        requestQ.add(this.createRequestTask(tile));
     }
 
     protected RequestTask createRequestTask(TextureTile tile) {

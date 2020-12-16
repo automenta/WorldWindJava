@@ -27,8 +27,8 @@ public class PickPointFrustum extends Frustum {
      * @param rect    screen rectangle to store with this frustum
      */
     public PickPointFrustum(Frustum frustum, Rectangle rect) {
-        super(frustum.getLeft(), frustum.getRight(), frustum.getBottom(), frustum.getTop(), frustum.getNear(),
-            frustum.getFar());
+        super(frustum.left, frustum.right, frustum.bottom, frustum.top, frustum.near,
+            frustum.far);
 
         if (rect == null) {
             String message = Logging.getMessage("nullValue.RectangleIsNull");

@@ -870,9 +870,7 @@ public class Vec4 {
     }
 
     public final double getLengthSquared3() {
-        return (this.x * this.x)
-            + (this.y * this.y)
-            + (this.z * this.z);
+        return (this.x * this.x) + (this.y * this.y) + (this.z * this.z);
     }
 
     public final Vec4 normalize3() {
@@ -935,13 +933,11 @@ public class Vec4 {
         return this.dot4(this);
     }
 
-    public final Vec4 cross3(Vec4 vec4) {
-        if (vec4 == null) {
-            String msg = Logging.getMessage("nullValue.Vec4IsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+    public final Vec4 cross3normalize(Vec4 vec4) {
+        return cross3(vec4).normalize3();
+    }
 
+    public final Vec4 cross3(Vec4 vec4) {
         return new Vec4(
             (this.y * vec4.z) - (this.z * vec4.y),
             (this.z * vec4.x) - (this.x * vec4.z),
@@ -949,11 +945,11 @@ public class Vec4 {
     }
 
     public final Angle angleBetween3(Vec4 vec4) {
-        if (vec4 == null) {
-            String msg = Logging.getMessage("nullValue.Vec4IsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (vec4 == null) {
+//            String msg = Logging.getMessage("nullValue.Vec4IsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         double a_dot_b = this.dot3(vec4);
         // Compute the sum of magnitudes.
@@ -974,11 +970,11 @@ public class Vec4 {
     }
 
     public final Vec4 projectOnto3(Vec4 vec4) {
-        if (vec4 == null) {
-            String msg = Logging.getMessage("nullValue.Vec4IsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (vec4 == null) {
+//            String msg = Logging.getMessage("nullValue.Vec4IsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         double dot = this.dot3(vec4);
         double length = vec4.getLength3();
@@ -989,11 +985,11 @@ public class Vec4 {
     }
 
     public final Vec4 perpendicularTo3(Vec4 vec4) {
-        if (vec4 == null) {
-            String msg = Logging.getMessage("nullValue.Vec4IsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (vec4 == null) {
+//            String msg = Logging.getMessage("nullValue.Vec4IsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         return this.subtract3(projectOnto3(vec4));
     }
@@ -1015,11 +1011,11 @@ public class Vec4 {
     }
 
     public final Vec4 transformBy3(Matrix matrix) {
-        if (matrix == null) {
-            String msg = Logging.getMessage("nullValue.MatrixIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (matrix == null) {
+//            String msg = Logging.getMessage("nullValue.MatrixIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         return new Vec4(
             (matrix.m11 * this.x) + (matrix.m12 * this.y) + (matrix.m13 * this.z),
@@ -1028,11 +1024,11 @@ public class Vec4 {
     }
 
     public final Vec4 transformBy3(Quaternion quaternion) {
-        if (quaternion == null) {
-            String msg = Logging.getMessage("nullValue.QuaternionIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (quaternion == null) {
+//            String msg = Logging.getMessage("nullValue.QuaternionIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         Quaternion tmp = new Quaternion(this.x, this.y, this.z, 0.0);
         tmp = quaternion.multiply(tmp);
@@ -1041,11 +1037,11 @@ public class Vec4 {
     }
 
     public final Vec4 transformBy4(Matrix matrix) {
-        if (matrix == null) {
-            String msg = Logging.getMessage("nullValue.MatrixIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (matrix == null) {
+//            String msg = Logging.getMessage("nullValue.MatrixIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         return new Vec4(
             (matrix.m11 * this.x) + (matrix.m12 * this.y) + (matrix.m13 * this.z) + (matrix.m14 * this.w),

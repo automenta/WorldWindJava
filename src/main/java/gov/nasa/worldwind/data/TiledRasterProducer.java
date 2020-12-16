@@ -44,11 +44,11 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
     private DataRasterReaderFactory readerFactory;
 
     public TiledRasterProducer(MemoryCache cache, int writeThreadPoolSize) {
-        if (cache == null) {
-            String message = Logging.getMessage("nullValue.CacheIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (cache == null) {
+//            String message = Logging.getMessage("nullValue.CacheIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
         if (writeThreadPoolSize < 1) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "writeThreadPoolSize < 1");
             Logging.logger().severe(message);

@@ -134,28 +134,6 @@ public interface MemoryCache {
      */
     long getFreeCapacity();
 
-    /**
-     * Retrieves the low water value of the <code>MemoryCache</code>. When a <code>MemoryCache</code> runs out of free
-     * space, it must remove some items if it wishes to add any more. It continues removing items until the low water
-     * level is reached. Not every <code>MemoryCache</code> necessarily uses the low water system, so this may not
-     * return a useful value.
-     *
-     * @return the low water value of the <code>MemoryCache</code>.
-     */
-    long getLowWater();
-
-    /* *******************************************************************************/
-    //capacity related mutators
-
-    /**
-     * Sets the new low water capacity value for this <code>MemoryCache</code>. When a <code>MemoryCache</code> runs out
-     * of free space, it must remove some items if it wishes to add any more. It continues removing items until the low
-     * water level is reached. Not every <code>MemoryCache</code> necessarily uses the low water system, so this method
-     * may not have any actual effect in some implementations.
-     *
-     * @param loWater the new low water value.
-     */
-    void setLowWater(long loWater);
 
     /**
      * Provides the interface for cache clients to be notified of key events. Currently the only key event is the

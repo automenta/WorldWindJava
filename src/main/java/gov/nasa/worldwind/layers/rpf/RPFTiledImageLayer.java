@@ -522,7 +522,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
         if (referencePoint != null)
             tile.setPriorityDistance(centroid.distanceTo3(referencePoint));
 
-        this.getRequestQ().add(new RequestTask(tile, this));
+        requestQ.add(new RequestTask(tile, this));
     }
 
     private boolean loadTexture(TextureTile tile, URL textureURL) {
@@ -578,7 +578,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
             WorldWind.retrieveRemote().run(retriever, tile.getPriority());
         }
         else {
-            this.getRequestQ().add(new DownloadTask(service, url, tile, this));
+            requestQ.add(new DownloadTask(service, url, tile, this));
         }
     }
 

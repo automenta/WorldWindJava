@@ -709,8 +709,8 @@ public class TacticalGraphicLabel {
 
         // Test the label's model coordinate point against the near and far clipping planes.
         if (olbl.placePoint != null
-            && (frustum.getNear().distanceTo(olbl.placePoint) < 0
-            || frustum.getFar().distanceTo(olbl.placePoint) < 0)) {
+            && (frustum.near.distanceTo(olbl.placePoint) < 0
+            || frustum.far.distanceTo(olbl.placePoint) < 0)) {
             return false;
         }
 

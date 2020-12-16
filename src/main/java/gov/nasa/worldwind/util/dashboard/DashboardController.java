@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.util.dashboard;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.util.Logging;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,12 +22,6 @@ public class DashboardController implements MouseListener, Disposable {
     private WorldWindow wwd;
 
     public DashboardController(WorldWindow wwd, Component component) {
-        if (wwd == null) {
-            String msg = Logging.getMessage("nullValue.WorldWindow");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
         this.wwd = wwd;
         this.component = component;
         wwd.input().addMouseListener(this);

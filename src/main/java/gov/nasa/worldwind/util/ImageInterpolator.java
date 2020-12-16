@@ -23,7 +23,9 @@ public class ImageInterpolator {
     protected final float[] xs;
     protected final float[] ys;
     protected final int cellSize;
-    protected final BasicMemoryCache kidCache = new BasicMemoryCache(750000L, 1000000L);
+    protected final MemoryCache kidCache =
+        new SoftMemoryCache();
+        //new BasicMemoryCache(750000L, 1000000L);
 
     public ImageInterpolator(Dimension gridSize, float[] xs, float[] ys, int depth, int cellSize) {
         if (gridSize == null) {

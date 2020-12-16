@@ -145,7 +145,7 @@ public class SelectEvent extends WWEvent {
     }
 
     public PickedObject getTopPickedObject() {
-        return this.hasObjects() ? this.pickedObjects.getTopPickedObject() : null;
+        return this.pickedObjects.getTopPickedObject();
     }
 
     public Object getTopObject() {

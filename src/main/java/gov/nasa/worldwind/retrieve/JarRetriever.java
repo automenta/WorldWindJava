@@ -37,13 +37,13 @@ public class JarRetriever extends URLRetriever {
     }
 
     protected ByteBuffer doRead(URLConnection connection) throws Exception {
-        if (connection == null) {
-            String msg = Logging.getMessage("nullValue.ConnectionIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (connection == null) {
+//            String msg = Logging.getMessage("nullValue.ConnectionIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
-        JarURLConnection htpc = (JarURLConnection) connection;
+        URLConnection htpc = connection;
         this.responseCode = htpc.getContentLength() >= 0 ? HttpURLConnection.HTTP_OK : -1;
         this.responseMessage = this.responseCode >= 0 ? "OK" : "FAILED";
 

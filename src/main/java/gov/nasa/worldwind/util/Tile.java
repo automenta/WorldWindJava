@@ -119,19 +119,24 @@ public class Tile implements Comparable<Tile>, Cacheable {
      * @throws IllegalArgumentException if <code>delta</code> is null or non-positive, or <code>latitude</code> is null,
      *                                  greater than positive 90 degrees, or less than  negative 90 degrees
      */
-    public static int computeRow(Angle delta, Angle latitude, Angle origin) {
+    @Deprecated public static int computeRow(Angle delta, Angle latitude, Angle origin) {
+        return computeRow(delta.degrees, latitude.degrees, origin.degrees);
+    }
+
+    /** in degrees */
+    public static int computeRow(double delta, double latitude, double origin) {
 
         assertPositiveDelta(delta);
 
-        if (latitude.degrees < -90.0d || latitude.degrees > 90.0d) {
+        if (latitude < -90.0d || latitude > 90.0d) {
             String message = Logging.getMessage("generic.AngleOutOfRange", latitude);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        int row = (int) ((latitude.degrees - origin.degrees) / delta.degrees);
+        int row = (int) ((latitude - origin) / delta);
         // Latitude is at the end of the grid. Subtract 1 from the computed row to return the last row.
-        if ((latitude.degrees - origin.degrees) == 180.0d)
+        if ((latitude - origin) == 180.0d)
             row = row - 1;
 
         return row;
@@ -147,11 +152,16 @@ public class Tile implements Comparable<Tile>, Cacheable {
      * @throws IllegalArgumentException if <code>delta</code> is null or non-positive, or <code>longitude</code> is
      *                                  null, greater than positive 180 degrees, or less than  negative 180 degrees
      */
-    public static int computeColumn(Angle delta, Angle longitude, Angle origin) {
+    @Deprecated public static int computeColumn(Angle delta, Angle longitude, Angle origin) {
+        return computeColumn(delta.degrees, longitude.degrees, origin.degrees);
+    }
+
+    /** in degrees */
+    public static int computeColumn(double delta, double longitude, double origin) {
 
         assertPositiveDelta(delta);
 
-        if (longitude.degrees < -180.0d || longitude.degrees > 180.0d) {
+        if (longitude < -180.0d || longitude > 180.0d) {
             String message = Logging.getMessage("generic.AngleOutOfRange", longitude);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -159,13 +169,13 @@ public class Tile implements Comparable<Tile>, Cacheable {
 
         // Compute the longitude relative to the grid. The grid provides 360 degrees of longitude from the grid origin.
         // We wrap grid longitude values so that the grid begins and ends at the origin.
-        double gridLongitude = longitude.degrees - origin.degrees;
+        double gridLongitude = longitude - origin;
         if (gridLongitude < 0.0)
             gridLongitude = 360.0d + gridLongitude;
 
-        int col = (int) (gridLongitude / delta.degrees);
+        int col = (int) (gridLongitude / delta);
         // Longitude is at the end of the grid. Subtract 1 from the computed column to return the last column.
-        if ((longitude.degrees - origin.degrees) == 360.0d)
+        if ((longitude - origin) == 360.0d)
             col = col - 1;
 
         return col;
@@ -221,9 +231,13 @@ public class Tile implements Comparable<Tile>, Cacheable {
         return Angle.fromDegrees(lonDegrees);
     }
 
-    private static void assertPositiveDelta(Angle delta) {
-        if (delta.degrees <= 0.0d) {
-            String message = Logging.getMessage("generic.DeltaAngleOutOfRange", delta);
+    @Deprecated private static void assertPositiveDelta(Angle delta) {
+        assertPositiveDelta(delta.degrees);
+    }
+
+    private static void assertPositiveDelta(double deltaDegrees) {
+        if (deltaDegrees <= 0.0d) {
+            String message = Logging.getMessage("generic.DeltaAngleOutOfRange", deltaDegrees);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }

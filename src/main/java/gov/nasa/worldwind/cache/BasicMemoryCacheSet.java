@@ -16,20 +16,20 @@ import java.util.concurrent.ConcurrentHashMap;
  * @version $Id: BasicMemoryCacheSet.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 public class BasicMemoryCacheSet implements MemoryCacheSet {
-    private final ConcurrentHashMap<String, MemoryCache> caches = new ConcurrentHashMap<>();
+    private final Map<String, MemoryCache> caches = new ConcurrentHashMap<>();
 
-    public synchronized boolean containsCache(String key) {
+    public boolean containsCache(String key) {
         return this.caches.containsKey(key);
     }
 
-    public synchronized MemoryCache getCache(String cacheKey) {
+    public MemoryCache getCache(String cacheKey) {
         MemoryCache cache = this.caches.get(cacheKey);
 
-        if (cache == null) {
-            String message = Logging.getMessage("MemoryCacheSet.CacheDoesNotExist", cacheKey);
-            Logging.logger().severe(message);
-            throw new IllegalStateException(message);
-        }
+//        if (cache == null) {
+//            String message = Logging.getMessage("MemoryCacheSet.CacheDoesNotExist", cacheKey);
+//            Logging.logger().severe(message);
+//            throw new IllegalStateException(message);
+//        }
 
         return cache;
     }
@@ -38,28 +38,20 @@ public class BasicMemoryCacheSet implements MemoryCacheSet {
         return this.caches;
     }
 
-    public synchronized MemoryCache addCache(String key, MemoryCache cache) {
-        if (this.containsCache(key)) {
+    public MemoryCache addCache(String key, MemoryCache cache) {
+
+        MemoryCache existing = this.caches.put(key, cache);
+        if (existing!=null) {
             String message = Logging.getMessage("MemoryCacheSet.CacheAlreadyExists");
             Logging.logger().fine(message);
             throw new IllegalStateException(message);
         }
 
-        if (cache == null) {
-            String message = Logging.getMessage("nullValue.CacheIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        this.caches.put(key, cache);
-
         return cache;
     }
 
-    public synchronized void clear() {
-        for (MemoryCache cache : this.caches.values()) {
-            cache.clear();
-        }
+    public void clear() {
+        caches.values().forEach(MemoryCache::clear);
     }
 
     public Collection<PerformanceStatistic> getPerformanceStatistics() {

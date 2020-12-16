@@ -8,15 +8,13 @@ import gov.nasa.worldwind.layers.sky.*;
 import gov.nasa.worldwind.pick.PickedObject;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.render.markers.*;
-import gov.nasa.worldwind.util.*;
+import gov.nasa.worldwind.util.WWUtil;
 import gov.nasa.worldwind.video.LayerList;
 import gov.nasa.worldwind.video.newt.WorldWindowNEWT;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
-
-import static gov.nasa.worldwind.avlist.AVKey.SHAPE_NONE;
+import java.util.*;
 
 public class WorldWindOSM {
 
@@ -38,7 +36,8 @@ public class WorldWindOSM {
 
         w.addSelectListener(s->{
             if (s.isLeftClick()) {
-                PickedObject top = s.getTopPickedObject();
+                PickedObject top =
+                    s.getTopPickedObject();
                 if (top==null || top.isTerrain()) {
                     //System.out.println(top.position());
                     final Position where = top.position();

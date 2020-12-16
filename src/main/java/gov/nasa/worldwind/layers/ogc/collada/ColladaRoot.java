@@ -110,7 +110,7 @@ public class ColladaRoot extends ColladaAbstractObject
      * Resource resolver to resolve relative file paths.
      */
     protected ColladaResourceResolver resourceResolver;
-    protected int redrawRequested = 0;
+//    protected int redrawRequested = 0;
 
     /**
      * Create a new <code>ColladaRoot</code> for a {@link XMLDoc} instance. A XMLDoc represents COLLADA files from
@@ -773,7 +773,7 @@ public class ColladaRoot extends ColladaAbstractObject
         ColladaScene scene = this.getScene();
         if (scene != null) {
             scene.render(tc, dc);
-            dc.setRedrawRequested(this.redrawRequested);
+//            dc.setRedrawRequested(this.redrawRequested);
         }
     }
 
@@ -898,13 +898,13 @@ public class ColladaRoot extends ColladaAbstractObject
         return filePath;
     }
 
-    @Override
-    public int getRedrawRequested() {
-        return redrawRequested;
-    }
-
-    @Override
-    public void setRedrawRequested(int redrawRequested) {
-        this.redrawRequested = redrawRequested;
-    }
+//    @Override
+//    public int getRedrawRequested() {
+//        return redrawRequested;
+//    }
+//
+//    @Override
+//    public void setRedrawRequested(int redrawRequested) {
+//        this.redrawRequested = redrawRequested;
+//    }
 }

@@ -27,12 +27,19 @@ import java.util.logging.Level;
  * @version $Id: BasicGpuResourceCache.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 public class BasicGpuResourceCache implements GpuResourceCache {
-    protected final BasicMemoryCache resources;
+    protected final MemoryCache cache;
 
-    public BasicGpuResourceCache(long loWater, long hiWater) {
-        this.resources = new BasicMemoryCache(loWater, hiWater);
-        this.resources.setName("GPU Resource Cache");
-        this.resources.addCacheListener(new MemoryCache.CacheListener() {
+
+    public BasicGpuResourceCache() {
+
+        this.cache =
+            new SoftMemoryCache();
+                //        long cacheSize = Configuration.getLongValue(AVKey.TEXTURE_CACHE_SIZE, WorldWindow.FALLBACK_TEXTURE_CACHE_SIZE);
+                //        return new BasicGpuResourceCache((long) (0.8 * cacheSize), cacheSize);
+                //new BasicMemoryCache(loWater, hiWater);
+
+        this.cache.setName("GPU Resource Cache");
+        this.cache.addCacheListener(new MemoryCache.CacheListener() {
             public void entryRemoved(Object key, Object clientObject) {
                 onEntryRemoved(key, clientObject);
             }
@@ -73,12 +80,12 @@ public class BasicGpuResourceCache implements GpuResourceCache {
 
     public void put(Object key, Texture texture) {
         CacheEntry te = BasicGpuResourceCache.createCacheEntry(texture, TEXTURE);
-        this.resources.add(key, te);
+        this.cache.add(key, te);
     }
 
     public void put(Object key, Object resource, String resourceType, long size) {
         CacheEntry te = BasicGpuResourceCache.createCacheEntry(resource, resourceType, size);
-        this.resources.add(key, te);
+        this.cache.add(key, te);
     }
 
     protected static CacheEntry createCacheEntry(Object resource, String resourceType) {
@@ -96,25 +103,25 @@ public class BasicGpuResourceCache implements GpuResourceCache {
     }
 
     public Object get(Object key) {
-        CacheEntry entry = (CacheEntry) this.resources.getObject(key);
+        CacheEntry entry = (CacheEntry) this.cache.getObject(key);
         return entry != null ? entry.resource : null;
     }
 
     public Texture getTexture(Object key) {
-        CacheEntry entry = (CacheEntry) this.resources.getObject(key);
+        CacheEntry entry = (CacheEntry) this.cache.getObject(key);
         return entry != null && entry.resourceType == TEXTURE ? (Texture) entry.resource : null;
     }
 
     public void remove(Object key) {
-        this.resources.remove(key);
+        this.cache.remove(key);
     }
 
     public int getNumObjects() {
-        return this.resources.getNumObjects();
+        return this.cache.getNumObjects();
     }
 
     public long getCapacity() {
-        return this.resources.getCapacity();
+        return this.cache.getCapacity();
     }
 
     /**
@@ -127,48 +134,25 @@ public class BasicGpuResourceCache implements GpuResourceCache {
      * @param newCapacity the new capacity of the cache.
      */
     public synchronized void setCapacity(long newCapacity) {
-        this.resources.setCapacity(newCapacity);
+        this.cache.setCapacity(newCapacity);
     }
 
     public long getUsedCapacity() {
-        return this.resources.getUsedCapacity();
+        return this.cache.getUsedCapacity();
     }
 
     public long getFreeCapacity() {
-        return this.resources.getFreeCapacity();
+        return this.cache.getFreeCapacity();
     }
 
     public boolean contains(Object key) {
-        return this.resources.contains(key);
+        return this.cache.contains(key);
     }
 
     public void clear() {
-        this.resources.clear();
+        this.cache.clear();
     }
 
-    /**
-     * Returns the low water level in bytes. When the cache fills, it removes items until it reaches the low water
-     * level.
-     *
-     * @return the low water level in bytes.
-     */
-    public long getLowWater() {
-        return this.resources.getLowWater();
-    }
-
-    /**
-     * Sets the new low water level in bytes, which controls how aggresively the cache discards items.
-     * <p>
-     * When the cache fills, it removes items until it reaches the low water level.
-     * <p>
-     * Setting a high loWater level will increase cache misses, but decrease average add time, but setting a low loWater
-     * will do the opposite.
-     *
-     * @param loWater the new low water level in bytes.
-     */
-    public synchronized void setLowWater(long loWater) {
-        this.resources.setLowWater(loWater);
-    }
 
     protected static long computeEntrySize(CacheEntry entry) {
         if (entry.resourceType == TEXTURE)

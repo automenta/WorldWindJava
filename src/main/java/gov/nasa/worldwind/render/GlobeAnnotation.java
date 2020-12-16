@@ -285,7 +285,7 @@ public class GlobeAnnotation extends AbstractAnnotation implements Locatable, Mo
         if (point == null)
             return;
 
-        if (dc.getView().getFrustumInModelCoordinates().getNear().distanceTo(point) < 0)
+        if (dc.getView().getFrustumInModelCoordinates().near.distanceTo(point) < 0)
             return;
 
         Vec4 screenPoint = dc.getView().project(point);

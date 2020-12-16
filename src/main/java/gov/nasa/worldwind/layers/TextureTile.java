@@ -7,8 +7,7 @@ package gov.nasa.worldwind.layers;
 
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.texture.*;
-import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.cache.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
@@ -48,8 +47,10 @@ public class TextureTile extends Tile implements SurfaceTile {
      */
     public static synchronized MemoryCache getMemoryCache() {
         if (!WorldWind.getMemoryCacheSet().containsCache(TextureTile.class.getName())) {
-            long size = Configuration.getLongValue(AVKey.TEXTURE_IMAGE_CACHE_SIZE, 3000000L);
-            MemoryCache cache = new BasicMemoryCache((long) (0.85 * size), size);
+//            long size = Configuration.getLongValue(AVKey.TEXTURE_IMAGE_CACHE_SIZE, 3000000L);
+            MemoryCache cache =
+                new SoftMemoryCache();
+                //new BasicMemoryCache((long) (0.85 * size), size);
             cache.setName("Texture Tiles");
             WorldWind.getMemoryCacheSet().addCache(TextureTile.class.getName(), cache);
         }
@@ -123,21 +124,21 @@ public class TextureTile extends Tile implements SurfaceTile {
     }
 
     public Texture getTexture(GpuResourceCache tc) {
-        if (tc == null) {
-            String message = Logging.getMessage("nullValue.TextureCacheIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalStateException(message);
-        }
+//        if (tc == null) {
+//            String message = Logging.getMessage("nullValue.TextureCacheIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalStateException(message);
+//        }
 
         return tc.getTexture(this.tileKey);
     }
 
     public boolean isTextureInMemory(GpuResourceCache tc) {
-        if (tc == null) {
-            String message = Logging.getMessage("nullValue.TextureCacheIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalStateException(message);
-        }
+//        if (tc == null) {
+//            String message = Logging.getMessage("nullValue.TextureCacheIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalStateException(message);
+//        }
 
         return this.getTexture(tc) != null || this.getTextureData() != null;
     }
@@ -155,11 +156,11 @@ public class TextureTile extends Tile implements SurfaceTile {
     }
 
     public void setTexture(GpuResourceCache tc, Texture texture) {
-        if (tc == null) {
-            String message = Logging.getMessage("nullValue.TextureCacheIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalStateException(message);
-        }
+//        if (tc == null) {
+//            String message = Logging.getMessage("nullValue.TextureCacheIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalStateException(message);
+//        }
 
         tc.put(this.tileKey, texture);
         this.updateTime.set(System.currentTimeMillis());
@@ -171,21 +172,21 @@ public class TextureTile extends Tile implements SurfaceTile {
     }
 
     public Vec4 getCentroidPoint(Globe globe) {
-        if (globe == null) {
-            String msg = Logging.getMessage("nullValue.GlobeIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (globe == null) {
+//            String msg = Logging.getMessage("nullValue.GlobeIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         return globe.computePointFromLocation(sector.getCentroid());
     }
 
     public Extent getExtent(DrawContext dc) {
-        if (dc == null) {
-            String msg = Logging.getMessage("nullValue.DrawContextIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (dc == null) {
+//            String msg = Logging.getMessage("nullValue.DrawContextIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         return Sector.computeBoundingBox(dc.getGlobe(), dc.getVerticalExaggeration(), sector);
     }
@@ -200,11 +201,11 @@ public class TextureTile extends Tile implements SurfaceTile {
      * @throws IllegalArgumentException if the level is null.
      */
     public TextureTile[] createSubTiles(Level nextLevel) {
-        if (nextLevel == null) {
-            String msg = Logging.getMessage("nullValue.LevelIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (nextLevel == null) {
+//            String msg = Logging.getMessage("nullValue.LevelIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         Angle p0 = sector.latMin();
         Angle p2 = sector.latMax();
@@ -326,11 +327,11 @@ public class TextureTile extends Tile implements SurfaceTile {
     }
 
     protected void setTextureParameters(DrawContext dc, Texture t) {
-        if (dc == null) {
-            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalStateException(message);
-        }
+//        if (dc == null) {
+//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalStateException(message);
+//        }
 
         GL gl = dc.getGL();
 
@@ -377,11 +378,11 @@ public class TextureTile extends Tile implements SurfaceTile {
     }
 
     public boolean bind(DrawContext dc) {
-        if (dc == null) {
-            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalStateException(message);
-        }
+//        if (dc == null) {
+//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalStateException(message);
+//        }
 
         // Reinitialize texture if new texture data
         if (this.getTextureData() != null) {
@@ -409,11 +410,11 @@ public class TextureTile extends Tile implements SurfaceTile {
     }
 
     public void applyInternalTransform(DrawContext dc, boolean textureIdentityActive) {
-        if (dc == null) {
-            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalStateException(message);
-        }
+//        if (dc == null) {
+//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalStateException(message);
+//        }
 
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
@@ -462,11 +463,11 @@ public class TextureTile extends Tile implements SurfaceTile {
     }
 
     protected void applyResourceTextureTransform(DrawContext dc) {
-        if (dc == null) {
-            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalStateException(message);
-        }
+//        if (dc == null) {
+//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalStateException(message);
+//        }
 
         if (level == null)
             return;

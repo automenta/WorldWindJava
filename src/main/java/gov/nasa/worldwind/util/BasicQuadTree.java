@@ -332,11 +332,11 @@ public class BasicQuadTree<T> extends BitSetQuadTreeFilter implements Iterable<T
      * @throws IllegalArgumentException if <code>location</code> is null.
      */
     synchronized public Set<T> getItemsAtLocation(LatLon location, Set<T> outItems) {
-        if (location == null) {
-            String message = Logging.getMessage("nullValue.LatLonIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (location == null) {
+//            String message = Logging.getMessage("nullValue.LatLonIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         FindIntersectingBitsOp op = new FindIntersectingBitsOp(this);
 

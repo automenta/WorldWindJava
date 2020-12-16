@@ -196,7 +196,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     protected SectorVisibilityTree visibleSectors;
     //    protected Map<String, GroupingFilter> groupingFilters;
     protected Layer currentLayer;
-    protected int redrawRequested = 0;
+
     protected Collection<Throwable> renderingExceptions;
     protected Dimension pickPointFrustumDimension = new Dimension(3, 3);
     protected LightingModel standardLighting = new BasicLightingModel();
@@ -264,7 +264,6 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
         this.orderedSurfaceRenderables.clear();
         this.uniquePickNumber = 0;
         this.deepPickingMode = false;
-        this.redrawRequested = 0;
 
         this.pickFrustumList.clear();
 
@@ -874,13 +873,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
         return this.credits;
     }
 
-    public int getRedrawRequested() {
-        return redrawRequested;
-    }
 
-    public void setRedrawRequested(int redrawRequested) {
-        this.redrawRequested = redrawRequested;
-    }
 
     public PickPointFrustumList getPickFrustums() {
         return this.pickFrustumList;

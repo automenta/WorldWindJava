@@ -688,7 +688,6 @@ public class ScrollBar implements Renderable {
                 if (now > this.nextAutoScroll) {
                     int delay = this.getAutoScrollDelay();
                     this.scroll(this.autoScrollIncrement);
-                    dc.setRedrawRequested(delay);
                     this.nextAutoScroll = now + delay;
                 }
             }

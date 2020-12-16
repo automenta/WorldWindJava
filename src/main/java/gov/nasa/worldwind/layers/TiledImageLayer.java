@@ -32,8 +32,6 @@ import java.util.concurrent.PriorityBlockingQueue;
  * @version $Id: TiledImageLayer.java 2922 2015-03-24 23:56:58Z tgaskins $
  */
 public abstract class TiledImageLayer extends AbstractLayer {
-    // Infrastructure
-    protected static final Comparator<TextureTile> levelComparer = new LevelComparer();
     protected final LevelSet levels;
     protected static final double detailHintOrigin = 2.8;
     protected final ArrayList<String> supportedImageFormats = new ArrayList<>();
@@ -390,10 +388,6 @@ public abstract class TiledImageLayer extends AbstractLayer {
         return levels;
     }
 
-    protected PriorityBlockingQueue<Runnable> getRequestQ() {
-        return requestQ;
-    }
-
     @Override
     public boolean isMultiResolution() {
         return this.getLevels() != null && this.getLevels().getNumLevels() > 1;
@@ -476,31 +470,34 @@ public abstract class TiledImageLayer extends AbstractLayer {
         Sector sector = this.levels.getSector();
 
         Level level = levels.getFirstLevel();
-        Angle dLat = level.getTileDelta().getLatitude();
-        Angle dLon = level.getTileDelta().getLongitude();
-        Angle latOrigin = this.levels.getTileOrigin().getLatitude();
-        Angle lonOrigin = this.levels.getTileOrigin().getLongitude();
+        double dLat = level.getTileDelta().latitude;
+        double dLon = level.getTileDelta().longitude;
+        double latOrigin = this.levels.getTileOrigin().latitude;
+        double lonOrigin = this.levels.getTileOrigin().longitude;
 
         // Determine the row and column offset from the common WorldWind global tiling origin.
-        int firstRow = Tile.computeRow(dLat, sector.latMin(), latOrigin);
-        int firstCol = Tile.computeColumn(dLon, sector.lonMin(), lonOrigin);
-        int lastRow = Tile.computeRow(dLat, sector.latMax(), latOrigin);
-        int lastCol = Tile.computeColumn(dLon, sector.lonMax(), lonOrigin);
+        int firstRow = Tile.computeRow(dLat, sector.latMin, latOrigin);
+        int firstCol = Tile.computeColumn(dLon, sector.lonMin, lonOrigin);
+        int lastRow = Tile.computeRow(dLat, sector.latMax, latOrigin);
+        int lastCol = Tile.computeColumn(dLon, sector.lonMax, lonOrigin);
 
         int nLatTiles = lastRow - firstRow + 1;
         int nLonTiles = lastCol - firstCol + 1;
 
         this.topLevels = new ArrayList<>(nLatTiles * nLonTiles);
 
-        Angle p1 = Tile.computeRowLatitude(firstRow, dLat, latOrigin);
+        final Angle LAT_ORIGIN = Angle.fromDegrees(latOrigin);
+        final Angle LON_ORIGIN = Angle.fromDegrees(lonOrigin);
+        final Angle DLON = Angle.fromDegrees(dLon);
+        final Angle DLAT = Angle.fromDegrees(dLat);
+        Angle p1 = Tile.computeRowLatitude(firstRow, Angle.fromDegrees(dLat), LAT_ORIGIN);
         for (int row = firstRow; row <= lastRow; row++) {
-            Angle p2;
-            p2 = p1.add(dLat);
+            Angle p2 = p1.add(DLAT);
 
-            Angle t1 = Tile.computeColumnLongitude(firstCol, dLon, lonOrigin);
+            Angle t1 = Tile.computeColumnLongitude(firstCol, DLON, LON_ORIGIN);
             for (int col = firstCol; col <= lastCol; col++) {
                 Angle t2;
-                t2 = t1.add(dLon);
+                t2 = t1.add(DLON);
 
                 this.topLevels.add(new TextureTile(new Sector(p1, p2, t1, t2), level, row, col));
                 t1 = t2;
@@ -759,7 +756,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
 
             TextureTile[] sortedTiles = new TextureTile[this.currentTiles.size()];
             sortedTiles = this.currentTiles.toArray(sortedTiles);
-            Arrays.sort(sortedTiles, levelComparer);
+            Arrays.sort(sortedTiles, levelComparator);
 
             GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
@@ -1270,22 +1267,20 @@ public abstract class TiledImageLayer extends AbstractLayer {
         return image;
     }
 
-    protected static class LevelComparer implements Comparator<TextureTile> {
-        public int compare(TextureTile ta, TextureTile tb) {
-            if (ta == tb) return 0;
+    protected static final Comparator<TextureTile> levelComparator = (ta,tb) -> {
+        if (ta == tb) return 0;
 
-            final TextureTile taf = ta.getFallbackTile();
-            final TextureTile tbf = tb.getFallbackTile();
-            var la = taf == null ? ta : taf;
-            var lb = tbf == null ? tb : tbf;
+        final TextureTile taf = ta.getFallbackTile();
+        final TextureTile tbf = tb.getFallbackTile();
+        var la = taf == null ? ta : taf;
+        var lb = tbf == null ? tb : tbf;
 
-            int l = Integer.compare(la.getLevelNumber(), lb.getLevelNumber());
-            if (l!=0)
-                return l;
-            else
-                return Integer.compare(System.identityHashCode(ta), System.identityHashCode(tb));
-        }
-    }
+        int l = Integer.compare(la.getLevelNumber(), lb.getLevelNumber());
+        if (l!=0)
+            return l;
+        else
+            return Integer.compare(System.identityHashCode(ta), System.identityHashCode(tb));
+    };
 
     protected class CompositionRetrievalPostProcessor extends AbstractRetrievalPostProcessor {
         protected final TextureTile tile;

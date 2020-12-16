@@ -16,12 +16,12 @@ import gov.nasa.worldwind.util.Logging;
  * @version $Id: Frustum.java 2178 2014-07-25 16:40:09Z dcollins $
  */
 public class Frustum {
-    protected final Plane left;
-    protected final Plane right;
-    protected final Plane bottom;
-    protected final Plane top;
-    protected final Plane near;
-    protected final Plane far;
+    public final Plane left;
+    public final Plane right;
+    public final Plane bottom;
+    public final Plane top;
+    public final Plane near;
+    public final Plane far;
     /**
      * Holds all six frustum planes in an array in the order left, right, bottom, top, near, far.
      */
@@ -169,16 +169,16 @@ public class Frustum {
             throw new IllegalArgumentException(message);
         }
 
-        double focalLength = 1.0d / horizontalFieldOfView.tanHalfAngle();
+        double focalLength = 1.0 / horizontalFieldOfView.tanHalfAngle();
         double aspect = viewportHeight / (double) viewportWidth;
         double lrLen = Math.sqrt(focalLength * focalLength + 1);
         double btLen = Math.sqrt(focalLength * focalLength + aspect * aspect);
-        Plane leftPlane = new Plane(focalLength / lrLen, 0.0d, 0.0d - 1.0d / lrLen, 0);
-        Plane rightPlane = new Plane(0.0d - focalLength / lrLen, 0.0d, 0.0d - 1.0d / lrLen, 0.0d);
-        Plane bottomPlane = new Plane(0.0d, focalLength / btLen, 0.0d - aspect / btLen, 0.0d);
-        Plane topPlane = new Plane(0.0d, 0.0d - focalLength / btLen, 0.0d - aspect / btLen, 0.0d);
-        Plane nearPlane = new Plane(0.0d, 0.0d, 0.0d - 1.0d, 0.0d - near);
-        Plane farPlane = new Plane(0.0d, 0.0d, 1.0d, far);
+        Plane leftPlane = new Plane(focalLength / lrLen, 0.0, 0.0 - 1.0 / lrLen, 0);
+        Plane rightPlane = new Plane(0.0 - focalLength / lrLen, 0.0, 0.0 - 1.0 / lrLen, 0.0);
+        Plane bottomPlane = new Plane(0.0, focalLength / btLen, 0.0 - aspect / btLen, 0.0);
+        Plane topPlane = new Plane(0.0, 0.0 - focalLength / btLen, 0.0 - aspect / btLen, 0.0);
+        Plane nearPlane = new Plane(0.0, 0.0, 0.0 - 1.0, 0.0 - near);
+        Plane farPlane = new Plane(0.0, 0.0, 1.0, far);
         return new Frustum(leftPlane, rightPlane, bottomPlane, topPlane, nearPlane, farPlane);
     }
 
@@ -228,13 +228,12 @@ public class Frustum {
      * @throws IllegalArgumentException if any of the vectors are null, if either near or far are negative, or near is
      *                                  greater than or equal to far
      */
-    public static Frustum fromPerspectiveVecs(Vec4 vTL, Vec4 vTR, Vec4 vBL, Vec4 vBR,
-        double near, double far) {
-        if (vTL == null || vTR == null || vBL == null || vBR == null) {
-            String message = Logging.getMessage("Geom.ViewFrustum.EdgeVectorIsNull");
-            Logging.logger().fine(message);
-            throw new IllegalArgumentException(message);
-        }
+    public static Frustum fromPerspectiveVecs(Vec4 vTL, Vec4 vTR, Vec4 vBL, Vec4 vBR, double near, double far) {
+//        if (vTL == null || vTR == null || vBL == null || vBR == null) {
+//            String message = Logging.getMessage("Geom.ViewFrustum.EdgeVectorIsNull");
+//            Logging.logger().fine(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         double farMinusNear = far - near;
         if (near <= 0 || farMinusNear <= 0) {
@@ -243,77 +242,14 @@ public class Frustum {
             throw new IllegalArgumentException(message);
         }
 
-        Vec4 lpn = vBL.cross3(vTL).normalize3();
-        Plane leftPlane = new Plane(lpn.x, lpn.y, lpn.z, 0);
-        Vec4 rpn = vTR.cross3(vBR).normalize3();
-        Plane rightPlane = new Plane(rpn.x, rpn.y, rpn.z, 0);
-        Vec4 bpn = vBR.cross3(vBL).normalize3();
-        Plane bottomPlane = new Plane(bpn.x, bpn.y, bpn.z, 0);
-        Vec4 tpn = vTL.cross3(vTR).normalize3();
-        Plane topPlane = new Plane(tpn.x, tpn.y, tpn.z, 0);
-
-        Plane nearPlane = new Plane(0.0d, 0.0d, 0.0d - 1.0d, 0.0d - near);
-        Plane farPlane = new Plane(0.0d, 0.0d, 1.0d, far);
+        Plane leftPlane = new Plane(vBL.cross3normalize(vTL), 0);
+        Plane rightPlane = new Plane(vTR.cross3normalize(vBR), 0);
+        Plane bottomPlane = new Plane(vBR.cross3normalize(vBL), 0);
+        Plane topPlane = new Plane(vTL.cross3normalize(vTR), 0);
+        Plane nearPlane = new Plane(0.0, 0.0, 0.0 - 1.0, 0.0 - near);
+        Plane farPlane = new Plane(0.0, 0.0, 1.0, far);
         return new Frustum(leftPlane, rightPlane, bottomPlane, topPlane, nearPlane, farPlane);
     }
-
-    /**
-     * Returns the left plane.
-     *
-     * @return the left plane.
-     */
-    public final Plane getLeft() {
-        return this.left;
-    }
-
-    /**
-     * Returns the right plane.
-     *
-     * @return the right plane.
-     */
-    public final Plane getRight() {
-        return this.right;
-    }
-
-    /**
-     * Returns the bottom plane.
-     *
-     * @return the bottom plane.
-     */
-    public final Plane getBottom() {
-        return this.bottom;
-    }
-
-    /**
-     * Returns the top plane.
-     *
-     * @return the top plane.
-     */
-    public final Plane getTop() {
-        return this.top;
-    }
-
-    /**
-     * Returns the near plane.
-     *
-     * @return the left plane.
-     */
-    public final Plane getNear() {
-        return this.near;
-    }
-
-    /**
-     * Returns the far plane.
-     *
-     * @return the left plane.
-     */
-    public final Plane getFar() {
-        return this.far;
-    }
-
-    // ============== Factory Functions ======================= //
-    // ============== Factory Functions ======================= //
-    // ============== Factory Functions ======================= //
 
     /**
      * Returns all the planes.

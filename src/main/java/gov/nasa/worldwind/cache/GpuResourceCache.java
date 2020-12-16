@@ -113,7 +113,6 @@ public interface GpuResourceCache {
      *
      * @param newCapacity the number of bytes allowed for the cache's resources. Values less than or equal to 0 are
      *                    ignored and cause no change to this cache's capacity.
-     * @see #setLowWater(long)
      */
     void setCapacity(long newCapacity);
 
@@ -134,22 +133,5 @@ public interface GpuResourceCache {
      */
     long getFreeCapacity();
 
-    /**
-     * Indicates the cache's low water size.
-     *
-     * @return the cache's low water size, in bytes.
-     * @see #setLowWater(long)
-     */
-    long getLowWater();
 
-    /**
-     * Specifies the low water size for this cache. When resources added to the cache would exceed the cache's capacity,
-     * existing resources are removed until the amount of memory used is at or below the low water size.
-     *
-     * @param loWater the size to reduce this cache to when added resources would exceed the cache's capacity. Values
-     *                less than or equal to 0 are ignored and cause no change to this cache's low water size.
-     * @see #setCapacity(long)
-     * @see #remove(Object)
-     */
-    void setLowWater(long loWater);
 }

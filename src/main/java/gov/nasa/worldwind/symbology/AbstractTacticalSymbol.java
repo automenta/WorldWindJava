@@ -1448,8 +1448,8 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
 
         // Test the symbol's model coordinate point against the near and far clipping planes.
         if (osym.placePoint != null
-            && (view.getFrustumInModelCoordinates().getNear().distanceTo(osym.placePoint) < 0
-            || view.getFrustumInModelCoordinates().getFar().distanceTo(osym.placePoint) < 0)) {
+            && (view.getFrustumInModelCoordinates().near.distanceTo(osym.placePoint) < 0
+            || view.getFrustumInModelCoordinates().far.distanceTo(osym.placePoint) < 0)) {
             return false;
         }
 

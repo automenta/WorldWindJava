@@ -45,7 +45,10 @@ public class BasicDataFileStore extends AbstractFileStore {
     /**
      * The map of cached entries.
      */
-    protected final BasicMemoryCache db = new BasicMemoryCache((long) 3.0e5, (long) 5.0e5);
+    protected final MemoryCache db =
+        new SoftMemoryCache();
+        //new BasicMemoryCache((long) 3.0e5, (long) 5.0e5);
+
     /**
      * Absent-resource list to keep track of resources that were requested by requestFile but failed. The default list
      * holds a maximum of 2000 entries, allows 3 attempts separated by 500 milliseconds before marking a resource
@@ -160,7 +163,7 @@ public class BasicDataFileStore extends AbstractFileStore {
      *
      * @return the file store's list of content types.
      */
-    protected List<String> getCacheContentTypes() {
+    protected Iterable<String> getCacheContentTypes() {
         return this.cacheContentTypes;
     }
 

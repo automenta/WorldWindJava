@@ -414,7 +414,7 @@ public class IconRenderer {
         }
 
         WWIcon icon = uIcon.icon;
-        if (dc.getView().getFrustumInModelCoordinates().getNear().distanceTo(uIcon.point) < 0) {
+        if (dc.getView().getFrustumInModelCoordinates().near.distanceTo(uIcon.point) < 0) {
             // Record feedback data for this WWIcon if feedback is enabled.
             IconRenderer.recordFeedback(dc, icon, uIcon.point, null);
 

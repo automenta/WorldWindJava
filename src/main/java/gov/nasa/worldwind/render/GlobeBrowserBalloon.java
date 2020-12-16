@@ -209,8 +209,8 @@ public class GlobeBrowserBalloon extends AbstractBrowserBalloon implements Globe
         Frustum frustum = view.getFrustumInModelCoordinates();
         //noinspection SimplifiableIfStatement
         if (ogpm.placePoint != null
-            && (frustum.getNear().distanceTo(ogpm.placePoint) < 0
-            || frustum.getFar().distanceTo(ogpm.placePoint) < 0)) {
+            && (frustum.near.distanceTo(ogpm.placePoint) < 0
+            || frustum.far.distanceTo(ogpm.placePoint) < 0)) {
             return false;
         }
 

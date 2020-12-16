@@ -1140,9 +1140,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
         if (this.isAnimating()) {
             this.animation.step();
 
-            if (this.animation.hasNext())
-                dc.setRedrawRequested(this.animationDelay);
-            else
+            if (!this.animation.hasNext())
                 this.animation = null;
         }
     }
