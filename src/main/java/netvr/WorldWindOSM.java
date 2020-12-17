@@ -1,7 +1,6 @@
 package netvr;
 
-import com.jogamp.opengl.*;
-import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.BasicModel;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.layers.earth.OSMMapnikLayer;
@@ -11,12 +10,14 @@ import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.render.markers.*;
 import gov.nasa.worldwind.util.WWUtil;
 import gov.nasa.worldwind.video.LayerList;
-import gov.nasa.worldwind.video.newt.*;
+import gov.nasa.worldwind.video.newt.WorldWindowNEWT2;
+import spacegraph.space2d.Surface;
 import spacegraph.space2d.container.Bordering;
 import spacegraph.space2d.container.grid.Gridding;
-import spacegraph.space2d.container.unit.Scale;
+import spacegraph.space2d.widget.Widget;
 import spacegraph.space2d.widget.button.PushButton;
 import spacegraph.space2d.widget.slider.FloatSlider;
+import spacegraph.space2d.widget.textedit.TextEdit;
 import spacegraph.video.*;
 
 import java.awt.*;
@@ -27,6 +28,7 @@ public class WorldWindOSM {
     static {
         System.setProperty("java.awt.headless", "true");
     }
+
     public WorldWindOSM() {
     }
 
@@ -36,61 +38,77 @@ public class WorldWindOSM {
     }
 
     private static void mainNEWT() {
-        JoglWindow w = new JoglWindow(1024, 800);
+        JoglWindow j = new JoglWindow(1024, 800);
 
         final OSMModel world = new OSMModel();
 
-        final WorldWindowNEWT2 ww =
+        final WorldWindowNEWT2 w =
             //new WorldWindowNEWT(world, 1024, 800);
             new WorldWindowNEWT2(world);
 
-        ww.setWindow(w);
+        w.setWindow(j);
 
+        final TextEdit out = new TextEdit(64,24);
+        final TextEdit in = new TextEdit(24).onKeyPress((k) -> {
 
-            new OrthoSurfaceGraph(
-                new Bordering()
-                    .west(new Gridding(new PushButton("xyz"),new PushButton("abc"),new FloatSlider(0.25f, 0, 1)))
-                    .north(new Gridding(new PushButton("xyz"),new PushButton("abc"),new FloatSlider(0.25f, 0, 1)))
-                , w);
+        });
+        final PushButton scan = new PushButton("Scan", () -> {
+        });
+        Surface param = new Gridding(
+            new FloatSlider("A", 0.5f, 0,1),
+            new FloatSlider("B", 0.1f, 0,1),
+            new FloatSlider("C", 0.3f, 0,1),
+            new FloatSlider("D", 0.8f, 0,1),
+            new FloatSlider("E", 0.1f, 0,1)
+        );
 
+        new OrthoSurfaceGraph(
+            new Bordering()
+                .north(param)
+                .west(new Gridding(new Widget(in), new Widget(out), scan))
+            , j);
 
+        j.runLater(() -> {
+            w.view().goTo(new Position(LatLon.fromDegrees(53.00820, 7.18812), 0), 400);
 
-//        ww.view().goTo(new Position(LatLon.fromDegrees(53.00820, 7.18812), 0), 400);
+            w.addSelectListener(s -> {
+                if (s.isLeftClick()) {
+                    PickedObject top =
+                        s.getTopPickedObject();
+                    if (top == null || top.isTerrain()) {
+//                        //System.out.println(top.position());
+//                        final Position where = top.position();
+//                        final BasicMarker m = new BasicMarker(
+//                            where,
+//                            new BasicMarkerAttributes(Material.ORANGE, BasicMarkerShape.CUBE, 1.0d, 10, 10)
+//                        );
 //
-//        ww.addSelectListener(s->{
-//            if (s.isLeftClick()) {
-//                PickedObject top =
-//                    s.getTopPickedObject();
-//                if (top==null || top.isTerrain()) {
-//                    //System.out.println(top.position());
-//                    final Position where = top.position();
-//                    final BasicMarker m = new BasicMarker(
-//                        where,
-//                        new BasicMarkerAttributes(Material.ORANGE, BasicMarkerShape.CUBE, 1.0d, 10, 10)
-//                    );
-//
-//                    GlobeAnnotation a = new GlobeAnnotation("AGL Annotation", where);
+//                        GlobeAnnotation a = new GlobeAnnotation("AGL Annotation", where);
 ////                    a.getAttributes().setFrameShape(SHAPE_NONE);
-//                    //a.getAttributes().setLeader();
+//                        //a.getAttributes().setLeader();
 //
 ////                    a.setAlwaysOnTop(true);
-//                    world.notes.removeAllAnnotations();
-//                    world.notes.addAnnotation(a);
+//                        world.notes.removeAllAnnotations();
+//                        world.notes.addAnnotation(a);
 //
 ////                    GlobeAnnotationBalloon a = new GlobeAnnotationBalloon("AGL Annotation", where);
 ////                    a.setAlwaysOnTop(true);
 ////                    world.renderables.add(a);
 //
-//
-//                    world.markers.setMarkers(
-//                        List.of(m)
-//                    );
-//
-//                } else {
-//                    System.out.println(top);
-//                }
-//            }
-//        });
+//                        world.markers.setMarkers(
+//                            List.of(m)
+//                        );
+                    }
+                    else {
+                        out.text(describe(top));
+                    }
+                }
+            });
+        });
+    }
+
+    private static String describe(PickedObject x) {
+        return x.toString();
     }
 
     static class OSMModel extends BasicModel {
@@ -135,10 +153,7 @@ public class WorldWindOSM {
 //            l.add(new ShapefileLayer(new Shapefile(new File("/tmp/shp1/natural.shp"))));
 //            l.add(new ShapefileLayer(new Shapefile(new File("/tmp/shp1/railways.shp"))));
             setLayers(l);
-
         }
-
-
     }
 
     protected static class OSMShapes {
@@ -210,7 +225,6 @@ public class WorldWindOSM {
                 if (text instanceof Label)
                     text.setVisible(((Label) text).isActive(dc));
             }
-
         }
     }
 }
