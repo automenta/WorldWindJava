@@ -13,15 +13,13 @@ import java.util.*;
  * @author jym
  * @version $Id: AnimationController.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class AnimationController extends
-    HashMap<Object, Animator> {
+public class AnimationController extends HashMap<Object, Animator> {
 
     /**
      * Starts all of the <code>Animator</code>s in the map
      */
     public void startAnimations() {
-        Collection<Animator> animators = this.values();
-        for (Animator a : animators) {
+        for (Animator a : this.values()) {
             a.start();
         }
     }
@@ -30,8 +28,7 @@ public class AnimationController extends
      * Stops all of the <code>Animator</code>s in the map
      */
     public void stopAnimations() {
-        Collection<Animator> animators = this.values();
-        for (Animator a : animators) {
+        for (Animator a : this.values()) {
             a.stop();
         }
     }
@@ -61,8 +58,7 @@ public class AnimationController extends
      */
     public boolean stepAnimators() {
         boolean didStep = false;
-        Collection<Animator> animators = this.values();
-        for (Animator a : animators) {
+        for (Animator a : this.values()) {
             if (a.hasNext()) {
                 didStep = true;
                 a.next();
@@ -78,8 +74,7 @@ public class AnimationController extends
      */
     public boolean hasActiveAnimation() {
 
-        Collection<Animator> animators = this.values();
-        for (Animator a : animators) {
+        for (Animator a : this.values()) {
             if (a.hasNext()) {
                 return true;
             }

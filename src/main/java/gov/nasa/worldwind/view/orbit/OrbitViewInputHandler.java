@@ -49,18 +49,15 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
     protected static Position computeNewPosition(OrbitView view, Position position) {
         Angle newLat = Angle.fromDegrees(WWMath.clamp(position.latitude, -90, 90));
         Angle newLon = Angle.lonNorm(position.getLongitude());
-        Position newPosition = new Position(newLat, newLon, position.elevation);
-        return view.getOrbitViewLimits().limitCenterPosition(view, newPosition);
+        return view.getOrbitViewLimits().limitCenterPosition(view, new Position(newLat, newLon, position.elevation));
     }
 
     protected static Angle computeNewHeading(OrbitView view, Angle heading) {
-        Angle newHeading = BasicOrbitView.normalizedHeading(heading);
-        return view.getOrbitViewLimits().limitHeading(view, newHeading);
+        return view.getOrbitViewLimits().limitHeading(view, BasicOrbitView.normalizedHeading(heading));
     }
 
     protected static Angle computeNewPitch(OrbitView view, Angle pitch) {
-        Angle newPitch = BasicOrbitView.normalizedPitch(pitch);
-        return view.getOrbitViewLimits().limitPitch(view, newPitch);
+        return view.getOrbitViewLimits().limitPitch(view, BasicOrbitView.normalizedPitch(pitch));
     }
 
     //**************************************************************//
@@ -68,9 +65,8 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
     //**************************************************************//
 
     protected static double computeNewZoom(OrbitView view, double curZoom, double change) {
-        double logCurZoom = curZoom != 0 ? Math.log(curZoom) : 0;
-        double newZoom = Math.exp(logCurZoom + change);
-        return view.getOrbitViewLimits().limitZoom(view, newZoom);
+        return view.getOrbitViewLimits().limitZoom(view,
+            Math.exp((curZoom != 0 ? Math.log(curZoom) : 0) + change));
     }
 
     /**

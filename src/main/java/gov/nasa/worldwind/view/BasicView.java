@@ -16,6 +16,7 @@ import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.video.awt.ViewInputHandler;
 
 import java.awt.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * A base class from which {@link View} implementations can be derived. Currently {@link
@@ -78,7 +79,7 @@ public class BasicView extends WWObjectImpl implements View {
      * Identifier for the modelview matrix state. This number is incremented when one of the fields that affects the
      * modelview matrix is set.
      */
-    protected long viewStateID;
+    protected final AtomicLong viewStateID = new AtomicLong();
 
     /**
      * Construct a BasicView
@@ -94,22 +95,22 @@ public class BasicView extends WWObjectImpl implements View {
      * @param projection the projection matrix
      */
     public static void loadGLViewState(DrawContext dc, Matrix modelview, Matrix projection) {
-        if (dc == null) {
-            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (dc.getGL() == null) {
-            String message = Logging.getMessage("nullValue.DrawingContextGLIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalStateException(message);
-        }
-        if (modelview == null) {
-            Logging.logger().fine("nullValue.ModelViewIsNull");
-        }
-        if (projection == null) {
-            Logging.logger().fine("nullValue.ProjectionIsNull");
-        }
+//        if (dc == null) {
+//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//        if (dc.getGL() == null) {
+//            String message = Logging.getMessage("nullValue.DrawingContextGLIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalStateException(message);
+//        }
+//        if (modelview == null) {
+//            Logging.logger().fine("nullValue.ModelViewIsNull");
+//        }
+//        if (projection == null) {
+//            Logging.logger().fine("nullValue.ProjectionIsNull");
+//        }
 
         double[] matrixArray = new double[16];
 
@@ -195,23 +196,23 @@ public class BasicView extends WWObjectImpl implements View {
     }
 
     public void apply(DrawContext dc) {
-        if (dc == null) {
-            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (dc.getGL() == null) {
-            String message = Logging.getMessage("nullValue.DrawingContextGLIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalStateException(message);
-        }
-
-        if (dc.getGlobe() == null) {
-            String message = Logging.getMessage("layers.AbstractLayer.NoGlobeSpecifiedInDrawingContext");
-            Logging.logger().severe(message);
-            throw new IllegalStateException(message);
-        }
+//        if (dc == null) {
+//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//
+//        if (dc.getGL() == null) {
+//            String message = Logging.getMessage("nullValue.DrawingContextGLIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalStateException(message);
+//        }
+//
+//        if (dc.getGlobe() == null) {
+//            String message = Logging.getMessage("layers.AbstractLayer.NoGlobeSpecifiedInDrawingContext");
+//            Logging.logger().severe(message);
+//            throw new IllegalStateException(message);
+//        }
 
         if (this.viewInputHandler != null)
             this.viewInputHandler.apply();
@@ -240,8 +241,7 @@ public class BasicView extends WWObjectImpl implements View {
 
     public Frustum getFrustumInModelCoordinates() {
         if (this.lastFrustumInModelCoords == null) {
-            Matrix modelviewTranspose = this.modelview.getTranspose();
-            this.lastFrustumInModelCoords = this.frustum.transformBy(modelviewTranspose);
+            this.lastFrustumInModelCoords = this.frustum.transformBy(this.modelview.getTranspose());
         }
         return this.lastFrustumInModelCoords;
     }
@@ -270,7 +270,7 @@ public class BasicView extends WWObjectImpl implements View {
      * {@inheritDoc}
      */
     public long getViewStateID() {
-        return this.viewStateID;
+        return this.viewStateID.get();
     }
 
     public Angle getFieldOfView() {
@@ -359,7 +359,7 @@ public class BasicView extends WWObjectImpl implements View {
     public void setHeading(Angle heading) {
 
         this.heading = ViewUtil.normalizedHeading(heading);
-        this.heading = heading;
+
         this.updateModelViewStateID();
         //resolveCollisionsWithPitch();
     }
@@ -613,7 +613,7 @@ public class BasicView extends WWObjectImpl implements View {
      * modelview matrix is changed.
      */
     protected void updateModelViewStateID() {
-        this.viewStateID++;
+        this.viewStateID.getAndIncrement();
     }
 
     protected void doGetRestorableState(RestorableSupport rs, RestorableSupport.StateObject context) {

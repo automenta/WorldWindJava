@@ -157,7 +157,7 @@ public class ViewInputAttributes {
         };
     // Vertical Translation Mouse Events
     private static final ActionAttributes.MouseAction DEFAULT_VERTICAL_TRANSLATE_MOUSE_MODS =
-        new ActionAttributes.MouseAction(MouseEvent.BUTTON2_DOWN_MASK);
+        new ActionAttributes.MouseAction(MouseEvent.BUTTON3_DOWN_MASK);
     private static final ActionAttributes.MouseAction[] verticalTransMouseEvents =
         {
             DEFAULT_VERTICAL_TRANSLATE_MOUSE_MODS
@@ -206,7 +206,7 @@ public class ViewInputAttributes {
             DEFAULT_VERTICAL_TRANSLATE_MOUSE_WHEEL_MODS
         };
     private static final ActionAttributes.MouseAction DEFAULT_ROTATE_MOUSE_MODS =
-        new ActionAttributes.MouseAction(MouseEvent.BUTTON3_DOWN_MASK);
+        new ActionAttributes.MouseAction(MouseEvent.BUTTON2_DOWN_MASK);
     private static final ActionAttributes.MouseAction[] rotateMouseEvents =
         {
             DEFAULT_ROTATE_MOUSE_MODS

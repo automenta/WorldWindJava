@@ -12,9 +12,11 @@ import gov.nasa.worldwind.render.markers.*;
 import gov.nasa.worldwind.util.WWUtil;
 import gov.nasa.worldwind.video.LayerList;
 import gov.nasa.worldwind.video.newt.*;
+import spacegraph.space2d.container.Bordering;
 import spacegraph.space2d.container.grid.Gridding;
 import spacegraph.space2d.container.unit.Scale;
 import spacegraph.space2d.widget.button.PushButton;
+import spacegraph.space2d.widget.slider.FloatSlider;
 import spacegraph.video.*;
 
 import java.awt.*;
@@ -45,8 +47,11 @@ public class WorldWindOSM {
         ww.setWindow(w);
 
 
-            new OrthoSurfaceGraph(new Scale(
-                new Gridding(new PushButton("xyz"),new PushButton("abc"),new PushButton("def")), 0.5f), w);
+            new OrthoSurfaceGraph(
+                new Bordering()
+                    .west(new Gridding(new PushButton("xyz"),new PushButton("abc"),new FloatSlider(0.25f, 0, 1)))
+                    .north(new Gridding(new PushButton("xyz"),new PushButton("abc"),new FloatSlider(0.25f, 0, 1)))
+                , w);
 
 
 
