@@ -22,6 +22,8 @@ import java.nio.*;
 import java.util.*;
 import java.util.logging.Level;
 
+import static gov.nasa.worldwind.util.WWUtil.sizeEstimate;
+
 /**
  * @author dcollins
  * @version $Id: SurfacePolygon.java 3436 2015-10-28 17:43:24Z tgaskins $
@@ -587,9 +589,10 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
 
         final int b = this.boundaries.size();
         for (int i = 0; i < b; i++) {
-            Collection<LatLon> newLocations = new ArrayList<>();
 
-            for (LatLon ll : this.boundaries.get(i)) {
+            final Iterable<? extends LatLon> bi = this.boundaries.get(i);
+            Collection<LatLon> newLocations = new ArrayList<>(sizeEstimate(bi));
+            for (LatLon ll : bi) {
                 Angle heading = LatLon.greatCircleAzimuth(oldReferencePosition, ll);
                 Angle pathLength = LatLon.greatCircleDistance(oldReferencePosition, ll);
                 newLocations.add(LatLon.greatCircleEndPosition(newReferencePosition, heading, pathLength));

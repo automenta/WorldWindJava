@@ -33,7 +33,7 @@ public class LayerTreeUsage extends ApplicationTemplate {
 
         JoglWindow W = new JoglWindow(1024, 800);
 
-        WorldWindowNEWT2 w = new WorldWindowNEWT2(m);
+        WorldWindowNEWT w = new WorldWindowNEWT(m);
         w.setWindow(W);
 
         W.runLater(()->{

@@ -1502,8 +1502,8 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
         return hits;
     }
 
-    protected Vec4 getSurfacePoint(RectTile tile, Angle latitude, Angle longitude, double metersOffset) {
-        Vec4 result = RectangularTessellator.getSurfacePoint(tile, latitude, longitude);
+    protected Vec4 getSurfacePoint(RectTile tile, double latDeg, double lonDeg, double metersOffset) {
+        Vec4 result = RectangularTessellator.getSurfacePoint(tile, latDeg, lonDeg);
         if (metersOffset != 0 && result != null) {
             result = applyOffset(this.globe, result, metersOffset);
         }
@@ -1511,24 +1511,18 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
         return result;
     }
 
-    protected static Vec4 getSurfacePoint(RectTile tile, Angle latitude, Angle longitude) {
+    protected static Vec4 getSurfacePoint(RectTile tile, double lat, double lon) {
 
-        if (!tile.sector.contains(latitude, longitude)) {
-            // not on this geometry
+        if (!tile.sector.containsDegrees(lat, lon))
+            return null; // not on this geometry
+
+        if (tile.ri == null)
             return null;
-        }
 
-        if (tile.ri == null) {
-            return null;
-        }
-
-        double lat = latitude.getDegrees();
-        double lon = longitude.getDegrees();
-
-        double bottom = tile.sector.latMin().getDegrees();
-        double top = tile.sector.latMax().getDegrees();
-        double left = tile.sector.lonMin().getDegrees();
-        double right = tile.sector.lonMax().getDegrees();
+        double bottom = tile.sector.latMin;
+        double top = tile.sector.latMax;
+        double left = tile.sector.lonMin;
+        double right = tile.sector.lonMax;
 
         double leftDecimal = (lon - left) / (right - left);
         double bottomDecimal = (lat - bottom) / (top - bottom);
@@ -1789,8 +1783,9 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
 
         public void endRendering(DrawContext dc) {
             if (this.ri.isVboBound) {
-                dc.getGL().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-                dc.getGL().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
+                final GL gl = dc.getGL();
+                gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+                gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
                 this.ri.isVboBound = false;
             }
         }
@@ -1819,8 +1814,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
         public void render(DrawContext dc, boolean beginRenderingCalled) {
             if (beginRenderingCalled) {
                 RectangularTessellator.render(dc, this);
-            }
-            else {
+            } else {
                 this.beginRendering(dc, 1);
                 RectangularTessellator.render(dc, this);
                 this.endRendering(dc);
@@ -1847,7 +1841,8 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
             this.tessellator.pick(dc, this, pickPoint);
         }
 
-        public Vec4 getSurfacePoint(Angle latitude, Angle longitude, double metersOffset) {
+
+        @Override public Vec4 getSurfacePoint(double latitude, double longitude, double metersOffset) {
             return this.tessellator.getSurfacePoint(this, latitude, longitude, metersOffset);
         }
 

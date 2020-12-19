@@ -1,67 +1,39 @@
 package gov.nasa.worldwind.video.newt;
 
-import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.*;
-import com.jogamp.opengl.util.FPSAnimator;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.layers.tool.WorldMapLayer;
-import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.video.*;
+import spacegraph.video.*;
 
 import java.beans.PropertyChangeListener;
 
-public class WorldWindowNEWT implements WorldWindow, GLEventListener {
 
-    static {
-        System.setProperty("java.awt.headless", "true");
-    }
-    static final int FPS_DEFAULT = 60;
+public class WorldWindowNEWT extends AbstractLayer implements WorldWindow, GLEventListener {
 
-    private final GLWindow window;
     private final WorldWindowGLAutoDrawable wwd;
-    private final FPSAnimator animator;
 
-    public WorldWindowNEWT(Model model, int width, int height) {
-        this(model);
-        size(width, height);
-    }
 
     public WorldWindowNEWT(Model model) {
-        this(model, glWindow());
-    }
-
-    private static GLWindow glWindow() {
-        return GLWindow.create(new GLCapabilities(GLProfile.getMaximum(true)));
-    }
-
-    public WorldWindowNEWT(Model model, GLWindow window) {
-        this.window = window;
+        super();
 
         this.wwd = ((WorldWindowGLAutoDrawable) WorldWind.createConfigurationComponent(AVKey.WORLD_WINDOW_CLASS_NAME));
         setModel(model);
-
-        window.addGLEventListener(this);
-        window.setVisible(true);
-
-        animator = new FPSAnimator(window, FPS_DEFAULT, false);
-        animator.start();
-
-    }
-
-    public WorldWindowNEWT fps(int fps) {
-        animator.setFPS(fps);
-        return this;
-    }
-
-    public void size(int width, int height) {
-        window.setSize(width, height);
     }
 
     @Override
-    public void init(GLAutoDrawable g) {
-        wwd().initDrawable(g, this);
+    public void init(GL2 g) {
+        wwd().initDrawable(window.window, this);
+    }
+
+    /** TODO return false when possible */
+    @Override public boolean changed() {
+        return wwd().redrawNecessary.getOpaque();
+    }
+
+    @Override
+    public void init(GLAutoDrawable drawable) {
 
     }
 
@@ -72,6 +44,12 @@ public class WorldWindowNEWT implements WorldWindow, GLEventListener {
 
     @Override
     public void display(GLAutoDrawable drawable) {
+
+    }
+
+    @Override
+    protected void renderVolume(float dtS, GL2 gl, float aspect) {
+        wwd().render(window.window);
     }
 
     @Override
@@ -118,14 +96,14 @@ public class WorldWindowNEWT implements WorldWindow, GLEventListener {
 
     @Override
     public void startEvents(InputHandler h) {
-        window.addMouseListener(h);
-        window.addWindowListener(h);
+        window.window.addMouseListener(h);
+        window.window.addWindowListener(h);
     }
 
     @Override
     public void stopEvents(InputHandler h) {
-        window.removeMouseListener(h);
-        window.removeWindowListener(h);
+        window.window.removeMouseListener(h);
+        window.window.removeWindowListener(h);
     }
 
 }

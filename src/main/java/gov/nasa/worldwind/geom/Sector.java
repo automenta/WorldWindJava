@@ -12,6 +12,7 @@ import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.tracks.TrackPoint;
 import gov.nasa.worldwind.util.*;
+import org.bridj.cpp.std.list;
 
 import java.awt.geom.*;
 import java.util.*;
@@ -64,9 +65,9 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
     }
 
     public Sector(double latMin, double latMax, double lonMin, double lonMax) {
-        if (latMin > latMax || lonMin > lonMax) {
+        if (latMin > latMax || lonMin > lonMax)
             throw new IllegalArgumentException();
-        }
+        
         this.latMin = latMin;
         this.latMax = latMax;
         this.lonMin = lonMin;
@@ -878,7 +879,7 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
         return corners;
     }
 
-    public final boolean contains(Angle latitude, Angle longitude) {
+    @Deprecated public final boolean contains(Angle latitude, Angle longitude) {
         return containsDegrees(latitude.degrees, longitude.degrees);
     }
 
@@ -921,7 +922,6 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
             return false;
         if (that.latMin < this.latMin)
             return false;
-        //noinspection RedundantIfStatement
         if (that.latMax > this.latMax)
             return false;
 
@@ -937,10 +937,8 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
      * @return <code>true</code> if the sectors intersect, otherwise <code>false</code>.
      */
     public boolean intersects(Sector that) {
-        if (this==that)
-            return true;
-        if (that == null)
-            return false;
+        if (that == null) return false;
+        if (this == that) return true;
 
         // Assumes normalized angles -- [-180, 180], [-90, 90]
         if (that.lonMax < this.lonMin)
@@ -949,7 +947,6 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
             return false;
         if (that.latMax < this.latMin)
             return false;
-        //noinspection RedundantIfStatement
         if (that.latMin > this.latMax)
             return false;
 
@@ -968,6 +965,8 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
     public boolean intersectsInterior(Sector that) {
         if (that == null)
             return false;
+        if (this == that)
+            return true;
 
         // Assumes normalized angles -- [-180, 180], [-90, 90]
         if (that.lonMax <= this.lonMin)
@@ -976,54 +975,53 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
             return false;
         if (that.latMax <= this.latMin)
             return false;
-        //noinspection RedundantIfStatement
         if (that.latMin >= this.latMax)
             return false;
 
         return true;
     }
 
-    /**
-     * Determines whether this sector intersects the specified geographic line segment. The line segment is specified by
-     * a begin location and an end location. The locations are are assumed to be connected by a linear path in
-     * geographic space. This returns true if any location along that linear path intersects this sector, including the
-     * begin and end locations.
-     *
-     * @param begin the line segment begin location.
-     * @param end   the line segment end location.
-     * @return true <code>true</code> if this sector intersects the line segment, otherwise <code>false</code>.
-     * @throws IllegalArgumentException if either the begin location or the end location is null.
-     */
-    public boolean intersectsSegment(LatLon begin, LatLon end) {
-
-        Vec4 segmentBegin = new Vec4(begin.getLongitude().degrees, begin.getLatitude().degrees, 0);
-        Vec4 segmentEnd = new Vec4(end.getLongitude().degrees, end.getLatitude().degrees, 0);
-        Vec4 tmp = segmentEnd.subtract3(segmentBegin);
-        Vec4 segmentCenter = segmentBegin.add3(segmentEnd).divide3(2);
-        Vec4 segmentDirection = tmp.normalize3();
-        double segmentExtent = tmp.getLength3() / 2.0;
-
-        LatLon centroid = this.getCentroid();
-        Vec4 boxCenter = new Vec4(centroid.getLongitude().degrees, centroid.getLatitude().degrees, 0);
-        double boxExtentX = this.lonDelta / 2.0;
-        double boxExtentY = this.latDelta / 2.0;
-
-        Vec4 diff = segmentCenter.subtract3(boxCenter);
-
-        if (Math.abs(diff.x) > (boxExtentX + segmentExtent * Math.abs(segmentDirection.x))) {
-            return false;
-        }
-
-        if (Math.abs(diff.y) > (boxExtentY + segmentExtent * Math.abs(segmentDirection.y))) {
-            return false;
-        }
-
-        //noinspection SuspiciousNameCombination
-        Vec4 segmentPerp = new Vec4(segmentDirection.y, -segmentDirection.x, 0);
-
-        return Math.abs(segmentPerp.dot3(diff)) <=
-            (boxExtentX * Math.abs(segmentPerp.x) + boxExtentY * Math.abs(segmentPerp.y));
-    }
+//    /**
+//     * Determines whether this sector intersects the specified geographic line segment. The line segment is specified by
+//     * a begin location and an end location. The locations are are assumed to be connected by a linear path in
+//     * geographic space. This returns true if any location along that linear path intersects this sector, including the
+//     * begin and end locations.
+//     *
+//     * @param begin the line segment begin location.
+//     * @param end   the line segment end location.
+//     * @return true <code>true</code> if this sector intersects the line segment, otherwise <code>false</code>.
+//     * @throws IllegalArgumentException if either the begin location or the end location is null.
+//     */
+//    public boolean intersectsSegment(LatLon begin, LatLon end) {
+//
+//        Vec4 segmentBegin = new Vec4(begin.getLongitude().degrees, begin.getLatitude().degrees, 0);
+//        Vec4 segmentEnd = new Vec4(end.getLongitude().degrees, end.getLatitude().degrees, 0);
+//        Vec4 tmp = segmentEnd.subtract3(segmentBegin);
+//        Vec4 segmentCenter = segmentBegin.add3(segmentEnd).divide3(2);
+//        Vec4 segmentDirection = tmp.normalize3();
+//        double segmentExtent = tmp.getLength3() / 2.0;
+//
+//        LatLon centroid = this.getCentroid();
+//        Vec4 boxCenter = new Vec4(centroid.getLongitude().degrees, centroid.getLatitude().degrees, 0);
+//        double boxExtentX = this.lonDelta / 2.0;
+//        double boxExtentY = this.latDelta / 2.0;
+//
+//        Vec4 diff = segmentCenter.subtract3(boxCenter);
+//
+//        if (Math.abs(diff.x) > (boxExtentX + segmentExtent * Math.abs(segmentDirection.x))) {
+//            return false;
+//        }
+//
+//        if (Math.abs(diff.y) > (boxExtentY + segmentExtent * Math.abs(segmentDirection.y))) {
+//            return false;
+//        }
+//
+//        //noinspection SuspiciousNameCombination
+//        Vec4 segmentPerp = new Vec4(segmentDirection.y, -segmentDirection.x, 0);
+//
+//        return Math.abs(segmentPerp.dot3(diff)) <=
+//            (boxExtentX * Math.abs(segmentPerp.x) + boxExtentY * Math.abs(segmentPerp.y));
+//    }
 
     /**
      * Determines whether this sector intersects any one of the sectors in the specified iterable. This returns true if
@@ -1075,15 +1073,14 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
         if (that == null)
             return this;
 
-        double minLat, maxLat;
-        minLat = Math.max(this.latMin, that.latMin);
-        maxLat = Math.min(this.latMax, that.latMax);
+        double minLat = Math.max(this.latMin, that.latMin);
+        double maxLat = Math.min(this.latMax, that.latMax);
         if (minLat > maxLat)
             return null;
 
-        double minLon, maxLon;
-        minLon = Math.max(this.lonMin, that.lonMin);
-        maxLon = Math.min(this.lonMax, that.lonMax);
+
+        double minLon = Math.max(this.lonMin, that.lonMin);
+        double maxLon = Math.min(this.lonMax, that.lonMax);
         if (minLon > maxLon)
             return null;
 
@@ -1186,16 +1183,16 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
         };
     }
 
-    /**
-     * Returns a {@link Rectangle2D} corresponding to this Sector in degrees lat-lon coordinates where x
-     * corresponds to longitude and y to latitude.
-     *
-     * @return a {@link Rectangle2D} corresponding to this Sector in degrees lat-lon coordinates.
-     */
-    public Rectangle2D toRectangleDegrees() {
-        return new Rectangle2D.Double(this.lonMin, this.latMin,
-            this.lonDelta, this.latDelta);
-    }
+//    /**
+//     * Returns a {@link Rectangle2D} corresponding to this Sector in degrees lat-lon coordinates where x
+//     * corresponds to longitude and y to latitude.
+//     *
+//     * @return a {@link Rectangle2D} corresponding to this Sector in degrees lat-lon coordinates.
+//     */
+//    public Rectangle2D toRectangleDegrees() {
+//        return new Rectangle2D.Double(this.lonMin, this.latMin,
+//            this.lonDelta, this.latDelta);
+//    }
 
     /**
      * Returns a string indicating the sector's angles.
@@ -1241,13 +1238,10 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
      */
     public int compareTo(Sector that) {
         if (this==that) return 0;
-
-        { final int a = Double.compare(latMin, that.latMin); if (a != 0) return a;  }
-        { final int a = Double.compare(lonMin, that.lonMin); if (a != 0) return a;  }
-        { final int a = Double.compare(latMax, that.latMax); if (a != 0) return a;  }
-        { final int a = Double.compare(lonMax, that.lonMax);
-            return a;
-        }
+        { int a = Double.compare(latMin, that.latMin); if (a != 0) return a;  }
+        { int a = Double.compare(lonMin, that.lonMin); if (a != 0) return a;  }
+        { int a = Double.compare(latMax, that.latMax); if (a != 0) return a;  }
+        { int a = Double.compare(lonMax, that.lonMax); return a;  }
     }
 
     /**
@@ -1290,10 +1284,8 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
      */
     public List<LatLon> asList() {
         List<LatLon> list = new ArrayList<>(4);
-
         for (LatLon ll : this)
             list.add(ll);
-
         return list;
     }
 
@@ -1314,12 +1306,10 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
      */
     public LatLon[] getCorners() {
         LatLon[] corners = new LatLon[4];
-
         corners[0] = LatLon.fromDegrees(this.latMin, this.lonMin);
         corners[1] = LatLon.fromDegrees(this.latMin, this.lonMax);
         corners[2] = LatLon.fromDegrees(this.latMax, this.lonMax);
         corners[3] = LatLon.fromDegrees(this.latMax, this.lonMin);
-
         return corners;
     }
 

@@ -13,6 +13,7 @@ import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.ui.HotSpotController;
 import gov.nasa.worldwind.ui.tree.*;
 import gov.nasa.worldwind.video.newt.WorldWindowNEWT;
+import spacegraph.video.JoglWindow;
 
 /**
  * This example demonstrates the use of the on-screen tree control using {@link BasicTree}.
@@ -25,13 +26,14 @@ public class TreeControl extends ApplicationTemplate {
 
     public static void main(String[] args) {
         BasicModel m = new BasicModel();
-        WorldWindowNEWT ww = new WorldWindowNEWT(m, 1024, 800) {
+        WorldWindowNEWT ww = new WorldWindowNEWT(m) {
             @Override
             public void init(GLAutoDrawable g) {
                 super.init(g);
                 HotSpotController controller = new HotSpotController(wwd());
             }
         };
+        ww.setWindow(new JoglWindow(1024, 800));
         WorldWindow w = ww.wwd();
 
         RenderableLayer layer = new RenderableLayer();

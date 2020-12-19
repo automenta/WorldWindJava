@@ -10,7 +10,7 @@ import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.Polyline;
 import gov.nasa.worldwind.util.*;
 
-import java.util.ArrayList;
+import java.util.*;
 
 import static java.lang.Math.toRadians;
 
@@ -42,7 +42,7 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
     private static final double DEFAULT_AREA_SAMPLING_STEPS = 32; // sampling grid max rows or cols
     protected double surfaceArea = -1;
     protected double projectedArea = -1;
-    private ArrayList<? extends Position> subdividedPositions;
+    private List<? extends Position> subdividedPositions;
     private Cell[][] sectorCells;
     private Double[][] sectorElevations;
     private double areaTerrainSamplingSteps = DEFAULT_AREA_SAMPLING_STEPS;
@@ -50,7 +50,7 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
     public AreaMeasurer() {
     }
 
-    public AreaMeasurer(ArrayList<? extends Position> positions) {
+    public AreaMeasurer(List<? extends Position> positions) {
         super(positions);
     }
 
@@ -63,11 +63,12 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
     }
 
     @Override
-    public void setPositions(ArrayList<? extends Position> positions) {
+    public void setPositions(List<? extends Position> positions) {
         Sector oldSector = getBoundingSector();
         super.setPositions(positions); // will call clearCachedData()
+        Sector newSector = getBoundingSector();
 
-        if (getBoundingSector() == null || !getBoundingSector().equals(oldSector)) {
+        if (newSector == null || !newSector.equals(oldSector)) {
             this.sectorCells = null;
             this.sectorElevations = null;
         }
@@ -185,9 +186,10 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
             int idx = 0;
             for (int i = 0; i < verticesCount; i++) {
                 // Vertices coordinates are x=lon y=lat in radians, z = elevation zero
-                verts[idx++] = (float) this.subdividedPositions.get(i).getLongitude().radians;
-                verts[idx++] = (float) this.subdividedPositions.get(i).getLatitude().radians;
-                verts[idx++] = 0.0f;
+                final Position I = this.subdividedPositions.get(i);
+                verts[idx++] = (float) I.getLongitude().radians;
+                verts[idx++] = (float) I.getLatitude().radians;
+                verts[idx++] = 0;
             }
             // Tessellate
             GeometryBuilder gb = new GeometryBuilder();

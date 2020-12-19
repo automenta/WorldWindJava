@@ -7,10 +7,10 @@ import gov.nasa.worldwind.layers.earth.OSMMapnikLayer;
 import gov.nasa.worldwind.layers.sky.*;
 import gov.nasa.worldwind.pick.PickedObject;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.render.markers.*;
 import gov.nasa.worldwind.util.WWUtil;
 import gov.nasa.worldwind.video.LayerList;
-import gov.nasa.worldwind.video.newt.WorldWindowNEWT2;
+import gov.nasa.worldwind.video.newt.WorldWindowNEWT;
+import jcog.exe.Exe;
 import spacegraph.space2d.Surface;
 import spacegraph.space2d.container.Bordering;
 import spacegraph.space2d.container.grid.Gridding;
@@ -21,7 +21,6 @@ import spacegraph.space2d.widget.textedit.TextEdit;
 import spacegraph.video.*;
 
 import java.awt.*;
-import java.util.List;
 import java.util.*;
 
 public class WorldWindOSM {
@@ -40,11 +39,12 @@ public class WorldWindOSM {
     private static void mainNEWT() {
         JoglWindow j = new JoglWindow(1024, 800);
 
+
         final OSMModel world = new OSMModel();
 
-        final WorldWindowNEWT2 w =
+        final WorldWindowNEWT w =
             //new WorldWindowNEWT(world, 1024, 800);
-            new WorldWindowNEWT2(world);
+            new WorldWindowNEWT(world);
 
         w.setWindow(j);
 
@@ -69,7 +69,13 @@ public class WorldWindOSM {
             , j);
 
         j.runLater(() -> {
-            w.view().goTo(new Position(LatLon.fromDegrees(53.00820, 7.18812), 0), 400);
+            Exe.runLater(()->{
+                double lat = 53.00821, lon = 7.18812 + 0.0015;
+                world.osm.focus(
+                    LatLon.fromDegrees(lat, lon), 0.005f
+                );
+                w.view().goTo(new Position(LatLon.fromDegrees(lat, lon), 0), 400);
+            });
 
             w.addSelectListener(s -> {
                 if (s.isLeftClick()) {
@@ -116,6 +122,7 @@ public class WorldWindOSM {
         public final RenderableLayer renderables = new RenderableLayer();
         public final AnnotationLayer notes;
         public final MarkerLayer markers;
+        private final AdaptiveOSMLayer osm;
 
         public OSMModel() {
 
@@ -126,10 +133,8 @@ public class WorldWindOSM {
             l.add(new OSMMapnikLayer());
 //            l.add(new BMNGWMSLayer());
 
-            final AdaptiveOSMLayer o = new AdaptiveOSMLayer().focus(
-                new Sector(53.00521, 53.00820, 7.18812, 7.19654)
-            );
-            l.add(o);
+            osm = new AdaptiveOSMLayer();
+            l.add(osm);
 
             markers = new MarkerLayer();
             l.add(markers);

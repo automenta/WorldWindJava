@@ -12,6 +12,7 @@ import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.pick.PickSupport;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.Logging;
+import jcog.data.list.FastCoWList;
 
 import java.awt.*;
 import java.util.List;
@@ -26,7 +27,7 @@ import java.util.*;
  * @see Renderable
  */
 public class RenderableLayer extends AbstractLayer {
-    protected final List<Renderable> renderables = new ArrayList();
+    protected final FastCoWList<Renderable> renderables = new FastCoWList(Renderable[]::new);
 
     protected final PickSupport pickSupport = new PickSupport();
 //    protected Iterable<Renderable> renderablesOverride;
@@ -52,8 +53,6 @@ public class RenderableLayer extends AbstractLayer {
      * @throws IllegalStateException    If a custom Iterable has been specified by a call to <code>setRenderables</code>.
      */
     public void add(Renderable renderable) {
-
-    
 
         this.renderables.add(renderable);
 
@@ -89,13 +88,7 @@ public class RenderableLayer extends AbstractLayer {
             throw new IllegalArgumentException(msg);
         }
 
-        // The renderables are contained in a ConcurrentLinkedQueue, which does not support element insertion. Make a
-        // shallow copy of the queue, insert into the copy, then replace the queue contents with the copy. This process
-        // maintains the element order, with the new renderabable inserted in the specified index.
-        List<Renderable> copy = new ArrayList<>(this.renderables);
-        copy.add(index, renderable);
-        this.renderables.clear();
-        this.renderables.addAll(copy);
+        renderables.add(index, renderable);
 
         // Attach the layer as a property change listener of the renderable. This forwards property change events from
         // the renderable to the SceneController.

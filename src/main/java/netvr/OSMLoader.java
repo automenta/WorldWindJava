@@ -5,10 +5,12 @@ import com.graphhopper.reader.osm.*;
 import com.graphhopper.reader.osm.pbf.*;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.geom.Sector;
+import jcog.Str;
 import okhttp3.*;
 
 import javax.xml.stream.*;
 import java.io.*;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.Consumer;
 import java.util.zip.*;
@@ -24,21 +26,26 @@ public class OSMLoader {
         .build();
 
     static final int CACHE_STALE_DAYS = 365;
+    static final CacheControl cacheControl = new CacheControl.Builder()
+        .maxStale(CACHE_STALE_DAYS, TimeUnit.DAYS)
+        .build();
+
 
 
     public static void osm(Sector s, Consumer<ReaderElement> each) throws IOException {
-        osm("bbox=" + s.lonMin + "," + s.latMin + "," + s.lonMax + "," + s.latMax, each);
+        osm("bbox=" + Str.n(s.lonMin, 3) + "," + Str.n(s.latMin, 3) +
+            "," + Str.n(s.lonMax, 3) + "," + Str.n(s.latMax, 3), each);
     }
 
      /** https://overpass-api.de/api/map?bbox=left,bottom,right,top */
-     public static void osm(String request, Consumer<ReaderElement> each) throws IOException {
+     private static void osm(String request, Consumer<ReaderElement> each) throws IOException {
          final String uu = "https://overpass-api.de/api/map?" + request;
-         Response response = http.newCall(new Request.Builder()
-             .cacheControl(new CacheControl.Builder()
-                 .maxStale(CACHE_STALE_DAYS, TimeUnit.DAYS)
-                 .build())
-             .url(HttpUrl.get(uu)).build()).execute();
-         read(response.body().byteStream(), each);
+
+         System.out.println(uu);
+
+         read(http.newCall(new Request.Builder()
+             .cacheControl(cacheControl)
+             .url(uu).build()).execute().body().byteStream(), each);
 
          //final URL u = new URL(uu);
 ////        OSMInputFile2 o = new OSMInputFile2(
@@ -75,15 +82,12 @@ public class OSMLoader {
     }
 
     private static void read(InputStream i, Consumer<ReaderElement> each) throws IOException {
-
-        try {
-            OSMInputFile2 o = new OSMInputFile2(i);
+        try (OSMInputFile2 o = new OSMInputFile2(i)) {
 
             ReaderElement e;
-            while ((e = o.getNext())!=null) {
+            while ((e = o.getNext()) != null) {
                 each.accept(e);
             }
-
         } catch (XMLStreamException e) {
             throw new IOException(e);
         }
@@ -91,21 +95,21 @@ public class OSMLoader {
 
     public static class OSMInputFile2 implements Sink, OSMInput {
         private final InputStream bis;
-        private final BlockingQueue<ReaderElement> itemQueue = new ArrayBlockingQueue<>(32*1024);
+        private final Queue<ReaderElement> itemQueue = new ArrayDeque<>();
         Thread pbfReaderThread;
         private boolean eof;
         private XMLStreamReader parser;
         private boolean binary = false;
-        private boolean hasIncomingData;
-        private int workerThreads = -1;
+
+
         private OSMFileHeader fileheader;
-        final XMLInputFactory factory = XMLInputFactory.newInstance();
-        static private final int BUFFER_SIZE = 32*1024;
+        static final XMLInputFactory factory = XMLInputFactory.newInstance();
+        static private final int BUFFER_SIZE = 1*1024*1024;
 
         public OSMInputFile2(InputStream i) throws IOException, XMLStreamException {
             InputStream result;
 
-            BufferedInputStream ips = null;
+            BufferedInputStream ips;
 
             ips = i instanceof BufferedInputStream ? ((BufferedInputStream) i) :
                 new BufferedInputStream(i, BUFFER_SIZE);
@@ -162,6 +166,7 @@ public class OSMLoader {
 
         private void openXMLStream(InputStream in) throws XMLStreamException {
             this.parser = factory.createXMLStreamReader(in, "UTF-8");
+
             int event = this.parser.next();
             if (event == 1 && this.parser.getLocalName().equalsIgnoreCase("osm")) {
                 String timestamp = this.parser.getAttributeValue(null, "osmosis_replication_timestamp");
@@ -186,15 +191,14 @@ public class OSMLoader {
         public ReaderElement getNext() throws XMLStreamException {
             if (this.eof) {
                 throw new IllegalStateException("EOF reached");
-            } else {
-                ReaderElement item = this.binary ? this.getNextPBF() : this.getNextXML();
+            }
 
-                if (item != null) {
-                    return item;
-                } else {
-                    this.eof = true;
-                    return null;
-                }
+            ReaderElement item = this.binary ? this.getNextPBF() : this.getNextXML();
+            if (item != null) {
+                return item;
+            } else {
+                this.eof = true;
+                return null;
             }
         }
 
@@ -212,9 +216,8 @@ public class OSMLoader {
                             String name = this.parser.getLocalName();
                             switch(name.charAt(0)) {
                                 case 'n':
-                                    if ("node".equals(name)) {
+                                    if ("node".equals(name))
                                         return createNode(parseLong(idStr), this.parser);
-                                    }
                                     break;
                                 case 'r':
                                     return createRelation(parseLong(idStr), this.parser);
@@ -230,15 +233,10 @@ public class OSMLoader {
             }
         }
 
-        public boolean isEOF() {
-            return this.eof;
-        }
-
         public void close() throws IOException {
             try {
-                if (!this.binary) {
-                    this.parser.close();
-                }
+                if (!this.binary) this.parser.close();
+
             } catch (XMLStreamException var5) {
                 throw new IOException(var5);
             } finally {
@@ -253,50 +251,33 @@ public class OSMLoader {
         }
 
         private void openPBFReader(InputStream stream) {
-            this.hasIncomingData = true;
-            if (this.workerThreads <= 0) {
-                this.workerThreads = 1;
-            }
-
-            PbfReader reader = new PbfReader(stream, this, this.workerThreads);
-            this.pbfReaderThread = new Thread(reader, "PBF Reader");
-            this.pbfReaderThread.start();
+            PbfReader reader = new PbfReader(stream, this, 1);
+            reader.run();
+//            this.pbfReaderThread = new Thread(reader, "PBF Reader");
+//            this.pbfReaderThread.start();
         }
 
         public void process(ReaderElement item) {
-            try {
-                this.itemQueue.put(item);
-            } catch (InterruptedException var3) {
-                throw new RuntimeException(var3);
-            }
+            this.itemQueue.add(item);
+        }
+
+        @Override
+        public void complete() {
+
         }
 
         public int getUnprocessedElements() {
             return this.itemQueue.size();
         }
 
-        public void complete() {
-            this.hasIncomingData = false;
-        }
-
         private ReaderElement getNextPBF() {
-            ReaderElement next = null;
-
-            while(next == null) {
-                if (!this.hasIncomingData && this.itemQueue.isEmpty()) {
-                    this.eof = true;
-                    break;
-                }
-
-                try {
-                    next = this.itemQueue.poll(10L, TimeUnit.MILLISECONDS);
-                } catch (InterruptedException var3) {
-                    this.eof = true;
-                    break;
-                }
-            }
-
-            return next;
+            return itemQueue.poll();
+//            ReaderElement next;
+//            while((next = this.itemQueue.poll()) != null) {
+//                process(next);
+//            }
+//            this.eof = true;
+//            return next;
         }
     }
 

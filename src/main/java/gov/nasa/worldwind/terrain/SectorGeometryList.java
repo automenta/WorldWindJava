@@ -10,6 +10,7 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.pick.*;
 import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.util.Logging;
+import org.checkerframework.checker.units.qual.degrees;
 
 import java.awt.*;
 import java.util.List;
@@ -322,15 +323,16 @@ public class SectorGeometryList extends ArrayList<SectorGeometry> {
      * @return the Cartesian point, in meters, relative to an origin of (0, 0, 0). Will be null if there is no sector
      * geometry in this list for the specifed latitude and longitude.
      */
-    public Vec4 getSurfacePoint(Angle latitude, Angle longitude, double metersOffset) {
-        if (latitude == null || longitude == null) {
-            String msg = Logging.getMessage("nullValue.LatLonIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+    public Vec4 getSurfacePoint(Angle lat, Angle lon, double metersOffset) {
+//        if (latitude == null || longitude == null) {
+//            String msg = Logging.getMessage("nullValue.LatLonIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
+        double latitude = lat.degrees, longitude = lon.degrees;
         for (SectorGeometry sg : this) {
-            if (sg.getSector().contains(latitude, longitude)) {
+            if (sg.getSector().containsDegrees(latitude, longitude)) {
                 Vec4 point = sg.getSurfacePoint(latitude, longitude, metersOffset);
                 if (point != null)
                     return point;

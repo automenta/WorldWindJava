@@ -40,8 +40,8 @@ public class LengthMeasurer implements MeasurableLength {
     private static final double DEFAULT_MAX_SEGMENT_LENGTH = 100.0e3; // size above which segments are subdivided
     private static final double DEFAULT_MIN_SEGMENT_LENGTH = 30; // minimum length of a terrain following subdivision
     protected double length = -1;
-    private ArrayList<? extends Position> positions;
-    private ArrayList<? extends Position> subdividedPositions;
+    private List<? extends Position> positions;
+    private List<? extends Position> subdividedPositions;
     private boolean followTerrain = false;
     private String pathType = AVKey.GREAT_CIRCLE;
     private double maxSegmentLength = DEFAULT_MAX_SEGMENT_LENGTH;
@@ -51,7 +51,7 @@ public class LengthMeasurer implements MeasurableLength {
     public LengthMeasurer() {
     }
 
-    public LengthMeasurer(ArrayList<? extends Position> positions) {
+    public LengthMeasurer(List<? extends Position> positions) {
         this.setPositions(positions);
     }
 
@@ -73,8 +73,7 @@ public class LengthMeasurer implements MeasurableLength {
      * @param avkeyPathType the type of path to use in between two positions.
      * @return a list of positions with no segment longer then maxLength and elevations following terrain or not.
      */
-    protected static ArrayList<? extends Position> subdividePositions(Globe globe,
-        ArrayList<? extends Position> positions,
+    protected static List<? extends Position> subdividePositions(Globe globe, List<? extends Position> positions,
         double maxLength, boolean followTerrain, String avkeyPathType) {
         return subdividePositions(globe, positions, maxLength, followTerrain, avkeyPathType, 0, positions.size());
     }
@@ -96,8 +95,7 @@ public class LengthMeasurer implements MeasurableLength {
      * @param count         how many positions from the original list have to be processed and returned.
      * @return a list of positions with no segment longer then maxLength and elevations following terrain or not.
      */
-    protected static ArrayList<? extends Position> subdividePositions(Globe globe,
-        ArrayList<? extends Position> positions,
+    protected static List<? extends Position> subdividePositions(Globe globe, List<? extends Position> positions,
         double maxLength, boolean followTerrain, String pathType,
         int start, int count) {
         if (positions == null || positions.size() < start + count) {
@@ -179,16 +177,16 @@ public class LengthMeasurer implements MeasurableLength {
         this.length = -1;
     }
 
-    public ArrayList<? extends Position> getPositions() {
+    public List<? extends Position> getPositions() {
         return this.positions;
     }
 
     public void setPositions(Position[] positions) {
-        if (positions == null) {
-            String message = Logging.getMessage("nullValue.PositionsListIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (positions == null) {
+//            String message = Logging.getMessage("nullValue.PositionsListIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         ArrayList<Position> newPositions = new ArrayList<>(Arrays.asList(positions));
         setPositions(newPositions);
@@ -208,7 +206,7 @@ public class LengthMeasurer implements MeasurableLength {
         return this;
     }
 
-    public void setPositions(ArrayList<? extends Position> positions) {
+    public void setPositions(List<? extends Position> positions) {
         if (this.positions!=positions) {
             clearCachedValues();
             this.positions = positions;

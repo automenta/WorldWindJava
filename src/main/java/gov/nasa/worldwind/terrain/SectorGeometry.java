@@ -61,7 +61,7 @@ public interface SectorGeometry extends Renderable {
      * or no internal geometry exists (has not yet been created).
      * @throws IllegalArgumentException if either the latitude or longitude are null.
      */
-    Vec4 getSurfacePoint(Angle latitude, Angle longitude, double metersOffset);
+    Vec4 getSurfacePoint(double latitudeDegrees, double longitudeDegrees, double metersOffset);
 
     /**
      * Indicates that this sector geometry is about to be rendered one or more times. When rendering is complete, the
