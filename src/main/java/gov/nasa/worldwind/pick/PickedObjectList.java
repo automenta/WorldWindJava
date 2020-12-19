@@ -39,7 +39,7 @@ public class PickedObjectList extends ArrayList<PickedObject> {
 
     public Object getTopObject() {
         PickedObject po = this.getTopPickedObject();
-        return po != null ? po.getObject() : null;
+        return po != null ? po.get() : null;
     }
 
     public PickedObject getTerrainObject() {
@@ -89,7 +89,7 @@ public class PickedObjectList extends ArrayList<PickedObject> {
             if (po.isOnTop()) {
                 if (list == null)
                     list = new ArrayList<>();
-                list.add(po.getObject());
+                list.add(po.get());
             }
         }
 

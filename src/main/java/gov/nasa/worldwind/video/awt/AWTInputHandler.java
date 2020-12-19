@@ -525,10 +525,10 @@ public class AWTInputHandler extends WWObjectImpl implements KeyListener, MouseL
             PickedObject hover = this.hoverObjects.getTopPickedObject();
             PickedObject last = pickedObjects.getTopPickedObject();
 
-            Object oh = hover == null ? null : hover.getObject() != null ? hover.getObject() :
+            Object oh = hover == null ? null : hover.get() != null ? hover.get() :
                 hover.getParentLayer();
             if (oh!=null) {
-                Object ol = last == null ? null : last.getObject() != null ? last.getObject() :
+                Object ol = last == null ? null : last.get() != null ? last.get() :
                     last.getParentLayer();
                 if (oh.equals(ol)) {
                     return; // object picked is the hover object. don't do anything but wait for the timer to expire.
@@ -575,11 +575,11 @@ public class AWTInputHandler extends WWObjectImpl implements KeyListener, MouseL
 
         PickedObject newTop = pickedObjects.getTopPickedObject();
         //noinspection SimplifiableIfStatement
-        if (lastTop == null || newTop == null || lastTop.getObject() == null || newTop.getObject() == null) {
+        if (lastTop == null || newTop == null || lastTop.get() == null || newTop.get() == null) {
             return false;
         }
 
-        return lastTop.getObject().equals(newTop.getObject());
+        return lastTop.get().equals(newTop.get());
     }
 
     private void cancelDrag() {

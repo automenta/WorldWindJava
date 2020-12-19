@@ -373,10 +373,10 @@ public class ShapeEditingExtension extends ApplicationTemplate {
 
             // Enable and disable editing via left click.
             if (event.getEventAction().equals(SelectEvent.LEFT_CLICK)) {
-                if (topObject != null && topObject.getObject() instanceof Renderable) {
+                if (topObject != null && topObject.get() instanceof Renderable) {
                     if (this.editor == null) {
                         // Enable editing of the selected shape.
-                        this.editor = new ShapeEditorExtension(wwd(), (Renderable) topObject.getObject());
+                        this.editor = new ShapeEditorExtension(wwd(), (Renderable) topObject.get());
                         this.editor.setArmed(true);
                         this.keepShapeHighlighted(true);
                         event.consume();
@@ -385,7 +385,7 @@ public class ShapeEditingExtension extends ApplicationTemplate {
                         // Switch editor to a different shape.
                         this.keepShapeHighlighted(false);
                         this.editor.setArmed(false);
-                        this.editor = new ShapeEditorExtension(wwd(), (Renderable) topObject.getObject());
+                        this.editor = new ShapeEditorExtension(wwd(), (Renderable) topObject.get());
                         this.editor.setArmed(true);
                         this.keepShapeHighlighted(true);
                         event.consume();

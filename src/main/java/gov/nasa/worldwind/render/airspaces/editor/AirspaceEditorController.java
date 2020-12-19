@@ -170,7 +170,7 @@ public class AirspaceEditorController implements KeyListener, MouseListener, Mou
             return null;
         }
 
-        return pickedObjects.getTopPickedObject().getObject();
+        return pickedObjects.getTopPickedObject().get();
     }
 
     protected Map<String, Cursor> getActionCursorMap() {

@@ -2,6 +2,7 @@ package netvr;
 
 import com.carrotsearch.hppc.*;
 import com.graphhopper.reader.*;
+import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -16,14 +17,20 @@ import static gov.nasa.worldwind.WorldWind.RELATIVE_TO_GROUND;
 
 public class AdaptiveOSMLayer extends RenderableLayer {
 
-    private static final double DEFAULT_ELEVATION = 1;
+    private static final double DEFAULT_ELEVATION = 4;
+    private static final double DEFAULT_ELEVATION_USE = 2;
 
     /** in degrees lat,lon */
-    static final double gridRes = 0.003;
+    static final double gridRes = 0.002;
 
     static final private Set<String> keysExcl = Set.of("area", "source", "image", "ref:bag", "source:date");
 
+    /** key for description data */
+    public static final String DESCRIPTION = "_";
+
     private final LongObjectHashMap<ReaderNode> nodes = new LongObjectHashMap<>();
+    private final LongObjectHashMap<ReaderRelation> relations = new LongObjectHashMap<>();
+    private final LongObjectHashMap<ReaderWay> ways = new LongObjectHashMap<>();
 
     public final AdaptiveOSMLayer focus(LatLon at, float radiusDegrees) {
         return focus(new Sector(
@@ -97,8 +104,20 @@ public class AdaptiveOSMLayer extends RenderableLayer {
     }
 
     private void readWay(ReaderWay z) {
-        final ReaderWay w = z;
-        LongArrayList wayNodes = w.getNodes();
+        if (ways.put(z.getId(), z)!=null)
+            return; //already read
+
+        //TODO use VarHandle to access private field 'properties'
+        boolean landUse = false;
+        Map<String, String> properties = new HashMap();
+        for (String k : z.getKeysWithPrefix("")) {
+            if (!keysExcl.contains(k))
+                properties.put(k, z.getTag(k));
+            if (!landUse && k.equals("landuse"))
+                landUse = true;
+        }
+
+        LongArrayList wayNodes = z.getNodes();
 
         final int n = wayNodes.size();
         List<Position> latlon = new ArrayList(n);
@@ -110,33 +129,32 @@ public class AdaptiveOSMLayer extends RenderableLayer {
 
             double e = node.getEle();
             if (e != e)
-                e = DEFAULT_ELEVATION;
+                e = landUse ? DEFAULT_ELEVATION_USE : DEFAULT_ELEVATION;
 
             latlon.add(Position.fromDegrees(node.getLat(), node.getLon(), e));
         }
 
+        Renderable p;
         if (closed)
-            readArea(w, latlon);
+            p = readArea(z, properties, latlon);
         else
-            readPath(w, latlon);
+            p = readPath(z, properties, latlon);
+
+        if (p!=null) {
+            ((AVList)p).set(DESCRIPTION, properties);
+            add(p);
+        }
     }
 
-    private void readPath(ReaderWay w, List<Position> latlon) {
+    private Path readPath(ReaderWay w, Map<String,String> properties, List<Position> latlon) {
         Path p = new Path(latlon);
         p.setFollowTerrain(true);
         p.setSurfacePath(true);
-        add(p);
+        return p;
     }
 
-    private void readArea(ReaderWay w, List<Position> latlon) {
-        //SurfacePolygon p = new SurfacePolygon(latlon);
+    private Polygon readArea(ReaderWay w, Map<String,String> properties, List<Position> latlon) {
 
-        //TODO use VarHandle to access private field 'properties'
-        Map<String, String> properties = new HashMap();
-        for (String k : w.getKeysWithPrefix("")) {
-            if (!keysExcl.contains(k))
-                properties.put(k, w.getTag(k));
-        }
 
         Polygon p = new Polygon(latlon);/* {
                 @Override
@@ -191,6 +209,6 @@ public class AdaptiveOSMLayer extends RenderableLayer {
         a.setInteriorOpacity(0.5f);
         a.setInteriorMaterial(m);
         p.setAttributes(a);
-        add(p);
+        return p;
     }
 }

@@ -208,13 +208,13 @@ public class PlacemarkDecluttering extends ApplicationTemplate {
             // Add a select listener in order to determine when a label is clicked on.
             this.wwd().addSelectListener(event -> {
                 PickedObject po = event.getTopPickedObject();
-                if (po != null && po.getObject() instanceof PointPlacemark) {
+                if (po != null && po.get() instanceof PointPlacemark) {
                     if (event.getEventAction().equals(SelectEvent.LEFT_CLICK)) {
                         // See if it was the label that was picked. If so, raise an input dialog prompting
                         // for new label text.
                         Object placemarkPiece = po.get(AVKey.PICKED_OBJECT_ID);
                         if (placemarkPiece != null && placemarkPiece.equals(AVKey.LABEL)) {
-                            PointPlacemark placemark = (PointPlacemark) po.getObject();
+                            PointPlacemark placemark = (PointPlacemark) po.get();
                             String labelText = placemark.getLabelText();
                             System.out.println(labelText);
                             event.consume();

@@ -585,7 +585,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
             PickedObject po = this.pickSupport.getTopObject(dc, pickPoint); // resolve the picked tile, if any
             if (po != null) {
                 this.pickSupport.clearPickList();
-                this.drawTileInUniqueColors(dc, (Tile) po.getObject());
+                this.drawTileInUniqueColors(dc, (Tile) po.get());
                 this.pickSupport.resolvePick(dc, pickPoint, this.pickLayer); // resolve the picked records, if any
             }
         }

@@ -2509,8 +2509,8 @@ public class Path extends AbstractShape {
                     // of picked objects if one doesn't already exist. If one already exists, then this picked object
                     // provides no additional information and we just ignore it. Note that if multiple parts of a path
                     // are picked, we use the pick color of the first part we encounter.
-                    if (!this.pathPickedObjects.containsKey(po.getObject())) {
-                        this.pathPickedObjects.put(po.getObject(), po);
+                    if (!this.pathPickedObjects.containsKey(po.get())) {
+                        this.pathPickedObjects.put(po.get(), po);
                     }
                 }
                 else {

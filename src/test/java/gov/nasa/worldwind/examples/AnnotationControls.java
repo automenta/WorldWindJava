@@ -322,8 +322,8 @@ public class AnnotationControls extends ApplicationTemplate {
             PickedObject topPickedObject = e.getTopPickedObject();
 
             if (e.getEventAction() == SelectEvent.LEFT_PRESS) {
-                if (topPickedObject != null && topPickedObject.getObject() instanceof WWIcon) {
-                    WWIcon selected = (WWIcon) topPickedObject.getObject();
+                if (topPickedObject != null && topPickedObject.get() instanceof WWIcon) {
+                    WWIcon selected = (WWIcon) topPickedObject.get();
                     this.highlight(selected);
                 }
                 else {
@@ -331,8 +331,8 @@ public class AnnotationControls extends ApplicationTemplate {
                 }
             }
             else if (e.getEventAction() == SelectEvent.LEFT_DOUBLE_CLICK) {
-                if (topPickedObject != null && topPickedObject.getObject() instanceof WWIcon) {
-                    WWIcon selected = (WWIcon) topPickedObject.getObject();
+                if (topPickedObject != null && topPickedObject.get() instanceof WWIcon) {
+                    WWIcon selected = (WWIcon) topPickedObject.get();
                     this.highlight(selected);
                     this.openResource(selected);
                 }

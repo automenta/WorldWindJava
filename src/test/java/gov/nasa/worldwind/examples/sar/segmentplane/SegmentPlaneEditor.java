@@ -106,11 +106,11 @@ public class SegmentPlaneEditor extends AbstractLayer {
             return;
         }
 
-        if (!(pickedObject.getObject() instanceof SegmentPlane.ControlPoint)) {
+        if (!(pickedObject.get() instanceof SegmentPlane.ControlPoint)) {
             return;
         }
 
-        SegmentPlane.ControlPoint controlPoint = (SegmentPlane.ControlPoint) pickedObject.getObject();
+        SegmentPlane.ControlPoint controlPoint = (SegmentPlane.ControlPoint) pickedObject.get();
         if (this.getSegmentPlane() != controlPoint.getOwner()) {
             return;
         }
@@ -120,7 +120,7 @@ public class SegmentPlaneEditor extends AbstractLayer {
 
     protected void doMoveControlPoint(WorldWindow wwd, PickedObject pickedObject,
         Point mousePoint, Point previousMousePoint) {
-        SegmentPlane.ControlPoint controlPoint = (SegmentPlane.ControlPoint) pickedObject.getObject();
+        SegmentPlane.ControlPoint controlPoint = (SegmentPlane.ControlPoint) pickedObject.get();
 
         Object key = controlPoint.getKey();
         if (key == null) {
@@ -449,7 +449,7 @@ public class SegmentPlaneEditor extends AbstractLayer {
         }
 
         for (PickedObject po : wwd.sceneControl().getPickedObjectList()) {
-            if (po != null && po.getObject() == this.getSegmentPlane()) {
+            if (po != null && po.get() == this.getSegmentPlane()) {
                 Object id = po.get(AVKey.PICKED_OBJECT_ID);
                 if (id == pickedObjectId) {
                     return po;

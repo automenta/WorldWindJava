@@ -76,7 +76,7 @@ public class IconPicking extends ApplicationTemplate {
                     System.out.println(" Picked Objects Size " + pol.size());
                     for (PickedObject po : pol) {
                         System.out.println(
-                            " Class " + po.getObject().getClass().getName() + "  isTerrian=" + po.isTerrain());
+                            " Class " + po.get().getClass().getName() + "  isTerrian=" + po.isTerrain());
                     }
                 }
             });

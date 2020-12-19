@@ -10,7 +10,6 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.pick.*;
 import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.util.Logging;
-import org.checkerframework.checker.units.qual.degrees;
 
 import java.awt.*;
 import java.util.List;
@@ -134,11 +133,11 @@ public class SectorGeometryList extends ArrayList<SectorGeometry> {
             }
 
             PickedObject pickedSector = this.pickSupport.getTopObject(dc, pickPoint);
-            if (pickedSector == null || pickedSector.getObject() == null)
+            if (pickedSector == null || pickedSector.get() == null)
                 return; // no sector picked
 
             SectorGeometryList.beginSectorGeometryPicking(dc);
-            SectorGeometry sector = (SectorGeometry) pickedSector.getObject();
+            SectorGeometry sector = (SectorGeometry) pickedSector.get();
             sector.pick(dc, pickPoint);
         }
         finally {
@@ -163,11 +162,11 @@ public class SectorGeometryList extends ArrayList<SectorGeometry> {
      * @return an array of picked objects that intersect one or more of the specified screen points.
      */
     public List<PickedObject> pick(DrawContext dc, Collection<Point> pickPoints) {
-        if (dc == null) {
-            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalStateException(message);
-        }
+//        if (dc == null) {
+//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalStateException(message);
+//        }
 
         if (pickPoints == null || pickPoints.size() < 1)
             return null;
@@ -194,10 +193,10 @@ public class SectorGeometryList extends ArrayList<SectorGeometry> {
             this.pickSectors.clear();
             for (Point pickPoint : pickPoints) {
                 PickedObject pickedSector = this.pickSupport.getTopObject(dc, pickPoint);
-                if (pickedSector == null || pickedSector.getObject() == null)
+                if (pickedSector == null || pickedSector.get() == null)
                     continue;
 
-                SectorGeometry sector = (SectorGeometry) pickedSector.getObject();
+                SectorGeometry sector = (SectorGeometry) pickedSector.get();
                 ArrayList<Point> sectorPickPoints;
                 if (!this.pickSectors.containsKey(sector)) {
                     sectorPickPoints = new ArrayList<>();

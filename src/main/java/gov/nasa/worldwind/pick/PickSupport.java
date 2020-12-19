@@ -8,7 +8,7 @@ package gov.nasa.worldwind.pick;
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.Layer;
-import gov.nasa.worldwind.render.DrawContext;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.Range;
 
 import java.awt.*;
@@ -44,7 +44,7 @@ public class PickSupport {
      * @return true if both objects are not null and they refer to the same user object, otherwise false.
      */
     public static boolean areSelectionsTheSame(PickedObject a, PickedObject b) {
-        return a != null && b != null && a.getObject() == b.getObject();
+        return a != null && b != null && a.get() == b.get();
     }
 
     public void clearPickList() {
@@ -215,6 +215,8 @@ public class PickSupport {
     }
 
     public static void beginPicking(DrawContext dc) {
+        ((DrawContextImpl)dc).pickChanged.set(true);
+
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glPushAttrib(GL2.GL_ENABLE_BIT | GL2.GL_CURRENT_BIT);
@@ -250,8 +252,7 @@ public class PickSupport {
 
         // Try matching the color code to one of the pickable object ranges.
         for (Map.Entry<Range, PickedObjectFactory> entry : this.pickableObjectRanges.entrySet()) {
-            Range range = entry.getKey();
-            if (range.contains(colorCode)) {
+            if (entry.getKey().contains(colorCode)) {
                 PickedObjectFactory factory = entry.getValue();
                 if (factory != null)
                     return factory.createPickedObject(colorCode);

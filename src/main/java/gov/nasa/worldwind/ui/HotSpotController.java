@@ -246,8 +246,8 @@ public class HotSpotController implements SelectListener, MouseMotionListener {
         if (po != null && po.get(AVKey.HOT_SPOT) instanceof HotSpot) {
             this.setActiveHotSpot((HotSpot) po.get(AVKey.HOT_SPOT));
         }
-        else if (po != null && po.getObject() instanceof HotSpot) {
-            this.setActiveHotSpot((HotSpot) po.getObject());
+        else if (po != null && po.get() instanceof HotSpot) {
+            this.setActiveHotSpot((HotSpot) po.get());
         }
         else {
             this.setActiveHotSpot(null);

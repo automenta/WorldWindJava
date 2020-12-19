@@ -5,6 +5,7 @@
  */
 package gov.nasa.worldwind.render;
 
+import com.carrotsearch.hppc.BitSet;
 import com.graphhopper.coll.GHIntHashSet;
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.*;
@@ -26,6 +27,7 @@ import java.nio.*;
 import java.util.List;
 import java.util.Queue;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author Tom Gaskins
@@ -201,6 +203,8 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     protected Dimension pickPointFrustumDimension = new Dimension(3, 3);
     protected LightingModel standardLighting = new BasicLightingModel();
     protected ClutterFilter clutterFilter;
+    public AtomicBoolean pickChanged = new AtomicBoolean(true);
+    private GL gl;
 
     /**
      * Free internal resources held by this draw context. A GL context must be current when this method is called.
@@ -212,7 +216,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public final GL getGL() {
-        return this.getGLContext().getGL();
+        return gl;
     }
 
     public final GLU getGLU() {
@@ -224,8 +228,8 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public final void setGLContext(GLContext glContext) {
-
         this.glContext = glContext;
+        this.gl = glContext.getGL();
     }
 
     public final int getDrawableHeight() {
@@ -251,7 +255,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
 
     public final void initialize(GLContext glContext) {
 
-        this.glContext = glContext;
+        setGLContext(glContext);
 
         this.visibleSector = null;
         if (this.surfaceGeometry != null)
@@ -472,15 +476,18 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
 //        }
 
         // Translate the point from AWT screen coordinates to OpenGL screen coordinates.
-        Rectangle viewport = this.getView().getViewport();
-        int x = point.x;
-        int y = viewport.height - point.y - 1;
+        if (this.pickChanged.getAndSet(false)) {
+            Rectangle viewport = this.getView().getViewport();
+            int x = point.x;
+            int y = viewport.height - point.y - 1;
 
-        // Read the framebuffer color at the specified point in OpenGL screen coordinates as a 24-bit RGB value.
-        if (this.pixelColors == null || this.pixelColors.capacity() < 3)
-            this.pixelColors = Buffers.newDirectByteBuffer(3);
-        this.pixelColors.clear();
-        this.getGL().glReadPixels(x, y, 1, 1, GL.GL_RGB, GL.GL_UNSIGNED_BYTE, this.pixelColors);
+            // Read the framebuffer color at the specified point in OpenGL screen coordinates as a 24-bit RGB value.
+            if (this.pixelColors == null || this.pixelColors.capacity() < 3)
+                this.pixelColors = Buffers.newDirectByteBuffer(3);
+            this.pixelColors.clear();
+            this.getGL().glReadPixels(x, y, 1, 1, GL.GL_RGB, GL.GL_UNSIGNED_BYTE, this.pixelColors);
+        }
+
 
         int colorCode = ((this.pixelColors.get(0) & 0xff) << 16) // Red, bits 16-23
             | ((this.pixelColors.get(1) & 0xff) << 8) // Green, bits 8-16

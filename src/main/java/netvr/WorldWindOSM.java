@@ -1,6 +1,7 @@
 package netvr;
 
 import gov.nasa.worldwind.BasicModel;
+import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.layers.earth.OSMMapnikLayer;
@@ -70,7 +71,8 @@ public class WorldWindOSM {
 
         j.runLater(() -> {
             Exe.runLater(()->{
-                double lat = 53.00821, lon = 7.18812 + 0.0015;
+                //double lat = 53.00821, lon = 7.18812 + 0.0015;
+                double lon = -115.8195, lat = 37.2410;
                 world.osm.focus(
                     LatLon.fromDegrees(lat, lon), 0.005f
                 );
@@ -78,7 +80,9 @@ public class WorldWindOSM {
             });
 
             w.addSelectListener(s -> {
-                if (s.isLeftClick()) {
+                if (s.isRightClick()) {
+
+                } else if (s.isLeftClick()) {
                     PickedObject top =
                         s.getTopPickedObject();
                     if (top == null || top.isTerrain()) {
@@ -104,9 +108,15 @@ public class WorldWindOSM {
 //                        world.markers.setMarkers(
 //                            List.of(m)
 //                        );
-                    }
-                    else {
+                    }else {
                         out.text(describe(top));
+                    }
+                } else {
+                    if (s.isRollover()) {
+                        PickedObject top =
+                            s.getTopPickedObject();
+                        if (top!=null)
+                            System.out.println(describe(top));
                     }
                 }
             });
@@ -114,6 +124,13 @@ public class WorldWindOSM {
     }
 
     private static String describe(PickedObject x) {
+
+        Object y = x.get();
+        if (y instanceof AVList) {
+            Object z = ((AVList)y).get(AdaptiveOSMLayer.DESCRIPTION);
+            if (z!=null)
+                return z.toString();
+        }
         return x.toString();
     }
 

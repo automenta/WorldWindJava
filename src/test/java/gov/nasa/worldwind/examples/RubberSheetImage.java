@@ -181,8 +181,8 @@ public class RubberSheetImage extends ApplicationTemplate {
             PickedObject topObject = e.getTopPickedObject();
 
             if (e.getEventAction().equals(SelectEvent.LEFT_PRESS)) {
-                if (topObject != null && !topObject.isTerrain() && topObject.getObject() instanceof SurfaceImage) {
-                    SurfaceImageEntry entry = this.getEntryFor((SurfaceImage) topObject.getObject());
+                if (topObject != null && !topObject.isTerrain() && topObject.get() instanceof SurfaceImage) {
+                    SurfaceImageEntry entry = this.getEntryFor((SurfaceImage) topObject.get());
                     if (entry != null) {
                         this.setSelectedEntry(entry);
                     }

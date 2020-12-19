@@ -492,17 +492,19 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
         if (extent != null && !extent.intersects(this.currentFrustum))
             return;
 
-
-        if (this.currentLevel < this.maxLevel - 1 && !RectangularTessellator.atBestResolution(dc, tile) && RectangularTessellator.needToSplit(dc, tile)) {
-            ++this.currentLevel;
-            for (RectTile child : this.split(dc, tile)) {
-                this.selectVisibleTiles(dc, child);
-            }
-            --this.currentLevel;
-            return;
+        if (this.currentLevel >= this.maxLevel - 1 || RectangularTessellator.atBestResolution(dc, tile) || !RectangularTessellator.needToSplit(dc, tile)) {
+            this.currentCoverage = tile.getSector().union(this.currentCoverage);
+            this.currentTiles.add(tile);
         }
-        this.currentCoverage = tile.getSector().union(this.currentCoverage);
-        this.currentTiles.add(tile);
+        else {
+            ++this.currentLevel;
+            Sector[] sectors = tile.sector.subdivide();
+            int nextLevel = tile.level + 1;
+            for (Sector sector : sectors)
+                this.selectVisibleTiles(dc, this.createTile(dc, sector, nextLevel));
+
+            --this.currentLevel;
+        }
     }
 
     protected static boolean atBestResolution(DrawContext dc, RectTile tile) {
@@ -552,18 +554,6 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
         // default detail target.
 
         return DEFAULT_LOG10_RESOLUTION_TARGET + dc.getGlobe().getElevationModel().getDetailHint(tile.sector);
-    }
-
-    protected RectTile[] split(DrawContext dc, RectTile tile) {
-        Sector[] sectors = tile.sector.subdivide();
-
-        RectTile[] subTiles = new RectTile[4];
-        subTiles[0] = this.createTile(dc, sectors[0], tile.level + 1);
-        subTiles[1] = this.createTile(dc, sectors[1], tile.level + 1);
-        subTiles[2] = this.createTile(dc, sectors[2], tile.level + 1);
-        subTiles[3] = this.createTile(dc, sectors[3], tile.level + 1);
-
-        return subTiles;
     }
 
     protected static RectangularTessellator.CacheKey createCacheKey(DrawContext dc, RectTile tile) {

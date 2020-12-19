@@ -198,7 +198,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
         // While the mouse is in the resize area, the resize controller will handle select events to resize the
         // balloon. The controller will be destroyed when the mouse exists the resize area.
         if (pickedObject != null && BalloonController.isResizeControl(pickedObject)) {
-            this.createResizeController((Balloon) pickedObject.getObject());
+            this.createResizeController((Balloon) pickedObject.get());
         }
         else if (this.resizeController != null && !this.resizeController.isResizing()) {
             // Destroy the resize controller if the mouse is out of the resize area and the controller
@@ -267,7 +267,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
     protected static boolean isResizeControl(PickedObject po) {
         return po != null
             && AVKey.RESIZE.equals(po.getStringValue(AVKey.ACTION))
-            && po.getObject() instanceof Balloon;
+            && po.get() instanceof Balloon;
     }
 
     /**
@@ -289,7 +289,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
      * @return The KML feature associated with the picked object, or null if no KML feature is found.
      */
     protected static KMLAbstractFeature getContext(PickedObject pickedObject) {
-        Object topObject = pickedObject.getObject();
+        Object topObject = pickedObject.get();
 
         Object context = pickedObject.get(AVKey.CONTEXT);
 
@@ -675,7 +675,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
      * pickedObject} is null.
      */
     protected Balloon getBalloon(PickedObject pickedObject) {
-        Object topObject = pickedObject.getObject();
+        Object topObject = pickedObject.get();
         Object balloonObj = null;
 
         // Look for a KMLAbstractFeature context. If the top picked object is part of a KML feature, the

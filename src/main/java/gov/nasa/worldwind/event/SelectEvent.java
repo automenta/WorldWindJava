@@ -150,7 +150,7 @@ public class SelectEvent extends WWEvent {
 
     public Object getTopObject() {
         PickedObject tpo = this.getTopPickedObject();
-        return tpo != null ? tpo.getObject() : null;
+        return tpo != null ? tpo.get() : null;
     }
 
     /**

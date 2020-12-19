@@ -1134,11 +1134,11 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         double[] buffer, boolean mapMissingData) {
 
         final int n = latlons.size();
-        if (buffer.length < n) {
-            String msg = Logging.getMessage("ElevationModel.ElevationsBufferTooSmall", n);
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (buffer.length < n) {
+//            String msg = Logging.getMessage("ElevationModel.ElevationsBufferTooSmall", n);
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
         //System.out.println("sector="+sector);
 
         Level targetLevel = this.getTargetLevel(sector, targetResolution);

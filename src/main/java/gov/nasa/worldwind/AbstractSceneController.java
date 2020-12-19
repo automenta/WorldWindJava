@@ -76,7 +76,9 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
      * <code>null</code>.
      */
     protected Rectangle pickRect = null;
-    protected boolean deepPick = false;
+    public boolean pickDeep = false;
+    public boolean pickTerrain = false, pickNonTerrain = true;
+
     protected GpuResourceCache gpuResourceCache;
     protected TextRendererCache textRendererCache = new TextRendererCache();
     protected ScreenCreditController screenCreditController;
@@ -84,6 +86,7 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
     protected ClutterFilter clutterFilter = new BasicClutterFilter();
     //protected Map<String, GroupingFilter> groupingFilters = new HashMap<String, GroupingFilter>();
     protected boolean deferOrderedRendering;
+
 
     public AbstractSceneController() {
         this.setVerticalExaggeration(Configuration.getDoubleValue(AVKey.VERTICAL_EXAGGERATION, 1.00d));
@@ -229,7 +232,7 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
                 if (pa.isTerrain())
                     continue;
 
-                if (pa.getObject() == pb.getObject()) {
+                if (pa.get() == pb.get()) {
                     common = true;
                     break;
                 }
@@ -398,11 +401,11 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
     }
 
     public boolean isDeepPickEnabled() {
-        return this.deepPick;
+        return this.pickDeep;
     }
 
     public void setDeepPickEnabled(boolean tf) {
-        this.deepPick = tf;
+        this.pickDeep = tf;
     }
 
     public SectorGeometryList getTerrain() {
@@ -507,7 +510,7 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
         }
         this.dc.setPerFrameStatistic(PerformanceStatistic.FRAME_TIME, "Frame Time (ms)", (int) this.beforePaint);
         this.dc.setPerFrameStatistic(PerformanceStatistic.FRAME_RATE, "Frame Rate (fps)", (int) this.framesPerSecond);
-        this.dc.setPerFrameStatistic(PerformanceStatistic.PICK_TIME, "Pick Time (ms)", (int) this.pickTime);
+        this.dc.setPerFrameStatistic(PerformanceStatistic.PICK_TIME, "Pick Time (ns)", (int) this.pickTime);
 
         Set<String> perfKeys = dc.getPerFrameStatisticsKeys();
         if (perfKeys == null)
@@ -606,7 +609,7 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
                 if (po.getPickPoint().equals(dc.getPickPoint()))
                     dc.addPickedObject(po);
                 else if (po.getPickPoint().equals(vpc))
-                    dc.setViewportCenterPosition((Position) po.getObject());
+                    dc.setViewportCenterPosition((Position) po.get());
             }
         }
     }
@@ -675,13 +678,15 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
     }
 
     protected void pick(DrawContext dc) {
-        this.pickTime = System.currentTimeMillis();
+        long start = System.nanoTime();
         this.lastPickedObjects = null;
         this.lastObjectsInPickRect = null;
 
         dc.enablePickingMode();
-        this.pickTerrain(dc);
-        this.doNonTerrainPick(dc);
+        if (pickTerrain)
+            this.pickTerrain(dc);
+        if (pickNonTerrain)
+            this.doNonTerrainPick(dc);
 
         if (this.isDeferOrderedRendering())
             return;
@@ -696,7 +701,7 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
         }
 
         dc.disablePickingMode();
-        this.pickTime = System.currentTimeMillis() - this.pickTime;
+        this.pickTime = System.nanoTime() - start;
     }
 
     protected void doNonTerrainPick(DrawContext dc) {

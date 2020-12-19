@@ -96,10 +96,10 @@ public class PathPositionColors extends ApplicationTemplate {
                     // Intercept the selected position and assign the selected object's display name to the picked
                     // ordinal.
                     PickedObject po = event.getTopPickedObject();
-                    if (po != null && po.getObject() instanceof Path) {
+                    if (po != null && po.get() instanceof Path) {
                         String name = (po.get(AVKey.ORDINAL) != null) ? "Position " + po.get(AVKey.ORDINAL)
                             : null;
-                        ((AVList) po.getObject()).set(AVKey.DISPLAY_NAME, name);
+                        ((AVList) po.get()).set(AVKey.DISPLAY_NAME, name);
                     }
 
                     super.accept(event);

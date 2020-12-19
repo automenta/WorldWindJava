@@ -1,7 +1,10 @@
 package gov.nasa.worldwind.cache;
 
 import com.github.benmanes.caffeine.cache.*;
+import com.google.common.util.concurrent.MoreExecutors;
 import org.checkerframework.checker.nullness.qual.*;
+
+import java.util.concurrent.Executors;
 
 public class SoftMemoryCache extends AbstractMemoryCache implements RemovalListener<Object, AbstractMemoryCache.CacheEntry> {
 
@@ -10,7 +13,10 @@ public class SoftMemoryCache extends AbstractMemoryCache implements RemovalListe
     public SoftMemoryCache() {
         super(Long.MAX_VALUE);
 
-        cache = Caffeine.newBuilder().softValues().removalListener(this).build();
+        cache = Caffeine.newBuilder().softValues()
+            .removalListener(this)
+            .executor(MoreExecutors.directExecutor())
+            .build();
     }
 
     @Override

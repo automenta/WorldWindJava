@@ -110,11 +110,11 @@ public class SegmentPlaneController implements MouseListener, MouseMotionListene
         }
 
         PickedObject topObject = this.getWorldWindow().sceneControl().getPickedObjectList().getTopPickedObject();
-        if (topObject == null || !(topObject.getObject() instanceof SegmentPlane.ControlPoint)) {
+        if (topObject == null || !(topObject.get() instanceof SegmentPlane.ControlPoint)) {
             return null;
         }
 
-        SegmentPlane.ControlPoint controlPoint = (SegmentPlane.ControlPoint) topObject.getObject();
+        SegmentPlane.ControlPoint controlPoint = (SegmentPlane.ControlPoint) topObject.get();
         if (controlPoint.getOwner() != this.getEditor().getSegmentPlane()) {
             return null;
         }
@@ -294,7 +294,7 @@ public class SegmentPlaneController implements MouseListener, MouseMotionListene
             return null;
         }
 
-        SegmentPlane.ControlPoint controlPoint = (SegmentPlane.ControlPoint) pickedObject.getObject();
+        SegmentPlane.ControlPoint controlPoint = (SegmentPlane.ControlPoint) pickedObject.get();
 
         SegmentPlaneAttributes newAttributes = attributes.copy();
         SegmentPlaneAttributes.GeometryAttributes geometryAttributes = newAttributes.getGeometryAttributes(

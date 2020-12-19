@@ -463,17 +463,18 @@ public class CompoundElevationModel extends AbstractElevationModel {
     protected double[] doGetElevations(Sector sector, List<? extends LatLon> latlons, double[] targetResolution,
         double[] buffer, boolean mapMissingData) {
 
-        if (buffer.length < latlons.size()) {
-            String msg = Logging.getMessage("ElevationModel.ElevationsBufferTooSmall", latlons.size());
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (buffer.length < latlons.size()) {
+//            String msg = Logging.getMessage("ElevationModel.ElevationsBufferTooSmall", latlons.size());
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         // Fill the buffer with ElevationModel contents from lowest resolution to highest, potentially overwriting
         // values at each step. ElevationModels are expected to leave the buffer untouched for locations outside their
         // coverage area.
-        double[] resolutionAchieved = new double[this.elevationModels.size()];
-        for (int i = 0; i < this.elevationModels.size(); i++) {
+        final int n = this.elevationModels.size();
+        double[] resolutionAchieved = new double[n];
+        for (int i = 0; i < n; i++) {
             ElevationModel em = this.elevationModels.get(i);
             resolutionAchieved[i] = 0;
 
@@ -485,7 +486,7 @@ public class CompoundElevationModel extends AbstractElevationModel {
                 continue;
 
             double r;
-            if (mapMissingData || this.elevationModels.size() == 1)
+            if (mapMissingData || n == 1)
                 r = em.getElevations(sector, latlons, targetResolution[i], buffer);
             else
                 r = em.getUnmappedElevations(sector, latlons, targetResolution[i], buffer);

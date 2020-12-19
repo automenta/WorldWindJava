@@ -23,6 +23,9 @@ public class OSMLoader {
         .cache(new Cache(
             WorldWind.store().newFile("OSM"),
             512 * 1024L * 1024L))
+        .connectTimeout(15, TimeUnit.SECONDS)
+        .readTimeout(15, TimeUnit.SECONDS)
+        //.callTimeout(10, TimeUnit.SECONDS)
         .build();
 
     static final int CACHE_STALE_DAYS = 365;
@@ -37,15 +40,33 @@ public class OSMLoader {
             "," + Str.n(s.lonMax, 3) + "," + Str.n(s.latMax, 3), each);
     }
 
+    static final String osmHost[] = new String[] {
+        "overpass-api.de",
+//        "overpass.openstreetmap.ru",
+//        "overpass.kumi.systems",
+//        "overpass.nchc.org.tw"
+    };
+
      /** https://overpass-api.de/api/map?bbox=left,bottom,right,top */
      private static void osm(String request, Consumer<ReaderElement> each) throws IOException {
-         final String uu = "https://overpass-api.de/api/map?" + request;
+         String host = osmHost[0];
 
-         System.out.println(uu);
+         final String uu = "https://" + host + "/api/map?" + request;
 
-         read(http.newCall(new Request.Builder()
-             .cacheControl(cacheControl)
-             .url(uu).build()).execute().body().byteStream(), each);
+         System.out.println("load: " + uu);
+
+         try {
+             final Response r = http.newCall(new Request.Builder()
+                 .cacheControl(cacheControl)
+                 .url(uu).build()).execute();
+             final Response rn = r.networkResponse();
+             if (rn==null || rn.isSuccessful())
+                 read(r.body().byteStream(), each);
+             else
+                 throw new IOException("unsuccessful: " + uu);
+         } catch (Exception e) {
+             throw new IOException("fail to load: " + uu);
+         }
 
          //final URL u = new URL(uu);
 ////        OSMInputFile2 o = new OSMInputFile2(
@@ -88,7 +109,7 @@ public class OSMLoader {
             while ((e = o.getNext()) != null) {
                 each.accept(e);
             }
-        } catch (XMLStreamException e) {
+        } catch (Exception e) {
             throw new IOException(e);
         }
     }
@@ -106,7 +127,7 @@ public class OSMLoader {
         static final XMLInputFactory factory = XMLInputFactory.newInstance();
         static private final int BUFFER_SIZE = 1*1024*1024;
 
-        public OSMInputFile2(InputStream i) throws IOException, XMLStreamException {
+        public OSMInputFile2(InputStream i) throws IOException, XMLStreamException, IllegalArgumentException {
             InputStream result;
 
             BufferedInputStream ips;

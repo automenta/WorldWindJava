@@ -41,7 +41,7 @@ public class DeepPicking extends Airspaces {
                     System.out.printf("%d objects\n", event.pickedObjects.size());
                     if (event.pickedObjects.size() > 1) {
                         for (PickedObject po : event.pickedObjects) {
-                            System.out.println(po.getObject().getClass().getName());
+                            System.out.println(po.get().getClass().getName());
                         }
                     }
                 }
