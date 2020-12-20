@@ -3,7 +3,7 @@
  * National Aeronautics and Space Administration.
  * All Rights Reserved.
  */
-package gov.nasa.worldwind.video.awt;
+package gov.nasa.worldwind.video;
 
 import com.jogamp.newt.event.WindowUpdateEvent;
 import com.jogamp.opengl.awt.GLJPanel;
@@ -26,7 +26,7 @@ import static java.awt.event.InputEvent.*;
  * @author tag
  * @version $Id: AWTInputHandler.java 2258 2014-08-22 22:08:33Z dcollins $
  */
-public class AWTInputHandler extends WWObjectImpl implements KeyListener, MouseListener, MouseMotionListener, MouseWheelListener, FocusListener, InputHandler, Disposable {
+public class DefaultInputHandler extends WWObjectImpl implements KeyListener, MouseListener, MouseMotionListener, MouseWheelListener, FocusListener, InputHandler, Disposable {
     private WorldWindow wwd = null;
     public final EventListenerList eventListeners = new EventListenerList();
     private Point mousePoint = new Point();
@@ -36,17 +36,17 @@ public class AWTInputHandler extends WWObjectImpl implements KeyListener, MouseL
     private boolean isDragging = false;
     private boolean forceRedrawOnMousePressed = Configuration.getBooleanValue(AVKey.REDRAW_ON_MOUSE_PRESSED, false);
     private Timer hoverTimer = new Timer(600, actionEvent -> {
-        if (AWTInputHandler.this.pickMatches(AWTInputHandler.this.hoverObjects)) {
-            AWTInputHandler.this.isHovering = true;
-            AWTInputHandler.this.callSelectListeners(new SelectEvent(AWTInputHandler.this.wwd,
-                SelectEvent.HOVER, mousePoint, AWTInputHandler.this.hoverObjects));
-            AWTInputHandler.this.hoverTimer.stop();
+        if (DefaultInputHandler.this.pickMatches(DefaultInputHandler.this.hoverObjects)) {
+            DefaultInputHandler.this.isHovering = true;
+            DefaultInputHandler.this.callSelectListeners(new SelectEvent(DefaultInputHandler.this.wwd,
+                SelectEvent.HOVER, mousePoint, DefaultInputHandler.this.hoverObjects));
+            DefaultInputHandler.this.hoverTimer.stop();
         }
     });
     // Delegate handler for View.
     private SelectListener selectListener;
 
-    public AWTInputHandler() {
+    public DefaultInputHandler() {
     }
 
     public void dispose() {
@@ -194,9 +194,16 @@ public class AWTInputHandler extends WWObjectImpl implements KeyListener, MouseL
     }
 
     private static MouseEvent mouseEvent(com.jogamp.newt.event.MouseEvent e, int mousePressed) {
-        return new MouseEvent(dummySource, mousePressed, System.currentTimeMillis(),
+        return new MouseEvent(dummySource, mousePressed, e.getWhen(),
             awtModifiers(e), e.getX(), e.getY(), e.getClickCount(), false, e.getButton());
     }
+    private static MouseWheelEvent mouseWheelEvent(com.jogamp.newt.event.MouseEvent e) {
+        return new MouseWheelEvent(dummySource, MouseEvent.MOUSE_WHEEL, e.getWhen(), 0, e.getX(), e.getY(),
+            e.getClickCount(), false, MouseWheelEvent.WHEEL_UNIT_SCROLL,
+            1, -Math.round(e.getRotation()[1]));
+    }
+
+
 
     @Override
     public void mouseEntered(com.jogamp.newt.event.MouseEvent e) {
@@ -226,8 +233,9 @@ public class AWTInputHandler extends WWObjectImpl implements KeyListener, MouseL
 
     @Override
     public void mouseWheelMoved(com.jogamp.newt.event.MouseEvent e) {
-        //mouseWheelMoved(awtEvent(e, MouseEvent.MOUSE_WHEEL));
+        mouseWheelMoved(mouseWheelEvent(e));
     }
+
 
     public void keyTyped(KeyEvent keyEvent) {
         if (this.wwd == null) {
@@ -521,7 +529,7 @@ public class AWTInputHandler extends WWObjectImpl implements KeyListener, MouseL
 
     private void doHover(boolean reset) {
         PickedObjectList pickedObjects = this.wwd.objectsAtPosition();
-        if (!(AWTInputHandler.isPickListEmpty(this.hoverObjects) || AWTInputHandler.isPickListEmpty(pickedObjects))) {
+        if (!(DefaultInputHandler.isPickListEmpty(this.hoverObjects) || DefaultInputHandler.isPickListEmpty(pickedObjects))) {
             PickedObject hover = this.hoverObjects.getTopPickedObject();
             PickedObject last = pickedObjects.getTopPickedObject();
 
@@ -563,7 +571,7 @@ public class AWTInputHandler extends WWObjectImpl implements KeyListener, MouseL
     }
 
     private boolean pickMatches(PickedObjectList pickedObjects) {
-        if (AWTInputHandler.isPickListEmpty(this.wwd.objectsAtPosition()) || AWTInputHandler.isPickListEmpty(pickedObjects)) {
+        if (DefaultInputHandler.isPickListEmpty(this.wwd.objectsAtPosition()) || DefaultInputHandler.isPickListEmpty(pickedObjects)) {
             return false;
         }
 

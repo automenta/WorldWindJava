@@ -13,7 +13,7 @@ import gov.nasa.worldwind.event.InputHandler;
 import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.util.BasicGLCapabilitiesChooser;
 import gov.nasa.worldwind.util.dashboard.DashboardController;
-import gov.nasa.worldwind.video.WorldWindowGLDrawable;
+import gov.nasa.worldwind.video.*;
 
 import java.beans.PropertyChangeListener;
 
@@ -104,7 +104,7 @@ import java.beans.PropertyChangeListener;
 
     @Override
     public void startEvents(InputHandler h) {
-        AWTInputHandler hh = (AWTInputHandler) h;
+        DefaultInputHandler hh = (DefaultInputHandler) h;
         addKeyListener(hh);
         addMouseMotionListener(hh);
         addMouseListener(hh);
@@ -114,7 +114,7 @@ import java.beans.PropertyChangeListener;
 
     @Override
     public void stopEvents(InputHandler h) {
-        AWTInputHandler hh = (AWTInputHandler) h;
+        DefaultInputHandler hh = (DefaultInputHandler) h;
         removeKeyListener(hh);
         removeMouseMotionListener(hh);
         removeMouseListener(hh);

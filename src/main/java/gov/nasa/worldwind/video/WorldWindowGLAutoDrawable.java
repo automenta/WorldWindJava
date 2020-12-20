@@ -18,7 +18,6 @@ import gov.nasa.worldwind.exception.WWAbsentRequirementException;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.pick.*;
 import gov.nasa.worldwind.util.*;
-import gov.nasa.worldwind.video.awt.AWTInputHandler;
 
 import javax.swing.Timer;
 import javax.swing.event.*;
@@ -498,8 +497,8 @@ public class WorldWindowGLAutoDrawable extends WWObjectImpl implements WorldWind
     public void setInput(InputHandler inputHandler) {
         this.inputHandler = inputHandler;
         //HACK share eventListeners
-        this.eventListeners = (inputHandler instanceof AWTInputHandler ?
-            ((AWTInputHandler)inputHandler).eventListeners : new EventListenerList());
+        this.eventListeners = (inputHandler instanceof DefaultInputHandler ?
+            ((DefaultInputHandler)inputHandler).eventListeners : new EventListenerList());
     }
 
     public void setPerFrameStatisticsKeys(Set<String> keys) {
