@@ -435,4 +435,8 @@ public interface View extends WWObject, Restorable {
      * @return the horizon position, in meters, or 0 if this view has not yet been applied.
      */
     double getHorizonDistance();
+
+    default Position computePositionFromScreenPoint(Point p) {
+        return computePositionFromScreenPoint(p.x, p.y);
+    }
 }

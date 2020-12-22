@@ -12,6 +12,7 @@ import gov.nasa.worldwind.util.WWUtil;
 import gov.nasa.worldwind.video.LayerList;
 import gov.nasa.worldwind.video.newt.WorldWindowNEWT;
 import jcog.exe.Exe;
+import spacegraph.layer.OrthoSurfaceGraph;
 import spacegraph.space2d.Surface;
 import spacegraph.space2d.container.Bordering;
 import spacegraph.space2d.container.grid.Gridding;
@@ -22,6 +23,7 @@ import spacegraph.space2d.widget.textedit.TextEdit;
 import spacegraph.video.*;
 
 import java.awt.*;
+import java.awt.event.*;
 import java.util.*;
 
 public class WorldWindOSM {
@@ -73,15 +75,20 @@ public class WorldWindOSM {
             Exe.runLater(()->{
                 //double lat = 53.00821, lon = 7.18812 + 0.0015;
                 double lon = -115.8195, lat = 37.2410;
-                world.osm.focus(
-                    LatLon.fromDegrees(lat, lon), 0.005f
-                );
-                w.view().goTo(new Position(LatLon.fromDegrees(lat, lon), 0), 400);
+                focus(world, w, lon, lat, 0.005f);
             });
 
+            w.input().addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getButton()==3) {
+                        Position p = w.view().computePositionFromScreenPoint(e.getPoint());
+                        focus(world, w, p.longitude, p.latitude, 0.001f);
+                    }
+                }
+            });
             w.addSelectListener(s -> {
                 if (s.isRightClick()) {
-
                 } else if (s.isLeftClick()) {
                     PickedObject top =
                         s.getTopPickedObject();
@@ -121,6 +128,13 @@ public class WorldWindOSM {
                 }
             });
         });
+    }
+
+    private static void focus(OSMModel world, WorldWindowNEWT w, double lon, double lat, float rad) {
+        world.osm.focus(
+            LatLon.fromDegrees(lat, lon), rad
+        );
+        w.view().goTo(new Position(LatLon.fromDegrees(lat, lon), 0), 400);
     }
 
     private static String describe(PickedObject x) {

@@ -6,6 +6,7 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.video.*;
 import spacegraph.video.*;
+import spacegraph.layer.*;
 
 import java.beans.PropertyChangeListener;
 

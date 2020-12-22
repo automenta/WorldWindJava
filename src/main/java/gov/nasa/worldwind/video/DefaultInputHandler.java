@@ -194,10 +194,12 @@ public class DefaultInputHandler extends WWObjectImpl implements KeyListener, Mo
     }
 
     private static MouseEvent mouseEvent(com.jogamp.newt.event.MouseEvent e, int mousePressed) {
+        e.setConsumed(true);
         return new MouseEvent(dummySource, mousePressed, e.getWhen(),
             awtModifiers(e), e.getX(), e.getY(), e.getClickCount(), false, e.getButton());
     }
     private static MouseWheelEvent mouseWheelEvent(com.jogamp.newt.event.MouseEvent e) {
+        e.setConsumed(true);
         return new MouseWheelEvent(dummySource, MouseEvent.MOUSE_WHEEL, e.getWhen(), 0, e.getX(), e.getY(),
             e.getClickCount(), false, MouseWheelEvent.WHEEL_UNIT_SCROLL,
             1, -Math.round(e.getRotation()[1]));
