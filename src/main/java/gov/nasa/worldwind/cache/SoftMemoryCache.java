@@ -17,6 +17,11 @@ public class SoftMemoryCache extends AbstractMemoryCache implements RemovalListe
             .build();
     }
 
+    public SoftMemoryCache(String name) {
+        this();
+        setName(name);
+    }
+
     @Override
     public boolean contains(Object key) {
         return cache.asMap().containsKey(key);

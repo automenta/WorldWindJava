@@ -10,12 +10,14 @@ import gov.nasa.worldwind.util.*;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.*;
 
 /**
  * @author tag
  * @version $Id: BasicMemoryCacheSet.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 public class BasicMemoryCacheSet implements MemoryCacheSet {
+
     private final Map<String, MemoryCache> caches = new ConcurrentHashMap<>();
 
     public boolean containsCache(String key) {
@@ -23,9 +25,12 @@ public class BasicMemoryCacheSet implements MemoryCacheSet {
     }
 
     public MemoryCache getCache(String cacheKey) {
-        MemoryCache cache = this.caches.get(cacheKey);
+        return this.caches.get(cacheKey);
+    }
 
-        return cache;
+    @Override
+    public MemoryCache getCache(String cacheKey, Function<String,MemoryCache> s) {
+        return caches.computeIfAbsent(cacheKey, s);
     }
 
     public Map<String, MemoryCache> getAllCaches() {
@@ -33,14 +38,12 @@ public class BasicMemoryCacheSet implements MemoryCacheSet {
     }
 
     public MemoryCache addCache(String key, MemoryCache cache) {
-
         MemoryCache existing = this.caches.put(key, cache);
         if (existing!=null) {
             String message = Logging.getMessage("MemoryCacheSet.CacheAlreadyExists");
             Logging.logger().fine(message);
             throw new IllegalStateException(message);
         }
-
         return cache;
     }
 

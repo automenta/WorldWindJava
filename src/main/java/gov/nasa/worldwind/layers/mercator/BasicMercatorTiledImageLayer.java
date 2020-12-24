@@ -110,8 +110,7 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
     }
 
     private static void addTileToCache(MercatorTextureTile tile) {
-        WorldWind.cache(MercatorTextureTile.class.getName()).add(
-            tile.tileKey, tile);
+        WorldWind.cache(MercatorTextureTile.class.getName()).add(tile.tileKey, tile);
     }
 
     protected void downloadTexture(final MercatorTextureTile tile) {
@@ -142,8 +141,7 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
         if ("http".equalsIgnoreCase(protocol) || "https".equalsIgnoreCase(protocol)) {
             retriever = new HTTPRetriever(url, new DownloadPostProcessor(tile, this));
             retriever.set(URLRetriever.EXTRACT_ZIP_ENTRY, "true"); // supports legacy layers
-        }
-        else {
+        }else {
             Logging.logger().severe(
                 Logging.getMessage("layers.TextureLayer.UnknownRetrievalProtocol", url.toString()));
             return;
@@ -186,8 +184,7 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
 
     private static BufferedImage convertBufferToImage(ByteBuffer buffer) {
         try {
-            InputStream is = new ByteArrayInputStream(buffer.array());
-            return ImageIO.read(is);
+            return ImageIO.read(new ByteArrayInputStream(buffer.array()));
         }
         catch (IOException e) {
             return null;
@@ -214,20 +211,19 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
         int type = image.getType();
         if (type == 0)
             type = BufferedImage.TYPE_INT_RGB;
-        BufferedImage trans = new BufferedImage(image.getWidth(), image
-            .getHeight(), type);
+        final int w = image.getWidth();
+        final int h = image.getHeight();
+        BufferedImage trans = new BufferedImage(w, h, type);
         double miny = sector.getMinLatPercent();
         double maxy = sector.getMaxLatPercent();
-        for (int y = 0; y < image.getHeight(); y++) {
-            double sy = 1.0 - y / (double) (image.getHeight() - 1);
-            Angle lat = Angle.fromRadians(sy * toRadians(sector.latDelta)
-                + sector.latMin().radians);
-            double dy = 1.0 - (MercatorSector.gudermannianInverse(lat) - miny)
-                / (maxy - miny);
+        for (int y = 0; y < h; y++) {
+            double sy = 1.0 - y / (double) (h - 1);
+            Angle lat = Angle.fromRadians(sy * toRadians(sector.latDelta) + sector.latMin().radians);
+            double dy = 1.0 - (MercatorSector.gudermannianInverse(lat) - miny) / (maxy - miny);
             dy = Math.max(0.0, Math.min(1.0, dy));
-            int iy = (int) (dy * (image.getHeight() - 1));
+            int iy = (int) (dy * (h - 1));
 
-            for (int x = 0; x < image.getWidth(); x++) {
+            for (int x = 0; x < w; x++) {
                 trans.setRGB(x, y, image.getRGB(x, iy));
             }
         }
@@ -259,8 +255,7 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
                 }
                 else {
                     // Assume that something's wrong with the file and delete it.
-                    this.layer.getDataFileStore().removeFile(
-                        textureURL);
+                    this.layer.getDataFileStore().removeFile(textureURL);
                     layer.getLevels().miss(tile);
                     String message = Logging.getMessage(
                         "generic.DeletedCorruptDataFile", textureURL);
@@ -277,7 +272,10 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
          * @throws IllegalArgumentException if <code>that</code> is null
          */
         public int compareTo(RequestTask that) {
-            return Double.compare(this.tile.getPriority(), that.tile.getPriority());
+            if (tile.equals(that.tile)) return 0;
+            int c = Double.compare(this.tile.getPriority(), that.tile.getPriority());
+            if (c!=0) return c;
+            return Integer.compare(System.identityHashCode(tile), System.identityHashCode(that.tile));
         }
 
         public boolean equals(Object o) {
@@ -314,15 +312,14 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
         }
 
         public ByteBuffer run(Retriever retriever) {
-            if (retriever == null) {
-                String msg = Logging.getMessage("nullValue.RetrieverIsNull");
-                Logging.logger().severe(msg);
-                throw new IllegalArgumentException(msg);
-            }
+//            if (retriever == null) {
+//                String msg = Logging.getMessage("nullValue.RetrieverIsNull");
+//                Logging.logger().severe(msg);
+//                throw new IllegalArgumentException(msg);
+//            }
 
             try {
-                if (!retriever.getState().equals(
-                    Retriever.RETRIEVER_STATE_SUCCESSFUL))
+                if (!retriever.getState().equals(Retriever.RETRIEVER_STATE_SUCCESSFUL))
                     return null;
 
                 ByteBuffer buffer = retriever.getBuffer();
@@ -330,12 +327,8 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
                 if (retriever instanceof HTTPRetriever) {
                     HTTPRetriever htr = (HTTPRetriever) retriever;
                     final int code = htr.getResponseCode();
-                    if (code == HttpURLConnection.HTTP_NO_CONTENT) {
+                    if (code == HttpURLConnection.HTTP_NO_CONTENT || code!=HttpURLConnection.HTTP_OK) {
                         // Mark tile as missing to avoid excessive attempts
-                        this.layer.getLevels().miss(this.tile);
-                        return null;
-                    }
-                    else if (code != HttpURLConnection.HTTP_OK) {
                         // Also mark tile as missing, but for an unknown reason.
                         this.layer.getLevels().miss(this.tile);
                         return null;
@@ -386,8 +379,7 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
                             if (BasicMercatorTiledImageLayer.isTileValid(image)) {
                                 if (!this.layer.transformAndSave(image, tile.getMercatorSector(), outFile))
                                     image = null;
-                            }
-                            else {
+                            } else {
                                 this.layer.getLevels().miss(this.tile);
                                 return null;
                             }

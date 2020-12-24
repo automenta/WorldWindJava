@@ -45,17 +45,17 @@ public class TextureTile extends Tile implements SurfaceTile {
      *
      * @return the memory cache associated with the tile.
      */
-    public static synchronized MemoryCache getMemoryCache() {
-        if (!WorldWind.getMemoryCacheSet().containsCache(TextureTile.class.getName())) {
-//            long size = Configuration.getLongValue(AVKey.TEXTURE_IMAGE_CACHE_SIZE, 3000000L);
-            MemoryCache cache =
-                new SoftMemoryCache();
-                //new BasicMemoryCache((long) (0.85 * size), size);
-            cache.setName("Texture Tiles");
-            WorldWind.getMemoryCacheSet().addCache(TextureTile.class.getName(), cache);
-        }
+    public static MemoryCache getMemoryCache() {
+//        if (!WorldWind.getMemoryCacheSet().containsCache(TextureTile.class.getName())) {
+////            long size = Configuration.getLongValue(AVKey.TEXTURE_IMAGE_CACHE_SIZE, 3000000L);
+//            MemoryCache cache =
+//                new SoftMemoryCache();
+//                //new BasicMemoryCache((long) (0.85 * size), size);
+//            cache.setName("Texture Tiles");
+//            WorldWind.getMemoryCacheSet().addCache(TextureTile.class.getName(), cache);
+//        }
 
-        return WorldWind.getMemoryCacheSet().getCache(TextureTile.class.getName());
+        return WorldWind.getMemoryCacheSet().getCache(TextureTile.class.getName(), SoftMemoryCache::new);
     }
 
     @Override
