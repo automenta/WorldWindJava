@@ -68,11 +68,6 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
      * @throws IllegalArgumentException if the retriever is null.
      */
     public ByteBuffer run(Retriever retriever) {
-//        if (retriever == null) {
-//            String message = Logging.getMessage("nullValue.RetrieverIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         this.retriever = retriever;
 

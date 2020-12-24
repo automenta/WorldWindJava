@@ -107,12 +107,6 @@ public class Polygon extends AbstractShape {
     public Polygon(Iterable<? extends Position> corners) {
         this(); // to initialize the instance
 
-//        if (corners == null) {
-//            String message = Logging.getMessage("nullValue.PositionsListIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-
         this.setOuterBoundary(corners);
     }
 

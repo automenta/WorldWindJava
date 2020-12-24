@@ -22,7 +22,7 @@ public class GlobeAnnotationBalloon extends AbstractAnnotationBalloon implements
     /**
      * Annotation used to render the balloon.
      */
-    protected GlobeAnnotation annotation;
+    protected final GlobeAnnotation annotation;
 
     /**
      * Create the balloon.
@@ -32,12 +32,6 @@ public class GlobeAnnotationBalloon extends AbstractAnnotationBalloon implements
      */
     public GlobeAnnotationBalloon(String text, Position position) {
         super(text);
-
-//        if (position == null) {
-//            String message = Logging.getMessage("nullValue.PositionIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         this.position = position;
 

@@ -355,21 +355,8 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
     }
 
     public SectorGeometryList tessellate(DrawContext dc) {
-//        if (dc == null) {
-//            String msg = Logging.getMessage("nullValue.DrawContextIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//
-//        if (dc.getView() == null) {
-//            String msg = Logging.getMessage("nullValue.ViewIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalStateException(msg);
-//        }
 
         if (!WorldWind.getMemoryCacheSet().containsCache(CACHE_ID)) {
-//            long size = Configuration.getLongValue(AVKey.SECTOR_GEOMETRY_CACHE_SIZE, 10000000L);
-//            MemoryCache cache = new BasicMemoryCache((long) (0.85 * size), size);
             MemoryCache cache = new SoftMemoryCache();
             cache.setName(CACHE_NAME);
             WorldWind.getMemoryCacheSet().addCache(CACHE_ID, cache);

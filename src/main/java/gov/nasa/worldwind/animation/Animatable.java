@@ -7,10 +7,6 @@ public interface Animatable {
 
     void setPosition(Position position);
 
-//    int getRedrawRequested();
-//
-//    void setRedrawRequested(int redrawRequested);
-
     Angle getHeading();
 
     void setHeading(Angle heading);

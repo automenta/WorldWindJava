@@ -50,17 +50,6 @@ public class CachedDataRaster extends AVListImpl implements DataRaster {
      */
     public CachedDataRaster(Object source, AVList params, DataRasterReader reader, MemoryCache cache)
         throws IOException, IllegalArgumentException {
-//        if (source == null) {
-//            String message = Logging.getMessage("nullValue.SourceIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//
-//        if (reader == null) {
-//            String message = Logging.getMessage("nullValue.ReaderIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         params = (null == params) ? new AVListImpl() : params;
         this.assembleMetadata(source, params, reader);

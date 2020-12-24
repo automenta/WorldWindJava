@@ -77,7 +77,8 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
      */
     protected Rectangle pickRect = null;
     public boolean pickDeep = false;
-    public boolean pickTerrain = false, pickNonTerrain = true;
+    public final boolean pickTerrain = false;
+    public final boolean pickNonTerrain = true;
 
     protected GpuResourceCache gpuResourceCache;
     protected TextRendererCache textRendererCache = new TextRendererCache();
@@ -105,11 +106,6 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
     }
 
     protected static void initializeFrame(DrawContext dc) {
-//        if (dc.getGLContext() == null) {
-//            String message = Logging.getMessage("BasicSceneController.GLContextNullStartRedisplay");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
-//        }
 
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 

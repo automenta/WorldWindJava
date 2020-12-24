@@ -42,7 +42,7 @@ public final class WorldWind {
     public final static int ANTIALIAS_FASTEST = GL.GL_FASTEST;
     public final static int ANTIALIAS_NICEST = GL.GL_NICEST;
 
-    private static WorldWind instance = new WorldWind();
+    private static final WorldWind instance = new WorldWind();
 
     private final WWObjectImpl wwo;
     private final MemoryCacheSet memoryCacheSet;
@@ -87,7 +87,7 @@ public final class WorldWind {
     public static synchronized void shutDown() {
         instance.wwo.firePropertyChange(SHUTDOWN_EVENT, null, -1);
         instance.dispose();
-        instance = new WorldWind();
+//        instance = new WorldWind();
     }
 
     public static MemoryCacheSet getMemoryCacheSet() {

@@ -62,7 +62,7 @@ public class WorldWindowGLAutoDrawable extends WWObjectImpl implements WorldWind
      */
     private ScheduledFuture viewRefreshTask;
 
-    protected boolean enableGpuCacheReinitialization = true;
+    protected final boolean enableGpuCacheReinitialization = true;
     private GLAutoDrawable drawable;
 
     private boolean shuttingDown = false;
@@ -273,16 +273,6 @@ public class WorldWindowGLAutoDrawable extends WWObjectImpl implements WorldWind
     }
 
     @Override public void display(GLAutoDrawable g) {
-//        if (this.shuttingDown) {
-//            // Performing shutdown here in order to do so with a current GL context for GL resource disposal.
-//            this.doShutdown();
-//            return;
-//        }
-//
-//        if (!redrawNecessary.getAndSet(false))
-//            return;
-//
-//        render(g);
     }
 
 
@@ -303,20 +293,6 @@ public class WorldWindowGLAutoDrawable extends WWObjectImpl implements WorldWind
         SceneController sc = this.sceneControl();
 
         sc.repaint();
-//        if (redrawDelay > 0) {
-//            if (this.redrawTimer == null) {
-//                this.redrawTimer = new Timer(redrawDelay, actionEvent -> {
-//                    redraw();
-//                    redrawTimer = null;
-//                });
-//                redrawTimer.setRepeats(false);
-//                redrawTimer.start();
-//            }
-//        }
-
-//        this.callRenderingListeners(BEFORE_BUFFER_SWAP);
-
-//        this.drawable.swapBuffers();
 
         this.set(PerformanceStatistic.FRAME_TIME, sc.getFrameTime());
 

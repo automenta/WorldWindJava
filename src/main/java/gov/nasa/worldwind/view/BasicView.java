@@ -95,22 +95,6 @@ public class BasicView extends WWObjectImpl implements View {
      * @param projection the projection matrix
      */
     public static void loadGLViewState(DrawContext dc, Matrix modelview, Matrix projection) {
-//        if (dc == null) {
-//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//        if (dc.getGL() == null) {
-//            String message = Logging.getMessage("nullValue.DrawingContextGLIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
-//        }
-//        if (modelview == null) {
-//            Logging.logger().fine("nullValue.ModelViewIsNull");
-//        }
-//        if (projection == null) {
-//            Logging.logger().fine("nullValue.ProjectionIsNull");
-//        }
 
         double[] matrixArray = new double[16];
 
@@ -196,23 +180,6 @@ public class BasicView extends WWObjectImpl implements View {
     }
 
     public void apply(DrawContext dc) {
-//        if (dc == null) {
-//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//
-//        if (dc.getGL() == null) {
-//            String message = Logging.getMessage("nullValue.DrawingContextGLIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
-//        }
-//
-//        if (dc.getGlobe() == null) {
-//            String message = Logging.getMessage("layers.AbstractLayer.NoGlobeSpecifiedInDrawingContext");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
-//        }
 
         if (this.viewInputHandler != null)
             this.viewInputHandler.apply();

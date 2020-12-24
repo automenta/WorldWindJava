@@ -54,7 +54,7 @@ import java.beans.PropertyChangeListener;
     private final WorldWindowGLDrawable wwd
         = ((WorldWindowGLDrawable) WorldWind.createConfigurationComponent(AVKey.WORLD_WINDOW_CLASS_NAME));
 
-    private DashboardController dashboard;
+    private final DashboardController dashboard;
 
     /**
      * Constructs a new <code>WorldWindowGLCanvas</code> on the default graphics device.
@@ -67,40 +67,6 @@ import java.beans.PropertyChangeListener;
 //        initializeCreditsController();
         this.dashboard = new DashboardController(this, this);
     }
-
-//    /**
-//     * Constructs a new <code>WorldWindowGLCanvas</code> on the default graphics device and shares graphics resources
-//     * with another <code>WorldWindow</code>.
-//     *
-//     * @param shareWith a <code>WorldWindow</code> with which to share graphics resources.
-//     * @see GLCanvas#GLCanvas(GLCapabilitiesImmutable, GLCapabilitiesChooser, GraphicsDevice)
-//     */
-//    public WorldWindowGLCanvas(WorldWindow shareWith) {
-//        super(Configuration.getRequiredGLCapabilities(), new BasicGLCapabilitiesChooser(), null);
-//
-//        if (shareWith != null)
-//            this.setSharedAutoDrawable((GLAutoDrawable) shareWith);
-//
-//        try {
-//            this.wwd = ((WorldWindowGLDrawable) WorldWind.createConfigurationComponent(AVKey.WORLD_WINDOW_CLASS_NAME));
-//            this.wwd().initDrawable(this);
-//            this.wwd().addPropertyChangeListener(this);
-//            if (shareWith != null)
-//                this.wwd().initGpuResourceCache(shareWith.resourceCache());
-//            else
-//                this.wwd().initGpuResourceCache(WorldWindow.createGpuResourceCache());
-//            this.createView();
-//            this.createDefaultInputHandler();
-//            WorldWind.addPropertyChangeListener(WorldWind.SHUTDOWN_EVENT, this);
-//            WorldWindow.configureIdentityPixelScale(this);
-//            this.wwd().endInitialization();
-//        }
-//        catch (Exception e) {
-//            String message = Logging.getMessage("Awt.WorldWindowGLSurface.UnabletoCreateWindow");
-//            Logging.logger().severe(message);
-//            throw new WWRuntimeException(message, e);
-//        }
-//    }
 
     @Override
     public void startEvents(InputHandler h) {
@@ -121,10 +87,6 @@ import java.beans.PropertyChangeListener;
         removeMouseWheelListener(hh);
         removeFocusListener(hh);
     }
-
-//    protected void initializeCreditsController() {
-//        new ScreenCreditController(wwd());
-//    }
 
     @Override
     public void shutdown() {

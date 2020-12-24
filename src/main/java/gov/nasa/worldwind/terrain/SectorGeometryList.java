@@ -162,11 +162,6 @@ public class SectorGeometryList extends ArrayList<SectorGeometry> {
      * @return an array of picked objects that intersect one or more of the specified screen points.
      */
     public List<PickedObject> pick(DrawContext dc, Collection<Point> pickPoints) {
-//        if (dc == null) {
-//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
-//        }
 
         if (pickPoints == null || pickPoints.size() < 1)
             return null;
@@ -323,11 +318,6 @@ public class SectorGeometryList extends ArrayList<SectorGeometry> {
      * geometry in this list for the specifed latitude and longitude.
      */
     public Vec4 getSurfacePoint(Angle lat, Angle lon, double metersOffset) {
-//        if (latitude == null || longitude == null) {
-//            String msg = Logging.getMessage("nullValue.LatLonIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         double latitude = lat.degrees, longitude = lon.degrees;
         for (SectorGeometry sg : this) {

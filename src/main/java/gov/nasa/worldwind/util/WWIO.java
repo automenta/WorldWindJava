@@ -512,11 +512,6 @@ public class WWIO {
      * @throws IOException              if an I/O error occurs.
      */
     public static ByteBuffer readURLContentToBuffer(URL url) throws IOException {
-//        if (url == null) {
-//            String message = Logging.getMessage("nullValue.URLIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         return readURLContentToBuffer(url, false);
     }
@@ -535,11 +530,6 @@ public class WWIO {
      * @throws IOException              if an I/O error occurs.
      */
     public static ByteBuffer readURLContentToBuffer(URL url, boolean allocateDirect) throws IOException {
-//        if (url == null) {
-//            String message = Logging.getMessage("nullValue.URLIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         InputStream is = null;
         try {
@@ -585,11 +575,6 @@ public class WWIO {
      * @throws IOException              if an I/O error occurs.
      */
     public static ByteBuffer readFileToBuffer(File file) throws IOException {
-//        if (file == null) {
-//            String message = Logging.getMessage("nullValue.FileIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         return readFileToBuffer(file, false);
     }

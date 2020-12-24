@@ -182,11 +182,6 @@ public class LengthMeasurer implements MeasurableLength {
     }
 
     public void setPositions(Position[] positions) {
-//        if (positions == null) {
-//            String message = Logging.getMessage("nullValue.PositionsListIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         ArrayList<Position> newPositions = new ArrayList<>(Arrays.asList(positions));
         setPositions(newPositions);

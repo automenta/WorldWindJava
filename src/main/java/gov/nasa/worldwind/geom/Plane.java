@@ -27,11 +27,6 @@ public final class Plane {
      * @throws IllegalArgumentException if the vector is null.
      */
     public Plane(Vec4 vec) {
-//        if (vec == null) {
-//            String message = Logging.getMessage("nullValue.VectorIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (vec.getLengthSquared3() == 0.0) {
             String message = Logging.getMessage("Geom.Plane.VectorIsZero");
@@ -77,11 +72,6 @@ public final class Plane {
      * @throws IllegalArgumentException if <code>pa</code>, <code>pb</code>, or <code>pc</code> is <code>null</code>.
      */
     public static Plane fromPoints(Vec4 pa, Vec4 pb, Vec4 pc) {
-//        if (pa == null || pb == null || pc == null) {
-//            String message = Logging.getMessage("nullValue.Vec4IsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         Vec4 vab = pb.subtract3(pa);
         Vec4 vac = pc.subtract3(pa);
@@ -226,11 +216,6 @@ public final class Plane {
      * @throws IllegalArgumentException if either input point is null.
      */
     public Vec4 intersect(Vec4 pa, Vec4 pb) {
-//        if (pa == null || pb == null) {
-//            String message = Logging.getMessage("nullValue.PointIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         try {
             // Test if line segment is in fact a point
@@ -270,11 +255,6 @@ public final class Plane {
      * @throws IllegalArgumentException if either input point is null.
      */
     public Vec4[] clip(Vec4 pa, Vec4 pb) {
-//        if (pa == null || pb == null) {
-//            String message = Logging.getMessage("nullValue.PointIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (pa.equals(pb))
             return null;
@@ -315,11 +295,6 @@ public final class Plane {
      * @throws IllegalArgumentException if either point is null.
      */
     public int onSameSide(Vec4 pa, Vec4 pb) {
-//        if (pa == null || pb == null) {
-//            String message = Logging.getMessage("nullValue.PointIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         double da = this.distanceTo(pa);
         double db = this.distanceTo(pb);
@@ -341,11 +316,6 @@ public final class Plane {
      * @throws IllegalArgumentException if the points array is null or any point within it is null.
      */
     public int onSameSide(Vec4[] pts) {
-//        if (pts == null) {
-//            String message = Logging.getMessage("nullValue.PointsArrayIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         int side;
         {
@@ -356,11 +326,6 @@ public final class Plane {
         }
 
         for (int i = 1; i < pts.length; i++) {
-//            if (pts[i] == null) {
-//                String message = Logging.getMessage("nullValue.PointIsNull");
-//                Logging.logger().severe(message);
-//                throw new IllegalArgumentException(message);
-//            }
 
             double d = this.distanceTo(pts[i]);
             if ((side != -1 || !(d < 0)) && (side != 1 || !(d > 0)))

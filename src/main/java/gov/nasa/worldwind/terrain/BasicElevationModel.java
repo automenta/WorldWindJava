@@ -539,8 +539,6 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
             return WorldWind.cache(cacheName);
         }
         else {
-//            long size = Configuration.getLongValue(AVKey.ELEVATION_TILE_CACHE_SIZE, 20000000L);
-//            MemoryCache mc = new BasicMemoryCache((long) (0.85 * size), size);
             MemoryCache mc = new SoftMemoryCache();
             mc.setName("Elevation Tiles");
             WorldWind.getMemoryCacheSet().addCache(cacheName, mc);
@@ -1134,12 +1132,6 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         double[] buffer, boolean mapMissingData) {
 
         final int n = latlons.size();
-//        if (buffer.length < n) {
-//            String msg = Logging.getMessage("ElevationModel.ElevationsBufferTooSmall", n);
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-        //System.out.println("sector="+sector);
 
         Level targetLevel = this.getTargetLevel(sector, targetResolution);
         if (targetLevel == null)
@@ -1418,8 +1410,6 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         // elevation model is reclaimed by the GC.
 
         if (this.extremesLookupCache == null) {
-//            long size = Configuration.getLongValue(AVKey.ELEVATION_EXTREMES_LOOKUP_CACHE_SIZE, 20000000L);
-//            this.extremesLookupCache = new BasicMemoryCache((long) (0.85 * size), size);
             this.extremesLookupCache = new SoftMemoryCache();
         }
 

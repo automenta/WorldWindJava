@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.animation;
 
-import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The <code>AnimationController</code> class is a convenience class for managing a group of <code>Animators</code>.
@@ -13,7 +13,7 @@ import java.util.*;
  * @author jym
  * @version $Id: AnimationController.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class AnimationController extends HashMap<Object, Animator> {
+public class AnimationController extends ConcurrentHashMap<Object, Animator> {
 
     /**
      * Starts all of the <code>Animator</code>s in the map

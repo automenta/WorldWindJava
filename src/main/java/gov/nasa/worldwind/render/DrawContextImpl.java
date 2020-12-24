@@ -5,7 +5,6 @@
  */
 package gov.nasa.worldwind.render;
 
-import com.carrotsearch.hppc.BitSet;
 import com.graphhopper.coll.GHIntHashSet;
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.*;
@@ -203,7 +202,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     protected Dimension pickPointFrustumDimension = new Dimension(3, 3);
     protected LightingModel standardLighting = new BasicLightingModel();
     protected ClutterFilter clutterFilter;
-    public AtomicBoolean pickChanged = new AtomicBoolean(true);
+    public final AtomicBoolean pickChanged = new AtomicBoolean(true);
     private GL gl;
 
     /**

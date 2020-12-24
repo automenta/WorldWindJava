@@ -5,7 +5,6 @@ import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.video.*;
-import spacegraph.video.*;
 import spacegraph.layer.*;
 
 import java.beans.PropertyChangeListener;
@@ -55,8 +54,6 @@ public class WorldWindowNEWT extends AbstractLayer implements WorldWindow, GLEve
 
     @Override
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
-//        window.setSize(width, height);
-//        window.setPosition(x, y);
         redraw();
     }
 

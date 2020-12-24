@@ -229,11 +229,6 @@ public class Frustum {
      *                                  greater than or equal to far
      */
     public static Frustum fromPerspectiveVecs(Vec4 vTL, Vec4 vTR, Vec4 vBL, Vec4 vBR, double near, double far) {
-//        if (vTL == null || vTR == null || vBL == null || vBR == null) {
-//            String message = Logging.getMessage("Geom.ViewFrustum.EdgeVectorIsNull");
-//            Logging.logger().fine(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         double farMinusNear = far - near;
         if (near <= 0 || farMinusNear <= 0) {

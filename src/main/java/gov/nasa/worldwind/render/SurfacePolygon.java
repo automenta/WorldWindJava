@@ -144,15 +144,6 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
         this.onShapeChanged();
     }
 
-//    /**
-//     * Returns this polygon's texture image source.
-//     *
-//     * @return the texture image source, or null if no source has been specified.
-//     */
-//    public Object getTextureImageSource() {
-//        return this.explicitTexture != null ? this.explicitTexture.getImageSource() : null;
-//    }
-
     /**
      * Returns the texture coordinates for this polygon.
      *
@@ -221,13 +212,6 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
             Angle degreesPerInterval = Angle.fromDegrees(1.0 / this.computeEdgeIntervalsPerDegree(sdc));
             List<List<Vertex>> contours = this.assembleContours(degreesPerInterval);
             shapeData = this.tessellateContours(contours);
-
-//            if (shapeData == null) {
-//                String msg = Logging.getMessage("generic.ExceptionWhileTessellating", this);
-//                dc.addRenderingException(new WWRuntimeException(msg));
-//                this.handleUnsuccessfulInteriorTessellation(dc); // clears boundaries, preventing repeat attempts
-//                return;
-//            }
 
             this.shapeDataCache.put(key, shapeData);
         }

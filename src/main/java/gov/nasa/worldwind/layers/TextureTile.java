@@ -124,21 +124,11 @@ public class TextureTile extends Tile implements SurfaceTile {
     }
 
     public Texture getTexture(GpuResourceCache tc) {
-//        if (tc == null) {
-//            String message = Logging.getMessage("nullValue.TextureCacheIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
-//        }
 
         return tc.getTexture(this.tileKey);
     }
 
     public boolean isTextureInMemory(GpuResourceCache tc) {
-//        if (tc == null) {
-//            String message = Logging.getMessage("nullValue.TextureCacheIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
-//        }
 
         return this.getTexture(tc) != null || this.getTextureData() != null;
     }
@@ -156,11 +146,6 @@ public class TextureTile extends Tile implements SurfaceTile {
     }
 
     public void setTexture(GpuResourceCache tc, Texture texture) {
-//        if (tc == null) {
-//            String message = Logging.getMessage("nullValue.TextureCacheIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
-//        }
 
         tc.put(this.tileKey, texture);
         this.updateTime.set(System.currentTimeMillis());
@@ -172,21 +157,11 @@ public class TextureTile extends Tile implements SurfaceTile {
     }
 
     public Vec4 getCentroidPoint(Globe globe) {
-//        if (globe == null) {
-//            String msg = Logging.getMessage("nullValue.GlobeIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         return globe.computePointFromLocation(sector.getCentroid());
     }
 
     public Extent getExtent(DrawContext dc) {
-//        if (dc == null) {
-//            String msg = Logging.getMessage("nullValue.DrawContextIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         return Sector.computeBoundingBox(dc.getGlobe(), dc.getVerticalExaggeration(), sector);
     }
@@ -201,11 +176,6 @@ public class TextureTile extends Tile implements SurfaceTile {
      * @throws IllegalArgumentException if the level is null.
      */
     public TextureTile[] createSubTiles(Level nextLevel) {
-//        if (nextLevel == null) {
-//            String msg = Logging.getMessage("nullValue.LevelIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         Angle p0 = sector.latMin();
         Angle p2 = sector.latMax();
@@ -327,11 +297,6 @@ public class TextureTile extends Tile implements SurfaceTile {
     }
 
     protected void setTextureParameters(DrawContext dc, Texture t) {
-//        if (dc == null) {
-//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
-//        }
 
         GL gl = dc.getGL();
 
@@ -410,11 +375,6 @@ public class TextureTile extends Tile implements SurfaceTile {
     }
 
     public void applyInternalTransform(DrawContext dc, boolean textureIdentityActive) {
-//        if (dc == null) {
-//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
-//        }
 
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
@@ -463,11 +423,6 @@ public class TextureTile extends Tile implements SurfaceTile {
     }
 
     protected void applyResourceTextureTransform(DrawContext dc) {
-//        if (dc == null) {
-//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
-//        }
 
         if (level == null)
             return;

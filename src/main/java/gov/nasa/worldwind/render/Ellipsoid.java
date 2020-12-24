@@ -147,11 +147,6 @@ public class Ellipsoid extends RigidShape {
     }
 
     protected boolean sufficientDetail(DrawContext dc, int subdivisions, ShapeData shapeData) {
-//        if (dc.getView() == null) {
-//            String message = "nullValue.DrawingContextViewIsNull";
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
         if (subdivisions < 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "subdivisions < 0");
             Logging.logger().severe(message);

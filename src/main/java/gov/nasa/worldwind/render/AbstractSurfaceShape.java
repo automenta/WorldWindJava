@@ -106,8 +106,6 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
     protected int maxEdgeIntervals = DEFAULT_MAX_EDGE_INTERVALS;
     protected WWTexture texture; // An optional texture.
     // Measurement properties.
-//    protected AreaMeasurer areaMeasurer;
-//    protected long areaMeasurerLastModifiedTime;
 
     /**
      * Constructs a new surface shape with the default attributes.

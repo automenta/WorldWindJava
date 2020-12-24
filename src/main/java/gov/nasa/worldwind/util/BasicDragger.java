@@ -28,7 +28,7 @@ public class BasicDragger implements SelectListener {
      * The {@link WorldWindow} this dragger will utilize for the {@link Globe}, {@link View}, and {@link
      * SceneController} objects.
      */
-    protected WorldWindow wwd;
+    protected final WorldWindow wwd;
     /**
      * Indicates if the dragger is currently dragging.
      */
@@ -51,11 +51,6 @@ public class BasicDragger implements SelectListener {
      * @throws IllegalArgumentException if the provided {@link WorldWindow} is null.
      */
     public BasicDragger(WorldWindow wwd) {
-//        if (wwd == null) {
-//            String msg = Logging.getMessage("nullValue.WorldWindow");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
         this.wwd = wwd;
     }
 
@@ -101,11 +96,6 @@ public class BasicDragger implements SelectListener {
 
     @Override
     public void accept(SelectEvent event) {
-//        if (event == null) {
-//            String msg = Logging.getMessage("nullValue.EventIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         if (event.getEventAction().equals(SelectEvent.DRAG_END)) {
             this.dragContext.setDragState(AVKey.DRAG_ENDED);
@@ -146,11 +136,6 @@ public class BasicDragger implements SelectListener {
      * @throws IllegalArgumentException if the {@link DragContext} is null.
      */
     protected void fireDrag(DragSelectEvent dragEvent) {
-//        if (dragEvent == null || dragEvent.getTopObject() == null) {
-//            String msg = Logging.getMessage("nullValue.ObjectIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         Object dragObject = dragEvent.getTopObject();
 

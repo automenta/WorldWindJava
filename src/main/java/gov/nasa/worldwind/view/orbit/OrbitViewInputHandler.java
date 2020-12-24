@@ -945,11 +945,6 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
     }
 
     public void addCenterAnimator(Position begin, Position end, boolean smoothed) {
-//        if (begin == null || end == null) {
-//            String message = Logging.getMessage("nullValue.PositionIsNull");
-//            Logging.logger().fine(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         View view = this.getView();
         if (view instanceof OrbitView) {
@@ -960,11 +955,6 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
     }
 
     public void addCenterAnimator(Position begin, Position end, long lengthMillis, boolean smoothed) {
-//        if (begin == null || end == null) {
-//            String message = Logging.getMessage("nullValue.PositionIsNull");
-//            Logging.logger().fine(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         View view = this.getView();
         if (view instanceof OrbitView) {

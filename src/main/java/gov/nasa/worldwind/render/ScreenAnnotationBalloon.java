@@ -21,7 +21,7 @@ public class ScreenAnnotationBalloon extends AbstractAnnotationBalloon implement
     /**
      * Annotation used to render the balloon.
      */
-    protected ScreenAnnotation annotation;
+    protected final ScreenAnnotation annotation;
 
     /**
      * Create the balloon.
@@ -32,12 +32,6 @@ public class ScreenAnnotationBalloon extends AbstractAnnotationBalloon implement
      */
     public ScreenAnnotationBalloon(String text, Point point) {
         super(text);
-
-//        if (point == null) {
-//            String message = Logging.getMessage("nullValue.PositionIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         this.screenPoint = point;
 

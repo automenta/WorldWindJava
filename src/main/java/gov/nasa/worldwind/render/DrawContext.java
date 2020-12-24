@@ -303,13 +303,6 @@ public interface DrawContext extends WWObject, Disposable {
      */
     Color getUniquePickColorRange(int count);
 
-//    /**
-//     * Returns the WorldWindow's background color.
-//     *
-//     * @return the WorldWindow's background color.
-//     */
-//    Color getClearColor();
-
     /**
      * Returns the framebuffer RGB color for a point in AWT screen coordinates, formatted as a pick color code. The red,
      * green, and blue components are each stored as an 8-bit unsigned integer, and packed into bits 0-23 of the

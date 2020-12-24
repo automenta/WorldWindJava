@@ -117,13 +117,9 @@ public class Configuration // Singleton
         this.initializeCustom();
     }
 
-    private static Configuration getInstance() {
-        return ourInstance;
-    }
-
-    public static void insertConfigurationDocument(String fileName) {
-        getInstance().insertConfigDoc(fileName);
-    }
+//    public static void insertConfigurationDocument(String fileName) {
+//        ourInstance.insertConfigDoc(fileName);
+//    }
 
     /**
      * Return as a string the value associated with a specified key.
@@ -144,7 +140,7 @@ public class Configuration // Singleton
      * @return the value associated with the key, or null if the key does not exist.
      */
     public static synchronized String getStringValue(String key) {
-        Object o = getInstance().properties.getProperty(key);
+        Object o = ourInstance.properties.getProperty(key);
         return o != null ? o.toString() : null;
     }
 
@@ -300,7 +296,7 @@ public class Configuration // Singleton
      * @return true if the key exists, otherwise false.
      */
     public static synchronized boolean hasKey(String key) {
-        return getInstance().properties.contains(key);
+        return ourInstance.properties.contains(key);
     }
 
     /**
@@ -309,7 +305,7 @@ public class Configuration // Singleton
      * @param key the key of interest.
      */
     public static synchronized void removeKey(String key) {
-        getInstance().properties.remove(key);
+        ourInstance.properties.remove(key);
     }
 
     /**
@@ -320,7 +316,7 @@ public class Configuration // Singleton
      * @param value the value to associate with the key.
      */
     public static synchronized void setValue(String key, Object value) {
-        getInstance().properties.put(key, value.toString());
+        ourInstance.properties.put(key, value.toString());
     }
 
     /**
@@ -533,7 +529,7 @@ public class Configuration // Singleton
     public static Element getElement(String xpathExpression) {
         XPath xpath = WWXML.makeXPath();
 
-        for (Document doc : getInstance().configDocs) {
+        for (Document doc : ourInstance.configDocs) {
             try {
                 Node node = (Node) xpath.evaluate(xpathExpression, doc.getDocumentElement(), XPathConstants.NODE);
                 if (node != null)

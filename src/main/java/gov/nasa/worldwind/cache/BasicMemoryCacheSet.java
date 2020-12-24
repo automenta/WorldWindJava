@@ -25,12 +25,6 @@ public class BasicMemoryCacheSet implements MemoryCacheSet {
     public MemoryCache getCache(String cacheKey) {
         MemoryCache cache = this.caches.get(cacheKey);
 
-//        if (cache == null) {
-//            String message = Logging.getMessage("MemoryCacheSet.CacheDoesNotExist", cacheKey);
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
-//        }
-
         return cache;
     }
 

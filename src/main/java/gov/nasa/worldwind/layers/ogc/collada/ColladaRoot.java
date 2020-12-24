@@ -897,14 +897,4 @@ public class ColladaRoot extends ColladaAbstractObject
 
         return filePath;
     }
-
-//    @Override
-//    public int getRedrawRequested() {
-//        return redrawRequested;
-//    }
-//
-//    @Override
-//    public void setRedrawRequested(int redrawRequested) {
-//        this.redrawRequested = redrawRequested;
-//    }
 }

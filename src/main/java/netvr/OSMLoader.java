@@ -40,7 +40,7 @@ public class OSMLoader {
             "," + Str.n(s.lonMax, 3) + "," + Str.n(s.latMax, 3), each);
     }
 
-    static final String osmHost[] = new String[] {
+    static final String[] osmHost = new String[] {
         "overpass-api.de",
 //        "overpass.openstreetmap.ru",
 //        "overpass.kumi.systems",

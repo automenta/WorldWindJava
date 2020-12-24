@@ -334,22 +334,9 @@ public class BasicOrbitView extends BasicView implements OrbitView {
     public void focusOnViewportCenter() {
         if (this.isAnimating())
             return;
-//        if (this.dc == null) {
-//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
-//        }
-//        if (this.globe == null) {
-//            String message = Logging.getMessage("nullValue.DrawingContextGlobeIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
-//        }
 
         Position viewportCenterPos = this.dc.getViewportCenterPosition();
         if (viewportCenterPos == null) {
-//            String message = Logging.getMessage("nullValue.DrawingContextViewportCenterIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
             return;
         }
 
@@ -389,16 +376,6 @@ public class BasicOrbitView extends BasicView implements OrbitView {
     }
 
     public void focusOnTerrainCenter() {
-//        if (this.dc == null) {
-//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
-//        }
-//        if (this.globe == null) {
-//            String message = Logging.getMessage("nullValue.DrawingContextGlobeIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
-//        }
 
         if (this.dc.getSurfaceGeometry() == null) {
             return;
@@ -477,11 +454,6 @@ public class BasicOrbitView extends BasicView implements OrbitView {
     }
 
     public void setOrientation(Position eyePosition, Position centerPosition) {
-//        if (eyePosition == null || centerPosition == null) {
-//            String message = Logging.getMessage("nullValue.PositionIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
         if (this.globe == null) {
 
             String message = Logging.getMessage("nullValue.DrawingContextGlobeIsNull");
@@ -510,12 +482,6 @@ public class BasicOrbitView extends BasicView implements OrbitView {
                 up = Vec4.UNIT_Y.transformBy4(modelviewInv);
             }
         }
-
-//        if (up == null) {
-//            String message = Logging.getMessage("View.ErrorSettingOrientation", eyePosition, centerPosition);
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         OrbitViewInputSupport.OrbitViewState modelCoords = OrbitViewInputSupport.computeOrbitViewState(
             this.globe, newEyePoint, newCenterPoint, up);
@@ -737,16 +703,6 @@ public class BasicOrbitView extends BasicView implements OrbitView {
             beginCenterPos, endCenterPos, beginHeading, endHeading, beginPitch, endPitch,
             beginZoom, endZoom, timeToMove, endCenterOnSurface);
     }
-
-//    public void addPanToAnimator(Position beginCenterPos, Position endCenterPos,
-//        Angle beginHeading, Angle endHeading,
-//        Angle beginPitch, Angle endPitch,
-//        double beginZoom, double endZoom, boolean endCenterOnSurface) {
-//
-//        ((OrbitViewInputHandler) this.viewInputHandler).addPanToAnimator(
-//            beginCenterPos, endCenterPos, beginHeading, endHeading, beginPitch, endPitch,
-//            beginZoom, endZoom, endCenterOnSurface);
-//    }
 
     public void addPanToAnimator(Position centerPos, Angle heading, Angle pitch, double zoom,
         long timeToMove, boolean endCenterOnSurface) {

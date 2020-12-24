@@ -69,23 +69,6 @@ public class ScreenAnnotation extends AbstractAnnotation {
      * @param defaults the default {@link AnnotationAttributes} set.
      */
     public ScreenAnnotation(String text, Point position, AnnotationAttributes defaults) {
-//        if (text == null) {
-//            String message = Logging.getMessage("nullValue.StringIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//
-//        if (position == null) {
-//            String message = Logging.getMessage("nullValue.PointIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//
-//        if (defaults == null) {
-//            String message = Logging.getMessage("nullValue.AnnotationAttributesIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         this.setText(text);
         this.screenPoint = position;

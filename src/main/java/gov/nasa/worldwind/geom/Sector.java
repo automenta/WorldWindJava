@@ -12,7 +12,6 @@ import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.tracks.TrackPoint;
 import gov.nasa.worldwind.util.*;
-import org.bridj.cpp.std.list;
 
 import java.awt.geom.*;
 import java.util.*;
@@ -981,48 +980,6 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
         return true;
     }
 
-//    /**
-//     * Determines whether this sector intersects the specified geographic line segment. The line segment is specified by
-//     * a begin location and an end location. The locations are are assumed to be connected by a linear path in
-//     * geographic space. This returns true if any location along that linear path intersects this sector, including the
-//     * begin and end locations.
-//     *
-//     * @param begin the line segment begin location.
-//     * @param end   the line segment end location.
-//     * @return true <code>true</code> if this sector intersects the line segment, otherwise <code>false</code>.
-//     * @throws IllegalArgumentException if either the begin location or the end location is null.
-//     */
-//    public boolean intersectsSegment(LatLon begin, LatLon end) {
-//
-//        Vec4 segmentBegin = new Vec4(begin.getLongitude().degrees, begin.getLatitude().degrees, 0);
-//        Vec4 segmentEnd = new Vec4(end.getLongitude().degrees, end.getLatitude().degrees, 0);
-//        Vec4 tmp = segmentEnd.subtract3(segmentBegin);
-//        Vec4 segmentCenter = segmentBegin.add3(segmentEnd).divide3(2);
-//        Vec4 segmentDirection = tmp.normalize3();
-//        double segmentExtent = tmp.getLength3() / 2.0;
-//
-//        LatLon centroid = this.getCentroid();
-//        Vec4 boxCenter = new Vec4(centroid.getLongitude().degrees, centroid.getLatitude().degrees, 0);
-//        double boxExtentX = this.lonDelta / 2.0;
-//        double boxExtentY = this.latDelta / 2.0;
-//
-//        Vec4 diff = segmentCenter.subtract3(boxCenter);
-//
-//        if (Math.abs(diff.x) > (boxExtentX + segmentExtent * Math.abs(segmentDirection.x))) {
-//            return false;
-//        }
-//
-//        if (Math.abs(diff.y) > (boxExtentY + segmentExtent * Math.abs(segmentDirection.y))) {
-//            return false;
-//        }
-//
-//        //noinspection SuspiciousNameCombination
-//        Vec4 segmentPerp = new Vec4(segmentDirection.y, -segmentDirection.x, 0);
-//
-//        return Math.abs(segmentPerp.dot3(diff)) <=
-//            (boxExtentX * Math.abs(segmentPerp.x) + boxExtentY * Math.abs(segmentPerp.y));
-//    }
-
     /**
      * Determines whether this sector intersects any one of the sectors in the specified iterable. This returns true if
      * at least one of the sectors is non-null and intersects this sector.
@@ -1182,17 +1139,6 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
             this.lonMin, this.lonMax
         };
     }
-
-//    /**
-//     * Returns a {@link Rectangle2D} corresponding to this Sector in degrees lat-lon coordinates where x
-//     * corresponds to longitude and y to latitude.
-//     *
-//     * @return a {@link Rectangle2D} corresponding to this Sector in degrees lat-lon coordinates.
-//     */
-//    public Rectangle2D toRectangleDegrees() {
-//        return new Rectangle2D.Double(this.lonMin, this.latMin,
-//            this.lonDelta, this.latDelta);
-//    }
 
     /**
      * Returns a string indicating the sector's angles.

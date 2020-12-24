@@ -114,9 +114,10 @@ public class WordNet {
     public void walk(final ISynset synset, final int level) {
         final String indentSpace = new String(new char[level]).replace('\0', '\t');
         final Map<IPointer, List<ISynsetID>> links = synset.getRelatedMap();
-        for (final IPointer p : links.keySet()) {
+        for (final Map.Entry<IPointer, List<ISynsetID>> entry : links.entrySet()) {
+            final IPointer p = entry.getKey();
             System.out.println(indentSpace + "🡆 " + p.getName());
-            final List<ISynsetID> relations2 = links.get(p);
+            final List<ISynsetID> relations2 = entry.getValue();
             for (final ISynsetID synsetid2 : relations2) {
                 final ISynset synset2 = this.dict.getSynset(synsetid2);
                 System.out.println(indentSpace + toString(synset2));
@@ -137,11 +138,11 @@ public class WordNet {
         }
     }
 
-    public String toString(final ISynset synset) {
+    public static String toString(final ISynset synset) {
         return getMembers(synset) + synset.getGloss();
     }
 
-    public String getMembers(final ISynset synset) {
+    public static String getMembers(final ISynset synset) {
         final StringBuilder sb = new StringBuilder();
         sb.append('{');
         boolean first = true;

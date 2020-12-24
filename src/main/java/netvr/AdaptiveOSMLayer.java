@@ -34,15 +34,18 @@ public class AdaptiveOSMLayer extends RenderableLayer {
 
     public final AdaptiveOSMLayer focus(LatLon at, float radiusDegrees) {
         return focus(new Sector(
-            at.latitude-radiusDegrees,at.latitude+ radiusDegrees,
-            at.longitude-radiusDegrees, at.longitude+radiusDegrees));
+            at.latitude - radiusDegrees,at.latitude + radiusDegrees,
+            at.longitude - radiusDegrees, at.longitude + radiusDegrees));
     }
 
     public synchronized AdaptiveOSMLayer focus(Sector sector) {
-        double latMin = Util.round(sector.latMin - gridRes /2, gridRes);
-        double lonMin = Util.round(sector.lonMin - gridRes /2, gridRes);
-        int latCells = Math.max(1, (int) Math.ceil(sector.latDelta / gridRes));
-        int lonCells = Math.max(1, (int) Math.ceil(sector.lonDelta / gridRes));
+        double latMin = Util.round(sector.latMin - gridRes/2, gridRes);
+        double lonMin = Util.round(sector.lonMin - gridRes/2, gridRes);
+        double latMax = Util.round(sector.latMax + gridRes/2, gridRes);
+        double lonMax = Util.round(sector.lonMax + gridRes/2, gridRes);
+
+        int latCells = Math.max(1, (int) Math.ceil((latMax-latMin)/gridRes));
+        int lonCells = Math.max(1, (int) Math.ceil((lonMax-lonMin)/gridRes));
         for (int i = 0; i < latCells; i++) {
             final double latI = latMin + i * gridRes;
             for (int j = 0; j < lonCells; j++) {
@@ -170,36 +173,28 @@ public class AdaptiveOSMLayer extends RenderableLayer {
         if (m == null) {
             final String building = properties.get("building");
             if (building != null) {
-                switch (building) {
-                    case "house":
-                        m = Material.RED;
-                        break;
-                    default:
-                        m = Material.ORANGE;
-                        break;
-                }
+                m = switch (building) {
+                    case "house" -> Material.RED;
+                    default -> Material.ORANGE;
+                };
             }
         }
         if (m == null) {
             final String l = properties.get("landuse");
             if (l != null) {
-                switch (l) {
-                    case "grass":
-                    case "farmland":
-                        m = Material.GREEN;
-                        break;
-                }
+                m = switch (l) {
+                    case "grass", "farmland" -> Material.GREEN;
+                    default -> m;
+                };
             }
         }
         if (m == null) {
             final String s = properties.get("surface");
             if (s != null) {
-                switch (s) {
-                    case "grass":
-                    case "cobblestone":
-                        m = Material.BLACK;
-                        break;
-                }
+                m = switch (s) {
+                    case "grass", "cobblestone" -> Material.BLACK;
+                    default -> m;
+                };
             }
         }
         if (m == null)

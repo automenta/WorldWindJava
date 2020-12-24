@@ -45,16 +45,6 @@ public class RayCastingSupport {
      */
     public static Position intersectRayWithTerrain(Globe globe, Vec4 origin, Vec4 direction,
         double sampleLength, double precision) {
-//        if (globe == null) {
-//            String msg = Logging.getMessage("nullValue.GlobeIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//        if (origin == null || direction == null) {
-//            String msg = Logging.getMessage("nullValue.Vec4IsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
         if (sampleLength < 0) {
             String msg = Logging.getMessage("generic.ArgumentOutOfRange", sampleLength);
             Logging.logger().severe(msg);
@@ -135,16 +125,6 @@ public class RayCastingSupport {
      */
     public static Vec4 intersectSegmentWithTerrain(Globe globe, Vec4 p1, Vec4 p2,
         double sampleLength, double precision) {
-//        if (globe == null) {
-//            String msg = Logging.getMessage("nullValue.GlobeIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//        if (p1 == null || p2 == null) {
-//            String msg = Logging.getMessage("nullValue.Vec4IsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
         if (sampleLength < 0) {
             String msg = Logging.getMessage("generic.ArgumentOutOfRange", sampleLength);
             Logging.logger().severe(msg);

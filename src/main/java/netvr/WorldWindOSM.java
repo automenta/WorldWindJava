@@ -4,7 +4,7 @@ import gov.nasa.worldwind.BasicModel;
 import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
-import gov.nasa.worldwind.layers.earth.OSMMapnikLayer;
+import gov.nasa.worldwind.layers.earth.*;
 import gov.nasa.worldwind.layers.sky.*;
 import gov.nasa.worldwind.pick.PickedObject;
 import gov.nasa.worldwind.render.*;
@@ -72,26 +72,29 @@ public class WorldWindOSM {
             , j);
 
         j.runLater(() -> {
-            Exe.runLater(()->{
-                //double lat = 53.00821, lon = 7.18812 + 0.0015;
-                double lon = -115.8195, lat = 37.2410;
-                focus(world, w, lon, lat, 0.005f);
-            });
+//            Exe.runLater(()->{
+//                //double lat = 53.00821, lon = 7.18812 + 0.0015;
+//                double lon = -115.8195, lat = 37.2410;
+//                focus(world, w, lon, lat, 0.005f);
+//            });
 
             w.input().addMouseListener(new MouseAdapter() {
                 @Override
-                public void mouseClicked(MouseEvent e) {
-                    if (e.getButton()==3) {
+                public void mousePressed(MouseEvent e) {
+                    if (e.getButton()==1 && e.getClickCount()==2) {
                         Position p = w.view().computePositionFromScreenPoint(e.getPoint());
                         focus(world, w, p.longitude, p.latitude, 0.001f);
                     }
+                }
+
+                @Override
+                public void mouseClicked(MouseEvent e) {
                 }
             });
             w.addSelectListener(s -> {
                 if (s.isRightClick()) {
                 } else if (s.isLeftClick()) {
-                    PickedObject top =
-                        s.getTopPickedObject();
+                    PickedObject top = s.getTopPickedObject();
                     if (top == null || top.isTerrain()) {
 //                        //System.out.println(top.position());
 //                        final Position where = top.position();
@@ -131,10 +134,12 @@ public class WorldWindOSM {
     }
 
     private static void focus(OSMModel world, WorldWindowNEWT w, double lon, double lat, float rad) {
-        world.osm.focus(
-            LatLon.fromDegrees(lat, lon), rad
-        );
-        w.view().goTo(new Position(LatLon.fromDegrees(lat, lon), 0), 400);
+        Exe.runLater(()->{
+            world.osm.focus(
+                LatLon.fromDegrees(lat, lon), rad
+            );
+            w.view().goTo(new Position(LatLon.fromDegrees(lat, lon), 0), 400);
+        });
     }
 
     private static String describe(PickedObject x) {

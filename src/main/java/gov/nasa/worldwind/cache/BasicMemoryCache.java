@@ -127,11 +127,6 @@ import java.util.concurrent.ConcurrentHashMap;
      * @throws IllegalArgumentException if <code>key</code> is null.
      */
     public void remove(Object key) {
-//        if (key == null) {
-//            Logging.logger().finer("nullValue.KeyIsNull");
-//
-//            return;
-//        }
 
         synchronized (this.lock) {
             CacheEntry entry = this.entries.get(key);
@@ -149,11 +144,6 @@ import java.util.concurrent.ConcurrentHashMap;
      * @throws IllegalArgumentException if <code>key</code> is null.
      */
     public Object getObject(Object key) {
-//        if (key == null) {
-//            Logging.logger().finer("nullValue.KeyIsNull");
-//
-//            return null;
-//        }
 
         CacheEntry entry; // don't need to lock because call is atomic
 

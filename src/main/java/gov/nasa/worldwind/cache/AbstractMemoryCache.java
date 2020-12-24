@@ -66,11 +66,6 @@ abstract public class AbstractMemoryCache implements MemoryCache {
      * @throws IllegalArgumentException is <code>listener</code> is null.
      */
     public void addCacheListener(MemoryCache.CacheListener listener) {
-//        if (listener == null) {
-//            String message = Logging.getMessage("BasicMemoryCache.nullListenerAdded");
-//            Logging.logger().warning(message);
-//            throw new IllegalArgumentException(message);
-//        }
         this.listeners.add(listener);
     }
 
@@ -81,11 +76,6 @@ abstract public class AbstractMemoryCache implements MemoryCache {
      * @throws IllegalArgumentException if <code>listener</code> is null.
      */
     public void removeCacheListener(MemoryCache.CacheListener listener) {
-//        if (listener == null) {
-//            String message = Logging.getMessage("BasicMemoryCache.nullListenerRemoved");
-//            Logging.logger().warning(message);
-//            throw new IllegalArgumentException(message);
-//        }
         this.listeners.remove(listener);
     }
 
@@ -110,11 +100,6 @@ abstract public class AbstractMemoryCache implements MemoryCache {
 
         public int compareTo(CacheEntry that) {
             if (this==that) return 0;
-//            if (that == null) {
-//                String msg = Logging.getMessage("nullValue.CacheEntryIsNull");
-//                Logging.logger().severe(msg);
-//                throw new IllegalArgumentException(msg);
-//            }
 
             int when = Long.compare(this.lastUsed, that.lastUsed);
             if (when!=0) return when;

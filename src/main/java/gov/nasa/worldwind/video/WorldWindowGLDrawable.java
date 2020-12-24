@@ -8,7 +8,6 @@ package gov.nasa.worldwind.video;
 
 import com.jogamp.opengl.GLAutoDrawable;
 import gov.nasa.worldwind.WorldWindow;
-import gov.nasa.worldwind.cache.GpuResourceCache;
 
 /**
  * @author tag

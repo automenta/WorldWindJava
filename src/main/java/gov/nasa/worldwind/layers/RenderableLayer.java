@@ -15,8 +15,6 @@ import gov.nasa.worldwind.util.Logging;
 import jcog.data.list.FastCoWList;
 
 import java.awt.*;
-import java.util.List;
-import java.util.*;
 
 /**
  * The <code>RenderableLayer</code> class manages a collection of {@link Renderable} objects

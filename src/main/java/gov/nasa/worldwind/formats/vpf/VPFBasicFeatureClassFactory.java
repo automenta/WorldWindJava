@@ -67,7 +67,7 @@ public class VPFBasicFeatureClassFactory implements VPFFeatureClassFactory {
         if (cls != null)
             return cls;
 
-        cls = this.doCreateFromFeatureType(coverage, schema);
+        cls = VPFBasicFeatureClassFactory.doCreateFromFeatureType(coverage, schema);
         VPFBasicFeatureClassFactory.initFeatureClass(cls);
 
         return cls;
@@ -78,7 +78,7 @@ public class VPFBasicFeatureClassFactory implements VPFFeatureClassFactory {
         return null;
     }
 
-    protected VPFFeatureClass doCreateFromFeatureType(VPFCoverage coverage, VPFFeatureClassSchema schema) {
+    protected static VPFFeatureClass doCreateFromFeatureType(VPFCoverage coverage, VPFFeatureClassSchema schema) {
         return switch (schema.getType()) {
             case POINT -> createPointFeatureClass(coverage, schema);
             case LINE -> createLineFeatureClass(coverage, schema);

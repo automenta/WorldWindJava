@@ -19,7 +19,7 @@ abstract public class GraphOSM extends GraphHopperOSM {
         boolean l = super.load(graphHopperFolder); //HACK
 
         DataReader reader = new FullWayReader(
-                ramGraph("x", getEncodingManager(), true, false));
+            ramGraph("x", getEncodingManager(), true, false));
 
 
         reader.setFile(new File(getOSMFile()));
@@ -33,7 +33,7 @@ abstract public class GraphOSM extends GraphHopperOSM {
     }
 
 
-    private class FullWayReader extends OSMReader {
+    private static class FullWayReader extends OSMReader {
 //        final NodeAccess nodeAccess = getGraphHopperStorage().getNodeAccess();
 
         public FullWayReader(GraphHopperStorage ghStorage) {

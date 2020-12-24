@@ -34,9 +34,6 @@ public class BasicGpuResourceCache implements GpuResourceCache {
 
         this.cache =
             new SoftMemoryCache();
-                //        long cacheSize = Configuration.getLongValue(AVKey.TEXTURE_CACHE_SIZE, WorldWindow.FALLBACK_TEXTURE_CACHE_SIZE);
-                //        return new BasicGpuResourceCache((long) (0.8 * cacheSize), cacheSize);
-                //new BasicMemoryCache(loWater, hiWater);
 
         this.cache.setName("GPU Resource Cache");
         this.cache.addCacheListener(new MemoryCache.CacheListener() {
