@@ -5,12 +5,11 @@
  */
 package gov.nasa.worldwind.render;
 
+import com.google.common.collect.Iterables;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.terrain.SectorGeometry;
 
 import java.util.ArrayList;
-
-import static java.lang.Math.toRadians;
 
 /**
  * @author tag
@@ -24,18 +23,18 @@ public class GeographicSurfaceTileRenderer extends SurfaceTileRenderer {
 
     protected void preComputeTextureTransform(DrawContext dc, SectorGeometry sg, Transform t) {
         Sector st = sg.getSector();
-        this.sgWidth = toRadians(st.lonDelta);
-        this.sgHeight = toRadians(st.latDelta);
-        this.sgMinWE = st.lonMin().radians;
-        this.sgMinSN = st.latMin().radians;
+        this.sgWidth = st.lonDelta;
+        this.sgHeight = st.latDelta;
+        this.sgMinWE = st.lonMin;
+        this.sgMinSN = st.latMin;
     }
 
     protected void computeTextureTransform(DrawContext dc, SurfaceTile tile, Transform t) {
-        Sector st = tile.getSector();
-        double tileWidth = toRadians(st.lonDelta);
-        double tileHeight = toRadians(st.latDelta);
-        double minLon = st.lonMin().radians;
-        double minLat = st.latMin().radians;
+        Sector s = tile.getSector();
+        double tileWidth = s.lonDelta;
+        double tileHeight = s.latDelta;
+        double minLon = s.lonMin;
+        double minLat = s.latMin;
 
         t.VScale = tileHeight > 0 ? this.sgHeight / tileHeight : 1;
         t.HScale = tileWidth > 0 ? this.sgWidth / tileWidth : 1;
@@ -43,20 +42,20 @@ public class GeographicSurfaceTileRenderer extends SurfaceTileRenderer {
         t.HShift = -(minLon - this.sgMinWE) / this.sgWidth;
     }
 
-    protected Iterable<SurfaceTile> getIntersectingTiles(DrawContext dc, SectorGeometry sg,
-        Iterable<? extends SurfaceTile> tiles) {
-        ArrayList<SurfaceTile> intersectingTiles = null;
-
-        for (SurfaceTile tile : tiles) {
-            if (!tile.getSector().intersectsInterior(sg.getSector()))
-                continue;
-
-            if (intersectingTiles == null) // lazy creation because most common case is no intersecting tiles
-                intersectingTiles = new ArrayList<>();
-
-            intersectingTiles.add(tile);
-        }
-
-        return intersectingTiles; // will be null if no intersecting tiles
+    protected Iterable<? extends SurfaceTile> getIntersectingTiles(DrawContext dc, SectorGeometry sg, Iterable<? extends SurfaceTile> tiles) {
+        final Sector s = sg.getSector();
+        return Iterables.filter(tiles, t -> s.intersectsInterior(t.getSector()));
+//
+        //ArrayList<SurfaceTile> intersectingTiles = null;
+//        for (SurfaceTile tile : tiles) {
+//            if (tile.getSector().intersectsInterior(s)) {
+//                if (intersectingTiles == null) // lazy creation because most common case is no intersecting tiles
+//                    intersectingTiles = new ArrayList<>();
+//
+//                intersectingTiles.add(tile);
+//            }
+//        }
+//
+//        return intersectingTiles; // will be null if no intersecting tiles
     }
 }

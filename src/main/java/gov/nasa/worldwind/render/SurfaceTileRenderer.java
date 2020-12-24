@@ -103,7 +103,7 @@ public abstract class SurfaceTileRenderer implements Disposable {
 
     abstract protected void computeTextureTransform(DrawContext dc, SurfaceTile tile, Transform t);
 
-    abstract protected Iterable<SurfaceTile> getIntersectingTiles(DrawContext dc, SectorGeometry sg,
+    abstract protected Iterable<? extends SurfaceTile> getIntersectingTiles(DrawContext dc, SectorGeometry sg,
         Iterable<? extends SurfaceTile> tiles);
 
     public void renderTiles(DrawContext dc, Iterable<? extends SurfaceTile> tiles) {
@@ -187,14 +187,8 @@ public abstract class SurfaceTileRenderer implements Disposable {
             // tile once for each intersecting image tile.
             Transform transform = new Transform();
             for (SectorGeometry sg : dc.getSurfaceGeometry()) {
-                Iterable<SurfaceTile> tilesToRender = this.getIntersectingTiles(dc, sg, tiles);
-                if (tilesToRender == null)
-                    continue;
-
-                sg.beginRendering(dc, numTexUnitsUsed); // TODO: wrap in try/catch in case of exception
-
-                // Pre-load info to compute the texture transform
-                this.preComputeTextureTransform(dc, sg, transform);
+                Iterable<? extends SurfaceTile> tilesToRender = this.getIntersectingTiles(dc, sg, tiles);
+                int count = 0;
 
                 // For each intersecting tile, establish the texture transform necessary to map the image tile
                 // into the geometry tile's texture space. Use an alpha texture as a mask to prevent changing the
@@ -202,6 +196,12 @@ public abstract class SurfaceTileRenderer implements Disposable {
                 // alpha textures via multi-texture rendering.
                 // TODO: Figure out how to apply multi-texture to more than one tile at a time. Use fragment shader?
                 for (SurfaceTile tile : tilesToRender) {
+                    if (count++ == 0) {
+                        sg.beginRendering(dc, numTexUnitsUsed); // TODO: wrap in try/catch in case of exception
+
+                        // Pre-load info to compute the texture transform
+                        this.preComputeTextureTransform(dc, sg, transform);
+                    }
                     gl.glActiveTexture(GL.GL_TEXTURE0);
 
                     if (tile.bind(dc)) {
@@ -242,7 +242,8 @@ public abstract class SurfaceTileRenderer implements Disposable {
                     }
                 }
 
-                sg.endRendering(dc);
+                if (count > 0)
+                    sg.endRendering(dc);
             }
         }
         catch (Exception e) {

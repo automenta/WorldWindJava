@@ -287,11 +287,11 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
             final RequestTask that = (RequestTask) o;
 
             // Don't include layer in comparison so that requests are shared among layers
-            return Objects.equals(tile, that.tile);
+            return tile.equals(that.tile);
         }
 
         public int hashCode() {
-            return (tile != null ? tile.hashCode() : 0);
+            return tile.hashCode();
         }
 
         public String toString() {
