@@ -54,14 +54,14 @@ public class BasicModel extends WWObjectImpl implements Model {
         this.setLayers(layers != null ? layers : new LayerList(/*empty list*/)); // an empty list is ok
     }
 
-    @NotNull
     static private Globe globeDefault() {
         return (Globe) WorldWind.createComponent(Configuration.getStringValue(AVKey.GLOBE_CLASS_NAME));
     }
 
-    public BasicModel(LayerList layers) {
-
+    @Deprecated public BasicModel(LayerList layers) {
+        this(globeDefault(), layers);
     }
+
     public BasicModel(Globe globe, LayerList layers) {
         this.setGlobe(globe);
         this.setLayers(layers != null ? layers : new LayerList(/*empty list*/)); // an empty list is ok

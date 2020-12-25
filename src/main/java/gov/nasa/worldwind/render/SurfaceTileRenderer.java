@@ -107,17 +107,17 @@ public abstract class SurfaceTileRenderer implements Disposable {
         Iterable<? extends SurfaceTile> tiles);
 
     public void renderTiles(DrawContext dc, Iterable<? extends SurfaceTile> tiles) {
-        if (tiles == null) {
-            String message = Logging.getMessage("nullValue.TileIterableIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalStateException(message);
-        }
+//        if (tiles == null) {
+//            String message = Logging.getMessage("nullValue.TileIterableIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalStateException(message);
+//        }
 
-        if (dc == null) {
-            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalStateException(message);
-        }
+//        if (dc == null) {
+//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalStateException(message);
+//        }
 
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         int alphaTextureUnit = GL.GL_TEXTURE1;

@@ -763,8 +763,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
             if (this.isUseTransparentTextures() || this.getOpacity() < 1) {
                 gl.glPushAttrib(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_POLYGON_BIT | GL2.GL_CURRENT_BIT);
                 this.setBlendingFunction(dc);
-            }
-            else {
+            } else {
                 gl.glPushAttrib(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_POLYGON_BIT);
             }
 

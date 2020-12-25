@@ -27,8 +27,9 @@ public interface Layer extends WWObject, Disposable, Restorable {
      * Controls whether the layer is enabled for rendering and selection.
      *
      * @param enabled <code>true</code> if the layer is enabled, else <code>false</code>.
+     * @return
      */
-    void setEnabled(boolean enabled);
+    Layer setEnabled(boolean enabled);
 
     /**
      * Returns the layer's name, as specified in the most recent call to {@link #setName}.

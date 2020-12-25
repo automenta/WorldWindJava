@@ -57,7 +57,10 @@ public class WorldWindOSM {
 //        });
         Surface layers = new Gridding(
             world.getLayers().stream().map(z ->
-                new CheckBox(z.name(), z::setEnabled).enabled(z.isEnabled())
+                new Gridding(
+                    new CheckBox(z.name(), z::setEnabled).on(z.isEnabled()),
+                    new FloatSlider(1, 0, 1).on(z::setOpacity)
+                )
             )
         );
 
@@ -167,13 +170,13 @@ public class WorldWindOSM {
         private final AdaptiveOSMLayer osm;
 
         public OSMModel() {
-
-            LayerList l = new LayerList();
+            super(new LayerList());
+            LayerList l = getLayers();
             l.add(new StarsLayer());
             l.add(new SkyGradientLayer());
 
             l.add(new OSMMapnikLayer());
-//            l.add(new BMNGWMSLayer());
+            l.add(new BMNGWMSLayer().setEnabled(false));
 
             osm = new AdaptiveOSMLayer();
             l.add(osm);

@@ -103,8 +103,9 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
         return !this.isMinimized();
     }
 
-    public void setEnabled(boolean enabled) {
+    @Override public Layer setEnabled(boolean enabled) {
         this.setMinimized(!enabled);
+        return this;
     }
 
     /**

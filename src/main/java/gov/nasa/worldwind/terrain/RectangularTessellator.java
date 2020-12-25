@@ -53,7 +53,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
     protected final int density = DEFAULT_DENSITY;
     protected Frustum currentFrustum;
     protected Sector currentCoverage; // union of all tiles selected during call to render()
-    protected boolean makeTileSkirts = true;
+    protected boolean makeTileSkirts = false;
     protected int currentLevel;
     protected int maxLevel = DEFAULT_MAX_LEVEL;
     protected Globe globe;
@@ -612,7 +612,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
                     elevation = exaggeratedMinElevation;
                 }
 
-                Vec4 p = globe.computePointFromPosition(latlon.getLatitude(), latlon.getLongitude(), elevation);
+                Vec4 p = globe.computePointFromPosition(latlon.latitude, latlon.longitude, elevation);
                 verts.put(iv++, (float) (p.x - refCenter.x));
                 verts.put(iv++, (float) (p.y - refCenter.y));
                 verts.put(iv++, (float) (p.z - refCenter.z));
@@ -675,11 +675,11 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
     }
 
     protected static void renderMultiTexture(DrawContext dc, RectTile tile, int numTextureUnits) {
-        if (dc == null) {
-            String msg = Logging.getMessage("nullValue.DrawContextIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (dc == null) {
+//            String msg = Logging.getMessage("nullValue.DrawContextIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         if (numTextureUnits < 1) {
             String msg = Logging.getMessage("generic.NumTextureUnitsLessThanOne");
@@ -719,11 +719,11 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
     }
 
     protected static long render(DrawContext dc, RectTile tile, int numTextureUnits) {
-        if (tile.ri == null) {
-            String msg = Logging.getMessage("nullValue.RenderInfoIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalStateException(msg);
-        }
+//        if (tile.ri == null) {
+//            String msg = Logging.getMessage("nullValue.RenderInfoIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalStateException(msg);
+//        }
 
         if (dc.getGLRuntimeCapabilities().isUseVertexBufferObject()) {
             if (!RectangularTessellator.renderVBO(dc, tile, numTextureUnits)) {
@@ -752,8 +752,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
             Object texCoords = dc.get(AVKey.TEXTURE_COORDINATES);
             if (texCoords instanceof DoubleBuffer) {
                 gl.glTexCoordPointer(2, GL.GL_FLOAT, 0, ((Buffer) texCoords).rewind());
-            }
-            else {
+            }else {
                 gl.glTexCoordPointer(2, GL.GL_FLOAT, 0, tile.ri.texCoords.rewind());
             }
         }
@@ -1774,8 +1773,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
         public void renderMultiTexture(DrawContext dc, int numTextureUnits, boolean beginRenderingCalled) {
             if (beginRenderingCalled) {
                 RectangularTessellator.renderMultiTexture(dc, this, numTextureUnits);
-            }
-            else {
+            } else {
                 this.beginRendering(dc, numTextureUnits);
                 RectangularTessellator.renderMultiTexture(dc, this, numTextureUnits);
                 this.endRendering(dc);

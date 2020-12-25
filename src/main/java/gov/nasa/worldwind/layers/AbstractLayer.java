@@ -132,10 +132,11 @@ public abstract class AbstractLayer extends WWObjectImpl implements Layer {
         return this.enabled;
     }
 
-    public void setEnabled(boolean enabled) {
+    @Override public Layer setEnabled(boolean enabled) {
         Boolean oldEnabled = this.enabled;
         this.enabled = enabled;
         this.propertyChange(new PropertyChangeEvent(this, "Enabled", oldEnabled, this.enabled));
+        return this;
     }
 
     public boolean isPickEnabled() {
