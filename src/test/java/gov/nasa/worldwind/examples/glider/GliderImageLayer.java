@@ -81,7 +81,7 @@ public class GliderImageLayer extends AbstractLayer {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return this.image != null ? this.image.getName() : "Unnamed Layer";
     }
 

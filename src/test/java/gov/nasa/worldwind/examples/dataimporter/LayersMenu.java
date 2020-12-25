@@ -57,7 +57,7 @@ public class LayersMenu extends JMenu {
         final WorldWindow wwd;
 
         public LayerAction(Layer layer, WorldWindow wwd, boolean selected) {
-            super(layer.getName());
+            super(layer.name());
             this.wwd = wwd;
             this.layer = layer;
             this.selected = selected;

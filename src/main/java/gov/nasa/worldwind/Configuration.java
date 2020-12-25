@@ -128,7 +128,7 @@ public class Configuration // Singleton
      * @param defaultValue the value to return if the key does not exist.
      * @return the value associated with the key, or the specified default value if the key does not exist.
      */
-    public static synchronized String getStringValue(String key, String defaultValue) {
+    public static String getStringValue(String key, String defaultValue) {
         String v = getStringValue(key);
         return v != null ? v : defaultValue;
     }
@@ -139,7 +139,7 @@ public class Configuration // Singleton
      * @param key the key for the desired value.
      * @return the value associated with the key, or null if the key does not exist.
      */
-    public static synchronized String getStringValue(String key) {
+    public static String getStringValue(String key) {
         Object o = ourInstance.properties.getProperty(key);
         return o != null ? o.toString() : null;
     }
@@ -152,7 +152,7 @@ public class Configuration // Singleton
      * @return the value associated with the key, or the specified default value if the key does not exist or is not an
      * Integer or string representation of an Integer.
      */
-    public static synchronized Integer getIntegerValue(String key, Integer defaultValue) {
+    public static Integer getIntegerValue(String key, Integer defaultValue) {
         Integer v = getIntegerValue(key);
         return v != null ? v : defaultValue;
     }
@@ -164,7 +164,7 @@ public class Configuration // Singleton
      * @return the value associated with the key, or null if the key does not exist or is not an Integer or string
      * representation of an Integer.
      */
-    public static synchronized Integer getIntegerValue(String key) {
+    public static Integer getIntegerValue(String key) {
         String v = getStringValue(key);
         if (v == null)
             return null;
@@ -186,7 +186,7 @@ public class Configuration // Singleton
      * @return the value associated with the key, or the specified default value if the key does not exist or is not a
      * Long or string representation of a Long.
      */
-    public static synchronized Long getLongValue(String key, Long defaultValue) {
+    public static Long getLongValue(String key, Long defaultValue) {
         Long v = getLongValue(key);
         return v != null ? v : defaultValue;
     }
@@ -198,7 +198,7 @@ public class Configuration // Singleton
      * @return the value associated with the key, or null if the key does not exist or is not a Long or string
      * representation of a Long.
      */
-    public static synchronized Long getLongValue(String key) {
+    public static Long getLongValue(String key) {
         String v = getStringValue(key);
         if (v == null)
             return null;
@@ -220,7 +220,7 @@ public class Configuration // Singleton
      * @return the value associated with the key, or the specified default value if the key does not exist or is not an
      * Double or string representation of an Double.
      */
-    public static synchronized Double getDoubleValue(String key, Double defaultValue) {
+    public static Double getDoubleValue(String key, Double defaultValue) {
         Double v = getDoubleValue(key);
         return v != null ? v : defaultValue;
     }
@@ -232,7 +232,7 @@ public class Configuration // Singleton
      * @return the value associated with the key, or null if the key does not exist or is not an Double or string
      * representation of an Double.
      */
-    public static synchronized Double getDoubleValue(String key) {
+    public static Double getDoubleValue(String key) {
         String v = getStringValue(key);
         if (v == null)
             return null;
@@ -257,7 +257,7 @@ public class Configuration // Singleton
      * @return the value associated with the key, or the specified default value if the key does not exist or is not a
      * Boolean or string representation of an Boolean.
      */
-    public static synchronized Boolean getBooleanValue(String key, Boolean defaultValue) {
+    public static Boolean getBooleanValue(String key, Boolean defaultValue) {
         Boolean v = getBooleanValue(key);
         return v != null ? v : defaultValue;
     }
@@ -272,21 +272,25 @@ public class Configuration // Singleton
      * @return the value associated with the key, or null if the key does not exist or is not a Boolean or string
      * representation of an Boolean.
      */
-    public static synchronized Boolean getBooleanValue(String key) {
+    public static Boolean getBooleanValue(String key) {
         String v = getStringValue(key);
         if (v == null)
             return null;
 
-        if (!v.trim().isEmpty() && v.trim().toUpperCase().charAt(0) == 'T' || v.trim().equals("1")) {
-            return true;
+        final String V = v.trim();
+        final boolean vEmpty = V.isEmpty();
+        if (!vEmpty) {
+            final char vFirstchar = V.toUpperCase().charAt(0);
+            if (vFirstchar == 'T' || V.equals("1")) {
+                return true;
+            } else if (vFirstchar == 'F' || V.equals("0")) {
+                return false;
+            }
         }
-        else if (!v.trim().isEmpty() && v.trim().toUpperCase().charAt(0) == 'F' || v.trim().equals("0")) {
-            return false;
-        }
-        else {
-            Logging.logger().log(Level.SEVERE, "Configuration.ConversionError", v);
-            return null;
-        }
+
+        Logging.logger().log(Level.SEVERE, "Configuration.ConversionError", v);
+        return null;
+
     }
 
     /**
@@ -295,7 +299,7 @@ public class Configuration // Singleton
      * @param key the key of interest.
      * @return true if the key exists, otherwise false.
      */
-    public static synchronized boolean hasKey(String key) {
+    public static boolean hasKey(String key) {
         return ourInstance.properties.contains(key);
     }
 
@@ -304,7 +308,7 @@ public class Configuration // Singleton
      *
      * @param key the key of interest.
      */
-    public static synchronized void removeKey(String key) {
+    public static void removeKey(String key) {
         ourInstance.properties.remove(key);
     }
 
@@ -315,19 +319,19 @@ public class Configuration // Singleton
      * @param key   the key to set.
      * @param value the value to associate with the key.
      */
-    public static synchronized void setValue(String key, Object value) {
+    public static void setValue(String key, Object value) {
         ourInstance.properties.put(key, value.toString());
     }
 
-    /**
-     * Returns the path to the application's current working directory.
-     *
-     * @return the absolute path to the application's current working directory.
-     */
-    public static String getCurrentWorkingDirectory() {
-        String dir = System.getProperty("user.dir");
-        return (dir != null) ? dir : ".";
-    }
+//    /**
+//     * Returns the path to the application's current working directory.
+//     *
+//     * @return the absolute path to the application's current working directory.
+//     */
+//    public static String getCurrentWorkingDirectory() {
+//        String dir = System.getProperty("user.dir");
+//        return (dir != null) ? dir : ".";
+//    }
 
     /**
      * Returns the path to the application user's home directory.

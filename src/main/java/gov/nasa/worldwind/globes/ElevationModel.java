@@ -32,7 +32,7 @@ public interface ElevationModel extends WWObject, Restorable, Disposable {
      * @return the elevation model's name.
      * @see #setName(String)
      */
-    String getName();
+    String name();
 
     /**
      * Set the elevation model's name. The name is a convenience attribute typically used to identify the elevation

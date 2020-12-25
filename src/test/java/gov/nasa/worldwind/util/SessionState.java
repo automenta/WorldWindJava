@@ -201,7 +201,7 @@ public class SessionState {
                 if (layer == null)
                     continue;
 
-                Layer existingLayer = SessionState.findLayer(layers, layer.getName());
+                Layer existingLayer = SessionState.findLayer(layers, layer.name());
                 if (existingLayer != null)
                     layers.remove(existingLayer);
 
@@ -286,7 +286,7 @@ public class SessionState {
             return null;
 
         for (Layer layer : layers) {
-            if (layer.getName() != null && layer.getName().equals(layerName))
+            if (layer.name() != null && layer.name().equals(layerName))
                 return layer;
         }
 

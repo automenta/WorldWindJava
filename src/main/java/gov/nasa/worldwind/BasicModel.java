@@ -12,6 +12,7 @@ import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.util.Logging;
 import gov.nasa.worldwind.video.LayerList;
+import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Element;
 
 import java.util.logging.Level;
@@ -31,12 +32,8 @@ public class BasicModel extends WWObjectImpl implements Model {
     private boolean showWireframeExterior = false;
     private boolean showTessellationBoundingVolumes = false;
 
-    public BasicModel() {
-        String globeName = Configuration.getStringValue(AVKey.GLOBE_CLASS_NAME);
-        if (globeName == null)
-            return;
-
-        this.setGlobe((Globe) WorldWind.createComponent(globeName));
+    @Deprecated public BasicModel() {
+        this.setGlobe(globeDefault());
 
         // Look for the old-style, property-based layer configuration first. If not found then use the new-style
         // configuration.
@@ -57,6 +54,14 @@ public class BasicModel extends WWObjectImpl implements Model {
         this.setLayers(layers != null ? layers : new LayerList(/*empty list*/)); // an empty list is ok
     }
 
+    @NotNull
+    static private Globe globeDefault() {
+        return (Globe) WorldWind.createComponent(Configuration.getStringValue(AVKey.GLOBE_CLASS_NAME));
+    }
+
+    public BasicModel(LayerList layers) {
+
+    }
     public BasicModel(Globe globe, LayerList layers) {
         this.setGlobe(globe);
         this.setLayers(layers != null ? layers : new LayerList(/*empty list*/)); // an empty list is ok
@@ -209,29 +214,7 @@ public class BasicModel extends WWObjectImpl implements Model {
         this.showTessellationBoundingVolumes = showTessellationBoundingVolumes;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public Extent getExtent() {
-        // See if the layers have it.
-        LayerList layers = BasicModel.this.getLayers();
-        if (layers != null) {
-            for (Object layer1 : layers) {
-                Layer layer = (Layer) layer1;
-                Extent e = (Extent) layer.get(AVKey.EXTENT);
-                if (e != null)
-                    return e;
-            }
-        }
 
-        // See if the Globe has it.
-        Globe globe = this.getGlobe();
-        if (globe != null) {
-            return globe.getExtent();
-        }
-
-        return null;
-    }
 
     /**
      * {@inheritDoc}

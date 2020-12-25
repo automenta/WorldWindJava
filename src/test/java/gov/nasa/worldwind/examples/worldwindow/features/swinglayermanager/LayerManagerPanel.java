@@ -338,7 +338,7 @@ public class LayerManagerPanel extends AbstractFeaturePanel implements LayerMana
             ? this.getModel().getRootNode() : this.getModel().getLastNode(pathToParent);
 
         // Remove from the group any existing layer having the same name.
-        LayerTreeNode existingNode = this.getModel().findByTitle(layerNode.getLayer().getName(), parentNode);
+        LayerTreeNode existingNode = this.getModel().findByTitle(layerNode.getLayer().name(), parentNode);
         if (existingNode != null)
             this.removeLayer(existingNode.getLayer());
 

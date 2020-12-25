@@ -20,7 +20,6 @@ import java.awt.image.*;
 import java.io.*;
 import java.net.*;
 import java.nio.ByteBuffer;
-import java.util.Objects;
 import java.util.logging.Level;
 
 import static java.lang.Math.toRadians;
@@ -327,7 +326,7 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
                 if (retriever instanceof HTTPRetriever) {
                     HTTPRetriever htr = (HTTPRetriever) retriever;
                     final int code = htr.getResponseCode();
-                    if (code == HttpURLConnection.HTTP_NO_CONTENT || code!=HttpURLConnection.HTTP_OK) {
+                    if (code != HttpURLConnection.HTTP_OK) {
                         // Mark tile as missing to avoid excessive attempts
                         // Also mark tile as missing, but for an unknown reason.
                         this.layer.getLevels().miss(this.tile);

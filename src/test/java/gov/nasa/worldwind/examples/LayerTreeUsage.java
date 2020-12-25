@@ -25,9 +25,6 @@ import java.awt.*;
  * @version $Id: LayerTreeUsage.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 public class LayerTreeUsage extends ApplicationTemplate {
-    public static void main0(String[] args) {
-        ApplicationTemplate.start("WorldWind Layer Tree", AppFrame.class);
-    }
     public static void main(String[] args) {
         final BasicModel m = new BasicModel();
 
@@ -55,35 +52,4 @@ public class LayerTreeUsage extends ApplicationTemplate {
         });
     }
 
-    public static class AppFrame extends ApplicationTemplate.AppFrame {
-
-        public AppFrame() {
-            super(true, false, false); // Don't include the layer panel; we're using the on-screen layer tree.
-
-            final WorldWindow wwd = this.wwd();
-
-            var layerTree = new LayerTree();
-            layerTree.getModel().refresh(wwd.model().getLayers());
-
-            // Set up a layer to display the on-screen layer tree in the WorldWindow.
-            var ui = new RenderableLayer();
-            ui.add(layerTree);
-            wwd.model().getLayers().add(ui);
-
-            // Mark the layer as hidden to prevent it being included in the layer tree's model. Including the layer in
-            // the tree would enable the user to hide the layer tree display with no way of bringing it back.
-            ui.set(AVKey.HIDDEN, true);
-
-
-            // Add a controller to handle input events on the layer tree.
-            var controller = new HotSpotController(wwd);
-
-            // Size the WorldWindow to take up the space typically used by the layer panel. This illustrates the
-            // screen space gained by using the on-screen layer tree.
-            Dimension size = new Dimension(1000, 600);
-            this.setPreferredSize(size);
-            this.pack();
-            WWUtil.alignComponent(null, this, AVKey.CENTER);
-        }
-    }
 }

@@ -483,7 +483,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
         rs.addStateValueAsDouble("rpf.Opacity", this.getOpacity());
         rs.addStateValueAsDouble("rpf.MinActiveAltitude", this.getMinActiveAltitude());
         rs.addStateValueAsDouble("rpf.MaxActiveAltitude", this.getMaxActiveAltitude());
-        rs.addStateValueAsString("rpf.LayerName", this.getName());
+        rs.addStateValueAsString("rpf.LayerName", this.name());
         rs.addStateValueAsBoolean("rpf.UseMipMaps", this.isUseMipMaps());
         rs.addStateValueAsBoolean("rpf.UseTransparentTextures", this.isUseTransparentTextures());
 

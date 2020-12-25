@@ -68,7 +68,7 @@ public abstract class LayerTree implements Iterable<Layer> {
 
     public Object getChild(String name) {
         for (Layer layer : this.layers) {
-            if (layer.getName().equals(name))
+            if (layer.name().equals(name))
                 return layer;
         }
 
@@ -170,7 +170,7 @@ public abstract class LayerTree implements Iterable<Layer> {
         protected void buildPath(LayerTree tree, LayerPath ancestorPath) {
             for (Layer layer : tree.getLayers()) {
                 LayerPath path = new LayerPath(ancestorPath);
-                path.add(layer.getName());
+                path.add(layer.name());
                 this.paths.add(path);
             }
 

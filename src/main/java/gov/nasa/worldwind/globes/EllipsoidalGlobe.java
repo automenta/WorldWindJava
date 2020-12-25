@@ -727,14 +727,12 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
                 double rad1 = Math.sqrt(evoluteBorderTest);
                 double rad2 = Math.sqrt(e4 * p * q);
 
+                double rad3 = Math.cbrt((rad1 + rad2) * (rad1 + rad2));
                 // 10*e2 is my arbitrary decision of what Vermeille means by "near... the cusps of the evolute".
                 if (evoluteBorderTest > 10 * e2) {
-                    double rad3 = Math.cbrt((rad1 + rad2) * (rad1 + rad2));
                     u = r + 0.5 * rad3 + 2 * r * r / rad3;
-                }
-                else {
-                    u = r + 0.5 * Math.cbrt((rad1 + rad2) * (rad1 + rad2)) + 0.5 * Math.cbrt(
-                        (rad1 - rad2) * (rad1 - rad2));
+                } else {
+                    u = r + 0.5 * rad3 + 0.5 * Math.cbrt((rad1 - rad2) * (rad1 - rad2));
                 }
             }
             else {
@@ -749,8 +747,7 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
 
             double v = Math.sqrt(u * u + e4 * q);
             double w = e2 * (u + v - q) / (2 * v);
-            double k = (u + v) /
-                (Math.sqrt(w * w + u + v) + w);
+            double k = (u + v) / (Math.sqrt(w * w + u + v) + w);
             double D = k * sqrtXXpYY / (k + e2);
             double sqrtDDpZZ = Math.sqrt(D * D + Z * Z);
 
@@ -777,8 +774,7 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
         else if (sqrtXXpYY + Y < (s2 + 1) * X) {
             // case 2 - -225deg < lambda < 45deg
             lambda = -Math.PI * 0.5 + 2 * Math.atan2(X, sqrtXXpYY - Y);
-        }
-        else {
+        } else {
             // if (sqrtXXpYY-Y<(s2=1)*X) {  // is the test, if needed, but it's not
             // case 3: - -45deg < lambda < 225deg
             lambda = Math.PI * 0.5 - 2 * Math.atan2(X, sqrtXXpYY + Y);
@@ -804,9 +800,9 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
         if (point == null)
             return false;
 
-        return sqr(point.x()) / sqr(this.equatorialRadius + elevation)
-            + sqr(point.y()) / sqr(this.polarRadius + elevation)
-            + sqr(point.z()) / sqr(this.equatorialRadius + elevation)
+        return sqr(point.x) / sqr(this.equatorialRadius + elevation)
+            + sqr(point.y) / sqr(this.polarRadius + elevation)
+            + sqr(point.z) / sqr(this.equatorialRadius + elevation)
             - 1 > 0;
     }
 

@@ -36,7 +36,7 @@ public class VPFBasicFeatureClassFactory implements VPFFeatureClassFactory {
         }
 
         try {
-            return this.doCreateFromSchema(coverage, schema);
+            return VPFBasicFeatureClassFactory.doCreateFromSchema(coverage, schema);
         }
         catch (Exception e) {
             String message = Logging.getMessage("generic.ExceptionWhileReading",
@@ -45,7 +45,7 @@ public class VPFBasicFeatureClassFactory implements VPFFeatureClassFactory {
         }
     }
 
-    protected VPFFeatureClass doCreateFromSchema(VPFCoverage coverage, VPFFeatureClassSchema schema) {
+    protected static VPFFeatureClass doCreateFromSchema(VPFCoverage coverage, VPFFeatureClassSchema schema) {
         // DIGEST Part 2, Annex C.2.2.2.2.3.a: Simple feature classes.
         // A simple feature class consists of a (logically) single primitive table and a single simple feature table.
         // There are four subtypes of the simple feature class in VRF:

@@ -42,7 +42,7 @@ public class LayerTreeNode extends BasicTreeNode {
      * @throws IllegalArgumentException if the <code>layer</code> is <code>null</code>.
      */
     public LayerTreeNode(Layer layer) {
-        super(layer != null ? layer.getName() : "");
+        super(layer != null ? layer.name() : "");
 
         if (layer == null) {
             String message = Logging.getMessage("nullValue.LayerIsNull");

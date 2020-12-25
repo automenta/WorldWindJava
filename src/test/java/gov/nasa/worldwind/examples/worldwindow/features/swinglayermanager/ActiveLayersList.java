@@ -83,7 +83,7 @@ public class ActiveLayersList extends JList {
                 && layer.get(Constants.ACTIVE_LAYER) == null)
                 return this.zeroSizeComponent; // Do not display internal layers
 
-            renderer.layerTitle.setText(layer.getName());
+            renderer.layerTitle.setText(layer.name());
             renderer.checkBox.setSelected(layer.isEnabled());
             renderer.layerTitle.setForeground(selected ? selectionForeground : textForeground);
             renderer.layerTitle.setBackground(selected ? selectionBackground : textBackground);

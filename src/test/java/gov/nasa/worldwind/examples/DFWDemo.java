@@ -83,7 +83,7 @@ public class DFWDemo {
         int targetPosition = 0;
         LayerList layers = wwd.model().getLayers();
         for (Layer l : layers) {
-            if (l.getName().contains(targetName)) {
+            if (l.name().contains(targetName)) {
                 targetPosition = layers.indexOf(l);
                 break;
             }

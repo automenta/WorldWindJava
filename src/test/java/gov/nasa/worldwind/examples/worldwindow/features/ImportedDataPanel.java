@@ -174,7 +174,7 @@ public class ImportedDataPanel extends ShadedPanel {
 
     protected void addLayer(final Layer layer, final LayerPath pathToParent) {
         SwingUtilities.invokeLater(() -> {
-            LayerPath path = new LayerPath(pathToParent, layer.getName());
+            LayerPath path = new LayerPath(pathToParent, layer.name());
             doAddLayer(layer, path);
         });
     }

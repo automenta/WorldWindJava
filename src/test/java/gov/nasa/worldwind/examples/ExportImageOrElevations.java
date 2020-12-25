@@ -174,7 +174,7 @@ public class ExportImageOrElevations extends ApplicationTemplate {
         public void enableNAIPLayer() {
             LayerList list = this.wwd().model().getLayers();
             for (Layer layer : list) {
-                if (layer.getName().contains("NAIP")) {
+                if (layer.name().contains("NAIP")) {
                     layer.setEnabled(true);
                     break;
                 }

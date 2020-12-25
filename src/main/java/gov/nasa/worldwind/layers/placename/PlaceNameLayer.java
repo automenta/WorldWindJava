@@ -581,7 +581,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
             return downloader.getEstimatedMissingDataSize();
         }
         catch (Exception e) {
-            String message = Logging.getMessage("generic.ExceptionDuringDataSizeEstimate", this.getName());
+            String message = Logging.getMessage("generic.ExceptionDuringDataSizeEstimate", this.name());
             Logging.logger().severe(message);
             throw new RuntimeException(message);
         }

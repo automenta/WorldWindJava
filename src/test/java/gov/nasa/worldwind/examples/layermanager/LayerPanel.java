@@ -134,7 +134,7 @@ public class LayerPanel extends JPanel {
         protected final boolean selected;
 
         public SelectLayerAction(WorldWindow wwd, Layer layer, boolean selected) {
-            super(layer.getName());
+            super(layer.name());
 
             this.wwd = wwd;
             this.layer = layer;

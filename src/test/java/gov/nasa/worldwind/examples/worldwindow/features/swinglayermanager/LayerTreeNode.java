@@ -68,7 +68,7 @@ public class LayerTreeNode extends DefaultMutableTreeNode implements LayerNode {
     }
 
     public String getTitle() {
-        return this.title != null ? this.title : this.layer != null ? this.layer.getName() : Long.toString(this.id);
+        return this.title != null ? this.title : this.layer != null ? this.layer.name() : Long.toString(this.id);
     }
 
     public void setTitle(String title) {

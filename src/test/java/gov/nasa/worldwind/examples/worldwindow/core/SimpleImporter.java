@@ -43,7 +43,7 @@ public class SimpleImporter {
     protected void addLayer(final Layer layer, final LayerPath pathToParent) {
         SwingUtilities.invokeLater(() -> {
             LayerPath path = new LayerPath(pathToParent != null ? pathToParent : getDefaultPathToParent(),
-                layer.getName());
+                layer.name());
             doAddLayer(layer, path);
         });
     }

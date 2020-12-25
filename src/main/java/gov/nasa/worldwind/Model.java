@@ -6,8 +6,10 @@
 
 package gov.nasa.worldwind;
 
+import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Extent;
 import gov.nasa.worldwind.globes.Globe;
+import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.video.LayerList;
 
 /**
@@ -24,7 +26,23 @@ public interface Model extends WWObject {
      *
      * @return the model's bounding sphere in Cartesian coordinates, or null if the extent cannot be determined.
      */
-    Extent getExtent();
+    default Extent getExtent() {
+        // See if the layers have it.
+        //TODO union(extents...)
+        LayerList layers = getLayers();
+        if (layers != null) {
+            for (Object layer1 : layers) {
+                Layer layer = (Layer) layer1;
+                Extent e = (Extent) layer.get(AVKey.EXTENT);
+                if (e != null)
+                    return e;
+            }
+        }
+
+        // See if the Globe has it.
+        Globe globe = this.getGlobe();
+        return globe != null ? globe.getExtent() : null;
+    }
 
     /**
      * Indicates the globe in this model.

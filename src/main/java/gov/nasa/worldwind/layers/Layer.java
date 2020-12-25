@@ -35,7 +35,7 @@ public interface Layer extends WWObject, Disposable, Restorable {
      *
      * @return the layer's name.
      */
-    String getName();
+    String name();
 
     /**
      * Set the layer's name. The name is a convenience attribute typically used to identify the layer in user

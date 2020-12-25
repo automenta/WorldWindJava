@@ -133,7 +133,7 @@ public class ElevationModelPanel extends JPanel {
         protected final boolean selected;
 
         public SelectModelAction(WorldWindow wwd, ElevationModel elevationModel, boolean selected) {
-            super(elevationModel.getName());
+            super(elevationModel.name());
 
             this.wwd = wwd;
             this.elevationModel = elevationModel;

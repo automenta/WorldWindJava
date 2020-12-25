@@ -90,7 +90,7 @@ public class WWPanelImpl extends AbstractFeature implements WWPanel {
         int targetPosition = 0;
         LayerList layers = this.wwd.model().getLayers();
         for (Layer l : layers) {
-            if (l.getName().contains(targetLayerName)) {
+            if (l.name().contains(targetLayerName)) {
                 targetPosition = layers.indexOf(l);
                 break;
             }
@@ -111,7 +111,7 @@ public class WWPanelImpl extends AbstractFeature implements WWPanel {
         int targetPosition = 0;
         LayerList layers = this.wwd.model().getLayers();
         for (Layer l : layers) {
-            if (l.getName().contains(targetLayerName))
+            if (l.name().contains(targetLayerName))
                 targetPosition = layers.indexOf(l);
         }
         layers.add(targetPosition + 1, layer);

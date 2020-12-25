@@ -62,7 +62,7 @@ public class LayerMenu extends JMenu {
         private final LayerMenu menu;
 
         public LayerVisibilityAction(WorldWindow wwd, Layer layer, LayerMenu menu) {
-            super(layer.getName());
+            super(layer.name());
             this.layer = layer;
             this.wwd = wwd;
             this.menu = menu;

@@ -17,7 +17,7 @@ import spacegraph.space2d.Surface;
 import spacegraph.space2d.container.Bordering;
 import spacegraph.space2d.container.grid.Gridding;
 import spacegraph.space2d.widget.Widget;
-import spacegraph.space2d.widget.button.PushButton;
+import spacegraph.space2d.widget.button.*;
 import spacegraph.space2d.widget.slider.FloatSlider;
 import spacegraph.space2d.widget.textedit.TextEdit;
 import spacegraph.video.*;
@@ -52,23 +52,29 @@ public class WorldWindOSM {
         w.setWindow(j);
 
         final TextEdit out = new TextEdit(64,24);
-        final TextEdit in = new TextEdit(24).onKeyPress((k) -> {
+//        final TextEdit in = new TextEdit(24).onKeyPress((k) -> {
+//
+//        });
+        Surface layers = new Gridding(
+            world.getLayers().stream().map(z ->
+                new CheckBox(z.name(), z::setEnabled).enabled(z.isEnabled())
+            )
+        );
 
-        });
         final PushButton scan = new PushButton("Scan", () -> {
         });
         Surface param = new Gridding(
+            new TextEdit(16),
             new FloatSlider("A", 0.5f, 0,1),
             new FloatSlider("B", 0.1f, 0,1),
             new FloatSlider("C", 0.3f, 0,1),
-            new FloatSlider("D", 0.8f, 0,1),
-            new FloatSlider("E", 0.1f, 0,1)
+            new FloatSlider("D", 0.8f, 0,1)
         );
 
         new OrthoSurfaceGraph(
             new Bordering()
                 .north(param)
-                .west(new Gridding(new Widget(in), new Widget(out), scan))
+                .west(new Gridding(layers, new Widget(out), scan))
             , j);
 
         j.runLater(() -> {

@@ -639,17 +639,18 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
         if (minHeight == maxHeight)
             maxHeight = minHeight + 1; // ensure the top and bottom of the cylinder won't be coincident
 
-        List<Vec4> points = new ArrayList<>();
+        List<Vec4> points = new ArrayList<>(8 + (sector.lonDelta > 180 ? 4 : 0));
         for (LatLon ll : sector) {
             points.add(globe.computePointFromPosition(ll, minHeight));
             points.add(globe.computePointFromPosition(ll, maxHeight));
         }
-        points.add(globe.computePointFromPosition(sector.getCentroid(), maxHeight));
+        final LatLon sc = sector.getCentroid();
+        points.add(globe.computePointFromPosition(sc, maxHeight));
 
         if (sector.lonDelta > 180) {
             // Need to compute more points to ensure the box encompasses the full sector.
-            Angle cLon = sector.getCentroid().getLongitude();
-            Angle cLat = sector.getCentroid().getLatitude();
+            Angle cLon = sc.getLongitude();
+            Angle cLat = sc.getLatitude();
 
             // centroid latitude, longitude midway between min longitude and centroid longitude
             Angle lon = Angle.midAngle(sector.lonMin(), cLon);
@@ -722,11 +723,11 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
                 continue;
 
             for (LatLon p : s) {
-                final double lat = p.getLatitude().degrees;
+                final double lat = p.latitude;
                 if (lat < minLat) minLat = lat;
                 if (lat > maxLat) maxLat = lat;
 
-                final double lon = p.getLongitude().degrees;
+                final double lon = p.longitude;
                 if (lon < minLon) minLon = lon;
                 if (lon > maxLon) maxLon = lon;
             }
@@ -833,9 +834,10 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
      * @return The latitude and longitude of the sector's angular center
      */
     public LatLon getCentroid() {
-        Angle la = Angle.fromDegrees(0.5 * (this.latMax + this.latMin));
-        Angle lo = Angle.fromDegrees(0.5 * (this.lonMax + this.lonMin));
-        return new LatLon(la, lo);
+        return new LatLon(
+            Angle.fromDegrees(0.5 * (this.latMax + this.latMin)),
+            Angle.fromDegrees(0.5 * (this.lonMax + this.lonMin))
+        );
     }
 
     /**
@@ -865,15 +867,19 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
     public Vec4[] computeCornerPoints(Globe g, double exaggeration) {
         Vec4[] corners = new Vec4[4];
 
-        Angle minLat = this.latMin();
-        Angle maxLat = this.latMax();
-        Angle minLon = this.lonMin();
-        Angle maxLon = this.lonMax();
+        double minLat = this.latMin;
+        double maxLat = this.latMax;
+        double minLon = this.lonMin;
+        double maxLon = this.lonMax;
 
-        corners[0] = g.computePointFromPosition(minLat, minLon, exaggeration * g.getElevation(minLat, minLon));
-        corners[1] = g.computePointFromPosition(minLat, maxLon, exaggeration * g.getElevation(minLat, maxLon));
-        corners[2] = g.computePointFromPosition(maxLat, maxLon, exaggeration * g.getElevation(maxLat, maxLon));
-        corners[3] = g.computePointFromPosition(maxLat, minLon, exaggeration * g.getElevation(maxLat, minLon));
+        final Angle latMin = latMin();
+        final Angle lonMin = lonMin();
+        final Angle lonMax = lonMax();
+        final Angle latMax = latMax();
+        corners[0] = g.computePointFromPosition(minLat, minLon, exaggeration * g.getElevation(latMin, lonMin));
+        corners[1] = g.computePointFromPosition(minLat, maxLon, exaggeration * g.getElevation(latMin, lonMax));
+        corners[2] = g.computePointFromPosition(maxLat, maxLon, exaggeration * g.getElevation(latMax, lonMax));
+        corners[3] = g.computePointFromPosition(maxLat, minLon, exaggeration * g.getElevation(latMax, lonMin));
 
         return corners;
     }

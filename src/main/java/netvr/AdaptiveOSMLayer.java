@@ -1,6 +1,6 @@
 package netvr;
 
-import com.carrotsearch.hppc.*;
+import com.carrotsearch.hppc.LongArrayList;
 import com.graphhopper.reader.*;
 import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.geom.*;
@@ -9,6 +9,7 @@ import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.measure.AreaMeasurer;
 import jcog.Util;
+import org.eclipse.collections.impl.map.mutable.primitive.LongObjectHashMap;
 
 import java.io.IOException;
 import java.util.*;
@@ -30,7 +31,9 @@ public class AdaptiveOSMLayer extends RenderableLayer {
 
     private final LongObjectHashMap<ReaderNode> nodes = new LongObjectHashMap<>();
     private final LongObjectHashMap<ReaderRelation> relations = new LongObjectHashMap<>();
-    private final LongObjectHashMap<ReaderWay> ways = new LongObjectHashMap<>();
+    public final LongObjectHashMap<ReaderWay> ways = new LongObjectHashMap<>();
+
+    public final LongObjectHashMap<Map<String,String>> meta = new LongObjectHashMap<>();
 
     public final AdaptiveOSMLayer focus(LatLon at, float radiusDegrees) {
         return focus(new Sector(
@@ -112,10 +115,11 @@ public class AdaptiveOSMLayer extends RenderableLayer {
 
         //TODO use VarHandle to access private field 'properties'
         boolean landUse = false;
-        Map<String, String> properties = new HashMap();
+        Map<String, String> m = new HashMap();
+        meta.put(z.getId(), m);
         for (String k : z.getKeysWithPrefix("")) {
             if (!keysExcl.contains(k))
-                properties.put(k, z.getTag(k));
+                m.put(k, z.getTag(k));
             if (!landUse && k.equals("landuse"))
                 landUse = true;
         }
@@ -139,12 +143,12 @@ public class AdaptiveOSMLayer extends RenderableLayer {
 
         Renderable p;
         if (closed)
-            p = readArea(z, properties, latlon);
+            p = readArea(z, m, latlon);
         else
-            p = readPath(z, properties, latlon);
+            p = readPath(z, m, latlon);
 
         if (p!=null) {
-            ((AVList)p).set(DESCRIPTION, properties);
+            ((AVList)p).set(DESCRIPTION, m);
             add(p);
         }
     }

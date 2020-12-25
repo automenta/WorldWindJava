@@ -133,11 +133,11 @@ public class BasicElevationModelBulkDownloader extends BulkRetrievalThread {
             this.progress.setTotalSize(this.progress.getCurrentSize());
         }
         catch (InterruptedException e) {
-            String message = Logging.getMessage("generic.BulkRetrievalInterrupted", elevationModel.getName());
+            String message = Logging.getMessage("generic.BulkRetrievalInterrupted", elevationModel.name());
             Logging.logger().log(java.util.logging.Level.WARNING, message, e);
         }
         catch (Exception e) {
-            String message = Logging.getMessage("generic.ExceptionDuringBulkRetrieval", elevationModel.getName());
+            String message = Logging.getMessage("generic.ExceptionDuringBulkRetrieval", elevationModel.name());
             Logging.logger().severe(message);
             throw new RuntimeException(message);
         }

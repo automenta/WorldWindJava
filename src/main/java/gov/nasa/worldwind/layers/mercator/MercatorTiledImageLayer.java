@@ -74,7 +74,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
         this.createTopLevelTiles();
 
         this.setPickEnabled(false); // textures are assumed to be terrain unless specifically indicated otherwise.
-        this.tileCountName = this.getName() + " Tiles";
+        this.tileCountName = this.name() + " Tiles";
     }
 
     abstract protected void requestTexture(DrawContext dc, MercatorTextureTile tile);
@@ -84,7 +84,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
     @Override
     public void setName(String name) {
         super.setName(name);
-        this.tileCountName = this.getName() + " Tiles";
+        this.tileCountName = this.name() + " Tiles";
     }
 
     public boolean isUseTransparentTextures() {

@@ -305,7 +305,7 @@ public class BulkDownloadPanel extends JPanel {
 
         protected void updateStatus() {
             // Update description
-            String text = thread.getRetrievable().getName();
+            String text = thread.getRetrievable().name();
             text = text.length() > 30 ? text.substring(0, 27) + "..." : text;
             text += " (" + BulkDownloadPanel.makeSizeDescription(this.progress.getCurrentSize())
                 + " / " + BulkDownloadPanel.makeSizeDescription(this.progress.getTotalSize())
@@ -355,7 +355,7 @@ public class BulkDownloadPanel extends JPanel {
             // Description label
             JPanel descriptionPanel = new JPanel(new GridLayout(0, 1, 0, 0));
             descriptionPanel.setBorder(BorderFactory.createEmptyBorder(border, border, border, border));
-            String text = thread.getRetrievable().getName();
+            String text = thread.getRetrievable().name();
             text = text.length() > 40 ? text.substring(0, 37) + "..." : text;
             descriptionLabel = new JLabel(text);
             descriptionPanel.add(descriptionLabel);
@@ -405,7 +405,7 @@ public class BulkDownloadPanel extends JPanel {
             this.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
 
             // Check + name
-            this.selectCheckBox = new JCheckBox(this.retrievable.getName());
+            this.selectCheckBox = new JCheckBox(this.retrievable.name());
             this.selectCheckBox.addActionListener(e -> {
                 if (((AbstractButton) e.getSource()).isSelected() && sector != null)
                     updateDescription(sector);
@@ -447,7 +447,7 @@ public class BulkDownloadPanel extends JPanel {
         }
 
         public String toString() {
-            return this.retrievable.getName();
+            return this.retrievable.name();
         }
     }
 }

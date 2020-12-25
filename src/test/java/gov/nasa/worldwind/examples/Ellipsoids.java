@@ -175,7 +175,7 @@ public class Ellipsoids extends ApplicationTemplate {
 
         protected RenderableLayer getLayer() {
             for (Layer layer : wwd().model().getLayers()) {
-                if (layer.getName().contains("Renderable")) {
+                if (layer.name().contains("Renderable")) {
                     return (RenderableLayer) layer;
                 }
             }

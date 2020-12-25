@@ -75,10 +75,8 @@ public class TextureTile extends Tile implements SurfaceTile {
 
     public List<? extends LatLon> getCorners() {
         List<LatLon> list = new ArrayList<>(4);
-        for (LatLon ll : sector) {
+        for (LatLon ll : sector)
             list.add(ll);
-        }
-
         return list;
     }
 
@@ -199,24 +197,18 @@ public class TextureTile extends Tile implements SurfaceTile {
 
         key = this.createSubTileKey(nextLevel, 2 * row, 2 * col + 1);
         subTile = this.getTileFromMemoryCache(key);
-        if (subTile != null)
-            subTiles[1] = subTile;
-        else
-            subTiles[1] = this.createSubTile(new Sector(p0, p1, t1, t2), nextLevel, 2 * row, 2 * col + 1);
+        subTiles[1] = subTile != null ? subTile
+            : this.createSubTile(new Sector(p0, p1, t1, t2), nextLevel, 2 * row, 2 * col + 1);
 
         key = this.createSubTileKey(nextLevel, 2 * row + 1, 2 * col);
         subTile = this.getTileFromMemoryCache(key);
-        if (subTile != null)
-            subTiles[2] = subTile;
-        else
-            subTiles[2] = this.createSubTile(new Sector(p1, p2, t0, t1), nextLevel, 2 * row + 1, 2 * col);
+        subTiles[2] = subTile != null ? subTile
+            : this.createSubTile(new Sector(p1, p2, t0, t1), nextLevel, 2 * row + 1, 2 * col);
 
         key = this.createSubTileKey(nextLevel, 2 * row + 1, 2 * col + 1);
         subTile = this.getTileFromMemoryCache(key);
-        if (subTile != null)
-            subTiles[3] = subTile;
-        else
-            subTiles[3] = this.createSubTile(new Sector(p1, p2, t1, t2), nextLevel, 2 * row + 1, 2 * col + 1);
+        subTiles[3] = subTile != null ? subTile
+            : this.createSubTile(new Sector(p1, p2, t1, t2), nextLevel, 2 * row + 1, 2 * col + 1);
 
         return subTiles;
     }

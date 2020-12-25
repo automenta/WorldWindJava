@@ -146,7 +146,7 @@ public abstract class AbstractLayer extends WWObjectImpl implements Layer {
         this.pickable = pickable;
     }
 
-    public String getName() {
+    public String name() {
         Object n = this.get(AVKey.DISPLAY_NAME);
 
         return n != null ? n.toString() : this.toString();

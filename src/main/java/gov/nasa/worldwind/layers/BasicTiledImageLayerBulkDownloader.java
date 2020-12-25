@@ -111,11 +111,11 @@ public class BasicTiledImageLayerBulkDownloader extends BulkRetrievalThread {
             this.progress.setTotalSize(this.progress.getCurrentSize());
         }
         catch (InterruptedException e) {
-            String message = Logging.getMessage("generic.BulkRetrievalInterrupted", this.layer.getName());
+            String message = Logging.getMessage("generic.BulkRetrievalInterrupted", this.layer.name());
             Logging.logger().log(java.util.logging.Level.WARNING, message, e);
         }
         catch (Exception e) {
-            String message = Logging.getMessage("generic.ExceptionDuringBulkRetrieval", this.layer.getName());
+            String message = Logging.getMessage("generic.ExceptionDuringBulkRetrieval", this.layer.name());
             Logging.logger().severe(message);
             throw new RuntimeException(message);
         }
@@ -227,7 +227,7 @@ public class BasicTiledImageLayerBulkDownloader extends BulkRetrievalThread {
             return 0;
         }
         catch (Exception e) {
-            String message = Logging.getMessage("generic.ExceptionDuringDataSizeEstimate", this.layer.getName());
+            String message = Logging.getMessage("generic.ExceptionDuringDataSizeEstimate", this.layer.name());
             Logging.logger().severe(message);
             throw new RuntimeException(message);
         }

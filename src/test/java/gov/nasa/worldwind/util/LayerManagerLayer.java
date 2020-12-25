@@ -736,7 +736,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
                 text.append((layer.isEnabled() ? layerEnabledSymbol : layerDisabledSymbol));
                 text.append(" ");
                 text.append((layer.isEnabled() ? "<b>" : "<i>"));
-                text.append(layer.getName());
+                text.append(layer.name());
                 text.append((layer.isEnabled() ? "</b>" : "</i>"));
                 text.append("</a><br />");
             }

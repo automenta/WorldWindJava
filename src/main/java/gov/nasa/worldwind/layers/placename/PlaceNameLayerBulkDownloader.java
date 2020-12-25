@@ -97,11 +97,11 @@ public class PlaceNameLayerBulkDownloader extends BulkRetrievalThread {
             }
         }
         catch (InterruptedException e) {
-            String message = Logging.getMessage("generic.BulkRetrievalInterrupted", layer.getName());
+            String message = Logging.getMessage("generic.BulkRetrievalInterrupted", layer.name());
             Logging.logger().log(Level.WARNING, message, e);
         }
         catch (Exception e) {
-            String message = Logging.getMessage("generic.ExceptionDuringBulkRetrieval", layer.getName());
+            String message = Logging.getMessage("generic.ExceptionDuringBulkRetrieval", layer.name());
             Logging.logger().severe(message);
             throw new RuntimeException(message);
         }

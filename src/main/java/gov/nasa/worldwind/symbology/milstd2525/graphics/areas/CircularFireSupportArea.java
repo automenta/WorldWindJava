@@ -90,7 +90,6 @@ public class CircularFireSupportArea extends AbstractCircularGraphic {
      */
     @Override
     protected void createLabels() {
-        FireSupportTextBuilder textBuilder = CircularFireSupportArea.createTextBuilder();
         String[] allText = FireSupportTextBuilder.createText(this);
 
         String text = allText[0];
@@ -114,9 +113,6 @@ public class CircularFireSupportArea extends AbstractCircularGraphic {
         }
     }
 
-    protected static FireSupportTextBuilder createTextBuilder() {
-        return new FireSupportTextBuilder();
-    }
 
     /**
      * Indicates the text alignment to apply to the main label of this graphic.
@@ -127,10 +123,7 @@ public class CircularFireSupportArea extends AbstractCircularGraphic {
         boolean isACA = TacGrpSidc.FSUPP_ARS_C2ARS_ACA_CIRCLR.equalsIgnoreCase(this.maskedSymbolCode);
 
         // Airspace Coordination Area labels are left aligned. All others are center aligned.
-        if (isACA)
-            return AVKey.LEFT;
-        else
-            return AVKey.CENTER;
+        return isACA ? AVKey.LEFT : AVKey.CENTER;
     }
 
     /**

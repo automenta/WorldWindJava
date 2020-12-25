@@ -164,7 +164,7 @@ public abstract class AbstractApplicationFeature extends AbstractFeature impleme
 
     protected void addLayers(LayerList layerList) {
         for (Layer layer : layerList) {
-            this.addLayer(layer, new LayerPath(layerList.getDisplayName(), layer.getName()));
+            this.addLayer(layer, new LayerPath(layerList.getDisplayName(), layer.name()));
         }
     }
 

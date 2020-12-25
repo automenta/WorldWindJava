@@ -54,11 +54,11 @@ public class LayerTree extends BasicTree {
      * @throws IllegalArgumentException if <code>model</code> is <code>null</code>.
      */
     public LayerTree(LayerTreeModel model) {
-        if (model == null) {
-            String message = Logging.getMessage("nullValue.ModelIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (model == null) {
+//            String message = Logging.getMessage("nullValue.ModelIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         this.initialize(model, null);
     }
@@ -71,11 +71,11 @@ public class LayerTree extends BasicTree {
      * @throws IllegalArgumentException if <code>offset</code> is <code>null</code>.
      */
     public LayerTree(Offset offset) {
-        if (offset == null) {
-            String message = Logging.getMessage("nullValue.OffsetIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (offset == null) {
+//            String message = Logging.getMessage("nullValue.OffsetIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         this.initialize(null, offset);
     }
@@ -89,17 +89,17 @@ public class LayerTree extends BasicTree {
      *                                  <code>null</code>.
      */
     public LayerTree(LayerTreeModel model, Offset offset) {
-        if (model == null) {
-            String message = Logging.getMessage("nullValue.ModelIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (offset == null) {
-            String message = Logging.getMessage("nullValue.OffsetIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (model == null) {
+//            String message = Logging.getMessage("nullValue.ModelIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//
+//        if (offset == null) {
+//            String message = Logging.getMessage("nullValue.OffsetIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         this.initialize(model, offset);
     }

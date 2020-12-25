@@ -61,7 +61,7 @@ public class DataInstaller extends AVListImpl {
 
             Sector sector = WWXML.getSector(domElement, "Sector", null);
             layer.set(AVKey.SECTOR, sector);
-            dataSet.set(AVKey.DISPLAY_NAME, layer.getName());
+            dataSet.set(AVKey.DISPLAY_NAME, layer.name());
         }
         catch (Exception e) {
             String message = Logging.getMessage("generic.CreationFromConfigurationFailed",
@@ -121,7 +121,7 @@ public class DataInstaller extends AVListImpl {
             Factory factory = (Factory) WorldWind.createConfigurationComponent(AVKey.ELEVATION_MODEL_FACTORY);
             elevationModel = (ElevationModel) factory.createFromConfigSource(domElement, null);
 //            elevationModel.setValue(AVKey.DATASET_NAME, dataSet.getStringValue(AVKey.DATASET_NAME));
-            dataSet.set(AVKey.DISPLAY_NAME, elevationModel.getName());
+            dataSet.set(AVKey.DISPLAY_NAME, elevationModel.name());
 
             // TODO: set Sector as in addLayerToWorldWindow?
         }
@@ -207,7 +207,7 @@ public class DataInstaller extends AVListImpl {
             CompoundElevationModel cm = (CompoundElevationModel) defaultElevationModel;
             for (ElevationModel em : cm.getElevationModels()) {
                 String name = em.getStringValue(AVKey.DISPLAY_NAME);
-                if (name != null && name.equals(elevationModel.getName())) {
+                if (name != null && name.equals(elevationModel.name())) {
                     cm.removeElevationModel(elevationModel);
                     wwd.firePropertyChange(new PropertyChangeEvent(wwd, AVKey.ELEVATION_MODEL, null, elevationModel));
                 }

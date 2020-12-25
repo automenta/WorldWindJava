@@ -71,11 +71,11 @@ public class LayerTreeModel extends BasicTreeModel {
      * @throws IllegalArgumentException if the <code>layerList</code> is <code>null</code>.
      */
     public LayerTreeModel(Iterable<Layer> layerList, boolean includeHiddenLayers) {
-        if (layerList == null) {
-            String message = Logging.getMessage("nullValue.LayersListArrayIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (layerList == null) {
+//            String message = Logging.getMessage("nullValue.LayersListArrayIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         this.initialize();
         this.includeHiddenLayers = includeHiddenLayers;
@@ -129,11 +129,11 @@ public class LayerTreeModel extends BasicTreeModel {
      * @throws IllegalArgumentException if the <code>layerNode</code> is <code>null</code>.
      */
     public void addLayer(TreeNode layerNode) {
-        if (layerNode == null) {
-            String message = Logging.getMessage("nullValue.TreeNodeIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (layerNode == null) {
+//            String message = Logging.getMessage("nullValue.TreeNodeIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         this.getRoot().addChild(layerNode);
     }
@@ -148,11 +148,11 @@ public class LayerTreeModel extends BasicTreeModel {
      * @throws IllegalArgumentException if the <code>layer</code> is <code>null</code>.
      */
     public LayerTreeNode addLayer(Layer layer) {
-        if (layer == null) {
-            String message = Logging.getMessage("nullValue.LayerIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (layer == null) {
+//            String message = Logging.getMessage("nullValue.LayerIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         LayerTreeNode layerNode = LayerTreeModel.createLayerNode(layer);
 
@@ -189,11 +189,11 @@ public class LayerTreeModel extends BasicTreeModel {
      * @see #setIncludeHiddenLayers(boolean)
      */
     public void refresh(Iterable<Layer> layerList) {
-        if (layerList == null) {
-            String message = Logging.getMessage("nullValue.LayersListArrayIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (layerList == null) {
+//            String message = Logging.getMessage("nullValue.LayersListArrayIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         // Replace all the layer nodes in the tree with nodes for the current layers.
         this.removeAllLayers();

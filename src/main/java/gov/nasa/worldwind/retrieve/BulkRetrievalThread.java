@@ -9,7 +9,6 @@ package gov.nasa.worldwind.retrieve;
 import gov.nasa.worldwind.cache.FileStore;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.geom.Sector;
-import gov.nasa.worldwind.util.Logging;
 
 import javax.swing.event.*;
 

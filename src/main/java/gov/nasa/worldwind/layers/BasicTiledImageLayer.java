@@ -620,17 +620,17 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
      * @throws IllegalArgumentException if either the Capabilities or the parameter list is null.
      */
     protected void initFromOGCCapabilitiesResource(WMSCapabilities caps, AVList params) {
-        if (caps == null) {
-            String message = Logging.getMessage("nullValue.CapabilitiesIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (caps == null) {
+//            String message = Logging.getMessage("nullValue.CapabilitiesIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
-        if (params == null) {
-            String message = Logging.getMessage("nullValue.ParametersIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (params == null) {
+//            String message = Logging.getMessage("nullValue.ParametersIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         String[] names = DataConfigurationUtils.getOGCLayerNames(params);
         if (names == null || names.length == 0)
@@ -667,7 +667,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
      */
     protected void startResourceRetrieval() {
         Thread t = new Thread(this::retrieveResources);
-        t.setName("Capabilities retrieval for " + this.getName());
+        t.setName("Capabilities retrieval for " + this.name());
         t.start();
     }
 
@@ -795,7 +795,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
         rs.addStateValueAsDouble(context, "Layer.MinActiveAltitude", this.getMinActiveAltitude());
         rs.addStateValueAsDouble(context, "Layer.MaxActiveAltitude", this.getMaxActiveAltitude());
         rs.addStateValueAsBoolean(context, "Layer.NetworkRetrievalEnabled", this.isNetworkRetrievalEnabled());
-        rs.addStateValueAsString(context, "Layer.Name", this.getName());
+        rs.addStateValueAsString(context, "Layer.Name", this.name());
         rs.addStateValueAsBoolean(context, "TiledImageLayer.UseMipMaps", this.isUseMipMaps());
         rs.addStateValueAsBoolean(context, "TiledImageLayer.UseTransparentTextures", this.isUseTransparentTextures());
 

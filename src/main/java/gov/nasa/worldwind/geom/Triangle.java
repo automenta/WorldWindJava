@@ -786,21 +786,19 @@ public class Triangle {
         double[] u1 = new double[] {u[1].x, u[1].y, u[1].z};
         double[] u2 = new double[] {u[2].x, u[2].y, u[2].z};
 
-        boolean tf = triangleEdgeTest(v0, v1, u0, u1, u2, i0, i1);
-        if (tf)
+
+        if (triangleEdgeTest(v0, v1, u0, u1, u2, i0, i1))
             return true;
 
-        tf = triangleEdgeTest(v1, v2, u0, u1, u2, i0, i1);
-        if (tf)
+
+        if (triangleEdgeTest(v1, v2, u0, u1, u2, i0, i1))
             return true;
 
-        tf = triangleEdgeTest(v2, v0, u0, u1, u2, i0, i1);
-        if (tf)
+        if (triangleEdgeTest(v2, v0, u0, u1, u2, i0, i1))
             return true;
 
         // Finally, test whether one triangle is contained in the other one.
-        tf = pointInTri(v0, u0, u1, u2, i0, i1);
-        if (tf)
+        if (pointInTri(v0, u0, u1, u2, i0, i1))
             return true;
 
         return pointInTri(u0, v0, v1, v2, i0, i1);
@@ -812,13 +810,11 @@ public class Triangle {
         double ay = v1[i1] - v0[i1];
 
         // Test edge u0:u1 against v0:v1
-        boolean tf = edgeEdgeTest(v0, u0, u1, i0, i1, ax, ay);
-        if (tf)
+        if (edgeEdgeTest(v0, u0, u1, i0, i1, ax, ay))
             return true;
 
         // Test edge u1:u2 against v0:v1
-        tf = edgeEdgeTest(v0, u1, u2, i0, i1, ax, ay);
-        if (tf)
+        if (edgeEdgeTest(v0, u1, u2, i0, i1, ax, ay))
             return true;
 
         // Test edge u2:u0 against v0:v1
@@ -838,8 +834,7 @@ public class Triangle {
             double e = ax * cy - ay * cx;
             if (f > 0) {
                 return e >= 0 && e <= f;
-            }
-            else {
+            } else {
                 return e <= 0 && e >= f;
             }
         }
@@ -902,7 +897,7 @@ public class Triangle {
         double v = (dot00 * dot12 - dot01 * dot02) * detInv;
 
         // Check if point is contained in triangle (including edges and vertices)
-        return /*(u >= 0.0d) && */(v >= 0.0d) && (u + v <= 1.0d);
+        return /*(u >= 0.0d) && */(v >= 0) && (u + v <= 1);
 
         // Check if point is contained inside triangle (NOT including edges or vertices)
 //        return (u > 0d) && (v > 0d) && (u + v < 1d);

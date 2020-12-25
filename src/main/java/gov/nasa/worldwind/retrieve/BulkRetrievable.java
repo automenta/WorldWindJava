@@ -75,5 +75,5 @@ public interface BulkRetrievable {
     BulkRetrievalThread makeLocal(Sector sector, double resolution, FileStore fileStore,
         BulkRetrievalListener listener);
 
-    String getName();
+    String name();
 }

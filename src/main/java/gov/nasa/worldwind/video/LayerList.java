@@ -347,7 +347,7 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject {
         }
 
         for (Layer l : this) {
-            if (l.getName().equals(name))
+            if (l.name().equals(name))
                 return l;
         }
 
@@ -417,7 +417,7 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject {
 
         Layer[] array = new Layer[this.size()];
         this.toArray(array);
-        Arrays.sort(array, Comparator.comparing(Layer::getName));
+        Arrays.sort(array, Comparator.comparing(Layer::name));
 
         this.clear();
         super.addAll(Arrays.asList(array));

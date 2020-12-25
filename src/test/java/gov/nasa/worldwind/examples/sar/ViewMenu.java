@@ -75,7 +75,7 @@ public class ViewMenu extends JMenu {
         private final WorldWindow wwd;
 
         public LayerVisibilityAction(WorldWindow wwd, Layer layer) {
-            super(layer.getName());
+            super(layer.name());
             this.layer = layer;
             this.wwd = wwd;
         }

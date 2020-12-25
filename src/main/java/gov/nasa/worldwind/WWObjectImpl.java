@@ -38,11 +38,11 @@ public class WWObjectImpl extends AVListImpl implements WWObject {
      * @throws IllegalArgumentException if <code>propertyChangeEvent</code> is null
      */
     public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-        if (propertyChangeEvent == null) {
-            String msg = Logging.getMessage("nullValue.PropertyChangeEventIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (propertyChangeEvent == null) {
+//            String msg = Logging.getMessage("nullValue.PropertyChangeEventIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         // Notify all *my* listeners of the change that I caught
         super.firePropertyChange(propertyChangeEvent);

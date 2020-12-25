@@ -78,7 +78,7 @@ public class ObjectAnimations extends ApplicationTemplate {
             this.vcp = new ViewControlPanel(wwd);
             this.getControlPanel().add(this.vcp, BorderLayout.SOUTH);
             for (Layer layer : wwd.model().getLayers()) {
-                if (layer.getName().toLowerCase().contains("bing")) {
+                if (layer.name().toLowerCase().contains("bing")) {
                     layer.setEnabled(true);
                 }
             }

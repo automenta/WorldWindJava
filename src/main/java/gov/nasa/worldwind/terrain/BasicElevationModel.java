@@ -67,7 +67,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
     protected int extremesLevel = -1;
     protected boolean extremesCachingEnabled = true;
     protected BufferWrapper extremes = null;
-    protected MemoryCache extremesLookupCache;
+    protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
 
     public BasicElevationModel(AVList params) {
         if (params == null) {
@@ -1275,7 +1275,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
 
         try {
             double[] extremes = this.extremesCachingEnabled
-                ? (double[]) this.getExtremesLookupCache().getObject(sector) : null;
+                ? (double[]) this.extremesLookupCache.getObject(sector) : null;
             if (extremes != null)
                 return new double[] {extremes[0], extremes[1]}; // return defensive copy
 
@@ -1285,7 +1285,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
             // Compute the extremes from the extreme-elevations file.
             extremes = this.computeExtremeElevations(sector);
             if (extremes != null && this.isExtremesCachingEnabled())
-                this.getExtremesLookupCache().add(sector, extremes, 64);
+                this.extremesLookupCache.add(sector, extremes, 64);
 
             // Return a defensive copy of the array to prevent the caller from modifying the cache contents.
             return extremes != null ? new double[] {extremes[0], extremes[1]} : null;
@@ -1337,14 +1337,12 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
                 Logging.getMessage("BasicElevationModel.ExceptionReadingExtremeElevations", extremesFileName), e);
             this.extremes = null;
             this.extremesLevel = -1;
-            this.extremesLookupCache = null;
         }
         finally {
             WWIO.closeStream(is, extremesFileName);
 
             // Clear the extreme elevations lookup cache.
-            if (this.extremesLookupCache != null)
-                this.extremesLookupCache.clear();
+            this.extremesLookupCache.clear();
         }
     }
 
@@ -1396,26 +1394,6 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         return new double[] {min, max};
     }
 
-    /**
-     * Returns the memory cache used to cache extreme elevation computations, initializing the cache if it doesn't yet
-     * exist. This is an instance level cache: each instance of BasicElevationModel has its own instance of an extreme
-     * elevations lookup cache.
-     *
-     * @return the memory cache associated with the extreme elevations computations.
-     */
-    protected synchronized MemoryCache getExtremesLookupCache() {
-        // Note that the extremes lookup cache does not belong to the WorldWind memory cache set, therefore it will not
-        // be automatically cleared and disposed when WorldWind is shutdown. However, since the extremes lookup cache
-        // is a local reference to this elevation model, it will be reclaimed by the JVM garbage collector when this
-        // elevation model is reclaimed by the GC.
-
-        if (this.extremesLookupCache == null) {
-            this.extremesLookupCache = new SoftMemoryCache();
-        }
-
-        return this.extremesLookupCache;
-    }
-
     protected Elevations getElevations(Sector requestedSector, LevelSet levelSet, int targetLevelNumber) {
         // Compute the intersection of the requested sector with the LevelSet's sector.
         // The intersection will be used to determine which Tiles in the LevelSet are in the requested sector.
@@ -1424,10 +1402,10 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         Level targetLevel = levelSet.getLevel(targetLevelNumber);
         LatLon delta = targetLevel.getTileDelta();
         LatLon origin = levelSet.getTileOrigin();
-        final int nwRow = Tile.computeRow(delta.getLatitude(), sector.latMax(), origin.getLatitude());
-        final int nwCol = Tile.computeColumn(delta.getLongitude(), sector.lonMin(), origin.getLongitude());
-        final int seRow = Tile.computeRow(delta.getLatitude(), sector.latMin(), origin.getLatitude());
-        final int seCol = Tile.computeColumn(delta.getLongitude(), sector.lonMax(), origin.getLongitude());
+        final int nwRow = Tile.computeRow(delta.latitude, sector.latMax, origin.latitude);
+        final int nwCol = Tile.computeColumn(delta.longitude, sector.lonMin, origin.longitude);
+        final int seRow = Tile.computeRow(delta.latitude, sector.latMin, origin.latitude);
+        final int seCol = Tile.computeColumn(delta.longitude, sector.lonMax, origin.longitude);
         TreeSet<ElevationTile> tiles = new TreeSet<>((t1, t2) -> {
             if (t1==t2) return 0;
 
@@ -1436,8 +1414,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
             if (l2 == l1) {
                 int dr = Integer.compare(t1.row, t2.row);
                 if (dr!=0) return dr;
-                int dc = Integer.compare(t1.col, t2.col);
-                return dc;
+                return Integer.compare(t1.col, t2.col);
             } else
                 return l1 > l2 ? -1 : 1;             // Higher-res levels compare lower than lower-res
 
@@ -1498,14 +1475,12 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
             // Double.MAX_VALUE is a signal for no in-memory tile for a given region of the sector.
             elevations = new Elevations(this, Double.MAX_VALUE);
             elevations.tiles = tiles;
-        }
-        else if (missingTargetTiles) {
+        } else if (missingTargetTiles) {
             // Use the level of the the lowest resolution found to denote the resolution of this elevation set.
             // The list of tiles is sorted first by level, so use the level of the list's last entry.
             elevations = new Elevations(this, tiles.last().level.getTexelSize());
             elevations.tiles = tiles;
-        }
-        else {
+        } else {
             elevations = new Elevations(this, tiles.last().level.getTexelSize());
 
             // Compute the elevation extremes now that the sector is fully resolved
@@ -1514,10 +1489,10 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
                 double[] extremes = elevations.getTileExtremes();
                 if (extremes != null && this.isExtremesCachingEnabled()) {
                     // Cache the newly computed extremes if they're different from the currently cached ones.
-                    double[] currentExtremes = (double[]) this.getExtremesLookupCache().getObject(requestedSector);
+                    double[] currentExtremes = (double[]) this.extremesLookupCache.getObject(requestedSector);
                     if (currentExtremes == null || currentExtremes[0] != extremes[0]
                         || currentExtremes[1] != extremes[1])
-                        this.getExtremesLookupCache().add(requestedSector, extremes, 64);
+                        this.extremesLookupCache.add(requestedSector, extremes, 64);
                 }
             }
         }
@@ -1591,11 +1566,11 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         // This ElevationModel has no construction parameters, so there is no description of what to retrieve. Return a
         // key indicating the resources have been successfully retrieved, though there is nothing to retrieve.
         AVList params = (AVList) this.get(AVKey.CONSTRUCTION_PARAMETERS);
-        if (params == null) {
-            String message = Logging.getMessage("nullValue.ConstructionParametersIsNull");
-            Logging.logger().warning(message);
-            return AVKey.RETRIEVAL_STATE_SUCCESSFUL;
-        }
+//        if (params == null) {
+//            String message = Logging.getMessage("nullValue.ConstructionParametersIsNull");
+//            Logging.logger().warning(message);
+//            return AVKey.RETRIEVAL_STATE_SUCCESSFUL;
+//        }
 
         // This ElevationModel has no OGC Capabilities URL in its construction parameters. Return a key indicating the
         // resources have been successfully retrieved, though there is nothing to retrieve.
@@ -1656,10 +1631,10 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
             return;
 
         // Synchronize changes to this ElevationModel with the Event Dispatch Thread.
-        SwingUtilities.invokeLater(() -> {
+//        SwingUtilities.invokeLater(() -> {
             BasicElevationModel.this.setExpiryTime(expiryTime);
             BasicElevationModel.this.firePropertyChange(AVKey.ELEVATION_MODEL, null, BasicElevationModel.this);
-        });
+//        });
     }
 
     /**
@@ -1687,7 +1662,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
      */
     protected void startResourceRetrieval() {
         Thread t = new Thread(this::retrieveResources);
-        t.setName("Capabilities retrieval for " + this.getName());
+        t.setName("Capabilities retrieval for " + this.name());
         t.start();
     }
 
@@ -1697,8 +1672,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         try {
             AVList configParams = this.getConfigurationParams(null);
             this.writeConfigurationParams(configParams, fileStore);
-        }
-        catch (Exception e) {
+        }  catch (Exception e) {
             String message = Logging.getMessage("generic.ExceptionAttemptingToWriteConfigurationFile");
             Logging.logger().log(java.util.logging.Level.SEVERE, message, e);
         }
@@ -1708,11 +1682,11 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         // Determine what the configuration file name should be based on the configuration parameters. Assume an XML
         // configuration document type, and append the XML file suffix.
         String fileName = DataConfigurationUtils.getDataConfigFilename(params, ".xml");
-        if (fileName == null) {
-            String message = Logging.getMessage("nullValue.FilePathIsNull");
-            Logging.logger().severe(message);
-            throw new WWRuntimeException(message);
-        }
+//        if (fileName == null) {
+//            String message = Logging.getMessage("nullValue.FilePathIsNull");
+//            Logging.logger().severe(message);
+//            throw new WWRuntimeException(message);
+//        }
 
         // Check if this component needs to write a configuration file. This happens outside of the synchronized block
         // to improve multithreaded performance for the common case: the configuration file already exists, this just
@@ -1734,11 +1708,11 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
 
     protected void doWriteConfigurationParams(FileStore fileStore, String fileName, AVList params) {
         File file = fileStore.newFile(fileName);
-        if (file == null) {
-            String message = Logging.getMessage("generic.CannotCreateFile", fileName);
-            Logging.logger().severe(message);
-            throw new WWRuntimeException(message);
-        }
+//        if (file == null) {
+//            String message = Logging.getMessage("generic.CannotCreateFile", fileName);
+//            Logging.logger().severe(message);
+//            throw new WWRuntimeException(message);
+//        }
 
         Document doc = this.createConfigurationDocument(params);
         WWXML.saveDocumentToFile(doc, file.getPath());
@@ -1820,7 +1794,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
             }
         }
 
-        rs.addStateValueAsString(context, "ElevationModel.Name", this.getName());
+        rs.addStateValueAsString(context, "ElevationModel.Name", this.name());
         rs.addStateValueAsDouble(context, "ElevationModel.MissingDataFlag", this.getMissingDataSignal());
         rs.addStateValueAsDouble(context, "ElevationModel.MissingDataValue", this.getMissingDataReplacement());
         rs.addStateValueAsBoolean(context, "ElevationModel.NetworkRetrievalEnabled", this.isNetworkRetrievalEnabled());
