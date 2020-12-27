@@ -28,8 +28,7 @@ public class TestParser {
         File[] messageList = messageDir.listFiles(filter);
         for (File f : messageList) {
             GeoJSONDoc messageJson = new GeoJSONDoc(f);
-            messageJson.parse();
-            Object root = messageJson.getRootObject();
+            Object root = messageJson.getRoot();
             if (root instanceof Object[]) {
                 Object[] rootArray = (Object[]) root;
                 for (Object o : rootArray) {

@@ -84,9 +84,7 @@ public abstract class RigidShape extends AbstractShape {
      */
     protected static void setUpGeometryCache() {
         if (!WorldWind.getMemoryCacheSet().containsCache(RigidShape.GEOMETRY_CACHE_KEY)) {
-            long size = Configuration.getLongValue(AVKey.AIRSPACE_GEOMETRY_CACHE_SIZE,
-                RigidShape.DEFAULT_GEOMETRY_CACHE_SIZE);
-            MemoryCache cache = new BasicMemoryCache((long) (0.85 * size), size);
+            MemoryCache cache = new SoftMemoryCache();
             cache.setName(RigidShape.GEOMETRY_CACHE_NAME);
             WorldWind.getMemoryCacheSet().addCache(RigidShape.GEOMETRY_CACHE_KEY, cache);
         }

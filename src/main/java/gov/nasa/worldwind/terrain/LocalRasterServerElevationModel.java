@@ -143,7 +143,7 @@ public class LocalRasterServerElevationModel extends BasicElevationModel {
         RetrieverFactory retrieverFactory = new RetrieverFactory() {
             final protected RasterServer rasterServer = new BasicRasterServer(rasterServerFileURL, rasterServerParams);
 
-            public Retriever createRetriever(AVList tileParams, RetrievalPostProcessor postProcessor) {
+            public Retriever retriever(AVList tileParams, RetrievalPostProcessor postProcessor) {
                 Retriever retriever =
                     new LocalRasterServerRetriever(tileParams, rasterServer, postProcessor);
 

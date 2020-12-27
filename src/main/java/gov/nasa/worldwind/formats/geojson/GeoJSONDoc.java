@@ -15,7 +15,7 @@ import java.io.IOException;
  * @version $Id: GeoJSONDoc.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 public class GeoJSONDoc extends JSONDoc {
-    public GeoJSONDoc(Object source) {
+    public GeoJSONDoc(Object source) throws Exception {
         super(source);
     }
 

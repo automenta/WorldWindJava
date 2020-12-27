@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.util;
 
 import com.jogamp.common.nio.*;
-import gov.nasa.worldwind.Configuration;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 
@@ -1084,7 +1084,7 @@ public class WWIO {
             if (mimeType == null)
                 continue;
 
-            String typeSuffix = WWIO.makeSuffixForMimeType(mimeType);
+            String typeSuffix = WWIO.mimeSuffix(mimeType);
             String fileSuffix = WWIO.getSuffix(file.getName());
 
             if (fileSuffix == null)
@@ -1108,7 +1108,7 @@ public class WWIO {
      * @return the file suffix for the specified mime type, with a leading ".".
      * @throws IllegalArgumentException if the mime type is null or malformed.
      */
-    public static String makeSuffixForMimeType(String mimeType) {
+    public static String mimeSuffix(String mimeType) {
 
         if (!mimeType.contains("/") || mimeType.charAt(mimeType.length() - 1) == '/') {
             String message = Logging.getMessage("generic.InvalidImageFormat");
@@ -1188,8 +1188,7 @@ public class WWIO {
         if (file.exists()) {
             try {
                 return new FileInputStream(file);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 return e;
             }
         }
@@ -1229,7 +1228,8 @@ public class WWIO {
     public static InputStream getInputStreamFromString(String string, String encoding) {
 
         try {
-            return new ByteArrayInputStream(string.getBytes(encoding != null ? encoding : WWIO.DEFAULT_CHARACTER_ENCODING));
+            return new ByteArrayInputStream(
+                string.getBytes(encoding != null ? encoding : WWIO.DEFAULT_CHARACTER_ENCODING));
         }
         catch (UnsupportedEncodingException e) {
             throw new WWRuntimeException(e); // should never happen because encoding is always UTF-8.
@@ -1575,8 +1575,7 @@ public class WWIO {
      * @throws IllegalArgumentException if the source is null, an empty string, or is not one of the above types.
      * @throws Exception                if the source cannot be opened for any reason.
      */
-    public static InputStream openStream(Object src) throws Exception, IllegalArgumentException, IOException,
-        MalformedURLException {
+    public static InputStream openStream(Object src) throws Exception {
         if (WWUtil.isEmpty(src)) {
             String message = Logging.getMessage("nullValue.SourceIsNull");
             Logging.logger().severe(message);
@@ -1599,7 +1598,7 @@ public class WWIO {
         } else if (!(src instanceof String)) {
             String message = Logging.getMessage("generic.UnrecognizedSourceType", src.toString());
             Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
+            throw new IOException(message);
         }
 
         String sourceName = (String) src;
@@ -1850,7 +1849,8 @@ public class WWIO {
 
         // Recursively process the contents of each path . 
         for (String filename : names) {
-            WWIO.listDescendantFilenames(parent, WWIO.appendPathPart(pathname, filename), filter, recurseAfterMatch, matches);
+            WWIO.listDescendantFilenames(parent, WWIO.appendPathPart(pathname, filename), filter, recurseAfterMatch,
+                matches);
         }
     }
 
@@ -1915,5 +1915,9 @@ public class WWIO {
      */
     public static boolean isLocalJarAddress(URL jarUrl) {
         return jarUrl != null && jarUrl.getFile().startsWith("file:");
+    }
+
+    public static InputStream stream(String path) throws IOException {
+        return WorldWind.store().findFile(path, false).openStream();
     }
 }

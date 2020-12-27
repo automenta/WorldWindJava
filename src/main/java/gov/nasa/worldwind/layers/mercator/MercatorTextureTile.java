@@ -7,7 +7,7 @@ package gov.nasa.worldwind.layers.mercator;
 
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.geom.Angle;
-import gov.nasa.worldwind.layers.TextureTile;
+import gov.nasa.worldwind.util.TextureTile;
 import gov.nasa.worldwind.util.*;
 
 /**

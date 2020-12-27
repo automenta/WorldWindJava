@@ -16,67 +16,50 @@ import java.util.logging.Level;
  * @author dcollins
  * @version $Id: JSONDoc.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class JSONDoc implements Closeable {
-    protected JsonParser jsonParser;
-    protected Object rootObject;
-    protected String displayName;
+public class JSONDoc {
+    protected Object root;
+    protected String name;
 
-    public JSONDoc(Object source) {
+    public JSONDoc(Object source) throws Exception {
         if (WWUtil.isEmpty(source)) {
             String message = Logging.getMessage("nullValue.SourceIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        try {
-            this.displayName = WWIO.getSourcePath(source);
-            this.initialize(source);
+        this.name = WWIO.getSourcePath(source);
+
+        InputStream s = WWIO.openStream(source);
+
+        try (var json = new JsonFactory().createParser(s)) {
+
+            JSONEventParserContext ctx = this.createEventParserContext(json);
+            if (ctx == null) {
+                Logging.logger().warning(Logging.getMessage("generic.CannotParse", this.name));
+                return;
+            }
+
+            if (!ctx.hasNext())
+                return;
+
+            JSONEventParser rootParser = this.createRootObjectParser();
+            if (rootParser == null) {
+                Logging.logger().warning(Logging.getMessage("generic.CannotParse", this.name));
+                return;
+            }
+
+            this.root = rootParser.parse(ctx, ctx.nextEvent());
+
         }
         catch (Exception e) {
-            String message = Logging.getMessage("generic.ExceptionWhileReading", this.displayName);
+            String message = Logging.getMessage("generic.ExceptionWhileReading", this.name);
             Logging.logger().log(Level.SEVERE, message, e);
             throw new WWRuntimeException(message, e);
         }
     }
 
-    protected void initialize(Object source) throws Exception {
-        JsonFactory factory = new JsonFactory();
-        this.jsonParser = factory.createJsonParser(WWIO.openStream(source));
-    }
-
-    public Object getRootObject() {
-        return this.rootObject;
-    }
-
-    public void parse() throws IOException {
-        if (this.jsonParser == null) {
-            Logging.logger().warning(Logging.getMessage("generic.ParserUninitialized", this.displayName));
-            return;
-        }
-
-        JSONEventParserContext ctx = this.createEventParserContext(this.jsonParser);
-        if (ctx == null) {
-            Logging.logger().warning(Logging.getMessage("generic.CannotParse", this.displayName));
-            return;
-        }
-
-        if (!ctx.hasNext())
-            return;
-
-        JSONEventParser rootParser = this.createRootObjectParser();
-        if (rootParser == null) {
-            Logging.logger().warning(Logging.getMessage("generic.CannotParse", this.displayName));
-            return;
-        }
-
-        this.rootObject = rootParser.parse(ctx, ctx.nextEvent());
-    }
-
-    public void close() {
-        if (this.jsonParser != null) {
-            WWIO.closeStream(this.jsonParser, this.displayName);
-            this.jsonParser = null;
-        }
+    public Object getRoot() {
+        return this.root;
     }
 
     protected JSONEventParserContext createEventParserContext(JsonParser parser) throws IOException {

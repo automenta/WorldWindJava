@@ -156,9 +156,7 @@ public abstract class AbstractAirspace extends WWObjectImpl
         this.attributes = attributes;
 
         if (!WorldWind.getMemoryCacheSet().containsCache(AbstractAirspace.GEOMETRY_CACHE_KEY)) {
-            long size = Configuration.getLongValue(AVKey.AIRSPACE_GEOMETRY_CACHE_SIZE,
-                AbstractAirspace.DEFAULT_GEOMETRY_CACHE_SIZE);
-            MemoryCache cache = new BasicMemoryCache((long) (0.85 * size), size);
+            MemoryCache cache = new SoftMemoryCache();
             cache.setName(AbstractAirspace.GEOMETRY_CACHE_NAME);
             WorldWind.getMemoryCacheSet().addCache(AbstractAirspace.GEOMETRY_CACHE_KEY, cache);
         }

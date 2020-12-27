@@ -317,7 +317,7 @@ public class BasicDataFileStore extends AbstractFileStore {
         // suffix. If the content type is not known, we do not append any suffix. If the caller does not know the
         // content type used to create a cache file path, it must attempt to use known mime types until it finds a
         // match.
-        String suffix = contentType != null ? WWIO.makeSuffixForMimeType(contentType) : null;
+        String suffix = contentType != null ? WWIO.mimeSuffix(contentType) : null;
         String existingSuffix = WWIO.getSuffix(path);
 
         // The suffix returned by makeSuffixForMimeType is always ".jpg" for a JPEG mime type. We must convert any
@@ -568,7 +568,7 @@ public class BasicDataFileStore extends AbstractFileStore {
             String suffix = WWIO.getSuffix(cachePath);
             if (cacheFileUrl == null && (suffix == null || suffix.length() > 4)) {
                 for (String contentType : this.getCacheContentTypes()) {
-                    String pathWithSuffix = cachePath + WWIO.makeSuffixForMimeType(contentType);
+                    String pathWithSuffix = cachePath + WWIO.mimeSuffix(contentType);
                     cacheFileUrl = WorldWind.store().findFile(pathWithSuffix, true);
                     if (cacheFileUrl != null)
                         break;

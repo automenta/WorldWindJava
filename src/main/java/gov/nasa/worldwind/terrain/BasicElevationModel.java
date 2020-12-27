@@ -182,7 +182,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
     }
 
     protected static ByteBuffer convertImageToElevations(ByteBuffer buffer, String contentType) throws IOException {
-        File tempFile = File.createTempFile("wwj-", WWIO.makeSuffixForMimeType(contentType));
+        File tempFile = File.createTempFile("wwj-", WWIO.mimeSuffix(contentType));
         try {
             WWIO.saveBuffer(buffer, tempFile);
             BufferedImage image = ImageIO.read(tempFile);
@@ -975,7 +975,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         avList.set(AVKey.HEIGHT, tile.getHeight());
         avList.set(AVKey.FILE_NAME, tile.getPath());
 
-        Retriever retriever = retrieverFactory.createRetriever(avList, postProcessor);
+        Retriever retriever = retrieverFactory.retriever(avList, postProcessor);
 
         WorldWind.retrieveLocal().run(retriever, tile.getPriority());
     }

@@ -68,9 +68,7 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
     }
 
     protected static MemoryCache createDefaultCache() {
-        long cacheSize = Configuration.getLongValue(AVKey.TILED_RASTER_PRODUCER_CACHE_SIZE,
-            TiledRasterProducer.DEFAULT_TILED_RASTER_PRODUCER_CACHE_SIZE);
-        return new BasicMemoryCache((long) (0.8 * cacheSize), cacheSize);
+        return new SoftMemoryCache();
     }
 
     protected static File installLocationFor(AVList params) {

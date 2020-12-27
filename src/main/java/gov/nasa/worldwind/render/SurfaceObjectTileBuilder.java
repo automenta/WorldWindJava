@@ -11,7 +11,7 @@ import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.cache.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe2D;
-import gov.nasa.worldwind.layers.TextureTile;
+import gov.nasa.worldwind.util.TextureTile;
 import gov.nasa.worldwind.pick.PickedObject;
 import gov.nasa.worldwind.util.*;
 

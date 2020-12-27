@@ -202,7 +202,6 @@ public class MeasureTool extends AVListImpl implements Disposable {
         this.layer = new CustomRenderableLayer();
         this.shapeLayer = new CustomRenderableLayer();
         this.controlPointsLayer = new CustomRenderableLayer() {
-            @Override
             protected Iterable<Renderable> active() {
                 return controlPoints;
             }

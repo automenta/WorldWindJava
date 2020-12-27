@@ -3,7 +3,7 @@
  * National Aeronautics and Space Administration.
  * All Rights Reserved.
  */
-package gov.nasa.worldwind.layers;
+package gov.nasa.worldwind.util;
 
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.texture.*;
@@ -12,7 +12,6 @@ import gov.nasa.worldwind.cache.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.util.*;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;

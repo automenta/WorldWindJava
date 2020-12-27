@@ -24,11 +24,12 @@ public class SectorVisibilityTree {
     protected final DecisionTree<Sector, Context> tree = new DecisionTree<>(
         new DecisionTree.Controller<>() {
             public boolean isTerminal(Sector s, Context context) {
-                if (s.latDelta().degrees > context.sectorSize)
+                if (s.latDelta <= context.sectorSize) {
+                    context.sectors.add(s);
+                    return true;
+                } else {
                     return false;
-
-                context.sectors.add(s);
-                return true;
+                }
             }
 
             public Sector[] split(Sector s, Context context) {
@@ -37,10 +38,11 @@ public class SectorVisibilityTree {
 
             public boolean isVisible(Sector s, Context c) {
                 Extent extent = prevExtents.get(s);
+                final DrawContext dc = c.dc;
                 if (extent == null)
-                    extent = Sector.computeBoundingBox(c.dc.getGlobe(), c.dc.getVerticalExaggeration(), s);
+                    extent = Sector.computeBoundingBox(dc.getGlobe(), dc.getVerticalExaggeration(), s);
 
-                if (extent.intersects(c.dc.getView().getFrustumInModelCoordinates())) {
+                if (extent.intersects(dc.getView().getFrustumInModelCoordinates())) {
                     newExtents.put(s, extent);
                     return true;
                 }
@@ -48,6 +50,7 @@ public class SectorVisibilityTree {
                 return false;
             }
         });
+
     protected ArrayList<Sector> sectors = new ArrayList<>();
     protected long timeStamp;
 
@@ -116,20 +119,9 @@ public class SectorVisibilityTree {
      *                                  the search sector list is null.
      */
     public List<Sector> refresh(DrawContext dc, double sectorSize, Sector searchSector) {
-        if (dc == null) {
-            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         if (sectorSize < Angle.SECOND.degrees || sectorSize > 180) {
             String message = Logging.getMessage("generic.SizeOutOfRange", sectorSize);
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (searchSector == null) {
-            String message = Logging.getMessage("nullValue.SectorIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
@@ -157,11 +149,7 @@ public class SectorVisibilityTree {
      *                                  the search sector list is null.
      */
     public List<Sector> refresh(DrawContext dc, double sectorSize, Iterable<Sector> searchSectors) {
-        if (dc == null) {
-            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+
 
         if (sectorSize < Angle.SECOND.degrees || sectorSize > 180) {
             String message = Logging.getMessage("generic.SizeOutOfRange", sectorSize);
@@ -169,11 +157,6 @@ public class SectorVisibilityTree {
             throw new IllegalArgumentException(message);
         }
 
-        if (searchSectors == null) {
-            String message = Logging.getMessage("nullValue.SectorListIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         this.swapCylinderLists(dc);
         this.sectors = new ArrayList<>();
@@ -187,7 +170,8 @@ public class SectorVisibilityTree {
     }
 
     protected void swapCylinderLists(DrawContext dc) {
-        if (this.globeStateKey != null && !dc.getGlobe().getStateKey(dc).equals(this.globeStateKey))
+        final Object stateKey = dc.getGlobe().getStateKey(dc);
+        if (this.globeStateKey != null && !stateKey.equals(this.globeStateKey))
             this.newExtents.clear();
 
         this.prevExtents.clear();
@@ -195,10 +179,10 @@ public class SectorVisibilityTree {
         this.prevExtents = newExtents;
         this.newExtents = temp;
 
-        this.globeStateKey = dc.getGlobe().getStateKey(dc);
+        this.globeStateKey = stateKey;
     }
 
-    protected static class Context {
+    protected static final class Context {
         private final DrawContext dc;
         private final double sectorSize;
         private final List<Sector> sectors;

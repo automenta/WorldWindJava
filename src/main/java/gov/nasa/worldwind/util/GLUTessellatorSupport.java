@@ -44,12 +44,6 @@ public class GLUTessellatorSupport {
      * @throws IllegalArgumentException if the GL is null.
      */
     public static GLUtessellatorCallback createOGLDrawPrimitivesCallback(GL2 gl) {
-        if (gl == null) {
-            String message = Logging.getMessage("nullValue.GLIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
         return new OGLDrawPrimitivesCallback(gl);
     }
 
@@ -97,12 +91,6 @@ public class GLUTessellatorSupport {
     public void beginTessellation(GLUtessellatorCallback callback, Vec4 normal) {
         if (callback == null) {
             String message = Logging.getMessage("nullValue.CallbackIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (normal == null) {
-            String message = Logging.getMessage("nullValue.NormalIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
@@ -354,12 +342,6 @@ public class GLUTessellatorSupport {
          * @throws IllegalArgumentException if the tessellator is null.
          */
         public RecursiveCallback(GLUtessellator tessellator) {
-            if (tessellator == null) {
-                String msg = Logging.getMessage("nullValue.TessellatorIsNull");
-                Logging.logger().severe(msg);
-                throw new IllegalArgumentException(msg);
-            }
-
             this.tess = tessellator;
         }
 

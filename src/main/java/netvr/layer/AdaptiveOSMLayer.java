@@ -1,4 +1,4 @@
-package netvr;
+package netvr.layer;
 
 import com.carrotsearch.hppc.LongArrayList;
 import com.graphhopper.reader.*;
@@ -9,6 +9,7 @@ import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.measure.AreaMeasurer;
 import jcog.Util;
+import netvr.OSMLoader;
 import org.eclipse.collections.impl.map.mutable.primitive.LongObjectHashMap;
 
 import java.io.IOException;

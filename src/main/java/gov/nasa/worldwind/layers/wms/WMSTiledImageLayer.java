@@ -397,7 +397,7 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer {
             this.width = width;
             this.height = height;
 
-            this.file = File.createTempFile(WWIO.DELETE_ON_EXIT_PREFIX, WWIO.makeSuffixForMimeType(mimeType));
+            this.file = File.createTempFile(WWIO.DELETE_ON_EXIT_PREFIX, WWIO.mimeSuffix(mimeType));
         }
 
         @Override

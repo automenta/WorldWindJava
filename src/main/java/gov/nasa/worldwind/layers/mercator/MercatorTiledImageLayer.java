@@ -44,7 +44,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
     private final ArrayList<String> supportedImageFormats = new ArrayList<>();
     // Stuff computed each frame
     private final ArrayList<MercatorTextureTile> currentTiles = new ArrayList<>();
-    private final PriorityBlockingQueue<Runnable> requestQ = new PriorityBlockingQueue<>(
+    final PriorityBlockingQueue<Runnable> requestQ = new PriorityBlockingQueue<>(
         200);
     private ArrayList<MercatorTextureTile> topLevels;
     private boolean forceLevelZeroLoads;
@@ -59,7 +59,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
     private boolean drawTileIDs;
     private boolean drawBoundingVolumes;
     private MercatorTextureTile currentResourceTile;
-    private Vec4 referencePoint;
+    Vec4 referencePoint;
     private boolean atMaxResolution;
 
     public MercatorTiledImageLayer(LevelSet levelSet) {
@@ -114,6 +114,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
 
         textRenderer.setColor(Color.YELLOW);
         textRenderer.beginRendering(viewport.width, viewport.height);
+        final Globe g = dc.getGlobe();
         for (MercatorTextureTile tile : tiles) {
             String tileLabel = tile.getLabel();
 
@@ -121,11 +122,8 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
                 tileLabel += '/' + tile.getFallbackTile().getLabel();
 
             LatLon ll = tile.sector.getCentroid();
-            Vec4 pt = dc.getGlobe().computePointFromPosition(
-                ll.getLatitude(),
-                ll.getLongitude(),
-                dc.getGlobe().getElevation(ll.getLatitude(),
-                    ll.getLongitude()));
+            Vec4 pt = g.computePointFromPosition(ll.latitude, ll.longitude,
+                g.getElevation(ll.getLatitude(), ll.getLongitude()));
             pt = dc.getView().project(pt);
             textRenderer.draw(tileLabel, (int) pt.x, (int) pt.y);
         }
@@ -200,10 +198,6 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
 
     protected LevelSet getLevels() {
         return levels;
-    }
-
-    protected PriorityBlockingQueue<Runnable> getRequestQ() {
-        return requestQ;
     }
 
     public boolean isMultiResolution() {
@@ -526,10 +520,6 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
             .intersects(dc.getVisibleSector()));
     }
 
-    protected Vec4 getReferencePoint() {
-        return this.referencePoint;
-    }
-
     private void drawBoundingVolumes(DrawContext dc,
         Iterable<MercatorTextureTile> tiles) {
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
@@ -580,7 +570,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
         throws URISyntaxException {
         String pathBase = tile.getPath().substring(0,
             tile.getPath().lastIndexOf('.'));
-        String suffix = WWIO.makeSuffixForMimeType(mimeType);
+        String suffix = WWIO.mimeSuffix(mimeType);
         String path = pathBase + suffix;
         URL url = this.getDataFileStore().findFile(path, false);
 
@@ -888,7 +878,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
 
             ByteBuffer buffer = retriever.getBuffer();
 
-            String suffix = WWIO.makeSuffixForMimeType(htr.getContentType());
+            String suffix = WWIO.mimeSuffix(htr.getContentType());
 
             String path = tile.getPath().substring(0,
                 tile.getPath().lastIndexOf('.'));

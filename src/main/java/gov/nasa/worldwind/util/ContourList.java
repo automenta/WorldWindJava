@@ -24,11 +24,7 @@ public class ContourList extends WWObjectImpl implements Combinable {
     }
 
     public ContourList(ContourList that) {
-        if (that == null) {
-            String msg = Logging.getMessage("nullValue.ContourListIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+
 
         this.contours.addAll(that.contours);
         this.sector = that.sector;
@@ -55,22 +51,12 @@ public class ContourList extends WWObjectImpl implements Combinable {
             throw new IllegalArgumentException(msg);
         }
 
-        if (contour == null) {
-            String msg = Logging.getMessage("nullValue.IterableIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
 
         this.contours.set(index, contour);
         this.computeSector();
     }
 
     public void addContour(Iterable<? extends LatLon> contour) {
-        if (contour == null) {
-            String msg = Logging.getMessage("nullValue.IterableIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
 
         this.contours.add(contour);
 
@@ -79,12 +65,6 @@ public class ContourList extends WWObjectImpl implements Combinable {
     }
 
     public void addAllContours(ContourList that) {
-        if (that == null) {
-            String msg = Logging.getMessage("nullValue.ContourListIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
         this.contours.addAll(that.contours);
         this.sector = (this.sector != null ? this.sector.union(that.sector) : that.sector);
     }

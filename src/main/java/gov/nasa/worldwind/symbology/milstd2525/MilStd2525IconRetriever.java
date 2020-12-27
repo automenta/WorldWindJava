@@ -477,7 +477,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
         sb.append(MilStd2525IconRetriever.FILLS_PATH).append('/');
         sb.append(MilStd2525IconRetriever.TACTICAL_SYMBOLS_PATH).append('/');
         sb.append(maskedCode.toLowerCase());
-        sb.append(WWIO.makeSuffixForMimeType(MilStd2525IconRetriever.DEFAULT_IMAGE_FORMAT));
+        sb.append(WWIO.mimeSuffix(MilStd2525IconRetriever.DEFAULT_IMAGE_FORMAT));
 
         return sb.toString();
     }
@@ -489,7 +489,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
         sb.append(MilStd2525IconRetriever.FRAMES_PATH).append('/');
         sb.append(MilStd2525IconRetriever.TACTICAL_SYMBOLS_PATH).append('/');
         sb.append(maskedCode.toLowerCase());
-        sb.append(WWIO.makeSuffixForMimeType(MilStd2525IconRetriever.DEFAULT_IMAGE_FORMAT));
+        sb.append(WWIO.mimeSuffix(MilStd2525IconRetriever.DEFAULT_IMAGE_FORMAT));
 
         return sb.toString();
     }
@@ -504,7 +504,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
             sb.append(MilStd2525IconRetriever.ICONS_PATH).append('/');
             sb.append(MilStd2525IconRetriever.UNKNOWN_PATH).append('/');
             sb.append(maskedCode.toLowerCase());
-            sb.append(WWIO.makeSuffixForMimeType(MilStd2525IconRetriever.DEFAULT_IMAGE_FORMAT));
+            sb.append(WWIO.mimeSuffix(MilStd2525IconRetriever.DEFAULT_IMAGE_FORMAT));
             return sb.toString();
         } else {
             if (SymbolCode.isFieldEmpty(symbolCode.getFunctionId()))
@@ -515,7 +515,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
             sb.append(MilStd2525IconRetriever.ICONS_PATH).append('/');
             sb.append(MilStd2525IconRetriever.schemePathMap.get(scheme.toLowerCase())).append('/');
             sb.append(maskedCode.toLowerCase());
-            sb.append(WWIO.makeSuffixForMimeType(MilStd2525IconRetriever.DEFAULT_IMAGE_FORMAT));
+            sb.append(WWIO.mimeSuffix(MilStd2525IconRetriever.DEFAULT_IMAGE_FORMAT));
             return sb.toString();
         }
     }

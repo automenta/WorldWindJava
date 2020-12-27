@@ -49,7 +49,7 @@ public class GeoSymSupport {
         }
 
         this.filePath = filePath;
-        this.imageSuffix = WWIO.makeSuffixForMimeType(symbolMimeType);
+        this.imageSuffix = WWIO.mimeSuffix(symbolMimeType);
         this.featureMap = new HashMap<>();
 
         this.loadAssignment(filePath);

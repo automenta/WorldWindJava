@@ -931,52 +931,56 @@ public abstract class TiledImageLayer extends AbstractLayer {
     }
 
     protected BufferedImage requestImage(TextureTile tile, String mimeType)
-        throws URISyntaxException, InterruptedIOException, MalformedURLException {
-        String pathBase = tile.getPathBase();
-        String suffix = WWIO.makeSuffixForMimeType(mimeType);
-        String path = pathBase + suffix;
+        throws URISyntaxException, IOException {
+
+        InputStream in;
+        String path = tile.getPathBase() + WWIO.mimeSuffix(mimeType);
         File f = new File(path);
-        URL url;
+
         if (f.isAbsolute() && f.exists())
-            url = f.toURI().toURL();
+            in = f.toURI().toURL().openStream();
         else
-            url = this.getDataFileStore().findFile(path, false);
+            in = WWIO.stream(path);
 
-        if (url == null) // image is not local
-            return null;
-
-        if (WWIO.isFileOutOfDate(url, tile.level.getExpiryTime())) {
-            // The file has expired. Delete it.
-            this.levels.miss(tile);
-            this.getDataFileStore().removeFile(url);
-            String message = Logging.getMessage("generic.DataFileExpired", url);
-            Logging.logger().fine(message);
-        } else {
-            try {
-                File imageFile = new File(url.toURI());
-                BufferedImage image = ImageIO.read(imageFile);
-                if (image == null) {
-                    String message = Logging.getMessage("generic.ImageReadFailed", imageFile);
-                    throw new RuntimeException(message);
-                }
-
+        try {
+//        if (in == null) // image is not local
+//            return null;
+//
+//        if (WWIO.isFileOutOfDate(in, tile.level.getExpiryTime())) {
+//            // The file has expired. Delete it.
+//            this.levels.miss(tile);
+//            this.getDataFileStore().removeFile(in);
+//            String message = Logging.getMessage("generic.DataFileExpired", in);
+//            Logging.logger().fine(message);
+//        } else {
+            BufferedImage image = ImageIO.read(in);
+            if (image != null) {
                 this.levels.has(tile);
                 return image;
+            } else {
+                throw new IOException(Logging.getMessage("generic.ImageReadFailed", in));
             }
-            catch (InterruptedIOException e) {
-                this.levels.miss(tile);
-                throw e;
-            }
-            catch (IOException e) {
-                // Assume that something's wrong with the file and delete it.
-                this.getDataFileStore().removeFile(url);
-                this.levels.miss(tile);
-                String message = Logging.getMessage("generic.DeletedCorruptDataFile", url);
-                Logging.logger().info(message);
-            }
+
+        } catch (Exception e) {
+            this.levels.miss(tile);
+            throw e;
+        } finally {
+            in.close();
         }
 
-        return null;
+//            catch (InterruptedIOException e) {
+//                this.levels.miss(tile);
+//                throw e;
+//            }
+//            catch (IOException e) {
+//                // Assume that something's wrong with the file and delete it.
+//                this.getDataFileStore().removeFile(url);
+//                this.levels.miss(tile);
+//                Logging.logger().info(Logging.getMessage("generic.DeletedCorruptDataFile", url));
+//            }
+//        }
+
+//        return null;
     }
 
     protected void downloadImage(final TextureTile tile, String mimeType, int timeout) throws Exception {
@@ -1026,7 +1030,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
         avList.set(AVKey.FILE_NAME, tile.getPath());
         avList.set(AVKey.IMAGE_FORMAT, mimeType);
 
-        Retriever retriever = retrieverFactory.createRetriever(avList, new CompositionRetrievalPostProcessor(tile));
+        Retriever retriever = retrieverFactory.retriever(avList, new CompositionRetrievalPostProcessor(tile));
 
         Logging.logger().log(java.util.logging.Level.FINE, "Locally retrieving " + tile.getPath());
         retriever.setReadTimeout(timeout);
@@ -1249,7 +1253,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
     protected BufferedImage getImage(TextureTile tile, String mimeType, int timeout) throws Exception {
         // Read the image from disk.
         BufferedImage image = this.requestImage(tile, mimeType);
-        Thread.sleep(1); // generates InterruptedException if thread has been interrupted
+        //Thread.sleep(1); // generates InterruptedException if thread has been interrupted
         if (image != null)
             return image;
 
@@ -1258,11 +1262,9 @@ public abstract class TiledImageLayer extends AbstractLayer {
 
         // Try to read from disk again after retrieving it from the net.
         image = this.requestImage(tile, mimeType);
-        Thread.sleep(1); // generates InterruptedException if thread has been interupted
+        //Thread.sleep(1); // generates InterruptedException if thread has been interupted
         if (image == null) {
-            String message =
-                Logging.getMessage("layers.TiledImageLayer.ImageUnavailable", tile.getPath());
-            throw new RuntimeException(message);
+            throw new RuntimeException(Logging.getMessage("layers.TiledImageLayer.ImageUnavailable", tile.getPath()));
         }
 
         return image;
@@ -1276,7 +1278,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
         }
 
         protected File doGetOutputFile() {
-            String suffix = WWIO.makeSuffixForMimeType(this.getRetriever().getContentType());
+            String suffix = WWIO.mimeSuffix(this.getRetriever().getContentType());
 
             String path = this.tile.getPathBase();
             path += suffix;

@@ -65,12 +65,9 @@ public class GeoJSON {
             throw new IllegalArgumentException(message);
         }
 
-        GeoJSONDoc doc = null;
         try {
-            doc = new GeoJSONDoc(docSource);
-            doc.parse();
 
-            final Object root = doc.getRootObject();
+            final Object root = new GeoJSONDoc(docSource).getRoot();
 
             if (root instanceof GeoJSONObject) {
                 this.addGeoJSONGeometryToLayer((GeoJSONObject) root, layer);
@@ -85,14 +82,10 @@ public class GeoJSON {
             } else {
                 GeoJSON.handleUnrecognizedObject(root);
             }
-        }
-        catch (IOException e) {
+        } catch (Exception e) {
             String message = Logging.getMessage("generic.ExceptionAttemptingToReadGeoJSON", docSource);
             Logging.logger().log(Level.SEVERE, message, e);
             throw new WWRuntimeException(message, e);
-        }
-        finally {
-            WWIO.closeStream(doc, docSource.toString());
         }
         return layer;
     }
@@ -118,16 +111,6 @@ public class GeoJSON {
             GeoJSON.handleUnrecognizedObject(object);
     }
 
-    /**
-     * Create a layer from a GeoJSON document.
-     *
-     * @param docSource GeoJSON document. May be a file path {@link String}, {@link java.io.File}, {@link java.net.URL},
-     *                  or {@link java.net.URI}.
-     * @return the new layer.
-     */
-    public final Layer layer(Object docSource) {
-        return load(docSource, new RenderableLayer());
-    }
 
     /**
      * Create a layer from a GeoJSON object.

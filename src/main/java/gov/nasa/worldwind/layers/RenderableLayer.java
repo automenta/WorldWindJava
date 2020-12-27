@@ -25,10 +25,10 @@ import java.awt.*;
  * @see Renderable
  */
 public class RenderableLayer extends AbstractLayer {
-    protected final FastCoWList<Renderable> renderables = new FastCoWList(Renderable[]::new);
+
+    protected final FastCoWList<Renderable> renderables = new FastCoWList<>(Renderable[]::new);
 
     protected final PickSupport pickSupport = new PickSupport();
-//    protected Iterable<Renderable> renderablesOverride;
 
     /**
      * Creates a new <code>RenderableLayer</code> with a null <code>delegateOwner</code>
@@ -43,32 +43,14 @@ public class RenderableLayer extends AbstractLayer {
 
     protected static void doPreRender(DrawContext dc, Iterable<? extends Renderable> renderables) {
         for (Renderable renderable : renderables) {
-//            try {
-            // If the caller has specified their own Iterable,
-            // then we cannot make any guarantees about its contents.
             if (renderable instanceof PreRenderable)
                 ((PreRenderable) renderable).preRender(dc);
-//            } catch (Exception e) {
-//                String msg = Logging.getMessage("generic.ExceptionWhilePrerenderingRenderable");
-//                Logging.logger().severe(msg);
-//                // continue to next renderable
-//            }
         }
     }
 
     protected static void doRender(DrawContext dc, Iterable<? extends Renderable> renderables) {
         for (Renderable renderable : renderables) {
-//            try {
-            // If the caller has specified their own Iterable,
-            // then we cannot make any guarantees about its contents.
-            //if (renderable != null)
             renderable.render(dc);
-//            }
-//            catch (Exception e) {
-//                String msg = Logging.getMessage("generic.ExceptionWhileRenderingRenderable");
-//                Logging.logger().log(Level.SEVERE, msg, e);
-//                // continue to next renderable
-//            }
         }
     }
 
@@ -90,8 +72,7 @@ public class RenderableLayer extends AbstractLayer {
 
         // Attach the layer as a property change listener of the renderable. This forwards property change events from
         // the renderable to the SceneController.
-        if (renderable instanceof AVList)
-            ((AVList) renderable).addPropertyChangeListener(this);
+        _added(renderable);
     }
 
     /**
@@ -122,8 +103,7 @@ public class RenderableLayer extends AbstractLayer {
 
         // Attach the layer as a property change listener of the renderable. This forwards property change events from
         // the renderable to the SceneController.
-        if (renderable instanceof AVList)
-            ((AVList) renderable).addPropertyChangeListener(this);
+        _added(renderable);
     }
 
     /**
@@ -141,15 +121,17 @@ public class RenderableLayer extends AbstractLayer {
     public void addAll(Iterable<? extends Renderable> renderables) {
 
         for (Renderable renderable : renderables) {
-            // Internal list of renderables does not accept null values.
-            if (renderable != null)
-                this.renderables.add(renderable);
-
-            // Attach the layer as a property change listener of the renderable. This forwards property change events
-            // from the renderable to the SceneController.
-            if (renderable instanceof AVList)
-                ((AVList) renderable).addPropertyChangeListener(this);
+            //if (renderable != null) // Internal list of renderables does not accept null values.
+            this.renderables.add(renderable);
+            _added(renderable);
         }
+    }
+
+    private void _added(Renderable renderable) {
+        // Attach the layer as a property change listener of the renderable. This forwards property change events
+        // from the renderable to the SceneController.
+        if (renderable instanceof AVList)
+            ((AVList) renderable).addPropertyChangeListener(this);
     }
 
     /**
@@ -168,12 +150,15 @@ public class RenderableLayer extends AbstractLayer {
     public void remove(Renderable renderable) {
 
         if (this.renderables.remove(renderable)) {
-
-            // Remove the layer as a property change listener of the renderable. This prevents the renderable from keeping a
-            // dangling reference to the layer.
-            if (renderable instanceof AVList)
-                ((AVList) renderable).removePropertyChangeListener(this);
+            _removed(renderable);
         }
+    }
+
+    private void _removed(Renderable renderable) {
+        // Remove the layer as a property change listener of the renderable. This prevents the renderable from keeping a
+        // dangling reference to the layer.
+        if (renderable instanceof AVList)
+            ((AVList) renderable).removePropertyChangeListener(this);
     }
 
     /**
@@ -186,22 +171,18 @@ public class RenderableLayer extends AbstractLayer {
      *
      * @throws IllegalStateException If a custom Iterable has been specified by a call to <code>setRenderables</code>.
      */
-    public void clear() {
-
-        this._clear();
+    public final void clear() {
+        clear(false);
     }
 
-    protected void _clear() {
-        if (this.renderables != null && !this.renderables.isEmpty()) {
-            // Remove the layer as property change listener of any renderables. This prevents the renderables from
-            // keeping a dangling references to the layer.
-            for (Renderable renderable : this.renderables) {
-                if (renderable instanceof AVList)
-                    ((AVList) renderable).removePropertyChangeListener(this);
-            }
+    public void clear(boolean dispose) {
+        renderables.removeIf(renderable->{
+            _removed(renderable);
 
-            this.renderables.clear();
-        }
+            if (dispose && renderable instanceof Disposable)
+                ((Disposable) renderable).dispose();
+            return true;
+        });
     }
 
     public int size() {
@@ -228,26 +209,7 @@ public class RenderableLayer extends AbstractLayer {
      * @return Iterable of currently active Renderables.
      */
     public Iterable<Renderable> all() {
-        return this.active();
-    }
-
-    /**
-     * Returns the Iterable of currently active Renderables. If the caller has specified a custom Iterable via {@link
-     * #set(Iterable)}, this will returns a reference to that Iterable. If the caller passed
-     * <code>setRenderables</code> a null parameter, or if <code>setRenderables</code> has not been called, this
-     * returns a view of this layer's internal collection of Renderables.
-     *
-     * @return Iterable of currently active Renderables.
-     */
-    protected Iterable<Renderable> active() {
-//        if (this.renderablesOverride != null) {
-//            return this.renderablesOverride;
-//        } else {
-        // Return an unmodifiable reference to the internal list of renderables.
-        // This prevents callers from changing this list and invalidating any invariants we have established.
-        //return Collections.unmodifiableCollection(this.renderables);
         return renderables;
-//        }
     }
 
     /**
@@ -262,39 +224,19 @@ public class RenderableLayer extends AbstractLayer {
      */
     @Override
     public void dispose() {
-
-        if (this.renderables != null && !this.renderables.isEmpty()) {
-            for (Renderable renderable : this.renderables) {
-                try {
-                    // Remove the layer as a property change listener of the renderable. This prevents the renderable
-                    // from keeping a dangling reference to the layer.
-                    if (renderable instanceof AVList)
-                        ((AVList) renderable).removePropertyChangeListener(this);
-
-                    if (renderable instanceof Disposable)
-                        ((Disposable) renderable).dispose();
-                }
-                catch (RuntimeException e) {
-                    String msg = Logging.getMessage("generic.ExceptionAttemptingToDisposeRenderable");
-                    Logging.logger().severe(msg);
-                    // continue to next renderable
-                }
-            }
-        }
-
-        this.renderables.clear();
+        clear(true);
     }
 
     protected void doPreRender(DrawContext dc) {
-        RenderableLayer.doPreRender(dc, this.active());
+        RenderableLayer.doPreRender(dc, all());
     }
 
     protected void doPick(DrawContext dc, Point pickPoint) {
-        this.doPick(dc, this.active(), pickPoint);
+        this.doPick(dc, all(), pickPoint);
     }
 
     protected void doRender(DrawContext dc) {
-        RenderableLayer.doRender(dc, this.active());
+        RenderableLayer.doRender(dc, all());
     }
 
     protected void doPick(DrawContext dc, Iterable<? extends Renderable> renderables, Point pickPoint) {
@@ -306,34 +248,26 @@ public class RenderableLayer extends AbstractLayer {
             for (Renderable renderable : renderables) {
                 // If the caller has specified their own Iterable,
                 // then we cannot make any guarantees about its contents.
-                if (renderable != null) {
-                    Color color = dc.getUniquePickColor();
-                    gl.glColor3ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
+                if (renderable == null)
+                    continue;
 
-//                    try {
-                    renderable.render(dc);
-//                    }
-//                    catch (Exception e) {
-//                        String msg = Logging.getMessage("generic.ExceptionWhilePickingRenderable");
-//                        Logging.logger().severe(msg);
-//                        Logging.logger().log(Level.FINER, msg, e); // show exception for this level
-//                        continue; // go on to next renderable
-//                    }
-//
-//                    gl.glColor4fv(inColor, 0);
+                Color color = dc.getUniquePickColor();
+                gl.glColor3ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
 
-                    if (renderable instanceof Locatable) {
-                        this.pickSupport.addPickableObject(color.getRGB(), renderable,
-                            ((Locatable) renderable).getPosition(), false);
-                    } else {
-                        this.pickSupport.addPickableObject(color.getRGB(), renderable);
-                    }
+                renderable.render(dc);
+
+                final int colorRGB = color.getRGB();
+
+                if (renderable instanceof Locatable) {
+                    this.pickSupport.addPickableObject(colorRGB, renderable,
+                        ((Locatable) renderable).getPosition(), false);
+                } else {
+                    this.pickSupport.addPickableObject(colorRGB, renderable);
                 }
             }
 
             this.pickSupport.resolvePick(dc, pickPoint, this);
-        }
-        finally {
+        } finally {
             PickSupport.endPicking(dc);
         }
     }
@@ -353,15 +287,8 @@ public class RenderableLayer extends AbstractLayer {
     @Override
     public void onMessage(Message message) {
         for (Renderable renderable : this.renderables) {
-//            try {
             if (renderable instanceof MessageListener)
                 ((MessageListener) renderable).onMessage(message);
-//            }
-//            catch (Exception e) {
-//                String msg = Logging.getMessage("generic.ExceptionInvokingMessageListener");
-//                Logging.logger().log(Level.SEVERE, msg, e);
-//                // continue to next renderable
-//            }
         }
     }
 }

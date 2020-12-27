@@ -35,8 +35,7 @@ import static java.lang.Math.toRadians;
 public class ShapefilePolygons extends ShapefileRenderable implements OrderedRenderable, PreRenderable, Combinable {
     static {
         if (!WorldWind.getMemoryCacheSet().containsCache(ShapefileGeometry.class.getName())) {
-            long size = Configuration.getLongValue(AVKey.SHAPEFILE_GEOMETRY_CACHE_SIZE, (long) 50.0e6); // default 50MB
-            MemoryCache cache = new BasicMemoryCache((long) (0.8 * size), size);
+            MemoryCache cache = new SoftMemoryCache();
             cache.setName("Shapefile Geometry");
             WorldWind.getMemoryCacheSet().addCache(ShapefileGeometry.class.getName(), cache);
         }

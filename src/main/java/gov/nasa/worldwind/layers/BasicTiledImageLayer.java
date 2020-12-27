@@ -486,7 +486,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
         avList.set(AVKey.HEIGHT, tile.getHeight());
         avList.set(AVKey.FILE_NAME, tile.getPath());
 
-        Retriever retriever = retrieverFactory.createRetriever(avList, postProcessor);
+        Retriever retriever = retrieverFactory.retriever(avList, postProcessor);
 
         WorldWind.retrieveLocal().run(retriever, tile.getPriority());
     }

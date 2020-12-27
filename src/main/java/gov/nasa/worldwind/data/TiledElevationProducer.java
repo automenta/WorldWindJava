@@ -195,7 +195,7 @@ public class TiledElevationProducer extends TiledRasterProducer {
         // Compute the format suffix if none exists.        
         if (params.get(AVKey.FORMAT_SUFFIX) == null) {
             params.set(AVKey.FORMAT_SUFFIX,
-                WWIO.makeSuffixForMimeType(params.get(AVKey.IMAGE_FORMAT).toString()));
+                WWIO.mimeSuffix(params.get(AVKey.IMAGE_FORMAT).toString()));
         }
 
         // Compute the data type from the image format.

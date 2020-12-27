@@ -1,6 +1,7 @@
 package netvr;
 
 import gov.nasa.worldwind.geom.LatLon;
+import netvr.layer.AdaptiveOSMLayer;
 import org.junit.jupiter.api.*;
 
 import java.util.*;

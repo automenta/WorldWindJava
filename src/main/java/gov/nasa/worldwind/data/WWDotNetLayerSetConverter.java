@@ -44,7 +44,7 @@ public class WWDotNetLayerSetConverter extends AbstractDataStoreProducer {
 
         // If an installation type is specified, override the file extension with the new type.
         if (installMimeType != null)
-            tokens[2] = WWIO.makeSuffixForMimeType(installMimeType);
+            tokens[2] = WWIO.mimeSuffix(installMimeType);
             // Otherwise keep the existing extension. Add a leading '.' so that both cases can be handled transparently.
         else if (tokens[2].length() > 1)
             tokens[2] = '.' + tokens[2];
@@ -94,7 +94,7 @@ public class WWDotNetLayerSetConverter extends AbstractDataStoreProducer {
         // Compute the format suffix if none exists.
         if (params.get(AVKey.FORMAT_SUFFIX) == null) {
             params.set(AVKey.FORMAT_SUFFIX,
-                WWIO.makeSuffixForMimeType(params.get(AVKey.IMAGE_FORMAT).toString()));
+                WWIO.mimeSuffix(params.get(AVKey.IMAGE_FORMAT).toString()));
         }
 
         productionState.productionParams = params;
