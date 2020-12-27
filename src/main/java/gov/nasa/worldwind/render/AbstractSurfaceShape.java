@@ -92,7 +92,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject
     protected final List<List<LatLon>> activeGeometry = new ArrayList<>(); // re-determined each frame
     protected final Collection<List<LatLon>> activeOutlineGeometry = new ArrayList<>(); // re-determined each frame
     protected final Map<GlobeStateKey, List<Sector>> sectorCache = new HashMap<>();
-    protected final Map<Object, List<List<LatLon>>> geometryCache = new HashMap<>();
+    protected final Map<GeometryKey, List<List<LatLon>>> geometryCache = new HashMap<>();
     protected final OGLStackHandler stackHandler = new OGLStackHandler();
     // Public interface properties.
     protected boolean highlighted;
@@ -284,9 +284,10 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject
         double scale = attributes.getImageScale();
         transform = Matrix.fromScale(cosLat / scale, 1.0d / scale, 1.0d).multiply(transform);
         // To maintain the pattern apparent size, we scale it so that one texture pixel match one draw tile pixel.
-        double regionPixelSize = dc.getGlobe().getRadius() * toRadians(sdc.getSector().latDelta)
+        final double globeRad = dc.getGlobe().getRadius();
+        double regionPixelSize = globeRad * toRadians(sdc.getSector().latDelta)
             / sdc.getViewport().height;
-        double texturePixelSize = dc.getGlobe().getRadius() * Angle.fromDegrees(1).radians() / texture.getHeight(dc);
+        double texturePixelSize = globeRad * Angle.fromDegrees(1).radians() / texture.getHeight(dc);
         double drawScale = texturePixelSize / regionPixelSize;
         transform = Matrix.fromScale(drawScale, drawScale, 1.0d).multiply(transform); // Pre multiply
         // Apply texture coordinates transform
@@ -430,28 +431,13 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject
 
     @SuppressWarnings("unchecked")
     public List<Sector> getSectors(DrawContext dc) {
-
-        final GlobeStateKey key
-            = dc.getGlobe().getGlobeStateKey(/*dc*/ /* shared should be ok if draw context is 1:1 with a globe*/);
-
-        List<Sector> s = sectorCache.get(key);
-        if (s == null) {
-            s = WWUtil.arrayList(computeSectors(dc));
-            sectorCache.put(key, s);
-        }
-        return s;
+        ///*dc*/ /* shared should be ok if draw context is 1:1 with a globe*/
+        return sectorCache.computeIfAbsent(
+            dc.getGlobe().getGlobeStateKey(),
+            K-> WWUtil.arrayList(computeSectors(K.getGlobe())));
     }
 
-    /**
-     * Computes the bounding sectors for the shape. There will be more than one if the shape crosses the date line, but
-     * does not enclose a pole.
-     *
-     * @param dc Current draw context.
-     * @return Bounding sectors for the shape.
-     */
-    protected Sector[] computeSectors(DrawContext dc) {
-        return this.computeSectors(dc.getGlobe());
-    }
+
 
     /**
      * Computes the bounding sectors for the shape. There will be more than one if the shape crosses the date line, but
@@ -473,9 +459,9 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject
             // latitude of the pole, and the full range of longitude.
             Sector s = Sector.boundingSector(locations);
             s = AVKey.NORTH.equals(pole) ?
-                new Sector(s.latMin(), Angle.POS90, Angle.NEG180, Angle.POS180)
+                new Sector(s.latMin, Angle.POS90degrees, Angle.NEG180degrees, Angle.POS180degrees)
                 :
-                    new Sector(Angle.NEG90, s.latMax(), Angle.NEG180, Angle.POS180);
+                    new Sector(Angle.NEG90degrees, s.latMax, Angle.NEG180degrees, Angle.POS180degrees);
 
             sectors = new Sector[] {s};
         } else if (LatLon.locationsCrossDateLine(locations)) {
@@ -496,8 +482,8 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject
         // the two latitudes. All other path types are bounded by the defining locations.
         if (AVKey.GREAT_CIRCLE.equals(this.getPathType())) {
             LatLon[] extremes = LatLon.greatCircleArcExtremeLocations(locations);
-            final double e0Lat = extremes[0].getLatitude().degrees;
-            final double e1Lat = extremes[1].getLatitude().degrees;
+            final double e0Lat = extremes[0].latitude;
+            final double e1Lat = extremes[1].latitude;
 
             final int n = sectors.length;
             for (int i = 0; i < n; i++) {
@@ -511,10 +497,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject
                 if (maxLatDegrees < e1Lat)
                     maxLatDegrees = e1Lat;
 
-                sectors[i] = new Sector(
-                    Angle.fromDegreesLatitude(minLatDegrees),
-                    Angle.fromDegreesLatitude(maxLatDegrees),
-                    s.lonMin(), s.lonMax());
+                sectors[i] = new Sector(minLatDegrees, maxLatDegrees, s.lonMin, s.lonMax);
             }
         }
 
@@ -531,11 +514,11 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject
      * @throws IllegalArgumentException if the Globe is null.
      */
     public Extent getExtent(Globe globe, double verticalExaggeration) {
-        if (globe == null) {
-            String message = Logging.getMessage("nullValue.GlobeIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (globe == null) {
+//            String message = Logging.getMessage("nullValue.GlobeIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         Sector[] sectors = this.computeSectors(globe);
         if (sectors == null)
@@ -611,19 +594,17 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject
     public void moveTo(Position position) {
 
         Position oldReferencePosition = this.getReferencePosition();
-        if (oldReferencePosition == null)
-            return;
+        if (oldReferencePosition != null)
+            this.doMoveTo(oldReferencePosition, position);
 
-        this.doMoveTo(oldReferencePosition, position);
     }
 
     public void moveTo(Globe globe, Position position) {
 
         Position oldReferencePosition = this.getReferencePosition();
-        if (oldReferencePosition == null)
-            return;
+        if (oldReferencePosition != null)
+            this.doMoveTo(globe, oldReferencePosition, position);
 
-        this.doMoveTo(globe, oldReferencePosition, position);
     }
 
     @Override
@@ -937,12 +918,10 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject
         return this.texture;
     }
 
-    @SuppressWarnings("unchecked")
     protected List<List<LatLon>> getCachedGeometry(DrawContext dc, SurfaceTileDrawContext sdc) {
-
         return this.geometryCache.computeIfAbsent(
             createGeometryKey(dc, sdc),
-            K -> this.createGeometry(dc.getGlobe(), sdc));
+            K -> this.createGeometry(K.globe, sdc));
     }
 
     //**************************************************************//
@@ -955,7 +934,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject
 
     protected abstract List<List<LatLon>> createGeometry(Globe globe, double edgeIntervalsPerDegree);
 
-    protected Object createGeometryKey(DrawContext dc, SurfaceTileDrawContext sdc) {
+    protected GeometryKey createGeometryKey(DrawContext dc, SurfaceTileDrawContext sdc) {
         return new GeometryKey(dc, this.computeEdgeIntervalsPerDegree(sdc));
     }
 

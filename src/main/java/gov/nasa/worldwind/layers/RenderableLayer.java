@@ -36,6 +36,11 @@ public class RenderableLayer extends AbstractLayer {
     public RenderableLayer() {
     }
 
+    public RenderableLayer(String name) {
+        this();
+        setName(name);
+    }
+
     protected static void doPreRender(DrawContext dc, Iterable<? extends Renderable> renderables) {
         for (Renderable renderable : renderables) {
 //            try {

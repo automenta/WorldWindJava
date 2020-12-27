@@ -124,11 +124,11 @@ public class PointPlacemark extends WWObjectImpl
      * @throws IllegalArgumentException if the position is null.
      */
     public PointPlacemark(Position position) {
-        if (position == null) {
-            String message = Logging.getMessage("nullValue.PositionIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (position == null) {
+//            String message = Logging.getMessage("nullValue.PositionIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         this.position = position;
     }

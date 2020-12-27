@@ -91,7 +91,7 @@ public class SurfacePolylines extends AbstractSurfaceShape {
 
         // SurfacePolylines does not interpolate between caller specified positions, therefore it has no path type.
         if (this.sectors == null)
-            this.sectors = WWUtil.arrayList(this.computeSectors(dc));
+            this.sectors = WWUtil.arrayList(this.computeSectors(dc.getGlobe()));
 
         return this.sectors;
     }

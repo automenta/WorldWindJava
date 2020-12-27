@@ -106,7 +106,7 @@ public class Ellipsoid extends RigidShape {
         RigidShape.setUpGeometryCache();
     }
 
-    public int getSubdivisions() {
+    public int getSlices() {
         return this.subdivisions;
     }
 
@@ -301,10 +301,10 @@ public class Ellipsoid extends RigidShape {
         // dc.getGLRuntimeCapabilities().setVertexBufferObjectEnabled(true);
 
         // decide whether to draw with VBO's or VA's
-        if (this.shouldUseVBOs(dc) && (this.getVboIds(getSubdivisions(), dc)) != null) {
+        if (this.shouldUseVBOs(dc) && (this.getVboIds(getSlices(), dc)) != null) {
             // render using VBO's
-            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, getVboIds(getSubdivisions(), dc)[2 * face]);
-            gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, this.getVboIds(getSubdivisions(), dc)[2 * face + 1]);
+            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, getVboIds(getSlices(), dc)[2 * face]);
+            gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, this.getVboIds(getSlices(), dc)[2 * face + 1]);
 
             gl.glVertexPointer(size, glType, stride, 0);
             gl.glDrawElements(mode, count, type, 0);

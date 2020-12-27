@@ -260,7 +260,7 @@ public abstract class RigidShape extends AbstractShape {
         this.faceCount = faces;
     }
 
-    public abstract int getSubdivisions();
+    public abstract int getSlices();
 
     /**
      * Returns the pair of texture coordinate offsets corresponding to the shape face and texture coordinate specified
@@ -1193,10 +1193,10 @@ public abstract class RigidShape extends AbstractShape {
         List<Geometry> meshes = shapeData.getMeshes();
 
         // create the cacheKey for this LOD if it doesn't yet exist
-        if (shapeData.getVboCacheKey(getSubdivisions()) == null) {
-            shapeData.setVboCacheKey(getSubdivisions(), this.getClass().toString() + getSubdivisions());
+        if (shapeData.getVboCacheKey(getSlices()) == null) {
+            shapeData.setVboCacheKey(getSlices(), this.getClass().toString() + getSlices());
         }
-        int[] vboIds = (int[]) dc.getGpuResourceCache().get(shapeData.getVboCacheKey(getSubdivisions()));
+        int[] vboIds = (int[]) dc.getGpuResourceCache().get(shapeData.getVboCacheKey(getSlices()));
         if (vboIds == null) {
             int size = 0;
             for (int face = 0; face < getFaceCount(); face++) {
@@ -1206,7 +1206,7 @@ public abstract class RigidShape extends AbstractShape {
 
             vboIds = new int[2 * getFaceCount()];
             gl.glGenBuffers(vboIds.length, vboIds, 0);
-            dc.getGpuResourceCache().put(shapeData.getVboCacheKey(getSubdivisions()), vboIds,
+            dc.getGpuResourceCache().put(shapeData.getVboCacheKey(getSlices()), vboIds,
                 GpuResourceCache.VBO_BUFFERS, size);
 
             shapeData.refillIndexVBO = true;

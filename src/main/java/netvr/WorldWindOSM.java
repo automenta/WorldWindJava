@@ -11,6 +11,7 @@ import gov.nasa.worldwind.layers.earth.*;
 import gov.nasa.worldwind.layers.sky.*;
 import gov.nasa.worldwind.pick.PickedObject;
 import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.render.Cylinder;
 import gov.nasa.worldwind.util.WWUtil;
 import gov.nasa.worldwind.video.LayerList;
 import gov.nasa.worldwind.video.newt.WorldWindowNEWT;
@@ -27,6 +28,7 @@ import spacegraph.space2d.widget.slider.FloatSlider;
 import spacegraph.space2d.widget.textedit.TextEdit;
 import spacegraph.video.*;
 
+import javax.naming.directory.BasicAttributes;
 import java.awt.*;
 import java.awt.event.*;
 import java.nio.DoubleBuffer;
@@ -170,7 +172,9 @@ public class WorldWindOSM {
             l.add(renderables);
 
             String earthquakeFeedUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson";
-            Layer eq = new GeoJSON() {
+
+            l.add(new GeoJSONLayer("Earthquakes", earthquakeFeedUrl, new GeoJSON.GeoJSONRenderer() {
+
                 protected static final long MILLISECONDS_PER_MINUTE = 60000;
                 protected static final long MILLISECONDS_PER_HOUR = 60 * MILLISECONDS_PER_MINUTE;
                 protected static final long MILLISECONDS_PER_DAY = 24 * MILLISECONDS_PER_HOUR;
@@ -197,7 +201,8 @@ public class WorldWindOSM {
                 protected void addRenderableForPoint(GeoJSONPoint geom, RenderableLayer l, AVList properties) {
                     addEarthquake(geom, l, properties);
                 }
-                private void addEarthquake(GeoJSONPoint geom, RenderableLayer layer, AVList properties) {
+
+                private void addEarthquake(GeoJSONPoint geom, RenderableLayer layer, AVList p) {
                     if (eqAttributes == null) {
                         // Init default attributes for all eq
                         eqAttributes = new AnnotationAttributes();
@@ -208,16 +213,8 @@ public class WorldWindOSM {
                         eqAttributes.setCornerRadius(0);
                         eqAttributes.setBackgroundColor(new Color(0, 0, 0, 0));
                     }
-
-                    EqAnnotation eq = new EqAnnotation(geom.getPosition(), eqAttributes);
-                    eq.setAltitudeMode(WorldWind.CLAMP_TO_GROUND); // GeoJON point's 3rd coordinate indicates depth
-                    eq.setValues(properties);
-
-                    Number eqMagnitude = (Number) eq.get(USGS_EARTHQUAKE_MAGNITUDE);
-                    Number eqTime = (Number) eq.get(USGS_EARTHQUAKE_TIME);
-
-
-                    int elapsedDays = 6;
+                    Number eqTime = (Number) p.get(USGS_EARTHQUAKE_TIME);
+                    int elapsedDays;
                     if (eqTime != null) {
                         // Compute days elapsed since earthquake event
                         elapsedDays = (int) ((this.updateTime - eqTime.longValue()) / MILLISECONDS_PER_DAY);
@@ -230,10 +227,41 @@ public class WorldWindOSM {
 //                        } else {
 //                            this.latestEq = eq;
 //                        }
-                    }
-                    eq.getAttributes().setTextColor(eqColors[Math.min(elapsedDays, eqColors.length - 1)]);
-                    eq.getAttributes().setScale(eqMagnitude.doubleValue() / 10);
+                    } else
+                        elapsedDays = 6;
+
+                    Number eqMagnitude = (Number) p.get(USGS_EARTHQUAKE_MAGNITUDE);
+
+                    final double radMeters = eqMagnitude.doubleValue() * 32_000;
+                    final Cylinder eq = new Cylinder(geom.getPosition(),
+                        radMeters/2,
+                        radMeters
+                        );
+
+//                    final SurfaceCircle eq = new SurfaceCircle(
+//                        geom.getPosition(),
+//                        radMeters);
+                    final BasicShapeAttributes a = new BasicShapeAttributes();
+                    eq.setAttributes(a);
+                    a.setDrawOutline(false);
+                    float alpha = 1f / (1+elapsedDays);
+                    a.setInteriorMaterial(new Material(
+                        new Color(0.5f + 0.5f*alpha, 0, 0)
+                    ));
+                    a.setInteriorOpacity(0.5f*alpha);
+                    eq.setHighlightAttributes(a);
+
                     layer.add(eq);
+
+//                    EqAnnotation eq = new EqAnnotation(geom.getPosition(), eqAttributes);
+//                    eq.setAltitudeMode(WorldWind.CLAMP_TO_GROUND); // GeoJON point's 3rd coordinate indicates depth
+//                    eq.setValues(properties);
+//
+//                    eq.getAttributes().setTextColor(eqColors[Math.min(elapsedDays, eqColors.length - 1)]);
+//
+//                    eq.getAttributes().setScale(eqMagnitude.doubleValue() / 4);
+//
+//                    layer.add(eq);
                 }
 
                 class EqAnnotation extends GlobeAnnotation {
@@ -269,9 +297,8 @@ public class WorldWindOSM {
                         FrameFactory.drawBuffer(dc, GL.GL_TRIANGLE_FAN, this.shapeBuffer);
                     }
                 }
-            }.layer(earthquakeFeedUrl);
-            eq.setName("Earthquakes");
-            l.add(eq);
+
+            }));
 
 
 /* //SHAPEFILE

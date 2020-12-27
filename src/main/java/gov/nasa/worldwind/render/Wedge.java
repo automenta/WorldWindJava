@@ -236,7 +236,7 @@ public class Wedge extends RigidShape {
         return this.faceCount;
     }
 
-    public int getSubdivisions() {
+    public int getSlices() {
         return this.subdivisions;
     }
 
@@ -328,11 +328,11 @@ public class Wedge extends RigidShape {
      * @throws IllegalArgumentException if the wedgeAngle is null
      */
     protected void makeGeometry(ShapeData shapeData) {
-        if (this.wedgeAngle == null) {
-            String message = Logging.getMessage("nullValue.AngleIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (this.wedgeAngle == null) {
+//            String message = Logging.getMessage("nullValue.AngleIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         // attempt to retrieve a cached unit wedge with the same angle and number of subdivisions
         Object cacheKey = new Geometry.CacheKey(this.getClass(), "Wedge0-" + this.wedgeAngle.toString(),
@@ -474,10 +474,10 @@ public class Wedge extends RigidShape {
         dc.getGLRuntimeCapabilities().setVertexBufferObjectEnabled(false);
 
         // decide whether to draw with VBO's or VA's
-        if (this.shouldUseVBOs(dc) && (this.getVboIds(getSubdivisions(), dc)) != null) {
+        if (this.shouldUseVBOs(dc) && (this.getVboIds(getSlices(), dc)) != null) {
             // render using VBO's
-            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, getVboIds(getSubdivisions(), dc)[2 * face]);
-            gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, this.getVboIds(getSubdivisions(), dc)[2 * face + 1]);
+            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, getVboIds(getSlices(), dc)[2 * face]);
+            gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, this.getVboIds(getSlices(), dc)[2 * face + 1]);
 
             gl.glVertexPointer(size, glType, stride, 0);
             gl.glDrawElements(mode, count, type, 0);

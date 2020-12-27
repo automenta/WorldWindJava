@@ -259,16 +259,16 @@ public class GeometryBuilder {
     }
 
     public static LatLon[] makeCylinderLocations(Extent globe, LatLon center, double radius, int slices) {
-        if (globe == null) {
-            String message = Logging.getMessage("nullValue.GlobeIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (center == null) {
-            String message = Logging.getMessage("nullValue.CenterIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (globe == null) {
+//            String message = Logging.getMessage("nullValue.GlobeIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//        if (center == null) {
+//            String message = Logging.getMessage("nullValue.CenterIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
         if (slices < 1) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "slices < 1");
             Logging.logger().severe(message);
@@ -2379,13 +2379,13 @@ public class GeometryBuilder {
         texCoords.rewind();
     }
 
-    public static void makeUnitCylinderTextureCoordinates(int face, FloatBuffer texCoords, int subdivisions) {
+    public static void makeUnitCylinderTextureCoordinates(int face, FloatBuffer texCoords, int slices) {
         if (texCoords == null) {
             String message = "nullValue.DestinationArrayIsNull";
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (subdivisions < 0) {
+        if (slices < 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "subdivisions < 0");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -2397,7 +2397,7 @@ public class GeometryBuilder {
         int i, index;
         float x, y, z, u, v, a, phi;
 
-        int slices = (int) Math.pow(2, 2 + subdivisions);
+//        int slices = (int) Math.pow(2, 2 + subdivisions);
         float da = 2.0f * (float) Math.PI / slices;
 
         if (face == 2)      // cylinder core
@@ -2453,11 +2453,11 @@ public class GeometryBuilder {
     }
 
     public static void makeWedgeTextureCoordinates(FloatBuffer texCoords, int subdivisions, Angle angle) {
-        if (texCoords == null) {
-            String message = "nullValue.DestinationArrayIsNull";
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (texCoords == null) {
+//            String message = "nullValue.DestinationArrayIsNull";
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
         if (subdivisions < 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "subdivisions < 0");
             Logging.logger().severe(message);
@@ -2635,11 +2635,11 @@ public class GeometryBuilder {
     }
 
     public static void makeUnitConeTextureCoordinates(FloatBuffer texCoords, int subdivisions) {
-        if (texCoords == null) {
-            String message = "nullValue.DestinationArrayIsNull";
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (texCoords == null) {
+//            String message = "nullValue.DestinationArrayIsNull";
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
         if (subdivisions < 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "subdivisions < 0");
             Logging.logger().severe(message);
@@ -2696,11 +2696,11 @@ public class GeometryBuilder {
     }
 
     public static void makeUnitConeTextureCoordinates(int face, FloatBuffer texCoords, int subdivisions) {
-        if (texCoords == null) {
-            String message = "nullValue.DestinationArrayIsNull";
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (texCoords == null) {
+//            String message = "nullValue.DestinationArrayIsNull";
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
         if (subdivisions < 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "subdivisions < 0");
             Logging.logger().severe(message);
@@ -4578,13 +4578,13 @@ public class GeometryBuilder {
         return itb;
     }
 
-    public IndexedTriangleBuffer tessellateCylinderBuffer(float radius, int subdivisions) {
+    public IndexedTriangleBuffer tessellateCylinderBuffer(float radius, int slices) {
         if (radius < 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "radius < 0");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (subdivisions < 0) {
+        if (slices < 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "subdivisions < 0");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -4593,7 +4593,7 @@ public class GeometryBuilder {
         int i, index;
         float x, y, z, a;
 
-        int slices = (int) Math.pow(2, 2 + subdivisions);
+//        int slices = (int) Math.pow(2, 2 + subdivisions);
         float da = 2.0f * (float) Math.PI / slices;
 
         int cylinderIndexCount = 12 * slices;
@@ -4665,7 +4665,7 @@ public class GeometryBuilder {
         // INDICES
 
         int coreIndex = (2 * slices) + 2;
-        int centerPoint = 0;
+//        int centerPoint = 0;
 
         for (i = 0; i < slices; i++) {
             // cylinder top
@@ -4724,13 +4724,13 @@ public class GeometryBuilder {
         return itb;
     }
 
-    public IndexedTriangleBuffer tessellateCylinderBuffer(int face, float radius, int subdivisions) {
+    public IndexedTriangleBuffer tessellateCylinderBuffer(int face, float radius, int slices) {
         if (radius < 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "radius < 0");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (subdivisions < 0) {
+        if (slices < 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "subdivisions < 0");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -4743,8 +4743,8 @@ public class GeometryBuilder {
         // face 1 = bottom
         // face 2 = round cylinder core
 
-        int slices = (int) Math.pow(2, 2 + subdivisions);
-        float da = 2.0f * (float) Math.PI / slices;
+        //int slices = (int) Math.pow(2, 2 + subdivisions);
+        float da = (float) (2.0 * Math.PI / slices);
 
         int cylinderIndexCount = 3 * slices;
         int cylinderVertexCount = slices + 1;
@@ -5542,11 +5542,11 @@ public class GeometryBuilder {
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (dest == null) {
-            String message = "nullValue.DestinationArrayIsNull";
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (dest == null) {
+//            String message = "nullValue.DestinationArrayIsNull";
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
         if (dest.length < numCoords) {
             String message = "generic.DestinationArrayInvalidLength " + dest.length;
             Logging.logger().severe(message);
@@ -5596,11 +5596,11 @@ public class GeometryBuilder {
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (dest == null) {
-            String message = "nullValue.DestinationArrayIsNull";
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (dest == null) {
+//            String message = "nullValue.DestinationArrayIsNull";
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
         if (dest.length < numCoords) {
             String message = "generic.DestinationArrayInvalidLength " + dest.length;
             Logging.logger().severe(message);
@@ -5648,11 +5648,11 @@ public class GeometryBuilder {
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (dest == null) {
-            String message = "nullValue.DestinationArrayIsNull";
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (dest == null) {
+//            String message = "nullValue.DestinationArrayIsNull";
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
         if (dest.length < numIndices) {
             String message = "generic.DestinationArrayInvalidLength " + dest.length;
             Logging.logger().severe(message);
@@ -5748,11 +5748,11 @@ public class GeometryBuilder {
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (dest == null) {
-            String message = "nullValue.DestinationArrayIsNull";
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (dest == null) {
+//            String message = "nullValue.DestinationArrayIsNull";
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
         if (dest.length < numIndices) {
             String message = "generic.DestinationArrayInvalidLength " + dest.length;
             Logging.logger().severe(message);
@@ -6459,11 +6459,11 @@ public class GeometryBuilder {
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (dest == null) {
-            String message = "nullValue.DestinationArrayIsNull";
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (dest == null) {
+//            String message = "nullValue.DestinationArrayIsNull";
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
         if (dest.length < numIndices) {
             String message = "generic.DestinationArrayInvalidLength " + dest.length;
             Logging.logger().severe(message);
@@ -7073,11 +7073,11 @@ public class GeometryBuilder {
     }
 
     public void makeCylinderNormals(IndexedTriangleBuffer itb, FloatBuffer dest) {
-        if (itb == null) {
-            String message = "nullValue.IndexedTriangleArray";
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (itb == null) {
+//            String message = "nullValue.IndexedTriangleArray";
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         int numCoords = 3 * itb.vertexCount;
 

@@ -262,9 +262,8 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
         ShapeData shapeData = this.shapeDataCache.get(key);
 
         if (shapeData == null) {
-            Angle degreesPerInterval = Angle.fromDegrees(1.0 / this.computeEdgeIntervalsPerDegree(sdc));
-            List<List<Vertex>> contours = this.assembleContours(degreesPerInterval);
-            shapeData = this.tessellateContours(contours);
+            shapeData = this.tessellateContours(this.assembleContours(
+                Angle.fromDegrees(1.0 / this.computeEdgeIntervalsPerDegree(sdc))));
 
             this.shapeDataCache.put(key, shapeData);
         }
@@ -316,7 +315,7 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
 
     protected List<List<Vertex>> assembleContours(Angle maxEdgeLength) {
         final int n = this.boundaries.size();
-        List<List<Vertex>> result = new ArrayList<>();
+        List<List<Vertex>> result = new ArrayList<>(n);
 
         for (int b = 0; b < n; b++) {
             Iterable<? extends LatLon> locations = this.boundaries.get(b);
@@ -396,7 +395,7 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
                 if (LatLon.locationsCrossDateline(vertex, nextVertex)) {
                     // Determine where the segment crosses the dateline.
                     LatLon separation = LatLon.intersectionWithMeridian(vertex, nextVertex, Angle.POS180);
-                    double sign = Math.signum(vertex.getLongitude().degrees);
+                    double sign = Math.signum(vertex.longitude);
 
                     Angle lat = separation.getLatitude();
                     Angle thisSideLon = Angle.POS180.multiply(sign);
