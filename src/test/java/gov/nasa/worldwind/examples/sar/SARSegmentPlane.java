@@ -157,7 +157,7 @@ public class SARSegmentPlane extends WWObjectImpl {
         double[] gridCellDimensions = segmentPlane.getGridCellDimensions();
 
         double gridWidthRadians = gridCellDimensions[0] / wwd.model().getGlobe().getRadius();
-        double segmentDistanceRadians = LatLon.rhumbDistance(position1, position2).radians;
+        double segmentDistanceRadians = LatLon.rhumbDistance(position1, position2).radians();
 
         return Angle.fromRadians(Math.max(2 * gridWidthRadians, segmentDistanceRadians / 2.0));
     }

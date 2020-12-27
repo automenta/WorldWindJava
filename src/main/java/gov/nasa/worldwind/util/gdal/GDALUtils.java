@@ -39,24 +39,24 @@ public class GDALUtils {
 
     protected static final byte ALPHA_TRANSPARENT = 0x00;
     protected static final String JAVA_LIBRARY_PATH = "java.library.path";
-protected static final String GDAL_DATA_PATH = "GDAL_DATA";
+    protected static final String GDAL_DATA_PATH = "GDAL_DATA";
     protected static final AtomicBoolean gdalIsAvailable = new AtomicBoolean(false);
     // This is an OLD default libname request by WW build of GDAL
     protected static final String gdalalljni = Configuration.isMacOS()
-        ? "gdalalljni" : (is32bitArchitecture() ? "gdalalljni32" : "gdalalljni64");
+        ? "gdalalljni" : (GDALUtils.is32bitArchitecture() ? "gdalalljni32" : "gdalalljni64");
     protected static final Collection<String> loadedLibraries = new CopyOnWriteArraySet<>();
-private static Class newClassLoader = null;
+    private static Class newClassLoader;
 
-    private static Object originalClassLoader = null;
-    private static Field fieldSysPaths = null;
-    private static boolean fieldSysPaths_accessible = false;
+    private static Object originalClassLoader;
+    private static Field fieldSysPaths;
+    private static boolean fieldSysPaths_accessible;
 
     static {
         // Allow the app or user to prevent library loader replacement.
         if (System.getProperty("gov.nasa.worldwind.prevent.gdal.loader.replacement") == null) {
-            replaceLibraryLoader(); // This must be the first line of initialization
+            GDALUtils.replaceLibraryLoader(); // This must be the first line of initialization
         }
-        initialize();
+        GDALUtils.initialize();
     }
 
     protected static void replaceLibraryLoader() {
@@ -86,9 +86,9 @@ private static Class newClassLoader = null;
 
     protected static boolean gdalPreLoadNativeLibrary(boolean allowLogErrors) {
         try {
-            NativeLibraryLoader.loadLibrary(gdalalljni);
-            loadedLibraries.add(gdalalljni);
-            Logging.logger().info(Logging.getMessage("generic.LibraryLoadedOK", gdalalljni));
+            NativeLibraryLoader.loadLibrary(GDALUtils.gdalalljni);
+            GDALUtils.loadedLibraries.add(GDALUtils.gdalalljni);
+            Logging.logger().info(Logging.getMessage("generic.LibraryLoadedOK", GDALUtils.gdalalljni));
 
             return true;
         }
@@ -107,14 +107,14 @@ private static Class newClassLoader = null;
 
             // attempt to load library from default locations
             // (current path OR by specifying java.library.path from the command line)
-            boolean gdalNativeLibraryLoaded = gdalPreLoadNativeLibrary(false);
+            boolean gdalNativeLibraryLoaded = GDALUtils.gdalPreLoadNativeLibrary(false);
 
             if (!gdalNativeLibraryLoaded && !runningAsJavaWebStart) {
                 // if we are here, library is not in any default place, so we will search in sub-folders
-                String[] folders = findGdalFolders();
-                String newJavaLibraryPath = buildPathString(folders, true);
+                String[] folders = GDALUtils.findGdalFolders();
+                String newJavaLibraryPath = GDALUtils.buildPathString(folders, true);
                 try {
-                    alterJavaLibraryPath(newJavaLibraryPath);
+                    GDALUtils.alterJavaLibraryPath(newJavaLibraryPath);
 //                    gdalNativeLibraryLoaded = gdalLoadNativeLibrary(true);
                 }
                 catch (Exception e) {
@@ -127,11 +127,11 @@ private static Class newClassLoader = null;
                 if (!runningAsJavaWebStart) {
                     // No need, because we are build one dynamic library that contains ALL  drivers
                     // and dependant libraries
-                    String dataFolder = findGdalDataFolder();
+                    String dataFolder = GDALUtils.findGdalDataFolder();
                     if (null != dataFolder) {
                         String msg = Logging.getMessage("gdal.SharedDataFolderFound", dataFolder);
                         Logging.logger().finest(msg);
-                        gdal.SetConfigOption(GDAL_DATA_PATH, dataFolder);
+                        gdal.SetConfigOption(GDALUtils.GDAL_DATA_PATH, dataFolder);
                     }
                 }
 
@@ -145,11 +145,10 @@ private static Class newClassLoader = null;
                  */
                 String msg = Logging.getMessage("generic.LibraryLoadedOK", "GDAL v" + gdal.VersionInfo("RELEASE_NAME"));
                 Logging.logger().info(msg);
-                listAllRegisteredDrivers();
+                GDALUtils.listAllRegisteredDrivers();
 
-                gdalIsAvailable.set(true);
-            }
-            else {
+                GDALUtils.gdalIsAvailable.set(true);
+            } else {
                 String reason = Logging.getMessage("generic.LibraryNotFound", "GDAL");
                 String msg = Logging.getMessage("generic.LibraryNotLoaded", "GDAL", reason);
                 Logging.logger().warning(msg);
@@ -173,7 +172,7 @@ private static Class newClassLoader = null;
 
     protected static String[] findGdalFolders() {
         try {
-            String cwd = getCurrentDirectory();
+            String cwd = GDALUtils.getCurrentDirectory();
 
             FileTree fileTree = new FileTree(new File(cwd));
             fileTree.setMode(FileTree.FILES_AND_DIRECTORIES);
@@ -190,7 +189,7 @@ private static Class newClassLoader = null;
 
     protected static String findGdalDataFolder() {
         try {
-            String cwd = getCurrentDirectory();
+            String cwd = GDALUtils.getCurrentDirectory();
 
             FileTree fileTree = new FileTree(new File(cwd));
             fileTree.setMode(FileTree.FILES_AND_DIRECTORIES);
@@ -201,7 +200,8 @@ private static Class newClassLoader = null;
 
             if (null != folders && folders.length > 0) {
                 if (folders.length > 1) {
-                    String msg = Logging.getMessage("gdal.MultipleDataFoldersFound", buildPathString(folders, false));
+                    String msg = Logging.getMessage("gdal.MultipleDataFoldersFound",
+                        GDALUtils.buildPathString(folders, false));
                     Logging.logger().warning(msg);
                 }
                 return folders[0];
@@ -229,9 +229,9 @@ private static Class newClassLoader = null;
             }
         }
         if (addDefaultValues) {
-            path.append(".").append(del); // append current directory
+            path.append('.').append(del); // append current directory
             path.append(System.getProperty("user.dir")).append(del);
-            path.append(System.getProperty(JAVA_LIBRARY_PATH));
+            path.append(System.getProperty(GDALUtils.JAVA_LIBRARY_PATH));
         }
 
         return path.toString();
@@ -243,7 +243,7 @@ private static Class newClassLoader = null;
             Driver drv = gdal.GetDriver(i);
             String msg = Logging.getMessage("gdal.DriverDetails", drv.getShortName(), drv.getLongName(),
                 drv.GetDescription());
-            sb.append(msg).append("\n");
+            sb.append(msg).append('\n');
         }
         Logging.logger().finest(sb.toString());
     }
@@ -253,7 +253,7 @@ private static Class newClassLoader = null;
      */
     public static String getErrorMessage() {
         try {
-            if (gdalIsAvailable.get()) {
+            if (GDALUtils.gdalIsAvailable.get()) {
                 int errno = gdal.GetLastErrorNo();
                 if (errno != gdalconst.CE_None) {
                     return Logging.getMessage("gdal.InternalError", errno, gdal.GetLastErrorMsg());
@@ -279,7 +279,7 @@ private static Class newClassLoader = null;
      */
     public static Dataset open(Object source, boolean isSilentMode)
         throws FileNotFoundException, IllegalArgumentException, SecurityException, WWRuntimeException {
-        if (!gdalIsAvailable.get()) {
+        if (!GDALUtils.gdalIsAvailable.get()) {
             if (isSilentMode) {
                 return null;
             }
@@ -355,7 +355,7 @@ private static Class newClassLoader = null;
      */
     public static Dataset open(Object source)
         throws FileNotFoundException, IllegalArgumentException, SecurityException, WWRuntimeException {
-        return open(source, false);
+        return GDALUtils.open(source, false);
     }
 
     /**
@@ -365,7 +365,7 @@ private static Class newClassLoader = null;
      * @return true, if source is readable
      */
     public static boolean canOpen(Object source) {
-        if (!gdalIsAvailable.get()) {
+        if (!GDALUtils.gdalIsAvailable.get()) {
             return false;
         }
 
@@ -410,7 +410,7 @@ private static Class newClassLoader = null;
      */
     protected static DataRaster composeImageDataRaster(Dataset ds, AVList params)
         throws IllegalArgumentException, SecurityException, WWRuntimeException {
-        if (!gdalIsAvailable.get()) {
+        if (!GDALUtils.gdalIsAvailable.get()) {
             String message = Logging.getMessage("gdal.GDALNotAvailable");
             Logging.logger().severe(message);
             throw new WWRuntimeException(message);
@@ -461,16 +461,14 @@ private static Class newClassLoader = null;
 
             if (params.hasKey(AVKey.RASTER_BAND_MAX_PIXEL_VALUE)) {
                 maxValue = (Double) params.get(AVKey.RASTER_BAND_MAX_PIXEL_VALUE);
-            }
-            else if ((bandDataType == gdalconstConstants.GDT_UInt16 || bandDataType == gdalconstConstants.GDT_UInt32)
+            } else if ((bandDataType == gdalconstConstants.GDT_UInt16 || bandDataType == gdalconstConstants.GDT_UInt32)
                 && colorInt != gdalconst.GCI_AlphaBand && colorInt != gdalconst.GCI_Undefined) {
                 imageBand.GetMaximum(dbls);
                 if (dbls[0] == null) {
                     double[] minmax = new double[2];
                     imageBand.ComputeRasterMinMax(minmax);
                     maxValue = Math.max(minmax[1], maxValue);
-                }
-                else {
+                } else {
                     maxValue = (dbls[0] > maxValue) ? dbls[0] : maxValue;
                 }
             }
@@ -486,11 +484,9 @@ private static Class newClassLoader = null;
 
             if (colorInt == gdalconst.GCI_RedBand) {
                 destBandIdx = 0;
-            }
-            else if (colorInt == gdalconst.GCI_GreenBand) {
+            } else if (colorInt == gdalconst.GCI_GreenBand) {
                 destBandIdx = 1;
-            }
-            else if (colorInt == gdalconst.GCI_BlueBand) {
+            } else if (colorInt == gdalconst.GCI_BlueBand) {
                 destBandIdx = 2;
             }
 
@@ -503,18 +499,16 @@ private static Class newClassLoader = null;
 
         if (params.hasKey(AVKey.RASTER_BAND_ACTUAL_BITS_PER_PIXEL)) {
             actualBitsPerColor = (Integer) params.get(AVKey.RASTER_BAND_ACTUAL_BITS_PER_PIXEL);
-        }
-        else if (maxValue > 0.0d) {
+        } else if (maxValue > 0.0d) {
             actualBitsPerColor = (int) Math.ceil(Math.log(maxValue) / Math.log(2.0d));
         }
 
         int[] reqBandOrder;
         try {
-            reqBandOrder = extractBandOrder(ds, params);
+            reqBandOrder = GDALUtils.extractBandOrder(ds, params);
             if (null == reqBandOrder || 0 == reqBandOrder.length) {
                 reqBandOrder = bandsOrder;
-            }
-            else {
+            } else {
                 offsets = new int[reqBandOrder.length];
                 bandsOrder = new int[reqBandOrder.length];
                 for (int i = 0; i < reqBandOrder.length; i++) {
@@ -546,7 +540,7 @@ private static Class newClassLoader = null;
 
         IntBuffer imageMask = null;
         if (hasAlpha && params.hasKey(AVKey.GDAL_MASK_DATASET)) {
-            imageMask = extractImageMask(params);
+            imageMask = GDALUtils.extractImageMask(params);
         }
 
         if (bandDataType == gdalconstConstants.GDT_Byte) {
@@ -558,14 +552,13 @@ private static Class newClassLoader = null;
             }
 
             if (hasAlpha && null != imageMask) {
-                applyImageMask(int8[reqBandCount - 1], imageMask);
+                GDALUtils.applyImageMask(int8[reqBandCount - 1], imageMask);
             }
 
             imgBuffer = new DataBufferByte(int8, imgSize);
 
             bufferType = DataBuffer.TYPE_BYTE;
-        }
-        else if (bandDataType == gdalconstConstants.GDT_Int16) {
+        } else if (bandDataType == gdalconstConstants.GDT_Int16) {
             short[][] int16 = new short[reqBandCount][];
             for (int i = 0; i < reqBandCount; i++) {
                 int srcBandIndex = reqBandOrder[i];
@@ -574,13 +567,12 @@ private static Class newClassLoader = null;
             }
 
             if (hasAlpha && null != imageMask) {
-                applyImageMask(int16[reqBandCount - 1], imageMask);
+                GDALUtils.applyImageMask(int16[reqBandCount - 1], imageMask);
             }
 
             imgBuffer = new DataBufferShort(int16, imgSize);
             bufferType = DataBuffer.TYPE_SHORT;
-        }
-        else if (bandDataType == gdalconstConstants.GDT_Int32 || bandDataType == gdalconstConstants.GDT_UInt32) {
+        } else if (bandDataType == gdalconstConstants.GDT_Int32 || bandDataType == gdalconstConstants.GDT_UInt32) {
             int[][] uint32 = new int[reqBandCount][];
             for (int i = 0; i < reqBandCount; i++) {
                 int srcBandIndex = reqBandOrder[i];
@@ -588,13 +580,12 @@ private static Class newClassLoader = null;
                 bands[srcBandIndex].asIntBuffer().get(uint32[i]);
             }
             if (hasAlpha && null != imageMask) {
-                applyImageMask(uint32[reqBandCount - 1], imageMask);
+                GDALUtils.applyImageMask(uint32[reqBandCount - 1], imageMask);
             }
 
             imgBuffer = new DataBufferInt(uint32, imgSize);
             bufferType = DataBuffer.TYPE_INT;
-        }
-        else if (bandDataType == gdalconstConstants.GDT_UInt16) {
+        } else if (bandDataType == gdalconstConstants.GDT_UInt16) {
 
             short[][] uint16 = new short[reqBandCount][];
             for (int i = 0; i < reqBandCount; i++) {
@@ -603,13 +594,12 @@ private static Class newClassLoader = null;
                 bands[srcBandIndex].asShortBuffer().get(uint16[i]);
             }
             if (hasAlpha && null != imageMask) {
-                applyImageMask(uint16[reqBandCount - 1], imageMask);
+                GDALUtils.applyImageMask(uint16[reqBandCount - 1], imageMask);
             }
 
             imgBuffer = new DataBufferUShort(uint16, imgSize);
             bufferType = DataBuffer.TYPE_USHORT;
-        }
-        else {
+        } else {
             String message = Logging.getMessage("generic.UnrecognizedDataType", bandDataType);
             Logging.logger().severe(message);
         }
@@ -623,8 +613,7 @@ private static Class newClassLoader = null;
         if (band1.GetRasterColorInterpretation() == gdalconstConstants.GCI_PaletteIndex) {
             cm = band1.GetRasterColorTable().getIndexColorModel(gdal.GetDataTypeSize(bandDataType));
             img = new BufferedImage(cm, raster, false, null);
-        }
-        else if (band1.GetRasterColorInterpretation() == gdalconstConstants.GCI_GrayIndex && reqBandCount == 2) {
+        } else if (band1.GetRasterColorInterpretation() == gdalconstConstants.GCI_GrayIndex && reqBandCount == 2) {
             int transparency = Transparency.BITMASK;
             int baseColorSpace = ColorSpace.CS_GRAY;
             ColorSpace cs = ColorSpace.getInstance(baseColorSpace);
@@ -654,8 +643,7 @@ private static Class newClassLoader = null;
                 dstRaster.setSamples(0, y, w, 1, 2, gray);
                 dstRaster.setSamples(0, y, w, 1, 3, alpha);
             }
-        }
-        else {
+        } else {
             // Determine the color space.
             int transparency = hasAlpha ? Transparency.TRANSLUCENT : Transparency.OPAQUE;
             int baseColorSpace = (reqBandCount > 2) ? ColorSpace.CS_sRGB : ColorSpace.CS_GRAY;
@@ -672,7 +660,7 @@ private static Class newClassLoader = null;
 
         if (AVListImpl.getBooleanValue(params, AVKey.BLACK_GAPS_DETECTION, false)) {
             // remove voids
-            img = detectVoidsAndMakeThemTransparent(img);
+            img = GDALUtils.detectVoidsAndMakeThemTransparent(img);
         }
 
         return BufferedImageRaster.wrap(img, params);
@@ -706,11 +694,11 @@ private static Class newClassLoader = null;
 
         try {
             // first run (creates a copy and flips vertically)
-            dest = verticalFlip(sourceImage);
-            scanFill(dest);
+            dest = GDALUtils.verticalFlip(sourceImage);
+            GDALUtils.scanFill(dest);
             // second run
-            dest = verticalFlip(dest);
-            scanFill(dest);
+            dest = GDALUtils.verticalFlip(dest);
+            GDALUtils.scanFill(dest);
         }
         catch (Throwable t) {
             Logging.logger().log(java.util.logging.Level.SEVERE, t.getMessage(), t);
@@ -775,8 +763,7 @@ private static Class newClassLoader = null;
             if (h + 1 < height) {
                 sourceImage.getRGB(0, h + 1, width, 1, scanline2, 1, width);
                 scanline2[0] = scanline2[width + 1] = NODATA_TRANSPARENT;
-            }
-            else {
+            } else {
                 Arrays.fill(scanline2, NODATA_TRANSPARENT);
             }
 
@@ -833,9 +820,9 @@ private static Class newClassLoader = null;
 
         maskBand.rewind();
         for (int i = 0; i < size; i++) {
-            long pixel = ALPHA_MASK & maskBand.get();
-            if (pixel == ALPHA_MASK) {
-                alphaBand[i] = ALPHA_TRANSPARENT;
+            long pixel = GDALUtils.ALPHA_MASK & maskBand.get();
+            if (pixel == GDALUtils.ALPHA_MASK) {
+                alphaBand[i] = GDALUtils.ALPHA_TRANSPARENT;
             }
         }
         maskBand.rewind();
@@ -850,9 +837,9 @@ private static Class newClassLoader = null;
 
         maskBand.rewind();
         for (int i = 0; i < size; i++) {
-            long pixel = ALPHA_MASK & maskBand.get();
-            if (pixel == ALPHA_MASK) {
-                alphaBand[i] = ALPHA_TRANSPARENT;
+            long pixel = GDALUtils.ALPHA_MASK & maskBand.get();
+            if (pixel == GDALUtils.ALPHA_MASK) {
+                alphaBand[i] = GDALUtils.ALPHA_TRANSPARENT;
             }
         }
         maskBand.rewind();
@@ -867,9 +854,9 @@ private static Class newClassLoader = null;
 
         maskBand.rewind();
         for (int i = 0; i < size; i++) {
-            long pixel = ALPHA_MASK & maskBand.get();
-            if (pixel == ALPHA_MASK) {
-                alphaBand[i] = ALPHA_TRANSPARENT;
+            long pixel = GDALUtils.ALPHA_MASK & maskBand.get();
+            if (pixel == GDALUtils.ALPHA_MASK) {
+                alphaBand[i] = GDALUtils.ALPHA_TRANSPARENT;
             }
         }
         maskBand.rewind();
@@ -964,7 +951,7 @@ private static Class newClassLoader = null;
     }
 
     public static SpatialReference createGeographicSRS() throws WWRuntimeException {
-        if (!gdalIsAvailable.get()) {
+        if (!GDALUtils.gdalIsAvailable.get()) {
             String message = Logging.getMessage("gdal.GDALNotAvailable");
             Logging.logger().severe(message);
             throw new WWRuntimeException(message);
@@ -976,7 +963,7 @@ private static Class newClassLoader = null;
     }
 
     protected static LatLon getLatLonForRasterPoint(double[] gt, int x, int y, CoordinateTransformation ct) {
-        if (!gdalIsAvailable.get()) {
+        if (!GDALUtils.gdalIsAvailable.get()) {
             String message = Logging.getMessage("gdal.GDALNotAvailable");
             Logging.logger().severe(message);
             throw new WWRuntimeException(message);
@@ -992,7 +979,7 @@ private static Class newClassLoader = null;
     }
 
     public static AVList extractRasterParameters(Dataset ds) throws IllegalArgumentException, WWRuntimeException {
-        return extractRasterParameters(ds, null, false);
+        return GDALUtils.extractRasterParameters(ds, null, false);
     }
 
     /**
@@ -1004,98 +991,79 @@ private static Class newClassLoader = null;
      * @param quickReadingMode if quick reading mode is enabled GDAL will not spend much time on heavy calculations,
      *                         like for example calculating Min/Max for entire elevation raster
      * @return AVList with retrieved metadata
-     * @throws IllegalArgumentException                        when the passed dataset is null pr emtpy, or any of the
-     *                                                         dimension is 0
-     * @throws WWRuntimeException if GDAL is not available, or a dataset contains no bands
-     *                                                         <p>
-     *                                                         The extractRasterParameters() sets next key/value pairs:
-     *                                                         <p>
-     *                                                         AVKey.WIDTH - the maximum width of the image
-     *                                                         <p>
-     *                                                         AVKey.HEIGHT - the maximum height of the image
-     *                                                         <p>
-     *                                                         AVKey.COORDINATE_SYSTEM - one of the next values:
-     *                                                         AVKey.COORDINATE_SYSTEM_SCREEN AVKey.COORDINATE_SYSTEM_GEOGRAPHIC
-     *                                                         AVKey.COORDINATE_SYSTEM_PROJECTED
-     *                                                         <p>
-     *                                                         AVKey.SECTOR - in case of Geographic CS, contains a
-     *                                                         regular Geographic Sector defined by lat/lon coordinates
-     *                                                         of corners in case of Projected CS, contains a bounding
-     *                                                         box of the area
-     *                                                         <p>
-     *                                                         AVKey.COORDINATE_SYSTEM_NAME
-     *                                                         <p>
-     *                                                         AVKey.PIXEL_WIDTH (Double) pixel size, UTM images usually
-     *                                                         specify 1 (1 meter); if missing and Geographic Coordinate
-     *                                                         System is specified will be calculated as
-     *                                                         LongitudeDelta/WIDTH
-     *                                                         <p>
-     *                                                         AVKey.PIXEL_HEIGHT (Double) pixel size, UTM images
-     *                                                         usually specify 1 (1 meter); if missing and Geographic
-     *                                                         Coordinate System is specified will be calculated as
-     *                                                         LatitudeDelta/HEIGHT
-     *                                                         <p>
-     *                                                         AVKey.ORIGIN (LatLon) specifies coordinate of the image's
-     *                                                         origin (one of the corners, or center) If missing, upper
-     *                                                         left corner will be set as origin
-     *                                                         <p>
-     *                                                         AVKey.DATE_TIME (0 terminated String, length == 20) if
-     *                                                         missing, current date and time will be used
-     *                                                         <p>
-     *                                                         AVKey.PIXEL_FORMAT required (valid values:
-     *                                                         AVKey.ELEVATION | AVKey.IMAGE } specifies weather it is a
-     *                                                         digital elevation model or image
-     *                                                         <p>
-     *                                                         AVKey.IMAGE_COLOR_FORMAT required if AVKey.PIXEL_FORMAT
-     *                                                         is AVKey.IMAGE (valid values: AVKey.COLOR and
-     *                                                         AVKey.MONOCHROME)
-     *                                                         <p>
-     *                                                         AVKey.DATA_TYPE required ( valid values: AVKey.INT16, and
-     *                                                         AVKey.FLOAT32 )
-     *                                                         <p>
-     *                                                         AVKey.VERSION optional, if missing a default will be used
-     *                                                         "NASA WorldWind"
-     *                                                         <p>
-     *                                                         AVKey.DISPLAY_NAME, (String) optional, specifies a name
-     *                                                         of the document/image
-     *                                                         <p>
-     *                                                         AVKey.DESCRIPTION (String) optional, for any kind of
-     *                                                         descriptions
-     *                                                         <p>
-     *                                                         AVKey.MISSING_DATA_SIGNAL optional, set the
-     *                                                         AVKey.MISSING_DATA_SIGNAL ONLY if you know for sure that
-     *                                                         the specified value actually represents void (NODATA)
-     *                                                         areas. Elevation data usually has "-32767" (like DTED),
-     *                                                         or "-32768" like SRTM, but some has "0" (mostly images)
-     *                                                         and "-9999" like NED. Note! Setting "-9999" is very
-     *                                                         ambiguos because -9999 for elevation is valid value;
-     *                                                         <p>
-     *                                                         AVKey.MISSING_DATA_REPLACEMENT (String type forced by
-     *                                                         spec) Most images have "NODATA" as "0", elevations have
-     *                                                         as "-9999", or "-32768" (sometimes "-32767")
-     *                                                         <p>
-     *                                                         AVKey.COORDINATE_SYSTEM required, valid values
-     *                                                         AVKey.COORDINATE_SYSTEM_GEOGRAPHIC or AVKey.COORDINATE_SYSTEM_PROJECTED
-     *                                                         <p>
-     *                                                         AVKey.COORDINATE_SYSTEM_NAME Optional, A name of the
-     *                                                         Coordinates System as a String
-     *                                                         <p>
-     *                                                         AVKey.PROJECTION_EPSG_CODE Required; Integer; EPSG code
-     *                                                         or Projection Code If CS is Geodetic and EPSG code is not
-     *                                                         specified, a default WGS84 (4326) will be used
-     *                                                         <p>
-     *                                                         AVKey.PROJECTION_DATUM Optional, AVKey.PROJECTION_DESC
-     *                                                         Optional, AVKey.PROJECTION_NAME Optional,
-     *                                                         AVKey.PROJECTION_UNITS Optional,
-     *                                                         <p>
-     *                                                         AVKey.ELEVATION_UNIT Required, if AVKey.PIXEL_FORMAT =
-     *                                                         AVKey.ELEVATION, value: AVKey.UNIT_FOOT or
-     *                                                         AVKey.UNIT_METER (default, if not specified)
-     *                                                         <p>
-     *                                                         AVKey.RASTER_PIXEL, optional, values: AVKey.RASTER_PIXEL_IS_AREA
-     *                                                         or AVKey.RASTER_PIXEL_IS_POINT if not specified, default
-     *                                                         for images is RASTER_PIXEL_IS_AREA, and
-     *                                                         AVKey.RASTER_PIXEL_IS_POINT for elevations
+     * @throws IllegalArgumentException when the passed dataset is null pr emtpy, or any of the dimension is 0
+     * @throws WWRuntimeException       if GDAL is not available, or a dataset contains no bands
+     *                                  <p>
+     *                                  The extractRasterParameters() sets next key/value pairs:
+     *                                  <p>
+     *                                  AVKey.WIDTH - the maximum width of the image
+     *                                  <p>
+     *                                  AVKey.HEIGHT - the maximum height of the image
+     *                                  <p>
+     *                                  AVKey.COORDINATE_SYSTEM - one of the next values: AVKey.COORDINATE_SYSTEM_SCREEN
+     *                                  AVKey.COORDINATE_SYSTEM_GEOGRAPHIC AVKey.COORDINATE_SYSTEM_PROJECTED
+     *                                  <p>
+     *                                  AVKey.SECTOR - in case of Geographic CS, contains a regular Geographic Sector
+     *                                  defined by lat/lon coordinates of corners in case of Projected CS, contains a
+     *                                  bounding box of the area
+     *                                  <p>
+     *                                  AVKey.COORDINATE_SYSTEM_NAME
+     *                                  <p>
+     *                                  AVKey.PIXEL_WIDTH (Double) pixel size, UTM images usually specify 1 (1 meter);
+     *                                  if missing and Geographic Coordinate System is specified will be calculated as
+     *                                  LongitudeDelta/WIDTH
+     *                                  <p>
+     *                                  AVKey.PIXEL_HEIGHT (Double) pixel size, UTM images usually specify 1 (1 meter);
+     *                                  if missing and Geographic Coordinate System is specified will be calculated as
+     *                                  LatitudeDelta/HEIGHT
+     *                                  <p>
+     *                                  AVKey.ORIGIN (LatLon) specifies coordinate of the image's origin (one of the
+     *                                  corners, or center) If missing, upper left corner will be set as origin
+     *                                  <p>
+     *                                  AVKey.DATE_TIME (0 terminated String, length == 20) if missing, current date and
+     *                                  time will be used
+     *                                  <p>
+     *                                  AVKey.PIXEL_FORMAT required (valid values: AVKey.ELEVATION | AVKey.IMAGE }
+     *                                  specifies weather it is a digital elevation model or image
+     *                                  <p>
+     *                                  AVKey.IMAGE_COLOR_FORMAT required if AVKey.PIXEL_FORMAT is AVKey.IMAGE (valid
+     *                                  values: AVKey.COLOR and AVKey.MONOCHROME)
+     *                                  <p>
+     *                                  AVKey.DATA_TYPE required ( valid values: AVKey.INT16, and AVKey.FLOAT32 )
+     *                                  <p>
+     *                                  AVKey.VERSION optional, if missing a default will be used "NASA WorldWind"
+     *                                  <p>
+     *                                  AVKey.DISPLAY_NAME, (String) optional, specifies a name of the document/image
+     *                                  <p>
+     *                                  AVKey.DESCRIPTION (String) optional, for any kind of descriptions
+     *                                  <p>
+     *                                  AVKey.MISSING_DATA_SIGNAL optional, set the AVKey.MISSING_DATA_SIGNAL ONLY if
+     *                                  you know for sure that the specified value actually represents void (NODATA)
+     *                                  areas. Elevation data usually has "-32767" (like DTED), or "-32768" like SRTM,
+     *                                  but some has "0" (mostly images) and "-9999" like NED. Note! Setting "-9999" is
+     *                                  very ambiguos because -9999 for elevation is valid value;
+     *                                  <p>
+     *                                  AVKey.MISSING_DATA_REPLACEMENT (String type forced by spec) Most images have
+     *                                  "NODATA" as "0", elevations have as "-9999", or "-32768" (sometimes "-32767")
+     *                                  <p>
+     *                                  AVKey.COORDINATE_SYSTEM required, valid values AVKey.COORDINATE_SYSTEM_GEOGRAPHIC
+     *                                  or AVKey.COORDINATE_SYSTEM_PROJECTED
+     *                                  <p>
+     *                                  AVKey.COORDINATE_SYSTEM_NAME Optional, A name of the Coordinates System as a
+     *                                  String
+     *                                  <p>
+     *                                  AVKey.PROJECTION_EPSG_CODE Required; Integer; EPSG code or Projection Code If CS
+     *                                  is Geodetic and EPSG code is not specified, a default WGS84 (4326) will be used
+     *                                  <p>
+     *                                  AVKey.PROJECTION_DATUM Optional, AVKey.PROJECTION_DESC Optional,
+     *                                  AVKey.PROJECTION_NAME Optional, AVKey.PROJECTION_UNITS Optional,
+     *                                  <p>
+     *                                  AVKey.ELEVATION_UNIT Required, if AVKey.PIXEL_FORMAT = AVKey.ELEVATION, value:
+     *                                  AVKey.UNIT_FOOT or AVKey.UNIT_METER (default, if not specified)
+     *                                  <p>
+     *                                  AVKey.RASTER_PIXEL, optional, values: AVKey.RASTER_PIXEL_IS_AREA or
+     *                                  AVKey.RASTER_PIXEL_IS_POINT if not specified, default for images is
+     *                                  RASTER_PIXEL_IS_AREA, and AVKey.RASTER_PIXEL_IS_POINT for elevations
      */
     public static AVList extractRasterParameters(Dataset ds, AVList params, boolean quickReadingMode)
         throws IllegalArgumentException, WWRuntimeException {
@@ -1103,7 +1071,7 @@ private static Class newClassLoader = null;
             params = new AVListImpl();
         }
 
-        if (!gdalIsAvailable.get()) {
+        if (!GDALUtils.gdalIsAvailable.get()) {
             String message = Logging.getMessage("gdal.GDALNotAvailable");
             Logging.logger().finest(message);
             throw new WWRuntimeException(message);
@@ -1150,40 +1118,33 @@ private static Class newClassLoader = null;
             if (dataType == gdalconst.GDT_Int16 || dataType == gdalconst.GDT_CInt16) {
                 params.set(AVKey.PIXEL_FORMAT, AVKey.ELEVATION);
                 params.set(AVKey.DATA_TYPE, AVKey.INT16);
-            }
-            else if (dataType == gdalconst.GDT_Int32 || dataType == gdalconst.GDT_CInt32) {
+            } else if (dataType == gdalconst.GDT_Int32 || dataType == gdalconst.GDT_CInt32) {
                 params.set(AVKey.PIXEL_FORMAT, AVKey.ELEVATION);
                 params.set(AVKey.DATA_TYPE, AVKey.INT32);
-            }
-            else if (dataType == gdalconst.GDT_Float32 || dataType == gdalconst.GDT_CFloat32) {
+            } else if (dataType == gdalconst.GDT_Float32 || dataType == gdalconst.GDT_CFloat32) {
                 params.set(AVKey.PIXEL_FORMAT, AVKey.ELEVATION);
                 params.set(AVKey.DATA_TYPE, AVKey.FLOAT32);
-            }
-            else if (dataType == gdalconst.GDT_Byte) {
+            } else if (dataType == gdalconst.GDT_Byte) {
                 int colorInt = band.GetColorInterpretation();
                 if (colorInt == gdalconst.GCI_GrayIndex && bandCount < 3) {
                     params.set(AVKey.IMAGE_COLOR_FORMAT, AVKey.GRAYSCALE);
-                }
-                else {
+                } else {
                     // if has only one band => one byte index of the palette, 216 marks voids
                     params.set(AVKey.IMAGE_COLOR_FORMAT, AVKey.COLOR);
                 }
                 params.set(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
                 params.set(AVKey.DATA_TYPE, AVKey.INT8);
-            }
-            else if (dataType == gdalconst.GDT_UInt16) {
+            } else if (dataType == gdalconst.GDT_UInt16) {
                 params.set(AVKey.IMAGE_COLOR_FORMAT,
                     ((bandCount >= 3) ? AVKey.COLOR : AVKey.GRAYSCALE));
                 params.set(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
                 params.set(AVKey.DATA_TYPE, AVKey.INT16);
-            }
-            else if (dataType == gdalconst.GDT_UInt32) {
+            } else if (dataType == gdalconst.GDT_UInt32) {
                 params.set(AVKey.IMAGE_COLOR_FORMAT,
                     ((bandCount >= 3) ? AVKey.COLOR : AVKey.GRAYSCALE));
                 params.set(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
                 params.set(AVKey.DATA_TYPE, AVKey.INT32);
-            }
-            else {
+            } else {
                 String msg = Logging.getMessage("generic.UnrecognizedDataType", dataType);
                 Logging.logger().severe(msg);
                 throw new WWRuntimeException(msg);
@@ -1221,7 +1182,7 @@ private static Class newClassLoader = null;
                 }
             }
 
-            extractMinMaxSampleValues(ds, band, params);
+            GDALUtils.extractMinMaxSampleValues(ds, band, params);
 
             if (AVKey.ELEVATION.equals(params.get(AVKey.PIXEL_FORMAT))
                 && (!params.hasKey(AVKey.ELEVATION_MIN)
@@ -1235,14 +1196,13 @@ private static Class newClassLoader = null;
                 if (ElevationsUtil.isKnownMissingSignal(minmax[0])) {
                     params.set(AVKey.MISSING_DATA_SIGNAL, minmax[0]);
 
-                    if (setNoDataValue(band, minmax[0])) {
+                    if (GDALUtils.setNoDataValue(band, minmax[0])) {
                         band.ComputeRasterMinMax(minmax);
 
                         params.set(AVKey.ELEVATION_MIN, minmax[0]);
                         params.set(AVKey.ELEVATION_MAX, minmax[1]);
                     }
-                }
-                else {
+                } else {
                     params.set(AVKey.ELEVATION_MIN, minmax[0]);
                     params.set(AVKey.ELEVATION_MAX, minmax[1]);
                 }
@@ -1294,16 +1254,14 @@ private static Class newClassLoader = null;
 
         if (minX == 0.0d && pixelWidth == 1.0d && rotX == 0.0d && maxY == 0.0d && rotY == 0.0d && pixelHeight == 1.0d) {
             params.set(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_SCREEN);
-        }
-        else if (Angle.isValidLongitude(minX) && Angle.isValidLatitude(maxY)
+        } else if (Angle.isValidLongitude(minX) && Angle.isValidLatitude(maxY)
             && Angle.isValidLongitude(maxX) && Angle.isValidLatitude(minY)) {
             if (null == srs) {
-                srs = createGeographicSRS();
-            }
-            else if (srs.IsGeographic() == 0) {
+                srs = GDALUtils.createGeographicSRS();
+            } else if (srs.IsGeographic() == 0) {
                 String msg = Logging.getMessage("generic.UnexpectedCoordinateSystem", srs.ExportToWkt());
                 Logging.logger().warning(msg);
-                srs = createGeographicSRS();
+                srs = GDALUtils.createGeographicSRS();
             }
         }
 
@@ -1332,8 +1290,7 @@ private static Class newClassLoader = null;
             if (srs.IsGeographic() == 1) {
                 params.set(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_GEOGRAPHIC);
                 // no need to extract anything, all parameters were extracted above
-            }
-            else if (srs.IsProjected() == 1) {
+            } else if (srs.IsProjected() == 1) {
                 params.set(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_PROJECTED);
 
                 // ----8><----------------------------------------------------------------------------------------
@@ -1373,11 +1330,9 @@ private static Class newClassLoader = null;
                     if ("meter".equals(unit) || "meters".equals(unit) || "metre".equals(unit) || "metres".equals(
                         unit)) {
                         params.set(AVKey.PROJECTION_UNITS, AVKey.UNIT_METER);
-                    }
-                    else if ("foot".equals(unit) || "feet".equals(unit)) {
+                    } else if ("foot".equals(unit) || "feet".equals(unit)) {
                         params.set(AVKey.PROJECTION_UNITS, AVKey.UNIT_FOOT);
-                    }
-                    else {
+                    } else {
                         Logging.logger().warning(Logging.getMessage("generic.UnknownProjectionUnits", unit));
                     }
                 }
@@ -1385,11 +1340,9 @@ private static Class newClassLoader = null;
                 if (null != projection && !projection.isEmpty()) {
                     params.set(AVKey.PROJECTION_NAME, projection);
                 }
-            }
-            else if (srs.IsLocal() == 1) {
+            } else if (srs.IsLocal() == 1) {
                 params.set(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_SCREEN);
-            }
-            else {
+            } else {
                 params.set(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_UNKNOWN);
                 String msg = Logging.getMessage("generic.UnknownCoordinateSystem", proj_wkt);
                 Logging.logger().severe(msg);
@@ -1414,8 +1367,8 @@ private static Class newClassLoader = null;
 
             Double[] dbls = new Double[16];
 
-            Double minValue = convertStringToDouble(ds.GetMetadataItem("TIFFTAG_MINSAMPLEVALUE"));
-            Double maxValue = convertStringToDouble(ds.GetMetadataItem("TIFFTAG_MAXSAMPLEVALUE"));
+            Double minValue = GDALUtils.convertStringToDouble(ds.GetMetadataItem("TIFFTAG_MINSAMPLEVALUE"));
+            Double maxValue = GDALUtils.convertStringToDouble(ds.GetMetadataItem("TIFFTAG_MAXSAMPLEVALUE"));
 
             // TODO garakl This feature is not working for GeoTiff files
 //            String type = band.GetUnitType();
@@ -1429,7 +1382,7 @@ private static Class newClassLoader = null;
 
             band.GetNoDataValue(dbls);
             Double missingSignal = (null != dbls[0])
-                ? dbls[0] : convertStringToDouble(ds.GetMetadataItem("TIFFTAG_GDAL_NODATA"));
+                ? dbls[0] : GDALUtils.convertStringToDouble(ds.GetMetadataItem("TIFFTAG_GDAL_NODATA"));
 
             if (ElevationsUtil.isKnownMissingSignal(minValue)) {
                 if (missingSignal == null) {
@@ -1470,22 +1423,20 @@ private static Class newClassLoader = null;
 
     public static DataRaster composeDataRaster(Dataset ds, AVList params)
         throws IllegalArgumentException, WWRuntimeException {
-        if (!gdalIsAvailable.get()) {
+        if (!GDALUtils.gdalIsAvailable.get()) {
             String message = Logging.getMessage("gdal.GDALNotAvailable");
             Logging.logger().severe(message);
             throw new WWRuntimeException(message);
         }
 
-        params = extractRasterParameters(ds, params, false);
+        params = GDALUtils.extractRasterParameters(ds, params, false);
 
         String pixelFormat = params.getStringValue(AVKey.PIXEL_FORMAT);
         if (AVKey.ELEVATION.equals(pixelFormat)) {
-            return composeNonImageDataRaster(ds, params);
-        }
-        else if (AVKey.IMAGE.equals(pixelFormat)) {
-            return composeImageDataRaster(ds, params);
-        }
-        else {
+            return GDALUtils.composeNonImageDataRaster(ds, params);
+        } else if (AVKey.IMAGE.equals(pixelFormat)) {
+            return GDALUtils.composeImageDataRaster(ds, params);
+        } else {
             String message = Logging.getMessage("generic.UnexpectedRasterType", pixelFormat);
             Logging.logger().severe(message);
             throw new WWRuntimeException(message);
@@ -1494,7 +1445,7 @@ private static Class newClassLoader = null;
 
     public static int[] extractBandOrder(Dataset ds, AVList params)
         throws IllegalArgumentException, WWRuntimeException {
-        if (!gdalIsAvailable.get()) {
+        if (!GDALUtils.gdalIsAvailable.get()) {
             String message = Logging.getMessage("gdal.GDALNotAvailable");
             Logging.logger().severe(message);
             throw new WWRuntimeException(message);
@@ -1523,8 +1474,7 @@ private static Class newClassLoader = null;
                 for (int i = 0; i < order.length; i++) {
                     bandsOrder[i] = order[i];
                 }
-            }
-            else if (o instanceof int[]) {
+            } else if (o instanceof int[]) {
                 bandsOrder = (int[]) o;
             }
 
@@ -1592,8 +1542,7 @@ private static Class newClassLoader = null;
         if (params.hasKey(AVKey.BYTE_ORDER)) {
             byteOrder = AVKey.LITTLE_ENDIAN.equals(params.getStringValue(AVKey.BYTE_ORDER))
                 ? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN;
-        }
-        else {
+        } else {
             params.set(AVKey.BYTE_ORDER,
                 (byteOrder == ByteOrder.BIG_ENDIAN) ? AVKey.BIG_ENDIAN : AVKey.LITTLE_ENDIAN);
         }
@@ -1638,30 +1587,30 @@ private static Class newClassLoader = null;
 
     protected static void alterJavaLibraryPath(String newJavaLibraryPath)
         throws IllegalAccessException, NoSuchFieldException {
-        System.setProperty(JAVA_LIBRARY_PATH, newJavaLibraryPath);
+        System.setProperty(GDALUtils.JAVA_LIBRARY_PATH, newJavaLibraryPath);
 
-        newClassLoader = ClassLoader.class;
-        fieldSysPaths = newClassLoader.getDeclaredField("sys_paths");
+        GDALUtils.newClassLoader = ClassLoader.class;
+        GDALUtils.fieldSysPaths = GDALUtils.newClassLoader.getDeclaredField("sys_paths");
         try {
-            fieldSysPaths.setAccessible(true);
-            fieldSysPaths_accessible = true;
+            GDALUtils.fieldSysPaths.setAccessible(true);
+            GDALUtils.fieldSysPaths_accessible = true;
         }
         catch (InaccessibleObjectException ioex) {
-            fieldSysPaths_accessible = false;
+            GDALUtils.fieldSysPaths_accessible = false;
         }
-        originalClassLoader = fieldSysPaths.get(newClassLoader);
+        GDALUtils.originalClassLoader = GDALUtils.fieldSysPaths.get(GDALUtils.newClassLoader);
 
         // Reset it to null so that whenever "System.loadLibrary" is called,
         // it will be reconstructed with the changed value.
-        fieldSysPaths.set(newClassLoader, null);
+        GDALUtils.fieldSysPaths.set(GDALUtils.newClassLoader, null);
     }
 
     protected static void restoreJavaLibraryPath() {
         try {
             //Revert back the changes.
-            if (null != originalClassLoader && null != fieldSysPaths) {
-                fieldSysPaths.set(newClassLoader, originalClassLoader);
-                fieldSysPaths.setAccessible(fieldSysPaths_accessible);
+            if (null != GDALUtils.originalClassLoader && null != GDALUtils.fieldSysPaths) {
+                GDALUtils.fieldSysPaths.set(GDALUtils.newClassLoader, GDALUtils.originalClassLoader);
+                GDALUtils.fieldSysPaths.setAccessible(GDALUtils.fieldSysPaths_accessible);
             }
         }
         catch (Exception e) {

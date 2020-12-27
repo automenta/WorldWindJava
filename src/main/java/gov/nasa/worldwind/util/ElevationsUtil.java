@@ -20,7 +20,7 @@ public class ElevationsUtil {
     public static final double DEM_DEFAULT_MISSING_SIGNAL = -9999.0d;
 
     protected static final double[] knownMissingSignals = {
-        DTED_DEFAULT_MISSING_SIGNAL, SRTM_DEFAULT_MISSING_SIGNAL, DEM_DEFAULT_MISSING_SIGNAL
+        ElevationsUtil.DTED_DEFAULT_MISSING_SIGNAL, ElevationsUtil.SRTM_DEFAULT_MISSING_SIGNAL, ElevationsUtil.DEM_DEFAULT_MISSING_SIGNAL
     };
 
     /**
@@ -32,7 +32,7 @@ public class ElevationsUtil {
      */
     public static boolean isKnownMissingSignal(Double value) {
         if (null != value) {
-            for (double signal : knownMissingSignals) {
+            for (double signal : ElevationsUtil.knownMissingSignals) {
                 if (value == signal)
                     return true;
             }
@@ -99,15 +99,13 @@ public class ElevationsUtil {
             String unit = raster.getStringValue(AVKey.ELEVATION_UNIT);
             if (AVKey.UNIT_METER.equalsIgnoreCase(unit)) {
                 needsConversion = false;
-            }
-            else if (AVKey.UNIT_FOOT.equalsIgnoreCase(unit)) {
+            } else if (AVKey.UNIT_FOOT.equalsIgnoreCase(unit)) {
                 needsConversion = true;
                 conversionValue = WWMath.convertFeetToMeters(1);
                 minValue = WWMath.convertFeetToMeters(minValue);
                 maxValue = WWMath.convertFeetToMeters(maxValue);
                 raster.set(AVKey.ELEVATION_UNIT, AVKey.UNIT_METER);
-            }
-            else {
+            } else {
                 needsConversion = false;
                 String msg = Logging.getMessage("generic.UnrecognizedElevationUnit", unit);
                 Logging.logger().warning(msg);
@@ -125,8 +123,7 @@ public class ElevationsUtil {
 
                 if (null != missingDataSignal && value == missingDataSignal) {
                     rasterHasVoids = true;
-                }
-                else {
+                } else {
                     if (needsConversion) {
                         value *= conversionValue;
                         commitChanges = true;
@@ -151,8 +148,7 @@ public class ElevationsUtil {
         if (rasterHasVoids) {
             if (missingDataSignal != null)
                 raster.set(AVKey.MISSING_DATA_SIGNAL, missingDataSignal);
-        }
-        else {
+        } else {
             raster.removeKey(AVKey.MISSING_DATA_SIGNAL);
         }
 

@@ -42,15 +42,15 @@ public class DirectionOfAttack extends AbstractMilStd2525TacticalGraphic {
     /**
      * Length of the arrowhead from base to tip, as a fraction of the total line length.
      */
-    protected Angle arrowAngle = DEFAULT_ARROWHEAD_ANGLE;
+    protected Angle arrowAngle = DirectionOfAttack.DEFAULT_ARROWHEAD_ANGLE;
     /**
      * Angle of the arrowhead.
      */
-    protected double arrowLength = DEFAULT_ARROWHEAD_LENGTH;
+    protected double arrowLength = DirectionOfAttack.DEFAULT_ARROWHEAD_LENGTH;
     /**
      * Width of the arrowhead outline, as a fraction of the arrowhead length.
      */
-    protected double outlineWidth = DEFAULT_ARROWHEAD_OUTLINE_WIDTH;
+    protected double outlineWidth = DirectionOfAttack.DEFAULT_ARROWHEAD_OUTLINE_WIDTH;
 
     /**
      * First control point.
@@ -332,8 +332,7 @@ public class DirectionOfAttack extends AbstractMilStd2525TacticalGraphic {
             Vec4 ptE = ptB.subtract3(dir.multiply3(length * outlineWidth));
 
             positions = TacticalGraphicUtil.asPositionList(globe, ptA, ptB, ptC, ptD, ptE, ptF, ptA);
-        }
-        else {
+        } else {
             positions = TacticalGraphicUtil.asPositionList(globe, ptA, ptB, ptC);
         }
 

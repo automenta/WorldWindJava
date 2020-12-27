@@ -83,8 +83,7 @@ public class BasicJSONEventParserContext implements JSONEventParserContext {
         if (!this.parser.hasCurrentToken()) {
             this.hasNext = false;
             this.nextEvent = null;
-        }
-        else {
+        } else {
             this.hasNext = true;
             this.nextEvent = this.createEvent(this.parser.getCurrentToken());
         }
@@ -93,8 +92,7 @@ public class BasicJSONEventParserContext implements JSONEventParserContext {
     protected JSONEvent createEvent(JsonToken token) throws IOException {
         if (token == JsonToken.VALUE_NUMBER_INT || token == JsonToken.VALUE_NUMBER_FLOAT) {
             return new NumericValueJSONEvent(this.parser.getCurrentName(), this.parser.getDoubleValue());
-        }
-        else {
+        } else {
             return new BasicJSONEvent(this.parser, token, this.parser.getCurrentName());
         }
     }

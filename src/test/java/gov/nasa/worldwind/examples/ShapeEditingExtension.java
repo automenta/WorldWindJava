@@ -132,7 +132,7 @@ public class ShapeEditingExtension extends ApplicationTemplate {
             Position position1 = iterator.next();
 
             Angle shaftDistance = LatLon.rhumbDistance(position0, position1);
-            double shaftLength = shaftDistance.radians * globe.getEquatorialRadius();
+            double shaftLength = shaftDistance.radians() * globe.getEquatorialRadius();
             double headLength = 0.1 * shaftLength;
             double headWidth = headLength * Math.tan(Math.PI / 4);
 

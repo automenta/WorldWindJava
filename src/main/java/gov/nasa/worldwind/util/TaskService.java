@@ -18,14 +18,14 @@ import java.util.concurrent.*;
 public class TaskService extends WWObjectImpl implements Thread.UncaughtExceptionHandler {
     static final private int DEFAULT_CORE_POOL_SIZE = 1;
     static final private int DEFAULT_QUEUE_SIZE = 10;
-private static final String IDLE_THREAD_NAME_PREFIX = Logging.getMessage(
+    private static final String IDLE_THREAD_NAME_PREFIX = Logging.getMessage(
         "ThreadedTaskService.IdleThreadNamePrefix");
     private final Set<Runnable> activeTasks; // tasks currently allocated a thread
     private final TaskExecutor executor; // thread pool for running retrievers
 
     public TaskService() {
-        Integer poolSize = Configuration.getIntegerValue(AVKey.TASK_POOL_SIZE, DEFAULT_CORE_POOL_SIZE);
-        Integer queueSize = Configuration.getIntegerValue(AVKey.TASK_QUEUE_SIZE, DEFAULT_QUEUE_SIZE);
+        Integer poolSize = Configuration.getIntegerValue(AVKey.TASK_POOL_SIZE, TaskService.DEFAULT_CORE_POOL_SIZE);
+        Integer queueSize = Configuration.getIntegerValue(AVKey.TASK_QUEUE_SIZE, TaskService.DEFAULT_QUEUE_SIZE);
 
         // this.executor runs the tasks, each in their own thread
         this.executor = new TaskExecutor(poolSize, queueSize);
@@ -50,7 +50,7 @@ private static final String IDLE_THREAD_NAME_PREFIX = Logging.getMessage(
 
     public synchronized boolean contains(Runnable runnable) {
         //noinspection SimplifiableIfStatement
-        return runnable!=null && activeTasks.contains(runnable);
+        return runnable != null && activeTasks.contains(runnable);
     }
 
     /**
@@ -79,7 +79,7 @@ private static final String IDLE_THREAD_NAME_PREFIX = Logging.getMessage(
         private static final long THREAD_TIMEOUT = 2; // keep idle threads alive this many seconds
 
         private TaskExecutor(int poolSize, int queueSize) {
-            super(poolSize, poolSize, THREAD_TIMEOUT, TimeUnit.SECONDS,
+            super(poolSize, poolSize, TaskExecutor.THREAD_TIMEOUT, TimeUnit.SECONDS,
                 new ArrayBlockingQueue<>(queueSize),
                 runnable -> {
                     Thread thread = new Thread(runnable);
@@ -111,11 +111,12 @@ private static final String IDLE_THREAD_NAME_PREFIX = Logging.getMessage(
 
         protected void afterExecute(Runnable runnable, Throwable throwable) {
             boolean removed = activeTasks.remove(runnable);
-            if (!removed) throw new RuntimeException();
+            if (!removed)
+                throw new RuntimeException();
 
             super.afterExecute(runnable, throwable);
 
-            Thread.currentThread().setName(IDLE_THREAD_NAME_PREFIX);
+            Thread.currentThread().setName(TaskService.IDLE_THREAD_NAME_PREFIX);
         }
     }
 }

@@ -91,10 +91,10 @@ public class NITFSImageSegment extends NITFSSegment {
     private int transparencySequenceRecordLength;
     private int transparentOutputPixelCodeLength;
     private int transparentOutputPixelCode;
-    private int[] subFrameOffsets = null;
+    private int[] subFrameOffsets;
 
-    private boolean hasTransparentPixels = false;
-    private boolean hasMaskedSubframes = false;
+    private boolean hasTransparentPixels;
+    private boolean hasMaskedSubframes;
     private CompressionLookupRecord[] compressionLUTS;
 
     public NITFSImageSegment(ByteBuffer buffer, int headerStartOffset, int headerLength, int dataStartOffset,
@@ -120,7 +120,7 @@ public class NITFSImageSegment extends NITFSSegment {
     }
 
     public static String[] getSupportedFormats() {
-        return SupportedFormats;
+        return NITFSImageSegment.SupportedFormats;
     }
 
     public boolean hasTransparentPixels() {
@@ -181,8 +181,7 @@ public class NITFSImageSegment extends NITFSSegment {
                     subFrameOffset = this.subFrameOffsets[subFrameIdx];
                     if (-1 == subFrameOffset) {   // this is a masked / empty subframe
                         continue;
-                    }
-                    else {
+                    } else {
                         super.buffer.position(spatialDataSubsectionLocation + subFrameOffset);
                     }
                 }
@@ -292,8 +291,7 @@ public class NITFSImageSegment extends NITFSSegment {
                     }
                 }
             }
-        }
-        else {
+        } else {
             this.subFrameOffsets = null;
         }
 
@@ -322,8 +320,7 @@ public class NITFSImageSegment extends NITFSSegment {
             < componentLocationTable.getImageDisplayParametersSubheaderLength()) {   // parse [ nitf-rpf image display parameter sub-header ]
             buffer.position(componentLocationTable.getImageDisplayParametersSubheaderLocation());
             this.parseImageDisplayParametersSubheader(buffer);
-        }
-        else
+        } else
             throw new NITFSRuntimeException("NITFSReader.ImageDisplayParametersSubheaderNotFound");
 
         // [ nitf rpf compression section ]
@@ -331,16 +328,14 @@ public class NITFSImageSegment extends NITFSSegment {
             < componentLocationTable.getCompressionSectionSubheaderLength()) {   // parse [ nitf-rpf compression section sub-header ]
             buffer.position(componentLocationTable.getCompressionSectionSubheaderLocation());
             this.parseRPFCompressionSectionSubheader(buffer);
-        }
-        else
+        } else
             throw new NITFSRuntimeException("NITFSReader.RPFCompressionSectionSubheaderNotFound");
 
         // [ nitf rpf compression lookup sub-section ]
         if (0 < componentLocationTable.getCompressionLookupSubsectionLength()) {
             buffer.position(componentLocationTable.getCompressionLookupSubsectionLocation());
             this.parseRPFCompressionLookupSubsection(buffer);
-        }
-        else
+        } else
             throw new NITFSRuntimeException("NITFSReader.RPFCompressionLookupSubsectionNotFound");
 
         // [ nitf rpf compression parameter subsection ]
@@ -352,8 +347,7 @@ public class NITFSImageSegment extends NITFSSegment {
 
             buffer.position(componentLocationTable.getSpatialDataSubsectionLocation());
             this.parseRPFSpatialDataSubsection(buffer);
-        }
-        else
+        } else
             throw new NITFSRuntimeException("NITFSReader.RPFSpatialDataSubsectionNotFound");
     }
 
@@ -441,8 +435,7 @@ public class NITFSImageSegment extends NITFSSegment {
             for (int i = 0; i < numCommentRecords; i++) {
                 this.imageCommentRecords[i] = NITFSUtil.getString(buffer, 80);
             }
-        }
-        else
+        } else
             this.imageCommentRecords = null;
     }
 
@@ -497,7 +490,7 @@ public class NITFSImageSegment extends NITFSSegment {
 
         this.imageID = NITFSUtil.getString(buffer, 10);
         boolean isSupportedFormat = false;
-        for (String s : SupportedFormats) {
+        for (String s : NITFSImageSegment.SupportedFormats) {
             if (0 == s.compareTo(this.imageID)) {
                 isSupportedFormat = true;
                 break;

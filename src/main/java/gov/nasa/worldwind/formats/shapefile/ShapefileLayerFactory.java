@@ -21,8 +21,7 @@ import java.util.Map;
 import java.util.logging.Level;
 
 /**
- * A factory that creates {@link Layer} instances from a shapefile layer configuration source
- * or a shapefile source.
+ * A factory that creates {@link Layer} instances from a shapefile layer configuration source or a shapefile source.
  * <h1>Shapefile Geometry Conversion</h1>
  * <p>
  * Shapefile geometries are mapped to WorldWind objects as shown in the following table.
@@ -67,6 +66,140 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
     protected PointPlacemarkAttributes normalPointAttributes;
     protected PointPlacemarkAttributes highlightPointAttributes;
     protected ShapefileRenderable.AttributeDelegate attributeDelegate;
+
+    protected static Shapefile loadShapefile(Object shapefileSource) {
+        return (shapefileSource instanceof Shapefile) ? (Shapefile) shapefileSource : new Shapefile(shapefileSource);
+    }
+
+    protected static AVList collectDBaseMappings(Element domElement, XPath xpath) {
+        try {
+            Element[] elements = WWXML.getElements(domElement, "AttributeMapping", xpath);
+            if (elements == null || elements.length == 0)
+                return null;
+
+            AVList attrMappings = new AVListImpl();
+
+            for (Element el : elements) {
+                String prop = xpath.evaluate("@attributeName", el);
+                String value = xpath.evaluate("@mapToKey", el);
+                if (WWUtil.isEmpty(prop) || WWUtil.isEmpty(value))
+                    continue;
+
+                attrMappings.set(prop, value);
+            }
+
+            return attrMappings;
+        }
+        catch (XPathExpressionException e) // should not occur, but log just if it does
+        {
+            String message = Logging.getMessage("XML.InvalidXPathExpression", "internal expression");
+            Logging.logger().log(Level.WARNING, message, e);
+            return null;
+        }
+    }
+
+    protected static PointPlacemarkAttributes collectPointAttributes(Element attrElement) {
+        XPathFactory xpFactory = XPathFactory.newInstance();
+        XPath xpath = xpFactory.newXPath();
+
+        PointPlacemarkAttributes attributes = new PointPlacemarkAttributes();
+
+        String imageAddress = WWXML.getText(attrElement, "ImageAddress", xpath);
+        if (!WWUtil.isEmpty(imageAddress))
+            attributes.setImageAddress(imageAddress);
+
+        Double scale = WWXML.getDouble(attrElement, "Scale", xpath);
+        if (scale != null)
+            attributes.setScale(scale);
+
+        Color imageColor = WWXML.getColor(attrElement, "ImageColor", xpath);
+        if (imageColor != null)
+            attributes.setImageColor(imageColor);
+
+        Double width = WWXML.getDouble(attrElement, "LineWidth", xpath);
+        if (width != null)
+            attributes.setLineWidth(width);
+
+        Double labelScale = WWXML.getDouble(attrElement, "LabelScale", xpath);
+        if (labelScale != null)
+            attributes.setLabelScale(labelScale);
+
+        Color labelColor = WWXML.getColor(attrElement, "LabelColor", xpath);
+        if (labelColor != null)
+            attributes.setLabelMaterial(new Material(labelColor));
+
+        Color lineColor = WWXML.getColor(attrElement, "LineColor", xpath);
+        if (lineColor != null)
+            attributes.setLabelMaterial(new Material(lineColor));
+
+        Boolean tf = WWXML.getBoolean(attrElement, "UsePointAsDefaultImage", xpath);
+        if (tf != null)
+            attributes.setUsePointAsDefaultImage(tf);
+
+        return attributes;
+    }
+
+    protected static ShapeAttributes collectShapeAttributes(Element attrElement) {
+        XPathFactory xpFactory = XPathFactory.newInstance();
+        XPath xpath = xpFactory.newXPath();
+
+        ShapeAttributes shapeAttributes = new BasicShapeAttributes();
+
+        Boolean tf = WWXML.getBoolean(attrElement, "DrawInterior", xpath);
+        if (tf != null)
+            shapeAttributes.setDrawInterior(tf);
+
+        tf = WWXML.getBoolean(attrElement, "DrawOutline", xpath);
+        if (tf != null)
+            shapeAttributes.setDrawOutline(tf);
+
+        Double opacity = WWXML.getDouble(attrElement, "InteriorOpacity", xpath);
+        if (opacity != null)
+            shapeAttributes.setInteriorOpacity(opacity);
+
+        opacity = WWXML.getDouble(attrElement, "OutlineOpacity", xpath);
+        if (opacity != null)
+            shapeAttributes.setOutlineOpacity(opacity);
+
+        Double width = WWXML.getDouble(attrElement, "OutlineWidth", xpath);
+        if (opacity != null)
+            shapeAttributes.setOutlineWidth(width);
+
+        Color color = WWXML.getColor(attrElement, "InteriorColor", xpath);
+        if (color != null)
+            shapeAttributes.setInteriorMaterial(new Material(color));
+
+        color = WWXML.getColor(attrElement, "OutlineColor", xpath);
+        if (color != null)
+            shapeAttributes.setOutlineMaterial(new Material(color));
+
+        return shapeAttributes;
+    }
+
+    protected static AVList applyMappings(AVList attrRecord, AVList attrMappings) {
+        if (attrRecord == null || attrMappings == null)
+            return null;
+
+        AVList mappings = new AVListImpl();
+        for (Map.Entry<String, Object> mapping : attrMappings.getEntries()) {
+            Object attrValue = attrRecord.get(mapping.getKey());
+            if (attrValue != null)
+                mappings.set((String) mapping.getValue(), attrValue);
+        }
+
+        return mappings.getEntries().isEmpty() ? null : mappings;
+    }
+
+    protected static void addPropertiesForShapefile(Shapefile shp, AVList layer) {
+        if (layer.get(AVKey.DISPLAY_NAME) == null) // use the shapefile's display name when the layer is unnamed
+        {
+            layer.set(AVKey.DISPLAY_NAME, shp.get(AVKey.DISPLAY_NAME));
+        }
+
+        if (shp.getBoundingRectangle() != null) {
+            layer.set(AVKey.SECTOR, Sector.fromDegrees(shp.getBoundingRectangle()));
+        }
+    }
 
     /**
      * Indicates the mappings between shapefile attribute names and av-list keys attached to created shapes.
@@ -205,10 +338,10 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
     }
 
     /**
-     * Creates a {@link Layer} from a general configuration source. The source can be one of
-     * the following: <ul> <li>a {@link java.net.URL}</li> <li>a {@link java.io.File}</li> <li>a {@link
-     * java.io.InputStream}</li> <li>{@link Element}</li> <li>a {@link String} holding a file name, a name of a resource
-     * on the classpath, or a string representation of a URL</li> </ul>
+     * Creates a {@link Layer} from a general configuration source. The source can be one of the following: <ul> <li>a
+     * {@link java.net.URL}</li> <li>a {@link java.io.File}</li> <li>a {@link java.io.InputStream}</li> <li>{@link
+     * Element}</li> <li>a {@link String} holding a file name, a name of a resource on the classpath, or a string
+     * representation of a URL</li> </ul>
      * <p>
      * The XML configuration file indicated by the source must contain the shapefile location, and may contain elements
      * specifying shapefile attribute mappings, shape attributes to assign to created shapes, and layer properties.
@@ -216,8 +349,7 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
      * This returns with the new layer immediately, but executes shapefile parsing and shapefile geometry conversion on
      * a separate thread. Shapefile geometry is added to the returned layer as it becomes available. In order to receive
      * notifications when execution completes or if an exception occurs, use {@link #createFromConfigSource(Object,
-     * AVList, ShapefileLayerFactory.CompletionCallback)}
-     * and specify a completion callback.
+     * AVList, ShapefileLayerFactory.CompletionCallback)} and specify a completion callback.
      *
      * @param configSource the configuration source. See above for supported types.
      * @param params       Key/value pairs to associate with the created layer. Values specified here override
@@ -239,10 +371,10 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
     }
 
     /**
-     * Creates a {@link Layer} from a general configuration source. The source can be one of
-     * the following: <ul> <li>a {@link java.net.URL}</li> <li>a {@link java.io.File}</li> <li>a {@link
-     * java.io.InputStream}</li> <li>{@link Element}</li> <li>a {@link String} holding a file name, a name of a resource
-     * on the classpath, or a string representation of a URL</li> </ul>
+     * Creates a {@link Layer} from a general configuration source. The source can be one of the following: <ul> <li>a
+     * {@link java.net.URL}</li> <li>a {@link java.io.File}</li> <li>a {@link java.io.InputStream}</li> <li>{@link
+     * Element}</li> <li>a {@link String} holding a file name, a name of a resource on the classpath, or a string
+     * representation of a URL</li> </ul>
      * <p>
      * The XML configuration file indicated by the source must contain the shapefile location, and may contain elements
      * specifying shapefile attribute mappings, shape attributes to assign to created shapes, and layer properties.
@@ -277,14 +409,13 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
         try {
             if (configSource instanceof Element) {
                 o = this.doCreateFromElement((Element) configSource, params, callback);
-            }
-            else {
+            } else {
                 Document doc = WWXML.openDocument(configSource);
                 if (doc != null)
                     o = this.doCreateFromElement(doc.getDocumentElement(), params, callback);
             }
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             String msg = Logging.getMessage("generic.CreationFromConfigurationFileFailed", configSource);
             throw new WWRuntimeException(msg, e);
         }
@@ -293,16 +424,15 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
     }
 
     /**
-     * Creates a {@link Layer} from a general shapefile source. The source can be one of the
-     * following: <ul> <li>a {@link java.net.URL}</li> <li>a {@link java.io.File}</li> <li>a {@link
-     * java.io.InputStream}</li> <li>{@link Shapefile}</li> <li>a {@link String} holding a file name, a name of a
-     * resource on the classpath, or a string representation of a URL</li> </ul>
+     * Creates a {@link Layer} from a general shapefile source. The source can be one of the following: <ul> <li>a
+     * {@link java.net.URL}</li> <li>a {@link java.io.File}</li> <li>a {@link java.io.InputStream}</li> <li>{@link
+     * Shapefile}</li> <li>a {@link String} holding a file name, a name of a resource on the classpath, or a string
+     * representation of a URL</li> </ul>
      * <p>
      * This returns with the new layer immediately, but executes shapefile parsing and shapefile geometry conversion on
      * a separate thread. Shapefile geometry is added to the returned layer as it becomes available. In order to receive
      * notifications when execution completes or if an exception occurs, use {@link #createFromConfigSource(Object,
-     * AVList, ShapefileLayerFactory.CompletionCallback)}
-     * and specify a completion callback.
+     * AVList, ShapefileLayerFactory.CompletionCallback)} and specify a completion callback.
      * <p>
      * If the source is a Shapefile instance, it is the responsibility of the caller to close the shapefile after this
      * factory completes execution.
@@ -324,10 +454,10 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
     }
 
     /**
-     * Creates a {@link Layer} from a general shapefile source. The source can be one of the
-     * following: <ul> <li>a {@link java.net.URL}</li> <li>a {@link java.io.File}</li> <li>a {@link
-     * java.io.InputStream}</li> <li>{@link Shapefile}</li> <li>a {@link String} holding a file name, a name of a
-     * resource on the classpath, or a string representation of a URL</li> </ul>
+     * Creates a {@link Layer} from a general shapefile source. The source can be one of the following: <ul> <li>a
+     * {@link java.net.URL}</li> <li>a {@link java.io.File}</li> <li>a {@link java.io.InputStream}</li> <li>{@link
+     * Shapefile}</li> <li>a {@link String} holding a file name, a name of a resource on the classpath, or a string
+     * representation of a URL</li> </ul>
      * <p>
      * This returns with the new layer immediately, but executes shapefile parsing and shapefile geometry conversion on
      * a separate thread. Shapefile geometry is added to the returned layer as it becomes available. Once parsing
@@ -360,7 +490,7 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
         try {
             o = this.doCreateFromShapefile(shapefileSource, callback);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             String msg = Logging.getMessage("generic.CreationFromShapefileSourceFailed", shapefileSource);
             throw new WWRuntimeException(msg, e);
         }
@@ -369,9 +499,9 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
     }
 
     /**
-     * Creates a {@link Layer} from a general shapefile layer configuration element. The
-     * element must contain the shapefile location, and may contain elements specifying shapefile attribute mappings,
-     * shape attributes to assign to created shapes, and layer properties.
+     * Creates a {@link Layer} from a general shapefile layer configuration element. The element must contain the
+     * shapefile location, and may contain elements specifying shapefile attribute mappings, shape attributes to assign
+     * to created shapes, and layer properties.
      *
      * @param domElement an XML element describing the layer.
      * @param params     any properties to apply when creating the layer.
@@ -403,13 +533,15 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
         this.setNormalShapeAttributes(element != null ? ShapefileLayerFactory.collectShapeAttributes(element) : null);
 
         element = WWXML.getElement(domElement, "HighlightShapeAttributes", xpath);
-        this.setHighlightShapeAttributes(element != null ? ShapefileLayerFactory.collectShapeAttributes(element) : null);
+        this.setHighlightShapeAttributes(
+            element != null ? ShapefileLayerFactory.collectShapeAttributes(element) : null);
 
         element = WWXML.getElement(domElement, "NormalPointAttributes", xpath);
         this.setNormalPointAttributes(element != null ? ShapefileLayerFactory.collectPointAttributes(element) : null);
 
         element = WWXML.getElement(domElement, "HighlightPointAttributes", xpath);
-        this.setHighlightPointAttributes(element != null ? ShapefileLayerFactory.collectPointAttributes(element) : null);
+        this.setHighlightPointAttributes(
+            element != null ? ShapefileLayerFactory.collectPointAttributes(element) : null);
 
         Double d = (Double) params.get(AVKey.OPACITY);
         if (d != null)
@@ -433,10 +565,10 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
     }
 
     /**
-     * Creates a {@link Layer} from a general shapefile source. The source can be one of the
-     * following: <ul> <li>a {@link java.net.URL}</li> <li>a {@link java.io.File}</li> <li>a {@link
-     * java.io.InputStream}</li> <li>{@link Shapefile}</li> <li>a {@link String} holding a file name, a name of a
-     * resource on the classpath, or a string representation of a URL</li> </ul>
+     * Creates a {@link Layer} from a general shapefile source. The source can be one of the following: <ul> <li>a
+     * {@link java.net.URL}</li> <li>a {@link java.io.File}</li> <li>a {@link java.io.InputStream}</li> <li>{@link
+     * Shapefile}</li> <li>a {@link String} holding a file name, a name of a resource on the classpath, or a string
+     * representation of a URL</li> </ul>
      *
      * @param shapefileSource the shapefile source. See above for supported types.
      * @param callback        A callback to notify when shapefile parsing completes or encounters an exception. May be
@@ -456,10 +588,10 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
         WorldWind.scheduler().addTask(() -> {
             Shapefile shp = null;
             try {
-                shp = loadShapefile(shapefileSource);
+                shp = ShapefileLayerFactory.loadShapefile(shapefileSource);
                 assembleShapefileLayer(shp, layer);
             }
-            catch (Exception e) {
+            catch (RuntimeException e) {
                 if (callback != null)
                     callback.exception(e);
             }
@@ -472,138 +604,24 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
         });
     }
 
-    protected static Shapefile loadShapefile(Object shapefileSource) {
-        return (shapefileSource instanceof Shapefile) ? (Shapefile) shapefileSource : new Shapefile(shapefileSource);
-    }
-
     protected void assembleShapefileLayer(Shapefile shp, RenderableLayer layer) {
         this.addRenderablesForShapefile(shp, layer);
         ShapefileLayerFactory.addPropertiesForShapefile(shp, layer);
-    }
-
-    protected static AVList collectDBaseMappings(Element domElement, XPath xpath) {
-        try {
-            Element[] elements = WWXML.getElements(domElement, "AttributeMapping", xpath);
-            if (elements == null || elements.length == 0)
-                return null;
-
-            AVList attrMappings = new AVListImpl();
-
-            for (Element el : elements) {
-                String prop = xpath.evaluate("@attributeName", el);
-                String value = xpath.evaluate("@mapToKey", el);
-                if (WWUtil.isEmpty(prop) || WWUtil.isEmpty(value))
-                    continue;
-
-                attrMappings.set(prop, value);
-            }
-
-            return attrMappings;
-        }
-        catch (XPathExpressionException e) // should not occur, but log just if it does
-        {
-            String message = Logging.getMessage("XML.InvalidXPathExpression", "internal expression");
-            Logging.logger().log(Level.WARNING, message, e);
-            return null;
-        }
-    }
-
-    protected static PointPlacemarkAttributes collectPointAttributes(Element attrElement) {
-        XPathFactory xpFactory = XPathFactory.newInstance();
-        XPath xpath = xpFactory.newXPath();
-
-        PointPlacemarkAttributes attributes = new PointPlacemarkAttributes();
-
-        String imageAddress = WWXML.getText(attrElement, "ImageAddress", xpath);
-        if (!WWUtil.isEmpty(imageAddress))
-            attributes.setImageAddress(imageAddress);
-
-        Double scale = WWXML.getDouble(attrElement, "Scale", xpath);
-        if (scale != null)
-            attributes.setScale(scale);
-
-        Color imageColor = WWXML.getColor(attrElement, "ImageColor", xpath);
-        if (imageColor != null)
-            attributes.setImageColor(imageColor);
-
-        Double width = WWXML.getDouble(attrElement, "LineWidth", xpath);
-        if (width != null)
-            attributes.setLineWidth(width);
-
-        Double labelScale = WWXML.getDouble(attrElement, "LabelScale", xpath);
-        if (labelScale != null)
-            attributes.setLabelScale(labelScale);
-
-        Color labelColor = WWXML.getColor(attrElement, "LabelColor", xpath);
-        if (labelColor != null)
-            attributes.setLabelMaterial(new Material(labelColor));
-
-        Color lineColor = WWXML.getColor(attrElement, "LineColor", xpath);
-        if (lineColor != null)
-            attributes.setLabelMaterial(new Material(lineColor));
-
-        Boolean tf = WWXML.getBoolean(attrElement, "UsePointAsDefaultImage", xpath);
-        if (tf != null)
-            attributes.setUsePointAsDefaultImage(tf);
-
-        return attributes;
-    }
-
-    protected static ShapeAttributes collectShapeAttributes(Element attrElement) {
-        XPathFactory xpFactory = XPathFactory.newInstance();
-        XPath xpath = xpFactory.newXPath();
-
-        ShapeAttributes shapeAttributes = new BasicShapeAttributes();
-
-        Boolean tf = WWXML.getBoolean(attrElement, "DrawInterior", xpath);
-        if (tf != null)
-            shapeAttributes.setDrawInterior(tf);
-
-        tf = WWXML.getBoolean(attrElement, "DrawOutline", xpath);
-        if (tf != null)
-            shapeAttributes.setDrawOutline(tf);
-
-        Double opacity = WWXML.getDouble(attrElement, "InteriorOpacity", xpath);
-        if (opacity != null)
-            shapeAttributes.setInteriorOpacity(opacity);
-
-        opacity = WWXML.getDouble(attrElement, "OutlineOpacity", xpath);
-        if (opacity != null)
-            shapeAttributes.setOutlineOpacity(opacity);
-
-        Double width = WWXML.getDouble(attrElement, "OutlineWidth", xpath);
-        if (opacity != null)
-            shapeAttributes.setOutlineWidth(width);
-
-        Color color = WWXML.getColor(attrElement, "InteriorColor", xpath);
-        if (color != null)
-            shapeAttributes.setInteriorMaterial(new Material(color));
-
-        color = WWXML.getColor(attrElement, "OutlineColor", xpath);
-        if (color != null)
-            shapeAttributes.setOutlineMaterial(new Material(color));
-
-        return shapeAttributes;
     }
 
     protected void addRenderablesForShapefile(Shapefile shp, RenderableLayer layer) {
 
         if (Shapefile.isPointType(shp.getShapeType())) {
             this.addRenderablesForPoints(shp, layer);
-        }
-        else if (Shapefile.isMultiPointType(shp.getShapeType())) {
+        } else if (Shapefile.isMultiPointType(shp.getShapeType())) {
             this.addRenderablesForMultiPoints(shp, layer);
-        }
-        else if (Shapefile.isPolylineType(shp.getShapeType())) {
+        } else if (Shapefile.isPolylineType(shp.getShapeType())) {
             this.addRenderablesForPolylines(shp, layer);
-        }
-        else if (Shapefile.isPolygonType(shp.getShapeType())) {
+        } else if (Shapefile.isPolygonType(shp.getShapeType())) {
             this.addRenderablesForPolygons(shp, layer);
-        }
-        else if (Shapefile.isMultiPatchType(shp.getShapeType())) {
+        } else if (Shapefile.isMultiPatchType(shp.getShapeType())) {
             this.addRenderablesForMultiPatch(shp, layer);
-        }
-        else {
+        } else {
             String msg = Logging.getMessage("generic.UnrecognizedShapeType", shp.getShapeType());
             throw new WWRuntimeException(msg);
         }
@@ -672,8 +690,7 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
     protected void addRenderablesForPolygons(Shapefile shp, RenderableLayer layer) {
         if (ShapefileUtils.hasHeightAttribute(shp)) {
             this.addRenderablesForExtrudedPolygons(shp, layer);
-        }
-        else {
+        } else {
             this.addRenderablesForSurfacePolygons(shp, layer);
         }
     }
@@ -688,31 +705,6 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
         Renderable shape = new ShapefileExtrudedPolygons(shp, this.normalShapeAttributes,
             this.highlightShapeAttributes, this);
         layer.add(shape);
-    }
-
-    protected static AVList applyMappings(AVList attrRecord, AVList attrMappings) {
-        if (attrRecord == null || attrMappings == null)
-            return null;
-
-        AVList mappings = new AVListImpl();
-        for (Map.Entry<String, Object> mapping : attrMappings.getEntries()) {
-            Object attrValue = attrRecord.get(mapping.getKey());
-            if (attrValue != null)
-                mappings.set((String) mapping.getValue(), attrValue);
-        }
-
-        return !mappings.getEntries().isEmpty() ? mappings : null;
-    }
-
-    protected static void addPropertiesForShapefile(Shapefile shp, AVList layer) {
-        if (layer.get(AVKey.DISPLAY_NAME) == null) // use the shapefile's display name when the layer is unnamed
-        {
-            layer.set(AVKey.DISPLAY_NAME, shp.get(AVKey.DISPLAY_NAME));
-        }
-
-        if (shp.getBoundingRectangle() != null) {
-            layer.set(AVKey.SECTOR, Sector.fromDegrees(shp.getBoundingRectangle()));
-        }
     }
 
     /**

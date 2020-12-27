@@ -57,8 +57,9 @@ public class VPFWingedEdgeTraverser {
             curEdgeId = nextEdgeId;
 
             if (listener != null) {
-                listener.nextEdge(count, curEdgeId, VPFWingedEdgeTraverser.getMustReverseCoordinates(faceId, prevEdgeId, curEdgeId,
-                    edgeInfoArray));
+                listener.nextEdge(count, curEdgeId,
+                    VPFWingedEdgeTraverser.getMustReverseCoordinates(faceId, prevEdgeId, curEdgeId,
+                        edgeInfoArray));
             }
 
             count++;
@@ -82,26 +83,25 @@ public class VPFWingedEdgeTraverser {
         }
 
         return switch (o) {
-            case LEFT -> getEdgeInfo(edgeInfoArray, curEdgeId).getLeftEdge();
-            case RIGHT -> getEdgeInfo(edgeInfoArray, curEdgeId).getRightEdge();
-            case LEFT_AND_RIGHT -> (prevEdgeId > 0) ? VPFWingedEdgeTraverser.auxiliaryNextEdgeId(prevEdgeId, curEdgeId, edgeInfoArray)
+            case LEFT -> VPFWingedEdgeTraverser.getEdgeInfo(edgeInfoArray, curEdgeId).getLeftEdge();
+            case RIGHT -> VPFWingedEdgeTraverser.getEdgeInfo(edgeInfoArray, curEdgeId).getRightEdge();
+            case LEFT_AND_RIGHT -> (prevEdgeId > 0) ? VPFWingedEdgeTraverser.auxiliaryNextEdgeId(prevEdgeId, curEdgeId,
+                edgeInfoArray)
                 : -1;
         };
     }
 
     protected static Orientation getOrientation(int faceId, int edgeId, VPFPrimitiveData.PrimitiveInfo[] edgeInfo) {
-        VPFPrimitiveData.EdgeInfo thisInfo = getEdgeInfo(edgeInfo, edgeId);
+        VPFPrimitiveData.EdgeInfo thisInfo = VPFWingedEdgeTraverser.getEdgeInfo(edgeInfo, edgeId);
         boolean matchLeft = thisInfo.getLeftFace() == faceId;
         boolean matchRight = thisInfo.getRightFace() == faceId;
 
         if (matchLeft && matchRight) // Auxiliary edge has the same face on both sides.
         {
             return Orientation.LEFT_AND_RIGHT;
-        }
-        else if (matchLeft) {
+        } else if (matchLeft) {
             return Orientation.LEFT;
-        }
-        else if (matchRight) {
+        } else if (matchRight) {
             return Orientation.RIGHT;
         }
 
@@ -124,7 +124,8 @@ public class VPFWingedEdgeTraverser {
 
         return switch (o) {
             case LEFT -> true;
-            case LEFT_AND_RIGHT -> (prevEdgeId > 0) && VPFWingedEdgeTraverser.auxiliaryMustReverseCoordinates(prevEdgeId, curEdgeId,
+            case LEFT_AND_RIGHT -> (prevEdgeId > 0) && VPFWingedEdgeTraverser.auxiliaryMustReverseCoordinates(
+                prevEdgeId, curEdgeId,
                 edgeInfo);
             default -> false;
         };
@@ -137,16 +138,16 @@ public class VPFWingedEdgeTraverser {
         // with an auxiliary edge joining each inner and outer loop. The auxiliary edge is traversed twice; one upon
         // entering the inner ring, then  again upon exit.
 
-        VPFPrimitiveData.EdgeInfo prevInfo = getEdgeInfo(edgeInfoArray, prevEdgeId);
-        VPFPrimitiveData.EdgeInfo curInfo = getEdgeInfo(edgeInfoArray, curEdgeId);
+        VPFPrimitiveData.EdgeInfo prevInfo = VPFWingedEdgeTraverser.getEdgeInfo(edgeInfoArray, prevEdgeId);
+        VPFPrimitiveData.EdgeInfo curInfo = VPFWingedEdgeTraverser.getEdgeInfo(edgeInfoArray, curEdgeId);
 
         // Previous edge is adjacent to starting node.
         if (curInfo.getStartNode() == prevInfo.getStartNode() || curInfo.getStartNode() == prevInfo.getEndNode()) {
-            return (curInfo.getRightEdge() != curEdgeId) ? curInfo.getRightEdge() : curInfo.getLeftEdge();
+            return (curInfo.getRightEdge() == curEdgeId) ? curInfo.getLeftEdge() : curInfo.getRightEdge();
         }
         // Previous edge is adjacent to ending node.
         else if (curInfo.getEndNode() == prevInfo.getStartNode() || curInfo.getEndNode() == prevInfo.getEndNode()) {
-            return (curInfo.getLeftEdge() != curEdgeId) ? curInfo.getLeftEdge() : curInfo.getRightEdge();
+            return (curInfo.getLeftEdge() == curEdgeId) ? curInfo.getRightEdge() : curInfo.getLeftEdge();
         }
         // Edges are not actually adjacent. This should never happen, but we check anyway.
         else {
@@ -156,8 +157,8 @@ public class VPFWingedEdgeTraverser {
 
     protected static boolean auxiliaryMustReverseCoordinates(int prevEdgeId, int curEdgeId,
         VPFPrimitiveData.PrimitiveInfo[] edgeInfoArray) {
-        VPFPrimitiveData.EdgeInfo prevInfo = getEdgeInfo(edgeInfoArray, prevEdgeId);
-        VPFPrimitiveData.EdgeInfo curInfo = getEdgeInfo(edgeInfoArray, curEdgeId);
+        VPFPrimitiveData.EdgeInfo prevInfo = VPFWingedEdgeTraverser.getEdgeInfo(edgeInfoArray, prevEdgeId);
+        VPFPrimitiveData.EdgeInfo curInfo = VPFWingedEdgeTraverser.getEdgeInfo(edgeInfoArray, curEdgeId);
 
         return curInfo.getEndNode() == prevInfo.getStartNode() || curInfo.getEndNode() == prevInfo.getEndNode();
     }

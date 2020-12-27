@@ -70,6 +70,24 @@ public class Wizard {
         init();
     }
 
+    private static void setButtonText(JButton button, Object value) {
+        if (button != null) {
+            button.setText(value != null ? value.toString() : null);
+        }
+    }
+
+    private static void setButtonEnabled(JButton button, Object value) {
+        if (button != null) {
+            button.setEnabled(value != null && Boolean.parseBoolean(value.toString()));
+        }
+    }
+
+    private static void setButtonIcon(JButton button, Object value) {
+        if (button != null) {
+            button.setIcon((value instanceof Icon) ? (Icon) value : null);
+        }
+    }
+
     public WizardPanelDescriptor getWizardPanel(Object id) {
         return this.model.getWizardPanel(id);
     }
@@ -97,7 +115,7 @@ public class Wizard {
 
     public void setCurrentPanelDescriptor(Object id) {
         if (id == null) {
-            close(ERROR_RETURN_CODE);
+            close(Wizard.ERROR_RETURN_CODE);
             return;
         }
 
@@ -234,9 +252,9 @@ public class Wizard {
         this.backButton = new JButton();
         this.nextButton = new JButton();
         this.cancelButton = new JButton();
-        this.backButton.setActionCommand(BACK_BUTTON_ACTION_COMMAND);
-        this.nextButton.setActionCommand(NEXT_BUTTON_ACTION_COMMAND);
-        this.cancelButton.setActionCommand(CANCEL_BUTTON_ACTION_COMMAND);
+        this.backButton.setActionCommand(Wizard.BACK_BUTTON_ACTION_COMMAND);
+        this.nextButton.setActionCommand(Wizard.NEXT_BUTTON_ACTION_COMMAND);
+        this.cancelButton.setActionCommand(Wizard.CANCEL_BUTTON_ACTION_COMMAND);
         this.backButton.addActionListener(this.controller);
         this.nextButton.addActionListener(this.controller);
         this.cancelButton.addActionListener(this.controller);
@@ -265,24 +283,6 @@ public class Wizard {
         this.dialog.getContentPane().add(buttonPanel, BorderLayout.SOUTH);
     }
 
-    private static void setButtonText(JButton button, Object value) {
-        if (button != null) {
-            button.setText(value != null ? value.toString() : null);
-        }
-    }
-
-    private static void setButtonEnabled(JButton button, Object value) {
-        if (button != null) {
-            button.setEnabled(value != null && Boolean.parseBoolean(value.toString()));
-        }
-    }
-
-    private static void setButtonIcon(JButton button, Object value) {
-        if (button != null) {
-            button.setIcon((value instanceof Icon) ? (Icon) value : null);
-        }
-    }
-
     final static class FinishIdentifier {
         public static final String IDENTIFIER = "wizard.FinishIdentifier";
     }
@@ -300,31 +300,31 @@ public class Wizard {
                         }
                         break;
                     case WizardModel.BACK_BUTTON_TEXT:
-                        setButtonText(backButton, newValue);
+                        Wizard.setButtonText(backButton, newValue);
                         break;
                     case WizardModel.NEXT_BUTTON_TEXT:
-                        setButtonText(nextButton, newValue);
+                        Wizard.setButtonText(nextButton, newValue);
                         break;
                     case WizardModel.CANCEL_BUTTON_TEXT:
-                        setButtonText(cancelButton, newValue);
+                        Wizard.setButtonText(cancelButton, newValue);
                         break;
                     case WizardModel.BACK_BUTTON_ENABLED:
-                        setButtonEnabled(backButton, newValue);
+                        Wizard.setButtonEnabled(backButton, newValue);
                         break;
                     case WizardModel.NEXT_BUTTON_ENABLED:
-                        setButtonEnabled(nextButton, newValue);
+                        Wizard.setButtonEnabled(nextButton, newValue);
                         break;
                     case WizardModel.CANCEL_BUTTON_ENABLED:
-                        setButtonEnabled(cancelButton, newValue);
+                        Wizard.setButtonEnabled(cancelButton, newValue);
                         break;
                     case WizardModel.BACK_BUTTON_ICON:
-                        setButtonIcon(backButton, newValue);
+                        Wizard.setButtonIcon(backButton, newValue);
                         break;
                     case WizardModel.NEXT_BUTTON_ICON:
-                        setButtonIcon(nextButton, newValue);
+                        Wizard.setButtonIcon(nextButton, newValue);
                         break;
                     case WizardModel.CANCEL_BUTTON_ICON:
-                        setButtonIcon(cancelButton, newValue);
+                        Wizard.setButtonIcon(cancelButton, newValue);
                         break;
                 }
             }
@@ -335,7 +335,7 @@ public class Wizard {
         public void windowClosing(WindowEvent e) {
             // Simulate a button's ActionEvent for window closing.
             if (controller != null) {
-                controller.actionPerformed(new ActionEvent(e.getSource(), e.getID(), DIALOG_CLOSE_ACTION_COMMAND));
+                controller.actionPerformed(new ActionEvent(e.getSource(), e.getID(), Wizard.DIALOG_CLOSE_ACTION_COMMAND));
             }
         }
     }

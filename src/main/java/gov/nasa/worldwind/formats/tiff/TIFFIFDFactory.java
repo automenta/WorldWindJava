@@ -34,9 +34,9 @@ class TIFFIFDFactory {
             fc.read(header);
             header.flip();
 
-            int tag = getUnsignedShort(header);
-            int type = getUnsignedShort(header);
-            long count = getUnsignedInt(header);
+            int tag = TIFFIFDFactory.getUnsignedShort(header);
+            int type = TIFFIFDFactory.getUnsignedShort(header);
+            long count = TIFFIFDFactory.getUnsignedInt(header);
 
             // To save time and space the Value Offset contains the Value instead of pointing to
             // the Value if and only if the Value fits into 4 bytes. If the Value is shorter than 4 bytes,
@@ -45,19 +45,17 @@ class TIFFIFDFactory {
 
             if (type == Tiff.Type.SHORT && count == 1) {
                 // these get packed left-justified in the bytes...
-                int upper = getUnsignedShort(header);
-                int lower = getUnsignedShort(header);
-                long value = (MASK_USHORT & upper) << 16 | (MASK_USHORT & lower);
+                int upper = TIFFIFDFactory.getUnsignedShort(header);
+                int lower = TIFFIFDFactory.getUnsignedShort(header);
+                long value = (TIFFIFDFactory.MASK_USHORT & upper) << 16 | (TIFFIFDFactory.MASK_USHORT & lower);
 
                 return new TiffIFDEntry(tag, type, value);
-            }
-            else if (count == 1 && (type == Tiff.Type.LONG || type == Tiff.Type.FLOAT)) {
+            } else if (count == 1 && (type == Tiff.Type.LONG || type == Tiff.Type.FLOAT)) {
                 long value = header.getInt();
                 return new TiffIFDEntry(tag, type, value);
-            }
-            else {
-                long offset = getUnsignedInt(header);
-                int size = MASK_USHORT & (int) calcSize(type, count);
+            } else {
+                long offset = TIFFIFDFactory.getUnsignedInt(header);
+                int size = TIFFIFDFactory.MASK_USHORT & (int) TIFFIFDFactory.calcSize(type, count);
 
                 if (size > 0L) {
                     ByteBuffer data = ByteBuffer.allocateDirect(size).order(tiffFileOrder);
@@ -70,8 +68,7 @@ class TIFFIFDFactory {
                     savedPosition = 0;
 
                     return new TiffIFDEntry(tag, type, count, offset, data);
-                }
-                else
+                } else
                     return new TiffIFDEntry(tag, type, count, offset);
             }
         }
@@ -103,10 +100,10 @@ class TIFFIFDFactory {
     }
 
     private static int getUnsignedShort(ByteBuffer bb) {
-        return MASK_USHORT & bb.getShort();
+        return TIFFIFDFactory.MASK_USHORT & bb.getShort();
     }
 
     private static long getUnsignedInt(ByteBuffer bb) {
-        return MASK_UINT & bb.getInt();
+        return TIFFIFDFactory.MASK_UINT & bb.getInt();
     }
 }

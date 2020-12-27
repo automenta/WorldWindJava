@@ -48,8 +48,8 @@ public class FireSupportLine extends AbstractMilStd2525TacticalGraphic {
     /**
      * The value of an optional second text string for the graphic. This value is equivalent to the "T1" modifier
      * defined by MIL-STD-2525C. It can be set using {@link #setAdditionalText(String)}, or by passing an Iterable to
-     * {@link #setModifier(String, Object)} with a key of {@link SymbologyConstants#UNIQUE_DESIGNATION}
-     * (additional text is the second value in the iterable).
+     * {@link #setModifier(String, Object)} with a key of {@link SymbologyConstants#UNIQUE_DESIGNATION} (additional text
+     * is the second value in the iterable).
      */
     protected String additionalText;
 
@@ -74,6 +74,24 @@ public class FireSupportLine extends AbstractMilStd2525TacticalGraphic {
             TacGrpSidc.FSUPP_LNE_C2LNE_CFL,
             TacGrpSidc.FSUPP_LNE_C2LNE_RFL
         );
+    }
+
+    /**
+     * Indicates the offset applied to the upper label.
+     *
+     * @return Offset applied to the upper label.
+     */
+    protected static Offset getTopLabelOffset() {
+        return FireSupportLine.TOP_LABEL_OFFSET;
+    }
+
+    /**
+     * Indicates the offset applied to the lower label.
+     *
+     * @return Offset applied to the bottom label.
+     */
+    protected static Offset getBottomLabelOffset() {
+        return FireSupportLine.BOTTOM_LABEL_OFFSET;
     }
 
     /**
@@ -119,8 +137,7 @@ public class FireSupportLine extends AbstractMilStd2525TacticalGraphic {
             if (iterator.hasNext()) {
                 this.setAdditionalText((String) iterator.next());
             }
-        }
-        else {
+        } else {
             super.setModifier(key, value);
         }
     }
@@ -221,7 +238,7 @@ public class FireSupportLine extends AbstractMilStd2525TacticalGraphic {
 
         String text = this.getAdditionalText();
         if (!WWUtil.isEmpty(text)) {
-            sb.append(" ");
+            sb.append(' ');
             sb.append(text);
         }
 
@@ -242,11 +259,9 @@ public class FireSupportLine extends AbstractMilStd2525TacticalGraphic {
 
         if (TacGrpSidc.FSUPP_LNE_C2LNE_FSCL.equalsIgnoreCase(this.maskedSymbolCode)) {
             sb.append(" FSCL");
-        }
-        else if (TacGrpSidc.FSUPP_LNE_C2LNE_CFL.equalsIgnoreCase(this.maskedSymbolCode)) {
+        } else if (TacGrpSidc.FSUPP_LNE_C2LNE_CFL.equalsIgnoreCase(this.maskedSymbolCode)) {
             sb.insert(0, "CFL ");
-        }
-        else if (TacGrpSidc.FSUPP_LNE_C2LNE_RFL.equalsIgnoreCase(this.maskedSymbolCode)) {
+        } else if (TacGrpSidc.FSUPP_LNE_C2LNE_RFL.equalsIgnoreCase(this.maskedSymbolCode)) {
             sb.insert(0, "RFL ");
         }
 
@@ -301,8 +316,7 @@ public class FireSupportLine extends AbstractMilStd2525TacticalGraphic {
         if (startPosition.longitude < endPosition.longitude) {
             startLabel.setTextAlign(AVKey.RIGHT);
             endLabel.setTextAlign(AVKey.LEFT);
-        }
-        else {
+        } else {
             startLabel.setTextAlign(AVKey.LEFT);
             endLabel.setTextAlign(AVKey.RIGHT);
         }
@@ -365,25 +379,7 @@ public class FireSupportLine extends AbstractMilStd2525TacticalGraphic {
      */
     @Override
     protected Offset getDefaultLabelOffset() {
-        return TOP_LABEL_OFFSET;
-    }
-
-    /**
-     * Indicates the offset applied to the upper label.
-     *
-     * @return Offset applied to the upper label.
-     */
-    protected static Offset getTopLabelOffset() {
-        return TOP_LABEL_OFFSET;
-    }
-
-    /**
-     * Indicates the offset applied to the lower label.
-     *
-     * @return Offset applied to the bottom label.
-     */
-    protected static Offset getBottomLabelOffset() {
-        return BOTTOM_LABEL_OFFSET;
+        return FireSupportLine.TOP_LABEL_OFFSET;
     }
 
     /**
@@ -395,7 +391,7 @@ public class FireSupportLine extends AbstractMilStd2525TacticalGraphic {
 
         // Coordinated Fire Line always renders with dashed lines.
         if (TacGrpSidc.FSUPP_LNE_C2LNE_CFL.equalsIgnoreCase(this.maskedSymbolCode)) {
-            attributes.setOutlineStippleFactor(CFL_OUTLINE_STIPPLE_FACTOR);
+            attributes.setOutlineStippleFactor(FireSupportLine.CFL_OUTLINE_STIPPLE_FACTOR);
             attributes.setOutlineStipplePattern(AbstractMilStd2525TacticalGraphic.getOutlineStipplePattern());
         }
     }

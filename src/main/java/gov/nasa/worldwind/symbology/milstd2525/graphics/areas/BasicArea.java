@@ -137,7 +137,7 @@ public class BasicArea extends AbstractMilStd2525TacticalGraphic implements PreR
 
         StringBuilder sb = new StringBuilder();
         if (!WWUtil.isEmpty(label)) {
-            sb.append(label).append("\n");
+            sb.append(label).append('\n');
         }
 
         if (!WWUtil.isEmpty(text)) {

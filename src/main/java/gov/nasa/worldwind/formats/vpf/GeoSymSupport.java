@@ -57,8 +57,7 @@ public class GeoSymSupport {
         if (this.assignment == null) {
             String message = Logging.getMessage("VPF.GeoSymSupportDisabled");
             Logging.logger().warning(message);
-        }
-        else {
+        } else {
             this.loadStyleProvider();
             this.loadAbbreviationProvider();
             this.loadAttributeExpressionProvider();
@@ -76,7 +75,7 @@ public class GeoSymSupport {
 
         for (AVList row : textCharTable.getRecords()) {
             Integer id = (Integer) row.get("id");
-            VPFSymbolAttributes.LabelAttributes attr = getTextLabelCharacteristics(row, colorTable);
+            VPFSymbolAttributes.LabelAttributes attr = GeoSymSupport.getTextLabelCharacteristics(row, colorTable);
 
             attributes.put(id, attr);
         }
@@ -92,7 +91,7 @@ public class GeoSymSupport {
         Integer fontType = (Integer) row.get("tfont");
         Integer fontStyle = (Integer) row.get("tstyle");
         Integer size = (Integer) row.get("tsize");
-        Color color = selectColor(colorTable, (Integer) row.get("tcolor"));
+        Color color = GeoSymSupport.selectColor(colorTable, (Integer) row.get("tcolor"));
         String prepend = (String) row.get("tprepend");
         String append = (String) row.get("tappend");
         Integer abbreviationTableIndex = (Integer) row.get("abindexid");
@@ -134,7 +133,7 @@ public class GeoSymSupport {
 
         for (AVList row : textLocTable.getRecords()) {
             Integer id = (Integer) row.get("id");
-            VPFSymbolAttributes.LabelAttributes attr = getTextLabelLocation(row);
+            VPFSymbolAttributes.LabelAttributes attr = GeoSymSupport.getTextLabelLocation(row);
 
             attributes.put(id, attr);
         }
@@ -206,7 +205,7 @@ public class GeoSymSupport {
         if (cov != null) {
             // Some assignments do not specify a 'cov'. In these cases, we must ignore the cov parameter and return
             // the closest match according to the other parameters.
-            selectMatchingCoverages("cov", cov, true, rows);
+            GeoSymSupport.selectMatchingCoverages("cov", cov, true, rows);
         }
 
         return rows;
@@ -230,8 +229,7 @@ public class GeoSymSupport {
                 if (s == null || s.isEmpty()) {
                     if (!acceptNullValue)
                         iter.remove();
-                }
-                else {
+                } else {
                     int pos = s.indexOf("<>");
                     if (pos >= 0)
                         s = s.substring(pos + 1);
@@ -290,6 +288,68 @@ public class GeoSymSupport {
         ArrayList<AVList> rows = new ArrayList<>(Arrays.asList(textCharTable.getRecords()));
         GeoSymTable.selectMatchingRows("id", txtRowId, false, rows);
         return (rows.isEmpty()) ? null : rows.get(0);
+    }
+
+    protected static String getAssignmentPath(String filePath) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(filePath);
+        sb.append('/');
+        sb.append(GeoSymConstants.SYMBOLOGY_ASSIGNMENT);
+        sb.append('/');
+        sb.append(GeoSymConstants.ASCII);
+
+        return sb.toString();
+    }
+
+    protected static String getPathForAssignmentFile(String filePath, String fileName) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(GeoSymSupport.getAssignmentPath(filePath));
+        sb.append('/');
+        sb.append(fileName);
+        return sb.toString();
+    }
+
+    /**
+     * From MIL-HDBK-857A, section 6.4.1.6.1: Default Symbology  Although all efforts have been made to symbolize all
+     * features according to the appropriate symbology specifications, should the application software be unable to
+     * determine at least one "true" condition for a particular instance of a feature in the VPF dataset, there are
+     * default CGMs provided in GeoSym for displaying that feature.  The following table identifies which symbol should
+     * be used to symbolize an "unknown" point, line, or area feature.
+     * <p>
+     * Note that the default symbols should only be placed under two conditions: 1.  There is no row in the *sym.txt
+     * file for the feature (fcode) 2.  After evaluating all rows in the *sym.txt file for that fcode, there is no row
+     * that results in an evaluation of "true".
+     *
+     * @return a single element list containing a reference to the unknown symbol key {@link
+     * VPFSymbolKey#UNKNOWN_SYMBOL_KEY}.
+     */
+    protected static List<? extends VPFSymbolKey> doGetUnknownSymbolKeys() {
+        return Collections.singletonList(VPFSymbolKey.UNKNOWN_SYMBOL_KEY);
+    }
+
+    protected static String getProductName(VPFFeatureClass featureClass) {
+        String s = featureClass.getCoverage().getLibrary().getProductType();
+
+        // 'TADS', or Terrain Analysis Data Set is an alias for 'VITD', or 'Vector Product Interim Terrain Data'.
+        if (s != null && s.equals("TADS")) {
+            s = "VITD";
+        }
+
+        return s;
+    }
+
+    protected static void assembleCommonSymbolAttributes(AVList symbolRow, VPFSymbolAttributes attr) {
+        Integer i = AVListImpl.getIntegerValue(symbolRow, "dispri");
+        if (i != null)
+            attr.setDisplayPriority(i);
+
+        String s = AVListImpl.getStringValue(symbolRow, "orient");
+        if (s != null)
+            attr.setOrientationAttributeName(s);
+
+        s = AVListImpl.getStringValue(symbolRow, "feadesc");
+        if (s != null)
+            attr.setDescription(s);
     }
 
     public String getFilePath() {
@@ -384,17 +444,21 @@ public class GeoSymSupport {
 
         StringBuilder sb = new StringBuilder();
         sb.append(this.filePath);
-        sb.append("/");
+        sb.append('/');
         sb.append(GeoSymConstants.GRAPHICS);
-        sb.append("/");
+        sb.append('/');
         sb.append(GeoSymConstants.BINARY);
-        sb.append("/");
+        sb.append('/');
         sb.append(symbol);
         if (imageSuffix != null)
             sb.append(this.imageSuffix);
 
         return sb.toString();
     }
+
+    //**************************************************************//
+    //********************  Symbol Selection  **********************//
+    //**************************************************************//
 
     public String getAbbreviation(int tableId, int abbreviationId) {
         return this.abbreviationProvider.getAbbreviation(tableId, abbreviationId);
@@ -412,7 +476,7 @@ public class GeoSymSupport {
         try {
             this.assignment = GeoSymAssignment.fromFile(geoSymPath);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             String message = Logging.getMessage("generic.ExceptionWhileReading", filePath);
             Logging.logger().log(Level.SEVERE, message, e);
         }
@@ -423,18 +487,19 @@ public class GeoSymSupport {
         try {
             this.styleProvider = new GeoSymStyleProvider(path);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             String message = Logging.getMessage("generic.ExceptionWhileReading", path);
             Logging.logger().log(Level.SEVERE, message, e);
         }
     }
 
     protected void loadAbbreviationProvider() {
-        String path = GeoSymSupport.getPathForAssignmentFile(this.filePath, GeoSymConstants.TEXT_ABBREVIATIONS_ASSIGNMENT_FILE);
+        String path = GeoSymSupport.getPathForAssignmentFile(this.filePath,
+            GeoSymConstants.TEXT_ABBREVIATIONS_ASSIGNMENT_FILE);
         try {
             this.abbreviationProvider = new GeoSymAbbreviationProvider(path);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             String message = Logging.getMessage("generic.ExceptionWhileReading", path);
             Logging.logger().log(Level.SEVERE, message, e);
         }
@@ -445,16 +510,12 @@ public class GeoSymSupport {
         try {
             this.attributeExpressionProvider = new GeoSymAttributeExpressionProvider(table);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             String message = Logging.getMessage("generic.ExceptionWhileReading",
                 GeoSymConstants.ATTRIBUTE_EXPRESSION_FILE);
             Logging.logger().log(Level.SEVERE, message, e);
         }
     }
-
-    //**************************************************************//
-    //********************  Symbol Selection  **********************//
-    //**************************************************************//
 
     protected void loadLabelAttributes() {
         // Load label attributes for text characteristics and text locations.
@@ -462,9 +523,9 @@ public class GeoSymSupport {
         GeoSymTable textCharTable = this.getAssignment().getTable(GeoSymConstants.TEXT_LABEL_CHARACTERISTICS_FILE);
         GeoSymTable textLocTable = this.getAssignment().getTable(GeoSymConstants.TEXT_LABEL_LOCATION_FILE);
 
-        Map<Integer, VPFSymbolAttributes.LabelAttributes> labelCharacteristics = getTextLabelCharacteristics(
+        Map<Integer, VPFSymbolAttributes.LabelAttributes> labelCharacteristics = GeoSymSupport.getTextLabelCharacteristics(
             textCharTable, colorTable);
-        Map<Integer, VPFSymbolAttributes.LabelAttributes> labelLocations = getTextLabelLocations(textLocTable);
+        Map<Integer, VPFSymbolAttributes.LabelAttributes> labelLocations = GeoSymSupport.getTextLabelLocations(textLocTable);
 
         // Map text join to label attributes
         this.textJoinAttributes = new HashMap<>();
@@ -530,25 +591,6 @@ public class GeoSymSupport {
         this.featureName.put(VPFFeatureType.AREA, "AREA");
     }
 
-    protected static String getAssignmentPath(String filePath) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(filePath);
-        sb.append("/");
-        sb.append(GeoSymConstants.SYMBOLOGY_ASSIGNMENT);
-        sb.append("/");
-        sb.append(GeoSymConstants.ASCII);
-
-        return sb.toString();
-    }
-
-    protected static String getPathForAssignmentFile(String filePath, String fileName) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(GeoSymSupport.getAssignmentPath(filePath));
-        sb.append("/");
-        sb.append(fileName);
-        return sb.toString();
-    }
-
     protected List<? extends VPFSymbolKey> doGetSymbolKeys(VPFFeatureClass featureClass, String featureCode) {
         // Select the symbol rows associated with this feature class and feature code combination.
         Collection<AVList> symbolRows = this.selectSymbolRows(featureClass, featureCode);
@@ -572,24 +614,6 @@ public class GeoSymSupport {
         Collections.sort(keyList);
 
         return keyList;
-    }
-
-    /**
-     * From MIL-HDBK-857A, section 6.4.1.6.1: Default Symbology  Although all efforts have been made to symbolize all
-     * features according to the appropriate symbology specifications, should the application software be unable to
-     * determine at least one "true" condition for a particular instance of a feature in the VPF dataset, there are
-     * default CGMs provided in GeoSym for displaying that feature.  The following table identifies which symbol should
-     * be used to symbolize an "unknown" point, line, or area feature.
-     * <p>
-     * Note that the default symbols should only be placed under two conditions: 1.  There is no row in the *sym.txt
-     * file for the feature (fcode) 2.  After evaluating all rows in the *sym.txt file for that fcode, there is no row
-     * that results in an evaluation of "true".
-     *
-     * @return a single element list containing a reference to the unknown symbol key {@link
-     * VPFSymbolKey#UNKNOWN_SYMBOL_KEY}.
-     */
-    protected static List<? extends VPFSymbolKey> doGetUnknownSymbolKeys() {
-        return Collections.singletonList(VPFSymbolKey.UNKNOWN_SYMBOL_KEY);
     }
 
     protected List<VPFSymbolKey> doEvaluateSymbolKeys(Iterable<? extends VPFSymbolKey> iterable,
@@ -639,19 +663,12 @@ public class GeoSymSupport {
         GeoSymTable symbolTable = this.getAssignment().getTable(GeoSymConstants.FULL_SYMBOL_ASSIGNMENT_FILE);
 
         // Select the matching symbol rows.
-        return selectSymbolAssignments(symbolTable, pid, featureCode, delin, cov);
+        return GeoSymSupport.selectSymbolAssignments(symbolTable, pid, featureCode, delin, cov);
     }
 
-    protected static String getProductName(VPFFeatureClass featureClass) {
-        String s = featureClass.getCoverage().getLibrary().getProductType();
-
-        // 'TADS', or Terrain Analysis Data Set is an alias for 'VITD', or 'Vector Product Interim Terrain Data'.
-        if (s != null && s.equals("TADS")) {
-            s = "VITD";
-        }
-
-        return s;
-    }
+    //**************************************************************//
+    //********************  Symbol Attribute Assembly  *************//
+    //**************************************************************//
 
     @SuppressWarnings("UnusedDeclaration")
     protected Iterable<? extends VPFSymbolAttributes> doGetSymbolAttributes(VPFFeatureClass featureClass,
@@ -669,16 +686,13 @@ public class GeoSymSupport {
         if ((s = symbolRow.getStringValue("pointsym")) != null && !s.isEmpty()) {
             attr = new VPFSymbolAttributes(VPFFeatureType.POINT, key);
             this.assemblePointSymbolAttributes(s, attr);
-        }
-        else if ((s = symbolRow.getStringValue("linesym")) != null && !s.isEmpty()) {
+        } else if ((s = symbolRow.getStringValue("linesym")) != null && !s.isEmpty()) {
             attr = new VPFSymbolAttributes(VPFFeatureType.LINE, key);
             this.assembleLineSymbolAttributes(s, attr);
-        }
-        else if ((s = symbolRow.getStringValue("areasym")) != null && !s.isEmpty()) {
+        } else if ((s = symbolRow.getStringValue("areasym")) != null && !s.isEmpty()) {
             attr = new VPFSymbolAttributes(VPFFeatureType.AREA, key);
             this.assembleAreaSymbolAttributes(s, attr);
-        }
-        else if ((s = symbolRow.getStringValue("labatt")) != null && !s.isEmpty()) {
+        } else if ((s = symbolRow.getStringValue("labatt")) != null && !s.isEmpty()) {
             attr = new VPFSymbolAttributes(VPFFeatureType.LABEL, key);
             this.assembleTextLabelAttributes(symbolRow, attr);
         }
@@ -691,41 +705,23 @@ public class GeoSymSupport {
         return Collections.singletonList(attr);
     }
 
-    //**************************************************************//
-    //********************  Symbol Attribute Assembly  *************//
-    //**************************************************************//
-
     protected Iterable<? extends VPFSymbolAttributes> doGetUnknownSymbolAttributes(VPFFeatureClass featureClass,
         VPFSymbolKey key) {
         Collection<VPFSymbolAttributes> list = new ArrayList<>();
 
         if (featureClass.getType() == VPFFeatureType.POINT || featureClass.getType() == VPFFeatureType.AREA) {
             VPFSymbolAttributes attr = new VPFSymbolAttributes(featureClass.getType(), key);
-            this.assemblePointSymbolAttributes(UNKNOWN_POINT_SYMBOL, attr);
+            this.assemblePointSymbolAttributes(GeoSymSupport.UNKNOWN_POINT_SYMBOL, attr);
             list.add(attr);
         }
 
         if (featureClass.getType() == VPFFeatureType.LINE || featureClass.getType() == VPFFeatureType.AREA) {
             VPFSymbolAttributes attr = new VPFSymbolAttributes(featureClass.getType(), key);
-            this.assembleLineSymbolAttributes(UNKNOWN_LINE_SYMBOL, attr);
+            this.assembleLineSymbolAttributes(GeoSymSupport.UNKNOWN_LINE_SYMBOL, attr);
             list.add(attr);
         }
 
         return list;
-    }
-
-    protected static void assembleCommonSymbolAttributes(AVList symbolRow, VPFSymbolAttributes attr) {
-        Integer i = AVListImpl.getIntegerValue(symbolRow, "dispri");
-        if (i != null)
-            attr.setDisplayPriority(i);
-
-        String s = AVListImpl.getStringValue(symbolRow, "orient");
-        if (s != null)
-            attr.setOrientationAttributeName(s);
-
-        s = AVListImpl.getStringValue(symbolRow, "feadesc");
-        if (s != null)
-            attr.setDescription(s);
     }
 
     protected void assemblePointSymbolAttributes(String symbol, VPFSymbolAttributes attr) {

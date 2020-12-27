@@ -20,10 +20,10 @@ import java.awt.*;
  */
 public class SphereAirspaceEditor extends AbstractAirspaceEditor {
     public static final int RADIUS_CONTROL_ID = 1024;
-    private SphereAirspace sphere = null; // Can be null
+    private SphereAirspace sphere; // Can be null
     private double minRadius = 1.0;
     private double maxRadius = Double.MAX_VALUE;
-    private boolean alwaysShowRadiusControl = false;
+    private boolean alwaysShowRadiusControl;
     private double radiusControlDrawDistance = 14;
 
     public SphereAirspaceEditor(AirspaceControlPointRenderer renderer) {
@@ -31,12 +31,12 @@ public class SphereAirspaceEditor extends AbstractAirspaceEditor {
     }
 
     public SphereAirspaceEditor() {
-        this(getDefaultRenderer());
+        this(SphereAirspaceEditor.getDefaultRenderer());
     }
 
     public static AirspaceControlPointRenderer getDefaultRenderer() {
         BasicAirspaceControlPointRenderer renderer = new BasicAirspaceControlPointRenderer();
-        renderer.setControlPointMarker(createDefaultMarker());
+        renderer.setControlPointMarker(SphereAirspaceEditor.createDefaultMarker());
         renderer.setEnableDepthTest(false);
         return renderer;
     }
@@ -46,6 +46,35 @@ public class SphereAirspaceEditor extends AbstractAirspaceEditor {
         // 0.1 meters .
         MarkerAttributes attributes = new BasicMarkerAttributes(Material.BLUE, BasicMarkerShape.SPHERE, 1.0, 12, 0.1);
         return new BasicMarker(null, attributes, null);
+    }
+
+    protected static Vec4 getCenterPoint(WorldWindow wwd, Airspace airspace) {
+        if (!(airspace instanceof SphereAirspace)) {
+            return null;
+        }
+
+        SphereAirspace sphere = (SphereAirspace) airspace;
+        LatLon location = sphere.getLocation();
+        double altitude = sphere.getAltitudes()[AbstractAirspaceEditor.LOWER_ALTITUDE];
+        boolean terrainConforming = sphere.isTerrainConforming()[AbstractAirspaceEditor.LOWER_ALTITUDE];
+
+        Vec4 point;
+        if (terrainConforming) {
+            if (wwd.sceneControl().getTerrain() != null) {
+                point = wwd.sceneControl().getTerrain().getSurfacePoint(
+                    location.getLatitude(), location.getLongitude(), altitude);
+            } else {
+                double elevation = wwd.model().getGlobe().getElevation(
+                    location.getLatitude(), location.getLongitude());
+                point = wwd.model().getGlobe().computePointFromPosition(
+                    location.getLatitude(), location.getLongitude(), elevation + altitude);
+            }
+        } else {
+            point = wwd.model().getGlobe().computePointFromPosition(
+                location.getLatitude(), location.getLongitude(), altitude);
+        }
+
+        return point;
     }
 
     public Airspace getAirspace() {
@@ -100,6 +129,10 @@ public class SphereAirspaceEditor extends AbstractAirspaceEditor {
         return radiusControlDrawDistance;
     }
 
+    //**************************************************************//
+    //********************  Control Point Assembly  ****************//
+    //**************************************************************//
+
     public void setRadiusControlDrawDistance(double distance) {
         if (distance < 0.0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "distance < 0");
@@ -109,10 +142,6 @@ public class SphereAirspaceEditor extends AbstractAirspaceEditor {
 
         this.radiusControlDrawDistance = distance;
     }
-
-    //**************************************************************//
-    //********************  Control Point Assembly  ****************//
-    //**************************************************************//
 
     protected void assembleControlPoints(DrawContext dc) {
         // If the cursor passes near the edge of the sphere, draw a tangent control point that can be used to
@@ -144,40 +173,9 @@ public class SphereAirspaceEditor extends AbstractAirspaceEditor {
         double distance = nearestScreenPointOnLine.distanceTo3(nearestScreenPointOnSphere);
         if (this.isAlwaysShowRadiusControl() || distance < this.getRadiusControlDrawDistance()) {
             AirspaceControlPoint controlPoint = new BasicAirspaceControlPoint(this, this.getSphere(),
-                RADIUS_CONTROL_ID, RADIUS_CONTROL_ID, nearestPointOnSphere);
+                SphereAirspaceEditor.RADIUS_CONTROL_ID, SphereAirspaceEditor.RADIUS_CONTROL_ID, nearestPointOnSphere);
             this.addControlPoint(dc, controlPoint);
         }
-    }
-
-    protected static Vec4 getCenterPoint(WorldWindow wwd, Airspace airspace) {
-        if (!(airspace instanceof SphereAirspace)) {
-            return null;
-        }
-
-        SphereAirspace sphere = (SphereAirspace) airspace;
-        LatLon location = sphere.getLocation();
-        double altitude = sphere.getAltitudes()[LOWER_ALTITUDE];
-        boolean terrainConforming = sphere.isTerrainConforming()[LOWER_ALTITUDE];
-
-        Vec4 point;
-        if (terrainConforming) {
-            if (wwd.sceneControl().getTerrain() != null) {
-                point = wwd.sceneControl().getTerrain().getSurfacePoint(
-                    location.getLatitude(), location.getLongitude(), altitude);
-            }
-            else {
-                double elevation = wwd.model().getGlobe().getElevation(
-                    location.getLatitude(), location.getLongitude());
-                point = wwd.model().getGlobe().computePointFromPosition(
-                    location.getLatitude(), location.getLongitude(), elevation + altitude);
-            }
-        }
-        else {
-            point = wwd.model().getGlobe().computePointFromPosition(
-                location.getLatitude(), location.getLongitude(), altitude);
-        }
-
-        return point;
     }
 
     //**************************************************************//
@@ -193,8 +191,8 @@ public class SphereAirspaceEditor extends AbstractAirspaceEditor {
         // If the state keepControlPointsAboveTerrain is set, we prevent the control point from passing any lower than
         // the terrain elevation beneath it.
 
-        double altitude = this.getAirspace().getAltitudes()[LOWER_ALTITUDE];
-        boolean terrainConforming = this.getAirspace().isTerrainConforming()[LOWER_ALTITUDE];
+        double altitude = this.getAirspace().getAltitudes()[AbstractAirspaceEditor.LOWER_ALTITUDE];
+        boolean terrainConforming = this.getAirspace().isTerrainConforming()[AbstractAirspaceEditor.LOWER_ALTITUDE];
         Vec4 centerPoint = SphereAirspaceEditor.getCenterPoint(wwd, airspace);
 
         Vec4 surfaceNormal = wwd.model().getGlobe().computeSurfaceNormalAtPoint(centerPoint);
@@ -213,8 +211,7 @@ public class SphereAirspaceEditor extends AbstractAirspaceEditor {
             if (terrainConforming) {
                 if (altitude + elevationChange < 0.0)
                     elevationChange = -altitude;
-            }
-            else {
+            } else {
                 double height = AirspaceEditorUtil.computeHeightAboveSurface(wwd, centerPoint);
                 if (elevationChange <= -height)
                     elevationChange = -height;
@@ -237,7 +234,7 @@ public class SphereAirspaceEditor extends AbstractAirspaceEditor {
 
     protected void doMoveControlPoint(WorldWindow wwd, AirspaceControlPoint controlPoint,
         Point mousePoint, Point previousMousePoint) {
-        if (controlPoint.getLocationIndex() == RADIUS_CONTROL_ID) {
+        if (controlPoint.getLocationIndex() == SphereAirspaceEditor.RADIUS_CONTROL_ID) {
             this.doMoveRadiusControlPoint(wwd, controlPoint, mousePoint, previousMousePoint);
         }
     }

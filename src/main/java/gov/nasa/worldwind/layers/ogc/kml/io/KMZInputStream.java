@@ -7,6 +7,7 @@
 package gov.nasa.worldwind.layers.ogc.kml.io;
 
 ////.*;
+
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.util.xml.XMLDoc;
 
@@ -49,7 +50,7 @@ public class KMZInputStream extends XMLDoc {
      *
      * @param sourceStream the input stream to read from.
      * @throws IllegalArgumentException if the specified stream is null.
-     * @throws IOException      if an error occurs while accessing the stream.
+     * @throws IOException              if an error occurs while accessing the stream.
      */
     public KMZInputStream(InputStream sourceStream) throws IOException {
         if (sourceStream == null) {
@@ -96,8 +97,7 @@ public class KMZInputStream extends XMLDoc {
                 this.copyCurrentEntryToTempDir(); // copies the current entry to a temp file and adds it to this.files
                 File file = this.files.get(kmlEntryName);
                 return file != null ? new FileInputStream(file) : null;
-            }
-            else {
+            } else {
                 this.copyCurrentEntryToTempDir();
             }
         }

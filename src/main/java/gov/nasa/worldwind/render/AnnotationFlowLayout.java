@@ -61,12 +61,52 @@ public class AnnotationFlowLayout extends AbstractAnnotationLayout {
 
         if (orientation == AVKey.HORIZONTAL) {
             return AVKey.BOTTOM;
-        }
-        else if (orientation == AVKey.VERTICAL) {
+        } else if (orientation == AVKey.VERTICAL) {
             return AVKey.LEFT;
         }
 
         return null;
+    }
+
+    @SuppressWarnings("StringEquality")
+    protected static void alignHorizontal(DrawContext dc, Rectangle bounds, Dimension size, String align) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
+
+        if (align == AVKey.BOTTOM) {
+            // This is the default.
+        } else if (align == AVKey.TOP) {
+            int dy = bounds.height - size.height;
+            gl.glTranslated(0, dy, 0);
+        } else if (align == AVKey.CENTER) {
+            int dy = (bounds.height / 2) - (size.height / 2);
+            gl.glTranslated(0, dy, 0);
+        }
+    }
+
+    @SuppressWarnings("StringEquality")
+    protected static void alignVertical(DrawContext dc, Rectangle bounds, Dimension size, String align) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
+
+        if (align == AVKey.LEFT) {
+            // This is the default.
+        }
+        if (align == AVKey.RIGHT) {
+            int dx = bounds.width - size.width;
+            gl.glTranslated(dx, 0, 0);
+        } else if (align == AVKey.CENTER) {
+            int dx = (bounds.width / 2) - (size.width / 2);
+            gl.glTranslated(dx, 0, 0);
+        }
+    }
+
+    protected static void beginHorizontal(DrawContext dc, Rectangle bounds) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
+        gl.glTranslated(bounds.getMinX(), bounds.getMinY(), 0);
+    }
+
+    protected static void beginVertical(DrawContext dc, Rectangle bounds) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
+        gl.glTranslated(bounds.getMinX(), bounds.getMaxY(), 0);
     }
 
     public String getOrientation() {
@@ -125,8 +165,7 @@ public class AnnotationFlowLayout extends AbstractAnnotationLayout {
 
         if (this.orientation == AVKey.HORIZONTAL) {
             return this.horizontalPreferredSize(dc, annotations);
-        }
-        else if (this.orientation == AVKey.VERTICAL) {
+        } else if (this.orientation == AVKey.VERTICAL) {
             return this.verticalPerferredSize(dc, annotations);
         }
 
@@ -156,8 +195,7 @@ public class AnnotationFlowLayout extends AbstractAnnotationLayout {
 
         if (this.orientation == AVKey.HORIZONTAL) {
             this.drawHorizontal(dc, bounds, annotations, opacity, pickPosition);
-        }
-        else if (this.orientation == AVKey.VERTICAL) {
+        } else if (this.orientation == AVKey.VERTICAL) {
             this.drawVertical(dc, bounds, annotations, opacity, pickPosition);
         }
     }
@@ -180,8 +218,7 @@ public class AnnotationFlowLayout extends AbstractAnnotationLayout {
 
         if (this.orientation == AVKey.HORIZONTAL) {
             AnnotationFlowLayout.beginHorizontal(dc, bounds);
-        }
-        else if (this.orientation == AVKey.VERTICAL) {
+        } else if (this.orientation == AVKey.VERTICAL) {
             AnnotationFlowLayout.beginVertical(dc, bounds);
         }
     }
@@ -240,7 +277,7 @@ public class AnnotationFlowLayout extends AbstractAnnotationLayout {
         Iterable<? extends Annotation> annotations, double opacity, Position pickPosition) {
         String align = this.getAlignment();
         if (align == null) {
-            align = getDefaultAlignment(AVKey.HORIZONTAL);
+            align = AnnotationFlowLayout.getDefaultAlignment(AVKey.HORIZONTAL);
         }
 
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
@@ -263,7 +300,7 @@ public class AnnotationFlowLayout extends AbstractAnnotationLayout {
         Iterable<? extends Annotation> annotations, double opacity, Position pickPosition) {
         String align = this.getAlignment();
         if (align == null) {
-            align = getDefaultAlignment(AVKey.VERTICAL);
+            align = AnnotationFlowLayout.getDefaultAlignment(AVKey.VERTICAL);
         }
 
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
@@ -280,49 +317,5 @@ public class AnnotationFlowLayout extends AbstractAnnotationLayout {
 
             gl.glTranslated(0, -this.vgap, 0);
         }
-    }
-
-    @SuppressWarnings("StringEquality")
-    protected static void alignHorizontal(DrawContext dc, Rectangle bounds, Dimension size, String align) {
-        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-
-        if (align == AVKey.BOTTOM) {
-            // This is the default.
-        }
-        else if (align == AVKey.TOP) {
-            int dy = bounds.height - size.height;
-            gl.glTranslated(0, dy, 0);
-        }
-        else if (align == AVKey.CENTER) {
-            int dy = (bounds.height / 2) - (size.height / 2);
-            gl.glTranslated(0, dy, 0);
-        }
-    }
-
-    @SuppressWarnings("StringEquality")
-    protected static void alignVertical(DrawContext dc, Rectangle bounds, Dimension size, String align) {
-        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-
-        if (align == AVKey.LEFT) {
-            // This is the default.
-        }
-        if (align == AVKey.RIGHT) {
-            int dx = bounds.width - size.width;
-            gl.glTranslated(dx, 0, 0);
-        }
-        else if (align == AVKey.CENTER) {
-            int dx = (bounds.width / 2) - (size.width / 2);
-            gl.glTranslated(dx, 0, 0);
-        }
-    }
-
-    protected static void beginHorizontal(DrawContext dc, Rectangle bounds) {
-        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-        gl.glTranslated(bounds.getMinX(), bounds.getMinY(), 0);
-    }
-
-    protected static void beginVertical(DrawContext dc, Rectangle bounds) {
-        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-        gl.glTranslated(bounds.getMinX(), bounds.getMaxY(), 0);
     }
 }

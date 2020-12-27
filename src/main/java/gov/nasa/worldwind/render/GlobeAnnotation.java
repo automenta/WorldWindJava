@@ -24,8 +24,8 @@ import java.awt.*;
 public class GlobeAnnotation extends AbstractAnnotation implements Locatable, Movable, Draggable {
     protected Position position;
     protected boolean dragEnabled = true;
-    protected DraggableSupport draggableSupport = null;
-    protected double heightInMeter = 0;
+    protected DraggableSupport draggableSupport;
+    protected double heightInMeter;
 
     protected Integer altitudeMode;
 
@@ -79,6 +79,54 @@ public class GlobeAnnotation extends AbstractAnnotation implements Locatable, Mo
         this.setText(text);
         this.position = position;
         this.getAttributes().setDefaults(defaults);
+    }
+
+    protected static Double computeLookAtDistance(DrawContext dc) {
+        // TODO: Remove this method once the new mechanism for scaling and opacity is in place.
+        View view = dc.getView();
+
+        // Get point in the middle of the screen
+        Position groundPos = view.computePositionFromScreenPoint(
+            view.getViewport().getCenterX(), view.getViewport().getCenterY());
+
+        if (groundPos == null) {
+            // Decrease the point's y coordinate until it intersects the globe.
+            Rectangle vp = view.getViewport();
+            double y = view.getViewport().getCenterY() + 1;
+            while (groundPos == null && y < vp.height - 1) {
+                groundPos = view.computePositionFromScreenPoint(view.getViewport().getCenterX(), y++);
+            }
+        }
+
+        // Update look at distance if center point found
+        if (groundPos != null)
+            // Compute distance from eye to the position in the middle of the screen
+            return view.getEyePoint().distanceTo3(dc.getGlobe().computePointFromPosition(groundPos));
+        else
+            return null;
+    }
+
+    protected static void setDepthFunc(DrawContext dc, Vec4 screenPoint) {
+        GL gl = dc.getGL();
+
+        Position eyePos = dc.getView().getEyePosition();
+        if (eyePos == null) {
+            gl.glDepthFunc(GL.GL_ALWAYS);
+            return;
+        }
+
+        double altitude = eyePos.getElevation();
+        if (altitude < (dc.getGlobe().getMaxElevation() * dc.getVerticalExaggeration())) {
+            double depth = screenPoint.z - (8.0d * 0.00048875809d);
+            depth = depth < 0.0d ? 0.0d : (Math.min(depth, 1.0d));
+            gl.glDepthFunc(GL.GL_LESS);
+            gl.glDepthRange(depth, depth);
+        } else if (screenPoint.z >= 1.0d) {
+            gl.glDepthFunc(GL.GL_EQUAL);
+            gl.glDepthRange(1.0d, 1.0d);
+        } else {
+            gl.glDepthFunc(GL.GL_ALWAYS);
+        }
     }
 
     private void init(String text, Position position, Font font, Color textColor) {
@@ -187,18 +235,20 @@ public class GlobeAnnotation extends AbstractAnnotation implements Locatable, Mo
             if (this.getAltitudeMode() == null) {
                 if (this.position.getElevation() > dragContext.getGlobe().getMaxElevation()) {
                     this.draggableSupport = new DraggableSupport(this, WorldWind.ABSOLUTE);
-                }
-                else {
+                } else {
                     this.draggableSupport = new DraggableSupport(this, WorldWind.RELATIVE_TO_GROUND);
                 }
-            }
-            else {
+            } else {
                 this.draggableSupport = new DraggableSupport(this, this.getAltitudeMode());
             }
         }
 
         this.doDrag(dragContext);
     }
+
+    //**************************************************************//
+    //********************  Rendering  *****************************//
+    //**************************************************************//
 
     protected void doDrag(DragContext dragContext) {
         this.draggableSupport.dragScreenSizeConstant(dragContext);
@@ -207,10 +257,6 @@ public class GlobeAnnotation extends AbstractAnnotation implements Locatable, Mo
     public Position getReferencePosition() {
         return this.position;
     }
-
-    //**************************************************************//
-    //********************  Rendering  *****************************//
-    //**************************************************************//
 
     protected Rectangle computeBounds(DrawContext dc) {
         Vec4 point = this.getAnnotationDrawPoint(dc);
@@ -279,8 +325,7 @@ public class GlobeAnnotation extends AbstractAnnotation implements Locatable, Mo
                 opacity = WWMath.clamp(distanceFactor,
                     this.attributes.getDistanceMinOpacity(), 1);
             }
-        }
-        else {
+        } else {
             // Determine scale and opacity so as to maintain real world dimension
             double distance = dc.getView().getEyePoint().distanceTo3(point);
             double pixelSize = dc.getView().computePixelSizeAtDistance(distance);
@@ -290,56 +335,6 @@ public class GlobeAnnotation extends AbstractAnnotation implements Locatable, Mo
         }
 
         return new double[] {scale, opacity};
-    }
-
-    protected static Double computeLookAtDistance(DrawContext dc) {
-        // TODO: Remove this method once the new mechanism for scaling and opacity is in place.
-        View view = dc.getView();
-
-        // Get point in the middle of the screen
-        Position groundPos = view.computePositionFromScreenPoint(
-            view.getViewport().getCenterX(), view.getViewport().getCenterY());
-
-        if (groundPos == null) {
-            // Decrease the point's y coordinate until it intersects the globe.
-            Rectangle vp = view.getViewport();
-            double y = view.getViewport().getCenterY() + 1;
-            while (groundPos == null && y < vp.height - 1) {
-                groundPos = view.computePositionFromScreenPoint(view.getViewport().getCenterX(), y++);
-            }
-        }
-
-        // Update look at distance if center point found
-        if (groundPos != null)
-            // Compute distance from eye to the position in the middle of the screen
-            return view.getEyePoint().distanceTo3(dc.getGlobe().computePointFromPosition(groundPos));
-        else
-            return null;
-    }
-
-    protected static void setDepthFunc(DrawContext dc, Vec4 screenPoint) {
-        GL gl = dc.getGL();
-
-        Position eyePos = dc.getView().getEyePosition();
-        if (eyePos == null) {
-            gl.glDepthFunc(GL.GL_ALWAYS);
-            return;
-        }
-
-        double altitude = eyePos.getElevation();
-        if (altitude < (dc.getGlobe().getMaxElevation() * dc.getVerticalExaggeration())) {
-            double depth = screenPoint.z - (8.0d * 0.00048875809d);
-            depth = depth < 0.0d ? 0.0d : (Math.min(depth, 1.0d));
-            gl.glDepthFunc(GL.GL_LESS);
-            gl.glDepthRange(depth, depth);
-        }
-        else if (screenPoint.z >= 1.0d) {
-            gl.glDepthFunc(GL.GL_EQUAL);
-            gl.glDepthRange(1.0d, 1.0d);
-        }
-        else {
-            gl.glDepthFunc(GL.GL_ALWAYS);
-        }
     }
 
     /**
@@ -359,17 +354,13 @@ public class GlobeAnnotation extends AbstractAnnotation implements Locatable, Mo
 
         if (dc.is2DGlobe()) {
             drawPoint = dc.computeTerrainPoint(pos.getLatitude(), pos.getLongitude(), 0);
-        }
-        else if (altitudeMode == null) {
+        } else if (altitudeMode == null) {
             drawPoint = getAnnotationDrawPointLegacy(dc);
-        }
-        else if (altitudeMode == WorldWind.CLAMP_TO_GROUND) {
+        } else if (altitudeMode == WorldWind.CLAMP_TO_GROUND) {
             drawPoint = dc.computeTerrainPoint(pos.getLatitude(), pos.getLongitude(), 0);
-        }
-        else if (altitudeMode == WorldWind.RELATIVE_TO_GROUND) {
+        } else if (altitudeMode == WorldWind.RELATIVE_TO_GROUND) {
             drawPoint = dc.computeTerrainPoint(pos.getLatitude(), pos.getLongitude(), pos.getAltitude());
-        }
-        else  // ABSOLUTE
+        } else  // ABSOLUTE
         {
             double height = pos.getElevation() * dc.getVerticalExaggeration();
             drawPoint = dc.getGlobe().computePointFromPosition(pos.getLatitude(), pos.getLongitude(), height);
@@ -420,7 +411,7 @@ public class GlobeAnnotation extends AbstractAnnotation implements Locatable, Mo
             try {
                 restorableSupport = RestorableSupport.parse(superStateInXml);
             }
-            catch (Exception e) {
+            catch (RuntimeException e) {
                 // Parsing the document specified by the superclass failed.
                 String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", superStateInXml);
                 Logging.logger().severe(message);
@@ -472,7 +463,7 @@ public class GlobeAnnotation extends AbstractAnnotation implements Locatable, Mo
         try {
             super.restoreState(stateInXml);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             // Superclass will log the exception.
         }
 
@@ -480,7 +471,7 @@ public class GlobeAnnotation extends AbstractAnnotation implements Locatable, Mo
         try {
             restorableSupport = RestorableSupport.parse(stateInXml);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             // Parsing the document specified by stateInXml failed.
             String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", stateInXml);
             Logging.logger().severe(message);

@@ -105,12 +105,12 @@ public class UPSCoordConverter {
     private static final int UPS_INV_F_ERROR = 0x0040;
 
     private static final double PI = 3.14159265358979323;
-    private static final double MAX_LAT = (PI * 90) / 180.0;             // 90 degrees in radians
+    private static final double MAX_LAT = (UPSCoordConverter.PI * 90) / 180.0;             // 90 degrees in radians
     // Min and max latitude values accepted
-    private static final double MIN_NORTH_LAT = 72 * PI / 180.0;       // 83.5
-    private static final double MIN_SOUTH_LAT = -72 * PI / 180.0;      // -79.5
+    private static final double MIN_NORTH_LAT = 72 * UPSCoordConverter.PI / 180.0;       // 83.5
+    private static final double MIN_SOUTH_LAT = -72 * UPSCoordConverter.PI / 180.0;      // -79.5
 
-    private static final double MAX_ORIGIN_LAT = (81.114528 * PI) / 180.0;
+    private static final double MAX_ORIGIN_LAT = (81.114528 * UPSCoordConverter.PI) / 180.0;
     private static final double MIN_EAST_NORTH = 0;
     private static final double MAX_EAST_NORTH = 4000000;
     private final double UPS_Origin_Longitude = 0.0;
@@ -121,16 +121,16 @@ public class UPSCoordConverter {
     private final double false_easting = 0.0;
     private final double false_northing = 0.0;
     private final PolarCoordConverter polarConverter = new PolarCoordConverter();
-    private double UPS_Origin_Latitude = MAX_ORIGIN_LAT;  /*set default = North Hemisphere */
+    private double UPS_Origin_Latitude = UPSCoordConverter.MAX_ORIGIN_LAT;  /*set default = North Hemisphere */
     private double UPS_a = 6378137.0;          /* Semi-major axis of ellipsoid in meters   */
     private double UPS_f = 1 / 298.257223563;  /* Flattening of ellipsoid  */
-    private double UPS_Easting = 0.0;
-    private double UPS_Northing = 0.0;
-    private double Easting = 0.0;
-    private double Northing = 0.0;
+    private double UPS_Easting;
+    private double UPS_Northing;
+    private double Easting;
+    private double Northing;
     private String Hemisphere = AVKey.NORTH;
-    private double Latitude = 0.0;
-    private double Longitude = 0.0;
+    private double Latitude;
+    private double Longitude;
 
     UPSCoordConverter(Globe globe) {
         this.globe = globe;
@@ -153,16 +153,16 @@ public class UPSCoordConverter {
         double inv_f = 1 / f;
 
         if (a <= 0.0) { /* Semi-major axis must be greater than zero */
-            return UPS_A_ERROR;
+            return UPSCoordConverter.UPS_A_ERROR;
         }
         if ((inv_f < 250) || (inv_f > 350)) { /* Inverse flattening must be between 250 and 350 */
-            return UPS_INV_F_ERROR;
+            return UPSCoordConverter.UPS_INV_F_ERROR;
         }
 
         UPS_a = a;
         UPS_f = f;
 
-        return (UPS_NO_ERROR);
+        return (UPSCoordConverter.UPS_NO_ERROR);
     }
 
     /**
@@ -175,24 +175,23 @@ public class UPSCoordConverter {
      * @return error code
      */
     public long convertGeodeticToUPS(double latitude, double longitude) {
-        if ((latitude < -MAX_LAT) || (latitude > MAX_LAT)) {   /* latitude out of range */
-            return UPS_LAT_ERROR;
+        if ((latitude < -UPSCoordConverter.MAX_LAT) || (latitude > UPSCoordConverter.MAX_LAT)) {   /* latitude out of range */
+            return UPSCoordConverter.UPS_LAT_ERROR;
         }
-        if ((latitude < 0) && (latitude > MIN_SOUTH_LAT))
-            return UPS_LAT_ERROR;
-        if ((latitude >= 0) && (latitude < MIN_NORTH_LAT))
-            return UPS_LAT_ERROR;
+        if ((latitude < 0) && (latitude > UPSCoordConverter.MIN_SOUTH_LAT))
+            return UPSCoordConverter.UPS_LAT_ERROR;
+        if ((latitude >= 0) && (latitude < UPSCoordConverter.MIN_NORTH_LAT))
+            return UPSCoordConverter.UPS_LAT_ERROR;
 
-        if ((longitude < -PI) || (longitude > (2 * PI))) {  /* slam out of range */
-            return UPS_LON_ERROR;
+        if ((longitude < -UPSCoordConverter.PI) || (longitude > (2 * UPSCoordConverter.PI))) {  /* slam out of range */
+            return UPSCoordConverter.UPS_LON_ERROR;
         }
 
         if (latitude < 0) {
-            UPS_Origin_Latitude = -MAX_ORIGIN_LAT;
+            UPS_Origin_Latitude = -UPSCoordConverter.MAX_ORIGIN_LAT;
             Hemisphere = AVKey.SOUTH;
-        }
-        else {
-            UPS_Origin_Latitude = MAX_ORIGIN_LAT;
+        } else {
+            UPS_Origin_Latitude = UPSCoordConverter.MAX_ORIGIN_LAT;
             Hemisphere = AVKey.NORTH;
         }
 
@@ -210,7 +209,7 @@ public class UPSCoordConverter {
         Easting = UPS_Easting;
         Northing = UPS_Northing;
 
-        return UPS_NO_ERROR;
+        return UPSCoordConverter.UPS_NO_ERROR;
     }
 
     /**
@@ -228,8 +227,7 @@ public class UPSCoordConverter {
     }
 
     /**
-     * @return Hemisphere, either {@link AVKey#NORTH} or {@link
-     * AVKey#SOUTH}.
+     * @return Hemisphere, either {@link AVKey#NORTH} or {@link AVKey#SOUTH}.
      */
     public String getHemisphere() {
         return Hemisphere;
@@ -240,28 +238,27 @@ public class UPSCoordConverter {
      * (latitude and longitude) coordinates according to the current ellipsoid parameters.  If any errors occur, the
      * error code(s) are returned by the function, otherwise UPS_NO_ERROR is returned.
      *
-     * @param Hemisphere Hemisphere, either {@link AVKey#NORTH} or {@link
-     *                   AVKey#SOUTH}.
+     * @param Hemisphere Hemisphere, either {@link AVKey#NORTH} or {@link AVKey#SOUTH}.
      * @param Easting    Easting/X in meters
      * @param Northing   Northing/Y in meters
      * @return error code
      */
     public long convertUPSToGeodetic(String Hemisphere, double Easting, double Northing) {
-        long Error_Code = UPS_NO_ERROR;
+        long Error_Code = UPSCoordConverter.UPS_NO_ERROR;
 
         if (!AVKey.NORTH.equals(Hemisphere) && !AVKey.SOUTH.equals(Hemisphere))
-            Error_Code |= UPS_HEMISPHERE_ERROR;
-        if ((Easting < MIN_EAST_NORTH) || (Easting > MAX_EAST_NORTH))
-            Error_Code |= UPS_EASTING_ERROR;
-        if ((Northing < MIN_EAST_NORTH) || (Northing > MAX_EAST_NORTH))
-            Error_Code |= UPS_NORTHING_ERROR;
+            Error_Code |= UPSCoordConverter.UPS_HEMISPHERE_ERROR;
+        if ((Easting < UPSCoordConverter.MIN_EAST_NORTH) || (Easting > UPSCoordConverter.MAX_EAST_NORTH))
+            Error_Code |= UPSCoordConverter.UPS_EASTING_ERROR;
+        if ((Northing < UPSCoordConverter.MIN_EAST_NORTH) || (Northing > UPSCoordConverter.MAX_EAST_NORTH))
+            Error_Code |= UPSCoordConverter.UPS_NORTHING_ERROR;
 
         if (AVKey.NORTH.equals(Hemisphere))
-            UPS_Origin_Latitude = MAX_ORIGIN_LAT;
+            UPS_Origin_Latitude = UPSCoordConverter.MAX_ORIGIN_LAT;
         if (AVKey.SOUTH.equals(Hemisphere))
-            UPS_Origin_Latitude = -MAX_ORIGIN_LAT;
+            UPS_Origin_Latitude = -UPSCoordConverter.MAX_ORIGIN_LAT;
 
-        if (Error_Code == UPS_NO_ERROR) {   /*  no errors   */
+        if (Error_Code == UPSCoordConverter.UPS_NO_ERROR) {   /*  no errors   */
             polarConverter.setPolarStereographicParameters(UPS_a,
                 UPS_f,
                 UPS_Origin_Latitude,
@@ -273,10 +270,10 @@ public class UPSCoordConverter {
             Latitude = polarConverter.getLatitude();
             Longitude = polarConverter.getLongitude();
 
-            if ((Latitude < 0) && (Latitude > MIN_SOUTH_LAT))
-                Error_Code |= UPS_LAT_ERROR;
-            if ((Latitude >= 0) && (Latitude < MIN_NORTH_LAT))
-                Error_Code |= UPS_LAT_ERROR;
+            if ((Latitude < 0) && (Latitude > UPSCoordConverter.MIN_SOUTH_LAT))
+                Error_Code |= UPSCoordConverter.UPS_LAT_ERROR;
+            if ((Latitude >= 0) && (Latitude < UPSCoordConverter.MIN_NORTH_LAT))
+                Error_Code |= UPSCoordConverter.UPS_LAT_ERROR;
         }
         return Error_Code;
     }

@@ -228,8 +228,8 @@ public interface XMLEventParserContext extends AVList {
      *                      <i>styleUrl</i>. Resolution is performed for only elements of this name.
      * @param fieldName     the key used to identify the resolved object in a parser's field table. After this method
      *                      resolves references, the referenced object can be obtained by calling the parsers {@link
-     *                      AbstractXMLEventParser#getField(QName)}
-     *                      method with the <code>fieldName</code> specified here as the name argument.
+     *                      AbstractXMLEventParser#getField(QName)} method with the <code>fieldName</code> specified
+     *                      here as the name argument.
      * @param parser        the parser whose references to resolve.
      * @deprecated Reference resolution is handled by parsers specific to a certain document type. For example, {@link
      * KMLRoot} handles resolution of references in KML files.
@@ -239,8 +239,7 @@ public interface XMLEventParserContext extends AVList {
 
     /**
      * Specify the object to receive notifications, which are sent when exceptions occur during parsing and when
-     * unrecognized element types are encountered. See {@link XMLParserNotification} for
-     * more information.
+     * unrecognized element types are encountered. See {@link XMLParserNotification} for more information.
      * <p>
      * The parser context may have only one notification listener. That listener may be changed at any time.
      *

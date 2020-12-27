@@ -37,8 +37,7 @@ import java.util.List;
  * events.
  * <p>
  * If no object is under the cursor but the cursor is over terrain, the select event will identify the terrain as the
- * picked object and will include the corresponding geographic position. See {@link
- * PickedObject#isTerrain()}.
+ * picked object and will include the corresponding geographic position. See {@link PickedObject#isTerrain()}.
  *
  * @author tag
  * @version $Id: SelectEvent.java 1171 2013-02-11 21:45:02Z dcollins $
@@ -177,48 +176,48 @@ public class SelectEvent extends WWEvent {
     }
 
     public boolean isRollover() {
-        return this.getEventAction() == ROLLOVER;
+        return this.getEventAction() == SelectEvent.ROLLOVER;
     }
 
     public boolean isHover() {
-        return this.getEventAction() == HOVER;
+        return this.getEventAction() == SelectEvent.HOVER;
     }
 
     public boolean isDragEnd() {
-        return this.getEventAction() == DRAG_END;
+        return this.getEventAction() == SelectEvent.DRAG_END;
     }
 
     public boolean isDrag() {
-        return this.getEventAction() == DRAG;
+        return this.getEventAction() == SelectEvent.DRAG;
     }
 
     public boolean isRightPress() {
-        return this.getEventAction() == RIGHT_PRESS;
+        return this.getEventAction() == SelectEvent.RIGHT_PRESS;
     }
 
     public boolean isRightClick() {
-        return this.getEventAction() == RIGHT_CLICK;
+        return this.getEventAction() == SelectEvent.RIGHT_CLICK;
     }
 
     public boolean isLeftDoubleClick() {
-        return this.getEventAction() == LEFT_DOUBLE_CLICK;
+        return this.getEventAction() == SelectEvent.LEFT_DOUBLE_CLICK;
     }
 
     public boolean isLeftClick() {
-        return this.getEventAction() == LEFT_CLICK;
+        return this.getEventAction() == SelectEvent.LEFT_CLICK;
     }
 
     public boolean isLeftPress() {
-        return this.getEventAction() == LEFT_PRESS;
+        return this.getEventAction() == SelectEvent.LEFT_PRESS;
     }
 
     public boolean isBoxSelect() {
-        return this.getEventAction() == BOX_ROLLOVER;
+        return this.getEventAction() == SelectEvent.BOX_ROLLOVER;
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(this.getClass().getName() + " "
+        StringBuilder sb = new StringBuilder(this.getClass().getName() + ' '
             + (this.eventAction != null ? this.eventAction : Logging.getMessage("generic.Unknown")));
         if (this.pickedObjects != null && this.pickedObjects.getTopObject() != null)
             sb.append(", ").append(this.pickedObjects.getTopObject().getClass().getName());

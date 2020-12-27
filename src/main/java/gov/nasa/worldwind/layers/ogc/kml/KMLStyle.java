@@ -66,8 +66,7 @@ public class KMLStyle extends KMLAbstractStyleSelector {
                 this.setField(KMLConstants.LABEL_STYLE_FIELD, labelStyle);
             }
             labelStyle.setField("color", value);
-        }
-        else {
+        } else {
             super.setField(keyName, value);
         }
     }
@@ -109,6 +108,6 @@ public class KMLStyle extends KMLAbstractStyleSelector {
 
         super.applyChange(sourceValues);
 
-        this.onChange(new Message(MSG_STYLE_CHANGED, this));
+        this.onChange(new Message(KMLAbstractObject.MSG_STYLE_CHANGED, this));
     }
 }

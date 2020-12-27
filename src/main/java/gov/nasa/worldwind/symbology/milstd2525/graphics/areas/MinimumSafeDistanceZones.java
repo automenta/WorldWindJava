@@ -43,7 +43,7 @@ public class MinimumSafeDistanceZones extends AbstractMilStd2525TacticalGraphic 
     /**
      * Position the labels along a line radiating out from the center of the circle at this angle from North.
      */
-    protected Angle labelAngle = DEFAULT_LABEL_ANGLE;
+    protected Angle labelAngle = MinimumSafeDistanceZones.DEFAULT_LABEL_ANGLE;
 
     /**
      * Create the graphic.
@@ -221,7 +221,7 @@ public class MinimumSafeDistanceZones extends AbstractMilStd2525TacticalGraphic 
             Position pos = iterator.next();
             Angle radius = LatLon.greatCircleDistance(center, pos);
 
-            double radiusMeters = radius.radians * globeRadius;
+            double radiusMeters = radius.radians() * globeRadius;
             ring.setRadius(radiusMeters);
 
             this.rings.add(ring);
@@ -257,7 +257,7 @@ public class MinimumSafeDistanceZones extends AbstractMilStd2525TacticalGraphic 
         for (SurfaceCircle ring : this.rings) {
             double radius = ring.getRadius();
 
-            LatLon ll = LatLon.greatCircleEndPosition(center, labelAngle.radians, radius / globeRadius);
+            LatLon ll = LatLon.greatCircleEndPosition(center, labelAngle.radians(), radius / globeRadius);
 
             this.labels.get(i).setPosition(new Position(ll, 0));
             i += 1;

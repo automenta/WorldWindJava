@@ -81,7 +81,7 @@ public class UnitsFormat extends AVListImpl {
 
     protected static final String NL = "\n";
 
-    protected boolean showDMS = false;
+    protected boolean showDMS;
 
     protected String lengthUnits;
     protected String lengthUnitsSymbol;
@@ -154,18 +154,18 @@ public class UnitsFormat extends AVListImpl {
      * recognized labels are those indicated by the "LABEL_" constants defined by this class or by its subclasses.
      */
     protected void setDefaultLabels() {
-        this.setLabel(LABEL_LATITUDE, Logging.getMessage(LABEL_LATITUDE));
-        this.setLabel(LABEL_LONGITUDE, Logging.getMessage(LABEL_LONGITUDE));
-        this.setLabel(LABEL_LATLON_LAT, Logging.getMessage(LABEL_LATLON_LAT));
-        this.setLabel(LABEL_LATLON_LON, Logging.getMessage(LABEL_LATLON_LON));
-        this.setLabel(LABEL_HEADING, Logging.getMessage(LABEL_HEADING));
-        this.setLabel(LABEL_EYE_ALTITUDE, Logging.getMessage(LABEL_EYE_ALTITUDE));
-        this.setLabel(LABEL_PITCH, Logging.getMessage(LABEL_PITCH));
-        this.setLabel(LABEL_UTM_ZONE, Logging.getMessage(LABEL_UTM_ZONE));
-        this.setLabel(LABEL_UTM_EASTING, Logging.getMessage(LABEL_UTM_EASTING));
-        this.setLabel(LABEL_UTM_NORTHING, Logging.getMessage(LABEL_UTM_NORTHING));
-        this.setLabel(LABEL_TERRAIN_HEIGHT, Logging.getMessage(LABEL_TERRAIN_HEIGHT));
-        this.setLabel(LABEL_DATUM, "Datum:");
+        this.setLabel(UnitsFormat.LABEL_LATITUDE, Logging.getMessage(UnitsFormat.LABEL_LATITUDE));
+        this.setLabel(UnitsFormat.LABEL_LONGITUDE, Logging.getMessage(UnitsFormat.LABEL_LONGITUDE));
+        this.setLabel(UnitsFormat.LABEL_LATLON_LAT, Logging.getMessage(UnitsFormat.LABEL_LATLON_LAT));
+        this.setLabel(UnitsFormat.LABEL_LATLON_LON, Logging.getMessage(UnitsFormat.LABEL_LATLON_LON));
+        this.setLabel(UnitsFormat.LABEL_HEADING, Logging.getMessage(UnitsFormat.LABEL_HEADING));
+        this.setLabel(UnitsFormat.LABEL_EYE_ALTITUDE, Logging.getMessage(UnitsFormat.LABEL_EYE_ALTITUDE));
+        this.setLabel(UnitsFormat.LABEL_PITCH, Logging.getMessage(UnitsFormat.LABEL_PITCH));
+        this.setLabel(UnitsFormat.LABEL_UTM_ZONE, Logging.getMessage(UnitsFormat.LABEL_UTM_ZONE));
+        this.setLabel(UnitsFormat.LABEL_UTM_EASTING, Logging.getMessage(UnitsFormat.LABEL_UTM_EASTING));
+        this.setLabel(UnitsFormat.LABEL_UTM_NORTHING, Logging.getMessage(UnitsFormat.LABEL_UTM_NORTHING));
+        this.setLabel(UnitsFormat.LABEL_TERRAIN_HEIGHT, Logging.getMessage(UnitsFormat.LABEL_TERRAIN_HEIGHT));
+        this.setLabel(UnitsFormat.LABEL_DATUM, "Datum:");
     }
 
     /**
@@ -175,15 +175,15 @@ public class UnitsFormat extends AVListImpl {
      * subclasses.
      */
     protected void setDefaultFormats() {
-        this.setFormat(FORMAT_LENGTH, " %,12.1f %s");
-        this.setFormat(FORMAT_AREA, " %,12.1f %s");
-        this.setFormat(FORMAT_PITCH, " %9.2f\u00b0");
-        this.setFormat(FORMAT_HEADING, " %9.2f\u00b0");
-        this.setFormat(FORMAT_UTM_NORTHING, " %,11.1f");
-        this.setFormat(FORMAT_UTM_EASTING, " %,11.1f");
-        this.setFormat(FORMAT_EYE_ALTITUDE, " %,6d %s");
-        this.setFormat(FORMAT_DECIMAL_DEGREES, "%9.4f\u00B0");
-        this.setFormat(FORMAT_TERRAIN_HEIGHT, " (ve %3.1f) %,6d %s");
+        this.setFormat(UnitsFormat.FORMAT_LENGTH, " %,12.1f %s");
+        this.setFormat(UnitsFormat.FORMAT_AREA, " %,12.1f %s");
+        this.setFormat(UnitsFormat.FORMAT_PITCH, " %9.2f\u00b0");
+        this.setFormat(UnitsFormat.FORMAT_HEADING, " %9.2f\u00b0");
+        this.setFormat(UnitsFormat.FORMAT_UTM_NORTHING, " %,11.1f");
+        this.setFormat(UnitsFormat.FORMAT_UTM_EASTING, " %,11.1f");
+        this.setFormat(UnitsFormat.FORMAT_EYE_ALTITUDE, " %,6d %s");
+        this.setFormat(UnitsFormat.FORMAT_DECIMAL_DEGREES, "%9.4f\u00B0");
+        this.setFormat(UnitsFormat.FORMAT_TERRAIN_HEIGHT, " (ve %3.1f) %,6d %s");
     }
 
     /**
@@ -532,8 +532,7 @@ public class UnitsFormat extends AVListImpl {
             this.setLengthUnits(UnitsFormat.MILES);
             this.setAltitudeUnits(UnitsFormat.MILES);
             this.setAreaUnits(UnitsFormat.SQUARE_MILES);
-        }
-        else {
+        } else {
             this.setLengthUnits(UnitsFormat.KILOMETERS);
             this.setAltitudeUnits(UnitsFormat.KILOMETERS);
             this.setAreaUnits(UnitsFormat.SQUARE_KILOMETERS);
@@ -586,7 +585,7 @@ public class UnitsFormat extends AVListImpl {
             throw new IllegalArgumentException(msg);
         }
 
-        return this.angleNL(this.getLabel(LABEL_LATITUDE), angle);
+        return this.angleNL(this.getLabel(UnitsFormat.LABEL_LATITUDE), angle);
     }
 
     /**
@@ -605,7 +604,7 @@ public class UnitsFormat extends AVListImpl {
             throw new IllegalArgumentException(msg);
         }
 
-        return this.angle(this.getLabel(LABEL_LATITUDE), angle);
+        return this.angle(this.getLabel(UnitsFormat.LABEL_LATITUDE), angle);
     }
 
     /**
@@ -623,7 +622,7 @@ public class UnitsFormat extends AVListImpl {
             throw new IllegalArgumentException(msg);
         }
 
-        return this.angleNL(this.getLabel(LABEL_LONGITUDE), angle);
+        return this.angleNL(this.getLabel(UnitsFormat.LABEL_LONGITUDE), angle);
     }
 
     /**
@@ -642,7 +641,7 @@ public class UnitsFormat extends AVListImpl {
             throw new IllegalArgumentException(msg);
         }
 
-        return this.angle(this.getLabel(LABEL_LONGITUDE), angle);
+        return this.angle(this.getLabel(UnitsFormat.LABEL_LONGITUDE), angle);
     }
 
     /**
@@ -655,7 +654,7 @@ public class UnitsFormat extends AVListImpl {
      * @throws IllegalArgumentException if the angle is null.
      */
     public String headingNL(Angle angle) {
-        return this.angleNL(this.getLabel(LABEL_HEADING), angle);
+        return this.angleNL(this.getLabel(UnitsFormat.LABEL_HEADING), angle);
     }
 
     /**
@@ -674,7 +673,7 @@ public class UnitsFormat extends AVListImpl {
             throw new IllegalArgumentException(msg);
         }
 
-        return this.angle(this.getLabel(LABEL_HEADING), angle);
+        return this.angle(this.getLabel(UnitsFormat.LABEL_HEADING), angle);
     }
 
     /**
@@ -687,7 +686,7 @@ public class UnitsFormat extends AVListImpl {
      * @return a string containing the formatted angle and ending with the new-line character.
      */
     public String headingNL(double heading) {
-        return this.heading(heading) + NL;
+        return this.heading(heading) + UnitsFormat.NL;
     }
 
     /**
@@ -700,7 +699,7 @@ public class UnitsFormat extends AVListImpl {
      * @return a string containing the formatted angle.
      */
     public String heading(double heading) {
-        return String.format(this.getLabel(LABEL_HEADING) + this.getFormat(FORMAT_HEADING), heading);
+        return String.format(this.getLabel(UnitsFormat.LABEL_HEADING) + this.getFormat(UnitsFormat.FORMAT_HEADING), heading);
     }
 
     /**
@@ -720,7 +719,7 @@ public class UnitsFormat extends AVListImpl {
             throw new IllegalArgumentException(msg);
         }
 
-        return this.latLon(latlon) + NL;
+        return this.latLon(latlon) + UnitsFormat.NL;
     }
 
     /**
@@ -740,8 +739,8 @@ public class UnitsFormat extends AVListImpl {
             throw new IllegalArgumentException(msg);
         }
 
-        return String.format("%s %s", this.angle(this.getLabel(LABEL_LATLON_LAT), latlon.getLatitude()),
-            this.angle(this.getLabel(LABEL_LATLON_LON), latlon.getLongitude())).trim();
+        return String.format("%s %s", this.angle(this.getLabel(UnitsFormat.LABEL_LATLON_LAT), latlon.getLatitude()),
+            this.angle(this.getLabel(UnitsFormat.LABEL_LATLON_LON), latlon.getLongitude())).trim();
     }
 
     /**
@@ -758,7 +757,7 @@ public class UnitsFormat extends AVListImpl {
             throw new IllegalArgumentException(msg);
         }
 
-        return this.latLon2(latlon) + NL;
+        return this.latLon2(latlon) + UnitsFormat.NL;
     }
 
     /**
@@ -802,7 +801,7 @@ public class UnitsFormat extends AVListImpl {
             throw new IllegalArgumentException(msg);
         }
 
-        return this.angle(label, angle) + NL;
+        return this.angle(label, angle) + UnitsFormat.NL;
     }
 
     /**
@@ -824,9 +823,9 @@ public class UnitsFormat extends AVListImpl {
         if (this.isShowDMS())
             s = String.format("%s", angle.toFormattedDMSString()).trim();
         else
-            s = String.format(this.getFormat(FORMAT_DECIMAL_DEGREES), angle.degrees).trim();
+            s = String.format(this.getFormat(UnitsFormat.FORMAT_DECIMAL_DEGREES), angle.degrees).trim();
 
-        return label != null ? label + " " + s : s;
+        return label != null ? label + ' ' + s : s;
     }
 
     /**
@@ -839,7 +838,7 @@ public class UnitsFormat extends AVListImpl {
      * @return a string containing the formatted eye altitude and ending with the new-line character.
      */
     public String eyeAltitudeNL(double metersAltitude) {
-        return this.eyeAltitude(metersAltitude) + NL;
+        return this.eyeAltitude(metersAltitude) + UnitsFormat.NL;
     }
 
     /**
@@ -852,12 +851,12 @@ public class UnitsFormat extends AVListImpl {
      * @return a string containing the formatted eye altitude.
      */
     public String eyeAltitude(double metersAltitude) {
-        if (this.getFormat(FORMAT_EYE_ALTITUDE).contains("f"))
-            return String.format(this.getLabel(LABEL_EYE_ALTITUDE) + this.getFormat(FORMAT_EYE_ALTITUDE),
+        if (this.getFormat(UnitsFormat.FORMAT_EYE_ALTITUDE).contains("f"))
+            return String.format(this.getLabel(UnitsFormat.LABEL_EYE_ALTITUDE) + this.getFormat(UnitsFormat.FORMAT_EYE_ALTITUDE),
                 metersAltitude * this.getAltitudeUnitsMultiplier(),
                 this.getAltitudeUnitsSymbol());
         else
-            return String.format(this.getLabel(LABEL_EYE_ALTITUDE) + this.getFormat(FORMAT_EYE_ALTITUDE),
+            return String.format(this.getLabel(UnitsFormat.LABEL_EYE_ALTITUDE) + this.getFormat(UnitsFormat.FORMAT_EYE_ALTITUDE),
                 (int) Math.round(metersAltitude * this.getAltitudeUnitsMultiplier()),
                 this.getAltitudeUnitsSymbol());
     }
@@ -872,7 +871,7 @@ public class UnitsFormat extends AVListImpl {
      * @return a string containing the formatted angle and ending with the new-line character.
      */
     public String pitchNL(double pitch) {
-        return this.pitch(pitch) + NL;
+        return this.pitch(pitch) + UnitsFormat.NL;
     }
 
     /**
@@ -885,7 +884,7 @@ public class UnitsFormat extends AVListImpl {
      * @return a string containing the formatted angle.
      */
     public String pitch(double pitch) {
-        return String.format(this.getLabel(LABEL_PITCH) + this.getFormat(FORMAT_PITCH), pitch);
+        return String.format(this.getLabel(UnitsFormat.LABEL_PITCH) + this.getFormat(UnitsFormat.FORMAT_PITCH), pitch);
     }
 
     /**
@@ -897,7 +896,7 @@ public class UnitsFormat extends AVListImpl {
      * @return the formatted UTM zone ending with a new-line character.
      */
     public String utmZoneNL(int zone) {
-        return this.utmZone(zone) + NL;
+        return this.utmZone(zone) + UnitsFormat.NL;
     }
 
     /**
@@ -909,7 +908,7 @@ public class UnitsFormat extends AVListImpl {
      * @return the formatted UTM zone.
      */
     public String utmZone(int zone) {
-        return String.format(this.getLabel(LABEL_UTM_ZONE) + " %2d", zone);
+        return String.format(this.getLabel(UnitsFormat.LABEL_UTM_ZONE) + " %2d", zone);
     }
 
     /**
@@ -923,7 +922,7 @@ public class UnitsFormat extends AVListImpl {
      * @return the formatted UTM northing ending with a new-line character.
      */
     public String utmNorthingNL(double northing) {
-        return this.utmNorthing(northing) + NL;
+        return this.utmNorthing(northing) + UnitsFormat.NL;
     }
 
     /**
@@ -937,7 +936,7 @@ public class UnitsFormat extends AVListImpl {
      * @return the formatted UTM northing.
      */
     public String utmNorthing(double northing) {
-        return String.format(this.getLabel(LABEL_UTM_NORTHING) + this.getFormat(FORMAT_UTM_NORTHING), northing);
+        return String.format(this.getLabel(UnitsFormat.LABEL_UTM_NORTHING) + this.getFormat(UnitsFormat.FORMAT_UTM_NORTHING), northing);
     }
 
     /**
@@ -951,7 +950,7 @@ public class UnitsFormat extends AVListImpl {
      * @return the formatted UTM easting ending with a new-line character.
      */
     public String utmEastingNL(double easting) {
-        return this.utmEasting(easting) + NL;
+        return this.utmEasting(easting) + UnitsFormat.NL;
     }
 
     /**
@@ -965,7 +964,7 @@ public class UnitsFormat extends AVListImpl {
      * @return the formatted UTM easting.
      */
     public String utmEasting(double easting) {
-        return String.format(this.getLabel(LABEL_UTM_EASTING) + this.getFormat(FORMAT_UTM_EASTING), easting);
+        return String.format(this.getLabel(UnitsFormat.LABEL_UTM_EASTING) + this.getFormat(UnitsFormat.FORMAT_UTM_EASTING), easting);
     }
 
     /**
@@ -977,7 +976,7 @@ public class UnitsFormat extends AVListImpl {
      * @return the formatted terrain height ending with a new-line character.
      */
     public String terrainHeightNL(double metersElevation, double verticalExaggeration) {
-        return this.terrainHeight(metersElevation, verticalExaggeration) + NL;
+        return this.terrainHeight(metersElevation, verticalExaggeration) + UnitsFormat.NL;
     }
 
     /**
@@ -1003,13 +1002,12 @@ public class UnitsFormat extends AVListImpl {
         if (this.getLengthUnitsSystem().equals(UnitsFormat.METRIC_SYSTEM)) {
             multiplier = 1.0d;
             symbol = UnitsFormat.SYMBOL_METERS;
-        }
-        else {
+        } else {
             multiplier = WWMath.METERS_TO_FEET;
             symbol = UnitsFormat.SYMBOL_FEET;
         }
 
-        return String.format(this.getLabel(LABEL_TERRAIN_HEIGHT) + getFormat(FORMAT_TERRAIN_HEIGHT),
+        return String.format(this.getLabel(UnitsFormat.LABEL_TERRAIN_HEIGHT) + getFormat(UnitsFormat.FORMAT_TERRAIN_HEIGHT),
             verticalExaggeration, (int) Math.round((metersElevation / verticalExaggeration) * multiplier), symbol);
     }
 
@@ -1026,7 +1024,7 @@ public class UnitsFormat extends AVListImpl {
      * @return the formatted length with the specified label prepended and a new-line character appended.
      */
     public String lengthNL(String label, double meters) {
-        return this.length(label, meters) + NL;
+        return this.length(label, meters) + UnitsFormat.NL;
     }
 
     /**
@@ -1041,10 +1039,10 @@ public class UnitsFormat extends AVListImpl {
      * @return the formatted length with the specified label prepended.
      */
     public String length(String label, double meters) {
-        String s = String.format(this.getFormat(FORMAT_LENGTH), meters * this.getLengthUnitsMultiplier(),
+        String s = String.format(this.getFormat(UnitsFormat.FORMAT_LENGTH), meters * this.getLengthUnitsMultiplier(),
             this.getLengthUnitsSymbol()).trim();
 
-        return label != null ? label + " " + s : s;
+        return label != null ? label + ' ' + s : s;
     }
 
     /**
@@ -1060,7 +1058,7 @@ public class UnitsFormat extends AVListImpl {
      * @return the formatted area with the specified label prepended and a new-line character appended.
      */
     public String areaNL(String label, double squareMeters) {
-        return this.area(label, squareMeters) + NL;
+        return this.area(label, squareMeters) + UnitsFormat.NL;
     }
 
     /**
@@ -1075,9 +1073,9 @@ public class UnitsFormat extends AVListImpl {
      * @return the formatted area with the specified label prepended.
      */
     public String area(String label, double squareMeters) {
-        String s = String.format(this.getFormat(FORMAT_AREA), squareMeters * this.getAreaUnitsMultiplier(),
+        String s = String.format(this.getFormat(UnitsFormat.FORMAT_AREA), squareMeters * this.getAreaUnitsMultiplier(),
             this.getAreaUnitsSymbol()).trim();
 
-        return label != null ? label + " " + s : s;
+        return label != null ? label + ' ' + s : s;
     }
 }

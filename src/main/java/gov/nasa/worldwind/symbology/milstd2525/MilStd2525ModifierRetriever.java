@@ -37,6 +37,79 @@ public class MilStd2525ModifierRetriever extends AbstractIconRetriever {
         super(retrieverPath);
     }
 
+    protected static String composePath(String symbolModifierCode, AVList params) {
+        AVList modifierParams = SymbolCode.parseSymbolModifierCode(symbolModifierCode, null);
+        if (modifierParams == null)
+            return null;
+
+        if (params != null)
+            modifierParams.setValues(params);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(MilStd2525ModifierRetriever.PATH_PREFIX).append('/');
+        sb.append(symbolModifierCode.toLowerCase());
+
+        if (MilStd2525ModifierRetriever.isVariableWidth(modifierParams)) {
+            Integer i = MilStd2525ModifierRetriever.chooseBestFittingWidth(modifierParams);
+            if (i != null)
+                sb.append('_').append(i);
+        }
+
+        sb.append(MilStd2525ModifierRetriever.PATH_SUFFIX);
+        return sb.toString();
+    }
+
+    protected static boolean isVariableWidth(AVList params) {
+        return params.hasKey(SymbologyConstants.FEINT_DUMMY)
+            || params.hasKey(SymbologyConstants.OPERATIONAL_CONDITION_ALTERNATE);
+    }
+
+    /**
+     * Indicates whether or not color must be applied to the modifier. Color is applied to all modifiers except for
+     * alternate Operational Condition modifiers, which have their own color.
+     *
+     * @param symbolId Modifier id.
+     * @return True if color must be applied to the modifier.
+     */
+    protected static boolean mustApplyColor(String symbolId) {
+        return !SymbologyConstants.OPERATIONAL_CONDITION_ALTERNATE_ALL.contains(symbolId.toUpperCase());
+    }
+
+    protected static Integer chooseBestFittingWidth(AVList params) {
+        Object o = params.get(AVKey.WIDTH);
+        if (!(o instanceof Number))
+            return null;
+
+        int value = ((Number) o).intValue();
+        int width = MilStd2525ModifierRetriever.variableWidths[0];
+        int minDiff = Math.abs(value - width);
+
+        for (int i = 1; i < MilStd2525ModifierRetriever.variableWidths.length; i++) {
+            int diff = Math.abs(value - MilStd2525ModifierRetriever.variableWidths[i]);
+            if (diff < minDiff) {
+                width = MilStd2525ModifierRetriever.variableWidths[i];
+                minDiff = diff;
+            }
+        }
+
+        return width;
+    }
+
+    /**
+     * Retrieves the value of the AVKey.COLOR parameter.
+     *
+     * @param params Parameter list.
+     * @return The value of the AVKey.COLOR parameter, if such a parameter exists and is of type java.awt.Color. Returns
+     * null if the parameter list is null, if there is no value for key AVKey.COLOR, or if the value is not a Color.
+     */
+    protected static Color getColorFromParams(AVList params) {
+        if (params == null)
+            return null;
+
+        Object o = params.get(AVKey.COLOR);
+        return (o instanceof Color) ? (Color) o : null;
+    }
+
     /**
      * Create an icon for a symbol modifier.
      *
@@ -72,83 +145,10 @@ public class MilStd2525ModifierRetriever extends AbstractIconRetriever {
             // Apply the correct color the modifier.
             Color color = MilStd2525ModifierRetriever.getColorFromParams(params);
             if (color == null)
-                color = DEFAULT_COLOR;
+                color = MilStd2525ModifierRetriever.DEFAULT_COLOR;
             AbstractIconRetriever.multiply(image, color);
         }
 
         return image;
-    }
-
-    protected static String composePath(String symbolModifierCode, AVList params) {
-        AVList modifierParams = SymbolCode.parseSymbolModifierCode(symbolModifierCode, null);
-        if (modifierParams == null)
-            return null;
-
-        if (params != null)
-            modifierParams.setValues(params);
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(PATH_PREFIX).append("/");
-        sb.append(symbolModifierCode.toLowerCase());
-
-        if (MilStd2525ModifierRetriever.isVariableWidth(modifierParams)) {
-            Integer i = MilStd2525ModifierRetriever.chooseBestFittingWidth(modifierParams);
-            if (i != null)
-                sb.append("_").append(i);
-        }
-
-        sb.append(PATH_SUFFIX);
-        return sb.toString();
-    }
-
-    protected static boolean isVariableWidth(AVList params) {
-        return params.hasKey(SymbologyConstants.FEINT_DUMMY)
-            || params.hasKey(SymbologyConstants.OPERATIONAL_CONDITION_ALTERNATE);
-    }
-
-    /**
-     * Indicates whether or not color must be applied to the modifier. Color is applied to all modifiers except for
-     * alternate Operational Condition modifiers, which have their own color.
-     *
-     * @param symbolId Modifier id.
-     * @return True if color must be applied to the modifier.
-     */
-    protected static boolean mustApplyColor(String symbolId) {
-        return !SymbologyConstants.OPERATIONAL_CONDITION_ALTERNATE_ALL.contains(symbolId.toUpperCase());
-    }
-
-    protected static Integer chooseBestFittingWidth(AVList params) {
-        Object o = params.get(AVKey.WIDTH);
-        if (!(o instanceof Number))
-            return null;
-
-        int value = ((Number) o).intValue();
-        int width = variableWidths[0];
-        int minDiff = Math.abs(value - width);
-
-        for (int i = 1; i < variableWidths.length; i++) {
-            int diff = Math.abs(value - variableWidths[i]);
-            if (diff < minDiff) {
-                width = variableWidths[i];
-                minDiff = diff;
-            }
-        }
-
-        return width;
-    }
-
-    /**
-     * Retrieves the value of the AVKey.COLOR parameter.
-     *
-     * @param params Parameter list.
-     * @return The value of the AVKey.COLOR parameter, if such a parameter exists and is of type java.awt.Color. Returns
-     * null if the parameter list is null, if there is no value for key AVKey.COLOR, or if the value is not a Color.
-     */
-    protected static Color getColorFromParams(AVList params) {
-        if (params == null)
-            return null;
-
-        Object o = params.get(AVKey.COLOR);
-        return (o instanceof Color) ? (Color) o : null;
     }
 }

@@ -68,7 +68,7 @@ public class FrameFactory {
     public static void drawShape(DrawContext dc, String shape, double width, double height, int glMode,
         int cornerRadius) {
         if (!shape.equals(AVKey.SHAPE_NONE))
-            drawBuffer(dc, glMode, createShapeBuffer(shape, width, height, cornerRadius, null));
+            FrameFactory.drawBuffer(dc, glMode, FrameFactory.createShapeBuffer(shape, width, height, cornerRadius, null));
     }
 
     /**
@@ -90,8 +90,8 @@ public class FrameFactory {
     public static void drawShapeWithLeader(DrawContext dc, String shape, double width, double height,
         Point leaderOffset, double leaderGapWidth, int glMode, int cornerRadius) {
         if (!shape.equals(AVKey.SHAPE_NONE))
-            drawBuffer(dc, glMode,
-                createShapeWithLeaderBuffer(shape, width, height, leaderOffset, leaderGapWidth, cornerRadius, null));
+            FrameFactory.drawBuffer(dc, glMode,
+                FrameFactory.createShapeWithLeaderBuffer(shape, width, height, leaderOffset, leaderGapWidth, cornerRadius, null));
     }
 
     /**
@@ -109,9 +109,9 @@ public class FrameFactory {
         DoubleBuffer buffer) {
         // default to rectangle if shape unknown
         return switch (shape) {
-            case AVKey.SHAPE_ELLIPSE -> createEllipseBuffer(width, height, circleSteps, buffer);
+            case AVKey.SHAPE_ELLIPSE -> FrameFactory.createEllipseBuffer(width, height, FrameFactory.circleSteps, buffer);
             case AVKey.SHAPE_NONE -> null;
-            default -> createRoundedRectangleBuffer(width, height, cornerRadius, buffer);
+            default -> FrameFactory.createRoundedRectangleBuffer(width, height, cornerRadius, buffer);
         };
     }
 
@@ -133,10 +133,10 @@ public class FrameFactory {
         Point leaderOffset, double leaderGapWidth, int cornerRadius, DoubleBuffer buffer) {
         // default to rectangle if shape unknown
         return switch (shape) {
-            case AVKey.SHAPE_ELLIPSE -> createEllipseWithLeaderBuffer(width, height, leaderOffset, leaderGapWidth,
-                circleSteps, buffer);
+            case AVKey.SHAPE_ELLIPSE -> FrameFactory.createEllipseWithLeaderBuffer(width, height, leaderOffset, leaderGapWidth,
+                FrameFactory.circleSteps, buffer);
             case AVKey.SHAPE_NONE -> null;
-            default -> createRoundedRectangleWithLeaderBuffer(width, height, leaderOffset, leaderGapWidth,
+            default -> FrameFactory.createRoundedRectangleWithLeaderBuffer(width, height, leaderOffset, leaderGapWidth,
                 cornerRadius,
                 buffer);
         };
@@ -222,7 +222,7 @@ public class FrameFactory {
         }
 
         int count = verts.remaining() / 2;
-        drawBuffer(dc, mode, count, verts);
+        FrameFactory.drawBuffer(dc, mode, count, verts);
     }
 
     //-- Shape creation
@@ -230,8 +230,8 @@ public class FrameFactory {
 
     private static DoubleBuffer createRoundedRectangleBuffer(double width, double height, int cornerRadius,
         DoubleBuffer buffer) {
-        int numVertices = 9 + (cornerRadius < 1 ? 0 : 4 * (cornerSteps - 2));
-        buffer = allocateVertexBuffer(numVertices, buffer);
+        int numVertices = 9 + (cornerRadius < 1 ? 0 : 4 * (FrameFactory.cornerSteps - 2));
+        buffer = FrameFactory.allocateVertexBuffer(numVertices, buffer);
 
         int idx = 0;
         // Drawing counter clockwise from bottom-left
@@ -240,27 +240,29 @@ public class FrameFactory {
         buffer.put(idx++, 0.0d);
         buffer.put(idx++, width - cornerRadius);
         buffer.put(idx++, 0.0d);
-        idx = drawCorner(width - cornerRadius, cornerRadius, cornerRadius, -Math.PI / 2, 0, cornerSteps, buffer, idx);
+        idx = FrameFactory.drawCorner(width - cornerRadius, cornerRadius, cornerRadius, -Math.PI / 2, 0, FrameFactory.cornerSteps, buffer, idx);
         // Right
         buffer.put(idx++, width);
         buffer.put(idx++, cornerRadius);
         buffer.put(idx++, width);
         buffer.put(idx++, height - cornerRadius);
-        idx = drawCorner(width - cornerRadius, height - cornerRadius, cornerRadius, 0, Math.PI / 2, cornerSteps, buffer,
+        idx = FrameFactory.drawCorner(width - cornerRadius, height - cornerRadius, cornerRadius, 0, Math.PI / 2,
+            FrameFactory.cornerSteps, buffer,
             idx);
         // Top
         buffer.put(idx++, width - cornerRadius);
         buffer.put(idx++, height);
         buffer.put(idx++, cornerRadius);
         buffer.put(idx++, height);
-        idx = drawCorner(cornerRadius, height - cornerRadius, cornerRadius, Math.PI / 2, Math.PI, cornerSteps, buffer,
+        idx = FrameFactory.drawCorner(cornerRadius, height - cornerRadius, cornerRadius, Math.PI / 2, Math.PI,
+            FrameFactory.cornerSteps, buffer,
             idx);
         // Left
         buffer.put(idx++, 0.0d);
         buffer.put(idx++, height - cornerRadius);
         buffer.put(idx++, 0.0d);
         buffer.put(idx++, cornerRadius);
-        idx = drawCorner(cornerRadius, cornerRadius, cornerRadius, Math.PI, Math.PI * 1.5, cornerSteps, buffer, idx);
+        idx = FrameFactory.drawCorner(cornerRadius, cornerRadius, cornerRadius, Math.PI, Math.PI * 1.5, FrameFactory.cornerSteps, buffer, idx);
         // Finish up to starting point
         buffer.put(idx++, cornerRadius);
         buffer.put(idx++, 0.0d);
@@ -271,8 +273,8 @@ public class FrameFactory {
 
     private static DoubleBuffer createRoundedRectangleWithLeaderBuffer(double width, double height, Point leaderOffset,
         double leaderGapWidth, int cornerRadius, DoubleBuffer buffer) {
-        int numVertices = 12 + (cornerRadius < 1 ? 0 : 4 * (cornerSteps - 2));
-        buffer = allocateVertexBuffer(numVertices, buffer);
+        int numVertices = 12 + (cornerRadius < 1 ? 0 : 4 * (FrameFactory.cornerSteps - 2));
+        buffer = FrameFactory.allocateVertexBuffer(numVertices, buffer);
 
         int idx = 0;
         // Drawing counter clockwise from right leader connection at the bottom
@@ -282,27 +284,29 @@ public class FrameFactory {
         buffer.put(idx++, 0.0d);
         buffer.put(idx++, width - cornerRadius);
         buffer.put(idx++, 0.0d);
-        idx = drawCorner(width - cornerRadius, cornerRadius, cornerRadius, -Math.PI / 2, 0, cornerSteps, buffer, idx);
+        idx = FrameFactory.drawCorner(width - cornerRadius, cornerRadius, cornerRadius, -Math.PI / 2, 0, FrameFactory.cornerSteps, buffer, idx);
         // Right
         buffer.put(idx++, width);
         buffer.put(idx++, cornerRadius);
         buffer.put(idx++, width);
         buffer.put(idx++, height - cornerRadius);
-        idx = drawCorner(width - cornerRadius, height - cornerRadius, cornerRadius, 0, Math.PI / 2, cornerSteps, buffer,
+        idx = FrameFactory.drawCorner(width - cornerRadius, height - cornerRadius, cornerRadius, 0, Math.PI / 2,
+            FrameFactory.cornerSteps, buffer,
             idx);
         // Top
         buffer.put(idx++, width - cornerRadius);
         buffer.put(idx++, height);
         buffer.put(idx++, cornerRadius);
         buffer.put(idx++, height);
-        idx = drawCorner(cornerRadius, height - cornerRadius, cornerRadius, Math.PI / 2, Math.PI, cornerSteps, buffer,
+        idx = FrameFactory.drawCorner(cornerRadius, height - cornerRadius, cornerRadius, Math.PI / 2, Math.PI,
+            FrameFactory.cornerSteps, buffer,
             idx);
         // Left
         buffer.put(idx++, 0.0d);
         buffer.put(idx++, height - cornerRadius);
         buffer.put(idx++, 0.0d);
         buffer.put(idx++, cornerRadius);
-        idx = drawCorner(cornerRadius, cornerRadius, cornerRadius, Math.PI, Math.PI * 1.5, cornerSteps, buffer, idx);
+        idx = FrameFactory.drawCorner(cornerRadius, cornerRadius, cornerRadius, Math.PI, Math.PI * 1.5, FrameFactory.cornerSteps, buffer, idx);
         // Bottom left
         buffer.put(idx++, cornerRadius);
         buffer.put(idx++, 0.0d);
@@ -339,7 +343,7 @@ public class FrameFactory {
 
     private static DoubleBuffer createEllipseBuffer(double width, double height, int steps, DoubleBuffer buffer) {
         int numVertices = steps + 1;
-        buffer = allocateVertexBuffer(numVertices, buffer);
+        buffer = FrameFactory.allocateVertexBuffer(numVertices, buffer);
 
         // Drawing counter clockwise from bottom-left
         double halfWidth = width / 2;
@@ -363,7 +367,7 @@ public class FrameFactory {
     private static DoubleBuffer createEllipseWithLeaderBuffer(double width, double height, Point leaderOffset,
         double leaderGapWidth, int steps, DoubleBuffer buffer) {
         int numVertices = steps + 3;
-        buffer = allocateVertexBuffer(numVertices, buffer);
+        buffer = FrameFactory.allocateVertexBuffer(numVertices, buffer);
 
         // Drawing counter clockwise from right leader connection at the bottom
         // so as to accomodate GL_TRIANGLE_FAN and GL_LINE_STRIP (inside and border)

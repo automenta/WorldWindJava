@@ -190,8 +190,7 @@ public class FortifiedArea extends BasicArea {
                 if (!firstPos.equals(nextPos)) {
                     nextPos = firstPos;
                     pNext = globe.computePointFromPosition(nextPos);
-                }
-                else {
+                } else {
                     break;
                 }
             }
@@ -247,8 +246,7 @@ public class FortifiedArea extends BasicArea {
 
             if (prev != null) {
                 perimeter += current.distanceTo3(prev);
-            }
-            else {
+            } else {
                 first = current;
             }
 
@@ -265,6 +263,6 @@ public class FortifiedArea extends BasicArea {
         // vertices are added.
         double complexity = Math.sqrt(count / 3.0);
 
-        return perimeter / (complexity * DEFAULT_NUM_WAVES);
+        return perimeter / (complexity * FortifiedArea.DEFAULT_NUM_WAVES);
     }
 }

@@ -47,7 +47,7 @@ public class VecBufferSequence extends CompoundVecBuffer {
      * @throws IllegalArgumentException if the buffer is null.
      */
     public VecBufferSequence(VecBuffer buffer) {
-        this(buffer, DEFAULT_INITIAL_CAPACITY);
+        this(buffer, CompoundVecBuffer.DEFAULT_INITIAL_CAPACITY);
     }
 
     protected VecBufferSequence(VecBufferSequence that, int beginIndex, int endIndex) {
@@ -79,6 +79,10 @@ public class VecBufferSequence extends CompoundVecBuffer {
         }
 
         return new VecBufferSequence(VecBuffer.emptyVecBuffer(coordsPerVec));
+    }
+
+    protected static boolean haveMultiDrawArrays(DrawContext dc) {
+        return dc.getGL().isFunctionAvailable("glMultiDrawArrays");
     }
 
     /**
@@ -118,6 +122,10 @@ public class VecBufferSequence extends CompoundVecBuffer {
         return this.buffer;
     }
 
+    //**************************************************************//
+    //********************  Protected Interface  *******************//
+    //**************************************************************//
+
     /**
      * Appends the contents of the specified sub-buffer to the end of this PackedCompoundVecBuffer, incrementing the
      * number of sub-buffers by one. The backing buffer grows to accomodate the sub-buffer if it does not already have
@@ -145,10 +153,6 @@ public class VecBufferSequence extends CompoundVecBuffer {
         return this.addSubBuffer(newBufferPos, buffer.getSize());
     }
 
-    //**************************************************************//
-    //********************  Protected Interface  *******************//
-    //**************************************************************//
-
     protected VecBuffer createSubBuffer(int offset, int length) {
         return this.buffer.getSubBuffer(offset, length);
     }
@@ -160,6 +164,10 @@ public class VecBufferSequence extends CompoundVecBuffer {
     protected CompoundVecBuffer createSlice(int beginIndex, int endIndex) {
         return new VecBufferSequence(this, beginIndex, endIndex);
     }
+
+    //**************************************************************//
+    //********************  OpenGL Vertex Buffer Interface  ********//
+    //**************************************************************//
 
     protected void expandBufferCapacity(int minCapacity) {
         int newCapacity = 2 * this.buffer.getSize();
@@ -176,10 +184,6 @@ public class VecBufferSequence extends CompoundVecBuffer {
 
         this.buffer = this.buffer.copyOf(newCapacity);
     }
-
-    //**************************************************************//
-    //********************  OpenGL Vertex Buffer Interface  ********//
-    //**************************************************************//
 
     /**
      * Binds this buffer as the source of normal coordinates to use when rendering OpenGL primitives. The normal type is
@@ -259,8 +263,8 @@ public class VecBufferSequence extends CompoundVecBuffer {
 
     /**
      * Renders elements from the currently bounds OpenGL coordinate buffers. This behaves exactly like {@link
-     * #drawArrays(DrawContext, int)}, except that each sub-buffer is rendered independently.
-     * The specified drawMode indicates which type of OpenGL primitives to render.
+     * #drawArrays(DrawContext, int)}, except that each sub-buffer is rendered independently. The specified drawMode
+     * indicates which type of OpenGL primitives to render.
      *
      * @param dc       the current DrawContext.
      * @param drawMode the type of OpenGL primtives to render.
@@ -277,15 +281,10 @@ public class VecBufferSequence extends CompoundVecBuffer {
 
         if (VecBufferSequence.haveMultiDrawArrays(dc)) {
             gl.glMultiDrawArrays(drawMode, this.offsets, this.lengths, this.count);
-        }
-        else {
+        } else {
             for (int i = 0; i < this.count; i++) {
                 gl.glDrawArrays(drawMode, this.offsets.get(i), this.lengths.get(i));
             }
         }
-    }
-
-    protected static boolean haveMultiDrawArrays(DrawContext dc) {
-        return dc.getGL().isFunctionAvailable("glMultiDrawArrays");
     }
 }

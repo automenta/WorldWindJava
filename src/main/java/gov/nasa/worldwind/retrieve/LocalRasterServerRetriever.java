@@ -24,9 +24,9 @@ public class LocalRasterServerRetriever extends WWObjectImpl implements Retrieve
     //    protected AVList params;
     protected final RetrievalPostProcessor postProcessor;
     protected final AtomicInteger contentLengthRead = new AtomicInteger(0);
-    protected RasterServer server = null;
-    protected volatile String state = RETRIEVER_STATE_NOT_STARTED;
-    protected volatile int contentLength = 0;
+    protected RasterServer server;
+    protected volatile String state = Retriever.RETRIEVER_STATE_NOT_STARTED;
+    protected volatile int contentLength;
     protected ByteBuffer byteBuffer;
     protected int staleRequestLimit = -1;
     protected long submitTime;
@@ -139,10 +139,10 @@ public class LocalRasterServerRetriever extends WWObjectImpl implements Retrieve
 
     public Retriever call() {
         try {
-            setState(RETRIEVER_STATE_CONNECTING);
+            setState(Retriever.RETRIEVER_STATE_CONNECTING);
 
             if (null == this.server) {
-                setState(RETRIEVER_STATE_ERROR);
+                setState(Retriever.RETRIEVER_STATE_ERROR);
                 String message = Logging.getMessage("nullValue.RasterServerIsNull");
                 Logging.logger().severe(message);
                 throw new WWRuntimeException(message);
@@ -150,18 +150,17 @@ public class LocalRasterServerRetriever extends WWObjectImpl implements Retrieve
 
             this.byteBuffer = this.server.getRasterAsByteBuffer(this.copy());
             if (null != this.byteBuffer) {
-                setState(RETRIEVER_STATE_SUCCESSFUL);
+                setState(Retriever.RETRIEVER_STATE_SUCCESSFUL);
                 this.contentLength = this.byteBuffer.capacity();
                 this.contentLengthRead.set(this.contentLength);
-            }
-            else
-                setState(RETRIEVER_STATE_ERROR);
+            } else
+                setState(Retriever.RETRIEVER_STATE_ERROR);
 
             if (this.postProcessor != null)
                 this.byteBuffer = this.postProcessor.run(this);
         }
         catch (Exception e) {
-            setState(RETRIEVER_STATE_ERROR);
+            setState(Retriever.RETRIEVER_STATE_ERROR);
 
             Logging.logger().log(Level.SEVERE, Logging.getMessage("Retriever.ErrorPostProcessing", this.getName()), e);
             throw e;

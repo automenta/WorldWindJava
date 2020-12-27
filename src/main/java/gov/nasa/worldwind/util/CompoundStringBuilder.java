@@ -63,7 +63,7 @@ public class CompoundStringBuilder {
      * Constructs a CompoundStringBuilder with a default backing StringBuilder, and the default initial capacity.
      */
     public CompoundStringBuilder() {
-        this(new StringBuilder(), DEFAULT_INITIAL_CAPACITY);
+        this(new StringBuilder(), CompoundStringBuilder.DEFAULT_INITIAL_CAPACITY);
     }
 
     /**

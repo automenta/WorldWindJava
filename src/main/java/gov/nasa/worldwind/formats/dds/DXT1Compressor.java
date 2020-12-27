@@ -18,6 +18,23 @@ public class DXT1Compressor implements DXTCompressor {
     public DXT1Compressor() {
     }
 
+    protected static boolean blockHasDXT1Alpha(ColorBlock4x4 colorBlock, int alphaThreshold) {
+        // DXT1 provides support for binary alpha. Therefore we determine treat a color block as needing alpha support
+        // if any of the alpha values are less than a certain threshold.
+
+        for (int i = 0; i < 16; i++) {
+            if (colorBlock.color[i].a < alphaThreshold) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected static ColorBlockExtractor getColorBlockExtractor(BufferedImage image) {
+        return new BasicColorBlockExtractor(image);
+    }
+
     public int getDXTFormat() {
         return DDSConstants.D3DFMT_DXT1;
     }
@@ -80,10 +97,9 @@ public class DXT1Compressor implements DXTCompressor {
             for (int i = 0; i < width; i += 4) {
                 colorBlockExtractor.extractColorBlock4x4(attributes, i, j, colorBlock);
 
-                if (enableAlpha && imageHasAlpha && blockHasDXT1Alpha(colorBlock, alphaThreshold)) {
+                if (enableAlpha && imageHasAlpha && DXT1Compressor.blockHasDXT1Alpha(colorBlock, alphaThreshold)) {
                     dxt1Compressor.compressBlockDXT1a(colorBlock, attributes, dxt1Block);
-                }
-                else {
+                } else {
                     dxt1Compressor.compressBlockDXT1(colorBlock, attributes, dxt1Block);
                 }
 
@@ -92,22 +108,5 @@ public class DXT1Compressor implements DXTCompressor {
                 buffer.putInt((int) dxt1Block.colorIndexMask);
             }
         }
-    }
-
-    protected static boolean blockHasDXT1Alpha(ColorBlock4x4 colorBlock, int alphaThreshold) {
-        // DXT1 provides support for binary alpha. Therefore we determine treat a color block as needing alpha support
-        // if any of the alpha values are less than a certain threshold.
-
-        for (int i = 0; i < 16; i++) {
-            if (colorBlock.color[i].a < alphaThreshold) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    protected static ColorBlockExtractor getColorBlockExtractor(BufferedImage image) {
-        return new BasicColorBlockExtractor(image);
     }
 }

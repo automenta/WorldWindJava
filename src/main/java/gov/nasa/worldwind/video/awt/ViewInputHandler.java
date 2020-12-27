@@ -116,8 +116,7 @@ public interface ViewInputHandler
      * kilometers. This <code>factor</code> is the amount of damping applied to the view movement in such cases.
      * Setting
      * <code>factor</code> to zero will disable this behavior, while setting <code>factor</code> to a positive value
-     * may
-     * dampen the effects of mouse dragging.
+     * may dampen the effects of mouse dragging.
      *
      * @param factor dampening view movement when a mouse drag event would cause an abrupt transition. Must be greater
      *               than or equal to zero.
@@ -159,11 +158,10 @@ public interface ViewInputHandler
     boolean isAnimating();
 
     /**
-     * Add an {@link Animator} to this <code>ViewInputHandler</code>. This method does not
-     * start the {@link Animator}.  Starting the {@link
-     * Animator} is the responsibility of the application. This method is here primarily
-     * for use by the {@link gov.nasa.worldwind.View}.  Applications should call {@link
-     * gov.nasa.worldwind.View#addAnimator(Animator)} to add an animtion to the view.
+     * Add an {@link Animator} to this <code>ViewInputHandler</code>. This method does not start the {@link Animator}.
+     * Starting the {@link Animator} is the responsibility of the application. This method is here primarily for use by
+     * the {@link gov.nasa.worldwind.View}.  Applications should call {@link gov.nasa.worldwind.View#addAnimator(Animator)}
+     * to add an animtion to the view.
      *
      * @param animator the {@link Animator} to be added
      */

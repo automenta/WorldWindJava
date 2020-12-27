@@ -24,13 +24,13 @@ class BaselineTiff {
     public int minSampleValue;
     public int maxSampleValue;
 
-    public int[] sampleFormat = null;
-    public int[] bitsPerSample = null;
+    public int[] sampleFormat;
+    public int[] bitsPerSample;
 
-    public String displayName = null;
-    public String imageDescription = null;
-    public String softwareVersion = null;
-    public String dateTime = null;
+    public String displayName;
+    public String imageDescription;
+    public String softwareVersion;
+    public String dateTime;
 
     private BaselineTiff() {
     }
@@ -82,20 +82,18 @@ class BaselineTiff {
         sb.append("sampleFormat=( ");
         if (null != this.sampleFormat) {
             for (int value : this.sampleFormat) {
-                sb.append(value).append(" ");
+                sb.append(value).append(' ');
             }
-        }
-        else
+        } else
             sb.append(" NULL ");
         sb.append("), ");
 
         sb.append("bitsPerSample=( ");
         if (null != this.bitsPerSample) {
             for (int value : this.bitsPerSample) {
-                sb.append(value).append(" ");
+                sb.append(value).append(' ');
             }
-        }
-        else
+        } else
             sb.append(" NULL ");
         sb.append("), ");
 

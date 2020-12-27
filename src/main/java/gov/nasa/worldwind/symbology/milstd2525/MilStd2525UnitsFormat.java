@@ -50,7 +50,7 @@ public class MilStd2525UnitsFormat extends UnitsFormat {
      */
     public MilStd2525UnitsFormat(String lengthUnits, String areaUnits, boolean showDMS) {
         super(lengthUnits, areaUnits, showDMS);
-        this.setAltitudeUnits(FEET);
+        this.setAltitudeUnits(UnitsFormat.FEET);
     }
 
     /**
@@ -72,8 +72,7 @@ public class MilStd2525UnitsFormat extends UnitsFormat {
         if (this.isShowDMS()) {
             double[] dms = angle.toDMS();
             return String.format("%02.0f%02.0f%04.1f%s", Math.abs(dms[0]), dms[1], dms[2], dms[0] < 0 ? "S" : "N");
-        }
-        else {
+        } else {
             return super.latitude(angle);
         }
     }
@@ -97,8 +96,7 @@ public class MilStd2525UnitsFormat extends UnitsFormat {
         if (this.isShowDMS()) {
             double[] dms = angle.toDMS();
             return String.format("%03.0f%02.0f%04.1f%s", Math.abs(dms[0]), dms[1], dms[2], dms[0] < 0 ? "W" : "E");
-        }
-        else {
+        } else {
             return super.longitude(angle);
         }
     }
@@ -133,8 +131,8 @@ public class MilStd2525UnitsFormat extends UnitsFormat {
      */
     @Override
     protected void setDefaultLabels() {
-        this.setLabel(LABEL_LATITUDE, "");
-        this.setLabel(LABEL_LONGITUDE, "");
-        this.setLabel(LABEL_EYE_ALTITUDE, "");
+        this.setLabel(UnitsFormat.LABEL_LATITUDE, "");
+        this.setLabel(UnitsFormat.LABEL_LONGITUDE, "");
+        this.setLabel(UnitsFormat.LABEL_EYE_ALTITUDE, "");
     }
 }

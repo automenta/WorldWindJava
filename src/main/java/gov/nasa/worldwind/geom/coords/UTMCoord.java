@@ -32,8 +32,7 @@ public class UTMCoord {
      * @param latitude   the latitude <code>Angle</code>.
      * @param longitude  the longitude <code>Angle</code>.
      * @param zone       the UTM zone - 1 to 60.
-     * @param hemisphere the hemisphere, either {@link AVKey#NORTH} or {@link
-     *                   AVKey#SOUTH}.
+     * @param hemisphere the hemisphere, either {@link AVKey#NORTH} or {@link AVKey#SOUTH}.
      * @param easting    the easting distance in meters
      * @param northing   the northing distance in meters.
      * @throws IllegalArgumentException if <code>latitude</code> or <code>longitude</code> is null.
@@ -48,8 +47,7 @@ public class UTMCoord {
      * @param latitude        the latitude <code>Angle</code>.
      * @param longitude       the longitude <code>Angle</code>.
      * @param zone            the UTM zone - 1 to 60.
-     * @param hemisphere      the hemisphere, either {@link AVKey#NORTH} or {@link
-     *                        AVKey#SOUTH}.
+     * @param hemisphere      the hemisphere, either {@link AVKey#NORTH} or {@link AVKey#SOUTH}.
      * @param easting         the easting distance in meters
      * @param northing        the northing distance in meters.
      * @param centralMeridian the cntral meridian <code>Angle</code>.
@@ -82,7 +80,7 @@ public class UTMCoord {
      *                                  UTM coordinates fails.
      */
     public static UTMCoord fromLatLon(Angle latitude, Angle longitude) {
-        return fromLatLon(latitude, longitude, (Globe) null);
+        return UTMCoord.fromLatLon(latitude, longitude, (Globe) null);
     }
 
     /**
@@ -103,7 +101,7 @@ public class UTMCoord {
         }
 
         final UTMCoordConverter converter = new UTMCoordConverter(globe);
-        long err = converter.convertGeodeticToUTM(latitude.radians, longitude.radians);
+        long err = converter.convertGeodeticToUTM(latitude.radians(), longitude.radians());
 
         if (err != UTMCoordConverter.UTM_NO_ERROR) {
             String message = Logging.getMessage("Coord.UTMConversionError");
@@ -128,12 +126,11 @@ public class UTMCoord {
             LatLon llNAD27 = UTMCoordConverter.convertWGS84ToNAD27(latitude, longitude);
             latitude = llNAD27.getLatitude();
             longitude = llNAD27.getLongitude();
-        }
-        else {
+        } else {
             converter = new UTMCoordConverter(UTMCoordConverter.WGS84_A, UTMCoordConverter.WGS84_F);
         }
 
-        long err = converter.convertGeodeticToUTM(latitude.radians, longitude.radians);
+        long err = converter.convertGeodeticToUTM(latitude.radians(), longitude.radians());
 
         if (err != UTMCoordConverter.UTM_NO_ERROR) {
             String message = Logging.getMessage("Coord.UTMConversionError");
@@ -149,23 +146,21 @@ public class UTMCoord {
      * Create a set of UTM coordinates for a WGS84 globe.
      *
      * @param zone       the UTM zone - 1 to 60.
-     * @param hemisphere the hemisphere, either {@link AVKey#NORTH} or {@link
-     *                   AVKey#SOUTH}.
+     * @param hemisphere the hemisphere, either {@link AVKey#NORTH} or {@link AVKey#SOUTH}.
      * @param easting    the easting distance in meters
      * @param northing   the northing distance in meters.
      * @return the corresponding <code>UTMCoord</code>.
      * @throws IllegalArgumentException if the conversion to UTM coordinates fails.
      */
     public static UTMCoord fromUTM(int zone, String hemisphere, double easting, double northing) {
-        return fromUTM(zone, hemisphere, easting, northing, null);
+        return UTMCoord.fromUTM(zone, hemisphere, easting, northing, null);
     }
 
     /**
      * Create a set of UTM coordinates for the given <code>Globe</code>.
      *
      * @param zone       the UTM zone - 1 to 60.
-     * @param hemisphere the hemisphere, either {@link AVKey#NORTH} or {@link
-     *                   AVKey#SOUTH}.
+     * @param hemisphere the hemisphere, either {@link AVKey#NORTH} or {@link AVKey#SOUTH}.
      * @param easting    the easting distance in meters
      * @param northing   the northing distance in meters.
      * @param globe      the <code>Globe</code> - can be null (will use WGS84).
@@ -191,8 +186,7 @@ public class UTMCoord {
      * Convenience method for converting a UTM coordinate to a geographic location.
      *
      * @param zone       the UTM zone: 1 to 60.
-     * @param hemisphere the hemisphere, either {@link AVKey#NORTH} or {@link
-     *                   AVKey#SOUTH}.
+     * @param hemisphere the hemisphere, either {@link AVKey#NORTH} or {@link AVKey#SOUTH}.
      * @param easting    the easting distance in meters
      * @param northing   the northing distance in meters.
      * @param globe      the <code>Globe</code>. Can be null (will use WGS84).
@@ -235,9 +229,9 @@ public class UTMCoord {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(zone);
-        sb.append(" ").append(AVKey.NORTH.equals(hemisphere) ? "N" : "S");
-        sb.append(" ").append(easting).append("E");
-        sb.append(" ").append(northing).append("N");
+        sb.append(' ').append(AVKey.NORTH.equals(hemisphere) ? "N" : "S");
+        sb.append(' ').append(easting).append('E');
+        sb.append(' ').append(northing).append('N');
         return sb.toString();
     }
 }

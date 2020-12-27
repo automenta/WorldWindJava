@@ -9,7 +9,7 @@ package gov.nasa.worldwind.globes.projections;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
-import gov.nasa.worldwind.util.*;
+import gov.nasa.worldwind.util.WWMath;
 
 /**
  * Provides a Universal Polar Stereographic projection using the WGS84 ellipsoid and centered on a specified pole.
@@ -24,14 +24,7 @@ public class ProjectionUPS extends AbstractGeographicProjection {
     protected static final Sector NORTH_LIMITS = Sector.fromDegrees(0, 90, -180, 180);
     protected static final Sector SOUTH_LIMITS = Sector.fromDegrees(-90, 0, -180, 180);
 
-    protected int pole = NORTH;
-
-//    /**
-//     * Creates a projection centered on the North pole.
-//     */
-//    public ProjectionUPS() {
-//        super(NORTH_LIMITS);
-//    }
+    protected int pole = ProjectionUPS.NORTH;
 
     /**
      * Creates a projection centered on the specified pole, which can be either {@link AVKey#NORTH} or {@link
@@ -41,20 +34,14 @@ public class ProjectionUPS extends AbstractGeographicProjection {
      * @throws IllegalArgumentException if the specified pole is null.
      */
     public ProjectionUPS(String pole) {
-        super(pole != null && pole.equals(AVKey.SOUTH) ? SOUTH_LIMITS : NORTH_LIMITS);
+        super(pole != null && pole.equals(AVKey.SOUTH) ? ProjectionUPS.SOUTH_LIMITS : ProjectionUPS.NORTH_LIMITS);
 
-//        if (pole == null) {
-//            String message = Logging.getMessage("nullValue.HemisphereIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-
-        this.pole = pole.equals(AVKey.SOUTH) ? SOUTH : NORTH;
+        this.pole = pole.equals(AVKey.SOUTH) ? ProjectionUPS.SOUTH : ProjectionUPS.NORTH;
     }
 
     @Override
     public String getName() {
-        return (this.pole == SOUTH ? "South " : "North ") + "Universal Polar Stereographic";
+        return (this.pole == ProjectionUPS.SOUTH ? "South " : "North ") + "Universal Polar Stereographic";
     }
 
     @Override
@@ -67,27 +54,27 @@ public class ProjectionUPS extends AbstractGeographicProjection {
         Vec4 offset) {
         // Formulas taken from "Map Projections -- A Working Manual", Snyder, USGS paper 1395, pg. 161.
 
-        if ((this.pole == NORTH && latitude.degrees == 90) || (this.pole == SOUTH && latitude.degrees == -90))
+        if ((this.pole == ProjectionUPS.NORTH && latitude.degrees == 90) || (this.pole == ProjectionUPS.SOUTH && latitude.degrees == -90))
             return new Vec4(0, 0, metersElevation);
 
-        double lat = latitude.radians;
-        double lon = longitude.radians;
+        double lat = latitude.radians();
+        double lon = longitude.radians();
 
-        if (this.pole == NORTH && lat < 0)
+        if (this.pole == ProjectionUPS.NORTH && lat < 0)
             lat = 0;
-        else if (this.pole == SOUTH && lat > 0)
+        else if (this.pole == ProjectionUPS.SOUTH && lat > 0)
             lat = 0;
 
         double k0 = 0.994; // standard UPS scale factor -- see above reference pg.157, pp 2.
         double ecc = Math.sqrt(globe.getEccentricitySquared());
-        double sp = Math.sin(lat * (this.pole == NORTH ? 1 : -1));
+        double sp = Math.sin(lat * (this.pole == ProjectionUPS.NORTH ? 1 : -1));
 
         double t = Math.sqrt(((1 - sp) / (1 + sp)) * Math.pow((1 + ecc * sp) / (1 - ecc * sp), ecc));
         double s = Math.sqrt(Math.pow(1 + ecc, 1 + ecc) * Math.pow(1 - ecc, 1 - ecc));
         double r = 2 * globe.getEquatorialRadius() * k0 * t / s;
 
         double x = r * Math.sin(lon);
-        double y = -r * Math.cos(lon) * (this.pole == NORTH ? 1 : -1);
+        double y = -r * Math.cos(lon) * (this.pole == ProjectionUPS.NORTH ? 1 : -1);
 
         return new Vec4(x, y, metersElevation);
     }
@@ -95,16 +82,16 @@ public class ProjectionUPS extends AbstractGeographicProjection {
     @Override
     public void geographicToCartesian(Globe globe, Sector sector, int numLat, int numLon, double[] metersElevation,
         Vec4 offset, Vec4[] out) {
-        double minLat = sector.latMin().radians;
-        double maxLat = sector.latMax().radians;
-        double minLon = sector.lonMin().radians;
-        double maxLon = sector.lonMax().radians;
+        double minLat = sector.latMin().radians();
+        double maxLat = sector.latMax().radians();
+        double minLon = sector.lonMin().radians();
+        double maxLon = sector.lonMax().radians();
         double deltaLat = (maxLat - minLat) / (numLat > 1 ? numLat - 1 : 1);
         double deltaLon = (maxLon - minLon) / (numLon > 1 ? numLon - 1 : 1);
-        double minLatLimit = this.getProjectionLimits().latMin().radians;
-        double maxLatLimit = this.getProjectionLimits().latMax().radians;
-        double minLonLimit = this.getProjectionLimits().lonMin().radians;
-        double maxLonLimit = this.getProjectionLimits().lonMax().radians;
+        double minLatLimit = this.getProjectionLimits().latMin().radians();
+        double maxLatLimit = this.getProjectionLimits().latMax().radians();
+        double minLonLimit = this.getProjectionLimits().lonMin().radians();
+        double maxLonLimit = this.getProjectionLimits().lonMax().radians();
         int pos = 0;
 
         // Iterate over the latitude and longitude coordinates in the specified sector, computing the Cartesian point
@@ -134,7 +121,7 @@ public class ProjectionUPS extends AbstractGeographicProjection {
         double x = (cart.x - xOffset);
         double y = cart.y;
 
-        double lon = Math.atan2(x, y * (this.pole == NORTH ? -1 : 1));
+        double lon = Math.atan2(x, y * (this.pole == ProjectionUPS.NORTH ? -1 : 1));
 
         double k0 = 0.994; // standard UPS scale factor -- see above reference pg.157, pp 2.
         double ecc = Math.sqrt(globe.getEccentricitySquared());
@@ -163,7 +150,7 @@ public class ProjectionUPS extends AbstractGeographicProjection {
 
         double lat = Ap + s2p * (Bp + s2p * (Cp + s2p * (Dp + Ep * s2p)));
 
-        lat = lat * (this.pole == NORTH ? 1 : -1);
+        lat = lat * (this.pole == ProjectionUPS.NORTH ? 1 : -1);
 
         return Position.fromRadians(lat, lon, cart.z);
     }
@@ -174,89 +161,9 @@ public class ProjectionUPS extends AbstractGeographicProjection {
         // same direction as the vector returned by cartesianToGeographic. With the north pole, the north pointing
         // tangent has the opposite direction.
 
-        double x = Math.sin(longitude.radians) * (this.pole == SOUTH ? 1 : -1);
-        double y = Math.cos(longitude.radians);
+        double x = Math.sin(longitude.radians()) * (this.pole == ProjectionUPS.SOUTH ? 1 : -1);
+        double y = Math.cos(longitude.radians());
 
         return new Vec4(x, y, 0);
     }
-
-//    //    @Override
-//    public Vec4 geographicToCartesianNGA(Globe globe, Angle latitude, Angle longitude, double metersElevation,
-//        Vec4 offset) {
-//        // Formula from NGA.SIG.0012_2.0.0_UTMUPS dated 2014-03-25.
-//
-//        if ((this.pole == NORTH && latitude.degrees == 90) || (this.pole == SOUTH && latitude.degrees == -90))
-//            return new Vec4(0, 0, metersElevation);
-//
-//        double clampedLat = WWMath.clamp(latitude.radians, this.getProjectionLimits().latMin().radians,
-//            this.getProjectionLimits().latMax().radians);
-//
-//        double a = globe.getEquatorialRadius();
-//        double lat = clampedLat * (this.pole == NORTH ? 1 : -1);
-//        double lon = longitude.radians;
-//
-//        double sinLat = Math.sin(lat);
-//        double cosLat = Math.cos(lat);
-//
-//        double e = Math.sqrt(globe.getEccentricitySquared());
-//        double P = Math.exp(e * Angle.arctanh(e * sinLat));
-//        double k90 = Math.sqrt(1 - e * e) * Math.exp(e * Angle.arctanh(e));
-//
-//        double denom = (1 + sinLat) / P + (1 - sinLat) * P;
-//        double cosChi = 2 * cosLat / denom;
-//        double sinChi = ((1 + sinLat) / P - (1 - sinLat) * P) / denom;
-//
-//        double denom2 = k90 * (1 + sinChi);
-//        double x = 0.994 * 2 * a * Math.sin(lon) * cosChi / denom2;
-//        double y = 0.994 * -2 * a * Math.cos(lon) * cosChi / denom2 * (this.pole == NORTH ? 1 : -1);
-//
-//        return new Vec4(x, y, metersElevation);
-//    }
-//
-//    //    @Override
-//    public Position cartesianToGeographicNGA(Globe globe, Vec4 cart, Vec4 offset) {
-//        // Formula from NGA.SIG.0012_2.0.0_UTMUPS dated 2014-03-25.
-//
-//        // THIS FORMULA IS NOT PRODUCING THE EXPECTED RESULTS. Using this formula causes navigation to behave as
-//        // though there's a singularity at the pole. The user appears to be prevented from moving the pole over
-//        // the center of Cartesian coordinates.
-//
-//        double xOffset = offset != null ? offset.x : 0;
-//        double x = (cart.x - xOffset) / 0.994;
-//        double y = cart.y / (0.994 * this.pole == NORTH ? 1 : -1);
-//
-//        double a = globe.getEquatorialRadius();
-//        double e = Math.sqrt(globe.getEccentricitySquared());
-//        double k90 = Math.sqrt(1 - e * e) * Math.exp(e * Angle.arctanh(e));
-//
-//        double rx = (k90 * x) / (2 * a);
-//        double ry = (k90 * y) / (2 * a);
-//        double rSquared = rx * rx + ry * ry;
-//        double r = Math.sqrt(rSquared);
-//
-//        double cosChi = 2 * r / (1 + rSquared);
-//        double sinChi = (1 - rSquared) / (1 + rSquared);
-//
-//        double sinLat = sinChi;
-//        double P = 1;
-//        double convergence = 0.00000001; // ~ 6 cm on Earth
-//
-//        for (int i = 0; i < 10; i++) {
-//            P = Math.exp(e * Angle.arctanh(e * sinLat));
-//            double sPrevious = sinLat;
-//            sinLat = ((1 + sinChi) * P * P - (1 - sinChi)) / ((1 + sinChi) * P * P + (1 - sinChi));
-//
-//            if (Math.abs(sinLat - sPrevious) <= convergence)
-//                break;
-//        }
-//
-//        double cosLat = 0.5 * ((1 + sinLat) / P + (1 - sinLat) * P) * cosChi;
-//        double lat = Math.atan2(sinLat, cosLat) * this.pole == NORTH ? 1 : -1;
-//
-//        double lon = Math.atan2(x, -y);
-//        if (x == 0 && y == 0)
-//            lon = 0;
-//
-//        return Position.fromRadians(lat, lon, cart.z);
-//    }
 }

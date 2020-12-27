@@ -75,7 +75,7 @@ public class WindowsWebViewJNI {
             else
                 System.loadLibrary("WebView64");
 
-            initialize();
+            WindowsWebViewJNI.initialize();
         }
         catch (Throwable t) {
             String message = Logging.getMessage("WebView.ExceptionCreatingWebView", t);

@@ -45,12 +45,10 @@ public class WCSCapabilities extends OWSCapabilities {
         if (version == null) {
             this.setOWSNamespaceURI(OGCConstants.OWS_1_1_0_NAMESPACE_URI);
             this.setNamespaceURI(OGCConstants.WCS_1_1_1_NAMESPACE_URI);
-        }
-        else if (WWUtil.compareVersion(version, "1.1.1") == 0) {
+        } else if (WWUtil.compareVersion(version, "1.1.1") == 0) {
             this.setOWSNamespaceURI(OGCConstants.OWS_1_1_0_NAMESPACE_URI);
             this.setNamespaceURI(OGCConstants.WCS_1_1_1_NAMESPACE_URI);
-        }
-        else {
+        } else {
             this.setOWSNamespaceURI(OGCConstants.OWS_1_1_0_NAMESPACE_URI);
             this.setNamespaceURI(OGCConstants.WCS_1_1_1_NAMESPACE_URI);
         }

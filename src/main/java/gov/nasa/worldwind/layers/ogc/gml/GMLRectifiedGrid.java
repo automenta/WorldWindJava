@@ -39,7 +39,7 @@ public class GMLRectifiedGrid extends GMLGrid {
         List<Vec4> vectors = new ArrayList<>(this.offsetVectors.size());
 
         for (String s : this.offsetVectors) {
-            double[] arr = new double[] {0, 0, 0, 0};
+            double[] arr = {0, 0, 0, 0};
             String[] split = s.split(" ");
             for (int i = 0; i < Math.min(split.length, 4); i++) {
                 try {
@@ -63,13 +63,11 @@ public class GMLRectifiedGrid extends GMLGrid {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.axisNames.add(s);
-        }
-        else if (ctx.isStartElement(event, "offsetVector")) {
+        } else if (ctx.isStartElement(event, "offsetVector")) {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.offsetVectors.add(s);
-        }
-        else {
+        } else {
             super.doParseEventContent(ctx, event, args);
         }
     }

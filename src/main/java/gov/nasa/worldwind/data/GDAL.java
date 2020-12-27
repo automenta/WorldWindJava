@@ -43,10 +43,10 @@ public class GDAL {
 
         return new Point2D[]
             {
-                getGeoPointForRasterPoint(gt, 0, height),
-                getGeoPointForRasterPoint(gt, width, height),
-                getGeoPointForRasterPoint(gt, width, 0),
-                getGeoPointForRasterPoint(gt, 0, 0)
+                GDAL.getGeoPointForRasterPoint(gt, 0, height),
+                GDAL.getGeoPointForRasterPoint(gt, width, height),
+                GDAL.getGeoPointForRasterPoint(gt, width, 0),
+                GDAL.getGeoPointForRasterPoint(gt, 0, 0)
             };
     }
 
@@ -103,7 +103,7 @@ public class GDAL {
             throw new IllegalArgumentException(message);
         }
 
-        AffineTransform atx = getAffineTransform(ds);
+        AffineTransform atx = GDAL.getAffineTransform(ds);
         double sy = ((double) ds.getRasterYSize() / newHeight);
         double sx = ((double) ds.getRasterXSize() / newWidth);
         atx.scale(sx, sy);
@@ -173,8 +173,8 @@ public class GDAL {
 
     public static class Area {
         protected SpatialReference srs;
-        protected Point2D[] corners = null;
-        protected Sector bbox = null; // its a sector for Geodetic rasters, and a BoundingBox for projected rasters
+        protected Point2D[] corners;
+        protected Sector bbox; // its a sector for Geodetic rasters, and a BoundingBox for projected rasters
 
         public Area(SpatialReference srs, Dataset ds) throws IllegalArgumentException {
             if (null == ds) {
@@ -206,7 +206,7 @@ public class GDAL {
             ds.GetGeoTransform(gt);
 
             this.corners = GDAL.computeCornersFromGeotransform(gt, ds.getRasterXSize(), ds.getRasterYSize());
-            this.bbox = calcBoundingSector(srs, this.corners);
+            this.bbox = Area.calcBoundingSector(srs, this.corners);
         }
 
         protected Area(SpatialReference srs, double minY, double maxY, double minX, double maxX)
@@ -227,9 +227,8 @@ public class GDAL {
 
             if (this.srs.IsGeographic() > 0) {
                 this.bbox = Sector.fromDegrees(minY, maxY, minX, maxX);
-            }
-            else
-                this.bbox = calcBoundingSector(this.srs, this.corners);
+            } else
+                this.bbox = Area.calcBoundingSector(this.srs, this.corners);
         }
 
         public Area(SpatialReference srs, Sector sector) throws IllegalArgumentException {

@@ -15,9 +15,9 @@ import java.io.*;
  * @version $Id: RPFImageFile.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 public class RPFImageFile extends RPFFile {
-    private NITFSImageSegment imageSegment = null;
-    private UserDefinedImageSubheader imageSubheader = null;
-    private RPFFrameFileComponents rpfFrameFileComponents = null;
+    private final NITFSImageSegment imageSegment;
+    private final UserDefinedImageSubheader imageSubheader;
+    private final RPFFrameFileComponents rpfFrameFileComponents;
 
     private RPFImageFile(File rpfFile) throws IOException, NITFSRuntimeException {
         super(rpfFile);

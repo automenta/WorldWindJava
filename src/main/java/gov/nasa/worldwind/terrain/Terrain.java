@@ -61,7 +61,8 @@ public interface Terrain {
      *                                                         terrain data.
      * @throws gov.nasa.worldwind.exception.WWRuntimeException if the operation is interrupted.
      */
-    @Deprecated Vec4 getSurfacePoint(Angle latitude, Angle longitude, double metersOffset);
+    @Deprecated
+    Vec4 getSurfacePoint(Angle latitude, Angle longitude, double metersOffset);
 
     default Vec4 getSurfacePoint(double latitude, double longitude, double metersOffset) {
         return getSurfacePoint(Angle.fromDegrees(latitude), Angle.fromDegrees(longitude), metersOffset);

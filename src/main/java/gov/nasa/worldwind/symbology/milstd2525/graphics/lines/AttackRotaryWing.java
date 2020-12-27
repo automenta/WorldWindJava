@@ -107,7 +107,7 @@ public class AttackRotaryWing extends Aviation {
         Position posStart = globe.computePositionFromPoint(start);
         Position posEnd = globe.computePositionFromPoint(end);
 
-        this.paths[LEFT_VERTICAL].setPositions(Arrays.asList(posStart, posEnd));
+        this.paths[AttackRotaryWing.LEFT_VERTICAL].setPositions(Arrays.asList(posStart, posEnd));
 
         // Find points required to draw a vertical line on the other side of Pt. X
         start = pX.add3(vAB.normalize3().multiply3(-offsetDist));
@@ -116,7 +116,7 @@ public class AttackRotaryWing extends Aviation {
         posStart = globe.computePositionFromPoint(start);
         posEnd = globe.computePositionFromPoint(end);
 
-        this.paths[RIGHT_VERTICAL].setPositions(Arrays.asList(posStart, posEnd));
+        this.paths[AttackRotaryWing.RIGHT_VERTICAL].setPositions(Arrays.asList(posStart, posEnd));
 
         // Compute positions for the rotor symbol. Points are named according to this diagram:
         //     H
@@ -157,6 +157,6 @@ public class AttackRotaryWing extends Aviation {
 
         // Draw the symbol as a single path (the path doubles back itself when drawing the base of the symbol, and the
         // arrow head.
-        this.paths[ROTOR_SYMBOL].setPositions(Arrays.asList(posE, posF, posG, posH, posI, posH, posJ));
+        this.paths[AttackRotaryWing.ROTOR_SYMBOL].setPositions(Arrays.asList(posE, posF, posG, posH, posI, posH, posJ));
     }
 }

@@ -20,8 +20,8 @@ public class PickedObject extends AVListImpl {
     private final Point pickPoint;
     private final int colorCode;
     private final Object userObject;
-    private boolean isOnTop = false;
-    private boolean isTerrain = false;
+    private boolean isOnTop;
+    private final boolean isTerrain;
 
     public PickedObject(int colorCode, Object userObject) {
         super();

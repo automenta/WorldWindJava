@@ -7,7 +7,7 @@
 package gov.nasa.worldwind;
 
 import com.jogamp.nativewindow.ScalableSurface;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.cache.*;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.geom.Position;
@@ -208,7 +208,6 @@ public interface WorldWindow extends AVList, PropertyChangeListener {
         this.wwd().setModel(model); // null models are permissible
     }
 
-
     default void addRenderingListener(RenderingListener listener) {
         this.wwd().addRenderingListener(listener);
     }
@@ -292,8 +291,6 @@ public interface WorldWindow extends AVList, PropertyChangeListener {
         return this.wwd().removeKey(key);
     }
 
-
-
     default void firePropertyChange(PropertyChangeEvent propertyChangeEvent) {
         this.wwd().firePropertyChange(propertyChangeEvent);
     }
@@ -319,10 +316,15 @@ public interface WorldWindow extends AVList, PropertyChangeListener {
         this.wwd().setPerFrameStatisticsKeys(keys);
     }
 
-    /** start supplying events to the handler */
-    default void startEvents(InputHandler h) { }
+    /**
+     * start supplying events to the handler
+     */
+    default void startEvents(InputHandler h) {
+    }
 
-    /** stop supplying events to the handler */
-    default void stopEvents(InputHandler h) { }
-
+    /**
+     * stop supplying events to the handler
+     */
+    default void stopEvents(InputHandler h) {
+    }
 }

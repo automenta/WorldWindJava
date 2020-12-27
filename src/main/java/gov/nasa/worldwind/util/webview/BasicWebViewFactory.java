@@ -26,28 +26,6 @@ public class BasicWebViewFactory implements WebViewFactory {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    public WebView createWebView(Dimension frameSize) {
-        if (frameSize == null) {
-            String message = Logging.getMessage("nullValue.SizeIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (Configuration.isLinuxOS())
-            return BasicWebViewFactory.createLinuxWebView(frameSize);
-
-        else if (Configuration.isMacOS())
-            return BasicWebViewFactory.createMacWebView(frameSize);
-
-        else if (Configuration.isWindowsOS())
-            return BasicWebViewFactory.createWindowsWebView(frameSize);
-
-        return BasicWebViewFactory.createUnknownOSWebView(frameSize);
-    }
-
-    /**
      * Create a WebView for Linux. This implementation throws UnsupportedOperationException. Subclasses may override
      * this method to add Linux support to the factory.
      *
@@ -94,5 +72,27 @@ public class BasicWebViewFactory implements WebViewFactory {
             System.getProperty("os.name"));
         Logging.logger().severe(message);
         throw new UnsupportedOperationException(message);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public WebView createWebView(Dimension frameSize) {
+        if (frameSize == null) {
+            String message = Logging.getMessage("nullValue.SizeIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        if (Configuration.isLinuxOS())
+            return BasicWebViewFactory.createLinuxWebView(frameSize);
+
+        else if (Configuration.isMacOS())
+            return BasicWebViewFactory.createMacWebView(frameSize);
+
+        else if (Configuration.isWindowsOS())
+            return BasicWebViewFactory.createWindowsWebView(frameSize);
+
+        return BasicWebViewFactory.createUnknownOSWebView(frameSize);
     }
 }

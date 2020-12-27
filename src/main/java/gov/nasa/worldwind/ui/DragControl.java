@@ -40,9 +40,8 @@ public abstract class DragControl extends SubHotSpot {
     }
 
     /**
-     * Handle a {@link SelectEvent} and call {@link #beginDrag(Point)}, {@link #drag(Point)}, {@link
-     * #endDrag} as appropriate. Subclasses may override this method if they need to handle events other than drag
-     * events.
+     * Handle a {@link SelectEvent} and call {@link #beginDrag(Point)}, {@link #drag(Point)}, {@link #endDrag} as
+     * appropriate. Subclasses may override this method if they need to handle events other than drag events.
      *
      * @param event Select event.
      */
@@ -60,8 +59,7 @@ public abstract class DragControl extends SubHotSpot {
 
             this.drag(pickPoint);
             event.consume();
-        }
-        else if (event.isDragEnd()) {
+        } else if (event.isDragEnd()) {
             this.dragging = false;
             this.endDrag();
             event.consume();

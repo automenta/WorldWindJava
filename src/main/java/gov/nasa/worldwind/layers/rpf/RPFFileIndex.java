@@ -41,21 +41,21 @@ public class RPFFileIndex {
         return x < min ? min : Math.min(x, max);
     }
 
-    private static String getString(ByteBuffer buffer, int len) throws IOException {
+    private static String getString(ByteBuffer buffer, int len) throws UnsupportedEncodingException {
         String s = null;
         if (buffer != null && buffer.remaining() >= len) {
             byte[] dest = new byte[len];
             buffer.get(dest, 0, len);
-            s = new String(dest, CHARACTER_ENCODING).trim();
+            s = new String(dest, RPFFileIndex.CHARACTER_ENCODING).trim();
         }
         return s;
     }
 
-    private static void putString(ByteBuffer buffer, String s, int len) throws IOException {
+    private static void putString(ByteBuffer buffer, String s, int len) throws UnsupportedEncodingException {
         if (buffer != null) {
             byte[] src = new byte[len];
             if (s != null) {
-                byte[] utfBytes = s.getBytes(CHARACTER_ENCODING);
+                byte[] utfBytes = s.getBytes(RPFFileIndex.CHARACTER_ENCODING);
                 System.arraycopy(utfBytes, 0, src, 0, utfBytes.length);
             }
             buffer.put(src, 0, len);
@@ -216,10 +216,10 @@ public class RPFFileIndex {
 
         if (bs != null) {
             bs = Sector.fromDegrees(
-                clamp(bs.latMin, -90.0d, 90.0d),
-                clamp(bs.latMax, -90.0d, 90.0d),
-                clamp(bs.lonMin, -180.0d, 180.0d),
-                clamp(bs.lonMax, -180.0d, 180.0d));
+                RPFFileIndex.clamp(bs.latMin, -90.0d, 90.0d),
+                RPFFileIndex.clamp(bs.latMax, -90.0d, 90.0d),
+                RPFFileIndex.clamp(bs.lonMin, -180.0d, 180.0d),
+                RPFFileIndex.clamp(bs.lonMax, -180.0d, 180.0d));
         }
         this.properties.setBoundingSector(bs);
     }
@@ -231,14 +231,14 @@ public class RPFFileIndex {
             throw new IllegalArgumentException(message);
         }
 
-        String fileId = getString(buffer, FILE_ID_LENGTH);
-        if (!FILE_ID.equals(fileId)) {
+        String fileId = RPFFileIndex.getString(buffer, RPFFileIndex.FILE_ID_LENGTH);
+        if (!RPFFileIndex.FILE_ID.equals(fileId)) {
             String message = "buffer does not contain an RPFFileIndex";
             Logging.logger().severe(message);
             throw new IOException(message);
         }
         //noinspection UnusedDeclaration
-        String version = getString(buffer, VERSION_LENGTH);
+        String version = RPFFileIndex.getString(buffer, RPFFileIndex.VERSION_LENGTH);
 
         LocationSection locationSection = new LocationSection(buffer);
         this.properties.load(buffer, locationSection.getInformationSectionLocation());
@@ -253,7 +253,7 @@ public class RPFFileIndex {
         ByteBuffer waveletTableBuffer = this.waveletTable.save();
         ByteBuffer directoryTableBuffer = this.directoryTable.save();
 
-        int location = FILE_ID_LENGTH + VERSION_LENGTH;
+        int location = RPFFileIndex.FILE_ID_LENGTH + RPFFileIndex.VERSION_LENGTH;
         LocationSection locationSection = new LocationSection();
         location += locationSection.locationSectionLength;
         locationSection.setInformationSection(informationSectionBuffer.limit(), location);
@@ -268,7 +268,7 @@ public class RPFFileIndex {
         ByteBuffer locationSectionBuffer = locationSection.save();
 
         int length =
-            FILE_ID_LENGTH + VERSION_LENGTH
+            RPFFileIndex.FILE_ID_LENGTH + RPFFileIndex.VERSION_LENGTH
                 + locationSectionBuffer.limit()
                 + informationSectionBuffer.limit()
                 + rpfFileTableBuffer.limit()
@@ -276,8 +276,8 @@ public class RPFFileIndex {
                 + directoryTableBuffer.limit();
         ByteBuffer buffer = ByteBuffer.allocate(length);
 
-        putString(buffer, FILE_ID, FILE_ID_LENGTH);
-        putString(buffer, VERSION, VERSION_LENGTH);
+        RPFFileIndex.putString(buffer, RPFFileIndex.FILE_ID, RPFFileIndex.FILE_ID_LENGTH);
+        RPFFileIndex.putString(buffer, RPFFileIndex.VERSION, RPFFileIndex.VERSION_LENGTH);
         buffer.put(locationSectionBuffer);
         buffer.put(informationSectionBuffer);
         buffer.put(rpfFileTableBuffer);
@@ -297,7 +297,7 @@ public class RPFFileIndex {
         private final List<Record> records;
         private final Map<Long, Record> keyIndex;
         private RecordFactory recordFactory;
-        private volatile long uniqueKey = INVALID_KEY;
+        private volatile long uniqueKey = Table.INVALID_KEY;
 
         public Table() {
             this.records = new ArrayList<>();
@@ -311,7 +311,7 @@ public class RPFFileIndex {
 
         public final Record getRecord(long key) {
             Record found = null;
-            if (key != INVALID_KEY) {
+            if (key != Table.INVALID_KEY) {
                 found = this.keyIndex.get(key);
             }
             return found;
@@ -434,7 +434,7 @@ public class RPFFileIndex {
     public static class RPFFileRecord extends Record {
         private static final int FILENAME_LENGTH = 12;
         private static final int SIZE =
-            (FILENAME_LENGTH * Byte.SIZE) // Filename.
+            (RPFFileRecord.FILENAME_LENGTH * Byte.SIZE) // Filename.
                 + Long.SIZE // Directory path secondary key.
                 + Long.SIZE // Wavelet file secondary key.
                 + (4 * Double.SIZE); // min-latitude, max-latitude, min-longitude, and max-longitude.
@@ -486,47 +486,47 @@ public class RPFFileIndex {
             this.maxLongitude = sector != null ? sector.lonMax() : null;
         }
 
-        void load(ByteBuffer buffer) throws IOException {
+        void load(ByteBuffer buffer) throws UnsupportedEncodingException {
             if (buffer == null) {
                 String message = Logging.getMessage("nullValue.ByteBufferIsNull");
                 Logging.logger().severe(message);
                 throw new IllegalArgumentException(message);
             }
 
-            this.filename = getString(buffer, FILENAME_LENGTH);
+            this.filename = RPFFileIndex.getString(buffer, RPFFileRecord.FILENAME_LENGTH);
             this.directorySecondaryKey = buffer.getLong();
             this.waveletSecondaryKey = buffer.getLong();
-            this.minLatitude = getAngle(buffer);
-            this.maxLatitude = getAngle(buffer);
-            this.minLongitude = getAngle(buffer);
-            this.maxLongitude = getAngle(buffer);
+            this.minLatitude = RPFFileIndex.getAngle(buffer);
+            this.maxLatitude = RPFFileIndex.getAngle(buffer);
+            this.minLongitude = RPFFileIndex.getAngle(buffer);
+            this.maxLongitude = RPFFileIndex.getAngle(buffer);
         }
 
-        void save(ByteBuffer buffer) throws IOException {
+        void save(ByteBuffer buffer) throws UnsupportedEncodingException {
             if (buffer == null) {
                 String message = Logging.getMessage("nullValue.ByteBufferIsNull");
                 Logging.logger().severe(message);
                 throw new IllegalArgumentException(message);
             }
 
-            putString(buffer, this.filename, FILENAME_LENGTH);
+            RPFFileIndex.putString(buffer, this.filename, RPFFileRecord.FILENAME_LENGTH);
             buffer.putLong(this.directorySecondaryKey);
             buffer.putLong(this.waveletSecondaryKey);
-            putAngle(buffer, this.minLatitude);
-            putAngle(buffer, this.maxLatitude);
-            putAngle(buffer, this.minLongitude);
-            putAngle(buffer, this.maxLongitude);
+            RPFFileIndex.putAngle(buffer, this.minLatitude);
+            RPFFileIndex.putAngle(buffer, this.maxLatitude);
+            RPFFileIndex.putAngle(buffer, this.minLongitude);
+            RPFFileIndex.putAngle(buffer, this.maxLongitude);
         }
 
         int getSizeInBits() {
-            return SIZE + super.getSizeInBits();
+            return RPFFileRecord.SIZE + super.getSizeInBits();
         }
     }
 
     public static class WaveletRecord extends Record {
         private static final int FILENAME_LENGTH = 16;
         private static final int SIZE =
-            (FILENAME_LENGTH * Byte.SIZE) // Filename.
+            (WaveletRecord.FILENAME_LENGTH * Byte.SIZE) // Filename.
                 + Long.SIZE // Directory path secondary key.
                 + Long.SIZE; // RPF file secondary key.
         private String filename;
@@ -553,39 +553,39 @@ public class RPFFileIndex {
             return this.rpfFileSecondaryKey;
         }
 
-        void load(ByteBuffer buffer) throws IOException {
+        void load(ByteBuffer buffer) throws UnsupportedEncodingException {
             if (buffer == null) {
                 String message = Logging.getMessage("nullValue.ByteBufferIsNull");
                 Logging.logger().severe(message);
                 throw new IllegalArgumentException(message);
             }
 
-            this.filename = getString(buffer, FILENAME_LENGTH);
+            this.filename = RPFFileIndex.getString(buffer, WaveletRecord.FILENAME_LENGTH);
             this.directorySecondaryKey = buffer.getLong();
             this.rpfFileSecondaryKey = buffer.getLong();
         }
 
-        void save(ByteBuffer buffer) throws IOException {
+        void save(ByteBuffer buffer) throws UnsupportedEncodingException {
             if (buffer == null) {
                 String message = Logging.getMessage("nullValue.ByteBufferIsNull");
                 Logging.logger().severe(message);
                 throw new IllegalArgumentException(message);
             }
 
-            putString(buffer, this.filename, FILENAME_LENGTH);
+            RPFFileIndex.putString(buffer, this.filename, WaveletRecord.FILENAME_LENGTH);
             buffer.putLong(this.directorySecondaryKey);
             buffer.putLong(this.rpfFileSecondaryKey);
         }
 
         int getSizeInBits() {
-            return SIZE + super.getSizeInBits();
+            return WaveletRecord.SIZE + super.getSizeInBits();
         }
     }
 
     public static class DirectoryRecord extends Record {
         private static final int PATH_LENGTH = 512;
         private static final int SIZE =
-            (PATH_LENGTH * Byte.SIZE); // Path.
+            (DirectoryRecord.PATH_LENGTH * Byte.SIZE); // Path.
         private String path;
 
         public DirectoryRecord(long key) {
@@ -606,28 +606,28 @@ public class RPFFileIndex {
             this.path = path;
         }
 
-        void load(ByteBuffer buffer) throws IOException {
+        void load(ByteBuffer buffer) throws UnsupportedEncodingException {
             if (buffer == null) {
                 String message = Logging.getMessage("nullValue.ByteBufferIsNull");
                 Logging.logger().severe(message);
                 throw new IllegalArgumentException(message);
             }
 
-            this.path = getString(buffer, PATH_LENGTH);
+            this.path = RPFFileIndex.getString(buffer, DirectoryRecord.PATH_LENGTH);
         }
 
-        void save(ByteBuffer buffer) throws IOException {
+        void save(ByteBuffer buffer) throws UnsupportedEncodingException {
             if (buffer == null) {
                 String message = Logging.getMessage("nullValue.ByteBufferIsNull");
                 Logging.logger().severe(message);
                 throw new IllegalArgumentException(message);
             }
 
-            putString(buffer, this.path, PATH_LENGTH);
+            RPFFileIndex.putString(buffer, this.path, DirectoryRecord.PATH_LENGTH);
         }
 
         int getSizeInBits() {
-            return SIZE + super.getSizeInBits();
+            return DirectoryRecord.SIZE + super.getSizeInBits();
         }
     }
 
@@ -637,9 +637,9 @@ public class RPFFileIndex {
         private static final int DESCRIPTION_LENGTH = 4096;
         private static final int SIZE =
             Integer.SIZE // Section length.
-                + (ROOT_PATH_LENGTH * Byte.SIZE) // Root path.
-                + (DATA_SERIES_ID_LENGTH * Byte.SIZE) // Data series identifier.
-                + (DESCRIPTION_LENGTH * Byte.SIZE) // Description.
+                + (IndexProperties.ROOT_PATH_LENGTH * Byte.SIZE) // Root path.
+                + (IndexProperties.DATA_SERIES_ID_LENGTH * Byte.SIZE) // Data series identifier.
+                + (IndexProperties.DESCRIPTION_LENGTH * Byte.SIZE) // Description.
                 + (4 * Double.SIZE); // min-latitude, max-latitude, min-longitude, and max-longitude.
         public String rootPath;
         public String dataSeriesIdentifier;
@@ -696,7 +696,7 @@ public class RPFFileIndex {
             this.maxLongitude = sector != null ? sector.lonMax() : null;
         }
 
-        void load(ByteBuffer buffer, int location) throws IOException {
+        void load(ByteBuffer buffer, int location) throws UnsupportedEncodingException {
             if (buffer == null) {
                 String message = Logging.getMessage("nullValue.ByteBufferIsNull");
                 Logging.logger().severe(message);
@@ -708,28 +708,28 @@ public class RPFFileIndex {
 
             //noinspection UnusedDeclaration
             int length = buffer.getInt();
-            this.rootPath = getString(buffer, ROOT_PATH_LENGTH);
-            this.dataSeriesIdentifier = getString(buffer, DATA_SERIES_ID_LENGTH);
-            this.description = getString(buffer, DESCRIPTION_LENGTH);
-            this.minLatitude = getAngle(buffer);
-            this.maxLatitude = getAngle(buffer);
-            this.minLongitude = getAngle(buffer);
-            this.maxLongitude = getAngle(buffer);
+            this.rootPath = RPFFileIndex.getString(buffer, IndexProperties.ROOT_PATH_LENGTH);
+            this.dataSeriesIdentifier = RPFFileIndex.getString(buffer, IndexProperties.DATA_SERIES_ID_LENGTH);
+            this.description = RPFFileIndex.getString(buffer, IndexProperties.DESCRIPTION_LENGTH);
+            this.minLatitude = RPFFileIndex.getAngle(buffer);
+            this.maxLatitude = RPFFileIndex.getAngle(buffer);
+            this.minLongitude = RPFFileIndex.getAngle(buffer);
+            this.maxLongitude = RPFFileIndex.getAngle(buffer);
 
             buffer.position(savePos);
         }
 
-        ByteBuffer save() throws IOException {
-            int length = SIZE / 8;
+        ByteBuffer save() throws UnsupportedEncodingException {
+            int length = IndexProperties.SIZE / 8;
             ByteBuffer buffer = ByteBuffer.allocate(length);
             buffer.putInt(length);
-            putString(buffer, this.rootPath, ROOT_PATH_LENGTH);
-            putString(buffer, this.dataSeriesIdentifier, DATA_SERIES_ID_LENGTH);
-            putString(buffer, this.description, DESCRIPTION_LENGTH);
-            putAngle(buffer, this.minLatitude);
-            putAngle(buffer, this.maxLatitude);
-            putAngle(buffer, this.minLongitude);
-            putAngle(buffer, this.maxLongitude);
+            RPFFileIndex.putString(buffer, this.rootPath, IndexProperties.ROOT_PATH_LENGTH);
+            RPFFileIndex.putString(buffer, this.dataSeriesIdentifier, IndexProperties.DATA_SERIES_ID_LENGTH);
+            RPFFileIndex.putString(buffer, this.description, IndexProperties.DESCRIPTION_LENGTH);
+            RPFFileIndex.putAngle(buffer, this.minLatitude);
+            RPFFileIndex.putAngle(buffer, this.maxLatitude);
+            RPFFileIndex.putAngle(buffer, this.minLongitude);
+            RPFFileIndex.putAngle(buffer, this.maxLongitude);
             buffer.flip();
             return buffer;
         }

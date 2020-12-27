@@ -31,80 +31,6 @@ public class ShapeCombiner {
         this.resolution = resolution;
     }
 
-    public Globe getGlobe() {
-        return this.globe;
-    }
-
-    public double getResolution() {
-        return this.resolution;
-    }
-
-    public ContourList union(Combinable... shapes) {
-        if (shapes == null) {
-            String msg = Logging.getMessage("nullValue.ListIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        CombineContext cc = this.createContext();
-
-        try {
-            ShapeCombiner.union(cc, shapes);
-        }
-        finally {
-            cc.dispose(); // releases GLU tessellator resources
-        }
-
-        return cc.getContours();
-    }
-
-    public ContourList intersection(Combinable... shapes) {
-        if (shapes == null) {
-            String msg = Logging.getMessage("nullValue.ListIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        CombineContext cc = this.createContext();
-
-        try {
-            if (shapes.length == 1)
-                ShapeCombiner.union(cc, shapes); // equivalent to the identity of the first shape
-            else if (shapes.length > 1)
-                ShapeCombiner.intersection(cc, shapes);
-        }
-        finally {
-            cc.dispose(); // releases GLU tessellator resources
-        }
-
-        return cc.getContours();
-    }
-
-    public ContourList difference(Combinable... shapes) {
-        if (shapes == null) {
-            String msg = Logging.getMessage("nullValue.ListIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        CombineContext cc = this.createContext();
-        try {
-            if (shapes.length == 1)
-                ShapeCombiner.union(cc, shapes); // equivalent to the identity of the first shape
-            else if (shapes.length > 1)
-                ShapeCombiner.difference(cc, shapes);
-        }
-        finally {
-            cc.dispose(); // releases GLU tessellator resources
-        }
-
-        return cc.getContours();
-    }
-
-    protected CombineContext createContext() {
-        return new CombineContext(this.globe, this.resolution);
-    }
-
     protected static void union(CombineContext cc, Combinable... shapes) {
         GLUtessellator tess = cc.getTessellator();
 
@@ -224,5 +150,79 @@ public class ShapeCombiner {
         finally {
             cc.setBoundingSectorMode(false);
         }
+    }
+
+    public Globe getGlobe() {
+        return this.globe;
+    }
+
+    public double getResolution() {
+        return this.resolution;
+    }
+
+    public ContourList union(Combinable... shapes) {
+        if (shapes == null) {
+            String msg = Logging.getMessage("nullValue.ListIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        CombineContext cc = this.createContext();
+
+        try {
+            ShapeCombiner.union(cc, shapes);
+        }
+        finally {
+            cc.dispose(); // releases GLU tessellator resources
+        }
+
+        return cc.getContours();
+    }
+
+    public ContourList intersection(Combinable... shapes) {
+        if (shapes == null) {
+            String msg = Logging.getMessage("nullValue.ListIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        CombineContext cc = this.createContext();
+
+        try {
+            if (shapes.length == 1)
+                ShapeCombiner.union(cc, shapes); // equivalent to the identity of the first shape
+            else if (shapes.length > 1)
+                ShapeCombiner.intersection(cc, shapes);
+        }
+        finally {
+            cc.dispose(); // releases GLU tessellator resources
+        }
+
+        return cc.getContours();
+    }
+
+    public ContourList difference(Combinable... shapes) {
+        if (shapes == null) {
+            String msg = Logging.getMessage("nullValue.ListIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        CombineContext cc = this.createContext();
+        try {
+            if (shapes.length == 1)
+                ShapeCombiner.union(cc, shapes); // equivalent to the identity of the first shape
+            else if (shapes.length > 1)
+                ShapeCombiner.difference(cc, shapes);
+        }
+        finally {
+            cc.dispose(); // releases GLU tessellator resources
+        }
+
+        return cc.getContours();
+    }
+
+    protected CombineContext createContext() {
+        return new CombineContext(this.globe, this.resolution);
     }
 }

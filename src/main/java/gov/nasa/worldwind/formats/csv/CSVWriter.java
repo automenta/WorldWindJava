@@ -16,7 +16,7 @@ import java.io.*;
  */
 public class CSVWriter {
     private final PrintWriter printWriter;
-    private int lineNumber = 0;
+    private int lineNumber;
 
     public CSVWriter(String path) throws IOException {
         if (path == null) {

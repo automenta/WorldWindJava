@@ -119,8 +119,7 @@ public class PlacemarkClutterFilter implements ClutterFilter {
                     if (placemarks == null)
                         placemarks = new ArrayList<>();
                     placemarks.add((PointPlacemark.OrderedPlacemark) shape);
-                }
-                else {
+                } else {
                     // Keep track of the first non-placemark shape associated with the current rectangle.
                     if (firstShape == null)
                         firstShape = shape;
@@ -138,8 +137,7 @@ public class PlacemarkClutterFilter implements ClutterFilter {
                     angle += 1;
                     dc.addOrderedRenderable(new DeclutteredLabel(angle, pp, entry.getKey()));
                 }
-            }
-            else if (placemarks != null && placemarks.size() == 1) {
+            } else if (placemarks != null && placemarks.size() == 1) {
                 // If there's only one placemark associated with the current rectangle, just add it back to the
                 // ordered renderable list.
                 dc.addOrderedRenderable(placemarks.get(0));
@@ -157,6 +155,21 @@ public class PlacemarkClutterFilter implements ClutterFilter {
             this.angle = angle;
             this.opm = opm;
             this.region = region;
+        }
+
+        protected static void drawDeclutterLine(DrawContext dc, Vec4 startPoint, Vec4 endPoint) {
+            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
+
+            gl.glLineWidth(1);
+
+            Color color = Color.WHITE;
+            gl.glColor4ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue(),
+                (byte) color.getAlpha());
+
+            gl.glBegin(GL2.GL_LINE_STRIP);
+            gl.glVertex3d(startPoint.x, startPoint.y, startPoint.z);
+            gl.glVertex3d(endPoint.x, endPoint.y, endPoint.z);
+            gl.glEnd();
         }
 
         @Override
@@ -210,7 +223,8 @@ public class PlacemarkClutterFilter implements ClutterFilter {
                 gl.glDepthMask(false);
 
                 // The label is drawn using a parallel projection.
-                gl.glOrtho(0.0d, dc.getView().getViewport().width, 0.0d, dc.getView().getViewport().height, -1.0d, 1.0d);
+                gl.glOrtho(0.0d, dc.getView().getViewport().width, 0.0d, dc.getView().getViewport().height, -1.0d,
+                    1.0d);
 
                 // Compute the starting point of the line.
                 Vec4 startPoint = this.opm.getScreenPoint();
@@ -231,7 +245,7 @@ public class PlacemarkClutterFilter implements ClutterFilter {
                     // Compute the end point of the line.
                     Vec4 endPoint = new Vec4(textPoint.x + bounds.getWidth(), textPoint.y, textPoint.z);
                     dx = endPoint.x - startPoint.x;
-                    dy = endPoint.y() - startPoint.y;
+                    dy = endPoint.y - startPoint.y;
                     double d1 = dx * dx + dy * dy;
                     dx = textPoint.x - startPoint.x;
                     dy = textPoint.y - startPoint.y;
@@ -262,8 +276,7 @@ public class PlacemarkClutterFilter implements ClutterFilter {
                 gl.glTranslated(textPoint.x, textPoint.y, 0);
                 gl.glScaled(this.region.getWidth() / 2, this.region.getHeight() / 2, 1);
                 dc.drawUnitQuad();
-            }
-            else {
+            } else {
                 TextRenderer textRenderer = OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(), font);
                 try {
                     PointPlacemark placemark = this.opm.getPlacemark();
@@ -284,21 +297,6 @@ public class PlacemarkClutterFilter implements ClutterFilter {
                     textRenderer.end3DRendering();
                 }
             }
-        }
-
-        protected static void drawDeclutterLine(DrawContext dc, Vec4 startPoint, Vec4 endPoint) {
-            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-
-            gl.glLineWidth(1);
-
-            Color color = Color.WHITE;
-            gl.glColor4ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue(),
-                (byte) color.getAlpha());
-
-            gl.glBegin(GL2.GL_LINE_STRIP);
-            gl.glVertex3d(startPoint.x(), startPoint.y, startPoint.z);
-            gl.glVertex3d(endPoint.x, endPoint.y(), endPoint.z);
-            gl.glEnd();
         }
     }
 }

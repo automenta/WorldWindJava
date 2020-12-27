@@ -54,11 +54,9 @@ public class OGCDCType extends AbstractXMLEventParser {
         throws XMLStreamException {
         if (ctx.isStartElement(event, HTTP)) {
             this.addProtocol(event.asStartElement().getName().getLocalPart());
-        }
-        else if (ctx.isStartElement(event, GET) || ctx.isStartElement(event, POST)) {
+        } else if (ctx.isStartElement(event, GET) || ctx.isStartElement(event, POST)) {
             this.addRequestMethod(event.asStartElement().getName().getLocalPart());
-        }
-        else if (ctx.isStartElement(event, ONLINE_RESOURCE)) {
+        } else if (ctx.isStartElement(event, ONLINE_RESOURCE)) {
             XMLEventParser parser = this.allocate(ctx, event);
             if (parser != null) {
                 Object o = parser.parse(ctx, event, args);

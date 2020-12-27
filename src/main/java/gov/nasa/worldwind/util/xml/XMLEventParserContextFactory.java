@@ -32,9 +32,9 @@ public class XMLEventParserContextFactory {
 
     static {
         // Register a KML parser context for the default KML namespace and one for the empty namespace.
-        String[] mimeTypes = new String[] {KMLConstants.KML_MIME_TYPE, KMLConstants.KMZ_MIME_TYPE};
-        parsers.add(new ParserTableEntry(mimeTypes, new KMLParserContext(KMLConstants.KML_NAMESPACE)));
-        parsers.add(new ParserTableEntry(mimeTypes, new KMLParserContext(XMLConstants.NULL_NS_URI)));
+        String[] mimeTypes = {KMLConstants.KML_MIME_TYPE, KMLConstants.KMZ_MIME_TYPE};
+        XMLEventParserContextFactory.parsers.add(new ParserTableEntry(mimeTypes, new KMLParserContext(KMLConstants.KML_NAMESPACE)));
+        XMLEventParserContextFactory.parsers.add(new ParserTableEntry(mimeTypes, new KMLParserContext(XMLConstants.NULL_NS_URI)));
     }
 
     /**
@@ -60,7 +60,7 @@ public class XMLEventParserContextFactory {
             throw new IllegalArgumentException(message);
         }
 
-        parsers.add(new ParserTableEntry(mimeTypes, prototypeContext));
+        XMLEventParserContextFactory.parsers.add(new ParserTableEntry(mimeTypes, prototypeContext));
     }
 
     /**
@@ -87,7 +87,7 @@ public class XMLEventParserContextFactory {
             throw new IllegalArgumentException(message);
         }
 
-        parsers.add(0, new ParserTableEntry(mimeTypes, prototypeContext));
+        XMLEventParserContextFactory.parsers.add(0, new ParserTableEntry(mimeTypes, prototypeContext));
     }
 
     /**
@@ -113,7 +113,7 @@ public class XMLEventParserContextFactory {
             throw new IllegalArgumentException(message);
         }
 
-        for (ParserTableEntry entry : parsers) {
+        for (ParserTableEntry entry : XMLEventParserContextFactory.parsers) {
             for (String entryMimeType : entry.mimeTypes) {
                 if (entryMimeType.equals(mimeType)) {
                     String ns = entry.prototypeParser.getDefaultNamespaceURI();
@@ -122,7 +122,7 @@ public class XMLEventParserContextFactory {
 
                     if (ns.equals(defaultNamespace))
                         try {
-                            return createInstanceFromPrototype(entry.prototypeParser);
+                            return XMLEventParserContextFactory.createInstanceFromPrototype(entry.prototypeParser);
                         }
                         catch (Exception e) {
                             String message = Logging.getMessage("XML.ExceptionCreatingParserContext", e.getMessage());
@@ -145,7 +145,8 @@ public class XMLEventParserContextFactory {
      * @throws Exception if an exception occurs while attempting to construct the new context.
      */
     protected static XMLEventParserContext createInstanceFromPrototype(XMLEventParserContext prototype)
-        throws Exception {
+        throws NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException,
+        IllegalArgumentException, java.lang.reflect.InvocationTargetException {
         Constructor<? extends XMLEventParserContext> constructor;
         constructor = prototype.getClass().getConstructor(prototype.getClass());
 

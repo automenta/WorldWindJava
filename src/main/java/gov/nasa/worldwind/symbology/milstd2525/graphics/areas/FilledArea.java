@@ -45,6 +45,15 @@ public class FilledArea extends BasicArea {
     }
 
     /**
+     * Indicates the source of the image that provides the polygon fill pattern.
+     *
+     * @return The source of the polygon fill pattern.
+     */
+    protected static Object getImageSource() {
+        return FilledArea.DIAGONAL_FILL_PATH;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -54,14 +63,5 @@ public class FilledArea extends BasicArea {
         // Enable the polygon interior and set the image source to draw a fill pattern of diagonal lines.
         attributes.setDrawInterior(true);
         attributes.setImageSource(FilledArea.getImageSource());
-    }
-
-    /**
-     * Indicates the source of the image that provides the polygon fill pattern.
-     *
-     * @return The source of the polygon fill pattern.
-     */
-    protected static Object getImageSource() {
-        return DIAGONAL_FILL_PATH;
     }
 }

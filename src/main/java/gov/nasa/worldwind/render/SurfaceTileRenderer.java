@@ -25,8 +25,8 @@ public abstract class SurfaceTileRenderer implements Disposable {
 
     protected Texture alphaTexture;
     protected Texture outlineTexture;
-    protected boolean showImageTileOutlines = false;
-    protected boolean useImageTilePickColors = false;
+    protected boolean showImageTileOutlines;
+    protected boolean useImageTilePickColors;
 
     private static void fillByteBuffer(ByteBuffer buffer, byte value) {
         for (int i = 0; i < buffer.capacity(); i++) {
@@ -107,17 +107,6 @@ public abstract class SurfaceTileRenderer implements Disposable {
         Iterable<? extends SurfaceTile> tiles);
 
     public void renderTiles(DrawContext dc, Iterable<? extends SurfaceTile> tiles) {
-//        if (tiles == null) {
-//            String message = Logging.getMessage("nullValue.TileIterableIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
-//        }
-
-//        if (dc == null) {
-//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
-//        }
 
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         int alphaTextureUnit = GL.GL_TEXTURE1;
@@ -132,7 +121,7 @@ public abstract class SurfaceTileRenderer implements Disposable {
         try {
             this.alphaTexture = dc.getTextureCache().getTexture(this);
             if (this.alphaTexture == null) {
-                this.initAlphaTexture(dc, DEFAULT_ALPHA_TEXTURE_SIZE); // TODO: choose size to match incoming tile size?
+                this.initAlphaTexture(dc, SurfaceTileRenderer.DEFAULT_ALPHA_TEXTURE_SIZE); // TODO: choose size to match incoming tile size?
                 dc.getTextureCache().put(this, this.alphaTexture);
             }
 
@@ -152,12 +141,10 @@ public abstract class SurfaceTileRenderer implements Disposable {
             if (!dc.isPickingMode()) // treat texture as an image; modulate RGBA with the current color
             {
                 gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
-            }
-            else if (this.useImageTilePickColors) // treat texture as pick colors; use texture RGBA directly
+            } else if (this.useImageTilePickColors) // treat texture as pick colors; use texture RGBA directly
             {
                 gl.glTexEnvf(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_REPLACE);
-            }
-            else // treat texture as a pick mask; replace RGB with the current pick color
+            } else // treat texture as a pick mask; replace RGB with the current pick color
             {
                 gl.glTexEnvf(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_COMBINE);
                 gl.glTexEnvf(GL2.GL_TEXTURE_ENV, GL2.GL_SRC0_RGB, GL2.GL_PREVIOUS);
@@ -282,7 +269,7 @@ public abstract class SurfaceTileRenderer implements Disposable {
 
     protected void initAlphaTexture(DrawContext dc, int size) {
         ByteBuffer textureBytes = Buffers.newDirectByteBuffer(size * size);
-        fillByteBuffer(textureBytes, (byte) 0xff);
+        SurfaceTileRenderer.fillByteBuffer(textureBytes, (byte) 0xff);
 
         GL gl = dc.getGL();
 

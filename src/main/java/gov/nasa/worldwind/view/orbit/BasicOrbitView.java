@@ -37,8 +37,8 @@ public class BasicOrbitView extends BasicView implements OrbitView {
         if (this.viewInputHandler == null)
             this.viewInputHandler = new OrbitViewInputHandler();
 
-        this.collisionSupport.setCollisionThreshold(COLLISION_THRESHOLD);
-        this.collisionSupport.setNumIterations(COLLISION_NUM_ITERATIONS);
+        this.collisionSupport.setCollisionThreshold(BasicView.COLLISION_THRESHOLD);
+        this.collisionSupport.setNumIterations(BasicView.COLLISION_NUM_ITERATIONS);
         loadConfigurationValues();
     }
 
@@ -87,6 +87,18 @@ public class BasicOrbitView extends BasicView implements OrbitView {
         return Angle.fromDegrees(pitch > 180 ? pitch - 360 : (pitch < -180 ? 360 + pitch : pitch));
     }
 
+    protected static boolean validateModelCoordinates(OrbitViewInputSupport.OrbitViewState c) {
+        return (c != null
+            && c.getCenterPosition() != null
+            && c.getCenterPosition().latitude >= -90
+            && c.getCenterPosition().latitude <= 90
+            && c.getHeading() != null
+            && c.getPitch() != null
+            && c.getPitch().degrees >= 0
+            && c.getPitch().degrees <= 90
+            && c.getZoom() >= 0);
+    }
+
     protected void loadConfigurationValues() {
         Double initLat = Configuration.getDoubleValue(AVKey.INITIAL_LATITUDE);
         Double initLon = Configuration.getDoubleValue(AVKey.INITIAL_LONGITUDE);
@@ -125,7 +137,7 @@ public class BasicOrbitView extends BasicView implements OrbitView {
     }
 
     public void stopMovementOnCenter() {
-        firePropertyChange(CENTER_STOPPED, null, null);
+        firePropertyChange(OrbitView.CENTER_STOPPED, null, null);
     }
 
     public void copyViewState(View view) {
@@ -155,7 +167,7 @@ public class BasicOrbitView extends BasicView implements OrbitView {
             throw new IllegalArgumentException(message);
         }
 
-        this.center = normalizedCenterPosition(center);
+        this.center = BasicOrbitView.normalizedCenterPosition(center);
         this.center = this.getOrbitViewLimits().limitCenterPosition(this, this.center);
         resolveCollisionsWithCenterPosition();
 
@@ -174,7 +186,7 @@ public class BasicOrbitView extends BasicView implements OrbitView {
             throw new IllegalArgumentException(message);
         }
 
-        this.heading = normalizedHeading(heading);
+        this.heading = BasicOrbitView.normalizedHeading(heading);
         this.heading = this.getOrbitViewLimits().limitHeading(this, this.heading);
         resolveCollisionsWithPitch();
 
@@ -188,7 +200,7 @@ public class BasicOrbitView extends BasicView implements OrbitView {
             throw new IllegalArgumentException(message);
         }
 
-        this.pitch = normalizedPitch(pitch);
+        this.pitch = BasicOrbitView.normalizedPitch(pitch);
         this.pitch = this.getOrbitViewLimits().limitPitch(this, this.pitch);
         resolveCollisionsWithPitch();
 
@@ -297,7 +309,7 @@ public class BasicOrbitView extends BasicView implements OrbitView {
                 this.setViewOutOfFocus(false);
             }
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             String message = Logging.getMessage("generic.ExceptionWhileChangingView");
             Logging.logger().log(Level.SEVERE, message, e);
             // If updating the View's focus failed, raise the flag again.
@@ -362,7 +374,7 @@ public class BasicOrbitView extends BasicView implements OrbitView {
 
                 OrbitViewInputSupport.OrbitViewState modelCoords = OrbitViewInputSupport.computeOrbitViewState(
                     this.globe, modelview, newCenterPoint);
-                if (validateModelCoordinates(modelCoords)) {
+                if (BasicOrbitView.validateModelCoordinates(modelCoords)) {
                     setModelCoordinates(modelCoords);
                 }
             }
@@ -397,7 +409,7 @@ public class BasicOrbitView extends BasicView implements OrbitView {
                 Vec4 viewportCenterPoint = intersections[0].getIntersectionPoint();
                 OrbitViewInputSupport.OrbitViewState modelCoords = OrbitViewInputSupport.computeOrbitViewState(
                     this.globe, modelview, viewportCenterPoint);
-                if (validateModelCoordinates(modelCoords)) {
+                if (BasicOrbitView.validateModelCoordinates(modelCoords)) {
                     setModelCoordinates(modelCoords);
                 }
             }
@@ -485,7 +497,7 @@ public class BasicOrbitView extends BasicView implements OrbitView {
 
         OrbitViewInputSupport.OrbitViewState modelCoords = OrbitViewInputSupport.computeOrbitViewState(
             this.globe, newEyePoint, newCenterPoint, up);
-        if (!validateModelCoordinates(modelCoords)) {
+        if (!BasicOrbitView.validateModelCoordinates(modelCoords)) {
             String message = Logging.getMessage("View.ErrorSettingOrientation", eyePosition, centerPosition);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -552,7 +564,7 @@ public class BasicOrbitView extends BasicView implements OrbitView {
             this.nearClipDistance, this.farClipDistance);
 
         //========== load GL matrix state ==========//
-        loadGLViewState(dc, this.modelview, this.projection);
+        BasicView.loadGLViewState(dc, this.modelview, this.projection);
 
         //========== after apply (GL matrix state) ==========//
         afterDoApply();
@@ -574,31 +586,19 @@ public class BasicOrbitView extends BasicView implements OrbitView {
         if (modelCoords != null) {
             final OrbitViewLimits l = this.getOrbitViewLimits();
             if (modelCoords.getCenterPosition() != null) {
-                this.center = l.limitCenterPosition(this, normalizedCenterPosition(modelCoords.getCenterPosition()));
+                this.center = l.limitCenterPosition(this, BasicOrbitView.normalizedCenterPosition(modelCoords.getCenterPosition()));
             }
             if (modelCoords.getHeading() != null) {
-                this.heading = l.limitHeading(this, normalizedHeading(modelCoords.getHeading()));
+                this.heading = l.limitHeading(this, BasicOrbitView.normalizedHeading(modelCoords.getHeading()));
             }
             if (modelCoords.getPitch() != null) {
-                this.pitch = l.limitPitch(this, normalizedPitch(modelCoords.getPitch()));
+                this.pitch = l.limitPitch(this, BasicOrbitView.normalizedPitch(modelCoords.getPitch()));
             }
 
             this.zoom = l.limitZoom(this, modelCoords.getZoom());
 
             this.updateModelViewStateID();
         }
-    }
-
-    protected static boolean validateModelCoordinates(OrbitViewInputSupport.OrbitViewState c) {
-        return (c != null
-            && c.getCenterPosition() != null
-            && c.getCenterPosition().latitude >= -90
-            && c.getCenterPosition().latitude <= 90
-            && c.getHeading() != null
-            && c.getPitch() != null
-            && c.getPitch().degrees >= 0
-            && c.getPitch().degrees <= 90
-            && c.getZoom() >= 0);
     }
 
     @Override
@@ -628,7 +628,7 @@ public class BasicOrbitView extends BasicView implements OrbitView {
             far = Math.max(far, eyePoint.distanceTo3(p));
             p = this.globe.computePointFromPosition(Angle.ZERO, Angle.NEG180, 0); // W
             far = Math.max(far, eyePoint.distanceTo3(p));
-            return Math.max(far, MINIMUM_FAR_DISTANCE);
+            return Math.max(far, BasicView.MINIMUM_FAR_DISTANCE);
         } else {
             return super.computeHorizonDistance(eyePosition);
         }
@@ -679,8 +679,7 @@ public class BasicOrbitView extends BasicView implements OrbitView {
     /**
      * Restores state values from previous versions of the BasicObitView state XML. These values are stored or named
      * differently than the current implementation. Those values which have not changed are ignored here, and are
-     * restored in {@link #doRestoreState(RestorableSupport,
-     * RestorableSupport.StateObject)}.
+     * restored in {@link #doRestoreState(RestorableSupport, RestorableSupport.StateObject)}.
      *
      * @param rs      RestorableSupport object which contains the state value properties.
      * @param context active context in the RestorableSupport to read state from.

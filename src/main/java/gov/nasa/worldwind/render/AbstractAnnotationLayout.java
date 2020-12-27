@@ -25,6 +25,21 @@ public abstract class AbstractAnnotationLayout implements AnnotationLayoutManage
         this.stackHandler = new OGLStackHandler();
     }
 
+    protected static Dimension getAnnotationSize(DrawContext dc, Annotation annotation) {
+        try {
+            return annotation.getPreferredSize(dc);
+        }
+        catch (RuntimeException e) {
+            // Trap and log exceptions thrown by computing an annotation's preferred size. This will prevent one
+            // annotation from throwing an exception and preventing all other anotations from reporting their
+            // preferred size.
+            String message = Logging.getMessage("generic.ExceptionWhileComputingSize", annotation);
+            Logging.logger().log(Level.SEVERE, message, e);
+        }
+
+        return null;
+    }
+
     public PickSupport getPickSupport() {
         return this.pickSupport;
     }
@@ -61,21 +76,6 @@ public abstract class AbstractAnnotationLayout implements AnnotationLayoutManage
         this.stackHandler.pop(gl);
     }
 
-    protected static Dimension getAnnotationSize(DrawContext dc, Annotation annotation) {
-        try {
-            return annotation.getPreferredSize(dc);
-        }
-        catch (Exception e) {
-            // Trap and log exceptions thrown by computing an annotation's preferred size. This will prevent one
-            // annotation from throwing an exception and preventing all other anotations from reporting their
-            // preferred size.
-            String message = Logging.getMessage("generic.ExceptionWhileComputingSize", annotation);
-            Logging.logger().log(Level.SEVERE, message, e);
-        }
-
-        return null;
-    }
-
     protected void drawAnnotation(DrawContext dc, Annotation annotation, int width, int height, double opacity,
         Position pickPosition) {
         try {
@@ -84,7 +84,7 @@ public abstract class AbstractAnnotationLayout implements AnnotationLayoutManage
 
             annotation.draw(dc, width, height, opacity, pickPosition);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             // Trap and log exceptions thrown by rendering an annotation. This will prevent one annotation from
             // throwing an exception and preventing all other anotations from rendering.
             String message = Logging.getMessage("generic.ExceptionWhileRenderingAnnotation", annotation);

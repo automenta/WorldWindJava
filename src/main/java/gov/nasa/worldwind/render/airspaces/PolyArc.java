@@ -26,7 +26,7 @@ public class PolyArc extends Polygon {
     private Angle leftAzimuth = Angle.ZERO;
     private Angle rightAzimuth = Angle.ZERO;
     // Geometry.
-    private int slices = DEFAULT_SLICES;
+    private int slices = PolyArc.DEFAULT_SLICES;
 
     public PolyArc(Iterable<? extends LatLon> locations, double radius, Angle leftAzimuth, Angle rightAzimuth) {
         super(locations);
@@ -67,39 +67,59 @@ public class PolyArc extends Polygon {
         this.makeDefaultDetailLevels();
     }
 
+    private static LatLon[] makeArc(Extent globe, LatLon center, double radius, int slices, double start,
+        double sweep) {
+        double da = sweep / slices;
+        double r = radius / globe.getRadius();
+        LatLon[] locations = new LatLon[slices + 1];
+
+        for (int i = 0; i <= slices; i++) {
+            double a = i * da + start;
+            locations[i] = LatLon.greatCircleEndPosition(center, a, r);
+        }
+
+        return locations;
+    }
+
+    private static Angle normalizedAzimuth(Angle azimuth) {
+        double degrees = azimuth.degrees;
+        double normalizedDegrees = degrees < 0.0 ? degrees + 360.0 : (degrees >= 360.0 ? degrees - 360.0 : degrees);
+        return Angle.fromDegrees(normalizedDegrees);
+    }
+
     private void makeDefaultDetailLevels() {
         Collection<DetailLevel> levels = new ArrayList<>();
         double[] ramp = ScreenSizeDetailLevel.computeDefaultScreenSizeRamp(5);
 
         DetailLevel level;
         level = new ScreenSizeDetailLevel(ramp[0], "Detail-Level-0");
-        level.set(SLICES, 32);
-        level.set(SUBDIVISIONS, 3);
-        level.set(DISABLE_TERRAIN_CONFORMANCE, false);
+        level.set(AbstractAirspace.SLICES, 32);
+        level.set(AbstractAirspace.SUBDIVISIONS, 3);
+        level.set(AbstractAirspace.DISABLE_TERRAIN_CONFORMANCE, false);
         levels.add(level);
 
         level = new ScreenSizeDetailLevel(ramp[1], "Detail-Level-1");
-        level.set(SLICES, 26);
-        level.set(SUBDIVISIONS, 3);
-        level.set(DISABLE_TERRAIN_CONFORMANCE, false);
+        level.set(AbstractAirspace.SLICES, 26);
+        level.set(AbstractAirspace.SUBDIVISIONS, 3);
+        level.set(AbstractAirspace.DISABLE_TERRAIN_CONFORMANCE, false);
         levels.add(level);
 
         level = new ScreenSizeDetailLevel(ramp[2], "Detail-Level-2");
-        level.set(SLICES, 20);
-        level.set(SUBDIVISIONS, 2);
-        level.set(DISABLE_TERRAIN_CONFORMANCE, false);
+        level.set(AbstractAirspace.SLICES, 20);
+        level.set(AbstractAirspace.SUBDIVISIONS, 2);
+        level.set(AbstractAirspace.DISABLE_TERRAIN_CONFORMANCE, false);
         levels.add(level);
 
         level = new ScreenSizeDetailLevel(ramp[3], "Detail-Level-3");
-        level.set(SLICES, 14);
-        level.set(SUBDIVISIONS, 1);
-        level.set(DISABLE_TERRAIN_CONFORMANCE, false);
+        level.set(AbstractAirspace.SLICES, 14);
+        level.set(AbstractAirspace.SUBDIVISIONS, 1);
+        level.set(AbstractAirspace.DISABLE_TERRAIN_CONFORMANCE, false);
         levels.add(level);
 
         level = new ScreenSizeDetailLevel(ramp[4], "Detail-Level-4");
-        level.set(SLICES, 8);
-        level.set(SUBDIVISIONS, 0);
-        level.set(DISABLE_TERRAIN_CONFORMANCE, true);
+        level.set(AbstractAirspace.SLICES, 8);
+        level.set(AbstractAirspace.SUBDIVISIONS, 0);
+        level.set(AbstractAirspace.DISABLE_TERRAIN_CONFORMANCE, true);
         levels.add(level);
 
         this.setDetailLevels(levels);
@@ -158,6 +178,10 @@ public class PolyArc extends Polygon {
         this.slices = slices;
     }
 
+    //**************************************************************//
+    //********************  Geometry Rendering  ********************//
+    //**************************************************************//
+
     @Override
     protected List<Vec4> computeMinimalGeometry(Globe globe, double verticalExaggeration) {
         List<LatLon> locations = this.getLocationList();
@@ -169,7 +193,7 @@ public class PolyArc extends Polygon {
         this.makePolyArcLocations(globe, locations, 8, arcLocations, arcFlags);
 
         Collection<LatLon> tessellatedLocations = new ArrayList<>();
-        Polygon.makeTessellatedLocations(globe, MINIMAL_GEOMETRY_SUBDIVISIONS, arcLocations, tessellatedLocations);
+        Polygon.makeTessellatedLocations(globe, Polygon.MINIMAL_GEOMETRY_SUBDIVISIONS, arcLocations, tessellatedLocations);
 
         List<Vec4> points = new ArrayList<>();
         this.makeExtremePoints(globe, verticalExaggeration, tessellatedLocations, points);
@@ -186,10 +210,6 @@ public class PolyArc extends Polygon {
         ((SurfacePolygon) shape).setOuterBoundary(arcLocations);
     }
 
-    //**************************************************************//
-    //********************  Geometry Rendering  ********************//
-    //**************************************************************//
-
     protected double[] computeAngles() {
         Angle startAngle = PolyArc.normalizedAzimuth(this.leftAzimuth);
         Angle stopAngle = PolyArc.normalizedAzimuth(this.rightAzimuth);
@@ -200,9 +220,9 @@ public class PolyArc extends Polygon {
             sweepAngle = Angle.POS360.sub(startAngle).add(stopAngle);
 
         double[] array = new double[3];
-        array[0] = startAngle.radians;
-        array[1] = stopAngle.radians;
-        array[2] = sweepAngle.radians;
+        array[0] = startAngle.radians();
+        array[1] = stopAngle.radians();
+        array[2] = sweepAngle.radians();
         return array;
     }
 
@@ -212,7 +232,7 @@ public class PolyArc extends Polygon {
         if (this.isEnableLevelOfDetail()) {
             DetailLevel level = this.computeDetailLevel(dc);
 
-            Object o = level.get(SLICES);
+            Object o = level.get(AbstractAirspace.SLICES);
             if (o instanceof Integer)
                 slices = (Integer) o;
         }
@@ -251,7 +271,8 @@ public class PolyArc extends Polygon {
                 GeometryBuilder gb = this.getGeometryBuilder();
                 Vec4[] polyPoints = new Vec4[locationCount + 1];
                 Matrix[] polyTransform = new Matrix[1];
-                int polyCount = Polygon.computeEllipsoidalPolygon(globe, locations, null, polyPoints, null, polyTransform);
+                int polyCount = Polygon.computeEllipsoidalPolygon(globe, locations, null, polyPoints, null,
+                    polyTransform);
                 int polyWinding = GeometryBuilder.computePolygonWindingOrder2(0, polyCount, polyPoints);
 
                 if (polyWinding == GeometryBuilder.COUNTER_CLOCKWISE) {
@@ -259,8 +280,7 @@ public class PolyArc extends Polygon {
                         polyArcLocations.add(locations.get(i));
                         edgeFlags.add(true);
                     }
-                }
-                else // (polyWinding == GeometryBuilder.CLOCKWISE)
+                } else // (polyWinding == GeometryBuilder.CLOCKWISE)
                 {
                     for (int i = locationCount - 1; i >= 1; i--) {
                         polyArcLocations.add(locations.get(i));
@@ -269,25 +289,6 @@ public class PolyArc extends Polygon {
                 }
             }
         }
-    }
-
-    private static LatLon[] makeArc(Extent globe, LatLon center, double radius, int slices, double start, double sweep) {
-        double da = sweep / slices;
-        double r = radius / globe.getRadius();
-        LatLon[] locations = new LatLon[slices + 1];
-
-        for (int i = 0; i <= slices; i++) {
-            double a = i * da + start;
-            locations[i] = LatLon.greatCircleEndPosition(center, a, r);
-        }
-
-        return locations;
-    }
-
-    private static Angle normalizedAzimuth(Angle azimuth) {
-        double degrees = azimuth.degrees;
-        double normalizedDegrees = degrees < 0.0 ? degrees + 360.0 : (degrees >= 360.0 ? degrees - 360.0 : degrees);
-        return Angle.fromDegrees(normalizedDegrees);
     }
 
     //**************************************************************//

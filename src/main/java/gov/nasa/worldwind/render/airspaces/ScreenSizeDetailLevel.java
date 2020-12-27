@@ -27,7 +27,7 @@ public class ScreenSizeDetailLevel extends AVListImpl implements DetailLevel {
     }
 
     public static double[] computeDefaultScreenSizeRamp(int levels) {
-        return computeLinearScreenSizeRamp(levels, DEFAULT_MIN_SIZE, DEFAULT_MAX_SIZE);
+        return ScreenSizeDetailLevel.computeLinearScreenSizeRamp(levels, ScreenSizeDetailLevel.DEFAULT_MIN_SIZE, ScreenSizeDetailLevel.DEFAULT_MAX_SIZE);
     }
 
     public static double[] computeLinearScreenSizeRamp(int levels, double min, double max) {
@@ -71,7 +71,7 @@ public class ScreenSizeDetailLevel extends AVListImpl implements DetailLevel {
     }
 
     public int hashCode() {
-        long temp = this.screenSize != +0.0d ? Double.doubleToLongBits(this.screenSize) : 0L;
+        long temp = this.screenSize == +0.0d ? 0L : Double.doubleToLongBits(this.screenSize);
         return (int) (temp ^ (temp >>> 32));
     }
 

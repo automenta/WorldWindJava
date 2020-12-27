@@ -8,7 +8,6 @@ package gov.nasa.worldwind;
 
 import gov.nasa.worldwind.avlist.AVListImpl;
 import gov.nasa.worldwind.event.Message;
-import gov.nasa.worldwind.util.Logging;
 
 import java.beans.PropertyChangeEvent;
 

@@ -56,11 +56,11 @@ public class PolygonEditor extends AbstractAirspaceEditor {
         for (int locationIndex = 0; locationIndex < numLocations; locationIndex++) {
             // If the polygon is not collapsed, then add the lower altitude control points.
             if (!isCollapsed) {
-                this.addPolygonControlPoint(dc, locationIndex, LOWER_ALTITUDE);
+                this.addPolygonControlPoint(dc, locationIndex, AbstractAirspaceEditor.LOWER_ALTITUDE);
             }
 
             // Add the upper altitude control points.
-            this.addPolygonControlPoint(dc, locationIndex, UPPER_ALTITUDE);
+            this.addPolygonControlPoint(dc, locationIndex, AbstractAirspaceEditor.UPPER_ALTITUDE);
         }
     }
 
@@ -89,8 +89,7 @@ public class PolygonEditor extends AbstractAirspaceEditor {
         Point mousePoint) {
         if (this.getPolygon().getLocations().isEmpty()) {
             return this.doAddFirstLocation(wwd, mousePoint);
-        }
-        else {
+        } else {
             return this.doAddNextLocation(wwd, mousePoint);
         }
     }
@@ -118,10 +117,10 @@ public class PolygonEditor extends AbstractAirspaceEditor {
 
         boolean[] terrainConformance = this.getPolygon().isTerrainConforming();
         double[] altitudes = new double[2];
-        altitudes[LOWER_ALTITUDE] = terrainConformance[LOWER_ALTITUDE] ? 0.0 : newPosition.getElevation();
-        altitudes[UPPER_ALTITUDE] = terrainConformance[UPPER_ALTITUDE] ? 0.0
-            : newPosition.getElevation() + DEFAULT_POLYGON_HEIGHT;
-        this.getPolygon().setAltitudes(altitudes[LOWER_ALTITUDE], altitudes[UPPER_ALTITUDE]);
+        altitudes[AbstractAirspaceEditor.LOWER_ALTITUDE] = terrainConformance[AbstractAirspaceEditor.LOWER_ALTITUDE] ? 0.0 : newPosition.getElevation();
+        altitudes[AbstractAirspaceEditor.UPPER_ALTITUDE] = terrainConformance[AbstractAirspaceEditor.UPPER_ALTITUDE] ? 0.0
+            : newPosition.getElevation() + PolygonEditor.DEFAULT_POLYGON_HEIGHT;
+        this.getPolygon().setAltitudes(altitudes[AbstractAirspaceEditor.LOWER_ALTITUDE], altitudes[AbstractAirspaceEditor.UPPER_ALTITUDE]);
 
         Collection<LatLon> locationList = new ArrayList<>();
         locationList.add(new LatLon(newPosition));
@@ -134,12 +133,13 @@ public class PolygonEditor extends AbstractAirspaceEditor {
         this.getPolygon().setLocations(locationList);
 
         AirspaceControlPoint controlPoint =
-            new BasicAirspaceControlPoint(this, this.getPolygon(), 0, LOWER_ALTITUDE, newPoint);
+            new BasicAirspaceControlPoint(this, this.getPolygon(), 0, AbstractAirspaceEditor.LOWER_ALTITUDE, newPoint);
         this.fireControlPointAdded(new AirspaceEditEvent(wwd, this.getAirspace(), this, controlPoint));
 
         // If rubber banding is enabled, fire a second add event, and return a reference to the second location.
         if (this.isUseRubberBand()) {
-            controlPoint = new BasicAirspaceControlPoint(this, this.getPolygon(), 1, LOWER_ALTITUDE, newPoint);
+            controlPoint = new BasicAirspaceControlPoint(this, this.getPolygon(), 1,
+                AbstractAirspaceEditor.LOWER_ALTITUDE, newPoint);
             this.fireControlPointAdded(new AirspaceEditEvent(wwd, this.getAirspace(), this, controlPoint));
         }
 
@@ -252,9 +252,8 @@ public class PolygonEditor extends AbstractAirspaceEditor {
 
         int index;
         if (this.getPolygon().isAirspaceCollapsed()) {
-            index = (elevationChange < 0) ? LOWER_ALTITUDE : UPPER_ALTITUDE;
-        }
-        else {
+            index = (elevationChange < 0) ? AbstractAirspaceEditor.LOWER_ALTITUDE : AbstractAirspaceEditor.UPPER_ALTITUDE;
+        } else {
             index = controlPoint.getAltitudeIndex();
         }
 
@@ -265,8 +264,7 @@ public class PolygonEditor extends AbstractAirspaceEditor {
             if (terrainConformance[index]) {
                 if (altitudes[index] + elevationChange < 0.0)
                     elevationChange = -altitudes[index];
-            }
-            else {
+            } else {
                 double height = AirspaceEditorUtil.computeLowestHeightAboveSurface(
                     wwd, this.getCurrentControlPoints(), index);
                 if (elevationChange <= -height)
@@ -276,17 +274,16 @@ public class PolygonEditor extends AbstractAirspaceEditor {
 
         double d = AirspaceEditorUtil.computeMinimumDistanceBetweenAltitudes(this.getPolygon().getLocations().size(),
             this.getCurrentControlPoints());
-        if (index == LOWER_ALTITUDE) {
+        if (index == AbstractAirspaceEditor.LOWER_ALTITUDE) {
             if (elevationChange > d)
                 elevationChange = d;
-        }
-        else if (index == UPPER_ALTITUDE) {
+        } else if (index == AbstractAirspaceEditor.UPPER_ALTITUDE) {
             if (elevationChange < -d)
                 elevationChange = -d;
         }
 
         altitudes[index] += elevationChange;
-        controlPoint.getAirspace().setAltitudes(altitudes[LOWER_ALTITUDE], altitudes[UPPER_ALTITUDE]);
+        controlPoint.getAirspace().setAltitudes(altitudes[AbstractAirspaceEditor.LOWER_ALTITUDE], altitudes[AbstractAirspaceEditor.UPPER_ALTITUDE]);
 
         AirspaceEditEvent editEvent = new AirspaceEditEvent(wwd, controlPoint.getAirspace(), this, controlPoint);
         this.fireControlPointChanged(editEvent);

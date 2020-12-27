@@ -45,17 +45,18 @@ public class NASAWFSPlaceNameLayer extends PlaceNameLayer {
     public static final String GEONET_P_PPL = "topp:wpl_geonet_p_ppl";
     public static final String GEONET_P_PPLC = "topp:wpl_geonet_p_pplC";
 
-    private static final String[] allNameSets = {OCEANS, CONTINENTS, WATERBODIES, TRENCHESRIDGES, DESERTSPLAINS,
-        LAKESRIVERS,
-        MOUNTAINSVALLEYS, COUNTRIES, GEONET_P_PPC, CITIESOVER500K, CITIESOVER100K,
-        CITIESOVER50K, CITIESOVER10K, CITIESOVER1K, USCITIESOVER0, USCITIES0,
-        US_ANTHROPOGENIC, US_WATER, US_TERRAIN, GEONET_A_ADM1, GEONET_A_ADM2,
-        GEONET_P_PPLA, GEONET_P_PPL};
+    private static final String[] allNameSets = {NASAWFSPlaceNameLayer.OCEANS, NASAWFSPlaceNameLayer.CONTINENTS, NASAWFSPlaceNameLayer.WATERBODIES, NASAWFSPlaceNameLayer.TRENCHESRIDGES,
+        NASAWFSPlaceNameLayer.DESERTSPLAINS,
+        NASAWFSPlaceNameLayer.LAKESRIVERS,
+        NASAWFSPlaceNameLayer.MOUNTAINSVALLEYS, NASAWFSPlaceNameLayer.COUNTRIES, NASAWFSPlaceNameLayer.GEONET_P_PPC, NASAWFSPlaceNameLayer.CITIESOVER500K, NASAWFSPlaceNameLayer.CITIESOVER100K,
+        NASAWFSPlaceNameLayer.CITIESOVER50K, NASAWFSPlaceNameLayer.CITIESOVER10K, NASAWFSPlaceNameLayer.CITIESOVER1K, NASAWFSPlaceNameLayer.USCITIESOVER0, NASAWFSPlaceNameLayer.USCITIES0,
+        NASAWFSPlaceNameLayer.US_ANTHROPOGENIC, NASAWFSPlaceNameLayer.US_WATER, NASAWFSPlaceNameLayer.US_TERRAIN, NASAWFSPlaceNameLayer.GEONET_A_ADM1, NASAWFSPlaceNameLayer.GEONET_A_ADM2,
+        NASAWFSPlaceNameLayer.GEONET_P_PPLA, NASAWFSPlaceNameLayer.GEONET_P_PPL};
 
-    private static List activeNamesList = Arrays.asList(allNameSets);
+    private static List activeNamesList = Arrays.asList(NASAWFSPlaceNameLayer.allNameSets);
 
     public NASAWFSPlaceNameLayer() {
-        super(makePlaceNameServiceSet());
+        super(NASAWFSPlaceNameLayer.makePlaceNameServiceSet());
     }
 
     private static PlaceNameServiceSet makePlaceNameServiceSet() {
@@ -66,234 +67,234 @@ public class NASAWFSPlaceNameLayer extends PlaceNameLayer {
         PlaceNameService placeNameService;
         final boolean addVersionTag = true;  //true if pointing to a new wfs server
         // Oceans
-        if (activeNamesList.contains(OCEANS)) {
+        if (NASAWFSPlaceNameLayer.activeNamesList.contains(NASAWFSPlaceNameLayer.OCEANS)) {
             placeNameService = new PlaceNameService(service, "topp:wpl_oceans", fileCachePath, Sector.FULL_SPHERE,
-                GRID_1x1,
+                PlaceNameLayer.GRID_1x1,
                 Font.decode("Arial-BOLDITALIC-12"), addVersionTag);
             placeNameService.setColor(new Color(200, 200, 200));
             placeNameService.setMinDisplayDistance(0.0d);
-            placeNameService.setMaxDisplayDistance(LEVEL_A);
+            placeNameService.setMaxDisplayDistance(PlaceNameLayer.LEVEL_A);
             placeNameServiceSet.addService(placeNameService, false);
         }
         // Continents
-        if (activeNamesList.contains(CONTINENTS)) {
+        if (NASAWFSPlaceNameLayer.activeNamesList.contains(NASAWFSPlaceNameLayer.CONTINENTS)) {
             placeNameService = new PlaceNameService(service, "topp:wpl_continents", fileCachePath, Sector.FULL_SPHERE,
-                GRID_1x1, Font.decode("Arial-BOLD-12"), addVersionTag);
+                PlaceNameLayer.GRID_1x1, Font.decode("Arial-BOLD-12"), addVersionTag);
             placeNameService.setColor(new Color(255, 255, 240));
-            placeNameService.setMinDisplayDistance(LEVEL_G);
-            placeNameService.setMaxDisplayDistance(LEVEL_A);
+            placeNameService.setMinDisplayDistance(PlaceNameLayer.LEVEL_G);
+            placeNameService.setMaxDisplayDistance(PlaceNameLayer.LEVEL_A);
             placeNameServiceSet.addService(placeNameService, false);
         }
 
         // Water Bodies
-        if (activeNamesList.contains(WATERBODIES)) {
+        if (NASAWFSPlaceNameLayer.activeNamesList.contains(NASAWFSPlaceNameLayer.WATERBODIES)) {
             placeNameService = new PlaceNameService(service, "topp:wpl_waterbodies", fileCachePath, Sector.FULL_SPHERE,
-                GRID_4x8, Font.decode("Arial-ITALIC-10"), addVersionTag);
+                PlaceNameLayer.GRID_4x8, Font.decode("Arial-ITALIC-10"), addVersionTag);
             placeNameService.setColor(Color.cyan);
             placeNameService.setMinDisplayDistance(0.0d);
-            placeNameService.setMaxDisplayDistance(LEVEL_B);
+            placeNameService.setMaxDisplayDistance(PlaceNameLayer.LEVEL_B);
             placeNameServiceSet.addService(placeNameService, false);
         }
         // Trenches & Ridges
-        if (activeNamesList.contains(TRENCHESRIDGES)) {
+        if (NASAWFSPlaceNameLayer.activeNamesList.contains(NASAWFSPlaceNameLayer.TRENCHESRIDGES)) {
             placeNameService = new PlaceNameService(service, "topp:wpl_trenchesridges", fileCachePath,
                 Sector.FULL_SPHERE,
-                GRID_4x8, Font.decode("Arial-BOLDITALIC-10"), addVersionTag);
+                PlaceNameLayer.GRID_4x8, Font.decode("Arial-BOLDITALIC-10"), addVersionTag);
             placeNameService.setColor(Color.cyan);
             placeNameService.setMinDisplayDistance(0.0d);
-            placeNameService.setMaxDisplayDistance(LEVEL_B);
+            placeNameService.setMaxDisplayDistance(PlaceNameLayer.LEVEL_B);
             placeNameServiceSet.addService(placeNameService, false);
         }
         // Deserts & Plains
-        if (activeNamesList.contains(DESERTSPLAINS)) {
+        if (NASAWFSPlaceNameLayer.activeNamesList.contains(NASAWFSPlaceNameLayer.DESERTSPLAINS)) {
             placeNameService = new PlaceNameService(service, "topp:wpl_desertsplains", fileCachePath,
                 Sector.FULL_SPHERE,
-                GRID_4x8, Font.decode("Arial-BOLDITALIC-10"), addVersionTag);
+                PlaceNameLayer.GRID_4x8, Font.decode("Arial-BOLDITALIC-10"), addVersionTag);
             placeNameService.setColor(Color.orange);
             placeNameService.setMinDisplayDistance(0.0d);
-            placeNameService.setMaxDisplayDistance(LEVEL_B);
+            placeNameService.setMaxDisplayDistance(PlaceNameLayer.LEVEL_B);
             placeNameServiceSet.addService(placeNameService, false);
         }
         // Lakes & Rivers
-        if (activeNamesList.contains(LAKESRIVERS)) {
+        if (NASAWFSPlaceNameLayer.activeNamesList.contains(NASAWFSPlaceNameLayer.LAKESRIVERS)) {
             placeNameService = new PlaceNameService(service, "topp:wpl_lakesrivers", fileCachePath, Sector.FULL_SPHERE,
-                GRID_8x16, Font.decode("Arial-ITALIC-10"), addVersionTag);
+                PlaceNameLayer.GRID_8x16, Font.decode("Arial-ITALIC-10"), addVersionTag);
             placeNameService.setColor(Color.cyan);
             placeNameService.setMinDisplayDistance(0.0d);
-            placeNameService.setMaxDisplayDistance(LEVEL_C);
+            placeNameService.setMaxDisplayDistance(PlaceNameLayer.LEVEL_C);
             placeNameServiceSet.addService(placeNameService, false);
         }
         // Mountains & Valleys
-        if (activeNamesList.contains(MOUNTAINSVALLEYS)) {
+        if (NASAWFSPlaceNameLayer.activeNamesList.contains(NASAWFSPlaceNameLayer.MOUNTAINSVALLEYS)) {
             placeNameService = new PlaceNameService(service, "topp:wpl_mountainsvalleys", fileCachePath,
                 Sector.FULL_SPHERE,
-                GRID_8x16, Font.decode("Arial-BOLDITALIC-10"), addVersionTag);
+                PlaceNameLayer.GRID_8x16, Font.decode("Arial-BOLDITALIC-10"), addVersionTag);
             placeNameService.setColor(Color.orange);
             placeNameService.setMinDisplayDistance(0.0d);
-            placeNameService.setMaxDisplayDistance(LEVEL_C);
+            placeNameService.setMaxDisplayDistance(PlaceNameLayer.LEVEL_C);
             placeNameServiceSet.addService(placeNameService, false);
         }
         // Countries
-        if (activeNamesList.contains(COUNTRIES)) {
+        if (NASAWFSPlaceNameLayer.activeNamesList.contains(NASAWFSPlaceNameLayer.COUNTRIES)) {
             placeNameService = new PlaceNameService(service, "topp:countries", fileCachePath, Sector.FULL_SPHERE,
-                GRID_4x8,
+                PlaceNameLayer.GRID_4x8,
                 Font.decode("Arial-BOLD-10"), addVersionTag);
             placeNameService.setColor(Color.white);
-            placeNameService.setMinDisplayDistance(LEVEL_G);
-            placeNameService.setMaxDisplayDistance(LEVEL_D);
+            placeNameService.setMinDisplayDistance(PlaceNameLayer.LEVEL_G);
+            placeNameService.setMaxDisplayDistance(PlaceNameLayer.LEVEL_D);
             placeNameServiceSet.addService(placeNameService, false);
         }
         // GeoNet World Capitals
-        if (activeNamesList.contains(GEONET_P_PPLC)) {
+        if (NASAWFSPlaceNameLayer.activeNamesList.contains(NASAWFSPlaceNameLayer.GEONET_P_PPLC)) {
             placeNameService = new PlaceNameService(service, "topp:wpl_geonet_p_pplc", fileCachePath,
                 Sector.FULL_SPHERE,
-                GRID_16x32, Font.decode("Arial-BOLD-10"), addVersionTag);
+                PlaceNameLayer.GRID_16x32, Font.decode("Arial-BOLD-10"), addVersionTag);
             placeNameService.setColor(Color.yellow);
             placeNameService.setMinDisplayDistance(0.0d);
-            placeNameService.setMaxDisplayDistance(LEVEL_D);
+            placeNameService.setMaxDisplayDistance(PlaceNameLayer.LEVEL_D);
             placeNameServiceSet.addService(placeNameService, false);
         }
         // World Cities >= 500k
-        if (activeNamesList.contains(CITIESOVER500K)) {
+        if (NASAWFSPlaceNameLayer.activeNamesList.contains(NASAWFSPlaceNameLayer.CITIESOVER500K)) {
             placeNameService = new PlaceNameService(service, "topp:citiesover500k", fileCachePath, Sector.FULL_SPHERE,
-                GRID_8x16, Font.decode("Arial-BOLD-10"), addVersionTag);
+                PlaceNameLayer.GRID_8x16, Font.decode("Arial-BOLD-10"), addVersionTag);
             placeNameService.setColor(Color.yellow);
             placeNameService.setMinDisplayDistance(0);
-            placeNameService.setMaxDisplayDistance(LEVEL_D);
+            placeNameService.setMaxDisplayDistance(PlaceNameLayer.LEVEL_D);
             placeNameServiceSet.addService(placeNameService, false);
         }
         // World Cities >= 100k
-        if (activeNamesList.contains(CITIESOVER100K)) {
+        if (NASAWFSPlaceNameLayer.activeNamesList.contains(NASAWFSPlaceNameLayer.CITIESOVER100K)) {
             placeNameService = new PlaceNameService(service, "topp:citiesover100k", fileCachePath, Sector.FULL_SPHERE,
-                GRID_16x32, Font.decode("Arial-PLAIN-10"), addVersionTag);
+                PlaceNameLayer.GRID_16x32, Font.decode("Arial-PLAIN-10"), addVersionTag);
             placeNameService.setColor(Color.yellow);
-            placeNameService.setMinDisplayDistance(LEVEL_N);
-            placeNameService.setMaxDisplayDistance(LEVEL_F);
+            placeNameService.setMinDisplayDistance(PlaceNameLayer.LEVEL_N);
+            placeNameService.setMaxDisplayDistance(PlaceNameLayer.LEVEL_F);
             placeNameServiceSet.addService(placeNameService, false);
         }
         // World Cities >= 50k and <100k
-        if (activeNamesList.contains(CITIESOVER50K)) {
+        if (NASAWFSPlaceNameLayer.activeNamesList.contains(NASAWFSPlaceNameLayer.CITIESOVER50K)) {
             placeNameService = new PlaceNameService(service, "topp:citiesover50k", fileCachePath, Sector.FULL_SPHERE,
-                GRID_16x32, Font.decode("Arial-PLAIN-10"), addVersionTag);
+                PlaceNameLayer.GRID_16x32, Font.decode("Arial-PLAIN-10"), addVersionTag);
             placeNameService.setColor(Color.yellow);
-            placeNameService.setMinDisplayDistance(LEVEL_N);
-            placeNameService.setMaxDisplayDistance(LEVEL_H);
+            placeNameService.setMinDisplayDistance(PlaceNameLayer.LEVEL_N);
+            placeNameService.setMaxDisplayDistance(PlaceNameLayer.LEVEL_H);
             placeNameServiceSet.addService(placeNameService, false);
         }
 
         // World Cities >= 10k and <50k
-        if (activeNamesList.contains(CITIESOVER10K)) {
+        if (NASAWFSPlaceNameLayer.activeNamesList.contains(NASAWFSPlaceNameLayer.CITIESOVER10K)) {
             placeNameService = new PlaceNameService(service, "topp:citiesover10k", fileCachePath, Sector.FULL_SPHERE,
-                GRID_36x72, Font.decode("Arial-PLAIN-10"), addVersionTag);
+                PlaceNameLayer.GRID_36x72, Font.decode("Arial-PLAIN-10"), addVersionTag);
             placeNameService.setColor(Color.yellow);
             placeNameService.setMinDisplayDistance(0.0d);
-            placeNameService.setMaxDisplayDistance(LEVEL_I);
+            placeNameService.setMaxDisplayDistance(PlaceNameLayer.LEVEL_I);
             placeNameServiceSet.addService(placeNameService, false);
         }
 
         // World Cities >= 1k and <10k
-        if (activeNamesList.contains(CITIESOVER1K)) {
+        if (NASAWFSPlaceNameLayer.activeNamesList.contains(NASAWFSPlaceNameLayer.CITIESOVER1K)) {
             placeNameService = new PlaceNameService(service, "topp:citiesover1k", fileCachePath, Sector.FULL_SPHERE,
-                GRID_36x72, Font.decode("Arial-PLAIN-10"), addVersionTag);
+                PlaceNameLayer.GRID_36x72, Font.decode("Arial-PLAIN-10"), addVersionTag);
             placeNameService.setColor(Color.yellow);
             placeNameService.setMinDisplayDistance(0.0d);
-            placeNameService.setMaxDisplayDistance(LEVEL_K);
+            placeNameService.setMaxDisplayDistance(PlaceNameLayer.LEVEL_K);
             placeNameServiceSet.addService(placeNameService, false);
         }
         // US Cities (Population Over 0)
-        if (activeNamesList.contains(USCITIESOVER0)) {
+        if (NASAWFSPlaceNameLayer.activeNamesList.contains(NASAWFSPlaceNameLayer.USCITIESOVER0)) {
             //values for masking sector pulled from wfs capabilities request
             Sector maskingSector = new Sector(Angle.fromDegrees(18.0), Angle.fromDegrees(70.7),
                 Angle.fromDegrees(-176.66), Angle.fromDegrees(-66.0));
             placeNameService = new PlaceNameService(service, "topp:wpl_uscitiesover0", fileCachePath, maskingSector,
-                GRID_36x72, Font.decode("Arial-PLAIN-10"), addVersionTag);
+                PlaceNameLayer.GRID_36x72, Font.decode("Arial-PLAIN-10"), addVersionTag);
             placeNameService.setColor(Color.yellow);
             placeNameService.setMinDisplayDistance(0.0d);
-            placeNameService.setMaxDisplayDistance(LEVEL_N);
+            placeNameService.setMaxDisplayDistance(PlaceNameLayer.LEVEL_N);
             placeNameServiceSet.addService(placeNameService, false);
         }
         // US Cities (No Population)
-        if (activeNamesList.contains(USCITIES0)) {
+        if (NASAWFSPlaceNameLayer.activeNamesList.contains(NASAWFSPlaceNameLayer.USCITIES0)) {
             //values for masking sector pulled from wfs capabilities request
             Sector maskingSector = new Sector(Angle.fromDegrees(-14.4), Angle.fromDegrees(71.3),
                 Angle.fromDegrees(-176.66), Angle.fromDegrees(178.88));
             placeNameService = new PlaceNameService(service, "topp:wpl_uscities0", fileCachePath, maskingSector,
-                GRID_288x576, Font.decode("Arial-PLAIN-10"), addVersionTag);
+                PlaceNameLayer.GRID_288x576, Font.decode("Arial-PLAIN-10"), addVersionTag);
             placeNameService.setColor(Color.orange);
             placeNameService.setMinDisplayDistance(0.0d);
-            placeNameService.setMaxDisplayDistance(LEVEL_N);//M);
+            placeNameService.setMaxDisplayDistance(PlaceNameLayer.LEVEL_N);//M);
             placeNameServiceSet.addService(placeNameService, false);
         }
 
         // US Anthropogenic Features
-        if (activeNamesList.contains(US_ANTHROPOGENIC)) {
+        if (NASAWFSPlaceNameLayer.activeNamesList.contains(NASAWFSPlaceNameLayer.US_ANTHROPOGENIC)) {
             placeNameService = new PlaceNameService(service, "topp:wpl_us_anthropogenic", fileCachePath,
-                Sector.FULL_SPHERE, GRID_288x576,
+                Sector.FULL_SPHERE, PlaceNameLayer.GRID_288x576,
                 Font.decode("Arial-PLAIN-10"), addVersionTag);
             placeNameService.setColor(Color.orange);
             placeNameService.setMinDisplayDistance(0.0d);
-            placeNameService.setMaxDisplayDistance(LEVEL_P);
+            placeNameService.setMaxDisplayDistance(PlaceNameLayer.LEVEL_P);
             placeNameServiceSet.addService(placeNameService, false);
         }
 
         // US Water Features
-        if (activeNamesList.contains(US_WATER)) {
+        if (NASAWFSPlaceNameLayer.activeNamesList.contains(NASAWFSPlaceNameLayer.US_WATER)) {
             placeNameService = new PlaceNameService(service, "topp:wpl_us_water", fileCachePath, Sector.FULL_SPHERE,
-                GRID_144x288,
+                PlaceNameLayer.GRID_144x288,
                 Font.decode("Arial-PLAIN-10"), addVersionTag);
             placeNameService.setColor(Color.cyan);
             placeNameService.setMinDisplayDistance(0.0d);
-            placeNameService.setMaxDisplayDistance(LEVEL_M);
+            placeNameService.setMaxDisplayDistance(PlaceNameLayer.LEVEL_M);
             placeNameServiceSet.addService(placeNameService, false);
         }
         // US Terrain Features
-        if (activeNamesList.contains(US_TERRAIN)) {
+        if (NASAWFSPlaceNameLayer.activeNamesList.contains(NASAWFSPlaceNameLayer.US_TERRAIN)) {
             placeNameService = new PlaceNameService(service, "topp:wpl_us_terrain", fileCachePath, Sector.FULL_SPHERE,
-                GRID_72x144,
+                PlaceNameLayer.GRID_72x144,
                 Font.decode("Arial-PLAIN-10"), addVersionTag);
             placeNameService.setColor(Color.orange);
             placeNameService.setMinDisplayDistance(0.0d);
-            placeNameService.setMaxDisplayDistance(LEVEL_O);
+            placeNameService.setMaxDisplayDistance(PlaceNameLayer.LEVEL_O);
             placeNameServiceSet.addService(placeNameService, false);
         }
         // GeoNET Administrative 1st Order
-        if (activeNamesList.contains(GEONET_A_ADM1)) {
+        if (NASAWFSPlaceNameLayer.activeNamesList.contains(NASAWFSPlaceNameLayer.GEONET_A_ADM1)) {
             placeNameService = new PlaceNameService(service, "topp:wpl_geonet_a_adm1", fileCachePath,
-                Sector.FULL_SPHERE, GRID_36x72,
+                Sector.FULL_SPHERE, PlaceNameLayer.GRID_36x72,
                 Font.decode("Arial-BOLD-10"), addVersionTag);
             placeNameService.setColor(Color.yellow);
             placeNameService.setMinDisplayDistance(0.0d);
-            placeNameService.setMaxDisplayDistance(LEVEL_N);
+            placeNameService.setMaxDisplayDistance(PlaceNameLayer.LEVEL_N);
             placeNameServiceSet.addService(placeNameService, false);
         }
         // GeoNET Administrative 2nd Order
-        if (activeNamesList.contains(GEONET_A_ADM2)) {
+        if (NASAWFSPlaceNameLayer.activeNamesList.contains(NASAWFSPlaceNameLayer.GEONET_A_ADM2)) {
             placeNameService = new PlaceNameService(service, "topp:wpl_geonet_a_adm2", fileCachePath,
-                Sector.FULL_SPHERE, GRID_36x72,
+                Sector.FULL_SPHERE, PlaceNameLayer.GRID_36x72,
                 Font.decode("Arial-BOLD-10"), addVersionTag);
             placeNameService.setColor(Color.yellow);
             placeNameService.setMinDisplayDistance(0.0d);
-            placeNameService.setMaxDisplayDistance(LEVEL_N);
+            placeNameService.setMaxDisplayDistance(PlaceNameLayer.LEVEL_N);
             placeNameServiceSet.addService(placeNameService, false);
         }
         // GeoNET Populated Place Administrative
-        if (activeNamesList.contains(GEONET_P_PPLA)) {
+        if (NASAWFSPlaceNameLayer.activeNamesList.contains(NASAWFSPlaceNameLayer.GEONET_P_PPLA)) {
             placeNameService = new PlaceNameService(service, "topp:wpl_geonet_p_ppla", fileCachePath,
-                Sector.FULL_SPHERE, GRID_36x72,
+                Sector.FULL_SPHERE, PlaceNameLayer.GRID_36x72,
                 Font.decode("Arial-BOLD-10"), addVersionTag);
             placeNameService.setColor(Color.pink);
             placeNameService.setMinDisplayDistance(0.0d);
-            placeNameService.setMaxDisplayDistance(LEVEL_N);
+            placeNameService.setMaxDisplayDistance(PlaceNameLayer.LEVEL_N);
             placeNameServiceSet.addService(placeNameService, false);
         }
         // GeoNET Populated Place
-        if (activeNamesList.contains(GEONET_P_PPL)) {
+        if (NASAWFSPlaceNameLayer.activeNamesList.contains(NASAWFSPlaceNameLayer.GEONET_P_PPL)) {
             placeNameService = new PlaceNameService(service, "topp:wpl_geonet_p_ppl", fileCachePath, Sector.FULL_SPHERE,
-                GRID_36x72,
+                PlaceNameLayer.GRID_36x72,
                 Font.decode("Arial-PLAIN-10"), addVersionTag);
             placeNameService.setColor(Color.pink);
             placeNameService.setMinDisplayDistance(0.0d);
-            placeNameService.setMaxDisplayDistance(LEVEL_O);
+            placeNameService.setMaxDisplayDistance(PlaceNameLayer.LEVEL_O);
             placeNameServiceSet.addService(placeNameService, false);
         }
 
@@ -301,8 +302,8 @@ public class NASAWFSPlaceNameLayer extends PlaceNameLayer {
     }
 
     public static void setPlaceNameSetsVisible(List names) {
-        activeNamesList = names;
-        makePlaceNameServiceSet();
+        NASAWFSPlaceNameLayer.activeNamesList = names;
+        NASAWFSPlaceNameLayer.makePlaceNameServiceSet();
     }
 
     @Override

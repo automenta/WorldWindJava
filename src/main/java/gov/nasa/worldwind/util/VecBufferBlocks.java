@@ -73,7 +73,7 @@ public class VecBufferBlocks extends CompoundVecBuffer {
      *                                  null.
      */
     public VecBufferBlocks(int coordsPerVec, String dataType, ByteBuffer buffer) {
-        this(coordsPerVec, dataType, buffer, DEFAULT_INITIAL_CAPACITY);
+        this(coordsPerVec, dataType, buffer, CompoundVecBuffer.DEFAULT_INITIAL_CAPACITY);
     }
 
     protected VecBufferBlocks(VecBufferBlocks that, int beginIndex, int endIndex) {

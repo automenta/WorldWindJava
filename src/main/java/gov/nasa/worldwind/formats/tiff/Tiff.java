@@ -98,7 +98,7 @@ public interface Tiff {
         // and the 0th column represents the visual bottom.
         int Row0_IS_RHS__Col0_IS_BOTTOM = 7;
 
-        int DEFAULT = Row0_IS_TOP__Col0_IS_LHS;
+        int DEFAULT = Orientation.Row0_IS_TOP__Col0_IS_LHS;
     }
 
     interface BitsPerSample {
@@ -207,7 +207,7 @@ public interface Tiff {
         // If SamplesPerPixel is 1, PlanarConfiguration is irrelevant, and need not be included.
         int PLANAR = 2;
 
-        int DEFAULT = CHUNKY;
+        int DEFAULT = PlanarConfiguration.CHUNKY;
     }
 
     interface ResolutionUnit {

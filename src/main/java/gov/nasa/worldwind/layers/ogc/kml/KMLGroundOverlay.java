@@ -21,7 +21,7 @@ import java.util.*;
  * @author tag
  * @version $Id: KMLGroundOverlay.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class KMLGroundOverlay extends KMLAbstractOverlay implements KMLRenderable {
+public class KMLGroundOverlay extends KMLAbstractOverlay {
     protected KMLRenderable renderable;
 
     /**
@@ -96,8 +96,7 @@ public class KMLGroundOverlay extends KMLAbstractOverlay implements KMLRenderabl
         final String altitudeMode = this.getAltitudeMode();
         if ("absolute".equals(altitudeMode)) {
             this.renderable = new KMLGroundOverlayPolygonImpl(tc, this);
-        }
-        else // Default to clampToGround
+        } else // Default to clampToGround
         {
             // If the overlay has an icon, create a surface image renderable. Otherwise, create a surface polygon to
             // render the overlay as a colored polygon.
@@ -137,8 +136,7 @@ public class KMLGroundOverlay extends KMLAbstractOverlay implements KMLRenderabl
             for (LatLon ll : sector.getCorners()) {
                 corners.add(new Position(ll, altitude));
             }
-        }
-        else {
+        } else {
             GXLatLongQuad latLonQuad = this.getLatLonQuad();
             if (latLonQuad != null && latLonQuad.getCoordinates() != null) {
                 for (Position position : latLonQuad.getCoordinates().list) {
@@ -165,10 +163,10 @@ public class KMLGroundOverlay extends KMLAbstractOverlay implements KMLRenderabl
 
     @Override
     public void onChange(Message msg) {
-        if (MSG_LINK_CHANGED.equals(msg.getName()))
+        if (KMLAbstractObject.MSG_LINK_CHANGED.equals(msg.getName()))
             this.renderable = null;
 
-        if (MSG_BOX_CHANGED.equals(msg.getName()))
+        if (KMLAbstractObject.MSG_BOX_CHANGED.equals(msg.getName()))
             this.renderable = null;
 
         super.onChange(msg);

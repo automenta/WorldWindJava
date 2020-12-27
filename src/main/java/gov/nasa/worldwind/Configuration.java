@@ -30,9 +30,9 @@ import java.util.logging.Level;
  * When the Configuration class is first instantiated it reads the XML document <code>config/worldwind.xml</code> and
  * registers all the information there. The information can subsequently be retrieved via the class' various
  * <code>getValue</code> methods. Many WorldWind start-up objects query this information to determine the classes to
- * create. For example, the first WorldWind object created by an application is typically a {@link
- * WorldWindowGLCanvas}. During construction that class causes WorldWind's internal classes to be
- * constructed, using the names of those classes drawn from the Configuration singleton, this class.
+ * create. For example, the first WorldWind object created by an application is typically a {@link WorldWindowGLCanvas}.
+ * During construction that class causes WorldWind's internal classes to be constructed, using the names of those
+ * classes drawn from the Configuration singleton, this class.
  * <p>
  * The default WorldWind configuration document is <code>config/worldwind.xml</code>. This can be changed by setting the
  * Java property <code>gov.nasa.worldwind.config.file</code> to a different file name or a valid URL prior to creating
@@ -84,42 +84,38 @@ public class Configuration // Singleton
      * Private constructor invoked only internally.
      */
     private Configuration() {
-        this.properties = initializeDefaults();
+        this.properties = Configuration.initializeDefaults();
 
         // Load the app's configuration if there is one
         try {
-            String appConfigLocation = System.getProperty(CONFIG_APP_DOCUMENT_KEY);
+            String appConfigLocation = System.getProperty(Configuration.CONFIG_APP_DOCUMENT_KEY);
             if (appConfigLocation != null)
-                this.loadConfigDoc(System.getProperty(CONFIG_APP_DOCUMENT_KEY)); // Load app's config first
+                this.loadConfigDoc(System.getProperty(Configuration.CONFIG_APP_DOCUMENT_KEY)); // Load app's config first
         }
-        catch (Exception e) {
-            Logging.logger(DEFAULT_LOGGER_NAME).log(Level.WARNING, "Configuration.ConfigNotFound",
-                System.getProperty(CONFIG_APP_DOCUMENT_KEY));
+        catch (RuntimeException e) {
+            Logging.logger(Configuration.DEFAULT_LOGGER_NAME).log(Level.WARNING, "Configuration.ConfigNotFound",
+                System.getProperty(Configuration.CONFIG_APP_DOCUMENT_KEY));
             // Don't stop if the app config file can't be found or parsed
         }
 
         try {
             // Load the default configuration
-            this.loadConfigDoc(System.getProperty(CONFIG_WW_DOCUMENT_KEY, CONFIG_WW_DOCUMENT_NAME));
+            this.loadConfigDoc(System.getProperty(Configuration.CONFIG_WW_DOCUMENT_KEY, Configuration.CONFIG_WW_DOCUMENT_NAME));
 
             // Load config properties, ensuring that the app's config takes precedence over wwj's
             for (int i = this.configDocs.size() - 1; i >= 0; i--) {
                 this.loadConfigProperties(this.configDocs.get(i));
             }
         }
-        catch (Exception e) {
-            Logging.logger(DEFAULT_LOGGER_NAME).log(Level.WARNING, "Configuration.ConfigNotFound",
-                System.getProperty(CONFIG_WW_DOCUMENT_KEY));
+        catch (RuntimeException e) {
+            Logging.logger(Configuration.DEFAULT_LOGGER_NAME).log(Level.WARNING, "Configuration.ConfigNotFound",
+                System.getProperty(Configuration.CONFIG_WW_DOCUMENT_KEY));
         }
 
         // To support old-style configuration, read an existing config properties file and give the properties
         // specified there precedence.
         this.initializeCustom();
     }
-
-//    public static void insertConfigurationDocument(String fileName) {
-//        ourInstance.insertConfigDoc(fileName);
-//    }
 
     /**
      * Return as a string the value associated with a specified key.
@@ -129,7 +125,7 @@ public class Configuration // Singleton
      * @return the value associated with the key, or the specified default value if the key does not exist.
      */
     public static String getStringValue(String key, String defaultValue) {
-        String v = getStringValue(key);
+        String v = Configuration.getStringValue(key);
         return v != null ? v : defaultValue;
     }
 
@@ -140,7 +136,7 @@ public class Configuration // Singleton
      * @return the value associated with the key, or null if the key does not exist.
      */
     public static String getStringValue(String key) {
-        Object o = ourInstance.properties.getProperty(key);
+        Object o = Configuration.ourInstance.properties.getProperty(key);
         return o != null ? o.toString() : null;
     }
 
@@ -153,7 +149,7 @@ public class Configuration // Singleton
      * Integer or string representation of an Integer.
      */
     public static Integer getIntegerValue(String key, Integer defaultValue) {
-        Integer v = getIntegerValue(key);
+        Integer v = Configuration.getIntegerValue(key);
         return v != null ? v : defaultValue;
     }
 
@@ -165,7 +161,7 @@ public class Configuration // Singleton
      * representation of an Integer.
      */
     public static Integer getIntegerValue(String key) {
-        String v = getStringValue(key);
+        String v = Configuration.getStringValue(key);
         if (v == null)
             return null;
 
@@ -187,7 +183,7 @@ public class Configuration // Singleton
      * Long or string representation of a Long.
      */
     public static Long getLongValue(String key, Long defaultValue) {
-        Long v = getLongValue(key);
+        Long v = Configuration.getLongValue(key);
         return v != null ? v : defaultValue;
     }
 
@@ -199,7 +195,7 @@ public class Configuration // Singleton
      * representation of a Long.
      */
     public static Long getLongValue(String key) {
-        String v = getStringValue(key);
+        String v = Configuration.getStringValue(key);
         if (v == null)
             return null;
 
@@ -221,7 +217,7 @@ public class Configuration // Singleton
      * Double or string representation of an Double.
      */
     public static Double getDoubleValue(String key, Double defaultValue) {
-        Double v = getDoubleValue(key);
+        Double v = Configuration.getDoubleValue(key);
         return v != null ? v : defaultValue;
     }
 
@@ -233,7 +229,7 @@ public class Configuration // Singleton
      * representation of an Double.
      */
     public static Double getDoubleValue(String key) {
-        String v = getStringValue(key);
+        String v = Configuration.getStringValue(key);
         if (v == null)
             return null;
 
@@ -258,7 +254,7 @@ public class Configuration // Singleton
      * Boolean or string representation of an Boolean.
      */
     public static Boolean getBooleanValue(String key, Boolean defaultValue) {
-        Boolean v = getBooleanValue(key);
+        Boolean v = Configuration.getBooleanValue(key);
         return v != null ? v : defaultValue;
     }
 
@@ -273,7 +269,7 @@ public class Configuration // Singleton
      * representation of an Boolean.
      */
     public static Boolean getBooleanValue(String key) {
-        String v = getStringValue(key);
+        String v = Configuration.getStringValue(key);
         if (v == null)
             return null;
 
@@ -290,7 +286,6 @@ public class Configuration // Singleton
 
         Logging.logger().log(Level.SEVERE, "Configuration.ConversionError", v);
         return null;
-
     }
 
     /**
@@ -300,7 +295,7 @@ public class Configuration // Singleton
      * @return true if the key exists, otherwise false.
      */
     public static boolean hasKey(String key) {
-        return ourInstance.properties.contains(key);
+        return Configuration.ourInstance.properties.contains(key);
     }
 
     /**
@@ -309,7 +304,7 @@ public class Configuration // Singleton
      * @param key the key of interest.
      */
     public static void removeKey(String key) {
-        ourInstance.properties.remove(key);
+        Configuration.ourInstance.properties.remove(key);
     }
 
     /**
@@ -320,18 +315,8 @@ public class Configuration // Singleton
      * @param value the value to associate with the key.
      */
     public static void setValue(String key, Object value) {
-        ourInstance.properties.put(key, value.toString());
+        Configuration.ourInstance.properties.put(key, value.toString());
     }
-
-//    /**
-//     * Returns the path to the application's current working directory.
-//     *
-//     * @return the absolute path to the application's current working directory.
-//     */
-//    public static String getCurrentWorkingDirectory() {
-//        String dir = System.getProperty("user.dir");
-//        return (dir != null) ? dir : ".";
-//    }
 
     /**
      * Returns the path to the application user's home directory.
@@ -365,19 +350,16 @@ public class Configuration // Singleton
      * @return the absolute path to the current user's application data directory.
      */
     public static String getCurrentUserAppDataDirectory() {
-        if (isMacOS()) {
+        if (Configuration.isMacOS()) {
             // Return a path that Mac OS X has designated for app-specific data and support files. See the following URL
             // for details:
             // http://developer.apple.com/library/mac/#documentation/FileManagement/Conceptual/FileSystemProgrammingGUide/MacOSXDirectories/MacOSXDirectories.html#//apple_ref/doc/uid/TP40010672-CH10-SW1
-            return getUserHomeDirectory() + "/Library/Application Support";
-        }
-        else if (isWindowsOS()) {
-            return getUserHomeDirectory() + "\\Application Data";
-        }
-        else if (isLinuxOS() || isUnixOS() || isSolarisOS()) {
-            return getUserHomeDirectory();
-        }
-        else {
+            return Configuration.getUserHomeDirectory() + "/Library/Application Support";
+        } else if (Configuration.isWindowsOS()) {
+            return Configuration.getUserHomeDirectory() + "\\Application Data";
+        } else if (Configuration.isLinuxOS() || Configuration.isUnixOS() || Configuration.isSolarisOS()) {
+            return Configuration.getUserHomeDirectory();
+        } else {
             String msg = Logging.getMessage("generic.UnknownOperatingSystem");
             Logging.logger().fine(msg);
             return null;
@@ -389,7 +371,8 @@ public class Configuration // Singleton
      *
      * @return true if the operating system is a Mac operating system, otherwise false.
      */
-    @Deprecated public static boolean isMacOS() {
+    @Deprecated
+    public static boolean isMacOS() {
         String osName = System.getProperty("os.name");
         return osName != null && osName.toLowerCase().contains("mac");
     }
@@ -498,15 +481,15 @@ public class Configuration // Singleton
     }
 
     /**
-     * Returns a {@link GLCapabilities} identifying graphics features required by WorldWind. The
-     * capabilities instance returned requests the maximum OpenGL profile supporting GL fixed function operations, a
-     * frame buffer with 8 bits each of red, green, blue and alpha, a 24-bit depth buffer, double buffering, and if the
-     * Java property "gov.nasa.worldwind.stereo.mode" is set to "device", device supported stereo.
+     * Returns a {@link GLCapabilities} identifying graphics features required by WorldWind. The capabilities instance
+     * returned requests the maximum OpenGL profile supporting GL fixed function operations, a frame buffer with 8 bits
+     * each of red, green, blue and alpha, a 24-bit depth buffer, double buffering, and if the Java property
+     * "gov.nasa.worldwind.stereo.mode" is set to "device", device supported stereo.
      *
      * @return a new capabilities instance identifying required graphics features.
      */
     public static GLCapabilities getRequiredGLCapabilities() {
-        GLCapabilities caps = new GLCapabilities(getMaxCompatibleGLProfile());
+        GLCapabilities caps = new GLCapabilities(Configuration.getMaxCompatibleGLProfile());
 
         caps.setAlphaBits(8);
         caps.setRedBits(8);
@@ -533,7 +516,7 @@ public class Configuration // Singleton
     public static Element getElement(String xpathExpression) {
         XPath xpath = WWXML.makeXPath();
 
-        for (Document doc : ourInstance.configDocs) {
+        for (Document doc : Configuration.ourInstance.configDocs) {
             try {
                 Node node = (Node) xpath.evaluate(xpathExpression, doc.getDocumentElement(), XPathConstants.NODE);
                 if (node != null)
@@ -545,6 +528,16 @@ public class Configuration // Singleton
         }
 
         return null;
+    }
+
+    private static Properties initializeDefaults() {
+        Properties defaults = new Properties();
+        TimeZone tz = Calendar.getInstance().getTimeZone();
+        if (tz != null)
+            defaults.setProperty(AVKey.INITIAL_LONGITUDE,
+                Double.toString(
+                    Angle.fromDegrees(180.0 * tz.getOffset(System.currentTimeMillis()) / (12.0 * 3.6e6)).degrees));
+        return defaults;
     }
 
     private void loadConfigDoc(String configLocation) {
@@ -586,25 +579,15 @@ public class Configuration // Singleton
             }
         }
         catch (XPathExpressionException e) {
-            Logging.logger(DEFAULT_LOGGER_NAME).log(Level.WARNING, "XML.ParserConfigurationException");
+            Logging.logger(Configuration.DEFAULT_LOGGER_NAME).log(Level.WARNING, "XML.ParserConfigurationException");
         }
-    }
-
-    private static Properties initializeDefaults() {
-        Properties defaults = new Properties();
-        TimeZone tz = Calendar.getInstance().getTimeZone();
-        if (tz != null)
-            defaults.setProperty(AVKey.INITIAL_LONGITUDE,
-                Double.toString(
-                    Angle.fromDegrees(180.0 * tz.getOffset(System.currentTimeMillis()) / (12.0 * 3.6e6)).degrees));
-        return defaults;
     }
 
     private void initializeCustom() {
         // IMPORTANT NOTE: Always use the single argument version of Logging.logger in this method because the non-arg
         // method assumes an instance of Configuration already exists.
 
-        String configFileName = System.getProperty(CONFIG_FILE_PROPERTY_KEY, CONFIG_PROPERTIES_FILE_NAME);
+        String configFileName = System.getProperty(Configuration.CONFIG_FILE_PROPERTY_KEY, Configuration.CONFIG_PROPERTIES_FILE_NAME);
         try {
             InputStream propsStream = null;
             File file = new File(configFileName);
@@ -613,13 +596,13 @@ public class Configuration // Singleton
                     propsStream = new FileInputStream(file);
                 }
                 catch (FileNotFoundException e) {
-                    Logging.logger(DEFAULT_LOGGER_NAME).log(Level.FINEST, "Configuration.LocalConfigFileNotFound",
+                    Logging.logger(Configuration.DEFAULT_LOGGER_NAME).log(Level.FINEST, "Configuration.LocalConfigFileNotFound",
                         configFileName);
                 }
             }
 
             if (propsStream == null) {
-                propsStream = this.getClass().getResourceAsStream("/" + configFileName);
+                propsStream = this.getClass().getResourceAsStream('/' + configFileName);
             }
 
             if (propsStream != null)
@@ -628,7 +611,7 @@ public class Configuration // Singleton
         // Use a named logger in all the catch statements below to prevent Logger from calling back into
         // Configuration when this Configuration instance is not yet fully instantiated.
         catch (IOException e) {
-            Logging.logger(DEFAULT_LOGGER_NAME).log(Level.SEVERE, "Configuration.ExceptionReadingPropsFile", e);
+            Logging.logger(Configuration.DEFAULT_LOGGER_NAME).log(Level.SEVERE, "Configuration.ExceptionReadingPropsFile", e);
         }
     }
 }

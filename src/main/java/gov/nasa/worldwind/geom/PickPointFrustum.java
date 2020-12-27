@@ -11,8 +11,7 @@ import gov.nasa.worldwind.util.Logging;
 import java.awt.*;
 
 /**
- * A viewport aligned {@link Frustum} that also stores the 2D screen rectangle that the {@link
- * Frustum} contains.
+ * A viewport aligned {@link Frustum} that also stores the 2D screen rectangle that the {@link Frustum} contains.
  *
  * @author Jeff Addison
  * @version $Id: PickPointFrustum.java 1171 2013-02-11 21:45:02Z dcollins $
@@ -42,8 +41,8 @@ public class PickPointFrustum extends Frustum {
     // ============== Intersection Functions ======================= //
 
     /**
-     * Returns true if the specified 2D screen {@link Rectangle} intersects the space enclosed by this view
-     * aligned frustums screen rectangle.
+     * Returns true if the specified 2D screen {@link Rectangle} intersects the space enclosed by this view aligned
+     * frustums screen rectangle.
      *
      * @param rect the rectangle to test
      * @return true if the specified Rectangle intersects the space enclosed by this Frustum, and false otherwise.

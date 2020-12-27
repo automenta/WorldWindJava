@@ -77,16 +77,14 @@ public class WCS100HTTP extends AbstractXMLEventParser {
                 if (o instanceof AttributesOnlyXMLEventParser)
                     this.gets.add((AttributesOnlyXMLEventParser) o);
             }
-        }
-        else if (ctx.isStartElement(event, "Post")) {
+        } else if (ctx.isStartElement(event, "Post")) {
             XMLEventParser parser = this.allocate(ctx, event);
             if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
                 if (o instanceof AttributesOnlyXMLEventParser)
                     this.posts.add((AttributesOnlyXMLEventParser) o);
             }
-        }
-        else {
+        } else {
             super.doParseEventContent(ctx, event, args);
         }
     }

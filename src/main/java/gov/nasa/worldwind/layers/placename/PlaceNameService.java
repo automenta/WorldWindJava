@@ -32,15 +32,15 @@ public class PlaceNameService {
     // Display attributes.
     private final Font font;
     private final int numColumns;
-    private final AbsentResourceList absentTiles = new AbsentResourceList(MAX_ABSENT_TILE_TRIES,
-        MIN_ABSENT_TILE_CHECK_INTERVAL);
+    private final AbsentResourceList absentTiles = new AbsentResourceList(PlaceNameService.MAX_ABSENT_TILE_TRIES,
+        PlaceNameService.MIN_ABSENT_TILE_CHECK_INTERVAL);
     private boolean enabled;
     private Color color;
     private Color backgroundColor;
     private double minDisplayDistance;
     private double maxDisplayDistance;
-    private boolean addVersionTag = false;
-    private Sector maskingSector = null;
+    private boolean addVersionTag;
+    private final Sector maskingSector;
 
     /**
      * PlaceNameService Constructor
@@ -80,6 +80,14 @@ public class PlaceNameService {
         this.numColumns = this.numColumnsInLevel();
     }
 
+    private static Color suggestBackgroundColor(Color foreground) {
+        float[] compArray = new float[4];
+        Color.RGBtoHSB(foreground.getRed(), foreground.getGreen(), foreground.getBlue(), compArray);
+        int colorValue = compArray[2] < 0.5f ? 255 : 0;
+        int alphaValue = foreground.getAlpha();
+        return new Color(colorValue, colorValue, colorValue, alphaValue);
+    }
+
     /**
      * @param row    row
      * @param column column
@@ -97,16 +105,16 @@ public class PlaceNameService {
         sb.append(File.separator).append(this.dataset);
         sb.append(File.separator).append(row);
         sb.append(File.separator).append(row).append('_').append(column);
-        sb.append(FORMAT_SUFFIX);
+        sb.append(PlaceNameService.FORMAT_SUFFIX);
 
         String path = sb.toString();
         return path.replaceAll("[:*?<>|]", "");
     }
 
     private int numColumnsInLevel() {
-        int firstCol = Tile.computeColumn(this.tileDelta.getLongitude(), TILING_SECTOR.lonMin(), Angle.NEG180);
+        int firstCol = Tile.computeColumn(this.tileDelta.getLongitude(), PlaceNameService.TILING_SECTOR.lonMin(), Angle.NEG180);
         int lastCol = Tile.computeColumn(this.tileDelta.getLongitude(),
-            TILING_SECTOR.lonMax().sub(this.tileDelta.getLongitude()), Angle.NEG180);
+            PlaceNameService.TILING_SECTOR.lonMax().sub(this.tileDelta.getLongitude()), Angle.NEG180);
 
         return lastCol - firstCol + 1;
     }
@@ -118,8 +126,8 @@ public class PlaceNameService {
     /**
      * @param sector request bounding box
      * @return wfs request url
-     * @throws MalformedURLException thrown if error creating the url
-     * @throws IllegalArgumentException       if {@link Sector} is null
+     * @throws MalformedURLException    thrown if error creating the url
+     * @throws IllegalArgumentException if {@link Sector} is null
      */
     public URL createServiceURLFromSector(Sector sector) throws MalformedURLException {
         if (sector == null) {
@@ -142,10 +150,10 @@ public class PlaceNameService {
         sb.append("&Service=WFS");
         sb.append("&OUTPUTFORMAT=GML2-GZIP");
         sb.append("&BBOX=");
-        sb.append(sector.lonMin().getDegrees()).append(',');
-        sb.append(sector.latMin().getDegrees()).append(',');
-        sb.append(sector.lonMax().getDegrees()).append(',');
-        sb.append(sector.latMax().getDegrees());
+        sb.append(sector.lonMin().degrees).append(',');
+        sb.append(sector.latMin().degrees).append(',');
+        sb.append(sector.lonMax().degrees).append(',');
+        sb.append(sector.latMax().degrees);
         return new URL(sb.toString());
     }
 
@@ -213,20 +221,12 @@ public class PlaceNameService {
 
     public synchronized final Color getBackgroundColor() {
         if (this.backgroundColor == null)
-            this.backgroundColor = suggestBackgroundColor(this.color);
+            this.backgroundColor = PlaceNameService.suggestBackgroundColor(this.color);
         return this.backgroundColor;
     }
 
     public synchronized final void setBackgroundColor(Color backgroundColor) {
         this.backgroundColor = backgroundColor;
-    }
-
-    private static Color suggestBackgroundColor(Color foreground) {
-        float[] compArray = new float[4];
-        Color.RGBtoHSB(foreground.getRed(), foreground.getGreen(), foreground.getBlue(), compArray);
-        int colorValue = compArray[2] < 0.5f ? 255 : 0;
-        int alphaValue = foreground.getAlpha();
-        return new Color(colorValue, colorValue, colorValue, alphaValue);
     }
 
     public final String getDataset() {

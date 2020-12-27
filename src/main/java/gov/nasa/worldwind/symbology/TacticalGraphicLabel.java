@@ -21,8 +21,8 @@ import java.awt.geom.*;
 /**
  * A label drawn as part of a tactical graphic. The label is drawn at constant screen size. The label can include
  * multiple lines of text, and can optionally be kept aligned with features on the globe. To align a label with the
- * globe specify an {@link #setOrientationPosition(Position) orientationPosition} for the label.
- * The label will be drawn along a line connecting the label's position to the orientation position.
+ * globe specify an {@link #setOrientationPosition(Position) orientationPosition} for the label. The label will be drawn
+ * along a line connecting the label's position to the orientation position.
  *
  * @author pabercrombie
  * @version $Id: TacticalGraphicLabel.java 2200 2014-08-07 18:05:43Z tgaskins $
@@ -69,7 +69,7 @@ public class TacticalGraphicLabel {
     /**
      * Offset from the geographic position at which to draw the label.
      */
-    protected Offset offset = DEFAULT_OFFSET;
+    protected Offset offset = TacticalGraphicLabel.DEFAULT_OFFSET;
     /**
      * Text alignment for multi-line labels.
      */
@@ -86,11 +86,11 @@ public class TacticalGraphicLabel {
      * Opacity of the text, as a value between 0 and 1.
      */
     protected double opacity = 1.0;
-    protected double interiorOpacity = DEFAULT_INTERIOR_OPACITY;
+    protected double interiorOpacity = TacticalGraphicLabel.DEFAULT_INTERIOR_OPACITY;
     /**
      * Font used to draw the label.
      */
-    protected Font font = DEFAULT_FONT;
+    protected Font font = TacticalGraphicLabel.DEFAULT_FONT;
     /**
      * Space (in pixels) between lines in a multi-line label.
      */
@@ -98,11 +98,11 @@ public class TacticalGraphicLabel {
     /**
      * Effect applied to the text. May be {@link AVKey#TEXT_EFFECT_SHADOW} or {@link AVKey#TEXT_EFFECT_NONE}.
      */
-    protected String effect = DEFAULT_TEXT_EFFECT;
+    protected String effect = TacticalGraphicLabel.DEFAULT_TEXT_EFFECT;
     /**
      * Insets that separate the text from its frame. Only applies when the text interior is rendered.
      */
-    protected Insets insets = DEFAULT_INSETS;
+    protected Insets insets = TacticalGraphicLabel.DEFAULT_INSETS;
     /**
      * Indicates whether or not to draw the label interior.
      */
@@ -157,6 +157,98 @@ public class TacticalGraphicLabel {
     }
 
     /**
+     * Compute the amount of rotation to apply to a label in order to keep it oriented toward its orientation position.
+     *
+     * @param screenPoint            Geographic position of the text, projected onto the screen.
+     * @param orientationScreenPoint Orientation position, projected onto the screen.
+     * @return The rotation angle to apply when drawing the label.
+     */
+    protected static Angle computeRotation(Vec4 screenPoint, Vec4 orientationScreenPoint) {
+        // Determine delta between the orientation position and the label position
+        double deltaX = screenPoint.x - orientationScreenPoint.x;
+        double deltaY = screenPoint.y - orientationScreenPoint.y;
+
+        if (deltaX != 0) {
+            double angle = Math.atan(deltaY / deltaX);
+            return Angle.fromRadians(angle);
+        } else {
+            return Angle.POS90; // Vertical label
+        }
+    }
+
+    /**
+     * Compute the bounding screen extent of a rotated rectangle.
+     *
+     * @param rect     Rectangle to rotate.
+     * @param x        X coordinate of the rotation point.
+     * @param y        Y coordinate of the rotation point.
+     * @param rotation Rotation angle.
+     * @return The smallest rectangle that completely contains {@code rect} when rotated by the specified angle.
+     */
+    protected static Rectangle computeRotatedScreenExtent(Rectangle rect, int x, int y, Angle rotation) {
+        Rectangle r = new Rectangle(rect);
+
+        // Translate the rectangle to the rotation point.
+        r.translate(-x, -y);
+
+        // Compute corner points
+        Vec4[] corners = {
+            new Vec4(r.getMaxX(), r.getMaxY()),
+            new Vec4(r.getMaxX(), r.getMinY()),
+            new Vec4(r.getMinX(), r.getMaxY()),
+            new Vec4(r.getMinX(), r.getMinY())
+        };
+
+        // Rotate the rectangle
+        Matrix rotationMatrix = Matrix.fromRotationZ(rotation);
+        for (int i = 0; i < corners.length; i++) {
+            corners[i] = corners[i].transformBy3(rotationMatrix);
+        }
+
+        // Find the bounding rectangle of rotated points.
+        int minX = Integer.MAX_VALUE;
+        int minY = Integer.MAX_VALUE;
+        int maxX = -Integer.MAX_VALUE;
+        int maxY = -Integer.MAX_VALUE;
+
+        for (Vec4 v : corners) {
+            if (v.x > maxX)
+                maxX = (int) v.x;
+
+            if (v.x < minX)
+                minX = (int) v.x;
+
+            if (v.y > maxY)
+                maxY = (int) v.y;
+
+            if (v.y < minY)
+                minY = (int) v.y;
+        }
+
+        // Set bounds and translate the rectangle back to where it started.
+        r.setBounds(minX, minY, maxX - minX, maxY - minY);
+        r.translate(x, y);
+
+        return r;
+    }
+
+    /**
+     * Compute a contrasting background color to draw the label's outline.
+     *
+     * @param color Label color.
+     * @return A color that contrasts with {@code color}.
+     */
+    protected static Color computeBackgroundColor(Color color) {
+        float[] colorArray = new float[4];
+        Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), colorArray);
+
+        if (colorArray[2] > 0.5)
+            return new Color(0, 0, 0, 0.7f);
+        else
+            return new Color(1, 1, 1, 0.7f);
+    }
+
+    /**
      * Indicates the text of this label.
      *
      * @return The label's text.
@@ -166,7 +258,7 @@ public class TacticalGraphicLabel {
             StringBuilder sb = new StringBuilder();
 
             for (int i = 0; i < this.lines.length - 1; i++) {
-                sb.append(this.lines[i]).append("\n");
+                sb.append(this.lines[i]).append('\n');
             }
             sb.append(this.lines[this.lines.length - 1]);
 
@@ -241,8 +333,8 @@ public class TacticalGraphicLabel {
     }
 
     /**
-     * Indicates the offset from the geographic position at which to draw the label. See {@link
-     * #setOffset(Offset) setOffset} for more information on how the offset is interpreted.
+     * Indicates the offset from the geographic position at which to draw the label. See {@link #setOffset(Offset)
+     * setOffset} for more information on how the offset is interpreted.
      *
      * @return The offset at which to draw the label.
      */
@@ -562,9 +654,9 @@ public class TacticalGraphicLabel {
     }
 
     /**
-     * Get the label bounding {@link Rectangle} using OGL coordinates - bottom-left corner x and y relative to
-     * the {@link gov.nasa.worldwind.WorldWindow} bottom-left corner. If the label is rotated then the returned
-     * rectangle is the bounding rectangle of the rotated label.
+     * Get the label bounding {@link Rectangle} using OGL coordinates - bottom-left corner x and y relative to the
+     * {@link gov.nasa.worldwind.WorldWindow} bottom-left corner. If the label is rotated then the returned rectangle is
+     * the bounding rectangle of the rotated label.
      *
      * @param dc the current DrawContext.
      * @return the label bounding {@link Rectangle} using OGL viewport coordinates.
@@ -686,7 +778,7 @@ public class TacticalGraphicLabel {
 
             pOffset = pOffset.transformBy3(rot);
 
-            offsetPoint = new Point((int) pOffset.getX(), (int) pOffset.getY());
+            offsetPoint = new Point((int) pOffset.x, (int) pOffset.y);
         }
 
         int x = (int) (olbl.screenPlacePoint.x + offsetPoint.getX());
@@ -718,27 +810,6 @@ public class TacticalGraphicLabel {
             return dc.getPickFrustums().intersectsAny(olbl.screenExtent);
         else
             return view.getViewport().intersects(olbl.screenExtent);
-    }
-
-    /**
-     * Compute the amount of rotation to apply to a label in order to keep it oriented toward its orientation position.
-     *
-     * @param screenPoint            Geographic position of the text, projected onto the screen.
-     * @param orientationScreenPoint Orientation position, projected onto the screen.
-     * @return The rotation angle to apply when drawing the label.
-     */
-    protected static Angle computeRotation(Vec4 screenPoint, Vec4 orientationScreenPoint) {
-        // Determine delta between the orientation position and the label position
-        double deltaX = screenPoint.x - orientationScreenPoint.x;
-        double deltaY = screenPoint.y - orientationScreenPoint.y;
-
-        if (deltaX != 0) {
-            double angle = Math.atan(deltaY / deltaX);
-            return Angle.fromRadians(angle);
-        }
-        else {
-            return Angle.POS90; // Vertical label
-        }
     }
 
     /**
@@ -835,8 +906,7 @@ public class TacticalGraphicLabel {
         TextRenderer textRenderer = OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(), font);
         if (dc.isPickingMode()) {
             this.doPick(dc, pickSupport, olbl);
-        }
-        else {
+        } else {
             this.drawText(dc, textRenderer, olbl);
         }
     }
@@ -1119,12 +1189,11 @@ public class TacticalGraphicLabel {
 
     /**
      * Draws this ordered renderable and all subsequent Label ordered renderables in the ordered renderable list. This
-     * method differs from {@link #drawBatchedText(DrawContext, TextRenderer,
-     * TacticalGraphicLabel.OrderedLabel) drawBatchedText} in that this method
-     * re-initializes the text renderer to draw the next label, while {@code drawBatchedText} re-uses the active text
-     * renderer context. That is, {@code drawBatchedText} attempts to draw as many labels as possible that share same
-     * text renderer configuration as this label, and this method attempts to draw as many labels as possible regardless
-     * of the text renderer configuration of the subsequent labels.
+     * method differs from {@link #drawBatchedText(DrawContext, TextRenderer, TacticalGraphicLabel.OrderedLabel)
+     * drawBatchedText} in that this method re-initializes the text renderer to draw the next label, while {@code
+     * drawBatchedText} re-uses the active text renderer context. That is, {@code drawBatchedText} attempts to draw as
+     * many labels as possible that share same text renderer configuration as this label, and this method attempts to
+     * draw as many labels as possible regardless of the text renderer configuration of the subsequent labels.
      *
      * @param dc         the current draw context.
      * @param firstLabel the label drawn prior to calling this method.
@@ -1144,8 +1213,7 @@ public class TacticalGraphicLabel {
 
                 nextItem = dc.peekOrderedRenderables();
             }
-        }
-        else if (this.isEnableBatchPicking()) {
+        } else if (this.isEnableBatchPicking()) {
             while (nextItem instanceof OrderedLabel) {
                 OrderedLabel nextLabel = (OrderedLabel) nextItem;
                 if (!nextLabel.isEnableBatchRendering() || !nextLabel.isEnableBatchPicking())
@@ -1166,9 +1234,8 @@ public class TacticalGraphicLabel {
      * Draws text for subsequent Label ordered renderables in the ordered renderable list. This method is called after
      * the text renderer has been set up (after beginRendering has been called), so this method can only draw text for
      * subsequent labels that use the same font and rotation as this label. This method differs from {@link
-     * #drawBatched(DrawContext, TacticalGraphicLabel.OrderedLabel)
-     * drawBatched} in that this method reuses the active text renderer context to draw as many labels as possible
-     * without switching text renderer state.
+     * #drawBatched(DrawContext, TacticalGraphicLabel.OrderedLabel) drawBatched} in that this method reuses the active
+     * text renderer context to draw as many labels as possible without switching text renderer state.
      *
      * @param dc           the current draw context.
      * @param textRenderer Text renderer used to draw the label.
@@ -1246,78 +1313,6 @@ public class TacticalGraphicLabel {
         }
 
         return screenRect;
-    }
-
-    /**
-     * Compute the bounding screen extent of a rotated rectangle.
-     *
-     * @param rect     Rectangle to rotate.
-     * @param x        X coordinate of the rotation point.
-     * @param y        Y coordinate of the rotation point.
-     * @param rotation Rotation angle.
-     * @return The smallest rectangle that completely contains {@code rect} when rotated by the specified angle.
-     */
-    protected static Rectangle computeRotatedScreenExtent(Rectangle rect, int x, int y, Angle rotation) {
-        Rectangle r = new Rectangle(rect);
-
-        // Translate the rectangle to the rotation point.
-        r.translate(-x, -y);
-
-        // Compute corner points
-        Vec4[] corners = {
-            new Vec4(r.getMaxX(), r.getMaxY()),
-            new Vec4(r.getMaxX(), r.getMinY()),
-            new Vec4(r.getMinX(), r.getMaxY()),
-            new Vec4(r.getMinX(), r.getMinY())
-        };
-
-        // Rotate the rectangle
-        Matrix rotationMatrix = Matrix.fromRotationZ(rotation);
-        for (int i = 0; i < corners.length; i++) {
-            corners[i] = corners[i].transformBy3(rotationMatrix);
-        }
-
-        // Find the bounding rectangle of rotated points.
-        int minX = Integer.MAX_VALUE;
-        int minY = Integer.MAX_VALUE;
-        int maxX = -Integer.MAX_VALUE;
-        int maxY = -Integer.MAX_VALUE;
-
-        for (Vec4 v : corners) {
-            if (v.x > maxX)
-                maxX = (int) v.x;
-
-            if (v.x < minX)
-                minX = (int) v.x;
-
-            if (v.y > maxY)
-                maxY = (int) v.y;
-
-            if (v.y < minY)
-                minY = (int) v.y;
-        }
-
-        // Set bounds and translate the rectangle back to where it started.
-        r.setBounds(minX, minY, maxX - minX, maxY - minY);
-        r.translate(x, y);
-
-        return r;
-    }
-
-    /**
-     * Compute a contrasting background color to draw the label's outline.
-     *
-     * @param color Label color.
-     * @return A color that contrasts with {@code color}.
-     */
-    protected static Color computeBackgroundColor(Color color) {
-        float[] colorArray = new float[4];
-        Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), colorArray);
-
-        if (colorArray[2] > 0.5)
-            return new Color(0, 0, 0, 0.7f);
-        else
-            return new Color(1, 1, 1, 0.7f);
     }
 
     protected class OrderedLabel implements OrderedRenderable {

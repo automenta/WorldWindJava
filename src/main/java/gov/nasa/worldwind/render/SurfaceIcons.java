@@ -29,6 +29,19 @@ public class SurfaceIcons extends SurfaceIcon {
         this.setLocations(locations);
     }
 
+    protected static Angle computeSectorRadius(Sector sector) {
+        double dLat = toRadians(sector.latDelta);
+        double dLon = toRadians(sector.lonDelta);
+        return Angle.fromRadians(Math.sqrt(dLat * dLat + dLon * dLon) / 2);
+    }
+
+    protected static double computeLocationDistanceDegreesSquared(Sector drawSector, LatLon location) {
+        double lonOffset = AbstractSurfaceRenderable.computeHemisphereOffset(drawSector, location);
+        double dLat = location.getLatitude().degrees - drawSector.getCentroid().getLatitude().degrees;
+        double dLon = location.getLongitude().degrees - drawSector.getCentroid().getLongitude().degrees + lonOffset;
+        return dLat * dLat + dLon * dLon;
+    }
+
     public Iterable<? extends LatLon> getLocations() {
         return this.locations;
     }
@@ -93,7 +106,7 @@ public class SurfaceIcons extends SurfaceIcon {
         Collection<LatLon> drawList = new ArrayList<>();
         double safeDistanceDegreesSquared = Math.pow(this.computeSafeRadius(dc, sdc).degrees, 2);
         for (LatLon location : this.getLocations()) {
-            if (computeLocationDistanceDegreesSquared(sdc.getSector(), location) <= safeDistanceDegreesSquared)
+            if (SurfaceIcons.computeLocationDistanceDegreesSquared(sdc.getSector(), location) <= safeDistanceDegreesSquared)
                 drawList.add(location);
         }
         return drawList;
@@ -106,12 +119,6 @@ public class SurfaceIcons extends SurfaceIcon {
         return sectorRadius.add(iconRadius);
     }
 
-    protected static Angle computeSectorRadius(Sector sector) {
-        double dLat = toRadians(sector.latDelta);
-        double dLon = toRadians(sector.lonDelta);
-        return Angle.fromRadians(Math.sqrt(dLat * dLat + dLon * dLon) / 2);
-    }
-
     protected Angle computeIconRadius(DrawContext dc, double regionPixelSize, Sector drawSector) {
         double minCosLat = Math.min(drawSector.latMin().cos(), drawSector.latMax().cos());
         if (minCosLat < 0.001)
@@ -121,12 +128,5 @@ public class SurfaceIcons extends SurfaceIcon {
         double dLat = iconDimension.getHeight() / dc.getGlobe().getRadius();
         double dLon = iconDimension.getWidth() / dc.getGlobe().getRadius() / minCosLat;
         return Angle.fromRadians(Math.sqrt(dLat * dLat + dLon * dLon) / 2);
-    }
-
-    protected static double computeLocationDistanceDegreesSquared(Sector drawSector, LatLon location) {
-        double lonOffset = computeHemisphereOffset(drawSector, location);
-        double dLat = location.getLatitude().degrees - drawSector.getCentroid().getLatitude().degrees;
-        double dLon = location.getLongitude().degrees - drawSector.getCentroid().getLongitude().degrees + lonOffset;
-        return dLat * dLat + dLon * dLon;
     }
 }

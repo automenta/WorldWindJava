@@ -87,15 +87,12 @@ public class CircularRangeFan extends AbstractMilStd2525TacticalGraphic implemen
             if (value instanceof Iterable) {
                 //noinspection unchecked
                 this.setRadii((Iterable) value);
-            }
-            else if (value instanceof Double) {
+            } else if (value instanceof Double) {
                 this.setRadii(Collections.singletonList((Double) value));
             }
-        }
-        else if (SymbologyConstants.SYMBOL_INDICATOR.equals(modifier) && value instanceof String) {
+        } else if (SymbologyConstants.SYMBOL_INDICATOR.equals(modifier) && value instanceof String) {
             this.setSymbol((String) value);
-        }
-        else {
+        } else {
             super.setModifier(modifier, value);
         }
     }
@@ -107,11 +104,9 @@ public class CircularRangeFan extends AbstractMilStd2525TacticalGraphic implemen
     public Object getModifier(String modifier) {
         if (SymbologyConstants.DISTANCE.equals(modifier)) {
             return this.getRadii();
-        }
-        else if (SymbologyConstants.SYMBOL_INDICATOR.equals(modifier)) {
+        } else if (SymbologyConstants.SYMBOL_INDICATOR.equals(modifier)) {
             return this.getSymbol();
-        }
-        else {
+        } else {
             return super.getModifier(modifier);
         }
     }
@@ -175,8 +170,7 @@ public class CircularRangeFan extends AbstractMilStd2525TacticalGraphic implemen
                 this.symbolAttributes = new BasicTacticalSymbolAttributes();
 
             this.symbol = this.createSymbol(sidc, this.getPosition(), this.symbolAttributes);
-        }
-        else {
+        } else {
             // Null value indicates no symbol.
             this.symbol = null;
             this.symbolAttributes = null;
@@ -278,8 +272,7 @@ public class CircularRangeFan extends AbstractMilStd2525TacticalGraphic implemen
         Object modifier = this.getModifier(SymbologyConstants.ALTITUDE_DEPTH);
         if (modifier instanceof Iterable) {
             altIterator = ((Iterable) modifier).iterator();
-        }
-        else if (modifier != null) {
+        } else if (modifier != null) {
             // Use the modifier as the altitude of the first ring
             altIterator = Collections.singletonList(modifier).iterator();
         }
@@ -291,8 +284,7 @@ public class CircularRangeFan extends AbstractMilStd2525TacticalGraphic implemen
 
             if (i == 0) {
                 sb.append("MIN RG ");
-            }
-            else {
+            } else {
                 sb.append("MAX RG(");
                 sb.append(i);
                 sb.append(") ");
@@ -302,13 +294,13 @@ public class CircularRangeFan extends AbstractMilStd2525TacticalGraphic implemen
             // Append the altitude, if available
             if (altIterator != null && altIterator.hasNext()) {
                 Object alt = altIterator.next();
-                sb.append("\n");
+                sb.append('\n');
                 sb.append("ALT ");
                 sb.append(alt);
             }
 
             TacticalGraphicLabel label = this.addLabel(sb.toString());
-            label.setOffset(LABEL_OFFSET);
+            label.setOffset(CircularRangeFan.LABEL_OFFSET);
         }
     }
 
@@ -317,7 +309,7 @@ public class CircularRangeFan extends AbstractMilStd2525TacticalGraphic implemen
      */
     @Override
     protected void determineLabelPositions(DrawContext dc) {
-        double dueSouth = Angle.POS180.radians;
+        double dueSouth = Angle.POS180.radians();
         double globeRadius = dc.getGlobe().getRadius();
 
         int i = 0;

@@ -56,8 +56,7 @@ public class WCS100RangeSet extends AbstractXMLEventParser {
                 if (o instanceof WCS100AxisDescriptionHolder)
                     this.axisDescriptions.add((WCS100AxisDescriptionHolder) o);
             }
-        }
-        else {
+        } else {
             super.doParseEventContent(ctx, event, args);
         }
     }

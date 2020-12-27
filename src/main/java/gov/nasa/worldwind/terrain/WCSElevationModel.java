@@ -24,11 +24,11 @@ import java.util.List;
  */
 public class WCSElevationModel extends BasicElevationModel {
     public WCSElevationModel(Element domElement, AVList params) {
-        super(wcsGetParamsFromDocument(domElement, params));
+        super(WCSElevationModel.wcsGetParamsFromDocument(domElement, params));
     }
 
     public WCSElevationModel(WCS100Capabilities caps, AVList params) {
-        super(wcsGetParamsFromCapsDoc(caps, params));
+        super(WCSElevationModel.wcsGetParamsFromCapsDoc(caps, params));
     }
 
     /**
@@ -38,35 +38,35 @@ public class WCSElevationModel extends BasicElevationModel {
      * @see #getRestorableState()
      */
     public WCSElevationModel(String restorableStateInXml) {
-        super(wcsRestorableStateToParams(restorableStateInXml));
+        super(WCSElevationModel.wcsRestorableStateToParams(restorableStateInXml));
 
         RestorableSupport rs;
-        try {
+//        try {
             rs = RestorableSupport.parse(restorableStateInXml);
-        }
-        catch (Exception e) {
-            // Parsing the document specified by stateInXml failed.
-            String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", restorableStateInXml);
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message, e);
-        }
+//        }
+//        catch (RuntimeException e) {
+//            // Parsing the document specified by stateInXml failed.
+//            String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", restorableStateInXml);
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message, e);
+//        }
 
         this.doRestoreState(rs, null);
     }
 
     protected static AVList wcsGetParamsFromDocument(Element domElement, AVList params) {
-        if (domElement == null) {
-            String message = Logging.getMessage("nullValue.DocumentIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (domElement == null) {
+//            String message = Logging.getMessage("nullValue.DocumentIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         if (params == null)
             params = new AVListImpl();
 
         DataConfigurationUtils.getWCSConfigParams(domElement, params);
         BasicElevationModel.getBasicElevationModelConfigParams(domElement, params);
-        wcsSetFallbacks(params);
+        WCSElevationModel.wcsSetFallbacks(params);
 
         params.set(AVKey.TILE_URL_BUILDER, new URLBuilder(params.getStringValue(AVKey.WCS_VERSION), params));
 
@@ -74,29 +74,29 @@ public class WCSElevationModel extends BasicElevationModel {
     }
 
     protected static AVList wcsGetParamsFromCapsDoc(WCS100Capabilities caps, AVList params) {
-        if (caps == null) {
-            String message = Logging.getMessage("nullValue.WCSCapabilities");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (params == null) {
-            String message = Logging.getMessage("nullValue.ElevationModelConfigParams");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (caps == null) {
+//            String message = Logging.getMessage("nullValue.WCSCapabilities");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//
+//        if (params == null) {
+//            String message = Logging.getMessage("nullValue.ElevationModelConfigParams");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         WCS100DescribeCoverage coverage = (WCS100DescribeCoverage) params.get(AVKey.DOCUMENT);
-        if (coverage == null) {
-            String message = Logging.getMessage("nullValue.WCSDescribeCoverage");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (coverage == null) {
+//            String message = Logging.getMessage("nullValue.WCSDescribeCoverage");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
-        getWCSElevationModelConfigParams(caps, coverage, params);
+        WCSElevationModel.getWCSElevationModelConfigParams(caps, coverage, params);
 
-        wcsSetFallbacks(params);
-        determineNumLevels(coverage, params);
+        WCSElevationModel.wcsSetFallbacks(params);
+        WCSElevationModel.determineNumLevels(coverage, params);
 
         params.set(AVKey.TILE_URL_BUILDER, new URLBuilder(caps.getVersion(), params));
 
@@ -201,17 +201,17 @@ public class WCSElevationModel extends BasicElevationModel {
     }
 
     protected static AVList wcsRestorableStateToParams(String stateInXml) {
-        if (stateInXml == null) {
-            String message = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (stateInXml == null) {
+//            String message = Logging.getMessage("nullValue.StringIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         RestorableSupport rs;
         try {
             rs = RestorableSupport.parse(stateInXml);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             // Parsing the document specified by stateInXml failed.
             String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", stateInXml);
             Logging.logger().severe(message);
@@ -219,14 +219,14 @@ public class WCSElevationModel extends BasicElevationModel {
         }
 
         AVList params = new AVListImpl();
-        wcsRestoreStateForParams(rs, null, params);
+        WCSElevationModel.wcsRestoreStateForParams(rs, null, params);
         return params;
     }
 
     protected static void wcsRestoreStateForParams(RestorableSupport rs, RestorableSupport.StateObject context,
         AVList params) {
         // Invoke the BasicElevationModel functionality.
-        restoreStateForParams(rs, null, params);
+        BasicElevationModel.restoreStateForParams(rs, null, params);
 
         String s = rs.getStateValueAsString(context, AVKey.IMAGE_FORMAT);
         if (s != null)
@@ -251,6 +251,16 @@ public class WCSElevationModel extends BasicElevationModel {
             params.set(AVKey.TILE_URL_BUILDER, new URLBuilder(s, params));
     }
 
+    protected static void downloadElevations(WMSBasicElevationModel.ElevationCompositionTile tile) throws Exception {
+        URL url = tile.getResourceURL();
+
+        Retriever retriever = new HTTPRetriever(url,
+            new WMSBasicElevationModel.CompositionRetrievalPostProcessor(tile.getFile()));
+        retriever.setConnectTimeout(10000);
+        retriever.setReadTimeout(60000);
+        retriever.call();
+    }
+
     /**
      * Appends WCS elevation model configuration elements to the superclass configuration document.
      *
@@ -267,40 +277,28 @@ public class WCSElevationModel extends BasicElevationModel {
         return doc;
     }
 
+    //**************************************************************//
+    //********************  Restorable Support  ********************//
+    //**************************************************************//
+
     public void composeElevations(Sector sector, List<? extends LatLon> latlons, int tileWidth, double[] buffer)
         throws Exception {
-        if (sector == null) {
-            String msg = Logging.getMessage("nullValue.SectorIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
 
-        if (latlons == null) {
-            String msg = Logging.getMessage("nullValue.LatLonListIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        if (buffer == null) {
-            String msg = Logging.getMessage("nullValue.ElevationsBufferIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        if (buffer.length < latlons.size() || tileWidth > latlons.size()) {
-            String msg = Logging.getMessage("ElevationModel.ElevationsBufferTooSmall", latlons.size());
+        final int n = latlons.size();
+        if (buffer.length < n || tileWidth > n) {
+            String msg = Logging.getMessage("ElevationModel.ElevationsBufferTooSmall", n);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
         WMSBasicElevationModel.ElevationCompositionTile tile = new WMSBasicElevationModel.ElevationCompositionTile(
             sector, this.getLevels().getLastLevel(),
-            tileWidth, latlons.size() / tileWidth);
+            tileWidth, n / tileWidth);
 
         WCSElevationModel.downloadElevations(tile);
         tile.setElevations(this.readElevations(tile.getFile().toURI().toURL()), this);
 
-        for (int i = 0; i < latlons.size(); i++) {
+        for (int i = 0; i < n; i++) {
             LatLon ll = latlons.get(i);
             if (ll == null)
                 continue;
@@ -314,27 +312,12 @@ public class WCSElevationModel extends BasicElevationModel {
         }
     }
 
-    //**************************************************************//
-    //********************  Restorable Support  ********************//
-    //**************************************************************//
-
-    protected static void downloadElevations(WMSBasicElevationModel.ElevationCompositionTile tile) throws Exception {
-        URL url = tile.getResourceURL();
-
-        Retriever retriever = new HTTPRetriever(url,
-            new WMSBasicElevationModel.CompositionRetrievalPostProcessor(tile.getFile()));
-        retriever.setConnectTimeout(10000);
-        retriever.setReadTimeout(60000);
-        retriever.call();
-    }
-
     @Override
     public void getRestorableStateForAVPair(String key, Object value,
         RestorableSupport rs, RestorableSupport.StateObject context) {
         if (value instanceof URLBuilder) {
             rs.addStateValueAsString(context, AVKey.WCS_VERSION, ((URLBuilder) value).serviceVersion);
-        }
-        else if (!(value instanceof WCS100DescribeCoverage)) {
+        } else if (!(value instanceof WCS100DescribeCoverage)) {
             // Don't pass DescribeCoverage to superclass. The DescribeCoverage parameters will already be present in the
             // parameter list, so do nothing here.
             super.getRestorableStateForAVPair(key, value, rs, context);
@@ -345,7 +328,7 @@ public class WCSElevationModel extends BasicElevationModel {
         protected final String layerNames;
         protected final String serviceVersion;
         private final String imageFormat;
-        protected String URLTemplate = null;
+        protected String URLTemplate;
 
         protected URLBuilder(String version, AVList params) {
             this.serviceVersion = version;
@@ -373,8 +356,7 @@ public class WCSElevationModel extends BasicElevationModel {
                     sb.append(altImageFormat);
 
                 this.URLTemplate = sb.toString();
-            }
-            else {
+            } else {
                 sb = new StringBuffer(this.URLTemplate);
             }
 
@@ -385,15 +367,15 @@ public class WCSElevationModel extends BasicElevationModel {
 
             Sector s = tile.sector;
             sb.append("&bbox=");
-            sb.append(s.lonMin().getDegrees());
-            sb.append(",");
-            sb.append(s.latMin().getDegrees());
-            sb.append(",");
-            sb.append(s.lonMax().getDegrees());
-            sb.append(",");
-            sb.append(s.latMax().getDegrees());
+            sb.append(s.lonMin().degrees);
+            sb.append(',');
+            sb.append(s.latMin().degrees);
+            sb.append(',');
+            sb.append(s.lonMax().degrees);
+            sb.append(',');
+            sb.append(s.latMax().degrees);
 
-            sb.append("&"); // terminate the query string
+            sb.append('&'); // terminate the query string
 
             return new URL(sb.toString().replace(" ", "%20"));
         }

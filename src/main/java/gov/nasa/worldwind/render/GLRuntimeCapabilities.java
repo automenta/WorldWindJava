@@ -18,14 +18,14 @@ import gov.nasa.worldwind.util.*;
  * For each GL feature, there are three key pieces of information available through GLRuntimeCapabilities: <ul> <li>The
  * property <code>is[Feature]Available</code> defines whether or not the feature is supported by the current GL runtime.
  * This is an attribute of the GL runtime, and is typically configured automatically by a call to {@link
- * #initialize(GLContext)}.</li> <li>The property <code>is[Feature]Enabled</code> defines whether or
- * not this feature should be used, and must be configured by the caller. </li> <li>The convenience method
+ * #initialize(GLContext)}.</li> <li>The property <code>is[Feature]Enabled</code> defines whether or not this feature
+ * should be used, and must be configured by the caller. </li> <li>The convenience method
  * <code>isUse[Feature]()</code>. This returns whether or not the feature is available and is enabled for use (it is
  * simply a conjunction of the "available" and "enabled" properties).</li> </ul>
  * <p>
  * GLRuntimeCapabilities is designed to automatically configure itself with information about the current GL runtime. To
- * invoke this behavior, call {@link #initialize(GLContext)} with a valid GLContext at the beginning
- * of each rendering pass.
+ * invoke this behavior, call {@link #initialize(GLContext)} with a valid GLContext at the beginning of each rendering
+ * pass.
  *
  * @author dcollins
  * @version $Id: GLRuntimeCapabilities.java 1933 2014-04-14 22:54:19Z dcollins $
@@ -65,10 +65,10 @@ public class GLRuntimeCapabilities {
     }
 
     /**
-     * Initialize this GLRuntimeCapabilities from the specified {@link GLContext}. The context's
-     * runtime GL capabilities are examined, and the properties of this GLRuntimeCapabilities are modified accordingly.
-     * Invoking initialize() may change any property of this GLRuntimeCapabilities, except the caller specified enable
-     * flags: is[Feature]Enabled.
+     * Initialize this GLRuntimeCapabilities from the specified {@link GLContext}. The context's runtime GL capabilities
+     * are examined, and the properties of this GLRuntimeCapabilities are modified accordingly. Invoking initialize()
+     * may change any property of this GLRuntimeCapabilities, except the caller specified enable flags:
+     * is[Feature]Enabled.
      *
      * @param glContext the GLContext from which to initialize GL runtime capabilities.
      * @throws IllegalArgumentException if the glContext is null.
@@ -104,8 +104,10 @@ public class GLRuntimeCapabilities {
             this.isVMwareSVGA3D = true;
         }
 
-        this.isAnisotropicTextureFilterAvailable = gl.isExtensionAvailable(GL_EXT_TEXTURE_FILTER_ANISOTROPIC_STRING);
-        this.isFramebufferObjectAvailable = gl.isExtensionAvailable(GL_EXT_FRAMEBUFFER_OBJECT_STRING);
+        this.isAnisotropicTextureFilterAvailable = gl.isExtensionAvailable(
+            GLRuntimeCapabilities.GL_EXT_TEXTURE_FILTER_ANISOTROPIC_STRING);
+        this.isFramebufferObjectAvailable = gl.isExtensionAvailable(
+            GLRuntimeCapabilities.GL_EXT_FRAMEBUFFER_OBJECT_STRING);
         // Vertex Buffer Objects are supported in version 1.5 or greater only.
         this.isVertexBufferObjectAvailable = this.glVersion >= 1.5;
 

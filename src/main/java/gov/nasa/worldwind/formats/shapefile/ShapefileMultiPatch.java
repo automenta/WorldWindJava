@@ -28,8 +28,7 @@ public class ShapefileMultiPatch { //extends ShapefileRenderable implements Orde
      * Creates a new ShapefileMultiPatch with the specified shapefile. The normal attributes and the highlight
      * attributes for each ShapefileRenderable.Record are assigned default values. In order to modify
      * ShapefileRenderable.Record shape attributes or key-value attributes during construction, use {@link
-     * #ShapefileMultiPatch(Shapefile, ShapeAttributes, ShapeAttributes,
-     * ShapefileRenderable.AttributeDelegate)}.
+     * #ShapefileMultiPatch(Shapefile, ShapeAttributes, ShapeAttributes, ShapefileRenderable.AttributeDelegate)}.
      *
      * @param shapefile The shapefile to display.
      * @throws IllegalArgumentException if the shapefile is null.
@@ -69,6 +68,22 @@ public class ShapefileMultiPatch { //extends ShapefileRenderable implements Orde
         }
 
         this.init(shapefile, normalAttrs, highlightAttrs, attributeDelegate);
+    }
+
+    protected static boolean mustAssembleRecord(ShapefileRecord shapefileRecord) {
+        double[] bounds = shapefileRecord.getBoundingRectangle();
+        Sector aoi = new Sector(Angle.fromDegreesLatitude(42.36), Angle.fromDegreesLatitude(42.37),
+            Angle.fromDegreesLongitude(-71.075), Angle.fromDegreesLongitude(-71.055));
+        if (!aoi.contains(LatLon.fromDegrees(bounds[0], bounds[2]))) {
+            return false;
+        }
+        return shapefileRecord.getNumberOfParts() > 0
+            && shapefileRecord.getNumberOfPoints() > 0
+            && !shapefileRecord.isNullRecord();
+    }
+
+    protected static ShapefileMultiPatch.Record createRecord(ShapefileRecord shapefileRecord) {
+        return new Record(shapefileRecord);
     }
 
     protected void generatePolygon(Position[] locations) {
@@ -160,18 +175,6 @@ public class ShapefileMultiPatch { //extends ShapefileRenderable implements Orde
         this.records.trimToSize(); // Reduce memory overhead from unused ArrayList capacity.
     }
 
-    protected static boolean mustAssembleRecord(ShapefileRecord shapefileRecord) {
-        double[] bounds = shapefileRecord.getBoundingRectangle();
-        Sector aoi = new Sector(Angle.fromDegreesLatitude(42.36), Angle.fromDegreesLatitude(42.37),
-            Angle.fromDegreesLongitude(-71.075), Angle.fromDegreesLongitude(-71.055));
-        if (!aoi.contains(LatLon.fromDegrees(bounds[0], bounds[2]))) {
-            return false;
-        }
-        return shapefileRecord.getNumberOfParts() > 0
-            && shapefileRecord.getNumberOfPoints() > 0
-            && !shapefileRecord.isNullRecord();
-    }
-
     protected void addRecord(ShapefileRecord shapefileRecord, Record renderableRecord) {
         this.records.add(renderableRecord);
     }
@@ -179,10 +182,6 @@ public class ShapefileMultiPatch { //extends ShapefileRenderable implements Orde
     protected void assembleRecord(ShapefileRecord shapefileRecord) {
         Record record = ShapefileMultiPatch.createRecord(shapefileRecord);
         this.addRecord(shapefileRecord, record);
-    }
-
-    protected static ShapefileMultiPatch.Record createRecord(ShapefileRecord shapefileRecord) {
-        return new Record(shapefileRecord);
     }
 
     protected void tessellateTriangleStrip(Terrain terrain, FloatBuffer vertices, Position[] locations, Vec4 refPt) {

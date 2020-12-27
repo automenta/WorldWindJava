@@ -149,7 +149,7 @@ public class LocalRasterServerElevationModel extends BasicElevationModel {
 
                 // copy only values that do not exist in destination AVList
                 // from rasterServerParams (source) to retriever (destination)
-                String[] keysToCopy = new String[] {
+                String[] keysToCopy = {
                     AVKey.DATASET_NAME, AVKey.DISPLAY_NAME,
                     AVKey.FILE_STORE, AVKey.BYTE_ORDER,
                     AVKey.IMAGE_FORMAT, AVKey.DATA_TYPE, AVKey.FORMAT_SUFFIX,

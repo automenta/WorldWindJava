@@ -53,20 +53,15 @@ public class OGCAddress extends AbstractXMLEventParser {
         throws XMLStreamException {
         if (ctx.isStartElement(event, ADDRESS_TYPE)) {
             this.setAddressType(ctx.getStringParser().parseString(ctx, event));
-        }
-        else if (ctx.isStartElement(event, ADDRESS)) {
+        } else if (ctx.isStartElement(event, ADDRESS)) {
             this.setAddress(ctx.getStringParser().parseString(ctx, event));
-        }
-        else if (ctx.isStartElement(event, CITY)) {
+        } else if (ctx.isStartElement(event, CITY)) {
             this.setCity(ctx.getStringParser().parseString(ctx, event));
-        }
-        else if (ctx.isStartElement(event, STATE_OR_PROVINCE)) {
+        } else if (ctx.isStartElement(event, STATE_OR_PROVINCE)) {
             this.setStateOrProvince(ctx.getStringParser().parseString(ctx, event));
-        }
-        else if (ctx.isStartElement(event, POST_CODE)) {
+        } else if (ctx.isStartElement(event, POST_CODE)) {
             this.setPostCode(ctx.getStringParser().parseString(ctx, event));
-        }
-        else if (ctx.isStartElement(event, COUNTRY)) {
+        } else if (ctx.isStartElement(event, COUNTRY)) {
             this.setCountry(ctx.getStringParser().parseString(ctx, event));
         }
     }
@@ -123,11 +118,11 @@ public class OGCAddress extends AbstractXMLEventParser {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("AddressType: ").append(this.addressType != null ? this.addressType : "none").append(" ");
-        sb.append("Address: ").append(this.address != null ? this.address : "none").append(" ");
-        sb.append("City: ").append(this.city != null ? this.city : "none").append(" ");
-        sb.append("StateOrProvince: ").append(this.stateOrProvince != null ? this.stateOrProvince : "none").append(" ");
-        sb.append("PostCode: ").append(this.postCode != null ? this.postCode : "none").append(" ");
+        sb.append("AddressType: ").append(this.addressType != null ? this.addressType : "none").append(' ');
+        sb.append("Address: ").append(this.address != null ? this.address : "none").append(' ');
+        sb.append("City: ").append(this.city != null ? this.city : "none").append(' ');
+        sb.append("StateOrProvince: ").append(this.stateOrProvince != null ? this.stateOrProvince : "none").append(' ');
+        sb.append("PostCode: ").append(this.postCode != null ? this.postCode : "none").append(' ');
         sb.append("Country: ").append(this.country != null ? this.country : "none");
 
         return sb.toString();

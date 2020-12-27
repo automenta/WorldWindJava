@@ -20,11 +20,14 @@ public class Position extends LatLon {
 
     public final double elevation;
 
-    /** lat,lon in degrees */
+    /**
+     * lat,lon in degrees
+     */
     public Position(double latitude, double longitude, double elevation) {
         super(latitude, longitude);
         this.elevation = elevation;
     }
+
     public Position(Angle latitude, Angle longitude, double elevation) {
         this(latitude.degrees, longitude.degrees, elevation);
     }
@@ -46,7 +49,7 @@ public class Position extends LatLon {
     }
 
     public static Position fromDegrees(double latitude, double longitude) {
-        return fromDegrees(latitude, longitude, 0);
+        return Position.fromDegrees(latitude, longitude, 0);
     }
 
     /**
@@ -63,7 +66,7 @@ public class Position extends LatLon {
 
         if (a < 0) {
             return x;
-        }else if (a > 1) {
+        } else if (a > 1) {
             return y;
         }
 
@@ -152,8 +155,8 @@ public class Position extends LatLon {
      * Computes a new set of positions translated from a specified reference position to a new reference position.
      *
      * @param from the original reference position.
-     * @param to the new reference position.
-     * @param x   the positions to translate.
+     * @param to   the new reference position.
+     * @param x    the positions to translate.
      * @return the translated positions, or null if the positions could not be translated.
      * @throws IllegalArgumentException if any argument is null.
      */
@@ -165,11 +168,12 @@ public class Position extends LatLon {
 
         double elevDelta = to.getElevation() - from.getElevation();
 
-        for (Position p : x)
+        for (Position p : x) {
             y.add(new Position(LatLon.greatCircleEndPosition(to,
                 LatLon.greatCircleAzimuth(from, p),
                 LatLon.greatCircleDistance(from, p)),
                 p.getElevation() + elevDelta));
+        }
 
         return y;
     }
@@ -241,7 +245,8 @@ public class Position extends LatLon {
     }
 
     public String toString() {
-        return "(" + this.getLatitude().toString() + ", " + this.getLongitude().toString() + ", " + this.elevation + ")";
+        return '('
+            + this.getLatitude().toString() + ", " + this.getLongitude().toString() + ", " + this.elevation + ')';
     }
 
     // A class that makes it easier to pass around position lists.

@@ -63,6 +63,21 @@ public class MipMappedBufferedImageRaster extends BufferedImageRaster {
         }
     }
 
+    protected static int computeMipmapLevel(int sourceWidth, int sourceHeight, Sector sourceSector,
+        int destWidth, int destHeight, Sector destSector) {
+        double sy = ((double) sourceHeight / destHeight)
+            * (destSector.latDelta / sourceSector.latDelta);
+        double sx = ((double) sourceWidth / destWidth)
+            * (destSector.lonDelta / sourceSector.lonDelta);
+        double scale = Math.max(sx, sy);
+
+        if (scale < 1) {
+            return 0;
+        }
+
+        return (int) WWMath.logBase2(scale);
+    }
+
     public long getSizeInBytes() {
         long sizeInBytes = 0L;
         for (BufferedImageRaster raster : this.levelRasters) {
@@ -96,20 +111,5 @@ public class MipMappedBufferedImageRaster extends BufferedImageRaster {
         level = WWMath.clamp(level, 0, maxLevel);
 
         return this.levelRasters[level];
-    }
-
-    protected static int computeMipmapLevel(int sourceWidth, int sourceHeight, Sector sourceSector,
-        int destWidth, int destHeight, Sector destSector) {
-        double sy = ((double) sourceHeight / destHeight)
-            * (destSector.latDelta / sourceSector.latDelta);
-        double sx = ((double) sourceWidth / destWidth)
-            * (destSector.lonDelta / sourceSector.lonDelta);
-        double scale = Math.max(sx, sy);
-
-        if (scale < 1) {
-            return 0;
-        }
-
-        return (int) WWMath.logBase2(scale);
     }
 }

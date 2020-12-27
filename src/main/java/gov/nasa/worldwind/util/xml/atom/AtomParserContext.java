@@ -7,6 +7,7 @@
 package gov.nasa.worldwind.util.xml.atom;
 
 //.xml.*;
+
 import gov.nasa.worldwind.util.xml.*;
 
 import javax.xml.namespace.QName;
@@ -18,14 +19,13 @@ import java.util.concurrent.ConcurrentHashMap;
  * @version $Id: AtomParserContext.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 public class AtomParserContext extends BasicXMLEventParserContext {
-    protected static final String[] StringFields = new String[]
-        {
-            "base",
-            "email",
-            "lang",
-            "name",
-            "uri",
-        };
+    protected static final String[] StringFields = {
+        "base",
+        "email",
+        "lang",
+        "name",
+        "uri",
+    };
 
     public static Map<QName, XMLEventParser> getDefaultParsers() {
         Map<QName, XMLEventParser> parsers = new ConcurrentHashMap<>();
@@ -35,7 +35,7 @@ public class AtomParserContext extends BasicXMLEventParserContext {
         parsers.put(new QName(ans, "link"), new AtomLink(ans));
 
         XMLEventParser stringParser = new StringXMLEventParser();
-        for (String s : StringFields) {
+        for (String s : AtomParserContext.StringFields) {
             parsers.put(new QName(ans, s), stringParser);
         }
 

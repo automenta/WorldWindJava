@@ -40,15 +40,15 @@ public class PrincipleDirectionOfFire extends AbstractMilStd2525TacticalGraphic 
     /**
      * Length of the arrowhead from base to tip, as a fraction of the total line length.
      */
-    protected Angle arrowAngle = DEFAULT_ARROWHEAD_ANGLE;
+    protected Angle arrowAngle = PrincipleDirectionOfFire.DEFAULT_ARROWHEAD_ANGLE;
     /**
      * Angle of the arrowhead.
      */
-    protected double arrowLength = DEFAULT_ARROWHEAD_LENGTH;
+    protected double arrowLength = PrincipleDirectionOfFire.DEFAULT_ARROWHEAD_LENGTH;
     /**
      * Width of the arrowhead outline, as a fraction of the arrowhead length.
      */
-    protected double outlineWidth = DEFAULT_ARROWHEAD_OUTLINE_WIDTH;
+    protected double outlineWidth = PrincipleDirectionOfFire.DEFAULT_ARROWHEAD_OUTLINE_WIDTH;
 
     /**
      * First control point.
@@ -177,8 +177,7 @@ public class PrincipleDirectionOfFire extends AbstractMilStd2525TacticalGraphic 
                 this.symbolAttributes = new BasicTacticalSymbolAttributes();
 
             this.symbol = this.createSymbol(sidc, this.position1, this.symbolAttributes);
-        }
-        else {
+        } else {
             // Null value indicates no symbol.
             this.symbol = null;
             this.symbolAttributes = null;
@@ -240,8 +239,7 @@ public class PrincipleDirectionOfFire extends AbstractMilStd2525TacticalGraphic 
     public void setModifier(String modifier, Object value) {
         if (SymbologyConstants.SYMBOL_INDICATOR.equals(modifier) && value instanceof String) {
             this.setSymbol((String) value);
-        }
-        else {
+        } else {
             super.setModifier(modifier, value);
         }
     }
@@ -253,8 +251,7 @@ public class PrincipleDirectionOfFire extends AbstractMilStd2525TacticalGraphic 
     public Object getModifier(String modifier) {
         if (SymbologyConstants.SYMBOL_INDICATOR.equals(modifier)) {
             return this.getSymbol();
-        }
-        else {
+        } else {
             return super.getModifier(modifier);
         }
     }

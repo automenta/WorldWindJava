@@ -49,12 +49,12 @@ public class WCS100DescribeCoverage extends AbstractXMLEventParser {
         return new WCS100DescribeCoverage(request.toString());
     }
 
-    protected void initialize() {
-        this.parserContext = this.createParserContext(this.eventReader);
-    }
-
     protected static XMLEventReader createReader(Object docSource) {
         return WWXML.openEventReader(docSource);
+    }
+
+    protected void initialize() {
+        this.parserContext = this.createParserContext(this.eventReader);
     }
 
     protected XMLEventParserContext createParserContext(XMLEventReader reader) {
@@ -99,8 +99,7 @@ public class WCS100DescribeCoverage extends AbstractXMLEventParser {
                 if (o instanceof WCS100CoverageOffering)
                     this.coverageOfferings.add((WCS100CoverageOffering) o);
             }
-        }
-        else {
+        } else {
             super.doParseEventContent(ctx, event, args);
         }
     }

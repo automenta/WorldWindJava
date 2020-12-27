@@ -32,7 +32,7 @@ public abstract class AbstractDataRasterReader extends AVListImpl implements Dat
     }
 
     public AbstractDataRasterReader(String[] mimeTypes, String[] suffixes) {
-        this(descriptionFromSuffixes(suffixes), mimeTypes, suffixes);
+        this(AbstractDataRasterReader.descriptionFromSuffixes(suffixes), mimeTypes, suffixes);
     }
 
     protected AbstractDataRasterReader(String description) {
@@ -148,15 +148,15 @@ public abstract class AbstractDataRasterReader extends AVListImpl implements Dat
 
         Object o = (params != null) ? params.get(AVKey.WIDTH) : null;
         if (!(o instanceof Integer))
-            sb.append(!sb.isEmpty() ? ", " : "").append(Logging.getMessage("WorldFile.NoSizeSpecified", source));
+            sb.append(sb.isEmpty() ? "" : ", ").append(Logging.getMessage("WorldFile.NoSizeSpecified", source));
 
         o = (params != null) ? params.get(AVKey.HEIGHT) : null;
         if (!(o instanceof Integer))
-            sb.append(!sb.isEmpty() ? ", " : "").append(Logging.getMessage("WorldFile.NoSizeSpecified", source));
+            sb.append(sb.isEmpty() ? "" : ", ").append(Logging.getMessage("WorldFile.NoSizeSpecified", source));
 
         o = (params != null) ? params.get(AVKey.SECTOR) : null;
         if (!(o instanceof Sector))
-            sb.append(!sb.isEmpty() ? ", " : "").append(Logging.getMessage("WorldFile.NoSectorSpecified", source));
+            sb.append(sb.isEmpty() ? "" : ", ").append(Logging.getMessage("WorldFile.NoSectorSpecified", source));
 
         if (sb.isEmpty())
             return null;

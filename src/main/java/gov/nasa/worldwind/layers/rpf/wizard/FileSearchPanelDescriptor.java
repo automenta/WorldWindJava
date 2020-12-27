@@ -28,8 +28,122 @@ public class FileSearchPanelDescriptor extends DefaultPanelDescriptor {
         this.panelComponent = new ProgressPanel();
         this.propertyEvents = new PropertyEvents();
         this.panelComponent.addPropertyChangeListener(this.propertyEvents);
-        setPanelIdentifier(IDENTIFIER);
+        setPanelIdentifier(FileSearchPanelDescriptor.IDENTIFIER);
         setPanelComponent(this.panelComponent);
+    }
+
+    private static List<File> searchSelectedFile(File fileToSearch, FileFilter fileFilter) {
+        if (Thread.interrupted())
+            return null;
+
+        List<File> fileList;
+        try {
+            FileTree fileTree = new FileTree(fileToSearch);
+            fileTree.setMode(FileTree.FILES_ONLY);
+            fileList = fileTree.asList(fileFilter);
+        }
+        catch (Throwable t) {
+            String message = String.format("Exception while searching file: %s", fileToSearch);
+            Logging.logger().log(Level.SEVERE, message, t);
+            fileList = null;
+        }
+        return fileList;
+    }
+
+    private static List<FileSet> makeFileSetList(Iterable<File> fileList) {
+        List<FileSet> result = null;
+        if (fileList != null) {
+            Map<String, FileSet> map = new HashMap<>();
+            for (File file : fileList) {
+                try {
+                    String filename = file.getName().toUpperCase();
+                    RPFFrameFilename rpfFilename = RPFFrameFilename.parseFilename(filename);
+                    String id = rpfFilename.getDataSeriesCode();
+                    FileSet set = map.get(id);
+                    if (set == null) {
+                        set = new FileSet();
+                        set.setIdentifier(id);
+                        set.setFiles(new LinkedList<>());
+                        map.put(id, set);
+                    }
+                    set.getFiles().add(file);
+                }
+                catch (RuntimeException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            result = new ArrayList<>(map.values());
+        }
+        return result;
+    }
+
+    private static void makeDefaultSelections(List<FileSet> fileSetList) {
+        // If only one FileSet is available, select it.
+        if (fileSetList != null
+            && fileSetList.size() == 1
+            && fileSetList.get(0) != null) {
+            fileSetList.get(0).setSelected(true);
+        }
+    }
+
+    private static void makeTitles(Iterable<FileSet> fileSetList) {
+        if (fileSetList != null) {
+            for (FileSet set : fileSetList) {
+                FileSearchPanelDescriptor.makeTitle(set);
+            }
+        }
+    }
+
+    private static void makeTitle(FileSet set) {
+        if (set != null && set.getIdentifier() != null) {
+            String id = set.getIdentifier();
+            RPFDataSeries ds;
+            try {
+                ds = RPFDataSeries.dataSeriesFor(id);
+            }
+            catch (RuntimeException e) {
+                e.printStackTrace();
+                ds = null;
+            }
+
+            if (ds != null) {
+                StringBuilder sb = new StringBuilder();
+                sb.append(ds.dataSeries);
+                sb.append(" (");
+                sb.append(ds.seriesCode);
+                sb.append(')');
+                set.setTitle(sb.toString());
+            }
+        }
+    }
+
+    private static void sortFileSetList(List<FileSet> fileSetList) {
+        Comparator<FileSet> comparator = (o1, o2) -> {
+            // Don't care about ordering in this case.
+            if (o1 == null || o2 == null)
+                return 0;
+            String id1 = o1.getIdentifier();
+            String id2 = o2.getIdentifier();
+            // Don't care about ordering in this case.
+            if (id1 == null || id2 == null)
+                return 0;
+
+            RPFDataSeries ds1, ds2;
+            try {
+                ds1 = RPFDataSeries.dataSeriesFor(id1);
+                ds2 = RPFDataSeries.dataSeriesFor(id2);
+            }
+            catch (RuntimeException e) {
+                e.printStackTrace();
+                ds1 = ds2 = null;
+            }
+
+            // Sort on the order the data series appears in the NITFS specification table,
+            // or if the data series cannot be identified, sort alphabetically.
+            return ds1 != null ? ds1.compareTo(ds2) : id1.compareTo(id2);
+        };
+        fileSetList.sort(comparator);
     }
 
     public Object getBackPanelDescriptor() {
@@ -64,7 +178,7 @@ public class FileSearchPanelDescriptor extends DefaultPanelDescriptor {
                 StringBuilder sb = new StringBuilder();
                 sb.append("<br>");
                 sb.append("Searching ");
-                sb.append("'").append(selectedFile.getAbsolutePath()).append(File.separator).append("...'");
+                sb.append('\'').append(selectedFile.getAbsolutePath()).append(File.separator).append("...'");
                 sb.append("<br>");
                 this.panelComponent.setDescription(RPFWizardUtil.makeBold(sb.toString()));
             }
@@ -119,15 +233,15 @@ public class FileSearchPanelDescriptor extends DefaultPanelDescriptor {
             File selectedFile = RPFWizardUtil.getSelectedFile(model);
             FileFilter rpfFilter = new AcceptRPFFilter();
             FileFilter updateUIFilter = new UpdateDescriptionFilter(rpfFilter, this.panelComponent);
-            List<File> fileList = searchSelectedFile(selectedFile, updateUIFilter);
+            List<File> fileList = FileSearchPanelDescriptor.searchSelectedFile(selectedFile, updateUIFilter);
             RPFWizardUtil.setFileList(model, fileList);
 
             // Create FileSets from the search results (if any).
-            List<FileSet> fileSetList = makeFileSetList(fileList);
+            List<FileSet> fileSetList = FileSearchPanelDescriptor.makeFileSetList(fileList);
             if (fileSetList != null) {
-                makeDefaultSelections(fileSetList);
-                makeTitles(fileSetList);
-                sortFileSetList(fileSetList);
+                FileSearchPanelDescriptor.makeDefaultSelections(fileSetList);
+                FileSearchPanelDescriptor.makeTitles(fileSetList);
+                FileSearchPanelDescriptor.sortFileSetList(fileSetList);
             }
             RPFWizardUtil.setFileSetList(model, fileSetList);
             // Forces notification that the FileSetList has changed.
@@ -137,120 +251,6 @@ public class FileSearchPanelDescriptor extends DefaultPanelDescriptor {
             model.setBackButtonEnabled(backEnabled);
             model.setNextButtonEnabled(nextEnabled);
         }
-    }
-
-    private static List<File> searchSelectedFile(File fileToSearch, FileFilter fileFilter) {
-        if (Thread.interrupted())
-            return null;
-
-        List<File> fileList;
-        try {
-            FileTree fileTree = new FileTree(fileToSearch);
-            fileTree.setMode(FileTree.FILES_ONLY);
-            fileList = fileTree.asList(fileFilter);
-        }
-        catch (Throwable t) {
-            String message = String.format("Exception while searching file: %s", fileToSearch);
-            Logging.logger().log(Level.SEVERE, message, t);
-            fileList = null;
-        }
-        return fileList;
-    }
-
-    private static List<FileSet> makeFileSetList(Iterable<File> fileList) {
-        List<FileSet> result = null;
-        if (fileList != null) {
-            Map<String, FileSet> map = new HashMap<>();
-            for (File file : fileList) {
-                try {
-                    String filename = file.getName().toUpperCase();
-                    RPFFrameFilename rpfFilename = RPFFrameFilename.parseFilename(filename);
-                    String id = rpfFilename.getDataSeriesCode();
-                    FileSet set = map.get(id);
-                    if (set == null) {
-                        set = new FileSet();
-                        set.setIdentifier(id);
-                        set.setFiles(new LinkedList<>());
-                        map.put(id, set);
-                    }
-                    set.getFiles().add(file);
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            result = new ArrayList<>(map.values());
-        }
-        return result;
-    }
-
-    private static void makeDefaultSelections(List<FileSet> fileSetList) {
-        // If only one FileSet is available, select it.
-        if (fileSetList != null
-            && fileSetList.size() == 1
-            && fileSetList.get(0) != null) {
-            fileSetList.get(0).setSelected(true);
-        }
-    }
-
-    private static void makeTitles(Iterable<FileSet> fileSetList) {
-        if (fileSetList != null) {
-            for (FileSet set : fileSetList) {
-                makeTitle(set);
-            }
-        }
-    }
-
-    private static void makeTitle(FileSet set) {
-        if (set != null && set.getIdentifier() != null) {
-            String id = set.getIdentifier();
-            RPFDataSeries ds;
-            try {
-                ds = RPFDataSeries.dataSeriesFor(id);
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-                ds = null;
-            }
-
-            if (ds != null) {
-                StringBuilder sb = new StringBuilder();
-                sb.append(ds.dataSeries);
-                sb.append(" (");
-                sb.append(ds.seriesCode);
-                sb.append(")");
-                set.setTitle(sb.toString());
-            }
-        }
-    }
-
-    private static void sortFileSetList(List<FileSet> fileSetList) {
-        Comparator<FileSet> comparator = (o1, o2) -> {
-            // Don't care about ordering in this case.
-            if (o1 == null || o2 == null)
-                return 0;
-            String id1 = o1.getIdentifier();
-            String id2 = o2.getIdentifier();
-            // Don't care about ordering in this case.
-            if (id1 == null || id2 == null)
-                return 0;
-
-            RPFDataSeries ds1, ds2;
-            try {
-                ds1 = RPFDataSeries.dataSeriesFor(id1);
-                ds2 = RPFDataSeries.dataSeriesFor(id2);
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-                ds1 = ds2 = null;
-            }
-
-            // Sort on the order the data series appears in the NITFS specification table,
-            // or if the data series cannot be identified, sort alphabetically.
-            return ds1 != null ? ds1.compareTo(ds2) : id1.compareTo(id2);
-        };
-        fileSetList.sort(comparator);
     }
 
     private void startWorkerThread(Runnable runnable) {

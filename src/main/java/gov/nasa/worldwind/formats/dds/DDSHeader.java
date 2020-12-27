@@ -6,6 +6,7 @@
 package gov.nasa.worldwind.formats.dds;
 
 ////.*;
+
 import gov.nasa.worldwind.util.*;
 
 import java.io.*;

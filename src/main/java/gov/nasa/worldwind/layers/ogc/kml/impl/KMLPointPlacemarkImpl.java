@@ -26,8 +26,8 @@ import java.io.IOException;
 public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderable {
     public static final double DEFAULT_LABEL_SCALE_THRESHOLD = 1.0;
     protected final KMLPlacemark parent;
-    protected boolean highlightAttributesResolved = false;
-    protected boolean normalAttributesResolved = false;
+    protected boolean highlightAttributesResolved;
+    protected boolean normalAttributesResolved;
     /**
      * Indicates the time at which the image source was specified.
      */
@@ -41,7 +41,7 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
      * logic supports KML files with many placemarks with small labels, and drawing all the labels would be too
      * cluttered.
      */
-    protected double labelScaleThreshold = DEFAULT_LABEL_SCALE_THRESHOLD;
+    protected double labelScaleThreshold = KMLPointPlacemarkImpl.DEFAULT_LABEL_SCALE_THRESHOLD;
 
     /**
      * Create an instance.
@@ -103,6 +103,49 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
         this.set(AVKey.CONTEXT, this.parent);
     }
 
+    protected static PointPlacemarkAttributes assembleLineAttributes(PointPlacemarkAttributes attrs,
+        KMLLineStyle style) {
+        // Assign the attributes defined in the KML Feature element.
+
+        if (style.getWidth() != null)
+            attrs.setLineWidth(style.getWidth());
+
+        if (style.getColor() != null)
+            attrs.setLineColor(style.getColor());
+
+        if (style.getColorMode() != null && "random".equals(style.getColorMode()))
+            attrs.setLineMaterial(new Material(WWUtil.makeRandomColor(attrs.getLineColor())));
+
+        return attrs;
+    }
+
+    protected static PointPlacemarkAttributes assembleLabelAttributes(PointPlacemarkAttributes attrs,
+        KMLLabelStyle style) {
+        // Assign the attributes defined in the KML Feature element.
+
+        if (style.getScale() != null)
+            attrs.setLabelScale(style.getScale());
+
+        if (style.getColor() != null)
+            attrs.setLabelColor(style.getColor());
+
+        if (style.getColorMode() != null && "random".equals(style.getColorMode()))
+            attrs.setLabelMaterial(new Material(WWUtil.makeRandomColor(attrs.getLabelColor())));
+
+        return attrs;
+    }
+
+    /**
+     * Get the initial attributes for this feature. These attributes will be changed to reflect the feature's style.
+     *
+     * @param attrType {@link KMLConstants#NORMAL} or {@link KMLConstants#HIGHLIGHT}.
+     * @return New placemark attributes.
+     */
+    @SuppressWarnings("UnusedDeclaration")
+    protected static PointPlacemarkAttributes getInitialAttributes(String attrType) {
+        return new PointPlacemarkAttributes();
+    }
+
     public void preRender(KMLTraversalContext tc, DrawContext dc) {
         // Intentionally left blank; KML point placemark does nothing during the preRender phase.
     }
@@ -120,16 +163,14 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
                         this.setHighlightAttributes(a);
                         if (!a.isUnresolved())
                             this.highlightAttributesResolved = true;
-                    }
-                    else {
+                    } else {
                         // There are no highlight attributes, so we can stop looking for them. Note that this is
                         // different from having unresolved highlight attributes (handled above).
                         this.highlightAttributesResolved = true;
                     }
                 }
             }
-        }
-        else {
+        } else {
             if (!this.normalAttributesResolved) {
                 PointPlacemarkAttributes a = this.getAttributes();
                 if (a == null || a.isUnresolved()) {
@@ -138,8 +179,7 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
                         this.setAttributes(a);
                         if (!a.isUnresolved())
                             this.normalAttributesResolved = true;
-                    }
-                    else {
+                    } else {
                         // There are no normal attributes, so we can stop looking for them.  Note that this is different
                         // from having unresolved attributes (handled above).
                         this.normalAttributesResolved = true;
@@ -180,8 +220,7 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
         if (this.isHighlighted()) {
             mode = KMLConstants.HIGHLIGHT;
             retrievalTime = this.highlightIconRetrievalTime;
-        }
-        else {
+        } else {
             mode = KMLConstants.NORMAL;
             retrievalTime = this.iconRetrievalTime;
         }
@@ -339,55 +378,12 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
             KMLVec2 hs = style.getHotSpot();
             attrs.setImageOffset(new Offset(hs.getX(), hs.getY(), KMLUtil.kmlUnitsToWWUnits(hs.getXunits()),
                 KMLUtil.kmlUnitsToWWUnits(hs.getYunits())));
-        }
-        else {
+        } else {
             // By default, use the center of the image as the offset.
             attrs.setImageOffset(new Offset(0.5, 0.5, AVKey.FRACTION, AVKey.FRACTION));
         }
 
         return attrs;
-    }
-
-    protected static PointPlacemarkAttributes assembleLineAttributes(PointPlacemarkAttributes attrs, KMLLineStyle style) {
-        // Assign the attributes defined in the KML Feature element.
-
-        if (style.getWidth() != null)
-            attrs.setLineWidth(style.getWidth());
-
-        if (style.getColor() != null)
-            attrs.setLineColor(style.getColor());
-
-        if (style.getColorMode() != null && "random".equals(style.getColorMode()))
-            attrs.setLineMaterial(new Material(WWUtil.makeRandomColor(attrs.getLineColor())));
-
-        return attrs;
-    }
-
-    protected static PointPlacemarkAttributes assembleLabelAttributes(PointPlacemarkAttributes attrs,
-        KMLLabelStyle style) {
-        // Assign the attributes defined in the KML Feature element.
-
-        if (style.getScale() != null)
-            attrs.setLabelScale(style.getScale());
-
-        if (style.getColor() != null)
-            attrs.setLabelColor(style.getColor());
-
-        if (style.getColorMode() != null && "random".equals(style.getColorMode()))
-            attrs.setLabelMaterial(new Material(WWUtil.makeRandomColor(attrs.getLabelColor())));
-
-        return attrs;
-    }
-
-    /**
-     * Get the initial attributes for this feature. These attributes will be changed to reflect the feature's style.
-     *
-     * @param attrType {@link KMLConstants#NORMAL} or {@link KMLConstants#HIGHLIGHT}.
-     * @return New placemark attributes.
-     */
-    @SuppressWarnings("UnusedDeclaration")
-    protected static PointPlacemarkAttributes getInitialAttributes(String attrType) {
-        return new PointPlacemarkAttributes();
     }
 
     /**

@@ -34,13 +34,13 @@ public class RPFTiledImageLayer extends TiledImageLayer {
     private final Object fileLock = new Object();
 
     public RPFTiledImageLayer(String stateInXml) {
-        this(xmlStateToParams(stateInXml));
+        this(RPFTiledImageLayer.xmlStateToParams(stateInXml));
 
         RestorableSupport rs;
         try {
             rs = RestorableSupport.parse(stateInXml);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             // Parsing the document specified by stateInXml failed.
             String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", stateInXml);
             Logging.logger().severe(message);
@@ -88,7 +88,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
     }
 
     public RPFTiledImageLayer(AVList params) {
-        super(new LevelSet(initParams(params)));
+        super(new LevelSet(RPFTiledImageLayer.initParams(params)));
 
         this.initRPFFileIndex(params);
         this.creationParams = params.copy();
@@ -97,7 +97,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
         this.set(AVKey.CONSTRUCTION_PARAMETERS, params);
         //this.setUseMipMaps(true);
         this.setUseTransparentTextures(true);
-        this.setName(makeTitle(params));
+        this.setName(RPFTiledImageLayer.makeTitle(params));
     }
 
     static Collection<Tile> createTopLevelTiles(AVList params) {
@@ -107,7 +107,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
             throw new IllegalArgumentException(message);
         }
 
-        LevelSet levels = new LevelSet(initParams(params));
+        LevelSet levels = new LevelSet(RPFTiledImageLayer.initParams(params));
         Sector sector = levels.getSector();
 
         Level level = levels.getFirstLevel();
@@ -174,14 +174,14 @@ public class RPFTiledImageLayer extends TiledImageLayer {
             throw new IllegalArgumentException(message);
         }
 
-        String rootPath = params.getStringValue(RPF_ROOT_PATH);
+        String rootPath = params.getStringValue(RPFTiledImageLayer.RPF_ROOT_PATH);
         if (rootPath == null) {
             String message = Logging.getMessage("nullValue.RPFRootPath");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        String dataSeriesId = params.getStringValue(RPF_DATA_SERIES_ID);
+        String dataSeriesId = params.getStringValue(RPFTiledImageLayer.RPF_DATA_SERIES_ID);
         if (dataSeriesId == null) {
             String message = Logging.getMessage("nullValue.RPFDataSeriesIsNull");
             Logging.logger().severe(message);
@@ -190,7 +190,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
 
         // Use a dummy value for service.
         if (params.get(AVKey.SERVICE) == null)
-            params.set(AVKey.SERVICE, "file://" + RPFGenerator.class.getName() + "?");
+            params.set(AVKey.SERVICE, "file://" + RPFGenerator.class.getName() + '?');
 
         // Use a dummy value for dataset-name.
         if (params.get(AVKey.DATASET_NAME) == null)
@@ -282,10 +282,10 @@ public class RPFTiledImageLayer extends TiledImageLayer {
         }
 
         if (sb.isEmpty()) {
-            String rootPath = params.getStringValue(RPF_ROOT_PATH);
-            String dataSeriesId = params.getStringValue(RPF_DATA_SERIES_ID);
+            String rootPath = params.getStringValue(RPFTiledImageLayer.RPF_ROOT_PATH);
+            String dataSeriesId = params.getStringValue(RPFTiledImageLayer.RPF_DATA_SERIES_ID);
             if (rootPath != null && dataSeriesId != null) {
-                sb.append(rootPath).append(":").append(dataSeriesId);
+                sb.append(rootPath).append(':').append(dataSeriesId);
             }
         }
 
@@ -303,7 +303,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
         try {
             rs = RestorableSupport.parse(stateInXml);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             // Parsing the document specified by stateInXml failed.
             String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", stateInXml);
             Logging.logger().severe(message);
@@ -312,13 +312,13 @@ public class RPFTiledImageLayer extends TiledImageLayer {
 
         AVList params = new AVListImpl();
 
-        String s = rs.getStateValueAsString(RPF_ROOT_PATH);
+        String s = rs.getStateValueAsString(RPFTiledImageLayer.RPF_ROOT_PATH);
         if (s != null)
-            params.set(RPF_ROOT_PATH, s);
+            params.set(RPFTiledImageLayer.RPF_ROOT_PATH, s);
 
-        s = rs.getStateValueAsString(RPF_DATA_SERIES_ID);
+        s = rs.getStateValueAsString(RPFTiledImageLayer.RPF_DATA_SERIES_ID);
         if (s != null)
-            params.set(RPF_DATA_SERIES_ID, s);
+            params.set(RPFTiledImageLayer.RPF_DATA_SERIES_ID, s);
 
         s = rs.getStateValueAsString(AVKey.IMAGE_FORMAT);
         if (s != null)
@@ -413,6 +413,10 @@ public class RPFTiledImageLayer extends TiledImageLayer {
         return buffer;
     }
 
+    private static void addTileToCache(TextureTile tile) {
+        TextureTile.getMemoryCache().add(tile.tileKey, tile);
+    }
+
     protected void initRPFFileIndex(AVList params) {
         // Load the RPFFileIndex associated with this RPFTiledImageLayer, and update the layer's expiry time according
         // to the last modified time on the RPFFileIndex.
@@ -420,13 +424,13 @@ public class RPFTiledImageLayer extends TiledImageLayer {
         FileStore fileStore = WorldWind.store();
 
         // Root path and data series ID parameters should have already been validated in initParams().
-        String rootPath = params.getStringValue(RPF_ROOT_PATH);
-        String dataSeriesId = params.getStringValue(RPF_DATA_SERIES_ID);
-        File file = fileStore.newFile(getFileIndexCachePath(rootPath, dataSeriesId));
+        String rootPath = params.getStringValue(RPFTiledImageLayer.RPF_ROOT_PATH);
+        String dataSeriesId = params.getStringValue(RPFTiledImageLayer.RPF_DATA_SERIES_ID);
+        File file = fileStore.newFile(RPFTiledImageLayer.getFileIndexCachePath(rootPath, dataSeriesId));
 
         RPFFileIndex fileIndex = (RPFFileIndex) params.get(RPFGenerator.RPF_FILE_INDEX);
         if (fileIndex == null) {
-            fileIndex = initFileIndex(file);
+            fileIndex = RPFTiledImageLayer.initFileIndex(file);
             if (fileIndex == null) {
                 String message = Logging.getMessage("nullValue.RPFFileIndexIsNull");
                 Logging.logger().severe(message);
@@ -459,22 +463,18 @@ public class RPFTiledImageLayer extends TiledImageLayer {
             if (p.getValue() instanceof LatLon) {
                 rs.addStateValueAsDouble(p.getKey() + ".Latitude", ((LatLon) p.getValue()).getLatitude().degrees);
                 rs.addStateValueAsDouble(p.getKey() + ".Longitude", ((LatLon) p.getValue()).getLongitude().degrees);
-            }
-            else if (p.getValue() instanceof Sector) {
+            } else if (p.getValue() instanceof Sector) {
                 rs.addStateValueAsDouble(p.getKey() + ".MinLatitude", ((Sector) p.getValue()).latMin);
                 rs.addStateValueAsDouble(p.getKey() + ".MaxLatitude", ((Sector) p.getValue()).latMax);
                 rs.addStateValueAsDouble(p.getKey() + ".MinLongitude",
                     ((Sector) p.getValue()).lonMin);
                 rs.addStateValueAsDouble(p.getKey() + ".MaxLongitude",
                     ((Sector) p.getValue()).lonMax);
-            }
-            else if (p.getValue() instanceof URLBuilder) {
+            } else if (p.getValue() instanceof URLBuilder) {
                 // Intentionally left blank. URLBuilder will be created from scratch in fromRestorableState().
-            }
-            else if (p.getKey().equals(RPFGenerator.RPF_FILE_INDEX)) {
+            } else if (p.getKey().equals(RPFGenerator.RPF_FILE_INDEX)) {
                 // Intentionally left blank.
-            }
-            else {
+            } else {
                 super.getRestorableStateForAVPair(p.getKey(), p.getValue(), rs, null);
             }
         }
@@ -537,7 +537,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
         TextureData textureData;
 
         synchronized (this.fileLock) {
-            textureData = readTexture(textureURL, this.isUseMipMaps());
+            textureData = RPFTiledImageLayer.readTexture(textureURL, this.isUseMipMaps());
         }
 
         if (textureData == null)
@@ -548,10 +548,6 @@ public class RPFTiledImageLayer extends TiledImageLayer {
             RPFTiledImageLayer.addTileToCache(tile);
 
         return true;
-    }
-
-    private static void addTileToCache(TextureTile tile) {
-        TextureTile.getMemoryCache().add(tile.tileKey, tile);
     }
 
     protected void downloadTexture(final TextureTile tile) {
@@ -576,8 +572,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
             if (srl != null && srl > 0)
                 retriever.setStaleRequestLimit(srl);
             WorldWind.retrieveRemote().run(retriever, tile.getPriority());
-        }
-        else {
+        } else {
             requestQ.add(new DownloadTask(service, url, tile, this));
         }
     }
@@ -590,7 +585,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
     }
 
     private static class URLBuilder implements TileUrlBuilder {
-        public String URLTemplate = null;
+        public String URLTemplate;
 
         private URLBuilder() {
         }
@@ -607,21 +602,20 @@ public class RPFTiledImageLayer extends TiledImageLayer {
                 sb.append(tile.level.getTileHeight());
 
                 this.URLTemplate = sb.toString();
-            }
-            else {
+            } else {
                 sb = new StringBuffer(this.URLTemplate);
             }
 
             Sector s = tile.sector;
             sb.append("&bbox=");
-            sb.append(s.lonMin().getDegrees());
-            sb.append(",");
-            sb.append(s.latMin().getDegrees());
-            sb.append(",");
-            sb.append(s.lonMax().getDegrees());
-            sb.append(",");
-            sb.append(s.latMax().getDegrees());
-            sb.append("&"); // terminate the query string
+            sb.append(s.lonMin().degrees);
+            sb.append(',');
+            sb.append(s.latMin().degrees);
+            sb.append(',');
+            sb.append(s.lonMax().degrees);
+            sb.append(',');
+            sb.append(s.latMax().degrees);
+            sb.append('&'); // terminate the query string
 
             return new URL(sb.toString().replace(" ", "%20"));
         }
@@ -646,8 +640,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
                     layer.getLevels().has(tile);
                     this.layer.firePropertyChange(AVKey.LAYER, null, this);
                     return;
-                }
-                else {
+                } else {
                     // Assume that something's wrong with the file and delete it.
                     WorldWind.store().removeFile(textureURL);
                     layer.getLevels().miss(tile);
@@ -727,7 +720,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
         public void run() {
             final TextureTile tile = getTile();
             try {
-                ByteBuffer buffer = createImage(this.service, this.url);
+                ByteBuffer buffer = RPFTiledImageLayer.createImage(this.service, this.url);
                 if (buffer != null) {
                     final File outFile = WorldWind.store().newFile(tile.getPath());
                     if (outFile != null) {
@@ -762,8 +755,10 @@ public class RPFTiledImageLayer extends TiledImageLayer {
          * @return -1 if <code>this</code> less than <code>that</code>, 1 if greater than, 0 if equal
          * @throws IllegalArgumentException if <code>that</code> is null
          */
-        @Override public int compareTo(TileTask that) {
-            if (this==that) return 0;
+        @Override
+        public int compareTo(TileTask that) {
+            if (this == that)
+                return 0;
             return Double.compare(that.tile.getPriority(), this.tile.getPriority());
         }
 

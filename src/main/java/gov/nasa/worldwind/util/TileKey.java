@@ -124,7 +124,8 @@ public class TileKey implements Comparable<TileKey> {
      * @throws IllegalArgumentException if <code>key</code> is null
      */
     public final int compareTo(TileKey key) {
-        if (this == key) return 0;
+        if (this == key)
+            return 0;
 
         //TEMPORARY
         if (cacheName.equals(key.cacheName))
@@ -135,24 +136,28 @@ public class TileKey implements Comparable<TileKey> {
         if (this.level > key.level)
             return 1;
 
-        if (this.row < key.row) return -1;
-        if (this.row > key.row) return 1;
+        if (this.row < key.row)
+            return -1;
+        if (this.row > key.row)
+            return 1;
 
         return Integer.compare(col, key.col);
     }
 
     @Override
     public final boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof TileKey)) return false;
+        if (this == o)
+            return true;
+        if (!(o instanceof TileKey))
+            return false;
 
         final TileKey tileKey = (TileKey) o;
         return
             this.hash == tileKey.hash &&
-            this.col == tileKey.col &&
-            this.row == tileKey.row &&
-            this.level == tileKey.level &&
-            Objects.equals(this.cacheName, tileKey.cacheName);
+                this.col == tileKey.col &&
+                this.row == tileKey.row &&
+                this.level == tileKey.level &&
+                Objects.equals(this.cacheName, tileKey.cacheName);
     }
 
     @Override
@@ -162,6 +167,6 @@ public class TileKey implements Comparable<TileKey> {
 
     @Override
     public String toString() {
-        return this.cacheName + "/" + this.level + "/" + this.row + "/" + col;
+        return this.cacheName + '/' + this.level + '/' + this.row + '/' + col;
     }
 }

@@ -20,11 +20,11 @@ import java.util.logging.Level;
  */
 
 public class DDSRasterReader extends AbstractDataRasterReader {
-    protected static final String[] ddsMimeTypes = new String[] {"image/dds"};
-    protected static final String[] ddsSuffixes = new String[] {"dds"};
+    protected static final String[] ddsMimeTypes = {"image/dds"};
+    protected static final String[] ddsSuffixes = {"dds"};
 
     public DDSRasterReader() {
-        super(ddsMimeTypes, ddsSuffixes);
+        super(DDSRasterReader.ddsMimeTypes, DDSRasterReader.ddsSuffixes);
     }
 
     @Override

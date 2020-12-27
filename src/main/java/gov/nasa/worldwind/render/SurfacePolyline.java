@@ -244,11 +244,9 @@ public class SurfacePolyline extends AbstractSurfaceShape implements Exportable 
         if (output instanceof XMLStreamWriter) {
             xmlWriter = (XMLStreamWriter) output;
             closeWriterWhenFinished = false;
-        }
-        else if (output instanceof Writer) {
+        } else if (output instanceof Writer) {
             xmlWriter = factory.createXMLStreamWriter((Writer) output);
-        }
-        else if (output instanceof OutputStream) {
+        } else if (output instanceof OutputStream) {
             xmlWriter = factory.createXMLStreamWriter((OutputStream) output);
         }
 
@@ -313,9 +311,9 @@ public class SurfacePolyline extends AbstractSurfaceShape implements Exportable 
 
         xmlWriter.writeStartElement("coordinates");
         for (LatLon position : this.getLocations()) {
-            xmlWriter.writeCharacters(Double.toString(position.getLongitude().getDegrees()));
+            xmlWriter.writeCharacters(Double.toString(position.getLongitude().degrees));
             xmlWriter.writeCharacters(",");
-            xmlWriter.writeCharacters(Double.toString(position.getLatitude().getDegrees()));
+            xmlWriter.writeCharacters(Double.toString(position.getLatitude().degrees));
             xmlWriter.writeCharacters(" ");
         }
         xmlWriter.writeEndElement(); // coordinates

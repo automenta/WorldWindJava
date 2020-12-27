@@ -35,7 +35,7 @@ public class FlyToFlyViewAnimator extends CompoundAnimator {
         Angle beginHeading, Angle endHeading,
         Angle beginPitch, Angle endPitch,
         double beginElevation, double endElevation, long timeToMove, int altitudeMode) {
-        return createFlyToFlyViewAnimator(view, beginCenterPos, endCenterPos, beginHeading, endHeading,
+        return FlyToFlyViewAnimator.createFlyToFlyViewAnimator(view, beginCenterPos, endCenterPos, beginHeading, endHeading,
             beginPitch, endPitch, view.getRoll(), view.getRoll(), beginElevation, endElevation, timeToMove,
             altitudeMode);
     }
@@ -86,14 +86,13 @@ public class FlyToFlyViewAnimator extends CompoundAnimator {
 
             if (globe == null) {
                 useMidZoom = false;
-            }
-            else {
-                this.midZoom = computeMidZoom(globe, beginLatLon, endLatLon, beginZoom, endZoom);
+            } else {
+                this.midZoom = ViewElevationAnimator.computeMidZoom(globe, beginLatLon, endLatLon, beginZoom, endZoom);
                 double maxMidZoom = flyView.getViewPropertyLimits().getEyeElevationLimits()[1];
                 if (this.midZoom > maxMidZoom) {
                     this.midZoom = maxMidZoom;
                 }
-                useMidZoom = useMidZoom(beginZoom, endZoom, midZoom);
+                useMidZoom = ViewElevationAnimator.useMidZoom(beginZoom, endZoom, midZoom);
             }
             if (useMidZoom) {
                 this.trueEndZoom = endZoom;
@@ -121,7 +120,7 @@ public class FlyToFlyViewAnimator extends CompoundAnimator {
             final int MAX_SMOOTHING = 1;
 
             final double CENTER_START = this.useMidZoom ? 0.2 : 0.0;
-            final double CENTER_STOP = this.useMidZoom ? 0.8 : 0.8;
+            final double CENTER_STOP = 0.8;
             double latLonInterpolant = AnimationSupport.basicInterpolant(interpolant, CENTER_START, CENTER_STOP,
                 MAX_SMOOTHING);
 
@@ -138,8 +137,7 @@ public class FlyToFlyViewAnimator extends CompoundAnimator {
             if (this.altitudeMode == WorldWind.CLAMP_TO_GROUND) {
                 overrideEndElevation = true;
                 endElevation = this.globe.getElevation(getEnd().getLatitude(), getEnd().getLongitude());
-            }
-            else if (this.altitudeMode == WorldWind.RELATIVE_TO_GROUND) {
+            } else if (this.altitudeMode == WorldWind.RELATIVE_TO_GROUND) {
                 overrideEndElevation = true;
                 endElevation = this.globe.getElevation(getEnd().getLatitude(), getEnd().getLongitude())
                     + getEnd().getAltitude();

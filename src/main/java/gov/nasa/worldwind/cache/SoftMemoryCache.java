@@ -4,7 +4,8 @@ import com.github.benmanes.caffeine.cache.*;
 import com.google.common.util.concurrent.MoreExecutors;
 import org.checkerframework.checker.nullness.qual.*;
 
-public class SoftMemoryCache extends AbstractMemoryCache implements RemovalListener<Object, AbstractMemoryCache.CacheEntry> {
+public class SoftMemoryCache extends AbstractMemoryCache
+    implements RemovalListener<Object, AbstractMemoryCache.CacheEntry> {
 
     final Cache<Object, CacheEntry> cache;
 
@@ -30,7 +31,7 @@ public class SoftMemoryCache extends AbstractMemoryCache implements RemovalListe
     @Override
     public boolean add(Object key, Object clientObject, long objectSize) {
 
-        CacheEntry e = cache.get(key, k-> new CacheEntry(k, clientObject, objectSize));
+        CacheEntry e = cache.get(key, k -> new CacheEntry(k, clientObject, objectSize));
 
         return true;
     }
@@ -43,7 +44,7 @@ public class SoftMemoryCache extends AbstractMemoryCache implements RemovalListe
     @Override
     public Object getObject(Object key) {
         final CacheEntry e = cache.getIfPresent(key);
-        return e!=null ? e.clientObject : null;
+        return e != null ? e.clientObject : null;
     }
 
     @Override

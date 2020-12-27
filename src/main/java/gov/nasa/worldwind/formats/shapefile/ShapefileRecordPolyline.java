@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.formats.shapefile;
 
-import gov.nasa.worldwind.geom.LatLon;
+import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.util.VecBuffer;
 
 import javax.xml.stream.*;
@@ -32,8 +32,8 @@ public class ShapefileRecordPolyline extends ShapefileRecord {
     protected double[] mValues; // will be null if no measures
 
     /**
-     * Constructs a record instance from the given {@link ByteBuffer}. The buffer's current position must be
-     * the start of the record, and will be the start of the next record when the constructor returns.
+     * Constructs a record instance from the given {@link ByteBuffer}. The buffer's current position must be the start
+     * of the record, and will be the start of the next record when the constructor returns.
      *
      * @param shapeFile the parent {@link Shapefile}.
      * @param buffer    the shapefile record {@link ByteBuffer} to read from.
@@ -211,8 +211,8 @@ public class ShapefileRecordPolyline extends ShapefileRecord {
                     z = zValues[index];
 
                 xmlWriter.writeCharacters(String.format(Locale.US, "%f,%f,%f ",
-                    latLon.getLongitude().getDegrees(),
-                    latLon.getLatitude().getDegrees(),
+                    latLon.getLongitude().degrees,
+                    latLon.getLatitude().degrees,
                     z));
 
                 index++;

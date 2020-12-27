@@ -41,7 +41,7 @@ public class SurfaceImage extends WWObjectImpl
      * prevent its having to create a list every time this surface image is rendered.
      */
     protected final List<SurfaceImage> thisList = Collections.singletonList(this);
-    protected boolean alwaysOnTop = false;
+    protected boolean alwaysOnTop;
     protected PickSupport pickSupport;
     protected Layer pickLayer;
     protected Object imageSource;
@@ -52,7 +52,7 @@ public class SurfaceImage extends WWObjectImpl
     protected WWTexture previousGeneratedTexture;
     protected boolean generatedTextureExpired;
     protected boolean dragEnabled = true;
-    protected DraggableSupport draggableSupport = null;
+    protected DraggableSupport draggableSupport;
     private Sector sector;
     private Position referencePosition;
     private double opacity = 1.0;
@@ -319,14 +319,12 @@ public class SurfaceImage extends WWObjectImpl
                     gl.glPushAttrib(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_POLYGON_BIT | GL2.GL_CURRENT_BIT);
                     // Enable blending using white premultiplied by the current opacity.
                     gl.glColor4d(opacity, opacity, opacity, opacity);
-                }
-                else {
+                } else {
                     gl.glPushAttrib(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_POLYGON_BIT);
                 }
                 gl.glEnable(GL.GL_BLEND);
                 gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE_MINUS_SRC_ALPHA);
-            }
-            else {
+            } else {
                 gl.glPushAttrib(GL2.GL_POLYGON_BIT);
             }
 
@@ -353,12 +351,10 @@ public class SurfaceImage extends WWObjectImpl
             if (this.sourceTexture.bind(dc)) {
                 this.generatedTexture = this.sourceTexture;
                 return this.generatedTexture;
-            }
-            else {
+            } else {
                 return null;
             }
-        }
-        else {
+        } else {
             FramebufferTexture t = dc.getGLRuntimeCapabilities().isUseFramebufferObject() ?
                 new FBOTexture(this.sourceTexture, this.sector, this.corners)
                 : new FramebufferTexture(this.sourceTexture, this.sector, this.corners);
@@ -389,8 +385,8 @@ public class SurfaceImage extends WWObjectImpl
 
         for (int i = 0; i < this.corners.size(); i++) {
             LatLon p = this.corners.get(i);
-            double distance = LatLon.greatCircleDistance(oldRef, p).radians;
-            double azimuth = LatLon.greatCircleAzimuth(oldRef, p).radians;
+            double distance = LatLon.greatCircleDistance(oldRef, p).radians();
+            double azimuth = LatLon.greatCircleAzimuth(oldRef, p).radians();
             LatLon pp = LatLon.greatCircleEndPosition(position, azimuth, distance);
             this.corners.set(i, pp);
         }
@@ -504,8 +500,7 @@ public class SurfaceImage extends WWObjectImpl
                 Logging.logger().throwing(getClass().getName(), "export", e);
                 throw new IOException(e);
             }
-        }
-        else {
+        } else {
             String message = Logging.getMessage("Export.UnsupportedFormat", mimeType);
             Logging.logger().warning(message);
             throw new UnsupportedOperationException(message);
@@ -528,11 +523,9 @@ public class SurfaceImage extends WWObjectImpl
         if (output instanceof XMLStreamWriter) {
             xmlWriter = (XMLStreamWriter) output;
             closeWriterWhenFinished = false;
-        }
-        else if (output instanceof Writer) {
+        } else if (output instanceof Writer) {
             xmlWriter = factory.createXMLStreamWriter((Writer) output);
-        }
-        else if (output instanceof OutputStream) {
+        } else if (output instanceof OutputStream) {
             xmlWriter = factory.createXMLStreamWriter((OutputStream) output);
         }
 
@@ -558,8 +551,7 @@ public class SurfaceImage extends WWObjectImpl
             xmlWriter.writeCharacters(imgSourceStr);
             xmlWriter.writeEndElement(); // href
             xmlWriter.writeEndElement();  // Icon
-        }
-        else {
+        } else {
             String message = Logging.getMessage("Export.UnableToExportImageSource",
                 (imgSource != null ? imgSource.getClass().getName() : "null"));
             Logging.logger().info(message);
@@ -573,8 +565,7 @@ public class SurfaceImage extends WWObjectImpl
         // we'll need to use a gx:LatLonQuad.
         if (Sector.isSector(this.corners)) {
             exportKMLLatLonBox(xmlWriter);
-        }
-        else {
+        } else {
             exportKMLLatLonQuad(xmlWriter);
         }
 
@@ -588,19 +579,19 @@ public class SurfaceImage extends WWObjectImpl
     protected void exportKMLLatLonBox(XMLStreamWriter xmlWriter) throws XMLStreamException {
         xmlWriter.writeStartElement("LatLonBox");
         xmlWriter.writeStartElement("north");
-        xmlWriter.writeCharacters(Double.toString(this.sector.latMax().getDegrees()));
+        xmlWriter.writeCharacters(Double.toString(this.sector.latMax().degrees));
         xmlWriter.writeEndElement();
 
         xmlWriter.writeStartElement("south");
-        xmlWriter.writeCharacters(Double.toString(this.sector.latMin().getDegrees()));
+        xmlWriter.writeCharacters(Double.toString(this.sector.latMin().degrees));
         xmlWriter.writeEndElement(); // south
 
         xmlWriter.writeStartElement("east");
-        xmlWriter.writeCharacters(Double.toString(this.sector.lonMin().getDegrees()));
+        xmlWriter.writeCharacters(Double.toString(this.sector.lonMin().degrees));
         xmlWriter.writeEndElement();
 
         xmlWriter.writeStartElement("west");
-        xmlWriter.writeCharacters(Double.toString(this.sector.lonMax().getDegrees()));
+        xmlWriter.writeCharacters(Double.toString(this.sector.lonMax().degrees));
         xmlWriter.writeEndElement(); // west
         xmlWriter.writeEndElement(); // LatLonBox
     }
@@ -610,9 +601,9 @@ public class SurfaceImage extends WWObjectImpl
         xmlWriter.writeStartElement("coordinates");
 
         for (LatLon ll : this.corners) {
-            xmlWriter.writeCharacters(Double.toString(ll.getLongitude().getDegrees()));
+            xmlWriter.writeCharacters(Double.toString(ll.getLongitude().degrees));
             xmlWriter.writeCharacters(",");
-            xmlWriter.writeCharacters(Double.toString(ll.getLatitude().getDegrees()));
+            xmlWriter.writeCharacters(Double.toString(ll.getLatitude().degrees));
             xmlWriter.writeCharacters(" ");
         }
 

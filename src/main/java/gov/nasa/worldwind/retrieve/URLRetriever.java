@@ -32,12 +32,12 @@ public class URLRetriever extends WWObjectImpl implements Retriever {
      */
     public static final String EXTRACT_ZIP_ENTRY = "URLRetriever.ExtractZipEntry";
     private static final Pattern maxAge = Pattern.compile("max-age=(\\d+)");
-//    protected final AtomicInteger contentLengthRead = new AtomicInteger(0);
+    //    protected final AtomicInteger contentLengthRead = new AtomicInteger(0);
     protected final AtomicLong expiration = new AtomicLong(0);
     protected final URL url;
     protected final RetrievalPostProcessor postProcessor;
-    protected volatile String state = RETRIEVER_STATE_NOT_STARTED;
-//    protected volatile int contentLength = 0;
+    protected volatile String state = Retriever.RETRIEVER_STATE_NOT_STARTED;
+    //    protected volatile int contentLength = 0;
     protected volatile String contentType;
     protected volatile ByteBuffer byteBuffer;
     protected volatile URLConnection connection;
@@ -71,6 +71,89 @@ public class URLRetriever extends WWObjectImpl implements Retriever {
             case "jar" -> new JarRetriever(url, postProcessor);
             default -> null;
         };
+    }
+
+    protected static void configureSSLContext(HttpsURLConnection connection) {
+        SSLContext sslContext = (SSLContext) WorldWind.getValue(AVKey.HTTP_SSL_CONTEXT);
+
+        if (sslContext != null)
+            connection.setSSLSocketFactory(sslContext.getSocketFactory());
+    }
+
+    protected static ByteBuffer readStream(InputStream inputStream) throws IOException {
+
+        return ByteBuffer.wrap(inputStream.readAllBytes());
+    }
+
+    /**
+     * @param inputStream a stream to the zip connection.
+     * @param url         the URL of the zip resource.
+     * @return a buffer containing the content read from the zip stream.
+     * @throws IOException              if the stream does not refer to a zip resource or an exception occurs during
+     *                                  reading.
+     * @throws IllegalArgumentException if <code>inputStream</code> is null
+     */
+    protected static ByteBuffer readZipStream(InputStream inputStream, URL url) throws IOException {
+        ZipInputStream zis = new ZipInputStream(inputStream);
+        ZipEntry ze = zis.getNextEntry();
+        if (ze == null) {
+            Logging.logger().severe(Logging.getMessage("URLRetriever.NoZipEntryFor") + url);
+            return null;
+        }
+
+//        if (ze.getSize() > 0) {
+        return ByteBuffer.wrap(zis.readNBytes((int) ze.getSize()));
+//
+//
+//            byte[] inputBuffer = new byte[8192];
+//            while (buffer.hasRemaining()) {
+//                int count = zis.read(inputBuffer);
+//                if (count > 0) {
+//                    buffer.put(inputBuffer, 0, count);
+////                    this.contentLengthRead.getAndAdd(buffer.position() + 1);
+//                }
+//            }
+//        }
+
+    }
+
+    /**
+     * Indicates the expiration time specified by either the Expires header or the max-age directive of the
+     * Cache-Control header. If both are present, then Cache-Control is given priority (See section 14.9.3 of the HTTP
+     * Specification: http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html).
+     * <p>
+     * If both the Expires and Date headers are present then the expiration time is calculated as current time +
+     * (expires - date). This helps guard against clock skew between the client and server.
+     *
+     * @param connection Connection for which to get expiration time.
+     * @return The expiration time, in milliseconds since the Epoch, specified by the HTTP headers, or zero if there is
+     * no expiration time.
+     */
+    protected static long getExpiration(URLConnection connection) {
+        // Read the expiration time from either the Cache-Control header or the Expires header. Cache-Control has
+        // priority if both headers are specified.
+        String cacheControl = connection.getHeaderField("cache-control");
+        long nowMS = System.currentTimeMillis();
+        if (cacheControl != null) {
+
+            Matcher matcher = URLRetriever.maxAge.matcher(cacheControl);
+            if (matcher.find()) {
+                Long maxAgeSec = WWUtil.makeLong(matcher.group(1));
+                if (maxAgeSec != null)
+                    return maxAgeSec * 1000 + nowMS;
+            }
+        }
+
+        // If the Cache-Control header is not present, or does not contain max-age, then look for the Expires header.
+        // If the Date header is also present then compute the expiration time based on the server reported response
+        // time. This helps guard against clock skew between client and server.
+        long expiration = connection.getExpiration();
+        long date = connection.getDate();
+
+        if (date > 0 && expiration > date)
+            return nowMS + (expiration - date);
+
+        return expiration;
     }
 
     public final URL getUrl() {
@@ -151,32 +234,36 @@ public class URLRetriever extends WWObjectImpl implements Retriever {
 
         try {
             if (WorldWind.getNetworkStatus().isHostUnavailable(url)) {
-                setState(RETRIEVER_STATE_NOT_STARTED);
+                setState(Retriever.RETRIEVER_STATE_NOT_STARTED);
                 return this;
             }
 
-            if (interrupted()) return this;
+            if (interrupted())
+                return this;
 
-            setState(RETRIEVER_STATE_CONNECTING);
+            setState(Retriever.RETRIEVER_STATE_CONNECTING);
             this.connection = this.openConnection();
 
-            if (interrupted()) return this;
+            if (interrupted())
+                return this;
 
-            setState(RETRIEVER_STATE_READING);
+            setState(Retriever.RETRIEVER_STATE_READING);
 
             if ((this.byteBuffer = this.doRead(this.connection)) == null)
                 throw new IOException("empty");
 
-            setState(RETRIEVER_STATE_SUCCESSFUL);
+            setState(Retriever.RETRIEVER_STATE_SUCCESSFUL);
 
             if (this.postProcessor != null)
                 this.byteBuffer = this.postProcessor.run(this);
 
             WorldWind.getNetworkStatus().logAvailableHost(this.url);
-        } catch (ClosedByInterruptException e) {
+        }
+        catch (ClosedByInterruptException e) {
             this.interrupted();
-        } catch (Exception e) {
-            setState(RETRIEVER_STATE_ERROR);
+        }
+        catch (Exception e) {
+            setState(Retriever.RETRIEVER_STATE_ERROR);
 //            this.contentLength = 0;
             WorldWind.getNetworkStatus().logUnavailableHost(this.url);
             //throw e;
@@ -187,7 +274,7 @@ public class URLRetriever extends WWObjectImpl implements Retriever {
 
     protected boolean interrupted() {
         if (Thread.currentThread().isInterrupted()) {
-            setState(RETRIEVER_STATE_INTERRUPTED);
+            setState(Retriever.RETRIEVER_STATE_INTERRUPTED);
 //            this.contentLength = 0;
             Logging.logger().fine(Logging.getMessage("URLRetriever.RetrievalInterruptedFor", this.url.toString()));
             return true;
@@ -224,13 +311,6 @@ public class URLRetriever extends WWObjectImpl implements Retriever {
         return proxy != null ? this.url.openConnection(proxy) : this.url.openConnection();
     }
 
-    protected static void configureSSLContext(HttpsURLConnection connection) {
-        SSLContext sslContext = (SSLContext) WorldWind.getValue(AVKey.HTTP_SSL_CONTEXT);
-
-        if (sslContext != null)
-            connection.setSSLSocketFactory(sslContext.getSocketFactory());
-    }
-
     /**
      * @param connection the connection to read from.
      * @return a buffer containing the content read from the connection
@@ -254,91 +334,15 @@ public class URLRetriever extends WWObjectImpl implements Retriever {
             // automatically unzip the content if the content type is application/zip.
             this.contentType = connection.getContentType();
             if (this.contentType != null && this.contentType.equalsIgnoreCase("application/zip")
-                && !WWUtil.isEmpty(this.get(EXTRACT_ZIP_ENTRY)))
+                && !WWUtil.isEmpty(this.get(URLRetriever.EXTRACT_ZIP_ENTRY)))
                 // Assume single file in zip and decompress it
                 return URLRetriever.readZipStream(inputStream, connection.getURL());
             else
                 return URLRetriever.readStream(inputStream);
-        } finally {
+        }
+        finally {
             WWIO.closeStream(inputStream, getName());
         }
-    }
-
-    protected static ByteBuffer readStream(InputStream inputStream) throws IOException {
-
-        return ByteBuffer.wrap(inputStream.readAllBytes());
-    }
-
-    /**
-     * @param inputStream a stream to the zip connection.
-     * @param url         the URL of the zip resource.
-     * @return a buffer containing the content read from the zip stream.
-     * @throws IOException              if the stream does not refer to a zip resource or an exception occurs during
-     *                                  reading.
-     * @throws IllegalArgumentException if <code>inputStream</code> is null
-     */
-    protected static ByteBuffer readZipStream(InputStream inputStream, URL url) throws IOException {
-        ZipInputStream zis = new ZipInputStream(inputStream);
-        ZipEntry ze = zis.getNextEntry();
-        if (ze == null) {
-            Logging.logger().severe(Logging.getMessage("URLRetriever.NoZipEntryFor") + url);
-            return null;
-        }
-
-
-//        if (ze.getSize() > 0) {
-        return ByteBuffer.wrap(zis.readNBytes((int)ze.getSize()));
-//
-//
-//            byte[] inputBuffer = new byte[8192];
-//            while (buffer.hasRemaining()) {
-//                int count = zis.read(inputBuffer);
-//                if (count > 0) {
-//                    buffer.put(inputBuffer, 0, count);
-////                    this.contentLengthRead.getAndAdd(buffer.position() + 1);
-//                }
-//            }
-//        }
-
-    }
-
-    /**
-     * Indicates the expiration time specified by either the Expires header or the max-age directive of the
-     * Cache-Control header. If both are present, then Cache-Control is given priority (See section 14.9.3 of the HTTP
-     * Specification: http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html).
-     * <p>
-     * If both the Expires and Date headers are present then the expiration time is calculated as current time +
-     * (expires - date). This helps guard against clock skew between the client and server.
-     *
-     * @param connection Connection for which to get expiration time.
-     * @return The expiration time, in milliseconds since the Epoch, specified by the HTTP headers, or zero if there is
-     * no expiration time.
-     */
-    protected static long getExpiration(URLConnection connection) {
-        // Read the expiration time from either the Cache-Control header or the Expires header. Cache-Control has
-        // priority if both headers are specified.
-        String cacheControl = connection.getHeaderField("cache-control");
-        long nowMS = System.currentTimeMillis();
-        if (cacheControl != null) {
-
-            Matcher matcher = maxAge.matcher(cacheControl);
-            if (matcher.find()) {
-                Long maxAgeSec = WWUtil.makeLong(matcher.group(1));
-                if (maxAgeSec != null)
-                    return maxAgeSec * 1000 + nowMS;
-            }
-        }
-
-        // If the Cache-Control header is not present, or does not contain max-age, then look for the Expires header.
-        // If the Date header is also present then compute the expiration time based on the server reported response
-        // time. This helps guard against clock skew between client and server.
-        long expiration = connection.getExpiration();
-        long date = connection.getDate();
-
-        if (date > 0 && expiration > date)
-            return nowMS + (expiration - date);
-
-        return expiration;
     }
 
     @Override

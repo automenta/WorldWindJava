@@ -36,11 +36,11 @@ public class SearchArea extends AbstractMilStd2525TacticalGraphic implements Pre
     /**
      * Length of the arrowhead from base to tip, as a fraction of the total line length.
      */
-    protected Angle arrowAngle = DEFAULT_ARROWHEAD_ANGLE;
+    protected Angle arrowAngle = SearchArea.DEFAULT_ARROWHEAD_ANGLE;
     /**
      * Angle of the arrowhead.
      */
-    protected double arrowLength = DEFAULT_ARROWHEAD_LENGTH;
+    protected double arrowLength = SearchArea.DEFAULT_ARROWHEAD_LENGTH;
 
     /**
      * First control point.
@@ -93,6 +93,62 @@ public class SearchArea extends AbstractMilStd2525TacticalGraphic implements Pre
      */
     public static List<String> getSupportedGraphics() {
         return Collections.singletonList(TacGrpSidc.C2GM_GNL_ARS_SRHARA);
+    }
+
+    protected static List<Position> computePathPositions(Position startPosition, Position endPosition, Angle delta) {
+        Angle dist = LatLon.greatCircleDistance(startPosition, endPosition);
+        dist = dist.multiply(0.6);
+
+        Angle azimuth = LatLon.greatCircleAzimuth(startPosition, endPosition);
+
+        LatLon locA = LatLon.greatCircleEndPosition(startPosition, azimuth.add(delta), dist);
+
+        dist = dist.multiply(0.9);
+        LatLon locB = LatLon.greatCircleEndPosition(startPosition, azimuth.sub(delta), dist);
+
+        return Arrays.asList(startPosition, new Position(locA, 0), new Position(locB, 0), endPosition);
+    }
+
+    /**
+     * Compute the positions of the arrow head of the graphic's legs.
+     *
+     * @param dc          Current draw context
+     * @param base        Position of the arrow's starting point.
+     * @param tip         Position of the arrow head tip.
+     * @param arrowLength Length of the arrowhead as a fraction of the total line length.
+     * @param arrowAngle  Angle of the arrow head.
+     * @return Positions required to draw the arrow head.
+     */
+    protected static List<Position> computeArrowheadPositions(DrawContext dc, Position base, Position tip,
+        double arrowLength,
+        Angle arrowAngle) {
+        // Build a triangle to represent the arrowhead. The triangle is built from two vectors, one parallel to the
+        // segment, and one perpendicular to it.
+
+        Globe globe = dc.getGlobe();
+
+        Vec4 ptA = globe.computePointFromPosition(base);
+        Vec4 ptB = globe.computePointFromPosition(tip);
+
+        // Compute parallel component
+        Vec4 parallel = ptA.subtract3(ptB);
+
+        Vec4 surfaceNormal = globe.computeSurfaceNormalAtPoint(ptB);
+
+        // Compute perpendicular component
+        Vec4 perpendicular = surfaceNormal.cross3(parallel);
+
+        double finalArrowLength = arrowLength * parallel.getLength3();
+        double arrowHalfWidth = finalArrowLength * arrowAngle.tanHalfAngle();
+
+        perpendicular = perpendicular.normalize3().multiply3(arrowHalfWidth);
+        parallel = parallel.normalize3().multiply3(finalArrowLength);
+
+        // Compute geometry of direction arrow
+        Vec4 vertex1 = ptB.add3(parallel).add3(perpendicular);
+        Vec4 vertex2 = ptB.add3(parallel).subtract3(perpendicular);
+
+        return TacticalGraphicUtil.asPositionList(globe, vertex1, vertex2, ptB);
     }
 
     /**
@@ -173,8 +229,7 @@ public class SearchArea extends AbstractMilStd2525TacticalGraphic implements Pre
                 this.symbolAttributes = new BasicTacticalSymbolAttributes();
 
             this.symbol = this.createSymbol(sidc, this.position1, this.symbolAttributes);
-        }
-        else {
+        } else {
             // Null value indicates no symbol.
             this.symbol = null;
             this.symbolAttributes = null;
@@ -237,8 +292,7 @@ public class SearchArea extends AbstractMilStd2525TacticalGraphic implements Pre
     public void setModifier(String modifier, Object value) {
         if (SymbologyConstants.SYMBOL_INDICATOR.equals(modifier) && value instanceof String) {
             this.setSymbol((String) value);
-        }
-        else {
+        } else {
             super.setModifier(modifier, value);
         }
     }
@@ -250,8 +304,7 @@ public class SearchArea extends AbstractMilStd2525TacticalGraphic implements Pre
     public Object getModifier(String modifier) {
         if (SymbologyConstants.SYMBOL_INDICATOR.equals(modifier)) {
             return this.getSymbol();
-        }
-        else {
+        } else {
             return super.getModifier(modifier);
         }
     }
@@ -341,7 +394,8 @@ public class SearchArea extends AbstractMilStd2525TacticalGraphic implements Pre
         // Create a polygon to draw the arrow head.
         double arrowLength = this.getArrowLength();
         Angle arrowAngle = this.getArrowAngle();
-        positions = SearchArea.computeArrowheadPositions(dc, positions.get(2), positions.get(3), arrowLength, arrowAngle);
+        positions = SearchArea.computeArrowheadPositions(dc, positions.get(2), positions.get(3), arrowLength,
+            arrowAngle);
         this.arrowHead1 = this.createPolygon(positions);
         this.arrowHead1.setLocations(positions);
 
@@ -349,65 +403,10 @@ public class SearchArea extends AbstractMilStd2525TacticalGraphic implements Pre
         positions = SearchArea.computePathPositions(this.position1, this.position3, delta);
         this.paths[i] = this.createPath(positions);
 
-        positions = SearchArea.computeArrowheadPositions(dc, positions.get(2), positions.get(3), arrowLength, arrowAngle);
+        positions = SearchArea.computeArrowheadPositions(dc, positions.get(2), positions.get(3), arrowLength,
+            arrowAngle);
         this.arrowHead2 = this.createPolygon(positions);
         this.arrowHead2.setLocations(positions);
-    }
-
-    protected static List<Position> computePathPositions(Position startPosition, Position endPosition, Angle delta) {
-        Angle dist = LatLon.greatCircleDistance(startPosition, endPosition);
-        dist = dist.multiply(0.6);
-
-        Angle azimuth = LatLon.greatCircleAzimuth(startPosition, endPosition);
-
-        LatLon locA = LatLon.greatCircleEndPosition(startPosition, azimuth.add(delta), dist);
-
-        dist = dist.multiply(0.9);
-        LatLon locB = LatLon.greatCircleEndPosition(startPosition, azimuth.sub(delta), dist);
-
-        return Arrays.asList(startPosition, new Position(locA, 0), new Position(locB, 0), endPosition);
-    }
-
-    /**
-     * Compute the positions of the arrow head of the graphic's legs.
-     *
-     * @param dc          Current draw context
-     * @param base        Position of the arrow's starting point.
-     * @param tip         Position of the arrow head tip.
-     * @param arrowLength Length of the arrowhead as a fraction of the total line length.
-     * @param arrowAngle  Angle of the arrow head.
-     * @return Positions required to draw the arrow head.
-     */
-    protected static List<Position> computeArrowheadPositions(DrawContext dc, Position base, Position tip,
-        double arrowLength,
-        Angle arrowAngle) {
-        // Build a triangle to represent the arrowhead. The triangle is built from two vectors, one parallel to the
-        // segment, and one perpendicular to it.
-
-        Globe globe = dc.getGlobe();
-
-        Vec4 ptA = globe.computePointFromPosition(base);
-        Vec4 ptB = globe.computePointFromPosition(tip);
-
-        // Compute parallel component
-        Vec4 parallel = ptA.subtract3(ptB);
-
-        Vec4 surfaceNormal = globe.computeSurfaceNormalAtPoint(ptB);
-
-        // Compute perpendicular component
-        Vec4 perpendicular = surfaceNormal.cross3(parallel);
-
-        double finalArrowLength = arrowLength * parallel.getLength3();
-        double arrowHalfWidth = finalArrowLength * arrowAngle.tanHalfAngle();
-
-        perpendicular = perpendicular.normalize3().multiply3(arrowHalfWidth);
-        parallel = parallel.normalize3().multiply3(finalArrowLength);
-
-        // Compute geometry of direction arrow
-        Vec4 vertex1 = ptB.add3(parallel).add3(perpendicular);
-        Vec4 vertex2 = ptB.add3(parallel).subtract3(perpendicular);
-
-        return TacticalGraphicUtil.asPositionList(globe, vertex1, vertex2, ptB);
     }
 
     /**

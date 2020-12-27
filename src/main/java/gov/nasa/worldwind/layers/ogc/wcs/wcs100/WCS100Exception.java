@@ -34,8 +34,7 @@ public class WCS100Exception extends AbstractXMLEventParser {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.formats.add(s);
-        }
-        else {
+        } else {
             super.doParseEventContent(ctx, event, args);
         }
     }

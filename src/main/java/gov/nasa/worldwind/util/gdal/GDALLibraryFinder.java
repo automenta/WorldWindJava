@@ -27,27 +27,6 @@ class GDALLibraryFinder extends GDALAbstractFileFilter {
         super(searchPattern);
     }
 
-    public boolean accept(File pathname) {
-        String filename;
-        String dir;
-        if (null != pathname
-            && !isHidden(pathname.getAbsolutePath())
-            && null != (dir = pathname.getParent())
-            && !this.listFolders.contains(dir)                  // skip already discovered
-            && null != (filename = pathname.getName())          // get folder name
-            && !(!filename.isEmpty() && filename.charAt(0) == '.')
-            && null != (filename = filename.toLowerCase())      // change to lower case
-            && filename.contains(this.searchPattern)
-            && filename.endsWith(this.libExtension)
-//            && this.canLoad(pathname.getAbsolutePath())
-        ) {
-            this.listFolders.add(dir);
-            return true;
-        }
-        Thread.yield();
-        return false;
-    }
-
     /**
      * Attempts to load the specified filename from the local file system as a dynamic library. The filename argument
      * must be a complete path name.
@@ -64,6 +43,27 @@ class GDALLibraryFinder extends GDALAbstractFileFilter {
         catch (Throwable t) {
             Logging.logger().finest(WWUtil.extractExceptionReason(t));
         }
+        return false;
+    }
+
+    public boolean accept(File pathname) {
+        String filename;
+        String dir;
+        if (null != pathname
+            && !GDALAbstractFileFilter.isHidden(pathname.getAbsolutePath())
+            && null != (dir = pathname.getParent())
+            && !this.listFolders.contains(dir)                  // skip already discovered
+            && null != (filename = pathname.getName())          // get folder name
+            && !(!filename.isEmpty() && filename.charAt(0) == '.')
+            && null != (filename = filename.toLowerCase())      // change to lower case
+            && filename.contains(this.searchPattern)
+            && filename.endsWith(this.libExtension)
+//            && this.canLoad(pathname.getAbsolutePath())
+        ) {
+            this.listFolders.add(dir);
+            return true;
+        }
+        Thread.yield();
         return false;
     }
 }

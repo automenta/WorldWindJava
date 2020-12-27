@@ -29,7 +29,7 @@ public class RenderingEvent extends WWEvent {
 
     @Override
     public String toString() {
-        return this.getClass().getName() + " "
+        return this.getClass().getName() + ' '
             + (this.stage != null ? this.stage : Logging.getMessage("generic.Unknown"));
     }
 }

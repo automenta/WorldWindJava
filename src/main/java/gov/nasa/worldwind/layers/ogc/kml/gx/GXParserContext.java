@@ -18,23 +18,20 @@ import java.util.concurrent.ConcurrentHashMap;
  * @version $Id: GXParserContext.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 public class GXParserContext extends BasicXMLEventParserContext {
-    protected static final String[] StringFields = new String[]
-        {
-            "altitudeMode",
-            "description",
-            "flyToMode",
-            "playMode",
-        };
+    protected static final String[] StringFields = {
+        "altitudeMode",
+        "description",
+        "flyToMode",
+        "playMode",
+    };
 
-    protected static final String[] DoubleFields = new String[]
-        {
-            "duration",
-        };
+    protected static final String[] DoubleFields = {
+        "duration",
+    };
 
-    protected static final String[] BooleanFields = new String[]
-        {
-            "balloonVisibility",
-        };
+    protected static final String[] BooleanFields = {
+        "balloonVisibility",
+    };
 
     public static Map<QName, XMLEventParser> getDefaultParsers() {
         Map<QName, XMLEventParser> parsers = new ConcurrentHashMap<>();
@@ -52,17 +49,17 @@ public class GXParserContext extends BasicXMLEventParserContext {
         parsers.put(new QName(ns, "Wait"), new GXWait(ns));
 
         XMLEventParser stringParser = new StringXMLEventParser();
-        for (String s : StringFields) {
+        for (String s : GXParserContext.StringFields) {
             parsers.put(new QName(ns, s), stringParser);
         }
 
         XMLEventParser doubleParser = new DoubleXMLEventParser();
-        for (String s : DoubleFields) {
+        for (String s : GXParserContext.DoubleFields) {
             parsers.put(new QName(ns, s), doubleParser);
         }
 
         XMLEventParser booleanParser = new BooleanXMLEventParser();
-        for (String s : BooleanFields) {
+        for (String s : GXParserContext.BooleanFields) {
             parsers.put(new QName(ns, s), booleanParser);
         }
 

@@ -10,10 +10,10 @@ import gov.nasa.worldwind.render.*;
 
 /**
  * Holds common attributes for WorldWind {@link Airspace} shapes. AirspaceAttributes was originally designed as a
- * special purpose attribute bundle for Airspace, but is now a redundant subinterface of {@link
- * ShapeAttributes}. AirspaceAttributes is still used by Airspace shapes to ensure backward
- * compatibility with earlier versions of WorldWind. Usage of methods unique to AirspaceAttributes should be replaced
- * with the equivalent methods in ShapeAttributes.
+ * special purpose attribute bundle for Airspace, but is now a redundant subinterface of {@link ShapeAttributes}.
+ * AirspaceAttributes is still used by Airspace shapes to ensure backward compatibility with earlier versions of
+ * WorldWind. Usage of methods unique to AirspaceAttributes should be replaced with the equivalent methods in
+ * ShapeAttributes.
  *
  * @author dcollins
  * @version $Id: AirspaceAttributes.java 2222 2014-08-13 21:25:29Z dcollins $

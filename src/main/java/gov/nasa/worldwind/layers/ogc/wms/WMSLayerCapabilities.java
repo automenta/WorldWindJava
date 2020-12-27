@@ -89,6 +89,19 @@ public class WMSLayerCapabilities extends AbstractXMLEventParser {
         this.initialize();
     }
 
+    protected static Boolean parseBooleanLayerAttribute(String s) {
+        if (WWUtil.isEmpty(s))
+            return false;
+
+        if (s.equalsIgnoreCase("false"))
+            return false;
+        else if (s.equalsIgnoreCase("true"))
+            return true;
+
+        Boolean d = WWUtil.convertStringToBoolean(s);
+        return (d != null && d);
+    }
+
     private void initialize() {
         ABSTRACT = new QName(this.getNamespaceURI(), "Abstract");
         ATTRIBUTION = new QName(this.getNamespaceURI(), "Attribution");
@@ -234,140 +247,117 @@ public class WMSLayerCapabilities extends AbstractXMLEventParser {
                 if (o instanceof WMSLayerCapabilities)
                     this.addLayer(((WMSLayerCapabilities) o));
             }
-        }
-        else if (ctx.isStartElement(event, TITLE)) {
+        } else if (ctx.isStartElement(event, TITLE)) {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.setTitle(s);
-        }
-        else if (ctx.isStartElement(event, NAME)) {
+        } else if (ctx.isStartElement(event, NAME)) {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.setName(s);
-        }
-        else if (ctx.isStartElement(event, STYLE)) {
+        } else if (ctx.isStartElement(event, STYLE)) {
             XMLEventParser parser = this.allocate(ctx, event);
             if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
                 if (o instanceof WMSLayerStyle)
                     this.addStyle(((WMSLayerStyle) o));
             }
-        }
-        else if (ctx.isStartElement(event, SRS)) {
+        } else if (ctx.isStartElement(event, SRS)) {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.addSRS(s);
-        }
-        else if (ctx.isStartElement(event, CRS)) {
+        } else if (ctx.isStartElement(event, CRS)) {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.addCRS(s);
-        }
-        else if (ctx.isStartElement(event, GEOGRAPHIC_BOUNDING_BOX)) {
+        } else if (ctx.isStartElement(event, GEOGRAPHIC_BOUNDING_BOX)) {
             this.parseGeographicBoundingBox(ctx, event);
-        }
-        else if (ctx.isStartElement(event, LAT_LON_BOUNDING_BOX)) {
+        } else if (ctx.isStartElement(event, LAT_LON_BOUNDING_BOX)) {
             this.parseGeographicBoundingBoxV111(ctx, event);
-        }
-        else if (ctx.isStartElement(event, ABSTRACT)) {
+        } else if (ctx.isStartElement(event, ABSTRACT)) {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.setLayerAbstract(s);
-        }
-        else if (ctx.isStartElement(event, LAST_UPDATE)) {
+        } else if (ctx.isStartElement(event, LAST_UPDATE)) {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.setLastUpdate(s);
-        }
-        else if (ctx.isStartElement(event, MAX_SCALE_DENOMINATOR)) {
+        } else if (ctx.isStartElement(event, MAX_SCALE_DENOMINATOR)) {
             Double d = ctx.getDoubleParser().parseDouble(ctx, event);
             if (d != null)
                 this.setMaxScaleDenominator(d);
-        }
-        else if (ctx.isStartElement(event, MIN_SCALE_DENOMINATOR)) {
+        } else if (ctx.isStartElement(event, MIN_SCALE_DENOMINATOR)) {
             Double d = ctx.getDoubleParser().parseDouble(ctx, event);
             if (d != null)
                 this.setMinScaleDenominator(d);
-        }
-        else if (ctx.isStartElement(event, EXTREME_ELEVATIONS)) {
+        } else if (ctx.isStartElement(event, EXTREME_ELEVATIONS)) {
             this.parseExtremeElevations(ctx, event);
-        }
-        else if (ctx.isStartElement(event, SCALE_HINT)) {
+        } else if (ctx.isStartElement(event, SCALE_HINT)) {
             this.parseScaleHint(ctx, event);
-        }
-        else if (ctx.isStartElement(event, BOUNDING_BOX)) {
+        } else if (ctx.isStartElement(event, BOUNDING_BOX)) {
             XMLEventParser parser = this.allocate(ctx, event);
             if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
                 if (o instanceof OGCBoundingBox)
                     this.addBoundingBox((OGCBoundingBox) o);
             }
-        }
-        else if (ctx.isStartElement(event, ATTRIBUTION)) {
+        } else if (ctx.isStartElement(event, ATTRIBUTION)) {
             XMLEventParser parser = this.allocate(ctx, event);
             if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
                 if (o instanceof WMSLayerAttribution)
                     this.addAttribution((WMSLayerAttribution) o);
             }
-        }
-        else if (ctx.isStartElement(event, KEYWORD_LIST)) {
+        } else if (ctx.isStartElement(event, KEYWORD_LIST)) {
             XMLEventParser parser = this.allocate(ctx, event);
             if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
                 if (o instanceof StringSetXMLEventParser)
                     this.setKeywords(((StringSetXMLEventParser) o).getStrings());
             }
-        }
-        else if (ctx.isStartElement(event, IDENTIFIER)) {
+        } else if (ctx.isStartElement(event, IDENTIFIER)) {
             XMLEventParser parser = this.allocate(ctx, event);
             if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
                 if (o instanceof WMSLayerIdentifier)
                     this.addIdentifer((WMSLayerIdentifier) o);
             }
-        }
-        else if (ctx.isStartElement(event, DIMENSION)) {
+        } else if (ctx.isStartElement(event, DIMENSION)) {
             XMLEventParser parser = this.allocate(ctx, event);
             if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
                 if (o instanceof WMSLayerDimension)
                     this.addDimension((WMSLayerDimension) o);
             }
-        }
-        else if (ctx.isStartElement(event, EXTENT)) {
+        } else if (ctx.isStartElement(event, EXTENT)) {
             XMLEventParser parser = this.allocate(ctx, event);
             if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
                 if (o instanceof WMSLayerExtent)
                     this.addExtent((WMSLayerExtent) o);
             }
-        }
-        else if (ctx.isStartElement(event, AUTHORITY_URL)) {
+        } else if (ctx.isStartElement(event, AUTHORITY_URL)) {
             XMLEventParser parser = this.allocate(ctx, event);
             if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
                 if (o instanceof WMSAuthorityURL)
                     this.addAuthorityURL((WMSAuthorityURL) o);
             }
-        }
-        else if (ctx.isStartElement(event, DATA_URL)) {
+        } else if (ctx.isStartElement(event, DATA_URL)) {
             XMLEventParser parser = this.allocate(ctx, event);
             if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
                 if (o instanceof WMSLayerInfoURL)
                     this.addDataURL((WMSLayerInfoURL) o);
             }
-        }
-        else if (ctx.isStartElement(event, FEATURE_LIST_URL)) {
+        } else if (ctx.isStartElement(event, FEATURE_LIST_URL)) {
             XMLEventParser parser = this.allocate(ctx, event);
             if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
                 if (o instanceof WMSLayerInfoURL)
                     this.addFeatureListURL((WMSLayerInfoURL) o);
             }
-        }
-        else if (ctx.isStartElement(event, METADATA_URL)) {
+        } else if (ctx.isStartElement(event, METADATA_URL)) {
             XMLEventParser parser = this.allocate(ctx, event);
             if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
@@ -388,43 +378,25 @@ public class WMSLayerCapabilities extends AbstractXMLEventParser {
             if (attr.getName().getLocalPart().equals("queryable") && attr.getValue() != null) {
                 Boolean b = WMSLayerCapabilities.parseBooleanLayerAttribute(attr.getValue());
                 this.setQueryable(b);
-            }
-            else if (attr.getName().getLocalPart().equals("cascaded") && attr.getValue() != null) {
+            } else if (attr.getName().getLocalPart().equals("cascaded") && attr.getValue() != null) {
                 Boolean b = WMSLayerCapabilities.parseBooleanLayerAttribute(attr.getValue());
                 this.setCascaded(b);
-            }
-            else if (attr.getName().getLocalPart().equals("opaque") && attr.getValue() != null) {
+            } else if (attr.getName().getLocalPart().equals("opaque") && attr.getValue() != null) {
                 Boolean b = WMSLayerCapabilities.parseBooleanLayerAttribute(attr.getValue());
                 this.setOpaque(b);
-            }
-            else if (attr.getName().getLocalPart().equals("noSubsets") && attr.getValue() != null) {
+            } else if (attr.getName().getLocalPart().equals("noSubsets") && attr.getValue() != null) {
                 Boolean b = WMSLayerCapabilities.parseBooleanLayerAttribute(attr.getValue());
                 this.setNoSubsets(b);
-            }
-            else if (attr.getName().getLocalPart().equals("fixedWidth") && attr.getValue() != null) {
+            } else if (attr.getName().getLocalPart().equals("fixedWidth") && attr.getValue() != null) {
                 Double d = WWUtil.convertStringToDouble(attr.getValue());
                 if (d != null)
                     this.setFixedWidth(d.intValue());
-            }
-            else if (attr.getName().getLocalPart().equals("fixedHeight") && attr.getValue() != null) {
+            } else if (attr.getName().getLocalPart().equals("fixedHeight") && attr.getValue() != null) {
                 Double d = WWUtil.convertStringToDouble(attr.getValue());
                 if (d != null)
                     this.setFixedHeight(d.intValue());
             }
         }
-    }
-
-    protected static Boolean parseBooleanLayerAttribute(String s) {
-        if (WWUtil.isEmpty(s))
-            return false;
-
-        if (s.equalsIgnoreCase("false"))
-            return false;
-        else if (s.equalsIgnoreCase("true"))
-            return true;
-
-        Boolean d = WWUtil.convertStringToBoolean(s);
-        return (d != null && d);
     }
 
     @SuppressWarnings("UnusedDeclaration")
@@ -439,8 +411,7 @@ public class WMSLayerCapabilities extends AbstractXMLEventParser {
                 Double d = WWUtil.convertStringToDouble(attr.getValue());
                 if (d != null)
                     this.setExtremeElevationMin(d);
-            }
-            else if (attr.getName().getLocalPart().equals("max") && attr.getValue() != null) {
+            } else if (attr.getName().getLocalPart().equals("max") && attr.getValue() != null) {
                 Double d = WWUtil.convertStringToDouble(attr.getValue());
                 if (d != null)
                     this.setExtremeElevationMax(d);
@@ -459,8 +430,7 @@ public class WMSLayerCapabilities extends AbstractXMLEventParser {
                 if (minLat != null && minLon != null && maxLat != null && maxLon != null)
                     this.setGeographicBoundingBox(Sector.fromDegreesAndClamp(minLat, maxLat, minLon, maxLon));
                 return;
-            }
-            else if (event.isStartElement()) {
+            } else if (event.isStartElement()) {
                 switch (event.asStartElement().getName().getLocalPart()) {
                     case "westBoundLongitude" -> {
                         Double d = ctx.getDoubleParser().parseDouble(ctx, event);
@@ -504,18 +474,15 @@ public class WMSLayerCapabilities extends AbstractXMLEventParser {
                 Double d = WWUtil.convertStringToDouble(attr.getValue());
                 if (d != null)
                     minLon = d;
-            }
-            else if (attr.getName().getLocalPart().equals("miny") && attr.getValue() != null) {
+            } else if (attr.getName().getLocalPart().equals("miny") && attr.getValue() != null) {
                 Double d = WWUtil.convertStringToDouble(attr.getValue());
                 if (d != null)
                     minLat = d;
-            }
-            else if (attr.getName().getLocalPart().equals("maxx") && attr.getValue() != null) {
+            } else if (attr.getName().getLocalPart().equals("maxx") && attr.getValue() != null) {
                 Double d = WWUtil.convertStringToDouble(attr.getValue());
                 if (d != null)
                     maxLon = d;
-            }
-            else if (attr.getName().getLocalPart().equals("maxy") && attr.getValue() != null) {
+            } else if (attr.getName().getLocalPart().equals("maxy") && attr.getValue() != null) {
                 Double d = WWUtil.convertStringToDouble(attr.getValue());
                 if (d != null)
                     maxLat = d;
@@ -538,8 +505,7 @@ public class WMSLayerCapabilities extends AbstractXMLEventParser {
                 Double d = WWUtil.convertStringToDouble(attr.getValue());
                 if (d != null)
                     this.setMinScaleHint(d);
-            }
-            else if (attr.getName().getLocalPart().equals("max") && attr.getValue() != null) {
+            } else if (attr.getName().getLocalPart().equals("max") && attr.getValue() != null) {
                 Double d = WWUtil.convertStringToDouble(attr.getValue());
                 if (d != null)
                     this.setMaxScaleHint(d);

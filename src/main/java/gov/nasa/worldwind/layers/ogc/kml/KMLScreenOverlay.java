@@ -121,7 +121,7 @@ public class KMLScreenOverlay extends KMLAbstractOverlay {
 
     @Override
     public void onChange(Message msg) {
-        if (MSG_LINK_CHANGED.equals(msg.getName()))
+        if (KMLAbstractObject.MSG_LINK_CHANGED.equals(msg.getName()))
             this.renderable = null;
 
         super.onChange(msg);

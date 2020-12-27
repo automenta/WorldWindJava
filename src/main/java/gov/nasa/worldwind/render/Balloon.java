@@ -137,8 +137,8 @@ public interface Balloon extends Renderable, Highlightable, AVList {
     void setVisible(boolean visible);
 
     /**
-     * Get the balloon bounding {@link Rectangle} using OGL coordinates - bottom-left corner x and y relative
-     * to the {@link gov.nasa.worldwind.WorldWindow} bottom-left corner, and the balloon callout width and height.
+     * Get the balloon bounding {@link Rectangle} using OGL coordinates - bottom-left corner x and y relative to the
+     * {@link gov.nasa.worldwind.WorldWindow} bottom-left corner, and the balloon callout width and height.
      * <p>
      * The balloon offset from it's reference point is factored in such that the callout leader shape and reference
      * point are included in the bounding rectangle.

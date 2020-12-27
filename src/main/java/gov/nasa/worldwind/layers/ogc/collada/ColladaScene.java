@@ -21,7 +21,7 @@ public class ColladaScene extends ColladaAbstractObject implements ColladaRender
     /**
      * Flag to indicate that the scene has been fetched from the hash map.
      */
-    protected boolean sceneFetched = false;
+    protected boolean sceneFetched;
     /**
      * Cached value of the <i>instance_visual_scene</i> field.
      */

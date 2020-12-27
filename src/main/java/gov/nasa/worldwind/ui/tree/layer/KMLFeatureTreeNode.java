@@ -10,10 +10,8 @@ import gov.nasa.worldwind.layers.ogc.kml.*;
 import gov.nasa.worldwind.ui.tree.*;
 import gov.nasa.worldwind.util.*;
 
-
 /**
- * A <code>TreeNode</code> that represents a KML feature defined by a <code>{@link
- * KMLAbstractFeature}</code>.
+ * A <code>TreeNode</code> that represents a KML feature defined by a <code>{@link KMLAbstractFeature}</code>.
  * <p>
  * The node's selection state is synchronized with its KML feature's visibility state. <code>{@link
  * #isSelected()}</code> returns whether the node's feature is visible. Calling <code>{@link
@@ -72,6 +70,47 @@ public class KMLFeatureTreeNode extends BasicTreeNode {
             return new KMLContainerTreeNode((KMLAbstractContainer) feature);
         else
             return new KMLFeatureTreeNode(feature);
+    }
+
+    /**
+     * Remove HTML tags and extra whitespace from a string. Runs of whitespace will be collapsed to a single space.
+     *
+     * @param input Text to strip of HTML tags and extra whitespace.
+     * @return The input string with HTML tags removed, and runs of whitespace collapsed to a single space. Returns
+     * {@code null} if {@code input} is {@code null}.
+     */
+    protected static String stripHtmlTags(CharSequence input) {
+        if (input == null)
+            return null;
+
+        StringBuilder output = new StringBuilder();
+
+        boolean inTag = false;
+        boolean inWhitespace = false;
+
+        for (int i = 0; i < input.length(); i++) {
+            char c = input.charAt(i);
+
+            if (Character.isWhitespace(c)) {
+                inWhitespace = true;
+                continue;
+            }
+
+            if (!inTag && inWhitespace && !output.isEmpty()) {
+                output.append(' ');
+            }
+            inWhitespace = false;
+
+            if (c == '<') {
+                inTag = true;
+            } else if (c == '>') {
+                inTag = false;
+            } else if (!inTag) {
+                output.append(c);
+            }
+        }
+
+        return output.toString();
     }
 
     /**
@@ -183,54 +222,10 @@ public class KMLFeatureTreeNode extends BasicTreeNode {
                 text = kmlSnippet.getCharacters();
             else
                 text = null;
-        }
-        else {
+        } else {
             text = this.getFeature().getDescription();
         }
 
         return EntityMap.replaceAll(KMLFeatureTreeNode.stripHtmlTags(text));
-    }
-
-    /**
-     * Remove HTML tags and extra whitespace from a string. Runs of whitespace will be collapsed to a single space.
-     *
-     * @param input Text to strip of HTML tags and extra whitespace.
-     * @return The input string with HTML tags removed, and runs of whitespace collapsed to a single space. Returns
-     * {@code null} if {@code input} is {@code null}.
-     */
-    protected static String stripHtmlTags(CharSequence input) {
-        if (input == null)
-            return null;
-
-        StringBuilder output = new StringBuilder();
-
-        boolean inTag = false;
-        boolean inWhitespace = false;
-
-        for (int i = 0; i < input.length(); i++) {
-            char c = input.charAt(i);
-
-            if (Character.isWhitespace(c)) {
-                inWhitespace = true;
-                continue;
-            }
-
-            if (!inTag && inWhitespace && !output.isEmpty()) {
-                output.append(' ');
-            }
-            inWhitespace = false;
-
-            if (c == '<') {
-                inTag = true;
-            }
-            else if (c == '>') {
-                inTag = false;
-            }
-            else if (!inTag) {
-                output.append(c);
-            }
-        }
-
-        return output.toString();
     }
 }

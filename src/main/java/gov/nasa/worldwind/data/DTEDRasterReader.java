@@ -19,18 +19,29 @@ import java.net.URL;
  */
 
 public class DTEDRasterReader extends AbstractDataRasterReader {
-    protected static final String[] dtedMimeTypes = new String[] {
+    protected static final String[] dtedMimeTypes = {
         "application/dted",
         "application/dt0", "application/dted-0",
         "application/dt1", "application/dted-1",
         "application/dt2", "application/dted-2",
     };
 
-    protected static final String[] dtedSuffixes = new String[]
-        {"dt0", "dt1", "dt2"};
+    protected static final String[] dtedSuffixes = {"dt0", "dt1", "dt2"};
 
     public DTEDRasterReader() {
-        super(dtedMimeTypes, dtedSuffixes);
+        super(DTEDRasterReader.dtedMimeTypes, DTEDRasterReader.dtedSuffixes);
+    }
+
+    protected static File getFile(Object source) {
+        if (null == source) {
+            return null;
+        } else if (source instanceof File) {
+            return (File) source;
+        } else if (source instanceof URL) {
+            return WWIO.convertURLToFile((URL) source);
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -100,21 +111,6 @@ public class DTEDRasterReader extends AbstractDataRasterReader {
         AVList metadata = DTED.readMetadata(file);
         if (null != metadata && null != params) {
             params.setValues(metadata);
-        }
-    }
-
-    protected static File getFile(Object source) {
-        if (null == source) {
-            return null;
-        }
-        else if (source instanceof File) {
-            return (File) source;
-        }
-        else if (source instanceof URL) {
-            return WWIO.convertURLToFile((URL) source);
-        }
-        else {
-            return null;
         }
     }
 

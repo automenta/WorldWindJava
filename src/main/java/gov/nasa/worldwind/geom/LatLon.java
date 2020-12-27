@@ -31,7 +31,9 @@ public class LatLon {
      */
     protected final static double NEAR_ZERO_THRESHOLD = 1.0e-15;
 
-    /** in degrees */
+    /**
+     * in degrees
+     */
     public final double latitude;
     public final double longitude;
 
@@ -47,7 +49,8 @@ public class LatLon {
      * @param longitude longitude
      * @throws IllegalArgumentException if <code>latitude</code> or <code>longitude</code> is null
      */
-    @Deprecated public LatLon(Angle latitude, Angle longitude) {
+    @Deprecated
+    public LatLon(Angle latitude, Angle longitude) {
 
         this.latitude = latitude.degrees;
         this.longitude = longitude.degrees;
@@ -98,12 +101,11 @@ public class LatLon {
     public static LatLon interpolate(String pathType, double amount, LatLon value1, LatLon value2) {
 
         if (pathType.equals(AVKey.GREAT_CIRCLE))
-            return interpolateGreatCircle(amount, value1, value2);
+            return LatLon.interpolateGreatCircle(amount, value1, value2);
         else if (pathType.equals(AVKey.RHUMB_LINE) || pathType.equals(AVKey.LOXODROME))
-            return interpolateRhumb(amount, value1, value2);
+            return LatLon.interpolateRhumb(amount, value1, value2);
         else // Default to linear interpolation.
-            return interpolate(amount, value1, value2);
-
+            return LatLon.interpolate(amount, value1, value2);
     }
 
     /**
@@ -123,9 +125,9 @@ public class LatLon {
 
         Line line;
 //        try {
-            line = Line.fromSegment(
-                new Vec4(value1.getLongitude().radians, value1.getLatitude().radians, 0),
-                new Vec4(value2.getLongitude().radians, value2.getLatitude().radians, 0));
+        line = Line.fromSegment(
+            new Vec4(value1.getLongitude().radians(), value1.getLatitude().radians(), 0),
+            new Vec4(value2.getLongitude().radians(), value2.getLatitude().radians(), 0));
 //        }
 //        catch (IllegalArgumentException e) {
 //            // Locations became coincident after calculations.
@@ -134,7 +136,7 @@ public class LatLon {
 
         Vec4 p = line.getPointAt(amount);
 
-        return LatLon.fromRadians(p.y(), p.x);
+        return LatLon.fromRadians(p.y, p.x);
     }
 
     /**
@@ -209,14 +211,12 @@ public class LatLon {
     public static Angle pathDistance(String pathType, LatLon value1, LatLon value2) {
 
         if (pathType.equals(AVKey.GREAT_CIRCLE)) {
-            return greatCircleDistance(value1, value2);
-        }
-        else if (pathType.equals(AVKey.RHUMB_LINE) || pathType.equals(AVKey.LOXODROME)) {
-            return rhumbDistance(value1, value2);
-        }
-        else // Default to linear interpolation.
+            return LatLon.greatCircleDistance(value1, value2);
+        } else if (pathType.equals(AVKey.RHUMB_LINE) || pathType.equals(AVKey.LOXODROME)) {
+            return LatLon.rhumbDistance(value1, value2);
+        } else // Default to linear interpolation.
         {
-            return linearDistance(value1, value2);
+            return LatLon.linearDistance(value1, value2);
         }
     }
 
@@ -233,10 +233,10 @@ public class LatLon {
      */
     public static Angle greatCircleDistance(LatLon p1, LatLon p2) {
 
-        double lat1 = p1.getLatitude().radians;
-        double lon1 = p1.getLongitude().radians;
-        double lat2 = p2.getLatitude().radians;
-        double lon2 = p2.getLongitude().radians;
+        double lat1 = p1.getLatitude().radians();
+        double lon1 = p1.getLongitude().radians();
+        double lat2 = p2.getLatitude().radians();
+        double lon2 = p2.getLongitude().radians();
 
         if (lat1 == lat2 && lon1 == lon2)
             return Angle.ZERO;
@@ -260,16 +260,11 @@ public class LatLon {
      * @return Angle that points from the first location to the second location.
      */
     public static Angle greatCircleAzimuth(LatLon p1, LatLon p2) {
-        if ((p1 == null) || (p2 == null)) {
-            String message = Logging.getMessage("nullValue.LatLonIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
-        double lat1 = p1.getLatitude().radians;
-        double lon1 = p1.getLongitude().radians;
-        double lat2 = p2.getLatitude().radians;
-        double lon2 = p2.getLongitude().radians;
+        double lat1 = p1.getLatitude().radians();
+        double lon1 = p1.getLongitude().radians();
+        double lat2 = p2.getLatitude().radians();
+        double lon2 = p2.getLongitude().radians();
 
         if (lat1 == lat2 && lon1 == lon2)
             return Angle.ZERO;
@@ -296,21 +291,11 @@ public class LatLon {
      * @return LatLon location on the great circle arc.
      */
     public static LatLon greatCircleEndPosition(LatLon p, Angle greatCircleAzimuth, Angle pathLength) {
-        if (p == null) {
-            String message = Logging.getMessage("nullValue.LatLonIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (greatCircleAzimuth == null || pathLength == null) {
-            String message = Logging.getMessage("nullValue.AngleIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
-        double lat = p.getLatitude().radians;
-        double lon = p.getLongitude().radians;
-        double azimuth = greatCircleAzimuth.radians;
-        double distance = pathLength.radians;
+        double lat = p.getLatitude().radians();
+        double lon = p.getLongitude().radians();
+        double azimuth = greatCircleAzimuth.radians();
+        double distance = pathLength.radians();
 
         if (distance == 0)
             return p;
@@ -340,13 +325,8 @@ public class LatLon {
      * @return LatLon location on the great circle arc.
      */
     public static LatLon greatCircleEndPosition(LatLon p, double greatCircleAzimuthRadians, double pathLengthRadians) {
-        if (p == null) {
-            String message = Logging.getMessage("nullValue.LatLonIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
-        return greatCircleEndPosition(p,
+        return LatLon.greatCircleEndPosition(p,
             Angle.fromRadians(greatCircleAzimuthRadians), Angle.fromRadians(pathLengthRadians));
     }
 
@@ -360,20 +340,9 @@ public class LatLon {
      * @throws IllegalArgumentException if either <code>location</code> or <code>azimuth</code> are null.
      */
     public static LatLon[] greatCircleExtremeLocations(LatLon location, Angle azimuth) {
-        if (location == null) {
-            String message = Logging.getMessage("nullValue.LocationIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
-        if (azimuth == null) {
-            String message = Logging.getMessage("nullValue.AzimuthIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        double lat0 = location.getLatitude().radians;
-        double az = azimuth.radians;
+        double lat0 = location.getLatitude().radians();
+        double az = azimuth.radians();
 
         // Derived by solving the function for longitude on a great circle against the desired longitude. We start with
         // the equation in "Map Projections - A Working Manual", page 31, equation 5-5:
@@ -403,8 +372,8 @@ public class LatLon {
 
         return new LatLon[]
             {
-                greatCircleEndPosition(location, azimuth, extremeDistance1),
-                greatCircleEndPosition(location, azimuth, extremeDistance2)
+                LatLon.greatCircleEndPosition(location, azimuth, extremeDistance1),
+                LatLon.greatCircleEndPosition(location, azimuth, extremeDistance2)
             };
     }
 
@@ -418,17 +387,6 @@ public class LatLon {
      * @throws IllegalArgumentException if either <code>begin</code> or <code>end</code> are null.
      */
     public static LatLon[] greatCircleArcExtremeLocations(LatLon begin, LatLon end) {
-        if (begin == null) {
-            String message = Logging.getMessage("nullValue.BeginIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (end == null) {
-            String message = Logging.getMessage("nullValue.EndIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         LatLon minLatLocation = null;
         LatLon maxLatLocation = null;
@@ -449,9 +407,9 @@ public class LatLon {
 
         // Compute parameters for the great circle arc defined by begin and end. Then compute the locations of extreme
         // latitude on entire the great circle which that arc is part of.
-        Angle greatArcAzimuth = greatCircleAzimuth(begin, end);
-        Angle greatArcDistance = greatCircleDistance(begin, end);
-        LatLon[] greatCircleExtremes = greatCircleExtremeLocations(begin, greatArcAzimuth);
+        Angle greatArcAzimuth = LatLon.greatCircleAzimuth(begin, end);
+        Angle greatArcDistance = LatLon.greatCircleDistance(begin, end);
+        LatLon[] greatCircleExtremes = LatLon.greatCircleExtremeLocations(begin, greatArcAzimuth);
 
         // Determine whether either of the extreme locations are inside the arc defined by begin and end. If so,
         // adjust the min and max latitude accordingly.
@@ -488,11 +446,6 @@ public class LatLon {
      * @throws IllegalArgumentException if <code>locations</code> is null.
      */
     public static LatLon[] greatCircleArcExtremeLocations(Iterable<? extends LatLon> locations) {
-        if (locations == null) {
-            String message = Logging.getMessage("nullValue.LocationsListIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         LatLon minLatLocation = null;
         LatLon maxLatLocation = null;
@@ -527,16 +480,11 @@ public class LatLon {
      * the radius pi circle.
      */
     public static Angle rhumbDistance(LatLon p1, LatLon p2) {
-        if (p1 == null || p2 == null) {
-            String message = Logging.getMessage("nullValue.LatLonIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
-        double lat1 = p1.getLatitude().radians;
-        double lon1 = p1.getLongitude().radians;
-        double lat2 = p2.getLatitude().radians;
-        double lon2 = p2.getLongitude().radians;
+        double lat1 = p1.getLatitude().radians();
+        double lon1 = p1.getLongitude().radians();
+        double lat2 = p2.getLatitude().radians();
+        double lon2 = p2.getLongitude().radians();
 
         if (lat1 == lat2 && lon1 == lon2)
             return Angle.ZERO;
@@ -546,10 +494,9 @@ public class LatLon {
         double dLon = lon2 - lon1;
 
         double q;
-        if (Math.abs(dLat) < NEAR_ZERO_THRESHOLD) {
+        if (Math.abs(dLat) < LatLon.NEAR_ZERO_THRESHOLD) {
             q = Math.cos(lat1);
-        }
-        else {
+        } else {
             double dPhi = Math.log(Math.tan(lat2 / 2.0 + Math.PI / 4.0) / Math.tan(lat1 / 2.0 + Math.PI / 4.0));
             q = dLat / dPhi;
         }
@@ -573,16 +520,11 @@ public class LatLon {
      * @return azimuth Angle of a rhumb line between the two locations.
      */
     public static Angle rhumbAzimuth(LatLon p1, LatLon p2) {
-        if (p1 == null || p2 == null) {
-            String message = Logging.getMessage("nullValue.LatLonIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
-        double lat1 = p1.getLatitude().radians;
-        double lon1 = p1.getLongitude().radians;
-        double lat2 = p2.getLatitude().radians;
-        double lon2 = p2.getLongitude().radians;
+        double lat1 = p1.getLatitude().radians();
+        double lon1 = p1.getLongitude().radians();
+        double lat2 = p2.getLatitude().radians();
+        double lon2 = p2.getLongitude().radians();
 
         if (lat1 == lat2 && lon1 == lon2)
             return Angle.ZERO;
@@ -609,21 +551,11 @@ public class LatLon {
      * @return LatLon location on the rhumb line.
      */
     public static LatLon rhumbEndPosition(LatLon p, Angle rhumbAzimuth, Angle pathLength) {
-        if (p == null) {
-            String message = Logging.getMessage("nullValue.LatLonIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (rhumbAzimuth == null || pathLength == null) {
-            String message = Logging.getMessage("nullValue.AngleIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
-        double lat1 = p.getLatitude().radians;
-        double lon1 = p.getLongitude().radians;
-        double azimuth = rhumbAzimuth.radians;
-        double distance = pathLength.radians;
+        double lat1 = p.getLatitude().radians();
+        double lon1 = p.getLongitude().radians();
+        double azimuth = rhumbAzimuth.radians();
+        double distance = pathLength.radians();
 
         if (distance == 0)
             return p;
@@ -632,10 +564,9 @@ public class LatLon {
         double dLat = distance * Math.cos(azimuth);
         double lat2 = lat1 + dLat;
         double q;
-        if (Math.abs(dLat) < NEAR_ZERO_THRESHOLD) {
+        if (Math.abs(dLat) < LatLon.NEAR_ZERO_THRESHOLD) {
             q = Math.cos(lat1);
-        }
-        else {
+        } else {
             double dPhi = Math.log(Math.tan(lat2 / 2.0 + Math.PI / 4.0) / Math.tan(lat1 / 2.0 + Math.PI / 4.0));
             q = (lat2 - lat1) / dPhi;
         }
@@ -665,13 +596,8 @@ public class LatLon {
      * @return LatLon location on the rhumb line.
      */
     public static LatLon rhumbEndPosition(LatLon p, double rhumbAzimuthRadians, double pathLengthRadians) {
-        if (p == null) {
-            String message = Logging.getMessage("nullValue.LatLonIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
-        return rhumbEndPosition(p, Angle.fromRadians(rhumbAzimuthRadians), Angle.fromRadians(pathLengthRadians));
+        return LatLon.rhumbEndPosition(p, Angle.fromRadians(rhumbAzimuthRadians), Angle.fromRadians(pathLengthRadians));
     }
 
     /**
@@ -686,16 +612,11 @@ public class LatLon {
      * radius pi circle.
      */
     public static Angle linearDistance(LatLon p1, LatLon p2) {
-        if (p1 == null || p2 == null) {
-            String message = Logging.getMessage("nullValue.LatLonIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
-        double lat1 = p1.getLatitude().radians;
-        double lon1 = p1.getLongitude().radians;
-        double lat2 = p2.getLatitude().radians;
-        double lon2 = p2.getLongitude().radians;
+        double lat1 = p1.getLatitude().radians();
+        double lon1 = p1.getLongitude().radians();
+        double lat2 = p2.getLatitude().radians();
+        double lon2 = p2.getLongitude().radians();
 
         if (lat1 == lat2 && lon1 == lon2)
             return Angle.ZERO;
@@ -721,16 +642,11 @@ public class LatLon {
      * @return azimuth Angle of a linear path between the two locations.
      */
     public static Angle linearAzimuth(LatLon p1, LatLon p2) {
-        if (p1 == null || p2 == null) {
-            String message = Logging.getMessage("nullValue.LatLonIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
-        double lat1 = p1.getLatitude().radians;
-        double lon1 = p1.getLongitude().radians;
-        double lat2 = p2.getLatitude().radians;
-        double lon2 = p2.getLongitude().radians;
+        double lat1 = p1.getLatitude().radians();
+        double lon1 = p1.getLongitude().radians();
+        double lat2 = p2.getLatitude().radians();
+        double lon2 = p2.getLongitude().radians();
 
         if (lat1 == lat2 && lon1 == lon2)
             return Angle.ZERO;
@@ -758,21 +674,11 @@ public class LatLon {
      * @return LatLon location on the line.
      */
     public static LatLon linearEndPosition(LatLon p, Angle linearAzimuth, Angle pathLength) {
-        if (p == null) {
-            String message = Logging.getMessage("nullValue.LatLonIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (linearAzimuth == null || pathLength == null) {
-            String message = Logging.getMessage("nullValue.AngleIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
-        double lat1 = p.getLatitude().radians;
-        double lon1 = p.getLongitude().radians;
-        double azimuth = linearAzimuth.radians;
-        double distance = pathLength.radians;
+        double lat1 = p.getLatitude().radians();
+        double lon1 = p.getLongitude().radians();
+        double azimuth = linearAzimuth.radians();
+        double distance = pathLength.radians();
 
         if (distance == 0)
             return p;
@@ -800,11 +706,6 @@ public class LatLon {
      * @return Average rhumb line distance between locations, as an angular distance.
      */
     public static Angle getAverageDistance(Iterable<? extends LatLon> locations) {
-        if ((locations == null)) {
-            String msg = Logging.getMessage("nullValue.LocationsListIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
 
         double totalDistance = 0.0;
         int count = 0;
@@ -812,7 +713,7 @@ public class LatLon {
         for (LatLon p1 : locations) {
             for (LatLon p2 : locations) {
                 if (p1 != p2) {
-                    double d = rhumbDistance(p1, p2).radians;
+                    double d = LatLon.rhumbDistance(p1, p2).radians();
                     totalDistance += d;
                     count++;
                 }
@@ -884,12 +785,12 @@ public class LatLon {
         double longitude = 0;
         int count = 0;
         for (LatLon location : locations) {
-            double lon = location.getLongitude().radians;
+            double lon = location.getLongitude().radians();
             if (lon < 0)
                 lon += 2 * Math.PI;
             longitude += lon;
 
-            latitude += location.getLatitude().radians;
+            latitude += location.getLatitude().radians();
 
             ++count;
         }
@@ -1072,8 +973,7 @@ public class LatLon {
 
             if (applyLonOffset) {
                 locationsA.add(LatLon.fromDegrees(cur.latitude, cur.longitude + lonOffset));
-            }
-            else {
+            } else {
                 locationsA.add(cur);
             }
 
@@ -1082,7 +982,7 @@ public class LatLon {
 
         if (lonOffset != 0) // longitude offset is non-zero when the locations cross the dateline
         {
-            List<LatLon> locationsB = new ArrayList<>(1+locationsA.size());
+            List<LatLon> locationsB = new ArrayList<>(1 + locationsA.size());
             list.add(locationsB);
 
             for (LatLon cur : locationsA) {
@@ -1189,7 +1089,7 @@ public class LatLon {
     public static LatLon intersectionWithMeridian(LatLon p1, LatLon p2, Angle meridian, Globe globe) {
 
         if (globe == null || globe instanceof Globe2D) {
-            return intersectionWithMeridian(p1, p2, meridian);
+            return LatLon.intersectionWithMeridian(p1, p2, meridian);
         }
 
         Vec4 pt1 = globe.computePointFromLocation(p1);
@@ -1273,16 +1173,16 @@ public class LatLon {
         final double f = (equatorialRadius - polarRadius) / equatorialRadius; // flattening
 
         // Calculate reduced latitudes and related sines/cosines
-        final double U1 = Math.atan((1.0 - f) * Math.tan(p1.getLatitude().radians));
+        final double U1 = Math.atan((1.0 - f) * Math.tan(p1.getLatitude().radians()));
         final double cU1 = Math.cos(U1);
         final double sU1 = Math.sin(U1);
 
-        final double U2 = Math.atan((1.0 - f) * Math.tan(p2.getLatitude().radians));
+        final double U2 = Math.atan((1.0 - f) * Math.tan(p2.getLatitude().radians()));
         final double cU2 = Math.cos(U2);
         final double sU2 = Math.sin(U2);
 
         // Calculate difference in longitude
-        final double L = p2.getLongitude().sub(p1.getLongitude()).radians;
+        final double L = p2.getLongitude().sub(p1.getLongitude()).radians();
 
         // Vincenty's Formula for Forward Azimuth
         // iterate until change in lambda is negligible (e.g. 1e-12 ~= 0.06mm)
@@ -1308,8 +1208,7 @@ public class LatLon {
             double cSigmam2;
             if (Math.abs(cAlpha2) < 1.0e-6) {
                 cSigmam2 = 0;
-            }
-            else {
+            } else {
                 cSigmam2 = cSigma - 2 * sU1 * sU2 / cAlpha2;
             }
             double c = f / 16 * cAlpha2 * (4 + f * (4 - 3 * cAlpha2));
@@ -1388,8 +1287,8 @@ public class LatLon {
         //IMPLICIT REAL*8 (A-H,O-Z)
         //  COMMON/CONST/PI,RAD
 
-        double GLAT1 = p1.getLatitude().radians;
-        double GLAT2 = p2.getLatitude().radians;
+        double GLAT1 = p1.getLatitude().radians();
+        double GLAT2 = p2.getLatitude().radians();
         double TU1 = R * Math.sin(GLAT1) / Math.cos(GLAT1);
         double TU2 = R * Math.sin(GLAT2) / Math.cos(GLAT2);
         double CU1 = 1.0 / Math.sqrt(TU1 * TU1 + 1.0);
@@ -1398,8 +1297,8 @@ public class LatLon {
         double S = CU1 * CU2;
         double BAZ = S * TU2;
         double FAZ = BAZ * TU1;
-        double GLON1 = p1.getLongitude().radians;
-        double GLON2 = p2.getLongitude().radians;
+        double GLON1 = p1.getLongitude().radians();
+        double GLON2 = p2.getLongitude().radians();
         double X = GLON2 - GLON1;
         double D, SX, CX, SY, CY, Y, SA, C2A, CZ, E, C;
         int iterCount = 0;
@@ -1487,7 +1386,8 @@ public class LatLon {
      *
      * @return this <code>LatLon</code>'s latitude
      */
-    @Deprecated public final Angle getLatitude() {
+    @Deprecated
+    public final Angle getLatitude() {
         return Angle.fromDegrees(this.latitude);
     }
 
@@ -1496,7 +1396,8 @@ public class LatLon {
      *
      * @return this <code>LatLon</code>'s longitude
      */
-    @Deprecated public final Angle getLongitude() {
+    @Deprecated
+    public final Angle getLongitude() {
         return Angle.fromDegrees(this.longitude);
     }
 
@@ -1515,7 +1416,7 @@ public class LatLon {
      * @return the array of latitude and longitude, arranged in that order.
      */
     public double[] asRadiansArray() {
-        return new double[] {this.getLatitude().radians, this.getLongitude().radians};
+        return new double[] {this.getLatitude().radians(), this.getLongitude().radians()};
     }
 
     public LatLon add(LatLon that) {
@@ -1565,9 +1466,9 @@ public class LatLon {
 
     @Override
     public String toString() {
-        String las = String.format("Lat %7.4f\u00B0", this.getLatitude().getDegrees());
-        String los = String.format("Lon %7.4f\u00B0", this.getLongitude().getDegrees());
-        return "(" + las + ", " + los + ")";
+        String las = String.format("Lat %7.4f\u00B0", this.getLatitude().degrees);
+        String los = String.format("Lon %7.4f\u00B0", this.getLongitude().degrees);
+        return '(' + las + ", " + los + ')';
     }
 
     @Override
@@ -1579,7 +1480,7 @@ public class LatLon {
 
         final LatLon latLon = (LatLon) o;
 
-        return latitude==(latLon.latitude) && longitude==(latLon.longitude);
+        return latitude == (latLon.latitude) && longitude == (latLon.longitude);
     }
 
     @Override

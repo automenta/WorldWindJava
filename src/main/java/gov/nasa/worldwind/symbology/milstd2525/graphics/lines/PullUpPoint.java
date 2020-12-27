@@ -9,7 +9,7 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.lines;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.*;
+import gov.nasa.worldwind.symbology.TacticalGraphicLabel;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.areas.AbstractCircularGraphic;
 
@@ -21,7 +21,7 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id: PullUpPoint.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class PullUpPoint extends AbstractCircularGraphic implements TacticalPoint, PreRenderable {
+public class PullUpPoint extends AbstractCircularGraphic {
     /**
      * Default radius, in meters, for the circle.
      */
@@ -39,7 +39,7 @@ public class PullUpPoint extends AbstractCircularGraphic implements TacticalPoin
      */
     public PullUpPoint(String sidc) {
         super(sidc);
-        this.setRadius(DEFAULT_RADIUS);
+        this.setRadius(PullUpPoint.DEFAULT_RADIUS);
     }
 
     /**
@@ -49,6 +49,20 @@ public class PullUpPoint extends AbstractCircularGraphic implements TacticalPoin
      */
     public static List<String> getSupportedGraphics() {
         return Collections.singletonList(TacGrpSidc.C2GM_AVN_PNT_PUP);
+    }
+
+    /**
+     * Convert a list of LatLon to a list of Positions at zero elevation.
+     *
+     * @param locations Locations to convert to Positions.
+     * @return Position list. All elevations will be set to zero.
+     */
+    protected static List<Position> asPositionList(LatLon... locations) {
+        List<Position> positions = new ArrayList<>(locations.length);
+        for (LatLon loc : locations) {
+            positions.add(new Position(loc, 0));
+        }
+        return positions;
     }
 
     /**
@@ -101,20 +115,6 @@ public class PullUpPoint extends AbstractCircularGraphic implements TacticalPoin
         bowtie.setPositions(PullUpPoint.asPositionList(a, b, c, d, a));
 
         return bowtie;
-    }
-
-    /**
-     * Convert a list of LatLon to a list of Positions at zero elevation.
-     *
-     * @param locations Locations to convert to Positions.
-     * @return Position list. All elevations will be set to zero.
-     */
-    protected static List<Position> asPositionList(LatLon... locations) {
-        List<Position> positions = new ArrayList<>(locations.length);
-        for (LatLon loc : locations) {
-            positions.add(new Position(loc, 0));
-        }
-        return positions;
     }
 
     /**

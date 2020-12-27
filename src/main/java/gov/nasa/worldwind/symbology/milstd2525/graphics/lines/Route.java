@@ -125,9 +125,8 @@ public class Route extends AbstractMilStd2525TacticalGraphic implements Tactical
         Object widthModifier = this.getModifier(SymbologyConstants.DISTANCE);
         if (widthModifier instanceof Double) {
             return (Double) widthModifier;
-        }
-        else {
-            return DEFAULT_WIDTH;
+        } else {
+            return Route.DEFAULT_WIDTH;
         }
     }
 
@@ -360,7 +359,7 @@ public class Route extends AbstractMilStd2525TacticalGraphic implements Tactical
         if (o != null) {
             sb.append("Name: ");
             sb.append(o);
-            sb.append("\n");
+            sb.append('\n');
         }
 
         o = this.getModifier(SymbologyConstants.DISTANCE);
@@ -368,27 +367,27 @@ public class Route extends AbstractMilStd2525TacticalGraphic implements Tactical
             sb.append("Width: ");
             sb.append(o);
             sb.append(" m");
-            sb.append("\n");
+            sb.append('\n');
         }
 
         Object[] altitudes = TacticalGraphicUtil.getAltitudeRange(this);
         if (altitudes[0] != null) {
             sb.append("Min Alt: ");
             sb.append(altitudes[0]);
-            sb.append("\n");
+            sb.append('\n');
         }
 
         if (altitudes[1] != null) {
             sb.append("Max Alt: ");
             sb.append(altitudes[1]);
-            sb.append("\n");
+            sb.append('\n');
         }
 
         Object[] dates = TacticalGraphicUtil.getDateRange(this);
         if (dates[0] != null) {
             sb.append("DTG Start: ");
             sb.append(dates[0]);
-            sb.append("\n");
+            sb.append('\n');
         }
 
         if (dates[1] != null) {
@@ -408,7 +407,7 @@ public class Route extends AbstractMilStd2525TacticalGraphic implements Tactical
 
         TacticalGraphicLabel label = this.addLabel(labelText);
         label.setTextAlign(AVKey.LEFT);
-        label.setOffset(DEFAULT_OFFSET);
+        label.setOffset(Route.DEFAULT_OFFSET);
 
         Iterator<? extends Position> iterator = this.getPositions().iterator();
 
@@ -423,7 +422,7 @@ public class Route extends AbstractMilStd2525TacticalGraphic implements Tactical
 
                 String text = this.getText();
                 if (!WWUtil.isEmpty(text)) {
-                    sb.append(" ");
+                    sb.append(' ');
                     sb.append(text);
                 }
                 this.addLabel(sb.toString());
@@ -500,7 +499,7 @@ public class Route extends AbstractMilStd2525TacticalGraphic implements Tactical
 
     @Override
     protected Offset getDefaultLabelOffset() {
-        return DEFAULT_OFFSET;
+        return Route.DEFAULT_OFFSET;
     }
 
     /**

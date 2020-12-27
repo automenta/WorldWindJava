@@ -64,6 +64,16 @@ public class GCPSReader {
         }
     }
 
+    protected static String nextLine(BufferedReader reader) throws IOException {
+        // Read until the next non-whitespace line.
+
+        String line;
+        while ((line = reader.readLine()) != null && line.trim().isEmpty()) {
+        }
+
+        return (line != null) ? line.trim() : null;
+    }
+
     public String getDelimiter() {
         return this.delimiter;
     }
@@ -106,7 +116,7 @@ public class GCPSReader {
             RasterControlPointList controlPoints = new RasterControlPointList();
             return this.doCanRead(streamReader, controlPoints);
         }
-        catch (Exception ignored) {
+        catch (RuntimeException ignored) {
             return false;
         }
         finally {
@@ -213,7 +223,8 @@ public class GCPSReader {
         }
     }
 
-    protected void doRead(Reader reader, Collection<RasterControlPointList.ControlPoint> controlPoints) throws IOException {
+    protected void doRead(Reader reader, Collection<RasterControlPointList.ControlPoint> controlPoints)
+        throws IOException {
         if (reader == null) {
             String message = Logging.getMessage("nullValue.ReaderIsNull");
             Logging.logger().severe(message);
@@ -253,10 +264,10 @@ public class GCPSReader {
             String srx = matcher.group(3);
             String sry = matcher.group(4);
 
-            Double wx = parseDouble(swx);
-            Double wy = parseDouble(swy);
-            Double rx = parseDouble(srx);
-            Double ry = parseDouble(sry);
+            Double wx = GCPSReader.parseDouble(swx);
+            Double wy = GCPSReader.parseDouble(swy);
+            Double rx = GCPSReader.parseDouble(srx);
+            Double ry = GCPSReader.parseDouble(sry);
 
             if (wx != null && wy != null && rx != null && ry != null) {
                 RasterControlPointList.ControlPoint controlPoint =
@@ -271,23 +282,13 @@ public class GCPSReader {
 
         StringBuilder sb = new StringBuilder();
         sb.append("(.+)");
-        sb.append(delim).append("+");
+        sb.append(delim).append('+');
         sb.append("(.+)");
-        sb.append(delim).append("+");
+        sb.append(delim).append('+');
         sb.append("(.+)");
-        sb.append(delim).append("+");
+        sb.append(delim).append('+');
         sb.append("(.+)");
 
         return Pattern.compile(sb.toString());
-    }
-
-    protected static String nextLine(BufferedReader reader) throws IOException {
-        // Read until the next non-whitespace line.
-
-        String line;
-        while ((line = reader.readLine()) != null && line.trim().isEmpty()) {
-        }
-
-        return (line != null) ? line.trim() : null;
     }
 }

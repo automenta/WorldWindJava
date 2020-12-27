@@ -78,6 +78,82 @@ public class BasicTiledImageLayerBulkDownloader extends BulkRetrievalThread {
         this.level = this.layer.computeLevelForResolution(sector, resolution);
     }
 
+    protected static Sector[] computeRandomRegions(Sector sector, int div, int numRegions) {
+        if (numRegions > div * div)
+            return sector.subdivide(div);
+
+        final double dLat = sector.latDelta / div;
+        final double dLon = sector.lonDelta / div;
+        ArrayList<Sector> regions = new ArrayList<>(numRegions);
+        Random rand = new Random();
+        while (regions.size() < numRegions) {
+            int row = rand.nextInt(div);
+            int col = rand.nextInt(div);
+            Sector s = Sector.fromDegrees(
+                sector.latMin + dLat * row,
+                sector.latMin + dLat * row + dLat,
+                sector.lonMin + dLon * col,
+                sector.lonMin + dLon * col + dLon);
+            if (!regions.contains(s))
+                regions.add(s);
+        }
+
+        return regions.toArray(new Sector[numRegions]);
+    }
+
+    protected static Iterator<Sector> getRegionIterator(final Sector sector, final int div) {
+        final double dLat = sector.latDelta / div;
+        final double dLon = sector.lonDelta / div;
+
+        return new Iterator<>() {
+            int row;
+            int col;
+
+            public boolean hasNext() {
+                return row < div;
+            }
+
+            public Sector next() {
+                Sector s = Sector.fromDegrees(
+                    sector.latMin + dLat * row,
+                    sector.latMin + dLat * row + dLat,
+                    sector.lonMin + dLon * col,
+                    sector.lonMin + dLon * col + dLon);
+
+                col++;
+                if (col >= div) {
+                    col = 0;
+                    row++;
+                }
+                return s;
+            }
+
+            public void remove() {
+
+            }
+        };
+    }
+
+    protected static long computeAverageTileSize(File dir) {
+        long size = 0;
+        int count = 0;
+
+        File[] files = dir.listFiles();
+        for (File file : files) {
+            try {
+                FileInputStream fis = new FileInputStream(file);
+                size += fis.available();
+                fis.close();
+                count++;
+            }
+            catch (IOException e) {
+                count += 0;
+            }
+        }
+
+        return count > 0 ? size / count : 0;
+    }
+
     public void run() {
         try {
             // Init progress with missing tile count estimate
@@ -89,8 +165,10 @@ public class BasicTiledImageLayerBulkDownloader extends BulkRetrievalThread {
                 if (this.layer.getLevels().isLevelEmpty(levelNumber))
                     continue;
 
-                int div = this.computeRegionDivisions(this.sector, levelNumber, MAX_TILE_COUNT_PER_REGION);
-                Iterator<Sector> regionsIterator = BasicTiledImageLayerBulkDownloader.getRegionIterator(this.sector, div);
+                int div = this.computeRegionDivisions(this.sector, levelNumber,
+                    BasicTiledImageLayerBulkDownloader.MAX_TILE_COUNT_PER_REGION);
+                Iterator<Sector> regionsIterator = BasicTiledImageLayerBulkDownloader.getRegionIterator(this.sector,
+                    div);
 
                 Sector region;
                 while (regionsIterator.hasNext()) {
@@ -114,7 +192,7 @@ public class BasicTiledImageLayerBulkDownloader extends BulkRetrievalThread {
             String message = Logging.getMessage("generic.BulkRetrievalInterrupted", this.layer.name());
             Logging.logger().log(java.util.logging.Level.WARNING, message, e);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             String message = Logging.getMessage("generic.ExceptionDuringBulkRetrieval", this.layer.name());
             Logging.logger().severe(message);
             throw new RuntimeException(message);
@@ -207,15 +285,14 @@ public class BasicTiledImageLayerBulkDownloader extends BulkRetrievalThread {
         }
         // Sample random small sized sectors at finest level
         int div = this.computeRegionDivisions(this.sector, maxLevel, 36); // max 6x6 tiles per region
-        Sector[] regions = computeRandomRegions(this.sector, div, numSamples);
+        Sector[] regions = BasicTiledImageLayerBulkDownloader.computeRandomRegions(this.sector, div, numSamples);
         long regionMissing = 0;
         long regionCount = 0;
         try {
             if (regions.length < numSamples) {
                 regionCount = this.layer.countImagesInSector(this.sector, maxLevel);
                 regionMissing = getMissingTilesInSector(this.sector, maxLevel).size();
-            }
-            else {
+            } else {
                 for (Sector region : regions) {
                     // Count how many tiles are missing in each sample region
                     regionCount += this.layer.countImagesInSector(region, maxLevel);
@@ -226,7 +303,7 @@ public class BasicTiledImageLayerBulkDownloader extends BulkRetrievalThread {
         catch (InterruptedException e) {
             return 0;
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             String message = Logging.getMessage("generic.ExceptionDuringDataSizeEstimate", this.layer.name());
             Logging.logger().severe(message);
             throw new RuntimeException(message);
@@ -244,62 +321,6 @@ public class BasicTiledImageLayerBulkDownloader extends BulkRetrievalThread {
 
         // Divide sector in regions that will contain no more tiles then maxCount
         return (int) Math.ceil(Math.sqrt((double) tileCount / maxCount));
-    }
-
-    protected static Sector[] computeRandomRegions(Sector sector, int div, int numRegions) {
-        if (numRegions > div * div)
-            return sector.subdivide(div);
-
-        final double dLat = sector.latDelta / div;
-        final double dLon = sector.lonDelta / div;
-        ArrayList<Sector> regions = new ArrayList<>(numRegions);
-        Random rand = new Random();
-        while (regions.size() < numRegions) {
-            int row = rand.nextInt(div);
-            int col = rand.nextInt(div);
-            Sector s = Sector.fromDegrees(
-                sector.latMin + dLat * row,
-                sector.latMin + dLat * row + dLat,
-                sector.lonMin + dLon * col,
-                sector.lonMin + dLon * col + dLon);
-            if (!regions.contains(s))
-                regions.add(s);
-        }
-
-        return regions.toArray(new Sector[numRegions]);
-    }
-
-    protected static Iterator<Sector> getRegionIterator(final Sector sector, final int div) {
-        final double dLat = sector.latDelta / div;
-        final double dLon = sector.lonDelta / div;
-
-        return new Iterator<>() {
-            int row = 0;
-            int col = 0;
-
-            public boolean hasNext() {
-                return row < div;
-            }
-
-            public Sector next() {
-                Sector s = Sector.fromDegrees(
-                    sector.latMin + dLat * row,
-                    sector.latMin + dLat * row + dLat,
-                    sector.lonMin + dLon * col,
-                    sector.lonMin + dLon * col + dLon);
-
-                col++;
-                if (col >= div) {
-                    col = 0;
-                    row++;
-                }
-                return s;
-            }
-
-            public void remove() {
-
-            }
-        };
     }
 
     protected ArrayList<TextureTile> getMissingTilesInSector(Sector sector, int levelNumber)
@@ -350,7 +371,7 @@ public class BasicTiledImageLayerBulkDownloader extends BulkRetrievalThread {
         if (cacheRoot.exists()) {
             File[] rowDirs = cacheRoot.listFiles(File::isDirectory);
             for (File dir : rowDirs) {
-                long averageSize = computeAverageTileSize(dir);
+                long averageSize = BasicTiledImageLayerBulkDownloader.computeAverageTileSize(dir);
                 if (averageSize > 0) {
                     size += averageSize;
                     count++;
@@ -360,32 +381,13 @@ public class BasicTiledImageLayerBulkDownloader extends BulkRetrievalThread {
             }
         }
 
-        long averageTileSize = DEFAULT_AVERAGE_FILE_SIZE;
+        long averageTileSize = BasicTiledImageLayerBulkDownloader.DEFAULT_AVERAGE_FILE_SIZE;
         if (count > 0 && size > 0) {
             averageTileSize = size / count;
             this.layer.set(AVKey.AVERAGE_TILE_SIZE, averageTileSize);
         }
 
         return averageTileSize;
-    }
-
-    protected static long computeAverageTileSize(File dir) {
-        long size = 0;
-        int count = 0;
-
-        File[] files = dir.listFiles();
-        for (File file : files) {
-            try {
-                FileInputStream fis = new FileInputStream(file);
-                size += fis.available();
-                fis.close();
-                count++;
-            } catch (IOException e) {
-                count += 0;
-            }
-        }
-
-        return count > 0 ? size / count : 0;
     }
 
     protected class BulkDownloadPostProcessor extends BasicTiledImageLayer.DownloadPostProcessor {

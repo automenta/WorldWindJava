@@ -40,7 +40,6 @@ interface RoutingRenderer {
             na = graph.getNodeAccess();
         }
 
-
         @Override
         public void updateBestPath(EdgeIteratorState es, SPTEntry bestEE, int currLoc) {
             super.updateBestPath(es, bestEE, currLoc);
@@ -52,14 +51,13 @@ interface RoutingRenderer {
      */
     class AStarBiRoutingRenderer extends AStarBidirection implements RoutingRenderer {
 
-
         public AStarBiRoutingRenderer(Graph graph, Weighting type, TraversalMode tMode) {
             super(graph, type, tMode);
         }
 
-
         @Override
-        public void updateBestPath(double edgeWeight, SPTEntry entry, int origEdgeId, int traversalId, boolean reverse) {
+        public void updateBestPath(double edgeWeight, SPTEntry entry, int origEdgeId, int traversalId,
+            boolean reverse) {
             super.updateBestPath(edgeWeight, entry, origEdgeId, traversalId, reverse);
         }
 
@@ -81,9 +79,9 @@ interface RoutingRenderer {
             na = graph.getNodeAccess();
         }
 
-
         @Override
-        public void updateBestPath(double edgeWeight, SPTEntry entry, int origEdgeId, int traversalId, boolean reverse) {
+        public void updateBestPath(double edgeWeight, SPTEntry entry, int origEdgeId, int traversalId,
+            boolean reverse) {
             super.updateBestPath(edgeWeight, entry, origEdgeId, traversalId, reverse);
         }
     }
@@ -93,11 +91,9 @@ interface RoutingRenderer {
      */
     class DijkstraSimpleRoutingRenderer extends Dijkstra implements RoutingRenderer {
 
-
         public DijkstraSimpleRoutingRenderer(Graph graph, Weighting weighting, TraversalMode tMode) {
             super(graph, weighting, tMode);
         }
-
 
         @Override
         public void updateBestPath(EdgeIteratorState es, SPTEntry bestEE, int currLoc) {
@@ -107,17 +103,15 @@ interface RoutingRenderer {
 
     class CHRoutingRenderer extends DijkstraBidirectionCH implements RoutingRenderer {
 
-
         public CHRoutingRenderer(RoutingCHGraph graph) {
             super(graph);
         }
 
-
         @Override
-        public void updateBestPath(double edgeWeight, SPTEntry entry, int origEdgeId, int traversalId, boolean reverse) {
+        public void updateBestPath(double edgeWeight, SPTEntry entry, int origEdgeId, int traversalId,
+            boolean reverse) {
 
             super.updateBestPath(edgeWeight, entry, origEdgeId, traversalId, reverse);
         }
     }
-
 }

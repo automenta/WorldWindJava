@@ -45,7 +45,7 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
     // Tile quadtree structures.
     protected Tile rootTile;
     // Data structures supporting picking.
-    protected int outlinePickWidth = DEFAULT_OUTLINE_PICK_WIDTH;
+    protected int outlinePickWidth = ShapefilePolylines.DEFAULT_OUTLINE_PICK_WIDTH;
     protected Layer pickLayer;
     protected ByteBuffer pickColors;
 
@@ -53,8 +53,7 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
      * Creates a new ShapefilePolylines with the specified shapefile. The normal attributes and the highlight attributes
      * for each ShapefileRenderable.Record are assigned default values. In order to modify ShapefileRenderable.Record
      * shape attributes or key-value attributes during construction, use {@link #ShapefilePolylines(Shapefile,
-     * ShapeAttributes, ShapeAttributes,
-     * ShapefileRenderable.AttributeDelegate)}.
+     * ShapeAttributes, ShapeAttributes, ShapefileRenderable.AttributeDelegate)}.
      *
      * @param shapefile The shapefile to display.
      * @throws IllegalArgumentException if the shapefile is null.
@@ -94,6 +93,126 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
         }
 
         this.init(shapefile, normalAttrs, highlightAttrs, attributeDelegate);
+    }
+
+    protected static boolean isTileVisible(DrawContext dc, Tile tile) {
+        Extent extent = Sector.computeBoundingBox(dc.getGlobe(), dc.getVerticalExaggeration(), tile.sector);
+
+        if (dc.isSmall(extent, 1)) {
+            return false;
+        }
+
+        if (dc.isPickingMode()) {
+            return dc.getPickFrustums().intersectsAny(extent);
+        }
+
+        return dc.getView().getFrustumInModelCoordinates().intersects(extent);
+    }
+
+    protected static boolean mustRegenerateTileGeometry(Tile tile) {
+        return tile.vertices == null;
+    }
+
+    protected static void assembleRecordIndices(PolylineTessellator tessellator, Record record) {
+        // Get the tessellated boundary indices representing a line segment tessellation of the record parts.
+        // Flip each buffer in order to limit the buffer range we use to values added during tessellation.
+        IntBuffer tessBoundary = tessellator.getIndices().flip();
+
+        // Allocate and fill the record's outline indices.
+        IntBuffer outlineIndices = IntBuffer.allocate(tessBoundary.remaining());
+        outlineIndices.put(tessBoundary);
+
+        record.outlineIndices = outlineIndices.rewind();
+    }
+
+    protected static void invalidateTileAttributeGroups(Tile tile) {
+        tile.attributeGroups.clear();
+    }
+
+    protected static boolean mustAssembleTileAttributeGroups(Tile tile) {
+        return tile.attributeGroups.isEmpty();
+    }
+
+    protected static void assembleTileAttributeGroups(Tile tile) {
+        tile.attributeGroups.clear();
+        tile.attributeStateID++;
+
+        // Assemble the tile's records into groups with common attributes. Attributes are compared using the instance's
+        // address, so subsequent changes to an Attribute instance will be reflected in the record group automatically.
+        // We take care to avoid assembling groups based on any Attribute property, as those properties may change
+        // without re-assembling these groups. However, changes to a record's visibility state, highlight state, normal
+        // attributes reference and highlight attributes reference invalidate this grouping.
+        HashMap<ShapeAttributes, RecordGroup> attrMap = new HashMap<>();
+        for (Record record : tile.records) {
+            if (!record.isVisible()) // ignore records marked as not visible
+                continue;
+
+            ShapeAttributes attrs = ShapefileRenderable.determineActiveAttributes(record);
+            RecordGroup group = attrMap.get(attrs);
+
+            if (group == null) // create a new group if one doesn't already exist
+            {
+                group = new RecordGroup(attrs);
+                attrMap.put(attrs, group); // add it to the map to prevent duplicates
+                tile.attributeGroups.add(group); // add it to the tile's attribute group list
+            }
+
+            group.records.add(record);
+            group.outlineIndexRange.length += record.outlineIndices.remaining();
+        }
+
+        // Make the indices for each record group. We take care to make indices for both the interior and the outline,
+        // regardless of the current state of Attributes.isDrawInterior and Attributes.isDrawOutline. This enable these
+        // properties change state without needing to re-assemble these groups.
+        for (RecordGroup group : tile.attributeGroups) {
+            int indexCount = group.outlineIndexRange.length;
+            IntBuffer indices = Buffers.newDirectIntBuffer(indexCount);
+
+            group.outlineIndexRange.location = indices.position();
+            for (Record record : group.records) // assemble the group's line indices in a single contiguous range
+            {
+                indices.put(record.outlineIndices);
+                record.outlineIndices.rewind();
+            }
+
+            group.indices = indices.rewind();
+            group.records.clear();
+            group.records.trimToSize(); // Reduce memory overhead from unused ArrayList capacity.
+        }
+    }
+
+    protected static void beginDrawing(DrawContext dc) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
+        gl.glDisable(GL.GL_DEPTH_TEST);
+        gl.glEnableClientState(GL2.GL_VERTEX_ARRAY); // all drawing uses vertex arrays
+        gl.glMatrixMode(GL2.GL_MODELVIEW);
+        gl.glPushMatrix();
+
+        if (!dc.isPickingMode()) {
+            gl.glEnable(GL.GL_BLEND);
+            gl.glEnable(GL.GL_LINE_SMOOTH);
+            gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+        }
+    }
+
+    protected static void endDrawing(DrawContext dc) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
+        gl.glEnable(GL.GL_DEPTH_TEST);
+        gl.glDisableClientState(GL2.GL_VERTEX_ARRAY);
+        gl.glColor4f(1, 1, 1, 1);
+        gl.glLineWidth(1);
+        gl.glPopMatrix();
+
+        if (!dc.isPickingMode()) {
+            gl.glDisable(GL.GL_BLEND);
+            gl.glDisable(GL.GL_LINE_SMOOTH);
+            gl.glBlendFunc(GL.GL_ONE, GL.GL_ZERO);
+        }
+
+        if (dc.getGLRuntimeCapabilities().isUseVertexBufferObject()) {
+            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+            gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
+        }
     }
 
     /**
@@ -338,24 +457,6 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
         }
     }
 
-    protected static boolean isTileVisible(DrawContext dc, Tile tile) {
-        Extent extent = Sector.computeBoundingBox(dc.getGlobe(), dc.getVerticalExaggeration(), tile.sector);
-
-        if (dc.isSmall(extent, 1)) {
-            return false;
-        }
-
-        if (dc.isPickingMode()) {
-            return dc.getPickFrustums().intersectsAny(extent);
-        }
-
-        return dc.getView().getFrustumInModelCoordinates().intersects(extent);
-    }
-
-    protected static boolean mustRegenerateTileGeometry(Tile tile) {
-        return tile.vertices == null;
-    }
-
     protected void regenerateTileGeometry(Tile tile) {
         this.tessellateTile(tile);
     }
@@ -415,120 +516,17 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
         tile.transformMatrix = Matrix.fromTranslation(rp.x, rp.y, rp.z);
     }
 
-    protected static void assembleRecordIndices(PolylineTessellator tessellator, Record record) {
-        // Get the tessellated boundary indices representing a line segment tessellation of the record parts.
-        // Flip each buffer in order to limit the buffer range we use to values added during tessellation.
-        IntBuffer tessBoundary = tessellator.getIndices().flip();
-
-        // Allocate and fill the record's outline indices.
-        IntBuffer outlineIndices = IntBuffer.allocate(tessBoundary.remaining());
-        outlineIndices.put(tessBoundary);
-
-        record.outlineIndices = outlineIndices.rewind();
-    }
-
-    protected static void invalidateTileAttributeGroups(Tile tile) {
-        tile.attributeGroups.clear();
-    }
-
-    protected static boolean mustAssembleTileAttributeGroups(Tile tile) {
-        return tile.attributeGroups.isEmpty();
-    }
-
-    protected static void assembleTileAttributeGroups(Tile tile) {
-        tile.attributeGroups.clear();
-        tile.attributeStateID++;
-
-        // Assemble the tile's records into groups with common attributes. Attributes are compared using the instance's
-        // address, so subsequent changes to an Attribute instance will be reflected in the record group automatically.
-        // We take care to avoid assembling groups based on any Attribute property, as those properties may change
-        // without re-assembling these groups. However, changes to a record's visibility state, highlight state, normal
-        // attributes reference and highlight attributes reference invalidate this grouping.
-        HashMap<ShapeAttributes, RecordGroup> attrMap = new HashMap<>();
-        for (Record record : tile.records) {
-            if (!record.isVisible()) // ignore records marked as not visible
-                continue;
-
-            ShapeAttributes attrs = ShapefileRenderable.determineActiveAttributes(record);
-            RecordGroup group = attrMap.get(attrs);
-
-            if (group == null) // create a new group if one doesn't already exist
-            {
-                group = new RecordGroup(attrs);
-                attrMap.put(attrs, group); // add it to the map to prevent duplicates
-                tile.attributeGroups.add(group); // add it to the tile's attribute group list
-            }
-
-            group.records.add(record);
-            group.outlineIndexRange.length += record.outlineIndices.remaining();
-        }
-
-        // Make the indices for each record group. We take care to make indices for both the interior and the outline,
-        // regardless of the current state of Attributes.isDrawInterior and Attributes.isDrawOutline. This enable these
-        // properties change state without needing to re-assemble these groups.
-        for (RecordGroup group : tile.attributeGroups) {
-            int indexCount = group.outlineIndexRange.length;
-            IntBuffer indices = Buffers.newDirectIntBuffer(indexCount);
-
-            group.outlineIndexRange.location = indices.position();
-            for (Record record : group.records) // assemble the group's line indices in a single contiguous range
-            {
-                indices.put(record.outlineIndices);
-                record.outlineIndices.rewind();
-            }
-
-            group.indices = indices.rewind();
-            group.records.clear();
-            group.records.trimToSize(); // Reduce memory overhead from unused ArrayList capacity.
-        }
-    }
-
     protected void renderTile(DrawContext dc, Tile tile) {
         ShapefilePolylines.beginDrawing(dc);
         try {
             if (dc.isPickingMode()) {
                 this.drawTileInUniqueColors(dc, tile);
-            }
-            else {
+            } else {
                 this.drawTile(dc, tile);
             }
         }
         finally {
             ShapefilePolylines.endDrawing(dc);
-        }
-    }
-
-    protected static void beginDrawing(DrawContext dc) {
-        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-        gl.glDisable(GL.GL_DEPTH_TEST);
-        gl.glEnableClientState(GL2.GL_VERTEX_ARRAY); // all drawing uses vertex arrays
-        gl.glMatrixMode(GL2.GL_MODELVIEW);
-        gl.glPushMatrix();
-
-        if (!dc.isPickingMode()) {
-            gl.glEnable(GL.GL_BLEND);
-            gl.glEnable(GL.GL_LINE_SMOOTH);
-            gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
-        }
-    }
-
-    protected static void endDrawing(DrawContext dc) {
-        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-        gl.glEnable(GL.GL_DEPTH_TEST);
-        gl.glDisableClientState(GL2.GL_VERTEX_ARRAY);
-        gl.glColor4f(1, 1, 1, 1);
-        gl.glLineWidth(1);
-        gl.glPopMatrix();
-
-        if (!dc.isPickingMode()) {
-            gl.glDisable(GL.GL_BLEND);
-            gl.glDisable(GL.GL_LINE_SMOOTH);
-            gl.glBlendFunc(GL.GL_ONE, GL.GL_ZERO);
-        }
-
-        if (dc.getGLRuntimeCapabilities().isUseVertexBufferObject()) {
-            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-            gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
         }
     }
 
@@ -545,12 +543,10 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
             gl.glBufferData(GL.GL_ARRAY_BUFFER, vboSize, tile.vertices, GL.GL_STATIC_DRAW);
             gl.glVertexPointer(tile.vertexStride, GL.GL_FLOAT, 0, 0);
             dc.getGpuResourceCache().put(tile.vboKey, vboId, GpuResourceCache.VBO_BUFFERS, vboSize);
-        }
-        else if (useVbo) {
+        } else if (useVbo) {
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboId[0]);
             gl.glVertexPointer(tile.vertexStride, GL.GL_FLOAT, 0, 0);
-        }
-        else {
+        } else {
             gl.glVertexPointer(tile.vertexStride, GL.GL_FLOAT, 0, tile.vertices);
         }
 
@@ -580,8 +576,7 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
             gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vboId[0]);
             gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, vboSize, attributeGroup.indices, GL.GL_STATIC_DRAW);
             dc.getGpuResourceCache().put(attributeGroup.vboKey, vboId, GpuResourceCache.VBO_BUFFERS, vboSize);
-        }
-        else if (useVbo) {
+        } else if (useVbo) {
             gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vboId[0]);
         }
 
@@ -598,8 +593,7 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
 
         if (useVbo) {
             gl.glDrawElements(GL.GL_LINES, attributeGroup.indices.remaining(), GL.GL_UNSIGNED_INT, 0);
-        }
-        else {
+        } else {
             gl.glDrawElements(GL.GL_LINES, attributeGroup.indices.remaining(), GL.GL_UNSIGNED_INT,
                 attributeGroup.indices);
         }
@@ -626,12 +620,10 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
             dc.getGpuResourceCache().put(this.pickColorsVboKey, vboId, GpuResourceCache.VBO_BUFFERS,
                 this.pickColors.remaining());
             colors = gl.glMapBuffer(GL.GL_ARRAY_BUFFER, GL.GL_WRITE_ONLY);
-        }
-        else if (useVbo) {
+        } else if (useVbo) {
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboId[0]);
             colors = gl.glMapBuffer(GL.GL_ARRAY_BUFFER, GL.GL_WRITE_ONLY);
-        }
-        else {
+        } else {
             colors = pickColors;
         }
 
@@ -660,8 +652,7 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
             if (useVbo) {
                 gl.glUnmapBuffer(GL.GL_ARRAY_BUFFER);
                 gl.glColorPointer(3, GL.GL_UNSIGNED_BYTE, 0, 0);
-            }
-            else {
+            } else {
                 gl.glColorPointer(3, GL.GL_UNSIGNED_BYTE, 0, colors);
             }
 

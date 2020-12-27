@@ -46,11 +46,11 @@ public class StereoOptionSceneController extends BasicSceneController implements
     /**
      * The angle between eyes. Larger angles give increased 3D effect.
      */
-    protected Angle focusAngle = Angle.fromDegrees(DEFAULT_FOCUS_ANGLE);
+    protected Angle focusAngle = Angle.fromDegrees(StereoOptionSceneController.DEFAULT_FOCUS_ANGLE);
     /**
      * Indicates whether left and right eye positions are swapped.
      */
-    protected boolean swapEyes = false;
+    protected boolean swapEyes;
     /**
      * Indicates the GL drawable capabilities. Non-null only after this scene controller draws once.
      */
@@ -58,13 +58,13 @@ public class StereoOptionSceneController extends BasicSceneController implements
     /**
      * Indicates whether hardware device stereo is available. Valid only after this scene controller draws once.
      */
-    protected boolean hardwareStereo = false;
+    protected boolean hardwareStereo;
     /**
      * Indicates whether stereo is being applied, either because a stereo device is being used or a stereo mode is in
      * effect. This field is included because the question is asked every frame, and tracking the answer via a boolean
      * avoids the overhead of more complicated logic that determines the stereo-drawing implementation to call.
      */
-    protected boolean inStereo = false;
+    protected boolean inStereo;
 
     /**
      * Constructs an instance and initializes its stereo mode to
@@ -191,8 +191,7 @@ public class StereoOptionSceneController extends BasicSceneController implements
             if (this.isHardwareStereo())
                 gl.glDrawBuffer(GL2.GL_BACK_RIGHT);
             gl.glColorMask(false, true, true, true); // right eye in green/blue
-        }
-        else {
+        } else {
             if (this.isHardwareStereo())
                 gl.glDrawBuffer(GL2.GL_BACK_LEFT);
             gl.glColorMask(true, false, false, true); // left eye in red only
@@ -215,8 +214,7 @@ public class StereoOptionSceneController extends BasicSceneController implements
                 if (this.isHardwareStereo())
                     gl.glDrawBuffer(GL2.GL_BACK_RIGHT);
                 gl.glColorMask(true, false, false, true); // right eye in red only
-            }
-            else {
+            } else {
                 if (this.isHardwareStereo())
                     gl.glDrawBuffer(GL2.GL_BACK_LEFT);
                 gl.glColorMask(false, true, true, true);  // right eye in green/blue

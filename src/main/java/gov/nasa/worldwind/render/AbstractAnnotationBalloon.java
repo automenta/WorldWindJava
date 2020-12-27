@@ -135,8 +135,7 @@ public abstract class AbstractAnnotationBalloon extends AbstractBalloon {
                 double opacity = balloonAttrs.getInteriorOpacity();
                 annotationAttrs.setBackgroundColor(new Color(color.getRed(), color.getGreen(), color.getBlue(),
                     (opacity < 1 ? (int) (opacity * 255 + 0.5) : 255)));
-            }
-            else {
+            } else {
                 annotationAttrs.setBackgroundColor(new Color(0, 0, 0, 0));
             }
 
@@ -149,8 +148,7 @@ public abstract class AbstractAnnotationBalloon extends AbstractBalloon {
                 double opacity = balloonAttrs.getOutlineOpacity();
                 annotationAttrs.setBorderColor(new Color(color.getRed(), color.getGreen(), color.getBlue(),
                     (opacity < 1 ? (int) (opacity * 255 + 0.5) : 255)));
-            }
-            else {
+            } else {
                 annotationAttrs.setBorderColor(new Color(0, 0, 0, 0));
             }
         }

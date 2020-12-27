@@ -147,13 +147,13 @@ public class BasicTreeNode extends WWObjectImpl implements TreeNode {
      * @return {@link #SELECTED}, {@link #NOT_SELECTED}, {@link #PARTIALLY_SELECTED}.
      */
     protected String computeTreeSelected() {
-        String selected = this.isSelected() ? SELECTED : NOT_SELECTED;
+        String selected = this.isSelected() ? TreeNode.SELECTED : TreeNode.NOT_SELECTED;
 
         for (TreeNode child : this.getChildren()) {
             String childSelected = child.isTreeSelected();
 
             if (!selected.equals(childSelected)) {
-                selected = PARTIALLY_SELECTED;
+                selected = TreeNode.PARTIALLY_SELECTED;
                 break; // No need to look at other nodes
             }
         }
@@ -233,8 +233,7 @@ public class BasicTreeNode extends WWObjectImpl implements TreeNode {
             if (imageURL != null) {
                 this.texture = new BasicWWTexture(imageURL, true);
             }
-        }
-        else if (imageSource != null) {
+        } else if (imageSource != null) {
             this.texture = new BasicWWTexture(imageSource, true);
         }
     }

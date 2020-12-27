@@ -62,6 +62,28 @@ public class KMLLink extends KMLAbstractObject {
         super(namespaceURI);
     }
 
+    /**
+     * Schedule a task to mark a link as updated after a delay. The task only executes once.
+     *
+     * @param task     Task to schedule.
+     * @param delay    Delay to wait before executing the task. The time unit is determined by {code timeUnit}.
+     * @param timeUnit The time unit of {@code delay}.
+     * @return Future that represents the scheduled task.
+     */
+    protected static ScheduledFuture scheduleDelayedTask(Runnable task, long delay, TimeUnit timeUnit) {
+        return WorldWind.scheduler().addScheduledTask(task, delay, timeUnit);
+    }
+
+    /**
+     * Returns whether the resource specified by the <code>url</code> is a local resource.
+     *
+     * @param url the URL to test.
+     * @return <code>true</code> if the <code>url</code> specifies a local resource, otherwise <code>false</code>.
+     */
+    protected static boolean isLocalReference(URL url) {
+        return url.getProtocol() == null || "file".equals(url.getProtocol()) || "jar".equals(url.getProtocol());
+    }
+
     public String getHref() {
         return (String) this.getField("href");
     }
@@ -220,18 +242,6 @@ public class KMLLink extends KMLAbstractObject {
     }
 
     /**
-     * Schedule a task to mark a link as updated after a delay. The task only executes once.
-     *
-     * @param task     Task to schedule.
-     * @param delay    Delay to wait before executing the task. The time unit is determined by {code timeUnit}.
-     * @param timeUnit The time unit of {@code delay}.
-     * @return Future that represents the scheduled task.
-     */
-    protected static ScheduledFuture scheduleDelayedTask(Runnable task, long delay, TimeUnit timeUnit) {
-        return WorldWind.scheduler().addScheduledTask(task, delay, timeUnit);
-    }
-
-    /**
      * {@inheritDoc} Overridden to set a default refresh mode of {@code onChange} if the refresh mode is not specified.
      */
     @Override
@@ -278,8 +288,7 @@ public class KMLLink extends KMLAbstractObject {
      * specified in the configuration file using the keys <code>{@link AVKey#NAME}</code> and
      * <code>{@link AVKey#VERSION}</code>. If not specified, this uses default values of
      * <code>{@link Version#getVersionName()}</code> and <code>{@link
-     * Version#getVersion()}</code> for <code>[clientName]</code> and <code>[clientVersion]</code>,
-     * respectively.
+     * Version#getVersion()}</code> for <code>[clientName]</code> and <code>[clientVersion]</code>, respectively.
      *
      * @param dc the <code>DrawContext</code> used to determine the current view parameters.
      * @return the address of the resource specified by this KML link.
@@ -337,16 +346,6 @@ public class KMLLink extends KMLAbstractObject {
     }
 
     /**
-     * Returns whether the resource specified by the <code>url</code> is a local resource.
-     *
-     * @param url the URL to test.
-     * @return <code>true</code> if the <code>url</code> specifies a local resource, otherwise <code>false</code>.
-     */
-    protected static boolean isLocalReference(URL url) {
-        return url.getProtocol() == null || "file".equals(url.getProtocol()) || "jar".equals(url.getProtocol());
-    }
-
-    /**
      * This returns the concatenation of the query part of <code>href</code> (if any), the <code>viewFormat</code> and
      * the <code>httpQuery</code> to form the link URL's query part. This returns <code>null</code> if this link's
      * <code>href</code> does not specify a URL. This substitutes parameters in <code>viewFormat</code> according to
@@ -379,7 +378,7 @@ public class KMLLink extends KMLAbstractObject {
             // and the viewRefreshMode is "onStop".
             // See Google KML Reference: http://code.google.com/apis/kml/documentation/kmlreference.html#link
             if (s == null && KMLConstants.ON_STOP.equals(viewRefreshMode))
-                s = DEFAULT_VIEW_FORMAT;
+                s = KMLLink.DEFAULT_VIEW_FORMAT;
 
             // Ignore the viewFormat if it's specified but empty.
             if (!WWUtil.isEmpty(s)) {
@@ -454,14 +453,14 @@ public class KMLLink extends KMLAbstractObject {
         if (!queryString.isEmpty() && queryString.charAt(0) != '?')
             queryString.insert(0, '?');
 
-        return !queryString.isEmpty() ? queryString.toString() : null;
+        return queryString.isEmpty() ? null : queryString.toString();
     }
 
     /**
      * Returns a <code>Sector</code> that specifies the current visible bounds on the globe. If this link specifies a
      * <code>viewBoundScale</code>, this scales the visible bounds from its centroid by that factor, but limits the
-     * bounds to [-90,90] latitude and [-180,180] longitude. This returns <code>{@link
-     * Sector#EMPTY_SECTOR}</code> if the globe is not visible.
+     * bounds to [-90,90] latitude and [-180,180] longitude. This returns <code>{@link Sector#EMPTY_SECTOR}</code> if
+     * the globe is not visible.
      *
      * @param dc the <code>DrawContext</code> for which to compute the visible bounds.
      * @return the current visible bounds on the specified <code>DrawContext</code>.
@@ -485,13 +484,11 @@ public class KMLLink extends KMLAbstractObject {
                 Angle.fromDegreesLatitude(centerLat + this.getViewBoundScale() * (latDelta / 2.0d)),
                 Angle.fromDegreesLongitude(centerLon - this.getViewBoundScale() * (lonDelta / 2.0d)),
                 Angle.fromDegreesLongitude(centerLon + this.getViewBoundScale() * (lonDelta / 2.0d)));
-        }
-        else if (dc.getVisibleSector() != null) {
+        } else if (dc.getVisibleSector() != null) {
             // If the DrawContext has a visible sector but no viewBoundScale is specified, use the DrawContext's visible
             // sector as the view bounding box.
             return dc.getVisibleSector();
-        }
-        else {
+        } else {
             // If the DrawContext does not have a visible sector, use the standard EMPTY_SECTOR as the view bounding
             // box. If the viewFormat contains bounding box parameters, we must substitute them with a valid value. In
             // this case we substitute them with 0.
@@ -516,7 +513,7 @@ public class KMLLink extends KMLAbstractObject {
 
         super.applyChange(sourceValues);
 
-        this.onChange(new Message(MSG_LINK_CHANGED, this));
+        this.onChange(new Message(KMLAbstractObject.MSG_LINK_CHANGED, this));
     }
 
     /**

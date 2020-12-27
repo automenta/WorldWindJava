@@ -118,28 +118,6 @@ public class TABRasterReader {
         //noinspection EmptyCatchBlock
     }
 
-    public boolean canRead(String path) {
-        if (path == null)
-            return false;
-
-        Object streamOrException = WWIO.getFileOrResourceAsStream(path, this.getClass());
-        if (streamOrException == null || streamOrException instanceof Exception)
-            return false;
-
-        InputStream stream = (InputStream) streamOrException;
-        try {
-            InputStreamReader streamReader = new InputStreamReader(stream);
-            AVList controlPoints = new RasterControlPointList();
-            return TABRasterReader.doCanRead(streamReader, controlPoints);
-        }
-        catch (Exception ignored) {
-            return false;
-        }
-        finally {
-            WWIO.closeStream(stream, path);
-        }
-    }
-
     public static RasterControlPointList read(File file) throws IOException {
         if (file == null) {
             String message = Logging.getMessage("nullValue.FileIsNull");
@@ -166,36 +144,6 @@ public class TABRasterReader {
         }
         finally {
             WWIO.closeStream(fileReader, file.getPath());
-        }
-    }
-
-    public RasterControlPointList read(String path) throws IOException {
-        if (path == null) {
-            String message = Logging.getMessage("nullValue.PathIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        Object streamOrException = WWIO.getFileOrResourceAsStream(path, this.getClass());
-        if (streamOrException == null || streamOrException instanceof Exception) {
-            String message = Logging.getMessage("generic.ExceptionAttemptingToReadFile",
-                (streamOrException != null) ? streamOrException : path);
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        InputStream stream = (InputStream) streamOrException;
-        try {
-            InputStreamReader streamReader = new InputStreamReader(stream);
-
-            String workingDirectory = WWIO.getParentFilePath(path);
-
-            RasterControlPointList controlPoints = new RasterControlPointList();
-            TABRasterReader.doRead(streamReader, workingDirectory, controlPoints);
-            return controlPoints;
-        }
-        finally {
-            WWIO.closeStream(stream, path);
         }
     }
 
@@ -269,22 +217,22 @@ public class TABRasterReader {
         }
 
         String line = TABRasterReader.skipToHeader(reader);
-        if (line == null || !line.equalsIgnoreCase(TAG_HEADER_TABLE)) {
+        if (line == null || !line.equalsIgnoreCase(TABRasterReader.TAG_HEADER_TABLE)) {
             String message = Logging.getMessage("TABReader.InvalidMagicString", line);
             Logging.logger().severe(message);
             throw new IOException(message);
         }
 
         line = TABRasterReader.nextLine(reader);
-        if (line != null && line.startsWith(TAG_HEADER_VERSION)) {
-            if (controlPoints.get(VERSION) == null)
-                setProperty(line, VERSION, controlPoints);
+        if (line != null && line.startsWith(TABRasterReader.TAG_HEADER_VERSION)) {
+            if (controlPoints.get(TABRasterReader.VERSION) == null)
+                TABRasterReader.setProperty(line, TABRasterReader.VERSION, controlPoints);
         }
 
         line = TABRasterReader.nextLine(reader);
-        if (line != null && line.startsWith(TAG_HEADER_CHARSET)) {
-            if (controlPoints.get(CHARSET) == null)
-                setProperty(line, CHARSET, controlPoints);
+        if (line != null && line.startsWith(TABRasterReader.TAG_HEADER_CHARSET)) {
+            if (controlPoints.get(TABRasterReader.CHARSET) == null)
+                TABRasterReader.setProperty(line, TABRasterReader.CHARSET, controlPoints);
         }
     }
 
@@ -302,25 +250,25 @@ public class TABRasterReader {
         }
 
         String line = TABRasterReader.skipToDefinition(reader);
-        if (line == null || !line.equalsIgnoreCase(TAG_TABLE))
+        if (line == null || !line.equalsIgnoreCase(TABRasterReader.TAG_TABLE))
             return;
 
         line = TABRasterReader.nextLine(reader);
-        if (line != null && line.startsWith(TAG_FILE)) {
-            if (controlPoints.getStringValue(IMAGE_PATH) == null
-                || controlPoints.getStringValue(IMAGE_PATH).isEmpty()) {
+        if (line != null && line.startsWith(TABRasterReader.TAG_FILE)) {
+            if (controlPoints.getStringValue(TABRasterReader.IMAGE_PATH) == null
+                || controlPoints.getStringValue(TABRasterReader.IMAGE_PATH).isEmpty()) {
                 String[] tokens = line.split(" ", 2);
                 if (tokens.length >= 2 && tokens[1] != null) {
-                    String pathname = stripQuotes(tokens[1].trim());
-                    controlPoints.set(IMAGE_PATH, WWIO.appendPathPart(workingDirectory, pathname));
+                    String pathname = TABRasterReader.stripQuotes(tokens[1].trim());
+                    controlPoints.set(TABRasterReader.IMAGE_PATH, WWIO.appendPathPart(workingDirectory, pathname));
                 }
             }
         }
 
         line = TABRasterReader.nextLine(reader);
-        if (line != null && line.startsWith(TAG_TYPE)) {
-            if (controlPoints.get(TYPE) == null)
-                setProperty(line, TYPE, controlPoints);
+        if (line != null && line.startsWith(TABRasterReader.TAG_TYPE)) {
+            if (controlPoints.get(TABRasterReader.TYPE) == null)
+                TABRasterReader.setProperty(line, TABRasterReader.TYPE, controlPoints);
         }
 
         TABRasterReader.readControlPoints(reader, controlPoints);
@@ -362,7 +310,7 @@ public class TABRasterReader {
             if (wx != null && wy != null && rx != null && ry != null) {
                 RasterControlPointList.ControlPoint controlPoint =
                     new RasterControlPointList.ControlPoint(wx, wy, rx, ry);
-                controlPoint.set(LABEL, label);
+                controlPoint.set(TABRasterReader.LABEL, label);
                 controlPoints.add(controlPoint);
             }
         }
@@ -424,14 +372,14 @@ public class TABRasterReader {
     protected static String validateHeaderValues(AVList values) {
         StringBuilder sb = new StringBuilder();
 
-        String s = values.getStringValue(VERSION);
+        String s = values.getStringValue(TABRasterReader.VERSION);
         if (s == null || s.isEmpty()) {
             if (!sb.isEmpty())
                 sb.append(", ");
             sb.append(Logging.getMessage("term.version"));
         }
 
-        s = values.getStringValue(CHARSET);
+        s = values.getStringValue(TABRasterReader.CHARSET);
         if (s == null || s.isEmpty()) {
             if (!sb.isEmpty())
                 sb.append(", ");
@@ -447,11 +395,11 @@ public class TABRasterReader {
     protected static String validateRasterControlPoints(RasterControlPointList controlPoints) {
         StringBuilder sb = new StringBuilder();
 
-        if (controlPoints.getStringValue(IMAGE_PATH) == null && controlPoints.getStringValue(IMAGE_PATH).isEmpty()) {
+        if (controlPoints.getStringValue(TABRasterReader.IMAGE_PATH) == null && controlPoints.getStringValue(TABRasterReader.IMAGE_PATH).isEmpty()) {
             if (!sb.isEmpty())
                 sb.append(", ");
             sb.append(Logging.getMessage("TABReader.MissingOrInvalidFileName",
-                controlPoints.getStringValue(IMAGE_PATH)));
+                controlPoints.getStringValue(TABRasterReader.IMAGE_PATH)));
         }
 
         if (controlPoints.size() < 3) {
@@ -464,5 +412,57 @@ public class TABRasterReader {
             return sb.toString();
 
         return null;
+    }
+
+    public boolean canRead(String path) {
+        if (path == null)
+            return false;
+
+        Object streamOrException = WWIO.getFileOrResourceAsStream(path, this.getClass());
+        if (streamOrException == null || streamOrException instanceof Exception)
+            return false;
+
+        InputStream stream = (InputStream) streamOrException;
+        try {
+            InputStreamReader streamReader = new InputStreamReader(stream);
+            AVList controlPoints = new RasterControlPointList();
+            return TABRasterReader.doCanRead(streamReader, controlPoints);
+        }
+        catch (RuntimeException ignored) {
+            return false;
+        }
+        finally {
+            WWIO.closeStream(stream, path);
+        }
+    }
+
+    public RasterControlPointList read(String path) throws IOException {
+        if (path == null) {
+            String message = Logging.getMessage("nullValue.PathIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        Object streamOrException = WWIO.getFileOrResourceAsStream(path, this.getClass());
+        if (streamOrException == null || streamOrException instanceof Exception) {
+            String message = Logging.getMessage("generic.ExceptionAttemptingToReadFile",
+                (streamOrException != null) ? streamOrException : path);
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        InputStream stream = (InputStream) streamOrException;
+        try {
+            InputStreamReader streamReader = new InputStreamReader(stream);
+
+            String workingDirectory = WWIO.getParentFilePath(path);
+
+            RasterControlPointList controlPoints = new RasterControlPointList();
+            TABRasterReader.doRead(streamReader, workingDirectory, controlPoints);
+            return controlPoints;
+        }
+        finally {
+            WWIO.closeStream(stream, path);
+        }
     }
 }

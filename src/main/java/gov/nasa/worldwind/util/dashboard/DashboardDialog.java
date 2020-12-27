@@ -22,7 +22,7 @@ import java.awt.event.*;
  */
 public class DashboardDialog extends JDialog {
     private WorldWindow wwd;
-    private boolean runContinuously = false;
+    private boolean runContinuously;
 
     public DashboardDialog(Frame parent, WorldWindow wwd) throws HeadlessException {
         super(parent, "WWJ Dashboard");
@@ -115,13 +115,11 @@ public class DashboardDialog extends JDialog {
                 wwd.model().setShowWireframeInterior(true);
                 wwd.model().getGlobe().getTessellator().setMakeTileSkirts(false);
                 skirtsButton.setSelected(false);
-            }
-            else if (skirts && e.getSource() == skirtsButton) {
+            } else if (skirts && e.getSource() == skirtsButton) {
                 wwd.model().setShowWireframeInterior(true);
                 wwd.model().getGlobe().getTessellator().setMakeTileSkirts(true);
                 triangleButton.setSelected(false);
-            }
-            else {
+            } else {
                 wwd.model().setShowWireframeInterior(false);
                 wwd.model().getGlobe().getTessellator().setMakeTileSkirts(true);
             }

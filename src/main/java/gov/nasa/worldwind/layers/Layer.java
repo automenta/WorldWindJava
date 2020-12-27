@@ -70,11 +70,10 @@ public interface Layer extends WWObject, Disposable, Restorable {
     /**
      * Indicates whether the layer performs selection during picking.
      * <p>
-     * Most layers enable picking by default. However, this becomes inconvenient for {@link
-     * SurfaceImage} and {@link SurfaceImageLayer}} when the image
-     * covers a large area because the view input handlers detect the surface image rather than the terrain as the top
-     * picked object, and will not respond to the user's attempts at navigation. The solution is to disable picking for
-     * the layer.
+     * Most layers enable picking by default. However, this becomes inconvenient for {@link SurfaceImage} and {@link
+     * SurfaceImageLayer}} when the image covers a large area because the view input handlers detect the surface image
+     * rather than the terrain as the top picked object, and will not respond to the user's attempts at navigation. The
+     * solution is to disable picking for the layer.
      *
      * @return <code>true</code> if picking is enabled, else <code>false</code>.
      */
@@ -223,9 +222,9 @@ public interface Layer extends WWObject, Disposable, Restorable {
      * Indicates the altitude above which this layer likely has low value or is not expected to be active. This value is
      * independent of the maximum active altitude, {@link #setMaxActiveAltitude(double)} and does not reflect it.
      * <p>
-     * The returned altitude is valid when the field of view indicated by {@link View#getFieldOfView()}
-     * is set to its default value. Changing the field of view to any value other than the default may change this
-     * layer's maximum effective altitude, but the returned altitude will not reflect that change.
+     * The returned altitude is valid when the field of view indicated by {@link View#getFieldOfView()} is set to its
+     * default value. Changing the field of view to any value other than the default may change this layer's maximum
+     * effective altitude, but the returned altitude will not reflect that change.
      *
      * @param radius the radius of the {@link gov.nasa.worldwind.globes.Globe} the layer is associated with. May be
      *               null, in which case the Earth's equatorial radius is used, {@link gov.nasa.worldwind.globes.Earth#WGS84_EQUATORIAL_RADIUS}.
@@ -237,9 +236,9 @@ public interface Layer extends WWObject, Disposable, Restorable {
      * Indicates the altitude below which this layer likely has low value or is not expected to be active. This value is
      * independent of the minimum active altitude, {@link #setMinActiveAltitude(double)} and does not reflect it.
      * <p>
-     * The returned altitude is valid when the field of view indicated by {@link View#getFieldOfView()}
-     * is set to its default value. Changing the field of view to any value other than the default may change this
-     * layer's minimum effective altitude, but the returned altitude will not reflect that change.
+     * The returned altitude is valid when the field of view indicated by {@link View#getFieldOfView()} is set to its
+     * default value. Changing the field of view to any value other than the default may change this layer's minimum
+     * effective altitude, but the returned altitude will not reflect that change.
      *
      * @param radius the radius of the {@link gov.nasa.worldwind.globes.Globe} the layer is associated with. May be
      *               null, in which case the Earth's equatorial radius is used, {@link gov.nasa.worldwind.globes.Earth#WGS84_EQUATORIAL_RADIUS}.

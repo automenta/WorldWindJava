@@ -30,8 +30,8 @@ public class DDSDecompressor {
 
     /**
      * Reconstructs image raster from a DDS source. The source type may be one of the following: <ul><li>{@link
-     * java.net.URL}</li> <li>{@link java.net.URI}</li> <li>{@link File}</li> <li>{@link String} containing a
-     * valid URL description, a valid URI description, or a valid path to a local file.</li> </ul>
+     * java.net.URL}</li> <li>{@link java.net.URI}</li> <li>{@link File}</li> <li>{@link String} containing a valid URL
+     * description, a valid URI description, or a valid path to a local file.</li> </ul>
      *
      * @param source the source to convert to local file path.
      * @param params The AVList is a required parameter, Cannot be null. Requires AVK.Sector to be present.
@@ -106,8 +106,7 @@ public class DDSDecompressor {
             int dxtFormat = pixelFormat.getFourCC();
             if (dxtFormat == DDSConstants.D3DFMT_DXT3) {
                 decompressor = new DXT3Decompressor();
-            }
-            else if (dxtFormat == DDSConstants.D3DFMT_DXT1) {
+            } else if (dxtFormat == DDSConstants.D3DFMT_DXT1) {
                 decompressor = new DXT1Decompressor();
             }
 
@@ -125,8 +124,7 @@ public class DDSDecompressor {
                 buffer.position(DDSConstants.DDS_DATA_OFFSET);
                 BufferedImage image = decompressor.decompress(buffer, header.getWidth(), header.getHeight());
                 raster = new BufferedImageRaster(sector, image, params);
-            }
-            else if (mipMapCount > 0) {
+            } else if (mipMapCount > 0) {
                 ArrayList<BufferedImage> list = new ArrayList<>();
 
                 int mmLength = header.getLinearSize();
@@ -165,7 +163,8 @@ public class DDSDecompressor {
         }
     }
 
-    protected static MappedByteBuffer mapFile(FileChannel channel, long offset, long length) throws Exception {
+    protected static MappedByteBuffer mapFile(FileChannel channel, long offset, long length)
+        throws IllegalArgumentException, IOException {
         if (null == channel || !channel.isOpen()) {
             String message = Logging.getMessage("nullValue.ChannelIsNull");
             Logging.logger().fine(message);

@@ -76,6 +76,30 @@ public abstract class AbstractGeneralShape extends AbstractShape {
     }
 
     /**
+     * Computes the minimum distance between this shape and the eye point.
+     * <p>
+     * A {@link AbstractShape.AbstractShapeData} must be current when this method is called.
+     *
+     * @param dc        the current draw context.
+     * @param shapeData the current shape data for this shape.
+     * @return the minimum distance from the shape to the eye point.
+     */
+    protected static double computeEyeDistance(DrawContext dc, ShapeData shapeData) {
+        Vec4 eyePoint = dc.getView().getEyePoint();
+
+        // TODO: compute distance using extent.getEffectiveRadius(Plane)
+        Extent extent = shapeData.getExtent();
+        if (extent != null)
+            return extent.getCenter().distanceTo3(eyePoint) + extent.getRadius();
+
+        Vec4 refPt = shapeData.getReferencePoint();
+        if (refPt != null)
+            return refPt.distanceTo3(eyePoint);
+
+        return 0;
+    }
+
+    /**
      * Returns the current shape data cache entry.
      *
      * @return the current data cache entry.
@@ -216,30 +240,6 @@ public abstract class AbstractGeneralShape extends AbstractShape {
             return null;
 
         return terrain.getSurfacePoint(refPos.getLatitude(), refPos.getLongitude(), 0);
-    }
-
-    /**
-     * Computes the minimum distance between this shape and the eye point.
-     * <p>
-     * A {@link AbstractShape.AbstractShapeData} must be current when this method is called.
-     *
-     * @param dc        the current draw context.
-     * @param shapeData the current shape data for this shape.
-     * @return the minimum distance from the shape to the eye point.
-     */
-    protected static double computeEyeDistance(DrawContext dc, ShapeData shapeData) {
-        Vec4 eyePoint = dc.getView().getEyePoint();
-
-        // TODO: compute distance using extent.getEffectiveRadius(Plane)
-        Extent extent = shapeData.getExtent();
-        if (extent != null)
-            return extent.getCenter().distanceTo3(eyePoint) + extent.getRadius();
-
-        Vec4 refPt = shapeData.getReferencePoint();
-        if (refPt != null)
-            return refPt.distanceTo3(eyePoint);
-
-        return 0;
     }
 
     public void moveTo(Position position) {

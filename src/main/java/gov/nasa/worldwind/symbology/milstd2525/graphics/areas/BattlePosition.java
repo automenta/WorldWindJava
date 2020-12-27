@@ -90,7 +90,7 @@ public class BattlePosition extends BasicArea {
 
         StringBuilder sb = new StringBuilder();
         if (!WWUtil.isEmpty(label)) {
-            sb.append(label).append(" ");
+            sb.append(label).append(' ');
         }
 
         if (!WWUtil.isEmpty(text)) {
@@ -179,7 +179,7 @@ public class BattlePosition extends BasicArea {
 
         // Prepared but not Occupied graphic always renders with dashed lines.
         if (TacGrpSidc.C2GM_DEF_ARS_BTLPSN_PBNO.equalsIgnoreCase(this.maskedSymbolCode)) {
-            attributes.setOutlineStippleFactor(PBNO_OUTLINE_STIPPLE_FACTOR);
+            attributes.setOutlineStippleFactor(BattlePosition.PBNO_OUTLINE_STIPPLE_FACTOR);
             attributes.setOutlineStipplePattern(AbstractMilStd2525TacticalGraphic.getOutlineStipplePattern());
         }
     }

@@ -51,8 +51,7 @@ public class RotateToAngleAnimator extends AngleAnimator {
 
         if (stopMoving) {
             this.stop();
-        }
-        else {
+        } else {
             nextAngle = Angle.mix(interpolant, curAngle, this.end);
         }
         return (nextAngle);

@@ -29,16 +29,16 @@ public class CappedEllipticalCylinder extends AbstractAirspace {
     protected static final int DEFAULT_LOOPS = 8;
     protected static final int MINIMAL_GEOMETRY_SLICES = 8;
     protected static final int MINIMAL_GEOMETRY_LOOPS = 4;
-    protected final int stacks = DEFAULT_STACKS;
+    protected final int stacks = CappedEllipticalCylinder.DEFAULT_STACKS;
     protected LatLon center = LatLon.ZERO;
-    protected double innerMinorRadius = 0.0;
+    protected double innerMinorRadius;
     protected double outerMinorRadius = 1.0;
-    protected double innerMajorRadius = 0.0;
+    protected double innerMajorRadius;
     protected double outerMajorRadius = 1.0;
     protected Angle heading = Angle.ZERO;
     protected boolean enableCaps = true;
-    protected int slices = DEFAULT_SLICES;
-    protected int loops = DEFAULT_LOOPS;
+    protected int slices = CappedEllipticalCylinder.DEFAULT_SLICES;
+    protected int loops = CappedEllipticalCylinder.DEFAULT_LOOPS;
 
     public CappedEllipticalCylinder(LatLon location, double minorRadius, double majorRadius, Angle heading) {
         if (location == null) {
@@ -97,38 +97,38 @@ public class CappedEllipticalCylinder extends AbstractAirspace {
 
         DetailLevel level;
         level = new ScreenSizeDetailLevel(ramp[0], "Detail-Level-0");
-        level.set(SLICES, 32);
-        level.set(STACKS, 1);
-        level.set(LOOPS, 8);
-        level.set(DISABLE_TERRAIN_CONFORMANCE, false);
+        level.set(AbstractAirspace.SLICES, 32);
+        level.set(AbstractAirspace.STACKS, 1);
+        level.set(AbstractAirspace.LOOPS, 8);
+        level.set(AbstractAirspace.DISABLE_TERRAIN_CONFORMANCE, false);
         levels.add(level);
 
         level = new ScreenSizeDetailLevel(ramp[1], "Detail-Level-1");
-        level.set(SLICES, 26);
-        level.set(STACKS, 1);
-        level.set(LOOPS, 6);
-        level.set(DISABLE_TERRAIN_CONFORMANCE, false);
+        level.set(AbstractAirspace.SLICES, 26);
+        level.set(AbstractAirspace.STACKS, 1);
+        level.set(AbstractAirspace.LOOPS, 6);
+        level.set(AbstractAirspace.DISABLE_TERRAIN_CONFORMANCE, false);
         levels.add(level);
 
         level = new ScreenSizeDetailLevel(ramp[2], "Detail-Level-2");
-        level.set(SLICES, 20);
-        level.set(STACKS, 1);
-        level.set(LOOPS, 4);
-        level.set(DISABLE_TERRAIN_CONFORMANCE, false);
+        level.set(AbstractAirspace.SLICES, 20);
+        level.set(AbstractAirspace.STACKS, 1);
+        level.set(AbstractAirspace.LOOPS, 4);
+        level.set(AbstractAirspace.DISABLE_TERRAIN_CONFORMANCE, false);
         levels.add(level);
 
         level = new ScreenSizeDetailLevel(ramp[3], "Detail-Level-3");
-        level.set(SLICES, 14);
-        level.set(STACKS, 1);
-        level.set(LOOPS, 2);
-        level.set(DISABLE_TERRAIN_CONFORMANCE, false);
+        level.set(AbstractAirspace.SLICES, 14);
+        level.set(AbstractAirspace.STACKS, 1);
+        level.set(AbstractAirspace.LOOPS, 2);
+        level.set(AbstractAirspace.DISABLE_TERRAIN_CONFORMANCE, false);
         levels.add(level);
 
         level = new ScreenSizeDetailLevel(ramp[4], "Detail-Level-4");
-        level.set(SLICES, 14);
-        level.set(STACKS, 1);
-        level.set(LOOPS, 1);
-        level.set(DISABLE_TERRAIN_CONFORMANCE, true);
+        level.set(AbstractAirspace.SLICES, 14);
+        level.set(AbstractAirspace.STACKS, 1);
+        level.set(AbstractAirspace.LOOPS, 1);
+        level.set(AbstractAirspace.DISABLE_TERRAIN_CONFORMANCE, true);
         levels.add(level);
 
         this.setDetailLevels(levels);
@@ -307,8 +307,7 @@ public class CappedEllipticalCylinder extends AbstractAirspace {
             Vec4 topCenter = centerPoint.add3(cylinderAxis.multiply3(maxProj));
             double radius = Math.sqrt(maxPerp);
             return new Cylinder(bottomCenter, topCenter, radius);
-        }
-        else {
+        } else {
             return Box.computeBoundingBox(points);
         }
     }
@@ -317,7 +316,7 @@ public class CappedEllipticalCylinder extends AbstractAirspace {
     protected List<Vec4> computeMinimalGeometry(Globe globe, double verticalExaggeration) {
         GeometryBuilder gb = new GeometryBuilder();
         LatLon[] locations = GeometryBuilder.makeDiskLocations(globe, this.center, this.getRadii(),
-            this.heading, MINIMAL_GEOMETRY_SLICES, MINIMAL_GEOMETRY_LOOPS);
+            this.heading, CappedEllipticalCylinder.MINIMAL_GEOMETRY_SLICES, CappedEllipticalCylinder.MINIMAL_GEOMETRY_LOOPS);
 
         List<Vec4> points = new ArrayList<>();
         this.makeExtremePoints(globe, verticalExaggeration, Arrays.asList(locations), points);
@@ -360,8 +359,8 @@ public class CappedEllipticalCylinder extends AbstractAirspace {
         super.doMoveTo(oldRef, newRef);
 
         LatLon center = this.getCenter();
-        double distance = LatLon.greatCircleDistance(oldRef, center).radians;
-        double azimuth = LatLon.greatCircleAzimuth(oldRef, center).radians;
+        double distance = LatLon.greatCircleDistance(oldRef, center).radians();
+        double azimuth = LatLon.greatCircleAzimuth(oldRef, center).radians();
         this.setCenter(LatLon.greatCircleEndPosition(newRef, azimuth, distance));
     }
 
@@ -471,19 +470,19 @@ public class CappedEllipticalCylinder extends AbstractAirspace {
         if (this.isEnableLevelOfDetail()) {
             DetailLevel level = this.computeDetailLevel(dc);
 
-            Object o = level.get(SLICES);
+            Object o = level.get(AbstractAirspace.SLICES);
             if (o instanceof Integer)
                 slices = (Integer) o;
 
-            o = level.get(STACKS);
+            o = level.get(AbstractAirspace.STACKS);
             if (o instanceof Integer)
                 stacks = (Integer) o;
 
-            o = level.get(LOOPS);
+            o = level.get(AbstractAirspace.LOOPS);
             if (o instanceof Integer)
                 loops = (Integer) o;
 
-            o = level.get(DISABLE_TERRAIN_CONFORMANCE);
+            o = level.get(AbstractAirspace.DISABLE_TERRAIN_CONFORMANCE);
             if (o instanceof Boolean && ((Boolean) o))
                 terrainConformant[0] = terrainConformant[1] = false;
         }
@@ -497,7 +496,7 @@ public class CappedEllipticalCylinder extends AbstractAirspace {
         try {
             dc.getView().pushReferenceCenter(dc, refCenter);
 
-            if (DRAW_STYLE_OUTLINE.equals(drawStyle)) {
+            if (Airspace.DRAW_STYLE_OUTLINE.equals(drawStyle)) {
                 // Outer cylinder isn't rendered if outer radius is zero.
                 if (radii[2] != 0.0 && radii[3] != 0) {
                     this.drawCylinderOutline(dc, center, radii[2], radii[3], this.heading, altitudes,
@@ -508,8 +507,7 @@ public class CappedEllipticalCylinder extends AbstractAirspace {
                     this.drawCylinderOutline(dc, center, radii[0], radii[1], this.heading, altitudes,
                         terrainConformant, slices, stacks, GeometryBuilder.INSIDE, refCenter);
                 }
-            }
-            else if (DRAW_STYLE_FILL.equals(drawStyle)) {
+            } else if (Airspace.DRAW_STYLE_FILL.equals(drawStyle)) {
                 if (this.enableCaps) {
                     ogsh.pushAttrib(gl, GL2.GL_POLYGON_BIT);
                     gl.glEnable(GL.GL_CULL_FACE);
@@ -692,7 +690,8 @@ public class CappedEllipticalCylinder extends AbstractAirspace {
         int count = GeometryBuilder.getDiskVertexCount(slices, loops);
         float[] verts = new float[3 * count];
         float[] norms = new float[3 * count];
-        GeometryBuilder.makeDiskVertices(dc.getTerrain(), center, radii, heading, altitude, terrainConformant, slices, loops,
+        GeometryBuilder.makeDiskVertices(dc.getTerrain(), center, radii, heading, altitude, terrainConformant, slices,
+            loops,
             referenceCenter, verts);
         gb.makeDiskVertexNormals(radii[0], radii[2], slices, loops, verts, norms);
 

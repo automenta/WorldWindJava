@@ -554,7 +554,7 @@ public class WWOMeasureTool extends AVListImpl
                 .subtractDegrees(headingOffset);
             // Compute distance - have a minimal distance to avoid zero sized shape
             Angle distanceAngle = LatLon.greatCircleDistance(this.shapeCenterPosition, newPosition);
-            double distance = Math.max(distanceAngle.radians * getWwd().model().getGlobe().getRadius(), 0.1);
+            double distance = Math.max(distanceAngle.radians() * getWwd().model().getGlobe().getRadius(), 0.1);
             double width, height;
             if (control.equals("East") || control.equals("West")) {
                 width = distance * 2;
@@ -843,7 +843,7 @@ public class WWOMeasureTool extends AVListImpl
                 // Free hand - Compute distance from current control point (rubber band target)
                 Position lastPosition = rubberBandTarget.getPosition();
                 Position newPosition = this.getWwd().position();
-                double distance = LatLon.greatCircleDistance(lastPosition, newPosition).radians
+                double distance = LatLon.greatCircleDistance(lastPosition, newPosition).radians()
                     * this.getWwd().model().getGlobe().getRadius();
                 if (distance >= freeHandMinSpacing) {
                     // Add new control point

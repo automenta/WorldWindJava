@@ -15,8 +15,8 @@ import java.util.logging.*;
 
 /**
  * This class of static methods provides the interface to logging for WorldWind components. Logging is performed via
- * {@link Logger}. The default logger name is <code>gov.nasa.worldwind</code>. The logger name is
- * configurable via {@link Configuration}.
+ * {@link Logger}. The default logger name is <code>gov.nasa.worldwind</code>. The logger name is configurable via
+ * {@link Configuration}.
  *
  * @author tag
  * @version $Id: Logging.java 1171 2013-02-11 21:45:02Z dcollins $
@@ -41,25 +41,24 @@ public class Logging {
             // The Configuration singleton may not be established yet, so catch the exception that occurs if it's not
             // and use the default logger name.
             String loggerName = Configuration.getStringValue(AVKey.LOGGER_NAME, Configuration.DEFAULT_LOGGER_NAME);
-            return logger(loggerName);
+            return Logging.logger(loggerName);
         }
-        catch (Exception e) {
-            return logger(Configuration.DEFAULT_LOGGER_NAME);
+        catch (RuntimeException e) {
+            return Logging.logger(Configuration.DEFAULT_LOGGER_NAME);
         }
     }
 
     /**
-     * Returns a specific logger. Does not access {@link Configuration} to determine the configured
-     * WorldWind logger.
+     * Returns a specific logger. Does not access {@link Configuration} to determine the configured WorldWind logger.
      * <p>
-     * This is needed by {@link Configuration} to avoid calls back into itself when its singleton
-     * instance is not yet instantiated.
+     * This is needed by {@link Configuration} to avoid calls back into itself when its singleton instance is not yet
+     * instantiated.
      *
      * @param loggerName the name of the logger to use.
      * @return The logger.
      */
     public static Logger logger(String loggerName) {
-        return Logger.getLogger(loggerName != null ? loggerName : "", MESSAGE_BUNDLE_NAME);
+        return Logger.getLogger(loggerName != null ? loggerName : "", Logging.MESSAGE_BUNDLE_NAME);
     }
 
     /**
@@ -70,11 +69,11 @@ public class Logging {
      */
     public static String getMessage(String property) {
         try {
-            return (String) PropertyResourceBundle.getBundle(MESSAGE_BUNDLE_NAME, LOCALE).getObject(property);
+            return (String) PropertyResourceBundle.getBundle(Logging.MESSAGE_BUNDLE_NAME, Logging.LOCALE).getObject(property);
         }
-        catch (Exception e) {
-            String message = "Exception looking up message from bundle " + MESSAGE_BUNDLE_NAME;
-            logger().log(java.util.logging.Level.SEVERE, message, e);
+        catch (RuntimeException e) {
+            String message = "Exception looking up message from bundle " + Logging.MESSAGE_BUNDLE_NAME;
+            Logging.logger().log(java.util.logging.Level.SEVERE, message, e);
             return message;
         }
     }
@@ -89,7 +88,7 @@ public class Logging {
      * @see MessageFormat
      */
     public static String getMessage(String property, String arg) {
-        return arg != null ? getMessage(property, (Object) arg) : getMessage(property);
+        return arg != null ? Logging.getMessage(property, (Object) arg) : Logging.getMessage(property);
     }
 
     /**
@@ -105,11 +104,11 @@ public class Logging {
         String message;
 
         try {
-            message = (String) ResourceBundle.getBundle(MESSAGE_BUNDLE_NAME, Locale.getDefault()).getObject(property);
+            message = (String) ResourceBundle.getBundle(Logging.MESSAGE_BUNDLE_NAME, Locale.getDefault()).getObject(property);
         }
-        catch (Exception e) {
-            message = "Exception looking up message from bundle " + MESSAGE_BUNDLE_NAME;
-            logger().log(Level.SEVERE, message, e);
+        catch (RuntimeException e) {
+            message = "Exception looking up message from bundle " + Logging.MESSAGE_BUNDLE_NAME;
+            Logging.logger().log(Level.SEVERE, message, e);
             return message;
         }
 
@@ -119,7 +118,7 @@ public class Logging {
         }
         catch (IllegalArgumentException e) {
             message = "Message arguments do not match format string: " + property;
-            logger().log(Level.SEVERE, message, e);
+            Logging.logger().log(Level.SEVERE, message, e);
             return message;
         }
     }
@@ -131,6 +130,6 @@ public class Logging {
      * @return the maximum number of times to repeat a message.
      */
     public static int getMaxMessageRepeatCount() {
-        return MAX_MESSAGE_REPEAT;
+        return Logging.MAX_MESSAGE_REPEAT;
     }
 }

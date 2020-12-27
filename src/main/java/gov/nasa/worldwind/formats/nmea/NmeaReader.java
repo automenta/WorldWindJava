@@ -26,11 +26,48 @@ public class NmeaReader implements Track, TrackSegment {
     private final List<TrackPoint> points =
         new ArrayList<>();
     private String name;
-    private int sentenceNumber = 0;
+    private int sentenceNumber;
 
     public NmeaReader() {
         this.tracks.add(this);
         this.segments.add(this);
+    }
+
+    private static String readSentence(InputStream stream) throws IOException, InterruptedException {
+        StringBuilder sb = null;
+        boolean endOfSentence = false;
+
+        while (!endOfSentence && !Thread.currentThread().isInterrupted()) {
+            int b = stream.read();
+
+            if (b < 0)
+                return null;
+            else if (b == 0)
+                Thread.sleep(200);
+            else if (b == '$')
+                sb = new StringBuilder(100);
+            else if (b == '\r')
+                endOfSentence = true;
+            else if (sb != null)
+                sb.append((char) b);
+        }
+
+        // TODO: check checksum
+        return sb != null ? sb.toString() : null;
+    }
+
+    private static String readSentence(ByteBuffer buffer) {
+        StringBuilder sb = new StringBuilder(100);
+        boolean endOfSentence = false;
+        while (!endOfSentence) {
+            byte b = buffer.get();
+            if (b == '\r')
+                endOfSentence = true;
+            else
+                sb.append((char) b);
+        }
+
+        return sb.toString();
     }
 
     public List<TrackSegment> getSegments() {
@@ -52,9 +89,9 @@ public class NmeaReader implements Track, TrackSegment {
     /**
      * @param path The file spec to read.
      * @throws IllegalArgumentException if <code>path</code> is null
-     * @throws IOException      if a read error occurs.
+     * @throws IOException              if a read error occurs.
      */
-    public void readFile(String path) throws IOException {
+    public void readFile(String path) throws FileNotFoundException {
         if (path == null) {
             String msg = Logging.getMessage("nullValue.PathIsNull");
             Logging.logger().severe(msg);
@@ -133,43 +170,6 @@ public class NmeaReader implements Track, TrackSegment {
         }
     }
 
-    private static String readSentence(InputStream stream) throws IOException, InterruptedException {
-        StringBuilder sb = null;
-        boolean endOfSentence = false;
-
-        while (!endOfSentence && !Thread.currentThread().isInterrupted()) {
-            int b = stream.read();
-
-            if (b < 0)
-                return null;
-            else if (b == 0)
-                Thread.sleep(200);
-            else if (b == '$')
-                sb = new StringBuilder(100);
-            else if (b == '\r')
-                endOfSentence = true;
-            else if (sb != null)
-                sb.append((char) b);
-        }
-
-        // TODO: check checksum
-        return sb != null ? sb.toString() : null;
-    }
-
-    private static String readSentence(ByteBuffer buffer) {
-        StringBuilder sb = new StringBuilder(100);
-        boolean endOfSentence = false;
-        while (!endOfSentence) {
-            byte b = buffer.get();
-            if (b == '\r')
-                endOfSentence = true;
-            else
-                sb.append((char) b);
-        }
-
-        return sb.toString();
-    }
-
     private void parseSentence(String sentence) {
         String[] words = sentence.split("[,*]");
 
@@ -183,7 +183,7 @@ public class NmeaReader implements Track, TrackSegment {
                 words);
             this.points.add(point);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             System.out.printf("Exception %s at sentence number %d for %s\n",
                 e.getMessage(), this.sentenceNumber, this.name);
         }

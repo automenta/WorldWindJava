@@ -34,6 +34,17 @@ public class PolygonTessellator {
         this.boundaryIndices = IntBuffer.allocate(10);
     }
 
+    protected static IntBuffer addIndex(IntBuffer buffer, int index) {
+        if (!buffer.hasRemaining()) {
+            int newCapacity = buffer.capacity() + buffer.capacity() / 2; // increase capacity by 50%
+            IntBuffer newBuffer = IntBuffer.allocate(newCapacity);
+            newBuffer.put(buffer.flip());
+            return newBuffer.put(index);
+        } else {
+            return buffer.put(index);
+        }
+    }
+
     public boolean isEnabled() {
         return this.enabled;
     }
@@ -143,18 +154,6 @@ public class PolygonTessellator {
 
     protected void tessCombine(double[] coords, Object[] vertexData, float[] weight, Object[] outData) {
         // TODO: Implement the combine callback to handle complex polygons.
-    }
-
-    protected static IntBuffer addIndex(IntBuffer buffer, int index) {
-        if (!buffer.hasRemaining()) {
-            int newCapacity = buffer.capacity() + buffer.capacity() / 2; // increase capacity by 50%
-            IntBuffer newBuffer = IntBuffer.allocate(newCapacity);
-            newBuffer.put(buffer.flip());
-            return newBuffer.put(index);
-        }
-        else {
-            return buffer.put(index);
-        }
     }
 
     protected static class TessCallbackAdapter extends GLUtessellatorCallbackAdapter {

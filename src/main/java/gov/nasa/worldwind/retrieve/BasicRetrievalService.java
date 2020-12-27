@@ -37,8 +37,10 @@ public final class BasicRetrievalService extends WWObjectImpl
     protected SSLExceptionListener sslExceptionListener;
 
     public BasicRetrievalService() {
-        Integer poolSize = Configuration.getIntegerValue(AVKey.RETRIEVAL_POOL_SIZE, DEFAULT_POOL_SIZE);
-        this.queueSize = Configuration.getIntegerValue(AVKey.RETRIEVAL_QUEUE_SIZE, DEFAULT_QUEUE_SIZE);
+        Integer poolSize = Configuration.getIntegerValue(AVKey.RETRIEVAL_POOL_SIZE,
+            BasicRetrievalService.DEFAULT_POOL_SIZE);
+        this.queueSize = Configuration.getIntegerValue(AVKey.RETRIEVAL_QUEUE_SIZE,
+            BasicRetrievalService.DEFAULT_QUEUE_SIZE);
 
         // this.executor runs the retrievers, each in their own thread
         this.executor = new RetrievalExecutor(poolSize, this.queueSize);
@@ -92,8 +94,7 @@ public final class BasicRetrievalService extends WWObjectImpl
                     x.cancel(false); //already queued
                 }
                 return p;
-            }
-            else {
+            } else {
                 return x;
             }
         });
@@ -204,7 +205,7 @@ public final class BasicRetrievalService extends WWObjectImpl
         private final long staleRequestLimit; // reject requests older than this
 
         private RetrievalExecutor(int poolSize, int queueSize) {
-            super(poolSize, poolSize, THREAD_TIMEOUT, TimeUnit.SECONDS, new PriorityBlockingQueue<>(queueSize),
+            super(poolSize, poolSize, RetrievalExecutor.THREAD_TIMEOUT, TimeUnit.SECONDS, new PriorityBlockingQueue<>(queueSize),
                 runnable -> {
                     Thread thread = new Thread(runnable);
                     thread.setDaemon(true);
@@ -224,7 +225,7 @@ public final class BasicRetrievalService extends WWObjectImpl
                 });
 
             this.staleRequestLimit = Configuration.getLongValue(AVKey.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT,
-                DEFAULT_STALE_REQUEST_LIMIT);
+                BasicRetrievalService.DEFAULT_STALE_REQUEST_LIMIT);
         }
 
         /**
@@ -290,15 +291,13 @@ public final class BasicRetrievalService extends WWObjectImpl
                     task.getRetriever().getName());
                 final Throwable cause = e.getCause();
                 if (cause instanceof SocketTimeoutException || cause instanceof ConnectException) {
-                    Logging.logger().fine(message + " " + cause.getLocalizedMessage());
-                }
-                else if (cause instanceof SSLHandshakeException) {
+                    Logging.logger().fine(message + ' ' + cause.getLocalizedMessage());
+                } else if (cause instanceof SSLHandshakeException) {
                     if (sslExceptionListener != null)
                         sslExceptionListener.onException(cause, task.getRetriever().getName());
                     else
-                        Logging.logger().fine(message + " " + cause.getLocalizedMessage());
-                }
-                else {
+                        Logging.logger().fine(message + ' ' + cause.getLocalizedMessage());
+                } else {
                     Logging.logger().log(Level.FINE, message, e);
                 }
             }
@@ -311,7 +310,7 @@ public final class BasicRetrievalService extends WWObjectImpl
                     task.getRetriever().getName()));
             }
             finally {
-                Thread.currentThread().setName(IDLE_THREAD_NAME_PREFIX);
+                Thread.currentThread().setName(BasicRetrievalService.IDLE_THREAD_NAME_PREFIX);
             }
         }
     }

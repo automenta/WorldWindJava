@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.data;
 
-import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.Version;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.cache.Cacheable;
 import gov.nasa.worldwind.formats.tiff.GeoTiff;
@@ -22,7 +22,7 @@ import java.util.logging.Level;
  * @author dcollins
  * @version $Id: BufferedImageRaster.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class BufferedImageRaster extends AbstractDataRaster implements Cacheable, Disposable {
+public class BufferedImageRaster extends AbstractDataRaster implements Cacheable {
     private BufferedImage bufferedImage;
     private Graphics2D g2d;
 
@@ -62,7 +62,7 @@ public class BufferedImageRaster extends AbstractDataRaster implements Cacheable
     }
 
     private static long sizeOfDataBuffer(DataBuffer dataBuffer) {
-        return sizeOfElement(dataBuffer.getDataType()) * dataBuffer.getSize();
+        return BufferedImageRaster.sizeOfElement(dataBuffer.getDataType()) * dataBuffer.getSize();
     }
 
     private static long sizeOfElement(int dataType) {
@@ -104,8 +104,7 @@ public class BufferedImageRaster extends AbstractDataRaster implements Cacheable
                 Logging.logger().finest(msg);
                 throw new IllegalArgumentException(msg);
             }
-        }
-        else {
+        } else {
             params.set(AVKey.WIDTH, image.getWidth());
         }
 
@@ -116,8 +115,7 @@ public class BufferedImageRaster extends AbstractDataRaster implements Cacheable
                 Logging.logger().finest(msg);
                 throw new IllegalArgumentException(msg);
             }
-        }
-        else {
+        } else {
             params.set(AVKey.HEIGHT, image.getHeight());
         }
 
@@ -186,8 +184,7 @@ public class BufferedImageRaster extends AbstractDataRaster implements Cacheable
             if (AVKey.COORDINATE_SYSTEM_GEOGRAPHIC.equals(cs)) {
                 // assume WGS84
                 params.set(AVKey.PROJECTION_EPSG_CODE, GeoTiff.GCS.WGS_84);
-            }
-            else {
+            } else {
                 String msg = Logging.getMessage("generic.MissingRequiredParameter", AVKey.PROJECTION_EPSG_CODE);
                 Logging.logger().finest(msg);
                 throw new IllegalArgumentException(msg);
@@ -200,8 +197,7 @@ public class BufferedImageRaster extends AbstractDataRaster implements Cacheable
             if (AVKey.COORDINATE_SYSTEM_GEOGRAPHIC.equals(cs)) {
                 double pixelWidth = sector.lonDelta / image.getWidth();
                 params.set(AVKey.PIXEL_WIDTH, pixelWidth);
-            }
-            else {
+            } else {
                 String msg = Logging.getMessage("generic.MissingRequiredParameter", AVKey.PIXEL_WIDTH);
                 Logging.logger().finest(msg);
                 throw new IllegalArgumentException(msg);
@@ -214,8 +210,7 @@ public class BufferedImageRaster extends AbstractDataRaster implements Cacheable
             if (AVKey.COORDINATE_SYSTEM_GEOGRAPHIC.equals(cs)) {
                 double pixelHeight = sector.latDelta / image.getHeight();
                 params.set(AVKey.PIXEL_HEIGHT, pixelHeight);
-            }
-            else {
+            } else {
                 String msg = Logging.getMessage("generic.MissingRequiredParameter", AVKey.PIXEL_HEIGHT);
                 Logging.logger().finest(msg);
                 throw new IllegalArgumentException(msg);
@@ -224,8 +219,7 @@ public class BufferedImageRaster extends AbstractDataRaster implements Cacheable
 
         if (!params.hasKey(AVKey.PIXEL_FORMAT)) {
             params.set(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
-        }
-        else if (!AVKey.IMAGE.equals(params.getStringValue(AVKey.PIXEL_FORMAT))) {
+        } else if (!AVKey.IMAGE.equals(params.getStringValue(AVKey.PIXEL_FORMAT))) {
             String msg = Logging.getMessage("generic.UnknownValueForKey",
                 params.getStringValue(AVKey.PIXEL_FORMAT), AVKey.PIXEL_FORMAT);
             Logging.logger().severe(msg);
@@ -311,7 +305,7 @@ public class BufferedImageRaster extends AbstractDataRaster implements Cacheable
         if (raster != null) {
             DataBuffer db = raster.getDataBuffer();
             if (db != null) {
-                size = sizeOfDataBuffer(db);
+                size = BufferedImageRaster.sizeOfDataBuffer(db);
             }
         }
         return size;

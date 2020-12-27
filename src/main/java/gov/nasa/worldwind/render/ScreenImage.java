@@ -267,8 +267,7 @@ public class ScreenImage extends WWObjectImpl implements Renderable, Exportable 
                 this.texture = new BasicWWTexture(imageURL, true);
                 this.texture.setUseAnisotropy(false);
             }
-        }
-        else if (imageSource != null) {
+        } else if (imageSource != null) {
             this.texture = new BasicWWTexture(imageSource, true);
             return this.texture;
         }
@@ -394,13 +393,11 @@ public class ScreenImage extends WWObjectImpl implements Renderable, Exportable 
             if (texture != null) {
                 this.originalImageWidth = texture.getWidth(dc);
                 this.originalImageHeight = texture.getHeight(dc);
-            }
-            else if (this.getImageSource() == null) // If no image source is set, draw a rectangle
+            } else if (this.getImageSource() == null) // If no image source is set, draw a rectangle
             {
                 this.originalImageWidth = 1;
                 this.originalImageHeight = 1;
-            }
-            else // If an image source is set, but the image is not available yet, don't draw anything
+            } else // If an image source is set, but the image is not available yet, don't draw anything
             {
                 this.frameNumber = dc.getFrameTimeStamp();
                 return;
@@ -411,8 +408,7 @@ public class ScreenImage extends WWObjectImpl implements Renderable, Exportable 
                     viewportWidth, viewportHeight);
                 this.width = d.width;
                 this.height = d.height;
-            }
-            else {
+            } else {
                 this.width = this.originalImageWidth;
                 this.height = this.originalImageHeight;
             }
@@ -428,8 +424,7 @@ public class ScreenImage extends WWObjectImpl implements Renderable, Exportable 
                 // left corner of the image (0.5, 0.5 is the center of the image), so we'll do that too.
                 Point.Double pointD = rotationOffset.computeOffset(this.width, this.height, null, null);
                 rotationPoint = new Point((int) pointD.x, (int) pointD.y);
-            }
-            else {
+            } else {
                 this.rotationPoint = new Point(this.width, this.height);
             }
 
@@ -440,8 +435,7 @@ public class ScreenImage extends WWObjectImpl implements Renderable, Exportable 
                 // corner.
                 Point.Double pointD = this.screenOffset.computeOffset(viewportWidth, viewportHeight, null, null);
                 this.screenLocation = new Point((int) pointD.x, (int) (pointD.y));
-            }
-            else {
+            } else {
                 this.screenLocation = new Point(viewportWidth / 2, viewportHeight / 2);
             }
 
@@ -565,8 +559,7 @@ public class ScreenImage extends WWObjectImpl implements Renderable, Exportable 
                     gl.glScaled(xscale * this.originalImageWidth, yscale * this.originalImageHeight, 1.0d);
                     dc.drawUnitQuad(texCoords);
                     gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
-                }
-                else {
+                } else {
                     // Set color of the rectangle that will be drawn instead of an image
                     final Color color = this.getColor();
                     float[] colorRGB = color.getRGBColorComponents(null);
@@ -576,8 +569,7 @@ public class ScreenImage extends WWObjectImpl implements Renderable, Exportable 
                     gl.glScaled(xscale, yscale, 1.0d);
                     dc.drawUnitQuad();
                 }
-            }
-            else {
+            } else {
                 this.pickSupport.clearPickList();
                 PickSupport.beginPicking(dc);
                 Color color = dc.getUniquePickColor();
@@ -652,8 +644,7 @@ public class ScreenImage extends WWObjectImpl implements Renderable, Exportable 
                 Logging.logger().throwing(getClass().getName(), "export", e);
                 throw new IOException(e);
             }
-        }
-        else {
+        } else {
             String message = Logging.getMessage("Export.UnsupportedFormat", mimeType);
             Logging.logger().warning(message);
             throw new UnsupportedOperationException(message);
@@ -679,11 +670,9 @@ public class ScreenImage extends WWObjectImpl implements Renderable, Exportable 
         if (output instanceof XMLStreamWriter) {
             xmlWriter = (XMLStreamWriter) output;
             closeWriterWhenFinished = false;
-        }
-        else if (output instanceof Writer) {
+        } else if (output instanceof Writer) {
             xmlWriter = factory.createXMLStreamWriter((Writer) output);
-        }
-        else if (output instanceof OutputStream) {
+        } else if (output instanceof OutputStream) {
             xmlWriter = factory.createXMLStreamWriter((OutputStream) output);
         }
 
@@ -713,8 +702,7 @@ public class ScreenImage extends WWObjectImpl implements Renderable, Exportable 
             xmlWriter.writeCharacters(imgSrcString);
             xmlWriter.writeEndElement(); // href
             xmlWriter.writeEndElement(); // Icon
-        }
-        else {
+        } else {
             // No image string, try to export the color
             Color color = this.getColor();
             if (color != null) {

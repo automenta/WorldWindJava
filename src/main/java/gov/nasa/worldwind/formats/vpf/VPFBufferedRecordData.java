@@ -56,8 +56,7 @@ public class VPFBufferedRecordData implements Iterable<VPFRecord> {
 
         if (dataBuffer != null) {
             this.dataMap.put(parameterName, new RecordData(dataBuffer));
-        }
-        else {
+        } else {
             this.dataMap.remove(parameterName);
         }
     }
@@ -91,7 +90,7 @@ public class VPFBufferedRecordData implements Iterable<VPFRecord> {
     public Iterator<VPFRecord> iterator() {
         return new Iterator<>() {
             private final int maxId = numRecords;
-            private int id = 0;
+            private int id;
 
             public boolean hasNext() {
                 return this.id < this.maxId;
@@ -137,8 +136,7 @@ public class VPFBufferedRecordData implements Iterable<VPFRecord> {
                 Integer i = this.recordIndex.get(value);
                 if (i != null)
                     index = i;
-            }
-            else {
+            } else {
                 for (int i = startIndex; i <= endIndex; i++) {
                     Object o = this.dataBuffer.get(i);
                     if (Objects.equals(o, value)) {

@@ -28,7 +28,7 @@ public class SurfaceIcon extends AbstractSurfaceRenderable implements Movable, D
     protected int imageWidth = 32;
     protected int imageHeight = 32;
     protected boolean dragEnabled = true;
-    protected DraggableSupport draggableSupport = null;
+    protected DraggableSupport draggableSupport;
     private Object imageSource;
     private boolean useMipMaps = true;
     private LatLon location;
@@ -36,7 +36,7 @@ public class SurfaceIcon extends AbstractSurfaceRenderable implements Movable, D
     private double scale = 1.0d;
     private Angle heading = Angle.ZERO;             // CW from north
     private Color color = Color.WHITE;
-    private boolean maintainSize = false;
+    private boolean maintainSize;
     private double maxSize = Double.MAX_VALUE;      // Meter
     private double minSize = 0.1;                    // Meter
 
@@ -48,6 +48,58 @@ public class SurfaceIcon extends AbstractSurfaceRenderable implements Movable, D
         this.setImageSource(imageSource);
         if (location != null)
             this.setLocation(location);
+    }
+
+    protected static void beginDraw(DrawContext dc) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
+
+        int attributeMask = GL2.GL_TRANSFORM_BIT // for modelview
+            | GL2.GL_CURRENT_BIT // for current color
+            | GL2.GL_COLOR_BUFFER_BIT // for alpha test func and ref, and blend
+            | GL2.GL_ENABLE_BIT; // for enable/disable changes
+        gl.glPushAttrib(attributeMask);
+
+        // Suppress any fully transparent image pixels
+        gl.glEnable(GL2.GL_ALPHA_TEST);
+        gl.glAlphaFunc(GL2.GL_GREATER, 0.001f);
+
+        gl.glMatrixMode(GL2.GL_TEXTURE);
+        gl.glPushMatrix();
+
+        gl.glMatrixMode(GL2.GL_MODELVIEW);
+        gl.glPushMatrix();
+
+        if (dc.isPickingMode()) {
+            // Set up to replace the non-transparent texture colors with the single pick color.
+            gl.glEnable(GL.GL_TEXTURE_2D);
+            gl.glTexEnvf(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_COMBINE);
+            gl.glTexEnvf(GL2.GL_TEXTURE_ENV, GL2.GL_SRC0_RGB, GL2.GL_PREVIOUS);
+            gl.glTexEnvf(GL2.GL_TEXTURE_ENV, GL2.GL_COMBINE_RGB, GL2.GL_REPLACE);
+        } else {
+            gl.glEnable(GL.GL_TEXTURE_2D);
+            gl.glEnable(GL.GL_BLEND);
+            gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE_MINUS_SRC_ALPHA);
+        }
+    }
+
+    protected static void endDraw(DrawContext dc) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
+
+        if (dc.isPickingMode()) {
+            gl.glTexEnvf(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, OGLUtil.DEFAULT_TEX_ENV_MODE);
+            gl.glTexEnvf(GL2.GL_TEXTURE_ENV, GL2.GL_SRC0_RGB, OGLUtil.DEFAULT_SRC0_RGB);
+            gl.glTexEnvf(GL2.GL_TEXTURE_ENV, GL2.GL_COMBINE_RGB, OGLUtil.DEFAULT_COMBINE_RGB);
+        }
+
+        gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
+
+        gl.glMatrixMode(GL2.GL_MODELVIEW);
+        gl.glPopMatrix();
+
+        gl.glMatrixMode(GL2.GL_TEXTURE);
+        gl.glPopMatrix();
+
+        gl.glPopAttrib();
     }
 
     /**
@@ -298,6 +350,8 @@ public class SurfaceIcon extends AbstractSurfaceRenderable implements Movable, D
         return this.color;
     }
 
+    // *** SurfaceObject interface ***
+
     /**
      * Set the {@link Color} the source image will be combined with - default to white.
      * <p>
@@ -320,8 +374,6 @@ public class SurfaceIcon extends AbstractSurfaceRenderable implements Movable, D
     protected boolean isMaintainAppearance() {
         return this.getHeading() == null || this.isMaintainSize();  // always facing or constant size
     }
-
-    // *** SurfaceObject interface ***
 
     /**
      * {@inheritDoc}
@@ -381,7 +433,7 @@ public class SurfaceIcon extends AbstractSurfaceRenderable implements Movable, D
                 this.drawIcon(dc, sdc);
             }
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             // TODO: log error
         }
         finally {
@@ -414,14 +466,14 @@ public class SurfaceIcon extends AbstractSurfaceRenderable implements Movable, D
             this.location.getLongitude().addRadians(dLonRadians / 2).addRadians(offsetLonRadians)
         );
         // Rotate sector around location 
-        sector = computeRotatedSectorBounds(sector, this.location, computeDrawHeading(dc));
+        sector = AbstractSurfaceRenderable.computeRotatedSectorBounds(sector, this.location, computeDrawHeading(dc));
 
-        return computeNormalizedSectors(sector);
+        return AbstractSurfaceRenderable.computeNormalizedSectors(sector);
     }
 
     protected Rectangle2D.Double computeDrawDimension(DrawContext dc, LatLon location) {
         // Compute icon extent at 1:1 depending on distance from eye
-        double pixelSize = computePixelSizeAtLocation(dc, location);
+        double pixelSize = AbstractSurfaceRenderable.computePixelSizeAtLocation(dc, location);
         return computeDrawDimension(pixelSize);
     }
 
@@ -440,73 +492,20 @@ public class SurfaceIcon extends AbstractSurfaceRenderable implements Movable, D
         if (this.heading != null)
             return this.heading;
 
-        return getViewHeading(dc);
-    }
-
-    protected static void beginDraw(DrawContext dc) {
-        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-
-        int attributeMask = GL2.GL_TRANSFORM_BIT // for modelview
-            | GL2.GL_CURRENT_BIT // for current color
-            | GL2.GL_COLOR_BUFFER_BIT // for alpha test func and ref, and blend
-            | GL2.GL_ENABLE_BIT; // for enable/disable changes
-        gl.glPushAttrib(attributeMask);
-
-        // Suppress any fully transparent image pixels
-        gl.glEnable(GL2.GL_ALPHA_TEST);
-        gl.glAlphaFunc(GL2.GL_GREATER, 0.001f);
-
-        gl.glMatrixMode(GL2.GL_TEXTURE);
-        gl.glPushMatrix();
-
-        gl.glMatrixMode(GL2.GL_MODELVIEW);
-        gl.glPushMatrix();
-
-        if (dc.isPickingMode()) {
-            // Set up to replace the non-transparent texture colors with the single pick color.
-            gl.glEnable(GL.GL_TEXTURE_2D);
-            gl.glTexEnvf(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_COMBINE);
-            gl.glTexEnvf(GL2.GL_TEXTURE_ENV, GL2.GL_SRC0_RGB, GL2.GL_PREVIOUS);
-            gl.glTexEnvf(GL2.GL_TEXTURE_ENV, GL2.GL_COMBINE_RGB, GL2.GL_REPLACE);
-        }
-        else {
-            gl.glEnable(GL.GL_TEXTURE_2D);
-            gl.glEnable(GL.GL_BLEND);
-            gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE_MINUS_SRC_ALPHA);
-        }
-    }
-
-    protected static void endDraw(DrawContext dc) {
-        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-
-        if (dc.isPickingMode()) {
-            gl.glTexEnvf(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, OGLUtil.DEFAULT_TEX_ENV_MODE);
-            gl.glTexEnvf(GL2.GL_TEXTURE_ENV, GL2.GL_SRC0_RGB, OGLUtil.DEFAULT_SRC0_RGB);
-            gl.glTexEnvf(GL2.GL_TEXTURE_ENV, GL2.GL_COMBINE_RGB, OGLUtil.DEFAULT_COMBINE_RGB);
-        }
-
-        gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
-
-        gl.glMatrixMode(GL2.GL_MODELVIEW);
-        gl.glPopMatrix();
-
-        gl.glMatrixMode(GL2.GL_TEXTURE);
-        gl.glPopMatrix();
-
-        gl.glPopAttrib();
+        return AbstractSurfaceRenderable.getViewHeading(dc);
     }
 
     @SuppressWarnings("UnusedDeclaration")
     protected void applyDrawTransform(DrawContext dc, SurfaceTileDrawContext sdc, LatLon location, double drawScale) {
         // Compute icon viewport point
         // Apply hemisphere offset if needed - for icons that may cross the date line
-        double offset = computeHemisphereOffset(sdc.getSector(), location);
+        double offset = AbstractSurfaceRenderable.computeHemisphereOffset(sdc.getSector(), location);
         Vec4 point = new Vec4(location.getLongitude().degrees + offset, location.getLatitude().degrees, 1);
         point = point.transformBy4(sdc.getModelviewMatrix());
 
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         // Translate to location point
-        gl.glTranslated(point.x(), point.y(), point.z());
+        gl.glTranslated(point.x, point.y, point.z);
         // Add x scaling transform to maintain icon width and aspect ratio at any latitude
         gl.glScaled(drawScale / location.getLatitude().cos(), drawScale, 1);
         // Add rotation to account for icon heading
@@ -534,7 +533,7 @@ public class SurfaceIcon extends AbstractSurfaceRenderable implements Movable, D
     protected void applyDrawColor(DrawContext dc) {
         if (!dc.isPickingMode()) {
             GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-            applyPremultipliedAlphaColor(gl, this.color, getOpacity());
+            AbstractSurfaceRenderable.applyPremultipliedAlphaColor(gl, this.color, getOpacity());
         }
     }
 

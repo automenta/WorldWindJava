@@ -26,8 +26,8 @@ public class BarycentricQuadrilateral extends BarycentricTriangle {
     private static final Vec4 i2 = new Vec4(2.0d, 2.0d, 0.0d);
     private static final Vec4 i3 = new Vec4(0.0d, 1.0d, 0.0d);
     private static final Iterable<Vec4> testPoints = new ArrayList<>(Arrays.asList(
-        g0, g1, g2, g3,
-        i0, i1, i2, i3,
+        BarycentricQuadrilateral.g0, BarycentricQuadrilateral.g1, BarycentricQuadrilateral.g2, BarycentricQuadrilateral.g3,
+        BarycentricQuadrilateral.i0, BarycentricQuadrilateral.i1, BarycentricQuadrilateral.i2, BarycentricQuadrilateral.i3,
         new Vec4(-17, 0, 0)
 //        new Vec4(-122.4, 34.2, 0),
 //        new Vec4(-120.6, 34.2, 0),
@@ -47,7 +47,7 @@ public class BarycentricQuadrilateral extends BarycentricTriangle {
     public BarycentricQuadrilateral(LatLon p00, LatLon p10, LatLon p11, LatLon p01) {
         super(p00, p10, p01);
 
-        this.p11 = new Vec4(p11.getLongitude().getRadians(), p11.getLatitude().getRadians(), 0);
+        this.p11 = new Vec4(p11.getLongitude().radians(), p11.getLatitude().radians(), 0);
         this.w11 = this.getBarycentricCoords(this.p11);
     }
 
@@ -85,9 +85,9 @@ public class BarycentricQuadrilateral extends BarycentricTriangle {
     }
 
     public static void main(String[] args) {
-        BarycentricPlanarShape bc = new BarycentricQuadrilateral(i0, i1, i2, i3);
+        BarycentricPlanarShape bc = new BarycentricQuadrilateral(BarycentricQuadrilateral.i0, BarycentricQuadrilateral.i1, BarycentricQuadrilateral.i2, BarycentricQuadrilateral.i3);
 
-        for (Vec4 point : testPoints) {
+        for (Vec4 point : BarycentricQuadrilateral.testPoints) {
             double[] w = bc.getBarycentricCoords(point);
             Vec4 p = bc.getPoint(w);
             double[] uv = bc.getBilinearCoords(w[1], w[2]);
@@ -122,13 +122,11 @@ public class BarycentricQuadrilateral extends BarycentricTriangle {
                 v = beta;
             else
                 v = beta / (u * (beta11 - 1) + 1);
-        }
-        else if (Math.abs(beta11 - 1) < eps) // if beta = 1
+        } else if (Math.abs(beta11 - 1) < eps) // if beta = 1
         {
             v = beta;
             u = alpha / (v * (alpha11 - 1) + 1);
-        }
-        else {
+        } else {
             double a = 1.0d - beta11;
             double b = alpha * (beta11 - 1) - beta * (alpha11 - 1) - 1;
             double c = alpha;
@@ -157,6 +155,6 @@ public class BarycentricQuadrilateral extends BarycentricTriangle {
     }
 
     public double[] invertBilinear(Vec4 U) {
-        return invertBilinear(U, this.p00, this.p10, this.p11, this.p01);
+        return BarycentricQuadrilateral.invertBilinear(U, this.p00, this.p10, this.p11, this.p01);
     }
 }

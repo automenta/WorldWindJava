@@ -61,6 +61,53 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
         }
     }
 
+    private static void addTileToCache(MercatorTextureTile tile) {
+        WorldWind.cache(MercatorTextureTile.class.getName()).add(tile.tileKey, tile);
+    }
+
+    protected static boolean isTileValid(BufferedImage image) {
+        //override in subclass to check image tile
+        //if false is returned, then tile is marked absent
+        return true;
+    }
+
+    protected static BufferedImage modifyImage(BufferedImage image) {
+        //override in subclass to modify image tile
+        return image;
+    }
+
+    private static BufferedImage convertBufferToImage(ByteBuffer buffer) {
+        try {
+            return ImageIO.read(new ByteArrayInputStream(buffer.array()));
+        }
+        catch (IOException e) {
+            return null;
+        }
+    }
+
+    private static BufferedImage transform(BufferedImage image, MercatorSector sector) {
+        int type = image.getType();
+        if (type == 0)
+            type = BufferedImage.TYPE_INT_RGB;
+        final int w = image.getWidth();
+        final int h = image.getHeight();
+        BufferedImage trans = new BufferedImage(w, h, type);
+        double miny = sector.getMinLatPercent();
+        double maxy = sector.getMaxLatPercent();
+        for (int y = 0; y < h; y++) {
+            double sy = 1.0 - y / (double) (h - 1);
+            Angle lat = Angle.fromRadians(sy * toRadians(sector.latDelta) + sector.latMin().radians());
+            double dy = 1.0 - (MercatorSector.gudermannianInverse(lat) - miny) / (maxy - miny);
+            dy = Math.max(0.0, Math.min(1.0, dy));
+            int iy = (int) (dy * (h - 1));
+
+            for (int x = 0; x < w; x++) {
+                trans.setRGB(x, y, image.getRGB(x, iy));
+            }
+        }
+        return trans;
+    }
+
     protected void forceTextureLoad(MercatorTextureTile tile) {
         final URL textureURL = this.getDataFileStore().findFile(
             tile.getPath(), true);
@@ -95,7 +142,7 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
         TextureData textureData;
 
         synchronized (this.fileLock) {
-            textureData = readTexture(textureURL, this.isUseMipMaps());
+            textureData = BasicMercatorTiledImageLayer.readTexture(textureURL, this.isUseMipMaps());
         }
 
         if (textureData == null)
@@ -106,10 +153,6 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
             BasicMercatorTiledImageLayer.addTileToCache(tile);
 
         return true;
-    }
-
-    private static void addTileToCache(MercatorTextureTile tile) {
-        WorldWind.cache(MercatorTextureTile.class.getName()).add(tile.tileKey, tile);
     }
 
     protected void downloadTexture(final MercatorTextureTile tile) {
@@ -140,7 +183,7 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
         if ("http".equalsIgnoreCase(protocol) || "https".equalsIgnoreCase(protocol)) {
             retriever = new HTTPRetriever(url, new DownloadPostProcessor(tile, this));
             retriever.set(URLRetriever.EXTRACT_ZIP_ENTRY, "true"); // supports legacy layers
-        }else {
+        } else {
             Logging.logger().severe(
                 Logging.getMessage("layers.TextureLayer.UnknownRetrievalProtocol", url.toString()));
             return;
@@ -170,30 +213,10 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
         }
     }
 
-    protected static boolean isTileValid(BufferedImage image) {
-        //override in subclass to check image tile
-        //if false is returned, then tile is marked absent
-        return true;
-    }
-
-    protected static BufferedImage modifyImage(BufferedImage image) {
-        //override in subclass to modify image tile
-        return image;
-    }
-
-    private static BufferedImage convertBufferToImage(ByteBuffer buffer) {
-        try {
-            return ImageIO.read(new ByteArrayInputStream(buffer.array()));
-        }
-        catch (IOException e) {
-            return null;
-        }
-    }
-
     private boolean transformAndSave(BufferedImage image, MercatorSector sector,
         File outFile) {
         try {
-            image = transform(image, sector);
+            image = BasicMercatorTiledImageLayer.transform(image, sector);
             String extension = outFile.getName().substring(
                 outFile.getName().lastIndexOf('.') + 1);
             synchronized (this.fileLock) // synchronized with read of file in RequestTask.run()
@@ -204,29 +227,6 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
         catch (IOException e) {
             return false;
         }
-    }
-
-    private static BufferedImage transform(BufferedImage image, MercatorSector sector) {
-        int type = image.getType();
-        if (type == 0)
-            type = BufferedImage.TYPE_INT_RGB;
-        final int w = image.getWidth();
-        final int h = image.getHeight();
-        BufferedImage trans = new BufferedImage(w, h, type);
-        double miny = sector.getMinLatPercent();
-        double maxy = sector.getMaxLatPercent();
-        for (int y = 0; y < h; y++) {
-            double sy = 1.0 - y / (double) (h - 1);
-            Angle lat = Angle.fromRadians(sy * toRadians(sector.latDelta) + sector.latMin().radians);
-            double dy = 1.0 - (MercatorSector.gudermannianInverse(lat) - miny) / (maxy - miny);
-            dy = Math.max(0.0, Math.min(1.0, dy));
-            int iy = (int) (dy * (h - 1));
-
-            for (int x = 0; x < w; x++) {
-                trans.setRGB(x, y, image.getRGB(x, iy));
-            }
-        }
-        return trans;
     }
 
     private static class RequestTask implements Runnable,
@@ -251,8 +251,7 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
                     layer.getLevels().has(tile);
                     this.layer.firePropertyChange(AVKey.LAYER, null, this);
                     return;
-                }
-                else {
+                } else {
                     // Assume that something's wrong with the file and delete it.
                     this.layer.getDataFileStore().removeFile(textureURL);
                     layer.getLevels().miss(tile);
@@ -271,9 +270,11 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
          * @throws IllegalArgumentException if <code>that</code> is null
          */
         public int compareTo(RequestTask that) {
-            if (tile.equals(that.tile)) return 0;
+            if (tile.equals(that.tile))
+                return 0;
             int c = Double.compare(this.tile.getPriority(), that.tile.getPriority());
-            if (c!=0) return c;
+            if (c != 0)
+                return c;
             return Integer.compare(System.identityHashCode(tile), System.identityHashCode(that.tile));
         }
 
@@ -311,11 +312,6 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
         }
 
         public ByteBuffer run(Retriever retriever) {
-//            if (retriever == null) {
-//                String msg = Logging.getMessage("nullValue.RetrieverIsNull");
-//                Logging.logger().severe(msg);
-//                throw new IllegalArgumentException(msg);
-//            }
 
             try {
                 if (!retriever.getState().equals(Retriever.RETRIEVER_STATE_SUCCESSFUL))
@@ -362,11 +358,9 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
                         Logging.logger().severe(sb.toString());
 
                         return null;
-                    }
-                    else if (contentType.contains("dds")) {
+                    } else if (contentType.contains("dds")) {
                         this.layer.saveBuffer(buffer, outFile);
-                    }
-                    else if (contentType.contains("zip")) {
+                    } else if (contentType.contains("zip")) {
                         // Assume it's zipped DDS, which the retriever would have unzipped into the buffer.
                         this.layer.saveBuffer(buffer, outFile);
                     }

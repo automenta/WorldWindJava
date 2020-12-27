@@ -55,28 +55,28 @@ public class Ambush extends AbstractMilStd2525TacticalGraphic {
     /**
      * Number of intervals used to draw the arc.
      */
-    protected int intervals = DEFAULT_NUM_INTERVALS;
+    protected int intervals = Ambush.DEFAULT_NUM_INTERVALS;
     /**
      * The arc is drawn as a segment of a circle intersected by this angle.
      */
-    protected Angle arcAngle = DEFAULT_ARC_ANGLE;
+    protected Angle arcAngle = Ambush.DEFAULT_ARC_ANGLE;
     /**
      * Length of the arrowhead from base to tip, as a fraction of the total line length.
      */
-    protected Angle arrowAngle = DEFAULT_ARROWHEAD_ANGLE;
+    protected Angle arrowAngle = Ambush.DEFAULT_ARROWHEAD_ANGLE;
     /**
      * Angle of the arrowhead.
      */
-    protected double arrowLength = DEFAULT_ARROWHEAD_LENGTH;
+    protected double arrowLength = Ambush.DEFAULT_ARROWHEAD_LENGTH;
     /**
      * Number of "legs" drawn on this graphic's arc.
      */
-    protected int numLegs = DEFAULT_NUM_LEGS;
+    protected int numLegs = Ambush.DEFAULT_NUM_LEGS;
     /**
      * Length of the legs on the graphic's base, as a fraction of the distance between the control points that define
      * the base.
      */
-    protected double legLength = DEFAULT_LEG_LENGTH;
+    protected double legLength = Ambush.DEFAULT_LEG_LENGTH;
 
     /**
      * First control point.
@@ -443,7 +443,7 @@ public class Ambush extends AbstractMilStd2525TacticalGraphic {
         // Find the midpoint of the arc
         double globeRadius = globe.getRadiusAt(arcData.center.getLatitude(), arcData.center.getLongitude());
         LatLon ll = LatLon.greatCircleEndPosition(arcData.center,
-            arcData.arcAngle.divide(2.0).radians + arcData.startAngle.radians, arcData.radius / globeRadius);
+            arcData.arcAngle.divide(2.0).radians() + arcData.startAngle.radians(), arcData.radius / globeRadius);
         arcData.midpoint = new Position(ll, 0);
 
         return arcData;
@@ -468,7 +468,7 @@ public class Ambush extends AbstractMilStd2525TacticalGraphic {
         List<Position> positions = new ArrayList<>(intervals);
 
         for (int i = 0; i < intervals; i++) {
-            double angle = i * da.radians + arcData.startAngle.radians;
+            double angle = i * da.radians() + arcData.startAngle.radians();
 
             LatLon ll = LatLon.greatCircleEndPosition(arcData.center, angle, radiusRadians);
             positions.add(new Position(ll, 0));
@@ -512,7 +512,7 @@ public class Ambush extends AbstractMilStd2525TacticalGraphic {
         double radiusRadians = arcData.radius / globeRadius;
 
         for (int i = 0; i < pathCount; i++) {
-            double angle = (i + 0.5) * da.radians + arcData.startAngle.radians;
+            double angle = (i + 0.5) * da.radians() + arcData.startAngle.radians();
 
             LatLon ll = LatLon.greatCircleEndPosition(arcData.center, angle, radiusRadians);
 
@@ -543,7 +543,7 @@ public class Ambush extends AbstractMilStd2525TacticalGraphic {
 
         Vec4 pB = globe.computePointFromPosition(tip);
 
-        double baseLength = LatLon.greatCircleDistance(arcData.midpoint, tip).radians * globe.getRadius();
+        double baseLength = LatLon.greatCircleDistance(arcData.midpoint, tip).radians() * globe.getRadius();
         double arrowLength = baseLength * this.getArrowLength();
 
         // Find the point at the base of the arrowhead

@@ -6,6 +6,7 @@
 package gov.nasa.worldwind.formats.vpf;
 
 ////.*;
+
 import gov.nasa.worldwind.util.*;
 
 import java.nio.*;
@@ -20,11 +21,11 @@ public abstract class VPFBasicDataBufferFactory implements VPFDataBufferFactory 
     public static final int NO_VALUE_INT = -2147483648; // binary: 10000000 00000000 00000000 00000000
 
     public static boolean isNoValueShort(short s) {
-        return s == NO_VALUE_SHORT;
+        return s == VPFBasicDataBufferFactory.NO_VALUE_SHORT;
     }
 
     public static boolean isNoValueInt(int i) {
-        return i == NO_VALUE_INT;
+        return i == VPFBasicDataBufferFactory.NO_VALUE_INT;
     }
 
     public static boolean isNoValueFloat(float f) {
@@ -288,7 +289,7 @@ public abstract class VPFBasicDataBufferFactory implements VPFDataBufferFactory 
             if (length > 16)
                 sb.append("ZZZZ");
             else if (length == 16)
-                sb.append("Z");
+                sb.append('Z');
 
             return sb.toString();
         }
@@ -328,9 +329,9 @@ public abstract class VPFBasicDataBufferFactory implements VPFDataBufferFactory 
             if (type == 0)
                 return null;
 
-            int id = readId(byteBuffer, type >> 6);
-            int tileId = readId(byteBuffer, type >> 4);
-            int extId = readId(byteBuffer, type >> 2);
+            int id = TripletIdReader.readId(byteBuffer, type >> 6);
+            int tileId = TripletIdReader.readId(byteBuffer, type >> 4);
+            int extId = TripletIdReader.readId(byteBuffer, type >> 2);
 
             return new VPFTripletId(id, tileId, extId);
         }
@@ -406,7 +407,7 @@ public abstract class VPFBasicDataBufferFactory implements VPFDataBufferFactory 
             }
             // Fixed length text is null if it equals "N/A".
             else {
-                return !isNoValueText(this.buffer.substring(index).trim());
+                return !VPFBasicDataBufferFactory.isNoValueText(this.buffer.substring(index).trim());
             }
         }
 
@@ -453,7 +454,7 @@ public abstract class VPFBasicDataBufferFactory implements VPFDataBufferFactory 
     protected static class ShortAccessor extends IntAccessor {
         public boolean hasValue(BufferWrapper bufferWrapper, int index) {
             // Scalar shorts are null when equal to "no value" 16 bit pattern.
-            return !isNoValueShort((short) bufferWrapper.getInt(index));
+            return !VPFBasicDataBufferFactory.isNoValueShort((short) bufferWrapper.getInt(index));
         }
     }
 
@@ -464,14 +465,14 @@ public abstract class VPFBasicDataBufferFactory implements VPFDataBufferFactory 
 
         public boolean hasValue(BufferWrapper bufferWrapper, int index) {
             // Scalar ints are null when equal to "no value" 32 bit pattern.
-            return !isNoValueInt(bufferWrapper.getInt(index));
+            return !VPFBasicDataBufferFactory.isNoValueInt(bufferWrapper.getInt(index));
         }
     }
 
     protected static class FloatAccessor extends DoubleAccessor {
         public boolean hasValue(BufferWrapper bufferWrapper, int index) {
             // Scalar floats are null when equal to the 32 bit floating point NaN.
-            return !isNoValueFloat((float) bufferWrapper.getDouble(index));
+            return !VPFBasicDataBufferFactory.isNoValueFloat((float) bufferWrapper.getDouble(index));
         }
     }
 
@@ -482,7 +483,7 @@ public abstract class VPFBasicDataBufferFactory implements VPFDataBufferFactory 
 
         public boolean hasValue(BufferWrapper bufferWrapper, int index) {
             // Scalar doubles are null when equal to the 64 bit floating point NaN.
-            return !isNoValueDouble(bufferWrapper.getDouble(index));
+            return !VPFBasicDataBufferFactory.isNoValueDouble(bufferWrapper.getDouble(index));
         }
     }
 
@@ -595,7 +596,7 @@ public abstract class VPFBasicDataBufferFactory implements VPFDataBufferFactory 
             shortBuffer.flip();
 
             for (int i = 0; i < length; i++) {
-                if (isNoValueShort(this.tmpBuffer[i]))
+                if (VPFBasicDataBufferFactory.isNoValueShort(this.tmpBuffer[i]))
                     this.tmpBuffer[i] = value;
                 else
                     numValues++;
@@ -640,7 +641,7 @@ public abstract class VPFBasicDataBufferFactory implements VPFDataBufferFactory 
             intBuffer.flip();
 
             for (int i = 0; i < length; i++) {
-                if (isNoValueInt(this.tmpBuffer[i]))
+                if (VPFBasicDataBufferFactory.isNoValueInt(this.tmpBuffer[i]))
                     this.tmpBuffer[i] = value;
                 else
                     numValues++;
@@ -685,7 +686,7 @@ public abstract class VPFBasicDataBufferFactory implements VPFDataBufferFactory 
             floatBuffer.flip();
 
             for (int i = 0; i < length; i++) {
-                if (isNoValueFloat(this.tmpBuffer[i]))
+                if (VPFBasicDataBufferFactory.isNoValueFloat(this.tmpBuffer[i]))
                     this.tmpBuffer[i] = value;
                 else
                     numValues++;
@@ -730,7 +731,7 @@ public abstract class VPFBasicDataBufferFactory implements VPFDataBufferFactory 
             doubleBuffer.flip();
 
             for (int i = 0; i < length; i++) {
-                if (isNoValueDouble(this.tmpBuffer[i]))
+                if (VPFBasicDataBufferFactory.isNoValueDouble(this.tmpBuffer[i]))
                     this.tmpBuffer[i] = value;
                 else
                     numValues++;
@@ -785,8 +786,7 @@ public abstract class VPFBasicDataBufferFactory implements VPFDataBufferFactory 
 
             if (vecBuffer != null) {
                 this.buffer.append(vecBuffer);
-            }
-            else {
+            } else {
                 this.buffer.append(VecBuffer.emptyVecBuffer(this.buffer.getCoordsPerVec()));
             }
         }

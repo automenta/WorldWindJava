@@ -65,12 +65,12 @@ public class KMLRoot extends KMLAbstractObject implements KMLRenderable, XMLRoot
     /**
      * Flag to indicate that the feature has been fetched from the hash map.
      */
-    protected boolean featureFetched = false;
+    protected boolean featureFetched;
     protected KMLAbstractFeature feature;
     /**
      * Flag to indicate that the network link control element has been fetched from the hash map.
      */
-    protected boolean linkControlFetched = false;
+    protected boolean linkControlFetched;
     protected KMLNetworkLinkControl networkLinkControl;
 
     /**
@@ -150,8 +150,7 @@ public class KMLRoot extends KMLAbstractObject implements KMLRenderable, XMLRoot
                 // See WWJINT-282.
                 this.kmlDoc = new KMZInputStream(new FileInputStream(docSource));
             }
-        }
-        else
+        } else
             throw new WWUnrecognizedException(Logging.getMessage("KML.UnrecognizedKMLFileType"));
 
         this.initialize(namespaceAware);
@@ -266,7 +265,7 @@ public class KMLRoot extends KMLAbstractObject implements KMLRenderable, XMLRoot
      * @param docSource    the KML source specified via a {@link XMLDoc} instance. A XMLDoc represents KML and KMZ files
      *                     from either files or input streams.
      * @throws IllegalArgumentException if the document source is null.
-     * @throws IOException      if an I/O error occurs attempting to open the document source.
+     * @throws IOException              if an I/O error occurs attempting to open the document source.
      */
     public KMLRoot(String namespaceURI, XMLDoc docSource) throws IOException {
         this(namespaceURI, docSource, true);
@@ -282,7 +281,7 @@ public class KMLRoot extends KMLAbstractObject implements KMLRenderable, XMLRoot
      * @param namespaceAware specifies whether to use a namespace-aware XML parser. <code>true</code> if so,
      *                       <code>false</code> if not.
      * @throws IllegalArgumentException if the document source is null.
-     * @throws IOException      if an I/O error occurs attempting to open the document source.
+     * @throws IOException              if an I/O error occurs attempting to open the document source.
      */
     public KMLRoot(String namespaceURI, XMLDoc docSource, boolean namespaceAware) throws IOException {
         super(namespaceURI);
@@ -310,7 +309,7 @@ public class KMLRoot extends KMLAbstractObject implements KMLRenderable, XMLRoot
      * @throws IOException              if an error occurs while reading the source.
      */
     public static KMLRoot create(Object docSource) throws IOException {
-        return create(docSource, true);
+        return KMLRoot.create(docSource, true);
     }
 
     /**
@@ -367,9 +366,9 @@ public class KMLRoot extends KMLAbstractObject implements KMLRenderable, XMLRoot
      * @param docSource either a {@link File}, a {@link URL}, or an {@link InputStream}, or a {@link String} identifying
      *                  a file path or URL.
      * @return a new {@link KMLRoot} for the specified source, or null if the source type is not supported.
-     * @throws IllegalArgumentException            if the source is null.
-     * @throws IOException                         if an error occurs while reading the source.
-     * @throws XMLStreamException if the KML file has severe errors.
+     * @throws IllegalArgumentException if the source is null.
+     * @throws IOException              if an error occurs while reading the source.
+     * @throws XMLStreamException       if the KML file has severe errors.
      */
     public static KMLRoot createAndParse(Object docSource) throws IOException, XMLStreamException {
         KMLRoot kmlRoot = KMLRoot.create(docSource);
@@ -394,6 +393,111 @@ public class KMLRoot extends KMLAbstractObject implements KMLRenderable, XMLRoot
     }
 
     /**
+     * Creates the event reader. Called from the constructor.
+     *
+     * @param docSource      the document source to create a reader for. The type can be any of those supported by
+     *                       {@link WWXML#openEventReader(Object)}.
+     * @param namespaceAware specifies whether to use a namespace-aware XML parser. <code>true</code> if so,
+     *                       <code>false</code> if not.
+     * @return a new event reader, or null if the source type cannot be determined.
+     */
+    protected static XMLEventReader createReader(Object docSource, boolean namespaceAware) {
+        return WWXML.openEventReader(docSource, namespaceAware);
+    }
+
+    /**
+     * Check a cached resource for expiration. If the resource is expired, evict it from the cache.
+     *
+     * @param link           Link that identifies the resource to check for expiration. This is the same link that was
+     *                       passed to resolveReference to retrieve the resource.
+     * @param expirationTime Time at which the resource expires, in milliseconds since the Epoch. If the current system
+     *                       time is greater than the expiration time, then the resource will be evicted.
+     */
+    public static void evictIfExpired(String link, long expirationTime) {
+        try {
+            URL url = WorldWind.store().requestFile(link, false);
+            if (url != null) {
+                // Check the file's modification time against the link update time. If the file was last modified
+                // earlier than the link update time then we need to remove the cached file from the file store,
+                // and start a new file retrieval.
+                File file = new File(url.toURI());
+
+                if (file.lastModified() < expirationTime)
+                    WorldWind.store().removeFile(link);
+            }
+        }
+        catch (URISyntaxException e) {
+            String message = Logging.getMessage("generic.UnableToResolveReference", link);
+            Logging.logger().warning(message);
+        }
+    }
+
+    /**
+     * Determines if a MIME type can be parsed as KML or KMZ. Parsable types are the KML and KMZ MIME types, as well as
+     * "text/plain" and "text/xml".
+     *
+     * @param mimeType Type to test. May be null.
+     * @return {@code true} if {@code mimeType} can be parsed as KML.
+     */
+    protected static boolean canParseContentType(String mimeType) {
+        return KMLConstants.KML_MIME_TYPE.equals(mimeType) || KMLConstants.KMZ_MIME_TYPE.equals(mimeType)
+            || "text/plain".equals(mimeType) || "text/xml".equals(mimeType);
+    }
+
+    /**
+     * Open and parse the specified file expressed as a file: URL..
+     *
+     * @param url            the URL of the file to open, expressed as a URL with a scheme of "file".
+     * @param linkBase       the original address of the document if the file is a retrieved and cached file.
+     * @param contentType    the mime type of the file's content, either a KML or KMZ mime type.
+     * @param namespaceAware specifies whether to use a namespace aware event reader.
+     * @return A {@code KMLRoot} representing the file's KML contents.
+     * @throws IOException        if an I/O error occurs during opening and parsing.
+     * @throws XMLStreamException if a server parsing error is encountered.
+     */
+    protected static KMLRoot parseCachedKMLFile(URL url, String linkBase, String contentType, boolean namespaceAware)
+        throws IOException, XMLStreamException {
+        XMLDoc kmlDoc;
+
+        InputStream refStream = url.openStream();
+
+        if (KMLConstants.KMZ_MIME_TYPE.equals(contentType))
+            kmlDoc = new KMZInputStream(refStream);
+        else // Attempt to parse as KML
+            kmlDoc = new KMLInputStream(refStream, WWIO.makeURI(linkBase));
+
+        try {
+            KMLRoot refRoot = new KMLRoot(kmlDoc, namespaceAware);
+            refRoot = refRoot.parse(); // also closes the URL's stream
+            return refRoot;
+        }
+        catch (XMLStreamException e) {
+            refStream.close(); // parsing failed, so explicitly close the stream
+            throw e;
+        }
+    }
+
+    private static void setChildPositions(Iterable<?> children, Position position) {
+        children.forEach((v) -> {
+            if (v instanceof KMLMutable) {
+                ((KMLMutable) v).setPosition(position);
+            } else if (v instanceof KMLAbstractContainer) {
+                KMLRoot.setChildPositions(((KMLAbstractContainer) v).getFeatures(), position);
+            }
+        });
+    }
+
+    private static void setChildScales(Iterable<?> children, Vec4 scale) {
+        children.forEach((v) -> {
+            if (v instanceof KMLMutable) {
+                ((KMLMutable) v).setScale(scale);
+            } else if (v instanceof KMLAbstractContainer) {
+                KMLRoot.setChildScales(((KMLAbstractContainer) v).getFeatures(), scale);
+            }
+        });
+    }
+
+    /**
      * Called just before the constructor returns. If overriding this method be sure to invoke
      * <code>super.initialize(boolean)</code>.
      *
@@ -411,19 +515,6 @@ public class KMLRoot extends KMLAbstractObject implements KMLRenderable, XMLRoot
     }
 
     /**
-     * Creates the event reader. Called from the constructor.
-     *
-     * @param docSource      the document source to create a reader for. The type can be any of those supported by
-     *                       {@link WWXML#openEventReader(Object)}.
-     * @param namespaceAware specifies whether to use a namespace-aware XML parser. <code>true</code> if so,
-     *                       <code>false</code> if not.
-     * @return a new event reader, or null if the source type cannot be determined.
-     */
-    protected static XMLEventReader createReader(Object docSource, boolean namespaceAware) {
-        return WWXML.openEventReader(docSource, namespaceAware);
-    }
-
-    /**
      * Invoked during {@link #initialize(boolean)} to create the parser context. The parser context is created by the
      * global {@link XMLEventParserContextFactory}.
      *
@@ -436,7 +527,7 @@ public class KMLRoot extends KMLAbstractObject implements KMLRenderable, XMLRoot
 
         if (ctx == null) {
             // Register a parser context for this root's default namespace
-            String[] mimeTypes = new String[] {KMLConstants.KML_MIME_TYPE, KMLConstants.KMZ_MIME_TYPE};
+            String[] mimeTypes = {KMLConstants.KML_MIME_TYPE, KMLConstants.KMZ_MIME_TYPE};
             XMLEventParserContextFactory.addParserContext(mimeTypes, new KMLParserContext(this.getNamespaceURI()));
             ctx = (KMLParserContext)
                 XMLEventParserContextFactory.createParserContext(KMLConstants.KML_MIME_TYPE, this.getNamespaceURI());
@@ -459,8 +550,7 @@ public class KMLRoot extends KMLAbstractObject implements KMLRenderable, XMLRoot
     public void setNotificationListener(final XMLParserNotificationListener listener) {
         if (listener == null) {
             this.parserContext.setNotificationListener(null);
-        }
-        else {
+        } else {
             this.parserContext.setNotificationListener(notification -> {
                 // Set up so the user sees the notification coming from the root rather than the parser
                 notification.setSource(KMLRoot.this);
@@ -591,7 +681,7 @@ public class KMLRoot extends KMLAbstractObject implements KMLRenderable, XMLRoot
 
             File file = new File(linkBase);
             if (!file.exists()) {
-                final URL url = getClass().getResource("/" + linkBase);
+                final URL url = getClass().getResource('/' + linkBase);
                 if (url == null)
                     return null;
 
@@ -619,7 +709,7 @@ public class KMLRoot extends KMLAbstractObject implements KMLRenderable, XMLRoot
                 return refRoot;
         }
         catch (Exception e) {
-            String message = Logging.getMessage("generic.UnableToResolveReference", linkBase + "/" + linkRef);
+            String message = Logging.getMessage("generic.UnableToResolveReference", linkBase + '/' + linkRef);
             Logging.logger().warning(message);
             return null;
         }
@@ -732,7 +822,7 @@ public class KMLRoot extends KMLAbstractObject implements KMLRenderable, XMLRoot
                 return refRoot;
         }
         catch (Exception e) {
-            String message = Logging.getMessage("generic.UnableToResolveReference", linkBase + "/" + linkRef);
+            String message = Logging.getMessage("generic.UnableToResolveReference", linkBase + '/' + linkRef);
             Logging.logger().warning(message);
             return null;
         }
@@ -814,33 +904,6 @@ public class KMLRoot extends KMLAbstractObject implements KMLRenderable, XMLRoot
     }
 
     /**
-     * Check a cached resource for expiration. If the resource is expired, evict it from the cache.
-     *
-     * @param link           Link that identifies the resource to check for expiration. This is the same link that was
-     *                       passed to resolveReference to retrieve the resource.
-     * @param expirationTime Time at which the resource expires, in milliseconds since the Epoch. If the current system
-     *                       time is greater than the expiration time, then the resource will be evicted.
-     */
-    public static void evictIfExpired(String link, long expirationTime) {
-        try {
-            URL url = WorldWind.store().requestFile(link, false);
-            if (url != null) {
-                // Check the file's modification time against the link update time. If the file was last modified
-                // earlier than the link update time then we need to remove the cached file from the file store,
-                // and start a new file retrieval.
-                File file = new File(url.toURI());
-
-                if (file.lastModified() < expirationTime)
-                    WorldWind.store().removeFile(link);
-            }
-        }
-        catch (URISyntaxException e) {
-            String message = Logging.getMessage("generic.UnableToResolveReference", link);
-            Logging.logger().warning(message);
-        }
-    }
-
-    /**
      * Returns the expiration time of a file retrieved by {@link #resolveReference(String) resolveReference} or {@link
      * #resolveNetworkLink(String, boolean, long) resolveNetworkLink}.
      *
@@ -868,51 +931,6 @@ public class KMLRoot extends KMLAbstractObject implements KMLRenderable, XMLRoot
         }
 
         return 0;
-    }
-
-    /**
-     * Determines if a MIME type can be parsed as KML or KMZ. Parsable types are the KML and KMZ MIME types, as well as
-     * "text/plain" and "text/xml".
-     *
-     * @param mimeType Type to test. May be null.
-     * @return {@code true} if {@code mimeType} can be parsed as KML.
-     */
-    protected static boolean canParseContentType(String mimeType) {
-        return KMLConstants.KML_MIME_TYPE.equals(mimeType) || KMLConstants.KMZ_MIME_TYPE.equals(mimeType)
-            || "text/plain".equals(mimeType) || "text/xml".equals(mimeType);
-    }
-
-    /**
-     * Open and parse the specified file expressed as a file: URL..
-     *
-     * @param url            the URL of the file to open, expressed as a URL with a scheme of "file".
-     * @param linkBase       the original address of the document if the file is a retrieved and cached file.
-     * @param contentType    the mime type of the file's content, either a KML or KMZ mime type.
-     * @param namespaceAware specifies whether to use a namespace aware event reader.
-     * @return A {@code KMLRoot} representing the file's KML contents.
-     * @throws IOException        if an I/O error occurs during opening and parsing.
-     * @throws XMLStreamException if a server parsing error is encountered.
-     */
-    protected static KMLRoot parseCachedKMLFile(URL url, String linkBase, String contentType, boolean namespaceAware)
-        throws IOException, XMLStreamException {
-        XMLDoc kmlDoc;
-
-        InputStream refStream = url.openStream();
-
-        if (KMLConstants.KMZ_MIME_TYPE.equals(contentType))
-            kmlDoc = new KMZInputStream(refStream);
-        else // Attempt to parse as KML
-            kmlDoc = new KMLInputStream(refStream, WWIO.makeURI(linkBase));
-
-        try {
-            KMLRoot refRoot = new KMLRoot(kmlDoc, namespaceAware);
-            refRoot = refRoot.parse(); // also closes the URL's stream
-            return refRoot;
-        }
-        catch (XMLStreamException e) {
-            refStream.close(); // parsing failed, so explicitly close the stream
-            throw e;
-        }
     }
 
     /**
@@ -1060,6 +1078,10 @@ public class KMLRoot extends KMLAbstractObject implements KMLRenderable, XMLRoot
         this.firePropertyChange(AVKey.REPAINT, null, null);
     }
 
+    //**********************************************************************
+    //********************* Property change support ************************
+    //**********************************************************************
+
     public void preRender(KMLTraversalContext tc, DrawContext dc) {
         if (this.getFeature() != null)
             this.getFeature().preRender(tc, dc);
@@ -1069,10 +1091,6 @@ public class KMLRoot extends KMLAbstractObject implements KMLRenderable, XMLRoot
         if (this.getFeature() != null)
             this.getFeature().render(tc, dc);
     }
-
-    //**********************************************************************
-    //********************* Property change support ************************
-    //**********************************************************************
 
     /**
      * {@inheritDoc}
@@ -1161,17 +1179,6 @@ public class KMLRoot extends KMLAbstractObject implements KMLRenderable, XMLRoot
         return this.propertyChangeSupport;
     }
 
-    private static void setChildPositions(Iterable<?> children, Position position) {
-        children.forEach((v) -> {
-            if (v instanceof KMLMutable) {
-                ((KMLMutable) v).setPosition(position);
-            }
-            else if (v instanceof KMLAbstractContainer) {
-                setChildPositions(((KMLAbstractContainer) v).getFeatures(), position);
-            }
-        });
-    }
-
     /**
      * Specifies this shape's geographic position. The position's altitude is relative to this shape's altitude mode.
      *
@@ -1185,18 +1192,7 @@ public class KMLRoot extends KMLAbstractObject implements KMLRenderable, XMLRoot
             throw new IllegalArgumentException(message);
         }
 
-        setChildPositions(this.getFields().getValues(), position);
-    }
-
-    private static void setChildScales(Iterable<?> children, Vec4 scale) {
-        children.forEach((v) -> {
-            if (v instanceof KMLMutable) {
-                ((KMLMutable) v).setScale(scale);
-            }
-            else if (v instanceof KMLAbstractContainer) {
-                setChildScales(((KMLAbstractContainer) v).getFeatures(), scale);
-            }
-        });
+        KMLRoot.setChildPositions(this.getFields().getValues(), position);
     }
 
     /**

@@ -67,20 +67,17 @@ abstract public class OGCCapabilityInformation extends AbstractXMLEventParser {
                 if (o instanceof StringSetXMLEventParser)
                     this.setExceptionFormats(((StringSetXMLEventParser) o).getStrings());
             }
-        }
-        else if (event.isStartElement() && this.isRequestName(ctx, event.asStartElement().getName())) {
+        } else if (event.isStartElement() && this.isRequestName(ctx, event.asStartElement().getName())) {
             XMLEventParser parser = this.allocate(ctx, event);
             if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
                 if (o instanceof OGCRequestDescription)
                     this.requestDescriptions.add((OGCRequestDescription) o);
             }
-        }
-        else if (ctx.isStartElement(event, USER_DEFINED_SYMBOLIZATION)) {
+        } else if (ctx.isStartElement(event, USER_DEFINED_SYMBOLIZATION)) {
             // Break out the parsing so that it can be overridden by subclasses.
             this.parseUserDefinedSymbolization(event);
-        }
-        else if (ctx.isStartElement(event, EXTENDED_CAPABILITIES)) {
+        } else if (ctx.isStartElement(event, EXTENDED_CAPABILITIES)) {
             // Break out the parsing so that it can be overridden by subclasses.
             this.parseExtendedCapabilities(ctx, event, args);
         }
@@ -154,7 +151,7 @@ abstract public class OGCCapabilityInformation extends AbstractXMLEventParser {
         StringBuilder sb = new StringBuilder();
 
         for (String ef : this.getExceptionFormats()) {
-            sb.append("Exception format: ").append(ef).append("\n");
+            sb.append("Exception format: ").append(ef).append('\n');
         }
 
         for (OGCRequestDescription rd : this.getRequestDescriptions()) {
@@ -162,7 +159,7 @@ abstract public class OGCCapabilityInformation extends AbstractXMLEventParser {
         }
 
         for (Map.Entry<String, String> uds : this.getUserDefinedSymbolization().entrySet()) {
-            sb.append(uds.getKey()).append("=").append(uds.getValue()).append("\n");
+            sb.append(uds.getKey()).append('=').append(uds.getValue()).append('\n');
         }
 
         return sb.toString();

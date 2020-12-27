@@ -67,92 +67,6 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever {
     }
 
     /**
-     * Create an icon for a MIL-STD-2525C point graphic. Point graphics are defined in Appendixes B (Tactical Graphics),
-     * C (Meteorological and Oceanographic), and G (Emergency Management).
-     *
-     * @param sidc   SIDC identifier for the symbol.
-     * @param params Parameters that affect icon retrieval. This retriever accepts only one parameter: AVKey.COLOR,
-     *               which determines the color of the image. By default the color will be determined from the standard
-     *               identity.
-     * @return An BufferedImage containing the icon for the requested graphic, or null if the icon cannot be retrieved.
-     */
-    public BufferedImage createIcon(String sidc, AVList params) {
-        if (sidc == null) {
-            String msg = Logging.getMessage("nullValue.SymbolCodeIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        // Retrieve desired symbol and convert to BufferedImage
-        SymbolCode symbolCode = new SymbolCode(sidc);
-        String filename = MilStd2525PointGraphicRetriever.composeFilename(symbolCode);
-        BufferedImage srcImg = this.readImage(filename);
-
-        if (srcImg == null) {
-            String msg = Logging.getMessage("Symbology.SymbolIconNotFound", symbolCode);
-            Logging.logger().severe(msg);
-            throw new MissingResourceException(msg, BufferedImage.class.getName(), filename);
-        }
-
-        int width = srcImg.getWidth();
-        int height = srcImg.getHeight();
-
-        BufferedImage destImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB_PRE);
-
-        AbstractIconRetriever.drawImage(srcImg, destImg);
-
-        // Non-Metoc symbols take their color from the standard identity. Metoc symbols do not have a standard identity,
-        // so they take their color only from the override color.
-        Color color = MilStd2525PointGraphicRetriever.getColorFromParams(params);
-        if (!SymbologyConstants.SCHEME_METOC.equalsIgnoreCase(symbolCode.getScheme())) {
-            if (color == null)
-                color = MilStd2525PointGraphicRetriever.getColorForStandardIdentity(symbolCode);
-
-            AbstractIconRetriever.multiply(destImg, color);
-
-            if (MilStd2525PointGraphicRetriever.mustDrawFill(symbolCode)) {
-                destImg = this.composeFilledImage(destImg, symbolCode);
-            }
-        }
-        else if (color != null) // Metoc symbol
-        {
-            // There is not a clear use case for using an override color with Metoc so replace all colors in the
-            // source image with the override rather than attempting to multiply colors and change only part of
-            // the graphic.
-            AbstractIconRetriever.replaceColor(destImg, color);
-        }
-        return destImg;
-    }
-
-    /**
-     * Create an image by drawing over a fill image.
-     *
-     * @param srcImg     Image to draw over fill.
-     * @param symbolCode Symbol code that identifies the graphic.
-     * @return A new image with the {@code srcImg} drawn over the appropriate fill.
-     */
-    protected BufferedImage composeFilledImage(BufferedImage srcImg, SymbolCode symbolCode) {
-        String fillPath = MilStd2525PointGraphicRetriever.composeFillPath(symbolCode);
-        BufferedImage fill = this.readImage(fillPath);
-
-        if (fill == null) {
-            String msg = Logging.getMessage("Symbology.SymbolIconNotFound", symbolCode);
-            Logging.logger().severe(msg);
-            throw new MissingResourceException(msg, BufferedImage.class.getName(), fillPath);
-        }
-
-        int width = srcImg.getWidth();
-        int height = srcImg.getHeight();
-
-        BufferedImage filledImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB_PRE);
-
-        AbstractIconRetriever.drawImage(fill, filledImg);
-        AbstractIconRetriever.drawImage(srcImg, filledImg);
-
-        return filledImg;
-    }
-
-    /**
      * Indicates whether or not a fill must be drawn for a graphic.
      *
      * @param code Symbol code of a point graphic.
@@ -201,7 +115,8 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever {
      */
     protected static String composeFillPath(SymbolCode code) {
         // Note: Metoc symbols currently do not use fill, so only handle tactical graphics here.
-        return MilStd2525PointGraphicRetriever.composeFilenameTacticalGraphic(code, DIR_FILL_TACGRP);
+        return MilStd2525PointGraphicRetriever.composeFilenameTacticalGraphic(code,
+            MilStd2525PointGraphicRetriever.DIR_FILL_TACGRP);
     }
 
     /**
@@ -215,7 +130,8 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever {
         String scheme = code.getScheme();
 
         if (SymbologyConstants.SCHEME_TACTICAL_GRAPHICS.equalsIgnoreCase(scheme))
-            return MilStd2525PointGraphicRetriever.composeFilenameTacticalGraphic(code, DIR_ICON_TACGRP);
+            return MilStd2525PointGraphicRetriever.composeFilenameTacticalGraphic(code,
+                MilStd2525PointGraphicRetriever.DIR_ICON_TACGRP);
         else if (SymbologyConstants.SCHEME_METOC.equalsIgnoreCase(scheme))
             return MilStd2525PointGraphicRetriever.composeFilenameMetoc(code);
         else if (SymbologyConstants.SCHEME_EMERGENCY_MANAGEMENT.equalsIgnoreCase(scheme))
@@ -245,14 +161,14 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever {
             functionId = "------";
 
         StringBuilder sb = new StringBuilder();
-        sb.append(dir).append("/")
+        sb.append(dir).append('/')
             .append(scheme.toLowerCase())
             .append('-') // Standard identity
             .append(category.toLowerCase())
             .append(status)
             .append(functionId.toLowerCase())
             .append("-----") // Echelon, Country Code, Order of Battle
-            .append(PATH_SUFFIX);
+            .append(MilStd2525PointGraphicRetriever.PATH_SUFFIX);
 
         return sb.toString();
     }
@@ -274,14 +190,14 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever {
             functionId = "------";
 
         StringBuilder sb = new StringBuilder();
-        sb.append(DIR_ICON_METOC).append("/")
+        sb.append(MilStd2525PointGraphicRetriever.DIR_ICON_METOC).append('/')
             .append(scheme)
             .append(category)
             .append(staticDynamic)
             .append(functionId)
             .append(graphicType)
             .append("--") // Positions 14, 15 unused
-            .append(PATH_SUFFIX);
+            .append(MilStd2525PointGraphicRetriever.PATH_SUFFIX);
 
         return sb.toString().toLowerCase();
     }
@@ -306,15 +222,100 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever {
             functionId = "------";
 
         StringBuilder sb = new StringBuilder();
-        sb.append(DIR_ICON_EMS).append("/")
+        sb.append(MilStd2525PointGraphicRetriever.DIR_ICON_EMS).append('/')
             .append(scheme.toLowerCase())
             .append('-') // Standard identity
             .append(category.toLowerCase())
             .append(status)
             .append(functionId.toLowerCase())
             .append("-----") // Echelon, Country Code, Order of Battle
-            .append(PATH_SUFFIX);
+            .append(MilStd2525PointGraphicRetriever.PATH_SUFFIX);
 
         return sb.toString();
+    }
+
+    /**
+     * Create an icon for a MIL-STD-2525C point graphic. Point graphics are defined in Appendixes B (Tactical Graphics),
+     * C (Meteorological and Oceanographic), and G (Emergency Management).
+     *
+     * @param sidc   SIDC identifier for the symbol.
+     * @param params Parameters that affect icon retrieval. This retriever accepts only one parameter: AVKey.COLOR,
+     *               which determines the color of the image. By default the color will be determined from the standard
+     *               identity.
+     * @return An BufferedImage containing the icon for the requested graphic, or null if the icon cannot be retrieved.
+     */
+    public BufferedImage createIcon(String sidc, AVList params) {
+        if (sidc == null) {
+            String msg = Logging.getMessage("nullValue.SymbolCodeIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        // Retrieve desired symbol and convert to BufferedImage
+        SymbolCode symbolCode = new SymbolCode(sidc);
+        String filename = MilStd2525PointGraphicRetriever.composeFilename(symbolCode);
+        BufferedImage srcImg = this.readImage(filename);
+
+        if (srcImg == null) {
+            String msg = Logging.getMessage("Symbology.SymbolIconNotFound", symbolCode);
+            Logging.logger().severe(msg);
+            throw new MissingResourceException(msg, BufferedImage.class.getName(), filename);
+        }
+
+        int width = srcImg.getWidth();
+        int height = srcImg.getHeight();
+
+        BufferedImage destImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB_PRE);
+
+        AbstractIconRetriever.drawImage(srcImg, destImg);
+
+        // Non-Metoc symbols take their color from the standard identity. Metoc symbols do not have a standard identity,
+        // so they take their color only from the override color.
+        Color color = MilStd2525PointGraphicRetriever.getColorFromParams(params);
+        if (!SymbologyConstants.SCHEME_METOC.equalsIgnoreCase(symbolCode.getScheme())) {
+            if (color == null)
+                color = MilStd2525PointGraphicRetriever.getColorForStandardIdentity(symbolCode);
+
+            AbstractIconRetriever.multiply(destImg, color);
+
+            if (MilStd2525PointGraphicRetriever.mustDrawFill(symbolCode)) {
+                destImg = this.composeFilledImage(destImg, symbolCode);
+            }
+        } else if (color != null) // Metoc symbol
+        {
+            // There is not a clear use case for using an override color with Metoc so replace all colors in the
+            // source image with the override rather than attempting to multiply colors and change only part of
+            // the graphic.
+            AbstractIconRetriever.replaceColor(destImg, color);
+        }
+        return destImg;
+    }
+
+    /**
+     * Create an image by drawing over a fill image.
+     *
+     * @param srcImg     Image to draw over fill.
+     * @param symbolCode Symbol code that identifies the graphic.
+     * @return A new image with the {@code srcImg} drawn over the appropriate fill.
+     */
+    protected BufferedImage composeFilledImage(BufferedImage srcImg, SymbolCode symbolCode) {
+        String fillPath = MilStd2525PointGraphicRetriever.composeFillPath(symbolCode);
+        BufferedImage fill = this.readImage(fillPath);
+
+        if (fill == null) {
+            String msg = Logging.getMessage("Symbology.SymbolIconNotFound", symbolCode);
+            Logging.logger().severe(msg);
+            throw new MissingResourceException(msg, BufferedImage.class.getName(), fillPath);
+        }
+
+        int width = srcImg.getWidth();
+        int height = srcImg.getHeight();
+
+        BufferedImage filledImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB_PRE);
+
+        AbstractIconRetriever.drawImage(fill, filledImg);
+        AbstractIconRetriever.drawImage(srcImg, filledImg);
+
+        return filledImg;
     }
 }

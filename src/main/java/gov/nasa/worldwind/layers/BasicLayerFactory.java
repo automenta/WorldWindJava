@@ -32,6 +32,54 @@ public class BasicLayerFactory extends BasicFactory {
     }
 
     /**
+     * Create a {@link TiledImageLayer} layer described by an XML layer description.
+     *
+     * @param domElement the XML element describing the layer to create. The element must inculde a service name
+     *                   identifying the type of service to use to retrieve layer data. Recognized service types are
+     *                   "Offline", "WWTileService" and "OGC:WMS".
+     * @param params     any parameters to apply when creating the layer.
+     * @return a new layer
+     * @throws WWUnrecognizedException if the service type given in the describing element is unrecognized.
+     */
+    protected static Layer createTiledImageLayer(Element domElement, AVList params) {
+        Layer layer;
+
+        String serviceName = WWXML.getText(domElement, "Service/@serviceName");
+
+        if ("Offline".equals(serviceName)) {
+            layer = new BasicTiledImageLayer(domElement, params);
+        } else if ("WWTileService".equals(serviceName)) {
+            layer = new BasicTiledImageLayer(domElement, params);
+        } else if (OGCConstants.WMS_SERVICE_NAME.equals(serviceName)) {
+            layer = new WMSTiledImageLayer(domElement, params);
+        } else if (AVKey.SERVICE_NAME_LOCAL_RASTER_SERVER.equals(serviceName)) {
+            layer = new LocalRasterServerLayer(domElement, params);
+        } else {
+            String msg = Logging.getMessage("generic.UnrecognizedServiceName", serviceName);
+            throw new WWUnrecognizedException(msg);
+        }
+
+        String actuate = WWXML.getText(domElement, "@actuate");
+        layer.setEnabled(actuate != null && actuate.equals("onLoad"));
+
+        return layer;
+    }
+
+    /**
+     * Creates a shapefile layer described by an XML layer description. This delegates layer construction to the factory
+     * class associated with the configuration key "gov.nasa.worldwind.avkey.ShapefileLayerFactory".
+     *
+     * @param domElement the XML element describing the layer to create. The element must contain the shapefile
+     *                   location, and may contain elements specifying shapefile attribute mappings, shape attributes to
+     *                   assign to created shapes, and layer properties.
+     * @param params     any parameters to apply when creating the layer.
+     * @return a new layer
+     */
+    protected static Layer createShapefileLayer(Element domElement, AVList params) {
+        return (Layer) BasicFactory.create(AVKey.SHAPEFILE_LAYER_FACTORY, domElement, params);
+    }
+
+    /**
      * Creates a layer or layer list from a general configuration source. The source can be one of the following: <ul>
      * <li>a {@link java.net.URL}</li> <li>a {@link java.io.File}</li> <li>a {@link java.io.InputStream}</li>
      * <li>{@link
@@ -152,13 +200,11 @@ public class BasicLayerFactory extends BasicFactory {
                         LayerList list = (LayerList) o;
                         if (!list.isEmpty())
                             layerLists.add(list);
-                    }
-                    else if (o instanceof LayerList[]) {
+                    } else if (o instanceof LayerList[]) {
                         LayerList[] lists = (LayerList[]) o;
                         if (lists.length > 0)
                             layerLists.addAll(Arrays.asList(lists));
-                    }
-                    else {
+                    } else {
                         String msg = Logging.getMessage("LayerFactory.UnexpectedTypeForLayer", o.getClass().getName());
                         Logging.logger().log(Level.WARNING, msg);
                     }
@@ -177,7 +223,7 @@ public class BasicLayerFactory extends BasicFactory {
                     }
                 }
             }
-            catch (Exception e) {
+            catch (RuntimeException e) {
                 Logging.logger().log(Level.WARNING, e.getMessage(), e);
                 // keep going to create other layers
             }
@@ -203,7 +249,7 @@ public class BasicLayerFactory extends BasicFactory {
             try {
                 layerList.add(this.createFromLayerDocument(element, params));
             }
-            catch (Exception e) {
+            catch (RuntimeException e) {
                 Logging.logger().log(Level.WARNING, e.getMessage(), e);
                 // keep going to create other layers
             }
@@ -252,16 +298,13 @@ public class BasicLayerFactory extends BasicFactory {
             }
 
             layer = (Layer) o;
-        }
-        else {
+        } else {
             String layerType = WWXML.getText(domElement, "@layerType");
             if (layerType != null && layerType.equals("TiledImageLayer")) {
                 layer = BasicLayerFactory.createTiledImageLayer(domElement, params);
-            }
-            else if (layerType != null && layerType.equals("ShapefileLayer")) {
+            } else if (layerType != null && layerType.equals("ShapefileLayer")) {
                 layer = BasicLayerFactory.createShapefileLayer(domElement, params);
-            }
-            else {
+            } else {
                 String msg = Logging.getMessage("generic.UnrecognizedLayerType", layerType);
                 throw new WWUnrecognizedException(msg);
             }
@@ -274,57 +317,5 @@ public class BasicLayerFactory extends BasicFactory {
         }
 
         return layer;
-    }
-
-    /**
-     * Create a {@link TiledImageLayer} layer described by an XML layer description.
-     *
-     * @param domElement the XML element describing the layer to create. The element must inculde a service name
-     *                   identifying the type of service to use to retrieve layer data. Recognized service types are
-     *                   "Offline", "WWTileService" and "OGC:WMS".
-     * @param params     any parameters to apply when creating the layer.
-     * @return a new layer
-     * @throws WWUnrecognizedException if the service type given in the describing element is unrecognized.
-     */
-    protected static Layer createTiledImageLayer(Element domElement, AVList params) {
-        Layer layer;
-
-        String serviceName = WWXML.getText(domElement, "Service/@serviceName");
-
-        if ("Offline".equals(serviceName)) {
-            layer = new BasicTiledImageLayer(domElement, params);
-        }
-        else if ("WWTileService".equals(serviceName)) {
-            layer = new BasicTiledImageLayer(domElement, params);
-        }
-        else if (OGCConstants.WMS_SERVICE_NAME.equals(serviceName)) {
-            layer = new WMSTiledImageLayer(domElement, params);
-        }
-        else if (AVKey.SERVICE_NAME_LOCAL_RASTER_SERVER.equals(serviceName)) {
-            layer = new LocalRasterServerLayer(domElement, params);
-        }
-        else {
-            String msg = Logging.getMessage("generic.UnrecognizedServiceName", serviceName);
-            throw new WWUnrecognizedException(msg);
-        }
-
-        String actuate = WWXML.getText(domElement, "@actuate");
-        layer.setEnabled(actuate != null && actuate.equals("onLoad"));
-
-        return layer;
-    }
-
-    /**
-     * Creates a shapefile layer described by an XML layer description. This delegates layer construction to the factory
-     * class associated with the configuration key "gov.nasa.worldwind.avkey.ShapefileLayerFactory".
-     *
-     * @param domElement the XML element describing the layer to create. The element must contain the shapefile
-     *                   location, and may contain elements specifying shapefile attribute mappings, shape attributes to
-     *                   assign to created shapes, and layer properties.
-     * @param params     any parameters to apply when creating the layer.
-     * @return a new layer
-     */
-    protected static Layer createShapefileLayer(Element domElement, AVList params) {
-        return (Layer) BasicFactory.create(AVKey.SHAPEFILE_LAYER_FACTORY, domElement, params);
     }
 }

@@ -50,32 +50,33 @@ class RPFNonpolarFrameStructure extends RPFFrameStructure {
 
         // Constant zone properties.
 
-        int ewPixelSpacingConst = eastWestPixelSpacingConstant(zoneCode);
-        int nsPixelSpacingConst = northSouthPixelSpacingConstant();
-        int equatorwardNominalBound = equatorwardNominalBoundary(zoneCode);
-        int polewardNominalBound = polewardNominalBoundary(zoneCode);
+        int ewPixelSpacingConst = RPFFrameStructure.eastWestPixelSpacingConstant(zoneCode);
+        int nsPixelSpacingConst = RPFFrameStructure.northSouthPixelSpacingConstant();
+        int equatorwardNominalBound = RPFFrameStructure.equatorwardNominalBoundary(zoneCode);
+        int polewardNominalBound = RPFFrameStructure.polewardNominalBoundary(zoneCode);
 
         // Scale/GSD specific zone properties.
 
         int nsPixelConst, ewPixelConst;
         if (RPFDataSeries.isCADRGDataType(rpfDataType)) {
-            nsPixelConst = northSouthPixelConstant_CADRG(nsPixelSpacingConst, resolution);
-            ewPixelConst = eastWestPixelConstant_CADRG(ewPixelSpacingConst, resolution);
-        }
-        else if (RPFDataSeries.isCIBDataType(rpfDataType)) {
-            nsPixelConst = northSouthPixelConstant_CIB(nsPixelSpacingConst, resolution);
-            ewPixelConst = eastWestPixelConstant_CIB(ewPixelSpacingConst, resolution);
-        }
-        else {
+            nsPixelConst = RPFNonpolarFrameStructure.northSouthPixelConstant_CADRG(nsPixelSpacingConst, resolution);
+            ewPixelConst = RPFNonpolarFrameStructure.eastWestPixelConstant_CADRG(ewPixelSpacingConst, resolution);
+        } else if (RPFDataSeries.isCIBDataType(rpfDataType)) {
+            nsPixelConst = RPFNonpolarFrameStructure.northSouthPixelConstant_CIB(nsPixelSpacingConst, resolution);
+            ewPixelConst = RPFNonpolarFrameStructure.eastWestPixelConstant_CIB(ewPixelSpacingConst, resolution);
+        } else {
             nsPixelConst = -1;
             ewPixelConst = -1;
         }
 
-        double polewardExtent = polewardExtent(polewardNominalBound, nsPixelConst, PIXEL_ROWS_PER_FRAME);
-        double equatorwardExtent = equatorwardExtent(equatorwardNominalBound, nsPixelConst, PIXEL_ROWS_PER_FRAME);
+        double polewardExtent = RPFNonpolarFrameStructure.polewardExtent(polewardNominalBound, nsPixelConst,
+            RPFFrameStructure.PIXEL_ROWS_PER_FRAME);
+        double equatorwardExtent = RPFNonpolarFrameStructure.equatorwardExtent(equatorwardNominalBound, nsPixelConst,
+            RPFFrameStructure.PIXEL_ROWS_PER_FRAME);
 
-        int latFrames = latitudinalFrames(polewardExtent, equatorwardExtent, nsPixelConst, PIXEL_ROWS_PER_FRAME);
-        int lonFrames = longitudinalFrames(ewPixelConst, PIXEL_ROWS_PER_FRAME);
+        int latFrames = RPFNonpolarFrameStructure.latitudinalFrames(polewardExtent, equatorwardExtent, nsPixelConst,
+            RPFFrameStructure.PIXEL_ROWS_PER_FRAME);
+        int lonFrames = RPFNonpolarFrameStructure.longitudinalFrames(ewPixelConst, RPFFrameStructure.PIXEL_ROWS_PER_FRAME);
 
         return new RPFNonpolarFrameStructure(
             nsPixelConst, ewPixelConst,
@@ -126,7 +127,7 @@ class RPFNonpolarFrameStructure extends RPFFrameStructure {
         double pixelRowsPerFrame) {
         double nsPixelsPerDegree = northSouthPixelConstant / 90.0d;
         return Math.signum(polewardNominalBoundary)
-            * clamp(Math.ceil(nsPixelsPerDegree * Math.abs(polewardNominalBoundary) / pixelRowsPerFrame)
+            * RPFNonpolarFrameStructure.clamp(Math.ceil(nsPixelsPerDegree * Math.abs(polewardNominalBoundary) / pixelRowsPerFrame)
             * pixelRowsPerFrame / nsPixelsPerDegree, 0, 90);
     }
 
@@ -136,7 +137,7 @@ class RPFNonpolarFrameStructure extends RPFFrameStructure {
         double pixelRowsPerFrame) {
         double nsPixelsPerDegree = northSouthPixelConstant / 90.0d;
         return Math.signum(equatorwardNominalBoundary)
-            * clamp((int) (nsPixelsPerDegree * Math.abs(equatorwardNominalBoundary) / pixelRowsPerFrame)
+            * RPFNonpolarFrameStructure.clamp((int) (nsPixelsPerDegree * Math.abs(equatorwardNominalBoundary) / pixelRowsPerFrame)
             * pixelRowsPerFrame / nsPixelsPerDegree, 0, 90);
     }
 

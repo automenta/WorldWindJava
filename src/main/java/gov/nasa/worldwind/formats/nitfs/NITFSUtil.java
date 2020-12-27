@@ -94,7 +94,7 @@ public class NITFSUtil {
     }
 
     public static ByteBuffer readEntireFile(File file) throws IOException {
-        return readFileToBuffer(file);
+        return NITFSUtil.readFileToBuffer(file);
     }
 
     private static ByteBuffer readFileToBuffer(File file) throws IOException {
@@ -112,14 +112,14 @@ public class NITFSUtil {
     @SuppressWarnings("UnusedDeclaration")
     private static ByteBuffer readFile(File file) throws IOException {
         FileInputStream fis = new FileInputStream(file);
-        ByteBuffer buffer = ByteBuffer.allocate(PAGE_SIZE);
+        ByteBuffer buffer = ByteBuffer.allocate(NITFSUtil.PAGE_SIZE);
         ReadableByteChannel channel = Channels.newChannel(fis);
 
         int count = 0;
         while (count >= 0) {
             count = channel.read(buffer);
             if (count > 0 && !buffer.hasRemaining()) {
-                ByteBuffer biggerBuffer = ByteBuffer.allocate(buffer.limit() + PAGE_SIZE);
+                ByteBuffer biggerBuffer = ByteBuffer.allocate(buffer.limit() + NITFSUtil.PAGE_SIZE);
                 biggerBuffer.put(buffer.rewind());
                 buffer = biggerBuffer;
             }

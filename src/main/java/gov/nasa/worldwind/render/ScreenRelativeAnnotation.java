@@ -7,6 +7,7 @@
 package gov.nasa.worldwind.render;
 
 ////.*;
+
 import gov.nasa.worldwind.util.*;
 
 import java.awt.*;
@@ -45,7 +46,7 @@ public class ScreenRelativeAnnotation extends ScreenAnnotation {
      * @throws IllegalArgumentException if the text string is null.
      */
     public ScreenRelativeAnnotation(String text, double xFraction, double yFraction) {
-        super(text, DUMMY_POINT);
+        super(text, ScreenRelativeAnnotation.DUMMY_POINT);
 
         this.init(xFraction, yFraction);
     }
@@ -214,7 +215,7 @@ public class ScreenRelativeAnnotation extends ScreenAnnotation {
             try {
                 restorableSupport = RestorableSupport.parse(superStateInXml);
             }
-            catch (Exception e) {
+            catch (RuntimeException e) {
                 // Parsing the document specified by the superclass failed.
                 String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", superStateInXml);
                 Logging.logger().severe(message);
@@ -258,7 +259,7 @@ public class ScreenRelativeAnnotation extends ScreenAnnotation {
         try {
             super.restoreState(stateInXml);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             // Superclass will log the exception.
         }
 
@@ -266,7 +267,7 @@ public class ScreenRelativeAnnotation extends ScreenAnnotation {
         try {
             restorableSupport = RestorableSupport.parse(stateInXml);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             // Parsing the document specified by stateInXml failed.
             String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", stateInXml);
             Logging.logger().severe(message);

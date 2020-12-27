@@ -661,7 +661,7 @@ public class BasicBalloonAttributes extends BasicShapeAttributes implements Ball
         result = 31 * result + (this.font != null ? this.font.hashCode() : 0);
         result = 31 * result + (this.textColor != null ? this.textColor.hashCode() : 0);
         result = 31 * result + (this.imageOffset != null ? this.imageOffset.hashCode() : 0);
-        long temp = this.imageOpacity != +0.0d ? Double.doubleToLongBits(this.imageOpacity) : 0L;
+        long temp = this.imageOpacity == +0.0d ? 0L : Double.doubleToLongBits(this.imageOpacity);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         result = 31 * result + (this.imageRepeat != null ? this.imageRepeat.hashCode() : 0);
 

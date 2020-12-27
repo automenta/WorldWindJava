@@ -15,8 +15,8 @@ import gov.nasa.worldwind.util.Logging;
 import java.awt.*;
 
 /**
- * A <code>{@link GlobeBalloon}</code> that displays HTML, JavaScript, and Flash content using
- * the system's native browser, and who's origin is located at a position on the <code>Globe</code>.
+ * A <code>{@link GlobeBalloon}</code> that displays HTML, JavaScript, and Flash content using the system's native
+ * browser, and who's origin is located at a position on the <code>Globe</code>.
  *
  * @author pabercrombie
  * @version $Id: GlobeBrowserBalloon.java 2272 2014-08-25 23:24:45Z tgaskins $
@@ -122,12 +122,10 @@ public class GlobeBrowserBalloon extends AbstractBrowserBalloon implements Globe
         if (this.altitudeMode == WorldWind.CLAMP_TO_GROUND || dc.is2DGlobe()) {
             ogpm.placePoint = dc.computeTerrainPoint(
                 this.position.getLatitude(), this.position.getLongitude(), 0);
-        }
-        else if (this.altitudeMode == WorldWind.RELATIVE_TO_GROUND) {
+        } else if (this.altitudeMode == WorldWind.RELATIVE_TO_GROUND) {
             ogpm.placePoint = dc.computeTerrainPoint(
                 this.position.getLatitude(), this.position.getLongitude(), this.position.getAltitude());
-        }
-        else // Default to ABSOLUTE
+        } else // Default to ABSOLUTE
         {
             double height = this.position.getElevation() * dc.getVerticalExaggeration();
             ogpm.placePoint = dc.getGlobe().computePointFromPosition(
@@ -186,8 +184,7 @@ public class GlobeBrowserBalloon extends AbstractBrowserBalloon implements Globe
             depth = depth < 0.0d ? 0.0d : (Math.min(depth, 1.0d));
             gl.glDepthFunc(GL.GL_LESS);
             gl.glDepthRange(depth, depth);
-        }
-        else {
+        } else {
             gl.glDisable(GL.GL_DEPTH_TEST);
         }
     }

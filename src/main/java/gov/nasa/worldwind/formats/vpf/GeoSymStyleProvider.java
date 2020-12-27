@@ -72,18 +72,17 @@ public class GeoSymStyleProvider {
 
     private VPFSymbolAttributes getAttributes(String[] tokens) {
         VPFSymbolAttributes attr = new VPFSymbolAttributes(null, null);
-        if (tokens[TYPE].equals(TYPE_AREA_PLAIN) || tokens[TYPE].equals(TYPE_AREA_PATTERN)) {
-            attr.setInteriorMaterial(new Material(Color.decode(tokens[FILL_COLOR])));
-            if (tokens[TYPE].equals(TYPE_AREA_PATTERN)) {
-                attr.setImageSource(tokens[CODE]);
+        if (tokens[GeoSymStyleProvider.TYPE].equals(GeoSymStyleProvider.TYPE_AREA_PLAIN) || tokens[GeoSymStyleProvider.TYPE].equals(GeoSymStyleProvider.TYPE_AREA_PATTERN)) {
+            attr.setInteriorMaterial(new Material(Color.decode(tokens[GeoSymStyleProvider.FILL_COLOR])));
+            if (tokens[GeoSymStyleProvider.TYPE].equals(GeoSymStyleProvider.TYPE_AREA_PATTERN)) {
+                attr.setImageSource(tokens[GeoSymStyleProvider.CODE]);
             }
-        }
-        else if (tokens[TYPE].equals(TYPE_LINE_PLAIN) || tokens[TYPE].equals(TYPE_LINE_COMPLEX)) {
-            attr.setOutlineMaterial(new Material(Color.decode(tokens[LINE_COLOR])));
-            attr.setOutlineWidth(Double.parseDouble(tokens[LINE_WIDTH]) * this.lineWidthFactor);
-            if (tokens[TYPE].equals(TYPE_LINE_COMPLEX)) {
-                attr.setOutlineStipplePattern(Integer.decode(tokens[STIPPLE_PATTERN]).shortValue());
-                attr.setOutlineStippleFactor(Integer.parseInt(tokens[STIPPLE_FACTOR]));
+        } else if (tokens[GeoSymStyleProvider.TYPE].equals(GeoSymStyleProvider.TYPE_LINE_PLAIN) || tokens[GeoSymStyleProvider.TYPE].equals(GeoSymStyleProvider.TYPE_LINE_COMPLEX)) {
+            attr.setOutlineMaterial(new Material(Color.decode(tokens[GeoSymStyleProvider.LINE_COLOR])));
+            attr.setOutlineWidth(Double.parseDouble(tokens[GeoSymStyleProvider.LINE_WIDTH]) * this.lineWidthFactor);
+            if (tokens[GeoSymStyleProvider.TYPE].equals(GeoSymStyleProvider.TYPE_LINE_COMPLEX)) {
+                attr.setOutlineStipplePattern(Integer.decode(tokens[GeoSymStyleProvider.STIPPLE_PATTERN]).shortValue());
+                attr.setOutlineStippleFactor(Integer.parseInt(tokens[GeoSymStyleProvider.STIPPLE_FACTOR]));
             }
         }
 

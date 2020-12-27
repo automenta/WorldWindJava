@@ -25,7 +25,7 @@ public class ImageInterpolator {
     protected final int cellSize;
     protected final MemoryCache kidCache =
         new SoftMemoryCache();
-        //new BasicMemoryCache(750000L, 1000000L);
+    //new BasicMemoryCache(750000L, 1000000L);
 
     public ImageInterpolator(Dimension gridSize, float[] xs, float[] ys, int depth, int cellSize) {
         if (gridSize == null) {
@@ -197,8 +197,7 @@ public class ImageInterpolator {
                 }
 
                 this.computeExtremesFromChildren();
-            }
-            else {
+            } else {
                 this.computeExtremesFromLocations(dim, xs, ys);
             }
         }

@@ -21,8 +21,8 @@ import gov.nasa.worldwind.util.*;
  */
 public class KMLExtrudedPolygonImpl extends ExtrudedPolygon implements KMLRenderable {
     protected final KMLAbstractFeature parent;
-    protected boolean highlightAttributesResolved = false;
-    protected boolean normalAttributesResolved = false;
+    protected boolean highlightAttributesResolved;
+    protected boolean normalAttributesResolved;
 
     /**
      * Create an instance.
@@ -89,6 +89,20 @@ public class KMLExtrudedPolygonImpl extends ExtrudedPolygon implements KMLRender
         this.set(AVKey.CONTEXT, this.parent);
     }
 
+    protected static ShapeAttributes getInitialAttributes(String attrType) {
+        ShapeAttributes attrs = new BasicShapeAttributes();
+
+        if (KMLConstants.HIGHLIGHT.equals(attrType)) {
+            attrs.setOutlineMaterial(Material.RED);
+            attrs.setInteriorMaterial(Material.PINK);
+        } else {
+            attrs.setOutlineMaterial(Material.WHITE);
+            attrs.setInteriorMaterial(Material.LIGHT_GRAY);
+        }
+
+        return attrs;
+    }
+
     public void preRender(KMLTraversalContext tc, DrawContext dc) {
         super.preRender(dc);
     }
@@ -110,8 +124,7 @@ public class KMLExtrudedPolygonImpl extends ExtrudedPolygon implements KMLRender
                     }
                 }
             }
-        }
-        else {
+        } else {
             if (!this.normalAttributesResolved) {
                 ShapeAttributes a = this.getCapAttributes();
                 if (a == null || a.isUnresolved()) {
@@ -170,21 +183,6 @@ public class KMLExtrudedPolygonImpl extends ExtrudedPolygon implements KMLRender
 
             attrs.setDrawInterior(((KMLPolyStyle) fillSubStyle).isFill());
             attrs.setDrawOutline(((KMLPolyStyle) fillSubStyle).isOutline());
-        }
-
-        return attrs;
-    }
-
-    protected static ShapeAttributes getInitialAttributes(String attrType) {
-        ShapeAttributes attrs = new BasicShapeAttributes();
-
-        if (KMLConstants.HIGHLIGHT.equals(attrType)) {
-            attrs.setOutlineMaterial(Material.RED);
-            attrs.setInteriorMaterial(Material.PINK);
-        }
-        else {
-            attrs.setOutlineMaterial(Material.WHITE);
-            attrs.setInteriorMaterial(Material.LIGHT_GRAY);
         }
 
         return attrs;

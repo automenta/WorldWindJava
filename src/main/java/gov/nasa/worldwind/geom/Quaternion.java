@@ -38,7 +38,7 @@ public class Quaternion {
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
-        if ((compArray.length - offset) < NUM_ELEMENTS) {
+        if ((compArray.length - offset) < Quaternion.NUM_ELEMENTS) {
             String msg = Logging.getMessage("generic.ArrayInvalidLength", compArray.length);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -64,7 +64,7 @@ public class Quaternion {
             throw new IllegalArgumentException(msg);
         }
 
-        return fromAxisAngle(angle, axis.x, axis.y, axis.z, true);
+        return Quaternion.fromAxisAngle(angle, axis.x, axis.y, axis.z, true);
     }
 
     public static Quaternion fromAxisAngle(Angle angle, double axisX, double axisY, double axisZ) {
@@ -73,7 +73,7 @@ public class Quaternion {
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
-        return fromAxisAngle(angle, axisX, axisY, axisZ, true);
+        return Quaternion.fromAxisAngle(angle, axisX, axisY, axisZ, true);
     }
 
     private static Quaternion fromAxisAngle(Angle angle, double axisX, double axisY, double axisZ, boolean normalize) {
@@ -85,7 +85,7 @@ public class Quaternion {
 
         if (normalize) {
             double length = Math.sqrt((axisX * axisX) + (axisY * axisY) + (axisZ * axisZ));
-            if (!isZero(length) && (length != 1.0)) {
+            if (!Quaternion.isZero(length) && (length != 1.0)) {
                 axisX /= length;
                 axisY /= length;
                 axisZ /= length;
@@ -114,22 +114,19 @@ public class Quaternion {
             y = (matrix.m13 - matrix.m31) / s;
             z = (matrix.m21 - matrix.m12) / s;
             w = s / 4.0;
-        }
-        else if ((matrix.m11 > matrix.m22) && (matrix.m11 > matrix.m33)) {
+        } else if ((matrix.m11 > matrix.m22) && (matrix.m11 > matrix.m33)) {
             s = 2.0 * Math.sqrt(1.0 + matrix.m11 - matrix.m22 - matrix.m33);
             x = s / 4.0;
             y = (matrix.m21 + matrix.m12) / s;
             z = (matrix.m13 + matrix.m31) / s;
             w = (matrix.m32 - matrix.m23) / s;
-        }
-        else if (matrix.m22 > matrix.m33) {
+        } else if (matrix.m22 > matrix.m33) {
             s = 2.0 * Math.sqrt(1.0 + matrix.m22 - matrix.m11 - matrix.m33);
             x = (matrix.m21 + matrix.m12) / s;
             y = s / 4.0;
             z = (matrix.m32 + matrix.m23) / s;
             w = (matrix.m13 - matrix.m31) / s;
-        }
-        else {
+        } else {
             s = 2.0 * Math.sqrt(1.0 + matrix.m33 - matrix.m11 - matrix.m22);
             x = (matrix.m13 + matrix.m31) / s;
             y = (matrix.m32 + matrix.m23) / s;
@@ -286,8 +283,7 @@ public class Quaternion {
             y2 = 0.0 - value2.y;
             z2 = 0.0 - value2.z;
             w2 = 0.0 - value2.w;
-        }
-        else {
+        } else {
             x2 = value2.x;
             y2 = value2.y;
             z2 = value2.z;
@@ -303,8 +299,7 @@ public class Quaternion {
             double sinAngle = Math.sin(angle);
             t1 = Math.sin((1.0 - amount) * angle) / sinAngle;
             t2 = Math.sin(amount * angle) / sinAngle;
-        }
-        else // just lerp
+        } else // just lerp
         {
             t1 = 1.0 - amount;
             t2 = amount;
@@ -318,8 +313,8 @@ public class Quaternion {
     }
 
     private static boolean isZero(double value) {
-        return (PositiveZero.compareTo(value) == 0)
-            || (NegativeZero.compareTo(value) == 0);
+        return (Quaternion.PositiveZero.compareTo(value) == 0)
+            || (Quaternion.NegativeZero.compareTo(value) == 0);
     }
 
     public final boolean equals(Object obj) {
@@ -362,7 +357,7 @@ public class Quaternion {
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
-        if ((compArray.length - offset) < NUM_ELEMENTS) {
+        if ((compArray.length - offset) < Quaternion.NUM_ELEMENTS) {
             String msg = Logging.getMessage("generic.ArrayInvalidLength", compArray.length);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -378,12 +373,12 @@ public class Quaternion {
 
     public final String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("(");
+        sb.append('(');
         sb.append(this.x).append(", ");
         sb.append(this.y).append(", ");
         sb.append(this.z).append(", ");
         sb.append(this.w);
-        sb.append(")");
+        sb.append(')');
         return sb.toString();
     }
 
@@ -478,7 +473,7 @@ public class Quaternion {
     }
 
     public final Quaternion divideComponents(double value) {
-        if (isZero(value)) {
+        if (Quaternion.isZero(value)) {
             String msg = Logging.getMessage("generic.ArgumentOutOfRange", value);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -543,10 +538,9 @@ public class Quaternion {
     public final Quaternion normalize() {
         double length = this.getLength();
         // Vector has zero length.
-        if (isZero(length)) {
+        if (Quaternion.isZero(length)) {
             return this;
-        }
-        else {
+        } else {
             return new Quaternion(
                 this.x / length,
                 this.y / length,
@@ -568,10 +562,9 @@ public class Quaternion {
     public final Quaternion getInverse() {
         double length = this.getLength();
         // Vector has zero length.
-        if (isZero(length)) {
+        if (Quaternion.isZero(length)) {
             return this;
-        }
-        else {
+        } else {
             return new Quaternion(
                 (0.0 - this.x) / length,
                 (0.0 - this.y) / length,
@@ -584,7 +577,7 @@ public class Quaternion {
         double w = this.w;
 
         double length = this.getLength();
-        if (!isZero(length) && (length != 1.0))
+        if (!Quaternion.isZero(length) && (length != 1.0))
             w /= length;
 
         double radians = 2.0 * Math.acos(w);
@@ -600,14 +593,14 @@ public class Quaternion {
         double z = this.z;
 
         double length = this.getLength();
-        if (!isZero(length) && (length != 1.0)) {
+        if (!Quaternion.isZero(length) && (length != 1.0)) {
             x /= length;
             y /= length;
             z /= length;
         }
 
         double vecLength = Math.sqrt((x * x) + (y * y) + (z * z));
-        if (!isZero(vecLength) && (vecLength != 1.0)) {
+        if (!Quaternion.isZero(vecLength) && (vecLength != 1.0)) {
             x /= vecLength;
             y /= vecLength;
             z /= vecLength;

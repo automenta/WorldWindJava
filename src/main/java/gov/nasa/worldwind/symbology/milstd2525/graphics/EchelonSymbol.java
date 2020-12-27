@@ -68,13 +68,33 @@ public class EchelonSymbol extends AbstractTacticalSymbol {
         this.sidc = sidc;
 
         this.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
-        this.setOffset(DEFAULT_OFFSET);
+        this.setOffset(EchelonSymbol.DEFAULT_OFFSET);
 
         // Configure this tactical point graphic's icon retriever and modifier retriever with either the
         // configuration value or the default value (in that order of precedence).
         String iconRetrieverPath = Configuration.getStringValue(AVKey.MIL_STD_2525_ICON_RETRIEVER_PATH,
             MilStd2525Constants.DEFAULT_ICON_RETRIEVER_PATH);
         this.setIconRetriever(new MilStd2525ModifierRetriever(iconRetrieverPath));
+    }
+
+    /**
+     * Compute the amount of rotation to apply to a label in order to keep it oriented toward its orientation position.
+     *
+     * @param screenPoint            Geographic position of the text, projected onto the screen.
+     * @param orientationScreenPoint Orientation position, projected onto the screen.
+     * @return The rotation angle to apply when drawing the label.
+     */
+    protected static Angle computeRotation(Vec4 screenPoint, Vec4 orientationScreenPoint) {
+        // Determine delta between the orientation position and the label position
+        double deltaX = screenPoint.x - orientationScreenPoint.x;
+        double deltaY = screenPoint.y - orientationScreenPoint.y;
+
+        if (deltaX != 0) {
+            double angle = Math.atan(deltaY / deltaX);
+            return Angle.fromRadians(angle);
+        } else {
+            return Angle.POS90; // Vertical label
+        }
     }
 
     /**
@@ -104,7 +124,7 @@ public class EchelonSymbol extends AbstractTacticalSymbol {
         SymbolCode symbolCode = new SymbolCode(this.sidc);
         String echelon = symbolCode.getEchelon();
 
-        return "-" + echelon;
+        return '-' + echelon;
     }
 
     @Override
@@ -161,13 +181,12 @@ public class EchelonSymbol extends AbstractTacticalSymbol {
 
                 pOffset = pOffset.transformBy3(rot);
 
-                offsetPoint = new Point((int) pOffset.getX(), (int) pOffset.getY());
+                offsetPoint = new Point((int) pOffset.x, (int) pOffset.y);
             }
 
             osym.dx = -this.iconRect.getX() - offsetPoint.getX();
             osym.dy = -(this.iconRect.getY() - offsetPoint.getY());
-        }
-        else {
+        } else {
             osym.dx = 0;
             osym.dy = 0;
         }
@@ -197,27 +216,6 @@ public class EchelonSymbol extends AbstractTacticalSymbol {
 
             if (matrixPushed)
                 gl.glPopMatrix();
-        }
-    }
-
-    /**
-     * Compute the amount of rotation to apply to a label in order to keep it oriented toward its orientation position.
-     *
-     * @param screenPoint            Geographic position of the text, projected onto the screen.
-     * @param orientationScreenPoint Orientation position, projected onto the screen.
-     * @return The rotation angle to apply when drawing the label.
-     */
-    protected static Angle computeRotation(Vec4 screenPoint, Vec4 orientationScreenPoint) {
-        // Determine delta between the orientation position and the label position
-        double deltaX = screenPoint.x - orientationScreenPoint.x;
-        double deltaY = screenPoint.y - orientationScreenPoint.y;
-
-        if (deltaX != 0) {
-            double angle = Math.atan(deltaY / deltaX);
-            return Angle.fromRadians(angle);
-        }
-        else {
-            return Angle.POS90; // Vertical label
         }
     }
 }

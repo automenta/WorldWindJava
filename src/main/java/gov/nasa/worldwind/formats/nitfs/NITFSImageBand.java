@@ -79,8 +79,7 @@ class NITFSImageBand {
             r = (0x00FF & this.lut[0][colorIndex]) >> 3;
             g = (0x00FF & this.lut[1][colorIndex]) >> 2;
             b = (0x00FF & this.lut[2][colorIndex]) >> 3;
-        }
-        else {
+        } else {
             int gray = 0x00FF & this.lut[0][colorIndex];
             r = gray >> 3;
             g = gray >> 2;
@@ -95,8 +94,7 @@ class NITFSImageBand {
             r = (0x00FF & this.lut[0][colorIndex]);
             g = (0x00FF & this.lut[1][colorIndex]);
             b = (0x00FF & this.lut[2][colorIndex]);
-        }
-        else {
+        } else {
             r = g = b = 0x00FF & this.lut[0][colorIndex];
         }
         return (int) (0x00FFFFFFL & ((r << 16) | (g << 8) | b));
@@ -110,8 +108,7 @@ class NITFSImageBand {
             int b = (0x00FF & this.lut[2][colorIndex]);
 
             return (30 * r + 59 * g + 11 * b) / 100;
-        }
-        else {
+        } else {
             return (0x00FF & this.lut[0][colorIndex]);
         }
     }

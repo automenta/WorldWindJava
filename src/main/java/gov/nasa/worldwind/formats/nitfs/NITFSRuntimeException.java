@@ -19,27 +19,27 @@ public final class NITFSRuntimeException extends RuntimeException {
 
     public NITFSRuntimeException(String messageID) {
         super(Logging.getMessage(messageID));
-        log(this.getMessage());
+        NITFSRuntimeException.log(this.getMessage());
     }
 
     public NITFSRuntimeException(String messageID, String params) {
         super(Logging.getMessage(messageID) + params);
-        log(this.getMessage());
+        NITFSRuntimeException.log(this.getMessage());
     }
 
     public NITFSRuntimeException(Throwable throwable) {
         super(throwable);
-        log(this.getMessage());
+        NITFSRuntimeException.log(this.getMessage());
     }
 
     public NITFSRuntimeException(String messageID, Throwable throwable) {
         super(Logging.getMessage(messageID), throwable);
-        log(this.getMessage());
+        NITFSRuntimeException.log(this.getMessage());
     }
 
     public NITFSRuntimeException(String messageID, String params, Throwable throwable) {
         super(Logging.getMessage(messageID) + params, throwable);
-        log(this.getMessage());
+        NITFSRuntimeException.log(this.getMessage());
     }
 
     // TODO: Calling the logger from here causes the wrong method to be listed in the log record. Must call the

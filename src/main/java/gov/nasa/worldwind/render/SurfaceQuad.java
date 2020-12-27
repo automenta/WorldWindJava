@@ -301,19 +301,18 @@ public class SurfaceQuad extends AbstractSurfaceShape implements Exportable {
         double distance = Math.sqrt(hw * hw + hh * hh);
         double pathLength = distance / globeRadius;
 
-        double[] cornerAngles = new double[]
-            {
-                Math.atan2(-hh, -hw),
-                Math.atan2(-hh, hw),
-                Math.atan2(hh, hw),
-                Math.atan2(hh, -hw),
-                Math.atan2(-hh, -hw),
-            };
+        double[] cornerAngles = {
+            Math.atan2(-hh, -hw),
+            Math.atan2(-hh, hw),
+            Math.atan2(hh, hw),
+            Math.atan2(hh, -hw),
+            Math.atan2(-hh, -hw),
+        };
 
         LatLon[] locations = new LatLon[cornerAngles.length];
 
         for (int i = 0; i < cornerAngles.length; i++) {
-            double azimuth = (Math.PI / 2.0) - (cornerAngles[i] - this.heading.radians);
+            double azimuth = (Math.PI / 2.0) - (cornerAngles[i] - this.heading.radians());
             locations[i] = LatLon.greatCircleEndPosition(this.center, azimuth, pathLength);
         }
 
@@ -390,7 +389,7 @@ public class SurfaceQuad extends AbstractSurfaceShape implements Exportable {
      *
      * @param output Object to receive the generated KML.
      * @throws XMLStreamException If an exception occurs while writing the KML
-     * @throws IOException                 if an exception occurs while exporting the data.
+     * @throws IOException        if an exception occurs while exporting the data.
      * @see #export(String, Object)
      */
     protected void exportAsKML(Object output) throws IOException, XMLStreamException {
@@ -401,11 +400,9 @@ public class SurfaceQuad extends AbstractSurfaceShape implements Exportable {
         if (output instanceof XMLStreamWriter) {
             xmlWriter = (XMLStreamWriter) output;
             closeWriterWhenFinished = false;
-        }
-        else if (output instanceof Writer) {
+        } else if (output instanceof Writer) {
             xmlWriter = factory.createXMLStreamWriter((Writer) output);
-        }
-        else if (output instanceof OutputStream) {
+        } else if (output instanceof OutputStream) {
             xmlWriter = factory.createXMLStreamWriter((OutputStream) output);
         }
 

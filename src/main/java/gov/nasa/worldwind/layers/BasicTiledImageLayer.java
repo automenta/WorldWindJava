@@ -132,17 +132,17 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
     }
 
     public BasicTiledImageLayer(Element domElement, AVList params) {
-        this(getParamsFromDocument(domElement, params));
+        this(BasicTiledImageLayer.getParamsFromDocument(domElement, params));
     }
 
     public BasicTiledImageLayer(String restorableStateInXml) {
-        this(restorableStateToParams(restorableStateInXml));
+        this(BasicTiledImageLayer.restorableStateToParams(restorableStateInXml));
 
         RestorableSupport rs;
         try {
             rs = RestorableSupport.parse(restorableStateInXml);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             // Parsing the document specified by stateInXml failed.
             String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", restorableStateInXml);
             Logging.logger().severe(message);
@@ -162,8 +162,8 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
         if (params == null)
             params = new AVListImpl();
 
-        getTiledImageLayerConfigParams(domElement, params);
-        setFallbacks(params);
+        TiledImageLayer.getTiledImageLayerConfigParams(domElement, params);
+        BasicTiledImageLayer.setFallbacks(params);
 
         return params;
     }
@@ -201,7 +201,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
         try {
             rs = RestorableSupport.parse(stateInXml);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             // Parsing the document specified by stateInXml failed.
             String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", stateInXml);
             Logging.logger().severe(message);
@@ -209,7 +209,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
         }
 
         AVList params = new AVListImpl();
-        restoreStateForParams(rs, null, params);
+        BasicTiledImageLayer.restoreStateForParams(rs, null, params);
         return params;
     }
 
@@ -264,27 +264,6 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
             params.set(AVKey.SECTOR, sector);
     }
 
-    protected void forceTextureLoad(TextureTile tile) {
-        final URL textureURL = this.getDataFileStore().findFile(tile.getPath(), true);
-
-        if (textureURL != null && !BasicTiledImageLayer.isTextureFileExpired(tile, textureURL, this.getDataFileStore())) {
-            this.loadTexture(tile, textureURL);
-        }
-    }
-
-    protected void requestTexture(DrawContext dc, TextureTile tile) {
-        Vec4 centroid = tile.getCentroidPoint(dc.getGlobe());
-        Vec4 referencePoint = TiledImageLayer.getReferencePoint(dc);
-        if (referencePoint != null)
-            tile.setPriorityDistance(centroid.distanceTo3(referencePoint));
-
-        requestQ.add(this.createRequestTask(tile));
-    }
-
-    protected RequestTask createRequestTask(TextureTile tile) {
-        return new RequestTask(tile, this);
-    }
-
     protected static boolean isTextureFileExpired(TextureTile tile, URL textureURL, FileStore fileStore) {
         if (!WWIO.isFileOutOfDate(textureURL, tile.level.getExpiryTime()))
             return false;
@@ -293,23 +272,6 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
         fileStore.removeFile(textureURL);
         String message = Logging.getMessage("generic.DataFileExpired", textureURL);
         Logging.logger().fine(message);
-        return true;
-    }
-
-    protected boolean loadTexture(TextureTile tile, URL textureURL) {
-        TextureData textureData;
-
-        synchronized (this.fileLock) {
-            textureData = readTexture(textureURL, this.getTextureFormat(), this.isUseMipMaps());
-        }
-
-        if (textureData == null)
-            return false;
-
-        tile.setTextureData(textureData);
-        if (tile.getLevelNumber() != 0 || !this.isRetainLevelZeroTiles())
-            BasicTiledImageLayer.addTileToCache(tile);
-
         return true;
     }
 
@@ -356,12 +318,51 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
         }
     }
 
+    protected static void addTileToCache(TextureTile tile) {
+        TextureTile.getMemoryCache().add(tile.tileKey, tile);
+    }
+
+    protected void forceTextureLoad(TextureTile tile) {
+        final URL textureURL = this.getDataFileStore().findFile(tile.getPath(), true);
+
+        if (textureURL != null && !BasicTiledImageLayer.isTextureFileExpired(tile, textureURL,
+            this.getDataFileStore())) {
+            this.loadTexture(tile, textureURL);
+        }
+    }
+
+    protected void requestTexture(DrawContext dc, TextureTile tile) {
+        Vec4 centroid = tile.getCentroidPoint(dc.getGlobe());
+        Vec4 referencePoint = TiledImageLayer.getReferencePoint(dc);
+        if (referencePoint != null)
+            tile.setPriorityDistance(centroid.distanceTo3(referencePoint));
+
+        requestQ.add(this.createRequestTask(tile));
+    }
+
+    protected RequestTask createRequestTask(TextureTile tile) {
+        return new RequestTask(tile, this);
+    }
+
     // *** Bulk download ***
     // *** Bulk download ***
     // *** Bulk download ***
 
-    protected static void addTileToCache(TextureTile tile) {
-        TextureTile.getMemoryCache().add(tile.tileKey, tile);
+    protected boolean loadTexture(TextureTile tile, URL textureURL) {
+        TextureData textureData;
+
+        synchronized (this.fileLock) {
+            textureData = BasicTiledImageLayer.readTexture(textureURL, this.getTextureFormat(), this.isUseMipMaps());
+        }
+
+        if (textureData == null)
+            return false;
+
+        tile.setTextureData(textureData);
+        if (tile.getLevelNumber() != 0 || !this.isRetainLevelZeroTiles())
+            BasicTiledImageLayer.addTileToCache(tile);
+
+        return true;
     }
 
     /**
@@ -553,14 +554,13 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
     /**
      * Retrieves any non-tile resources associated with this Layer, either online or in the local filesystem, and
      * initializes properties of this Layer using those resources. This returns a key indicating the retrieval state:
-     * {@link AVKey#RETRIEVAL_STATE_SUCCESSFUL} indicates the retrieval succeeded, {@link
-     * AVKey#RETRIEVAL_STATE_ERROR} indicates the retrieval failed with errors, and
+     * {@link AVKey#RETRIEVAL_STATE_SUCCESSFUL} indicates the retrieval succeeded, {@link AVKey#RETRIEVAL_STATE_ERROR}
+     * indicates the retrieval failed with errors, and
      * <code>null</code> indicates the retrieval state is unknown. This method may invoke blocking I/O operations, and
      * therefore should not be executed from the rendering thread.
      *
-     * @return {@link AVKey#RETRIEVAL_STATE_SUCCESSFUL} if the retrieval succeeded, {@link
-     * AVKey#RETRIEVAL_STATE_ERROR} if the retrieval failed with errors, and <code>null</code>
-     * if the retrieval state is unknown.
+     * @return {@link AVKey#RETRIEVAL_STATE_SUCCESSFUL} if the retrieval succeeded, {@link AVKey#RETRIEVAL_STATE_ERROR}
+     * if the retrieval failed with errors, and <code>null</code> if the retrieval state is unknown.
      */
     protected String retrieveResources() {
         // This Layer has no construction parameters, so there is no description of what to retrieve. Return a key
@@ -592,7 +592,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
         WMSCapabilities caps;
         if (this.isNetworkRetrievalEnabled())
             caps = SessionCacheUtils.getOrRetrieveSessionCapabilities(url, WorldWind.getSessionCache(),
-                url.toString(), null, RESOURCE_ID_OGC_CAPABILITIES, null, null);
+                url.toString(), null, BasicTiledImageLayer.RESOURCE_ID_OGC_CAPABILITIES, null, null);
         else
             caps = SessionCacheUtils.getSessionCapabilities(WorldWind.getSessionCache(), url.toString(),
                 url.toString());
@@ -620,17 +620,6 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
      * @throws IllegalArgumentException if either the Capabilities or the parameter list is null.
      */
     protected void initFromOGCCapabilitiesResource(WMSCapabilities caps, AVList params) {
-//        if (caps == null) {
-//            String message = Logging.getMessage("nullValue.CapabilitiesIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-
-//        if (params == null) {
-//            String message = Logging.getMessage("nullValue.ParametersIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         String[] names = DataConfigurationUtils.getOGCLayerNames(params);
         if (names == null || names.length == 0)
@@ -642,8 +631,8 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
 
         // Synchronize changes to this Layer with the Event Dispatch Thread.
         //SwingUtilities.invokeLater(() -> {
-            BasicTiledImageLayer.this.setExpiryTime(expiryTime);
-            BasicTiledImageLayer.this.firePropertyChange(AVKey.LAYER, null, BasicTiledImageLayer.this);
+        BasicTiledImageLayer.this.setExpiryTime(expiryTime);
+        BasicTiledImageLayer.this.firePropertyChange(AVKey.LAYER, null, BasicTiledImageLayer.this);
         //});
     }
 
@@ -682,7 +671,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
             AVList configParams = this.getConfigurationParams(null);
             this.writeConfigurationParams(fileStore, configParams);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             String message = Logging.getMessage("generic.ExceptionAttemptingToWriteConfigurationFile");
             Logging.logger().log(Level.SEVERE, message, e);
         }
@@ -756,7 +745,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
     }
 
     protected Document createConfigurationDocument(AVList params) {
-        return createTiledImageLayerConfigDocument(params);
+        return TiledImageLayer.createTiledImageLayerConfigDocument(params);
     }
 
     //**************************************************************//
@@ -818,14 +807,11 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
 
         if (value instanceof LatLon) {
             rs.addStateValueAsLatLon(context, key, (LatLon) value);
-        }
-        else if (value instanceof Sector) {
+        } else if (value instanceof Sector) {
             rs.addStateValueAsSector(context, key, (Sector) value);
-        }
-        else if (value instanceof Color) {
+        } else if (value instanceof Color) {
             rs.addStateValueAsColor(context, key, (Color) value);
-        }
-        else {
+        } else {
             super.getRestorableStateForAVPair(key, value, rs, context);
         }
     }
@@ -908,7 +894,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
                         layer.getLevels().has(tile);
                         this.layer.firePropertyChange(AVKey.LAYER, null, this);
                         return;
-                    }else {
+                    } else {
                         // Assume that something is wrong with the file and delete it.
                         store.removeFile(textureURL);
                         Logging.logger().info(Logging.getMessage("generic.DeletedCorruptDataFile", textureURL));
@@ -923,8 +909,10 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
          * @return -1 if <code>this</code> less than <code>that</code>, 1 if greater than, 0 if equal
          * @throws IllegalArgumentException if <code>that</code> is null
          */
-        @Override public int compareTo(RequestTask that) {
-            if (this==that) return 0;
+        @Override
+        public int compareTo(RequestTask that) {
+            if (this == that)
+                return 0;
             return Double.compare(this.tile.getPriority(), that.tile.getPriority());
         }
 

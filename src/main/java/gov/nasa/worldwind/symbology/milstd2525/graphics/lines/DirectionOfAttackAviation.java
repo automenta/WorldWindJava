@@ -42,20 +42,20 @@ public class DirectionOfAttackAviation extends DirectionOfAttack {
     /**
      * Number of intervals used to draw the curve.
      */
-    protected int intervals = DEFAULT_NUM_INTERVALS;
+    protected int intervals = DirectionOfAttackAviation.DEFAULT_NUM_INTERVALS;
     /**
      * Length of the bow tie part of the graphic, as a fraction of the graphic's total length.
      */
-    protected double bowTieLength = DEFAULT_BOW_TIE_LENGTH;
+    protected double bowTieLength = DirectionOfAttackAviation.DEFAULT_BOW_TIE_LENGTH;
     /**
      * Width of the bow tie part of the graphic, as a fraction of the length of the bow tie.
      */
-    protected double bowTieWidth = DEFAULT_BOW_TIE_WIDTH;
+    protected double bowTieWidth = DirectionOfAttackAviation.DEFAULT_BOW_TIE_WIDTH;
     /**
      * Angle that controls the curve of the line. A large angle results in a more pronounced curve. An angle of zero
      * results in a straight line.
      */
-    protected Angle curvature = DEFAULT_CURVATURE;
+    protected Angle curvature = DirectionOfAttackAviation.DEFAULT_CURVATURE;
 
     /**
      * Create a new arrow graphic.
@@ -73,6 +73,34 @@ public class DirectionOfAttackAviation extends DirectionOfAttack {
      */
     public static List<String> getSupportedGraphics() {
         return Collections.singletonList(TacGrpSidc.C2GM_OFF_LNE_DIRATK_AVN);
+    }
+
+    /**
+     * Compute a point along a Hermite curve defined by two control point and tangent vectors at those points.
+     * <p>
+     * This function implements the Hermite curve equation from "Mathematics for 3D Game Programming and Computer
+     * Graphics, Second Edition" by Eric Lengyel (equation 15.15, pg. 457).
+     * <p>
+     * H(t) = (1 - 3t<sup>2</sup> + 2t<sup>3</sup>)P<sub>1</sub> + t<sup>2</sup>(3 - 2t)P<sub>2</sub> + t(t -
+     * 1)<sup>2</sup>T<sub>1</sub> + t<sup>2</sup>(t - 1)T<sub>2</sub>
+     *
+     * @param pt1      First control point.
+     * @param pt2      Second control point.
+     * @param tangent1 Vector tangent to the curve at the first control point.
+     * @param tangent2 Vector tangent to the curve at the second control point.
+     * @param t        Interpolation parameter in the range [0..1].
+     * @return A point along the curve.
+     */
+    protected static Vec4 hermiteCurve(Vec4 pt1, Vec4 pt2, Vec4 tangent1, Vec4 tangent2, double t) {
+        double c1 = (1 - 3 * t * t + 2 * Math.pow(t, 3));
+        double c2 = (3 - 2 * t) * t * t;
+        double c3 = t * Math.pow(t - 1, 2);
+        double c4 = (t - 1) * t * t;
+
+        return pt1.multiply3(c1)
+            .add3(pt2.multiply3(c2))
+            .add3(tangent1.multiply3(c3))
+            .add3(tangent2.multiply3(c4));
     }
 
     /**
@@ -284,34 +312,6 @@ public class DirectionOfAttackAviation extends DirectionOfAttack {
         return TacticalGraphicUtil.asPositionList(globe, ptA, ptB, ptC, ptD, ptA);
     }
 
-    /**
-     * Compute a point along a Hermite curve defined by two control point and tangent vectors at those points.
-     * <p>
-     * This function implements the Hermite curve equation from "Mathematics for 3D Game Programming and Computer
-     * Graphics, Second Edition" by Eric Lengyel (equation 15.15, pg. 457).
-     * <p>
-     * H(t) = (1 - 3t<sup>2</sup> + 2t<sup>3</sup>)P<sub>1</sub> + t<sup>2</sup>(3 - 2t)P<sub>2</sub> + t(t -
-     * 1)<sup>2</sup>T<sub>1</sub> + t<sup>2</sup>(t - 1)T<sub>2</sub>
-     *
-     * @param pt1      First control point.
-     * @param pt2      Second control point.
-     * @param tangent1 Vector tangent to the curve at the first control point.
-     * @param tangent2 Vector tangent to the curve at the second control point.
-     * @param t        Interpolation parameter in the range [0..1].
-     * @return A point along the curve.
-     */
-    protected static Vec4 hermiteCurve(Vec4 pt1, Vec4 pt2, Vec4 tangent1, Vec4 tangent2, double t) {
-        double c1 = (1 - 3 * t * t + 2 * Math.pow(t, 3));
-        double c2 = (3 - 2 * t) * t * t;
-        double c3 = t * Math.pow(t - 1, 2);
-        double c4 = (t - 1) * t * t;
-
-        return pt1.multiply3(c1)
-            .add3(pt2.multiply3(c2))
-            .add3(tangent1.multiply3(c3))
-            .add3(tangent2.multiply3(c4));
-    }
-
     @Override
     protected void createLabels() {
         // This graphic supports only the hostile indicator label.
@@ -326,7 +326,7 @@ public class DirectionOfAttackAviation extends DirectionOfAttack {
             return;
 
         Angle angle = LatLon.greatCircleDistance(this.startPosition, this.endPosition);
-        double length = angle.radians * dc.getGlobe().getRadius();
+        double length = angle.radians() * dc.getGlobe().getRadius();
 
         // Position the label 10% of the way along the path.
         Iterable<? extends Position> positions = this.paths[0].getPositions();

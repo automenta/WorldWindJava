@@ -10,7 +10,7 @@ import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.Polyline;
 import gov.nasa.worldwind.util.*;
 
-import java.util.*;
+import java.util.List;
 
 import static java.lang.Math.toRadians;
 
@@ -23,8 +23,7 @@ import static java.lang.Math.toRadians;
  *
  * <p>
  * Segments which are longer then the current maxSegmentLength will be subdivided along lines following the current
- * pathType - {@link Polyline#LINEAR}, {@link Polyline#RHUMB_LINE}
- * or {@link Polyline#GREAT_CIRCLE}.</p>
+ * pathType - {@link Polyline#LINEAR}, {@link Polyline#RHUMB_LINE} or {@link Polyline#GREAT_CIRCLE}.</p>
  *
  * <p>
  * Projected or non terrain following area is computed in a sinusoidal projection which is equivalent or equal area.
@@ -45,13 +44,30 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
     private List<? extends Position> subdividedPositions;
     private Cell[][] sectorCells;
     private Double[][] sectorElevations;
-    private double areaTerrainSamplingSteps = DEFAULT_AREA_SAMPLING_STEPS;
+    private double areaTerrainSamplingSteps = AreaMeasurer.DEFAULT_AREA_SAMPLING_STEPS;
 
     public AreaMeasurer() {
     }
 
     public AreaMeasurer(List<? extends Position> positions) {
         super(positions);
+    }
+
+    // Compute triangle area in a sinusoidal projection centered at the triangle center.
+    // Note sinusoidal projection is equivalent or equal erea.
+    protected static double computeTriangleProjectedArea(Globe globe, float[] verts, int a, int b, int c) {
+        // http://www.mathopenref.com/coordtrianglearea.html
+        double area = Math.abs(verts[a] * (verts[b + 1] - verts[c + 1])
+            + verts[b] * (verts[c + 1] - verts[a + 1])
+            + verts[c] * (verts[a + 1] - verts[b + 1])) / 2; // square radians
+        // Compute triangle center
+        double centerLat = (verts[a + 1] + verts[b + 1] + verts[c + 1]) / 3;
+        double centerLon = (verts[a] + verts[b] + verts[c]) / 3;
+        // Apply globe radius at triangle center and scale down area according to center latitude cosine
+        double radius = globe.getRadiusAt(Angle.fromRadians(centerLat), Angle.fromRadians(centerLon));
+        area *= Math.cos(centerLat) * radius * radius; // Square meter
+
+        return area;
     }
 
     @Override
@@ -151,8 +167,8 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
 
         Sector sector = getBoundingSector();
         if (sector != null) {
-            return globe.getRadiusAt(sector.getCentroid()) * sector.lonDelta().radians
-                * Math.cos(sector.getCentroid().getLatitude().radians);
+            return globe.getRadiusAt(sector.getCentroid()) * sector.lonDelta().radians()
+                * Math.cos(sector.getCentroid().getLatitude().radians());
         }
 
         return -1;
@@ -163,7 +179,7 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
 
         Sector sector = getBoundingSector();
         if (sector != null) {
-            return globe.getRadiusAt(sector.getCentroid()) * sector.latDelta().radians;
+            return globe.getRadiusAt(sector.getCentroid()) * sector.latDelta().radians();
         }
 
         return -1;
@@ -176,7 +192,7 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
         if (sector != null && this.isClosedShape()) {
             // Subdivide long segments if needed
             if (this.subdividedPositions == null) {
-                this.subdividedPositions = subdividePositions(globe, getPositions(), getMaxSegmentLength(),
+                this.subdividedPositions = LengthMeasurer.subdividePositions(globe, getPositions(), getMaxSegmentLength(),
                     isFollowTerrain(), getAVKeyPathType());
             }
             // First: tessellate polygon
@@ -187,8 +203,8 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
             for (int i = 0; i < verticesCount; i++) {
                 // Vertices coordinates are x=lon y=lat in radians, z = elevation zero
                 final Position I = this.subdividedPositions.get(i);
-                verts[idx++] = (float) I.getLongitude().radians;
-                verts[idx++] = (float) I.getLatitude().radians;
+                verts[idx++] = (float) I.getLongitude().radians();
+                verts[idx++] = (float) I.getLatitude().radians();
                 verts[idx++] = 0;
             }
             // Tessellate
@@ -200,29 +216,12 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
             int triangleCount = ita.getIndexCount() / 3;
             for (int i = 0; i < triangleCount; i++) {
                 idx = i * 3;
-                area += computeTriangleProjectedArea(globe, ita.getVertices(), indices[idx] * 3,
+                area += AreaMeasurer.computeTriangleProjectedArea(globe, ita.getVertices(), indices[idx] * 3,
                     indices[idx + 1] * 3, indices[idx + 2] * 3);
             }
             return area;
         }
         return -1;
-    }
-
-    // Compute triangle area in a sinusoidal projection centered at the triangle center.
-    // Note sinusoidal projection is equivalent or equal erea.
-    protected static double computeTriangleProjectedArea(Globe globe, float[] verts, int a, int b, int c) {
-        // http://www.mathopenref.com/coordtrianglearea.html
-        double area = Math.abs(verts[a] * (verts[b + 1] - verts[c + 1])
-            + verts[b] * (verts[c + 1] - verts[a + 1])
-            + verts[c] * (verts[a + 1] - verts[b + 1])) / 2; // square radians
-        // Compute triangle center
-        double centerLat = (verts[a + 1] + verts[b + 1] + verts[c + 1]) / 3;
-        double centerLon = (verts[a] + verts[b] + verts[c]) / 3;
-        // Apply globe radius at triangle center and scale down area according to center latitude cosine
-        double radius = globe.getRadiusAt(Angle.fromRadians(centerLat), Angle.fromRadians(centerLon));
-        area *= Math.cos(centerLat) * radius * radius; // Square meter
-
-        return area;
     }
 
     // *** Surface area - terrain following ***
@@ -233,7 +232,7 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
         if (sector != null && this.isClosedShape()) {
             // Subdivide long segments if needed
             if (this.subdividedPositions == null) {
-                this.subdividedPositions = subdividePositions(globe, getPositions(), getMaxSegmentLength(),
+                this.subdividedPositions = LengthMeasurer.subdividePositions(globe, getPositions(), getMaxSegmentLength(),
                     true, getAVKeyPathType());
             }
 
@@ -242,7 +241,7 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
             int latSteps = (int) Math.round(toRadians(sector.latDelta) / stepRadians);
             final LatLon sectorCentroid = sector.getCentroid();
             int lonSteps = (int) Math.round(toRadians(sector.lonDelta) / stepRadians
-                * Math.cos(sectorCentroid.getLatitude().radians));
+                * Math.cos(sectorCentroid.getLatitude().radians()));
             double latStepRadians = toRadians(sector.latDelta) / latSteps;
             double lonStepRadians = toRadians(sector.lonDelta) / lonSteps;
 
@@ -253,8 +252,8 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
                 this.sectorElevations = new Double[latSteps + 1][lonSteps + 1];
             }
 
-            final double sectorLatMinRadians = sector.latMin().radians;
-            final double sectorLonMinRadians = sector.lonMin().radians;
+            final double sectorLatMinRadians = sector.latMin().radians();
+            final double sectorLonMinRadians = sector.lonMin().radians();
             final Angle sectorCentroidLon = sectorCentroid.getLongitude();
 
             double area = 0;
@@ -295,7 +294,7 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
                             Vec4 vy = new Vec4(0, cellHeight, eleNW - eleSW).normalize3();
                             Vec4 normalSW = vx.cross3(vy).normalize3(); // point toward positive Z
                             // Compute slope factor
-                            double tan = Math.tan(Vec4.UNIT_Z.angleBetween3(normalSW).radians);
+                            double tan = Math.tan(Vec4.UNIT_Z.angleBetween3(normalSW).radians());
                             double slopeFactor = Math.sqrt(1 + tan * tan);
                             // Create and cache cell
                             cell = new Cell(cellSector, cellArea, cellArea * slopeFactor);

@@ -59,8 +59,7 @@ public class ColladaAbstractParamContainer extends ColladaAbstractObject {
 
                 this.newParams.put(sid, param);
             }
-        }
-        else {
+        } else {
             super.setField(keyName, value);
         }
     }

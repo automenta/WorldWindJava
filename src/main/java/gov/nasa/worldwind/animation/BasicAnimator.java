@@ -19,7 +19,7 @@ public class BasicAnimator implements Animator {
      * <code>Interpolator</code>'s next interpolant
      */
     protected Interpolator interpolator;
-    private boolean stopOnInvalidState = false;
+    private boolean stopOnInvalidState;
     private boolean lastStateValid = true;
     private boolean hasNext = true;
 

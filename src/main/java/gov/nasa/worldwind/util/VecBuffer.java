@@ -917,8 +917,7 @@ public class VecBuffer {
 
             if (this.position < this.size) {
                 return this.accessor.getElement(this.position);
-            }
-            else {
+            } else {
                 throw new NoSuchElementException();
             }
         }
@@ -946,8 +945,7 @@ public class VecBuffer {
 
             if (this.position >= 0) {
                 return this.accessor.getElement(this.position);
-            }
-            else {
+            } else {
                 throw new NoSuchElementException();
             }
         }

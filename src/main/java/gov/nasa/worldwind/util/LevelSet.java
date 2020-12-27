@@ -29,16 +29,16 @@ public class LevelSet extends WWObjectImpl {
 
         Object o = params.get(AVKey.LEVEL_ZERO_TILE_DELTA);
         if (!(o instanceof LatLon))
-            sb.append(Logging.getMessage("term.tileDelta")).append(" ");
+            sb.append(Logging.getMessage("term.tileDelta")).append(' ');
 
         o = params.get(AVKey.SECTOR);
         if (!(o instanceof Sector))
-            sb.append(Logging.getMessage("term.sector")).append(" ");
+            sb.append(Logging.getMessage("term.sector")).append(' ');
 
         int numLevels = 0;
         o = params.get(AVKey.NUM_LEVELS);
         if (!(o instanceof Integer) || (numLevels = (Integer) o) < 1)
-            sb.append(Logging.getMessage("term.numLevels")).append(" ");
+            sb.append(Logging.getMessage("term.numLevels")).append(' ');
 
         int numEmptyLevels = 0;
         o = params.get(AVKey.NUM_EMPTY_LEVELS);
@@ -48,16 +48,15 @@ public class LevelSet extends WWObjectImpl {
         String[] inactiveLevels = null;
         o = params.get(AVKey.INACTIVE_LEVELS);
         if (o != null && !(o instanceof String))
-            sb.append(Logging.getMessage("term.inactiveLevels")).append(" ");
+            sb.append(Logging.getMessage("term.inactiveLevels")).append(' ');
         else if (o != null)
             inactiveLevels = ((String) o).split(",");
 
         SectorResolution[] sectorLimits = null;
         o = params.get(AVKey.SECTOR_RESOLUTION_LIMITS);
         if (o != null && !(o instanceof SectorResolution[])) {
-            sb.append(Logging.getMessage("term.sectorResolutionLimits")).append(" ");
-        }
-        else if (o != null) {
+            sb.append(Logging.getMessage("term.sectorResolutionLimits")).append(' ');
+        } else if (o != null) {
             sectorLimits = (SectorResolution[]) o;
             for (SectorResolution sr : sectorLimits) {
                 if (sr.levelNumber > numLevels - 1) {
@@ -96,7 +95,7 @@ public class LevelSet extends WWObjectImpl {
 
                 StringBuilder sb1 = new StringBuilder(tile.level.getService());
                 if (sb1.lastIndexOf("?") != sb1.length() - 1)
-                    sb1.append("?");
+                    sb1.append('?');
                 sb1.append("T=");
                 sb1.append(tile.level.getDataset());
                 sb1.append("&L=");

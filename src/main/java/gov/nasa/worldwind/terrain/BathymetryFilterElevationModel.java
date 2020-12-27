@@ -23,7 +23,7 @@ import java.util.List;
  */
 public class BathymetryFilterElevationModel extends AbstractElevationModel {
     protected final ElevationModel sourceModel;
-    protected double threshold = 0.0d;
+    protected double threshold;
 
     /**
      * Constructs an elevation model that filters the elevations from a specified elevation model.

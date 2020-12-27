@@ -32,8 +32,8 @@ public interface TacticalGraphicFactory {
     /**
      * Create a tactical graphic positioned by more than one control point. This method is general purpose, and may be
      * used to create any type of graphic. The other creation methods in the factory (for example, {@link
-     * #createCircle(String, Position, double, AVList) createCircle})
-     * are provided for convenience, and may be used to specific categories of graphics.
+     * #createCircle(String, Position, double, AVList) createCircle}) are provided for convenience, and may be used to
+     * specific categories of graphics.
      *
      * @param symbolIdentifier Identifier for the symbol within its symbol set.
      * @param positions        Control points to use to place the graphic. How many points are required depends on the

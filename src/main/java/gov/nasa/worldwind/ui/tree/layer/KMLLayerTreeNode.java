@@ -14,8 +14,7 @@ import gov.nasa.worldwind.util.Logging;
 import javax.swing.*;
 
 /**
- * A <code>LayerTreeNode</code> that represents a KML feature hierarchy defined by a <code>{@link
- * KMLRoot}</code>.
+ * A <code>LayerTreeNode</code> that represents a KML feature hierarchy defined by a <code>{@link KMLRoot}</code>.
  *
  * @author dcollins
  * @version $Id: KMLLayerTreeNode.java 1171 2013-02-11 21:45:02Z dcollins $
@@ -62,8 +61,7 @@ public class KMLLayerTreeNode extends LayerTreeNode {
                 // Ensure that the node list is manipulated on the EDT
                 if (SwingUtilities.isEventDispatchThread()) {
                     KMLLayerTreeNode.this.refresh();
-                }
-                else {
+                } else {
                     SwingUtilities.invokeLater(KMLLayerTreeNode.this::refresh);
                 }
             }
@@ -134,8 +132,7 @@ public class KMLLayerTreeNode extends LayerTreeNode {
                         if (child != null)
                             this.addFeatureNode(child);
                     }
-                }
-                else if (rootFeature != null) {
+                } else if (rootFeature != null) {
                     this.addFeatureNode(rootFeature);
                 }
             }

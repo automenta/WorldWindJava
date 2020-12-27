@@ -240,19 +240,19 @@ public class ExportableAnalyticSurface extends AnalyticSurface implements Export
     protected void exportKMLLatLonBox(XMLStreamWriter xmlWriter) throws XMLStreamException {
         xmlWriter.writeStartElement("LatLonBox");
         xmlWriter.writeStartElement("north");
-        xmlWriter.writeCharacters(Double.toString(this.sector.latMax().getDegrees()));
+        xmlWriter.writeCharacters(Double.toString(this.sector.latMax().degrees));
         xmlWriter.writeEndElement();
 
         xmlWriter.writeStartElement("south");
-        xmlWriter.writeCharacters(Double.toString(this.sector.latMin().getDegrees()));
+        xmlWriter.writeCharacters(Double.toString(this.sector.latMin().degrees));
         xmlWriter.writeEndElement(); // south
 
         xmlWriter.writeStartElement("east");
-        xmlWriter.writeCharacters(Double.toString(this.sector.lonMin().getDegrees()));
+        xmlWriter.writeCharacters(Double.toString(this.sector.lonMin().degrees));
         xmlWriter.writeEndElement();
 
         xmlWriter.writeStartElement("west");
-        xmlWriter.writeCharacters(Double.toString(this.sector.lonMax().getDegrees()));
+        xmlWriter.writeCharacters(Double.toString(this.sector.lonMax().degrees));
         xmlWriter.writeEndElement(); // west
         xmlWriter.writeEndElement(); // LatLonBox
     }
@@ -275,8 +275,8 @@ public class ExportableAnalyticSurface extends AnalyticSurface implements Export
                 colorGrid.add(gridPoint.getColor());
             }
 
-            double sectorHeight = this.sector.latDelta().radians;
-            double sectorWidth = this.sector.lonDelta().radians;
+            double sectorHeight = this.sector.latDelta().radians();
+            double sectorWidth = this.sector.lonDelta().radians();
             double pixelWidth = sectorHeight / imageHeight;
             double pixelHeight = sectorWidth / imageWidth;
             double colorCellWidth = sectorWidth / (this.width - 1);

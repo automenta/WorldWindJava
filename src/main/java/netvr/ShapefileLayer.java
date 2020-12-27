@@ -2,8 +2,8 @@ package netvr;
 
 import gov.nasa.worldwind.formats.shapefile.*;
 import gov.nasa.worldwind.geom.*;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.render.Polygon;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
 
 import java.awt.*;
@@ -12,7 +12,7 @@ import java.util.*;
 import static gov.nasa.worldwind.WorldWind.RELATIVE_TO_GROUND;
 
 public class ShapefileLayer extends WorldWindOSM.TextAndShapesLayer {
-    static final WorldWindOSM.OSMShapes[] shapeArray = new WorldWindOSM.OSMShapes[] {
+    static final WorldWindOSM.OSMShapes[] shapeArray = {
         new WorldWindOSM.OSMShapes(Color.BLACK, 0.5D, 30000.0D),
         new WorldWindOSM.OSMShapes(Color.GREEN, 0.5D, 100000.0D),
         new WorldWindOSM.OSMShapes(Color.CYAN, 1.0D, 500000.0D),
@@ -31,9 +31,9 @@ public class ShapefileLayer extends WorldWindOSM.TextAndShapesLayer {
             accept(shp.nextRecord());
         }
 
-        for (WorldWindOSM.OSMShapes ss : shapeArray) {
+        for (WorldWindOSM.OSMShapes ss : ShapefileLayer.shapeArray) {
             if (!ss.locations.isEmpty()) {
-                SurfaceIcons l = surfaceIcons(ss, ss.locations);
+                SurfaceIcons l = ShapefileLayer.surfaceIcons(ss, ss.locations);
                 l.setUseMipMaps(false);
                 add(l);
             }
@@ -57,9 +57,30 @@ public class ShapefileLayer extends WorldWindOSM.TextAndShapesLayer {
         return l;
     }
 
+    static private ArrayList<Position> positions(ShapefileRecord r, int i) {
+        return ShapefileLayer.positions(r, i, 0);
+    }
+
+    static private ArrayList<Position> positions(ShapefileRecord r, int i, float elevation) {
+        ArrayList<Position> l;
+        VecBuffer points = r.getPointBuffer(i);
+        final int ps = points.getSize();
+        if (ps > 0) {
+            l = new ArrayList<>(ps);
+            Iterable<LatLon> p = points.getLocations();
+            p.forEach(q -> l.add(new Position(q, elevation)));
+        } else
+            l = null;
+        return l;
+    }
+
+    protected static boolean include(double[] boundingRectangle) {
+        return true;
+    }
+
     public void accept(ShapefileRecord r) {
 
-        if (!include(r.getBoundingRectangle()))
+        if (!ShapefileLayer.include(r.getBoundingRectangle()))
             return;
 
         DBaseRecord attr = r.getAttributes();
@@ -76,7 +97,7 @@ public class ShapefileLayer extends WorldWindOSM.TextAndShapesLayer {
             final ShapefileRecordPolygon R = r.asPolygonRecord();
             int parts = R.getNumberOfParts();
             for (int x = 0; x < parts; x++) {
-                gov.nasa.worldwind.render.Polygon p = new Polygon(positions(R, x, 1)) {
+                gov.nasa.worldwind.render.Polygon p = new Polygon(ShapefileLayer.positions(R, x, 1)) {
                     //SurfacePolygon p = new SurfacePolygon(positions(R, x)) {
                     @Override
                     public void pick(DrawContext dc, Point pickPoint) {
@@ -104,8 +125,7 @@ public class ShapefileLayer extends WorldWindOSM.TextAndShapesLayer {
 
                 add(p);
             }
-        }
-        else if (r.isPolylineRecord()) {
+        } else if (r.isPolylineRecord()) {
 
             //final SurfacePolylines P = new SurfacePolylines(r.asPolylineRecord().getCompoundPointBuffer());
             Path P = null;
@@ -113,7 +133,7 @@ public class ShapefileLayer extends WorldWindOSM.TextAndShapesLayer {
             if (pp > 1)
                 throw new UnsupportedOperationException();
             for (int i = 0; i < pp; i++) {
-                ArrayList<Position> l = positions(r, i);
+                ArrayList<Position> l = ShapefileLayer.positions(r, i);
 
                 if (l != null) {
                     P = new Path(l) {
@@ -137,8 +157,7 @@ public class ShapefileLayer extends WorldWindOSM.TextAndShapesLayer {
             int speed;
             if (SPEED instanceof Long) {
                 speed = ((Long) SPEED).intValue();
-            }
-            else
+            } else
                 speed = 0;
 
             final ShapeAttributes lineAttr = new BasicShapeAttributes();
@@ -151,8 +170,7 @@ public class ShapefileLayer extends WorldWindOSM.TextAndShapesLayer {
 
             //P.setTexelsPerEdgeInterval(10);
             add(P);
-        }
-        else if (r.isPointRecord()) {
+        } else if (r.isPointRecord()) {
             double[] pointCoords = ((ShapefileRecordPoint) r).getPoint();
             LatLon location = LatLon.fromDegrees(pointCoords[1], pointCoords[0]);
 
@@ -160,19 +178,15 @@ public class ShapefileLayer extends WorldWindOSM.TextAndShapesLayer {
 
             WorldWindOSM.OSMShapes shapes;
             if (type.equalsIgnoreCase("hamlet")) {
-                shapes = shapeArray[0];
-            }
-            else if (type.equalsIgnoreCase("village")) {
-                shapes = shapeArray[1];
-            }
-            else if (type.equalsIgnoreCase("town")) {
-                shapes = shapeArray[2];
-            }
-            else if (type.equalsIgnoreCase("city")) {
-                shapes = shapeArray[3];
-            }
-            else
-                shapes = shapeArray[4];
+                shapes = ShapefileLayer.shapeArray[0];
+            } else if (type.equalsIgnoreCase("village")) {
+                shapes = ShapefileLayer.shapeArray[1];
+            } else if (type.equalsIgnoreCase("town")) {
+                shapes = ShapefileLayer.shapeArray[2];
+            } else if (type.equalsIgnoreCase("city")) {
+                shapes = ShapefileLayer.shapeArray[3];
+            } else
+                shapes = ShapefileLayer.shapeArray[4];
 
             String name = null;
             if (meta != null) {
@@ -191,35 +205,11 @@ public class ShapefileLayer extends WorldWindOSM.TextAndShapesLayer {
                 label.setMaxActiveAltitude(shapes.labelMaxAltitude);
                 label.setPriority(shapes.labelMaxAltitude);
                 shapes.labels.add(label);
-            }
-            else {
+            } else {
                 shapes.locations.add(location);
             }
-        }
-        else {
+        } else {
             System.out.println("unknown: " + r);
         }
-    }
-
-    static private ArrayList<Position> positions(ShapefileRecord r, int i) {
-        return positions(r, i, 0);
-    }
-
-    static private ArrayList<Position> positions(ShapefileRecord r, int i, float elevation) {
-        ArrayList<Position> l;
-        VecBuffer points = r.getPointBuffer(i);
-        final int ps = points.getSize();
-        if (ps > 0) {
-            l = new ArrayList<>(ps);
-            Iterable<LatLon> p = points.getLocations();
-            p.forEach(q -> l.add(new Position(q, elevation)));
-        }
-        else
-            l = null;
-        return l;
-    }
-
-    protected static boolean include(double[] boundingRectangle) {
-        return true;
     }
 }

@@ -47,7 +47,7 @@ public class ScheduledTaskService extends WWObjectImpl implements Thread.Uncaugh
      * {@link AVKey#TASK_POOL_SIZE}.
      */
     public ScheduledTaskService() {
-        Integer poolSize = Configuration.getIntegerValue(AVKey.TASK_POOL_SIZE, DEFAULT_POOL_SIZE);
+        Integer poolSize = Configuration.getIntegerValue(AVKey.TASK_POOL_SIZE, ScheduledTaskService.DEFAULT_POOL_SIZE);
 
         // this.executor runs the tasks, each in their own thread
         this.executor = new ScheduledTaskExecutor(poolSize);
@@ -119,7 +119,7 @@ public class ScheduledTaskService extends WWObjectImpl implements Thread.Uncaugh
         @Override
         protected void beforeExecute(Thread thread, Runnable runnable) {
 
-            thread.setName(RUNNING_THREAD_NAME_PREFIX + runnable);
+            thread.setName(ScheduledTaskService.RUNNING_THREAD_NAME_PREFIX + runnable);
             thread.setPriority(Thread.MIN_PRIORITY);
             thread.setUncaughtExceptionHandler(ScheduledTaskService.this);
 
@@ -134,7 +134,7 @@ public class ScheduledTaskService extends WWObjectImpl implements Thread.Uncaugh
             super.afterExecute(runnable, throwable);
 
             if (throwable == null)
-                Thread.currentThread().setName(IDLE_THREAD_NAME_PREFIX);
+                Thread.currentThread().setName(ScheduledTaskService.IDLE_THREAD_NAME_PREFIX);
         }
     }
 }

@@ -36,6 +36,49 @@ public class DefaultLabelLayouts {
     }
 
     /**
+     * Create a simple layout map and populate it with one key value pair.
+     *
+     * @param key     Modifier key.
+     * @param offset  Offset within the image at which to place the label.
+     * @param hotspot Offset within the label to align with the label point in the image.
+     * @return New map, populated with one entry for the key/value pair specified in the parameters.
+     */
+    protected static List<LabelLayout> createLayout(String key, Offset offset, Offset hotspot) {
+        LabelLayout layout = new LabelLayout(key);
+        layout.add(offset, hotspot);
+
+        return Collections.singletonList(layout);
+    }
+
+    /**
+     * Add a layout to a layout map, possibly replacing an existing layout.
+     *
+     * @param layoutList List to which to add an entry.
+     * @param key        Modifier key.
+     * @param offsets    List of offsets from which to create one or more LabelLayout objects. The offsets are specified
+     *                   in pairs: first the image offset and then the label offset. If multiple pairs are provided,
+     *                   then multiple LabelLayouts will be created and added to the map.
+     * @throws IllegalArgumentException if offsets does not have even length.
+     */
+    protected static void addLayout(Collection<LabelLayout> layoutList, String key, Offset... offsets) {
+        if (offsets.length % 2 != 0) {
+            String msg = Logging.getMessage("generic.ArrayInvalidLength", offsets.length);
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        LabelLayout layout = new LabelLayout(key);
+        for (int i = 0; i < offsets.length; i += 2) {
+            Offset offset = offsets[i];
+            Offset hotspot = offsets[i + 1];
+
+            layout.add(offset, hotspot);
+        }
+
+        layoutList.add(layout);
+    }
+
+    /**
      * Indicates the layout for a particular type of graphic.
      *
      * @param sidc Symbol code of the graphic.
@@ -219,49 +262,6 @@ public class DefaultLabelLayouts {
             Offset.fromFraction(0.0, 0.0));
         this.layouts.put(MOBSU_OBST_AVN_TWR_LOW, layout);
         this.layouts.put(MOBSU_OBST_AVN_TWR_HIGH, layout);
-    }
-
-    /**
-     * Create a simple layout map and populate it with one key value pair.
-     *
-     * @param key     Modifier key.
-     * @param offset  Offset within the image at which to place the label.
-     * @param hotspot Offset within the label to align with the label point in the image.
-     * @return New map, populated with one entry for the key/value pair specified in the parameters.
-     */
-    protected static List<LabelLayout> createLayout(String key, Offset offset, Offset hotspot) {
-        LabelLayout layout = new LabelLayout(key);
-        layout.add(offset, hotspot);
-
-        return Collections.singletonList(layout);
-    }
-
-    /**
-     * Add a layout to a layout map, possibly replacing an existing layout.
-     *
-     * @param layoutList List to which to add an entry.
-     * @param key        Modifier key.
-     * @param offsets    List of offsets from which to create one or more LabelLayout objects. The offsets are specified
-     *                   in pairs: first the image offset and then the label offset. If multiple pairs are provided,
-     *                   then multiple LabelLayouts will be created and added to the map.
-     * @throws IllegalArgumentException if offsets does not have even length.
-     */
-    protected static void addLayout(Collection<LabelLayout> layoutList, String key, Offset... offsets) {
-        if (offsets.length % 2 != 0) {
-            String msg = Logging.getMessage("generic.ArrayInvalidLength", offsets.length);
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        LabelLayout layout = new LabelLayout(key);
-        for (int i = 0; i < offsets.length; i += 2) {
-            Offset offset = offsets[i];
-            Offset hotspot = offsets[i + 1];
-
-            layout.add(offset, hotspot);
-        }
-
-        layoutList.add(layout);
     }
 
     /**

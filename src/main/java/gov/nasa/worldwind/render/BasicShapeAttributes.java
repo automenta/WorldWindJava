@@ -562,16 +562,16 @@ public class BasicShapeAttributes implements ShapeAttributes {
         result = 31 * result + (this.enableLighting ? 1 : 0);
         result = 31 * result + (this.interiorMaterial != null ? this.interiorMaterial.hashCode() : 0);
         result = 31 * result + (this.outlineMaterial != null ? this.outlineMaterial.hashCode() : 0);
-        temp = this.interiorOpacity != +0.0d ? Double.doubleToLongBits(this.interiorOpacity) : 0L;
+        temp = this.interiorOpacity == +0.0d ? 0L : Double.doubleToLongBits(this.interiorOpacity);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
-        temp = this.outlineOpacity != +0.0d ? Double.doubleToLongBits(this.outlineOpacity) : 0L;
+        temp = this.outlineOpacity == +0.0d ? 0L : Double.doubleToLongBits(this.outlineOpacity);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
-        temp = this.outlineWidth != +0.0d ? Double.doubleToLongBits(this.outlineWidth) : 0L;
+        temp = this.outlineWidth == +0.0d ? 0L : Double.doubleToLongBits(this.outlineWidth);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         result = 31 * result + this.outlineStippleFactor;
         result = 31 * result + this.outlineStipplePattern;
         result = 31 * result + (this.imageSource != null ? this.imageSource.hashCode() : 0);
-        temp = this.imageScale != +0.0d ? Double.doubleToLongBits(this.imageScale) : 0L;
+        temp = this.imageScale == +0.0d ? 0L : Double.doubleToLongBits(this.imageScale);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
 
         return result;
@@ -611,8 +611,7 @@ public class BasicShapeAttributes implements ShapeAttributes {
                 Logging.logger().throwing(getClass().getName(), "export", e);
                 throw new IOException(e);
             }
-        }
-        else {
+        } else {
             String message = Logging.getMessage("Export.UnsupportedFormat", mimeType);
             Logging.logger().warning(message);
             throw new UnsupportedOperationException(message);
@@ -635,11 +634,9 @@ public class BasicShapeAttributes implements ShapeAttributes {
         if (output instanceof XMLStreamWriter) {
             xmlWriter = (XMLStreamWriter) output;
             closeWriterWhenFinished = false;
-        }
-        else if (output instanceof Writer) {
+        } else if (output instanceof Writer) {
             xmlWriter = factory.createXMLStreamWriter((Writer) output);
-        }
-        else if (output instanceof OutputStream) {
+        } else if (output instanceof OutputStream) {
             xmlWriter = factory.createXMLStreamWriter((OutputStream) output);
         }
 

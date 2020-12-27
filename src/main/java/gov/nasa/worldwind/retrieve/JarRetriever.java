@@ -14,8 +14,8 @@ import java.util.logging.Level;
 
 /**
  * Retrieves resources identified by a jar url, which has the form jar:&lt;url&gt;!/{entry}, as in:
- * jar:http://www.foo.com/bar/baz.jar!/COM/foo/Quux.class. See {@link JarURLConnection} for a full description
- * of jar URLs.
+ * jar:http://www.foo.com/bar/baz.jar!/COM/foo/Quux.class. See {@link JarURLConnection} for a full description of jar
+ * URLs.
  *
  * @author tag
  * @version $Id: JarRetriever.java 1171 2013-02-11 21:45:02Z dcollins $

@@ -717,11 +717,11 @@ public class LatLonTest
         Angle initialLon = Angle.fromDegrees(-21.377644877408443);
         Angle azimuth = Angle.fromDegrees(90.0);
         Angle distance = Angle.fromDegrees(8.963656110719409);
-        LatLon begin = LatLon.fromRadians(initialLat.getRadians(), initialLon.getRadians());
+        LatLon begin = LatLon.fromRadians(initialLat.radians(), initialLon.radians());
         LatLon end = LatLon.rhumbEndPosition(begin, azimuth, distance);
-        assertEquals("Problem points A (lat)", initialLat.getDegrees(), end.getLatitude().getDegrees(),
+        assertEquals("Problem points A (lat)", initialLat.degrees, end.getLatitude().degrees,
             DISTANCE_THRESHOLD);
-        assertEquals("Problem points A (lon)", -12.391252821313167, end.getLongitude().getDegrees(),
+        assertEquals("Problem points A (lon)", -12.391252821313167, end.getLongitude().degrees,
             DISTANCE_THRESHOLD);
     }
 

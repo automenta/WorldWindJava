@@ -32,9 +32,9 @@ public class BarycentricTriangle implements BarycentricPlanarShape {
     }
 
     public BarycentricTriangle(LatLon p00, LatLon p10, LatLon p01) {
-        this.p00 = new Vec4(p00.getLongitude().getRadians(), p00.getLatitude().getRadians(), 0);
-        this.p10 = new Vec4(p01.getLongitude().getRadians(), p01.getLatitude().getRadians(), 0);
-        this.p01 = new Vec4(p10.getLongitude().getRadians(), p10.getLatitude().getRadians(), 0);
+        this.p00 = new Vec4(p00.getLongitude().radians(), p00.getLatitude().radians(), 0);
+        this.p10 = new Vec4(p01.getLongitude().radians(), p01.getLatitude().radians(), 0);
+        this.p01 = new Vec4(p10.getLongitude().radians(), p10.getLatitude().radians(), 0);
 
         q1 = this.p10.subtract3(this.p00);
         q3 = this.p01.subtract3(this.p00);
@@ -72,12 +72,10 @@ public class BarycentricTriangle implements BarycentricPlanarShape {
         if (na.x >= na.y && na.x >= na.z) {
             a = (q2.y * q3.z - q2.z * q3.y) / n.x;
             b = (q1.y * q2.z - q1.z * q2.y) / n.y;
-        }
-        else if (na.y >= na.x && na.y >= na.z) {
+        } else if (na.y >= na.x && na.y >= na.z) {
             a = (q2.z * q3.x - q2.x * q3.z) / n.y;
             b = (q1.z * q2.x - q1.x * q2.z) / n.y;
-        }
-        else {
+        } else {
             a = (q2.x * q3.y - q2.y * q3.x) / n.z;
             b = (q1.x * q2.y - q1.y * q2.x) / n.z;
         }
@@ -86,7 +84,8 @@ public class BarycentricTriangle implements BarycentricPlanarShape {
     }
 
     public double[] getBarycentricCoords(LatLon location) {
-        return this.getBarycentricCoords(new Vec4(location.getLongitude().radians, location.getLatitude().radians, 0));
+        return this.getBarycentricCoords(new Vec4(location.getLongitude().radians(),
+            location.getLatitude().radians(), 0));
     }
 
     public boolean contains(Vec4 p) {

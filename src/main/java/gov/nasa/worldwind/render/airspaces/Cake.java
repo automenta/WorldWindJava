@@ -125,11 +125,9 @@ public class Cake extends AbstractAirspace {
 
         if (cakeLayers == null || cakeLayers.isEmpty()) {
             return null;
-        }
-        else if (cakeLayers.size() == 1) {
+        } else if (cakeLayers.size() == 1) {
             return cakeLayers.get(0).computeExtent(globe, verticalExaggeration);
-        }
-        else {
+        } else {
             Collection<Box> extents = new ArrayList<>();
 
             for (Layer layer : cakeLayers) {

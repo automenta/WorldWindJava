@@ -26,19 +26,19 @@ class RPFFrameStructure {
         if (index < 0)
             return -1;
 
-        return EAST_WEST_PIXEL_SPACING_CONSTANT[index];
+        return RPFFrameStructure.EAST_WEST_PIXEL_SPACING_CONSTANT[index];
     }
 
     static int northSouthPixelSpacingConstant() {
-        return NORTH_SOUTH_PIXEL_SPACING_CONSTANT;
+        return RPFFrameStructure.NORTH_SOUTH_PIXEL_SPACING_CONSTANT;
     }
 
     static int equatorwardNominalBoundary(char zoneCode) {
-        return nominalBoundary(zoneCode, EQUATORWARD_NOMINAL_BOUNDARY);
+        return RPFFrameStructure.nominalBoundary(zoneCode, RPFFrameStructure.EQUATORWARD_NOMINAL_BOUNDARY);
     }
 
     static int polewardNominalBoundary(char zoneCode) {
-        return nominalBoundary(zoneCode, POLEWARD_NOMINAL_BOUNDARY);
+        return RPFFrameStructure.nominalBoundary(zoneCode, RPFFrameStructure.POLEWARD_NOMINAL_BOUNDARY);
     }
 
     private static int nominalBoundary(char zoneCode, int[] boundaryArray) {
@@ -52,10 +52,10 @@ class RPFFrameStructure {
     }
 
     public static int getPixelRowsPerFrame() {
-        return PIXEL_ROWS_PER_FRAME;
+        return RPFFrameStructure.PIXEL_ROWS_PER_FRAME;
     }
 
     public static int getSubframeRowsPerFrame() {
-        return SUBFRAME_ROWS_PER_FRAME;
+        return RPFFrameStructure.SUBFRAME_ROWS_PER_FRAME;
     }
 }

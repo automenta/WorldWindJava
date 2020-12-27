@@ -231,7 +231,7 @@ public class SurfaceImageEditor implements SelectListener {
     protected void updateAffordances() {
         java.util.List<LatLon> corners = this.shape.getCorners();
 
-        double d = LatLon.getAverageDistance(corners).radians * wwd.model().getGlobe().getRadius();
+        double d = LatLon.getAverageDistance(corners).radians() * wwd.model().getGlobe().getRadius();
 
         MarkerAttributes markerAttrs =
             new BasicMarkerAttributes(Material.BLUE, BasicMarkerShape.SPHERE, 0.7, 10, 0.1, d / 30);

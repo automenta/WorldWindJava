@@ -163,8 +163,8 @@ public class PickPointFrustumList extends ArrayList<PickPointFrustum> {
     }
 
     /**
-     * Returns true if the specified {@link Rectangle} intersects the 2D screen space enclosed by ALL the
-     * Frustums. NOTE: Cannot be true if all frustums do not intersect.
+     * Returns true if the specified {@link Rectangle} intersects the 2D screen space enclosed by ALL the Frustums.
+     * NOTE: Cannot be true if all frustums do not intersect.
      *
      * @param rect the Rectangle to test.
      * @return true if the specified Rectangle intersects the 2D screen space enclosed by ALL Frustums, and false
@@ -183,8 +183,7 @@ public class PickPointFrustumList extends ArrayList<PickPointFrustum> {
     }
 
     /**
-     * Returns true if the specified {@link Rectangle} intersects the 2D screen space enclosed by ANY of the
-     * Frustums.
+     * Returns true if the specified {@link Rectangle} intersects the 2D screen space enclosed by ANY of the Frustums.
      *
      * @param rect the Rectangle to test.
      * @return true if the specified Rectangle intersects the 2D screen space enclosed by ANY of the Frustums, and false

@@ -34,9 +34,11 @@ public class BasicMarkerShape {
     public static final String ORIENTED_CUBE = "gov.nasa.worldwind.examples.render.markers.DirectionalCube";
     public static final String ORIENTED_CONE = "gov.nasa.worldwind.examples.render.markers.DirectionalCone";
     public static final String ORIENTED_CYLINDER = "gov.nasa.worldwind.examples.render.markers.DirectionalCylinder";
-    public static final String ORIENTED_SPHERE_LINE = "gov.nasa.worldwind.examples.render.markers.DirectionalSphereLine";
+    public static final String ORIENTED_SPHERE_LINE
+        = "gov.nasa.worldwind.examples.render.markers.DirectionalSphereLine";
     public static final String ORIENTED_CONE_LINE = "gov.nasa.worldwind.examples.render.markers.DirectionalConeLine";
-    public static final String ORIENTED_CYLINDER_LINE = "gov.nasa.worldwind.examples.render.markers.DirectionalCylinderLine";
+    public static final String ORIENTED_CYLINDER_LINE
+        = "gov.nasa.worldwind.examples.render.markers.DirectionalCylinderLine";
 
     @SuppressWarnings("StringEquality")
     public static MarkerShape createShapeInstance(String shapeType) {
@@ -107,7 +109,7 @@ public class BasicMarkerShape {
         protected final String name;
         protected final String shapeType;
         protected final List<MarkerShape> shapes = new ArrayList<>(2);
-        protected double offset = 0;
+        protected double offset;
 
         public CompoundShape(String shapeType, String name, MarkerShape shape1, MarkerShape shape2) {
             this.name = name;
@@ -165,11 +167,40 @@ public class BasicMarkerShape {
         protected String name;
         protected String shapeType;
         protected GLUquadric quadric;
-        protected boolean isInitialized = false;
+        protected boolean isInitialized;
         /**
          * Indicates that the shape must apply heading, pitch, and roll.
          */
         protected boolean applyOrientation = true;
+
+        /**
+         * Compute a direction vector given a point, heading and pitch.
+         *
+         * @param dc      current draw context
+         * @param point   point at which to compute direction vector
+         * @param normal  surface normal at {@code point}
+         * @param heading desired heading
+         * @param pitch   desired pitch
+         * @return A vector pointing in the direction of the desired heading and pitch
+         */
+        protected static Vec4 computeOrientationVector(DrawContext dc, Vec4 point, Vec4 normal, Angle heading,
+            Angle pitch) {
+            // To compute rotation of the shape toward the proper heading, find a second point in that direction.
+            Globe globe = dc.getGlobe();
+            Position pos = globe.computePositionFromPoint(point);
+            LatLon p2ll = LatLon.greatCircleEndPosition(pos, heading, Angle.fromDegrees(0.1));
+            Vec4 p2 = globe.computePointFromPosition(p2ll.getLatitude(), p2ll.getLongitude(),
+                pos.getElevation());
+
+            // Find vector in the direction of the heading
+            Vec4 p1p2 = p2.subtract3(point).normalize3();
+
+            // Take cross product of normal vector and heading vector to create an axis around which to apply pitch
+            // rotation.
+            Vec4 pitchAxis = normal.cross3(p1p2);
+
+            return normal.transformBy3(Matrix.fromAxisAngle(pitch, pitchAxis));
+        }
 
         abstract protected void doRender(DrawContext dc, Marker marker, Vec4 point, double radius, int[] dlResource);
 
@@ -231,8 +262,7 @@ public class BasicMarkerShape {
 
             if (!isRelative) {
                 dc.getView().pushReferenceCenter(dc, point);
-            }
-            else {
+            } else {
                 gl.glPushMatrix();
                 gl.glTranslated(point.x, point.y, point.z);
             }
@@ -244,44 +274,14 @@ public class BasicMarkerShape {
             this.doRender(dc, marker, point, radius, dlResource);
             if (!isRelative) {
                 dc.getView().popReferenceCenter(dc);
-            }
-            else {
+            } else {
                 gl.glPopMatrix();
             }
         }
 
-        /**
-         * Compute a direction vector given a point, heading and pitch.
-         *
-         * @param dc      current draw context
-         * @param point   point at which to compute direction vector
-         * @param normal  surface normal at {@code point}
-         * @param heading desired heading
-         * @param pitch   desired pitch
-         * @return A vector pointing in the direction of the desired heading and pitch
-         */
-        protected static Vec4 computeOrientationVector(DrawContext dc, Vec4 point, Vec4 normal, Angle heading,
-            Angle pitch) {
-            // To compute rotation of the shape toward the proper heading, find a second point in that direction.
-            Globe globe = dc.getGlobe();
-            Position pos = globe.computePositionFromPoint(point);
-            LatLon p2ll = LatLon.greatCircleEndPosition(pos, heading, Angle.fromDegrees(0.1));
-            Vec4 p2 = globe.computePointFromPosition(p2ll.getLatitude(), p2ll.getLongitude(),
-                pos.getElevation());
-
-            // Find vector in the direction of the heading
-            Vec4 p1p2 = p2.subtract3(point).normalize3();
-
-            // Take cross product of normal vector and heading vector to create an axis around which to apply pitch
-            // rotation.
-            Vec4 pitchAxis = normal.cross3(p1p2);
-
-            return normal.transformBy3(Matrix.fromAxisAngle(pitch, pitchAxis));
-        }
-
         protected int[] createDisplayList(DrawContext dc, double radius) {
             GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-            int[] dlResource = new int[] {gl.glGenLists(1), 1};
+            int[] dlResource = {gl.glGenLists(1), 1};
 
             int size;
             try {
@@ -289,7 +289,7 @@ public class BasicMarkerShape {
                 size = this.drawShape(dc, radius);
                 gl.glEndList();
             }
-            catch (Exception e) {
+            catch (RuntimeException e) {
                 gl.glEndList();
                 gl.glDeleteLists(dlResource[0], dlResource[1]);
                 return null;
@@ -452,8 +452,7 @@ public class BasicMarkerShape {
                 double L = Math.sqrt(A * A + B * B);
 
                 gl.glRotated(angle.degrees, A / L, B / L, 0);  // rotate shape to proper heading and pitch
-            }
-            else if (orientation.equals(Vec4.UNIT_NEGATIVE_Z)) {
+            } else if (orientation.equals(Vec4.UNIT_NEGATIVE_Z)) {
                 gl.glRotated(180, 1, 0, 0); // rotate to point cone away from globe's surface
             }
 
@@ -574,8 +573,7 @@ public class BasicMarkerShape {
                 //noinspection SuspiciousNameCombination
                 double npta = Math.atan2(npt.x, npt.y);
                 gl.glRotated(-marker.getHeading().degrees - npta * 180 / Math.PI, 0, 0, 1);
-            }
-            else {
+            } else {
                 gl.glRotated(marker.getPosition().getLongitude().degrees, 0, 1, 0);
                 gl.glRotated(-marker.getPosition().getLatitude().degrees, 1, 0, 0);
                 gl.glRotated(-marker.getHeading().degrees, 0, 0, 1);
@@ -642,8 +640,7 @@ public class BasicMarkerShape {
                 //noinspection SuspiciousNameCombination
                 double npta = Math.atan2(npt.x, npt.y);
                 gl.glRotated(-marker.getHeading().degrees - npta * 180 / Math.PI, 0, 0, 1);
-            }
-            else {
+            } else {
                 gl.glRotated(marker.getPosition().getLongitude().degrees, 0, 1, 0);
                 gl.glRotated(-marker.getPosition().getLatitude().degrees, 1, 0, 0);
                 gl.glRotated(-marker.getHeading().degrees, 0, 0, 1);

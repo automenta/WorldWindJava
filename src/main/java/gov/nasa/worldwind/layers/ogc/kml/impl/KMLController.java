@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.layers.ogc.kml.impl;
 
 import gov.nasa.worldwind.WWObjectImpl;
-import gov.nasa.worldwind.event.*;
+import gov.nasa.worldwind.event.Message;
 import gov.nasa.worldwind.layers.ogc.kml.KMLRoot;
 import gov.nasa.worldwind.render.*;
 
@@ -18,7 +18,7 @@ import gov.nasa.worldwind.render.*;
  * @author tag
  * @version $Id: KMLController.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class KMLController extends WWObjectImpl implements PreRenderable, Renderable, MessageListener {
+public class KMLController extends WWObjectImpl implements PreRenderable, Renderable {
     protected KMLRoot kmlRoot;
     protected KMLTraversalContext tc;
 

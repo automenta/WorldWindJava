@@ -23,10 +23,9 @@ import java.net.*;
  * @version $Id: WMSTiledImageLayer.java 1957 2014-04-23 23:32:39Z tgaskins $
  */
 public class WMSTiledImageLayer extends BasicTiledImageLayer {
-    private static final String[] formatOrderPreference = new String[]
-        {
-            "image/dds", "image/png", "image/jpeg"
-        };
+    private static final String[] formatOrderPreference = {
+        "image/dds", "image/png", "image/jpeg"
+    };
 
     public WMSTiledImageLayer(AVList params) {
         super(params);
@@ -37,21 +36,21 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer {
     }
 
     public WMSTiledImageLayer(Element domElement, AVList params) {
-        this(wmsGetParamsFromDocument(domElement, params));
+        this(WMSTiledImageLayer.wmsGetParamsFromDocument(domElement, params));
     }
 
     public WMSTiledImageLayer(WMSCapabilities caps, AVList params) {
-        this(wmsGetParamsFromCapsDoc(caps, params));
+        this(WMSTiledImageLayer.wmsGetParamsFromCapsDoc(caps, params));
     }
 
     public WMSTiledImageLayer(String stateInXml) {
-        this(wmsRestorableStateToParams(stateInXml));
+        this(WMSTiledImageLayer.wmsRestorableStateToParams(stateInXml));
 
         RestorableSupport rs;
         try {
             rs = RestorableSupport.parse(stateInXml);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             // Parsing the document specified by stateInXml failed.
             String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", stateInXml);
             Logging.logger().severe(message);
@@ -110,7 +109,7 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer {
             params = new AVListImpl();
 
         try {
-            DataConfigurationUtils.getWMSLayerConfigParams(caps, formatOrderPreference, params);
+            DataConfigurationUtils.getWMSLayerConfigParams(caps, WMSTiledImageLayer.formatOrderPreference, params);
         }
         catch (IllegalArgumentException e) {
             String message = Logging.getMessage("WMS.MissingLayerParameters");
@@ -123,7 +122,7 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer {
             throw new IllegalArgumentException(message, e);
         }
 
-        setFallbacks(params);
+        BasicTiledImageLayer.setFallbacks(params);
 
         // Setup WMS URL builder.
         params.set(AVKey.TILE_URL_BUILDER, new URLBuilder(params));
@@ -151,7 +150,7 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer {
         try {
             rs = RestorableSupport.parse(stateInXml);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             // Parsing the document specified by stateInXml failed.
             String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", stateInXml);
             Logging.logger().severe(message);
@@ -159,16 +158,16 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer {
         }
 
         AVList params = new AVListImpl();
-        wmsRestoreStateToParams(rs, null, params);
+        WMSTiledImageLayer.wmsRestoreStateToParams(rs, null, params);
         return params;
     }
 
     protected static void wmsRestoreStateToParams(RestorableSupport rs, RestorableSupport.StateObject context,
         AVList params) {
         // Invoke the BasicTiledImageLayer functionality.
-        restoreStateForParams(rs, context, params);
+        BasicTiledImageLayer.restoreStateForParams(rs, context, params);
         // Parse any legacy WMSTiledImageLayer state values.
-        legacyWmsRestoreStateToParams(rs, context, params);
+        WMSTiledImageLayer.legacyWmsRestoreStateToParams(rs, context, params);
 
         String s = rs.getStateValueAsString(context, AVKey.IMAGE_FORMAT);
         if (s != null)
@@ -290,8 +289,7 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer {
         if (value instanceof URLBuilder) {
             rs.addStateValueAsString(context, "wms.Version", ((URLBuilder) value).wmsVersion);
             rs.addStateValueAsString(context, "wms.Crs", ((URLBuilder) value).crs);
-        }
-        else {
+        } else {
             super.getRestorableStateForAVPair(key, value, rs, context);
         }
     }
@@ -318,12 +316,11 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer {
             String coordSystemKey;
             String defaultCS;
             if (version == null || WWUtil.compareVersion(version, "1.3.0") >= 0) {
-                this.wmsVersion = MAX_VERSION;
+                this.wmsVersion = URLBuilder.MAX_VERSION;
                 coordSystemKey = "&crs=";
                 defaultCS
                     = "CRS:84"; // would like to do EPSG:4326 but that's incompatible with our old WMS server, see WWJ-474
-            }
-            else {
+            } else {
                 this.wmsVersion = version;
                 coordSystemKey = "&srs=";
                 defaultCS = "EPSG:4326";
@@ -350,8 +347,7 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer {
                     sb.append("&bgcolor=").append(this.backgroundColor);
 
                 this.URLTemplate = sb.toString();
-            }
-            else {
+            } else {
                 sb = new StringBuffer(this.URLTemplate);
             }
 
@@ -367,23 +363,22 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer {
             // The order of the coordinate specification matters, and it changed with WMS 1.3.0.
             if (WWUtil.compareVersion(this.wmsVersion, "1.1.1") <= 0 || this.crs.contains("CRS:84")) {
                 // 1.1.1 and earlier and CRS:84 use lon/lat order
-                sb.append(s.lonMin().getDegrees());
-                sb.append(",");
-                sb.append(s.latMin().getDegrees());
-                sb.append(",");
-                sb.append(s.lonMax().getDegrees());
-                sb.append(",");
-                sb.append(s.latMax().getDegrees());
-            }
-            else {
+                sb.append(s.lonMin().degrees);
+                sb.append(',');
+                sb.append(s.latMin().degrees);
+                sb.append(',');
+                sb.append(s.lonMax().degrees);
+                sb.append(',');
+                sb.append(s.latMax().degrees);
+            } else {
                 // 1.3.0 uses lat/lon ordering
-                sb.append(s.latMin().getDegrees());
-                sb.append(",");
-                sb.append(s.lonMin().getDegrees());
-                sb.append(",");
-                sb.append(s.latMax().getDegrees());
-                sb.append(",");
-                sb.append(s.lonMax().getDegrees());
+                sb.append(s.latMin().degrees);
+                sb.append(',');
+                sb.append(s.lonMin().degrees);
+                sb.append(',');
+                sb.append(s.latMax().degrees);
+                sb.append(',');
+                sb.append(s.lonMax().degrees);
             }
 
             return new URL(sb.toString().replace(" ", "%20"));

@@ -17,8 +17,7 @@ import java.util.*;
 import java.util.logging.Level;
 
 /**
- * Renders fast multiple polygons with or without holes in one pass. It relies on a {@link
- * CompoundVecBuffer}.
+ * Renders fast multiple polygons with or without holes in one pass. It relies on a {@link CompoundVecBuffer}.
  * <p>
  * Whether a polygon ring is filled or is a hole in another polygon depends on the vertices winding order and the
  * winding rule used - see setWindingRule(String).
@@ -48,6 +47,55 @@ public class SurfacePolygons extends SurfacePolylines // TODO: Review
         vertex[0] = coords[0] - referenceLocation.getLongitude().degrees;
         vertex[1] = coords[1] - referenceLocation.getLatitude().degrees;
         GLU.gluTessVertex(tess, vertex, 0, vertex);
+    }
+
+    protected static List<double[]> computeDateLineCrossingPoints(VecBuffer vecBuffer) {
+        // Shapes that include a pole will yield an odd number of points
+        List<double[]> list = new ArrayList<>();
+        Iterable<double[]> iterable = vecBuffer.getCoords(3);
+        double[] previousPoint = null;
+        for (double[] coords : iterable) {
+            if (previousPoint != null && Math.abs(previousPoint[0] - coords[0]) > 180)
+                list.add(previousPoint);
+            previousPoint = coords;
+        }
+
+        return list;
+    }
+
+    protected static double[] computePoleWrappingPoint(int pole, List<double[]> dateLineCrossingPoints) {
+        if (pole == 0)
+            return null;
+
+        // Find point with latitude closest to pole
+        int idx = -1;
+        double max = pole < 0 ? 90 : -90;
+        for (int i = 0; i < dateLineCrossingPoints.size(); i++) {
+            double[] point = dateLineCrossingPoints.get(i);
+            if (pole < 0 && point[1] < max) // increasing latitude toward north pole
+            {
+                idx = i;
+                max = point[1];
+            }
+            if (pole > 0 && point[1] > max) // decreasing latitude toward south pole
+            {
+                idx = i;
+                max = point[1];
+            }
+        }
+
+        return dateLineCrossingPoints.get(idx);
+    }
+
+    protected static double[] computeDateLineEntryPoint(double[] from, double[] to) {
+        // Linear interpolation between from and to at the date line
+        double dLat = to[1] - from[1];
+        double dLon = 360 - Math.abs(to[0] - from[0]);
+        double s = Math.abs(180 * Math.signum(from[0]) - from[0]) / dLon;
+        double lat = from[1] + dLat * s;
+        double lon = 180 * Math.signum(from[0]); // same side as from
+
+        return new double[] {lon, lat, 0};
     }
 
     /**
@@ -96,6 +144,10 @@ public class SurfacePolygons extends SurfacePolylines // TODO: Review
     public String getWindingRule() {
         return this.windingRule;
     }
+
+    //**************************************************************//
+    //********************  Interior Tessellation  *****************//
+    //**************************************************************//
 
     /**
      * Set the winding rule used when tessellating polygons. Can be one of {@link AVKey#CLOCKWISE} (default) or {@link
@@ -155,10 +207,6 @@ public class SurfacePolygons extends SurfacePolylines // TODO: Review
         }
     }
 
-    //**************************************************************//
-    //********************  Interior Tessellation  *****************//
-    //**************************************************************//
-
     protected WWTexture getTexture() {
         if (this.getActiveAttributes().getImageSource() == null)
             return null;
@@ -196,7 +244,7 @@ public class SurfacePolygons extends SurfacePolylines // TODO: Review
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         GLUtessellatorCallback cb = GLUTessellatorSupport.createOGLDrawPrimitivesCallback(gl);
 
-        int[] dlResource = new int[] {gl.glGenLists(1), 1};
+        int[] dlResource = {gl.glGenLists(1), 1};
         GLUTessellatorSupport glts = new GLUTessellatorSupport();
 
         try {
@@ -231,6 +279,8 @@ public class SurfacePolygons extends SurfacePolylines // TODO: Review
             return null;
         }
     }
+
+    // --- Pole wrapping shapes handling ---
 
     protected void handleUnsuccessfulInteriorTessellation(DrawContext dc) {
         // If tessellating the polygon's interior was unsuccessful, we modify the polygon to avoid any additional
@@ -277,8 +327,7 @@ public class SurfacePolygons extends SurfacePolylines // TODO: Review
 
             if (inBeginPolygon)
                 GLU.gluTessEndPolygon(tess);
-        }
-        else {
+        } else {
             // Tessellate one polygon per ring group
             int numGroups = this.polygonRingGroups.length;
             for (int group = 0; group < numGroups; group++) {
@@ -318,26 +367,25 @@ public class SurfacePolygons extends SurfacePolylines // TODO: Review
 
                 // Wrapping a pole
                 double[] dateLinePoint1 = SurfacePolygons.computeDateLineEntryPoint(poleWrappingPoint, coords);
-                double[] polePoint1 = new double[] {180 * Math.signum(poleWrappingPoint[0]), 90.0d * pole, 0};
+                double[] polePoint1 = {180 * Math.signum(poleWrappingPoint[0]), 90.0d * pole, 0};
                 double[] dateLinePoint2 = dateLinePoint1.clone();
                 double[] polePoint2 = polePoint1.clone();
                 dateLinePoint2[0] *= -1;
                 polePoint2[0] *= -1;
 
                 // Move to date line then to pole
-                tessVertex(tess, dateLinePoint1, referenceLocation);
-                tessVertex(tess, polePoint1, referenceLocation);
+                SurfacePolygons.tessVertex(tess, dateLinePoint1, referenceLocation);
+                SurfacePolygons.tessVertex(tess, polePoint1, referenceLocation);
 
                 // Move to the other side of the date line
-                tessVertex(tess, polePoint2, referenceLocation);
-                tessVertex(tess, dateLinePoint2, referenceLocation);
+                SurfacePolygons.tessVertex(tess, polePoint2, referenceLocation);
+                SurfacePolygons.tessVertex(tess, dateLinePoint2, referenceLocation);
 
                 // Finally, draw current point past the date line
-                tessVertex(tess, coords, referenceLocation);
+                SurfacePolygons.tessVertex(tess, coords, referenceLocation);
 
                 dateLineCrossed = true;
-            }
-            else {
+            } else {
                 if (previousPoint != null && Math.abs(previousPoint[0] - coords[0]) > 180) {
                     // Crossing date line, sum departure point longitude sign for hemisphere offset
                     sign += (int) Math.signum(previousPoint[0]);
@@ -347,28 +395,12 @@ public class SurfacePolygons extends SurfacePolylines // TODO: Review
                 previousPoint = coords.clone();
 
                 coords[0] += sign * 360;   // apply hemisphere offset
-                tessVertex(tess, coords, referenceLocation);
+                SurfacePolygons.tessVertex(tess, coords, referenceLocation);
             }
         }
         GLU.gluTessEndContour(tess);
 
         return dateLineCrossed;
-    }
-
-    // --- Pole wrapping shapes handling ---
-
-    protected static List<double[]> computeDateLineCrossingPoints(VecBuffer vecBuffer) {
-        // Shapes that include a pole will yield an odd number of points
-        List<double[]> list = new ArrayList<>();
-        Iterable<double[]> iterable = vecBuffer.getCoords(3);
-        double[] previousPoint = null;
-        for (double[] coords : iterable) {
-            if (previousPoint != null && Math.abs(previousPoint[0] - coords[0]) > 180)
-                list.add(previousPoint);
-            previousPoint = coords;
-        }
-
-        return list;
     }
 
     protected int computePole(Iterable<double[]> dateLineCrossingPoints) {
@@ -383,40 +415,5 @@ public class SurfacePolygons extends SurfacePolylines // TODO: Review
         // If we cross the date line going west (from a negative longitude) with a clockwise polygon,
         // then the north pole (positive) is included.
         return this.getWindingRule().equals(AVKey.CLOCKWISE) && sign < 0 ? 1 : -1;
-    }
-
-    protected static double[] computePoleWrappingPoint(int pole, List<double[]> dateLineCrossingPoints) {
-        if (pole == 0)
-            return null;
-
-        // Find point with latitude closest to pole
-        int idx = -1;
-        double max = pole < 0 ? 90 : -90;
-        for (int i = 0; i < dateLineCrossingPoints.size(); i++) {
-            double[] point = dateLineCrossingPoints.get(i);
-            if (pole < 0 && point[1] < max) // increasing latitude toward north pole
-            {
-                idx = i;
-                max = point[1];
-            }
-            if (pole > 0 && point[1] > max) // decreasing latitude toward south pole
-            {
-                idx = i;
-                max = point[1];
-            }
-        }
-
-        return dateLineCrossingPoints.get(idx);
-    }
-
-    protected static double[] computeDateLineEntryPoint(double[] from, double[] to) {
-        // Linear interpolation between from and to at the date line
-        double dLat = to[1] - from[1];
-        double dLon = 360 - Math.abs(to[0] - from[0]);
-        double s = Math.abs(180 * Math.signum(from[0]) - from[0]) / dLon;
-        double lat = from[1] + dLat * s;
-        double lon = 180 * Math.signum(from[0]); // same side as from
-
-        return new double[] {lon, lat, 0};
     }
 }

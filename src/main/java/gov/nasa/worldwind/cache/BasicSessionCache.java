@@ -6,6 +6,7 @@
 package gov.nasa.worldwind.cache;
 
 ////.*;
+
 import gov.nasa.worldwind.util.*;
 
 import java.util.*;
@@ -50,7 +51,7 @@ public class BasicSessionCache implements SessionCache {
      * Creates a BasicSessionCache with the default capacity.
      */
     public BasicSessionCache() {
-        this(DEFAULT_CAPACITY);
+        this(BasicSessionCache.DEFAULT_CAPACITY);
     }
 
     /**

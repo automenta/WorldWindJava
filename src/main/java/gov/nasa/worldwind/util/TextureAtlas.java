@@ -44,7 +44,7 @@ public class TextureAtlas {
      * Indicates the maximum amount of vertical fragmentation this texture atlas allows before compacting its elements.
      * Initialized to DEFAULT_MAX_VERTICAL_FRAGMENTATION.
      */
-    protected static final double maxVerticalFragmentation = DEFAULT_MAX_VERTICAL_FRAGMENTATION;
+    protected static final double maxVerticalFragmentation = TextureAtlas.DEFAULT_MAX_VERTICAL_FRAGMENTATION;
     /**
      * Maps element keys to their corresponding entry. This enables the texture atlas to access the information about
      * each element in constant time using its key. Initialized to a new HashMap.
@@ -127,7 +127,8 @@ public class TextureAtlas {
      *                                  than initialHeight.
      */
     public TextureAtlas(int initialWidth, int initialHeight, int maxWidth, int maxHeight) {
-        this(initialWidth, initialHeight, maxWidth, maxHeight, DEFAULT_USE_MIP_MAPS, DEFAULT_USE_ANISOTROPY);
+        this(initialWidth, initialHeight, maxWidth, maxHeight, TextureAtlas.DEFAULT_USE_MIP_MAPS,
+            TextureAtlas.DEFAULT_USE_ANISOTROPY);
     }
 
     /**
@@ -185,6 +186,95 @@ public class TextureAtlas {
         this.maxHeight = maxHeight;
         this.useMipMaps = useMipMaps;
         this.useAnisotropy = useAnisotropy;
+    }
+
+    /**
+     * Draws the specified image in the backing image at the specified (x, y) location. If drawBorder is
+     * <code>true</code>, this copies the image's outer pixels into 1 pixel border surrounding the original image. This
+     * border avoids sampling pixels from neighboring atlas elements when an OpenGL box filter is applied to this
+     * image.
+     *
+     * @param backingImage the destination backing image to draw into.
+     * @param image        the source image to draw.
+     * @param x            the X coordinate of the image's upper-left corner, in pixels.
+     * @param y            the Y coordinates of the image's upper-left corner, in pixels.
+     * @param drawBorder   <code>true</code> this copy the image's outer pixels into 1 pixel border surrounding the
+     *                     original image, or <code>false</code> to draw only the image.
+     */
+    protected static void drawImage(BufferedImage backingImage, BufferedImage image, int x, int y, boolean drawBorder) {
+        int w = image.getWidth();
+        int h = image.getHeight();
+
+        Graphics2D g = backingImage.createGraphics();
+        try {
+            // Replace destination pixels with source pixels (disables blending).
+            g.setComposite(AlphaComposite.Src);
+
+            // Copy the entire image to (x, y).
+            g.drawImage(image, x, y, null);
+
+            if (drawBorder) {
+                // Copy the image's top left corner to (x - 1, y - 1).
+                g.drawImage(image,
+                    x - 1, y - 1, x, y, // dstX1, dstY1, dstX2, dstY2
+                    0, 0, 1, 1, // srcX1, srcY1, srcX2, srcY2
+                    null);
+
+                // Copy the image's top row to (x, y - 1).
+                g.drawImage(image,
+                    x, y - 1, x + w, y, // dstX1, dstY1, dstX2, dstY2
+                    0, 0, w, 1, // srcX1, srcY1, srcX2, srcY2
+                    null);
+
+                // Copy the image's top right corner to (x + w, y - 1).
+                g.drawImage(image,
+                    x + w, y - 1, x + w + 1, y, // dstX1, dstY1, dstX2, dstY2
+                    w - 1, 0, w, 1, // srcX1, srcY1, srcX2, srcY2
+                    null);
+
+                // Copy the image's right column to (x + w, y).
+                g.drawImage(image,
+                    x + w, y, x + w + 1, y + h, // dstX1, dstY1, dstX2, dstY2
+                    w - 1, 0, w, h, // srcX1, srcY1, srcX2, srcY2
+                    null);
+
+                // Copy the image's bottom right corner to (x + w, y + h).
+                g.drawImage(image,
+                    x + w, y + h, x + w + 1, y + h + 1, // dstX1, dstY1, dstX2, dstY2
+                    w - 1, h - 1, w, h, // srcX1, srcY1, srcX2, srcY2
+                    null);
+
+                // Copy the image's bottom row to (x, y + h).
+                g.drawImage(image,
+                    x, y + h, x + w, y + h + 1, // dstX1, dstY1, dstX2, dstY2
+                    0, h - 1, w, h, // srcX1, srcY1, srcX2, srcY2
+                    null);
+
+                // Copy the image's bottom left corner to (x - 1, y + h).
+                g.drawImage(image,
+                    x - 1, y + h, x, y + h + 1, // dstX1, dstY1, dstX2, dstY2
+                    0, h - 1, 1, h, // srcX1, srcY1, srcX2, srcY2
+                    null);
+
+                // Copy the image's left column to (x - 1, y).
+                g.drawImage(image,
+                    x - 1, y, x, y + h, // dstX1, dstY1, dstX2, dstY2
+                    0, 0, 1, h, // srcX1, srcY1, srcX2, srcY2
+                    null);
+            }
+        }
+        finally {
+            g.dispose();
+        }
+    }
+
+    /**
+     * Marks the specified entry as used by setting its last used time to the current time in nanoseconds.
+     *
+     * @param entry the entry who's last used time is marked.
+     */
+    protected static void markUsed(Entry entry) {
+        entry.lastUsed = System.nanoTime();
     }
 
     /**
@@ -339,7 +429,7 @@ public class TextureAtlas {
         try {
             this.doAdd(key, image);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             // doAdd throws a WWRuntimeException when the rectangle packer cannot fit the specified image into the
             // backing store.
             String msg = Logging.getMessage("TextureAtlas.AtlasIsFull", key);
@@ -436,7 +526,7 @@ public class TextureAtlas {
         // Compact the remaining entries if the vertical fragmentation ratio is larger than this texture atlas'
         // configured threshold. This avoids wasting texture space when many elements of different sizes are
         // subsequently added and removed.
-        if (this.rectPacker.verticalFragmentationRatio() > maxVerticalFragmentation)
+        if (this.rectPacker.verticalFragmentationRatio() > TextureAtlas.maxVerticalFragmentation)
             this.rectPacker.compact();
     }
 
@@ -567,8 +657,7 @@ public class TextureAtlas {
         if (texture != null) {
             texture.bind(dc.getGL());
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -627,86 +716,6 @@ public class TextureAtlas {
             g.setComposite(AlphaComposite.Src); // Replace destination pixels with the clear color (disables blending).
             g.setColor(this.clearColor);
             g.fillRect(x, y, width, height);
-        }
-        finally {
-            g.dispose();
-        }
-    }
-
-    /**
-     * Draws the specified image in the backing image at the specified (x, y) location. If drawBorder is
-     * <code>true</code>, this copies the image's outer pixels into 1 pixel border surrounding the original image. This
-     * border avoids sampling pixels from neighboring atlas elements when an OpenGL box filter is applied to this
-     * image.
-     *
-     * @param backingImage the destination backing image to draw into.
-     * @param image        the source image to draw.
-     * @param x            the X coordinate of the image's upper-left corner, in pixels.
-     * @param y            the Y coordinates of the image's upper-left corner, in pixels.
-     * @param drawBorder   <code>true</code> this copy the image's outer pixels into 1 pixel border surrounding the
-     *                     original image, or <code>false</code> to draw only the image.
-     */
-    protected static void drawImage(BufferedImage backingImage, BufferedImage image, int x, int y, boolean drawBorder) {
-        int w = image.getWidth();
-        int h = image.getHeight();
-
-        Graphics2D g = backingImage.createGraphics();
-        try {
-            // Replace destination pixels with source pixels (disables blending).
-            g.setComposite(AlphaComposite.Src);
-
-            // Copy the entire image to (x, y).
-            g.drawImage(image, x, y, null);
-
-            if (drawBorder) {
-                // Copy the image's top left corner to (x - 1, y - 1).
-                g.drawImage(image,
-                    x - 1, y - 1, x, y, // dstX1, dstY1, dstX2, dstY2
-                    0, 0, 1, 1, // srcX1, srcY1, srcX2, srcY2
-                    null);
-
-                // Copy the image's top row to (x, y - 1).
-                g.drawImage(image,
-                    x, y - 1, x + w, y, // dstX1, dstY1, dstX2, dstY2
-                    0, 0, w, 1, // srcX1, srcY1, srcX2, srcY2
-                    null);
-
-                // Copy the image's top right corner to (x + w, y - 1).
-                g.drawImage(image,
-                    x + w, y - 1, x + w + 1, y, // dstX1, dstY1, dstX2, dstY2
-                    w - 1, 0, w, 1, // srcX1, srcY1, srcX2, srcY2
-                    null);
-
-                // Copy the image's right column to (x + w, y).
-                g.drawImage(image,
-                    x + w, y, x + w + 1, y + h, // dstX1, dstY1, dstX2, dstY2
-                    w - 1, 0, w, h, // srcX1, srcY1, srcX2, srcY2
-                    null);
-
-                // Copy the image's bottom right corner to (x + w, y + h).
-                g.drawImage(image,
-                    x + w, y + h, x + w + 1, y + h + 1, // dstX1, dstY1, dstX2, dstY2
-                    w - 1, h - 1, w, h, // srcX1, srcY1, srcX2, srcY2
-                    null);
-
-                // Copy the image's bottom row to (x, y + h).
-                g.drawImage(image,
-                    x, y + h, x + w, y + h + 1, // dstX1, dstY1, dstX2, dstY2
-                    0, h - 1, w, h, // srcX1, srcY1, srcX2, srcY2
-                    null);
-
-                // Copy the image's bottom left corner to (x - 1, y + h).
-                g.drawImage(image,
-                    x - 1, y + h, x, y + h + 1, // dstX1, dstY1, dstX2, dstY2
-                    0, h - 1, 1, h, // srcX1, srcY1, srcX2, srcY2
-                    null);
-
-                // Copy the image's left column to (x - 1, y).
-                g.drawImage(image,
-                    x - 1, y, x, y + h, // dstX1, dstY1, dstX2, dstY2
-                    0, 0, 1, h, // srcX1, srcY1, srcX2, srcY2
-                    null);
-            }
         }
         finally {
             g.dispose();
@@ -775,8 +784,7 @@ public class TextureAtlas {
             // The backing image has not changed. Move the entry's rectangle from its old location to its new location.
             this.g.copyArea(oldRect.x(), oldRect.y(), oldRect.w(), oldRect.h(), // x, y, width, height
                 newRect.x() - oldRect.x(), newRect.y() - oldRect.y()); // dx, dy
-        }
-        else {
+        } else {
             // The backing image is changing. Copy the entry from its location in the old backing images to its location
             // in the new backing image.
             this.g.drawImage(oldBackingImage,
@@ -786,15 +794,6 @@ public class TextureAtlas {
                 oldRect.x(), oldRect.y(), oldRect.x() + oldRect.w(), oldRect.y() + oldRect.h(),
                 null);
         }
-    }
-
-    /**
-     * Marks the specified entry as used by setting its last used time to the current time in nanoseconds.
-     *
-     * @param entry the entry who's last used time is marked.
-     */
-    protected static void markUsed(Entry entry) {
-        entry.lastUsed = System.nanoTime();
     }
 
     /**
@@ -910,8 +909,7 @@ public class TextureAtlas {
             // This texture atlas' OpenGL texture does not exist on the specified draw context. Load the entire backing
             // image into a new texture and use that as this texture atlas' OpenGL texture.
             texture = this.makeTextureWithBackingImage(dc);
-        }
-        else if (this.getDirtyRect() != null) {
+        } else if (this.getDirtyRect() != null) {
             // A region of this texture atlas' OpenGL texture is out-of-sync; load only the necessary portion of the
             // backing image into the texture.
             texture = this.updateTextureWithSubImage(dc, this.getDirtyRect());
@@ -968,8 +966,7 @@ public class TextureAtlas {
             GL gl = dc.getGL();
             TextureData subTextureData = AWTTextureIO.newTextureData(gl.getGLProfile(), subImage, false);
             texture.updateSubImage(gl, subTextureData, 0, rect.x, rect.y);
-        }
-        else {
+        } else {
             // If we're using mip-maps but do not have automatic mip-map generation, we must load the entire image into
             // the texture in order to force JOGL to recompute the mip-map data for all levels in Java. We must also
             // respecify the texture parameters, because Texture.updateImage overwrites the texture parameters with
@@ -1148,8 +1145,8 @@ public class TextureAtlas {
         /**
          * {@inheritDoc}
          * <p>
-         * Calls {@link TextureAtlas#beginMoveEntries(BufferedImage, BufferedImage)},
-         * casting the specified backing stores to BufferedImages.
+         * Calls {@link TextureAtlas#beginMoveEntries(BufferedImage, BufferedImage)}, casting the specified backing
+         * stores to BufferedImages.
          */
         public void beginMovement(Object oldBackingStore, Object newBackingStore) {
             beginMoveEntries((BufferedImage) oldBackingStore, (BufferedImage) newBackingStore);
@@ -1158,9 +1155,8 @@ public class TextureAtlas {
         /**
          * {@inheritDoc}
          * <p>
-         * Calls {@link TextureAtlas#moveEntry(BufferedImage, Rect,
-         * BufferedImage, Rect)}, casting the specified backing stores to
-         * BufferedImages.
+         * Calls {@link TextureAtlas#moveEntry(BufferedImage, Rect, BufferedImage, Rect)}, casting the specified backing
+         * stores to BufferedImages.
          */
         public void move(Object oldBackingStore, Rect oldLocation, Object newBackingStore, Rect newLocation) {
             moveEntry((BufferedImage) oldBackingStore, oldLocation, (BufferedImage) newBackingStore, newLocation);
@@ -1169,8 +1165,8 @@ public class TextureAtlas {
         /**
          * {@inheritDoc}
          * <p>
-         * Calls {@link TextureAtlas#endMoveEntries(BufferedImage, BufferedImage)},
-         * casting the specified backing stores to BufferedImages.
+         * Calls {@link TextureAtlas#endMoveEntries(BufferedImage, BufferedImage)}, casting the specified backing stores
+         * to BufferedImages.
          */
         public void endMovement(Object oldBackingStore, Object newBackingStore) {
             endMoveEntries((BufferedImage) oldBackingStore, (RenderedImage) newBackingStore);

@@ -17,11 +17,11 @@ import java.awt.*;
  * @version $Id: ScreenAnnotationBalloon.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 public class ScreenAnnotationBalloon extends AbstractAnnotationBalloon implements ScreenBalloon {
-    protected Point screenPoint;
     /**
      * Annotation used to render the balloon.
      */
     protected final ScreenAnnotation annotation;
+    protected Point screenPoint;
 
     /**
      * Create the balloon.

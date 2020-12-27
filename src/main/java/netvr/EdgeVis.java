@@ -1,6 +1,7 @@
 package netvr;
 
 //import com.bulletphysics.collision.broadphase.DbvtAabbMm;
+
 import com.graphhopper.util.EdgeIteratorState;
 import com.jogamp.opengl.GL2;
 
@@ -11,7 +12,6 @@ public class EdgeVis extends Vis {
     final float lat, lon, lat2, lon2;
     final float[] color = new float[3];
     float thick = 1;
-
 
     public EdgeVis(EdgeIteratorState edge, double lat, double lon, double lat2, double lon2) {
         this.id = edge.getEdge();

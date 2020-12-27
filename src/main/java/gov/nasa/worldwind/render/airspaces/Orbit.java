@@ -33,10 +33,10 @@ public class Orbit extends AbstractAirspace {
     private double width = 1.0;
     private boolean enableCaps = true;
     // Geometry.
-    private int arcSlices = DEFAULT_ARC_SLICES;
-    private int lengthSlices = DEFAULT_LENGTH_SLICES;
-    private int stacks = DEFAULT_STACKS;
-    private int loops = DEFAULT_LOOPS;
+    private int arcSlices = Orbit.DEFAULT_ARC_SLICES;
+    private int lengthSlices = Orbit.DEFAULT_LENGTH_SLICES;
+    private int stacks = Orbit.DEFAULT_STACKS;
+    private int loops = Orbit.DEFAULT_LOOPS;
 
     public Orbit(LatLon location1, LatLon location2, String orbitType, double width) {
         if (location1 == null) {
@@ -98,43 +98,43 @@ public class Orbit extends AbstractAirspace {
 
         DetailLevel level;
         level = new ScreenSizeDetailLevel(ramp[0], "Detail-Level-0");
-        level.set(ARC_SLICES, 16);
-        level.set(LENGTH_SLICES, 32);
-        level.set(STACKS, 1);
-        level.set(LOOPS, 4);
-        level.set(DISABLE_TERRAIN_CONFORMANCE, false);
+        level.set(AbstractAirspace.ARC_SLICES, 16);
+        level.set(AbstractAirspace.LENGTH_SLICES, 32);
+        level.set(AbstractAirspace.STACKS, 1);
+        level.set(AbstractAirspace.LOOPS, 4);
+        level.set(AbstractAirspace.DISABLE_TERRAIN_CONFORMANCE, false);
         levels.add(level);
 
         level = new ScreenSizeDetailLevel(ramp[1], "Detail-Level-1");
-        level.set(ARC_SLICES, 13);
-        level.set(LENGTH_SLICES, 25);
-        level.set(STACKS, 1);
-        level.set(LOOPS, 3);
-        level.set(DISABLE_TERRAIN_CONFORMANCE, false);
+        level.set(AbstractAirspace.ARC_SLICES, 13);
+        level.set(AbstractAirspace.LENGTH_SLICES, 25);
+        level.set(AbstractAirspace.STACKS, 1);
+        level.set(AbstractAirspace.LOOPS, 3);
+        level.set(AbstractAirspace.DISABLE_TERRAIN_CONFORMANCE, false);
         levels.add(level);
 
         level = new ScreenSizeDetailLevel(ramp[2], "Detail-Level-2");
-        level.set(ARC_SLICES, 10);
-        level.set(LENGTH_SLICES, 18);
-        level.set(STACKS, 1);
-        level.set(LOOPS, 2);
-        level.set(DISABLE_TERRAIN_CONFORMANCE, false);
+        level.set(AbstractAirspace.ARC_SLICES, 10);
+        level.set(AbstractAirspace.LENGTH_SLICES, 18);
+        level.set(AbstractAirspace.STACKS, 1);
+        level.set(AbstractAirspace.LOOPS, 2);
+        level.set(AbstractAirspace.DISABLE_TERRAIN_CONFORMANCE, false);
         levels.add(level);
 
         level = new ScreenSizeDetailLevel(ramp[3], "Detail-Level-3");
-        level.set(ARC_SLICES, 7);
-        level.set(LENGTH_SLICES, 11);
-        level.set(STACKS, 1);
-        level.set(LOOPS, 1);
-        level.set(DISABLE_TERRAIN_CONFORMANCE, false);
+        level.set(AbstractAirspace.ARC_SLICES, 7);
+        level.set(AbstractAirspace.LENGTH_SLICES, 11);
+        level.set(AbstractAirspace.STACKS, 1);
+        level.set(AbstractAirspace.LOOPS, 1);
+        level.set(AbstractAirspace.DISABLE_TERRAIN_CONFORMANCE, false);
         levels.add(level);
 
         level = new ScreenSizeDetailLevel(ramp[4], "Detail-Level-4");
-        level.set(ARC_SLICES, 4);
-        level.set(LENGTH_SLICES, 4);
-        level.set(STACKS, 1);
-        level.set(LOOPS, 1);
-        level.set(DISABLE_TERRAIN_CONFORMANCE, true);
+        level.set(AbstractAirspace.ARC_SLICES, 4);
+        level.set(AbstractAirspace.LENGTH_SLICES, 4);
+        level.set(AbstractAirspace.STACKS, 1);
+        level.set(AbstractAirspace.LOOPS, 1);
+        level.set(AbstractAirspace.DISABLE_TERRAIN_CONFORMANCE, true);
         levels.add(level);
 
         this.setDetailLevels(levels);
@@ -171,15 +171,14 @@ public class Orbit extends AbstractAirspace {
             return locations;
         }
 
-        double az1 = LatLon.greatCircleAzimuth(locations[0], locations[1]).radians;
-        double az2 = LatLon.greatCircleAzimuth(locations[1], locations[0]).radians;
+        double az1 = LatLon.greatCircleAzimuth(locations[0], locations[1]).radians();
+        double az2 = LatLon.greatCircleAzimuth(locations[1], locations[0]).radians();
         double r = (this.getWidth() / 2) / globe.getRadius();
 
         if (Orbit.OrbitType.LEFT.equals(this.getOrbitType())) {
             locations[0] = LatLon.greatCircleEndPosition(locations[0], az1 - (Math.PI / 2), r);
             locations[1] = LatLon.greatCircleEndPosition(locations[1], az2 + (Math.PI / 2), r);
-        }
-        else if (Orbit.OrbitType.RIGHT.equals(this.getOrbitType())) {
+        } else if (Orbit.OrbitType.RIGHT.equals(this.getOrbitType())) {
             locations[0] = LatLon.greatCircleEndPosition(locations[0], az1 + (Math.PI / 2), r);
             locations[1] = LatLon.greatCircleEndPosition(locations[1], az2 - (Math.PI / 2), r);
         }
@@ -244,7 +243,7 @@ public class Orbit extends AbstractAirspace {
         double radius = this.getWidth() / 2.0;
         GeometryBuilder gb = this.getGeometryBuilder();
         LatLon[] locations = GeometryBuilder.makeLongDiskLocations(globe, center[0], center[1], 0, radius,
-            MINIMAL_GEOMETRY_ARC_SLICES, MINIMAL_GEOMETRY_LENGTH_SLICES, MINIMAL_GEOMETRY_LOOPS);
+            Orbit.MINIMAL_GEOMETRY_ARC_SLICES, Orbit.MINIMAL_GEOMETRY_LENGTH_SLICES, Orbit.MINIMAL_GEOMETRY_LOOPS);
 
         List<Vec4> points = new ArrayList<>();
         this.makeExtremePoints(globe, verticalExaggeration, Arrays.asList(locations), points);
@@ -288,8 +287,8 @@ public class Orbit extends AbstractAirspace {
         LatLon[] locations = this.getLocations();
         int count = locations.length;
         for (int i = 0; i < count; i++) {
-            double distance = LatLon.greatCircleDistance(oldRef, locations[i]).radians;
-            double azimuth = LatLon.greatCircleAzimuth(oldRef, locations[i]).radians;
+            double distance = LatLon.greatCircleDistance(oldRef, locations[i]).radians();
+            double azimuth = LatLon.greatCircleAzimuth(oldRef, locations[i]).radians();
             locations[i] = LatLon.greatCircleEndPosition(newRef, azimuth, distance);
         }
         this.setLocations(locations[0], locations[1]);
@@ -313,7 +312,8 @@ public class Orbit extends AbstractAirspace {
         LatLon[] center = this.getAdjustedLocations(dc.getGlobe());
         double radius = this.getWidth() / 2.0;
         GeometryBuilder gb = this.getGeometryBuilder();
-        LatLon[] locations = GeometryBuilder.makeLongCylinderLocations(dc.getGlobe(), center[0], center[1], radius, this.arcSlices,
+        LatLon[] locations = GeometryBuilder.makeLongCylinderLocations(dc.getGlobe(), center[0], center[1], radius,
+            this.arcSlices,
             this.lengthSlices);
         ((SurfacePolygon) shape).setOuterBoundary(Arrays.asList(locations));
     }
@@ -421,7 +421,7 @@ public class Orbit extends AbstractAirspace {
         LatLon[] locations = this.getAdjustedLocations(dc.getGlobe());
         double[] altitudes = this.getAltitudes(dc.getVerticalExaggeration());
         boolean[] terrainConformant = this.isTerrainConforming();
-        double[] radii = new double[] {0.0, this.width / 2};
+        double[] radii = {0.0, this.width / 2};
         int arcSlices = this.arcSlices;
         int lengthSlices = this.lengthSlices;
         int stacks = this.stacks;
@@ -430,23 +430,23 @@ public class Orbit extends AbstractAirspace {
         if (this.isEnableLevelOfDetail()) {
             DetailLevel level = this.computeDetailLevel(dc);
 
-            Object o = level.get(ARC_SLICES);
+            Object o = level.get(AbstractAirspace.ARC_SLICES);
             if (o instanceof Integer)
                 arcSlices = (Integer) o;
 
-            o = level.get(LENGTH_SLICES);
+            o = level.get(AbstractAirspace.LENGTH_SLICES);
             if (o instanceof Integer)
                 lengthSlices = (Integer) o;
 
-            o = level.get(STACKS);
+            o = level.get(AbstractAirspace.STACKS);
             if (o instanceof Integer)
                 stacks = (Integer) o;
 
-            o = level.get(LOOPS);
+            o = level.get(AbstractAirspace.LOOPS);
             if (o instanceof Integer)
                 loops = (Integer) o;
 
-            o = level.get(DISABLE_TERRAIN_CONFORMANCE);
+            o = level.get(AbstractAirspace.DISABLE_TERRAIN_CONFORMANCE);
             if (o instanceof Boolean && ((Boolean) o))
                 terrainConformant[0] = terrainConformant[1] = false;
         }
@@ -463,8 +463,7 @@ public class Orbit extends AbstractAirspace {
             if (Airspace.DRAW_STYLE_OUTLINE.equals(drawStyle)) {
                 this.drawLongCylinderOutline(dc, locations[0], locations[1], radii[1], altitudes, terrainConformant,
                     arcSlices, lengthSlices, stacks, GeometryBuilder.OUTSIDE, referenceCenter);
-            }
-            else if (Airspace.DRAW_STYLE_FILL.equals(drawStyle)) {
+            } else if (Airspace.DRAW_STYLE_FILL.equals(drawStyle)) {
                 if (this.enableCaps) {
                     ogsh.pushAttrib(gl, GL2.GL_POLYGON_BIT);
                     gl.glEnable(GL.GL_CULL_FACE);
@@ -565,7 +564,8 @@ public class Orbit extends AbstractAirspace {
         int count = GeometryBuilder.getLongCylinderVertexCount(arcSlices, lengthSlices, stacks);
         float[] verts = new float[3 * count];
         float[] norms = new float[3 * count];
-        GeometryBuilder.makeLongCylinderVertices(dc.getTerrain(), center1, center2, radius, altitudes, terrainConformant, arcSlices,
+        GeometryBuilder.makeLongCylinderVertices(dc.getTerrain(), center1, center2, radius, altitudes,
+            terrainConformant, arcSlices,
             lengthSlices, stacks, referenceCenter, verts);
         gb.makeLongCylinderNormals(arcSlices, lengthSlices, stacks, norms);
 
@@ -638,7 +638,8 @@ public class Orbit extends AbstractAirspace {
         int count = GeometryBuilder.getLongDiskVertexCount(arcSlices, lengthSlices, loops);
         float[] verts = new float[3 * count];
         float[] norms = new float[3 * count];
-        GeometryBuilder.makeLongDiskVertices(dc.getTerrain(), center1, center2, radii[0], radii[1], altitude, terrainConformant,
+        GeometryBuilder.makeLongDiskVertices(dc.getTerrain(), center1, center2, radii[0], radii[1], altitude,
+            terrainConformant,
             arcSlices, lengthSlices, loops, referenceCenter, verts);
         gb.makeLongDiskVertexNormals((float) radii[0], (float) radii[1], 0, arcSlices, lengthSlices, loops, verts,
             norms);

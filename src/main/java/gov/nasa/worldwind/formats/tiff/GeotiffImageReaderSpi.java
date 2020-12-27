@@ -28,19 +28,19 @@ public class GeotiffImageReaderSpi extends ImageReaderSpi {
     private static final String[] suffixes = {"tif", "tiff", "gtif"};
     private static final String[] mimeTypes = {"image/tiff", "image/geotiff"};
     private static final String readerClassname = "gov.nasa.worldwind.servers.wms.utilities.TiffImageReader";
-    private static GeotiffImageReaderSpi theInstance = null;
+    private static GeotiffImageReaderSpi theInstance;
 
     private GeotiffImageReaderSpi() {
-        super(vendorName, version, names, suffixes, mimeTypes,
-            readerClassname, new Class[] {ImageInputStream.class},
+        super(GeotiffImageReaderSpi.vendorName, GeotiffImageReaderSpi.version, GeotiffImageReaderSpi.names, GeotiffImageReaderSpi.suffixes, GeotiffImageReaderSpi.mimeTypes,
+            GeotiffImageReaderSpi.readerClassname, new Class[] {ImageInputStream.class},
             null, false, null, null, null, null,
             false, null, null, null, null);
     }
 
     public static GeotiffImageReaderSpi inst() {
-        if (theInstance == null)
-            theInstance = new GeotiffImageReaderSpi();
-        return theInstance;
+        if (GeotiffImageReaderSpi.theInstance == null)
+            GeotiffImageReaderSpi.theInstance = new GeotiffImageReaderSpi();
+        return GeotiffImageReaderSpi.theInstance;
     }
 
     @Override

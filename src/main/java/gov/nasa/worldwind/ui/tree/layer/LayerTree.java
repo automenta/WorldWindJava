@@ -9,15 +9,13 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.render.Offset;
 import gov.nasa.worldwind.ui.FrameAttributes;
 import gov.nasa.worldwind.ui.tree.*;
-import gov.nasa.worldwind.util.Logging;
 
 /**
  * A <code>Renderable</code> tree of <code>{@link gov.nasa.worldwind.layers.Layer}</code> objects and their content. By
  * default, a <code>LayerTree</code> is created with a <code>{@link LayerTreeModel}</code>, and a <code>{@link
- * BasicTreeLayout}</code> that is configured for displaying a layer tree. Callers can
- * specify the model to use either by specifying one during construction, or by calling <code>{@link
- * LayerTree#setModel(TreeModel)}</code>. Once created, callers add layers to the tree
- * using methods on <code>LayerTreeModel</code>.
+ * BasicTreeLayout}</code> that is configured for displaying a layer tree. Callers can specify the model to use either
+ * by specifying one during construction, or by calling <code>{@link LayerTree#setModel(TreeModel)}</code>. Once
+ * created, callers add layers to the tree using methods on <code>LayerTreeModel</code>.
  *
  * @author dcollins
  * @version $Id: LayerTree.java 1171 2013-02-11 21:45:02Z dcollins $
@@ -54,11 +52,6 @@ public class LayerTree extends BasicTree {
      * @throws IllegalArgumentException if <code>model</code> is <code>null</code>.
      */
     public LayerTree(LayerTreeModel model) {
-//        if (model == null) {
-//            String message = Logging.getMessage("nullValue.ModelIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         this.initialize(model, null);
     }
@@ -71,11 +64,6 @@ public class LayerTree extends BasicTree {
      * @throws IllegalArgumentException if <code>offset</code> is <code>null</code>.
      */
     public LayerTree(Offset offset) {
-//        if (offset == null) {
-//            String message = Logging.getMessage("nullValue.OffsetIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         this.initialize(null, offset);
     }
@@ -89,19 +77,17 @@ public class LayerTree extends BasicTree {
      *                                  <code>null</code>.
      */
     public LayerTree(LayerTreeModel model, Offset offset) {
-//        if (model == null) {
-//            String message = Logging.getMessage("nullValue.ModelIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//
-//        if (offset == null) {
-//            String message = Logging.getMessage("nullValue.OffsetIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         this.initialize(model, offset);
+    }
+
+    /**
+     * Returns a new <code>LayerTreeModel</code>. Called from <code>initialize</code> when no model is specified.
+     *
+     * @return a new <code>LayerTreeModel</code>.
+     */
+    protected static LayerTreeModel createTreeModel() {
+        return new LayerTreeModel();
     }
 
     /**
@@ -122,15 +108,6 @@ public class LayerTree extends BasicTree {
     }
 
     /**
-     * Returns a new <code>LayerTreeModel</code>. Called from <code>initialize</code> when no model is specified.
-     *
-     * @return a new <code>LayerTreeModel</code>.
-     */
-    protected static LayerTreeModel createTreeModel() {
-        return new LayerTreeModel();
-    }
-
-    /**
      * Returns a new <code>TreeLayout</code> suitable for displaying the layer tree on a <code>WorldWindow</code>. If
      * the <code>offset</code> is <code>null</code> this the default value.
      *
@@ -139,11 +116,11 @@ public class LayerTree extends BasicTree {
      */
     protected TreeLayout createTreeLayout(Offset offset) {
         if (offset == null)
-            offset = DEFAULT_OFFSET;
+            offset = LayerTree.DEFAULT_OFFSET;
 
         BasicTreeLayout layout = new BasicTreeLayout(this, offset);
-        layout.getFrame().setFrameTitle(DEFAULT_FRAME_TITLE);
-        layout.getFrame().setIconImageSource(DEFAULT_FRAME_IMAGE);
+        layout.getFrame().setFrameTitle(LayerTree.DEFAULT_FRAME_TITLE);
+        layout.getFrame().setIconImageSource(LayerTree.DEFAULT_FRAME_IMAGE);
 
         BasicTreeAttributes attributes = new BasicTreeAttributes();
         attributes.setRootVisible(false);

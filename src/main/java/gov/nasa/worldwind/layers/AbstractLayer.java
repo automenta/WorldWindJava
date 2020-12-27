@@ -28,8 +28,8 @@ public abstract class AbstractLayer extends WWObjectImpl implements Layer {
     private double minActiveAltitude = -Double.MAX_VALUE;
     private double maxActiveAltitude = Double.MAX_VALUE;
     private boolean networkDownloadEnabled = true;
-    private long expiryTime = 0;
-    private ScreenCredit screenCredit = null;
+    private long expiryTime;
+    private ScreenCredit screenCredit;
     private FileStore dataFileStore = WorldWind.store();
 
     /**
@@ -132,7 +132,8 @@ public abstract class AbstractLayer extends WWObjectImpl implements Layer {
         return this.enabled;
     }
 
-    @Override public Layer setEnabled(boolean enabled) {
+    @Override
+    public Layer setEnabled(boolean enabled) {
         Boolean oldEnabled = this.enabled;
         this.enabled = enabled;
         this.propertyChange(new PropertyChangeEvent(this, "Enabled", oldEnabled, this.enabled));

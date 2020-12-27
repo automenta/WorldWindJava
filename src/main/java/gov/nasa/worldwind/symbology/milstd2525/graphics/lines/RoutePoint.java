@@ -7,8 +7,7 @@
 package gov.nasa.worldwind.symbology.milstd2525.graphics.lines;
 
 import gov.nasa.worldwind.geom.*;
-import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.TacticalPoint;
+import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.areas.AbstractCircularGraphic;
 import gov.nasa.worldwind.util.WWUtil;
@@ -22,7 +21,7 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id: RoutePoint.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class RoutePoint extends AbstractCircularGraphic implements TacticalPoint, PreRenderable {
+public class RoutePoint extends AbstractCircularGraphic {
     /**
      * Create a new control point.
      *
@@ -55,7 +54,7 @@ public class RoutePoint extends AbstractCircularGraphic implements TacticalPoint
 
         String text = this.getText();
         if (!WWUtil.isEmpty(text)) {
-            sb.append("\n");
+            sb.append('\n');
             sb.append(this.getText());
         }
 

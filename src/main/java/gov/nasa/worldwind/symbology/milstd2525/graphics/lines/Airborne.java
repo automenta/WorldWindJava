@@ -92,8 +92,7 @@ public class Airborne extends Aviation {
                 this.symbolAttributes = new BasicTacticalSymbolAttributes();
 
             this.symbol = this.createSymbol(sidc, this.computeSymbolPosition(), this.symbolAttributes);
-        }
-        else {
+        } else {
             // Null value indicates no symbol.
             this.symbol = null;
             this.symbolAttributes = null;

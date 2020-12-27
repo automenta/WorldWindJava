@@ -18,7 +18,7 @@ import static gov.nasa.worldwind.retrieve.BasicRetrievalService.DEFAULT_TIME_PRI
  */
 public interface Retriever extends WWObject, Callable<Retriever> {
     String RETRIEVER_STATE_NOT_STARTED = "gov.nasa.worldwind.RetrieverStatusNotStarted";
-//    String RETRIEVER_STATE_STARTED = "gov.nasa.worldwind.RetrieverStatusStarted";
+    //    String RETRIEVER_STATE_STARTED = "gov.nasa.worldwind.RetrieverStatusStarted";
     String RETRIEVER_STATE_CONNECTING = "gov.nasa.worldwind.RetrieverStatusConnecting";
     String RETRIEVER_STATE_READING = "gov.nasa.worldwind.RetrieverStatusReading";
     String RETRIEVER_STATE_INTERRUPTED = "gov.nasa.worldwind.RetrieverStatusInterrupted";

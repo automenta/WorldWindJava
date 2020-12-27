@@ -88,37 +88,37 @@ public class MilStd2525Util {
             if (bd != null && (bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_UNKNOWN)
                 || bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_SEA_SURFACE)
                 || bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_SOF))) {
-                symbolInfo.iconOffset = CLOVER_OFFSET;
-                symbolInfo.iconSize = CLOVER_SIZE;
+                symbolInfo.iconOffset = MilStd2525Util.CLOVER_OFFSET;
+                symbolInfo.iconSize = MilStd2525Util.CLOVER_SIZE;
             }
             // Clover icon for Special C2 Headquarters symbols. Must appear before Clover icon for Ground symbols.
             else if (scheme != null && scheme.equalsIgnoreCase(SymbologyConstants.SCHEME_WARFIGHTING)
                 && si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_UNKNOWN)
                 && bd != null && bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_GROUND)
                 && fi != null && fi.equalsIgnoreCase("UH----")) {
-                symbolInfo.iconOffset = CLOVER_OFFSET;
-                symbolInfo.iconSize = CLOVER_SIZE;
-                symbolInfo.offset = CLOVER_C2_HQ_OFFSET;
+                symbolInfo.iconOffset = MilStd2525Util.CLOVER_OFFSET;
+                symbolInfo.iconSize = MilStd2525Util.CLOVER_SIZE;
+                symbolInfo.offset = MilStd2525Util.CLOVER_C2_HQ_OFFSET;
                 symbolInfo.isGroundSymbol = true;
             }
             // Clover icon for Ground symbols.
             else if ((bd != null && bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_GROUND))
                 || (scheme != null && (scheme.equalsIgnoreCase(SymbologyConstants.SCHEME_STABILITY_OPERATIONS)
                 || scheme.equalsIgnoreCase(SymbologyConstants.SCHEME_EMERGENCY_MANAGEMENT)))) {
-                symbolInfo.iconOffset = CLOVER_OFFSET;
-                symbolInfo.iconSize = CLOVER_SIZE;
+                symbolInfo.iconOffset = MilStd2525Util.CLOVER_OFFSET;
+                symbolInfo.iconSize = MilStd2525Util.CLOVER_SIZE;
                 symbolInfo.isGroundSymbol = true;
             }
             // Clover Up icon (Clover without a bottom leaf).
             else if (bd != null && (bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_SPACE)
                 || bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_AIR))) {
-                symbolInfo.iconOffset = CLOVER_UP_OFFSET;
-                symbolInfo.iconSize = CLOVER_UP_SIZE;
+                symbolInfo.iconOffset = MilStd2525Util.CLOVER_UP_OFFSET;
+                symbolInfo.iconSize = MilStd2525Util.CLOVER_UP_SIZE;
             }
             // Clover Down icon (Clover without a top leaf).
             else if (bd != null && bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_SEA_SUBSURFACE)) {
-                symbolInfo.iconOffset = CLOVER_DOWN_OFFSET;
-                symbolInfo.iconSize = CLOVER_DOWN_SIZE;
+                symbolInfo.iconOffset = MilStd2525Util.CLOVER_DOWN_OFFSET;
+                symbolInfo.iconSize = MilStd2525Util.CLOVER_DOWN_SIZE;
             }
         }
         // Arch Up, Arch Down, Circle, and Rectangle.
@@ -131,19 +131,19 @@ public class MilStd2525Util {
             // Arch Up icon.
             if (bd != null && (bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_SPACE)
                 || bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_AIR))) {
-                symbolInfo.iconOffset = ARCH_UP_OFFSET;
-                symbolInfo.iconSize = ARCH_UP_SIZE;
+                symbolInfo.iconOffset = MilStd2525Util.ARCH_UP_OFFSET;
+                symbolInfo.iconSize = MilStd2525Util.ARCH_UP_SIZE;
             }
             // Arch Down icon.
             else if (bd != null && (bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_SEA_SUBSURFACE))) {
-                symbolInfo.iconOffset = ARCH_DOWN_OFFSET;
-                symbolInfo.iconSize = ARCH_DOWN_SIZE;
+                symbolInfo.iconOffset = MilStd2525Util.ARCH_DOWN_OFFSET;
+                symbolInfo.iconSize = MilStd2525Util.ARCH_DOWN_SIZE;
             }
             // Circle icon.
             else if (bd != null && (bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_UNKNOWN)
                 || bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_SEA_SURFACE))) {
-                symbolInfo.iconOffset = CIRCLE_OFFSET;
-                symbolInfo.iconSize = CIRCLE_SIZE;
+                symbolInfo.iconOffset = MilStd2525Util.CIRCLE_OFFSET;
+                symbolInfo.iconSize = MilStd2525Util.CIRCLE_SIZE;
             }
             // Circle icon for Ground Symbols.
             else if ((scheme != null && scheme.equalsIgnoreCase(SymbologyConstants.SCHEME_WARFIGHTING)
@@ -151,23 +151,23 @@ public class MilStd2525Util {
                 && fi != null && fi.matches("E....."))
                 || (scheme != null && scheme.equalsIgnoreCase(SymbologyConstants.SCHEME_INTELLIGENCE)
                 && bd != null && bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_GROUND))) {
-                symbolInfo.iconOffset = CIRCLE_OFFSET;
-                symbolInfo.iconSize = CIRCLE_SIZE;
+                symbolInfo.iconOffset = MilStd2525Util.CIRCLE_OFFSET;
+                symbolInfo.iconSize = MilStd2525Util.CIRCLE_SIZE;
                 symbolInfo.isGroundSymbol = true;
             }
             // Rectangle icon.
             else if (bd != null && bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_SOF)) {
-                symbolInfo.iconOffset = RECTANGLE_OFFSET;
-                symbolInfo.iconSize = RECTANGLE_SIZE;
+                symbolInfo.iconOffset = MilStd2525Util.RECTANGLE_OFFSET;
+                symbolInfo.iconSize = MilStd2525Util.RECTANGLE_SIZE;
             }
             // Rectangle icon for Special C2 Headquarters symbols. Must appear before Rectangle icon for Ground symbols.
             else if (scheme != null && scheme.equalsIgnoreCase(SymbologyConstants.SCHEME_WARFIGHTING)
                 && si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_FRIEND)
                 && bd != null && bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_GROUND)
                 && fi != null && fi.equalsIgnoreCase("UH----")) {
-                symbolInfo.iconOffset = RECTANGLE_OFFSET;
-                symbolInfo.iconSize = RECTANGLE_SIZE;
-                symbolInfo.offset = RECTANGLE_C2_HQ_OFFSET;
+                symbolInfo.iconOffset = MilStd2525Util.RECTANGLE_OFFSET;
+                symbolInfo.iconSize = MilStd2525Util.RECTANGLE_SIZE;
+                symbolInfo.offset = MilStd2525Util.RECTANGLE_C2_HQ_OFFSET;
                 symbolInfo.isGroundSymbol = true;
             }
             // Rectangle icon for Ground symbols.
@@ -177,8 +177,8 @@ public class MilStd2525Util {
                 || fi.toUpperCase().matches("I....."))))
                 || (scheme != null && (scheme.equalsIgnoreCase(SymbologyConstants.SCHEME_STABILITY_OPERATIONS)
                 || scheme.equalsIgnoreCase(SymbologyConstants.SCHEME_EMERGENCY_MANAGEMENT)))) {
-                symbolInfo.iconOffset = RECTANGLE_OFFSET;
-                symbolInfo.iconSize = RECTANGLE_SIZE;
+                symbolInfo.iconOffset = MilStd2525Util.RECTANGLE_OFFSET;
+                symbolInfo.iconSize = MilStd2525Util.RECTANGLE_SIZE;
                 symbolInfo.isGroundSymbol = true;
             }
         }
@@ -188,37 +188,37 @@ public class MilStd2525Util {
             // Hat Up icon (tall rectangle without a bottom edge).
             if (bd != null && (bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_SPACE)
                 || bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_AIR))) {
-                symbolInfo.iconOffset = HAT_UP_OFFSET;
-                symbolInfo.iconSize = HAT_UP_SIZE;
+                symbolInfo.iconOffset = MilStd2525Util.HAT_UP_OFFSET;
+                symbolInfo.iconSize = MilStd2525Util.HAT_UP_SIZE;
             }
             // Hat Down icon (tall rectangle without a top edge).
             else if (bd != null && bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_SEA_SUBSURFACE)) {
-                symbolInfo.iconOffset = HAT_DOWN_OFFSET;
-                symbolInfo.iconSize = HAT_DOWN_SIZE;
+                symbolInfo.iconOffset = MilStd2525Util.HAT_DOWN_OFFSET;
+                symbolInfo.iconSize = MilStd2525Util.HAT_DOWN_SIZE;
             }
             // Square icon.
             else if (bd != null && (bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_UNKNOWN)
                 || bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_SEA_SURFACE)
                 || bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_SOF))) {
-                symbolInfo.iconOffset = SQUARE_OFFSET;
-                symbolInfo.iconSize = SQUARE_SIZE;
+                symbolInfo.iconOffset = MilStd2525Util.SQUARE_OFFSET;
+                symbolInfo.iconSize = MilStd2525Util.SQUARE_SIZE;
             }
             // Square icon for Special C2 Headquarters symbols. Must appear before Square icon for Ground symbols.
             else if (scheme != null && scheme.equalsIgnoreCase(SymbologyConstants.SCHEME_WARFIGHTING)
                 && si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_NEUTRAL)
                 && bd != null && bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_GROUND)
                 && fi != null && fi.equalsIgnoreCase("UH----")) {
-                symbolInfo.iconOffset = SQUARE_OFFSET;
-                symbolInfo.iconSize = SQUARE_SIZE;
-                symbolInfo.offset = SQUARE_C2_HQ_OFFSET;
+                symbolInfo.iconOffset = MilStd2525Util.SQUARE_OFFSET;
+                symbolInfo.iconSize = MilStd2525Util.SQUARE_SIZE;
+                symbolInfo.offset = MilStd2525Util.SQUARE_C2_HQ_OFFSET;
                 symbolInfo.isGroundSymbol = true;
             }
             // Square icon for Ground symbols.
             else if ((bd != null && bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_GROUND))
                 || (scheme != null && (scheme.equalsIgnoreCase(SymbologyConstants.SCHEME_STABILITY_OPERATIONS)
                 || scheme.equalsIgnoreCase(SymbologyConstants.SCHEME_EMERGENCY_MANAGEMENT)))) {
-                symbolInfo.iconOffset = SQUARE_OFFSET;
-                symbolInfo.iconSize = SQUARE_SIZE;
+                symbolInfo.iconOffset = MilStd2525Util.SQUARE_OFFSET;
+                symbolInfo.iconSize = MilStd2525Util.SQUARE_SIZE;
                 symbolInfo.isGroundSymbol = true;
             }
         }
@@ -228,37 +228,37 @@ public class MilStd2525Util {
             // Tent Up icon.
             if (bd != null && (bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_SPACE)
                 || bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_AIR))) {
-                symbolInfo.iconOffset = TENT_UP_OFFSET;
-                symbolInfo.iconSize = TENT_UP_SIZE;
+                symbolInfo.iconOffset = MilStd2525Util.TENT_UP_OFFSET;
+                symbolInfo.iconSize = MilStd2525Util.TENT_UP_SIZE;
             }
             // Tent Down icon.
             else if (bd != null && bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_SEA_SUBSURFACE)) {
-                symbolInfo.iconOffset = TENT_DOWN_OFFSET;
-                symbolInfo.iconSize = TENT_DOWN_SIZE;
+                symbolInfo.iconOffset = MilStd2525Util.TENT_DOWN_OFFSET;
+                symbolInfo.iconSize = MilStd2525Util.TENT_DOWN_SIZE;
             }
             // Diamond icon.
             else if (bd != null && (bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_UNKNOWN)
                 || bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_SEA_SURFACE)
                 || bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_SOF))) {
-                symbolInfo.iconOffset = DIAMOND_OFFSET;
-                symbolInfo.iconSize = DIAMOND_SIZE;
+                symbolInfo.iconOffset = MilStd2525Util.DIAMOND_OFFSET;
+                symbolInfo.iconSize = MilStd2525Util.DIAMOND_SIZE;
             }
             // Diamond icon for Special C2 Headquarters symbols. Must appear before Diamond icon for Ground symbols.
             else if (scheme != null && scheme.equalsIgnoreCase(SymbologyConstants.SCHEME_WARFIGHTING)
                 && si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_HOSTILE)
                 && bd != null && bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_GROUND)
                 && fi != null && fi.equalsIgnoreCase("UH----")) {
-                symbolInfo.iconOffset = DIAMOND_OFFSET;
-                symbolInfo.iconSize = DIAMOND_SIZE;
-                symbolInfo.offset = DIAMOND_C2_HQ_OFFSET;
+                symbolInfo.iconOffset = MilStd2525Util.DIAMOND_OFFSET;
+                symbolInfo.iconSize = MilStd2525Util.DIAMOND_SIZE;
+                symbolInfo.offset = MilStd2525Util.DIAMOND_C2_HQ_OFFSET;
                 symbolInfo.isGroundSymbol = true;
             }
             // Diamond icon for Ground symbols.
             else if ((bd != null && bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_GROUND))
                 || (scheme != null && (scheme.equalsIgnoreCase(SymbologyConstants.SCHEME_STABILITY_OPERATIONS)
                 || scheme.equalsIgnoreCase(SymbologyConstants.SCHEME_EMERGENCY_MANAGEMENT)))) {
-                symbolInfo.iconOffset = DIAMOND_OFFSET;
-                symbolInfo.iconSize = DIAMOND_SIZE;
+                symbolInfo.iconOffset = MilStd2525Util.DIAMOND_OFFSET;
+                symbolInfo.iconSize = MilStd2525Util.DIAMOND_SIZE;
                 symbolInfo.isGroundSymbol = true;
             }
         }
@@ -291,7 +291,7 @@ public class MilStd2525Util {
         }
 
         View view = dc.getView();
-        Vec4 dir = computeDirectionOfMovement(dc, symbolPoint, heading, length);
+        Vec4 dir = MilStd2525Util.computeDirectionOfMovement(dc, symbolPoint, heading, length);
 
         // Project geographic points into screen space.
         Vec4 pt1 = view.project(symbolPoint);
@@ -328,7 +328,7 @@ public class MilStd2525Util {
         }
 
         View view = dc.getView();
-        Vec4 dir = computeDirectionOfMovement(dc, symbolPoint, heading, length);
+        Vec4 dir = MilStd2525Util.computeDirectionOfMovement(dc, symbolPoint, heading, length);
 
         // Project geographic points into screen space.
         Vec4 pt1 = view.project(symbolPoint);
@@ -381,7 +381,7 @@ public class MilStd2525Util {
             throw new IllegalArgumentException(msg);
         }
 
-        if (isObstacle(symbolCode))
+        if (MilStd2525Util.isObstacle(symbolCode))
             return MilStd2525Constants.MATERIAL_OBSTACLE;
 
         String id = symbolCode.getStandardIdentity();
@@ -389,14 +389,12 @@ public class MilStd2525Util {
             || SymbologyConstants.STANDARD_IDENTITY_ASSUMED_FRIEND.equalsIgnoreCase(id)
             || SymbologyConstants.STANDARD_IDENTITY_EXERCISE_ASSUMED_FRIEND.equalsIgnoreCase(id)) {
             return MilStd2525Constants.MATERIAL_FRIEND;
-        }
-        else if (SymbologyConstants.STANDARD_IDENTITY_HOSTILE.equalsIgnoreCase(id)
+        } else if (SymbologyConstants.STANDARD_IDENTITY_HOSTILE.equalsIgnoreCase(id)
             || SymbologyConstants.STANDARD_IDENTITY_SUSPECT.equalsIgnoreCase(id)
             || SymbologyConstants.STANDARD_IDENTITY_JOKER.equalsIgnoreCase(id)
             || SymbologyConstants.STANDARD_IDENTITY_FAKER.equalsIgnoreCase(id)) {
             return MilStd2525Constants.MATERIAL_HOSTILE;
-        }
-        else if (SymbologyConstants.STANDARD_IDENTITY_NEUTRAL.equalsIgnoreCase(id)
+        } else if (SymbologyConstants.STANDARD_IDENTITY_NEUTRAL.equalsIgnoreCase(id)
             || SymbologyConstants.STANDARD_IDENTITY_EXERCISE_NEUTRAL.equalsIgnoreCase(id)) {
             return MilStd2525Constants.MATERIAL_NEUTRAL;
         }

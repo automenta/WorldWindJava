@@ -79,8 +79,6 @@ abstract public class AbstractMemoryCache implements MemoryCache {
         this.listeners.remove(listener);
     }
 
-
-
     public final boolean add(Object key, Cacheable clientObject) {
         return this.add(key, clientObject, clientObject.getSizeInBytes());
     }
@@ -99,17 +97,18 @@ abstract public class AbstractMemoryCache implements MemoryCache {
         }
 
         public int compareTo(CacheEntry that) {
-            if (this==that) return 0;
+            if (this == that)
+                return 0;
 
             int when = Long.compare(this.lastUsed, that.lastUsed);
-            if (when!=0) return when;
+            if (when != 0)
+                return when;
 
             return Integer.compare(System.identityHashCode(clientObject), System.identityHashCode(that.clientObject));
         }
 
         public String toString() {
-            return key.toString() + " " + clientObject.toString() + " " + lastUsed + " " + clientObjectSize;
+            return key.toString() + ' ' + clientObject.toString() + ' ' + lastUsed + ' ' + clientObjectSize;
         }
     }
-
 }

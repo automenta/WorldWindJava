@@ -22,14 +22,14 @@ import java.util.List;
  */
 public class KMLSurfacePolygonImpl extends SurfacePolygon implements KMLRenderable {
     protected final KMLAbstractFeature parent;
-    protected boolean highlightAttributesResolved = false;
-    protected boolean normalAttributesResolved = false;
+    protected boolean highlightAttributesResolved;
+    protected boolean normalAttributesResolved;
 
     /**
      * Flag to indicate the rotation must be applied to the SurfaceImage. Rotation is applied the first time that the
      * image is rendered.
      */
-    protected boolean mustApplyRotation = false;
+    protected boolean mustApplyRotation;
 
     /**
      * Create an instance.
@@ -146,6 +146,20 @@ public class KMLSurfacePolygonImpl extends SurfacePolygon implements KMLRenderab
         }
     }
 
+    protected static ShapeAttributes getInitialAttributes(String attrType) {
+        ShapeAttributes attrs = new BasicShapeAttributes();
+
+        if (KMLConstants.HIGHLIGHT.equals(attrType)) {
+            attrs.setOutlineMaterial(Material.RED);
+            attrs.setInteriorMaterial(Material.PINK);
+        } else {
+            attrs.setOutlineMaterial(Material.WHITE);
+            attrs.setInteriorMaterial(Material.LIGHT_GRAY);
+        }
+
+        return attrs;
+    }
+
     public void preRender(KMLTraversalContext tc, DrawContext dc) {
         // If the attributes are not inline or internal then they might not be resolved until the external KML
         // document is resolved. Therefore check to see if resolution has occurred.
@@ -162,8 +176,7 @@ public class KMLSurfacePolygonImpl extends SurfacePolygon implements KMLRenderab
                     }
                 }
             }
-        }
-        else {
+        } else {
             if (!this.normalAttributesResolved) {
                 ShapeAttributes a = this.getAttributes();
                 if (a == null || a.isUnresolved()) {
@@ -235,21 +248,6 @@ public class KMLSurfacePolygonImpl extends SurfacePolygon implements KMLRenderab
 
         attrs.setDrawInterior(((KMLPolyStyle) fillSubStyle).isFill());
         attrs.setDrawOutline(((KMLPolyStyle) fillSubStyle).isOutline());
-
-        return attrs;
-    }
-
-    protected static ShapeAttributes getInitialAttributes(String attrType) {
-        ShapeAttributes attrs = new BasicShapeAttributes();
-
-        if (KMLConstants.HIGHLIGHT.equals(attrType)) {
-            attrs.setOutlineMaterial(Material.RED);
-            attrs.setInteriorMaterial(Material.PINK);
-        }
-        else {
-            attrs.setOutlineMaterial(Material.WHITE);
-            attrs.setInteriorMaterial(Material.LIGHT_GRAY);
-        }
 
         return attrs;
     }

@@ -21,8 +21,7 @@ import java.util.Objects;
 import java.util.logging.Level;
 
 /**
- * Represents a texture derived from a lazily loaded image source such as an image file or a {@link
- * BufferedImage}.
+ * Represents a texture derived from a lazily loaded image source such as an image file or a {@link BufferedImage}.
  * <p>
  * The interface contains a method, {@link #isTextureInitializationFailed()} to determine whether the instance failed to
  * convert an image source to a texture. If such a failure occurs, the method returns true and no further attempts are
@@ -80,11 +79,11 @@ public class LazilyLoadedTexture extends AVListImpl implements WWTexture {
     /**
      * Indicates that texture initialization failed. This texture should not be used if true.
      */
-    protected boolean textureInitializationFailed = false;
+    protected boolean textureInitializationFailed;
     /**
      * Indicates whether the image read from the image source has mip-map data.
      */
-    protected boolean hasMipmapData = false;
+    protected boolean hasMipmapData;
     /**
      * The object to notify when an image is eventually loaded in memory. The current layer at the time the image source
      * is requested is assigned to this field.
@@ -94,8 +93,7 @@ public class LazilyLoadedTexture extends AVListImpl implements WWTexture {
     /**
      * Constructs a texture object for a specified image source. Requests that mip-maps be used.
      *
-     * @param imageSource the source of the image, either a file path {@link String} or a {@link
-     *                    BufferedImage}.
+     * @param imageSource the source of the image, either a file path {@link String} or a {@link BufferedImage}.
      * @throws IllegalArgumentException if the <code>imageSource</code> is null.
      */
     public LazilyLoadedTexture(Object imageSource) {
@@ -105,8 +103,7 @@ public class LazilyLoadedTexture extends AVListImpl implements WWTexture {
     /**
      * Constructs a texture object for a specified image source.
      *
-     * @param imageSource the source of the image, either a file path {@link String} or a {@link
-     *                    BufferedImage}.
+     * @param imageSource the source of the image, either a file path {@link String} or a {@link BufferedImage}.
      * @param useMipMaps  Indicates whether to generate and use mip-maps for the image.
      * @throws IllegalArgumentException if the <code>imageSource</code> is null.
      */
@@ -316,8 +313,7 @@ public class LazilyLoadedTexture extends AVListImpl implements WWTexture {
         if (texture != null) {
             texture.bind(dc.getGL());
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -404,7 +400,7 @@ public class LazilyLoadedTexture extends AVListImpl implements WWTexture {
 
             return this.makeTextureFromTextureData(dc);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             String msg = Logging.getMessage("generic.IOExceptionDuringTextureInitialization");
             Logging.logger().log(Level.SEVERE, msg, e);
             this.textureInitializationFailed = true;

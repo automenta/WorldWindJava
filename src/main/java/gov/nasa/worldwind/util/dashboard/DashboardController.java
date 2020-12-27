@@ -27,6 +27,10 @@ public class DashboardController implements MouseListener, Disposable {
         wwd.input().addMouseListener(this);
     }
 
+    private static Frame getParentFrame(Component comp) {
+        return comp != null ? (Frame) SwingUtilities.getAncestorOfClass(Frame.class, comp) : null;
+    }
+
     @Override
     public void dispose() {
         if (this.dialog != null) {
@@ -44,7 +48,7 @@ public class DashboardController implements MouseListener, Disposable {
 
     public void raiseDialog() {
         if (this.dialog == null) {
-            this.dialog = new DashboardDialog(getParentFrame(this.component), wwd);
+            this.dialog = new DashboardDialog(DashboardController.getParentFrame(this.component), wwd);
         }
 
         this.dialog.raiseDialog();
@@ -54,10 +58,6 @@ public class DashboardController implements MouseListener, Disposable {
         if (this.dialog != null) {
             this.dialog.lowerDialog();
         }
-    }
-
-    private static Frame getParentFrame(Component comp) {
-        return comp != null ? (Frame) SwingUtilities.getAncestorOfClass(Frame.class, comp) : null;
     }
 
     @Override

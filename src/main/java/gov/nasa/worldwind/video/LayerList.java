@@ -82,11 +82,15 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject {
     }
 
     public static List<Layer> getLayersAdded(Collection<Layer> oldList, Iterable<Layer> newList) {
-        return getListDifference(oldList, newList);
+        return LayerList.getListDifference(oldList, newList);
     }
 
     public static List<Layer> getLayersRemoved(Iterable<Layer> oldList, Collection<Layer> newList) {
-        return getListDifference(newList, oldList);
+        return LayerList.getListDifference(newList, oldList);
+    }
+
+    protected static LayerList makeShallowCopy(LayerList sourceList) {
+        return new LayerList(sourceList);
     }
 
     public String getDisplayName() {
@@ -97,10 +101,6 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject {
         this.set(AVKey.DISPLAY_NAME, displayName);
     }
 
-    protected static LayerList makeShallowCopy(LayerList sourceList) {
-        return new LayerList(sourceList);
-    }
-
     public boolean add(Layer layer) {
         if (layer == null) {
             String message = Logging.getMessage("nullValue.LayerIsNull");
@@ -108,7 +108,7 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject {
             throw new IllegalArgumentException(message);
         }
 
-        LayerList copy = makeShallowCopy(this);
+        LayerList copy = LayerList.makeShallowCopy(this);
         super.add(layer);
         layer.addPropertyChangeListener(this);
         this.firePropertyChange(AVKey.LAYERS, copy, this);
@@ -123,7 +123,7 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject {
             throw new IllegalArgumentException(message);
         }
 
-        LayerList copy = makeShallowCopy(this);
+        LayerList copy = LayerList.makeShallowCopy(this);
         super.add(index, layer);
         layer.addPropertyChangeListener(this);
         this.firePropertyChange(AVKey.LAYERS, copy, this);
@@ -139,7 +139,7 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject {
         if (!this.contains(layer))
             return;
 
-        LayerList copy = makeShallowCopy(this);
+        LayerList copy = LayerList.makeShallowCopy(this);
         layer.removePropertyChangeListener(this);
         super.remove(layer);
         this.firePropertyChange(AVKey.LAYERS, copy, this);
@@ -150,7 +150,7 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject {
         if (layer == null)
             return null;
 
-        LayerList copy = makeShallowCopy(this);
+        LayerList copy = LayerList.makeShallowCopy(this);
         layer.removePropertyChangeListener(this);
         super.remove(index);
         this.firePropertyChange(AVKey.LAYERS, copy, this);
@@ -191,7 +191,7 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject {
         if (oldLayer != null)
             oldLayer.removePropertyChangeListener(this);
 
-        LayerList copy = makeShallowCopy(this);
+        LayerList copy = LayerList.makeShallowCopy(this);
         super.set(index, layer);
         layer.addPropertyChangeListener(this);
         this.firePropertyChange(AVKey.LAYERS, copy, this);
@@ -205,7 +205,7 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject {
                 layer.removePropertyChangeListener(this);
         }
 
-        LayerList copy = makeShallowCopy(this);
+        LayerList copy = LayerList.makeShallowCopy(this);
         boolean removed = super.remove(o);
         if (removed)
             this.firePropertyChange(AVKey.LAYERS, copy, this);
@@ -221,7 +221,7 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject {
 
         layer.addPropertyChangeListener(this);
 
-        LayerList copy = makeShallowCopy(this);
+        LayerList copy = LayerList.makeShallowCopy(this);
         boolean added = super.addIfAbsent(layer);
         if (added)
             this.firePropertyChange(AVKey.LAYERS, copy, this);
@@ -234,7 +234,7 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject {
             layer.removePropertyChangeListener(this);
         }
 
-        LayerList copy = makeShallowCopy(this);
+        LayerList copy = LayerList.makeShallowCopy(this);
         boolean removed = super.removeAll(objects);
         if (removed)
             this.firePropertyChange(AVKey.LAYERS, copy, this);
@@ -251,7 +251,7 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject {
             layer.removePropertyChangeListener(this);
         }
 
-        LayerList copy = makeShallowCopy(this);
+        LayerList copy = LayerList.makeShallowCopy(this);
         boolean removed = super.retainAll(new ArrayList<Layer>()); // retain no layers
         if (removed)
             this.firePropertyChange(AVKey.LAYERS, copy, this);
@@ -265,7 +265,7 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject {
                 layer.addPropertyChangeListener(this);
         }
 
-        LayerList copy = makeShallowCopy(this);
+        LayerList copy = LayerList.makeShallowCopy(this);
         int numAdded = super.addAllAbsent(layers);
         if (numAdded > 0)
             this.firePropertyChange(AVKey.LAYERS, copy, this);
@@ -278,7 +278,7 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject {
             layer.addPropertyChangeListener(this);
         }
 
-        LayerList copy = makeShallowCopy(this);
+        LayerList copy = LayerList.makeShallowCopy(this);
         boolean added = super.addAll(layers);
         if (added)
             this.firePropertyChange(AVKey.LAYERS, copy, this);
@@ -291,7 +291,7 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject {
             layer.addPropertyChangeListener(this);
         }
 
-        LayerList copy = makeShallowCopy(this);
+        LayerList copy = LayerList.makeShallowCopy(this);
         boolean added = super.addAll(i, layers);
         if (added)
             this.firePropertyChange(AVKey.LAYERS, copy, this);
@@ -306,7 +306,7 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject {
                 layer.removePropertyChangeListener(this);
         }
 
-        LayerList copy = makeShallowCopy(this);
+        LayerList copy = LayerList.makeShallowCopy(this);
         boolean added = super.retainAll(objects);
         if (added)
             this.firePropertyChange(AVKey.LAYERS, copy, this);

@@ -65,9 +65,9 @@ public class BasicColorBlockExtractor implements ColorBlockExtractor {
     }
 
     protected static void premultiplyAlpha(Color32 color) {
-        color.r = div255(color.r * color.a);
-        color.g = div255(color.g * color.a);
-        color.b = div255(color.b * color.a);
+        color.r = BasicColorBlockExtractor.div255(color.r * color.a);
+        color.g = BasicColorBlockExtractor.div255(color.g * color.a);
+        color.b = BasicColorBlockExtractor.div255(color.b * color.a);
     }
 
     private static int div255(int a) {
@@ -127,24 +127,24 @@ public class BasicColorBlockExtractor implements ColorBlockExtractor {
         this.image.getRGB(x, y, bw, bh, this.buffer, 0, 4);
 
         for (int j = 0; j < 4; j++) {
-            by = remainder[byOffset + j];
+            by = BasicColorBlockExtractor.remainder[byOffset + j];
 
-            bx = remainder[bxOffset];
-            int32ToColor32(this.buffer[bx + by * 4], colorBlock.color[blockPos++]);
+            bx = BasicColorBlockExtractor.remainder[bxOffset];
+            BasicColorBlockExtractor.int32ToColor32(this.buffer[bx + by * 4], colorBlock.color[blockPos++]);
 
-            bx = remainder[bxOffset + 1];
-            int32ToColor32(this.buffer[bx + by * 4], colorBlock.color[blockPos++]);
+            bx = BasicColorBlockExtractor.remainder[bxOffset + 1];
+            BasicColorBlockExtractor.int32ToColor32(this.buffer[bx + by * 4], colorBlock.color[blockPos++]);
 
-            bx = remainder[bxOffset + 2];
-            int32ToColor32(this.buffer[bx + by * 4], colorBlock.color[blockPos++]);
+            bx = BasicColorBlockExtractor.remainder[bxOffset + 2];
+            BasicColorBlockExtractor.int32ToColor32(this.buffer[bx + by * 4], colorBlock.color[blockPos++]);
 
-            bx = remainder[bxOffset + 3];
-            int32ToColor32(this.buffer[bx + by * 4], colorBlock.color[blockPos++]);
+            bx = BasicColorBlockExtractor.remainder[bxOffset + 3];
+            BasicColorBlockExtractor.int32ToColor32(this.buffer[bx + by * 4], colorBlock.color[blockPos++]);
         }
 
         if (attributes.isPremultiplyAlpha()) {
             for (int i = 0; i < 16; i++) {
-                premultiplyAlpha(colorBlock.color[i]);
+                BasicColorBlockExtractor.premultiplyAlpha(colorBlock.color[i]);
             }
         }
     }

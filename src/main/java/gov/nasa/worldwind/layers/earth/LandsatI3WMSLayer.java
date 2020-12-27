@@ -16,7 +16,7 @@ import org.w3c.dom.Document;
  */
 public class LandsatI3WMSLayer extends WMSTiledImageLayer {
     public LandsatI3WMSLayer() {
-        super(getConfigurationDocument(), null);
+        super(LandsatI3WMSLayer.getConfigurationDocument(), null);
     }
 
     protected static Document getConfigurationDocument() {

@@ -10,9 +10,9 @@ import gov.nasa.worldwind.geom.*;
 import java.awt.*;
 
 /**
- * GeographicImageInterpolator extends the functionality of {@link ImageInterpolator} to
- * correctly map from geographic coordinates to image coordinates. Unlike its superclass, which works in Cartesian
- * coordinates, GeographicImageInterpolator handles the singularities of geographic coordinates. For example,
+ * GeographicImageInterpolator extends the functionality of {@link ImageInterpolator} to correctly map from geographic
+ * coordinates to image coordinates. Unlike its superclass, which works in Cartesian coordinates,
+ * GeographicImageInterpolator handles the singularities of geographic coordinates. For example,
  * GeographicImageInterpolator can map images which cross the international dateline.
  *
  * @author dcollins
@@ -113,9 +113,9 @@ public class GeographicImageInterpolator extends ImageInterpolator {
     }
 
     /**
-     * GeographicCell extends {@link ImageInterpolator.Cell} to correctly handle image cells
-     * which have geographic coordinates. Unlike its superclass, which works in Cartesian coordinates, GeographicCell
-     * handles the singularities of geographic coordinates, such as image cells which cross the international dateline.
+     * GeographicCell extends {@link ImageInterpolator.Cell} to correctly handle image cells which have geographic
+     * coordinates. Unlike its superclass, which works in Cartesian coordinates, GeographicCell handles the
+     * singularities of geographic coordinates, such as image cells which cross the international dateline.
      */
     protected static class GeographicCell extends Cell {
         /**

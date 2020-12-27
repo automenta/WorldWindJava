@@ -10,8 +10,7 @@ import javax.xml.namespace.NamespaceContext;
 import java.util.*;
 
 /**
- * BasicNamespaceContext provides a mutable implementation of the {@link NamespaceContext}
- * interface.
+ * BasicNamespaceContext provides a mutable implementation of the {@link NamespaceContext} interface.
  *
  * @author dcollins
  * @version $Id: BasicNamespaceContext.java 1171 2013-02-11 21:45:02Z dcollins $
@@ -37,7 +36,7 @@ public class BasicNamespaceContext implements NamespaceContext {
         // interface.
         this.addNamespace(XMLConstants.XML_NS_PREFIX, XMLConstants.XML_NS_URI);
         this.addNamespace(XMLConstants.XMLNS_ATTRIBUTE, XMLConstants.XMLNS_ATTRIBUTE_NS_URI);
-        this.addNamespace(XLINK_NS_PREFIX, XLINK_NS_URI);
+        this.addNamespace(BasicNamespaceContext.XLINK_NS_PREFIX, BasicNamespaceContext.XLINK_NS_URI);
     }
 
     /**
@@ -64,8 +63,7 @@ public class BasicNamespaceContext implements NamespaceContext {
 
         if (this.prefixesByURI.containsKey(namespaceURI)) {
             this.prefixesByURI.get(namespaceURI).add(prefix);
-        }
-        else {
+        } else {
             Set<String> set = new HashSet<>();
             set.add(prefix);
             this.prefixesByURI.put(namespaceURI, set);
@@ -114,8 +112,7 @@ public class BasicNamespaceContext implements NamespaceContext {
         Set<String> returnSet;
         if (this.prefixesByURI.containsKey(namespaceURI)) {
             returnSet = this.prefixesByURI.get(namespaceURI);
-        }
-        else {
+        } else {
             returnSet = new HashSet<>();
         }
         return Collections.unmodifiableSet(returnSet).iterator();

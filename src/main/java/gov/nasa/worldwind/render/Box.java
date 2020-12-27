@@ -36,7 +36,7 @@ public class Box extends RigidShape {
     // face 3: back face
     // face 4: top face
     // face 5: bottom face
-    protected final int subdivisions = DEFAULT_SUBDIVISIONS;
+    protected final int subdivisions = Box.DEFAULT_SUBDIVISIONS;
 
     /**
      * Construct a box with default parameters
@@ -113,7 +113,7 @@ public class Box extends RigidShape {
 
     @Override
     public int getFaceCount() {
-        return faceCount;
+        return Box.faceCount;
     }
 
     public int getSubdivisions() {
@@ -154,8 +154,7 @@ public class Box extends RigidShape {
                 cacheKey = new Geometry.CacheKey(this.getClass(), "Box" + piece, this.subdivisions);
                 RigidShape.getGeometryCache().add(cacheKey, shapeData.getMesh(piece));
             }
-        }
-        else {
+        } else {
             // otherwise, just use the one from the cache
             for (int piece = 0; piece < getFaceCount(); piece++) {
                 if (offsets.get(piece) == null)  // if texture offsets don't exist, set default values to 0
@@ -253,8 +252,7 @@ public class Box extends RigidShape {
                 normalBuffer = mesh.getBuffer(Geometry.NORMAL);
                 if (normalBuffer == null) {
                     gl.glDisableClientState(GL2.GL_NORMAL_ARRAY);
-                }
-                else {
+                } else {
                     glType = mesh.getGLType(Geometry.NORMAL);
                     stride = mesh.getStride(Geometry.NORMAL);
                     gl.glNormalPointer(glType, stride, normalBuffer);
@@ -281,8 +279,7 @@ public class Box extends RigidShape {
 
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
             gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
-        }
-        else {
+        } else {
             // render using vertex arrays
             gl.glVertexPointer(size, glType, stride, vertexBuffer.rewind());
             gl.glDrawElements(mode, count, type, elementBuffer);
@@ -321,7 +318,7 @@ public class Box extends RigidShape {
         for (int i = 0; i < getFaceCount(); i++) {
             mesh = shapeData.getMesh(i);
             // transform the vertices from local to world coords
-            FloatBuffer newVertices = computeTransformedVertices((FloatBuffer) mesh.getBuffer(Geometry.VERTEX),
+            FloatBuffer newVertices = RigidShape.computeTransformedVertices((FloatBuffer) mesh.getBuffer(Geometry.VERTEX),
                 mesh.getCount(Geometry.VERTEX), matrix);
             mesh.setVertexData(mesh.getCount(Geometry.VERTEX), newVertices);
         }

@@ -61,6 +61,32 @@ public class ForwardEdgeOfBattleArea extends AbstractMilStd2525TacticalGraphic {
     }
 
     /**
+     * Apply graphic attributes to the symbol.
+     *
+     * @param graphicAttributes Tactical graphic attributes to apply to the tactical symbol.
+     * @param symbolAttributes  Symbol attributes to be modified.
+     */
+    protected static void applyAttributesToSymbol(TacticalGraphicAttributes graphicAttributes,
+        TacticalSymbolAttributes symbolAttributes) {
+        // Line and area graphics distinguish between interior and outline opacity. Tactical symbols only support one
+        // opacity, so use the interior opacity.
+        Double value = graphicAttributes.getInteriorOpacity();
+        if (value != null) {
+            symbolAttributes.setOpacity(value);
+        }
+
+        Font font = graphicAttributes.getTextModifierFont();
+        if (font != null) {
+            symbolAttributes.setTextModifierFont(font);
+        }
+
+        Material material = graphicAttributes.getTextModifierMaterial();
+        if (material != null) {
+            symbolAttributes.setTextModifierMaterial(material);
+        }
+    }
+
+    /**
      * Create the symbols used to render the graphic.
      *
      * @param sidc Symbol code the identifies the graphic.
@@ -162,8 +188,7 @@ public class ForwardEdgeOfBattleArea extends AbstractMilStd2525TacticalGraphic {
         if (orientationNormal) {
             this.symbol1.setTextAlign(AVKey.RIGHT);
             this.symbol2.setTextAlign(AVKey.LEFT);
-        }
-        else {
+        } else {
             this.symbol1.setTextAlign(AVKey.LEFT);
             this.symbol2.setTextAlign(AVKey.RIGHT);
         }
@@ -197,39 +222,12 @@ public class ForwardEdgeOfBattleArea extends AbstractMilStd2525TacticalGraphic {
                 // Apply overrides specified by application
                 ForwardEdgeOfBattleArea.applyAttributesToSymbol(highlightAttributes, this.activeSymbolAttributes);
             }
-        }
-        else {
+        } else {
             // Apply overrides specified by application
             TacticalGraphicAttributes normalAttributes = this.getAttributes();
             if (normalAttributes != null) {
                 ForwardEdgeOfBattleArea.applyAttributesToSymbol(normalAttributes, this.activeSymbolAttributes);
             }
-        }
-    }
-
-    /**
-     * Apply graphic attributes to the symbol.
-     *
-     * @param graphicAttributes Tactical graphic attributes to apply to the tactical symbol.
-     * @param symbolAttributes  Symbol attributes to be modified.
-     */
-    protected static void applyAttributesToSymbol(TacticalGraphicAttributes graphicAttributes,
-        TacticalSymbolAttributes symbolAttributes) {
-        // Line and area graphics distinguish between interior and outline opacity. Tactical symbols only support one
-        // opacity, so use the interior opacity.
-        Double value = graphicAttributes.getInteriorOpacity();
-        if (value != null) {
-            symbolAttributes.setOpacity(value);
-        }
-
-        Font font = graphicAttributes.getTextModifierFont();
-        if (font != null) {
-            symbolAttributes.setTextModifierFont(font);
-        }
-
-        Material material = graphicAttributes.getTextModifierMaterial();
-        if (material != null) {
-            symbolAttributes.setTextModifierMaterial(material);
         }
     }
 
@@ -265,6 +263,15 @@ public class ForwardEdgeOfBattleArea extends AbstractMilStd2525TacticalGraphic {
         }
 
         /**
+         * Indicates the text in the label.
+         *
+         * @return The string "FEBA".
+         */
+        protected static String getText() {
+            return "FEBA";
+        }
+
+        /**
          * {@inheritDoc}
          */
         public String getIdentifier() {
@@ -292,8 +299,8 @@ public class ForwardEdgeOfBattleArea extends AbstractMilStd2525TacticalGraphic {
             this.currentLabels.clear();
 
             Font font = this.getActiveAttributes().getTextModifierFont();
-            Offset imgOffset = this.leftAlign ? RIGHT_CENTER : LEFT_CENTER;
-            Offset txtOffset = this.leftAlign ? LEFT_CENTER : RIGHT_CENTER;
+            Offset imgOffset = this.leftAlign ? ForwardEdgeOfBattleArea.RIGHT_CENTER : ForwardEdgeOfBattleArea.LEFT_CENTER;
+            Offset txtOffset = this.leftAlign ? ForwardEdgeOfBattleArea.LEFT_CENTER : ForwardEdgeOfBattleArea.RIGHT_CENTER;
 
             this.addLabel(dc, imgOffset, txtOffset, FEBASymbol.getText(), font, null, null, osym);
         }
@@ -324,15 +331,6 @@ public class ForwardEdgeOfBattleArea extends AbstractMilStd2525TacticalGraphic {
             SymbolCode code = new SymbolCode(this.symbolCode);
             code.setStatus(status);
             this.symbolCode = code.toString();
-        }
-
-        /**
-         * Indicates the text in the label.
-         *
-         * @return The string "FEBA".
-         */
-        protected static String getText() {
-            return "FEBA";
         }
 
         @Override

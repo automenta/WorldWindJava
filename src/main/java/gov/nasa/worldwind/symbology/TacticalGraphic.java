@@ -29,8 +29,7 @@ import gov.nasa.worldwind.util.UnitsFormat;
  * MIL-STD-2525 Symbol Identification Code (SIDC) is a string of 15 characters.
  * <p>
  * You will need to instantiate the appropriate factory for the symbol set that you intend to use.  For example, {@link
- * MilStd2525GraphicFactory} creates graphics for the MIL-STD-2525 symbology
- * set.
+ * MilStd2525GraphicFactory} creates graphics for the MIL-STD-2525 symbology set.
  * <p>
  * The TacticalGraphic interface provides access to settings common to all tactical graphics. TacticalGraphic extends
  * the {@link Renderable} interface, so you can add a TacticalGraphic directly to a {@link

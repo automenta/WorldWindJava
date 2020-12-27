@@ -107,7 +107,7 @@ public class TreePath extends ArrayList<String> {
             if (sb.isEmpty())
                 sb.append(s);
             else
-                sb.append("/").append(s);
+                sb.append('/').append(s);
         }
 
         return sb.toString();

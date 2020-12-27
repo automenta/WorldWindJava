@@ -52,8 +52,7 @@ public class GeoJSON {
         if (pos.getAltitude() != 0) {
             p.setAltitudeMode(WorldWind.ABSOLUTE);
             p.setLineEnabled(true);
-        }
-        else {
+        } else {
             p.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
         }
 
@@ -66,7 +65,7 @@ public class GeoJSON {
     @SuppressWarnings("UnusedDeclaration")
     protected static Renderable createPolyline(GeoJSONGeometry owner, Iterable<? extends Position> positions,
         ShapeAttributes attrs, AVList properties) {
-        if (positionsHaveNonzeroAltitude(positions)) {
+        if (GeoJSON.positionsHaveNonzeroAltitude(positions)) {
             Path p = new Path();
             p.setPositions(positions);
             p.setAltitudeMode(WorldWind.ABSOLUTE);
@@ -76,8 +75,7 @@ public class GeoJSON {
                 p.set(AVKey.PROPERTIES, properties);
 
             return p;
-        }
-        else {
+        } else {
             SurfacePolyline sp = new SurfacePolyline(attrs, positions);
 
             if (properties != null)
@@ -90,7 +88,7 @@ public class GeoJSON {
     @SuppressWarnings("UnusedDeclaration")
     protected static Renderable createPolygon(GeoJSONGeometry owner, Iterable<? extends Position> outerBoundary,
         Iterable<? extends Position>[] innerBoundaries, ShapeAttributes attrs, AVList properties) {
-        if (positionsHaveNonzeroAltitude(outerBoundary)) {
+        if (GeoJSON.positionsHaveNonzeroAltitude(outerBoundary)) {
             Polygon poly = new Polygon(outerBoundary);
             poly.setAttributes(attrs);
 
@@ -104,8 +102,7 @@ public class GeoJSON {
                 poly.set(AVKey.PROPERTIES, properties);
 
             return poly;
-        }
-        else {
+        } else {
             SurfacePolygon poly = new SurfacePolygon(attrs, outerBoundary);
 
             if (innerBoundaries != null) {
@@ -121,7 +118,6 @@ public class GeoJSON {
         }
     }
 
-
     //**************************************************************//
     //********************  Geometry Conversion  *******************//
     //**************************************************************//
@@ -133,7 +129,7 @@ public class GeoJSON {
      *                  or {@link java.net.URI}.
      * @param layer     layer to receive the new Renderable.
      */
-    public void addSourceGeometryToLayer(Object docSource, RenderableLayer layer) {
+    public RenderableLayer load(Object docSource, RenderableLayer layer) {
         if (WWUtil.isEmpty(docSource)) {
             String message = Logging.getMessage("nullValue.SourceIsNull");
             Logging.logger().severe(message);
@@ -145,21 +141,20 @@ public class GeoJSON {
             doc = new GeoJSONDoc(docSource);
             doc.parse();
 
-            if (doc.getRootObject() instanceof GeoJSONObject) {
-                this.addGeoJSONGeometryToLayer((GeoJSONObject) doc.getRootObject(), layer);
-            }
-            else if (doc.getRootObject() instanceof Object[]) {
-                for (Object o : (Object[]) doc.getRootObject()) {
+            final Object root = doc.getRootObject();
+
+            if (root instanceof GeoJSONObject) {
+                this.addGeoJSONGeometryToLayer((GeoJSONObject) root, layer);
+            } else if (root instanceof Object[]) {
+                for (Object o : (Object[]) root) {
                     if (o instanceof GeoJSONObject) {
                         this.addGeoJSONGeometryToLayer((GeoJSONObject) o, layer);
-                    }
-                    else {
+                    } else {
                         GeoJSON.handleUnrecognizedObject(o);
                     }
                 }
-            }
-            else {
-                GeoJSON.handleUnrecognizedObject(doc.getRootObject());
+            } else {
+                GeoJSON.handleUnrecognizedObject(root);
             }
         }
         catch (IOException e) {
@@ -170,6 +165,7 @@ public class GeoJSON {
         finally {
             WWIO.closeStream(doc, docSource.toString());
         }
+        return layer;
     }
 
     /**
@@ -179,17 +175,17 @@ public class GeoJSON {
      * @param layer  layer to receive the new GeoJSON renderable.
      */
     public void addGeoJSONGeometryToLayer(GeoJSONObject object, RenderableLayer layer) {
-        if (object == null) {
-            String message = Logging.getMessage("nullValue.ObjectIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (layer == null) {
-            String message = Logging.getMessage("nullValue.LayerIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (object == null) {
+//            String message = Logging.getMessage("nullValue.ObjectIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//
+//        if (layer == null) {
+//            String message = Logging.getMessage("nullValue.LayerIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         if (object.isGeometry())
             this.addRenderableForGeometry(object.asGeometry(), layer, null);
@@ -211,16 +207,8 @@ public class GeoJSON {
      *                  or {@link java.net.URI}.
      * @return the new layer.
      */
-    public Layer layer(Object docSource) {
-        if (WWUtil.isEmpty(docSource)) {
-            String message = Logging.getMessage("nullValue.SourceIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        RenderableLayer layer = new RenderableLayer();
-        addSourceGeometryToLayer(docSource, layer);
-        return layer;
+    public final Layer layer(Object docSource) {
+        return load(docSource, new RenderableLayer());
     }
 
     /**
@@ -346,12 +334,12 @@ public class GeoJSON {
     @SuppressWarnings("UnusedDeclaration")
     protected PointPlacemarkAttributes createPointAttributes(GeoJSONGeometry geom, Layer layer) {
         if (layer == null)
-            return randomAttrs.nextAttributes().asPointAttributes();
+            return GeoJSON.randomAttrs.nextAttributes().asPointAttributes();
 
         String key = this.getClass().getName() + ".PointAttributes";
         PointPlacemarkAttributes attrs = (PointPlacemarkAttributes) layer.get(key);
         if (attrs == null) {
-            attrs = randomAttrs.nextAttributes().asPointAttributes();
+            attrs = GeoJSON.randomAttrs.nextAttributes().asPointAttributes();
             layer.set(key, attrs);
         }
 
@@ -361,12 +349,12 @@ public class GeoJSON {
     @SuppressWarnings("UnusedDeclaration")
     protected ShapeAttributes createPolylineAttributes(GeoJSONGeometry geom, Layer layer) {
         if (layer == null)
-            return randomAttrs.nextAttributes().asShapeAttributes();
+            return GeoJSON.randomAttrs.nextAttributes().asShapeAttributes();
 
         String key = this.getClass().getName() + ".PolylineAttributes";
         ShapeAttributes attrs = (ShapeAttributes) layer.get(key);
         if (attrs == null) {
-            attrs = randomAttrs.nextAttributes().asShapeAttributes();
+            attrs = GeoJSON.randomAttrs.nextAttributes().asShapeAttributes();
             layer.set(key, attrs);
         }
 
@@ -376,12 +364,12 @@ public class GeoJSON {
     @SuppressWarnings("UnusedDeclaration")
     protected ShapeAttributes createPolygonAttributes(GeoJSONGeometry geom, Layer layer) {
         if (layer == null)
-            return randomAttrs.nextAttributes().asShapeAttributes();
+            return GeoJSON.randomAttrs.nextAttributes().asShapeAttributes();
 
         String key = this.getClass().getName() + ".PolygonAttributes";
         ShapeAttributes attrs = (ShapeAttributes) layer.get(key);
         if (attrs == null) {
-            attrs = randomAttrs.nextAttributes().asShapeAttributes();
+            attrs = GeoJSON.randomAttrs.nextAttributes().asShapeAttributes();
             layer.set(key, attrs);
         }
 

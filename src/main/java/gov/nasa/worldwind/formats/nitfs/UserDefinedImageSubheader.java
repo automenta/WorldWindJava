@@ -18,7 +18,7 @@ public class UserDefinedImageSubheader {
     private final short overflow;
     private final String tag;
     private final int dataLength;
-    private RPFFrameFileComponents rpfFrameFileComponents = null;
+    private RPFFrameFileComponents rpfFrameFileComponents;
 
     public UserDefinedImageSubheader(ByteBuffer buffer) throws NITFSRuntimeException {
         this.overflow = NITFSUtil.getShortNumeric(buffer, 3);

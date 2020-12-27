@@ -54,7 +54,7 @@ public class CircularPositionArea extends AbstractCircularGraphic {
         Position center = new Position(this.circle.getCenter(), 0);
         Angle radius = Angle.fromRadians(this.circle.getRadius() / dc.getGlobe().getRadius());
 
-        Angle[] cardinalDirections = new Angle[] {
+        Angle[] cardinalDirections = {
             Angle.NEG90, // Due West
             Angle.POS90, // Due East
             Angle.ZERO, // Due North

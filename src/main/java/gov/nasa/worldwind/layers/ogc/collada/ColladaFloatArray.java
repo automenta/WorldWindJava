@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.layers.ogc.collada;
 
 import gov.nasa.worldwind.util.WWUtil;
-import gov.nasa.worldwind.util.xml.XMLEventParserContext;
+import gov.nasa.worldwind.util.xml.*;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
@@ -34,34 +34,6 @@ public class ColladaFloatArray extends ColladaAbstractObject {
     }
 
     /**
-     * Indicates the float array contained in this element.
-     *
-     * @return Floats contained in this element. May return an empty array, but will not return null.
-     */
-    public float[] getFloats() {
-        return (this.floats != null) ? this.floats : new float[0];
-    }
-
-    /**
-     * {@inheritDoc} Overridden to parse character content into a float[].
-     */
-    @Override
-    public Object parse(XMLEventParserContext ctx, XMLEvent event, Object... args) throws XMLStreamException {
-        super.parse(ctx, event, args);
-
-        if (this.hasField(CHARACTERS_CONTENT)) {
-            String s = (String) this.getField(CHARACTERS_CONTENT);
-            if (!WWUtil.isEmpty(s))
-                this.floats = ColladaFloatArray.parseFloats(s);
-
-            // Don't need to keep string version of the floats
-            this.removeField(CHARACTERS_CONTENT);
-        }
-
-        return this;
-    }
-
-    /**
      * Parse a string of floats into an array.
      *
      * @param floatArrayString String of floats separated by whitespace.
@@ -78,5 +50,33 @@ public class ColladaFloatArray extends ColladaAbstractObject {
         }
 
         return ary;
+    }
+
+    /**
+     * Indicates the float array contained in this element.
+     *
+     * @return Floats contained in this element. May return an empty array, but will not return null.
+     */
+    public float[] getFloats() {
+        return (this.floats != null) ? this.floats : new float[0];
+    }
+
+    /**
+     * {@inheritDoc} Overridden to parse character content into a float[].
+     */
+    @Override
+    public Object parse(XMLEventParserContext ctx, XMLEvent event, Object... args) throws XMLStreamException {
+        super.parse(ctx, event, args);
+
+        if (this.hasField(AbstractXMLEventParser.CHARACTERS_CONTENT)) {
+            String s = (String) this.getField(AbstractXMLEventParser.CHARACTERS_CONTENT);
+            if (!WWUtil.isEmpty(s))
+                this.floats = ColladaFloatArray.parseFloats(s);
+
+            // Don't need to keep string version of the floats
+            this.removeField(AbstractXMLEventParser.CHARACTERS_CONTENT);
+        }
+
+        return this;
     }
 }

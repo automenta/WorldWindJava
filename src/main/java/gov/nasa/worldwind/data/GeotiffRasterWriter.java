@@ -19,7 +19,7 @@ public class GeotiffRasterWriter extends AbstractDataRasterWriter {
     protected static final String[] geotiffSuffixes = {"tif", "tiff", "gtif"};
 
     public GeotiffRasterWriter() {
-        super(geotiffMimeTypes, geotiffSuffixes);
+        super(GeotiffRasterWriter.geotiffMimeTypes, GeotiffRasterWriter.geotiffSuffixes);
     }
 
     protected boolean doCanWrite(DataRaster raster, String formatSuffix, File file) {

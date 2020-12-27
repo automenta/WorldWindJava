@@ -132,6 +132,4 @@ public interface GpuResourceCache {
      * @see #getCapacity()
      */
     long getFreeCapacity();
-
-
 }

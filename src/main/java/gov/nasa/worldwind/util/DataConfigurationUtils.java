@@ -35,10 +35,9 @@ public class DataConfigurationUtils {
     protected static final String DEFAULT_TEXTURE_FORMAT = "image/dds";
 
     /**
-     * Returns true if the specified {@link Element} is a data configuration document. This recognizes the
-     * following data configuration documents: <ul> <li>Layer Configuration Documents</li> <li>Elevation Model
-     * Configuration Documents</li> <li>Installed DataDescriptor Documents</li> <li>WorldWind .NET LayerSet
-     * Documents</li> </ul>
+     * Returns true if the specified {@link Element} is a data configuration document. This recognizes the following
+     * data configuration documents: <ul> <li>Layer Configuration Documents</li> <li>Elevation Model Configuration
+     * Documents</li> <li>Installed DataDescriptor Documents</li> <li>WorldWind .NET LayerSet Documents</li> </ul>
      *
      * @param domElement the document in question.
      * @return true if the document is a data configuration document; false otherwise.
@@ -59,12 +58,12 @@ public class DataConfigurationUtils {
             return true;
         }
 
-        if (isInstalledDataDescriptorConfigDocument(domElement)) {
+        if (DataConfigurationUtils.isInstalledDataDescriptorConfigDocument(domElement)) {
             return true;
         }
 
         //noinspection RedundantIfStatement
-        if (isWWDotNetLayerSetConfigDocument(domElement)) {
+        if (DataConfigurationUtils.isWWDotNetLayerSetConfigDocument(domElement)) {
             return true;
         }
 
@@ -95,12 +94,12 @@ public class DataConfigurationUtils {
             return null;
         }
 
-        if (isInstalledDataDescriptorConfigDocument(el)) {
-            return transformInstalledDataDescriptorConfigDocument(el);
+        if (DataConfigurationUtils.isInstalledDataDescriptorConfigDocument(el)) {
+            return DataConfigurationUtils.transformInstalledDataDescriptorConfigDocument(el);
         }
 
-        if (isWWDotNetLayerSetConfigDocument(el)) {
-            return transformWWDotNetLayerSetConfigDocument(el);
+        if (DataConfigurationUtils.isWWDotNetLayerSetConfigDocument(el)) {
+            return DataConfigurationUtils.transformWWDotNetLayerSetConfigDocument(el);
         }
 
         return doc;
@@ -133,12 +132,12 @@ public class DataConfigurationUtils {
             return WWXML.getText(domElement, "DisplayName");
         }
 
-        if (isInstalledDataDescriptorConfigDocument(domElement)) {
+        if (DataConfigurationUtils.isInstalledDataDescriptorConfigDocument(domElement)) {
             return WWXML.getText(domElement,
                 "property[@name=\"dataSet\"]/property[@name=\"gov.nasa.worldwind.avkey.DatasetNameKey\"]");
         }
 
-        if (isWWDotNetLayerSetConfigDocument(domElement)) {
+        if (DataConfigurationUtils.isWWDotNetLayerSetConfigDocument(domElement)) {
             return WWXML.getText(domElement, "QuadTileSet/Name");
         }
 
@@ -174,19 +173,18 @@ public class DataConfigurationUtils {
             return "ElevationModel";
         }
 
-        if (isInstalledDataDescriptorConfigDocument(domElement)) {
+        if (DataConfigurationUtils.isInstalledDataDescriptorConfigDocument(domElement)) {
             String s = WWXML.getText(domElement,
                 "property[@name=\"dataSet\"]/property[@name=\"gov.nasa.worldwind.avkey.DataType\"]",
                 null);
             if (s != null && s.equals("gov.nasa.worldwind.avkey.TiledElevations")) {
                 return "ElevationModel";
-            }
-            else {
+            } else {
                 return "Layer";
             }
         }
 
-        if (isWWDotNetLayerSetConfigDocument(domElement)) {
+        if (DataConfigurationUtils.isWWDotNetLayerSetConfigDocument(domElement)) {
             return "Layer";
         }
 
@@ -301,7 +299,7 @@ public class DataConfigurationUtils {
 
         // Look for an existing configuration file in the store. Return true if a configuration file does not exist,
         // or it has expired; otherwise return false.
-        URL url = findExistingDataConfigFile(fileStore, fileName);
+        URL url = DataConfigurationUtils.findExistingDataConfigFile(fileStore, fileName);
         if (url != null && !WWIO.isFileOutOfDate(url, expiryTime)) {
             return true;
         }
@@ -365,9 +363,9 @@ public class DataConfigurationUtils {
     }
 
     /**
-     * Convenience method to create a {@link ScheduledExecutorService} which can be used by World
-     * Wind components to schedule periodic resource checks. The returned ExecutorService is backed by a single daemon
-     * thread with minimum priority.
+     * Convenience method to create a {@link ScheduledExecutorService} which can be used by World Wind components to
+     * schedule periodic resource checks. The returned ExecutorService is backed by a single daemon thread with minimum
+     * priority.
      *
      * @param threadName the String name for the ExecutorService's thread, may be <code>null</code>.
      * @return a new ScheduledExecutorService appropriate for scheduling periodic resource checks.
@@ -655,8 +653,7 @@ public class DataConfigurationUtils {
                 if (layerCaps.hasCoordinateSystem("EPSG:4326")) {
                     coordinateSystem = "EPSG:4326";
                     break; // this assumes that the CS is available for all the layers in layerNames
-                }
-                else if (layerCaps.hasCoordinateSystem("CRS:84")) {
+                } else if (layerCaps.hasCoordinateSystem("CRS:84")) {
                     coordinateSystem = "CRS:84";
                     break; // this assumes that the CS is available for all the layers in layerNames
                 }
@@ -667,7 +664,7 @@ public class DataConfigurationUtils {
         }
 
         // Define the DISPLAY_NAME and DATASET_NAME from the WMS layer names and styles.
-        params.set(AVKey.DISPLAY_NAME, makeTitle(caps, layerNames, styleNames));
+        params.set(AVKey.DISPLAY_NAME, DataConfigurationUtils.makeTitle(caps, layerNames, styleNames));
         params.set(AVKey.DATASET_NAME, layerNames);
 
         // Get the EXPIRY_TIME from the WMS layer last update time.
@@ -729,7 +726,7 @@ public class DataConfigurationUtils {
 
         // Determine image format to request.
         if (params.getStringValue(AVKey.IMAGE_FORMAT) == null) {
-            String imageFormat = chooseImageFormat(caps.getImageFormats().toArray(), formatOrderPreference);
+            String imageFormat = DataConfigurationUtils.chooseImageFormat(caps.getImageFormats().toArray(), formatOrderPreference);
             params.set(AVKey.IMAGE_FORMAT, imageFormat);
         }
 
@@ -824,8 +821,7 @@ public class DataConfigurationUtils {
             if (format.toLowerCase().contains("image/tiff")) {
                 params.set(AVKey.IMAGE_FORMAT, format);
                 break;
-            }
-            else if (format.toLowerCase().contains("tiff")) // lots of variants in use, so find one
+            } else if (format.toLowerCase().contains("tiff")) // lots of variants in use, so find one
             {
                 params.set(AVKey.IMAGE_FORMAT, format);
                 break;
@@ -848,8 +844,7 @@ public class DataConfigurationUtils {
         if (offering.getSupportedCRSs() != null) {
             if (offering.getSupportedCRSs().getRequestResponseCRSs().contains(epsg4326)) {
                 crs = epsg4326;
-            }
-            else if (offering.getSupportedCRSs().getRequestCRSs().contains(epsg4326)
+            } else if (offering.getSupportedCRSs().getRequestCRSs().contains(epsg4326)
                 && offering.getSupportedCRSs().getResponseCRSs().contains(epsg4326)) {
                 crs = epsg4326;
             }
@@ -1160,9 +1155,8 @@ public class DataConfigurationUtils {
      * <tr><th>Parameter</th><th>Element path</th><th>Type</th></tr> <tr><td>{@link
      * AVKey#DATASET_NAME}</td><td>DatasetName</td><td>String</td></tr> <tr><td>{@link
      * AVKey#DATA_CACHE_NAME}</td><td>DataCacheName</td><td>String</td></tr> <tr><td>{@link
-     * AVKey#SERVICE}</td><td>Service/URL</td><td>String</td></tr> <tr><td>{@link
-     * AVKey#EXPIRY_TIME}</td><td>ExpiryTime</td><td>Long</td></tr> <tr><td>{@link
-     * AVKey#EXPIRY_TIME}</td><td>LastUpdate</td><td>Long</td></tr> <tr><td>{@link
+     * AVKey#SERVICE}</td><td>Service/URL</td><td>String</td></tr> <tr><td>{@link AVKey#EXPIRY_TIME}</td><td>ExpiryTime</td><td>Long</td></tr>
+     * <tr><td>{@link AVKey#EXPIRY_TIME}</td><td>LastUpdate</td><td>Long</td></tr> <tr><td>{@link
      * AVKey#FORMAT_SUFFIX}</td><td>FormatSuffix</td><td>String</td></tr> <tr><td>{@link
      * AVKey#NUM_LEVELS}</td><td>NumLevels/@count</td><td>Integer</td></tr> <tr><td>{@link
      * AVKey#NUM_EMPTY_LEVELS}</td><td>NumLevels/@numEmpty</td><td>Integer</td></tr>
@@ -1205,7 +1199,8 @@ public class DataConfigurationUtils {
         WWXML.checkAndSetStringParam(domElement, params, AVKey.SERVICE_NAME, "Service/@serviceName", xpath);
 
         WWXML.checkAndSetLongParam(domElement, params, AVKey.EXPIRY_TIME, "ExpiryTime", xpath);
-        WWXML.checkAndSetDateTimeParam(domElement, params, AVKey.EXPIRY_TIME, "LastUpdate", DATE_TIME_PATTERN, xpath);
+        WWXML.checkAndSetDateTimeParam(domElement, params, AVKey.EXPIRY_TIME, "LastUpdate",
+            DataConfigurationUtils.DATE_TIME_PATTERN, xpath);
 
         // Image format properties.
         WWXML.checkAndSetStringParam(domElement, params, AVKey.FORMAT_SUFFIX, "FormatSuffix", xpath);
@@ -1241,17 +1236,17 @@ public class DataConfigurationUtils {
      * AVKey#DATASET_NAME}</td><td>First Level's dataset</td><td>String</td></tr>
      * <tr><td>{@link AVKey#DATA_CACHE_NAME}</td><td>First Level's
      * cacheName</td><td>String</td></tr> <tr><td>{@link AVKey#SERVICE}</td><td>First Level's
-     * service</td><td>String</td></tr> <tr><td>{@link AVKey#EXPIRY_TIME}</td><td>First
-     * Level's expiryTime</td><td>Long</td></tr> <tr><td>{@link AVKey#FORMAT_SUFFIX}</td><td>FirstLevel's
+     * service</td><td>String</td></tr> <tr><td>{@link AVKey#EXPIRY_TIME}</td><td>First Level's
+     * expiryTime</td><td>Long</td></tr> <tr><td>{@link AVKey#FORMAT_SUFFIX}</td><td>FirstLevel's
      * formatSuffix</td><td>String</td></tr> <tr><td>{@link AVKey#NUM_LEVELS}</td><td>numLevels</td><td>Integer</td></tr>
      * <tr><td>{@link AVKey#NUM_EMPTY_LEVELS}</td><td>1 + index of first non-empty
-     * Level</td><td>Integer</td></tr> <tr><td>{@link AVKey#INACTIVE_LEVELS}</td><td>Comma
-     * delimited string of Level numbers</td><td>String</td></tr> <tr><td>{@link AVKey#SECTOR}</td><td>sector</td><td>{@link
-     * Sector}</td></tr> <tr><td>{@link AVKey#SECTOR_RESOLUTION_LIMITS}</td><td>sectorLevelLimits</td>
+     * Level</td><td>Integer</td></tr> <tr><td>{@link AVKey#INACTIVE_LEVELS}</td><td>Comma delimited string of Level
+     * numbers</td><td>String</td></tr> <tr><td>{@link AVKey#SECTOR}</td><td>sector</td><td>{@link Sector}</td></tr>
+     * <tr><td>{@link AVKey#SECTOR_RESOLUTION_LIMITS}</td><td>sectorLevelLimits</td>
      * <td>{@link LevelSet.SectorResolution}</td></tr> <tr><td>{@link AVKey#TILE_ORIGIN}</td><td>tileOrigin</td><td>{@link
-     * LatLon}</td></tr> <tr><td>{@link AVKey#TILE_WIDTH}</td><td>First
-     * Level's tileWidth<td><td>Integer</td></tr> <tr><td>{@link AVKey#TILE_HEIGHT}</td><td>First
-     * Level's tileHeight</td><td>Integer</td></tr> <tr><td>{@link AVKey#LEVEL_ZERO_TILE_DELTA}</td><td>levelZeroTileDelta</td><td>LatLon</td></tr>
+     * LatLon}</td></tr> <tr><td>{@link AVKey#TILE_WIDTH}</td><td>First Level's tileWidth<td><td>Integer</td></tr>
+     * <tr><td>{@link AVKey#TILE_HEIGHT}</td><td>First Level's tileHeight</td><td>Integer</td></tr> <tr><td>{@link
+     * AVKey#LEVEL_ZERO_TILE_DELTA}</td><td>levelZeroTileDelta</td><td>LatLon</td></tr>
      * </table>
      *
      * @param levelSet the LevelSet reference to gather configuration parameters from.
@@ -1325,12 +1320,12 @@ public class DataConfigurationUtils {
 
         o = params.get(AVKey.NUM_EMPTY_LEVELS);
         if (o == null) {
-            params.set(AVKey.NUM_EMPTY_LEVELS, getNumEmptyLevels(levelSet));
+            params.set(AVKey.NUM_EMPTY_LEVELS, DataConfigurationUtils.getNumEmptyLevels(levelSet));
         }
 
         s = params.getStringValue(AVKey.INACTIVE_LEVELS);
         if (s == null || s.isEmpty()) {
-            s = getInactiveLevels(levelSet);
+            s = DataConfigurationUtils.getInactiveLevels(levelSet);
             if (s != null && !s.isEmpty()) {
                 params.set(AVKey.INACTIVE_LEVELS, s);
             }
@@ -1401,13 +1396,13 @@ public class DataConfigurationUtils {
         for (int i = 0; i < levelSet.getNumLevels(); i++) {
             if (!levelSet.getLevel(i).isActive()) {
                 if (!sb.isEmpty()) {
-                    sb.append(",");
+                    sb.append(',');
                 }
                 sb.append(i);
             }
         }
 
-        return (!sb.isEmpty()) ? sb.toString() : null;
+        return (sb.isEmpty()) ? null : sb.toString();
     }
 
     //**************************************************************//
@@ -1458,7 +1453,7 @@ public class DataConfigurationUtils {
 
         // Ignore all but the first dataSet element.
         Document outDoc = WWXML.createDocumentBuilder(true).newDocument();
-        transformDataDescriptorDataSet(els[0], outDoc, xpath);
+        DataConfigurationUtils.transformDataDescriptorDataSet(els[0], outDoc, xpath);
 
         return outDoc;
     }
@@ -1470,16 +1465,16 @@ public class DataConfigurationUtils {
         if (s != null && s.equals("gov.nasa.worldwind.avkey.TiledElevations")) {
             Element el = WWXML.setDocumentElement(outDoc, "ElevationModel");
             WWXML.setIntegerAttribute(el, "version", 1);
-            transformDataDescriptorCommonElements(context, el, xpath);
-            transformDataDescriptorElevationModelElements(context, el, xpath);
+            DataConfigurationUtils.transformDataDescriptorCommonElements(context, el, xpath);
+            DataConfigurationUtils.transformDataDescriptorElevationModelElements(context, el, xpath);
         }
         // Default to Layer output.
         else {
             Element el = WWXML.setDocumentElement(outDoc, "Layer");
             WWXML.setIntegerAttribute(el, "version", 1);
             WWXML.setTextAttribute(el, "layerType", "TiledImageLayer");
-            transformDataDescriptorCommonElements(context, el, xpath);
-            transformDataDescriptorLayerElements(context, el, xpath);
+            DataConfigurationUtils.transformDataDescriptorCommonElements(context, el, xpath);
+            DataConfigurationUtils.transformDataDescriptorLayerElements(context, el, xpath);
         }
     }
 
@@ -1523,17 +1518,17 @@ public class DataConfigurationUtils {
         }
 
         // Note the upper case K in "avKey". This was a typo in AVKey.SECTOR, and is intentionally reproduced here.
-        Sector sector = getDataDescriptorSector(context, "property[@name=\"gov.nasa.worldwind.avKey.Sector\"]", xpath);
+        Sector sector = DataConfigurationUtils.getDataDescriptorSector(context, "property[@name=\"gov.nasa.worldwind.avKey.Sector\"]", xpath);
         if (sector != null) {
             WWXML.appendSector(outElem, "Sector", sector);
         }
 
-        LatLon ll = getDataDescriptorLatLon(context, "property[@name=\"gov.nasa.worldwind.avkey.TileOrigin\"]", xpath);
+        LatLon ll = DataConfigurationUtils.getDataDescriptorLatLon(context, "property[@name=\"gov.nasa.worldwind.avkey.TileOrigin\"]", xpath);
         if (ll != null) {
             WWXML.appendLatLon(outElem, "TileOrigin/LatLon", ll);
         }
 
-        ll = getDataDescriptorLatLon(context, "property[@name=\"gov.nasa.worldwind.avkey.LevelZeroTileDelta\"]", xpath);
+        ll = DataConfigurationUtils.getDataDescriptorLatLon(context, "property[@name=\"gov.nasa.worldwind.avkey.LevelZeroTileDelta\"]", xpath);
         if (ll != null) {
             WWXML.appendLatLon(outElem, "LevelZeroTileDelta/LatLon", ll);
         }
@@ -1584,7 +1579,7 @@ public class DataConfigurationUtils {
     @SuppressWarnings("UnusedDeclaration")
     protected static void transformDataDescriptorLayerElements(Element context, Element outElem, XPath xpath) {
         // Set the texture format to DDS. If the texture data is already in DDS format, this parameter is benign.
-        WWXML.appendText(outElem, "TextureFormat", DEFAULT_TEXTURE_FORMAT);
+        WWXML.appendText(outElem, "TextureFormat", DataConfigurationUtils.DEFAULT_TEXTURE_FORMAT);
 
         // DataDescriptor documents always describe an offline pyramid of tiled imagery or elevations in the file
         // store. Therefore we can safely assume that network retrieval should be disabled. Because we know nothing
@@ -1696,8 +1691,8 @@ public class DataConfigurationUtils {
      * <tr><td>{@link AVKey#NETWORK_RETRIEVAL_ENABLED}</td><td>false (boolean
      * constant)<td></td><td>Boolean</td></tr> <tr><td>{@link AVKey#TEXTURE_FORMAT}</td><td>"image/dds"<td></td><td>String</td></tr>
      * <tr><td>{@link AVKey#USE_MIP_MAPS}</td><td>true (boolean
-     * constant)<td></td><td>Boolean</td></tr> <tr><td>{@link AVKey#USE_TRANSPARENT_TEXTURES}</td><td>true
-     * (boolean constant)<td></td><td>Boolean</td></tr> </table>
+     * constant)<td></td><td>Boolean</td></tr> <tr><td>{@link AVKey#USE_TRANSPARENT_TEXTURES}</td><td>true (boolean
+     * constant)<td></td><td>Boolean</td></tr> </table>
      *
      * @param domElement the XML document root to parse for LayerSet configuration parameters.
      * @param params     the output key-value pairs which receive the LayerSet configuration parameters. A null
@@ -1748,7 +1743,7 @@ public class DataConfigurationUtils {
             String s = WWXML.getText(el, "ImageAccessor/ImageFileExtension", xpath);
             if (s != null && !s.isEmpty()) {
                 if (!(s.charAt(0) == '.')) {
-                    s = "." + s;
+                    s = '.' + s;
                 }
                 params.set(AVKey.FORMAT_SUFFIX, s);
             }
@@ -1770,7 +1765,7 @@ public class DataConfigurationUtils {
 
         // Set the texture format to DDS. If the texture data is already in DDS format, this parameter is benign.
         if (params.get(AVKey.TEXTURE_FORMAT) == null) {
-            params.set(AVKey.TEXTURE_FORMAT, DEFAULT_TEXTURE_FORMAT);
+            params.set(AVKey.TEXTURE_FORMAT, DataConfigurationUtils.DEFAULT_TEXTURE_FORMAT);
         }
 
         // Tile structure properties.
@@ -1781,7 +1776,7 @@ public class DataConfigurationUtils {
         }
 
         if (params.get(AVKey.SECTOR) == null) {
-            Sector s = getWWDotNetLayerSetSector(el, "BoundingBox", xpath);
+            Sector s = DataConfigurationUtils.getWWDotNetLayerSetSector(el, "BoundingBox", xpath);
             if (s != null) {
                 params.set(AVKey.SECTOR, s);
             }
@@ -1792,7 +1787,7 @@ public class DataConfigurationUtils {
         }
 
         if (params.get(AVKey.LEVEL_ZERO_TILE_DELTA) == null) {
-            LatLon ll = getWWDotNetLayerSetLatLon(el, "ImageAccessor/LevelZeroTileSizeDegrees", xpath);
+            LatLon ll = DataConfigurationUtils.getWWDotNetLayerSetLatLon(el, "ImageAccessor/LevelZeroTileSizeDegrees", xpath);
             if (ll != null) {
                 params.set(AVKey.LEVEL_ZERO_TILE_DELTA, ll);
             }
@@ -1847,7 +1842,7 @@ public class DataConfigurationUtils {
 
         // Ignore all but the first QuadTileSet element.
         Document outDoc = WWXML.createDocumentBuilder(true).newDocument();
-        transformWWDotNetLayerSet(els[0], outDoc, xpath);
+        DataConfigurationUtils.transformWWDotNetLayerSet(els[0], outDoc, xpath);
 
         return outDoc;
     }
@@ -1857,7 +1852,7 @@ public class DataConfigurationUtils {
         WWXML.setIntegerAttribute(el, "version", 1);
         WWXML.setTextAttribute(el, "layerType", "TiledImageLayer");
 
-        transformWWDotNetQuadTileSet(context, el, xpath);
+        DataConfigurationUtils.transformWWDotNetQuadTileSet(context, el, xpath);
     }
 
     protected static void transformWWDotNetQuadTileSet(Element context, Element outElem, XPath xpath) {
@@ -1884,7 +1879,7 @@ public class DataConfigurationUtils {
         s = WWXML.getText(context, "ImageAccessor/ImageFileExtension", xpath);
         if (s != null && !s.isEmpty()) {
             if (!(s.charAt(0) == '.')) {
-                s = "." + s;
+                s = '.' + s;
             }
             WWXML.appendText(outElem, "FormatSuffix", s);
 
@@ -1899,7 +1894,7 @@ public class DataConfigurationUtils {
         }
 
         // Set the texture format to DDS. If the texture data is already in DDS format, this parameter is benign.
-        WWXML.appendText(outElem, "TextureFormat", DEFAULT_TEXTURE_FORMAT);
+        WWXML.appendText(outElem, "TextureFormat", DataConfigurationUtils.DEFAULT_TEXTURE_FORMAT);
 
         // Tile structure properties.
         Integer numLevels = WWXML.getInteger(context, "ImageAccessor/NumberLevels", xpath);
@@ -1909,14 +1904,14 @@ public class DataConfigurationUtils {
             WWXML.setIntegerAttribute(el, "numEmpty", 0);
         }
 
-        Sector sector = getWWDotNetLayerSetSector(context, "BoundingBox", xpath);
+        Sector sector = DataConfigurationUtils.getWWDotNetLayerSetSector(context, "BoundingBox", xpath);
         if (sector != null) {
             WWXML.appendSector(outElem, "Sector", sector);
         }
 
         WWXML.appendLatLon(outElem, "TileOrigin/LatLon", new LatLon(Angle.NEG90, Angle.NEG180));
 
-        LatLon ll = getWWDotNetLayerSetLatLon(context, "ImageAccessor/LevelZeroTileSizeDegrees", xpath);
+        LatLon ll = DataConfigurationUtils.getWWDotNetLayerSetLatLon(context, "ImageAccessor/LevelZeroTileSizeDegrees", xpath);
         if (ll != null) {
             WWXML.appendLatLon(outElem, "LevelZeroTileDelta/LatLon", ll);
         }

@@ -127,15 +127,15 @@ public class RadarVolumeExample extends ApplicationTemplate {
             List<Vec4> vertices = new ArrayList<>();
             vertices.add(Vec4.ZERO); // the first vertex is the radar position.
 
-            double dAz = (rightAzimuth.radians - leftAzimuth.radians) / (numAzimuths - 1);
-            double dEl = (upperElevation.radians - lowerElevation.radians) / (numElevations - 1);
+            double dAz = (rightAzimuth.radians() - leftAzimuth.radians()) / (numAzimuths - 1);
+            double dEl = (upperElevation.radians() - lowerElevation.radians()) / (numElevations - 1);
 
             // Compute the grid for the inner range.
             for (int iel = 0; iel < numElevations; iel++) {
-                double elevation = lowerElevation.radians + iel * dEl;
+                double elevation = lowerElevation.radians() + iel * dEl;
 
                 for (int iaz = 0; iaz < numAzimuths; iaz++) {
-                    double azimuth = leftAzimuth.radians + iaz * dAz;
+                    double azimuth = leftAzimuth.radians() + iaz * dAz;
 
                     double x = innerRange * Math.sin(azimuth) * Math.cos(elevation);
                     double y = innerRange * Math.cos(azimuth) * Math.cos(elevation);
@@ -147,10 +147,10 @@ public class RadarVolumeExample extends ApplicationTemplate {
 
             // Compute the grid for the outer range.
             for (int iel = 0; iel < numElevations; iel++) {
-                double elevation = lowerElevation.radians + iel * dEl;
+                double elevation = lowerElevation.radians() + iel * dEl;
 
                 for (int iaz = 0; iaz < numAzimuths; iaz++) {
-                    double azimuth = leftAzimuth.radians + iaz * dAz;
+                    double azimuth = leftAzimuth.radians() + iaz * dAz;
 
                     double x = outerRange * Math.sin(azimuth) * Math.cos(elevation);
                     double y = outerRange * Math.cos(azimuth) * Math.cos(elevation);
@@ -253,10 +253,10 @@ public class RadarVolumeExample extends ApplicationTemplate {
 
             // Compute the near grid.
             double phi;
-            double dPhi = fov.divide(2).radians / (height - 1);
+            double dPhi = fov.divide(2).radians() / (height - 1);
 
             for (int j = 0; j < height; j++) {
-                phi = fov.divide(2).radians - j * dPhi;
+                phi = fov.divide(2).radians() - j * dPhi;
 
                 for (int i = 0; i < width; i++) {
                     double theta = i * dTheta;
@@ -272,7 +272,7 @@ public class RadarVolumeExample extends ApplicationTemplate {
 
             // Compute the far grid.
             for (int j = 0; j < height; j++) {
-                phi = fov.divide(2).radians - j * dPhi;
+                phi = fov.divide(2).radians() - j * dPhi;
 
                 for (int i = 0; i < width; i++) {
                     double theta = i * dTheta;
@@ -415,7 +415,7 @@ public class RadarVolumeExample extends ApplicationTemplate {
             Vec4 cartesianPosition = globe.computeEllipsoidalPointFromPosition(position);
             Angle angle = cartesianOrigin.angleBetween3(cartesianPosition.subtract3(cartesianOrigin));
 
-            return angle.radians > (Math.PI / 2 - this.minimumElevation.radians);
+            return angle.radians() > (Math.PI / 2 - this.minimumElevation.radians());
         }
 
         List<Position> makePositions(Collection<Vec4> vertices) {

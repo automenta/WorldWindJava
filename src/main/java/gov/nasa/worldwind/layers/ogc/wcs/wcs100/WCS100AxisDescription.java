@@ -51,13 +51,11 @@ public class WCS100AxisDescription extends AbstractXMLEventParser {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.axisNames.add(s);
-        }
-        else if (ctx.isStartElement(event, "offsetVector")) {
+        } else if (ctx.isStartElement(event, "offsetVector")) {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.offsetVectors.add(s);
-        }
-        else {
+        } else {
             super.doParseEventContent(ctx, event, args);
         }
     }

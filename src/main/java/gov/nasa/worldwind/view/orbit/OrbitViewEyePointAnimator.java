@@ -116,12 +116,11 @@ public class OrbitViewEyePointAnimator implements Animator {
         Matrix modelview = this.view.getModelviewMatrix();
         Vec4 point = modelview.extractEyePoint();
 
-        if (point.distanceTo3(this.eyePoint) > STOP_DISTANCE) {
+        if (point.distanceTo3(this.eyePoint) > OrbitViewEyePointAnimator.STOP_DISTANCE) {
             point = Vec4.mix3(1 - this.smoothing, point, this.eyePoint);
-            setEyePoint(this.globe, this.view, point);
-        }
-        else {
-            setEyePoint(this.globe, this.view, this.eyePoint);
+            OrbitViewEyePointAnimator.setEyePoint(this.globe, this.view, point);
+        } else {
+            OrbitViewEyePointAnimator.setEyePoint(this.globe, this.view, this.eyePoint);
             this.stop();
         }
     }

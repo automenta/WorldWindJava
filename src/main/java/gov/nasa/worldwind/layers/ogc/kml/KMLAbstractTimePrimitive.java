@@ -35,6 +35,6 @@ public abstract class KMLAbstractTimePrimitive extends KMLAbstractObject {
 
         super.applyChange(sourceValues);
 
-        this.onChange(new Message(MSG_TIME_CHANGED, this));
+        this.onChange(new Message(KMLAbstractObject.MSG_TIME_CHANGED, this));
     }
 }

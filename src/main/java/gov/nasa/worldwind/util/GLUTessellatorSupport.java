@@ -13,8 +13,8 @@ import java.nio.IntBuffer;
 import java.util.*;
 
 /**
- * GLUTessellatorSupport is a utility class for configuring and using a {@link GLUtessellator} to
- * tessellate complex polygons into triangles.
+ * GLUTessellatorSupport is a utility class for configuring and using a {@link GLUtessellator} to tessellate complex
+ * polygons into triangles.
  * <p>
  * The standard pattern for using GLUTessellatorSupport to prepare a GLUtessellator is as follows: <code>
  * GLUTessellatorSupport glts = new GLUTessellatorSupport();<br> GLUtessellatorCallback cb = ...; // Reference to an
@@ -36,8 +36,8 @@ public class GLUTessellatorSupport {
     }
 
     /**
-     * Creates a new {@link GLUtessellatorCallback} that draws tessellated polygons as OpenGL
-     * primitives by calling glBegin, glEnd, and glVertex.
+     * Creates a new {@link GLUtessellatorCallback} that draws tessellated polygons as OpenGL primitives by calling
+     * glBegin, glEnd, and glVertex.
      *
      * @param gl the GL context to draw into.
      * @return a new GLUtessellatorCallback for drawing tessellated polygons as OpenGL primtives.
@@ -73,10 +73,9 @@ public class GLUTessellatorSupport {
     }
 
     /**
-     * Returns this GLUTessellatorSupport's internal {@link GLUtessellator} instance. This returns
-     * a valid GLUtessellator instance if called between {@link #beginTessellation(GLUtessellatorCallback,
-     * Vec4)} and {@link #endTessellation()}. This returns null if called from outside a
-     * beginTessellation/endTessellation block.
+     * Returns this GLUTessellatorSupport's internal {@link GLUtessellator} instance. This returns a valid
+     * GLUtessellator instance if called between {@link #beginTessellation(GLUtessellatorCallback, Vec4)} and {@link
+     * #endTessellation()}. This returns null if called from outside a beginTessellation/endTessellation block.
      *
      * @return the internal GLUtessellator instance, or null if called from outside a beginTessellation/endTessellation
      * block.
@@ -87,10 +86,9 @@ public class GLUTessellatorSupport {
 
     /**
      * Prepares this GLUTessellatorSupport's internal GLU tessellator for use. This initializes the internal
-     * GLUtessellator to a new instance by invoking {@link GLU#gluNewTess()}, and configures the
-     * tessellator with the specified callback and normal with calls to {@link GLU#gluTessCallback(GLUtessellator,
-     * int, GLUtessellatorCallback)} and {@link GLU#gluTessNormal(GLUtessellator,
-     * double, double, double)}, respectively.
+     * GLUtessellator to a new instance by invoking {@link GLU#gluNewTess()}, and configures the tessellator with the
+     * specified callback and normal with calls to {@link GLU#gluTessCallback(GLUtessellator, int,
+     * GLUtessellatorCallback)} and {@link GLU#gluTessNormal(GLUtessellator, double, double, double)}, respectively.
      *
      * @param callback the callback to configure the GLU tessellator with.
      * @param normal   the normal to configure the GLU tessellator with.
@@ -229,8 +227,8 @@ public class GLUTessellatorSupport {
         protected final boolean[] edgeFlags = {true, true, true};
         protected IntBuffer triangleBuffer = IntBuffer.allocate(0);
         protected IntBuffer lineBuffer = IntBuffer.allocate(0);
-        protected int error = 0;
-        protected int index = 0;
+        protected int error;
+        protected int index;
         protected boolean edgeFlag = true;
 
         public CollectPrimitivesCallback() {
@@ -423,7 +421,7 @@ public class GLUTessellatorSupport {
          */
         @Override
         public void error(int errno) {
-            String errstr = convertGLUTessErrorToString(errno);
+            String errstr = GLUTessellatorSupport.convertGLUTessErrorToString(errno);
             String msg = Logging.getMessage("generic.ExceptionWhileTessellating", errstr);
             Logging.logger().severe(msg);
         }

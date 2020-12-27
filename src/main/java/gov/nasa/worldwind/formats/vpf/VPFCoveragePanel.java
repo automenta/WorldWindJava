@@ -47,6 +47,51 @@ public class VPFCoveragePanel extends JPanel {
         this.makePanel(db, size);
     }
 
+    protected static void sortPropertyLists(java.util.List<? extends AVList> propertyList, final String propertyName) {
+        propertyList.sort((Comparator<AVList>) (a, b) -> {
+            String aValue = (a.get(propertyName) != null) ? a.get(propertyName).toString() : "";
+            String bValue = (b.get(propertyName) != null) ? b.get(propertyName).toString() : "";
+            return String.CASE_INSENSITIVE_ORDER.compare(aValue, bValue);
+        });
+    }
+
+    protected static Iterable<SymbolInfo> getUniqueSymbols(Iterable<VPFSymbol> iterable) {
+        // Use a TreeSet to consolidate duplicate symbol attributes and simultaneously sort the attributes.
+
+        Collection<SymbolInfo> set = new TreeSet<>((a, b) -> {
+            String aCoverageName = (a.getFeatureClass().getCoverage().getName() != null)
+                ? a.getFeatureClass().getCoverage().getName() : "";
+            String bCoverageName = (b.getFeatureClass().getCoverage().getName() != null)
+                ? b.getFeatureClass().getCoverage().getName() : "";
+
+            int i = String.CASE_INSENSITIVE_ORDER.compare(aCoverageName, bCoverageName);
+            if (i != 0)
+                return i;
+
+            String aKey = (a.getAttributes().getSymbolKey() != null) ? a.getAttributes().getSymbolKey().toString()
+                : "";
+            String bKey = (b.getAttributes().getSymbolKey() != null) ? b.getAttributes().getSymbolKey().toString()
+                : "";
+
+            i = String.CASE_INSENSITIVE_ORDER.compare(aKey, bKey);
+            if (i != 0)
+                return i;
+
+            int aType = (a.getFeatureClass().getType() != null) ? a.getFeatureClass().getType().ordinal() : -1;
+            int bType = (b.getFeatureClass().getType() != null) ? b.getFeatureClass().getType().ordinal() : -1;
+
+            return Integer.compare(aType, bType);
+        });
+
+        for (VPFSymbol symbol : iterable) {
+            if (symbol != null && symbol.getFeature() != null && symbol.getAttributes() != null) {
+                set.add(new SymbolInfo(symbol.getFeature().getFeatureClass(), symbol.getAttributes()));
+            }
+        }
+
+        return set;
+    }
+
     public VPFLayer getLayer() {
         return this.layer;
     }
@@ -140,14 +185,6 @@ public class VPFCoveragePanel extends JPanel {
         }
     }
 
-    protected static void sortPropertyLists(java.util.List<? extends AVList> propertyList, final String propertyName) {
-        propertyList.sort((Comparator<AVList>) (a, b) -> {
-            String aValue = (a.get(propertyName) != null) ? a.get(propertyName).toString() : "";
-            String bValue = (b.get(propertyName) != null) ? b.get(propertyName).toString() : "";
-            return String.CASE_INSENSITIVE_ORDER.compare(aValue, bValue);
-        });
-    }
-
     public void addLegend() {
         // Make and fill the panel holding the legend items.
         this.legendPanel = new JPanel();
@@ -226,43 +263,6 @@ public class VPFCoveragePanel extends JPanel {
 
         this.legendPanel.revalidate();
         this.legendPanel.repaint();
-    }
-
-    protected static Iterable<SymbolInfo> getUniqueSymbols(Iterable<VPFSymbol> iterable) {
-        // Use a TreeSet to consolidate duplicate symbol attributes and simultaneously sort the attributes.
-
-        Collection<SymbolInfo> set = new TreeSet<>((a, b) -> {
-            String aCoverageName = (a.getFeatureClass().getCoverage().getName() != null)
-                ? a.getFeatureClass().getCoverage().getName() : "";
-            String bCoverageName = (b.getFeatureClass().getCoverage().getName() != null)
-                ? b.getFeatureClass().getCoverage().getName() : "";
-
-            int i = String.CASE_INSENSITIVE_ORDER.compare(aCoverageName, bCoverageName);
-            if (i != 0)
-                return i;
-
-            String aKey = (a.getAttributes().getSymbolKey() != null) ? a.getAttributes().getSymbolKey().toString()
-                : "";
-            String bKey = (b.getAttributes().getSymbolKey() != null) ? b.getAttributes().getSymbolKey().toString()
-                : "";
-
-            i = String.CASE_INSENSITIVE_ORDER.compare(aKey, bKey);
-            if (i != 0)
-                return i;
-
-            int aType = (a.getFeatureClass().getType() != null) ? a.getFeatureClass().getType().ordinal() : -1;
-            int bType = (b.getFeatureClass().getType() != null) ? b.getFeatureClass().getType().ordinal() : -1;
-
-            return Integer.compare(aType, bType);
-        });
-
-        for (VPFSymbol symbol : iterable) {
-            if (symbol != null && symbol.getFeature() != null && symbol.getAttributes() != null) {
-                set.add(new SymbolInfo(symbol.getFeature().getFeatureClass(), symbol.getAttributes()));
-            }
-        }
-
-        return set;
     }
 
     protected void addCoverage(VPFDatabase db, VPFCoverage cov, Container parent) {

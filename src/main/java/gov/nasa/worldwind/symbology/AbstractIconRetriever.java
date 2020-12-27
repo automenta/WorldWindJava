@@ -7,6 +7,7 @@
 package gov.nasa.worldwind.symbology;
 
 ////.*;
+
 import gov.nasa.worldwind.util.*;
 
 import javax.imageio.ImageIO;
@@ -45,10 +46,10 @@ import java.util.Objects;
  * </pre>
  * <h2>Composite icons</h2>
  * <p>
- * Complicated symbols may be made up of several different graphical elements. {@link
- * #drawImage(BufferedImage, BufferedImage) drawImage} helps build a complex symbol from
- * simple pieces. For example, if a symbol is composed of a frame and an icon, the icon retriever could load the frame
- * and icon independently, draw the icon over the frame, and return the composite image:
+ * Complicated symbols may be made up of several different graphical elements. {@link #drawImage(BufferedImage,
+ * BufferedImage) drawImage} helps build a complex symbol from simple pieces. For example, if a symbol is composed of a
+ * frame and an icon, the icon retriever could load the frame and icon independently, draw the icon over the frame, and
+ * return the composite image:
  * <pre>
  * // Load the frame and icon as separate pieces.
  * BufferedImage frame = this.readImage("path/to/frame.png");
@@ -62,11 +63,11 @@ import java.util.Objects;
  * </pre>
  * <h2>Changing the color of an icon</h2>
  * <p>
- * {@link #multiply(BufferedImage, Color) multiply} can change the color of an image by
- * multiplying each pixel in the image by a color. The multiplication color will replace any white pixels and black
- * pixels will be unaffected. For example, a symbol set in which hostile symbols are drawn in red and friendly symbols
- * are drawn in green could be implemented by creating white icons, and then multiplying by either red or green when the
- * retriever constructs the icon.
+ * {@link #multiply(BufferedImage, Color) multiply} can change the color of an image by multiplying each pixel in the
+ * image by a color. The multiplication color will replace any white pixels and black pixels will be unaffected. For
+ * example, a symbol set in which hostile symbols are drawn in red and friendly symbols are drawn in green could be
+ * implemented by creating white icons, and then multiplying by either red or green when the retriever constructs the
+ * icon.
  *
  * @author ccrick
  * @version $Id: AbstractIconRetriever.java 1171 2013-02-11 21:45:02Z dcollins $
@@ -92,84 +93,6 @@ public abstract class AbstractIconRetriever implements IconRetriever {
         }
 
         this.retrieverPath = retrieverPath;
-    }
-
-    /**
-     * Indicates the file system or network path of the symbol directory.. The retrieval path may be a file URL to a
-     * directory on the local file system (for example, file:///symbols/mil-std-2525). A URL to a network resource (
-     * http://myserver.com/milstd2525/), or a URL to a JAR or ZIP file (jar:file:milstd2525-symbols.zip!).
-     *
-     * @return File system or network path to symbol repository.
-     */
-    public String getRetrieverPath() {
-        return this.retrieverPath;
-    }
-
-    /**
-     * Indicates whether or not this retriever is equal to another.
-     *
-     * @param o Object to compare.
-     * @return {@code true} if {@code o} is an instance of AbstractIconRetriever and has the same retrieval path as this
-     * retriever.
-     */
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || this.getClass() != o.getClass())
-            return false;
-
-        AbstractIconRetriever that = (AbstractIconRetriever) o;
-        return Objects.equals(this.retrieverPath, that.retrieverPath);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        return this.retrieverPath != null ? this.retrieverPath.hashCode() : 0;
-    }
-
-    /**
-     * Load an image from a local or remote path. The image path is interpreted relative to the retrieval path. For
-     * example, if the retrieval path is http://myserver.com/milstd2525/, calling readImage("icon.png") will attempt to
-     * retrieve an image from http://myserver.com/milstd2525/icon.png.
-     *
-     * @param path Path to the icon resource, relative to this retriever's retrieval path.
-     * @return The requested icon as a BufferedImage, or null if the icon cannot be loaded.
-     */
-    protected BufferedImage readImage(String path) {
-        if (path == null) {
-            String msg = Logging.getMessage("nullValue.PathIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(WWIO.stripTrailingSeparator(this.getRetrieverPath()));
-        sb.append("/");
-        sb.append(WWIO.stripLeadingSeparator(path));
-
-        InputStream is = null;
-        try {
-            URL url = WWIO.makeURL(sb.toString());
-            if (url != null)
-                return ImageIO.read(url);
-
-            is = WWIO.openFileOrResourceStream(sb.toString(), this.getClass());
-            if (is != null)
-                return ImageIO.read(is);
-        }
-        catch (Exception e) {
-            String msg = Logging.getMessage("generic.ExceptionWhileReading", sb.toString());
-            Logging.logger().fine(msg);
-        }
-        finally {
-            WWIO.closeStream(is, sb.toString());
-        }
-
-        return null;
     }
 
     /**
@@ -266,8 +189,8 @@ public abstract class AbstractIconRetriever implements IconRetriever {
 
     /**
      * Replace the color of each pixel in an image. This method retains the alpha channel of each pixel, but completely
-     * replaces the red, green, and blue components with the replacement color. Unlike {@link
-     * #multiply(BufferedImage, Color) multiply}, this method changes the color of all pixels.
+     * replaces the red, green, and blue components with the replacement color. Unlike {@link #multiply(BufferedImage,
+     * Color) multiply}, this method changes the color of all pixels.
      *
      * @param image Image to operate on.
      * @param color Color to apply to to each pixel.
@@ -318,5 +241,83 @@ public abstract class AbstractIconRetriever implements IconRetriever {
 
             image.setRGB(0, y, w, 1, pixels, 0, w);
         }
+    }
+
+    /**
+     * Indicates the file system or network path of the symbol directory.. The retrieval path may be a file URL to a
+     * directory on the local file system (for example, file:///symbols/mil-std-2525). A URL to a network resource (
+     * http://myserver.com/milstd2525/), or a URL to a JAR or ZIP file (jar:file:milstd2525-symbols.zip!).
+     *
+     * @return File system or network path to symbol repository.
+     */
+    public String getRetrieverPath() {
+        return this.retrieverPath;
+    }
+
+    /**
+     * Indicates whether or not this retriever is equal to another.
+     *
+     * @param o Object to compare.
+     * @return {@code true} if {@code o} is an instance of AbstractIconRetriever and has the same retrieval path as this
+     * retriever.
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || this.getClass() != o.getClass())
+            return false;
+
+        AbstractIconRetriever that = (AbstractIconRetriever) o;
+        return Objects.equals(this.retrieverPath, that.retrieverPath);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return this.retrieverPath != null ? this.retrieverPath.hashCode() : 0;
+    }
+
+    /**
+     * Load an image from a local or remote path. The image path is interpreted relative to the retrieval path. For
+     * example, if the retrieval path is http://myserver.com/milstd2525/, calling readImage("icon.png") will attempt to
+     * retrieve an image from http://myserver.com/milstd2525/icon.png.
+     *
+     * @param path Path to the icon resource, relative to this retriever's retrieval path.
+     * @return The requested icon as a BufferedImage, or null if the icon cannot be loaded.
+     */
+    protected BufferedImage readImage(String path) {
+        if (path == null) {
+            String msg = Logging.getMessage("nullValue.PathIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(WWIO.stripTrailingSeparator(this.getRetrieverPath()));
+        sb.append('/');
+        sb.append(WWIO.stripLeadingSeparator(path));
+
+        InputStream is = null;
+        try {
+            URL url = WWIO.makeURL(sb.toString());
+            if (url != null)
+                return ImageIO.read(url);
+
+            is = WWIO.openFileOrResourceStream(sb.toString(), this.getClass());
+            if (is != null)
+                return ImageIO.read(is);
+        }
+        catch (Exception e) {
+            String msg = Logging.getMessage("generic.ExceptionWhileReading", sb.toString());
+            Logging.logger().fine(msg);
+        }
+        finally {
+            WWIO.closeStream(is, sb.toString());
+        }
+
+        return null;
     }
 }

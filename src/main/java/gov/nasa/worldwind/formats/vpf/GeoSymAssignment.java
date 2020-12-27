@@ -44,8 +44,8 @@ public class GeoSymAssignment {
 
         GeoSymTableReader reader = new GeoSymTableReader();
 
-        for (String name : tableNames) {
-            GeoSymTable table = reader.read(getTablePath(filePath, name));
+        for (String name : GeoSymAssignment.tableNames) {
+            GeoSymTable table = reader.read(GeoSymAssignment.getTablePath(filePath, name));
             if (table != null)
                 assignment.putTable(name, table);
         }
@@ -62,8 +62,8 @@ public class GeoSymAssignment {
 
         GeoSymTableReader reader = new GeoSymTableReader();
 
-        for (String name : tableNames) {
-            if (!reader.canRead(getTablePath(filePath, name)))
+        for (String name : GeoSymAssignment.tableNames) {
+            if (!reader.canRead(GeoSymAssignment.getTablePath(filePath, name)))
                 return false;
         }
 
@@ -73,7 +73,7 @@ public class GeoSymAssignment {
     protected static String getTablePath(String filePath, String tableName) {
         StringBuilder sb = new StringBuilder();
         sb.append(filePath);
-        sb.append("/");
+        sb.append('/');
         sb.append(tableName);
 
         return sb.toString();

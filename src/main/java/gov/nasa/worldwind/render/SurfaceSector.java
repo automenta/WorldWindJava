@@ -32,8 +32,8 @@ public class SurfaceSector extends AbstractSurfaceShape implements Exportable {
 
     /**
      * Constructs a new surface sector with the specified normal (as opposed to highlight) attributes and the {@link
-     * Sector#EMPTY_SECTOR}. Modifying the attribute reference after calling this constructor
-     * causes this shape's appearance to change accordingly.
+     * Sector#EMPTY_SECTOR}. Modifying the attribute reference after calling this constructor causes this shape's
+     * appearance to change accordingly.
      *
      * @param normalAttrs the normal attributes. May be null, in which case default attributes are used.
      */
@@ -123,11 +123,10 @@ public class SurfaceSector extends AbstractSurfaceShape implements Exportable {
     }
 
     protected void doMoveTo(Position oldReferencePosition, Position newReferencePosition) {
-        LatLon[] locations = new LatLon[]
-            {
-                new LatLon(this.sector.latMin(), this.sector.lonMin()),
-                new LatLon(this.sector.latMax(), this.sector.lonMax())
-            };
+        LatLon[] locations = {
+            new LatLon(this.sector.latMin(), this.sector.lonMin()),
+            new LatLon(this.sector.latMax(), this.sector.lonMax())
+        };
 
         LatLon[] newLocations = new LatLon[2];
         for (int i = 0; i < 2; i++) {
@@ -191,11 +190,9 @@ public class SurfaceSector extends AbstractSurfaceShape implements Exportable {
         if (output instanceof XMLStreamWriter) {
             xmlWriter = (XMLStreamWriter) output;
             closeWriterWhenFinished = false;
-        }
-        else if (output instanceof Writer) {
+        } else if (output instanceof Writer) {
             xmlWriter = factory.createXMLStreamWriter((Writer) output);
-        }
-        else if (output instanceof OutputStream) {
+        } else if (output instanceof OutputStream) {
             xmlWriter = factory.createXMLStreamWriter((OutputStream) output);
         }
 

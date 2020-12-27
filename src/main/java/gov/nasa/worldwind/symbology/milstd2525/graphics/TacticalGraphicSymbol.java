@@ -87,6 +87,43 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol {
     }
 
     /**
+     * Indicates the label layouts designed to a particular graphic.
+     *
+     * @param sidc Symbol ID to for which to determine layout.
+     * @return List of label layouts for the specified symbol.
+     */
+    protected static List<LabelLayout> getLayouts(String sidc) {
+        return TacticalGraphicSymbol.defaultLayouts.get(sidc);
+    }
+
+    /**
+     * Add a hyphen to the first element in a list of dates to indicate a date range. This method only modifiers the
+     * date list if exactly two dates are displayed in the graphic.
+     *
+     * @param value   Iterable of date modifiers.
+     * @param offsets Layouts for the date modifiers.
+     * @return Iterable of modified dates. This may be a new, modified list, or the same list as {@code value} if no
+     * modification was required.
+     */
+    protected static Iterable addHyphenToDateRange(Iterable value, Collection<OffsetPair> offsets) {
+        // Only add a hyphen if exactly two dates are displayed in the graphic.
+        if (offsets.size() != 2)
+            return value;
+
+        // Make sure that two date values are provided.
+        Iterator iterator = value.iterator();
+        Object date1 = iterator.hasNext() ? iterator.next() : null;
+        Object date2 = iterator.hasNext() ? iterator.next() : null;
+
+        // If only two dates were provided, add a hyphen to indicate a date range. If more or less
+        // date were provided it's not a date range, so don't change anything.
+        if (date1 != null && date2 != null) {
+            return Arrays.asList(date1 + "-", date2);
+        }
+        return value;
+    }
+
+    /**
      * Indicates the current value of graphic's Status/Operational Condition field.
      *
      * @return this graphic's Status/Operational Condition field.
@@ -147,7 +184,7 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol {
             MilStd2525Constants.DEFAULT_ICON_RETRIEVER_PATH);
         this.setIconRetriever(new MilStd2525PointGraphicRetriever(iconRetrieverPath));
 
-        Offset offset = defaultOffsets.get(symbolCode.toMaskedString());
+        Offset offset = TacticalGraphicSymbol.defaultOffsets.get(symbolCode.toMaskedString());
         this.setOffset(offset);
 
         // By default, show the hostile indicator (the letters "ENY"). Note that this default is different from
@@ -171,7 +208,7 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol {
 
     @Override
     protected int getMaxLabelLines(AVList modifiers) {
-        return DEFAULT_LABEL_LINES;
+        return TacticalGraphicSymbol.DEFAULT_LABEL_LINES;
     }
 
     @Override
@@ -248,27 +285,16 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol {
                 value = TacticalGraphicSymbol.addHyphenToDateRange((Iterable) value, offsets);
             }
 
-            String mode = SymbologyConstants.LOCATION.equals(layout.modifier) ? LAYOUT_RELATIVE : LAYOUT_NONE;
+            String mode = SymbologyConstants.LOCATION.equals(layout.modifier) ? AbstractTacticalSymbol.LAYOUT_RELATIVE : AbstractTacticalSymbol.LAYOUT_NONE;
 
             // Some graphics support multiple instances of the same modifier. Handle this case differently than the
             // single instance case.
             if (value instanceof Iterable) {
                 this.layoutMultiLabel(dc, font, offsets, (Iterable) value, mode, osym);
-            }
-            else if (value != null) {
+            } else if (value != null) {
                 this.layoutLabel(dc, font, layout.offsets.get(0), value.toString(), mode, osym);
             }
         }
-    }
-
-    /**
-     * Indicates the label layouts designed to a particular graphic.
-     *
-     * @param sidc Symbol ID to for which to determine layout.
-     * @return List of label layouts for the specified symbol.
-     */
-    protected static List<LabelLayout> getLayouts(String sidc) {
-        return defaultLayouts.get(sidc);
     }
 
     @Override
@@ -288,35 +314,8 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol {
 
             java.util.List<? extends Point2D> points = MilStd2525Util.computeGroundHeadingIndicatorPoints(dc,
                 osym.placePoint, (Angle) o, length, this.iconRect.getHeight());
-            this.addLine(dc, BELOW_BOTTOM_CENTER_OFFSET, points, LAYOUT_RELATIVE, points.size() - 1, osym);
+            this.addLine(dc, TacticalGraphicSymbol.BELOW_BOTTOM_CENTER_OFFSET, points, AbstractTacticalSymbol.LAYOUT_RELATIVE, points.size() - 1, osym);
         }
-    }
-
-    /**
-     * Add a hyphen to the first element in a list of dates to indicate a date range. This method only modifiers the
-     * date list if exactly two dates are displayed in the graphic.
-     *
-     * @param value   Iterable of date modifiers.
-     * @param offsets Layouts for the date modifiers.
-     * @return Iterable of modified dates. This may be a new, modified list, or the same list as {@code value} if no
-     * modification was required.
-     */
-    protected static Iterable addHyphenToDateRange(Iterable value, Collection<OffsetPair> offsets) {
-        // Only add a hyphen if exactly two dates are displayed in the graphic.
-        if (offsets.size() != 2)
-            return value;
-
-        // Make sure that two date values are provided.
-        Iterator iterator = value.iterator();
-        Object date1 = iterator.hasNext() ? iterator.next() : null;
-        Object date2 = iterator.hasNext() ? iterator.next() : null;
-
-        // If only two dates were provided, add a hyphen to indicate a date range. If more or less
-        // date were provided it's not a date range, so don't change anything.
-        if (date1 != null && date2 != null) {
-            return Arrays.asList(date1 + "-", date2);
-        }
-        return value;
     }
 
     protected void layoutLabel(DrawContext dc, Font font, OffsetPair layout, String value, String mode,

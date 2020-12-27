@@ -38,7 +38,7 @@ public class StarsLayer extends RenderableLayer {
      * The stars file name.
      */
     protected String starsFileName =
-        Configuration.getStringValue("gov.nasa.worldwind.StarsLayer.StarsFileName", DEFAULT_STARS_FILE);
+        Configuration.getStringValue("gov.nasa.worldwind.StarsLayer.StarsFileName", StarsLayer.DEFAULT_STARS_FILE);
     /**
      * The float buffer holding the Cartesian star coordinates.
      */
@@ -109,7 +109,7 @@ public class StarsLayer extends RenderableLayer {
         this.setPickEnabled(false);
 
         // Turn the layer off to eliminate its overhead when the user zooms in.
-        this.setMinActiveAltitude(DEFAULT_MIN_ACTIVE_ALTITUDE);
+        this.setMinActiveAltitude(StarsLayer.DEFAULT_MIN_ACTIVE_ALTITUDE);
     }
 
     /**
@@ -236,8 +236,7 @@ public class StarsLayer extends RenderableLayer {
             if (dc.getGLRuntimeCapabilities().isUseVertexBufferObject()) {
                 if (!this.drawWithVBO(dc))
                     this.drawWithVertexArray(dc);
-            }
-            else {
+            } else {
                 this.drawWithVertexArray(dc);
             }
         }
@@ -323,8 +322,7 @@ public class StarsLayer extends RenderableLayer {
                 String message = "IOException while loading stars data from " + this.starsFileName;
                 Logging.logger().severe(message);
             }
-        }
-        else {
+        } else {
             //Assume it is a tsv text file
             byteBuffer = StarsConvertor.convertTsvToByteBuffer(this.starsFileName);
         }
@@ -389,7 +387,7 @@ public class StarsLayer extends RenderableLayer {
         public static void convertTsvToDat(String tsvFileName) {
             String datFileName = WWIO.replaceSuffix(tsvFileName, ".dat");
 
-            convertTsvToDat(tsvFileName, datFileName, DEFAULT_RADIUS);
+            StarsConvertor.convertTsvToDat(tsvFileName, datFileName, StarsConvertor.DEFAULT_RADIUS);
         }
 
         /**
@@ -401,7 +399,7 @@ public class StarsLayer extends RenderableLayer {
         public static void convertTsvToDat(String tsvFileName, float radius) {
             String datFileName = WWIO.replaceSuffix(tsvFileName, ".dat");
 
-            convertTsvToDat(tsvFileName, datFileName, radius);
+            StarsConvertor.convertTsvToDat(tsvFileName, datFileName, radius);
         }
 
         /**
@@ -411,7 +409,7 @@ public class StarsLayer extends RenderableLayer {
          * @param datFileName name of dat binary star file
          */
         public static void convertTsvToDat(String tsvFileName, String datFileName) {
-            convertTsvToDat(tsvFileName, datFileName, DEFAULT_RADIUS);
+            StarsConvertor.convertTsvToDat(tsvFileName, datFileName, StarsConvertor.DEFAULT_RADIUS);
         }
 
         /**
@@ -423,7 +421,7 @@ public class StarsLayer extends RenderableLayer {
          */
         public static void convertTsvToDat(String tsvFileName, String datFileName, float radius) {
             //Convert the Tsv Star file to a ByteBuffer in little-endian order
-            ByteBuffer bbuf = convertTsvToByteBuffer(tsvFileName, radius);
+            ByteBuffer bbuf = StarsConvertor.convertTsvToByteBuffer(tsvFileName, radius);
 
             try {
                 WWIO.saveBuffer(bbuf, new File(datFileName));
@@ -441,7 +439,7 @@ public class StarsLayer extends RenderableLayer {
          * @return ByteBuffer with interleaved color and vertex positions as floats in little-endian order
          */
         public static ByteBuffer convertTsvToByteBuffer(String starsFileName) {
-            return convertTsvToByteBuffer(starsFileName, DEFAULT_RADIUS);
+            return StarsConvertor.convertTsvToByteBuffer(starsFileName, StarsConvertor.DEFAULT_RADIUS);
         }
 
         /**
@@ -455,7 +453,7 @@ public class StarsLayer extends RenderableLayer {
             try {
                 Collection<Float> tmpBuffer = new ArrayList<>();
 
-                InputStream starsStream = StarsConvertor.class.getResourceAsStream("/" + starsFileName);
+                InputStream starsStream = StarsConvertor.class.getResourceAsStream('/' + starsFileName);
 
                 if (starsStream == null) {
                     File starsFile = new File(starsFileName);
@@ -527,16 +525,16 @@ public class StarsLayer extends RenderableLayer {
                         }
 
                         // Star color
-                        Color color = BVColor(BVdec);
+                        Color color = StarsConvertor.BVColor(BVdec);
                         tmpBuffer.add(color.getRed() / 255.0f * (float) Vdec);
                         tmpBuffer.add(color.getGreen() / 255.0f * (float) Vdec);
                         tmpBuffer.add(color.getBlue() / 255.0f * (float) Vdec);
 
                         // Place vertex for point star
-                        Vec4 pos = SphericalToCartesian(latitude, longitude, radius);
-                        tmpBuffer.add((float) pos.getX());
-                        tmpBuffer.add((float) pos.getY());
-                        tmpBuffer.add((float) pos.getZ());
+                        Vec4 pos = StarsConvertor.SphericalToCartesian(latitude, longitude, radius);
+                        tmpBuffer.add((float) pos.x);
+                        tmpBuffer.add((float) pos.y);
+                        tmpBuffer.add((float) pos.z);
                     }
 
                     // Data starting next line
@@ -629,7 +627,7 @@ public class StarsLayer extends RenderableLayer {
             }
 
             String ans;
-            ans = JOptionPane.showInputDialog("Enter star sphere radius?", DEFAULT_RADIUS);
+            ans = JOptionPane.showInputDialog("Enter star sphere radius?", StarsConvertor.DEFAULT_RADIUS);
 
             float radius;
 
@@ -644,12 +642,12 @@ public class StarsLayer extends RenderableLayer {
 
                     ans = JOptionPane.showInputDialog(
                         "<html><font color=#ff0000>INVALID VALUE: Please enter a floating point number."
-                            + "</font><br>Enter star sphere radius?</html>", DEFAULT_RADIUS);
+                            + "</font><br>Enter star sphere radius?</html>", StarsConvertor.DEFAULT_RADIUS);
                 }
             }
 
             for (File file : files) {
-                convertTsvToDat(file.getAbsolutePath(), radius);
+                StarsConvertor.convertTsvToDat(file.getAbsolutePath(), radius);
             }
         }
     }

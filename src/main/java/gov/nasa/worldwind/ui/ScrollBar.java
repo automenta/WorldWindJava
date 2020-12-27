@@ -93,15 +93,15 @@ public class ScrollBar implements Renderable {
     /**
      * Insets used to position the triangle in the scroll arrow box.
      */
-    protected final Insets arrowInsets = DEFAULT_ARROW_INSETS;
+    protected final Insets arrowInsets = ScrollBar.DEFAULT_ARROW_INSETS;
     /**
      * Minimum value in the scroll range.
      */
-    protected int minValue = DEFAULT_MIN_VALUE;
+    protected int minValue = ScrollBar.DEFAULT_MIN_VALUE;
     /**
      * Maximum value in the scroll range.
      */
-    protected int maxValue = DEFAULT_MAX_VALUE;
+    protected int maxValue = ScrollBar.DEFAULT_MAX_VALUE;
     /**
      * Current scroll bar value.
      */
@@ -113,7 +113,7 @@ public class ScrollBar implements Renderable {
     /**
      * Amount that the scroll bar scrolls when the up or down arrow is clicked.
      */
-    protected int unitIncrement = DEFAULT_UNIT_INCREMENT;
+    protected int unitIncrement = ScrollBar.DEFAULT_UNIT_INCREMENT;
     /**
      * Size, in pixels, of the scroll arrow square.
      */
@@ -123,7 +123,7 @@ public class ScrollBar implements Renderable {
      * smaller than this size. This prevents the knob from shrinking to a single pixels if the scroll range is very
      * large.
      */
-    protected int minScrollKnobSize = DEFAULT_MIN_SCROLL_KNOB_SIZE;
+    protected int minScrollKnobSize = ScrollBar.DEFAULT_MIN_SCROLL_KNOB_SIZE;
     /**
      * Full bounds of the scroll bar.
      */
@@ -141,27 +141,27 @@ public class ScrollBar implements Renderable {
     /**
      * Opacity of the scroll bar knob.
      */
-    protected double opacity = DEFAULT_OPACITY;
+    protected double opacity = ScrollBar.DEFAULT_OPACITY;
     /**
      * Color applied to lines in the scroll bar.
      */
-    protected Color lineColor = DEFAULT_LINE_COLOR;
+    protected Color lineColor = ScrollBar.DEFAULT_LINE_COLOR;
 
     /**
      * First color of the gradient used to fill the scroll knob.
      */
-    protected Color knobColor1 = DEFAULT_SCROLL_KNOB_COLOR1;
+    protected Color knobColor1 = ScrollBar.DEFAULT_SCROLL_KNOB_COLOR1;
     /**
      * Second color of the gradient used to fill the scroll knob.
      */
-    protected Color knobColor2 = DEFAULT_SCROLL_KNOB_COLOR2;
+    protected Color knobColor2 = ScrollBar.DEFAULT_SCROLL_KNOB_COLOR2;
 
     // Support for long-running scroll operations
     /**
      * Delay in milliseconds between each step in auto-scroll operation is effect. When auto-scrolling the bar will
      * scroll by the {@link #autoScrollIncrement} every {@code autoScrollDelay} milliseconds.
      */
-    protected int autoScrollDelay = DEFAULT_AUTO_SCROLL_DELAY;
+    protected int autoScrollDelay = ScrollBar.DEFAULT_AUTO_SCROLL_DELAY;
     /**
      * Indicates whether an auto-scroll operation is active (such as when the user has clicked and held the mouse on the
      * scroll arrow).
@@ -249,6 +249,80 @@ public class ScrollBar implements Renderable {
     }
 
     /**
+     * Draw the vertices of a quadrilateral. This method must be called between {@code glBegin(GL.GL_QUADS)} and {@code
+     * glEnd()}.
+     *
+     * @param dc     Current draw context.
+     * @param bounds Bounds of the quad.
+     */
+    protected static void drawQuad(DrawContext dc, Rectangle bounds) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
+
+        int minX = (int) bounds.getMinX();
+        int minY = (int) bounds.getMinY();
+        int maxX = (int) bounds.getMaxX();
+        int maxY = (int) bounds.getMaxY();
+
+        gl.glVertex2i(minX, minY);
+        gl.glVertex2i(maxX, minY);
+        gl.glVertex2i(maxX, maxY);
+        gl.glVertex2i(minX, maxY);
+    }
+
+    /**
+     * Draw a triangle for one of the scroll bar controls.
+     *
+     * @param dc       Draw context.
+     * @param rotation Rotation to apply to the triangle. 0 rotation produces a triangle pointing to the right. Rotation
+     *                 must be one of: 0, 90, -90, or 180.
+     * @param bounds   The bounds of the scroll control. The arrow must be drawn within this rectangle.
+     * @param insets   Insets to apply to the bounds.
+     */
+    protected static void drawTriangle(DrawContext dc, float rotation, Rectangle bounds, Insets insets) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
+
+        try {
+            gl.glPushMatrix();
+
+            // Apply the inset to the bounds. 
+            Rectangle insetBounds = new Rectangle(bounds.x + insets.left, bounds.y + insets.bottom,
+                bounds.width - insets.left - insets.right,
+                bounds.height - insets.top - insets.bottom);
+
+            float halfHeight = insetBounds.height / 2.0f;
+            float halfWidth = insetBounds.width / 2.0f;
+
+            float adjustX = 0;
+            float adjustY = 0;
+            if (rotation == 90) {
+                adjustX = halfWidth;
+                adjustY = (insetBounds.height - halfWidth) / 2.0f;
+            } else if (rotation == -90) {
+                adjustX = halfWidth;
+                adjustY = (insetBounds.height - halfWidth) / 2.0f + halfWidth;
+            } else if (rotation == 0) {
+                adjustX = (insetBounds.width - halfWidth) / 2.0f;
+                adjustY = halfHeight;
+            } else if (rotation == 180) {
+                adjustX = (insetBounds.width - halfWidth) / 2.0f + halfWidth;
+                adjustY = halfHeight;
+            }
+
+            gl.glTranslated(insetBounds.x + adjustX, insetBounds.y + adjustY, 1.0);
+            gl.glRotatef(rotation, 0, 0, 1);
+
+            gl.glBegin(GL2.GL_TRIANGLES);
+            gl.glVertex2f(0, halfHeight);
+            gl.glVertex2f(halfWidth, 0);
+            gl.glVertex2f(0, -halfHeight);
+            gl.glEnd();
+        }
+        finally {
+            gl.glPopMatrix();
+        }
+    }
+
+    /**
      * Initialize the objects that represent the UI controls.
      *
      * @param parent The screen component that contains the scroll bar. Input events that cannot be handled by the
@@ -256,10 +330,10 @@ public class ScrollBar implements Renderable {
      */
     protected void initializeUIControls(HotSpot parent) {
         this.scrollKnobControl = new ScrollKnob(parent, this);
-        this.scrollUpControl = new ScrollControl(parent, this, UNIT_UP);
-        this.scrollDownControl = new ScrollControl(parent, this, UNIT_DOWN);
-        this.scrollUpBlockControl = new ScrollControl(parent, this, BLOCK_UP);
-        this.scrollDownBlockControl = new ScrollControl(parent, this, BLOCK_DOWN);
+        this.scrollUpControl = new ScrollControl(parent, this, ScrollBar.UNIT_UP);
+        this.scrollDownControl = new ScrollControl(parent, this, ScrollBar.UNIT_DOWN);
+        this.scrollUpBlockControl = new ScrollControl(parent, this, ScrollBar.BLOCK_UP);
+        this.scrollDownBlockControl = new ScrollControl(parent, this, ScrollBar.BLOCK_DOWN);
     }
 
     /**
@@ -578,6 +652,10 @@ public class ScrollBar implements Renderable {
         this.opacity = opacity;
     }
 
+    //**************************************************************//
+    //********  Methods for setting the scroll position  ***********//
+    //**************************************************************//
+
     /**
      * Indicates how frequently the scrollbar updates while one of the scroll arrows is pressed.
      *
@@ -603,10 +681,6 @@ public class ScrollBar implements Renderable {
         this.autoScrollDelay = delay;
     }
 
-    //**************************************************************//
-    //********  Methods for setting the scroll position  ***********//
-    //**************************************************************//
-
     /**
      * Adjust the scroll value.
      *
@@ -623,13 +697,13 @@ public class ScrollBar implements Renderable {
      * @param amount One of {@link #UNIT_UP}, {@link #UNIT_DOWN}, {@link #BLOCK_UP}, or {@link #BLOCK_DOWN}.
      */
     public void scroll(String amount) {
-        if (UNIT_UP.equals(amount))
+        if (ScrollBar.UNIT_UP.equals(amount))
             this.scroll(-this.getUnitIncrement());
-        else if (UNIT_DOWN.equals(amount))
+        else if (ScrollBar.UNIT_DOWN.equals(amount))
             this.scroll(this.getUnitIncrement());
-        else if (BLOCK_UP.equals(amount))
+        else if (ScrollBar.BLOCK_UP.equals(amount))
             this.scroll(-this.getBlockIncrement());
-        else if (BLOCK_DOWN.equals(amount))
+        else if (ScrollBar.BLOCK_DOWN.equals(amount))
             this.scroll(this.getBlockIncrement());
     }
 
@@ -647,6 +721,10 @@ public class ScrollBar implements Renderable {
         this.autoScrolling = true;
         this.autoScrollIncrement = increment;
     }
+
+    //**************************************************************//
+    //**********************  Rendering ****************************//
+    //**************************************************************//
 
     /**
      * Stop an auto-scroll operation.
@@ -668,10 +746,6 @@ public class ScrollBar implements Renderable {
     public boolean isAutoScrolling() {
         return this.autoScrolling;
     }
-
-    //**************************************************************//
-    //**********************  Rendering ****************************//
-    //**************************************************************//
 
     /**
      * Draw the scroll bar. The scroll will not draw its bounds are too small to draw without distortion.
@@ -702,8 +776,7 @@ public class ScrollBar implements Renderable {
 
         if (dc.isPickingMode()) {
             this.doPick(dc);
-        }
-        else {
+        } else {
             this.draw(dc);
         }
     }
@@ -760,8 +833,7 @@ public class ScrollBar implements Renderable {
             int knobStart = (int) this.scrollKnobBounds.getMaxY();
             this.scrollUpBarBounds = new Rectangle(x1, knobStart, scrollControlSize,
                 this.scrollUpControlBounds.y - knobStart);
-        }
-        else {
+        } else {
             this.scrollUpControlBounds = new Rectangle(x1, y1, scrollControlSize, scrollControlSize);
             this.scrollDownControlBounds = new Rectangle(x2 - scrollControlSize, y1, scrollControlSize,
                 scrollControlSize);
@@ -840,8 +912,7 @@ public class ScrollBar implements Renderable {
             if (AVKey.VERTICAL.equals(this.getOrientation())) {
                 ScrollBar.drawTriangle(dc, 90, this.scrollUpControlBounds, arrowInsets);
                 ScrollBar.drawTriangle(dc, -90, this.scrollDownControlBounds, arrowInsets);
-            }
-            else {
+            } else {
                 ScrollBar.drawTriangle(dc, 180, this.scrollUpControlBounds, arrowInsets);
                 ScrollBar.drawTriangle(dc, 0, this.scrollDownControlBounds, arrowInsets);
             }
@@ -897,83 +968,6 @@ public class ScrollBar implements Renderable {
         gl.glColor3ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
 
         ScrollBar.drawQuad(dc, bounds);
-    }
-
-    /**
-     * Draw the vertices of a quadrilateral. This method must be called between {@code glBegin(GL.GL_QUADS)} and {@code
-     * glEnd()}.
-     *
-     * @param dc     Current draw context.
-     * @param bounds Bounds of the quad.
-     */
-    protected static void drawQuad(DrawContext dc, Rectangle bounds) {
-        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-
-        int minX = (int) bounds.getMinX();
-        int minY = (int) bounds.getMinY();
-        int maxX = (int) bounds.getMaxX();
-        int maxY = (int) bounds.getMaxY();
-
-        gl.glVertex2i(minX, minY);
-        gl.glVertex2i(maxX, minY);
-        gl.glVertex2i(maxX, maxY);
-        gl.glVertex2i(minX, maxY);
-    }
-
-    /**
-     * Draw a triangle for one of the scroll bar controls.
-     *
-     * @param dc       Draw context.
-     * @param rotation Rotation to apply to the triangle. 0 rotation produces a triangle pointing to the right. Rotation
-     *                 must be one of: 0, 90, -90, or 180.
-     * @param bounds   The bounds of the scroll control. The arrow must be drawn within this rectangle.
-     * @param insets   Insets to apply to the bounds.
-     */
-    protected static void drawTriangle(DrawContext dc, float rotation, Rectangle bounds, Insets insets) {
-        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-
-        try {
-            gl.glPushMatrix();
-
-            // Apply the inset to the bounds. 
-            Rectangle insetBounds = new Rectangle(bounds.x + insets.left, bounds.y + insets.bottom,
-                bounds.width - insets.left - insets.right,
-                bounds.height - insets.top - insets.bottom);
-
-            float halfHeight = insetBounds.height / 2.0f;
-            float halfWidth = insetBounds.width / 2.0f;
-
-            float adjustX = 0;
-            float adjustY = 0;
-            if (rotation == 90) {
-                adjustX = halfWidth;
-                adjustY = (insetBounds.height - halfWidth) / 2.0f;
-            }
-            else if (rotation == -90) {
-                adjustX = halfWidth;
-                adjustY = (insetBounds.height - halfWidth) / 2.0f + halfWidth;
-            }
-            else if (rotation == 0) {
-                adjustX = (insetBounds.width - halfWidth) / 2.0f;
-                adjustY = halfHeight;
-            }
-            else if (rotation == 180) {
-                adjustX = (insetBounds.width - halfWidth) / 2.0f + halfWidth;
-                adjustY = halfHeight;
-            }
-
-            gl.glTranslated(insetBounds.x + adjustX, insetBounds.y + adjustY, 1.0);
-            gl.glRotatef(rotation, 0, 0, 1);
-
-            gl.glBegin(GL2.GL_TRIANGLES);
-            gl.glVertex2f(0, halfHeight);
-            gl.glVertex2f(halfWidth, 0);
-            gl.glVertex2f(0, -halfHeight);
-            gl.glEnd();
-        }
-        finally {
-            gl.glPopMatrix();
-        }
     }
 
     //**************************************************************//
@@ -1078,8 +1072,7 @@ public class ScrollBar implements Renderable {
             if (AVKey.VERTICAL.equals(scrollBar.getOrientation())) {
                 delta = point.y - this.dragRefPoint.y;
                 screenDimension = this.scrollBar.scrollBounds.height - this.scrollBar.getMinScrollKnobSize();
-            }
-            else {
+            } else {
                 delta = point.x - this.dragRefPoint.x;
                 screenDimension = this.scrollBar.scrollBounds.width;
             }

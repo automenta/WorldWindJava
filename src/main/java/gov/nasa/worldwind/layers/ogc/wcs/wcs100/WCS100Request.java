@@ -17,15 +17,23 @@ import java.util.*;
  * @version $Id: WCS100Request.java 2061 2014-06-19 19:59:40Z tgaskins $
  */
 public class WCS100Request extends AbstractXMLEventParser {
-    private static final String[] rNames = new String[]
-        {
-            "GetCapabilities", "DescribeCoverage", "GetCoverage"
-        };
+    private static final String[] rNames = {
+        "GetCapabilities", "DescribeCoverage", "GetCoverage"
+    };
 
     protected final List<WCS100RequestDescription> requests = new ArrayList<>(2);
 
     public WCS100Request(String namespaceURI) {
         super(namespaceURI);
+    }
+
+    protected static String isRequestName(XMLEventParserContext ctx, XMLEvent event) {
+        for (String requestName : WCS100Request.rNames) {
+            if (ctx.isStartElement(event, requestName))
+                return requestName;
+        }
+
+        return null;
     }
 
     public List<WCS100RequestDescription> getRequests() {
@@ -53,18 +61,8 @@ public class WCS100Request extends AbstractXMLEventParser {
                     this.requests.add((WCS100RequestDescription) o);
                 }
             }
-        }
-        else {
+        } else {
             super.doParseEventContent(ctx, event, args);
         }
-    }
-
-    protected static String isRequestName(XMLEventParserContext ctx, XMLEvent event) {
-        for (String requestName : rNames) {
-            if (ctx.isStartElement(event, requestName))
-                return requestName;
-        }
-
-        return null;
     }
 }

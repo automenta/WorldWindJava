@@ -63,7 +63,7 @@ public class WindowsWebView extends AbstractWebView {
     /**
      * Flag to the indicate that the WebView has been disposed.
      */
-    protected boolean disposed = false;
+    protected boolean disposed;
 
     protected Color backgroundColor;
 
@@ -94,13 +94,13 @@ public class WindowsWebView extends AbstractWebView {
 
         try {
             // Increment the instance counter
-            instances.incrementAndGet();
+            WindowsWebView.instances.incrementAndGet();
 
             // Make sure that the message loop thread is running
             WindowsWebView.ensureMessageLoopRunning();
 
             // Create the web view
-            this.webViewWindowPtr = WindowsWebViewJNI.newWebViewWindow(webViewMessageLoop);
+            this.webViewWindowPtr = WindowsWebViewJNI.newWebViewWindow(WindowsWebView.webViewMessageLoop);
             if (this.webViewWindowPtr == 0) {
                 String message = Logging.getMessage("WebView.NativeExceptionInitializingWebView");
                 Logging.logger().severe(message);
@@ -115,7 +115,7 @@ public class WindowsWebView extends AbstractWebView {
         }
         catch (RuntimeException | Error e) {
             // If the WebView was not created successfully do not increment the instance counter.
-            instances.decrementAndGet();
+            WindowsWebView.instances.decrementAndGet();
             WindowsWebView.handleWebViewCreationError();
             throw e;
         }
@@ -136,6 +136,68 @@ public class WindowsWebView extends AbstractWebView {
     }
 
     /**
+     * Ensure that the message loop thread is running. This method simply returns if the thread is already running. It
+     * creates a new thread if the message thread is not running. This method does not return until the message loop is
+     * initialized and ready for use.
+     */
+    protected static void ensureMessageLoopRunning() {
+        synchronized (WindowsWebView.webViewUILock) {
+            if (WindowsWebView.webViewUI == null || !WindowsWebView.webViewUI.isAlive()) {
+                WindowsWebView.webViewMessageLoop = 0;
+
+                // Create a new thread to run the web view message loop.
+                WindowsWebView.webViewUI = new Thread("WebView UI") {
+                    public void run() {
+                        try {
+                            // Create a message loop in native code. This call must return
+                            // before any messages are sent to the WebView.
+                            WindowsWebView.webViewMessageLoop = WindowsWebViewJNI.newMessageLoop();
+                        }
+                        catch (Throwable t) {
+                            WindowsWebView.webViewMessageLoop = -1;
+                        }
+                        finally {
+                            // Notify the outer thread that the message loop is ready or failed to start.
+                            synchronized (WindowsWebView.webViewUILock) {
+                                WindowsWebView.webViewUILock.notify();
+                            }
+                        }
+
+                        // Process messages in native code until the message loop
+                        // is terminated.
+                        WindowsWebViewJNI.runMessageLoop(WindowsWebView.webViewMessageLoop);
+                    }
+                };
+                WindowsWebView.webViewUI.start();
+
+                // Wait for the newly started thread to create the message loop. We cannot
+                // safely use the WebView until the message loop has been initialized.
+                while (WindowsWebView.webViewMessageLoop == 0) {
+                    try {
+                        WindowsWebView.webViewUILock.wait(1000);
+                    }
+                    catch (InterruptedException ignored) {
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Terminate the message loop thread if there are no active (non-disposed) WebView instances. Has no effect if there
+     * are active instances.
+     */
+    protected static void stopMessageLoopIfNoInstances() {
+        synchronized (WindowsWebView.webViewUILock) {
+            if (WindowsWebView.instances.get() <= 0) {
+                WindowsWebViewJNI.releaseMessageLoop(WindowsWebView.webViewMessageLoop);
+                WindowsWebView.webViewMessageLoop = 0;
+                WindowsWebView.webViewUI = null;
+            }
+        }
+    }
+
+    /**
      * {@inheritDoc}
      */
     public void dispose() {
@@ -151,7 +213,7 @@ public class WindowsWebView extends AbstractWebView {
                 WindowsWebViewJNI.releaseWebView(webViewWindowPtr);
                 // Decrement the instance counter. Only do this if the webViewWindow pointer was non-zero, indicating
                 // that native resources were actually allocated.
-                instances.decrementAndGet();
+                WindowsWebView.instances.decrementAndGet();
             }
             if (observerPtr != 0)
                 WindowsWebViewJNI.releaseComObject(observerPtr);
@@ -164,70 +226,8 @@ public class WindowsWebView extends AbstractWebView {
 
             this.disposed = true;
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             Logging.logger().log(Level.SEVERE, Logging.getMessage("generic.ExceptionAttemptingToDisposeRenderable"), e);
-        }
-    }
-
-    /**
-     * Ensure that the message loop thread is running. This method simply returns if the thread is already running. It
-     * creates a new thread if the message thread is not running. This method does not return until the message loop is
-     * initialized and ready for use.
-     */
-    protected static void ensureMessageLoopRunning() {
-        synchronized (webViewUILock) {
-            if (webViewUI == null || !webViewUI.isAlive()) {
-                webViewMessageLoop = 0;
-
-                // Create a new thread to run the web view message loop.
-                webViewUI = new Thread("WebView UI") {
-                    public void run() {
-                        try {
-                            // Create a message loop in native code. This call must return
-                            // before any messages are sent to the WebView.
-                            webViewMessageLoop = WindowsWebViewJNI.newMessageLoop();
-                        }
-                        catch (Throwable t) {
-                            webViewMessageLoop = -1;
-                        }
-                        finally {
-                            // Notify the outer thread that the message loop is ready or failed to start.
-                            synchronized (webViewUILock) {
-                                webViewUILock.notify();
-                            }
-                        }
-
-                        // Process messages in native code until the message loop
-                        // is terminated.
-                        WindowsWebViewJNI.runMessageLoop(webViewMessageLoop);
-                    }
-                };
-                webViewUI.start();
-
-                // Wait for the newly started thread to create the message loop. We cannot
-                // safely use the WebView until the message loop has been initialized.
-                while (webViewMessageLoop == 0) {
-                    try {
-                        webViewUILock.wait(1000);
-                    }
-                    catch (InterruptedException ignored) {
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Terminate the message loop thread if there are no active (non-disposed) WebView instances. Has no effect if there
-     * are active instances.
-     */
-    protected static void stopMessageLoopIfNoInstances() {
-        synchronized (webViewUILock) {
-            if (instances.get() <= 0) {
-                WindowsWebViewJNI.releaseMessageLoop(webViewMessageLoop);
-                webViewMessageLoop = 0;
-                webViewUI = null;
-            }
         }
     }
 
@@ -408,8 +408,7 @@ public class WindowsWebView extends AbstractWebView {
             return new MouseWheelEvent((Component) e.getSource(), e.getID(), e.getWhen(), e.getModifiersEx(), x, y,
                 e.getClickCount(), e.isPopupTrigger(), ((MouseWheelEvent) e).getScrollType(),
                 ((MouseWheelEvent) e).getScrollAmount(), ((MouseWheelEvent) e).getWheelRotation());
-        }
-        else {
+        } else {
             return new MouseEvent((Component) e.getSource(), e.getID(), e.getWhen(), e.getModifiersEx(), x, y,
                 e.getClickCount(), e.isPopupTrigger(), e.getButton());
         }

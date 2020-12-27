@@ -386,7 +386,7 @@ public class BasicFrameAttributes implements FrameAttributes {
         int result = 12; // Arbitrary non-zero constant
         long temp;
 
-        temp = this.backgroundOpacity != +0.0d ? Double.doubleToLongBits(this.backgroundOpacity) : 0L;
+        temp = this.backgroundOpacity == +0.0d ? 0L : Double.doubleToLongBits(this.backgroundOpacity);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         result = 31 * result + (this.frameColor1 != null ? this.frameColor1.hashCode() : 0);
         result = 31 * result + (this.frameColor2 != null ? this.frameColor2.hashCode() : 0);
@@ -395,7 +395,7 @@ public class BasicFrameAttributes implements FrameAttributes {
         result = 31 * result + (this.scrollBarColor1 != null ? this.scrollBarColor1.hashCode() : 0);
         result = 31 * result + (this.scrollBarColor2 != null ? this.scrollBarColor2.hashCode() : 0);
         result = 31 * result + (this.minimizeButtonColor != null ? this.minimizeButtonColor.hashCode() : 0);
-        temp = this.foregroundOpacity != +0.0d ? Double.doubleToLongBits(this.foregroundOpacity) : 0L;
+        temp = this.foregroundOpacity == +0.0d ? 0L : Double.doubleToLongBits(this.foregroundOpacity);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         result = 31 * result + (this.foregroundColor != null ? this.foregroundColor.hashCode() : 0);
         result = 31 * result + (this.font != null ? this.font.hashCode() : 0);

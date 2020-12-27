@@ -27,7 +27,7 @@ public class HTTPRetriever extends URLRetriever {
     @Override
     protected URLConnection connection() throws IOException {
         URLConnection u = super.connection();
-        u.setRequestProperty("User-Agent", userAgent_Default);
+        u.setRequestProperty("User-Agent", HTTPRetriever.userAgent_Default);
         return u;
     }
 
@@ -39,6 +39,7 @@ public class HTTPRetriever extends URLRetriever {
         return this.responseMessage;
     }
 
+    @Override
     protected ByteBuffer doRead(URLConnection connection) throws Exception {
 
         HttpURLConnection htpc = (HttpURLConnection) connection;

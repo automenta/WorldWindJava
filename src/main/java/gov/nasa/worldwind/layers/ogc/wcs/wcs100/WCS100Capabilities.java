@@ -54,12 +54,12 @@ public class WCS100Capabilities extends AbstractXMLEventParser {
         }
     }
 
-    protected void initialize() {
-        this.parserContext = this.createParserContext(this.eventReader);
-    }
-
     protected static XMLEventReader createReader(Object docSource) {
         return WWXML.openEventReader(docSource);
+    }
+
+    protected void initialize() {
+        this.parserContext = this.createParserContext(this.eventReader);
     }
 
     protected XMLEventParserContext createParserContext(XMLEventReader reader) {

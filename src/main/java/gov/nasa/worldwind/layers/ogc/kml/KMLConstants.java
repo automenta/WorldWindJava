@@ -22,16 +22,16 @@ public interface KMLConstants {
     String KML_2dot1_NAMESPACE = "http://earth.google.com/kml/2.1";
     String KML_2dot2_NAMESPACE = "http://www.opengis.net/kml/2.2";
     String KML_GOOGLE_2dot2_NAMESPACE = "http://earth.google.com/kml/2.2";
-    String KML_NAMESPACE = KML_2dot2_NAMESPACE;
+    String KML_NAMESPACE = KMLConstants.KML_2dot2_NAMESPACE;
 
     /**
      * List of the versioned KML namespaces.
      */
     String[] KML_NAMESPACES = {
-        KML_2dot2_NAMESPACE,
-        KML_GOOGLE_2dot2_NAMESPACE,
-        KML_2dot1_NAMESPACE,
-        KML_2dot0_NAMESPACE
+        KMLConstants.KML_2dot2_NAMESPACE,
+        KMLConstants.KML_GOOGLE_2dot2_NAMESPACE,
+        KMLConstants.KML_2dot1_NAMESPACE,
+        KMLConstants.KML_2dot0_NAMESPACE
     };
 
     /**

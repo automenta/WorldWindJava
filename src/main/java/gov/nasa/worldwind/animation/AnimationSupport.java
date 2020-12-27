@@ -29,8 +29,8 @@ public class AnimationSupport {
         LatLon beginLatLon, LatLon endLatLon,
         long minTimeMillis, long maxTimeMillis) {
         Angle sphericalDistance = LatLon.greatCircleDistance(beginLatLon, endLatLon);
-        double scaleFactor = angularRatio(sphericalDistance, Angle.POS180);
-        return (long) mixDouble(scaleFactor, minTimeMillis, maxTimeMillis);
+        double scaleFactor = AnimationSupport.angularRatio(sphericalDistance, Angle.POS180);
+        return (long) AnimationSupport.mixDouble(scaleFactor, minTimeMillis, maxTimeMillis);
     }
 
     /**
@@ -48,8 +48,8 @@ public class AnimationSupport {
         Angle begin, Angle end, Angle max,
         long minTimeMillisecs, long maxTimeMillisecs) {
         Angle angularDistance = begin.angularDistanceTo(end);
-        double scaleFactor = angularRatio(angularDistance, max);
-        return (long) mixDouble(scaleFactor, minTimeMillisecs, maxTimeMillisecs);
+        double scaleFactor = AnimationSupport.angularRatio(angularDistance, max);
+        return (long) AnimationSupport.mixDouble(scaleFactor, minTimeMillisecs, maxTimeMillisecs);
     }
 
     /**
@@ -67,9 +67,9 @@ public class AnimationSupport {
         long minTimeMillisecs, long maxTimeMillisecs) {
         double scaleFactor = Math.abs(endZoom - beginZoom) / Math.max(endZoom, beginZoom);
         // Clamp scaleFactor to range [0, 1].
-        scaleFactor = clampDouble(scaleFactor, 0.0, 1.0);
+        scaleFactor = AnimationSupport.clampDouble(scaleFactor, 0.0, 1.0);
         // Iteration time is interpolated value between minumum and maximum lengths.
-        return (long) mixDouble(scaleFactor, minTimeMillisecs, maxTimeMillisecs);
+        return (long) AnimationSupport.mixDouble(scaleFactor, minTimeMillisecs, maxTimeMillisecs);
     }
 
     /**
@@ -87,7 +87,7 @@ public class AnimationSupport {
         }
 
         double unclampedRatio = x.divide(y);
-        return clampDouble(unclampedRatio, 0, 1);
+        return AnimationSupport.clampDouble(unclampedRatio, 0, 1);
     }
 
     /**
@@ -165,7 +165,7 @@ public class AnimationSupport {
      */
     public static double basicInterpolant(double interpolant, double startInterpolant, double stopInterpolant,
         int maxSmoothing) {
-        double normalizedInterpolant = interpolantNormalized(interpolant, startInterpolant, stopInterpolant);
-        return interpolantSmoothed(normalizedInterpolant, maxSmoothing);
+        double normalizedInterpolant = AnimationSupport.interpolantNormalized(interpolant, startInterpolant, stopInterpolant);
+        return AnimationSupport.interpolantSmoothed(normalizedInterpolant, maxSmoothing);
     }
 }

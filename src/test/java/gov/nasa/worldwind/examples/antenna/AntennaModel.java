@@ -532,9 +532,9 @@ public class AntennaModel extends AbstractShape {
     protected void putVec(int i, int j, Vec4 vec, FloatBuffer buffer) {
         int k = 3 * (j * this.nPhiIntervals + i);
 
-        buffer.put(k, (float) vec.getX());
-        buffer.put(k + 1, (float) vec.getY());
-        buffer.put(k + 2, (float) vec.getZ());
+        buffer.put(k, (float) vec.x);
+        buffer.put(k + 1, (float) vec.y);
+        buffer.put(k + 2, (float) vec.z);
     }
 
     @Override

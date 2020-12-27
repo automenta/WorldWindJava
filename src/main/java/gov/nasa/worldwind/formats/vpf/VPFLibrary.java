@@ -105,17 +105,16 @@ public class VPFLibrary extends AVListImpl {
         }
 
         // Library Coverages.
-        Collection<VPFCoverage> col = createCoverages(library, cat);
+        Collection<VPFCoverage> col = VPFLibrary.createCoverages(library, cat);
         library.setCoverages(col);
 
         // Library tiles.
         VPFCoverage cov = library.getCoverage(VPFConstants.TILE_REFERENCE_COVERAGE);
         if (cov != null) {
-            VPFTile[] tiles = createTiles(cov);
+            VPFTile[] tiles = VPFLibrary.createTiles(cov);
             if (tiles != null) {
                 library.setTiles(tiles);
-            }
-            else {
+            } else {
                 String message = Logging.getMessage("VPF.NoTilesInTileReferenceCoverage");
                 Logging.logger().warning(message);
             }
@@ -123,7 +122,7 @@ public class VPFLibrary extends AVListImpl {
 
         // Coverage tiled attributes.
         for (VPFCoverage coverage : library.getCoverages()) {
-            boolean tiled = isCoverageTiled(library, coverage);
+            boolean tiled = VPFLibrary.isCoverageTiled(library, coverage);
             coverage.setTiled(tiled);
         }
 
@@ -136,11 +135,9 @@ public class VPFLibrary extends AVListImpl {
 
         if (!value.isEmpty() && value.toLowerCase().charAt(0) == 'f') {
             return 1.0d / WWMath.METERS_TO_FEET;
-        }
-        else if (!value.isEmpty() && value.toLowerCase().charAt(0) == 'm') {
+        } else if (!value.isEmpty() && value.toLowerCase().charAt(0) == 'm') {
             return 1.0d;
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -220,7 +217,7 @@ public class VPFLibrary extends AVListImpl {
 
         VPFFeatureClassFactory factory = new VPFBasicFeatureClassFactory();
         VPFFeatureClass areaClass = factory.createFromSchema(coverage, tileRefSchema);
-        return createTiles(areaClass);
+        return VPFLibrary.createTiles(areaClass);
     }
 
     protected static VPFTile[] createTiles(VPFFeatureClass featureClass) {
@@ -240,7 +237,7 @@ public class VPFLibrary extends AVListImpl {
         for (VPFFeature feature : features) {
             String tileName = feature.getStringValue("tile_name");
             if (tileName != null)
-                tileName = fixTileName(tileName);
+                tileName = VPFLibrary.fixTileName(tileName);
 
             tiles[index++] = new VPFTile(feature.getId(), tileName, feature.getBounds());
         }
@@ -432,7 +429,7 @@ public class VPFLibrary extends AVListImpl {
             return null;
 
         String s = (String) record.getValue("units");
-        Double unitsCoefficient = parseUnitsCoefficient(s);
+        Double unitsCoefficient = VPFLibrary.parseUnitsCoefficient(s);
         if (unitsCoefficient == null) {
             String message = Logging.getMessage("VPF.UnrecognizedUnits", s);
             Logging.logger().severe(message);
@@ -440,7 +437,7 @@ public class VPFLibrary extends AVListImpl {
         }
 
         s = (String) record.getValue("ellipsoid_detail");
-        double[] ellipsoidParams = parseEllipsoidDetail(s);
+        double[] ellipsoidParams = VPFLibrary.parseEllipsoidDetail(s);
         if (ellipsoidParams == null || ellipsoidParams.length != 2) {
             String message = Logging.getMessage("VPF.UnrecognizedEllipsoidDetail", s);
             Logging.logger().severe(message);

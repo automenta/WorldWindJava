@@ -24,11 +24,10 @@ public class BasicNetworkStatus extends AVListImpl implements NetworkStatus {
     protected static final long DEFAULT_TRY_AGAIN_INTERVAL_MS = 5 * 60_000L;
     protected static final int DEFAULT_ATTEMPT_LIMIT = 3; // number of unavailable events to declare host unavailable
     protected static final long NETWORK_STATUS_REPORT_INTERVAL_MS = (long) 120.000e3;
-    protected static final String[] DEFAULT_NETWORK_TEST_SITES = new String[]
-        {
-            "cloudflare.com", "archive.org", "w3c.org", "wikipedia.org", "github.com"
-            //"www.nasa.gov", "worldwind.arc.nasa.gov", "google.com", "microsoft.com", "yahoo.com"
-        };
+    protected static final String[] DEFAULT_NETWORK_TEST_SITES = {
+        "cloudflare.com", "archive.org", "w3c.org", "wikipedia.org", "github.com"
+        //"www.nasa.gov", "worldwind.arc.nasa.gov", "google.com", "microsoft.com", "yahoo.com"
+    };
     // Fields for determining and remembering overall network status.
     protected final ConcurrentHashMap<String, HostInfo> hostMap = new ConcurrentHashMap<>();
     protected final AtomicLong lastUnavailableLogTime = new AtomicLong(System.currentTimeMillis());
@@ -38,8 +37,8 @@ public class BasicNetworkStatus extends AVListImpl implements NetworkStatus {
     protected final AtomicBoolean lastNetworkUnavailableResult = new AtomicBoolean(false);
     // Values exposed to the application.
     private final CopyOnWriteArrayList<String> networkTestSites = new CopyOnWriteArrayList<>();
-    private final AtomicLong tryAgainInterval = new AtomicLong(DEFAULT_TRY_AGAIN_INTERVAL_MS);
-    private final AtomicInteger attemptLimit = new AtomicInteger(DEFAULT_ATTEMPT_LIMIT);
+    private final AtomicLong tryAgainInterval = new AtomicLong(BasicNetworkStatus.DEFAULT_TRY_AGAIN_INTERVAL_MS);
+    private final AtomicInteger attemptLimit = new AtomicInteger(BasicNetworkStatus.DEFAULT_ATTEMPT_LIMIT);
     private boolean offlineMode;
 
     public BasicNetworkStatus() {
@@ -68,7 +67,7 @@ public class BasicNetworkStatus extends AVListImpl implements NetworkStatus {
             Logging.logger().fine(message);
             return false;
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             String message = Logging.getMessage("NetworkStatus.ExceptionTestingHost", hostName);
             Logging.logger().info(message);
             return false;
@@ -79,7 +78,7 @@ public class BasicNetworkStatus extends AVListImpl implements NetworkStatus {
 
         URLConnection connection = null;
         try {
-            final String[] protocols = new String[] {"https://", "http://"};
+            final String[] protocols = {"https://", "http://"};
             for (String protocol : protocols) {
                 URL url = new URL(protocol + hostName);
 
@@ -123,9 +122,8 @@ public class BasicNetworkStatus extends AVListImpl implements NetworkStatus {
             testSites = Configuration.getStringValue(AVKey.NETWORK_STATUS_TEST_SITES);
 
         if (testSites == null) {
-            this.networkTestSites.addAll(Arrays.asList(DEFAULT_NETWORK_TEST_SITES));
-        }
-        else {
+            this.networkTestSites.addAll(Arrays.asList(BasicNetworkStatus.DEFAULT_NETWORK_TEST_SITES));
+        } else {
             String[] sites = testSites.split(",");
             List<String> actualSites = new ArrayList<>(sites.length);
 
@@ -226,8 +224,7 @@ public class BasicNetworkStatus extends AVListImpl implements NetworkStatus {
                     this.firePropertyChange(NetworkStatus.HOST_UNAVAILABLE, null, url);
             }
             hi.lastLogTime.set(System.currentTimeMillis());
-        }
-        else {
+        } else {
             hi = new HostInfo(this.attemptLimit.get(), this.tryAgainInterval.get());
             hi.logCount.set(1);
             if (hi.isUnavailable()) // the attempt limit may be as low as 1, so handle that case here
@@ -314,7 +311,7 @@ public class BasicNetworkStatus extends AVListImpl implements NetworkStatus {
         }
 
         for (String testHost : networkTestSites) {
-            if (isHostReachable(testHost)) {
+            if (BasicNetworkStatus.isHostReachable(testHost)) {
                 {
                     this.lastNetworkUnavailableResult.set(false); // network not unreachable
                     return this.lastNetworkUnavailableResult.get();
@@ -322,7 +319,7 @@ public class BasicNetworkStatus extends AVListImpl implements NetworkStatus {
             }
         }
 
-        if (now - this.lastNetworkStatusReportTime.get() > NETWORK_STATUS_REPORT_INTERVAL_MS) {
+        if (now - this.lastNetworkStatusReportTime.get() > BasicNetworkStatus.NETWORK_STATUS_REPORT_INTERVAL_MS) {
             this.lastNetworkStatusReportTime.set(now);
             String message = Logging.getMessage("NetworkStatus.NetworkUnreachable");
             Logging.logger().info(message);
@@ -336,7 +333,7 @@ public class BasicNetworkStatus extends AVListImpl implements NetworkStatus {
      * {@inheritDoc}
      */
     public boolean isWorldWindServerUnavailable() {
-        return this.offlineMode || !isHostReachable("worldwind.arc.nasa.gov");
+        return this.offlineMode || !BasicNetworkStatus.isHostReachable("worldwind.arc.nasa.gov");
     }
 
     protected static class HostInfo {

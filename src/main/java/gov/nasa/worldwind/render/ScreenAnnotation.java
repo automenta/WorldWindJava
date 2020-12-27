@@ -77,6 +77,19 @@ public class ScreenAnnotation extends AbstractAnnotation {
         this.getAttributes().setDrawOffset(new Point(0, 0));
     }
 
+    protected static Point computeAnnotationPosition(DrawContext dc, Position pos) {
+        Vec4 surfacePoint = dc.getTerrain().getSurfacePoint(pos);
+        if (surfacePoint == null) {
+            Globe globe = dc.getGlobe();
+            surfacePoint = globe.computePointFromPosition(pos.getLatitude(), pos.getLongitude(),
+                globe.getElevation(pos.getLatitude(), pos.getLongitude()));
+        }
+
+        Vec4 pt = dc.getView().project(surfacePoint);
+
+        return new Point((int) pt.x, (int) pt.y);
+    }
+
     private void init(String text, Point position, Font font, Color textColor) {
         if (text == null) {
             String message = Logging.getMessage("nullValue.StringIsNull");
@@ -130,19 +143,6 @@ public class ScreenAnnotation extends AbstractAnnotation {
     @SuppressWarnings("UnusedDeclaration")
     protected Point getScreenPoint(DrawContext dc) {
         return this.position != null ? ScreenAnnotation.computeAnnotationPosition(dc, this.position) : this.screenPoint;
-    }
-
-    protected static Point computeAnnotationPosition(DrawContext dc, Position pos) {
-        Vec4 surfacePoint = dc.getTerrain().getSurfacePoint(pos);
-        if (surfacePoint == null) {
-            Globe globe = dc.getGlobe();
-            surfacePoint = globe.computePointFromPosition(pos.getLatitude(), pos.getLongitude(),
-                globe.getElevation(pos.getLatitude(), pos.getLongitude()));
-        }
-
-        Vec4 pt = dc.getView().project(surfacePoint);
-
-        return new Point((int) pt.x, (int) pt.y);
     }
 
     /**
@@ -234,7 +234,7 @@ public class ScreenAnnotation extends AbstractAnnotation {
             try {
                 restorableSupport = RestorableSupport.parse(superStateInXml);
             }
-            catch (Exception e) {
+            catch (RuntimeException e) {
                 // Parsing the document specified by the superclass failed.
                 String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", superStateInXml);
                 Logging.logger().severe(message);
@@ -278,7 +278,7 @@ public class ScreenAnnotation extends AbstractAnnotation {
         try {
             super.restoreState(stateInXml);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             // Superclass will log the exception.
         }
 
@@ -286,7 +286,7 @@ public class ScreenAnnotation extends AbstractAnnotation {
         try {
             restorableSupport = RestorableSupport.parse(stateInXml);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             // Parsing the document specified by stateInXml failed.
             String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", stateInXml);
             Logging.logger().severe(message);

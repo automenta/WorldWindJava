@@ -41,17 +41,50 @@ public class PreprocessPanelDescriptor extends DefaultPanelDescriptor {
         // Get preprocessor thread pool size, and num steps needed for ETR
         // from Configuration. Provide suitable defaults if these values
         // aren't specified.
-        int threadPoolSize = Configuration.getIntegerValue(THREAD_POOL_SIZE, DEFAULT_THREAD_POOL_SIZE);
-        int stepsNeededForEst = Configuration.getIntegerValue(STEPS_NEEDED_FOR_ESTIMATE,
-            DEFAULT_STEPS_NEEDED_FOR_ESTIMATE);
+        int threadPoolSize = Configuration.getIntegerValue(PreprocessPanelDescriptor.THREAD_POOL_SIZE,
+            PreprocessPanelDescriptor.DEFAULT_THREAD_POOL_SIZE);
+        int stepsNeededForEst = Configuration.getIntegerValue(PreprocessPanelDescriptor.STEPS_NEEDED_FOR_ESTIMATE,
+            PreprocessPanelDescriptor.DEFAULT_STEPS_NEEDED_FOR_ESTIMATE);
 
         this.panelComponent = new ProgressPanel();
         this.preprocessor = new RPFTiledImageProcessor();
         this.preprocessor.setThreadPoolSize(threadPoolSize);
         this.preprocessor.addPropertyChangeListener(new PropertyEvents());
         this.etrCalc.setStepsNeededForEstimate(stepsNeededForEst);
-        setPanelIdentifier(IDENTIFIER);
+        setPanelIdentifier(PreprocessPanelDescriptor.IDENTIFIER);
         setPanelComponent(this.panelComponent);
+    }
+
+    private static String formatFileCount(int n) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("%,d", n));
+        sb.append(" file");
+        if (n != 1)
+            sb.append('s');
+        return sb.toString();
+    }
+
+    private static String makeDescription(FileSet set, int value, int max) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Importing ");
+        if (set != null && set.getTitle() != null) {
+            sb.append('\'');
+            sb.append(set.getTitle());
+            sb.append('\'');
+        }
+        if (max > 1) {
+            sb.append(" (").append(value).append(" of ").append(max).append(')');
+        }
+        return sb.toString();
+    }
+
+    private static String makeSubStepDescription(String description, String subDescription) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<br>");
+        sb.append(description);
+        sb.append("<br><br><br>");
+        sb.append(subDescription);
+        return sb.toString();
     }
 
     public Object getBackPanelDescriptor() {
@@ -95,8 +128,7 @@ public class PreprocessPanelDescriptor extends DefaultPanelDescriptor {
                 }
                 finished();
             });
-        }
-        else {
+        } else {
             this.panelComponent.setTitle(RPFWizardUtil.makeLarger("No Imagery to Import"));
             this.panelComponent.setDescription("No Imagery");
             this.panelComponent.getProgressBar().setVisible(false);
@@ -107,8 +139,7 @@ public class PreprocessPanelDescriptor extends DefaultPanelDescriptor {
         Wizard wizard = getWizard();
         if (wizard != null && wizard.getReturnCode() == Wizard.FINISH_RETURN_CODE) {
             // "Finish" button pressed.
-        }
-        else {
+        } else {
             // "<Back" or "Cancel" button pressed, or window closed.
             if (this.preprocessor != null)
                 this.preprocessor.stop();
@@ -121,9 +152,9 @@ public class PreprocessPanelDescriptor extends DefaultPanelDescriptor {
         RPFFileIndex fileIndex = null;
         Layer layer = null;
         try {
-            String descr = makeDescription(set, setNumber, numSets);
+            String descr = PreprocessPanelDescriptor.makeDescription(set, setNumber, numSets);
             if (inFile != null && set != null) {
-                String subDescr = makeSubStepDescription(descr, "Processing Image Files");
+                String subDescr = PreprocessPanelDescriptor.makeSubStepDescription(descr, "Processing Image Files");
                 this.panelComponent.setDescription(RPFWizardUtil.makeBold(subDescr));
 
                 fileIndex = this.preprocessor.makeFileIndex(inFile, set.getIdentifier(), set.getTitle(),
@@ -133,13 +164,13 @@ public class PreprocessPanelDescriptor extends DefaultPanelDescriptor {
             }
 
             if (fileIndex != null) {
-                String subDescr = makeSubStepDescription(descr, "Generating Overview Imagery");
+                String subDescr = PreprocessPanelDescriptor.makeSubStepDescription(descr, "Generating Overview Imagery");
                 this.panelComponent.setDescription(RPFWizardUtil.makeBold(subDescr));
 
                 layer = this.preprocessor.makeLayer(fileIndex);
             }
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             String message = "Exception while preprocessing: " + (set != null ? set.getTitle() : "null");
             Logging.logger().log(Level.SEVERE, message, e);
             layer = null;
@@ -209,7 +240,7 @@ public class PreprocessPanelDescriptor extends DefaultPanelDescriptor {
         if (nErrors > 0) {
             if (!sb.isEmpty())
                 sb.append("; ");
-            sb.append(formatFileCount(nErrors)).append(" with errors");
+            sb.append(PreprocessPanelDescriptor.formatFileCount(nErrors)).append(" with errors");
         }
         setProgressMessage(sb.toString());
         setProgress(n, numFiles, etr);
@@ -227,8 +258,7 @@ public class PreprocessPanelDescriptor extends DefaultPanelDescriptor {
                 sb.append(TimeFormatter.formatEstimate(remainingMillis));
             }
             this.panelComponent.setProgressDescription2(sb.toString());
-        }
-        else {
+        } else {
             this.panelComponent.getProgressBar().setValue(0);
             this.panelComponent.getProgressBar().setMaximum(0);
             this.panelComponent.setProgressDescription2(" ");
@@ -237,38 +267,6 @@ public class PreprocessPanelDescriptor extends DefaultPanelDescriptor {
 
     private void setProgressMessage(String message) {
         this.panelComponent.setProgressDescription1(message);
-    }
-
-    private static String formatFileCount(int n) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(String.format("%,d", n));
-        sb.append(" file");
-        if (n != 1)
-            sb.append("s");
-        return sb.toString();
-    }
-
-    private static String makeDescription(FileSet set, int value, int max) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Importing ");
-        if (set != null && set.getTitle() != null) {
-            sb.append("'");
-            sb.append(set.getTitle());
-            sb.append("'");
-        }
-        if (max > 1) {
-            sb.append(" (").append(value).append(" of ").append(max).append(")");
-        }
-        return sb.toString();
-    }
-
-    private static String makeSubStepDescription(String description, String subDescription) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("<br>");
-        sb.append(description);
-        sb.append("<br><br><br>");
-        sb.append(subDescription);
-        return sb.toString();
     }
 
     private String makeFinishedDescription() {
@@ -295,11 +293,11 @@ public class PreprocessPanelDescriptor extends DefaultPanelDescriptor {
                         int numFilesOk = filesProcessed - filesWithErrors;
                         sb.append("<br>");
                         sb.append("<font size=\"-2\">");
-                        sb.append(formatFileCount(numFilesOk)).append(" imported");
+                        sb.append(PreprocessPanelDescriptor.formatFileCount(numFilesOk)).append(" imported");
                         if (filesWithErrors > 0) {
                             sb.append("; ");
                             sb.append("<font color=#990000>");
-                            sb.append(formatFileCount(filesWithErrors)).append(" with errors");
+                            sb.append(PreprocessPanelDescriptor.formatFileCount(filesWithErrors)).append(" with errors");
                             sb.append("</font>");
                         }
                         sb.append("</font>");

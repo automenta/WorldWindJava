@@ -6,6 +6,7 @@
 package gov.nasa.worldwind.formats.dds;
 
 ////.*;
+
 import gov.nasa.worldwind.util.*;
 
 import javax.imageio.ImageIO;
@@ -19,9 +20,9 @@ import java.nio.*;
  * the caller wants to encode using a certain type of DXT compression, DDSCompressor provides the appropriate methods to
  * do that. Otherwise, DDSCompressor chooses the DXT compression scheme that best suits the source image.
  * <p>
- * Each compression method accepts a reference to a {@link DXTCompressionAttributes}.
- * This compressor performs the appropriate actions according to the attributes, such as building mip maps and
- * converting the source image to a premultiplied alpha format.
+ * Each compression method accepts a reference to a {@link DXTCompressionAttributes}. This compressor performs the
+ * appropriate actions according to the attributes, such as building mip maps and converting the source image to a
+ * premultiplied alpha format.
  *
  * @author dcollins
  * @version $Id: DDSCompressor.java 1171 2013-02-11 21:45:02Z dcollins $
@@ -36,16 +37,16 @@ public class DDSCompressor {
     /**
      * Convenience method to convert the specified image <code>stream</code> to DDS according to the specified
      * compression <code>attributes</code>. The <code>stream</code> must be readable by {@link
-     * ImageIO#read(InputStream)}. Once the <code>stream</code> is read, this is equivalent to
-     * calling {#compressImage(java.awt.image.BufferedImage, gov.nasa.worldwind.formats.dds.DXTCompressionAttributes)}
-     * with the BufferedImage created by ImageIO and the specified <code>attributes</code>. This returns null if the
+     * ImageIO#read(InputStream)}. Once the <code>stream</code> is read, this is equivalent to calling
+     * {#compressImage(java.awt.image.BufferedImage, gov.nasa.worldwind.formats.dds.DXTCompressionAttributes)} with the
+     * BufferedImage created by ImageIO and the specified <code>attributes</code>. This returns null if the
      * <code>stream</code> is not in a format understood by ImageIO.
      *
      * @param inputStream image stream to convert to the DDS file format.
      * @param attributes  attributes that control the compression.
      * @return little endian ordered ByteBuffer containing the DDS file bytes, or null if the <code>stream</code> is not
      * in a format understood by ImageIO.
-     * @throws IOException      if <code>stream</code> is in a format understood by ImageIO, but the image data
+     * @throws IOException              if <code>stream</code> is in a format understood by ImageIO, but the image data
      *                                  cannot be read by ImageIO.
      * @throws IllegalArgumentException if either the <code>stream</code> or the <code>attributes</code> are null.
      */
@@ -68,7 +69,6 @@ public class DDSCompressor {
             return null;
         }
 
-        
         return DDSCompressor.compressImage(image, attributes);
     }
 
@@ -82,7 +82,7 @@ public class DDSCompressor {
      * @param inputStream image stream to convert to the DDS file format.
      * @return little endian ordered ByteBuffer containing the DDS file bytes, or null if the <code>stream</code> is not
      * in a format understood by ImageIO.
-     * @throws IOException      if <code>stream</code> is in a format understood by ImageIO, but the image data
+     * @throws IOException              if <code>stream</code> is in a format understood by ImageIO, but the image data
      *                                  cannot be read by ImageIO.
      * @throws IllegalArgumentException if <code>stream</code> is null.
      */
@@ -93,7 +93,7 @@ public class DDSCompressor {
             throw new IllegalArgumentException(message);
         }
 
-        return compressImageStream(inputStream, getDefaultCompressionAttributes());
+        return DDSCompressor.compressImageStream(inputStream, DDSCompressor.getDefaultCompressionAttributes());
     }
 
     /**
@@ -108,7 +108,7 @@ public class DDSCompressor {
      * @param attributes  attributes that control the compression.
      * @return little endian ordered ByteBuffer containing the DDS file bytes, or null if the <code>imageBuffer</code>
      * is not in a format understood by ImageIO.
-     * @throws IOException      if the bytes in <code>imageBuffer</code> are in a format understood by ImageIO,
+     * @throws IOException              if the bytes in <code>imageBuffer</code> are in a format understood by ImageIO,
      *                                  but the image data cannot be read by ImageIO.
      * @throws IllegalArgumentException if either <code>imageBuffer</code> or <code>attributes</code> are null.
      */
@@ -127,20 +127,20 @@ public class DDSCompressor {
         }
 
         InputStream inputStream = WWIO.getInputStreamFromByteBuffer(imageBuffer);
-        return compressImageStream(inputStream, attributes);
+        return DDSCompressor.compressImageStream(inputStream, attributes);
     }
 
     /**
      * Convenience method to convert the specified <code>imageBuffer</code> to DDS according to the default attributes.
-     * The bytes in <code>imageBuffer</code> must be readable by {@link ImageIO#read(InputStream)}.
-     * Once the image data is read, this is equivalent to calling {#compressImage(java.awt.image.BufferedImage)} with
-     * the BufferedImage created by ImageIO. This returns null if the bytes in<code>imageBuffer</code> are not in a
-     * format understood by ImageIO.
+     * The bytes in <code>imageBuffer</code> must be readable by {@link ImageIO#read(InputStream)}. Once the image data
+     * is read, this is equivalent to calling {#compressImage(java.awt.image.BufferedImage)} with the BufferedImage
+     * created by ImageIO. This returns null if the bytes in<code>imageBuffer</code> are not in a format understood by
+     * ImageIO.
      *
      * @param imageBuffer image file data to convert to the DDS file format.
      * @return little endian ordered ByteBuffer containing the DDS file bytes, or null if the <code>imageBuffer</code>
      * is not in a format understood by ImageIO.
-     * @throws IOException      if the bytes in <code>imageBuffer</code> are in a format understood by ImageIO,
+     * @throws IOException              if the bytes in <code>imageBuffer</code> are in a format understood by ImageIO,
      *                                  but the image data cannot be read by ImageIO.
      * @throws IllegalArgumentException if <code>imageBuffer</code> is null.
      */
@@ -151,7 +151,7 @@ public class DDSCompressor {
             throw new IllegalArgumentException(message);
         }
 
-        return compressImageBuffer(imageBuffer, getDefaultCompressionAttributes());
+        return DDSCompressor.compressImageBuffer(imageBuffer, DDSCompressor.getDefaultCompressionAttributes());
     }
 
     /**
@@ -167,7 +167,7 @@ public class DDSCompressor {
      * @param attributes attributes that control the compression.
      * @return little endian ordered ByteBuffer containing the DDS file bytes, or null if the <code>file</code> is not
      * in a format understood by ImageIO.
-     * @throws IOException      if <code>file</code> is in a format understood by ImageIO, but the image data
+     * @throws IOException              if <code>file</code> is in a format understood by ImageIO, but the image data
      *                                  cannot be read by ImageIO.
      * @throws IllegalArgumentException if either the <code>file</code> or the <code>attributes</code> are null, if the
      *                                  file does not exist, or if read permission is not allowed on the
@@ -198,20 +198,19 @@ public class DDSCompressor {
             return null;
         }
 
-        
         return DDSCompressor.compressImage(image, attributes);
     }
 
     /**
      * Convenience method to convert the specified image <code>file</code> to DDS according to the default attributes.
-     * The <code>file</code> must be readable by {@link ImageIO#read(File)}. Once the file is
-     * read, this is equivalent to calling {#compressImage(java.awt.image.BufferedImage)} with the BufferedImage created
-     * by ImageIO. This returns null if the <code>file</code> is not in a format understood by ImageIO.
+     * The <code>file</code> must be readable by {@link ImageIO#read(File)}. Once the file is read, this is equivalent
+     * to calling {#compressImage(java.awt.image.BufferedImage)} with the BufferedImage created by ImageIO. This returns
+     * null if the <code>file</code> is not in a format understood by ImageIO.
      *
      * @param file image file to convert to the DDS file format.
      * @return little endian ordered ByteBuffer containing the DDS file bytes, or null if the <code>file</code> is not
      * in a format understood by ImageIO.
-     * @throws IOException      if <code>file</code> is in a format understood by ImageIO, but the image data
+     * @throws IOException              if <code>file</code> is in a format understood by ImageIO, but the image data
      *                                  cannot be read by ImageIO.
      * @throws IllegalArgumentException if <code>file</code> is null, does not exist, or read permission is not allowed
      *                                  on the <code>file</code>.
@@ -229,7 +228,7 @@ public class DDSCompressor {
             throw new IllegalArgumentException(message);
         }
 
-        return compressImageFile(file, getDefaultCompressionAttributes());
+        return DDSCompressor.compressImageFile(file, DDSCompressor.getDefaultCompressionAttributes());
     }
 
     /**
@@ -244,7 +243,7 @@ public class DDSCompressor {
      * @param attributes attributes that control the compression.
      * @return little endian ordered ByteBuffer containing the DDS file bytes, or null if the <code>url</code> is not in
      * a format understood by ImageIO.
-     * @throws IOException      if <code>url</code> is in a format understood by ImageIO, but the image data
+     * @throws IOException              if <code>url</code> is in a format understood by ImageIO, but the image data
      *                                  cannot be read by ImageIO.
      * @throws IllegalArgumentException if either the <code>url</code> or the <code>attributes</code> are null.
      */
@@ -267,7 +266,6 @@ public class DDSCompressor {
             return null;
         }
 
-        
         return DDSCompressor.compressImage(image, attributes);
     }
 
@@ -281,7 +279,7 @@ public class DDSCompressor {
      * @param url image URL to convert to the DDS file format.
      * @return little endian ordered ByteBuffer containing the DDS file bytes, or null if the <code>url</code> is not in
      * a format understood by ImageIO.
-     * @throws IOException      if <code>url</code> is in a format understood by ImageIO, but the image data
+     * @throws IOException              if <code>url</code> is in a format understood by ImageIO, but the image data
      *                                  cannot be read by ImageIO.
      * @throws IllegalArgumentException if <code>url</code> is null.
      */
@@ -292,7 +290,7 @@ public class DDSCompressor {
             throw new IllegalArgumentException(message);
         }
 
-        return compressImageURL(url, getDefaultCompressionAttributes());
+        return DDSCompressor.compressImageURL(url, DDSCompressor.getDefaultCompressionAttributes());
     }
 
     /**
@@ -316,8 +314,7 @@ public class DDSCompressor {
             throw new IllegalArgumentException(message);
         }
 
-        
-        DXTCompressionAttributes attributes = getDefaultCompressionAttributes();
+        DXTCompressionAttributes attributes = DDSCompressor.getDefaultCompressionAttributes();
         return DDSCompressor.compressImage(image, attributes);
     }
 
@@ -456,8 +453,7 @@ public class DDSCompressor {
             header.setFlags(header.getFlags()
                 | DDSConstants.DDSD_MIPMAPCOUNT);
             header.setMipMapCount(mipMapLevels.length);
-        }
-        else {
+        } else {
             fileSize += compressor.getCompressedSize(image, attributes);
         }
 
@@ -474,8 +470,7 @@ public class DDSCompressor {
         // single image to the DDS file.
         if (mipMapLevels == null) {
             compressor.compressImage(image, attributes, buffer);
-        }
-        else {
+        } else {
             for (BufferedImage mipMapImage : mipMapLevels) {
                 compressor.compressImage(mipMapImage, attributes, buffer);
             }
@@ -492,15 +487,12 @@ public class DDSCompressor {
 
         if (attributes.getDXTFormat() == DDSConstants.D3DFMT_DXT1) {
             return new DXT1Compressor();
-        }
-        else if (attributes.getDXTFormat() == DDSConstants.D3DFMT_DXT2
+        } else if (attributes.getDXTFormat() == DDSConstants.D3DFMT_DXT2
             || attributes.getDXTFormat() == DDSConstants.D3DFMT_DXT3) {
             return new DXT3Compressor();
-        }
-        else if (!image.getColorModel().hasAlpha()) {
+        } else if (!image.getColorModel().hasAlpha()) {
             return new DXT1Compressor();
-        }
-        else {
+        } else {
             return new DXT3Compressor();
         }
     }

@@ -6,11 +6,12 @@
 package gov.nasa.worldwind.cache;
 
 ////.*;
+
 import gov.nasa.worldwind.util.*;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.*;
+import java.util.function.Function;
 
 /**
  * @author tag
@@ -29,7 +30,7 @@ public class BasicMemoryCacheSet implements MemoryCacheSet {
     }
 
     @Override
-    public MemoryCache getCache(String cacheKey, Function<String,MemoryCache> s) {
+    public MemoryCache getCache(String cacheKey, Function<String, MemoryCache> s) {
         return caches.computeIfAbsent(cacheKey, s);
     }
 
@@ -39,7 +40,7 @@ public class BasicMemoryCacheSet implements MemoryCacheSet {
 
     public MemoryCache addCache(String key, MemoryCache cache) {
         MemoryCache existing = this.caches.put(key, cache);
-        if (existing!=null) {
+        if (existing != null) {
             String message = Logging.getMessage("MemoryCacheSet.CacheAlreadyExists");
             Logging.logger().fine(message);
             throw new IllegalStateException(message);

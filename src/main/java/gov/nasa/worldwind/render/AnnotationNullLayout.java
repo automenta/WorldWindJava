@@ -24,6 +24,18 @@ public class AnnotationNullLayout extends AbstractAnnotationLayout {
         this.constraintMap = new HashMap<>();
     }
 
+    protected static Rectangle getAnnotationBounds(DrawContext dc, Annotation annotation) {
+        Dimension size = AbstractAnnotationLayout.getAnnotationSize(dc, annotation);
+        if (size == null)
+            return null;
+
+        Point offset = annotation.getAttributes().getDrawOffset();
+        if (offset == null)
+            offset = new Point();
+
+        return new Rectangle(offset, size);
+    }
+
     public Object getConstraint(Annotation annotation) {
         if (annotation == null) {
             String message = Logging.getMessage("nullValue.AnnotationIsNull");
@@ -107,18 +119,6 @@ public class AnnotationNullLayout extends AbstractAnnotationLayout {
         }
     }
 
-    protected static Rectangle getAnnotationBounds(DrawContext dc, Annotation annotation) {
-        Dimension size = AbstractAnnotationLayout.getAnnotationSize(dc, annotation);
-        if (size == null)
-            return null;
-
-        Point offset = annotation.getAttributes().getDrawOffset();
-        if (offset == null)
-            offset = new Point();
-
-        return new Rectangle(offset, size);
-    }
-
     @SuppressWarnings("UnusedDeclaration")
     protected Rectangle adjustAnnotationBounds(DrawContext dc, Rectangle parentBounds,
         Annotation annotation, Rectangle bounds) {
@@ -129,33 +129,25 @@ public class AnnotationNullLayout extends AbstractAnnotationLayout {
 
         if (constraint == AVKey.WEST) {
             y += parentBounds.height / 2 - bounds.height / 2;
-        }
-        else if (constraint == AVKey.NORTHWEST) {
+        } else if (constraint == AVKey.NORTHWEST) {
             y += parentBounds.height - bounds.height;
-        }
-        else if (constraint == AVKey.NORTH) {
+        } else if (constraint == AVKey.NORTH) {
             x += parentBounds.width / 2 - bounds.width / 2;
             y += parentBounds.height - bounds.height;
-        }
-        else if (constraint == AVKey.NORTHEAST) {
+        } else if (constraint == AVKey.NORTHEAST) {
             x += parentBounds.width - bounds.width;
             y += parentBounds.height - bounds.height;
-        }
-        else if (constraint == AVKey.EAST) {
+        } else if (constraint == AVKey.EAST) {
             x += parentBounds.width - bounds.width;
             y += parentBounds.height / 2 - bounds.height / 2;
-        }
-        else if (constraint == AVKey.SOUTHEAST) {
+        } else if (constraint == AVKey.SOUTHEAST) {
             x += parentBounds.width - bounds.width;
-        }
-        else if (constraint == AVKey.SOUTH) {
+        } else if (constraint == AVKey.SOUTH) {
             x += parentBounds.width / 2 - bounds.width / 2;
-        }
-        else if (constraint == AVKey.CENTER) {
+        } else if (constraint == AVKey.CENTER) {
             x += parentBounds.width / 2 - bounds.width / 2;
             y += parentBounds.height / 2 - bounds.height / 2;
-        }
-        else // Default to anchoring in the south west corner.
+        } else // Default to anchoring in the south west corner.
         {
         }
 

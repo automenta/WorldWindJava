@@ -80,7 +80,7 @@ public class ToolTipController implements SelectListener, Disposable {
             else if (event.isHover() && this.hoverKey != null)
                 this.handleHover(event);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             // Wrap the handler in a try/catch to keep exceptions from bubbling up
             Logging.logger().warning(e.getMessage() != null ? e.getMessage() : e.toString());
         }
@@ -124,8 +124,7 @@ public class ToolTipController implements SelectListener, Disposable {
         if (annotation != null) {
             annotation.setText(text);
             annotation.setScreenPoint(event.pickPoint);
-        }
-        else {
+        } else {
             annotation = new ToolTipAnnotation(text);
         }
 

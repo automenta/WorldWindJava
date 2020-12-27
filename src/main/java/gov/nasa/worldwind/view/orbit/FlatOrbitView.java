@@ -10,8 +10,8 @@ import gov.nasa.worldwind.geom.*;
 /**
  * @author Patrick Muris
  * @version $Id: FlatOrbitView.java 2219 2014-08-11 21:39:44Z dcollins $
- * @deprecated Use {@link BasicOrbitView} instead. BasicOrbitView implements the correct
- * horizon distance and far clip distance when used with a 2D globe.
+ * @deprecated Use {@link BasicOrbitView} instead. BasicOrbitView implements the correct horizon distance and far clip
+ * distance when used with a 2D globe.
  */
 @Deprecated
 public class FlatOrbitView extends BasicOrbitView {
@@ -29,7 +29,7 @@ public class FlatOrbitView extends BasicOrbitView {
 
     public double computeFarClipDistance() {
         double far = this.computeHorizonDistance(this.getCurrentEyePoint());
-        return Math.max(far, MINIMUM_FAR_DISTANCE);
+        return Math.max(far, FlatOrbitView.MINIMUM_FAR_DISTANCE);
     }
 
     protected double computeHorizonDistance(Vec4 eyePoint) {

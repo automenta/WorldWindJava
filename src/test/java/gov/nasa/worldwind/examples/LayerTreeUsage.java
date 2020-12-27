@@ -6,17 +6,14 @@
 
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.BasicModel;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.ui.HotSpotController;
 import gov.nasa.worldwind.ui.tree.BasicTree;
 import gov.nasa.worldwind.ui.tree.layer.LayerTree;
-import gov.nasa.worldwind.util.WWUtil;
-import gov.nasa.worldwind.video.newt.*;
+import gov.nasa.worldwind.video.newt.WorldWindowNEWT;
 import spacegraph.video.JoglWindow;
-
-import java.awt.*;
 
 /**
  * Example of using {@link BasicTree} to display a list of layers.

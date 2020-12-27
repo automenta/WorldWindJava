@@ -63,7 +63,7 @@ public class MGRSCoord {
      *                                  MGRS coordinates fails.
      */
     public static MGRSCoord fromLatLon(Angle latitude, Angle longitude) {
-        return fromLatLon(latitude, longitude, null, 5);
+        return MGRSCoord.fromLatLon(latitude, longitude, null, 5);
     }
 
     /**
@@ -78,7 +78,7 @@ public class MGRSCoord {
      *                                  MGRS coordinates fails.
      */
     public static MGRSCoord fromLatLon(Angle latitude, Angle longitude, int precision) {
-        return fromLatLon(latitude, longitude, null, precision);
+        return MGRSCoord.fromLatLon(latitude, longitude, null, precision);
     }
 
     /**
@@ -93,10 +93,11 @@ public class MGRSCoord {
      *                                  <code>globe</code> is null, or the conversion to MGRS coordinates fails.
      */
     public static MGRSCoord fromLatLon(Angle latitude, Angle longitude, Globe globe) {
-        return fromLatLon(latitude, longitude, globe, 5);
+        return MGRSCoord.fromLatLon(latitude, longitude, globe, 5);
     }
+
     public static MGRSCoord fromLatLon(double latitude, double longitude, Globe globe) {
-        return fromLatLon(Angle.fromDegrees(latitude), Angle.fromDegrees(longitude), globe);
+        return MGRSCoord.fromLatLon(Angle.fromDegrees(latitude), Angle.fromDegrees(longitude), globe);
     }
 
     /**
@@ -119,7 +120,7 @@ public class MGRSCoord {
         }
 
         final MGRSCoordConverter converter = new MGRSCoordConverter(globe);
-        long err = converter.convertGeodeticToMGRS(latitude.radians, longitude.radians, precision);
+        long err = converter.convertGeodeticToMGRS(latitude.radians(), longitude.radians(), precision);
 
         if (err != MGRSCoordConverter.MGRS_NO_ERROR) {
             String message = Logging.getMessage("Coord.MGRSConversionError");

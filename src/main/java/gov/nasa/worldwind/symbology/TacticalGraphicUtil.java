@@ -58,8 +58,7 @@ public class TacticalGraphicUtil {
             if (iterator.hasNext()) {
                 date2 = iterator.next();
             }
-        }
-        else {
+        } else {
             date1 = o;
         }
 
@@ -90,8 +89,7 @@ public class TacticalGraphicUtil {
             if (iterator.hasNext()) {
                 alt2 = iterator.next();
             }
-        }
-        else {
+        } else {
             alt1 = o;
         }
 
@@ -200,7 +198,7 @@ public class TacticalGraphicUtil {
         }
 
         if (coefficients[0] != 1) {
-            binomial(coefficients.length - 1, coefficients);
+            TacticalGraphicUtil.binomial(coefficients.length - 1, coefficients);
         }
 
         int n = controlPoints.length - 1;

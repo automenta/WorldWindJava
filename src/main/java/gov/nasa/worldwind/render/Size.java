@@ -64,7 +64,7 @@ public class Size {
      * Size mode for width. May be one of {@link #NATIVE_DIMENSION}, {@link #MAINTAIN_ASPECT_RATIO}, or {@link
      * #EXPLICIT_DIMENSION}.
      */
-    protected String widthMode = NATIVE_DIMENSION;
+    protected String widthMode = Size.NATIVE_DIMENSION;
     /**
      * Units of width.
      */
@@ -78,7 +78,7 @@ public class Size {
      * Size mode for height. May be one of {@link #NATIVE_DIMENSION}, {@link #MAINTAIN_ASPECT_RATIO}, or {@link
      * #EXPLICIT_DIMENSION}.
      */
-    protected String heightMode = NATIVE_DIMENSION;
+    protected String heightMode = Size.NATIVE_DIMENSION;
     /**
      * Units of height.
      */
@@ -122,8 +122,8 @@ public class Size {
      * @return New size object.
      */
     public static Size fromPixels(int widthInPixels, int heightInPixels) {
-        return new Size(EXPLICIT_DIMENSION, widthInPixels, AVKey.PIXELS,
-            EXPLICIT_DIMENSION, heightInPixels, AVKey.PIXELS);
+        return new Size(Size.EXPLICIT_DIMENSION, widthInPixels, AVKey.PIXELS,
+            Size.EXPLICIT_DIMENSION, heightInPixels, AVKey.PIXELS);
     }
 
     /**
@@ -134,8 +134,44 @@ public class Size {
      * @return a new size with the specified width and height.
      */
     public static Size fromFraction(double widthFraction, double heightFraction) {
-        return new Size(EXPLICIT_DIMENSION, widthFraction, AVKey.FRACTION,
-            EXPLICIT_DIMENSION, heightFraction, AVKey.FRACTION);
+        return new Size(Size.EXPLICIT_DIMENSION, widthFraction, AVKey.FRACTION,
+            Size.EXPLICIT_DIMENSION, heightFraction, AVKey.FRACTION);
+    }
+
+    /**
+     * Compute a dimension taking into account the units of the dimension.
+     *
+     * @param size               The size parameter.
+     * @param units              One of {@link AVKey#PIXELS} or {@link AVKey#FRACTION}. If the {@code units} value is
+     *                           not one of the expected options, {@link AVKey#PIXELS} is used as the default.
+     * @param containerDimension The viewport dimension.
+     * @return Size in pixels
+     */
+    protected static double computeSize(double size, String units, double containerDimension) {
+        if (AVKey.FRACTION.equals(units))
+            return size * containerDimension;
+        else  // Default to pixel
+            return size;
+    }
+
+    /**
+     * Converts a legacy size mode <code>string</code> ("NativeDimension", "MaintainAspectRatio", "ExplicitDimension"),
+     * into one of the mode constants (<code>NATIVE_DIMENSION</code>, <code>MAINTAIN_ASPECT_RATIO</code>, or
+     * <code>EXPLICIT_DIMENSION</code>). Returns the input string unmodified if the input does not match a legacy size
+     * mode.
+     *
+     * @param string the legacy size mode <code>String</code> to convert to a size mode.
+     * @return a size mode constant, or the input string if <code>string</code> is not a legacy size mode.
+     */
+    protected static String convertLegacyModeString(String string) {
+        if ("NativeDimension".equals(string))
+            return Size.NATIVE_DIMENSION;
+        else if ("MaintainAspectRatio".equals(string))
+            return Size.MAINTAIN_ASPECT_RATIO;
+        else if ("ExplicitDimension".equals(string))
+            return Size.EXPLICIT_DIMENSION;
+        else
+            return string;
     }
 
     /**
@@ -287,56 +323,37 @@ public class Size {
 
         double width, height;
 
-        if (NATIVE_DIMENSION.equals(xMode) && NATIVE_DIMENSION.equals(yMode)
-            || NATIVE_DIMENSION.equals(xMode) && MAINTAIN_ASPECT_RATIO.equals(yMode)
-            || MAINTAIN_ASPECT_RATIO.equals(xMode) && NATIVE_DIMENSION.equals(yMode)
-            || MAINTAIN_ASPECT_RATIO.equals(xMode) && MAINTAIN_ASPECT_RATIO.equals(yMode)) {
+        if (Size.NATIVE_DIMENSION.equals(xMode) && Size.NATIVE_DIMENSION.equals(yMode)
+            || Size.NATIVE_DIMENSION.equals(xMode) && Size.MAINTAIN_ASPECT_RATIO.equals(yMode)
+            || Size.MAINTAIN_ASPECT_RATIO.equals(xMode) && Size.NATIVE_DIMENSION.equals(yMode)
+            || Size.MAINTAIN_ASPECT_RATIO.equals(xMode) && Size.MAINTAIN_ASPECT_RATIO.equals(yMode)) {
             // Keep original dimensions
             width = rectWidth;
             height = rectHeight;
-        }
-        else if (MAINTAIN_ASPECT_RATIO.equals(xMode)) {
+        } else if (Size.MAINTAIN_ASPECT_RATIO.equals(xMode)) {
             // y dimension is specified, scale x to maintain aspect ratio
-            height = computeSize(this.heightParam, this.heightUnits, containerHeight);
+            height = Size.computeSize(this.heightParam, this.heightUnits, containerHeight);
             width = height * aspectRatio;
-        }
-        else if (MAINTAIN_ASPECT_RATIO.equals(yMode)) {
+        } else if (Size.MAINTAIN_ASPECT_RATIO.equals(yMode)) {
             // x dimension is specified, scale y to maintain aspect ratio
-            width = computeSize(this.widthParam, this.widthUnits, containerWidth);
+            width = Size.computeSize(this.widthParam, this.widthUnits, containerWidth);
             if (aspectRatio != 0)
                 height = width / aspectRatio;
             else
                 height = 0;
-        }
-        else {
-            if (NATIVE_DIMENSION.equals(xMode))
+        } else {
+            if (Size.NATIVE_DIMENSION.equals(xMode))
                 width = rectWidth;
             else
-                width = computeSize(this.widthParam, this.widthUnits, containerWidth);
+                width = Size.computeSize(this.widthParam, this.widthUnits, containerWidth);
 
-            if (NATIVE_DIMENSION.equals(yMode))
+            if (Size.NATIVE_DIMENSION.equals(yMode))
                 height = rectHeight;
             else
-                height = computeSize(this.heightParam, this.heightUnits, containerHeight);
+                height = Size.computeSize(this.heightParam, this.heightUnits, containerHeight);
         }
 
         return new Dimension((int) width, (int) height);
-    }
-
-    /**
-     * Compute a dimension taking into account the units of the dimension.
-     *
-     * @param size               The size parameter.
-     * @param units              One of {@link AVKey#PIXELS} or {@link AVKey#FRACTION}. If the {@code units} value is
-     *                           not one of the expected options, {@link AVKey#PIXELS} is used as the default.
-     * @param containerDimension The viewport dimension.
-     * @return Size in pixels
-     */
-    protected static double computeSize(double size, String units, double containerDimension) {
-        if (AVKey.FRACTION.equals(units))
-            return size * containerDimension;
-        else  // Default to pixel
-            return size;
     }
 
     /**
@@ -394,7 +411,7 @@ public class Size {
         RestorableSupport.StateObject so = restorableSupport.getStateObject(context, "width");
         if (so != null) {
             String mode = restorableSupport.getStateValueAsString(so, "mode");
-            mode = convertLegacyModeString(mode);
+            mode = Size.convertLegacyModeString(mode);
 
             Double param = restorableSupport.getStateValueAsDouble(so, "param");
             String units = restorableSupport.getStateValueAsString(so, "units");
@@ -407,7 +424,7 @@ public class Size {
         so = restorableSupport.getStateObject(context, "height");
         if (so != null) {
             String mode = restorableSupport.getStateValueAsString(so, "mode");
-            mode = convertLegacyModeString(mode);
+            mode = Size.convertLegacyModeString(mode);
 
             Double param = restorableSupport.getStateValueAsDouble(so, "param");
             String units = restorableSupport.getStateValueAsString(so, "units");
@@ -416,26 +433,6 @@ public class Size {
             if (mode != null && param != null)
                 this.setHeight(mode, param, units);
         }
-    }
-
-    /**
-     * Converts a legacy size mode <code>string</code> ("NativeDimension", "MaintainAspectRatio", "ExplicitDimension"),
-     * into one of the mode constants (<code>NATIVE_DIMENSION</code>, <code>MAINTAIN_ASPECT_RATIO</code>, or
-     * <code>EXPLICIT_DIMENSION</code>). Returns the input string unmodified if the input does not match a legacy size
-     * mode.
-     *
-     * @param string the legacy size mode <code>String</code> to convert to a size mode.
-     * @return a size mode constant, or the input string if <code>string</code> is not a legacy size mode.
-     */
-    protected static String convertLegacyModeString(String string) {
-        if ("NativeDimension".equals(string))
-            return NATIVE_DIMENSION;
-        else if ("MaintainAspectRatio".equals(string))
-            return MAINTAIN_ASPECT_RATIO;
-        else if ("ExplicitDimension".equals(string))
-            return EXPLICIT_DIMENSION;
-        else
-            return string;
     }
 
     @Override
@@ -468,9 +465,9 @@ public class Size {
     public int hashCode() {
         int result;
         long temp;
-        temp = this.widthParam != +0.0d ? Double.doubleToLongBits(this.widthParam) : 0L;
+        temp = this.widthParam == +0.0d ? 0L : Double.doubleToLongBits(this.widthParam);
         result = (int) (temp ^ (temp >>> 32));
-        temp = this.heightParam != +0.0d ? Double.doubleToLongBits(this.heightParam) : 0L;
+        temp = this.heightParam == +0.0d ? 0L : Double.doubleToLongBits(this.heightParam);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         result = 31 * result + (this.widthUnits != null ? this.widthUnits.hashCode() : 0);
         result = 31 * result + (this.heightUnits != null ? this.heightUnits.hashCode() : 0);

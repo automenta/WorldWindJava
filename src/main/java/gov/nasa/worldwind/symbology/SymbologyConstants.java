@@ -58,8 +58,8 @@ public interface SymbologyConstants {
      * List containing all recognized MIL-STD-2525 auxiliary equipment codes.
      */
     List<String> AUXILIARY_EQUIPMENT_ALL = Arrays.asList(
-        AUXILIARY_EQUIPMENT_TOWED_SONAR_ARRAY_SHORT,
-        AUXILIARY_EQUIPMENT_TOWED_SONAR_ARRAY_LONG
+        SymbologyConstants.AUXILIARY_EQUIPMENT_TOWED_SONAR_ARRAY_SHORT,
+        SymbologyConstants.AUXILIARY_EQUIPMENT_TOWED_SONAR_ARRAY_LONG
     );
 
     /**
@@ -129,26 +129,26 @@ public interface SymbologyConstants {
      * List containing all recognized MIL-STD-2525 battle dimension codes.
      */
     List<String> BATTLE_DIMENSION_ALL = Arrays.asList(
-        BATTLE_DIMENSION_UNKNOWN,
-        BATTLE_DIMENSION_SPACE,
-        BATTLE_DIMENSION_AIR,
-        BATTLE_DIMENSION_GROUND,
-        BATTLE_DIMENSION_SEA_SURFACE,
-        BATTLE_DIMENSION_SEA_SUBSURFACE,
-        BATTLE_DIMENSION_SOF,
-        BATTLE_DIMENSION_OTHER
+        SymbologyConstants.BATTLE_DIMENSION_UNKNOWN,
+        SymbologyConstants.BATTLE_DIMENSION_SPACE,
+        SymbologyConstants.BATTLE_DIMENSION_AIR,
+        SymbologyConstants.BATTLE_DIMENSION_GROUND,
+        SymbologyConstants.BATTLE_DIMENSION_SEA_SURFACE,
+        SymbologyConstants.BATTLE_DIMENSION_SEA_SUBSURFACE,
+        SymbologyConstants.BATTLE_DIMENSION_SOF,
+        SymbologyConstants.BATTLE_DIMENSION_OTHER
     );
     /**
      * List containing all recognized MIL-STD-2525 battle dimension codes for the Signals Intelligence scheme.
      */
     List<String> BATTLE_DIMENSION_ALL_INTELLIGENCE = Arrays.asList(
-        BATTLE_DIMENSION_UNKNOWN,
-        BATTLE_DIMENSION_SPACE,
-        BATTLE_DIMENSION_AIR,
-        BATTLE_DIMENSION_GROUND,
-        BATTLE_DIMENSION_SEA_SURFACE,
-        BATTLE_DIMENSION_SEA_SUBSURFACE,
-        BATTLE_DIMENSION_OTHER
+        SymbologyConstants.BATTLE_DIMENSION_UNKNOWN,
+        SymbologyConstants.BATTLE_DIMENSION_SPACE,
+        SymbologyConstants.BATTLE_DIMENSION_AIR,
+        SymbologyConstants.BATTLE_DIMENSION_GROUND,
+        SymbologyConstants.BATTLE_DIMENSION_SEA_SURFACE,
+        SymbologyConstants.BATTLE_DIMENSION_SEA_SUBSURFACE,
+        SymbologyConstants.BATTLE_DIMENSION_OTHER
     );
 
     /**
@@ -260,68 +260,68 @@ public interface SymbologyConstants {
      */
     List<String> CATEGORY_ALL = Arrays.asList(
         // Tactical Graphics category codes.
-        CATEGORY_TASKS,
-        CATEGORY_COMMAND_CONTROL_GENERAL_MANEUVER,
-        CATEGORY_MOBILITY_SURVIVABILITY,
-        CATEGORY_FIRE_SUPPORT,
-        CATEGORY_COMBAT_SERVICE_SUPPORT,
-        CATEGORY_OTHER,
+        SymbologyConstants.CATEGORY_TASKS,
+        SymbologyConstants.CATEGORY_COMMAND_CONTROL_GENERAL_MANEUVER,
+        SymbologyConstants.CATEGORY_MOBILITY_SURVIVABILITY,
+        SymbologyConstants.CATEGORY_FIRE_SUPPORT,
+        SymbologyConstants.CATEGORY_COMBAT_SERVICE_SUPPORT,
+        SymbologyConstants.CATEGORY_OTHER,
         // Stability Operations category codes.
-        CATEGORY_VIOLENT_ACTIVITIES,
-        CATEGORY_LOCATIONS,
-        CATEGORY_OPERATIONS,
-        CATEGORY_ITEMS,
-        CATEGORY_INDIVIDUAL,
-        CATEGORY_NONMILITARY_GROUP_ORGANIZATION,
-        CATEGORY_RAPE,
+        SymbologyConstants.CATEGORY_VIOLENT_ACTIVITIES,
+        SymbologyConstants.CATEGORY_LOCATIONS,
+        SymbologyConstants.CATEGORY_OPERATIONS,
+        SymbologyConstants.CATEGORY_ITEMS,
+        SymbologyConstants.CATEGORY_INDIVIDUAL,
+        SymbologyConstants.CATEGORY_NONMILITARY_GROUP_ORGANIZATION,
+        SymbologyConstants.CATEGORY_RAPE,
         // Emergency Management category codes (CATEGORY_OPERATIONS already included from Tactical Graphics).
-        CATEGORY_INCIDENT,
-        CATEGORY_NATURAL_EVENTS,
-        CATEGORY_INFRASTRUCTURE,
+        SymbologyConstants.CATEGORY_INCIDENT,
+        SymbologyConstants.CATEGORY_NATURAL_EVENTS,
+        SymbologyConstants.CATEGORY_INFRASTRUCTURE,
         // METOC category codes
-        CATEGORY_ATMOSPHERIC,
-        CATEGORY_OCEANIC,
-        CATEGORY_SPACE
+        SymbologyConstants.CATEGORY_ATMOSPHERIC,
+        SymbologyConstants.CATEGORY_OCEANIC,
+        SymbologyConstants.CATEGORY_SPACE
     );
     /**
      * List containing all recognized MIL-STD-2525 category codes for the Tactical Graphics scheme.
      */
     List<String> CATEGORY_ALL_TACTICAL_GRAPHICS = Arrays.asList(
-        CATEGORY_TASKS,
-        CATEGORY_COMMAND_CONTROL_GENERAL_MANEUVER,
-        CATEGORY_MOBILITY_SURVIVABILITY,
-        CATEGORY_FIRE_SUPPORT,
-        CATEGORY_COMBAT_SERVICE_SUPPORT,
-        CATEGORY_OTHER
+        SymbologyConstants.CATEGORY_TASKS,
+        SymbologyConstants.CATEGORY_COMMAND_CONTROL_GENERAL_MANEUVER,
+        SymbologyConstants.CATEGORY_MOBILITY_SURVIVABILITY,
+        SymbologyConstants.CATEGORY_FIRE_SUPPORT,
+        SymbologyConstants.CATEGORY_COMBAT_SERVICE_SUPPORT,
+        SymbologyConstants.CATEGORY_OTHER
     );
     /**
      * List containing all recognized MIL-STD-2525 category codes for the Stability Operations scheme.
      */
     List<String> CATEGORY_ALL_STABILITY_OPERATIONS = Arrays.asList(
-        CATEGORY_VIOLENT_ACTIVITIES,
-        CATEGORY_LOCATIONS,
-        CATEGORY_OPERATIONS,
-        CATEGORY_ITEMS,
-        CATEGORY_INDIVIDUAL,
-        CATEGORY_NONMILITARY_GROUP_ORGANIZATION,
-        CATEGORY_RAPE
+        SymbologyConstants.CATEGORY_VIOLENT_ACTIVITIES,
+        SymbologyConstants.CATEGORY_LOCATIONS,
+        SymbologyConstants.CATEGORY_OPERATIONS,
+        SymbologyConstants.CATEGORY_ITEMS,
+        SymbologyConstants.CATEGORY_INDIVIDUAL,
+        SymbologyConstants.CATEGORY_NONMILITARY_GROUP_ORGANIZATION,
+        SymbologyConstants.CATEGORY_RAPE
     );
     /**
      * List containing all recognized MIL-STD-2525 category codes for the Emergency Management scheme.
      */
     List<String> CATEGORY_ALL_EMERGENCY_MANAGEMENT = Arrays.asList(
-        CATEGORY_INCIDENT,
-        CATEGORY_NATURAL_EVENTS,
-        CATEGORY_OPERATIONS,
-        CATEGORY_INFRASTRUCTURE
+        SymbologyConstants.CATEGORY_INCIDENT,
+        SymbologyConstants.CATEGORY_NATURAL_EVENTS,
+        SymbologyConstants.CATEGORY_OPERATIONS,
+        SymbologyConstants.CATEGORY_INFRASTRUCTURE
     );
     /**
      * List containing all recognized MIL-STD-2525 category codes for the Meteorological and Oceanographic scheme.
      */
     List<String> CATEGORY_ALL_METOC = Arrays.asList(
-        CATEGORY_ATMOSPHERIC,
-        CATEGORY_OCEANIC,
-        CATEGORY_SPACE
+        SymbologyConstants.CATEGORY_ATMOSPHERIC,
+        SymbologyConstants.CATEGORY_OCEANIC,
+        SymbologyConstants.CATEGORY_SPACE
     );
 
     /**
@@ -454,20 +454,20 @@ public interface SymbologyConstants {
      * List containing all recognized MIL-STD-2525 echelon codes.
      */
     List<String> ECHELON_ALL = Arrays.asList(
-        ECHELON_TEAM_CREW,
-        ECHELON_SQUAD,
-        ECHELON_SECTION,
-        ECHELON_PLATOON_DETACHMENT,
-        ECHELON_COMPANY_BATTERY_TROOP,
-        ECHELON_BATTALION_SQUADRON,
-        ECHELON_REGIMENT_GROUP,
-        ECHELON_BRIGADE,
-        ECHELON_DIVISION,
-        ECHELON_CORPS,
-        ECHELON_ARMY,
-        ECHELON_ARMY_GROUP_FRONT,
-        ECHELON_REGION,
-        ECHELON_COMMAND
+        SymbologyConstants.ECHELON_TEAM_CREW,
+        SymbologyConstants.ECHELON_SQUAD,
+        SymbologyConstants.ECHELON_SECTION,
+        SymbologyConstants.ECHELON_PLATOON_DETACHMENT,
+        SymbologyConstants.ECHELON_COMPANY_BATTERY_TROOP,
+        SymbologyConstants.ECHELON_BATTALION_SQUADRON,
+        SymbologyConstants.ECHELON_REGIMENT_GROUP,
+        SymbologyConstants.ECHELON_BRIGADE,
+        SymbologyConstants.ECHELON_DIVISION,
+        SymbologyConstants.ECHELON_CORPS,
+        SymbologyConstants.ECHELON_ARMY,
+        SymbologyConstants.ECHELON_ARMY_GROUP_FRONT,
+        SymbologyConstants.ECHELON_REGION,
+        SymbologyConstants.ECHELON_COMMAND
     );
 
     /**
@@ -545,9 +545,9 @@ public interface SymbologyConstants {
      */
     String GRAPHIC_TYPE_AREA = "--A";
     List<String> GRAPHIC_TYPE_ALL = Arrays.asList(
-        GRAPHIC_TYPE_POINT,
-        GRAPHIC_TYPE_LINE,
-        GRAPHIC_TYPE_AREA
+        SymbologyConstants.GRAPHIC_TYPE_POINT,
+        SymbologyConstants.GRAPHIC_TYPE_LINE,
+        SymbologyConstants.GRAPHIC_TYPE_AREA
     );
 
     /**
@@ -615,8 +615,8 @@ public interface SymbologyConstants {
      * List containing all recognized MIL-STD-2525 installation codes.
      */
     List<String> INSTALLATION_ALL = Arrays.asList(
-        INSTALLATION_NORMAL,
-        INSTALLATION_FEINT_DUMMY
+        SymbologyConstants.INSTALLATION_NORMAL,
+        SymbologyConstants.INSTALLATION_FEINT_DUMMY
     );
 
     /**
@@ -697,17 +697,17 @@ public interface SymbologyConstants {
      * List containing all recognized MIL-STD-2525 mobility codes.
      */
     List<String> MOBILITY_ALL = Arrays.asList(
-        MOBILITY_WHEELED,
-        MOBILITY_CROSS_COUNTRY,
-        MOBILITY_TRACKED,
-        MOBILITY_WHEELED_TRACKED_COMBINATION,
-        MOBILITY_TOWED,
-        MOBILITY_RAIL,
-        MOBILITY_OVER_THE_SNOW,
-        MOBILITY_SLED,
-        MOBILITY_PACK_ANIMALS,
-        MOBILITY_BARGE,
-        MOBILITY_AMPHIBIOUS
+        SymbologyConstants.MOBILITY_WHEELED,
+        SymbologyConstants.MOBILITY_CROSS_COUNTRY,
+        SymbologyConstants.MOBILITY_TRACKED,
+        SymbologyConstants.MOBILITY_WHEELED_TRACKED_COMBINATION,
+        SymbologyConstants.MOBILITY_TOWED,
+        SymbologyConstants.MOBILITY_RAIL,
+        SymbologyConstants.MOBILITY_OVER_THE_SNOW,
+        SymbologyConstants.MOBILITY_SLED,
+        SymbologyConstants.MOBILITY_PACK_ANIMALS,
+        SymbologyConstants.MOBILITY_BARGE,
+        SymbologyConstants.MOBILITY_AMPHIBIOUS
     );
 
     /**
@@ -750,51 +750,51 @@ public interface SymbologyConstants {
      * List containing all recognized MIL-STD-2525 units and equipment symbol modifier codes.
      */
     List<String> MODIFIER_CODE_ALL_UEI = Arrays.asList(
-        MODIFIER_CODE_HEADQUARTERS,
-        MODIFIER_CODE_TASK_FORCE_HEADQUARTERS,
-        MODIFIER_CODE_FEINT_DUMMY_HEADQUARTERS,
-        MODIFIER_CODE_FEINT_DUMMY_TASK_FORCE_HEADQUARTERS,
-        MODIFIER_CODE_TASK_FORCE,
-        MODIFIER_CODE_FEINT_DUMMY,
-        MODIFIER_CODE_FEINT_DUMMY_TASK_FORCE
+        SymbologyConstants.MODIFIER_CODE_HEADQUARTERS,
+        SymbologyConstants.MODIFIER_CODE_TASK_FORCE_HEADQUARTERS,
+        SymbologyConstants.MODIFIER_CODE_FEINT_DUMMY_HEADQUARTERS,
+        SymbologyConstants.MODIFIER_CODE_FEINT_DUMMY_TASK_FORCE_HEADQUARTERS,
+        SymbologyConstants.MODIFIER_CODE_TASK_FORCE,
+        SymbologyConstants.MODIFIER_CODE_FEINT_DUMMY,
+        SymbologyConstants.MODIFIER_CODE_FEINT_DUMMY_TASK_FORCE
     );
     /**
      * List containing all recognized MIL-STD-2525 units and equipment symbol modifier codes that indicate a
      * feint/dummy.
      */
     List<String> MODIFIER_CODE_ALL_FEINT_DUMMY = Arrays.asList(
-        MODIFIER_CODE_FEINT_DUMMY_HEADQUARTERS,
-        MODIFIER_CODE_FEINT_DUMMY_TASK_FORCE_HEADQUARTERS,
-        MODIFIER_CODE_FEINT_DUMMY,
-        MODIFIER_CODE_FEINT_DUMMY_TASK_FORCE
+        SymbologyConstants.MODIFIER_CODE_FEINT_DUMMY_HEADQUARTERS,
+        SymbologyConstants.MODIFIER_CODE_FEINT_DUMMY_TASK_FORCE_HEADQUARTERS,
+        SymbologyConstants.MODIFIER_CODE_FEINT_DUMMY,
+        SymbologyConstants.MODIFIER_CODE_FEINT_DUMMY_TASK_FORCE
     );
     /**
      * List containing all recognized MIL-STD-2525 units and equipment symbol modifier codes that indicate a
      * headquarters.
      */
     List<String> MODIFIER_CODE_ALL_HEADQUARTERS = Arrays.asList(
-        MODIFIER_CODE_HEADQUARTERS,
-        MODIFIER_CODE_TASK_FORCE_HEADQUARTERS,
-        MODIFIER_CODE_FEINT_DUMMY_HEADQUARTERS,
-        MODIFIER_CODE_FEINT_DUMMY_TASK_FORCE_HEADQUARTERS
+        SymbologyConstants.MODIFIER_CODE_HEADQUARTERS,
+        SymbologyConstants.MODIFIER_CODE_TASK_FORCE_HEADQUARTERS,
+        SymbologyConstants.MODIFIER_CODE_FEINT_DUMMY_HEADQUARTERS,
+        SymbologyConstants.MODIFIER_CODE_FEINT_DUMMY_TASK_FORCE_HEADQUARTERS
     );
     /**
      * List containing all recognized MIL-STD-2525 units and equipment symbol modifier codes that indicate a task
      * force.
      */
     List<String> MODIFIER_CODE_ALL_TASK_FORCE = Arrays.asList(
-        MODIFIER_CODE_TASK_FORCE_HEADQUARTERS,
-        MODIFIER_CODE_FEINT_DUMMY_TASK_FORCE_HEADQUARTERS,
-        MODIFIER_CODE_TASK_FORCE,
-        MODIFIER_CODE_FEINT_DUMMY_TASK_FORCE
+        SymbologyConstants.MODIFIER_CODE_TASK_FORCE_HEADQUARTERS,
+        SymbologyConstants.MODIFIER_CODE_FEINT_DUMMY_TASK_FORCE_HEADQUARTERS,
+        SymbologyConstants.MODIFIER_CODE_TASK_FORCE,
+        SymbologyConstants.MODIFIER_CODE_FEINT_DUMMY_TASK_FORCE
     );
 
     String OPERATIONAL_CONDITION = "gov.nasa.worldwind.symbology.OperationalCondition";
     String OPERATIONAL_CONDITION_DAMAGED = "OD";
     String OPERATIONAL_CONDITION_DESTROYED = "OX";
     List<String> OPERATIONAL_CONDITION_ALL = Arrays.asList(
-        OPERATIONAL_CONDITION_DAMAGED,
-        OPERATIONAL_CONDITION_DESTROYED
+        SymbologyConstants.OPERATIONAL_CONDITION_DAMAGED,
+        SymbologyConstants.OPERATIONAL_CONDITION_DESTROYED
     );
 
     String OPERATIONAL_CONDITION_ALTERNATE = "gov.nasa.worldwind.symbology.OperationalConditionAlternate";
@@ -803,10 +803,10 @@ public interface SymbologyConstants {
     String OPERATIONAL_CONDITION_ALTERNATE_DESTROYED = "PX";
     String OPERATIONAL_CONDITION_ALTERNATE_FULL_TO_CAPACITY = "PF";
     List<String> OPERATIONAL_CONDITION_ALTERNATE_ALL = Arrays.asList(
-        OPERATIONAL_CONDITION_ALTERNATE_FULLY_CAPABLE,
-        OPERATIONAL_CONDITION_ALTERNATE_DAMAGED,
-        OPERATIONAL_CONDITION_ALTERNATE_DESTROYED,
-        OPERATIONAL_CONDITION_ALTERNATE_FULL_TO_CAPACITY
+        SymbologyConstants.OPERATIONAL_CONDITION_ALTERNATE_FULLY_CAPABLE,
+        SymbologyConstants.OPERATIONAL_CONDITION_ALTERNATE_DAMAGED,
+        SymbologyConstants.OPERATIONAL_CONDITION_ALTERNATE_DESTROYED,
+        SymbologyConstants.OPERATIONAL_CONDITION_ALTERNATE_FULL_TO_CAPACITY
     );
 
     /**
@@ -858,31 +858,31 @@ public interface SymbologyConstants {
      * List containing all recognized MIL-STD-2525 order of battle codes.
      */
     List<String> ORDER_OF_BATTLE_ALL = Arrays.asList(
-        ORDER_OF_BATTLE_AIR,
-        ORDER_OF_BATTLE_CIVILIAN,
-        ORDER_OF_BATTLE_CONTROL_MARKINGS,
-        ORDER_OF_BATTLE_ELECTRONIC,
-        ORDER_OF_BATTLE_GROUND,
-        ORDER_OF_BATTLE_MARITIME,
-        ORDER_OF_BATTLE_STRATEGIC_FORCE_RELATED
+        SymbologyConstants.ORDER_OF_BATTLE_AIR,
+        SymbologyConstants.ORDER_OF_BATTLE_CIVILIAN,
+        SymbologyConstants.ORDER_OF_BATTLE_CONTROL_MARKINGS,
+        SymbologyConstants.ORDER_OF_BATTLE_ELECTRONIC,
+        SymbologyConstants.ORDER_OF_BATTLE_GROUND,
+        SymbologyConstants.ORDER_OF_BATTLE_MARITIME,
+        SymbologyConstants.ORDER_OF_BATTLE_STRATEGIC_FORCE_RELATED
     );
     /**
      * List containing all recognized MIL-STD-2525 order of battle codes for the Warfighting (UEI), Signals Intelligence
      * (SIGINT), Stability Operations (SO), and Emergency Management (EM) schemes.
      */
     List<String> ORDER_OF_BATTLE_ALL_UEI_SIGINT_SO_EM = Arrays.asList(
-        ORDER_OF_BATTLE_AIR,
-        ORDER_OF_BATTLE_ELECTRONIC,
-        ORDER_OF_BATTLE_CIVILIAN,
-        ORDER_OF_BATTLE_GROUND,
-        ORDER_OF_BATTLE_MARITIME,
-        ORDER_OF_BATTLE_STRATEGIC_FORCE_RELATED
+        SymbologyConstants.ORDER_OF_BATTLE_AIR,
+        SymbologyConstants.ORDER_OF_BATTLE_ELECTRONIC,
+        SymbologyConstants.ORDER_OF_BATTLE_CIVILIAN,
+        SymbologyConstants.ORDER_OF_BATTLE_GROUND,
+        SymbologyConstants.ORDER_OF_BATTLE_MARITIME,
+        SymbologyConstants.ORDER_OF_BATTLE_STRATEGIC_FORCE_RELATED
     );
     /**
      * List containing all recognized MIL-STD-2525 order of battle codes for the Tactical Graphics scheme.
      */
     List<String> ORDER_OF_BATTLE_ALL_TACTICAL_GRAPHICS = Collections.singletonList(
-        ORDER_OF_BATTLE_CONTROL_MARKINGS
+        SymbologyConstants.ORDER_OF_BATTLE_CONTROL_MARKINGS
     );
 
     /**
@@ -943,12 +943,12 @@ public interface SymbologyConstants {
      * List containing all recognized MIL-STD-2525 scheme codes.
      */
     List<String> SCHEME_ALL = Arrays.asList(
-        SCHEME_WARFIGHTING,
-        SCHEME_TACTICAL_GRAPHICS,
-        SCHEME_METOC,
-        SCHEME_INTELLIGENCE,
-        SCHEME_STABILITY_OPERATIONS,
-        SCHEME_EMERGENCY_MANAGEMENT
+        SymbologyConstants.SCHEME_WARFIGHTING,
+        SymbologyConstants.SCHEME_TACTICAL_GRAPHICS,
+        SymbologyConstants.SCHEME_METOC,
+        SymbologyConstants.SCHEME_INTELLIGENCE,
+        SymbologyConstants.SCHEME_STABILITY_OPERATIONS,
+        SymbologyConstants.SCHEME_EMERGENCY_MANAGEMENT
     );
 
     /**
@@ -1109,20 +1109,20 @@ public interface SymbologyConstants {
      * List containing all recognized MIL-STD-2525 standard identity codes.
      */
     List<String> STANDARD_IDENTITY_ALL = Arrays.asList(
-        STANDARD_IDENTITY_PENDING,
-        STANDARD_IDENTITY_UNKNOWN,
-        STANDARD_IDENTITY_FRIEND,
-        STANDARD_IDENTITY_NEUTRAL,
-        STANDARD_IDENTITY_HOSTILE,
-        STANDARD_IDENTITY_ASSUMED_FRIEND,
-        STANDARD_IDENTITY_SUSPECT,
-        STANDARD_IDENTITY_EXERCISE_PENDING,
-        STANDARD_IDENTITY_EXERCISE_UNKNOWN,
-        STANDARD_IDENTITY_EXERCISE_FRIEND,
-        STANDARD_IDENTITY_EXERCISE_NEUTRAL,
-        STANDARD_IDENTITY_EXERCISE_ASSUMED_FRIEND,
-        STANDARD_IDENTITY_JOKER,
-        STANDARD_IDENTITY_FAKER
+        SymbologyConstants.STANDARD_IDENTITY_PENDING,
+        SymbologyConstants.STANDARD_IDENTITY_UNKNOWN,
+        SymbologyConstants.STANDARD_IDENTITY_FRIEND,
+        SymbologyConstants.STANDARD_IDENTITY_NEUTRAL,
+        SymbologyConstants.STANDARD_IDENTITY_HOSTILE,
+        SymbologyConstants.STANDARD_IDENTITY_ASSUMED_FRIEND,
+        SymbologyConstants.STANDARD_IDENTITY_SUSPECT,
+        SymbologyConstants.STANDARD_IDENTITY_EXERCISE_PENDING,
+        SymbologyConstants.STANDARD_IDENTITY_EXERCISE_UNKNOWN,
+        SymbologyConstants.STANDARD_IDENTITY_EXERCISE_FRIEND,
+        SymbologyConstants.STANDARD_IDENTITY_EXERCISE_NEUTRAL,
+        SymbologyConstants.STANDARD_IDENTITY_EXERCISE_ASSUMED_FRIEND,
+        SymbologyConstants.STANDARD_IDENTITY_JOKER,
+        SymbologyConstants.STANDARD_IDENTITY_FAKER
     );
 
     /**
@@ -1140,8 +1140,8 @@ public interface SymbologyConstants {
      */
     String DYNAMIC = "-D";
     List<String> STATIC_DYNAMIC_ALL = Arrays.asList(
-        STATIC,
-        DYNAMIC
+        SymbologyConstants.STATIC,
+        SymbologyConstants.DYNAMIC
     );
 
     /**
@@ -1210,37 +1210,37 @@ public interface SymbologyConstants {
      */
     List<String> STATUS_ALL = Arrays.asList(
         // UEI, SIGINT, SO, and EM status codes.
-        STATUS_ANTICIPATED,
-        STATUS_PRESENT,
-        STATUS_FULLY_CAPABLE,
-        STATUS_DAMAGED,
-        STATUS_DESTROYED,
-        STATUS_FULL_TO_CAPACITY,
+        SymbologyConstants.STATUS_ANTICIPATED,
+        SymbologyConstants.STATUS_PRESENT,
+        SymbologyConstants.STATUS_FULLY_CAPABLE,
+        SymbologyConstants.STATUS_DAMAGED,
+        SymbologyConstants.STATUS_DESTROYED,
+        SymbologyConstants.STATUS_FULL_TO_CAPACITY,
         // Tactical Graphics and METOC status codes (ANTICIPATED and PRESENT already included).
-        STATUS_SUSPECTED,
-        STATUS_KNOWN
+        SymbologyConstants.STATUS_SUSPECTED,
+        SymbologyConstants.STATUS_KNOWN
     );
     /**
      * List containing all recognized MIL-STD-2525 status codes for the Warfighting (UEI), Signals Intelligence
      * (SIGINT), Stability Operations (SO), and Emergency Management schemes. TODO: EM scheme contradicts itself.
      */
     List<String> STATUS_ALL_UEI_SIGINT_SO_EM = Arrays.asList(
-        STATUS_ANTICIPATED,
-        STATUS_PRESENT,
-        STATUS_FULLY_CAPABLE,
-        STATUS_DAMAGED,
-        STATUS_DESTROYED,
-        STATUS_FULL_TO_CAPACITY
+        SymbologyConstants.STATUS_ANTICIPATED,
+        SymbologyConstants.STATUS_PRESENT,
+        SymbologyConstants.STATUS_FULLY_CAPABLE,
+        SymbologyConstants.STATUS_DAMAGED,
+        SymbologyConstants.STATUS_DESTROYED,
+        SymbologyConstants.STATUS_FULL_TO_CAPACITY
     );
     /**
      * List containing all recognized MIL-STD-2525 status codes for the Tactical Graphics and Meteorological and
      * Oceanographic (METOC) scheme.
      */
     List<String> STATUS_ALL_TACTICAL_GRAPHICS_METOC = Arrays.asList(
-        STATUS_ANTICIPATED,
-        STATUS_SUSPECTED,
-        STATUS_PRESENT,
-        STATUS_KNOWN
+        SymbologyConstants.STATUS_ANTICIPATED,
+        SymbologyConstants.STATUS_SUSPECTED,
+        SymbologyConstants.STATUS_PRESENT,
+        SymbologyConstants.STATUS_KNOWN
     );
 
     /**

@@ -28,6 +28,16 @@ public class FileChooserPanel extends JPanel {
         layoutComponents();
     }
 
+    private static File getValueAsFile(Object value) {
+        if (value != null) {
+            if (value instanceof File)
+                return (File) value;
+            else
+                return new File(value.toString());
+        }
+        return null;
+    }
+
     public String getTitle() {
         return this.title.getText();
     }
@@ -59,17 +69,7 @@ public class FileChooserPanel extends JPanel {
     }
 
     public File getSelectedFile() {
-        return getValueAsFile(this.fileField.getValue());
-    }
-
-    private static File getValueAsFile(Object value) {
-        if (value != null) {
-            if (value instanceof File)
-                return (File) value;
-            else
-                return new File(value.toString());
-        }
-        return null;
+        return FileChooserPanel.getValueAsFile(this.fileField.getValue());
     }
 
     public void promptForNewSelection() {
@@ -84,7 +84,7 @@ public class FileChooserPanel extends JPanel {
     }
 
     private void onFileFieldChanged(Object newValue) {
-        File newFile = getValueAsFile(newValue);
+        File newFile = FileChooserPanel.getValueAsFile(newValue);
         firePropertyChange("selectedFile", null, newFile);
     }
 

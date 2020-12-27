@@ -23,9 +23,9 @@ import java.util.*;
  * during parsing.
  * <p>
  * Parsers are created when events of the associated type are encountered in the input stream. An {@link
- * #allocate(XMLEventParserContext, XMLEvent)} method in the parser typically creates a default
- * parser prior to consulting the {@link XMLEventParserContext}, which returns a new parser whose type is determined by
- * consulting a table of event types. The default parser is returned if the table contains no entry for the event type.
+ * #allocate(XMLEventParserContext, XMLEvent)} method in the parser typically creates a default parser prior to
+ * consulting the {@link XMLEventParserContext}, which returns a new parser whose type is determined by consulting a
+ * table of event types. The default parser is returned if the table contains no entry for the event type.
  * <p>
  * A parser can be associated with a specific namespace. The namespace is used to qualify the parser's association with
  * event types.
@@ -57,6 +57,25 @@ abstract public class AbstractXMLEventParser implements XMLEventParser {
         this.namespaceURI = namespaceURI;
     }
 
+    @SuppressWarnings("UnusedDeclaration")
+    protected static String parseCharacterContent(XMLEventParserContext ctx, XMLEvent stringEvent, Object... args)
+        throws XMLStreamException {
+        StringBuilder value = new StringBuilder();
+
+        for (XMLEvent event = ctx.nextEvent(); event != null; event = ctx.nextEvent()) {
+            if (ctx.isEndElement(event, stringEvent))
+                return value.isEmpty() ? null : value.toString();
+
+            if (event.isCharacters()) {
+                String s = ctx.getCharacters(event);
+                if (s != null)
+                    value.append(s);
+            }
+        }
+
+        return null;
+    }
+
     /**
      * Returns the qualifying namespace URI specified at construction.
      *
@@ -70,7 +89,8 @@ abstract public class AbstractXMLEventParser implements XMLEventParser {
         this.namespaceURI = namespaceURI;
     }
 
-    public XMLEventParser newInstance() throws Exception {
+    public XMLEventParser newInstance() throws
+        Exception {
         Constructor<? extends AbstractXMLEventParser> constructor = this.getAConstructor(String.class);
         if (constructor != null)
             return constructor.newInstance(this.getNamespaceURI());
@@ -240,12 +260,12 @@ abstract public class AbstractXMLEventParser implements XMLEventParser {
                 continue;
 
             if (ctx.isEndElement(event, inputEvent)) {
-                if (this.hasField(CHARACTERS_CONTENT)) {
-                    CharSequence sb = (CharSequence) this.getField(CHARACTERS_CONTENT);
+                if (this.hasField(AbstractXMLEventParser.CHARACTERS_CONTENT)) {
+                    CharSequence sb = (CharSequence) this.getField(AbstractXMLEventParser.CHARACTERS_CONTENT);
                     if (sb != null && !sb.isEmpty())
-                        this.setField(CHARACTERS_CONTENT, sb.toString());
+                        this.setField(AbstractXMLEventParser.CHARACTERS_CONTENT, sb.toString());
                     else
-                        this.removeField(CHARACTERS_CONTENT);
+                        this.removeField(AbstractXMLEventParser.CHARACTERS_CONTENT);
                 }
 
                 return this;
@@ -275,15 +295,15 @@ abstract public class AbstractXMLEventParser implements XMLEventParser {
         if (WWUtil.isEmpty(s))
             return;
 
-        StringBuilder sb = (StringBuilder) this.getField(CHARACTERS_CONTENT);
+        StringBuilder sb = (StringBuilder) this.getField(AbstractXMLEventParser.CHARACTERS_CONTENT);
         if (sb != null)
             sb.append(s);
         else
-            this.setField(CHARACTERS_CONTENT, new StringBuilder(s));
+            this.setField(AbstractXMLEventParser.CHARACTERS_CONTENT, new StringBuilder(s));
     }
 
     public String getCharacters() {
-        return (String) this.getField(CHARACTERS_CONTENT);
+        return (String) this.getField(AbstractXMLEventParser.CHARACTERS_CONTENT);
     }
 
     /**
@@ -353,25 +373,6 @@ abstract public class AbstractXMLEventParser implements XMLEventParser {
         throws XMLStreamException {
         // Override in subclass if need to react to certain attributes.
         this.setField(attr.getName(), attr.getValue());
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    protected static String parseCharacterContent(XMLEventParserContext ctx, XMLEvent stringEvent, Object... args)
-        throws XMLStreamException {
-        StringBuilder value = new StringBuilder();
-
-        for (XMLEvent event = ctx.nextEvent(); event != null; event = ctx.nextEvent()) {
-            if (ctx.isEndElement(event, stringEvent))
-                return !value.isEmpty() ? value.toString() : null;
-
-            if (event.isCharacters()) {
-                String s = ctx.getCharacters(event);
-                if (s != null)
-                    value.append(s);
-            }
-        }
-
-        return null;
     }
 
     public XMLEventParserContext getParserContext() {

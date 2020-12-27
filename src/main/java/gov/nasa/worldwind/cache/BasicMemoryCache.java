@@ -14,7 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Eric Dalgliesh
  * @version $Id: BasicMemoryCache.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-@Deprecated public class BasicMemoryCache extends AbstractMemoryCache {
+@Deprecated
+public class BasicMemoryCache extends AbstractMemoryCache {
 
     protected final Map<Object, CacheEntry> entries;
     protected Long lowWater;
@@ -34,10 +35,10 @@ import java.util.concurrent.ConcurrentHashMap;
     /**
      * @return the number of objects currently stored in this cache.
      */
-    @Override public int getNumObjects() {
+    @Override
+    public int getNumObjects() {
         return this.entries.size();
     }
-
 
     /**
      * Returns true if the cache contains the item referenced by key. No guarantee is made as to whether or not the item
@@ -50,9 +51,11 @@ import java.util.concurrent.ConcurrentHashMap;
      * @return true if the cache holds the item referenced by key.
      * @throws IllegalArgumentException if <code>key</code> is null.
      */
-    @Override public boolean contains(Object key) {
+    @Override
+    public boolean contains(Object key) {
         return this.entries.containsKey(key);
     }
+
     /**
      * Sets the new low water level in cache units, which controls how aggresively the cache discards items.
      * <p>
@@ -68,6 +71,7 @@ import java.util.concurrent.ConcurrentHashMap;
             this.lowWater = loWater;
         }
     }
+
     /**
      * Adds an object to the cache. The add fails if the object or key is null, or if the size is zero, negative or
      * greater than the maximmum capacity.
@@ -99,11 +103,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
         //synchronized (this.lock) {
         CacheEntry existing = this.entries.put(key, entry);
-        if (existing != null && existing!=entry) { // replacing
+        if (existing != null && existing != entry) { // replacing
             this.removeEntry(existing);
             this.entries.put(entry.key, entry);
         }
-        if (existing == null || existing!=entry) {
+        if (existing == null || existing != entry) {
             this.currentUsedCapacity.addAndGet(clientObjectSize);
 
             if (this.currentUsedCapacity.get() + clientObjectSize > cap) {
@@ -117,7 +121,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
         return true;
     }
-
 
     /**
      * Remove the object reference by key from the cache. If no object with the corresponding key is found, this method
@@ -147,15 +150,14 @@ import java.util.concurrent.ConcurrentHashMap;
 
         CacheEntry entry; // don't need to lock because call is atomic
 
-            entry = this.entries.get(key);
+        entry = this.entries.get(key);
 
-            if (entry == null)
-                return null;
+        if (entry == null)
+            return null;
 
-            entry.lastUsed = System.nanoTime(); // nanoTime overflows once every 292 years
-            // which will result in a slowing of the cache
-            // until ww is restarted or the cache is cleared.
-
+        entry.lastUsed = System.nanoTime(); // nanoTime overflows once every 292 years
+        // which will result in a slowing of the cache
+        // until ww is restarted or the cache is cleared.
 
         return entry.clientObject;
     }
@@ -188,7 +190,8 @@ import java.util.concurrent.ConcurrentHashMap;
             for (MemoryCache.CacheListener listener : this.listeners) {
                 try {
                     listener.entryRemoved(entry.key, entry.clientObject);
-                } catch (Exception e) {
+                }
+                catch (RuntimeException e) {
                     listener.removalException(e, entry.key, entry.clientObject);
                 }
             }
@@ -228,5 +231,4 @@ import java.util.concurrent.ConcurrentHashMap;
         return "MemoryCache " + this.name + " max size = " + this.getCapacity() + " current size = "
             + this.currentUsedCapacity.get() + " number of items: " + this.getNumObjects();
     }
-
 }

@@ -39,13 +39,11 @@ public class OWSPhone extends AbstractXMLEventParser {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.voices.add(s);
-        }
-        else if (ctx.isStartElement(event, "Facsimile") || ctx.isStartElement(event, "facsimile")) {
+        } else if (ctx.isStartElement(event, "Facsimile") || ctx.isStartElement(event, "facsimile")) {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.faxes.add(s);
-        }
-        else {
+        } else {
             super.doParseEventContent(ctx, event, args);
         }
     }

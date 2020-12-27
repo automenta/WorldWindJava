@@ -224,7 +224,7 @@ public class MacWebView extends AbstractWebView {
             try {
                 this.displayInTexture(dc, texture);
             }
-            catch (Exception e) {
+            catch (RuntimeException e) {
                 // Log an exception indicating that updating the texture failed, but do not re-throw it. This is called
                 // from within the rendering loop, and we want to avoid causing any other rendering code to fail.
                 Logging.logger().log(Level.SEVERE, Logging.getMessage("WebView.ExceptionUpdatingTexture"), e);

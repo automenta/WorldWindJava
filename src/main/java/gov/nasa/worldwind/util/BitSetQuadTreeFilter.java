@@ -51,7 +51,7 @@ public abstract class BitSetQuadTreeFilter {
         this.maxLevel = numLevels - 1;
 
         this.powersOf4 = WWMath.computePowers(4, numLevels);
-        this.levelSizes = computeLevelSizes(numLevels);
+        this.levelSizes = BitSetQuadTreeFilter.computeLevelSizes(numLevels);
 
         this.path = new int[this.numLevels];
         this.bits = bitSet != null ? bitSet : new BitSet(this.levelSizes[numLevels]);
@@ -77,6 +77,26 @@ public abstract class BitSetQuadTreeFilter {
         }
 
         return sizes;
+    }
+
+    /**
+     * Determines whether an item intersects a cell.
+     *
+     * @param cellRegion an array specifying the coordinates of the cell's region. The first two entries are the minimum
+     *                   and maximum values on the Y axis (typically latitude). The last two entries are the minimum and
+     *                   maximum values on the X axis, (typically longitude).
+     * @param itemCoords an array specifying the region or location of the item. If the array's length is 2 it
+     *                   represents a location in [latitude, longitude]. If its length is 4 it represents a region, with
+     *                   the same layout as the <code>nodeRegion</code> argument.
+     * @return non-zero if the item intersects the region. 0 if no intersection.
+     */
+    protected static int intersects(double[] cellRegion, double[] itemCoords) {
+        if (itemCoords.length == 4) // treat test region as a sector
+            return itemCoords[1] < cellRegion[0] || itemCoords[0] > cellRegion[1]
+                || itemCoords[3] < cellRegion[2] || itemCoords[2] > cellRegion[3] ? 0 : 1;
+        else // assume test region is a 2-tuple location
+            return itemCoords[0] >= cellRegion[0] && itemCoords[0] <= cellRegion[1]
+                && itemCoords[1] >= cellRegion[2] && itemCoords[1] <= cellRegion[3] ? 1 : 0;
     }
 
     /**
@@ -193,26 +213,6 @@ public abstract class BitSetQuadTreeFilter {
         subRegion[2] = cellRegion[2];
         subRegion[3] = lonMid;
         this.testAndDo(level + 1, 3, subRegion, itemCoords);
-    }
-
-    /**
-     * Determines whether an item intersects a cell.
-     *
-     * @param cellRegion an array specifying the coordinates of the cell's region. The first two entries are the minimum
-     *                   and maximum values on the Y axis (typically latitude). The last two entries are the minimum and
-     *                   maximum values on the X axis, (typically longitude).
-     * @param itemCoords an array specifying the region or location of the item. If the array's length is 2 it
-     *                   represents a location in [latitude, longitude]. If its length is 4 it represents a region, with
-     *                   the same layout as the <code>nodeRegion</code> argument.
-     * @return non-zero if the item intersects the region. 0 if no intersection.
-     */
-    protected static int intersects(double[] cellRegion, double[] itemCoords) {
-        if (itemCoords.length == 4) // treat test region as a sector
-            return !(itemCoords[1] < cellRegion[0] || itemCoords[0] > cellRegion[1]
-                || itemCoords[3] < cellRegion[2] || itemCoords[2] > cellRegion[3]) ? 1 : 0;
-        else // assume test region is a 2-tuple location
-            return itemCoords[0] >= cellRegion[0] && itemCoords[0] <= cellRegion[1]
-                && itemCoords[1] >= cellRegion[2] && itemCoords[1] <= cellRegion[3] ? 1 : 0;
     }
 
     /**

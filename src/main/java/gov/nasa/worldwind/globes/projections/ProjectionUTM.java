@@ -18,13 +18,13 @@ import gov.nasa.worldwind.util.Logging;
 public class ProjectionUTM extends ProjectionTransverseMercator {
     protected static final int DEFAULT_ZONE = 1;
 
-    protected int zone = DEFAULT_ZONE;
+    protected int zone = ProjectionUTM.DEFAULT_ZONE;
 
     /**
      * Creates a projection for UTM zone 1.
      */
     public ProjectionUTM() {
-        super(centralMeridianForZone(DEFAULT_ZONE));
+        super(ProjectionUTM.centralMeridianForZone(ProjectionUTM.DEFAULT_ZONE));
     }
 
     /**
@@ -34,7 +34,7 @@ public class ProjectionUTM extends ProjectionTransverseMercator {
      * @throws IllegalArgumentException if the specified zone is less than 1 or greater than 60.
      */
     public ProjectionUTM(int zone) {
-        super(centralMeridianForZone(zone));
+        super(ProjectionUTM.centralMeridianForZone(zone));
     }
 
     public static Angle centralMeridianForZone(int zone) {
@@ -76,6 +76,6 @@ public class ProjectionUTM extends ProjectionTransverseMercator {
 
         this.zone = zone;
 
-        this.setCentralMeridian(centralMeridianForZone(this.zone));
+        this.setCentralMeridian(ProjectionUTM.centralMeridianForZone(this.zone));
     }
 }

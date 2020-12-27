@@ -40,8 +40,7 @@ public class OWSParameter extends AbstractXMLEventParser {
                 if (o instanceof OWSAllowedValues)
                     this.allowedValues.add((OWSAllowedValues) o);
             }
-        }
-        else {
+        } else {
             super.doParseEventContent(ctx, event, args);
         }
     }

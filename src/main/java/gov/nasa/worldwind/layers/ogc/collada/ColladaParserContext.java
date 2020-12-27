@@ -21,42 +21,38 @@ public class ColladaParserContext extends BasicXMLEventParserContext {
     /**
      * The names of elements that contain merely string data and can be parsed by a generic string parser.
      */
-    protected static final String[] StringFields = new String[]
-        {
-            "author",
-            "name",
-            "authoring_tool",
-            "source_data",
-            "init_from",
-            "created",
-            "modified",
-            "up_axis",
-        };
+    protected static final String[] StringFields = {
+        "author",
+        "name",
+        "authoring_tool",
+        "source_data",
+        "init_from",
+        "created",
+        "modified",
+        "up_axis",
+    };
     /**
      * The names of elements that contain merely double data and can be parsed by a generic double parser.
      */
-    protected static final String[] DoubleFields = new String[]
-        {
-            "revision",
-            "float"
-        };
+    protected static final String[] DoubleFields = {
+        "revision",
+        "float"
+    };
     /**
      * The names of elements that contain merely integer data and can be parsed by a generic integer parser.
      */
-    protected static final String[] IntegerFields = new String[]
-        {
-            "drawOrder",
-            "meter",
-            "double_sided" // Not part of core COLLADA spec, but included in most SketchUp models.
-        };
+    protected static final String[] IntegerFields = {
+        "drawOrder",
+        "meter",
+        "double_sided" // Not part of core COLLADA spec, but included in most SketchUp models.
+    };
     /**
      * The names of elements that contain merely boolean integer (0 or 1) data and can be parsed by a generic boolean
      * integer parser.
      */
-    protected static final String[] BooleanFields = new String[]
-        {
-            "extrude",
-        };
+    protected static final String[] BooleanFields = {
+        "extrude",
+    };
     /**
      * The key used to identify the coordinates parser in the parser context's parser map.
      */
@@ -188,10 +184,10 @@ public class ColladaParserContext extends BasicXMLEventParserContext {
         this.parsers.put(new QName(ns, "yfov"), parser);
         this.parsers.put(new QName(ns, "aspect_ratio"), parser);
 
-        this.addStringParsers(ns, StringFields);
-        this.addDoubleParsers(ns, DoubleFields);
-        this.addIntegerParsers(ns, IntegerFields);
-        this.addBooleanParsers(ns, BooleanFields);
+        this.addStringParsers(ns, ColladaParserContext.StringFields);
+        this.addDoubleParsers(ns, ColladaParserContext.DoubleFields);
+        this.addIntegerParsers(ns, ColladaParserContext.IntegerFields);
+        this.addBooleanParsers(ns, ColladaParserContext.BooleanFields);
     }
 
     @Override

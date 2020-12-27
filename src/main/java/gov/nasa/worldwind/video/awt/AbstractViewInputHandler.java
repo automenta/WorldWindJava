@@ -21,12 +21,15 @@ import java.beans.*;
  * @version $Id: AbstractViewInputHandler.java 2251 2014-08-21 21:17:46Z dcollins $
  */
 public abstract class AbstractViewInputHandler implements ViewInputHandler, PropertyChangeListener {
-    private static final double DEFAULT_DRAG_SLOPE_FACTOR = 0.002;
-    private static final long DEFAULT_PER_FRAME_INPUT_INTERVAL = 35L; // perform per frame input every 35 ms
     // These constants are used by the device input handling routines to determine whether or not to
     // (1) generate view change events based on the current device state, or
     // (2) query whether or not events would be generated from the current device state.
     protected static final String GENERATE_EVENTS = "GenerateEvents";
+    protected static final String SCALE_FUNC_EYE_ALTITUDE_EXP = "ScaleFuncEyeAltitudeExp";
+    protected static final String SCALE_FUNC_ZOOM_EXP = "ScaleFuncZoomExp";
+    static final int NUM_MODIFIERS = 8;
+    private static final double DEFAULT_DRAG_SLOPE_FACTOR = 0.002;
+    private static final long DEFAULT_PER_FRAME_INPUT_INTERVAL = 35L; // perform per frame input every 35 ms
     private static final String QUERY_EVENTS = "QueryEvents";
     // These constants define scaling functions for transforming raw input into a range of values. The scale functions
     // are interpreted as follows:
@@ -34,15 +37,10 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
     // ZOOM: distance from eye to view center point, divided by 3 * globe's radius and clamped to range [0, 1]
     // EYE_ALTITUDE_EXP or ZOOM_EXP: function placed in an exponential function in the range [0, 1]
     private static final String SCALE_FUNC_EYE_ALTITUDE = "ScaleFuncEyeAltitude";
-    protected static final String SCALE_FUNC_EYE_ALTITUDE_EXP = "ScaleFuncEyeAltitudeExp";
     private static final String SCALE_FUNC_ZOOM = "ScaleFuncZoom";
-    protected static final String SCALE_FUNC_ZOOM_EXP = "ScaleFuncZoomExp";
-    private final ViewInputAttributes.ActionAttributesMap mouseActionMap;
-    private final ViewInputAttributes.ActionAttributesMap keyActionMap;
     final ViewInputAttributes.DeviceModifierMap keyModsActionMap;
     final ViewInputAttributes.DeviceModifierMap mouseModsActionMap;
     final ViewInputAttributes.DeviceModifierMap mouseWheelModsActionMap;
-    private final KeyEventState keyEventState = new KeyEventState();
     final int[] modifierList =
         {
             KeyEvent.ALT_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK,
@@ -54,7 +52,12 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
             KeyEvent.ALT_DOWN_MASK,
             0
         };
-    static final int NUM_MODIFIERS = 8;
+    private final ViewInputAttributes.ActionAttributesMap mouseActionMap;
+    private final ViewInputAttributes.ActionAttributesMap keyActionMap;
+    private final KeyEventState keyEventState = new KeyEventState();
+    protected Matrix mouseDownModelview;
+    protected Matrix mouseDownProjection;
+    protected Rectangle mouseDownViewport;
     private WorldWindow wwd;
     private ViewInputAttributes attributes;
     // Optional behaviors.
@@ -67,13 +70,10 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
     private Point lastMousePoint;
     private Point mousePoint;
     private Position selectedPosition;
-    protected Matrix mouseDownModelview;
-    protected Matrix mouseDownProjection;
-    protected Rectangle mouseDownViewport;
     // Input transformation coefficients.
-    private double dragSlopeFactor = DEFAULT_DRAG_SLOPE_FACTOR;
+    private double dragSlopeFactor = AbstractViewInputHandler.DEFAULT_DRAG_SLOPE_FACTOR;
     // Per-frame input event timing support.
-    private long perFrameInputInterval = DEFAULT_PER_FRAME_INPUT_INTERVAL;
+    private long perFrameInputInterval = AbstractViewInputHandler.DEFAULT_PER_FRAME_INPUT_INTERVAL;
     private long lastPerFrameInputTime;
 
     AbstractViewInputHandler() {
@@ -92,21 +92,40 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
     }
 
     protected static Point constrainToSourceBounds(Point point, Object source) {
-        if (!(source instanceof Component) || point==null) return point;
+        if (!(source instanceof Component) || point == null)
+            return point;
 
         Component c = (Component) source;
 
         int x = (int) Math.round(point.getX());
-        if (x < 0) x = 0;
+        if (x < 0)
+            x = 0;
         final int cw = c.getWidth();
-        if (x > cw) x = cw;
+        if (x > cw)
+            x = cw;
 
         int y = (int) Math.round(point.getY());
-        if (y < 0) y = 0;
+        if (y < 0)
+            y = 0;
         final int ch = c.getHeight();
-        if (y > ch) y = ch;
+        if (y > ch)
+            y = ch;
 
         return new Point(x, y);
+    }
+
+    private static boolean handlePerFrameAnimation(String target) {
+        return false;
+    }
+
+    protected static double getScaleValue(double minValue, double maxValue,
+        double value, double range, boolean isExp) {
+        double t = value / range;
+        t = t < 0 ? 0 : (t > 1 ? 1 : t);
+        if (isExp) {
+            t = Math.pow(2.0, t) - 1.0;
+        }
+        return (minValue * (1.0 - t) + maxValue * t);
     }
 
     /**
@@ -248,8 +267,7 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
      * kilometers. This <code>factor</code> is the amount of damping applied to the view movement in such cases.
      * Setting
      * <code>factor</code> to zero will disable this behavior, while setting <code>factor</code> to a positive value
-     * may
-     * dampen the effects of mouse dragging.
+     * may dampen the effects of mouse dragging.
      *
      * @param factor dampening view movement when a mouse drag event would cause an abrupt transition. Must be greater
      *               than or equal to zero.
@@ -265,6 +283,10 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
         this.dragSlopeFactor = factor;
     }
 
+    //**************************************************************//
+    //********************  AWT Event Support  *********************//
+    //**************************************************************//
+
     private long getPerFrameInputInterval() {
         return this.perFrameInputInterval;
     }
@@ -272,10 +294,6 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
     protected void setPerFrameInputInterval(long milliseconds) {
         this.perFrameInputInterval = milliseconds;
     }
-
-    //**************************************************************//
-    //********************  AWT Event Support  *********************//
-    //**************************************************************//
 
     protected View getView() {
         return (this.wwd != null) ? this.wwd.view() : null;
@@ -302,17 +320,21 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
         this.mousePoint = new Point(e.getPoint());
     }
 
+    //**************************************************************//
+    //********************  View Change Events  ********************//
+    //**************************************************************//
+
     protected Position getSelectedPosition() {
         return this.selectedPosition;
     }
 
+    //**************************************************************//
+    //********************  Key Events  ****************************//
+    //**************************************************************//
+
     protected void setSelectedPosition(Position position) {
         this.selectedPosition = position;
     }
-
-    //**************************************************************//
-    //********************  View Change Events  ********************//
-    //**************************************************************//
 
     protected Position computeSelectedPosition() {
         PickedObjectList pickedObjects = this.wwd.objectsAtPosition();
@@ -323,10 +345,6 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
         }
         return null;
     }
-
-    //**************************************************************//
-    //********************  Key Events  ****************************//
-    //**************************************************************//
 
     void onStopView() {
         View view = this.getView();
@@ -367,6 +385,10 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
         this.handleKeyPressed(e);
     }
 
+    //**************************************************************//
+    //********************  Mouse Events  **************************//
+    //**************************************************************//
+
     public void keyReleased(KeyEvent e) {
         if (this.wwd == null) // include this test to ensure any derived implementation performs it
         {
@@ -386,17 +408,13 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
     protected void handleKeyPressed(KeyEvent e) {
         // Determine whether or not the current key state would have generated a view change event.
         // If so, issue a repaint event to give the per-frame input a chance to run.
-        if (this.handlePerFrameKeyState(this.keyEventState, QUERY_EVENTS)) {
+        if (this.handlePerFrameKeyState(this.keyEventState, AbstractViewInputHandler.QUERY_EVENTS)) {
             View view = this.getView();
             if (view != null) {
                 view.firePropertyChange(AVKey.VIEW, null, view);
             }
         }
     }
-
-    //**************************************************************//
-    //********************  Mouse Events  **************************//
-    //**************************************************************//
 
     @SuppressWarnings("UnusedDeclaration")
     protected void handleKeyReleased(KeyEvent e) {
@@ -478,6 +496,10 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
         }
     }
 
+    //**************************************************************//
+    //********************  Mouse Motion Events  *******************//
+    //**************************************************************//
+
     @SuppressWarnings("UnusedDeclaration")
     protected void handleMouseClicked(MouseEvent e) {
     }
@@ -486,17 +508,13 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
     protected void handleMousePressed(MouseEvent e) {
         // Determine whether or not the current key state would have generated a view change event.
         // If so, issue a repaint event to give the per-frame input a chance to run.
-        if (this.handlePerFrameMouseState(this.keyEventState, QUERY_EVENTS)) {
+        if (this.handlePerFrameMouseState(this.keyEventState, AbstractViewInputHandler.QUERY_EVENTS)) {
             View view = this.getView();
             if (view != null) {
                 view.firePropertyChange(AVKey.VIEW, null, view);
             }
         }
     }
-
-    //**************************************************************//
-    //********************  Mouse Motion Events  *******************//
-    //**************************************************************//
 
     @SuppressWarnings("UnusedDeclaration")
     protected void handleMouseReleased(MouseEvent e) {
@@ -516,6 +534,10 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
         this.updateMousePoint(e);
         this.handleMouseDragged(e);
     }
+
+    //**************************************************************//
+    //********************  Mouse Wheel Events  ********************//
+    //**************************************************************//
 
     public void mouseMoved(MouseEvent e) {
         if (this.wwd == null) // include this test to ensure any derived implementation performs it
@@ -537,7 +559,7 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
     }
 
     //**************************************************************//
-    //********************  Mouse Wheel Events  ********************//
+    //********************  Focus Events  **************************//
     //**************************************************************//
 
     @SuppressWarnings("UnusedDeclaration")
@@ -557,10 +579,6 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
 
         this.handleMouseWheelMoved(e);
     }
-
-    //**************************************************************//
-    //********************  Focus Events  **************************//
-    //**************************************************************//
 
     @SuppressWarnings("UnusedDeclaration")
     protected void handleMouseWheelMoved(MouseWheelEvent e) {
@@ -619,9 +637,9 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
         long now = System.currentTimeMillis();
         long interval = now - this.lastPerFrameInputTime;
         if (interval >= this.getPerFrameInputInterval()) {
-            this.handlePerFrameKeyState(this.keyEventState, GENERATE_EVENTS);
-            this.handlePerFrameMouseState(this.keyEventState, GENERATE_EVENTS);
-            AbstractViewInputHandler.handlePerFrameAnimation(GENERATE_EVENTS);
+            this.handlePerFrameKeyState(this.keyEventState, AbstractViewInputHandler.GENERATE_EVENTS);
+            this.handlePerFrameMouseState(this.keyEventState, AbstractViewInputHandler.GENERATE_EVENTS);
+            AbstractViewInputHandler.handlePerFrameAnimation(AbstractViewInputHandler.GENERATE_EVENTS);
             this.lastPerFrameInputTime = now;
             this.wwd().redraw();
             return;
@@ -629,15 +647,19 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
 
         // Determine whether or not the current key state would have generated a view change event. If so, issue
         // a repaint event to give the per-frame input a chance to run again.
-        if (this.handlePerFrameKeyState(this.keyEventState, QUERY_EVENTS) ||
-            this.handlePerFrameMouseState(this.keyEventState, QUERY_EVENTS) ||
-            AbstractViewInputHandler.handlePerFrameAnimation(QUERY_EVENTS)) {
+        if (this.handlePerFrameKeyState(this.keyEventState, AbstractViewInputHandler.QUERY_EVENTS) ||
+            this.handlePerFrameMouseState(this.keyEventState, AbstractViewInputHandler.QUERY_EVENTS) ||
+            AbstractViewInputHandler.handlePerFrameAnimation(AbstractViewInputHandler.QUERY_EVENTS)) {
             this.wwd().redraw();
         }
     }
 
     public void viewApplied() {
     }
+
+    //**************************************************************//
+    //********************  Property Change Events  ****************//
+    //**************************************************************//
 
     // Interpret the current key state according to the specified target. If the target is KEY_POLL_GENERATE_EVENTS,
     // then the the key state will generate any appropriate view change events. If the target is KEY_POLL_QUERY_EVENTS,
@@ -652,12 +674,8 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
     }
 
     //**************************************************************//
-    //********************  Property Change Events  ****************//
+    //********************  Raw Input Transformation  **************//
     //**************************************************************//
-
-    private static boolean handlePerFrameAnimation(String target) {
-        return false;
-    }
 
     public void propertyChange(PropertyChangeEvent e) {
         if (this.wwd == null) // include this test to ensure any derived implementation performs it
@@ -672,10 +690,6 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
 
         this.handlePropertyChange(e);
     }
-
-    //**************************************************************//
-    //********************  Raw Input Transformation  **************//
-    //**************************************************************//
 
     @SuppressWarnings("UnusedDeclaration")
     protected void handlePropertyChange(PropertyChangeEvent e) {
@@ -703,10 +717,9 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
         }
 
         double t = 0.0;
-        if (scaleFunc.startsWith(SCALE_FUNC_EYE_ALTITUDE)) {
+        if (scaleFunc.startsWith(AbstractViewInputHandler.SCALE_FUNC_EYE_ALTITUDE)) {
             t = this.evaluateScaleFuncEyeAltitude();
-        }
-        else if (scaleFunc.startsWith(SCALE_FUNC_ZOOM)) {
+        } else if (scaleFunc.startsWith(AbstractViewInputHandler.SCALE_FUNC_ZOOM)) {
             t = this.evaluateScaleFuncZoom();
         }
 
@@ -746,6 +759,10 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
         return 0.0;
     }
 
+    //**************************************************************//
+    //********************  Utility Methods  ***********************//
+    //**************************************************************//
+
     protected double getScaleValueElevation(
         ViewInputAttributes.DeviceAttributes deviceAttributes, ViewInputAttributes.ActionAttributes actionAttributes) {
         View view = this.getView();
@@ -759,25 +776,11 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
         double radius = this.wwd.model().getGlobe().getRadius();
         double surfaceElevation = this.wwd.model().getGlobe().getElevation(eyePos.getLatitude(),
             eyePos.getLongitude());
-        double t = getScaleValue(range[0], range[1],
+        double t = AbstractViewInputHandler.getScaleValue(range[0], range[1],
             eyePos.getElevation() - surfaceElevation, 3.0 * radius, true);
         t *= deviceAttributes.getSensitivity();
 
         return t;
-    }
-
-    //**************************************************************//
-    //********************  Utility Methods  ***********************//
-    //**************************************************************//
-
-    protected static double getScaleValue(double minValue, double maxValue,
-        double value, double range, boolean isExp) {
-        double t = value / range;
-        t = t < 0 ? 0 : (t > 1 ? 1 : t);
-        if (isExp) {
-            t = Math.pow(2.0, t) - 1.0;
-        }
-        return (minValue * (1.0 - t) + maxValue * t);
     }
 
     protected Vec4 computeSelectedPointAt(Point point) {
@@ -863,8 +866,7 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
             this.mouseDownModelview = mouseDownView.getModelviewMatrix();
             this.mouseDownProjection = mouseDownView.getProjectionMatrix();
             this.mouseDownViewport = mouseDownView.getViewport();
-        }
-        else {
+        } else {
             this.mouseDownModelview = null;
             this.mouseDownProjection = null;
             this.mouseDownViewport = null;

@@ -40,23 +40,23 @@ public class OGLTextRenderer extends TextRenderer {
 
     public OGLTextRenderer(Font font, boolean antialiased, boolean useFractionalMetrics,
         RenderDelegate renderDelegate) {
-        this(font, antialiased, useFractionalMetrics, renderDelegate, DEFAULT_MIPMAP);
+        this(font, antialiased, useFractionalMetrics, renderDelegate, OGLTextRenderer.DEFAULT_MIPMAP);
     }
 
     public OGLTextRenderer(Font font, boolean antialiased, boolean useFractionalMetrics) {
-        this(font, antialiased, useFractionalMetrics, null, DEFAULT_MIPMAP);
+        this(font, antialiased, useFractionalMetrics, null, OGLTextRenderer.DEFAULT_MIPMAP);
     }
 
     public OGLTextRenderer(Font font, boolean mipmap) {
-        this(font, DEFAULT_ANTIALIAS, DEFAULT_USE_FRACTIONAL_METRICS, null, mipmap);
+        this(font, OGLTextRenderer.DEFAULT_ANTIALIAS, OGLTextRenderer.DEFAULT_USE_FRACTIONAL_METRICS, null, mipmap);
     }
 
     public OGLTextRenderer(Font font) {
-        this(font, DEFAULT_ANTIALIAS, DEFAULT_USE_FRACTIONAL_METRICS, null, DEFAULT_MIPMAP);
+        this(font, OGLTextRenderer.DEFAULT_ANTIALIAS, OGLTextRenderer.DEFAULT_USE_FRACTIONAL_METRICS, null, OGLTextRenderer.DEFAULT_MIPMAP);
     }
 
     public OGLTextRenderer() {
-        this(DEFAULT_FONT, DEFAULT_ANTIALIAS, DEFAULT_USE_FRACTIONAL_METRICS, null, DEFAULT_MIPMAP);
+        this(OGLTextRenderer.DEFAULT_FONT, OGLTextRenderer.DEFAULT_ANTIALIAS, OGLTextRenderer.DEFAULT_USE_FRACTIONAL_METRICS, null, OGLTextRenderer.DEFAULT_MIPMAP);
     }
 
     public static TextRenderer getOrCreateTextRenderer(TextRendererCache cache,
@@ -102,11 +102,12 @@ public class OGLTextRenderer extends TextRenderer {
             throw new IllegalArgumentException(message);
         }
 
-        return getOrCreateTextRenderer(cache, font, DEFAULT_ANTIALIAS, DEFAULT_USE_FRACTIONAL_METRICS, DEFAULT_MIPMAP);
+        return OGLTextRenderer.getOrCreateTextRenderer(cache, font, OGLTextRenderer.DEFAULT_ANTIALIAS, OGLTextRenderer.DEFAULT_USE_FRACTIONAL_METRICS,
+            OGLTextRenderer.DEFAULT_MIPMAP);
     }
 
     protected void initialize() {
-        this.setSmoothing(DEFAULT_SMOOTHING);
-        this.setUseVertexArrays(DEFAULT_USE_VERTEX_ARRAYS);
+        this.setSmoothing(OGLTextRenderer.DEFAULT_SMOOTHING);
+        this.setUseVertexArrays(OGLTextRenderer.DEFAULT_USE_VERTEX_ARRAYS);
     }
 }

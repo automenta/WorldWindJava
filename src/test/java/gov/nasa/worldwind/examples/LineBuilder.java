@@ -8,7 +8,7 @@ package gov.nasa.worldwind.examples;
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVListImpl;
 import gov.nasa.worldwind.event.PositionEvent;
-import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.Path;
 
@@ -328,8 +328,8 @@ public class LineBuilder extends AVListImpl {
                     break;
                 }
 
-                String las = String.format("Lat %7.4f\u00B0", pos.getLatitude().getDegrees());
-                String los = String.format("Lon %7.4f\u00B0", pos.getLongitude().getDegrees());
+                String las = String.format("Lat %7.4f\u00B0", pos.getLatitude().degrees);
+                String los = String.format("Lon %7.4f\u00B0", pos.getLongitude().degrees);
                 pointLabels[i++].setText(las + "  " + los);
             }
             for (; i < this.pointLabels.length; i++) {

@@ -14,30 +14,30 @@ public class Version {
     private static final String MAJOR_VALUE = "2";
     private static final String MINOR_VALUE = "2";
     private static final String DOT_VALUE = "0";
-    private static final String versionNumber = "v" + MAJOR_VALUE + "." + MINOR_VALUE + "." + DOT_VALUE;
+    private static final String versionNumber = 'v' + Version.MAJOR_VALUE + '.' + Version.MINOR_VALUE + '.' + Version.DOT_VALUE;
     private static final String versionName = "NASA WorldWind Java";
 
     public static String getVersion() {
-        return versionName + " " + versionNumber;
+        return Version.versionName + ' ' + Version.versionNumber;
     }
 
     public static String getVersionName() {
-        return versionName;
+        return Version.versionName;
     }
 
     public static String getVersionNumber() {
-        return versionNumber;
+        return Version.versionNumber;
     }
 
     public static String getVersionMajorNumber() {
-        return MAJOR_VALUE;
+        return Version.MAJOR_VALUE;
     }
 
     public static String getVersionMinorNumber() {
-        return MINOR_VALUE;
+        return Version.MINOR_VALUE;
     }
 
     public static String getVersionDotNumber() {
-        return DOT_VALUE;
+        return Version.DOT_VALUE;
     }
 }

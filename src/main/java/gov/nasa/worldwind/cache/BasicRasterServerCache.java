@@ -36,11 +36,12 @@ public class BasicRasterServerCache extends BasicMemoryCache {
     protected static final long DEFAULT_LEAST_RECENTLY_USED_TIMEOUT_NSEC = 20000000000L;
     // 20 sec = 20,000,000,000 nano-sec
 
-    protected final AtomicInteger inaccessibleMemorySize = new AtomicInteger(DEFAULT_INACCESSIBLE_MEMORY_SIZE);
+    protected final AtomicInteger inaccessibleMemorySize = new AtomicInteger(
+        BasicRasterServerCache.DEFAULT_INACCESSIBLE_MEMORY_SIZE);
     protected final ReferenceQueue<Object> queue = new ReferenceQueue<>();
     private final Lock removalLock = new ReentrantLock();
-    protected Reference<Object> lowMemorySemaphore = null;
-    protected long timeoutLeastRecentUseInNanoSeconds = DEFAULT_LEAST_RECENTLY_USED_TIMEOUT_NSEC;
+    protected Reference<Object> lowMemorySemaphore;
+    protected long timeoutLeastRecentUseInNanoSeconds = BasicRasterServerCache.DEFAULT_LEAST_RECENTLY_USED_TIMEOUT_NSEC;
 
     /**
      * Constructs a new cache which uses entire memory, but will immediately drop all cached entries ones there is a
@@ -145,7 +146,7 @@ public class BasicRasterServerCache extends BasicMemoryCache {
         public void run() {
             try {
                 for (; ; ) {
-                    Thread.sleep(DEFAULT_PRUNER_THREAD_TIMEOUT_MSEC);
+                    Thread.sleep(BasicRasterServerCache.DEFAULT_PRUNER_THREAD_TIMEOUT_MSEC);
                     removeExpiredEntries();
                 }
             }

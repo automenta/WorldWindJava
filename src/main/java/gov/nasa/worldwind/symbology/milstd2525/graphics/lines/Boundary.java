@@ -58,8 +58,8 @@ public class Boundary extends PhaseLine {
     /**
      * The value of an optional second text string for the graphic. This value is equivalent to the "T1" modifier
      * defined by MIL-STD-2525C. It can be set using {@link #setAdditionalText(String)}, or by passing an Iterable to
-     * {@link #setModifier(String, Object)} with a key of {@link SymbologyConstants#UNIQUE_DESIGNATION}
-     * (additional text is the second value in the iterable).
+     * {@link #setModifier(String, Object)} with a key of {@link SymbologyConstants#UNIQUE_DESIGNATION} (additional text
+     * is the second value in the iterable).
      */
     protected String additionalText;
 
@@ -79,6 +79,24 @@ public class Boundary extends PhaseLine {
      */
     public static List<String> getSupportedGraphics() {
         return Collections.singletonList(TacGrpSidc.C2GM_GNL_LNE_BNDS);
+    }
+
+    /**
+     * Indicates the offset applied to the upper label.
+     *
+     * @return Offset applied to the upper label.
+     */
+    protected static Offset getTopLabelOffset() {
+        return Boundary.TOP_LABEL_OFFSET;
+    }
+
+    /**
+     * Indicates the offset applied to the lower label.
+     *
+     * @return Offset applied to the bottom label.
+     */
+    protected static Offset getBottomLabelOffset() {
+        return Boundary.BOTTOM_LABEL_OFFSET;
     }
 
     /**
@@ -124,8 +142,7 @@ public class Boundary extends PhaseLine {
             if (iterator.hasNext()) {
                 this.setAdditionalText((String) iterator.next());
             }
-        }
-        else {
+        } else {
             super.setModifier(key, value);
         }
     }
@@ -293,29 +310,11 @@ public class Boundary extends PhaseLine {
         // in the list is considered the main label. If we have top labels, this will be either a top label, bottom
         // label, or hostile indicator.
         if (this.haveTopLabel)
-            return TOP_LABEL_OFFSET;
+            return Boundary.TOP_LABEL_OFFSET;
         else if (this.haveBottomLabel)
-            return BOTTOM_LABEL_OFFSET;
+            return Boundary.BOTTOM_LABEL_OFFSET;
         else
             return TacticalGraphicLabel.DEFAULT_OFFSET;
-    }
-
-    /**
-     * Indicates the offset applied to the upper label.
-     *
-     * @return Offset applied to the upper label.
-     */
-    protected static Offset getTopLabelOffset() {
-        return TOP_LABEL_OFFSET;
-    }
-
-    /**
-     * Indicates the offset applied to the lower label.
-     *
-     * @return Offset applied to the bottom label.
-     */
-    protected static Offset getBottomLabelOffset() {
-        return BOTTOM_LABEL_OFFSET;
     }
 
     /**

@@ -103,7 +103,7 @@ public class FlyToOrbitViewAnimator extends CompoundAnimator {
             final int MAX_SMOOTHING = 1;
 
             final double CENTER_START = this.useMidZoom ? 0.2 : 0.0;
-            final double CENTER_STOP = this.useMidZoom ? 0.8 : 0.8;
+            final double CENTER_STOP = 0.8;
             double latLonInterpolant = AnimationSupport.basicInterpolant(interpolant, CENTER_START, CENTER_STOP,
                 MAX_SMOOTHING);
 
@@ -120,8 +120,7 @@ public class FlyToOrbitViewAnimator extends CompoundAnimator {
             if (this.altitudeMode == WorldWind.CLAMP_TO_GROUND) {
                 overrideEndElevation = true;
                 endElevation = this.globe.getElevation(getEnd().getLatitude(), getEnd().getLongitude());
-            }
-            else if (this.altitudeMode == WorldWind.RELATIVE_TO_GROUND) {
+            } else if (this.altitudeMode == WorldWind.RELATIVE_TO_GROUND) {
                 overrideEndElevation = true;
                 endElevation = this.globe.getElevation(getEnd().getLatitude(), getEnd().getLongitude())
                     + getEnd().getAltitude();

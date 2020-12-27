@@ -29,15 +29,15 @@ public class KMLLocation extends KMLAbstractObject {
     }
 
     public Double getLongitude() {
-        return (Double) this.getField(LONGITUDE_KEY);
+        return (Double) this.getField(KMLLocation.LONGITUDE_KEY);
     }
 
     public Double getLatitude() {
-        return (Double) this.getField(LATITUDE_KEY);
+        return (Double) this.getField(KMLLocation.LATITUDE_KEY);
     }
 
     public Double getAltitude() {
-        return (Double) this.getField(ALTITUDE_KEY);
+        return (Double) this.getField(KMLLocation.ALTITUDE_KEY);
     }
 
     /**
@@ -57,8 +57,8 @@ public class KMLLocation extends KMLAbstractObject {
     }
 
     public void setPosition(Position pos) {
-        this.setField(LATITUDE_KEY, pos.latitude);
-        this.setField(LONGITUDE_KEY, pos.longitude);
-        this.setField(ALTITUDE_KEY, pos.elevation);
+        this.setField(KMLLocation.LATITUDE_KEY, pos.latitude);
+        this.setField(KMLLocation.LONGITUDE_KEY, pos.longitude);
+        this.setField(KMLLocation.ALTITUDE_KEY, pos.elevation);
     }
 }

@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.util.webview;
 
-import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.WWObjectImpl;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.Logging;
@@ -20,7 +20,7 @@ import java.beans.PropertyChangeEvent;
  * @author pabercrombie
  * @version $Id: AbstractWebView.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public abstract class AbstractWebView extends WWObjectImpl implements WebView, Disposable {
+public abstract class AbstractWebView extends WWObjectImpl implements WebView {
     /**
      * The size of the WebView frame in pixels. Initially null, indicating the default size is used.
      */
@@ -106,8 +106,7 @@ public abstract class AbstractWebView extends WWObjectImpl implements WebView, D
     public void propertyChange(final PropertyChangeEvent event) {
         if (!SwingUtilities.isEventDispatchThread()) {
             SwingUtilities.invokeLater(() -> propertyChange(event));
-        }
-        else {
+        } else {
             this.firePropertyChange(AVKey.REPAINT, null, this);
         }
     }

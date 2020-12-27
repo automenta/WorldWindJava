@@ -18,8 +18,8 @@ import java.util.Map;
  * @version $Id: AbstractDataRaster.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 public abstract class AbstractDataRaster extends AVListImpl implements DataRaster {
-    protected int width = 0;
-    protected int height = 0;
+    protected int width;
+    protected int height;
 
     protected AbstractDataRaster() {
         super();
@@ -99,8 +99,7 @@ public abstract class AbstractDataRaster extends AVListImpl implements DataRaste
                 // relax restriction, just log and continue
 //                throw new IllegalArgumentException(message);
                 return this;
-            }
-            else if (AVKey.HEIGHT.equals(key) && this.getHeight() != (Integer) value) {
+            } else if (AVKey.HEIGHT.equals(key) && this.getHeight() != (Integer) value) {
                 String message = Logging.getMessage("generic.AttemptToChangeReadOnlyProperty", key);
                 Logging.logger().finest(message);
                 // relax restriction, just log and continue
@@ -176,7 +175,7 @@ public abstract class AbstractDataRaster extends AVListImpl implements DataRaste
 
         // copy parent raster keys/values; only those key/value will be copied that do exist in the parent raster
         // AND does NOT exist in the requested raster
-        String[] keysToCopy = new String[] {
+        String[] keysToCopy = {
             AVKey.DATA_TYPE, AVKey.MISSING_DATA_SIGNAL, AVKey.BYTE_ORDER, AVKey.PIXEL_FORMAT, AVKey.ELEVATION_UNIT
         };
         WWUtil.copyValues(this, params, keysToCopy, false);
@@ -252,7 +251,7 @@ public abstract class AbstractDataRaster extends AVListImpl implements DataRaste
 
         // copy parent raster keys/values; only those key/value will be copied that do exist in the parent raster
         // AND does NOT exist in the requested raster
-        String[] keysToCopy = new String[] {
+        String[] keysToCopy = {
             AVKey.DATA_TYPE, AVKey.MISSING_DATA_SIGNAL, AVKey.BYTE_ORDER, AVKey.PIXEL_FORMAT, AVKey.ELEVATION_UNIT
         };
         WWUtil.copyValues(this, params, keysToCopy, false);

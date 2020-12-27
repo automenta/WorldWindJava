@@ -55,8 +55,7 @@ public class WindowShadeAnimation implements Animation {
             this.startWindowHeight = currentSize.height;
             this.maximizedWindowHeight = currentSize.height;
             this.targetWindowHeight = this.frame.getTitleBarHeight() + this.frame.frameBorder * 2;
-        }
-        else {
+        } else {
             this.startWindowHeight = currentSize.height;
             this.targetWindowHeight = this.maximizedWindowHeight;
         }

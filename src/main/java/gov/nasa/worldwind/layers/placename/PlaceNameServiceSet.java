@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.layers.placename;
 
 import gov.nasa.worldwind.WWObjectImpl;
-import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.util.Logging;
 
 import java.util.*;
@@ -15,9 +14,9 @@ import java.util.*;
  * @author Paul Collins
  * @version $Id: PlaceNameServiceSet.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class PlaceNameServiceSet extends WWObjectImpl implements AVList {
+public class PlaceNameServiceSet extends WWObjectImpl {
     private final List<PlaceNameService> serviceList = new LinkedList<>();
-    private long expiryTime = 0;
+    private long expiryTime;
 
     public PlaceNameServiceSet() {
     }
@@ -46,8 +45,7 @@ public class PlaceNameServiceSet extends WWObjectImpl implements AVList {
                 if (replace) {
                     this.serviceList.set(i, placeNameService);
                     return true;
-                }
-                else {
+                } else {
                     return false;
                 }
             }

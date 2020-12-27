@@ -82,7 +82,7 @@ public class PointPlacemarkAttributes implements Exportable {
     protected Offset labelOffset;
     protected Material labelMaterial;
     protected Double labelScale;
-    protected boolean usePointAsDefaultImage = false;
+    protected boolean usePointAsDefaultImage;
     protected boolean unresolved;
     protected boolean drawImage = true;
     protected boolean drawLabel = true;
@@ -247,8 +247,7 @@ public class PointPlacemarkAttributes implements Exportable {
     }
 
     /**
-     * Returns the {@link BufferedImage} previously specified to {@link
-     * #setImage(BufferedImage)}.
+     * Returns the {@link BufferedImage} previously specified to {@link #setImage(BufferedImage)}.
      *
      * @return The image previously specified for this attribute bundle.
      */
@@ -257,9 +256,9 @@ public class PointPlacemarkAttributes implements Exportable {
     }
 
     /**
-     * Specifies a {@link BufferedImage} for {@link PointPlacemark}s associated
-     * with this attribute bundle. When this method is called, this attribute bundle's image address is automatically
-     * set to a unique identifier for the image.
+     * Specifies a {@link BufferedImage} for {@link PointPlacemark}s associated with this attribute bundle. When this
+     * method is called, this attribute bundle's image address is automatically set to a unique identifier for the
+     * image.
      *
      * @param image the buffered image to use for the associated point placemarks. May be null, in which case this
      *              attribute bundle's image address is set to null by this method.
@@ -320,10 +319,10 @@ public class PointPlacemarkAttributes implements Exportable {
     }
 
     /**
-     * Specifies the heading reference. If {@link AVKey#RELATIVE_TO_SCREEN}, the heading is
-     * interpreted as relative to the screen and the placemark icon maintains the heading relative to the screen's
-     * vertical edges. If {@link AVKey#RELATIVE_TO_GLOBE}, the heading is interpreted relative
-     * to the globe and the placemark icon maintains the heading relative to the globe's north direction.
+     * Specifies the heading reference. If {@link AVKey#RELATIVE_TO_SCREEN}, the heading is interpreted as relative to
+     * the screen and the placemark icon maintains the heading relative to the screen's vertical edges. If {@link
+     * AVKey#RELATIVE_TO_GLOBE}, the heading is interpreted relative to the globe and the placemark icon maintains the
+     * heading relative to the globe's north direction.
      * <p>
      * The default heading reference is null, which {@link PointPlacemark} interprets as {@link
      * AVKey#RELATIVE_TO_SCREEN}.
@@ -586,8 +585,7 @@ public class PointPlacemarkAttributes implements Exportable {
                 Logging.logger().throwing(getClass().getName(), "export", e);
                 throw new IOException(e);
             }
-        }
-        else {
+        } else {
             String message = Logging.getMessage("Export.UnsupportedFormat", mimeType);
             Logging.logger().warning(message);
             throw new UnsupportedOperationException(message);
@@ -610,11 +608,9 @@ public class PointPlacemarkAttributes implements Exportable {
         if (output instanceof XMLStreamWriter) {
             xmlWriter = (XMLStreamWriter) output;
             closeWriterWhenFinished = false;
-        }
-        else if (output instanceof Writer) {
+        } else if (output instanceof Writer) {
             xmlWriter = factory.createXMLStreamWriter((Writer) output);
-        }
-        else if (output instanceof OutputStream) {
+        } else if (output instanceof OutputStream) {
             xmlWriter = factory.createXMLStreamWriter((OutputStream) output);
         }
 

@@ -93,24 +93,24 @@ public class KMLRegion extends KMLAbstractObject {
      * The maximum lifespan of this Region's computed data, in milliseconds. Initialized to
      * <code>DEFAULT_DATA_GENERATION_INTERVAL</code>.
      */
-    protected final long maxExpiryTime = DEFAULT_DATA_GENERATION_INTERVAL;
+    protected final long maxExpiryTime = KMLRegion.DEFAULT_DATA_GENERATION_INTERVAL;
     /**
      * The minimum lifespan of this Region's computed data, in milliseconds. Initialized to
      * <code>DEFAULT_DATA_GENERATION_INTERVAL - 1000</code>.
      */
-    protected final long minExpiryTime = Math.max(DEFAULT_DATA_GENERATION_INTERVAL - 1000, 0);
+    protected final long minExpiryTime = Math.max(KMLRegion.DEFAULT_DATA_GENERATION_INTERVAL - 1000, 0);
     /**
      * Holds globe-dependent computed Region data. One entry per globe encountered during <code>isActive</code>.
      * Initialized to a new <code>ShapeDataCache</code> with <code>maxTimeSinceLastUsed</code> set to
      * <code>DEFAULT_UNUSED_DATA_LIFETIME</code>.
      */
-    protected final ShapeDataCache regionDataCache = new ShapeDataCache(DEFAULT_UNUSED_DATA_LIFETIME);
+    protected final ShapeDataCache regionDataCache = new ShapeDataCache(KMLRegion.DEFAULT_UNUSED_DATA_LIFETIME);
     /**
      * The default value that configures KML scene resolution to screen resolution as the viewing distance changes. The
      * <code>KMLRoot's</code> detail hint specifies deviations from this default. Initially
      * <code>DEFAULT_DETAIL_HINT_ORIGIN</code>.
      */
-    protected final double detailHintOrigin = DEFAULT_DETAIL_HINT_ORIGIN;
+    protected final double detailHintOrigin = KMLRegion.DEFAULT_DETAIL_HINT_ORIGIN;
     /**
      * Identifies the active globe-dependent data for the current invocation of <code>isActive</code>. The active data
      * is drawn from the <code>regionDataCache</code> at the beginning of the <code>isActive</code> method.
@@ -126,6 +126,17 @@ public class KMLRegion extends KMLAbstractObject {
      */
     public KMLRegion(String namespaceURI) {
         super(namespaceURI);
+    }
+
+    /**
+     * Determines if a Sector is supported by this Region implementation. This implementation does not support sectors
+     * with latitude values outside of [-90, 90], or longitude values outside of [-180, 180].
+     *
+     * @param sector Sector to test.
+     * @return {@code true} if {@code sector} is with [-90, 90] latitude and [-180, 180] longitude.
+     */
+    protected static boolean isSectorSupported(Sector sector) {
+        return sector.isWithinLatLonLimits();
     }
 
     /**
@@ -247,8 +258,7 @@ public class KMLRegion extends KMLAbstractObject {
      * Indicates whether this Region's data must be recomputed, either as a result of a change in the
      * <code>Globe's</code> state or the expiration of the geometry regeneration interval.
      * <p>
-     * A <code>{@link KMLRegion.RegionData}</code> must be current when this method is
-     * called.
+     * A <code>{@link KMLRegion.RegionData}</code> must be current when this method is called.
      *
      * @param dc the current draw context.
      * @return <code>true</code> if this Region's data must be regenerated, otherwise <code>false</code>.
@@ -261,8 +271,7 @@ public class KMLRegion extends KMLAbstractObject {
      * Produces the data used to determine whether this Region is active for the specified <code>DrawContext</code>.
      * This method is called by <code>makeRegionData</code> upon determining that the current RegionData must be
      * recomputed, either as a result of a change in the <code>Globe's</code> state or the expiration of the geometry
-     * regeneration interval. A <code>{@link KMLRegion.RegionData}</code> must be current
-     * when this method is called.
+     * regeneration interval. A <code>{@link KMLRegion.RegionData}</code> must be current when this method is called.
      *
      * @param dc the current draw context.
      * @see #makeRegionData
@@ -281,11 +290,9 @@ public class KMLRegion extends KMLAbstractObject {
 
         if (altitudeMode == WorldWind.CLAMP_TO_GROUND) {
             this.doMakeClampToGroundRegionData(dc, box);
-        }
-        else if (altitudeMode == WorldWind.RELATIVE_TO_GROUND) {
+        } else if (altitudeMode == WorldWind.RELATIVE_TO_GROUND) {
             this.doMakeRelativeToGroundRegionData(dc, box);
-        }
-        else // Default to WorldWind.ABSOLUTE.
+        } else // Default to WorldWind.ABSOLUTE.
         {
             this.doMakeAbsoluteRegionData(dc, box);
         }
@@ -293,8 +300,8 @@ public class KMLRegion extends KMLAbstractObject {
 
     /**
      * Produces the <code>Extent</code> and the <code>Sector</code> for this Region. Assumes this region's altitude mode
-     * is <code>clampToGround</code>. A <code>{@link KMLRegion.RegionData}</code> must be
-     * current when this method is called.
+     * is <code>clampToGround</code>. A <code>{@link KMLRegion.RegionData}</code> must be current when this method is
+     * called.
      *
      * @param dc  the current draw context.
      * @param box the Region's geographic bounding box.
@@ -329,8 +336,8 @@ public class KMLRegion extends KMLAbstractObject {
 
     /**
      * Produces the <code>Extent</code> and the <code>Sector</code> for this Region. Assumes this region's altitude mode
-     * is <code>relativeToGround</code>. A <code>{@link KMLRegion.RegionData}</code> must be
-     * current when this method is called.
+     * is <code>relativeToGround</code>. A <code>{@link KMLRegion.RegionData}</code> must be current when this method is
+     * called.
      *
      * @param dc  the current draw context.
      * @param box the Region's geographic bounding box.
@@ -363,8 +370,8 @@ public class KMLRegion extends KMLAbstractObject {
 
     /**
      * Produces the <code>Extent</code> and the <code>Sector</code> for this Region. Assumes this region's altitude mode
-     * is <code>absolute</code>. A <code>{@link KMLRegion.RegionData}</code> must be current
-     * when this method is called.
+     * is <code>absolute</code>. A <code>{@link KMLRegion.RegionData}</code> must be current when this method is
+     * called.
      *
      * @param dc  the current draw context.
      * @param box the Region's geographic bounding box.
@@ -392,17 +399,6 @@ public class KMLRegion extends KMLAbstractObject {
             minAltitude, maxAltitude);
         this.getCurrentData().setExtent(extent);
         this.getCurrentData().setSector(sector);
-    }
-
-    /**
-     * Determines if a Sector is supported by this Region implementation. This implementation does not support sectors
-     * with latitude values outside of [-90, 90], or longitude values outside of [-180, 180].
-     *
-     * @param sector Sector to test.
-     * @return {@code true} if {@code sector} is with [-90, 90] latitude and [-180, 180] longitude.
-     */
-    protected static boolean isSectorSupported(Sector sector) {
-        return sector.isWithinLatLonLimits();
     }
 
     /**
@@ -501,11 +497,9 @@ public class KMLRegion extends KMLAbstractObject {
 
         if (altitudeMode == WorldWind.CLAMP_TO_GROUND) {
             return this.meetsClampToGroundLodCriteria(tc, dc, lod);
-        }
-        else if (altitudeMode == WorldWind.RELATIVE_TO_GROUND) {
+        } else if (altitudeMode == WorldWind.RELATIVE_TO_GROUND) {
             return this.meetsRelativeToGroundLodCriteria(tc, dc, lod);
-        }
-        else // Default to WorldWind.ABSOLUTE.
+        } else // Default to WorldWind.ABSOLUTE.
         {
             return this.meetsAbsoluteLodCriteria(tc, dc, lod);
         }
@@ -513,8 +507,8 @@ public class KMLRegion extends KMLAbstractObject {
 
     /**
      * Indicates whether the specified <code>DrawContext</code> meets this Region's level of detail criteria. Assumes
-     * this region's altitude mode is <code>clampToGround</code>. A <code>{@link KMLRegion.RegionData}</code>
-     * must be current when this method is called.
+     * this region's altitude mode is <code>clampToGround</code>. A <code>{@link KMLRegion.RegionData}</code> must be
+     * current when this method is called.
      *
      * @param tc  the current KML traversal context.
      * @param dc  the <code>DrawContext</code> to test.
@@ -592,8 +586,8 @@ public class KMLRegion extends KMLAbstractObject {
 
     /**
      * Indicates whether the specified <code>DrawContext</code> meets this Region's level of detail criteria. Assumes
-     * this region's altitude mode is <code>relativeToGround</code>. A <code>{@link
-     * KMLRegion.RegionData}</code> must be current when this method is called.
+     * this region's altitude mode is <code>relativeToGround</code>. A <code>{@link KMLRegion.RegionData}</code> must be
+     * current when this method is called.
      *
      * @param tc  the current KML traversal context.
      * @param dc  the <code>DrawContext</code> to test.
@@ -608,8 +602,8 @@ public class KMLRegion extends KMLAbstractObject {
 
     /**
      * Indicates whether the specified <code>DrawContext</code> meets this Region's level of detail criteria. Assumes
-     * this region's altitude mode is <code>absolute</code>. A <code>{@link KMLRegion.RegionData}</code>
-     * must be current when this method is called.
+     * this region's altitude mode is <code>absolute</code>. A <code>{@link KMLRegion.RegionData}</code> must be current
+     * when this method is called.
      *
      * @param tc  the current KML traversal context.
      * @param dc  the <code>DrawContext</code> to test.
@@ -692,7 +686,7 @@ public class KMLRegion extends KMLAbstractObject {
 
     @Override
     public void onChange(Message msg) {
-        if (MSG_BOX_CHANGED.equals(msg.getName()))
+        if (KMLAbstractObject.MSG_BOX_CHANGED.equals(msg.getName()))
             this.reset();
 
         super.onChange(msg);

@@ -202,8 +202,7 @@ public class PhaseLine extends AbstractMilStd2525TacticalGraphic {
         if (first.longitude < last.longitude) {
             startLabel.setTextAlign(AVKey.RIGHT);
             endLabel.setTextAlign(AVKey.LEFT);
-        }
-        else {
+        } else {
             startLabel.setTextAlign(AVKey.LEFT);
             endLabel.setTextAlign(AVKey.RIGHT);
         }
@@ -215,7 +214,7 @@ public class PhaseLine extends AbstractMilStd2525TacticalGraphic {
 
         // Probable Line of Deployment graphic always renders with dashed lines.
         if (TacGrpSidc.C2GM_OFF_LNE_PLD.equalsIgnoreCase(this.maskedSymbolCode)) {
-            attributes.setOutlineStippleFactor(PLD_OUTLINE_STIPPLE_FACTOR);
+            attributes.setOutlineStippleFactor(PhaseLine.PLD_OUTLINE_STIPPLE_FACTOR);
             attributes.setOutlineStipplePattern(AbstractMilStd2525TacticalGraphic.getOutlineStipplePattern());
         }
     }

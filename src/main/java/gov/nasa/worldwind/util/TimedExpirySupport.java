@@ -136,11 +136,10 @@ public class TimedExpirySupport {
     public void restart(DrawContext dc) {
         if (this.maxExpiryTime == 0 || this.maxExpiryTime < this.minExpiryTime) {
             this.expired = true;
-        }
-        else {
+        } else {
             long now = dc != null ? dc.getFrameTimeStamp() : System.currentTimeMillis();
             this.expiryTime = now + this.minExpiryTime
-                + rand.nextInt((int) (this.maxExpiryTime - this.minExpiryTime));
+                + TimedExpirySupport.rand.nextInt((int) (this.maxExpiryTime - this.minExpiryTime));
             this.expired = false;
         }
     }

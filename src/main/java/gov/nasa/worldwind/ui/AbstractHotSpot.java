@@ -12,9 +12,9 @@ import java.awt.*;
 import java.awt.event.*;
 
 /**
- * AbstractHotSpot is an abstract base class for the {@link HotSpot} interface. The methods in
- * AbstractHotSpot are empty or simply return {@code null}. This is a convenience class for that enables a subclass to
- * override only the events its interested in.
+ * AbstractHotSpot is an abstract base class for the {@link HotSpot} interface. The methods in AbstractHotSpot are empty
+ * or simply return {@code null}. This is a convenience class for that enables a subclass to override only the events
+ * its interested in.
  *
  * @author dcollins
  * @version $Id: AbstractHotSpot.java 1171 2013-02-11 21:45:02Z dcollins $
@@ -29,6 +29,17 @@ public abstract class AbstractHotSpot extends AVListImpl implements HotSpot {
      * Creates a new AbstractHotSpot, but otherwise does nothing.
      */
     public AbstractHotSpot() {
+    }
+
+    /**
+     * Determine if a select event, or the mouse event that generated the select event, has been consumed.
+     *
+     * @param event Event to test.
+     * @return {@code true} if {@code event} has been consumed, or if {@code event} was triggered by a mouse event, and
+     * that mouse event has been consumed.
+     */
+    protected static boolean isConsumed(SelectEvent event) {
+        return event.isConsumed() || (event.mouseEvent != null && event.mouseEvent.isConsumed());
     }
 
     /**
@@ -160,16 +171,5 @@ public abstract class AbstractHotSpot extends AVListImpl implements HotSpot {
      */
     public Cursor getCursor() {
         return null;
-    }
-
-    /**
-     * Determine if a select event, or the mouse event that generated the select event, has been consumed.
-     *
-     * @param event Event to test.
-     * @return {@code true} if {@code event} has been consumed, or if {@code event} was triggered by a mouse event, and
-     * that mouse event has been consumed.
-     */
-    protected static boolean isConsumed(SelectEvent event) {
-        return event.isConsumed() || (event.mouseEvent != null && event.mouseEvent.isConsumed());
     }
 }

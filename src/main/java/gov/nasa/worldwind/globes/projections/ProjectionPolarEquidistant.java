@@ -21,7 +21,7 @@ public class ProjectionPolarEquidistant extends AbstractGeographicProjection {
     protected static final int NORTH = 0;
     protected static final int SOUTH = 1;
 
-    protected int pole = NORTH;
+    protected int pole = ProjectionPolarEquidistant.NORTH;
 
     /**
      * Creates a projection centered on the North pole.
@@ -46,11 +46,11 @@ public class ProjectionPolarEquidistant extends AbstractGeographicProjection {
             throw new IllegalArgumentException(message);
         }
 
-        this.pole = pole.equals(AVKey.SOUTH) ? SOUTH : NORTH;
+        this.pole = pole.equals(AVKey.SOUTH) ? ProjectionPolarEquidistant.SOUTH : ProjectionPolarEquidistant.NORTH;
     }
 
     public String getName() {
-        return (this.pole == SOUTH ? "South " : "North ") + "Polar Equidistant";
+        return (this.pole == ProjectionPolarEquidistant.SOUTH ? "South " : "North ") + "Polar Equidistant";
     }
 
     @Override
@@ -64,7 +64,7 @@ public class ProjectionPolarEquidistant extends AbstractGeographicProjection {
      * @return The pole on which this projection is centered, either {@link AVKey#NORTH} or {@link AVKey#SOUTH}.
      */
     public String getPole() {
-        return this.pole == SOUTH ? AVKey.SOUTH : AVKey.NORTH;
+        return this.pole == ProjectionPolarEquidistant.SOUTH ? AVKey.SOUTH : AVKey.NORTH;
     }
 
     @Override
@@ -72,12 +72,14 @@ public class ProjectionPolarEquidistant extends AbstractGeographicProjection {
         Vec4 offset) {
         // Formulae taken from "Map Projections -- A Working Manual", Snyder, USGS paper 1395, pg. 195.
 
-        if ((this.pole == NORTH && latitude.degrees == 90) || (this.pole == SOUTH && latitude.degrees == -90))
+        if ((this.pole == ProjectionPolarEquidistant.NORTH && latitude.degrees == 90) || (this.pole == ProjectionPolarEquidistant.SOUTH
+            && latitude.degrees == -90))
             return new Vec4(0, 0, metersElevation);
 
-        double a = globe.getRadius() * (Math.PI / 2 + latitude.radians * (this.pole == SOUTH ? 1 : -1));
-        double x = a * Math.sin(longitude.radians);
-        double y = a * Math.cos(longitude.radians) * (this.pole == SOUTH ? 1 : -1);
+        double a = globe.getRadius() * (Math.PI / 2 + latitude.radians() * (this.pole == ProjectionPolarEquidistant.SOUTH
+            ? 1 : -1));
+        double x = a * Math.sin(longitude.radians());
+        double y = a * Math.cos(longitude.radians()) * (this.pole == ProjectionPolarEquidistant.SOUTH ? 1 : -1);
 
         return new Vec4(x, y, metersElevation);
     }
@@ -86,13 +88,13 @@ public class ProjectionPolarEquidistant extends AbstractGeographicProjection {
     public void geographicToCartesian(Globe globe, Sector sector, int numLat, int numLon, double[] metersElevation,
         Vec4 offset, Vec4[] out) {
         double radius = globe.getRadius();
-        double minLat = sector.latMin().radians;
-        double maxLat = sector.latMax().radians;
-        double minLon = sector.lonMin().radians;
-        double maxLon = sector.lonMax().radians;
+        double minLat = sector.latMin().radians();
+        double maxLat = sector.latMax().radians();
+        double minLon = sector.lonMin().radians();
+        double maxLon = sector.lonMax().radians();
         double deltaLat = (maxLat - minLat) / (numLat > 1 ? numLat - 1 : 1);
         double deltaLon = (maxLon - minLon) / (numLon > 1 ? numLon - 1 : 1);
-        double pole = (this.pole == SOUTH) ? 1 : -1;
+        double pole = (this.pole == ProjectionPolarEquidistant.SOUTH) ? 1 : -1;
         double pi_2 = Math.PI / 2;
         int pos = 0;
 
@@ -119,7 +121,7 @@ public class ProjectionPolarEquidistant extends AbstractGeographicProjection {
 
             // Latitude is constant for each row. Values that are a function of latitude can be computed once per row.
             double a = radius * (pi_2 + lat * pole);
-            if ((this.pole == NORTH && lat == pi_2) || (this.pole == SOUTH && lat == -pi_2)) {
+            if ((this.pole == ProjectionPolarEquidistant.NORTH && lat == pi_2) || (this.pole == ProjectionPolarEquidistant.SOUTH && lat == -pi_2)) {
                 a = 0;
             }
 
@@ -139,14 +141,14 @@ public class ProjectionPolarEquidistant extends AbstractGeographicProjection {
 
         double rho = Math.sqrt(cart.x * cart.x + cart.y * cart.y);
         if (rho < 1.0e-4)
-            return Position.fromDegrees((this.pole == SOUTH ? -90 : 90), 0, cart.z);
+            return Position.fromDegrees((this.pole == ProjectionPolarEquidistant.SOUTH ? -90 : 90), 0, cart.z);
 
         double c = rho / globe.getRadius();
         if (c > Math.PI) // map cartesian points beyond the projections radius to the edge of the projection
             c = Math.PI;
 
-        double lat = Math.asin(Math.cos(c) * (this.pole == SOUTH ? -1 : 1));
-        double lon = Math.atan2(cart.x, cart.y * (this.pole == SOUTH ? 1 : -1)); // use atan2(x,y) instead of atan(x/y)
+        double lat = Math.asin(Math.cos(c) * (this.pole == ProjectionPolarEquidistant.SOUTH ? -1 : 1));
+        double lon = Math.atan2(cart.x, cart.y * (this.pole == ProjectionPolarEquidistant.SOUTH ? 1 : -1)); // use atan2(x,y) instead of atan(x/y)
 
         return Position.fromRadians(lat, lon, cart.z);
     }
@@ -157,8 +159,8 @@ public class ProjectionPolarEquidistant extends AbstractGeographicProjection {
         // same direction as the vector returned by cartesianToGeographic. With the north pole, the north pointing
         // tangent has the opposite direction.
 
-        double x = Math.sin(longitude.radians) * (this.pole == SOUTH ? 1 : -1);
-        double y = Math.cos(longitude.radians);
+        double x = Math.sin(longitude.radians()) * (this.pole == ProjectionPolarEquidistant.SOUTH ? 1 : -1);
+        double y = Math.cos(longitude.radians());
 
         return new Vec4(x, y, 0);
     }

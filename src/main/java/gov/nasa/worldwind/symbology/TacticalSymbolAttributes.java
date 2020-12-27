@@ -85,8 +85,8 @@ public interface TacticalSymbolAttributes {
     void setOpacity(Double opacity);
 
     /**
-     * Indicates the font used to draw text modifiers. See {@link #setTextModifierFont(Font)} for a description
-     * of how the text modifier font is used.
+     * Indicates the font used to draw text modifiers. See {@link #setTextModifierFont(Font)} for a description of how
+     * the text modifier font is used.
      *
      * @return the text modifier font. May be <code>null</code>, indicating that the default font is used.
      */
@@ -103,8 +103,8 @@ public interface TacticalSymbolAttributes {
     void setTextModifierFont(Font font);
 
     /**
-     * Indicates the material used to draw text modifiers. See {@link #setTextModifierMaterial(Material)}
-     * for a description of how the text modifier material is used.
+     * Indicates the material used to draw text modifiers. See {@link #setTextModifierMaterial(Material)} for a
+     * description of how the text modifier material is used.
      *
      * @return the text modifier material. May be <code>null</code>, indicating that the default material is used.
      */

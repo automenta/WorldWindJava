@@ -98,6 +98,15 @@ public class IrregularFireSupportArea extends BasicArea {
             TacGrpSidc.FSUPP_ARS_TGTAQZ_CFZ_IRR));
     }
 
+    /**
+     * Indicates the source of the image that provides the polygon fill pattern.
+     *
+     * @return The source of the polygon fill pattern.
+     */
+    protected static Object getImageSource() {
+        return IrregularFireSupportArea.DIAGONAL_FILL_PATH;
+    }
+
     @Override
     protected void createLabels() {
         String[] allText = FireSupportTextBuilder.createText(this);
@@ -198,7 +207,7 @@ public class IrregularFireSupportArea extends BasicArea {
         // in the circle. (This is not necessary with a center aligned label because centering the text automatically
         // centers the label in the circle).
         if (isACA)
-            return LEFT_ALIGN_OFFSET;
+            return IrregularFireSupportArea.LEFT_ALIGN_OFFSET;
         else
             return super.getDefaultLabelOffset();
     }
@@ -226,14 +235,5 @@ public class IrregularFireSupportArea extends BasicArea {
         return TacGrpSidc.FSUPP_ARS_C2ARS_NFA_IRR.equalsIgnoreCase(this.maskedSymbolCode)
             || TacGrpSidc.FSUPP_ARS_KLBOX_BLUE_IRR.equalsIgnoreCase(this.maskedSymbolCode)
             || TacGrpSidc.FSUPP_ARS_KLBOX_PURPLE_IRR.equalsIgnoreCase(this.maskedSymbolCode);
-    }
-
-    /**
-     * Indicates the source of the image that provides the polygon fill pattern.
-     *
-     * @return The source of the polygon fill pattern.
-     */
-    protected static Object getImageSource() {
-        return DIAGONAL_FILL_PATH;
     }
 }

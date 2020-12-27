@@ -49,8 +49,8 @@ import java.util.logging.Level;
  * constructors that accept a generic source such as {@link #Shapefile(Object)} expect accompanying files to be in the
  * same logical folder as the Shapefile, have the same filename as the Shapefile, and have suffixes ".shx", ".dbf", and
  * ".prj" respectively. If any of these files do not exist, or cannot be read for any reason, the Shapefile opens
- * without that information. Alternatively, the Shapefile can be constructed by providing a direct {@link
- * InputStream} to any of the accompanying sources by using the InputStream based constructors, such as {@link
+ * without that information. Alternatively, the Shapefile can be constructed by providing a direct {@link InputStream}
+ * to any of the accompanying sources by using the InputStream based constructors, such as {@link
  * #Shapefile(InputStream, InputStream, InputStream, InputStream)}.
  * <h3>Coordinate System</h3>
  * <p>
@@ -63,12 +63,12 @@ import java.util.logging.Level;
  * Shapefile throws a {@link WWRuntimeException} during construction.</ul>
  * <p>
  * The Shapefile's coordinate system can be specified in either an accompanying projection file, or by specifying the
- * coordinate system parameters in an {@link AVList} during Shapefile's construction. The
- * Shapefile gives priority to the AVList if an accompanying projection file is available and AVList projection
- * parameters are specified. If an accompanying projection file is available, the Shapefile attempts to parse the
- * projection file as an OGC coordinate system encoded in well-known text format. For details, see the OGC Coordinate
- * Transform Service (CT) specification at <a href="http://www.opengeospatial.org/standards/ct">http://www.opengeospatial.org/standards/ct</a>.
- * The Shapefile expects the AVList specifying its coordinate system parameters to contain the following properties:
+ * coordinate system parameters in an {@link AVList} during Shapefile's construction. The Shapefile gives priority to
+ * the AVList if an accompanying projection file is available and AVList projection parameters are specified. If an
+ * accompanying projection file is available, the Shapefile attempts to parse the projection file as an OGC coordinate
+ * system encoded in well-known text format. For details, see the OGC Coordinate Transform Service (CT) specification at
+ * <a href="http://www.opengeospatial.org/standards/ct">http://www.opengeospatial.org/standards/ct</a>. The Shapefile
+ * expects the AVList specifying its coordinate system parameters to contain the following properties:
  * <ul> <li>{@link AVKey#COORDINATE_SYSTEM} - either {@link
  * AVKey#COORDINATE_SYSTEM_GEOGRAPHIC} or {@link AVKey#COORDINATE_SYSTEM_PROJECTED}.</li>
  * <li>{@link AVKey#PROJECTION_ZONE} - the UTM zone (if coordinate system projection is UTM);
@@ -162,9 +162,8 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
 
     /**
      * Opens an Shapefile from a general source. The source type may be one of the following: <ul> <li>{@link
-     * InputStream}</li> <li>{@link URL}</li> <li>absolute {@link URI}</li><li>{@link
-     * File}</li> <li>{@link String} containing a valid URL description or a file or resource name available on the
-     * classpath.</li> </ul>
+     * InputStream}</li> <li>{@link URL}</li> <li>absolute {@link URI}</li><li>{@link File}</li> <li>{@link String}
+     * containing a valid URL description or a file or resource name available on the classpath.</li> </ul>
      * <p>
      * The source Shapefile may be accompanied by an optional index file, attribute file, and projection file. To be
      * recognized by this Shapefile, accompanying files must be in the same logical folder as the Shapefile, have the
@@ -213,8 +212,8 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
 
     /**
      * Opens an Shapefile from a general source. The source type may be one of the following: <ul> <li>{@link
-     * InputStream}</li> <li>{@link URL}</li> <li>{@link File}</li> <li>{@link String} containing a
-     * valid URL description or a file or resource name available on the classpath.</li> </ul>
+     * InputStream}</li> <li>{@link URL}</li> <li>{@link File}</li> <li>{@link String} containing a valid URL
+     * description or a file or resource name available on the classpath.</li> </ul>
      * <p>
      * The source Shapefile may be accompanied by an optional index file, attribute file, and projection file. To be
      * recognized by this Shapefile, accompanying files must be in the same logical folder as the Shapefile, have the
@@ -342,7 +341,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
             throw new IllegalArgumentException(message);
         }
 
-        return measureTypes.contains(shapeType);
+        return Shapefile.measureTypes.contains(shapeType);
     }
 
     /**
@@ -359,7 +358,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
             throw new IllegalArgumentException(message);
         }
 
-        return zTypes.contains(shapeType);
+        return Shapefile.zTypes.contains(shapeType);
     }
 
     /**
@@ -471,6 +470,267 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
             || shapeType.equals(Shapefile.SHAPE_POLYGON_M);
     }
 
+    protected static InputStream getFileStream(String path) {
+        try {
+            return new FileInputStream(path);
+        }
+        catch (Exception e) {
+            return null;
+        }
+    }
+
+    protected static URLConnection getURLConnection(String urlString) {
+        try {
+            URL url = new URL(urlString);
+            return url.openConnection();
+        }
+        catch (Exception e) {
+            return null;
+        }
+    }
+
+    protected static InputStream getURLStream(URLConnection connection) {
+        try {
+            return connection.getInputStream();
+        }
+        catch (Exception e) {
+            return null;
+        }
+    }
+
+    protected static String validateURLConnection(URLConnection connection, String[] acceptedContentTypes) {
+        try {
+            if (connection instanceof HttpURLConnection &&
+                ((HttpURLConnection) connection).getResponseCode() != HttpURLConnection.HTTP_OK) {
+                return Logging.getMessage("HTTP.ResponseCode", ((HttpURLConnection) connection).getResponseCode(),
+                    connection.getURL());
+            }
+        }
+        catch (Exception e) {
+            return Logging.getMessage("URLRetriever.ErrorOpeningConnection", connection.getURL());
+        }
+
+        String contentType = connection.getContentType();
+        if (WWUtil.isEmpty(contentType))
+            return null;
+
+        for (String type : acceptedContentTypes) {
+            if (contentType.trim().toLowerCase().startsWith(type))
+                return null;
+        }
+
+        // Return an exception if the content type does not match the expected type.
+        return Logging.getMessage("HTTP.UnexpectedContentType", contentType, Arrays.toString(acceptedContentTypes));
+    }
+
+    /**
+     * Returns a string indicating an error with the Shapefile's projection parameters, or null to indicate that the
+     * projection parameters are valid.
+     *
+     * @param params the Shapefile's projection parameters.
+     * @return a non-empty string if the projection parameters are invalid; null otherwise.
+     */
+    protected static String validateProjection(AVList params) {
+        Object proj = params.get(AVKey.PROJECTION_NAME);
+
+        if (AVKey.PROJECTION_UTM.equals(proj)) {
+            StringBuilder sb = new StringBuilder();
+
+            // Validate the UTM zone.
+            Object o = params.get(AVKey.PROJECTION_ZONE);
+            if (o == null)
+                sb.append(Logging.getMessage("generic.ZoneIsMissing"));
+            else if (!(o instanceof Integer) || ((Integer) o) < 1 || ((Integer) o) > 60)
+                sb.append(Logging.getMessage("generic.ZoneIsInvalid", o));
+
+            // Validate the UTM hemisphere.
+            o = params.get(AVKey.PROJECTION_HEMISPHERE);
+            if (o == null)
+                sb.append(sb.isEmpty() ? "" : ", ").append(Logging.getMessage("generic.HemisphereIsMissing"));
+            else if (!o.equals(AVKey.NORTH) && !o.equals(AVKey.SOUTH))
+                sb.append(sb.isEmpty() ? "" : ", ").append(Logging.getMessage("generic.HemisphereIsInvalid", o));
+
+            return sb.isEmpty() ? null : sb.toString();
+        } else {
+            return Logging.getMessage("generic.UnsupportedProjection", proj);
+        }
+    }
+
+    //**************************************************************//
+    //********************  Initialization  ************************//
+    //**************************************************************//
+
+    /**
+     * Read and return a record's shape type from a record buffer.
+     *
+     * @param buffer the record buffer to read from.
+     * @return the record's shape type.
+     */
+    protected static String readRecordShapeType(ByteBuffer buffer) {
+        // Read shape type - little endian
+        buffer.order(ByteOrder.LITTLE_ENDIAN);
+
+        int type = buffer.getInt(buffer.position() + 2 * 4); // skip record number and length as ints
+
+        String shapeType = Shapefile.getShapeType(type);
+        if (shapeType == null) {
+            // Let the caller catch and log the exception.
+            throw new WWRuntimeException(Logging.getMessage("SHP.UnsupportedShapeType", type));
+        }
+
+        return shapeType;
+    }
+
+    /**
+     * Maps the integer shape type from the shapefile to the corresponding shape type defined above.
+     *
+     * @param type the integer shape type.
+     * @return the mapped shape type.
+     */
+    protected static String getShapeType(int type) {
+        // Cases commented out indicate shape types not implemented
+        return switch (type) {
+            case 0 -> Shapefile.SHAPE_NULL;
+            case 1 -> Shapefile.SHAPE_POINT;
+            case 3 -> Shapefile.SHAPE_POLYLINE;
+            case 5 -> Shapefile.SHAPE_POLYGON;
+            case 8 -> Shapefile.SHAPE_MULTI_POINT;
+            case 11 -> Shapefile.SHAPE_POINT_Z;
+            case 13 -> Shapefile.SHAPE_POLYLINE_Z;
+            case 15 -> Shapefile.SHAPE_POLYGON_Z;
+            case 18 -> Shapefile.SHAPE_MULTI_POINT_Z;
+            case 21 -> Shapefile.SHAPE_POINT_M;
+            case 23 -> Shapefile.SHAPE_POLYLINE_M;
+            case 25 -> Shapefile.SHAPE_POLYGON_M;
+            case 28 -> Shapefile.SHAPE_MULTI_POINT_M;
+            case 31 -> Shapefile.SHAPE_MULTI_PATCH;
+// unsupported shape type
+            default -> null;
+        };
+    }
+
+    /**
+     * Returns a {@link DoubleBuffer} containing the (X,Y) tuples between the buffer's position and its limit. The
+     * coordinates are assumed to be in an unspecified coordinate system and are not changed.
+     *
+     * @param record the record associated with the point coordinates, may be null.
+     * @param buffer the buffer to read point coordinates from.
+     * @return a buffer containing the point coordinates.
+     */
+    @SuppressWarnings("UnusedDeclaration")
+    protected static DoubleBuffer readUnspecifiedPoints(ShapefileRecord record, ByteBuffer buffer) {
+        // Create a view of the buffer as a doubles.
+        return buffer.asDoubleBuffer();
+    }
+
+    /**
+     * Returns a {@link DoubleBuffer} containing the geographic (longitude, latitude) tuples between the buffer's
+     * position and its limit. This normalizes the geographic coordinates to the range +-90 latitude and +-180 longitude
+     * if the record is non-null and {@link ShapefileRecord#isNormalizePoints()} returns <code>true</code>.
+     *
+     * @param record the record associated with the point coordinates, may be null.
+     * @param buffer the buffer to read point coordinates from.
+     * @return a buffer containing the geographic point coordinates.
+     */
+    protected static DoubleBuffer readGeographicPoints(ShapefileRecord record, ByteBuffer buffer) {
+        // Create a view of the buffer as a doubles.
+        DoubleBuffer doubleBuffer = buffer.asDoubleBuffer();
+
+        // Normalize the buffer of geographic point coordinates if the record is flagged as needing normalization.
+        if (record != null && record.isNormalizePoints()) {
+            WWUtil.normalizeGeographicCoordinates(doubleBuffer);
+            doubleBuffer.rewind();
+        }
+
+        return doubleBuffer;
+    }
+
+    /**
+     * Returns a bounding rectangle from the specified buffer. This reads four doubles and interprets them as a bounding
+     * rectangle in the following order: (minX, minY, maxX, maxY). The coordinates are assumed to be in an unspecified
+     * coordinate system and are not changed.
+     *
+     * @param buffer the buffer to read bounding rectangle coordinates from.
+     * @return a bounding rectangle with coordinates from the specified buffer. The rectangle's coordinates are ordered
+     * as follows: (minY, maxY, minX, maxX).
+     */
+    protected static BoundingRectangle readUnspecifiedBoundingRectangle(ByteBuffer buffer) {
+        // Read the bounding rectangle coordinates in the following order: minY, maxY, minX, maxX.
+        BoundingRectangle rect = new BoundingRectangle();
+        rect.coords = Shapefile.readBoundingRectangleCoordinates(buffer);
+        return rect;
+    }
+
+    /**
+     * Returns a bounding rectangle from the specified buffer. This reads four doubles and interprets them as a
+     * Geographic bounding rectangle in the following order: (minLat, maxLat, minLon, maxLon). If any of the coordinates
+     * are out of the range -90/+90 latitude and -180/+180 longitude, this normalizes the coordinates and sets the
+     * rectangle's {@link Shapefile.BoundingRectangle#isNormalized} property to
+     * <code>true</code>.
+     *
+     * @param buffer the buffer to read bounding rectangle coordinates from.
+     * @return a bounding rectangle with coordinates from the specified buffer. The rectangle's coordinates are ordered
+     * as follows: (minLat, maxLat, minLon, maxLon).
+     */
+    protected static BoundingRectangle readGeographicBoundingRectangle(ByteBuffer buffer) {
+        // Read the bounding rectangle coordinates in the following order: minLat, maxLat, minLon, maxLon.
+        BoundingRectangle rect = new BoundingRectangle();
+        rect.coords = Shapefile.readBoundingRectangleCoordinates(buffer);
+
+        // The bounding rectangle's min latitude exceeds -90. Set the min latitude to -90. Correct the max latitude if
+        // the normalized min latitude is greater than the max latitude.
+        if (rect.coords[0] < -90) {
+            double normalizedLat = Angle.latNorm(Angle.fromDegrees(rect.coords[0])).degrees;
+
+            rect.coords[0] = -90;
+            rect.isNormalized = true;
+
+            if (rect.coords[1] < normalizedLat)
+                rect.coords[1] = normalizedLat;
+        }
+
+        // The bounding rectangle's max latitude exceeds +90. Set the max latitude to +90. Correct the min latitude if
+        // the normalized max latitude is less than the min latitude.
+        if (rect.coords[1] > 90) {
+            double normalizedLat = Angle.latNorm(Angle.fromDegrees(rect.coords[1])).degrees;
+
+            rect.coords[1] = 90;
+            rect.isNormalized = true;
+
+            if (rect.coords[0] > normalizedLat)
+                rect.coords[0] = normalizedLat;
+        }
+
+        // The bounding rectangle's longitudes exceed +-180, therefore the rectangle spans the international
+        // dateline. Set the longitude bound to (-180, 180) to contain the dateline spanning rectangle.
+        if (rect.coords[2] < -180 || rect.coords[3] > 180) {
+            rect.coords[2] = -180;
+            rect.coords[3] = 180;
+            rect.isNormalized = true;
+        }
+
+        return rect;
+    }
+
+    /**
+     * Reads a Shapefile bounding rectangle from the specified buffer. This reads four doubles and returns them as a
+     * four-element array in the following order: (minY, maxY, minX, maxX). This ordering is consistent with the
+     * ordering expected by {@link Sector#fromDegrees(double[])}.
+     *
+     * @param buffer the buffer to read from.
+     * @return a four-element array ordered as follows: (minY, maxY, minX, maxX).
+     */
+    protected static double[] readBoundingRectangleCoordinates(ByteBuffer buffer) {
+        // Read the bounding rectangle coordinates in the following order: minX, minY, maxX, maxY.
+        double minx = buffer.getDouble();
+        double miny = buffer.getDouble();
+        double maxx = buffer.getDouble();
+        double maxy = buffer.getDouble();
+
+        // Return an array with bounding rectangle coordinates in the following order: minY, maxY, minX, maxX.
+        return new double[] {miny, maxy, minx, maxx};
+    }
+
     /**
      * Returns the shapefile's version field, or -1 if the Shapefile failed to open.
      *
@@ -488,6 +748,10 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
     public int getLength() {
         return this.header != null ? this.header.fileLength : -1;
     }
+
+    //**************************************************************//
+    //********************  Header  ********************************//
+    //**************************************************************//
 
     /**
      * Returns the shapefile's shape type: null if the Shapefile failed to open, otherwise one of the following symbolic
@@ -516,6 +780,10 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
         return this.header != null ? this.header.boundingRectangle : null;
     }
 
+    //**************************************************************//
+    //********************  Index  *********************************//
+    //**************************************************************//
+
     /**
      * Returns the number of records in the shapefile, or -1 if the number if records is unknown.
      *
@@ -526,7 +794,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
     }
 
     //**************************************************************//
-    //********************  Initialization  ************************//
+    //********************  Coordinate System  *********************//
     //**************************************************************//
 
     /**
@@ -567,19 +835,23 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
         if (!this.open || this.header == null)
             return false;
 
-        int contentLength = this.header.fileLength - HEADER_LENGTH;
+        int contentLength = this.header.fileLength - Shapefile.HEADER_LENGTH;
         return this.numBytesRead < contentLength;
     }
 
+    //**************************************************************//
+    //********************  Shape Records  *************************//
+    //**************************************************************//
+
     /**
-     * Reads the Shapefile's next record and returns the result as a new {@link ShapefileRecord}.
-     * The record's type depends on the Shapefile's type, and is one of the following: <ul> <li>{@link
-     * ShapefileRecordPoint} if type is {@link #SHAPE_POINT}, {@link
-     * #SHAPE_POINT_M} or {@link #SHAPE_POINT_Z}.</li> <li>{@link ShapefileRecordMultiPoint}
-     * if type is {@link #SHAPE_MULTI_POINT}, {@link #SHAPE_MULTI_POINT_M} or {@link #SHAPE_MULTI_POINT_Z}.</li>
+     * Reads the Shapefile's next record and returns the result as a new {@link ShapefileRecord}. The record's type
+     * depends on the Shapefile's type, and is one of the following: <ul> <li>{@link ShapefileRecordPoint} if type is
+     * {@link #SHAPE_POINT}, {@link #SHAPE_POINT_M} or {@link #SHAPE_POINT_Z}.</li> <li>{@link
+     * ShapefileRecordMultiPoint} if type is {@link #SHAPE_MULTI_POINT}, {@link #SHAPE_MULTI_POINT_M} or {@link
+     * #SHAPE_MULTI_POINT_Z}.</li>
      * <li>{@link ShapefileRecordPolyline} if type is {@link #SHAPE_POLYLINE},
-     * {@link #SHAPE_POLYLINE_M} or {@link #SHAPE_POLYLINE_Z}.</li> <li>{@link ShapefileRecordPolygon}
-     * if type is {@link #SHAPE_POLYGON}, {@link #SHAPE_POLYGON_M} or {@link #SHAPE_POLYGON_Z}.</li> </ul>
+     * {@link #SHAPE_POLYLINE_M} or {@link #SHAPE_POLYLINE_Z}.</li> <li>{@link ShapefileRecordPolygon} if type is {@link
+     * #SHAPE_POLYGON}, {@link #SHAPE_POLYGON_M} or {@link #SHAPE_POLYGON_Z}.</li> </ul>
      * <p>
      * This throws an exception if the JVM cannot allocate enough memory to hold the buffer used to store the record's
      * point coordinates.
@@ -603,7 +875,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
             throw new IllegalStateException(message);
         }
 
-        int contentLength = this.header.fileLength - HEADER_LENGTH;
+        int contentLength = this.header.fileLength - Shapefile.HEADER_LENGTH;
         if (contentLength <= 0 || this.numBytesRead >= contentLength) {
             String message = Logging.getMessage("SHP.NoRecords", this.getStringValue(AVKey.DISPLAY_NAME));
             Logging.logger().severe(message);
@@ -627,8 +899,8 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
 
     /**
      * Closes the Shapefile, freeing any resources allocated during reading except the buffer containing the Shapefile's
-     * points. This closes any {@link InputStream} passed to the Shapefile during construction. Subsequent calls
-     * to {@link #nextRecord()} cause an IllegalStateException.
+     * points. This closes any {@link InputStream} passed to the Shapefile during construction. Subsequent calls to
+     * {@link #nextRecord()} cause an IllegalStateException.
      * <p>
      * After closing, the Shapefile's header information and point coordinates are still available. The following
      * methods are safe to call: <ul> <li>{@link #getVersion()}</li> <li>{@link #getLength()}</li> <li>{@link
@@ -714,11 +986,12 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
         // thrown while attempting to open these optional resource streams. We wrap each source InputStream in a
         // BufferedInputStream because this increases read performance, even when the stream is wrapped in an NIO
         // Channel.
-        InputStream shxStream = Shapefile.getFileStream(WWIO.replaceSuffix(file.getPath(), INDEX_FILE_SUFFIX));
+        InputStream shxStream = Shapefile.getFileStream(WWIO.replaceSuffix(file.getPath(), Shapefile.INDEX_FILE_SUFFIX));
         if (shxStream != null)
             this.shxChannel = Channels.newChannel((shxStream));
 
-        InputStream prjStream = Shapefile.getFileStream(WWIO.replaceSuffix(file.getPath(), PROJECTION_FILE_SUFFIX));
+        InputStream prjStream = Shapefile.getFileStream(WWIO.replaceSuffix(file.getPath(),
+            Shapefile.PROJECTION_FILE_SUFFIX));
         if (prjStream != null)
             this.prjChannel = Channels.newChannel((prjStream));
 
@@ -728,12 +1001,12 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
         this.initialize(params);
 
         // Open the shapefile attribute source as a DBaseFile. We let the DBaseFile determine how to handle source File.
-        File dbfFile = new File(WWIO.replaceSuffix(file.getPath(), ATTRIBUTE_FILE_SUFFIX));
+        File dbfFile = new File(WWIO.replaceSuffix(file.getPath(), Shapefile.ATTRIBUTE_FILE_SUFFIX));
         if (dbfFile.exists()) {
             try {
                 this.attributeFile = new DBaseFile(dbfFile);
             }
-            catch (Exception e) {
+            catch (RuntimeException e) {
                 // Exception already logged by DBaseFile constructor.
             }
         }
@@ -744,7 +1017,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
         // or if it's an invalid Shapefile connection.
         URLConnection connection = url.openConnection();
 
-        String message = Shapefile.validateURLConnection(connection, SHAPE_CONTENT_TYPES);
+        String message = Shapefile.validateURLConnection(connection, Shapefile.SHAPE_CONTENT_TYPES);
         if (message != null) {
             throw new IOException(message);
         }
@@ -755,9 +1028,10 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
         // thrown while attempting to open these optional resource streams, but log a warning if the URL connection is
         // invalid. We wrap each source InputStream in a BufferedInputStream because this increases read performance,
         // even when the stream is wrapped in an NIO Channel.
-        URLConnection shxConnection = Shapefile.getURLConnection(WWIO.replaceSuffix(url.toString(), INDEX_FILE_SUFFIX));
+        URLConnection shxConnection = Shapefile.getURLConnection(WWIO.replaceSuffix(url.toString(),
+            Shapefile.INDEX_FILE_SUFFIX));
         if (shxConnection != null) {
-            message = Shapefile.validateURLConnection(shxConnection, INDEX_CONTENT_TYPES);
+            message = Shapefile.validateURLConnection(shxConnection, Shapefile.INDEX_CONTENT_TYPES);
             if (message != null)
                 Logging.logger().warning(message);
             else {
@@ -767,9 +1041,10 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
             }
         }
 
-        URLConnection prjConnection = Shapefile.getURLConnection(WWIO.replaceSuffix(url.toString(), PROJECTION_FILE_SUFFIX));
+        URLConnection prjConnection = Shapefile.getURLConnection(
+            WWIO.replaceSuffix(url.toString(), Shapefile.PROJECTION_FILE_SUFFIX));
         if (prjConnection != null) {
-            message = Shapefile.validateURLConnection(prjConnection, PROJECTION_CONTENT_TYPES);
+            message = Shapefile.validateURLConnection(prjConnection, Shapefile.PROJECTION_CONTENT_TYPES);
             if (message != null)
                 Logging.logger().warning(message);
             else {
@@ -785,20 +1060,16 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
         this.initialize(params);
 
         // Open the shapefile attribute source as a DBaseFile. We let the DBaseFile determine how to handle source URL.
-        URL dbfURL = WWIO.makeURL(WWIO.replaceSuffix(url.toString(), ATTRIBUTE_FILE_SUFFIX));
+        URL dbfURL = WWIO.makeURL(WWIO.replaceSuffix(url.toString(), Shapefile.ATTRIBUTE_FILE_SUFFIX));
         if (dbfURL != null) {
             try {
                 this.attributeFile = new DBaseFile(dbfURL);
             }
-            catch (Exception e) {
+            catch (RuntimeException e) {
                 // Exception already logged by DBaseFile constructor.
             }
         }
     }
-
-    //**************************************************************//
-    //********************  Header  ********************************//
-    //**************************************************************//
 
     protected void initializeFromStreams(InputStream shpStream, InputStream shxStream, InputStream dbfStream,
         InputStream prjStream, AVList params) throws IOException {
@@ -825,7 +1096,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
             try {
                 this.attributeFile = new DBaseFile(dbfStream);
             }
-            catch (Exception e) {
+            catch (RuntimeException e) {
                 // Exception already logged by DBaseFile constructor.
             }
         }
@@ -844,8 +1115,8 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
             return;
         }
 
-        URL urlResource = getClass().getResource("/" + path);
-        if (urlResource!=null) {
+        URL urlResource = getClass().getResource('/' + path);
+        if (urlResource != null) {
             try {
                 this.initializeFromFile(new File(urlResource.toURI()), params);
                 return;
@@ -855,18 +1126,10 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
             }
         }
 
-
-
-
-
         String message = Logging.getMessage("generic.UnrecognizedSourceType", path);
         Logging.logger().severe(message);
         throw new IllegalArgumentException(message);
     }
-
-    //**************************************************************//
-    //********************  Index  *********************************//
-    //**************************************************************//
 
     /**
      * Prepares the Shapefile for reading. This reads the Shapefile's accompanying index and projection (if they're
@@ -927,67 +1190,6 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
         this.setNormalizePoints(this.header.normalizePoints);
     }
 
-    //**************************************************************//
-    //********************  Coordinate System  *********************//
-    //**************************************************************//
-
-    protected static InputStream getFileStream(String path) {
-        try {
-            return new FileInputStream(path);
-        }
-        catch (Exception e) {
-            return null;
-        }
-    }
-
-    protected static URLConnection getURLConnection(String urlString) {
-        try {
-            URL url = new URL(urlString);
-            return url.openConnection();
-        }
-        catch (Exception e) {
-            return null;
-        }
-    }
-
-    protected static InputStream getURLStream(URLConnection connection) {
-        try {
-            return connection.getInputStream();
-        }
-        catch (Exception e) {
-            return null;
-        }
-    }
-
-    //**************************************************************//
-    //********************  Shape Records  *************************//
-    //**************************************************************//
-
-    protected static String validateURLConnection(URLConnection connection, String[] acceptedContentTypes) {
-        try {
-            if (connection instanceof HttpURLConnection &&
-                ((HttpURLConnection) connection).getResponseCode() != HttpURLConnection.HTTP_OK) {
-                return Logging.getMessage("HTTP.ResponseCode", ((HttpURLConnection) connection).getResponseCode(),
-                    connection.getURL());
-            }
-        }
-        catch (Exception e) {
-            return Logging.getMessage("URLRetriever.ErrorOpeningConnection", connection.getURL());
-        }
-
-        String contentType = connection.getContentType();
-        if (WWUtil.isEmpty(contentType))
-            return null;
-
-        for (String type : acceptedContentTypes) {
-            if (contentType.trim().toLowerCase().startsWith(type))
-                return null;
-        }
-
-        // Return an exception if the content type does not match the expected type.
-        return Logging.getMessage("HTTP.UnexpectedContentType", contentType, Arrays.toString(acceptedContentTypes));
-    }
-
     /**
      * Reads the {@link Header} from this Shapefile. This file is assumed to have a header.
      *
@@ -998,13 +1200,12 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
         ByteBuffer buffer;
         if (this.mappedShpBuffer != null) {
             buffer = this.mappedShpBuffer;
-        }
-        else {
-            buffer = ByteBuffer.allocate(HEADER_LENGTH);
+        } else {
+            buffer = ByteBuffer.allocate(Shapefile.HEADER_LENGTH);
             WWIO.readChannelToBuffer(this.shpChannel, buffer);
         }
 
-        if (buffer.remaining() < HEADER_LENGTH) {
+        if (buffer.remaining() < Shapefile.HEADER_LENGTH) {
             // Let the caller catch and log the message.
             throw new WWRuntimeException(Logging.getMessage("generic.InvalidFileLength", buffer.remaining()));
         }
@@ -1031,7 +1232,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
             buffer.order(ByteOrder.BIG_ENDIAN);
 
             int fileCode = buffer.getInt();
-            if (fileCode != FILE_CODE) {
+            if (fileCode != Shapefile.FILE_CODE) {
                 // Let the caller catch and log the message.
                 throw new WWUnrecognizedException(Logging.getMessage("SHP.UnrecognizedShapefile", fileCode));
             }
@@ -1051,7 +1252,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
             BoundingRectangle rect = this.readBoundingRectangle(buffer);
 
             // Check whether the shape type is supported
-            String shapeType = getShapeType(type);
+            String shapeType = Shapefile.getShapeType(type);
             if (shapeType == null) {
                 // Let the caller catch and log the message.
                 throw new WWRuntimeException(Logging.getMessage("SHP.UnsupportedShapeType", type));
@@ -1067,11 +1268,15 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
         }
         finally {
             // Move to the end of the header.
-            buffer.position(pos + HEADER_LENGTH);
+            buffer.position(pos + Shapefile.HEADER_LENGTH);
         }
 
         return header;
     }
+
+    //**************************************************************//
+    //********************  Point Data  ****************************//
+    //**************************************************************//
 
     /**
      * Reads the Shapefile's accompanying index file and return the indices as an array of integers. Each array element
@@ -1088,15 +1293,15 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
         if (this.shxChannel == null)
             return null;
 
-        ByteBuffer buffer = ByteBuffer.allocate(HEADER_LENGTH);
+        ByteBuffer buffer = ByteBuffer.allocate(Shapefile.HEADER_LENGTH);
         WWIO.readChannelToBuffer(this.shxChannel, buffer);
 
         // Return null if the index is empty or is smaller than the minimum required size.
-        if (buffer.remaining() < HEADER_LENGTH)
+        if (buffer.remaining() < Shapefile.HEADER_LENGTH)
             return null;
 
         Header indexHeader = this.readHeaderFromBuffer(buffer);
-        int numRecords = (indexHeader.fileLength - HEADER_LENGTH) / 8;
+        int numRecords = (indexHeader.fileLength - Shapefile.HEADER_LENGTH) / 8;
         int numElements = 2 * numRecords; // 2 elements per record: offset and length.
         int indexLength = 8 * numRecords; // 8 bytes per record.
 
@@ -1166,49 +1371,12 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
             Logging.logger().warning(
                 Logging.getMessage("generic.UnspecifiedCoordinateSystem", this.getStringValue(AVKey.DISPLAY_NAME)));
             return null;
-        }
-        else if (AVKey.COORDINATE_SYSTEM_GEOGRAPHIC.equals(o)) {
+        } else if (AVKey.COORDINATE_SYSTEM_GEOGRAPHIC.equals(o)) {
             return null;
-        }
-        else if (AVKey.COORDINATE_SYSTEM_PROJECTED.equals(o)) {
+        } else if (AVKey.COORDINATE_SYSTEM_PROJECTED.equals(o)) {
             return Shapefile.validateProjection(params);
-        }
-        else {
+        } else {
             return Logging.getMessage("generic.UnsupportedCoordinateSystem", o);
-        }
-    }
-
-    /**
-     * Returns a string indicating an error with the Shapefile's projection parameters, or null to indicate that the
-     * projection parameters are valid.
-     *
-     * @param params the Shapefile's projection parameters.
-     * @return a non-empty string if the projection parameters are invalid; null otherwise.
-     */
-    protected static String validateProjection(AVList params) {
-        Object proj = params.get(AVKey.PROJECTION_NAME);
-
-        if (AVKey.PROJECTION_UTM.equals(proj)) {
-            StringBuilder sb = new StringBuilder();
-
-            // Validate the UTM zone.
-            Object o = params.get(AVKey.PROJECTION_ZONE);
-            if (o == null)
-                sb.append(Logging.getMessage("generic.ZoneIsMissing"));
-            else if (!(o instanceof Integer) || ((Integer) o) < 1 || ((Integer) o) > 60)
-                sb.append(Logging.getMessage("generic.ZoneIsInvalid", o));
-
-            // Validate the UTM hemisphere.
-            o = params.get(AVKey.PROJECTION_HEMISPHERE);
-            if (o == null)
-                sb.append(!sb.isEmpty() ? ", " : "").append(Logging.getMessage("generic.HemisphereIsMissing"));
-            else if (!o.equals(AVKey.NORTH) && !o.equals(AVKey.SOUTH))
-                sb.append(!sb.isEmpty() ? ", " : "").append(Logging.getMessage("generic.HemisphereIsInvalid", o));
-
-            return !sb.isEmpty() ? sb.toString() : null;
-        }
-        else {
-            return Logging.getMessage("generic.UnsupportedProjection", proj);
         }
     }
 
@@ -1239,8 +1407,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
             this.numBytesRead += recordLength;
 
             buffer = this.mappedShpBuffer;
-        }
-        else {
+        } else {
             // Allocate a buffer to hold the record header.
             if (this.recordHeaderBuffer == null)
                 this.recordHeaderBuffer = ByteBuffer.allocate(ShapefileRecord.RECORD_HEADER_LENGTH);
@@ -1283,8 +1450,8 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
     }
 
     /**
-     * Reads a {@link ShapefileRecord} instance from the given {@link ByteBuffer}, or null if the buffer
-     * contains a null record.
+     * Reads a {@link ShapefileRecord} instance from the given {@link ByteBuffer}, or null if the buffer contains a null
+     * record.
      * <p>
      * The buffer current position is assumed to be set at the start of the record and will be set to the start of the
      * next record after this method has completed.
@@ -1306,9 +1473,9 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
     }
 
     /**
-     * Returns a new <code>{@link ShapefileRecord}</code> from the specified
-     * buffer. The buffer's current position is assumed to be set at the start of the record and will be set to the
-     * start of the next record after this method has completed.
+     * Returns a new <code>{@link ShapefileRecord}</code> from the specified buffer. The buffer's current position is
+     * assumed to be set at the start of the record and will be set to the start of the next record after this method
+     * has completed.
      * <p>
      * This returns an instance of of ShapefileRecord appropriate for the record's shape type. For example, if the
      * record's shape type is <code>SHAPE_POINT</code>, this returns a <code>ShapefileRecordPoint</code>, and if the
@@ -1322,34 +1489,33 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
      * <code>SHAPE_POLYLINE</code>, <code>SHAPE_POLYLINE_M</code>, <code>SHAPE_POLYLINE_Z</code>.
      *
      * @param buffer the buffer containing the record's content.
-     * @return a new {@link ShapefileRecord} instance, <code>null</code> if the
-     * record's shape type is not one of the recognized types.
+     * @return a new {@link ShapefileRecord} instance, <code>null</code> if the record's shape type is not one of the
+     * recognized types.
      */
     protected ShapefileRecord createRecord(ByteBuffer buffer) {
         String shapeType = Shapefile.readRecordShapeType(buffer);
 
         // Select proper record class
-        if (isPointType(shapeType)) {
+        if (Shapefile.isPointType(shapeType)) {
             return this.createPoint(buffer);
-        }
-        else if (isMultiPointType(shapeType)) {
+        } else if (Shapefile.isMultiPointType(shapeType)) {
             return this.createMultiPoint(buffer);
-        }
-        else if (isPolylineType(shapeType)) {
+        } else if (Shapefile.isPolylineType(shapeType)) {
             return this.createPolyline(buffer);
-        }
-        else if (isPolygonType(shapeType)) {
+        } else if (Shapefile.isPolygonType(shapeType)) {
             return this.createPolygon(buffer);
-        }
-        else if (isMultiPatchType(shapeType)) {
+        } else if (Shapefile.isMultiPatchType(shapeType)) {
             return this.createMultiPatch(buffer);
-        }
-        else if (isNullType(shapeType)) {
+        } else if (Shapefile.isNullType(shapeType)) {
             return this.createNull(buffer);
         }
 
         return null;
     }
+
+    //**************************************************************//
+    //********************  Bounding Rectangle  ********************//
+    //**************************************************************//
 
     /**
      * Returns a new "null" {@link ShapefileRecord} from the specified buffer.
@@ -1363,10 +1529,6 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
     protected ShapefileRecord createNull(ByteBuffer buffer) {
         return new ShapefileRecordNull(this, buffer);
     }
-
-    //**************************************************************//
-    //********************  Point Data  ****************************//
-    //**************************************************************//
 
     /**
      * Returns a new point {@link ShapefileRecord} from the specified buffer.
@@ -1382,8 +1544,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
     }
 
     /**
-     * Returns a new multi-point {@link ShapefileRecord} from the specified
-     * buffer.
+     * Returns a new multi-point {@link ShapefileRecord} from the specified buffer.
      * <p>
      * The buffer current position is assumed to be set at the start of the record and will be set to the start of the
      * next record after this method has completed.
@@ -1396,8 +1557,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
     }
 
     /**
-     * Returns a new multi-patch {@link ShapefileRecord} from the specified
-     * buffer.
+     * Returns a new multi-patch {@link ShapefileRecord} from the specified buffer.
      * <p>
      * The buffer current position is assumed to be set at the start of the record and will be set to the start of the
      * next record after this method has completed.
@@ -1435,58 +1595,9 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
         return new ShapefileRecordPolygon(this, buffer);
     }
 
-    /**
-     * Read and return a record's shape type from a record buffer.
-     *
-     * @param buffer the record buffer to read from.
-     * @return the record's shape type.
-     */
-    protected static String readRecordShapeType(ByteBuffer buffer) {
-        // Read shape type - little endian
-        buffer.order(ByteOrder.LITTLE_ENDIAN);
-
-        int type = buffer.getInt(buffer.position() + 2 * 4); // skip record number and length as ints
-
-        String shapeType = Shapefile.getShapeType(type);
-        if (shapeType == null) {
-            // Let the caller catch and log the exception.
-            throw new WWRuntimeException(Logging.getMessage("SHP.UnsupportedShapeType", type));
-        }
-
-        return shapeType;
-    }
-
     //**************************************************************//
-    //********************  Bounding Rectangle  ********************//
+    //********************  Static Utilities  **********************//
     //**************************************************************//
-
-    /**
-     * Maps the integer shape type from the shapefile to the corresponding shape type defined above.
-     *
-     * @param type the integer shape type.
-     * @return the mapped shape type.
-     */
-    protected static String getShapeType(int type) {
-        // Cases commented out indicate shape types not implemented
-        return switch (type) {
-            case 0 -> SHAPE_NULL;
-            case 1 -> SHAPE_POINT;
-            case 3 -> SHAPE_POLYLINE;
-            case 5 -> SHAPE_POLYGON;
-            case 8 -> SHAPE_MULTI_POINT;
-            case 11 -> SHAPE_POINT_Z;
-            case 13 -> SHAPE_POLYLINE_Z;
-            case 15 -> SHAPE_POLYGON_Z;
-            case 18 -> SHAPE_MULTI_POINT_Z;
-            case 21 -> SHAPE_POINT_M;
-            case 23 -> SHAPE_POLYLINE_M;
-            case 25 -> SHAPE_POLYGON_M;
-            case 28 -> SHAPE_MULTI_POINT_M;
-            case 31 -> SHAPE_MULTI_PATCH;
-// unsupported shape type
-            default -> null;
-        };
-    }
 
     /**
      * Add point coordinates to the Shapefile starting at the buffer's positions and ending at the specified number of
@@ -1530,8 +1641,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
 
             // Add the point's byte range to the VecBufferBlocks.
             return ((VecBufferBlocks) this.pointBuffer).addBlock(pos, limit - 1);
-        }
-        else {
+        } else {
             if (this.pointBuffer == null) {
                 // Create a CompoundVecBuffer to hold this Shapefile's point data.
                 int totalPointsEstimate = this.computeNumberOfPointsEstimate();
@@ -1574,32 +1684,32 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
 
         // Return very liberal estimate based on file size if num records unknown.
         if (numRecords < 0)
-            return (this.getLength() - HEADER_LENGTH) / 16; // num X, Y tuples that can fit in the file length
+            return (this.getLength() - Shapefile.HEADER_LENGTH) / 16; // num X, Y tuples that can fit in the file length
 
-        int overhead = HEADER_LENGTH + numRecords * 12; //12 bytes per record for record header and record shape type
+        int overhead = Shapefile.HEADER_LENGTH + numRecords * 12; //12 bytes per record for record header and record shape type
 
         String shapeType = this.getShapeType();
 
-        if (shapeType == SHAPE_POINT || shapeType == SHAPE_POINT_M)
+        if (shapeType == Shapefile.SHAPE_POINT || shapeType == Shapefile.SHAPE_POINT_M)
             return (this.getLength() - overhead) / 16; // 16 = two doubles, X and Y
 
-        if (shapeType == SHAPE_MULTI_POINT || shapeType == SHAPE_MULTI_POINT_M)
+        if (shapeType == Shapefile.SHAPE_MULTI_POINT || shapeType == Shapefile.SHAPE_MULTI_POINT_M)
             // Add 32 bytes per record for bounding box + 4 bytes for one int per record
             return (this.getLength() - (overhead + numRecords * (32 + 4))) / 16; // 16 = two doubles, X and Y
 
-        if (shapeType == SHAPE_POLYLINE || shapeType == SHAPE_POLYGON
-            || shapeType == SHAPE_POLYLINE_M || shapeType == SHAPE_POLYGON_M)
+        if (shapeType == Shapefile.SHAPE_POLYLINE || shapeType == Shapefile.SHAPE_POLYGON
+            || shapeType == Shapefile.SHAPE_POLYLINE_M || shapeType == Shapefile.SHAPE_POLYGON_M)
             // Add 32 bytes per record for bounding box + 8 bytes for two ints per record
             return (this.getLength() - (overhead + numRecords * (32 + 8))) / 16; // 16 = two doubles, X and Y
 
-        if (shapeType == SHAPE_POINT_Z)
+        if (shapeType == Shapefile.SHAPE_POINT_Z)
             return (this.getLength() - overhead) / 24; // 24 = three doubles, X, Y, Z
 
-        if (shapeType == SHAPE_MULTI_POINT_Z)
+        if (shapeType == Shapefile.SHAPE_MULTI_POINT_Z)
             // Add 48 bytes per record for bounding box + 4 bytes for one int per record
             return (this.getLength() - (overhead + numRecords * (48 + 4))) / 24; // 24 = three doubles, X, Y, Z
 
-        if (shapeType == SHAPE_POLYLINE_Z || shapeType == SHAPE_POLYGON_Z)
+        if (shapeType == Shapefile.SHAPE_POLYLINE_Z || shapeType == Shapefile.SHAPE_POLYGON_Z)
             // Add 48 bytes per record for bounding box + 8 bytes for two ints per record
             return (this.getLength() - (overhead + numRecords * (48 + 8))) / 24; // 24 = three doubles, X, Y and Z
 
@@ -1609,10 +1719,10 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
     }
 
     /**
-     * Returns a {@link DoubleBuffer} containing the (X,Y) tuples between the buffer's position and its limit.
-     * This returns null if the buffer is null or if the buffer has no remaining elements. The returned coordinates are
-     * interpreted according to the Shapefile's coordinate system. This throws a {@link
-     * WWRuntimeException} if the coordinate system is unsupported.
+     * Returns a {@link DoubleBuffer} containing the (X,Y) tuples between the buffer's position and its limit. This
+     * returns null if the buffer is null or if the buffer has no remaining elements. The returned coordinates are
+     * interpreted according to the Shapefile's coordinate system. This throws a {@link WWRuntimeException} if the
+     * coordinate system is unsupported.
      * <p>
      * The buffer current position is assumed to be set at the start of the point data and will be set to the end of the
      * point data after this method has completed.
@@ -1645,50 +1755,9 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
     }
 
     /**
-     * Returns a {@link DoubleBuffer} containing the (X,Y) tuples between the buffer's position and its limit.
-     * The coordinates are assumed to be in an unspecified coordinate system and are not changed.
-     *
-     * @param record the record associated with the point coordinates, may be null.
-     * @param buffer the buffer to read point coordinates from.
-     * @return a buffer containing the point coordinates.
-     */
-    @SuppressWarnings("UnusedDeclaration")
-    protected static DoubleBuffer readUnspecifiedPoints(ShapefileRecord record, ByteBuffer buffer) {
-        // Create a view of the buffer as a doubles.
-        return buffer.asDoubleBuffer();
-    }
-
-    /**
-     * Returns a {@link DoubleBuffer} containing the geographic (longitude, latitude) tuples between the
-     * buffer's position and its limit. This normalizes the geographic coordinates to the range +-90 latitude and +-180
-     * longitude if the record is non-null and {@link ShapefileRecord#isNormalizePoints()} returns <code>true</code>.
-     *
-     * @param record the record associated with the point coordinates, may be null.
-     * @param buffer the buffer to read point coordinates from.
-     * @return a buffer containing the geographic point coordinates.
-     */
-    protected static DoubleBuffer readGeographicPoints(ShapefileRecord record, ByteBuffer buffer) {
-        // Create a view of the buffer as a doubles.
-        DoubleBuffer doubleBuffer = buffer.asDoubleBuffer();
-
-        // Normalize the buffer of geographic point coordinates if the record is flagged as needing normalization.
-        if (record != null && record.isNormalizePoints()) {
-            WWUtil.normalizeGeographicCoordinates(doubleBuffer);
-            doubleBuffer.rewind();
-        }
-
-        return doubleBuffer;
-    }
-
-    //**************************************************************//
-    //********************  Static Utilities  **********************//
-    //**************************************************************//
-
-    /**
-     * Returns a {@link DoubleBuffer} containing the projected (X,Y) tuples between the buffer's position and
-     * its limit, converted to geographic coordinates (latitude,longitude). The returned coordinates are interpreted
-     * according to the Shapefile's projection. This throws a {@link WWRuntimeException} if
-     * the projection is unsupported.
+     * Returns a {@link DoubleBuffer} containing the projected (X,Y) tuples between the buffer's position and its limit,
+     * converted to geographic coordinates (latitude,longitude). The returned coordinates are interpreted according to
+     * the Shapefile's projection. This throws a {@link WWRuntimeException} if the projection is unsupported.
      *
      * @param record the record associated with the point coordinates, may be null.
      * @param buffer the buffer to read point coordinates from.
@@ -1711,8 +1780,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
             doubleBuffer.rewind();
 
             return doubleBuffer;
-        }
-        else {
+        } else {
             // The Shapefile's coordinate system projection is unsupported. This should never happen because the
             // projection is validated during initialization, but we check anyway. Let the caller catch and log the
             // message.
@@ -1723,8 +1791,8 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
     /**
      * Returns a bounding rectangle from the specified buffer. This reads four doubles and interprets them as a bounding
      * rectangle in the following order: (minX, minY, maxX, maxY). The returned rectangle's coordinates are interpreted
-     * according to the Shapefile's coordinate system. This throws a {@link WWRuntimeException}
-     * if the coordinate system is unsupported.
+     * according to the Shapefile's coordinate system. This throws a {@link WWRuntimeException} if the coordinate system
+     * is unsupported.
      *
      * @param buffer the buffer to read from.
      * @return a bounding rectangle with coordinates from the specified buffer.
@@ -1749,78 +1817,11 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
     }
 
     /**
-     * Returns a bounding rectangle from the specified buffer. This reads four doubles and interprets them as a bounding
-     * rectangle in the following order: (minX, minY, maxX, maxY). The coordinates are assumed to be in an unspecified
-     * coordinate system and are not changed.
-     *
-     * @param buffer the buffer to read bounding rectangle coordinates from.
-     * @return a bounding rectangle with coordinates from the specified buffer. The rectangle's coordinates are ordered
-     * as follows: (minY, maxY, minX, maxX).
-     */
-    protected static BoundingRectangle readUnspecifiedBoundingRectangle(ByteBuffer buffer) {
-        // Read the bounding rectangle coordinates in the following order: minY, maxY, minX, maxX.
-        BoundingRectangle rect = new BoundingRectangle();
-        rect.coords = Shapefile.readBoundingRectangleCoordinates(buffer);
-        return rect;
-    }
-
-    /**
-     * Returns a bounding rectangle from the specified buffer. This reads four doubles and interprets them as a
-     * Geographic bounding rectangle in the following order: (minLat, maxLat, minLon, maxLon). If any of the coordinates
-     * are out of the range -90/+90 latitude and -180/+180 longitude, this normalizes the coordinates and sets the
-     * rectangle's {@link Shapefile.BoundingRectangle#isNormalized} property to
-     * <code>true</code>.
-     *
-     * @param buffer the buffer to read bounding rectangle coordinates from.
-     * @return a bounding rectangle with coordinates from the specified buffer. The rectangle's coordinates are ordered
-     * as follows: (minLat, maxLat, minLon, maxLon).
-     */
-    protected static BoundingRectangle readGeographicBoundingRectangle(ByteBuffer buffer) {
-        // Read the bounding rectangle coordinates in the following order: minLat, maxLat, minLon, maxLon.
-        BoundingRectangle rect = new BoundingRectangle();
-        rect.coords = Shapefile.readBoundingRectangleCoordinates(buffer);
-
-        // The bounding rectangle's min latitude exceeds -90. Set the min latitude to -90. Correct the max latitude if
-        // the normalized min latitude is greater than the max latitude.
-        if (rect.coords[0] < -90) {
-            double normalizedLat = Angle.latNorm(Angle.fromDegrees(rect.coords[0])).degrees;
-
-            rect.coords[0] = -90;
-            rect.isNormalized = true;
-
-            if (rect.coords[1] < normalizedLat)
-                rect.coords[1] = normalizedLat;
-        }
-
-        // The bounding rectangle's max latitude exceeds +90. Set the max latitude to +90. Correct the min latitude if
-        // the normalized max latitude is less than the min latitude.
-        if (rect.coords[1] > 90) {
-            double normalizedLat = Angle.latNorm(Angle.fromDegrees(rect.coords[1])).degrees;
-
-            rect.coords[1] = 90;
-            rect.isNormalized = true;
-
-            if (rect.coords[0] > normalizedLat)
-                rect.coords[0] = normalizedLat;
-        }
-
-        // The bounding rectangle's longitudes exceed +-180, therefore the rectangle spans the international
-        // dateline. Set the longitude bound to (-180, 180) to contain the dateline spanning rectangle.
-        if (rect.coords[2] < -180 || rect.coords[3] > 180) {
-            rect.coords[2] = -180;
-            rect.coords[3] = 180;
-            rect.isNormalized = true;
-        }
-
-        return rect;
-    }
-
-    /**
      * Returns a bounding rectangle from the specified buffer. This reads four doubles and interprets them as a
      * projected bounding rectangle in the following order: (minX, maxX, minY, maxY). The projected rectangle is
      * converted to geographic coordinates before the rectangle is returned. The returned coordinates are interpreted
-     * according to the Shapefile's projection. This throws a {@link WWRuntimeException} if
-     * the projection is unsupported.
+     * according to the Shapefile's projection. This throws a {@link WWRuntimeException} if the projection is
+     * unsupported.
      *
      * @param buffer the buffer to read bounding rectangle coordinates from.
      * @return a bounding rectangle with coordinates from the specified buffer. The rectangle's coordinates are ordered
@@ -1842,8 +1843,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
             BoundingRectangle rect = new BoundingRectangle();
             rect.coords = sector.toArrayDegrees();
             return rect;
-        }
-        else {
+        } else {
             // The Shapefile's coordinate system projection is unsupported. This should never happen because the
             // projection is validated during initialization, but we check anyway. Let the caller catch and log the
             // message.
@@ -1851,30 +1851,11 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
         }
     }
 
-    /**
-     * Reads a Shapefile bounding rectangle from the specified buffer. This reads four doubles and returns them as a
-     * four-element array in the following order: (minY, maxY, minX, maxX). This ordering is consistent with the
-     * ordering expected by {@link Sector#fromDegrees(double[])}.
-     *
-     * @param buffer the buffer to read from.
-     * @return a four-element array ordered as follows: (minY, maxY, minX, maxX).
-     */
-    protected static double[] readBoundingRectangleCoordinates(ByteBuffer buffer) {
-        // Read the bounding rectangle coordinates in the following order: minX, minY, maxX, maxY.
-        double minx = buffer.getDouble();
-        double miny = buffer.getDouble();
-        double maxx = buffer.getDouble();
-        double maxy = buffer.getDouble();
-
-        // Return an array with bounding rectangle coordinates in the following order: minY, maxY, minX, maxX.
-        return new double[] {miny, maxy, minx, maxx};
-    }
-
     public String isExportFormatSupported(String mimeType) {
         if (KMLConstants.KML_MIME_TYPE.equalsIgnoreCase(mimeType))
-            return FORMAT_SUPPORTED;
+            return Exportable.FORMAT_SUPPORTED;
 
-        return Arrays.binarySearch(SHAPE_CONTENT_TYPES, mimeType) >= 0 ? FORMAT_SUPPORTED : FORMAT_NOT_SUPPORTED;
+        return Arrays.binarySearch(Shapefile.SHAPE_CONTENT_TYPES, mimeType) >= 0 ? Exportable.FORMAT_SUPPORTED : Exportable.FORMAT_NOT_SUPPORTED;
     }
 
     public void export(String mimeType, Object output) throws IOException, UnsupportedOperationException {
@@ -1907,11 +1888,9 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
         if (output instanceof XMLStreamWriter) {
             xmlWriter = (XMLStreamWriter) output;
             closeWriterWhenFinished = false;
-        }
-        else if (output instanceof Writer) {
+        } else if (output instanceof Writer) {
             xmlWriter = factory.createXMLStreamWriter((Writer) output);
-        }
-        else if (output instanceof OutputStream) {
+        } else if (output instanceof OutputStream) {
             xmlWriter = factory.createXMLStreamWriter((OutputStream) output);
         }
 
@@ -1980,7 +1959,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
     }
 
     protected static class Header {
-        public int fileCode = FILE_CODE;
+        public int fileCode = Shapefile.FILE_CODE;
         public int fileLength;
         public int version;
         public String shapeType;

@@ -33,9 +33,10 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
     protected final double polarRadius;
     protected final double es;
     private final Vec4 center;
+    private final Tessellator tessellator;
+    private final GlobeStateKey stateKey = new StateKey();
     protected EGM96 egm96;
     private ElevationModel elevationModel;
-    private final Tessellator tessellator;
 
     /**
      * Create a new globe. The globe's center point will be (0, 0, 0). The globe will be tessellated using tessellator
@@ -72,15 +73,14 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
         return (ElevationModel) BasicFactory.create(AVKey.ELEVATION_MODEL_FACTORY, configSource);
     }
 
-    @Override public Object getStateKey(DrawContext dc) {
+    @Override
+    public Object getStateKey(DrawContext dc) {
         return this.getGlobeStateKey(dc);
     }
 
     public GlobeStateKey getGlobeStateKey(DrawContext dc) {
         return new StateKey(dc);
     }
-
-    private final GlobeStateKey stateKey = new StateKey();
 
     public GlobeStateKey getGlobeStateKey() {
         return stateKey;
@@ -126,7 +126,7 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
         // radius at that location. The formula for the length of the ellipsoidal point was then converted into the
         // simplified form below.
 
-        double sinLat = Math.sin(latitude.radians);
+        double sinLat = Math.sin(latitude.radians());
         double rpm = this.equatorialRadius * Math.pow(1.0 - this.es * sinLat * sinLat, -0.5);
 
         return rpm * Math.sqrt(1.0 + (this.es * this.es - 2.0 * this.es) * sinLat * sinLat);
@@ -214,7 +214,7 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
         double b = 2 * (sx * vx + m2 * sy * vy + n2 * sz * vz);
         double c = sx * sx + m2 * sy * sy + n2 * sz * sz - r2;
 
-        double discriminant = discriminant(a, b, c);
+        double discriminant = EllipsoidalGlobe.discriminant(a, b, c);
         if (discriminant < 0)
             return null;
 
@@ -222,18 +222,17 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
             double discriminantRoot = 0;
             return new Intersection[] {new Intersection(
                 line.getPointAt((-b - discriminantRoot) / (2 * a)), true)};
-        }
-        else // (discriminant > 0)
+        } else // (discriminant > 0)
         {
             double discriminantRoot = Math.sqrt(discriminant);
             Vec4 near = line.getPointAt((-b - discriminantRoot) / (2 * a));
             Vec4 far = line.getPointAt((-b + discriminantRoot) / (2 * a));
             return c >= 0 ?
-                 // Line originates outside the Globe.
-                 new Intersection[] {new Intersection(near, false), new Intersection(far, false)}
-                 :
-                 // Line originates inside the Globe.
-                 new Intersection[] {new Intersection(far, false)};
+                // Line originates outside the Globe.
+                new Intersection[] {new Intersection(near, false), new Intersection(far, false)}
+                :
+                    // Line originates inside the Globe.
+                    new Intersection[] {new Intersection(far, false)};
         }
     }
 
@@ -263,8 +262,7 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
             inter[idx++] = intersect(bB ? new Line(c, b.subtract3(c)) : new Line(b, c.subtract3(b)), elevation)[0];
 
         if (bC ^ bA)
-            inter[idx  ] = intersect(bC ? new Line(a, c.subtract3(a)) : new Line(c, a.subtract3(c)), elevation)[0];
-
+            inter[idx] = intersect(bC ? new Line(a, c.subtract3(a)) : new Line(c, a.subtract3(c)), elevation)[0];
 
         return inter;
     }
@@ -581,10 +579,10 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
      */
     protected Vec4 geodeticToEllipsoidal(Angle latitude, Angle longitude, double metersElevation) {
 
-        double cosLat = Math.cos(latitude.radians);
-        double sinLat = Math.sin(latitude.radians);
-        double cosLon = Math.cos(longitude.radians);
-        double sinLon = Math.sin(longitude.radians);
+        double cosLat = Math.cos(latitude.radians());
+        double sinLat = Math.sin(latitude.radians());
+        double cosLon = Math.cos(longitude.radians());
+        double sinLon = Math.sin(longitude.radians());
 
         double rpm = // getRadius (in meters) of vertical in prime meridian
             this.equatorialRadius * Math.pow(1.0 - this.es * sinLat * sinLat, -0.5);
@@ -623,10 +621,10 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
      * @throws IllegalArgumentException If any argument is null, or if numLat or numLon are less than or equal to zero.
      */
     protected void geodeticToCartesian(Sector sector, int numLat, int numLon, double[] metersElevation, Vec4[] out) {
-        double minLat = sector.latMin().radians;
-        double maxLat = sector.latMax().radians;
-        double minLon = sector.lonMin().radians;
-        double maxLon = sector.lonMax().radians;
+        double minLat = sector.latMin().radians();
+        double maxLat = sector.latMax().radians();
+        double minLon = sector.lonMin().radians();
+        double maxLon = sector.lonMax().radians();
         double deltaLat = (maxLat - minLat) / (numLat > 1 ? numLat - 1 : 1);
         double deltaLon = (maxLon - minLon) / (numLon > 1 ? numLon - 1 : 1);
         int pos = 0;
@@ -734,8 +732,7 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
                 } else {
                     u = r + 0.5 * rad3 + 0.5 * Math.cbrt((rad1 - rad2) * (rad1 - rad2));
                 }
-            }
-            else {
+            } else {
                 // Step 3: near evolute
                 double rad1 = Math.sqrt(-evoluteBorderTest);
                 double rad2 = Math.sqrt(-8 * r * r * r);
@@ -753,8 +750,7 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
 
             h = (k + e2 - 1) * sqrtDDpZZ / k;
             phi = 2 * Math.atan2(Z, sqrtDDpZZ + D);
-        }
-        else {
+        } else {
             // Step 4: singular disk
             double rad1 = Math.sqrt(1 - e2);
             double rad2 = Math.sqrt(e2 - p);
@@ -770,8 +766,7 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
         if ((s2 - 1) * Y < sqrtXXpYY + X) {
             // case 1 - -135deg < lambda < 135deg
             lambda = 2 * Math.atan2(Y, sqrtXXpYY + X);
-        }
-        else if (sqrtXXpYY + Y < (s2 + 1) * X) {
+        } else if (sqrtXXpYY + Y < (s2 + 1) * X) {
             // case 2 - -225deg < lambda < 45deg
             lambda = -Math.PI * 0.5 + 2 * Math.atan2(X, sqrtXXpYY - Y);
         } else {
@@ -811,7 +806,7 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
 
         public StateKey(DrawContext dc) {
             final int x = System.identityHashCode(dc);
-            this.dcID = x!=0 ? x : 1;
+            this.dcID = x != 0 ? x : 1;
         }
 
         public StateKey() {

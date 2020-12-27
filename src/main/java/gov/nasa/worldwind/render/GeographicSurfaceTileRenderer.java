@@ -41,20 +41,9 @@ public class GeographicSurfaceTileRenderer extends SurfaceTileRenderer {
         t.HShift = (this.sgMinWE - minLon) / this.sgWidth;
     }
 
-    protected Iterable<? extends SurfaceTile> getIntersectingTiles(DrawContext dc, SectorGeometry sg, Iterable<? extends SurfaceTile> tiles) {
+    protected Iterable<? extends SurfaceTile> getIntersectingTiles(DrawContext dc, SectorGeometry sg,
+        Iterable<? extends SurfaceTile> tiles) {
         final Sector s = sg.getSector();
         return Iterables.filter(tiles, t -> s.intersectsInterior(t.getSector()));
-//
-        //ArrayList<SurfaceTile> intersectingTiles = null;
-//        for (SurfaceTile tile : tiles) {
-//            if (tile.getSector().intersectsInterior(s)) {
-//                if (intersectingTiles == null) // lazy creation because most common case is no intersecting tiles
-//                    intersectingTiles = new ArrayList<>();
-//
-//                intersectingTiles.add(tile);
-//            }
-//        }
-//
-//        return intersectingTiles; // will be null if no intersecting tiles
     }
 }

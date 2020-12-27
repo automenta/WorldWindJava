@@ -46,7 +46,7 @@ public class TriangleWavePositionIterator implements Iterator {
     /**
      * Current state of the state machine.
      */
-    protected int state = STATE_FIRST;
+    protected int state = TriangleWavePositionIterator.STATE_FIRST;
 
     /**
      * Control positions.
@@ -164,12 +164,12 @@ public class TriangleWavePositionIterator implements Iterator {
         // Compute the two points that form the tooth.
         // Return previously computed wave end position, and transition to Line state.
         switch (this.state) {
-            case STATE_FIRST -> {
+            case TriangleWavePositionIterator.STATE_FIRST -> {
                 ret = this.thisPosition;
-                this.state = STATE_LINE;
+                this.state = TriangleWavePositionIterator.STATE_LINE;
             }
-            case STATE_LINE -> ret = this.computeNext();
-            case STATE_WAVE_START -> {
+            case TriangleWavePositionIterator.STATE_LINE -> ret = this.computeNext();
+            case TriangleWavePositionIterator.STATE_WAVE_START -> {
                 Position prevPos = this.thisPosition; // Keep track of where the wave starts
                 this.waveEndPosition = this.computeNext();
                 Vec4 thisPoint = this.globe.computePointFromLocation(prevPos);
@@ -183,9 +183,9 @@ public class TriangleWavePositionIterator implements Iterator {
                 Vec4 toothPoint = midPoint.add3(perpendicular);
                 ret = this.globe.computePositionFromPoint(toothPoint);
             }
-            case STATE_TOOTH_PEAK -> {
+            case TriangleWavePositionIterator.STATE_TOOTH_PEAK -> {
                 ret = this.waveEndPosition;
-                this.state = STATE_LINE;
+                this.state = TriangleWavePositionIterator.STATE_LINE;
             }
             default -> throw new IllegalStateException();
         }
@@ -218,7 +218,7 @@ public class TriangleWavePositionIterator implements Iterator {
                 // If we're drawing a line segment between waves then return the current control point and do not
                 // transition states. We retain all of the control points between waves in order to keep the line
                 // as close to the application's specification as possible.
-                if (this.state == STATE_LINE) {
+                if (this.state == TriangleWavePositionIterator.STATE_LINE) {
                     this.thisStep -= distToNext.degrees;
                     return this.thisPosition;
                 }
@@ -229,12 +229,11 @@ public class TriangleWavePositionIterator implements Iterator {
                 this.nextControlPosition = this.firstPosition;
                 this.firstPosition = null;
 
-                if (this.state == STATE_LINE) {
+                if (this.state == TriangleWavePositionIterator.STATE_LINE) {
                     this.thisStep -= distToNext.degrees;
                     return this.thisPosition;
                 }
-            }
-            else {
+            } else {
                 Position next = this.nextControlPosition;
                 this.nextControlPosition = null;
                 return next;
@@ -253,8 +252,8 @@ public class TriangleWavePositionIterator implements Iterator {
         // Transition to the next state. If we were drawing a line we are now drawing a wave. If we were starting a
         // wave, we're now at the wave peak.
         switch (this.state) {
-            case STATE_LINE -> this.state = STATE_WAVE_START;
-            case STATE_WAVE_START -> this.state = STATE_TOOTH_PEAK;
+            case TriangleWavePositionIterator.STATE_LINE -> this.state = TriangleWavePositionIterator.STATE_WAVE_START;
+            case TriangleWavePositionIterator.STATE_WAVE_START -> this.state = TriangleWavePositionIterator.STATE_TOOTH_PEAK;
             default -> throw new IllegalStateException();
         }
 

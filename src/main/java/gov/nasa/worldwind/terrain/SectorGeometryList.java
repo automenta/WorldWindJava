@@ -45,24 +45,6 @@ public class SectorGeometryList extends ArrayList<SectorGeometry> {
     }
 
     /**
-     * Indicates the spanning sector of all sector geometries in this list.
-     *
-     * @return a sector that is the union of all sectors of entries in this list.
-     */
-    public Sector getSector() {
-        return sector;
-    }
-
-    /**
-     * Specifies the sector this list spans.
-     *
-     * @param sector the sector spanned by this list.
-     */
-    public void setSector(Sector sector) {
-        this.sector = sector;
-    }
-
-    /**
      * Indicates that this list's sectors are about to be rendered. When rendering is complete, the {@link
      * #endRendering(DrawContext)} must be called.
      *
@@ -97,10 +79,67 @@ public class SectorGeometryList extends ArrayList<SectorGeometry> {
     }
 
     /**
+     * Indicates that sector geometry picking is about to be performed. Configures the state necessary to correctly draw
+     * sector geometry in a second pass using unique per-triangle colors. When picking is complete, {@link
+     * #endSectorGeometryPicking(DrawContext)} must be called.
+     *
+     * @param dc the current draw context.
+     */
+    protected static void beginSectorGeometryPicking(DrawContext dc) {
+        GL gl = dc.getGL();
+
+        gl.glDepthFunc(GL.GL_LEQUAL);
+
+        // When the OpenGL implementation is provided by the VMware SVGA 3D graphics driver, move the per-triangle
+        // color geometry's depth values toward the eye and disable depth buffer writes. This works around an issue
+        // where the VMware driver breaks OpenGL's invariance requirement when per-vertex colors are enabled.
+        // See WWJ-425.
+        if (dc.getGLRuntimeCapabilities().isVMwareSVGA3D()) {
+            gl.glDepthMask(false);
+            gl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
+            gl.glPolygonOffset(-1.0f, -1.0f);
+        }
+    }
+
+    /**
+     * Restores state established by {@link #beginSectorGeometryPicking(DrawContext)}.
+     *
+     * @param dc the current draw context.
+     */
+    protected static void endSectorGeometryPicking(DrawContext dc) {
+        GL gl = dc.getGL();
+
+        gl.glDepthFunc(GL.GL_LESS); // restore to default explicitly to avoid more expensive pushAttrib
+
+        if (dc.getGLRuntimeCapabilities().isVMwareSVGA3D()) {
+            gl.glDepthMask(true);
+            gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
+            gl.glPolygonOffset(0.0f, 0.0f);
+        }
+    }
+
+    /**
+     * Indicates the spanning sector of all sector geometries in this list.
+     *
+     * @return a sector that is the union of all sectors of entries in this list.
+     */
+    public Sector getSector() {
+        return sector;
+    }
+
+    /**
+     * Specifies the sector this list spans.
+     *
+     * @param sector the sector spanned by this list.
+     */
+    public void setSector(Sector sector) {
+        this.sector = sector;
+    }
+
+    /**
      * Detects the locations of the sector geometries in this list that intersect a specified screen point.
      * <p>
-     * Note: Prior to calling this method, {@link #beginRendering(DrawContext)} must be
-     * called.
+     * Note: Prior to calling this method, {@link #beginRendering(DrawContext)} must be called.
      *
      * @param dc        the current draw context.
      * @param pickPoint the screen point to test.
@@ -154,8 +193,7 @@ public class SectorGeometryList extends ArrayList<SectorGeometry> {
      * Detects the locations of the sector geometries in this list that intersect any of the points in a specified list
      * of screen points.
      * <p>
-     * Note: Prior to calling this method, {@link #beginRendering(DrawContext)} must be
-     * called.
+     * Note: Prior to calling this method, {@link #beginRendering(DrawContext)} must be called.
      *
      * @param dc         the current draw context.
      * @param pickPoints the points to test.
@@ -196,8 +234,7 @@ public class SectorGeometryList extends ArrayList<SectorGeometry> {
                 if (!this.pickSectors.containsKey(sector)) {
                     sectorPickPoints = new ArrayList<>();
                     this.pickSectors.put(sector, sectorPickPoints);
-                }
-                else {
+                } else {
                     sectorPickPoints = this.pickSectors.get(sector);
                 }
                 sectorPickPoints.add(pickPoint);
@@ -230,46 +267,6 @@ public class SectorGeometryList extends ArrayList<SectorGeometry> {
 
             PickSupport.endPicking(dc);
             this.pickSupport.clearPickList();
-        }
-    }
-
-    /**
-     * Indicates that sector geometry picking is about to be performed. Configures the state necessary to correctly draw
-     * sector geometry in a second pass using unique per-triangle colors. When picking is complete, {@link
-     * #endSectorGeometryPicking(DrawContext)} must be called.
-     *
-     * @param dc the current draw context.
-     */
-    protected static void beginSectorGeometryPicking(DrawContext dc) {
-        GL gl = dc.getGL();
-
-        gl.glDepthFunc(GL.GL_LEQUAL);
-
-        // When the OpenGL implementation is provided by the VMware SVGA 3D graphics driver, move the per-triangle
-        // color geometry's depth values toward the eye and disable depth buffer writes. This works around an issue
-        // where the VMware driver breaks OpenGL's invariance requirement when per-vertex colors are enabled.
-        // See WWJ-425.
-        if (dc.getGLRuntimeCapabilities().isVMwareSVGA3D()) {
-            gl.glDepthMask(false);
-            gl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
-            gl.glPolygonOffset(-1.0f, -1.0f);
-        }
-    }
-
-    /**
-     * Restores state established by {@link #beginSectorGeometryPicking(DrawContext)}.
-     *
-     * @param dc the current draw context.
-     */
-    protected static void endSectorGeometryPicking(DrawContext dc) {
-        GL gl = dc.getGL();
-
-        gl.glDepthFunc(GL.GL_LESS); // restore to default explicitly to avoid more expensive pushAttrib
-
-        if (dc.getGLRuntimeCapabilities().isVMwareSVGA3D()) {
-            gl.glDepthMask(true);
-            gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
-            gl.glPolygonOffset(0.0f, 0.0f);
         }
     }
 

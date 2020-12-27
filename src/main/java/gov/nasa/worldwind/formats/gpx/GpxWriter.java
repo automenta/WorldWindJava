@@ -33,7 +33,7 @@ public class GpxWriter {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         this.doc = factory.newDocumentBuilder().newDocument();
         this.result = new StreamResult(new File(path));
-        createGpxDocument(this.doc);
+        GpxWriter.createGpxDocument(this.doc);
     }
 
     public GpxWriter(OutputStream stream) throws ParserConfigurationException {
@@ -46,23 +46,7 @@ public class GpxWriter {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         this.doc = factory.newDocumentBuilder().newDocument();
         this.result = new StreamResult(stream);
-        createGpxDocument(this.doc);
-    }
-
-    public void writeTrack(Track track) throws TransformerException {
-        if (track == null) {
-            String msg = Logging.getMessage("nullValue.TrackIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        doWriteTrack(track, this.doc.getDocumentElement());
-        doFlush();
-    }
-
-    public void close() {
-        // Intentionally left blank,
-        // as a placeholder for future functionality.
+        GpxWriter.createGpxDocument(this.doc);
     }
 
     private static void createGpxDocument(Document doc) {
@@ -79,6 +63,22 @@ public class GpxWriter {
             gpx.setAttribute("creator", "NASA WorldWind");
             doc.appendChild(gpx);
         }
+    }
+
+    public void writeTrack(Track track) throws TransformerException {
+        if (track == null) {
+            String msg = Logging.getMessage("nullValue.TrackIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        doWriteTrack(track, this.doc.getDocumentElement());
+        doFlush();
+    }
+
+    public void close() {
+        // Intentionally left blank,
+        // as a placeholder for future functionality.
     }
 
     private void doWriteTrack(Track track, Node elem) {

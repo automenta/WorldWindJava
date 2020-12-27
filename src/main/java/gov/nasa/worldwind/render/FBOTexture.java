@@ -70,8 +70,7 @@ public class FBOTexture extends FramebufferTexture {
             int status = gl.glCheckFramebufferStatus(GL.GL_FRAMEBUFFER);
             if (status == GL.GL_FRAMEBUFFER_COMPLETE) {
                 this.generateTexture(dc, this.width, this.height);
-            }
-            else {
+            } else {
                 String msg = Logging.getMessage("FBOTexture.TextureNotCreated");
                 throw new IllegalStateException(msg);
             }

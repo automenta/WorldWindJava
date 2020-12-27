@@ -78,6 +78,15 @@ public class PlaceNameLayerBulkDownloader extends BulkRetrievalThread {
         this.layer = layer;
     }
 
+    protected static void transferMissingTiles(ArrayList<PlaceNameLayer.Tile> source,
+        Collection<PlaceNameLayer.Tile> destination, int maxCount) {
+        int i = 0;
+        while (i < maxCount && !source.isEmpty()) {
+            destination.add(source.remove(0));
+            i++;
+        }
+    }
+
     public void run() {
         try {
             // Cycle though placenameservices and find missing tiles
@@ -87,7 +96,8 @@ public class PlaceNameLayerBulkDownloader extends BulkRetrievalThread {
             this.progress.setTotalCount(allMissingTiles.size());
             // Submit missing tiles requests at 10 sec intervals
             while (!allMissingTiles.isEmpty()) {
-                transferMissingTiles(allMissingTiles, missingTiles, MAX_TILE_COUNT_PER_REGION);
+                PlaceNameLayerBulkDownloader.transferMissingTiles(allMissingTiles, missingTiles,
+                    PlaceNameLayerBulkDownloader.MAX_TILE_COUNT_PER_REGION);
 
                 while (!missingTiles.isEmpty()) {
                     submitMissingTilesRequests();
@@ -100,19 +110,10 @@ public class PlaceNameLayerBulkDownloader extends BulkRetrievalThread {
             String message = Logging.getMessage("generic.BulkRetrievalInterrupted", layer.name());
             Logging.logger().log(Level.WARNING, message, e);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             String message = Logging.getMessage("generic.ExceptionDuringBulkRetrieval", layer.name());
             Logging.logger().severe(message);
             throw new RuntimeException(message);
-        }
-    }
-
-    protected static void transferMissingTiles(ArrayList<PlaceNameLayer.Tile> source,
-        Collection<PlaceNameLayer.Tile> destination, int maxCount) {
-        int i = 0;
-        while (i < maxCount && !source.isEmpty()) {
-            destination.add(source.remove(0));
-            i++;
         }
     }
 
@@ -126,8 +127,7 @@ public class PlaceNameLayerBulkDownloader extends BulkRetrievalThread {
             if (this.isTileLocalOrAbsent(tile)) {
                 // No need to request that tile anymore
                 this.missingTiles.remove(i);
-            }
-            else {
+            } else {
                 this.layer.downloadTile(tile, new BulkDownloadPostProcessor(this.layer, tile, this.fileStore));
                 i++;
             }
@@ -143,7 +143,7 @@ public class PlaceNameLayerBulkDownloader extends BulkRetrievalThread {
     protected synchronized void removeRetrievedTile(PlaceNameLayer.Tile tile) {
         this.missingTiles.remove(tile);
         this.progress.setCurrentCount(this.progress.getCurrentCount() + 1);
-        this.progress.setCurrentSize(this.progress.getCurrentSize() + AVG_TILE_SIZE);
+        this.progress.setCurrentSize(this.progress.getCurrentSize() + PlaceNameLayerBulkDownloader.AVG_TILE_SIZE);
         this.progress.setLastUpdateTime(System.currentTimeMillis());
         // Estimate total size
         this.progress.setTotalSize(
@@ -155,12 +155,12 @@ public class PlaceNameLayerBulkDownloader extends BulkRetrievalThread {
         try {
             tileCount = this.getMissingTilesCountEstimate(sector, resolution);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             String message = Logging.getMessage("generic.ExceptionDuringDataSizeEstimate", this.getName());
             Logging.logger().severe(message);
             throw new RuntimeException(message);
         }
-        return tileCount * AVG_TILE_SIZE;
+        return tileCount * PlaceNameLayerBulkDownloader.AVG_TILE_SIZE;
     }
 
     protected int getMissingTilesCountEstimate(Sector sector, double resolution) {
@@ -220,8 +220,7 @@ public class PlaceNameLayerBulkDownloader extends BulkRetrievalThread {
                 for (PlaceNameLayer.NavigationTile nav : tile.subNavTiles) {
                     navList.addAll(this.navTilesVisible(nav, sector));
                 }
-            }
-            else  //at bottom level navigation tile
+            } else  //at bottom level navigation tile
             {
                 navList.add(tile);
             }

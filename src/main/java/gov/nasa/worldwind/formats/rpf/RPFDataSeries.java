@@ -102,7 +102,7 @@ public enum RPFDataSeries {
     private static final String CADRG_DATA_TYPE = "CADRG";
     private static final String CIB_DATA_TYPE = "CIB";
     private static final String[] RPF_DATA_TYPES = {"CADRG", "CIB"};
-    private static Map<String, RPFDataSeries> enumConstantDirectory = null;
+    private static Map<String, RPFDataSeries> enumConstantDirectory;
     public final String seriesCode;
     public final String seriesAbbreviation;
     public final String scaleOrResolution;
@@ -125,14 +125,14 @@ public enum RPFDataSeries {
     // ============== RPF Data Types ======================= //
 
     private static synchronized Map<String, RPFDataSeries> enumConstantDirectory() {
-        if (enumConstantDirectory == null) {
+        if (RPFDataSeries.enumConstantDirectory == null) {
             RPFDataSeries[] universe = RPFDataSeries.class.getEnumConstants();
-            enumConstantDirectory = new HashMap<>(2 * universe.length);
+            RPFDataSeries.enumConstantDirectory = new HashMap<>(2 * universe.length);
             for (RPFDataSeries dataSeries : universe) {
-                enumConstantDirectory.put(dataSeries.seriesCode, dataSeries);
+                RPFDataSeries.enumConstantDirectory.put(dataSeries.seriesCode, dataSeries);
             }
         }
-        return enumConstantDirectory;
+        return RPFDataSeries.enumConstantDirectory;
     }
 
     public static RPFDataSeries dataSeriesFor(String seriesCode) {
@@ -142,7 +142,7 @@ public enum RPFDataSeries {
             throw new IllegalArgumentException(message);
         }
 
-        RPFDataSeries dataSeries = enumConstantDirectory().get(seriesCode);
+        RPFDataSeries dataSeries = RPFDataSeries.enumConstantDirectory().get(seriesCode);
         if (dataSeries == null) {
             String message = Logging.getMessage("generic.EnumNotFound", seriesCode);
             Logging.logger().fine(message);
@@ -158,7 +158,7 @@ public enum RPFDataSeries {
             throw new IllegalArgumentException(message);
         }
 
-        return enumConstantDirectory().get(seriesCode) != null;
+        return RPFDataSeries.enumConstantDirectory().get(seriesCode) != null;
     }
 
     public static boolean isRPFDataType(String rpfDataType) {
@@ -168,7 +168,7 @@ public enum RPFDataSeries {
             throw new IllegalArgumentException(message);
         }
 
-        for (String s : RPF_DATA_TYPES) {
+        for (String s : RPFDataSeries.RPF_DATA_TYPES) {
             if (s.equalsIgnoreCase(rpfDataType))
                 return true;
         }
@@ -182,7 +182,7 @@ public enum RPFDataSeries {
             throw new IllegalArgumentException(message);
         }
 
-        return CADRG_DATA_TYPE.equalsIgnoreCase(rpfDataType);
+        return RPFDataSeries.CADRG_DATA_TYPE.equalsIgnoreCase(rpfDataType);
     }
 
     public static boolean isCIBDataType(String rpfDataType) {
@@ -192,7 +192,7 @@ public enum RPFDataSeries {
             throw new IllegalArgumentException(message);
         }
 
-        return CIB_DATA_TYPE.equalsIgnoreCase(rpfDataType);
+        return RPFDataSeries.CIB_DATA_TYPE.equalsIgnoreCase(rpfDataType);
     }
 
     public static boolean isCADRGDataSeries(String seriesCode) {
@@ -202,8 +202,8 @@ public enum RPFDataSeries {
             throw new IllegalArgumentException(message);
         }
 
-        RPFDataSeries dataSeries = dataSeriesFor(seriesCode);
-        return isCADRGDataType(dataSeries.rpfDataType);
+        RPFDataSeries dataSeries = RPFDataSeries.dataSeriesFor(seriesCode);
+        return RPFDataSeries.isCADRGDataType(dataSeries.rpfDataType);
     }
 
     public static boolean isCIBDataSeries(String seriesCode) {
@@ -213,7 +213,7 @@ public enum RPFDataSeries {
             throw new IllegalArgumentException(message);
         }
 
-        RPFDataSeries dataSeries = dataSeriesFor(seriesCode);
-        return isCIBDataType(dataSeries.rpfDataType);
+        RPFDataSeries dataSeries = RPFDataSeries.dataSeriesFor(seriesCode);
+        return RPFDataSeries.isCIBDataType(dataSeries.rpfDataType);
     }
 }

@@ -21,11 +21,11 @@ import java.net.URL;
  */
 public class SessionCacheUtils {
     /**
-     * Retrieves the contents of a specified {@link URL}. If successful, this places the URL contents in a
-     * specified session cache with a specified key. This either marks the resource as available or missing, depending
-     * on whether the retrieval succeeds or fails. Finally, this optionally notifies the caller that the retrieval has
-     * succeeded by firing a property change event. If either the property listener or property name are null, that
-     * functionality is disabled.
+     * Retrieves the contents of a specified {@link URL}. If successful, this places the URL contents in a specified
+     * session cache with a specified key. This either marks the resource as available or missing, depending on whether
+     * the retrieval succeeds or fails. Finally, this optionally notifies the caller that the retrieval has succeeded by
+     * firing a property change event. If either the property listener or property name are null, that functionality is
+     * disabled.
      *
      * @param url                the URL contents to retrieve.
      * @param cache              the cache which receives the retrieved data.
@@ -54,7 +54,8 @@ public class SessionCacheUtils {
         Retriever retriever = URLRetriever.createRetriever(url, postProcessor);
         try {
             retriever.call();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             String message = Logging.getMessage("layers.TiledImageLayer.ExceptionRetrievingResources", url.toString());
             Logging.logger().log(java.util.logging.Level.SEVERE, message, e);
         }
@@ -126,13 +127,13 @@ public class SessionCacheUtils {
             throw new IllegalArgumentException(message);
         }
 
-        WMSCapabilities caps = getSessionCapabilities(cache, cacheKey, url.toString());
+        WMSCapabilities caps = SessionCacheUtils.getSessionCapabilities(cache, cacheKey, url.toString());
         if (caps != null)
             return caps;
 
-        retrieveSessionData(url, cache, cacheKey, absentResourceList, resourceID, propertyListener, propertyName);
+        SessionCacheUtils.retrieveSessionData(url, cache, cacheKey, absentResourceList, resourceID, propertyListener, propertyName);
 
         // Try to get the caps after the retrieval attempt.
-        return getSessionCapabilities(cache, cacheKey, url.toString());
+        return SessionCacheUtils.getSessionCapabilities(cache, cacheKey, url.toString());
     }
 }

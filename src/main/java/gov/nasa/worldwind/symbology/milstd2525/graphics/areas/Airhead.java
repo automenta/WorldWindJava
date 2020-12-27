@@ -58,7 +58,7 @@ public class Airhead extends BasicArea {
         if (!WWUtil.isEmpty(text)) {
             sb.append(text);
         }
-        sb.append(")");
+        sb.append(')');
 
         return sb.toString();
     }
@@ -90,6 +90,6 @@ public class Airhead extends BasicArea {
      */
     @Override
     protected Offset getDefaultLabelOffset() {
-        return DEFAULT_OFFSET;
+        return Airhead.DEFAULT_OFFSET;
     }
 }

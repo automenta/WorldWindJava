@@ -89,10 +89,35 @@ public class KMLScreenImageImpl extends ScreenImage implements KMLRenderable {
         KMLVec2 kmlSize = this.parent.getSize();
         if (kmlSize != null) {
             Size size = new Size();
-            size.setWidth(getSizeMode(kmlSize.getX()), kmlSize.getX(), KMLUtil.kmlUnitsToWWUnits(kmlSize.getXunits()));
-            size.setHeight(getSizeMode(kmlSize.getY()), kmlSize.getY(), KMLUtil.kmlUnitsToWWUnits(kmlSize.getYunits()));
+            size.setWidth(KMLScreenImageImpl.getSizeMode(kmlSize.getX()), kmlSize.getX(), KMLUtil.kmlUnitsToWWUnits(kmlSize.getXunits()));
+            size.setHeight(KMLScreenImageImpl.getSizeMode(kmlSize.getY()), kmlSize.getY(), KMLUtil.kmlUnitsToWWUnits(kmlSize.getYunits()));
             this.setSize(size);
         }
+    }
+
+    /**
+     * Get the size mode for a size parameter. The KML size tag takes a numeric size attribute, but certain values of
+     * this attribute change the interpretation of the tag.
+     * <ul><li> A value of -1 indicates to use the native dimension.</li> <li> A value of 0 indicates to maintain the
+     * aspect ratio.</li> <li> A value of n sets the value of the dimension.</li></ul>
+     *
+     * @param size The KML size attribute
+     * @return One of {@link Size#NATIVE_DIMENSION}, {@link Size#MAINTAIN_ASPECT_RATIO}, or {@link
+     * Size#EXPLICIT_DIMENSION}.
+     */
+    protected static String getSizeMode(Double size) {
+        // KML spec requires a value, but if there isn't one, use the image's native size.
+        if (size == null)
+            return Size.NATIVE_DIMENSION;
+
+        int s = (int) size.doubleValue();
+
+        if (s == KMLScreenImageImpl.KML_NATIVE_DIMENSION)
+            return Size.NATIVE_DIMENSION;
+        else if (size == KMLScreenImageImpl.KML_MAINTAIN_ASPECT_RATIO)
+            return Size.MAINTAIN_ASPECT_RATIO;
+        else
+            return Size.EXPLICIT_DIMENSION;
     }
 
     /**
@@ -175,30 +200,5 @@ public class KMLScreenImageImpl extends ScreenImage implements KMLRenderable {
             this.parent.getIcon().setExpirationTime(expiration);
         }
         return ret;
-    }
-
-    /**
-     * Get the size mode for a size parameter. The KML size tag takes a numeric size attribute, but certain values of
-     * this attribute change the interpretation of the tag.
-     * <ul><li> A value of -1 indicates to use the native dimension.</li> <li> A value of 0 indicates to maintain the
-     * aspect ratio.</li> <li> A value of n sets the value of the dimension.</li></ul>
-     *
-     * @param size The KML size attribute
-     * @return One of {@link Size#NATIVE_DIMENSION}, {@link Size#MAINTAIN_ASPECT_RATIO},
-     * or {@link Size#EXPLICIT_DIMENSION}.
-     */
-    protected static String getSizeMode(Double size) {
-        // KML spec requires a value, but if there isn't one, use the image's native size.
-        if (size == null)
-            return Size.NATIVE_DIMENSION;
-
-        int s = (int) size.doubleValue();
-
-        if (s == KML_NATIVE_DIMENSION)
-            return Size.NATIVE_DIMENSION;
-        else if (size == KML_MAINTAIN_ASPECT_RATIO)
-            return Size.MAINTAIN_ASPECT_RATIO;
-        else
-            return Size.EXPLICIT_DIMENSION;
     }
 }

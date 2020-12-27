@@ -40,14 +40,14 @@ public abstract class OWSCapabilities extends AbstractXMLEventParser {
         this.initialize();
     }
 
+    protected static XMLEventReader createReader(Object docSource) {
+        return WWXML.openEventReader(docSource);
+    }
+
     abstract protected void determineNamespaces();
 
     protected void initialize() {
         this.parserContext = this.createParserContext(this.eventReader);
-    }
-
-    protected static XMLEventReader createReader(Object docSource) {
-        return WWXML.openEventReader(docSource);
     }
 
     protected XMLEventParserContext createParserContext(XMLEventReader reader) {

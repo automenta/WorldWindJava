@@ -27,12 +27,49 @@ public class MarkerRenderer {
     protected final PickSupport pickSupport = new PickSupport();
     private final ArrayList<Vec4> surfacePoints = new ArrayList<>();
     private double elevation = 10.0d;
-    private boolean overrideMarkerElevation = false;
+    private boolean overrideMarkerElevation;
     private boolean keepSeparated = true;
-    private boolean enablePickSizeReturn = false;
+    private boolean enablePickSizeReturn;
     // Rendering state.
-    private long frameTimeStamp = 0;
+    private long frameTimeStamp;
     private MarkerAttributes previousAttributes; // used only by drawSeparated and drawMarker
+
+    protected static void end(DrawContext dc) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
+
+        gl.glMatrixMode(GL2.GL_MODELVIEW);
+        gl.glPopMatrix();
+
+        if (dc.isPickingMode()) {
+            PickSupport.endPicking(dc);
+        } else {
+            gl.glDisable(GL2.GL_LIGHT1);
+            gl.glEnable(GL2.GL_LIGHT0);
+            gl.glDisable(GL2.GL_LIGHTING);
+            gl.glDisable(GL2.GL_NORMALIZE);
+        }
+
+        gl.glPopAttrib();
+    }
+
+    protected static boolean intersectsFrustum(DrawContext dc, Vec4 point, double radius) {
+        if (dc.isPickingMode())
+            return dc.getPickFrustums().intersectsAny(new Sphere(point, radius));
+
+        // TODO: determine if culling markers against center point is intentional.
+        return dc.getView().getFrustumInModelCoordinates().contains(point);
+    }
+
+    protected static double computeMarkerRadius(DrawContext dc, Vec4 point, Marker marker) {
+        double d = point.distanceTo3(dc.getView().getEyePoint());
+        double radius = marker.getAttributes().getMarkerPixels() * dc.getView().computePixelSizeAtDistance(d);
+        if (radius < marker.getAttributes().getMinMarkerSize() && marker.getAttributes().getMinMarkerSize() > 0)
+            radius = marker.getAttributes().getMinMarkerSize();
+        else if (radius > marker.getAttributes().getMaxMarkerSize())
+            radius = marker.getAttributes().getMaxMarkerSize();
+
+        return radius;
+    }
 
     public double getElevation() {
         return elevation;
@@ -58,6 +95,10 @@ public class MarkerRenderer {
         this.keepSeparated = keepSeparated;
     }
 
+    //**************************************************************//
+    //********************  Rendering  *****************************//
+    //**************************************************************//
+
     public boolean isEnablePickSizeReturn() {
         return enablePickSizeReturn;
     }
@@ -82,10 +123,6 @@ public class MarkerRenderer {
         this.draw(dc, markers);
     }
 
-    //**************************************************************//
-    //********************  Rendering  *****************************//
-    //**************************************************************//
-
     protected void draw(DrawContext dc, Iterable<Marker> markers) {
         if (this.isKeepSeparated())
             this.drawSeparated(dc, markers);
@@ -97,8 +134,7 @@ public class MarkerRenderer {
         List<Marker> markerList;
         if (markers instanceof List) {
             markerList = (List<Marker>) markers;
-        }
-        else {
+        } else {
             markerList = new ArrayList<>();
             for (Marker m : markers) {
                 markerList.add(m);
@@ -214,6 +250,10 @@ public class MarkerRenderer {
         }
     }
 
+    //**************************************************************//
+    //********************  Rendering Utilities  *******************//
+    //**************************************************************//
+
     protected void drawAll(DrawContext dc, Iterable<Marker> markers) {
         Layer parentLayer = dc.getCurrentLayer();
         Vec4 eyePoint = dc.getView().getEyePoint();
@@ -254,8 +294,7 @@ public class MarkerRenderer {
 
             gl.glPushAttrib(GL2.GL_ENABLE_BIT | GL2.GL_CURRENT_BIT | GL2.GL_TRANSFORM_BIT);
             gl.glDisable(GL2.GL_COLOR_MATERIAL);
-        }
-        else {
+        } else {
             gl.glPushAttrib(GL2.GL_ENABLE_BIT | GL2.GL_CURRENT_BIT | GL2.GL_LIGHTING_BIT | GL2.GL_TRANSFORM_BIT
                 | GL2.GL_COLOR_BUFFER_BIT);
 
@@ -266,11 +305,10 @@ public class MarkerRenderer {
                 lightPosition[1] = -0.5f;
                 lightPosition[2] = 1.0f;
                 lightPosition[3] = 0.0f;
-            }
-            else {
+            } else {
                 lightPosition[0] = (float) cameraPosition.x * 2;
-                lightPosition[1] = (float) cameraPosition.y() / 2;
-                lightPosition[2] = (float) cameraPosition.z();
+                lightPosition[1] = (float) cameraPosition.y / 2;
+                lightPosition[2] = (float) cameraPosition.z;
                 lightPosition[3] = 0.0f;
             }
 
@@ -303,37 +341,6 @@ public class MarkerRenderer {
         this.previousAttributes = null;
     }
 
-    protected static void end(DrawContext dc) {
-        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-
-        gl.glMatrixMode(GL2.GL_MODELVIEW);
-        gl.glPopMatrix();
-
-        if (dc.isPickingMode()) {
-            PickSupport.endPicking(dc);
-        }
-        else {
-            gl.glDisable(GL2.GL_LIGHT1);
-            gl.glEnable(GL2.GL_LIGHT0);
-            gl.glDisable(GL2.GL_LIGHTING);
-            gl.glDisable(GL2.GL_NORMALIZE);
-        }
-
-        gl.glPopAttrib();
-    }
-
-    //**************************************************************//
-    //********************  Rendering Utilities  *******************//
-    //**************************************************************//
-
-    protected static boolean intersectsFrustum(DrawContext dc, Vec4 point, double radius) {
-        if (dc.isPickingMode())
-            return dc.getPickFrustums().intersectsAny(new Sphere(point, radius));
-
-        // TODO: determine if culling markers against center point is intentional.
-        return dc.getView().getFrustumInModelCoordinates().contains(point);
-    }
-
     protected Vec4 computeSurfacePoint(DrawContext dc, Position pos) {
         double ve = dc.getVerticalExaggeration();
         if (!this.overrideMarkerElevation)
@@ -348,17 +355,6 @@ public class MarkerRenderer {
 
         // Point is outside the current sector geometry, so compute it from the globe.
         return dc.getGlobe().computePointFromPosition(pos.getLatitude(), pos.getLongitude(), effectiveElevation * ve);
-    }
-
-    protected static double computeMarkerRadius(DrawContext dc, Vec4 point, Marker marker) {
-        double d = point.distanceTo3(dc.getView().getEyePoint());
-        double radius = marker.getAttributes().getMarkerPixels() * dc.getView().computePixelSizeAtDistance(d);
-        if (radius < marker.getAttributes().getMinMarkerSize() && marker.getAttributes().getMinMarkerSize() > 0)
-            radius = marker.getAttributes().getMinMarkerSize();
-        else if (radius > marker.getAttributes().getMaxMarkerSize())
-            radius = marker.getAttributes().getMaxMarkerSize();
-
-        return radius;
     }
 
     //**************************************************************//
@@ -426,7 +422,7 @@ public class MarkerRenderer {
             try {
                 MarkerRenderer.this.pickOrderedMarkers(dc, this);
             }
-            catch (Exception e) {
+            catch (RuntimeException e) {
                 Logging.logger().log(Level.SEVERE, Logging.getMessage("generic.ExceptionWhilePickingMarker", this),
                     e);
             }
@@ -441,7 +437,7 @@ public class MarkerRenderer {
             try {
                 MarkerRenderer.this.drawOrderedMarkers(dc, this);
             }
-            catch (Exception e) {
+            catch (RuntimeException e) {
                 Logging.logger().log(Level.SEVERE, Logging.getMessage("generic.ExceptionWhileRenderingMarker", this),
                     e);
             }

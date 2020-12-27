@@ -29,8 +29,8 @@ import java.util.*;
  */
 public class ShapefileRecordPolygon extends ShapefileRecordPolyline {
     /**
-     * Constructs a record instance from the given {@link ByteBuffer}. The buffer's current position must be
-     * the start of the record, and will be the start of the next record when the constructor returns.
+     * Constructs a record instance from the given {@link ByteBuffer}. The buffer's current position must be the start
+     * of the record, and will be the start of the next record when the constructor returns.
      *
      * @param shapeFile the parent {@link Shapefile}.
      * @param buffer    the shapefile record {@link ByteBuffer} to read from.
@@ -77,15 +77,13 @@ public class ShapefileRecordPolygon extends ShapefileRecordPolyline {
             if (WWMath.computeWindingOrderOfLocations(buffer.getLocations()).equals(AVKey.CLOCKWISE)) {
                 if (outerBoundary == null) {
                     outerBoundary = buffer.getLocations();
-                }
-                else {
+                } else {
                     this.exportPolygonAsKML(xmlWriter, outerBoundary, innerBoundaries, height);
 
                     outerBoundary = this.getCompoundPointBuffer().getLocations();
                     innerBoundaries.clear();
                 }
-            }
-            else {
+            } else {
                 innerBoundaries.add(buffer.getLocations());
             }
         }
@@ -111,8 +109,7 @@ public class ShapefileRecordPolygon extends ShapefileRecordPolyline {
             xmlWriter.writeEndElement();
 
             altitudeMode = "absolute";
-        }
-        else {
+        } else {
             altitudeMode = "clampToGround";
             height = 0.0;
         }

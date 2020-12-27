@@ -40,6 +40,22 @@ public class ColladaLibrary<T> extends ColladaAbstractObject {
         super(ns);
     }
 
+    protected static String getElementName(String libraryName) {
+        if ("library_nodes".equals(libraryName))
+            return "node";
+        else if ("library_effects".equals(libraryName))
+            return "effect";
+        else if ("library_materials".equals(libraryName))
+            return "material";
+        else if ("library_geometries".equals(libraryName))
+            return "geometry";
+        else if ("library_images".equals(libraryName))
+            return "image";
+        else if ("library_visual_scenes".equals(libraryName))
+            return "visual_scene";
+        return null;
+    }
+
     /**
      * Indicates the elements in the library.
      *
@@ -69,25 +85,8 @@ public class ColladaLibrary<T> extends ColladaAbstractObject {
     public void setField(String keyName, Object value) {
         if (keyName.equals(this.elementName)) {
             this.elements.add((T) value);
-        }
-        else {
+        } else {
             super.setField(keyName, value);
         }
-    }
-
-    protected static String getElementName(String libraryName) {
-        if ("library_nodes".equals(libraryName))
-            return "node";
-        else if ("library_effects".equals(libraryName))
-            return "effect";
-        else if ("library_materials".equals(libraryName))
-            return "material";
-        else if ("library_geometries".equals(libraryName))
-            return "geometry";
-        else if ("library_images".equals(libraryName))
-            return "image";
-        else if ("library_visual_scenes".equals(libraryName))
-            return "visual_scene";
-        return null;
     }
 }

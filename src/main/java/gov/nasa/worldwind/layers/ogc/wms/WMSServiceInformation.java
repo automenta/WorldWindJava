@@ -47,18 +47,15 @@ public class WMSServiceInformation extends OGCServiceInformation {
             Double d = ctx.getDoubleParser().parseDouble(ctx, event);
             if (d != null)
                 this.maxWidth = d.intValue();
-        }
-        else if (ctx.isStartElement(event, MAX_HEIGHT)) {
+        } else if (ctx.isStartElement(event, MAX_HEIGHT)) {
             Double d = ctx.getDoubleParser().parseDouble(ctx, event);
             if (d != null)
                 this.maxHeight = d.intValue();
-        }
-        else if (ctx.isStartElement(event, LAYER_LIMIT)) {
+        } else if (ctx.isStartElement(event, LAYER_LIMIT)) {
             Double d = ctx.getDoubleParser().parseDouble(ctx, event);
             if (d != null)
                 this.layerLimit = d.intValue();
-        }
-        else {
+        } else {
             super.doParseEventContent(ctx, event, args);
         }
     }
@@ -84,7 +81,7 @@ public class WMSServiceInformation extends OGCServiceInformation {
         StringBuilder sb = new StringBuilder(super.toString());
 
         sb.append("Max width = ").append(this.getMaxWidth());
-        sb.append(" Max height = ").append(this.getMaxHeight()).append("\n");
+        sb.append(" Max height = ").append(this.getMaxHeight()).append('\n');
 
         return sb.toString();
     }

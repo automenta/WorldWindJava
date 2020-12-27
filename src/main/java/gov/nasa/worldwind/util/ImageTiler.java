@@ -28,8 +28,8 @@ import java.util.logging.Level;
 public class ImageTiler {
     public static final int DEFAULT_IMAGE_TILE_SIZE = 2048; // default size to make subimages
 
-    private int tileWidth = DEFAULT_IMAGE_TILE_SIZE;
-    private int tileHeight = DEFAULT_IMAGE_TILE_SIZE;
+    private int tileWidth = ImageTiler.DEFAULT_IMAGE_TILE_SIZE;
+    private int tileHeight = ImageTiler.DEFAULT_IMAGE_TILE_SIZE;
     private Color transparencyColor = new Color(0, 0, 0, 0);
 
     public int getTileWidth() {
@@ -129,8 +129,7 @@ public class ImageTiler {
                             image = ImageUtil.toCompatibleImage(image);
                         Graphics2D g = image.createGraphics();
                         g.drawImage(baseImage.getSubimage(x, y, w, h), 0, 0, w, h, null);
-                    }
-                    else {
+                    } else {
                         // The source image has an alpha channel, create a tile with an alpha channel.
                         image = new BufferedImage(this.getTileWidth(), this.getTileHeight(),
                             BufferedImage.TYPE_4BYTE_ABGR);
@@ -150,8 +149,7 @@ public class ImageTiler {
 
 //                    System.out.println(new Sector(minLat, maxLat, minLon, maxLon));
                     listener.newTile(image, new Sector(minLat, maxLat, minLon, maxLon));
-                }
-                else {
+                } else {
                     // The source image does not fill this tile, so create a smaller tile with an alpha channel.
                     int shortWidth = w == this.getTileWidth() ? this.getTileWidth() : WWMath.powerOfTwoCeiling(w);
                     int shortheight = h == this.getTileHeight() ? this.getTileHeight() : WWMath.powerOfTwoCeiling(h);
@@ -266,8 +264,7 @@ public class ImageTiler {
                         g.drawImage(image.getSubimage(x, y, w, h), 0, 0, w, h, null);
 
                         continue;
-                    }
-                    else {
+                    } else {
                         // The source image has an alpha channel, create a tile with an alpha channel.
                         subImage = new BufferedImage(this.getTileWidth(), this.getTileHeight(),
                             BufferedImage.TYPE_4BYTE_ABGR);
@@ -285,8 +282,7 @@ public class ImageTiler {
                     se = geoQuad.interpolate(t0, s1);
                     ne = geoQuad.interpolate(t1, s1);
                     nw = geoQuad.interpolate(t1, s0);
-                }
-                else {
+                } else {
                     // The source image does not fill this tile, so create a smaller tile with an alpha channel.
                     int shortWidth = w == this.getTileWidth() ? this.getTileWidth() : WWMath.powerOfTwoCeiling(w);
                     int shortheight = h == this.getTileHeight() ? this.getTileHeight() : WWMath.powerOfTwoCeiling(h);

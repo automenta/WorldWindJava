@@ -17,10 +17,10 @@ public class GeoQuad {
     public static final int SOUTH = 2;
     public static final int EAST = 4;
     public static final int WEST = 8;
-    public static final int NORTHWEST = NORTH + WEST;
-    public static final int NORTHEAST = NORTH + EAST;
-    public static final int SOUTHWEST = SOUTH + WEST;
-    public static final int SOUTHEAST = SOUTH + EAST;
+    public static final int NORTHWEST = GeoQuad.NORTH + GeoQuad.WEST;
+    public static final int NORTHEAST = GeoQuad.NORTH + GeoQuad.EAST;
+    public static final int SOUTHWEST = GeoQuad.SOUTH + GeoQuad.WEST;
+    public static final int SOUTHEAST = GeoQuad.SOUTH + GeoQuad.EAST;
 
     private final LatLon sw, se, ne, nw;
     private final Line northEdge, southEdge, eastEdge, westEdge;

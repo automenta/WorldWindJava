@@ -39,6 +39,28 @@ public class Geometry extends AVListImpl implements Cacheable {
         this.buffer = new Buffer[4];
     }
 
+    private static long sizeOf(int glType) {
+        return switch (glType) {
+            case GL2.GL_BYTE -> 1L;
+            case GL2.GL_SHORT, GL2.GL_UNSIGNED_SHORT -> 2L;
+            case GL2.GL_INT, GL2.GL_UNSIGNED_INT, GL2.GL_FLOAT -> 4L;
+            case GL2.GL_DOUBLE -> 8L;
+            default -> 0L;
+        };
+    }
+
+    private static void bufferCopy(int[] src, int srcPos, IntBuffer dest, int destPos, int length) {
+        dest.position(destPos);
+        dest.put(src, srcPos, length);
+        dest.position(destPos);
+    }
+
+    private static void bufferCopy(float[] src, int srcPos, FloatBuffer dest, int destPos, int length) {
+        dest.position(destPos);
+        dest.put(src, srcPos, length);
+        dest.position(destPos);
+    }
+
     public int getMode(int object) {
         return this.mode[object];
     }
@@ -115,57 +137,57 @@ public class Geometry extends AVListImpl implements Cacheable {
     }
 
     public void setElementData(int mode, int count, int[] src) {
-        this.setMode(ELEMENT, mode);
-        this.setData(ELEMENT, 1, GL.GL_UNSIGNED_INT, 0, count, src, 0);
+        this.setMode(Geometry.ELEMENT, mode);
+        this.setData(Geometry.ELEMENT, 1, GL.GL_UNSIGNED_INT, 0, count, src, 0);
     }
 
     // version using buffer instead of array
     public void setElementData(int mode, int count, IntBuffer src) {
-        this.setMode(ELEMENT, mode);
-        this.buffer[ELEMENT] = src;
-        this.size[ELEMENT] = 1;
-        this.glType[ELEMENT] = GL.GL_UNSIGNED_INT;
-        this.stride[ELEMENT] = 0;
-        this.count[ELEMENT] = count;
+        this.setMode(Geometry.ELEMENT, mode);
+        this.buffer[Geometry.ELEMENT] = src;
+        this.size[Geometry.ELEMENT] = 1;
+        this.glType[Geometry.ELEMENT] = GL.GL_UNSIGNED_INT;
+        this.stride[Geometry.ELEMENT] = 0;
+        this.count[Geometry.ELEMENT] = count;
     }
 
     public void setVertexData(int count, float[] src) {
-        this.setData(VERTEX, 3, 0, count, src, 0);
+        this.setData(Geometry.VERTEX, 3, 0, count, src, 0);
     }
 
     // version using float buffer
     public void setVertexData(int count, FloatBuffer src) {
-        this.buffer[VERTEX] = src;
-        this.size[VERTEX] = 3;
-        this.glType[VERTEX] = GL.GL_FLOAT;
-        this.stride[VERTEX] = 0;
-        this.count[VERTEX] = count;
+        this.buffer[Geometry.VERTEX] = src;
+        this.size[Geometry.VERTEX] = 3;
+        this.glType[Geometry.VERTEX] = GL.GL_FLOAT;
+        this.stride[Geometry.VERTEX] = 0;
+        this.count[Geometry.VERTEX] = count;
     }
 
     public void setNormalData(int count, float[] src) {
-        this.setData(NORMAL, 3, 0, count, src, 0);
+        this.setData(Geometry.NORMAL, 3, 0, count, src, 0);
     }
 
     // version using float buffer
     public void setNormalData(int count, FloatBuffer src) {
-        this.buffer[NORMAL] = src;
-        this.size[NORMAL] = 3;
-        this.glType[NORMAL] = GL.GL_FLOAT;
-        this.stride[NORMAL] = 0;
-        this.count[NORMAL] = count;
+        this.buffer[Geometry.NORMAL] = src;
+        this.size[Geometry.NORMAL] = 3;
+        this.glType[Geometry.NORMAL] = GL.GL_FLOAT;
+        this.stride[Geometry.NORMAL] = 0;
+        this.count[Geometry.NORMAL] = count;
     }
 
     public void setTextureCoordData(int count, float[] src) {
-        this.setData(TEXTURE, 2, 0, count, src, 0);
+        this.setData(Geometry.TEXTURE, 2, 0, count, src, 0);
     }
 
     // version using float buffer
     public void setTextureCoordData(int count, FloatBuffer src) {
-        this.buffer[TEXTURE] = src;
-        this.size[NORMAL] = 2;
-        this.glType[NORMAL] = GL.GL_FLOAT;
-        this.stride[NORMAL] = 0;
-        this.count[NORMAL] = count;
+        this.buffer[Geometry.TEXTURE] = src;
+        this.size[Geometry.NORMAL] = 2;
+        this.glType[Geometry.NORMAL] = GL.GL_FLOAT;
+        this.stride[Geometry.NORMAL] = 0;
+        this.count[Geometry.NORMAL] = count;
     }
 
     public void clear(int type) {
@@ -178,7 +200,7 @@ public class Geometry extends AVListImpl implements Cacheable {
     }
 
     public long getSizeInBytes() {
-        return this.bufferSize(ELEMENT) + this.bufferSize(VERTEX) + this.bufferSize(NORMAL);
+        return this.bufferSize(Geometry.ELEMENT) + this.bufferSize(Geometry.VERTEX) + this.bufferSize(Geometry.NORMAL);
     }
 
     private long bufferSize(int bufferType) {
@@ -188,34 +210,12 @@ public class Geometry extends AVListImpl implements Cacheable {
         return size;
     }
 
-    private static long sizeOf(int glType) {
-        return switch (glType) {
-            case GL2.GL_BYTE -> 1L;
-            case GL2.GL_SHORT, GL2.GL_UNSIGNED_SHORT -> 2L;
-            case GL2.GL_INT, GL2.GL_UNSIGNED_INT, GL2.GL_FLOAT -> 4L;
-            case GL2.GL_DOUBLE -> 8L;
-            default -> 0L;
-        };
-    }
-
-    private static void bufferCopy(int[] src, int srcPos, IntBuffer dest, int destPos, int length) {
-        dest.position(destPos);
-        dest.put(src, srcPos, length);
-        dest.position(destPos);
-    }
-
-    private static void bufferCopy(float[] src, int srcPos, FloatBuffer dest, int destPos, int length) {
-        dest.position(destPos);
-        dest.put(src, srcPos, length);
-        dest.position(destPos);
-    }
-
     public static class CacheKey {
         private final GlobeStateKey globeStateKey;
         private final Class cls;
         private final String key;
         private final Object[] params;
-        private int hash = 0;
+        private int hash;
 
         public CacheKey(Globe globe, Class cls, String key, Object... params) {
             this.globeStateKey = globe != null ? globe.getGlobeStateKey() : null;

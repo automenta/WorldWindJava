@@ -36,62 +36,6 @@ public class DataChooserPanel extends JPanel {
         layoutComponents();
     }
 
-    public String getTitle() {
-        return this.title.getText();
-    }
-
-    public void setTitle(String title) {
-        this.title.setText(title);
-    }
-
-    public String getDescription() {
-        return this.description.getText();
-    }
-
-    public void setDescription(String description) {
-        this.description.setText(description);
-    }
-
-    public String getDataDescription() {
-        return this.dataDescription.getText();
-    }
-
-    public void setDataDescription(String dataDescription) {
-        this.dataDescription.setText(dataDescription);
-    }
-
-    public void setFileSetList(Collection<FileSet> fileSetList) {
-        removeListeners(this.fileSetList);
-        this.fileSetList = fileSetList;
-        addListeners(this.fileSetList);
-
-        this.selectButtons = new HashMap<>();
-
-        if (fileSetList != null && !fileSetList.isEmpty()) {
-            Box box = Box.createVerticalBox();
-            for (FileSet set : fileSetList) {
-                JCheckBox checkBox = new JCheckBox();
-                checkBox.putClientProperty("fileSet", set);
-                checkBox.setSelected(set.isSelected());
-                checkBox.setText(makeTitle(set));
-                checkBox.setAlignmentX(Component.LEFT_ALIGNMENT);
-                checkBox.addItemListener(DataChooserPanel::fileSetClicked);
-                box.add(checkBox);
-
-                this.selectButtons.put(set, checkBox);
-            }
-            this.dataScrollPane.setViewportView(box);
-            this.dataPanel.setVisible(true);
-        }
-        else {
-            this.dataScrollPane.setViewportView(null);
-            this.dataPanel.setVisible(false);
-        }
-        this.dataPanel.validate();
-
-        fileSetSelectionChanged(null);
-    }
-
     private static String makeTitle(FileSet set) {
         String title = null;
         if (set != null) {
@@ -133,6 +77,61 @@ public class DataChooserPanel extends JPanel {
                     set.setSelected(false);
             }
         }
+    }
+
+    public String getTitle() {
+        return this.title.getText();
+    }
+
+    public void setTitle(String title) {
+        this.title.setText(title);
+    }
+
+    public String getDescription() {
+        return this.description.getText();
+    }
+
+    public void setDescription(String description) {
+        this.description.setText(description);
+    }
+
+    public String getDataDescription() {
+        return this.dataDescription.getText();
+    }
+
+    public void setDataDescription(String dataDescription) {
+        this.dataDescription.setText(dataDescription);
+    }
+
+    public void setFileSetList(Collection<FileSet> fileSetList) {
+        removeListeners(this.fileSetList);
+        this.fileSetList = fileSetList;
+        addListeners(this.fileSetList);
+
+        this.selectButtons = new HashMap<>();
+
+        if (fileSetList != null && !fileSetList.isEmpty()) {
+            Box box = Box.createVerticalBox();
+            for (FileSet set : fileSetList) {
+                JCheckBox checkBox = new JCheckBox();
+                checkBox.putClientProperty("fileSet", set);
+                checkBox.setSelected(set.isSelected());
+                checkBox.setText(DataChooserPanel.makeTitle(set));
+                checkBox.setAlignmentX(Component.LEFT_ALIGNMENT);
+                checkBox.addItemListener(DataChooserPanel::fileSetClicked);
+                box.add(checkBox);
+
+                this.selectButtons.put(set, checkBox);
+            }
+            this.dataScrollPane.setViewportView(box);
+            this.dataPanel.setVisible(true);
+        } else {
+            this.dataScrollPane.setViewportView(null);
+            this.dataPanel.setVisible(false);
+        }
+        this.dataPanel.validate();
+
+        fileSetSelectionChanged(null);
     }
 
     private void setAllSelected(boolean b) {

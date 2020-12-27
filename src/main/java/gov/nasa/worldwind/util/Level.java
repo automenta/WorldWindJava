@@ -31,7 +31,7 @@ public class Level extends AVListImpl implements Comparable<Level> {
     protected double texelSize;
     protected String path;
     protected TileUrlBuilder urlBuilder;
-    protected long expiryTime = 0;
+    protected long expiryTime;
     protected boolean active = true;
     // Absent tiles: A tile is deemed absent if a specified maximum number of attempts have been made to retrieve it.
     // Retrieval attempts are governed by a minimum time interval between successive attempts. If an attempt is made
@@ -66,17 +66,17 @@ public class Level extends AVListImpl implements Comparable<Level> {
         this.urlBuilder = (TileUrlBuilder) this.params.get(AVKey.TILE_URL_BUILDER);
         this.expiryTime = AVListImpl.getLongValue(params, AVKey.EXPIRY_TIME, 0L);
 
-        this.texelSize = this.tileDelta.getLatitude().getRadians() / this.tileHeight;
+        this.texelSize = this.tileDelta.getLatitude().radians() / this.tileHeight;
 
-        this.path = this.cacheName + "/" + this.levelName;
+        this.path = this.cacheName + '/' + this.levelName;
 
         Integer maxAbsentTileAttempts = (Integer) this.params.get(AVKey.MAX_ABSENT_TILE_ATTEMPTS);
         if (maxAbsentTileAttempts == null)
-            maxAbsentTileAttempts = DEFAULT_MAX_ABSENT_TILE_ATTEMPTS;
+            maxAbsentTileAttempts = Level.DEFAULT_MAX_ABSENT_TILE_ATTEMPTS;
 
         Integer minAbsentTileCheckInterval = (Integer) this.params.get(AVKey.MIN_ABSENT_TILE_CHECK_INTERVAL);
         if (minAbsentTileCheckInterval == null)
-            minAbsentTileCheckInterval = DEFAULT_MIN_ABSENT_TILE_CHECK_INTERVAL;
+            minAbsentTileCheckInterval = Level.DEFAULT_MIN_ABSENT_TILE_CHECK_INTERVAL;
 
         this.absentTiles = new AbsentResourceList(maxAbsentTileAttempts, minAbsentTileCheckInterval);
     }
@@ -92,44 +92,44 @@ public class Level extends AVListImpl implements Comparable<Level> {
 
         Object o = params.get(AVKey.LEVEL_NUMBER);
         if (!(o instanceof Integer) || ((Integer) o) < 0)
-            sb.append(Logging.getMessage("term.levelNumber")).append(" ");
+            sb.append(Logging.getMessage("term.levelNumber")).append(' ');
 
         o = params.get(AVKey.LEVEL_NAME);
         if (!(o instanceof String))
-            sb.append(Logging.getMessage("term.levelName")).append(" ");
+            sb.append(Logging.getMessage("term.levelName")).append(' ');
 
         o = params.get(AVKey.TILE_WIDTH);
         if (!(o instanceof Integer) || ((Integer) o) < 0)
-            sb.append(Logging.getMessage("term.tileWidth")).append(" ");
+            sb.append(Logging.getMessage("term.tileWidth")).append(' ');
 
         o = params.get(AVKey.TILE_HEIGHT);
         if (!(o instanceof Integer) || ((Integer) o) < 0)
-            sb.append(Logging.getMessage("term.tileHeight")).append(" ");
+            sb.append(Logging.getMessage("term.tileHeight")).append(' ');
 
         o = params.get(AVKey.TILE_DELTA);
         if (!(o instanceof LatLon))
-            sb.append(Logging.getMessage("term.tileDelta")).append(" ");
+            sb.append(Logging.getMessage("term.tileDelta")).append(' ');
 
         o = params.get(AVKey.DATA_CACHE_NAME);
         if (!(o instanceof String) || ((CharSequence) o).length() < 1)
-            sb.append(Logging.getMessage("term.fileStoreFolder")).append(" ");
+            sb.append(Logging.getMessage("term.fileStoreFolder")).append(' ');
 
         o = params.get(AVKey.TILE_URL_BUILDER);
         if (!(o instanceof TileUrlBuilder))
-            sb.append(Logging.getMessage("term.tileURLBuilder")).append(" ");
+            sb.append(Logging.getMessage("term.tileURLBuilder")).append(' ');
 
         o = params.get(AVKey.EXPIRY_TIME);
         if (o != null && (!(o instanceof Long) || ((Long) o) < 1))
-            sb.append(Logging.getMessage("term.expiryTime")).append(" ");
+            sb.append(Logging.getMessage("term.expiryTime")).append(' ');
 
         if (!params.getStringValue(AVKey.LEVEL_NAME).isEmpty()) {
             o = params.get(AVKey.DATASET_NAME);
             if (!(o instanceof String) || ((CharSequence) o).length() < 1)
-                sb.append(Logging.getMessage("term.datasetName")).append(" ");
+                sb.append(Logging.getMessage("term.datasetName")).append(' ');
 
             o = params.get(AVKey.FORMAT_SUFFIX);
             if (!(o instanceof String) || ((CharSequence) o).length() < 1)
-                sb.append(Logging.getMessage("term.formatSuffix")).append(" ");
+                sb.append(Logging.getMessage("term.formatSuffix")).append(' ');
         }
 
         if (sb.isEmpty())
@@ -250,8 +250,8 @@ public class Level extends AVListImpl implements Comparable<Level> {
      * @param tile        the tile who's resources will be retrieved.
      * @param imageFormat a string identifying the mime type of the desired image format
      * @return the resource URL.
-     * @throws MalformedURLException if the URL cannot be formed from the tile's parameters.
-     * @throws IllegalArgumentException       if <code>tile</code> is null.
+     * @throws MalformedURLException    if the URL cannot be formed from the tile's parameters.
+     * @throws IllegalArgumentException if <code>tile</code> is null.
      */
     public URL getTileResourceURL(Tile tile, String imageFormat) throws MalformedURLException {
 
@@ -285,11 +285,13 @@ public class Level extends AVListImpl implements Comparable<Level> {
     }
 
     public int compareTo(Level that) {
-        if (this == that) return 0;
+        if (this == that)
+            return 0;
         int l = Integer.compare(this.levelNumber, that.levelNumber);
         if (l == 0)
             return path.compareTo(that.path);
-        else return l;
+        else
+            return l;
     }
 
     public boolean equals(Object o) {

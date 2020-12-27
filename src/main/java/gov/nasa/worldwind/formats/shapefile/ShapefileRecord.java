@@ -41,14 +41,13 @@ public abstract class ShapefileRecord {
     protected boolean normalizePoints;
 
     /**
-     * Constructs a record instance from the given {@link ByteBuffer}. The buffer's current position must be
-     * the start of the record, and will be the start of the next record when the constructor returns.
+     * Constructs a record instance from the given {@link ByteBuffer}. The buffer's current position must be the start
+     * of the record, and will be the start of the next record when the constructor returns.
      *
      * @param shapeFile the parent {@link Shapefile}.
      * @param buffer    the shapefile record {@link ByteBuffer} to read from.
-     * @throws IllegalArgumentException                        if any argument is null or otherwise invalid.
-     * @throws WWRuntimeException if the record's shape type does not match that of the
-     *                                                         shapefile.
+     * @throws IllegalArgumentException if any argument is null or otherwise invalid.
+     * @throws WWRuntimeException       if the record's shape type does not match that of the shapefile.
      */
     public ShapefileRecord(Shapefile shapeFile, ByteBuffer buffer) {
         if (shapeFile == null) {
@@ -70,7 +69,35 @@ public abstract class ShapefileRecord {
         }
         finally {
             // Move to the end of the record.
-            buffer.position(pos + this.contentLengthInBytes + RECORD_HEADER_LENGTH);
+            buffer.position(pos + this.contentLengthInBytes + ShapefileRecord.RECORD_HEADER_LENGTH);
+        }
+    }
+
+    /**
+     * Verifies that the record's shape type matches the expected one, typically that of the shapefile. All non-null
+     * records in a Shapefile must be of the same type. Throws an exception if the types do not match and the shape type
+     * is not <code>{@link Shapefile#SHAPE_NULL}</code>. Records of type <code>SHAPE_NULL</code> are always valid, and
+     * may appear in any Shapefile.
+     * <p>
+     * For details, see the ESRI Shapefile specification at <a href="http://www.esri.com/library/whitepapers/pdfs/shapefile.pdf"></a>,
+     * pages 4 and 5.
+     *
+     * @param shapefile the shapefile.
+     * @param shapeType the record's shape type.
+     * @throws WWRuntimeException       if the shape types do not match.
+     * @throws IllegalArgumentException if the specified shape type is null.
+     */
+    protected static void validateShapeType(Shapefile shapefile, String shapeType) {
+        if (shapeType == null) {
+            String message = Logging.getMessage("nullValue.ShapeType");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        if (!shapeType.equals(shapefile.getShapeType()) && !shapeType.equals(Shapefile.SHAPE_NULL)) {
+            String message = Logging.getMessage("SHP.UnsupportedShapeType", shapeType);
+            Logging.logger().severe(message);
+            throw new WWRuntimeException(message);
         }
     }
 
@@ -191,11 +218,10 @@ public abstract class ShapefileRecord {
     }
 
     /**
-     * Returns the {@link CompoundVecBuffer} holding all the X and Y points for this record. The
-     * returned buffer contains one sub-buffer for each of this record's parts. The coordinates for each part are
-     * referenced by invoking {@link CompoundVecBuffer#subBuffer(int)}, where the index is one
-     * of this record's part IDs, starting with 0 and ending with <code>{@link #getNumberOfParts()} - 1</code>
-     * (inclusive).
+     * Returns the {@link CompoundVecBuffer} holding all the X and Y points for this record. The returned buffer
+     * contains one sub-buffer for each of this record's parts. The coordinates for each part are referenced by invoking
+     * {@link CompoundVecBuffer#subBuffer(int)}, where the index is one of this record's part IDs, starting with 0 and
+     * ending with <code>{@link #getNumberOfParts()} - 1</code> (inclusive).
      *
      * @return a CompoundVecBuffer that holds this record's coordinate data.
      */
@@ -248,34 +274,6 @@ public abstract class ShapefileRecord {
         this.shapeFile = shapefile;
 
         this.doReadFromBuffer(shapefile, buffer);
-    }
-
-    /**
-     * Verifies that the record's shape type matches the expected one, typically that of the shapefile. All non-null
-     * records in a Shapefile must be of the same type. Throws an exception if the types do not match and the shape type
-     * is not <code>{@link Shapefile#SHAPE_NULL}</code>. Records of type <code>SHAPE_NULL</code> are always valid, and
-     * may appear in any Shapefile.
-     * <p>
-     * For details, see the ESRI Shapefile specification at <a href="http://www.esri.com/library/whitepapers/pdfs/shapefile.pdf"></a>,
-     * pages 4 and 5.
-     *
-     * @param shapefile the shapefile.
-     * @param shapeType the record's shape type.
-     * @throws WWRuntimeException       if the shape types do not match.
-     * @throws IllegalArgumentException if the specified shape type is null.
-     */
-    protected static void validateShapeType(Shapefile shapefile, String shapeType) {
-        if (shapeType == null) {
-            String message = Logging.getMessage("nullValue.ShapeType");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (!shapeType.equals(shapefile.getShapeType()) && !shapeType.equals(Shapefile.SHAPE_NULL)) {
-            String message = Logging.getMessage("SHP.UnsupportedShapeType", shapeType);
-            Logging.logger().severe(message);
-            throw new WWRuntimeException(message);
-        }
     }
 
     /**

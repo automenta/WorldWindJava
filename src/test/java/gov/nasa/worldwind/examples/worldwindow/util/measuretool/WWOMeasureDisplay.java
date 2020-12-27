@@ -283,11 +283,11 @@ public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay {
         LatLon pos1 = mt.getPositions().get(segmentIndex);
         for (int i = 1; i < mt.getPositions().size(); i++) {
             LatLon pos2 = mt.getPositions().get(i);
-            double segmentLength = LatLon.greatCircleDistance(pos1, pos2).radians * radius;
+            double segmentLength = LatLon.greatCircleDistance(pos1, pos2).radians() * radius;
 
             // Check whether the position is inside the segment
-            double length1 = LatLon.greatCircleDistance(pos1, pos).radians * radius;
-            double length2 = LatLon.greatCircleDistance(pos2, pos).radians * radius;
+            double length1 = LatLon.greatCircleDistance(pos1, pos).radians() * radius;
+            double length2 = LatLon.greatCircleDistance(pos2, pos).radians() * radius;
             if (length1 <= segmentLength && length2 <= segmentLength) {
                 // Compute portion of segment length
                 distanceFromStart += length1 / (length1 + length2) * segmentLength;
@@ -309,7 +309,7 @@ public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay {
         LatLon pos1 = null;
         for (LatLon pos2 : mt.getPositions()) {
             if (pos1 != null)
-                pathLengthRadians += LatLon.greatCircleDistance(pos1, pos2).radians;
+                pathLengthRadians += LatLon.greatCircleDistance(pos1, pos2).radians();
             pos1 = pos2;
         }
 
@@ -318,12 +318,12 @@ public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay {
 
     protected static Angle computeAngleBetween(LatLon a, LatLon b, LatLon c) {
         Vec4 v0 = new Vec4(
-            b.getLatitude().radians - a.getLatitude().radians,
-            b.getLongitude().radians - a.getLongitude().radians, 0);
+            b.getLatitude().radians() - a.getLatitude().radians(),
+            b.getLongitude().radians() - a.getLongitude().radians(), 0);
 
         Vec4 v1 = new Vec4(
-            c.getLatitude().radians - b.getLatitude().radians,
-            c.getLongitude().radians - b.getLongitude().radians, 0);
+            c.getLatitude().radians() - b.getLatitude().radians(),
+            c.getLongitude().radians() - b.getLongitude().radians(), 0);
 
         return v0.angleBetween3(v1);
     }

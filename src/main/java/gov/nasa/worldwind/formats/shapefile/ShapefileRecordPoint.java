@@ -25,8 +25,8 @@ public class ShapefileRecordPoint extends ShapefileRecord {
     protected Double m; // non-null only for Measure types with measures specified
 
     /**
-     * Constructs a record instance from the given {@link ByteBuffer}. The buffer's current position must be
-     * the start of the record, and will be the start of the next record when the constructor returns.
+     * Constructs a record instance from the given {@link ByteBuffer}. The buffer's current position must be the start
+     * of the record, and will be the start of the next record when the constructor returns.
      *
      * @param shapeFile the parent {@link Shapefile}.
      * @param buffer    the shapefile record {@link ByteBuffer} to read from.

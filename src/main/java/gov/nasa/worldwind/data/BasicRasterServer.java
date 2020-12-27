@@ -41,8 +41,8 @@ public class BasicRasterServer extends WWObjectImpl implements RasterServer {
      * accompanies layer description XML file), reads sector of each source and maintains a list of data sources, their
      * properties,
      *
-     * @param o      the RasterServer.xml source to read.  May by a {@link File}, a file path, a URL or an
-     *               {@link org.w3c.dom.Element}
+     * @param o      the RasterServer.xml source to read.  May by a {@link File}, a file path, a URL or an {@link
+     *               org.w3c.dom.Element}
      * @param params optional metadata associated with the data source that might be useful to the BasicRasterServer.
      */
     public BasicRasterServer(Object o, AVList params) {
@@ -69,7 +69,7 @@ public class BasicRasterServer extends WWObjectImpl implements RasterServer {
      * @return an instance of the MemoryCache that contains DataRasters and their properties
      */
     public static MemoryCache getCache() {
-        return cache;
+        return BasicRasterServer.cache;
     }
 
     /**
@@ -94,7 +94,7 @@ public class BasicRasterServer extends WWObjectImpl implements RasterServer {
         }
         catch (XMLStreamException e) {
             String message = Logging.getMessage("generic.InvalidDataSource", "");
-            message += "\n" + e.getMessage();
+            message += '\n' + e.getMessage();
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
@@ -105,8 +105,7 @@ public class BasicRasterServer extends WWObjectImpl implements RasterServer {
             // success, all raster sources are available
             String message = Logging.getMessage("generic.DataSetAvailable", this.getDataSetName());
             Logging.logger().finest(message);
-        }
-        else {
+        } else {
             // some (or all) required source rasters are not available (either missing or unreadable)
             // and therefore the dataset may not generate high resolution on-the-fly
             String message = Logging.getMessage("generic.DataSetLimitedAvailability", this.getDataSetName());
@@ -206,8 +205,7 @@ public class BasicRasterServer extends WWObjectImpl implements RasterServer {
 
                         Object o = rasterMetadata.get(AVKey.SECTOR);
                         sector = (o instanceof Sector) ? (Sector) o : null;
-                    }
-                    else {
+                    } else {
                         rasterMetadata.set(AVKey.SECTOR, sector);
                     }
 
@@ -222,12 +220,10 @@ public class BasicRasterServer extends WWObjectImpl implements RasterServer {
                             Logging.logger().warning(reason);
                             continue;
                         }
-                    }
-                    else {
+                    } else {
                         if (AVKey.IMAGE.equals(rasterPixelFormat) || AVKey.ELEVATION.equals(rasterPixelFormat)) {
                             this.setDataSetPixelFormat((String) rasterPixelFormat);
-                        }
-                        else {
+                        } else {
                             hasUnavailableRasterSources = true;
                             String reason = Logging.getMessage("generic.UnknownFileFormat", rasterSourcePath);
                             Logging.logger().warning(reason);
@@ -238,10 +234,10 @@ public class BasicRasterServer extends WWObjectImpl implements RasterServer {
                     if (null != sector) {
                         extent = Sector.union(extent, sector);
                         this.dataRasterList.add(
-                            new CachedDataRaster(rasterSourceFile, rasterMetadata, rasterReader, BasicRasterServer.getCache())
+                            new CachedDataRaster(rasterSourceFile, rasterMetadata, rasterReader,
+                                BasicRasterServer.getCache())
                         );
-                    }
-                    else {
+                    } else {
                         hasUnavailableRasterSources = true;
                         String reason = Logging.getMessage("generic.NoSectorSpecified", rasterSourcePath);
                         Logging.logger().warning(reason);
@@ -314,10 +310,9 @@ public class BasicRasterServer extends WWObjectImpl implements RasterServer {
      *                  Optional keys are: AVKey.PIXEL_FORMAT (AVKey.ELEVATION | AVKey.IMAGE) AVKey.DATA_TYPE
      *                  AVKey.BYTE_ORDER (AVKey.BIG_ENDIAN | AVKey.LITTLE_ENDIAN )
      * @return a DataRaster for the requested ROI
-     * @throws WWRuntimeException if there is no intersection of the source rasters with
-     *                                                         the requested ROI or the source format is unknown or not
-     *                                                         supported by currently loaded drivers
-     * @throws IllegalArgumentException                        if any of the required parameters or values are missing
+     * @throws WWRuntimeException       if there is no intersection of the source rasters with the requested ROI or the
+     *                                  source format is unknown or not supported by currently loaded drivers
+     * @throws IllegalArgumentException if any of the required parameters or values are missing
      */
     public DataRaster composeRaster(AVList reqParams) throws IllegalArgumentException, WWRuntimeException {
         DataRaster reqRaster;
@@ -370,12 +365,10 @@ public class BasicRasterServer extends WWObjectImpl implements RasterServer {
                 }
 
                 reqRaster = new ByteBufferRaster(reqWidth, reqHeight, reqSector, reqParams);
-            }
-            else if (AVKey.IMAGE.equals(this.getStringValue(AVKey.PIXEL_FORMAT))) {
+            } else if (AVKey.IMAGE.equals(this.getStringValue(AVKey.PIXEL_FORMAT))) {
                 reqParams.set(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
                 reqRaster = new BufferedImageRaster(reqWidth, reqHeight, Transparency.TRANSLUCENT, reqSector);
-            }
-            else {
+            } else {
                 String msg = Logging.getMessage("generic.UnrecognizedSourceType", this.get(AVKey.PIXEL_FORMAT));
                 Logging.logger().severe(msg);
                 throw new WWRuntimeException(msg);
@@ -424,10 +417,9 @@ public class BasicRasterServer extends WWObjectImpl implements RasterServer {
      *               Optional keys are: AVKey.PIXEL_FORMAT (AVKey.ELEVATION | AVKey.IMAGE) AVKey.DATA_TYPE
      *               AVKey.BYTE_ORDER (AVKey.BIG_ENDIAN | AVKey.LITTLE_ENDIAN )
      * @return a DataRaster for the requested ROI
-     * @throws WWRuntimeException if there is no intersection of the source rasters with
-     *                                                         the requested ROI or the source format is unknown or not
-     *                                                         supported by currently loaded drivers
-     * @throws IllegalArgumentException                        if any of the required parameters or values are missing
+     * @throws WWRuntimeException       if there is no intersection of the source rasters with the requested ROI or the
+     *                                  source format is unknown or not supported by currently loaded drivers
+     * @throws IllegalArgumentException if any of the required parameters or values are missing
      */
     public ByteBuffer getRasterAsByteBuffer(AVList params) {
         // request may contain a specific file format, different from a default file format
@@ -451,24 +443,20 @@ public class BasicRasterServer extends WWObjectImpl implements RasterServer {
             if (raster instanceof BufferedImageRaster) {
                 if ("image/png".equalsIgnoreCase(format)) {
                     return ImageUtil.asPNG(raster);
-                }
-                else if ("image/jpeg".equalsIgnoreCase(format) || "image/jpg".equalsIgnoreCase(format)) {
+                } else if ("image/jpeg".equalsIgnoreCase(format) || "image/jpg".equalsIgnoreCase(format)) {
                     return ImageUtil.asJPEG(raster);
                 }
                 if ("image/dds".equalsIgnoreCase(format)) {
                     return DDSCompressor.compressImage(((BufferedImageRaster) raster).getBufferedImage());
-                }
-                else {
+                } else {
                     String msg = Logging.getMessage("generic.UnknownFileFormat", format);
                     Logging.logger().severe(msg);
                     throw new WWRuntimeException(msg);
                 }
-            }
-            else if (raster instanceof ByteBufferRaster) {
+            } else if (raster instanceof ByteBufferRaster) {
                 // Elevations as BIL16 or as BIL32 are stored in the simple ByteBuffer object
                 return ((ByteBufferRaster) raster).getByteBuffer();
-            }
-            else {
+            } else {
                 String msg = Logging.getMessage("generic.UnexpectedRasterType", raster.getClass().getName());
                 Logging.logger().severe(msg);
                 throw new WWRuntimeException(msg);

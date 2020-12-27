@@ -19,17 +19,15 @@ import java.nio.ByteBuffer;
  * @version $Id: BILRasterReader.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 public class BILRasterReader extends AbstractDataRasterReader {
-    private static final String[] bilMimeTypes = new String[]
-        {"image/bil", "application/bil", "application/bil16", "application/bil32"};
+    private static final String[] bilMimeTypes = {"image/bil", "application/bil", "application/bil16", "application/bil32"};
 
-    private static final String[] bilSuffixes = new String[]
-        {"bil", "bil16", "bil32", "bil.gz", "bil16.gz", "bil32.gz"};
+    private static final String[] bilSuffixes = {"bil", "bil16", "bil32", "bil.gz", "bil16.gz", "bil32.gz"};
 
-    private boolean mapLargeFiles = false;
+    private boolean mapLargeFiles;
     private long largeFileThreshold = 16777216L; // 16 megabytes
 
     public BILRasterReader() {
-        super(bilMimeTypes, bilSuffixes);
+        super(BILRasterReader.bilMimeTypes, BILRasterReader.bilSuffixes);
     }
 
     public boolean isMapLargeFiles() {
@@ -119,21 +117,20 @@ public class BILRasterReader extends AbstractDataRasterReader {
 
         Object o = (params != null) ? params.get(AVKey.BYTE_ORDER) : null;
         if (!(o instanceof String)) {
-            sb.append(!sb.isEmpty() ? ", " : "").append(Logging.getMessage("WorldFile.NoByteOrderSpecified", source));
+            sb.append(sb.isEmpty() ? "" : ", ").append(Logging.getMessage("WorldFile.NoByteOrderSpecified", source));
         }
 
         o = (params != null) ? params.get(AVKey.PIXEL_FORMAT) : null;
         if (o == null) {
-            sb.append(!sb.isEmpty() ? ", " : "").append(
+            sb.append(sb.isEmpty() ? "" : ", ").append(
                 Logging.getMessage("WorldFile.NoPixelFormatSpecified", source));
-        }
-        else if (!AVKey.ELEVATION.equals(o)) {
-            sb.append(!sb.isEmpty() ? ", " : "").append(Logging.getMessage("WorldFile.InvalidPixelFormat", source));
+        } else if (!AVKey.ELEVATION.equals(o)) {
+            sb.append(sb.isEmpty() ? "" : ", ").append(Logging.getMessage("WorldFile.InvalidPixelFormat", source));
         }
 
         o = (params != null) ? params.get(AVKey.DATA_TYPE) : null;
         if (o == null) {
-            sb.append(!sb.isEmpty() ? ", " : "").append(Logging.getMessage("WorldFile.NoDataTypeSpecified", source));
+            sb.append(sb.isEmpty() ? "" : ", ").append(Logging.getMessage("WorldFile.NoDataTypeSpecified", source));
         }
 
         if (sb.isEmpty()) {
@@ -165,15 +162,12 @@ public class BILRasterReader extends AbstractDataRasterReader {
             // handle bil.gz, bil16.gz, and bil32.gz files
             else if (file.getName().toLowerCase().endsWith(".gz")) {
                 return WWIO.readGZipFileToBuffer(file);
-            }
-            else if (!this.isMapLargeFiles() || (this.getLargeFileThreshold() > file.length())) {
+            } else if (!this.isMapLargeFiles() || (this.getLargeFileThreshold() > file.length())) {
                 return WWIO.readFileToBuffer(file);
-            }
-            else {
+            } else {
                 return WWIO.mapFile(file);
             }
-        }
-        else // (source instanceof java.net.URL)
+        } else // (source instanceof java.net.URL)
         {
             return WWIO.readURLContentToBuffer(url);
         }

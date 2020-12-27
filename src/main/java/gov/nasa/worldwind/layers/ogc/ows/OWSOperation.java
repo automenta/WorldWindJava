@@ -52,24 +52,21 @@ public class OWSOperation extends AbstractXMLEventParser {
                 if (o instanceof OWSDCP)
                     this.dcps.add((OWSDCP) o);
             }
-        }
-        else if (ctx.isStartElement(event, "Parameter")) {
+        } else if (ctx.isStartElement(event, "Parameter")) {
             XMLEventParser parser = this.allocate(ctx, event);
             if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
                 if (o instanceof OWSParameter)
                     this.parameters.add((OWSParameter) o);
             }
-        }
-        else if (ctx.isStartElement(event, "Constraint")) {
+        } else if (ctx.isStartElement(event, "Constraint")) {
             XMLEventParser parser = this.allocate(ctx, event);
             if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
                 if (o instanceof OWSConstraint)
                     this.constraints.add((OWSConstraint) o);
             }
-        }
-        else {
+        } else {
             super.doParseEventContent(ctx, event, args);
         }
     }

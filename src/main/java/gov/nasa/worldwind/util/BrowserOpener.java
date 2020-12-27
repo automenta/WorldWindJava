@@ -25,24 +25,26 @@ public class BrowserOpener {
         try {
             String urlString = url.toString();
             if (Configuration.isMacOS())
-                browseMacOS(urlString);
+                BrowserOpener.browseMacOS(urlString);
             else if (Configuration.isWindowsOS())
-                browseWindows(urlString);
+                BrowserOpener.browseWindows(urlString);
             else if (Configuration.isUnixOS() || Configuration.isLinuxOS())
-                browseUnix(urlString);
+                BrowserOpener.browseUnix(urlString);
         }
         catch (Exception e) {
             throw new Exception(String.format("Cannot browse URL %s", url), e);
         }
     }
 
-    private static void browseMacOS(String urlString) throws Exception {
+    private static void browseMacOS(String urlString)
+        throws ClassNotFoundException, NoSuchMethodException, SecurityException, IllegalAccessException,
+        IllegalArgumentException, java.lang.reflect.InvocationTargetException {
         Class<?> fileManager = Class.forName("com.apple.eio.FileManager");
         Method openURL = fileManager.getDeclaredMethod("openURL", String.class);
         openURL.invoke(null, urlString);
     }
 
-    private static void browseWindows(String urlString) throws Exception {
+    private static void browseWindows(String urlString) throws java.io.IOException {
         Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + urlString);
     }
 

@@ -26,8 +26,8 @@ public class DXTCompressionAttributes {
         this.premultiplyAlpha = true;
         this.dxtFormat = 0;
         this.enableDXT1Alpha = false;
-        this.dxt1AlphaThreshold = DEFAULT_DXT1_TRANSPARENCY_THRESHOLD;
-        this.colorBlockCompressionType = COLOR_BLOCK_COMPRESSION_EUCLIDEAN_DISTANCE;
+        this.dxt1AlphaThreshold = DXTCompressionAttributes.DEFAULT_DXT1_TRANSPARENCY_THRESHOLD;
+        this.colorBlockCompressionType = DXTCompressionAttributes.COLOR_BLOCK_COMPRESSION_EUCLIDEAN_DISTANCE;
     }
 
     public boolean isBuildMipmaps() {

@@ -34,8 +34,7 @@ public class OWSAllowedValues extends AbstractXMLEventParser {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.values.add(s);
-        }
-        else {
+        } else {
             super.doParseEventContent(ctx, event, args);
         }
     }

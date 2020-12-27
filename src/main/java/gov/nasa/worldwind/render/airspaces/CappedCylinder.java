@@ -28,14 +28,14 @@ public class CappedCylinder extends AbstractAirspace {
     protected static final int DEFAULT_LOOPS = 8;
     protected static final int MINIMAL_GEOMETRY_SLICES = 8;
     protected static final int MINIMAL_GEOMETRY_LOOPS = 4;
-    private final int stacks = DEFAULT_STACKS;
+    private final int stacks = CappedCylinder.DEFAULT_STACKS;
     private LatLon center = LatLon.ZERO;
-    private double innerRadius = 0.0;
+    private double innerRadius;
     private double outerRadius = 1.0;
     private boolean enableCaps = true;
     // Geometry.
-    private int slices = DEFAULT_SLICES;
-    private int loops = DEFAULT_LOOPS;
+    private int slices = CappedCylinder.DEFAULT_SLICES;
+    private int loops = CappedCylinder.DEFAULT_LOOPS;
 
     public CappedCylinder(LatLon location, double radius) {
         if (location == null) {
@@ -82,38 +82,38 @@ public class CappedCylinder extends AbstractAirspace {
 
         DetailLevel level;
         level = new ScreenSizeDetailLevel(ramp[0], "Detail-Level-0");
-        level.set(SLICES, 32);
-        level.set(STACKS, 1);
-        level.set(LOOPS, 8);
-        level.set(DISABLE_TERRAIN_CONFORMANCE, false);
+        level.set(AbstractAirspace.SLICES, 32);
+        level.set(AbstractAirspace.STACKS, 1);
+        level.set(AbstractAirspace.LOOPS, 8);
+        level.set(AbstractAirspace.DISABLE_TERRAIN_CONFORMANCE, false);
         levels.add(level);
 
         level = new ScreenSizeDetailLevel(ramp[1], "Detail-Level-1");
-        level.set(SLICES, 26);
-        level.set(STACKS, 1);
-        level.set(LOOPS, 6);
-        level.set(DISABLE_TERRAIN_CONFORMANCE, false);
+        level.set(AbstractAirspace.SLICES, 26);
+        level.set(AbstractAirspace.STACKS, 1);
+        level.set(AbstractAirspace.LOOPS, 6);
+        level.set(AbstractAirspace.DISABLE_TERRAIN_CONFORMANCE, false);
         levels.add(level);
 
         level = new ScreenSizeDetailLevel(ramp[2], "Detail-Level-2");
-        level.set(SLICES, 20);
-        level.set(STACKS, 1);
-        level.set(LOOPS, 4);
-        level.set(DISABLE_TERRAIN_CONFORMANCE, false);
+        level.set(AbstractAirspace.SLICES, 20);
+        level.set(AbstractAirspace.STACKS, 1);
+        level.set(AbstractAirspace.LOOPS, 4);
+        level.set(AbstractAirspace.DISABLE_TERRAIN_CONFORMANCE, false);
         levels.add(level);
 
         level = new ScreenSizeDetailLevel(ramp[3], "Detail-Level-3");
-        level.set(SLICES, 14);
-        level.set(STACKS, 1);
-        level.set(LOOPS, 2);
-        level.set(DISABLE_TERRAIN_CONFORMANCE, false);
+        level.set(AbstractAirspace.SLICES, 14);
+        level.set(AbstractAirspace.STACKS, 1);
+        level.set(AbstractAirspace.LOOPS, 2);
+        level.set(AbstractAirspace.DISABLE_TERRAIN_CONFORMANCE, false);
         levels.add(level);
 
         level = new ScreenSizeDetailLevel(ramp[4], "Detail-Level-4");
-        level.set(SLICES, 8);
-        level.set(STACKS, 1);
-        level.set(LOOPS, 1);
-        level.set(DISABLE_TERRAIN_CONFORMANCE, true);
+        level.set(AbstractAirspace.SLICES, 8);
+        level.set(AbstractAirspace.STACKS, 1);
+        level.set(AbstractAirspace.LOOPS, 1);
+        level.set(AbstractAirspace.DISABLE_TERRAIN_CONFORMANCE, true);
         levels.add(level);
 
         this.setDetailLevels(levels);
@@ -242,8 +242,7 @@ public class CappedCylinder extends AbstractAirspace {
             Vec4 topCenter = centerPoint.add3(cylinderAxis.multiply3(maxProj));
             double radius = Math.sqrt(maxPerp);
             return new Cylinder(bottomCenter, topCenter, radius);
-        }
-        else {
+        } else {
             return Box.computeBoundingBox(points);
         }
     }
@@ -252,7 +251,7 @@ public class CappedCylinder extends AbstractAirspace {
     protected List<Vec4> computeMinimalGeometry(Globe globe, double verticalExaggeration) {
         GeometryBuilder gb = new GeometryBuilder();
         LatLon[] locations = GeometryBuilder.makeDiskLocations(globe, this.center, this.innerRadius, this.outerRadius,
-            MINIMAL_GEOMETRY_SLICES, MINIMAL_GEOMETRY_LOOPS);
+            CappedCylinder.MINIMAL_GEOMETRY_SLICES, CappedCylinder.MINIMAL_GEOMETRY_LOOPS);
 
         List<Vec4> points = new ArrayList<>();
         this.makeExtremePoints(globe, verticalExaggeration, Arrays.asList(locations), points);
@@ -295,8 +294,8 @@ public class CappedCylinder extends AbstractAirspace {
         super.doMoveTo(oldRef, newRef);
 
         LatLon center = this.getCenter();
-        double distance = LatLon.greatCircleDistance(oldRef, center).radians;
-        double azimuth = LatLon.greatCircleAzimuth(oldRef, center).radians;
+        double distance = LatLon.greatCircleDistance(oldRef, center).radians();
+        double azimuth = LatLon.greatCircleAzimuth(oldRef, center).radians();
         this.setCenter(LatLon.greatCircleEndPosition(newRef, azimuth, distance));
     }
 
@@ -316,12 +315,14 @@ public class CappedCylinder extends AbstractAirspace {
     @Override
     protected void regenerateSurfaceShape(DrawContext dc, SurfaceShape shape) {
         GeometryBuilder gb = new GeometryBuilder();
-        LatLon[] locations = GeometryBuilder.makeCylinderLocations(dc.getGlobe(), this.center, this.outerRadius, this.slices);
+        LatLon[] locations = GeometryBuilder.makeCylinderLocations(dc.getGlobe(), this.center, this.outerRadius,
+            this.slices);
         ((SurfacePolygon) shape).getBoundaries().clear();
         ((SurfacePolygon) shape).setOuterBoundary(Arrays.asList(locations));
 
         if (this.innerRadius > 0) {
-            locations = GeometryBuilder.makeCylinderLocations(dc.getGlobe(), this.center, this.innerRadius, this.slices);
+            locations = GeometryBuilder.makeCylinderLocations(dc.getGlobe(), this.center, this.innerRadius,
+                this.slices);
             ((SurfacePolygon) shape).addInnerBoundary(Arrays.asList(locations));
         }
     }
@@ -389,19 +390,19 @@ public class CappedCylinder extends AbstractAirspace {
         if (this.isEnableLevelOfDetail()) {
             DetailLevel level = this.computeDetailLevel(dc);
 
-            Object o = level.get(SLICES);
+            Object o = level.get(AbstractAirspace.SLICES);
             if (o instanceof Integer)
                 slices = (Integer) o;
 
-            o = level.get(STACKS);
+            o = level.get(AbstractAirspace.STACKS);
             if (o instanceof Integer)
                 stacks = (Integer) o;
 
-            o = level.get(LOOPS);
+            o = level.get(AbstractAirspace.LOOPS);
             if (o instanceof Integer)
                 loops = (Integer) o;
 
-            o = level.get(DISABLE_TERRAIN_CONFORMANCE);
+            o = level.get(AbstractAirspace.DISABLE_TERRAIN_CONFORMANCE);
             if (o instanceof Boolean && ((Boolean) o))
                 terrainConformant[0] = terrainConformant[1] = false;
         }
@@ -426,8 +427,7 @@ public class CappedCylinder extends AbstractAirspace {
                     this.drawCylinderOutline(dc, center, radii[0], altitudes, terrainConformant, slices, stacks,
                         GeometryBuilder.INSIDE, refCenter);
                 }
-            }
-            else if (Airspace.DRAW_STYLE_FILL.equals(drawStyle)) {
+            } else if (Airspace.DRAW_STYLE_FILL.equals(drawStyle)) {
                 if (this.enableCaps) {
                     ogsh.pushAttrib(gl, GL2.GL_POLYGON_BIT);
                     gl.glEnable(GL.GL_CULL_FACE);
@@ -531,7 +531,8 @@ public class CappedCylinder extends AbstractAirspace {
         int count = GeometryBuilder.getCylinderVertexCount(slices, stacks);
         float[] verts = new float[3 * count];
         float[] norms = new float[3 * count];
-        GeometryBuilder.makeCylinderVertices(dc.getTerrain(), center, radius, altitudes, terrainConformant, slices, stacks,
+        GeometryBuilder.makeCylinderVertices(dc.getTerrain(), center, radius, altitudes, terrainConformant, slices,
+            stacks,
             referenceCenter, verts);
         gb.makeCylinderNormals(slices, stacks, norms);
 
@@ -601,7 +602,8 @@ public class CappedCylinder extends AbstractAirspace {
         int count = GeometryBuilder.getDiskVertexCount(slices, loops);
         float[] verts = new float[3 * count];
         float[] norms = new float[3 * count];
-        GeometryBuilder.makeDiskVertices(dc.getTerrain(), center, radii[0], radii[1], altitude, terrainConformant, slices, loops,
+        GeometryBuilder.makeDiskVertices(dc.getTerrain(), center, radii[0], radii[1], altitude, terrainConformant,
+            slices, loops,
             referenceCenter, verts);
         gb.makeDiskVertexNormals((float) radii[0], (float) radii[1], slices, loops, verts, norms);
 

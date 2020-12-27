@@ -21,7 +21,7 @@ public class DDSRasterWriter extends AbstractDataRasterWriter {
     protected static final String[] ddsSuffixes = {"dds"};
 
     public DDSRasterWriter() {
-        super(ddsMimeTypes, ddsSuffixes);
+        super(DDSRasterWriter.ddsMimeTypes, DDSRasterWriter.ddsSuffixes);
     }
 
     protected boolean doCanWrite(DataRaster raster, String formatSuffix, File file) {

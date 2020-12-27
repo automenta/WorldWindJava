@@ -32,7 +32,7 @@ public class CrosshairLayer extends AbstractLayer {
     private String resizeBehavior = AVKey.RESIZE_SHRINK_ONLY;
     private int iconWidth;
     private int iconHeight;
-    private Vec4 locationCenter = null;
+    private Vec4 locationCenter;
 
     public CrosshairLayer() {
         this.setOpacity(0.8); // TODO: make configurable
@@ -276,8 +276,7 @@ public class CrosshairLayer extends AbstractLayer {
         if (this.locationCenter != null) {
             x = this.locationCenter.x - scaledWidth / 2;
             y = this.locationCenter.y - scaledHeight / 2;
-        }
-        else // viewport center
+        } else // viewport center
         {
             x = viewport.getWidth() / 2 - scaledWidth / 2;
             y = viewport.getHeight() / 2 - scaledHeight / 2;
@@ -294,7 +293,7 @@ public class CrosshairLayer extends AbstractLayer {
         GL gl = dc.getGL();
 
         try {
-            InputStream iconStream = this.getClass().getResourceAsStream("/" + this.getIconFilePath());
+            InputStream iconStream = this.getClass().getResourceAsStream('/' + this.getIconFilePath());
             if (iconStream == null) {
                 File iconFile = new File(this.getIconFilePath());
                 if (iconFile.exists()) {

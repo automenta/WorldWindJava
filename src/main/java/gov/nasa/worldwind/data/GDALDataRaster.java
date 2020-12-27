@@ -33,10 +33,10 @@ import java.util.logging.Level;
 public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
     protected static final int DEFAULT_MAX_RASTER_SIZE_LIMIT = 3072;
     protected final Object usageLock = new Object(); // GDAL rasters are not thread-safe
-    protected Dataset dsVRT = null;
+    protected Dataset dsVRT;
     protected SpatialReference srs;
-    protected File srcFile = null;
-    protected GDAL.Area area = null;
+    protected File srcFile;
+    protected GDAL.Area area;
 
     /**
      * Opens a data raster
@@ -68,8 +68,7 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
             String message;
             if (null != source) {
                 message = Logging.getMessage("generic.UnrecognizedSourceType", source.getClass().getName());
-            }
-            else {
+            } else {
                 message = Logging.getMessage("nullValue.SourceIsNull");
             }
 
@@ -116,7 +115,7 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
     }
 
     protected static int getMaxRasterSizeLimit() {
-        return DEFAULT_MAX_RASTER_SIZE_LIMIT;
+        return GDALDataRaster.DEFAULT_MAX_RASTER_SIZE_LIMIT;
     }
 
     protected static Band findAlphaBand(Dataset ds) {
@@ -150,11 +149,44 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
         Collections.sort(keys);
 
         for (String key : keys) {
-            sb.append("\n").append(key).append("=").append(list.get(key));
+            sb.append('\n').append(key).append('=').append(list.get(key));
         }
         sb.append("\n};");
 
         return sb.toString();
+    }
+
+    protected static Dataset createMaskDataset(int width, int height, Sector sector) {
+        if (width <= 0) {
+            String message = Logging.getMessage("generic.InvalidWidth", width);
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        if (height <= 0) {
+            String message = Logging.getMessage("generic.InvalidHeight", height);
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        Driver drvMem = gdal.GetDriverByName("MEM");
+
+        Dataset ds = drvMem.Create("roi-mask", width, height, 1, gdalconst.GDT_UInt32);
+        Band band = ds.GetRasterBand(1);
+        band.SetColorInterpretation(gdalconst.GCI_AlphaBand);
+        double missingSignal = GDALUtils.ALPHA_MASK;
+        band.SetNoDataValue(missingSignal);
+        band.Fill(missingSignal);
+
+        if (null != sector) {
+            SpatialReference t_srs = GDALUtils.createGeographicSRS();
+            String t_srs_wkt = t_srs.ExportToWkt();
+            ds.SetProjection(t_srs_wkt);
+
+            ds.SetGeoTransform(GDALUtils.calcGetGeoTransform(sector, width, height));
+        }
+
+        return ds;
     }
 
     /**
@@ -255,7 +287,7 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
                     proj = WWIO.readTextFile(prjFile);
                 }
             }
-            catch (Exception e) {
+            catch (RuntimeException e) {
                 String message = Logging.getMessage("generic.UnknownProjection", proj);
                 Logging.logger().severe(message);
             }
@@ -341,8 +373,7 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
                     Dataset dsWarp = vrt.CreateCopy("", ds);
                     dsWarp.SetProjection(srcWKT);
                     this.dsVRT = dsWarp;
-                }
-                else {
+                } else {
                     String message = Logging.getMessage("gdal.InternalError", GDALUtils.getErrorMessage());
                     Logging.logger().severe(message);
                     throw new WWRuntimeException(message);
@@ -394,7 +425,7 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
 
             // copy parent raster keys/values; only those key/value will be copied that do exist in the parent raster
             // AND does NOT exist in the requested raster
-            String[] keysToCopy = new String[] {
+            String[] keysToCopy = {
                 AVKey.DATA_TYPE, AVKey.MISSING_DATA_SIGNAL, AVKey.BYTE_ORDER, AVKey.PIXEL_FORMAT, AVKey.ELEVATION_UNIT
             };
             WWUtil.copyValues(this, params, keysToCopy, false);
@@ -405,7 +436,7 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
         catch (WWRuntimeException wwe) {
             Logging.logger().severe(wwe.getMessage());
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             String message = this.composeExceptionReason(e);
             Logging.logger().log(Level.SEVERE, message, e);
         }
@@ -441,39 +472,6 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
         }
 
         this.srs = null;
-    }
-
-    protected static Dataset createMaskDataset(int width, int height, Sector sector) {
-        if (width <= 0) {
-            String message = Logging.getMessage("generic.InvalidWidth", width);
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (height <= 0) {
-            String message = Logging.getMessage("generic.InvalidHeight", height);
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        Driver drvMem = gdal.GetDriverByName("MEM");
-
-        Dataset ds = drvMem.Create("roi-mask", width, height, 1, gdalconst.GDT_UInt32);
-        Band band = ds.GetRasterBand(1);
-        band.SetColorInterpretation(gdalconst.GCI_AlphaBand);
-        double missingSignal = GDALUtils.ALPHA_MASK;
-        band.SetNoDataValue(missingSignal);
-        band.Fill(missingSignal);
-
-        if (null != sector) {
-            SpatialReference t_srs = GDALUtils.createGeographicSRS();
-            String t_srs_wkt = t_srs.ExportToWkt();
-            ds.SetProjection(t_srs_wkt);
-
-            ds.SetGeoTransform(GDALUtils.calcGetGeoTransform(sector, width, height));
-        }
-
-        return ds;
     }
 
     /**
@@ -572,8 +570,7 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
                 bestOverviewIdx = i;
                 srcWidth = w;
                 srcHeight = h;
-            }
-            else {
+            } else {
                 break;
             }
         }
@@ -595,14 +592,13 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
                     if (ovHeightRes <= reqHeightRes && ovWidthRes <= reqWidthRes) {
                         srcWidth = (int) w;
                         srcHeight = (int) h;
-                    }
-                    else {
+                    } else {
                         break;
                     }
                 }
             }
 
-            if (srcHeight > getMaxRasterSizeLimit() || srcWidth > getMaxRasterSizeLimit()) {
+            if (srcHeight > GDALDataRaster.getMaxRasterSizeLimit() || srcWidth > GDALDataRaster.getMaxRasterSizeLimit()) {
                 return this.dsVRT;
             }
 
@@ -619,8 +615,7 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
             srcWidth = this.getWidth();
             srcHeight = this.getHeight();
 //            return this.dsVRT;
-        }
-        else {
+        } else {
             String msg = Logging.getMessage("gdal.UseOverviewRaster", srcWidth, srcHeight, reqWidth, reqHeight);
             Logging.logger().finest(msg);
         }
@@ -822,7 +817,7 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
         Band srcBand1 = this.dsVRT.GetRasterBand(1);
         int bandDataType = srcBand1.getDataType();
 
-        int[] bandColorInt = new int[] {gdalconst.GCI_RedBand, gdalconst.GCI_GreenBand,
+        int[] bandColorInt = {gdalconst.GCI_RedBand, gdalconst.GCI_GreenBand,
             gdalconst.GCI_BlueBand, gdalconst.GCI_AlphaBand};
 
         int destNumOfBands = 4; // RGBA by default
@@ -831,22 +826,18 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
         if (AVKey.ELEVATION.equals(pixelFormat)) {
             destNumOfBands = 1;
             bandColorInt = new int[] {gdalconst.GCI_GrayIndex};
-        }
-        else if (AVKey.IMAGE.equals(pixelFormat) && AVKey.GRAYSCALE.equals(colorFormat)) {
+        } else if (AVKey.IMAGE.equals(pixelFormat) && AVKey.GRAYSCALE.equals(colorFormat)) {
             bandColorInt = new int[] {gdalconst.GCI_GrayIndex, gdalconst.GCI_AlphaBand};
             destNumOfBands = 2; // Y + alpha
-        }
-        else if (AVKey.IMAGE.equals(pixelFormat) && AVKey.COLOR.equals(colorFormat)) {
+        } else if (AVKey.IMAGE.equals(pixelFormat) && AVKey.COLOR.equals(colorFormat)) {
             bandColorInt = new int[] {
                 gdalconst.GCI_RedBand, gdalconst.GCI_GreenBand, gdalconst.GCI_BlueBand, gdalconst.GCI_AlphaBand};
 
             if (AVKey.INT16.equals(this.get(AVKey.DATA_TYPE)) && srcNumOfBands > 3) {
                 destNumOfBands = 3; // ignore 4th band which is some kind of infra-red
-            }
-            else if (srcNumOfBands >= 3) {
+            } else if (srcNumOfBands >= 3) {
                 destNumOfBands = 4; // RGBA
-            }
-            else {
+            } else {
                 destNumOfBands = 1; // indexed 256 color image (like CADRG)
                 bandColorInt = new int[] {gdalconst.GCI_PaletteIndex};
             }
@@ -884,8 +875,7 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
                 if (colorInt == gdalconst.GCI_PaletteIndex) {
                     band.SetColorTable(srcBand.GetColorTable());
                 }
-            }
-            else {
+            } else {
                 colorInt = bandColorInt[i];
                 band.SetColorInterpretation(colorInt);
             }
@@ -909,7 +899,7 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
             ds.SetGeoTransform(GDALUtils.calcGetGeoTransform(sector, width, height));
         }
 
-        String[] keysToCopy = new String[] {
+        String[] keysToCopy = {
             AVKey.RASTER_BAND_ACTUAL_BITS_PER_PIXEL,
             AVKey.RASTER_BAND_MAX_PIXEL_VALUE
         };
@@ -942,7 +932,7 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
 
         // copy parent raster keys/values; only those key/value will be copied that do exist in the parent raster
         // AND does NOT exist in the requested raster
-        String[] keysToCopy = new String[] {
+        String[] keysToCopy = {
             AVKey.DATA_TYPE, AVKey.MISSING_DATA_SIGNAL, AVKey.BYTE_ORDER, AVKey.PIXEL_FORMAT, AVKey.ELEVATION_UNIT
         };
         WWUtil.copyValues(this, params, keysToCopy, false);
@@ -1013,8 +1003,7 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
 
                     start = System.currentTimeMillis();
                     gdal.ReprojectImage(srcDS, maskDS, s_srs_wkt, t_srs_wkt, gdalconst.GRA_NearestNeighbour);
-                }
-                else {
+                } else {
                     gdal.ReprojectImage(srcDS, destDS);
                     projTime = System.currentTimeMillis() - start;
 
@@ -1036,7 +1025,7 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
                 raster = GDALUtils.composeDataRaster(destDS, roiParams);
                 long composeTime = System.currentTimeMillis() - start;
 
-                Logging.logger().finest("doGetSubRaster(): [" + roiWidth + "x" + roiHeight + "] - "
+                Logging.logger().finest("doGetSubRaster(): [" + roiWidth + 'x' + roiHeight + "] - "
                     + " totalTime = " + (System.currentTimeMillis() - totalTime)
                     + " msec { Cropping = " + cropTime + " msec, Reprojection = " + projTime
                     + " msec, Masking = " + maskTime + " msec, Composing = " + composeTime + " msec }");
@@ -1062,15 +1051,14 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
 
     @Override
     public String toString() {
-        return "GDALDataRaster " + convertAVListToString(this);
+        return "GDALDataRaster " + GDALDataRaster.convertAVListToString(this);
     }
 
     protected boolean intersects(Sector reqSector) {
         if (null != reqSector) {
             if (null != this.area) {
                 return (null != this.area.intersection(reqSector));
-            }
-            else {
+            } else {
                 return reqSector.intersects(this.getSector());
             }
         }

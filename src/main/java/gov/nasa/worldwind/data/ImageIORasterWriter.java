@@ -24,7 +24,7 @@ public class ImageIORasterWriter extends AbstractDataRasterWriter {
     private boolean writeGeoreferenceFiles;
 
     public ImageIORasterWriter(boolean writeGeoreferenceFiles) {
-        super(ImageIO.getWriterMIMETypes(), getImageIOWriterSuffixes());
+        super(ImageIO.getWriterMIMETypes(), ImageIORasterWriter.getImageIOWriterSuffixes());
 
         this.writeGeoreferenceFiles = writeGeoreferenceFiles;
     }
@@ -39,7 +39,7 @@ public class ImageIORasterWriter extends AbstractDataRasterWriter {
             iter = IIORegistry.getDefaultInstance().getServiceProviders(
                 ImageWriterSpi.class, true);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             return new String[0];
         }
 
@@ -55,41 +55,13 @@ public class ImageIORasterWriter extends AbstractDataRasterWriter {
         return array;
     }
 
-    public boolean isWriteGeoreferenceFiles() {
-        return this.writeGeoreferenceFiles;
-    }
-
-    public void setWriteGeoreferenceFiles(boolean writeGeoreferenceFiles) {
-        this.writeGeoreferenceFiles = writeGeoreferenceFiles;
-    }
-
-    protected boolean doCanWrite(DataRaster raster, String formatSuffix, File file) {
-        return (raster instanceof BufferedImageRaster);
-    }
-
-    protected void doWrite(DataRaster raster, String formatSuffix, File file) throws IOException {
-        ImageIORasterWriter.writeImage(raster, formatSuffix, file);
-
-        if (this.isWriteGeoreferenceFiles()) {
-            AVList worldFileParams = new AVListImpl();
-            ImageIORasterWriter.initWorldFileParams(raster, worldFileParams);
-
-            File dir = file.getParentFile();
-            String base = WWIO.replaceSuffix(file.getName(), "");
-            String suffix = WWIO.getSuffix(file.getName());
-            String worldFileSuffix = ImageIORasterWriter.suffixForWorldFile(suffix);
-
-            ImageIORasterWriter.writeImageMetadata(new File(dir, base + "." + worldFileSuffix), worldFileParams);
-        }
-    }
-
     protected static void writeImage(DataRaster raster, String formatSuffix, File file) throws IOException {
         BufferedImageRaster bufferedImageRaster = (BufferedImageRaster) raster;
         BufferedImage image = bufferedImageRaster.getBufferedImage();
         ImageIO.write(image, formatSuffix, file);
     }
 
-    protected static void writeImageMetadata(File file, AVList values) throws IOException {
+    protected static void writeImageMetadata(File file, AVList values) throws FileNotFoundException {
         Sector sector = (Sector) values.get(AVKey.SECTOR);
         int[] size = (int[]) values.get(WorldFile.WORLD_FILE_IMAGE_SIZE);
 
@@ -121,7 +93,7 @@ public class ImageIORasterWriter extends AbstractDataRasterWriter {
         StringBuilder sb = new StringBuilder();
         sb.append(Character.toLowerCase(suffix.charAt(0)));
         sb.append(Character.toLowerCase(suffix.charAt(length - 1)));
-        sb.append("w");
+        sb.append('w');
 
         return sb.toString();
     }
@@ -134,5 +106,33 @@ public class ImageIORasterWriter extends AbstractDataRasterWriter {
 
         Sector sector = raster.getSector();
         worldFileParams.set(AVKey.SECTOR, sector);
+    }
+
+    public boolean isWriteGeoreferenceFiles() {
+        return this.writeGeoreferenceFiles;
+    }
+
+    public void setWriteGeoreferenceFiles(boolean writeGeoreferenceFiles) {
+        this.writeGeoreferenceFiles = writeGeoreferenceFiles;
+    }
+
+    protected boolean doCanWrite(DataRaster raster, String formatSuffix, File file) {
+        return (raster instanceof BufferedImageRaster);
+    }
+
+    protected void doWrite(DataRaster raster, String formatSuffix, File file) throws IOException {
+        ImageIORasterWriter.writeImage(raster, formatSuffix, file);
+
+        if (this.isWriteGeoreferenceFiles()) {
+            AVList worldFileParams = new AVListImpl();
+            ImageIORasterWriter.initWorldFileParams(raster, worldFileParams);
+
+            File dir = file.getParentFile();
+            String base = WWIO.replaceSuffix(file.getName(), "");
+            String suffix = WWIO.getSuffix(file.getName());
+            String worldFileSuffix = ImageIORasterWriter.suffixForWorldFile(suffix);
+
+            ImageIORasterWriter.writeImageMetadata(new File(dir, base + '.' + worldFileSuffix), worldFileParams);
+        }
     }
 }

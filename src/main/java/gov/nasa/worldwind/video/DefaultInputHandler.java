@@ -23,17 +23,28 @@ import static java.awt.event.InputEvent.*;
 
 /**
  * actually, this handles events for NEWT too for now.
+ *
  * @author tag
  * @version $Id: AWTInputHandler.java 2258 2014-08-22 22:08:33Z dcollins $
  */
-public class DefaultInputHandler extends WWObjectImpl implements KeyListener, MouseListener, MouseMotionListener, MouseWheelListener, FocusListener, InputHandler, Disposable {
-    private WorldWindow wwd = null;
+public class DefaultInputHandler extends WWObjectImpl
+    implements KeyListener, MouseListener, MouseMotionListener, MouseWheelListener, FocusListener, InputHandler,
+    Disposable {
+    private static final Component dummySource = new JButton() {
+        private final Point ZERO = new Point(0, 0);
+
+        @Override
+        public Point getLocationOnScreen() {
+            return ZERO;
+        }
+    };
     public final EventListenerList eventListeners = new EventListenerList();
+    private WorldWindow wwd;
     private Point mousePoint = new Point();
     private PickedObjectList hoverObjects;
     private PickedObjectList objectsAtButtonPress;
-    private boolean isHovering = false;
-    private boolean isDragging = false;
+    private boolean isHovering;
+    private boolean isDragging;
     private boolean forceRedrawOnMousePressed = Configuration.getBooleanValue(AVKey.REDRAW_ON_MOUSE_PRESSED, false);
     private Timer hoverTimer = new Timer(600, actionEvent -> {
         if (DefaultInputHandler.this.pickMatches(DefaultInputHandler.this.hoverObjects)) {
@@ -47,6 +58,34 @@ public class DefaultInputHandler extends WWObjectImpl implements KeyListener, Mo
     private SelectListener selectListener;
 
     public DefaultInputHandler() {
+    }
+
+    private static MouseEvent mouseEvent(com.jogamp.newt.event.MouseEvent e, int mousePressed) {
+        e.setConsumed(true);
+        return new MouseEvent(DefaultInputHandler.dummySource, mousePressed, e.getWhen(),
+            DefaultInputHandler.awtModifiers(e), e.getX(), e.getY(), e.getClickCount(), false, e.getButton());
+    }
+
+    private static MouseWheelEvent mouseWheelEvent(com.jogamp.newt.event.MouseEvent e) {
+        e.setConsumed(true);
+        return new MouseWheelEvent(DefaultInputHandler.dummySource, MouseEvent.MOUSE_WHEEL, e.getWhen(), 0, e.getX(), e.getY(),
+            e.getClickCount(), false, MouseWheelEvent.WHEEL_UNIT_SCROLL,
+            1, -Math.round(e.getRotation()[1]));
+    }
+
+    private static int awtModifiers(com.jogamp.newt.event.MouseEvent e) {
+        int modifiersEx = 0;
+        if (e.isButtonDown(com.jogamp.newt.event.MouseEvent.BUTTON1))
+            modifiersEx |= BUTTON1_DOWN_MASK;
+        if (e.isButtonDown(com.jogamp.newt.event.MouseEvent.BUTTON2))
+            modifiersEx |= BUTTON2_DOWN_MASK;
+        if (e.isButtonDown(com.jogamp.newt.event.MouseEvent.BUTTON3))
+            modifiersEx |= BUTTON3_DOWN_MASK;
+        return modifiersEx;
+    }
+
+    private static boolean isPickListEmpty(Collection<PickedObject> pickList) {
+        return pickList == null || pickList.size() < 1;
     }
 
     public void dispose() {
@@ -81,7 +120,7 @@ public class DefaultInputHandler extends WWObjectImpl implements KeyListener, Mo
 
         //this.eventListeners = new EventListenerList(); // make orphans of listener references
 
-        if (wwd!=null) {
+        if (wwd != null) {
             wwd.stopEvents(this);
 
             if (this.selectListener != null)
@@ -189,55 +228,38 @@ public class DefaultInputHandler extends WWObjectImpl implements KeyListener, Mo
 
     @Override
     public void mouseClicked(com.jogamp.newt.event.MouseEvent e) {
-        mouseClicked(mouseEvent(e, MouseEvent.MOUSE_CLICKED));
-
+        mouseClicked(DefaultInputHandler.mouseEvent(e, MouseEvent.MOUSE_CLICKED));
     }
-
-    private static MouseEvent mouseEvent(com.jogamp.newt.event.MouseEvent e, int mousePressed) {
-        e.setConsumed(true);
-        return new MouseEvent(dummySource, mousePressed, e.getWhen(),
-            awtModifiers(e), e.getX(), e.getY(), e.getClickCount(), false, e.getButton());
-    }
-    private static MouseWheelEvent mouseWheelEvent(com.jogamp.newt.event.MouseEvent e) {
-        e.setConsumed(true);
-        return new MouseWheelEvent(dummySource, MouseEvent.MOUSE_WHEEL, e.getWhen(), 0, e.getX(), e.getY(),
-            e.getClickCount(), false, MouseWheelEvent.WHEEL_UNIT_SCROLL,
-            1, -Math.round(e.getRotation()[1]));
-    }
-
-
 
     @Override
     public void mouseEntered(com.jogamp.newt.event.MouseEvent e) {
-        mouseEntered(mouseEvent(e, MouseEvent.MOUSE_ENTERED));
+        mouseEntered(DefaultInputHandler.mouseEvent(e, MouseEvent.MOUSE_ENTERED));
     }
 
     @Override
     public void mouseExited(com.jogamp.newt.event.MouseEvent e) {
-        mouseExited(mouseEvent(e, MouseEvent.MOUSE_EXITED));
+        mouseExited(DefaultInputHandler.mouseEvent(e, MouseEvent.MOUSE_EXITED));
     }
 
     @Override
     public void mousePressed(com.jogamp.newt.event.MouseEvent e) {
-        mousePressed(mouseEvent(e, MouseEvent.MOUSE_PRESSED));
+        mousePressed(DefaultInputHandler.mouseEvent(e, MouseEvent.MOUSE_PRESSED));
     }
 
     @Override
     public void mouseReleased(com.jogamp.newt.event.MouseEvent e) {
-        mouseReleased(mouseEvent(e, MouseEvent.MOUSE_RELEASED));
+        mouseReleased(DefaultInputHandler.mouseEvent(e, MouseEvent.MOUSE_RELEASED));
     }
 
     @Override
     public void mouseMoved(com.jogamp.newt.event.MouseEvent e) {
-        mouseMoved(mouseEvent(e, MouseEvent.MOUSE_MOVED));
+        mouseMoved(DefaultInputHandler.mouseEvent(e, MouseEvent.MOUSE_MOVED));
     }
-
 
     @Override
     public void mouseWheelMoved(com.jogamp.newt.event.MouseEvent e) {
-        mouseWheelMoved(mouseWheelEvent(e));
+        mouseWheelMoved(DefaultInputHandler.mouseWheelEvent(e));
     }
-
 
     public void keyTyped(KeyEvent keyEvent) {
         if (this.wwd == null) {
@@ -290,7 +312,6 @@ public class DefaultInputHandler extends WWObjectImpl implements KeyListener, Mo
     public void mouseClicked(final MouseEvent e) {
         if (this.wwd == null || this.wwd.view() == null || e == null)
             return;
-
 
         this.callMouseClickedListeners(e);
 
@@ -436,11 +457,13 @@ public class DefaultInputHandler extends WWObjectImpl implements KeyListener, Mo
                 || (pickedObjects != null && pickedObjects.getTopPickedObject() != null
                 && !pickedObjects.getTopPickedObject().isTerrain())) {
                 this.isDragging = true;
-                DragSelectEvent selectEvent = new DragSelectEvent(this.wwd, SelectEvent.DRAG, mouseEvent, pickedObjects, prevMousePoint);
+                DragSelectEvent selectEvent = new DragSelectEvent(this.wwd, SelectEvent.DRAG, mouseEvent, pickedObjects,
+                    prevMousePoint);
                 this.callSelectListeners(selectEvent);
 
                 // If no listener consumed the event, then cancel the drag.
-                if (!selectEvent.isConsumed()) this.cancelDrag();
+                if (!selectEvent.isConsumed())
+                    this.cancelDrag();
             }
         }
 
@@ -454,29 +477,9 @@ public class DefaultInputHandler extends WWObjectImpl implements KeyListener, Mo
         }
     }
 
-    private static final Component dummySource = new JButton() {
-        private final Point ZERO = new Point(0,0);
-
-        @Override
-        public Point getLocationOnScreen() {
-            return ZERO;
-        }
-    };
-
     @Override
     public void mouseDragged(com.jogamp.newt.event.MouseEvent e) {
-        mouseDragged(mouseEvent(e, MouseEvent.MOUSE_DRAGGED));
-    }
-
-    private static int awtModifiers(com.jogamp.newt.event.MouseEvent e) {
-        int modifiersEx = 0;
-        if (e.isButtonDown(com.jogamp.newt.event.MouseEvent.BUTTON1))
-            modifiersEx |= BUTTON1_DOWN_MASK;
-        if (e.isButtonDown(com.jogamp.newt.event.MouseEvent.BUTTON2))
-            modifiersEx |= BUTTON2_DOWN_MASK;
-        if (e.isButtonDown(com.jogamp.newt.event.MouseEvent.BUTTON3))
-            modifiersEx |= BUTTON3_DOWN_MASK;
-        return modifiersEx;
+        mouseDragged(DefaultInputHandler.mouseEvent(e, MouseEvent.MOUSE_DRAGGED));
     }
 
     public void mouseMoved(MouseEvent mouseEvent) {
@@ -525,19 +528,16 @@ public class DefaultInputHandler extends WWObjectImpl implements KeyListener, Mo
         this.wwd.view().getViewInputHandler().focusLost(focusEvent);
     }
 
-    private static boolean isPickListEmpty(Collection<PickedObject> pickList) {
-        return pickList == null || pickList.size() < 1;
-    }
-
     private void doHover(boolean reset) {
         PickedObjectList pickedObjects = this.wwd.objectsAtPosition();
-        if (!(DefaultInputHandler.isPickListEmpty(this.hoverObjects) || DefaultInputHandler.isPickListEmpty(pickedObjects))) {
+        if (!(DefaultInputHandler.isPickListEmpty(this.hoverObjects) || DefaultInputHandler.isPickListEmpty(
+            pickedObjects))) {
             PickedObject hover = this.hoverObjects.getTopPickedObject();
             PickedObject last = pickedObjects.getTopPickedObject();
 
             Object oh = hover == null ? null : hover.get() != null ? hover.get() :
                 hover.getParentLayer();
-            if (oh!=null) {
+            if (oh != null) {
                 Object ol = last == null ? null : last.get() != null ? last.get() :
                     last.getParentLayer();
                 if (oh.equals(ol)) {
@@ -573,7 +573,8 @@ public class DefaultInputHandler extends WWObjectImpl implements KeyListener, Mo
     }
 
     private boolean pickMatches(PickedObjectList pickedObjects) {
-        if (DefaultInputHandler.isPickListEmpty(this.wwd.objectsAtPosition()) || DefaultInputHandler.isPickListEmpty(pickedObjects)) {
+        if (DefaultInputHandler.isPickListEmpty(this.wwd.objectsAtPosition()) || DefaultInputHandler.isPickListEmpty(
+            pickedObjects)) {
             return false;
         }
 
@@ -746,12 +747,12 @@ public class DefaultInputHandler extends WWObjectImpl implements KeyListener, Mo
 
     @Override
     public void windowGainedFocus(com.jogamp.newt.event.WindowEvent e) {
-        focusGained(new FocusEvent(dummySource, WindowEvent.WINDOW_GAINED_FOCUS));
+        focusGained(new FocusEvent(DefaultInputHandler.dummySource, WindowEvent.WINDOW_GAINED_FOCUS));
     }
 
     @Override
     public void windowLostFocus(com.jogamp.newt.event.WindowEvent e) {
-        focusGained(new FocusEvent(dummySource, WindowEvent.WINDOW_LOST_FOCUS));
+        focusGained(new FocusEvent(DefaultInputHandler.dummySource, WindowEvent.WINDOW_LOST_FOCUS));
     }
 
     @Override

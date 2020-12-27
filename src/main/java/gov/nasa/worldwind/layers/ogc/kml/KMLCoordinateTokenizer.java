@@ -44,7 +44,7 @@ public class KMLCoordinateTokenizer {
     protected StringBuilder nextWord = new StringBuilder();
 
     protected boolean inWord;
-    protected boolean afterComma = false;
+    protected boolean afterComma;
 
     /**
      * Create a tokenizer to read coordinates from a string.
@@ -83,8 +83,7 @@ public class KMLCoordinateTokenizer {
                 // If the last separator was a comma, don't break. Wait for another word.
                 if (!this.afterComma && this.words.size() >= 2)
                     break;
-            }
-            else if (ch == ',') {
+            } else if (ch == ',') {
                 if (this.inWord)
                     wordBoundary();
 
@@ -93,8 +92,7 @@ public class KMLCoordinateTokenizer {
                 // Three words make a complete coordinate. Break out of the loop and return the coordinate.
                 if (this.words.size() >= 3)
                     break;
-            }
-            else {
+            } else {
                 this.inWord = true;
                 this.afterComma = false;
                 this.nextWord.append(ch);

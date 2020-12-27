@@ -180,11 +180,11 @@ class RPFNonpolarFrameTransform extends RPFFrameTransform {
     }
 
     public int getFrameNumber(int row, int column) {
-        return frameNumber(row, column, this.frameStructure.getLongitudinalFrames());
+        return RPFFrameTransform.frameNumber(row, column, this.frameStructure.getLongitudinalFrames());
     }
 
     public int getMaximumFrameNumber() {
-        return maxFrameNumber(this.frameStructure.getLatitudinalFrames(), this.frameStructure.getLongitudinalFrames());
+        return RPFFrameTransform.maxFrameNumber(this.frameStructure.getLatitudinalFrames(), this.frameStructure.getLongitudinalFrames());
     }
 
     public int getRows() {
@@ -202,21 +202,21 @@ class RPFNonpolarFrameTransform extends RPFFrameTransform {
             throw new IllegalArgumentException(message);
         }
 
-        int row = frameRow(frameNumber, this.frameStructure.getLongitudinalFrames());
-        int col = frameColumn(frameNumber, row, this.frameStructure.getLongitudinalFrames());
+        int row = RPFFrameTransform.frameRow(frameNumber, this.frameStructure.getLongitudinalFrames());
+        int col = RPFFrameTransform.frameColumn(frameNumber, row, this.frameStructure.getLongitudinalFrames());
 
         double zoneLat = RPFZone.isZoneInUpperHemisphere(this.zoneCode) ?
             this.frameStructure.getEquatorwardExtent() : this.frameStructure.getPolewardExtent();
-        double n = frameOriginLatitude(row, this.frameStructure.getNorthSouthPixelConstant(),
+        double n = RPFNonpolarFrameTransform.frameOriginLatitude(row, this.frameStructure.getNorthSouthPixelConstant(),
             RPFFrameStructure.getPixelRowsPerFrame(), zoneLat);
-        double w = frameOriginLongitude(col, this.frameStructure.getEastWestPixelConstant(),
+        double w = RPFNonpolarFrameTransform.frameOriginLongitude(col, this.frameStructure.getEastWestPixelConstant(),
             RPFFrameStructure.getPixelRowsPerFrame());
 
         return LatLon.fromDegrees(n, w);
     }
 
     public Sector computeFrameCoverage(int frameNumber) {
-        int maxFrameNumber = maxFrameNumber(this.frameStructure.getLatitudinalFrames(),
+        int maxFrameNumber = RPFFrameTransform.maxFrameNumber(this.frameStructure.getLatitudinalFrames(),
             this.frameStructure.getLongitudinalFrames());
         if (frameNumber < 0 || frameNumber > maxFrameNumber) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", frameNumber);
@@ -224,19 +224,19 @@ class RPFNonpolarFrameTransform extends RPFFrameTransform {
             throw new IllegalArgumentException(message);
         }
 
-        int row = frameRow(frameNumber, this.frameStructure.getLongitudinalFrames());
-        int col = frameColumn(frameNumber, row, this.frameStructure.getLongitudinalFrames());
+        int row = RPFFrameTransform.frameRow(frameNumber, this.frameStructure.getLongitudinalFrames());
+        int col = RPFFrameTransform.frameColumn(frameNumber, row, this.frameStructure.getLongitudinalFrames());
 
         double zoneLat = RPFZone.isZoneInUpperHemisphere(this.zoneCode) ?
             this.frameStructure.getEquatorwardExtent() : this.frameStructure.getPolewardExtent();
-        double n = frameOriginLatitude(row, this.frameStructure.getNorthSouthPixelConstant(),
+        double n = RPFNonpolarFrameTransform.frameOriginLatitude(row, this.frameStructure.getNorthSouthPixelConstant(),
             RPFFrameStructure.getPixelRowsPerFrame(), zoneLat);
-        double s = n - frameDeltaLatitude(this.frameStructure.getNorthSouthPixelConstant(),
+        double s = n - RPFNonpolarFrameTransform.frameDeltaLatitude(this.frameStructure.getNorthSouthPixelConstant(),
             RPFFrameStructure.getPixelRowsPerFrame());
 
-        double w = frameOriginLongitude(col, this.frameStructure.getEastWestPixelConstant(),
+        double w = RPFNonpolarFrameTransform.frameOriginLongitude(col, this.frameStructure.getEastWestPixelConstant(),
             RPFFrameStructure.getPixelRowsPerFrame());
-        double e = w + frameDeltaLongitude(this.frameStructure.getEastWestPixelConstant(),
+        double e = w + RPFNonpolarFrameTransform.frameDeltaLongitude(this.frameStructure.getEastWestPixelConstant(),
             RPFFrameStructure.getPixelRowsPerFrame());
         //e = normalizedDegreesLongitude(e);
 

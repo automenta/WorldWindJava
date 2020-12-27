@@ -30,7 +30,7 @@ public class Ellipsoid extends RigidShape {
     protected static final int DEFAULT_SUBDIVISIONS = 2;
 
     // Geometry.
-    protected int subdivisions = DEFAULT_SUBDIVISIONS;
+    protected int subdivisions = Ellipsoid.DEFAULT_SUBDIVISIONS;
 
     /**
      * Construct a default ellipsoid with centerPosition ZERO and radii all equal to one.
@@ -202,8 +202,7 @@ public class Ellipsoid extends RigidShape {
             makeUnitSphere(this.subdivisions, shapeData.getMesh(0));
             //this.restart(dc, geom);
             RigidShape.getGeometryCache().add(cacheKey, shapeData.getMesh(0));
-        }
-        else {
+        } else {
             // otherwise, just use the one from the cache
             shapeData.addMesh(0, geom);
         }
@@ -285,8 +284,7 @@ public class Ellipsoid extends RigidShape {
                 normalBuffer = mesh.getBuffer(Geometry.NORMAL);
                 if (normalBuffer == null) {
                     gl.glDisableClientState(GL2.GL_NORMAL_ARRAY);
-                }
-                else {
+                } else {
                     glType = mesh.getGLType(Geometry.NORMAL);
                     stride = mesh.getStride(Geometry.NORMAL);
                     gl.glNormalPointer(glType, stride, normalBuffer);
@@ -313,8 +311,7 @@ public class Ellipsoid extends RigidShape {
 
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
             gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
-        }
-        else {
+        } else {
             // render using vertex arrays
             gl.glVertexPointer(size, glType, stride, vertexBuffer.rewind());
             gl.glDrawElements(mode, count, type, elementBuffer);
@@ -375,7 +372,7 @@ public class Ellipsoid extends RigidShape {
 
         // transform the vertices from local to world coords
         Matrix matrix = computeRenderMatrix(terrain.getGlobe(), terrain.getVerticalExaggeration());
-        FloatBuffer newVertices = computeTransformedVertices((FloatBuffer) geom.getBuffer(Geometry.VERTEX),
+        FloatBuffer newVertices = RigidShape.computeTransformedVertices((FloatBuffer) geom.getBuffer(Geometry.VERTEX),
             geom.getCount(Geometry.VERTEX), matrix);
         geom.setVertexData(geom.getCount(Geometry.VERTEX), newVertices);
 

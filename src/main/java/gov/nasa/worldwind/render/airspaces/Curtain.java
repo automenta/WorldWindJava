@@ -29,7 +29,7 @@ public class Curtain extends AbstractAirspace {
     protected final List<LatLon> locations = new ArrayList<>();
     protected String pathType = AVKey.GREAT_CIRCLE;
     protected double splitThreshold = 2000.0; // 2 km
-    protected boolean applyPositionAltitude = false;
+    protected boolean applyPositionAltitude;
 
     public Curtain(Iterable<? extends LatLon> locations) {
         this.addLocations(locations);
@@ -56,34 +56,130 @@ public class Curtain extends AbstractAirspace {
         this.makeDefaultDetailLevels();
     }
 
+    protected static void makeSectionInfo(DrawContext dc, int count, LatLon[] locations, String pathType,
+        double splitThreshold,
+        SectionRenderInfo[] ri, int[] counts) {
+        int sectionCount = count - 1;
+
+        for (int i = 0; i < sectionCount; i++) {
+            ri[i] = new SectionRenderInfo(locations[i], locations[i + 1], pathType);
+            ri[i].pillars = Curtain.getSectionPillarCount(dc, ri[i].begin, ri[i].end, ri[i].pathType, splitThreshold);
+            ri[i].firstFillIndex = counts[0];
+            ri[i].firstOutlineIndex = counts[1];
+            ri[i].firstVertex = counts[2];
+            ri[i].fillIndexCount = Curtain.getSectionFillIndexCount(ri[i].pillars);
+            ri[i].outlineIndexCount = Curtain.getSectionOutlineIndexCount(ri[i].pillars);
+            ri[i].vertexCount = Curtain.getSectionVertexCount(ri[i].pillars);
+            counts[0] += ri[i].fillIndexCount;
+            counts[1] += ri[i].outlineIndexCount;
+            counts[2] += ri[i].vertexCount;
+        }
+    }
+
+    protected static int getSectionPillarCount(DrawContext dc, LatLon begin, LatLon end, String pathType,
+        double splitThreshold) {
+        Globe globe;
+        double arcLength, distance;
+        int pillars;
+
+        globe = dc.getGlobe();
+
+        if (AVKey.RHUMB_LINE.equalsIgnoreCase(pathType) || AVKey.LOXODROME.equalsIgnoreCase(pathType)) {
+            arcLength = LatLon.rhumbDistance(begin, end).radians();
+        } else // (AVKey.GREAT_CIRCLE.equalsIgnoreCase(pathType)
+        {
+            arcLength = LatLon.greatCircleDistance(begin, end).radians();
+        }
+
+        distance = arcLength * globe.getRadius();
+        pillars = (int) Math.ceil(distance / splitThreshold) - 1;
+        pillars = Math.max(1, pillars);
+
+        return pillars;
+    }
+
+    protected static int getSectionFillDrawMode() {
+        return GL.GL_TRIANGLE_STRIP;
+    }
+
+    protected static int getSectionOutlineDrawMode() {
+        return GL.GL_LINES;
+    }
+
+    protected static int getSectionFillIndexCount(int pillars) {
+        return 2 * (pillars + 1);
+    }
+
+    protected static int getSectionOutlineIndexCount(int pillars) {
+        return 4 * (pillars + 1);
+    }
+
+    protected static int getSectionVertexCount(int pillars) {
+        return 2 * (pillars + 1);
+    }
+
+    protected static void makeSectionFillIndices(int pillars, int vertexPos, int indexPos, int[] dest) {
+        int p;
+        int index, vertex;
+
+        index = indexPos;
+        for (p = 0; p <= pillars; p++) {
+            vertex = vertexPos + 2 * p;
+            dest[index++] = vertex + 1;
+            dest[index++] = vertex;
+        }
+    }
+
+    protected static void makeSectionOutlineIndices(int pillars, int vertexPos, int indexPos, int[] dest) {
+        int p;
+        int index, vertex;
+        index = indexPos;
+
+        vertex = vertexPos;
+        dest[index++] = vertex + 1;
+        dest[index++] = vertex;
+
+        for (p = 0; p < pillars; p++) {
+            vertex = vertexPos + 2 * p;
+            dest[index++] = vertex;
+            dest[index++] = vertex + 2;
+            dest[index++] = vertex + 1;
+            dest[index++] = vertex + 3;
+        }
+
+        vertex = vertexPos + 2 * pillars;
+        dest[index++] = vertex + 1;
+        dest[index] = vertex;
+    }
+
     protected void makeDefaultDetailLevels() {
         Collection<DetailLevel> levels = new ArrayList<>();
         double[] ramp = ScreenSizeDetailLevel.computeDefaultScreenSizeRamp(5);
 
         DetailLevel level;
         level = new ScreenSizeDetailLevel(ramp[0], "Detail-Level-0");
-        level.set(SPLIT_THRESHOLD, 1000.0);
-        level.set(DISABLE_TERRAIN_CONFORMANCE, false);
+        level.set(AbstractAirspace.SPLIT_THRESHOLD, 1000.0);
+        level.set(AbstractAirspace.DISABLE_TERRAIN_CONFORMANCE, false);
         levels.add(level);
 
         level = new ScreenSizeDetailLevel(ramp[1], "Detail-Level-1");
-        level.set(SPLIT_THRESHOLD, 2000.0);
-        level.set(DISABLE_TERRAIN_CONFORMANCE, false);
+        level.set(AbstractAirspace.SPLIT_THRESHOLD, 2000.0);
+        level.set(AbstractAirspace.DISABLE_TERRAIN_CONFORMANCE, false);
         levels.add(level);
 
         level = new ScreenSizeDetailLevel(ramp[2], "Detail-Level-2");
-        level.set(SPLIT_THRESHOLD, 10000.0);
-        level.set(DISABLE_TERRAIN_CONFORMANCE, false);
+        level.set(AbstractAirspace.SPLIT_THRESHOLD, 10000.0);
+        level.set(AbstractAirspace.DISABLE_TERRAIN_CONFORMANCE, false);
         levels.add(level);
 
         level = new ScreenSizeDetailLevel(ramp[3], "Detail-Level-3");
-        level.set(SPLIT_THRESHOLD, 100000.0);
-        level.set(DISABLE_TERRAIN_CONFORMANCE, false);
+        level.set(AbstractAirspace.SPLIT_THRESHOLD, 100000.0);
+        level.set(AbstractAirspace.DISABLE_TERRAIN_CONFORMANCE, false);
         levels.add(level);
 
         level = new ScreenSizeDetailLevel(ramp[4], "Detail-Level-4");
-        level.set(SPLIT_THRESHOLD, 1000000.0);
-        level.set(DISABLE_TERRAIN_CONFORMANCE, true);
+        level.set(AbstractAirspace.SPLIT_THRESHOLD, 1000000.0);
+        level.set(AbstractAirspace.DISABLE_TERRAIN_CONFORMANCE, true);
         levels.add(level);
 
         this.setDetailLevels(levels);
@@ -148,6 +244,10 @@ public class Curtain extends AbstractAirspace {
         return AbstractAirspace.computeReferencePosition(this.locations, this.getAltitudes());
     }
 
+    //**************************************************************//
+    //********************  Geometry Rendering  ********************//
+    //**************************************************************//
+
     protected Extent computeExtent(Globe globe, double verticalExaggeration) {
         List<Vec4> points = this.computeMinimalGeometry(globe, verticalExaggeration);
         if (points == null || points.isEmpty())
@@ -169,6 +269,10 @@ public class Curtain extends AbstractAirspace {
 
         return points;
     }
+
+    //**************************************************************//
+    //********************  Curtain             ********************//
+    //**************************************************************//
 
     @Override
     protected SurfaceShape createSurfaceShape() {
@@ -229,13 +333,17 @@ public class Curtain extends AbstractAirspace {
         LatLon[] newLocations = new LatLon[count];
         for (int i = 0; i < count; i++) {
             LatLon ll = this.locations.get(i);
-            double distance = LatLon.greatCircleDistance(oldRef, ll).radians;
-            double azimuth = LatLon.greatCircleAzimuth(oldRef, ll).radians;
+            double distance = LatLon.greatCircleDistance(oldRef, ll).radians();
+            double azimuth = LatLon.greatCircleAzimuth(oldRef, ll).radians();
             newLocations[i] = LatLon.greatCircleEndPosition(newRef, azimuth, distance);
         }
 
         this.setLocations(Arrays.asList(newLocations));
     }
+
+    //**************************************************************//
+    //********************  Section             ********************//
+    //**************************************************************//
 
     protected double getSplitThreshold() {
         return this.splitThreshold;
@@ -250,10 +358,6 @@ public class Curtain extends AbstractAirspace {
 
         this.splitThreshold = splitThreshold;
     }
-
-    //**************************************************************//
-    //********************  Geometry Rendering  ********************//
-    //**************************************************************//
 
     protected Vec4 computeReferenceCenter(DrawContext dc) {
         Extent extent = this.getExtent(dc);
@@ -284,11 +388,11 @@ public class Curtain extends AbstractAirspace {
         if (this.isEnableLevelOfDetail()) {
             DetailLevel level = this.computeDetailLevel(dc);
 
-            Object o = level.get(SPLIT_THRESHOLD);
+            Object o = level.get(AbstractAirspace.SPLIT_THRESHOLD);
             if (o instanceof Double)
                 splitThreshold = (Double) o;
 
-            o = level.get(DISABLE_TERRAIN_CONFORMANCE);
+            o = level.get(AbstractAirspace.DISABLE_TERRAIN_CONFORMANCE);
             if (o instanceof Boolean && (Boolean) o)
                 terrainConformant[0] = terrainConformant[1] = false;
         }
@@ -303,13 +407,12 @@ public class Curtain extends AbstractAirspace {
             gl.glGetIntegerv(GL2.GL_LIGHT_MODEL_TWO_SIDE, lightModelTwoSide, 0);
             dc.getView().pushReferenceCenter(dc, referenceCenter);
 
-            if (DRAW_STYLE_FILL.equals(drawStyle)) {
+            if (Airspace.DRAW_STYLE_FILL.equals(drawStyle)) {
                 gl.glLightModeli(GL2.GL_LIGHT_MODEL_TWO_SIDE, GL2.GL_TRUE);
 
                 this.drawCurtainFill(dc, count, locationArray, pathType, splitThreshold, altitudes, terrainConformant,
                     referenceCenter);
-            }
-            else if (DRAW_STYLE_OUTLINE.equals(drawStyle)) {
+            } else if (Airspace.DRAW_STYLE_OUTLINE.equals(drawStyle)) {
                 this.drawCurtainOutline(dc, count, locationArray, pathType, splitThreshold, altitudes,
                     terrainConformant, referenceCenter);
             }
@@ -319,10 +422,6 @@ public class Curtain extends AbstractAirspace {
             gl.glLightModeli(GL2.GL_LIGHT_MODEL_TWO_SIDE, lightModelTwoSide[0]);
         }
     }
-
-    //**************************************************************//
-    //********************  Curtain             ********************//
-    //**************************************************************//
 
     protected CurtainGeometry getCurtainGeometry(DrawContext dc, int count, LatLon[] locations, String pathType,
         double splitThreshold,
@@ -385,7 +484,8 @@ public class Curtain extends AbstractAirspace {
 
         for (int s = 0; s < sections; s++) {
             Curtain.makeSectionFillIndices(ri[s].pillars, ri[s].firstVertex, ri[s].firstFillIndex, fillIndices);
-            Curtain.makeSectionOutlineIndices(ri[s].pillars, ri[s].firstVertex, ri[s].firstOutlineIndex, outlineIndices);
+            Curtain.makeSectionOutlineIndices(ri[s].pillars, ri[s].firstVertex, ri[s].firstOutlineIndex,
+                outlineIndices);
 
             this.makeSectionVertices(dc, ri[s].begin, ri[s].end, ri[s].pathType, altitudes, terrainConformant,
                 ri[s].pillars, ri[s].firstVertex, verts, referenceCenter);
@@ -399,107 +499,6 @@ public class Curtain extends AbstractAirspace {
         dest.getVertexGeometry().setNormalData(counts[2], norms);
     }
 
-    protected static void makeSectionInfo(DrawContext dc, int count, LatLon[] locations, String pathType,
-        double splitThreshold,
-        SectionRenderInfo[] ri, int[] counts) {
-        int sectionCount = count - 1;
-
-        for (int i = 0; i < sectionCount; i++) {
-            ri[i] = new SectionRenderInfo(locations[i], locations[i + 1], pathType);
-            ri[i].pillars = Curtain.getSectionPillarCount(dc, ri[i].begin, ri[i].end, ri[i].pathType, splitThreshold);
-            ri[i].firstFillIndex = counts[0];
-            ri[i].firstOutlineIndex = counts[1];
-            ri[i].firstVertex = counts[2];
-            ri[i].fillIndexCount = Curtain.getSectionFillIndexCount(ri[i].pillars);
-            ri[i].outlineIndexCount = Curtain.getSectionOutlineIndexCount(ri[i].pillars);
-            ri[i].vertexCount = Curtain.getSectionVertexCount(ri[i].pillars);
-            counts[0] += ri[i].fillIndexCount;
-            counts[1] += ri[i].outlineIndexCount;
-            counts[2] += ri[i].vertexCount;
-        }
-    }
-
-    //**************************************************************//
-    //********************  Section             ********************//
-    //**************************************************************//
-
-    protected static int getSectionPillarCount(DrawContext dc, LatLon begin, LatLon end, String pathType,
-        double splitThreshold) {
-        Globe globe;
-        double arcLength, distance;
-        int pillars;
-
-        globe = dc.getGlobe();
-
-        if (AVKey.RHUMB_LINE.equalsIgnoreCase(pathType) || AVKey.LOXODROME.equalsIgnoreCase(pathType)) {
-            arcLength = LatLon.rhumbDistance(begin, end).radians;
-        }
-        else // (AVKey.GREAT_CIRCLE.equalsIgnoreCase(pathType)
-        {
-            arcLength = LatLon.greatCircleDistance(begin, end).radians;
-        }
-
-        distance = arcLength * globe.getRadius();
-        pillars = (int) Math.ceil(distance / splitThreshold) - 1;
-        pillars = Math.max(1, pillars);
-
-        return pillars;
-    }
-
-    protected static int getSectionFillDrawMode() {
-        return GL.GL_TRIANGLE_STRIP;
-    }
-
-    protected static int getSectionOutlineDrawMode() {
-        return GL.GL_LINES;
-    }
-
-    protected static int getSectionFillIndexCount(int pillars) {
-        return 2 * (pillars + 1);
-    }
-
-    protected static int getSectionOutlineIndexCount(int pillars) {
-        return 4 * (pillars + 1);
-    }
-
-    protected static int getSectionVertexCount(int pillars) {
-        return 2 * (pillars + 1);
-    }
-
-    protected static void makeSectionFillIndices(int pillars, int vertexPos, int indexPos, int[] dest) {
-        int p;
-        int index, vertex;
-
-        index = indexPos;
-        for (p = 0; p <= pillars; p++) {
-            vertex = vertexPos + 2 * p;
-            dest[index++] = vertex + 1;
-            dest[index++] = vertex;
-        }
-    }
-
-    protected static void makeSectionOutlineIndices(int pillars, int vertexPos, int indexPos, int[] dest) {
-        int p;
-        int index, vertex;
-        index = indexPos;
-
-        vertex = vertexPos;
-        dest[index++] = vertex + 1;
-        dest[index++] = vertex;
-
-        for (p = 0; p < pillars; p++) {
-            vertex = vertexPos + 2 * p;
-            dest[index++] = vertex;
-            dest[index++] = vertex + 2;
-            dest[index++] = vertex + 1;
-            dest[index++] = vertex + 3;
-        }
-
-        vertex = vertexPos + 2 * pillars;
-        dest[index++] = vertex + 1;
-        dest[index] = vertex;
-    }
-
     protected void makeSectionVertices(DrawContext dc, LatLon begin, LatLon end, String pathType,
         double[] altitude, boolean[] terrainConformant,
         int pillars, int vertexPos, float[] dest, Vec4 referenceCenter) {
@@ -507,13 +506,12 @@ public class Curtain extends AbstractAirspace {
         double arcLength, azimuth;
 
         if (AVKey.RHUMB_LINE.equalsIgnoreCase(pathType) || AVKey.LOXODROME.equalsIgnoreCase(pathType)) {
-            arcLength = LatLon.rhumbDistance(begin, end).radians;
-            azimuth = LatLon.rhumbAzimuth(begin, end).radians;
-        }
-        else // (AVKey.GREAT_CIRCLE.equalsIgnoreCase(pathType)
+            arcLength = LatLon.rhumbDistance(begin, end).radians();
+            azimuth = LatLon.rhumbAzimuth(begin, end).radians();
+        } else // (AVKey.GREAT_CIRCLE.equalsIgnoreCase(pathType)
         {
-            arcLength = LatLon.greatCircleDistance(begin, end).radians;
-            azimuth = LatLon.greatCircleAzimuth(begin, end).radians;
+            arcLength = LatLon.greatCircleDistance(begin, end).radians();
+            azimuth = LatLon.greatCircleAzimuth(begin, end).radians();
         }
 
         double dlength = arcLength / pillars;
@@ -579,28 +577,27 @@ public class Curtain extends AbstractAirspace {
         if (isRhumbSegment) {
             segmentAzimuth = LatLon.rhumbAzimuth(locA, locB);
             segmentDistance = LatLon.rhumbDistance(locA, locB);
-        }
-        else // Default to a great circle segment.
+        } else // Default to a great circle segment.
         {
             segmentAzimuth = LatLon.greatCircleAzimuth(locA, locB);
             segmentDistance = LatLon.greatCircleDistance(locA, locB);
         }
 
-        double arcLength = segmentDistance.radians * globe.getRadius();
+        double arcLength = segmentDistance.radians() * globe.getRadius();
         if (arcLength <= this.getSplitThreshold()) {
             tessellatedLocations.add(locB);
             return;
         }
 
         int numSubsegments = (int) Math.ceil(arcLength / this.getSplitThreshold());
-        double segmentIncrement = segmentDistance.radians / numSubsegments;
+        double segmentIncrement = segmentDistance.radians() / numSubsegments;
 
-        for (double s = 0; s < segmentDistance.radians; ) {
+        for (double s = 0; s < segmentDistance.radians(); ) {
             // If we've reached or passed the second location, then add the second location and break. We handle this
             // case specially to ensure that the actual second location is added, instead of a computed location very
             // close to it.
             s += segmentIncrement;
-            if (s >= segmentDistance.radians) {
+            if (s >= segmentDistance.radians()) {
                 tessellatedLocations.add(locB);
                 break;
             }
@@ -608,8 +605,7 @@ public class Curtain extends AbstractAirspace {
             LatLon ll;
             if (isRhumbSegment) {
                 ll = LatLon.rhumbEndPosition(locA, segmentAzimuth, Angle.fromRadians(s));
-            }
-            else // Default to a great circle segment.
+            } else // Default to a great circle segment.
             {
                 ll = LatLon.greatCircleEndPosition(locA, segmentAzimuth, Angle.fromRadians(s));
             }

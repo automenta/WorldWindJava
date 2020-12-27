@@ -24,11 +24,11 @@ public abstract class ShapefileRenderable extends WWObjectImpl
 
     static {
         defaultAttributes = new BasicShapeAttributes();
-        defaultAttributes.setInteriorMaterial(Material.LIGHT_GRAY);
-        defaultAttributes.setOutlineMaterial(Material.DARK_GRAY);
+        ShapefileRenderable.defaultAttributes.setInteriorMaterial(Material.LIGHT_GRAY);
+        ShapefileRenderable.defaultAttributes.setOutlineMaterial(Material.DARK_GRAY);
         defaultHighlightAttributes = new BasicShapeAttributes();
-        defaultHighlightAttributes.setInteriorMaterial(Material.WHITE);
-        defaultHighlightAttributes.setOutlineMaterial(Material.DARK_GRAY);
+        ShapefileRenderable.defaultHighlightAttributes.setInteriorMaterial(Material.WHITE);
+        ShapefileRenderable.defaultHighlightAttributes.setOutlineMaterial(Material.DARK_GRAY);
     }
 
     protected Sector sector;
@@ -38,6 +38,16 @@ public abstract class ShapefileRenderable extends WWObjectImpl
     protected ShapeAttributes initNormalAttrs;
     protected ShapeAttributes initHighlightAttrs;
     protected ShapefileRenderable.AttributeDelegate initAttributeDelegate;
+
+    protected static ShapeAttributes determineActiveAttributes(ShapefileRenderable.Record record) {
+        if (record.highlighted) {
+            return record.highlightAttrs != null ? record.highlightAttrs : ShapefileRenderable.defaultHighlightAttributes;
+        } else if (record.normalAttrs != null) {
+            return record.normalAttrs;
+        } else {
+            return ShapefileRenderable.defaultAttributes;
+        }
+    }
 
     /**
      * Initializes this ShapefileRenderable with the specified shapefile. The normal attributes, the highlight
@@ -142,18 +152,6 @@ public abstract class ShapefileRenderable extends WWObjectImpl
 
     protected void recordDidChange(ShapefileRenderable.Record record) {
         // Intentionally left empty. May be overridden by subclass.
-    }
-
-    protected static ShapeAttributes determineActiveAttributes(ShapefileRenderable.Record record) {
-        if (record.highlighted) {
-            return record.highlightAttrs != null ? record.highlightAttrs : defaultHighlightAttributes;
-        }
-        else if (record.normalAttrs != null) {
-            return record.normalAttrs;
-        }
-        else {
-            return defaultAttributes;
-        }
     }
 
     /**

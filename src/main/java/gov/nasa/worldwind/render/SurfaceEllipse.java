@@ -23,7 +23,7 @@ public class SurfaceEllipse extends AbstractSurfaceShape {
     protected double majorRadius;
     protected double minorRadius;
     protected Angle heading = Angle.ZERO;
-    private int intervals = DEFAULT_NUM_INTERVALS;
+    private int intervals = SurfaceEllipse.DEFAULT_NUM_INTERVALS;
 
     /**
      * Constructs a new surface ellipse with the default attributes, default center location, default radii, and default
@@ -128,7 +128,7 @@ public class SurfaceEllipse extends AbstractSurfaceShape {
     public SurfaceEllipse(LatLon center, double majorRadius, double minorRadius, Angle heading, int intervals) {
         this(center, majorRadius, minorRadius, heading);
 
-        if (intervals < MIN_NUM_INTERVALS) {
+        if (intervals < SurfaceEllipse.MIN_NUM_INTERVALS) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", intervals);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -218,7 +218,7 @@ public class SurfaceEllipse extends AbstractSurfaceShape {
         Angle heading, int intervals) {
         this(normalAttrs, center, majorRadius, minorRadius, heading);
 
-        if (intervals < MIN_NUM_INTERVALS) {
+        if (intervals < SurfaceEllipse.MIN_NUM_INTERVALS) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", intervals);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -297,7 +297,7 @@ public class SurfaceEllipse extends AbstractSurfaceShape {
     }
 
     public void setIntervals(int intervals) {
-        if (intervals < MIN_NUM_INTERVALS) {
+        if (intervals < SurfaceEllipse.MIN_NUM_INTERVALS) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", intervals);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -359,20 +359,20 @@ public class SurfaceEllipse extends AbstractSurfaceShape {
         if (this.majorRadius == 0 && this.minorRadius == 0)
             return null;
 
-        int numLocations = 1 + Math.max(MIN_NUM_INTERVALS, intervals);
+        int numLocations = 1 + Math.max(SurfaceEllipse.MIN_NUM_INTERVALS, intervals);
         double da = (2 * Math.PI) / (numLocations - 1);
         double globeRadius = globe.getRadiusAt(this.center.getLatitude(), this.center.getLongitude());
 
         LatLon[] locations = new LatLon[numLocations];
 
         for (int i = 0; i < numLocations; i++) {
-            double angle = (i != numLocations - 1) ? i * da : 0;
+            double angle = (i == numLocations - 1) ? 0 : i * da;
             double xLength = this.majorRadius * Math.cos(angle);
             double yLength = this.minorRadius * Math.sin(angle);
             double distance = Math.sqrt(xLength * xLength + yLength * yLength);
             // azimuth runs positive clockwise from north and through 360 degrees.
             double azimuth = (Math.PI / 2.0) - (Math.acos(xLength / distance) * Math.signum(yLength)
-                - this.heading.radians);
+                - this.heading.radians());
 
             locations[i] = LatLon.greatCircleEndPosition(this.center, azimuth, distance / globeRadius);
         }
@@ -411,7 +411,7 @@ public class SurfaceEllipse extends AbstractSurfaceShape {
             throw new IllegalArgumentException(message);
         }
 
-        int numPositions = 1 + Math.max(MIN_NUM_INTERVALS, intervals);
+        int numPositions = 1 + Math.max(SurfaceEllipse.MIN_NUM_INTERVALS, intervals);
         double radius = Math.max(this.majorRadius, this.minorRadius);
         double da = (2 * Math.PI) / (numPositions - 1);
         Angle edgePathLength = Angle.fromRadians(da * radius / globe.getRadiusAt(this.center));

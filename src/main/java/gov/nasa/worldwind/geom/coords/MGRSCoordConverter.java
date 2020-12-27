@@ -41,10 +41,10 @@ class MGRSCoordConverter {
     private static final int MGRS_UTM_ERROR = 0x1000;
     private static final int MGRS_UPS_ERROR = 0x2000;
     private static final double PI = 3.14159265358979323;
-    private static final double PI_OVER_2 = (PI / 2.0e0);
+    private static final double PI_OVER_2 = (MGRSCoordConverter.PI / 2.0e0);
     private static final int MAX_PRECISION = 5;
-    private static final double MIN_UTM_LAT = (-80 * PI) / 180.0;    // -80 degrees in radians
-    private static final double MAX_UTM_LAT = (84 * PI) / 180.0;     // 84 degrees in radians
+    private static final double MIN_UTM_LAT = (-80 * MGRSCoordConverter.PI) / 180.0;    // -80 degrees in radians
+    private static final double MAX_UTM_LAT = (84 * MGRSCoordConverter.PI) / 180.0;     // 84 degrees in radians
     private static final double RAD_TO_DEG = 57.29577951308232087;   // 180/PI
 
     private static final double MIN_EAST_NORTH = 0;
@@ -86,32 +86,32 @@ class MGRSCoordConverter {
     private static final String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     // UPS Constants are in the following order:
     private static final long[][] upsConstants = {
-        {LETTER_A, LETTER_J, LETTER_Z, LETTER_Z, 800000, 800000},
-        {LETTER_B, LETTER_A, LETTER_R, LETTER_Z, 2000000, 800000},
-        {LETTER_Y, LETTER_J, LETTER_Z, LETTER_P, 800000, 1300000},
-        {LETTER_Z, LETTER_A, LETTER_J, LETTER_P, 2000000, 1300000}};
+        {MGRSCoordConverter.LETTER_A, MGRSCoordConverter.LETTER_J, MGRSCoordConverter.LETTER_Z, MGRSCoordConverter.LETTER_Z, 800000, 800000},
+        {MGRSCoordConverter.LETTER_B, MGRSCoordConverter.LETTER_A, MGRSCoordConverter.LETTER_R, MGRSCoordConverter.LETTER_Z, 2000000, 800000},
+        {MGRSCoordConverter.LETTER_Y, MGRSCoordConverter.LETTER_J, MGRSCoordConverter.LETTER_Z, MGRSCoordConverter.LETTER_P, 800000, 1300000},
+        {MGRSCoordConverter.LETTER_Z, MGRSCoordConverter.LETTER_A, MGRSCoordConverter.LETTER_J, MGRSCoordConverter.LETTER_P, 2000000, 1300000}};
     // Latitude Band Constants are in the following order:
     private static final double[][] latitudeBandConstants = {
-        {LETTER_C, 1100000.0, -72.0, -80.5, 0.0},
-        {LETTER_D, 2000000.0, -64.0, -72.0, 2000000.0},
-        {LETTER_E, 2800000.0, -56.0, -64.0, 2000000.0},
-        {LETTER_F, 3700000.0, -48.0, -56.0, 2000000.0},
-        {LETTER_G, 4600000.0, -40.0, -48.0, 4000000.0},
-        {LETTER_H, 5500000.0, -32.0, -40.0, 4000000.0},   //smithjl last column to table
-        {LETTER_J, 6400000.0, -24.0, -32.0, 6000000.0},
-        {LETTER_K, 7300000.0, -16.0, -24.0, 6000000.0},
-        {LETTER_L, 8200000.0, -8.0, -16.0, 8000000.0},
-        {LETTER_M, 9100000.0, 0.0, -8.0, 8000000.0},
-        {LETTER_N, 0.0, 8.0, 0.0, 0.0},
-        {LETTER_P, 800000.0, 16.0, 8.0, 0.0},
-        {LETTER_Q, 1700000.0, 24.0, 16.0, 0.0},
-        {LETTER_R, 2600000.0, 32.0, 24.0, 2000000.0},
-        {LETTER_S, 3500000.0, 40.0, 32.0, 2000000.0},
-        {LETTER_T, 4400000.0, 48.0, 40.0, 4000000.0},
-        {LETTER_U, 5300000.0, 56.0, 48.0, 4000000.0},
-        {LETTER_V, 6200000.0, 64.0, 56.0, 6000000.0},
-        {LETTER_W, 7000000.0, 72.0, 64.0, 6000000.0},
-        {LETTER_X, 7900000.0, 84.5, 72.0, 6000000.0}};
+        {MGRSCoordConverter.LETTER_C, 1100000.0, -72.0, -80.5, 0.0},
+        {MGRSCoordConverter.LETTER_D, 2000000.0, -64.0, -72.0, 2000000.0},
+        {MGRSCoordConverter.LETTER_E, 2800000.0, -56.0, -64.0, 2000000.0},
+        {MGRSCoordConverter.LETTER_F, 3700000.0, -48.0, -56.0, 2000000.0},
+        {MGRSCoordConverter.LETTER_G, 4600000.0, -40.0, -48.0, 4000000.0},
+        {MGRSCoordConverter.LETTER_H, 5500000.0, -32.0, -40.0, 4000000.0},   //smithjl last column to table
+        {MGRSCoordConverter.LETTER_J, 6400000.0, -24.0, -32.0, 6000000.0},
+        {MGRSCoordConverter.LETTER_K, 7300000.0, -16.0, -24.0, 6000000.0},
+        {MGRSCoordConverter.LETTER_L, 8200000.0, -8.0, -16.0, 8000000.0},
+        {MGRSCoordConverter.LETTER_M, 9100000.0, 0.0, -8.0, 8000000.0},
+        {MGRSCoordConverter.LETTER_N, 0.0, 8.0, 0.0, 0.0},
+        {MGRSCoordConverter.LETTER_P, 800000.0, 16.0, 8.0, 0.0},
+        {MGRSCoordConverter.LETTER_Q, 1700000.0, 24.0, 16.0, 0.0},
+        {MGRSCoordConverter.LETTER_R, 2600000.0, 32.0, 24.0, 2000000.0},
+        {MGRSCoordConverter.LETTER_S, 3500000.0, 40.0, 32.0, 2000000.0},
+        {MGRSCoordConverter.LETTER_T, 4400000.0, 48.0, 40.0, 4000000.0},
+        {MGRSCoordConverter.LETTER_U, 5300000.0, 56.0, 48.0, 4000000.0},
+        {MGRSCoordConverter.LETTER_V, 6200000.0, 64.0, 56.0, 6000000.0},
+        {MGRSCoordConverter.LETTER_W, 7000000.0, 72.0, 64.0, 6000000.0},
+        {MGRSCoordConverter.LETTER_X, 7900000.0, 84.5, 72.0, 6000000.0}};
     private final Globe globe;
     // Ellipsoid parameters, default to WGS 84
     private double MGRS_a = 6378137.0;          // Semi-major axis of ellipsoid in meters
@@ -123,7 +123,7 @@ class MGRSCoordConverter {
     private long ltr2_high_value;       // this is only used for doing MGRS to xxx conversions.
     private double false_northing;
     private long lastLetter;
-    private long last_error = MGRS_NO_ERROR;
+    private long last_error = MGRSCoordConverter.MGRS_NO_ERROR;
     private double north, south, min_northing, northing_offset;  //smithjl added north_offset
     private double latitude;
     private double longitude;
@@ -138,6 +138,55 @@ class MGRSCoordConverter {
     }
 
     /**
+     * The function Check_Zone receives an MGRS coordinate string. If a zone is given, MGRS_NO_ERROR is returned.
+     * Otherwise, MGRS_NOZONE_WARNING. is returned.
+     *
+     * @param MGRSString the MGRS coordinate string.
+     * @return the error code.
+     */
+    private static long checkZone(CharSequence MGRSString) {
+        int i = 0;
+        int j = 0;
+        int num_digits = 0;
+        long error_code = MGRSCoordConverter.MGRS_NO_ERROR;
+
+        /* skip any leading blanks */
+        while (i < MGRSString.length() && MGRSString.charAt(i) == ' ') {
+            i++;
+        }
+        j = i;
+        while (i < MGRSString.length() && Character.isDigit(MGRSString.charAt(i))) {
+            i++;
+        }
+        num_digits = i - j;
+        if (num_digits > 2)
+            error_code |= MGRSCoordConverter.MGRS_STRING_ERROR;
+        else if (num_digits <= 0)
+            error_code |= MGRSCoordConverter.MGRS_NOZONE_WARNING;
+
+        return error_code;
+    }
+
+    /**
+     * The function Round_MGRS rounds the input value to the nearest integer, using the standard engineering rule. The
+     * rounded integer value is then returned.
+     *
+     * @param value Value to be rounded
+     * @return rounded double value
+     */
+    private static double roundMGRS(double value) {
+        double ivalue = Math.floor(value);
+        long ival;
+        double fraction = value - ivalue;
+        // double fraction = modf (value, &ivalue);
+
+        ival = (long) (ivalue);
+        if ((fraction > 0.5) || ((fraction == 0.5) && (ival % 2 == 1)))
+            ival++;
+        return ival;
+    }
+
+    /**
      * The function setMGRSParameters receives the ellipsoid parameters and sets the corresponding state variables. If
      * any errors occur, the error code(s) are returned by the function, otherwise MGRS_NO_ERROR is returned.
      *
@@ -148,19 +197,19 @@ class MGRSCoordConverter {
      */
     public long setMGRSParameters(double mgrs_a, double mgrs_f, String ellipsoidCode) {
         if (mgrs_a <= 0.0)
-            return MGRS_A_ERROR;
+            return MGRSCoordConverter.MGRS_A_ERROR;
 
         if (mgrs_f == 0.0)
-            return MGRS_INV_F_ERROR;
+            return MGRSCoordConverter.MGRS_INV_F_ERROR;
         double inv_f = 1 / mgrs_f;
         if (inv_f < 250 || inv_f > 350)
-            return MGRS_INV_F_ERROR;
+            return MGRSCoordConverter.MGRS_INV_F_ERROR;
 
         MGRS_a = mgrs_a;
         MGRS_f = mgrs_f;
         MGRS_Ellipsoid_Code = ellipsoidCode;
 
-        return MGRS_NO_ERROR;
+        return MGRSCoordConverter.MGRS_NO_ERROR;
     }
 
     /**
@@ -202,25 +251,22 @@ class MGRSCoordConverter {
     public long convertMGRSToGeodetic(String MGRSString) {
         latitude = 0;
         longitude = 0;
-        long error_code = checkZone(MGRSString);
-        if (error_code == MGRS_NO_ERROR) {
+        long error_code = MGRSCoordConverter.checkZone(MGRSString);
+        if (error_code == MGRSCoordConverter.MGRS_NO_ERROR) {
             UTMCoord UTM = convertMGRSToUTM(MGRSString);
             if (UTM != null) {
-                latitude = UTM.getLatitude().radians;
-                longitude = UTM.getLongitude().radians;
-            }
-            else
-                error_code = MGRS_UTM_ERROR;
-        }
-        else if (error_code == MGRS_NOZONE_WARNING) {
+                latitude = UTM.getLatitude().radians();
+                longitude = UTM.getLongitude().radians();
+            } else
+                error_code = MGRSCoordConverter.MGRS_UTM_ERROR;
+        } else if (error_code == MGRSCoordConverter.MGRS_NOZONE_WARNING) {
             // TODO: polar conversion
             UPSCoord UPS = convertMGRSToUPS(MGRSString);
             if (UPS != null) {
-                latitude = UPS.getLatitude().radians;
-                longitude = UPS.getLongitude().radians;
-            }
-            else
-                error_code = MGRS_UPS_ERROR;
+                latitude = UPS.getLatitude().radians();
+                longitude = UPS.getLongitude().radians();
+            } else
+                error_code = MGRSCoordConverter.MGRS_UPS_ERROR;
         }
         return (error_code);
     }
@@ -245,7 +291,7 @@ class MGRSCoordConverter {
         int num_letters;
         int i = 0;
         int j = 0;
-        long error_code = MGRS_NO_ERROR;
+        long error_code = MGRSCoordConverter.MGRS_NO_ERROR;
 
         int zone = 0;
         int[] letters = new int[3];
@@ -266,10 +312,9 @@ class MGRSCoordConverter {
                 /* get zone */
                 zone = Integer.parseInt(MGRSString.substring(j, i));
                 if ((zone < 1) || (zone > 60))
-                    error_code |= MGRS_STRING_ERROR;
-            }
-            else
-                error_code |= MGRS_STRING_ERROR;
+                    error_code |= MGRSCoordConverter.MGRS_STRING_ERROR;
+            } else
+                error_code |= MGRSCoordConverter.MGRS_STRING_ERROR;
         j = i;
 
         while (i < MGRSString.length() && Character.isLetter(MGRSString.charAt(i))) {
@@ -278,18 +323,17 @@ class MGRSCoordConverter {
         num_letters = i - j;
         if (num_letters == 3) {
             /* get letters */
-            letters[0] = alphabet.indexOf(Character.toUpperCase(MGRSString.charAt(j)));
-            if ((letters[0] == LETTER_I) || (letters[0] == LETTER_O))
-                error_code |= MGRS_STRING_ERROR;
-            letters[1] = alphabet.indexOf(Character.toUpperCase(MGRSString.charAt(j + 1)));
-            if ((letters[1] == LETTER_I) || (letters[1] == LETTER_O))
-                error_code |= MGRS_STRING_ERROR;
-            letters[2] = alphabet.indexOf(Character.toUpperCase(MGRSString.charAt(j + 2)));
-            if ((letters[2] == LETTER_I) || (letters[2] == LETTER_O))
-                error_code |= MGRS_STRING_ERROR;
-        }
-        else
-            error_code |= MGRS_STRING_ERROR;
+            letters[0] = MGRSCoordConverter.alphabet.indexOf(Character.toUpperCase(MGRSString.charAt(j)));
+            if ((letters[0] == MGRSCoordConverter.LETTER_I) || (letters[0] == MGRSCoordConverter.LETTER_O))
+                error_code |= MGRSCoordConverter.MGRS_STRING_ERROR;
+            letters[1] = MGRSCoordConverter.alphabet.indexOf(Character.toUpperCase(MGRSString.charAt(j + 1)));
+            if ((letters[1] == MGRSCoordConverter.LETTER_I) || (letters[1] == MGRSCoordConverter.LETTER_O))
+                error_code |= MGRSCoordConverter.MGRS_STRING_ERROR;
+            letters[2] = MGRSCoordConverter.alphabet.indexOf(Character.toUpperCase(MGRSString.charAt(j + 2)));
+            if ((letters[2] == MGRSCoordConverter.LETTER_I) || (letters[2] == MGRSCoordConverter.LETTER_O))
+                error_code |= MGRSCoordConverter.MGRS_STRING_ERROR;
+        } else
+            error_code |= MGRSCoordConverter.MGRS_STRING_ERROR;
         j = i;
         while (i < MGRSString.length() && Character.isDigit(MGRSString.charAt(i))) {
             i++;
@@ -308,50 +352,18 @@ class MGRSCoordConverter {
                 multiplier = Math.pow(10.0, 5 - n);
                 easting *= multiplier;
                 northing *= multiplier;
-            }
-            else {
+            } else {
                 easting = 0;
                 northing = 0;
             }
-        }
-        else
-            error_code |= MGRS_STRING_ERROR;
+        } else
+            error_code |= MGRSCoordConverter.MGRS_STRING_ERROR;
 
         last_error = error_code;
-        if (error_code == MGRS_NO_ERROR)
+        if (error_code == MGRSCoordConverter.MGRS_NO_ERROR)
             return new MGRSComponents(zone, letters[0], letters[1], letters[2], easting, northing, precision);
 
         return null;
-    }
-
-    /**
-     * The function Check_Zone receives an MGRS coordinate string. If a zone is given, MGRS_NO_ERROR is returned.
-     * Otherwise, MGRS_NOZONE_WARNING. is returned.
-     *
-     * @param MGRSString the MGRS coordinate string.
-     * @return the error code.
-     */
-    private static long checkZone(CharSequence MGRSString) {
-        int i = 0;
-        int j = 0;
-        int num_digits = 0;
-        long error_code = MGRS_NO_ERROR;
-
-        /* skip any leading blanks */
-        while (i < MGRSString.length() && MGRSString.charAt(i) == ' ') {
-            i++;
-        }
-        j = i;
-        while (i < MGRSString.length() && Character.isDigit(MGRSString.charAt(i))) {
-            i++;
-        }
-        num_digits = i - j;
-        if (num_digits > 2)
-            error_code |= MGRS_STRING_ERROR;
-        else if (num_digits <= 0)
-            error_code |= MGRS_NOZONE_WARNING;
-
-        return error_code;
     }
 
     /**
@@ -362,22 +374,19 @@ class MGRSCoordConverter {
      * @return the error code.
      */
     private long getLatitudeBandMinNorthing(int letter) {
-        long error_code = MGRS_NO_ERROR;
+        long error_code = MGRSCoordConverter.MGRS_NO_ERROR;
 
-        if ((letter >= LETTER_C) && (letter <= LETTER_H)) {
-            min_northing = latitudeBandConstants[letter - 2][1];
-            northing_offset = latitudeBandConstants[letter - 2][4];        //smithjl
-        }
-        else if ((letter >= LETTER_J) && (letter <= LETTER_N)) {
-            min_northing = latitudeBandConstants[letter - 3][1];
-            northing_offset = latitudeBandConstants[letter - 3][4];        //smithjl
-        }
-        else if ((letter >= LETTER_P) && (letter <= LETTER_X)) {
-            min_northing = latitudeBandConstants[letter - 4][1];
-            northing_offset = latitudeBandConstants[letter - 4][4];        //smithjl
-        }
-        else
-            error_code |= MGRS_STRING_ERROR;
+        if ((letter >= MGRSCoordConverter.LETTER_C) && (letter <= MGRSCoordConverter.LETTER_H)) {
+            min_northing = MGRSCoordConverter.latitudeBandConstants[letter - 2][1];
+            northing_offset = MGRSCoordConverter.latitudeBandConstants[letter - 2][4];        //smithjl
+        } else if ((letter >= MGRSCoordConverter.LETTER_J) && (letter <= MGRSCoordConverter.LETTER_N)) {
+            min_northing = MGRSCoordConverter.latitudeBandConstants[letter - 3][1];
+            northing_offset = MGRSCoordConverter.latitudeBandConstants[letter - 3][4];        //smithjl
+        } else if ((letter >= MGRSCoordConverter.LETTER_P) && (letter <= MGRSCoordConverter.LETTER_X)) {
+            min_northing = MGRSCoordConverter.latitudeBandConstants[letter - 4][1];
+            northing_offset = MGRSCoordConverter.latitudeBandConstants[letter - 4][4];        //smithjl
+        } else
+            error_code |= MGRSCoordConverter.MGRS_STRING_ERROR;
         return error_code;
     }
 
@@ -389,22 +398,19 @@ class MGRSCoordConverter {
      * @return the error code.
      */
     private long getLatitudeRange(int letter) {
-        long error_code = MGRS_NO_ERROR;
+        long error_code = MGRSCoordConverter.MGRS_NO_ERROR;
 
-        if ((letter >= LETTER_C) && (letter <= LETTER_H)) {
-            north = latitudeBandConstants[letter - 2][2] * DEG_TO_RAD;
-            south = latitudeBandConstants[letter - 2][3] * DEG_TO_RAD;
-        }
-        else if ((letter >= LETTER_J) && (letter <= LETTER_N)) {
-            north = latitudeBandConstants[letter - 3][2] * DEG_TO_RAD;
-            south = latitudeBandConstants[letter - 3][3] * DEG_TO_RAD;
-        }
-        else if ((letter >= LETTER_P) && (letter <= LETTER_X)) {
-            north = latitudeBandConstants[letter - 4][2] * DEG_TO_RAD;
-            south = latitudeBandConstants[letter - 4][3] * DEG_TO_RAD;
-        }
-        else
-            error_code |= MGRS_STRING_ERROR;
+        if ((letter >= MGRSCoordConverter.LETTER_C) && (letter <= MGRSCoordConverter.LETTER_H)) {
+            north = MGRSCoordConverter.latitudeBandConstants[letter - 2][2] * MGRSCoordConverter.DEG_TO_RAD;
+            south = MGRSCoordConverter.latitudeBandConstants[letter - 2][3] * MGRSCoordConverter.DEG_TO_RAD;
+        } else if ((letter >= MGRSCoordConverter.LETTER_J) && (letter <= MGRSCoordConverter.LETTER_N)) {
+            north = MGRSCoordConverter.latitudeBandConstants[letter - 3][2] * MGRSCoordConverter.DEG_TO_RAD;
+            south = MGRSCoordConverter.latitudeBandConstants[letter - 3][3] * MGRSCoordConverter.DEG_TO_RAD;
+        } else if ((letter >= MGRSCoordConverter.LETTER_P) && (letter <= MGRSCoordConverter.LETTER_X)) {
+            north = MGRSCoordConverter.latitudeBandConstants[letter - 4][2] * MGRSCoordConverter.DEG_TO_RAD;
+            south = MGRSCoordConverter.latitudeBandConstants[letter - 4][3] * MGRSCoordConverter.DEG_TO_RAD;
+        } else
+            error_code |= MGRSCoordConverter.MGRS_STRING_ERROR;
 
         return error_code;
     }
@@ -425,7 +431,7 @@ class MGRSCoordConverter {
         double latitude = 0.0;
         double longitude = 0.0;
         double divisor = 1.0;
-        long error_code = MGRS_NO_ERROR;
+        long error_code = MGRSCoordConverter.MGRS_NO_ERROR;
 
         String hemisphere = AVKey.NORTH;
         double easting = 0;
@@ -434,12 +440,12 @@ class MGRSCoordConverter {
 
         MGRSComponents MGRS = breakMGRSString(MGRSString);
         if (MGRS == null)
-            error_code |= MGRS_STRING_ERROR;
+            error_code |= MGRSCoordConverter.MGRS_STRING_ERROR;
         else {
-            if ((MGRS.latitudeBand == LETTER_X) && ((MGRS.zone == 32) || (MGRS.zone == 34) || (MGRS.zone == 36)))
-                error_code |= MGRS_STRING_ERROR;
+            if ((MGRS.latitudeBand == MGRSCoordConverter.LETTER_X) && ((MGRS.zone == 32) || (MGRS.zone == 34) || (MGRS.zone == 36)))
+                error_code |= MGRSCoordConverter.MGRS_STRING_ERROR;
             else {
-                if (MGRS.latitudeBand < LETTER_N)
+                if (MGRS.latitudeBand < MGRSCoordConverter.LETTER_N)
                     hemisphere = AVKey.SOUTH;
                 else
                     hemisphere = AVKey.NORTH;
@@ -450,37 +456,37 @@ class MGRSCoordConverter {
                 // the range of valid second letter values
                 // Also check that the third letter is valid
                 if ((MGRS.squareLetter1 < ltr2_low_value) || (MGRS.squareLetter1 > ltr2_high_value) ||
-                    (MGRS.squareLetter2 > LETTER_V))
-                    error_code |= MGRS_STRING_ERROR;
+                    (MGRS.squareLetter2 > MGRSCoordConverter.LETTER_V))
+                    error_code |= MGRSCoordConverter.MGRS_STRING_ERROR;
 
-                if (error_code == MGRS_NO_ERROR) {
+                if (error_code == MGRSCoordConverter.MGRS_NO_ERROR) {
                     grid_northing =
-                        (MGRS.squareLetter2) * ONEHT;  //   smithjl  commented out + false_northing;
-                    grid_easting = ((MGRS.squareLetter1) - ltr2_low_value + 1) * ONEHT;
-                    if ((ltr2_low_value == LETTER_J) && (MGRS.squareLetter1 > LETTER_O))
-                        grid_easting = grid_easting - ONEHT;
+                        (MGRS.squareLetter2) * MGRSCoordConverter.ONEHT;  //   smithjl  commented out + false_northing;
+                    grid_easting = ((MGRS.squareLetter1) - ltr2_low_value + 1) * MGRSCoordConverter.ONEHT;
+                    if ((ltr2_low_value == MGRSCoordConverter.LETTER_J) && (MGRS.squareLetter1 > MGRSCoordConverter.LETTER_O))
+                        grid_easting = grid_easting - MGRSCoordConverter.ONEHT;
 
-                    if (MGRS.squareLetter2 > LETTER_O)
-                        grid_northing = grid_northing - ONEHT;
+                    if (MGRS.squareLetter2 > MGRSCoordConverter.LETTER_O)
+                        grid_northing = grid_northing - MGRSCoordConverter.ONEHT;
 
-                    if (MGRS.squareLetter2 > LETTER_I)
-                        grid_northing = grid_northing - ONEHT;
+                    if (MGRS.squareLetter2 > MGRSCoordConverter.LETTER_I)
+                        grid_northing = grid_northing - MGRSCoordConverter.ONEHT;
 
-                    if (grid_northing >= TWOMIL)
-                        grid_northing = grid_northing - TWOMIL;
+                    if (grid_northing >= MGRSCoordConverter.TWOMIL)
+                        grid_northing = grid_northing - MGRSCoordConverter.TWOMIL;
 
                     error_code = getLatitudeBandMinNorthing(MGRS.latitudeBand);
-                    if (error_code == MGRS_NO_ERROR) {
+                    if (error_code == MGRSCoordConverter.MGRS_NO_ERROR) {
                         /*smithjl Deleted code here and added this*/
                         grid_northing = grid_northing - false_northing;
 
                         if (grid_northing < 0.0)
-                            grid_northing += TWOMIL;
+                            grid_northing += MGRSCoordConverter.TWOMIL;
 
                         grid_northing += northing_offset;
 
                         if (grid_northing < min_northing)
-                            grid_northing += TWOMIL;
+                            grid_northing += MGRSCoordConverter.TWOMIL;
 
                         /* smithjl End of added code */
 
@@ -489,17 +495,17 @@ class MGRSCoordConverter {
 
                         try {
                             UTM = UTMCoord.fromUTM(MGRS.zone, hemisphere, easting, northing, globe);
-                            latitude = UTM.getLatitude().radians;
+                            latitude = UTM.getLatitude().radians();
                             divisor = Math.pow(10.0, MGRS.precision);
                             error_code = getLatitudeRange(MGRS.latitudeBand);
-                            if (error_code == MGRS_NO_ERROR) {
-                                if (!(((south - DEG_TO_RAD / divisor) <= latitude)
-                                    && (latitude <= (north + DEG_TO_RAD / divisor))))
-                                    error_code |= MGRS_LAT_WARNING;
+                            if (error_code == MGRSCoordConverter.MGRS_NO_ERROR) {
+                                if (!(((south - MGRSCoordConverter.DEG_TO_RAD / divisor) <= latitude)
+                                    && (latitude <= (north + MGRSCoordConverter.DEG_TO_RAD / divisor))))
+                                    error_code |= MGRSCoordConverter.MGRS_LAT_WARNING;
                             }
                         }
-                        catch (Exception e) {
-                            error_code = MGRS_UTM_ERROR;
+                        catch (RuntimeException e) {
+                            error_code = MGRSCoordConverter.MGRS_UTM_ERROR;
                         }
                     }
                 }
@@ -507,7 +513,7 @@ class MGRSCoordConverter {
         }
 
         last_error = error_code;
-        if (error_code == MGRS_NO_ERROR || error_code == MGRS_LAT_WARNING)
+        if (error_code == MGRSCoordConverter.MGRS_NO_ERROR || error_code == MGRSCoordConverter.MGRS_LAT_WARNING)
             return UTM;
 
         return null;
@@ -530,20 +536,20 @@ class MGRSCoordConverter {
 
         MGRSString = "";
 
-        long error_code = MGRS_NO_ERROR;
-        if ((latitude < -PI_OVER_2) || (latitude > PI_OVER_2)) { /* Latitude out of range */
-            error_code = MGRS_LAT_ERROR;
+        long error_code = MGRSCoordConverter.MGRS_NO_ERROR;
+        if ((latitude < -MGRSCoordConverter.PI_OVER_2) || (latitude > MGRSCoordConverter.PI_OVER_2)) { /* Latitude out of range */
+            error_code = MGRSCoordConverter.MGRS_LAT_ERROR;
         }
 
-        if ((longitude < -PI) || (longitude > (2 * PI))) { /* Longitude out of range */
-            error_code = MGRS_LON_ERROR;
+        if ((longitude < -MGRSCoordConverter.PI) || (longitude > (2 * MGRSCoordConverter.PI))) { /* Longitude out of range */
+            error_code = MGRSCoordConverter.MGRS_LON_ERROR;
         }
 
-        if ((precision < 0) || (precision > MAX_PRECISION))
-            error_code = MGRS_PRECISION_ERROR;
+        if ((precision < 0) || (precision > MGRSCoordConverter.MAX_PRECISION))
+            error_code = MGRSCoordConverter.MGRS_PRECISION_ERROR;
 
-        if (error_code == MGRS_NO_ERROR) {
-            if ((latitude < MIN_UTM_LAT) || (latitude > MAX_UTM_LAT)) {
+        if (error_code == MGRSCoordConverter.MGRS_NO_ERROR) {
+            if ((latitude < MGRSCoordConverter.MIN_UTM_LAT) || (latitude > MGRSCoordConverter.MAX_UTM_LAT)) {
                 // TODO: polar
                 try {
                     UPSCoord UPS =
@@ -551,19 +557,18 @@ class MGRSCoordConverter {
                     error_code |= convertUPSToMGRS(UPS.getHemisphere(), UPS.getEasting(),
                         UPS.getNorthing(), precision);
                 }
-                catch (Exception e) {
-                    error_code = MGRS_UPS_ERROR;
+                catch (RuntimeException e) {
+                    error_code = MGRSCoordConverter.MGRS_UPS_ERROR;
                 }
-            }
-            else {
+            } else {
                 try {
                     UTMCoord UTM =
                         UTMCoord.fromLatLon(Angle.fromRadians(latitude), Angle.fromRadians(longitude), globe);
                     error_code |= convertUTMToMGRS(UTM.getZone(), latitude, UTM.getEasting(),
                         UTM.getNorthing(), precision);
                 }
-                catch (Exception e) {
-                    error_code = MGRS_UTM_ERROR;
+                catch (RuntimeException e) {
+                    error_code = MGRSCoordConverter.MGRS_UTM_ERROR;
                 }
             }
         }
@@ -583,8 +588,7 @@ class MGRSCoordConverter {
      * coordinate string according to the current ellipsoid parameters.  If any errors occur, the error code(s) are
      * returned by the function, otherwise MGRS_NO_ERROR is returned.
      *
-     * @param Hemisphere Hemisphere either, {@link AVKey#NORTH} or {@link
-     *                   AVKey#SOUTH}.
+     * @param Hemisphere Hemisphere either, {@link AVKey#NORTH} or {@link AVKey#SOUTH}.
      * @param Easting    Easting/X in meters
      * @param Northing   Northing/Y in meters
      * @param Precision  Precision level of MGRS string
@@ -596,77 +600,75 @@ class MGRSCoordConverter {
         double grid_easting;        /* Easting used to derive 2nd letter of MGRS    */
         double grid_northing;       /* Northing used to derive 3rd letter of MGRS   */
         int ltr2_low_value;        /* 2nd letter range - low number                */
-        long[] letters = new long[MGRS_LETTERS];  /* Number location of 3 letters in alphabet     */
+        long[] letters = new long[MGRSCoordConverter.MGRS_LETTERS];  /* Number location of 3 letters in alphabet     */
         double divisor;
         int index;
-        long error_code = MGRS_NO_ERROR;
+        long error_code = MGRSCoordConverter.MGRS_NO_ERROR;
 
         if (!AVKey.NORTH.equals(Hemisphere) && !AVKey.SOUTH.equals(Hemisphere))
-            error_code |= MGRS_HEMISPHERE_ERROR;
-        if ((Easting < MIN_EAST_NORTH) || (Easting > MAX_EAST_NORTH))
-            error_code |= MGRS_EASTING_ERROR;
-        if ((Northing < MIN_EAST_NORTH) || (Northing > MAX_EAST_NORTH))
-            error_code |= MGRS_NORTHING_ERROR;
-        if ((Precision < 0) || (Precision > MAX_PRECISION))
-            error_code |= MGRS_PRECISION_ERROR;
+            error_code |= MGRSCoordConverter.MGRS_HEMISPHERE_ERROR;
+        if ((Easting < MGRSCoordConverter.MIN_EAST_NORTH) || (Easting > MGRSCoordConverter.MAX_EAST_NORTH))
+            error_code |= MGRSCoordConverter.MGRS_EASTING_ERROR;
+        if ((Northing < MGRSCoordConverter.MIN_EAST_NORTH) || (Northing > MGRSCoordConverter.MAX_EAST_NORTH))
+            error_code |= MGRSCoordConverter.MGRS_NORTHING_ERROR;
+        if ((Precision < 0) || (Precision > MGRSCoordConverter.MAX_PRECISION))
+            error_code |= MGRSCoordConverter.MGRS_PRECISION_ERROR;
 
-        if (error_code == MGRS_NO_ERROR) {
+        if (error_code == MGRSCoordConverter.MGRS_NO_ERROR) {
             divisor = Math.pow(10.0, (5 - Precision));
-            Easting = roundMGRS(Easting / divisor) * divisor;
-            Northing = roundMGRS(Northing / divisor) * divisor;
+            Easting = MGRSCoordConverter.roundMGRS(Easting / divisor) * divisor;
+            Northing = MGRSCoordConverter.roundMGRS(Northing / divisor) * divisor;
 
             if (AVKey.NORTH.equals(Hemisphere)) {
-                if (Easting >= TWOMIL)
-                    letters[0] = LETTER_Z;
+                if (Easting >= MGRSCoordConverter.TWOMIL)
+                    letters[0] = MGRSCoordConverter.LETTER_Z;
                 else
-                    letters[0] = LETTER_Y;
+                    letters[0] = MGRSCoordConverter.LETTER_Y;
 
                 index = (int) letters[0] - 22;
-                ltr2_low_value = (int) upsConstants[index][1];
-                false_easting = upsConstants[index][4];
-                false_northing = upsConstants[index][5];
-            }
-            else // AVKey.SOUTH.equals(Hemisphere)
+                ltr2_low_value = (int) MGRSCoordConverter.upsConstants[index][1];
+                false_easting = MGRSCoordConverter.upsConstants[index][4];
+                false_northing = MGRSCoordConverter.upsConstants[index][5];
+            } else // AVKey.SOUTH.equals(Hemisphere)
             {
-                if (Easting >= TWOMIL)
-                    letters[0] = LETTER_B;
+                if (Easting >= MGRSCoordConverter.TWOMIL)
+                    letters[0] = MGRSCoordConverter.LETTER_B;
                 else
-                    letters[0] = LETTER_A;
+                    letters[0] = MGRSCoordConverter.LETTER_A;
 
-                ltr2_low_value = (int) upsConstants[(int) letters[0]][1];
-                false_easting = upsConstants[(int) letters[0]][4];
-                false_northing = upsConstants[(int) letters[0]][5];
+                ltr2_low_value = (int) MGRSCoordConverter.upsConstants[(int) letters[0]][1];
+                false_easting = MGRSCoordConverter.upsConstants[(int) letters[0]][4];
+                false_northing = MGRSCoordConverter.upsConstants[(int) letters[0]][5];
             }
 
             grid_northing = Northing;
             grid_northing = grid_northing - false_northing;
-            letters[2] = (int) (grid_northing / ONEHT);
+            letters[2] = (int) (grid_northing / MGRSCoordConverter.ONEHT);
 
-            if (letters[2] > LETTER_H)
+            if (letters[2] > MGRSCoordConverter.LETTER_H)
                 letters[2] = letters[2] + 1;
 
-            if (letters[2] > LETTER_N)
+            if (letters[2] > MGRSCoordConverter.LETTER_N)
                 letters[2] = letters[2] + 1;
 
             grid_easting = Easting;
             grid_easting = grid_easting - false_easting;
-            letters[1] = ltr2_low_value + ((int) (grid_easting / ONEHT));
+            letters[1] = ltr2_low_value + ((int) (grid_easting / MGRSCoordConverter.ONEHT));
 
-            if (Easting < TWOMIL) {
-                if (letters[1] > LETTER_L)
+            if (Easting < MGRSCoordConverter.TWOMIL) {
+                if (letters[1] > MGRSCoordConverter.LETTER_L)
                     letters[1] = letters[1] + 3;
 
-                if (letters[1] > LETTER_U)
+                if (letters[1] > MGRSCoordConverter.LETTER_U)
                     letters[1] = letters[1] + 2;
-            }
-            else {
-                if (letters[1] > LETTER_C)
+            } else {
+                if (letters[1] > MGRSCoordConverter.LETTER_C)
                     letters[1] = letters[1] + 2;
 
-                if (letters[1] > LETTER_H)
+                if (letters[1] > MGRSCoordConverter.LETTER_H)
                     letters[1] = letters[1] + 1;
 
-                if (letters[1] > LETTER_L)
+                if (letters[1] > MGRSCoordConverter.LETTER_L)
                     letters[1] = letters[1] + 3;
             }
 
@@ -688,46 +690,46 @@ class MGRSCoordConverter {
     private long convertUTMToMGRS(long Zone, double Latitude, double Easting, double Northing, long Precision) {
         double grid_easting;        /* Easting used to derive 2nd letter of MGRS   */
         double grid_northing;       /* Northing used to derive 3rd letter of MGRS  */
-        long[] letters = new long[MGRS_LETTERS];  /* Number location of 3 letters in alphabet    */
+        long[] letters = new long[MGRSCoordConverter.MGRS_LETTERS];  /* Number location of 3 letters in alphabet    */
         double divisor;
         long error_code;
 
         /* Round easting and northing values */
         divisor = Math.pow(10.0, (5 - Precision));
-        Easting = roundMGRS(Easting / divisor) * divisor;
-        Northing = roundMGRS(Northing / divisor) * divisor;
+        Easting = MGRSCoordConverter.roundMGRS(Easting / divisor) * divisor;
+        Northing = MGRSCoordConverter.roundMGRS(Northing / divisor) * divisor;
 
         getGridValues(Zone);
 
         error_code = getLatitudeLetter(Latitude);
         letters[0] = getLastLetter();
 
-        if (error_code == MGRS_NO_ERROR) {
+        if (error_code == MGRSCoordConverter.MGRS_NO_ERROR) {
             grid_northing = Northing;
             if (grid_northing == 1.0e7)
                 grid_northing = grid_northing - 1.0;
 
-            while (grid_northing >= TWOMIL) {
-                grid_northing = grid_northing - TWOMIL;
+            while (grid_northing >= MGRSCoordConverter.TWOMIL) {
+                grid_northing = grid_northing - MGRSCoordConverter.TWOMIL;
             }
             grid_northing = grid_northing + false_northing;   //smithjl
 
-            if (grid_northing >= TWOMIL)                     //smithjl
-                grid_northing = grid_northing - TWOMIL;        //smithjl
+            if (grid_northing >= MGRSCoordConverter.TWOMIL)                     //smithjl
+                grid_northing = grid_northing - MGRSCoordConverter.TWOMIL;        //smithjl
 
-            letters[2] = (long) (grid_northing / ONEHT);
-            if (letters[2] > LETTER_H)
+            letters[2] = (long) (grid_northing / MGRSCoordConverter.ONEHT);
+            if (letters[2] > MGRSCoordConverter.LETTER_H)
                 letters[2] = letters[2] + 1;
 
-            if (letters[2] > LETTER_N)
+            if (letters[2] > MGRSCoordConverter.LETTER_N)
                 letters[2] = letters[2] + 1;
 
             grid_easting = Easting;
-            if (((letters[0] == LETTER_V) && (Zone == 31)) && (grid_easting == 500000.0))
+            if (((letters[0] == MGRSCoordConverter.LETTER_V) && (Zone == 31)) && (grid_easting == 500000.0))
                 grid_easting = grid_easting - 1.0; /* SUBTRACT 1 METER */
 
-            letters[1] = ltr2_low_value + ((long) (grid_easting / ONEHT) - 1);
-            if ((ltr2_low_value == LETTER_J) && (letters[1] > LETTER_N))
+            letters[1] = ltr2_low_value + ((long) (grid_easting / MGRSCoordConverter.ONEHT) - 1);
+            if ((ltr2_low_value == MGRSCoordConverter.LETTER_J) && (letters[1] > MGRSCoordConverter.LETTER_N))
                 letters[1] = letters[1] + 1;
 
             makeMGRSString(Zone, letters, Easting, Northing, Precision);
@@ -753,23 +755,23 @@ class MGRSCoordConverter {
         if (set_number == 0)
             set_number = 6;
 
-        if (MGRS_Ellipsoid_Code.compareTo(CLARKE_1866) == 0 || MGRS_Ellipsoid_Code.compareTo(CLARKE_1880) == 0 ||
-            MGRS_Ellipsoid_Code.compareTo(BESSEL_1841) == 0 || MGRS_Ellipsoid_Code.compareTo(BESSEL_1841_NAMIBIA) == 0)
+        if (MGRS_Ellipsoid_Code.compareTo(MGRSCoordConverter.CLARKE_1866) == 0 || MGRS_Ellipsoid_Code.compareTo(
+            MGRSCoordConverter.CLARKE_1880) == 0 ||
+            MGRS_Ellipsoid_Code.compareTo(MGRSCoordConverter.BESSEL_1841) == 0 || MGRS_Ellipsoid_Code.compareTo(
+            MGRSCoordConverter.BESSEL_1841_NAMIBIA) == 0)
             aa_pattern = 0L;
         else
             aa_pattern = 1L;
 
         if ((set_number == 1) || (set_number == 4)) {
-            ltr2_low_value = LETTER_A;
-            ltr2_high_value = LETTER_H;
-        }
-        else if ((set_number == 2) || (set_number == 5)) {
-            ltr2_low_value = LETTER_J;
-            ltr2_high_value = LETTER_R;
-        }
-        else if ((set_number == 3) || (set_number == 6)) {
-            ltr2_low_value = LETTER_S;
-            ltr2_high_value = LETTER_Z;
+            ltr2_low_value = MGRSCoordConverter.LETTER_A;
+            ltr2_high_value = MGRSCoordConverter.LETTER_H;
+        } else if ((set_number == 2) || (set_number == 5)) {
+            ltr2_low_value = MGRSCoordConverter.LETTER_J;
+            ltr2_high_value = MGRSCoordConverter.LETTER_R;
+        } else if ((set_number == 3) || (set_number == 6)) {
+            ltr2_low_value = MGRSCoordConverter.LETTER_S;
+            ltr2_high_value = MGRSCoordConverter.LETTER_Z;
         }
 
         /* False northing at A for second letter of grid square */
@@ -778,8 +780,7 @@ class MGRSCoordConverter {
                 false_northing = 500000.0;             //smithjl was 1500000
             else
                 false_northing = 0.0;
-        }
-        else {
+        } else {
             if ((set_number % 2) == 0)
                 false_northing = 1500000.0;            //smithjl was 500000
             else
@@ -796,39 +797,19 @@ class MGRSCoordConverter {
      */
     private long getLatitudeLetter(double latitude) {
         double temp;
-        long error_code = MGRS_NO_ERROR;
-        double lat_deg = latitude * RAD_TO_DEG;
+        long error_code = MGRSCoordConverter.MGRS_NO_ERROR;
+        double lat_deg = latitude * MGRSCoordConverter.RAD_TO_DEG;
 
         if (lat_deg >= 72 && lat_deg < 84.5)
-            lastLetter = LETTER_X;
+            lastLetter = MGRSCoordConverter.LETTER_X;
         else if (lat_deg > -80.5 && lat_deg < 72) {
-            temp = ((latitude + (80.0 * DEG_TO_RAD)) / (8.0 * DEG_TO_RAD)) + 1.0e-12;
+            temp = ((latitude + (80.0 * MGRSCoordConverter.DEG_TO_RAD)) / (8.0 * MGRSCoordConverter.DEG_TO_RAD)) + 1.0e-12;
             // lastLetter = Latitude_Band_Table.get((int) temp).letter;
-            lastLetter = (long) latitudeBandConstants[(int) temp][0];
-        }
-        else
-            error_code |= MGRS_LAT_ERROR;
+            lastLetter = (long) MGRSCoordConverter.latitudeBandConstants[(int) temp][0];
+        } else
+            error_code |= MGRSCoordConverter.MGRS_LAT_ERROR;
 
         return error_code;
-    }
-
-    /**
-     * The function Round_MGRS rounds the input value to the nearest integer, using the standard engineering rule. The
-     * rounded integer value is then returned.
-     *
-     * @param value Value to be rounded
-     * @return rounded double value
-     */
-    private static double roundMGRS(double value) {
-        double ivalue = Math.floor(value);
-        long ival;
-        double fraction = value - ivalue;
-        // double fraction = modf (value, &ivalue);
-
-        ival = (long) (ivalue);
-        if ((fraction > 0.5) || ((fraction == 0.5) && (ival % 2 == 1)))
-            ival++;
-        return ival;
     }
 
     /**
@@ -855,8 +836,8 @@ class MGRSCoordConverter {
         for (j = 0; j < 3; j++) {
 
             if (Letters[j] < 0 || Letters[j] > 26)
-                return MGRS_ZONE_ERROR;  // TODO: Find out why this happens
-            MGRSString = MGRSString + alphabet.charAt((int) Letters[j]);
+                return MGRSCoordConverter.MGRS_ZONE_ERROR;  // TODO: Find out why this happens
+            MGRSString = MGRSString + MGRSCoordConverter.alphabet.charAt((int) Letters[j]);
         }
 
         divisor = Math.pow(10.0, (5 - Precision));
@@ -874,10 +855,10 @@ class MGRSCoordConverter {
             int i;
             int length = sEast.length();
             for (i = 0; i < Precision - length; i++) {
-                sEast = "0" + sEast;
+                sEast = '0' + sEast;
             }
         }
-        MGRSString = MGRSString + " " + sEast;
+        MGRSString = MGRSString + ' ' + sEast;
 
         Northing = Northing % 100000.0;
         if (Northing >= 99999.5)
@@ -892,12 +873,12 @@ class MGRSCoordConverter {
             int i;
             int length = sNorth.length();
             for (i = 0; i < Precision - length; i++) {
-                sNorth = "0" + sNorth;
+                sNorth = '0' + sNorth;
             }
         }
-        MGRSString = MGRSString + " " + sNorth;
+        MGRSString = MGRSString + ' ' + sNorth;
 
-        return MGRS_NO_ERROR;
+        return MGRSCoordConverter.MGRS_NO_ERROR;
     }
 
     /**
@@ -926,7 +907,7 @@ class MGRSCoordConverter {
         double grid_easting;        /* easting for 100,000 meter grid square      */
         double grid_northing;       /* northing for 100,000 meter grid square     */
         int index = 0;
-        long error_code = MGRS_NO_ERROR;
+        long error_code = MGRSCoordConverter.MGRS_NO_ERROR;
 
         String hemisphere;
         double easting, northing;
@@ -936,66 +917,64 @@ class MGRSCoordConverter {
             error_code = this.last_error;
 
         if (mgrs != null && mgrs.zone > 0)
-            error_code |= MGRS_STRING_ERROR;
+            error_code |= MGRSCoordConverter.MGRS_STRING_ERROR;
 
-        if (error_code == MGRS_NO_ERROR) {
+        if (error_code == MGRSCoordConverter.MGRS_NO_ERROR) {
             easting = mgrs.easting;
             northing = mgrs.northing;
 
-            if (mgrs.latitudeBand >= LETTER_Y) {
+            if (mgrs.latitudeBand >= MGRSCoordConverter.LETTER_Y) {
                 hemisphere = AVKey.NORTH;
 
                 index = mgrs.latitudeBand - 22;
-                ltr2_low_value = upsConstants[index][1]; //.ltr2_low_value;
-                ltr2_high_value = upsConstants[index][2]; //.ltr2_high_value;
-                ltr3_high_value = upsConstants[index][3]; //.ltr3_high_value;
-                false_easting = upsConstants[index][4]; //.false_easting;
-                false_northing = upsConstants[index][5]; //.false_northing;
-            }
-            else {
+                ltr2_low_value = MGRSCoordConverter.upsConstants[index][1]; //.ltr2_low_value;
+                ltr2_high_value = MGRSCoordConverter.upsConstants[index][2]; //.ltr2_high_value;
+                ltr3_high_value = MGRSCoordConverter.upsConstants[index][3]; //.ltr3_high_value;
+                false_easting = MGRSCoordConverter.upsConstants[index][4]; //.false_easting;
+                false_northing = MGRSCoordConverter.upsConstants[index][5]; //.false_northing;
+            } else {
                 hemisphere = AVKey.SOUTH;
 
-                ltr2_low_value = upsConstants[mgrs.latitudeBand][12]; //.ltr2_low_value;
-                ltr2_high_value = upsConstants[mgrs.latitudeBand][2]; //.ltr2_high_value;
-                ltr3_high_value = upsConstants[mgrs.latitudeBand][3]; //.ltr3_high_value;
-                false_easting = upsConstants[mgrs.latitudeBand][4]; //.false_easting;
-                false_northing = upsConstants[mgrs.latitudeBand][5]; //.false_northing;
+                ltr2_low_value = MGRSCoordConverter.upsConstants[mgrs.latitudeBand][12]; //.ltr2_low_value;
+                ltr2_high_value = MGRSCoordConverter.upsConstants[mgrs.latitudeBand][2]; //.ltr2_high_value;
+                ltr3_high_value = MGRSCoordConverter.upsConstants[mgrs.latitudeBand][3]; //.ltr3_high_value;
+                false_easting = MGRSCoordConverter.upsConstants[mgrs.latitudeBand][4]; //.false_easting;
+                false_northing = MGRSCoordConverter.upsConstants[mgrs.latitudeBand][5]; //.false_northing;
             }
 
             // Check that the second letter of the MGRS string is within
             // the range of valid second letter values
             // Also check that the third letter is valid
             if ((mgrs.squareLetter1 < ltr2_low_value) || (mgrs.squareLetter1 > ltr2_high_value) ||
-                ((mgrs.squareLetter1 == LETTER_D) || (mgrs.squareLetter1 == LETTER_E) ||
-                    (mgrs.squareLetter1 == LETTER_M) || (mgrs.squareLetter1 == LETTER_N) ||
-                    (mgrs.squareLetter1 == LETTER_V) || (mgrs.squareLetter1 == LETTER_W)) ||
+                ((mgrs.squareLetter1 == MGRSCoordConverter.LETTER_D) || (mgrs.squareLetter1 == MGRSCoordConverter.LETTER_E) ||
+                    (mgrs.squareLetter1 == MGRSCoordConverter.LETTER_M) || (mgrs.squareLetter1 == MGRSCoordConverter.LETTER_N) ||
+                    (mgrs.squareLetter1 == MGRSCoordConverter.LETTER_V) || (mgrs.squareLetter1 == MGRSCoordConverter.LETTER_W)) ||
                 (mgrs.squareLetter2 > ltr3_high_value))
-                error_code = MGRS_STRING_ERROR;
+                error_code = MGRSCoordConverter.MGRS_STRING_ERROR;
 
-            if (error_code == MGRS_NO_ERROR) {
-                grid_northing = mgrs.squareLetter2 * ONEHT + false_northing;
-                if (mgrs.squareLetter2 > LETTER_I)
-                    grid_northing = grid_northing - ONEHT;
+            if (error_code == MGRSCoordConverter.MGRS_NO_ERROR) {
+                grid_northing = mgrs.squareLetter2 * MGRSCoordConverter.ONEHT + false_northing;
+                if (mgrs.squareLetter2 > MGRSCoordConverter.LETTER_I)
+                    grid_northing = grid_northing - MGRSCoordConverter.ONEHT;
 
-                if (mgrs.squareLetter2 > LETTER_O)
-                    grid_northing = grid_northing - ONEHT;
+                if (mgrs.squareLetter2 > MGRSCoordConverter.LETTER_O)
+                    grid_northing = grid_northing - MGRSCoordConverter.ONEHT;
 
-                grid_easting = ((mgrs.squareLetter1) - ltr2_low_value) * ONEHT + false_easting;
-                if (ltr2_low_value != LETTER_A) {
-                    if (mgrs.squareLetter1 > LETTER_L)
+                grid_easting = ((mgrs.squareLetter1) - ltr2_low_value) * MGRSCoordConverter.ONEHT + false_easting;
+                if (ltr2_low_value != MGRSCoordConverter.LETTER_A) {
+                    if (mgrs.squareLetter1 > MGRSCoordConverter.LETTER_L)
                         grid_easting = grid_easting - 300000.0;
 
-                    if (mgrs.squareLetter1 > LETTER_U)
+                    if (mgrs.squareLetter1 > MGRSCoordConverter.LETTER_U)
                         grid_easting = grid_easting - 200000.0;
-                }
-                else {
-                    if (mgrs.squareLetter1 > LETTER_C)
+                } else {
+                    if (mgrs.squareLetter1 > MGRSCoordConverter.LETTER_C)
                         grid_easting = grid_easting - 200000.0;
 
-                    if (mgrs.squareLetter1 > LETTER_I)
-                        grid_easting = grid_easting - ONEHT;
+                    if (mgrs.squareLetter1 > MGRSCoordConverter.LETTER_I)
+                        grid_easting = grid_easting - MGRSCoordConverter.ONEHT;
 
-                    if (mgrs.squareLetter1 > LETTER_L)
+                    if (mgrs.squareLetter1 > MGRSCoordConverter.LETTER_L)
                         grid_easting = grid_easting - 300000.0;
                 }
 
@@ -1029,12 +1008,12 @@ class MGRSCoordConverter {
         }
 
         public String toString() {
-            return "MGRS: " + zone + " " +
-                alphabet.charAt(latitudeBand) + " " +
-                alphabet.charAt(squareLetter1) + alphabet.charAt(squareLetter2) + " " +
-                easting + " " +
-                northing + " " +
-                "(" + precision + ")";
+            return "MGRS: " + zone + ' ' +
+                MGRSCoordConverter.alphabet.charAt(latitudeBand) + ' ' +
+                MGRSCoordConverter.alphabet.charAt(squareLetter1) + MGRSCoordConverter.alphabet.charAt(squareLetter2) + ' ' +
+                easting + ' ' +
+                northing + ' ' +
+                '(' + precision + ')';
         }
     }
 }

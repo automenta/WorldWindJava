@@ -31,10 +31,10 @@ public abstract class AbstractResizeHotSpot extends AbstractHotSpot {
     protected static final int SOUTH = 2;
     protected static final int EAST = 4;
     protected static final int WEST = 8;
-    protected static final int NORTHWEST = NORTH + WEST;
-    protected static final int NORTHEAST = NORTH + EAST;
-    protected static final int SOUTHWEST = SOUTH + WEST;
-    protected static final int SOUTHEAST = SOUTH + EAST;
+    protected static final int NORTHWEST = AbstractResizeHotSpot.NORTH + AbstractResizeHotSpot.WEST;
+    protected static final int NORTHEAST = AbstractResizeHotSpot.NORTH + AbstractResizeHotSpot.EAST;
+    protected static final int SOUTHWEST = AbstractResizeHotSpot.SOUTH + AbstractResizeHotSpot.WEST;
+    protected static final int SOUTHEAST = AbstractResizeHotSpot.SOUTH + AbstractResizeHotSpot.EAST;
 
     protected boolean dragging;
 
@@ -63,75 +63,73 @@ public abstract class AbstractResizeHotSpot extends AbstractHotSpot {
     protected void setDirection(String direction) {
         int dir = 0;
         if (AVKey.NORTH.equals(direction))
-            dir = NORTH;
+            dir = AbstractResizeHotSpot.NORTH;
         else if (AVKey.SOUTH.equals(direction))
-            dir = SOUTH;
+            dir = AbstractResizeHotSpot.SOUTH;
         else if (AVKey.EAST.equals(direction))
-            dir = EAST;
+            dir = AbstractResizeHotSpot.EAST;
         else if (AVKey.WEST.equals(direction))
-            dir = WEST;
+            dir = AbstractResizeHotSpot.WEST;
         else if (AVKey.NORTHEAST.equals(direction))
-            dir = NORTHEAST;
+            dir = AbstractResizeHotSpot.NORTHEAST;
         else if (AVKey.NORTHWEST.equals(direction))
-            dir = NORTHWEST;
+            dir = AbstractResizeHotSpot.NORTHWEST;
         else if (AVKey.SOUTHEAST.equals(direction))
-            dir = SOUTHEAST;
+            dir = AbstractResizeHotSpot.SOUTHEAST;
         else if (AVKey.SOUTHWEST.equals(direction))
-            dir = SOUTHWEST;
+            dir = AbstractResizeHotSpot.SOUTHWEST;
 
         this.setDirection(dir);
     }
 
     protected void setDirection(int direction) {
         this.adjustLocationX =
-            NORTH == direction
-                || WEST == direction
-                || SOUTHWEST == direction
-                || NORTHWEST == direction;
+            AbstractResizeHotSpot.NORTH == direction
+                || AbstractResizeHotSpot.WEST == direction
+                || AbstractResizeHotSpot.SOUTHWEST == direction
+                || AbstractResizeHotSpot.NORTHWEST == direction;
         this.adjustLocationY =
-            NORTH == direction
-                || WEST == direction
-                || NORTHWEST == direction
-                || NORTHEAST == direction;
+            AbstractResizeHotSpot.NORTH == direction
+                || AbstractResizeHotSpot.WEST == direction
+                || AbstractResizeHotSpot.NORTHWEST == direction
+                || AbstractResizeHotSpot.NORTHEAST == direction;
 
-        if (NORTH == direction || SOUTH == direction) {
+        if (AbstractResizeHotSpot.NORTH == direction || AbstractResizeHotSpot.SOUTH == direction) {
             this.allowVerticalResize = true;
             this.allowHorizontalResize = false;
-        }
-        else if (EAST == direction || WEST == direction) {
+        } else if (AbstractResizeHotSpot.EAST == direction || AbstractResizeHotSpot.WEST == direction) {
             this.allowVerticalResize = false;
             this.allowHorizontalResize = true;
-        }
-        else {
+        } else {
             this.allowVerticalResize = true;
             this.allowHorizontalResize = true;
         }
 
-        if (WEST == direction || SOUTHWEST == direction || NORTHWEST == direction)
+        if (AbstractResizeHotSpot.WEST == direction || AbstractResizeHotSpot.SOUTHWEST == direction || AbstractResizeHotSpot.NORTHWEST == direction)
             this.xSign = -1;
         else
             this.xSign = 1;
 
-        if (NORTH == direction || NORTHEAST == direction || NORTHWEST == direction)
+        if (AbstractResizeHotSpot.NORTH == direction || AbstractResizeHotSpot.NORTHEAST == direction || AbstractResizeHotSpot.NORTHWEST == direction)
             this.ySign = -1;
         else
             this.ySign = 1;
 
-        if (NORTH == direction)
+        if (AbstractResizeHotSpot.NORTH == direction)
             this.cursor = Cursor.N_RESIZE_CURSOR;
-        else if (SOUTH == direction)
+        else if (AbstractResizeHotSpot.SOUTH == direction)
             this.cursor = Cursor.S_RESIZE_CURSOR;
-        else if (EAST == direction)
+        else if (AbstractResizeHotSpot.EAST == direction)
             this.cursor = Cursor.E_RESIZE_CURSOR;
-        else if (WEST == direction)
+        else if (AbstractResizeHotSpot.WEST == direction)
             this.cursor = Cursor.W_RESIZE_CURSOR;
-        else if (NORTHEAST == direction)
+        else if (AbstractResizeHotSpot.NORTHEAST == direction)
             this.cursor = Cursor.NE_RESIZE_CURSOR;
-        else if (SOUTHEAST == direction)
+        else if (AbstractResizeHotSpot.SOUTHEAST == direction)
             this.cursor = Cursor.SE_RESIZE_CURSOR;
-        else if (SOUTHWEST == direction)
+        else if (AbstractResizeHotSpot.SOUTHWEST == direction)
             this.cursor = Cursor.SW_RESIZE_CURSOR;
-        else if (NORTHWEST == direction)
+        else if (AbstractResizeHotSpot.NORTHWEST == direction)
             this.cursor = Cursor.NW_RESIZE_CURSOR;
     }
 
@@ -156,8 +154,8 @@ public abstract class AbstractResizeHotSpot extends AbstractHotSpot {
         int dx = pickPoint.x - center.x;
 
         // Use the sign of dx and dy to determine if we are resizing up or down, left or right
-        int vdir = (dy > 0) ? NORTH : SOUTH;
-        int hdir = (dx > 0) ? EAST : WEST;
+        int vdir = (dy > 0) ? AbstractResizeHotSpot.NORTH : AbstractResizeHotSpot.SOUTH;
+        int hdir = (dx > 0) ? AbstractResizeHotSpot.EAST : AbstractResizeHotSpot.WEST;
 
         // Compare the aspect ratio of the frame to the aspect ratio of the rectangle formed by the pick point and the
         // center point. If the aspect ratios are close to equal, resize both horizontally and vertically. Otherwise,
@@ -188,9 +186,8 @@ public abstract class AbstractResizeHotSpot extends AbstractHotSpot {
     }
 
     /**
-     * Handle a {@link SelectEvent} and call {@link #beginDrag}, {@link #drag}, {@link
-     * #endDrag} as appropriate. Subclasses may override this method if they need to handle events other than drag
-     * events.
+     * Handle a {@link SelectEvent} and call {@link #beginDrag}, {@link #drag}, {@link #endDrag} as appropriate.
+     * Subclasses may override this method if they need to handle events other than drag events.
      *
      * @param event Select event.
      */

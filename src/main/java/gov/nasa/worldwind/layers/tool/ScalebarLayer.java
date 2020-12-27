@@ -35,11 +35,11 @@ public class ScalebarLayer extends AbstractLayer {
     protected int borderWidth = 20;
     protected String position = AVKey.SOUTHEAST;
     protected String resizeBehavior = AVKey.RESIZE_SHRINK_ONLY;
-    protected String unit = UNIT_METRIC;
+    protected String unit = ScalebarLayer.UNIT_METRIC;
     protected Font defaultFont = Font.decode("Arial-PLAIN-12");
     protected double toViewportScale = 0.2;
-    protected Vec4 locationCenter = null;
-    protected Vec4 locationOffset = null;
+    protected Vec4 locationCenter;
+    protected Vec4 locationOffset;
     protected long frameStampForPicking;
     protected long frameStampForDrawing;
 
@@ -51,6 +51,42 @@ public class ScalebarLayer extends AbstractLayer {
     }
 
     // Public properties
+
+    protected static double computePixelSize(DrawContext dc, Position referencePosition) {
+        if (referencePosition == null)
+            return -1;
+
+        Vec4 groundTarget = dc.getGlobe().computePointFromPosition(referencePosition);
+        double eyeDistance = dc.getView().getEyePoint().distanceTo3(groundTarget);
+        return dc.getView().computePixelSizeAtDistance(eyeDistance);
+    }
+
+    // Draw scale rectangle
+    private static void drawRectangle(DrawContext dc, double width, double height) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
+        gl.glBegin(GL2.GL_POLYGON);
+        gl.glVertex3d(0, height, 0);
+        gl.glVertex3d(0, 0, 0);
+        gl.glVertex3d(width, 0, 0);
+        gl.glVertex3d(width, height, 0);
+        gl.glVertex3d(0, height, 0);
+        gl.glEnd();
+    }
+
+    // Draw scale graphic
+    private static void drawScale(DrawContext dc, double width, double height) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
+        gl.glBegin(GL2.GL_LINE_STRIP);
+        gl.glVertex3d(0, height, 0);
+        gl.glVertex3d(0, 0, 0);
+        gl.glVertex3d(width, 0, 0);
+        gl.glVertex3d(width, height, 0);
+        gl.glEnd();
+        gl.glBegin(GL2.GL_LINE_STRIP);
+        gl.glVertex3d(width / 2, 0, 0);
+        gl.glVertex3d(width / 2, height / 2, 0);
+        gl.glEnd();
+    }
 
     /**
      * Get the scalebar graphic Dimension (in pixels)
@@ -284,16 +320,8 @@ public class ScalebarLayer extends AbstractLayer {
         // Capture the current reference position and pixel size and create an ordered renderable to defer drawing.
 
         Position referencePosition = dc.getViewportCenterPosition();
-        dc.addOrderedRenderable(new OrderedImage(referencePosition, ScalebarLayer.computePixelSize(dc, referencePosition)));
-    }
-
-    protected static double computePixelSize(DrawContext dc, Position referencePosition) {
-        if (referencePosition == null)
-            return -1;
-
-        Vec4 groundTarget = dc.getGlobe().computePointFromPosition(referencePosition);
-        double eyeDistance = dc.getView().getEyePoint().distanceTo3(groundTarget);
-        return dc.getView().computePixelSizeAtDistance(eyeDistance);
+        dc.addOrderedRenderable(
+            new OrderedImage(referencePosition, ScalebarLayer.computePixelSize(dc, referencePosition)));
     }
 
     // Rendering
@@ -323,7 +351,7 @@ public class ScalebarLayer extends AbstractLayer {
             // located at the proper position on screen
             double scale = this.computeScale(viewport);
             Vec4 locationSW = this.computeLocation(viewport, scale);
-            gl.glTranslated(locationSW.x(), locationSW.y(), locationSW.z());
+            gl.glTranslated(locationSW.x, locationSW.y, locationSW.z);
             gl.glScaled(scale, scale, 1);
 
             // Compute scale size in real world
@@ -331,13 +359,13 @@ public class ScalebarLayer extends AbstractLayer {
                 double scaleSize = orderedImage.pixelSize * width * scale;  // meter
                 String unitLabel = "m";
                 switch (this.unit) {
-                    case UNIT_METRIC:
+                    case ScalebarLayer.UNIT_METRIC:
                         if (scaleSize > 10000) {
                             scaleSize /= 1000;
                             unitLabel = "Km";
                         }
                         break;
-                    case UNIT_IMPERIAL:
+                    case ScalebarLayer.UNIT_IMPERIAL:
                         scaleSize *= 3.280839895; // feet
 
                         unitLabel = "ft";
@@ -346,7 +374,7 @@ public class ScalebarLayer extends AbstractLayer {
                             unitLabel = "mile(s)";
                         }
                         break;
-                    case UNIT_NAUTICAL:
+                    case ScalebarLayer.UNIT_NAUTICAL:
                         scaleSize *= 3.280839895; // feet
 
                         unitLabel = "ft";
@@ -392,8 +420,7 @@ public class ScalebarLayer extends AbstractLayer {
                         drawLabel(dc, label,
                             locationSW.add3(
                                 new Vec4(divWidth * scale / 2 + (width - divWidth) / 2, height * scale, 0)));
-                    }
-                    else {
+                    } else {
                         // Picking
                         this.pickSupport.clearPickList();
                         PickSupport.beginPicking(dc);
@@ -425,41 +452,14 @@ public class ScalebarLayer extends AbstractLayer {
         }
     }
 
-    // Draw scale rectangle
-    private static void drawRectangle(DrawContext dc, double width, double height) {
-        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-        gl.glBegin(GL2.GL_POLYGON);
-        gl.glVertex3d(0, height, 0);
-        gl.glVertex3d(0, 0, 0);
-        gl.glVertex3d(width, 0, 0);
-        gl.glVertex3d(width, height, 0);
-        gl.glVertex3d(0, height, 0);
-        gl.glEnd();
-    }
-
-    // Draw scale graphic
-    private static void drawScale(DrawContext dc, double width, double height) {
-        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-        gl.glBegin(GL2.GL_LINE_STRIP);
-        gl.glVertex3d(0, height, 0);
-        gl.glVertex3d(0, 0, 0);
-        gl.glVertex3d(width, 0, 0);
-        gl.glVertex3d(width, height, 0);
-        gl.glEnd();
-        gl.glBegin(GL2.GL_LINE_STRIP);
-        gl.glVertex3d(width / 2, 0, 0);
-        gl.glVertex3d(width / 2, height / 2, 0);
-        gl.glEnd();
-    }
-
     // Draw the scale label
     private void drawLabel(DrawContext dc, String text, Vec4 screenPoint) {
         TextRenderer textRenderer = OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(),
             this.defaultFont);
 
         Rectangle2D nameBound = textRenderer.getBounds(text);
-        int x = (int) (screenPoint.x() - nameBound.getWidth() / 2.0d);
-        int y = (int) screenPoint.y();
+        int x = (int) (screenPoint.x - nameBound.getWidth() / 2.0d);
+        int y = (int) screenPoint.y;
 
         textRenderer.begin3DRendering();
 
@@ -499,24 +499,19 @@ public class ScalebarLayer extends AbstractLayer {
         if (this.locationCenter != null) {
             x = this.locationCenter.x - scaledWidth / 2;
             y = this.locationCenter.y - scaledHeight / 2;
-        }
-        else if (this.position.equals(AVKey.NORTHEAST)) {
+        } else if (this.position.equals(AVKey.NORTHEAST)) {
             x = viewport.getWidth() - scaledWidth - this.borderWidth;
             y = viewport.getHeight() - scaledHeight - this.borderWidth;
-        }
-        else if (this.position.equals(AVKey.SOUTHEAST)) {
+        } else if (this.position.equals(AVKey.SOUTHEAST)) {
             x = viewport.getWidth() - scaledWidth - this.borderWidth;
             y = 0.0d + this.borderWidth;
-        }
-        else if (this.position.equals(AVKey.NORTHWEST)) {
+        } else if (this.position.equals(AVKey.NORTHWEST)) {
             x = 0.0d + this.borderWidth;
             y = viewport.getHeight() - scaledHeight - this.borderWidth;
-        }
-        else if (this.position.equals(AVKey.SOUTHWEST)) {
+        } else if (this.position.equals(AVKey.SOUTHWEST)) {
             x = 0.0d + this.borderWidth;
             y = 0.0d + this.borderWidth;
-        }
-        else // use North East
+        } else // use North East
         {
             x = viewport.getWidth() - scaledWidth / 2 - this.borderWidth;
             y = viewport.getHeight() - scaledHeight / 2 - this.borderWidth;

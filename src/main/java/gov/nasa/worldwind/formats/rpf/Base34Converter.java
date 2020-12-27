@@ -33,7 +33,7 @@ class Base34Converter {
         }
 
         for (int digit = count + offset - 1; digit >= offset; digit--) {
-            dest[digit] = BASE34_ALPHABET[i % 34];
+            dest[digit] = Base34Converter.BASE34_ALPHABET[i % 34];
             i /= 34;
         }
         return dest;

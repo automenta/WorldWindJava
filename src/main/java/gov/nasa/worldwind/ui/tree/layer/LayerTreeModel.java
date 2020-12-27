@@ -8,7 +8,6 @@ package gov.nasa.worldwind.ui.tree.layer;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.ui.tree.*;
-import gov.nasa.worldwind.util.Logging;
 import gov.nasa.worldwind.video.LayerList;
 
 /**
@@ -71,15 +70,30 @@ public class LayerTreeModel extends BasicTreeModel {
      * @throws IllegalArgumentException if the <code>layerList</code> is <code>null</code>.
      */
     public LayerTreeModel(Iterable<Layer> layerList, boolean includeHiddenLayers) {
-//        if (layerList == null) {
-//            String message = Logging.getMessage("nullValue.LayersListArrayIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         this.initialize();
         this.includeHiddenLayers = includeHiddenLayers;
         this.refresh(layerList);
+    }
+
+    /**
+     * Returns a new root <code>TreeNode</code> for this tree model. Called from <code>initialize</code>.
+     *
+     * @return a new <code>TreeNode</code>.
+     */
+    protected static TreeNode createRootNode() {
+        return new BasicTreeNode(LayerTreeModel.DEFAULT_ROOT_NAME);
+    }
+
+    /**
+     * Returns a new root <code>LayerTreeNode</code> for the specified <code>layer</code>. Called from
+     * <code>addLayer(Layer)</code>.
+     *
+     * @param layer the <code>Layer</code> to create a new <code>LayerTreeNode</code> for.
+     * @return a new <code>LayerTreeNode</code>.
+     */
+    protected static LayerTreeNode createLayerNode(Layer layer) {
+        return new LayerTreeNode(layer);
     }
 
     /**
@@ -94,8 +108,8 @@ public class LayerTreeModel extends BasicTreeModel {
 
     /**
      * Specifies whether or not this tree model includes layers marked as hidden. Changes will take effect on the next
-     * call to {@link #refresh(LayerList) refresh}. A layer can be marked as hidden by setting
-     * the value for key <code>AVKey.HIDDEN</code> to <code>true</code>.
+     * call to {@link #refresh(LayerList) refresh}. A layer can be marked as hidden by setting the value for key
+     * <code>AVKey.HIDDEN</code> to <code>true</code>.
      *
      * @param includeHiddenLayers <code>true</code> if the tree model should include hidden layers. <code>false</code>
      *                            if the model should ignore layers marked as hidden.
@@ -112,15 +126,6 @@ public class LayerTreeModel extends BasicTreeModel {
     }
 
     /**
-     * Returns a new root <code>TreeNode</code> for this tree model. Called from <code>initialize</code>.
-     *
-     * @return a new <code>TreeNode</code>.
-     */
-    protected static TreeNode createRootNode() {
-        return new BasicTreeNode(DEFAULT_ROOT_NAME);
-    }
-
-    /**
      * Adds the specified <code>layerNode</code> to this tree model's root node. Nodes added under this tree model's
      * root should always be of type <code>{@link LayerTreeNode}</code>.  Note: this method adds the layer to the tree
      * model regardless of whether or not the layer is marked as hidden.
@@ -129,11 +134,6 @@ public class LayerTreeModel extends BasicTreeModel {
      * @throws IllegalArgumentException if the <code>layerNode</code> is <code>null</code>.
      */
     public void addLayer(TreeNode layerNode) {
-//        if (layerNode == null) {
-//            String message = Logging.getMessage("nullValue.TreeNodeIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         this.getRoot().addChild(layerNode);
     }
@@ -148,27 +148,11 @@ public class LayerTreeModel extends BasicTreeModel {
      * @throws IllegalArgumentException if the <code>layer</code> is <code>null</code>.
      */
     public LayerTreeNode addLayer(Layer layer) {
-//        if (layer == null) {
-//            String message = Logging.getMessage("nullValue.LayerIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         LayerTreeNode layerNode = LayerTreeModel.createLayerNode(layer);
 
         this.addLayer(layerNode);
         return layerNode;
-    }
-
-    /**
-     * Returns a new root <code>LayerTreeNode</code> for the specified <code>layer</code>. Called from
-     * <code>addLayer(Layer)</code>.
-     *
-     * @param layer the <code>Layer</code> to create a new <code>LayerTreeNode</code> for.
-     * @return a new <code>LayerTreeNode</code>.
-     */
-    protected static LayerTreeNode createLayerNode(Layer layer) {
-        return new LayerTreeNode(layer);
     }
 
     /**

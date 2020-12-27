@@ -17,7 +17,7 @@ import org.w3c.dom.Document;
 
 public class USDANAIPWMSImageLayer extends WMSTiledImageLayer {
     public USDANAIPWMSImageLayer() {
-        super(getConfigurationDocument(), null);
+        super(USDANAIPWMSImageLayer.getConfigurationDocument(), null);
     }
 
     protected static Document getConfigurationDocument() {

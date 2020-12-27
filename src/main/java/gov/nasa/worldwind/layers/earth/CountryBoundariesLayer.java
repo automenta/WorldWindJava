@@ -15,7 +15,7 @@ import org.w3c.dom.Document;
  */
 public class CountryBoundariesLayer extends WMSTiledImageLayer {
     public CountryBoundariesLayer() {
-        super(getConfigurationDocument(), null);
+        super(CountryBoundariesLayer.getConfigurationDocument(), null);
     }
 
     protected static Document getConfigurationDocument() {

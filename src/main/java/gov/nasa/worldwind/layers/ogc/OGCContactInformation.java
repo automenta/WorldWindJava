@@ -68,22 +68,17 @@ public class OGCContactInformation extends AbstractXMLEventParser {
         throws XMLStreamException {
         if (ctx.isStartElement(event, CONTACT_POSITION)) {
             this.setPosition(ctx.getStringParser().parseString(ctx, event));
-        }
-        else if (ctx.isStartElement(event, CONTACT_VOICE_TELEPHONE)) {
+        } else if (ctx.isStartElement(event, CONTACT_VOICE_TELEPHONE)) {
             this.setVoiceTelephone(ctx.getStringParser().parseString(ctx, event));
-        }
-        else if (ctx.isStartElement(event, CONTACT_FACSIMILE_TELEPHONE)) {
+        } else if (ctx.isStartElement(event, CONTACT_FACSIMILE_TELEPHONE)) {
             this.setFacsimileTelephone(ctx.getStringParser().parseString(ctx, event));
-        }
-        else if (ctx.isStartElement(event, CONTACT_ELECTRONIC_MAIL_ADDRESS)) {
+        } else if (ctx.isStartElement(event, CONTACT_ELECTRONIC_MAIL_ADDRESS)) {
             this.setElectronicMailAddress(ctx.getStringParser().parseString(ctx, event));
-        }
-        else if (ctx.isStartElement(event, CONTACT_PERSON_PRIMARY)) {
+        } else if (ctx.isStartElement(event, CONTACT_PERSON_PRIMARY)) {
             String[] sa = this.parseContactPersonPrimary(ctx, event);
             this.setPersonPrimary(sa[0]);
             this.setOrganization(sa[1]);
-        }
-        else if (ctx.isStartElement(event, CONTACT_ADDRESS)) {
+        } else if (ctx.isStartElement(event, CONTACT_ADDRESS)) {
             XMLEventParser parser = this.allocate(ctx, event);
             if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
@@ -103,8 +98,7 @@ public class OGCContactInformation extends AbstractXMLEventParser {
 
             if (ctx.isStartElement(event, CONTACT_PERSON)) {
                 items[0] = ctx.getStringParser().parseString(ctx, event);
-            }
-            else if (ctx.isStartElement(event, CONTACT_ORGANIZATION)) {
+            } else if (ctx.isStartElement(event, CONTACT_ORGANIZATION)) {
                 items[1] = ctx.getStringParser().parseString(ctx, event);
             }
         }
@@ -172,14 +166,14 @@ public class OGCContactInformation extends AbstractXMLEventParser {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("PersonPrimary: ").append(this.personPrimary != null ? this.personPrimary : "none").append("\n");
-        sb.append("Organization: ").append(this.organization != null ? this.organization : "none").append("\n");
-        sb.append("Position: ").append(this.position != null ? this.position : "none").append("\n");
-        sb.append("VoiceTelephone: ").append(this.voiceTelephone != null ? this.voiceTelephone : "none").append("\n");
+        sb.append("PersonPrimary: ").append(this.personPrimary != null ? this.personPrimary : "none").append('\n');
+        sb.append("Organization: ").append(this.organization != null ? this.organization : "none").append('\n');
+        sb.append("Position: ").append(this.position != null ? this.position : "none").append('\n');
+        sb.append("VoiceTelephone: ").append(this.voiceTelephone != null ? this.voiceTelephone : "none").append('\n');
         sb.append("FacsimileTelephone: ").append(
-            this.facsimileTelephone != null ? this.facsimileTelephone : "none").append("\n");
+            this.facsimileTelephone != null ? this.facsimileTelephone : "none").append('\n');
         sb.append("ElectronicMailAddress: ").append(
-            this.electronicMailAddress != null ? this.electronicMailAddress : "none").append("\n");
+            this.electronicMailAddress != null ? this.electronicMailAddress : "none").append('\n');
         sb.append(this.contactAddress != null ? this.contactAddress : "none");
 
         return sb.toString();

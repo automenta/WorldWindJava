@@ -109,15 +109,15 @@ public class TMCoord {
         if (globe != null) {
             a = globe.getEquatorialRadius();
             f = (globe.getEquatorialRadius() - globe.getPolarRadius()) / globe.getEquatorialRadius();
-        }
-        else if (a == null || f == null) {
+        } else if (a == null || f == null) {
             a = converter.getA();
             f = converter.getF();
         }
-        long err = converter.setTransverseMercatorParameters(a, f, originLatitude.radians, centralMeridian.radians,
+        long err = converter.setTransverseMercatorParameters(a, f, originLatitude.radians(),
+            centralMeridian.radians(),
             falseEasting, falseNorthing, scale);
         if (err == TMCoordConverter.TRANMERC_NO_ERROR)
-            err = converter.convertGeodeticToTransverseMercator(latitude.radians, longitude.radians);
+            err = converter.convertGeodeticToTransverseMercator(latitude.radians(), longitude.radians());
 
         if (err != TMCoordConverter.TRANMERC_NO_ERROR && err != TMCoordConverter.TRANMERC_LON_WARNING) {
             String message = Logging.getMessage("Coord.TMConversionError");
@@ -161,12 +161,12 @@ public class TMCoord {
         if (globe != null) {
             a = globe.getEquatorialRadius();
             f = (globe.getEquatorialRadius() - globe.getPolarRadius()) / globe.getEquatorialRadius();
-        }
-        else {
+        } else {
             a = converter.getA();
             f = converter.getF();
         }
-        long err = converter.setTransverseMercatorParameters(a, f, originLatitude.radians, centralMeridian.radians,
+        long err = converter.setTransverseMercatorParameters(a, f, originLatitude.radians(),
+            centralMeridian.radians(),
             falseEasting, falseNorthing, scale);
         if (err == TMCoordConverter.TRANMERC_NO_ERROR)
             err = converter.convertTransverseMercatorToGeodetic(easting, northing);

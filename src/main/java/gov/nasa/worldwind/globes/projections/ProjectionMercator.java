@@ -47,10 +47,10 @@ public class ProjectionMercator extends AbstractGeographicProjection {
 
         // See "Map Projections: A Working Manual", page 44 for the source of the below formulas.
 
-        double x = globe.getEquatorialRadius() * longitude.radians + xOffset;
+        double x = globe.getEquatorialRadius() * longitude.radians() + xOffset;
 
         double ecc = Math.sqrt(globe.getEccentricitySquared());
-        double sinPhi = Math.sin(latitude.radians);
+        double sinPhi = Math.sin(latitude.radians());
         double s = ((1 + sinPhi) / (1 - sinPhi)) * Math.pow((1 - ecc * sinPhi) / (1 + ecc * sinPhi), ecc);
         double y = 0.5 * globe.getEquatorialRadius() * Math.log(s);
 
@@ -62,16 +62,16 @@ public class ProjectionMercator extends AbstractGeographicProjection {
         Vec4 offset, Vec4[] out) {
         double eqr = globe.getEquatorialRadius();
         double ecc = Math.sqrt(globe.getEccentricitySquared());
-        double minLat = sector.latMin().radians;
-        double maxLat = sector.latMax().radians;
-        double minLon = sector.lonMin().radians;
-        double maxLon = sector.lonMax().radians;
+        double minLat = sector.latMin().radians();
+        double maxLat = sector.latMax().radians();
+        double minLon = sector.lonMin().radians();
+        double maxLon = sector.lonMax().radians();
         double deltaLat = (maxLat - minLat) / (numLat > 1 ? numLat - 1 : 1);
         double deltaLon = (maxLon - minLon) / (numLon > 1 ? numLon - 1 : 1);
-        double minLatLimit = this.getProjectionLimits().latMin().radians;
-        double maxLatLimit = this.getProjectionLimits().latMax().radians;
-        double minLonLimit = this.getProjectionLimits().lonMin().radians;
-        double maxLonLimit = this.getProjectionLimits().lonMax().radians;
+        double minLatLimit = this.getProjectionLimits().latMin().radians();
+        double maxLatLimit = this.getProjectionLimits().latMax().radians();
+        double minLonLimit = this.getProjectionLimits().lonMin().radians();
+        double maxLonLimit = this.getProjectionLimits().lonMax().radians();
         double offset_x = offset.x;
         int pos = 0;
 

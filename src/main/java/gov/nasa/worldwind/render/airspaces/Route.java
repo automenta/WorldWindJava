@@ -117,13 +117,11 @@ public class Route extends TrackAirspace {
         if (this.locations.isEmpty()) {
             this.locations.add(start);
             this.locations.add(end);
-        }
-        else {
+        } else {
             LatLon last = this.locations.get(this.locations.size() - 1);
             if (start.equals(last)) {
                 this.locations.add(end);
-            }
-            else {
+            } else {
                 String message = "Shapes.Route.DisjointLegDetected";
                 Logging.logger().severe(message);
                 throw new IllegalArgumentException(message);
@@ -203,8 +201,8 @@ public class Route extends TrackAirspace {
         LatLon[] newLocations = new LatLon[count];
         for (int i = 0; i < count; i++) {
             LatLon ll = this.locations.get(i);
-            double distance = LatLon.greatCircleDistance(oldRef, ll).radians;
-            double azimuth = LatLon.greatCircleAzimuth(oldRef, ll).radians;
+            double distance = LatLon.greatCircleDistance(oldRef, ll).radians();
+            double azimuth = LatLon.greatCircleAzimuth(oldRef, ll).radians();
             newLocations[i] = LatLon.greatCircleEndPosition(newRef, azimuth, distance);
         }
         this.setLocations(Arrays.asList(newLocations));

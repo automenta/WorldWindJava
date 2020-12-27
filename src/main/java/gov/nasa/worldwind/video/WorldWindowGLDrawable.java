@@ -15,5 +15,4 @@ import gov.nasa.worldwind.WorldWindow;
  */
 public interface WorldWindowGLDrawable extends WorldWindow {
     void initDrawable(GLAutoDrawable g, WorldWindow w);
-
 }

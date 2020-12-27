@@ -107,7 +107,7 @@ public class KMLModelPlacemarkImpl extends WWObjectImpl implements KMLRenderable
             }
         }
 
-        return !map.isEmpty() ? map : Collections.emptyMap();
+        return map.isEmpty() ? Collections.emptyMap() : map;
     }
 
     /**
@@ -289,7 +289,7 @@ public class KMLModelPlacemarkImpl extends WWObjectImpl implements KMLRenderable
      * <code>KMLLink</code>.
      *
      * @param address the address of the resource to retrieve
-     * @throws IOException                 if a reading error occurs.
+     * @throws IOException        if a reading error occurs.
      * @throws XMLStreamException if a parsing error occurs.
      */
     protected void retrieveModel(String address) throws IOException, XMLStreamException {

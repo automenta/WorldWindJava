@@ -29,7 +29,8 @@ public class RayCastingSupport {
      * @return the <code>Position</code> found or <code>null</code>.
      */
     public static Position intersectRayWithTerrain(Globe globe, Vec4 origin, Vec4 direction) {
-        return intersectRayWithTerrain(globe, origin, direction, defaultSampleLength, defaultPrecision);
+        return RayCastingSupport.intersectRayWithTerrain(globe, origin, direction, RayCastingSupport.defaultSampleLength,
+            RayCastingSupport.defaultPrecision);
     }
 
     /**
@@ -84,15 +85,14 @@ public class RayCastingSupport {
                     p2 = p1;
                     p1 = temp;
                 }
-            }
-            else {
+            } else {
                 // single point in right direction: inside sphere
                 p2 = p2 == null ? p1 : p2;
                 p1 = origin;
             }
 
             // Sample between p1 and p2
-            Vec4 point = intersectSegmentWithTerrain(globe, p1, p2, sampleLength, precision);
+            Vec4 point = RayCastingSupport.intersectSegmentWithTerrain(globe, p1, p2, sampleLength, precision);
             if (point != null)
                 pos = globe.computePositionFromPoint(point);
         }
@@ -109,7 +109,7 @@ public class RayCastingSupport {
      * @return the <code>Vec4</code> point found or <code>null</code>.
      */
     public static Vec4 intersectSegmentWithTerrain(Globe globe, Vec4 p1, Vec4 p2) {
-        return intersectSegmentWithTerrain(globe, p1, p2, defaultSampleLength, defaultPrecision);
+        return RayCastingSupport.intersectSegmentWithTerrain(globe, p1, p2, RayCastingSupport.defaultSampleLength, RayCastingSupport.defaultPrecision);
     }
 
     /**
@@ -160,7 +160,7 @@ public class RayCastingSupport {
 
         // Recurse for more precision if needed
         if (point != null && sampleLength > precision && lastSample != null)
-            point = intersectSegmentWithTerrain(globe, lastSample, point, sampleLength / 10, precision);
+            point = RayCastingSupport.intersectSegmentWithTerrain(globe, lastSample, point, sampleLength / 10, precision);
 
         return point;
     }

@@ -16,9 +16,8 @@ import gov.nasa.worldwind.globes.Globe;
  */
 public interface ExtentHolder {
     /**
-     * Returns the objects enclosing volume as an {@link Extent} in model coordinates, given a
-     * specified {@link Globe} and vertical exaggeration (see {@link
-     * gov.nasa.worldwind.SceneController#getVerticalExaggeration()}.
+     * Returns the objects enclosing volume as an {@link Extent} in model coordinates, given a specified {@link Globe}
+     * and vertical exaggeration (see {@link gov.nasa.worldwind.SceneController#getVerticalExaggeration()}.
      *
      * @param globe                the Globe the object is related to.
      * @param verticalExaggeration the vertical exaggeration of the scene containing this object.

@@ -17,7 +17,7 @@ import java.net.*;
  */
 public class OSMCycleMapLayer extends BasicMercatorTiledImageLayer {
     public OSMCycleMapLayer() {
-        super(makeLevels());
+        super(OSMCycleMapLayer.makeLevels());
     }
 
     private static LevelSet makeLevels() {
@@ -49,7 +49,7 @@ public class OSMCycleMapLayer extends BasicMercatorTiledImageLayer {
         public URL getURL(Tile tile, String imageFormat)
             throws MalformedURLException {
             return new URL(tile.level.getService()
-                + (tile.getLevelNumber() + 3) + "/" + tile.col + "/" + ((1 << (tile.getLevelNumber()) + 3) - 1
+                + (tile.getLevelNumber() + 3) + '/' + tile.col + '/' + ((1 << (tile.getLevelNumber()) + 3) - 1
                 - tile.row) + ".png");
         }
     }

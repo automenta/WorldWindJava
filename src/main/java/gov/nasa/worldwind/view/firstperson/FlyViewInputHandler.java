@@ -60,7 +60,7 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
             KeyEvent.VK_P, ViewInputAttributes.ActionAttributes.KeyAction.KA_DIR_X, 1);
     public static final ViewInputAttributes.ActionAttributes.KeyAction[] resetPitchEvents =
         {
-            DEFAULT_RESET_PITCH_KEY_ACT
+            FlyViewInputHandler.DEFAULT_RESET_PITCH_KEY_ACT
         };
     final AnimationController uiAnimControl = new AnimationController();
     final AnimationController gotoAnimControl = new AnimationController();
@@ -72,7 +72,8 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
         // Button 1
         this.getAttributes().setValues(ViewInputAttributes.DEVICE_MOUSE,
             ViewInputAttributes.VIEW_HORIZONTAL_TRANSLATE,
-            DEFAULT_MOUSE_HORIZONTAL_TRANSLATE_MIN_VALUE, DEFAULT_MOUSE_HORIZONTAL_TRANSLATE_MAX_VALUE);
+            FlyViewInputHandler.DEFAULT_MOUSE_HORIZONTAL_TRANSLATE_MIN_VALUE,
+            FlyViewInputHandler.DEFAULT_MOUSE_HORIZONTAL_TRANSLATE_MAX_VALUE);
         this.getAttributes().setActionTrigger(ViewInputAttributes.DEVICE_MOUSE,
             ViewInputAttributes.VIEW_HORIZONTAL_TRANSLATE,
             ViewInputAttributes.ActionAttributes.ActionTrigger.ON_KEY_DOWN);
@@ -80,15 +81,15 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
         // Mouse Button Rotate Events
         // Button 1 + SHIFT
         this.getAttributes().setValues(ViewInputAttributes.DEVICE_MOUSE, ViewInputAttributes.VIEW_ROTATE_SHIFT,
-            DEFAULT_MOUSE_ROTATE_MIN_VALUE,
-            DEFAULT_MOUSE_ROTATE_MAX_VALUE);
+            FlyViewInputHandler.DEFAULT_MOUSE_ROTATE_MIN_VALUE,
+            FlyViewInputHandler.DEFAULT_MOUSE_ROTATE_MAX_VALUE);
         this.getAttributes().setActionTrigger(ViewInputAttributes.DEVICE_MOUSE,
             ViewInputAttributes.VIEW_ROTATE_SHIFT,
             ViewInputAttributes.ActionAttributes.ActionTrigger.ON_KEY_DOWN);
         // Button 3
         this.getAttributes().setValues(ViewInputAttributes.DEVICE_MOUSE, ViewInputAttributes.VIEW_ROTATE,
-            DEFAULT_MOUSE_ROTATE_MIN_VALUE,
-            DEFAULT_MOUSE_ROTATE_MAX_VALUE);
+            FlyViewInputHandler.DEFAULT_MOUSE_ROTATE_MIN_VALUE,
+            FlyViewInputHandler.DEFAULT_MOUSE_ROTATE_MAX_VALUE);
         this.getAttributes().setActionTrigger(ViewInputAttributes.DEVICE_MOUSE,
             ViewInputAttributes.VIEW_ROTATE,
             ViewInputAttributes.ActionAttributes.ActionTrigger.ON_KEY_DOWN);
@@ -96,15 +97,16 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
         // Mouse Vertical Translate
         // Button 2
         this.getAttributes().setValues(ViewInputAttributes.DEVICE_MOUSE,
-            ViewInputAttributes.VIEW_VERTICAL_TRANSLATE, DEFAULT_MOUSE_VERTICAL_TRANSLATE_MIN_VALUE,
-            DEFAULT_MOUSE_VERTICAL_TRANSLATE_MAX_VALUE);
+            ViewInputAttributes.VIEW_VERTICAL_TRANSLATE, FlyViewInputHandler.DEFAULT_MOUSE_VERTICAL_TRANSLATE_MIN_VALUE,
+            FlyViewInputHandler.DEFAULT_MOUSE_VERTICAL_TRANSLATE_MAX_VALUE);
         this.getAttributes().setActionTrigger(ViewInputAttributes.DEVICE_MOUSE,
             ViewInputAttributes.VIEW_VERTICAL_TRANSLATE,
             ViewInputAttributes.ActionAttributes.ActionTrigger.ON_KEY_DOWN);
         // Button 1 + CTRL
         this.getAttributes().setValues(ViewInputAttributes.DEVICE_MOUSE,
-            ViewInputAttributes.VIEW_VERTICAL_TRANSLATE_CTRL, DEFAULT_MOUSE_VERTICAL_TRANSLATE_MIN_VALUE,
-            DEFAULT_MOUSE_VERTICAL_TRANSLATE_MAX_VALUE);
+            ViewInputAttributes.VIEW_VERTICAL_TRANSLATE_CTRL,
+            FlyViewInputHandler.DEFAULT_MOUSE_VERTICAL_TRANSLATE_MIN_VALUE,
+            FlyViewInputHandler.DEFAULT_MOUSE_VERTICAL_TRANSLATE_MAX_VALUE);
         this.getAttributes().setActionTrigger(ViewInputAttributes.DEVICE_MOUSE,
             ViewInputAttributes.VIEW_VERTICAL_TRANSLATE_CTRL,
             ViewInputAttributes.ActionAttributes.ActionTrigger.ON_KEY_DOWN);
@@ -119,51 +121,52 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
         // Arrow Keys horizontal translate
         this.getAttributes().setValues(ViewInputAttributes.DEVICE_KEYBOARD,
             ViewInputAttributes.VIEW_HORIZONTAL_TRANS_KEYS,
-            DEFAULT_KEY_HORIZONTAL_TRANSLATE_MIN_VALUE,
-            DEFAULT_KEY_HORIZONTAL_TRANSLATE_MAX_VALUE);
+            FlyViewInputHandler.DEFAULT_KEY_HORIZONTAL_TRANSLATE_MIN_VALUE,
+            FlyViewInputHandler.DEFAULT_KEY_HORIZONTAL_TRANSLATE_MAX_VALUE);
         this.getAttributes().getActionAttributes(ViewInputAttributes.DEVICE_KEYBOARD,
-            ViewInputAttributes.VIEW_HORIZONTAL_TRANS_KEYS).setSmoothingValue(DEFAULT_KEY_TRANSLATE_SMOOTHING_VALUE);
+            ViewInputAttributes.VIEW_HORIZONTAL_TRANS_KEYS).setSmoothingValue(
+            FlyViewInputHandler.DEFAULT_KEY_TRANSLATE_SMOOTHING_VALUE);
 
         this.getAttributes().setValues(ViewInputAttributes.DEVICE_KEYBOARD,
             ViewInputAttributes.VIEW_HORIZONTAL_TRANSLATE_SLOW,
-            DEFAULT_KEY_HORIZONTAL_TRANSLATE_MIN_VALUE_SLOW, DEFAULT_KEY_HORIZONTAL_TRANSLATE_MAX_VALUE_SLOW);
+            FlyViewInputHandler.DEFAULT_KEY_HORIZONTAL_TRANSLATE_MIN_VALUE_SLOW,
+            FlyViewInputHandler.DEFAULT_KEY_HORIZONTAL_TRANSLATE_MAX_VALUE_SLOW);
 
         // +- Keys vertical translate
         this.getAttributes().setValues(ViewInputAttributes.DEVICE_KEYBOARD,
             ViewInputAttributes.VIEW_VERTICAL_TRANS_KEYS,
-            DEFAULT_KEY_VERTICAL_TRANSLATE_MIN_VALUE, DEFAULT_KEY_VERTICAL_TRANSLATE_MAX_VALUE);
+            FlyViewInputHandler.DEFAULT_KEY_VERTICAL_TRANSLATE_MIN_VALUE, FlyViewInputHandler.DEFAULT_KEY_VERTICAL_TRANSLATE_MAX_VALUE);
         // Arrow keys vertical translate
         this.getAttributes().setValues(ViewInputAttributes.DEVICE_KEYBOARD,
             ViewInputAttributes.VIEW_VERTICAL_TRANS_KEYS_META,
-            DEFAULT_KEY_VERTICAL_TRANSLATE_MIN_VALUE, DEFAULT_KEY_VERTICAL_TRANSLATE_MAX_VALUE);
+            FlyViewInputHandler.DEFAULT_KEY_VERTICAL_TRANSLATE_MIN_VALUE, FlyViewInputHandler.DEFAULT_KEY_VERTICAL_TRANSLATE_MAX_VALUE);
         this.getAttributes().setValues(ViewInputAttributes.DEVICE_KEYBOARD,
             ViewInputAttributes.VIEW_VERTICAL_TRANS_KEYS_CTRL,
-            DEFAULT_KEY_VERTICAL_TRANSLATE_MIN_VALUE, DEFAULT_KEY_VERTICAL_TRANSLATE_MAX_VALUE);
+            FlyViewInputHandler.DEFAULT_KEY_VERTICAL_TRANSLATE_MIN_VALUE, FlyViewInputHandler.DEFAULT_KEY_VERTICAL_TRANSLATE_MAX_VALUE);
 
         // Mouse Wheel vertical translate
         if (Configuration.isMacOS()) {
             this.getAttributes().setValues(ViewInputAttributes.DEVICE_MOUSE_WHEEL,
                 ViewInputAttributes.VIEW_VERTICAL_TRANSLATE,
-                DEFAULT_MOUSE_WHEEL_VERTICAL_TRANSLATE_VALUE_MIN_OSX,
-                DEFAULT_MOUSE_WHEEL_VERTICAL_TRANSLATE_VALUE_MAX_OSX);
-        }
-        else {
+                FlyViewInputHandler.DEFAULT_MOUSE_WHEEL_VERTICAL_TRANSLATE_VALUE_MIN_OSX,
+                FlyViewInputHandler.DEFAULT_MOUSE_WHEEL_VERTICAL_TRANSLATE_VALUE_MAX_OSX);
+        } else {
             this.getAttributes().setValues(ViewInputAttributes.DEVICE_MOUSE_WHEEL,
                 ViewInputAttributes.VIEW_VERTICAL_TRANSLATE,
-                DEFAULT_MOUSE_WHEEL_VERTICAL_TRANSLATE_VALUE_MIN,
-                DEFAULT_MOUSE_WHEEL_VERTICAL_TRANSLATE_VALUE_MAX);
+                FlyViewInputHandler.DEFAULT_MOUSE_WHEEL_VERTICAL_TRANSLATE_VALUE_MIN,
+                FlyViewInputHandler.DEFAULT_MOUSE_WHEEL_VERTICAL_TRANSLATE_VALUE_MAX);
         }
 
         // P Key Reset Pitch
         this.getAttributes().addAction(ViewInputAttributes.DEVICE_KEYBOARD,
-            ViewInputAttributes.ActionAttributes.NO_MODIFIER, ACTION_RESET_PITCH,
-            new ViewInputAttributes.ActionAttributes(resetPitchEvents,
+            ViewInputAttributes.ActionAttributes.NO_MODIFIER, FlyViewInputHandler.ACTION_RESET_PITCH,
+            new ViewInputAttributes.ActionAttributes(FlyViewInputHandler.resetPitchEvents,
                 ViewInputAttributes.ActionAttributes.ActionTrigger.ON_PRESS, 0,
                 0.1, 0.1, false, 0.1));
         // Reset Pitch
         ViewInputAttributes.ActionAttributes actionAttrs =
             this.getAttributes().getActionMap(ViewInputAttributes.DEVICE_KEYBOARD).getActionAttributes(
-                ACTION_RESET_PITCH);
+                FlyViewInputHandler.ACTION_RESET_PITCH);
         actionAttrs.setActionListener(new ResetPitchActionListener());
     }
 
@@ -201,11 +204,11 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
         ViewUtil.ViewState viewCoords = view.getViewState(newPosition, focalPosition);
 
         this.stopAnimators();
-        this.gotoAnimControl.put(VIEW_ANIM_HEADING,
+        this.gotoAnimControl.put(FlyViewInputHandler.VIEW_ANIM_HEADING,
             new RotateToAngleAnimator(
                 view.getHeading(), viewCoords.getHeading(), smoothing,
                 ViewPropertyAccessor.createHeadingAccessor(view)));
-        this.gotoAnimControl.put(VIEW_ANIM_PITCH,
+        this.gotoAnimControl.put(FlyViewInputHandler.VIEW_ANIM_PITCH,
             new RotateToAngleAnimator(
                 view.getPitch(), viewCoords.getPitch(), smoothing,
                 ViewPropertyAccessor.createPitchAccessor(view)));
@@ -216,7 +219,7 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
         if (elevation != newPosition.getElevation()) {
             newPosition = new Position(newPosition, elevation);
         }
-        this.gotoAnimControl.put(VIEW_ANIM_POSITION,
+        this.gotoAnimControl.put(FlyViewInputHandler.VIEW_ANIM_POSITION,
             new MoveToPositionAnimator(
                 view.getEyePosition(), newPosition, smoothing,
                 ViewPropertyAccessor.createEyePositionAccessor(view)));
@@ -237,8 +240,7 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
                 * getScaleValueElevation(deviceAttributes, actionAttributes));
             sideChange = Angle.fromDegrees(totalSideInput
                 * getScaleValueElevation(deviceAttributes, actionAttributes));
-        }
-        else {
+        } else {
             forwardChange = Angle.fromDegrees(
                 forwardInput * speed * getScaleValueElevation(deviceAttributes, actionAttributes));
             sideChange = Angle.fromDegrees(
@@ -265,8 +267,8 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
             Vec4 up = view.getUpVector();
             Vec4 side = forward.transformBy3(Matrix.fromAxisAngle(Angle.fromDegrees(90), up));
 
-            forward = forward.multiply3(forwardChange.getDegrees());
-            side = side.multiply3(sideChange.getDegrees());
+            forward = forward.multiply3(forwardChange.degrees);
+            side = side.multiply3(sideChange.degrees);
             Vec4 eyePoint = view.getEyePoint();
             eyePoint = eyePoint.add3(forward.add3(side));
             Position newPosition = view.getGlobe().computePositionFromPoint(eyePoint);
@@ -286,7 +288,7 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
         double smoothing = actionAttribs.getSmoothingValue();
         if (!(actionAttribs.isEnableSmoothing() && this.isEnableSmoothing()))
             smoothing = 0.0;
-        this.gotoAnimControl.put(VIEW_ANIM_HEADING,
+        this.gotoAnimControl.put(FlyViewInputHandler.VIEW_ANIM_HEADING,
             new RotateToAngleAnimator(
                 view.getHeading(), Angle.ZERO, smoothing,
                 ViewPropertyAccessor.createHeadingAccessor(view)));
@@ -303,7 +305,7 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
         double smoothing = actionAttribs.getSmoothingValue();
         if (!(actionAttribs.isEnableSmoothing() && this.isEnableSmoothing()))
             smoothing = 0.0;
-        this.gotoAnimControl.put(VIEW_ANIM_PITCH,
+        this.gotoAnimControl.put(FlyViewInputHandler.VIEW_ANIM_PITCH,
             new RotateToAngleAnimator(
                 view.getPitch(), Angle.POS90, smoothing,
                 ViewPropertyAccessor.createPitchAccessor(view)));
@@ -317,15 +319,15 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
             return;
         }
         double smoothing = 0.95;
-        this.gotoAnimControl.put(VIEW_ANIM_HEADING,
+        this.gotoAnimControl.put(FlyViewInputHandler.VIEW_ANIM_HEADING,
             new RotateToAngleAnimator(
                 view.getHeading(), Angle.ZERO, smoothing,
                 ViewPropertyAccessor.createHeadingAccessor(view)));
-        this.gotoAnimControl.put(VIEW_ANIM_PITCH,
+        this.gotoAnimControl.put(FlyViewInputHandler.VIEW_ANIM_PITCH,
             new RotateToAngleAnimator(
                 view.getPitch(), Angle.POS90, smoothing,
                 ViewPropertyAccessor.createPitchAccessor(view)));
-        this.gotoAnimControl.put(VIEW_ANIM_ROLL,
+        this.gotoAnimControl.put(FlyViewInputHandler.VIEW_ANIM_ROLL,
             new RotateToAngleAnimator(
                 view.getPitch(), Angle.ZERO, smoothing,
                 ViewPropertyAccessor.createRollAccessor(view)));
@@ -444,7 +446,7 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
         Animator angleAnimator = new RotateToAngleAnimator(
             view.getHeading(), heading, smoothing,
             ViewPropertyAccessor.createHeadingAccessor(view));
-        animControl.put(VIEW_ANIM_HEADING, angleAnimator);
+        animControl.put(FlyViewInputHandler.VIEW_ANIM_HEADING, angleAnimator);
     }
 
     protected void setPitch(View view,
@@ -457,7 +459,7 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
         Animator angleAnimator = new RotateToAngleAnimator(
             view.getPitch(), pitch, smoothing,
             ViewPropertyAccessor.createPitchAccessor(view));
-        animControl.put(VIEW_ANIM_PITCH, angleAnimator);
+        animControl.put(FlyViewInputHandler.VIEW_ANIM_PITCH, angleAnimator);
     }
 
     /**
@@ -478,14 +480,14 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
         Animator angleAnimator = new RotateToAngleAnimator(
             view.getRoll(), roll, smoothing,
             ViewPropertyAccessor.createRollAccessor(view));
-        animControl.put(VIEW_ANIM_ROLL, angleAnimator);
+        animControl.put(FlyViewInputHandler.VIEW_ANIM_ROLL, angleAnimator);
     }
 
     protected void setEyePosition(AnimationController animControl, View view, Position position,
         ViewInputAttributes.ActionAttributes attrib) {
 
         MoveToPositionAnimator posAnimator = (MoveToPositionAnimator)
-            animControl.get(VIEW_ANIM_POSITION);
+            animControl.get(FlyViewInputHandler.VIEW_ANIM_POSITION);
 
         double smoothing = attrib.getSmoothingValue();
         if (!(attrib.isEnableSmoothing() && this.isEnableSmoothing()))
@@ -503,9 +505,8 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
                 posAnimator = new MoveToPositionAnimator(
                     view.getEyePosition(), position, smoothing,
                     OrbitViewPropertyAccessor.createEyePositionAccessor(view));
-                animControl.put(VIEW_ANIM_POSITION, posAnimator);
-            }
-            else {
+                animControl.put(FlyViewInputHandler.VIEW_ANIM_POSITION, posAnimator);
+            } else {
                 posAnimator.setEnd(position);
                 posAnimator.start();
             }
@@ -534,7 +535,7 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
             view.getEyePosition().getElevation(), lookFromPos.getElevation(),
             timeToMove, WorldWind.ABSOLUTE);
 
-        this.gotoAnimControl.put(VIEW_ANIM_PAN, panAnimator);
+        this.gotoAnimControl.put(FlyViewInputHandler.VIEW_ANIM_PAN, panAnimator);
 
         this.getView().firePropertyChange(AVKey.VIEW, null, this.getView());
     }
@@ -550,8 +551,7 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
             double elevAtLookAtPos = view.getGlobe().getElevation(
                 lookAtPos.getLatitude(), lookAtPos.getLongitude());
             newPosition = new Position(lookAtPos, elevAtLookAtPos + 10000);
-        }
-        else {
+        } else {
             Vec4 currentEyePt = view.getEyePoint();
             distanceToSurface = currentEyePt.distanceTo3(currentLookAtPt);
             lookDirection = currentLookAtPt.subtract3(currentEyePt).normalize3();
@@ -569,7 +569,7 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
             view.getEyePosition().getElevation(), viewCoords.getPosition().getElevation(),
             timeToMove, WorldWind.ABSOLUTE);
 
-        this.gotoAnimControl.put(VIEW_ANIM_PAN, panAnimator);
+        this.gotoAnimControl.put(FlyViewInputHandler.VIEW_ANIM_PAN, panAnimator);
         this.getView().firePropertyChange(AVKey.VIEW, null, this.getView());
 
         view.firePropertyChange(AVKey.VIEW, null, view);
@@ -585,7 +585,7 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
     }
 
     public void addAnimator(Animator animator) {
-        this.gotoAnimControl.put(VIEW_ANIM_APP, animator);
+        this.gotoAnimControl.put(FlyViewInputHandler.VIEW_ANIM_APP, animator);
     }
 
     protected void stopGoToAnimators() {
@@ -644,7 +644,7 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
             }
 
             //noinspection StringEquality
-            if (target == GENERATE_EVENTS) {
+            if (target == AbstractViewInputHandler.GENERATE_EVENTS) {
                 ViewInputAttributes.DeviceAttributes deviceAttributes =
                     inputHandler.getAttributes().getDeviceAttributes(ViewInputAttributes.DEVICE_KEYBOARD);
 

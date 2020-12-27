@@ -61,8 +61,7 @@ public class BasicViewPropertyLimits implements ViewPropertyLimits {
 
         if (angle.compareTo(limits[0]) < 0) {
             newAngle = limits[0];
-        }
-        else if (angle.compareTo(limits[1]) > 0) {
+        } else if (angle.compareTo(limits[1]) > 0) {
             newAngle = limits[1];
         }
 
@@ -95,8 +94,7 @@ public class BasicViewPropertyLimits implements ViewPropertyLimits {
         Angle newAngle = angle;
         if (angle.compareTo(limits[0]) < 0) {
             newAngle = limits[0];
-        }
-        else if (angle.compareTo(limits[1]) > 0) {
+        } else if (angle.compareTo(limits[1]) > 0) {
             newAngle = limits[1];
         }
 
@@ -129,8 +127,7 @@ public class BasicViewPropertyLimits implements ViewPropertyLimits {
         Angle newAngle = angle;
         if (angle.compareTo(limits[0]) < 0) {
             newAngle = limits[0];
-        }
-        else if (angle.compareTo(limits[1]) > 0) {
+        } else if (angle.compareTo(limits[1]) > 0) {
             newAngle = limits[1];
         }
 
@@ -158,8 +155,7 @@ public class BasicViewPropertyLimits implements ViewPropertyLimits {
 
         if (elevation < elevLimits[0]) {
             newElevation = elevLimits[0];
-        }
-        else if (elevation > elevLimits[1]) {
+        } else if (elevation > elevLimits[1]) {
             newElevation = elevLimits[1];
         }
         return (newElevation);
@@ -194,19 +190,25 @@ public class BasicViewPropertyLimits implements ViewPropertyLimits {
 
         if (latitude.compareTo(limits.latMin()) < 0) {
             newLatitude = limits.latMin();
-        }
-        else if (latitude.compareTo(limits.latMax()) > 0) {
+        } else if (latitude.compareTo(limits.latMax()) > 0) {
             newLatitude = limits.latMax();
         }
 
         if (longitude.compareTo(limits.lonMin()) < 0) {
             newLongitude = limits.lonMin();
-        }
-        else if (longitude.compareTo(limits.lonMax()) > 0) {
+        } else if (longitude.compareTo(limits.lonMax()) > 0) {
             newLongitude = limits.lonMax();
         }
 
         return new LatLon(newLatitude, newLongitude);
+    }
+
+    protected static boolean is2DGlobe(Globe globe) {
+        return globe instanceof Globe2D;
+    }
+
+    protected static boolean isNonContinous2DGlobe(Globe globe) {
+        return globe instanceof Globe2D && !((Globe2D) globe).isContinuous();
     }
 
     /**
@@ -401,14 +403,6 @@ public class BasicViewPropertyLimits implements ViewPropertyLimits {
         }
 
         return Angle.clamp(angle, this.minRoll, this.maxRoll);
-    }
-
-    protected static boolean is2DGlobe(Globe globe) {
-        return globe instanceof Globe2D;
-    }
-
-    protected static boolean isNonContinous2DGlobe(Globe globe) {
-        return globe instanceof Globe2D && !((Globe2D) globe).isContinuous();
     }
 
     //**************************************************************//

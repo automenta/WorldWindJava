@@ -557,7 +557,7 @@ public class SegmentPlaneRenderer {
         LatLon[] locations = segmentPlane.getPlaneLocations();
         double[] gridSizes = segmentPlane.getGridCellDimensions();
 
-        double width = LatLon.rhumbDistance(locations[0], locations[1]).radians * globe.getRadius();
+        double width = LatLon.rhumbDistance(locations[0], locations[1]).radians() * globe.getRadius();
         double height = Math.abs(altitudes[1] - altitudes[0]);
 
         gridCellCounts[0] = (int) Math.ceil(width / gridSizes[0]);

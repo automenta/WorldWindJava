@@ -6,6 +6,7 @@
 package gov.nasa.worldwind.data;
 
 ////.*;
+
 import gov.nasa.worldwind.util.*;
 
 import java.io.*;
@@ -35,6 +36,24 @@ public abstract class AbstractDataRasterWriter implements DataRasterWriter {
     public AbstractDataRasterWriter() {
         this.mimeTypes = null;
         this.suffixes = null;
+    }
+
+    /**
+     * Clones string array and also converts clones to lower case
+     *
+     * @param array string array
+     * @return cloned string array
+     */
+    protected static String[] copyAndConvertToLowerCase(String[] array) {
+        if (null == array)
+            return null;
+
+        String[] copy = new String[array.length];
+        for (int i = 0; i < array.length; i++) {
+            copy[i] = array[i].toLowerCase();
+        }
+
+        return copy;
     }
 
     /**
@@ -90,28 +109,10 @@ public abstract class AbstractDataRasterWriter implements DataRasterWriter {
 
     protected abstract boolean doCanWrite(DataRaster raster, String formatSuffix, File file);
 
-    protected abstract void doWrite(DataRaster raster, String formatSuffix, File file)
-        throws IOException;
-
     //**************************************************************//
     //********************  Utilities  *****************************//
     //**************************************************************//
 
-    /**
-     * Clones string array and also converts clones to lower case
-     *
-     * @param array string array
-     * @return cloned string array
-     */
-    protected static String[] copyAndConvertToLowerCase(String[] array) {
-        if (null == array)
-            return null;
-
-        String[] copy = new String[array.length];
-        for (int i = 0; i < array.length; i++) {
-            copy[i] = array[i].toLowerCase();
-        }
-
-        return copy;
-    }
+    protected abstract void doWrite(DataRaster raster, String formatSuffix, File file)
+        throws IOException;
 }

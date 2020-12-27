@@ -59,21 +59,21 @@ public class SurfaceText extends AbstractSurfaceObject implements GeographicText
     /**
      * The height of the text in meters.
      */
-    protected double textSizeInMeters = DEFAULT_TEXT_SIZE_IN_METERS;
+    protected double textSizeInMeters = SurfaceText.DEFAULT_TEXT_SIZE_IN_METERS;
     /**
      * Dragging Support
      */
     protected boolean dragEnabled = true;
-    protected DraggableSupport draggableSupport = null;
+    protected DraggableSupport draggableSupport;
 
     /**
      * Font to use to draw the text. Defaults to {@link #DEFAULT_FONT}.
      */
-    protected Font font = DEFAULT_FONT;
+    protected Font font = SurfaceText.DEFAULT_FONT;
     /**
      * Color to use to draw the text. Defaults to {@link #DEFAULT_COLOR}.
      */
-    protected Color color = DEFAULT_COLOR;
+    protected Color color = SurfaceText.DEFAULT_COLOR;
     /**
      * Background color for the text. By default color will be generated to contrast with the text color.
      */
@@ -85,7 +85,7 @@ public class SurfaceText extends AbstractSurfaceObject implements GeographicText
     /**
      * Offset that specifies where to place the text in relation to it's geographic position.
      */
-    protected Offset offset = DEFAULT_OFFSET;
+    protected Offset offset = SurfaceText.DEFAULT_OFFSET;
 
     // Computed each time text is rendered
     /**
@@ -109,7 +109,7 @@ public class SurfaceText extends AbstractSurfaceObject implements GeographicText
     /**
      * Indicates whether this text spans the dateline.
      */
-    protected boolean spansAntimeridian = false;
+    protected boolean spansAntimeridian;
 
     /**
      * Create a new surface text object.
@@ -135,6 +135,34 @@ public class SurfaceText extends AbstractSurfaceObject implements GeographicText
         this.setPosition(position);
         this.setFont(font);
         this.setColor(color);
+    }
+
+    /**
+     * Compute the size of a pixel in the surface tile.
+     *
+     * @param dc  Current draw context.
+     * @param sdc Current surface tile draw context.
+     * @return The size of a tile pixel in meters.
+     */
+    protected static double computePixelSize(DrawContext dc, SurfaceTileDrawContext sdc) {
+        return dc.getGlobe().getRadius() * toRadians(sdc.getSector().latDelta) / sdc.getViewport().height;
+    }
+
+    /**
+     * Compute a background color that contrasts with the text color.
+     *
+     * @param color text color.
+     * @return a color that contrasts with the text color.
+     */
+    protected static Color computeBackgroundColor(Color color) {
+        // Otherwise compute a color that contrasts with the text color.
+        float[] colorArray = new float[4];
+        Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), colorArray);
+
+        if (colorArray[2] > 0.5)
+            return new Color(0, 0, 0, 0.7f);
+        else
+            return new Color(1, 1, 1, 0.7f);
     }
 
     /**
@@ -477,7 +505,7 @@ public class SurfaceText extends AbstractSurfaceObject implements GeographicText
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         // Translate to location point
-        gl.glTranslated(point.x(), point.y(), point.z());
+        gl.glTranslated(point.x, point.y, point.z);
 
         // Apply the scaling factor to draw the text at the correct geographic size
         gl.glScaled(this.scale, this.scale, 1.0d);
@@ -490,17 +518,6 @@ public class SurfaceText extends AbstractSurfaceObject implements GeographicText
      */
     protected boolean isSmall() {
         return this.scale * this.textSizeInMeters < this.pixelSizeInMeters;
-    }
-
-    /**
-     * Compute the size of a pixel in the surface tile.
-     *
-     * @param dc  Current draw context.
-     * @param sdc Current surface tile draw context.
-     * @return The size of a tile pixel in meters.
-     */
-    protected static double computePixelSize(DrawContext dc, SurfaceTileDrawContext sdc) {
-        return dc.getGlobe().getRadius() * toRadians(sdc.getSector().latDelta) / sdc.getViewport().height;
     }
 
     /**
@@ -518,23 +535,6 @@ public class SurfaceText extends AbstractSurfaceObject implements GeographicText
 
         // Otherwise compute a color that contrasts with the text color.
         return SurfaceText.computeBackgroundColor(color);
-    }
-
-    /**
-     * Compute a background color that contrasts with the text color.
-     *
-     * @param color text color.
-     * @return a color that contrasts with the text color.
-     */
-    protected static Color computeBackgroundColor(Color color) {
-        // Otherwise compute a color that contrasts with the text color.
-        float[] colorArray = new float[4];
-        Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), colorArray);
-
-        if (colorArray[2] > 0.5)
-            return new Color(0, 0, 0, 0.7f);
-        else
-            return new Color(1, 1, 1, 0.7f);
     }
 
     /**
@@ -580,8 +580,7 @@ public class SurfaceText extends AbstractSurfaceObject implements GeographicText
             sectors[1] = Sector.fromDegrees(minLat, maxLat, -180, maxLon - 360);
             this.spansAntimeridian = true;
             return sectors;
-        }
-        else {
+        } else {
             this.spansAntimeridian = false;
             return new Sector[] {Sector.fromDegrees(minLat, maxLat, minLon, maxLon)};
         }

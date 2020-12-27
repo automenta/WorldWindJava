@@ -21,20 +21,45 @@ import java.awt.event.*;
  * @see MeasureTool
  */
 public class MeasureToolController extends MouseAdapter
-    implements MouseListener, MouseMotionListener, SelectListener, PositionListener, RenderingListener {
+    implements SelectListener, PositionListener, RenderingListener {
     protected MeasureTool measureTool;
 
-    protected boolean armed = false;
-    protected boolean active = false;
-    protected boolean moving = false;
+    protected boolean armed;
+    protected boolean active;
+    protected boolean moving;
     protected boolean useRubberBand = true;
-    protected boolean freeHand = false;
+    protected boolean freeHand;
     protected double freeHandMinSpacing = 100;
 
     protected MeasureTool.ControlPoint rubberBandTarget;
     protected MeasureTool.ControlPoint movingTarget;
     protected MeasureTool.ControlPoint lastPickedObject;
     protected BasicDragger dragger;
+
+    protected static Cursor selectResizeCursor(Angle azimuth) {
+        while (azimuth.degrees < 0) {
+            azimuth = azimuth.addDegrees(360);
+        }
+
+        if (azimuth.degrees < 22.5)
+            return Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR);
+        else if (azimuth.degrees < 67.5)
+            return Cursor.getPredefinedCursor(Cursor.NE_RESIZE_CURSOR);
+        else if (azimuth.degrees < 112.5)
+            return Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR);
+        else if (azimuth.degrees < 157.5)
+            return Cursor.getPredefinedCursor(Cursor.SE_RESIZE_CURSOR);
+        else if (azimuth.degrees < 202.5)
+            return Cursor.getPredefinedCursor(Cursor.S_RESIZE_CURSOR);
+        else if (azimuth.degrees < 247.5)
+            return Cursor.getPredefinedCursor(Cursor.SW_RESIZE_CURSOR);
+        else if (azimuth.degrees < 292.5)
+            return Cursor.getPredefinedCursor(Cursor.W_RESIZE_CURSOR);
+        else if (azimuth.degrees < 337.5)
+            return Cursor.getPredefinedCursor(Cursor.NW_RESIZE_CURSOR);
+        else // if (azimuth.degrees < 360)
+            return Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR);
+    }
 
     /**
      * Get the <code>MeasureTool</code> that this controller is operating on.
@@ -184,8 +209,7 @@ public class MeasureToolController extends MouseAdapter
                             String initControl =
                                 measureTool.getShapeInitialControl(measureTool.getWwd().position());
                             rubberBandTarget = measureTool.getControlPoint(initControl);
-                        }
-                        else {
+                        } else {
                             rubberBandTarget = (MeasureTool.ControlPoint) measureTool.getControlPoints().get(
                                 measureTool.getControlPoints().size() - 1);
                         }
@@ -194,8 +218,7 @@ public class MeasureToolController extends MouseAdapter
                 }
             }
             mouseEvent.consume();
-        }
-        else if (!this.isArmed() && mouseEvent.getButton() == MouseEvent.BUTTON1 && mouseEvent.isAltDown()) {
+        } else if (!this.isArmed() && mouseEvent.getButton() == MouseEvent.BUTTON1 && mouseEvent.isAltDown()) {
             if (!this.measureTool.isRegularShape()) {
                 this.setMoving(true);
                 this.movingTarget = this.lastPickedObject;
@@ -214,8 +237,7 @@ public class MeasureToolController extends MouseAdapter
             autoDisarm();
             mouseEvent.consume();
             measureTool.firePropertyChange(MeasureTool.EVENT_RUBBERBAND_STOP, null, null);
-        }
-        else if (this.isMoving() && mouseEvent.getButton() == MouseEvent.BUTTON1) {
+        } else if (this.isMoving() && mouseEvent.getButton() == MouseEvent.BUTTON1) {
             this.setMoving(false);
             this.movingTarget = null;
             mouseEvent.consume();
@@ -250,8 +272,7 @@ public class MeasureToolController extends MouseAdapter
             // have been updated to reflect the current mouse position. Wait to update in the
             // position listener, but consume the event so the view doesn't respond to it.
             mouseEvent.consume();
-        }
-        else if (!this.isArmed() && this.isMoving()
+        } else if (!this.isArmed() && this.isMoving()
             && (mouseEvent.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) != 0
             && mouseEvent.isAltDown()) {
             // Consume the ALT+Drag mouse event to ensure the View does not respond to it. Don't update the control
@@ -328,12 +349,11 @@ public class MeasureToolController extends MouseAdapter
                 measureTool.firePropertyChange(MeasureTool.EVENT_POSITION_REPLACE,
                     lastPosition, rubberBandTarget.getPosition());
                 measureTool.getWwd().redraw();
-            }
-            else {
+            } else {
                 // Free hand - Compute distance from current control point (rubber band target)
                 Position lastPosition = rubberBandTarget.getPosition();
                 Position newPosition = measureTool.getWwd().position();
-                double distance = LatLon.greatCircleDistance(lastPosition, newPosition).radians
+                double distance = LatLon.greatCircleDistance(lastPosition, newPosition).radians()
                     * measureTool.getWwd().model().getGlobe().getRadius();
                 if (distance >= freeHandMinSpacing) {
                     // Add new control point
@@ -344,8 +364,7 @@ public class MeasureToolController extends MouseAdapter
                     }
                 }
             }
-        }
-        else if (this.moving && movingTarget != null && measureTool.getWwd().position() != null) {
+        } else if (this.moving && movingTarget != null && measureTool.getWwd().position() != null) {
             // Moving the whole shape
             Position lastPosition = movingTarget.getPosition();
             Position newPosition = measureTool.getWwd().position();
@@ -439,50 +458,22 @@ public class MeasureToolController extends MouseAdapter
         // TODO: handle 'rotating' mode cursor is this.isRotating() - when using Alt key on regular shapes
         if (controlPoint == null) {
             setComponentCursor(null);
-        }
-        else {
+        } else {
             if (this.measureTool.isRegularShape()) {
                 if (MeasureTool.isCornerControl(controlPoint)) {
                     Angle azimuth = LatLon.greatCircleAzimuth(controlPoint.getPosition(),
                         this.measureTool.getCenterPosition());
                     // Account for view heading in cursor selection
                     azimuth = azimuth.sub(this.measureTool.getWwd().view().getHeading());
-                    setComponentCursor(selectResizeCursor(azimuth));
-                }
-                else if (MeasureTool.isCenterControl(controlPoint)) {
+                    setComponentCursor(MeasureToolController.selectResizeCursor(azimuth));
+                } else if (MeasureTool.isCenterControl(controlPoint)) {
                     setComponentCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
                 }
-            }
-            else {
+            } else {
                 // Line, path and polygon
                 setComponentCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
             }
         }
-    }
-
-    protected static Cursor selectResizeCursor(Angle azimuth) {
-        while (azimuth.degrees < 0) {
-            azimuth = azimuth.addDegrees(360);
-        }
-
-        if (azimuth.degrees < 22.5)
-            return Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR);
-        else if (azimuth.degrees < 67.5)
-            return Cursor.getPredefinedCursor(Cursor.NE_RESIZE_CURSOR);
-        else if (azimuth.degrees < 112.5)
-            return Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR);
-        else if (azimuth.degrees < 157.5)
-            return Cursor.getPredefinedCursor(Cursor.SE_RESIZE_CURSOR);
-        else if (azimuth.degrees < 202.5)
-            return Cursor.getPredefinedCursor(Cursor.S_RESIZE_CURSOR);
-        else if (azimuth.degrees < 247.5)
-            return Cursor.getPredefinedCursor(Cursor.SW_RESIZE_CURSOR);
-        else if (azimuth.degrees < 292.5)
-            return Cursor.getPredefinedCursor(Cursor.W_RESIZE_CURSOR);
-        else if (azimuth.degrees < 337.5)
-            return Cursor.getPredefinedCursor(Cursor.NW_RESIZE_CURSOR);
-        else // if (azimuth.degrees < 360)
-            return Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR);
     }
 
     protected void setComponentCursor(Cursor cursor) {

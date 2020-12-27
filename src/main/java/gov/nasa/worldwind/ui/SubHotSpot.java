@@ -11,9 +11,9 @@ import gov.nasa.worldwind.event.SelectEvent;
 import java.awt.event.*;
 
 /**
- * An area that can receive select and mouse events. The parent's
- * default behavior is to forward events to its parent HotSpot. Subclasses must override methods for events they can
- * react to, and all other events are handled by the parent.
+ * An area that can receive select and mouse events. The parent's default behavior is to forward events to its parent
+ * HotSpot. Subclasses must override methods for events they can react to, and all other events are handled by the
+ * parent.
  *
  * @author pabercrombie
  */

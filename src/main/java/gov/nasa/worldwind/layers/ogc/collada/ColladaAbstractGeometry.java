@@ -87,7 +87,7 @@ public abstract class ColladaAbstractGeometry extends ColladaAbstractObject {
      * @param buffer Buffer to receive coordinates.
      */
     public void getVertices(FloatBuffer buffer) {
-        this.getFloatFromAccessor(buffer, this.getVertexAccessor(), "VERTEX", COORDS_PER_VERTEX);
+        this.getFloatFromAccessor(buffer, this.getVertexAccessor(), "VERTEX", ColladaAbstractGeometry.COORDS_PER_VERTEX);
     }
 
     /**
@@ -96,7 +96,7 @@ public abstract class ColladaAbstractGeometry extends ColladaAbstractObject {
      * @param buffer Buffer to receive coordinates.
      */
     public void getNormals(FloatBuffer buffer) {
-        this.getFloatFromAccessor(buffer, this.getNormalAccessor(), "NORMAL", COORDS_PER_VERTEX);
+        this.getFloatFromAccessor(buffer, this.getNormalAccessor(), "NORMAL", ColladaAbstractGeometry.COORDS_PER_VERTEX);
     }
 
     /**
@@ -108,10 +108,11 @@ public abstract class ColladaAbstractGeometry extends ColladaAbstractObject {
      */
     public void getTextureCoordinates(FloatBuffer buffer, String semantic) {
         if (semantic == null) {
-            semantic = DEFAULT_TEX_COORD_SEMANTIC;
+            semantic = ColladaAbstractGeometry.DEFAULT_TEX_COORD_SEMANTIC;
         }
 
-        this.getFloatFromAccessor(buffer, this.getTexCoordAccessor(semantic), semantic, TEX_COORDS_PER_VERTEX);
+        this.getFloatFromAccessor(buffer, this.getTexCoordAccessor(semantic), semantic,
+            ColladaAbstractGeometry.TEX_COORDS_PER_VERTEX);
     }
 
     /**
@@ -142,7 +143,7 @@ public abstract class ColladaAbstractGeometry extends ColladaAbstractObject {
         try {
             indices = this.getIndices(semantic);
         }
-        catch (Exception ex) {
+        catch (RuntimeException ex) {
             ex.printStackTrace();
         }
         float[] vertexCoords = accessor.getFloats();
@@ -255,7 +256,7 @@ public abstract class ColladaAbstractGeometry extends ColladaAbstractObject {
      */
     public ColladaAccessor getTexCoordAccessor(String semantic) {
         if (semantic == null) {
-            semantic = DEFAULT_TEX_COORD_SEMANTIC;
+            semantic = ColladaAbstractGeometry.DEFAULT_TEX_COORD_SEMANTIC;
         }
 
         String sourceUri = null;
@@ -281,8 +282,7 @@ public abstract class ColladaAbstractGeometry extends ColladaAbstractObject {
     public void setField(String keyName, Object value) {
         if (keyName.equals("input")) {
             this.inputs.add((ColladaInput) value);
-        }
-        else {
+        } else {
             super.setField(keyName, value);
         }
     }

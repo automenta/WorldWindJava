@@ -35,15 +35,14 @@ public abstract class RPFFrameTransform {
             throw new IllegalArgumentException(message);
         }
 
-        return newFrameTransform(zoneCode, rpfDataType, resolution);
+        return RPFFrameTransform.newFrameTransform(zoneCode, rpfDataType, resolution);
     }
 
     private static RPFFrameTransform newFrameTransform(char zoneCode, String rpfDataType, double resolution) {
         boolean isNonpolarZone = !RPFZone.isPolarZone(zoneCode);
         if (isNonpolarZone) {
             return RPFNonpolarFrameTransform.createNonpolarFrameTransform(zoneCode, rpfDataType, resolution);
-        }
-        else {
+        } else {
             return RPFPolarFrameTransform.createPolarFrameTransform(zoneCode, rpfDataType, resolution);
         }
     }

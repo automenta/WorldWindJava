@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.formats.gpx;
 
-import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.tracks.TrackPoint;
 import gov.nasa.worldwind.util.Logging;
 import org.xml.sax.Attributes;
@@ -42,8 +42,7 @@ public class GpxTrackPoint extends ElementParser implements TrackPoint {
             String attrValue = attributes.getValue(i);
             if (attrName.equalsIgnoreCase("lat")) {
                 this.latitude = Double.parseDouble(attrValue);
-            }
-            else if (attrName.equalsIgnoreCase("lon")) {
+            } else if (attrName.equalsIgnoreCase("lon")) {
                 this.longitude = Double.parseDouble(attrValue);
             }
         }
@@ -71,8 +70,7 @@ public class GpxTrackPoint extends ElementParser implements TrackPoint {
 
         if (lname.equalsIgnoreCase("ele")) {
             this.elevation = Double.parseDouble(this.currentCharacters);
-        }
-        else if (lname.equalsIgnoreCase("time")) {
+        } else if (lname.equalsIgnoreCase("time")) {
             this.time = this.currentCharacters.trim();
         }
     }
@@ -132,8 +130,8 @@ public class GpxTrackPoint extends ElementParser implements TrackPoint {
             throw new IllegalArgumentException(msg);
         }
 
-        this.latitude = position.getLatitude().getDegrees();
-        this.longitude = position.getLongitude().getDegrees();
+        this.latitude = position.getLatitude().degrees;
+        this.longitude = position.getLongitude().degrees;
         this.elevation = position.getElevation();
     }
 

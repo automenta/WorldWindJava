@@ -73,7 +73,7 @@ public class RestorableSupport {
         this.doc = doc;
         XPathFactory pathFactory = XPathFactory.newInstance();
         this.xpath = pathFactory.newXPath();
-        this.stateObjectTagName = DEFAULT_STATE_OBJECT_TAG_NAME;
+        this.stateObjectTagName = RestorableSupport.DEFAULT_STATE_OBJECT_TAG_NAME;
     }
 
     /**
@@ -97,7 +97,7 @@ public class RestorableSupport {
             DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
             Document doc = docBuilder.newDocument();
             // Create the "restorableState" document root element.
-            createDocumentElement(doc, documentElementName);
+            RestorableSupport.createDocumentElement(doc, documentElementName);
             return new RestorableSupport(doc);
         }
         catch (ParserConfigurationException e) {
@@ -113,7 +113,7 @@ public class RestorableSupport {
      * @return a new, empty RestorableSupport instance.
      */
     public static RestorableSupport newRestorableSupport() {
-        return newRestorableSupport(DEFAULT_DOCUMENT_ELEMENT_TAG_NAME);
+        return RestorableSupport.newRestorableSupport(RestorableSupport.DEFAULT_DOCUMENT_ELEMENT_TAG_NAME);
     }
 
     /**
@@ -125,11 +125,11 @@ public class RestorableSupport {
      *                                  XML document.
      */
     public static RestorableSupport parse(String stateInXml) {
-        if (stateInXml == null) {
-            String message = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (stateInXml == null) {
+//            String message = Logging.getMessage("nullValue.StringIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         DocumentBuilderFactory docBuilderFactory =
             DocumentBuilderFactory.newInstance();
@@ -153,16 +153,16 @@ public class RestorableSupport {
     }
 
     protected static void createDocumentElement(Document doc, String tagName) {
-        if (doc == null) {
-            String message = Logging.getMessage("nullValue.DocumentIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (tagName == null) {
-            String message = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (doc == null) {
+//            String message = Logging.getMessage("nullValue.DocumentIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//        if (tagName == null) {
+//            String message = Logging.getMessage("nullValue.StringIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         // Document already has a root element.
         if (doc.getDocumentElement() != null)
@@ -181,11 +181,11 @@ public class RestorableSupport {
      * @throws IllegalArgumentException If <code>color</code> is null.
      */
     public static String encodeColor(Color color) {
-        if (color == null) {
-            String message = Logging.getMessage("nullValue.ColorIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (color == null) {
+//            String message = Logging.getMessage("nullValue.ColorIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         // Encode the red, green, blue, and alpha components
         int rgba = (color.getRed() & 0xFF) << 24
@@ -197,19 +197,18 @@ public class RestorableSupport {
 
     /**
      * Returns the Color described by the String <code>encodedString</code>. This understands Colors encoded with a call
-     * to {@link #encodeColor(Color)}. If <code>encodedString</code> cannot be decoded, this method returns
-     * null.
+     * to {@link #encodeColor(Color)}. If <code>encodedString</code> cannot be decoded, this method returns null.
      *
      * @param encodedString String to decode.
      * @return Color decoded from the specified <code>encodedString</code>, or null if the String cannot be decoded.
      * @throws IllegalArgumentException If <code>encodedString</code> is null.
      */
     public static Color decodeColor(String encodedString) {
-        if (encodedString == null) {
-            String message = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (encodedString == null) {
+//            String message = Logging.getMessage("nullValue.StringIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         if (!encodedString.startsWith("0x") && !encodedString.startsWith("0X"))
             return null;
@@ -311,21 +310,21 @@ public class RestorableSupport {
      * @throws IllegalArgumentException If <code>stateObjectTagName</code> is null.
      */
     public void setStateObjectTagName(String stateObjectTagName) {
-        if (stateObjectTagName == null) {
-            String message = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (stateObjectTagName == null) {
+//            String message = Logging.getMessage("nullValue.StringIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         this.stateObjectTagName = stateObjectTagName;
     }
 
     protected StateObject findStateObject(Node context, String name) {
-        if (name == null) {
-            String message = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (name == null) {
+//            String message = Logging.getMessage("nullValue.StringIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         // Search for the state element with the specified name.
         String expression = String.format("%s[@name=\"%s\"]", getStateObjectTagName(), name);
@@ -349,11 +348,11 @@ public class RestorableSupport {
     }
 
     protected StateObject[] findAllStateObjects(Node context, String name) {
-        if (name == null) {
-            String message = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (name == null) {
+//            String message = Logging.getMessage("nullValue.StringIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         // Search for the state elements beneath the context with the specified name.
         String expression;
@@ -1343,7 +1342,7 @@ public class RestorableSupport {
         if (stringValue == null)
             return null;
 
-        return decodeColor(stringValue);
+        return RestorableSupport.decodeColor(stringValue);
     }
 
     public Color getStateValueAsColor(StateObject context, String name) {
@@ -1796,7 +1795,7 @@ public class RestorableSupport {
             throw new IllegalArgumentException(message);
         }
 
-        String value = encodeColor(color);
+        String value = RestorableSupport.encodeColor(color);
         addStateValueAsString(context, name, value);
     }
 

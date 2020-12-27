@@ -41,8 +41,7 @@ public class GMLEnvelope extends AbstractXMLEventParser {
                 if (o instanceof GMLPos)
                     this.positions.add((GMLPos) o);
             }
-        }
-        else {
+        } else {
             super.doParseEventContent(ctx, event, args);
         }
     }

@@ -24,73 +24,6 @@ public class RPFRasterReader extends AbstractDataRasterReader {
         super("RPF Imagery");
     }
 
-    public boolean canRead(Object source, AVList params) {
-        if (source == null)
-            return false;
-
-        // RPF imagery cannot be identified by a small set of suffixes or mime types, so we override the standard
-        // suffix comparison behavior here.
-
-        return this.doCanRead(source, params);
-    }
-
-    protected boolean doCanRead(Object source, AVList params) {
-        if (!(source instanceof File))
-            return false;
-
-        File file = (File) source;
-        String filename = file.getName().toUpperCase();
-
-        boolean canRead = RPFFrameFilename.isFilename(filename);
-
-        if (canRead && null != params && !params.hasKey(AVKey.PIXEL_FORMAT))
-            params.set(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
-
-        return canRead;
-    }
-
-    protected DataRaster[] doRead(Object source, AVList params) throws IOException {
-        if (!(source instanceof File)) {
-            String message = Logging.getMessage("DataRaster.CannotRead", source);
-            Logging.logger().severe(message);
-            throw new IOException(message);
-        }
-
-        File file = (File) source;
-        RPFFrameFilename filename = RPFFrameFilename.parseFilename(file.getName().toUpperCase());
-        if (filename.getZoneCode() == '9' || filename.getZoneCode() == 'J') {
-            return RPFRasterReader.readPolarImage(source, filename);
-        }
-        else {
-            return RPFRasterReader.readNonPolarImage(source, params);
-        }
-    }
-
-    protected void doReadMetadata(Object source, AVList params) throws IOException {
-        if (!(source instanceof File)) {
-            String message = Logging.getMessage("DataRaster.CannotRead", source);
-            Logging.logger().severe(message);
-            throw new IOException(message);
-        }
-
-        File file = (File) source;
-        RPFImageFile rpfFile = null;
-
-        Object width = params.get(AVKey.WIDTH);
-        Object height = params.get(AVKey.HEIGHT);
-        if (!(width instanceof Integer) || !(height instanceof Integer)) {
-            rpfFile = RPFImageFile.load(file);
-            RPFRasterReader.readFileSize(rpfFile, params);
-        }
-
-        Object sector = params.get(AVKey.SECTOR);
-        if (!(sector instanceof Sector))
-            RPFRasterReader.readFileSector(file, rpfFile, params);
-
-        if (!params.hasKey(AVKey.PIXEL_FORMAT))
-            params.set(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
-    }
-
     private static DataRaster[] readNonPolarImage(Object source, AVList params) throws IOException {
         // TODO: break the raster along the international dateline, if necessary
         // Nonpolar images need no special processing. We convert it to a compatible image type to improve performance.
@@ -169,7 +102,7 @@ public class RPFRasterReader extends AbstractDataRasterReader {
                 sector = tx.computeFrameCoverage(rpfFilename.getFrameNumber());
             }
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             // Computing the file's coverage failed. Log the condition and return null.
             // This at allows the coverage to be re-computed at a later time.
             String message = String.format("Exception while computing file sector: %s", file);
@@ -210,5 +143,71 @@ public class RPFRasterReader extends AbstractDataRasterReader {
             sector = null;
         }
         return sector;
+    }
+
+    public boolean canRead(Object source, AVList params) {
+        if (source == null)
+            return false;
+
+        // RPF imagery cannot be identified by a small set of suffixes or mime types, so we override the standard
+        // suffix comparison behavior here.
+
+        return this.doCanRead(source, params);
+    }
+
+    protected boolean doCanRead(Object source, AVList params) {
+        if (!(source instanceof File))
+            return false;
+
+        File file = (File) source;
+        String filename = file.getName().toUpperCase();
+
+        boolean canRead = RPFFrameFilename.isFilename(filename);
+
+        if (canRead && null != params && !params.hasKey(AVKey.PIXEL_FORMAT))
+            params.set(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
+
+        return canRead;
+    }
+
+    protected DataRaster[] doRead(Object source, AVList params) throws IOException {
+        if (!(source instanceof File)) {
+            String message = Logging.getMessage("DataRaster.CannotRead", source);
+            Logging.logger().severe(message);
+            throw new IOException(message);
+        }
+
+        File file = (File) source;
+        RPFFrameFilename filename = RPFFrameFilename.parseFilename(file.getName().toUpperCase());
+        if (filename.getZoneCode() == '9' || filename.getZoneCode() == 'J') {
+            return RPFRasterReader.readPolarImage(source, filename);
+        } else {
+            return RPFRasterReader.readNonPolarImage(source, params);
+        }
+    }
+
+    protected void doReadMetadata(Object source, AVList params) throws IOException {
+        if (!(source instanceof File)) {
+            String message = Logging.getMessage("DataRaster.CannotRead", source);
+            Logging.logger().severe(message);
+            throw new IOException(message);
+        }
+
+        File file = (File) source;
+        RPFImageFile rpfFile = null;
+
+        Object width = params.get(AVKey.WIDTH);
+        Object height = params.get(AVKey.HEIGHT);
+        if (!(width instanceof Integer) || !(height instanceof Integer)) {
+            rpfFile = RPFImageFile.load(file);
+            RPFRasterReader.readFileSize(rpfFile, params);
+        }
+
+        Object sector = params.get(AVKey.SECTOR);
+        if (!(sector instanceof Sector))
+            RPFRasterReader.readFileSector(file, rpfFile, params);
+
+        if (!params.hasKey(AVKey.PIXEL_FORMAT))
+            params.set(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
     }
 }

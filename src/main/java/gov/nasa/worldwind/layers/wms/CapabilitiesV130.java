@@ -56,7 +56,7 @@ public class CapabilitiesV130 extends Capabilities {
             }
         }
 
-        return !bboxes.isEmpty() ? bboxes.toArray(new BoundingBox[0]) : null;
+        return bboxes.isEmpty() ? null : bboxes.toArray(new BoundingBox[0]);
     }
 
     @Override

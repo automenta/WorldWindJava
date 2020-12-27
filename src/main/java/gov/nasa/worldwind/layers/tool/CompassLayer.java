@@ -36,8 +36,8 @@ public class CompassLayer extends AbstractLayer {
     protected String resizeBehavior = AVKey.RESIZE_SHRINK_ONLY;
     protected int iconWidth;
     protected int iconHeight;
-    protected Vec4 locationCenter = null;
-    protected Vec4 locationOffset = null;
+    protected Vec4 locationCenter;
+    protected Vec4 locationOffset;
     protected boolean showTilt = true;
     protected long frameStampForPicking;
     protected long frameStampForDrawing;
@@ -51,6 +51,23 @@ public class CompassLayer extends AbstractLayer {
         this.setIconFilePath(iconFilePath);
         this.setOpacity(0.8); // TODO: make configurable
         this.setPickEnabled(false); // Default to no picking
+    }
+
+    protected static double computeHeading(View view) {
+        if (view == null)
+            return 0.0;
+
+        return view.getHeading().degrees;
+    }
+
+    protected static double computePitch(View view) {
+        if (view == null)
+            return 0.0;
+
+        if (!(view instanceof OrbitView))
+            return 0.0;
+
+        return view.getPitch().degrees;
     }
 
     /**
@@ -199,8 +216,7 @@ public class CompassLayer extends AbstractLayer {
      * non-null, it overrides the position specified by {@link #setPosition(String)}. The location is specified in
      * pixels. The origin is the window's lower left corner. Positive X values are to the right of the origin, positive
      * Y values are upwards from the origin. The final image location will be affected by the currently specified
-     * location offset if a non-null location offset has been specified (see {@link
-     * #setLocationOffset(Vec4)}).
+     * location offset if a non-null location offset has been specified (see {@link #setLocationOffset(Vec4)}).
      *
      * @param locationCenter the location center. May be null.
      * @see #setPosition(String)
@@ -321,8 +337,7 @@ public class CompassLayer extends AbstractLayer {
                 TextureCoords texCoords = iconTexture.getImageTexCoords();
                 gl.glScaled(width, height, 1.0d);
                 dc.drawUnitQuad(texCoords);
-            }
-            else {
+            } else {
                 // Picking
                 this.pickSupport.clearPickList();
                 PickSupport.beginPicking(dc);
@@ -401,24 +416,19 @@ public class CompassLayer extends AbstractLayer {
         if (this.locationCenter != null) {
             x = this.locationCenter.x - scaledWidth / 2;
             y = this.locationCenter.y - scaledHeight / 2;
-        }
-        else if (this.position.equals(AVKey.NORTHEAST)) {
+        } else if (this.position.equals(AVKey.NORTHEAST)) {
             x = viewport.getWidth() - scaledWidth - this.borderWidth;
             y = viewport.getHeight() - scaledHeight - this.borderWidth;
-        }
-        else if (this.position.equals(AVKey.SOUTHEAST)) {
+        } else if (this.position.equals(AVKey.SOUTHEAST)) {
             x = viewport.getWidth() - scaledWidth - this.borderWidth;
             y = 0.0d + this.borderWidth;
-        }
-        else if (this.position.equals(AVKey.NORTHWEST)) {
+        } else if (this.position.equals(AVKey.NORTHWEST)) {
             x = 0.0d + this.borderWidth;
             y = viewport.getHeight() - scaledHeight - this.borderWidth;
-        }
-        else if (this.position.equals(AVKey.SOUTHWEST)) {
+        } else if (this.position.equals(AVKey.SOUTHWEST)) {
             x = 0.0d + this.borderWidth;
             y = 0.0d + this.borderWidth;
-        }
-        else // use North East as default
+        } else // use North East as default
         {
             x = viewport.getWidth() - scaledWidth - this.borderWidth;
             y = viewport.getHeight() - scaledHeight - this.borderWidth;
@@ -432,23 +442,6 @@ public class CompassLayer extends AbstractLayer {
         return new Vec4(x, y, 0);
     }
 
-    protected static double computeHeading(View view) {
-        if (view == null)
-            return 0.0;
-
-        return view.getHeading().getDegrees();
-    }
-
-    protected static double computePitch(View view) {
-        if (view == null)
-            return 0.0;
-
-        if (!(view instanceof OrbitView))
-            return 0.0;
-
-        return view.getPitch().getDegrees();
-    }
-
     protected void initializeTexture(DrawContext dc) {
         Texture iconTexture = dc.getTextureCache().getTexture(this.getIconFilePath());
         if (iconTexture != null)
@@ -457,7 +450,7 @@ public class CompassLayer extends AbstractLayer {
         GL gl = dc.getGL();
 
         try {
-            InputStream iconStream = this.getClass().getResourceAsStream("/" + this.getIconFilePath());
+            InputStream iconStream = this.getClass().getResourceAsStream('/' + this.getIconFilePath());
             if (iconStream == null) {
                 File iconFile = new File(this.iconFilePath);
                 if (iconFile.exists()) {

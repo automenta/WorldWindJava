@@ -18,7 +18,7 @@ import java.util.logging.Level;
  */
 public class DBaseRecord extends AVListImpl {
     private static final DateFormat dateformat = new SimpleDateFormat("yyyyMMdd");
-    private boolean deleted = false;
+    private boolean deleted;
     private int recordNumber;
 
     public DBaseRecord(DBaseFile dbaseFile, ByteBuffer buffer, int recordNumber) {
@@ -84,14 +84,11 @@ public class DBaseRecord extends AVListImpl {
                 final String fieldType = field.getType();
                 if (fieldType == DBaseField.TYPE_BOOLEAN) {
                     this.set(field.getName(), value.equalsIgnoreCase("T") || value.equalsIgnoreCase("Y"));
-                }
-                else if (fieldType == DBaseField.TYPE_CHAR) {
+                } else if (fieldType == DBaseField.TYPE_CHAR) {
                     this.set(field.getName(), value);
-                }
-                else if (fieldType == DBaseField.TYPE_DATE) {
-                    this.set(field.getName(), dateformat.parse(value));
-                }
-                else if (fieldType == DBaseField.TYPE_NUMBER) {
+                } else if (fieldType == DBaseField.TYPE_DATE) {
+                    this.set(field.getName(), DBaseRecord.dateformat.parse(value));
+                } else if (fieldType == DBaseField.TYPE_NUMBER) {
                     // Parse the field value as a decimal number. Double.parseDouble ignores any leading or trailing
                     // whitespace.
                     if (field.getDecimals() > 0)

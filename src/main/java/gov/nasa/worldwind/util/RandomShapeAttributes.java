@@ -24,6 +24,35 @@ public class RandomShapeAttributes {
         this.initialize();
     }
 
+    protected static PointPlacemarkAttributes createPointAttributes(Color color) {
+        PointPlacemarkAttributes attrs = new PointPlacemarkAttributes();
+        attrs.setUsePointAsDefaultImage(true);
+        attrs.setLineMaterial(new Material(color));
+        attrs.setScale(7.0d);
+        return attrs;
+    }
+
+    protected static ShapeAttributes createShapeAttributes(Color color) {
+        ShapeAttributes attrs = new BasicShapeAttributes();
+        attrs.setInteriorMaterial(new Material(color));
+        attrs.setOutlineMaterial(new Material(WWUtil.makeColorBrighter(color)));
+        attrs.setInteriorOpacity(0.5);
+        attrs.setOutlineWidth(2);
+        return attrs;
+    }
+
+    protected static AirspaceAttributes createAirspaceAttributes(Color color) {
+        AirspaceAttributes attrs = new BasicAirspaceAttributes();
+        attrs.setInteriorMaterial(new Material(color));
+        attrs.setOutlineMaterial(new Material(WWUtil.makeColorBrighter(color)));
+        attrs.setInteriorOpacity(0.7);
+        attrs.setOutlineWidth(2);
+        attrs.setDrawOutline(true);
+        attrs.setEnableAntialiasing(true);
+        attrs.setEnableLighting(true);
+        return attrs;
+    }
+
     protected void initialize() {
         Color[] shapeColors = {
             new Color(255, 9, 84), // red
@@ -61,34 +90,5 @@ public class RandomShapeAttributes {
 
     public AirspaceAttributes asAirspaceAttributes() {
         return this.airspaceAttrs[this.attrIndex % this.airspaceAttrs.length];
-    }
-
-    protected static PointPlacemarkAttributes createPointAttributes(Color color) {
-        PointPlacemarkAttributes attrs = new PointPlacemarkAttributes();
-        attrs.setUsePointAsDefaultImage(true);
-        attrs.setLineMaterial(new Material(color));
-        attrs.setScale(7.0d);
-        return attrs;
-    }
-
-    protected static ShapeAttributes createShapeAttributes(Color color) {
-        ShapeAttributes attrs = new BasicShapeAttributes();
-        attrs.setInteriorMaterial(new Material(color));
-        attrs.setOutlineMaterial(new Material(WWUtil.makeColorBrighter(color)));
-        attrs.setInteriorOpacity(0.5);
-        attrs.setOutlineWidth(2);
-        return attrs;
-    }
-
-    protected static AirspaceAttributes createAirspaceAttributes(Color color) {
-        AirspaceAttributes attrs = new BasicAirspaceAttributes();
-        attrs.setInteriorMaterial(new Material(color));
-        attrs.setOutlineMaterial(new Material(WWUtil.makeColorBrighter(color)));
-        attrs.setInteriorOpacity(0.7);
-        attrs.setOutlineWidth(2);
-        attrs.setDrawOutline(true);
-        attrs.setEnableAntialiasing(true);
-        attrs.setEnableLighting(true);
-        return attrs;
     }
 }

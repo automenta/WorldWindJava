@@ -21,10 +21,9 @@ import java.util.*;
  * @version $Id: WMSCapabilityInformation.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 public class WMSCapabilityInformation extends OGCCapabilityInformation {
-    private static final String[] rNames = new String[]
-        {
-            "GetCapabilities", "GetMap", "GetFeatureInfo", "DescribeLayer", "GetLegendGraphic"
-        };
+    private static final String[] rNames = {
+        "GetCapabilities", "GetMap", "GetFeatureInfo", "DescribeLayer", "GetLegendGraphic"
+    };
 
     protected QName LAYER;
 
@@ -40,8 +39,8 @@ public class WMSCapabilityInformation extends OGCCapabilityInformation {
     private void initialize() {
         LAYER = new QName(this.getNamespaceURI(), "Layer");
 
-        this.requestNames = new ArrayList<>(rNames.length);
-        for (String name : rNames) {
+        this.requestNames = new ArrayList<>(WMSCapabilityInformation.rNames.length);
+        for (String name : WMSCapabilityInformation.rNames) {
             this.requestNames.add(new QName(this.getNamespaceURI(), name));
         }
 
@@ -70,8 +69,7 @@ public class WMSCapabilityInformation extends OGCCapabilityInformation {
                     this.getLayerCapabilities().add(caps);
                 }
             }
-        }
-        else {
+        } else {
             super.doParseEventContent(ctx, event, args);
         }
     }

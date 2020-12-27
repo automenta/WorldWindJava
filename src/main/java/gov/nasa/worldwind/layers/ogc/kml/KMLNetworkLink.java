@@ -49,7 +49,7 @@ public class KMLNetworkLink extends KMLAbstractContainer implements PropertyChan
     /**
      * Flag to indicate that the Link has been fetched from the hash map.
      */
-    protected boolean linkFetched = false;
+    protected boolean linkFetched;
     protected KMLLink link;
 
     /**
@@ -342,8 +342,8 @@ public class KMLNetworkLink extends KMLAbstractContainer implements PropertyChan
     /**
      * Initiates a retrieval of the network resource referenced by this <code>KMLNetworkLink</code>. Once the network
      * resource is retrieved and loaded, this calls <code>{@link #setNetworkResource(KMLRoot)}</code> to specify this
-     * link's new network resource, and sends an <code>{@link AVKey#RETRIEVAL_STATE_SUCCESSFUL}</code>
-     * property change event to this link's property change listeners.
+     * link's new network resource, and sends an <code>{@link AVKey#RETRIEVAL_STATE_SUCCESSFUL}</code> property change
+     * event to this link's property change listeners.
      * <p>
      * This does nothing if this <code>KMLNetworkLink</code> has no <code>KMLLink</code>.
      *
@@ -444,7 +444,7 @@ public class KMLNetworkLink extends KMLAbstractContainer implements PropertyChan
 
     @Override
     public void onChange(Message msg) {
-        if (MSG_LINK_CHANGED.equals(msg.getName()))
+        if (KMLAbstractObject.MSG_LINK_CHANGED.equals(msg.getName()))
             this.reset();
 
         super.onChange(msg);

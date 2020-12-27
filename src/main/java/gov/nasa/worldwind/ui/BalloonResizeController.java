@@ -56,6 +56,23 @@ public class BalloonResizeController extends AbstractResizeHotSpot {
     }
 
     /**
+     * Get the balloon bounds from a SelectEvent.
+     *
+     * @param pickedObject Top picked object. The bounds are expected to be attached to the to PickedObject under
+     *                     AVKey.BOUNDS.
+     * @return Bounds or {@code null} if no bounds are found in the top PickedObject.
+     */
+    protected static Rectangle getBounds(AVList pickedObject) {
+        if (pickedObject != null) {
+            Object bounds = pickedObject.get(AVKey.BOUNDS);
+            if (bounds instanceof Rectangle) {
+                return (Rectangle) bounds;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Remove this controller as an event listener. The controller will not receive input events after this method is
      * called.
      */
@@ -156,23 +173,6 @@ public class BalloonResizeController extends AbstractResizeHotSpot {
     }
 
     /**
-     * Get the balloon bounds from a SelectEvent.
-     *
-     * @param pickedObject Top picked object. The bounds are expected to be attached to the to PickedObject under
-     *                     AVKey.BOUNDS.
-     * @return Bounds or {@code null} if no bounds are found in the top PickedObject.
-     */
-    protected static Rectangle getBounds(AVList pickedObject) {
-        if (pickedObject != null) {
-            Object bounds = pickedObject.get(AVKey.BOUNDS);
-            if (bounds instanceof Rectangle) {
-                return (Rectangle) bounds;
-            }
-        }
-        return null;
-    }
-
-    /**
      * {@inheritDoc}
      */
     protected Point getScreenPoint() {
@@ -197,6 +197,6 @@ public class BalloonResizeController extends AbstractResizeHotSpot {
      */
     @Override
     protected Dimension getMinimumSize() {
-        return DEFAULT_MIN_SIZE;
+        return BalloonResizeController.DEFAULT_MIN_SIZE;
     }
 }

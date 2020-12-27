@@ -26,7 +26,7 @@ import java.util.zip.*;
  */
 public class WWIO {
     public static final String DELETE_ON_EXIT_PREFIX = "WWJDeleteOnExit";
-    public static final String ILLEGAL_FILE_PATH_PART_CHARACTERS = "[" + "?/\\\\=+<>:;,\"|^\\[\\]" + "]";
+    public static final String ILLEGAL_FILE_PATH_PART_CHARACTERS = '[' + "?/\\\\=+<>:;,\"|^\\[\\]" + ']';
     /**
      * The maximum number of characters allowed in a file path. Covers Windows, Linux and OS X.
      */
@@ -39,106 +39,106 @@ public class WWIO {
     protected static final Map<String, String> suffixToMimeTypeMap = new HashMap<>();
 
     static {
-        mimeTypeToSuffixMap.put("application/acad", "dwg");
-        mimeTypeToSuffixMap.put("application/bil", "bil");
-        mimeTypeToSuffixMap.put("application/bil16", "bil");
-        mimeTypeToSuffixMap.put("application/bil32", "bil");
-        mimeTypeToSuffixMap.put("application/dxf", "dxf");
-        mimeTypeToSuffixMap.put("application/octet-stream", "bin");
-        mimeTypeToSuffixMap.put("application/pdf", "pdf");
-        mimeTypeToSuffixMap.put("application/rss+xml", "xml");
-        mimeTypeToSuffixMap.put("application/rtf", "rtf");
-        mimeTypeToSuffixMap.put("application/sla", "slt");
-        mimeTypeToSuffixMap.put("application/vnd.google-earth.kml+xml", "kml");
-        mimeTypeToSuffixMap.put("application/vnd.google-earth.kmz", "kmz");
-        mimeTypeToSuffixMap.put("application/vnd.ogc.gml+xml", "gml");
-        mimeTypeToSuffixMap.put("application/x-gzip", "gz");
-        mimeTypeToSuffixMap.put("application/xml", "xml");
-        mimeTypeToSuffixMap.put("application/zip", "zip");
-        mimeTypeToSuffixMap.put("multipart/zip", "zip");
-        mimeTypeToSuffixMap.put("multipart/x-gzip", "gzip");
+        WWIO.mimeTypeToSuffixMap.put("application/acad", "dwg");
+        WWIO.mimeTypeToSuffixMap.put("application/bil", "bil");
+        WWIO.mimeTypeToSuffixMap.put("application/bil16", "bil");
+        WWIO.mimeTypeToSuffixMap.put("application/bil32", "bil");
+        WWIO.mimeTypeToSuffixMap.put("application/dxf", "dxf");
+        WWIO.mimeTypeToSuffixMap.put("application/octet-stream", "bin");
+        WWIO.mimeTypeToSuffixMap.put("application/pdf", "pdf");
+        WWIO.mimeTypeToSuffixMap.put("application/rss+xml", "xml");
+        WWIO.mimeTypeToSuffixMap.put("application/rtf", "rtf");
+        WWIO.mimeTypeToSuffixMap.put("application/sla", "slt");
+        WWIO.mimeTypeToSuffixMap.put("application/vnd.google-earth.kml+xml", "kml");
+        WWIO.mimeTypeToSuffixMap.put("application/vnd.google-earth.kmz", "kmz");
+        WWIO.mimeTypeToSuffixMap.put("application/vnd.ogc.gml+xml", "gml");
+        WWIO.mimeTypeToSuffixMap.put("application/x-gzip", "gz");
+        WWIO.mimeTypeToSuffixMap.put("application/xml", "xml");
+        WWIO.mimeTypeToSuffixMap.put("application/zip", "zip");
+        WWIO.mimeTypeToSuffixMap.put("multipart/zip", "zip");
+        WWIO.mimeTypeToSuffixMap.put("multipart/x-gzip", "gzip");
 
-        mimeTypeToSuffixMap.put("model/collada+xml", "dae");   // <--- burkey add
+        WWIO.mimeTypeToSuffixMap.put("model/collada+xml", "dae");   // <--- burkey add
 
-        mimeTypeToSuffixMap.put("text/html", "html");
-        mimeTypeToSuffixMap.put("text/plain", "txt");
-        mimeTypeToSuffixMap.put("text/richtext", "rtx");
-        mimeTypeToSuffixMap.put("text/tab-separated-values", "tsv");
-        mimeTypeToSuffixMap.put("text/xml", "xml");
+        WWIO.mimeTypeToSuffixMap.put("text/html", "html");
+        WWIO.mimeTypeToSuffixMap.put("text/plain", "txt");
+        WWIO.mimeTypeToSuffixMap.put("text/richtext", "rtx");
+        WWIO.mimeTypeToSuffixMap.put("text/tab-separated-values", "tsv");
+        WWIO.mimeTypeToSuffixMap.put("text/xml", "xml");
 
-        mimeTypeToSuffixMap.put("image/bmp", "bmp");
-        mimeTypeToSuffixMap.put("image/dds", "dds");
-        mimeTypeToSuffixMap.put("image/geotiff", "gtif");
-        mimeTypeToSuffixMap.put("image/gif", "gif");
-        mimeTypeToSuffixMap.put("image/jp2", "jp2");
-        mimeTypeToSuffixMap.put("image/jpeg", "jpg");
-        mimeTypeToSuffixMap.put("image/jpg", "jpg");
-        mimeTypeToSuffixMap.put("image/png", "png");
-        mimeTypeToSuffixMap.put("image/svg+xml", "svg");
-        mimeTypeToSuffixMap.put("image/tiff", "tif");
-        mimeTypeToSuffixMap.put("image/x-imagewebserver-ecw", "ecw");
-        mimeTypeToSuffixMap.put("image/x-mrsid", "sid");
-        mimeTypeToSuffixMap.put("image/x-rgb", "rgb");
+        WWIO.mimeTypeToSuffixMap.put("image/bmp", "bmp");
+        WWIO.mimeTypeToSuffixMap.put("image/dds", "dds");
+        WWIO.mimeTypeToSuffixMap.put("image/geotiff", "gtif");
+        WWIO.mimeTypeToSuffixMap.put("image/gif", "gif");
+        WWIO.mimeTypeToSuffixMap.put("image/jp2", "jp2");
+        WWIO.mimeTypeToSuffixMap.put("image/jpeg", "jpg");
+        WWIO.mimeTypeToSuffixMap.put("image/jpg", "jpg");
+        WWIO.mimeTypeToSuffixMap.put("image/png", "png");
+        WWIO.mimeTypeToSuffixMap.put("image/svg+xml", "svg");
+        WWIO.mimeTypeToSuffixMap.put("image/tiff", "tif");
+        WWIO.mimeTypeToSuffixMap.put("image/x-imagewebserver-ecw", "ecw");
+        WWIO.mimeTypeToSuffixMap.put("image/x-mrsid", "sid");
+        WWIO.mimeTypeToSuffixMap.put("image/x-rgb", "rgb");
 
-        mimeTypeToSuffixMap.put("video/mpeg", "mpg");
-        mimeTypeToSuffixMap.put("video/quicktime", "mov");
+        WWIO.mimeTypeToSuffixMap.put("video/mpeg", "mpg");
+        WWIO.mimeTypeToSuffixMap.put("video/quicktime", "mov");
 
-        mimeTypeToSuffixMap.put("audio/x-aiff", "aif");
-        mimeTypeToSuffixMap.put("audio/x-midi", "mid");
-        mimeTypeToSuffixMap.put("audio/x-wav", "wav");
+        WWIO.mimeTypeToSuffixMap.put("audio/x-aiff", "aif");
+        WWIO.mimeTypeToSuffixMap.put("audio/x-midi", "mid");
+        WWIO.mimeTypeToSuffixMap.put("audio/x-wav", "wav");
 
-        mimeTypeToSuffixMap.put("world/x-vrml", "wrl");
+        WWIO.mimeTypeToSuffixMap.put("world/x-vrml", "wrl");
 
         //-----------------------------------------------
 
-        suffixToMimeTypeMap.put("aif", "audio/x-aiff");
-        suffixToMimeTypeMap.put("aifc", "audio/x-aiff");
-        suffixToMimeTypeMap.put("aiff", "audio/x-aiff");
-        suffixToMimeTypeMap.put("bil", "application/bil");
-        suffixToMimeTypeMap.put("bil16", "application/bil16");
-        suffixToMimeTypeMap.put("bil32", "application/bil32");
-        suffixToMimeTypeMap.put("bin", "application/octet-stream");
-        suffixToMimeTypeMap.put("bmp", "image/bmp");
-        suffixToMimeTypeMap.put("dds", "image/dds");
-        suffixToMimeTypeMap.put("dwg", "application/acad");
-        suffixToMimeTypeMap.put("dxf", "application/dxf");
-        suffixToMimeTypeMap.put("ecw", "image/x-imagewebserver-ecw");
-        suffixToMimeTypeMap.put("gif", "image/gif");
-        suffixToMimeTypeMap.put("gml", "application/vnd.ogc.gml+xml");
-        suffixToMimeTypeMap.put("gtif", "image/geotiff");
-        suffixToMimeTypeMap.put("gz", "application/x-gzip");
-        suffixToMimeTypeMap.put("gzip", "multipart/x-gzip");
-        suffixToMimeTypeMap.put("htm", "text/html");
-        suffixToMimeTypeMap.put("html", "text/html");
-        suffixToMimeTypeMap.put("jp2", "image/jp2");
-        suffixToMimeTypeMap.put("jpeg", "image/jpeg");
-        suffixToMimeTypeMap.put("jpg", "image/jpeg");
-        suffixToMimeTypeMap.put("kml", "application/vnd.google-earth.kml+xml");
-        suffixToMimeTypeMap.put("kmz", "application/vnd.google-earth.kmz");
-        suffixToMimeTypeMap.put("mid", "audio/x-midi");
-        suffixToMimeTypeMap.put("midi", "audio/x-midi");
-        suffixToMimeTypeMap.put("mov", "video/quicktime");
-        suffixToMimeTypeMap.put("mp3", "audio/x-mpeg");
-        suffixToMimeTypeMap.put("mpe", "video/mpeg");
-        suffixToMimeTypeMap.put("mpeg", "video/mpeg");
-        suffixToMimeTypeMap.put("mpg", "video/mpeg");
-        suffixToMimeTypeMap.put("pdf", "application/pdf");
-        suffixToMimeTypeMap.put("png", "image/png");
-        suffixToMimeTypeMap.put("rgb", "image/x-rgb");
-        suffixToMimeTypeMap.put("rtf", "application/rtf");
-        suffixToMimeTypeMap.put("rtx", "text/richtext");
-        suffixToMimeTypeMap.put("sid", "image/x-mrsid");
-        suffixToMimeTypeMap.put("slt", "application/sla");
-        suffixToMimeTypeMap.put("svg", "image/svg+xml");
-        suffixToMimeTypeMap.put("tif", "image/tiff");
-        suffixToMimeTypeMap.put("tiff", "image/tiff");
-        suffixToMimeTypeMap.put("tsv", "text/tab-separated-values");
-        suffixToMimeTypeMap.put("txt", "text/plain");
-        suffixToMimeTypeMap.put("wav", "audio/x-wav");
-        suffixToMimeTypeMap.put("wbmp", "image/vnd.wap.wbmp");
-        suffixToMimeTypeMap.put("wrl", "world/x-vrml");
-        suffixToMimeTypeMap.put("xml", "application/xml");
-        suffixToMimeTypeMap.put("zip", "application/zip");
+        WWIO.suffixToMimeTypeMap.put("aif", "audio/x-aiff");
+        WWIO.suffixToMimeTypeMap.put("aifc", "audio/x-aiff");
+        WWIO.suffixToMimeTypeMap.put("aiff", "audio/x-aiff");
+        WWIO.suffixToMimeTypeMap.put("bil", "application/bil");
+        WWIO.suffixToMimeTypeMap.put("bil16", "application/bil16");
+        WWIO.suffixToMimeTypeMap.put("bil32", "application/bil32");
+        WWIO.suffixToMimeTypeMap.put("bin", "application/octet-stream");
+        WWIO.suffixToMimeTypeMap.put("bmp", "image/bmp");
+        WWIO.suffixToMimeTypeMap.put("dds", "image/dds");
+        WWIO.suffixToMimeTypeMap.put("dwg", "application/acad");
+        WWIO.suffixToMimeTypeMap.put("dxf", "application/dxf");
+        WWIO.suffixToMimeTypeMap.put("ecw", "image/x-imagewebserver-ecw");
+        WWIO.suffixToMimeTypeMap.put("gif", "image/gif");
+        WWIO.suffixToMimeTypeMap.put("gml", "application/vnd.ogc.gml+xml");
+        WWIO.suffixToMimeTypeMap.put("gtif", "image/geotiff");
+        WWIO.suffixToMimeTypeMap.put("gz", "application/x-gzip");
+        WWIO.suffixToMimeTypeMap.put("gzip", "multipart/x-gzip");
+        WWIO.suffixToMimeTypeMap.put("htm", "text/html");
+        WWIO.suffixToMimeTypeMap.put("html", "text/html");
+        WWIO.suffixToMimeTypeMap.put("jp2", "image/jp2");
+        WWIO.suffixToMimeTypeMap.put("jpeg", "image/jpeg");
+        WWIO.suffixToMimeTypeMap.put("jpg", "image/jpeg");
+        WWIO.suffixToMimeTypeMap.put("kml", "application/vnd.google-earth.kml+xml");
+        WWIO.suffixToMimeTypeMap.put("kmz", "application/vnd.google-earth.kmz");
+        WWIO.suffixToMimeTypeMap.put("mid", "audio/x-midi");
+        WWIO.suffixToMimeTypeMap.put("midi", "audio/x-midi");
+        WWIO.suffixToMimeTypeMap.put("mov", "video/quicktime");
+        WWIO.suffixToMimeTypeMap.put("mp3", "audio/x-mpeg");
+        WWIO.suffixToMimeTypeMap.put("mpe", "video/mpeg");
+        WWIO.suffixToMimeTypeMap.put("mpeg", "video/mpeg");
+        WWIO.suffixToMimeTypeMap.put("mpg", "video/mpeg");
+        WWIO.suffixToMimeTypeMap.put("pdf", "application/pdf");
+        WWIO.suffixToMimeTypeMap.put("png", "image/png");
+        WWIO.suffixToMimeTypeMap.put("rgb", "image/x-rgb");
+        WWIO.suffixToMimeTypeMap.put("rtf", "application/rtf");
+        WWIO.suffixToMimeTypeMap.put("rtx", "text/richtext");
+        WWIO.suffixToMimeTypeMap.put("sid", "image/x-mrsid");
+        WWIO.suffixToMimeTypeMap.put("slt", "application/sla");
+        WWIO.suffixToMimeTypeMap.put("svg", "image/svg+xml");
+        WWIO.suffixToMimeTypeMap.put("tif", "image/tiff");
+        WWIO.suffixToMimeTypeMap.put("tiff", "image/tiff");
+        WWIO.suffixToMimeTypeMap.put("tsv", "text/tab-separated-values");
+        WWIO.suffixToMimeTypeMap.put("txt", "text/plain");
+        WWIO.suffixToMimeTypeMap.put("wav", "audio/x-wav");
+        WWIO.suffixToMimeTypeMap.put("wbmp", "image/vnd.wap.wbmp");
+        WWIO.suffixToMimeTypeMap.put("wrl", "world/x-vrml");
+        WWIO.suffixToMimeTypeMap.put("xml", "application/xml");
+        WWIO.suffixToMimeTypeMap.put("zip", "application/zip");
     }
 
     public static String formPath(String... pathParts) {
@@ -150,7 +150,7 @@ public class WWIO {
 
             if (!sb.isEmpty())
                 sb.append(File.separator);
-            sb.append(pathPart.replaceAll(ILLEGAL_FILE_PATH_PART_CHARACTERS, "_"));
+            sb.append(pathPart.replaceAll(WWIO.ILLEGAL_FILE_PATH_PART_CHARACTERS, "_"));
         }
 
         return sb.toString();
@@ -178,21 +178,11 @@ public class WWIO {
      * @throws IllegalArgumentException if the specified string is null.
      */
     public static String replaceIllegalFileNameCharacters(String s) {
-        if (s == null) {
-            String message = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
-        return s.replaceAll(ILLEGAL_FILE_PATH_PART_CHARACTERS, "_");
+        return s.replaceAll(WWIO.ILLEGAL_FILE_PATH_PART_CHARACTERS, "_");
     }
 
     public static String stripTrailingSeparator(String s) {
-        if (s == null) {
-            String message = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         if (!s.isEmpty() && s.charAt(s.length() - 1) == '/' || !s.isEmpty() && s.charAt(s.length() - 1) == '\\')
             return s.substring(0, s.length() - 1);
@@ -201,11 +191,6 @@ public class WWIO {
     }
 
     public static String stripLeadingSeparator(String s) {
-        if (s == null) {
-            String message = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         if (!s.isEmpty() && s.charAt(0) == '/' || !s.isEmpty() && s.charAt(0) == '\\')
             return s.substring(1);
@@ -214,11 +199,6 @@ public class WWIO {
     }
 
     public static String stripLeadingZeros(String s) {
-        if (s == null) {
-            String message = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         int len = s.length();
         if (len < 2) // String is empty or is a single character, so there is nothing to strip.
@@ -238,10 +218,10 @@ public class WWIO {
     }
 
     /**
-     * Converts several types of addresses to a local file to a {@link File}. Returns null if the source cannot
-     * be converted to a file. The source type may be one of the following: <ul><li>{@link URL}</li> <li>{@link
-     * URI}</li> <li>{@link File}</li> <li>{@link String} containing a valid URL description, a valid
-     * URI description, or a valid path to a local file.</li> </ul>
+     * Converts several types of addresses to a local file to a {@link File}. Returns null if the source cannot be
+     * converted to a file. The source type may be one of the following: <ul><li>{@link URL}</li> <li>{@link URI}</li>
+     * <li>{@link File}</li> <li>{@link String} containing a valid URL description, a valid URI description, or a valid
+     * path to a local file.</li> </ul>
      *
      * @param src the source to convert to local file path.
      * @return a local File path, or null if the source could not be converted.
@@ -258,10 +238,10 @@ public class WWIO {
             return (File) src;
 
         else if (src instanceof URL)
-            return convertURLToFile((URL) src);
+            return WWIO.convertURLToFile((URL) src);
 
         else if (src instanceof URI)
-            return convertURIToFile((URI) src);
+            return WWIO.convertURIToFile((URI) src);
 
         else if (!(src instanceof String))
             return null;
@@ -272,13 +252,13 @@ public class WWIO {
         if (file.exists())
             return file;
 
-        URL url = makeURL(sourceName);
+        URL url = WWIO.makeURL(sourceName);
         if (url != null)
-            return convertURLToFile(url);
+            return WWIO.convertURLToFile(url);
 
-        URI uri = makeURI(sourceName);
+        URI uri = WWIO.makeURI(sourceName);
         if (uri != null)
-            return convertURIToFile(uri);
+            return WWIO.convertURIToFile(uri);
 
         return null;
     }
@@ -292,11 +272,6 @@ public class WWIO {
      * @throws IllegalArgumentException if the url is null.
      */
     public static File convertURIToFile(URI uri) {
-        if (uri == null) {
-            String message = Logging.getMessage("nullValue.URIIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         try {
             return new File(uri);
@@ -316,11 +291,6 @@ public class WWIO {
      * @throws IllegalArgumentException if the url is null.
      */
     public static File convertURLToFile(URL url) {
-        if (url == null) {
-            String message = Logging.getMessage("nullValue.URLIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         try {
             return new File(url.toURI());
@@ -334,17 +304,6 @@ public class WWIO {
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public static boolean saveBuffer(ByteBuffer buffer, File file, boolean forceFilesystemWrite) throws IOException {
-        if (buffer == null) {
-            String message = Logging.getMessage("nullValue.BufferNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (file == null) {
-            String message = Logging.getMessage("nullValue.FileIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         FileOutputStream fos = null;
         FileChannel channel = null;
@@ -398,23 +357,12 @@ public class WWIO {
 
     public static boolean saveBuffer(ByteBuffer buffer, File file) throws IOException {
         // By default, force changes to be written to the underlying storage device.
-        return saveBuffer(buffer, file, true);
+        return WWIO.saveBuffer(buffer, file, true);
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public static boolean saveBufferToStream(ByteBuffer buffer, OutputStream fos)
         throws IOException {
-        if (buffer == null) {
-            String message = Logging.getMessage("nullValue.BufferNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (fos == null) {
-            String message = Logging.getMessage("nullValue.FileIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         WritableByteChannel channel;
         try {
@@ -433,19 +381,19 @@ public class WWIO {
     }
 
     /**
-     * Maps the specified File's bytes directly into memory as a {@link MappedByteBuffer} according to the
-     * specified mode.
+     * Maps the specified File's bytes directly into memory as a {@link MappedByteBuffer} according to the specified
+     * mode.
      * <p>
-     * If the mode is {@link FileChannel.MapMode#READ_ONLY}, the file is mapped in read-only mode, and
-     * any attempt to modify the contents of the returned MappedByteBuffer causes a {@link ReadOnlyBufferException}.
+     * If the mode is {@link FileChannel.MapMode#READ_ONLY}, the file is mapped in read-only mode, and any attempt to
+     * modify the contents of the returned MappedByteBuffer causes a {@link ReadOnlyBufferException}.
      * <p>
-     * If the mode is {@link FileChannel.MapMode#READ_WRITE}, the file is mapped in read-write mode.
-     * Changing the contents of the returned MappedByteBuffer to be eventually propagated to the file. The specified
-     * file must be avialable for both reading and writing.
+     * If the mode is {@link FileChannel.MapMode#READ_WRITE}, the file is mapped in read-write mode. Changing the
+     * contents of the returned MappedByteBuffer to be eventually propagated to the file. The specified file must be
+     * avialable for both reading and writing.
      * <p>
-     * If the mode is {@link FileChannel.MapMode#PRIVATE}, the file is mapped in copy-on-write mode.
-     * Changing the contents of the returned MappedByteBuffer causes private copies of portions of the buffer to be
-     * created. The specified file must be avialable for both reading and writing.
+     * If the mode is {@link FileChannel.MapMode#PRIVATE}, the file is mapped in copy-on-write mode. Changing the
+     * contents of the returned MappedByteBuffer causes private copies of portions of the buffer to be created. The
+     * specified file must be avialable for both reading and writing.
      *
      * @param file the file to map.
      * @param mode the mapping mode, one of {@link FileChannel.MapMode#READ_ONLY}, {@link
@@ -454,17 +402,6 @@ public class WWIO {
      * @throws IOException if the file cannot be mapped for any reason.
      */
     public static MappedByteBuffer mapFile(File file, FileChannel.MapMode mode) throws IOException {
-        if (file == null) {
-            String message = Logging.getMessage("nullValue.FileIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (mode == null) {
-            String message = Logging.getMessage("nullValue.ModelIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         String accessMode;
         if (mode == FileChannel.MapMode.READ_ONLY)
@@ -484,8 +421,8 @@ public class WWIO {
     }
 
     /**
-     * Maps the specified File's bytes directly into memory as a {@link MappedByteBuffer}. The file is mapped
-     * in read-only mode; any attempt to modify the contents of the returned MappedByteBuffer causes a {@link
+     * Maps the specified File's bytes directly into memory as a {@link MappedByteBuffer}. The file is mapped in
+     * read-only mode; any attempt to modify the contents of the returned MappedByteBuffer causes a {@link
      * ReadOnlyBufferException}.
      *
      * @param file the file to map.
@@ -499,7 +436,7 @@ public class WWIO {
             throw new IllegalArgumentException(message);
         }
 
-        return mapFile(file, FileChannel.MapMode.READ_ONLY);
+        return WWIO.mapFile(file, FileChannel.MapMode.READ_ONLY);
     }
 
     /**
@@ -513,7 +450,7 @@ public class WWIO {
      */
     public static ByteBuffer readURLContentToBuffer(URL url) throws IOException {
 
-        return readURLContentToBuffer(url, false);
+        return WWIO.readURLContentToBuffer(url, false);
     }
 
     /**
@@ -534,7 +471,7 @@ public class WWIO {
         InputStream is = null;
         try {
             is = url.openStream();
-            return readStreamToBuffer(is, allocateDirect);
+            return WWIO.readStreamToBuffer(is, allocateDirect);
         }
         finally {
             WWIO.closeStream(is, url.toString());
@@ -561,8 +498,8 @@ public class WWIO {
             throw new IllegalArgumentException(message);
         }
 
-        ByteBuffer buffer = readURLContentToBuffer(url);
-        return byteBufferToString(buffer, encoding);
+        ByteBuffer buffer = WWIO.readURLContentToBuffer(url);
+        return WWIO.byteBufferToString(buffer, encoding);
     }
 
     /**
@@ -576,7 +513,7 @@ public class WWIO {
      */
     public static ByteBuffer readFileToBuffer(File file) throws IOException {
 
-        return readFileToBuffer(file, false);
+        return WWIO.readFileToBuffer(file, false);
     }
 
     /**
@@ -624,7 +561,7 @@ public class WWIO {
 
         FileInputStream is = new FileInputStream(file);
         try {
-            return inflateStreamToBuffer(is);
+            return WWIO.inflateStreamToBuffer(is);
         }
         finally {
             WWIO.closeStream(is, file.getPath());
@@ -632,11 +569,11 @@ public class WWIO {
     }
 
     public static boolean saveBufferToGZipFile(ByteBuffer buffer, File file) throws IOException {
-        return saveBufferToStream(buffer, new GZIPOutputStream(new FileOutputStream(file)));
+        return WWIO.saveBufferToStream(buffer, new GZIPOutputStream(new FileOutputStream(file)));
     }
 
     public static boolean deflateBufferToFile(ByteBuffer buffer, File file) throws IOException {
-        return saveBufferToStream(buffer, new DeflaterOutputStream(new FileOutputStream(file)));
+        return WWIO.saveBufferToStream(buffer, new DeflaterOutputStream(new FileOutputStream(file)));
     }
 
     public static ByteBuffer readGZipFileToBuffer(File gzFile) throws IllegalArgumentException, IOException {
@@ -656,7 +593,7 @@ public class WWIO {
             throw new IOException(message);
         }
 
-        int inflatedLength = gzipGetInflatedLength(gzFile);
+        int inflatedLength = WWIO.gzipGetInflatedLength(gzFile);
         if (0 == inflatedLength) {
             String message = Logging.getMessage("generic.LengthIsInvalid", gzFile.getAbsolutePath());
             Logging.logger().severe(message);
@@ -668,7 +605,7 @@ public class WWIO {
 
         try {
             is = new GZIPInputStream(new FileInputStream(gzFile));
-            buffer = transferStreamToByteBuffer(is, inflatedLength);
+            buffer = WWIO.transferStreamToByteBuffer(is, inflatedLength);
             buffer.rewind();
         }
         finally {
@@ -721,8 +658,7 @@ public class WWIO {
                     Logging.logger().severe(message);
                     throw new IOException(message);
                 }
-            }
-            else {   // Grab first first file entry
+            } else {   // Grab first first file entry
                 Enumeration entries = zf.entries();
                 while (entries.hasMoreElements()) {
                     ZipEntry entry = (ZipEntry) entries.nextElement();
@@ -741,7 +677,7 @@ public class WWIO {
             is = zf.getInputStream(ze);
             ByteBuffer buffer = null;
             if (ze.getSize() > 0) {
-                buffer = transferStreamToByteBuffer(is, (int) ze.getSize());
+                buffer = WWIO.transferStreamToByteBuffer(is, (int) ze.getSize());
                 buffer.rewind();
             }
             return buffer;
@@ -752,11 +688,6 @@ public class WWIO {
     }
 
     private static ByteBuffer transferStreamToByteBuffer(InputStream stream, int numBytes) throws IOException {
-        if (stream == null) {
-            String message = Logging.getMessage("nullValue.InputStreamIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         if (numBytes < 1) {
             Logging.logger().severe("WWIO.NumberBytesTransferLessThanOne");
@@ -786,13 +717,8 @@ public class WWIO {
      * @throws IOException              if an I/O error occurs.
      */
     public static ByteBuffer readStreamToBuffer(InputStream inputStream) throws IOException {
-        if (inputStream == null) {
-            String message = Logging.getMessage("nullValue.InputStreamIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
-        return readStreamToBuffer(inputStream, false);
+        return WWIO.readStreamToBuffer(inputStream, false);
     }
 
     /**
@@ -809,19 +735,14 @@ public class WWIO {
      * @throws IOException              if an I/O error occurs.
      */
     public static ByteBuffer readStreamToBuffer(InputStream inputStream, boolean allocateDirect) throws IOException {
-        if (inputStream == null) {
-            String message = Logging.getMessage("nullValue.InputStreamIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         ReadableByteChannel channel = Channels.newChannel(inputStream);
-        return readChannelToBuffer(channel, allocateDirect);
+        return WWIO.readChannelToBuffer(channel, allocateDirect);
     }
 
     /**
-     * Reads all the available bytes from the specified {@link InputStream}, returning the bytes as a String.
-     * The bytes are interpreted according to the specified encoding, or UTF-8 if no encoding is specified.
+     * Reads all the available bytes from the specified {@link InputStream}, returning the bytes as a String. The bytes
+     * are interpreted according to the specified encoding, or UTF-8 if no encoding is specified.
      *
      * @param stream   the stream to read.
      * @param encoding the encoding do use. If null is specified then UTF-8 is used.
@@ -830,21 +751,16 @@ public class WWIO {
      * @throws IOException              if an I/O error occurs.
      */
     public static String readStreamToString(InputStream stream, String encoding) throws IOException {
-        if (stream == null) {
-            String message = Logging.getMessage("nullValue.InputStreamIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
-        return readCharacterStreamToString(
-            new InputStreamReader(stream, encoding != null ? encoding : DEFAULT_CHARACTER_ENCODING));
+        return WWIO.readCharacterStreamToString(
+            new InputStreamReader(stream, encoding != null ? encoding : WWIO.DEFAULT_CHARACTER_ENCODING));
     }
 
     /**
-     * Reads all the available bytes from the specified {@link ReadableByteChannel}, returning the
-     * bytes as a {@link ByteBuffer} with the current JVM byte order. This returns a direct ByteBuffer if allocateDirect
-     * is true, and returns a non-direct ByteBuffer otherwise. Direct buffers are backed by native memory, and may
-     * reside outside of the normal garbage-collected heap. Non-direct buffers are backed by JVM heap memory.
+     * Reads all the available bytes from the specified {@link ReadableByteChannel}, returning the bytes as a {@link
+     * ByteBuffer} with the current JVM byte order. This returns a direct ByteBuffer if allocateDirect is true, and
+     * returns a non-direct ByteBuffer otherwise. Direct buffers are backed by native memory, and may reside outside of
+     * the normal garbage-collected heap. Non-direct buffers are backed by JVM heap memory.
      *
      * @param channel        the channel to read.
      * @param allocateDirect true to allocate and return a direct buffer, false to allocate and return a non-direct
@@ -882,10 +798,9 @@ public class WWIO {
     }
 
     /**
-     * Reads the available bytes from the specified {@link ReadableByteChannel} up to the number of
-     * bytes remaining in the buffer. Bytes read from the specified channel are copied to the specified {@link
-     * ByteBuffer}. Upon returning the specified buffer's limit is set to the number of bytes read, and its position is
-     * set to zero.
+     * Reads the available bytes from the specified {@link ReadableByteChannel} up to the number of bytes remaining in
+     * the buffer. Bytes read from the specified channel are copied to the specified {@link ByteBuffer}. Upon returning
+     * the specified buffer's limit is set to the number of bytes read, and its position is set to zero.
      *
      * @param channel the channel to read bytes from.
      * @param buffer  the buffer to receive the bytes.
@@ -917,9 +832,8 @@ public class WWIO {
     }
 
     /**
-     * Reads all the available bytes from the specified {@link ReadableByteChannel}, returning the
-     * bytes as a String. The bytes are interpreted according to the specified encoding, or UTF-8 if no encoding is
-     * specified.
+     * Reads all the available bytes from the specified {@link ReadableByteChannel}, returning the bytes as a String.
+     * The bytes are interpreted according to the specified encoding, or UTF-8 if no encoding is specified.
      *
      * @param channel  the channel to read.
      * @param encoding the encoding do use. If null is specified then UTF-8 is used.
@@ -934,13 +848,13 @@ public class WWIO {
             throw new IllegalArgumentException(message);
         }
 
-        return readCharacterStreamToString(
-            Channels.newReader(channel, encoding != null ? encoding : DEFAULT_CHARACTER_ENCODING));
+        return WWIO.readCharacterStreamToString(
+            Channels.newReader(channel, encoding != null ? encoding : WWIO.DEFAULT_CHARACTER_ENCODING));
     }
 
     /**
-     * Reads all the character stream content from the specified {@link Reader}, returning a the accumulated
-     * content as a String .
+     * Reads all the character stream content from the specified {@link Reader}, returning a the accumulated content as
+     * a String .
      *
      * @param reader the character stream to read.
      * @return the string representing the accumulated content from the character stream.
@@ -966,7 +880,7 @@ public class WWIO {
     }
 
     public static ByteBuffer inflateStreamToBuffer(InputStream inputStream) throws IOException {
-        return readStreamToBuffer(new InflaterInputStream(inputStream));
+        return WWIO.readStreamToBuffer(new InflaterInputStream(inputStream));
     }
 
     public static String replaceSuffix(String in, String newSuffix) {
@@ -1016,7 +930,7 @@ public class WWIO {
             throw new IllegalArgumentException(message);
         }
 
-        filePath = stripTrailingSeparator(filePath);
+        filePath = WWIO.stripTrailingSeparator(filePath);
 
         int len = filePath.length();
         int p = filePath.lastIndexOf('/');
@@ -1039,7 +953,7 @@ public class WWIO {
             throw new IllegalArgumentException(message);
         }
 
-        filePath = stripTrailingSeparator(filePath);
+        filePath = WWIO.stripTrailingSeparator(filePath);
 
         int len = filePath.length();
         int p = filePath.lastIndexOf('/');
@@ -1144,7 +1058,7 @@ public class WWIO {
             else if (proxyType.equals("Proxy.Type.SOCKS"))
                 proxy = new Proxy(Proxy.Type.SOCKS, addr);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             Logging.logger().log(Level.WARNING,
                 Logging.getMessage("URLRetriever.ErrorConfiguringProxy", proxyHost), e);
         }
@@ -1177,7 +1091,7 @@ public class WWIO {
                 continue;
 
             if (!(!fileSuffix.isEmpty() && fileSuffix.charAt(0) == '.'))
-                fileSuffix = "." + fileSuffix;
+                fileSuffix = '.' + fileSuffix;
 
             if (fileSuffix.equalsIgnoreCase(typeSuffix))
                 return true;
@@ -1208,7 +1122,7 @@ public class WWIO {
         if (paramIndex != -1)
             mimeType = mimeType.substring(0, paramIndex);
 
-        String suffix = mimeTypeToSuffixMap.get(mimeType);
+        String suffix = WWIO.mimeTypeToSuffixMap.get(mimeType);
 
         if (suffix == null)
             suffix = mimeType.substring(mimeType.lastIndexOf('/') + 1);
@@ -1216,7 +1130,7 @@ public class WWIO {
         suffix = suffix.replaceFirst("bil32", "bil"); // if bil32, replace with "bil" suffix.
         suffix = suffix.replaceFirst("bil16", "bil"); // if bil16, replace with "bil" suffix.
 
-        return "." + suffix;
+        return '.' + suffix;
     }
 
     /**
@@ -1237,7 +1151,7 @@ public class WWIO {
         if (!suffix.isEmpty() && suffix.charAt(0) == '.')
             suffix = suffix.substring(1);
 
-        return suffixToMimeTypeMap.get(suffix.toLowerCase());
+        return WWIO.suffixToMimeTypeMap.get(suffix.toLowerCase());
     }
 
     /**
@@ -1284,9 +1198,9 @@ public class WWIO {
             c = WWIO.class;
 
         try {
-            return c.getResourceAsStream("/" + path);
+            return c.getResourceAsStream('/' + path);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             return e;
         }
     }
@@ -1300,7 +1214,7 @@ public class WWIO {
      * @throws IllegalArgumentException if <code>string</code> is null.
      */
     public static InputStream getInputStreamFromString(String string) {
-        return getInputStreamFromString(string, DEFAULT_CHARACTER_ENCODING);
+        return WWIO.getInputStreamFromString(string, WWIO.DEFAULT_CHARACTER_ENCODING);
     }
 
     /**
@@ -1315,7 +1229,7 @@ public class WWIO {
     public static InputStream getInputStreamFromString(String string, String encoding) {
 
         try {
-            return new ByteArrayInputStream(string.getBytes(encoding != null ? encoding : DEFAULT_CHARACTER_ENCODING));
+            return new ByteArrayInputStream(string.getBytes(encoding != null ? encoding : WWIO.DEFAULT_CHARACTER_ENCODING));
         }
         catch (UnsupportedEncodingException e) {
             throw new WWRuntimeException(e); // should never happen because encoding is always UTF-8.
@@ -1336,9 +1250,8 @@ public class WWIO {
     }
 
     /**
-     * Returns a new {@link BufferedInputStream} which wraps the specified InputStream. If the specified
-     * InputStream is already a BufferedInputStream, this returns the original InputStream cast to a
-     * BufferedInputStream.
+     * Returns a new {@link BufferedInputStream} which wraps the specified InputStream. If the specified InputStream is
+     * already a BufferedInputStream, this returns the original InputStream cast to a BufferedInputStream.
      *
      * @param is the InputStream to wrap with a new BufferedInputStream.
      * @return a new BufferedInputStream which wraps the specified InputStream.
@@ -1428,13 +1341,13 @@ public class WWIO {
 
         for (File childFile : childFiles) {
             File destFile = new File(destination, childFile.getName());
-            copyFile(childFile, destFile);
+            WWIO.copyFile(childFile, destFile);
         }
 
         if (copySubDirectories) {
             for (File childDir : childDirs) {
                 File destDir = new File(destination, childDir.getName());
-                copyDirectory(childDir, destDir, true);
+                WWIO.copyDirectory(childDir, destDir, true);
             }
         }
     }
@@ -1461,7 +1374,7 @@ public class WWIO {
             }
 
             for (File childDir : childDirs) {
-                deleteDirectory(childDir);
+                WWIO.deleteDirectory(childDir);
             }
         }
     }
@@ -1480,11 +1393,12 @@ public class WWIO {
         try {
             if (stream instanceof Closeable) {
                 ((Closeable) stream).close();
-            }else {
+            } else {
                 String message = Logging.getMessage("WWIO.StreamTypeNotSupported", name != null ? name : "Unknown");
                 Logging.logger().warning(message);
             }
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             String message = Logging.getMessage("generic.ExceptionClosingStream", e, name != null ? name : "Unknown");
             Logging.logger().severe(message);
         }
@@ -1578,7 +1492,7 @@ public class WWIO {
      */
     public static String byteBufferToString(ByteBuffer buffer, String encoding) {
 
-        return Charset.forName(encoding != null ? encoding : DEFAULT_CHARACTER_ENCODING).decode(buffer).toString();
+        return Charset.forName(encoding != null ? encoding : WWIO.DEFAULT_CHARACTER_ENCODING).decode(buffer).toString();
     }
 
     /**
@@ -1600,7 +1514,7 @@ public class WWIO {
             throw new IllegalArgumentException(msg);
         }
 
-        CharBuffer charBuffer = Charset.forName(encoding != null ? encoding : DEFAULT_CHARACTER_ENCODING).decode(
+        CharBuffer charBuffer = Charset.forName(encoding != null ? encoding : WWIO.DEFAULT_CHARACTER_ENCODING).decode(
             buffer);
         if (charBuffer.remaining() > length) {
             charBuffer = charBuffer.slice();
@@ -1620,7 +1534,7 @@ public class WWIO {
      */
     public static ByteBuffer stringToByteBuffer(String string, String encoding) throws UnsupportedEncodingException {
 
-        return ByteBuffer.wrap(string.getBytes(encoding != null ? encoding : DEFAULT_CHARACTER_ENCODING));
+        return ByteBuffer.wrap(string.getBytes(encoding != null ? encoding : WWIO.DEFAULT_CHARACTER_ENCODING));
     }
 
     /**
@@ -1661,7 +1575,8 @@ public class WWIO {
      * @throws IllegalArgumentException if the source is null, an empty string, or is not one of the above types.
      * @throws Exception                if the source cannot be opened for any reason.
      */
-    public static InputStream openStream(Object src) throws Exception {
+    public static InputStream openStream(Object src) throws Exception, IllegalArgumentException, IOException,
+        MalformedURLException {
         if (WWUtil.isEmpty(src)) {
             String message = Logging.getMessage("nullValue.SourceIsNull");
             Logging.logger().severe(message);
@@ -1670,22 +1585,18 @@ public class WWIO {
 
         if (src instanceof InputStream) {
             return (InputStream) src;
-        }
-        else if (src instanceof URL) {
+        } else if (src instanceof URL) {
             return ((URL) src).openStream();
-        }
-        else if (src instanceof URI) {
+        } else if (src instanceof URI) {
             return ((URI) src).toURL().openStream();
-        }
-        else if (src instanceof File) {
-            Object streamOrException = getFileOrResourceAsStream(((File) src).getPath(), null);
+        } else if (src instanceof File) {
+            Object streamOrException = WWIO.getFileOrResourceAsStream(((File) src).getPath(), null);
             if (streamOrException instanceof Exception) {
                 throw (Exception) streamOrException;
             }
 
             return (InputStream) streamOrException;
-        }
-        else if (!(src instanceof String)) {
+        } else if (!(src instanceof String)) {
             String message = Logging.getMessage("generic.UnrecognizedSourceType", src.toString());
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -1697,7 +1608,7 @@ public class WWIO {
         if (url != null)
             return url.openStream();
 
-        Object streamOrException = getFileOrResourceAsStream(sourceName, null);
+        Object streamOrException = WWIO.getFileOrResourceAsStream(sourceName, null);
         if (streamOrException instanceof Exception) {
             throw (Exception) streamOrException;
         }
@@ -1707,8 +1618,7 @@ public class WWIO {
 
     /**
      * Returns the specified input source's abstract path, or null if the input source has no path. The input source may
-     * be one of the following: <ul> <li>{@link String}</li> <li>{@link File}</li> <li>{@link
-     * URL}</li>
+     * be one of the following: <ul> <li>{@link String}</li> <li>{@link File}</li> <li>{@link URL}</li>
      * <li>{@link URI}</li> </ul>
      *
      * @param src the input source of one of the above types.
@@ -1759,7 +1669,7 @@ public class WWIO {
      */
     public static URL makeURL(Object path) {
         try {
-            URI uri = makeURI(path);
+            URI uri = WWIO.makeURI(path);
 
             return uri != null ? uri.toURL() : null;
         }
@@ -1780,7 +1690,7 @@ public class WWIO {
      */
     public static URL makeURL(Object path, String defaultProtocol) {
         try {
-            URL url = makeURL(path);
+            URL url = WWIO.makeURL(path);
 
             final String pathString = path.toString();
             if (url == null && !WWUtil.isEmpty(pathString) && !WWUtil.isEmpty(defaultProtocol))
@@ -1868,7 +1778,7 @@ public class WWIO {
      */
     public static String[] listDescendantFilenames(File file, FileFilter filter) {
 
-        return listDescendantFilenames(file, filter, true);
+        return WWIO.listDescendantFilenames(file, filter, true);
     }
 
     /**
@@ -1899,7 +1809,7 @@ public class WWIO {
             return null;
 
         ArrayList<String> matches = new ArrayList<>();
-        listDescendantFilenames(file, null, filter, recurseAfterMatch, matches);
+        WWIO.listDescendantFilenames(file, null, filter, recurseAfterMatch, matches);
 
         return matches.toArray(new String[0]);
     }
@@ -1929,7 +1839,7 @@ public class WWIO {
             if (filter != null && !filter.accept(new File(file, filename)))
                 continue;
 
-            matches.add(appendPathPart(pathname, filename));
+            matches.add(WWIO.appendPathPart(pathname, filename));
             haveMatch = true;
         }
 
@@ -1940,7 +1850,7 @@ public class WWIO {
 
         // Recursively process the contents of each path . 
         for (String filename : names) {
-            listDescendantFilenames(parent, appendPathPart(pathname, filename), filter, recurseAfterMatch, matches);
+            WWIO.listDescendantFilenames(parent, WWIO.appendPathPart(pathname, filename), filter, recurseAfterMatch, matches);
         }
     }
 
@@ -1950,7 +1860,7 @@ public class WWIO {
      * @param is       the input stream.
      * @param numBytes the number of bytes to skip over.
      * @throws IllegalArgumentException if the specified input stream is null.
-     * @throws IOException      is an exception occurs while skipping the bytes.
+     * @throws IOException              is an exception occurs while skipping the bytes.
      */
     public static void skipBytes(InputStream is, int numBytes) throws IOException {
 

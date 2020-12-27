@@ -69,11 +69,9 @@ public class RectangularTarget extends AbstractRectangularGraphic {
             Iterator iterator = ((Iterable) value).iterator();
             this.setWidth((Double) iterator.next());
             this.setLength((Double) iterator.next());
-        }
-        else if (SymbologyConstants.AZIMUTH.equals(modifier) && (value instanceof Angle)) {
+        } else if (SymbologyConstants.AZIMUTH.equals(modifier) && (value instanceof Angle)) {
             this.setHeading((Angle) value);
-        }
-        else {
+        } else {
             super.setModifier(modifier, value);
         }
     }

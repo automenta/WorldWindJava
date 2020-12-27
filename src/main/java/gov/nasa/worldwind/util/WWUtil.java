@@ -130,7 +130,7 @@ public class WWUtil {
                 return null;
 
             if (s.length() == 1)
-                return convertNumericStringToBoolean(s);
+                return WWUtil.convertNumericStringToBoolean(s);
 
             return Boolean.valueOf(s);
         }
@@ -160,7 +160,7 @@ public class WWUtil {
                 return null;
             }
 
-            Integer i = makeInteger(s);
+            Integer i = WWUtil.makeInteger(s);
             return i != null && i != 0;
         }
         catch (NumberFormatException e) {
@@ -293,16 +293,13 @@ public class WWUtil {
         if (alignment != null && alignment.equals(AVKey.RIGHT)) {
             x += parentSize.width - 50;
             y += parentSize.height - prefSize.height;
-        }
-        else if (alignment != null && alignment.equals(AVKey.CENTER)) {
+        } else if (alignment != null && alignment.equals(AVKey.CENTER)) {
             x += (parentSize.width - prefSize.width) / 2;
             y += (parentSize.height - prefSize.height) / 2;
-        }
-        else if (alignment != null && alignment.equals(AVKey.LEFT_OF_CENTER)) {
+        } else if (alignment != null && alignment.equals(AVKey.LEFT_OF_CENTER)) {
             x += parentSize.width / 2 - 1.05 * prefSize.width;
             y += (parentSize.height - prefSize.height) / 2;
-        }
-        else if (alignment != null && alignment.equals(AVKey.RIGHT_OF_CENTER)) {
+        } else if (alignment != null && alignment.equals(AVKey.RIGHT_OF_CENTER)) {
             x += parentSize.width / 2 + 0.05 * prefSize.width;
             y += (parentSize.height - prefSize.height) / 2;
         }
@@ -348,7 +345,7 @@ public class WWUtil {
      * @return a new color with random red, green and blue components.
      */
     public static Color makeRandomColor(Color color, Color darkestColor, int maxAttempts) {
-        Color randomColor = makeRandomColor(color);
+        Color randomColor = WWUtil.makeRandomColor(color);
 
         if (darkestColor == null) {
             return randomColor;
@@ -534,8 +531,7 @@ public class WWUtil {
 
         if (!encodedString.isEmpty() && encodedString.charAt(0) == '#') {
             encodedString = encodedString.replaceFirst("#", "0x");
-        }
-        else if (!encodedString.startsWith("0x") && !encodedString.startsWith("0X")) {
+        } else if (!encodedString.startsWith("0x") && !encodedString.startsWith("0X")) {
             encodedString = "0x" + encodedString;
         }
 
@@ -578,8 +574,7 @@ public class WWUtil {
 
         if (!encodedString.isEmpty() && encodedString.charAt(0) == '#') {
             encodedString = encodedString.replaceFirst("#", "0x");
-        }
-        else if (!encodedString.startsWith("0x") && !encodedString.startsWith("0X")) {
+        } else if (!encodedString.startsWith("0x") && !encodedString.startsWith("0X")) {
             encodedString = "0x" + encodedString;
         }
 
@@ -642,14 +637,12 @@ public class WWUtil {
      * at the buffer's position and ending at its limit.
      *
      * @param zone       the UTM zone.
-     * @param hemisphere the UTM hemisphere, either {@link AVKey#NORTH} or {@link
-     *                   AVKey#SOUTH}.
+     * @param hemisphere the UTM hemisphere, either {@link AVKey#NORTH} or {@link AVKey#SOUTH}.
      * @param buffer     the buffer of UTM tuples to convert.
      * @throws IllegalArgumentException if <code>zone</code> is outside the range 1-60, if <code>hemisphere</code> is
-     *                                  null, if <code>hemisphere</code> is not one of {@link AVKey#NORTH}
-     *                                  or {@link AVKey#SOUTH}, if <code>buffer</code> is
-     *                                  null, or if the number of remaining elements in <code>buffer</code> is not a
-     *                                  multiple of two.
+     *                                  null, if <code>hemisphere</code> is not one of {@link AVKey#NORTH} or {@link
+     *                                  AVKey#SOUTH}, if <code>buffer</code> is null, or if the number of remaining
+     *                                  elements in <code>buffer</code> is not a multiple of two.
      */
     public static void convertUTMCoordinatesToGeographic(int zone, String hemisphere, DoubleBuffer buffer) {
         if (zone < 1 || zone > 60) {
@@ -885,7 +878,7 @@ public class WWUtil {
                 if (!sb.isEmpty()) {
                     sb.append(" : ");
                 }
-                sb.append(causeClass).append(" (").append(causeMessage).append(")");
+                sb.append(causeClass).append(" (").append(causeMessage).append(')');
             }
         }
 
@@ -929,7 +922,7 @@ public class WWUtil {
         // KML allows a hybrid time zone offset that does not contain the leading "GMT", e.g. 1997-05-10T09:30:00+03:00.
         // If the time string has this pattern, we convert it to an RFC 822 time zone so that SimpleDateFormat can
         // parse it.
-        if (isKMLTimeShift(timeString)) {
+        if (WWUtil.isKMLTimeShift(timeString)) {
             // Remove the colon from the GMT offset portion of the time string.
             timeString = timeString.trim();
             int colonPosition = timeString.length() - 3;
@@ -1048,8 +1041,7 @@ public class WWUtil {
             Vec4 facetNormal;
             if (i % 2 == 0) {
                 facetNormal = va.cross3(vb).normalize3();
-            }
-            else {
+            } else {
                 facetNormal = vb.cross3(va).normalize3();
             }
 
@@ -1125,12 +1117,11 @@ public class WWUtil {
 
     static class ArrayIterator<X> implements Iterator<X> {
         private final X[] array;
-        private int currentIndex = 0;
+        private int currentIndex;
 
         public ArrayIterator(X[] array) {
 
-                this.array = array;
-
+            this.array = array;
         }
 
         public boolean hasNext() {
@@ -1145,5 +1136,4 @@ public class WWUtil {
             throw new UnsupportedOperationException("cannot remove items from an array");
         }
     }
-
 }

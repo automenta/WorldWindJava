@@ -57,7 +57,7 @@ public class AviationZone extends BasicArea {
 
     @Override
     protected Offset getDefaultLabelOffset() {
-        return LABEL_OFFSET;
+        return AviationZone.LABEL_OFFSET;
     }
 
     @Override
@@ -81,12 +81,12 @@ public class AviationZone extends BasicArea {
     protected String doCreateLabelText(boolean includeAltitude) {
         StringBuilder sb = new StringBuilder();
         sb.append(this.getGraphicLabel());
-        sb.append("\n");
+        sb.append('\n');
 
         Object o = this.getModifier(SymbologyConstants.UNIQUE_DESIGNATION);
         if (o != null) {
             sb.append(o);
-            sb.append("\n");
+            sb.append('\n');
         }
 
         if (includeAltitude) {
@@ -94,13 +94,13 @@ public class AviationZone extends BasicArea {
             if (altitudes[0] != null) {
                 sb.append("MIN ALT: ");
                 sb.append(altitudes[0]);
-                sb.append("\n");
+                sb.append('\n');
             }
 
             if (altitudes[1] != null) {
                 sb.append("MAX ALT: ");
                 sb.append(altitudes[1]);
-                sb.append("\n");
+                sb.append('\n');
             }
         }
 
@@ -108,7 +108,7 @@ public class AviationZone extends BasicArea {
         if (dates[0] != null) {
             sb.append("TIME FROM: ");
             sb.append(dates[0]);
-            sb.append("\n");
+            sb.append('\n');
         }
 
         if (dates[1] != null) {

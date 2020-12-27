@@ -134,7 +134,6 @@ public interface MemoryCache {
      */
     long getFreeCapacity();
 
-
     /**
      * Provides the interface for cache clients to be notified of key events. Currently the only key event is the
      * removal of an entry from the cache. A client may need to know a removal instigated by the cache occurred in order

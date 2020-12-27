@@ -24,7 +24,7 @@ public class Earth extends EllipsoidalGlobe {
     public static final double ELEVATION_MAX = 8500.0d; // Height of Mt. Everest.
 
     public Earth() {
-        super(WGS84_EQUATORIAL_RADIUS, WGS84_POLAR_RADIUS, WGS84_ES,
+        super(Earth.WGS84_EQUATORIAL_RADIUS, Earth.WGS84_POLAR_RADIUS, Earth.WGS84_ES,
             EllipsoidalGlobe.makeElevationModel(AVKey.EARTH_ELEVATION_MODEL_CONFIG_FILE,
                 "config/Earth/EarthElevations2.xml"));
     }

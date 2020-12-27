@@ -318,8 +318,8 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
 
     // Draw the label
     private void drawLabel(DrawContext dc, String text, Vec4 screenPoint, Color textColor) {
-        int x = (int) screenPoint.x();
-        int y = (int) screenPoint.y();
+        int x = (int) screenPoint.x;
+        int y = (int) screenPoint.y;
 
         TextRenderer textRenderer = OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(),
             this.defaultFont);

@@ -96,7 +96,7 @@ public abstract class BufferWrapper {
             throw new IllegalArgumentException(message);
         }
 
-        return wrap(byteBuffer, dataType, null);
+        return BufferWrapper.wrap(byteBuffer, dataType, null);
     }
 
     /**
@@ -131,7 +131,7 @@ public abstract class BufferWrapper {
             throw new IllegalArgumentException(message);
         }
 
-        return wrap(byteBuffer, params.get(AVKey.DATA_TYPE), params.get(AVKey.BYTE_ORDER));
+        return BufferWrapper.wrap(byteBuffer, params.get(AVKey.DATA_TYPE), params.get(AVKey.BYTE_ORDER));
     }
 
     /**
@@ -401,9 +401,6 @@ public abstract class BufferWrapper {
      */
     public abstract Buffer getBackingBuffer();
 
-
-
-
     //**************************************************************//
     //********************  BufferWrapper Implementations  *********//
     //**************************************************************//
@@ -585,7 +582,6 @@ public abstract class BufferWrapper {
             }
         }
 
-
         public void getDouble(int index, double[] array, int offset, int length) {
 
             if (length <= 0)
@@ -595,8 +591,9 @@ public abstract class BufferWrapper {
             try {
                 buffer.position(index);
                 this.doGetDouble(array, offset, length);
-            } finally {
-                if (pos!=index)
+            }
+            finally {
+                if (pos != index)
                     buffer.position(pos);  // Restore the buffer's previous position.
             }
         }
@@ -684,7 +681,7 @@ public abstract class BufferWrapper {
             this.putDouble(index, array, 0, length);
         }
 
-        public Buffer getBackingBuffer() {
+        public final Buffer getBackingBuffer() {
             return this.buffer;
         }
 
@@ -1491,7 +1488,7 @@ public abstract class BufferWrapper {
         }
 
         public LatLon getLatLon(int index) {
-            return LatLon.fromDegrees(this.getDouble(index+1), getDouble(index));
+            return LatLon.fromDegrees(this.getDouble(index + 1), getDouble(index));
         }
 
         public void putDouble(int index, double value) {

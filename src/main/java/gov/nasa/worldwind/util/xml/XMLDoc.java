@@ -9,39 +9,6 @@ import java.net.URL;
 public abstract class XMLDoc {
 
     /**
-     * Returns an {@link InputStream} to the associated XML document.
-     * <p>
-     * Implementations of this interface do not close the stream; the user of the class must close the stream.
-     *
-     * @return an input stream positioned to the head of the XML document.
-     * @throws IOException if an error occurs while attempting to create or open the input stream.
-     */
-    public abstract InputStream getInputStream() throws IOException;
-
-    /**
-     * Returns an absolute path or URL to a file indicated by a path relative to the XML file's location.
-     *
-     * @param path the path of the requested file.
-     * @return an absolute path or URL to the file, or null if the file does not exist.
-     * @throws IllegalArgumentException if the specified path is null.
-     * @throws IOException      if an error occurs while attempting to read the support file.
-     */
-    public abstract String getSupportFilePath(String path) throws IOException;
-
-    /**
-     * Returns a file specified by a path relative to the XML document. If the document is in a KML file, the path is
-     * resolved relative to the KML file's location in the file system. If the document is in a KMZ file or stream, the
-     * path is resolved relative to the root of the KMZ file or stream. If the document is a KML stream, the relative
-     * path is resolved relative to the base URI of the stream, if a base URI has been specified.
-     *
-     * @param path the path of the requested file.
-     * @return an input stream positioned to the start of the requested file, or null if the file cannot be found.
-     * @throws IllegalArgumentException if the path is null.
-     * @throws IOException              if an error occurs while attempting to create or open the input stream.
-     */
-    public abstract InputStream getSupportFileStream(String path) throws IOException;
-
-    /**
      * Resolves a reference to a remote or local element of the form address#identifier, where "address" identifies a
      * local or remote document, including the current document, and and "identifier" is the id of the desired element.
      * <p>
@@ -128,4 +95,37 @@ public abstract class XMLDoc {
 
         return null;
     }
+
+    /**
+     * Returns an {@link InputStream} to the associated XML document.
+     * <p>
+     * Implementations of this interface do not close the stream; the user of the class must close the stream.
+     *
+     * @return an input stream positioned to the head of the XML document.
+     * @throws IOException if an error occurs while attempting to create or open the input stream.
+     */
+    public abstract InputStream getInputStream() throws IOException;
+
+    /**
+     * Returns an absolute path or URL to a file indicated by a path relative to the XML file's location.
+     *
+     * @param path the path of the requested file.
+     * @return an absolute path or URL to the file, or null if the file does not exist.
+     * @throws IllegalArgumentException if the specified path is null.
+     * @throws IOException              if an error occurs while attempting to read the support file.
+     */
+    public abstract String getSupportFilePath(String path) throws IOException;
+
+    /**
+     * Returns a file specified by a path relative to the XML document. If the document is in a KML file, the path is
+     * resolved relative to the KML file's location in the file system. If the document is in a KMZ file or stream, the
+     * path is resolved relative to the root of the KMZ file or stream. If the document is a KML stream, the relative
+     * path is resolved relative to the base URI of the stream, if a base URI has been specified.
+     *
+     * @param path the path of the requested file.
+     * @return an input stream positioned to the start of the requested file, or null if the file cannot be found.
+     * @throws IllegalArgumentException if the path is null.
+     * @throws IOException              if an error occurs while attempting to create or open the input stream.
+     */
+    public abstract InputStream getSupportFileStream(String path) throws IOException;
 }

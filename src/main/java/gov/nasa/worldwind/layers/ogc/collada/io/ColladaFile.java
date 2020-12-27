@@ -41,7 +41,7 @@ public class ColladaFile extends XMLDoc {
     /**
      * {@inheritDoc}
      */
-    public InputStream getInputStream() throws IOException {
+    public InputStream getInputStream() throws FileNotFoundException {
         return new FileInputStream(this.colladaFile);
     }
 

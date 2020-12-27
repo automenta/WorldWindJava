@@ -61,6 +61,18 @@ public class PartialCappedCylinder extends CappedCylinder {
         this.rightAzimuth = source.rightAzimuth;
     }
 
+    protected static Angle normalizedAzimuth(Angle azimuth) {
+        if (azimuth == null) {
+            String message = "nullValue.AzimuthIsNull";
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        double degrees = azimuth.degrees;
+        double normalizedDegrees = degrees < 0.0 ? degrees + 360.0 : (degrees >= 360.0 ? degrees - 360.0 : degrees);
+        return Angle.fromDegrees(normalizedDegrees);
+    }
+
     public Angle[] getAzimuths() {
         Angle[] array = new Angle[2];
         array[0] = this.leftAzimuth;
@@ -103,13 +115,17 @@ public class PartialCappedCylinder extends CappedCylinder {
 
         GeometryBuilder gb = this.getGeometryBuilder();
         LatLon[] locations = GeometryBuilder.makePartialDiskLocations(globe, this.getCenter(), this.getRadii()[0],
-            this.getRadii()[1], MINIMAL_GEOMETRY_SLICES, MINIMAL_GEOMETRY_LOOPS, angles[0], angles[2]);
+            this.getRadii()[1], CappedCylinder.MINIMAL_GEOMETRY_SLICES, CappedCylinder.MINIMAL_GEOMETRY_LOOPS, angles[0], angles[2]);
 
         List<Vec4> points = new ArrayList<>();
         this.makeExtremePoints(globe, verticalExaggeration, Arrays.asList(locations), points);
 
         return points;
     }
+
+    //**************************************************************//
+    //********************  Geometry Rendering  ********************//
+    //**************************************************************//
 
     @Override
     protected void regenerateSurfaceShape(DrawContext dc, SurfaceShape shape) {
@@ -127,17 +143,18 @@ public class PartialCappedCylinder extends CappedCylinder {
 
         if (radii[0] > 0) // inner radius is > 0; add inner loop
         {
-            List<LatLon> innerLoop = Arrays.asList(GeometryBuilder.makePartialCylinderLocations(dc.getGlobe(), this.getCenter(),
-                this.getRadii()[0], this.getSlices(), angles[0], angles[2]));
+            List<LatLon> innerLoop = Arrays.asList(
+                GeometryBuilder.makePartialCylinderLocations(dc.getGlobe(), this.getCenter(),
+                    this.getRadii()[0], this.getSlices(), angles[0], angles[2]));
             locations.addAll(innerLoop);
-        }
-        else // inner radius == 0
+        } else // inner radius == 0
         {
             locations.add(this.getCenter());
         }
 
-        List<LatLon> outerLoop = Arrays.asList(GeometryBuilder.makePartialCylinderLocations(dc.getGlobe(), this.getCenter(),
-            this.getRadii()[1], this.getSlices(), angles[0], angles[2]));
+        List<LatLon> outerLoop = Arrays.asList(
+            GeometryBuilder.makePartialCylinderLocations(dc.getGlobe(), this.getCenter(),
+                this.getRadii()[1], this.getSlices(), angles[0], angles[2]));
         Collections.reverse(outerLoop);
         locations.addAll(outerLoop); // outer loop in reverse
 
@@ -145,16 +162,12 @@ public class PartialCappedCylinder extends CappedCylinder {
         ((SurfacePolygon) shape).setOuterBoundary(locations);
     }
 
-    //**************************************************************//
-    //********************  Geometry Rendering  ********************//
-    //**************************************************************//
-
     protected double[] computeAngles() {
         // Compute the start and sweep angles such that the partial cylinder shape tranverses a clockwise path from
         // the start angle to the stop angle.
         Angle startAngle, stopAngle, sweepAngle;
-        startAngle = normalizedAzimuth(this.leftAzimuth);
-        stopAngle = normalizedAzimuth(this.rightAzimuth);
+        startAngle = PartialCappedCylinder.normalizedAzimuth(this.leftAzimuth);
+        stopAngle = PartialCappedCylinder.normalizedAzimuth(this.rightAzimuth);
 
         int i = startAngle.compareTo(stopAngle);
         // Angles are equal, fallback to building a closed cylinder.
@@ -167,22 +180,10 @@ public class PartialCappedCylinder extends CappedCylinder {
             sweepAngle = Angle.POS360.sub(startAngle).add(stopAngle);
 
         double[] array = new double[3];
-        array[0] = startAngle.radians;
-        array[1] = stopAngle.radians;
-        array[2] = sweepAngle.radians;
+        array[0] = startAngle.radians();
+        array[1] = stopAngle.radians();
+        array[2] = sweepAngle.radians();
         return array;
-    }
-
-    protected static Angle normalizedAzimuth(Angle azimuth) {
-        if (azimuth == null) {
-            String message = "nullValue.AzimuthIsNull";
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        double degrees = azimuth.degrees;
-        double normalizedDegrees = degrees < 0.0 ? degrees + 360.0 : (degrees >= 360.0 ? degrees - 360.0 : degrees);
-        return Angle.fromDegrees(normalizedDegrees);
     }
 
     protected void doRenderGeometry(DrawContext dc, String drawStyle) {
@@ -215,19 +216,19 @@ public class PartialCappedCylinder extends CappedCylinder {
         if (this.isEnableLevelOfDetail()) {
             DetailLevel level = this.computeDetailLevel(dc);
 
-            Object o = level.get(SLICES);
+            Object o = level.get(AbstractAirspace.SLICES);
             if (o instanceof Integer)
                 slices = (Integer) o;
 
-            o = level.get(STACKS);
+            o = level.get(AbstractAirspace.STACKS);
             if (o instanceof Integer)
                 stacks = (Integer) o;
 
-            o = level.get(LOOPS);
+            o = level.get(AbstractAirspace.LOOPS);
             if (o instanceof Integer)
                 loops = (Integer) o;
 
-            o = level.get(DISABLE_TERRAIN_CONFORMANCE);
+            o = level.get(AbstractAirspace.DISABLE_TERRAIN_CONFORMANCE);
             if (o instanceof Boolean && ((Boolean) o))
                 terrainConformant[0] = terrainConformant[1] = false;
         }
@@ -241,7 +242,7 @@ public class PartialCappedCylinder extends CappedCylinder {
         try {
             dc.getView().pushReferenceCenter(dc, referenceCenter);
 
-            if (DRAW_STYLE_OUTLINE.equals(drawStyle)) {
+            if (Airspace.DRAW_STYLE_OUTLINE.equals(drawStyle)) {
                 this.drawRadialWallOutline(dc, center, radii, angles[0], altitudes, terrainConformant, loops, stacks,
                     GeometryBuilder.INSIDE, referenceCenter);
                 this.drawRadialWallOutline(dc, center, radii, angles[1], altitudes, terrainConformant, loops, stacks,
@@ -257,8 +258,7 @@ public class PartialCappedCylinder extends CappedCylinder {
                     this.drawPartialCylinderOutline(dc, center, radii[0], altitudes, terrainConformant, slices, stacks,
                         GeometryBuilder.INSIDE, angles[0], angles[2], referenceCenter);
                 }
-            }
-            else if (DRAW_STYLE_FILL.equals(drawStyle)) {
+            } else if (Airspace.DRAW_STYLE_FILL.equals(drawStyle)) {
                 if (this.isEnableCaps()) {
                     ogsh.pushAttrib(gl, GL2.GL_POLYGON_BIT);
                     gl.glEnable(GL.GL_CULL_FACE);
@@ -373,7 +373,8 @@ public class PartialCappedCylinder extends CappedCylinder {
         int count = GeometryBuilder.getPartialCylinderVertexCount(slices, stacks);
         float[] verts = new float[3 * count];
         float[] norms = new float[3 * count];
-        GeometryBuilder.makePartialCylinderVertices(dc.getTerrain(), center, radius, altitudes, terrainConformant, slices, stacks,
+        GeometryBuilder.makePartialCylinderVertices(dc.getTerrain(), center, radius, altitudes, terrainConformant,
+            slices, stacks,
             start, sweep, referenceCenter, verts);
         gb.makePartialCylinderNormals((float) radius, height, slices, stacks, (float) start, (float) sweep, norms);
 
@@ -444,7 +445,8 @@ public class PartialCappedCylinder extends CappedCylinder {
         int count = GeometryBuilder.getPartialDiskIndexCount(slices, loops);
         float[] verts = new float[3 * count];
         float[] norms = new float[3 * count];
-        GeometryBuilder.makePartialDiskVertices(dc.getTerrain(), center, radii[0], radii[1], altitude, terrainConformant, slices,
+        GeometryBuilder.makePartialDiskVertices(dc.getTerrain(), center, radii[0], radii[1], altitude,
+            terrainConformant, slices,
             loops, start, sweep, referenceCenter, verts);
         gb.makePartialDiskVertexNormals((float) radii[0], (float) radii[1], slices, loops, (float) start, (float) sweep,
             verts, norms);
@@ -530,7 +532,8 @@ public class PartialCappedCylinder extends CappedCylinder {
         int count = GeometryBuilder.getRadialWallVertexCount(pillars, stacks);
         float[] verts = new float[3 * count];
         float[] norms = new float[3 * count];
-        GeometryBuilder.makeRadialWallVertices(dc.getTerrain(), center, radii[0], radii[1], angle, altitudes, terrainConformant,
+        GeometryBuilder.makeRadialWallVertices(dc.getTerrain(), center, radii[0], radii[1], angle, altitudes,
+            terrainConformant,
             pillars, stacks, referenceCenter, verts);
         gb.makeRadialWallNormals((float) radii[0], (float) radii[1], height, (float) angle, pillars, stacks, norms);
 

@@ -27,9 +27,9 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class TextureTile extends Tile implements SurfaceTile {
     protected final AtomicLong updateTime = new AtomicLong(0);
-    protected boolean hasMipmapData = false;
+    protected boolean hasMipmapData;
     private volatile TextureData textureData; // if non-null, then must be converted to a Texture
-    private TextureTile fallbackTile = null; // holds texture to use if own texture not available
+    private TextureTile fallbackTile; // holds texture to use if own texture not available
 
     public TextureTile(Sector sector, Level level, int row, int col) {
         super(sector, level, row, col);
@@ -46,14 +46,6 @@ public class TextureTile extends Tile implements SurfaceTile {
      * @return the memory cache associated with the tile.
      */
     public static MemoryCache getMemoryCache() {
-//        if (!WorldWind.getMemoryCacheSet().containsCache(TextureTile.class.getName())) {
-////            long size = Configuration.getLongValue(AVKey.TEXTURE_IMAGE_CACHE_SIZE, 3000000L);
-//            MemoryCache cache =
-//                new SoftMemoryCache();
-//                //new BasicMemoryCache((long) (0.85 * size), size);
-//            cache.setName("Texture Tiles");
-//            WorldWind.getMemoryCacheSet().addCache(TextureTile.class.getName(), cache);
-//        }
 
         return WorldWind.getMemoryCacheSet().getCache(TextureTile.class.getName(), SoftMemoryCache::new);
     }
@@ -75,8 +67,9 @@ public class TextureTile extends Tile implements SurfaceTile {
 
     public List<? extends LatLon> getCorners() {
         List<LatLon> list = new ArrayList<>(4);
-        for (LatLon ll : sector)
+        for (LatLon ll : sector) {
             list.add(ll);
+        }
         return list;
     }
 
@@ -166,8 +159,8 @@ public class TextureTile extends Tile implements SurfaceTile {
 
     /**
      * Splits this texture tile into four tiles; one for each sub quadrant of this texture tile. This attempts to
-     * retrieve each sub tile from the texture tile cache. This calls {@link #createSubTile(Sector,
-     * Level, int, int)} to create sub tiles not found in the cache.
+     * retrieve each sub tile from the texture tile cache. This calls {@link #createSubTile(Sector, Level, int, int)} to
+     * create sub tiles not found in the cache.
      *
      * @param nextLevel the level for the sub tiles.
      * @return a four-element array containing this texture tile's sub tiles.
@@ -214,10 +207,9 @@ public class TextureTile extends Tile implements SurfaceTile {
     }
 
     /**
-     * Creates a sub tile of this texture tile with the specified {@link Sector}, {@link
-     * Level}, row, and column. This is called by {@link #createSubTiles(Level)},
-     * to construct a sub tile for each quadrant of this tile. Subclasses must override this method to return an
-     * instance of the derived version.
+     * Creates a sub tile of this texture tile with the specified {@link Sector}, {@link Level}, row, and column. This
+     * is called by {@link #createSubTiles(Level)}, to construct a sub tile for each quadrant of this tile. Subclasses
+     * must override this method to return an instance of the derived version.
      *
      * @param sector the sub tile's sector.
      * @param level  the sub tile's level.
@@ -230,9 +222,8 @@ public class TextureTile extends Tile implements SurfaceTile {
     }
 
     /**
-     * Returns a key for a sub tile of this texture tile with the specified {@link Level}, row,
-     * and column. This is called by {@link #createSubTiles(Level)}, to create a sub tile key
-     * for each quadrant of this tile.
+     * Returns a key for a sub tile of this texture tile with the specified {@link Level}, row, and column. This is
+     * called by {@link #createSubTiles(Level)}, to create a sub tile key for each quadrant of this tile.
      *
      * @param level the sub tile's level.
      * @param row   the sub tile's row.
@@ -244,12 +235,12 @@ public class TextureTile extends Tile implements SurfaceTile {
     }
 
     protected TextureTile getTileFromMemoryCache(TileKey tileKey) {
-        return (TextureTile) getMemoryCache().getObject(tileKey);
+        return (TextureTile) TextureTile.getMemoryCache().getObject(tileKey);
     }
 
     protected void updateMemoryCache() {
         if (this.getTileFromMemoryCache(this.tileKey) != null)
-            getMemoryCache().add(this.tileKey, this);
+            TextureTile.getMemoryCache().add(this.tileKey, this);
     }
 
     protected Texture initializeTexture(DrawContext dc) {

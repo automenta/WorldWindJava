@@ -54,8 +54,7 @@ class WizardController implements ActionListener {
             Object nextPanelDescriptor = descriptor.getNextPanelDescriptor();
             if (nextPanelDescriptor instanceof Wizard.FinishIdentifier) {
                 this.wizard.close(Wizard.FINISH_RETURN_CODE);
-            }
-            else {
+            } else {
                 this.wizard.setCurrentPanelDescriptor(nextPanelDescriptor);
             }
         }
@@ -95,8 +94,7 @@ class WizardController implements ActionListener {
                 && descriptor.getNextPanelDescriptor() instanceof Wizard.FinishIdentifier) {
                 model.setNextButtonText("Finish");
                 model.setNextButtonIcon(null);
-            }
-            else {
+            } else {
                 model.setNextButtonText("Next>");
                 model.setNextButtonIcon(null);
             }

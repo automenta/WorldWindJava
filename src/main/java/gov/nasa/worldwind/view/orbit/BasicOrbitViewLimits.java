@@ -37,8 +37,7 @@ public class BasicOrbitViewLimits extends BasicViewPropertyLimits implements Orb
      * @param viewLimits defines the view property limits.
      * @throws IllegalArgumentException if any argument is null.
      * @deprecated Use methods that limit individual view properties directly: {@link #limitCenterPosition(View,
-     * Position)}, {@link #limitHeading(View,
-     * Angle)}, etc.
+     * Position)}, {@link #limitHeading(View, Angle)}, etc.
      */
     @Deprecated
     public static void applyLimits(OrbitView view, OrbitViewLimits viewLimits) {
@@ -53,10 +52,10 @@ public class BasicOrbitViewLimits extends BasicViewPropertyLimits implements Orb
             throw new IllegalArgumentException(message);
         }
 
-        view.setCenterPosition(limitCenterPosition(view.getCenterPosition(), viewLimits));
-        view.setHeading(limitHeading(view.getHeading(), viewLimits));
-        view.setPitch(limitPitch(view.getPitch(), viewLimits));
-        view.setZoom(limitZoom(view.getZoom(), viewLimits));
+        view.setCenterPosition(BasicOrbitViewLimits.limitCenterPosition(view.getCenterPosition(), viewLimits));
+        view.setHeading(BasicViewPropertyLimits.limitHeading(view.getHeading(), viewLimits));
+        view.setPitch(BasicViewPropertyLimits.limitPitch(view.getPitch(), viewLimits));
+        view.setZoom(BasicOrbitViewLimits.limitZoom(view.getZoom(), viewLimits));
     }
 
     /**
@@ -82,8 +81,8 @@ public class BasicOrbitViewLimits extends BasicViewPropertyLimits implements Orb
         }
 
         return new Position(
-            limitCenterLocation(position.getLatitude(), position.getLongitude(), viewLimits),
-            limitCenterElevation(position.getElevation(), viewLimits));
+            BasicOrbitViewLimits.limitCenterLocation(position.getLatitude(), position.getLongitude(), viewLimits),
+            BasicOrbitViewLimits.limitCenterElevation(position.getElevation(), viewLimits));
     }
 
     /**
@@ -115,15 +114,13 @@ public class BasicOrbitViewLimits extends BasicViewPropertyLimits implements Orb
 
         if (latitude.compareTo(limits.latMin()) < 0) {
             newLatitude = limits.latMin();
-        }
-        else if (latitude.compareTo(limits.latMax()) > 0) {
+        } else if (latitude.compareTo(limits.latMax()) > 0) {
             newLatitude = limits.latMax();
         }
 
         if (longitude.compareTo(limits.lonMin()) < 0) {
             newLongitude = limits.lonMin();
-        }
-        else if (longitude.compareTo(limits.lonMax()) > 0) {
+        } else if (longitude.compareTo(limits.lonMax()) > 0) {
             newLongitude = limits.lonMax();
         }
 
@@ -152,8 +149,7 @@ public class BasicOrbitViewLimits extends BasicViewPropertyLimits implements Orb
 
         if (value < limits[0]) {
             newValue = limits[0];
-        }
-        else if (value > limits[1]) {
+        } else if (value > limits[1]) {
             newValue = limits[1];
         }
 
@@ -182,8 +178,7 @@ public class BasicOrbitViewLimits extends BasicViewPropertyLimits implements Orb
 
         if (value < limits[0]) {
             newValue = limits[0];
-        }
-        else if (value > limits[1]) {
+        } else if (value > limits[1]) {
             newValue = limits[1];
         }
 
@@ -288,7 +283,8 @@ public class BasicOrbitViewLimits extends BasicViewPropertyLimits implements Orb
         double minZoom = this.minZoom;
         double maxZoom = this.maxZoom;
 
-        if (BasicViewPropertyLimits.is2DGlobe(view.getGlobe())) // limit zoom to ~360 degrees of visible longitude on 2D globes
+        if (BasicViewPropertyLimits.is2DGlobe(
+            view.getGlobe())) // limit zoom to ~360 degrees of visible longitude on 2D globes
         {
             double max2DZoom = Math.PI * view.getGlobe().getEquatorialRadius() / view.getFieldOfView().tanHalfAngle();
             if (minZoom > max2DZoom)

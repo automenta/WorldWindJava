@@ -42,11 +42,11 @@ public class LengthMeasurer implements MeasurableLength {
     protected double length = -1;
     private List<? extends Position> positions;
     private List<? extends Position> subdividedPositions;
-    private boolean followTerrain = false;
+    private boolean followTerrain;
     private String pathType = AVKey.GREAT_CIRCLE;
-    private double maxSegmentLength = DEFAULT_MAX_SEGMENT_LENGTH;
+    private double maxSegmentLength = LengthMeasurer.DEFAULT_MAX_SEGMENT_LENGTH;
     private Sector sector;
-    private double lengthTerrainSamplingSteps = DEFAULT_TERRAIN_SAMPLING_STEPS;
+    private double lengthTerrainSamplingSteps = LengthMeasurer.DEFAULT_TERRAIN_SAMPLING_STEPS;
 
     public LengthMeasurer() {
     }
@@ -75,7 +75,7 @@ public class LengthMeasurer implements MeasurableLength {
      */
     protected static List<? extends Position> subdividePositions(Globe globe, List<? extends Position> positions,
         double maxLength, boolean followTerrain, String avkeyPathType) {
-        return subdividePositions(globe, positions, maxLength, followTerrain, avkeyPathType, 0, positions.size());
+        return LengthMeasurer.subdividePositions(globe, positions, maxLength, followTerrain, avkeyPathType, 0, positions.size());
     }
 
     /**
@@ -107,13 +107,12 @@ public class LengthMeasurer implements MeasurableLength {
         Position pos1 = positions.get(start);
         if (followTerrain) {
             newPositions.add(new Position(pos1, globe.getElevation(pos1.getLatitude(), pos1.getLongitude())));
-        }
-        else {
+        } else {
             newPositions.add(pos1);
         }
         for (int i = 1; i < count; i++) {
             Position pos2 = positions.get(start + i);
-            double arcLengthRadians = LatLon.greatCircleDistance(pos1, pos2).radians;
+            double arcLengthRadians = LatLon.greatCircleDistance(pos1, pos2).radians();
             double arcLength = arcLengthRadians * globe.getRadiusAt(LatLon.interpolate(0.5, pos1, pos2));
             if (arcLength > maxLength) {
                 // if necessary subdivide segment at regular intervals smaller then maxLength
@@ -130,16 +129,16 @@ public class LengthMeasurer implements MeasurableLength {
                                 segmentAzimuth = LatLon.rhumbAzimuth(pos1, pos2);
                                 segmentDistance = LatLon.rhumbDistance(pos1, pos2);
                             }
-                            destLatLon = LatLon.rhumbEndPosition(pos1, segmentAzimuth.radians,
-                                s * segmentDistance.radians);
+                            destLatLon = LatLon.rhumbEndPosition(pos1, segmentAzimuth.radians(),
+                                s * segmentDistance.radians());
                         }
                         case AVKey.GREAT_CIRCLE -> {
                             if (segmentAzimuth == null) {
                                 segmentAzimuth = LatLon.greatCircleAzimuth(pos1, pos2);
                                 segmentDistance = LatLon.greatCircleDistance(pos1, pos2);
                             }
-                            destLatLon = LatLon.greatCircleEndPosition(pos1, segmentAzimuth.radians,
-                                s * segmentDistance.radians);
+                            destLatLon = LatLon.greatCircleEndPosition(pos1, segmentAzimuth.radians(),
+                                s * segmentDistance.radians());
                         }
                         default -> {
                             String message = Logging.getMessage("generic.ArgumentOutOfRange");
@@ -151,8 +150,7 @@ public class LengthMeasurer implements MeasurableLength {
                     double elevation;
                     if (followTerrain) {
                         elevation = globe.getElevation(destLatLon.getLatitude(), destLatLon.getLongitude());
-                    }
-                    else {
+                    } else {
                         elevation = pos1.getElevation() * (1 - s) + pos2.getElevation() * s;
                     }
                     // Add new position
@@ -162,8 +160,7 @@ public class LengthMeasurer implements MeasurableLength {
             // Finally add the segment end position
             if (followTerrain) {
                 newPositions.add(new Position(pos2, globe.getElevation(pos2.getLatitude(), pos2.getLongitude())));
-            }
-            else {
+            } else {
                 newPositions.add(pos2);
             }
             // Prepare for next segment
@@ -190,11 +187,12 @@ public class LengthMeasurer implements MeasurableLength {
     public final LengthMeasurer setPositions(Iterable<? extends Position> positions) {
 
         if (positions instanceof ArrayList)
-            setPositions((ArrayList)positions);
+            setPositions((ArrayList) positions);
         else {
             ArrayList<Position> newPositions = new ArrayList<>(sizeEstimate(positions));
-            for (Position p : positions)
+            for (Position p : positions) {
                 newPositions.add(p);
+            }
 
             setPositions(newPositions);
         }
@@ -202,7 +200,7 @@ public class LengthMeasurer implements MeasurableLength {
     }
 
     public void setPositions(List<? extends Position> positions) {
-        if (this.positions!=positions) {
+        if (this.positions != positions) {
             clearCachedValues();
             this.positions = positions;
             this.sector = this.positions.size() > 2 ? Sector.boundingSector(this.positions) : null;
@@ -421,9 +419,9 @@ public class LengthMeasurer implements MeasurableLength {
                 double pathLength = computeLength(globe, false);
                 // Determine segment length to have enough sampling points
                 maxLength = pathLength / this.lengthTerrainSamplingSteps;
-                maxLength = Math.min(Math.max(maxLength, DEFAULT_MIN_SEGMENT_LENGTH), getMaxSegmentLength());
+                maxLength = Math.min(Math.max(maxLength, LengthMeasurer.DEFAULT_MIN_SEGMENT_LENGTH), getMaxSegmentLength());
             }
-            this.subdividedPositions = subdividePositions(globe, this.positions, maxLength,
+            this.subdividedPositions = LengthMeasurer.subdividePositions(globe, this.positions, maxLength,
                 followTerrain, this.pathType);
         }
 

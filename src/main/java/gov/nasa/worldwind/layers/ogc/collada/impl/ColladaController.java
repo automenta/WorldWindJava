@@ -38,6 +38,17 @@ public class ColladaController implements Renderable, PreRenderable {
     }
 
     /**
+     * Initializes this COLLADA controller's traversal context to its default state. A COLLADA traversal context must be
+     * initialized prior to use during preRendering or rendering, to ensure that state from the previous pass does not
+     * affect the current pass.
+     *
+     * @param tc the COLLADA traversal context to initialize.
+     */
+    protected static void initializeTraversalContext(ColladaTraversalContext tc) {
+        tc.initialize();
+    }
+
+    /**
      * Indicates the COLLADA document that this controller will render.
      *
      * @return The COLLADA document referenced by this controller.
@@ -99,16 +110,5 @@ public class ColladaController implements Renderable, PreRenderable {
     public void render(DrawContext dc) {
         ColladaController.initializeTraversalContext(this.getTraversalContext());
         this.colladaRoot.render(this.getTraversalContext(), dc);
-    }
-
-    /**
-     * Initializes this COLLADA controller's traversal context to its default state. A COLLADA traversal context must be
-     * initialized prior to use during preRendering or rendering, to ensure that state from the previous pass does not
-     * affect the current pass.
-     *
-     * @param tc the COLLADA traversal context to initialize.
-     */
-    protected static void initializeTraversalContext(ColladaTraversalContext tc) {
-        tc.initialize();
     }
 }

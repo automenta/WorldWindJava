@@ -29,7 +29,7 @@ public class Polygon extends AbstractAirspace {
 
     private List<LatLon> locations = new ArrayList<>();
     private boolean enableCaps = true;
-    private int subdivisions = DEFAULT_SUBDIVISIONS;
+    private int subdivisions = Polygon.DEFAULT_SUBDIVISIONS;
 
     public Polygon(Polygon source) {
         super(source);
@@ -53,275 +53,6 @@ public class Polygon extends AbstractAirspace {
 
     public Polygon() {
         this.makeDefaultDetailLevels();
-    }
-
-    private void makeDefaultDetailLevels() {
-        Collection<DetailLevel> levels = new ArrayList<>();
-        double[] ramp = ScreenSizeDetailLevel.computeDefaultScreenSizeRamp(5);
-
-        DetailLevel level;
-        level = new ScreenSizeDetailLevel(ramp[0], "Detail-Level-0");
-        level.set(SUBDIVISIONS, 4);
-        level.set(DISABLE_TERRAIN_CONFORMANCE, false);
-        levels.add(level);
-
-        level = new ScreenSizeDetailLevel(ramp[1], "Detail-Level-1");
-        level.set(SUBDIVISIONS, 3);
-        level.set(DISABLE_TERRAIN_CONFORMANCE, false);
-        levels.add(level);
-
-        level = new ScreenSizeDetailLevel(ramp[2], "Detail-Level-2");
-        level.set(SUBDIVISIONS, 2);
-        level.set(DISABLE_TERRAIN_CONFORMANCE, false);
-        levels.add(level);
-
-        level = new ScreenSizeDetailLevel(ramp[3], "Detail-Level-3");
-        level.set(SUBDIVISIONS, 1);
-        level.set(DISABLE_TERRAIN_CONFORMANCE, false);
-        levels.add(level);
-
-        level = new ScreenSizeDetailLevel(ramp[4], "Detail-Level-4");
-        level.set(SUBDIVISIONS, 0);
-        level.set(DISABLE_TERRAIN_CONFORMANCE, true);
-        levels.add(level);
-
-        this.setDetailLevels(levels);
-    }
-
-    public List<LatLon> getLocations() {
-        return Collections.unmodifiableList(this.locations);
-    }
-
-    public void setLocations(Iterable<? extends LatLon> locations) {
-        this.locations.clear();
-        this.addLocations(locations);
-    }
-
-    protected List<LatLon> getLocationList() {
-        return this.locations;
-    }
-
-    protected void addLocations(Iterable<? extends LatLon> newLocations) {
-        if (newLocations != null) {
-            for (LatLon ll : newLocations) {
-                if (ll != null)
-                    this.locations.add(ll);
-            }
-        }
-
-        this.invalidateAirspaceData();
-    }
-
-    public boolean isEnableCaps() {
-        return this.enableCaps;
-    }
-
-    public void setEnableCaps(boolean enable) {
-        this.enableCaps = enable;
-    }
-
-    public Position getReferencePosition() {
-        return AbstractAirspace.computeReferencePosition(this.locations, this.getAltitudes());
-    }
-
-    protected Extent computeExtent(Globe globe, double verticalExaggeration) {
-        List<Vec4> points = this.computeMinimalGeometry(globe, verticalExaggeration);
-        if (points == null || points.isEmpty())
-            return null;
-
-        // Add a point at the center of this polygon to the points used to compute its extent. The center point captures
-        // the curvature of the globe when the polygon's minimal geometry only contain any points near the polygon's
-        // edges.
-        Vec4 centerPoint = Vec4.computeAveragePoint(points);
-        LatLon centerLocation = globe.computePositionFromPoint(centerPoint);
-        this.makeExtremePoints(globe, verticalExaggeration, Collections.singletonList(centerLocation), points);
-
-        return Box.computeBoundingBox(points);
-    }
-
-    @Override
-    protected List<Vec4> computeMinimalGeometry(Globe globe, double verticalExaggeration) {
-        List<LatLon> locations = this.getLocations();
-        if (locations == null || locations.isEmpty())
-            return null;
-
-        List<LatLon> copyOfLocations = new ArrayList<>(locations);
-        Collection<LatLon> tessellatedLocations = new ArrayList<>();
-        Polygon.makeTessellatedLocations(globe, MINIMAL_GEOMETRY_SUBDIVISIONS, copyOfLocations, tessellatedLocations);
-
-        List<Vec4> points = new ArrayList<>();
-        this.makeExtremePoints(globe, verticalExaggeration, tessellatedLocations, points);
-
-        return points;
-    }
-
-    protected void doMoveTo(Globe globe, Position oldRef, Position newRef) {
-        if (oldRef == null) {
-            String message = "nullValue.OldRefIsNull";
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (newRef == null) {
-            String message = "nullValue.NewRefIsNull";
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        List<LatLon> newLocations = LatLon.computeShiftedLocations(globe, oldRef, newRef, this.getLocations());
-        this.setLocations(newLocations);
-
-        super.doMoveTo(oldRef, newRef);
-    }
-
-    protected void doMoveTo(Position oldRef, Position newRef) {
-        if (oldRef == null) {
-            String message = "nullValue.OldRefIsNull";
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (newRef == null) {
-            String message = "nullValue.NewRefIsNull";
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        super.doMoveTo(oldRef, newRef);
-
-        int count = this.locations.size();
-        LatLon[] newLocations = new LatLon[count];
-        for (int i = 0; i < count; i++) {
-            LatLon ll = this.locations.get(i);
-            double distance = LatLon.greatCircleDistance(oldRef, ll).radians;
-            double azimuth = LatLon.greatCircleAzimuth(oldRef, ll).radians;
-            newLocations[i] = LatLon.greatCircleEndPosition(newRef, azimuth, distance);
-        }
-        this.setLocations(Arrays.asList(newLocations));
-    }
-
-    @Override
-    protected SurfaceShape createSurfaceShape() {
-        return new SurfacePolygon();
-    }
-
-    @Override
-    protected void updateSurfaceShape(DrawContext dc, SurfaceShape shape) {
-        super.updateSurfaceShape(dc, shape);
-
-        boolean mustDrawInterior = this.getActiveAttributes().isDrawInterior() && this.isEnableCaps();
-        shape.getAttributes().setDrawInterior(mustDrawInterior); // suppress the shape interior when caps are disabled
-    }
-
-    @Override
-    protected void regenerateSurfaceShape(DrawContext dc, SurfaceShape shape) {
-        ((SurfacePolygon) shape).setOuterBoundary(this.locations);
-    }
-
-    protected int getSubdivisions() {
-        return this.subdivisions;
-    }
-
-    protected void setSubdivisions(int subdivisions) {
-        if (subdivisions < 0) {
-            String message = Logging.getMessage("generic.ArgumentOutOfRange", "subdivisions=" + subdivisions);
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        this.subdivisions = subdivisions;
-    }
-
-    //**************************************************************//
-    //********************  Geometry Rendering  ********************//
-    //**************************************************************//
-
-    protected Vec4 computeReferenceCenter(DrawContext dc) {
-        Extent extent = this.getExtent(dc);
-        return extent != null ? extent.getCenter() : null;
-    }
-
-    protected void doRenderGeometry(DrawContext dc, String drawStyle) {
-        this.doRenderGeometry(dc, drawStyle, this.locations, null);
-    }
-
-    protected void doRenderGeometry(DrawContext dc, String drawStyle, List<LatLon> locations, List<Boolean> edgeFlags) {
-        if (dc == null) {
-            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (dc.getGL() == null) {
-            String message = Logging.getMessage("nullValue.DrawingContextGLIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (locations == null) {
-            String message = "nullValue.LocationsIsNull";
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (locations.isEmpty())
-            return;
-
-        double[] altitudes = this.getAltitudes(dc.getVerticalExaggeration());
-        boolean[] terrainConformant = this.isTerrainConforming();
-        boolean enableCaps = this.isEnableCaps();
-        int subdivisions = this.subdivisions;
-
-        if (this.getAltitudeDatum()[0].equals(AVKey.ABOVE_GROUND_REFERENCE)
-            || this.getAltitudeDatum()[1].equals(AVKey.ABOVE_GROUND_REFERENCE)) {
-            this.adjustForGroundReference(dc, terrainConformant, altitudes);
-        }
-
-        if (this.isEnableLevelOfDetail()) {
-            DetailLevel level = this.computeDetailLevel(dc);
-
-            Object o = level.get(SUBDIVISIONS);
-            if (o instanceof Integer)
-                subdivisions = (Integer) o;
-
-            o = level.get(DISABLE_TERRAIN_CONFORMANCE);
-            if (o instanceof Boolean && (Boolean) o)
-                terrainConformant[0] = terrainConformant[1] = false;
-        }
-
-        Vec4 referenceCenter = this.computeReferenceCenter(dc);
-        this.setExpiryTime(this.nextExpiryTime(dc, terrainConformant));
-        this.clearElevationMap();
-
-        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-        OGLStackHandler ogsh = new OGLStackHandler();
-        try {
-            dc.getView().pushReferenceCenter(dc, referenceCenter);
-
-            if (DRAW_STYLE_FILL.equals(drawStyle)) {
-                if (enableCaps && !this.isAirspaceCollapsed()) {
-                    ogsh.pushAttrib(gl, GL2.GL_POLYGON_BIT);
-                    gl.glEnable(GL.GL_CULL_FACE);
-                    gl.glFrontFace(GL.GL_CCW);
-                }
-
-                this.drawPolygonFill(dc, locations, edgeFlags, altitudes, terrainConformant, enableCaps, subdivisions,
-                    referenceCenter);
-            }
-            else if (DRAW_STYLE_OUTLINE.equals(drawStyle)) {
-                this.drawPolygonOutline(dc, locations, edgeFlags, altitudes, terrainConformant, enableCaps,
-                    subdivisions, referenceCenter);
-            }
-        }
-        finally {
-            dc.getView().popReferenceCenter(dc);
-            ogsh.pop(gl);
-        }
-    }
-
-    protected void adjustForGroundReference(DrawContext dc, boolean[] terrainConformant, double[] altitudes) {
-        LatLon groundRef = this.getGroundReference();
-
-        if (groundRef == null && !this.getLocationList().isEmpty())
-            groundRef = this.getLocationList().get(0);
-
-        this.adjustForGroundReference(dc, terrainConformant, altitudes, groundRef); // no-op if groudRef is null
     }
 
     protected static int computeEllipsoidalPolygon(Globe globe, List<? extends LatLon> locations,
@@ -410,9 +141,329 @@ public class Polygon extends AbstractAirspace {
         }
     }
 
+    protected static void makeTessellatedLocations(Globe globe, int subdivisions, List<LatLon> locations,
+        Collection<LatLon> tessellatedLocations) {
+        List<Vec4> points = new ArrayList<>(locations.size());
+        for (LatLon ll : locations) {
+            points.add(globe.computeEllipsoidalPointFromPosition(Angle.fromDegrees(ll.latitude),
+                Angle.fromDegrees(ll.longitude), 0));
+        }
+
+        //noinspection StringEquality
+        if (WWMath.computeWindingOrderOfLocations(locations) != AVKey.COUNTER_CLOCKWISE)
+            Collections.reverse(locations);
+
+        Vec4 centerPoint = Vec4.computeAveragePoint(points);
+        Position centerPos = globe.computePositionFromEllipsoidalPoint(centerPoint);
+        Vec4 surfaceNormal = globe.computeEllipsoidalNormalAtLocation(Angle.fromDegrees(centerPos.latitude),
+            Angle.fromDegrees(centerPos.longitude));
+
+        int numPoints = points.size();
+        float[] coords = new float[3 * numPoints];
+        for (int i = 0; i < numPoints; i++) {
+            points.get(i).toFloatArray(coords, 3 * i, 3);
+        }
+
+        GeometryBuilder gb = new GeometryBuilder();
+        GeometryBuilder.IndexedTriangleArray tessellatedPoints = gb.tessellatePolygon(0, numPoints, coords,
+            surfaceNormal);
+
+        for (int i = 0; i < subdivisions; i++) {
+            GeometryBuilder.subdivideIndexedTriangleArray(tessellatedPoints);
+        }
+
+        for (int i = 0; i < tessellatedPoints.getVertexCount(); i++) {
+            Vec4 v = Vec4.fromFloatArray(tessellatedPoints.getVertices(), 3 * i, 3);
+            tessellatedLocations.add(globe.computePositionFromEllipsoidalPoint(v));
+        }
+    }
+
+    private static void copyIndexArray(int indexCount, boolean reverseWinding, int[] indices,
+        int destVertexPos, int destIndexPos, int[] dest) {
+        for (int i = 0; i < indexCount; i += 3) {
+            if (reverseWinding) {
+                dest[destIndexPos + i] = destVertexPos + indices[i + 2];
+                dest[destIndexPos + i + 1] = destVertexPos + indices[i + 1];
+                dest[destIndexPos + i + 2] = destVertexPos + indices[i];
+            } else {
+                dest[destIndexPos + i] = destVertexPos + indices[i];
+                dest[destIndexPos + i + 1] = destVertexPos + indices[i + 1];
+                dest[destIndexPos + i + 2] = destVertexPos + indices[i + 2];
+            }
+        }
+    }
+
+    private void makeDefaultDetailLevels() {
+        Collection<DetailLevel> levels = new ArrayList<>();
+        double[] ramp = ScreenSizeDetailLevel.computeDefaultScreenSizeRamp(5);
+
+        DetailLevel level;
+        level = new ScreenSizeDetailLevel(ramp[0], "Detail-Level-0");
+        level.set(AbstractAirspace.SUBDIVISIONS, 4);
+        level.set(AbstractAirspace.DISABLE_TERRAIN_CONFORMANCE, false);
+        levels.add(level);
+
+        level = new ScreenSizeDetailLevel(ramp[1], "Detail-Level-1");
+        level.set(AbstractAirspace.SUBDIVISIONS, 3);
+        level.set(AbstractAirspace.DISABLE_TERRAIN_CONFORMANCE, false);
+        levels.add(level);
+
+        level = new ScreenSizeDetailLevel(ramp[2], "Detail-Level-2");
+        level.set(AbstractAirspace.SUBDIVISIONS, 2);
+        level.set(AbstractAirspace.DISABLE_TERRAIN_CONFORMANCE, false);
+        levels.add(level);
+
+        level = new ScreenSizeDetailLevel(ramp[3], "Detail-Level-3");
+        level.set(AbstractAirspace.SUBDIVISIONS, 1);
+        level.set(AbstractAirspace.DISABLE_TERRAIN_CONFORMANCE, false);
+        levels.add(level);
+
+        level = new ScreenSizeDetailLevel(ramp[4], "Detail-Level-4");
+        level.set(AbstractAirspace.SUBDIVISIONS, 0);
+        level.set(AbstractAirspace.DISABLE_TERRAIN_CONFORMANCE, true);
+        levels.add(level);
+
+        this.setDetailLevels(levels);
+    }
+
+    public List<LatLon> getLocations() {
+        return Collections.unmodifiableList(this.locations);
+    }
+
+    public void setLocations(Iterable<? extends LatLon> locations) {
+        this.locations.clear();
+        this.addLocations(locations);
+    }
+
+    protected List<LatLon> getLocationList() {
+        return this.locations;
+    }
+
+    protected void addLocations(Iterable<? extends LatLon> newLocations) {
+        if (newLocations != null) {
+            for (LatLon ll : newLocations) {
+                if (ll != null)
+                    this.locations.add(ll);
+            }
+        }
+
+        this.invalidateAirspaceData();
+    }
+
+    public boolean isEnableCaps() {
+        return this.enableCaps;
+    }
+
+    public void setEnableCaps(boolean enable) {
+        this.enableCaps = enable;
+    }
+
+    public Position getReferencePosition() {
+        return AbstractAirspace.computeReferencePosition(this.locations, this.getAltitudes());
+    }
+
+    protected Extent computeExtent(Globe globe, double verticalExaggeration) {
+        List<Vec4> points = this.computeMinimalGeometry(globe, verticalExaggeration);
+        if (points == null || points.isEmpty())
+            return null;
+
+        // Add a point at the center of this polygon to the points used to compute its extent. The center point captures
+        // the curvature of the globe when the polygon's minimal geometry only contain any points near the polygon's
+        // edges.
+        Vec4 centerPoint = Vec4.computeAveragePoint(points);
+        LatLon centerLocation = globe.computePositionFromPoint(centerPoint);
+        this.makeExtremePoints(globe, verticalExaggeration, Collections.singletonList(centerLocation), points);
+
+        return Box.computeBoundingBox(points);
+    }
+
+    @Override
+    protected List<Vec4> computeMinimalGeometry(Globe globe, double verticalExaggeration) {
+        List<LatLon> locations = this.getLocations();
+        if (locations == null || locations.isEmpty())
+            return null;
+
+        List<LatLon> copyOfLocations = new ArrayList<>(locations);
+        Collection<LatLon> tessellatedLocations = new ArrayList<>();
+        Polygon.makeTessellatedLocations(globe, Polygon.MINIMAL_GEOMETRY_SUBDIVISIONS, copyOfLocations, tessellatedLocations);
+
+        List<Vec4> points = new ArrayList<>();
+        this.makeExtremePoints(globe, verticalExaggeration, tessellatedLocations, points);
+
+        return points;
+    }
+
+    protected void doMoveTo(Globe globe, Position oldRef, Position newRef) {
+        if (oldRef == null) {
+            String message = "nullValue.OldRefIsNull";
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+        if (newRef == null) {
+            String message = "nullValue.NewRefIsNull";
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        List<LatLon> newLocations = LatLon.computeShiftedLocations(globe, oldRef, newRef, this.getLocations());
+        this.setLocations(newLocations);
+
+        super.doMoveTo(oldRef, newRef);
+    }
+
+    protected void doMoveTo(Position oldRef, Position newRef) {
+        if (oldRef == null) {
+            String message = "nullValue.OldRefIsNull";
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+        if (newRef == null) {
+            String message = "nullValue.NewRefIsNull";
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        super.doMoveTo(oldRef, newRef);
+
+        int count = this.locations.size();
+        LatLon[] newLocations = new LatLon[count];
+        for (int i = 0; i < count; i++) {
+            LatLon ll = this.locations.get(i);
+            double distance = LatLon.greatCircleDistance(oldRef, ll).radians();
+            double azimuth = LatLon.greatCircleAzimuth(oldRef, ll).radians();
+            newLocations[i] = LatLon.greatCircleEndPosition(newRef, azimuth, distance);
+        }
+        this.setLocations(Arrays.asList(newLocations));
+    }
+
+    @Override
+    protected SurfaceShape createSurfaceShape() {
+        return new SurfacePolygon();
+    }
+
+    //**************************************************************//
+    //********************  Geometry Rendering  ********************//
+    //**************************************************************//
+
+    @Override
+    protected void updateSurfaceShape(DrawContext dc, SurfaceShape shape) {
+        super.updateSurfaceShape(dc, shape);
+
+        boolean mustDrawInterior = this.getActiveAttributes().isDrawInterior() && this.isEnableCaps();
+        shape.getAttributes().setDrawInterior(mustDrawInterior); // suppress the shape interior when caps are disabled
+    }
+
+    @Override
+    protected void regenerateSurfaceShape(DrawContext dc, SurfaceShape shape) {
+        ((SurfacePolygon) shape).setOuterBoundary(this.locations);
+    }
+
+    protected int getSubdivisions() {
+        return this.subdivisions;
+    }
+
+    protected void setSubdivisions(int subdivisions) {
+        if (subdivisions < 0) {
+            String message = Logging.getMessage("generic.ArgumentOutOfRange", "subdivisions=" + subdivisions);
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        this.subdivisions = subdivisions;
+    }
+
+    protected Vec4 computeReferenceCenter(DrawContext dc) {
+        Extent extent = this.getExtent(dc);
+        return extent != null ? extent.getCenter() : null;
+    }
+
+    protected void doRenderGeometry(DrawContext dc, String drawStyle) {
+        this.doRenderGeometry(dc, drawStyle, this.locations, null);
+    }
+
     //**************************************************************//
     //********************  Polygon  ******************//
     //**************************************************************//
+
+    protected void doRenderGeometry(DrawContext dc, String drawStyle, List<LatLon> locations, List<Boolean> edgeFlags) {
+        if (dc == null) {
+            String message = Logging.getMessage("nullValue.DrawContextIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+        if (dc.getGL() == null) {
+            String message = Logging.getMessage("nullValue.DrawingContextGLIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+        if (locations == null) {
+            String message = "nullValue.LocationsIsNull";
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        if (locations.isEmpty())
+            return;
+
+        double[] altitudes = this.getAltitudes(dc.getVerticalExaggeration());
+        boolean[] terrainConformant = this.isTerrainConforming();
+        boolean enableCaps = this.isEnableCaps();
+        int subdivisions = this.subdivisions;
+
+        if (this.getAltitudeDatum()[0].equals(AVKey.ABOVE_GROUND_REFERENCE)
+            || this.getAltitudeDatum()[1].equals(AVKey.ABOVE_GROUND_REFERENCE)) {
+            this.adjustForGroundReference(dc, terrainConformant, altitudes);
+        }
+
+        if (this.isEnableLevelOfDetail()) {
+            DetailLevel level = this.computeDetailLevel(dc);
+
+            Object o = level.get(AbstractAirspace.SUBDIVISIONS);
+            if (o instanceof Integer)
+                subdivisions = (Integer) o;
+
+            o = level.get(AbstractAirspace.DISABLE_TERRAIN_CONFORMANCE);
+            if (o instanceof Boolean && (Boolean) o)
+                terrainConformant[0] = terrainConformant[1] = false;
+        }
+
+        Vec4 referenceCenter = this.computeReferenceCenter(dc);
+        this.setExpiryTime(this.nextExpiryTime(dc, terrainConformant));
+        this.clearElevationMap();
+
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
+        OGLStackHandler ogsh = new OGLStackHandler();
+        try {
+            dc.getView().pushReferenceCenter(dc, referenceCenter);
+
+            if (Airspace.DRAW_STYLE_FILL.equals(drawStyle)) {
+                if (enableCaps && !this.isAirspaceCollapsed()) {
+                    ogsh.pushAttrib(gl, GL2.GL_POLYGON_BIT);
+                    gl.glEnable(GL.GL_CULL_FACE);
+                    gl.glFrontFace(GL.GL_CCW);
+                }
+
+                this.drawPolygonFill(dc, locations, edgeFlags, altitudes, terrainConformant, enableCaps, subdivisions,
+                    referenceCenter);
+            } else if (Airspace.DRAW_STYLE_OUTLINE.equals(drawStyle)) {
+                this.drawPolygonOutline(dc, locations, edgeFlags, altitudes, terrainConformant, enableCaps,
+                    subdivisions, referenceCenter);
+            }
+        }
+        finally {
+            dc.getView().popReferenceCenter(dc);
+            ogsh.pop(gl);
+        }
+    }
+
+    protected void adjustForGroundReference(DrawContext dc, boolean[] terrainConformant, double[] altitudes) {
+        LatLon groundRef = this.getGroundReference();
+
+        if (groundRef == null && !this.getLocationList().isEmpty())
+            groundRef = this.getLocationList().get(0);
+
+        this.adjustForGroundReference(dc, terrainConformant, altitudes, groundRef); // no-op if groudRef is null
+    }
 
     private PolygonGeometry getPolygonGeometry(DrawContext dc, List<LatLon> locations, List<Boolean> edgeFlags,
         double[] altitudes, boolean[] terrainConformant,
@@ -496,7 +547,8 @@ public class Polygon extends AbstractAirspace {
         Vec4[] polyPoints = new Vec4[locations.size() + 1];
         Boolean[] polyEdgeFlags = new Boolean[locations.size() + 1];
         Matrix[] polyTransform = new Matrix[1];
-        int polyCount = Polygon.computeEllipsoidalPolygon(dc.getGlobe(), locations, edgeFlags, polyPoints, polyEdgeFlags,
+        int polyCount = Polygon.computeEllipsoidalPolygon(dc.getGlobe(), locations, edgeFlags, polyPoints,
+            polyEdgeFlags,
             polyTransform);
 
         // Compute the winding order of the planar cartesian points. If the order is not counter-clockwise, then
@@ -574,48 +626,13 @@ public class Polygon extends AbstractAirspace {
         dest.getVertexGeometry().setNormalData(vertexCount, normals);
     }
 
-    protected static void makeTessellatedLocations(Globe globe, int subdivisions, List<LatLon> locations,
-        Collection<LatLon> tessellatedLocations) {
-        List<Vec4> points = new ArrayList<>(locations.size());
-        for (LatLon ll : locations) {
-            points.add(globe.computeEllipsoidalPointFromPosition(Angle.fromDegrees(ll.latitude), Angle.fromDegrees(ll.longitude), 0));
-        }
-
-        //noinspection StringEquality
-        if (WWMath.computeWindingOrderOfLocations(locations) != AVKey.COUNTER_CLOCKWISE)
-            Collections.reverse(locations);
-
-        Vec4 centerPoint = Vec4.computeAveragePoint(points);
-        Position centerPos = globe.computePositionFromEllipsoidalPoint(centerPoint);
-        Vec4 surfaceNormal = globe.computeEllipsoidalNormalAtLocation(Angle.fromDegrees(centerPos.latitude), Angle.fromDegrees(centerPos.longitude));
-
-        int numPoints = points.size();
-        float[] coords = new float[3 * numPoints];
-        for (int i = 0; i < numPoints; i++) {
-            points.get(i).toFloatArray(coords, 3 * i, 3);
-        }
-
-        GeometryBuilder gb = new GeometryBuilder();
-        GeometryBuilder.IndexedTriangleArray tessellatedPoints = gb.tessellatePolygon(0, numPoints, coords,
-            surfaceNormal);
-
-        for (int i = 0; i < subdivisions; i++) {
-            GeometryBuilder.subdivideIndexedTriangleArray(tessellatedPoints);
-        }
-
-        for (int i = 0; i < tessellatedPoints.getVertexCount(); i++) {
-            Vec4 v = Vec4.fromFloatArray(tessellatedPoints.getVertices(), 3 * i, 3);
-            tessellatedLocations.add(globe.computePositionFromEllipsoidalPoint(v));
-        }
-    }
+    //**************************************************************//
+    //********************  Polygon Edge        ********************//
+    //**************************************************************//
 
     private int getEdgeFillIndexCount(int count, int subdivisions) {
         return (count - 1) * this.getSectionFillIndexCount(subdivisions);
     }
-
-    //**************************************************************//
-    //********************  Polygon Edge        ********************//
-    //**************************************************************//
 
     private int getEdgeOutlineIndexCount(int count, int subdivisions, Boolean[] edgeFlags) {
         int sum = 0;
@@ -769,6 +786,10 @@ public class Polygon extends AbstractAirspace {
         }
     }
 
+    //**************************************************************//
+    //********************  Polygon Cap         ********************//
+    //**************************************************************//
+
     private void makeCap(DrawContext dc, GeometryBuilder.IndexedTriangleArray ita,
         double altitude, boolean terrainConformant,
         int orientation,
@@ -804,26 +825,6 @@ public class Polygon extends AbstractAirspace {
 
         gb.makeIndexedTriangleArrayNormals(indexPos, indexCount, indices, vertexPos, vertexCount, vertices,
             normals);
-    }
-
-    //**************************************************************//
-    //********************  Polygon Cap         ********************//
-    //**************************************************************//
-
-    private static void copyIndexArray(int indexCount, boolean reverseWinding, int[] indices,
-        int destVertexPos, int destIndexPos, int[] dest) {
-        for (int i = 0; i < indexCount; i += 3) {
-            if (reverseWinding) {
-                dest[destIndexPos + i] = destVertexPos + indices[i + 2];
-                dest[destIndexPos + i + 1] = destVertexPos + indices[i + 1];
-                dest[destIndexPos + i + 2] = destVertexPos + indices[i];
-            }
-            else {
-                dest[destIndexPos + i] = destVertexPos + indices[i];
-                dest[destIndexPos + i + 1] = destVertexPos + indices[i + 1];
-                dest[destIndexPos + i + 2] = destVertexPos + indices[i + 2];
-            }
-        }
     }
 
     @Override

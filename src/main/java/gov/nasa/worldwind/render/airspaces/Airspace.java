@@ -169,9 +169,8 @@ public interface Airspace extends Renderable, Restorable, AVList, ExtentHolder, 
     boolean isAirspaceVisible(DrawContext dc);
 
     /**
-     * Returns this Airspace's enclosing volume as an {@link Extent} in model coordinates, given
-     * a specified {@link Globe} and vertical exaggeration (see {@link
-     * gov.nasa.worldwind.SceneController#getVerticalExaggeration()}.
+     * Returns this Airspace's enclosing volume as an {@link Extent} in model coordinates, given a specified {@link
+     * Globe} and vertical exaggeration (see {@link gov.nasa.worldwind.SceneController#getVerticalExaggeration()}.
      *
      * @param globe                the Globe this Airspace is related to.
      * @param verticalExaggeration the vertical exaggeration of the scene containing this Airspace.
@@ -181,11 +180,10 @@ public interface Airspace extends Renderable, Restorable, AVList, ExtentHolder, 
     Extent getExtent(Globe globe, double verticalExaggeration);
 
     /**
-     * Returns this Airspace's enclosing volume as an {@link Extent} in model coordinates, given
-     * a specified {@link DrawContext}. The returned Extent may be different than the Extent
-     * returned by calling {@link #getExtent(Globe, double)} with the DrawContext's Globe and
-     * vertical exaggeration. Additionally, this may cache the computed extent and is therefore potentially faster than
-     * calling {@link #getExtent(Globe, double)}.
+     * Returns this Airspace's enclosing volume as an {@link Extent} in model coordinates, given a specified {@link
+     * DrawContext}. The returned Extent may be different than the Extent returned by calling {@link #getExtent(Globe,
+     * double)} with the DrawContext's Globe and vertical exaggeration. Additionally, this may cache the computed extent
+     * and is therefore potentially faster than calling {@link #getExtent(Globe, double)}.
      *
      * @param dc the current DrawContext.
      * @return this Airspace's Extent in model coordinates.

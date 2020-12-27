@@ -20,8 +20,7 @@ public interface DataRasterReaderFactory {
      * <p>
      * The list of readers searched is determined by the DataRasterReaderFactory associated with the current {@link
      * gov.nasa.worldwind.Configuration}, as specified by the {@link gov.nasa.worldwind.avlist.AVKey#DATA_RASTER_READER_FACTORY_CLASS_NAME}.
-     * If no factory is specified in the configuration, {@link BasicDataRasterReaderFactory} is
-     * used.
+     * If no factory is specified in the configuration, {@link BasicDataRasterReaderFactory} is used.
      *
      * @param source the source to read. May by a {@link java.io.File}, a file path, a URL or an {@link
      *               java.io.InputStream}.

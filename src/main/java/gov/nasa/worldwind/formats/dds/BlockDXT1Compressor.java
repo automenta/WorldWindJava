@@ -49,8 +49,8 @@ public class BlockDXT1Compressor {
         // second colors is based on the current hardware algorithms, and the Direct3D SDK documentation at
         // http://msdn.microsoft.com/en-us/library/bb694531(VS.85).aspx
 
-        short565ToColor32(color0, palette[0]);
-        short565ToColor32(color1, palette[1]);
+        BlockDXT1Compressor.short565ToColor32(color0, palette[0]);
+        BlockDXT1Compressor.short565ToColor32(color1, palette[1]);
 
         palette[2].a = 255;
         palette[2].r = (palette[0].r + palette[1].r) / 2;
@@ -71,8 +71,8 @@ public class BlockDXT1Compressor {
         // second and third colors are based on the current hardware algorithms, and the Direct3D SDK documentation at
         // http://msdn.microsoft.com/en-us/library/bb694531(VS.85).aspx
 
-        short565ToColor32(color0, palette[0]);
-        short565ToColor32(color1, palette[1]);
+        BlockDXT1Compressor.short565ToColor32(color0, palette[0]);
+        BlockDXT1Compressor.short565ToColor32(color1, palette[1]);
 
         palette[2].a = 255;
         palette[2].r = (2 * palette[0].r + palette[1].r) / 3;
@@ -100,22 +100,19 @@ public class BlockDXT1Compressor {
         long index;
 
         for (int i = 0; i < 16; i++) {
-            int d0 = colorDistanceSquared(palette[0], block.color[i]);
-            int d1 = colorDistanceSquared(palette[1], block.color[i]);
-            int d2 = colorDistanceSquared(palette[2], block.color[i]);
+            int d0 = BlockDXT1Compressor.colorDistanceSquared(palette[0], block.color[i]);
+            int d1 = BlockDXT1Compressor.colorDistanceSquared(palette[1], block.color[i]);
+            int d2 = BlockDXT1Compressor.colorDistanceSquared(palette[2], block.color[i]);
 
             // TODO: implement bit twiddle as in computePaletteIndex4 to avoid conditional branching
 
             if (block.color[i].a < alphaThreshold) {
                 index = 3;
-            }
-            else if (d0 < d1 && d0 < d2) {
+            } else if (d0 < d1 && d0 < d2) {
                 index = 0;
-            }
-            else if (d1 < d2) {
+            } else if (d1 < d2) {
                 index = 1;
-            }
-            else {
+            } else {
                 index = 2;
             }
 
@@ -144,16 +141,16 @@ public class BlockDXT1Compressor {
         final Color32[] blockColor = block.color;
 
         for (int i = 0; i < 16; i++) {
-            int d0 = colorDistanceSquared(palette[0], blockColor[i]);
-            int d1 = colorDistanceSquared(palette[1], blockColor[i]);
-            int d2 = colorDistanceSquared(palette[2], blockColor[i]);
-            int d3 = colorDistanceSquared(palette[3], blockColor[i]);
+            int d0 = BlockDXT1Compressor.colorDistanceSquared(palette[0], blockColor[i]);
+            int d1 = BlockDXT1Compressor.colorDistanceSquared(palette[1], blockColor[i]);
+            int d2 = BlockDXT1Compressor.colorDistanceSquared(palette[2], blockColor[i]);
+            int d3 = BlockDXT1Compressor.colorDistanceSquared(palette[3], blockColor[i]);
 
-            int b0 = greaterThan(d0, d3);
-            int b1 = greaterThan(d1, d2);
-            int b2 = greaterThan(d0, d2);
-            int b3 = greaterThan(d1, d3);
-            int b4 = greaterThan(d2, d3);
+            int b0 = BlockDXT1Compressor.greaterThan(d0, d3);
+            int b1 = BlockDXT1Compressor.greaterThan(d1, d2);
+            int b2 = BlockDXT1Compressor.greaterThan(d0, d2);
+            int b3 = BlockDXT1Compressor.greaterThan(d1, d3);
+            int b4 = BlockDXT1Compressor.greaterThan(d2, d3);
 
             int x0 = b1 & b2;
             int x1 = b0 & b3;
@@ -173,8 +170,8 @@ public class BlockDXT1Compressor {
 
         final Color32[] blockColor = block.color;
         for (int i = 0; i < 16; i++) {
-            minColorComponents(minColor, blockColor[i], minColor);
-            maxColorComponents(maxColor, blockColor[i], maxColor);
+            BlockDXT1Compressor.minColorComponents(minColor, blockColor[i], minColor);
+            BlockDXT1Compressor.maxColorComponents(maxColor, blockColor[i], maxColor);
         }
     }
 
@@ -244,7 +241,7 @@ public class BlockDXT1Compressor {
         for (int i = 0; i < 15; i++) {
             final Color32 bci = color[i];
             for (int j = i + 1; j < 16; j++) {
-                double d = colorDistanceSquared(bci, color[j]);
+                double d = BlockDXT1Compressor.colorDistanceSquared(bci, color[j]);
                 if (d > maxDistance) {
                     minIndex = i;
                     maxIndex = j;
@@ -253,8 +250,8 @@ public class BlockDXT1Compressor {
             }
         }
 
-        copyColorComponents(color[minIndex], minColor);
-        copyColorComponents(color[maxIndex], maxColor);
+        BlockDXT1Compressor.copyColorComponents(color[minIndex], minColor);
+        BlockDXT1Compressor.copyColorComponents(color[maxIndex], maxColor);
     }
 
     protected static void findMinMaxColorsLuminanceDistance(ColorBlock4x4 block, Color32 minColor, Color32 maxColor) {
@@ -264,7 +261,7 @@ public class BlockDXT1Compressor {
         int maxIndex = 0;
 
         for (int i = 0; i < 16; i++) {
-            int luminance = colorLuminance(block.color[i]);
+            int luminance = BlockDXT1Compressor.colorLuminance(block.color[i]);
             if (luminance < minLuminance) {
                 minIndex = i;
                 minLuminance = luminance;
@@ -275,8 +272,8 @@ public class BlockDXT1Compressor {
             }
         }
 
-        copyColorComponents(block.color[minIndex], minColor);
-        copyColorComponents(block.color[maxIndex], maxColor);
+        BlockDXT1Compressor.copyColorComponents(block.color[minIndex], minColor);
+        BlockDXT1Compressor.copyColorComponents(block.color[maxIndex], maxColor);
     }
 
     protected static int short565FromColor32(Color32 color) {
@@ -284,7 +281,7 @@ public class BlockDXT1Compressor {
         // forum by member "ryg":
         // https://mollyrocket.com/forums/viewtopic.php?t=392
 
-        return (mul8bit(color.r, 31) << 11) + (mul8bit(color.g, 63) << 5) + (mul8bit(color.b, 31));
+        return (BlockDXT1Compressor.mul8bit(color.r, 31) << 11) + (BlockDXT1Compressor.mul8bit(color.g, 63) << 5) + (BlockDXT1Compressor.mul8bit(color.b, 31));
     }
 
     //**************************************************************//
@@ -324,10 +321,11 @@ public class BlockDXT1Compressor {
     }
 
     protected static int colorDistanceSquared(Color32 c1, Color32 c2) {
-        return (int)(sqr(c1.r - c2.r)
+        return (int) (sqr(c1.r - c2.r)
             + sqr(c1.g - c2.g)
             + sqr(c1.b - c2.b));
     }
+
     protected static void maxColorComponents(Color32 c1, Color32 c2, Color32 max) {
         max.a = Math.max(c1.a, c2.a);
         max.r = Math.max(c1.r, c2.r);
@@ -364,6 +362,25 @@ public class BlockDXT1Compressor {
         return (b - a) >>> 31;
     }
 
+    protected static void chooseMinMaxColors(ColorBlock4x4 block, DXTCompressionAttributes attributes,
+        Color32 minColor, Color32 maxColor) {
+        //noinspection StringEquality
+        if (attributes.getColorBlockCompressionType() == DXTCompressionAttributes.COLOR_BLOCK_COMPRESSION_BBOX) {
+            BlockDXT1Compressor.findMinMaxColorsBox(block, minColor, maxColor);
+            BlockDXT1Compressor.selectDiagonal(block, minColor, maxColor);
+            BlockDXT1Compressor.insetBox(minColor, maxColor);
+        } else //noinspection StringEquality
+            if (attributes.getColorBlockCompressionType()
+                == DXTCompressionAttributes.COLOR_BLOCK_COMPRESSION_EUCLIDEAN_DISTANCE) {
+                BlockDXT1Compressor.findMinMaxColorsEuclideanDistance(block, minColor, maxColor);
+            } else //noinspection StringEquality
+                if (attributes.getColorBlockCompressionType()
+                    == DXTCompressionAttributes.COLOR_BLOCK_COMPRESSION_LUMINANCE_DISTANCE) {
+                    // Default to using euclidean distance to compute the min and max palette colors.
+                    BlockDXT1Compressor.findMinMaxColorsLuminanceDistance(block, minColor, maxColor);
+                }
+    }
+
     /**
      * Compress the 4x4 color block into a DXT1 block using four colors. This method ignores transparency and guarantees
      * that the DXT1 block will use four colors.
@@ -380,8 +397,8 @@ public class BlockDXT1Compressor {
     public void compressBlockDXT1(ColorBlock4x4 colorBlock, DXTCompressionAttributes attributes, BlockDXT1 dxtBlock) {
 
         BlockDXT1Compressor.chooseMinMaxColors(colorBlock, attributes, this.minColor, this.maxColor);
-        int color0 = short565FromColor32(this.maxColor);
-        int color1 = short565FromColor32(this.minColor);
+        int color0 = BlockDXT1Compressor.short565FromColor32(this.maxColor);
+        int color1 = BlockDXT1Compressor.short565FromColor32(this.minColor);
 
         if (color0 < color1) {
             int tmp = color0;
@@ -390,11 +407,11 @@ public class BlockDXT1Compressor {
         }
 
         // To get a four color palette with no alpha, the first color must be greater than the second color.
-        computeColorPalette4(color0, color1, this.palette);
+        BlockDXT1Compressor.computeColorPalette4(color0, color1, this.palette);
 
         dxtBlock.color0 = color0;
         dxtBlock.color1 = color1;
-        dxtBlock.colorIndexMask = computePaletteIndices4(colorBlock, this.palette);
+        dxtBlock.colorIndexMask = BlockDXT1Compressor.computePaletteIndices4(colorBlock, this.palette);
     }
 
     /**
@@ -427,8 +444,8 @@ public class BlockDXT1Compressor {
         }
 
         BlockDXT1Compressor.chooseMinMaxColors(colorBlock, attributes, this.minColor, this.maxColor);
-        int color0 = short565FromColor32(this.maxColor);
-        int color1 = short565FromColor32(this.minColor);
+        int color0 = BlockDXT1Compressor.short565FromColor32(this.maxColor);
+        int color1 = BlockDXT1Compressor.short565FromColor32(this.minColor);
 
         if (color0 < color1) {
             int tmp = color0;
@@ -437,31 +454,10 @@ public class BlockDXT1Compressor {
         }
 
         // To get a three color palette with alpha, the first color must be less than the second color.
-        computeColorPalette3(color1, color0, this.palette);
+        BlockDXT1Compressor.computeColorPalette3(color1, color0, this.palette);
 
         dxtBlock.color0 = color1;
         dxtBlock.color1 = color0;
-        dxtBlock.colorIndexMask = computePaletteIndices3(colorBlock, attributes, this.palette);
-    }
-
-    protected static void chooseMinMaxColors(ColorBlock4x4 block, DXTCompressionAttributes attributes,
-        Color32 minColor, Color32 maxColor) {
-        //noinspection StringEquality
-        if (attributes.getColorBlockCompressionType() == DXTCompressionAttributes.COLOR_BLOCK_COMPRESSION_BBOX) {
-            findMinMaxColorsBox(block, minColor, maxColor);
-            selectDiagonal(block, minColor, maxColor);
-            insetBox(minColor, maxColor);
-        }
-        else //noinspection StringEquality
-            if (attributes.getColorBlockCompressionType()
-                == DXTCompressionAttributes.COLOR_BLOCK_COMPRESSION_EUCLIDEAN_DISTANCE) {
-                findMinMaxColorsEuclideanDistance(block, minColor, maxColor);
-            }
-            else //noinspection StringEquality
-                if (attributes.getColorBlockCompressionType()
-                    == DXTCompressionAttributes.COLOR_BLOCK_COMPRESSION_LUMINANCE_DISTANCE) {
-                    // Default to using euclidean distance to compute the min and max palette colors.
-                    findMinMaxColorsLuminanceDistance(block, minColor, maxColor);
-                }
+        dxtBlock.colorIndexMask = BlockDXT1Compressor.computePaletteIndices3(colorBlock, attributes, this.palette);
     }
 }

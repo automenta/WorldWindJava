@@ -20,6 +20,14 @@ public class PolylineGeneralizer {
         this.vertexArea = new double[10];
     }
 
+    // TODO: Modify computeEffectiveArea to correctly compute area when z != 0
+    protected static double computeEffectiveArea(Element e) {
+        Element p = e.prev;
+        Element n = e.next;
+
+        return 0.5 * Math.abs((p.x - e.x) * (n.y - e.y) - (p.y - e.y) * (n.x - e.x));
+    }
+
     public int getVertexCount() {
         return this.vertexCount;
     }
@@ -108,14 +116,6 @@ public class PolylineGeneralizer {
             cur.prev = null;
             cur.next = null;
         }
-    }
-
-    // TODO: Modify computeEffectiveArea to correctly compute area when z != 0
-    protected static double computeEffectiveArea(Element e) {
-        Element p = e.prev;
-        Element n = e.next;
-
-        return 0.5 * Math.abs((p.x - e.x) * (n.y - e.y) - (p.y - e.y) * (n.x - e.x));
     }
 
     protected void updateEffectiveArea(Element e) {

@@ -381,8 +381,8 @@ public class BasicQuadTree<T> extends BitSetQuadTreeFilter implements Iterable<T
     }
 
     /**
-     * Finds and returns the items intersecting a specified collection of {@link SectorGeometry}.
-     * This method is a convenience for finding the items intersecting the current visible regions.
+     * Finds and returns the items intersecting a specified collection of {@link SectorGeometry}. This method is a
+     * convenience for finding the items intersecting the current visible regions.
      *
      * @param geometryList the list of sector geometry.
      * @param outItems     a {@link Set} in which to place the items. If null, a new set is created.
@@ -424,7 +424,7 @@ public class BasicQuadTree<T> extends BitSetQuadTreeFilter implements Iterable<T
 
     private void _buildItemSet(BitSet bitIds, Set<T> outItems) {
         bitIds.stream().forEach(id -> {
-        //for (Integer id : bitIds) {
+            //for (Integer id : bitIds) {
             List<T> regionItems = this.items.get(id);
             if (regionItems != null)
                 outItems.addAll(regionItems);

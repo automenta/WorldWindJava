@@ -32,7 +32,7 @@ public class BasicDragger implements SelectListener {
     /**
      * Indicates if the dragger is currently dragging.
      */
-    protected boolean dragging = false;
+    protected boolean dragging;
     /**
      * The {@link DragContext} for dragging operations. Initialized on {@link AVKey#DRAG_BEGIN}.
      */
@@ -68,15 +68,6 @@ public class BasicDragger implements SelectListener {
     }
 
     /**
-     * Returns if the dragger is currently executing a dragging operation.
-     *
-     * @return <code>true</code> if a drag operation is executing.
-     */
-    public boolean isDragging() {
-        return this.dragging;
-    }
-
-    /**
      * @return <code>false</code> as this functionality has been deprecated.
      * @deprecated the {@link Draggable} provides the object being dragged complete control over the dragging behavior.
      */
@@ -94,6 +85,15 @@ public class BasicDragger implements SelectListener {
         // ignored - functionality deprecated
     }
 
+    /**
+     * Returns if the dragger is currently executing a dragging operation.
+     *
+     * @return <code>true</code> if a drag operation is executing.
+     */
+    public boolean isDragging() {
+        return this.dragging;
+    }
+
     @Override
     public void accept(SelectEvent event) {
 
@@ -102,8 +102,7 @@ public class BasicDragger implements SelectListener {
             this.fireDrag((DragSelectEvent) event);
             this.dragContext = null;
             this.dragging = false;
-        }
-        else if (event.getEventAction().equals(SelectEvent.DRAG)) {
+        } else if (event.getEventAction().equals(SelectEvent.DRAG)) {
 
             if (this.dragContext == null)
                 this.dragContext = new DragContext();
@@ -116,8 +115,7 @@ public class BasicDragger implements SelectListener {
 
             if (this.dragging) {
                 this.dragContext.setDragState(AVKey.DRAG_CHANGE);
-            }
-            else {
+            } else {
                 this.dragContext.setDragState(AVKey.DRAG_BEGIN);
                 this.dragContext.setInitialPoint(((DragSelectEvent) event).getPreviousPickPoint());
                 this.dragging = true;
@@ -152,7 +150,8 @@ public class BasicDragger implements SelectListener {
      *
      * @param event the current {@link SelectEvent}.
      */
-    @Deprecated protected void dragLegacy(SelectEvent event) {
+    @Deprecated
+    protected void dragLegacy(SelectEvent event) {
 
         DragSelectEvent dragEvent = (DragSelectEvent) event;
         Object dragObject = dragEvent.getTopObject();

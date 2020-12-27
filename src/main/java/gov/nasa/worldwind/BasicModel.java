@@ -7,12 +7,10 @@ package gov.nasa.worldwind;
 
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.Message;
-import gov.nasa.worldwind.geom.Extent;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.util.Logging;
 import gov.nasa.worldwind.video.LayerList;
-import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Element;
 
 import java.util.logging.Level;
@@ -28,12 +26,13 @@ import java.util.logging.Level;
 public class BasicModel extends WWObjectImpl implements Model {
     private Globe globe;
     private LayerList layers;
-    private boolean showWireframeInterior = false;
-    private boolean showWireframeExterior = false;
-    private boolean showTessellationBoundingVolumes = false;
+    private boolean showWireframeInterior;
+    private boolean showWireframeExterior;
+    private boolean showTessellationBoundingVolumes;
 
-    @Deprecated public BasicModel() {
-        this.setGlobe(globeDefault());
+    @Deprecated
+    public BasicModel() {
+        this.setGlobe(BasicModel.globeDefault());
 
         // Look for the old-style, property-based layer configuration first. If not found then use the new-style
         // configuration.
@@ -44,8 +43,7 @@ public class BasicModel extends WWObjectImpl implements Model {
             // functionality.
             //noinspection deprecation
             layers = BasicModel.createLayersFromProperties(layerNames);
-        }
-        else {
+        } else {
             Element el = Configuration.getElement("./LayerList");
             if (el != null)
                 layers = BasicModel.createLayersFromElement(el);
@@ -54,17 +52,18 @@ public class BasicModel extends WWObjectImpl implements Model {
         this.setLayers(layers != null ? layers : new LayerList(/*empty list*/)); // an empty list is ok
     }
 
-    static private Globe globeDefault() {
-        return (Globe) WorldWind.createComponent(Configuration.getStringValue(AVKey.GLOBE_CLASS_NAME));
-    }
-
-    @Deprecated public BasicModel(LayerList layers) {
-        this(globeDefault(), layers);
+    @Deprecated
+    public BasicModel(LayerList layers) {
+        this(BasicModel.globeDefault(), layers);
     }
 
     public BasicModel(Globe globe, LayerList layers) {
         this.setGlobe(globe);
         this.setLayers(layers != null ? layers : new LayerList(/*empty list*/)); // an empty list is ok
+    }
+
+    static private Globe globeDefault() {
+        return (Globe) WorldWind.createComponent(Configuration.getStringValue(AVKey.GLOBE_CLASS_NAME));
     }
 
     /**
@@ -214,8 +213,6 @@ public class BasicModel extends WWObjectImpl implements Model {
         this.showTessellationBoundingVolumes = showTessellationBoundingVolumes;
     }
 
-
-
     /**
      * {@inheritDoc}
      * <p>
@@ -228,9 +225,9 @@ public class BasicModel extends WWObjectImpl implements Model {
         if (this.getLayers() != null) {
             for (Layer layer : this.getLayers()) {
 //                try {
-                    if (layer != null) {
-                        layer.onMessage(msg);
-                    }
+                if (layer != null) {
+                    layer.onMessage(msg);
+                }
 //                }
 //                catch (Exception e) {
 //                    String message = Logging.getMessage("generic.ExceptionInvokingMessageListener");

@@ -57,7 +57,7 @@ public class KMLFile extends XMLDoc {
      * @return an input stream positioned to the start of the KML file.
      * @throws IOException if an error occurs attempting to create the input stream.
      */
-    public InputStream getInputStream() throws IOException {
+    public InputStream getInputStream() throws FileNotFoundException {
         return new FileInputStream(this.kmlFile);
     }
 
@@ -68,7 +68,7 @@ public class KMLFile extends XMLDoc {
      * @return an input stream positioned to the start of the file, or null if the file does not exist.
      * @throws IOException if an error occurs while attempting to query or open the file.
      */
-    public InputStream getSupportFileStream(String path) throws IOException {
+    public InputStream getSupportFileStream(String path) throws FileNotFoundException {
         if (path == null) {
             String message = Logging.getMessage("nullValue.FilePathIsNull");
             Logging.logger().severe(message);

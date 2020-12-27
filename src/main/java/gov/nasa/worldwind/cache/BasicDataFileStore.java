@@ -47,7 +47,7 @@ public class BasicDataFileStore extends AbstractFileStore {
      */
     protected final MemoryCache db =
         new SoftMemoryCache();
-        //new BasicMemoryCache((long) 3.0e5, (long) 5.0e5);
+    //new BasicMemoryCache((long) 3.0e5, (long) 5.0e5);
 
     /**
      * Absent-resource list to keep track of resources that were requested by requestFile but failed. The default list
@@ -70,7 +70,7 @@ public class BasicDataFileStore extends AbstractFileStore {
      * This list may be overridden by specifying a comma-delimited list of content types in the WorldWind configuration
      * parameter <code>gov.nasa.worldwind.avkey.CacheContentTypes</code>.
      */
-    protected final List<String> cacheContentTypes = new ArrayList<>(DEFAULT_CACHE_CONTENT_TYPES);
+    protected final List<String> cacheContentTypes = new ArrayList<>(BasicDataFileStore.DEFAULT_CACHE_CONTENT_TYPES);
 
     /**
      * Create an instance.
@@ -130,6 +130,236 @@ public class BasicDataFileStore extends AbstractFileStore {
         sb.append("\" create=\"true\"/></writeLocations></dataFileStore>");
 
         this.initialize(WWIO.getInputStreamFromString(sb.toString()));
+    }
+
+    /**
+     * Returns the length of the resource referred to by a jar URL. Can be used to test whether the resource exists.
+     * <p>
+     * Note: This method causes the URL to open a connection and retrieve content length.
+     *
+     * @param jarUrl the jar URL.
+     * @return the jar file's content length, or -1 if a connection to the URL can't be formed or queried.
+     */
+    protected static int getJarLength(URL jarUrl) {
+        try {
+            return jarUrl.openConnection().getContentLength();
+        }
+        catch (IOException e) {
+            String message = Logging.getMessage("generic.JarOpenFailed", jarUrl.toString());
+            Logging.logger().log(Level.WARNING, message, e);
+
+            return -1;
+        }
+    }
+
+    /**
+     * Makes a path to the file in the cache from the file's URL and content type.
+     *
+     * @param url         the URL to obtain the file.
+     * @param contentType the mime type of the file's contents.
+     * @return a path name.
+     */
+    protected static String makeCachePath(URL url, String contentType) {
+        if ("jar".equals(url.getProtocol()))
+            return BasicDataFileStore.makeJarURLCachePath(url, contentType);
+
+        return BasicDataFileStore.makeGenericURLCachePath(url, contentType);
+    }
+
+    /**
+     * Makes a path to the file in the cache from the file's generic URL and content type. If the URL has a non-empty
+     * query string, then this returns a path name formatted as follows:
+     * <p>
+     * <code>host/hashCode/path_query.suffix</code>
+     * <p>
+     * Otherwise, this returns a path name formatted as follows:
+     * <p>
+     * <code>host/hashCode/path.suffix</code>
+     * <p>
+     * Where <code>host</code> is the name of the host machine, <code>hashCode</code> is a four digit hash code computed
+     * from the string "path" or "path_query" (if the URL has a query string), <code>path</code> is the URL's path
+     * part,
+     * <code>query</code> is the URL's query string, and <code>suffix</code> is either the path's suffix or a suffix
+     * created from the specified content type. The <code>hashCode</code> folder is used to limit the number of files
+     * that appear beneath the host folder. This is necessary to avoiding the operating system's maximum file limit
+     * should a large number of files be requested from the same host. If two URLs have the same hash code, then both
+     * URLs are stored under the same <code>hashCode</code> folder in the cache and are differentiated by their
+     * <code>path</code> and <code>query</code> parts.
+     * <p>
+     * This removes any private parameters from the query string to ensure that those parameters are not written to the
+     * file store as part of the cache name. For example, the "CONNECTID" query parameter typically encodes a user's
+     * unique connection id, and must not be shared. Writing this parameter to the cache would expose that parameter to
+     * anyone using the same machine. If the query string is empty after removing any private parameters, it is ignored
+     * and only the path part of the URL is used as the filename.
+     *
+     * @param url         the URL to obtain the file.
+     * @param contentType the mime type of the file's contents.
+     * @return a path name.
+     */
+    protected static String makeGenericURLCachePath(URL url, String contentType) {
+        String host = WWIO.replaceIllegalFileNameCharacters(url.getHost());
+        String path = WWIO.replaceIllegalFileNameCharacters(url.getPath());
+        String filename = path;
+
+        if (!WWUtil.isEmpty(url.getQuery())) {
+            // Remove private query parameters from the query string, and replace any illegal filename characters with
+            // an underscore. This avoids exposing private parameters to other users by writing them to the cache as
+            // part of the cache name.
+            String query = BasicDataFileStore.removePrivateQueryParameters(url.getQuery());
+            query = WWIO.replaceIllegalFileNameCharacters(query);
+
+            // If the query string is not empty after removing private parameters and illegal filename characters, we
+            // use it as part of the cache name by appending it to the path part.
+            if (!WWUtil.isEmpty(query)) {
+                filename = path + '_' + query;
+            }
+        }
+
+        // Create a hash folder name using the first four numbers of the filename's hash code (ignore any negative
+        // sign). The filename is either the path name or the path name appended with the query string. In either case,
+        // the same hash folder name can be re-created from the same address. If two URLs have the same hash string,
+        // both URLs are stored under the same hash folder and are differentiated by their filenames.
+        String hashString = String.valueOf(Math.abs(filename.hashCode()));
+        if (hashString.length() > 4)
+            hashString = hashString.substring(0, 4);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(host);
+        sb.append(File.separator);
+        sb.append(hashString);
+        sb.append(File.separator);
+        sb.append(filename);
+
+        String suffix = BasicDataFileStore.makeSuffix(filename, contentType);
+        if (suffix != null)
+            sb.append(suffix);
+
+        return sb.toString();
+    }
+
+    /**
+     * Makes a path to the file in the cache from the file's JAR URL and content type. This returns a path name
+     * formatted as follows:
+     * <p>
+     * <code>host/path.suffix</code>
+     * <p>
+     * Where <code>host</code> is the path to the JAR file, <code>path</code> is the file's path within the JAR archive,
+     * and <code>suffix</code> is either the path's suffix or a suffix created from the specified content type.
+     *
+     * @param jarURL      the URL to obtain the file. This URL is assumed to have the "jar" protocol.
+     * @param contentType the mime type of the file's contents.
+     * @return a path name.
+     */
+    protected static String makeJarURLCachePath(URL jarURL, String contentType) {
+        String innerAddress = jarURL.getPath();
+        URL innerUrl = WWIO.makeURL(innerAddress);
+        String host = WWIO.replaceIllegalFileNameCharacters(innerUrl.getHost());
+        String path = WWIO.replaceIllegalFileNameCharacters(innerUrl.getPath().replace("!/", "#"));
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(host);
+        sb.append(File.separator);
+        sb.append(path);
+
+        String suffix = BasicDataFileStore.makeSuffix(path, contentType);
+        if (suffix != null)
+            sb.append(suffix);
+
+        return sb.toString();
+    }
+
+    /**
+     * Creates a temp file to hold the contents associated with a specified URL. Since the file store intentionally does
+     * not persist a mapping of retrieved URLs to temp files, this deletes the returned temp file when the current Java
+     * Virtual Machine terminates.
+     *
+     * @param url         the URL to be associated with the temp file. Used only to determine an appropriate suffix.
+     * @param contentType the mime type of the file contents. Used to determine the file's suffix.
+     * @return a temporary file, or null if a file could not be created.
+     */
+    protected static File makeTempFile(URL url, String contentType) {
+        // Use a suffix based on the content type if the content type and the URL's suffix do not match. Otherwise
+        // attempt to use the URL's suffix. If neither of these attempts produce a non-null suffix, File.createTmpFile
+        // uses the default suffix ".tmp".
+        String suffix = BasicDataFileStore.makeSuffix(url.toString(),
+            contentType); // null if the URL suffix and content type match.
+        if (suffix == null)
+            suffix = WWIO.getSuffix(url.toString());
+
+        // Ensure that the suffix starts with the "." character.
+        if (!(!suffix.isEmpty() && suffix.charAt(0) == '.'))
+            suffix = '.' + suffix;
+
+        try {
+            File file = File.createTempFile("wwfs", suffix); // Uses the default suffix ".tmp" if this suffix is null.
+            file.deleteOnExit();
+            return file;
+        }
+        catch (IOException e) {
+            String message = Logging.getMessage("generic.CannotCreateTempFile");
+            Logging.logger().fine(message);
+            return null;
+        }
+    }
+
+    /**
+     * Determines an appropriate suffix for a cached file. If the specified path already has a suffix that matches the
+     * specified content type, then this method returns null. Otherwise the method determines and returns a suffix for
+     * the specified content type.
+     *
+     * @param path        the path whose suffix is to be validated if it exists.
+     * @param contentType the mime type of the data associated with the path.
+     * @return a suffix appropriate to the content type, or null if the specified path already has an appropriate
+     * suffix.
+     */
+    protected static String makeSuffix(String path, String contentType) {
+        // If the cache path does not end in a suffix that matches the specified content type, we append the appropriate
+        // suffix. If the content type is not known, we do not append any suffix. If the caller does not know the
+        // content type used to create a cache file path, it must attempt to use known mime types until it finds a
+        // match.
+        String suffix = contentType != null ? WWIO.makeSuffixForMimeType(contentType) : null;
+        String existingSuffix = WWIO.getSuffix(path);
+
+        // The suffix returned by makeSuffixForMimeType is always ".jpg" for a JPEG mime type. We must convert any
+        // existing using "jpeg" to "jpg" to correctly match against the suffix created from the content type.
+        if (existingSuffix != null && existingSuffix.equalsIgnoreCase("jpeg"))
+            existingSuffix = "jpg";
+
+        if (suffix != null && (existingSuffix == null || !existingSuffix.equalsIgnoreCase(suffix.substring(1))))
+            return suffix;
+        else
+            return null;
+    }
+
+    /**
+     * Removes any private parameters from the query string to ensure that those parameters are not written to the file
+     * store as part of the cache name. For example, the "CONNECTID" query parameter typically encodes a user's unique
+     * connection id, and must not be shared. Writing this parameter to the cache would expose that parameter to anyone
+     * using the same machine.
+     * <p>
+     * This removes the key, the value, and any trailing parameter delimiter of all private parameters in the specified
+     * query string. Recognized private query parameters are as follows:
+     * <ul> <li>CONNECTID</li> </ul>
+     *
+     * @param queryString the query string to examine.
+     * @return a new string with the private query parameters removed. This string is empty if the query string is
+     * empty, or if the query string contains only private parameters.
+     */
+    protected static String removePrivateQueryParameters(String queryString) {
+        if (WWUtil.isEmpty(queryString))
+            return queryString;
+
+        // Remove the "connectid" query parameter, its corresponding value, and any trailing parameter delimiter. We
+        // specify the regular expression directive "(?i)" to enable case-insensitive matching. The regular expression
+        // parameters "\Q" and "\E" define the begin and end of a literal quote around the query parameter name.
+        String s = queryString.replaceAll("(?i)\\Qconnectid\\E=[^&]*&?", "");
+
+        // If we removed the query string's last parameter, we need to clean up the trailing delimiter from the previous
+        // query parameter.
+        if (!s.isEmpty() && s.charAt(s.length() - 1) == '&')
+            s = s.substring(0, s.length() - 1);
+
+        return s;
     }
 
     @Override
@@ -241,7 +471,7 @@ public class BasicDataFileStore extends AbstractFileStore {
             if (entry.state == DBEntry.LOCAL && !expired)
                 return entry.localUrl;
 
-            if (entry.state == DBEntry.PENDING && (now - entry.lastUpdateTime <= TIMEOUT))
+            if (entry.state == DBEntry.PENDING && (now - entry.lastUpdateTime <= BasicDataFileStore.TIMEOUT))
                 return null;
         }
 
@@ -361,26 +591,6 @@ public class BasicDataFileStore extends AbstractFileStore {
     }
 
     /**
-     * Returns the length of the resource referred to by a jar URL. Can be used to test whether the resource exists.
-     * <p>
-     * Note: This method causes the URL to open a connection and retrieve content length.
-     *
-     * @param jarUrl the jar URL.
-     * @return the jar file's content length, or -1 if a connection to the URL can't be formed or queried.
-     */
-    protected static int getJarLength(URL jarUrl) {
-        try {
-            return jarUrl.openConnection().getContentLength();
-        }
-        catch (IOException e) {
-            String message = Logging.getMessage("generic.JarOpenFailed", jarUrl.toString());
-            Logging.logger().log(Level.WARNING, message, e);
-
-            return -1;
-        }
-    }
-
-    /**
      * Retrieves a specified file and either adds it to the cache or saves it in a temporary file, depending on the
      * value of <code>saveInLocalCache</code>.
      *
@@ -424,215 +634,6 @@ public class BasicDataFileStore extends AbstractFileStore {
     }
 
     /**
-     * Makes a path to the file in the cache from the file's URL and content type.
-     *
-     * @param url         the URL to obtain the file.
-     * @param contentType the mime type of the file's contents.
-     * @return a path name.
-     */
-    protected static String makeCachePath(URL url, String contentType) {
-        if ("jar".equals(url.getProtocol()))
-            return BasicDataFileStore.makeJarURLCachePath(url, contentType);
-
-        return BasicDataFileStore.makeGenericURLCachePath(url, contentType);
-    }
-
-    /**
-     * Makes a path to the file in the cache from the file's generic URL and content type. If the URL has a non-empty
-     * query string, then this returns a path name formatted as follows:
-     * <p>
-     * <code>host/hashCode/path_query.suffix</code>
-     * <p>
-     * Otherwise, this returns a path name formatted as follows:
-     * <p>
-     * <code>host/hashCode/path.suffix</code>
-     * <p>
-     * Where <code>host</code> is the name of the host machine, <code>hashCode</code> is a four digit hash code computed
-     * from the string "path" or "path_query" (if the URL has a query string), <code>path</code> is the URL's path
-     * part,
-     * <code>query</code> is the URL's query string, and <code>suffix</code> is either the path's suffix or a suffix
-     * created from the specified content type. The <code>hashCode</code> folder is used to limit the number of files
-     * that appear beneath the host folder. This is necessary to avoiding the operating system's maximum file limit
-     * should a large number of files be requested from the same host. If two URLs have the same hash code, then both
-     * URLs are stored under the same <code>hashCode</code> folder in the cache and are differentiated by their
-     * <code>path</code> and <code>query</code> parts.
-     * <p>
-     * This removes any private parameters from the query string to ensure that those parameters are not written to the
-     * file store as part of the cache name. For example, the "CONNECTID" query parameter typically encodes a user's
-     * unique connection id, and must not be shared. Writing this parameter to the cache would expose that parameter to
-     * anyone using the same machine. If the query string is empty after removing any private parameters, it is ignored
-     * and only the path part of the URL is used as the filename.
-     *
-     * @param url         the URL to obtain the file.
-     * @param contentType the mime type of the file's contents.
-     * @return a path name.
-     */
-    protected static String makeGenericURLCachePath(URL url, String contentType) {
-        String host = WWIO.replaceIllegalFileNameCharacters(url.getHost());
-        String path = WWIO.replaceIllegalFileNameCharacters(url.getPath());
-        String filename = path;
-
-        if (!WWUtil.isEmpty(url.getQuery())) {
-            // Remove private query parameters from the query string, and replace any illegal filename characters with
-            // an underscore. This avoids exposing private parameters to other users by writing them to the cache as
-            // part of the cache name.
-            String query = BasicDataFileStore.removePrivateQueryParameters(url.getQuery());
-            query = WWIO.replaceIllegalFileNameCharacters(query);
-
-            // If the query string is not empty after removing private parameters and illegal filename characters, we
-            // use it as part of the cache name by appending it to the path part.
-            if (!WWUtil.isEmpty(query)) {
-                filename = path + "_" + query;
-            }
-        }
-
-        // Create a hash folder name using the first four numbers of the filename's hash code (ignore any negative
-        // sign). The filename is either the path name or the path name appended with the query string. In either case,
-        // the same hash folder name can be re-created from the same address. If two URLs have the same hash string,
-        // both URLs are stored under the same hash folder and are differentiated by their filenames.
-        String hashString = String.valueOf(Math.abs(filename.hashCode()));
-        if (hashString.length() > 4)
-            hashString = hashString.substring(0, 4);
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(host);
-        sb.append(File.separator);
-        sb.append(hashString);
-        sb.append(File.separator);
-        sb.append(filename);
-
-        String suffix = BasicDataFileStore.makeSuffix(filename, contentType);
-        if (suffix != null)
-            sb.append(suffix);
-
-        return sb.toString();
-    }
-
-    /**
-     * Makes a path to the file in the cache from the file's JAR URL and content type. This returns a path name
-     * formatted as follows:
-     * <p>
-     * <code>host/path.suffix</code>
-     * <p>
-     * Where <code>host</code> is the path to the JAR file, <code>path</code> is the file's path within the JAR archive,
-     * and <code>suffix</code> is either the path's suffix or a suffix created from the specified content type.
-     *
-     * @param jarURL      the URL to obtain the file. This URL is assumed to have the "jar" protocol.
-     * @param contentType the mime type of the file's contents.
-     * @return a path name.
-     */
-    protected static String makeJarURLCachePath(URL jarURL, String contentType) {
-        String innerAddress = jarURL.getPath();
-        URL innerUrl = WWIO.makeURL(innerAddress);
-        String host = WWIO.replaceIllegalFileNameCharacters(innerUrl.getHost());
-        String path = WWIO.replaceIllegalFileNameCharacters(innerUrl.getPath().replace("!/", "#"));
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(host);
-        sb.append(File.separator);
-        sb.append(path);
-
-        String suffix = BasicDataFileStore.makeSuffix(path, contentType);
-        if (suffix != null)
-            sb.append(suffix);
-
-        return sb.toString();
-    }
-
-    /**
-     * Creates a temp file to hold the contents associated with a specified URL. Since the file store intentionally does
-     * not persist a mapping of retrieved URLs to temp files, this deletes the returned temp file when the current Java
-     * Virtual Machine terminates.
-     *
-     * @param url         the URL to be associated with the temp file. Used only to determine an appropriate suffix.
-     * @param contentType the mime type of the file contents. Used to determine the file's suffix.
-     * @return a temporary file, or null if a file could not be created.
-     */
-    protected static File makeTempFile(URL url, String contentType) {
-        // Use a suffix based on the content type if the content type and the URL's suffix do not match. Otherwise
-        // attempt to use the URL's suffix. If neither of these attempts produce a non-null suffix, File.createTmpFile
-        // uses the default suffix ".tmp".
-        String suffix = BasicDataFileStore.makeSuffix(url.toString(), contentType); // null if the URL suffix and content type match.
-        if (suffix == null)
-            suffix = WWIO.getSuffix(url.toString());
-
-        // Ensure that the suffix starts with the "." character.
-        if (!(!suffix.isEmpty() && suffix.charAt(0) == '.'))
-            suffix = "." + suffix;
-
-        try {
-            File file = File.createTempFile("wwfs", suffix); // Uses the default suffix ".tmp" if this suffix is null.
-            file.deleteOnExit();
-            return file;
-        }
-        catch (IOException e) {
-            String message = Logging.getMessage("generic.CannotCreateTempFile");
-            Logging.logger().fine(message);
-            return null;
-        }
-    }
-
-    /**
-     * Determines an appropriate suffix for a cached file. If the specified path already has a suffix that matches the
-     * specified content type, then this method returns null. Otherwise the method determines and returns a suffix for
-     * the specified content type.
-     *
-     * @param path        the path whose suffix is to be validated if it exists.
-     * @param contentType the mime type of the data associated with the path.
-     * @return a suffix appropriate to the content type, or null if the specified path already has an appropriate
-     * suffix.
-     */
-    protected static String makeSuffix(String path, String contentType) {
-        // If the cache path does not end in a suffix that matches the specified content type, we append the appropriate
-        // suffix. If the content type is not known, we do not append any suffix. If the caller does not know the
-        // content type used to create a cache file path, it must attempt to use known mime types until it finds a
-        // match.
-        String suffix = contentType != null ? WWIO.makeSuffixForMimeType(contentType) : null;
-        String existingSuffix = WWIO.getSuffix(path);
-
-        // The suffix returned by makeSuffixForMimeType is always ".jpg" for a JPEG mime type. We must convert any
-        // existing using "jpeg" to "jpg" to correctly match against the suffix created from the content type.
-        if (existingSuffix != null && existingSuffix.equalsIgnoreCase("jpeg"))
-            existingSuffix = "jpg";
-
-        if (suffix != null && (existingSuffix == null || !existingSuffix.equalsIgnoreCase(suffix.substring(1))))
-            return suffix;
-        else
-            return null;
-    }
-
-    /**
-     * Removes any private parameters from the query string to ensure that those parameters are not written to the file
-     * store as part of the cache name. For example, the "CONNECTID" query parameter typically encodes a user's unique
-     * connection id, and must not be shared. Writing this parameter to the cache would expose that parameter to anyone
-     * using the same machine.
-     * <p>
-     * This removes the key, the value, and any trailing parameter delimiter of all private parameters in the specified
-     * query string. Recognized private query parameters are as follows:
-     * <ul> <li>CONNECTID</li> </ul>
-     *
-     * @param queryString the query string to examine.
-     * @return a new string with the private query parameters removed. This string is empty if the query string is
-     * empty, or if the query string contains only private parameters.
-     */
-    protected static String removePrivateQueryParameters(String queryString) {
-        if (WWUtil.isEmpty(queryString))
-            return queryString;
-
-        // Remove the "connectid" query parameter, its corresponding value, and any trailing parameter delimiter. We
-        // specify the regular expression directive "(?i)" to enable case-insensitive matching. The regular expression
-        // parameters "\Q" and "\E" define the begin and end of a literal quote around the query parameter name.
-        String s = queryString.replaceAll("(?i)\\Qconnectid\\E=[^&]*&?", "");
-
-        // If we removed the query string's last parameter, we need to clean up the trailing delimiter from the previous
-        // query parameter.
-        if (!s.isEmpty() && s.charAt(s.length() - 1) == '&')
-            s = s.substring(0, s.length() - 1);
-
-        return s;
-    }
-
-    /**
      * Holds information for entries in the cache database.
      */
     protected static class DBEntry implements Cacheable {
@@ -649,7 +650,7 @@ public class BasicDataFileStore extends AbstractFileStore {
 
         public DBEntry(String name) {
             this.name = name;
-            this.state = NONE;
+            this.state = DBEntry.NONE;
             this.lastUpdateTime = System.currentTimeMillis();
         }
 
@@ -662,8 +663,8 @@ public class BasicDataFileStore extends AbstractFileStore {
         protected final String address;
         protected final URL retrievalUrl;
         protected final boolean saveInLocalCache;
-        protected URL localFileUrl = null;
-        protected File outputFile = null;
+        protected URL localFileUrl;
+        protected File outputFile;
 
         public PostProcessor(String address, URL url, boolean saveInLocalCache) {
             this.address = address;
@@ -691,7 +692,7 @@ public class BasicDataFileStore extends AbstractFileStore {
         protected File makeOutputFile() {
             File file;
 
-            String path = makeCachePath(this.retrievalUrl, this.getRetriever().getContentType());
+            String path = BasicDataFileStore.makeCachePath(this.retrievalUrl, this.getRetriever().getContentType());
             if (this.saveInLocalCache && path.length() <= WWIO.MAX_FILE_PATH_LENGTH)
                 file = WorldWind.store().newFile(path);
             else

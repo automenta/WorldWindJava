@@ -33,7 +33,6 @@ public class ViewInputAttributes {
     public static final String DEVICE_MOUSE_WHEEL_MODS = "gov.nasa.worldwind.DeviceMouseWheelMods";
     // Action keys
     public static final String VIEW_MOVE_TO = "gov.nasa.worldwind.ViewMoveTo";
-    private static final String VIEW_MOVE_TO_SLOW = "gov.nasa.worldwind.MoveToSlow";
     public static final String VIEW_HORIZONTAL_TRANSLATE = "gov.nasa.worldwind.ViewHorizTrans";
     public static final String VIEW_HORIZONTAL_TRANSLATE_SLOW = "gov.nasa.worldwind.ViewHorizTransSlow";
     public static final String VIEW_VERTICAL_TRANSLATE = "gov.nasa.worldwind.ViewVertTrans";
@@ -47,13 +46,16 @@ public class ViewInputAttributes {
     public static final String VIEW_VERTICAL_TRANS_KEYS_META = "gov.nasa.worldwind.ViewVertTransKeysMeta";
     public static final String VIEW_VERTICAL_TRANS_KEYS_CTRL = "gov.nasa.worldwind.ViewVertTransKeysCTRL";
     public static final String VIEW_VERTICAL_TRANS_KEYS = "gov.nasa.worldwind.ViewVertTransKeys";
-    private static final String VIEW_VERTICAL_TRANS_KEYS_SLOW_META = "gov.nasa.worldwind.ViewVertTransKeysMetaSlow";
     public static final String VIEW_VERTICAL_TRANS_KEYS_SLOW_CTRL = "gov.nasa.worldwind.ViewVertTransKeysCtrlSlow";
     public static final String VIEW_VERTICAL_TRANS_KEYS_SLOW = "gov.nasa.worldwind.ViewVertTransKeysSlow";
     public static final String VIEW_ROTATE_KEYS = "gov.nasa.worldwind.ViewRotateKeys";
     public static final String VIEW_ROTATE_KEYS_SHIFT = "gov.nasa.worldwind.ViewRotateKeysShift";
     public static final String VIEW_ROTATE_KEYS_SHIFT_SLOW = "gov.nasa.worldwind.ViewRotateKeysShiftSlow";
     public static final String VIEW_ROLL_KEYS = "gov.nasa.worldwind.ViewRollKeys";
+    public static final double DEFAULT_KEY_ROLL_MIN_VALUE = 2.0; // Speed in degrees per frame
+    public static final double DEFAULT_KEY_ROLL_MAX_VALUE = 2.2; // Speed in degrees per frame
+    private static final String VIEW_MOVE_TO_SLOW = "gov.nasa.worldwind.MoveToSlow";
+    private static final String VIEW_VERTICAL_TRANS_KEYS_SLOW_META = "gov.nasa.worldwind.ViewVertTransKeysMetaSlow";
     private static final boolean DEFAULT_MOVE_TO_SMOOTHING_ENABLED = true;
     private static final boolean DEFAULT_HORIZONTAL_TRANSLATE_SMOOTHING_ENABLED = true;
     private static final boolean DEFAULT_VERTICAL_TRANSLATE_SMOOTHING_ENABLED = true;
@@ -71,7 +73,8 @@ public class ViewInputAttributes {
     // Speed in degrees per mouse movement
     private static final double DEFAULT_MOUSE_HORIZONTAL_TRANSLATE_MAX_VALUE = 0.2;
     // Speed in degrees per mouse movement
-    private static final double DEFAULT_MOUSE_VERTICAL_TRANSLATE_VALUE = 0.003; // Speed in log-meters per mouse movement
+    private static final double DEFAULT_MOUSE_VERTICAL_TRANSLATE_VALUE = 0.003;
+        // Speed in log-meters per mouse movement
     // MouseWheel/Action calibration values.
     private static final double DEFAULT_MOUSE_WHEEL_VERTICAL_TRANSLATE_VALUE = 0.1;
     // Speed in log-meters per wheel movement
@@ -88,8 +91,6 @@ public class ViewInputAttributes {
     // Keyboard/Action calibration values.
     private static final double DEFAULT_KEY_ROTATE_MIN_VALUE = 2.0; // Speed in degrees per frame
     private static final double DEFAULT_KEY_ROTATE_MAX_VALUE = 2.2; // Speed in degrees per frame
-    public static final double DEFAULT_KEY_ROLL_MIN_VALUE = 2.0; // Speed in degrees per frame
-    public static final double DEFAULT_KEY_ROLL_MAX_VALUE = 2.2; // Speed in degrees per frame
     private static final double DEFAULT_MOUSE_ROTATE_MIN_VALUE = 0.14; // Speed in degrees per mouse movement
     private static final double DEFAULT_MOUSE_ROTATE_MAX_VALUE = 0.18; // Speed in degrees per mouse movement
     // Roll Keyboard events. Use CTRL-Left and CTRL-Right to change roll.
@@ -101,43 +102,43 @@ public class ViewInputAttributes {
             ActionAttributes.KeyAction.KA_DIR_Y, -1);
     private static final ActionAttributes.KeyAction[] rollKeyEvents =
         {
-            DEFAULT_ROTATE_ROLLUP_KEY_ACT,
-            DEFAULT_ROTATE_ROLLDOWN_KEY_ACT
+            ViewInputAttributes.DEFAULT_ROTATE_ROLLUP_KEY_ACT,
+            ViewInputAttributes.DEFAULT_ROTATE_ROLLDOWN_KEY_ACT
         };
     // Reset Heading
     private static final ActionAttributes.KeyAction DEFAULT_RESET_HEADING_KEY_ACT =
         new ActionAttributes.KeyAction(KeyEvent.VK_N, ActionAttributes.KeyAction.KA_DIR_X, 1);
     private static final ActionAttributes.KeyAction[] resetHeadingEvents =
         {
-            DEFAULT_RESET_HEADING_KEY_ACT
+            ViewInputAttributes.DEFAULT_RESET_HEADING_KEY_ACT
         };
     // Reset Heading, Pitch, and Roll
     private static final ActionAttributes.KeyAction DEFAULT_RESET_HEADING_PITCH_ROLL_KEY_ACT =
         new ActionAttributes.KeyAction(KeyEvent.VK_R, ActionAttributes.KeyAction.KA_DIR_X, 1);
     private static final ActionAttributes.KeyAction[] resetHeadingPitchRollEvents =
         {
-            DEFAULT_RESET_HEADING_PITCH_ROLL_KEY_ACT
+            ViewInputAttributes.DEFAULT_RESET_HEADING_PITCH_ROLL_KEY_ACT
         };
     // Stop view
     private static final ActionAttributes.KeyAction DEFAULT_STOP_VIEW_KEY_ACT =
         new ActionAttributes.KeyAction(KeyEvent.VK_SPACE, ActionAttributes.KeyAction.KA_DIR_X, 1);
     private static final ActionAttributes.KeyAction[] stopViewEvents =
         {
-            DEFAULT_STOP_VIEW_KEY_ACT
+            ViewInputAttributes.DEFAULT_STOP_VIEW_KEY_ACT
         };
     // MoveTo Events
     private static final ActionAttributes.MouseAction DEFAULT_MOVETO_MOUSE_MODS =
         new ActionAttributes.MouseAction(MouseEvent.BUTTON1);
     private static final ActionAttributes.MouseAction[] moveToMouseEvents =
         {
-            DEFAULT_MOVETO_MOUSE_MODS
+            ViewInputAttributes.DEFAULT_MOVETO_MOUSE_MODS
         };
     // Horizontal Translation mouse events
     private static final ActionAttributes.MouseAction DEFAULT_HORIZONTAL_TRANSLATE_MOUSE_MODS =
         new ActionAttributes.MouseAction(MouseEvent.BUTTON1_DOWN_MASK);
     private static final ActionAttributes.MouseAction[] horizontalTransMouseEvents =
         {
-            DEFAULT_HORIZONTAL_TRANSLATE_MOUSE_MODS
+            ViewInputAttributes.DEFAULT_HORIZONTAL_TRANSLATE_MOUSE_MODS
         };
     // Horizontal Translation keyboard events
     private static final ActionAttributes.KeyAction DEFAULT_HORIZONTAL_TRANSLEFT_KEY_ACT =
@@ -150,23 +151,23 @@ public class ViewInputAttributes {
         new ActionAttributes.KeyAction(KeyEvent.VK_DOWN, ActionAttributes.KeyAction.KA_DIR_Y, -1);
     private static final ActionAttributes.KeyAction[] horizontalTransKeyEvents =
         {
-            DEFAULT_HORIZONTAL_TRANSLEFT_KEY_ACT,
-            DEFAULT_HORIZONTAL_TRANSRIGHT_KEY_ACT,
-            DEFAULT_HORIZONTAL_TRANSUP_KEY_ACT,
-            DEFAULT_HORIZONTAL_TRANSDOWN_KEY_ACT
+            ViewInputAttributes.DEFAULT_HORIZONTAL_TRANSLEFT_KEY_ACT,
+            ViewInputAttributes.DEFAULT_HORIZONTAL_TRANSRIGHT_KEY_ACT,
+            ViewInputAttributes.DEFAULT_HORIZONTAL_TRANSUP_KEY_ACT,
+            ViewInputAttributes.DEFAULT_HORIZONTAL_TRANSDOWN_KEY_ACT
         };
     // Vertical Translation Mouse Events
     private static final ActionAttributes.MouseAction DEFAULT_VERTICAL_TRANSLATE_MOUSE_MODS =
         new ActionAttributes.MouseAction(MouseEvent.BUTTON3_DOWN_MASK);
     private static final ActionAttributes.MouseAction[] verticalTransMouseEvents =
         {
-            DEFAULT_VERTICAL_TRANSLATE_MOUSE_MODS
+            ViewInputAttributes.DEFAULT_VERTICAL_TRANSLATE_MOUSE_MODS
         };
     private static final ActionAttributes.MouseAction DEFAULT_VERTICAL_TRANSLATE_MOUSE_MODS_CTRL =
         new ActionAttributes.MouseAction(MouseEvent.BUTTON1_DOWN_MASK);
     private static final ActionAttributes.MouseAction[] verticalTransMouseEventsCtrl =
         {
-            DEFAULT_VERTICAL_TRANSLATE_MOUSE_MODS_CTRL
+            ViewInputAttributes.DEFAULT_VERTICAL_TRANSLATE_MOUSE_MODS_CTRL
         };
     // Vertical Translation Key Events
     private static final ActionAttributes.KeyAction DEFAULT_VERTICAL_TRANSUP_KEY_ACT =
@@ -177,8 +178,8 @@ public class ViewInputAttributes {
             ActionAttributes.KeyAction.KA_DIR_Z, 1);
     private static final ActionAttributes.KeyAction[] verticalTransKeyEventsCtrl =
         {
-            DEFAULT_VERTICAL_TRANSUP_KEY_ACT,
-            DEFAULT_VERTICAL_TRANSDOWN_KEY_ACT
+            ViewInputAttributes.DEFAULT_VERTICAL_TRANSUP_KEY_ACT,
+            ViewInputAttributes.DEFAULT_VERTICAL_TRANSDOWN_KEY_ACT
         };
     private static final ActionAttributes.KeyAction DEFAULT_VERTICAL_TRANSUP_ADDKEY_ACT =
         new ActionAttributes.KeyAction(KeyEvent.VK_ADD,
@@ -194,29 +195,29 @@ public class ViewInputAttributes {
             ActionAttributes.KeyAction.KA_DIR_Z, 1);
     private static final ActionAttributes.KeyAction[] verticalTransKeyEvents =
         {
-            DEFAULT_VERTICAL_TRANSUP_ADDKEY_ACT,
-            DEFAULT_VERTICAL_TRANSDOWN_EQUALSKEY_ACT,
-            DEFAULT_VERTICAL_TRANSUP_SUBTKEY_ACT,
-            DEFAULT_VERTICAL_TRANSDOWN_MINUSKEY_ACT
+            ViewInputAttributes.DEFAULT_VERTICAL_TRANSUP_ADDKEY_ACT,
+            ViewInputAttributes.DEFAULT_VERTICAL_TRANSDOWN_EQUALSKEY_ACT,
+            ViewInputAttributes.DEFAULT_VERTICAL_TRANSUP_SUBTKEY_ACT,
+            ViewInputAttributes.DEFAULT_VERTICAL_TRANSDOWN_MINUSKEY_ACT
         };
     private static final ActionAttributes.MouseAction DEFAULT_VERTICAL_TRANSLATE_MOUSE_WHEEL_MODS =
         new ActionAttributes.MouseAction(MouseEvent.MOUSE_WHEEL);
     private static final ActionAttributes.MouseAction[] verticalTransMouseWheelEvents =
         {
-            DEFAULT_VERTICAL_TRANSLATE_MOUSE_WHEEL_MODS
+            ViewInputAttributes.DEFAULT_VERTICAL_TRANSLATE_MOUSE_WHEEL_MODS
         };
     private static final ActionAttributes.MouseAction DEFAULT_ROTATE_MOUSE_MODS =
         new ActionAttributes.MouseAction(MouseEvent.BUTTON2_DOWN_MASK);
     private static final ActionAttributes.MouseAction[] rotateMouseEvents =
         {
-            DEFAULT_ROTATE_MOUSE_MODS
+            ViewInputAttributes.DEFAULT_ROTATE_MOUSE_MODS
         };
     private static final ActionAttributes.MouseAction DEFAULT_ROTATE_MOUSE_MODS_SHIFT =
         new ActionAttributes.MouseAction(MouseEvent.BUTTON1_DOWN_MASK);
     // Speed in log-meters per wheel movement
     private static final ActionAttributes.MouseAction[] rotateMouseEventsShift =
         {
-            DEFAULT_ROTATE_MOUSE_MODS_SHIFT
+            ViewInputAttributes.DEFAULT_ROTATE_MOUSE_MODS_SHIFT
         };
     // Rotation Keyboard events
     private static final ActionAttributes.KeyAction DEFAULT_ROTATE_HEADINGLEFT_KEY_ACT =
@@ -233,10 +234,10 @@ public class ViewInputAttributes {
             ActionAttributes.KeyAction.KA_DIR_Y, 1);
     private static final ActionAttributes.KeyAction[] rotationKeyEvents =
         {
-            DEFAULT_ROTATE_HEADINGLEFT_KEY_ACT,
-            DEFAULT_ROTATE_HEADINGRIGHT_KEY_ACT,
-            DEFAULT_ROTATE_PITCHUP_KEY_ACT,
-            DEFAULT_ROTATE_PITCHDOWN_KEY_ACT
+            ViewInputAttributes.DEFAULT_ROTATE_HEADINGLEFT_KEY_ACT,
+            ViewInputAttributes.DEFAULT_ROTATE_HEADINGRIGHT_KEY_ACT,
+            ViewInputAttributes.DEFAULT_ROTATE_PITCHUP_KEY_ACT,
+            ViewInputAttributes.DEFAULT_ROTATE_PITCHDOWN_KEY_ACT
         };
     private static final ActionAttributes.KeyAction DEFAULT_ROTATE_PITCHUP_KEY_PAGE_ACT =
         new ActionAttributes.KeyAction(KeyEvent.VK_PAGE_UP,
@@ -246,8 +247,8 @@ public class ViewInputAttributes {
             ActionAttributes.KeyAction.KA_DIR_Y, 1);
     private static final ActionAttributes.KeyAction[] rotationKeyEventsPage =
         {
-            DEFAULT_ROTATE_PITCHUP_KEY_PAGE_ACT,
-            DEFAULT_ROTATE_PITCHDOWN_KEY_PAGE_ACT
+            ViewInputAttributes.DEFAULT_ROTATE_PITCHUP_KEY_PAGE_ACT,
+            ViewInputAttributes.DEFAULT_ROTATE_PITCHDOWN_KEY_PAGE_ACT
         };
     // Device attributes.
     private final Map<Object, DeviceAttributes> deviceMap = new HashMap<>();
@@ -262,6 +263,17 @@ public class ViewInputAttributes {
 
         this.setDefaultDeviceAttributes();
         this.setDeviceModifierActionMaps();
+    }
+
+    private static ActionAttributes makeSlowActionAttributes(ActionAttributes attributes, double slowCoefficient) {
+        ActionAttributes slowAttributes = new ActionAttributes(attributes);
+        double[] values = attributes.getValues();
+        slowAttributes.setValues(values[0] * slowCoefficient, values[1] * slowCoefficient);
+        slowAttributes.setEnableSmoothing(attributes.isEnableSmoothing());
+        slowAttributes.setSmoothingValue(attributes.getSmoothingValue());
+        slowAttributes.setKeyCodeModifier(attributes.getKeyCodeModifier());
+        slowAttributes.setKeyActions(attributes.getKeyActions());
+        return slowAttributes;
     }
 
     public ActionAttributesMap getActionMap(Object deviceKey) {
@@ -304,8 +316,7 @@ public class ViewInputAttributes {
             String message = Logging.getMessage("nullValue.AttributesIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
-        }
-        else {
+        } else {
             actionAttrs.setValues(minValue, maxValue);
         }
     }
@@ -316,8 +327,7 @@ public class ViewInputAttributes {
             String message = Logging.getMessage("nullValue.AttributesIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
-        }
-        else {
+        } else {
             actionAttrs.setActionTrigger(trigger);
         }
     }
@@ -441,16 +451,15 @@ public class ViewInputAttributes {
     public void setMouseActionAttributes(String actionName, int modifier, ActionAttributes.ActionTrigger trigger,
         ActionAttributes.MouseAction[] mouseActions,
         double minValue, double maxValue, boolean smoothingEnabled, double smoothingValue) {
-        ActionAttributes actionAttrs = this.getActionAttributes(DEVICE_MOUSE, actionName);
+        ActionAttributes actionAttrs = this.getActionAttributes(ViewInputAttributes.DEVICE_MOUSE, actionName);
         if (actionAttrs != null) {
             actionAttrs.setValues(minValue, maxValue);
             actionAttrs.setMouseActions(mouseActions);
             actionAttrs.setActionTrigger(trigger);
             actionAttrs.setEnableSmoothing(smoothingEnabled);
             actionAttrs.setSmoothingValue(smoothingValue);
-        }
-        else {
-            this.addAction(DEVICE_MOUSE, modifier, actionName,
+        } else {
+            this.addAction(ViewInputAttributes.DEVICE_MOUSE, modifier, actionName,
                 new ActionAttributes(mouseActions, trigger,
                     minValue, maxValue,
                     smoothingEnabled, smoothingValue));
@@ -483,158 +492,162 @@ public class ViewInputAttributes {
 
         if (actions.getMouseActions() != null) {
             actions.setMouseActionListener(listener);
-        }
-        else if (actions.getKeyActions() != null) {
+        } else if (actions.getKeyActions() != null) {
             actions.setActionListener(listener);
         }
     }
 
     private void setDefaultDeviceAttributes() {
-        this.setDeviceAttributes(DEVICE_KEYBOARD, new DeviceAttributes(DEFAULT_KEY_SENSITIVITY));
-        this.setDeviceAttributes(DEVICE_MOUSE, new DeviceAttributes(DEFAULT_MOUSE_SENSITIVITY));
-        this.setDeviceAttributes(DEVICE_MOUSE_WHEEL, new DeviceAttributes(DEFAULT_MOUSE_WHEEL_SENSITIVITY));
+        this.setDeviceAttributes(ViewInputAttributes.DEVICE_KEYBOARD, new DeviceAttributes(ViewInputAttributes.DEFAULT_KEY_SENSITIVITY));
+        this.setDeviceAttributes(ViewInputAttributes.DEVICE_MOUSE, new DeviceAttributes(ViewInputAttributes.DEFAULT_MOUSE_SENSITIVITY));
+        this.setDeviceAttributes(ViewInputAttributes.DEVICE_MOUSE_WHEEL, new DeviceAttributes(
+            ViewInputAttributes.DEFAULT_MOUSE_WHEEL_SENSITIVITY));
     }
 
     private void setDeviceModifierActionMaps() {
         // Mouse Wheel Vertical Translation Event
         if (Configuration.isMacOS()) {
-            this.addAction(DEVICE_MOUSE_WHEEL, ActionAttributes.NO_MODIFIER, VIEW_VERTICAL_TRANSLATE,
-                new ActionAttributes(verticalTransMouseWheelEvents, ActionAttributes.ActionTrigger.ON_DRAG,
-                    DEFAULT_MOUSE_WHEEL_VERTICAL_TRANSLATE_VALUE_OSX, DEFAULT_MOUSE_WHEEL_VERTICAL_TRANSLATE_VALUE_OSX,
-                    DEFAULT_VERTICAL_TRANSLATE_SMOOTHING_ENABLED, DEFAULT_VERTICAL_TRANSLATE_SMOOTHING_VALUE));
-        }
-        else {
-            this.addAction(DEVICE_MOUSE_WHEEL, ActionAttributes.NO_MODIFIER, VIEW_VERTICAL_TRANSLATE,
-                new ActionAttributes(verticalTransMouseWheelEvents, ActionAttributes.ActionTrigger.ON_DRAG,
-                    DEFAULT_MOUSE_WHEEL_VERTICAL_TRANSLATE_VALUE, DEFAULT_MOUSE_WHEEL_VERTICAL_TRANSLATE_VALUE,
-                    DEFAULT_VERTICAL_TRANSLATE_SMOOTHING_ENABLED, DEFAULT_VERTICAL_TRANSLATE_SMOOTHING_VALUE));
+            this.addAction(ViewInputAttributes.DEVICE_MOUSE_WHEEL, ActionAttributes.NO_MODIFIER,
+                ViewInputAttributes.VIEW_VERTICAL_TRANSLATE,
+                new ActionAttributes(ViewInputAttributes.verticalTransMouseWheelEvents, ActionAttributes.ActionTrigger.ON_DRAG,
+                    ViewInputAttributes.DEFAULT_MOUSE_WHEEL_VERTICAL_TRANSLATE_VALUE_OSX,
+                    ViewInputAttributes.DEFAULT_MOUSE_WHEEL_VERTICAL_TRANSLATE_VALUE_OSX,
+                    ViewInputAttributes.DEFAULT_VERTICAL_TRANSLATE_SMOOTHING_ENABLED,
+                    ViewInputAttributes.DEFAULT_VERTICAL_TRANSLATE_SMOOTHING_VALUE));
+        } else {
+            this.addAction(ViewInputAttributes.DEVICE_MOUSE_WHEEL, ActionAttributes.NO_MODIFIER,
+                ViewInputAttributes.VIEW_VERTICAL_TRANSLATE,
+                new ActionAttributes(ViewInputAttributes.verticalTransMouseWheelEvents, ActionAttributes.ActionTrigger.ON_DRAG,
+                    ViewInputAttributes.DEFAULT_MOUSE_WHEEL_VERTICAL_TRANSLATE_VALUE,
+                    ViewInputAttributes.DEFAULT_MOUSE_WHEEL_VERTICAL_TRANSLATE_VALUE,
+                    ViewInputAttributes.DEFAULT_VERTICAL_TRANSLATE_SMOOTHING_ENABLED,
+                    ViewInputAttributes.DEFAULT_VERTICAL_TRANSLATE_SMOOTHING_VALUE));
         }
 
         // Mouse Button Move To Events
-        this.addAction(DEVICE_MOUSE, ActionAttributes.NO_MODIFIER, VIEW_MOVE_TO,
-            new ActionAttributes(moveToMouseEvents, ActionAttributes.ActionTrigger.ON_PRESS,
-                DEFAULT_MOUSE_MOVE_TO_MIN_VALUE, DEFAULT_MOUSE_MOVE_TO_MAX_VALUE,
-                DEFAULT_MOVE_TO_SMOOTHING_ENABLED, DEFAULT_MOVE_TO_SMOOTHING_VALUE));
-        this.addAction(DEVICE_MOUSE, KeyEvent.ALT_DOWN_MASK, VIEW_MOVE_TO_SLOW,
+        this.addAction(ViewInputAttributes.DEVICE_MOUSE, ActionAttributes.NO_MODIFIER, ViewInputAttributes.VIEW_MOVE_TO,
+            new ActionAttributes(ViewInputAttributes.moveToMouseEvents, ActionAttributes.ActionTrigger.ON_PRESS,
+                ViewInputAttributes.DEFAULT_MOUSE_MOVE_TO_MIN_VALUE, ViewInputAttributes.DEFAULT_MOUSE_MOVE_TO_MAX_VALUE,
+                ViewInputAttributes.DEFAULT_MOVE_TO_SMOOTHING_ENABLED, ViewInputAttributes.DEFAULT_MOVE_TO_SMOOTHING_VALUE));
+        this.addAction(ViewInputAttributes.DEVICE_MOUSE, KeyEvent.ALT_DOWN_MASK, ViewInputAttributes.VIEW_MOVE_TO_SLOW,
             ViewInputAttributes.makeSlowActionAttributes(this.getActionAttributes(
-                DEVICE_MOUSE, VIEW_MOVE_TO), DEFAULT_SLOW_VALUE));
+                ViewInputAttributes.DEVICE_MOUSE, ViewInputAttributes.VIEW_MOVE_TO), ViewInputAttributes.DEFAULT_SLOW_VALUE));
 
         // Mouse Button Rotate Events
-        this.addAction(DEVICE_MOUSE, ActionAttributes.NO_MODIFIER, VIEW_ROTATE,
-            new ActionAttributes(rotateMouseEvents, ActionAttributes.ActionTrigger.ON_DRAG,
-                DEFAULT_MOUSE_ROTATE_MIN_VALUE, DEFAULT_MOUSE_ROTATE_MAX_VALUE,
-                DEFAULT_ROTATE_SMOOTHING_ENABLED, DEFAULT_ROTATE_SMOOTHING_VALUE));
-        this.addAction(DEVICE_MOUSE, KeyEvent.SHIFT_DOWN_MASK, VIEW_ROTATE_SHIFT,
-            new ActionAttributes(rotateMouseEventsShift, ActionAttributes.ActionTrigger.ON_DRAG,
-                DEFAULT_MOUSE_ROTATE_MIN_VALUE, DEFAULT_MOUSE_ROTATE_MAX_VALUE,
-                DEFAULT_ROTATE_SMOOTHING_ENABLED, DEFAULT_ROTATE_SMOOTHING_VALUE));
+        this.addAction(ViewInputAttributes.DEVICE_MOUSE, ActionAttributes.NO_MODIFIER, ViewInputAttributes.VIEW_ROTATE,
+            new ActionAttributes(ViewInputAttributes.rotateMouseEvents, ActionAttributes.ActionTrigger.ON_DRAG,
+                ViewInputAttributes.DEFAULT_MOUSE_ROTATE_MIN_VALUE, ViewInputAttributes.DEFAULT_MOUSE_ROTATE_MAX_VALUE,
+                ViewInputAttributes.DEFAULT_ROTATE_SMOOTHING_ENABLED, ViewInputAttributes.DEFAULT_ROTATE_SMOOTHING_VALUE));
+        this.addAction(ViewInputAttributes.DEVICE_MOUSE, KeyEvent.SHIFT_DOWN_MASK, ViewInputAttributes.VIEW_ROTATE_SHIFT,
+            new ActionAttributes(ViewInputAttributes.rotateMouseEventsShift, ActionAttributes.ActionTrigger.ON_DRAG,
+                ViewInputAttributes.DEFAULT_MOUSE_ROTATE_MIN_VALUE, ViewInputAttributes.DEFAULT_MOUSE_ROTATE_MAX_VALUE,
+                ViewInputAttributes.DEFAULT_ROTATE_SMOOTHING_ENABLED, ViewInputAttributes.DEFAULT_ROTATE_SMOOTHING_VALUE));
 
         // Mouse Button Horizontal Translate Events
-        this.addAction(DEVICE_MOUSE, ActionAttributes.NO_MODIFIER, VIEW_HORIZONTAL_TRANSLATE,
-            new ActionAttributes(horizontalTransMouseEvents, ActionAttributes.ActionTrigger.ON_DRAG,
-                DEFAULT_MOUSE_HORIZONTAL_TRANSLATE_MIN_VALUE, DEFAULT_MOUSE_HORIZONTAL_TRANSLATE_MAX_VALUE,
-                DEFAULT_HORIZONTAL_TRANSLATE_SMOOTHING_ENABLED, DEFAULT_HORIZONTAL_TRANSLATE_SMOOTHING_VALUE));
+        this.addAction(ViewInputAttributes.DEVICE_MOUSE, ActionAttributes.NO_MODIFIER, ViewInputAttributes.VIEW_HORIZONTAL_TRANSLATE,
+            new ActionAttributes(ViewInputAttributes.horizontalTransMouseEvents, ActionAttributes.ActionTrigger.ON_DRAG,
+                ViewInputAttributes.DEFAULT_MOUSE_HORIZONTAL_TRANSLATE_MIN_VALUE,
+                ViewInputAttributes.DEFAULT_MOUSE_HORIZONTAL_TRANSLATE_MAX_VALUE,
+                ViewInputAttributes.DEFAULT_HORIZONTAL_TRANSLATE_SMOOTHING_ENABLED,
+                ViewInputAttributes.DEFAULT_HORIZONTAL_TRANSLATE_SMOOTHING_VALUE));
 
         // Mouse Button Vertical Translate Events
-        this.addAction(DEVICE_MOUSE, ActionAttributes.NO_MODIFIER, VIEW_VERTICAL_TRANSLATE,
-            new ActionAttributes(verticalTransMouseEvents, ActionAttributes.ActionTrigger.ON_DRAG,
-                DEFAULT_MOUSE_VERTICAL_TRANSLATE_VALUE, DEFAULT_MOUSE_VERTICAL_TRANSLATE_VALUE,
-                DEFAULT_VERTICAL_TRANSLATE_SMOOTHING_ENABLED, DEFAULT_VERTICAL_TRANSLATE_SMOOTHING_VALUE));
-        this.addAction(DEVICE_MOUSE, KeyEvent.CTRL_DOWN_MASK, VIEW_VERTICAL_TRANSLATE_CTRL,
-            new ActionAttributes(verticalTransMouseEventsCtrl, ActionAttributes.ActionTrigger.ON_DRAG,
-                DEFAULT_MOUSE_VERTICAL_TRANSLATE_VALUE, DEFAULT_MOUSE_VERTICAL_TRANSLATE_VALUE,
-                DEFAULT_VERTICAL_TRANSLATE_SMOOTHING_ENABLED, DEFAULT_VERTICAL_TRANSLATE_SMOOTHING_VALUE));
-        this.addAction(DEVICE_MOUSE, KeyEvent.META_DOWN_MASK, VIEW_VERTICAL_TRANSLATE_CTRL,
-            new ActionAttributes(verticalTransMouseEventsCtrl, ActionAttributes.ActionTrigger.ON_DRAG,
-                DEFAULT_MOUSE_VERTICAL_TRANSLATE_VALUE, DEFAULT_MOUSE_VERTICAL_TRANSLATE_VALUE,
-                DEFAULT_VERTICAL_TRANSLATE_SMOOTHING_ENABLED, DEFAULT_VERTICAL_TRANSLATE_SMOOTHING_VALUE));
+        this.addAction(ViewInputAttributes.DEVICE_MOUSE, ActionAttributes.NO_MODIFIER, ViewInputAttributes.VIEW_VERTICAL_TRANSLATE,
+            new ActionAttributes(ViewInputAttributes.verticalTransMouseEvents, ActionAttributes.ActionTrigger.ON_DRAG,
+                ViewInputAttributes.DEFAULT_MOUSE_VERTICAL_TRANSLATE_VALUE, ViewInputAttributes.DEFAULT_MOUSE_VERTICAL_TRANSLATE_VALUE,
+                ViewInputAttributes.DEFAULT_VERTICAL_TRANSLATE_SMOOTHING_ENABLED,
+                ViewInputAttributes.DEFAULT_VERTICAL_TRANSLATE_SMOOTHING_VALUE));
+        this.addAction(ViewInputAttributes.DEVICE_MOUSE, KeyEvent.CTRL_DOWN_MASK, ViewInputAttributes.VIEW_VERTICAL_TRANSLATE_CTRL,
+            new ActionAttributes(ViewInputAttributes.verticalTransMouseEventsCtrl, ActionAttributes.ActionTrigger.ON_DRAG,
+                ViewInputAttributes.DEFAULT_MOUSE_VERTICAL_TRANSLATE_VALUE, ViewInputAttributes.DEFAULT_MOUSE_VERTICAL_TRANSLATE_VALUE,
+                ViewInputAttributes.DEFAULT_VERTICAL_TRANSLATE_SMOOTHING_ENABLED,
+                ViewInputAttributes.DEFAULT_VERTICAL_TRANSLATE_SMOOTHING_VALUE));
+        this.addAction(ViewInputAttributes.DEVICE_MOUSE, KeyEvent.META_DOWN_MASK, ViewInputAttributes.VIEW_VERTICAL_TRANSLATE_CTRL,
+            new ActionAttributes(ViewInputAttributes.verticalTransMouseEventsCtrl, ActionAttributes.ActionTrigger.ON_DRAG,
+                ViewInputAttributes.DEFAULT_MOUSE_VERTICAL_TRANSLATE_VALUE, ViewInputAttributes.DEFAULT_MOUSE_VERTICAL_TRANSLATE_VALUE,
+                ViewInputAttributes.DEFAULT_VERTICAL_TRANSLATE_SMOOTHING_ENABLED,
+                ViewInputAttributes.DEFAULT_VERTICAL_TRANSLATE_SMOOTHING_VALUE));
 
         // Keyboard Rotation Actions
-        this.addAction(DEVICE_KEYBOARD, KeyEvent.SHIFT_DOWN_MASK, VIEW_ROTATE_KEYS_SHIFT,
-            new ActionAttributes(rotationKeyEvents, ActionAttributes.ActionTrigger.ON_KEY_DOWN,
+        this.addAction(ViewInputAttributes.DEVICE_KEYBOARD, KeyEvent.SHIFT_DOWN_MASK, ViewInputAttributes.VIEW_ROTATE_KEYS_SHIFT,
+            new ActionAttributes(ViewInputAttributes.rotationKeyEvents, ActionAttributes.ActionTrigger.ON_KEY_DOWN,
                 KeyEvent.SHIFT_DOWN_MASK,
-                DEFAULT_KEY_ROTATE_MIN_VALUE, DEFAULT_KEY_ROTATE_MAX_VALUE,
-                DEFAULT_ROTATE_SMOOTHING_ENABLED, DEFAULT_ROTATE_SMOOTHING_VALUE));
+                ViewInputAttributes.DEFAULT_KEY_ROTATE_MIN_VALUE, ViewInputAttributes.DEFAULT_KEY_ROTATE_MAX_VALUE,
+                ViewInputAttributes.DEFAULT_ROTATE_SMOOTHING_ENABLED, ViewInputAttributes.DEFAULT_ROTATE_SMOOTHING_VALUE));
 
-        this.addAction(DEVICE_KEYBOARD, ActionAttributes.NO_MODIFIER, VIEW_ROTATE_KEYS,
-            new ActionAttributes(rotationKeyEventsPage, ActionAttributes.ActionTrigger.ON_KEY_DOWN,
+        this.addAction(ViewInputAttributes.DEVICE_KEYBOARD, ActionAttributes.NO_MODIFIER, ViewInputAttributes.VIEW_ROTATE_KEYS,
+            new ActionAttributes(ViewInputAttributes.rotationKeyEventsPage, ActionAttributes.ActionTrigger.ON_KEY_DOWN,
                 ActionAttributes.NO_MODIFIER,
-                DEFAULT_KEY_ROTATE_MIN_VALUE, DEFAULT_KEY_ROTATE_MAX_VALUE,
-                DEFAULT_ROTATE_SMOOTHING_ENABLED, DEFAULT_ROTATE_SMOOTHING_VALUE));
+                ViewInputAttributes.DEFAULT_KEY_ROTATE_MIN_VALUE, ViewInputAttributes.DEFAULT_KEY_ROTATE_MAX_VALUE,
+                ViewInputAttributes.DEFAULT_ROTATE_SMOOTHING_ENABLED, ViewInputAttributes.DEFAULT_ROTATE_SMOOTHING_VALUE));
 
-        this.addAction(DEVICE_KEYBOARD, KeyEvent.SHIFT_DOWN_MASK | KeyEvent.ALT_DOWN_MASK, VIEW_ROTATE_KEYS_SHIFT_SLOW,
+        this.addAction(ViewInputAttributes.DEVICE_KEYBOARD, KeyEvent.SHIFT_DOWN_MASK | KeyEvent.ALT_DOWN_MASK,
+            ViewInputAttributes.VIEW_ROTATE_KEYS_SHIFT_SLOW,
             ViewInputAttributes.makeSlowActionAttributes(this.getActionAttributes(
-                DEVICE_KEYBOARD, VIEW_ROTATE_KEYS_SHIFT), DEFAULT_SLOW_VALUE));
-        this.addAction(DEVICE_KEYBOARD, KeyEvent.ALT_DOWN_MASK, VIEW_ROTATE_SLOW,
+                ViewInputAttributes.DEVICE_KEYBOARD, ViewInputAttributes.VIEW_ROTATE_KEYS_SHIFT), ViewInputAttributes.DEFAULT_SLOW_VALUE));
+        this.addAction(ViewInputAttributes.DEVICE_KEYBOARD, KeyEvent.ALT_DOWN_MASK, ViewInputAttributes.VIEW_ROTATE_SLOW,
             ViewInputAttributes.makeSlowActionAttributes(this.getActionAttributes(
-                DEVICE_KEYBOARD, VIEW_ROTATE_KEYS), DEFAULT_SLOW_VALUE));
+                ViewInputAttributes.DEVICE_KEYBOARD, ViewInputAttributes.VIEW_ROTATE_KEYS), ViewInputAttributes.DEFAULT_SLOW_VALUE));
 
         // Keyboard Roll Actions
-        this.addAction(DEVICE_KEYBOARD, KeyEvent.CTRL_DOWN_MASK, VIEW_ROLL_KEYS,
-            new ActionAttributes(rollKeyEvents, ActionAttributes.ActionTrigger.ON_KEY_DOWN,
+        this.addAction(ViewInputAttributes.DEVICE_KEYBOARD, KeyEvent.CTRL_DOWN_MASK, ViewInputAttributes.VIEW_ROLL_KEYS,
+            new ActionAttributes(ViewInputAttributes.rollKeyEvents, ActionAttributes.ActionTrigger.ON_KEY_DOWN,
                 KeyEvent.CTRL_DOWN_MASK,
-                DEFAULT_KEY_ROLL_MIN_VALUE, DEFAULT_KEY_ROLL_MAX_VALUE,
-                DEFAULT_ROLL_SMOOTHING_ENABLED, DEFAULT_ROLL_SMOOTHING_VALUE));
+                ViewInputAttributes.DEFAULT_KEY_ROLL_MIN_VALUE, ViewInputAttributes.DEFAULT_KEY_ROLL_MAX_VALUE,
+                ViewInputAttributes.DEFAULT_ROLL_SMOOTHING_ENABLED, ViewInputAttributes.DEFAULT_ROLL_SMOOTHING_VALUE));
 
         // Keyboard Horizontal Translation Actions
-        this.addAction(DEVICE_KEYBOARD, ActionAttributes.NO_MODIFIER, VIEW_HORIZONTAL_TRANS_KEYS,
-            new ActionAttributes(horizontalTransKeyEvents, ActionAttributes.ActionTrigger.ON_KEY_DOWN, 0,
-                DEFAULT_KEY_HORIZONTAL_TRANSLATE_MIN_VALUE, DEFAULT_KEY_HORIZONTAL_TRANSLATE_MAX_VALUE,
-                DEFAULT_HORIZONTAL_TRANSLATE_SMOOTHING_ENABLED, DEFAULT_HORIZONTAL_TRANSLATE_SMOOTHING_VALUE));
-        this.addAction(DEVICE_KEYBOARD, KeyEvent.ALT_DOWN_MASK, VIEW_HORIZONTAL_TRANSLATE_SLOW,
+        this.addAction(ViewInputAttributes.DEVICE_KEYBOARD, ActionAttributes.NO_MODIFIER, ViewInputAttributes.VIEW_HORIZONTAL_TRANS_KEYS,
+            new ActionAttributes(ViewInputAttributes.horizontalTransKeyEvents, ActionAttributes.ActionTrigger.ON_KEY_DOWN, 0,
+                ViewInputAttributes.DEFAULT_KEY_HORIZONTAL_TRANSLATE_MIN_VALUE,
+                ViewInputAttributes.DEFAULT_KEY_HORIZONTAL_TRANSLATE_MAX_VALUE,
+                ViewInputAttributes.DEFAULT_HORIZONTAL_TRANSLATE_SMOOTHING_ENABLED,
+                ViewInputAttributes.DEFAULT_HORIZONTAL_TRANSLATE_SMOOTHING_VALUE));
+        this.addAction(ViewInputAttributes.DEVICE_KEYBOARD, KeyEvent.ALT_DOWN_MASK, ViewInputAttributes.VIEW_HORIZONTAL_TRANSLATE_SLOW,
             ViewInputAttributes.makeSlowActionAttributes(this.getActionAttributes(
-                DEVICE_KEYBOARD, VIEW_HORIZONTAL_TRANS_KEYS), DEFAULT_SLOW_VALUE));
+                ViewInputAttributes.DEVICE_KEYBOARD, ViewInputAttributes.VIEW_HORIZONTAL_TRANS_KEYS), ViewInputAttributes.DEFAULT_SLOW_VALUE));
 
         // Vertical Translation Actions
-        this.addAction(DEVICE_KEYBOARD, ActionAttributes.NO_MODIFIER, VIEW_VERTICAL_TRANS_KEYS,
-            new ActionAttributes(verticalTransKeyEvents, ActionAttributes.ActionTrigger.ON_KEY_DOWN, 0,
-                DEFAULT_KEY_VERTICAL_TRANSLATE_VALUE, DEFAULT_KEY_VERTICAL_TRANSLATE_VALUE,
-                DEFAULT_VERTICAL_TRANSLATE_SMOOTHING_ENABLED, DEFAULT_VERTICAL_TRANSLATE_SMOOTHING_VALUE));
-        this.addAction(DEVICE_KEYBOARD, KeyEvent.ALT_DOWN_MASK, VIEW_VERTICAL_TRANS_KEYS_SLOW,
+        this.addAction(ViewInputAttributes.DEVICE_KEYBOARD, ActionAttributes.NO_MODIFIER, ViewInputAttributes.VIEW_VERTICAL_TRANS_KEYS,
+            new ActionAttributes(ViewInputAttributes.verticalTransKeyEvents, ActionAttributes.ActionTrigger.ON_KEY_DOWN, 0,
+                ViewInputAttributes.DEFAULT_KEY_VERTICAL_TRANSLATE_VALUE, ViewInputAttributes.DEFAULT_KEY_VERTICAL_TRANSLATE_VALUE,
+                ViewInputAttributes.DEFAULT_VERTICAL_TRANSLATE_SMOOTHING_ENABLED,
+                ViewInputAttributes.DEFAULT_VERTICAL_TRANSLATE_SMOOTHING_VALUE));
+        this.addAction(ViewInputAttributes.DEVICE_KEYBOARD, KeyEvent.ALT_DOWN_MASK, ViewInputAttributes.VIEW_VERTICAL_TRANS_KEYS_SLOW,
             ViewInputAttributes.makeSlowActionAttributes(this.getActionAttributes(
-                DEVICE_KEYBOARD, VIEW_VERTICAL_TRANS_KEYS), DEFAULT_SLOW_VALUE));
+                ViewInputAttributes.DEVICE_KEYBOARD, ViewInputAttributes.VIEW_VERTICAL_TRANS_KEYS), ViewInputAttributes.DEFAULT_SLOW_VALUE));
 
-        this.addAction(DEVICE_KEYBOARD, KeyEvent.CTRL_DOWN_MASK, VIEW_VERTICAL_TRANS_KEYS_CTRL,
-            new ActionAttributes(verticalTransKeyEventsCtrl, ActionAttributes.ActionTrigger.ON_KEY_DOWN,
+        this.addAction(ViewInputAttributes.DEVICE_KEYBOARD, KeyEvent.CTRL_DOWN_MASK, ViewInputAttributes.VIEW_VERTICAL_TRANS_KEYS_CTRL,
+            new ActionAttributes(ViewInputAttributes.verticalTransKeyEventsCtrl, ActionAttributes.ActionTrigger.ON_KEY_DOWN,
                 (KeyEvent.CTRL_DOWN_MASK),
-                DEFAULT_KEY_VERTICAL_TRANSLATE_VALUE, DEFAULT_KEY_VERTICAL_TRANSLATE_VALUE,
-                DEFAULT_VERTICAL_TRANSLATE_SMOOTHING_ENABLED, DEFAULT_VERTICAL_TRANSLATE_SMOOTHING_VALUE));
-        this.addAction(DEVICE_KEYBOARD, KeyEvent.META_DOWN_MASK, VIEW_VERTICAL_TRANS_KEYS_META,
-            this.getActionAttributes(DEVICE_KEYBOARD, VIEW_VERTICAL_TRANS_KEYS));
-        this.addAction(DEVICE_KEYBOARD, KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK,
-            VIEW_VERTICAL_TRANS_KEYS_SLOW_CTRL,
+                ViewInputAttributes.DEFAULT_KEY_VERTICAL_TRANSLATE_VALUE, ViewInputAttributes.DEFAULT_KEY_VERTICAL_TRANSLATE_VALUE,
+                ViewInputAttributes.DEFAULT_VERTICAL_TRANSLATE_SMOOTHING_ENABLED,
+                ViewInputAttributes.DEFAULT_VERTICAL_TRANSLATE_SMOOTHING_VALUE));
+        this.addAction(ViewInputAttributes.DEVICE_KEYBOARD, KeyEvent.META_DOWN_MASK, ViewInputAttributes.VIEW_VERTICAL_TRANS_KEYS_META,
+            this.getActionAttributes(ViewInputAttributes.DEVICE_KEYBOARD, ViewInputAttributes.VIEW_VERTICAL_TRANS_KEYS));
+        this.addAction(ViewInputAttributes.DEVICE_KEYBOARD, KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK,
+            ViewInputAttributes.VIEW_VERTICAL_TRANS_KEYS_SLOW_CTRL,
             ViewInputAttributes.makeSlowActionAttributes(this.getActionAttributes(
-                DEVICE_KEYBOARD, VIEW_VERTICAL_TRANS_KEYS_CTRL), DEFAULT_SLOW_VALUE));
-        this.addAction(DEVICE_KEYBOARD, KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK,
-            VIEW_VERTICAL_TRANS_KEYS_SLOW_META,
+                ViewInputAttributes.DEVICE_KEYBOARD, ViewInputAttributes.VIEW_VERTICAL_TRANS_KEYS_CTRL), ViewInputAttributes.DEFAULT_SLOW_VALUE));
+        this.addAction(ViewInputAttributes.DEVICE_KEYBOARD, KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK,
+            ViewInputAttributes.VIEW_VERTICAL_TRANS_KEYS_SLOW_META,
             ViewInputAttributes.makeSlowActionAttributes(this.getActionAttributes(
-                DEVICE_KEYBOARD, VIEW_VERTICAL_TRANS_KEYS_CTRL), DEFAULT_SLOW_VALUE));
+                ViewInputAttributes.DEVICE_KEYBOARD, ViewInputAttributes.VIEW_VERTICAL_TRANS_KEYS_CTRL), ViewInputAttributes.DEFAULT_SLOW_VALUE));
 
         // Reset Heading Action
-        this.addAction(DEVICE_KEYBOARD, ActionAttributes.NO_MODIFIER, VIEW_RESET_HEADING,
-            new ActionAttributes(resetHeadingEvents, ActionAttributes.ActionTrigger.ON_PRESS, 0,
-                DEFAULT_KEY_ROTATE_MIN_VALUE, DEFAULT_KEY_ROTATE_MAX_VALUE,
-                DEFAULT_ROTATE_SMOOTHING_ENABLED, DEFAULT_ROTATE_SMOOTHING_VALUE));
+        this.addAction(ViewInputAttributes.DEVICE_KEYBOARD, ActionAttributes.NO_MODIFIER, ViewInputAttributes.VIEW_RESET_HEADING,
+            new ActionAttributes(ViewInputAttributes.resetHeadingEvents, ActionAttributes.ActionTrigger.ON_PRESS, 0,
+                ViewInputAttributes.DEFAULT_KEY_ROTATE_MIN_VALUE, ViewInputAttributes.DEFAULT_KEY_ROTATE_MAX_VALUE,
+                ViewInputAttributes.DEFAULT_ROTATE_SMOOTHING_ENABLED, ViewInputAttributes.DEFAULT_ROTATE_SMOOTHING_VALUE));
         // Reset Heading, Pitch, and Roll Action
-        this.addAction(DEVICE_KEYBOARD, ActionAttributes.NO_MODIFIER, VIEW_RESET_HEADING_PITCH_ROLL,
-            new ActionAttributes(resetHeadingPitchRollEvents, ActionAttributes.ActionTrigger.ON_PRESS, 0,
-                DEFAULT_KEY_ROTATE_MIN_VALUE, DEFAULT_KEY_ROTATE_MAX_VALUE,
-                DEFAULT_ROTATE_SMOOTHING_ENABLED, DEFAULT_ROTATE_SMOOTHING_VALUE));
+        this.addAction(ViewInputAttributes.DEVICE_KEYBOARD, ActionAttributes.NO_MODIFIER, ViewInputAttributes.VIEW_RESET_HEADING_PITCH_ROLL,
+            new ActionAttributes(ViewInputAttributes.resetHeadingPitchRollEvents, ActionAttributes.ActionTrigger.ON_PRESS, 0,
+                ViewInputAttributes.DEFAULT_KEY_ROTATE_MIN_VALUE, ViewInputAttributes.DEFAULT_KEY_ROTATE_MAX_VALUE,
+                ViewInputAttributes.DEFAULT_ROTATE_SMOOTHING_ENABLED, ViewInputAttributes.DEFAULT_ROTATE_SMOOTHING_VALUE));
         // Stop View Action
-        this.addAction(DEVICE_KEYBOARD, ActionAttributes.NO_MODIFIER, VIEW_STOP_VIEW,
-            new ActionAttributes(stopViewEvents, ActionAttributes.ActionTrigger.ON_PRESS, 0,
+        this.addAction(ViewInputAttributes.DEVICE_KEYBOARD, ActionAttributes.NO_MODIFIER, ViewInputAttributes.VIEW_STOP_VIEW,
+            new ActionAttributes(ViewInputAttributes.stopViewEvents, ActionAttributes.ActionTrigger.ON_PRESS, 0,
                 0.1, 0.1, false, 0.1));
-    }
-
-    private static ActionAttributes makeSlowActionAttributes(ActionAttributes attributes, double slowCoefficient) {
-        ActionAttributes slowAttributes = new ActionAttributes(attributes);
-        double[] values = attributes.getValues();
-        slowAttributes.setValues(values[0] * slowCoefficient, values[1] * slowCoefficient);
-        slowAttributes.setEnableSmoothing(attributes.isEnableSmoothing());
-        slowAttributes.setSmoothingValue(attributes.getSmoothingValue());
-        slowAttributes.setKeyCodeModifier(attributes.getKeyCodeModifier());
-        slowAttributes.setKeyActions(attributes.getKeyActions());
-        return slowAttributes;
     }
 
     public static class DeviceModifierMap extends HashMap<Object, ArrayList> {

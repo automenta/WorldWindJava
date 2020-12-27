@@ -16,9 +16,8 @@ import java.util.Objects;
 
 /**
  * Defines a globe represented as a projection onto a plane. The projection type is modifiable. The default projection
- * is Mercator. New projections may be added by extending this class and overriding {@link
- * #geodeticToCartesian(Angle, Angle, double) geodeticToCartesian}
- * {@link #cartesianToGeodetic(Vec4) cartesianToGeodetic}.
+ * is Mercator. New projections may be added by extending this class and overriding {@link #geodeticToCartesian(Angle,
+ * Angle, double) geodeticToCartesian} {@link #cartesianToGeodetic(Vec4) cartesianToGeodetic}.
  * <p>
  * This globe uses a Cartesian coordinate system in the world plane is located at the origin and has UNIT-Z as normal.
  * The Y axis points to the north pole. The Z axis points up. The X axis completes a right-handed coordinate system, and
@@ -44,11 +43,10 @@ public class FlatGlobe extends EllipsoidalGlobe implements Globe2D {
     public final static String PROJECTION_SINUSOIDAL = "gov.nasa.worldwind.globes.projectionSinusoidal";
     public final static String PROJECTION_MODIFIED_SINUSOIDAL =
         "gov.nasa.worldwind.globes.projectionModifiedSinusoidal";
-
+    private final GlobeStateKey stateKey = new FlatStateKey();
     protected GeographicProjection projection = (GeographicProjection) WorldWind.createComponent(
         Configuration.getStringValue(AVKey.GEOGRAPHIC_PROJECTION_CLASS_NAME,
             "gov.nasa.worldwind.globes.projections.ProjectionEquirectangular"));
-
     protected boolean continuous;
     protected int offset;
     protected Vec4 offsetVector = Vec4.ZERO;
@@ -73,8 +71,6 @@ public class FlatGlobe extends EllipsoidalGlobe implements Globe2D {
     public GlobeStateKey getGlobeStateKey(DrawContext dc) {
         return new FlatStateKey(dc);
     }
-
-    private final GlobeStateKey stateKey = new FlatStateKey();
 
     public final GlobeStateKey getGlobeStateKey() {
         return stateKey;
@@ -106,9 +102,9 @@ public class FlatGlobe extends EllipsoidalGlobe implements Globe2D {
         }
 
         switch (projection) {
-            case PROJECTION_MERCATOR -> this.setProjection(new ProjectionMercator());
-            case PROJECTION_SINUSOIDAL -> this.setProjection(new ProjectionSinusoidal());
-            case PROJECTION_MODIFIED_SINUSOIDAL -> this.setProjection(new ProjectionModifiedSinusoidal());
+            case FlatGlobe.PROJECTION_MERCATOR -> this.setProjection(new ProjectionMercator());
+            case FlatGlobe.PROJECTION_SINUSOIDAL -> this.setProjection(new ProjectionSinusoidal());
+            case FlatGlobe.PROJECTION_MODIFIED_SINUSOIDAL -> this.setProjection(new ProjectionModifiedSinusoidal());
             default -> this.setProjection(new ProjectionEquirectangular());
         }
     }
@@ -336,7 +332,7 @@ public class FlatGlobe extends EllipsoidalGlobe implements Globe2D {
         if (point == null)
             return false;
 
-        return point.z() > elevation;
+        return point.z > elevation;
     }
 
     private class FlatStateKey extends StateKey {
@@ -381,7 +377,7 @@ public class FlatGlobe extends EllipsoidalGlobe implements Globe2D {
             int result = super.hashCode();
             long temp;
             result = 31 * result + (projection != null ? projection.hashCode() : 0);
-            temp = verticalExaggeration != +0.0d ? Double.doubleToLongBits(verticalExaggeration) : 0L;
+            temp = verticalExaggeration == +0.0d ? 0L : Double.doubleToLongBits(verticalExaggeration);
             result = 31 * result + (int) (temp ^ (temp >>> 32));
             result = 31 * result + offset;
             return result;

@@ -106,15 +106,12 @@ public class WWXML {
         }
 
         if (docSource instanceof URL) {
-            return openDocumentURL((URL) docSource);
-        }
-        else if (docSource instanceof InputStream) {
-            return openDocumentStream((InputStream) docSource);
-        }
-        else if (docSource instanceof File) {
-            return openDocumentFile(((File) docSource).getPath(), null);
-        }
-        else if (!(docSource instanceof String)) {
+            return WWXML.openDocumentURL((URL) docSource);
+        } else if (docSource instanceof InputStream) {
+            return WWXML.openDocumentStream((InputStream) docSource);
+        } else if (docSource instanceof File) {
+            return WWXML.openDocumentFile(((File) docSource).getPath(), null);
+        } else if (!(docSource instanceof String)) {
             String message = Logging.getMessage("generic.UnrecognizedSourceType", docSource.toString());
             throw new IllegalArgumentException(message);
         }
@@ -123,9 +120,9 @@ public class WWXML {
 
         URL url = WWIO.makeURL(sourceName);
         if (url != null)
-            return openDocumentURL(url);
+            return WWXML.openDocumentURL(url);
 
-        return openDocumentFile(sourceName, null);
+        return WWXML.openDocumentFile(sourceName, null);
     }
 
     /**
@@ -148,7 +145,7 @@ public class WWXML {
 
         InputStream inputStream = WWIO.openFileOrResourceStream(filePath, c);
 
-        return inputStream != null ? openDocumentStream(inputStream) : null;
+        return inputStream != null ? WWXML.openDocumentStream(inputStream) : null;
     }
 
     /**
@@ -169,7 +166,7 @@ public class WWXML {
 
         try {
             InputStream inputStream = url.openStream();
-            return openDocumentStream(inputStream);
+            return WWXML.openDocumentStream(inputStream);
         }
         catch (IOException e) {
             String message = Logging.getMessage("generic.ExceptionAttemptingToParseXml", url.toString());
@@ -187,7 +184,7 @@ public class WWXML {
      *                                  is included in this exception's {@link Throwable#initCause(Throwable)}
      */
     public static Document openDocumentStream(InputStream inputStream) {
-        return openDocumentStream(inputStream, true);
+        return WWXML.openDocumentStream(inputStream, true);
     }
 
     public static Document openDocumentStream(InputStream inputStream, boolean isNamespaceAware) {
@@ -230,7 +227,7 @@ public class WWXML {
         try {
             FileOutputStream outputStream = new FileOutputStream(filePath);
 
-            saveDocumentToStream(doc, outputStream);
+            WWXML.saveDocumentToStream(doc, outputStream);
         }
         catch (IOException e) {
             String message = Logging.getMessage("generic.ExceptionAttemptingToWriteXml", filePath);
@@ -265,7 +262,7 @@ public class WWXML {
         Result result = new StreamResult(outputStream);
 
         try {
-            Transformer transformer = createTransformer();
+            Transformer transformer = WWXML.createTransformer();
             transformer.transform(source, result);
         }
         catch (TransformerException e) {
@@ -321,7 +318,7 @@ public class WWXML {
             throw new IllegalArgumentException(message);
         }
 
-        return openEventReaderStream(inputStream, true);
+        return WWXML.openEventReaderStream(inputStream, true);
     }
 
     /**
@@ -345,7 +342,7 @@ public class WWXML {
 
         InputStream inputStream = WWIO.openFileOrResourceStream(filePath, c);
 
-        return inputStream != null ? openEventReaderStream(inputStream, isNamespaceAware) : null;
+        return inputStream != null ? WWXML.openEventReaderStream(inputStream, isNamespaceAware) : null;
     }
 
     /**
@@ -367,7 +364,7 @@ public class WWXML {
 
         try {
             InputStream inputStream = url.openStream();
-            return openEventReaderStream(inputStream, isNamespaceAware);
+            return WWXML.openEventReaderStream(inputStream, isNamespaceAware);
         }
         catch (IOException e) {
             String message = Logging.getMessage("generic.ExceptionAttemptingToParseXml", url.toString());
@@ -381,11 +378,11 @@ public class WWXML {
      * URL description or a file or resource name available on the classpath.</li> </ul>
      *
      * @param docSource the source of the XML document.
-     * @return the source document as a {@link XMLEventReader}, or null if the source object is a
-     * string that does not identify a URL, a file or a resource available on the classpath.
+     * @return the source document as a {@link XMLEventReader}, or null if the source object is a string that does not
+     * identify a URL, a file or a resource available on the classpath.
      */
     public static XMLEventReader openEventReader(Object docSource) {
-        return openEventReader(docSource, true);
+        return WWXML.openEventReader(docSource, true);
     }
 
     /**
@@ -395,8 +392,8 @@ public class WWXML {
      *
      * @param docSource        the source of the XML document.
      * @param isNamespaceAware true to enable namespace-aware processing and false to disable it.
-     * @return the source document as a {@link XMLEventReader}, or null if the source object is a
-     * string that does not identify a URL, a file or a resource available on the classpath.
+     * @return the source document as a {@link XMLEventReader}, or null if the source object is a string that does not
+     * identify a URL, a file or a resource available on the classpath.
      */
     public static XMLEventReader openEventReader(Object docSource, boolean isNamespaceAware) {
         if (docSource == null || WWUtil.isEmpty(docSource)) {
@@ -406,19 +403,15 @@ public class WWXML {
         }
 
         if (docSource instanceof URL) {
-            return openEventReaderURL((URL) docSource, isNamespaceAware);
-        }
-        else if (docSource instanceof InputStream) {
-            return openEventReaderStream((InputStream) docSource, isNamespaceAware);
-        }
-        else if (docSource instanceof File) {
-            return openEventReaderFile(((File) docSource).getPath(), null, isNamespaceAware);
-        }
-        else if (docSource instanceof ByteBuffer) {
+            return WWXML.openEventReaderURL((URL) docSource, isNamespaceAware);
+        } else if (docSource instanceof InputStream) {
+            return WWXML.openEventReaderStream((InputStream) docSource, isNamespaceAware);
+        } else if (docSource instanceof File) {
+            return WWXML.openEventReaderFile(((File) docSource).getPath(), null, isNamespaceAware);
+        } else if (docSource instanceof ByteBuffer) {
             InputStream is = WWIO.getInputStreamFromByteBuffer((ByteBuffer) docSource);
-            return openEventReaderStream(is, isNamespaceAware);
-        }
-        else if (!(docSource instanceof String)) {
+            return WWXML.openEventReaderStream(is, isNamespaceAware);
+        } else if (!(docSource instanceof String)) {
             String message = Logging.getMessage("generic.UnrecognizedSourceType", docSource.toString());
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -428,9 +421,9 @@ public class WWXML {
 
         URL url = WWIO.makeURL(sourceName);
         if (url != null)
-            return openEventReaderURL(url, isNamespaceAware);
+            return WWXML.openEventReaderURL(url, isNamespaceAware);
 
-        return openEventReaderFile(sourceName, null, isNamespaceAware);
+        return WWXML.openEventReaderFile(sourceName, null, isNamespaceAware);
     }
 
     /**
@@ -541,21 +534,17 @@ public class WWXML {
                 if (nextEvent.isStartElement()) {
                     ++depth;
                     eventReader.nextEvent(); // consume the event
-                }
-                else if (nextEvent.isEndElement()) {
+                } else if (nextEvent.isEndElement()) {
                     if (--depth > 0) {
                         eventReader.nextEvent(); // consume the event
-                    }
-                    else {
+                    } else {
                         break; // stop parsing at the end element that corresponds to the root start element
                     }
-                }
-                else if (nextEvent.isCharacters()) {
+                } else if (nextEvent.isCharacters()) {
                     Characters characters = eventReader.nextEvent().asCharacters(); // consume the event
                     if (!characters.isWhiteSpace())
                         sb.append(characters.getData());
-                }
-                else {
+                } else {
                     eventReader.nextEvent(); // consume the event
                 }
             }
@@ -586,7 +575,7 @@ public class WWXML {
         }
 
         try {
-            XPath xpath = makeXPath();
+            XPath xpath = WWXML.makeXPath();
 
             String exception = xpath.evaluate("ServiceExceptionReport", doc);
 
@@ -653,7 +642,7 @@ public class WWXML {
      * @throws IllegalArgumentException if the context or XPath expression are null.
      */
     public static String getText(Element context, String path) {
-        return getText(context, path, null);
+        return WWXML.getText(context, path, null);
     }
 
     /**
@@ -680,7 +669,7 @@ public class WWXML {
         }
 
         if (xpath == null)
-            xpath = makeXPath();
+            xpath = WWXML.makeXPath();
 
         try {
             return xpath.evaluate(path, context);
@@ -714,7 +703,7 @@ public class WWXML {
         }
 
         if (xpath == null)
-            xpath = makeXPath();
+            xpath = WWXML.makeXPath();
 
         try {
             NodeList nodes = (NodeList) xpath.evaluate(path, context,
@@ -759,9 +748,9 @@ public class WWXML {
         }
 
         if (xpath == null)
-            xpath = makeXPath();
+            xpath = WWXML.makeXPath();
 
-        String[] strings = getTextArray(context, path, xpath);
+        String[] strings = WWXML.getTextArray(context, path, xpath);
         if (strings == null)
             return null;
 
@@ -798,7 +787,7 @@ public class WWXML {
         }
 
         if (xpath == null)
-            xpath = makeXPath();
+            xpath = WWXML.makeXPath();
 
         try {
             Node node = (Node) xpath.evaluate(path, context, XPathConstants.NODE);
@@ -838,7 +827,7 @@ public class WWXML {
         }
 
         if (xpath == null)
-            xpath = makeXPath();
+            xpath = WWXML.makeXPath();
 
         try {
             NodeList nodes = (NodeList) xpath.evaluate(path, context, XPathConstants.NODESET);
@@ -893,15 +882,15 @@ public class WWXML {
         }
 
         if (xpath == null)
-            xpath = makeXPath();
+            xpath = WWXML.makeXPath();
 
-        Element[] elements = getElements(context, path, xpath);
+        Element[] elements = WWXML.getElements(context, path, xpath);
         if (elements == null)
             return null;
 
         Map<String, Element> styles = new HashMap<>();
         for (Element e : elements) {
-            String name = getText(e, uniqueTag, xpath);
+            String name = WWXML.getText(e, uniqueTag, xpath);
             if (name != null)
                 styles.put(name, e);
         }
@@ -936,7 +925,7 @@ public class WWXML {
         String s = null;
 
         try {
-            s = getText(context, path, xpath);
+            s = WWXML.getText(context, path, xpath);
             if (s == null || s.isEmpty())
                 return null;
 
@@ -976,7 +965,7 @@ public class WWXML {
         String s = null;
 
         try {
-            s = getText(context, path, xpath);
+            s = WWXML.getText(context, path, xpath);
             if (s == null || s.isEmpty())
                 return null;
 
@@ -1016,7 +1005,7 @@ public class WWXML {
         String s = null;
 
         try {
-            s = getText(context, path, xpath);
+            s = WWXML.getText(context, path, xpath);
             if (s == null || s.isEmpty())
                 return null;
 
@@ -1056,7 +1045,7 @@ public class WWXML {
         String s = null;
 
         try {
-            s = getText(context, path, xpath);
+            s = WWXML.getText(context, path, xpath);
             if (s == null || s.isEmpty())
                 return null;
 
@@ -1089,13 +1078,13 @@ public class WWXML {
         }
 
         try {
-            Element el = path == null ? context : getElement(context, path, xpath);
+            Element el = path == null ? context : WWXML.getElement(context, path, xpath);
             if (el == null)
                 return null;
 
-            String units = getText(el, "@units", xpath);
-            Double lat = getDouble(el, "@latitude", xpath);
-            Double lon = getDouble(el, "@longitude", xpath);
+            String units = WWXML.getText(el, "@units", xpath);
+            Double lat = WWXML.getDouble(el, "@latitude", xpath);
+            Double lon = WWXML.getDouble(el, "@longitude", xpath);
 
             if (lat == null || lon == null)
                 return null;
@@ -1139,14 +1128,14 @@ public class WWXML {
         }
 
         try {
-            Element el = path == null ? context : getElement(context, path, xpath);
+            Element el = path == null ? context : WWXML.getElement(context, path, xpath);
             if (el == null)
                 return null;
 
-            Integer r = getInteger(el, "@red", xpath);
-            Integer g = getInteger(el, "@green", xpath);
-            Integer b = getInteger(el, "@blue", xpath);
-            Integer a = getInteger(el, "@alpha", xpath);
+            Integer r = WWXML.getInteger(el, "@red", xpath);
+            Integer g = WWXML.getInteger(el, "@green", xpath);
+            Integer b = WWXML.getInteger(el, "@blue", xpath);
+            Integer a = WWXML.getInteger(el, "@alpha", xpath);
 
             return new Color(r != null ? r : 0, g != null ? g : 0, b != null ? b : 0, a != null ? a : 255);
         }
@@ -1176,12 +1165,12 @@ public class WWXML {
             throw new IllegalArgumentException(message);
         }
 
-        Element el = path == null ? context : getElement(context, path, xpath);
+        Element el = path == null ? context : WWXML.getElement(context, path, xpath);
         if (el == null)
             return null;
 
-        LatLon sw = getLatLon(el, "SouthWest/LatLon", xpath);
-        LatLon ne = getLatLon(el, "NorthEast/LatLon", xpath);
+        LatLon sw = WWXML.getLatLon(el, "SouthWest/LatLon", xpath);
+        LatLon ne = WWXML.getLatLon(el, "NorthEast/LatLon", xpath);
 
         if (sw == null || ne == null)
             return null;
@@ -1190,8 +1179,7 @@ public class WWXML {
     }
 
     /**
-     * Returns the {@link LevelSet.SectorResolution} value of an element identified by an XPath
-     * expression.
+     * Returns the {@link LevelSet.SectorResolution} value of an element identified by an XPath expression.
      *
      * @param context the context from which to start the XPath search.
      * @param path    the XPath expression. If null, indicates that the context is the SectorResolution element itself.
@@ -1209,12 +1197,12 @@ public class WWXML {
             throw new IllegalArgumentException(message);
         }
 
-        Element el = path == null ? context : getElement(context, path, xpath);
+        Element el = path == null ? context : WWXML.getElement(context, path, xpath);
         if (el == null)
             return null;
 
-        Integer maxLevelNum = getInteger(el, "@maxLevelNum", xpath);
-        Sector sector = getSector(el, "Sector", xpath);
+        Integer maxLevelNum = WWXML.getInteger(el, "@maxLevelNum", xpath);
+        Sector sector = WWXML.getSector(el, "Sector", xpath);
 
         if (maxLevelNum == null || sector == null)
             return null;
@@ -1242,12 +1230,12 @@ public class WWXML {
         }
 
         try {
-            Element el = path == null ? context : getElement(context, path, xpath);
+            Element el = path == null ? context : WWXML.getElement(context, path, xpath);
             if (el == null)
                 return null;
 
-            String units = getText(el, "@units", xpath);
-            Double value = getDouble(el, "@value", xpath);
+            String units = WWXML.getText(el, "@units", xpath);
+            Double value = WWXML.getDouble(el, "@value", xpath);
 
             if (value == null)
                 return null;
@@ -1283,8 +1271,8 @@ public class WWXML {
      * @param context the context from which to start the XPath search.
      * @param path    the XPath expression. If null, indicates that the context is the element itself. If non-null, the
      *                context is searched for an element matching the expression.
-     * @param pattern the format pattern of the date. See {@link DateFormat} for the pattern symbols. The
-     *                element content must either match the pattern or be directly convertible to a long.
+     * @param pattern the format pattern of the date. See {@link DateFormat} for the pattern symbols. The element
+     *                content must either match the pattern or be directly convertible to a long.
      * @param xpath   an {@link XPath} object to use for the search. This allows the caller to re-use XPath objects when
      *                performing multiple searches. May be null.
      * @return the value of an element matching the XPath expression, or null if no match is found.
@@ -1304,11 +1292,11 @@ public class WWXML {
         }
 
         try {
-            Element el = path == null ? context : getElement(context, path, xpath);
+            Element el = path == null ? context : WWXML.getElement(context, path, xpath);
             if (el == null)
                 return null;
 
-            String s = getText(context, path, xpath);
+            String s = WWXML.getText(context, path, xpath);
             if (s == null || s.isEmpty())
                 return null;
 
@@ -1327,8 +1315,7 @@ public class WWXML {
     }
 
     /**
-     * Returns the {@link ScreenCredit} value of an element identified by an XPath
-     * expression.
+     * Returns the {@link ScreenCredit} value of an element identified by an XPath expression.
      *
      * @param context the context from which to start the XPath search.
      * @param path    the XPath expression. If null, indicates that the context is the ScreenCredit element itself. If
@@ -1362,8 +1349,7 @@ public class WWXML {
                     credit.setLink(link);
 
                 return credit;
-            }
-            else {
+            } else {
                 // Warn that the FileName property is missing.
                 String message = Logging.getMessage("generic.FileNameIsMissing");
                 Logging.logger().warning(message);
@@ -1408,8 +1394,7 @@ public class WWXML {
 
         if (doc.getDocumentElement() != null) {
             doc.replaceChild(el, doc.getDocumentElement());
-        }
-        else {
+        } else {
             doc.appendChild(el);
         }
 
@@ -1494,8 +1479,8 @@ public class WWXML {
 
     /**
      * Append a heirarcy of new elements with a path to a context element, ending with a text element with a specified
-     * value. Elements are added to the context as in {@link #appendElementPath(Element, String)}, except
-     * that a terminating text element is appended to the last element.
+     * value. Elements are added to the context as in {@link #appendElementPath(Element, String)}, except that a
+     * terminating text element is appended to the last element.
      *
      * @param context the context on which to append new elements.
      * @param path    the element path to append.
@@ -1516,7 +1501,7 @@ public class WWXML {
             throw new IllegalArgumentException(message);
         }
 
-        Element el = appendElementPath(context, path);
+        Element el = WWXML.appendElementPath(context, path);
 
         Document doc = context.getOwnerDocument();
         Text text = doc.createTextNode(string);
@@ -1528,8 +1513,7 @@ public class WWXML {
     /**
      * For each non-null string in a specified array, appends a heirarcy of new elements with a path to a context
      * element, ending with a text element with a specified value. Elements are added to the context as in {@link
-     * #appendElementPath(Element, String)}, except that a terminating text element is appended to the last
-     * element.
+     * #appendElementPath(Element, String)}, except that a terminating text element is appended to the last element.
      *
      * @param context the context on which to append new elements.
      * @param path    the element path to append.
@@ -1556,7 +1540,7 @@ public class WWXML {
             String s = strings[i];
 
             if (s != null && !s.isEmpty()) {
-                els[i] = appendText(context, path, s);
+                els[i] = WWXML.appendText(context, path, s);
             }
         }
 
@@ -1565,8 +1549,8 @@ public class WWXML {
 
     /**
      * Append a heirarcy of new elements with a path to a context element, ending with a text element with a specified
-     * value. Elements are added to the context as in {@link #appendElementPath(Element, String)}, except
-     * that a terminating text element is appended to the last element.
+     * value. Elements are added to the context as in {@link #appendElementPath(Element, String)}, except that a
+     * terminating text element is appended to the last element.
      *
      * @param context the context on which to append new elements.
      * @param path    the element path to append.
@@ -1581,13 +1565,13 @@ public class WWXML {
             throw new IllegalArgumentException(message);
         }
 
-        return appendText(context, path, Double.toString(value));
+        return WWXML.appendText(context, path, Double.toString(value));
     }
 
     /**
      * Append a heirarcy of new elements with a path to a context element, ending with a text element with a specified
-     * value. Elements are added to the context as in {@link #appendElementPath(Element, String)}, except
-     * that a terminating text element is appended to the last element.
+     * value. Elements are added to the context as in {@link #appendElementPath(Element, String)}, except that a
+     * terminating text element is appended to the last element.
      *
      * @param context the context on which to append new elements.
      * @param path    the element path to append.
@@ -1602,13 +1586,13 @@ public class WWXML {
             throw new IllegalArgumentException(message);
         }
 
-        return appendText(context, path, Integer.toString(value));
+        return WWXML.appendText(context, path, Integer.toString(value));
     }
 
     /**
      * Append a heirarcy of new elements with a path to a context element, ending with a text element with a specified
-     * value. Elements are added to the context as in {@link #appendElementPath(Element, String)}, except
-     * that a terminating text element is appended to the last element.
+     * value. Elements are added to the context as in {@link #appendElementPath(Element, String)}, except that a
+     * terminating text element is appended to the last element.
      *
      * @param context the context on which to append new elements.
      * @param path    the element path to append.
@@ -1623,13 +1607,13 @@ public class WWXML {
             throw new IllegalArgumentException(message);
         }
 
-        return appendText(context, path, Long.toString(value));
+        return WWXML.appendText(context, path, Long.toString(value));
     }
 
     /**
      * Append a heirarcy of new elements with a path to a context element, ending with a text element with a specified
-     * value. Elements are added to the context as in {@link #appendElementPath(Element, String)}, except
-     * that a terminating text element is appended to the last element.
+     * value. Elements are added to the context as in {@link #appendElementPath(Element, String)}, except that a
+     * terminating text element is appended to the last element.
      *
      * @param context the context on which to append new elements.
      * @param path    the element path to append.
@@ -1644,13 +1628,13 @@ public class WWXML {
             throw new IllegalArgumentException(message);
         }
 
-        return appendText(context, path, Boolean.toString(value));
+        return WWXML.appendText(context, path, Boolean.toString(value));
     }
 
     /**
      * Append a heirarcy of new elements with a path to a context element, ending with an element formatted as a LatLon.
-     * Elements are added to the context as in {@link #appendElementPath(Element, String)}, except that a
-     * terminating text element is appended to the last element.
+     * Elements are added to the context as in {@link #appendElementPath(Element, String)}, except that a terminating
+     * text element is appended to the last element.
      *
      * @param context the context on which to append new elements.
      * @param path    the element path to append.
@@ -1671,18 +1655,18 @@ public class WWXML {
             throw new IllegalArgumentException(message);
         }
 
-        Element el = appendElementPath(context, path);
-        setTextAttribute(el, "units", "degrees");
-        setDoubleAttribute(el, "latitude", ll.getLatitude().degrees);
-        setDoubleAttribute(el, "longitude", ll.getLongitude().degrees);
+        Element el = WWXML.appendElementPath(context, path);
+        WWXML.setTextAttribute(el, "units", "degrees");
+        WWXML.setDoubleAttribute(el, "latitude", ll.getLatitude().degrees);
+        WWXML.setDoubleAttribute(el, "longitude", ll.getLongitude().degrees);
 
         return el;
     }
 
     /**
      * Append a heirarcy of new elements with a path to a context element, ending with an element formatted as a Sector.
-     * Elements are added to the context as in {@link #appendElementPath(Element, String)}, except that a
-     * terminating text element is appended to the last element.
+     * Elements are added to the context as in {@link #appendElementPath(Element, String)}, except that a terminating
+     * text element is appended to the last element.
      *
      * @param context the context on which to append new elements.
      * @param path    the element path to append.
@@ -1703,18 +1687,17 @@ public class WWXML {
             throw new IllegalArgumentException(message);
         }
 
-        Element el = appendElementPath(context, path);
-        appendLatLon(el, "SouthWest/LatLon", new LatLon(sector.latMin(), sector.lonMin()));
-        appendLatLon(el, "NorthEast/LatLon", new LatLon(sector.latMax(), sector.lonMax()));
+        Element el = WWXML.appendElementPath(context, path);
+        WWXML.appendLatLon(el, "SouthWest/LatLon", new LatLon(sector.latMin(), sector.lonMin()));
+        WWXML.appendLatLon(el, "NorthEast/LatLon", new LatLon(sector.latMax(), sector.lonMax()));
 
         return el;
     }
 
     /**
      * Append a heirarcy of new elements with a path to a context element, ending with an element formatted as a
-     * LevelSet.SectorResolutionLimit. Elements are added to the context as in {@link
-     * #appendElementPath(Element, String)}, except that a terminating text element is appended to the last
-     * element.
+     * LevelSet.SectorResolutionLimit. Elements are added to the context as in {@link #appendElementPath(Element,
+     * String)}, except that a terminating text element is appended to the last element.
      *
      * @param context          the context on which to append new elements.
      * @param path             the element path to append.
@@ -1736,17 +1719,17 @@ public class WWXML {
             throw new IllegalArgumentException(message);
         }
 
-        Element el = appendElementPath(context, path);
-        setIntegerAttribute(el, "maxLevelNum", sectorResolution.getLevelNumber());
-        appendSector(el, "Sector", sectorResolution.getSector());
+        Element el = WWXML.appendElementPath(context, path);
+        WWXML.setIntegerAttribute(el, "maxLevelNum", sectorResolution.getLevelNumber());
+        WWXML.appendSector(el, "Sector", sectorResolution.getSector());
 
         return el;
     }
 
     /**
      * Append a heirarcy of new elements with a path to a context element, ending with an element formatted as a time in
-     * milliseconds. Elements are added to the context as in {@link #appendElementPath(Element, String)},
-     * except that a terminating text element is appended to the last element.
+     * milliseconds. Elements are added to the context as in {@link #appendElementPath(Element, String)}, except that a
+     * terminating text element is appended to the last element.
      *
      * @param context      the context on which to append new elements.
      * @param path         the element path to append.
@@ -1761,17 +1744,17 @@ public class WWXML {
             throw new IllegalArgumentException(message);
         }
 
-        Element el = appendElementPath(context, path);
-        setTextAttribute(el, "units", "milliseconds");
-        setLongAttribute(el, "value", timeInMillis);
+        Element el = WWXML.appendElementPath(context, path);
+        WWXML.setTextAttribute(el, "units", "milliseconds");
+        WWXML.setLongAttribute(el, "value", timeInMillis);
 
         return el;
     }
 
     /**
      * Append a heirarcy of new elements with a path to a context element, ending with an element formatted as a
-     * ScreenCredit. Elements are added to the context as in {@link WWXML#appendElementPath(Element,
-     * String)}, except that a terminating text element is appended to the last element.
+     * ScreenCredit. Elements are added to the context as in {@link WWXML#appendElementPath(Element, String)}, except
+     * that a terminating text element is appended to the last element.
      *
      * @param context      the context on which to append new elements.
      * @param path         the element path to append.
@@ -1794,7 +1777,7 @@ public class WWXML {
 
         if (screenCredit instanceof ScreenCreditImage) {
             Element el = WWXML.appendElementPath(context, path);
-            setTextAttribute(el, "creditType", "ScreenImage");
+            WWXML.setTextAttribute(el, "creditType", "ScreenImage");
 
             String link = screenCredit.getLink();
             if (link != null && !link.isEmpty())
@@ -1803,8 +1786,7 @@ public class WWXML {
             Object imageSource = ((ScreenImage) screenCredit).getImageSource();
             if (imageSource instanceof String) {
                 WWXML.appendText(el, "FileName", (String) imageSource);
-            }
-            else {
+            } else {
                 // Warn that the image source property cannot be written to the document.
                 String message = Logging.getMessage("generic.UnrecognizedImageSourceType",
                     (imageSource != null) ? imageSource.getClass().getName() : null);
@@ -1871,7 +1853,7 @@ public class WWXML {
             throw new IllegalArgumentException(message);
         }
 
-        setTextAttribute(context, name, Double.toString(value));
+        WWXML.setTextAttribute(context, name, Double.toString(value));
     }
 
     /**
@@ -1896,7 +1878,7 @@ public class WWXML {
             throw new IllegalArgumentException(message);
         }
 
-        setTextAttribute(context, name, Integer.toString(value));
+        WWXML.setTextAttribute(context, name, Integer.toString(value));
     }
 
     /**
@@ -1921,7 +1903,7 @@ public class WWXML {
             throw new IllegalArgumentException(message);
         }
 
-        setTextAttribute(context, name, Long.toString(value));
+        WWXML.setTextAttribute(context, name, Long.toString(value));
     }
 
     /**
@@ -1946,7 +1928,7 @@ public class WWXML {
             throw new IllegalArgumentException(message);
         }
 
-        setTextAttribute(context, name, Boolean.toString(value));
+        WWXML.setTextAttribute(context, name, Boolean.toString(value));
     }
 
     /**
@@ -1990,7 +1972,7 @@ public class WWXML {
 
         String s = params.getStringValue(paramKey);
         if (s == null) {
-            s = getText(context, paramName, xpath);
+            s = WWXML.getText(context, paramName, xpath);
             if (s != null && !s.isEmpty())
                 params.set(paramKey, s.trim());
         }
@@ -2037,7 +2019,7 @@ public class WWXML {
 
         Object o = params.get(paramKey);
         if (o == null) {
-            String[] strings = getTextArray(context, paramName, xpath);
+            String[] strings = WWXML.getTextArray(context, paramName, xpath);
             if (strings != null && strings.length > 0)
                 params.set(paramKey, strings);
         }
@@ -2084,7 +2066,7 @@ public class WWXML {
 
         Object o = params.get(paramKey);
         if (o == null) {
-            String[] strings = getUniqueText(context, paramName, xpath);
+            String[] strings = WWXML.getUniqueText(context, paramName, xpath);
             if (strings != null && strings.length > 0)
                 params.set(paramKey, strings);
         }
@@ -2131,7 +2113,7 @@ public class WWXML {
 
         Object o = params.get(paramKey);
         if (o == null) {
-            Double d = getDouble(context, paramName, xpath);
+            Double d = WWXML.getDouble(context, paramName, xpath);
             if (d != null)
                 params.set(paramKey, d);
         }
@@ -2178,7 +2160,7 @@ public class WWXML {
 
         Object o = params.get(paramKey);
         if (o == null) {
-            Integer d = getInteger(context, paramName, xpath);
+            Integer d = WWXML.getInteger(context, paramName, xpath);
             if (d != null)
                 params.set(paramKey, d);
         }
@@ -2225,7 +2207,7 @@ public class WWXML {
 
         Object o = params.get(paramKey);
         if (o == null) {
-            Long d = getLong(context, paramName, xpath);
+            Long d = WWXML.getLong(context, paramName, xpath);
             if (d != null)
                 params.set(paramKey, d);
         }
@@ -2272,7 +2254,7 @@ public class WWXML {
 
         Object o = params.get(paramKey);
         if (o == null) {
-            Boolean d = getBoolean(context, paramName, xpath);
+            Boolean d = WWXML.getBoolean(context, paramName, xpath);
             if (d != null)
                 params.set(paramKey, d);
         }
@@ -2319,7 +2301,7 @@ public class WWXML {
 
         Object o = params.get(paramKey);
         if (o == null) {
-            LatLon ll = getLatLon(context, paramName, xpath);
+            LatLon ll = WWXML.getLatLon(context, paramName, xpath);
             if (ll != null)
                 params.set(paramKey, ll);
         }
@@ -2366,7 +2348,7 @@ public class WWXML {
 
         Object o = params.get(paramKey);
         if (o == null) {
-            Color color = getColor(context, paramName, xpath);
+            Color color = WWXML.getColor(context, paramName, xpath);
             if (color != null)
                 params.set(paramKey, color);
         }
@@ -2400,14 +2382,14 @@ public class WWXML {
 
         Object o = params.get(paramKey);
         if (o == null) {
-            Element[] els = getElements(context, paramName, xpath);
+            Element[] els = WWXML.getElements(context, paramName, xpath);
             if (els == null || els.length == 0)
                 return;
 
             int[] colors = new int[els.length];
 
             for (int i = 0; i < els.length; i++) {
-                Color color = getColor(context, paramName, xpath);
+                Color color = WWXML.getColor(context, paramName, xpath);
                 if (color != null)
                     colors[i] = color.getRGB();
             }
@@ -2457,7 +2439,7 @@ public class WWXML {
 
         Object o = params.get(paramKey);
         if (o == null) {
-            Sector sector = getSector(context, paramName, xpath);
+            Sector sector = WWXML.getSector(context, paramName, xpath);
             if (sector != null)
                 params.set(paramKey, sector);
         }
@@ -2504,14 +2486,14 @@ public class WWXML {
 
         Object o = params.get(paramKey);
         if (o == null) {
-            Element[] els = getElements(context, paramName, xpath);
+            Element[] els = WWXML.getElements(context, paramName, xpath);
             if (els == null || els.length == 0)
                 return;
 
             LevelSet.SectorResolution[] srs = new LevelSet.SectorResolution[els.length];
 
             for (int i = 0; i < els.length; i++) {
-                LevelSet.SectorResolution sr = getSectorResolutionLimit(els[i], null, xpath);
+                LevelSet.SectorResolution sr = WWXML.getSectorResolutionLimit(els[i], null, xpath);
                 if (sr != null)
                     srs[i] = sr;
             }
@@ -2561,7 +2543,7 @@ public class WWXML {
 
         Object o = params.get(paramKey);
         if (o == null) {
-            Long d = getTimeInMillis(context, paramName, xpath);
+            Long d = WWXML.getTimeInMillis(context, paramName, xpath);
             if (d != null)
                 params.set(paramKey, d);
         }
@@ -2622,8 +2604,8 @@ public class WWXML {
      * @param params    the parameter list.
      * @param paramKey  the key used to identify the paramater in the parameter list.
      * @param paramName the Xpath expression identifying the parameter value within the specified context.
-     * @param pattern   the format pattern of the date. See {@link DateFormat} for the pattern symbols. The
-     *                  element content must either match the pattern or be directly convertible to a long.
+     * @param pattern   the format pattern of the date. See {@link DateFormat} for the pattern symbols. The element
+     *                  content must either match the pattern or be directly convertible to a long.
      * @param xpath     an {@link XPath} object to use for the search. This allows the caller to re-use XPath objects
      *                  when performing multiple searches. May be null.
      * @throws IllegalArgumentException if either the context, parameter list, parameter key, pattern or parameter name
@@ -2663,7 +2645,7 @@ public class WWXML {
 
         Object o = params.get(paramKey);
         if (o == null) {
-            Long d = getDateTimeInMillis(context, paramName, pattern, xpath);
+            Long d = WWXML.getDateTimeInMillis(context, paramName, pattern, xpath);
             if (d != null)
                 params.set(paramKey, d);
         }
@@ -2710,7 +2692,7 @@ public class WWXML {
 
         Object o = params.get(paramKey);
         if (o == null) {
-            ScreenCredit sc = getScreenCredit(context, paramName, xpath);
+            ScreenCredit sc = WWXML.getScreenCredit(context, paramName, xpath);
             if (sc != null)
                 params.set(paramKey, sc);
         }
@@ -2747,7 +2729,7 @@ public class WWXML {
 
         String s = params.getStringValue(paramKey);
         if (s != null && !s.isEmpty()) {
-            appendText(context, path, s.trim());
+            WWXML.appendText(context, path, s.trim());
         }
     }
 
@@ -2784,7 +2766,7 @@ public class WWXML {
         if (o instanceof String[]) {
             String[] strings = (String[]) o;
             if (strings.length > 0) {
-                appendTextArray(context, path, (String[]) o);
+                WWXML.appendTextArray(context, path, (String[]) o);
             }
         }
     }
@@ -2820,7 +2802,7 @@ public class WWXML {
 
         Double d = AVListImpl.getDoubleValue(params, paramKey);
         if (d != null) {
-            appendDouble(context, path, d);
+            WWXML.appendDouble(context, path, d);
         }
     }
 
@@ -2855,7 +2837,7 @@ public class WWXML {
 
         Integer i = AVListImpl.getIntegerValue(params, paramKey);
         if (i != null) {
-            appendInteger(context, path, i);
+            WWXML.appendInteger(context, path, i);
         }
     }
 
@@ -2890,7 +2872,7 @@ public class WWXML {
 
         Long l = AVListImpl.getLongValue(params, paramKey);
         if (l != null) {
-            appendLong(context, path, l);
+            WWXML.appendLong(context, path, l);
         }
     }
 
@@ -2925,7 +2907,7 @@ public class WWXML {
 
         Object o = params.get(paramKey);
         if (o instanceof Boolean) {
-            appendBoolean(context, path, (Boolean) o);
+            WWXML.appendBoolean(context, path, (Boolean) o);
         }
     }
 
@@ -2960,7 +2942,7 @@ public class WWXML {
 
         Object o = params.get(paramKey);
         if (o instanceof LatLon) {
-            appendLatLon(context, path, (LatLon) o);
+            WWXML.appendLatLon(context, path, (LatLon) o);
         }
     }
 
@@ -2995,7 +2977,7 @@ public class WWXML {
 
         Object o = params.get(paramKey);
         if (o instanceof Sector) {
-            appendSector(context, path, (Sector) o);
+            WWXML.appendSector(context, path, (Sector) o);
         }
     }
 
@@ -3035,7 +3017,7 @@ public class WWXML {
 
             for (LevelSet.SectorResolution sr : srs) {
                 if (sr != null) {
-                    appendSectorResolutionLimit(context, path, sr);
+                    WWXML.appendSectorResolutionLimit(context, path, sr);
                 }
             }
         }
@@ -3074,7 +3056,7 @@ public class WWXML {
         Object o = params.get(paramKey);
         if (o instanceof Number) {
             Number num = (Number) o;
-            appendTimeInMillis(context, path, num.longValue());
+            WWXML.appendTimeInMillis(context, path, num.longValue());
         }
     }
 
@@ -3109,7 +3091,7 @@ public class WWXML {
 
         Object o = params.get(paramKey);
         if (o instanceof ScreenCredit) {
-            appendScreenCredit(context, path, (ScreenCredit) o);
+            WWXML.appendScreenCredit(context, path, (ScreenCredit) o);
         }
     }
 
@@ -3280,8 +3262,8 @@ public class WWXML {
         }
 
         try {
-            XPath xpath = makeXPath();
-            Element[] elements = getElements(element, "Property", xpath);
+            XPath xpath = WWXML.makeXPath();
+            Element[] elements = WWXML.getElements(element, "Property", xpath);
             if (elements == null || elements.length == 0)
                 return params;
 

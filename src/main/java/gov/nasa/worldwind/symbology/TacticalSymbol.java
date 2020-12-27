@@ -18,8 +18,8 @@ import gov.nasa.worldwind.util.UnitsFormat;
  * in time. See the <a href="https://worldwind.arc.nasa.gov/java/tutorials/tactical-graphics/"
  * target="_blank">Tutorial</a> for instructions on using TacticalSymbol in an application.
  * <h2>Construction</h2> Implementations of this interface provide support for symbols belonging to a specific
- * symbology set. For example, class {@link MilStd2525TacticalSymbol} provides
- * support for tactical symbols from the MIL-STD-2525 symbology specification.
+ * symbology set. For example, class {@link MilStd2525TacticalSymbol} provides support for tactical symbols from the
+ * MIL-STD-2525 symbology specification.
  * <p>
  * To create a tactical symbol, instantiate a concrete implementation appropriate for the desired symbology set. Pass a
  * string identifier, the desired geographic position, and (optionally) one or more symbol modifier key-value pairs to
@@ -147,8 +147,8 @@ public interface TacticalSymbol extends WWObject, Renderable, Highlightable {
     String getIdentifier();
 
     /**
-     * Indicates this symbol's geographic position. See {@link #setPosition(Position)} for a
-     * description of how tactical symbols interpret their position.
+     * Indicates this symbol's geographic position. See {@link #setPosition(Position)} for a description of how tactical
+     * symbols interpret their position.
      *
      * @return this symbol's current geographic position.
      */

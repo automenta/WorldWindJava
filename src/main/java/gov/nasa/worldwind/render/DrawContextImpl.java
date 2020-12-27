@@ -35,13 +35,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     public static final float DEFAULT_DEPTH_OFFSET_FACTOR = 1.0f;
     public static final float DEFAULT_DEPTH_OFFSET_UNITS = 1.0f;
-    protected final GLU glu = new GLUgl2();
-    /**
-     * The list of objects intersecting the pick rectangle during the most recent pick traversal. Initialized to an
-     * empty PickedObjectList.
-     */
-    protected final PickedObjectList objectsInPickRect = new PickedObjectList();
-
     private static final Comparator<OrderedRenderableEntry> distanceSort = (orA, orB) -> {
         if (orA == orB)
             return 0;
@@ -53,12 +46,17 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
 
         return Integer.compare(System.identityHashCode(orA), System.identityHashCode(orB));
     };
-
+    public final AtomicBoolean pickChanged = new AtomicBoolean(true);
+    protected final GLU glu = new GLUgl2();
     /**
-     * Set of ints used by {@link #getPickColorsInRectangle(Rectangle, int[])} to identify the unique color
-     * codes in the specified rectangle. This consolidates duplicate colors to a single entry. We use IntSet to achieve
-     * constant time insertion, and to reduce overhead associated associated with storing integer primitives in a
-     * HashSet.
+     * The list of objects intersecting the pick rectangle during the most recent pick traversal. Initialized to an
+     * empty PickedObjectList.
+     */
+    protected final PickedObjectList objectsInPickRect = new PickedObjectList();
+    /**
+     * Set of ints used by {@link #getPickColorsInRectangle(Rectangle, int[])} to identify the unique color codes in the
+     * specified rectangle. This consolidates duplicate colors to a single entry. We use IntSet to achieve constant time
+     * insertion, and to reduce overhead associated associated with storing integer primitives in a HashSet.
      */
     //protected final IntSet uniquePixelColors = new IntSet();
     protected final GHIntHashSet uniquePixelColors = new GHIntHashSet();
@@ -66,7 +64,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     protected final PickPointFrustumList pickFrustumList = new PickPointFrustumList();
     protected final DeclutteringTextRenderer declutteringTextRenderer = new DeclutteringTextRenderer();
     protected final PriorityQueue<OrderedRenderableEntry> orderedRenderables =
-        new PriorityQueue<>(16 * 1024, distanceSort);
+        new PriorityQueue<>(16 * 1024, DrawContextImpl.distanceSort);
     // Use a standard Queue to store the ordered surface object renderables. Ordered surface renderables are processed
     // in the order they were submitted.
     protected final Queue<OrderedRenderable> orderedSurfaceRenderables = new ArrayDeque<>();
@@ -125,9 +123,11 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
         public Intersection[] intersect(Position pA, Position pB) {
 
             Vec4 ptA = this.getSurfacePoint(pA);
-            if (ptA == null) return null;
+            if (ptA == null)
+                return null;
             Vec4 ptB = this.getSurfacePoint(pB);
-            if (ptB == null) return null;
+            if (ptB == null)
+                return null;
 
             return DrawContextImpl.this.getSurfaceGeometry().intersect(new Line(ptA, ptB.subtract3(ptA)));
         }
@@ -168,27 +168,27 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
      * PickedObjectList.
      */
     protected PickedObjectList pickedObjects = new PickedObjectList();
-    protected int uniquePickNumber = 0;
+    protected int uniquePickNumber;
     /**
      * Buffer of RGB colors used to read back the framebuffer's colors and store them in client memory.
      */
     protected ByteBuffer pixelColors;
-    protected boolean pickingMode = false;
-    protected boolean deepPickingMode = false;
+    protected boolean pickingMode;
+    protected boolean deepPickingMode;
     /**
      * Indicates the current pick point in AWT screen coordinates, or <code>null</code> to indicate that there is no
      * pick point. Initially <code>null</code>.
      */
-    protected Point pickPoint = null;
+    protected Point pickPoint;
     /**
      * Indicates the current pick rectangle in AWT screen coordinates, or <code>null</code> to indicate that there is no
      * pick rectangle. Initially <code>null</code>.
      */
-    protected Rectangle pickRect = null;
-    protected boolean isOrderedRenderingMode = false;
-    protected boolean preRenderMode = false;
-    protected Point viewportCenterScreenPoint = null;
-    protected Position viewportCenterPosition = null;
+    protected Rectangle pickRect;
+    protected boolean isOrderedRenderingMode;
+    protected boolean preRenderMode;
+    protected Point viewportCenterScreenPoint;
+    protected Position viewportCenterPosition;
     protected AnnotationRenderer annotationRenderer = new BasicAnnotationRenderer();
     protected GpuResourceCache gpuResourceCache;
     protected TextRendererCache textRendererCache;
@@ -197,12 +197,10 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     protected SectorVisibilityTree visibleSectors;
     //    protected Map<String, GroupingFilter> groupingFilters;
     protected Layer currentLayer;
-
     protected Collection<Throwable> renderingExceptions;
     protected Dimension pickPointFrustumDimension = new Dimension(3, 3);
     protected LightingModel standardLighting = new BasicLightingModel();
     protected ClutterFilter clutterFilter;
-    public final AtomicBoolean pickChanged = new AtomicBoolean(true);
     private GL gl;
 
     /**
@@ -432,7 +430,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     public Color getUniquePickColor() {
         this.uniquePickNumber++;
 
-        int clearColorCode = CLEAR_COLOR;
+        int clearColorCode = DrawContext.CLEAR_COLOR;
         if (clearColorCode == this.uniquePickNumber) // skip the clear color
             this.uniquePickNumber++;
 
@@ -487,12 +485,11 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
             this.getGL().glReadPixels(x, y, 1, 1, GL.GL_RGB, GL.GL_UNSIGNED_BYTE, this.pixelColors);
         }
 
-
         int colorCode = ((this.pixelColors.get(0) & 0xff) << 16) // Red, bits 16-23
             | ((this.pixelColors.get(1) & 0xff) << 8) // Green, bits 8-16
             | (this.pixelColors.get(2) & 0xff); // Blue, bits 0-7
 
-        return colorCode != CLEAR_COLOR ? colorCode : 0;
+        return colorCode == DrawContext.CLEAR_COLOR ? 0 : colorCode;
     }
 
     /**
@@ -539,7 +536,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
         // specified range. We place each color in a set to consolidates duplicate pick colors to a single entry. This
         // reduces the number of colors we need to return to the caller, and ensures that callers creating picked
         // objects based on the returned colors do not create duplicates.
-        int clearColorCode = CLEAR_COLOR;
+        int clearColorCode = DrawContext.CLEAR_COLOR;
         for (int i = 0; i < numPixels; i++) {
             int colorCode = ((this.pixelColors.get() & 0xff) << 16) // Red, bits 16-23
                 | ((this.pixelColors.get() & 0xff) << 8) // Green, bits 8-16
@@ -676,7 +673,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
 
         // Sort the declutterables front-to-back.
 
-        declutterableArray.sort(distanceSort);
+        declutterableArray.sort(DrawContextImpl.distanceSort);
 
         if (declutterableArray.isEmpty())
             return;
@@ -878,8 +875,6 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     public Map<ScreenCredit, Long> getScreenCredits() {
         return this.credits;
     }
-
-
 
     public PickPointFrustumList getPickFrustums() {
         return this.pickFrustumList;
@@ -1097,8 +1092,8 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
                     Double depthOffsetFactor = renderer.getDepthOffsetFactor(this, shape);
                     Double depthOffsetUnits = renderer.getDepthOffsetUnits(this, shape);
                     gl.glPolygonOffset(
-                        depthOffsetFactor != null ? depthOffsetFactor.floatValue() : DEFAULT_DEPTH_OFFSET_FACTOR,
-                        depthOffsetUnits != null ? depthOffsetUnits.floatValue() : DEFAULT_DEPTH_OFFSET_UNITS);
+                        depthOffsetFactor != null ? depthOffsetFactor.floatValue() : DrawContextImpl.DEFAULT_DEPTH_OFFSET_FACTOR,
+                        depthOffsetUnits != null ? depthOffsetUnits.floatValue() : DrawContextImpl.DEFAULT_DEPTH_OFFSET_UNITS);
 
                     renderer.drawInterior(this, shape);
 
@@ -1108,8 +1103,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
                     gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
 
                     renderer.drawInterior(this, shape);
-                }
-                else {
+                } else {
                     gl.glColorMask(true, true, true, true);
                     gl.glDepthMask(true);
 
@@ -1125,7 +1119,8 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
 
                 renderer.drawOutline(this, shape);
             }
-        } finally {
+        }
+        finally {
             ogsh.pop(gl);
         }
     }
@@ -1183,11 +1178,9 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
         final Angle lon = position.getLongitude();
         if (altitudeMode == WorldWind.CLAMP_TO_GROUND) {
             point = this.computeTerrainPoint(lat, lon, 0);
-        }
-        else if (altitudeMode == WorldWind.RELATIVE_TO_GROUND) {
+        } else if (altitudeMode == WorldWind.RELATIVE_TO_GROUND) {
             point = this.computeTerrainPoint(lat, lon, position.getAltitude());
-        }
-        else  // ABSOLUTE
+        } else  // ABSOLUTE
         {
             point = this.getGlobe().computePointFromPosition(lat, lon,
                 position.getElevation() * this.getVerticalExaggeration());

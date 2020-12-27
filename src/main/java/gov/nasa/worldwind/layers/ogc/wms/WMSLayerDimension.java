@@ -69,13 +69,11 @@ public class WMSLayerDimension extends AbstractXMLEventParser {
                 Boolean d = WWUtil.convertStringToBoolean(attr.getValue());
                 if (d != null)
                     this.setMultipleValues(d);
-            }
-            else if (attr.getName().getLocalPart().equals("nearestValue") && attr.getValue() != null) {
+            } else if (attr.getName().getLocalPart().equals("nearestValue") && attr.getValue() != null) {
                 Boolean d = WWUtil.convertStringToBoolean(attr.getValue());
                 if (d != null)
                     this.setNearestValue(d);
-            }
-            else if (attr.getName().getLocalPart().equals("current") && attr.getValue() != null) {
+            } else if (attr.getName().getLocalPart().equals("current") && attr.getValue() != null) {
                 Boolean d = WWUtil.convertStringToBoolean(attr.getValue());
                 if (d != null)
                     this.setCurrent(d);

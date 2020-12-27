@@ -73,13 +73,13 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     static {
         // Create and populate the default attributes.
         defaultAttrs = new BasicTacticalSymbolAttributes();
-        defaultAttrs.setOpacity(BasicTacticalSymbolAttributes.DEFAULT_OPACITY);
-        defaultAttrs.setScale(BasicTacticalSymbolAttributes.DEFAULT_SCALE);
-        defaultAttrs.setTextModifierMaterial(BasicTacticalSymbolAttributes.DEFAULT_TEXT_MODIFIER_MATERIAL);
+        AbstractTacticalSymbol.defaultAttrs.setOpacity(BasicTacticalSymbolAttributes.DEFAULT_OPACITY);
+        AbstractTacticalSymbol.defaultAttrs.setScale(BasicTacticalSymbolAttributes.DEFAULT_SCALE);
+        AbstractTacticalSymbol.defaultAttrs.setTextModifierMaterial(BasicTacticalSymbolAttributes.DEFAULT_TEXT_MODIFIER_MATERIAL);
 
         // Configure the atlas to remove old texture elements that are likely no longer used to make room for new
         // modifiers when the atlas is full.
-        DEFAULT_GLYPH_ATLAS.setEvictOldElements(true);
+        AbstractTacticalSymbol.DEFAULT_GLYPH_ATLAS.setEvictOldElements(true);
     }
 
     /**
@@ -103,17 +103,15 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     protected final Collection<Label> currentLabels = new ArrayList<>();
     protected final Collection<Line> currentLines = new ArrayList<>();
     protected final Map<String, IconAtlasElement> glyphMap = new HashMap<>();
-    protected final long maxTimeSinceLastUsed = DEFAULT_MAX_TIME_SINCE_LAST_USED;
+    protected final long maxTimeSinceLastUsed = AbstractTacticalSymbol.DEFAULT_MAX_TIME_SINCE_LAST_USED;
     /**
      * Support for setting up and restoring OpenGL state during rendering. Initialized to a new OGLStackHandler, and
-     * used in {@link #beginDrawing(DrawContext, int)} and {@link
-     * #endDrawing(DrawContext)}.
+     * used in {@link #beginDrawing(DrawContext, int)} and {@link #endDrawing(DrawContext)}.
      */
     protected final OGLStackHandler BEogsh = new OGLStackHandler();
     /**
      * Support for setting up and restoring picking state, and resolving the picked object. Initialized to a new
-     * PickSupport, and used in {@link #pick(DrawContext, Point,
-     * AbstractTacticalSymbol.OrderedSymbol)}.
+     * PickSupport, and used in {@link #pick(DrawContext, Point, AbstractTacticalSymbol.OrderedSymbol)}.
      */
     protected final PickSupport pickSupport = new PickSupport();
     /**
@@ -127,9 +125,8 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
      */
     protected boolean highlighted;
     /**
-     * Indicates this symbol's geographic position. See {@link #setPosition(Position)} for a
-     * description of how tactical symbols interpret their position. Must be non-null, and is initialized during
-     * construction.
+     * Indicates this symbol's geographic position. See {@link #setPosition(Position)} for a description of how tactical
+     * symbols interpret their position. Must be non-null, and is initialized during construction.
      */
     protected Position position;
     /**
@@ -204,7 +201,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     /**
      * Unit format used to format location and altitude for text modifiers.
      */
-    protected UnitsFormat unitsFormat = DEFAULT_UNITS_FORMAT;
+    protected UnitsFormat unitsFormat = AbstractTacticalSymbol.DEFAULT_UNITS_FORMAT;
     /**
      * Current symbol position, formatted using the current unit format.
      */
@@ -213,11 +210,11 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
      * Dragging support properties.
      */
     protected boolean dragEnabled = true;
-    protected DraggableSupport draggableSupport = null;
+    protected DraggableSupport draggableSupport;
     /**
      * Per-frame layer indicating this symbol's layer when its ordered renderable was created. Assigned each frame in
-     * {@link #makeOrderedRenderable(DrawContext)}. Used to define the picked object's layer
-     * during pick resolution. Initially <code>null</code>.
+     * {@link #makeOrderedRenderable(DrawContext)}. Used to define the picked object's layer during pick resolution.
+     * Initially <code>null</code>.
      */
     protected Layer pickLayer;
     /**
@@ -229,7 +226,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
      * Constructs a new symbol with no position.
      */
     protected AbstractTacticalSymbol() {
-        this.setGlyphAtlas(DEFAULT_GLYPH_ATLAS);
+        this.setGlyphAtlas(AbstractTacticalSymbol.DEFAULT_GLYPH_ATLAS);
     }
 
     /**
@@ -248,7 +245,44 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         }
 
         this.position = position;
-        this.setGlyphAtlas(DEFAULT_GLYPH_ATLAS);
+        this.setGlyphAtlas(AbstractTacticalSymbol.DEFAULT_GLYPH_ATLAS);
+    }
+
+    protected static Rectangle computeScaledRect(Rectangle rect, Dimension maxDimension, double scaleX, double scaleY) {
+        double x = rect.getX() * scaleX;
+        double y = rect.getY() * scaleY;
+        double width = rect.getWidth() * scaleX;
+        double height = rect.getHeight() * scaleY;
+
+        double maxWidth = maxDimension.getWidth();
+        double maxHeight = maxDimension.getHeight();
+
+        if (width < maxWidth) {
+            x = x + (width - maxWidth) / 2.0;
+            width = maxWidth;
+        }
+        if (height < maxHeight) {
+            y = y + (height - maxHeight) / 2.0;
+            height = maxHeight;
+        }
+
+        return new Rectangle((int) x, (int) y, (int) Math.ceil(width), (int) Math.ceil(height));
+    }
+
+    /**
+     * Indicates the maximum expected size of a rendered tactical symbol. This value is used to estimate the size of a
+     * symbol and perform culling. If the symbol would not be visible (assuming it is the max size), then the icon does
+     * not need to be retrieved.
+     *
+     * @return Maximum size of a symbol, in pixels.
+     */
+    protected static int getMaxSymbolDimension() {
+        return AbstractTacticalSymbol.MAX_SYMBOL_DIMENSION;
+    }
+
+    @SuppressWarnings("UnusedParameters")
+    protected static boolean mustDrawIcon(DrawContext dc) {
+        return true;
     }
 
     /**
@@ -567,8 +601,8 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     }
 
     /**
-     * Indicates a location within the symbol to align with the symbol point. See {@link
-     * #setOffset(Offset) setOffset} for more information.
+     * Indicates a location within the symbol to align with the symbol point. See {@link #setOffset(Offset) setOffset}
+     * for more information.
      *
      * @return the hot spot controlling the symbol's placement relative to the symbol point. null indicates default
      * alignment.
@@ -725,8 +759,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
 
             this.frameNumber = dc.getFrameTimeStamp();
             this.thisFramesOrderedSymbol = osym;
-        }
-        else {
+        } else {
             osym = thisFramesOrderedSymbol;
         }
 
@@ -749,11 +782,9 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
 
         if (this.altitudeMode == WorldWind.CLAMP_TO_GROUND || dc.is2DGlobe()) {
             osym.placePoint = dc.computeTerrainPoint(pos.getLatitude(), pos.getLongitude(), 0);
-        }
-        else if (this.altitudeMode == WorldWind.RELATIVE_TO_GROUND) {
+        } else if (this.altitudeMode == WorldWind.RELATIVE_TO_GROUND) {
             osym.placePoint = dc.computeTerrainPoint(pos.getLatitude(), pos.getLongitude(), pos.getAltitude());
-        }
-        else // Default to ABSOLUTE
+        } else // Default to ABSOLUTE
         {
             double height = pos.getElevation() * dc.getVerticalExaggeration();
             osym.placePoint = dc.getGlobe().computePointFromPosition(pos.getLatitude(), pos.getLongitude(), height);
@@ -781,14 +812,12 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
                 if (this.getAttributes() != null)
                     this.activeAttrs.copy(this.getAttributes());
                 else
-                    this.activeAttrs.copy(defaultAttrs);
+                    this.activeAttrs.copy(AbstractTacticalSymbol.defaultAttrs);
             }
-        }
-        else if (this.getAttributes() != null) {
+        } else if (this.getAttributes() != null) {
             this.activeAttrs.copy(this.getAttributes());
-        }
-        else {
-            this.activeAttrs.copy(defaultAttrs);
+        } else {
+            this.activeAttrs.copy(AbstractTacticalSymbol.defaultAttrs);
         }
 
         // If the font has changed since the last frame, then the layout needs to be recomputed since text may be a
@@ -860,8 +889,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             this.activeModifiers.setValues(modifierParams);
 
             this.removeDeadModifiers(System.currentTimeMillis());
-        }
-        else {
+        } else {
             // Reuse cached layout.
             osym.layoutRect = new Rectangle(this.staticLayoutRect);
             osym.screenRect = new Rectangle(this.staticScreenRect);
@@ -923,7 +951,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         // available rather than going back to the default icon.
         boolean textureLoaded = this.activeIconTexture != null;
         if (!textureLoaded) {
-            this.activeIconTexture = new BasicWWTexture(LOADING_IMAGE_PATH);
+            this.activeIconTexture = new BasicWWTexture(AbstractTacticalSymbol.LOADING_IMAGE_PATH);
             textureLoaded = this.activeIconTexture.bind(dc);
         }
 
@@ -969,20 +997,15 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     /**
      * Layout static modifiers around the symbol. Static modifiers are not expected to change due to changes in view.
      * Subclasses should not override this method. Instead, subclasses may override {@link
-     * #layoutGraphicModifiers(DrawContext, AVList,
-     * AbstractTacticalSymbol.OrderedSymbol) layoutGraphicModifiers} and {@link
-     * #layoutTextModifiers(DrawContext, AVList,
-     * AbstractTacticalSymbol.OrderedSymbol) layoutTextModifiers}.
+     * #layoutGraphicModifiers(DrawContext, AVList, AbstractTacticalSymbol.OrderedSymbol) layoutGraphicModifiers} and
+     * {@link #layoutTextModifiers(DrawContext, AVList, AbstractTacticalSymbol.OrderedSymbol) layoutTextModifiers}.
      *
      * @param dc        Current draw context.
      * @param modifiers Current modifiers.
      * @param osym      The OrderedSymbol to hold the per-frame data.
-     * @see #layoutDynamicModifiers(DrawContext, AVList,
-     * AbstractTacticalSymbol.OrderedSymbol)
-     * @see #layoutGraphicModifiers(DrawContext, AVList,
-     * AbstractTacticalSymbol.OrderedSymbol)
-     * @see #layoutTextModifiers(DrawContext, AVList,
-     * AbstractTacticalSymbol.OrderedSymbol)
+     * @see #layoutDynamicModifiers(DrawContext, AVList, AbstractTacticalSymbol.OrderedSymbol)
+     * @see #layoutGraphicModifiers(DrawContext, AVList, AbstractTacticalSymbol.OrderedSymbol)
+     * @see #layoutTextModifiers(DrawContext, AVList, AbstractTacticalSymbol.OrderedSymbol)
      */
     protected void layoutStaticModifiers(DrawContext dc, AVList modifiers, OrderedSymbol osym) {
         if (this.iconRect == null)
@@ -1009,8 +1032,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
      * @param dc        Current draw context.
      * @param modifiers Current modifiers.
      * @param osym      The OrderedSymbol to hold the per-frame data.
-     * @see #layoutDynamicModifiers(DrawContext, AVList,
-     * AbstractTacticalSymbol.OrderedSymbol)
+     * @see #layoutDynamicModifiers(DrawContext, AVList, AbstractTacticalSymbol.OrderedSymbol)
      */
     protected void layoutGraphicModifiers(DrawContext dc, AVList modifiers, OrderedSymbol osym) {
         // Intentionally left blank. Subclasses can override this method in order to layout any modifiers associated
@@ -1027,8 +1049,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
      * @param dc        Current draw context.
      * @param modifiers Current modifiers.
      * @param osym      The OrderedSymbol to hold the per-frame data.
-     * @see #layoutDynamicModifiers(DrawContext, AVList,
-     * AbstractTacticalSymbol.OrderedSymbol)
+     * @see #layoutDynamicModifiers(DrawContext, AVList, AbstractTacticalSymbol.OrderedSymbol)
      */
     protected void layoutTextModifiers(DrawContext dc, AVList modifiers, OrderedSymbol osym) {
         // Intentionally left blank. Subclasses can override this method in order to layout any modifiers associated
@@ -1043,8 +1064,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
      * @param dc        Current draw context.
      * @param modifiers Current modifiers.
      * @param osym      The OrderedSymbol to hold the per-frame data.
-     * @see #layoutStaticModifiers(DrawContext, AVList,
-     * AbstractTacticalSymbol.OrderedSymbol)
+     * @see #layoutStaticModifiers(DrawContext, AVList, AbstractTacticalSymbol.OrderedSymbol)
      */
     protected void layoutDynamicModifiers(DrawContext dc, AVList modifiers, OrderedSymbol osym) {
         // Intentionally left blank. Subclasses can override this method in order to layout any modifiers associated
@@ -1080,9 +1100,9 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
 
         if (offset != null) {
             Rectangle rect;
-            if (LAYOUT_ABSOLUTE.equals(layoutMode))
+            if (AbstractTacticalSymbol.LAYOUT_ABSOLUTE.equals(layoutMode))
                 rect = this.iconRect;
-            else if (LAYOUT_RELATIVE.equals(layoutMode))
+            else if (AbstractTacticalSymbol.LAYOUT_RELATIVE.equals(layoutMode))
                 rect = osym.layoutRect;
             else // LAYOUT_NONE
                 rect = this.iconRect;
@@ -1105,7 +1125,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         else
             osym.screenRect = new Rectangle(rect);
 
-        if (LAYOUT_ABSOLUTE.equals(layoutMode) || LAYOUT_RELATIVE.equals(layoutMode)) {
+        if (AbstractTacticalSymbol.LAYOUT_ABSOLUTE.equals(layoutMode) || AbstractTacticalSymbol.LAYOUT_RELATIVE.equals(layoutMode)) {
             if (osym.layoutRect != null)
                 osym.layoutRect.add(rect);
             else
@@ -1133,9 +1153,9 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
 
         if (offset != null) {
             Rectangle rect;
-            if (LAYOUT_ABSOLUTE.equals(layoutMode))
+            if (AbstractTacticalSymbol.LAYOUT_ABSOLUTE.equals(layoutMode))
                 rect = osym.iconRectScaled;
-            else if (LAYOUT_RELATIVE.equals(layoutMode))
+            else if (AbstractTacticalSymbol.LAYOUT_RELATIVE.equals(layoutMode))
                 rect = osym.layoutRectScaled;
             else // LAYOUT_NONE
                 rect = osym.iconRectScaled;
@@ -1153,17 +1173,17 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
 
         Rectangle rect = new Rectangle(x, y, size.width, size.height);
 
-        if (LAYOUT_ABSOLUTE.equals(layoutMode) || LAYOUT_RELATIVE.equals(layoutMode)) {
+        if (AbstractTacticalSymbol.LAYOUT_ABSOLUTE.equals(layoutMode) || AbstractTacticalSymbol.LAYOUT_RELATIVE.equals(layoutMode)) {
             if (osym.layoutRectScaled != null) {
                 osym.layoutRectScaled.add(rect);
-            }
-            else
+            } else
                 osym.layoutRectScaled = new Rectangle(rect);
 
             // Compute where the label rectangle falls in the icon layout before scaling is applied. This is necessary
             // to layout graphic modifiers such as the ground direction of movement indicator that are scaled down with
             // the icon, but should not overlap text which is not scaled with the icon.
-            Rectangle scaledRect = AbstractTacticalSymbol.computeScaledRect(rect, rect.getSize(), 1 / osym.sx, 1 / osym.sy);
+            Rectangle scaledRect = AbstractTacticalSymbol.computeScaledRect(rect, rect.getSize(), 1 / osym.sx,
+                1 / osym.sy);
             if (osym.layoutRect != null)
                 osym.layoutRect.add(scaledRect);
             else
@@ -1180,9 +1200,9 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
 
         if (offset != null) {
             Rectangle rect;
-            if (LAYOUT_ABSOLUTE.equals(layoutMode))
+            if (AbstractTacticalSymbol.LAYOUT_ABSOLUTE.equals(layoutMode))
                 rect = this.iconRect;
-            else if (LAYOUT_RELATIVE.equals(layoutMode))
+            else if (AbstractTacticalSymbol.LAYOUT_RELATIVE.equals(layoutMode))
                 rect = osym.layoutRect;
             else // LAYOUT_NONE
                 rect = this.iconRect;
@@ -1201,7 +1221,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             else
                 osym.screenRect = new Rectangle((int) p.getX(), (int) p.getY(), 0, 0);
 
-            if (i < numPointsInLayout && (LAYOUT_ABSOLUTE.equals(layoutMode) || LAYOUT_RELATIVE.equals(layoutMode))) {
+            if (i < numPointsInLayout && (AbstractTacticalSymbol.LAYOUT_ABSOLUTE.equals(layoutMode) || AbstractTacticalSymbol.LAYOUT_RELATIVE.equals(layoutMode))) {
                 if (osym.layoutRect != null)
                     osym.layoutRect.add(p);
                 else
@@ -1224,8 +1244,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             Rectangle rect = this.layoutRect(offset, hotspot, elem.getSize(), layoutMode, osym);
             elem.setPoint(rect.getLocation());
             this.currentGlyphs.add(elem);
-        }
-        else {
+        } else {
             this.unresolvedGlyph = true;
         }
     }
@@ -1325,8 +1344,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         if (this.getActiveAttributes().getScale() != null) {
             osym.sx = this.getActiveAttributes().getScale();
             osym.sy = this.getActiveAttributes().getScale();
-        }
-        else {
+        } else {
             osym.sx = BasicTacticalSymbolAttributes.DEFAULT_SCALE;
             osym.sy = BasicTacticalSymbolAttributes.DEFAULT_SCALE;
         }
@@ -1338,8 +1356,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
                 null);
             osym.dx = -this.iconRect.getX() - p.getX();
             osym.dy = -this.iconRect.getY() - p.getY();
-        }
-        else {
+        } else {
             osym.dx = 0;
             osym.dy = 0;
         }
@@ -1355,7 +1372,8 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     protected void computeScaledBounds(DrawContext dc, AVList modifiers, OrderedSymbol osym) {
         Dimension maxDimension = this.computeMinTextLayout(dc, modifiers);
         osym.iconRectScaled = AbstractTacticalSymbol.computeScaledRect(this.iconRect, maxDimension, osym.sx, osym.sy);
-        osym.layoutRectScaled = AbstractTacticalSymbol.computeScaledRect(osym.layoutRect, maxDimension, osym.sx, osym.sy);
+        osym.layoutRectScaled = AbstractTacticalSymbol.computeScaledRect(osym.layoutRect, maxDimension, osym.sx,
+            osym.sy);
     }
 
     /**
@@ -1386,28 +1404,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
 
     @SuppressWarnings("UnusedParameters")
     protected int getMaxLabelLines(AVList modifiers) {
-        return DEFAULT_LABEL_LINES;
-    }
-
-    protected static Rectangle computeScaledRect(Rectangle rect, Dimension maxDimension, double scaleX, double scaleY) {
-        double x = rect.getX() * scaleX;
-        double y = rect.getY() * scaleY;
-        double width = rect.getWidth() * scaleX;
-        double height = rect.getHeight() * scaleY;
-
-        double maxWidth = maxDimension.getWidth();
-        double maxHeight = maxDimension.getHeight();
-
-        if (width < maxWidth) {
-            x = x + (width - maxWidth) / 2.0;
-            width = maxWidth;
-        }
-        if (height < maxHeight) {
-            y = y + (height - maxHeight) / 2.0;
-            height = maxHeight;
-        }
-
-        return new Rectangle((int) x, (int) y, (int) Math.ceil(width), (int) Math.ceil(height));
+        return AbstractTacticalSymbol.DEFAULT_LABEL_LINES;
     }
 
     protected Rectangle computeScreenExtent(OrderedSymbol osym) {
@@ -1421,26 +1418,14 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             y = osym.screenPoint.y + osym.sy * (osym.dy + osym.screenRect.getY());
             width = osym.sx * osym.screenRect.getWidth();
             height = osym.sy * osym.screenRect.getHeight();
-        }
-        else {
-            width = MAX_SYMBOL_DIMENSION;
-            height = MAX_SYMBOL_DIMENSION;
+        } else {
+            width = AbstractTacticalSymbol.MAX_SYMBOL_DIMENSION;
+            height = AbstractTacticalSymbol.MAX_SYMBOL_DIMENSION;
             x = osym.screenPoint.x - width / 2.0;
             y = osym.screenPoint.y - height / 2.0;
         }
 
         return new Rectangle((int) x, (int) y, (int) Math.ceil(width), (int) Math.ceil(height));
-    }
-
-    /**
-     * Indicates the maximum expected size of a rendered tactical symbol. This value is used to estimate the size of a
-     * symbol and perform culling. If the symbol would not be visible (assuming it is the max size), then the icon does
-     * not need to be retrieved.
-     *
-     * @return Maximum size of a symbol, in pixels.
-     */
-    protected static int getMaxSymbolDimension() {
-        return MAX_SYMBOL_DIMENSION;
     }
 
     protected boolean intersectsFrustum(DrawContext dc, OrderedSymbol osym) {
@@ -1492,8 +1477,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
 
                 nextItem = dc.peekOrderedRenderables();
             }
-        }
-        else if (this.isEnableBatchPicking()) {
+        } else if (this.isEnableBatchPicking()) {
             while (nextItem instanceof OrderedSymbol) {
                 OrderedSymbol ts = (OrderedSymbol) nextItem;
                 if (!ts.isEnableBatchRendering() || !ts.isEnableBatchPicking())
@@ -1545,7 +1529,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         // Enable OpenGL texturing for all symbols by default. The most common case is to render a series of textured
         // quads representing symbol icons and modifiers.
         gl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
-        gl.glPolygonOffset(0, (float) DEFAULT_DEPTH_OFFSET);
+        gl.glPolygonOffset(0, (float) AbstractTacticalSymbol.DEFAULT_DEPTH_OFFSET);
 
         // Enable OpenGL texturing for all symbols by default. The most common case is to render a series of textured
         // quads representing symbol icons and modifiers.
@@ -1559,8 +1543,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
 
             // Give symbol modifier lines a thicker width during picking in order to make them easier to select.
             gl.glLineWidth(9.0f);
-        }
-        else {
+        } else {
             // Enable blending for RGB colors which have been premultiplied by their alpha component. We use this mode
             // because the icon texture and modifier textures RGB color components have been premultiplied by their color
             // component.
@@ -1605,8 +1588,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             Color pickColor = dc.getUniquePickColor();
             pickCandidates.addPickableObject(this.createPickedObject(pickColor.getRGB()));
             gl.glColor3ub((byte) pickColor.getRed(), (byte) pickColor.getGreen(), (byte) pickColor.getBlue());
-        }
-        else {
+        } else {
             // Set the current color to white with the symbol's current opacity. This applies the symbol's opacity to
             // its icon texture and graphic modifier textures by multiplying texture fragment colors by the opacity. We
             // pre-multiply the white RGB color components by the alpha since the texture's RGB color components have
@@ -1631,7 +1613,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             // If the caller specified a custom depth offset, we restore the default depth offset to the value specified
             // in beginRendering.
             if (depthOffsetUnits != null)
-                gl.glPolygonOffset(0.0f, (float) DEFAULT_DEPTH_OFFSET);
+                gl.glPolygonOffset(0.0f, (float) AbstractTacticalSymbol.DEFAULT_DEPTH_OFFSET);
         }
     }
 
@@ -1676,11 +1658,6 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
                 gl.glPopMatrix();
             }
         }
-    }
-
-    @SuppressWarnings("UnusedParameters")
-    protected static boolean mustDrawIcon(DrawContext dc) {
-        return true;
     }
 
     @SuppressWarnings("UnusedParameters")
@@ -1938,7 +1915,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
                 return AWTTextureIO.newTextureData(Configuration.getMaxCompatibleGLProfile(), image,
                     this.isUseMipMaps());
             }
-            catch (Exception e) {
+            catch (RuntimeException e) {
                 String msg = Logging.getMessage("Symbology.ExceptionRetrievingTacticalIcon", this.getImageSource());
                 Logging.logger().log(Level.SEVERE, msg, e);
                 this.textureInitializationFailed = true; // Suppress subsequent requests for this tactical icon.
@@ -2036,7 +2013,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
 
                 return image;
             }
-            catch (Exception e) {
+            catch (RuntimeException e) {
                 String msg = Logging.getMessage("Symbology.ExceptionRetrievingGraphicModifier",
                     this.getImageSource());
                 Logging.logger().log(Level.SEVERE, msg, e);
@@ -2128,8 +2105,8 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     protected class OrderedSymbol implements OrderedRenderable {
         /**
          * Per-frame Cartesian point corresponding to this symbol's position. Calculated each frame in {@link
-         * AbstractTacticalSymbol#computeSymbolPoints(DrawContext,
-         * AbstractTacticalSymbol.OrderedSymbol)}. Initially <code>null</code>.
+         * AbstractTacticalSymbol#computeSymbolPoints(DrawContext, AbstractTacticalSymbol.OrderedSymbol)}. Initially
+         * <code>null</code>.
          */
         public Vec4 placePoint;
         /**
@@ -2141,32 +2118,28 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         /**
          * Per-frame distance corresponding to the distance between the placePoint and the View's eye point. Used to
          * order the symbol as an ordered renderable, and is returned by getDistanceFromEye. Calculated each frame in
-         * {@link AbstractTacticalSymbol#computeSymbolPoints(DrawContext,
-         * AbstractTacticalSymbol.OrderedSymbol)}. Initially 0.
+         * {@link AbstractTacticalSymbol#computeSymbolPoints(DrawContext, AbstractTacticalSymbol.OrderedSymbol)}.
+         * Initially 0.
          */
         public double eyeDistance;
         /**
          * Per-frame screen scale indicating this symbol's x-scale relative to the screen offset. Calculated each frame
-         * in {@link #computeTransform(DrawContext, AbstractTacticalSymbol.OrderedSymbol)}.
-         * Initially 0.
+         * in {@link #computeTransform(DrawContext, AbstractTacticalSymbol.OrderedSymbol)}. Initially 0.
          */
         public double sx;
         /**
          * Per-frame screen scale indicating this symbol's y-scale relative to the screen offset. Calculated each frame
-         * in {@link #computeTransform(DrawContext, AbstractTacticalSymbol.OrderedSymbol)}.
-         * Initially 0.
+         * in {@link #computeTransform(DrawContext, AbstractTacticalSymbol.OrderedSymbol)}. Initially 0.
          */
         public double sy;
         /**
          * Per-frame screen offset indicating this symbol's x-offset relative to the screenPoint. Calculated each frame
-         * in {@link #computeTransform(DrawContext, AbstractTacticalSymbol.OrderedSymbol)}.
-         * Initially 0.
+         * in {@link #computeTransform(DrawContext, AbstractTacticalSymbol.OrderedSymbol)}. Initially 0.
          */
         public double dx;
         /**
          * Per-frame screen offset indicating this symbol's y-offset relative to the screenPoint. Calculated each frame
-         * in {@link #computeTransform(DrawContext, AbstractTacticalSymbol.OrderedSymbol)}.
-         * Initially 0.
+         * in {@link #computeTransform(DrawContext, AbstractTacticalSymbol.OrderedSymbol)}. Initially 0.
          */
         public double dy;
 

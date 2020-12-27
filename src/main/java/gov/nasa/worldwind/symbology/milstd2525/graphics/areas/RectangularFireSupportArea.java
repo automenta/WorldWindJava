@@ -9,7 +9,7 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.areas;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.*;
+import gov.nasa.worldwind.symbology.TacticalGraphicLabel;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 import gov.nasa.worldwind.util.WWUtil;
 
@@ -27,7 +27,7 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id: RectangularFireSupportArea.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class RectangularFireSupportArea extends AbstractRectangularGraphic implements TacticalQuad, PreRenderable {
+public class RectangularFireSupportArea extends AbstractRectangularGraphic {
     /**
      * Path to the image used for the polygon fill pattern.
      */
@@ -94,6 +94,15 @@ public class RectangularFireSupportArea extends AbstractRectangularGraphic imple
     }
 
     /**
+     * Indicates the source of the image that provides the polygon fill pattern.
+     *
+     * @return The source of the polygon fill pattern.
+     */
+    protected static Object getImageSource() {
+        return RectangularFireSupportArea.DIAGONAL_FILL_PATH;
+    }
+
+    /**
      * Create labels for the graphic.
      */
     @Override
@@ -135,7 +144,7 @@ public class RectangularFireSupportArea extends AbstractRectangularGraphic imple
             // Find the upper left corner (looking the quad such that Point 1 is on the left and Point 2 is on the right,
             // and the line between the two is horizontal, as the quad is pictured in the MIL-STD-2525C spec, pg. 652).
             double cornerAngle = Math.atan2(-hh, hw);
-            double azimuth = (Math.PI / 2.0) - (cornerAngle - this.quad.getHeading().radians);
+            double azimuth = (Math.PI / 2.0) - (cornerAngle - this.quad.getHeading().radians());
 
             LatLon corner = LatLon.greatCircleEndPosition(center, azimuth, pathLength);
 
@@ -172,7 +181,7 @@ public class RectangularFireSupportArea extends AbstractRectangularGraphic imple
         // in the circle. (This is not necessary with a center aligned label because centering the text automatically
         // centers the label in the circle).
         if (isACA)
-            return LEFT_ALIGN_OFFSET;
+            return RectangularFireSupportArea.LEFT_ALIGN_OFFSET;
         else
             return super.getDefaultLabelOffset();
     }
@@ -200,14 +209,5 @@ public class RectangularFireSupportArea extends AbstractRectangularGraphic imple
         return TacGrpSidc.FSUPP_ARS_C2ARS_NFA_RTG.equalsIgnoreCase(this.maskedSymbolCode)
             || TacGrpSidc.FSUPP_ARS_KLBOX_BLUE_RTG.equalsIgnoreCase(this.maskedSymbolCode)
             || TacGrpSidc.FSUPP_ARS_KLBOX_PURPLE_RTG.equalsIgnoreCase(this.maskedSymbolCode);
-    }
-
-    /**
-     * Indicates the source of the image that provides the polygon fill pattern.
-     *
-     * @return The source of the polygon fill pattern.
-     */
-    protected static Object getImageSource() {
-        return DIAGONAL_FILL_PATH;
     }
 }

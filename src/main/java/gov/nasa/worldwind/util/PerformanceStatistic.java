@@ -34,7 +34,7 @@ public class PerformanceStatistic implements Comparable<PerformanceStatistic> {
     public static final Set<String> ALL_STATISTICS_SET = new HashSet<>(1);
 
     static {
-        ALL_STATISTICS_SET.add(PerformanceStatistic.ALL);
+        PerformanceStatistic.ALL_STATISTICS_SET.add(PerformanceStatistic.ALL);
     }
 
     private final String key;
@@ -102,6 +102,6 @@ public class PerformanceStatistic implements Comparable<PerformanceStatistic> {
 
     @Override
     public String toString() {
-        return this.displayString + " " + this.value.toString();
+        return this.displayString + ' ' + this.value.toString();
     }
 }

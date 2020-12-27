@@ -26,9 +26,9 @@ import java.util.*;
  */
 public class WWMath {
     public static final double SECOND_TO_MILLIS = 1000.0;
-    public static final double MINUTE_TO_MILLIS = 60.0 * SECOND_TO_MILLIS;
-    public static final double HOUR_TO_MILLIS = 60.0 * MINUTE_TO_MILLIS;
-    public static final double DAY_TO_MILLIS = 24.0 * HOUR_TO_MILLIS;
+    public static final double MINUTE_TO_MILLIS = 60.0 * WWMath.SECOND_TO_MILLIS;
+    public static final double HOUR_TO_MILLIS = 60.0 * WWMath.MINUTE_TO_MILLIS;
+    public static final double DAY_TO_MILLIS = 24.0 * WWMath.HOUR_TO_MILLIS;
 
     public static final double METERS_TO_KILOMETERS = 1.0e-3;
     public static final double METERS_TO_MILES = 0.000621371192;
@@ -64,7 +64,7 @@ public class WWMath {
      * @return true if power of 2, else false
      */
     public static boolean isPowerOfTwo(int value) {
-        return (value == powerOfTwoCeiling(value));
+        return (value == WWMath.powerOfTwoCeiling(value));
     }
 
     /**
@@ -153,11 +153,9 @@ public class WWMath {
 
         if (value <= min) {
             return 0;
-        }
-        else if (value >= max) {
+        } else if (value >= max) {
             return 1;
-        }
-        else {
+        } else {
             return (value - min) / (max - min);
         }
     }
@@ -188,11 +186,9 @@ public class WWMath {
 
         if (value <= min) {
             return 0;
-        }
-        else if (value >= max) {
+        } else if (value >= max) {
             return 1;
-        }
-        else {
+        } else {
             double step = (value - min) / (max - min);
             return step * step * (3 - 2 * step);
         }
@@ -211,7 +207,7 @@ public class WWMath {
      * @return the interpolation factor for <code>v</code> given the specified range <code>[x, y]</code>
      */
     public static double computeInterpolationFactor(double v, double x, double y) {
-        return clamp((v - x) / (y - x), 0.0d, 1.0d);
+        return WWMath.clamp((v - x) / (y - x), 0.0d, 1.0d);
     }
 
     /**
@@ -228,7 +224,7 @@ public class WWMath {
      * @return the linear interpolation of <code>x</code> and <code>y</code>.
      */
     public static double mix(double a, double x, double y) {
-        double t = clamp(a, 0.0d, 1.0d);
+        double t = WWMath.clamp(a, 0.0d, 1.0d);
         return x + t * (y - x);
     }
 
@@ -249,7 +245,7 @@ public class WWMath {
      * @return the smooth hermite interpolation of <code>x</code> and <code>y</code>.
      */
     public static double mixSmooth(double a, double x, double y) {
-        double t = clamp(a, 0.0d, 1.0d);
+        double t = WWMath.clamp(a, 0.0d, 1.0d);
         t = t * t * (3.0d - 2.0d * t);
         return x + t * (y - x);
     }
@@ -261,7 +257,7 @@ public class WWMath {
      * @return the value converted to feet.
      */
     public static double convertMetersToFeet(double meters) {
-        return (meters * METERS_TO_FEET);
+        return (meters * WWMath.METERS_TO_FEET);
     }
 
     /**
@@ -271,7 +267,7 @@ public class WWMath {
      * @return the value converted to miles.
      */
     public static double convertMetersToMiles(double meters) {
-        return (meters * METERS_TO_MILES);
+        return (meters * WWMath.METERS_TO_MILES);
     }
 
     /**
@@ -281,7 +277,7 @@ public class WWMath {
      * @return the distance converted to meters.
      */
     public static double convertFeetToMeters(double feet) {
-        return (feet / METERS_TO_FEET);
+        return (feet / WWMath.METERS_TO_FEET);
     }
 
     /**
@@ -291,7 +287,7 @@ public class WWMath {
      * @return time in milliseconds.
      */
     public static double convertSecondsToMillis(double seconds) {
-        return (seconds * SECOND_TO_MILLIS);
+        return (seconds * WWMath.SECOND_TO_MILLIS);
     }
 
     /**
@@ -301,7 +297,7 @@ public class WWMath {
      * @return time in seconds.
      */
     public static double convertMillisToSeconds(double millis) {
-        return millis / SECOND_TO_MILLIS;
+        return millis / WWMath.SECOND_TO_MILLIS;
     }
 
     /**
@@ -311,7 +307,7 @@ public class WWMath {
      * @return time in milliseconds.
      */
     public static double convertMinutesToMillis(double minutes) {
-        return (minutes * MINUTE_TO_MILLIS);
+        return (minutes * WWMath.MINUTE_TO_MILLIS);
     }
 
     /**
@@ -321,7 +317,7 @@ public class WWMath {
      * @return time in minutes.
      */
     public static double convertMillisToMinutes(double millis) {
-        return millis / MINUTE_TO_MILLIS;
+        return millis / WWMath.MINUTE_TO_MILLIS;
     }
 
     /**
@@ -331,7 +327,7 @@ public class WWMath {
      * @return time in milliseconds.
      */
     public static double convertHoursToMillis(double hours) {
-        return (hours * HOUR_TO_MILLIS);
+        return (hours * WWMath.HOUR_TO_MILLIS);
     }
 
     /**
@@ -341,7 +337,7 @@ public class WWMath {
      * @return time in hours.
      */
     public static double convertMillisToHours(double mills) {
-        return mills / HOUR_TO_MILLIS;
+        return mills / WWMath.HOUR_TO_MILLIS;
     }
 
     /**
@@ -351,7 +347,7 @@ public class WWMath {
      * @return time in milliseconds.
      */
     public static double convertDaysToMillis(double millis) {
-        return millis * DAY_TO_MILLIS;
+        return millis * WWMath.DAY_TO_MILLIS;
     }
 
     /**
@@ -361,12 +357,12 @@ public class WWMath {
      * @return time in days.
      */
     public static double convertMillisToDays(double millis) {
-        return millis / DAY_TO_MILLIS;
+        return millis / WWMath.DAY_TO_MILLIS;
     }
 
     /**
-     * Returns the distance in model coordinates from the {@link View} eye point to the specified
-     * {@link Extent}. If the View eye point is inside the extent, this returns 0.
+     * Returns the distance in model coordinates from the {@link View} eye point to the specified {@link Extent}. If the
+     * View eye point is inside the extent, this returns 0.
      *
      * @param dc     the {@link DrawContext} which the View eye point is obtained from.
      * @param extent the extent to compute the distance from.
@@ -391,9 +387,8 @@ public class WWMath {
     }
 
     /**
-     * Returns the size in window coordinates of the specified {@link Extent} from the current
-     * {@link View}. The returned size is an estimate of the Extent's diameter in window
-     * coordinates.
+     * Returns the size in window coordinates of the specified {@link Extent} from the current {@link View}. The
+     * returned size is an estimate of the Extent's diameter in window coordinates.
      *
      * @param dc     the current draw context, from which the View is obtained from.
      * @param extent the extent to compute the window size for.
@@ -720,7 +715,7 @@ public class WWMath {
             throw new IllegalArgumentException(message);
         }
 
-        double area = computePolygonAreaFromVertices(points);
+        double area = WWMath.computePolygonAreaFromVertices(points);
 
         return (area < 0) ? AVKey.CLOCKWISE : AVKey.COUNTER_CLOCKWISE;
     }
@@ -1068,8 +1063,7 @@ public class WWMath {
                         return null;
                     fMax = a;
                 }
-            }
-            else // line intersects back face and therefore leaving polytope
+            } else // line intersects back face and therefore leaving polytope
             {
                 if (a < bMin) {
                     if (a < 0 || a < fMax)
@@ -1255,7 +1249,7 @@ public class WWMath {
                 triangle[1] = tmp;
             }
 
-            addTriangleNormal(3 * triangle[0], 3 * triangle[1], 3 * triangle[2], vertices, normals);
+            WWMath.addTriangleNormal(3 * triangle[0], 3 * triangle[1], 3 * triangle[2], vertices, normals);
         }
 
         indices.rewind();
@@ -1267,7 +1261,7 @@ public class WWMath {
         // length.
         for (int i = 0; i < numVertices; i++) {
             // Normalizes the tuple and the buffer's position then advances to the next tuple.
-            normalize3(normals);
+            WWMath.normalize3(normals);
         }
 
         normals.rewind();
@@ -1479,7 +1473,7 @@ public class WWMath {
         Vec4 prevOffset = null;
 
         // Compute side points at the start of the line.
-        prevOffset = generateParallelPoints(ptB, null, ptA, leftPositions, rightPositions, distance,
+        prevOffset = WWMath.generateParallelPoints(ptB, null, ptA, leftPositions, rightPositions, distance,
             posB.getElevation(), globe, null);
 
         double prevElevation;
@@ -1491,12 +1485,12 @@ public class WWMath {
             ptB = ptA;
             ptA = globe.computePointFromLocation(posA);
 
-            prevOffset = generateParallelPoints(ptB, ptC, ptA, leftPositions, rightPositions, distance,
+            prevOffset = WWMath.generateParallelPoints(ptB, ptC, ptA, leftPositions, rightPositions, distance,
                 prevElevation, globe, prevOffset);
         }
 
         // Compute side points at the end of the line.
-        generateParallelPoints(ptA, ptB, null, leftPositions, rightPositions, distance, posA.getElevation(),
+        WWMath.generateParallelPoints(ptA, ptB, null, leftPositions, rightPositions, distance, posA.getElevation(),
             globe, prevOffset);
     }
 
@@ -1579,8 +1573,7 @@ public class WWMath {
             }
 
             offset = offset.multiply3(length);
-        }
-        else {
+        } else {
             offset = perpendicular.normalize3();
             offset = offset.multiply3(distance);
         }
@@ -1600,13 +1593,14 @@ public class WWMath {
     }
 
     public static double sqr(double x) {
-        return x*x;
+        return x * x;
     }
+
     public static long sqr(int x) {
-        return x*x;
+        return x * x;
     }
 
     public static double average(double x, double y) {
-        return (x+y)/2;
+        return (x + y) / 2;
     }
 }

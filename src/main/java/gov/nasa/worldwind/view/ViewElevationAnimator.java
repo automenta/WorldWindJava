@@ -12,8 +12,8 @@ import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.util.PropertyAccessor;
 
 /**
- * An {@link Animator} for elevation values.  Calculates a mid-zoom value that gives the
- * effect of flying up and them back down again.
+ * An {@link Animator} for elevation values.  Calculates a mid-zoom value that gives the effect of flying up and them
+ * back down again.
  *
  * @author jym
  * @version $Id: ViewElevationAnimator.java 1171 2013-02-11 21:45:02Z dcollins $
@@ -51,11 +51,10 @@ public class ViewElevationAnimator extends DoubleAnimator {
 
         if (globe == null) {
             useMidZoom = false;
-        }
-        else {
+        } else {
             this.globe = globe;
-            this.midZoom = computeMidZoom(globe, beginLatLon, endLatLon, beginZoom, endZoom);
-            useMidZoom = useMidZoom(beginZoom, endZoom, midZoom);
+            this.midZoom = ViewElevationAnimator.computeMidZoom(globe, beginLatLon, endLatLon, beginZoom, endZoom);
+            useMidZoom = ViewElevationAnimator.useMidZoom(beginZoom, endZoom, midZoom);
         }
 
         if (useMidZoom) {
@@ -76,6 +75,39 @@ public class ViewElevationAnimator extends DoubleAnimator {
         final double MIN_ZOOM = Math.min(beginZoom, endZoom);
         final double MAX_ZOOM = 3.0 * globe.getRadius();
         return AnimationSupport.mixDouble(scaleFactor, MIN_ZOOM, MAX_ZOOM);
+    }
+
+    private static double zoomInterpolant(double interpolant, double startInterpolant, double stopInterpolant,
+        int maxSmoothing) {
+        // Map interpolant in to range [start, stop].
+        double normalizedInterpolant = AnimationSupport.interpolantNormalized(
+            interpolant, startInterpolant, stopInterpolant);
+
+        // During first half of iteration, zoom increases from begin to mid,
+        // and decreases from mid to end during second half.
+        if (normalizedInterpolant <= 0.5) {
+            normalizedInterpolant = (normalizedInterpolant * 2.0);
+        } else {
+            normalizedInterpolant = ((normalizedInterpolant - 0.5) * 2.0);
+        }
+
+        return AnimationSupport.interpolantSmoothed(normalizedInterpolant, maxSmoothing);
+    }
+
+    /**
+     * Determines if the animation will use mid-zoom.  Mid-zoom animation is used if the difference between the
+     * beginZoom and endZoom values is less than the difference between the midZoom value and the larger of the
+     * beginZoom or endZoom values.
+     *
+     * @param beginZoom the begin zoom value
+     * @param endZoom   the end zoom value
+     * @param midZoom   the elevation at the middle of the animation
+     * @return true if it is appropriate to use the midZoom value.
+     */
+    protected static boolean useMidZoom(double beginZoom, double endZoom, double midZoom) {
+        double a = Math.abs(endZoom - beginZoom);
+        double b = Math.abs(midZoom - Math.max(beginZoom, endZoom));
+        return a < b;
     }
 
     /**
@@ -128,34 +160,14 @@ public class ViewElevationAnimator extends DoubleAnimator {
             zoomInterpolant = ViewElevationAnimator.zoomInterpolant(interpolant, ZOOM_START, ZOOM_STOP, MAX_SMOOTHING);
             if (interpolant <= 0.5) {
                 value = nextDouble(zoomInterpolant, this.begin, this.end);
-            }
-            else {
+            } else {
                 value = nextDouble(zoomInterpolant, this.end, this.trueEndZoom);
             }
             this.propertyAccessor.setDouble(value);
-        }
-        else {
+        } else {
             zoomInterpolant = AnimationSupport.basicInterpolant(interpolant, ZOOM_START, ZOOM_STOP, MAX_SMOOTHING);
             super.set(zoomInterpolant);
         }
-    }
-
-    private static double zoomInterpolant(double interpolant, double startInterpolant, double stopInterpolant,
-        int maxSmoothing) {
-        // Map interpolant in to range [start, stop].
-        double normalizedInterpolant = AnimationSupport.interpolantNormalized(
-            interpolant, startInterpolant, stopInterpolant);
-
-        // During first half of iteration, zoom increases from begin to mid,
-        // and decreases from mid to end during second half.
-        if (normalizedInterpolant <= 0.5) {
-            normalizedInterpolant = (normalizedInterpolant * 2.0);
-        }
-        else {
-            normalizedInterpolant = ((normalizedInterpolant - 0.5) * 2.0);
-        }
-
-        return AnimationSupport.interpolantSmoothed(normalizedInterpolant, maxSmoothing);
     }
 
     @Override
@@ -187,8 +199,7 @@ public class ViewElevationAnimator extends DoubleAnimator {
         if (this.globe != null && this.altitudeMode == WorldWind.CLAMP_TO_GROUND) {
             overrideEndElevation = true;
             endElevation = this.globe.getElevation(endLatLon.getLatitude(), endLatLon.getLongitude());
-        }
-        else if (this.globe != null && this.altitudeMode == WorldWind.RELATIVE_TO_GROUND) {
+        } else if (this.globe != null && this.altitudeMode == WorldWind.RELATIVE_TO_GROUND) {
             overrideEndElevation = true;
             endElevation = this.globe.getElevation(endLatLon.getLatitude(), endLatLon.getLongitude()) + end;
         }
@@ -211,21 +222,5 @@ public class ViewElevationAnimator extends DoubleAnimator {
         }
         if (interpolant >= 1.0)
             this.stop();
-    }
-
-    /**
-     * Determines if the animation will use mid-zoom.  Mid-zoom animation is used if the difference between the
-     * beginZoom and endZoom values is less than the difference between the midZoom value and the larger of the
-     * beginZoom or endZoom values.
-     *
-     * @param beginZoom the begin zoom value
-     * @param endZoom   the end zoom value
-     * @param midZoom   the elevation at the middle of the animation
-     * @return true if it is appropriate to use the midZoom value.
-     */
-    protected static boolean useMidZoom(double beginZoom, double endZoom, double midZoom) {
-        double a = Math.abs(endZoom - beginZoom);
-        double b = Math.abs(midZoom - Math.max(beginZoom, endZoom));
-        return a < b;
     }
 }

@@ -54,52 +54,53 @@ public class Box implements Extent, Renderable {
     /**
      *
      */
-    protected static final int[][] ProjectionHullTable = new int[][]
-        {
-            null,               // 000000: inside
-            {7, 6, 5, 4},       // 000001: top
-            {0, 1, 2, 3},       // 000010: bottom
-            null,               // 000011: -
-            {3, 2, 6, 7},       // 000100: front
-            {3, 2, 6, 5, 4, 7}, // 000101: front, top
-            {0, 1, 2, 6, 7, 3}, // 000110: front, bottom
-            null,               // 000111: -
-            {1, 0, 4, 5},       // 001000: back
-            {1, 0, 4, 7, 6, 5}, // 001001: back, top
-            {2, 3, 0, 4, 5, 1}, // 001010: back, bottom
-            null,               // 001011: -
-            null,               // 001100: -
-            null,               // 001101: -
-            null,               // 001110: -
-            null,               // 001111: -
-            {2, 1, 5, 6},       // 010000: right
-            {2, 1, 5, 4, 7, 6}, // 010001: right, top
-            {3, 0, 1, 5, 6, 2}, // 010010: right, bottom
-            null,               // 010011: -
-            {3, 2, 1, 5, 6, 7}, // 010100: right, front
-            {3, 2, 1, 5, 4, 7}, // 010101: right, front, top
-            {3, 0, 1, 5, 6, 7}, // 010110: right, front, bottom
-            null,               // 010111: -
-            {2, 1, 0, 4, 5, 6}, // 011000: right, back
-            {2, 1, 0, 4, 7, 6}, // 011001: right, back, top
-            {2, 3, 0, 4, 5, 6}, // 011010: right, back, bottom
-            null,               // 011011: -
-            null,               // 011100: -
-            null,               // 011101: -
-            null,               // 011110: -
-            null,               // 011111: -
-            {0, 3, 7, 4},       // 100000: left
-            {0, 3, 7, 6, 5, 4}, // 100001: left, top
-            {1, 2, 3, 7, 4, 0}, // 100010: left, bottom
-            null,               // 100011: -
-            {0, 3, 2, 6, 7, 4}, // 100100: left, front
-            {0, 3, 2, 6, 5, 4}, // 100101: left, front, top
-            {0, 1, 2, 6, 7, 4}, // 100110: left, front, bottom
-            null,               // 100111: -
-            {1, 0, 3, 7, 4, 5}, // 101000: left, back
-            {1, 0, 3, 7, 6, 5}, // 101001: left, back, top
-            {1, 2, 3, 7, 4, 5}, // 101010: left, back, bottom
-        };
+    protected static final int[][] ProjectionHullTable = {
+        null,               // 000000: inside
+        {7, 6, 5, 4},       // 000001: top
+        {0, 1, 2, 3},       // 000010: bottom
+        null,               // 000011: -
+        {3, 2, 6, 7},       // 000100: front
+        {3, 2, 6, 5, 4, 7}, // 000101: front, top
+        {0, 1, 2, 6, 7, 3}, // 000110: front, bottom
+        null,               // 000111: -
+        {1, 0, 4, 5},       // 001000: back
+        {1, 0, 4, 7, 6, 5}, // 001001: back, top
+        {2, 3, 0, 4, 5, 1}, // 001010: back, bottom
+        null,               // 001011: -
+        null,               // 001100: -
+        null,               // 001101: -
+        null,               // 001110: -
+        null,               // 001111: -
+        {2, 1, 5, 6},       // 010000: right
+        {2, 1, 5, 4, 7, 6}, // 010001: right, top
+        {3, 0, 1, 5, 6, 2}, // 010010: right, bottom
+        null,               // 010011: -
+        {3, 2, 1, 5, 6, 7}, // 010100: right, front
+        {3, 2, 1, 5, 4, 7}, // 010101: right, front, top
+        {3, 0, 1, 5, 6, 7}, // 010110: right, front, bottom
+        null,               // 010111: -
+        {2, 1, 0, 4, 5, 6}, // 011000: right, back
+        {2, 1, 0, 4, 7, 6}, // 011001: right, back, top
+        {2, 3, 0, 4, 5, 6}, // 011010: right, back, bottom
+        null,               // 011011: -
+        null,               // 011100: -
+        null,               // 011101: -
+        null,               // 011110: -
+        null,               // 011111: -
+        {0, 3, 7, 4},       // 100000: left
+        {0, 3, 7, 6, 5, 4}, // 100001: left, top
+        {1, 2, 3, 7, 4, 0}, // 100010: left, bottom
+        null,               // 100011: -
+        {0, 3, 2, 6, 7, 4}, // 100100: left, front
+        {0, 3, 2, 6, 5, 4}, // 100101: left, front, top
+        {0, 1, 2, 6, 7, 4}, // 100110: left, front, bottom
+        null,               // 100111: -
+        {1, 0, 3, 7, 4, 5}, // 101000: left, back
+        {1, 0, 3, 7, 6, 5}, // 101001: left, back, top
+        {1, 2, 3, 7, 4, 5}, // 101010: left, back, bottom
+    };
+    public final Vec4 bottomCenter; // point at center of box's longest axis
+    public final Vec4 topCenter; // point at center of box's longest axis
     protected final Vec4 center; // center of box
     protected final Vec4 r; // longest axis
     protected final Vec4 s; // next longest axis
@@ -111,8 +112,6 @@ public class Box implements Extent, Renderable {
     protected final double sLength; // length of s axis
     protected final double tLength; // length of t axis
     protected final Plane[] planes; // the six planes, with positive normals facing outwards
-    public final Vec4 bottomCenter; // point at center of box's longest axis
-    public final Vec4 topCenter; // point at center of box's longest axis
 
     protected Box(Vec4 bottomCenter, Vec4 topCenter, Vec4 center, Vec4 r, Vec4 s, Vec4 t, Vec4 ru, Vec4 su, Vec4 tu,
         double rlength, double sLength, double tLength, Plane[] planes) {
@@ -382,14 +381,12 @@ public class Box implements Extent, Renderable {
 
         if (boxes.isEmpty()) {
             return null;
-        }
-        else if (boxes.size() == 1) {
+        } else if (boxes.size() == 1) {
             // If the iterable contains only a single non-null box, we avoid unnecessarily computing its bouding box and
             // just return it directly. This also ensures that we do not return a box larger than the original box, by
             // performing a principal component analysis on the corners of a single box.
             return boxes.get(0);
-        }
-        else {
+        } else {
             // If the iterable contains two or more boxes, gather up their corners and return a box that encloses the
             // boxes corners. We create an ArrayList with enough room to hold all the boxes corners to avoid unnecessary
             // overhead.
@@ -398,7 +395,7 @@ public class Box implements Extent, Renderable {
                 Collections.addAll(corners, box.getCorners());
             }
 
-            return computeBoundingBox(corners);
+            return Box.computeBoundingBox(corners);
         }
     }
 
@@ -622,7 +619,7 @@ public class Box implements Extent, Renderable {
         // FYI: this code is identical to that in Cylinder.intersects.
 
         double intersectionPoint;
-        Vec4[] endPoints = new Vec4[] {this.bottomCenter, this.topCenter};
+        Vec4[] endPoints = {this.bottomCenter, this.topCenter};
 
         double effectiveRadius = this.getEffectiveRadius2(frustum.near);
         intersectionPoint = Box.intersectsAt(frustum.near, effectiveRadius, endPoints);
@@ -761,12 +758,12 @@ public class Box implements Extent, Renderable {
         if (lookupCode == 0)
             return Double.POSITIVE_INFINITY;
 
-        if (lookupCode < 0 || lookupCode >= ProjectionHullTable.length)
+        if (lookupCode < 0 || lookupCode >= Box.ProjectionHullTable.length)
             return 0; // This should never happen, but we check anyway.
 
         // Get the 4 or 6 vertex indices that define this Box's convex hull in screen coordinates. Each element is used
         // as an index into this Box's array of corners.
-        int[] indices = ProjectionHullTable[lookupCode];
+        int[] indices = Box.ProjectionHullTable[lookupCode];
         if (indices == null || (indices.length != 4 && indices.length != 6))
             return 0; // This should never happen, but we check anyway.
 

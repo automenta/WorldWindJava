@@ -45,8 +45,7 @@ public class ColladaTechniqueCommon extends ColladaAbstractObject {
     public void setField(String keyName, Object value) {
         if (keyName.equals("instance_material")) {
             this.materials.add((ColladaInstanceMaterial) value);
-        }
-        else {
+        } else {
             super.setField(keyName, value);
         }
     }

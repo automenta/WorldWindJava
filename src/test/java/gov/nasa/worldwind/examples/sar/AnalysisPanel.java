@@ -661,10 +661,10 @@ public class AnalysisPanel extends JPanel implements Restorable {
         // Extend the track segment ends by one subsegment to make sure it will intersect the near plane
         double deltaElevation = posB.getElevation() - posA.getElevation();
         LatLon latLon = LatLon.rhumbEndPosition(posA, segmentAzimuth.addRadians(Math.PI),
-            Angle.fromRadians(segmentDistance.radians / numSubsegments));
+            Angle.fromRadians(segmentDistance.radians() / numSubsegments));
         posA = new Position(latLon, posA.getElevation() - deltaElevation / numSubsegments);
         latLon = LatLon.rhumbEndPosition(posB, segmentAzimuth,
-            Angle.fromRadians(segmentDistance.radians / numSubsegments));
+            Angle.fromRadians(segmentDistance.radians() / numSubsegments));
         posB = new Position(latLon, posB.getElevation() + deltaElevation / numSubsegments);
         segmentDistance = LatLon.rhumbDistance(posA, posB);
         // Iterate through segments to find intersection
@@ -677,7 +677,7 @@ public class AnalysisPanel extends JPanel implements Restorable {
             else if (s >= 1)
                 p2 = posB;
             else {
-                Angle distance = Angle.fromRadians(s * segmentDistance.radians);
+                Angle distance = Angle.fromRadians(s * segmentDistance.radians());
                 latLon = LatLon.rhumbEndPosition(posA, segmentAzimuth, distance);
                 p2 = new Position(latLon, (1 - s) * posA.getElevation() + s * posB.getElevation());
             }
@@ -743,9 +743,9 @@ public class AnalysisPanel extends JPanel implements Restorable {
             this.saveExamineViewState();
         // Add state values
         if (this.examineViewState != null) {
-            rs.addStateValueAsDouble(context, "examinePitch", this.examineViewState.pitch.getDegrees());
+            rs.addStateValueAsDouble(context, "examinePitch", this.examineViewState.pitch.degrees);
             rs.addStateValueAsDouble(context, "examineRelativeHeading",
-                this.examineViewState.relativeHeading.getDegrees());
+                this.examineViewState.relativeHeading.degrees);
             rs.addStateValueAsDouble(context, "examineZoom", this.examineViewState.zoom);
             rs.addStateValueAsLatLon(context, "examineCenter", this.examineViewState.relativeCenterLocation);
         }

@@ -19,8 +19,8 @@ import java.util.*;
  * when the application associates the same shape with multiple {@link gov.nasa.worldwind.WorldWindow}s.
  * <p>
  * This cache limits the amount of time an entry remains in the cache unused. The maximum unused time may be specified.
- * Entries unused within the specified duration are removed from the cache each time {@link
- * #getEntry(Globe)} is called.
+ * Entries unused within the specified duration are removed from the cache each time {@link #getEntry(Globe)} is
+ * called.
  *
  * @author tag
  * @version $Id: ShapeDataCache.java 2152 2014-07-16 00:00:33Z tgaskins $

@@ -39,8 +39,8 @@ public class BasicFlyView extends BasicView {
         this.viewInputHandler = new FlyViewInputHandler();
 
         this.viewLimits = new FlyViewLimits();
-        this.viewLimits.setPitchLimits(DEFAULT_MIN_PITCH, DEFAULT_MAX_PITCH);
-        this.viewLimits.setEyeElevationLimits(DEFAULT_MIN_ELEVATION, DEFAULT_MAX_ELEVATION);
+        this.viewLimits.setPitchLimits(BasicFlyView.DEFAULT_MIN_PITCH, BasicFlyView.DEFAULT_MAX_PITCH);
+        this.viewLimits.setEyeElevationLimits(BasicFlyView.DEFAULT_MIN_ELEVATION, BasicFlyView.DEFAULT_MAX_ELEVATION);
 
         loadConfigurationValues();
     }
@@ -242,7 +242,7 @@ public class BasicFlyView extends BasicView {
             this.nearClipDistance, this.farClipDistance);
 
         //========== load GL matrix state ==========//
-        loadGLViewState(dc, this.modelview, this.projection);
+        BasicView.loadGLViewState(dc, this.modelview, this.projection);
 
         //========== after apply (GL matrix state) ==========//
         afterDoApply();

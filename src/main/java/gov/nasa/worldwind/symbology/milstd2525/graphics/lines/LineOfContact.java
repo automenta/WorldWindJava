@@ -47,82 +47,6 @@ public class LineOfContact extends ForwardLineOfOwnTroops {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void moveTo(Position position) {
-        Position delta;
-        Position ref1 = this.path.getReferencePosition();
-        Position ref2 = this.path2.getReferencePosition();
-        if (ref1 != null && ref2 != null)
-            delta = ref2.subtract(ref1);
-        else
-            delta = Position.ZERO;
-
-        // Move the first path
-        super.moveTo(position);
-
-        // Move the second path
-        this.path2.moveTo(position.add(delta));
-    }
-
-    @Override
-    protected void doRenderGraphic(DrawContext dc) {
-        super.doRenderGraphic(dc);
-        this.path2.render(dc);
-    }
-
-    @Override
-    protected String getGraphicLabel() {
-        StringBuilder sb = new StringBuilder();
-        if (this.mustShowHostileIndicator()) {
-            sb.append(SymbologyConstants.HOSTILE_ENEMY);
-            sb.append("\n");
-        }
-        return sb.toString();
-    }
-
-    /**
-     * Generate the positions required to draw the line.
-     *
-     * @param dc        Current draw context.
-     * @param positions Positions that define the polygon boundary.
-     */
-    @Override
-    protected void generateIntermediatePositions(DrawContext dc, Iterable<? extends Position> positions) {
-        Globe globe = dc.getGlobe();
-
-        boolean useDefaultWaveLength = false;
-        double waveLength = this.getWaveLength();
-        if (waveLength == 0) {
-            waveLength = ForwardLineOfOwnTroops.computeDefaultWavelength(positions, globe);
-            useDefaultWaveLength = true;
-        }
-
-        // Generate lines that parallel the control line.
-        List<Position> leftPositions = new ArrayList<>();
-        List<Position> rightPositions = new ArrayList<>();
-        LineOfContact.generateParallelLines(positions.iterator(), leftPositions, rightPositions, waveLength / 2.0, globe);
-
-        if (useDefaultWaveLength)
-            waveLength = ForwardLineOfOwnTroops.computeDefaultWavelength(leftPositions, globe);
-        double radius = (waveLength) / 2.0;
-
-        // Generate wavy line to the left of the control line.
-        PositionIterator iterator = new PositionIterator(leftPositions, waveLength, globe);
-        this.computedPositions = this.generateWavePositions(iterator, radius / globe.getRadius(), false);
-        this.path.setPositions(this.computedPositions);
-
-        if (useDefaultWaveLength)
-            waveLength = ForwardLineOfOwnTroops.computeDefaultWavelength(rightPositions, globe);
-        radius = (waveLength) / 2.0;
-
-        // Generate wavy line to the right of the control line.
-        iterator = new PositionIterator(rightPositions, waveLength, globe);
-        this.path2.setPositions(this.generateWavePositions(iterator, radius / globe.getRadius(), true));
-    }
-
-    /**
      * Create positions that describe lines parallel to a control line.
      *
      * @param iterator       Iterator of control line positions.
@@ -159,11 +83,11 @@ public class LineOfContact extends ForwardLineOfOwnTroops {
             ptB = ptA;
             ptA = globe.computePointFromLocation(posA);
 
-            generateParallelPoints(ptB, ptC, ptA, leftPositions, rightPositions, halfWidth, globe);
+            LineOfContact.generateParallelPoints(ptB, ptC, ptA, leftPositions, rightPositions, halfWidth, globe);
         }
 
         // Compute side points at the end of the line.
-        generateParallelPoints(ptA, ptB, null, leftPositions, rightPositions, halfWidth, globe);
+        LineOfContact.generateParallelPoints(ptA, ptB, null, leftPositions, rightPositions, halfWidth, globe);
     }
 
     /**
@@ -229,8 +153,7 @@ public class LineOfContact extends ForwardLineOfOwnTroops {
                 length = halfWidth / theta.sin();
             else
                 length = halfWidth;
-        }
-        else {
+        } else {
             offset = perpendicular.normalize3();
             length = halfWidth;
         }
@@ -246,5 +169,82 @@ public class LineOfContact extends ForwardLineOfOwnTroops {
 
         leftPositions.add(posLeft);
         rightPositions.add(posRight);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void moveTo(Position position) {
+        Position delta;
+        Position ref1 = this.path.getReferencePosition();
+        Position ref2 = this.path2.getReferencePosition();
+        if (ref1 != null && ref2 != null)
+            delta = ref2.subtract(ref1);
+        else
+            delta = Position.ZERO;
+
+        // Move the first path
+        super.moveTo(position);
+
+        // Move the second path
+        this.path2.moveTo(position.add(delta));
+    }
+
+    @Override
+    protected void doRenderGraphic(DrawContext dc) {
+        super.doRenderGraphic(dc);
+        this.path2.render(dc);
+    }
+
+    @Override
+    protected String getGraphicLabel() {
+        StringBuilder sb = new StringBuilder();
+        if (this.mustShowHostileIndicator()) {
+            sb.append(SymbologyConstants.HOSTILE_ENEMY);
+            sb.append('\n');
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Generate the positions required to draw the line.
+     *
+     * @param dc        Current draw context.
+     * @param positions Positions that define the polygon boundary.
+     */
+    @Override
+    protected void generateIntermediatePositions(DrawContext dc, Iterable<? extends Position> positions) {
+        Globe globe = dc.getGlobe();
+
+        boolean useDefaultWaveLength = false;
+        double waveLength = this.getWaveLength();
+        if (waveLength == 0) {
+            waveLength = ForwardLineOfOwnTroops.computeDefaultWavelength(positions, globe);
+            useDefaultWaveLength = true;
+        }
+
+        // Generate lines that parallel the control line.
+        List<Position> leftPositions = new ArrayList<>();
+        List<Position> rightPositions = new ArrayList<>();
+        LineOfContact.generateParallelLines(positions.iterator(), leftPositions, rightPositions, waveLength / 2.0,
+            globe);
+
+        if (useDefaultWaveLength)
+            waveLength = ForwardLineOfOwnTroops.computeDefaultWavelength(leftPositions, globe);
+        double radius = (waveLength) / 2.0;
+
+        // Generate wavy line to the left of the control line.
+        PositionIterator iterator = new PositionIterator(leftPositions, waveLength, globe);
+        this.computedPositions = this.generateWavePositions(iterator, radius / globe.getRadius(), false);
+        this.path.setPositions(this.computedPositions);
+
+        if (useDefaultWaveLength)
+            waveLength = ForwardLineOfOwnTroops.computeDefaultWavelength(rightPositions, globe);
+        radius = (waveLength) / 2.0;
+
+        // Generate wavy line to the right of the control line.
+        iterator = new PositionIterator(rightPositions, waveLength, globe);
+        this.path2.setPositions(this.generateWavePositions(iterator, radius / globe.getRadius(), true));
     }
 }

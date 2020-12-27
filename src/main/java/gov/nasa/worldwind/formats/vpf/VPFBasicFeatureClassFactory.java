@@ -22,29 +22,6 @@ public class VPFBasicFeatureClassFactory implements VPFFeatureClassFactory {
     public VPFBasicFeatureClassFactory() {
     }
 
-    public VPFFeatureClass createFromSchema(VPFCoverage coverage, VPFFeatureClassSchema schema) {
-        if (coverage == null) {
-            String message = Logging.getMessage("nullValue.CoverageIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (schema == null) {
-            String message = Logging.getMessage("nullValue.SchemaIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        try {
-            return VPFBasicFeatureClassFactory.doCreateFromSchema(coverage, schema);
-        }
-        catch (Exception e) {
-            String message = Logging.getMessage("generic.ExceptionWhileReading",
-                coverage.getFilePath() + File.separator + schema.getClassName());
-            throw new WWRuntimeException(message, e);
-        }
-    }
-
     protected static VPFFeatureClass doCreateFromSchema(VPFCoverage coverage, VPFFeatureClassSchema schema) {
         // DIGEST Part 2, Annex C.2.2.2.2.3.a: Simple feature classes.
         // A simple feature class consists of a (logically) single primitive table and a single simple feature table.
@@ -80,11 +57,11 @@ public class VPFBasicFeatureClassFactory implements VPFFeatureClassFactory {
 
     protected static VPFFeatureClass doCreateFromFeatureType(VPFCoverage coverage, VPFFeatureClassSchema schema) {
         return switch (schema.getType()) {
-            case POINT -> createPointFeatureClass(coverage, schema);
-            case LINE -> createLineFeatureClass(coverage, schema);
-            case AREA -> createAreaFeatureClass(coverage, schema);
-            case TEXT -> createTextFeatureClass(coverage, schema);
-            case COMPLEX -> createComplexFeatureClass(coverage, schema);
+            case POINT -> VPFBasicFeatureClassFactory.createPointFeatureClass(coverage, schema);
+            case LINE -> VPFBasicFeatureClassFactory.createLineFeatureClass(coverage, schema);
+            case AREA -> VPFBasicFeatureClassFactory.createAreaFeatureClass(coverage, schema);
+            case TEXT -> VPFBasicFeatureClassFactory.createTextFeatureClass(coverage, schema);
+            case COMPLEX -> VPFBasicFeatureClassFactory.createComplexFeatureClass(coverage, schema);
             default -> VPFBasicFeatureClassFactory.createUnknownFeatureClass(coverage, schema);
         };
     }
@@ -95,10 +72,6 @@ public class VPFBasicFeatureClassFactory implements VPFFeatureClassFactory {
             cls.setRelations(rels);
         }
     }
-
-    //**************************************************************//
-    //********************  Feature Class Assembly  ****************//
-    //**************************************************************//
 
     protected static VPFFeatureClass createPointFeatureClass(VPFCoverage coverage, VPFFeatureClassSchema schema) {
         return new VPFFeatureClass(coverage, schema,
@@ -113,6 +86,10 @@ public class VPFBasicFeatureClassFactory implements VPFFeatureClassFactory {
             }
         };
     }
+
+    //**************************************************************//
+    //********************  Feature Class Assembly  ****************//
+    //**************************************************************//
 
     protected static VPFFeatureClass createLineFeatureClass(VPFCoverage coverage, VPFFeatureClassSchema schema) {
         return new VPFFeatureClass(coverage, schema,
@@ -158,7 +135,8 @@ public class VPFBasicFeatureClassFactory implements VPFFeatureClassFactory {
 
     protected static VPFFeatureClass createComplexFeatureClass(VPFCoverage coverage, VPFFeatureClassSchema schema) {
         return new VPFFeatureClass(coverage, schema,
-            VPFBasicFeatureClassFactory.getJoinTableName(coverage, schema, VPFConstants.TEXT_FEATURE_JOIN_TABLE), null) {
+            VPFBasicFeatureClassFactory.getJoinTableName(coverage, schema, VPFConstants.TEXT_FEATURE_JOIN_TABLE),
+            null) {
             public Collection<? extends VPFFeature> createFeatures(VPFFeatureFactory factory) {
                 return factory.createComplexFeatures(this);
             }
@@ -173,10 +151,6 @@ public class VPFBasicFeatureClassFactory implements VPFFeatureClassFactory {
         return new VPFFeatureClass(coverage, schema, null, null);
     }
 
-    //**************************************************************//
-    //********************  Utility Methods  ***********************//
-    //**************************************************************//
-
     protected static String getJoinTableName(VPFCoverage coverage, VPFFeatureClassSchema schema, String suffix) {
         StringBuilder sb = new StringBuilder();
         sb.append(schema.getClassName());
@@ -187,6 +161,10 @@ public class VPFBasicFeatureClassFactory implements VPFFeatureClassFactory {
 
         return file.exists() ? tableName : null;
     }
+
+    //**************************************************************//
+    //********************  Utility Methods  ***********************//
+    //**************************************************************//
 
     protected static String getPointFeaturePrimitiveTable(VPFCoverage coverage, VPFFeatureClassSchema schema) {
         String primitiveTableName = null;
@@ -207,5 +185,28 @@ public class VPFBasicFeatureClassFactory implements VPFFeatureClassFactory {
         }
 
         return primitiveTableName;
+    }
+
+    public VPFFeatureClass createFromSchema(VPFCoverage coverage, VPFFeatureClassSchema schema) {
+        if (coverage == null) {
+            String message = Logging.getMessage("nullValue.CoverageIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        if (schema == null) {
+            String message = Logging.getMessage("nullValue.SchemaIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        try {
+            return VPFBasicFeatureClassFactory.doCreateFromSchema(coverage, schema);
+        }
+        catch (RuntimeException e) {
+            String message = Logging.getMessage("generic.ExceptionWhileReading",
+                coverage.getFilePath() + File.separator + schema.getClassName());
+            throw new WWRuntimeException(message, e);
+        }
     }
 }

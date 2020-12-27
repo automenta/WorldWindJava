@@ -41,15 +41,16 @@ import java.beans.PropertyChangeListener;
  * the new context. WorldWind does this automatically by clearing the associated {@link GpuResourceCache}. Objects
  * subsequently rendered automatically re-create those resources. If an application creates its own graphics resources,
  * including textures, vertex buffer objects and display lists, it must store them in the <code>GpuResourceCache</code>
- * associated with the current {@link DrawContext} so that they are automatically
- * cleared, and be prepared to re-create them if they do not exist in the <code>DrawContext</code>'s current
+ * associated with the current {@link DrawContext} so that they are automatically cleared, and be prepared to re-create
+ * them if they do not exist in the <code>DrawContext</code>'s current
  * <code>GpuResourceCache</code> when needed. Examples of doing this can be found by searching for usages of the method
  * {@link GpuResourceCache#get(Object)} and {@link GpuResourceCache#getTexture(Object)}.
  *
  * @author Tom Gaskins
  * @version $Id: WorldWindowGLCanvas.java 2924 2015-03-26 01:32:02Z tgaskins $
  */
-@Deprecated public class WorldWindowGLCanvas extends GLCanvas implements WorldWindow, PropertyChangeListener {
+@Deprecated
+public class WorldWindowGLCanvas extends GLCanvas implements WorldWindow {
 
     private final WorldWindowGLDrawable wwd
         = ((WorldWindowGLDrawable) WorldWind.createConfigurationComponent(AVKey.WORLD_WINDOW_CLASS_NAME));

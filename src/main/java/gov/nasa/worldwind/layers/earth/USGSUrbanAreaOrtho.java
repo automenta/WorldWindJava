@@ -15,7 +15,7 @@ import org.w3c.dom.Document;
  */
 public class USGSUrbanAreaOrtho extends BasicTiledImageLayer {
     public USGSUrbanAreaOrtho() {
-        super(getConfigurationDocument(), null);
+        super(USGSUrbanAreaOrtho.getConfigurationDocument(), null);
     }
 
     protected static Document getConfigurationDocument() {

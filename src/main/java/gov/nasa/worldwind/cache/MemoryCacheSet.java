@@ -9,7 +9,7 @@ import gov.nasa.worldwind.util.PerformanceStatistic;
 import jcog.TODO;
 
 import java.util.*;
-import java.util.function.*;
+import java.util.function.Function;
 
 /**
  * @author tag
@@ -20,7 +20,7 @@ public interface MemoryCacheSet {
 
     MemoryCache getCache(String cacheKey);
 
-    default MemoryCache getCache(String cacheKey, Function<String,MemoryCache> s) {
+    default MemoryCache getCache(String cacheKey, Function<String, MemoryCache> s) {
         throw new TODO();
     }
 

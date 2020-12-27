@@ -88,39 +88,33 @@ public class WCSCoverageSummary extends AbstractXMLEventParser {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.abstracts.add(s);
-        }
-        else if (ctx.isStartElement(event, "WGS84BoundingBox")) {
+        } else if (ctx.isStartElement(event, "WGS84BoundingBox")) {
             XMLEventParser parser = this.allocate(ctx, event);
             if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
                 if (o instanceof OWSWGS84BoundingBox)
                     this.boundingBoxes.add((OWSWGS84BoundingBox) o);
             }
-        }
-        else if (ctx.isStartElement(event, "CoverageSummary")) {
+        } else if (ctx.isStartElement(event, "CoverageSummary")) {
             XMLEventParser parser = this.allocate(ctx, event);
             if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
                 if (o instanceof WCSCoverageSummary)
                     this.coverageSummaries.add((WCSCoverageSummary) o);
             }
-        }
-        else if (ctx.isStartElement(event, "SupportedCRS")) {
+        } else if (ctx.isStartElement(event, "SupportedCRS")) {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.supportedCRSs.add(s);
-        }
-        else if (ctx.isStartElement(event, "SupportedFormat")) {
+        } else if (ctx.isStartElement(event, "SupportedFormat")) {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.supportedFormats.add(s);
-        }
-        else if (ctx.isStartElement(event, "Title")) {
+        } else if (ctx.isStartElement(event, "Title")) {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.titles.add(s);
-        }
-        else {
+        } else {
             super.doParseEventContent(ctx, event, args);
         }
     }

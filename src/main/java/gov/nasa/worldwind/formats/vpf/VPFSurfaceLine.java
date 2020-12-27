@@ -34,7 +34,7 @@ public class VPFSurfaceLine extends SurfacePolyline // TODO: consolidate with Su
         if (this.sector == null || this.sector.equals(Sector.EMPTY_SECTOR))
             return null;
 
-        return new Sector[] { this.sector };
+        return new Sector[] {this.sector};
     }
 
     public Iterable<? extends LatLon> getLocations() {

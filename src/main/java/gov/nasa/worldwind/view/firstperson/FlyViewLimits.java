@@ -23,8 +23,7 @@ public class FlyViewLimits extends BasicViewPropertyLimits {
 
         if (position.getElevation() < (elevLimits[0] + terrainElevation)) {
             newElevation = elevLimits[0] + terrainElevation;
-        }
-        else if (position.getElevation() > elevLimits[1] + terrainElevation) {
+        } else if (position.getElevation() > elevLimits[1] + terrainElevation) {
             newElevation = elevLimits[1] + terrainElevation;
         }
         return (newElevation);
@@ -34,8 +33,7 @@ public class FlyViewLimits extends BasicViewPropertyLimits {
         double[] elevLimits = this.getEyeElevationLimits();
         if (elevation < elevLimits[0]) {
             return elevLimits[0];
-        }
-        else if (elevation > elevLimits[1]) {
+        } else if (elevation > elevLimits[1]) {
             return elevLimits[1];
         }
         return (elevation);

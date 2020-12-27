@@ -12,8 +12,8 @@ import gov.nasa.worldwind.util.Logging;
 import java.awt.*;
 
 /**
- * A <code>{@link ScreenBalloon}</code> that displays HTML, JavaScript, and Flash content
- * using the system's native browser, and who's origin is located at a point on the screen.
+ * A <code>{@link ScreenBalloon}</code> that displays HTML, JavaScript, and Flash content using the system's native
+ * browser, and who's origin is located at a point on the screen.
  *
  * @author pabercrombie
  * @version $Id: ScreenBrowserBalloon.java 2148 2014-07-14 16:27:49Z tgaskins $

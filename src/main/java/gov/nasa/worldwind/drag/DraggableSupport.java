@@ -43,30 +43,30 @@ public class DraggableSupport {
      * Initial drag operation offset in x and y screen coordinates, between the object reference position and the screen
      * point. Used for screen size constant drag operations.
      */
-    protected Vec4 initialScreenPointOffset = null;
+    protected Vec4 initialScreenPointOffset;
     /**
      * Initial drag operation cartesian coordinates of the objects reference position. Used for globe size constant drag
      * operations.
      */
-    protected Vec4 initialEllipsoidalReferencePoint = null;
+    protected Vec4 initialEllipsoidalReferencePoint;
     /**
      * Initial drag operation cartesian coordinates of the initial screen point.
      */
-    protected Vec4 initialEllipsoidalScreenPoint = null;
+    protected Vec4 initialEllipsoidalScreenPoint;
     /**
      * This instances step limit when using the solver to determine the position of objects using the {@link
      * WorldWind#RELATIVE_TO_GROUND} altitude mode. Increasing this value will increase solver runtime and may cause the
      * event loop to hang. If the solver exceeds the number of steps specified here, it will fall back to using a
      * position calculated by intersection with the ellipsoid.
      */
-    protected int stepLimit = DEFAULT_STEP_LIMIT;
+    protected int stepLimit = DraggableSupport.DEFAULT_STEP_LIMIT;
     /**
      * This instances convergence threshold for the solver used to determine the position of objects using the {@link
      * WorldWind#RELATIVE_TO_GROUND} altitude mode. Decreasing this value will increase solver runtime and may cause the
      * event loop to hang. If the solver does not converge to the threshold specified here, it will fall back to using a
      * position calculated by intersection with the ellipsoid.
      */
-    protected double convergenceThreshold = DEFAULT_CONVERGENCE_THRESHOLD;
+    protected double convergenceThreshold = DraggableSupport.DEFAULT_CONVERGENCE_THRESHOLD;
     /**
      * The altitude mode of the object to be dragged.
      */
@@ -139,8 +139,8 @@ public class DraggableSupport {
 
         // Project the new screen point back through the globe to find a new reference position
         Line ray = dragContext.getView().computeRayFromScreenPoint(
-            moveToScreenCoordinates.getX(),
-            moveToScreenCoordinates.getY()
+            moveToScreenCoordinates.x,
+            moveToScreenCoordinates.y
         );
         if (ray == null)
             return;
@@ -199,7 +199,7 @@ public class DraggableSupport {
             dragContext.getPoint().getY()
         );
         Line ray = dragContext.getView()
-            .computeRayFromScreenPoint(currentScreenPoint.getX(), currentScreenPoint.getY());
+            .computeRayFromScreenPoint(currentScreenPoint.x, currentScreenPoint.y);
         if (ray == null)
             return;
 
@@ -354,16 +354,14 @@ public class DraggableSupport {
         if (dragContext.getGlobe() instanceof Globe2D) {
             dragObjectPoint = dragContext.getGlobe().computePointFromPosition(
                 new Position(dragObjectReferencePosition, 0.0));
-        }
-        else {
+        } else {
             // If the altitude mode is ABSOLUTE, or not recognized as a standard WorldWind altitude mode, use the
             // ABSOLUTE method as the default
             if (this.altitudeMode == WorldWind.ABSOLUTE ||
                 (this.altitudeMode != WorldWind.RELATIVE_TO_GROUND && this.altitudeMode != WorldWind.CLAMP_TO_GROUND
                     && this.altitudeMode != WorldWind.CONSTANT)) {
                 dragObjectPoint = dragContext.getGlobe().computePointFromPosition(dragObjectReferencePosition);
-            }
-            else // Should be any one of the remaining WorldWind altitude modes: CLAMP, RELATIVE, CONSTANT
+            } else // Should be any one of the remaining WorldWind altitude modes: CLAMP, RELATIVE, CONSTANT
             {
                 dragObjectPoint = dragContext.getSceneController().getTerrain()
                     .getSurfacePoint(dragObjectReferencePosition);
@@ -378,10 +376,10 @@ public class DraggableSupport {
             return null;
 
         return new Vec4(
-            dragContext.getInitialPoint().getX() - dragObjectScreenPoint.getX(),
+            dragContext.getInitialPoint().getX() - dragObjectScreenPoint.x,
             dragContext.getInitialPoint().getY() - (
                 dragContext.getView().getViewport().getHeight()
-                    - dragObjectScreenPoint.getY() - 1.0)
+                    - dragObjectScreenPoint.y - 1.0)
         );
     }
 
@@ -419,8 +417,7 @@ public class DraggableSupport {
                 throw new IllegalArgumentException(msg);
             }
             ((Movable2) this.dragObject).moveTo(globe, movePosition);
-        }
-        else if (this.dragObject instanceof Movable)
+        } else if (this.dragObject instanceof Movable)
             ((Movable) this.dragObject).moveTo(movePosition);
     }
 
@@ -449,20 +446,16 @@ public class DraggableSupport {
             // Utilize the globe intersection method for a Globe2D as it best describes the appearance and the
             // terrain intersection method returns null when crossing the dateline on a Globe2D
             intersections = globe.intersect(ray, 0.0);
-        }
-        else if (this.altitudeMode == WorldWind.ABSOLUTE) {
+        } else if (this.altitudeMode == WorldWind.ABSOLUTE) {
             // Accounts for the object being visually placed on the surface in a Globe2D Globe
             intersections = globe.intersect(ray, altitude);
-        }
-        else if (this.altitudeMode == WorldWind.CLAMP_TO_GROUND || this.altitudeMode == WorldWind.CONSTANT) {
+        } else if (this.altitudeMode == WorldWind.CLAMP_TO_GROUND || this.altitudeMode == WorldWind.CONSTANT) {
             intersections = sceneController.getTerrain().intersect(ray);
-        }
-        else if (this.altitudeMode == WorldWind.RELATIVE_TO_GROUND) {
+        } else if (this.altitudeMode == WorldWind.RELATIVE_TO_GROUND) {
             // If an object is RELATIVE_TO_GROUND but has an altitude close to 0.0, use CLAMP_TO_GROUND method
             if (altitude < 1.0) {
                 intersections = sceneController.getTerrain().intersect(ray);
-            }
-            else {
+            } else {
                 // When an object maintains a constant screen size independent of globe orientation or eye location,
                 // the dragger attempts to determine the position by testing different points of the ray for a
                 // matching altitude above elevation. The method is only used in objects maintain a constant screen
@@ -476,13 +469,11 @@ public class DraggableSupport {
                         intersections = new Intersection[] {new Intersection(intersectionPoint, false)};
                     else
                         intersections = null;
-                }
-                else {
+                } else {
                     intersections = globe.intersect(ray, altitude);
                 }
             }
-        }
-        else {
+        } else {
             // If the altitude mode isn't recognized, the ABSOLUTE determination method is used as a fallback/default
             intersections = globe.intersect(ray, altitude);
         }

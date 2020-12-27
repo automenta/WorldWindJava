@@ -26,17 +26,6 @@ import static java.lang.Math.toRadians;
 public abstract class AbstractSurfaceRenderable extends AbstractSurfaceObject {
     private double opacity = 1.0d;
 
-    public double getOpacity() {
-        return this.opacity;
-    }
-
-    public void setOpacity(double opacity) {
-        this.opacity = opacity < 0 ? 0 : opacity > 1 ? 1 : opacity;  // clamp to 0..1
-        this.updateModifiedTime();
-    }
-
-    // *** Utility methods
-
     protected static Angle getViewHeading(DrawContext dc) {
         Angle heading = Angle.ZERO;
         if (dc.getView() instanceof OrbitView)
@@ -52,6 +41,8 @@ public abstract class AbstractSurfaceRenderable extends AbstractSurfaceObject {
         return dc.getView().computePixelSizeAtDistance(distance);
     }
 
+    // *** Utility methods
+
     protected static double computeDrawPixelSize(DrawContext dc, SurfaceTileDrawContext sdc) {
         return dc.getGlobe().getRadius() * toRadians(sdc.getSector().latDelta) / sdc.getViewport().height;
     }
@@ -65,7 +56,7 @@ public abstract class AbstractSurfaceRenderable extends AbstractSurfaceObject {
         if (Math.abs(heading.degrees) < 0.001)
             return sector;
 
-        LatLon[] corners = new LatLon[] {
+        LatLon[] corners = {
             new LatLon(sector.latMax(), sector.lonMin()),  // nw
             new LatLon(sector.latMax(), sector.lonMax()),  // ne
             new LatLon(sector.latMin(), sector.lonMin()),  // sw
@@ -93,13 +84,11 @@ public abstract class AbstractSurfaceRenderable extends AbstractSurfaceObject {
         if (minLon.degrees >= -180 && maxLon.degrees <= 180) {
             // No date line crossing on both sides
             sectors.add(new Sector(minLat, maxLat, minLon, maxLon));
-        }
-        else {
+        } else {
             if (minLon.degrees < -180 && maxLon.degrees > 180) {
                 // min and max lon overlap at the date line - span the whole ongitude range
                 sectors.add(new Sector(minLat, maxLat, Angle.NEG180, Angle.POS180));
-            }
-            else {
+            } else {
                 // Date line crossing, produce two sectors, one on each side of the date line
                 while (minLon.degrees < -180) {
                     minLon = minLon.addDegrees(360);
@@ -110,8 +99,7 @@ public abstract class AbstractSurfaceRenderable extends AbstractSurfaceObject {
                 if (minLat.degrees > maxLat.degrees) {
                     sector = new Sector(minLat, maxLat, minLon, maxLon);
                     sectors.addAll(Arrays.asList(Sector.splitBoundingSectors(sector)));
-                }
-                else {
+                } else {
                     // min and max lon overlap - span the whole ongitude range
                     sectors.add(new Sector(minLat, maxLat, Angle.NEG180, Angle.POS180));
                 }
@@ -147,5 +135,14 @@ public abstract class AbstractSurfaceRenderable extends AbstractSurfaceObject {
         color.getRGBComponents(compArray);
         compArray[3] = (float) WWMath.clamp(opacity, 0, 1);
         gl.glColor4fv(compArray, 0);
+    }
+
+    public double getOpacity() {
+        return this.opacity;
+    }
+
+    public void setOpacity(double opacity) {
+        this.opacity = opacity < 0 ? 0 : opacity > 1 ? 1 : opacity;  // clamp to 0..1
+        this.updateModifiedTime();
     }
 }

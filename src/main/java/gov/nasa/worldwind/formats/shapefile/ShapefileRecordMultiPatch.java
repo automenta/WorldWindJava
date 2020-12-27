@@ -38,8 +38,8 @@ public class ShapefileRecordMultiPatch extends ShapefileRecord {
     // Multipatch shapefiles need a specialized type for each part which can be:
 
     /**
-     * Constructs a record instance from the given {@link ByteBuffer}. The buffer's current position must be
-     * the start of the record, and will be the start of the next record when the constructor returns.
+     * Constructs a record instance from the given {@link ByteBuffer}. The buffer's current position must be the start
+     * of the record, and will be the start of the next record when the constructor returns.
      *
      * @param shapeFile the parent {@link Shapefile}.
      * @param buffer    the shapefile record {@link ByteBuffer} to read from.

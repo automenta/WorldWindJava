@@ -44,25 +44,23 @@ class RPFPolarFrameStructure extends RPFFrameStructure {
             throw new IllegalArgumentException(message);
         }
 
-        int nsPixelSpacingConst = northSouthPixelSpacingConstant();
+        int nsPixelSpacingConst = RPFFrameStructure.northSouthPixelSpacingConstant();
 
         int polarPixelConst, polarFrames;
         if (RPFDataSeries.isCADRGDataType(rpfDataType)) {
-            polarPixelConst = polarPixelConstant_CADRG(nsPixelSpacingConst, resolution);
-            polarFrames = polarFrames_CADRG(polarPixelConst);
-        }
-        else if (RPFDataSeries.isCIBDataType(rpfDataType)) {
-            int nsPixelConst = northSouthPixelConstant_CIB(nsPixelSpacingConst, resolution);
-            polarPixelConst = polarPixelConstant_CIB(nsPixelConst);
-            polarFrames = polarFrames_CIB(polarPixelConst);
-        }
-        else {
+            polarPixelConst = RPFPolarFrameStructure.polarPixelConstant_CADRG(nsPixelSpacingConst, resolution);
+            polarFrames = RPFPolarFrameStructure.polarFrames_CADRG(polarPixelConst);
+        } else if (RPFDataSeries.isCIBDataType(rpfDataType)) {
+            int nsPixelConst = RPFPolarFrameStructure.northSouthPixelConstant_CIB(nsPixelSpacingConst, resolution);
+            polarPixelConst = RPFPolarFrameStructure.polarPixelConstant_CIB(nsPixelConst);
+            polarFrames = RPFPolarFrameStructure.polarFrames_CIB(polarPixelConst);
+        } else {
             polarPixelConst = -1;
             polarFrames = -1;
         }
 
-        double polewardExtent = polewardExtent(polewardNominalBoundary(zoneCode));
-        double equatorwardExtent = equatorwardExtent(equatorwardNominalBoundary(zoneCode));
+        double polewardExtent = RPFPolarFrameStructure.polewardExtent(RPFFrameStructure.polewardNominalBoundary(zoneCode));
+        double equatorwardExtent = RPFPolarFrameStructure.equatorwardExtent(RPFFrameStructure.equatorwardNominalBoundary(zoneCode));
 
         return new RPFPolarFrameStructure(
             polarPixelConst,

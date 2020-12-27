@@ -201,8 +201,8 @@ public class RigidShapeEditor extends AbstractShapeEditor {
             Vec4 rightVec = northVec.cross3(upVec).normalize3();
 
             // compute width
-            double width1 = Math.abs(Math.sin(this.shape.getHeading().getRadians()) * this.shape.getNorthSouthRadius());
-            double width2 = Math.abs(Math.cos(this.shape.getHeading().getRadians()) * this.shape.getEastWestRadius());
+            double width1 = Math.abs(Math.sin(this.shape.getHeading().radians()) * this.shape.getNorthSouthRadius());
+            double width2 = Math.abs(Math.cos(this.shape.getHeading().radians()) * this.shape.getEastWestRadius());
             radiusScaleFactor = Math.max(width1, width2);
 
             //vert = matrix.transformBy3(matrix, 1, 0, 0).add3(refPt);   // right
@@ -222,8 +222,8 @@ public class RigidShapeEditor extends AbstractShapeEditor {
 
             // compute height
             double height1 = Math.abs(
-                Math.cos(this.shape.getHeading().getRadians()) * this.shape.getNorthSouthRadius());
-            double height2 = Math.abs(Math.sin(this.shape.getHeading().getRadians()) * this.shape.getEastWestRadius());
+                Math.cos(this.shape.getHeading().radians()) * this.shape.getNorthSouthRadius());
+            double height2 = Math.abs(Math.sin(this.shape.getHeading().radians()) * this.shape.getEastWestRadius());
             radiusScaleFactor = Math.max(height1, height2);
 
             //Vec4 vert = matrix.transformBy3(matrix, 0, 1, 0).add3(refPt);   // top
@@ -1215,7 +1215,7 @@ public class RigidShapeEditor extends AbstractShapeEditor {
         // compute angle between them
         Angle rotationChange = vectorOnPlane.angleBetween3(previousVectorOnPlane);
         if (vectorOnPlane.cross3(previousVectorOnPlane).dot3(perpendicularVector) < 0)
-            rotationChange = Angle.fromRadians(rotationChange.getRadians() * -1);
+            rotationChange = Angle.fromRadians(rotationChange.radians() * -1);
 
         // XYZ version
         //Matrix M = Matrix.fromRotationXYZ(shape.getTilt(), shape.getRoll(), shape.getHeading());
@@ -1286,7 +1286,7 @@ public class RigidShapeEditor extends AbstractShapeEditor {
         // compute angle between them
         Angle rotationChange = vectorOnPlane.angleBetween3(previousVectorOnPlane);
         if (vectorOnPlane.cross3(previousVectorOnPlane).dot3(perpendicularVector) < 0)
-            rotationChange = Angle.fromRadians(rotationChange.getRadians() * -1);
+            rotationChange = Angle.fromRadians(rotationChange.radians() * -1);
 
         // XYZ version:
         //Matrix M = Matrix.fromRotationXYZ(shape.getTilt(), shape.getRoll(), shape.getHeading());
@@ -1357,7 +1357,7 @@ public class RigidShapeEditor extends AbstractShapeEditor {
         // compute angle between them
         Angle rotationChange = vectorOnPlane.angleBetween3(previousVectorOnPlane);
         if (vectorOnPlane.cross3(previousVectorOnPlane).dot3(perpendicularVector) < 0)
-            rotationChange = Angle.fromRadians(rotationChange.getRadians() * -1);
+            rotationChange = Angle.fromRadians(rotationChange.radians() * -1);
 
         // XYZ version
         //Matrix M = Matrix.fromRotationXYZ(shape.getTilt(), shape.getRoll(), shape.getHeading());
@@ -1387,7 +1387,7 @@ public class RigidShapeEditor extends AbstractShapeEditor {
 
     protected void skewShapeEastWest(Point previousMousePoint, Point mousePoint) {
         RigidShape shape = this.getShape();
-        double skew = shape.getSkewEastWest().getDegrees();
+        double skew = shape.getSkewEastWest().degrees;
 
         double scale = ShapeUtils.getViewportScaleFactor(wwd);
 
@@ -1444,7 +1444,7 @@ public class RigidShapeEditor extends AbstractShapeEditor {
 
     protected void skewShapeNorthSouth(Point previousMousePoint, Point mousePoint) {
         RigidShape shape = this.getShape();
-        double skew = shape.getSkewNorthSouth().getDegrees();
+        double skew = shape.getSkewNorthSouth().degrees;
         double scale = ShapeUtils.getViewportScaleFactor(wwd);
 
         Position referencePos = this.shape.getReferencePosition();
@@ -1500,8 +1500,8 @@ public class RigidShapeEditor extends AbstractShapeEditor {
 
     protected void skewShape(Point previousMousePoint, Point mousePoint) {
         RigidShape shape = this.getShape();
-        double eastSkew = shape.getSkewEastWest().getDegrees();
-        double northSkew = shape.getSkewNorthSouth().getDegrees();
+        double eastSkew = shape.getSkewEastWest().degrees;
+        double northSkew = shape.getSkewNorthSouth().degrees;
 
         double scale = ShapeUtils.getViewportScaleFactor(wwd);
 

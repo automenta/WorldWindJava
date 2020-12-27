@@ -49,13 +49,11 @@ public class POIUtils {
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 inputStream = connection.getInputStream();
                 ByteBuffer buffer = WWIO.readStreamToBuffer(inputStream);
-                String charsetName = getCharsetName(contentType);
-                return decodeBuffer(buffer, charsetName);
-            }
-            else if (responseCode == HttpURLConnection.HTTP_BAD_REQUEST) {
+                String charsetName = POIUtils.getCharsetName(contentType);
+                return POIUtils.decodeBuffer(buffer, charsetName);
+            } else if (responseCode == HttpURLConnection.HTTP_BAD_REQUEST) {
                 throw new NoItemException(responseMessage);
-            }
-            else {
+            } else {
                 throw new ServiceException(responseMessage);
             }
         }
@@ -88,7 +86,7 @@ public class POIUtils {
 
     protected static String getCharsetName(String contentType) {
         if (contentType == null || !contentType.toLowerCase().contains("charset"))
-            return DEFAULT_CHARSET_NAME;
+            return POIUtils.DEFAULT_CHARSET_NAME;
 
         String[] pairs = contentType.split(";");
         for (String pair : pairs) {
@@ -99,6 +97,6 @@ public class POIUtils {
             }
         }
 
-        return DEFAULT_CHARSET_NAME;
+        return POIUtils.DEFAULT_CHARSET_NAME;
     }
 }

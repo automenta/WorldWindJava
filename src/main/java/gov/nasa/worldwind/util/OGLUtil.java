@@ -25,8 +25,8 @@ import java.net.URL;
 public class OGLUtil {
     public final static int DEFAULT_TEX_ENV_MODE = GL2.GL_MODULATE;
     public final static int DEFAULT_TEXTURE_GEN_MODE = GL2.GL_EYE_LINEAR;
-    public final static double[] DEFAULT_TEXTURE_GEN_S_OBJECT_PLANE = new double[] {1, 0, 0, 0};
-    public final static double[] DEFAULT_TEXTURE_GEN_T_OBJECT_PLANE = new double[] {0, 1, 0, 0};
+    public final static double[] DEFAULT_TEXTURE_GEN_S_OBJECT_PLANE = {1, 0, 0, 0};
+    public final static double[] DEFAULT_TEXTURE_GEN_T_OBJECT_PLANE = {0, 1, 0, 0};
 
     public final static int DEFAULT_SRC0_RGB = GL2.GL_TEXTURE;
     public final static int DEFAULT_SRC1_RGB = GL2.GL_PREVIOUS;
@@ -58,33 +58,31 @@ public class OGLUtil {
 
         if (havePremultipliedColors) {
             gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE_MINUS_SRC_ALPHA);
-        }
-        else {
+        } else {
             // The separate blend function correctly handles regular (non-premultiplied) colors. We want
             //     Cd = Cs*As + Cf*(1-As)
             //     Ad = As    + Af*(1-As)
             // So we use GL_EXT_blend_func_separate to specify different blending factors for source color and source
             // alpha.
 
-            boolean haveExtBlendFuncSeparate = gl.isExtensionAvailable(GL_EXT_BLEND_FUNC_SEPARATE);
+            boolean haveExtBlendFuncSeparate = gl.isExtensionAvailable(OGLUtil.GL_EXT_BLEND_FUNC_SEPARATE);
             if (haveExtBlendFuncSeparate) {
                 gl.glBlendFuncSeparate(
                     GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA, // rgb   blending factors
                     GL.GL_ONE, GL.GL_ONE_MINUS_SRC_ALPHA);      // alpha blending factors
-            }
-            else {
+            } else {
                 gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
             }
         }
     }
 
     public static void applyColor(GL2 gl, Color color, double opacity, boolean premultiplyColors) {
-        applyColor(gl, color, (float)opacity, premultiplyColors);
+        OGLUtil.applyColor(gl, color, (float) opacity, premultiplyColors);
     }
 
     /**
-     * Sets the GL color state to the specified {@link Color} and opacity, and with the specified color mode.
-     * If <code>premultiplyColors</code> is true, this premultipies the Red, Green, and Blue color values by the opacity
+     * Sets the GL color state to the specified {@link Color} and opacity, and with the specified color mode. If
+     * <code>premultiplyColors</code> is true, this premultipies the Red, Green, and Blue color values by the opacity
      * value. Otherwise, this does not modify the Red, Green, and Blue color values.
      *
      * @param gl                the GL context.
@@ -156,7 +154,7 @@ public class OGLUtil {
     public static void applyLightingDirectionalFromViewer(GL2 gl, int light, Vec4 direction) {
 
         if (direction == null)
-            direction = DEFAULT_LIGHT_DIRECTION;
+            direction = OGLUtil.DEFAULT_LIGHT_DIRECTION;
 
         float[] ambient = {1.0f, 1.0f, 1.0f, 0.0f};
         float[] diffuse = {1.0f, 1.0f, 1.0f, 0.0f};
@@ -349,7 +347,7 @@ public class OGLUtil {
      */
     public static TextureData newTextureData(GLProfile glp, URL url, boolean useMipMaps) throws IOException {
         try (InputStream stream = url.openStream()) {
-            return newTextureData(glp, stream, useMipMaps);
+            return OGLUtil.newTextureData(glp, stream, useMipMaps);
         }
     }
 

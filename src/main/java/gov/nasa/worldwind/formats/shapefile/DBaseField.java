@@ -46,10 +46,10 @@ public class DBaseField {
 
     public static String getFieldType(char type) {
         return switch (type) {
-            case 'C' -> TYPE_CHAR;
-            case 'D' -> TYPE_DATE;
-            case 'F', 'N' -> TYPE_NUMBER;
-            case 'L' -> TYPE_BOOLEAN;
+            case 'C' -> DBaseField.TYPE_CHAR;
+            case 'D' -> DBaseField.TYPE_DATE;
+            case 'F', 'N' -> DBaseField.TYPE_NUMBER;
+            case 'L' -> DBaseField.TYPE_BOOLEAN;
             default -> null;
         };
     }
@@ -75,12 +75,12 @@ public class DBaseField {
 
         int pos = buffer.position();
 
-        byte[] bytes = new byte[FIELD_NAME_LENGTH];
-        int numRead = DBaseFile.readZeroTerminatedString(buffer, bytes, FIELD_NAME_LENGTH);
+        byte[] bytes = new byte[DBaseField.FIELD_NAME_LENGTH];
+        int numRead = DBaseFile.readZeroTerminatedString(buffer, bytes, DBaseField.FIELD_NAME_LENGTH);
         this.name = DBaseFile.decodeString(bytes, numRead);
 
         this.typeCode = (char) buffer.get();
-        this.type = getFieldType(this.typeCode);
+        this.type = DBaseField.getFieldType(this.typeCode);
         if (this.type == null) {
             String message = Logging.getMessage("SHP.UnsupportedDBaseFieldType", this.typeCode);
             Logging.logger().log(Level.SEVERE, message);
@@ -100,7 +100,7 @@ public class DBaseField {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(this.name);
-        sb.append("(").append(this.typeCode).append(")");
+        sb.append('(').append(this.typeCode).append(')');
 
         return sb.toString();
     }

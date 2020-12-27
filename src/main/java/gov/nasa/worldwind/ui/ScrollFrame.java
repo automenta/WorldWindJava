@@ -91,19 +91,19 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
     /**
      * The size, in pixels, of the frame's minimize button.
      */
-    protected final int buttonSize = DEFAULT_BUTTON_SIZE;
+    protected final int buttonSize = ScrollFrame.DEFAULT_BUTTON_SIZE;
     /**
      * The width of the frame scroll bar.
      */
-    protected final int scrollBarSize = DEFAULT_SCROLL_BAR_SIZE;
+    protected final int scrollBarSize = ScrollFrame.DEFAULT_SCROLL_BAR_SIZE;
     /**
      * The width of the frame border.
      */
-    protected final int frameBorder = DEFAULT_FRAME_BORDER_WIDTH;
+    protected final int frameBorder = ScrollFrame.DEFAULT_FRAME_BORDER_WIDTH;
     /**
      * The width of lines used to draw the frame.
      */
-    protected final int frameLineWidth = DEFAULT_LINE_WIDTH;
+    protected final int frameLineWidth = ScrollFrame.DEFAULT_LINE_WIDTH;
     /**
      * Support for setting up and restoring OpenGL state during rendering.
      */
@@ -115,11 +115,11 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
     /**
      * Delay in milliseconds between frames of an animation.
      */
-    protected final int animationDelay = DEFAULT_ANIMATION_DELAY;
+    protected final int animationDelay = ScrollFrame.DEFAULT_ANIMATION_DELAY;
     /**
      * Width of the pickable frame border.
      */
-    protected final int borderPickWidth = DEFAULT_FRAME_BORDER_PICK_WIDTH;
+    protected final int borderPickWidth = ScrollFrame.DEFAULT_FRAME_BORDER_PICK_WIDTH;
     /**
      * Support class used to render to an offscreen texture.
      */
@@ -142,7 +142,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
      * Dimension of a sub-tile in the rendering texture. Also the dimension of logical tiles in the scrollable content
      * that are rendered into the texture tiles.
      */
-    protected final int textureTileDimension = DEFAULT_TEXTURE_TILE_DIMENSION;
+    protected final int textureTileDimension = ScrollFrame.DEFAULT_TEXTURE_TILE_DIMENSION;
     /**
      * Attributes to use when the frame is not highlighted.
      */
@@ -179,7 +179,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
     /**
      * The height, in pixels, of the frame title bar.
      */
-    protected int titleBarHeight = DEFAULT_TITLE_BAR_HEIGHT;
+    protected int titleBarHeight = ScrollFrame.DEFAULT_TITLE_BAR_HEIGHT;
     /**
      * Scroll bar to control vertical scrolling.
      */
@@ -193,11 +193,11 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
     /**
      * Indicates whether or not the frame is minimized.
      */
-    protected boolean minimized = false;
+    protected boolean minimized;
     /**
      * The size of the maximized frame.
      */
-    protected Size maximizedSize = DEFAULT_MAXIMIZED_SIZE;
+    protected Size maximizedSize = ScrollFrame.DEFAULT_MAXIMIZED_SIZE;
     /**
      * The size of the minimized frame.
      */
@@ -347,6 +347,25 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
         super(null);
         this.setScreenLocation(screenLocation);
         this.initializeUIControls();
+    }
+
+    /**
+     * Determines if the frame size is relative to the size of the scrollable content (as opposed to an absolute pixel
+     * value, or a fraction of the viewport).
+     *
+     * @param size Size to test.
+     * @return {@code true} if the absolute size of {@code size} depends on the size of the frame content.
+     */
+    // TODO try to eliminate this dependence on size modes. This would break if an app subclassed Size and implemented
+    // TODO different modes.
+    protected static boolean isRelativeSize(Size size) {
+        String heightMode = size.getHeightMode();
+        String widthMode = size.getWidthMode();
+
+        return Size.NATIVE_DIMENSION.equals(heightMode)
+            || Size.MAINTAIN_ASPECT_RATIO.equals(heightMode)
+            || Size.NATIVE_DIMENSION.equals(widthMode)
+            || Size.MAINTAIN_ASPECT_RATIO.equals(widthMode);
     }
 
     /**
@@ -724,6 +743,10 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
         return this.highlightAttributes;
     }
 
+    //**************************************************************//
+    //********************  Tile Updating  *************************//
+    //**************************************************************//
+
     /**
      * Specifies the frame attributes used to draw the frame when it is highlighted.
      *
@@ -738,10 +761,6 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
 
         this.highlightAttributes = attributes;
     }
-
-    //**************************************************************//
-    //********************  Tile Updating  *************************//
-    //**************************************************************//
 
     /**
      * Build the list of ContentTile that represents the logical tiles in the frame contents.
@@ -1106,8 +1125,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
                 if (event.isLeftClick()) {
                     ScrollFrame.this.setMinimized(!ScrollFrame.this.isMinimized());
                     event.consume();
-                }
-                else {
+                } else {
                     super.accept(event);
                 }
             }
@@ -1190,8 +1208,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
 
             this.frameSize = size.compute(frameSizeForContentSize.width, frameSizeForContentSize.height,
                 viewport.width, viewport.height);
-        }
-        else {
+        } else {
             // Otherwise just compute the frame size. The content size will be computed after the frame size has been
             // determined.
             this.frameSize = size.compute(0, 0, viewport.width, viewport.height);
@@ -1312,25 +1329,6 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
     }
 
     /**
-     * Determines if the frame size is relative to the size of the scrollable content (as opposed to an absolute pixel
-     * value, or a fraction of the viewport).
-     *
-     * @param size Size to test.
-     * @return {@code true} if the absolute size of {@code size} depends on the size of the frame content.
-     */
-    // TODO try to eliminate this dependence on size modes. This would break if an app subclassed Size and implemented
-    // TODO different modes.
-    protected static boolean isRelativeSize(Size size) {
-        String heightMode = size.getHeightMode();
-        String widthMode = size.getWidthMode();
-
-        return Size.NATIVE_DIMENSION.equals(heightMode)
-            || Size.MAINTAIN_ASPECT_RATIO.equals(heightMode)
-            || Size.NATIVE_DIMENSION.equals(widthMode)
-            || Size.MAINTAIN_ASPECT_RATIO.equals(widthMode);
-    }
-
-    /**
      * Determine if the vertical scrollbar should be displayed.
      *
      * @param contentSize The total size, in pixels, of the scrollable content.
@@ -1341,8 +1339,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
         // bounds.
         if ((!this.isMinimized() && !this.isAnimating())) {
             return contentSize.height > this.contentBounds.height;
-        }
-        else {
+        } else {
             // Otherwise, return the previous scrollbar setting, do not recompute it. While the frame is animating, we want
             // the scrollbar decision to be based on its maximized size. If the frame would have scrollbars when maximized will
             // have scrollbars while it animates, but a frame that would not have scrollbars when maximized will not have
@@ -1446,8 +1443,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
         // cached in a texture.
         if (this.renderToTexture && !dc.isPickingMode()) {
             this.drawContentTiles(dc);
-        }
-        else {
+        } else {
             this.drawContentDirect(dc);
         }
     }
@@ -1583,8 +1579,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
 
                 TreeUtil.drawRectWithGradient(gl, new Rectangle(0, 0, this.innerBounds.width, this.innerBounds.height),
                     color[0], color[1], attributes.getBackgroundOpacity(), AVKey.VERTICAL);
-            }
-            else {
+            } else {
                 int frameHeight = this.frameBounds.height;
                 int frameWidth = this.frameBounds.width;
 
@@ -1893,8 +1888,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
         if (sb.length() > cutOff.length()) {
             this.shortTitle = sb.toString();
             this.shortTitleBounds = textRenderer.getBounds(sb);
-        }
-        else {
+        } else {
             this.shortTitle = null;
             this.shortTitleBounds = null;
         }
@@ -1931,7 +1925,8 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
                     gl.glVertex2f(0.5f, buttonSize + 0.5f);
                     gl.glVertex2f(buttonSize, buttonSize + 0.5f);
                     gl.glVertex2f(buttonSize, 0);
-                } finally {
+                }
+                finally {
                     gl.glEnd();
                 }
 
@@ -1947,11 +1942,11 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
                         gl.glVertex2f(buttonSize / 2.0f, buttonSize / 4.0f);
                         gl.glVertex2f(buttonSize / 2.0f, buttonSize - buttonSize / 4.0f);
                     }
-                } finally {
+                }
+                finally {
                     gl.glEnd();
                 }
-            }
-            else {
+            } else {
                 Color color = dc.getUniquePickColor();
 
                 this.pickSupport.addPickableObject(color.getRGB(), this.minimizeButton, null, false);
@@ -1960,7 +1955,8 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
                 gl.glScaled(buttonSize, buttonSize, 1.0d);
                 dc.drawUnitQuad();
             }
-        } finally {
+        }
+        finally {
             oglStack.pop(gl);
         }
     }
@@ -2028,14 +2024,12 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
                 if (this.getAttributes() != null)
                     this.activeAttributes.copy(this.getAttributes());
                 else
-                    this.activeAttributes.copy(defaultAttributes);
+                    this.activeAttributes.copy(ScrollFrame.defaultAttributes);
             }
-        }
-        else if (this.getAttributes() != null) {
+        } else if (this.getAttributes() != null) {
             this.activeAttributes.copy(this.getAttributes());
-        }
-        else {
-            this.activeAttributes.copy(defaultAttributes);
+        } else {
+            this.activeAttributes.copy(ScrollFrame.defaultAttributes);
         }
 
         this.determineScrollbarAttributes();
@@ -2096,7 +2090,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
             if (imageURL != null) {
                 this.texture = new BasicWWTexture(imageURL, true);
             }
-        }else if (imageSource != null) {
+        } else if (imageSource != null) {
             return this.texture = new BasicWWTexture(imageSource, true);
         }
 

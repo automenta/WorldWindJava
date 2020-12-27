@@ -7,6 +7,7 @@
 package gov.nasa.worldwind.layers.ogc.kml.io;
 
 ////.*;
+
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.util.xml.XMLDoc;
 
@@ -46,7 +47,7 @@ public class KMZFile extends XMLDoc {
      * @throws IllegalArgumentException if the specified file is null.
      * @throws ZipException             if a Zip error occurs.
      */
-    public KMZFile(File file) throws IOException {
+    public KMZFile(File file) throws IOException, ZipException {
         if (file == null) {
             String message = Logging.getMessage("nullValue.FileIsNull");
             Logging.logger().severe(message);
@@ -156,8 +157,7 @@ public class KMZFile extends XMLDoc {
             ZipEntry entry = zipEntries.nextElement();
             if (entry.getName().equals(path)) {
                 requestedFilePath = this.copyEntryToTempDir(entry);
-            }
-            else {
+            } else {
                 Path entryFolder = Path.of(entry.getName()).getParent();
                 entryFolder = (entryFolder == null) ? root : entryFolder;
                 if (entryFolder.equals(requestedFolder)) {

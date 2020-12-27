@@ -7,6 +7,7 @@
 package gov.nasa.worldwind.layers.ogc;
 
 ////.*;
+
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.util.xml.*;
 
@@ -51,6 +52,10 @@ abstract public class OGCCapabilities extends AbstractXMLEventParser {
         this.initialize();
     }
 
+    protected static XMLEventReader createReader(Object docSource) {
+        return WWXML.openEventReader(docSource);
+    }
+
     /**
      * Returns the default namespace URI. Must be overridden by subclasses to provide a specific URI. The default
      * namespace is used to match XML elements found in the default namespace of the XML stream.
@@ -77,10 +82,6 @@ abstract public class OGCCapabilities extends AbstractXMLEventParser {
 
         this.getParserContext().registerParser(SERVICE, new OGCServiceInformation(this.getNamespaceURI()));
         // Capability parser is registered by subclass.
-    }
-
-    protected static XMLEventReader createReader(Object docSource) {
-        return WWXML.openEventReader(docSource);
     }
 
     protected XMLEventParserContext createParserContext(XMLEventReader reader) {
@@ -141,8 +142,7 @@ abstract public class OGCCapabilities extends AbstractXMLEventParser {
                 if (o instanceof OGCServiceInformation)
                     this.setServiceInformation((OGCServiceInformation) o);
             }
-        }
-        else if (ctx.isStartElement(event, CAPABILITY)) {
+        } else if (ctx.isStartElement(event, CAPABILITY)) {
             XMLEventParser parser = this.allocate(ctx, event);
             if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
@@ -228,15 +228,15 @@ abstract public class OGCCapabilities extends AbstractXMLEventParser {
         StringBuilder sb = new StringBuilder();
 
         sb.append("Version: ").
-            append(this.getVersion() != null ? this.getVersion() : "none").append("\n");
+            append(this.getVersion() != null ? this.getVersion() : "none").append('\n');
         sb.append("UpdateSequence: ").
             append(this.getUpdateSequence() != null ? this.getUpdateSequence() : "none");
-        sb.append("\n");
+        sb.append('\n');
         sb.append(this.getServiceInformation() != null ? this.getServiceInformation() : "Service Information: none");
-        sb.append("\n");
+        sb.append('\n');
         sb.append(this.getCapabilityInformation() != null
             ? this.getCapabilityInformation() : "Capability Information: none");
-        sb.append("\n");
+        sb.append('\n');
 
         return sb.toString();
     }

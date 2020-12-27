@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.layers.ogc.collada;
 
 import gov.nasa.worldwind.util.WWUtil;
-import gov.nasa.worldwind.util.xml.XMLEventParserContext;
+import gov.nasa.worldwind.util.xml.*;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
@@ -37,34 +37,6 @@ public class ColladaP extends ColladaAbstractObject {
     }
 
     /**
-     * Indicates the contents of the P element.
-     *
-     * @return Array of indices defined by this element.
-     */
-    public int[] getIndices() {
-        return this.indices;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Object parse(XMLEventParserContext ctx, XMLEvent event, Object... args) throws XMLStreamException {
-        super.parse(ctx, event, args);
-
-        if (this.hasField(CHARACTERS_CONTENT)) {
-            String s = (String) this.getField(CHARACTERS_CONTENT);
-            if (!WWUtil.isEmpty(s))
-                this.indices = ColladaP.parseInts(s);
-
-            // Don't need to keep string version of the ints
-            this.removeField(CHARACTERS_CONTENT);
-        }
-
-        return this;
-    }
-
-    /**
      * Parse an string of integers into an array.
      *
      * @param intArrayString String of integers separated by spaces.
@@ -81,5 +53,33 @@ public class ColladaP extends ColladaAbstractObject {
         }
 
         return ints;
+    }
+
+    /**
+     * Indicates the contents of the P element.
+     *
+     * @return Array of indices defined by this element.
+     */
+    public int[] getIndices() {
+        return this.indices;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object parse(XMLEventParserContext ctx, XMLEvent event, Object... args) throws XMLStreamException {
+        super.parse(ctx, event, args);
+
+        if (this.hasField(AbstractXMLEventParser.CHARACTERS_CONTENT)) {
+            String s = (String) this.getField(AbstractXMLEventParser.CHARACTERS_CONTENT);
+            if (!WWUtil.isEmpty(s))
+                this.indices = ColladaP.parseInts(s);
+
+            // Don't need to keep string version of the ints
+            this.removeField(AbstractXMLEventParser.CHARACTERS_CONTENT);
+        }
+
+        return this;
     }
 }

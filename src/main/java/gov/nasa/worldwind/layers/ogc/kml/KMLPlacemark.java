@@ -38,6 +38,18 @@ public class KMLPlacemark extends KMLAbstractFeature implements KMLMutable {
         super(namespaceURI);
     }
 
+    /**
+     * Indicates whether or not an altitude mode equals one of the altitude modes defined in the KML specification.
+     *
+     * @param altMode Altitude mode test.
+     * @return True if {@code altMode} is one of "clampToGround", "relativeToGround", or "absolute".
+     */
+    protected static boolean isValidAltitudeMode(String altMode) {
+        return "clampToGround".equals(altMode)
+            || "relativeToGround".equals(altMode)
+            || "absolute".equals(altMode);
+    }
+
     @Override
     protected void doAddEventContent(Object o, XMLEventParserContext ctx, XMLEvent event, Object... args)
         throws XMLStreamException {
@@ -143,8 +155,7 @@ public class KMLPlacemark extends KMLAbstractFeature implements KMLMutable {
                     this.initializeGeometry(tc, g); // recurse
                 }
             }
-        }
-        else if (geom instanceof KMLModel)
+        } else if (geom instanceof KMLModel)
             this.addRenderable(this.selectModelRenderable(tc, geom));
     }
 
@@ -189,24 +200,13 @@ public class KMLPlacemark extends KMLAbstractFeature implements KMLMutable {
         if (shape.getOuterBoundary().getCoordinates() == null)
             return null;
 
-        if ("clampToGround".equals(shape.getAltitudeMode()) || !KMLPlacemark.isValidAltitudeMode(shape.getAltitudeMode()))
+        if ("clampToGround".equals(shape.getAltitudeMode()) || !KMLPlacemark.isValidAltitudeMode(
+            shape.getAltitudeMode()))
             return new KMLSurfacePolygonImpl(tc, this, geom);
         else if (shape.isExtrude())
             return new KMLExtrudedPolygonImpl(tc, this, geom);
         else
             return new KMLPolygonImpl(tc, this, geom);
-    }
-
-    /**
-     * Indicates whether or not an altitude mode equals one of the altitude modes defined in the KML specification.
-     *
-     * @param altMode Altitude mode test.
-     * @return True if {@code altMode} is one of "clampToGround", "relativeToGround", or "absolute".
-     */
-    protected static boolean isValidAltitudeMode(String altMode) {
-        return "clampToGround".equals(altMode)
-            || "relativeToGround".equals(altMode)
-            || "absolute".equals(altMode);
     }
 
     @Override
@@ -228,7 +228,7 @@ public class KMLPlacemark extends KMLAbstractFeature implements KMLMutable {
         }
 
         if (placemark.hasStyle()) {
-            Message msg = new Message(MSG_STYLE_CHANGED, placemark);
+            Message msg = new Message(KMLAbstractObject.MSG_STYLE_CHANGED, placemark);
 
             if (this.renderables != null) {
                 for (KMLRenderable renderable : this.renderables) {
@@ -240,10 +240,9 @@ public class KMLPlacemark extends KMLAbstractFeature implements KMLMutable {
 
     @Override
     public void onChange(Message msg) {
-        if (MSG_GEOMETRY_CHANGED.equals(msg.getName())) {
+        if (KMLAbstractObject.MSG_GEOMETRY_CHANGED.equals(msg.getName())) {
             this.renderables = null;
-        }
-        else if (MSG_STYLE_CHANGED.equals(msg.getName())) {
+        } else if (KMLAbstractObject.MSG_STYLE_CHANGED.equals(msg.getName())) {
             for (KMLRenderable renderable : this.renderables) {
                 renderable.onMessage(msg);
             }

@@ -60,7 +60,7 @@ public class ViewPropertyAccessor {
                 this.view.setHeading(value);
                 return true;
             }
-            catch (Exception e) {
+            catch (RuntimeException e) {
                 return false;
             }
         }
@@ -89,7 +89,7 @@ public class ViewPropertyAccessor {
                 this.view.setPitch(value);
                 return true;
             }
-            catch (Exception e) {
+            catch (RuntimeException e) {
                 return false;
             }
         }
@@ -118,7 +118,7 @@ public class ViewPropertyAccessor {
                 this.view.setRoll(value);
                 return true;
             }
-            catch (Exception e) {
+            catch (RuntimeException e) {
                 return false;
             }
         }
@@ -149,7 +149,7 @@ public class ViewPropertyAccessor {
                 this.view.setEyePosition(value);
                 return true;
             }
-            catch (Exception e) {
+            catch (RuntimeException e) {
                 return false;
             }
         }
@@ -181,7 +181,7 @@ public class ViewPropertyAccessor {
                     new Position(this.view.getCurrentEyePosition(), value));
                 return true;
             }
-            catch (Exception e) {
+            catch (RuntimeException e) {
                 return false;
             }
         }

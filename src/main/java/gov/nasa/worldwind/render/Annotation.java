@@ -120,8 +120,8 @@ public interface Annotation extends Renderable, Disposable, Restorable {
     void draw(DrawContext dc, int width, int height, double opacity, Position pickPosition);
 
     /**
-     * Get the annotation bounding {@link Rectangle} using OGL coordinates - bottom-left corner x and y
-     * relative to the {@link WorldWindow} bottom-left corner, and the annotation callout width and height.
+     * Get the annotation bounding {@link Rectangle} using OGL coordinates - bottom-left corner x and y relative to the
+     * {@link WorldWindow} bottom-left corner, and the annotation callout width and height.
      * <p>
      * The annotation offset from it's reference point is factored in such that the callout leader shape and reference
      * point are included in the bounding rectangle.

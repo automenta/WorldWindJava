@@ -84,7 +84,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
         for (int i = 0; i < this.placeNameServiceSet.getServiceCount(); i++) {
             //todo do this for long as well and pick min
             int calc1 = (int) (PlaceNameService.TILING_SECTOR.latDelta
-                / this.placeNameServiceSet.getService(i).getTileDelta().getLatitude().getDegrees());
+                / this.placeNameServiceSet.getService(i).getTileDelta().getLatitude().degrees);
             int numLevels = (int) Math.log(calc1);
             navTiles.add(
                 new NavigationTile(this.placeNameServiceSet.getService(i), PlaceNameService.TILING_SECTOR, numLevels,
@@ -121,11 +121,10 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
         if (dc.isContinuous2DGlobe()) {
             // Just use the eye altitude since the majority of non-visible sectors are culled elsewhere.
             distSquared = eyePos.getAltitude() * eyePos.getAltitude();
-        }
-        else {
-            Angle lat = clampAngle(eyePos.getLatitude(), sector.latMin(),
+        } else {
+            Angle lat = PlaceNameLayer.clampAngle(eyePos.getLatitude(), sector.latMin(),
                 sector.latMax());
-            Angle lon = clampAngle(eyePos.getLongitude(), sector.lonMin(),
+            Angle lon = PlaceNameLayer.clampAngle(eyePos.getLongitude(), sector.lonMin(),
                 sector.lonMax());
             Vec4 p = dc.getGlobe().computePointFromPosition(lat, lon, 0.0d);
             distSquared = dc.getView().getEyePoint().distanceToSquared3(p);
@@ -152,11 +151,10 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
         if (dc.isContinuous2DGlobe()) {
             // Just use the eye altitude since the majority of non-visible sectors are culled elsewhere.
             distSquared = eyePos.getAltitude() * eyePos.getAltitude();
-        }
-        else {
-            Angle lat = clampAngle(eyePos.getLatitude(), tile.sector.latMin(),
+        } else {
+            Angle lat = PlaceNameLayer.clampAngle(eyePos.getLatitude(), tile.sector.latMin(),
                 tile.sector.latMax());
-            Angle lon = clampAngle(eyePos.getLongitude(), tile.sector.lonMin(),
+            Angle lon = PlaceNameLayer.clampAngle(eyePos.getLongitude(), tile.sector.lonMin(),
                 tile.sector.lonMax());
             Vec4 p = dc.getGlobe().computePointFromPosition(lat, lon, 0.0d);
             distSquared = dc.getView().getEyePoint().distanceToSquared3(p);
@@ -194,7 +192,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
         InputStream is = null;
 
         try {
-            SAXParser p = saxParserFactory.newSAXParser();
+            SAXParser p = PlaceNameLayer.saxParserFactory.newSAXParser();
 
             String path = url.getFile();
             path = path.replaceAll("%20", " "); // TODO: find a better way to get a path usable by FileInputStream
@@ -239,6 +237,23 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
     // ============== Rendering ======================= //
     // ============== Rendering ======================= //
     // ============== Rendering ======================= //
+
+    protected static Vec4 computeReferencePoint(DrawContext dc) {
+        if (dc.getViewportCenterPosition() != null)
+            return dc.getGlobe().computePointFromPosition(dc.getViewportCenterPosition());
+
+        Rectangle2D viewport = dc.getView().getViewport();
+        int x = (int) viewport.getWidth() / 2;
+        for (int y = (int) (0.5 * viewport.getHeight()); y >= 0; y--) {
+            Position pos = dc.getView().computePositionFromScreenPoint(x, y);
+            if (pos == null)
+                continue;
+
+            return dc.getGlobe().computePointFromPosition(pos.getLatitude(), pos.getLongitude(), 0.0d);
+        }
+
+        return null;
+    }
 
     /**
      * @return not in use
@@ -308,13 +323,13 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
         int serviceCount = this.placeNameServiceSet.getServiceCount();
         for (int i = 0; i < serviceCount; i++) {
             PlaceNameService placeNameService = this.placeNameServiceSet.getService(i);
-            if (!isServiceVisible(dc, placeNameService))
+            if (!PlaceNameLayer.isServiceVisible(dc, placeNameService))
                 continue;
 
             double minDistSquared = placeNameService.getMinDisplayDistance() * placeNameService.getMinDisplayDistance();
             double maxDistSquared = placeNameService.getMaxDisplayDistance() * placeNameService.getMaxDisplayDistance();
 
-            if (isSectorVisible(dc, placeNameService.getMaskingSector(), minDistSquared, maxDistSquared)) {
+            if (PlaceNameLayer.isSectorVisible(dc, placeNameService.getMaskingSector(), minDistSquared, maxDistSquared)) {
                 Collection<Tile> baseTiles = new ArrayList<>();
                 NavigationTile navTile = this.navTiles.get(i);
                 //drill down into tiles to find bottom level navTiles visible
@@ -327,7 +342,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
                     try {
                         drawOrRequestTile(dc, tile, minDistSquared, maxDistSquared);
                     }
-                    catch (Exception e) {
+                    catch (RuntimeException e) {
                         Logging.logger().log(Level.FINE,
                             Logging.getMessage("layers.PlaceNameLayer.ExceptionRenderingTile"),
                             e);
@@ -340,30 +355,13 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
         this.requestQ.clear();
     }
 
-    protected static Vec4 computeReferencePoint(DrawContext dc) {
-        if (dc.getViewportCenterPosition() != null)
-            return dc.getGlobe().computePointFromPosition(dc.getViewportCenterPosition());
-
-        Rectangle2D viewport = dc.getView().getViewport();
-        int x = (int) viewport.getWidth() / 2;
-        for (int y = (int) (0.5 * viewport.getHeight()); y >= 0; y--) {
-            Position pos = dc.getView().computePositionFromScreenPoint(x, y);
-            if (pos == null)
-                continue;
-
-            return dc.getGlobe().computePointFromPosition(pos.getLatitude(), pos.getLongitude(), 0.0d);
-        }
-
-        return null;
-    }
-
     protected Vec4 getReferencePoint() {
         return this.referencePoint;
     }
 
     protected void drawOrRequestTile(DrawContext dc, Tile tile, double minDisplayDistanceSquared,
         double maxDisplayDistanceSquared) {
-        if (!isTileVisible(dc, tile, minDisplayDistanceSquared, maxDisplayDistanceSquared))
+        if (!PlaceNameLayer.isTileVisible(dc, tile, minDisplayDistanceSquared, maxDisplayDistanceSquared))
             return;
 
         if (tile.isTileInMemoryWithData()) {
@@ -416,7 +414,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
 
         PlaceNameChunk tileData;
         synchronized (this.fileLock) {
-            tileData = readTileData(tile, url);
+            tileData = PlaceNameLayer.readTileData(tile, url);
         }
 
         if (tileData == null) {
@@ -464,8 +462,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
                 postProcessor = new DownloadPostProcessor(this, tile);
             retriever = new HTTPRetriever(url, postProcessor);
             retriever.set(URLRetriever.EXTRACT_ZIP_ENTRY, "true"); // supports legacy layers
-        }
-        else {
+        } else {
             Logging.logger().severe(
                 Logging.getMessage("layers.PlaceNameLayer.UnknownRetrievalProtocol", url.toString()));
             return;
@@ -580,7 +577,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
                 fileStore != null ? fileStore : this.getDataFileStore(), null);
             return downloader.getEstimatedMissingDataSize();
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             String message = Logging.getMessage("generic.ExceptionDuringDataSizeEstimate", this.name());
             Logging.logger().severe(message);
             throw new RuntimeException(message);
@@ -594,10 +591,10 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
         public final int column;
         private final int hashInt;
         // Computed data.
-        protected String fileCachePath = null;
+        protected String fileCachePath;
         protected double extentVerticalExaggeration = Double.MIN_VALUE;
         protected double priority = Double.MAX_VALUE; // Default is minimum priority
-        protected PlaceNameChunk dataChunk = null;
+        protected PlaceNameChunk dataChunk;
 
         Tile(PlaceNameService placeNameService, Sector sector, int row, int column) {
             this.placeNameService = placeNameService;
@@ -614,7 +611,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
                 Logging.logger().severe(msg);
                 throw new IllegalArgumentException(msg);
             }
-            return (int) ((latitude.getDegrees() + 90.0d) / delta.getDegrees());
+            return (int) ((latitude.degrees + 90.0d) / delta.degrees);
         }
 
         static int computeColumn(Angle delta, Angle longitude) {
@@ -623,7 +620,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
                 Logging.logger().severe(msg);
                 throw new IllegalArgumentException(msg);
             }
-            return (int) ((longitude.getDegrees() + 180.0d) / delta.getDegrees());
+            return (int) ((longitude.degrees + 180.0d) / delta.degrees);
         }
 
         static Angle computeRowLatitude(int row, Angle delta) {
@@ -632,7 +629,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
                 Logging.logger().severe(msg);
                 throw new IllegalArgumentException(msg);
             }
-            return Angle.fromDegrees(-90.0d + delta.getDegrees() * row);
+            return Angle.fromDegrees(-90.0d + delta.degrees * row);
         }
 
         static Angle computeColumnLongitude(int column, Angle delta) {
@@ -641,7 +638,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
                 Logging.logger().severe(msg);
                 throw new IllegalArgumentException(msg);
             }
-            return Angle.fromDegrees(-180 + delta.getDegrees() * column);
+            return Angle.fromDegrees(-180 + delta.degrees * column);
         }
 
         public PlaceNameChunk getDataChunk() {
@@ -775,7 +772,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
                 text.setFont(this.placeNameService.getFont());
                 text.setColor(this.placeNameService.getColor());
                 text.setBackgroundColor(this.placeNameService.getBackgroundColor());
-                text.setVisible(isNameVisible(dc, this.placeNameService, pos));
+                text.setVisible(PlaceNameLayer.isNameVisible(dc, this.placeNameService, pos));
                 text.setPriority(maxDisplayDistance);
                 list.add(text);
             }
@@ -861,40 +858,12 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
         protected final StringBuilder latBuffer = new StringBuilder();
         protected final StringBuilder lonBuffer = new StringBuilder();
         final StringBuilder textArray = new StringBuilder();
-        protected boolean inBeginEndPair = false;
+        protected boolean inBeginEndPair;
         int[] textIndexArray = new int[16];
         double[] latlonArray = new double[16];
-        int numEntries = 0;
+        int numEntries;
 
         protected GMLPlaceNameSAXHandler() {
-        }
-
-        protected PlaceNameChunk createPlaceNameChunk(PlaceNameService service) {
-            int numChars = this.textArray.length();
-            CharBuffer textBuffer = newCharBuffer(numChars);
-            textBuffer.put(this.textArray.toString());
-            textBuffer.rewind();
-            return new PlaceNameChunk(service, textBuffer, this.textIndexArray, this.latlonArray, this.numEntries);
-        }
-
-        protected void beginEntry() {
-            int textIndex = this.textArray.length();
-            this.textIndexArray = append(this.textIndexArray, this.numEntries, textIndex);
-            this.inBeginEndPair = true;
-        }
-
-        protected void endEntry() {
-            double lat = GMLPlaceNameSAXHandler.parseDouble(this.latBuffer);
-            double lon = GMLPlaceNameSAXHandler.parseDouble(this.lonBuffer);
-            int numLatLon = 2 * this.numEntries;
-            this.latlonArray = GMLPlaceNameSAXHandler.append(this.latlonArray, numLatLon, lat);
-            numLatLon++;
-            this.latlonArray = GMLPlaceNameSAXHandler.append(this.latlonArray, numLatLon, lon);
-
-            this.latBuffer.delete(0, this.latBuffer.length());
-            this.lonBuffer.delete(0, this.lonBuffer.length());
-            this.inBeginEndPair = false;
-            this.numEntries++;
         }
 
         protected static double parseDouble(CharSequence sb) {
@@ -937,6 +906,34 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
             return newArray;
         }
 
+        protected PlaceNameChunk createPlaceNameChunk(PlaceNameService service) {
+            int numChars = this.textArray.length();
+            CharBuffer textBuffer = PlaceNameLayer.newCharBuffer(numChars);
+            textBuffer.put(this.textArray.toString());
+            textBuffer.rewind();
+            return new PlaceNameChunk(service, textBuffer, this.textIndexArray, this.latlonArray, this.numEntries);
+        }
+
+        protected void beginEntry() {
+            int textIndex = this.textArray.length();
+            this.textIndexArray = GMLPlaceNameSAXHandler.append(this.textIndexArray, this.numEntries, textIndex);
+            this.inBeginEndPair = true;
+        }
+
+        protected void endEntry() {
+            double lat = GMLPlaceNameSAXHandler.parseDouble(this.latBuffer);
+            double lon = GMLPlaceNameSAXHandler.parseDouble(this.lonBuffer);
+            int numLatLon = 2 * this.numEntries;
+            this.latlonArray = GMLPlaceNameSAXHandler.append(this.latlonArray, numLatLon, lat);
+            numLatLon++;
+            this.latlonArray = GMLPlaceNameSAXHandler.append(this.latlonArray, numLatLon, lon);
+
+            this.latBuffer.delete(0, this.latBuffer.length());
+            this.lonBuffer.delete(0, this.lonBuffer.length());
+            this.inBeginEndPair = false;
+            this.numEntries++;
+        }
+
         @SuppressWarnings("StringEquality")
         public void characters(char[] ch, int start, int length) {
             if (!this.inBeginEndPair)
@@ -947,11 +944,11 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
             String internedTopQName = this.internedQNameStack.getFirst();
 
             StringBuilder sb = null;
-            if (TOPP_LATITUDE == internedTopQName)
+            if (GMLPlaceNameSAXHandler.TOPP_LATITUDE == internedTopQName)
                 sb = this.latBuffer;
-            else if (TOPP_LONGITUDE == internedTopQName)
+            else if (GMLPlaceNameSAXHandler.TOPP_LONGITUDE == internedTopQName)
                 sb = this.lonBuffer;
-            else if (TOPP_FULL_NAME_ND == internedTopQName)
+            else if (GMLPlaceNameSAXHandler.TOPP_FULL_NAME_ND == internedTopQName)
                 sb = this.textArray;
 
             if (sb != null)
@@ -963,7 +960,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
             // Intern the qName string so we can use pointer comparison.
             String internedQName = qName.intern();
             //noinspection StringEquality
-            if (GML_FEATURE_MEMBER == internedQName)
+            if (GMLPlaceNameSAXHandler.GML_FEATURE_MEMBER == internedQName)
                 this.beginEntry();
             this.internedQNameStack.addFirst(internedQName);
         }
@@ -973,7 +970,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
             // Intern the qName string so we can use pointer comparison.
             String internedQName = qName.intern();
             //noinspection StringEquality
-            if (GML_FEATURE_MEMBER == internedQName)
+            if (GMLPlaceNameSAXHandler.GML_FEATURE_MEMBER == internedQName)
                 this.endEntry();
             this.internedQNameStack.removeFirst();
         }
@@ -1040,7 +1037,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
 
                 StringBuilder sb = new StringBuilder(this.getRetriever().getName());
 
-                sb.append("\n");
+                sb.append('\n');
                 sb.append(WWIO.byteBufferToString(this.getRetriever().getBuffer(), 2048, null));
                 Logging.logger().warning(sb.toString());
 
@@ -1073,7 +1070,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
                 //split sector, create a navTile for each quad
                 Sector[] subSectors = this.navSector.subdivide();
                 for (int j = 0; j < subSectors.length; j++) {
-                    subNavTiles.add(new NavigationTile(placeNameService, subSectors[j], level - 1, this.id + "." + j));
+                    subNavTiles.add(new NavigationTile(placeNameService, subSectors[j], level - 1, this.id + '.' + j));
                 }
             }
         }
@@ -1088,8 +1085,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
                     for (NavigationTile nav : subNavTiles) {
                         navList.addAll(nav.navTilesVisible(dc, minDistSquared, maxDistSquared));
                     }
-                }
-                else  //at bottom level navigation tile
+                } else  //at bottom level navigation tile
                 {
                     navList.add(this);
                 }
@@ -1118,18 +1114,17 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
                 return false;
 
             //check for eyePos over globe
-            if (Double.isNaN(eyePos.getLatitude().getDegrees()) || Double.isNaN(eyePos.getLongitude().getDegrees()))
+            if (Double.isNaN(eyePos.getLatitude().degrees) || Double.isNaN(eyePos.getLongitude().degrees))
                 return false;
 
             double distSquared;
             if (dc.isContinuous2DGlobe()) {
                 // Just use the eye altitude since the majority of non-visible sectors are culled elsewhere.
                 distSquared = eyePos.getAltitude() * eyePos.getAltitude();
-            }
-            else {
-                Angle lat = clampAngle(eyePos.getLatitude(), navSector.latMin(),
+            } else {
+                Angle lat = PlaceNameLayer.clampAngle(eyePos.getLatitude(), navSector.latMin(),
                     navSector.latMax());
-                Angle lon = clampAngle(eyePos.getLongitude(), navSector.lonMin(),
+                Angle lon = PlaceNameLayer.clampAngle(eyePos.getLongitude(), navSector.lonMin(),
                     navSector.lonMax());
                 Vec4 p = dc.getGlobe().computePointFromPosition(lat, lon, 0.0d);
                 distSquared = dc.getView().getEyePoint().distanceToSquared3(p);
@@ -1151,8 +1146,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
                     WorldWind.cache(Tile.class.getName()).add(t.getFileCachePath(), t);
                 }
                 return Arrays.asList(tiles);
-            }
-            else {
+            } else {
                 List<Tile> dataTiles = new ArrayList<>();
                 for (String s : tileKeys) {
                     Tile t = (Tile) WorldWind.cache(Tile.class.getName()).getObject(s);

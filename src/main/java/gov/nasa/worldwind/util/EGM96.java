@@ -103,31 +103,31 @@ public class EGM96 {
         double lat = latitude.degrees;
         double lon = longitude.degrees >= 0 ? longitude.degrees : longitude.degrees + 360;
 
-        int topRow = (int) ((90 - lat) / INTERVAL.degrees);
+        int topRow = (int) ((90 - lat) / EGM96.INTERVAL.degrees);
         if (lat <= -90)
-            topRow = NUM_ROWS - 2;
+            topRow = EGM96.NUM_ROWS - 2;
         int bottomRow = topRow + 1;
 
         // Note that the number of columns does not repeat the column at 0 longitude, so we must force the right
         // column to 0 for any longitude that's less than one interval from 360, and force the left column to the
         // last column of the grid.
-        int leftCol = (int) (lon / INTERVAL.degrees);
+        int leftCol = (int) (lon / EGM96.INTERVAL.degrees);
         int rightCol = leftCol + 1;
-        if (lon >= 360 - INTERVAL.degrees) {
-            leftCol = NUM_COLS - 1;
+        if (lon >= 360 - EGM96.INTERVAL.degrees) {
+            leftCol = EGM96.NUM_COLS - 1;
             rightCol = 0;
         }
 
-        double latBottom = 90 - bottomRow * INTERVAL.degrees;
-        double lonLeft = leftCol * INTERVAL.degrees;
+        double latBottom = 90 - bottomRow * EGM96.INTERVAL.degrees;
+        double lonLeft = leftCol * EGM96.INTERVAL.degrees;
 
         double ul = this.gePostOffset(topRow, leftCol);
         double ll = this.gePostOffset(bottomRow, leftCol);
         double lr = this.gePostOffset(bottomRow, rightCol);
         double ur = this.gePostOffset(topRow, rightCol);
 
-        double u = (lon - lonLeft) / INTERVAL.degrees;
-        double v = (lat - latBottom) / INTERVAL.degrees;
+        double u = (lon - lonLeft) / EGM96.INTERVAL.degrees;
+        double v = (lat - latBottom) / EGM96.INTERVAL.degrees;
 
         double pll = (1.0 - u) * (1.0 - v);
         double plr = u * (1.0 - v);
@@ -140,7 +140,7 @@ public class EGM96 {
     }
 
     protected double gePostOffset(int row, int col) {
-        int k = row * NUM_COLS + col;
+        int k = row * EGM96.NUM_COLS + col;
 
         if (k >= this.deltas.length())
             System.out.println(k);

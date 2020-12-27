@@ -65,8 +65,7 @@ public class KMLNetworkLinkTreeNode extends KMLContainerTreeNode {
                     if (SwingUtilities.isEventDispatchThread()) {
                         refresh();
                         KMLNetworkLinkTreeNode.this.firePropertyChange(AVKey.RETRIEVAL_STATE_SUCCESSFUL, null, this);
-                    }
-                    else {
+                    } else {
                         SwingUtilities.invokeLater(new Runnable() {
                             public void run() {
                                 refresh();
@@ -110,8 +109,7 @@ public class KMLNetworkLinkTreeNode extends KMLContainerTreeNode {
                 if (child != null)
                     this.addFeatureNode(child);
             }
-        }
-        else {
+        } else {
             this.addFeatureNode(kmlRoot.getFeature());
         }
     }

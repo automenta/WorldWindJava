@@ -29,7 +29,7 @@ public class SmoothInterpolator extends ScheduledInterpolator {
 
     public double nextInterpolant() {
         double interpolant = super.nextInterpolant();
-        return basicInterpolant(interpolant,
+        return SmoothInterpolator.basicInterpolant(interpolant,
             this.START, this.STOP, this.MAX_SMOOTHING);
     }
 

@@ -21,7 +21,7 @@ public class DefaultPanelDescriptor implements WizardPanelDescriptor {
     private Component panelComponent;
 
     public DefaultPanelDescriptor() {
-        this.panelIdentifier = DEFAULT_PANEL_IDENTIFIER;
+        this.panelIdentifier = DefaultPanelDescriptor.DEFAULT_PANEL_IDENTIFIER;
         this.panelComponent = new JPanel();
     }
 

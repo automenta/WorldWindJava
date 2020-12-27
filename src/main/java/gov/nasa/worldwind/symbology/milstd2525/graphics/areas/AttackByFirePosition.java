@@ -41,16 +41,16 @@ public class AttackByFirePosition extends AbstractMilStd2525TacticalGraphic {
     /**
      * Length of the arrowhead from base to tip, as a fraction of the total line length.
      */
-    protected Angle arrowAngle = DEFAULT_ARROWHEAD_ANGLE;
+    protected Angle arrowAngle = AttackByFirePosition.DEFAULT_ARROWHEAD_ANGLE;
     /**
      * Angle of the arrowhead.
      */
-    protected double arrowLength = DEFAULT_ARROWHEAD_LENGTH;
+    protected double arrowLength = AttackByFirePosition.DEFAULT_ARROWHEAD_LENGTH;
     /**
      * Length of the legs on the graphic's base, as a fraction of the distance between the control points that define
      * the base.
      */
-    protected double legLength = DEFAULT_LEG_LENGTH;
+    protected double legLength = AttackByFirePosition.DEFAULT_LEG_LENGTH;
 
     /**
      * First control point.

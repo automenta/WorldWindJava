@@ -19,23 +19,21 @@ public class MSVirtualEarthLayer extends BasicTiledImageLayer {
     public static final String LAYER_HYBRID = "gov.nasa.worldwind.layers.Earth.MSVirtualEarthLayer.Hybrid";
 
     public MSVirtualEarthLayer(String layerName) {
-        super(getConfigurationDocument(layerName), null);
+        super(MSVirtualEarthLayer.getConfigurationDocument(layerName), null);
     }
 
     public MSVirtualEarthLayer() {
-        this(LAYER_AERIAL);
+        this(MSVirtualEarthLayer.LAYER_AERIAL);
     }
 
     protected static Document getConfigurationDocument(String layerName) {
         String filePath;
 
-        if (layerName != null && layerName.equals(LAYER_HYBRID)) {
+        if (layerName != null && layerName.equals(MSVirtualEarthLayer.LAYER_HYBRID)) {
             filePath = "config/Earth/MSVirtualEarthHybridLayer.xml";
-        }
-        else if (layerName != null && layerName.equals(LAYER_ROADS)) {
+        } else if (layerName != null && layerName.equals(MSVirtualEarthLayer.LAYER_ROADS)) {
             filePath = "config/Earth/MSVirtualEarthRoadsLayer.xml";
-        }
-        else {
+        } else {
             // Default to MS Virtual Earth Aerial.
             filePath = "config/Earth/MSVirtualEarthAerialLayer.xml";
         }

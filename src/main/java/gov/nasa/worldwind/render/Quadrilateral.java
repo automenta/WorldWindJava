@@ -25,7 +25,7 @@ public class Quadrilateral implements Renderable, Movable,
     protected WWTexture texture;
     protected DoubleBuffer textureCoordinates;
     protected boolean dragEnabled = true;
-    protected DraggableSupport draggableSupport = null;
+    protected DraggableSupport draggableSupport;
     private LatLon southwestCorner;
     private LatLon northeastCorner;
     private double elevation;

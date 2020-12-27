@@ -53,16 +53,14 @@ public class WCS100Values extends AbstractXMLEventParser {
                 if (o instanceof WCS100SingleValue)
                     this.singleValues.add((WCS100SingleValue) o);
             }
-        }
-        else if (ctx.isStartElement(event, "interval")) {
+        } else if (ctx.isStartElement(event, "interval")) {
             XMLEventParser parser = this.allocate(ctx, event);
             if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
                 if (o instanceof WCS100Interval)
                     this.intervals.add((WCS100Interval) o);
             }
-        }
-        else {
+        } else {
             super.doParseEventContent(ctx, event, args);
         }
     }

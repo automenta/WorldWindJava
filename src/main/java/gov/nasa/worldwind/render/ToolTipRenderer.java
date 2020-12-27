@@ -60,6 +60,138 @@ public class ToolTipRenderer {
         return new Color(c.getRed(), c.getGreen(), c.getBlue(), color.getAlpha());
     }
 
+    protected static void beginRendering(DrawContext dc, OGLStackHandler stackHandler) {
+        if (dc == null) {
+            String message = Logging.getMessage("nullValue.DrawContextIsNull");
+            Logging.logger().fine(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
+
+        int attribMask = GL2.GL_COLOR_BUFFER_BIT // for alpha test func and ref, blend func
+            | GL2.GL_CURRENT_BIT // for current color
+            | GL2.GL_ENABLE_BIT // for enable/disable
+            | GL2.GL_LINE_BIT // for line width
+            | GL2.GL_TRANSFORM_BIT; // for matrix mode
+        stackHandler.pushAttrib(gl, attribMask);
+
+        stackHandler.pushTextureIdentity(gl);
+        stackHandler.pushProjectionIdentity(gl);
+        Rectangle viewport = dc.getView().getViewport();
+        gl.glOrtho(viewport.x, viewport.x + viewport.width, viewport.y, viewport.y + viewport.height, -1, 1);
+        stackHandler.pushModelviewIdentity(gl);
+
+        // Enable the alpha test.
+        gl.glEnable(GL2.GL_ALPHA_TEST);
+        gl.glAlphaFunc(GL2.GL_GREATER, 0.0f);
+
+        // Enable blending in premultiplied color mode.
+        gl.glEnable(GL.GL_BLEND);
+        OGLUtil.applyBlending(gl, true);
+
+        gl.glDisable(GL.GL_CULL_FACE);
+        gl.glDisable(GL.GL_DEPTH_TEST);
+        gl.glDisable(GL2.GL_LIGHTING);
+        gl.glDisable(GL.GL_TEXTURE_2D);
+    }
+
+    protected static void endRendering(DrawContext dc, OGLStackHandler stackHandler) {
+        if (dc == null) {
+            String message = Logging.getMessage("nullValue.DrawContextIsNull");
+            Logging.logger().fine(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
+
+        stackHandler.pop(gl);
+    }
+
+    protected static void drawToolTipInterior(DrawContext dc, double width, double height,
+        ToolTipAttributes attributes) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
+
+        ToolTipRenderer.applyColor(dc, attributes.getInteriorColor(), attributes.getInteriorOpacity());
+
+        // Draw a filled rectangle with the background dimensions.
+        gl.glRectd(0, 0, width, height);
+    }
+
+    protected static void drawToolTipText(DrawContext dc, CharSequence text, int x, int y,
+        ToolTipAttributes attributes) {
+        Color textColor = ToolTipRenderer.modulateColorOpacity(attributes.getTextColor(),
+            attributes.getTextOpacity());
+
+        TextRenderer textRenderer = ToolTipRenderer.getTextRenderer(dc, attributes.getFont());
+        textRenderer.begin3DRendering();
+        textRenderer.setColor(textColor);
+        textRenderer.draw(text, x, y);
+        textRenderer.end3DRendering();
+    }
+
+    protected static TextRenderer getTextRenderer(DrawContext dc, Font font) {
+        return OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(), font);
+    }
+
+    protected static void applyColor(DrawContext dc, Color color, double opacity) {
+        if (dc.isPickingMode())
+            return;
+
+        double finalOpacity = opacity * (color.getAlpha() / 255.0);
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
+        OGLUtil.applyColor(gl, color, finalOpacity, true);
+    }
+
+    protected static Color modulateColorOpacity(Color color, double opacity) {
+        float[] compArray = new float[4];
+        color.getRGBComponents(compArray);
+        compArray[3] *= (float) opacity;
+
+        return new Color(compArray[0], compArray[1], compArray[2], compArray[3]);
+    }
+
+    protected static Rectangle2D computeTextBounds(DrawContext dc, String text, Font font) {
+        TextRenderer textRenderer = ToolTipRenderer.getTextRenderer(dc, font);
+        return textRenderer.getBounds(text);
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    protected static Point2D computeTextTranslation(DrawContext dc, Rectangle2D textBounds,
+        Insets insets) {
+        // The text bounds are assumed to come from the return value of a call to TextRenderer.getBounds(). The bounds
+        // place the origin in the upper left hand corner, with the y axis increasing downward. The y
+        // coordinate in the bounds corresponds to the baseline of the leftmost character.
+
+        return new Point2D.Double(
+            insets.left - textBounds.getX(),
+            insets.bottom + textBounds.getY() + textBounds.getHeight());
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    protected static Rectangle2D computeBackgroundBounds(DrawContext dc, double width, double height,
+        Insets insets) {
+        return new Rectangle2D.Double(
+            0, 0,
+            width + (insets.left + insets.right),
+            height + (insets.top + insets.bottom));
+    }
+
+    protected static Point adjustDrawPointToViewport(int x, int y, Rectangle2D bounds,
+        Rectangle viewport) {
+        if (x + bounds.getMaxX() > viewport.getWidth())
+            x = (int) (viewport.getWidth() - bounds.getWidth()) - 1;
+        else if (x < 0)
+            x = 0;
+
+        if (y + bounds.getMaxY() > viewport.getHeight())
+            y = (int) (viewport.getHeight() - bounds.getHeight()) - 1;
+        else if (y < 0)
+            y = 0;
+
+        return new Point(x, y);
+    }
+
     public boolean isUseSystemLookAndFeel() {
         return this.useSystemLookAndFeel;
     }
@@ -110,6 +242,10 @@ public class ToolTipRenderer {
         this.interiorColor = color;
     }
 
+    //**************************************************************//
+    //********************  Rendering  *****************************//
+    //**************************************************************//
+
     public Color getOutlineColor() {
         return this.outlineColor;
     }
@@ -142,6 +278,10 @@ public class ToolTipRenderer {
         return this.outlineWidth;
     }
 
+    //**************************************************************//
+    //********************  Background Rendering  ******************//
+    //**************************************************************//
+
     public void setOutlineWidth(double width) {
         if (width < 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "width < 0");
@@ -157,6 +297,10 @@ public class ToolTipRenderer {
         return (Insets) this.insets.clone();
     }
 
+    //**************************************************************//
+    //********************  Text Rendering  ************************//
+    //**************************************************************//
+
     public void setInsets(Insets insets) {
         if (insets == null) {
             String message = Logging.getMessage("nullValue.InsetsIsNull");
@@ -167,6 +311,10 @@ public class ToolTipRenderer {
         // Class java.awt.Insets is known to override the method Object.clone().
         this.insets = (Insets) insets.clone();
     }
+
+    //**************************************************************//
+    //********************  Rendering Utilities  *******************//
+    //**************************************************************//
 
     public void render(DrawContext dc, String text, int x, int y) {
         if (dc == null) {
@@ -238,7 +386,7 @@ public class ToolTipRenderer {
     }
 
     //**************************************************************//
-    //********************  Rendering  *****************************//
+    //********************  Bounds Computation  ********************//
     //**************************************************************//
 
     protected void doRender(DrawContext dc, String text, int x, int y) {
@@ -286,67 +434,6 @@ public class ToolTipRenderer {
         }
     }
 
-    protected static void beginRendering(DrawContext dc, OGLStackHandler stackHandler) {
-        if (dc == null) {
-            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-            Logging.logger().fine(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-
-        int attribMask = GL2.GL_COLOR_BUFFER_BIT // for alpha test func and ref, blend func
-            | GL2.GL_CURRENT_BIT // for current color
-            | GL2.GL_ENABLE_BIT // for enable/disable
-            | GL2.GL_LINE_BIT // for line width
-            | GL2.GL_TRANSFORM_BIT; // for matrix mode
-        stackHandler.pushAttrib(gl, attribMask);
-
-        stackHandler.pushTextureIdentity(gl);
-        stackHandler.pushProjectionIdentity(gl);
-        Rectangle viewport = dc.getView().getViewport();
-        gl.glOrtho(viewport.x, viewport.x + viewport.width, viewport.y, viewport.y + viewport.height, -1, 1);
-        stackHandler.pushModelviewIdentity(gl);
-
-        // Enable the alpha test.
-        gl.glEnable(GL2.GL_ALPHA_TEST);
-        gl.glAlphaFunc(GL2.GL_GREATER, 0.0f);
-
-        // Enable blending in premultiplied color mode.
-        gl.glEnable(GL.GL_BLEND);
-        OGLUtil.applyBlending(gl, true);
-
-        gl.glDisable(GL.GL_CULL_FACE);
-        gl.glDisable(GL.GL_DEPTH_TEST);
-        gl.glDisable(GL2.GL_LIGHTING);
-        gl.glDisable(GL.GL_TEXTURE_2D);
-    }
-
-    protected static void endRendering(DrawContext dc, OGLStackHandler stackHandler) {
-        if (dc == null) {
-            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-            Logging.logger().fine(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-
-        stackHandler.pop(gl);
-    }
-
-    //**************************************************************//
-    //********************  Background Rendering  ******************//
-    //**************************************************************//
-
-    protected static void drawToolTipInterior(DrawContext dc, double width, double height, ToolTipAttributes attributes) {
-        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-
-        ToolTipRenderer.applyColor(dc, attributes.getInteriorColor(), attributes.getInteriorOpacity());
-
-        // Draw a filled rectangle with the background dimensions.
-        gl.glRectd(0, 0, width, height);
-    }
-
     protected void drawToolTipOutline(DrawContext dc, double width, double height, ToolTipAttributes attributes) {
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
@@ -362,91 +449,6 @@ public class ToolTipRenderer {
         gl.glVertex2d(width - inset, height - inset);
         gl.glVertex2d(inset, height - inset);
         gl.glEnd();
-    }
-
-    //**************************************************************//
-    //********************  Text Rendering  ************************//
-    //**************************************************************//
-
-    protected static void drawToolTipText(DrawContext dc, CharSequence text, int x, int y, ToolTipAttributes attributes) {
-        Color textColor = ToolTipRenderer.modulateColorOpacity(attributes.getTextColor(),
-            attributes.getTextOpacity());
-
-        TextRenderer textRenderer = ToolTipRenderer.getTextRenderer(dc, attributes.getFont());
-        textRenderer.begin3DRendering();
-        textRenderer.setColor(textColor);
-        textRenderer.draw(text, x, y);
-        textRenderer.end3DRendering();
-    }
-
-    //**************************************************************//
-    //********************  Rendering Utilities  *******************//
-    //**************************************************************//
-
-    protected static TextRenderer getTextRenderer(DrawContext dc, Font font) {
-        return OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(), font);
-    }
-
-    protected static void applyColor(DrawContext dc, Color color, double opacity) {
-        if (dc.isPickingMode())
-            return;
-
-        double finalOpacity = opacity * (color.getAlpha() / 255.0);
-        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-        OGLUtil.applyColor(gl, color, finalOpacity, true);
-    }
-
-    protected static Color modulateColorOpacity(Color color, double opacity) {
-        float[] compArray = new float[4];
-        color.getRGBComponents(compArray);
-        compArray[3] *= (float) opacity;
-
-        return new Color(compArray[0], compArray[1], compArray[2], compArray[3]);
-    }
-
-    //**************************************************************//
-    //********************  Bounds Computation  ********************//
-    //**************************************************************//
-
-    protected static Rectangle2D computeTextBounds(DrawContext dc, String text, Font font) {
-        TextRenderer textRenderer = ToolTipRenderer.getTextRenderer(dc, font);
-        return textRenderer.getBounds(text);
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    protected static Point2D computeTextTranslation(DrawContext dc, Rectangle2D textBounds,
-        Insets insets) {
-        // The text bounds are assumed to come from the return value of a call to TextRenderer.getBounds(). The bounds
-        // place the origin in the upper left hand corner, with the y axis increasing downward. The y
-        // coordinate in the bounds corresponds to the baseline of the leftmost character.
-
-        return new Point2D.Double(
-            insets.left - textBounds.getX(),
-            insets.bottom + textBounds.getY() + textBounds.getHeight());
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    protected static Rectangle2D computeBackgroundBounds(DrawContext dc, double width, double height,
-        Insets insets) {
-        return new Rectangle2D.Double(
-            0, 0,
-            width + (insets.left + insets.right),
-            height + (insets.top + insets.bottom));
-    }
-
-    protected static Point adjustDrawPointToViewport(int x, int y, Rectangle2D bounds,
-        Rectangle viewport) {
-        if (x + bounds.getMaxX() > viewport.getWidth())
-            x = (int) (viewport.getWidth() - bounds.getWidth()) - 1;
-        else if (x < 0)
-            x = 0;
-
-        if (y + bounds.getMaxY() > viewport.getHeight())
-            y = (int) (viewport.getHeight() - bounds.getHeight()) - 1;
-        else if (y < 0)
-            y = 0;
-
-        return new Point(x, y);
     }
 
     //**************************************************************//

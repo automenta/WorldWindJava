@@ -40,7 +40,7 @@ public class WizardModel extends WizardProperties {
     }
 
     public WizardPanelDescriptor getCurrentPanel() {
-        Object value = getProperty(CURRENT_PANEL_DESCRIPTOR);
+        Object value = getProperty(WizardModel.CURRENT_PANEL_DESCRIPTOR);
         return (value instanceof WizardPanelDescriptor) ? (WizardPanelDescriptor) value : null;
     }
 
@@ -50,8 +50,8 @@ public class WizardModel extends WizardProperties {
         if (newPanel != null) {
             WizardPanelDescriptor oldPanel = getCurrentPanel();
             if (oldPanel != newPanel) {
-                setProperty(CURRENT_PANEL_DESCRIPTOR, newPanel);
-                firePropertyChange(CURRENT_PANEL_DESCRIPTOR, oldPanel, newPanel);
+                setProperty(WizardModel.CURRENT_PANEL_DESCRIPTOR, newPanel);
+                firePropertyChange(WizardModel.CURRENT_PANEL_DESCRIPTOR, oldPanel, newPanel);
             }
             success = true;
         }
@@ -59,75 +59,75 @@ public class WizardModel extends WizardProperties {
     }
 
     public String getBackButtonText() {
-        return getStringProperty(BACK_BUTTON_TEXT);
+        return getStringProperty(WizardModel.BACK_BUTTON_TEXT);
     }
 
     public void setBackButtonText(String newText) {
-        setProperty(BACK_BUTTON_TEXT, newText);
+        setProperty(WizardModel.BACK_BUTTON_TEXT, newText);
     }
 
     public String getNextButtonText() {
-        return getStringProperty(NEXT_BUTTON_TEXT);
+        return getStringProperty(WizardModel.NEXT_BUTTON_TEXT);
     }
 
     public void setNextButtonText(String newText) {
-        setProperty(NEXT_BUTTON_TEXT, newText);
+        setProperty(WizardModel.NEXT_BUTTON_TEXT, newText);
     }
 
     public String getCancelButtonText() {
-        return getStringProperty(CANCEL_BUTTON_TEXT);
+        return getStringProperty(WizardModel.CANCEL_BUTTON_TEXT);
     }
 
     public void setCancelButtonText(String newText) {
-        setProperty(CANCEL_BUTTON_TEXT, newText);
+        setProperty(WizardModel.CANCEL_BUTTON_TEXT, newText);
     }
 
     public Boolean isBackButtonEnabled() {
-        return getBooleanProperty(BACK_BUTTON_ENABLED);
+        return getBooleanProperty(WizardModel.BACK_BUTTON_ENABLED);
     }
 
     public void setBackButtonEnabled(Boolean newValue) {
-        setProperty(BACK_BUTTON_ENABLED, newValue);
+        setProperty(WizardModel.BACK_BUTTON_ENABLED, newValue);
     }
 
     public Boolean isNextButtonEnabled() {
-        return getBooleanProperty(NEXT_BUTTON_ENABLED);
+        return getBooleanProperty(WizardModel.NEXT_BUTTON_ENABLED);
     }
 
     public void setNextButtonEnabled(Boolean newValue) {
-        setProperty(NEXT_BUTTON_ENABLED, newValue);
+        setProperty(WizardModel.NEXT_BUTTON_ENABLED, newValue);
     }
 
     public Boolean isCancelButtonEnabled() {
-        return getBooleanProperty(CANCEL_BUTTON_ENABLED);
+        return getBooleanProperty(WizardModel.CANCEL_BUTTON_ENABLED);
     }
 
     public void setCancelButtonEnabled(Boolean newValue) {
-        setProperty(CANCEL_BUTTON_ENABLED, newValue);
+        setProperty(WizardModel.CANCEL_BUTTON_ENABLED, newValue);
     }
 
     public Icon getBackButtonIcon() {
-        return getIconProperty(BACK_BUTTON_ICON);
+        return getIconProperty(WizardModel.BACK_BUTTON_ICON);
     }
 
     public void setBackButtonIcon(Icon newIcon) {
-        setProperty(BACK_BUTTON_ICON, newIcon);
+        setProperty(WizardModel.BACK_BUTTON_ICON, newIcon);
     }
 
     public Icon getNextButtonIcon() {
-        return getIconProperty(NEXT_BUTTON_ICON);
+        return getIconProperty(WizardModel.NEXT_BUTTON_ICON);
     }
 
     public void setNextButtonIcon(Icon newIcon) {
-        setProperty(NEXT_BUTTON_ICON, newIcon);
+        setProperty(WizardModel.NEXT_BUTTON_ICON, newIcon);
     }
 
     public Icon getCancelButtonIcon() {
-        return getIconProperty(CANCEL_BUTTON_ICON);
+        return getIconProperty(WizardModel.CANCEL_BUTTON_ICON);
     }
 
     public void setCancelButtonIcon(Icon newIcon) {
-        setProperty(CANCEL_BUTTON_ICON, newIcon);
+        setProperty(WizardModel.CANCEL_BUTTON_ICON, newIcon);
     }
 
     public Icon getIconProperty(String propertyName) {

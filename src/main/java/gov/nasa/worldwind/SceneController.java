@@ -52,7 +52,6 @@ public interface SceneController extends WWObject, Disposable {
 
     /**
      * Cause the window to regenerate the frame, including pick resolution.
-     *
      */
     void repaint();
 
@@ -180,8 +179,7 @@ public interface SceneController extends WWObject, Disposable {
     Collection<PerformanceStatistic> getPerFrameStatistics();
 
     /**
-     * Specifies the performance values to monitor. See {@link PerformanceStatistic} for the
-     * available keys.
+     * Specifies the performance values to monitor. See {@link PerformanceStatistic} for the available keys.
      *
      * @param keys the performance statistic keys to monitor.
      */
@@ -224,8 +222,8 @@ public interface SceneController extends WWObject, Disposable {
     ScreenCreditController getScreenCreditController();
 
     /**
-     * Specifies the {@link ScreenCreditController} to use for displaying screen credits for
-     * the model of this screen controller.
+     * Specifies the {@link ScreenCreditController} to use for displaying screen credits for the model of this screen
+     * controller.
      *
      * @param screenCreditRenderer the screen credit controller. May be null, in which case screen credits are not
      *                             displayed.

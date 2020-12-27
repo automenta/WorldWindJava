@@ -7,6 +7,7 @@
 package gov.nasa.worldwind.layers.ogc.kml.io;
 
 ////.*;
+
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.util.xml.XMLDoc;
 

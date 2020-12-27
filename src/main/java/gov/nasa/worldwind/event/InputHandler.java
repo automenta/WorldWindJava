@@ -16,7 +16,8 @@ import java.util.*;
  * @author tag
  * @version $Id: InputHandler.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface InputHandler extends AVList, PropertyChangeListener, com.jogamp.newt.event.MouseListener, com.jogamp.newt.event.WindowListener {
+public interface InputHandler
+    extends AVList, PropertyChangeListener, com.jogamp.newt.event.MouseListener, com.jogamp.newt.event.WindowListener {
     WorldWindow getEventSource();
 
     void setEventSource(WorldWindow newWorldWindow);

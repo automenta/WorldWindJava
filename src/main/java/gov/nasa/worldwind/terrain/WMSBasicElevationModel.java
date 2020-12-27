@@ -23,31 +23,30 @@ import java.util.List;
  * @version $Id: WMSBasicElevationModel.java 2050 2014-06-09 18:52:26Z tgaskins $
  */
 public class WMSBasicElevationModel extends BasicElevationModel {
-    private static final String[] formatOrderPreference = new String[]
-        {
-            "application/bil32", "application/bil16", "application/bil", "image/bil", "image/png", "image/tiff"
-        };
+    private static final String[] formatOrderPreference = {
+        "application/bil32", "application/bil16", "application/bil", "image/bil", "image/png", "image/tiff"
+    };
 
     public WMSBasicElevationModel(AVList params) {
         super(params);
     }
 
     public WMSBasicElevationModel(Element domElement, AVList params) {
-        this(wmsGetParamsFromDocument(domElement, params));
+        this(WMSBasicElevationModel.wmsGetParamsFromDocument(domElement, params));
     }
 
     public WMSBasicElevationModel(WMSCapabilities caps, AVList params) {
-        this(wmsGetParamsFromCapsDoc(caps, params));
+        this(WMSBasicElevationModel.wmsGetParamsFromCapsDoc(caps, params));
     }
 
     public WMSBasicElevationModel(String restorableStateInXml) {
-        super(wmsRestorableStateToParams(restorableStateInXml));
+        super(WMSBasicElevationModel.wmsRestorableStateToParams(restorableStateInXml));
 
         RestorableSupport rs;
         try {
             rs = RestorableSupport.parse(restorableStateInXml);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             // Parsing the document specified by stateInXml failed.
             String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", restorableStateInXml);
             Logging.logger().severe(message);
@@ -69,7 +68,7 @@ public class WMSBasicElevationModel extends BasicElevationModel {
 
         DataConfigurationUtils.getWMSLayerConfigParams(domElement, params);
         BasicElevationModel.getBasicElevationModelConfigParams(domElement, params);
-        wmsSetFallbacks(params);
+        WMSBasicElevationModel.wmsSetFallbacks(params);
 
         params.set(AVKey.TILE_URL_BUILDER, new URLBuilder(params.getStringValue(AVKey.WMS_VERSION), params));
 
@@ -92,7 +91,7 @@ public class WMSBasicElevationModel extends BasicElevationModel {
         String wmsVersion;
         try {
             wmsVersion = caps.getVersion();
-            getWMSElevationModelConfigParams(caps, formatOrderPreference, params);
+            WMSBasicElevationModel.getWMSElevationModelConfigParams(caps, WMSBasicElevationModel.formatOrderPreference, params);
         }
         catch (IllegalArgumentException e) {
             String message = Logging.getMessage("WMS.MissingLayerParameters");
@@ -105,7 +104,7 @@ public class WMSBasicElevationModel extends BasicElevationModel {
             throw new IllegalArgumentException(message, e);
         }
 
-        wmsSetFallbacks(params);
+        WMSBasicElevationModel.wmsSetFallbacks(params);
 
         params.set(AVKey.TILE_URL_BUILDER, new URLBuilder(wmsVersion, params));
 
@@ -146,8 +145,8 @@ public class WMSBasicElevationModel extends BasicElevationModel {
      * maximum extreme elevation</td><td>Double</td></tr> <tr><td>{@link AVKey#ELEVATION_MIN}</td><td>WMS layer's
      * minimum extreme elevation</td><td>Double</td></tr> <tr><td>{@link AVKey#DATA_TYPE}</td><td>Translate WMS layer's
      * image format to a matching data type</td><td>String</td></tr> </table> This also parses common WMS layer
-     * parameters by invoking {@link DataConfigurationUtils#getWMSLayerConfigParams(WMSCapabilities,
-     * String[], AVList)}.
+     * parameters by invoking {@link DataConfigurationUtils#getWMSLayerConfigParams(WMSCapabilities, String[],
+     * AVList)}.
      *
      * @param caps                  the WMS Capabilities source to parse for WMSBasicElevationModel configuration
      *                              parameters.
@@ -155,10 +154,9 @@ public class WMSBasicElevationModel extends BasicElevationModel {
      * @param params                the output key-value pairs which recieve the WMSBasicElevationModel configuration
      *                              parameters.
      * @return a reference to params.
-     * @throws IllegalArgumentException                        if either the document or params are null, or if params
-     *                                                         does not contain the required key-value pairs.
-     * @throws WWRuntimeException if the Capabilities document does not contain any of the
-     *                                                         required information.
+     * @throws IllegalArgumentException if either the document or params are null, or if params does not contain the
+     *                                  required key-value pairs.
+     * @throws WWRuntimeException       if the Capabilities document does not contain any of the required information.
      */
     public static AVList getWMSElevationModelConfigParams(WMSCapabilities caps, String[] formatOrderPreference,
         AVList params) {
@@ -236,7 +234,7 @@ public class WMSBasicElevationModel extends BasicElevationModel {
         try {
             rs = RestorableSupport.parse(stateInXml);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             // Parsing the document specified by stateInXml failed.
             String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", stateInXml);
             Logging.logger().severe(message);
@@ -244,14 +242,14 @@ public class WMSBasicElevationModel extends BasicElevationModel {
         }
 
         AVList params = new AVListImpl();
-        wmsRestoreStateForParams(rs, null, params);
+        WMSBasicElevationModel.wmsRestoreStateForParams(rs, null, params);
         return params;
     }
 
     protected static void wmsRestoreStateForParams(RestorableSupport rs, RestorableSupport.StateObject context,
         AVList params) {
         // Invoke the BasicElevationModel functionality.
-        restoreStateForParams(rs, null, params);
+        BasicElevationModel.restoreStateForParams(rs, null, params);
 
         String s = rs.getStateValueAsString(context, AVKey.IMAGE_FORMAT);
         if (s != null)
@@ -283,6 +281,15 @@ public class WMSBasicElevationModel extends BasicElevationModel {
     //********************  Composition  ***************************//
     //**************************************************************//
 
+    protected static void downloadElevations(ElevationCompositionTile tile) throws Exception {
+        URL url = tile.getResourceURL();
+
+        Retriever retriever = new HTTPRetriever(url, new CompositionRetrievalPostProcessor(tile.getFile()));
+        retriever.setConnectTimeout(10000);
+        retriever.setReadTimeout(60000);
+        retriever.call();
+    }
+
     /**
      * Appends WMS basic elevation model configuration elements to the superclass configuration document.
      *
@@ -301,37 +308,38 @@ public class WMSBasicElevationModel extends BasicElevationModel {
 
     public void composeElevations(Sector sector, List<? extends LatLon> latlons, int tileWidth, double[] buffer)
         throws Exception {
-        if (sector == null) {
-            String msg = Logging.getMessage("nullValue.SectorIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (sector == null) {
+//            String msg = Logging.getMessage("nullValue.SectorIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
+//
+//        if (latlons == null) {
+//            String msg = Logging.getMessage("nullValue.LatLonListIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
+//
+//        if (buffer == null) {
+//            String msg = Logging.getMessage("nullValue.ElevationsBufferIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
-        if (latlons == null) {
-            String msg = Logging.getMessage("nullValue.LatLonListIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        if (buffer == null) {
-            String msg = Logging.getMessage("nullValue.ElevationsBufferIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        if (buffer.length < latlons.size() || tileWidth > latlons.size()) {
-            String msg = Logging.getMessage("ElevationModel.ElevationsBufferTooSmall", latlons.size());
+        final int n = latlons.size();
+        if (buffer.length < n || tileWidth > n) {
+            String msg = Logging.getMessage("ElevationModel.ElevationsBufferTooSmall", n);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
         ElevationCompositionTile tile = new ElevationCompositionTile(sector, this.getLevels().getLastLevel(),
-            tileWidth, latlons.size() / tileWidth);
+            tileWidth, n / tileWidth);
 
         WMSBasicElevationModel.downloadElevations(tile);
         tile.setElevations(this.readElevations(tile.getFile().toURI().toURL()), this);
 
-        for (int i = 0; i < latlons.size(); i++) {
+        for (int i = 0; i < n; i++) {
             LatLon ll = latlons.get(i);
             if (ll == null)
                 continue;
@@ -345,22 +353,12 @@ public class WMSBasicElevationModel extends BasicElevationModel {
         }
     }
 
-    protected static void downloadElevations(ElevationCompositionTile tile) throws Exception {
-        URL url = tile.getResourceURL();
-
-        Retriever retriever = new HTTPRetriever(url, new CompositionRetrievalPostProcessor(tile.getFile()));
-        retriever.setConnectTimeout(10000);
-        retriever.setReadTimeout(60000);
-        retriever.call();
-    }
-
     public void getRestorableStateForAVPair(String key, Object value,
         RestorableSupport rs, RestorableSupport.StateObject context) {
         if (value instanceof URLBuilder) {
             rs.addStateValueAsString(context, "wms.Version", ((URLBuilder) value).wmsVersion);
             rs.addStateValueAsString(context, "wms.Crs", ((URLBuilder) value).crs);
-        }
-        else {
+        } else {
             super.getRestorableStateForAVPair(key, value, rs, context);
         }
     }
@@ -378,10 +376,10 @@ public class WMSBasicElevationModel extends BasicElevationModel {
         private final String imageFormat;
         private final String wmsVersion;
         private final String crs;
-        protected String URLTemplate = null;
+        protected String URLTemplate;
 
         protected URLBuilder(String version, AVList params) {
-            Double d = (Double) params.get(AVKey.MISSING_DATA_SIGNAL);
+//            Double d = (Double) params.get(AVKey.MISSING_DATA_SIGNAL);
 
             this.layerNames = params.getStringValue(AVKey.LAYER_NAMES);
             this.styleNames = params.getStringValue(AVKey.STYLE_NAMES);
@@ -391,12 +389,11 @@ public class WMSBasicElevationModel extends BasicElevationModel {
             String defaultCS;
             if (version == null || WWUtil.compareVersion(version, "1.3.0") >= 0) // version 1.3.0 or greater
             {
-                this.wmsVersion = MAX_VERSION;
+                this.wmsVersion = URLBuilder.MAX_VERSION;
                 coordSystemKey = "&crs=";
                 defaultCS
                     = "CRS:84"; // would like to do EPSG:4326 but that's incompatible with our old WMS server, see WWJ-474
-            }
-            else {
+            } else {
                 this.wmsVersion = version;
                 coordSystemKey = "&srs=";
                 defaultCS = "EPSG:4326";
@@ -428,8 +425,7 @@ public class WMSBasicElevationModel extends BasicElevationModel {
                     sb.append(altImageFormat);
 
                 this.URLTemplate = sb.toString();
-            }
-            else {
+            } else {
                 sb = new StringBuffer(this.URLTemplate);
             }
 
@@ -443,26 +439,25 @@ public class WMSBasicElevationModel extends BasicElevationModel {
             // The order of the coordinate specification matters, and it changed with WMS 1.3.0.
             if (WWUtil.compareVersion(this.wmsVersion, "1.1.1") <= 0 || this.crs.contains("CRS:84")) {
                 // 1.1.1 and earlier and CRS:84 use lon/lat order
-                sb.append(s.lonMin().getDegrees());
-                sb.append(",");
-                sb.append(s.latMin().getDegrees());
-                sb.append(",");
-                sb.append(s.lonMax().getDegrees());
-                sb.append(",");
-                sb.append(s.latMax().getDegrees());
-            }
-            else {
+                sb.append(s.lonMin);
+                sb.append(',');
+                sb.append(s.latMin);
+                sb.append(',');
+                sb.append(s.lonMax);
+                sb.append(',');
+                sb.append(s.latMax);
+            } else {
                 // 1.3.0 uses lat/lon ordering
-                sb.append(s.latMin().getDegrees());
-                sb.append(",");
-                sb.append(s.lonMin().getDegrees());
-                sb.append(",");
-                sb.append(s.latMax().getDegrees());
-                sb.append(",");
-                sb.append(s.lonMax().getDegrees());
+                sb.append(s.latMin);
+                sb.append(',');
+                sb.append(s.lonMin);
+                sb.append(',');
+                sb.append(s.latMax);
+                sb.append(',');
+                sb.append(s.lonMax);
             }
 
-            sb.append("&"); // terminate the query string
+            sb.append('&'); // terminate the query string
 
             return new URL(sb.toString().replace(" ", "%20"));
         }
@@ -473,8 +468,7 @@ public class WMSBasicElevationModel extends BasicElevationModel {
         private final int height;
         private final File file;
 
-        public ElevationCompositionTile(Sector sector, Level level, int width, int height)
-            throws IOException {
+        public ElevationCompositionTile(Sector sector, Level level, int width, int height) throws IOException {
             super(sector, level, -1, -1); // row and column aren't used and need to signal that
 
             this.width = width;

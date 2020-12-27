@@ -56,7 +56,7 @@ public abstract class RigidShape extends AbstractShape {
     protected Angle skewNorthSouth = Angle.POS90;
     protected Angle skewEastWest = Angle.POS90;
     // Geometry
-    protected double detailHint = 0;
+    protected double detailHint;
     // texture coordinate offsets for each piece
     //protected Map<Integer, Offsets> offsets = new HashMap<Integer, Offsets>();
     protected Map<Integer, OffsetsList> offsets = new HashMap<>();
@@ -78,6 +78,66 @@ public abstract class RigidShape extends AbstractShape {
     protected ShapeData previousIntersectionShapeData;
 
     // Fields used in intersection calculations
+
+    /**
+     * Create the geometry cache supporting the Level of Detail system.
+     */
+    protected static void setUpGeometryCache() {
+        if (!WorldWind.getMemoryCacheSet().containsCache(RigidShape.GEOMETRY_CACHE_KEY)) {
+            long size = Configuration.getLongValue(AVKey.AIRSPACE_GEOMETRY_CACHE_SIZE,
+                RigidShape.DEFAULT_GEOMETRY_CACHE_SIZE);
+            MemoryCache cache = new BasicMemoryCache((long) (0.85 * size), size);
+            cache.setName(RigidShape.GEOMETRY_CACHE_NAME);
+            WorldWind.getMemoryCacheSet().addCache(RigidShape.GEOMETRY_CACHE_KEY, cache);
+        }
+    }
+
+    /**
+     * Retrieve the geometry cache supporting the Level of Detail system.
+     *
+     * @return the geometry cache.
+     */
+    protected static MemoryCache getGeometryCache() {
+        return WorldWind.cache(RigidShape.GEOMETRY_CACHE_KEY);
+    }
+
+    /**
+     * Transform all vertices with the provided matrix
+     *
+     * @param vertices    the buffer of vertices to transform
+     * @param numVertices the number of distinct vertices in the buffer (assume 3-space)
+     * @param matrix      the matrix for transforming the vertices
+     * @return the transformed vertices.
+     */
+    protected static FloatBuffer computeTransformedVertices(FloatBuffer vertices, int numVertices, Matrix matrix) {
+        int size = numVertices * 3;
+        FloatBuffer newVertices = Buffers.newDirectFloatBuffer(size);
+
+        // transform all vertices by the render matrix
+        for (int i = 0; i < numVertices; i++) {
+            Vec4 point = Matrix.transformBy3(matrix, vertices.get(3 * i), vertices.get(3 * i + 1),
+                vertices.get(3 * i + 2));
+            newVertices.put((float) point.x).put((float) point.y).put((float) point.z);
+        }
+
+        newVertices.rewind();
+
+        return newVertices;
+    }
+
+    protected static void intersect(Line line, ShapeData shapeData, Collection<Intersection> intersections, int index) {
+
+        IntBuffer indices = (IntBuffer) shapeData.getMesh(index).getBuffer(Geometry.ELEMENT);
+        indices.rewind();
+        FloatBuffer vertices = (FloatBuffer) shapeData.getMesh(index).getBuffer(Geometry.VERTEX);
+        vertices.rewind();
+
+        List<Intersection> ti = Triangle.intersectTriangleTypes(line, vertices, indices,
+            GL.GL_TRIANGLES);
+
+        if (ti != null && !ti.isEmpty())
+            intersections.addAll(ti);
+    }
 
     /**
      * Returns the current shape data cache entry.
@@ -364,7 +424,7 @@ public abstract class RigidShape extends AbstractShape {
      */
     public void setHeading(Angle heading) {
         // constrain values to 0 to 360 (aka 0 to 2PI) for compatibility with KML
-        double degrees = heading.getDegrees();
+        double degrees = heading.degrees;
         while (degrees < 0) {
             degrees += 360;
         }
@@ -393,7 +453,7 @@ public abstract class RigidShape extends AbstractShape {
      */
     public void setTilt(Angle tilt) {
         // constrain values to 0 to 360 (aka 0 to 2PI) for compatibility with KML
-        double degrees = tilt.getDegrees();
+        double degrees = tilt.degrees;
         while (degrees < 0) {
             degrees += 360;
         }
@@ -423,7 +483,7 @@ public abstract class RigidShape extends AbstractShape {
      */
     public void setRoll(Angle roll) {
         // constrain values to 0 to 360 (aka 0 to 2PI) for compatibility with KML
-        double degrees = roll.getDegrees();
+        double degrees = roll.degrees;
         while (degrees < 0) {
             degrees += 360;
         }
@@ -521,27 +581,6 @@ public abstract class RigidShape extends AbstractShape {
         this.detailHint = detailHint;
 
         reset();
-    }
-
-    /**
-     * Create the geometry cache supporting the Level of Detail system.
-     */
-    protected static void setUpGeometryCache() {
-        if (!WorldWind.getMemoryCacheSet().containsCache(GEOMETRY_CACHE_KEY)) {
-            long size = Configuration.getLongValue(AVKey.AIRSPACE_GEOMETRY_CACHE_SIZE, DEFAULT_GEOMETRY_CACHE_SIZE);
-            MemoryCache cache = new BasicMemoryCache((long) (0.85 * size), size);
-            cache.setName(GEOMETRY_CACHE_NAME);
-            WorldWind.getMemoryCacheSet().addCache(GEOMETRY_CACHE_KEY, cache);
-        }
-    }
-
-    /**
-     * Retrieve the geometry cache supporting the Level of Detail system.
-     *
-     * @return the geometry cache.
-     */
-    protected static MemoryCache getGeometryCache() {
-        return WorldWind.cache(GEOMETRY_CACHE_KEY);
     }
 
     @Override
@@ -719,8 +758,7 @@ public abstract class RigidShape extends AbstractShape {
                     }
 
                     gl.glTexCoordPointer(2, GL.GL_FLOAT, 0, offsetCoords.rewind());
-                }
-                else {
+                } else {
                     gl.glTexCoordPointer(2, GL.GL_FLOAT, 0, mesh.getBuffer(Geometry.TEXTURE).rewind());
                 }
                 gl.glEnable(GL.GL_TEXTURE_2D);
@@ -728,8 +766,7 @@ public abstract class RigidShape extends AbstractShape {
 
                 gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_REPEAT);
                 gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_REPEAT);
-            }
-            else {
+            } else {
                 gl.glDisable(GL.GL_TEXTURE_2D);
                 gl.glDisableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
             }
@@ -819,30 +856,6 @@ public abstract class RigidShape extends AbstractShape {
      */
     public Sector getSector() {
         return null;
-    }
-
-    /**
-     * Transform all vertices with the provided matrix
-     *
-     * @param vertices    the buffer of vertices to transform
-     * @param numVertices the number of distinct vertices in the buffer (assume 3-space)
-     * @param matrix      the matrix for transforming the vertices
-     * @return the transformed vertices.
-     */
-    protected static FloatBuffer computeTransformedVertices(FloatBuffer vertices, int numVertices, Matrix matrix) {
-        int size = numVertices * 3;
-        FloatBuffer newVertices = Buffers.newDirectFloatBuffer(size);
-
-        // transform all vertices by the render matrix
-        for (int i = 0; i < numVertices; i++) {
-            Vec4 point = Matrix.transformBy3(matrix, vertices.get(3 * i), vertices.get(3 * i + 1),
-                vertices.get(3 * i + 2));
-            newVertices.put((float) point.getX()).put((float) point.getY()).put((float) point.getZ());
-        }
-
-        newVertices.rewind();
-
-        return newVertices;
     }
 
     /**
@@ -1080,13 +1093,13 @@ public abstract class RigidShape extends AbstractShape {
      */
     abstract protected void makeGeometry(ShapeData shapeData);
 
-    protected GeometryBuilder getGeometryBuilder() {
-        return this.geometryBuilder;
-    }
-
     //*****************************************************************//
     //***********************  Geometry Rendering  ********************//
     //*****************************************************************//
+
+    protected GeometryBuilder getGeometryBuilder() {
+        return this.geometryBuilder;
+    }
 
     /**
      * Renders the Rigid Shape
@@ -1151,6 +1164,10 @@ public abstract class RigidShape extends AbstractShape {
         return null;
     }
 
+    //*****************************************************************//
+    //*********************        VBOs               *****************//
+    //*****************************************************************//
+
     /**
      * Removes from the GPU resource cache the entry for the current data cache entry's VBOs.
      * <p>
@@ -1164,10 +1181,6 @@ public abstract class RigidShape extends AbstractShape {
             dc.getGpuResourceCache().remove(((ShapeData) this.getCurrentData()).getVboCacheKey(key));
         }
     }
-
-    //*****************************************************************//
-    //*********************        VBOs               *****************//
-    //*****************************************************************//
 
     /**
      * Fill this shape's vertex buffer objects. If the vertex buffer object resource IDs don't yet exist, create them.
@@ -1240,15 +1253,15 @@ public abstract class RigidShape extends AbstractShape {
             terrain.getGlobe().getGlobeStateKey().equals(this.previousIntersectionGlobeStateKey);
     }
 
+    //*****************************************************************//
+    //*********************       Intersections       *****************//
+    //*****************************************************************//
+
     public void clearIntersectionGeometry() {
         this.previousIntersectionGlobeStateKey = null;
         this.previousIntersectionShapeData = null;
         this.previousIntersectionTerrain = null;
     }
-
-    //*****************************************************************//
-    //*********************       Intersections       *****************//
-    //*****************************************************************//
 
     /**
      * Compute the intersections of a specified line with this shape. If the shape's altitude mode is other than {@link
@@ -1332,20 +1345,6 @@ public abstract class RigidShape extends AbstractShape {
         return shapeIntersections;
     }
 
-    protected static void intersect(Line line, ShapeData shapeData, Collection<Intersection> intersections, int index) {
-
-        IntBuffer indices = (IntBuffer) shapeData.getMesh(index).getBuffer(Geometry.ELEMENT);
-        indices.rewind();
-        FloatBuffer vertices = (FloatBuffer) shapeData.getMesh(index).getBuffer(Geometry.VERTEX);
-        vertices.rewind();
-
-        List<Intersection> ti = Triangle.intersectTriangleTypes(line, vertices, indices,
-            GL.GL_TRIANGLES);
-
-        if (ti != null && !ti.isEmpty())
-            intersections.addAll(ti);
-    }
-
     abstract protected ShapeData createIntersectionGeometry(Terrain terrain);
 
     /**
@@ -1364,7 +1363,7 @@ public abstract class RigidShape extends AbstractShape {
 
         Geometry mesh = this.getCurrentShapeData().getMesh(index);
         // transform the vertices from local to world coords
-        FloatBuffer vertices = computeTransformedVertices((FloatBuffer) mesh.getBuffer(Geometry.VERTEX),
+        FloatBuffer vertices = RigidShape.computeTransformedVertices((FloatBuffer) mesh.getBuffer(Geometry.VERTEX),
             mesh.getCount(Geometry.VERTEX), renderMatrix);
 
         List<Intersection> intersections = Triangle.intersectTriangleTypes(localLine, vertices,
@@ -1427,7 +1426,7 @@ public abstract class RigidShape extends AbstractShape {
         try {
             rs = RestorableSupport.parse(stateInXml);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             // Parsing the document specified by stateInXml failed.
             String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", stateInXml);
             Logging.logger().severe(message);

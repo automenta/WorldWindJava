@@ -26,10 +26,39 @@ import java.util.logging.Level;
  */
 public class BasicElevationModelFactory extends BasicFactory {
     /**
+     * Create a simple elevation model.
+     *
+     * @param domElement the XML element describing the elevation model to create. The element must inculde a service
+     *                   name identifying the type of service to use to retrieve elevation data. Recognized service
+     *                   types are "Offline", "WWTileService" and "OGC:WMS".
+     * @param params     any parameters to apply when creating the elevation model.
+     * @return a new elevation model
+     * @throws WWUnrecognizedException if the service type given in the describing element is unrecognized.
+     */
+    protected static ElevationModel createNonCompoundModel(Element domElement, AVList params) {
+        ElevationModel em;
+
+        String serviceName = WWXML.getText(domElement, "Service/@serviceName");
+
+        switch (serviceName) {
+            case "Offline", "WWTileService" -> em = new BasicElevationModel(domElement, params);
+            case OGCConstants.WMS_SERVICE_NAME -> em = new WMSBasicElevationModel(domElement, params);
+            case OGCConstants.WCS_SERVICE_NAME -> em = new WCSElevationModel(domElement, params);
+            case AVKey.SERVICE_NAME_LOCAL_RASTER_SERVER -> em = new LocalRasterServerElevationModel(domElement, params);
+            default -> {
+                String msg = Logging.getMessage("generic.UnrecognizedServiceName", serviceName);
+                throw new WWUnrecognizedException(msg);
+            }
+        }
+
+        return em;
+    }
+
+    /**
      * Creates an elevation model from a general configuration source. The source can be one of the following: <ul>
      * <li>a {@link java.net.URL}</li> <li>a {@link java.io.File}</li> <li>a {@link java.io.InputStream}</li> <li> an
-     * {@link Element}</li> <li>a {@link String} holding a file name, a name of a resource on the classpath,
-     * or a string representation of a URL</li> </ul>
+     * {@link Element}</li> <li>a {@link String} holding a file name, a name of a resource on the classpath, or a string
+     * representation of a URL</li> </ul>
      * <p>
      * For non-compound models, this method maps the <code>serviceName</code> attribute of the
      * <code>ElevationModel/Service</code> element of the XML configuration document to the appropriate elevation-model
@@ -148,41 +177,12 @@ public class BasicElevationModelFactory extends BasicFactory {
                 if (em != null)
                     compoundModel.addElevationModel(em);
             }
-            catch (Exception e) {
+            catch (RuntimeException e) {
                 String msg = Logging.getMessage("ElevationModel.ExceptionCreatingElevationModel");
                 Logging.logger().log(Level.WARNING, msg, e);
             }
         }
 
         return compoundModel;
-    }
-
-    /**
-     * Create a simple elevation model.
-     *
-     * @param domElement the XML element describing the elevation model to create. The element must inculde a service
-     *                   name identifying the type of service to use to retrieve elevation data. Recognized service
-     *                   types are "Offline", "WWTileService" and "OGC:WMS".
-     * @param params     any parameters to apply when creating the elevation model.
-     * @return a new elevation model
-     * @throws WWUnrecognizedException if the service type given in the describing element is unrecognized.
-     */
-    protected static ElevationModel createNonCompoundModel(Element domElement, AVList params) {
-        ElevationModel em;
-
-        String serviceName = WWXML.getText(domElement, "Service/@serviceName");
-
-        switch (serviceName) {
-            case "Offline", "WWTileService" -> em = new BasicElevationModel(domElement, params);
-            case OGCConstants.WMS_SERVICE_NAME -> em = new WMSBasicElevationModel(domElement, params);
-            case OGCConstants.WCS_SERVICE_NAME -> em = new WCSElevationModel(domElement, params);
-            case AVKey.SERVICE_NAME_LOCAL_RASTER_SERVER -> em = new LocalRasterServerElevationModel(domElement, params);
-            default -> {
-                String msg = Logging.getMessage("generic.UnrecognizedServiceName", serviceName);
-                throw new WWUnrecognizedException(msg);
-            }
-        }
-
-        return em;
     }
 }

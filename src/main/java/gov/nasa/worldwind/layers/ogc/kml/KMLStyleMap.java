@@ -96,11 +96,10 @@ public class KMLStyleMap extends KMLAbstractStyleSelector {
      * sub-style is marked with the value {@link gov.nasa.worldwind.avlist.AVKey#UNRESOLVED}.
      *
      * @param styleState the style mode, either \"normal\" or \"highlight\".
-     * @param subStyle   an instance of the {@link KMLAbstractSubStyle} class desired, such
-     *                   as {@link KMLIconStyle}. The effective style values are accumulated
-     *                   and merged into this instance. The instance should not be one from within the KML document
-     *                   because its values may be overridden and augmented. The instance specified is the return value
-     *                   of this method.
+     * @param subStyle   an instance of the {@link KMLAbstractSubStyle} class desired, such as {@link KMLIconStyle}. The
+     *                   effective style values are accumulated and merged into this instance. The instance should not
+     *                   be one from within the KML document because its values may be overridden and augmented. The
+     *                   instance specified is the return value of this method.
      * @return the sub-style values for the specified type and state. The reference returned is the same one passed in
      * as the <code>subStyle</code> argument.
      */
@@ -112,7 +111,7 @@ public class KMLStyleMap extends KMLAbstractStyleSelector {
         else
             subStyle.setField(KMLConstants.STYLE_STATE, styleState); // identify which style state it is
 
-        return mergeSubStyles(styleUrl, selector, styleState, subStyle);
+        return KMLAbstractStyleSelector.mergeSubStyles(styleUrl, selector, styleState, subStyle);
     }
 
     @Override
@@ -130,7 +129,7 @@ public class KMLStyleMap extends KMLAbstractStyleSelector {
         if (sourceMap.getPairs() != null && !sourceMap.getPairs().isEmpty())
             this.pairs = sourceMap.getPairs();
 
-        this.onChange(new Message(MSG_STYLE_CHANGED, this));
+        this.onChange(new Message(KMLAbstractObject.MSG_STYLE_CHANGED, this));
     }
 
     /**

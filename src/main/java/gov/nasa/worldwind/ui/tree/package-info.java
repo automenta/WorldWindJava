@@ -11,7 +11,6 @@
  *
  * <p>
  * See {@link gov.nasa.worldwind.examples.util.TreeControl} for an example of using the tree. {@link
- * gov.nasa.worldwind.examples.LayerTreeUsage} is an example of using the tree control to display a tree of
- * layers.</p>
+ * gov.nasa.worldwind.examples.LayerTreeUsage} is an example of using the tree control to display a tree of layers.</p>
  */
 package gov.nasa.worldwind.ui.tree;

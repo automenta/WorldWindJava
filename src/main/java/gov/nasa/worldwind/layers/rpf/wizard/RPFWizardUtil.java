@@ -31,7 +31,7 @@ public class RPFWizardUtil {
         }
 
         File file = null;
-        Object value = properties.getProperty(SELECTED_FILE);
+        Object value = properties.getProperty(RPFWizardUtil.SELECTED_FILE);
         if (value instanceof File)
             file = (File) value;
         return file;
@@ -44,7 +44,7 @@ public class RPFWizardUtil {
             throw new IllegalArgumentException(message);
         }
 
-        properties.setProperty(SELECTED_FILE, file);
+        properties.setProperty(RPFWizardUtil.SELECTED_FILE, file);
     }
 
     @SuppressWarnings("unchecked")
@@ -56,7 +56,7 @@ public class RPFWizardUtil {
         }
 
         List<File> fileList = null;
-        Object value = properties.getProperty(FILE_LIST);
+        Object value = properties.getProperty(RPFWizardUtil.FILE_LIST);
         if (value instanceof List)
             fileList = (List<File>) value;
         return fileList;
@@ -69,7 +69,7 @@ public class RPFWizardUtil {
             throw new IllegalArgumentException(message);
         }
 
-        properties.setProperty(FILE_LIST, fileList);
+        properties.setProperty(RPFWizardUtil.FILE_LIST, fileList);
     }
 
     public static boolean isFileListCurrent(WizardProperties properties) {
@@ -80,7 +80,7 @@ public class RPFWizardUtil {
         }
 
         boolean isFileListCurrent = false;
-        Boolean value = properties.getBooleanProperty(IS_FILE_LIST_CURRENT);
+        Boolean value = properties.getBooleanProperty(RPFWizardUtil.IS_FILE_LIST_CURRENT);
         if (value != null)
             isFileListCurrent = value;
         return isFileListCurrent;
@@ -93,7 +93,7 @@ public class RPFWizardUtil {
             throw new IllegalArgumentException(message);
         }
 
-        properties.setProperty(IS_FILE_LIST_CURRENT, current);
+        properties.setProperty(RPFWizardUtil.IS_FILE_LIST_CURRENT, current);
     }
 
     @SuppressWarnings("unchecked")
@@ -105,7 +105,7 @@ public class RPFWizardUtil {
         }
 
         List<FileSet> fileSets = null;
-        Object value = properties.getProperty(FILE_SET_LIST);
+        Object value = properties.getProperty(RPFWizardUtil.FILE_SET_LIST);
         if (value instanceof List)
             fileSets = (List<FileSet>) value;
         return fileSets;
@@ -118,7 +118,7 @@ public class RPFWizardUtil {
             throw new IllegalArgumentException(message);
         }
 
-        properties.setProperty(FILE_SET_LIST, fileSetList);
+        properties.setProperty(RPFWizardUtil.FILE_SET_LIST, fileSetList);
     }
 
     @SuppressWarnings("unchecked")
@@ -130,7 +130,7 @@ public class RPFWizardUtil {
         }
 
         List<Layer> fileSets = null;
-        Object value = properties.getProperty(LAYER_LIST);
+        Object value = properties.getProperty(RPFWizardUtil.LAYER_LIST);
         if (value instanceof List)
             fileSets = (List<Layer>) value;
         return fileSets;
@@ -143,7 +143,7 @@ public class RPFWizardUtil {
             throw new IllegalArgumentException(message);
         }
 
-        properties.setProperty(LAYER_LIST, layerList);
+        properties.setProperty(RPFWizardUtil.LAYER_LIST, layerList);
     }
 
     public static String makeLarger(String text) {

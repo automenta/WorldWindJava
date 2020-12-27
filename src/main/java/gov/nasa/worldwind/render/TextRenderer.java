@@ -38,8 +38,7 @@ import java.util.*;
  * controls in the public API. <P>
  * <p>
  * Using the {@link TextRenderer TextRenderer} is simple. Add a "<code>TextRenderer renderer;</code>" field to your
- * {@link GLEventListener GLEventListener}. In your {@link GLEventListener#init
- * init} method, add:
+ * {@link GLEventListener GLEventListener}. In your {@link GLEventListener#init init} method, add:
  *
  * <PRE>
  * renderer = new TextRenderer(new Font("SansSerif", Font.BOLD, 36));
@@ -63,10 +62,10 @@ import java.util.*;
  * <p>
  * Internally, the renderer uses a rectangle packing algorithm to pack both glyphs and full Strings' rendering results
  * (which are variable size) onto a larger OpenGL texture. The internal backing store is maintained using a {@link
- * TextureRenderer TextureRenderer}. A least recently used (LRU) algorithm is used to discard
- * previously rendered strings; the specific algorithm is undefined, but is currently implemented by flushing unused
- * Strings' rendering results every few hundred rendering cycles, where a rendering cycle is defined as a pair of calls
- * to {@link #beginRendering beginRendering} / {@link #endRendering endRendering}.
+ * TextureRenderer TextureRenderer}. A least recently used (LRU) algorithm is used to discard previously rendered
+ * strings; the specific algorithm is undefined, but is currently implemented by flushing unused Strings' rendering
+ * results every few hundred rendering cycles, where a rendering cycle is defined as a pair of calls to {@link
+ * #beginRendering beginRendering} / {@link #endRendering endRendering}.
  *
  * @author John Burkey
  * @author Kenneth Russell
@@ -77,13 +76,13 @@ public class TextRenderer {
     static final int kCoordsPerVertVerts = 3;
     static final int kCoordsPerVertTex = 2;
     static final int kVertsPerQuad = 4;
-    static final int kTotalBufferSizeVerts = kQuadsPerBuffer * kVertsPerQuad;
-    static final int kTotalBufferSizeCoordsVerts = kQuadsPerBuffer * kVertsPerQuad * kCoordsPerVertVerts;
-    static final int kTotalBufferSizeCoordsTex = kQuadsPerBuffer * kVertsPerQuad * kCoordsPerVertTex;
-    static final int kTotalBufferSizeBytesVerts = kTotalBufferSizeCoordsVerts * 4;
-    static final int kTotalBufferSizeBytesTex = kTotalBufferSizeCoordsTex * 4;
-    static final int kSizeInBytes_OneVertices_VertexData = kCoordsPerVertVerts * 4;
-    static final int kSizeInBytes_OneVertices_TexData = kCoordsPerVertTex * 4;
+    static final int kTotalBufferSizeVerts = TextRenderer.kQuadsPerBuffer * TextRenderer.kVertsPerQuad;
+    static final int kTotalBufferSizeCoordsVerts = TextRenderer.kQuadsPerBuffer * TextRenderer.kVertsPerQuad * TextRenderer.kCoordsPerVertVerts;
+    static final int kTotalBufferSizeCoordsTex = TextRenderer.kQuadsPerBuffer * TextRenderer.kVertsPerQuad * TextRenderer.kCoordsPerVertTex;
+    static final int kTotalBufferSizeBytesVerts = TextRenderer.kTotalBufferSizeCoordsVerts * 4;
+    static final int kTotalBufferSizeBytesTex = TextRenderer.kTotalBufferSizeCoordsTex * 4;
+    static final int kSizeInBytes_OneVertices_VertexData = TextRenderer.kCoordsPerVertVerts * 4;
+    static final int kSizeInBytes_OneVertices_TexData = TextRenderer.kCoordsPerVertTex * 4;
     private static final boolean DEBUG;
     // These are occasionally useful for more in-depth debugging
     private static final boolean DRAW_BBOXES = false;
@@ -229,7 +228,7 @@ public class TextRenderer {
 
         // FIXME: consider adjusting the size based on font size
         // (it will already automatically resize if necessary)
-        packer = new RectanglePacker(new Manager(), kSize, kSize);
+        packer = new RectanglePacker(new Manager(), TextRenderer.kSize, TextRenderer.kSize);
 
         if (renderDelegate == null) {
             renderDelegate = new DefaultRenderDelegate();
@@ -267,12 +266,11 @@ public class TextRenderer {
      * Returns the bounding rectangle of the given CharSequence, assuming it was rendered at the origin.The coordinate
      * system of the returned rectangle is Java 2D's, with increasing Y coordinates in the downward direction.The
      * relative coordinate (0, 0) in the returned rectangle corresponds to the baseline of the leftmost character of the
-     * rendered string, in similar fashion to the results returned by, for example, {@link
-     * GlyphVector#getVisualBounds}. Most applications will use only the width and height of the returned
-     * Rectangle for the purposes of centering or justifying the String. It is not specified which Java 2D bounds
-     * ({@link GlyphVector#getVisualBounds getVisualBounds}, {@link GlyphVector#getPixelBounds
-     * getPixelBounds}, etc.) the returned bounds correspond to, although every effort is made to ensure an accurate
-     * bound.
+     * rendered string, in similar fashion to the results returned by, for example, {@link GlyphVector#getVisualBounds}.
+     * Most applications will use only the width and height of the returned Rectangle for the purposes of centering or
+     * justifying the String. It is not specified which Java 2D bounds ({@link GlyphVector#getVisualBounds
+     * getVisualBounds}, {@link GlyphVector#getPixelBounds getPixelBounds}, etc.) the returned bounds correspond to,
+     * although every effort is made to ensure an accurate bound.
      *
      * @param str The string.
      * @return The bounds of the string.
@@ -415,8 +413,6 @@ public class TextRenderer {
         cachedA = a;
         cachedColor = null;
     }
-
-
 
     /**
      * * Draws the supplied String at the desired location using the renderer's current color.See {@link
@@ -566,7 +562,7 @@ public class TextRenderer {
         boolean disableDepthTestForOrtho) {
         GL2 gl = GLContext.getCurrentGL().getGL2();
 
-        if (DEBUG && !debugged) {
+        if (TextRenderer.DEBUG && !debugged) {
             debug(gl);
         }
 
@@ -579,8 +575,7 @@ public class TextRenderer {
         if (ortho) {
             getBackingStore().beginOrthoRendering(width, height,
                 disableDepthTestForOrtho);
-        }
-        else {
+        } else {
             getBackingStore().begin3DRendering();
         }
 
@@ -599,8 +594,7 @@ public class TextRenderer {
         if (needToResetColor && haveCachedColor) {
             if (cachedColor == null) {
                 getBackingStore().setColor(cachedR, cachedG, cachedB, cachedA);
-            }
-            else {
+            } else {
                 getBackingStore().setColor(cachedColor);
             }
 
@@ -610,7 +604,7 @@ public class TextRenderer {
         // Disable future attempts to use mipmapping if TextureRenderer
         // doesn't support it
         if (mipmap && !getBackingStore().isUsingAutoMipmapGeneration()) {
-            if (DEBUG) {
+            if (TextRenderer.DEBUG) {
                 System.err.println("Disabled mipmapping in TextRenderer");
             }
 
@@ -642,22 +636,21 @@ public class TextRenderer {
             try {
                 gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, 0);
             }
-            catch (Exception e) {
+            catch (RuntimeException e) {
                 isExtensionAvailable_GL_VERSION_1_5 = false;
             }
         }
 
         if (ortho) {
             getBackingStore().endOrthoRendering();
-        }
-        else {
+        } else {
             getBackingStore().end3DRendering();
         }
 
-        if (++numRenderCycles >= CYCLES_PER_FLUSH) {
+        if (++numRenderCycles >= TextRenderer.CYCLES_PER_FLUSH) {
             numRenderCycles = 0;
 
-            if (DEBUG) {
+            if (TextRenderer.DEBUG) {
                 System.err.println("Clearing unused entries in endRendering()");
             }
 
@@ -675,8 +668,7 @@ public class TextRenderer {
 
             if (data.used()) {
                 data.clearUsed();
-            }
-            else {
+            } else {
                 deadRects.add(rect);
             }
         });
@@ -695,8 +687,8 @@ public class TextRenderer {
         // If we removed dead rectangles this cycle, try to do a compaction
         float frag = packer.verticalFragmentationRatio();
 
-        if (!deadRects.isEmpty() && (frag > MAX_VERTICAL_FRAGMENTATION)) {
-            if (DEBUG) {
+        if (!deadRects.isEmpty() && (frag > TextRenderer.MAX_VERTICAL_FRAGMENTATION)) {
+            if (TextRenderer.DEBUG) {
                 System.err.println(
                     "Compacting TextRenderer backing store due to vertical fragmentation " +
                         frag);
@@ -705,7 +697,7 @@ public class TextRenderer {
             packer.compact();
         }
 
-        if (DEBUG) {
+        if (TextRenderer.DEBUG) {
             getBackingStore().markDirty(0, 0, getBackingStore().getWidth(),
                 getBackingStore().getHeight());
         }
@@ -730,8 +722,7 @@ public class TextRenderer {
         String curStr;
         if (str instanceof String) {
             curStr = (String) str;
-        }
-        else {
+        } else {
             curStr = str.toString();
         }
 
@@ -741,7 +732,7 @@ public class TextRenderer {
         if (rect == null) {
             // Rasterize this string and place it on the backing store
             Graphics2D g = getGraphics2D();
-            Rectangle2D origBBox = preNormalize(renderDelegate.getBounds(curStr, font, getFontRenderContext()));
+            Rectangle2D origBBox = TextRenderer.preNormalize(renderDelegate.getBounds(curStr, font, getFontRenderContext()));
             Rectangle2D bbox = normalize(origBBox);
             Point origin = new Point((int) -bbox.getMinX(),
                 (int) -bbox.getMinY());
@@ -769,7 +760,7 @@ public class TextRenderer {
             // Draw the string
             renderDelegate.draw(g, curStr, strx, stry);
 
-            if (DRAW_BBOXES) {
+            if (TextRenderer.DRAW_BBOXES) {
                 TextData data = (TextData) rect.getUserData();
                 // Draw a bounding box on the backing store
                 g.drawRect(strx - data.origOriginX(),
@@ -828,7 +819,7 @@ public class TextRenderer {
                 new Thread(anim::stop).start();
             }
         });
-        dbgFrame.setSize(kSize, kSize);
+        dbgFrame.setSize(TextRenderer.kSize, TextRenderer.kSize);
         dbgFrame.setVisible(true);
         anim.start();
         debugged = true;
@@ -1169,8 +1160,8 @@ public class TextRenderer {
         static final Character[] CACHE = new Character[127 + 1];
 
         static {
-            for (int i = 0; i < CACHE.length; i++) {
-                CACHE[i] = (char) i;
+            for (int i = 0; i < CharacterCache.CACHE.length; i++) {
+                CharacterCache.CACHE[i] = (char) i;
             }
         }
 
@@ -1198,13 +1189,12 @@ public class TextRenderer {
 
             if (renderDelegate.intensityOnly()) {
                 renderer = TextureRenderer.createAlphaOnlyRenderer(w, h, mipmap);
-            }
-            else {
+            } else {
                 renderer = new TextureRenderer(w, h, true, mipmap);
             }
             renderer.setSmoothing(smoothing);
 
-            if (DEBUG) {
+            if (TextRenderer.DEBUG) {
                 System.err.println(" TextRenderer allocating backing store " +
                     w + " x " + h);
             }
@@ -1234,7 +1224,7 @@ public class TextRenderer {
             // very quickly to its maximum size, at least with the TextFlow
             // demo when the text is being continually re-laid out.
             if (attemptNumber == 0) {
-                if (DEBUG) {
+                if (TextRenderer.DEBUG) {
                     System.err.println(
                         "Clearing unused entries in preExpand(): attempt number " +
                             attemptNumber);
@@ -1260,7 +1250,7 @@ public class TextRenderer {
             stringLocations.clear();
             mGlyphProducer.clearAllCacheEntries();
 
-            if (DEBUG) {
+            if (TextRenderer.DEBUG) {
                 System.err.println(
                     " *** Cleared all text because addition failed ***");
             }
@@ -1292,15 +1282,14 @@ public class TextRenderer {
                     try {
                         gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, 0);
                     }
-                    catch (Exception e) {
+                    catch (RuntimeException e) {
                         isExtensionAvailable_GL_VERSION_1_5 = false;
                     }
                 }
 
                 if (isOrthoMode) {
                     ((TextureRenderer) oldBackingStore).endOrthoRendering();
-                }
-                else {
+                } else {
                     ((TextureRenderer) oldBackingStore).end3DRendering();
                 }
             }
@@ -1320,8 +1309,7 @@ public class TextRenderer {
                 g.copyArea(oldLocation.x(), oldLocation.y(), oldLocation.w(),
                     oldLocation.h(), newLocation.x() - oldLocation.x(),
                     newLocation.y() - oldLocation.y());
-            }
-            else {
+            } else {
                 // Need to draw from the old renderer's image into the new one
                 Image img = oldRenderer.getImage();
                 g.drawImage(img, newLocation.x(), newLocation.y(),
@@ -1346,8 +1334,7 @@ public class TextRenderer {
                 if (isOrthoMode) {
                     ((TextureRenderer) newBackingStore).beginOrthoRendering(beginRenderingWidth,
                         beginRenderingHeight, beginRenderingDepthTestDisabled);
-                }
-                else {
+                } else {
                     ((TextureRenderer) newBackingStore).begin3DRendering();
                 }
 
@@ -1359,13 +1346,11 @@ public class TextRenderer {
                     if (cachedColor == null) {
                         ((TextureRenderer) newBackingStore).setColor(cachedR,
                             cachedG, cachedB, cachedA);
-                    }
-                    else {
+                    } else {
                         ((TextureRenderer) newBackingStore).setColor(cachedColor);
                     }
                 }
-            }
-            else {
+            } else {
                 needToResetColor = true;
             }
         }
@@ -1531,7 +1516,7 @@ public class TextRenderer {
 
         private void upload() {
             GlyphVector gv = getGlyphVector();
-            Rectangle2D origBBox = preNormalize(renderDelegate.getBounds(gv, getFontRenderContext()));
+            Rectangle2D origBBox = TextRenderer.preNormalize(renderDelegate.getBounds(gv, getFontRenderContext()));
             Rectangle2D bbox = normalize(origBBox);
             Point origin = new Point((int) -bbox.getMinX(),
                 (int) -bbox.getMinY());
@@ -1554,7 +1539,7 @@ public class TextRenderer {
             // Draw the string
             renderDelegate.drawGlyphVector(g, gv, strx, stry);
 
-            if (DRAW_BBOXES) {
+            if (TextRenderer.DRAW_BBOXES) {
                 TextData data = (TextData) rect.getUserData();
                 // Draw a bounding box on the backing store
                 g.drawRect(strx - data.origOriginX(),
@@ -1614,7 +1599,7 @@ public class TextRenderer {
                 fullGlyphVectorCache.put(inString.toString(), fullRunGlyphVector);
             }
             boolean complex = (fullRunGlyphVector.getLayoutFlags() != 0);
-            if (complex || DISABLE_GLYPH_CACHE) {
+            if (complex || TextRenderer.DISABLE_GLYPH_CACHE) {
                 // Punt to the robust version of the renderer
                 glyphsOutput.add(new Glyph(inString.toString(), false));
                 return glyphsOutput;
@@ -1633,8 +1618,7 @@ public class TextRenderer {
                 if (glyph != null) {
                     glyphsOutput.add(glyph);
                     i++;
-                }
-                else {
+                } else {
                     // Assemble a run of characters that don't fit in
                     // the cache
                     StringBuilder buf = new StringBuilder();
@@ -1652,14 +1636,14 @@ public class TextRenderer {
 
         public void clearCacheEntry(int unicodeID) {
             int glyphID = unicodes2Glyphs[unicodeID];
-            if (glyphID != undefined) {
+            if (glyphID != GlyphProducer.undefined) {
                 Glyph glyph = glyphCache[glyphID];
                 if (glyph != null) {
                     glyph.clear();
                 }
                 glyphCache[glyphID] = null;
             }
-            unicodes2Glyphs[unicodeID] = undefined;
+            unicodes2Glyphs[unicodeID] = GlyphProducer.undefined;
         }
 
         public void clearAllCacheEntries() {
@@ -1699,7 +1683,7 @@ public class TextRenderer {
             }
 
             int glyphID = unicodes2Glyphs[unicodeID];
-            if (glyphID != undefined) {
+            if (glyphID != GlyphProducer.undefined) {
                 return glyphCache[glyphID];
             }
 
@@ -1718,7 +1702,7 @@ public class TextRenderer {
             }
 
             int glyphID = unicodes2Glyphs[unicodeID];
-            if (glyphID != undefined) {
+            if (glyphID != GlyphProducer.undefined) {
                 return glyphCache[glyphID];
             }
             singleUnicode[0] = (char) unicodeID;
@@ -1747,15 +1731,15 @@ public class TextRenderer {
     class Pipelined_QuadRenderer {
         final FloatBuffer mTexCoords;
         final FloatBuffer mVertCoords;
-        int mOutstandingGlyphsVerticesPipeline = 0;
+        int mOutstandingGlyphsVerticesPipeline;
         boolean usingVBOs;
         int mVBO_For_ResuableTileVertices;
         int mVBO_For_ResuableTileTexCoords;
 
         Pipelined_QuadRenderer() {
             GL2 gl = GLContext.getCurrentGL().getGL2();
-            mVertCoords = Buffers.newDirectFloatBuffer(kTotalBufferSizeCoordsVerts);
-            mTexCoords = Buffers.newDirectFloatBuffer(kTotalBufferSizeCoordsTex);
+            mVertCoords = Buffers.newDirectFloatBuffer(TextRenderer.kTotalBufferSizeCoordsVerts);
+            mTexCoords = Buffers.newDirectFloatBuffer(TextRenderer.kTotalBufferSizeCoordsTex);
 
             usingVBOs = getUseVertexArrays() && is15Available(gl);
 
@@ -1769,15 +1753,15 @@ public class TextRenderer {
 
                     gl.glBindBuffer(GL2.GL_ARRAY_BUFFER,
                         mVBO_For_ResuableTileVertices);
-                    gl.glBufferData(GL2.GL_ARRAY_BUFFER, kTotalBufferSizeBytesVerts,
+                    gl.glBufferData(GL2.GL_ARRAY_BUFFER, TextRenderer.kTotalBufferSizeBytesVerts,
                         null, GL2.GL_STREAM_DRAW); // stream draw because this is a single quad use pipeline
 
                     gl.glBindBuffer(GL2.GL_ARRAY_BUFFER,
                         mVBO_For_ResuableTileTexCoords);
-                    gl.glBufferData(GL2.GL_ARRAY_BUFFER, kTotalBufferSizeBytesTex,
+                    gl.glBufferData(GL2.GL_ARRAY_BUFFER, TextRenderer.kTotalBufferSizeBytesTex,
                         null, GL2.GL_STREAM_DRAW); // stream draw because this is a single quad use pipeline
                 }
-                catch (Exception e) {
+                catch (RuntimeException e) {
                     isExtensionAvailable_GL_VERSION_1_5 = false;
                     usingVBOs = false;
                 }
@@ -1796,7 +1780,7 @@ public class TextRenderer {
 
             mOutstandingGlyphsVerticesPipeline++;
 
-            if (mOutstandingGlyphsVerticesPipeline >= kTotalBufferSizeVerts) {
+            if (mOutstandingGlyphsVerticesPipeline >= TextRenderer.kTotalBufferSizeVerts) {
                 this.draw();
             }
         }
@@ -1804,8 +1788,7 @@ public class TextRenderer {
         private void draw() {
             if (useVertexArrays) {
                 drawVertexArrays();
-            }
-            else {
+            } else {
                 drawIMMEDIATE();
             }
         }
@@ -1826,11 +1809,10 @@ public class TextRenderer {
                     gl.glBindBuffer(GL2.GL_ARRAY_BUFFER,
                         mVBO_For_ResuableTileVertices);
                     gl.glBufferSubData(GL2.GL_ARRAY_BUFFER, 0,
-                        mOutstandingGlyphsVerticesPipeline * kSizeInBytes_OneVertices_VertexData,
+                        mOutstandingGlyphsVerticesPipeline * TextRenderer.kSizeInBytes_OneVertices_VertexData,
                         mVertCoords); // upload only the new stuff
                     gl.glVertexPointer(3, GL2.GL_FLOAT, 0, 0);
-                }
-                else {
+                } else {
                     gl.glVertexPointer(3, GL2.GL_FLOAT, 0, mVertCoords);
                 }
 
@@ -1840,11 +1822,10 @@ public class TextRenderer {
                     gl.glBindBuffer(GL2.GL_ARRAY_BUFFER,
                         mVBO_For_ResuableTileTexCoords);
                     gl.glBufferSubData(GL2.GL_ARRAY_BUFFER, 0,
-                        mOutstandingGlyphsVerticesPipeline * kSizeInBytes_OneVertices_TexData,
+                        mOutstandingGlyphsVerticesPipeline * TextRenderer.kSizeInBytes_OneVertices_TexData,
                         mTexCoords); // upload only the new stuff
                     gl.glTexCoordPointer(2, GL2.GL_FLOAT, 0, 0);
-                }
-                else {
+                } else {
                     gl.glTexCoordPointer(2, GL2.GL_FLOAT, 0, mTexCoords);
                 }
 
@@ -1888,7 +1869,7 @@ public class TextRenderer {
                             mVertCoords.get());
                     }
                 }
-                catch (Exception e) {
+                catch (RuntimeException e) {
                     e.printStackTrace();
                 }
                 finally {

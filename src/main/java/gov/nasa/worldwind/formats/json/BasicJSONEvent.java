@@ -58,8 +58,7 @@ public class BasicJSONEvent implements JSONEvent {
                 Logging.logger().warning(Logging.getMessage("generic.UnexpectedEvent", this.token));
                 this.scalarValue = null;
             }
-        }
-        else {
+        } else {
             this.scalarValue = null;
         }
     }

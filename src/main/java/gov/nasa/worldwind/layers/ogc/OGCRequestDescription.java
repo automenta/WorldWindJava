@@ -68,8 +68,7 @@ public class OGCRequestDescription extends AbstractXMLEventParser {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.addFormat(s);
-        }
-        else if (ctx.isStartElement(event, DCPTYPE)) {
+        } else if (ctx.isStartElement(event, DCPTYPE)) {
             XMLEventParser parser = this.allocate(ctx, event);
             if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
@@ -138,16 +137,16 @@ public class OGCRequestDescription extends AbstractXMLEventParser {
         StringBuilder sb = new StringBuilder();
 
         if (this.getRequestName() != null)
-            sb.append(this.getRequestName()).append("\n");
+            sb.append(this.getRequestName()).append('\n');
 
         sb.append("\tFormats: ");
         for (String format : this.getFormats()) {
-            sb.append("\t").append(format).append(", ");
+            sb.append('\t').append(format).append(", ");
         }
 
         sb.append("\n\tDCPTypes:\n");
         for (OGCDCType dcpt : this.getDCPTypes()) {
-            sb.append("\t\t").append(dcpt.toString()).append("\n");
+            sb.append("\t\t").append(dcpt.toString()).append('\n');
         }
 
         return sb.toString();

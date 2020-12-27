@@ -75,34 +75,29 @@ public class WMSLayerStyle extends AbstractXMLEventParser {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.setTitle(s);
-        }
-        else if (ctx.isStartElement(event, NAME)) {
+        } else if (ctx.isStartElement(event, NAME)) {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.setName(s);
-        }
-        else if (ctx.isStartElement(event, ABSTRACT)) {
+        } else if (ctx.isStartElement(event, ABSTRACT)) {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.setStyleAbstract(s);
-        }
-        else if (ctx.isStartElement(event, LEGEND_URL)) {
+        } else if (ctx.isStartElement(event, LEGEND_URL)) {
             XMLEventParser parser = this.allocate(ctx, event);
             if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
                 if (o instanceof WMSLogoURL)
                     this.addLegendURL((WMSLogoURL) o);
             }
-        }
-        else if (ctx.isStartElement(event, STYLE_SHEET_URL)) {
+        } else if (ctx.isStartElement(event, STYLE_SHEET_URL)) {
             XMLEventParser parser = this.allocate(ctx, event);
             if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
                 if (o instanceof WMSLayerInfoURL)
                     this.setStyleSheetURL((WMSLayerInfoURL) o);
             }
-        }
-        else if (ctx.isStartElement(event, STYLE_URL)) {
+        } else if (ctx.isStartElement(event, STYLE_URL)) {
             XMLEventParser parser = this.allocate(ctx, event);
             if (parser != null) {
                 Object o = parser.parse(ctx, event, args);

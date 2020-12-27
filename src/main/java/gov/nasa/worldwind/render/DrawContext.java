@@ -30,7 +30,7 @@ import java.util.*;
  */
 public interface DrawContext extends WWObject, Disposable {
     Color CLEAR_COLOR_COLOR = new Color(0, 0, 0, 0);
-    int CLEAR_COLOR = CLEAR_COLOR_COLOR.getRGB();
+    int CLEAR_COLOR = DrawContext.CLEAR_COLOR_COLOR.getRGB();
 
     /**
      * Retrieves this <code>DrawContext</code>s <code>com.jogamp.opengl.GLContext</code>. If this method returns null,
@@ -383,12 +383,12 @@ public interface DrawContext extends WWObject, Disposable {
     void addOrderedRenderable(OrderedRenderable orderedRenderable);
 
     /**
-     * Adds an {@link OrderedRenderable} to the draw context's ordered renderable list,
-     * optionally indicating that the draw context should treat the specified ordered renderable as behind other ordered
-     * renderables. If <code>isBehind</code> is <code>true</code>, the draw context treats the specified ordered
-     * renderable as though it is behind all other ordered renderables and ignores the ordered renderable's eye
-     * distance. If multiple ordered renderables are added with <code>isBehind</code> specified as <code>true</code>,
-     * those ordered renderables are drawn according to the order in which they are added.
+     * Adds an {@link OrderedRenderable} to the draw context's ordered renderable list, optionally indicating that the
+     * draw context should treat the specified ordered renderable as behind other ordered renderables. If
+     * <code>isBehind</code> is <code>true</code>, the draw context treats the specified ordered renderable as though it
+     * is behind all other ordered renderables and ignores the ordered renderable's eye distance. If multiple ordered
+     * renderables are added with <code>isBehind</code> specified as <code>true</code>, those ordered renderables are
+     * drawn according to the order in which they are added.
      *
      * @param orderedRenderable the ordered renderable to add.
      * @param isBehind          <code>true</code> to specify that the ordered renderable is behind all other ordered
@@ -398,9 +398,9 @@ public interface DrawContext extends WWObject, Disposable {
     void addOrderedRenderable(OrderedRenderable orderedRenderable, boolean isBehind);
 
     /**
-     * Adds an {@link OrderedRenderable} to the draw context's ordered surface renderable
-     * queue. This queue is populated during layer rendering with objects to render on the terrain surface, and is
-     * processed immediately after layer rendering.
+     * Adds an {@link OrderedRenderable} to the draw context's ordered surface renderable queue. This queue is populated
+     * during layer rendering with objects to render on the terrain surface, and is processed immediately after layer
+     * rendering.
      *
      * @param orderedRenderable the ordered renderable to add.
      */
@@ -463,8 +463,7 @@ public interface DrawContext extends WWObject, Disposable {
      * Specifies the current pick point in AWT screen coordinates, or <code>null</code> to indicate that there is no
      * pick point. During each pick traversal, layers determine if their contents are drawn at the pick point. If so,
      * layers add each unique picked object to a PickedObjectList on this draw context by calling {@link
-     * #addPickedObject(PickedObject)}. This list can be accessed by calling {@link
-     * #getPickedObjects()}.
+     * #addPickedObject(PickedObject)}. This list can be accessed by calling {@link #getPickedObjects()}.
      * <p>
      * If the pick point is <code>null</code>, the pick point is ignored during each pick traversal, and the list of
      * objects returned by getPickedObjects is empty.
@@ -691,7 +690,6 @@ public interface DrawContext extends WWObject, Disposable {
      */
     Map<ScreenCredit, Long> getScreenCredits();
 
-
     /**
      * Gets the FrustumList containing all the current Pick Frustums
      *
@@ -729,10 +727,10 @@ public interface DrawContext extends WWObject, Disposable {
     void addPickRectangleFrustum();
 
     /**
-     * Gets the rendering exceptions associated with this DrawContext as a {@link Collection} of {@link
-     * Throwable} objects. If non-null, the returned Collection is used as the data structure that accumulates rendering
-     * exceptions passed to this DrawContext in {@link #addRenderingException(Throwable)}. A null collection indicates
-     * this DrawContext does not accumulate rendering exceptions.
+     * Gets the rendering exceptions associated with this DrawContext as a {@link Collection} of {@link Throwable}
+     * objects. If non-null, the returned Collection is used as the data structure that accumulates rendering exceptions
+     * passed to this DrawContext in {@link #addRenderingException(Throwable)}. A null collection indicates this
+     * DrawContext does not accumulate rendering exceptions.
      *
      * @return the Collection used to accumulate rendering exceptions, or null if this DrawContext does not accumulate
      * rendering exceptions.
@@ -740,8 +738,8 @@ public interface DrawContext extends WWObject, Disposable {
     Collection<Throwable> getRenderingExceptions();
 
     /**
-     * Sets the rendering exceptions associated with this DrawContext to the specified {@link Collection} of
-     * {@link Throwable} objects. If non-null, the specified Collection is used as the data structure that accumulates
+     * Sets the rendering exceptions associated with this DrawContext to the specified {@link Collection} of {@link
+     * Throwable} objects. If non-null, the specified Collection is used as the data structure that accumulates
      * rendering exceptions passed to this DrawContext in {@link #addRenderingException(Throwable)}. A null collection
      * indicates this DrawContext should not accumulate rendering exceptions.
      *
@@ -796,21 +794,19 @@ public interface DrawContext extends WWObject, Disposable {
     boolean isOrderedRenderingMode();
 
     /**
-     * Called by the {@link SceneController} to indicate whether it is currently drawing the draw
-     * context's {@link OrderedRenderable}s. See {@link #isOrderedRenderingMode()} for more
-     * information.
+     * Called by the {@link SceneController} to indicate whether it is currently drawing the draw context's {@link
+     * OrderedRenderable}s. See {@link #isOrderedRenderingMode()} for more information.
      *
      * @param tf true if ordered renderables are being drawn, false if ordered renderables are only being accumulated.
      */
     void setOrderedRenderingMode(boolean tf);
 
     /**
-     * Performs a multi-pass rendering technique to ensure that s around filled shapes are drawn correctly when
-     * blending or ant-aliasing is performed, and that filled portions of the shape resolve depth-buffer fighting with
-     * shapes previously drawn in favor of the current shape.
+     * Performs a multi-pass rendering technique to ensure that s around filled shapes are drawn correctly when blending
+     * or ant-aliasing is performed, and that filled portions of the shape resolve depth-buffer fighting with shapes
+     * previously drawn in favor of the current shape.
      *
-     * @param renderer an object implementing the {@link OutlinedShape} interface for the
-     *                 shape.
+     * @param renderer an object implementing the {@link OutlinedShape} interface for the shape.
      * @param shape    the shape to render.
      * @see OutlinedShape
      */
@@ -874,16 +870,16 @@ public interface DrawContext extends WWObject, Disposable {
     void drawNormals(float length, FloatBuffer vBuf, FloatBuffer nBuf);
 
     /**
-     * Returns the next {@link OrderedRenderable} on the ordered-renderable priority queue but
-     * does not remove it from the queue.
+     * Returns the next {@link OrderedRenderable} on the ordered-renderable priority queue but does not remove it from
+     * the queue.
      *
      * @return the next ordered renderable, or null if there are no more ordered renderables on the queue.
      */
     OrderedRenderable peekOrderedRenderables();
 
     /**
-     * Returns the next {@link OrderedRenderable} on the ordered-renderable priority queue and
-     * removes it from the queue.
+     * Returns the next {@link OrderedRenderable} on the ordered-renderable priority queue and removes it from the
+     * queue.
      *
      * @return the next ordered renderable, or null if there are no more ordered renderables on the queue.
      */

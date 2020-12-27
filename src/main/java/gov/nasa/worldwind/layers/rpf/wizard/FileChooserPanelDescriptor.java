@@ -21,7 +21,7 @@ public class FileChooserPanelDescriptor extends DefaultPanelDescriptor {
     public FileChooserPanelDescriptor() {
         this.panelComponent = new FileChooserPanel();
         this.panelComponent.addPropertyChangeListener(new PropertyEvents());
-        setPanelIdentifier(IDENTIFIER);
+        setPanelIdentifier(FileChooserPanelDescriptor.IDENTIFIER);
         setPanelComponent(this.panelComponent);
     }
 

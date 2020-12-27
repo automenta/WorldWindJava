@@ -35,6 +35,31 @@ public class SurfaceImageLayer extends RenderableLayer {
 
     protected final DataRasterReaderFactory factory = new BasicDataRasterReaderFactory();
 
+    protected static BufferedImage getBufferedImage(DataRaster raster) {
+        if (null == raster)
+            return null;
+
+        if (raster instanceof GDALDataRaster) {
+            AVList params = new AVListImpl();
+
+            params.set(AVKey.WIDTH, raster.getWidth());
+            params.set(AVKey.HEIGHT, raster.getHeight());
+            params.set(AVKey.SECTOR, raster.getSector());
+
+            raster = raster.getSubRaster(params);
+        }
+
+        if (raster instanceof BufferedImageRaster) {
+            return ((BufferedImageRaster) raster).getBufferedImage();
+        }
+
+        if (raster instanceof BufferWrapperRaster) {
+            return ImageUtil.visualize((BufferWrapperRaster) raster);
+        }
+
+        return null;
+    }
+
     @Override
     public void dispose() {
         super.dispose();
@@ -64,37 +89,11 @@ public class SurfaceImageLayer extends RenderableLayer {
 
         if (null != raster && image != null) {
             addImage(imagePath, image, raster.getSector());
-        }
-        else {
+        } else {
             String message = Logging.getMessage("generic.ImageReadFailed", imagePath);
             Logging.logger().severe(message);
             throw new WWRuntimeException(message);
         }
-    }
-
-    protected static BufferedImage getBufferedImage(DataRaster raster) {
-        if (null == raster)
-            return null;
-
-        if (raster instanceof GDALDataRaster) {
-            AVList params = new AVListImpl();
-
-            params.set(AVKey.WIDTH, raster.getWidth());
-            params.set(AVKey.HEIGHT, raster.getHeight());
-            params.set(AVKey.SECTOR, raster.getSector());
-
-            raster = raster.getSubRaster(params);
-        }
-
-        if (raster instanceof BufferedImageRaster) {
-            return ((BufferedImageRaster) raster).getBufferedImage();
-        }
-
-        if (raster instanceof BufferWrapperRaster) {
-            return ImageUtil.visualize((BufferWrapperRaster) raster);
-        }
-
-        return null;
     }
 
     protected DataRaster openDataRaster(Object src, AVList params)
@@ -183,8 +182,7 @@ public class SurfaceImageLayer extends RenderableLayer {
             Sector rasterSector = raster.getSector();
             rasterSector = (null == rasterSector) ? sector : rasterSector;
             addImage(imagePath, image, rasterSector);
-        }
-        else {
+        } else {
             String message = Logging.getMessage("generic.ImageReadFailed", imagePath);
             Logging.logger().severe(message);
             throw new WWRuntimeException(message);
@@ -271,8 +269,7 @@ public class SurfaceImageLayer extends RenderableLayer {
 
         if (null != raster && image != null) {
             this.addImage(imagePath, image, corners);
-        }
-        else {
+        } else {
             String message = Logging.getMessage("generic.ImageReadFailed", imagePath);
             Logging.logger().severe(message);
             throw new WWRuntimeException(message);

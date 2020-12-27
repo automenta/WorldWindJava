@@ -15,9 +15,8 @@ import java.awt.*;
 import java.util.*;
 
 /**
- * The <code>IconLayer</code> class manages a collection of {@link WWIcon} objects for
- * rendering and picking. <code>IconLayer</code> delegates to its internal {@link IconRenderer}
- * for rendering and picking operations.
+ * The <code>IconLayer</code> class manages a collection of {@link WWIcon} objects for rendering and picking.
+ * <code>IconLayer</code> delegates to its internal {@link IconRenderer} for rendering and picking operations.
  *
  * @author tag
  * @version $Id: IconLayer.java 2140 2014-07-10 18:56:05Z tgaskins $

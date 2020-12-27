@@ -9,6 +9,8 @@ import gov.nasa.worldwind.util.Logging;
 
 import java.util.regex.*;
 
+import static java.lang.Math.*;
+
 /**
  * Represents a geometric angle. Instances of <code>Angle</code> are immutable. An angle can be obtained through the
  * factory methods {@link #fromDegrees} and {@link #fromRadians}.
@@ -21,9 +23,9 @@ public class Angle implements Comparable<Angle> {
     public final static String ANGLE_FORMAT_DD = "gov.nasa.worldwind.Geom.AngleDD";
     public final static String ANGLE_FORMAT_DM = "gov.nasa.worldwind.Geom.AngleDM";
     public final static String ANGLE_FORMAT_DMS = "gov.nasa.worldwind.Geom.AngleDMS";
+
     static final Pattern dmsPattern = Pattern.compile("([-|+]?\\d{1,3}[d|D\u00B0\\s](\\s*\\d{1,2}['|\u2019\\s])?"
         + "(\\s*\\d{1,2}[\"|\u201d\\s])?\\s*([N|nSsEeWw])?\\s?)");
-    private final static double DEGREES_TO_RADIANS = Math.PI / 180.0d;
     /**
      * Represents an angle of zero degrees
      */
@@ -32,25 +34,18 @@ public class Angle implements Comparable<Angle> {
      * Represents a right angle of positive 90 degrees
      */
     public static final Angle POS90 = Angle.fromDegrees(90);
-    public static final double POS90degrees = POS90.getDegrees();
-
-
     /**
      * Represents a right angle of negative 90 degrees
      */
     public final static Angle NEG90 = Angle.fromDegrees(-90);
-    public static final double NEG90degrees = NEG90.getDegrees();
     /**
      * Represents an angle of positive 180 degrees
      */
     public final static Angle POS180 = Angle.fromDegrees(180);
-    public static final double POS180degrees = POS180.getDegrees();
-
     /**
      * Represents an angle of negative 180 degrees
      */
     public final static Angle NEG180 = Angle.fromDegrees(-180);
-    public static final double NEG180degrees = NEG180.getDegrees();
     /**
      * Represents an angle of positive 360 degrees
      */
@@ -70,17 +65,15 @@ public class Angle implements Comparable<Angle> {
     private final static double RADIANS_TO_DEGREES = 180.0d / Math.PI;
     private static final double PIOver2 = Math.PI / 2;
 
+    public static final double POS90degrees = Angle.POS90.degrees;
+    public static final double NEG90degrees = Angle.NEG90.degrees;
+    public static final double POS180degrees = Angle.POS180.degrees;
+    public static final double NEG180degrees = Angle.NEG180.degrees;
+
     public final double degrees;
-    public final double radians;
 
-    public Angle(Angle angle) {
-        this.degrees = angle.degrees;
-        this.radians = angle.radians;
-    }
-
-    private Angle(double degrees, double radians) {
+    public Angle(double degrees) {
         this.degrees = degrees;
-        this.radians = radians;
     }
 
     /**
@@ -90,7 +83,7 @@ public class Angle implements Comparable<Angle> {
      * @return a new angle, whose size in degrees is given by <code>degrees</code>
      */
     public static Angle fromDegrees(double degrees) {
-        return new Angle(degrees, DEGREES_TO_RADIANS * degrees);
+        return new Angle(degrees);
     }
 
     /**
@@ -100,39 +93,40 @@ public class Angle implements Comparable<Angle> {
      * @return a new angle, whose size in radians is given by <code>radians</code>.
      */
     public static Angle fromRadians(double radians) {
-        return new Angle(RADIANS_TO_DEGREES * radians, radians);
+
+        return new Angle(toDegrees(radians));
     }
 
     public static Angle fromDegreesLatitude(double degrees) {
         degrees = degrees < -90 ? -90 : degrees > 90 ? 90 : degrees;
-        double radians = DEGREES_TO_RADIANS * degrees;
-        radians = radians < -PIOver2 ? -PIOver2 : Math.min(radians, PIOver2);
+        double radians = toRadians(degrees);
+        radians = radians < -Angle.PIOver2 ? -Angle.PIOver2 : Math.min(radians, Angle.PIOver2);
 
-        return new Angle(degrees, radians);
+        return new Angle(toDegrees(radians));
     }
 
     public static Angle fromRadiansLatitude(double radians) {
-        radians = radians < -PIOver2 ? -PIOver2 : Math.min(radians, PIOver2);
-        double degrees = RADIANS_TO_DEGREES * radians;
+        radians = radians < -Angle.PIOver2 ? -Angle.PIOver2 : Math.min(radians, Angle.PIOver2);
+        double degrees = Angle.RADIANS_TO_DEGREES * radians;
         degrees = degrees < -90 ? -90 : degrees > 90 ? 90 : degrees;
 
-        return new Angle(degrees, radians);
+        return new Angle(degrees);
     }
 
     public static Angle fromDegreesLongitude(double degrees) {
         degrees = degrees < -180 ? -180 : degrees > 180 ? 180 : degrees;
-        double radians = DEGREES_TO_RADIANS * degrees;
+        double radians = toRadians(degrees);
         radians = radians < -Math.PI ? -Math.PI : Math.min(radians, Math.PI);
 
-        return new Angle(degrees, radians);
+        return new Angle(toDegrees(radians));
     }
 
     public static Angle fromRadiansLongitude(double radians) {
         radians = radians < -Math.PI ? -Math.PI : Math.min(radians, Math.PI);
-        double degrees = RADIANS_TO_DEGREES * radians;
+        double degrees = toDegrees(radians);
         degrees = degrees < -180 ? -180 : degrees > 180 ? 180 : degrees;
 
-        return new Angle(degrees, radians);
+        return new Angle(degrees);
     }
 
     /**
@@ -144,7 +138,7 @@ public class Angle implements Comparable<Angle> {
      */
     public static Angle fromXY(double x, double y) {
         double radians = Math.atan2(y, x);
-        return new Angle(RADIANS_TO_DEGREES * radians, radians);
+        return new Angle(Angle.RADIANS_TO_DEGREES * radians);
     }
 
     /**
@@ -222,7 +216,7 @@ public class Angle implements Comparable<Angle> {
 //            throw new IllegalArgumentException(message);
 //        }
         // Check for string format validity
-        Matcher matcher = dmsPattern.matcher(dmsString + " ");
+        Matcher matcher = Angle.dmsPattern.matcher(dmsString + ' ');
         if (!matcher.matches()) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", dmsString);
             Logging.logger().severe(message);
@@ -248,8 +242,7 @@ public class Angle implements Comparable<Angle> {
                 dmsString = dmsString.substring(1);
                 dmsString = dmsString.trim();
             }
-        }
-        else if (!Character.isDigit(prefix)) {
+        } else if (!Character.isDigit(prefix)) {
             sign *= (prefix == '-') ? -1 : 1;
             dmsString = dmsString.substring(1);
         }
@@ -260,7 +253,7 @@ public class Angle implements Comparable<Angle> {
         int m = DMS.length > 1 ? Integer.parseInt(DMS[1]) : 0;
         int s = DMS.length > 2 ? Integer.parseInt(DMS[2]) : 0;
 
-        return fromDMS(d, m, s).multiply(sign);
+        return Angle.fromDMS(d, m, s).multiply(sign);
     }
 
     public static Angle asin(double sine) {
@@ -386,17 +379,17 @@ public class Angle implements Comparable<Angle> {
 
     public static Angle normalizedAngle(Angle unnormalizedAngle) {
 
-        return Angle.fromDegrees(normalizedDegrees(unnormalizedAngle.degrees));
+        return Angle.fromDegrees(Angle.normalizedDegrees(unnormalizedAngle.degrees));
     }
 
     public static Angle latNorm(Angle unnormalizedAngle) {
 
-        return Angle.fromDegrees(normalizedDegreesLatitude(unnormalizedAngle.degrees));
+        return Angle.fromDegrees(Angle.normalizedDegreesLatitude(unnormalizedAngle.degrees));
     }
 
     public static Angle lonNorm(Angle unnormalizedAngle) {
 
-        return Angle.fromDegrees(normalizedDegreesLongitude(unnormalizedAngle.degrees));
+        return Angle.fromDegrees(Angle.normalizedDegreesLongitude(unnormalizedAngle.degrees));
     }
 
     public static boolean crossesLongitudeBoundary(Angle angleA, Angle angleB) {
@@ -438,24 +431,14 @@ public class Angle implements Comparable<Angle> {
     }
 
     /**
-     * Retrieves the size of this angle in degrees. This method may be faster than first obtaining the radians and then
-     * converting to degrees.
-     *
-     * @return the size of this angle in degrees.
-     */
-    public final double getDegrees() {
-        return this.degrees;
-    }
-
-    /**
      * Retrieves the size of this angle in radians. This may be useful for <code>java.lang.Math</code> functions, which
      * generally take radians as trigonometric arguments. This method may be faster that first obtaining the degrees and
      * then converting to radians.
      *
      * @return the size of this angle in radians.
      */
-    public final double getRadians() {
-        return this.radians;
+    public final double radians() {
+        return toRadians(degrees);
     }
 
     /**
@@ -505,7 +488,7 @@ public class Angle implements Comparable<Angle> {
      * @throws IllegalArgumentException if angle is null.
      */
     public final double divide(Angle angle) {
-        if (angle.getDegrees() == 0.0) {
+        if (angle.degrees == 0.0) {
             String message = Logging.getMessage("generic.DivideByZero");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -534,11 +517,11 @@ public class Angle implements Comparable<Angle> {
     }
 
     public final Angle addRadians(double radians) {
-        return Angle.fromRadians(this.radians + radians);
+        return Angle.fromRadians(this.radians() + radians);
     }
 
     public final Angle subtractRadians(double radians) {
-        return Angle.fromRadians(this.radians - radians);
+        return Angle.fromRadians(this.radians() - radians);
     }
 
     /**
@@ -564,11 +547,11 @@ public class Angle implements Comparable<Angle> {
      * @return the trigonometric sine of this angle.
      */
     public final double sin() {
-        return Math.sin(this.radians);
+        return Math.sin(this.radians());
     }
 
     public final double sinHalfAngle() {
-        return Math.sin(0.5 * this.radians);
+        return Math.sin(0.5 * this.radians());
     }
 
     /**
@@ -577,11 +560,11 @@ public class Angle implements Comparable<Angle> {
      * @return the trigonometric cosine of this angle.
      */
     public final double cos() {
-        return Math.cos(this.radians);
+        return Math.cos(this.radians());
     }
 
     public final double cosHalfAngle() {
-        return Math.cos(0.5 * this.radians);
+        return Math.cos(0.5 * this.radians());
     }
 
     /**
@@ -590,7 +573,7 @@ public class Angle implements Comparable<Angle> {
      * @return the trigonometric tangent of half of this angle.
      */
     public final double tanHalfAngle() {
-        return Math.tan(0.5 * this.radians);
+        return Math.tan(0.5 * this.radians());
     }
 
     /**
@@ -607,15 +590,15 @@ public class Angle implements Comparable<Angle> {
     }
 
     public Angle normalize() {
-        return normalizedAngle(this);
+        return Angle.normalizedAngle(this);
     }
 
     public Angle latNorm() {
-        return latNorm(this);
+        return Angle.latNorm(this);
     }
 
     public Angle lonNorm() {
-        return lonNorm(this);
+        return Angle.lonNorm(this);
     }
 
     /**

@@ -37,12 +37,10 @@ public class NativeLibraryLoader {
         if (Configuration.isWindowsOS()) {
             if (!libName.toLowerCase().endsWith(".dll"))
                 return libName + ".dll";
-        }
-        else if (Configuration.isMacOS()) {
+        } else if (Configuration.isMacOS()) {
             if (!libName.toLowerCase().endsWith(".jnilib") && !libName.toLowerCase().startsWith("lib"))
                 return "lib" + libName + ".jnilib";
-        }
-        else if (Configuration.isUnixOS())  // covers Solaris and Linux
+        } else if (Configuration.isUnixOS())  // covers Solaris and Linux
         {
             if (!libName.toLowerCase().endsWith(".so") && !libName.toLowerCase().startsWith("lib"))
                 return "lib" + libName + ".so";

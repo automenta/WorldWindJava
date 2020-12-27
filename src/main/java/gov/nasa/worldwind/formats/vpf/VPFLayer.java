@@ -58,6 +58,10 @@ public class VPFLayer extends AbstractLayer {
         this.textRenderer.setEffect(AVKey.TEXT_EFFECT_OUTLINE);
     }
 
+    protected static void sortSymbols(List<VPFSymbol> list) {
+        list.sort(new VPFSymbolComparator());
+    }
+
     protected VPFSymbolCollection loadTileSymbols(VPFCoverage coverage, VPFTile tile) {
         VPFPrimitiveDataFactory primitiveDataFactory = new VPFBasicPrimitiveDataFactory(tile);
         VPFPrimitiveData primitiveData = primitiveDataFactory.createPrimitiveData(coverage);
@@ -89,25 +93,24 @@ public class VPFLayer extends AbstractLayer {
         return this.db;
     }
 
+    // --- VPF Layer ----------------------------------------------------------------------
+
     public void setVPFDatabase(VPFDatabase db) {
         this.db = db;
         this.initialize();
 
         this.db.addPropertyChangeListener(event -> {
-            if (event.getPropertyName().equals(LIBRARY_CHANGED)) {
+            if (event.getPropertyName().equals(VPFLayer.LIBRARY_CHANGED)) {
                 VPFLibrary library = (VPFLibrary) event.getSource();
                 boolean enabled = (Boolean) event.getNewValue();
                 setLibraryEnabled(library, enabled);
-            }
-            else if (event.getPropertyName().equals(COVERAGE_CHANGED)) {
+            } else if (event.getPropertyName().equals(VPFLayer.COVERAGE_CHANGED)) {
                 VPFCoverage coverage = (VPFCoverage) event.getSource();
                 boolean enabled = (Boolean) event.getNewValue();
                 setCoverageEnabled(coverage, enabled);
             }
         });
     }
-
-    // --- VPF Layer ----------------------------------------------------------------------
 
     protected void initialize() {
         this.libraries = new ArrayList<>();
@@ -194,10 +197,6 @@ public class VPFLayer extends AbstractLayer {
         this.requestQ.clear();
     }
 
-    protected static void sortSymbols(List<VPFSymbol> list) {
-        list.sort(new VPFSymbolComparator());
-    }
-
     protected void handleDisposal() {
         Disposable disposable;
         while ((disposable = this.disposalQ.poll()) != null) {
@@ -219,7 +218,7 @@ public class VPFLayer extends AbstractLayer {
         protected final VPFLibrary library;
         protected final Collection<VPFCoverageRenderable> coverages = new ArrayList<>();
         protected final List<VPFTile> currentTiles = new ArrayList<>();
-        protected boolean enabled = false;
+        protected boolean enabled;
         protected VPFCoverageRenderable referenceCoverage;
 
         public VPFLibraryRenderable(VPFLayer layer, VPFLibrary library) {
@@ -315,7 +314,7 @@ public class VPFLayer extends AbstractLayer {
         protected final VPFLayer layer;
         protected final VPFCoverage coverage;
         protected final Map<VPFTile, VPFSymbolCollection> tileCache;
-        protected boolean enabled = false;
+        protected boolean enabled;
 
         public VPFCoverageRenderable(VPFLayer layer, VPFCoverage coverage) {
             this.layer = layer;
@@ -336,7 +335,7 @@ public class VPFLayer extends AbstractLayer {
                 return;
 
             if (tiles == null) {
-                this.doAssembleSymbols(NULL_TILE);
+                this.doAssembleSymbols(VPFLayer.NULL_TILE);
                 return;
             }
 
@@ -349,8 +348,7 @@ public class VPFLayer extends AbstractLayer {
             VPFSymbolCollection symbolCollection = this.tileCache.get(tile);
             if (symbolCollection != null) {
                 this.layer.symbols.addAll(symbolCollection.getSymbols());
-            }
-            else {
+            } else {
                 this.layer.requestQ.add(new RequestTask(this, tile));
             }
         }
@@ -399,7 +397,7 @@ public class VPFLayer extends AbstractLayer {
 
         public void run() {
             VPFSymbolCollection symbols = this.coverageRenderable.layer.loadTileSymbols(
-                this.coverageRenderable.coverage, (this.tile != NULL_TILE) ? this.tile : null);
+                this.coverageRenderable.coverage, (this.tile == VPFLayer.NULL_TILE) ? null : this.tile);
 
             this.coverageRenderable.tileCache.put(this.tile, symbols);
             this.coverageRenderable.layer.firePropertyChange(AVKey.LAYER, null, this.coverageRenderable.layer);

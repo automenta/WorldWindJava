@@ -21,14 +21,14 @@ import java.util.logging.Level;
 
 public class GDALDataRasterReader extends AbstractDataRasterReader {
     // Extract list of mime types supported by GDAL
-    protected static final String[] mimeTypes = new String[] {
+    protected static final String[] mimeTypes = {
         "image/jp2", "image/jpeg2000", "image/jpeg2000-image", "image/x-jpeg2000-image",
         "image/x-mrsid-image",
         "image/jpeg", "image/png", "image/bmp", "image/tif"
     };
 
     // TODO Extract list of extensions supported by GDAL
-    protected static final String[] suffixes = new String[] {
+    protected static final String[] suffixes = {
         "jp2", "sid", "ntf", "nitf",
         "JP2", "SID", "NTF", "NITF",
 
@@ -45,7 +45,28 @@ public class GDALDataRasterReader extends AbstractDataRasterReader {
     };
 
     public GDALDataRasterReader() {
-        super("GDAL-based Data Raster Reader", mimeTypes, suffixes);
+        super("GDAL-based Data Raster Reader", GDALDataRasterReader.mimeTypes, GDALDataRasterReader.suffixes);
+    }
+
+    protected static GDALDataRaster readDataRaster(Object source, boolean quickReadingMode) {
+        if (null == source) {
+            String message = Logging.getMessage("nullValue.SourceIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        try {
+
+            return new GDALDataRaster(source, quickReadingMode);
+        }
+        catch (WWRuntimeException wwre) {
+            throw wwre;
+        }
+        catch (Throwable t) {
+            String message = Logging.getMessage("generic.CannotOpenFile", GDALUtils.getErrorMessage());
+            Logging.logger().log(Level.SEVERE, message, t);
+            throw new WWRuntimeException(t);
+        }
     }
 
     @Override
@@ -109,27 +130,6 @@ public class GDALDataRasterReader extends AbstractDataRasterReader {
             params.setValues(raster.getMetadata());
             WWUtil.copyValues(params, raster, new String[] {AVKey.SECTOR}, false);
             raster.dispose();
-        }
-    }
-
-    protected static GDALDataRaster readDataRaster(Object source, boolean quickReadingMode) {
-        if (null == source) {
-            String message = Logging.getMessage("nullValue.SourceIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        try {
-
-            return new GDALDataRaster(source, quickReadingMode);
-        }
-        catch (WWRuntimeException wwre) {
-            throw wwre;
-        }
-        catch (Throwable t) {
-            String message = Logging.getMessage("generic.CannotOpenFile", GDALUtils.getErrorMessage());
-            Logging.logger().log(Level.SEVERE, message, t);
-            throw new WWRuntimeException(t);
         }
     }
 }

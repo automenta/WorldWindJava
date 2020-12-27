@@ -37,6 +37,12 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory {
         this.populateClassMap();
     }
 
+    protected static void setModifiers(TacticalGraphic graphic, AVList props) {
+        for (Map.Entry<String, Object> entry : props.getEntries()) {
+            graphic.setModifier(entry.getKey(), entry.getValue());
+        }
+    }
+
     /**
      * Populate the map that maps function IDs to implementation classes.
      */
@@ -184,8 +190,7 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory {
         TacticalGraphic graphic = this.createGraphic(sidc, Collections.singletonList(position), params);
         if (graphic instanceof TacticalPoint) {
             return (TacticalPoint) graphic;
-        }
-        else if (graphic != null) {
+        } else if (graphic != null) {
             String className = graphic.getClass().getName();
             String msg = Logging.getMessage("Symbology.CannotCast", className, TacticalPoint.class.getName());
             Logging.logger().severe(msg);
@@ -204,8 +209,7 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory {
             TacticalCircle circle = (TacticalCircle) graphic;
             circle.setRadius(radius);
             return circle;
-        }
-        else if (graphic != null) {
+        } else if (graphic != null) {
             String className = graphic.getClass().getName();
             String msg = Logging.getMessage("Symbology.CannotCast", className, TacticalCircle.class.getName());
             Logging.logger().severe(msg);
@@ -222,8 +226,7 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory {
         TacticalGraphic graphic = this.createGraphic(sidc, positions, modifiers);
         if (graphic instanceof TacticalQuad) {
             return (TacticalQuad) graphic;
-        }
-        else if (graphic != null) {
+        } else if (graphic != null) {
             String className = graphic.getClass().getName();
             String msg = Logging.getMessage("Symbology.CannotCast", className, TacticalQuad.class.getName());
             Logging.logger().severe(msg);
@@ -243,8 +246,7 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory {
             TacticalRoute route = (TacticalRoute) graphic;
             route.setControlPoints(controlPoints);
             return route;
-        }
-        else if (graphic != null) {
+        } else if (graphic != null) {
             String className = graphic.getClass().getName();
             String msg = Logging.getMessage("Symbology.CannotCast", className, TacticalRoute.class.getName());
             Logging.logger().severe(msg);
@@ -260,13 +262,7 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory {
     public boolean isSupported(String sidc) {
         SymbolCode symbolCode = new SymbolCode(sidc);
         String key = symbolCode.toMaskedString();
-        return key!=null && this.classMap.containsKey(key);
-    }
-
-    protected static void setModifiers(TacticalGraphic graphic, AVList props) {
-        for (Map.Entry<String, Object> entry : props.getEntries()) {
-            graphic.setModifier(entry.getKey(), entry.getValue());
-        }
+        return key != null && this.classMap.containsKey(key);
     }
 
     /**

@@ -21,19 +21,18 @@ import java.util.Iterator;
 import java.util.logging.Level;
 
 /**
- * IconRenderer processes collections of {@link WWIcon} instances for picking and rendering.
- * IconRenderer applies batch processing techniques to improve the runtime performance of picking and rendering large
- * collections of icons.
+ * IconRenderer processes collections of {@link WWIcon} instances for picking and rendering. IconRenderer applies batch
+ * processing techniques to improve the runtime performance of picking and rendering large collections of icons.
  * <p>
  * During the draw pass, IconRenderer records feedback information for each WWIcon which has the property key {@link
- * AVKey#FEEDBACK_ENABLED} set to <code>true</code>. IconRenderer does not record any feedback
- * information during the pick pass. When feedback is enabled, IconRenderer puts properties which describe how each
- * WWIcon has been processed in key-value pairs attached to the WWIcon. Any of these properties may be null, indicating
- * that processing of the WWIcon was terminated before this information became available. The feedback properties for
- * WWIcon are as follows: <table> <caption>WWIcon Feedback Properties</caption><tr><th>Key</th><th>Description</th></tr>
+ * AVKey#FEEDBACK_ENABLED} set to <code>true</code>. IconRenderer does not record any feedback information during the
+ * pick pass. When feedback is enabled, IconRenderer puts properties which describe how each WWIcon has been processed
+ * in key-value pairs attached to the WWIcon. Any of these properties may be null, indicating that processing of the
+ * WWIcon was terminated before this information became available. The feedback properties for WWIcon are as follows:
+ * <table> <caption>WWIcon Feedback Properties</caption><tr><th>Key</th><th>Description</th></tr>
  * <tr><td>{@link AVKey#FEEDBACK_REFERENCE_POINT}</td><td>The icon's reference point in model
- * coordinates.</td></tr> <tr><td>{@link AVKey#FEEDBACK_SCREEN_BOUNDS}</td><td>The icon's
- * bounding rectangle in screen coordinates.</td></tr> </table>
+ * coordinates.</td></tr> <tr><td>{@link AVKey#FEEDBACK_SCREEN_BOUNDS}</td><td>The icon's bounding rectangle in screen
+ * coordinates.</td></tr> </table>
  *
  * @author tag
  * @version $Id: IconRenderer.java 2260 2014-08-23 00:14:06Z tgaskins $
@@ -42,10 +41,10 @@ public class IconRenderer {
     protected final OGLStackHandler oglStackHandler = new OGLStackHandler();
     protected final PickSupport pickSupport = new PickSupport();
     protected Pedestal pedestal;
-    protected boolean horizonClippingEnabled = false;
+    protected boolean horizonClippingEnabled;
     protected boolean viewClippingEnabled = true;
     protected boolean pickFrustumClippingEnabled = true;
-    protected boolean alwaysUseAbsoluteElevation = false;
+    protected boolean alwaysUseAbsoluteElevation;
     protected boolean allowBatchPicking = true;
 
     public IconRenderer() {
@@ -60,6 +59,98 @@ public class IconRenderer {
             return false;
 
         return true;
+    }
+
+    protected static void addToolTip(DrawContext dc, WWIcon icon, Vec4 iconPoint) {
+        if (icon.getToolTipFont() == null && icon.getToolTipText() == null)
+            return;
+
+        Vec4 screenPoint = dc.getView().project(iconPoint);
+        if (screenPoint == null)
+            return;
+
+        if (icon.getToolTipOffset() != null)
+            screenPoint = screenPoint.add3(icon.getToolTipOffset());
+
+        OrderedRenderable tip = new OrderedText(icon.getToolTipText(), icon.getToolTipFont(), screenPoint,
+            icon.getToolTipTextColor(), 0.0d);
+        dc.addOrderedRenderable(tip);
+    }
+
+    protected static void applyBackground(DrawContext dc, WWIcon icon, Vec4 screenPoint, double width, double height,
+        double pedestalSpacing, double pedestalScale) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
+
+        double backgroundScale;
+        backgroundScale = icon.getBackgroundScale();
+
+        if (icon.getBackgroundTexture() != null) {
+            if (icon.getBackgroundTexture().bind(dc)) {
+                TextureCoords texCoords = icon.getBackgroundTexture().getTexCoords();
+                gl.glPushMatrix();
+                gl.glLoadIdentity();
+                double bgwidth = backgroundScale * width;
+                double bgheight = backgroundScale * height;
+                // Offset the background for the highlighted scale.
+                //if (icon.isHighlighted())
+                //{
+                //    gl.glTranslated(0d, height * (icon.getHighlightScale() - 1) / 2, 0d);
+                //}
+                // Offset the background for the pedestal height.
+                gl.glTranslated(0.0d, (pedestalScale * height) + pedestalSpacing, 0.0d);
+                // Place the background centered behind the icon.
+                gl.glTranslated(screenPoint.x - bgwidth / 2, screenPoint.y - (bgheight - height) / 2, 0.0d);
+                // Scale to the background image dimension.
+                gl.glScaled(bgwidth, bgheight, 1.0d);
+                dc.drawUnitQuad(texCoords);
+                gl.glPopMatrix();
+            }
+        }
+    }
+
+    /**
+     * Returns true if the IconRenderer should record feedback about how the specified WWIcon has been processed.
+     *
+     * @param dc   the current DrawContext.
+     * @param icon the WWIcon to record feedback information for.
+     * @return true to record feedback; false otherwise.
+     */
+    protected static boolean isFeedbackEnabled(DrawContext dc, WWIcon icon) {
+        if (dc.isPickingMode())
+            return false;
+
+        Boolean b = (Boolean) icon.get(AVKey.FEEDBACK_ENABLED);
+        return (b != null && b);
+    }
+
+    /**
+     * If feedback is enabled for the specified WWIcon, this method records feedback about how the specified WWIcon has
+     * been processed.
+     *
+     * @param dc         the current DrawContext.
+     * @param icon       the icon which the feedback information refers to.
+     * @param modelPoint the icon's reference point in model coordinates.
+     * @param screenRect the icon's bounding rectangle in screen coordinates.
+     */
+    protected static void recordFeedback(DrawContext dc, WWIcon icon, Vec4 modelPoint, Rectangle screenRect) {
+        if (!IconRenderer.isFeedbackEnabled(dc, icon))
+            return;
+
+        IconRenderer.doRecordFeedback(dc, icon, modelPoint, screenRect);
+    }
+
+    /**
+     * Records feedback about how the specified WWIcon has been processed.
+     *
+     * @param dc         the current DrawContext.
+     * @param icon       the icon which the feedback information refers to.
+     * @param modelPoint the icon's reference point in model coordinates.
+     * @param screenRect the icon's bounding rectangle in screen coordinates.
+     */
+    @SuppressWarnings("UnusedDeclaration")
+    protected static void doRecordFeedback(DrawContext dc, AVList icon, Vec4 modelPoint, Rectangle screenRect) {
+        icon.set(AVKey.FEEDBACK_REFERENCE_POINT, modelPoint);
+        icon.set(AVKey.FEEDBACK_SCREEN_BOUNDS, screenRect);
     }
 
     public Pedestal getPedestal() {
@@ -222,7 +313,7 @@ public class IconRenderer {
 
         while (iterator.hasNext()) {
             WWIcon icon = iterator.next();
-            if (!isIconValid(icon, true)) {
+            if (!IconRenderer.isIconValid(icon, true)) {
                 // Record feedback data for this WWIcon if feedback is enabled.
                 if (icon != null)
                     IconRenderer.recordFeedback(dc, icon, null, null);
@@ -243,8 +334,7 @@ public class IconRenderer {
             Vec4 iconPoint = null;
             if (dc.is2DGlobe()) {
                 iconPoint = dc.getGlobe().computePointFromLocation(pos);
-            }
-            else if (pos.getElevation() < dc.getGlobe().getMaxElevation() && !this.isAlwaysUseAbsoluteElevation()) {
+            } else if (pos.getElevation() < dc.getGlobe().getMaxElevation() && !this.isAlwaysUseAbsoluteElevation()) {
                 iconPoint = dc.getSurfaceGeometry().getSurfacePoint(icon.getPosition());
             }
 
@@ -281,22 +371,6 @@ public class IconRenderer {
             if (icon.isShowToolTip())
                 IconRenderer.addToolTip(dc, icon, iconPoint);
         }
-    }
-
-    protected static void addToolTip(DrawContext dc, WWIcon icon, Vec4 iconPoint) {
-        if (icon.getToolTipFont() == null && icon.getToolTipText() == null)
-            return;
-
-        Vec4 screenPoint = dc.getView().project(iconPoint);
-        if (screenPoint == null)
-            return;
-
-        if (icon.getToolTipOffset() != null)
-            screenPoint = screenPoint.add3(icon.getToolTipOffset());
-
-        OrderedRenderable tip = new OrderedText(icon.getToolTipText(), icon.getToolTipFont(), screenPoint,
-            icon.getToolTipTextColor(), 0.0d);
-        dc.addOrderedRenderable(tip);
     }
 
     protected void beginDrawIcons(DrawContext dc) {
@@ -338,8 +412,7 @@ public class IconRenderer {
             gl.glTexEnvf(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_COMBINE);
             gl.glTexEnvf(GL2.GL_TEXTURE_ENV, GL2.GL_SRC0_RGB, GL2.GL_PREVIOUS);
             gl.glTexEnvf(GL2.GL_TEXTURE_ENV, GL2.GL_COMBINE_RGB, GL2.GL_REPLACE);
-        }
-        else {
+        } else {
             gl.glEnable(GL.GL_TEXTURE_2D);
             gl.glEnable(GL.GL_BLEND);
             gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE_MINUS_SRC_ALPHA);
@@ -434,8 +507,7 @@ public class IconRenderer {
         if (this.pedestal != null) {
             pedestalScale = this.pedestal.getScale();
             pedestalSpacing = pedestal.getSpacingPixels();
-        }
-        else {
+        } else {
             pedestalScale = 0.0d;
             pedestalSpacing = 0.0d;
         }
@@ -469,8 +541,7 @@ public class IconRenderer {
                 IconRenderer.recordFeedback(dc, icon, uIcon.point, rect);
 
                 return screenPoint;
-            }
-            else {
+            } else {
                 Color color = dc.getUniquePickColor();
                 int colorCode = color.getRGB();
                 this.pickSupport.addPickableObject(colorCode, icon, uIcon.getPosition(), false);
@@ -504,37 +575,6 @@ public class IconRenderer {
         return screenPoint;
     }
 
-    protected static void applyBackground(DrawContext dc, WWIcon icon, Vec4 screenPoint, double width, double height,
-        double pedestalSpacing, double pedestalScale) {
-        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-
-        double backgroundScale;
-        backgroundScale = icon.getBackgroundScale();
-
-        if (icon.getBackgroundTexture() != null) {
-            if (icon.getBackgroundTexture().bind(dc)) {
-                TextureCoords texCoords = icon.getBackgroundTexture().getTexCoords();
-                gl.glPushMatrix();
-                gl.glLoadIdentity();
-                double bgwidth = backgroundScale * width;
-                double bgheight = backgroundScale * height;
-                // Offset the background for the highlighted scale.
-                //if (icon.isHighlighted())
-                //{
-                //    gl.glTranslated(0d, height * (icon.getHighlightScale() - 1) / 2, 0d);
-                //}
-                // Offset the background for the pedestal height.
-                gl.glTranslated(0.0d, (pedestalScale * height) + pedestalSpacing, 0.0d);
-                // Place the background centered behind the icon.
-                gl.glTranslated(screenPoint.x - bgwidth / 2, screenPoint.y - (bgheight - height) / 2, 0.0d);
-                // Scale to the background image dimension.
-                gl.glScaled(bgwidth, bgheight, 1.0d);
-                dc.drawUnitQuad(texCoords);
-                gl.glPopMatrix();
-            }
-        }
-    }
-
     protected void setDepthFunc(DrawContext dc, OrderedIcon uIcon, Vec4 screenPoint) {
         GL gl = dc.getGL();
 
@@ -555,68 +595,21 @@ public class IconRenderer {
             depth = depth < 0.0d ? 0.0d : (Math.min(depth, 1.0d));
             gl.glDepthFunc(GL.GL_LESS);
             gl.glDepthRange(depth, depth);
-        }
-        else if (uIcon.eyeDistance > uIcon.horizonDistance) {
+        } else if (uIcon.eyeDistance > uIcon.horizonDistance) {
             gl.glDepthFunc(GL.GL_EQUAL);
             gl.glDepthRange(1.0d, 1.0d);
-        }
-        else {
+        } else {
             gl.glDepthFunc(GL.GL_ALWAYS);
         }
-    }
-
-    @Override
-    public String toString() {
-        return Logging.getMessage("layers.IconLayer.Name");
-    }
-
-    /**
-     * Returns true if the IconRenderer should record feedback about how the specified WWIcon has been processed.
-     *
-     * @param dc   the current DrawContext.
-     * @param icon the WWIcon to record feedback information for.
-     * @return true to record feedback; false otherwise.
-     */
-    protected static boolean isFeedbackEnabled(DrawContext dc, WWIcon icon) {
-        if (dc.isPickingMode())
-            return false;
-
-        Boolean b = (Boolean) icon.get(AVKey.FEEDBACK_ENABLED);
-        return (b != null && b);
-    }
-
-    /**
-     * If feedback is enabled for the specified WWIcon, this method records feedback about how the specified WWIcon has
-     * been processed.
-     *
-     * @param dc         the current DrawContext.
-     * @param icon       the icon which the feedback information refers to.
-     * @param modelPoint the icon's reference point in model coordinates.
-     * @param screenRect the icon's bounding rectangle in screen coordinates.
-     */
-    protected static void recordFeedback(DrawContext dc, WWIcon icon, Vec4 modelPoint, Rectangle screenRect) {
-        if (!IconRenderer.isFeedbackEnabled(dc, icon))
-            return;
-
-        IconRenderer.doRecordFeedback(dc, icon, modelPoint, screenRect);
     }
 
     //**************************************************************//
     //********************  Feedback  ******************************//
     //**************************************************************//
 
-    /**
-     * Records feedback about how the specified WWIcon has been processed.
-     *
-     * @param dc         the current DrawContext.
-     * @param icon       the icon which the feedback information refers to.
-     * @param modelPoint the icon's reference point in model coordinates.
-     * @param screenRect the icon's bounding rectangle in screen coordinates.
-     */
-    @SuppressWarnings("UnusedDeclaration")
-    protected static void doRecordFeedback(DrawContext dc, AVList icon, Vec4 modelPoint, Rectangle screenRect) {
-        icon.set(AVKey.FEEDBACK_REFERENCE_POINT, modelPoint);
-        icon.set(AVKey.FEEDBACK_SCREEN_BOUNDS, screenRect);
+    @Override
+    public String toString() {
+        return Logging.getMessage("layers.IconLayer.Name");
     }
 
     protected static class OrderedText implements OrderedRenderable {
@@ -666,8 +659,7 @@ public class IconRenderer {
                 tr.setTextColor(this.color);
                 tr.setOutlineColor(this.color);
                 tr.setInteriorColor(ToolTipRenderer.getContrastingColor(this.color));
-            }
-            else {
+            } else {
                 tr.setUseSystemLookAndFeel(true);
             }
 
@@ -724,7 +716,7 @@ public class IconRenderer {
             try {
                 IconRenderer.this.drawIconsInBatch(dc, this);
             }
-            catch (Exception e) {
+            catch (RuntimeException e) {
                 Logging.logger().log(Level.SEVERE, "generic.ExceptionWhileRenderingIcon", e);
             }
             finally {
@@ -744,7 +736,7 @@ public class IconRenderer {
             catch (WWRuntimeException e) {
                 Logging.logger().log(Level.SEVERE, "generic.ExceptionWhileRenderingIcon", e);
             }
-            catch (Exception e) {
+            catch (RuntimeException e) {
                 Logging.logger().log(Level.SEVERE, "generic.ExceptionWhilePickingIcon", e);
             }
             finally {

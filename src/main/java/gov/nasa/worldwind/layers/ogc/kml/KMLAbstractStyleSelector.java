@@ -31,19 +31,18 @@ public abstract class KMLAbstractStyleSelector extends KMLAbstractObject {
      * style selectors and style URL, with precedence given to style selectors.
      * <p>
      * Remote <i>styleUrls</i> that have not yet been resolved are not included in the result. In this case the returned
-     * sub-style is marked with a field named {@link AVKey#UNRESOLVED}. The same is true when
-     * a StyleMap refers to a Style other than one internal to the KML document.
+     * sub-style is marked with a field named {@link AVKey#UNRESOLVED}. The same is true when a StyleMap refers to a
+     * Style other than one internal to the KML document.
      *
      * @param styleUrl       an applicable style URL. May be null.
-     * @param styleSelectors a list of {@link KMLAbstractStyleSelector}s to consider when
-     *                       determining the effective attributes. May be null, in which case only the specified
+     * @param styleSelectors a list of {@link KMLAbstractStyleSelector}s to consider when determining the effective
+     *                       attributes. May be null, in which case only the specified
      *                       <code>styleUrl</code> is considered.
      * @param styleState     the style mode, either \"normal\" or \"highlight\".
-     * @param subStyle       an instance of the {@link KMLAbstractSubStyle} class desired,
-     *                       such as {@link KMLIconStyle}. The effective style values are
-     *                       accumulated and merged into this instance. The instance should not be one from within the
-     *                       KML document because its values may be overridden and augmented. The instance specified is
-     *                       the return value of this method.
+     * @param subStyle       an instance of the {@link KMLAbstractSubStyle} class desired, such as {@link KMLIconStyle}.
+     *                       The effective style values are accumulated and merged into this instance. The instance
+     *                       should not be one from within the KML document because its values may be overridden and
+     *                       augmented. The instance specified is the return value of this method.
      * @return the sub-style values for the specified type and state. The reference returned is the same one passed in
      * as the <code>subStyle</code> argument.
      * @throws IllegalArgumentException if the sub-style parameter is null.
@@ -59,14 +58,14 @@ public abstract class KMLAbstractStyleSelector extends KMLAbstractObject {
         if (styleUrl != null) {
             KMLAbstractStyleSelector selector = styleUrl.resolveStyleUrl();
             if (selector != null)
-                mergeSubStyles(null, selector, styleState, subStyle);
+                KMLAbstractStyleSelector.mergeSubStyles(null, selector, styleState, subStyle);
             else
-                markUnresolved(true, subStyle);
+                KMLAbstractStyleSelector.markUnresolved(true, subStyle);
         }
 
         if (styleSelectors != null) {
             for (KMLAbstractStyleSelector selector : styleSelectors) {
-                mergeSubStyles(null, selector, styleState, subStyle);
+                KMLAbstractStyleSelector.mergeSubStyles(null, selector, styleState, subStyle);
             }
         }
 
@@ -82,15 +81,14 @@ public abstract class KMLAbstractStyleSelector extends KMLAbstractObject {
      * sub-style is marked with the value {@link AVKey#UNRESOLVED}.
      *
      * @param styleUrl      an applicable style URL. May be null.
-     * @param styleSelector the {@link KMLAbstractStyleSelector} to consider when determining
-     *                      the effective attributes. May be null, in which case only the specified
+     * @param styleSelector the {@link KMLAbstractStyleSelector} to consider when determining the effective attributes.
+     *                      May be null, in which case only the specified
      *                      <code>styleUrl</code> is considered.
      * @param styleState    the style mode, either \"normal\" or \"highlight\".
-     * @param subStyle      an instance of the {@link KMLAbstractSubStyle} class desired,
-     *                      such as {@link KMLIconStyle}. The effective style values are
-     *                      accumulated and merged into this instance. The instance should not be one from within the
-     *                      KML document because its values may be overridden and augmented. The instance specified is
-     *                      the return value of this method.
+     * @param subStyle      an instance of the {@link KMLAbstractSubStyle} class desired, such as {@link KMLIconStyle}.
+     *                      The effective style values are accumulated and merged into this instance. The instance
+     *                      should not be one from within the KML document because its values may be overridden and
+     *                      augmented. The instance specified is the return value of this method.
      * @return the sub-style values for the specified type and state. The reference returned is the same one passed in
      * as the <code>subStyle</code> parameter.
      * @throws IllegalArgumentException if the sub-style parameter is null.
@@ -106,9 +104,9 @@ public abstract class KMLAbstractStyleSelector extends KMLAbstractObject {
         if (styleUrl != null) {
             KMLAbstractStyleSelector ss = styleUrl.resolveStyleUrl();
             if (ss != null)
-                mergeSubStyles(null, ss, styleState, subStyle);
+                KMLAbstractStyleSelector.mergeSubStyles(null, ss, styleState, subStyle);
             else
-                markUnresolved(true, subStyle);
+                KMLAbstractStyleSelector.markUnresolved(true, subStyle);
         }
 
         if (styleSelector != null) {

@@ -22,13 +22,13 @@ import java.util.*;
  * target="_blank">Tutorial</a> for instructions on using TacticalGraphic in an application. This base class provides
  * functionality for creating and rendering a graphic that is made up of one or more shapes, and text labels.
  * <p>
- * Implementations must implement at least {@link #doRenderGraphic(DrawContext)
- * doRenderGraphic} and {@link #applyDelegateOwner(Object)}.
+ * Implementations must implement at least {@link #doRenderGraphic(DrawContext) doRenderGraphic} and {@link
+ * #applyDelegateOwner(Object)}.
  *
  * @author pabercrombie
  * @version $Id: AbstractTacticalGraphic.java 560 2012-04-26 16:28:24Z pabercrombie $
  */
-public abstract class AbstractTacticalGraphic extends AVListImpl implements TacticalGraphic, Renderable, Draggable {
+public abstract class AbstractTacticalGraphic extends AVListImpl implements TacticalGraphic, Draggable {
     /**
      * The default highlight color.
      */
@@ -82,7 +82,7 @@ public abstract class AbstractTacticalGraphic extends AVListImpl implements Tact
     /**
      * Provides additional information for dragging regarding this particular object.
      */
-    protected DraggableSupport draggableSupport = null;
+    protected DraggableSupport draggableSupport;
     /**
      * Indicates whether or not to render the hostile/enemy modifier. This modifier is displayed by default.
      */
@@ -130,6 +130,52 @@ public abstract class AbstractTacticalGraphic extends AVListImpl implements Tact
      * Flag to indicate that labels must be recreated before the graphic is rendered.
      */
     protected boolean mustCreateLabels = true;
+
+    /**
+     * Compute the opacity for the label interior. By default, the label interior is opacity is computed as 70% of the
+     * text opacity.
+     *
+     * @param textOpacity Opacity of the label text.
+     * @return Opacity of the label interior as a floating point number between 0.0 and 1.0.
+     */
+    protected static double computeLabelInteriorOpacity(double textOpacity) {
+        return textOpacity * AbstractTacticalGraphic.DEFAULT_LABEL_INTERIOR_OPACITY;
+    }
+
+    /**
+     * Apply override attributes specified in a TacticalGraphicAttributes bundle to the active ShapeAttributes. Any
+     * non-null properties of {@code graphicAttributes} will be applied to {@code shapeAttributes}.
+     *
+     * @param graphicAttributes Override attributes.
+     * @param shapeAttributes   Shape attributes to receive overrides.
+     */
+    protected static void applyOverrideAttributes(TacticalGraphicAttributes graphicAttributes,
+        ShapeAttributes shapeAttributes) {
+        Material material = graphicAttributes.getInteriorMaterial();
+        if (material != null) {
+            shapeAttributes.setInteriorMaterial(material);
+        }
+
+        material = graphicAttributes.getOutlineMaterial();
+        if (material != null) {
+            shapeAttributes.setOutlineMaterial(material);
+        }
+
+        Double value = graphicAttributes.getInteriorOpacity();
+        if (value != null) {
+            shapeAttributes.setInteriorOpacity(value);
+        }
+
+        value = graphicAttributes.getOutlineOpacity();
+        if (value != null) {
+            shapeAttributes.setOutlineOpacity(value);
+        }
+
+        value = graphicAttributes.getOutlineWidth();
+        if (value != null) {
+            shapeAttributes.setOutlineWidth(value);
+        }
+    }
 
     /**
      * Render this graphic, without modifiers.
@@ -330,6 +376,10 @@ public abstract class AbstractTacticalGraphic extends AVListImpl implements Tact
         this.labelOffset = labelOffset;
     }
 
+    /////////////////////////////
+    // Movable interface
+    /////////////////////////////
+
     /**
      * {@inheritDoc}
      */
@@ -343,10 +393,6 @@ public abstract class AbstractTacticalGraphic extends AVListImpl implements Tact
     public void setHighlighted(boolean highlighted) {
         this.highlighted = highlighted;
     }
-
-    /////////////////////////////
-    // Movable interface
-    /////////////////////////////
 
     /**
      * {@inheritDoc}
@@ -400,6 +446,10 @@ public abstract class AbstractTacticalGraphic extends AVListImpl implements Tact
         this.dragEnabled = enabled;
     }
 
+    /////////////
+    // Rendering
+    /////////////
+
     @Override
     public void drag(DragContext dragContext) {
         if (!this.dragEnabled)
@@ -414,10 +464,6 @@ public abstract class AbstractTacticalGraphic extends AVListImpl implements Tact
     protected void doDrag(DragContext dragContext) {
         this.draggableSupport.dragGlobeSizeConstant(dragContext);
     }
-
-    /////////////
-    // Rendering
-    /////////////
 
     /**
      * {@inheritDoc}
@@ -573,17 +619,15 @@ public abstract class AbstractTacticalGraphic extends AVListImpl implements Tact
 
                 // Apply overrides specified by application
                 AbstractTacticalGraphic.applyOverrideAttributes(highlightAttributes, this.activeShapeAttributes);
-            }
-            else {
+            } else {
                 // If no highlight attributes have been specified we need to use the normal attributes but adjust them
                 // to cause highlighting.
-                this.activeShapeAttributes.setOutlineMaterial(DEFAULT_HIGHLIGHT_MATERIAL);
-                this.activeShapeAttributes.setInteriorMaterial(DEFAULT_HIGHLIGHT_MATERIAL);
+                this.activeShapeAttributes.setOutlineMaterial(AbstractTacticalGraphic.DEFAULT_HIGHLIGHT_MATERIAL);
+                this.activeShapeAttributes.setInteriorMaterial(AbstractTacticalGraphic.DEFAULT_HIGHLIGHT_MATERIAL);
                 this.activeShapeAttributes.setInteriorOpacity(1.0);
                 this.activeShapeAttributes.setOutlineOpacity(1.0);
             }
-        }
-        else {
+        } else {
             // Apply overrides specified by application
             TacticalGraphicAttributes normalAttributes = this.getAttributes();
             if (normalAttributes != null) {
@@ -626,17 +670,6 @@ public abstract class AbstractTacticalGraphic extends AVListImpl implements Tact
         if (offset == null)
             offset = this.getDefaultLabelOffset();
         this.labels.get(0).setOffset(offset);
-    }
-
-    /**
-     * Compute the opacity for the label interior. By default, the label interior is opacity is computed as 70% of the
-     * text opacity.
-     *
-     * @param textOpacity Opacity of the label text.
-     * @return Opacity of the label interior as a floating point number between 0.0 and 1.0.
-     */
-    protected static double computeLabelInteriorOpacity(double textOpacity) {
-        return textOpacity * DEFAULT_LABEL_INTERIOR_OPACITY;
     }
 
     /**
@@ -691,40 +724,5 @@ public abstract class AbstractTacticalGraphic extends AVListImpl implements Tact
      */
     protected void applyDefaultAttributes(ShapeAttributes attributes) {
         // Do nothing but allow subclasses to override
-    }
-
-    /**
-     * Apply override attributes specified in a TacticalGraphicAttributes bundle to the active ShapeAttributes. Any
-     * non-null properties of {@code graphicAttributes} will be applied to {@code shapeAttributes}.
-     *
-     * @param graphicAttributes Override attributes.
-     * @param shapeAttributes   Shape attributes to receive overrides.
-     */
-    protected static void applyOverrideAttributes(TacticalGraphicAttributes graphicAttributes,
-        ShapeAttributes shapeAttributes) {
-        Material material = graphicAttributes.getInteriorMaterial();
-        if (material != null) {
-            shapeAttributes.setInteriorMaterial(material);
-        }
-
-        material = graphicAttributes.getOutlineMaterial();
-        if (material != null) {
-            shapeAttributes.setOutlineMaterial(material);
-        }
-
-        Double value = graphicAttributes.getInteriorOpacity();
-        if (value != null) {
-            shapeAttributes.setInteriorOpacity(value);
-        }
-
-        value = graphicAttributes.getOutlineOpacity();
-        if (value != null) {
-            shapeAttributes.setOutlineOpacity(value);
-        }
-
-        value = graphicAttributes.getOutlineWidth();
-        if (value != null) {
-            shapeAttributes.setOutlineWidth(value);
-        }
     }
 }

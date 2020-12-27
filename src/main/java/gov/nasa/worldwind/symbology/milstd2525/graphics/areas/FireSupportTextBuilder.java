@@ -47,24 +47,20 @@ public class FireSupportTextBuilder {
         if (TacGrpSidc.FSUPP_ARS_ARATGT_CIRTGT.equalsIgnoreCase(maskedSidc)) {
             // Circular Target just uses the Unique Designation as a label.
             result = new String[] {graphic.getText()};
-        }
-        else if (TacGrpSidc.FSUPP_ARS_ARATGT_BMARA.equalsIgnoreCase(maskedSidc)) {
+        } else if (TacGrpSidc.FSUPP_ARS_ARATGT_BMARA.equalsIgnoreCase(maskedSidc)) {
             // Bomb graphic just says "BOMB"
             result = new String[] {"BOMB"};
-        }
-        else if (TacGrpSidc.FSUPP_ARS_C2ARS_TGMF.equalsIgnoreCase(maskedSidc)) {
+        } else if (TacGrpSidc.FSUPP_ARS_C2ARS_TGMF.equalsIgnoreCase(maskedSidc)) {
             // Terminally guided munitions footprint says "TGMF", and does not support modifiers.
             result = new String[] {"TGMF"};
-        }
-        else {
+        } else {
             boolean useSeparateTimeLabel = FireSupportTextBuilder.isShowSeparateTimeLabel(maskedSidc);
 
             String mainText;
 
             if (FireSupportTextBuilder.isAirspaceCoordinationArea(maskedSidc)) {
                 mainText = FireSupportTextBuilder.createAirspaceCoordinationText(graphic);
-            }
-            else {
+            } else {
                 boolean includeTime = !useSeparateTimeLabel;
                 boolean includeAltitude = FireSupportTextBuilder.isShowAltitude(maskedSidc);
                 mainText = FireSupportTextBuilder.createMainText(graphic, maskedSidc, includeTime, includeAltitude);
@@ -73,8 +69,7 @@ public class FireSupportTextBuilder {
             if (useSeparateTimeLabel) {
                 String timeText = FireSupportTextBuilder.createTimeRangeText(graphic);
                 result = new String[] {mainText, timeText};
-            }
-            else {
+            } else {
                 result = new String[] {mainText};
             }
         }
@@ -102,18 +97,18 @@ public class FireSupportTextBuilder {
     protected static String createMainText(TacticalGraphic graphic, String functionId, boolean includeTime,
         boolean includeAltitude) {
         StringBuilder sb = new StringBuilder();
-        sb.append(FireSupportTextBuilder.getGraphicLabel(functionId)).append("\n");
+        sb.append(FireSupportTextBuilder.getGraphicLabel(functionId)).append('\n');
 
         String s = graphic.getText();
         if (!WWUtil.isEmpty(s)) {
-            sb.append(s).append("\n");
+            sb.append(s).append('\n');
         }
 
         if (includeTime) {
             Object[] dates = TacticalGraphicUtil.getDateRange(graphic);
             if (dates[0] != null) {
                 sb.append(dates[0]);
-                sb.append("-");
+                sb.append('-');
             }
 
             if (dates[1] != null) {
@@ -155,69 +150,55 @@ public class FireSupportTextBuilder {
             || TacGrpSidc.FSUPP_ARS_C2ARS_FFA_CIRCLR.equalsIgnoreCase(sidc)
             || TacGrpSidc.FSUPP_ARS_C2ARS_FFA_IRR.equalsIgnoreCase(sidc)) {
             return "FFA";
-        }
-        else if (TacGrpSidc.FSUPP_ARS_C2ARS_RFA_RTG.equalsIgnoreCase(sidc)
+        } else if (TacGrpSidc.FSUPP_ARS_C2ARS_RFA_RTG.equalsIgnoreCase(sidc)
             || TacGrpSidc.FSUPP_ARS_C2ARS_RFA_CIRCLR.equalsIgnoreCase(sidc)
             || TacGrpSidc.FSUPP_ARS_C2ARS_RFA_IRR.equalsIgnoreCase(sidc)) {
             return "RFA";
-        }
-        else if (TacGrpSidc.FSUPP_ARS_C2ARS_FSA_RTG.equalsIgnoreCase(sidc)
+        } else if (TacGrpSidc.FSUPP_ARS_C2ARS_FSA_RTG.equalsIgnoreCase(sidc)
             || TacGrpSidc.FSUPP_ARS_C2ARS_FSA_CIRCLR.equalsIgnoreCase(sidc)
             || TacGrpSidc.FSUPP_ARS_C2ARS_FSA_IRR.equalsIgnoreCase(sidc)) {
             return "FSA";
-        }
-        else if (TacGrpSidc.FSUPP_ARS_C2ARS_SNSZ_RTG.equalsIgnoreCase(sidc)
+        } else if (TacGrpSidc.FSUPP_ARS_C2ARS_SNSZ_RTG.equalsIgnoreCase(sidc)
             || TacGrpSidc.FSUPP_ARS_C2ARS_SNSZ_CIRCLR.equalsIgnoreCase(sidc)
             || TacGrpSidc.FSUPP_ARS_C2ARS_SNSZ_IRR.equalsIgnoreCase(sidc)) {
             return "SENSOR\nZONE";
-        }
-        else if (TacGrpSidc.FSUPP_ARS_C2ARS_DA_RTG.equalsIgnoreCase(sidc)
+        } else if (TacGrpSidc.FSUPP_ARS_C2ARS_DA_RTG.equalsIgnoreCase(sidc)
             || TacGrpSidc.FSUPP_ARS_C2ARS_DA_CIRCLR.equalsIgnoreCase(sidc)
             || TacGrpSidc.FSUPP_ARS_C2ARS_DA_IRR.equalsIgnoreCase(sidc)) {
             return "DA";
-        }
-        else if (TacGrpSidc.FSUPP_ARS_C2ARS_ZOR_RTG.equalsIgnoreCase(sidc)
+        } else if (TacGrpSidc.FSUPP_ARS_C2ARS_ZOR_RTG.equalsIgnoreCase(sidc)
             || TacGrpSidc.FSUPP_ARS_C2ARS_ZOR_CIRCLR.equalsIgnoreCase(sidc)) {
             //|| TacGrpSidc.FSUPP_ARS_C2ARS_DA_IRR.equalsIgnoreCase(sidc) {
             return "ZOR";
-        }
-        else if (TacGrpSidc.FSUPP_ARS_C2ARS_TBA_RTG.equalsIgnoreCase(sidc)
+        } else if (TacGrpSidc.FSUPP_ARS_C2ARS_TBA_RTG.equalsIgnoreCase(sidc)
             || TacGrpSidc.FSUPP_ARS_C2ARS_TBA_CIRCLR.equalsIgnoreCase(sidc)
             || TacGrpSidc.FSUPP_ARS_C2ARS_TBA_IRR.equalsIgnoreCase(sidc)) {
             return "TBA";
-        }
-        else if (TacGrpSidc.FSUPP_ARS_C2ARS_TVAR_RTG.equalsIgnoreCase(sidc)
+        } else if (TacGrpSidc.FSUPP_ARS_C2ARS_TVAR_RTG.equalsIgnoreCase(sidc)
             || TacGrpSidc.FSUPP_ARS_C2ARS_TVAR_CIRCLR.equalsIgnoreCase(sidc)
             || TacGrpSidc.FSUPP_ARS_C2ARS_TVAR_IRR.equalsIgnoreCase(sidc)) {
             return "TVAR";
-        }
-        else if (TacGrpSidc.FSUPP_ARS_TGTAQZ_ATIZ_RTG.equalsIgnoreCase(sidc)
+        } else if (TacGrpSidc.FSUPP_ARS_TGTAQZ_ATIZ_RTG.equalsIgnoreCase(sidc)
             || TacGrpSidc.FSUPP_ARS_TGTAQZ_ATIZ_IRR.equalsIgnoreCase(sidc)) {
             return "ATI ZONE";
-        }
-        else if (TacGrpSidc.FSUPP_ARS_TGTAQZ_CFFZ_RTG.equalsIgnoreCase(sidc)
+        } else if (TacGrpSidc.FSUPP_ARS_TGTAQZ_CFFZ_RTG.equalsIgnoreCase(sidc)
             || TacGrpSidc.FSUPP_ARS_TGTAQZ_CFFZ_IRR.equalsIgnoreCase(sidc)) {
             return "CFF ZONE";
-        }
-        else if (TacGrpSidc.FSUPP_ARS_TGTAQZ_CNS_RTG.equalsIgnoreCase(sidc)
+        } else if (TacGrpSidc.FSUPP_ARS_TGTAQZ_CNS_RTG.equalsIgnoreCase(sidc)
             || TacGrpSidc.FSUPP_ARS_TGTAQZ_CNS_IRR.equalsIgnoreCase(sidc)) {
             return "CENSOR ZONE";
-        }
-        else if (TacGrpSidc.FSUPP_ARS_TGTAQZ_CFZ_RTG.equalsIgnoreCase(sidc)
+        } else if (TacGrpSidc.FSUPP_ARS_TGTAQZ_CFZ_RTG.equalsIgnoreCase(sidc)
             || TacGrpSidc.FSUPP_ARS_TGTAQZ_CFZ_IRR.equalsIgnoreCase(sidc)) {
             return "CF ZONE";
-        }
-        else if (TacGrpSidc.FSUPP_ARS_C2ARS_NFA_RTG.equalsIgnoreCase(sidc)
+        } else if (TacGrpSidc.FSUPP_ARS_C2ARS_NFA_RTG.equalsIgnoreCase(sidc)
             || TacGrpSidc.FSUPP_ARS_C2ARS_NFA_CIRCLR.equalsIgnoreCase(sidc)
             || TacGrpSidc.FSUPP_ARS_C2ARS_NFA_IRR.equalsIgnoreCase(sidc)) {
             return "NFA";
-        }
-        else if (TacGrpSidc.FSUPP_ARS_KLBOX_BLUE_RTG.equalsIgnoreCase(sidc)
+        } else if (TacGrpSidc.FSUPP_ARS_KLBOX_BLUE_RTG.equalsIgnoreCase(sidc)
             || TacGrpSidc.FSUPP_ARS_KLBOX_BLUE_CIRCLR.equalsIgnoreCase(sidc)
             || TacGrpSidc.FSUPP_ARS_KLBOX_BLUE_IRR.equalsIgnoreCase(sidc)) {
             return "BKB";
-        }
-        else if (TacGrpSidc.FSUPP_ARS_KLBOX_PURPLE_RTG.equalsIgnoreCase(sidc)
+        } else if (TacGrpSidc.FSUPP_ARS_KLBOX_PURPLE_RTG.equalsIgnoreCase(sidc)
             || TacGrpSidc.FSUPP_ARS_KLBOX_PURPLE_CIRCLR.equalsIgnoreCase(sidc)
             || TacGrpSidc.FSUPP_ARS_KLBOX_PURPLE_IRR.equalsIgnoreCase(sidc)) {
             return "PKB";
@@ -233,34 +214,34 @@ public class FireSupportTextBuilder {
         Object o = graphic.getText();
         if (o != null) {
             sb.append(o);
-            sb.append("\n");
+            sb.append('\n');
         }
 
         Object[] altitudes = TacticalGraphicUtil.getAltitudeRange(graphic);
         if (altitudes[0] != null) {
             sb.append("MIN ALT: ");
             sb.append(altitudes[0]);
-            sb.append("\n");
+            sb.append('\n');
         }
 
         if (altitudes[1] != null) {
             sb.append("MAX ALT: ");
             sb.append(altitudes[1]);
-            sb.append("\n");
+            sb.append('\n');
         }
 
         o = graphic.getModifier(SymbologyConstants.ADDITIONAL_INFORMATION);
         if (o != null) {
             sb.append("Grids: ");
             sb.append(o);
-            sb.append("\n");
+            sb.append('\n');
         }
 
         Object[] dates = TacticalGraphicUtil.getDateRange(graphic);
         if (dates[0] != null) {
             sb.append("EFF: ");
             sb.append(dates[0]);
-            sb.append("\n");
+            sb.append('\n');
         }
 
         if (dates[1] != null) {

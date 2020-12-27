@@ -43,7 +43,7 @@ public class LinearTarget extends AbstractMilStd2525TacticalGraphic {
     /**
      * Length of the vertical segments, as a fraction of the horizontal segment.
      */
-    protected double verticalLength = DEFAULT_VERTICAL_LENGTH;
+    protected double verticalLength = LinearTarget.DEFAULT_VERTICAL_LENGTH;
     /**
      * First control point.
      */
@@ -86,6 +86,41 @@ public class LinearTarget extends AbstractMilStd2525TacticalGraphic {
             TacGrpSidc.FSUPP_LNE_LNRTGT_LSTGT,
             TacGrpSidc.FSUPP_LNE_LNRTGT_FPF
         );
+    }
+
+    /**
+     * Compute positions for one of the vertical segments in the graphic.
+     *
+     * @param globe          Current globe.
+     * @param basePoint      Point at which the vertical segment must meet the horizontal segment.
+     * @param segment        Vector in the direction of the horizontal segment.
+     * @param verticalLength Length of the vertical segment, in meters.
+     * @return Positions that make up the vertical segment.
+     */
+    protected static List<Position> computeVerticalSegmentPositions(Globe globe, Vec4 basePoint, Vec4 segment,
+        double verticalLength) {
+        Vec4 normal = globe.computeSurfaceNormalAtPoint(basePoint);
+
+        // Compute a vector perpendicular to the segment and the normal vector
+        Vec4 perpendicular = normal.cross3(segment);
+        perpendicular = perpendicular.normalize3().multiply3(verticalLength / 2.0);
+
+        // Find points on the vertical segment
+        Vec4 pA = basePoint.add3(perpendicular);
+        Vec4 pB = basePoint.subtract3(perpendicular);
+
+        return Arrays.asList(
+            globe.computePositionFromPoint(pA),
+            globe.computePositionFromPoint(pB));
+    }
+
+    /**
+     * Indicates the offset applied to the lower label.
+     *
+     * @return Offset applied to the bottom label.
+     */
+    protected static Offset getBottomLabelOffset() {
+        return LinearTarget.BOTTOM_LABEL_OFFSET;
     }
 
     /**
@@ -156,8 +191,7 @@ public class LinearTarget extends AbstractMilStd2525TacticalGraphic {
             if (iterator.hasNext()) {
                 this.setAdditionalText((String) iterator.next());
             }
-        }
-        else {
+        } else {
             super.setModifier(key, value);
         }
     }
@@ -267,32 +301,6 @@ public class LinearTarget extends AbstractMilStd2525TacticalGraphic {
     }
 
     /**
-     * Compute positions for one of the vertical segments in the graphic.
-     *
-     * @param globe          Current globe.
-     * @param basePoint      Point at which the vertical segment must meet the horizontal segment.
-     * @param segment        Vector in the direction of the horizontal segment.
-     * @param verticalLength Length of the vertical segment, in meters.
-     * @return Positions that make up the vertical segment.
-     */
-    protected static List<Position> computeVerticalSegmentPositions(Globe globe, Vec4 basePoint, Vec4 segment,
-        double verticalLength) {
-        Vec4 normal = globe.computeSurfaceNormalAtPoint(basePoint);
-
-        // Compute a vector perpendicular to the segment and the normal vector
-        Vec4 perpendicular = normal.cross3(segment);
-        perpendicular = perpendicular.normalize3().multiply3(verticalLength / 2.0);
-
-        // Find points on the vertical segment
-        Vec4 pA = basePoint.add3(perpendicular);
-        Vec4 pB = basePoint.subtract3(perpendicular);
-
-        return Arrays.asList(
-            globe.computePositionFromPoint(pA),
-            globe.computePositionFromPoint(pB));
-    }
-
-    /**
      * Create labels for the graphic.
      */
     @Override
@@ -318,12 +326,11 @@ public class LinearTarget extends AbstractMilStd2525TacticalGraphic {
         String code = this.maskedSymbolCode;
         if (TacGrpSidc.FSUPP_LNE_LNRTGT_LSTGT.equalsIgnoreCase(code)) {
             return "SMOKE";
-        }
-        else if (TacGrpSidc.FSUPP_LNE_LNRTGT_FPF.equalsIgnoreCase(code)) {
+        } else if (TacGrpSidc.FSUPP_LNE_LNRTGT_FPF.equalsIgnoreCase(code)) {
             StringBuilder sb = new StringBuilder("FPF");
             String additionalText = this.getAdditionalText();
             if (!WWUtil.isEmpty(additionalText)) {
-                sb.append("\n").append(additionalText);
+                sb.append('\n').append(additionalText);
             }
             return sb.toString();
         }
@@ -380,16 +387,7 @@ public class LinearTarget extends AbstractMilStd2525TacticalGraphic {
      */
     @Override
     protected Offset getDefaultLabelOffset() {
-        return TOP_LABEL_OFFSET;
-    }
-
-    /**
-     * Indicates the offset applied to the lower label.
-     *
-     * @return Offset applied to the bottom label.
-     */
-    protected static Offset getBottomLabelOffset() {
-        return BOTTOM_LABEL_OFFSET;
+        return LinearTarget.TOP_LABEL_OFFSET;
     }
 
     /**

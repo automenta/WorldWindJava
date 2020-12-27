@@ -54,13 +54,13 @@ class RPFPolarFrameTransform extends RPFFrameTransform {
     }
 
     private static int pixelRow(int rowInFrame, int frameNumber, int pixelsPerFrameRow, int numFrames) {
-        int row = frameRow(frameNumber, numFrames);
+        int row = RPFFrameTransform.frameRow(frameNumber, numFrames);
         return ((row + 1) * pixelsPerFrameRow - rowInFrame) - (numFrames * pixelsPerFrameRow / 2);
     }
 
     private static int pixelColumn(int colInFrame, int frameNumber, int pixelsPerFrameRow, int numFrames) {
-        int row = frameRow(frameNumber, numFrames);
-        int col = frameColumn(frameNumber, row, numFrames);
+        int row = RPFFrameTransform.frameRow(frameNumber, numFrames);
+        int col = RPFFrameTransform.frameColumn(frameNumber, row, numFrames);
         return (col * pixelsPerFrameRow + colInFrame) - (numFrames * pixelsPerFrameRow / 2);
     }
 
@@ -81,11 +81,11 @@ class RPFPolarFrameTransform extends RPFFrameTransform {
     }
 
     public int getFrameNumber(int row, int column) {
-        return frameNumber(row, column, this.frameStructure.getPolarFrames());
+        return RPFFrameTransform.frameNumber(row, column, this.frameStructure.getPolarFrames());
     }
 
     public int getMaximumFrameNumber() {
-        return maxFrameNumber(this.frameStructure.getPolarFrames(), this.frameStructure.getPolarFrames());
+        return RPFFrameTransform.maxFrameNumber(this.frameStructure.getPolarFrames(), this.frameStructure.getPolarFrames());
     }
 
     public int getRows() {
@@ -104,13 +104,13 @@ class RPFPolarFrameTransform extends RPFFrameTransform {
             throw new IllegalArgumentException(message);
         }
 
-        int originX = pixelColumn(0, frameNumber, RPFFrameStructure.getPixelRowsPerFrame(),
+        int originX = RPFPolarFrameTransform.pixelColumn(0, frameNumber, RPFFrameStructure.getPixelRowsPerFrame(),
             this.frameStructure.getPolarFrames());
-        int originY = pixelRow(0, frameNumber, RPFFrameStructure.getPixelRowsPerFrame(),
+        int originY = RPFPolarFrameTransform.pixelRow(0, frameNumber, RPFFrameStructure.getPixelRowsPerFrame(),
             this.frameStructure.getPolarFrames());
 
         double lat, lon;
-        PixelTransformer pt = (this.zoneCode == '9') ? northernPixels : southernPixels;
+        PixelTransformer pt = (this.zoneCode == '9') ? RPFPolarFrameTransform.northernPixels : RPFPolarFrameTransform.southernPixels;
         lat = pt.pixel2Latitude(originX, originY, this.frameStructure.getPolarPixelConstant());
         lon = pt.pixel2Longitude(originX, originY);
 
@@ -125,14 +125,14 @@ class RPFPolarFrameTransform extends RPFFrameTransform {
             throw new IllegalArgumentException(message);
         }
 
-        int minX = pixelColumn(0, frameNumber, RPFFrameStructure.getPixelRowsPerFrame(),
+        int minX = RPFPolarFrameTransform.pixelColumn(0, frameNumber, RPFFrameStructure.getPixelRowsPerFrame(),
             this.frameStructure.getPolarFrames());
-        int maxY = pixelRow(0, frameNumber, RPFFrameStructure.getPixelRowsPerFrame(),
+        int maxY = RPFPolarFrameTransform.pixelRow(0, frameNumber, RPFFrameStructure.getPixelRowsPerFrame(),
             this.frameStructure.getPolarFrames());
 
-        int maxX = pixelColumn(RPFFrameStructure.getPixelRowsPerFrame(), frameNumber,
+        int maxX = RPFPolarFrameTransform.pixelColumn(RPFFrameStructure.getPixelRowsPerFrame(), frameNumber,
             RPFFrameStructure.getPixelRowsPerFrame(), this.frameStructure.getPolarFrames());
-        int minY = pixelRow(RPFFrameStructure.getPixelRowsPerFrame(), frameNumber,
+        int minY = RPFPolarFrameTransform.pixelRow(RPFFrameStructure.getPixelRowsPerFrame(), frameNumber,
             RPFFrameStructure.getPixelRowsPerFrame(), this.frameStructure.getPolarFrames());
 
         // we'll need these below...
@@ -140,7 +140,7 @@ class RPFPolarFrameTransform extends RPFFrameTransform {
         int midY = (minY + maxY) / 2;
 
         // Find the bounds. This is kind of tedious...
-        PixelTransformer pt = (this.zoneCode == '9') ? northernPixels : southernPixels;
+        PixelTransformer pt = (this.zoneCode == '9') ? RPFPolarFrameTransform.northernPixels : RPFPolarFrameTransform.southernPixels;
         MinMaxLatLon bounds = new MinMaxLatLon();
 
         // LL
@@ -198,16 +198,15 @@ class RPFPolarFrameTransform extends RPFFrameTransform {
             throw new IllegalArgumentException(message);
         }
 
-        PixelTransformer pt = (this.zoneCode == '9') ? northernPixels : southernPixels;
+        PixelTransformer pt = (this.zoneCode == '9') ? RPFPolarFrameTransform.northernPixels : RPFPolarFrameTransform.southernPixels;
 
         RPFImage[] images;
         if (isDatelineSpanningFrame(frameNumber, pt)) {
-            if (pt == northernPixels)
+            if (pt == RPFPolarFrameTransform.northernPixels)
                 images = deprojectNorthernDatelineFrames(frameNumber, frame, pt);
             else
                 images = deprojectSouthernDatelineFrames(frameNumber, frame, pt);
-        }
-        else {
+        } else {
             // non-dateline spanning frames are more straightforward...
             Sector sector = computeFrameCoverage(frameNumber);
             BufferedImage destImage = new BufferedImage(frame.getWidth(), frame.getHeight(),
@@ -225,13 +224,13 @@ class RPFPolarFrameTransform extends RPFFrameTransform {
         RPFImage[] images = new RPFImage[2];
 
         // Compute a tight bounds for western half...
-        int minX = pixelColumn(0, frameNumber, RPFFrameStructure.getPixelRowsPerFrame(),
+        int minX = RPFPolarFrameTransform.pixelColumn(0, frameNumber, RPFFrameStructure.getPixelRowsPerFrame(),
             this.frameStructure.getPolarFrames());
-        int maxX = pixelColumn(RPFFrameStructure.getPixelRowsPerFrame(), frameNumber,
+        int maxX = RPFPolarFrameTransform.pixelColumn(RPFFrameStructure.getPixelRowsPerFrame(), frameNumber,
             RPFFrameStructure.getPixelRowsPerFrame(), this.frameStructure.getPolarFrames());
-        int minY = pixelRow(0, frameNumber, RPFFrameStructure.getPixelRowsPerFrame(),
+        int minY = RPFPolarFrameTransform.pixelRow(0, frameNumber, RPFFrameStructure.getPixelRowsPerFrame(),
             this.frameStructure.getPolarFrames());
-        int maxY = pixelRow(RPFFrameStructure.getPixelRowsPerFrame(), frameNumber,
+        int maxY = RPFPolarFrameTransform.pixelRow(RPFFrameStructure.getPixelRowsPerFrame(), frameNumber,
             RPFFrameStructure.getPixelRowsPerFrame(), this.frameStructure.getPolarFrames());
         int midX = (minX + maxX) / 2;
         int midY = (minY + maxY) / 2;
@@ -248,8 +247,7 @@ class RPFPolarFrameTransform extends RPFFrameTransform {
             bndsWest.maxLat = pt.pixel2Latitude(midX, midY, this.frameStructure.getPolarPixelConstant());
             // min lat is at an arbitrary corner...
             bndsWest.minLat = pt.pixel2Latitude(minX, minY, this.frameStructure.getPolarPixelConstant());
-        }
-        else {
+        } else {
             // min lat is one of the upper corners...
             bndsWest.minLat = pt.pixel2Latitude(minX, minY, this.frameStructure.getPolarPixelConstant());
             // max lat is center of bottom edge...
@@ -271,8 +269,7 @@ class RPFPolarFrameTransform extends RPFFrameTransform {
         if (isCenterFrame(frameNumber)) {
             bndsEast.minLon = 0.0;
             bndsEast.maxLon = 180.0;
-        }
-        else {
+        } else {
             bndsEast.minLon = pt.pixel2Longitude(maxX, maxY);
             bndsEast.maxLon = 180.0;
         }
@@ -289,13 +286,13 @@ class RPFPolarFrameTransform extends RPFFrameTransform {
         RPFImage[] images = new RPFImage[2];
 
         // Compute a tight bounds for western half...
-        int minX = pixelColumn(0, frameNumber, RPFFrameStructure.getPixelRowsPerFrame(),
+        int minX = RPFPolarFrameTransform.pixelColumn(0, frameNumber, RPFFrameStructure.getPixelRowsPerFrame(),
             this.frameStructure.getPolarFrames());
-        int maxX = pixelColumn(RPFFrameStructure.getPixelRowsPerFrame(), frameNumber,
+        int maxX = RPFPolarFrameTransform.pixelColumn(RPFFrameStructure.getPixelRowsPerFrame(), frameNumber,
             RPFFrameStructure.getPixelRowsPerFrame(), this.frameStructure.getPolarFrames());
-        int minY = pixelRow(0, frameNumber, RPFFrameStructure.getPixelRowsPerFrame(),
+        int minY = RPFPolarFrameTransform.pixelRow(0, frameNumber, RPFFrameStructure.getPixelRowsPerFrame(),
             this.frameStructure.getPolarFrames());
-        int maxY = pixelRow(RPFFrameStructure.getPixelRowsPerFrame(), frameNumber,
+        int maxY = RPFPolarFrameTransform.pixelRow(RPFFrameStructure.getPixelRowsPerFrame(), frameNumber,
             RPFFrameStructure.getPixelRowsPerFrame(), this.frameStructure.getPolarFrames());
         int midX = (minX + maxX) / 2;
         int midY = (minY + maxY) / 2;
@@ -312,8 +309,7 @@ class RPFPolarFrameTransform extends RPFFrameTransform {
             bndsWest.maxLat = pt.pixel2Latitude(midX, midY, this.frameStructure.getPolarPixelConstant());
             // min lat is at an arbitrary corner...
             bndsWest.minLat = pt.pixel2Latitude(minX, minY, this.frameStructure.getPolarPixelConstant());
-        }
-        else {
+        } else {
             // min lat is one of the lower corners...
             bndsWest.minLat = pt.pixel2Latitude(minX, maxY, this.frameStructure.getPolarPixelConstant());
             // max lat is center of top edge...
@@ -335,8 +331,7 @@ class RPFPolarFrameTransform extends RPFFrameTransform {
         if (isCenterFrame(frameNumber)) {
             bndsEast.minLon = 0.0;
             bndsEast.maxLon = 180.0;
-        }
-        else {
+        } else {
             bndsEast.minLon = pt.pixel2Longitude(maxX, minY);
             bndsEast.maxLon = 180.0;
         }
@@ -350,9 +345,9 @@ class RPFPolarFrameTransform extends RPFFrameTransform {
 
     private void resampleFrameFile(Sector sector, BufferedImage srcImage, BufferedImage destImage, int frameNumber,
         PixelTransformer pt) {
-        int frameULX = pixelColumn(0, frameNumber, RPFFrameStructure.getPixelRowsPerFrame(),
+        int frameULX = RPFPolarFrameTransform.pixelColumn(0, frameNumber, RPFFrameStructure.getPixelRowsPerFrame(),
             this.frameStructure.getPolarFrames());
-        int frameULY = pixelRow(0, frameNumber, RPFFrameStructure.getPixelRowsPerFrame(),
+        int frameULY = RPFPolarFrameTransform.pixelRow(0, frameNumber, RPFFrameStructure.getPixelRowsPerFrame(),
             this.frameStructure.getPolarFrames());
 
         int width = destImage.getWidth();
@@ -395,7 +390,7 @@ class RPFPolarFrameTransform extends RPFFrameTransform {
         // By definition, the center column of the polar frame grid...
         int row = frameNumber / getColumns();
         int col = frameNumber % getColumns();
-        if (pt == northernPixels)
+        if (pt == RPFPolarFrameTransform.northernPixels)
             return (row >= (getRows() / 2) && col == (getColumns() / 2));
         else
             return (row <= (getRows() / 2) && col == (getColumns() / 2));

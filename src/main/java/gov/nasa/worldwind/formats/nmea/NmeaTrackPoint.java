@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.formats.nmea;
 
-import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.tracks.TrackPoint;
 import gov.nasa.worldwind.util.Logging;
 
@@ -42,30 +42,6 @@ public class NmeaTrackPoint implements TrackPoint {
             this.doRMC(words);
     }
 
-    /**
-     * @param words
-     * @throws IllegalArgumentException if <code>words</code> is null or has length less than 6
-     */
-    private void doGGA(String[] words) {
-        // words won't be null, but it could be the wrong length
-        if (words.length < 6) {
-            String msg = Logging.getMessage("generic.ArrayInvalidLength", words.length);
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        this.time = words[1];
-        this.latitude = NmeaTrackPoint.parseLatitude(words[2], words[3]);
-        this.longitude = NmeaTrackPoint.parseLongitude(words[4], words[5]);
-        if (words.length >= 11)
-            this.altitude = parseElevation(words[9], words[10]);
-        if (words.length >= 13)
-            this.geoidHeight = parseElevation(words[11], words[12]);
-    }
-
-    private void doRMC(String[] words) {
-    }
-
     private static double parseLatitude(String angle, String direction) {
         if (angle.isEmpty())
             return 0;
@@ -90,7 +66,7 @@ public class NmeaTrackPoint implements TrackPoint {
         if (height.isEmpty())
             return 0;
 
-        return Double.parseDouble(height) * unitsToMeters(units);
+        return Double.parseDouble(height) * NmeaTrackPoint.unitsToMeters(units);
     }
 
     private static double unitsToMeters(String units) {
@@ -103,6 +79,30 @@ public class NmeaTrackPoint implements TrackPoint {
             case "F" -> 0.5468066528;
             default -> 1.0d;
         };
+    }
+
+    /**
+     * @param words
+     * @throws IllegalArgumentException if <code>words</code> is null or has length less than 6
+     */
+    private void doGGA(String[] words) {
+        // words won't be null, but it could be the wrong length
+        if (words.length < 6) {
+            String msg = Logging.getMessage("generic.ArrayInvalidLength", words.length);
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        this.time = words[1];
+        this.latitude = NmeaTrackPoint.parseLatitude(words[2], words[3]);
+        this.longitude = NmeaTrackPoint.parseLongitude(words[4], words[5]);
+        if (words.length >= 11)
+            this.altitude = NmeaTrackPoint.parseElevation(words[9], words[10]);
+        if (words.length >= 13)
+            this.geoidHeight = NmeaTrackPoint.parseElevation(words[11], words[12]);
+    }
+
+    private void doRMC(String[] words) {
     }
 
     public double getLatitude() {
@@ -152,8 +152,8 @@ public class NmeaTrackPoint implements TrackPoint {
             throw new IllegalArgumentException(msg);
         }
 
-        this.latitude = position.getLatitude().getDegrees();
-        this.longitude = position.getLongitude().getDegrees();
+        this.latitude = position.getLatitude().degrees;
+        this.longitude = position.getLongitude().degrees;
         this.altitude = position.getElevation();
     }
 

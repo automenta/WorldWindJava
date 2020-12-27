@@ -41,14 +41,11 @@ public class ShapefileUtils {
 
                 if (entry.getName().toLowerCase().endsWith(Shapefile.SHAPE_FILE_SUFFIX)) {
                     shpStream = zipFile.getInputStream(entry);
-                }
-                else if (entry.getName().toLowerCase().endsWith(Shapefile.INDEX_FILE_SUFFIX)) {
+                } else if (entry.getName().toLowerCase().endsWith(Shapefile.INDEX_FILE_SUFFIX)) {
                     shxStream = zipFile.getInputStream(entry);
-                }
-                else if (entry.getName().toLowerCase().endsWith(Shapefile.ATTRIBUTE_FILE_SUFFIX)) {
+                } else if (entry.getName().toLowerCase().endsWith(Shapefile.ATTRIBUTE_FILE_SUFFIX)) {
                     dbfStream = zipFile.getInputStream(entry);
-                }
-                else if (entry.getName().toLowerCase().endsWith(Shapefile.PROJECTION_FILE_SUFFIX)) {
+                } else if (entry.getName().toLowerCase().endsWith(Shapefile.PROJECTION_FILE_SUFFIX)) {
                     prjStream = zipFile.getInputStream(entry);
                 }
             }

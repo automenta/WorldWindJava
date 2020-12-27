@@ -30,19 +30,19 @@ public class GeographicTextRenderer {
     private static final Font DEFAULT_FONT = Font.decode("Arial-PLAIN-12");
     private static final Color DEFAULT_COLOR = Color.white;
     private final GLU glu = new GLUgl2();
-    private TextRenderer lastTextRenderer = null;
-    private boolean cullText = false;
-    private int cullTextMargin = 0;
+    private TextRenderer lastTextRenderer;
+    private boolean cullText;
+    private int cullTextMargin;
     private String effect = AVKey.TEXT_EFFECT_SHADOW;
 
     // Distance scaling and fading
     private double distanceMinScale = 1.0d;
     private double distanceMaxScale = 1.0d;
     private double distanceMinOpacity = 1.0d;
-    private boolean isDistanceScaling = false;
-    private double lookAtDistance = 0;
+    private boolean isDistanceScaling;
+    private double lookAtDistance;
 
-    private boolean hasJOGLv111Bug = false;
+    private boolean hasJOGLv111Bug;
 
     public GeographicTextRenderer() {
     }
@@ -56,6 +56,49 @@ public class GeographicTextRenderer {
             return false;
 
         return true;
+    }
+
+    protected static Rectangle2D computeScaledBounds(Rectangle2D bounds, double scale) {
+        if (scale == 1)
+            return bounds;
+
+        // Scale rectangle from bottom center
+        double halfWidth = bounds.getWidth() / 2;
+        bounds.setRect(bounds.getX() + halfWidth - halfWidth * scale, bounds.getY(),
+            bounds.getWidth() * scale, bounds.getHeight() * scale);
+        return bounds;
+    }
+
+    protected static Rectangle2D computeExpandedBounds(Rectangle2D bounds, int margin) {
+        if (margin == 0)
+            return bounds;
+
+        // Add margin around rectangle
+        bounds.setRect(bounds.getX() - margin, bounds.getY() - margin,
+            bounds.getWidth() + margin * 2, bounds.getHeight() + margin * 2);
+        return bounds;
+    }
+
+    protected static Color applyOpacity(Color color, double opacity) {
+        if (opacity >= 1)
+            return color;
+
+        float[] compArray = color.getRGBComponents(null);
+        return new Color(compArray[0], compArray[1], compArray[2], compArray[3] * (float) opacity);
+    }
+
+    /**
+     * Computes the final draw point for the given rectangle lower left corner and target screen point. If the returned
+     * point is <code>null</code> the text will not be drawn.
+     *
+     * @param dc          the current {@link DrawContext}
+     * @param rect        the text rectangle to draw.
+     * @param screenPoint the projected screen point the text relates to.
+     * @return the final draw point for the given rectangle lower left corner or <code>null</code>.
+     */
+    @SuppressWarnings("UnusedDeclaration")
+    protected static Point.Float computeDrawPoint(DrawContext dc, Rectangle2D rect, Vec4 screenPoint) {
+        return new Point.Float((float) (screenPoint.x - rect.getWidth() / 2.0d), (float) (screenPoint.y));
     }
 
     /**
@@ -196,7 +239,7 @@ public class GeographicTextRenderer {
     }
 
     public void render(DrawContext dc, GeographicText text, Vec4 textPoint) {
-        if (!isTextValid(text, false))
+        if (!GeographicTextRenderer.isTextValid(text, false))
             return;
 
         this.drawOne(dc, text, textPoint);
@@ -230,7 +273,7 @@ public class GeographicTextRenderer {
 
         while (iterator.hasNext()) {
             GeographicText text = iterator.next();
-            if (!isTextValid(text, true))
+            if (!GeographicTextRenderer.isTextValid(text, true))
                 continue;
 
             if (!text.isVisible())
@@ -326,7 +369,7 @@ public class GeographicTextRenderer {
 
         Font font = geographicText.getFont();
         if (font == null)
-            font = DEFAULT_FONT;
+            font = GeographicTextRenderer.DEFAULT_FONT;
 
         try {
             TextRenderer textRenderer = OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(), font);
@@ -342,33 +385,12 @@ public class GeographicTextRenderer {
             Rectangle2D bounds = new Rectangle2D.Float();
             bounds.setRect(x, screenPoint.y, textBound.getWidth(), textBound.getHeight());
 
-            return computeScaledBounds(bounds, scale);
+            return GeographicTextRenderer.computeScaledBounds(bounds, scale);
         }
         catch (Exception e) {
             handleTextRendererExceptions(e);
             return null;
         }
-    }
-
-    protected static Rectangle2D computeScaledBounds(Rectangle2D bounds, double scale) {
-        if (scale == 1)
-            return bounds;
-
-        // Scale rectangle from bottom center
-        double halfWidth = bounds.getWidth() / 2;
-        bounds.setRect(bounds.getX() + halfWidth - halfWidth * scale, bounds.getY(),
-            bounds.getWidth() * scale, bounds.getHeight() * scale);
-        return bounds;
-    }
-
-    protected static Rectangle2D computeExpandedBounds(Rectangle2D bounds, int margin) {
-        if (margin == 0)
-            return bounds;
-
-        // Add margin around rectangle
-        bounds.setRect(bounds.getX() - margin, bounds.getY() - margin,
-            bounds.getWidth() + margin * 2, bounds.getHeight() + margin * 2);
-        return bounds;
     }
 
     @SuppressWarnings("UnusedDeclaration")
@@ -484,7 +506,7 @@ public class GeographicTextRenderer {
 
         Font font = geographicText.getFont();
         if (font == null)
-            font = DEFAULT_FONT;
+            font = GeographicTextRenderer.DEFAULT_FONT;
 
         try {
             TextRenderer textRenderer = OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(), font);
@@ -500,7 +522,7 @@ public class GeographicTextRenderer {
             Rectangle2D textBounds = textRenderer.getBounds(
                 charSequence);//note:may already be calculated during culling
             textBounds = GeographicTextRenderer.computeScaledBounds(textBounds, scale);
-            Point.Float drawPoint = computeDrawPoint(dc, textBounds, screenPoint);
+            Point.Float drawPoint = GeographicTextRenderer.computeDrawPoint(dc, textBounds, screenPoint);
 
             if (scale != 1.0d) {
                 gl.glScaled(scale, scale, 1.0d);
@@ -509,7 +531,7 @@ public class GeographicTextRenderer {
 
             Color color = geographicText.getColor();
             if (color == null)
-                color = DEFAULT_COLOR;
+                color = GeographicTextRenderer.DEFAULT_COLOR;
             color = GeographicTextRenderer.applyOpacity(color, opacity);
 
             Color background = geographicText.getBackgroundColor();
@@ -518,8 +540,7 @@ public class GeographicTextRenderer {
                 textRenderer.setColor(background);
                 if (this.effect.equals(AVKey.TEXT_EFFECT_SHADOW)) {
                     textRenderer.draw3D(charSequence, drawPoint.x + 1, drawPoint.y - 1, 0, 1);
-                }
-                else if (this.effect.equals(AVKey.TEXT_EFFECT_OUTLINE)) {
+                } else if (this.effect.equals(AVKey.TEXT_EFFECT_OUTLINE)) {
                     textRenderer.draw3D(charSequence, drawPoint.x + 1, drawPoint.y - 1, 0, 1);
                     textRenderer.draw3D(charSequence, drawPoint.x + 1, drawPoint.y + 1, 0, 1);
                     textRenderer.draw3D(charSequence, drawPoint.x - 1, drawPoint.y - 1, 0, 1);
@@ -541,14 +562,6 @@ public class GeographicTextRenderer {
         return screenPoint;
     }
 
-    protected static Color applyOpacity(Color color, double opacity) {
-        if (opacity >= 1)
-            return color;
-
-        float[] compArray = color.getRGBComponents(null);
-        return new Color(compArray[0], compArray[1], compArray[2], compArray[3] * (float) opacity);
-    }
-
     private void handleTextRendererExceptions(Exception e) throws Exception {
         if (e instanceof IOException) {
             if (!this.hasJOGLv111Bug) {
@@ -557,24 +570,9 @@ public class GeographicTextRenderer {
                 Logging.logger().log(Level.SEVERE, "generic.ExceptionWhileRenderingText", e);
                 this.hasJOGLv111Bug = true;
             }
-        }
-        else {
+        } else {
             throw e;
         }
-    }
-
-    /**
-     * Computes the final draw point for the given rectangle lower left corner and target screen point. If the returned
-     * point is <code>null</code> the text will not be drawn.
-     *
-     * @param dc          the current {@link DrawContext}
-     * @param rect        the text rectangle to draw.
-     * @param screenPoint the projected screen point the text relates to.
-     * @return the final draw point for the given rectangle lower left corner or <code>null</code>.
-     */
-    @SuppressWarnings("UnusedDeclaration")
-    protected static Point.Float computeDrawPoint(DrawContext dc, Rectangle2D rect, Vec4 screenPoint) {
-        return new Point.Float((float) (screenPoint.x - rect.getWidth() / 2.0d), (float) (screenPoint.y));
     }
 
     @SuppressWarnings("UnusedDeclaration")
@@ -615,8 +613,7 @@ public class GeographicTextRenderer {
         public int compareTo(OrderedText t) {
             if (t.text.getPriority() - this.text.getPriority() == 0) {
                 return (int) (this.eyeDistance - t.eyeDistance);
-            }
-            else
+            } else
                 return (int) (t.text.getPriority() - this.text.getPriority());
         }
 
@@ -669,8 +666,7 @@ public class GeographicTextRenderer {
                             GeographicTextRenderer.this.drawText(dc, ot, scaleAndOpacity[0], scaleAndOpacity[1]);
                         }
                     }
-                }
-                else //just draw each label
+                } else //just draw each label
                 {
                     double[] scaleAndOpacity = GeographicTextRenderer.this.computeDistanceScaleAndOpacity(dc, this);
                     GeographicTextRenderer.this.drawText(dc, this, scaleAndOpacity[0], scaleAndOpacity[1]);

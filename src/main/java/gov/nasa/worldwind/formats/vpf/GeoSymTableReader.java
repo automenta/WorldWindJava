@@ -27,61 +27,6 @@ public class GeoSymTableReader {
         return s.isEmpty() || s.equals("-");
     }
 
-    public boolean canRead(String filePath) {
-        if (filePath == null) {
-            String message = Logging.getMessage("nullValue.FilePathIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        Object streamOrException = null;
-        boolean result = false;
-
-        try {
-            streamOrException = WWIO.getFileOrResourceAsStream(filePath, this.getClass());
-            result = (streamOrException instanceof InputStream);
-        }
-        finally {
-            if (streamOrException instanceof InputStream) {
-                WWIO.closeStream(streamOrException, filePath);
-            }
-        }
-
-        return result;
-    }
-
-    public GeoSymTable read(String filePath) {
-        if (filePath == null) {
-            String message = Logging.getMessage("nullValue.FilePathIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        try {
-            return this.doRead(filePath);
-        }
-        catch (Exception e) {
-            String message = Logging.getMessage("VPF.ExceptionAttemptingToReadTable", filePath);
-            Logging.logger().log(Level.SEVERE, message, e);
-            throw new WWRuntimeException(message, e);
-        }
-    }
-
-    protected GeoSymTable doRead(String filePath) {
-        InputStream inputStream = null;
-        GeoSymTable result = null;
-
-        try {
-            inputStream = WWIO.openFileOrResourceStream(filePath, this.getClass());
-            result = GeoSymTableReader.readTable(filePath, inputStream);
-        }
-        finally {
-            WWIO.closeStream(inputStream, filePath);
-        }
-
-        return result;
-    }
-
     @SuppressWarnings("UnusedDeclaration")
     protected static GeoSymTable readTable(String filePath, InputStream inputStream) {
         Scanner scanner = new Scanner(inputStream);
@@ -104,12 +49,12 @@ public class GeoSymTableReader {
 
         // Read the file name.
         String s = tokens[0].trim();
-        if (!isEmpty(s))
+        if (!GeoSymTableReader.isEmpty(s))
             header.setFileName(s);
 
         // Read the description.
         s = tokens[1].trim();
-        if (!isEmpty(s))
+        if (!GeoSymTableReader.isEmpty(s))
             header.setDescription(s);
 
         while (!(string = scanner.nextLine()).equals(";")) {
@@ -135,7 +80,7 @@ public class GeoSymTableReader {
         col.setDescription(s);
 
         s = tokens[4].trim();
-        if (!isEmpty(s))
+        if (!GeoSymTableReader.isEmpty(s))
             col.setCodeRef(s);
 
         return col;
@@ -172,13 +117,67 @@ public class GeoSymTableReader {
             if (col.getDataType().equalsIgnoreCase(GeoSymConstants.INTEGER)) {
                 if (s != null)
                     o = WWUtil.convertStringToInteger(s);
-            }
-            else if (col.getDataType().equalsIgnoreCase(GeoSymConstants.CHARACTER_STRING)) {
+            } else if (col.getDataType().equalsIgnoreCase(GeoSymConstants.CHARACTER_STRING)) {
                 if (s != null && !s.isEmpty())
                     o = s;
             }
 
             record.set(col.getName(), o);
         }
+    }
+
+    public boolean canRead(String filePath) {
+        if (filePath == null) {
+            String message = Logging.getMessage("nullValue.FilePathIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        Object streamOrException = null;
+        boolean result = false;
+
+        try {
+            streamOrException = WWIO.getFileOrResourceAsStream(filePath, this.getClass());
+            result = (streamOrException instanceof InputStream);
+        }
+        finally {
+            if (streamOrException instanceof InputStream) {
+                WWIO.closeStream(streamOrException, filePath);
+            }
+        }
+
+        return result;
+    }
+
+    public GeoSymTable read(String filePath) {
+        if (filePath == null) {
+            String message = Logging.getMessage("nullValue.FilePathIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        try {
+            return this.doRead(filePath);
+        }
+        catch (RuntimeException e) {
+            String message = Logging.getMessage("VPF.ExceptionAttemptingToReadTable", filePath);
+            Logging.logger().log(Level.SEVERE, message, e);
+            throw new WWRuntimeException(message, e);
+        }
+    }
+
+    protected GeoSymTable doRead(String filePath) {
+        InputStream inputStream = null;
+        GeoSymTable result = null;
+
+        try {
+            inputStream = WWIO.openFileOrResourceStream(filePath, this.getClass());
+            result = GeoSymTableReader.readTable(filePath, inputStream);
+        }
+        finally {
+            WWIO.closeStream(inputStream, filePath);
+        }
+
+        return result;
     }
 }

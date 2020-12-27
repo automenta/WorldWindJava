@@ -43,13 +43,93 @@ public class BasicAnnotationRenderer implements AnnotationRenderer {
         return true;
     }
 
+    protected static boolean isAtPickRange(DrawContext dc, Annotation annotation) {
+        Rectangle screenBounds = annotation.getBounds(dc);
+        return screenBounds != null && dc.getPickFrustums().intersectsAny(screenBounds);
+    }
+
+    /**
+     * Get the final Vec4 point at which an annotation will be drawn. If the annotation Position elevation is lower then
+     * the highest elevation on the globe, it will be drawn above the ground using its elevation as an offset.
+     * Otherwise, the original elevation will be used.
+     *
+     * @param dc         the current DrawContext.
+     * @param annotation the annotation
+     * @return the annotation draw cartesian point
+     */
+    protected static Vec4 getAnnotationDrawPoint(DrawContext dc, Annotation annotation) {
+        Vec4 drawPoint = null;
+        if (annotation instanceof Locatable) {
+            Position pos = ((Locatable) annotation).getPosition();
+            if (pos.getElevation() < dc.getGlobe().getMaxElevation())
+                drawPoint = dc.getSurfaceGeometry().getSurfacePoint(pos.getLatitude(), pos.getLongitude(),
+                    pos.getElevation());
+            if (drawPoint == null)
+                drawPoint = dc.getGlobe().computePointFromPosition(pos);
+        }
+        return drawPoint;
+    }
+
+    protected static void beginDrawAnnotations(DrawContext dc, OGLStackHandler stackHandler) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
+
+        int attributeMask = GL2.GL_COLOR_BUFFER_BIT // for alpha test func and ref, blend func
+            | GL2.GL_CURRENT_BIT // for current color
+            | GL2.GL_DEPTH_BUFFER_BIT // for depth test, depth mask, depth func
+            | GL2.GL_ENABLE_BIT // for enable/disable changes
+            | GL2.GL_HINT_BIT // for line smoothing hint
+            | GL2.GL_LINE_BIT // for line width, line stipple
+            | GL2.GL_TRANSFORM_BIT // for matrix mode
+            | GL2.GL_VIEWPORT_BIT; // for viewport, depth range
+        stackHandler.pushAttrib(gl, attributeMask);
+
+        // Load a parallel projection with dimensions (viewportWidth, viewportHeight)
+        stackHandler.pushProjectionIdentity(gl);
+        gl.glOrtho(0.0d, dc.getView().getViewport().width, 0.0d, dc.getView().getViewport().height, -1.0d, 1.0d);
+
+        // Push identity matrices on the texture and modelview matrix stacks. Leave the matrix mode as modelview.
+        stackHandler.pushTextureIdentity(gl);
+        stackHandler.pushModelviewIdentity(gl);
+
+        // Enable the alpha test.
+        gl.glEnable(GL2.GL_ALPHA_TEST);
+        gl.glAlphaFunc(GL2.GL_GREATER, 0.0f);
+
+        // Apply the depth buffer but don't change it.
+        if ((!dc.isDeepPickingEnabled()))
+            gl.glEnable(GL.GL_DEPTH_TEST);
+        gl.glDepthMask(false);
+
+        // Disable lighting and backface culling.
+        gl.glDisable(GL2.GL_LIGHTING);
+        gl.glDisable(GL.GL_CULL_FACE);
+
+        if (!dc.isPickingMode()) {
+            // Enable blending in premultiplied color mode.
+            gl.glEnable(GL.GL_BLEND);
+            OGLUtil.applyBlending(gl, true);
+        } else {
+            PickSupport.beginPicking(dc);
+        }
+    }
+
+    protected static void endDrawAnnotations(DrawContext dc, OGLStackHandler stackHandler) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
+
+        if (dc.isPickingMode()) {
+            PickSupport.endPicking(dc);
+        }
+
+        stackHandler.pop(gl);
+    }
+
     public void pick(DrawContext dc, Iterable<Annotation> annotations, Point pickPoint, Layer layer) {
         this.drawMany(dc, annotations, layer);
     }
 
     public void pick(DrawContext dc, Annotation annotation, Vec4 annotationPoint, Point pickPoint,
         Layer layer) {
-        if (!isAnnotationValid(annotation, false))
+        if (!BasicAnnotationRenderer.isAnnotationValid(annotation, false))
             return;
 
         this.drawOne(dc, annotation, annotationPoint, layer);
@@ -60,7 +140,7 @@ public class BasicAnnotationRenderer implements AnnotationRenderer {
     }
 
     public void render(DrawContext dc, Annotation annotation, Vec4 annotationPoint, Layer layer) {
-        if (!isAnnotationValid(annotation, false))
+        if (!BasicAnnotationRenderer.isAnnotationValid(annotation, false))
             return;
 
         this.drawOne(dc, annotation, annotationPoint, layer);
@@ -104,7 +184,7 @@ public class BasicAnnotationRenderer implements AnnotationRenderer {
 
         while (iterator.hasNext()) {
             Annotation annotation = iterator.next();
-            if (!isAnnotationValid(annotation, true))
+            if (!BasicAnnotationRenderer.isAnnotationValid(annotation, true))
                 continue;
 
             if (!annotation.getAttributes().isVisible())
@@ -130,7 +210,7 @@ public class BasicAnnotationRenderer implements AnnotationRenderer {
             if (annotation instanceof Locatable) {
                 // Determine Cartesian position from the surface geometry if the annotation is near the surface,
                 // otherwise draw it from the globe.
-                Vec4 annotationPoint = getAnnotationDrawPoint(dc, annotation);
+                Vec4 annotationPoint = BasicAnnotationRenderer.getAnnotationDrawPoint(dc, annotation);
                 if (annotationPoint == null)
                     continue;
                 eyeDistance = annotation.isAlwaysOnTop() ? 0 : dc.getView().getEyePoint().distanceTo3(annotationPoint);
@@ -207,7 +287,7 @@ public class BasicAnnotationRenderer implements AnnotationRenderer {
 
                 // Determine Cartesian position from the surface geometry if the annotation is near the surface,
                 // otherwise draw it from the globe.
-                annotationPoint = getAnnotationDrawPoint(dc, annotation);
+                annotationPoint = BasicAnnotationRenderer.getAnnotationDrawPoint(dc, annotation);
                 if (annotationPoint == null)
                     return;
             }
@@ -238,87 +318,6 @@ public class BasicAnnotationRenderer implements AnnotationRenderer {
             else
                 this.currentDrawAnnotations.add(annotation);
         }
-    }
-
-    protected static boolean isAtPickRange(DrawContext dc, Annotation annotation) {
-        Rectangle screenBounds = annotation.getBounds(dc);
-        return screenBounds != null && dc.getPickFrustums().intersectsAny(screenBounds);
-    }
-
-    /**
-     * Get the final Vec4 point at which an annotation will be drawn. If the annotation Position elevation is lower then
-     * the highest elevation on the globe, it will be drawn above the ground using its elevation as an offset.
-     * Otherwise, the original elevation will be used.
-     *
-     * @param dc         the current DrawContext.
-     * @param annotation the annotation
-     * @return the annotation draw cartesian point
-     */
-    protected static Vec4 getAnnotationDrawPoint(DrawContext dc, Annotation annotation) {
-        Vec4 drawPoint = null;
-        if (annotation instanceof Locatable) {
-            Position pos = ((Locatable) annotation).getPosition();
-            if (pos.getElevation() < dc.getGlobe().getMaxElevation())
-                drawPoint = dc.getSurfaceGeometry().getSurfacePoint(pos.getLatitude(), pos.getLongitude(),
-                    pos.getElevation());
-            if (drawPoint == null)
-                drawPoint = dc.getGlobe().computePointFromPosition(pos);
-        }
-        return drawPoint;
-    }
-
-    protected static void beginDrawAnnotations(DrawContext dc, OGLStackHandler stackHandler) {
-        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-
-        int attributeMask = GL2.GL_COLOR_BUFFER_BIT // for alpha test func and ref, blend func
-            | GL2.GL_CURRENT_BIT // for current color
-            | GL2.GL_DEPTH_BUFFER_BIT // for depth test, depth mask, depth func
-            | GL2.GL_ENABLE_BIT // for enable/disable changes
-            | GL2.GL_HINT_BIT // for line smoothing hint
-            | GL2.GL_LINE_BIT // for line width, line stipple
-            | GL2.GL_TRANSFORM_BIT // for matrix mode
-            | GL2.GL_VIEWPORT_BIT; // for viewport, depth range
-        stackHandler.pushAttrib(gl, attributeMask);
-
-        // Load a parallel projection with dimensions (viewportWidth, viewportHeight)
-        stackHandler.pushProjectionIdentity(gl);
-        gl.glOrtho(0.0d, dc.getView().getViewport().width, 0.0d, dc.getView().getViewport().height, -1.0d, 1.0d);
-
-        // Push identity matrices on the texture and modelview matrix stacks. Leave the matrix mode as modelview.
-        stackHandler.pushTextureIdentity(gl);
-        stackHandler.pushModelviewIdentity(gl);
-
-        // Enable the alpha test.
-        gl.glEnable(GL2.GL_ALPHA_TEST);
-        gl.glAlphaFunc(GL2.GL_GREATER, 0.0f);
-
-        // Apply the depth buffer but don't change it.
-        if ((!dc.isDeepPickingEnabled()))
-            gl.glEnable(GL.GL_DEPTH_TEST);
-        gl.glDepthMask(false);
-
-        // Disable lighting and backface culling.
-        gl.glDisable(GL2.GL_LIGHTING);
-        gl.glDisable(GL.GL_CULL_FACE);
-
-        if (!dc.isPickingMode()) {
-            // Enable blending in premultiplied color mode.
-            gl.glEnable(GL.GL_BLEND);
-            OGLUtil.applyBlending(gl, true);
-        }
-        else {
-            PickSupport.beginPicking(dc);
-        }
-    }
-
-    protected static void endDrawAnnotations(DrawContext dc, OGLStackHandler stackHandler) {
-        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-
-        if (dc.isPickingMode()) {
-            PickSupport.endPicking(dc);
-        }
-
-        stackHandler.pop(gl);
     }
 
     protected class OrderedAnnotation implements OrderedRenderable {
@@ -352,7 +351,7 @@ public class BasicAnnotationRenderer implements AnnotationRenderer {
                     this.doRender(dc, oa);
                 }
             }
-            catch (Exception e) {
+            catch (RuntimeException e) {
                 Logging.logger().log(Level.SEVERE, "generic.ExceptionWhileRenderingAnnotation", e);
             }
             finally {
@@ -374,7 +373,7 @@ public class BasicAnnotationRenderer implements AnnotationRenderer {
                     this.doRender(dc, oa);
                 }
             }
-            catch (Exception e) {
+            catch (RuntimeException e) {
                 Logging.logger().log(Level.SEVERE, "generic.ExceptionWhilePickingAnnotation", e);
             }
             finally {

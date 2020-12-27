@@ -11,11 +11,11 @@ import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
 
 /**
- * Basic implementation of the {@link AirspaceAttributes} interface.
- * AirspaceAttributes was originally designed as a special purpose attribute bundle for {@link Airspace} shapes, but is
- * now redundant subclass of {@link BasicShapeAttributes}. BasicAirspaceAttributes is still
- * supported to ensure backward compatibility with earlier versions of WorldWind. Usage of methods unique to
- * AirspaceAttributes should be replaced with the equivalent methods in ShapeAttributes.
+ * Basic implementation of the {@link AirspaceAttributes} interface. AirspaceAttributes was originally designed as a
+ * special purpose attribute bundle for {@link Airspace} shapes, but is now redundant subclass of {@link
+ * BasicShapeAttributes}. BasicAirspaceAttributes is still supported to ensure backward compatibility with earlier
+ * versions of WorldWind. Usage of methods unique to AirspaceAttributes should be replaced with the equivalent methods
+ * in ShapeAttributes.
  *
  * @author tag
  * @version $Id: BasicAirspaceAttributes.java 2318 2014-09-17 18:26:33Z tgaskins $
@@ -89,6 +89,21 @@ public class BasicAirspaceAttributes extends BasicShapeAttributes implements Air
      */
     public BasicAirspaceAttributes(ShapeAttributes attributes) {
         super(attributes);
+    }
+
+    protected static void applyMaterial(DrawContext dc, Material material, double opacity, boolean enableMaterial) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
+
+        if (material != null) {
+            if (enableMaterial) {
+                material.apply(gl, GL2.GL_FRONT_AND_BACK, (float) opacity);
+            } else {
+                float[] compArray = new float[4];
+                material.getDiffuse().getRGBComponents(compArray);
+                compArray[3] = (float) opacity;
+                gl.glColor4fv(compArray, 0);
+            }
+        }
     }
 
     /**
@@ -170,7 +185,8 @@ public class BasicAirspaceAttributes extends BasicShapeAttributes implements Air
             throw new IllegalArgumentException(message);
         }
 
-        BasicAirspaceAttributes.applyMaterial(dc, this.getInteriorMaterial(), this.getInteriorOpacity(), enableMaterial);
+        BasicAirspaceAttributes.applyMaterial(dc, this.getInteriorMaterial(), this.getInteriorOpacity(),
+            enableMaterial);
     }
 
     /**
@@ -211,21 +227,5 @@ public class BasicAirspaceAttributes extends BasicShapeAttributes implements Air
         Double d = rs.getStateValueAsDouble(so, "opacity");
         if (d != null)
             this.setInteriorOpacity(d);
-    }
-
-    protected static void applyMaterial(DrawContext dc, Material material, double opacity, boolean enableMaterial) {
-        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-
-        if (material != null) {
-            if (enableMaterial) {
-                material.apply(gl, GL2.GL_FRONT_AND_BACK, (float) opacity);
-            }
-            else {
-                float[] compArray = new float[4];
-                material.getDiffuse().getRGBComponents(compArray);
-                compArray[3] = (float) opacity;
-                gl.glColor4fv(compArray, 0);
-            }
-        }
     }
 }

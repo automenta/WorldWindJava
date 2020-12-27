@@ -201,7 +201,7 @@ public class SessionCacheRetrievalPostProcessor implements RetrievalPostProcesso
         }
     }
 
-    protected void handleContent(Retriever retriever) throws Exception {
+    protected void handleContent(Retriever retriever) throws javax.xml.stream.XMLStreamException {
         String uppercaseName = retriever.getName().toUpperCase();
         if (uppercaseName.contains("SERVICE=WMS") && uppercaseName.contains("REQUEST=GETCAPABILITIES")) {
             this.handleWMSCapabilitiesContent(retriever);
@@ -210,7 +210,7 @@ public class SessionCacheRetrievalPostProcessor implements RetrievalPostProcesso
         }
     }
 
-    protected void handleWMSCapabilitiesContent(Retriever retriever) throws Exception {
+    protected void handleWMSCapabilitiesContent(Retriever retriever) throws javax.xml.stream.XMLStreamException {
         WMSCapabilities caps = new WMSCapabilities(retriever.getBuffer());
         this.cache.put(this.cacheKey, caps.parse());
     }

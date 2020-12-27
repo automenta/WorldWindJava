@@ -365,8 +365,7 @@ public abstract class AbstractAxisArrow extends AbstractMilStd2525TacticalGraphi
                 if (tripleProduct < 0) {
                     offset = offset.multiply3(-1);
                 }
-            }
-            else {
+            } else {
                 // If this is the last control point then don't consider the surrounding points, just compute an offset
                 // perpendicular to the control line.
                 offset = perpendicular.normalize3();

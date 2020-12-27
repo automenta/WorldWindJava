@@ -70,7 +70,7 @@ public class DefaultOffsets {
      */
     public Offset get(String sidc) {
         Offset offset = this.offsets.get(sidc);
-        return offset != null ? offset : DEFAULT_OFFSET;
+        return offset != null ? offset : DefaultOffsets.DEFAULT_OFFSET;
     }
 
     /**
@@ -180,7 +180,7 @@ public class DefaultOffsets {
         );
 
         // Sonobouy and a few other graphics are anchored a point 25% up from the bottom edge.
-        this.putAll(OFFSET_BOTTOM_QUARTER,
+        this.putAll(DefaultOffsets.OFFSET_BOTTOM_QUARTER,
             C2GM_GNL_PNT_USW_SNBY,
             C2GM_GNL_PNT_USW_SNBY_PTNCTR,
             C2GM_GNL_PNT_USW_SNBY_DIFAR,
@@ -198,11 +198,11 @@ public class DefaultOffsets {
             MOBSU_OBST_MNE_ATMDIR);
 
         // A handful of graphics have unique offsets
-        this.offsets.put(C2GM_GNL_PNT_WPN_DRPPNT, OFFSET_C2GM_GNL_PNT_WPN_DRPPNT);
-        this.offsets.put(MOBSU_OBST_MNE_ATMAHD, OFFSET_MOBSU_OBST_MNE_ATMAHD);
-        this.offsets.put(MOBSU_OBST_MNE_APMNE, OFFSET_MOBSU_OBST_MNE_APMNE);
-        this.offsets.put(MOBSU_OBST_MNE_WAMNE, OFFSET_MOBSU_OBST_MNE_WAMNE);
-        this.offsets.put(OTH_HAZ_SML, OFFSET_OTH_HAZ_SML);
+        this.offsets.put(C2GM_GNL_PNT_WPN_DRPPNT, DefaultOffsets.OFFSET_C2GM_GNL_PNT_WPN_DRPPNT);
+        this.offsets.put(MOBSU_OBST_MNE_ATMAHD, DefaultOffsets.OFFSET_MOBSU_OBST_MNE_ATMAHD);
+        this.offsets.put(MOBSU_OBST_MNE_APMNE, DefaultOffsets.OFFSET_MOBSU_OBST_MNE_APMNE);
+        this.offsets.put(MOBSU_OBST_MNE_WAMNE, DefaultOffsets.OFFSET_MOBSU_OBST_MNE_WAMNE);
+        this.offsets.put(OTH_HAZ_SML, DefaultOffsets.OFFSET_OTH_HAZ_SML);
         this.offsets.put(OTH_SSUBSR_MARLFE, Offset.LEFT_CENTER);
     }
 

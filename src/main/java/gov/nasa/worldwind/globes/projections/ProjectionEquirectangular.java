@@ -33,18 +33,18 @@ public class ProjectionEquirectangular extends AbstractGeographicProjection {
     @Override
     public Vec4 geographicToCartesian(Globe globe, Angle latitude, Angle longitude, double metersElevation,
         Vec4 offset) {
-        return new Vec4(globe.getEquatorialRadius() * longitude.radians + offset.x,
-            globe.getEquatorialRadius() * latitude.radians, metersElevation);
+        return new Vec4(globe.getEquatorialRadius() * longitude.radians() + offset.x,
+            globe.getEquatorialRadius() * latitude.radians(), metersElevation);
     }
 
     @Override
     public void geographicToCartesian(Globe globe, Sector sector, int numLat, int numLon, double[] metersElevation,
         Vec4 offset, Vec4[] out) {
         double eqr = globe.getEquatorialRadius();
-        double minLat = sector.latMin().radians;
-        double maxLat = sector.latMax().radians;
-        double minLon = sector.lonMin().radians;
-        double maxLon = sector.lonMax().radians;
+        double minLat = sector.latMin().radians();
+        double maxLat = sector.latMax().radians();
+        double minLon = sector.lonMin().radians();
+        double maxLon = sector.lonMax().radians();
         double deltaLat = (maxLat - minLat) / (numLat > 1 ? numLat - 1 : 1);
         double deltaLon = (maxLon - minLon) / (numLon > 1 ? numLon - 1 : 1);
         double offset_x = offset.x;

@@ -229,7 +229,7 @@ public class GazetteerPanel extends JPanel {
             Angle aLat = Angle.fromDMS(coords[0].trim());
             Angle aLon = Angle.fromDMS(coords[1].trim());
 
-            return new BasicPointOfInterest(LatLon.fromDegrees(aLat.getDegrees(), aLon.getDegrees()));
+            return new BasicPointOfInterest(LatLon.fromDegrees(aLat.degrees, aLon.degrees));
         }
     }
 

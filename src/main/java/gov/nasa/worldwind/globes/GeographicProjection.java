@@ -110,8 +110,7 @@ public interface GeographicProjection {
      *               projections that are continuous (see {@link #isContinuous()} apply this offset. Others ignore it.
      *               May be null.
      * @return The geographic position corresponding to the input point.
-     * @see #geographicToCartesian(Globe, Angle, Angle, double,
-     * Vec4)
+     * @see #geographicToCartesian(Globe, Angle, Angle, double, Vec4)
      */
     Position cartesianToGeographic(Globe globe, Vec4 cart, Vec4 offset);
 

@@ -30,7 +30,7 @@ public class SphereAirspace extends AbstractAirspace {
     private LatLon location = LatLon.ZERO;
     private double radius = 1.0;
     // Geometry.
-    private int subdivisions = DEFAULT_SUBDIVISIONS;
+    private int subdivisions = SphereAirspace.DEFAULT_SUBDIVISIONS;
 
     public SphereAirspace(LatLon location, double radius) {
         if (location == null) {
@@ -74,37 +74,37 @@ public class SphereAirspace extends AbstractAirspace {
 
         DetailLevel level;
         level = new ScreenSizeDetailLevel(ramp[0], "Detail-Level-0");
-        level.set(SUBDIVISIONS, 6);
+        level.set(AbstractAirspace.SUBDIVISIONS, 6);
         //level.setValue(DISABLE_TERRAIN_CONFORMANCE, false);
         levels.add(level);
 
         level = new ScreenSizeDetailLevel(ramp[1], "Detail-Level-1");
-        level.set(SUBDIVISIONS, 5);
+        level.set(AbstractAirspace.SUBDIVISIONS, 5);
         //level.setValue(DISABLE_TERRAIN_CONFORMANCE, false);
         levels.add(level);
 
         level = new ScreenSizeDetailLevel(ramp[2], "Detail-Level-2");
-        level.set(SUBDIVISIONS, 4);
+        level.set(AbstractAirspace.SUBDIVISIONS, 4);
         //level.setValue(DISABLE_TERRAIN_CONFORMANCE, false);
         levels.add(level);
 
         level = new ScreenSizeDetailLevel(ramp[3], "Detail-Level-3");
-        level.set(SUBDIVISIONS, 3);
+        level.set(AbstractAirspace.SUBDIVISIONS, 3);
         //level.setValue(DISABLE_TERRAIN_CONFORMANCE, false);
         levels.add(level);
 
         level = new ScreenSizeDetailLevel(ramp[4], "Detail-Level-4");
-        level.set(SUBDIVISIONS, 2);
+        level.set(AbstractAirspace.SUBDIVISIONS, 2);
         //level.setValue(DISABLE_TERRAIN_CONFORMANCE, true);
         levels.add(level);
 
         level = new ScreenSizeDetailLevel(ramp[5], "Detail-Level-5");
-        level.set(SUBDIVISIONS, 1);
+        level.set(AbstractAirspace.SUBDIVISIONS, 1);
         //level.setValue(DISABLE_TERRAIN_CONFORMANCE, true);
         levels.add(level);
 
         level = new ScreenSizeDetailLevel(ramp[6], "Detail-Level-6");
-        level.set(SUBDIVISIONS, 0);
+        level.set(AbstractAirspace.SUBDIVISIONS, 0);
         //level.setValue(DISABLE_TERRAIN_CONFORMANCE, true);
         levels.add(level);
 
@@ -181,8 +181,7 @@ public class SphereAirspace extends AbstractAirspace {
             Vec4 bottomCenter = globe.computePointFromPosition(this.location, minAltitude);
             Vec4 topCenter = globe.computePointFromPosition(this.location, maxAltitude);
             return new Cylinder(bottomCenter, topCenter, radius);
-        }
-        else {
+        } else {
             Vec4 centerPoint = globe.computePointFromPosition(this.location, altitude);
             return new Sphere(centerPoint, radius);
         }
@@ -194,12 +193,11 @@ public class SphereAirspace extends AbstractAirspace {
     }
 
     /**
-     * Returns this SphereAirspace's {@link Extent} for the specified DrawContext. This
-     * overrides {@link AbstractAirspace#getExtent(DrawContext)}
-     * in order to bypass the superclass' extent caching. Unlike other Airspace's Extents, SphereAirspace's Extent is a
-     * perfect fitting {@link Sphere}, who's center point depends on the current surface
-     * geometry. For this reason SphereAirspace's exact bounding volume can be easily computed, and should not be
-     * cached.
+     * Returns this SphereAirspace's {@link Extent} for the specified DrawContext. This overrides {@link
+     * AbstractAirspace#getExtent(DrawContext)} in order to bypass the superclass' extent caching. Unlike other
+     * Airspace's Extents, SphereAirspace's Extent is a perfect fitting {@link Sphere}, who's center point depends on
+     * the current surface geometry. For this reason SphereAirspace's exact bounding volume can be easily computed, and
+     * should not be cached.
      *
      * @param dc the current DrawContext.
      * @return this SphereAirspace's Extent in model coordinates.
@@ -330,10 +328,9 @@ public class SphereAirspace extends AbstractAirspace {
 
         this.clearElevationMap();
 
-        if (DRAW_STYLE_FILL.equals(drawStyle)) {
+        if (Airspace.DRAW_STYLE_FILL.equals(drawStyle)) {
             this.drawSphere(dc);
-        }
-        else if (DRAW_STYLE_OUTLINE.equals(drawStyle)) {
+        } else if (Airspace.DRAW_STYLE_OUTLINE.equals(drawStyle)) {
             // Sphere airspaces do not display an outline.
         }
     }
@@ -346,7 +343,7 @@ public class SphereAirspace extends AbstractAirspace {
         if (this.isEnableLevelOfDetail()) {
             DetailLevel level = this.computeDetailLevel(dc);
 
-            Object o = level.get(SUBDIVISIONS);
+            Object o = level.get(AbstractAirspace.SUBDIVISIONS);
             if (o instanceof Integer)
                 subdivisions = (Integer) o;
         }

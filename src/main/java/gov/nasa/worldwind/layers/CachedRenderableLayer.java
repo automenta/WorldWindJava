@@ -40,11 +40,11 @@ public class CachedRenderableLayer extends AbstractLayer {
      */
     public CachedRenderableLayer(Sector coverage) {
         // Extent tree checks args
-        this.extentTree = new BasicQuadTree<>(DEFAULT_DEPTH, coverage, null);
+        this.extentTree = new BasicQuadTree<>(CachedRenderableLayer.DEFAULT_DEPTH, coverage, null);
     }
 
     public CachedRenderableLayer() {
-        this((Sector)null);
+        this((Sector) null);
     }
 
     /**
@@ -270,8 +270,7 @@ public class CachedRenderableLayer extends AbstractLayer {
                     if (renderable instanceof Locatable) {
                         this.pickSupport.addPickableObject(color.getRGB(), renderable,
                             ((Locatable) renderable).getPosition(), false);
-                    }
-                    else {
+                    } else {
                         this.pickSupport.addPickableObject(color.getRGB(), renderable);
                     }
                 }

@@ -33,7 +33,7 @@ public enum RPFZone {
     ZONE_J('J'),
     ;
 
-    private static RPFZone[] enumConstantAlphabet = null;
+    private static RPFZone[] enumConstantAlphabet;
     public final char zoneCode;
 
     RPFZone(char zoneCode) {
@@ -55,11 +55,9 @@ public enum RPFZone {
         char upperChar = Character.toUpperCase(zoneCode);
         if (upperChar >= '1' && upperChar <= '9') {
             index = NUM_START_INDEX + upperChar - '1';
-        }
-        else if (upperChar >= 'A' && upperChar <= 'H') {
+        } else if (upperChar >= 'A' && upperChar <= 'H') {
             index = ALPHA_START_INDEX + upperChar - 'A';
-        }
-        else if (upperChar == 'J') {
+        } else if (upperChar == 'J') {
             index = ALPHA_START_INDEX + upperChar - 'A' - 1;
         }
 
@@ -77,8 +75,8 @@ public enum RPFZone {
     }
 
     public static RPFZone zoneFor(char zoneCode) {
-        RPFZone[] alphabet = enumConstantAlphabet();
-        int index = indexFor(zoneCode);
+        RPFZone[] alphabet = RPFZone.enumConstantAlphabet();
+        int index = RPFZone.indexFor(zoneCode);
         if (index < 0 || index >= alphabet.length) {
             String message = Logging.getMessage("generic.EnumNotFound", zoneCode);
             Logging.logger().fine(message);
@@ -96,13 +94,13 @@ public enum RPFZone {
     }
 
     private static synchronized RPFZone[] enumConstantAlphabet() {
-        if (enumConstantAlphabet == null) {
+        if (RPFZone.enumConstantAlphabet == null) {
             RPFZone[] universe = RPFZone.class.getEnumConstants();
-            enumConstantAlphabet = new RPFZone[universe.length];
+            RPFZone.enumConstantAlphabet = new RPFZone[universe.length];
             for (RPFZone zone : universe) {
-                enumConstantAlphabet[indexFor(zone.zoneCode)] = zone;
+                RPFZone.enumConstantAlphabet[RPFZone.indexFor(zone.zoneCode)] = zone;
             }
         }
-        return enumConstantAlphabet;
+        return RPFZone.enumConstantAlphabet;
     }
 }

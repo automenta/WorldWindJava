@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.layers.ogc.kml.impl;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.geom.LatLon;
+import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.ogc.kml.KMLConstants;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.Logging;
@@ -53,7 +53,7 @@ public class KMLExportUtil {
      *                   or {@link KMLConstants#HIGHLIGHT}
      * @param attributes Attributes to export. The method takes no action if this parameter is null.
      * @throws XMLStreamException if exception occurs writing XML.
-     * @throws IOException                 if exception occurs exporting data.
+     * @throws IOException        if exception occurs exporting data.
      */
     public static void exportAttributesAsKML(XMLStreamWriter xmlWriter, String styleType, Exportable attributes)
         throws XMLStreamException, IOException {
@@ -100,9 +100,9 @@ public class KMLExportUtil {
         throws XMLStreamException {
         if (dimension != null) {
             xmlWriter.writeStartElement(tagName);
-            exportDimensionAttributes("x", xmlWriter, dimension.getWidthMode(), dimension.getWidth(),
+            KMLExportUtil.exportDimensionAttributes("x", xmlWriter, dimension.getWidthMode(), dimension.getWidth(),
                 dimension.getWidthUnits());
-            exportDimensionAttributes("y", xmlWriter, dimension.getHeightMode(), dimension.getHeight(),
+            KMLExportUtil.exportDimensionAttributes("y", xmlWriter, dimension.getHeightMode(), dimension.getHeight(),
                 dimension.getHeightUnits());
             xmlWriter.writeEndElement();
         }
@@ -124,14 +124,12 @@ public class KMLExportUtil {
         throws XMLStreamException {
         if (Size.NATIVE_DIMENSION.equals(sizeMode)) {
             xmlWriter.writeAttribute(axes, "-1");
-        }
-        else if (Size.MAINTAIN_ASPECT_RATIO.equals(sizeMode))
+        } else if (Size.MAINTAIN_ASPECT_RATIO.equals(sizeMode))
             xmlWriter.writeAttribute(axes, "0");
         else if (Size.EXPLICIT_DIMENSION.equals(sizeMode)) {
             xmlWriter.writeAttribute(axes, Double.toString(size));
             xmlWriter.writeAttribute(axes + "units", KMLUtil.wwUnitsToKMLUnits(units));
-        }
-        else {
+        } else {
             Logging.logger().warning(Logging.getMessage("generic.UnknownSizeMode", sizeMode));
         }
     }
@@ -169,9 +167,9 @@ public class KMLExportUtil {
         xmlWriter.writeStartElement("LinearRing");
         xmlWriter.writeStartElement("coordinates");
         for (LatLon location : boundary) {
-            xmlWriter.writeCharacters(Double.toString(location.getLongitude().getDegrees()));
+            xmlWriter.writeCharacters(Double.toString(location.getLongitude().degrees));
             xmlWriter.writeCharacters(",");
-            xmlWriter.writeCharacters(Double.toString(location.getLatitude().getDegrees()));
+            xmlWriter.writeCharacters(Double.toString(location.getLatitude().degrees));
 
             if (altitudeString != null) {
                 xmlWriter.writeCharacters(",");

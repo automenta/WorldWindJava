@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.formats.csv;
 
-import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.tracks.TrackPoint;
 import gov.nasa.worldwind.util.Logging;
 
@@ -38,13 +38,6 @@ public class CSVTrackPoint implements TrackPoint {
         this.doValues(words);
     }
 
-    private void doValues(String[] words) {
-        this.latitude = CSVTrackPoint.parseLatitude(words[1]);
-        this.longitude = CSVTrackPoint.parseLongitude(words[2]);
-        if (words.length > 3)
-            this.altitude = parseElevation(words[3], "M");
-    }
-
     private static double parseLatitude(String angle) {
         return angle.isEmpty() ? 0 : Double.parseDouble(angle);
     }
@@ -54,7 +47,7 @@ public class CSVTrackPoint implements TrackPoint {
     }
 
     private static double parseElevation(String alt, String units) {
-        return alt.isEmpty() ? 0 : Double.parseDouble(alt) * unitsToMeters(units);
+        return alt.isEmpty() ? 0 : Double.parseDouble(alt) * CSVTrackPoint.unitsToMeters(units);
     }
 
     private static double unitsToMeters(String units) {
@@ -67,6 +60,13 @@ public class CSVTrackPoint implements TrackPoint {
             case "F" -> 0.5468066528;
             default -> 1.0d;
         };
+    }
+
+    private void doValues(String[] words) {
+        this.latitude = CSVTrackPoint.parseLatitude(words[1]);
+        this.longitude = CSVTrackPoint.parseLongitude(words[2]);
+        if (words.length > 3)
+            this.altitude = CSVTrackPoint.parseElevation(words[3], "M");
     }
 
     public double getLatitude() {
@@ -116,8 +116,8 @@ public class CSVTrackPoint implements TrackPoint {
             throw new IllegalArgumentException(msg);
         }
 
-        this.latitude = position.getLatitude().getDegrees();
-        this.longitude = position.getLongitude().getDegrees();
+        this.latitude = position.getLatitude().degrees;
+        this.longitude = position.getLongitude().degrees;
         this.altitude = position.getElevation();
     }
 

@@ -39,7 +39,7 @@ public class PositionEvent extends WWEvent {
 
     @Override
     public String toString() {
-        return this.getClass().getName() + " "
+        return this.getClass().getName() + ' '
             + (this.previousPosition != null ? this.previousPosition : "null")
             + " --> "
             + (this.position != null ? this.position : "null");

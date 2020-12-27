@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.util;
 
 import gov.nasa.worldwind.event.PositionEvent;
-import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.geom.coords.MGRSCoord;
 
 /**
@@ -21,8 +21,8 @@ public class StatusBarMGRS extends StatusBar {
     protected void handleCursorPositionChange(PositionEvent event) {
         Position newPos = event.getPosition();
         if (newPos != null) {
-            String las = String.format("%7.4f\u00B0 %7.4f\u00B0", newPos.getLatitude().getDegrees(),
-                newPos.getLongitude().getDegrees());
+            String las = String.format("%7.4f\u00B0 %7.4f\u00B0", newPos.getLatitude().degrees,
+                newPos.getLongitude().degrees);
             String els = makeCursorElevationDescription(
                 getEventSource().model().getGlobe().getElevation(newPos.getLatitude(), newPos.getLongitude()));
             String los = "";
@@ -31,14 +31,13 @@ public class StatusBarMGRS extends StatusBar {
                     getEventSource().model().getGlobe());
                 los = MGRS.toString();
             }
-            catch (Exception e) {
+            catch (RuntimeException e) {
                 los = "";
             }
             latDisplay.setText(las);
             lonDisplay.setText(los);
             eleDisplay.setText(els);
-        }
-        else {
+        } else {
             latDisplay.setText("");
             lonDisplay.setText("Off globe");
             eleDisplay.setText("");

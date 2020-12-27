@@ -74,8 +74,7 @@ public class KMLSurfaceImageImpl extends SurfaceImage implements KMLRenderable {
             if (rotation != null) {
                 this.mustApplyRotation = true;
             }
-        }
-        else {
+        } else {
             GXLatLongQuad latLonQuad = overlay.getLatLonQuad();
             if (latLonQuad != null && latLonQuad.getCoordinates() != null) {
                 this.initializeGeometry(latLonQuad.getCoordinates().list);

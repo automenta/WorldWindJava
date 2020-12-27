@@ -62,7 +62,7 @@ public interface XMLRoot {
      * @param path the path of the requested file.
      * @return an absolute path or URL to the file, or null if the file does not exist.
      * @throws IllegalArgumentException if the specified path is null.
-     * @throws IOException      if an error occurs while attempting to read the support file.
+     * @throws IOException              if an error occurs while attempting to read the support file.
      */
     String getSupportFilePath(String path) throws IOException;
 }

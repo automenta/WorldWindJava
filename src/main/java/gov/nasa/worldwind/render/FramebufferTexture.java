@@ -56,7 +56,64 @@ public class FramebufferTexture implements WWTexture {
         this.sector = sector;
         this.corners = corners;
 
-        this.tessellationDensity = DEFAULT_TESSELLATION_DENSITY;
+        this.tessellationDensity = FramebufferTexture.DEFAULT_TESSELLATION_DENSITY;
+    }
+
+    protected static Matrix computeGeographicToCartesianTransform(Sector sector) {
+        // Compute a transform that will map the geographic region defined by sector onto a cartesian region of width
+        // and height 2.0 centered at the origin.
+
+        double sx = 2.0 / sector.lonDelta;
+        double sy = 2.0 / sector.latDelta;
+
+        double tx = -sector.lonMin;
+        double ty = -sector.latMin;
+
+        Matrix transform = Matrix.IDENTITY;
+        transform = transform.multiply(Matrix.fromTranslation(-1.0, -1.0, 0.0));
+        transform = transform.multiply(Matrix.fromScale(sx, sy, 1.0));
+        transform = transform.multiply(Matrix.fromTranslation(tx, ty, 0.0));
+
+        return transform;
+    }
+
+    protected static Vec4 transformToQuadCoordinates(Matrix geoToCartesian, LatLon latLon) {
+        return new Vec4(latLon.getLongitude().degrees, latLon.getLatitude().degrees, 0.0).transformBy4(geoToCartesian);
+    }
+
+    protected static void drawQuad(DrawContext dc, BilinearInterpolator interp, int slices, int stacks) {
+        double[] compArray = new double[4];
+        double du = 1.0f / slices;
+        double dv = 1.0f / stacks;
+
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
+
+        for (int vi = 0; vi < stacks; vi++) {
+            double v = vi * dv;
+            double vn = (vi + 1) * dv;
+
+            if (vi != 0) {
+                interp.interpolate(slices * du, v, compArray);
+                gl.glTexCoord2d(slices * du, v);
+                gl.glVertex3dv(compArray, 0);
+
+                interp.interpolate(0, v, compArray);
+                gl.glTexCoord2d(0, v);
+                gl.glVertex3dv(compArray, 0);
+            }
+
+            for (int ui = 0; ui <= slices; ui++) {
+                double u = ui * du;
+
+                interp.interpolate(u, v, compArray);
+                gl.glTexCoord2d(u, v);
+                gl.glVertex3dv(compArray, 0);
+
+                interp.interpolate(u, vn, compArray);
+                gl.glTexCoord2d(u, vn);
+                gl.glVertex3dv(compArray, 0);
+            }
+        }
     }
 
     public int getWidth(DrawContext dc) {
@@ -217,28 +274,6 @@ public class FramebufferTexture implements WWTexture {
         return true;
     }
 
-    protected static Matrix computeGeographicToCartesianTransform(Sector sector) {
-        // Compute a transform that will map the geographic region defined by sector onto a cartesian region of width
-        // and height 2.0 centered at the origin.
-
-        double sx = 2.0 / sector.lonDelta;
-        double sy = 2.0 / sector.latDelta;
-
-        double tx = -sector.lonMin;
-        double ty = -sector.latMin;
-
-        Matrix transform = Matrix.IDENTITY;
-        transform = transform.multiply(Matrix.fromTranslation(-1.0, -1.0, 0.0));
-        transform = transform.multiply(Matrix.fromScale(sx, sy, 1.0));
-        transform = transform.multiply(Matrix.fromTranslation(tx, ty, 0.0));
-
-        return transform;
-    }
-
-    protected static Vec4 transformToQuadCoordinates(Matrix geoToCartesian, LatLon latLon) {
-        return new Vec4(latLon.getLongitude().degrees, latLon.getLatitude().degrees, 0.0).transformBy4(geoToCartesian);
-    }
-
     protected void drawQuad(DrawContext dc, Matrix geoToCartesian, int slices, int stacks) {
         Vec4 ll = FramebufferTexture.transformToQuadCoordinates(geoToCartesian, this.corners.get(0));
         Vec4 lr = FramebufferTexture.transformToQuadCoordinates(geoToCartesian, this.corners.get(1));
@@ -254,41 +289,6 @@ public class FramebufferTexture implements WWTexture {
         }
         finally {
             gl.glEnd();
-        }
-    }
-
-    protected static void drawQuad(DrawContext dc, BilinearInterpolator interp, int slices, int stacks) {
-        double[] compArray = new double[4];
-        double du = 1.0f / slices;
-        double dv = 1.0f / stacks;
-
-        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-
-        for (int vi = 0; vi < stacks; vi++) {
-            double v = vi * dv;
-            double vn = (vi + 1) * dv;
-
-            if (vi != 0) {
-                interp.interpolate(slices * du, v, compArray);
-                gl.glTexCoord2d(slices * du, v);
-                gl.glVertex3dv(compArray, 0);
-
-                interp.interpolate(0, v, compArray);
-                gl.glTexCoord2d(0, v);
-                gl.glVertex3dv(compArray, 0);
-            }
-
-            for (int ui = 0; ui <= slices; ui++) {
-                double u = ui * du;
-
-                interp.interpolate(u, v, compArray);
-                gl.glTexCoord2d(u, v);
-                gl.glVertex3dv(compArray, 0);
-
-                interp.interpolate(u, vn, compArray);
-                gl.glTexCoord2d(u, vn);
-                gl.glVertex3dv(compArray, 0);
-            }
         }
     }
 }

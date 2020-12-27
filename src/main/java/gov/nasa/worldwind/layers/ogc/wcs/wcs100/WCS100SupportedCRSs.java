@@ -49,23 +49,19 @@ public class WCS100SupportedCRSs extends AbstractXMLEventParser {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.requestResponseCRSs.add(s);
-        }
-        else if (ctx.isStartElement(event, "requestCRSs")) {
+        } else if (ctx.isStartElement(event, "requestCRSs")) {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.requestCRSs.add(s);
-        }
-        else if (ctx.isStartElement(event, "responseCRSs")) {
+        } else if (ctx.isStartElement(event, "responseCRSs")) {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.responseCRSs.add(s);
-        }
-        else if (ctx.isStartElement(event, "nativeCRSs")) {
+        } else if (ctx.isStartElement(event, "nativeCRSs")) {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.nativeCRSs.add(s);
-        }
-        else {
+        } else {
             super.doParseEventContent(ctx, event, args);
         }
     }

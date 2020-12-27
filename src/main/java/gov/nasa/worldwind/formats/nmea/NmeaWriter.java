@@ -19,13 +19,13 @@ public class NmeaWriter {
     private final PrintStream printStream;
     private final String encoding;
     @SuppressWarnings("UnusedDeclaration")
-    private int sentenceNumber = 0;
+    private int sentenceNumber;
 
-    public NmeaWriter(String path) throws IOException {
-        this(path, DEFAULT_ENCODING);
+    public NmeaWriter(String path) throws UnsupportedEncodingException, FileNotFoundException {
+        this(path, NmeaWriter.DEFAULT_ENCODING);
     }
 
-    public NmeaWriter(String path, String encoding) throws IOException {
+    public NmeaWriter(String path, String encoding) throws UnsupportedEncodingException, FileNotFoundException {
         if (path == null) {
             String msg = Logging.getMessage("nullValue.PathIsNull");
             Logging.logger().severe(msg);
@@ -44,11 +44,11 @@ public class NmeaWriter {
             this.encoding); // Character mapping from 16-bit UTF characters to bytes.
     }
 
-    public NmeaWriter(OutputStream stream) throws IOException {
-        this(stream, DEFAULT_ENCODING);
+    public NmeaWriter(OutputStream stream) throws UnsupportedEncodingException {
+        this(stream, NmeaWriter.DEFAULT_ENCODING);
     }
 
-    public NmeaWriter(OutputStream stream, String encoding) throws IOException {
+    public NmeaWriter(OutputStream stream, String encoding) throws UnsupportedEncodingException {
         if (stream == null) {
             String msg = Logging.getMessage("nullValue.InputStreamIsNull");
             Logging.logger().severe(msg);
@@ -65,6 +65,44 @@ public class NmeaWriter {
             new BufferedOutputStream(stream),
             false, // Disable autoflush.
             this.encoding); // Character mapping from 16-bit UTF characters to bytes.
+    }
+
+    private static String formatTime(String time) {
+        // Format time as "HHMMSS"
+        return (time != null) ? time : "";
+    }
+
+    private static String formatLatitude(double degrees) {
+        int d = (int) Math.floor(Math.abs(degrees));
+        double m = 60 * (Math.abs(degrees) - d);
+        // Format latitude as "DDMM.MMM[N|S]"
+        return String.format("%02d%06.3f,%s", d, m, degrees < 0 ? "S" : "N");
+    }
+
+    private static String formatLongitude(double degrees) {
+        int d = (int) Math.floor(Math.abs(degrees));
+        double m = 60 * (Math.abs(degrees) - d);
+        // Format longitude as "DDDMM.MMM[N|S]"
+        return String.format("%03d%06.3f,%s", d, m, degrees < 0 ? "W" : "E");
+    }
+
+    private static String formatElevation(double metersElevation) {
+        // Format elevation with 1 digit of precision.
+        // This provides decimeter resolution.
+        return String.format("%.1f,M", metersElevation);
+    }
+
+    private static String formatChecksum(int checksum) {
+        return Integer.toHexString(checksum);
+    }
+
+    private static int computeChecksum(CharSequence s, int start, int end) {
+        int chksum = 0;
+        for (int i = start; i < end; i++) {
+            int c = 0xFF & s.charAt(i);
+            chksum ^= c;
+        }
+        return chksum;
     }
 
     public final String getEncoding() {
@@ -128,16 +166,16 @@ public class NmeaWriter {
         sb.append("GP");
         // Global Positioning System Fix Data
         sb.append("GGA");
-        sb.append(",");
+        sb.append(',');
         // Fix taken at "HHMMSS" UTC
-        sb.append(formatTime(time));
-        sb.append(",");
+        sb.append(NmeaWriter.formatTime(time));
+        sb.append(',');
         // Latitude "DDMM.MMM,[N|S]"
-        sb.append(formatLatitude(lat));
-        sb.append(",");
+        sb.append(NmeaWriter.formatLatitude(lat));
+        sb.append(',');
         // Longitude "DDDMM.MMM,[N|S]"
-        sb.append(formatLongitude(lon));
-        sb.append(",");
+        sb.append(NmeaWriter.formatLongitude(lon));
+        sb.append(',');
         // Fix quality: 0 = invalid
         //              1 = GPS fix (SPS)
         //              2 = DGPS fix
@@ -147,68 +185,30 @@ public class NmeaWriter {
         //              6 = estimated (dead reckoning) (2.3 feature)
         //              7 = Manual input mode
         //              8 = Simulation mode
-        sb.append(",");
+        sb.append(',');
         // Number of satellites being tracked
-        sb.append(",");
+        sb.append(',');
         // Horizontal dilution of position
-        sb.append(",");
+        sb.append(',');
         // Altitude, Meters, above mean sea level
-        sb.append(formatElevation(altitude));
-        sb.append(",");
+        sb.append(NmeaWriter.formatElevation(altitude));
+        sb.append(',');
         // Height of geoid (mean sea level) above WGS84 ellipsoid
-        sb.append(formatElevation(geoidHeight));
-        sb.append(",");
+        sb.append(NmeaWriter.formatElevation(geoidHeight));
+        sb.append(',');
         // time in seconds since last DGPS update
-        sb.append(",");
+        sb.append(',');
         // DGPS station ID number
-        sb.append(",");
+        sb.append(',');
         // the checksum data, always begins with *
-        int chksum = computeChecksum(sb, 0, sb.length());
-        sb.append("*");
-        sb.append(formatChecksum(chksum));
+        int chksum = NmeaWriter.computeChecksum(sb, 0, sb.length());
+        sb.append('*');
+        sb.append(NmeaWriter.formatChecksum(chksum));
 
         out.print("$");
         out.print(sb);
         out.print("\r\n");
         doFlush();
-    }
-
-    private static String formatTime(String time) {
-        // Format time as "HHMMSS"
-        return (time != null) ? time : "";
-    }
-
-    private static String formatLatitude(double degrees) {
-        int d = (int) Math.floor(Math.abs(degrees));
-        double m = 60 * (Math.abs(degrees) - d);
-        // Format latitude as "DDMM.MMM[N|S]"
-        return String.format("%02d%06.3f,%s", d, m, degrees < 0 ? "S" : "N");
-    }
-
-    private static String formatLongitude(double degrees) {
-        int d = (int) Math.floor(Math.abs(degrees));
-        double m = 60 * (Math.abs(degrees) - d);
-        // Format longitude as "DDDMM.MMM[N|S]"
-        return String.format("%03d%06.3f,%s", d, m, degrees < 0 ? "W" : "E");
-    }
-
-    private static String formatElevation(double metersElevation) {
-        // Format elevation with 1 digit of precision.
-        // This provides decimeter resolution.
-        return String.format("%.1f,M", metersElevation);
-    }
-
-    private static String formatChecksum(int checksum) {
-        return Integer.toHexString(checksum);
-    }
-
-    private static int computeChecksum(CharSequence s, int start, int end) {
-        int chksum = 0;
-        for (int i = start; i < end; i++) {
-            int c = 0xFF & s.charAt(i);
-            chksum ^= c;
-        }
-        return chksum;
     }
 
     private void doFlush() {

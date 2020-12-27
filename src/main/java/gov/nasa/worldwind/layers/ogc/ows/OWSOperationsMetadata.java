@@ -67,16 +67,14 @@ public class OWSOperationsMetadata extends AbstractXMLEventParser {
                 if (o instanceof OWSOperation)
                     this.operations.add((OWSOperation) o);
             }
-        }
-        else if (ctx.isStartElement(event, "Constraint")) {
+        } else if (ctx.isStartElement(event, "Constraint")) {
             XMLEventParser parser = this.allocate(ctx, event);
             if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
                 if (o instanceof OWSConstraint)
                     this.constraints.add((OWSConstraint) o);
             }
-        }
-        else {
+        } else {
             super.doParseEventContent(ctx, event, args);
         }
     }

@@ -18,16 +18,16 @@ import java.util.*;
  * CombineContext provides a suitcase of state used by Combinable shapes to generate a complex set of contours by
  * applying boolean operations to one or more shapes. Instances of CombineContext are typically created and configured
  * by a controller that operates on one or more combinable shapes and implements the boolean operation that is applied
- * to those shapes, such as {@link ShapeCombiner}. The parameters used by shapes and by
- * the controller are as follows: a globe, a minimum resolution in radians, a region of interest, and a GLU tessellator.
- * The globe is used by shapes that define geometry relative to a globe. The resolution is used to filter shape detail
- * and compute geometry for resolution independent shapes. Shape geometry outside of the region of interest may be
- * ignored, clipped, or simplified at the discretion of the shape.
+ * to those shapes, such as {@link ShapeCombiner}. The parameters used by shapes and by the controller are as follows: a
+ * globe, a minimum resolution in radians, a region of interest, and a GLU tessellator. The globe is used by shapes that
+ * define geometry relative to a globe. The resolution is used to filter shape detail and compute geometry for
+ * resolution independent shapes. Shape geometry outside of the region of interest may be ignored, clipped, or
+ * simplified at the discretion of the shape.
  * <p>
  * CombineContext initializes its GLU tessellator according to the conventions for Combinable shapes. See the {@link
- * Combinable} interface documentation for information on drawing Combinable contours.
- * The complex set of contours computed as a result of drawing shapes into the tessellator are collected in the
- * context's contour list. This list may be accessed by calling getContours().
+ * Combinable} interface documentation for information on drawing Combinable contours. The complex set of contours
+ * computed as a result of drawing shapes into the tessellator are collected in the context's contour list. This list
+ * may be accessed by calling getContours().
  *
  * @author dcollins
  * @version $Id: CombineContext.java 2412 2014-10-30 21:32:34Z dcollins $
@@ -95,6 +95,17 @@ public class CombineContext implements Disposable {
         this.globe = globe;
         this.resolution = resolution;
         this.tess = tess;
+    }
+
+    @SuppressWarnings("UnusedParameters")
+    protected static void tessCombine(double[] coords, Object[] vertexData, float[] weight, Object[] outData) {
+        outData[0] = coords;
+    }
+
+    protected static void tessError(int errno) {
+        String errstr = GLUTessellatorSupport.convertGLUTessErrorToString(errno);
+        String msg = Logging.getMessage("generic.ExceptionWhileTessellating", errstr);
+        Logging.logger().severe(msg);
     }
 
     /**
@@ -182,10 +193,9 @@ public class CombineContext implements Disposable {
 
     /**
      * Returns the GLU tessellator used to draw shape contours. The GLU tessellator is configured according to the
-     * conventions for Combinable shapes. See the {@link Combinable} interface
-     * documentation for information on drawing Combinable contours. The complex set of contours computed as a result of
-     * drawing shapes into the tessellator are collected in the context's contour list. This list may be accessed by
-     * calling getContours().
+     * conventions for Combinable shapes. See the {@link Combinable} interface documentation for information on drawing
+     * Combinable contours. The complex set of contours computed as a result of drawing shapes into the tessellator are
+     * collected in the context's contour list. This list may be accessed by calling getContours().
      *
      * @return the GLU tessellator used to draw shape contours.
      */
@@ -240,17 +250,6 @@ public class CombineContext implements Disposable {
     protected void tessEnd() {
         this.addContour(this.currentContour);
         this.currentContour = null;
-    }
-
-    @SuppressWarnings("UnusedParameters")
-    protected static void tessCombine(double[] coords, Object[] vertexData, float[] weight, Object[] outData) {
-        outData[0] = coords;
-    }
-
-    protected static void tessError(int errno) {
-        String errstr = GLUTessellatorSupport.convertGLUTessErrorToString(errno);
-        String msg = Logging.getMessage("generic.ExceptionWhileTessellating", errstr);
-        Logging.logger().severe(msg);
     }
 
     /**

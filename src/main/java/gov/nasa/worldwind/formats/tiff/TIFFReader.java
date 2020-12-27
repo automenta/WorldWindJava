@@ -47,6 +47,71 @@ class TIFFReader {
         return 0xffffffffL & b.getInt();
     }
 
+    public static byte[] lzwUncompress(byte[] input, int rowNumPixels) {
+        if (input == null || input.length == 0)
+            return input;
+        byte[][] symbolTable = new byte[4096][1];
+        int bitsToRead = 9; //default
+        int nextSymbol = 258;
+        int code;
+        int oldCode = -1;
+
+        ByteBuffer out = ByteBuffer.allocate(rowNumPixels);
+        CodeReader bb = new CodeReader(input);
+
+        while (true) {
+            code = bb.getCode(bitsToRead);
+
+            if (code == TIFFReader.EOI_CODE || code == -1)
+                break;
+            if (code == TIFFReader.CLEAR_CODE) {
+                // initialize symbol table
+                for (int i = 0; i < 256; i++) {
+                    symbolTable[i][0] = (byte) i;
+                }
+                nextSymbol = 258;
+                bitsToRead = 9;
+                code = bb.getCode(bitsToRead);
+
+                if (code == TIFFReader.EOI_CODE || code == -1)
+                    break;
+
+                out.put(symbolTable[code]);
+                oldCode = code;
+            } else {
+                if (code < nextSymbol) {
+                    out.put(symbolTable[code]);
+                    ByteBuffer symbol = ByteBuffer.allocate((symbolTable[oldCode].length + 1));
+                    symbol.put(symbolTable[oldCode]);
+                    symbol.put(symbolTable[code][0]);
+                    symbolTable[nextSymbol] = symbol.array();
+                } else {
+                    int size = symbolTable[oldCode].length + 1;
+                    ByteBuffer symbol = ByteBuffer.allocate(size);
+                    symbol.put(symbolTable[oldCode]);
+                    symbol.put(symbolTable[oldCode][0]);
+                    byte[] outString = symbol.array();
+
+                    out.put(outString);
+
+                    symbolTable[nextSymbol] = outString;
+                }
+                oldCode = code;
+                nextSymbol++;
+                if (nextSymbol == 511) {
+                    bitsToRead = 10;
+                }
+                if (nextSymbol == 1023) {
+                    bitsToRead = 11;
+                }
+                if (nextSymbol == 2047) {
+                    bitsToRead = 12;
+                }
+            }
+        }
+        return out.array();
+    }
+
     public ByteOrder getByteOrder() {
         return this.tiffFileOrder;
     }
@@ -84,7 +149,7 @@ class TIFFReader {
                 read += r;
                 left -= r;
             }
-            byteArray = lzwUncompress(byteArray, (width * samplesPerPixel));
+            byteArray = TIFFReader.lzwUncompress(byteArray, (width * samplesPerPixel));
             if (differencing) {
                 for (int b = 0; b < byteArray.length; b++) {
                     if (b / samplesPerPixel % width == 0)
@@ -107,73 +172,6 @@ class TIFFReader {
         }
 
         return pixels;
-    }
-
-    public static byte[] lzwUncompress(byte[] input, int rowNumPixels) {
-        if (input == null || input.length == 0)
-            return input;
-        byte[][] symbolTable = new byte[4096][1];
-        int bitsToRead = 9; //default
-        int nextSymbol = 258;
-        int code;
-        int oldCode = -1;
-
-        ByteBuffer out = ByteBuffer.allocate(rowNumPixels);
-        CodeReader bb = new CodeReader(input);
-
-        while (true) {
-            code = bb.getCode(bitsToRead);
-
-            if (code == EOI_CODE || code == -1)
-                break;
-            if (code == CLEAR_CODE) {
-                // initialize symbol table
-                for (int i = 0; i < 256; i++) {
-                    symbolTable[i][0] = (byte) i;
-                }
-                nextSymbol = 258;
-                bitsToRead = 9;
-                code = bb.getCode(bitsToRead);
-
-                if (code == EOI_CODE || code == -1)
-                    break;
-
-                out.put(symbolTable[code]);
-                oldCode = code;
-            }
-            else {
-                if (code < nextSymbol) {
-                    out.put(symbolTable[code]);
-                    ByteBuffer symbol = ByteBuffer.allocate((symbolTable[oldCode].length + 1));
-                    symbol.put(symbolTable[oldCode]);
-                    symbol.put(symbolTable[code][0]);
-                    symbolTable[nextSymbol] = symbol.array();
-                }
-                else {
-                    int size = symbolTable[oldCode].length + 1;
-                    ByteBuffer symbol = ByteBuffer.allocate(size);
-                    symbol.put(symbolTable[oldCode]);
-                    symbol.put(symbolTable[oldCode][0]);
-                    byte[] outString = symbol.array();
-
-                    out.put(outString);
-
-                    symbolTable[nextSymbol] = outString;
-                }
-                oldCode = code;
-                nextSymbol++;
-                if (nextSymbol == 511) {
-                    bitsToRead = 10;
-                }
-                if (nextSymbol == 1023) {
-                    bitsToRead = 11;
-                }
-                if (nextSymbol == 2047) {
-                    bitsToRead = 12;
-                }
-            }
-        }
-        return out.array();
     }
 
     /*
@@ -266,8 +264,7 @@ class TIFFReader {
                 if (band == (b++ % samplesPerPixel)) {
                     data[dataOffset] = (short) (0xFFFF & sb.get());
                     dataOffset++;
-                }
-                else
+                } else
                     sb.get();
             }
         }
@@ -285,14 +282,14 @@ class TIFFReader {
         int band = 0;
         int numRows = 0;
 
-        ByteBuffer buff = ByteBuffer.allocateDirect(width * height * SHORT_SIZEOF);
+        ByteBuffer buff = ByteBuffer.allocateDirect(width * height * TIFFReader.SHORT_SIZEOF);
         buff.order(this.getByteOrder());
 
         for (int i = 0; i < stripOffsets.length; i++) {
             this.theChannel.position(stripOffsets[i]);
             int len = (int) stripCounts[i];
-            if ((buff.position() + len) > data[band].length * SHORT_SIZEOF)
-                len = data[band].length * SHORT_SIZEOF - buff.position();
+            if ((buff.position() + len) > data[band].length * TIFFReader.SHORT_SIZEOF)
+                len = data[band].length * TIFFReader.SHORT_SIZEOF - buff.position();
             buff.limit(buff.position() + len);
             this.theChannel.read(buff);
             numRows += rowsPerStrip;
@@ -319,14 +316,14 @@ class TIFFReader {
         int band = 0;
         int numRows = 0;
 
-        ByteBuffer buff = ByteBuffer.allocateDirect(width * height * FLOAT_SIZEOF);
+        ByteBuffer buff = ByteBuffer.allocateDirect(width * height * TIFFReader.FLOAT_SIZEOF);
         buff.order(this.getByteOrder());
 
         for (int i = 0; i < stripOffsets.length; i++) {
             this.theChannel.position(stripOffsets[i]);
             int len = (int) stripCounts[i];
-            if ((buff.position() + len) >= data[band].length * FLOAT_SIZEOF)
-                len = data[band].length * FLOAT_SIZEOF - buff.position();
+            if ((buff.position() + len) >= data[band].length * TIFFReader.FLOAT_SIZEOF)
+                len = data[band].length * TIFFReader.FLOAT_SIZEOF - buff.position();
             buff.limit(buff.position() + len);
             this.theChannel.read(buff);
             numRows += rowsPerStrip;
@@ -417,9 +414,9 @@ class TIFFReader {
     private static class CodeReader {
         private final byte[] byteBuffer;
         private final int bufferLength;
-        private final int[] backMask = new int[] {0x0000, 0x0001, 0x0003, 0x0007,
+        private final int[] backMask = {0x0000, 0x0001, 0x0003, 0x0007,
             0x000F, 0x001F, 0x003F, 0x007F};
-        private final int[] frontMask = new int[] {0x0000, 0x0080, 0x00C0, 0x00E0,
+        private final int[] frontMask = {0x0000, 0x0080, 0x00C0, 0x00E0,
             0x00F0, 0x00F8, 0x00FC, 0x00FE};
         private int currentByte;
         private int currentBit;
@@ -447,16 +444,14 @@ class TIFFReader {
                         int cb = byteBuffer[currentByte];
                         returnCode += (cb < 0 ? 256 + cb : cb);
                         numBitsToRead -= 8;
-                    }
-                    else {
+                    } else {
                         returnCode = returnCode << (8 - currentBit);
                         returnCode += byteBuffer[currentByte] & backMask[8 - currentBit];
                         numBitsToRead -= (8 - currentBit);
                         currentBit = 0;
                     }
                     currentByte++;
-                }
-                else {
+                } else {
                     returnCode = returnCode << numBitsToRead;
                     int cb = byteBuffer[currentByte];
                     cb = (cb < 0 ? 256 + cb : cb);

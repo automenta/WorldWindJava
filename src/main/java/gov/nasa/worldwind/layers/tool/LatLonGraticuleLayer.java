@@ -45,6 +45,62 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
         this.setName(Logging.getMessage("layers.LatLonGraticule.Name"));
     }
 
+    protected static String[] getOrderedTypes() {
+        return new String[] {
+            LatLonGraticuleLayer.GRATICULE_LATLON_LEVEL_0,
+            LatLonGraticuleLayer.GRATICULE_LATLON_LEVEL_1,
+            LatLonGraticuleLayer.GRATICULE_LATLON_LEVEL_2,
+            LatLonGraticuleLayer.GRATICULE_LATLON_LEVEL_3,
+            LatLonGraticuleLayer.GRATICULE_LATLON_LEVEL_4,
+            LatLonGraticuleLayer.GRATICULE_LATLON_LEVEL_5,
+        };
+    }
+
+    protected static String getTypeFor(double resolution) {
+        if (resolution >= 10)
+            return LatLonGraticuleLayer.GRATICULE_LATLON_LEVEL_0;
+        else if (resolution >= 1)
+            return LatLonGraticuleLayer.GRATICULE_LATLON_LEVEL_1;
+        else if (resolution >= 0.1)
+            return LatLonGraticuleLayer.GRATICULE_LATLON_LEVEL_2;
+        else if (resolution >= 0.01)
+            return LatLonGraticuleLayer.GRATICULE_LATLON_LEVEL_3;
+        else if (resolution >= 0.001)
+            return LatLonGraticuleLayer.GRATICULE_LATLON_LEVEL_4;
+        else if (resolution >= 0.0001)
+            return LatLonGraticuleLayer.GRATICULE_LATLON_LEVEL_5;
+
+        return null;
+    }
+
+    // --- Graticule Rendering --------------------------------------------------------------
+
+    private static Rectangle2D getGridRectangleForSector(Sector sector) {
+        int x1 = LatLonGraticuleLayer.getGridColumn(sector.lonMin);
+        int x2 = LatLonGraticuleLayer.getGridColumn(sector.lonMax);
+        int y1 = LatLonGraticuleLayer.getGridRow(sector.latMin);
+        int y2 = LatLonGraticuleLayer.getGridRow(sector.latMax);
+        return new Rectangle(x1, y1, x2 - x1, y2 - y1);
+    }
+
+    private static Sector getGridSector(int row, int col) {
+        int minLat = -90 + row * 10;
+        int maxLat = minLat + 10;
+        int minLon = -180 + col * 10;
+        int maxLon = minLon + 10;
+        return Sector.fromDegrees(minLat, maxLat, minLon, maxLon);
+    }
+
+    private static int getGridColumn(Double longitude) {
+        int col = (int) Math.floor((longitude + 180) / 10.0d);
+        return Math.min(col, 35);
+    }
+
+    private static int getGridRow(Double latitude) {
+        int row = (int) Math.floor((latitude + 90) / 10.0d);
+        return Math.min(row, 17);
+    }
+
     /**
      * Get the graticule division and angular display format. Can be one of {@link Angle#ANGLE_FORMAT_DD} or {@link
      * Angle#ANGLE_FORMAT_DMS}.
@@ -77,8 +133,6 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
         this.lastEyePoint = null; // force graticule to update
     }
 
-    // --- Graticule Rendering --------------------------------------------------------------
-
     protected void initRenderingParams() {
         GraticuleRenderingParams params;
         // Ten degrees grid
@@ -86,61 +140,33 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
         params.set(GraticuleRenderingParams.KEY_LINE_COLOR, Color.WHITE);
         params.set(GraticuleRenderingParams.KEY_LABEL_COLOR, Color.WHITE);
         params.set(GraticuleRenderingParams.KEY_LABEL_FONT, Font.decode("Arial-Bold-16"));
-        setRenderingParams(GRATICULE_LATLON_LEVEL_0, params);
+        setRenderingParams(LatLonGraticuleLayer.GRATICULE_LATLON_LEVEL_0, params);
         // One degree
         params = new GraticuleRenderingParams();
         params.set(GraticuleRenderingParams.KEY_LINE_COLOR, Color.GREEN);
         params.set(GraticuleRenderingParams.KEY_LABEL_COLOR, Color.GREEN);
         params.set(GraticuleRenderingParams.KEY_LABEL_FONT, Font.decode("Arial-Bold-14"));
-        setRenderingParams(GRATICULE_LATLON_LEVEL_1, params);
+        setRenderingParams(LatLonGraticuleLayer.GRATICULE_LATLON_LEVEL_1, params);
         // 1/10th degree - 1/6th (10 minutes)
         params = new GraticuleRenderingParams();
         params.set(GraticuleRenderingParams.KEY_LINE_COLOR, new Color(0, 102, 255));
         params.set(GraticuleRenderingParams.KEY_LABEL_COLOR, new Color(0, 102, 255));
-        setRenderingParams(GRATICULE_LATLON_LEVEL_2, params);
+        setRenderingParams(LatLonGraticuleLayer.GRATICULE_LATLON_LEVEL_2, params);
         // 1/100th degree - 1/60th (one minutes)
         params = new GraticuleRenderingParams();
         params.set(GraticuleRenderingParams.KEY_LINE_COLOR, Color.CYAN);
         params.set(GraticuleRenderingParams.KEY_LABEL_COLOR, Color.CYAN);
-        setRenderingParams(GRATICULE_LATLON_LEVEL_3, params);
+        setRenderingParams(LatLonGraticuleLayer.GRATICULE_LATLON_LEVEL_3, params);
         // 1/1000 degree - 1/360th (10 seconds)
         params = new GraticuleRenderingParams();
         params.set(GraticuleRenderingParams.KEY_LINE_COLOR, new Color(0, 153, 153));
         params.set(GraticuleRenderingParams.KEY_LABEL_COLOR, new Color(0, 153, 153));
-        setRenderingParams(GRATICULE_LATLON_LEVEL_4, params);
+        setRenderingParams(LatLonGraticuleLayer.GRATICULE_LATLON_LEVEL_4, params);
         // 1/10000 degree - 1/3600th (one second)
         params = new GraticuleRenderingParams();
         params.set(GraticuleRenderingParams.KEY_LINE_COLOR, new Color(102, 255, 204));
         params.set(GraticuleRenderingParams.KEY_LABEL_COLOR, new Color(102, 255, 204));
-        setRenderingParams(GRATICULE_LATLON_LEVEL_5, params);
-    }
-
-    protected static String[] getOrderedTypes() {
-        return new String[] {
-            GRATICULE_LATLON_LEVEL_0,
-            GRATICULE_LATLON_LEVEL_1,
-            GRATICULE_LATLON_LEVEL_2,
-            GRATICULE_LATLON_LEVEL_3,
-            GRATICULE_LATLON_LEVEL_4,
-            GRATICULE_LATLON_LEVEL_5,
-        };
-    }
-
-    protected static String getTypeFor(double resolution) {
-        if (resolution >= 10)
-            return GRATICULE_LATLON_LEVEL_0;
-        else if (resolution >= 1)
-            return GRATICULE_LATLON_LEVEL_1;
-        else if (resolution >= 0.1)
-            return GRATICULE_LATLON_LEVEL_2;
-        else if (resolution >= 0.01)
-            return GRATICULE_LATLON_LEVEL_3;
-        else if (resolution >= 0.001)
-            return GRATICULE_LATLON_LEVEL_4;
-        else if (resolution >= 0.0001)
-            return GRATICULE_LATLON_LEVEL_5;
-
-        return null;
+        setRenderingParams(LatLonGraticuleLayer.GRATICULE_LATLON_LEVEL_5, params);
     }
 
     protected void clear(DrawContext dc) {
@@ -151,7 +177,7 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
     }
 
     private void applyTerrainConformance() {
-        String[] graticuleType = getOrderedTypes();
+        String[] graticuleType = LatLonGraticuleLayer.getOrderedTypes();
         for (String type : graticuleType) {
             getRenderingParams(type).set(
                 GraticuleRenderingParams.KEY_LINE_CONFORMANCE, this.terrainConformance);
@@ -177,13 +203,13 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
         ArrayList<GraticuleTile> tileList = new ArrayList<>();
         Sector vs = dc.getVisibleSector();
         if (vs != null) {
-            Rectangle2D gridRectangle = getGridRectangleForSector(vs);
+            Rectangle2D gridRectangle = LatLonGraticuleLayer.getGridRectangleForSector(vs);
             for (int row = (int) gridRectangle.getY(); row <= gridRectangle.getY() + gridRectangle.getHeight();
                 row++) {
                 for (int col = (int) gridRectangle.getX(); col <= gridRectangle.getX() + gridRectangle.getWidth();
                     col++) {
                     if (gridTiles[row][col] == null)
-                        gridTiles[row][col] = new GraticuleTile(getGridSector(row, col), 10, 0);
+                        gridTiles[row][col] = new GraticuleTile(LatLonGraticuleLayer.getGridSector(row, col), 10, 0);
                     if (gridTiles[row][col].isInView(dc))
                         tileList.add(gridTiles[row][col]);
                     else
@@ -192,32 +218,6 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
             }
         }
         return tileList;
-    }
-
-    private static Rectangle2D getGridRectangleForSector(Sector sector) {
-        int x1 = getGridColumn(sector.lonMin);
-        int x2 = getGridColumn(sector.lonMax);
-        int y1 = getGridRow(sector.latMin);
-        int y2 = getGridRow(sector.latMax);
-        return new Rectangle(x1, y1, x2 - x1, y2 - y1);
-    }
-
-    private static Sector getGridSector(int row, int col) {
-        int minLat = -90 + row * 10;
-        int maxLat = minLat + 10;
-        int minLon = -180 + col * 10;
-        int maxLon = minLon + 10;
-        return Sector.fromDegrees(minLat, maxLat, minLon, maxLon);
-    }
-
-    private static int getGridColumn(Double longitude) {
-        int col = (int) Math.floor((longitude + 180) / 10.0d);
-        return Math.min(col, 35);
-    }
-
-    private static int getGridRow(Double latitude) {
-        int row = (int) Math.floor((latitude + 90) / 10.0d);
-        return Math.min(row, 17);
     }
 
     protected void clearTiles() {
@@ -246,8 +246,7 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
                 else
                     label = angle.toDMSString();
             }
-        }
-        else if (this.getAngleFormat().equals(Angle.ANGLE_FORMAT_DM)) {
+        } else if (this.getAngleFormat().equals(Angle.ANGLE_FORMAT_DM)) {
             if (resolution >= 1)
                 label = angle.toDecimalDegreesString(0);
             else {
@@ -259,8 +258,7 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
                 else
                     label = angle.toDMString();
             }
-        }
-        else // default to decimal degrees
+        } else // default to decimal degrees
         {
             if (resolution >= 1)
                 label = angle.toDecimalDegreesString(0);
@@ -288,8 +286,7 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
                 text.setPriority(resolution * 1.0e6);
                 this.addRenderable(text, graticuleType);
             }
-        }
-        else if (labelType.equals(GridElement.TYPE_LONGITUDE_LABEL)) {
+        } else if (labelType.equals(GridElement.TYPE_LONGITUDE_LABEL)) {
             if (!this.longitudeLabels.contains(value)) {
                 this.longitudeLabels.add(value);
                 String label = makeAngleLabel(Angle.fromDegrees(value), resolution);
@@ -328,7 +325,7 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
                 return false;
 
             // Check apparent size
-            if (this.level != 0 && getSizeInPixels(dc) / this.divisions < MIN_CELL_SIZE_PIXELS)
+            if (this.level != 0 && getSizeInPixels(dc) / this.divisions < LatLonGraticuleLayer.MIN_CELL_SIZE_PIXELS)
                 return false;
 
             return true;
@@ -336,7 +333,7 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
 
         public double getSizeInPixels(DrawContext dc) {
             View view = dc.getView();
-            Vec4 centerPoint = getSurfacePoint(dc, this.sector.getCentroid().getLatitude(),
+            Vec4 centerPoint = GraticuleLayer.getSurfacePoint(dc, this.sector.getCentroid().getLatitude(),
                 this.sector.getCentroid().getLongitude());
             double distance = view.getEyePoint().distanceTo3(centerPoint);
             double tileSizeMeter = toRadians(this.sector.latDelta) * dc.getGlobe().getRadius();
@@ -347,8 +344,8 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
             if (this.gridElements == null)
                 this.createRenderables();
 
-            LatLon labelOffset = computeLabelOffset(dc);
-            String graticuleType = getTypeFor(this.sector.latDelta);
+            LatLon labelOffset = GraticuleLayer.computeLabelOffset(dc);
+            String graticuleType = LatLonGraticuleLayer.getTypeFor(this.sector.latDelta);
             if (this.level == 0) {
                 for (GridElement ge : this.gridElements) {
                     if (ge.isInView(dc)) {
@@ -363,13 +360,13 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
                         }
                     }
                 }
-                if (getSizeInPixels(dc) / this.divisions < MIN_CELL_SIZE_PIXELS)
+                if (getSizeInPixels(dc) / this.divisions < LatLonGraticuleLayer.MIN_CELL_SIZE_PIXELS)
                     return;
             }
 
             // Select tile grid elements
             double resolution = this.sector.latDelta / this.divisions;
-            graticuleType = getTypeFor(resolution);
+            graticuleType = LatLonGraticuleLayer.getTypeFor(resolution);
             for (GridElement ge : this.gridElements) {
                 if (ge.isInView(dc)) {
                     if (ge.type.equals(GridElement.TYPE_LINE)) {
@@ -381,7 +378,7 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
                 }
             }
 
-            if (getSizeInPixels(dc) / this.divisions < MIN_CELL_SIZE_PIXELS * 2)
+            if (getSizeInPixels(dc) / this.divisions < LatLonGraticuleLayer.MIN_CELL_SIZE_PIXELS * 2)
                 return;
 
             // Select child elements
@@ -390,8 +387,7 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
             for (GraticuleTile gt : this.subTiles) {
                 if (gt.isInView(dc)) {
                     gt.selectRenderables(dc);
-                }
-                else
+                } else
                     gt.clearRenderables();
             }
         }
@@ -439,7 +435,7 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
                 positions.add(new Position(this.sector.latMin(), longitude, 0));
                 positions.add(new Position(this.sector.latMax(), longitude, 0));
 
-                Object line = createLineRenderable(positions, AVKey.LINEAR);
+                Object line = GraticuleLayer.createLineRenderable(positions, AVKey.LINEAR);
                 Sector sector = Sector.fromDegrees(
                     this.sector.latMin, this.sector.latMax, lon, lon);
                 String lineType = lon == this.sector.lonMin ?
@@ -460,7 +456,7 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
                 positions.add(new Position(latitude, this.sector.lonMin(), 0));
                 positions.add(new Position(latitude, this.sector.lonMax(), 0));
 
-                Object line = createLineRenderable(positions, AVKey.LINEAR);
+                Object line = GraticuleLayer.createLineRenderable(positions, AVKey.LINEAR);
                 Sector sector = Sector.fromDegrees(
                     lat, lat, this.sector.lonMin, this.sector.lonMax);
                 String lineType = lat == this.sector.latMin ?
@@ -479,7 +475,7 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
                 positions.add(new Position(Angle.POS90, this.sector.lonMin(), 0));
                 positions.add(new Position(Angle.POS90, this.sector.lonMax(), 0));
 
-                Object line = createLineRenderable(positions, AVKey.LINEAR);
+                Object line = GraticuleLayer.createLineRenderable(positions, AVKey.LINEAR);
                 Sector sector = Sector.fromDegrees(
                     90, 90, this.sector.lonMin, this.sector.lonMax);
                 GridElement ge = new GridElement(sector, line, GridElement.TYPE_LINE_NORTH);

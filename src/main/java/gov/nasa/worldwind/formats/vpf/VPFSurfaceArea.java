@@ -30,15 +30,15 @@ public class VPFSurfaceArea extends SurfacePolygon // TODO: consolidate with Sur
     public VPFSurfaceArea(VPFFeature feature, VPFPrimitiveData primitiveData) {
         this.feature = feature;
         this.primitiveData = primitiveData;
-        this.buffer = computeAreaFeatureCoords(feature, primitiveData);
+        this.buffer = VPFSurfaceArea.computeAreaFeatureCoords(feature, primitiveData);
         this.referenceLocation = feature.getBounds().toSector().getCentroid();
     }
 
     protected static VecBufferSequence computeAreaFeatureCoords(VPFFeature feature, VPFPrimitiveData primitiveData) {
-        final int numEdges = traverseAreaEdges(feature, primitiveData, null);
+        final int numEdges = VPFSurfaceArea.traverseAreaEdges(feature, primitiveData, null);
         final IntBuffer edgeIds = IntBuffer.wrap(new int[numEdges]);
 
-        traverseAreaEdges(feature, primitiveData, (edgeId, edgeInfo) -> edgeIds.put(edgeId));
+        VPFSurfaceArea.traverseAreaEdges(feature, primitiveData, (edgeId, edgeInfo) -> edgeIds.put(edgeId));
 
         edgeIds.rewind();
 
@@ -56,10 +56,10 @@ public class VPFSurfaceArea extends SurfacePolygon // TODO: consolidate with Sur
                 primitiveName, id);
 
             VPFPrimitiveData.Ring outerRing = faceInfo.getOuterRing();
-            count += traverseRingEdges(outerRing, primitiveData, listener);
+            count += VPFSurfaceArea.traverseRingEdges(outerRing, primitiveData, listener);
 
             for (VPFPrimitiveData.Ring ring : faceInfo.getInnerRings()) {
-                count += traverseRingEdges(ring, primitiveData, listener);
+                count += VPFSurfaceArea.traverseRingEdges(ring, primitiveData, listener);
             }
         }
 
@@ -89,7 +89,7 @@ public class VPFSurfaceArea extends SurfacePolygon // TODO: consolidate with Sur
         if (s == null || s.equals(Sector.EMPTY_SECTOR))
             return null;
 
-        return new Sector[] { s };
+        return new Sector[] {s};
     }
 
     public Iterable<? extends LatLon> getLocations() {
@@ -145,8 +145,7 @@ public class VPFSurfaceArea extends SurfacePolygon // TODO: consolidate with Sur
             if (numBytes == null) {
                 gl.glDeleteLists(dlResource[0], dlResource[1]);
                 dlResource = null;
-            }
-            else {
+            } else {
                 dc.getGpuResourceCache().put(this.interiorDisplayListCacheKey, dlResource,
                     GpuResourceCache.DISPLAY_LISTS, numBytes);
             }
@@ -167,8 +166,7 @@ public class VPFSurfaceArea extends SurfacePolygon // TODO: consolidate with Sur
     protected WWTexture getInteriorTexture() {
         if (this.getActiveAttributes().getImageSource() == null) {
             this.texture = null;
-        }
-        else if (this.texture == null
+        } else if (this.texture == null
             || this.texture.getImageSource() != this.getActiveAttributes().getImageSource()) {
             this.texture = new BasicWWTexture(this.getActiveAttributes().getImageSource(),
                 ((VPFSymbolAttributes) this.getActiveAttributes()).isMipMapIconImage());

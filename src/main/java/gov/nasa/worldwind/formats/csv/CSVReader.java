@@ -47,9 +47,9 @@ public class CSVReader implements Track, TrackSegment {
     /**
      * @param path File spec to read from.
      * @throws IllegalArgumentException if <code>path</code> is null
-     * @throws IOException      If there are issues reading from the file.
+     * @throws IOException              If there are issues reading from the file.
      */
-    public void readFile(String path) throws IOException {
+    public void readFile(String path) throws FileNotFoundException {
         if (path == null) {
             String msg = Logging.getMessage("nullValue.PathIsNull");
             Logging.logger().severe(msg);

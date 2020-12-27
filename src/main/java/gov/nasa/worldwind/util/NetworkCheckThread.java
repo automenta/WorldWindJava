@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.*;
  */
 public class NetworkCheckThread extends Thread {
     protected static final long DEFAULT_NET_CHECK_INTERVAL = 1000; // milliseconds
-    protected final AtomicLong netChecInterval = new AtomicLong(DEFAULT_NET_CHECK_INTERVAL);
+    protected final AtomicLong netChecInterval = new AtomicLong(NetworkCheckThread.DEFAULT_NET_CHECK_INTERVAL);
     protected AtomicBoolean showNetStatus;
     protected AtomicBoolean isNetAvailable;
 
@@ -59,7 +59,7 @@ public class NetworkCheckThread extends Thread {
         while (showNetStatus.get() && !Thread.currentThread().isInterrupted()) {
             //noinspection EmptyCatchBlock
             try {
-                Thread.sleep(DEFAULT_NET_CHECK_INTERVAL);
+                Thread.sleep(NetworkCheckThread.DEFAULT_NET_CHECK_INTERVAL);
                 this.isNetAvailable.set(!WorldWind.getNetworkStatus().isNetworkUnavailable());
             }
             catch (InterruptedException e) {

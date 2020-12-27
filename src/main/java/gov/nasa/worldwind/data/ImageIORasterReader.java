@@ -32,7 +32,7 @@ public class ImageIORasterReader extends AbstractDataRasterReader {
     private boolean generateMipMaps;
 
     public ImageIORasterReader(boolean generateMipMaps) {
-        super(ImageIO.getReaderMIMETypes(), getImageIOReaderSuffixes());
+        super(ImageIO.getReaderMIMETypes(), ImageIORasterReader.getImageIOReaderSuffixes());
         this.generateMipMaps = generateMipMaps;
     }
 
@@ -48,9 +48,8 @@ public class ImageIORasterReader extends AbstractDataRasterReader {
 
         if (source instanceof URL) {
             input = ((URL) source).openStream();
-        }
-        else if (source instanceof CharSequence) {
-            input = openInputStream(source.toString());
+        } else if (source instanceof CharSequence) {
+            input = ImageIORasterReader.openInputStream(source.toString());
         }
 
         return ImageIO.createImageInputStream(input);
@@ -60,11 +59,9 @@ public class ImageIORasterReader extends AbstractDataRasterReader {
         Object streamOrException = WWIO.getFileOrResourceAsStream(path, null);
         if (streamOrException == null) {
             return null;
-        }
-        else if (streamOrException instanceof IOException) {
+        } else if (streamOrException instanceof IOException) {
             throw (IOException) streamOrException;
-        }
-        else if (streamOrException instanceof Exception) {
+        } else if (streamOrException instanceof Exception) {
             String message = Logging.getMessage("generic.ExceptionAttemptingToReadImageFile", path);
             Logging.logger().log(Level.SEVERE, message, streamOrException);
             throw new IOException(message);
@@ -88,7 +85,7 @@ public class ImageIORasterReader extends AbstractDataRasterReader {
             iter = IIORegistry.getDefaultInstance().getServiceProviders(
                 ImageReaderSpi.class, true);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             return new String[0];
         }
 
@@ -102,78 +99,6 @@ public class ImageIORasterReader extends AbstractDataRasterReader {
         String[] array = new String[set.size()];
         set.toArray(array);
         return array;
-    }
-
-    public boolean isGenerateMipMaps() {
-        return this.generateMipMaps;
-    }
-
-    public void setGenerateMipMaps(boolean generateMipMaps) {
-        this.generateMipMaps = generateMipMaps;
-    }
-
-    protected boolean doCanRead(Object source, AVList params) {
-        // Determine whether or not the data source can be read.
-        //if (!this.canReadImage(source))
-        //    return false;
-
-        // If the data source doesn't already have all the necessary metadata, then we determine whether or not
-        // the missing metadata can be read.
-        Object o = (params != null) ? params.get(AVKey.SECTOR) : null;
-        if (!(o instanceof Sector)) {
-            if (!ImageIORasterReader.canReadWorldFiles(source)) {
-                return false;
-            }
-        }
-
-        if (null != params && !params.hasKey(AVKey.PIXEL_FORMAT)) {
-            params.set(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
-        }
-
-        return true;
-    }
-
-    protected DataRaster[] doRead(Object source, AVList params) throws IOException {
-        ImageInputStream iis = createInputStream(source);
-        BufferedImage image = ImageIO.read(iis);
-        image = ImageUtil.toCompatibleImage(image);
-
-        // If the data source doesn't already have all the necessary metadata, then we attempt to read the metadata.
-        Object o = (params != null) ? params.get(AVKey.SECTOR) : null;
-        if (!(o instanceof Sector)) {
-            AVList values = new AVListImpl();
-            values.set(AVKey.IMAGE, image);
-            ImageIORasterReader.readWorldFiles(source, values);
-            o = values.get(AVKey.SECTOR);
-        }
-
-        return new DataRaster[] {this.createRaster((Sector) o, image)};
-    }
-
-    protected void doReadMetadata(Object source, AVList params) throws IOException {
-        Object width = params.get(AVKey.WIDTH);
-        Object height = params.get(AVKey.HEIGHT);
-        if (!(width instanceof Integer) || !(height instanceof Integer)) {
-            ImageIORasterReader.readImageDimension(source, params);
-        }
-
-        Object sector = params.get(AVKey.SECTOR);
-        if (!(sector instanceof Sector)) {
-            ImageIORasterReader.readWorldFiles(source, params);
-        }
-
-        if (!params.hasKey(AVKey.PIXEL_FORMAT)) {
-            params.set(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
-        }
-    }
-
-    protected DataRaster createRaster(Sector sector, BufferedImage image) {
-        if (this.isGenerateMipMaps()) {
-            return new MipMappedBufferedImageRaster(sector, image);
-        }
-        else {
-            return new BufferedImageRaster(sector, image);
-        }
     }
 
     private static boolean canReadWorldFiles(Object source) {
@@ -196,10 +121,10 @@ public class ImageIORasterReader extends AbstractDataRasterReader {
     }
 
     private static void readImageDimension(Object source, AVList params) throws IOException {
-        ImageInputStream iis = createInputStream(source);
+        ImageInputStream iis = ImageIORasterReader.createInputStream(source);
         ImageReader reader = null;
         try (iis) {
-            reader = readerFor(iis);
+            reader = ImageIORasterReader.readerFor(iis);
             if (reader == null) {
                 String message = Logging.getMessage("generic.UnrecognizedImageSourceType", source);
                 Logging.logger().severe(message);
@@ -237,7 +162,7 @@ public class ImageIORasterReader extends AbstractDataRasterReader {
                 Object width = params.get(AVKey.WIDTH);
                 Object height = params.get(AVKey.HEIGHT);
                 if (width instanceof Integer && height instanceof Integer) {
-                    int[] size = new int[] {(Integer) width, (Integer) height};
+                    int[] size = {(Integer) width, (Integer) height};
                     params.set(WorldFile.WORLD_FILE_IMAGE_SIZE, size);
                 }
             }
@@ -245,5 +170,76 @@ public class ImageIORasterReader extends AbstractDataRasterReader {
 
         File[] worldFiles = WorldFile.getWorldFiles((File) source);
         WorldFile.decodeWorldFiles(worldFiles, params);
+    }
+
+    public boolean isGenerateMipMaps() {
+        return this.generateMipMaps;
+    }
+
+    public void setGenerateMipMaps(boolean generateMipMaps) {
+        this.generateMipMaps = generateMipMaps;
+    }
+
+    protected boolean doCanRead(Object source, AVList params) {
+        // Determine whether or not the data source can be read.
+        //if (!this.canReadImage(source))
+        //    return false;
+
+        // If the data source doesn't already have all the necessary metadata, then we determine whether or not
+        // the missing metadata can be read.
+        Object o = (params != null) ? params.get(AVKey.SECTOR) : null;
+        if (!(o instanceof Sector)) {
+            if (!ImageIORasterReader.canReadWorldFiles(source)) {
+                return false;
+            }
+        }
+
+        if (null != params && !params.hasKey(AVKey.PIXEL_FORMAT)) {
+            params.set(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
+        }
+
+        return true;
+    }
+
+    protected DataRaster[] doRead(Object source, AVList params) throws IOException {
+        ImageInputStream iis = ImageIORasterReader.createInputStream(source);
+        BufferedImage image = ImageIO.read(iis);
+        image = ImageUtil.toCompatibleImage(image);
+
+        // If the data source doesn't already have all the necessary metadata, then we attempt to read the metadata.
+        Object o = (params != null) ? params.get(AVKey.SECTOR) : null;
+        if (!(o instanceof Sector)) {
+            AVList values = new AVListImpl();
+            values.set(AVKey.IMAGE, image);
+            ImageIORasterReader.readWorldFiles(source, values);
+            o = values.get(AVKey.SECTOR);
+        }
+
+        return new DataRaster[] {this.createRaster((Sector) o, image)};
+    }
+
+    protected void doReadMetadata(Object source, AVList params) throws IOException {
+        Object width = params.get(AVKey.WIDTH);
+        Object height = params.get(AVKey.HEIGHT);
+        if (!(width instanceof Integer) || !(height instanceof Integer)) {
+            ImageIORasterReader.readImageDimension(source, params);
+        }
+
+        Object sector = params.get(AVKey.SECTOR);
+        if (!(sector instanceof Sector)) {
+            ImageIORasterReader.readWorldFiles(source, params);
+        }
+
+        if (!params.hasKey(AVKey.PIXEL_FORMAT)) {
+            params.set(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
+        }
+    }
+
+    protected DataRaster createRaster(Sector sector, BufferedImage image) {
+        if (this.isGenerateMipMaps()) {
+            return new MipMappedBufferedImageRaster(sector, image);
+        } else {
+            return new BufferedImageRaster(sector, image);
+        }
     }
 }

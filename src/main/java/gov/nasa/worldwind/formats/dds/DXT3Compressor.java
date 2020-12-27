@@ -18,6 +18,10 @@ public class DXT3Compressor implements DXTCompressor {
     public DXT3Compressor() {
     }
 
+    protected static ColorBlockExtractor getColorBlockExtractor(BufferedImage image) {
+        return new BasicColorBlockExtractor(image);
+    }
+
     public int getDXTFormat() {
         return DDSConstants.D3DFMT_DXT3;
     }
@@ -83,9 +87,5 @@ public class DXT3Compressor implements DXTCompressor {
                 buffer.putInt((int) dxtColorBlock.colorIndexMask);
             }
         }
-    }
-
-    protected static ColorBlockExtractor getColorBlockExtractor(BufferedImage image) {
-        return new BasicColorBlockExtractor(image);
     }
 }

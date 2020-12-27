@@ -59,7 +59,7 @@ public class BasicAirspaceControlPoint implements AirspaceControlPoint {
     }
 
     public Object getKey() {
-        return keyFor(this.locationIndex, this.altitudeIndex);
+        return BasicAirspaceControlPoint.keyFor(this.locationIndex, this.altitudeIndex);
     }
 
     public boolean equals(Object o) {

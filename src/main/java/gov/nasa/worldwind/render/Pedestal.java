@@ -50,7 +50,7 @@ public class Pedestal extends UserFacingIcon {
             try {
                 restorableSupport = RestorableSupport.parse(superStateInXml);
             }
-            catch (Exception e) {
+            catch (RuntimeException e) {
                 // Parsing the document specified by the superclass failed.
                 String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", superStateInXml);
                 Logging.logger().severe(message);
@@ -89,7 +89,7 @@ public class Pedestal extends UserFacingIcon {
         try {
             super.restoreState(stateInXml);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             // Superclass will log the exception.
         }
 
@@ -97,7 +97,7 @@ public class Pedestal extends UserFacingIcon {
         try {
             restorableSupport = RestorableSupport.parse(stateInXml);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             // Parsing the document specified by stateInXml failed.
             String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", stateInXml);
             Logging.logger().severe(message);

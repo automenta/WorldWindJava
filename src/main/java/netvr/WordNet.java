@@ -32,7 +32,7 @@ public class WordNet {
     public static void main(final String[] args) throws IOException {
         final String wnHome = "/home/me/wordnet30"; //args[0];
         final String lemma = "monkey";//args[1];
-        run(wnHome, lemma);
+        WordNet.run(wnHome, lemma);
     }
 
     @SuppressWarnings("SameReturnValue")
@@ -40,6 +40,46 @@ public class WordNet {
         final WordNet jwi = new WordNet(wnhome);
         jwi.walk(lemma);
         return true;
+    }
+
+    public static String toString(final ISynset synset) {
+        return WordNet.getMembers(synset) + synset.getGloss();
+    }
+
+    public static String getMembers(final ISynset synset) {
+        final StringBuilder sb = new StringBuilder();
+        sb.append('{');
+        boolean first = true;
+        for (final IWord sense : synset.getWords()) {
+            if (first) {
+                first = false;
+            } else {
+                sb.append(' ');
+            }
+            sb.append(sense.getLemma());
+        }
+        sb.append('}');
+        sb.append(' ');
+        return sb.toString();
+    }
+
+    private static boolean canRecurse(IPointer p) {
+        String symbol = p.getSymbol();
+        //noinspection EnhancedSwitchMigration
+        switch (symbol) {
+            case "@": // hypernym
+            case "~": // hyponym
+            case "%p": // part holonym
+            case "#p": // part meronym
+            case "%m": // member holonym
+            case "#m": // member meronym
+            case "%s": // substance holonym
+            case "#s": // substance meronym
+            case "*": // entail
+            case ">": // cause
+                return true;
+        }
+        return false;
     }
 
     public void walk(final String lemma) {
@@ -86,11 +126,11 @@ public class WordNet {
                         System.out.println("  marker = " + marker);
                     List<IVerbFrame> verbFrames = sense.getVerbFrames();
                     if (verbFrames != null) {
-						for (IVerbFrame verbFrame : verbFrames) {
-							System.out.println(
-								"  verbframe = " + verbFrame.getTemplate() + " : " + verbFrame.instantiateTemplate(
-									lemma));
-						}
+                        for (IVerbFrame verbFrame : verbFrames) {
+                            System.out.println(
+                                "  verbframe = " + verbFrame.getTemplate() + " : " + verbFrame.instantiateTemplate(
+                                    lemma));
+                        }
                     }
                     ISenseEntry senseEntry = this.dict.getSenseEntry(sense.getSenseKey());
                     if (senseEntry == null)
@@ -103,7 +143,7 @@ public class WordNet {
                     // synset
                     final ISynsetID synsetid = senseid.getSynsetID();
                     final ISynset synset = this.dict.getSynset(synsetid);
-                    System.out.println("● synset = " + toString(synset));
+                    System.out.println("● synset = " + WordNet.toString(synset));
 
                     walk(synset, 1);
                 }
@@ -120,7 +160,7 @@ public class WordNet {
             final List<ISynsetID> relations2 = entry.getValue();
             for (final ISynsetID synsetid2 : relations2) {
                 final ISynset synset2 = this.dict.getSynset(synsetid2);
-                System.out.println(indentSpace + toString(synset2));
+                System.out.println(indentSpace + WordNet.toString(synset2));
 
                 walk(synset2, p, level + 1);
             }
@@ -132,49 +172,9 @@ public class WordNet {
         final List<ISynsetID> relations2 = synset.getRelatedSynsets(p);
         for (final ISynsetID synsetid2 : relations2) {
             final ISynset synset2 = this.dict.getSynset(synsetid2);
-            System.out.println(indentSpace + toString(synset2));
-            if (canRecurse(p))
+            System.out.println(indentSpace + WordNet.toString(synset2));
+            if (WordNet.canRecurse(p))
                 walk(synset2, p, level + 1);
         }
-    }
-
-    public static String toString(final ISynset synset) {
-        return getMembers(synset) + synset.getGloss();
-    }
-
-    public static String getMembers(final ISynset synset) {
-        final StringBuilder sb = new StringBuilder();
-        sb.append('{');
-        boolean first = true;
-        for (final IWord sense : synset.getWords()) {
-            if (first) {
-                first = false;
-            } else {
-                sb.append(' ');
-            }
-            sb.append(sense.getLemma());
-        }
-        sb.append('}');
-        sb.append(' ');
-        return sb.toString();
-    }
-
-    private static boolean canRecurse(IPointer p) {
-        String symbol = p.getSymbol();
-		//noinspection EnhancedSwitchMigration
-		switch (symbol) {
-            case "@": // hypernym
-            case "~": // hyponym
-            case "%p": // part holonym
-            case "#p": // part meronym
-            case "%m": // member holonym
-            case "#m": // member meronym
-            case "%s": // substance holonym
-            case "#s": // substance meronym
-            case "*": // entail
-            case ">": // cause
-                return true;
-        }
-        return false;
     }
 }

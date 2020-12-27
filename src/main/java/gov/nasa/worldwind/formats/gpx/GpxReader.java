@@ -34,8 +34,8 @@ public class GpxReader // TODO: I18N, proper exception handling, remove stack-tr
     /**
      * @param path The file spec to read from.
      * @throws IllegalArgumentException if <code>path</code> is null
-     * @throws IOException      if no file exists at the location specified by <code>path</code>
-     * @throws SAXException if a parsing error occurs.
+     * @throws IOException              if no file exists at the location specified by <code>path</code>
+     * @throws SAXException             if a parsing error occurs.
      */
     public void readFile(String path) throws IOException, SAXException {
         if (path == null) {
@@ -58,8 +58,8 @@ public class GpxReader // TODO: I18N, proper exception handling, remove stack-tr
     /**
      * @param stream The stream to read from.
      * @throws IllegalArgumentException if <code>stream</code> is null
-     * @throws IOException      if a problem is encountered reading the stream.
-     * @throws SAXException if a parsing error occurs.
+     * @throws IOException              if a problem is encountered reading the stream.
+     * @throws SAXException             if a parsing error occurs.
      */
     public void readStream(InputStream stream) throws IOException, SAXException {
         if (stream == null) {
@@ -100,7 +100,7 @@ public class GpxReader // TODO: I18N, proper exception handling, remove stack-tr
     private class Handler extends DefaultHandler {
         // this is a private class used solely by the containing class, so no validation occurs in it.
 
-        private ElementParser currentElement = null;
+        private ElementParser currentElement;
         private boolean firstElement = true;
 
         @Override
@@ -132,13 +132,11 @@ public class GpxReader // TODO: I18N, proper exception handling, remove stack-tr
 
             if (this.currentElement != null) {
                 this.currentElement.startElement(uri, lname, qname, attributes);
-            }
-            else if (lname.equalsIgnoreCase("trk")) {
+            } else if (lname.equalsIgnoreCase("trk")) {
                 GpxTrack track = new GpxTrack(uri, lname, qname, attributes);
                 this.currentElement = track;
                 GpxReader.this.tracks.add(track);
-            }
-            else if (lname.equalsIgnoreCase("rte")) {
+            } else if (lname.equalsIgnoreCase("rte")) {
                 GpxRoute route = new GpxRoute(uri, lname, qname, attributes);
                 this.currentElement = route;
                 GpxReader.this.tracks.add(route);

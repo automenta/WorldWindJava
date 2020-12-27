@@ -23,6 +23,14 @@ public class KeyEventState implements KeyListener, MouseListener {
     public KeyEventState() {
     }
 
+    private static long getTimeStamp(InputEvent e, int eventType, InputState currentState) {
+        // If the current state for this input event type exists and is not null, then keep the current timestamp.
+        if (currentState != null && currentState.eventType == eventType) {
+            return currentState.timestamp;
+        } else
+            return e.getWhen(); // Otherwise return the InputEvent's timestamp.
+    }
+
     public boolean isKeyDown(int keyCode) {
         InputState state = this.getKeyState(keyCode);
         return state != null && state.eventType == KeyEvent.KEY_PRESSED;
@@ -162,7 +170,8 @@ public class KeyEventState implements KeyListener, MouseListener {
 
     @Override
     public void mousePressed(MouseEvent e) {
-        long timestamp = KeyEventState.getTimeStamp(e, MouseEvent.MOUSE_PRESSED, this.keyStateMap.get(e.getModifiersEx()));
+        long timestamp = KeyEventState.getTimeStamp(e, MouseEvent.MOUSE_PRESSED,
+            this.keyStateMap.get(e.getModifiersEx()));
         this.setKeyState(e.getButton(), new InputState(MouseEvent.MOUSE_PRESSED, e.getButton(), timestamp));
         this.setMouseModifiersEx(e.getModifiersEx());
     }
@@ -194,14 +203,6 @@ public class KeyEventState implements KeyListener, MouseListener {
     private void removeKeyState(KeyEvent e) {
         this.keyStateMap.remove(e.getKeyCode());
         this.setModifiersEx(e.getModifiersEx());
-    }
-
-    private static long getTimeStamp(InputEvent e, int eventType, InputState currentState) {
-        // If the current state for this input event type exists and is not null, then keep the current timestamp.
-        if (currentState != null && currentState.eventType == eventType) {
-            return currentState.timestamp;
-        } else
-            return e.getWhen(); // Otherwise return the InputEvent's timestamp.
     }
 
     protected static class InputState {

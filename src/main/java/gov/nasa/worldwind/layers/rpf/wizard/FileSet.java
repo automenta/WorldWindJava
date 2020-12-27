@@ -24,21 +24,21 @@ public class FileSet extends WizardProperties {
     }
 
     public String getIdentifier() {
-        return getStringProperty(IDENTIFIER);
+        return getStringProperty(FileSet.IDENTIFIER);
     }
 
     public void setIdentifier(String identifier) {
-        setProperty(IDENTIFIER, identifier);
+        setProperty(FileSet.IDENTIFIER, identifier);
     }
 
     @SuppressWarnings("unchecked")
     public Collection<File> getFiles() {
-        Object value = getProperty(FILES);
+        Object value = getProperty(FileSet.FILES);
         return (value instanceof Collection) ? (Collection<File>) value : null;
     }
 
     public void setFiles(Collection<File> files) {
-        setProperty(FILES, files);
+        setProperty(FileSet.FILES, files);
     }
 
     public int getFileCount() {
@@ -47,19 +47,19 @@ public class FileSet extends WizardProperties {
     }
 
     public String getTitle() {
-        return getStringProperty(TITLE);
+        return getStringProperty(FileSet.TITLE);
     }
 
     public void setTitle(String title) {
-        setProperty(TITLE, title);
+        setProperty(FileSet.TITLE, title);
     }
 
     public boolean isSelected() {
-        Boolean b = getBooleanProperty(SELECTED);
+        Boolean b = getBooleanProperty(FileSet.SELECTED);
         return b != null ? b : false;
     }
 
     public void setSelected(boolean b) {
-        setProperty(SELECTED, b);
+        setProperty(FileSet.SELECTED, b);
     }
 }

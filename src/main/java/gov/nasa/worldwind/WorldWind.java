@@ -58,14 +58,14 @@ public final class WorldWind {
     {
         this.wwo = new WWObjectImpl();
         this.remoteRetrievalService =
-            (RetrievalService) createConfigurationComponent(AVKey.RETRIEVAL_SERVICE_CLASS_NAME);
+            (RetrievalService) WorldWind.createConfigurationComponent(AVKey.RETRIEVAL_SERVICE_CLASS_NAME);
         this.localRetrievalService =
-            (RetrievalService) createConfigurationComponent(AVKey.RETRIEVAL_SERVICE_CLASS_NAME);
-        this.taskService = (TaskService) createConfigurationComponent(AVKey.TASK_SERVICE_CLASS_NAME);
-        this.dataFileStore = (FileStore) createConfigurationComponent(AVKey.DATA_FILE_STORE_CLASS_NAME);
-        this.memoryCacheSet = (MemoryCacheSet) createConfigurationComponent(AVKey.MEMORY_CACHE_SET_CLASS_NAME);
-        this.networkStatus = (NetworkStatus) createConfigurationComponent(AVKey.NETWORK_STATUS_CLASS_NAME);
-        this.sessionCache = (SessionCache) createConfigurationComponent(AVKey.SESSION_CACHE_CLASS_NAME);
+            (RetrievalService) WorldWind.createConfigurationComponent(AVKey.RETRIEVAL_SERVICE_CLASS_NAME);
+        this.taskService = (TaskService) WorldWind.createConfigurationComponent(AVKey.TASK_SERVICE_CLASS_NAME);
+        this.dataFileStore = (FileStore) WorldWind.createConfigurationComponent(AVKey.DATA_FILE_STORE_CLASS_NAME);
+        this.memoryCacheSet = (MemoryCacheSet) WorldWind.createConfigurationComponent(AVKey.MEMORY_CACHE_SET_CLASS_NAME);
+        this.networkStatus = (NetworkStatus) WorldWind.createConfigurationComponent(AVKey.NETWORK_STATUS_CLASS_NAME);
+        this.sessionCache = (SessionCache) WorldWind.createConfigurationComponent(AVKey.SESSION_CACHE_CLASS_NAME);
         this.scheduledTaskService = new ScheduledTaskService();
 
         // Seems like an unlikely place to load the tiff reader, but do it here nonetheless.
@@ -85,33 +85,33 @@ public final class WorldWind {
      * WorldWind can continue to be used after calling this method.
      */
     public static synchronized void shutDown() {
-        instance.wwo.firePropertyChange(SHUTDOWN_EVENT, null, -1);
-        instance.dispose();
+        WorldWind.instance.wwo.firePropertyChange(WorldWind.SHUTDOWN_EVENT, null, -1);
+        WorldWind.instance.dispose();
 //        instance = new WorldWind();
     }
 
     public static MemoryCacheSet getMemoryCacheSet() {
-        return instance.memoryCacheSet;
+        return WorldWind.instance.memoryCacheSet;
     }
 
     public static MemoryCache cache(String key) {
-        return instance.memoryCacheSet.getCache(key);
+        return WorldWind.instance.memoryCacheSet.getCache(key);
     }
 
     public static FileStore store() {
-        return instance.dataFileStore;
+        return WorldWind.instance.dataFileStore;
     }
 
     public static RetrievalService retrieveRemote() {
-        return instance.remoteRetrievalService;
+        return WorldWind.instance.remoteRetrievalService;
     }
 
     public static RetrievalService retrieveLocal() {
-        return instance.localRetrievalService;
+        return WorldWind.instance.localRetrievalService;
     }
 
     public static TaskService tasks() {
-        return instance.taskService;
+        return WorldWind.instance.taskService;
     }
 
     /**
@@ -121,15 +121,15 @@ public final class WorldWind {
      * @return the scheduled task service.
      */
     public static ScheduledTaskService scheduler() {
-        return instance.scheduledTaskService;
+        return WorldWind.instance.scheduledTaskService;
     }
 
     public static NetworkStatus getNetworkStatus() {
-        return instance.networkStatus;
+        return WorldWind.instance.networkStatus;
     }
 
     public static SessionCache getSessionCache() {
-        return instance.sessionCache;
+        return WorldWind.instance.sessionCache;
     }
 
     /**
@@ -139,7 +139,7 @@ public final class WorldWind {
      * @see NetworkStatus
      */
     public static boolean isOfflineMode() {
-        return getNetworkStatus().isOfflineMode();
+        return WorldWind.getNetworkStatus().isOfflineMode();
     }
 
     /**
@@ -150,7 +150,7 @@ public final class WorldWind {
      * @see NetworkStatus
      */
     public static void setOfflineMode(boolean offlineMode) {
-        getNetworkStatus().setOfflineMode(offlineMode);
+        WorldWind.getNetworkStatus().setOfflineMode(offlineMode);
     }
 
     /**
@@ -164,10 +164,12 @@ public final class WorldWind {
         try {
             Class<?> c = Class.forName(className.trim());
             return c.getConstructor().newInstance();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             Logging.logger().log(Level.SEVERE, "WorldWind.ExceptionCreatingComponent", className);
             throw new WWRuntimeException(Logging.getMessage("WorldWind.ExceptionCreatingComponent", className), e);
-        } catch (Throwable t) {
+        }
+        catch (Throwable t) {
             Logging.logger().log(Level.SEVERE, "WorldWind.ErrorCreatingComponent", className);
             throw new WWRuntimeException(Logging.getMessage("WorldWind.ErrorCreatingComponent", className), t);
         }
@@ -205,43 +207,43 @@ public final class WorldWind {
     }
 
     public static void setValue(String key, Object value) {
-        instance.wwo.set(key, value);
+        WorldWind.instance.wwo.set(key, value);
     }
 
     public static void setValue(String key, String value) {
-        instance.wwo.set(key, value);
+        WorldWind.instance.wwo.set(key, value);
     }
 
     public static Object getValue(String key) {
-        return instance.wwo.get(key);
+        return WorldWind.instance.wwo.get(key);
     }
 
     public static String getStringValue(String key) {
-        return instance.wwo.getStringValue(key);
+        return WorldWind.instance.wwo.getStringValue(key);
     }
 
     public static boolean hasKey(String key) {
-        return instance.wwo.hasKey(key);
+        return WorldWind.instance.wwo.hasKey(key);
     }
 
     public static void removeKey(String key) {
-        instance.wwo.removeKey(key);
+        WorldWind.instance.wwo.removeKey(key);
     }
 
     public static void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
-        instance.wwo.addPropertyChangeListener(propertyName, listener);
+        WorldWind.instance.wwo.addPropertyChangeListener(propertyName, listener);
     }
 
     public static void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
-        instance.wwo.removePropertyChangeListener(propertyName, listener);
+        WorldWind.instance.wwo.removePropertyChangeListener(propertyName, listener);
     }
 
     public static void addPropertyChangeListener(PropertyChangeListener listener) {
-        instance.wwo.addPropertyChangeListener(listener);
+        WorldWind.instance.wwo.addPropertyChangeListener(listener);
     }
 
     public static void removePropertyChangeListener(PropertyChangeListener listener) {
-        instance.wwo.removePropertyChangeListener(listener);
+        WorldWind.instance.wwo.removePropertyChangeListener(listener);
     }
 
     private void dispose() {

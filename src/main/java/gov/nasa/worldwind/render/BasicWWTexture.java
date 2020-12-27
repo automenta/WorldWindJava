@@ -17,8 +17,7 @@ import java.net.URL;
 import java.util.logging.Level;
 
 /**
- * Basic implementation of a texture derived from an image source such as an image file or a {@link
- * BufferedImage}.
+ * Basic implementation of a texture derived from an image source such as an image file or a {@link BufferedImage}.
  * <p>
  * The interface contains a method, {@link #isTextureInitializationFailed()} to determine whether the instance failed to
  * convert an image source to a texture. If such a failure occurs, the method returns true and no further attempts are
@@ -35,7 +34,7 @@ public class BasicWWTexture implements WWTexture {
     protected Integer width;
     protected Integer height;
     protected TextureCoords texCoords;
-    protected boolean textureInitializationFailed = false;
+    protected boolean textureInitializationFailed;
     private Object imageSource;
     private boolean useMipMaps;
     private boolean useAnisotropy = true;
@@ -246,8 +245,7 @@ public class BasicWWTexture implements WWTexture {
                 this.textureInitializationFailed = true;
                 return null;
             }
-        }
-        else if (imageSource instanceof BufferedImage) {
+        } else if (imageSource instanceof BufferedImage) {
             try {
                 TextureData td = AWTTextureIO.newTextureData(gl.getGLProfile(), (BufferedImage) imageSource,
                     this.useMipMaps);
@@ -260,8 +258,7 @@ public class BasicWWTexture implements WWTexture {
                 this.textureInitializationFailed = true;
                 return null;
             }
-        }
-        else if (imageSource instanceof URL) {
+        } else if (imageSource instanceof URL) {
             try {
                 InputStream stream = ((URL) imageSource).openStream();
                 if (stream == null) {
@@ -282,8 +279,7 @@ public class BasicWWTexture implements WWTexture {
                 this.textureInitializationFailed = true;
                 return null;
             }
-        }
-        else {
+        } else {
             Logging.logger().log(Level.SEVERE, "generic.UnrecognizedImageSourceType",
                 imageSource.getClass().getName());
             this.textureInitializationFailed = true;

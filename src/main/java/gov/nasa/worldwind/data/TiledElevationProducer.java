@@ -25,15 +25,14 @@ public class TiledElevationProducer extends TiledRasterProducer {
     // Statically reference the readers used to for unknown data sources. This drastically improves the performance of
     // reading large quantities of sources. Since the readers are invoked from a single thread, they can be
     // safely re-used.
-    protected static final DataRasterReader[] readers = new DataRasterReader[]
-        {
-            new DTEDRasterReader(),
-            new GDALDataRasterReader(),
-            new BILRasterReader(),
-            new GeotiffRasterReader()
-        };
+    protected static final DataRasterReader[] readers = {
+        new DTEDRasterReader(),
+        new GDALDataRasterReader(),
+        new BILRasterReader(),
+        new GeotiffRasterReader()
+    };
     // Extreme elevations computed during production.
-    protected double[] extremes = null;
+    protected double[] extremes;
 
     public TiledElevationProducer(MemoryCache cache, int writeThreadPoolSize) {
         super(cache, writeThreadPoolSize);
@@ -41,6 +40,35 @@ public class TiledElevationProducer extends TiledRasterProducer {
 
     public TiledElevationProducer() {
         super();
+    }
+
+    protected static String validateDataSourceParams(AVList params, String name) {
+        if (params.hasKey(AVKey.PIXEL_FORMAT) && params.get(AVKey.PIXEL_FORMAT) != AVKey.ELEVATION) {
+            return Logging.getMessage("TiledRasterProducer.UnrecognizedRasterType",
+                params.get(AVKey.PIXEL_FORMAT), name);
+        }
+
+        if (params.hasKey(AVKey.COORDINATE_SYSTEM)
+            && params.get(AVKey.COORDINATE_SYSTEM) != AVKey.COORDINATE_SYSTEM_GEOGRAPHIC
+            && params.get(AVKey.COORDINATE_SYSTEM) != AVKey.COORDINATE_SYSTEM_PROJECTED
+        ) {
+            return Logging.getMessage("TiledRasterProducer.UnrecognizedCoordinateSystem",
+                params.get(AVKey.COORDINATE_SYSTEM), name);
+        }
+
+        if (params.hasKey(AVKey.ELEVATION_UNIT)
+            && params.get(AVKey.ELEVATION_UNIT) != AVKey.UNIT_METER
+            && params.get(AVKey.ELEVATION_UNIT) != AVKey.UNIT_FOOT
+        ) {
+            return Logging.getMessage("TiledElevationProducer.UnrecognizedElevationUnit",
+                params.get(AVKey.ELEVATION_UNIT), name);
+        }
+
+        if (params.get(AVKey.SECTOR) == null) {
+            return Logging.getMessage("TiledRasterProducer.NoSector", name);
+        }
+
+        return null;
     }
 
     /**
@@ -59,7 +87,7 @@ public class TiledElevationProducer extends TiledRasterProducer {
     public String getDataSourceDescription() {
         StringBuilder sb = new StringBuilder();
         sb.append(Logging.getMessage("TiledElevationProducer.Description"));
-        sb.append(" (").append(super.getDataSourceDescription()).append(")");
+        sb.append(" (").append(super.getDataSourceDescription()).append(')');
         return sb.toString();
     }
 
@@ -84,7 +112,7 @@ public class TiledElevationProducer extends TiledRasterProducer {
     }
 
     protected DataRasterReader[] getDataRasterReaders() {
-        return readers;
+        return TiledElevationProducer.readers;
     }
 
     protected DataRasterWriter[] getDataRasterWriters() {
@@ -137,35 +165,6 @@ public class TiledElevationProducer extends TiledRasterProducer {
         }
     }
 
-    protected static String validateDataSourceParams(AVList params, String name) {
-        if (params.hasKey(AVKey.PIXEL_FORMAT) && params.get(AVKey.PIXEL_FORMAT) != AVKey.ELEVATION) {
-            return Logging.getMessage("TiledRasterProducer.UnrecognizedRasterType",
-                params.get(AVKey.PIXEL_FORMAT), name);
-        }
-
-        if (params.hasKey(AVKey.COORDINATE_SYSTEM)
-            && params.get(AVKey.COORDINATE_SYSTEM) != AVKey.COORDINATE_SYSTEM_GEOGRAPHIC
-            && params.get(AVKey.COORDINATE_SYSTEM) != AVKey.COORDINATE_SYSTEM_PROJECTED
-        ) {
-            return Logging.getMessage("TiledRasterProducer.UnrecognizedCoordinateSystem",
-                params.get(AVKey.COORDINATE_SYSTEM), name);
-        }
-
-        if (params.hasKey(AVKey.ELEVATION_UNIT)
-            && params.get(AVKey.ELEVATION_UNIT) != AVKey.UNIT_METER
-            && params.get(AVKey.ELEVATION_UNIT) != AVKey.UNIT_FOOT
-        ) {
-            return Logging.getMessage("TiledElevationProducer.UnrecognizedElevationUnit",
-                params.get(AVKey.ELEVATION_UNIT), name);
-        }
-
-        if (params.get(AVKey.SECTOR) == null) {
-            return Logging.getMessage("TiledRasterProducer.NoSector", name);
-        }
-
-        return null;
-    }
-
     protected void initProductionParameters(AVList params) {
         // Preserve backward compatibility with previous versions of TiledElevationProducer. If the caller specified a
         // format suffix parameter, use it to compute the image format properties. This gives priority to the format
@@ -184,7 +183,7 @@ public class TiledElevationProducer extends TiledRasterProducer {
 
         // Use the default image format if none exists.
         if (params.get(AVKey.IMAGE_FORMAT) == null) {
-            params.set(AVKey.IMAGE_FORMAT, DEFAULT_IMAGE_FORMAT);
+            params.set(AVKey.IMAGE_FORMAT, TiledElevationProducer.DEFAULT_IMAGE_FORMAT);
         }
 
         // Compute the available image formats if none exists.
@@ -220,7 +219,7 @@ public class TiledElevationProducer extends TiledRasterProducer {
         // This code expects the string "gov.nasa.worldwind.avkey.MissingDataValue", which now corresponds to the key
         // MISSING_DATA_REPLACEMENT.
         if (params.get(AVKey.MISSING_DATA_REPLACEMENT) == null) {
-            params.set(AVKey.MISSING_DATA_REPLACEMENT, DEFAULT_MISSING_DATA_SIGNAL);
+            params.set(AVKey.MISSING_DATA_REPLACEMENT, TiledElevationProducer.DEFAULT_MISSING_DATA_SIGNAL);
         }
     }
 
@@ -278,8 +277,7 @@ public class TiledElevationProducer extends TiledRasterProducer {
         if (raster.hasKey(AVKey.ELEVATION_MIN) && raster.hasKey(AVKey.ELEVATION_MAX)) {
             tileExtremes[0] = (Double) raster.get(AVKey.ELEVATION_MAX);
             tileExtremes[1] = (Double) raster.get(AVKey.ELEVATION_MIN);
-        }
-        else {
+        } else {
             tileExtremes = ((BufferWrapperRaster) raster).getExtremes();
             if (tileExtremes == null || tileExtremes.length < 2) {
                 return;

@@ -106,8 +106,7 @@ public class BasicFactory implements Factory {
         try {
             if (configSource instanceof Element) {
                 o = this.doCreateFromElement((Element) configSource, params);
-            }
-            else if (configSource instanceof OGCCapabilities)
+            } else if (configSource instanceof OGCCapabilities)
                 o = this.doCreateFromCapabilities((OGCCapabilities) configSource, params);
             else if (configSource instanceof WCS100Capabilities)
                 o = this.doCreateFromCapabilities((WCS100Capabilities) configSource, params);
@@ -117,7 +116,7 @@ public class BasicFactory implements Factory {
                     o = this.doCreateFromElement(doc.getDocumentElement(), params);
             }
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             String msg = Logging.getMessage("generic.CreationFromConfigurationFileFailed", configSource);
             throw new WWRuntimeException(msg, e);
         }

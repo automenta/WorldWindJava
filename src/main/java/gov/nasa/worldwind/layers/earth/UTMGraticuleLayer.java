@@ -10,6 +10,7 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.geom.coords.UTMCoord;
 import gov.nasa.worldwind.globes.Globe;
+import gov.nasa.worldwind.layers.tool.GraticuleLayer;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.Logging;
 
@@ -59,7 +60,7 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
     protected static final int GRID_ROWS = 8;
     protected static final int GRID_COLS = 60;
 
-    protected final GraticuleTile[][] gridTiles = new GraticuleTile[GRID_ROWS][GRID_COLS];
+    protected final GraticuleTile[][] gridTiles = new GraticuleTile[UTMGraticuleLayer.GRID_ROWS][UTMGraticuleLayer.GRID_COLS];
 
     public UTMGraticuleLayer() {
         initRenderingParams();
@@ -70,6 +71,49 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
 
     // --- Graticule Rendering --------------------------------------------------------------
 
+    protected static String[] getOrderedTypes() {
+        return new String[] {
+            UTMGraticuleLayer.GRATICULE_UTM_GRID,
+            UTMGraticuleLayer.GRATICULE_100000M,
+            UTMGraticuleLayer.GRATICULE_10000M,
+            UTMGraticuleLayer.GRATICULE_1000M,
+            UTMGraticuleLayer.GRATICULE_100M,
+            UTMGraticuleLayer.GRATICULE_10M,
+            UTMGraticuleLayer.GRATICULE_1M,
+        };
+    }
+
+    private static Rectangle2D getGridRectangleForSector(Sector sector) {
+        int x1 = UTMGraticuleLayer.getGridColumn(sector.lonMin);
+        int x2 = UTMGraticuleLayer.getGridColumn(sector.lonMax);
+        int y1 = UTMGraticuleLayer.getGridRow(sector.latMin);
+        int y2 = UTMGraticuleLayer.getGridRow(sector.latMax);
+        return new Rectangle(x1, y1, x2 - x1, y2 - y1);
+    }
+
+    private static Sector getGridSector(int row, int col) {
+        double deltaLat = UTMBaseGraticuleLayer.UTM_MAX_LATITUDE * 2.0f / UTMGraticuleLayer.GRID_ROWS;
+        double deltaLon = 360.0 / UTMGraticuleLayer.GRID_COLS;
+        double minLat = row == 0 ? UTMBaseGraticuleLayer.UTM_MIN_LATITUDE
+            : -UTMBaseGraticuleLayer.UTM_MAX_LATITUDE + deltaLat * row;
+        double maxLat = -UTMBaseGraticuleLayer.UTM_MAX_LATITUDE + deltaLat * (row + 1);
+        double minLon = -180 + deltaLon * col;
+        double maxLon = minLon + deltaLon;
+        return Sector.fromDegrees(minLat, maxLat, minLon, maxLon);
+    }
+
+    private static int getGridColumn(double longitude) {
+        double deltaLon = 360.0 / UTMGraticuleLayer.GRID_COLS;
+        int col = (int) Math.floor((longitude + 180) / deltaLon);
+        return Math.min(col, UTMGraticuleLayer.GRID_COLS - 1);
+    }
+
+    private static int getGridRow(double latitude) {
+        double deltaLat = UTMBaseGraticuleLayer.UTM_MAX_LATITUDE * 2 / UTMGraticuleLayer.GRID_ROWS;
+        int row = (int) Math.floor((latitude + UTMBaseGraticuleLayer.UTM_MAX_LATITUDE) / deltaLat);
+        return Math.max(0, Math.min(row, UTMGraticuleLayer.GRID_ROWS - 1));
+    }
+
     protected void initRenderingParams() {
         GraticuleRenderingParams params;
         // UTM zone grid
@@ -77,67 +121,55 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
         params.set(GraticuleRenderingParams.KEY_LINE_COLOR, Color.WHITE);
         params.set(GraticuleRenderingParams.KEY_LABEL_COLOR, Color.WHITE);
         params.set(GraticuleRenderingParams.KEY_LABEL_FONT, Font.decode("Arial-Bold-16"));
-        setRenderingParams(GRATICULE_UTM_GRID, params);
+        setRenderingParams(UTMGraticuleLayer.GRATICULE_UTM_GRID, params);
         // 100km
         params = new GraticuleRenderingParams();
         params.set(GraticuleRenderingParams.KEY_LINE_COLOR, Color.GREEN);
         params.set(GraticuleRenderingParams.KEY_LABEL_COLOR, Color.GREEN);
         params.set(GraticuleRenderingParams.KEY_LABEL_FONT, Font.decode("Arial-Bold-14"));
-        setRenderingParams(GRATICULE_100000M, params);
+        setRenderingParams(UTMGraticuleLayer.GRATICULE_100000M, params);
         // 10km
         params = new GraticuleRenderingParams();
         params.set(GraticuleRenderingParams.KEY_LINE_COLOR, new Color(0, 102, 255));
         params.set(GraticuleRenderingParams.KEY_LABEL_COLOR, new Color(0, 102, 255));
-        setRenderingParams(GRATICULE_10000M, params);
+        setRenderingParams(UTMGraticuleLayer.GRATICULE_10000M, params);
         // 1km
         params = new GraticuleRenderingParams();
         params.set(GraticuleRenderingParams.KEY_LINE_COLOR, Color.CYAN);
         params.set(GraticuleRenderingParams.KEY_LABEL_COLOR, Color.CYAN);
-        setRenderingParams(GRATICULE_1000M, params);
+        setRenderingParams(UTMGraticuleLayer.GRATICULE_1000M, params);
         // 100m
         params = new GraticuleRenderingParams();
         params.set(GraticuleRenderingParams.KEY_LINE_COLOR, new Color(0, 153, 153));
         params.set(GraticuleRenderingParams.KEY_LABEL_COLOR, new Color(0, 153, 153));
-        setRenderingParams(GRATICULE_100M, params);
+        setRenderingParams(UTMGraticuleLayer.GRATICULE_100M, params);
         // 10m
         params = new GraticuleRenderingParams();
         params.set(GraticuleRenderingParams.KEY_LINE_COLOR, new Color(102, 255, 204));
         params.set(GraticuleRenderingParams.KEY_LABEL_COLOR, new Color(102, 255, 204));
-        setRenderingParams(GRATICULE_10M, params);
+        setRenderingParams(UTMGraticuleLayer.GRATICULE_10M, params);
         // 1m
         params = new GraticuleRenderingParams();
         params.set(GraticuleRenderingParams.KEY_LINE_COLOR, new Color(153, 153, 255));
         params.set(GraticuleRenderingParams.KEY_LABEL_COLOR, new Color(153, 153, 255));
-        setRenderingParams(GRATICULE_1M, params);
-    }
-
-    protected static String[] getOrderedTypes() {
-        return new String[] {
-            GRATICULE_UTM_GRID,
-            GRATICULE_100000M,
-            GRATICULE_10000M,
-            GRATICULE_1000M,
-            GRATICULE_100M,
-            GRATICULE_10M,
-            GRATICULE_1M,
-        };
+        setRenderingParams(UTMGraticuleLayer.GRATICULE_1M, params);
     }
 
     protected String getTypeFor(int resolution) {
         if (resolution >= 500000)
-            return GRATICULE_UTM_GRID;
+            return UTMGraticuleLayer.GRATICULE_UTM_GRID;
         if (resolution >= 100000)
-            return GRATICULE_100000M;
+            return UTMGraticuleLayer.GRATICULE_100000M;
         else if (resolution >= 10000)
-            return GRATICULE_10000M;
+            return UTMGraticuleLayer.GRATICULE_10000M;
         else if (resolution >= 1000)
-            return GRATICULE_1000M;
+            return UTMGraticuleLayer.GRATICULE_1000M;
         else if (resolution >= 100)
-            return GRATICULE_100M;
+            return UTMGraticuleLayer.GRATICULE_100M;
         else if (resolution >= 10)
-            return GRATICULE_10M;
+            return UTMGraticuleLayer.GRATICULE_10M;
         else if (resolution >= 1)
-            return GRATICULE_1M;
+            return UTMGraticuleLayer.GRATICULE_1M;
 
         return null;
     }
@@ -150,9 +182,9 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
     }
 
     private void applyTerrainConformance() {
-        String[] graticuleType = getOrderedTypes();
+        String[] graticuleType = UTMGraticuleLayer.getOrderedTypes();
         for (String type : graticuleType) {
-            double lineConformance = type.equals(GRATICULE_UTM_GRID) ? 20 : this.terrainConformance;
+            double lineConformance = type.equals(UTMGraticuleLayer.GRATICULE_UTM_GRID) ? 20 : this.terrainConformance;
             getRenderingParams(type).set(GraticuleRenderingParams.KEY_LINE_CONFORMANCE, lineConformance);
         }
     }
@@ -181,13 +213,13 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
         ArrayList<GraticuleTile> tileList = new ArrayList<>();
         Sector vs = dc.getVisibleSector();
         if (vs != null) {
-            Rectangle2D gridRectangle = getGridRectangleForSector(vs);
+            Rectangle2D gridRectangle = UTMGraticuleLayer.getGridRectangleForSector(vs);
             for (int row = (int) gridRectangle.getY(); row <= gridRectangle.getY() + gridRectangle.getHeight();
                 row++) {
                 for (int col = (int) gridRectangle.getX(); col <= gridRectangle.getX() + gridRectangle.getWidth();
                     col++) {
                     if (gridTiles[row][col] == null)
-                        gridTiles[row][col] = new GraticuleTile(getGridSector(row, col));
+                        gridTiles[row][col] = new GraticuleTile(UTMGraticuleLayer.getGridSector(row, col));
                     if (gridTiles[row][col].isInView(dc))
                         tileList.add(gridTiles[row][col]);
                     else
@@ -196,36 +228,6 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
             }
         }
         return tileList;
-    }
-
-    private static Rectangle2D getGridRectangleForSector(Sector sector) {
-        int x1 = getGridColumn(sector.lonMin);
-        int x2 = getGridColumn(sector.lonMax);
-        int y1 = getGridRow(sector.latMin);
-        int y2 = getGridRow(sector.latMax);
-        return new Rectangle(x1, y1, x2 - x1, y2 - y1);
-    }
-
-    private static Sector getGridSector(int row, int col) {
-        double deltaLat = UTM_MAX_LATITUDE * 2.0f / GRID_ROWS;
-        double deltaLon = 360.0 / GRID_COLS;
-        double minLat = row == 0 ? UTM_MIN_LATITUDE : -UTM_MAX_LATITUDE + deltaLat * row;
-        double maxLat = -UTM_MAX_LATITUDE + deltaLat * (row + 1);
-        double minLon = -180 + deltaLon * col;
-        double maxLon = minLon + deltaLon;
-        return Sector.fromDegrees(minLat, maxLat, minLon, maxLon);
-    }
-
-    private static int getGridColumn(double longitude) {
-        double deltaLon = 360.0 / GRID_COLS;
-        int col = (int) Math.floor((longitude + 180) / deltaLon);
-        return Math.min(col, GRID_COLS - 1);
-    }
-
-    private static int getGridRow(double latitude) {
-        double deltaLat = UTM_MAX_LATITUDE * 2 / GRID_ROWS;
-        int row = (int) Math.floor((latitude + UTM_MAX_LATITUDE) / deltaLat);
-        return Math.max(0, Math.min(row, GRID_ROWS - 1));
     }
 
     protected void clearTiles() {
@@ -251,7 +253,7 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
 
         public GraticuleTile(Sector sector) {
             this.sector = sector;
-            this.zone = getGridColumn(this.sector.getCentroid().getLongitude().degrees) + 1;
+            this.zone = UTMGraticuleLayer.getGridColumn(this.sector.getCentroid().getLongitude().degrees) + 1;
             this.hemisphere = this.sector.getCentroid().latitude > 0 ? AVKey.NORTH : AVKey.SOUTH;
         }
 
@@ -270,7 +272,7 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
 
         public double getSizeInPixels(DrawContext dc) {
             View view = dc.getView();
-            Vec4 centerPoint = getSurfacePoint(dc, this.sector.getCentroid().getLatitude(),
+            Vec4 centerPoint = GraticuleLayer.getSurfacePoint(dc, this.sector.getCentroid().getLatitude(),
                 this.sector.getCentroid().getLongitude());
             double distance = view.getEyePoint().distanceTo3(centerPoint);
             double tileSizeMeter = toRadians(this.sector.latDelta) * dc.getGlobe().getRadius();
@@ -289,7 +291,7 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
                     addRenderable(ge.renderable, graticuleType);
             }
 
-            if (getSizeInPixels(dc) / 10 < MIN_CELL_SIZE_PIXELS * 2)
+            if (getSizeInPixels(dc) / 10 < UTMGraticuleLayer.MIN_CELL_SIZE_PIXELS * 2)
                 return;
 
             // Select child elements
@@ -298,8 +300,7 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
             for (SquareZone sz : this.squares) {
                 if (sz.isInView(dc)) {
                     sz.selectRenderables(dc, dc.getVisibleSector());
-                }
-                else
+                } else
                     sz.clearRenderables();
             }
         }
@@ -354,7 +355,7 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
             // Generate west meridian
             positions.add(new Position(this.sector.latMin(), this.sector.lonMin(), 0));
             positions.add(new Position(this.sector.latMax(), this.sector.lonMin(), 0));
-            Object polyline = createLineRenderable(new ArrayList<>(positions), AVKey.LINEAR);
+            Object polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), AVKey.LINEAR);
             Sector lineSector = new Sector(this.sector.latMin(), this.sector.latMax(),
                 this.sector.lonMin(), this.sector.lonMin());
             GridElement ge = new GridElement(lineSector, polyline, GridElement.TYPE_LINE);
@@ -362,11 +363,11 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
             this.gridElements.add(ge);
 
             // Generate south parallel at south pole and equator
-            if (this.sector.latMin == UTM_MIN_LATITUDE || this.sector.latMin == 0) {
+            if (this.sector.latMin == UTMBaseGraticuleLayer.UTM_MIN_LATITUDE || this.sector.latMin == 0) {
                 positions.clear();
                 positions.add(new Position(this.sector.latMin(), this.sector.lonMin(), 0));
                 positions.add(new Position(this.sector.latMin(), this.sector.lonMax(), 0));
-                polyline = createLineRenderable(new ArrayList<>(positions), AVKey.LINEAR);
+                polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), AVKey.LINEAR);
                 lineSector = new Sector(this.sector.latMin(), this.sector.latMin(),
                     this.sector.lonMin(), this.sector.lonMax());
                 ge = new GridElement(lineSector, polyline, GridElement.TYPE_LINE);
@@ -375,11 +376,11 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
             }
 
             // Generate north parallel at north pole
-            if (this.sector.latMax == UTM_MAX_LATITUDE) {
+            if (this.sector.latMax == UTMBaseGraticuleLayer.UTM_MAX_LATITUDE) {
                 positions.clear();
                 positions.add(new Position(this.sector.latMax(), this.sector.lonMin(), 0));
                 positions.add(new Position(this.sector.latMax(), this.sector.lonMax(), 0));
-                polyline = createLineRenderable(new ArrayList<>(positions), AVKey.LINEAR);
+                polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), AVKey.LINEAR);
                 lineSector = new Sector(this.sector.latMax(), this.sector.latMax(),
                     this.sector.lonMin(), this.sector.lonMax());
                 ge = new GridElement(lineSector, polyline, GridElement.TYPE_LINE);
@@ -398,11 +399,11 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
 
         private boolean hasLabel() {
             // Has label if it contains hemisphere mid latitude
-            double southLat = UTM_MIN_LATITUDE / 2;
+            double southLat = UTMBaseGraticuleLayer.UTM_MIN_LATITUDE / 2;
             boolean southLabel = this.sector.latMin < southLat
                 && southLat <= this.sector.latMax;
 
-            double northLat = UTM_MAX_LATITUDE / 2;
+            double northLat = UTMBaseGraticuleLayer.UTM_MAX_LATITUDE / 2;
             boolean northLabel = this.sector.latMin < northLat
                 && northLat <= this.sector.latMax;
 

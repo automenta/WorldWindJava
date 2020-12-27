@@ -161,14 +161,14 @@ public class PlaneModel implements Renderable {
         double radius = dc.getGlobe().getRadius();
 
         // triangle head point
-        LatLon p = LatLon.rhumbEndPosition(center, this.heading.radians, hl / radius);
+        LatLon p = LatLon.rhumbEndPosition(center, this.heading.radians(), hl / radius);
         positions.add(p);
         // triangle base points
         double d = Math.sqrt(hw * hw + hl * hl);
         double a = Math.PI / 2 + Math.asin(hl / d);
-        p = LatLon.rhumbEndPosition(center, this.heading.radians + a, d / radius);
+        p = LatLon.rhumbEndPosition(center, this.heading.radians() + a, d / radius);
         positions.add(p);
-        p = LatLon.rhumbEndPosition(center, this.heading.radians - a, d / radius);
+        p = LatLon.rhumbEndPosition(center, this.heading.radians() - a, d / radius);
         positions.add(p);
         // close shape
         positions.add(positions.get(0));

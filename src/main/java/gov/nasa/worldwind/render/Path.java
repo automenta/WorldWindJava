@@ -113,16 +113,16 @@ public class Path extends AbstractShape {
     protected Iterable<? extends Position> positions; // the positions as provided by the application
     protected int numPositions; // the number of positions in the positions field.
     protected PositionColors positionColors; // defines a color at each application-provided position.
-    protected String pathType = DEFAULT_PATH_TYPE;
+    protected String pathType = Path.DEFAULT_PATH_TYPE;
     protected boolean followTerrain; // true if altitude mode indicates terrain following
-    protected double offset = 0; // offset to use in clamp to ground mode
+    protected double offset; // offset to use in clamp to ground mode
     protected boolean extrude;
-    protected double terrainConformance = DEFAULT_TERRAIN_CONFORMANCE;
-    protected int numSubsegments = DEFAULT_NUM_SUBSEGMENTS;
+    protected double terrainConformance = Path.DEFAULT_TERRAIN_CONFORMANCE;
+    protected int numSubsegments = Path.DEFAULT_NUM_SUBSEGMENTS;
     protected boolean drawVerticals = true;
-    protected boolean showPositions = false;
-    protected double showPositionsThreshold = DEFAULT_DRAW_POSITIONS_THRESHOLD;
-    protected double showPositionsScale = DEFAULT_DRAW_POSITIONS_SCALE;
+    protected boolean showPositions;
+    protected double showPositionsThreshold = Path.DEFAULT_DRAW_POSITIONS_THRESHOLD;
+    protected double showPositionsScale = Path.DEFAULT_DRAW_POSITIONS_SCALE;
     protected boolean positionsSpanDateline;
 
     /**
@@ -798,7 +798,7 @@ public class Path extends AbstractShape {
 
     @Override
     protected boolean shouldUseVBOs(DrawContext dc) {
-        return this.getCurrentPathData().tessellatedPositions.size() > VBO_THRESHOLD && super.shouldUseVBOs(dc);
+        return this.getCurrentPathData().tessellatedPositions.size() > AbstractShape.VBO_THRESHOLD && super.shouldUseVBOs(dc);
     }
 
     /**
@@ -841,8 +841,8 @@ public class Path extends AbstractShape {
         if (surfacePath) {
             this.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
             this.setFollowTerrain(true);
-        }else {
-            this.setAltitudeMode(DEFAULT_ALTITUDE_MODE);
+        } else {
+            this.setAltitudeMode(AbstractShape.DEFAULT_ALTITUDE_MODE);
             this.setFollowTerrain(false);
         }
     }
@@ -934,8 +934,7 @@ public class Path extends AbstractShape {
     protected void addOrderedRenderable(DrawContext dc) {
         if (this.isSurfacePath(dc)) {
             dc.addOrderedRenderable(this, true); // Specify that this Path is behind other renderables.
-        }
-        else {
+        } else {
             super.addOrderedRenderable(dc);
         }
     }
@@ -963,7 +962,7 @@ public class Path extends AbstractShape {
         try {
             if (this.isSurfacePath(dc)) {
                 // Pull the line forward just a bit to ensure it shows over the terrain.
-                dc.pushProjectionOffest(SURFACE_PATH_DEPTH_OFFSET);
+                dc.pushProjectionOffest(Path.SURFACE_PATH_DEPTH_OFFSET);
                 dc.getGL().glDepthMask(false);
                 projectionOffsetPushed = true;
             }
@@ -972,11 +971,10 @@ public class Path extends AbstractShape {
                 int[] vboIds = this.getVboIds(dc);
                 if (vboIds != null) {
                     this.doDrawOutlineVBO(dc, vboIds, this.getCurrentPathData());
-                }else {
+                } else {
                     this.doDrawOutlineVA(dc, this.getCurrentPathData());
                 }
-            }
-            else {
+            } else {
                 this.doDrawOutlineVA(dc, this.getCurrentPathData());
             }
         }
@@ -1010,8 +1008,7 @@ public class Path extends AbstractShape {
             if (this.positionsSpanDateline && dc.is2DGlobe()) {
                 gl.glDrawElements(GL.GL_LINES, pathData.path2DIndices.limit(), GL.GL_UNSIGNED_INT,
                     pathData.path2DIndices.rewind());
-            }
-            else {
+            } else {
                 gl.glDrawArrays(GL.GL_LINE_STRIP, 0, count);
             }
 
@@ -1055,8 +1052,7 @@ public class Path extends AbstractShape {
         if (this.positionsSpanDateline && dc.is2DGlobe()) {
             gl.glDrawElements(GL.GL_LINES, pathData.path2DIndices.limit(), GL.GL_UNSIGNED_INT,
                 pathData.path2DIndices.rewind());
-        }
-        else {
+        } else {
             gl.glDrawArrays(GL.GL_LINE_STRIP, 0, count);
         }
 
@@ -1097,9 +1093,8 @@ public class Path extends AbstractShape {
 
         if (dc.isPickingMode()) {
             gl.glEnableClientState(GL2.GL_COLOR_ARRAY);
-            gl.glColorPointer(3, GL.GL_UNSIGNED_BYTE, 0, pickPositionColors);
-        }
-        else if (pathData.tessellatedColors != null) {
+            gl.glColorPointer(3, GL.GL_UNSIGNED_BYTE, 0, Path.pickPositionColors);
+        } else if (pathData.tessellatedColors != null) {
             // Apply this path's per-position colors if we're in normal rendering mode (not picking) and this path's
             // positionColors is non-null. Convert stride from number of elements to number of bytes, and position the
             // vertex buffer at the first color.
@@ -1151,9 +1146,8 @@ public class Path extends AbstractShape {
         if (dc.isPickingMode()) {
             gl.glEnableClientState(GL2.GL_COLOR_ARRAY);
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-            gl.glColorPointer(3, GL.GL_UNSIGNED_BYTE, 0, pickPositionColors);
-        }
-        else if (pathData.tessellatedColors != null) {
+            gl.glColorPointer(3, GL.GL_UNSIGNED_BYTE, 0, Path.pickPositionColors);
+        } else if (pathData.tessellatedColors != null) {
             // Apply this path's per-position colors if we're in normal rendering mode (not picking) and this path's
             // positionColors is non-null. Convert the stride and offset from number of elements to number of bytes.
             gl.glEnableClientState(GL2.GL_COLOR_ARRAY);
@@ -1189,8 +1183,7 @@ public class Path extends AbstractShape {
             double deltaWidth = activeAttrs.getOutlineWidth() < this.getOutlinePickWidth()
                 ? this.getOutlinePickWidth() - activeAttrs.getOutlineWidth() : 0;
             gl.glPointSize((float) (this.getShowPositionsScale() * activeAttrs.getOutlineWidth() + deltaWidth));
-        }
-        else {
+        } else {
             // During normal rendering mode, compute the GL point size as the product of the active outline width and
             // the show positions scale. This computation is consistent with the documentation for the methods
             // setShowPositionsScale and getShowPositionsScale.
@@ -1218,10 +1211,10 @@ public class Path extends AbstractShape {
             int[] vboIds = this.getVboIds(dc);
             if (vboIds != null) {
                 Path.doDrawInteriorVBO(dc, vboIds, this.getCurrentPathData());
-            }else {
+            } else {
                 Path.doDrawInteriorVA(dc, this.getCurrentPathData());
             }
-        }else {
+        } else {
             Path.doDrawInteriorVA(dc, this.getCurrentPathData());
         }
     }
@@ -1241,9 +1234,9 @@ public class Path extends AbstractShape {
 
         if (this.getAltitudeMode() == WorldWind.CLAMP_TO_GROUND || dc.is2DGlobe()) {
             path = this.computePointsRelativeToTerrain(dc, positions, offset, path, pathData);
-        }else if (this.getAltitudeMode() == WorldWind.RELATIVE_TO_GROUND) {
+        } else if (this.getAltitudeMode() == WorldWind.RELATIVE_TO_GROUND) {
             path = this.computePointsRelativeToTerrain(dc, positions, null, path, pathData);
-        }else {
+        } else {
             path = this.computeAbsolutePoints(dc, positions, path, pathData);
         }
 
@@ -1352,8 +1345,7 @@ public class Path extends AbstractShape {
                     Path.appendTerrainPoint(dc, pos, color, path, pathData);
                 }
             }
-        }
-        else {
+        } else {
             for (Position pos : positions) {
                 Vec4 pt = globe.computePointFromPosition(pos);
                 path.put((float) (pt.x - referencePoint.x));
@@ -1400,10 +1392,10 @@ public class Path extends AbstractShape {
             return;
         }
 
-        if (pickPositionColors == null || pickPositionColors.capacity() < 3 * pathData.vertexCount) {
-            pickPositionColors = ByteBuffer.allocateDirect(3 * pathData.vertexCount);
+        if (Path.pickPositionColors == null || Path.pickPositionColors.capacity() < 3 * pathData.vertexCount) {
+            Path.pickPositionColors = ByteBuffer.allocateDirect(3 * pathData.vertexCount);
         }
-        pickPositionColors.clear();
+        Path.pickPositionColors.clear();
 
         posPoints.rewind(); // Rewind the position points buffer before use to ensure it starts at position 0.
         posPoints.get(); // Skip the first position index; this is always 0.
@@ -1421,11 +1413,11 @@ public class Path extends AbstractShape {
                 maxColorCode = pickColor.getRGB();
             }
 
-            pickPositionColors.put((byte) pickColor.getRed()).put((byte) pickColor.getGreen()).put(
+            Path.pickPositionColors.put((byte) pickColor.getRed()).put((byte) pickColor.getGreen()).put(
                 (byte) pickColor.getBlue());
         }
 
-        pickPositionColors.flip(); // Since this buffer is shared, the limit will likely be different each use.
+        Path.pickPositionColors.flip(); // Since this buffer is shared, the limit will likely be different each use.
         posPoints.rewind(); // Rewind the position points buffer after use.
 
         ((PathPickSupport) pickCandidates).addPickablePositions(minColorCode, maxColorCode, this);
@@ -1472,8 +1464,7 @@ public class Path extends AbstractShape {
             int size = (this.numSubsegments * (this.numPositions - 1) + 1) * (this.isExtrude() ? 2 : 1);
             pathData.tessellatedPositions = new ArrayList<>(size);
             pathData.tessellatedColors = (this.positionColors != null) ? new ArrayList<>(size) : null;
-        }
-        else {
+        } else {
             pathData.tessellatedPositions.clear();
 
             if (pathData.tessellatedColors != null) {
@@ -1483,15 +1474,13 @@ public class Path extends AbstractShape {
 
         if (pathData.polePositions == null || pathData.polePositions.capacity() < this.numPositions * 2) {
             pathData.polePositions = Buffers.newDirectIntBuffer(this.numPositions * 2);
-        }
-        else {
+        } else {
             pathData.polePositions.clear();
         }
 
         if (pathData.positionPoints == null || pathData.positionPoints.capacity() < this.numPositions) {
             pathData.positionPoints = Buffers.newDirectIntBuffer(this.numPositions);
-        }
-        else {
+        } else {
             pathData.positionPoints.clear();
         }
 
@@ -1609,8 +1598,7 @@ public class Path extends AbstractShape {
 
             if (pathData.hasExtrusionPoints) {
                 pathData.positionPoints.put(index);
-            }
-            else {
+            } else {
                 pathData.positionPoints.put(pathData.tessellatedPositions.size());
             }
         }
@@ -1732,8 +1720,7 @@ public class Path extends AbstractShape {
         double arcLength;
         if (straightLine) {
             arcLength = ptA.distanceTo3(ptB);
-        }
-        else {
+        } else {
             arcLength = this.computeSegmentLength(dc, posA, posB);
         }
 
@@ -1752,8 +1739,7 @@ public class Path extends AbstractShape {
             if (this.isFollowTerrain() || dc.is2DGlobe()) {
                 p += this.terrainConformance * dc.getView().computePixelSizeAtDistance(
                     ptA.distanceTo3(dc.getView().getEyePoint()));
-            }
-            else {
+            } else {
                 p += arcLength / this.numSubsegments;
             }
 
@@ -1769,28 +1755,26 @@ public class Path extends AbstractShape {
                     segmentAzimuth = LatLon.linearAzimuth(posA, posB);
                     segmentDistance = LatLon.linearDistance(posA, posB);
                 }
-                Angle distance = Angle.fromRadians(s * segmentDistance.radians);
+                Angle distance = Angle.fromRadians(s * segmentDistance.radians());
                 LatLon latLon = LatLon.linearEndPosition(posA, segmentAzimuth, distance);
                 pos = new Position(latLon, (1 - s) * posA.getElevation() + s * posB.getElevation());
                 color = (colorA != null && colorB != null) ? WWUtil.interpolateColor(s, colorA, colorB) : null;
-            }
-            else if (this.pathType == AVKey.RHUMB_LINE || this.pathType == AVKey.LOXODROME) {
+            } else if (this.pathType == AVKey.RHUMB_LINE || this.pathType == AVKey.LOXODROME) {
                 if (segmentAzimuth == null) {
                     segmentAzimuth = LatLon.rhumbAzimuth(posA, posB);
                     segmentDistance = LatLon.rhumbDistance(posA, posB);
                 }
-                Angle distance = Angle.fromRadians(s * segmentDistance.radians);
+                Angle distance = Angle.fromRadians(s * segmentDistance.radians());
                 LatLon latLon = LatLon.rhumbEndPosition(posA, segmentAzimuth, distance);
                 pos = new Position(latLon, (1 - s) * posA.getElevation() + s * posB.getElevation());
                 color = (colorA != null && colorB != null) ? WWUtil.interpolateColor(s, colorA, colorB) : null;
-            }
-            else // GREAT_CIRCLE
+            } else // GREAT_CIRCLE
             {
                 if (segmentAzimuth == null) {
                     segmentAzimuth = LatLon.greatCircleAzimuth(posA, posB);
                     segmentDistance = LatLon.greatCircleDistance(posA, posB);
                 }
-                Angle distance = Angle.fromRadians(s * segmentDistance.radians);
+                Angle distance = Angle.fromRadians(s * segmentDistance.radians());
                 LatLon latLon = LatLon.greatCircleEndPosition(posA, segmentAzimuth, distance);
                 pos = new Position(latLon, (1 - s) * posA.getElevation() + s * posB.getElevation());
                 color = (colorA != null && colorB != null) ? WWUtil.interpolateColor(s, colorA, colorB) : null;
@@ -1822,21 +1806,19 @@ public class Path extends AbstractShape {
         String pathType = this.getPathType();
         if (pathType == AVKey.LINEAR) {
             ang = LatLon.linearDistance(llA, llB);
-        }
-        else if (pathType == AVKey.RHUMB_LINE || pathType == AVKey.LOXODROME) {
+        } else if (pathType == AVKey.RHUMB_LINE || pathType == AVKey.LOXODROME) {
             ang = LatLon.rhumbDistance(llA, llB);
-        }
-        else // Great circle
+        } else // Great circle
         {
             ang = LatLon.greatCircleDistance(llA, llB);
         }
 
         if (this.getAltitudeMode() == WorldWind.CLAMP_TO_GROUND) {
-            return ang.radians * (dc.getGlobe().getRadius());
+            return ang.radians() * (dc.getGlobe().getRadius());
         }
 
         double height = 0.5 * (posA.getElevation() + posB.getElevation());
-        return ang.radians * (dc.getGlobe().getRadius() + height * dc.getVerticalExaggeration());
+        return ang.radians() * (dc.getGlobe().getRadius() + height * dc.getVerticalExaggeration());
     }
 
     /**
@@ -2045,8 +2027,8 @@ public class Path extends AbstractShape {
         xmlWriter.writeStartElement("coordinates");
         for (Position position : this.positions) {
             xmlWriter.writeCharacters(String.format(Locale.US, "%f,%f,%f ",
-                position.getLongitude().getDegrees(),
-                position.getLatitude().getDegrees(),
+                position.getLongitude().degrees,
+                position.getLatitude().degrees,
                 position.getElevation()));
         }
         xmlWriter.writeEndElement();
@@ -2478,8 +2460,7 @@ public class Path extends AbstractShape {
             if (this.pickableObjects.isEmpty() && this.pickablePositions.isEmpty()) {
                 // There's nothing to do if both the pickable objects and pickable positions are empty.
                 return;
-            }
-            else if (this.pickablePositions.isEmpty()) {
+            } else if (this.pickablePositions.isEmpty()) {
                 // Fall back to the superclass version of this method if we have pickable objects but no pickable
                 // positions. This avoids the additional overhead of consolidating multiple objects picked from the same
                 // path.
@@ -2512,8 +2493,7 @@ public class Path extends AbstractShape {
                     if (!this.pathPickedObjects.containsKey(po.get())) {
                         this.pathPickedObjects.put(po.get(), po);
                     }
-                }
-                else {
+                } else {
                     for (PickablePositions positions : this.getPickablePositions()) {
                         if (colorCode >= positions.minColorCode && colorCode <= positions.maxColorCode) {
                             Path path = positions.path;

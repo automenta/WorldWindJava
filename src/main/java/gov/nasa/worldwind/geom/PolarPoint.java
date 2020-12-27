@@ -154,7 +154,7 @@ public class PolarPoint {
      * @return this polar point in cartesian coordinates
      */
     public final Vec4 toCartesian() {
-        return toCartesian(this.latitude, this.longitude, this.radius);
+        return PolarPoint.toCartesian(this.latitude, this.longitude, this.radius);
     }
 
     @Override
@@ -183,7 +183,7 @@ public class PolarPoint {
         long temp;
         result = latitude.hashCode();
         result = 29 * result + longitude.hashCode();
-        temp = radius != +0.0d ? Double.doubleToLongBits(radius) : 0L;
+        temp = radius == +0.0d ? 0L : Double.doubleToLongBits(radius);
         result = 29 * result + (int) (temp ^ (temp >>> 32));
         return result;
     }
@@ -191,6 +191,6 @@ public class PolarPoint {
     @Override
     public String toString() {
         return "(lat: " + this.latitude.toString() + ", lon: " + this.longitude.toString() + ", r: " + this.radius
-            + ")";
+            + ')';
     }
 }

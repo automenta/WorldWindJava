@@ -55,7 +55,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
     protected final double[] matrixArray = new double[16];
     protected final double[] clipPlaneArray = new double[16];
     // ShapefilePolygons properties.
-    protected double detailHint = 0;
+    protected double detailHint;
     protected int outlinePickWidth = 10;
     // Properties supporting shapefile tile assembly and tessellation.
     protected BasicQuadTree<Record> recordTree;
@@ -68,8 +68,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
      * Creates a new ShapefilePolygons with the specified shapefile. The normal attributes and the highlight attributes
      * for each ShapefileRenderable.Record are assigned default values. In order to modify ShapefileRenderable.Record
      * shape attributes or key-value attributes during construction, use {@link #ShapefilePolygons(Shapefile,
-     * ShapeAttributes, ShapeAttributes,
-     * ShapefileRenderable.AttributeDelegate)}.
+     * ShapeAttributes, ShapeAttributes, ShapefileRenderable.AttributeDelegate)}.
      *
      * @param shapefile The shapefile to display.
      * @throws IllegalArgumentException if the shapefile is null.
@@ -106,6 +105,195 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
         array[1 + offset] = y;
         array[2 + offset] = z;
         array[3 + offset] = w;
+    }
+
+    protected static boolean isTileVisible(DrawContext dc, ShapefileTile tile) {
+        Extent extent = Sector.computeBoundingBox(dc.getGlobe(), dc.getVerticalExaggeration(), tile.sector);
+
+        if (dc.isPickingMode()) {
+            return dc.getPickFrustums().intersectsAny(extent);
+        }
+
+        return dc.getView().getFrustumInModelCoordinates().intersects(extent);
+    }
+
+    protected static void computeRecordMetrics(Record record, PolylineGeneralizer generalizer) {
+        synchronized (record) // synchronize access to checking and computing a record's effective area
+        {
+            if (record.boundaryEffectiveArea != null)
+                return;
+
+            record.boundaryEffectiveArea = new double[record.getBoundaryCount()][];
+            record.boundaryCrossesAntimeridian = new boolean[record.getBoundaryCount()];
+
+            for (int i = 0; i < record.getBoundaryCount(); i++) {
+                VecBuffer boundaryCoords = record.getBoundaryPoints(i);
+                double[] coord = new double[2]; // lon, lat
+                double[] prevCoord = new double[2]; // prevlon, prevlat
+
+                generalizer.reset();
+                generalizer.beginPolyline();
+
+                for (int j = 0; j < boundaryCoords.getSize(); j++) {
+                    boundaryCoords.get(j, coord);
+                    generalizer.addVertex(coord[0], coord[1], 0); // lon, lat, 0
+
+                    if (j > 0 && Math.signum(prevCoord[0]) != Math.signum(coord[0]) &&
+                        Math.abs(prevCoord[0] - coord[0]) > 180) {
+                        record.boundaryCrossesAntimeridian[i] = true;
+                    }
+
+                    prevCoord[0] = coord[0]; // prevlon = lon
+                    prevCoord[1] = coord[1]; // prevlat = lat
+                }
+
+                record.boundaryEffectiveArea[i] = new double[boundaryCoords.getSize()];
+                generalizer.endPolyline();
+                generalizer.getVertexEffectiveArea(record.boundaryEffectiveArea[i]);
+            }
+        }
+    }
+
+    protected static void tessellateRecord(ShapefileGeometry geom, Record record, final PolygonTessellator2 tess) {
+        // Compute the minimum effective area for a vertex based on the geometry resolution. We convert the resolution
+        // from radians to square degrees. This ensures the units are consistent with the vertex effective area computed
+        // by PolylineGeneralizer, which adopts the units of the source data (degrees).
+        double resolutionDegrees = geom.resolution * 180.0 / Math.PI;
+        double minEffectiveArea = resolutionDegrees * resolutionDegrees;
+
+        tess.resetIndices(); // clear indices from previous records, but retain the accumulated vertices
+        tess.beginPolygon();
+
+        final int c = record.getBoundaryCount();
+        for (int i = 0; i < c; i++) {
+            ShapefilePolygons.tessellateBoundary(record, i, minEffectiveArea, new TessBoundaryCallback() {
+                @Override
+                public void beginBoundary() {
+                    tess.beginContour();
+                }
+
+                @Override
+                public void vertex(double degreesLatitude, double degreesLongitude) {
+                    tess.addVertex(degreesLongitude, degreesLatitude, 0);
+                }
+
+                @Override
+                public void endBoundary() {
+                    tess.endContour();
+                }
+            });
+        }
+
+        tess.endPolygon();
+
+        Range range = tess.getPolygonVertexRange();
+        if (range.length == 0) // this should never happen, but we check anyway
+            return;
+
+        IntBuffer interiorIndices = IntBuffer.allocate(tess.getInteriorIndexCount());
+        tess.getInteriorIndices(interiorIndices);
+        IntBuffer outlineIndices = IntBuffer.allocate(tess.getBoundaryIndexCount());
+        tess.getBoundaryIndices(outlineIndices);
+
+        RecordIndices ri = new RecordIndices(record.ordinal);
+        ri.vertexRange.location = range.location;
+        ri.vertexRange.length = range.length;
+        ri.interiorIndices = interiorIndices.rewind();
+        ri.outlineIndices = outlineIndices.rewind();
+        geom.recordIndices.add(ri);
+    }
+
+    protected static void beginDrawing(DrawContext dc) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
+        gl.glDisable(GL.GL_DEPTH_TEST);
+        gl.glEnableClientState(GL2.GL_VERTEX_ARRAY); // all drawing uses vertex arrays
+        gl.glMatrixMode(GL2.GL_MODELVIEW);
+        gl.glPushMatrix();
+
+        if (!dc.isPickingMode()) {
+            gl.glEnable(GL.GL_BLEND);
+            gl.glEnable(GL.GL_LINE_SMOOTH);
+            gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+        }
+    }
+
+    protected static void doCombineRecord(GLUtessellator tess, Sector sector, double minEffectiveArea, Record record) {
+        for (int i = 0; i < record.getBoundaryCount(); i++) {
+            ShapefilePolygons.doCombineBoundary(tess, sector, minEffectiveArea, record, i);
+        }
+    }
+
+    protected static void doCombineBoundary(GLUtessellator tess, Sector sector, double minEffectiveArea, Record record,
+        int boundaryIndex) {
+        final ClippingTessellator clipTess = new ClippingTessellator(tess, sector);
+
+        ShapefilePolygons.tessellateBoundary(record, boundaryIndex, minEffectiveArea, new TessBoundaryCallback() {
+            @Override
+            public void beginBoundary() {
+                clipTess.beginContour();
+            }
+
+            @Override
+            public void vertex(double degreesLatitude, double degreesLongitude) {
+                clipTess.addVertex(degreesLatitude, degreesLongitude);
+            }
+
+            @Override
+            public void endBoundary() {
+                clipTess.endContour();
+            }
+        });
+    }
+
+    protected static void tessellateBoundary(Record record, int boundaryIndex, double minEffectiveArea,
+        TessBoundaryCallback callback) {
+        VecBuffer boundaryCoords = record.getBoundaryPoints(boundaryIndex);
+        double[] boundaryEffectiveArea = record.getBoundaryEffectiveArea(boundaryIndex);
+        double[] coord = new double[2];
+
+        final int n = boundaryCoords.getSize();
+        if (!record.isBoundaryCrossesAntimeridian(boundaryIndex)) {
+            callback.beginBoundary();
+            for (int j = 0; j < n; j++) {
+                if (boundaryEffectiveArea[j] < minEffectiveArea)
+                    continue; // ignore vertices that don't meet the resolution criteria
+
+                boundaryCoords.get(j, coord); // lon, lat
+                callback.vertex(coord[1], coord[0]); // lat, lon
+            }
+            callback.endBoundary();
+        } else {
+            // Copy the boundary locations into a list of LatLon instances in order to utilize existing code that
+            // handles locations that cross the antimeridian.
+            Collection<LatLon> locations = new ArrayList<>();
+            for (int j = 0; j < n; j++) {
+                if (boundaryEffectiveArea[j] < minEffectiveArea)
+                    continue; // ignore vertices that don't meet the resolution criteria
+
+                boundaryCoords.get(j, coord); // lon, lat
+                locations.add(LatLon.fromDegrees(coord[1], coord[0])); // lat, lon
+            }
+
+            String pole = LatLon.locationsContainPole(locations);
+            if (pole != null) // wrap the boundary around the pole and along the antimeridian
+            {
+                callback.beginBoundary();
+                for (LatLon location : LatLon.cutLocationsAlongDateLine(locations, pole, null)) {
+                    callback.vertex(location.latitude, location.longitude);
+                }
+
+                callback.endBoundary();
+            } else { // tessellate on both sides of the antimeridian
+                for (List<LatLon> antimeridianLocations : LatLon.repeatLocationsAroundDateline(locations)) {
+                    callback.beginBoundary();
+                    for (LatLon location : antimeridianLocations) {
+                        callback.vertex(location.latitude, location.longitude);
+                    }
+
+                    callback.endBoundary();
+                }
+            }
+        }
     }
 
     @Override
@@ -232,9 +420,9 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
         // Assemble the tiles used for rendering, then add those tiles to the scene controller's list of renderables to
         // draw into the scene's shared surface tiles.
         this.assembleTiles(dc);
-        for (ShapefileTile tile : this.currentTiles)
+        for (ShapefileTile tile : this.currentTiles) {
             dc.addOrderedSurfaceRenderable(tile);
-
+        }
 
         // Assemble the tiles used for picking, then build a set of surface object tiles containing unique colors for
         // each record.
@@ -352,7 +540,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
     protected void createTopLevelTiles() {
         Angle latDelta = Angle.fromDegrees(45);
         Angle lonDelta = Angle.fromDegrees(45);
-        double resolution = latDelta.radians / 512;
+        double resolution = latDelta.radians() / 512;
 
         int firstRow = Tile.computeRow(latDelta, this.sector.latMin(), Angle.NEG90);
         int lastRow = Tile.computeRow(latDelta, this.sector.latMax(), Angle.NEG90);
@@ -370,16 +558,6 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
             }
             p1 = p2;
         }
-    }
-
-    protected static boolean isTileVisible(DrawContext dc, ShapefileTile tile) {
-        Extent extent = Sector.computeBoundingBox(dc.getGlobe(), dc.getVerticalExaggeration(), tile.sector);
-
-        if (dc.isPickingMode()) {
-            return dc.getPickFrustums().intersectsAny(extent);
-        }
-
-        return dc.getView().getFrustumInModelCoordinates().intersects(extent);
     }
 
     protected void addTileOrDescendants(DrawContext dc, ShapefileTile tile) {
@@ -540,92 +718,6 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
         geom.vertexOffset = new Vec4(xOffset, yOffset, 0);
     }
 
-    protected static void computeRecordMetrics(Record record, PolylineGeneralizer generalizer) {
-        synchronized (record) // synchronize access to checking and computing a record's effective area
-        {
-            if (record.boundaryEffectiveArea != null)
-                return;
-
-            record.boundaryEffectiveArea = new double[record.getBoundaryCount()][];
-            record.boundaryCrossesAntimeridian = new boolean[record.getBoundaryCount()];
-
-            for (int i = 0; i < record.getBoundaryCount(); i++) {
-                VecBuffer boundaryCoords = record.getBoundaryPoints(i);
-                double[] coord = new double[2]; // lon, lat
-                double[] prevCoord = new double[2]; // prevlon, prevlat
-
-                generalizer.reset();
-                generalizer.beginPolyline();
-
-                for (int j = 0; j < boundaryCoords.getSize(); j++) {
-                    boundaryCoords.get(j, coord);
-                    generalizer.addVertex(coord[0], coord[1], 0); // lon, lat, 0
-
-                    if (j > 0 && Math.signum(prevCoord[0]) != Math.signum(coord[0]) &&
-                        Math.abs(prevCoord[0] - coord[0]) > 180) {
-                        record.boundaryCrossesAntimeridian[i] = true;
-                    }
-
-                    prevCoord[0] = coord[0]; // prevlon = lon
-                    prevCoord[1] = coord[1]; // prevlat = lat
-                }
-
-                record.boundaryEffectiveArea[i] = new double[boundaryCoords.getSize()];
-                generalizer.endPolyline();
-                generalizer.getVertexEffectiveArea(record.boundaryEffectiveArea[i]);
-            }
-        }
-    }
-
-    protected static void tessellateRecord(ShapefileGeometry geom, Record record, final PolygonTessellator2 tess) {
-        // Compute the minimum effective area for a vertex based on the geometry resolution. We convert the resolution
-        // from radians to square degrees. This ensures the units are consistent with the vertex effective area computed
-        // by PolylineGeneralizer, which adopts the units of the source data (degrees).
-        double resolutionDegrees = geom.resolution * 180.0 / Math.PI;
-        double minEffectiveArea = resolutionDegrees * resolutionDegrees;
-
-        tess.resetIndices(); // clear indices from previous records, but retain the accumulated vertices
-        tess.beginPolygon();
-
-        final int c = record.getBoundaryCount();
-        for (int i = 0; i < c; i++) {
-            ShapefilePolygons.tessellateBoundary(record, i, minEffectiveArea, new TessBoundaryCallback() {
-                @Override
-                public void beginBoundary() {
-                    tess.beginContour();
-                }
-
-                @Override
-                public void vertex(double degreesLatitude, double degreesLongitude) {
-                    tess.addVertex(degreesLongitude, degreesLatitude, 0);
-                }
-
-                @Override
-                public void endBoundary() {
-                    tess.endContour();
-                }
-            });
-        }
-
-        tess.endPolygon();
-
-        Range range = tess.getPolygonVertexRange();
-        if (range.length == 0) // this should never happen, but we check anyway
-            return;
-
-        IntBuffer interiorIndices = IntBuffer.allocate(tess.getInteriorIndexCount());
-        tess.getInteriorIndices(interiorIndices);
-        IntBuffer outlineIndices = IntBuffer.allocate(tess.getBoundaryIndexCount());
-        tess.getBoundaryIndices(outlineIndices);
-
-        RecordIndices ri = new RecordIndices(record.ordinal);
-        ri.vertexRange.location = range.location;
-        ri.vertexRange.length = range.length;
-        ri.interiorIndices = interiorIndices.rewind();
-        ri.outlineIndices = outlineIndices.rewind();
-        geom.recordIndices.add(ri);
-    }
-
     protected boolean mustAssembleAttributeGroups(ShapefileGeometry geom) {
         return geom.attributeGroups.isEmpty() || geom.attributeStateID != this.recordStateID;
     }
@@ -697,20 +789,6 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
         }
     }
 
-    protected static void beginDrawing(DrawContext dc) {
-        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-        gl.glDisable(GL.GL_DEPTH_TEST);
-        gl.glEnableClientState(GL2.GL_VERTEX_ARRAY); // all drawing uses vertex arrays
-        gl.glMatrixMode(GL2.GL_MODELVIEW);
-        gl.glPushMatrix();
-
-        if (!dc.isPickingMode()) {
-            gl.glEnable(GL.GL_BLEND);
-            gl.glEnable(GL.GL_LINE_SMOOTH);
-            gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
-        }
-    }
-
     protected void endDrawing(DrawContext dc) {
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glEnable(GL.GL_DEPTH_TEST);
@@ -757,10 +835,10 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
     }
 
     protected void applyClipSector(DrawContext dc, Sector sector, Vec4 vertexOffset) {
-        fillArray4(this.clipPlaneArray, 0, 1, 0, 0, -(sector.lonMin - vertexOffset.x));
-        fillArray4(this.clipPlaneArray, 4, -1, 0, 0, sector.lonMax - vertexOffset.x);
-        fillArray4(this.clipPlaneArray, 8, 0, 1, 0, -(sector.latMin - vertexOffset.y));
-        fillArray4(this.clipPlaneArray, 12, 0, -1, 0, sector.latMax - vertexOffset.y);
+        ShapefilePolygons.fillArray4(this.clipPlaneArray, 0, 1, 0, 0, -(sector.lonMin - vertexOffset.x));
+        ShapefilePolygons.fillArray4(this.clipPlaneArray, 4, -1, 0, 0, sector.lonMax - vertexOffset.x);
+        ShapefilePolygons.fillArray4(this.clipPlaneArray, 8, 0, 1, 0, -(sector.latMin - vertexOffset.y));
+        ShapefilePolygons.fillArray4(this.clipPlaneArray, 12, 0, -1, 0, sector.latMax - vertexOffset.y);
 
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         for (int i = 0; i < 4; i++) {
@@ -825,8 +903,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
                 double alpha = attrs.getOutlineOpacity() * 255 + 0.5;
                 gl.glColor4ub((byte) rgb.getRed(), (byte) rgb.getGreen(), (byte) rgb.getBlue(), (byte) alpha);
                 gl.glLineWidth((float) attrs.getOutlineWidth());
-            }
-            else {
+            } else {
                 gl.glLineWidth((float) Math.max(attrs.getOutlineWidth(), this.getOutlinePickWidth()));
             }
 
@@ -897,84 +974,6 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
         finally {
             GLU.gluTessEndPolygon(tess);
             GLU.gluDeleteTess(tess);
-        }
-    }
-
-    protected static void doCombineRecord(GLUtessellator tess, Sector sector, double minEffectiveArea, Record record) {
-        for (int i = 0; i < record.getBoundaryCount(); i++) {
-            ShapefilePolygons.doCombineBoundary(tess, sector, minEffectiveArea, record, i);
-        }
-    }
-
-    protected static void doCombineBoundary(GLUtessellator tess, Sector sector, double minEffectiveArea, Record record,
-        int boundaryIndex) {
-        final ClippingTessellator clipTess = new ClippingTessellator(tess, sector);
-
-        ShapefilePolygons.tessellateBoundary(record, boundaryIndex, minEffectiveArea, new TessBoundaryCallback() {
-            @Override
-            public void beginBoundary() {
-                clipTess.beginContour();
-            }
-
-            @Override
-            public void vertex(double degreesLatitude, double degreesLongitude) {
-                clipTess.addVertex(degreesLatitude, degreesLongitude);
-            }
-
-            @Override
-            public void endBoundary() {
-                clipTess.endContour();
-            }
-        });
-    }
-
-    protected static void tessellateBoundary(Record record, int boundaryIndex, double minEffectiveArea,
-        TessBoundaryCallback callback) {
-        VecBuffer boundaryCoords = record.getBoundaryPoints(boundaryIndex);
-        double[] boundaryEffectiveArea = record.getBoundaryEffectiveArea(boundaryIndex);
-        double[] coord = new double[2];
-
-        final int n = boundaryCoords.getSize();
-        if (!record.isBoundaryCrossesAntimeridian(boundaryIndex)) {
-            callback.beginBoundary();
-            for (int j = 0; j < n; j++) {
-                if (boundaryEffectiveArea[j] < minEffectiveArea)
-                    continue; // ignore vertices that don't meet the resolution criteria
-
-                boundaryCoords.get(j, coord); // lon, lat
-                callback.vertex(coord[1], coord[0]); // lat, lon
-            }
-            callback.endBoundary();
-        }
-        else {
-            // Copy the boundary locations into a list of LatLon instances in order to utilize existing code that
-            // handles locations that cross the antimeridian.
-            Collection<LatLon> locations = new ArrayList<>();
-            for (int j = 0; j < n; j++) {
-                if (boundaryEffectiveArea[j] < minEffectiveArea)
-                    continue; // ignore vertices that don't meet the resolution criteria
-
-                boundaryCoords.get(j, coord); // lon, lat
-                locations.add(LatLon.fromDegrees(coord[1], coord[0])); // lat, lon
-            }
-
-            String pole = LatLon.locationsContainPole(locations);
-            if (pole != null) // wrap the boundary around the pole and along the antimeridian
-            {
-                callback.beginBoundary();
-                for (LatLon location : LatLon.cutLocationsAlongDateLine(locations, pole, null))
-                    callback.vertex(location.latitude, location.longitude);
-
-                callback.endBoundary();
-            } else { // tessellate on both sides of the antimeridian
-                for (List<LatLon> antimeridianLocations : LatLon.repeatLocationsAroundDateline(locations)) {
-                    callback.beginBoundary();
-                    for (LatLon location : antimeridianLocations)
-                        callback.vertex(location.latitude, location.longitude);
-
-                    callback.endBoundary();
-                }
-            }
         }
     }
 
@@ -1112,7 +1111,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
 
         @Override
         public int hashCode() {
-            long temp = this.resolution != +0.0d ? Double.doubleToLongBits(this.resolution) : 0L;
+            long temp = this.resolution == +0.0d ? 0L : Double.doubleToLongBits(this.resolution);
             int result;
             result = this.shape.hashCode();
             result = 31 * result + this.sector.hashCode();
@@ -1151,7 +1150,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
             try {
                 ((ShapefilePolygons) this.shape).tessellate(this);
             }
-            catch (Exception e) {
+            catch (RuntimeException e) {
                 String msg = Logging.getMessage("generic.ExceptionWhileTessellating", this.shape);
                 Logging.logger().log(Level.SEVERE, msg, e);
             }
@@ -1196,7 +1195,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
 
         @Override
         public int hashCode() {
-            long temp = this.resolution != +0.0d ? Double.doubleToLongBits(this.resolution) : 0L;
+            long temp = this.resolution == +0.0d ? 0L : Double.doubleToLongBits(this.resolution);
             int result;
             result = this.shape.hashCode();
             result = 31 * result + this.sector.hashCode();

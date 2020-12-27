@@ -211,9 +211,8 @@ public class Encirclement extends BasicArea {
         for (Position pos : this.positions) {
             if (prev != null) {
                 Angle dist = LatLon.greatCircleDistance(pos, prev);
-                perimeter += dist.radians;
-            }
-            else {
+                perimeter += dist.radians();
+            } else {
                 first = pos;
             }
 
@@ -224,7 +223,7 @@ public class Encirclement extends BasicArea {
         // If the polygon is not closed account for the missing segment.
         if (prev != null && !prev.equals(first)) {
             Angle dist = LatLon.greatCircleDistance(first, prev);
-            perimeter += dist.radians;
+            perimeter += dist.radians();
         }
 
         // Compute the "complexity" of the polygon. A triangle has complexity of one, and complexity increases as
@@ -233,6 +232,6 @@ public class Encirclement extends BasicArea {
 
         perimeter = perimeter * globe.getRadius(); // Convert perimeter to meters.
 
-        return perimeter / (complexity * DEFAULT_NUM_WAVES);
+        return perimeter / (complexity * Encirclement.DEFAULT_NUM_WAVES);
     }
 }

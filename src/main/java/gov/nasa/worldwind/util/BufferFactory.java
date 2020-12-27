@@ -6,15 +6,15 @@
 package gov.nasa.worldwind.util;
 
 /**
- * BufferFactory provides a general factory interface for creating instances of {@link
- * BufferWrapper}, without having to know the underlying data type. Once created, a
- * BufferWrapper abstracts reading and writing buffer data from the underlying data type. When BufferWrapper is combined
- * with BufferFactory, a component may create and work with buffer data in a type agnostic manner.
+ * BufferFactory provides a general factory interface for creating instances of {@link BufferWrapper}, without having to
+ * know the underlying data type. Once created, a BufferWrapper abstracts reading and writing buffer data from the
+ * underlying data type. When BufferWrapper is combined with BufferFactory, a component may create and work with buffer
+ * data in a type agnostic manner.
  * <p>
  * BufferFactory is itself abstract and defines the factory interface. It defines several implementations as static
- * inner classes, which serve the most common data types: {@link BufferFactory.ByteBufferFactory},
- * {@link BufferFactory.ShortBufferFactory}, {@link BufferFactory.IntBufferFactory},
- * {@link BufferFactory.FloatBufferFactory}, and {@link BufferFactory.DoubleBufferFactory}.
+ * inner classes, which serve the most common data types: {@link BufferFactory.ByteBufferFactory}, {@link
+ * BufferFactory.ShortBufferFactory}, {@link BufferFactory.IntBufferFactory}, {@link BufferFactory.FloatBufferFactory},
+ * and {@link BufferFactory.DoubleBufferFactory}.
  *
  * @author dcollins
  * @version $Id: BufferFactory.java 1171 2013-02-11 21:45:02Z dcollins $

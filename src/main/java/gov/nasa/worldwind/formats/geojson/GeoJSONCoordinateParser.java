@@ -27,6 +27,38 @@ public class GeoJSONCoordinateParser extends GeoJSONEventParser {
     public GeoJSONCoordinateParser() {
     }
 
+    protected static DoubleBuffer allocatePositionBuffer(int capacity) {
+        return Buffers.newDirectDoubleBuffer(capacity);
+    }
+
+    //**************************************************************//
+    //********************  Position Parsing  **********************//
+    //**************************************************************//
+
+    protected static Object resolveArrayOfArrays(List<?> list) {
+        if (list == null || list.isEmpty())
+            return null;
+
+        if (list.get(0) instanceof GeoJSONPositionArray) {
+            GeoJSONPositionArray[] a = new GeoJSONPositionArray[list.size()];
+            for (int i = 0; i < list.size(); i++) {
+                a[i] = (GeoJSONPositionArray) list.get(i);
+            }
+            return a;
+        } else if (list.get(0) instanceof List) {
+            GeoJSONPositionArray[][] a = new GeoJSONPositionArray[list.size()][];
+            for (int i = 0; i < list.size(); i++) {
+                for (int j = 0; j < ((Collection) list.get(i)).size(); j++) {
+                    a[i][j] = (GeoJSONPositionArray) ((List) list.get(i)).get(j);
+                }
+            }
+            return a;
+        } else {
+            Logging.logger().warning(Logging.getMessage("generic.UnexpectedObjectType", list.get(0)));
+            return null;
+        }
+    }
+
     @Override
     protected Object parseArray(JSONEventParserContext ctx, JSONEvent event) throws IOException {
         if (!event.isStartArray()) {
@@ -42,19 +74,13 @@ public class GeoJSONCoordinateParser extends GeoJSONEventParser {
 
         if (nextEvent != null && nextEvent.isNumericValue()) {
             return this.parseSimpleArray(ctx, event);
-        }
-        else if (nextEvent != null && nextEvent.isStartArray()) {
+        } else if (nextEvent != null && nextEvent.isStartArray()) {
             return this.parseComplexArray(ctx, event);
-        }
-        else {
+        } else {
             Logging.logger().warning(Logging.getMessage("generic.UnexpectedEvent", event));
             return null;
         }
     }
-
-    //**************************************************************//
-    //********************  Position Parsing  **********************//
-    //**************************************************************//
 
     protected void startPositionArray() {
         this.startPos = (this.posBuffer != null) ? this.posBuffer.position() : 0;
@@ -87,7 +113,8 @@ public class GeoJSONCoordinateParser extends GeoJSONEventParser {
             }
 
             if (this.posBuffer == null)
-                this.posBuffer = GeoJSONCoordinateParser.allocatePositionBuffer(INITIAL_POSITION_BUFFER_CAPACITY);
+                this.posBuffer = GeoJSONCoordinateParser.allocatePositionBuffer(
+                    GeoJSONCoordinateParser.INITIAL_POSITION_BUFFER_CAPACITY);
             else if (this.posBuffer.remaining() == 0)
                 this.expandPositionBuffer(1 + this.posBuffer.capacity());
 
@@ -105,9 +132,9 @@ public class GeoJSONCoordinateParser extends GeoJSONEventParser {
         return new GeoJSONPositionArray(positionSize, this.posBuffer, this.startPos, this.endPos);
     }
 
-    protected static DoubleBuffer allocatePositionBuffer(int capacity) {
-        return Buffers.newDirectDoubleBuffer(capacity);
-    }
+    //**************************************************************//
+    //********************  Simple Array Parsing  ******************//
+    //**************************************************************//
 
     protected void expandPositionBuffer(int minCapacity) {
         int newCapacity = 2 * this.posBuffer.capacity();
@@ -127,7 +154,7 @@ public class GeoJSONCoordinateParser extends GeoJSONEventParser {
     }
 
     //**************************************************************//
-    //********************  Simple Array Parsing  ******************//
+    //********************  Complex Array Parsing  *****************//
     //**************************************************************//
 
     protected Object parseSimpleArray(JSONEventParserContext ctx, JSONEvent event) throws IOException {
@@ -143,10 +170,6 @@ public class GeoJSONCoordinateParser extends GeoJSONEventParser {
 
         return this.resolvePositionArray(positionSize);
     }
-
-    //**************************************************************//
-    //********************  Complex Array Parsing  *****************//
-    //**************************************************************//
 
     protected Object parseComplexArray(JSONEventParserContext ctx, JSONEvent event) throws IOException {
         if (!event.isStartArray()) {
@@ -241,31 +264,5 @@ public class GeoJSONCoordinateParser extends GeoJSONEventParser {
         }
 
         return GeoJSONCoordinateParser.resolveArrayOfArrays(list);
-    }
-
-    protected static Object resolveArrayOfArrays(List<?> list) {
-        if (list == null || list.isEmpty())
-            return null;
-
-        if (list.get(0) instanceof GeoJSONPositionArray) {
-            GeoJSONPositionArray[] a = new GeoJSONPositionArray[list.size()];
-            for (int i = 0; i < list.size(); i++) {
-                a[i] = (GeoJSONPositionArray) list.get(i);
-            }
-            return a;
-        }
-        else if (list.get(0) instanceof List) {
-            GeoJSONPositionArray[][] a = new GeoJSONPositionArray[list.size()][];
-            for (int i = 0; i < list.size(); i++) {
-                for (int j = 0; j < ((Collection) list.get(i)).size(); j++) {
-                    a[i][j] = (GeoJSONPositionArray) ((List) list.get(i)).get(j);
-                }
-            }
-            return a;
-        }
-        else {
-            Logging.logger().warning(Logging.getMessage("generic.UnexpectedObjectType", list.get(0)));
-            return null;
-        }
     }
 }

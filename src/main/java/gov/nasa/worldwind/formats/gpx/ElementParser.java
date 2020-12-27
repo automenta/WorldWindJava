@@ -14,8 +14,8 @@ import org.xml.sax.Attributes;
  */
 public class ElementParser {
     protected final String elementName;
-    protected ElementParser currentElement = null;
-    protected String currentCharacters = null;
+    protected ElementParser currentElement;
+    protected String currentCharacters;
 
     /**
      * @param elementName the element's name, may not be null

@@ -263,8 +263,7 @@ public final class Sphere implements Extent, Renderable {
         if (discriminant == 0) {
             Vec4 p = line.getPointAt((-b - discriminantRoot) / (2 * a));
             return new Intersection[] {new Intersection(p, true)};
-        }
-        else // (discriminant > 0)
+        } else // (discriminant > 0)
         {
             Vec4 near = line.getPointAt((-b - discriminantRoot) / (2 * a));
             Vec4 far = line.getPointAt((-b + discriminantRoot) / (2 * a));
@@ -416,7 +415,7 @@ public final class Sphere implements Extent, Renderable {
         int result;
         long temp;
         result = center.hashCode();
-        temp = radius != +0.0d ? Double.doubleToLongBits(radius) : 0L;
+        temp = radius == +0.0d ? 0L : Double.doubleToLongBits(radius);
         result = 29 * result + (int) (temp ^ (temp >>> 32));
         return result;
     }

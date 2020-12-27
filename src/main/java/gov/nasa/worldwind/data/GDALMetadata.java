@@ -61,7 +61,7 @@ public class GDALMetadata {
             Logging.logger().log(Level.FINE, t.getMessage(), t);
         }
 
-        return mapExtendedMetadata(ds, extParams, params);
+        return GDALMetadata.mapExtendedMetadata(ds, extParams, params);
     }
 
     static protected AVList mapExtendedMetadata(Dataset ds, AVList extParams, AVList params) {
@@ -71,33 +71,33 @@ public class GDALMetadata {
             return params;
         }
 
-        convertToWorldWind(extParams, params);
+        GDALMetadata.convertToWorldWind(extParams, params);
 
         String drvName = (null != ds) ? ds.GetDriver().getShortName() : "";
 
         if ("NITF".equals(drvName)) {
-            mapNITFMetadata(extParams, params);
+            GDALMetadata.mapNITFMetadata(extParams, params);
         }
 
         return params;
     }
 
     protected static void mapNITFMetadata(AVList extParams, AVList params) {
-        if (extParams.hasKey(NITF_ONAME)) {
+        if (extParams.hasKey(GDALMetadata.NITF_ONAME)) {
             // values: GeoEye, DigitalGlobe
         }
 
-        if (extParams.hasKey(NITF_ISORCE)) {
+        if (extParams.hasKey(GDALMetadata.NITF_ISORCE)) {
             // values: GEOEYE1,DigitalGlobe
         }
 
-        if (extParams.hasKey(NITF_IREP)) {
+        if (extParams.hasKey(GDALMetadata.NITF_IREP)) {
             // values: RGB/LUT/MONO/MULTI
         }
 
         // Extract Actual Bit-Per-Pixel
-        if (extParams.hasKey(NITF_ABPP)) {
-            Object o = extParams.get(NITF_ABPP);
+        if (extParams.hasKey(GDALMetadata.NITF_ABPP)) {
+            Object o = extParams.get(GDALMetadata.NITF_ABPP);
             if (!WWUtil.isEmpty(o) && o instanceof String) {
                 Integer abpp = WWUtil.convertStringToInteger((String) o);
                 if (null != abpp)
@@ -105,8 +105,8 @@ public class GDALMetadata {
             }
         }
 
-        if (extParams.hasKey(NITF_DYNAMIC_RANGE)) {
-            Object o = extParams.get(NITF_DYNAMIC_RANGE);
+        if (extParams.hasKey(GDALMetadata.NITF_DYNAMIC_RANGE)) {
+            Object o = extParams.get(GDALMetadata.NITF_DYNAMIC_RANGE);
             if (!WWUtil.isEmpty(o) && o instanceof String) {
                 Double maxPixelValue = WWUtil.convertStringToDouble((String) o);
                 if (null != maxPixelValue)
@@ -114,13 +114,13 @@ public class GDALMetadata {
             }
         }
 
-        if (extParams.hasKey(NITF_FBKGC)) {
-            Object o = extParams.get(NITF_FBKGC);
+        if (extParams.hasKey(GDALMetadata.NITF_FBKGC)) {
+            Object o = extParams.get(GDALMetadata.NITF_FBKGC);
             if (!WWUtil.isEmpty(o) && o instanceof String) {
                 try {
                     String[] s = ((String) o).split(",");
                 }
-                catch (Exception e) {
+                catch (RuntimeException e) {
                     String msg = Logging.getMessage("generic.CannotCreateColor", o);
                     Logging.logger().severe(msg);
                 }
@@ -169,8 +169,7 @@ public class GDALMetadata {
                 if (!zone.isEmpty() && zone.charAt(zone.length() - 1) == 'N') {
                     destParams.set(AVKey.PROJECTION_HEMISPHERE, AVKey.NORTH);
                     zone = zone.substring(0, zone.length() - 1);
-                }
-                else if (!zone.isEmpty() && zone.charAt(zone.length() - 1) == 'S') {
+                } else if (!zone.isEmpty() && zone.charAt(zone.length() - 1) == 'S') {
                     destParams.set(AVKey.PROJECTION_HEMISPHERE, AVKey.SOUTH);
                     zone = zone.substring(0, zone.length() - 1);
                 }

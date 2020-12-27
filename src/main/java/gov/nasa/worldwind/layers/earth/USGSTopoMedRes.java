@@ -15,7 +15,7 @@ import org.w3c.dom.Document;
  */
 public class USGSTopoMedRes extends WMSTiledImageLayer {
     public USGSTopoMedRes() {
-        super(getConfigurationDocument(), null);
+        super(USGSTopoMedRes.getConfigurationDocument(), null);
     }
 
     protected static Document getConfigurationDocument() {

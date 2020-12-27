@@ -19,7 +19,7 @@ public class ImageTrimmer {
         for (String path : args) {
             try {
                 System.out.print("Trimming " + path + " ... ");
-                trimImageInPlace(new File(path));
+                ImageTrimmer.trimImageInPlace(new File(path));
                 System.out.print("success");
                 System.out.println();
             }

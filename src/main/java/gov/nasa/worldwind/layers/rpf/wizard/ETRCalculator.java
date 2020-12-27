@@ -75,8 +75,7 @@ public class ETRCalculator {
                 double pctComplete = this.step / (double) (this.numSteps - 1);
                 this.etr = (long) (elapsed / pctComplete - elapsed);
             }
-        }
-        else {
+        } else {
             this.etr = -1;
         }
 

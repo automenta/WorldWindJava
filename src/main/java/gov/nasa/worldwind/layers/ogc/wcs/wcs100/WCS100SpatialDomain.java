@@ -47,24 +47,21 @@ public class WCS100SpatialDomain extends AbstractXMLEventParser {
                 if (o instanceof GMLEnvelope)
                     this.envelopes.add((GMLEnvelope) o);
             }
-        }
-        else if (ctx.isStartElement(event, "RectifiedGrid")) {
+        } else if (ctx.isStartElement(event, "RectifiedGrid")) {
             XMLEventParser parser = this.allocate(ctx, event);
             if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
                 if (o instanceof GMLRectifiedGrid)
                     this.rectifiedGrids.add((GMLRectifiedGrid) o);
             }
-        }
-        else if (ctx.isStartElement(event, "Grid")) {
+        } else if (ctx.isStartElement(event, "Grid")) {
             XMLEventParser parser = this.allocate(ctx, event);
             if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
                 if (o instanceof GMLGrid)
                     this.grids.add((GMLGrid) o);
             }
-        }
-        else {
+        } else {
             super.doParseEventContent(ctx, event, args);
         }
     }

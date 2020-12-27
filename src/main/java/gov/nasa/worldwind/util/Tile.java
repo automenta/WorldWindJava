@@ -43,7 +43,7 @@ public class Tile implements Comparable<Tile>, Cacheable {
      * @param sector the sector corresponding with the tile.
      * @param level  the tile's level within a containing level set.
      * @param row    the row index (0 origin) of the tile within the indicated level.
-     * @param col the column index (0 origin) of the tile within the indicated level.
+     * @param col    the column index (0 origin) of the tile within the indicated level.
      * @throws IllegalArgumentException if <code>sector</code> or <code>level</code> is null.
      */
     public Tile(Sector sector, Level level, int row, int col) {
@@ -76,7 +76,7 @@ public class Tile implements Comparable<Tile>, Cacheable {
      * @param sector    the sector corresponding with the tile.
      * @param level     the tile's level within a containing level set.
      * @param row       the row index (0 origin) of the tile within the indicated level.
-     * @param col    the column index (0 origin) of the tile within the indicated level.
+     * @param col       the column index (0 origin) of the tile within the indicated level.
      * @param cacheName optional cache name to override the Level's cache name. May be null.
      * @throws IllegalArgumentException if <code>sector</code> or <code>level</code> is null.
      */
@@ -119,14 +119,17 @@ public class Tile implements Comparable<Tile>, Cacheable {
      * @throws IllegalArgumentException if <code>delta</code> is null or non-positive, or <code>latitude</code> is null,
      *                                  greater than positive 90 degrees, or less than  negative 90 degrees
      */
-    @Deprecated public static int computeRow(Angle delta, Angle latitude, Angle origin) {
-        return computeRow(delta.degrees, latitude.degrees, origin.degrees);
+    @Deprecated
+    public static int computeRow(Angle delta, Angle latitude, Angle origin) {
+        return Tile.computeRow(delta.degrees, latitude.degrees, origin.degrees);
     }
 
-    /** in degrees */
+    /**
+     * in degrees
+     */
     public static int computeRow(double delta, double latitude, double origin) {
 
-        assertPositiveDelta(delta);
+        Tile.assertPositiveDelta(delta);
 
         if (latitude < -90.0d || latitude > 90.0d) {
             String message = Logging.getMessage("generic.AngleOutOfRange", latitude);
@@ -152,14 +155,17 @@ public class Tile implements Comparable<Tile>, Cacheable {
      * @throws IllegalArgumentException if <code>delta</code> is null or non-positive, or <code>longitude</code> is
      *                                  null, greater than positive 180 degrees, or less than  negative 180 degrees
      */
-    @Deprecated public static int computeColumn(Angle delta, Angle longitude, Angle origin) {
-        return computeColumn(delta.degrees, longitude.degrees, origin.degrees);
+    @Deprecated
+    public static int computeColumn(Angle delta, Angle longitude, Angle origin) {
+        return Tile.computeColumn(delta.degrees, longitude.degrees, origin.degrees);
     }
 
-    /** in degrees */
+    /**
+     * in degrees
+     */
     public static int computeColumn(double delta, double longitude, double origin) {
 
-        assertPositiveDelta(delta);
+        Tile.assertPositiveDelta(delta);
 
         if (longitude < -180.0d || longitude > 180.0d) {
             String message = Logging.getMessage("generic.AngleOutOfRange", longitude);
@@ -192,9 +198,9 @@ public class Tile implements Comparable<Tile>, Cacheable {
      *                                  negative.
      */
     public static Angle computeRowLatitude(int row, Angle delta, Angle origin) {
-        assertPositiveRow(row);
+        Tile.assertPositiveRow(row);
 
-        assertPositiveDelta(delta);
+        Tile.assertPositiveDelta(delta);
 
         double latDegrees = origin.degrees + (row * delta.degrees);
         return Angle.fromDegrees(latDegrees);
@@ -225,14 +231,15 @@ public class Tile implements Comparable<Tile>, Cacheable {
             throw new IllegalArgumentException(msg);
         }
 
-        assertPositiveDelta(delta);
+        Tile.assertPositiveDelta(delta);
 
         double lonDegrees = origin.degrees + (column * delta.degrees);
         return Angle.fromDegrees(lonDegrees);
     }
 
-    @Deprecated private static void assertPositiveDelta(Angle delta) {
-        assertPositiveDelta(delta.degrees);
+    @Deprecated
+    private static void assertPositiveDelta(Angle delta) {
+        Tile.assertPositiveDelta(delta.degrees);
     }
 
     private static void assertPositiveDelta(double deltaDegrees) {
@@ -260,7 +267,7 @@ public class Tile implements Comparable<Tile>, Cacheable {
 
     public String getPath() {
         if (this.path == null) {
-            this.path = this.level.getPath() + "/" + this.row + "/" + this.row + "_" + this.col;
+            this.path = this.level.getPath() + '/' + this.row + '/' + this.row + '_' + this.col;
             if (!this.level.isEmpty())
                 path += this.level.getFormatSuffix();
         }
@@ -272,7 +279,7 @@ public class Tile implements Comparable<Tile>, Cacheable {
         String path = this.getPath();
 
         final int period = path.lastIndexOf('.');
-        return period!=-1 ? path.substring(0, period) : path;
+        return period == -1 ? path : path.substring(0, period);
     }
 
     public final int getLevelNumber() {
@@ -314,7 +321,7 @@ public class Tile implements Comparable<Tile>, Cacheable {
         sb.append('(');
         sb.append(getLevelName());
         sb.append("), ").append(row);
-        sb.append( ", ").append(col);
+        sb.append(", ").append(col);
         return sb.toString();
     }
 
@@ -327,7 +334,8 @@ public class Tile implements Comparable<Tile>, Cacheable {
     }
 
     public int compareTo(Tile tile) {
-        if (this==tile) return 0;
+        if (this == tile)
+            return 0;
 //        if (tile == null) {
 //            String msg = Logging.getMessage("nullValue.TileIsNull");
 //            Logging.logger().severe(msg);
@@ -381,6 +389,7 @@ public class Tile implements Comparable<Tile>, Cacheable {
     public void setPriority(double priority) {
         this.priority = priority;
     }
+
     public void setPriorityDistance(double dist) {
         setPriority(1.0 / (1.0 + dist));
     }

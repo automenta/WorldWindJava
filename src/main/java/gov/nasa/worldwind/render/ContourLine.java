@@ -33,7 +33,7 @@ public class ContourLine implements Renderable {
     private Color color = Color.CYAN;
     private double lineWidth = 1;
     private boolean enabled = true;
-    private boolean viewClippingEnabled = false;
+    private boolean viewClippingEnabled;
 
     public ContourLine() {
         this(0, Sector.FULL_SPHERE);
@@ -57,6 +57,31 @@ public class ContourLine implements Renderable {
 
         this.elevation = elevation;
         this.sector = sector;
+    }
+
+    /**
+     * Filters the given intersection segments list according to the current view frustum.
+     *
+     * @param dc   the current <code>DrawContext</code>
+     * @param list the list of <code>Intersection</code> to be filtered.
+     * @return the filtered list.
+     */
+    protected static ArrayList<Intersection> filterIntersectionsOnViewFrustum(DrawContext dc,
+        ArrayList<Intersection> list) {
+        Frustum vf = dc.getView().getFrustumInModelCoordinates();
+        int i = 0;
+        while (i < list.size()) {
+            if (vf.contains(list.get(i).getIntersectionPoint())
+                || vf.contains(list.get(i + 1).getIntersectionPoint())) // Keep segment
+            {
+                i += 2;
+            } else {
+                // Remove segment
+                list.remove(i);
+                list.remove(i);
+            }
+        }
+        return list;
     }
 
     /**
@@ -261,39 +286,13 @@ public class ContourLine implements Renderable {
 
             // Filter intersection segment list
             if (isViewClippingEnabled()) {
-                inter = filterIntersectionsOnViewFrustum(dc, inter);
+                inter = ContourLine.filterIntersectionsOnViewFrustum(dc, inter);
             }
             inter = filterIntersections(dc, inter);
 
             // Create path segments
             makePathsConnected(dc, inter, this.maxConnectingDistance);
         }
-    }
-
-    /**
-     * Filters the given intersection segments list according to the current view frustum.
-     *
-     * @param dc   the current <code>DrawContext</code>
-     * @param list the list of <code>Intersection</code> to be filtered.
-     * @return the filtered list.
-     */
-    protected static ArrayList<Intersection> filterIntersectionsOnViewFrustum(DrawContext dc,
-        ArrayList<Intersection> list) {
-        Frustum vf = dc.getView().getFrustumInModelCoordinates();
-        int i = 0;
-        while (i < list.size()) {
-            if (vf.contains(list.get(i).getIntersectionPoint())
-                || vf.contains(list.get(i + 1).getIntersectionPoint())) // Keep segment
-            {
-                i += 2;
-            }
-            else {
-                // Remove segment
-                list.remove(i);
-                list.remove(i);
-            }
-        }
-        return list;
     }
 
     /**
@@ -317,8 +316,7 @@ public class ContourLine implements Renderable {
                 && s.contains(globe.computePositionFromPoint(list.get(i + 1).getIntersectionPoint()))) // Keep segment
             {
                 i += 2;
-            }
-            else {
+            } else {
                 // Remove segment
                 list.remove(i);
                 list.remove(i);

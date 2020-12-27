@@ -100,10 +100,10 @@ public abstract class GeoTiff {
         int ProjAzimuthAngle = 3094; /*  GeogAzimuthUnit */
         int ProjStraightVertPoleLong = 3095; /*  GeogAngularUnit */
         // Aliases:
-        int ProjStdParallel = ProjStdParallel1;
-        int ProjOriginLong = ProjNatOriginLong;
-        int ProjOriginLat = ProjNatOriginLat;
-        int ProjScaleAtOrigin = ProjScaleAtNatOrigin;
+        int ProjStdParallel = GeoKey.ProjStdParallel1;
+        int ProjOriginLong = GeoKey.ProjNatOriginLong;
+        int ProjOriginLat = GeoKey.ProjNatOriginLat;
+        int ProjScaleAtOrigin = GeoKey.ProjScaleAtNatOrigin;
 
         // 6.2.4 Vertical CS Keys
         int VerticalCSType = 4096; /* Section 6.3.4.1 codes */
@@ -119,7 +119,7 @@ public abstract class GeoTiff {
         int Geocentric = 3;
         int UserDefined = 32767;
 
-        int DEFAULT = Geographic;
+        int DEFAULT = ModelType.Geographic;
     }
 
     public interface RasterType {
@@ -176,7 +176,7 @@ public abstract class GeoTiff {
         int WGS_72BE = 4324;
         int WGS_84 = 4326;
 
-        int DEFAULT = WGS_84;
+        int DEFAULT = GCS.WGS_84;
     }
 
     // Geogrphic Coordinate System Ellipsoid (GCSE)
@@ -242,7 +242,7 @@ public abstract class GeoTiff {
         int Baltic_Sea = 5105;
         int Caspian_Sea = 5106;
 
-        int DEFAULT = Undefined;
+        int DEFAULT = VCS.Undefined;
     }
 }
 

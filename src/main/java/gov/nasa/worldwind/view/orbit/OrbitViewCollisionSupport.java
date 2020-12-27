@@ -24,187 +24,18 @@ public class OrbitViewCollisionSupport {
         setNumIterations(1);
     }
 
-    public double getCollisionThreshold() {
-        return this.collisionThreshold;
-    }
-
-    public void setCollisionThreshold(double collisionThreshold) {
-        if (collisionThreshold < 0) {
-            String message = Logging.getMessage("generic.ArgumentOutOfRange", collisionThreshold);
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        this.collisionThreshold = collisionThreshold;
-    }
-
-    public int getNumIterations() {
-        return this.numIterations;
-    }
-
-    public void setNumIterations(int numIterations) {
-        if (numIterations < 1) {
-            String message = Logging.getMessage("generic.ArgumentOutOfRange", numIterations);
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        this.numIterations = numIterations;
-    }
-
-    public boolean isColliding(OrbitView orbitView, double nearDistance, DrawContext dc) {
-        if (orbitView == null) {
-            String message = Logging.getMessage("nullValue.OrbitViewIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (nearDistance < 0) {
-            String message = Logging.getMessage("generic.ArgumentOutOfRange", nearDistance);
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (dc == null) {
-            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        Globe globe = dc.getGlobe();
-        if (globe == null) {
-            String message = Logging.getMessage("nullValue.DrawingContextGlobeIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        Matrix modelviewInv = getModelviewInverse(globe,
-            orbitView.getCenterPosition(), orbitView.getHeading(), orbitView.getPitch(), orbitView.getRoll(),
-            orbitView.getZoom());
-        if (modelviewInv != null) {
-            // OrbitView is colliding when its eye point is below the collision threshold.
-            double heightAboveSurface = computeViewHeightAboveSurface(dc, modelviewInv,
-                orbitView.getFieldOfView(), orbitView.getViewport(), nearDistance);
-            return heightAboveSurface < this.collisionThreshold;
-        }
-
-        return false;
-    }
-
-    public Position computeCenterPositionToResolveCollision(BasicOrbitView orbitView, double nearDistance,
-        DrawContext dc) {
-        if (orbitView == null) {
-            String message = Logging.getMessage("nullValue.OrbitViewIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (nearDistance < 0) {
-            String message = Logging.getMessage("generic.ArgumentOutOfRange", nearDistance);
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (dc == null) {
-            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        Globe globe = dc.getGlobe();
-        if (globe == null) {
-            String message = Logging.getMessage("nullValue.DrawingContextGlobeIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        Position newCenter = null;
-
-        for (int i = 0; i < this.numIterations; i++) {
-            Matrix modelviewInv = getModelviewInverse(globe,
-                newCenter != null ? newCenter : orbitView.getCenterPosition(),
-                orbitView.getHeading(), orbitView.getPitch(), orbitView.getRoll(), orbitView.getZoom());
-            if (modelviewInv != null) {
-                double heightAboveSurface = computeViewHeightAboveSurface(dc, modelviewInv,
-                    orbitView.getFieldOfView(), orbitView.getViewport(), nearDistance);
-                double adjustedHeight = heightAboveSurface - this.collisionThreshold;
-                if (adjustedHeight < 0) {
-                    newCenter = new Position(
-                        newCenter != null ? newCenter : orbitView.getCenterPosition(),
-                        (newCenter != null ? newCenter.getElevation() : orbitView.getCenterPosition().getElevation())
-                            - adjustedHeight);
-                }
-            }
-        }
-
-        return newCenter;
-    }
-
-    public Angle computePitchToResolveCollision(BasicOrbitView orbitView, double nearDistance, DrawContext dc) {
-        if (orbitView == null) {
-            String message = Logging.getMessage("nullValue.OrbitViewIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (nearDistance < 0) {
-            String message = Logging.getMessage("generic.ArgumentOutOfRange", nearDistance);
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (dc == null) {
-            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        Globe globe = dc.getGlobe();
-        if (globe == null) {
-            String message = Logging.getMessage("nullValue.DrawingContextGlobeIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        Angle newPitch = null;
-
-        for (int i = 0; i < this.numIterations; i++) {
-            Matrix modelviewInv = getModelviewInverse(globe,
-                orbitView.getCenterPosition(), orbitView.getHeading(),
-                newPitch != null ? newPitch : orbitView.getPitch(), orbitView.getRoll(),
-                orbitView.getZoom());
-            if (modelviewInv != null) {
-                double heightAboveSurface = computeViewHeightAboveSurface(dc, modelviewInv,
-                    orbitView.getFieldOfView(), orbitView.getViewport(), nearDistance);
-                double adjustedHeight = heightAboveSurface - this.collisionThreshold;
-                if (adjustedHeight < 0) {
-                    Vec4 eyePoint = getEyePoint(modelviewInv);
-                    Vec4 centerPoint = globe.computePointFromPosition(orbitView.getCenterPosition());
-                    if (centerPoint != null) {
-                        Position eyePos = globe.computePositionFromPoint(eyePoint);
-                        // Compute the eye point required to resolve the collision.
-                        Vec4 newEyePoint = globe.computePointFromPosition(eyePos.getLatitude(), eyePos.getLongitude(),
-                            eyePos.getElevation() - adjustedHeight);
-                        // Compute the pitch that corresponds with the elevation of the eye point
-                        // (but not necessarily the latitude and longitude).
-                        Vec4 normalAtCenter = globe.computeSurfaceNormalAtPoint(centerPoint);
-                        Vec4 newEye_sub_center = newEyePoint.subtract3(centerPoint).normalize3();
-                        double dot = normalAtCenter.dot3(newEye_sub_center);
-                        if (dot >= -1 || dot <= 1) {
-                            double angle = Math.acos(dot);
-                            newPitch = Angle.fromRadians(angle);
-                        }
-                    }
-                }
-            }
-        }
-
-        return newPitch;
-    }
-
     private static double computeViewHeightAboveSurface(DrawContext dc, Matrix modelviewInv,
         Angle fieldOfView, Rectangle viewport, double nearDistance) {
         double height = Double.POSITIVE_INFINITY;
         if (dc != null && modelviewInv != null && fieldOfView != null && viewport != null && nearDistance >= 0) {
-            Vec4 eyePoint = getEyePoint(modelviewInv);
-            double eyeHeight = computePointHeightAboveSurface(dc, eyePoint);
+            Vec4 eyePoint = OrbitViewCollisionSupport.getEyePoint(modelviewInv);
+            double eyeHeight = OrbitViewCollisionSupport.computePointHeightAboveSurface(dc, eyePoint);
             if (eyeHeight < height)
                 height = eyeHeight;
 
-            Vec4 nearPoint = getPointOnNearPlane(modelviewInv, fieldOfView, viewport, nearDistance);
+            Vec4 nearPoint = OrbitViewCollisionSupport.getPointOnNearPlane(modelviewInv, fieldOfView, viewport, nearDistance);
             if (nearPoint != null) {
-                double nearHeight = computePointHeightAboveSurface(dc, nearPoint);
+                double nearHeight = OrbitViewCollisionSupport.computePointHeightAboveSurface(dc, nearPoint);
                 if (nearHeight < height)
                     height = nearHeight;
             }
@@ -260,5 +91,174 @@ public class OrbitViewCollisionSupport {
         }
 
         return null;
+    }
+
+    public double getCollisionThreshold() {
+        return this.collisionThreshold;
+    }
+
+    public void setCollisionThreshold(double collisionThreshold) {
+        if (collisionThreshold < 0) {
+            String message = Logging.getMessage("generic.ArgumentOutOfRange", collisionThreshold);
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        this.collisionThreshold = collisionThreshold;
+    }
+
+    public int getNumIterations() {
+        return this.numIterations;
+    }
+
+    public void setNumIterations(int numIterations) {
+        if (numIterations < 1) {
+            String message = Logging.getMessage("generic.ArgumentOutOfRange", numIterations);
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        this.numIterations = numIterations;
+    }
+
+    public boolean isColliding(OrbitView orbitView, double nearDistance, DrawContext dc) {
+        if (orbitView == null) {
+            String message = Logging.getMessage("nullValue.OrbitViewIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+        if (nearDistance < 0) {
+            String message = Logging.getMessage("generic.ArgumentOutOfRange", nearDistance);
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+        if (dc == null) {
+            String message = Logging.getMessage("nullValue.DrawContextIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+        Globe globe = dc.getGlobe();
+        if (globe == null) {
+            String message = Logging.getMessage("nullValue.DrawingContextGlobeIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        Matrix modelviewInv = OrbitViewCollisionSupport.getModelviewInverse(globe,
+            orbitView.getCenterPosition(), orbitView.getHeading(), orbitView.getPitch(), orbitView.getRoll(),
+            orbitView.getZoom());
+        if (modelviewInv != null) {
+            // OrbitView is colliding when its eye point is below the collision threshold.
+            double heightAboveSurface = OrbitViewCollisionSupport.computeViewHeightAboveSurface(dc, modelviewInv,
+                orbitView.getFieldOfView(), orbitView.getViewport(), nearDistance);
+            return heightAboveSurface < this.collisionThreshold;
+        }
+
+        return false;
+    }
+
+    public Position computeCenterPositionToResolveCollision(BasicOrbitView orbitView, double nearDistance,
+        DrawContext dc) {
+        if (orbitView == null) {
+            String message = Logging.getMessage("nullValue.OrbitViewIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+        if (nearDistance < 0) {
+            String message = Logging.getMessage("generic.ArgumentOutOfRange", nearDistance);
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+        if (dc == null) {
+            String message = Logging.getMessage("nullValue.DrawContextIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+        Globe globe = dc.getGlobe();
+        if (globe == null) {
+            String message = Logging.getMessage("nullValue.DrawingContextGlobeIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        Position newCenter = null;
+
+        for (int i = 0; i < this.numIterations; i++) {
+            Matrix modelviewInv = OrbitViewCollisionSupport.getModelviewInverse(globe,
+                newCenter != null ? newCenter : orbitView.getCenterPosition(),
+                orbitView.getHeading(), orbitView.getPitch(), orbitView.getRoll(), orbitView.getZoom());
+            if (modelviewInv != null) {
+                double heightAboveSurface = OrbitViewCollisionSupport.computeViewHeightAboveSurface(dc, modelviewInv,
+                    orbitView.getFieldOfView(), orbitView.getViewport(), nearDistance);
+                double adjustedHeight = heightAboveSurface - this.collisionThreshold;
+                if (adjustedHeight < 0) {
+                    newCenter = new Position(
+                        newCenter != null ? newCenter : orbitView.getCenterPosition(),
+                        (newCenter != null ? newCenter.getElevation() : orbitView.getCenterPosition().getElevation())
+                            - adjustedHeight);
+                }
+            }
+        }
+
+        return newCenter;
+    }
+
+    public Angle computePitchToResolveCollision(BasicOrbitView orbitView, double nearDistance, DrawContext dc) {
+        if (orbitView == null) {
+            String message = Logging.getMessage("nullValue.OrbitViewIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+        if (nearDistance < 0) {
+            String message = Logging.getMessage("generic.ArgumentOutOfRange", nearDistance);
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+        if (dc == null) {
+            String message = Logging.getMessage("nullValue.DrawContextIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+        Globe globe = dc.getGlobe();
+        if (globe == null) {
+            String message = Logging.getMessage("nullValue.DrawingContextGlobeIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        Angle newPitch = null;
+
+        for (int i = 0; i < this.numIterations; i++) {
+            Matrix modelviewInv = OrbitViewCollisionSupport.getModelviewInverse(globe,
+                orbitView.getCenterPosition(), orbitView.getHeading(),
+                newPitch != null ? newPitch : orbitView.getPitch(), orbitView.getRoll(),
+                orbitView.getZoom());
+            if (modelviewInv != null) {
+                double heightAboveSurface = OrbitViewCollisionSupport.computeViewHeightAboveSurface(dc, modelviewInv,
+                    orbitView.getFieldOfView(), orbitView.getViewport(), nearDistance);
+                double adjustedHeight = heightAboveSurface - this.collisionThreshold;
+                if (adjustedHeight < 0) {
+                    Vec4 eyePoint = OrbitViewCollisionSupport.getEyePoint(modelviewInv);
+                    Vec4 centerPoint = globe.computePointFromPosition(orbitView.getCenterPosition());
+                    if (centerPoint != null) {
+                        Position eyePos = globe.computePositionFromPoint(eyePoint);
+                        // Compute the eye point required to resolve the collision.
+                        Vec4 newEyePoint = globe.computePointFromPosition(eyePos.getLatitude(), eyePos.getLongitude(),
+                            eyePos.getElevation() - adjustedHeight);
+                        // Compute the pitch that corresponds with the elevation of the eye point
+                        // (but not necessarily the latitude and longitude).
+                        Vec4 normalAtCenter = globe.computeSurfaceNormalAtPoint(centerPoint);
+                        Vec4 newEye_sub_center = newEyePoint.subtract3(centerPoint).normalize3();
+                        double dot = normalAtCenter.dot3(newEye_sub_center);
+                        if (dot >= -1 || dot <= 1) {
+                            double angle = Math.acos(dot);
+                            newPitch = Angle.fromRadians(angle);
+                        }
+                    }
+                }
+            }
+        }
+
+        return newPitch;
     }
 }

@@ -6,6 +6,7 @@
 package gov.nasa.worldwind.layers.wms;
 
 ////.*;
+
 import gov.nasa.worldwind.util.*;
 
 import java.net.*;
@@ -176,14 +177,14 @@ public abstract class Request {
         StringBuffer queryString = new StringBuffer(existingQueryString != null ? existingQueryString : "");
 
         if (queryString.length() > 1 && queryString.lastIndexOf("&") != queryString.length() - 1)
-            queryString = queryString.append("&");
+            queryString = queryString.append('&');
 
         for (Map.Entry<String, String> entry : this.queryParams.entrySet()) {
             if (((Map.Entry) entry).getKey() != null && ((Map.Entry) entry).getValue() != null) {
                 queryString.append(((Map.Entry) entry).getKey());
-                queryString.append("=");
+                queryString.append('=');
                 queryString.append(((Map.Entry) entry).getValue());
-                queryString.append("&");
+                queryString.append('&');
             }
         }
 

@@ -118,8 +118,8 @@ public interface HotSpot extends SelectListener, KeyListener, MouseListener, Mou
     void mouseWheelMoved(MouseWheelEvent event);
 
     /**
-     * Returns the AWT {@link Cursor} representation to display when the HotSpot is active, or {@code null} to
-     * use the default Cursor.
+     * Returns the AWT {@link Cursor} representation to display when the HotSpot is active, or {@code null} to use the
+     * default Cursor.
      *
      * @return The Cursor representation associated with the HotSpot. May return {@code null}.
      */

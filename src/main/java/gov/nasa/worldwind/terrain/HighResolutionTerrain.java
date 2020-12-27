@@ -39,7 +39,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
     protected double verticalExaggeration = 1;
     protected Long timeout;
     // Internal fields.
-    protected int density = DEFAULT_DENSITY;
+    protected int density = HighResolutionTerrain.DEFAULT_DENSITY;
     protected double targetResolution;
     protected double latTileSize;
     protected double lonTileSize;
@@ -51,7 +51,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
      * instance uses {@link ElevationModel#getUnmappedLocalSourceElevation(Angle, Angle)} to retrieve elevations. This
      * assumes that the highest-resolution elevations for the elevation model are cached locally.
      */
-    protected boolean useCachedElevationsOnly = false;
+    protected boolean useCachedElevationsOnly;
 
     /**
      * Constructs a terrain object for a specified globe.
@@ -97,7 +97,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
 
         this.geometryCache =
             new SoftMemoryCache();
-            //new BasicMemoryCache((long) (0.85 * DEFAULT_CACHE_CAPACITY), DEFAULT_CACHE_CAPACITY);
+        //new BasicMemoryCache((long) (0.85 * DEFAULT_CACHE_CAPACITY), DEFAULT_CACHE_CAPACITY);
     }
 
     protected static double createPosition(int start, double decimal, int density) {
@@ -126,7 +126,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
         Vec4 tL = new Vec4(ri.vertices[i++], ri.vertices[i++], ri.vertices[i++]);
         Vec4 tR = new Vec4(ri.vertices[i++], ri.vertices[i++], ri.vertices[i]);
 
-        return interpolate(bL, bR, tR, tL, xDec, yDec);
+        return HighResolutionTerrain.interpolate(bL, bR, tR, tL, xDec, yDec);
     }
 
     protected static Vec4 interpolate(Vec4 bL, Vec4 bR, Vec4 tR, Vec4 tL, double xDec, double yDec) {
@@ -137,8 +137,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
                 tL.x * yDec + bR.x * xDec,
                 tL.y * yDec + bR.y * xDec,
                 tL.z * yDec + bR.z * xDec);
-        }
-        else if (pos > 1) {
+        } else if (pos > 1) {
             // in the "top right" half
 
             // vectors pointing from top right towards the point we want (can be thought of as "negative" vectors)
@@ -146,8 +145,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
             Vec4 verticalVector = (bR.subtract3(tR)).multiply3(1 - yDec);
 
             return tR.add3(horizontalVector).add3(verticalVector);
-        }
-        else {
+        } else {
             // pos < 1 - in the "bottom left" half
 
             // vectors pointing from the bottom left towards the point we want
@@ -156,6 +154,59 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
 
             return bL.add3(horizontalVector).add3(verticalVector);
         }
+    }
+
+    protected static boolean resolutionsMeetCriteria(double[] actualResolution, double[] targetResolution) {
+        for (int i = 0; i < actualResolution.length; i++) {
+            if (actualResolution[i] > targetResolution[i])
+                return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Computes the tile's cell locations, determined by the tile's density and sector.
+     *
+     * @param tile the tile to compute locations for.
+     * @return the cell locations.
+     */
+    protected static ArrayList<LatLon> computeLocations(RectTile tile) {
+        int density = tile.density;
+        int numVertices = (density + 1) * (density + 1);
+
+        Angle latMax = tile.sector.latMax();
+        Angle dLat = tile.sector.latDelta().divide(density);
+        Angle lat = tile.sector.latMin();
+
+        Angle lonMin = tile.sector.lonMin();
+        Angle lonMax = tile.sector.lonMax();
+        Angle dLon = tile.sector.lonDelta().divide(density);
+
+        ArrayList<LatLon> latlons = new ArrayList<>(numVertices);
+        for (int j = 0; j <= density; j++) {
+            Angle lon = lonMin;
+            for (int i = 0; i <= density; i++) {
+                latlons.add(new LatLon(lat, lon));
+
+                if (i == density)
+                    lon = lonMax;
+                else
+                    lon = lon.add(dLon);
+
+                if (lon.degrees < -180)
+                    lon = Angle.NEG180;
+                else if (lon.degrees > 180)
+                    lon = Angle.POS180;
+            }
+
+            if (j == density)
+                lat = latMax;
+            else
+                lat = lat.add(dLat);
+        }
+
+        return latlons;
     }
 
     /**
@@ -220,8 +271,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
 
     /**
      * Specifies the maximum amount of time allowed for retrieval of all terrain data necessary to satisfy an operation.
-     * Operations that retrieve data throw a {@link WWTimeoutException} if the specified
-     * timeout is exceeded.
+     * Operations that retrieve data throw a {@link WWTimeoutException} if the specified timeout is exceeded.
      *
      * @param timeout the number of milliseconds to wait. May be null, to indicate that operations have unlimited amount
      *                of time to operate.
@@ -389,8 +439,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
         if (altitudeMode == WorldWind.ABSOLUTE) {
             altitudeA -= this.getElevation(pA);
             altitudeB -= this.getElevation(pB);
-        }
-        else if (altitudeMode == WorldWind.CLAMP_TO_GROUND) {
+        } else if (altitudeMode == WorldWind.CLAMP_TO_GROUND) {
             altitudeA = 0;
             altitudeB = 0;
         }
@@ -421,7 +470,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
                         callback.intersection(pA, pB, intersections);
                     }
                 }
-                catch (Exception e) {
+                catch (RuntimeException e) {
                     callback.exception(e);
                 }
             });
@@ -754,7 +803,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
 
             this.doGetIntersectingTiles(rowA, colA, rowB, colB, line, tiles);
 
-            return !tiles.isEmpty() ? tiles : null;
+            return tiles.isEmpty() ? null : tiles;
         }
         finally {
             this.getGlobe().getElevationModel().setExtremesCachingEnabled(oldCachingMode);
@@ -799,8 +848,8 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
      * Computes a terrain tile's vertices of draws them from the cache.
      *
      * @param tile the tile to compute vertices for
-     * @throws InterruptedException                            if the operation is interrupted.
-     * @throws WWTimeoutException if terrain data retrieval exceeds the current timeout.
+     * @throws InterruptedException if the operation is interrupted.
+     * @throws WWTimeoutException   if terrain data retrieval exceeds the current timeout.
      */
     protected void makeVerts(RectTile tile) throws InterruptedException {
         // First see if the vertices have been previously computed and are in the cache.
@@ -819,8 +868,8 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
      *
      * @param tile the tile to compute vertices for
      * @return the computed vertex information.
-     * @throws InterruptedException                            if the operation is interrupted.
-     * @throws WWTimeoutException if terrain data retrieval exceeds the current timeout.
+     * @throws InterruptedException if the operation is interrupted.
+     * @throws WWTimeoutException   if terrain data retrieval exceeds the current timeout.
      */
     protected RenderInfo buildVerts(RectTile tile) throws InterruptedException {
         int density = tile.density;
@@ -831,8 +880,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
         //Re-use the RenderInfo vertices buffer. If it has not been set or the density has changed, create a new buffer
         if (tile.ri == null || tile.ri.vertices == null) {
             verts = new float[numVertices * 3];
-        }
-        else {
+        } else {
             verts = tile.ri.vertices;
         }
 
@@ -918,7 +966,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
         }
         while (!HighResolutionTerrain.resolutionsMeetCriteria(actualResolution, targetResolution)) {
             actualResolution = this.globe.getElevations(sector, latlons, targetResolution, elevations);
-            if (resolutionsMeetCriteria(actualResolution, targetResolution))
+            if (HighResolutionTerrain.resolutionsMeetCriteria(actualResolution, targetResolution))
                 break;
 
             // Give the system a chance to retrieve data from the disk cache or the server. Also catches interrupts
@@ -931,15 +979,6 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
                     throw new WWTimeoutException("Terrain convergence timed out");
             }
         }
-    }
-
-    protected static boolean resolutionsMeetCriteria(double[] actualResolution, double[] targetResolution) {
-        for (int i = 0; i < actualResolution.length; i++) {
-            if (actualResolution[i] > targetResolution[i])
-                return false;
-        }
-
-        return true;
     }
 
     protected void getCachedElevations(List<LatLon> latlons, double[] elevations) {
@@ -958,54 +997,10 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
     }
 
     /**
-     * Computes the tile's cell locations, determined by the tile's density and sector.
-     *
-     * @param tile the tile to compute locations for.
-     * @return the cell locations.
-     */
-    protected static ArrayList<LatLon> computeLocations(RectTile tile) {
-        int density = tile.density;
-        int numVertices = (density + 1) * (density + 1);
-
-        Angle latMax = tile.sector.latMax();
-        Angle dLat = tile.sector.latDelta().divide(density);
-        Angle lat = tile.sector.latMin();
-
-        Angle lonMin = tile.sector.lonMin();
-        Angle lonMax = tile.sector.lonMax();
-        Angle dLon = tile.sector.lonDelta().divide(density);
-
-        ArrayList<LatLon> latlons = new ArrayList<>(numVertices);
-        for (int j = 0; j <= density; j++) {
-            Angle lon = lonMin;
-            for (int i = 0; i <= density; i++) {
-                latlons.add(new LatLon(lat, lon));
-
-                if (i == density)
-                    lon = lonMax;
-                else
-                    lon = lon.add(dLon);
-
-                if (lon.degrees < -180)
-                    lon = Angle.NEG180;
-                else if (lon.degrees > 180)
-                    lon = Angle.POS180;
-            }
-
-            if (j == density)
-                lat = latMax;
-            else
-                lat = lat.add(dLat);
-        }
-
-        return latlons;
-    }
-
-    /**
      * Computes the Cartesian, model-coordinate point of a location within a terrain tile.
      * <p>
-     * This operation fails with a {@link WWTimeoutException} if a timeout has been
-     * specified and it is exceeded during the operation.
+     * This operation fails with a {@link WWTimeoutException} if a timeout has been specified and it is exceeded during
+     * the operation.
      *
      * @param tile         the terrain tile.
      * @param latitude     the location's latitude.
@@ -1013,10 +1008,9 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
      * @param metersOffset the location's distance above the terrain.
      * @return the Cartesian, model-coordinate point of a the specified location, or null if the specified location does
      * not exist within this instance's sector or if the operation is interrupted.
-     * @throws IllegalArgumentException                        if the latitude or longitude are null.
-     * @throws WWTimeoutException if the current timeout is exceeded while retrieving
-     *                                                         terrain data.
-     * @throws InterruptedException                            if the operation is interrupted.
+     * @throws IllegalArgumentException if the latitude or longitude are null.
+     * @throws WWTimeoutException       if the current timeout is exceeded while retrieving terrain data.
+     * @throws InterruptedException     if the operation is interrupted.
      * @see #setTimeout(Long)
      */
     protected Vec4 getSurfacePoint(RectTile tile, Angle latitude, Angle longitude, double metersOffset)
@@ -1044,18 +1038,17 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
     /**
      * Computes the Cartesian, model-coordinate point of a location within a terrain tile.
      * <p>
-     * This operation fails with a {@link WWTimeoutException} if a timeout has been
-     * specified and it is exceeded during the operation.
+     * This operation fails with a {@link WWTimeoutException} if a timeout has been specified and it is exceeded during
+     * the operation.
      *
      * @param tile      the terrain tile.
      * @param latitude  the location's latitude.
      * @param longitude the location's longitude.
      * @return the Cartesian, model-coordinate point of a the specified location, or null if the specified location does
      * not exist within this instance's sector or if the operation is interrupted.
-     * @throws IllegalArgumentException                        if the latitude or longitude are null.
-     * @throws WWTimeoutException if the current timeout is exceeded while retrieving
-     *                                                         terrain data.
-     * @throws InterruptedException                            if the operation is interrupted.
+     * @throws IllegalArgumentException if the latitude or longitude are null.
+     * @throws WWTimeoutException       if the current timeout is exceeded while retrieving terrain data.
+     * @throws InterruptedException     if the operation is interrupted.
      * @see #setTimeout(Long)
      */
     protected Vec4 getSurfacePoint(RectTile tile, Angle latitude, Angle longitude) throws InterruptedException {
@@ -1076,13 +1069,13 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
         if (tile.ri == null)
             return null;
 
-        double lat = latitude.getDegrees();
-        double lon = longitude.getDegrees();
+        double lat = latitude.degrees;
+        double lon = longitude.degrees;
 
-        double bottom = tile.sector.latMin().getDegrees();
-        double top = tile.sector.latMax().getDegrees();
-        double left = tile.sector.lonMin().getDegrees();
-        double right = tile.sector.lonMax().getDegrees();
+        double bottom = tile.sector.latMin().degrees;
+        double top = tile.sector.latMax().degrees;
+        double left = tile.sector.lonMin().degrees;
+        double right = tile.sector.lonMax().degrees;
 
         double leftDecimal = (lon - left) / (right - left);
         double bottomDecimal = (lat - bottom) / (top - bottom);
@@ -1090,10 +1083,10 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
         int row = (int) (bottomDecimal * (tile.density));
         int column = (int) (leftDecimal * (tile.density));
 
-        double l = createPosition(column, leftDecimal, tile.ri.density);
-        double h = createPosition(row, bottomDecimal, tile.ri.density);
+        double l = HighResolutionTerrain.createPosition(column, leftDecimal, tile.ri.density);
+        double h = HighResolutionTerrain.createPosition(row, bottomDecimal, tile.ri.density);
 
-        Vec4 result = interpolate(row, column, l, h, tile.ri);
+        Vec4 result = HighResolutionTerrain.interpolate(row, column, l, h, tile.ri);
         result = result.add3(tile.ri.referenceCenter);
 
         return result;
@@ -1232,8 +1225,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
                 if (status == 1) {
                     intersections.add(new Vec4[] {iVerts[0], iVerts[1]});
 //                    intersections.add(new Vec4[] {triA[0], triA[1], triA[2], triA[0]});
-                }
-                else if (status == 0) {
+                } else if (status == 0) {
                     intersections.add(new Vec4[] {triA[0], triA[1], triA[2]});
                 }
 
@@ -1241,8 +1233,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
                 if (status == 1) {
                     intersections.add(new Vec4[] {iVerts[0], iVerts[1]});
 //                    intersections.add(new Vec4[] {triB[0], triB[1], triB[2], triB[0]});
-                }
-                else if (status == 0) {
+                } else if (status == 0) {
                     intersections.add(new Vec4[] {triB[0], triB[1], triB[2]});
                 }
             }

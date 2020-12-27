@@ -51,6 +51,26 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
         this.avList = avList;
     }
 
+    protected static boolean isPrimaryContentType(String typeOfContent, String contentType) {
+        if (WWUtil.isEmpty(contentType) || WWUtil.isEmpty(typeOfContent))
+            return false;
+
+        return contentType.trim().toLowerCase().startsWith(typeOfContent);
+    }
+
+    /**
+     * Log the content of a buffer as a String. If the buffer is null or empty, nothing is logged. Only the first 2,048
+     * characters of the buffer are included in the log message.
+     *
+     * @param buffer the content to log. The content is assumed to be of type "text".
+     */
+    protected static void logTextBuffer(ByteBuffer buffer) {
+        if (buffer == null || !buffer.hasRemaining())
+            return;
+
+        Logging.logger().warning(WWIO.byteBufferToString(buffer, 2048, null));
+    }
+
     /**
      * Abstract method that subclasses must provide to identify the output file for the post-processor's retrieval
      * content.
@@ -111,7 +131,8 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
     protected ByteBuffer handleSuccessfulRetrieval() {
         try {
             return this.handleContent();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             this.handleContentException(e);
             return null;
         }
@@ -169,7 +190,8 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
             this.handleWMSExceptionContent();
 
         else if (AbstractRetrievalPostProcessor.isPrimaryContentType("text", this.getRetriever().getContentType()))
-            AbstractRetrievalPostProcessor.logTextBuffer(this.getRetriever().getBuffer()); // the buffer might contain error info, so log it
+            AbstractRetrievalPostProcessor.logTextBuffer(
+                this.getRetriever().getBuffer()); // the buffer might contain error info, so log it
     }
 
     /**
@@ -182,8 +204,7 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
     /**
      * Saves the retrieved and possibly transformed data. The data may have been transformed during content handling.
      * <p>
-     * The default implementation of this method simply calls {@link #saveBuffer(ByteBuffer)} with an argument
-     * of null.
+     * The default implementation of this method simply calls {@link #saveBuffer(ByteBuffer)} with an argument of null.
      *
      * @return true if the buffer was saved, false if the output file could not be determined or already exists and not
      * overwritten.
@@ -265,13 +286,6 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
         return this;
     }
 
-    protected static boolean isPrimaryContentType(String typeOfContent, String contentType) {
-        if (WWUtil.isEmpty(contentType) || WWUtil.isEmpty(typeOfContent))
-            return false;
-
-        return contentType.trim().toLowerCase().startsWith(typeOfContent);
-    }
-
     protected boolean isWMSException() {
         String contentType = this.getRetriever().getContentType();
 
@@ -333,8 +347,7 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
             Logging.logger().log(Level.FINE,
                 Logging.getMessage("generic.OperationCancelled",
                     "retrieval post-processing for " + this.getRetriever().getName()), e);
-        }
-        else if (e instanceof IOException) {
+        } else if (e instanceof IOException) {
             this.markResourceAbsent();
             Logging.logger().log(Level.SEVERE,
                 Logging.getMessage("generic.ExceptionWhileSavingRetreivedData", this.getRetriever().getName()), e);
@@ -377,8 +390,7 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
     }
 
     /**
-     * Handles XML content. The default implementation only calls {@link #logTextBuffer(ByteBuffer)} and
-     * returns.
+     * Handles XML content. The default implementation only calls {@link #logTextBuffer(ByteBuffer)} and returns.
      *
      * @return a buffer containing the retrieved XML.
      * @throws IOException if an IO error occurs while processing the data.
@@ -390,8 +402,7 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
     }
 
     /**
-     * Handles HTML content. The default implementation only calls {@link #logTextBuffer(ByteBuffer)} and
-     * returns.
+     * Handles HTML content. The default implementation only calls {@link #logTextBuffer(ByteBuffer)} and returns.
      *
      * @return a buffer containing the retrieved HTML.
      */
@@ -399,19 +410,6 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
         AbstractRetrievalPostProcessor.logTextBuffer(this.getRetriever().getBuffer());
 
         return null;
-    }
-
-    /**
-     * Log the content of a buffer as a String. If the buffer is null or empty, nothing is logged. Only the first 2,048
-     * characters of the buffer are included in the log message.
-     *
-     * @param buffer the content to log. The content is assumed to be of type "text".
-     */
-    protected static void logTextBuffer(ByteBuffer buffer) {
-        if (buffer == null || !buffer.hasRemaining())
-            return;
-
-        Logging.logger().warning(WWIO.byteBufferToString(buffer, 2048, null));
     }
 
     /**
@@ -454,7 +452,7 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
 
         StringBuilder sb = new StringBuilder(this.getRetriever().getName());
 
-        sb.append("\n");
+        sb.append('\n');
         sb.append(WWIO.byteBufferToString(this.getRetriever().getBuffer(), 2048, null));
         Logging.logger().warning(sb.toString());
 
@@ -489,8 +487,7 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
             {
                 ImageIO.write(image, this.getRetriever().getContentType().split("/")[1], outFile);
             }
-        }
-        else
+        } else
             this.saveBuffer();
 
         return this.getRetriever().getBuffer();
@@ -498,8 +495,8 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
 
     /**
      * Transform the retrieved data in some purpose-specific way. May be overridden by subclasses to perform special
-     * transformations. The default implementation calls {@link ImageUtil#mapTransparencyColors(BufferedImage,
-     * int[])} if the attribute-value list specified at construction contains transparency colors (includes the {@link
+     * transformations. The default implementation calls {@link ImageUtil#mapTransparencyColors(BufferedImage, int[])}
+     * if the attribute-value list specified at construction contains transparency colors (includes the {@link
      * AVKey#TRANSPARENCY_COLORS} key).
      *
      * @return returns the transformed data if a transform is performed, otherwise returns the original data.

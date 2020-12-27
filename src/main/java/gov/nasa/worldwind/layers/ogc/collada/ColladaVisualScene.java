@@ -50,8 +50,7 @@ public class ColladaVisualScene extends ColladaAbstractObject implements Collada
     public void setField(String keyName, Object value) {
         if (keyName.equals("node")) {
             this.nodes.add((ColladaNode) value);
-        }
-        else {
+        } else {
             super.setField(keyName, value);
         }
     }

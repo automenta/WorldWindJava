@@ -20,7 +20,7 @@ import java.util.*;
 class GeoCodec {
     // Collection of ModelTiePoints.
     private final Vector<ModelTiePoint> tiePoints = new Vector<>(1);
-    private HashMap<Integer, GeoKeyEntry> geoKeys = null;
+    private HashMap<Integer, GeoKeyEntry> geoKeys;
     // ModelPixelScale values...
     private double xScale;
     private double yScale;
@@ -236,8 +236,7 @@ class GeoCodec {
                 if (tagLoc == 0) {
                     // value is in the 4th field of this entry...
                     this.geoKeys.put(tag, new GeoKeyEntry(tag, 1, i + 3, this.shortParams));
-                }
-                else {
+                } else {
                     // in this case, one or more values are given relative to one of the params arrays...
                     Object sourceArray = null;
                     if (tagLoc == GeoTiff.Tag.GEO_KEY_DIRECTORY)

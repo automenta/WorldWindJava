@@ -23,12 +23,12 @@ import java.util.*;
  * point number.
  * <p>
  * Contour lines may be computed at any threshold value (i.e. isovalue) by calling {@link #buildContourLines(double)} or
- * {@link #buildContourLines(double, Sector, double)}. The latter method maps contour line
- * coordinates to geographic positions by associating the rectangular array with a geographic sector. It is valid to
- * compute contour lines for a threshold value that is less than the rectangular array's minimum value or greater than
- * the rectangular array's maximum value, though the result is an empty list of contour lines. The domain of contour
- * line coordinates is the XY Cartesian space defined by the rectangular array's width and height. X coordinates range
- * from 0 to width-1, and Y coordinates range from 0 to height-1.
+ * {@link #buildContourLines(double, Sector, double)}. The latter method maps contour line coordinates to geographic
+ * positions by associating the rectangular array with a geographic sector. It is valid to compute contour lines for a
+ * threshold value that is less than the rectangular array's minimum value or greater than the rectangular array's
+ * maximum value, though the result is an empty list of contour lines. The domain of contour line coordinates is the XY
+ * Cartesian space defined by the rectangular array's width and height. X coordinates range from 0 to width-1, and Y
+ * coordinates range from 0 to height-1.
  *
  * @author dcollins
  * @version $Id: ContourBuilder.java 2436 2014-11-14 23:20:50Z danm $
@@ -39,86 +39,86 @@ public class ContourBuilder {
         = new HashMap<>();
 
     static {
-        dirRev.put(Direction.NORTH, Direction.SOUTH);
-        dirRev.put(Direction.SOUTH, Direction.NORTH);
-        dirRev.put(Direction.EAST, Direction.WEST);
-        dirRev.put(Direction.WEST, Direction.EAST);
+        ContourBuilder.dirRev.put(Direction.NORTH, Direction.SOUTH);
+        ContourBuilder.dirRev.put(Direction.SOUTH, Direction.NORTH);
+        ContourBuilder.dirRev.put(Direction.EAST, Direction.WEST);
+        ContourBuilder.dirRev.put(Direction.WEST, Direction.EAST);
 
         // Use LinkedHaspMap to store the maps in dirNext in order to preserve enumeration order. The method
         // traverseContourCells requires that the directions are enumerated in the order listed here.
         LinkedHashMap<Direction, Direction> map = new LinkedHashMap<>();
         map.put(Direction.SOUTH, Direction.WEST);
         map.put(Direction.WEST, Direction.SOUTH);
-        dirNext.put(1, map);
+        ContourBuilder.dirNext.put(1, map);
 
         map = new LinkedHashMap<>();
         map.put(Direction.SOUTH, Direction.EAST);
         map.put(Direction.EAST, Direction.SOUTH);
-        dirNext.put(2, map);
+        ContourBuilder.dirNext.put(2, map);
 
         map = new LinkedHashMap<>();
         map.put(Direction.EAST, Direction.WEST);
         map.put(Direction.WEST, Direction.EAST);
-        dirNext.put(3, map);
+        ContourBuilder.dirNext.put(3, map);
 
         map = new LinkedHashMap<>();
         map.put(Direction.NORTH, Direction.EAST);
         map.put(Direction.EAST, Direction.NORTH);
-        dirNext.put(4, map);
+        ContourBuilder.dirNext.put(4, map);
 
         map = new LinkedHashMap<>();
         map.put(Direction.NORTH, Direction.WEST);
         map.put(Direction.WEST, Direction.NORTH);
         map.put(Direction.SOUTH, Direction.EAST);
         map.put(Direction.EAST, Direction.SOUTH);
-        dirNext.put(5, map);
+        ContourBuilder.dirNext.put(5, map);
 
         map = new LinkedHashMap<>();
         map.put(Direction.NORTH, Direction.SOUTH);
         map.put(Direction.SOUTH, Direction.NORTH);
-        dirNext.put(6, map);
+        ContourBuilder.dirNext.put(6, map);
 
         map = new LinkedHashMap<>();
         map.put(Direction.NORTH, Direction.WEST);
         map.put(Direction.WEST, Direction.NORTH);
-        dirNext.put(7, map);
+        ContourBuilder.dirNext.put(7, map);
 
         map = new LinkedHashMap<>();
         map.put(Direction.NORTH, Direction.WEST);
         map.put(Direction.WEST, Direction.NORTH);
-        dirNext.put(8, map);
+        ContourBuilder.dirNext.put(8, map);
 
         map = new LinkedHashMap<>();
         map.put(Direction.NORTH, Direction.SOUTH);
         map.put(Direction.SOUTH, Direction.NORTH);
-        dirNext.put(9, map);
+        ContourBuilder.dirNext.put(9, map);
 
         map = new LinkedHashMap<>();
         map.put(Direction.NORTH, Direction.EAST);
         map.put(Direction.EAST, Direction.NORTH);
         map.put(Direction.SOUTH, Direction.WEST);
         map.put(Direction.WEST, Direction.SOUTH);
-        dirNext.put(10, map);
+        ContourBuilder.dirNext.put(10, map);
 
         map = new LinkedHashMap<>();
         map.put(Direction.NORTH, Direction.EAST);
         map.put(Direction.EAST, Direction.NORTH);
-        dirNext.put(11, map);
+        ContourBuilder.dirNext.put(11, map);
 
         map = new LinkedHashMap<>();
         map.put(Direction.EAST, Direction.WEST);
         map.put(Direction.WEST, Direction.EAST);
-        dirNext.put(12, map);
+        ContourBuilder.dirNext.put(12, map);
 
         map = new LinkedHashMap<>();
         map.put(Direction.SOUTH, Direction.EAST);
         map.put(Direction.EAST, Direction.SOUTH);
-        dirNext.put(13, map);
+        ContourBuilder.dirNext.put(13, map);
 
         map = new LinkedHashMap<>();
         map.put(Direction.SOUTH, Direction.WEST);
         map.put(Direction.WEST, Direction.SOUTH);
-        dirNext.put(14, map);
+        ContourBuilder.dirNext.put(14, map);
     }
 
     protected final Map<CellKey, CellInfo> contourCellMap = new HashMap<>();
@@ -138,9 +138,8 @@ public class ContourBuilder {
      * @param values the rectangular array values, as a one-dimensional array. Must contain at least width * height
      *               values. This array is understood to be organized in row-major order, with the first index
      *               indicating the value at the rectangle's upper-left corner.
-     * @throws IllegalArgumentException if either the width or the height are less than 1, if the array is
-     *                                            null, or if the array length is insufficient for the specified width
-     *                                            and height.
+     * @throws IllegalArgumentException if either the width or the height are less than 1, if the array is null, or if
+     *                                  the array length is insufficient for the specified width and height.
      */
     public ContourBuilder(int width, int height, double[] values) {
         if (width < 1) {
@@ -323,7 +322,7 @@ public class ContourBuilder {
         {
             CellInfo cell = this.contourCellMap.get(key);
 
-            for (Direction dir : dirNext.get(cell.contourMask).keySet()) // either 2 or 4 starting directions
+            for (Direction dir : ContourBuilder.dirNext.get(cell.contourMask).keySet()) // either 2 or 4 starting directions
             {
                 if (cell.visitedDirections.contains(dir)) {
                     continue;
@@ -340,8 +339,7 @@ public class ContourBuilder {
                         String msg = Logging.getMessage("generic.UnexpectedCondition",
                             "both contours are of zero length");
                         Logging.logger().severe(msg);
-                    }
-                    else {
+                    } else {
                         Collections.reverse(contours.get(0));
                         contours.get(0).addAll(contours.get(1));
                         this.contourList.add(contours.get(0));
@@ -399,7 +397,7 @@ public class ContourBuilder {
             }
             case WEST -> yIntersect += cell.edgeWeights.get(dir); // interpolate along the west edge
             default -> {
-                String msg = Logging.getMessage("generic.UnexpectedDirection", dirNext);
+                String msg = Logging.getMessage("generic.UnexpectedDirection", ContourBuilder.dirNext);
                 Logging.logger().severe(msg);
             }
         }
@@ -428,7 +426,7 @@ public class ContourBuilder {
             case WEST:
                 return this.getContourCell(x - 1, y);
             default:
-                String msg = Logging.getMessage("generic.UnexpectedDirection", dirNext);
+                String msg = Logging.getMessage("generic.UnexpectedDirection", ContourBuilder.dirNext);
                 Logging.logger().severe(msg);
                 return null;
         }

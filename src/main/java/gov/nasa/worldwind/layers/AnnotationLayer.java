@@ -13,9 +13,9 @@ import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
- * The <code>AnnotationLayer</code> class manages a collection of {@link Annotation} objects
- * for rendering and picking. <code>AnnotationLayer</code> delegates to its internal {@link
- * AnnotationRenderer} for rendering and picking operations. The
+ * The <code>AnnotationLayer</code> class manages a collection of {@link Annotation} objects for rendering and picking.
+ * <code>AnnotationLayer</code> delegates to its internal {@link AnnotationRenderer} for rendering and picking
+ * operations. The
  * <code>AnnotationRenderer</code> is specified by calling {@link #setAnnotationRenderer}.
  *
  * @author Patrick Murris
@@ -165,8 +165,7 @@ public class AnnotationLayer extends AbstractLayer {
     protected Iterable<Annotation> getActiveAnnotations() {
         if (this.annotationsOverride != null) {
             return this.annotationsOverride;
-        }
-        else {
+        } else {
             // Return an unmodifiable reference to the internal list of annotations.
             // This prevents callers from changing this list and invalidating any invariants we have established.
             return Collections.unmodifiableCollection(this.annotations);

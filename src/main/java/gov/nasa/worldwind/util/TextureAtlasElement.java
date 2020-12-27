@@ -22,10 +22,9 @@ import java.util.Objects;
  * Represents a texture defined by a sub-image within a {@link TextureAtlas}.
  * <p>
  * TextureAtlasElement performs lazy retrieval and loading of its image source into its texture atlas. This loads the
- * image source and adds it to the atlas only when the {@link #load(DrawContext)} method is
- * called. If the image source is a {@link BufferedImage} it is added to the atlas immediately when <code>load</code> is
- * called. If the image source is a local file or a remote stream (URL), retrieval and loading is performed on a
- * separate thread from the EDT.
+ * image source and adds it to the atlas only when the {@link #load(DrawContext)} method is called. If the image source
+ * is a {@link BufferedImage} it is added to the atlas immediately when <code>load</code> is called. If the image source
+ * is a local file or a remote stream (URL), retrieval and loading is performed on a separate thread from the EDT.
  *
  * @author dcollins
  * @version $Id: TextureAtlasElement.java 1171 2013-02-11 21:45:02Z dcollins $
@@ -305,7 +304,7 @@ public class TextureAtlasElement implements Disposable {
             this.getTextureAtlas().add(this.getImageSource(), this.getImage());
             this.setImage(null);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             String msg = Logging.getMessage("TextureAtlas.ExceptionAddingImage", this.getImageSource().toString());
             Logging.logger().log(java.util.logging.Level.SEVERE, msg, e);
             this.imageInitializationFailed = true;

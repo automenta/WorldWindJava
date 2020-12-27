@@ -35,19 +35,20 @@ import java.util.logging.Level;
  * @author Tom Gaskins
  * @version $Id: WorldWindowGLAutoDrawable.java 2047 2014-06-06 22:48:33Z tgaskins $
  */
-public class WorldWindowGLAutoDrawable extends WWObjectImpl implements WorldWindowGLDrawable, GLEventListener, WorldWindow {
+public class WorldWindowGLAutoDrawable extends WWObjectImpl implements WorldWindowGLDrawable, GLEventListener {
 
     /**
      * Default time in milliseconds that the view must remain unchanged before the {@link View#VIEW_STOPPED} message is
      * sent.
      */
     public static final long DEFAULT_VIEW_STOP_TIME = 1000;
-
+    public final AtomicBoolean redrawNecessary = new AtomicBoolean(true);
+    protected final boolean enableGpuCacheReinitialization = true;
+    private final Message viewStopMsg = new Message(View.VIEW_STOPPED, WorldWindowGLAutoDrawable.this);
     /**
      * Time in milliseconds that the view must remain unchanged before the {@link View#VIEW_STOPPED} message is sent.
      */
-    protected long viewStopTime = DEFAULT_VIEW_STOP_TIME;
-
+    protected long viewStopTime = WorldWindowGLAutoDrawable.DEFAULT_VIEW_STOP_TIME;
     /**
      * The most recent View modelView ID.
      *
@@ -56,22 +57,17 @@ public class WorldWindowGLAutoDrawable extends WWObjectImpl implements WorldWind
     protected long lastViewID;
     protected GpuResourceCache gpuResourceCache;
     protected SceneController sceneController;
-
+    private final Runnable viewStoppedTask = () -> WorldWindowGLAutoDrawable.this.onMessage(viewStopMsg);
     /**
      * Schedule task to send the {@link View#VIEW_STOPPED} message after the view stop time elapses.
      */
     private ScheduledFuture viewRefreshTask;
-
-    protected final boolean enableGpuCacheReinitialization = true;
     private GLAutoDrawable drawable;
-
-    private boolean shuttingDown = false;
+    private boolean shuttingDown;
     private Timer redrawTimer;
     private boolean firstInit = true;
-
-    public final AtomicBoolean redrawNecessary = new AtomicBoolean(true);
     //    private static final long FALLBACK_TEXTURE_CACHE_SIZE = 60000000;
-        private EventListenerList eventListeners = null;
+    private EventListenerList eventListeners;
     private InputHandler inputHandler;
 
     /**
@@ -108,8 +104,20 @@ public class WorldWindowGLAutoDrawable extends WWObjectImpl implements WorldWind
             throw new IllegalArgumentException(message);
         }
 
-        float[] identityScale = new float[] {ScalableSurface.IDENTITY_PIXELSCALE, ScalableSurface.IDENTITY_PIXELSCALE};
+        float[] identityScale = {ScalableSurface.IDENTITY_PIXELSCALE, ScalableSurface.IDENTITY_PIXELSCALE};
         surface.setSurfaceScale(identityScale);
+    }
+
+    protected static boolean isGLContextCompatible(GLContext context) {
+        return context != null && context.isGL2();
+    }
+
+    protected static String[] getRequiredOglFunctions() {
+        return new String[] {"glActiveTexture", "glClientActiveTexture"};
+    }
+
+    protected static String[] getRequiredOglExtensions() {
+        return new String[] {};
     }
 
     /**
@@ -137,20 +145,15 @@ public class WorldWindowGLAutoDrawable extends WWObjectImpl implements WorldWind
 
         this.drawable = g;
 
-
-
-
         addPropertyChangeListener(w);
 
         this.setGpuResourceCache(WorldWindow.createGpuResourceCache());
 
-
         g.addGLEventListener(this);
 
-        WorldWindow.configureIdentityPixelScale((ScalableSurface)g);
+        WorldWindow.configureIdentityPixelScale((ScalableSurface) g);
 
         WorldWindow.createView(w);
-
     }
 
     @Override
@@ -166,7 +169,8 @@ public class WorldWindowGLAutoDrawable extends WWObjectImpl implements WorldWind
             if (this.viewRefreshTask != null)
                 this.viewRefreshTask.cancel(false);
             this.shuttingDown = false;
-        } catch (Exception e) {
+        }
+        catch (RuntimeException e) {
             Logging.logger().log(Level.SEVERE, Logging.getMessage(
                 "WorldWindowGLCanvas.ExceptionWhileShuttingDownWorldWindow"), e);
         }
@@ -180,18 +184,6 @@ public class WorldWindowGLAutoDrawable extends WWObjectImpl implements WorldWind
 
     public GLContext getContext() {
         return this.drawable.getContext();
-    }
-
-    protected static boolean isGLContextCompatible(GLContext context) {
-        return context != null && context.isGL2();
-    }
-
-    protected static String[] getRequiredOglFunctions() {
-        return new String[] {"glActiveTexture", "glClientActiveTexture"};
-    }
-
-    protected static String[] getRequiredOglExtensions() {
-        return new String[] {};
     }
 
     /**
@@ -272,10 +264,9 @@ public class WorldWindowGLAutoDrawable extends WWObjectImpl implements WorldWind
     public void dispose(GLAutoDrawable glAutoDrawable) {
     }
 
-    @Override public void display(GLAutoDrawable g) {
+    @Override
+    public void display(GLAutoDrawable g) {
     }
-
-
 
     public void render(GLAutoDrawable g) {
 
@@ -302,8 +293,9 @@ public class WorldWindowGLAutoDrawable extends WWObjectImpl implements WorldWind
         // RenderingExceptionListeners.
         Iterable<Throwable> renderingExceptions = sc.getRenderingExceptions();
         if (renderingExceptions != null) {
-            for (Throwable t : renderingExceptions)
+            for (Throwable t : renderingExceptions) {
                 this.callRenderingExceptionListeners(t);
+            }
         }
 
 //        this.callRenderingListeners(AFTER_BUFFER_SWAP);
@@ -328,13 +320,13 @@ public class WorldWindowGLAutoDrawable extends WWObjectImpl implements WorldWind
 
         PickedObject selectionAtEnd = this.getCurrentSelection();
         if (selectionAtStart != null || selectionAtEnd != null)
-            this.callSelectListeners(new SelectEvent(drawable, SelectEvent.ROLLOVER, pickPoint, sc.getPickedObjectList()));
-
+            this.callSelectListeners(
+                new SelectEvent(drawable, SelectEvent.ROLLOVER, pickPoint, sc.getPickedObjectList()));
 
         PickedObjectList boxSelectionAtEnd = this.getCurrentBoxSelection();
         if (boxSelectionAtStart != null || boxSelectionAtEnd != null)
-            this.callSelectListeners(new SelectEvent(drawable, SelectEvent.BOX_ROLLOVER, sc.getPickRectangle(), sc.getObjectsInPickRectangle()));
-
+            this.callSelectListeners(new SelectEvent(drawable, SelectEvent.BOX_ROLLOVER, sc.getPickRectangle(),
+                sc.getObjectsInPickRectangle()));
     }
 
     /**
@@ -369,18 +361,12 @@ public class WorldWindowGLAutoDrawable extends WWObjectImpl implements WorldWind
         }
     }
 
-
-
     @Override
     public void redraw() {
         redrawNecessary.setOpaque(true);
         if (this.drawable instanceof AWTGLAutoDrawable)
             ((AWTGLAutoDrawable) this.drawable).repaint();
     }
-
-    private final Message viewStopMsg = new Message(View.VIEW_STOPPED, WorldWindowGLAutoDrawable.this);
-
-    private final Runnable viewStoppedTask = () -> WorldWindowGLAutoDrawable.this.onMessage(viewStopMsg);
 
     /**
      * Schedule a task that will send a {@link View#VIEW_STOPPED} message to the Model when the task executes. If the
@@ -397,7 +383,6 @@ public class WorldWindowGLAutoDrawable extends WWObjectImpl implements WorldWind
             this.viewRefreshTask.cancel(false);
             this.viewRefreshTask = null;
         }
-
 
         // Schedule the task for execution in delay milliseconds
         this.viewRefreshTask = WorldWind.scheduler()
@@ -474,7 +459,7 @@ public class WorldWindowGLAutoDrawable extends WWObjectImpl implements WorldWind
         this.inputHandler = inputHandler;
         //HACK share eventListeners
         this.eventListeners = (inputHandler instanceof DefaultInputHandler ?
-            ((DefaultInputHandler)inputHandler).eventListeners : new EventListenerList());
+            ((DefaultInputHandler) inputHandler).eventListeners : new EventListenerList());
     }
 
     public void setPerFrameStatisticsKeys(Set<String> keys) {
@@ -544,8 +529,9 @@ public class WorldWindowGLAutoDrawable extends WWObjectImpl implements WorldWind
     }
 
     protected void callRenderingListeners(RenderingEvent event) {
-        for (RenderingListener listener : eventListeners.getListeners(RenderingListener.class))
+        for (RenderingListener listener : eventListeners.getListeners(RenderingListener.class)) {
             listener.stageChanged(event);
+        }
     }
 
     public void addPositionListener(PositionListener listener) {
@@ -558,9 +544,9 @@ public class WorldWindowGLAutoDrawable extends WWObjectImpl implements WorldWind
 
     protected void callPositionListeners(final PositionEvent event) {
         //EventQueue.invokeLater(() -> {
-            for (PositionListener listener : eventListeners.getListeners(PositionListener.class)) {
-                listener.moved(event);
-            }
+        for (PositionListener listener : eventListeners.getListeners(PositionListener.class)) {
+            listener.moved(event);
+        }
         //});
     }
 
@@ -574,9 +560,9 @@ public class WorldWindowGLAutoDrawable extends WWObjectImpl implements WorldWind
 
     protected void callSelectListeners(final SelectEvent event) {
         //EventQueue.invokeLater(() -> {
-            for (SelectListener listener : eventListeners.getListeners(SelectListener.class)) {
-                listener.accept(event);
-            }
+        for (SelectListener listener : eventListeners.getListeners(SelectListener.class)) {
+            listener.accept(event);
+        }
         //});
     }
 
@@ -590,10 +576,10 @@ public class WorldWindowGLAutoDrawable extends WWObjectImpl implements WorldWind
 
     protected void callRenderingExceptionListeners(final Throwable exception) {
         //EventQueue.invokeLater(() -> {
-            for (RenderingExceptionListener listener : eventListeners.getListeners(
-                RenderingExceptionListener.class)) {
-                listener.exceptionThrown(exception);
-            }
+        for (RenderingExceptionListener listener : eventListeners.getListeners(
+            RenderingExceptionListener.class)) {
+            listener.exceptionThrown(exception);
+        }
         //});
     }
 }

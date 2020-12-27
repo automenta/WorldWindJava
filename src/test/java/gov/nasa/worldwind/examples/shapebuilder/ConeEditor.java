@@ -180,7 +180,7 @@ public class ConeEditor extends RigidShapeEditor {
         else {
             // create vertices at the extrema of the current shape piece, and transform them by the
             // render matrix to get their final positions for use as control points
-            Vec4 vert = Matrix.transformBy3(matrix, ULeft.getX(), ULeft.getY(), ULeft.getZ()).add3(refPt);
+            Vec4 vert = Matrix.transformBy3(matrix, ULeft.x, ULeft.y, ULeft.z).add3(refPt);
             Position ULvertexPosition = this.wwd.model().getGlobe().computePositionFromPoint(vert);
             RigidShape controlPoint = new Ellipsoid(ULvertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.textureControlAttributes);
@@ -188,7 +188,7 @@ public class ConeEditor extends RigidShapeEditor {
             controlPoint.set(AVKey.ACTION, TEXTURE_UPPER_LEFT_ACTION);
             this.controlPoints.add(controlPoint);                                   // upper left
 
-            vert = Matrix.transformBy3(matrix, URight.getX(), URight.getY(), URight.getZ()).add3(refPt);
+            vert = Matrix.transformBy3(matrix, URight.x, URight.y, URight.z).add3(refPt);
             Position URvertexPosition = this.wwd.model().getGlobe().computePositionFromPoint(vert);
             controlPoint = new Ellipsoid(URvertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.textureControlAttributes);
@@ -196,7 +196,7 @@ public class ConeEditor extends RigidShapeEditor {
             controlPoint.set(AVKey.ACTION, TEXTURE_UPPER_RIGHT_ACTION);
             this.controlPoints.add(controlPoint);                                   // upper right
 
-            vert = Matrix.transformBy3(matrix, LLeft.getX(), LLeft.getY(), LLeft.getZ()).add3(refPt);
+            vert = Matrix.transformBy3(matrix, LLeft.x, LLeft.y, LLeft.z).add3(refPt);
             Position LLvertexPosition = this.wwd.model().getGlobe().computePositionFromPoint(vert);
             controlPoint = new Ellipsoid(LLvertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.textureControlAttributes);
@@ -204,7 +204,7 @@ public class ConeEditor extends RigidShapeEditor {
             controlPoint.set(AVKey.ACTION, TEXTURE_LOWER_LEFT_ACTION);
             this.controlPoints.add(controlPoint);                                   // lower left
 
-            vert = Matrix.transformBy3(matrix, LRight.getX(), LRight.getY(), LRight.getZ()).add3(refPt);
+            vert = Matrix.transformBy3(matrix, LRight.x, LRight.y, LRight.z).add3(refPt);
             Position LRvertexPosition = this.wwd.model().getGlobe().computePositionFromPoint(vert);
             controlPoint = new Ellipsoid(LRvertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.textureControlAttributes);
@@ -213,7 +213,7 @@ public class ConeEditor extends RigidShapeEditor {
             this.controlPoints.add(controlPoint);                                   // lower right
 
             // side scaling control points
-            vert = Matrix.transformBy3(matrix, right.getX(), right.getY(), right.getZ()).add3(refPt);
+            vert = Matrix.transformBy3(matrix, right.x, right.y, right.z).add3(refPt);
             Position pos = this.wwd.model().getGlobe().computePositionFromPoint(vert);
             controlPoint = new Ellipsoid(pos, radius, radius, radius);
             controlPoint.setAttributes(this.radiusControlAttributes);
@@ -221,7 +221,7 @@ public class ConeEditor extends RigidShapeEditor {
             controlPoint.set(AVKey.ACTION, TEXTURE_SCALE_RIGHT_ACTION);
             this.controlPoints.add(controlPoint);                                   // right
 
-            vert = Matrix.transformBy3(matrix, left.getX(), left.getY(), left.getZ()).add3(refPt);
+            vert = Matrix.transformBy3(matrix, left.x, left.y, left.z).add3(refPt);
             pos = this.wwd.model().getGlobe().computePositionFromPoint(vert);
             controlPoint = new Ellipsoid(pos, radius, radius, radius);
             controlPoint.setAttributes(this.radiusControlAttributes);
@@ -229,7 +229,7 @@ public class ConeEditor extends RigidShapeEditor {
             controlPoint.set(AVKey.ACTION, TEXTURE_SCALE_LEFT_ACTION);
             this.controlPoints.add(controlPoint);                                   // left
 
-            vert = Matrix.transformBy3(matrix, top.getX(), top.getY(), top.getZ()).add3(refPt);
+            vert = Matrix.transformBy3(matrix, top.x, top.y, top.z).add3(refPt);
             pos = this.wwd.model().getGlobe().computePositionFromPoint(vert);
             controlPoint = new Ellipsoid(pos, radius, radius, radius);
             controlPoint.setAttributes(this.radiusControlAttributes);
@@ -237,7 +237,7 @@ public class ConeEditor extends RigidShapeEditor {
             controlPoint.set(AVKey.ACTION, TEXTURE_SCALE_UP_ACTION);
             this.controlPoints.add(controlPoint);                                   // top
 
-            vert = Matrix.transformBy3(matrix, bottom.getX(), bottom.getY(), bottom.getZ()).add3(refPt);
+            vert = Matrix.transformBy3(matrix, bottom.x, bottom.y, bottom.z).add3(refPt);
             pos = this.wwd.model().getGlobe().computePositionFromPoint(vert);
             controlPoint = new Ellipsoid(pos, radius, radius, radius);
             controlPoint.setAttributes(this.radiusControlAttributes);
@@ -245,7 +245,7 @@ public class ConeEditor extends RigidShapeEditor {
             controlPoint.set(AVKey.ACTION, TEXTURE_SCALE_DOWN_ACTION);
             this.controlPoints.add(controlPoint);                                   // bottom
 
-            vert = Matrix.transformBy3(matrix, center.getX(), center.getY(), center.getZ()).add3(refPt);
+            vert = Matrix.transformBy3(matrix, center.x, center.y, center.z).add3(refPt);
             pos = this.wwd.model().getGlobe().computePositionFromPoint(vert);
             controlPoint = new Ellipsoid(pos, radius, radius, radius);
             controlPoint.setAttributes(this.radiusControlAttributes);
@@ -494,7 +494,7 @@ public class ConeEditor extends RigidShapeEditor {
     @Override
     protected void skewShapeEastWest(Point previousMousePoint, Point mousePoint) {
         RigidShape shape = this.getShape();
-        double skew = shape.getSkewEastWest().getDegrees();
+        double skew = shape.getSkewEastWest().degrees;
         double scale = ShapeUtils.getViewportScaleFactor(wwd);
 
         Matrix renderMatrix = this.shape.computeRenderMatrix(this.wwd.model().getGlobe(),
@@ -570,7 +570,7 @@ public class ConeEditor extends RigidShapeEditor {
     @Override
     protected void skewShapeNorthSouth(Point previousMousePoint, Point mousePoint) {
         RigidShape shape = this.getShape();
-        double skew = shape.getSkewNorthSouth().getDegrees();
+        double skew = shape.getSkewNorthSouth().degrees;
         double scale = ShapeUtils.getViewportScaleFactor(wwd);
 
         Matrix renderMatrix = this.shape.computeRenderMatrix(this.wwd.model().getGlobe(),
@@ -688,8 +688,8 @@ public class ConeEditor extends RigidShapeEditor {
 
         // get change of position vector
         Vec4 changeVector = pointOnPlane.subtract3(previousPointOnPlane);
-        Vec4 localChange = Matrix.transformBy3(inverseRenderMatrix, changeVector.getX(),
-            changeVector.getY(), changeVector.getZ());
+        Vec4 localChange = Matrix.transformBy3(inverseRenderMatrix, changeVector.x,
+            changeVector.y, changeVector.z);
 
         // update offset for this uv corner of this piece
         float[] newOffset = {0.0f, 0.0f};
@@ -783,8 +783,8 @@ public class ConeEditor extends RigidShapeEditor {
 
         // get change of position vector
         Vec4 changeVector = pointOnPlane.subtract3(previousPointOnPlane);
-        Vec4 localChange = Matrix.transformBy3(inverseRenderMatrix, changeVector.getX(),
-            changeVector.getY(), changeVector.getZ());
+        Vec4 localChange = Matrix.transformBy3(inverseRenderMatrix, changeVector.x,
+            changeVector.y, changeVector.z);
 
         // update offsets for the uv corners adjacent to this control point
         float[] newOffset = {0.0f, 0.0f};

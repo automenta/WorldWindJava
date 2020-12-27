@@ -86,6 +86,15 @@ public class CircularFireSupportArea extends AbstractCircularGraphic {
     }
 
     /**
+     * Indicates the source of the image that provides the polygon fill pattern.
+     *
+     * @return The source of the polygon fill pattern.
+     */
+    protected static Object getImageSource() {
+        return CircularFireSupportArea.DIAGONAL_FILL_PATH;
+    }
+
+    /**
      * Create labels for the start and end of the path.
      */
     @Override
@@ -113,7 +122,6 @@ public class CircularFireSupportArea extends AbstractCircularGraphic {
         }
     }
 
-
     /**
      * Indicates the text alignment to apply to the main label of this graphic.
      *
@@ -140,7 +148,7 @@ public class CircularFireSupportArea extends AbstractCircularGraphic {
         // in the circle. (This is not necessary with a center aligned label because centering the text automatically
         // centers the label in the circle).
         if (isACA)
-            return LEFT_ALIGN_OFFSET;
+            return CircularFireSupportArea.LEFT_ALIGN_OFFSET;
         else
             return super.getDefaultLabelOffset();
     }
@@ -185,14 +193,5 @@ public class CircularFireSupportArea extends AbstractCircularGraphic {
         return TacGrpSidc.FSUPP_ARS_C2ARS_NFA_CIRCLR.equalsIgnoreCase(this.maskedSymbolCode)
             || TacGrpSidc.FSUPP_ARS_KLBOX_BLUE_CIRCLR.equalsIgnoreCase(this.maskedSymbolCode)
             || TacGrpSidc.FSUPP_ARS_KLBOX_PURPLE_CIRCLR.equalsIgnoreCase(this.maskedSymbolCode);
-    }
-
-    /**
-     * Indicates the source of the image that provides the polygon fill pattern.
-     *
-     * @return The source of the polygon fill pattern.
-     */
-    protected static Object getImageSource() {
-        return DIAGONAL_FILL_PATH;
     }
 }

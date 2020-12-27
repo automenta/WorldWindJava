@@ -66,28 +66,23 @@ public class OWSServiceIdentification extends AbstractXMLEventParser {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.serviceTypeVersions.add(s);
-        }
-        else if (ctx.isStartElement(event, "Abstract")) {
+        } else if (ctx.isStartElement(event, "Abstract")) {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.abstracts.add(s);
-        }
-        else if (ctx.isStartElement(event, "AccessConstraints")) {
+        } else if (ctx.isStartElement(event, "AccessConstraints")) {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.accessConstraints.add(s);
-        }
-        else if (ctx.isStartElement(event, "Title")) {
+        } else if (ctx.isStartElement(event, "Title")) {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.titles.add(s);
-        }
-        else if (ctx.isStartElement(event, "Profile")) {
+        } else if (ctx.isStartElement(event, "Profile")) {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.profiles.add(s);
-        }
-        else {
+        } else {
             super.doParseEventContent(ctx, event, args);
         }
     }

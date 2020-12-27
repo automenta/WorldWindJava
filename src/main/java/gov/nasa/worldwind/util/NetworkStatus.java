@@ -16,9 +16,9 @@ import java.util.List;
  * unreachable. Users can query instances of classes implementing this interface to determine whether a host has been
  * marked as unreachable.
  * <p>
- * Users are expected to invoke the {@link #logUnavailableHost(URL)} method when an attempt to contact a host
- * fails. Each invocation increments the failure count by one. When the count exceeds the attempt limit, the host is
- * marked as unreachable. When attempts to contact the host <em>are</em> successful, users should invoke {@link
+ * Users are expected to invoke the {@link #logUnavailableHost(URL)} method when an attempt to contact a host fails.
+ * Each invocation increments the failure count by one. When the count exceeds the attempt limit, the host is marked as
+ * unreachable. When attempts to contact the host <em>are</em> successful, users should invoke {@link
  * #logAvailableHost(URL)} method to clear its status.
  * <p>
  * A host may become reachable at a time subsequent to its being logged. To detect this, the implementation marks a host

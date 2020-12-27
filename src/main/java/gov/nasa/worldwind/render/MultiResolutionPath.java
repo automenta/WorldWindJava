@@ -35,7 +35,7 @@ public class MultiResolutionPath extends Path {
      * less then 10e3, and a value of 1 when the eye distance is less than 1e3.
      */
     protected SkipCountComputer skipCountComputer = (dc, pathData) -> {
-        double d = getDistanceMetric(dc, pathData);
+        double d = Path.getDistanceMetric(dc, pathData);
 
         return d > 10.0e3 ? 4 : d > 1.0e3 ? 2 : 1;
     };

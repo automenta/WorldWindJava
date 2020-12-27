@@ -21,7 +21,7 @@ class GDALDataFinder extends GDALAbstractFileFilter {
         String filename;
         String dir;
         if (null != pathname
-            && !isHidden(pathname.getAbsolutePath())
+            && !GDALAbstractFileFilter.isHidden(pathname.getAbsolutePath())
             && null != (dir = pathname.getParent())
             && !this.listFolders.contains(dir)                  // skip already discovered
             && null != (filename = pathname.getName())          // get folder name

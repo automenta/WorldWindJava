@@ -23,11 +23,11 @@ import java.util.*;
 
 /**
  * Abstract implementation of SurfaceObject that participates in the {@link gov.nasa.worldwind.SceneController}'s bulk
- * rendering of SurfaceObjects. The SceneControllers bulk renders all SurfaceObjects added to the {@link
- * DrawContext}'s ordered surface renderable queue during the preRendering pass. While
- * building the composite representation the SceneController invokes {@link #render(DrawContext)} in ordered rendering
- * mode. To avoid overloading the purpose of the render method, AbstractSurfaceObject does not add itself to the
- * DrawContext's ordered surface renderable queue during rendering.
+ * rendering of SurfaceObjects. The SceneControllers bulk renders all SurfaceObjects added to the {@link DrawContext}'s
+ * ordered surface renderable queue during the preRendering pass. While building the composite representation the
+ * SceneController invokes {@link #render(DrawContext)} in ordered rendering mode. To avoid overloading the purpose of
+ * the render method, AbstractSurfaceObject does not add itself to the DrawContext's ordered surface renderable queue
+ * during rendering.
  * <p>
  * Subclasses that do not wish to participate in this composite representation can override this behavior as follows:
  * <ol> <li>Override {@link #makeOrderedPreRenderable(DrawContext)}; do not add this object to the draw context's
@@ -68,7 +68,7 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
      */
     public AbstractSurfaceObject() {
         this.visible = true;
-        this.uniqueId = nextUniqueId();
+        this.uniqueId = AbstractSurfaceObject.nextUniqueId();
         this.lastModifiedTime = System.currentTimeMillis();
         this.enableBatchPicking = true;
     }
@@ -82,7 +82,7 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
         super(source);
 
         this.visible = source.visible;
-        this.uniqueId = nextUniqueId();
+        this.uniqueId = AbstractSurfaceObject.nextUniqueId();
         this.lastModifiedTime = System.currentTimeMillis();
         this.enableBatchPicking = source.enableBatchPicking;
     }
@@ -96,7 +96,58 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
      * @return the next unique integer.
      */
     protected static synchronized long nextUniqueId() {
-        return nextUniqueId++;
+        return AbstractSurfaceObject.nextUniqueId++;
+    }
+
+    /**
+     * Computes an extent bounding the the specified sectors on the specified Globe's surface. If the list contains a
+     * single sector this returns a box created by calling {@link Sector#computeBoundingBox(Globe, double, Sector)}. If
+     * the list contains more than one sector this returns a {@link gov.nasa.worldwind.geom.Box} containing the corners
+     * of the boxes bounding each sector. This returns null if the sector list is empty.
+     *
+     * @param globe                the globe the extent relates to.
+     * @param verticalExaggeration the globe's vertical surface exaggeration.
+     * @param sectors              the sectors to bound.
+     * @return an extent for the specified sectors on the specified Globe.
+     */
+    protected static Extent computeExtent(Globe globe, double verticalExaggeration, List<Sector> sectors) {
+        // This should never happen, but we check anyway.
+        if (sectors == null) {
+            return null;
+        }
+        // This surface shape does not cross the international dateline, and therefore has a single bounding sector.
+        // Return the box which contains that sector.
+        else {
+            final int n = sectors.size();
+            if (n == 1) {
+                return Sector.computeBoundingBox(globe, verticalExaggeration, sectors.get(0));
+            }
+            // This surface crosses the international dateline, and its bounding sectors are split along the dateline.
+            // Return a box which contains the corners of the boxes bounding each sector.
+            else {
+                Collection<Vec4> boxCorners = new ArrayList<>(n);
+
+                for (Sector s : sectors) {
+                    boxCorners.addAll(List.of(
+                        Sector.computeBoundingBox(globe, verticalExaggeration, s).getCorners()
+                    ));
+                }
+
+                return Box.computeBoundingBox(boxCorners);
+            }
+        }
+    }
+
+    /**
+     * Returns a {@link SurfaceObjectTileBuilder} appropriate for building and drawing the surface object's pickable
+     * representation. The returned SurfaceObjectTileBuilder's is configured to create textures with the GL_ALPHA8
+     * format, and to use GL_NEAREST filtering. This reduces a surface object's pick texture resources by a factor of 4,
+     * and ensures that linear texture filtering and mip-mapping is disabled while drawing the pick tiles.
+     *
+     * @return a SurfaceObjectTileBuilder used for building and drawing the surface object's pickable representation.
+     */
+    protected static SurfaceObjectTileBuilder createPickTileBuilder() {
+        return new SurfaceObjectTileBuilder(new Dimension(512, 512), GL2.GL_ALPHA8, false, false);
     }
 
     /**
@@ -218,7 +269,7 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
         // This method is called only during ordered picking. Therefore we setup for picking and draw this object to the
         // framebuffer in a unique pick color. We invoke a separate path for picking because this object creates and
         // draws a separate representation of itself during picking. Using a separate call stack enables us to use
-        // common rendering code to draw both the pick and render representations, by setting the draw context's 
+        // common rendering code to draw both the pick and render representations, by setting the draw context's
         // isPickingMode flag to control which representation is drawn.
 
         if (!this.isVisible())
@@ -270,6 +321,10 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
         this.lastModifiedTime = System.currentTimeMillis();
     }
 
+    //**************************************************************//
+    //********************  Extent  ********************************//
+    //**************************************************************//
+
     /**
      * Clears this SurfaceObject's internal extent cache.
      */
@@ -282,10 +337,6 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
         this.updateModifiedTime();
         this.clearCaches();
     }
-
-    //**************************************************************//
-    //********************  Extent  ********************************//
-    //**************************************************************//
 
     /**
      * Computes the surface object's extent. Uses the sector list returned by {@link #getSectors(DrawContext)} to
@@ -301,46 +352,6 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
             return null;
 
         return AbstractSurfaceObject.computeExtent(dc.getGlobe(), dc.getVerticalExaggeration(), sectors);
-    }
-
-    /**
-     * Computes an extent bounding the the specified sectors on the specified Globe's surface. If the list contains a
-     * single sector this returns a box created by calling {@link Sector#computeBoundingBox(Globe,
-     * double, Sector)}. If the list contains more than one sector this returns a {@link
-     * gov.nasa.worldwind.geom.Box} containing the corners of the boxes bounding each sector. This returns null if the
-     * sector list is empty.
-     *
-     * @param globe                the globe the extent relates to.
-     * @param verticalExaggeration the globe's vertical surface exaggeration.
-     * @param sectors              the sectors to bound.
-     * @return an extent for the specified sectors on the specified Globe.
-     */
-    protected static Extent computeExtent(Globe globe, double verticalExaggeration, List<Sector> sectors) {
-        // This should never happen, but we check anyway.
-        if (sectors==null) {
-            return null;
-        }
-        // This surface shape does not cross the international dateline, and therefore has a single bounding sector.
-        // Return the box which contains that sector.
-        else {
-            final int n = sectors.size();
-            if (n == 1) {
-                return Sector.computeBoundingBox(globe, verticalExaggeration, sectors.get(0));
-            }
-            // This surface crosses the international dateline, and its bounding sectors are split along the dateline.
-            // Return a box which contains the corners of the boxes bounding each sector.
-            else {
-                Collection<Vec4> boxCorners = new ArrayList<>(n);
-
-                for (Sector s : sectors) {
-                    boxCorners.addAll(List.of(
-                        Sector.computeBoundingBox(globe, verticalExaggeration, s).getCorners()
-                    ));
-                }
-
-                return Box.computeBoundingBox(boxCorners);
-            }
-        }
     }
 
     /**
@@ -377,6 +388,10 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
         return extent != null && dc.getPickFrustums().intersectsAny(extent);
     }
 
+    //**************************************************************//
+    //********************  Rendering  *****************************//
+    //**************************************************************//
+
     /**
      * Test if this SurfaceObject intersects the specified draw context's visible sector. This returns false if the draw
      * context's visible sector is null.
@@ -401,15 +416,11 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
         return false;
     }
 
-    //**************************************************************//
-    //********************  Rendering  *****************************//
-    //**************************************************************//
-
     /**
-     * Prepares the SurfaceObject as an {@link OrderedRenderable} and adds it to the
-     * DrawContext's ordered surface renderable list. Additionally, this prepares the SurfaceObject's pickable
-     * representation if the SurfaceObject's containing layer is enabled for picking and the SurfaceObject intersects
-     * one of the DrawContext's picking frustums.
+     * Prepares the SurfaceObject as an {@link OrderedRenderable} and adds it to the DrawContext's ordered surface
+     * renderable list. Additionally, this prepares the SurfaceObject's pickable representation if the SurfaceObject's
+     * containing layer is enabled for picking and the SurfaceObject intersects one of the DrawContext's picking
+     * frustums.
      * <p>
      * During ordered preRendering, the {@link gov.nasa.worldwind.SceneController} builds a composite representation of
      * this SurfaceObject and any other SurfaceObject on the DrawContext's ordered surface renderable list. The
@@ -421,11 +432,12 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
     protected void makeOrderedPreRenderable(DrawContext dc) {
         // Test for visibility against the draw context's visible sector prior to preparing this object for
         // preRendering.
-        if (!this.intersectsVisibleSector(dc)) return;
-        if (!this.intersectsFrustum(dc)) return;
+        if (!this.intersectsVisibleSector(dc))
+            return;
+        if (!this.intersectsFrustum(dc))
+            return;
 
-
-            // Create a representation of this object that can be used during picking. No need for a pickable representation
+        // Create a representation of this object that can be used during picking. No need for a pickable representation
         // if this object's parent layer isn't pickable or if this object doesn't intersect the pick frustum. We do not
         // test visibility against the view frustum, because it's possible for the pick frustum to slightly exceed the
         // view frustum when the cursor is on the viewport edge.
@@ -438,14 +450,14 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
         // method (we ignore this call with a conditional in preRender). While building a composite representation the
         // SceneController calls this object's render method in ordered rendering mode.
         //if (this.intersectsFrustum(dc))
-            dc.addOrderedSurfaceRenderable(this);
+        dc.addOrderedSurfaceRenderable(this);
     }
 
     /**
-     * Prepares the SurfaceObject as an {@link OrderedRenderable} and adds it to the
-     * DrawContext's ordered surface renderable list. We ignore this call during rendering mode to suppress calls to
-     * {@link #render(DrawContext)} during ordered rendering mode. The SceneController already invokes render during
-     * ordered picking mode to build a composite representation of the SurfaceObjects.
+     * Prepares the SurfaceObject as an {@link OrderedRenderable} and adds it to the DrawContext's ordered surface
+     * renderable list. We ignore this call during rendering mode to suppress calls to {@link #render(DrawContext)}
+     * during ordered rendering mode. The SceneController already invokes render during ordered picking mode to build a
+     * composite representation of the SurfaceObjects.
      * <p>
      * During ordered picking, the {@link gov.nasa.worldwind.SceneController} invokes the SurfaceObject's {@link
      * #pick(DrawContext, Point)} method.
@@ -497,8 +509,8 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
     }
 
     /**
-     * Create a {@link PickedObject} for this surface object. The PickedObject created by this
-     * method will be added to the pick list to represent the current surface object.
+     * Create a {@link PickedObject} for this surface object. The PickedObject created by this method will be added to
+     * the pick list to represent the current surface object.
      *
      * @param dc        Active draw context.
      * @param pickColor Unique color for this PickedObject.
@@ -540,11 +552,10 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
 
     /**
      * Causes the SurfaceObject to render itself. SurfaceObjects are drawn in geographic coordinates into offscreen
-     * surface tiles. This attempts to get a {@link SurfaceTileDrawContext} from the
-     * DrawContext's AVList by querying the key {@link AVKey#SURFACE_TILE_DRAW_CONTEXT}. If
-     * the DrawContext has a SurfaceTileDrawContext attached under that key, this calls {@link
-     * #drawGeographic(DrawContext, SurfaceTileDrawContext)} with the SurfaceTileDrawContext.
-     * Otherwise this logs a warning and returns.
+     * surface tiles. This attempts to get a {@link SurfaceTileDrawContext} from the DrawContext's AVList by querying
+     * the key {@link AVKey#SURFACE_TILE_DRAW_CONTEXT}. If the DrawContext has a SurfaceTileDrawContext attached under
+     * that key, this calls {@link #drawGeographic(DrawContext, SurfaceTileDrawContext)} with the
+     * SurfaceTileDrawContext. Otherwise this logs a warning and returns.
      *
      * @param dc the current DrawContext.
      */
@@ -564,6 +575,10 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
             this.drawBoundingSectors(dc, sdc);
     }
 
+    //**************************************************************//
+    //********************  Picking  *******************************//
+    //**************************************************************//
+
     /**
      * Causes the SurfaceObject to render itself to the specified region in geographic coordinates. The specified
      * viewport denotes the geographic region and its corresponding screen viewport.
@@ -572,10 +587,6 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
      * @param sdc the context containing a geographic region and screen viewport corresponding to a surface tile.
      */
     protected abstract void drawGeographic(DrawContext dc, SurfaceTileDrawContext sdc);
-
-    //**************************************************************//
-    //********************  Picking  *******************************//
-    //**************************************************************//
 
     /**
      * Builds this AbstractSurfaceObject's pickable representation. This method is called during the preRender phase,
@@ -640,18 +651,6 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
             // Clear the list of pick tiles to avoid retaining references to them in case we're never picked again.
             this.pickTileBuilder.clearTiles(dc);
         }
-    }
-
-    /**
-     * Returns a {@link SurfaceObjectTileBuilder} appropriate for building and drawing the surface object's pickable
-     * representation. The returned SurfaceObjectTileBuilder's is configured to create textures with the GL_ALPHA8
-     * format, and to use GL_NEAREST filtering. This reduces a surface object's pick texture resources by a factor of 4,
-     * and ensures that linear texture filtering and mip-mapping is disabled while drawing the pick tiles.
-     *
-     * @return a SurfaceObjectTileBuilder used for building and drawing the surface object's pickable representation.
-     */
-    protected static SurfaceObjectTileBuilder createPickTileBuilder() {
-        return new SurfaceObjectTileBuilder(new Dimension(512, 512), GL2.GL_ALPHA8, false, false);
     }
 
     //**************************************************************//
@@ -759,7 +758,7 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
 
         @Override
         public int hashCode() {
-            return 31 * Long.hashCode(uniqueId)  + Long.hashCode(modifiedTime);
+            return 31 * Long.hashCode(uniqueId) + Long.hashCode(modifiedTime);
         }
 
         /**

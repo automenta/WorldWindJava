@@ -190,9 +190,9 @@ public interface WebView extends AVList, Disposable {
     Iterable<AVList> getLinks();
 
     /**
-     * Returns a layed out and rendered representation of the WebView's content as a {@link
-     * WWTexture}. The texture's image source is the WebView, and its dimensions are large
-     * enough to capture the WebView's frame size (see {@link #setFrameSize(Dimension)}.
+     * Returns a layed out and rendered representation of the WebView's content as a {@link WWTexture}. The texture's
+     * image source is the WebView, and its dimensions are large enough to capture the WebView's frame size (see {@link
+     * #setFrameSize(Dimension)}.
      * <p>
      * On machines that support non-power-of-two sized textures, the texture's dimensions are always equal to the
      * WebView's frame size. Otherwise, the texture's dimensions are the smallest power-of-two that captures the
@@ -221,8 +221,8 @@ public interface WebView extends AVList, Disposable {
 
     /**
      * Sends the specified input event to the WebView. Which events the WebView's responds to and how it responds is
-     * implementation-defined. Typical implementations respond to {@link KeyEvent}, {@link
-     * MouseEvent}, and {@link MouseWheelEvent}.
+     * implementation-defined. Typical implementations respond to {@link KeyEvent}, {@link MouseEvent}, and {@link
+     * MouseWheelEvent}.
      * <p>
      * The screen coordinates for a <code>MouseEvent</code> must be transformed into the WebView's local coordinate
      * system, which has its origin in the lower left corner with the X-axis pointing right and the Y-axis pointing up.

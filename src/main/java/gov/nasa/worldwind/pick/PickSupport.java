@@ -47,6 +47,51 @@ public class PickSupport {
         return a != null && b != null && a.get() == b.get();
     }
 
+    /**
+     * Returns the framebuffer RGB color for a point in AWT screen coordinates, formatted as a pick color code. The red,
+     * green, and blue components are each stored as an 8-bit unsigned integer, and packed into bits 0-23 of the
+     * returned integer as follows: bits 16-23 are red, bits 8-15 are green, and bits 0-7 are blue. This format is
+     * consistent with the RGB integers used to create the pick colors.
+     * <p>
+     * This returns 0 if the point is <code>null</code>, if the point contains the clear color, or if the point is
+     * outside the draw context's drawable area.
+     *
+     * @param dc        the draw context to return a color for.
+     * @param pickPoint the point to return a color for, in AWT screen coordinates.
+     * @return the RGB color corresponding to the specified point.
+     */
+    public static int getTopColor(DrawContext dc, Point pickPoint) {
+        // This method's implementation has been moved into DrawContext.getPickColor in order to consolidate this logic
+        // into one place. We've left this method here to avoid removing an interface that applications may rely on.
+        return pickPoint != null ? dc.getPickColorAtPoint(pickPoint) : 0;
+    }
+
+    public static void beginPicking(DrawContext dc) {
+        ((DrawContextImpl) dc).pickChanged.set(true);
+
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
+
+        gl.glPushAttrib(GL2.GL_ENABLE_BIT | GL2.GL_CURRENT_BIT);
+
+        gl.glDisable(GL.GL_DITHER);
+        gl.glDisable(GL2.GL_LIGHTING);
+        gl.glDisable(GL2.GL_FOG);
+        gl.glDisable(GL.GL_BLEND);
+        gl.glDisable(GL.GL_TEXTURE_2D);
+
+        if (dc.isDeepPickingEnabled())
+            gl.glDisable(GL.GL_DEPTH_TEST);
+    }
+
+    public static void endPicking(DrawContext dc) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
+        gl.glPopAttrib();
+
+        // Some nvidia Quadro cards have a bug in which the current color is not restored. Restore it to the
+        // default here.
+        gl.glColor3ub((byte) 255, (byte) 255, (byte) 255);
+    }
+
     public void clearPickList() {
         this.pickableObjects.clear();
         this.pickableObjectRanges.clear();
@@ -193,51 +238,6 @@ public class PickSupport {
 
             dc.addObjectInPickRectangle(po);
         }
-    }
-
-    /**
-     * Returns the framebuffer RGB color for a point in AWT screen coordinates, formatted as a pick color code. The red,
-     * green, and blue components are each stored as an 8-bit unsigned integer, and packed into bits 0-23 of the
-     * returned integer as follows: bits 16-23 are red, bits 8-15 are green, and bits 0-7 are blue. This format is
-     * consistent with the RGB integers used to create the pick colors.
-     * <p>
-     * This returns 0 if the point is <code>null</code>, if the point contains the clear color, or if the point is
-     * outside the draw context's drawable area.
-     *
-     * @param dc        the draw context to return a color for.
-     * @param pickPoint the point to return a color for, in AWT screen coordinates.
-     * @return the RGB color corresponding to the specified point.
-     */
-    public static int getTopColor(DrawContext dc, Point pickPoint) {
-        // This method's implementation has been moved into DrawContext.getPickColor in order to consolidate this logic
-        // into one place. We've left this method here to avoid removing an interface that applications may rely on.
-        return pickPoint != null ? dc.getPickColorAtPoint(pickPoint) : 0;
-    }
-
-    public static void beginPicking(DrawContext dc) {
-        ((DrawContextImpl)dc).pickChanged.set(true);
-
-        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-
-        gl.glPushAttrib(GL2.GL_ENABLE_BIT | GL2.GL_CURRENT_BIT);
-
-        gl.glDisable(GL.GL_DITHER);
-        gl.glDisable(GL2.GL_LIGHTING);
-        gl.glDisable(GL2.GL_FOG);
-        gl.glDisable(GL.GL_BLEND);
-        gl.glDisable(GL.GL_TEXTURE_2D);
-
-        if (dc.isDeepPickingEnabled())
-            gl.glDisable(GL.GL_DEPTH_TEST);
-    }
-
-    public static void endPicking(DrawContext dc) {
-        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-        gl.glPopAttrib();
-
-        // Some nvidia Quadro cards have a bug in which the current color is not restored. Restore it to the
-        // default here.
-        gl.glColor3ub((byte) 255, (byte) 255, (byte) 255);
     }
 
     protected boolean hasPickableObjects() {

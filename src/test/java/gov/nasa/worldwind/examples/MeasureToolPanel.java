@@ -446,8 +446,8 @@ public class MeasureToolPanel extends JPanel {
                     break;
                 }
 
-                String las = String.format("Lat %7.4f\u00B0", pos.getLatitude().getDegrees());
-                String los = String.format("Lon %7.4f\u00B0", pos.getLongitude().getDegrees());
+                String las = String.format("Lat %7.4f\u00B0", pos.getLatitude().degrees);
+                String los = String.format("Lon %7.4f\u00B0", pos.getLongitude().degrees);
                 pointLabels[i++].setText(las + "  " + los);
             }
         }

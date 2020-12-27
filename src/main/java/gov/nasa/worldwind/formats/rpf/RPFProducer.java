@@ -33,7 +33,7 @@ public enum RPFProducer {
 //  PRODUCER_?('I'-'Z', "",                   "Reserved for future standardization"),
     ;
 
-    private static RPFProducer[] enumConstantAlphabet = null;
+    private static RPFProducer[] enumConstantAlphabet;
     public final Character id;
     public final String producerCode;
     public final String producer;
@@ -45,14 +45,14 @@ public enum RPFProducer {
     }
 
     private static synchronized RPFProducer[] enumConstantAlphabet() {
-        if (enumConstantAlphabet == null) {
+        if (RPFProducer.enumConstantAlphabet == null) {
             RPFProducer[] universe = RPFProducer.class.getEnumConstants();
-            enumConstantAlphabet = new RPFProducer[36];
+            RPFProducer.enumConstantAlphabet = new RPFProducer[36];
             for (RPFProducer producer : universe) {
-                enumConstantAlphabet[indexFor(producer.id)] = producer;
+                RPFProducer.enumConstantAlphabet[RPFProducer.indexFor(producer.id)] = producer;
             }
         }
-        return enumConstantAlphabet;
+        return RPFProducer.enumConstantAlphabet;
     }
 
     private static int indexFor(Character id) {
@@ -69,8 +69,8 @@ public enum RPFProducer {
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        RPFProducer[] alphabet = enumConstantAlphabet();
-        int index = indexFor(Character.toUpperCase(id));
+        RPFProducer[] alphabet = RPFProducer.enumConstantAlphabet();
+        int index = RPFProducer.indexFor(Character.toUpperCase(id));
         return (index >= 0) && (index < alphabet.length) && (alphabet[index] != null);
     }
 
@@ -81,8 +81,8 @@ public enum RPFProducer {
             throw new IllegalArgumentException(message);
         }
         RPFProducer producer;
-        RPFProducer[] alphabet = enumConstantAlphabet();
-        int index = indexFor(Character.toUpperCase(id));
+        RPFProducer[] alphabet = RPFProducer.enumConstantAlphabet();
+        int index = RPFProducer.indexFor(Character.toUpperCase(id));
         if (index < 0 || index >= alphabet.length || (producer = alphabet[index]) == null) {
             String message = Logging.getMessage("generic.EnumNotFound", id);
             Logging.logger().severe(message);

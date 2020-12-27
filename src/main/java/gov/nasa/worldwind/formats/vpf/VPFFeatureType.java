@@ -19,19 +19,15 @@ public enum VPFFeatureType {
 
     public static VPFFeatureType fromTypeName(String featureType) {
         if (featureType.equalsIgnoreCase(VPFConstants.POINT_FEATURE_TYPE)) {
-            return POINT;
-        }
-        else if (featureType.equalsIgnoreCase(VPFConstants.LINE_FEATURE_TYPE)) {
-            return LINE;
-        }
-        else if (featureType.equalsIgnoreCase(VPFConstants.AREA_FEATURE_TYPE)) {
-            return AREA;
-        }
-        else if (featureType.equalsIgnoreCase(VPFConstants.TEXT_FEATURE_TYPE)) {
-            return TEXT;
-        }
-        else if (featureType.equalsIgnoreCase(VPFConstants.COMPLEX_FEATURE_TYPE)) {
-            return COMPLEX;
+            return VPFFeatureType.POINT;
+        } else if (featureType.equalsIgnoreCase(VPFConstants.LINE_FEATURE_TYPE)) {
+            return VPFFeatureType.LINE;
+        } else if (featureType.equalsIgnoreCase(VPFConstants.AREA_FEATURE_TYPE)) {
+            return VPFFeatureType.AREA;
+        } else if (featureType.equalsIgnoreCase(VPFConstants.TEXT_FEATURE_TYPE)) {
+            return VPFFeatureType.TEXT;
+        } else if (featureType.equalsIgnoreCase(VPFConstants.COMPLEX_FEATURE_TYPE)) {
+            return VPFFeatureType.COMPLEX;
         }
 
         return null;

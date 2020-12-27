@@ -21,7 +21,7 @@ public class EarthFlat extends FlatGlobe {
     public static final double WGS84_ES = 0.00669437999013; // eccentricity squared, semi-major axis
 
     public EarthFlat() {
-        super(WGS84_EQUATORIAL_RADIUS, WGS84_POLAR_RADIUS, WGS84_ES,
+        super(EarthFlat.WGS84_EQUATORIAL_RADIUS, EarthFlat.WGS84_POLAR_RADIUS, EarthFlat.WGS84_ES,
             EllipsoidalGlobe.makeElevationModel(AVKey.EARTH_ELEVATION_MODEL_CONFIG_FILE,
                 "config/Earth/EarthElevations2.xml"));
     }

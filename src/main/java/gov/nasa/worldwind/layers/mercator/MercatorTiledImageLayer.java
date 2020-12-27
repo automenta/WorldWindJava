@@ -47,20 +47,20 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
     private final PriorityBlockingQueue<Runnable> requestQ = new PriorityBlockingQueue<>(
         200);
     private ArrayList<MercatorTextureTile> topLevels;
-    private boolean forceLevelZeroLoads = false;
-    private boolean levelZeroLoaded = false;
-    private boolean retainLevelZeroTiles = false;
+    private boolean forceLevelZeroLoads;
+    private boolean levelZeroLoaded;
+    private boolean retainLevelZeroTiles;
     private String tileCountName;
-    private boolean useMipMaps = false;
+    private boolean useMipMaps;
     // Diagnostic flags
-    private boolean showImageTileOutlines = false;
-    private boolean drawTileBoundaries = false;
-    private boolean useTransparentTextures = false;
-    private boolean drawTileIDs = false;
-    private boolean drawBoundingVolumes = false;
+    private boolean showImageTileOutlines;
+    private boolean drawTileBoundaries;
+    private boolean useTransparentTextures;
+    private boolean drawTileIDs;
+    private boolean drawBoundingVolumes;
     private MercatorTextureTile currentResourceTile;
     private Vec4 referencePoint;
-    private boolean atMaxResolution = false;
+    private boolean atMaxResolution;
 
     public MercatorTiledImageLayer(LevelSet levelSet) {
         if (levelSet == null) {
@@ -75,6 +75,61 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
 
         this.setPickEnabled(false); // textures are assumed to be terrain unless specifically indicated otherwise.
         this.tileCountName = this.name() + " Tiles";
+    }
+
+    private static boolean isTileVisible(DrawContext dc, MercatorTextureTile tile) {
+        return tile.getExtent(dc).intersects(
+            dc.getView().getFrustumInModelCoordinates())
+            && (dc.getVisibleSector() == null || dc.getVisibleSector()
+            .intersects(tile.sector));
+    }
+
+    private static Vec4 computeReferencePoint(DrawContext dc) {
+        if (dc.getViewportCenterPosition() != null)
+            return dc.getGlobe().computePointFromPosition(
+                dc.getViewportCenterPosition());
+
+        final View view = dc.getView();
+        Rectangle2D viewport = view.getViewport();
+        int x = (int) viewport.getWidth() / 2;
+        for (int y = (int) (0.5 * viewport.getHeight()); y >= 0; y--) {
+            Position pos = view.computePositionFromScreenPoint(x, y);
+            if (pos != null)
+                return dc.getGlobe().computePointFromPosition(pos.getLatitude(),
+                    pos.getLongitude(), 0);
+        }
+
+        return null;
+    }
+
+    private static void drawTileIDs(DrawContext dc,
+        Iterable<MercatorTextureTile> tiles) {
+        Rectangle viewport = dc.getView().getViewport();
+        TextRenderer textRenderer = OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(),
+            Font.decode("Arial-Plain-13"));
+
+        dc.getGL().glDisable(GL.GL_DEPTH_TEST);
+        dc.getGL().glDisable(GL.GL_BLEND);
+        dc.getGL().glDisable(GL.GL_TEXTURE_2D);
+
+        textRenderer.setColor(Color.YELLOW);
+        textRenderer.beginRendering(viewport.width, viewport.height);
+        for (MercatorTextureTile tile : tiles) {
+            String tileLabel = tile.getLabel();
+
+            if (tile.getFallbackTile() != null)
+                tileLabel += '/' + tile.getFallbackTile().getLabel();
+
+            LatLon ll = tile.sector.getCentroid();
+            Vec4 pt = dc.getGlobe().computePointFromPosition(
+                ll.getLatitude(),
+                ll.getLongitude(),
+                dc.getGlobe().getElevation(ll.getLatitude(),
+                    ll.getLongitude()));
+            pt = dc.getView().project(pt);
+            textRenderer.draw(tileLabel, (int) pt.x, (int) pt.y);
+        }
+        textRenderer.endRendering();
     }
 
     abstract protected void requestTexture(DrawContext dc, MercatorTextureTile tile);
@@ -262,8 +317,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
                 || tile.getLevelNumber() == 0) {
                 ancestorResource = this.currentResourceTile;
                 this.currentResourceTile = tile;
-            }
-            else if (!tile.level.isEmpty()) {
+            } else if (!tile.level.isEmpty()) {
                 //                this.addTile(dc, tile);
                 //                return;
 
@@ -335,17 +389,14 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
         this.currentTiles.add(tile);
     }
 
-    private static boolean isTileVisible(DrawContext dc, MercatorTextureTile tile) {
-        return tile.getExtent(dc).intersects(
-            dc.getView().getFrustumInModelCoordinates())
-            && (dc.getVisibleSector() == null || dc.getVisibleSector()
-            .intersects(tile.sector));
-    }
-
     private boolean meetsRenderCriteria(DrawContext dc, MercatorTextureTile tile) {
         return this.levels.isFinalLevel(tile.getLevelNumber())
             || !needToSplit(dc, tile.sector);
     }
+
+    // ============== Rendering ======================= //
+    // ============== Rendering ======================= //
+    // ============== Rendering ======================= //
 
     private boolean needToSplit(DrawContext dc, Sector sector) {
         Vec4[] corners = sector.computeCornerPoints(dc.getGlobe(), dc.getVerticalExaggeration());
@@ -396,10 +447,6 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
         return this.needToSplit(dc, centerSector);
     }
 
-    // ============== Rendering ======================= //
-    // ============== Rendering ======================= //
-    // ============== Rendering ======================= //
-
     @Override
     public void render(DrawContext dc) {
         this.atMaxResolution = this.atMaxLevel(dc);
@@ -429,7 +476,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
             MercatorTextureTile[] sortedTiles = new MercatorTextureTile[this.currentTiles
                 .size()];
             sortedTiles = this.currentTiles.toArray(sortedTiles);
-            Arrays.sort(sortedTiles, levelComparer);
+            Arrays.sort(sortedTiles, MercatorTiledImageLayer.levelComparer);
 
             GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
@@ -439,8 +486,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
                 gl.glColor4d(1.0d, 1.0d, 1.0d, this.getOpacity());
                 gl.glEnable(GL.GL_BLEND);
                 gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
-            }
-            else {
+            } else {
                 gl.glPushAttrib(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_POLYGON_BIT);
             }
 
@@ -480,56 +526,8 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
             .intersects(dc.getVisibleSector()));
     }
 
-    private static Vec4 computeReferencePoint(DrawContext dc) {
-        if (dc.getViewportCenterPosition() != null)
-            return dc.getGlobe().computePointFromPosition(
-                dc.getViewportCenterPosition());
-
-        final View view = dc.getView();
-        Rectangle2D viewport = view.getViewport();
-        int x = (int) viewport.getWidth() / 2;
-        for (int y = (int) (0.5 * viewport.getHeight()); y >= 0; y--) {
-            Position pos = view.computePositionFromScreenPoint(x, y);
-            if (pos != null)
-                return dc.getGlobe().computePointFromPosition(pos.getLatitude(),
-                    pos.getLongitude(), 0);
-        }
-
-        return null;
-    }
-
     protected Vec4 getReferencePoint() {
         return this.referencePoint;
-    }
-
-    private static void drawTileIDs(DrawContext dc,
-        Iterable<MercatorTextureTile> tiles) {
-        Rectangle viewport = dc.getView().getViewport();
-        TextRenderer textRenderer = OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(),
-            Font.decode("Arial-Plain-13"));
-
-        dc.getGL().glDisable(GL.GL_DEPTH_TEST);
-        dc.getGL().glDisable(GL.GL_BLEND);
-        dc.getGL().glDisable(GL.GL_TEXTURE_2D);
-
-        textRenderer.setColor(Color.YELLOW);
-        textRenderer.beginRendering(viewport.width, viewport.height);
-        for (MercatorTextureTile tile : tiles) {
-            String tileLabel = tile.getLabel();
-
-            if (tile.getFallbackTile() != null)
-                tileLabel += "/" + tile.getFallbackTile().getLabel();
-
-            LatLon ll = tile.sector.getCentroid();
-            Vec4 pt = dc.getGlobe().computePointFromPosition(
-                ll.getLatitude(),
-                ll.getLongitude(),
-                dc.getGlobe().getElevation(ll.getLatitude(),
-                    ll.getLongitude()));
-            pt = dc.getView().project(pt);
-            textRenderer.draw(tileLabel, (int) pt.x, (int) pt.y);
-        }
-        textRenderer.endRendering();
     }
 
     private void drawBoundingVolumes(DrawContext dc,
@@ -574,9 +572,8 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
     }
 
     public String getDefaultImageFormat() {
-        return !this.supportedImageFormats.isEmpty() ? this.supportedImageFormats
-            .get(0)
-            : null;
+        return this.supportedImageFormats.isEmpty() ? null : this.supportedImageFormats
+            .get(0);
     }
 
     private BufferedImage requestImage(MercatorTextureTile tile, String mimeType)
@@ -595,7 +592,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
             this.getDataFileStore().removeFile(url);
             String message = Logging.getMessage("generic.DataFileExpired", url);
             Logging.logger().fine(message);
-        }else {
+        } else {
             try {
                 File imageFile = new File(url.toURI());
                 BufferedImage image = ImageIO.read(imageFile);
@@ -622,7 +619,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
     }
 
     private void downloadImage(final MercatorTextureTile tile, String mimeType)
-        throws Exception {
+        throws Exception, MalformedURLException, RuntimeException {
         //        System.out.println(tile.getPath());
         final URL resourceURL = tile.getResourceURL(mimeType);
         Retriever retriever;
@@ -632,8 +629,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
         if ("http".equalsIgnoreCase(protocol)) {
             retriever = new HTTPRetriever(resourceURL, new HttpRetrievalPostProcessor(tile));
             retriever.set(URLRetriever.EXTRACT_ZIP_ENTRY, "true"); // supports legacy layers
-        }
-        else {
+        } else {
             String message = Logging
                 .getMessage("layers.TextureLayer.UnknownRetrievalProtocol",
                     resourceURL);
@@ -674,8 +670,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
 
         if (levelNumber < 0) {
             levelNumber = this.levels.getLastLevel().getLevelNumber();
-        }
-        else if (levelNumber > this.levels.getLastLevel().getLevelNumber()) {
+        } else if (levelNumber > this.levels.getLastLevel().getLevelNumber()) {
             Logging.logger().warning(
                 Logging.getMessage(
                     "generic.LevelRequestedGreaterThanMaxLevel",
@@ -837,7 +832,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
     }
 
     private BufferedImage getImage(MercatorTextureTile tile, String mimeType)
-        throws Exception {
+        throws Exception, URISyntaxException, RuntimeException {
         // Read the image from disk.
         BufferedImage image = this.requestImage(tile, mimeType);
         if (image != null)

@@ -43,14 +43,14 @@ public enum VPFDataType {
         this.name = name;
         this.length = length;
         this.dataBufferFactory = dataBufferFactory;
-        register(name, this);
+        VPFDataType.register(name, this);
     }
 
     private static void register(String name, VPFDataType type) {
-        if (nameRegistry == null)
-            nameRegistry = new HashMap<>();
+        if (VPFDataType.nameRegistry == null)
+            VPFDataType.nameRegistry = new HashMap<>();
 
-        nameRegistry.put(name, type);
+        VPFDataType.nameRegistry.put(name, type);
     }
 
     public static VPFDataType fromTypeName(String name) {
@@ -60,7 +60,7 @@ public enum VPFDataType {
             throw new IllegalArgumentException(message);
         }
 
-        return (nameRegistry != null) ? nameRegistry.get(name) : null;
+        return (VPFDataType.nameRegistry != null) ? VPFDataType.nameRegistry.get(name) : null;
     }
 
     public String getFieldName() {

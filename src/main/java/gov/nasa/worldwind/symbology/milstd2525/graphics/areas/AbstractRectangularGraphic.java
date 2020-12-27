@@ -117,14 +117,12 @@ public class AbstractRectangularGraphic extends AbstractMilStd2525TacticalGraphi
         if (SymbologyConstants.DISTANCE.equalsIgnoreCase(modifier)) {
             if (value instanceof Double) {
                 this.setWidth((Double) value);
-            }
-            else if (value instanceof Iterable) {
+            } else if (value instanceof Iterable) {
                 // Only use the first value of the iterable. This graphic uses two control points and a width.
                 Iterator iterator = ((Iterable) value).iterator();
                 this.setWidth((Double) iterator.next());
             }
-        }
-        else {
+        } else {
             super.setModifier(modifier, value);
         }
     }
@@ -174,7 +172,7 @@ public class AbstractRectangularGraphic extends AbstractMilStd2525TacticalGraphi
         Position pos2 = iterator.next();
 
         Angle angularDistance = LatLon.greatCircleDistance(pos1, pos2);
-        double length = angularDistance.radians * dc.getGlobe().getRadius();
+        double length = angularDistance.radians() * dc.getGlobe().getRadius();
 
         this.quad.setWidth(length);
     }

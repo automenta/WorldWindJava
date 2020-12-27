@@ -10,12 +10,10 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 
 /**
- * Common interface for surface conforming shapes such as {@link SurfacePolygon}, {@link
- * SurfacePolyline}, {@link SurfaceEllipse}, {@link
- * SurfaceQuad}, and {@link SurfaceSector}.
+ * Common interface for surface conforming shapes such as {@link SurfacePolygon}, {@link SurfacePolyline}, {@link
+ * SurfaceEllipse}, {@link SurfaceQuad}, and {@link SurfaceSector}.
  * <p>
- * SurfaceShape extends the {@link SurfaceObject} interface, and inherits SurfaceObject's
- * batch rendering capabilities.
+ * SurfaceShape extends the {@link SurfaceObject} interface, and inherits SurfaceObject's batch rendering capabilities.
  *
  * @author dcollins
  * @version $Id: SurfaceShape.java 2339 2014-09-22 18:22:37Z tgaskins $

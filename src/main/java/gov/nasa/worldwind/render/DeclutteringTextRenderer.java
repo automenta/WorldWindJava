@@ -34,7 +34,7 @@ public class DeclutteringTextRenderer {
     protected final GLU glu = new GLUgl2();
 
     // Flag indicating a JOGL text rendering problem. Set to avoid continual exception logging.
-    protected boolean hasJOGLv111Bug = false;
+    protected boolean hasJOGLv111Bug;
 
     protected static boolean isTextValid(GeographicText text, boolean checkPosition) {
         if (text == null || text.getText() == null)
@@ -44,7 +44,7 @@ public class DeclutteringTextRenderer {
     }
 
     public static Font getDefaultFont() {
-        return DEFAULT_FONT;
+        return DeclutteringTextRenderer.DEFAULT_FONT;
     }
 
     /**
@@ -56,6 +56,65 @@ public class DeclutteringTextRenderer {
      */
     public static TextRenderer getTextRenderer(DrawContext dc, Font font) {
         return OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(), font);
+    }
+
+    protected static void endRendering(DrawContext dc) {
+        if (dc == null) {
+            String msg = Logging.getMessage("nullValue.DrawContextIsNull");
+            Logging.logger().fine(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
+
+        gl.glMatrixMode(GL2.GL_PROJECTION);
+        gl.glPopMatrix();
+        gl.glMatrixMode(GL2.GL_MODELVIEW);
+        gl.glPopMatrix();
+        gl.glMatrixMode(GL2.GL_TEXTURE);
+        gl.glPopMatrix();
+
+        gl.glPopAttrib();
+    }
+
+    protected static void setDepthFunc(DrawContext dc, Vec4 screenPoint) {
+        GL gl = dc.getGL();
+
+        Position eyePos = dc.getView().getEyePosition();
+        if (eyePos == null) {
+            gl.glDepthFunc(GL.GL_ALWAYS);
+            return;
+        }
+
+        double altitude = eyePos.getElevation();
+        if (altitude < (dc.getGlobe().getMaxElevation() * dc.getVerticalExaggeration())) {
+            double depth = screenPoint.z - (8.0d * 0.00048875809d);
+            depth = depth < 0.0d ? 0.0d : (Math.min(depth, 1.0d));
+            gl.glDepthFunc(GL.GL_LESS);
+            gl.glDepthRange(depth, depth);
+        } else {
+            gl.glDepthFunc(GL.GL_ALWAYS);
+        }
+    }
+
+    /**
+     * Computes the final draw point for the given rectangle lower left corner and target screen point. If the returned
+     * point is <code>null</code> the text will not be drawn.
+     *
+     * @param rect        the text rectangle to draw.
+     * @param screenPoint the projected screen point the text relates to.
+     * @return the final draw point for the given rectangle lower left corner or <code>null</code>.
+     */
+    protected static Point.Float computeDrawPoint(Rectangle2D rect, Vec4 screenPoint) {
+        return new Point.Float((float) (screenPoint.x - rect.getWidth() / 2.0d), (float) (screenPoint.y));
+    }
+
+    protected static Color applyOpacity(Color color, double opacity) {
+        if (opacity >= 1)
+            return color;
+
+        float[] compArray = color.getRGBComponents(null);
+        return new Color(compArray[0], compArray[1], compArray[2], compArray[3] * (float) opacity);
     }
 
     /**
@@ -94,7 +153,7 @@ public class DeclutteringTextRenderer {
         while (iterator.hasNext()) {
             GeographicText text = iterator.next();
 
-            if (!isTextValid(text, true))
+            if (!DeclutteringTextRenderer.isTextValid(text, true))
                 continue;
 
             if (!text.isVisible())
@@ -170,25 +229,6 @@ public class DeclutteringTextRenderer {
         gl.glAlphaFunc(GL2.GL_GREATER, 0.001f);
     }
 
-    protected static void endRendering(DrawContext dc) {
-        if (dc == null) {
-            String msg = Logging.getMessage("nullValue.DrawContextIsNull");
-            Logging.logger().fine(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-
-        gl.glMatrixMode(GL2.GL_PROJECTION);
-        gl.glPopMatrix();
-        gl.glMatrixMode(GL2.GL_MODELVIEW);
-        gl.glPopMatrix();
-        gl.glMatrixMode(GL2.GL_TEXTURE);
-        gl.glPopMatrix();
-
-        gl.glPopAttrib();
-    }
-
     protected Vec4 drawText(DrawContext dc, DeclutterableText uText, double scale, double opacity) throws Exception {
         if (uText.getPoint() == null) {
             String msg = Logging.getMessage("nullValue.PointIsNull");
@@ -209,7 +249,7 @@ public class DeclutteringTextRenderer {
 
         Font font = geographicText.getFont();
         if (font == null)
-            font = DEFAULT_FONT;
+            font = DeclutteringTextRenderer.DEFAULT_FONT;
 
         TextRenderer textRenderer = DeclutteringTextRenderer.getTextRenderer(dc, font);
 
@@ -232,7 +272,7 @@ public class DeclutteringTextRenderer {
 
             Color color = geographicText.getColor();
             if (color == null)
-                color = DEFAULT_COLOR;
+                color = DeclutteringTextRenderer.DEFAULT_COLOR;
             color = DeclutteringTextRenderer.applyOpacity(color, opacity);
 
             Color background = geographicText.getBackgroundColor();
@@ -260,47 +300,6 @@ public class DeclutteringTextRenderer {
         return screenPoint;
     }
 
-    protected static void setDepthFunc(DrawContext dc, Vec4 screenPoint) {
-        GL gl = dc.getGL();
-
-        Position eyePos = dc.getView().getEyePosition();
-        if (eyePos == null) {
-            gl.glDepthFunc(GL.GL_ALWAYS);
-            return;
-        }
-
-        double altitude = eyePos.getElevation();
-        if (altitude < (dc.getGlobe().getMaxElevation() * dc.getVerticalExaggeration())) {
-            double depth = screenPoint.z - (8.0d * 0.00048875809d);
-            depth = depth < 0.0d ? 0.0d : (Math.min(depth, 1.0d));
-            gl.glDepthFunc(GL.GL_LESS);
-            gl.glDepthRange(depth, depth);
-        }
-        else {
-            gl.glDepthFunc(GL.GL_ALWAYS);
-        }
-    }
-
-    /**
-     * Computes the final draw point for the given rectangle lower left corner and target screen point. If the returned
-     * point is <code>null</code> the text will not be drawn.
-     *
-     * @param rect        the text rectangle to draw.
-     * @param screenPoint the projected screen point the text relates to.
-     * @return the final draw point for the given rectangle lower left corner or <code>null</code>.
-     */
-    protected static Point.Float computeDrawPoint(Rectangle2D rect, Vec4 screenPoint) {
-        return new Point.Float((float) (screenPoint.x - rect.getWidth() / 2.0d), (float) (screenPoint.y));
-    }
-
-    protected static Color applyOpacity(Color color, double opacity) {
-        if (opacity >= 1)
-            return color;
-
-        float[] compArray = color.getRGBComponents(null);
-        return new Color(compArray[0], compArray[1], compArray[2], compArray[3] * (float) opacity);
-    }
-
     protected Rectangle2D computeTextBounds(DrawContext dc, DeclutterableText text) throws Exception {
         GeographicText geographicText = text.getText();
 
@@ -326,7 +325,7 @@ public class DeclutteringTextRenderer {
 
             return bounds;
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             handleTextRendererExceptions(e);
             return null;
         }
@@ -340,8 +339,7 @@ public class DeclutteringTextRenderer {
                 Logging.logger().log(Level.SEVERE, "generic.ExceptionWhileRenderingText", e);
                 this.hasJOGLv111Bug = true;
             }
-        }
-        else {
+        } else {
             throw e;
         }
     }

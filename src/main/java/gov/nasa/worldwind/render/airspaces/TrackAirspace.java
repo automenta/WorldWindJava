@@ -54,6 +54,24 @@ public class TrackAirspace extends AbstractAirspace {
         this.smallAngleThreshold = source.smallAngleThreshold;
     }
 
+    /**
+     * Specifies whether the legs must have their adjacent edges joined. <code>leg1</code> must precede
+     * <code>leg2</code>. A track's legs must be joined when two adjacent legs share a common location. In this case,
+     * the geometry of the two adjacent boxes contains a gap on one side and an intersection on the other. Joining the
+     * legs modifies the edges of each leg at their common location to produce a seamless transition from the first leg
+     * to the second.
+     *
+     * @param leg1 the first leg.
+     * @param leg2 the second leg.
+     * @return <code>true</code> if the legs must be joined, otherwise <code>false</code>.
+     */
+    protected static boolean mustJoinLegs(
+        gov.nasa.worldwind.render.airspaces.Box leg1, gov.nasa.worldwind.render.airspaces.Box leg2) {
+        return leg1.getLocations()[1].equals(leg2.getLocations()[0]) // leg1 end == leg2 begin
+            && Arrays.equals(leg1.getAltitudes(), leg2.getAltitudes())
+            && Arrays.equals(leg1.isTerrainConforming(), leg2.isTerrainConforming());
+    }
+
     public List<gov.nasa.worldwind.render.airspaces.Box> getLegs() {
         return Collections.unmodifiableList(this.legs);
     }
@@ -75,7 +93,8 @@ public class TrackAirspace extends AbstractAirspace {
         this.setLegsOutOfDate(true);
     }
 
-    public gov.nasa.worldwind.render.airspaces.Box addLeg(LatLon start, LatLon end, double lowerAltitude, double upperAltitude,
+    public gov.nasa.worldwind.render.airspaces.Box addLeg(LatLon start, LatLon end, double lowerAltitude,
+        double upperAltitude,
         double leftWidth, double rightWidth) {
         if (start == null) {
             String message = "nullValue.StartIsNull";
@@ -271,8 +290,7 @@ public class TrackAirspace extends AbstractAirspace {
 
         if (trackLegs == null || trackLegs.isEmpty()) {
             return null;
-        }
-        else {
+        } else {
             Collection<gov.nasa.worldwind.geom.Box> extents = new ArrayList<>();
 
             for (Box leg : trackLegs) {
@@ -381,24 +399,6 @@ public class TrackAirspace extends AbstractAirspace {
     }
 
     /**
-     * Specifies whether the legs must have their adjacent edges joined. <code>leg1</code> must precede
-     * <code>leg2</code>. A track's legs must be joined when two adjacent legs share a common location. In this case,
-     * the geometry of the two adjacent boxes contains a gap on one side and an intersection on the other. Joining the
-     * legs modifies the edges of each leg at their common location to produce a seamless transition from the first leg
-     * to the second.
-     *
-     * @param leg1 the first leg.
-     * @param leg2 the second leg.
-     * @return <code>true</code> if the legs must be joined, otherwise <code>false</code>.
-     */
-    protected static boolean mustJoinLegs(
-        gov.nasa.worldwind.render.airspaces.Box leg1, gov.nasa.worldwind.render.airspaces.Box leg2) {
-        return leg1.getLocations()[1].equals(leg2.getLocations()[0]) // leg1 end == leg2 begin
-            && Arrays.equals(leg1.getAltitudes(), leg2.getAltitudes())
-            && Arrays.equals(leg1.isTerrainConforming(), leg2.isTerrainConforming());
-    }
-
-    /**
      * Modifies the adjacent edges of the specified adjacent legs to produce a seamless transition from the first leg to
      * the second. <code>leg1</code> must precede <code>leg2</code>, and they must share a common location at the end
      * of
@@ -410,7 +410,8 @@ public class TrackAirspace extends AbstractAirspace {
      * @param leg1 the first leg.
      * @param leg2 the second leg.
      */
-    protected void joinLegs(gov.nasa.worldwind.render.airspaces.Box leg1, gov.nasa.worldwind.render.airspaces.Box leg2) {
+    protected void joinLegs(gov.nasa.worldwind.render.airspaces.Box leg1,
+        gov.nasa.worldwind.render.airspaces.Box leg2) {
         LatLon[] locations1 = leg1.getLocations();
         LatLon[] locations2 = leg2.getLocations();
         Angle[] azimuths1 = leg1.getCornerAzimuths();
@@ -434,15 +435,13 @@ public class TrackAirspace extends AbstractAirspace {
             leg2.setEnableStartCap(widthsDifferent || this.isEnableInnerCaps());
             leg1.setCornerAzimuths(azimuths1[0], azimuths1[1], leftAzimuth, rightAzimuth); // end of first leg
             leg2.setCornerAzimuths(leftAzimuth, rightAzimuth, azimuths2[2], azimuths2[3]); // begin of second leg
-        }
-        else if (isLeftTurn) // left turn; align only the left side
+        } else if (isLeftTurn) // left turn; align only the left side
         {
             leg1.setEnableEndCap(true);
             leg2.setEnableStartCap(true);
             leg1.setCornerAzimuths(azimuths1[0], azimuths1[1], shortAngle, azimuths1[3]); // end left of first leg
             leg2.setCornerAzimuths(shortAngle, azimuths2[1], azimuths2[2], azimuths2[3]); // begin left of second leg
-        }
-        else // right turn; align only the right side
+        } else // right turn; align only the right side
         {
             leg1.setEnableEndCap(true);
             leg2.setEnableStartCap(true);

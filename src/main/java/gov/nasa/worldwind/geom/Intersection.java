@@ -77,8 +77,9 @@ public final class Intersection // Instances are immutable
      * @param listB    the second list of intersections.
      * @return the merged list of intersections, sorted by increasing distance from the reference point.
      */
-    public static List<Intersection> sort(final Vec4 refPoint, Collection<Intersection> listA, Collection<Intersection> listB) {
-        final int s = (listA!=null ? sizeEstimate(listA) : 0) + (listB!=null ? sizeEstimate(listB) : 0);
+    public static List<Intersection> sort(final Vec4 refPoint, Collection<Intersection> listA,
+        Collection<Intersection> listB) {
+        final int s = (listA != null ? sizeEstimate(listA) : 0) + (listB != null ? sizeEstimate(listB) : 0);
 
         List<Intersection> sorted = new ArrayList<>(s);
 

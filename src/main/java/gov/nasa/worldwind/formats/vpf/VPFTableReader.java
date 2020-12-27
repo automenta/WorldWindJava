@@ -89,7 +89,7 @@ public class VPFTableReader {
         RecordIndex recordIndex = null;
         // Attempt to find a variable-length record index according to the file naming convention in
         // DIGEST Part 2 Annex C.2.3.1.2
-        File recordIndexFile = new File(file.getParent(), getRecordIndexFilename(file.getName()));
+        File recordIndexFile = new File(file.getParent(), VPFTableReader.getRecordIndexFilename(file.getName()));
         if (recordIndexFile.exists())
             recordIndex = VPFTableReader.readRecordIndex(recordIndexFile);
         // If the record index is null, then attempt to compute it from the header's column definitions.
@@ -166,7 +166,7 @@ public class VPFTableReader {
 
         s = VPFUtils.readDelimitedText(buffer, ',');
         if (s != null)
-            col.numElements = parseNumElements(s);
+            col.numElements = VPFTableReader.parseNumElements(s);
 
         s = VPFUtils.readDelimitedText(buffer, ',');
         if (s != null)

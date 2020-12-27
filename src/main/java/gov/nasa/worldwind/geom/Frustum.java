@@ -157,7 +157,7 @@ public class Frustum {
             Logging.logger().fine(message);
             throw new IllegalArgumentException(message);
         }
-        double fov = horizontalFieldOfView.getDegrees();
+        double fov = horizontalFieldOfView.degrees;
         double farMinusNear = far - near;
         String message = null;
         if (fov <= 0 || fov > 180)
@@ -284,14 +284,14 @@ public class Frustum {
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("(");
+        sb.append('(');
         sb.append("left=").append(this.left);
         sb.append(", right=").append(this.right);
         sb.append(", bottom=").append(this.bottom);
         sb.append(", top=").append(this.top);
         sb.append(", near=").append(this.near);
         sb.append(", far=").append(this.far);
-        sb.append(")");
+        sb.append(')');
         return sb.toString();
     }
 

@@ -22,18 +22,18 @@ public class UserFacingIcon extends AVListImpl implements WWIcon, Movable, Dragg
     protected BasicWWTexture imageTexture;
     protected BasicWWTexture backgroundTexture;
     protected boolean dragEnabled = true;
-    protected DraggableSupport draggableSupport = null;
+    protected DraggableSupport draggableSupport;
     //    private final String iconPath;
     private Position iconPosition; // may be null because placement may be relative
     private Dimension iconSize; // may be null to indicate "use native image size"
-    private boolean isHighlighted = false;
+    private boolean isHighlighted;
     private boolean isVisible = true;
     private double highlightScale = 1.2; // TODO: make configurable
     private String toolTipText;
     private Font toolTipFont;
     private Vec4 toolTipOffset;
-    private boolean showToolTip = false;
-    private boolean alwaysOnTop = false;
+    private boolean showToolTip;
+    private boolean alwaysOnTop;
     private Color textColor;
     private double backgroundScale;
 
@@ -186,8 +186,7 @@ public class UserFacingIcon extends AVListImpl implements WWIcon, Movable, Dragg
         if (background != null) {
             this.backgroundTexture = new BasicWWTexture(background, true);
             this.backgroundTexture.setUseAnisotropy(false);
-        }
-        else
+        } else
             this.backgroundTexture = null;
     }
 
@@ -355,7 +354,7 @@ public class UserFacingIcon extends AVListImpl implements WWIcon, Movable, Dragg
         try {
             restorableSupport = RestorableSupport.parse(stateInXml);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             // Parsing the document specified by stateInXml failed.
             String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", stateInXml);
             Logging.logger().severe(message);

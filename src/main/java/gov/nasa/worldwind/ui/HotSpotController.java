@@ -16,16 +16,15 @@ import java.awt.*;
 import java.awt.event.*;
 
 /**
- * Controller to forward selection, keyboard, and mouse events on the WorldWindow to the active {@link
- * HotSpot}. The active HotSpot is updated on {@link SelectEvent#ROLLOVER}
- * select events, but not during a drag operation. This ensures that the active HotSpot remains active while it's being
- * dragged, regardless of what's under the cursor.
+ * Controller to forward selection, keyboard, and mouse events on the WorldWindow to the active {@link HotSpot}. The
+ * active HotSpot is updated on {@link SelectEvent#ROLLOVER} select events, but not during a drag operation. This
+ * ensures that the active HotSpot remains active while it's being dragged, regardless of what's under the cursor.
  * <p>
  * The active HotSpot is updated during non-drag rollover select events as follows: <ul> <li>The select event's top
- * picked object, if the top picked object implements {@link HotSpot}.</li> <li>The value for
- * {@code SelectEvent.getTopPickedObject().getValue(AVKey.HOT_SPOT)},if the value for key {@link
- * AVKey#HOT_SPOT} implements HotSpot.</li> <li>{@code null} if neither of the above
- * conditions are true, or if the event is {@code null}.</li> </ul>
+ * picked object, if the top picked object implements {@link HotSpot}.</li> <li>The value for {@code
+ * SelectEvent.getTopPickedObject().getValue(AVKey.HOT_SPOT)},if the value for key {@link AVKey#HOT_SPOT} implements
+ * HotSpot.</li> <li>{@code null} if neither of the above conditions are true, or if the event is {@code null}.</li>
+ * </ul>
  *
  * @author pabercrombie
  * @version $Id: HotSpotController.java 1534 2013-08-07 04:32:22Z pabercrombie $
@@ -33,7 +32,7 @@ import java.awt.event.*;
 public class HotSpotController implements SelectListener, MouseMotionListener {
     protected final WorldWindow wwd;
     protected HotSpot activeHotSpot;
-    protected boolean dragging = false;
+    protected boolean dragging;
     /**
      * Indicates that the active HotSpot has set a custom cursor that must be reset when the HotSpot is deactivated.
      */
@@ -52,11 +51,11 @@ public class HotSpotController implements SelectListener, MouseMotionListener {
     }
 
     /**
-     * Updates the active {@link HotSpot} if necessary, and forwards the select event to the
-     * active HotSpot. This does nothing if the select event is {@code null}.
+     * Updates the active {@link HotSpot} if necessary, and forwards the select event to the active HotSpot. This does
+     * nothing if the select event is {@code null}.
      * <p>
-     * This forwards the select event to {@link #doSelected(SelectEvent)}, and catches and logs
-     * any exceptions thrown by {@code doSelected}.
+     * This forwards the select event to {@link #doSelected(SelectEvent)}, and catches and logs any exceptions thrown by
+     * {@code doSelected}.
      *
      * @param event A select event on the WorldWindow we're monitoring.
      */
@@ -66,7 +65,8 @@ public class HotSpotController implements SelectListener, MouseMotionListener {
 
         try {
             this.doSelected(event);
-        } catch (Exception e) {
+        }
+        catch (RuntimeException e) {
             // Wrap the handler in a try/catch to keep exceptions from bubbling up.
             Logging.logger().warning(e.getMessage() != null ? e.getMessage() : e.toString());
         }
@@ -75,9 +75,9 @@ public class HotSpotController implements SelectListener, MouseMotionListener {
     /**
      * Updates the active {@link HotSpot} depending on the specified select event action: <ul>
      * <li>{@link SelectEvent#DRAG_END} - Forwards the event to the active {@link
-     * HotSpot}, then updates the active HotSpot.</li> <li>{@link
-     * SelectEvent#ROLLOVER} while not dragging - Updates the active HotSpot, then forwards the
-     * event to the active HotSpot.</li> <li>Other event types - forwards the event to the active HotSpot</li> </ul>
+     * HotSpot}, then updates the active HotSpot.</li> <li>{@link SelectEvent#ROLLOVER} while not dragging - Updates the
+     * active HotSpot, then forwards the event to the active HotSpot.</li> <li>Other event types - forwards the event to
+     * the active HotSpot</li> </ul>
      *
      * @param event A select event on the WorldWindow we're monitoring.
      */
@@ -97,8 +97,7 @@ public class HotSpotController implements SelectListener, MouseMotionListener {
             PickedObject po = list != null ? list.getTopPickedObject() : null;
 
             this.updateActiveHotSpot(po);
-        }
-        else if (!this.isDragging() && (event.isRollover() || event.isLeftPress())) {
+        } else if (!this.isDragging() && (event.isRollover() || event.isLeftPress())) {
             // Update the active HotSpot and the currently displayed cursor on drag end events, and on rollover and left
             // press events when we're not dragging. This ensures that the active HotSpot remains active while it's
             // being dragged, regardless of what's under the cursor. It's necessary to do this on left press to handle
@@ -118,8 +117,7 @@ public class HotSpotController implements SelectListener, MouseMotionListener {
                 activeHotSpot.accept(event);
                 //noinspection ConstantConditions
                 this.setDragging(event.isConsumed() && !wasConsumed);
-            }
-            else if (!event.isDragEnd()) {
+            } else if (!event.isDragEnd()) {
                 // Forward all other the select event (except drag end) to the active HotSpot. We ignore drag end events
                 // because we've already forwarded them to the previously active HotSpot in the logic above.
                 activeHotSpot.accept(event);
@@ -166,8 +164,7 @@ public class HotSpotController implements SelectListener, MouseMotionListener {
     }
 
     /**
-     * Returns the currently active {@link HotSpot}, or {@code null} if there is no active
-     * HotSpot.
+     * Returns the currently active {@link HotSpot}, or {@code null} if there is no active HotSpot.
      *
      * @return The currently active HotSpot, or {@code null}.
      */
@@ -176,11 +173,11 @@ public class HotSpotController implements SelectListener, MouseMotionListener {
     }
 
     /**
-     * Sets the active {@link HotSpot} to the specified HotSpot. The HotSpot may be {@code
-     * null}, indicating that there is no active HotSpot. This registers the new HotSpot as key listener, mouse
-     * listener, mouse motion listener, and mouse wheel listener on the WorldWindow's {@link
-     * InputHandler}. This removes the previously active HotSpot as a listener on the World
-     * Window's InputHandler. This does nothing if the active HotSpot and the specified HotSpot are the same object.
+     * Sets the active {@link HotSpot} to the specified HotSpot. The HotSpot may be {@code null}, indicating that there
+     * is no active HotSpot. This registers the new HotSpot as key listener, mouse listener, mouse motion listener, and
+     * mouse wheel listener on the WorldWindow's {@link InputHandler}. This removes the previously active HotSpot as a
+     * listener on the World Window's InputHandler. This does nothing if the active HotSpot and the specified HotSpot
+     * are the same object.
      * <p> Additionally, this updates the WorldWindow's {@link Cursor} to the value returned by {@code
      * hotSpot.getCursor()}, or {@code null} if the specified hotSpot is {@code null}.
      *
@@ -233,23 +230,20 @@ public class HotSpotController implements SelectListener, MouseMotionListener {
     }
 
     /**
-     * Updates the active {@link HotSpot} and the currently displayed cursor according to the
-     * picked objects in the specified event. The active HotSpot is assigned as follows: <ul> <li>The value for {@code
-     * event.getTopPickedObject().getValue(AVKey.HOT_SPOT)}, if the value for the key {@link
-     * AVKey#HOT_SPOT} implements HotSpot.</li> <li>The event's top picked object, if the top
-     * picked object implements HotSpot.</li> <li>{@code null} if neither of the above conditions are true, or if the
-     * event is {@code null}.</li> </ul>
+     * Updates the active {@link HotSpot} and the currently displayed cursor according to the picked objects in the
+     * specified event. The active HotSpot is assigned as follows: <ul> <li>The value for {@code
+     * event.getTopPickedObject().getValue(AVKey.HOT_SPOT)}, if the value for the key {@link AVKey#HOT_SPOT} implements
+     * HotSpot.</li> <li>The event's top picked object, if the top picked object implements HotSpot.</li> <li>{@code
+     * null} if neither of the above conditions are true, or if the event is {@code null}.</li> </ul>
      *
      * @param po Top picked object, which will provide the active HotSpot.
      */
     protected void updateActiveHotSpot(PickedObject po) {
         if (po != null && po.get(AVKey.HOT_SPOT) instanceof HotSpot) {
             this.setActiveHotSpot((HotSpot) po.get(AVKey.HOT_SPOT));
-        }
-        else if (po != null && po.get() instanceof HotSpot) {
+        } else if (po != null && po.get() instanceof HotSpot) {
             this.setActiveHotSpot((HotSpot) po.get());
-        }
-        else {
+        } else {
             this.setActiveHotSpot(null);
         }
     }

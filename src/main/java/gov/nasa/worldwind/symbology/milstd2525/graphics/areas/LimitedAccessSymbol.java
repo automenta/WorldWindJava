@@ -63,6 +63,16 @@ public class LimitedAccessSymbol extends AbstractTacticalSymbol {
             super(retrieverPath);
         }
 
+        /**
+         * Indicates the color to apply to a graphic based on the graphic's standard identity.
+         *
+         * @param code Symbol code that identifies the graphic.
+         * @return Color to apply based on the standard identity. (Red for hostile entities, black for friendly, etc.)
+         */
+        protected static Color getColorForStandardIdentity(SymbolCode code) {
+            return MilStd2525Util.getDefaultGraphicMaterial(code).getDiffuse();
+        }
+
         @Override
         public BufferedImage createIcon(String symbolId, AVList params) {
             if (symbolId == null) {
@@ -138,16 +148,6 @@ public class LimitedAccessSymbol extends AbstractTacticalSymbol {
 
             Object o = params.get(AVKey.COLOR);
             return (o instanceof Color) ? (Color) o : null;
-        }
-
-        /**
-         * Indicates the color to apply to a graphic based on the graphic's standard identity.
-         *
-         * @param code Symbol code that identifies the graphic.
-         * @return Color to apply based on the standard identity. (Red for hostile entities, black for friendly, etc.)
-         */
-        protected static Color getColorForStandardIdentity(SymbolCode code) {
-            return MilStd2525Util.getDefaultGraphicMaterial(code).getDiffuse();
         }
     }
 }

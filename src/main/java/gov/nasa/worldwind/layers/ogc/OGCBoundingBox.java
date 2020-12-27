@@ -7,6 +7,7 @@
 package gov.nasa.worldwind.layers.ogc;
 
 ////.*;
+
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.util.xml.*;
 
@@ -66,33 +67,27 @@ public class OGCBoundingBox extends AbstractXMLEventParser {
                 String s = attr.getValue();
                 if (s != null)
                     this.setCRS(s);
-            }
-            else if (attr.getName().getLocalPart().equals("minx") && attr.getValue() != null) {
+            } else if (attr.getName().getLocalPart().equals("minx") && attr.getValue() != null) {
                 Double d = WWUtil.convertStringToDouble(attr.getValue());
                 if (d != null)
                     this.setMinx(d);
-            }
-            else if (attr.getName().getLocalPart().equals("miny") && attr.getValue() != null) {
+            } else if (attr.getName().getLocalPart().equals("miny") && attr.getValue() != null) {
                 Double d = WWUtil.convertStringToDouble(attr.getValue());
                 if (d != null)
                     this.setMiny(d);
-            }
-            else if (attr.getName().getLocalPart().equals("maxx") && attr.getValue() != null) {
+            } else if (attr.getName().getLocalPart().equals("maxx") && attr.getValue() != null) {
                 Double d = WWUtil.convertStringToDouble(attr.getValue());
                 if (d != null)
                     this.setMaxx(d);
-            }
-            else if (attr.getName().getLocalPart().equals("maxy") && attr.getValue() != null) {
+            } else if (attr.getName().getLocalPart().equals("maxy") && attr.getValue() != null) {
                 Double d = WWUtil.convertStringToDouble(attr.getValue());
                 if (d != null)
                     this.setMaxy(d);
-            }
-            else if (attr.getName().getLocalPart().equals("resx") && attr.getValue() != null) {
+            } else if (attr.getName().getLocalPart().equals("resx") && attr.getValue() != null) {
                 Double d = WWUtil.convertStringToDouble(attr.getValue());
                 if (d != null)
                     this.setResx(d);
-            }
-            else if (attr.getName().getLocalPart().equals("resy") && attr.getValue() != null) {
+            } else if (attr.getName().getLocalPart().equals("resy") && attr.getValue() != null) {
                 Double d = WWUtil.convertStringToDouble(attr.getValue());
                 if (d != null)
                     this.setResy(d);

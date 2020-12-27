@@ -24,9 +24,8 @@ import java.awt.*;
  * a good example of when it is appropriate to use OGLRenderToTextureSupport. Fore more information on the pre-render
  * stage, see {@link PreRenderable} and {@link gov.nasa.worldwind.layers.Layer#preRender(DrawContext)}.
  * <b>Note:</b> In order to achieve consistent results across all platforms, it is essential to clear the texture's
- * contents before rendering anything into the texture. Do this by invoking {@link
- * #clear(DrawContext, Color)} immediately after any call to {@link
- * #beginRendering(DrawContext, int, int, int, int)}.
+ * contents before rendering anything into the texture. Do this by invoking {@link #clear(DrawContext, Color)}
+ * immediately after any call to {@link #beginRendering(DrawContext, int, int, int, int)}.
  * <p>
  * The common usage pattern for OGLRenderToTextureSupport is as follows: <br><code> DrawContext dc = ...; // Typically
  * passed in as an argument to the containing method.<br> Texture texture = TextureIO.newTexture(new
@@ -74,6 +73,89 @@ public class OGLRenderToTextureSupport {
             case GL.GL_FRAMEBUFFER_UNSUPPORTED -> Logging.getMessage("OGL.FramebufferUnsupported");
             default -> null;
         };
+    }
+
+    protected static void copyScreenPixelsToTexture(DrawContext dc, int x, int y, int width, int height,
+        Texture texture) {
+        int w = width;
+        int h = height;
+
+        // If the lower left corner of the region to copy is outside of the texture bounds, then exit and do nothing.
+        if (x >= texture.getWidth() || y >= texture.getHeight())
+            return;
+
+        // Limit the dimensions of the region to copy so they fit into the texture's dimensions.
+        if (w > texture.getWidth())
+            w = texture.getWidth();
+        if (h > texture.getHeight())
+            h = texture.getHeight();
+
+        GL gl = dc.getGL();
+
+        try {
+            // We want to copy the contents of the current GL read buffer to the specified texture target. However we do
+            // not want to change any of the texture creation parameters (e.g. dimensions, internal format, border).
+            // Therefore we use glCopyTexSubImage2D() to copy a region of the read buffer to a region of the texture.
+            // glCopyTexSubImage2D() has two key features:
+            // 1. Does not change the texture creation parameters. We want to upload a new region of data without
+            //    changing the textures' defining parameters.
+            // 2. Enables specification of a destination (x, y) offset in texels. This offset corresponds to the
+            //    viewport (x, y) specified by the caller in beginRendering().
+            texture.enable(gl);
+            texture.bind(gl);
+            gl.glCopyTexSubImage2D(
+                texture.getTarget(), // target
+                0,                   // level
+                x, y,                // xoffset, yoffset
+                x, y, w, h);         // x, y, width, height
+        }
+        finally {
+            texture.disable(gl);
+        }
+    }
+
+    protected static void updateMipmaps(DrawContext dc, Texture texture) {
+        GL gl = dc.getGL();
+
+        try {
+            texture.enable(gl);
+            texture.bind(gl);
+            gl.glGenerateMipmap(texture.getTarget());
+        }
+        finally {
+            texture.disable(gl);
+        }
+    }
+
+    protected static void bindFramebufferColorAttachment(DrawContext dc, Texture texture) {
+        GL gl = dc.getGL();
+
+        // Attach the texture as color attachment 0 to the framebuffer.
+        if (texture != null) {
+            gl.glFramebufferTexture2D(GL.GL_FRAMEBUFFER, GL.GL_COLOR_ATTACHMENT0, GL.GL_TEXTURE_2D,
+                texture.getTextureObject(gl), 0);
+            OGLRenderToTextureSupport.checkFramebufferStatus(dc);
+        }
+        // If the texture is null, detach color attachment 0 from the framebuffer.
+        else {
+            gl.glFramebufferTexture2D(GL.GL_FRAMEBUFFER, GL.GL_COLOR_ATTACHMENT0, GL.GL_TEXTURE_2D, 0, 0);
+        }
+    }
+
+    protected static void checkFramebufferStatus(DrawContext dc) {
+        int status = dc.getGL().glCheckFramebufferStatus(GL.GL_FRAMEBUFFER);
+
+        switch (status) {
+            // Framebuffer is configured correctly and supported on this hardware.
+            case GL.GL_FRAMEBUFFER_COMPLETE:
+                break;
+            // Framebuffer is configured correctly, but not supported on this hardware.
+            case GL.GL_FRAMEBUFFER_UNSUPPORTED:
+                throw new IllegalStateException(OGLRenderToTextureSupport.getFramebufferStatusString(status));
+                // Framebuffer is configured incorrectly. This should never happen, but we check anyway.
+            default:
+                throw new IllegalStateException(OGLRenderToTextureSupport.getFramebufferStatusString(status));
+        }
     }
 
     /**
@@ -263,8 +345,8 @@ public class OGLRenderToTextureSupport {
 
     /**
      * Flushes any buffered pixel values to the appropriate texure targets, then restores the GL state to its previous
-     * configuration before {@link #beginRendering(DrawContext, int, int, int, int)} was
-     * called. Finally, all texture targets associated with this OGLRenderToTextureSupport are unbound.
+     * configuration before {@link #beginRendering(DrawContext, int, int, int, int)} was called. Finally, all texture
+     * targets associated with this OGLRenderToTextureSupport are unbound.
      *
      * @param dc the current DrawContext.
      * @throws IllegalArgumentException if the DrawContext is null.
@@ -317,58 +399,6 @@ public class OGLRenderToTextureSupport {
         }
     }
 
-    protected static void copyScreenPixelsToTexture(DrawContext dc, int x, int y, int width, int height,
-        Texture texture) {
-        int w = width;
-        int h = height;
-
-        // If the lower left corner of the region to copy is outside of the texture bounds, then exit and do nothing.
-        if (x >= texture.getWidth() || y >= texture.getHeight())
-            return;
-
-        // Limit the dimensions of the region to copy so they fit into the texture's dimensions.
-        if (w > texture.getWidth())
-            w = texture.getWidth();
-        if (h > texture.getHeight())
-            h = texture.getHeight();
-
-        GL gl = dc.getGL();
-
-        try {
-            // We want to copy the contents of the current GL read buffer to the specified texture target. However we do
-            // not want to change any of the texture creation parameters (e.g. dimensions, internal format, border).
-            // Therefore we use glCopyTexSubImage2D() to copy a region of the read buffer to a region of the texture.
-            // glCopyTexSubImage2D() has two key features:
-            // 1. Does not change the texture creation parameters. We want to upload a new region of data without
-            //    changing the textures' defining parameters.
-            // 2. Enables specification of a destination (x, y) offset in texels. This offset corresponds to the
-            //    viewport (x, y) specified by the caller in beginRendering().
-            texture.enable(gl);
-            texture.bind(gl);
-            gl.glCopyTexSubImage2D(
-                texture.getTarget(), // target
-                0,                   // level
-                x, y,                // xoffset, yoffset
-                x, y, w, h);         // x, y, width, height
-        }
-        finally {
-            texture.disable(gl);
-        }
-    }
-
-    protected static void updateMipmaps(DrawContext dc, Texture texture) {
-        GL gl = dc.getGL();
-
-        try {
-            texture.enable(gl);
-            texture.bind(gl);
-            gl.glGenerateMipmap(texture.getTarget());
-        }
-        finally {
-            texture.disable(gl);
-        }
-    }
-
     protected boolean useFramebufferObject(DrawContext dc) {
         return this.isEnableFramebufferObject() && dc.getGLRuntimeCapabilities().isUseFramebufferObject();
     }
@@ -393,43 +423,12 @@ public class OGLRenderToTextureSupport {
         // Binding framebuffer object 0 (the default) causes GL operations to operate on the window system attached
         // framebuffer.
 
-        int[] framebuffers = new int[] {this.framebufferObject};
+        int[] framebuffers = {this.framebufferObject};
 
         GL gl = dc.getGL();
         gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
         gl.glDeleteFramebuffers(1, framebuffers, 0);
 
         this.framebufferObject = 0;
-    }
-
-    protected static void bindFramebufferColorAttachment(DrawContext dc, Texture texture) {
-        GL gl = dc.getGL();
-
-        // Attach the texture as color attachment 0 to the framebuffer.
-        if (texture != null) {
-            gl.glFramebufferTexture2D(GL.GL_FRAMEBUFFER, GL.GL_COLOR_ATTACHMENT0, GL.GL_TEXTURE_2D,
-                texture.getTextureObject(gl), 0);
-            OGLRenderToTextureSupport.checkFramebufferStatus(dc);
-        }
-        // If the texture is null, detach color attachment 0 from the framebuffer.
-        else {
-            gl.glFramebufferTexture2D(GL.GL_FRAMEBUFFER, GL.GL_COLOR_ATTACHMENT0, GL.GL_TEXTURE_2D, 0, 0);
-        }
-    }
-
-    protected static void checkFramebufferStatus(DrawContext dc) {
-        int status = dc.getGL().glCheckFramebufferStatus(GL.GL_FRAMEBUFFER);
-
-        switch (status) {
-            // Framebuffer is configured correctly and supported on this hardware.
-            case GL.GL_FRAMEBUFFER_COMPLETE:
-                break;
-            // Framebuffer is configured correctly, but not supported on this hardware.
-            case GL.GL_FRAMEBUFFER_UNSUPPORTED:
-                throw new IllegalStateException(getFramebufferStatusString(status));
-                // Framebuffer is configured incorrectly. This should never happen, but we check anyway.
-            default:
-                throw new IllegalStateException(getFramebufferStatusString(status));
-        }
     }
 }

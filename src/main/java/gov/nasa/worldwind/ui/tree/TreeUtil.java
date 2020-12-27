@@ -39,7 +39,7 @@ public class TreeUtil {
         pickSupport.addPickableObject(colorCode, pickedObject);
         gl.glColor3ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
 
-        drawRect(gl, bounds);
+        TreeUtil.drawRect(gl, bounds);
     }
 
     /**
@@ -66,8 +66,7 @@ public class TreeUtil {
             OGLUtil.applyColor(gl, color2, opacity, false);
             gl.glVertex2d(bounds.getMaxX(), bounds.getMinY());
             gl.glVertex2d(bounds.getMaxX(), bounds.getMaxY());
-        }
-        else {
+        } else {
             OGLUtil.applyColor(gl, color1, opacity, false);
             gl.glVertex2d(bounds.getMaxX(), bounds.getMaxY());
             gl.glVertex2d(bounds.getMinX(), bounds.getMaxY());

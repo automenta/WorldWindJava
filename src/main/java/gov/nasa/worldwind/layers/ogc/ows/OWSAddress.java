@@ -58,24 +58,20 @@ public class OWSAddress extends AbstractXMLEventParser {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.deliveryPoints.add(s);
-        }
-        else if (ctx.isStartElement(event, "PostalCode") || ctx.isStartElement(event, "postalCode")) {
+        } else if (ctx.isStartElement(event, "PostalCode") || ctx.isStartElement(event, "postalCode")) {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.postalCodes.add(s);
-        }
-        else if (ctx.isStartElement(event, "Country") || ctx.isStartElement(event, "country")) {
+        } else if (ctx.isStartElement(event, "Country") || ctx.isStartElement(event, "country")) {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.countries.add(s);
-        }
-        else if (ctx.isStartElement(event, "ElectronicMailAddress")
+        } else if (ctx.isStartElement(event, "ElectronicMailAddress")
             || ctx.isStartElement(event, "electronicMailAddress")) {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.emails.add(s);
-        }
-        else {
+        } else {
             super.doParseEventContent(ctx, event, args);
         }
     }

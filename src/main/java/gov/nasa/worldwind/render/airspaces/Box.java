@@ -32,17 +32,17 @@ public class Box extends AbstractAirspace {
     private LatLon endLocation = LatLon.ZERO;
     private double leftWidth = 1.0;
     private double rightWidth = 1.0;
-    private Angle beginLeftAzimuth = null;
-    private Angle beginRightAzimuth = null;
-    private Angle endLeftAzimuth = null;
-    private Angle endRightAzimuth = null;
+    private Angle beginLeftAzimuth;
+    private Angle beginRightAzimuth;
+    private Angle endLeftAzimuth;
+    private Angle endRightAzimuth;
     private boolean enableStartCap = true;
     private boolean enableEndCap = true;
     private boolean enableCenterLine;
 
-    private boolean forceCullFace = false;
-    private int pillars = DEFAULT_PILLARS;
-    private int stacks = DEFAULT_STACKS;
+    private boolean forceCullFace;
+    private int pillars = Box.DEFAULT_PILLARS;
+    private int stacks = Box.DEFAULT_STACKS;
 
     private Object geometryCacheKey = new Object();
 
@@ -102,39 +102,57 @@ public class Box extends AbstractAirspace {
         this.makeDefaultDetailLevels();
     }
 
+    protected static int getHeightStacks() {
+        return 1;
+    }
+
+    private static void appendLocations(LatLon begin, LatLon middle, LatLon end, int numSegments,
+        Collection<LatLon> result) {
+        for (int i = 0; i <= numSegments; i++) {
+            double amount = (double) i / numSegments;
+            result.add(LatLon.interpolateGreatCircle(amount, begin, middle));
+        }
+
+        for (int i = 1; i <= numSegments; i++) // skip the first segment, it's already covered in the above loop
+        {
+            double amount = (double) i / numSegments;
+            result.add(LatLon.interpolateGreatCircle(amount, middle, end));
+        }
+    }
+
     private void makeDefaultDetailLevels() {
         Collection<DetailLevel> levels = new ArrayList<>();
         double[] ramp = ScreenSizeDetailLevel.computeDefaultScreenSizeRamp(5);
 
         DetailLevel level;
         level = new ScreenSizeDetailLevel(ramp[0], "Detail-Level-0");
-        level.set(PILLARS, 8);
-        level.set(STACKS, 2);
-        level.set(DISABLE_TERRAIN_CONFORMANCE, false);
+        level.set(AbstractAirspace.PILLARS, 8);
+        level.set(AbstractAirspace.STACKS, 2);
+        level.set(AbstractAirspace.DISABLE_TERRAIN_CONFORMANCE, false);
         levels.add(level);
 
         level = new ScreenSizeDetailLevel(ramp[1], "Detail-Level-1");
-        level.set(PILLARS, 6);
-        level.set(STACKS, 2);
-        level.set(DISABLE_TERRAIN_CONFORMANCE, false);
+        level.set(AbstractAirspace.PILLARS, 6);
+        level.set(AbstractAirspace.STACKS, 2);
+        level.set(AbstractAirspace.DISABLE_TERRAIN_CONFORMANCE, false);
         levels.add(level);
 
         level = new ScreenSizeDetailLevel(ramp[2], "Detail-Level-2");
-        level.set(PILLARS, 4);
-        level.set(STACKS, 2);
-        level.set(DISABLE_TERRAIN_CONFORMANCE, false);
+        level.set(AbstractAirspace.PILLARS, 4);
+        level.set(AbstractAirspace.STACKS, 2);
+        level.set(AbstractAirspace.DISABLE_TERRAIN_CONFORMANCE, false);
         levels.add(level);
 
         level = new ScreenSizeDetailLevel(ramp[3], "Detail-Level-3");
-        level.set(PILLARS, 2);
-        level.set(STACKS, 1);
-        level.set(DISABLE_TERRAIN_CONFORMANCE, false);
+        level.set(AbstractAirspace.PILLARS, 2);
+        level.set(AbstractAirspace.STACKS, 1);
+        level.set(AbstractAirspace.DISABLE_TERRAIN_CONFORMANCE, false);
         levels.add(level);
 
         level = new ScreenSizeDetailLevel(ramp[4], "Detail-Level-4");
-        level.set(PILLARS, 1);
-        level.set(STACKS, 1);
-        level.set(DISABLE_TERRAIN_CONFORMANCE, true);
+        level.set(AbstractAirspace.PILLARS, 1);
+        level.set(AbstractAirspace.STACKS, 1);
+        level.set(AbstractAirspace.DISABLE_TERRAIN_CONFORMANCE, true);
         levels.add(level);
 
         this.setDetailLevels(levels);
@@ -270,7 +288,7 @@ public class Box extends AbstractAirspace {
 
     @Override
     protected List<Vec4> computeMinimalGeometry(Globe globe, double verticalExaggeration) {
-        List<LatLon> locations = this.makeCapLocations(globe, DEFAULT_PILLARS, DEFAULT_STACKS);
+        List<LatLon> locations = this.makeCapLocations(globe, Box.DEFAULT_PILLARS, Box.DEFAULT_STACKS);
         List<Vec4> points = new ArrayList<>();
         this.makeExtremePoints(globe, verticalExaggeration, locations, points);
 
@@ -334,8 +352,8 @@ public class Box extends AbstractAirspace {
         LatLon[] locations = this.getLocations();
         int count = locations.length;
         for (int i = 0; i < count; i++) {
-            double distance = LatLon.greatCircleDistance(oldRef, locations[i]).radians;
-            double azimuth = LatLon.greatCircleAzimuth(oldRef, locations[i]).radians;
+            double distance = LatLon.greatCircleDistance(oldRef, locations[i]).radians();
+            double azimuth = LatLon.greatCircleAzimuth(oldRef, locations[i]).radians();
             locations[i] = LatLon.greatCircleEndPosition(newRef, azimuth, distance);
         }
         this.setLocations(locations[0], locations[1]);
@@ -367,6 +385,10 @@ public class Box extends AbstractAirspace {
         return this.stacks;
     }
 
+    //**************************************************************//
+    //********************  Geometry Rendering  ********************//
+    //**************************************************************//
+
     protected void setStacks(int stacks) {
         if (stacks < 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "stacks=" + stacks);
@@ -376,14 +398,6 @@ public class Box extends AbstractAirspace {
 
         this.stacks = stacks;
     }
-
-    protected static int getHeightStacks() {
-        return 1;
-    }
-
-    //**************************************************************//
-    //********************  Geometry Rendering  ********************//
-    //**************************************************************//
 
     protected Vec4 computeReferenceCenter(DrawContext dc) {
         Extent extent = this.getExtent(dc);
@@ -410,15 +424,15 @@ public class Box extends AbstractAirspace {
         if (this.isEnableLevelOfDetail()) {
             DetailLevel level = this.computeDetailLevel(dc);
 
-            Object o = level.get(PILLARS);
+            Object o = level.get(AbstractAirspace.PILLARS);
             if (o instanceof Integer)
                 lengthSegments = (Integer) o;
 
-            o = level.get(STACKS);
+            o = level.get(AbstractAirspace.STACKS);
             if (o instanceof Integer)
                 widthSegments = (Integer) o;
 
-            o = level.get(DISABLE_TERRAIN_CONFORMANCE);
+            o = level.get(AbstractAirspace.DISABLE_TERRAIN_CONFORMANCE);
             if (o instanceof Boolean && (Boolean) o)
                 terrainConformant[0] = terrainConformant[1] = false;
         }
@@ -435,10 +449,9 @@ public class Box extends AbstractAirspace {
                 gl.glFrontFace(GL.GL_CCW);
             }
 
-            if (DRAW_STYLE_FILL.equals(drawStyle)) {
+            if (Airspace.DRAW_STYLE_FILL.equals(drawStyle)) {
                 this.drawBox(dc, altitudes, terrainConformant, lengthSegments, widthSegments);
-            }
-            else if (DRAW_STYLE_OUTLINE.equals(drawStyle)) {
+            } else if (Airspace.DRAW_STYLE_OUTLINE.equals(drawStyle)) {
                 this.drawBoxOutline(dc, altitudes, terrainConformant, lengthSegments, widthSegments);
 
                 if (this.enableCenterLine) {
@@ -451,6 +464,10 @@ public class Box extends AbstractAirspace {
         }
     }
 
+    //**************************************************************//
+    //********************  Box  ***********************************//
+    //**************************************************************//
+
     protected void applyCenterLineState(DrawContext dc) {
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         AirspaceAttributes attrs = this.getActiveAttributes();
@@ -461,10 +478,6 @@ public class Box extends AbstractAirspace {
             gl.glLineStipple(Box.DEFAULT_CENTER_LINE_STIPPLE_FACTOR, Box.DEFAULT_CENTER_LINE_STIPPLE_PATTERN);
         }
     }
-
-    //**************************************************************//
-    //********************  Box  ***********************************//
-    //**************************************************************//
 
     private void drawBox(DrawContext dc, double[] altitudes, boolean[] terrainConformant, int lengthSegments,
         int widthSegments) {
@@ -496,7 +509,7 @@ public class Box extends AbstractAirspace {
         BoxGeometry geom = this.getBoxGeometry(dc, altitudes, terrainConformant, lengthSegments, widthSegments);
         try {
             dc.getView().pushReferenceCenter(dc, geom.referencePoint);
-            dc.pushProjectionOffest(DEFAULT_CENTER_LINE_OFFSET); // move center line depth slightly in front of fill
+            dc.pushProjectionOffest(Box.DEFAULT_CENTER_LINE_OFFSET); // move center line depth slightly in front of fill
             this.applyCenterLineState(dc);
             this.drawGeometry(dc, geom.centerLineIndices, geom.capGeometry);
         }
@@ -690,7 +703,7 @@ public class Box extends AbstractAirspace {
         for (int i = 1; i < lengthSegments; i++) {
             double amount = (double) i / lengthSegments;
             LatLon rightProj = LatLon.interpolateGreatCircle(amount, corners.beginRightProj, corners.endRightProj);
-            double rightAzimuth = LatLon.greatCircleAzimuth(rightProj, corners.endRightProj).radians + (Math.PI / 2);
+            double rightAzimuth = LatLon.greatCircleAzimuth(rightProj, corners.endRightProj).radians() + (Math.PI / 2);
             LatLon right = LatLon.greatCircleEndPosition(rightProj, rightAzimuth, corners.rightArcLength);
             locations.add(right);
         }
@@ -704,7 +717,7 @@ public class Box extends AbstractAirspace {
         for (int i = 1; i < lengthSegments; i++) {
             double amount = (double) i / lengthSegments;
             LatLon leftProj = LatLon.interpolateGreatCircle(amount, corners.endLeftProj, corners.beginLeftProj);
-            double leftAzimuth = LatLon.greatCircleAzimuth(leftProj, corners.endLeftProj).radians - (Math.PI / 2);
+            double leftAzimuth = LatLon.greatCircleAzimuth(leftProj, corners.endLeftProj).radians() - (Math.PI / 2);
             LatLon left = LatLon.greatCircleEndPosition(leftProj, leftAzimuth, corners.leftArcLength);
             locations.add(left);
         }
@@ -726,8 +739,8 @@ public class Box extends AbstractAirspace {
             LatLon center = LatLon.interpolateGreatCircle(amount, this.beginLocation, this.endLocation);
             LatLon leftProj = LatLon.interpolateGreatCircle(amount, corners.beginLeftProj, corners.endLeftProj);
             LatLon rightProj = LatLon.interpolateGreatCircle(amount, corners.beginRightProj, corners.endRightProj);
-            double leftAzimuth = LatLon.greatCircleAzimuth(leftProj, corners.endLeftProj).radians - (Math.PI / 2);
-            double rightAzimuth = LatLon.greatCircleAzimuth(rightProj, corners.endRightProj).radians + (Math.PI / 2);
+            double leftAzimuth = LatLon.greatCircleAzimuth(leftProj, corners.endLeftProj).radians() - (Math.PI / 2);
+            double rightAzimuth = LatLon.greatCircleAzimuth(rightProj, corners.endRightProj).radians() + (Math.PI / 2);
             LatLon left = LatLon.greatCircleEndPosition(leftProj, leftAzimuth, corners.leftArcLength);
             LatLon right = LatLon.greatCircleEndPosition(rightProj, rightAzimuth, corners.rightArcLength);
 
@@ -742,9 +755,9 @@ public class Box extends AbstractAirspace {
 
     private BoxCorners computeBoxCorners(Extent globe) {
         BoxCorners corners = new BoxCorners();
-        double beginAzimuth = LatLon.greatCircleAzimuth(this.beginLocation, this.endLocation).radians;
-        double endAzimuth = LatLon.greatCircleAzimuth(this.endLocation, this.beginLocation).radians;
-        double centerArcLength = LatLon.greatCircleDistance(this.beginLocation, this.endLocation).radians;
+        double beginAzimuth = LatLon.greatCircleAzimuth(this.beginLocation, this.endLocation).radians();
+        double endAzimuth = LatLon.greatCircleAzimuth(this.endLocation, this.beginLocation).radians();
+        double centerArcLength = LatLon.greatCircleDistance(this.beginLocation, this.endLocation).radians();
         corners.leftArcLength = this.leftWidth / globe.getRadius();
         corners.rightArcLength = this.rightWidth / globe.getRadius();
 
@@ -752,11 +765,12 @@ public class Box extends AbstractAirspace {
             corners.leftArcLength);
         corners.beginLeftProj = this.beginLocation;
         if (this.beginLeftAzimuth != null) {
-            double arcAngle = beginAzimuth - this.beginLeftAzimuth.radians;
+            double arcAngle = beginAzimuth - this.beginLeftAzimuth.radians();
             double arcLength = Math.asin(Math.cos(arcAngle) * Math.sin(corners.leftArcLength) / Math.sin(arcAngle));
             double sideLength = Math.asin(Math.sin(corners.leftArcLength) / Math.sin(arcAngle));
             if (arcLength < centerArcLength) {
-                corners.beginLeft = LatLon.greatCircleEndPosition(this.beginLocation, this.beginLeftAzimuth.radians,
+                corners.beginLeft = LatLon.greatCircleEndPosition(this.beginLocation,
+                    this.beginLeftAzimuth.radians(),
                     sideLength);
                 corners.beginLeftProj = LatLon.greatCircleEndPosition(this.beginLocation, beginAzimuth, arcLength);
             }
@@ -766,11 +780,12 @@ public class Box extends AbstractAirspace {
             corners.rightArcLength);
         corners.beginRightProj = this.beginLocation;
         if (this.beginRightAzimuth != null) {
-            double arcAngle = this.beginRightAzimuth.radians - beginAzimuth;
+            double arcAngle = this.beginRightAzimuth.radians() - beginAzimuth;
             double arcLength = Math.asin(Math.cos(arcAngle) * Math.sin(corners.rightArcLength) / Math.sin(arcAngle));
             double sideLength = Math.asin(Math.sin(corners.rightArcLength) / Math.sin(arcAngle));
             if (arcLength < centerArcLength) {
-                corners.beginRight = LatLon.greatCircleEndPosition(this.beginLocation, this.beginRightAzimuth.radians,
+                corners.beginRight = LatLon.greatCircleEndPosition(this.beginLocation,
+                    this.beginRightAzimuth.radians(),
                     sideLength);
                 corners.beginRightProj = LatLon.greatCircleEndPosition(this.beginLocation, beginAzimuth, arcLength);
             }
@@ -780,11 +795,11 @@ public class Box extends AbstractAirspace {
             corners.leftArcLength);
         corners.endLeftProj = this.endLocation;
         if (this.endLeftAzimuth != null) {
-            double arcAngle = this.endLeftAzimuth.radians - endAzimuth;
+            double arcAngle = this.endLeftAzimuth.radians() - endAzimuth;
             double arcLength = Math.asin(Math.cos(arcAngle) * Math.sin(corners.leftArcLength) / Math.sin(arcAngle));
             double sideLength = Math.asin(Math.sin(corners.leftArcLength) / Math.sin(arcAngle));
             if (arcLength < centerArcLength) {
-                corners.endLeft = LatLon.greatCircleEndPosition(this.endLocation, this.endLeftAzimuth.radians,
+                corners.endLeft = LatLon.greatCircleEndPosition(this.endLocation, this.endLeftAzimuth.radians(),
                     sideLength);
                 corners.endLeftProj = LatLon.greatCircleEndPosition(this.endLocation, endAzimuth, arcLength);
             }
@@ -794,31 +809,17 @@ public class Box extends AbstractAirspace {
             corners.rightArcLength);
         corners.endRightProj = this.endLocation;
         if (this.endRightAzimuth != null) {
-            double arcAngle = endAzimuth - this.endRightAzimuth.radians;
+            double arcAngle = endAzimuth - this.endRightAzimuth.radians();
             double arcLength = Math.asin(Math.cos(arcAngle) * Math.sin(corners.rightArcLength) / Math.sin(arcAngle));
             double sideLength = Math.asin(Math.sin(corners.rightArcLength) / Math.sin(arcAngle));
             if (arcLength < centerArcLength) {
-                corners.endRight = LatLon.greatCircleEndPosition(this.endLocation, this.endRightAzimuth.radians,
+                corners.endRight = LatLon.greatCircleEndPosition(this.endLocation, this.endRightAzimuth.radians(),
                     sideLength);
                 corners.endRightProj = LatLon.greatCircleEndPosition(this.endLocation, endAzimuth, arcLength);
             }
         }
 
         return corners;
-    }
-
-    private static void appendLocations(LatLon begin, LatLon middle, LatLon end, int numSegments,
-        Collection<LatLon> result) {
-        for (int i = 0; i <= numSegments; i++) {
-            double amount = (double) i / numSegments;
-            result.add(LatLon.interpolateGreatCircle(amount, begin, middle));
-        }
-
-        for (int i = 1; i <= numSegments; i++) // skip the first segment, it's already covered in the above loop
-        {
-            double amount = (double) i / numSegments;
-            result.add(LatLon.interpolateGreatCircle(amount, middle, end));
-        }
     }
 
     @Override

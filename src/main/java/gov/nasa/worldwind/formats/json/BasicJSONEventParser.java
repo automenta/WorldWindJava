@@ -22,6 +22,40 @@ public class BasicJSONEventParser implements JSONEventParser {
     public BasicJSONEventParser() {
     }
 
+    protected static JSONEventParser allocate(JSONEventParserContext ctx, JSONEvent event) {
+        if (ctx == null) {
+            String message = Logging.getMessage("nullValue.ParserContextIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        if (event == null) {
+            String message = Logging.getMessage("nullValue.EventIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        return ctx.allocate(event);
+    }
+
+    protected static Object parseComplexContent(JSONEventParserContext ctx, JSONEvent event) throws IOException {
+        JSONEventParser parser = BasicJSONEventParser.allocate(ctx, event);
+
+        if (parser == null)
+            parser = ctx.getUnrecognizedParser();
+
+        return (parser != null) ? parser.parse(ctx, event) : null;
+    }
+
+    //**************************************************************//
+    //********************  Object Parsing  ************************//
+    //**************************************************************//
+
+    @SuppressWarnings("UnusedDeclaration")
+    protected static Object parseScalarContent(JSONEventParserContext ctx, JSONEvent event) {
+        return event.asScalarValue();
+    }
+
     public Object parse(JSONEventParserContext ctx, JSONEvent event) throws IOException {
         if (ctx == null) {
             String message = Logging.getMessage("nullValue.ParserContextIsNull");
@@ -49,26 +83,6 @@ public class BasicJSONEventParser implements JSONEventParser {
             return null;
         }
     }
-
-    protected static JSONEventParser allocate(JSONEventParserContext ctx, JSONEvent event) {
-        if (ctx == null) {
-            String message = Logging.getMessage("nullValue.ParserContextIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (event == null) {
-            String message = Logging.getMessage("nullValue.EventIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        return ctx.allocate(event);
-    }
-
-    //**************************************************************//
-    //********************  Object Parsing  ************************//
-    //**************************************************************//
 
     protected Object parseObject(JSONEventParserContext ctx, JSONEvent event) throws IOException {
         if (!event.isStartObject()) {
@@ -115,13 +129,16 @@ public class BasicJSONEventParser implements JSONEventParser {
             else {
                 Logging.logger().warning(Logging.getMessage("generic.UnexpectedEvent", valueEvent));
             }
-        }
-        else {
+        } else {
             this.addFieldContent(ctx, null);
         }
 
         ctx.popFieldName();
     }
+
+    //**************************************************************//
+    //********************  Array Parsing  *************************//
+    //**************************************************************//
 
     protected void addFieldContent(JSONEventParserContext ctx, Object value) {
         if (this.fields == null)
@@ -133,10 +150,6 @@ public class BasicJSONEventParser implements JSONEventParser {
     protected Object resolveObject(JSONEventParserContext ctx, JSONEvent event) {
         return this.fields;
     }
-
-    //**************************************************************//
-    //********************  Array Parsing  *************************//
-    //**************************************************************//
 
     protected Object parseArray(JSONEventParserContext ctx, JSONEvent event) throws IOException {
         if (!event.isStartArray()) {
@@ -170,6 +183,10 @@ public class BasicJSONEventParser implements JSONEventParser {
         }
     }
 
+    //**************************************************************//
+    //********************  Content Parsing  ************************//
+    //**************************************************************//
+
     protected void addArrayEntry(Object o) {
         if (this.array == null)
             this.array = new ArrayList<>();
@@ -179,23 +196,5 @@ public class BasicJSONEventParser implements JSONEventParser {
 
     protected Object resolveArray(JSONEventParserContext ctx, JSONEvent event) {
         return this.array.toArray(new Object[0]);
-    }
-
-    //**************************************************************//
-    //********************  Content Parsing  ************************//
-    //**************************************************************//
-
-    protected static Object parseComplexContent(JSONEventParserContext ctx, JSONEvent event) throws IOException {
-        JSONEventParser parser = BasicJSONEventParser.allocate(ctx, event);
-
-        if (parser == null)
-            parser = ctx.getUnrecognizedParser();
-
-        return (parser != null) ? parser.parse(ctx, event) : null;
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    protected static Object parseScalarContent(JSONEventParserContext ctx, JSONEvent event) {
-        return event.asScalarValue();
     }
 }

@@ -29,7 +29,7 @@ public class GeoRSSParser {
     public static final String GML_URI = "http://www.opengis.net/gml";
 
     public static List<Renderable> parseFragment(String fragmentString, NamespaceContext nsc) {
-        return parseShapes(fixNamespaceQualification(fragmentString));
+        return GeoRSSParser.parseShapes(GeoRSSParser.fixNamespaceQualification(fragmentString));
     }
 
     public static List<Renderable> parseShapes(String docString) {
@@ -49,7 +49,7 @@ public class GeoRSSParser {
             DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
             Document doc = docBuilder.parse(new InputSource(new StringReader(docString)));
 
-            List<Renderable> shapes = parseShapes(doc);
+            List<Renderable> shapes = GeoRSSParser.parseShapes(doc);
 
             if (shapes == null || shapes.size() < 1) {
                 Logging.logger().log(Level.WARNING, "GeoRSS.NoShapes", docString);
@@ -74,23 +74,23 @@ public class GeoRSSParser {
         String lcaseString = xmlString.toLowerCase();
         StringBuilder qualifiers = new StringBuilder();
 
-        if (lcaseString.contains("georss:") && !lcaseString.contains(GEORSS_URI)) {
+        if (lcaseString.contains("georss:") && !lcaseString.contains(GeoRSSParser.GEORSS_URI)) {
             qualifiers.append(" xmlns:georss=\"");
-            qualifiers.append(GEORSS_URI);
-            qualifiers.append("\"");
+            qualifiers.append(GeoRSSParser.GEORSS_URI);
+            qualifiers.append('"');
         }
 
-        if (lcaseString.contains("gml:") && !lcaseString.contains(GML_URI)) {
+        if (lcaseString.contains("gml:") && !lcaseString.contains(GeoRSSParser.GML_URI)) {
             qualifiers.append(" xmlns:gml=\"");
-            qualifiers.append(GML_URI);
-            qualifiers.append("\"");
+            qualifiers.append(GeoRSSParser.GML_URI);
+            qualifiers.append('"');
         }
 
         if (!qualifiers.isEmpty()) {
             StringBuilder sb = new StringBuilder();
             sb.append("<wwdummyelement");
             sb.append(qualifiers);
-            sb.append(">");
+            sb.append('>');
             sb.append(xmlString);
             sb.append("</wwdummyelement>");
 
@@ -113,7 +113,7 @@ public class GeoRSSParser {
             DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
             Document doc = docBuilder.parse(file);
 
-            List<Renderable> shapes = parseShapes(doc);
+            List<Renderable> shapes = GeoRSSParser.parseShapes(doc);
 
             if (shapes == null || shapes.size() < 1) {
                 Logging.logger().log(Level.WARNING, "GeoRSS.NoShapes", file.getPath());
@@ -145,40 +145,40 @@ public class GeoRSSParser {
         Collection<Node> attributeNodes = new ArrayList<>();
 
         // Shapes
-        NodeList nodes = xmlDoc.getElementsByTagNameNS(GEORSS_URI, "where");
+        NodeList nodes = xmlDoc.getElementsByTagNameNS(GeoRSSParser.GEORSS_URI, "where");
         if (nodes != null && nodes.getLength() > 0) {
-            addNodes(shapeNodes, nodes);
+            GeoRSSParser.addNodes(shapeNodes, nodes);
         }
 
-        nodes = xmlDoc.getElementsByTagNameNS(GEORSS_URI, "point");
+        nodes = xmlDoc.getElementsByTagNameNS(GeoRSSParser.GEORSS_URI, "point");
         if (nodes != null && nodes.getLength() > 0) {
-            addNodes(shapeNodes, nodes);
+            GeoRSSParser.addNodes(shapeNodes, nodes);
         }
 
-        nodes = xmlDoc.getElementsByTagNameNS(GEORSS_URI, "line");
+        nodes = xmlDoc.getElementsByTagNameNS(GeoRSSParser.GEORSS_URI, "line");
         if (nodes != null && nodes.getLength() > 0) {
-            addNodes(shapeNodes, nodes);
+            GeoRSSParser.addNodes(shapeNodes, nodes);
         }
 
-        nodes = xmlDoc.getElementsByTagNameNS(GEORSS_URI, "polygon");
+        nodes = xmlDoc.getElementsByTagNameNS(GeoRSSParser.GEORSS_URI, "polygon");
         if (nodes != null && nodes.getLength() > 0) {
-            addNodes(shapeNodes, nodes);
+            GeoRSSParser.addNodes(shapeNodes, nodes);
         }
 
-        nodes = xmlDoc.getElementsByTagNameNS(GEORSS_URI, "box");
+        nodes = xmlDoc.getElementsByTagNameNS(GeoRSSParser.GEORSS_URI, "box");
         if (nodes != null && nodes.getLength() > 0) {
-            addNodes(shapeNodes, nodes);
+            GeoRSSParser.addNodes(shapeNodes, nodes);
         }
 
         // Attributes
-        nodes = xmlDoc.getElementsByTagNameNS(GEORSS_URI, "radius");
+        nodes = xmlDoc.getElementsByTagNameNS(GeoRSSParser.GEORSS_URI, "radius");
         if (nodes != null && nodes.getLength() > 0) {
-            addNodes(attributeNodes, nodes);
+            GeoRSSParser.addNodes(attributeNodes, nodes);
         }
 
-        nodes = xmlDoc.getElementsByTagNameNS(GEORSS_URI, "elev");
+        nodes = xmlDoc.getElementsByTagNameNS(GeoRSSParser.GEORSS_URI, "elev");
         if (nodes != null && nodes.getLength() > 0) {
-            addNodes(attributeNodes, nodes);
+            GeoRSSParser.addNodes(attributeNodes, nodes);
         }
 
         List<Renderable> shapes = new ArrayList<>();
@@ -192,19 +192,19 @@ public class GeoRSSParser {
 
             switch (localName) {
                 case "point":
-                    shape = makePointShape(node, attributeNodes);
+                    shape = GeoRSSParser.makePointShape(node, attributeNodes);
                     break;
                 case "where":
-                    shape = makeWhereShape(node);
+                    shape = GeoRSSParser.makeWhereShape(node);
                     break;
                 case "line":
-                    shape = makeLineShape(node, attributeNodes);
+                    shape = GeoRSSParser.makeLineShape(node, attributeNodes);
                     break;
                 case "polygon":
-                    shape = makePolygonShape(node, attributeNodes);
+                    shape = GeoRSSParser.makePolygonShape(node, attributeNodes);
                     break;
                 case "box":
-                    shape = makeBoxShape(node, attributeNodes);
+                    shape = GeoRSSParser.makeBoxShape(node, attributeNodes);
                     break;
                 default:
                     break;
@@ -225,24 +225,24 @@ public class GeoRSSParser {
     }
 
     private static Renderable makeWhereShape(Node node) {
-        Node typeNode = findChildByLocalName(node, "Polygon");
+        Node typeNode = GeoRSSParser.findChildByLocalName(node, "Polygon");
         if (typeNode != null) {
-            return makeGMLPolygonShape(typeNode);
+            return GeoRSSParser.makeGMLPolygonShape(typeNode);
         }
 
-        typeNode = findChildByLocalName(node, "Envelope");
+        typeNode = GeoRSSParser.findChildByLocalName(node, "Envelope");
         if (typeNode != null) {
-            return makeGMLEnvelopeShape(typeNode);
+            return GeoRSSParser.makeGMLEnvelopeShape(typeNode);
         }
 
-        typeNode = findChildByLocalName(node, "LineString");
+        typeNode = GeoRSSParser.findChildByLocalName(node, "LineString");
         if (typeNode != null) {
-            return makeGMLineStringShape(typeNode);
+            return GeoRSSParser.makeGMLineStringShape(typeNode);
         }
 
-        typeNode = findChildByLocalName(node, "Point");
+        typeNode = GeoRSSParser.findChildByLocalName(node, "Point");
         if (typeNode != null) {
-            return makeGMLPointShape(typeNode);
+            return GeoRSSParser.makeGMLPointShape(typeNode);
         }
 
         Logging.logger().log(Level.WARNING, "GeoRSS.MissingElementContent", "where");
@@ -250,19 +250,19 @@ public class GeoRSSParser {
     }
 
     private static Renderable makeGMLPolygonShape(Node node) {
-        Node n = findChildByLocalName(node, "exterior");
+        Node n = GeoRSSParser.findChildByLocalName(node, "exterior");
         if (n == null) {
             Logging.logger().log(Level.WARNING, "GeoRSS.MissingElement", "exterior");
             return null;
         }
 
-        n = findChildByLocalName(n, "LinearRing");
+        n = GeoRSSParser.findChildByLocalName(n, "LinearRing");
         if (n == null) {
             Logging.logger().log(Level.WARNING, "GeoRSS.MissingElement", "LinearRing");
             return null;
         }
 
-        return makePolygonShape(n, null);
+        return GeoRSSParser.makePolygonShape(n, null);
     }
 
     private static Renderable makePolygonShape(Node node, Iterable<Node> attrs) {
@@ -272,7 +272,7 @@ public class GeoRSSParser {
             return null;
         }
 
-        ArrayList<Double> values = getDoubleValues(valuesString);
+        ArrayList<Double> values = GeoRSSParser.getDoubleValues(valuesString);
         if (values.size() < 8 || values.size() % 2 != 0) {
             Logging.logger().log(Level.WARNING, "GeoRSS.InvalidCoordinateCount", node.getLocalName());
             return null;
@@ -283,21 +283,20 @@ public class GeoRSSParser {
             positions.add(LatLon.fromDegrees(values.get(i), values.get(i + 1)));
         }
 
-        double elevation = attrs != null ? getElevation(node, attrs) : 0.0d;
+        double elevation = attrs != null ? GeoRSSParser.getElevation(node, attrs) : 0.0d;
         if (elevation != 0) {
             Path path = new Path(positions, elevation);
             path.setAttributes(new BasicShapeAttributes());
             path.getAttributes().setOutlineMaterial(Material.WHITE);
             path.setPathType(AVKey.GREAT_CIRCLE);
             return path;
-        }
-        else {
+        } else {
             return new SurfacePolygon(positions);
         }
     }
 
     private static Renderable makeGMLEnvelopeShape(Node node) {
-        Node n = findChildByLocalName(node, "lowerCorner");
+        Node n = GeoRSSParser.findChildByLocalName(node, "lowerCorner");
         if (n == null) {
             Logging.logger().log(Level.WARNING, "GeoRSS.MissingElement", " lowerCorner");
             return null;
@@ -309,7 +308,7 @@ public class GeoRSSParser {
             return null;
         }
 
-        n = findChildByLocalName(node, "upperCorner");
+        n = GeoRSSParser.findChildByLocalName(node, "upperCorner");
         if (n == null) {
             Logging.logger().log(Level.WARNING, "GeoRSS.InvalidCoordinateCount", " upperCorner");
             return null;
@@ -321,13 +320,13 @@ public class GeoRSSParser {
             return null;
         }
 
-        ArrayList<Double> lv = getDoubleValues(lowerCornerString);
+        ArrayList<Double> lv = GeoRSSParser.getDoubleValues(lowerCornerString);
         if (lv.size() != 2) {
             Logging.logger().log(Level.WARNING, "GeoRSS.InvalidCoordinateCount", " lowerCorner");
             return null;
         }
 
-        ArrayList<Double> uv = getDoubleValues(upperCornerString);
+        ArrayList<Double> uv = GeoRSSParser.getDoubleValues(upperCornerString);
         if (uv.size() != 2) {
             Logging.logger().log(Level.WARNING, "GeoRSS.InvalidCoordinateCount", " upperCorner");
             return null;
@@ -343,30 +342,29 @@ public class GeoRSSParser {
             return null;
         }
 
-        ArrayList<Double> p = getDoubleValues(valuesString);
+        ArrayList<Double> p = GeoRSSParser.getDoubleValues(valuesString);
         if (p.size() != 4) {
             Logging.logger().log(Level.WARNING, "GeoRSS.InvalidCoordinateCount", node.getLocalName());
             return null;
         }
 
-        double elevation = getElevation(node, attrs);
+        double elevation = GeoRSSParser.getElevation(node, attrs);
         if (elevation != 0) {
             return new Quadrilateral(LatLon.fromDegrees(p.get(0), p.get(1)),
                 LatLon.fromDegrees(p.get(2), p.get(3)), elevation);
-        }
-        else {
+        } else {
             return new SurfaceSector(Sector.fromDegrees(p.get(0), p.get(2), p.get(1), p.get(3)));
         }
     }
 
     private static Renderable makeGMLineStringShape(Node node) {
-        Node n = findChildByLocalName(node, "posList");
+        Node n = GeoRSSParser.findChildByLocalName(node, "posList");
         if (n == null) {
             Logging.logger().log(Level.WARNING, "GeoRSS.MissingElement", "posList");
             return null;
         }
 
-        return makeLineShape(n, null);
+        return GeoRSSParser.makeLineShape(n, null);
     }
 
     private static Renderable makeLineShape(Node node, Iterable<Node> attrs) {
@@ -376,7 +374,7 @@ public class GeoRSSParser {
             return null;
         }
 
-        ArrayList<Double> values = getDoubleValues(valuesString);
+        ArrayList<Double> values = GeoRSSParser.getDoubleValues(valuesString);
         if (values.size() < 4) {
             Logging.logger().log(Level.WARNING, "GeoRSS.InvalidCoordinateCount", node.getLocalName());
             return null;
@@ -387,12 +385,11 @@ public class GeoRSSParser {
             positions.add(LatLon.fromDegrees(values.get(i), values.get(i + 1)));
         }
 
-        double elevation = attrs != null ? getElevation(node, attrs) : 0.0d;
+        double elevation = attrs != null ? GeoRSSParser.getElevation(node, attrs) : 0.0d;
         Path path;
         if (elevation != 0) {
             path = new Path(positions, elevation);
-        }
-        else {
+        } else {
             path = new Path(positions, 0);
         }
         path.setAttributes(new BasicShapeAttributes());
@@ -471,13 +468,12 @@ public class GeoRSSParser {
     private static double getElevation(Node shapeNode, Iterable<Node> attrs) {
         double elevation = 0.0d;
 
-        Node elevNode = findSiblingAttribute("elev", attrs, shapeNode);
+        Node elevNode = GeoRSSParser.findSiblingAttribute("elev", attrs, shapeNode);
         if (elevNode != null) {
-            ArrayList<Double> ev = getDoubleValues(elevNode.getTextContent());
+            ArrayList<Double> ev = GeoRSSParser.getDoubleValues(elevNode.getTextContent());
             if (ev != null && !ev.isEmpty()) {
                 elevation = ev.get(0);
-            }
-            else {
+            } else {
                 Logging.logger().log(Level.WARNING, "GeoRSS.MissingElementContent", "elev");
             }
         }

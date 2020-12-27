@@ -96,10 +96,10 @@ public class CompoundElevationModel extends AbstractElevationModel {
     /**
      * Adds a specified elevation model to a specified position in this compound elevation model's elevation model list.
      * It's expected that this class' elevation model list is sorted from lowest resolution to highest. The method
-     * {@link #addElevationModel(ElevationModel)} inserts added elevation models at the
-     * appropriate place in the list. This method, however, inserts the elevation model at the specified position in the
-     * list. For proper operation of this compound elevation model, the caller should ensure that the specified position
-     * is the appropriate one for the inserted elevation model's resolution.
+     * {@link #addElevationModel(ElevationModel)} inserts added elevation models at the appropriate place in the list.
+     * This method, however, inserts the elevation model at the specified position in the list. For proper operation of
+     * this compound elevation model, the caller should ensure that the specified position is the appropriate one for
+     * the inserted elevation model's resolution.
      *
      * @param index The position at which to insert the specified model, zero origin. Existing models are shifted to the
      *              right.
@@ -224,8 +224,7 @@ public class CompoundElevationModel extends AbstractElevationModel {
             double[] minmax = em.getExtremeElevations(latitude, longitude);
             if (retVal == null) {
                 retVal = new double[] {minmax[0], minmax[1]};
-            }
-            else {
+            } else {
                 if (minmax[0] < retVal[0])
                     retVal[0] = minmax[0];
                 if (minmax[1] > retVal[1])
@@ -256,8 +255,7 @@ public class CompoundElevationModel extends AbstractElevationModel {
             double[] minmax = em.getExtremeElevations(sector);
             if (retVal == null) {
                 retVal = new double[] {minmax[0], minmax[1]};
-            }
-            else {
+            } else {
                 if (minmax[0] < retVal[0])
                     retVal[0] = minmax[0];
                 if (minmax[1] > retVal[1])
@@ -478,21 +476,17 @@ public class CompoundElevationModel extends AbstractElevationModel {
             ElevationModel em = this.elevationModels.get(i);
             resolutionAchieved[i] = 0;
 
-            if (!em.isEnabled())
-                continue;
+            if (em.isEnabled() && em.intersects(sector) >= 0) {// no intersection
 
-            int c = em.intersects(sector);
-            if (c < 0) // no intersection
-                continue;
+                double r;
+                if (mapMissingData || n == 1)
+                    r = em.getElevations(sector, latlons, targetResolution[i], buffer);
+                else
+                    r = em.getUnmappedElevations(sector, latlons, targetResolution[i], buffer);
 
-            double r;
-            if (mapMissingData || n == 1)
-                r = em.getElevations(sector, latlons, targetResolution[i], buffer);
-            else
-                r = em.getUnmappedElevations(sector, latlons, targetResolution[i], buffer);
-
-            if (r < resolutionAchieved[i] || resolutionAchieved[i] == 0)
-                resolutionAchieved[i] = r;
+                if (r < resolutionAchieved[i] || resolutionAchieved[i] == 0)
+                    resolutionAchieved[i] = r;
+            }
         }
 
         return resolutionAchieved;
@@ -535,12 +529,11 @@ public class CompoundElevationModel extends AbstractElevationModel {
         double availability = 0;
 
         for (ElevationModel em : this.elevationModels) {
-            if (!em.isEnabled())
-                continue;
-
-            if (em.intersects(sector) >= 0) {
-                availability += em.getLocalDataAvailability(sector, targetResolution);
-                models++;
+            if (em.isEnabled()) {
+                if (em.intersects(sector) >= 0) {
+                    availability += em.getLocalDataAvailability(sector, targetResolution);
+                    models++;
+                }
             }
         }
 

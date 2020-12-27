@@ -155,7 +155,7 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler {
         boolean eventHandled = false;
 
         int modifier = e.getModifiersEx();
-        for (int i = 0; i < NUM_MODIFIERS; i++) {
+        for (int i = 0; i < AbstractViewInputHandler.NUM_MODIFIERS; i++) {
             if ((((modifier & this.modifierList[i]) == this.modifierList[i]))) {
                 Iterable<ViewInputAttributes.ActionAttributes> actionList = (ViewInputAttributes.ActionAttributesList)
                     keyModsActionMap.get(this.modifierList[i]);
@@ -177,7 +177,7 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler {
         boolean eventHandled = false;
 
         int modifier = e.getModifiersEx();
-        for (int i = 0; i < NUM_MODIFIERS; i++) {
+        for (int i = 0; i < AbstractViewInputHandler.NUM_MODIFIERS; i++) {
             if ((((modifier & this.modifierList[i]) == this.modifierList[i]))) {
                 Iterable<ViewInputAttributes.ActionAttributes> actionList = (ViewInputAttributes.ActionAttributesList)
                     mouseModsActionMap.get(this.modifierList[i]);
@@ -196,7 +196,7 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler {
 
         // TODO : Make this conditional look like handleMouseDragged
         int modifier = e.getModifiersEx();
-        for (int i = 0; i < NUM_MODIFIERS; i++) {
+        for (int i = 0; i < AbstractViewInputHandler.NUM_MODIFIERS; i++) {
             if ((((modifier & this.modifierList[i]) == this.modifierList[i]))) {
                 Iterable<ViewInputAttributes.ActionAttributes> actionList = (ViewInputAttributes.ActionAttributesList)
                     mouseWheelModsActionMap.get(this.modifierList[i]);
@@ -217,7 +217,7 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler {
 
         int modifier = e.getModifiersEx();
 
-        for (int i = 0; i < NUM_MODIFIERS; i++) {
+        for (int i = 0; i < AbstractViewInputHandler.NUM_MODIFIERS; i++) {
             if ((((modifier & this.modifierList[i]) == this.modifierList[i]))) {
                 Iterable<ViewInputAttributes.ActionAttributes> actionList = (ViewInputAttributes.ActionAttributesList)
                     mouseModsActionMap.get(this.modifierList[i]);
@@ -241,7 +241,7 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler {
         boolean isKeyEventTrigger = false;
 
         int modifier = keys.getModifiersEx();
-        for (int i = 0; i < NUM_MODIFIERS; i++) {
+        for (int i = 0; i < AbstractViewInputHandler.NUM_MODIFIERS; i++) {
             if (((modifier & this.modifierList[i]) == this.modifierList[i])) {
 
                 Iterable<ViewInputAttributes.ActionAttributes> actionList = (ViewInputAttributes.ActionAttributesList)
@@ -263,7 +263,7 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler {
 
         int modifier = keys.getModifiersEx();
 
-        for (int i = 0; i < NUM_MODIFIERS; i++) {
+        for (int i = 0; i < AbstractViewInputHandler.NUM_MODIFIERS; i++) {
             if (((modifier & this.modifierList[i]) == this.modifierList[i])) {
 
                 Iterable<ViewInputAttributes.ActionAttributes> actionList = (ViewInputAttributes.ActionAttributesList)
@@ -388,8 +388,7 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler {
                 if (keys.isKeyDown(keyAction.keyCode)) {
                     if (keyAction.direction == ViewInputAttributes.ActionAttributes.KeyAction.KA_DIR_X) {
                         headingInput += keyAction.sign;
-                    }
-                    else {
+                    } else {
                         pitchInput += keyAction.sign;
                     }
                 }
@@ -400,7 +399,7 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler {
             }
 
             //noinspection StringEquality
-            if (target == GENERATE_EVENTS) {
+            if (target == AbstractViewInputHandler.GENERATE_EVENTS) {
 
                 ViewInputAttributes.DeviceAttributes deviceAttributes =
                     inputHandler.getAttributes().getDeviceAttributes(ViewInputAttributes.DEVICE_KEYBOARD);
@@ -424,8 +423,7 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler {
                 if (keys.isKeyDown(keyAction.keyCode)) {
                     if (keyAction.direction == ViewInputAttributes.ActionAttributes.KeyAction.KA_DIR_X) {
                         sideInput += keyAction.sign;
-                    }
-                    else {
+                    } else {
                         forwardInput += keyAction.sign;
                     }
                 }
@@ -436,7 +434,7 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler {
             }
 
             //noinspection StringEquality
-            if (target == GENERATE_EVENTS) {
+            if (target == AbstractViewInputHandler.GENERATE_EVENTS) {
                 onHorizontalTranslateRel(forwardInput, sideInput, forwardInput, sideInput,
                     getAttributes().getDeviceAttributes(ViewInputAttributes.DEVICE_KEYBOARD), viewAction);
             }
@@ -467,7 +465,7 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler {
             }
 
             //noinspection StringEquality
-            if (target == GENERATE_EVENTS) {
+            if (target == AbstractViewInputHandler.GENERATE_EVENTS) {
 
                 ViewInputAttributes.DeviceAttributes deviceAttributes =
                     getAttributes().getDeviceAttributes(ViewInputAttributes.DEVICE_KEYBOARD);
@@ -497,9 +495,9 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler {
                 return false;
             }
 
-            Point point = constrainToSourceBounds(getMousePoint(), wwd());
-            Point lastPoint = constrainToSourceBounds(getLastMousePoint(), wwd());
-            Point mouseDownPoint = constrainToSourceBounds(getMouseDownPoint(), wwd());
+            Point point = AbstractViewInputHandler.constrainToSourceBounds(getMousePoint(), wwd());
+            Point lastPoint = AbstractViewInputHandler.constrainToSourceBounds(getLastMousePoint(), wwd());
+            Point mouseDownPoint = AbstractViewInputHandler.constrainToSourceBounds(getMouseDownPoint(), wwd());
             if (point == null || lastPoint == null) {
                 return false;
             }
@@ -533,9 +531,9 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler {
             if (!handleThisEvent) {
                 return false;
             }
-            Point point = constrainToSourceBounds(getMousePoint(), wwd());
-            Point lastPoint = constrainToSourceBounds(getLastMousePoint(), wwd());
-            Point mouseDownPoint = constrainToSourceBounds(getMouseDownPoint(), wwd());
+            Point point = AbstractViewInputHandler.constrainToSourceBounds(getMousePoint(), wwd());
+            Point lastPoint = AbstractViewInputHandler.constrainToSourceBounds(getLastMousePoint(), wwd());
+            Point mouseDownPoint = AbstractViewInputHandler.constrainToSourceBounds(getMouseDownPoint(), wwd());
             if (point == null || lastPoint == null) {
                 return false;
             }
@@ -575,10 +573,10 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler {
             if (!handleThisEvent) {
                 return false;
             }
-            if (target == GENERATE_EVENTS) {
-                Point point = constrainToSourceBounds(getMousePoint(), wwd());
-                Point lastPoint = constrainToSourceBounds(getLastMousePoint(), wwd());
-                Point mouseDownPoint = constrainToSourceBounds(getMouseDownPoint(), wwd());
+            if (target == AbstractViewInputHandler.GENERATE_EVENTS) {
+                Point point = AbstractViewInputHandler.constrainToSourceBounds(getMousePoint(), wwd());
+                Point lastPoint = AbstractViewInputHandler.constrainToSourceBounds(getLastMousePoint(), wwd());
+                Point mouseDownPoint = AbstractViewInputHandler.constrainToSourceBounds(getMouseDownPoint(), wwd());
 
                 Point movement = ViewUtil.subtract(point, lastPoint);
                 if (point == null || lastPoint == null)
@@ -614,9 +612,9 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler {
             if (!handleThisEvent) {
                 return false;
             }
-            Point point = constrainToSourceBounds(getMousePoint(), wwd());
-            Point lastPoint = constrainToSourceBounds(getLastMousePoint(), wwd());
-            Point mouseDownPoint = constrainToSourceBounds(getMouseDownPoint(), wwd());
+            Point point = AbstractViewInputHandler.constrainToSourceBounds(getMousePoint(), wwd());
+            Point lastPoint = AbstractViewInputHandler.constrainToSourceBounds(getLastMousePoint(), wwd());
+            Point mouseDownPoint = AbstractViewInputHandler.constrainToSourceBounds(getMouseDownPoint(), wwd());
             if (point == null || lastPoint == null || mouseDownPoint == null) {
                 return (false);
             }
@@ -654,9 +652,9 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler {
                 return false;
             }
 
-            Point point = constrainToSourceBounds(getMousePoint(), wwd());
-            Point lastPoint = constrainToSourceBounds(getLastMousePoint(), wwd());
-            Point mouseDownPoint = constrainToSourceBounds(getMouseDownPoint(), wwd());
+            Point point = AbstractViewInputHandler.constrainToSourceBounds(getMousePoint(), wwd());
+            Point lastPoint = AbstractViewInputHandler.constrainToSourceBounds(getLastMousePoint(), wwd());
+            Point mouseDownPoint = AbstractViewInputHandler.constrainToSourceBounds(getMouseDownPoint(), wwd());
             if (point == null || lastPoint == null || mouseDownPoint == null) {
                 return false;
             }
@@ -689,9 +687,9 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler {
                 return false;
             }
 
-            Point point = constrainToSourceBounds(getMousePoint(), wwd());
-            Point lastPoint = constrainToSourceBounds(getLastMousePoint(), wwd());
-            Point mouseDownPoint = constrainToSourceBounds(getMouseDownPoint(), wwd());
+            Point point = AbstractViewInputHandler.constrainToSourceBounds(getMousePoint(), wwd());
+            Point lastPoint = AbstractViewInputHandler.constrainToSourceBounds(getLastMousePoint(), wwd());
+            Point mouseDownPoint = AbstractViewInputHandler.constrainToSourceBounds(getMouseDownPoint(), wwd());
             if (point == null || lastPoint == null) {
                 return false;
             }

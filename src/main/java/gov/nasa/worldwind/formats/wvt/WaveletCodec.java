@@ -6,6 +6,7 @@
 package gov.nasa.worldwind.formats.wvt;
 
 ////.*;
+
 import gov.nasa.worldwind.util.*;
 
 import java.awt.*;
@@ -31,7 +32,7 @@ public class WaveletCodec {
     private byte[][] xform;
 
     private WaveletCodec(int type, int resolutionX, int resolutionY) {
-        if (!isTypeValid(type)) {
+        if (!WaveletCodec.isTypeValid(type)) {
             String message = "Invalid type: " + type;
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -67,9 +68,9 @@ public class WaveletCodec {
     }
 
     private static boolean isTypeValid(int type) {
-        return type == TYPE_BYTE_GRAY
-            || type == TYPE_3BYTE_BGR
-            || type == TYPE_4BYTE_ARGB;
+        return type == WaveletCodec.TYPE_BYTE_GRAY
+            || type == WaveletCodec.TYPE_3BYTE_BGR
+            || type == WaveletCodec.TYPE_4BYTE_ARGB;
     }
 
     private static int getBufferedImageType(WaveletCodec codec) {
@@ -80,9 +81,9 @@ public class WaveletCodec {
         }
 
         return switch (codec.type) {
-            case TYPE_BYTE_GRAY -> BufferedImage.TYPE_BYTE_GRAY;
-            case TYPE_3BYTE_BGR -> BufferedImage.TYPE_3BYTE_BGR;
-            case TYPE_4BYTE_ARGB -> BufferedImage.TYPE_4BYTE_ABGR;
+            case WaveletCodec.TYPE_BYTE_GRAY -> BufferedImage.TYPE_BYTE_GRAY;
+            case WaveletCodec.TYPE_3BYTE_BGR -> BufferedImage.TYPE_3BYTE_BGR;
+            case WaveletCodec.TYPE_4BYTE_ARGB -> BufferedImage.TYPE_4BYTE_ABGR;
             default -> -1;
         };
     }
@@ -95,9 +96,9 @@ public class WaveletCodec {
         }
 
         return switch (image.getType()) {
-            case BufferedImage.TYPE_BYTE_GRAY -> TYPE_BYTE_GRAY;
-            case BufferedImage.TYPE_3BYTE_BGR -> TYPE_3BYTE_BGR;
-            case BufferedImage.TYPE_4BYTE_ABGR -> TYPE_4BYTE_ARGB;
+            case BufferedImage.TYPE_BYTE_GRAY -> WaveletCodec.TYPE_BYTE_GRAY;
+            case BufferedImage.TYPE_3BYTE_BGR -> WaveletCodec.TYPE_3BYTE_BGR;
+            case BufferedImage.TYPE_4BYTE_ABGR -> WaveletCodec.TYPE_4BYTE_ARGB;
             default -> -1;
         };
     }
@@ -112,7 +113,7 @@ public class WaveletCodec {
         int resolutionX = buffer.getInt();
         int resolutionY = buffer.getInt();
         int type = buffer.getInt();
-        if (!isTypeValid(type))
+        if (!WaveletCodec.isTypeValid(type))
             throw new IllegalArgumentException("WaveletCodec.loadFully(): invalid encoding type");
 
         int numBands = buffer.getInt();
@@ -140,7 +141,7 @@ public class WaveletCodec {
                 "WaveletCodec.loadPartially(): input resolution greater than encoded image");
 
         int type = buffer.getInt();
-        if (!isTypeValid(type))
+        if (!WaveletCodec.isTypeValid(type))
             throw new IllegalArgumentException("WaveletCodec.loadPartially(): invalid encoding type");
 
         int numBands = buffer.getInt();
@@ -182,8 +183,8 @@ public class WaveletCodec {
             throw new IllegalArgumentException(
                 "Image is not of BYTE type, or not recognized as grayscale, RGB, or ARGB");
 
-        int type = getWaveletType(image);
-        if (!isTypeValid(type))
+        int type = WaveletCodec.getWaveletType(image);
+        if (!WaveletCodec.isTypeValid(type))
             throw new IllegalArgumentException("Image is not recognized as grayscale, RGB, or ARGB");
 
         // Looks good to go;  grab the image data.  We'll need to make a copy, as we need some
@@ -434,7 +435,7 @@ public class WaveletCodec {
         BandedSampleModel sm = new BandedSampleModel(DataBuffer.TYPE_BYTE, resolution, resolution, numBands);
         DataBufferByte dataBuff = new DataBufferByte(imageBytes, imageBytes[0].length);
         WritableRaster rast = Raster.createWritableRaster(sm, dataBuff, new Point(0, 0));
-        int imageType = getBufferedImageType(this);
+        int imageType = WaveletCodec.getBufferedImageType(this);
         BufferedImage image = new BufferedImage(resolution, resolution, imageType);
         image.getRaster().setRect(rast);
 

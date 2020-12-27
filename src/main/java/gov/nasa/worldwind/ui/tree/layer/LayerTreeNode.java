@@ -60,7 +60,7 @@ public class LayerTreeNode extends BasicTreeNode {
     protected void initialize() {
         Object imageSource = this.layer.get(AVKey.IMAGE);
         if (imageSource == null)
-            imageSource = DEFAULT_IMAGE;
+            imageSource = LayerTreeNode.DEFAULT_IMAGE;
         this.setImageSource(imageSource);
     }
 

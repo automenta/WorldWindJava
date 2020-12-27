@@ -60,6 +60,87 @@ public class VPFBasicSymbolFactory implements VPFSymbolFactory {
         return array;
     }
 
+    protected static void addPointLabel(CombinedFeature feature, VPFSymbolAttributes attr,
+        Collection<VPFSymbol> outCollection) {
+        // Build the list of point symbol locations associated with each sub-feature.
+        ArrayList<LatLon> locations = new ArrayList<>();
+
+        for (VPFFeature subFeature : feature) {
+            if (subFeature.getBounds() != null) {
+                locations.add(subFeature.getBounds().toSector().getCentroid());
+            }
+        }
+
+        SurfaceIcons o = new SurfaceIcons("", locations);
+        VPFBasicSymbolFactory.applyPointSymbolAttributes(attr, o);
+        outCollection.add(new VPFSymbol(feature, attr, o));
+    }
+
+    protected static void applyPointSymbolAttributes(VPFSymbolAttributes attr, SurfaceIcon icon) {
+        if (attr.getIconImageSource() != null)
+            icon.setImageSource(attr.getIconImageSource());
+        icon.setUseMipMaps(attr.isMipMapIconImage());
+        icon.setScale(attr.getIconImageScale());
+        icon.setMaxSize(VPFBasicSymbolFactory.DEFAULT_ICON_MAX_SIZE);
+    }
+
+    protected static Angle getPointSymbolHeading(VPFSymbolAttributes attr, AVList featureAttributes) {
+        if (attr.getOrientationAttributeName() == null) {
+            return null;
+        }
+
+        Object o = featureAttributes.get(attr.getOrientationAttributeName());
+        if (o instanceof Number) {
+            double d = ((Number) o).doubleValue();
+            return Angle.fromDegrees(d);
+        } else if (o instanceof String) {
+            Double d = WWUtil.convertStringToDouble((String) o);
+            if (d != null)
+                return Angle.fromDegrees(d);
+        }
+
+        return null;
+    }
+
+    protected static void applySymbolAttributes(ShapeAttributes attr, Attributable surfaceShape) {
+        surfaceShape.setAttributes(attr);
+    }
+
+    public static void applyTextAttributes(VPFSymbolAttributes attr, GeographicText text) {
+        VPFSymbolAttributes.LabelAttributes[] labelAttr = attr.getLabelAttributes();
+        if (labelAttr != null && labelAttr.length > 0) {
+            text.setFont(labelAttr[0].getFont());
+            text.setColor(labelAttr[0].getColor());
+            text.setBackgroundColor(labelAttr[0].getBackgroundColor());
+        } else {
+            text.setFont(Font.decode("Arial-PLAIN-12"));
+            text.setColor(attr.getInteriorMaterial().getDiffuse());
+            text.setBackgroundColor(WWUtil.computeContrastingColor(attr.getInteriorMaterial().getDiffuse()));
+        }
+    }
+
+    protected static LatLon computeLabelLocation(VPFSymbolAttributes.LabelAttributes attr, VPFFeature feature) {
+        LatLon location = feature.getBounds().toSector().getCentroid();
+
+        // If we are given label offset parameters, compute the label location using the offset azimuth and offset arc
+        // length.
+        if (attr.getOffset() != 0) {
+            VPFLibrary library = feature.getFeatureClass().getCoverage().getLibrary();
+
+            Angle offsetAzimuth = attr.getOffsetAngle();
+            Angle offsetLength = library.computeArcLengthFromMapDistance(attr.getOffset());
+            if (offsetAzimuth != null && offsetLength != null) {
+                location = LatLon.greatCircleEndPosition(location, offsetAzimuth, offsetLength);
+            }
+        }
+
+        return location;
+    }
+
+    //**************************************************************//
+    //********************  Symbol Assembly  ***********************//
+    //**************************************************************//
+
     public VPFSymbolSupport getStyleSupport() {
         return this.symbolSupport;
     }
@@ -148,10 +229,6 @@ public class VPFBasicSymbolFactory implements VPFSymbolFactory {
         this.doCreateTextSymbols(map, symbols);
         return symbols;
     }
-
-    //**************************************************************//
-    //********************  Symbol Assembly  ***********************//
-    //**************************************************************//
 
     /**
      * @param featureClass The feature class.
@@ -292,6 +369,10 @@ public class VPFBasicSymbolFactory implements VPFSymbolFactory {
         }
     }
 
+    //**************************************************************//
+    //********************  Symbol Attribute Assembly  *************//
+    //**************************************************************//
+
     /**
      * From MIL-DTL-89045A, section 3.5.3.1.1: VPF products can contain a fourth type of feature known as a text
      * feature.GeoSym does not include rules to display text features.The application software should refer to the
@@ -349,8 +430,7 @@ public class VPFBasicSymbolFactory implements VPFSymbolFactory {
                 VPFBasicSymbolFactory.applyPointSymbolAttributes(attr, o);
                 outCollection.add(new VPFSymbol(feature, attr, o));
             }
-        }
-        else {
+        } else {
             SurfaceIcons o = new SurfaceIcons("", locations);
             if (headings.get(0) != null)
                 o.setHeading(headings.get(0));
@@ -399,10 +479,6 @@ public class VPFBasicSymbolFactory implements VPFSymbolFactory {
         }
     }
 
-    //**************************************************************//
-    //********************  Symbol Attribute Assembly  *************//
-    //**************************************************************//
-
     protected void addTextLabel(VPFFeature feature, VPFSymbolAttributes attr, Collection<VPFSymbol> outCollection) {
         VPFSymbolAttributes.LabelAttributes[] labelAttr = attr.getLabelAttributes();
         if (labelAttr == null || labelAttr.length == 0)
@@ -417,79 +493,18 @@ public class VPFBasicSymbolFactory implements VPFSymbolFactory {
         }
     }
 
-    protected static void addPointLabel(CombinedFeature feature, VPFSymbolAttributes attr,
-        Collection<VPFSymbol> outCollection) {
-        // Build the list of point symbol locations associated with each sub-feature.
-        ArrayList<LatLon> locations = new ArrayList<>();
-
-        for (VPFFeature subFeature : feature) {
-            if (subFeature.getBounds() != null) {
-                locations.add(subFeature.getBounds().toSector().getCentroid());
-            }
-        }
-
-        SurfaceIcons o = new SurfaceIcons("", locations);
-        VPFBasicSymbolFactory.applyPointSymbolAttributes(attr, o);
-        outCollection.add(new VPFSymbol(feature, attr, o));
-    }
-
     protected Iterable<? extends VPFSymbolKey> getSymbolKeys(VPFFeature feature) {
         String fcode = feature.getStringValue("f_code");
         return this.symbolSupport.getSymbolKeys(feature.getFeatureClass(), fcode, feature);
     }
 
-    protected Iterable<? extends VPFSymbolAttributes> getSymbolAttributes(VPFFeature feature, VPFSymbolKey symbolKey) {
-        return this.symbolSupport.getSymbolAttributes(feature.getFeatureClass(), symbolKey);
-    }
-
-    protected static void applyPointSymbolAttributes(VPFSymbolAttributes attr, SurfaceIcon icon) {
-        if (attr.getIconImageSource() != null)
-            icon.setImageSource(attr.getIconImageSource());
-        icon.setUseMipMaps(attr.isMipMapIconImage());
-        icon.setScale(attr.getIconImageScale());
-        icon.setMaxSize(DEFAULT_ICON_MAX_SIZE);
-    }
-
-    protected static Angle getPointSymbolHeading(VPFSymbolAttributes attr, AVList featureAttributes) {
-        if (attr.getOrientationAttributeName() == null) {
-            return null;
-        }
-
-        Object o = featureAttributes.get(attr.getOrientationAttributeName());
-        if (o instanceof Number) {
-            double d = ((Number) o).doubleValue();
-            return Angle.fromDegrees(d);
-        }
-        else if (o instanceof String) {
-            Double d = WWUtil.convertStringToDouble((String) o);
-            if (d != null)
-                return Angle.fromDegrees(d);
-        }
-
-        return null;
-    }
-
-    protected static void applySymbolAttributes(ShapeAttributes attr, Attributable surfaceShape) {
-        surfaceShape.setAttributes(attr);
-    }
-
-    public static void applyTextAttributes(VPFSymbolAttributes attr, GeographicText text) {
-        VPFSymbolAttributes.LabelAttributes[] labelAttr = attr.getLabelAttributes();
-        if (labelAttr != null && labelAttr.length > 0) {
-            text.setFont(labelAttr[0].getFont());
-            text.setColor(labelAttr[0].getColor());
-            text.setBackgroundColor(labelAttr[0].getBackgroundColor());
-        }
-        else {
-            text.setFont(Font.decode("Arial-PLAIN-12"));
-            text.setColor(attr.getInteriorMaterial().getDiffuse());
-            text.setBackgroundColor(WWUtil.computeContrastingColor(attr.getInteriorMaterial().getDiffuse()));
-        }
-    }
-
     //**************************************************************//
     //********************  Feature Support  ***********************//
     //**************************************************************//
+
+    protected Iterable<? extends VPFSymbolAttributes> getSymbolAttributes(VPFFeature feature, VPFSymbolKey symbolKey) {
+        return this.symbolSupport.getSymbolAttributes(feature.getFeatureClass(), symbolKey);
+    }
 
     protected void applyLabelAttributes(VPFSymbolAttributes.LabelAttributes attr, VPFFeature feature,
         GeographicText text) {
@@ -504,24 +519,6 @@ public class VPFBasicSymbolFactory implements VPFSymbolFactory {
         String labelText = this.symbolSupport.getSymbolLabelText(attr, feature);
         if (labelText != null)
             text.setText(labelText);
-    }
-
-    protected static LatLon computeLabelLocation(VPFSymbolAttributes.LabelAttributes attr, VPFFeature feature) {
-        LatLon location = feature.getBounds().toSector().getCentroid();
-
-        // If we are given label offset parameters, compute the label location using the offset azimuth and offset arc
-        // length.
-        if (attr.getOffset() != 0) {
-            VPFLibrary library = feature.getFeatureClass().getCoverage().getLibrary();
-
-            Angle offsetAzimuth = attr.getOffsetAngle();
-            Angle offsetLength = library.computeArcLengthFromMapDistance(attr.getOffset());
-            if (offsetAzimuth != null && offsetLength != null) {
-                location = LatLon.greatCircleEndPosition(location, offsetAzimuth, offsetLength);
-            }
-        }
-
-        return location;
     }
 
     protected static class FeatureMap extends HashMap<VPFSymbolKey, CombinedFeature> {
@@ -545,11 +542,11 @@ public class VPFBasicSymbolFactory implements VPFSymbolFactory {
         }
 
         public VPFBoundingBox getBounds() {
-            return combineBounds(this.featureList);
+            return VPFBasicSymbolFactory.combineBounds(this.featureList);
         }
 
         public int[] getPrimitiveIds() {
-            return combinePrimitiveIds(this.featureList);
+            return VPFBasicSymbolFactory.combinePrimitiveIds(this.featureList);
         }
 
         public void add(VPFFeature feature) {

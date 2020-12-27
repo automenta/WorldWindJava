@@ -11,10 +11,10 @@ import java.nio.IntBuffer;
 import java.util.Iterator;
 
 /**
- * CompoundVecBuffer defines an interface for storing and retrieving a collection of variable length {@link
- * VecBuffer} objects. Each VecBuffer is retrieved via an index. The range of valid indices in a
- * CompoundVecBuffer is [0, size() - 1], inclusive. Implementations of CompoundVecBuffer define how each VecBuffer is
- * stored and retrieved according to its index.
+ * CompoundVecBuffer defines an interface for storing and retrieving a collection of variable length {@link VecBuffer}
+ * objects. Each VecBuffer is retrieved via an index. The range of valid indices in a CompoundVecBuffer is [0, size() -
+ * 1], inclusive. Implementations of CompoundVecBuffer define how each VecBuffer is stored and retrieved according to
+ * its index.
  * <p>
  * To retrieve a single VecBuffer given an index, invoke {@link #subBuffer(int)}. To retrieve a VecBuffer's size, in
  * number of logical tuples, invoke {@link #subBufferSize(int)}.
@@ -50,15 +50,15 @@ public abstract class CompoundVecBuffer {
         }
 
         this.capacity = capacity;
-        this.offsets = WWBufferUtil.newIntBuffer(capacity, ALLOCATE_DIRECT_BUFFERS);
-        this.lengths = WWBufferUtil.newIntBuffer(capacity, ALLOCATE_DIRECT_BUFFERS);
+        this.offsets = WWBufferUtil.newIntBuffer(capacity, CompoundVecBuffer.ALLOCATE_DIRECT_BUFFERS);
+        this.lengths = WWBufferUtil.newIntBuffer(capacity, CompoundVecBuffer.ALLOCATE_DIRECT_BUFFERS);
     }
 
     /**
      * Constructs a CompoundVecBuffer with the default initial capacity.
      */
     public CompoundVecBuffer() {
-        this(DEFAULT_INITIAL_CAPACITY);
+        this(CompoundVecBuffer.DEFAULT_INITIAL_CAPACITY);
     }
 
     protected CompoundVecBuffer(CompoundVecBuffer that, int beginIndex, int endIndex) {
@@ -67,14 +67,14 @@ public abstract class CompoundVecBuffer {
         this.count = length;
         this.capacity = length;
 
-        this.offsets = WWBufferUtil.newIntBuffer(length, ALLOCATE_DIRECT_BUFFERS);
+        this.offsets = WWBufferUtil.newIntBuffer(length, CompoundVecBuffer.ALLOCATE_DIRECT_BUFFERS);
         that.offsets.limit(endIndex + 1);
         that.offsets.position(beginIndex);
         this.offsets.put(that.offsets);
         this.offsets.rewind();
         that.offsets.clear();
 
-        this.lengths = WWBufferUtil.newIntBuffer(length, ALLOCATE_DIRECT_BUFFERS);
+        this.lengths = WWBufferUtil.newIntBuffer(length, CompoundVecBuffer.ALLOCATE_DIRECT_BUFFERS);
         that.lengths.limit(endIndex + 1);
         that.lengths.position(beginIndex);
         this.lengths.put(that.lengths);
@@ -86,8 +86,8 @@ public abstract class CompoundVecBuffer {
         this.count = length;
         this.capacity = length;
 
-        this.offsets = WWBufferUtil.newIntBuffer(length, ALLOCATE_DIRECT_BUFFERS);
-        this.lengths = WWBufferUtil.newIntBuffer(length, ALLOCATE_DIRECT_BUFFERS);
+        this.offsets = WWBufferUtil.newIntBuffer(length, CompoundVecBuffer.ALLOCATE_DIRECT_BUFFERS);
+        this.lengths = WWBufferUtil.newIntBuffer(length, CompoundVecBuffer.ALLOCATE_DIRECT_BUFFERS);
 
         for (int i = offset; i < offset + length; i++) {
             this.offsets.put(that.offsets.get(indices[i]));
@@ -152,7 +152,7 @@ public abstract class CompoundVecBuffer {
         if (len > 0) {
             int off = this.offsets.get(index);
             return this.createSubBuffer(off, len);
-        }else {
+        } else {
             return VecBuffer.emptyVecBuffer(this.getCoordsPerVec());
         }
     }
@@ -514,7 +514,6 @@ public abstract class CompoundVecBuffer {
                 return false;
             }
         }
-
     }
 
     protected class ReverseCompoundIterator<T> extends CompoundIterator<T> {

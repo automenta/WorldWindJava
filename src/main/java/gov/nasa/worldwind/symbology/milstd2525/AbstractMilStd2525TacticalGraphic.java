@@ -18,7 +18,7 @@ import gov.nasa.worldwind.util.Logging;
  * @version $Id: AbstractMilStd2525TacticalGraphic.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 public abstract class AbstractMilStd2525TacticalGraphic extends AbstractTacticalGraphic
-    implements MilStd2525TacticalGraphic, Renderable {
+    implements MilStd2525TacticalGraphic {
     /**
      * Factor applied to the stipple pattern used to draw graphics in present state.
      */
@@ -54,6 +54,27 @@ public abstract class AbstractMilStd2525TacticalGraphic extends AbstractTactical
     }
 
     /**
+     * Indicates the factor applied to the stipple pattern used to draw dashed lines when the graphic is "anticipated".
+     * This value is not used when the graphic is "present".
+     *
+     * @return Factor applied to the stipple pattern.
+     * @see ShapeAttributes#getOutlineStippleFactor()
+     */
+    protected static int getOutlineStippleFactor() {
+        return AbstractMilStd2525TacticalGraphic.OUTLINE_STIPPLE_FACTOR_ANTICIPATED;
+    }
+
+    /**
+     * Indicates the stipple pattern used to draw dashed lines when the graphic is "anticipated".
+     *
+     * @return Factor applied to the stipple pattern.
+     * @see ShapeAttributes#getOutlineStipplePattern()
+     */
+    protected static short getOutlineStipplePattern() {
+        return AbstractMilStd2525TacticalGraphic.OUTLINE_STIPPLE_PATTERN;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public String getIdentifier() {
@@ -78,8 +99,7 @@ public abstract class AbstractMilStd2525TacticalGraphic extends AbstractTactical
     public void setModifier(String modifier, Object value) {
         if (SymbologyConstants.UNIQUE_DESIGNATION.equals(modifier) && (value instanceof String)) {
             this.setText((String) value);
-        }
-        else {
+        } else {
             super.setModifier(modifier, value);
         }
     }
@@ -154,34 +174,12 @@ public abstract class AbstractMilStd2525TacticalGraphic extends AbstractTactical
         if (!SymbologyConstants.STATUS_PRESENT.equalsIgnoreCase(status)) {
             attributes.setOutlineStippleFactor(AbstractMilStd2525TacticalGraphic.getOutlineStippleFactor());
             attributes.setOutlineStipplePattern(AbstractMilStd2525TacticalGraphic.getOutlineStipplePattern());
-        }
-        else {
-            attributes.setOutlineStippleFactor(OUTLINE_STIPPLE_FACTOR_PRESENT);
+        } else {
+            attributes.setOutlineStippleFactor(AbstractMilStd2525TacticalGraphic.OUTLINE_STIPPLE_FACTOR_PRESENT);
         }
 
         // Most 2525 area graphic do not have a fill.
         attributes.setDrawInterior(false);
-    }
-
-    /**
-     * Indicates the factor applied to the stipple pattern used to draw dashed lines when the graphic is "anticipated".
-     * This value is not used when the graphic is "present".
-     *
-     * @return Factor applied to the stipple pattern.
-     * @see ShapeAttributes#getOutlineStippleFactor()
-     */
-    protected static int getOutlineStippleFactor() {
-        return OUTLINE_STIPPLE_FACTOR_ANTICIPATED;
-    }
-
-    /**
-     * Indicates the stipple pattern used to draw dashed lines when the graphic is "anticipated".
-     *
-     * @return Factor applied to the stipple pattern.
-     * @see ShapeAttributes#getOutlineStipplePattern()
-     */
-    protected static short getOutlineStipplePattern() {
-        return OUTLINE_STIPPLE_PATTERN;
     }
 
     /**

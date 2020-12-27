@@ -11,7 +11,7 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.examples.worldwindow.core.*;
 import gov.nasa.worldwind.examples.worldwindow.core.layermanager.LayerPath;
 import gov.nasa.worldwind.examples.worldwindow.util.WWOUnitsFormat;
-import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.geom.coords.UTMCoord;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.pick.PickedObject;
@@ -180,7 +180,7 @@ public class CoordinatesDisplay extends AbstractOnDemandLayerFeature {
         if (!(view instanceof OrbitView))
             return 0.0;
 
-        return view.getHeading().getDegrees();
+        return view.getHeading().degrees;
     }
 
     private static double computePitch(View view) {
@@ -190,7 +190,7 @@ public class CoordinatesDisplay extends AbstractOnDemandLayerFeature {
         if (!(view instanceof OrbitView))
             return 0.0;
 
-        return view.getPitch().getDegrees();
+        return view.getPitch().degrees;
     }
 
     private class CoordAnnotationLayer extends AnnotationLayer {

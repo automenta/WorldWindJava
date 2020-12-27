@@ -42,7 +42,7 @@ public class RPFFrameFilename {
     private final char zoneCode;
     // Cached values.
     private int hashCode = -1;
-    private String filename = null;
+    private String filename;
 
     private RPFFrameFilename(String dataSeriesCode, int frameNumber, char producerId, int version, char zoneCode) {
         this.dataSeriesCode = dataSeriesCode;
@@ -60,14 +60,14 @@ public class RPFFrameFilename {
             Logging.logger().fine(message);
             throw new IllegalArgumentException(message);
         }
-        if (filename.length() != FILENAME_LENGTH) {
+        if (filename.length() != RPFFrameFilename.FILENAME_LENGTH) {
             String message = Logging.getMessage("RPFFrameFilename.BadFilenameLength", filename);
             Logging.logger().fine(message);
             throw new RPFFrameFilenameFormatException(message);
         }
 
-        char[] buffer = new char[FILENAME_LENGTH];
-        filename.getChars(0, FILENAME_LENGTH, buffer, 0);
+        char[] buffer = new char[RPFFrameFilename.FILENAME_LENGTH];
+        filename.getChars(0, RPFFrameFilename.FILENAME_LENGTH, buffer, 0);
 
         char producerId = buffer[7];
         String dataSeriesCode = filename.substring(9, 11);
@@ -122,10 +122,10 @@ public class RPFFrameFilename {
             throw new IllegalArgumentException(message);
         }
 
-        if (str.length() != FILENAME_LENGTH)
+        if (str.length() != RPFFrameFilename.FILENAME_LENGTH)
             return false;
 
-        char[] buffer = new char[FILENAME_LENGTH];
+        char[] buffer = new char[RPFFrameFilename.FILENAME_LENGTH];
         str.getChars(0, 12, buffer, 0);
 
         if (!Base34Converter.isBase34(buffer, 0, 7))
@@ -173,8 +173,8 @@ public class RPFFrameFilename {
 
     public final String getFilename() {
         if (this.filename == null) {
-            char[] buffer = new char[FILENAME_LENGTH];
-            toCharArray(this, buffer);
+            char[] buffer = new char[RPFFrameFilename.FILENAME_LENGTH];
+            RPFFrameFilename.toCharArray(this, buffer);
             this.filename = new String(buffer);
         }
         return this.filename;

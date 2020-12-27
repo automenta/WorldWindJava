@@ -54,7 +54,7 @@ public class RPFFrameFileComponents {
     public long transparencyMaskTableOffset;
 
     // [ rpf related images section ]
-    public RelatedImagesSection relatedImagesSection = null;
+    public RelatedImagesSection relatedImagesSection;
 
     public RPFFrameFileComponents(ByteBuffer buffer) {
         this.componentLocationTable = new RPFLocationSection(buffer);
@@ -109,8 +109,7 @@ public class RPFFrameFileComponents {
             for (int i = 0; i < this.numOfColorGrayscaleOffsetRecords; i++) {
                 rpfColorMaps[i] = new RPFColorMap(buffer, this.componentLocationTable.getColormapSubsectionLocation());
             }
-        }
-        else
+        } else
             throw new NITFSRuntimeException("NITFSReader.InvalidNumberOfRPFColorGrayscaleRecords");
     }
 

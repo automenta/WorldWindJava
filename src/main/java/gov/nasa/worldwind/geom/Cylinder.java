@@ -207,7 +207,7 @@ public class Cylinder implements Extent, Renderable {
         }
 
         double[] minAndMaxElevations = globe.getMinAndMaxElevations(sector);
-        return computeVerticalBoundingCylinder(globe, verticalExaggeration, sector,
+        return Cylinder.computeVerticalBoundingCylinder(globe, verticalExaggeration, sector,
             minAndMaxElevations[0], minAndMaxElevations[1]);
     }
 
@@ -248,11 +248,11 @@ public class Cylinder implements Extent, Renderable {
         // sector's latitude range. In some cases this cylinder may be too large, but we're typically not interested
         // in culling these cylinders since the sector will span most of the globe.
         if (sector.latDelta >= 180.00d || sector.lonDelta >= 180.00d) {
-            return computeVerticalBoundsFromSectorLatitudeRange(globe, sector, minHeight, maxHeight);
+            return Cylinder.computeVerticalBoundsFromSectorLatitudeRange(globe, sector, minHeight, maxHeight);
         }
         // Otherwise, create a standard bounding cylinder that minimally surrounds the specified sector and elevations.
         else {
-            return computeVerticalBoundsFromSectorQuadrilateral(globe, sector, minHeight, maxHeight);
+            return Cylinder.computeVerticalBoundsFromSectorQuadrilateral(globe, sector, minHeight, maxHeight);
         }
     }
 
@@ -328,8 +328,7 @@ public class Cylinder implements Extent, Renderable {
             p0 = globe.computePointFromPosition(sector.latMin(), sector.lonMax(), maxHeight); // SE
             p1 = globe.computePointFromPosition(sector.latMin(), sector.lonMin(), maxHeight); // SW
             p2 = globe.computePointFromPosition(sector.latMax(), sector.lonMin(), maxHeight); // NW
-        }
-        else {
+        } else {
             p0 = globe.computePointFromPosition(sector.latMax(), sector.lonMin(), maxHeight); // NW
             p1 = globe.computePointFromPosition(sector.latMax(), sector.lonMax(), maxHeight); // NE
             p2 = globe.computePointFromPosition(sector.latMin(), sector.lonMin(), maxHeight); // SW
@@ -344,7 +343,7 @@ public class Cylinder implements Extent, Renderable {
             // If the computation failed, then two of the points are coincident. Fall back to creating a bounding
             // cylinder based on the vertices of the sector. This bounding cylinder won't be as tight a fit, but
             // it will be correct.
-            return computeVerticalBoundsFromSectorVertices(globe, sector, minHeight, maxHeight);
+            return Cylinder.computeVerticalBoundsFromSectorVertices(globe, sector, minHeight, maxHeight);
         }
         Vec4 centerPoint = centerOut[0];
         Vec4 axis = axisOut[0];
@@ -429,136 +428,6 @@ public class Cylinder implements Extent, Renderable {
         return new Cylinder(bottomCenterPoint, topCenterPoint, radius);
     }
 
-    /**
-     * Returns the unit-length axis of this cylinder.
-     *
-     * @return the unit-length axis of this cylinder.
-     */
-    public Vec4 getAxisUnitDirection() {
-        return axisUnitDirection;
-    }
-
-    /**
-     * Returns the this cylinder's bottom-center point.
-     *
-     * @return this cylinder's bottom-center point.
-     */
-    public Vec4 getBottomCenter() {
-        return bottomCenter;
-    }
-
-    /**
-     * Returns the this cylinder's top-center point.
-     *
-     * @return this cylinder's top-center point.
-     */
-    public Vec4 getTopCenter() {
-        return topCenter;
-    }
-
-    /**
-     * Returns this cylinder's radius.
-     *
-     * @return this cylinder's radius.
-     */
-    public double getCylinderRadius() {
-        return cylinderRadius;
-    }
-
-    /**
-     * Returns this cylinder's height.
-     *
-     * @return this cylinder's height.
-     */
-    public double getCylinderHeight() {
-        return cylinderHeight;
-    }
-
-    /**
-     * Return this cylinder's center point.
-     *
-     * @return this cylinder's center point.
-     */
-    public Vec4 getCenter() {
-        Vec4 b = this.bottomCenter;
-        Vec4 t = this.topCenter;
-        return new Vec4(
-            (b.x + t.x) / 2.0,
-            (b.y + t.y) / 2.0,
-            (b.z + t.z) / 2.0);
-    }
-
-    // Taken from "Graphics Gems IV", Section V.2, page 356.
-
-    /**
-     * {@inheritDoc}
-     */
-    public double getDiameter() {
-        return 2 * this.getRadius();
-    }
-
-    // Taken from "Graphics Gems IV", Section V.2, page 356.
-
-    /**
-     * {@inheritDoc}
-     */
-    public double getRadius() {
-        // return the radius of the enclosing sphere
-        double halfHeight = this.bottomCenter.distanceTo3(this.topCenter) / 2.0;
-        return Math.sqrt(halfHeight * halfHeight + this.cylinderRadius * this.cylinderRadius);
-    }
-
-    /**
-     * Return this cylinder's volume.
-     *
-     * @return this cylinder's volume.
-     */
-    public double getVolume() {
-        return Math.PI * this.cylinderRadius * this.cylinderRadius * this.cylinderHeight;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Intersection[] intersect(Line line) {
-        if (line == null) {
-            String message = Logging.getMessage("nullValue.LineIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        double[] tVals = new double[2];
-        if (!intcyl(line.origin, line.direction, this.bottomCenter, this.axisUnitDirection,
-            this.cylinderRadius, tVals))
-            return null;
-
-        if (!clipcyl(line.origin, line.direction, this.bottomCenter, this.topCenter,
-            this.axisUnitDirection, tVals))
-            return null;
-
-        if (!Double.isInfinite(tVals[0]) && !Double.isInfinite(tVals[1]) && tVals[0] >= 0.0 && tVals[1] >= 0.0)
-            return new Intersection[] {new Intersection(line.getPointAt(tVals[0]), false),
-                new Intersection(line.getPointAt(tVals[1]), false)};
-        if (!Double.isInfinite(tVals[0]) && tVals[0] >= 0.0)
-            return new Intersection[] {new Intersection(line.getPointAt(tVals[0]), false)};
-        if (!Double.isInfinite(tVals[1]) && tVals[1] >= 0.0)
-            return new Intersection[] {new Intersection(line.getPointAt(tVals[1]), false)};
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean intersects(Line line) {
-        if (line == null) {
-            String message = Logging.getMessage("nullValue.LineIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        return intersect(line) != null;
-    }
-
     protected static boolean intcyl(Vec4 raybase, Vec4 raycos, Vec4 base, Vec4 axis, double radius, double[] tVals) {
         boolean hit; // True if ray intersects cyl
         Vec4 RC; // Ray base to cylinder base
@@ -616,8 +485,7 @@ public class Cylinder implements Extent, Renderable {
                 return false;
             if (dwt >= 0.0)
                 return false;
-        }
-        else {
+        } else {
             // Intersect the ray with the bottom end-cap.
             tb = -dwb / dc;
             // Intersect the ray with the top end-cap.
@@ -652,24 +520,6 @@ public class Cylinder implements Extent, Renderable {
         return in < out;
     }
 
-    protected double intersects(Plane plane, double effectiveRadius) {
-        // Test the distance from the first cylinder end-point. Assumes that bottomCenter's w-coordinate is 1.
-        double dq1 = plane.dot(this.bottomCenter);
-        boolean bq1 = dq1 <= -effectiveRadius;
-
-        // Test the distance from the top of the cylinder. Assumes that topCenter's w-coordinate is 1.
-        double dq2 = plane.dot(this.topCenter);
-        boolean bq2 = dq2 <= -effectiveRadius;
-
-        if (bq1 && bq2) // both beyond effective radius; cylinder is on negative side of plane
-            return -1;
-
-        if (bq1 == bq2) // both within effective radius; can't draw any conclusions
-            return 0;
-
-        return 1; // Cylinder almost certainly intersects
-    }
-
     protected static double intersectsAt(Plane plane, double effectiveRadius, Vec4[] endpoints) {
         // Test the distance from the first end-point. Assumes that the first end-point's w-coordinate is 1.
         double dq1 = plane.dot(endpoints[0]);
@@ -696,6 +546,154 @@ public class Cylinder implements Extent, Renderable {
             endpoints[1] = newEndPoint;
 
         return t;
+    }
+
+    /**
+     * Returns the unit-length axis of this cylinder.
+     *
+     * @return the unit-length axis of this cylinder.
+     */
+    public Vec4 getAxisUnitDirection() {
+        return axisUnitDirection;
+    }
+
+    /**
+     * Returns the this cylinder's bottom-center point.
+     *
+     * @return this cylinder's bottom-center point.
+     */
+    public Vec4 getBottomCenter() {
+        return bottomCenter;
+    }
+
+    /**
+     * Returns the this cylinder's top-center point.
+     *
+     * @return this cylinder's top-center point.
+     */
+    public Vec4 getTopCenter() {
+        return topCenter;
+    }
+
+    // Taken from "Graphics Gems IV", Section V.2, page 356.
+
+    /**
+     * Returns this cylinder's radius.
+     *
+     * @return this cylinder's radius.
+     */
+    public double getCylinderRadius() {
+        return cylinderRadius;
+    }
+
+    // Taken from "Graphics Gems IV", Section V.2, page 356.
+
+    /**
+     * Returns this cylinder's height.
+     *
+     * @return this cylinder's height.
+     */
+    public double getCylinderHeight() {
+        return cylinderHeight;
+    }
+
+    /**
+     * Return this cylinder's center point.
+     *
+     * @return this cylinder's center point.
+     */
+    public Vec4 getCenter() {
+        Vec4 b = this.bottomCenter;
+        Vec4 t = this.topCenter;
+        return new Vec4(
+            (b.x + t.x) / 2.0,
+            (b.y + t.y) / 2.0,
+            (b.z + t.z) / 2.0);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public double getDiameter() {
+        return 2 * this.getRadius();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public double getRadius() {
+        // return the radius of the enclosing sphere
+        double halfHeight = this.bottomCenter.distanceTo3(this.topCenter) / 2.0;
+        return Math.sqrt(halfHeight * halfHeight + this.cylinderRadius * this.cylinderRadius);
+    }
+
+    /**
+     * Return this cylinder's volume.
+     *
+     * @return this cylinder's volume.
+     */
+    public double getVolume() {
+        return Math.PI * this.cylinderRadius * this.cylinderRadius * this.cylinderHeight;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Intersection[] intersect(Line line) {
+        if (line == null) {
+            String message = Logging.getMessage("nullValue.LineIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        double[] tVals = new double[2];
+        if (!Cylinder.intcyl(line.origin, line.direction, this.bottomCenter, this.axisUnitDirection,
+            this.cylinderRadius, tVals))
+            return null;
+
+        if (!Cylinder.clipcyl(line.origin, line.direction, this.bottomCenter, this.topCenter,
+            this.axisUnitDirection, tVals))
+            return null;
+
+        if (!Double.isInfinite(tVals[0]) && !Double.isInfinite(tVals[1]) && tVals[0] >= 0.0 && tVals[1] >= 0.0)
+            return new Intersection[] {new Intersection(line.getPointAt(tVals[0]), false),
+                new Intersection(line.getPointAt(tVals[1]), false)};
+        if (!Double.isInfinite(tVals[0]) && tVals[0] >= 0.0)
+            return new Intersection[] {new Intersection(line.getPointAt(tVals[0]), false)};
+        if (!Double.isInfinite(tVals[1]) && tVals[1] >= 0.0)
+            return new Intersection[] {new Intersection(line.getPointAt(tVals[1]), false)};
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean intersects(Line line) {
+        if (line == null) {
+            String message = Logging.getMessage("nullValue.LineIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        return intersect(line) != null;
+    }
+
+    protected double intersects(Plane plane, double effectiveRadius) {
+        // Test the distance from the first cylinder end-point. Assumes that bottomCenter's w-coordinate is 1.
+        double dq1 = plane.dot(this.bottomCenter);
+        boolean bq1 = dq1 <= -effectiveRadius;
+
+        // Test the distance from the top of the cylinder. Assumes that topCenter's w-coordinate is 1.
+        double dq2 = plane.dot(this.topCenter);
+        boolean bq2 = dq2 <= -effectiveRadius;
+
+        if (bq1 && bq2) // both beyond effective radius; cylinder is on negative side of plane
+            return -1;
+
+        if (bq1 == bq2) // both within effective radius; can't draw any conclusions
+            return 0;
+
+        return 1; // Cylinder almost certainly intersects
     }
 
     /**
@@ -740,7 +738,7 @@ public class Cylinder implements Extent, Renderable {
         }
 
         double intersectionPoint;
-        Vec4[] endPoints = new Vec4[] {this.bottomCenter, this.topCenter};
+        Vec4[] endPoints = {this.bottomCenter, this.topCenter};
 
         double effectiveRadius = this.getEffectiveRadius(frustum.near);
         intersectionPoint = Cylinder.intersectsAt(frustum.near, effectiveRadius, endPoints);
@@ -890,9 +888,9 @@ public class Cylinder implements Extent, Renderable {
         result = bottomCenter != null ? bottomCenter.hashCode() : 0;
         result = 31 * result + (topCenter != null ? topCenter.hashCode() : 0);
         result = 31 * result + (axisUnitDirection != null ? axisUnitDirection.hashCode() : 0);
-        temp = cylinderRadius != +0.0d ? Double.doubleToLongBits(cylinderRadius) : 0L;
+        temp = cylinderRadius == +0.0d ? 0L : Double.doubleToLongBits(cylinderRadius);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
-        temp = cylinderHeight != +0.0d ? Double.doubleToLongBits(cylinderHeight) : 0L;
+        temp = cylinderHeight == +0.0d ? 0L : Double.doubleToLongBits(cylinderHeight);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         return result;
     }

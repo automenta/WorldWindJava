@@ -76,6 +76,15 @@ public class VPFSymbolComparator implements Comparator<VPFSymbol> {
     public VPFSymbolComparator() {
     }
 
+    protected static int getFeatureTypePriority(VPFFeatureType type) {
+        return switch (type) {
+            case POINT -> 3;
+            case LINE -> 2;
+            case AREA -> 1;
+            default -> 0;
+        };
+    }
+
     /**
      * @param a Symbol to compare.
      * @param b Symbol to compare.
@@ -113,14 +122,5 @@ public class VPFSymbolComparator implements Comparator<VPFSymbol> {
         VPFSymbolKey bKey = b.getAttributes().getSymbolKey();
         i = aKey.compareTo(bKey);
         return i;
-    }
-
-    protected static int getFeatureTypePriority(VPFFeatureType type) {
-        return switch (type) {
-            case POINT -> 3;
-            case LINE -> 2;
-            case AREA -> 1;
-            default -> 0;
-        };
     }
 }

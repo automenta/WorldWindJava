@@ -54,7 +54,7 @@ public class WWBufferUtil {
             throw new IllegalArgumentException(message);
         }
 
-        return allocateDirect ? newDirectByteBuffer(size) : ByteBuffer.allocate(size);
+        return allocateDirect ? WWBufferUtil.newDirectByteBuffer(size) : ByteBuffer.allocate(size);
     }
 
     /**
@@ -73,7 +73,7 @@ public class WWBufferUtil {
             throw new IllegalArgumentException(message);
         }
 
-        return allocateDirect ? newDirectByteBuffer(SIZEOF_SHORT * size).asShortBuffer() : ShortBuffer.allocate(size);
+        return allocateDirect ? WWBufferUtil.newDirectByteBuffer(WWBufferUtil.SIZEOF_SHORT * size).asShortBuffer() : ShortBuffer.allocate(size);
     }
 
     /**
@@ -92,7 +92,7 @@ public class WWBufferUtil {
             throw new IllegalArgumentException(message);
         }
 
-        return allocateDirect ? newDirectByteBuffer(SIZEOF_INT * size).asIntBuffer() : IntBuffer.allocate(size);
+        return allocateDirect ? WWBufferUtil.newDirectByteBuffer(WWBufferUtil.SIZEOF_INT * size).asIntBuffer() : IntBuffer.allocate(size);
     }
 
     /**
@@ -111,7 +111,7 @@ public class WWBufferUtil {
             throw new IllegalArgumentException(message);
         }
 
-        return allocateDirect ? newDirectByteBuffer(SIZEOF_FLOAT * size).asFloatBuffer() : FloatBuffer.allocate(size);
+        return allocateDirect ? WWBufferUtil.newDirectByteBuffer(WWBufferUtil.SIZEOF_FLOAT * size).asFloatBuffer() : FloatBuffer.allocate(size);
     }
 
     /**
@@ -130,7 +130,7 @@ public class WWBufferUtil {
             throw new IllegalArgumentException(message);
         }
 
-        return allocateDirect ? newDirectByteBuffer(SIZEOF_DOUBLE * size).asDoubleBuffer()
+        return allocateDirect ? WWBufferUtil.newDirectByteBuffer(WWBufferUtil.SIZEOF_DOUBLE * size).asDoubleBuffer()
             : DoubleBuffer.allocate(size);
     }
 
@@ -150,7 +150,7 @@ public class WWBufferUtil {
             throw new IllegalArgumentException(message);
         }
 
-        return (allocateDirect ? newDirectByteBuffer(SIZEOF_CHAR * size).asCharBuffer() : CharBuffer.allocate(size));
+        return (allocateDirect ? WWBufferUtil.newDirectByteBuffer(WWBufferUtil.SIZEOF_CHAR * size).asCharBuffer() : CharBuffer.allocate(size));
     }
 
     /**
@@ -170,7 +170,7 @@ public class WWBufferUtil {
             throw new IllegalArgumentException(message);
         }
 
-        ByteBuffer buffer = newByteBuffer(size, allocateDirect);
+        ByteBuffer buffer = WWBufferUtil.newByteBuffer(size, allocateDirect);
         return new BufferWrapper.ByteBufferWrapper(buffer);
     }
 
@@ -191,7 +191,7 @@ public class WWBufferUtil {
             throw new IllegalArgumentException(message);
         }
 
-        ShortBuffer buffer = newShortBuffer(size, allocateDirect);
+        ShortBuffer buffer = WWBufferUtil.newShortBuffer(size, allocateDirect);
         return new BufferWrapper.ShortBufferWrapper(buffer);
     }
 
@@ -212,7 +212,7 @@ public class WWBufferUtil {
             throw new IllegalArgumentException(message);
         }
 
-        IntBuffer buffer = newIntBuffer(size, allocateDirect);
+        IntBuffer buffer = WWBufferUtil.newIntBuffer(size, allocateDirect);
         return new BufferWrapper.IntBufferWrapper(buffer);
     }
 
@@ -233,7 +233,7 @@ public class WWBufferUtil {
             throw new IllegalArgumentException(message);
         }
 
-        FloatBuffer buffer = newFloatBuffer(size, allocateDirect);
+        FloatBuffer buffer = WWBufferUtil.newFloatBuffer(size, allocateDirect);
         return new BufferWrapper.FloatBufferWrapper(buffer);
     }
 
@@ -254,7 +254,7 @@ public class WWBufferUtil {
             throw new IllegalArgumentException(message);
         }
 
-        DoubleBuffer buffer = newDoubleBuffer(size, allocateDirect);
+        DoubleBuffer buffer = WWBufferUtil.newDoubleBuffer(size, allocateDirect);
         return new BufferWrapper.DoubleBufferWrapper(buffer);
     }
 
@@ -277,7 +277,7 @@ public class WWBufferUtil {
             throw new IllegalArgumentException(message);
         }
 
-        ByteBuffer newBuffer = newByteBuffer(newSize, buffer.isDirect());
+        ByteBuffer newBuffer = WWBufferUtil.newByteBuffer(newSize, buffer.isDirect());
 
         int pos = buffer.position(); // Save the input buffer's current position.
         try {
@@ -310,7 +310,7 @@ public class WWBufferUtil {
             throw new IllegalArgumentException(message);
         }
 
-        CharBuffer newBuffer = newCharBuffer(newSize, buffer.isDirect());
+        CharBuffer newBuffer = WWBufferUtil.newCharBuffer(newSize, buffer.isDirect());
 
         int pos = buffer.position(); // Save the input buffer's current position.
         try {
@@ -343,7 +343,7 @@ public class WWBufferUtil {
             throw new IllegalArgumentException(message);
         }
 
-        ShortBuffer newBuffer = newShortBuffer(newSize, buffer.isDirect());
+        ShortBuffer newBuffer = WWBufferUtil.newShortBuffer(newSize, buffer.isDirect());
 
         int pos = buffer.position(); // Save the input buffer's current position.
         try {
@@ -376,7 +376,7 @@ public class WWBufferUtil {
             throw new IllegalArgumentException(message);
         }
 
-        IntBuffer newBuffer = newIntBuffer(newSize, buffer.isDirect());
+        IntBuffer newBuffer = WWBufferUtil.newIntBuffer(newSize, buffer.isDirect());
 
         int pos = buffer.position(); // Save the input buffer's current position.
         try {
@@ -409,7 +409,7 @@ public class WWBufferUtil {
             throw new IllegalArgumentException(message);
         }
 
-        FloatBuffer newBuffer = newFloatBuffer(newSize, buffer.isDirect());
+        FloatBuffer newBuffer = WWBufferUtil.newFloatBuffer(newSize, buffer.isDirect());
 
         int pos = buffer.position(); // Save the input buffer's current position.
         try {
@@ -442,7 +442,7 @@ public class WWBufferUtil {
             throw new IllegalArgumentException(message);
         }
 
-        DoubleBuffer newBuffer = newDoubleBuffer(newSize, buffer.isDirect());
+        DoubleBuffer newBuffer = WWBufferUtil.newDoubleBuffer(newSize, buffer.isDirect());
 
         int pos = buffer.position(); // Save the input buffer's current position.
         try {
@@ -458,9 +458,8 @@ public class WWBufferUtil {
 
     /**
      * Returns the size in bytes of the specified primitive data type, or -1 if the specified type is unrecognized.
-     * Recognized primitive types are as follows: <ul> <li>{@link AVKey#INT8} <li>{@link
-     * AVKey#INT16} <li>{@link AVKey#INT32} <li>{@link
-     * AVKey#FLOAT32} <li>{@link AVKey#FLOAT64} </ul>
+     * Recognized primitive types are as follows: <ul> <li>{@link AVKey#INT8} <li>{@link AVKey#INT16} <li>{@link
+     * AVKey#INT32} <li>{@link AVKey#FLOAT32} <li>{@link AVKey#FLOAT64} </ul>
      *
      * @param dataType the primitive data type.
      * @return the size of the primitive data type, in bytes.
@@ -476,13 +475,13 @@ public class WWBufferUtil {
         if (AVKey.INT8.equals(dataType))
             return 1;
         else if (AVKey.INT16.equals(dataType))
-            return SIZEOF_SHORT;
+            return WWBufferUtil.SIZEOF_SHORT;
         else if (AVKey.INT32.equals(dataType))
-            return SIZEOF_INT;
+            return WWBufferUtil.SIZEOF_INT;
         else if (AVKey.FLOAT32.equals(dataType))
-            return SIZEOF_FLOAT;
+            return WWBufferUtil.SIZEOF_FLOAT;
         else if (AVKey.FLOAT64.equals(dataType))
-            return SIZEOF_DOUBLE;
+            return WWBufferUtil.SIZEOF_DOUBLE;
 
         return -1;
     }
@@ -543,7 +542,7 @@ public class WWBufferUtil {
             throw new IllegalArgumentException(message);
         }
 
-        return computeExtremeValues(buffer, Double.NaN);
+        return WWBufferUtil.computeExtremeValues(buffer, Double.NaN);
     }
 
     protected static ByteBuffer newDirectByteBuffer(int size) {
@@ -551,8 +550,8 @@ public class WWBufferUtil {
     }
 
     /**
-     * Copies a specified array of vertices to a specified vertex buffer. This method calls {@link
-     * FloatBuffer#flip()} prior to returning.
+     * Copies a specified array of vertices to a specified vertex buffer. This method calls {@link FloatBuffer#flip()}
+     * prior to returning.
      *
      * @param array  the vertices to copy.
      * @param buffer the buffer to copy the vertices to. Must have enough remaining space to hold the vertices.

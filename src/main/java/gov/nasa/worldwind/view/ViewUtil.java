@@ -109,9 +109,9 @@ public class ViewUtil {
             MIN_LENGTH_MILLIS, MAX_LENGTH_MILLIS / 2L);
         long lengthMillis = headingLengthMillis + pitchLengthMillis + rollLengthMillis;
 
-        AngleAnimator headingAnimator = createHeadingAnimator(view, beginHeading, endHeading);
-        AngleAnimator pitchAnimator = createPitchAnimator(view, beginPitch, endPitch);
-        AngleAnimator rollAnimator = createRollAnimator(view, beginRoll, endRoll);
+        AngleAnimator headingAnimator = ViewUtil.createHeadingAnimator(view, beginHeading, endHeading);
+        AngleAnimator pitchAnimator = ViewUtil.createPitchAnimator(view, beginPitch, endPitch);
+        AngleAnimator rollAnimator = ViewUtil.createRollAnimator(view, beginRoll, endRoll);
 
         return (new CompoundAnimator(new ScheduledInterpolator(lengthMillis),
             headingAnimator, pitchAnimator, rollAnimator));
@@ -148,7 +148,7 @@ public class ViewUtil {
         transform = transform.multiply(Matrix.fromAxisAngle(pitch, -1, 0, 0));
         transform = transform.multiply(Matrix.fromAxisAngle(heading, 0, 0, 1));
 
-        transform = transform.multiply(computePositionTransform(globe, position));
+        transform = transform.multiply(ViewUtil.computePositionTransform(globe, position));
 
         return transform;
     }
@@ -333,7 +333,6 @@ public class ViewUtil {
             return null;
 
         Vec4 eye = Vec4.UNIT_W.transformBy4(modelViewInv);
-
 
         double yInGLCoords = viewport.height - y - 1;
         Vec4 a = view.unProject(new Vec4(x, yInGLCoords, 0, 0));
@@ -539,7 +538,7 @@ public class ViewUtil {
         modelview.toArray(modelviewArray, 0, false);
         projection.toArray(projectionArray, 0, false);
         // GLU expects the viewport as a four-component array.
-        int[] viewportArray = new int[] {viewport.x, viewport.y, viewport.width, viewport.height};
+        int[] viewportArray = {viewport.x, viewport.y, viewport.width, viewport.height};
 
         double[] result = new double[3];
         if (!glu.gluProject(
@@ -599,7 +598,7 @@ public class ViewUtil {
         double[] modelviewArray = modelview.toArray(new double[16], 0, false);
         double[] projectionArray = projection.toArray(new double[16], 0, false);
         // GLU expects the viewport as a four-component array.
-        int[] viewportArray = new int[] {viewport.x, viewport.y, viewport.width, viewport.height};
+        int[] viewportArray = {viewport.x, viewport.y, viewport.width, viewport.height};
 
         double[] result = new double[3];
 

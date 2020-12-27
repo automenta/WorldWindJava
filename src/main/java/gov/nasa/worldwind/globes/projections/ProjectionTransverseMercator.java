@@ -14,8 +14,8 @@ import gov.nasa.worldwind.util.*;
 /**
  * Provides a Transverse Mercator ellipsoidal projection using the WGS84 ellipsoid. The projection's central meridian
  * may be specified and defaults to the Prime Meridian (0 longitude). By default, the projection computes values for 30
- * degrees either side of the central meridian. This may be changed via the {@link
- * #setWidth(Angle)} method, but the projection may fail for large widths.
+ * degrees either side of the central meridian. This may be changed via the {@link #setWidth(Angle)} method, but the
+ * projection may fail for large widths.
  * <p>
  * The projection limits are modified to reflect the central meridian and the width, however the projection limits are
  * clamped to a minimum of -180 degrees and a maximum of +180 degrees. It's therefore not possible to display a band
@@ -29,15 +29,15 @@ public class ProjectionTransverseMercator extends AbstractGeographicProjection {
     protected static final Angle DEFAULT_CENTRAL_MERIDIAN = Angle.ZERO;
     protected static final Angle DEFAULT_CENTRAL_LATITUDE = Angle.ZERO;
 
-    protected Angle width = DEFAULT_WIDTH;
-    protected Angle centralMeridian = DEFAULT_CENTRAL_MERIDIAN;
-    protected Angle centralLatitude = DEFAULT_CENTRAL_LATITUDE;
+    protected Angle width = ProjectionTransverseMercator.DEFAULT_WIDTH;
+    protected Angle centralMeridian = ProjectionTransverseMercator.DEFAULT_CENTRAL_MERIDIAN;
+    protected Angle centralLatitude = ProjectionTransverseMercator.DEFAULT_CENTRAL_LATITUDE;
 
     /**
      * Creates a projection whose central meridian is the Prime Meridian and central latitude is 0.
      */
     public ProjectionTransverseMercator() {
-        super(makeProjectionLimits(DEFAULT_CENTRAL_MERIDIAN, DEFAULT_WIDTH));
+        super(ProjectionTransverseMercator.makeProjectionLimits(ProjectionTransverseMercator.DEFAULT_CENTRAL_MERIDIAN, ProjectionTransverseMercator.DEFAULT_WIDTH));
     }
 
     /**
@@ -46,7 +46,7 @@ public class ProjectionTransverseMercator extends AbstractGeographicProjection {
      * @param centralMeridian The projection's central meridian.
      */
     public ProjectionTransverseMercator(Angle centralMeridian) {
-        super(makeProjectionLimits(centralMeridian, DEFAULT_WIDTH));
+        super(ProjectionTransverseMercator.makeProjectionLimits(centralMeridian, ProjectionTransverseMercator.DEFAULT_WIDTH));
 
         this.centralMeridian = centralMeridian;
     }
@@ -58,7 +58,7 @@ public class ProjectionTransverseMercator extends AbstractGeographicProjection {
      * @param centralLatitude The projection's central latitude.
      */
     public ProjectionTransverseMercator(Angle centralMeridian, Angle centralLatitude) {
-        super(makeProjectionLimits(centralMeridian, DEFAULT_WIDTH));
+        super(ProjectionTransverseMercator.makeProjectionLimits(centralMeridian, ProjectionTransverseMercator.DEFAULT_WIDTH));
 
         if (centralLatitude == null) {
             String message = Logging.getMessage("nullValue.CentralLatitudeIsNull");
@@ -109,7 +109,8 @@ public class ProjectionTransverseMercator extends AbstractGeographicProjection {
         }
 
         this.centralMeridian = centralMeridian;
-        this.setProjectionLimits(makeProjectionLimits(this.getCentralMeridian(), this.getWidth()));
+        this.setProjectionLimits(
+            ProjectionTransverseMercator.makeProjectionLimits(this.getCentralMeridian(), this.getWidth()));
     }
 
     /**
@@ -160,7 +161,8 @@ public class ProjectionTransverseMercator extends AbstractGeographicProjection {
         }
 
         this.width = width;
-        this.setProjectionLimits(makeProjectionLimits(this.getCentralMeridian(), this.getWidth()));
+        this.setProjectionLimits(
+            ProjectionTransverseMercator.makeProjectionLimits(this.getCentralMeridian(), this.getWidth()));
     }
 
     protected double getScale() {
@@ -189,16 +191,16 @@ public class ProjectionTransverseMercator extends AbstractGeographicProjection {
     @Override
     public void geographicToCartesian(Globe globe, Sector sector, int numLat, int numLon, double[] metersElevation,
         Vec4 offset, Vec4[] out) {
-        double minLat = sector.latMin().radians;
-        double maxLat = sector.latMax().radians;
-        double minLon = sector.lonMin().radians;
-        double maxLon = sector.lonMax().radians;
+        double minLat = sector.latMin().radians();
+        double maxLat = sector.latMax().radians();
+        double minLon = sector.lonMin().radians();
+        double maxLon = sector.lonMax().radians();
         double deltaLat = (maxLat - minLat) / (numLat > 1 ? numLat - 1 : 1);
         double deltaLon = (maxLon - minLon) / (numLon > 1 ? numLon - 1 : 1);
         double minLatLimit = -82 * Math.PI / 180;
         double maxLatLimit = 86 * Math.PI / 180;
-        double minLonLimit = this.centralMeridian.radians - this.width.radians;
-        double maxLonLimit = this.centralMeridian.radians + this.width.radians;
+        double minLonLimit = this.centralMeridian.radians() - this.width.radians();
+        double maxLonLimit = this.centralMeridian.radians() + this.width.radians();
         int pos = 0;
 
         // Iterate over the latitude and longitude coordinates in the specified sector, computing the Cartesian point
@@ -247,14 +249,12 @@ public class ProjectionTransverseMercator extends AbstractGeographicProjection {
             Vec4 p1 = this.geographicToCartesian(globe, latitude, longitude, 0, null);
             Vec4 p2 = this.geographicToCartesian(globe, latitude.sub(deltaLat), longitude, 0, null);
             return p1.subtract3(p2).normalize3();
-        }
-        else if (latitude.degrees - deltaLat.degrees <= -82) // compute the incremental vector above the location
+        } else if (latitude.degrees - deltaLat.degrees <= -82) // compute the incremental vector above the location
         {
             Vec4 p1 = this.geographicToCartesian(globe, latitude.add(deltaLat), longitude, 0, null);
             Vec4 p2 = this.geographicToCartesian(globe, latitude, longitude, 0, null);
             return p1.subtract3(p2).normalize3();
-        }
-        else // compute the average of the incremental vector above and below the location
+        } else // compute the average of the incremental vector above and below the location
         {
             Vec4 p1 = this.geographicToCartesian(globe, latitude.add(deltaLat), longitude, 0, null);
             Vec4 p2 = this.geographicToCartesian(globe, latitude.sub(deltaLat), longitude, 0, null);

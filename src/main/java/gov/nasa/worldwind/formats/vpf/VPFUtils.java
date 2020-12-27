@@ -210,7 +210,7 @@ public class VPFUtils {
         if (suffix == null)
             return null;
 
-        suffix = "." + suffix;
+        suffix = '.' + suffix;
 
         if (suffix.equalsIgnoreCase(VPFConstants.POINT_FEATURE_TABLE))
             return VPFConstants.POINT_FEATURE_TYPE;

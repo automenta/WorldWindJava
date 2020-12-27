@@ -24,8 +24,8 @@ import java.util.*;
 /**
  * Displays a world map overlay with a current-position crosshair in a screen corner.
  * <p>
- * A {@link gov.nasa.worldwind.examples.ClickAndGoSelectListener} can be used in conjunction with this layer to move
- * the view to a selected location when that location is clicked within the layer's map. Specify
+ * A {@link gov.nasa.worldwind.examples.ClickAndGoSelectListener} can be used in conjunction with this layer to move the
+ * view to a selected location when that location is clicked within the layer's map. Specify
  * <code>WorldMapLayer.class</code> when constructing the <code>ClickAndGoSelectListener</code>.
  * <p>
  * Note: This layer may not be shared among multiple {@link WorldWindow}s.
@@ -46,8 +46,8 @@ public class WorldMapLayer extends AbstractLayer {
     protected String resizeBehavior = AVKey.RESIZE_SHRINK_ONLY;
     protected int iconWidth;
     protected int iconHeight;
-    protected Vec4 locationCenter = null;
-    protected Vec4 locationOffset = null;
+    protected Vec4 locationCenter;
+    protected Vec4 locationOffset;
     protected Color backColor = new Color(0.0f, 0.0f, 0.0f, 0.4f);
     protected boolean showFootprint = true;
     protected ArrayList<? extends LatLon> footPrintPositions;
@@ -73,6 +73,83 @@ public class WorldMapLayer extends AbstractLayer {
     }
 
     /**
+     * Compute the lat/lon position of the view center
+     *
+     * @param dc   the current DrawContext
+     * @param view the current View
+     * @return the ground position of the view center or null
+     */
+    protected static Position computeGroundPosition(DrawContext dc, View view) {
+        if (view == null)
+            return null;
+
+        Position groundPos = view.computePositionFromScreenPoint(
+            view.getViewport().getWidth() / 2, view.getViewport().getHeight() / 2);
+        if (groundPos == null)
+            return null;
+
+        double elevation = dc.getGlobe().getElevation(groundPos.getLatitude(), groundPos.getLongitude());
+        return new Position(
+            groundPos.getLatitude(),
+            groundPos.getLongitude(),
+            elevation * dc.getVerticalExaggeration());
+    }
+
+    // Public properties
+
+    /**
+     * Computes the lat/lon of the pickPoint over the world map
+     *
+     * @param dc         the current <code>DrawContext</code>
+     * @param locationSW the screen location of the bottom left corner of the map
+     * @param mapSize    the world map screen dimension in pixels
+     * @return the picked Position
+     */
+    protected static Position computePickPosition(DrawContext dc, Vec4 locationSW, Dimension mapSize) {
+        Position pickPosition = null;
+        Point pickPoint = dc.getPickPoint();
+        if (pickPoint != null) {
+            Rectangle viewport = dc.getView().getViewport();
+            // Check if pickpoint is inside the map
+            if (pickPoint.getX() >= locationSW.x
+                && pickPoint.getX() < locationSW.x + mapSize.width
+                && viewport.height - pickPoint.getY() >= locationSW.y
+                && viewport.height - pickPoint.getY() < locationSW.y + mapSize.height) {
+                double lon = (pickPoint.getX() - locationSW.x) / mapSize.width * 360 - 180;
+                double lat = (viewport.height - pickPoint.getY() - locationSW.y) / mapSize.height * 180 - 90;
+                double pickAltitude = 1000.0e3;
+                pickPosition = new Position(Angle.fromDegrees(lat), Angle.fromDegrees(lon), pickAltitude);
+            }
+        }
+        return pickPosition;
+    }
+
+    /**
+     * Compute the view range footprint on the globe.
+     *
+     * @param dc    the current <code>DrawContext</code>
+     * @param steps the number of steps.
+     * @return an array list of <code>LatLon</code> forming a closed shape.
+     */
+    protected static ArrayList<LatLon> computeViewFootPrint(DrawContext dc, int steps) {
+        ArrayList<LatLon> positions = new ArrayList<>();
+        Position eyePos = dc.getView().getEyePosition();
+        Angle distance = Angle.fromRadians(
+            Math.asin(dc.getView().getFarClipDistance() / (dc.getGlobe().getRadius() + eyePos.getElevation())));
+        if (distance.degrees > 10) {
+            double headStep = 360.0d / steps;
+            Angle heading = Angle.ZERO;
+            for (int i = 0; i <= steps; i++) {
+                LatLon p = LatLon.greatCircleEndPosition(eyePos, heading, distance);
+                positions.add(p);
+                heading = heading.addDegrees(headStep);
+            }
+            return positions;
+        } else
+            return null;
+    }
+
+    /**
      * Returns the layer's current icon file path.
      *
      * @return the icon file path
@@ -80,8 +157,6 @@ public class WorldMapLayer extends AbstractLayer {
     public String getIconFilePath() {
         return iconFilePath;
     }
-
-    // Public properties
 
     /**
      * Sets the world map icon's image location. The layer first searches for this location in the current Java
@@ -344,7 +419,7 @@ public class WorldMapLayer extends AbstractLayer {
             ogsh.pushModelviewIdentity(gl);
             double scale = this.computeScale(viewport);
             Vec4 locationSW = this.computeLocation(viewport, scale);
-            gl.glTranslated(locationSW.x(), locationSW.y(), locationSW.z());
+            gl.glTranslated(locationSW.x, locationSW.y, locationSW.z);
             // Scale to 0..1 space
             gl.glScaled(scale, scale, 1);
             gl.glScaled(width, height, 1.0d);
@@ -370,7 +445,7 @@ public class WorldMapLayer extends AbstractLayer {
 
                 // Draw crosshair for current location
                 gl.glLoadIdentity();
-                gl.glTranslated(locationSW.x(), locationSW.y(), locationSW.z());
+                gl.glTranslated(locationSW.x, locationSW.y, locationSW.z);
                 // Scale to width x height space
                 gl.glScaled(scale, scale, 1);
                 // Set color
@@ -425,14 +500,13 @@ public class WorldMapLayer extends AbstractLayer {
                 gl.glVertex3d(0, height - 1, 0);
                 gl.glVertex3d(0, 0, 0);
                 gl.glEnd();
-            }
-            else {
+            } else {
                 // Picking
                 this.pickSupport.clearPickList();
                 PickSupport.beginPicking(dc);
                 // Where in the world are we picking ?
                 Position pickPosition =
-                    computePickPosition(dc, locationSW, new Dimension((int) (width * scale), (int) (height * scale)));
+                    WorldMapLayer.computePickPosition(dc, locationSW, new Dimension((int) (width * scale), (int) (height * scale)));
                 Color color = dc.getUniquePickColor();
                 int colorCode = color.getRGB();
                 this.pickSupport.addPickableObject(colorCode, this, pickPosition, false);
@@ -481,24 +555,19 @@ public class WorldMapLayer extends AbstractLayer {
         if (this.locationCenter != null) {
             x = this.locationCenter.x - scaledWidth / 2;
             y = this.locationCenter.y - scaledHeight / 2;
-        }
-        else if (this.position.equals(AVKey.NORTHEAST)) {
+        } else if (this.position.equals(AVKey.NORTHEAST)) {
             x = viewport.getWidth() - scaledWidth - this.borderWidth;
             y = viewport.getHeight() - scaledHeight - this.borderWidth;
-        }
-        else if (this.position.equals(AVKey.SOUTHEAST)) {
+        } else if (this.position.equals(AVKey.SOUTHEAST)) {
             x = viewport.getWidth() - scaledWidth - this.borderWidth;
             y = 0.0d + this.borderWidth;
-        }
-        else if (this.position.equals(AVKey.NORTHWEST)) {
+        } else if (this.position.equals(AVKey.NORTHWEST)) {
             x = 0.0d + this.borderWidth;
             y = viewport.getHeight() - scaledHeight - this.borderWidth;
-        }
-        else if (this.position.equals(AVKey.SOUTHWEST)) {
+        } else if (this.position.equals(AVKey.SOUTHWEST)) {
             x = 0.0d + this.borderWidth;
             y = 0.0d + this.borderWidth;
-        }
-        else // use North East
+        } else // use North East
         {
             x = viewport.getWidth() - scaledWidth / 2 - this.borderWidth;
             y = viewport.getHeight() - scaledHeight / 2 - this.borderWidth;
@@ -520,7 +589,7 @@ public class WorldMapLayer extends AbstractLayer {
         GL gl = dc.getGL();
 
         try {
-            InputStream iconStream = this.getClass().getResourceAsStream("/" + this.getIconFilePath());
+            InputStream iconStream = this.getClass().getResourceAsStream('/' + this.getIconFilePath());
             if (iconStream == null) {
                 File iconFile = new File(this.iconFilePath);
                 if (iconFile.exists()) {
@@ -549,82 +618,6 @@ public class WorldMapLayer extends AbstractLayer {
         int[] maxAnisotropy = new int[1];
         gl.glGetIntegerv(GL.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, maxAnisotropy, 0);
         gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAnisotropy[0]);
-    }
-
-    /**
-     * Compute the lat/lon position of the view center
-     *
-     * @param dc   the current DrawContext
-     * @param view the current View
-     * @return the ground position of the view center or null
-     */
-    protected static Position computeGroundPosition(DrawContext dc, View view) {
-        if (view == null)
-            return null;
-
-        Position groundPos = view.computePositionFromScreenPoint(
-            view.getViewport().getWidth() / 2, view.getViewport().getHeight() / 2);
-        if (groundPos == null)
-            return null;
-
-        double elevation = dc.getGlobe().getElevation(groundPos.getLatitude(), groundPos.getLongitude());
-        return new Position(
-            groundPos.getLatitude(),
-            groundPos.getLongitude(),
-            elevation * dc.getVerticalExaggeration());
-    }
-
-    /**
-     * Computes the lat/lon of the pickPoint over the world map
-     *
-     * @param dc         the current <code>DrawContext</code>
-     * @param locationSW the screen location of the bottom left corner of the map
-     * @param mapSize    the world map screen dimension in pixels
-     * @return the picked Position
-     */
-    protected static Position computePickPosition(DrawContext dc, Vec4 locationSW, Dimension mapSize) {
-        Position pickPosition = null;
-        Point pickPoint = dc.getPickPoint();
-        if (pickPoint != null) {
-            Rectangle viewport = dc.getView().getViewport();
-            // Check if pickpoint is inside the map
-            if (pickPoint.getX() >= locationSW.getX()
-                && pickPoint.getX() < locationSW.getX() + mapSize.width
-                && viewport.height - pickPoint.getY() >= locationSW.getY()
-                && viewport.height - pickPoint.getY() < locationSW.getY() + mapSize.height) {
-                double lon = (pickPoint.getX() - locationSW.getX()) / mapSize.width * 360 - 180;
-                double lat = (viewport.height - pickPoint.getY() - locationSW.getY()) / mapSize.height * 180 - 90;
-                double pickAltitude = 1000.0e3;
-                pickPosition = new Position(Angle.fromDegrees(lat), Angle.fromDegrees(lon), pickAltitude);
-            }
-        }
-        return pickPosition;
-    }
-
-    /**
-     * Compute the view range footprint on the globe.
-     *
-     * @param dc    the current <code>DrawContext</code>
-     * @param steps the number of steps.
-     * @return an array list of <code>LatLon</code> forming a closed shape.
-     */
-    protected static ArrayList<LatLon> computeViewFootPrint(DrawContext dc, int steps) {
-        ArrayList<LatLon> positions = new ArrayList<>();
-        Position eyePos = dc.getView().getEyePosition();
-        Angle distance = Angle.fromRadians(
-            Math.asin(dc.getView().getFarClipDistance() / (dc.getGlobe().getRadius() + eyePos.getElevation())));
-        if (distance.degrees > 10) {
-            double headStep = 360.0d / steps;
-            Angle heading = Angle.ZERO;
-            for (int i = 0; i <= steps; i++) {
-                LatLon p = LatLon.greatCircleEndPosition(eyePos, heading, distance);
-                positions.add(p);
-                heading = heading.addDegrees(headStep);
-            }
-            return positions;
-        }
-        else
-            return null;
     }
 
     @Override

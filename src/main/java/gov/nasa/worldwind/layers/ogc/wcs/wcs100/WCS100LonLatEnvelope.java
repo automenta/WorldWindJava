@@ -43,13 +43,11 @@ public class WCS100LonLatEnvelope extends AbstractXMLEventParser {
                 if (o instanceof GMLPos)
                     this.positions.add((GMLPos) o);
             }
-        }
-        else if (ctx.isStartElement(event, "timePosition")) {
+        } else if (ctx.isStartElement(event, "timePosition")) {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.timePositions.add(s);
-        }
-        else {
+        } else {
             super.doParseEventContent(ctx, event, args);
         }
     }

@@ -21,7 +21,7 @@ public class TiffIFDEntry implements Comparable<TiffIFDEntry> {
     final int type;
     final long count;
     final long valOffset;
-    private ByteBuffer data = null;
+    private final ByteBuffer data;
 
     public TiffIFDEntry(int tag, int type, long count, long valOffset) throws IllegalArgumentException {
         this(tag, type, count, valOffset, null);
@@ -43,7 +43,7 @@ public class TiffIFDEntry implements Comparable<TiffIFDEntry> {
     public long asLong() throws IllegalStateException {
         if (this.type != Tiff.Type.SHORT && this.type != Tiff.Type.LONG)
             throw new IllegalStateException("Attempt to access Tiff IFD-entry as int: tag/type="
-                + Long.toHexString(tag) + "/" + type);
+                + Long.toHexString(tag) + '/' + type);
 
         if (this.type == Tiff.Type.SHORT && this.count == 1)
             return 0xFFFFL & (valOffset >> 16);
@@ -152,8 +152,7 @@ public class TiffIFDEntry implements Comparable<TiffIFDEntry> {
 
         if (this.count == 1) {
             return new long[] {this.asLong()};
-        }
-        else if (this.count > 1 && null != this.data) {
+        } else if (this.count > 1 && null != this.data) {
             long[] array = new long[(int) this.count];
 
             if (this.type == Tiff.Type.SHORT) {
@@ -163,8 +162,7 @@ public class TiffIFDEntry implements Comparable<TiffIFDEntry> {
                 while (sb.hasRemaining()) {
                     array[i++] = 0xFFFFL & sb.get();
                 }
-            }
-            else {
+            } else {
                 IntBuffer sb = this.data.rewind().asIntBuffer();
                 this.data.rewind();
                 int i = 0;

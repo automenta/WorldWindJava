@@ -51,6 +51,6 @@ public abstract class KMLAbstractLatLonBoxType extends KMLAbstractObject {
 
         super.applyChange(sourceValues);
 
-        this.onChange(new Message(MSG_BOX_CHANGED, this));
+        this.onChange(new Message(KMLAbstractObject.MSG_BOX_CHANGED, this));
     }
 }

@@ -6,14 +6,19 @@
 package gov.nasa.worldwind.geom;
 
 ////.*;
+
 import gov.nasa.worldwind.util.*;
+import jcog.Util;
+
+import static gov.nasa.worldwind.geom.Matrix.EPSILON;
 
 /**
  * @author dcollins
  * @version $Id: Vec4.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 public class Vec4 {
-    public static final Vec4 INFINITY = new Vec4(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, 0);
+    public static final Vec4 INFINITY = new Vec4(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY,
+        Double.POSITIVE_INFINITY, 0);
     public static final Vec4 ZERO = new Vec4(0, 0, 0, 1);
     public static final Vec4 ONE = new Vec4(1, 1, 1, 1);
     public static final Vec4 UNIT_X = new Vec4(1, 0, 0, 0);
@@ -38,11 +43,11 @@ public class Vec4 {
     }
 
     public Vec4(double x, double y) {
-        this(x, y, 0, DEFAULT_W);
+        this(x, y, 0, Vec4.DEFAULT_W);
     }
 
     public Vec4(double x, double y, double z) {
-        this(x, y, z, DEFAULT_W);
+        this(x, y, z, Vec4.DEFAULT_W);
     }
 
     public Vec4(double x, double y, double z, double w) {
@@ -51,8 +56,12 @@ public class Vec4 {
         this.z = z;
         this.w = w;
     }
+
     public Vec4(double[] xyzw) {
-        this.x = xyzw[0]; this.y = xyzw[1]; this.z = xyzw[2]; this.w = xyzw[3];
+        this.x = xyzw[0];
+        this.y = xyzw[1];
+        this.z = xyzw[2];
+        this.w = xyzw[3];
     }
 
     /**
@@ -160,7 +169,7 @@ public class Vec4 {
      */
     public static Vec4 fromArray2(double[] array, int offset) {
 
-        return fromDoubleArray(array, offset, 2);
+        return Vec4.fromDoubleArray(array, offset, 2);
     }
 
     /**
@@ -178,7 +187,7 @@ public class Vec4 {
      */
     public static Vec4 fromArray3(double[] array, int offset) {
 
-        return fromDoubleArray(array, offset, 3);
+        return Vec4.fromDoubleArray(array, offset, 3);
     }
 
     /**
@@ -197,7 +206,7 @@ public class Vec4 {
      */
     public static Vec4 fromArray4(double[] array, int offset) {
 
-        return fromDoubleArray(array, offset, 4);
+        return Vec4.fromDoubleArray(array, offset, 4);
     }
 
     public static Vec4 fromLine3(Vec4 origin, double t, Vec4 direction) {
@@ -300,10 +309,10 @@ public class Vec4 {
     public static Vec4 computeAveragePoint(Iterable<? extends Vec4> points) {
 
         int count = 0;
-        double x = 0.00d;
-        double y = 0.00d;
-        double z = 0.00d;
-        double w = 0.00d;
+        double x = 0;
+        double y = 0;
+        double z = 0;
+        double w = 0;
 
         for (Vec4 vec : points) {
             if (vec == null)
@@ -333,14 +342,14 @@ public class Vec4 {
      * must be at least 3. If the buffer's length is not evenly divisible into stride-sized tuples, this ignores the
      * remaining elements that follow the last complete tuple.
      *
-     * @param coordinates the buffer containing the point coordinates for which to compute a bounding volume.
-     * @param stride      the number of elements between the first coordinate of consecutive points. If stride is 3,
-     *                    this interprets the buffer has having tightly packed XYZ coordinate tuples.
+     * @param c      the buffer containing the point coordinates for which to compute a bounding volume.
+     * @param stride the number of elements between the first coordinate of consecutive points. If stride is 3, this
+     *               interprets the buffer has having tightly packed XYZ coordinate tuples.
      * @return the arithmetic mean point of the specified points Iterable, or null if the Iterable is empty or contains
      * only null points.
      * @throws IllegalArgumentException if the buffer is null, or if the stride is less than three.
      */
-    public static Vec4 computeAveragePoint3(BufferWrapper coordinates, int stride) {
+    public static Vec4 computeAveragePoint3(BufferWrapper c, int stride) {
 
         if (stride < 3) {
             String msg = Logging.getMessage("generic.StrideIsInvalid");
@@ -349,16 +358,16 @@ public class Vec4 {
         }
 
         int count = 0;
-        double x = 0.00d;
-        double y = 0.00d;
-        double z = 0.00d;
+        double x = 0;
+        double y = 0;
+        double z = 0;
 
-        final int n = coordinates.length() - stride;
+        final int n = c.length() - stride;
         for (int i = 0; i <= n; i += stride) {
             count++;
-            x += coordinates.getDouble(i);
-            y += coordinates.getDouble(i + 1);
-            z += coordinates.getDouble(i + 2);
+            x += c.getDouble(i);
+            y += c.getDouble(i + 1);
+            z += c.getDouble(i + 2);
         }
 
         if (count == 0)
@@ -411,24 +420,21 @@ public class Vec4 {
             double x = points[i].x;
             if (x > xmax) {
                 xmax = x;
-            }
-            else if (x < xmin) {
+            } else if (x < xmin) {
                 xmin = x;
             }
 
             double y = points[i].y;
             if (y > ymax) {
                 ymax = y;
-            }
-            else if (y < ymin) {
+            } else if (y < ymin) {
                 ymin = y;
             }
 
             double z = points[i].z;
             if (z > zmax) {
                 zmax = z;
-            }
-            else if (z < zmin) {
+            } else if (z < zmin) {
                 zmin = z;
             }
         }
@@ -453,24 +459,21 @@ public class Vec4 {
             double x = buffer.getDouble(i * 3);
             if (x > xmax) {
                 xmax = x;
-            }
-            else if (x < xmin) {
+            } else if (x < xmin) {
                 xmin = x;
             }
 
             double y = buffer.getDouble(i * 3 + 1);
             if (y > ymax) {
                 ymax = y;
-            }
-            else if (y < ymin) {
+            } else if (y < ymin) {
                 ymin = y;
             }
 
             double z = buffer.getDouble(i * 3 + 2);
             if (z > zmax) {
                 zmax = z;
-            }
-            else if (z < zmin) {
+            } else if (z < zmin) {
                 zmin = z;
             }
         }
@@ -492,7 +495,8 @@ public class Vec4 {
         Vec4 ab = b.subtract3(a).normalize3();
         Vec4 bc = c.subtract3(b).normalize3();
 
-        return Math.abs(ab.dot3(bc)) > 0.999; // ab and bc are considered colinear if their dot product is near +/-1
+        return Util.equals(1, Math.abs(ab.dot3(bc)),
+            EPSILON); // ab and bc are considered colinear if their dot product is near +/-1
     }
 
     public final boolean equals(Object obj) {
@@ -742,49 +746,13 @@ public class Vec4 {
 
     public final String toString() {
         StringBuilder sb = new StringBuilder(64);
-        sb.append("(");
+        sb.append('(');
         sb.append(this.x).append(", ");
         sb.append(this.y).append(", ");
         sb.append(this.z).append(", ");
         sb.append(this.w);
-        sb.append(")");
+        sb.append(')');
         return sb.toString();
-    }
-
-    public final double getX() {
-        return this.x;
-    }
-
-    public final double getY() {
-        return this.y;
-    }
-
-    public final double getZ() {
-        return this.z;
-    }
-
-    public final double getW() {
-        return this.w;
-    }
-
-    public final double x() {
-        return this.x;
-    }
-
-    public final double y() {
-        return this.y;
-    }
-
-    public final double z() {
-        return this.z;
-    }
-
-    // ============== Geometric Functions ======================= //
-    // ============== Geometric Functions ======================= //
-    // ============== Geometric Functions ======================= //
-
-    public final double w() {
-        return this.w;
     }
 
     public final Vec4 add3(Vec4 vec4) {
@@ -845,7 +813,6 @@ public class Vec4 {
     }
 
     public final Vec4 divide3(Vec4 vec4) {
-
         return new Vec4(
             this.x / vec4.x,
             this.y / vec4.y,
@@ -855,9 +822,9 @@ public class Vec4 {
 
     public final Vec4 getNegative3() {
         return new Vec4(
-            0.0 - this.x,
-            0.0 - this.y,
-            0.0 - this.z,
+            -this.x,
+            -this.y,
+            -this.z,
             this.w);
     }
 
@@ -878,7 +845,7 @@ public class Vec4 {
         // Vector has zero length.
         if (length == 0) {
             return this;
-        }else {
+        } else {
             return new Vec4(
                 this.x / length,
                 this.y / length,
@@ -1018,5 +985,13 @@ public class Vec4 {
             (matrix.m21 * this.x) + (matrix.m22 * this.y) + (matrix.m23 * this.z) + (matrix.m24 * this.w),
             (matrix.m31 * this.x) + (matrix.m32 * this.y) + (matrix.m33 * this.z) + (matrix.m34 * this.w),
             (matrix.m41 * this.x) + (matrix.m42 * this.y) + (matrix.m43 * this.z) + (matrix.m44 * this.w));
+    }
+
+    public float[] toArray4f() {
+        return new float[] {(float) x, (float) y, (float) z, 0};
+    }
+
+    public double[] toArray4() {
+        return new double[] {x, y, z, 0};
     }
 }

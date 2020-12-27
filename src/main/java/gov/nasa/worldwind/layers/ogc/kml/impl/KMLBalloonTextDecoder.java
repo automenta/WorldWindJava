@@ -53,6 +53,16 @@ public class KMLBalloonTextDecoder extends BasicTextDecoder {
     }
 
     /**
+     * Get the text used to replace the $[geDirections] entity. This implementation returns an empty string. Subclasses
+     * can override this method to provide directions text.
+     *
+     * @return Text to replace the $[geDirections] entity.
+     */
+    protected static String getGeDirectionsText() {
+        return "";
+    }
+
+    /**
      * Get the balloon text after entity substitutions (for example, $[name], $[description], etc) have been made. See
      * the KML specification for details on entity replacement. If some entities could not be resolved because they
      * refer to unresolved schema, the decoder will try to decode the string again the next time this method is called.
@@ -84,7 +94,7 @@ public class KMLBalloonTextDecoder extends BasicTextDecoder {
 
         this.isUnresolved = false;
 
-        Matcher m = kmlBalloonDecoder.matcher(textToDecode);
+        Matcher m = KMLBalloonTextDecoder.kmlBalloonDecoder.matcher(textToDecode);
         StringBuilder sb = new StringBuilder();
         while (m.find()) {
             String entity = m.group(1);
@@ -167,9 +177,8 @@ public class KMLBalloonTextDecoder extends BasicTextDecoder {
             for (KMLData data : extendedData.getData()) {
                 if (name.equals(data.getName())) {
                     if (isDisplayName) {
-                        return !WWUtil.isEmpty(data.getDisplayName()) ? data.getDisplayName() : data.getName();
-                    }
-                    else {
+                        return WWUtil.isEmpty(data.getDisplayName()) ? data.getName() : data.getDisplayName();
+                    } else {
                         return data.getValue();
                     }
                 }
@@ -193,8 +202,7 @@ public class KMLBalloonTextDecoder extends BasicTextDecoder {
                                 return simpleField.getDisplayName();
                             }
                         }
-                    }
-                    else {
+                    } else {
                         // Search data fields
                         for (KMLSimpleData simpleData : schemaData.getSimpleData()) {
                             if (field.equals(simpleData.getName())) {
@@ -202,8 +210,7 @@ public class KMLBalloonTextDecoder extends BasicTextDecoder {
                             }
                         }
                     }
-                }
-                else if (schema == null) {
+                } else if (schema == null) {
                     schemaUnresolved = true;
                 }
             }
@@ -225,15 +232,5 @@ public class KMLBalloonTextDecoder extends BasicTextDecoder {
      */
     public KMLAbstractFeature getFeature() {
         return this.feature;
-    }
-
-    /**
-     * Get the text used to replace the $[geDirections] entity. This implementation returns an empty string. Subclasses
-     * can override this method to provide directions text.
-     *
-     * @return Text to replace the $[geDirections] entity.
-     */
-    protected static String getGeDirectionsText() {
-        return "";
     }
 }

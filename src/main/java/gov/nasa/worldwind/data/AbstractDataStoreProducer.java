@@ -19,9 +19,9 @@ public abstract class AbstractDataStoreProducer extends WWObjectImpl implements 
     private final List<SourceInfo> dataSourceList =
         Collections.synchronizedList(new ArrayList<>());
     private final List<Object> productionResults = new ArrayList<>();
-    protected AVList productionParams = null;
+    protected AVList productionParams;
     private AVList params;
-    private boolean isStopped = false;
+    private boolean isStopped;
 
     public AbstractDataStoreProducer() {
     }

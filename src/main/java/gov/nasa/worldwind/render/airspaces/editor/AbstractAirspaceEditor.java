@@ -125,8 +125,7 @@ public abstract class AbstractAirspaceEditor extends AbstractLayer implements Ai
 
         if (dc.isPickingMode()) {
             this.getControlPointRenderer().pick(dc, this.getCurrentControlPoints(), pickPoint, this);
-        }
-        else {
+        } else {
             this.getControlPointRenderer().render(dc, this.getCurrentControlPoints());
         }
     }
@@ -312,7 +311,7 @@ public abstract class AbstractAirspaceEditor extends AbstractLayer implements Ai
         // Convert the reference position into a cartesian point. This assumes that the reference elevation is defined
         // by the airspace's lower altitude.
         Vec4 refPoint = null;
-        if (airspace.isTerrainConforming()[LOWER_ALTITUDE])
+        if (airspace.isTerrainConforming()[AbstractAirspaceEditor.LOWER_ALTITUDE])
             refPoint = wwd.sceneControl().getTerrain().getSurfacePoint(refPos);
         if (refPoint == null)
             refPoint = globe.computePointFromPosition(refPos);
@@ -376,22 +375,21 @@ public abstract class AbstractAirspaceEditor extends AbstractLayer implements Ai
         boolean[] terrainConformance = this.getAirspace().isTerrainConforming();
 
         if (this.isKeepControlPointsAboveTerrain()) {
-            if (terrainConformance[LOWER_ALTITUDE]) {
-                if (altitudes[LOWER_ALTITUDE] + elevationChange < 0.0)
-                    elevationChange = 0.0 - altitudes[LOWER_ALTITUDE];
-            }
-            else {
+            if (terrainConformance[AbstractAirspaceEditor.LOWER_ALTITUDE]) {
+                if (altitudes[AbstractAirspaceEditor.LOWER_ALTITUDE] + elevationChange < 0.0)
+                    elevationChange = 0.0 - altitudes[AbstractAirspaceEditor.LOWER_ALTITUDE];
+            } else {
                 double height = AirspaceEditorUtil.computeLowestHeightAboveSurface(
-                    wwd, this.getCurrentControlPoints(), LOWER_ALTITUDE);
+                    wwd, this.getCurrentControlPoints(), AbstractAirspaceEditor.LOWER_ALTITUDE);
                 if (elevationChange <= -height) {
                     elevationChange = -height;
                 }
             }
         }
 
-        altitudes[LOWER_ALTITUDE] += elevationChange;
-        altitudes[UPPER_ALTITUDE] += elevationChange;
-        this.getAirspace().setAltitudes(altitudes[LOWER_ALTITUDE], altitudes[UPPER_ALTITUDE]);
+        altitudes[AbstractAirspaceEditor.LOWER_ALTITUDE] += elevationChange;
+        altitudes[AbstractAirspaceEditor.UPPER_ALTITUDE] += elevationChange;
+        this.getAirspace().setAltitudes(altitudes[AbstractAirspaceEditor.LOWER_ALTITUDE], altitudes[AbstractAirspaceEditor.UPPER_ALTITUDE]);
 
         this.fireAirspaceMoved(new AirspaceEditEvent(wwd, airspace, this));
     }

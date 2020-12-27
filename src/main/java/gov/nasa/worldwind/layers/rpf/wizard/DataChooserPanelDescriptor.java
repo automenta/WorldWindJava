@@ -24,7 +24,7 @@ public class DataChooserPanelDescriptor extends DefaultPanelDescriptor {
         this.panelComponent = new DataChooserPanel();
         this.propertyEvents = new PropertyEvents();
         this.panelComponent.addPropertyChangeListener(this.propertyEvents);
-        setPanelIdentifier(IDENTIFIER);
+        setPanelIdentifier(DataChooserPanelDescriptor.IDENTIFIER);
         setPanelComponent(this.panelComponent);
     }
 
@@ -90,8 +90,7 @@ public class DataChooserPanelDescriptor extends DefaultPanelDescriptor {
     private void updatePanelTitle(Collection<FileSet> fileSetList) {
         if (fileSetList != null && !fileSetList.isEmpty()) {
             this.panelComponent.setTitle(RPFWizardUtil.makeLarger("Select Imagery to Import"));
-        }
-        else {
+        } else {
             this.panelComponent.setTitle(RPFWizardUtil.makeLarger("No Imagery Found"));
         }
     }
@@ -131,20 +130,18 @@ public class DataChooserPanelDescriptor extends DefaultPanelDescriptor {
                     sb.append(" - ");
                 sb.append("Processing time: ");
                 sb.append(TimeFormatter.formatEstimate(estimatedMillis));
-            }
-            else {
+            } else {
                 sb.append("No files selected");
             }
             this.panelComponent.setDataDescription(RPFWizardUtil.makeSmaller(sb.toString()));
-        }
-        else {
+        } else {
             StringBuilder sb = new StringBuilder();
             sb.append("No Imagery");
             WizardModel model = getWizardModel();
             if (model != null) {
                 File selectedFile = RPFWizardUtil.getSelectedFile(model);
                 if (selectedFile != null)
-                    sb.append(" in '").append(selectedFile.getAbsolutePath()).append(File.separator).append("'");
+                    sb.append(" in '").append(selectedFile.getAbsolutePath()).append(File.separator).append('\'');
             }
             this.panelComponent.setDataDescription(RPFWizardUtil.makeBold(sb.toString()));
         }
@@ -156,8 +153,7 @@ public class DataChooserPanelDescriptor extends DefaultPanelDescriptor {
                 String propertyName = evt.getPropertyName();
                 if (propertyName.equals(RPFWizardUtil.FILE_SET_LIST)) {
                     fileSetListChanged();
-                }
-                else if (propertyName.equals(FileSet.SELECTED)) {
+                } else if (propertyName.equals(FileSet.SELECTED)) {
                     fileSetSelectionChanged();
                 }
             }

@@ -49,6 +49,24 @@ public class ColladaNode extends ColladaAbstractObject implements ColladaRendera
         super(ns);
     }
 
+    /**
+     * Parse a string of doubles into a double[].
+     *
+     * @param doubleArrayString String of doubles, separated by whitespace.
+     * @return Parsed double[]
+     */
+    protected static double[] parseDoubleArray(String doubleArrayString) {
+        String[] arrayOfNumbers = doubleArrayString.trim().split("\\s+");
+        double[] doubles = new double[arrayOfNumbers.length];
+
+        int i = 0;
+        for (String s : arrayOfNumbers) {
+            doubles[i++] = Double.parseDouble(s);
+        }
+
+        return doubles;
+    }
+
     public Box getLocalExtent(ColladaTraversalContext tc) {
         if (tc == null) {
             String msg = Logging.getMessage("nullValue.TraversalContextIsNull");
@@ -215,14 +233,12 @@ public class ColladaNode extends ColladaAbstractObject implements ColladaRendera
                 this.children = new ArrayList<>();
 
             this.children.add((ColladaRenderable) value);
-        }
-        else if ("instance_geometry".equals(keyName)) {
+        } else if ("instance_geometry".equals(keyName)) {
             if (this.geometries == null)
                 this.geometries = new ArrayList<>();
 
             this.geometries.add((ColladaInstanceGeometry) value);
-        }
-        else {
+        } else {
             super.setField(keyName, value);
         }
     }
@@ -261,23 +277,5 @@ public class ColladaNode extends ColladaAbstractObject implements ColladaRendera
 
         this.matrix = Matrix.fromArray(doubles, 0, true);
         return this.matrix;
-    }
-
-    /**
-     * Parse a string of doubles into a double[].
-     *
-     * @param doubleArrayString String of doubles, separated by whitespace.
-     * @return Parsed double[]
-     */
-    protected static double[] parseDoubleArray(String doubleArrayString) {
-        String[] arrayOfNumbers = doubleArrayString.trim().split("\\s+");
-        double[] doubles = new double[arrayOfNumbers.length];
-
-        int i = 0;
-        for (String s : arrayOfNumbers) {
-            doubles[i++] = Double.parseDouble(s);
-        }
-
-        return doubles;
     }
 }

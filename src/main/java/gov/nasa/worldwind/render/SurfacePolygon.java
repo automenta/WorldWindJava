@@ -102,6 +102,59 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
         this.setOuterBoundary(iterable);
     }
 
+    protected static void closeContour(List<Vertex> contour) {
+        final Vertex x = contour.get(0);
+        if (!x.equals(contour.get(contour.size() - 1))) {
+            contour.add(x);
+        }
+    }
+
+    protected static double[] uvWeightedAverage(List<Vertex> contour, Vertex vertex) {
+        double[] weight = new double[contour.size()];
+        double sumOfWeights = 0;
+        for (int i = 0; i < contour.size(); i++) {
+            double distance = LatLon.greatCircleDistance(contour.get(i), vertex).degrees;
+            weight[i] = 1 / distance;
+            sumOfWeights += weight[i];
+        }
+
+        double u = 0;
+        double v = 0;
+        for (int i = 0; i < contour.size(); i++) {
+            double factor = weight[i] / sumOfWeights;
+            u += contour.get(i).u * factor;
+            v += contour.get(i).v * factor;
+        }
+
+        return new double[] {u, v};
+    }
+
+    protected static List<List<Vertex>> clipWithDateline(Iterable<Vertex> contour) {
+        List<Vertex> result = new ArrayList<>();
+        Vertex prev = null;
+        Angle offset = null;
+        boolean applyOffset = false;
+
+        for (Vertex cur : contour) {
+            if (prev != null && LatLon.locationsCrossDateline(prev, cur)) {
+                if (offset == null)
+                    offset = (prev.longitude < 0 ? Angle.NEG360 : Angle.POS360);
+                applyOffset = !applyOffset;
+            }
+
+            result.add(applyOffset ? new Vertex(cur.getLatitude(), cur.getLongitude().add(offset), cur.u, cur.v) : cur);
+
+            prev = cur;
+        }
+
+        List<Vertex> mirror = new ArrayList<>(result.size());
+        for (Vertex cur : result) {
+            mirror.add(new Vertex(cur.getLatitude(), cur.getLongitude().sub(offset), cur.u, cur.v));
+        }
+
+        return Arrays.asList(result, mirror);
+    }
+
     public Iterable<? extends LatLon> getLocations(Globe globe) {
         return this.getOuterBoundary();
     }
@@ -115,7 +168,8 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
         this.setOuterBoundary(iterable);
     }
 
-    @Override public Sector getSector() {
+    @Override
+    public Sector getSector() {
         return Sector.boundingSector(this.getOuterBoundary());
     }
 
@@ -124,9 +178,8 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
     }
 
     public Iterable<? extends LatLon> getOuterBoundary() {
-        return !this.boundaries.isEmpty() ? this.boundaries.get(0) : null;
+        return this.boundaries.isEmpty() ? null : this.boundaries.get(0);
     }
-
 
     public void setOuterBoundary(Iterable<? extends LatLon> iterable) {
 
@@ -256,8 +309,7 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
                 gl.glDisable(GL2.GL_TEXTURE_GEN_S);
                 gl.glDisable(GL2.GL_TEXTURE_GEN_T);
             }
-        }
-        else {
+        } else {
             super.applyInteriorState(dc, sdc, attributes, this.getInteriorTexture(), this.getReferencePosition());
         }
     }
@@ -301,13 +353,6 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
         return result;
     }
 
-    protected static void closeContour(List<Vertex> contour) {
-        final Vertex x = contour.get(0);
-        if (!x.equals(contour.get(contour.size() - 1))) {
-            contour.add(x);
-        }
-    }
-
     protected void subdivideContour(List<Vertex> contour, Angle maxEdgeLength) {
         List<Vertex> original = new ArrayList<>(contour.size());
         original.addAll(contour);
@@ -338,7 +383,6 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
             result.add(center);
         }
     }
-
 
     protected List<Vertex> clipWithPole(List<Vertex> contour, String pole, Angle maxEdgeLength) {
         List<Vertex> newVertices = new ArrayList<>();
@@ -398,61 +442,15 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
         return newVertices;
     }
 
-    protected static double[] uvWeightedAverage(List<Vertex> contour, Vertex vertex) {
-        double[] weight = new double[contour.size()];
-        double sumOfWeights = 0;
-        for (int i = 0; i < contour.size(); i++) {
-            double distance = LatLon.greatCircleDistance(contour.get(i), vertex).degrees;
-            weight[i] = 1 / distance;
-            sumOfWeights += weight[i];
-        }
-
-        double u = 0;
-        double v = 0;
-        for (int i = 0; i < contour.size(); i++) {
-            double factor = weight[i] / sumOfWeights;
-            u += contour.get(i).u * factor;
-            v += contour.get(i).v * factor;
-        }
-
-        return new double[] {u, v};
-    }
-
-    protected static List<List<Vertex>> clipWithDateline(Iterable<Vertex> contour) {
-        List<Vertex> result = new ArrayList<>();
-        Vertex prev = null;
-        Angle offset = null;
-        boolean applyOffset = false;
-
-        for (Vertex cur : contour) {
-            if (prev != null && LatLon.locationsCrossDateline(prev, cur)) {
-                if (offset == null)
-                    offset = (prev.longitude < 0 ? Angle.NEG360 : Angle.POS360);
-                applyOffset = !applyOffset;
-            }
-
-            result.add(applyOffset ? new Vertex(cur.getLatitude(), cur.getLongitude().add(offset), cur.u, cur.v) : cur);
-
-            prev = cur;
-        }
-
-        List<Vertex> mirror = new ArrayList<>(result.size());
-        for (Vertex cur : result) {
-            mirror.add(new Vertex(cur.getLatitude(), cur.getLongitude().sub(offset), cur.u, cur.v));
-        }
-
-        return Arrays.asList(result, mirror);
-    }
-
     protected ShapeData tessellateContours(Iterable<List<Vertex>> contours) {
         Collection<Vertex> polygonData = new ArrayList<>();
         double[] coords = {0, 0, 0};
 
-        if (tess == null) {
-            tess = GLU.gluNewTess();
-            tessCallback = new GLUTessellatorSupport.CollectPrimitivesCallback();
-            tessCallback.attach(tess);
-            GLU.gluTessCallback(tess, GLU.GLU_TESS_COMBINE_DATA, new GLUtessellatorCallbackAdapter() {
+        if (SurfacePolygon.tess == null) {
+            SurfacePolygon.tess = GLU.gluNewTess();
+            SurfacePolygon.tessCallback = new GLUTessellatorSupport.CollectPrimitivesCallback();
+            SurfacePolygon.tessCallback.attach(SurfacePolygon.tess);
+            GLU.gluTessCallback(SurfacePolygon.tess, GLU.GLU_TESS_COMBINE_DATA, new GLUtessellatorCallbackAdapter() {
                 @Override
                 public void combineData(double[] coords, Object[] vertexData, float[] weight, Object[] outData,
                     Object polygonData) {
@@ -479,12 +477,12 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
         }
 
         try {
-            tessCallback.reset();
-            GLU.gluTessNormal(tess, 0, 0, 1);
-            GLU.gluTessBeginPolygon(tess, polygonData);
+            SurfacePolygon.tessCallback.reset();
+            GLU.gluTessNormal(SurfacePolygon.tess, 0, 0, 1);
+            GLU.gluTessBeginPolygon(SurfacePolygon.tess, polygonData);
 
             for (List<Vertex> contour : contours) {
-                GLU.gluTessBeginContour(tess);
+                GLU.gluTessBeginContour(SurfacePolygon.tess);
 
                 for (Vertex vertex : contour) {
                     coords[0] = vertex.longitude;
@@ -492,22 +490,23 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
                     int index = polygonData.size();
                     polygonData.add(vertex);
                     Object vertexData = new GLUTessellatorSupport.VertexData(index, vertex.edgeFlag);
-                    GLU.gluTessVertex(tess, coords, 0, vertexData);
+                    GLU.gluTessVertex(SurfacePolygon.tess, coords, 0, vertexData);
                 }
 
-                GLU.gluTessEndContour(tess);
+                GLU.gluTessEndContour(SurfacePolygon.tess);
             }
 
-            GLU.gluTessEndPolygon(tess);
-        }  catch (Exception e) {
+            GLU.gluTessEndPolygon(SurfacePolygon.tess);
+        }
+        catch (RuntimeException e) {
             String msg = Logging.getMessage("generic.ExceptionWhileTessellating", e.getMessage());
             Logging.logger().log(Level.SEVERE, msg, e);
             return null;
         }
 
-        if (tessCallback.getError() != 0) {
+        if (SurfacePolygon.tessCallback.getError() != 0) {
             String msg = Logging.getMessage("generic.ExceptionWhileTessellating",
-                GLUTessellatorSupport.convertGLUTessErrorToString(tessCallback.getError()));
+                GLUTessellatorSupport.convertGLUTessErrorToString(SurfacePolygon.tessCallback.getError()));
             Logging.logger().log(Level.SEVERE, msg);
             return null;
         }
@@ -530,12 +529,12 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
         }
         shapeData.vertices.rewind();
 
-        IntBuffer tmp = tessCallback.getTriangleIndices();
+        IntBuffer tmp = SurfacePolygon.tessCallback.getTriangleIndices();
         shapeData.interiorIndices = Buffers.newDirectIntBuffer(tmp.remaining());
         shapeData.interiorIndices.put(tmp);
         shapeData.interiorIndices.rewind();
 
-        tmp = tessCallback.getLineIndices();
+        tmp = SurfacePolygon.tessCallback.getLineIndices();
         shapeData.outlineIndices = Buffers.newDirectIntBuffer(tmp.remaining());
         shapeData.outlineIndices.put(tmp);
         shapeData.outlineIndices.rewind();
@@ -692,11 +691,9 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
         if (output instanceof XMLStreamWriter) {
             xmlWriter = (XMLStreamWriter) output;
             closeWriterWhenFinished = false;
-        }
-        else if (output instanceof Writer) {
+        } else if (output instanceof Writer) {
             xmlWriter = factory.createXMLStreamWriter((Writer) output);
-        }
-        else if (output instanceof OutputStream) {
+        } else if (output instanceof OutputStream) {
             xmlWriter = factory.createXMLStreamWriter((OutputStream) output);
         }
 

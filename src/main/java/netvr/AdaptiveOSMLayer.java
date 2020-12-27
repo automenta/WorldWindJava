@@ -18,42 +18,41 @@ import static gov.nasa.worldwind.WorldWind.RELATIVE_TO_GROUND;
 
 public class AdaptiveOSMLayer extends RenderableLayer {
 
+    /**
+     * key for description data
+     */
+    public static final String DESCRIPTION = "_";
+    /**
+     * in degrees lat,lon
+     */
+    static final double gridRes = 0.002;
     private static final double DEFAULT_ELEVATION = 4;
     private static final double DEFAULT_ELEVATION_USE = 2;
-
-    /** in degrees lat,lon */
-    static final double gridRes = 0.002;
-
     static final private Set<String> keysExcl = Set.of("area", "source", "image", "ref:bag", "source:date");
-
-    /** key for description data */
-    public static final String DESCRIPTION = "_";
-
+    public final LongObjectHashMap<ReaderWay> ways = new LongObjectHashMap<>();
+    public final LongObjectHashMap<Map<String, String>> meta = new LongObjectHashMap<>();
     private final LongObjectHashMap<ReaderNode> nodes = new LongObjectHashMap<>();
     private final LongObjectHashMap<ReaderRelation> relations = new LongObjectHashMap<>();
-    public final LongObjectHashMap<ReaderWay> ways = new LongObjectHashMap<>();
-
-    public final LongObjectHashMap<Map<String,String>> meta = new LongObjectHashMap<>();
 
     public final AdaptiveOSMLayer focus(LatLon at, float radiusDegrees) {
         return focus(new Sector(
-            at.latitude - radiusDegrees,at.latitude + radiusDegrees,
+            at.latitude - radiusDegrees, at.latitude + radiusDegrees,
             at.longitude - radiusDegrees, at.longitude + radiusDegrees));
     }
 
     public synchronized AdaptiveOSMLayer focus(Sector sector) {
-        double latMin = Util.round(sector.latMin - gridRes/2, gridRes);
-        double lonMin = Util.round(sector.lonMin - gridRes/2, gridRes);
-        double latMax = Util.round(sector.latMax + gridRes/2, gridRes);
-        double lonMax = Util.round(sector.lonMax + gridRes/2, gridRes);
+        double latMin = Util.round(sector.latMin - AdaptiveOSMLayer.gridRes / 2, AdaptiveOSMLayer.gridRes);
+        double lonMin = Util.round(sector.lonMin - AdaptiveOSMLayer.gridRes / 2, AdaptiveOSMLayer.gridRes);
+        double latMax = Util.round(sector.latMax + AdaptiveOSMLayer.gridRes / 2, AdaptiveOSMLayer.gridRes);
+        double lonMax = Util.round(sector.lonMax + AdaptiveOSMLayer.gridRes / 2, AdaptiveOSMLayer.gridRes);
 
-        int latCells = Math.max(1, (int) Math.ceil((latMax-latMin)/gridRes));
-        int lonCells = Math.max(1, (int) Math.ceil((lonMax-lonMin)/gridRes));
+        int latCells = Math.max(1, (int) Math.ceil((latMax - latMin) / AdaptiveOSMLayer.gridRes));
+        int lonCells = Math.max(1, (int) Math.ceil((lonMax - lonMin) / AdaptiveOSMLayer.gridRes));
         for (int i = 0; i < latCells; i++) {
-            final double latI = latMin + i * gridRes;
+            final double latI = latMin + i * AdaptiveOSMLayer.gridRes;
             for (int j = 0; j < lonCells; j++) {
-                final double lonJ = lonMin + j * gridRes;
-                _focus(new Sector(latI, latI+gridRes, lonJ, lonJ+gridRes));
+                final double lonJ = lonMin + j * AdaptiveOSMLayer.gridRes;
+                _focus(new Sector(latI, latI + AdaptiveOSMLayer.gridRes, lonJ, lonJ + AdaptiveOSMLayer.gridRes));
             }
         }
         Globe g = new EarthFlat();
@@ -63,8 +62,10 @@ public class AdaptiveOSMLayer extends RenderableLayer {
                 return 0;
             final boolean ap = a instanceof Polygon;
             final boolean bp = b instanceof Polygon;
-            if (ap && !bp) return +1;
-            else if (bp && !ap) return -1;
+            if (ap && !bp)
+                return +1;
+            else if (bp && !ap)
+                return -1;
             else if (ap && bp) {
                 final double A = area((Polygon) a, g);
                 final double B = area((Polygon) b, g);
@@ -86,7 +87,8 @@ public class AdaptiveOSMLayer extends RenderableLayer {
 
         try {
             OSMLoader.osm(sector, this::read);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -110,7 +112,7 @@ public class AdaptiveOSMLayer extends RenderableLayer {
     }
 
     private void readWay(ReaderWay z) {
-        if (ways.put(z.getId(), z)!=null)
+        if (ways.put(z.getId(), z) != null)
             return; //already read
 
         //TODO use VarHandle to access private field 'properties'
@@ -118,7 +120,7 @@ public class AdaptiveOSMLayer extends RenderableLayer {
         Map<String, String> m = new HashMap();
         meta.put(z.getId(), m);
         for (String k : z.getKeysWithPrefix("")) {
-            if (!keysExcl.contains(k))
+            if (!AdaptiveOSMLayer.keysExcl.contains(k))
                 m.put(k, z.getTag(k));
             if (!landUse && k.equals("landuse"))
                 landUse = true;
@@ -136,7 +138,7 @@ public class AdaptiveOSMLayer extends RenderableLayer {
 
             double e = node.getEle();
             if (e != e)
-                e = landUse ? DEFAULT_ELEVATION_USE : DEFAULT_ELEVATION;
+                e = landUse ? AdaptiveOSMLayer.DEFAULT_ELEVATION_USE : AdaptiveOSMLayer.DEFAULT_ELEVATION;
 
             latlon.add(Position.fromDegrees(node.getLat(), node.getLon(), e));
         }
@@ -147,21 +149,20 @@ public class AdaptiveOSMLayer extends RenderableLayer {
         else
             p = readPath(z, m, latlon);
 
-        if (p!=null) {
-            ((AVList)p).set(DESCRIPTION, m);
+        if (p != null) {
+            ((AVList) p).set(AdaptiveOSMLayer.DESCRIPTION, m);
             add(p);
         }
     }
 
-    private Path readPath(ReaderWay w, Map<String,String> properties, List<Position> latlon) {
+    private Path readPath(ReaderWay w, Map<String, String> properties, List<Position> latlon) {
         Path p = new Path(latlon);
         p.setFollowTerrain(true);
         p.setSurfacePath(true);
         return p;
     }
 
-    private Polygon readArea(ReaderWay w, Map<String,String> properties, List<Position> latlon) {
-
+    private Polygon readArea(ReaderWay w, Map<String, String> properties, List<Position> latlon) {
 
         Polygon p = new Polygon(latlon);/* {
                 @Override

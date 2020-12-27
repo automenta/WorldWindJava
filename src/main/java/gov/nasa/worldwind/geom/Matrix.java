@@ -26,7 +26,7 @@ public class Matrix {
         true);
     protected static final double EPSILON =
         1.0e-12;
-    protected static final double NEAR_ZERO_THRESHOLD = EPSILON/100;
+    protected static final double NEAR_ZERO_THRESHOLD = Matrix.EPSILON / 100;
     static final double TINY = 1.0e-20;
 
     // 16 values in a 4x4 matrix.
@@ -111,7 +111,7 @@ public class Matrix {
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
-        if ((compArray.length - offset) < NUM_ELEMENTS) {
+        if ((compArray.length - offset) < Matrix.NUM_ELEMENTS) {
             String msg = Logging.getMessage("generic.ArrayInvalidLength", compArray.length);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -140,8 +140,7 @@ public class Matrix {
                 compArray[13 + offset],
                 compArray[14 + offset],
                 compArray[15 + offset]);
-        }
-        else {
+        } else {
             //noinspection PointlessArithmeticExpression
             return new Matrix(
                 // Row 1
@@ -223,7 +222,7 @@ public class Matrix {
             throw new IllegalArgumentException(msg);
         }
 
-        return fromAxisAngle(angle, axis.x, axis.y, axis.z, true);
+        return Matrix.fromAxisAngle(angle, axis.x, axis.y, axis.z, true);
     }
 
     public static Matrix fromAxisAngle(Angle angle, double axisX, double axisY, double axisZ) {
@@ -232,7 +231,7 @@ public class Matrix {
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
-        return fromAxisAngle(angle, axisX, axisY, axisZ, true);
+        return Matrix.fromAxisAngle(angle, axisX, axisY, axisZ, true);
     }
 
     private static Matrix fromAxisAngle(Angle angle, double axisX, double axisY, double axisZ, boolean normalize) {
@@ -244,7 +243,7 @@ public class Matrix {
 
         if (normalize) {
             double length = Math.sqrt((axisX * axisX) + (axisY * axisY) + (axisZ * axisZ));
-            if (!isZero(length) && (length != 1.0)) {
+            if (!Matrix.isZero(length) && (length != 1.0)) {
                 axisX /= length;
                 axisY /= length;
                 axisZ /= length;
@@ -283,13 +282,13 @@ public class Matrix {
             throw new IllegalArgumentException(msg);
         }
 
-        return fromQuaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w, true);
+        return Matrix.fromQuaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w, true);
     }
 
     private static Matrix fromQuaternion(double x, double y, double z, double w, boolean normalize) {
         if (normalize) {
             double length = Math.sqrt((x * x) + (y * y) + (z * z) + (w * w));
-            if (!isZero(length) && (length != 1.0)) {
+            if (!Matrix.isZero(length) && (length != 1.0)) {
                 x /= length;
                 y /= length;
                 z /= length;
@@ -396,7 +395,7 @@ public class Matrix {
     }
 
     public static Matrix fromScale(double scale) {
-        return fromScale(scale, scale, scale);
+        return Matrix.fromScale(scale, scale, scale);
     }
 
     public static Matrix fromScale(Vec4 scale) {
@@ -406,7 +405,7 @@ public class Matrix {
             throw new IllegalArgumentException(msg);
         }
 
-        return fromScale(scale.x, scale.y, scale.z);
+        return Matrix.fromScale(scale.x, scale.y, scale.z);
     }
 
     public static Matrix fromScale(double scaleX, double scaleY, double scaleZ) {
@@ -426,7 +425,7 @@ public class Matrix {
             throw new IllegalArgumentException(msg);
         }
 
-        return fromTranslation(translation.x, translation.y, translation.z);
+        return Matrix.fromTranslation(translation.x, translation.y, translation.z);
     }
 
     public static Matrix fromTranslation(double x, double y, double z) {
@@ -445,15 +444,14 @@ public class Matrix {
         double cotTheta = 1.0e6;
         double cotPhi = 1.0e6;
 
-        if (theta.getRadians() < EPSILON && phi.getRadians() < EPSILON) {
+        if (theta.radians() < Matrix.EPSILON && phi.radians() < Matrix.EPSILON) {
             cotTheta = 0;
             cotPhi = 0;
-        }
-        else {
-            if (Math.abs(Math.tan(theta.getRadians())) > EPSILON)
-                cotTheta = 1 / Math.tan(theta.getRadians());
-            if (Math.abs(Math.tan(phi.getRadians())) > EPSILON)
-                cotPhi = 1 / Math.tan(phi.getRadians());
+        } else {
+            if (Math.abs(Math.tan(theta.radians())) > Matrix.EPSILON)
+                cotTheta = 1 / Math.tan(theta.radians());
+            if (Math.abs(Math.tan(phi.radians())) > Matrix.EPSILON)
+                cotPhi = 1 / Math.tan(phi.radians());
         }
 
         return new Matrix(
@@ -504,7 +502,7 @@ public class Matrix {
             throw new IllegalArgumentException(msg);
         }
 
-        return fromTranslation(origin).multiply(fromAxes(axes));
+        return Matrix.fromTranslation(origin).multiply(Matrix.fromAxes(axes));
     }
 
     /**
@@ -534,7 +532,7 @@ public class Matrix {
             throw new IllegalArgumentException(msg);
         }
 
-        if (eye.distanceTo3(center) <= EPSILON) {
+        if (eye.distanceTo3(center) <= Matrix.EPSILON) {
             String msg = Logging.getMessage("Geom.EyeAndCenterInvalid", eye, center);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -546,7 +544,7 @@ public class Matrix {
         Vec4 s = f.cross3(up);
         s = s.normalize3();
 
-        if (s.getLength3() <= EPSILON) {
+        if (s.getLength3() <= Matrix.EPSILON) {
             String msg = Logging.getMessage("Geom.UpAndLineOfSightInvalid", up, forward);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -590,7 +588,7 @@ public class Matrix {
             throw new IllegalArgumentException(msg);
         }
 
-        if (eye.distanceTo3(center) <= EPSILON) {
+        if (eye.distanceTo3(center) <= Matrix.EPSILON) {
             String msg = Logging.getMessage("Geom.EyeAndCenterInvalid", eye, center);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -602,7 +600,7 @@ public class Matrix {
         Vec4 s = up.cross3(f);
         s = s.normalize3();
 
-        if (s.getLength3() <= EPSILON) {
+        if (s.getLength3() <= Matrix.EPSILON) {
             String msg = Logging.getMessage("Geom.UpAndLineOfSightInvalid", up, forward);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -899,8 +897,7 @@ public class Matrix {
                 0.0, 1.0 / e, (-f / e), 0.0,
                 0.0, 0.0, 1.0, 0.0,
                 0.0, 0.0, 0.0, 0.0);
-        }
-        else {
+        } else {
             double x0 = d - (e * a) / b;
             double ap = -e / (b * x0);
             double bp = 1.0 / x0;
@@ -1364,12 +1361,10 @@ public class Matrix {
 
             // Annihilate (1,2) entry
             if (m12 != 0.0d) {
-                double u = (m22 - m11) / (2*m12);
+                double u = (m22 - m11) / (2 * m12);
                 double u2 = u * u;
                 double u2p1 = u2 + 1.0d;
-                double t = (u2p1 != u2) ?
-                    ((u < 0.0d) ? -1.0d : 1.0d) * (Math.sqrt(u2p1) - Math.abs(u))
-                    : 0.5 / u;
+                double t = (u2p1 == u2) ? 0.5 / u : ((u < 0.0d) ? -1.0d : 1.0d) * (Math.sqrt(u2p1) - Math.abs(u));
                 double c = Math.pow(t * t + 1.0d, -0.5);
                 double s = c * t;
 
@@ -1383,7 +1378,7 @@ public class Matrix {
 
                 for (int i = 0; i < 3; i++) {
                     final double[] ri = r[i];
-                    double x =  c * ri[0] - s * ri[1];
+                    double x = c * ri[0] - s * ri[1];
                     ri[1] = s * ri[0] + c * ri[1];
                     ri[0] = x;
                 }
@@ -1394,9 +1389,7 @@ public class Matrix {
                 double u = (m33 - m11) / (2 * m13);
                 double u2 = u * u;
                 double u2p1 = u2 + 1.0d;
-                double t = (u2p1 != u2) ?
-                    ((u < 0.0d) ? -1.0d : 1.0d) * (Math.sqrt(u2p1) - Math.abs(u))
-                    : 0.5 / u;
+                double t = (u2p1 == u2) ? 0.5 / u : ((u < 0.0d) ? -1.0d : 1.0d) * (Math.sqrt(u2p1) - Math.abs(u));
                 double c = Math.pow(t * t + 1.0d, -0.5);
                 double s = c * t;
 
@@ -1421,9 +1414,7 @@ public class Matrix {
                 double u = (m33 - m22) / (2 * m23);
                 double u2 = u * u;
                 double u2p1 = u2 + 1.0d;
-                double t = (u2p1 != u2) ?
-                    ((u < 0.0d) ? -1.0d : 1.0d) * (Math.sqrt(u2p1) - Math.abs(u))
-                    : 0.5 / u;
+                double t = (u2p1 == u2) ? 0.5 / u : ((u < 0.0d) ? -1.0d : 1.0d) * (Math.sqrt(u2p1) - Math.abs(u));
                 double c = Math.pow(t * t + 1.0d, -0.5);
                 double s = c * t;
 
@@ -1489,7 +1480,7 @@ public class Matrix {
         A[3][3] = a.m44;
 
         int[] indx = new int[4];
-        double d = ludcmp(A, indx);
+        double d = Matrix.ludcmp(A, indx);
 
         // Compute the matrix's determinant.
         for (int i = 0; i < 4; i++) {
@@ -1497,7 +1488,7 @@ public class Matrix {
         }
 
         // The matrix is singular if its determinant is zero or very close to zero.
-        if (Math.abs(d) < NEAR_ZERO_THRESHOLD)
+        if (Math.abs(d) < Matrix.NEAR_ZERO_THRESHOLD)
             return null;
 
         double[][] Y = new double[4][4];
@@ -1506,10 +1497,11 @@ public class Matrix {
             Arrays.fill(col, 0);
 
             col[j] = 1.0;
-            lubksb(A, indx, col);
+            Matrix.lubksb(A, indx, col);
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 4; i++) {
                 Y[i][j] = col[i];
+            }
         }
 
         return new Matrix(
@@ -1532,8 +1524,7 @@ public class Matrix {
                 for (int j = ii; j <= i - 1; j++) {
                     sum -= aI[j] * b[j];
                 }
-            }
-            else if (sum != 0.0) {
+            } else if (sum != 0.0) {
                 ii = i;
             }
 
@@ -1544,8 +1535,9 @@ public class Matrix {
             double sum = b[i];
             final double[] aI = A[i];
 
-            for (int j = i + 1; j < 4; j++)
+            for (int j = i + 1; j < 4; j++) {
                 sum -= aI[j] * b[j];
+            }
 
             b[i] = sum / aI[i];
         }
@@ -1612,10 +1604,10 @@ public class Matrix {
             indx[j] = imax;
 
             final double ajj = A[j][j];
-            if (ajj >= 0 && ajj < TINY)
-                A[j][j] = TINY;
-            else if (ajj <= 0 && ajj > -TINY)
-                A[j][j] = -TINY;
+            if (ajj >= 0 && ajj < Matrix.TINY)
+                A[j][j] = Matrix.TINY;
+            else if (ajj <= 0 && ajj > -Matrix.TINY)
+                A[j][j] = -Matrix.TINY;
 
             if (j != 3) {
                 dum = 1 / A[j][j];
@@ -1630,6 +1622,19 @@ public class Matrix {
 
     private static boolean isZero(double value) {
         return Math.abs(value) <= Double.MIN_NORMAL;
+    }
+
+    public static Vec4 transformBy3(Matrix matrix, double x, double y, double z) {
+        if (matrix == null) {
+            String msg = Logging.getMessage("nullValue.MatrixIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        return new Vec4(
+            (matrix.m11 * x) + (matrix.m12 * y) + (matrix.m13 * z),
+            (matrix.m21 * x) + (matrix.m22 * y) + (matrix.m23 * z),
+            (matrix.m31 * x) + (matrix.m32 * y) + (matrix.m33 * z));
     }
 
     public final boolean equals(Object obj) {
@@ -1687,7 +1692,7 @@ public class Matrix {
     }
 
     public final double[] toArray(double[] compArray, int offset, boolean rowMajor) {
-        if ((compArray.length - offset) < NUM_ELEMENTS) {
+        if ((compArray.length - offset) < Matrix.NUM_ELEMENTS) {
             String msg = Logging.getMessage("generic.ArrayInvalidLength", compArray.length);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -1714,8 +1719,7 @@ public class Matrix {
             compArray[12 + offset] = this.m41;
             compArray[13 + offset] = this.m42;
             compArray[14 + offset] = this.m43;
-        }
-        else {
+        } else {
             // Row 1
             //noinspection PointlessArithmeticExpression
             compArray[0 + offset] = this.m11;
@@ -1744,7 +1748,7 @@ public class Matrix {
 
     public final String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("(");
+        sb.append('(');
         sb.append(this.m11).append(", ").append(this.m12).append(", ").append(this.m13).append(", ").append(this.m14);
         sb.append(", \r\n");
         sb.append(this.m21).append(", ").append(this.m22).append(", ").append(this.m23).append(", ").append(this.m24);
@@ -1752,7 +1756,7 @@ public class Matrix {
         sb.append(this.m31).append(", ").append(this.m32).append(", ").append(this.m33).append(", ").append(this.m34);
         sb.append(", \r\n");
         sb.append(this.m41).append(", ").append(this.m42).append(", ").append(this.m43).append(", ").append(this.m44);
-        sb.append(")");
+        sb.append(')');
         return sb.toString();
     }
 
@@ -1852,13 +1856,13 @@ public class Matrix {
         return this.m24;
     }
 
+    // ============== Arithmetic Functions ======================= //
+    // ============== Arithmetic Functions ======================= //
+    // ============== Arithmetic Functions ======================= //
+
     public final double m31() {
         return this.m31;
     }
-
-    // ============== Arithmetic Functions ======================= //
-    // ============== Arithmetic Functions ======================= //
-    // ============== Arithmetic Functions ======================= //
 
     public final double m32() {
         return this.m32;
@@ -1888,6 +1892,10 @@ public class Matrix {
         return this.m44;
     }
 
+    // ============== Matrix Arithmetic Functions ======================= //
+    // ============== Matrix Arithmetic Functions ======================= //
+    // ============== Matrix Arithmetic Functions ======================= //
+
     public final Matrix add(Matrix matrix) {
         if (matrix == null) {
             String msg = Logging.getMessage("nullValue.MatrixIsNull");
@@ -1901,10 +1909,6 @@ public class Matrix {
             this.m31 + matrix.m31, this.m32 + matrix.m32, this.m33 + matrix.m33, this.m34 + matrix.m34,
             this.m41 + matrix.m41, this.m42 + matrix.m42, this.m43 + matrix.m43, this.m44 + matrix.m44);
     }
-
-    // ============== Matrix Arithmetic Functions ======================= //
-    // ============== Matrix Arithmetic Functions ======================= //
-    // ============== Matrix Arithmetic Functions ======================= //
 
     public final Matrix subtract(Matrix matrix) {
         if (matrix == null) {
@@ -1961,7 +1965,7 @@ public class Matrix {
     }
 
     public final Matrix divideComponents(double value) {
-        if (isZero(value)) {
+        if (Matrix.isZero(value)) {
             String msg = Logging.getMessage("generic.ArgumentOutOfRange", value);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -1996,19 +2000,6 @@ public class Matrix {
             0.0 - this.m41, 0.0 - this.m42, 0.0 - this.m43, 0.0 - this.m44,
             // Negative of orthonormal 3D transform matrix is also an orthonormal 3D transform.
             this.isOrthonormalTransform);
-    }
-
-    public static Vec4 transformBy3(Matrix matrix, double x, double y, double z) {
-        if (matrix == null) {
-            String msg = Logging.getMessage("nullValue.MatrixIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        return new Vec4(
-            (matrix.m11 * x) + (matrix.m12 * y) + (matrix.m13 * z),
-            (matrix.m21 * x) + (matrix.m22 * y) + (matrix.m23 * z),
-            (matrix.m31 * x) + (matrix.m32 * y) + (matrix.m33 * z));
     }
 
     public final double getDeterminant() {
@@ -2062,15 +2053,15 @@ public class Matrix {
      */
     public final Matrix getInverse() {
         if (this.isOrthonormalTransform)
-            return computeTransformInverse(this);
+            return Matrix.computeTransformInverse(this);
         else
-            return computeGeneralInverse(this);
+            return Matrix.computeGeneralInverse(this);
     }
 
     public final Angle getRotationX() {
         double yRadians = Math.asin(this.m13);
         double cosY = Math.cos(yRadians);
-        if (isZero(cosY))
+        if (Matrix.isZero(cosY))
             return null;
 
         double xRadians;
@@ -2100,7 +2091,7 @@ public class Matrix {
     public final Angle getRotationZ() {
         double yRadians = Math.asin(this.m13);
         double cosY = Math.cos(yRadians);
-        if (isZero(cosY))
+        if (Matrix.isZero(cosY))
             return null;
 
         double zRadians;
@@ -2138,12 +2129,10 @@ public class Matrix {
         if (xRadians < Math.PI / 2) {
             if (xRadians > -Math.PI / 2) {
                 yRadians = Math.atan2(this.m13, this.m33);
-            }
-            else {
+            } else {
                 yRadians = -Math.atan2(-this.m12, this.m11);
             }
-        }
-        else {
+        } else {
             yRadians = Math.atan2(-this.m12, this.m11);
         }
 
@@ -2162,8 +2151,7 @@ public class Matrix {
         double zRadians;
         if (xRadians < Math.PI / 2 && xRadians > -Math.PI / 2) {
             zRadians = Math.atan2(this.m21, this.m22);
-        }
-        else {
+        } else {
             zRadians = 0;
         }
 
@@ -2282,8 +2270,8 @@ public class Matrix {
                 globe.computeModelCoordinateOriginTransform(originPos)).m23);
         double tilt = Math.atan2(st, this.multiply(globe.computeModelCoordinateOriginTransform(originPos)).m33);
 
-        double cr = Math.cos(roll.radians);
-        double sr = Math.sin(roll.radians);
+        double cr = Math.cos(roll.radians());
+        double sr = Math.sin(roll.radians());
         double ch = cr * this.multiply(globe.computeModelCoordinateOriginTransform(originPos)).m11 - sr * this.multiply(
             globe.computeModelCoordinateOriginTransform(originPos)).m21;
         double sh = sr * this.multiply(globe.computeModelCoordinateOriginTransform(originPos)).m22 - cr * this.multiply(

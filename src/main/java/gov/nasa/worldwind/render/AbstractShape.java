@@ -26,8 +26,8 @@ import java.io.*;
 import java.util.List;
 
 /**
- * Provides a base class form several geometric {@link Renderable}s. Implements common
- * attribute handling and rendering flow for outlined shapes. Provides common defaults and common export code.
+ * Provides a base class form several geometric {@link Renderable}s. Implements common attribute handling and rendering
+ * flow for outlined shapes. Provides common defaults and common export code.
  * <p>
  * In order to support simultaneous use of this shape with multiple globes (windows), this shape maintains a cache of
  * data computed relative to each globe. During rendering, the data for the currently active globe, as indicated in the
@@ -76,8 +76,8 @@ public abstract class AbstractShape extends WWObjectImpl
     static {
         // Create and populate the default attributes.
         defaultAttributes = new BasicShapeAttributes();
-        defaultAttributes.setInteriorMaterial(DEFAULT_INTERIOR_MATERIAL);
-        defaultAttributes.setOutlineMaterial(DEFAULT_OUTLINE_MATERIAL);
+        AbstractShape.defaultAttributes.setInteriorMaterial(AbstractShape.DEFAULT_INTERIOR_MATERIAL);
+        AbstractShape.defaultAttributes.setOutlineMaterial(AbstractShape.DEFAULT_OUTLINE_MATERIAL);
     }
 
     /**
@@ -102,11 +102,11 @@ public abstract class AbstractShape extends WWObjectImpl
     protected boolean highlighted;
     protected boolean dragEnabled = true;
     protected boolean visible = true;
-    protected int altitudeMode = DEFAULT_ALTITUDE_MODE;
+    protected int altitudeMode = AbstractShape.DEFAULT_ALTITUDE_MODE;
     protected boolean enableBatchRendering = true;
     protected boolean enableBatchPicking = true;
     protected boolean enableDepthOffset;
-    protected int outlinePickWidth = DEFAULT_OUTLINE_PICK_WIDTH;
+    protected int outlinePickWidth = AbstractShape.DEFAULT_OUTLINE_PICK_WIDTH;
     /**
      * Outlined shapes are drawn as {@link OutlinedShape}s.
      */
@@ -142,14 +142,14 @@ public abstract class AbstractShape extends WWObjectImpl
     protected Sector sector; // the shape's bounding sector
     protected Position referencePosition; // the location/position to use as the shape's reference point
     protected Object delegateOwner; // for app use to identify an owner of this shape other than the current layer
-    protected long maxExpiryTime = DEFAULT_GEOMETRY_GENERATION_INTERVAL;
-    protected long minExpiryTime = Math.max(DEFAULT_GEOMETRY_GENERATION_INTERVAL - 500, 0);
+    protected long maxExpiryTime = AbstractShape.DEFAULT_GEOMETRY_GENERATION_INTERVAL;
+    protected long minExpiryTime = Math.max(AbstractShape.DEFAULT_GEOMETRY_GENERATION_INTERVAL - 500, 0);
     protected boolean viewDistanceExpiration = true;
     protected SurfaceShape surfaceShape;
     protected Layer pickLayer;
     protected PickSupport pickSupport = new PickSupport();
     // Additional drag context
-    protected DraggableSupport draggableSupport = null;
+    protected DraggableSupport draggableSupport;
     /**
      * Identifies the active globe-dependent data for the current invocation of {@link #render(DrawContext)}. The active
      * data is drawn from this shape's data cache at the beginning of the <code>render</code> method.
@@ -178,6 +178,32 @@ public abstract class AbstractShape extends WWObjectImpl
         this.delegateOwner = source.delegateOwner;
 
         this.initialize();
+    }
+
+    /**
+     * Creates a {@link WWTexture} for a specified image source.
+     *
+     * @param imageSource the image source for which to create the texture.
+     * @return the new <code>WWTexture</code>.
+     * @throws IllegalArgumentException if the image source is null.
+     */
+    protected static WWTexture makeTexture(Object imageSource) {
+        return new LazilyLoadedTexture(imageSource, true);
+    }
+
+    protected static int countTriangleVertices(java.util.List<List<Integer>> prims,
+        List<Integer> primTypes) {
+        int numVertices = 0;
+
+        for (int i = 0; i < prims.size(); i++) {
+            switch (primTypes.get(i)) {
+                case GL.GL_TRIANGLES -> numVertices += prims.get(i).size();
+                case GL.GL_TRIANGLE_FAN, GL.GL_TRIANGLE_STRIP -> numVertices += (prims.get(i).size() - 2)
+                    * 3; // N tris from N + 2 vertices
+            }
+        }
+
+        return numVertices;
     }
 
     /**
@@ -214,8 +240,8 @@ public abstract class AbstractShape extends WWObjectImpl
     /**
      * Produces the geometry and other state necessary to represent this shape as an ordered renderable. Places this
      * shape on the draw context's ordered renderable list for subsequent rendering. This method is called during {@link
-     * #pick(DrawContext, Point)} and {@link #render(DrawContext)} when it's been determined that the shape is
-     * likely to be visible.
+     * #pick(DrawContext, Point)} and {@link #render(DrawContext)} when it's been determined that the shape is likely to
+     * be visible.
      *
      * @param dc the current draw context.
      * @return true if the ordered renderable state was successfully computed, otherwise false, in which case the
@@ -488,8 +514,7 @@ public abstract class AbstractShape extends WWObjectImpl
 
     /**
      * Specifies whether the filled sides of this shape should be offset towards the viewer to help eliminate artifacts
-     * when two or more faces of this or other filled shapes are coincident. See {@link
-     * Offset}.
+     * when two or more faces of this or other filled shapes are coincident. See {@link Offset}.
      *
      * @param enableDepthOffset true if depth offset is applied, otherwise false.
      */
@@ -594,17 +619,15 @@ public abstract class AbstractShape extends WWObjectImpl
                 if (this.getAttributes() != null)
                     this.activeAttributes.copy(this.getAttributes());
                 else
-                    this.activeAttributes.copy(defaultAttributes);
+                    this.activeAttributes.copy(AbstractShape.defaultAttributes);
 
-                this.activeAttributes.setOutlineMaterial(DEFAULT_HIGHLIGHT_MATERIAL);
-                this.activeAttributes.setInteriorMaterial(DEFAULT_HIGHLIGHT_MATERIAL);
+                this.activeAttributes.setOutlineMaterial(AbstractShape.DEFAULT_HIGHLIGHT_MATERIAL);
+                this.activeAttributes.setInteriorMaterial(AbstractShape.DEFAULT_HIGHLIGHT_MATERIAL);
             }
-        }
-        else if (this.getAttributes() != null) {
+        } else if (this.getAttributes() != null) {
             this.activeAttributes.copy(this.getAttributes());
-        }
-        else {
-            this.activeAttributes.copy(defaultAttributes);
+        } else {
+            this.activeAttributes.copy(AbstractShape.defaultAttributes);
         }
     }
 
@@ -708,17 +731,6 @@ public abstract class AbstractShape extends WWObjectImpl
      */
     protected boolean mustCreateNormals(DrawContext dc, ShapeAttributes activeAttrs) {
         return this.mustApplyLighting(dc, activeAttrs);
-    }
-
-    /**
-     * Creates a {@link WWTexture} for a specified image source.
-     *
-     * @param imageSource the image source for which to create the texture.
-     * @return the new <code>WWTexture</code>.
-     * @throws IllegalArgumentException if the image source is null.
-     */
-    protected static WWTexture makeTexture(Object imageSource) {
-        return new LazilyLoadedTexture(imageSource, true);
     }
 
     @Override
@@ -994,8 +1006,7 @@ public abstract class AbstractShape extends WWObjectImpl
 
                 nextItem = dc.peekOrderedRenderables();
             }
-        }
-        else if (this.isEnableBatchPicking()) {
+        } else if (this.isEnableBatchPicking()) {
             while (nextItem != null && nextItem.getClass() == this.getClass()) {
                 AbstractShape shape = (AbstractShape) nextItem;
                 if (!shape.isEnableBatchRendering() || !shape.isEnableBatchPicking())
@@ -1040,8 +1051,8 @@ public abstract class AbstractShape extends WWObjectImpl
     }
 
     /**
-     * Creates a {@link PickedObject} for this shape and the specified unique pick color code.
-     * The PickedObject returned by this method will be added to the pick list to represent the current shape.
+     * Creates a {@link PickedObject} for this shape and the specified unique pick color code. The PickedObject returned
+     * by this method will be added to the pick list to represent the current shape.
      *
      * @param colorCode the unique color code for this shape.
      * @return a new picked object.
@@ -1083,8 +1094,7 @@ public abstract class AbstractShape extends WWObjectImpl
             gl.glEnable(GL.GL_LINE_SMOOTH);
             gl.glEnable(GL.GL_BLEND);
             OGLUtil.applyBlending(gl, false);
-        }
-        else {
+        } else {
             gl.glDisable(GL.GL_LINE_SMOOTH);
             gl.glDisable(GL.GL_BLEND);
         }
@@ -1131,7 +1141,7 @@ public abstract class AbstractShape extends WWObjectImpl
      */
     protected void drawOutline(DrawContext dc) {
 
-        this.prepareToDrawOutline(dc, this.getActiveAttributes(), defaultAttributes);
+        this.prepareToDrawOutline(dc, this.getActiveAttributes(), AbstractShape.defaultAttributes);
 
         this.doDrawOutline(dc);
     }
@@ -1160,7 +1170,7 @@ public abstract class AbstractShape extends WWObjectImpl
 
                 gl.glEnable(GL2.GL_LIGHTING);
                 gl.glEnableClientState(GL2.GL_NORMAL_ARRAY);
-            }else {
+            } else {
                 Color sc = material.getDiffuse();
                 double opacity = activeAttrs.getOutlineOpacity();
 
@@ -1182,7 +1192,7 @@ public abstract class AbstractShape extends WWObjectImpl
         if (activeAttrs.getOutlineStippleFactor() > 0) {
             gl.glEnable(GL2.GL_LINE_STIPPLE);
             gl.glLineStipple(activeAttrs.getOutlineStippleFactor(), activeAttrs.getOutlineStipplePattern());
-        }else {
+        } else {
             gl.glDisable(GL2.GL_LINE_STIPPLE);
         }
 
@@ -1197,7 +1207,7 @@ public abstract class AbstractShape extends WWObjectImpl
      * @param dc the current draw context.
      */
     protected void drawInterior(DrawContext dc) {
-        this.prepareToDrawInterior(dc, this.getActiveAttributes(), defaultAttributes);
+        this.prepareToDrawInterior(dc, this.getActiveAttributes(), AbstractShape.defaultAttributes);
 
         this.doDrawInterior(dc);
     }
@@ -1226,8 +1236,7 @@ public abstract class AbstractShape extends WWObjectImpl
 
                 gl.glEnable(GL2.GL_LIGHTING);
                 gl.glEnableClientState(GL2.GL_NORMAL_ARRAY);
-            }
-            else {
+            } else {
                 Color sc = material.getDiffuse();
                 double opacity = activeAttrs.getInteriorOpacity();
                 gl.glColor4ub((byte) sc.getRed(), (byte) sc.getGreen(), (byte) sc.getBlue(),
@@ -1317,8 +1326,7 @@ public abstract class AbstractShape extends WWObjectImpl
                 if (extremes[1] < elevation)
                     extremes[1] = elevation * verticalExaggeration; // max
             }
-        }
-        else {
+        } else {
             extremes = minAndMaxElevations;
         }
 
@@ -1347,21 +1355,6 @@ public abstract class AbstractShape extends WWObjectImpl
      */
     protected void clearCachedVbos(DrawContext dc) {
         dc.getGpuResourceCache().remove(this.getCurrentData().getVboCacheKey());
-    }
-
-    protected static int countTriangleVertices(java.util.List<List<Integer>> prims,
-        List<Integer> primTypes) {
-        int numVertices = 0;
-
-        for (int i = 0; i < prims.size(); i++) {
-            switch (primTypes.get(i)) {
-                case GL.GL_TRIANGLES -> numVertices += prims.get(i).size();
-                case GL.GL_TRIANGLE_FAN, GL.GL_TRIANGLE_STRIP -> numVertices += (prims.get(i).size() - 2)
-                    * 3; // N tris from N + 2 vertices
-            }
-        }
-
-        return numVertices;
     }
 
     public void move(Position delta) {
@@ -1417,7 +1410,7 @@ public abstract class AbstractShape extends WWObjectImpl
     public void export(String mimeType, Object output) throws IOException, UnsupportedOperationException {
 
         String supported = this.isExportFormatSupported(mimeType);
-        if (FORMAT_NOT_SUPPORTED.equals(supported)) {
+        if (Exportable.FORMAT_NOT_SUPPORTED.equals(supported)) {
             String message = Logging.getMessage("Export.UnsupportedFormat", mimeType);
             Logging.logger().warning(message);
             throw new UnsupportedOperationException(message);
@@ -1431,8 +1424,7 @@ public abstract class AbstractShape extends WWObjectImpl
                 Logging.logger().throwing(getClass().getName(), "export", e);
                 throw new IOException(e);
             }
-        }
-        else {
+        } else {
             String message = Logging.getMessage("Export.UnsupportedFormat", mimeType);
             Logging.logger().warning(message);
             throw new UnsupportedOperationException(message);
@@ -1456,11 +1448,9 @@ public abstract class AbstractShape extends WWObjectImpl
         if (output instanceof XMLStreamWriter) {
             xmlWriter = (XMLStreamWriter) output;
             closeWriterWhenFinished = false;
-        }
-        else if (output instanceof Writer) {
+        } else if (output instanceof Writer) {
             xmlWriter = factory.createXMLStreamWriter((Writer) output);
-        }
-        else if (output instanceof OutputStream) {
+        } else if (output instanceof OutputStream) {
             xmlWriter = factory.createXMLStreamWriter((OutputStream) output);
         }
 
@@ -1548,7 +1538,8 @@ public abstract class AbstractShape extends WWObjectImpl
         RestorableSupport rs;
         try {
             rs = RestorableSupport.parse(stateInXml);
-        } catch (Exception e) {
+        }
+        catch (RuntimeException e) {
             // Parsing the document specified by stateInXml failed.
             String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", stateInXml);
             Logging.logger().severe(message);

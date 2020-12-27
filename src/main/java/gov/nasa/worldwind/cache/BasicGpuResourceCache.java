@@ -29,7 +29,6 @@ import java.util.logging.Level;
 public class BasicGpuResourceCache implements GpuResourceCache {
     protected final MemoryCache cache;
 
-
     public BasicGpuResourceCache() {
 
         this.cache =
@@ -38,7 +37,7 @@ public class BasicGpuResourceCache implements GpuResourceCache {
         this.cache.setName("GPU Resource Cache");
         this.cache.addCacheListener(new MemoryCache.CacheListener() {
             public void entryRemoved(Object key, Object clientObject) {
-                onEntryRemoved(key, clientObject);
+                BasicGpuResourceCache.onEntryRemoved(key, clientObject);
             }
 
             public void removalException(Throwable e, Object key, Object clientObject) {
@@ -60,29 +59,17 @@ public class BasicGpuResourceCache implements GpuResourceCache {
         CacheEntry entry = (CacheEntry) clientObject;
         GL2 gl = context.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
-        if (entry.resourceType == TEXTURE) {
+        if (entry.resourceType == GpuResourceCache.TEXTURE) {
             // Unbind a tile's texture when the tile leaves the cache.
             ((Texture) entry.resource).destroy(gl);
-        }
-        else if (entry.resourceType == VBO_BUFFERS) {
+        } else if (entry.resourceType == GpuResourceCache.VBO_BUFFERS) {
             int[] ids = (int[]) entry.resource;
             gl.glDeleteBuffers(ids.length, ids, 0);
-        }
-        else if (entry.resourceType == DISPLAY_LISTS) {
+        } else if (entry.resourceType == GpuResourceCache.DISPLAY_LISTS) {
             // Delete display list ids. They're in a two-element int array, with the id at 0 and the count at 1
             int[] ids = (int[]) entry.resource;
             gl.glDeleteLists(ids[0], ids[1]);
         }
-    }
-
-    public void put(Object key, Texture texture) {
-        CacheEntry te = BasicGpuResourceCache.createCacheEntry(texture, TEXTURE);
-        this.cache.add(key, te);
-    }
-
-    public void put(Object key, Object resource, String resourceType, long size) {
-        CacheEntry te = BasicGpuResourceCache.createCacheEntry(resource, resourceType, size);
-        this.cache.add(key, te);
     }
 
     protected static CacheEntry createCacheEntry(Object resource, String resourceType) {
@@ -99,6 +86,35 @@ public class BasicGpuResourceCache implements GpuResourceCache {
         return entry;
     }
 
+    protected static long computeEntrySize(CacheEntry entry) {
+        if (entry.resourceType == GpuResourceCache.TEXTURE)
+            return BasicGpuResourceCache.computeTextureSize(entry);
+
+        return 0;
+    }
+
+    protected static long computeTextureSize(CacheEntry entry) {
+        Texture texture = (Texture) entry.resource;
+
+        long size = texture.getEstimatedMemorySize();
+
+        // JOGL returns a zero estimated memory size for some textures, so calculate a size ourselves.
+        if (size < 1)
+            size = texture.getHeight() * texture.getWidth() * 4;
+
+        return size;
+    }
+
+    public void put(Object key, Texture texture) {
+        CacheEntry te = BasicGpuResourceCache.createCacheEntry(texture, GpuResourceCache.TEXTURE);
+        this.cache.add(key, te);
+    }
+
+    public void put(Object key, Object resource, String resourceType, long size) {
+        CacheEntry te = BasicGpuResourceCache.createCacheEntry(resource, resourceType, size);
+        this.cache.add(key, te);
+    }
+
     public Object get(Object key) {
         CacheEntry entry = (CacheEntry) this.cache.getObject(key);
         return entry != null ? entry.resource : null;
@@ -106,7 +122,7 @@ public class BasicGpuResourceCache implements GpuResourceCache {
 
     public Texture getTexture(Object key) {
         CacheEntry entry = (CacheEntry) this.cache.getObject(key);
-        return entry != null && entry.resourceType == TEXTURE ? (Texture) entry.resource : null;
+        return entry != null && entry.resourceType == GpuResourceCache.TEXTURE ? (Texture) entry.resource : null;
     }
 
     public void remove(Object key) {
@@ -148,26 +164,6 @@ public class BasicGpuResourceCache implements GpuResourceCache {
 
     public void clear() {
         this.cache.clear();
-    }
-
-
-    protected static long computeEntrySize(CacheEntry entry) {
-        if (entry.resourceType == TEXTURE)
-            return BasicGpuResourceCache.computeTextureSize(entry);
-
-        return 0;
-    }
-
-    protected static long computeTextureSize(CacheEntry entry) {
-        Texture texture = (Texture) entry.resource;
-
-        long size = texture.getEstimatedMemorySize();
-
-        // JOGL returns a zero estimated memory size for some textures, so calculate a size ourselves.
-        if (size < 1)
-            size = texture.getHeight() * texture.getWidth() * 4;
-
-        return size;
     }
 
     public static class CacheEntry implements Cacheable {

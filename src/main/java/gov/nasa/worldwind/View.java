@@ -50,8 +50,8 @@ public interface View extends WWObject, Restorable {
      * Returns the current geographic coordinates of this view's eye position, as computed for the most recent model
      * traversal.
      * <p>
-     * Note: The value returned is not necessarily the value specified to {@link #setEyePosition(Position)}
-     * but is the eye position corresponding to this view's most recently applied state.
+     * Note: The value returned is not necessarily the value specified to {@link #setEyePosition(Position)} but is the
+     * eye position corresponding to this view's most recently applied state.
      *
      * @return the position of the eye corresponding to the most recent application of this view, or null if the view
      * has not yet been applied.
@@ -70,8 +70,8 @@ public interface View extends WWObject, Restorable {
      * Returns the current geographic coordinates of this view's eye position, as determined from this view's current
      * parameters.
      * <p>
-     * Note: The value returned is not necessarily the value specified to {@link #setEyePosition(Position)}
-     * but is the eye position corresponding to this view's current parameters.
+     * Note: The value returned is not necessarily the value specified to {@link #setEyePosition(Position)} but is the
+     * eye position corresponding to this view's current parameters.
      *
      * @return the position of the eye corresponding to the current parameters of this view.
      */
@@ -419,9 +419,8 @@ public interface View extends WWObject, Restorable {
     void copyViewState(View view);
 
     /**
-     * Add an animator to the <code>View</code>. This method does not start the {@link
-     * Animator}.  Starting the {@link Animator} is the
-     * responsibility of the application.
+     * Add an animator to the <code>View</code>. This method does not start the {@link Animator}.  Starting the {@link
+     * Animator} is the responsibility of the application.
      *
      * @param animator the {@link Animator} to be added
      */

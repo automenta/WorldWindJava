@@ -31,7 +31,7 @@ public class NITFSMessage {
     }
 
     public static NITFSMessage load(File file) throws IOException {
-        validateImageFile(file);
+        NITFSMessage.validateImageFile(file);
 
         ByteBuffer roBuffer = NITFSUtil.readEntireFile(file).asReadOnlyBuffer();
 

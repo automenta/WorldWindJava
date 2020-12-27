@@ -37,7 +37,7 @@ public class LocalElevationModel extends AbstractElevationModel {
     /**
      * The min and max elevations.
      */
-    protected double[] extremeElevations = null;
+    protected double[] extremeElevations;
 
     public double getMinElevation() {
         return this.extremeElevations[0];
@@ -89,8 +89,8 @@ public class LocalElevationModel extends AbstractElevationModel {
         }
 
         return new double[] {
-            min != Double.MAX_VALUE ? min : this.getMinElevation(),
-            max != -Double.MAX_VALUE ? max : this.getMaxElevation()};
+            min == Double.MAX_VALUE ? this.getMinElevation() : min,
+            max == -Double.MAX_VALUE ? this.getMaxElevation() : max};
     }
 
     public double[] getExtremeElevations(Sector sector) {
@@ -116,8 +116,8 @@ public class LocalElevationModel extends AbstractElevationModel {
         }
 
         return new double[] {
-            min != Double.MAX_VALUE ? min : this.getMinElevation(),
-            max != -Double.MAX_VALUE ? max : this.getMaxElevation()};
+            min == Double.MAX_VALUE ? this.getMinElevation() : min,
+            max == -Double.MAX_VALUE ? this.getMaxElevation() : max};
     }
 
     public double getBestResolution(Sector sector) {
@@ -154,7 +154,7 @@ public class LocalElevationModel extends AbstractElevationModel {
         if (!this.contains(latitude, longitude))
             return this.missingDataFlag;
 
-        Double e = this.lookupElevation(latitude.radians, longitude.radians);
+        Double e = this.lookupElevation(latitude.radians(), longitude.radians());
 
         // e will be null if the tile containing the location isn't available, or it will be the computed elevation if
         // there is one for the location, otherwise it will be the missing data signal. In the latter two cases the
@@ -236,7 +236,7 @@ public class LocalElevationModel extends AbstractElevationModel {
             // If an elevation is not available but the location is within the elevation model's coverage, write the
             // elevation models extreme elevation at the location. Do nothing if the location is not within the
             // elevation model's coverage.
-            Double e = this.lookupElevation(ll.getLatitude().radians, ll.getLongitude().radians);
+            Double e = this.lookupElevation(ll.getLatitude().radians(), ll.getLongitude().radians());
             if (e != null && e != this.missingDataFlag)
                 buffer[i] = e;
             if (e == null)
@@ -459,15 +459,13 @@ public class LocalElevationModel extends AbstractElevationModel {
     protected void adjustMinMax(LocalTile tile) {
         if (this.extremeElevations == null && tile != null) {
             this.extremeElevations = new double[] {tile.minElevation, tile.maxElevation};
-        }
-        else if (tile != null) // adjust for just the input tile
+        } else if (tile != null) // adjust for just the input tile
         {
             if (tile.minElevation < this.extremeElevations[0])
                 this.extremeElevations[0] = tile.minElevation;
             if (tile.maxElevation > this.extremeElevations[1])
                 this.extremeElevations[1] = tile.maxElevation;
-        }
-        else // Find the min and max among all the tiles
+        } else // Find the min and max among all the tiles
         {
             double min = Double.MAX_VALUE;
             double max = -min;
@@ -480,7 +478,7 @@ public class LocalElevationModel extends AbstractElevationModel {
             }
 
             this.extremeElevations =
-                new double[] {min != Double.MAX_VALUE ? min : 0, max != -Double.MAX_VALUE ? max : 0};
+                new double[] {min == Double.MAX_VALUE ? 0 : min, max == -Double.MAX_VALUE ? 0 : max};
         }
     }
 
@@ -497,10 +495,10 @@ public class LocalElevationModel extends AbstractElevationModel {
         if (tile == null)
             return null;
 
-        final double sectorDeltaLat = tile.sector.latDelta().radians;
-        final double sectorDeltaLon = tile.sector.lonDelta().radians;
-        final double dLat = tile.sector.latMax().radians - latRadians;
-        final double dLon = lonRadians - tile.sector.lonMin().radians;
+        final double sectorDeltaLat = tile.sector.latDelta().radians();
+        final double sectorDeltaLon = tile.sector.lonDelta().radians();
+        final double dLat = tile.sector.latMax().radians() - latRadians;
+        final double dLon = lonRadians - tile.sector.lonMin().radians();
         final double sLat = dLat / sectorDeltaLat;
         final double sLon = dLon / sectorDeltaLon;
 
@@ -537,8 +535,9 @@ public class LocalElevationModel extends AbstractElevationModel {
 
     /**
      * Finds the tile in this elevation model that contains a specified location.
-     *
+     * <p>
      * lat,lon in degrees
+     *
      * @return the tile that contains the location, or null if no tile contains it.
      */
     protected LocalTile findTile(final double lat, final double lon) {

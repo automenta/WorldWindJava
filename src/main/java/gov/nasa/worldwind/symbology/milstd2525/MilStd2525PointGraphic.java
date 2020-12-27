@@ -47,7 +47,7 @@ public class MilStd2525PointGraphic extends AVListImpl implements MilStd2525Tact
      * Indicates whether the object is draggable and provides additional information for dragging about this object.
      */
     protected boolean dragEnabled = true;
-    protected DraggableSupport draggableSupport = null;
+    protected DraggableSupport draggableSupport;
     /**
      * Attributes to apply when the graphic is not highlighted. These attributes override defaults determined by the
      * graphic's symbol code.
@@ -79,9 +79,9 @@ public class MilStd2525PointGraphic extends AVListImpl implements MilStd2525Tact
      */
     public static List<String> getSupportedGraphics() {
         List<String> graphics = new ArrayList<>();
-        graphics.addAll(getTacGrpGraphics());
-        graphics.addAll(getMetocGraphics());
-        graphics.addAll(getEmsGraphics());
+        graphics.addAll(MilStd2525PointGraphic.getTacGrpGraphics());
+        graphics.addAll(MilStd2525PointGraphic.getMetocGraphics());
+        graphics.addAll(MilStd2525PointGraphic.getEmsGraphics());
         return graphics;
     }
 
@@ -507,6 +507,40 @@ public class MilStd2525PointGraphic extends AVListImpl implements MilStd2525Tact
     }
 
     /**
+     * Apply graphic attributes to the symbol.
+     *
+     * @param graphicAttributes Tactical graphic attributes to apply to the tactical symbol.
+     * @param symbolAttributes  Symbol attributes to be modified.
+     */
+    protected static void applyAttributesToSymbol(TacticalGraphicAttributes graphicAttributes,
+        TacticalSymbolAttributes symbolAttributes) {
+        // Line and area graphics distinguish between interior and outline opacity. Tactical symbols only support one
+        // opacity, so use the interior opacity.
+        Double value = graphicAttributes.getInteriorOpacity();
+        if (value != null) {
+            symbolAttributes.setOpacity(value);
+        }
+
+        value = graphicAttributes.getScale();
+        if (value != null) {
+            symbolAttributes.setScale(value);
+        }
+
+        Material material = graphicAttributes.getInteriorMaterial();
+        symbolAttributes.setInteriorMaterial(material);
+
+        Font font = graphicAttributes.getTextModifierFont();
+        if (font != null) {
+            symbolAttributes.setTextModifierFont(font);
+        }
+
+        material = graphicAttributes.getTextModifierMaterial();
+        if (material != null) {
+            symbolAttributes.setTextModifierMaterial(material);
+        }
+    }
+
+    /**
      * Create a tactical symbol to render this graphic.
      *
      * @param sidc Symbol code that identifies the graphic.
@@ -618,8 +652,7 @@ public class MilStd2525PointGraphic extends AVListImpl implements MilStd2525Tact
         Object value = this.getModifier(SymbologyConstants.UNIQUE_DESIGNATION);
         if (value instanceof String) {
             return (String) value;
-        }
-        else if (value instanceof Iterable) {
+        } else if (value instanceof Iterable) {
             Iterator iterator = ((Iterable) value).iterator();
             Object o = iterator.hasNext() ? iterator.next() : null;
             if (o != null)
@@ -709,8 +742,8 @@ public class MilStd2525PointGraphic extends AVListImpl implements MilStd2525Tact
     }
 
     /**
-     * Indicates a location within the symbol to align with the symbol point. See {@link
-     * #setOffset(Offset) setOffset} for more information.
+     * Indicates a location within the symbol to align with the symbol point. See {@link #setOffset(Offset) setOffset}
+     * for more information.
      *
      * @return the hot spot controlling the symbol's placement relative to the symbol point. null indicates default
      * alignment.
@@ -740,7 +773,7 @@ public class MilStd2525PointGraphic extends AVListImpl implements MilStd2525Tact
         // default), return null to keep the contract of getDelegateOwner, which specifies that a value of null
         // indicates that the graphic itself is used during picking.
         Object owner = this.symbol.getDelegateOwner();
-        return owner != this ? owner : null;
+        return owner == this ? null : owner;
     }
 
     /**
@@ -762,13 +795,6 @@ public class MilStd2525PointGraphic extends AVListImpl implements MilStd2525Tact
         return this.symbol.getUnitsFormat();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public void setUnitsFormat(UnitsFormat unitsFormat) {
-        this.symbol.setUnitsFormat(unitsFormat);
-    }
-
     ////////////////////////////////////////
     // MilStd2525TacticalGraphic interface
     ////////////////////////////////////////
@@ -776,9 +802,20 @@ public class MilStd2525PointGraphic extends AVListImpl implements MilStd2525Tact
     /**
      * {@inheritDoc}
      */
+    public void setUnitsFormat(UnitsFormat unitsFormat) {
+        this.symbol.setUnitsFormat(unitsFormat);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public Position getPosition() {
         return this.symbol.getPosition();
     }
+
+    /////////////////////////////
+    // Movable interface
+    /////////////////////////////
 
     /**
      * {@inheritDoc}
@@ -792,10 +829,6 @@ public class MilStd2525PointGraphic extends AVListImpl implements MilStd2525Tact
 
         this.symbol.setPosition(position);
     }
-
-    /////////////////////////////
-    // Movable interface
-    /////////////////////////////
 
     /**
      * Indicates this symbol's altitude mode. See {@link #setAltitudeMode(int)} for a description of the valid altitude
@@ -863,6 +896,10 @@ public class MilStd2525PointGraphic extends AVListImpl implements MilStd2525Tact
         this.moveTo(refPos.add(delta));
     }
 
+    /////////////////////////////
+    // Highlightable interface
+    /////////////////////////////
+
     /**
      * {@inheritDoc}
      */
@@ -870,23 +907,19 @@ public class MilStd2525PointGraphic extends AVListImpl implements MilStd2525Tact
         this.symbol.setPosition(position);
     }
 
-    /////////////////////////////
-    // Highlightable interface
-    /////////////////////////////
-
     @Override
     public boolean isDragEnabled() {
         return this.dragEnabled;
     }
 
+    /////////////////////////////
+    // Rendering
+    /////////////////////////////
+
     @Override
     public void setDragEnabled(boolean enabled) {
         this.dragEnabled = enabled;
     }
-
-    /////////////////////////////
-    // Rendering
-    /////////////////////////////
 
     @Override
     public void drag(DragContext dragContext) {
@@ -935,7 +968,7 @@ public class MilStd2525PointGraphic extends AVListImpl implements MilStd2525Tact
      */
     protected void determineActiveAttributes() {
         // Reset symbol attributes to default before applying overrides.
-        this.activeSymbolAttributes.copy(defaultSymbolAttributes);
+        this.activeSymbolAttributes.copy(MilStd2525PointGraphic.defaultSymbolAttributes);
 
         if (this.isHighlighted()) {
             TacticalGraphicAttributes highlightAttributes = this.getHighlightAttributes();
@@ -945,47 +978,12 @@ public class MilStd2525PointGraphic extends AVListImpl implements MilStd2525Tact
                 // Apply overrides specified by application
                 MilStd2525PointGraphic.applyAttributesToSymbol(highlightAttributes, this.activeSymbolAttributes);
             }
-        }
-        else {
+        } else {
             // Apply overrides specified by application
             TacticalGraphicAttributes normalAttributes = this.getAttributes();
             if (normalAttributes != null) {
                 MilStd2525PointGraphic.applyAttributesToSymbol(normalAttributes, this.activeSymbolAttributes);
             }
-        }
-    }
-
-    /**
-     * Apply graphic attributes to the symbol.
-     *
-     * @param graphicAttributes Tactical graphic attributes to apply to the tactical symbol.
-     * @param symbolAttributes  Symbol attributes to be modified.
-     */
-    protected static void applyAttributesToSymbol(TacticalGraphicAttributes graphicAttributes,
-        TacticalSymbolAttributes symbolAttributes) {
-        // Line and area graphics distinguish between interior and outline opacity. Tactical symbols only support one
-        // opacity, so use the interior opacity.
-        Double value = graphicAttributes.getInteriorOpacity();
-        if (value != null) {
-            symbolAttributes.setOpacity(value);
-        }
-
-        value = graphicAttributes.getScale();
-        if (value != null) {
-            symbolAttributes.setScale(value);
-        }
-
-        Material material = graphicAttributes.getInteriorMaterial();
-        symbolAttributes.setInteriorMaterial(material);
-
-        Font font = graphicAttributes.getTextModifierFont();
-        if (font != null) {
-            symbolAttributes.setTextModifierFont(font);
-        }
-
-        material = graphicAttributes.getTextModifierMaterial();
-        if (material != null) {
-            symbolAttributes.setTextModifierMaterial(material);
         }
     }
 }

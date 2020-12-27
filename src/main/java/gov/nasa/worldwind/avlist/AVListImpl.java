@@ -6,6 +6,7 @@
 package gov.nasa.worldwind.avlist;
 
 ////.*;
+
 import gov.nasa.worldwind.util.*;
 
 import java.beans.*;
@@ -16,7 +17,6 @@ import java.util.logging.Level;
 import static java.util.Collections.*;
 
 /**
- *
  * An implementation class for the {@link AVList} interface. Classes implementing <code>AVList</code> can subclass or
  * aggregate this class to provide default <code>AVList</code> functionality. This class maintains a hash table of
  * attribute-value pairs.
@@ -31,7 +31,7 @@ import static java.util.Collections.*;
 public class AVListImpl implements AVList {
     // Identifies the property change support instance in the avlist
     private static final String PROPERTY_CHANGE_SUPPORT = "avlist.PropertyChangeSupport";
-
+    private static final Object NULLL = new Object();
     // To avoid unnecessary overhead, this object's hash map is created only if needed.
     private volatile Map<String, Object> avList;
 
@@ -48,25 +48,26 @@ public class AVListImpl implements AVList {
      */
     public AVListImpl(Object sourceBean) {
         if (sourceBean != null)
-            this.set(PROPERTY_CHANGE_SUPPORT, new PropertyChangeSupport(sourceBean));
+            this.set(AVListImpl.PROPERTY_CHANGE_SUPPORT, new PropertyChangeSupport(sourceBean));
     }
 
     // Static AVList utilities.
     public static String getStringValue(AVList avList, String key, String defaultValue) {
-        String v = getStringValue(avList, key);
+        String v = AVListImpl.getStringValue(avList, key);
         return v != null ? v : defaultValue;
     }
 
     public static String getStringValue(AVList avList, String key) {
         try {
             return avList.getStringValue(key);
-        } catch (Exception e) {
+        }
+        catch (RuntimeException e) {
             return null;
         }
     }
 
     public static Integer getIntegerValue(AVList avList, String key, Integer defaultValue) {
-        Integer v = getIntegerValue(avList, key);
+        Integer v = AVListImpl.getIntegerValue(avList, key);
         return v != null ? v : defaultValue;
     }
 
@@ -78,20 +79,21 @@ public class AVListImpl implements AVList {
         if (o instanceof Integer)
             return (Integer) o;
 
-        String v = getStringValue(avList, key);
+        String v = AVListImpl.getStringValue(avList, key);
         if (v == null)
             return null;
 
         try {
             return Integer.parseInt(v);
-        } catch (NumberFormatException e) {
+        }
+        catch (NumberFormatException e) {
             Logging.logger().log(Level.SEVERE, "Configuration.ConversionError", v);
             return null;
         }
     }
 
     public static Long getLongValue(AVList avList, String key, Long defaultValue) {
-        Long v = getLongValue(avList, key);
+        Long v = AVListImpl.getLongValue(avList, key);
         return v != null ? v : defaultValue;
     }
 
@@ -103,20 +105,21 @@ public class AVListImpl implements AVList {
         if (o instanceof Long)
             return (Long) o;
 
-        String v = getStringValue(avList, key);
+        String v = AVListImpl.getStringValue(avList, key);
         if (v == null)
             return null;
 
         try {
             return Long.parseLong(v);
-        } catch (NumberFormatException e) {
+        }
+        catch (NumberFormatException e) {
             Logging.logger().log(Level.SEVERE, "Configuration.ConversionError", v);
             return null;
         }
     }
 
     public static Double getDoubleValue(AVList avList, String key, Double defaultValue) {
-        Double v = getDoubleValue(avList, key);
+        Double v = AVListImpl.getDoubleValue(avList, key);
         return v != null ? v : defaultValue;
     }
 
@@ -128,7 +131,7 @@ public class AVListImpl implements AVList {
         if (o instanceof Double)
             return (Double) o;
 
-        String v = getStringValue(avList, key);
+        String v = AVListImpl.getStringValue(avList, key);
         if (v == null)
             return null;
 
@@ -142,7 +145,7 @@ public class AVListImpl implements AVList {
     }
 
     public static Boolean getBooleanValue(AVList avList, String key, Boolean defaultValue) {
-        Boolean v = getBooleanValue(avList, key);
+        Boolean v = AVListImpl.getBooleanValue(avList, key);
         return v != null ? v : defaultValue;
     }
 
@@ -154,7 +157,7 @@ public class AVListImpl implements AVList {
         if (o instanceof Boolean)
             return (Boolean) o;
 
-        String v = getStringValue(avList, key);
+        String v = AVListImpl.getStringValue(avList, key);
         if (v == null)
             return null;
 
@@ -169,7 +172,15 @@ public class AVListImpl implements AVList {
 
     private static Map<String, Object> newAvList() {
         return new ConcurrentHashMap<>(1);
-               //Collections.synchronizedMap(new HashMap<>(1));
+        //Collections.synchronizedMap(new HashMap<>(1));
+    }
+
+    private static Object i(Object value) {
+        return value == null ? AVListImpl.NULLL : value;
+    }
+
+    private static Object o(Object value) {
+        return value == AVListImpl.NULLL ? null : value;
     }
 
     @Override
@@ -180,15 +191,15 @@ public class AVListImpl implements AVList {
 
     private Map<String, Object> avList(boolean createIfNone) {
         Map<String, Object> l = avList;
-        if (createIfNone && l==null)
-             l = (this.avList = AVListImpl.newAvList());
+        if (createIfNone && l == null)
+            l = (this.avList = AVListImpl.newAvList());
 
         return l;
     }
 
     public Object get(String key) {
         Map<String, Object> l = this.avList;
-        return l!=null ? o(l.get(key)) : null;
+        return l != null ? AVListImpl.o(l.get(key)) : null;
     }
 
     public Iterable<Object> getValues() {
@@ -207,21 +218,10 @@ public class AVListImpl implements AVList {
         return y != null ? y.toString() : null;
     }
 
-    private static final Object NULLL = new Object();
-
     public Object set(String key, Object value) {
 
-        return this.avList(true).put(key, i(value));
+        return this.avList(true).put(key, AVListImpl.i(value));
     }
-
-    private static Object i(Object value) {
-        return value == null ? NULLL : value;
-    }
-
-    private static Object o(Object value) {
-        return value == NULLL ? null : value;
-    }
-
 
     public AVList setValues(AVList list) {
 //        if (list == null) {
@@ -231,9 +231,10 @@ public class AVListImpl implements AVList {
 //        }
 
         //synchronized(avList) {
-            Set<Map.Entry<String, Object>> entries = list.getEntries();
-            for (Map.Entry<String, Object> entry : entries)
-                this.set(entry.getKey(), o(entry.getValue()));
+        Set<Map.Entry<String, Object>> entries = list.getEntries();
+        for (Map.Entry<String, Object> entry : entries) {
+            this.set(entry.getKey(), AVListImpl.o(entry.getValue()));
+        }
         //}
 
         return this;
@@ -242,13 +243,13 @@ public class AVListImpl implements AVList {
     public boolean hasKey(String key) {
 
         Map<String, Object> l = avList;
-        return l!=null && l.containsKey(key);
+        return l != null && l.containsKey(key);
     }
 
     public Object removeKey(String key) {
 
         Map<String, Object> l = avList;
-        return l!=null ? l.remove(key) : null;
+        return l != null ? l.remove(key) : null;
     }
 
     public AVList copy() {
@@ -263,12 +264,14 @@ public class AVListImpl implements AVList {
 
     public AVList clearList() {
         Map<String, Object> v = this.avList;
-        if (v!=null) v.clear();
+        if (v != null)
+            v.clear();
         return this;
     }
 
     protected PropertyChangeSupport getChangeSupport() {
-        return (PropertyChangeSupport) avList(true).computeIfAbsent(PROPERTY_CHANGE_SUPPORT, p -> new PropertyChangeSupport(AVListImpl.this));
+        return (PropertyChangeSupport) avList(true).computeIfAbsent(AVListImpl.PROPERTY_CHANGE_SUPPORT,
+            p -> new PropertyChangeSupport(AVListImpl.this));
     }
 
     public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
@@ -300,7 +303,7 @@ public class AVListImpl implements AVList {
         if (value == null)
             return;
 
-        if (key.equals(PROPERTY_CHANGE_SUPPORT))
+        if (key.equals(AVListImpl.PROPERTY_CHANGE_SUPPORT))
             return;
 
         rs.addStateValueAsString(context, key, value.toString());

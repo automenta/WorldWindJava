@@ -1,7 +1,10 @@
 package netvr;
 
-import gov.nasa.worldwind.BasicModel;
-import gov.nasa.worldwind.avlist.AVList;
+import com.jogamp.opengl.*;
+import edu.mit.jwi.Nullable;
+import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.formats.geojson.GeoJSONPoint;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.layers.earth.*;
@@ -14,16 +17,19 @@ import gov.nasa.worldwind.video.newt.WorldWindowNEWT;
 import jcog.exe.Exe;
 import spacegraph.layer.OrthoSurfaceGraph;
 import spacegraph.space2d.Surface;
-import spacegraph.space2d.container.Bordering;
+import spacegraph.space2d.container.*;
 import spacegraph.space2d.container.grid.Gridding;
+import spacegraph.space2d.container.unit.AspectAlign;
 import spacegraph.space2d.widget.Widget;
 import spacegraph.space2d.widget.button.*;
+import spacegraph.space2d.widget.meta.*;
 import spacegraph.space2d.widget.slider.FloatSlider;
 import spacegraph.space2d.widget.textedit.TextEdit;
 import spacegraph.video.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.nio.DoubleBuffer;
 import java.util.*;
 
 public class WorldWindOSM {
@@ -31,17 +37,18 @@ public class WorldWindOSM {
         System.setProperty("java.awt.headless", "true");
     }
 
+
+
     public WorldWindOSM() {
     }
 
     public static void main(String[] args) {
-        mainNEWT();
+        WorldWindOSM.mainNEWT();
         //mainAWT();
     }
 
     private static void mainNEWT() {
         JoglWindow j = new JoglWindow(1024, 800);
-
 
         final OSMModel world = new OSMModel();
 
@@ -51,48 +58,43 @@ public class WorldWindOSM {
 
         w.setWindow(j);
 
-        final TextEdit out = new TextEdit(64,24);
-//        final TextEdit in = new TextEdit(24).onKeyPress((k) -> {
-//
-//        });
-        Surface layers = new Gridding(
-            world.getLayers().stream().map(z ->
-                new Gridding(
-                    new CheckBox(z.name(), z::setEnabled).on(z.isEnabled()),
-                    new FloatSlider(1, 0, 1).on(z::setOpacity)
-                )
-            )
-        );
+        final TextEdit out = new TextEdit(64, 24);
+
 
         final PushButton scan = new PushButton("Scan", () -> {
         });
         Surface param = new Gridding(
             new TextEdit(16),
-            new FloatSlider("A", 0.5f, 0,1),
-            new FloatSlider("B", 0.1f, 0,1),
-            new FloatSlider("C", 0.3f, 0,1),
-            new FloatSlider("D", 0.8f, 0,1)
+            new FloatSlider("A", 0.5f, 0, 1),
+            new FloatSlider("B", 0.1f, 0, 1),
+            new FloatSlider("C", 0.3f, 0, 1),
+            new FloatSlider("D", 0.8f, 0, 1)
         );
 
-        new OrthoSurfaceGraph(
-            new Bordering()
-                .north(param)
-                .west(new Gridding(layers, new Widget(out), scan))
-            , j);
+        final BorderingView z = new BorderingView();
+        z.north(param);
+        z.west(new Gridding(
+            z.togglerIcon("home", Surfaces.TODO),
+            z.togglerIcon("cogs", ()-> new Gridding(
+                world.getLayers().stream().map(ll ->
+                    Splitting.column(
+                        new FloatSlider((float) ll.getOpacity(), 0, 1).on(ll::setOpacity),
+                        0.75f,
+                        new CheckBox(ll.name(), ll::setEnabled).on(ll.isEnabled())
+                    )
+                )
+            )), new Widget(out), scan));
+
+        new OrthoSurfaceGraph(z, j);
 
         j.runLater(() -> {
-//            Exe.runLater(()->{
-//                //double lat = 53.00821, lon = 7.18812 + 0.0015;
-//                double lon = -115.8195, lat = 37.2410;
-//                focus(world, w, lon, lat, 0.005f);
-//            });
 
             w.input().addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
-                    if (e.getButton()==1 && e.getClickCount()==2) {
+                    if (e.getButton() == 1 && e.getClickCount() == 2) {
                         Position p = w.view().computePositionFromScreenPoint(e.getPoint());
-                        focus(world, w, p.longitude, p.latitude, 0.001f);
+                        WorldWindOSM.focus(world, w, p.longitude, p.latitude, 0.001f);
                     }
                 }
 
@@ -105,37 +107,15 @@ public class WorldWindOSM {
                 } else if (s.isLeftClick()) {
                     PickedObject top = s.getTopPickedObject();
                     if (top == null || top.isTerrain()) {
-//                        //System.out.println(top.position());
-//                        final Position where = top.position();
-//                        final BasicMarker m = new BasicMarker(
-//                            where,
-//                            new BasicMarkerAttributes(Material.ORANGE, BasicMarkerShape.CUBE, 1.0d, 10, 10)
-//                        );
-//
-//                        GlobeAnnotation a = new GlobeAnnotation("AGL Annotation", where);
-////                    a.getAttributes().setFrameShape(SHAPE_NONE);
-//                        //a.getAttributes().setLeader();
-//
-////                    a.setAlwaysOnTop(true);
-//                        world.notes.removeAllAnnotations();
-//                        world.notes.addAnnotation(a);
-//
-////                    GlobeAnnotationBalloon a = new GlobeAnnotationBalloon("AGL Annotation", where);
-////                    a.setAlwaysOnTop(true);
-////                    world.renderables.add(a);
-//
-//                        world.markers.setMarkers(
-//                            List.of(m)
-//                        );
-                    }else {
-                        out.text(describe(top));
+                    } else {
+                        out.text(WorldWindOSM.describe(top));
                     }
                 } else {
                     if (s.isRollover()) {
                         PickedObject top =
                             s.getTopPickedObject();
-                        if (top!=null)
-                            System.out.println(describe(top));
+                        if (top != null)
+                            System.out.println(WorldWindOSM.describe(top));
                     }
                 }
             });
@@ -143,7 +123,7 @@ public class WorldWindOSM {
     }
 
     private static void focus(OSMModel world, WorldWindowNEWT w, double lon, double lat, float rad) {
-        Exe.runLater(()->{
+        Exe.runLater(() -> {
             world.osm.focus(
                 LatLon.fromDegrees(lat, lon), rad
             );
@@ -155,8 +135,8 @@ public class WorldWindOSM {
 
         Object y = x.get();
         if (y instanceof AVList) {
-            Object z = ((AVList)y).get(AdaptiveOSMLayer.DESCRIPTION);
-            if (z!=null)
+            Object z = ((AVList) y).get(AdaptiveOSMLayer.DESCRIPTION);
+            if (z != null)
                 return z.toString();
         }
         return x.toString();
@@ -189,19 +169,115 @@ public class WorldWindOSM {
 
             l.add(renderables);
 
+            String earthquakeFeedUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson";
+            Layer eq = new GeoJSON() {
+                protected static final long MILLISECONDS_PER_MINUTE = 60000;
+                protected static final long MILLISECONDS_PER_HOUR = 60 * MILLISECONDS_PER_MINUTE;
+                protected static final long MILLISECONDS_PER_DAY = 24 * MILLISECONDS_PER_HOUR;
+                protected static final String USGS_EARTHQUAKE_MAGNITUDE = "mag";
+                protected static final String USGS_EARTHQUAKE_PLACE = "place";
+                protected static final String USGS_EARTHQUAKE_TIME = "time";
+
+                private final Color[] eqColors =
+                    {
+                        Color.RED,
+                        Color.ORANGE,
+                        Color.YELLOW,
+                        Color.GREEN,
+                        Color.BLUE,
+                        Color.GRAY,
+                        Color.BLACK,
+                    };
+
+                private AnnotationAttributes eqAttributes;
+
+                final long updateTime = System.currentTimeMillis();
+
+                @Override
+                protected void addRenderableForPoint(GeoJSONPoint geom, RenderableLayer l, AVList properties) {
+                    addEarthquake(geom, l, properties);
+                }
+                private void addEarthquake(GeoJSONPoint geom, RenderableLayer layer, AVList properties) {
+                    if (eqAttributes == null) {
+                        // Init default attributes for all eq
+                        eqAttributes = new AnnotationAttributes();
+                        eqAttributes.setLeader(AVKey.SHAPE_NONE);
+                        eqAttributes.setDrawOffset(new Point(0, -16));
+                        eqAttributes.setSize(new Dimension(32, 32));
+                        eqAttributes.setBorderWidth(0);
+                        eqAttributes.setCornerRadius(0);
+                        eqAttributes.setBackgroundColor(new Color(0, 0, 0, 0));
+                    }
+
+                    EqAnnotation eq = new EqAnnotation(geom.getPosition(), eqAttributes);
+                    eq.setAltitudeMode(WorldWind.CLAMP_TO_GROUND); // GeoJON point's 3rd coordinate indicates depth
+                    eq.setValues(properties);
+
+                    Number eqMagnitude = (Number) eq.get(USGS_EARTHQUAKE_MAGNITUDE);
+                    Number eqTime = (Number) eq.get(USGS_EARTHQUAKE_TIME);
+
+
+                    int elapsedDays = 6;
+                    if (eqTime != null) {
+                        // Compute days elapsed since earthquake event
+                        elapsedDays = (int) ((this.updateTime - eqTime.longValue()) / MILLISECONDS_PER_DAY);
+
+                        // Update latest earthquake event
+//                        if (this.latestEq != null) {
+//                            Number latestEqTime = (Number) this.latestEq.get(USGS_EARTHQUAKE_TIME);
+//                            if (latestEqTime.longValue() < eqTime.longValue())
+//                                this.latestEq = eq;
+//                        } else {
+//                            this.latestEq = eq;
+//                        }
+                    }
+                    eq.getAttributes().setTextColor(eqColors[Math.min(elapsedDays, eqColors.length - 1)]);
+                    eq.getAttributes().setScale(eqMagnitude.doubleValue() / 10);
+                    layer.add(eq);
+                }
+
+                class EqAnnotation extends GlobeAnnotation {
+                    // Override annotation drawing for a simple circle
+                    private DoubleBuffer shapeBuffer;
+
+                    public EqAnnotation(Position position, AnnotationAttributes defaults) {
+                        super("", position, defaults);
+                    }
+
+                    protected void applyScreenTransform(DrawContext dc, int x, int y, int width, int height, double scale) {
+                        double finalScale = scale * this.computeScale(dc);
+
+                        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
+                        gl.glTranslated(x, y, 0);
+                        gl.glScaled(finalScale, finalScale, 1);
+                    }
+
+                    protected void doDraw(DrawContext dc, int width, int height, double opacity, Position pickPosition) {
+                        // Draw colored circle around screen point - use annotation's text color
+                        if (dc.isPickingMode()) {
+                            this.bindPickableObject(dc, pickPosition);
+                        }
+
+                        AbstractAnnotation.applyColor(dc, this.getAttributes().getTextColor(), 0.6 * opacity, true);
+
+                        // Draw 32x32 shape from its bottom left corner
+                        int size = 32;
+                        if (this.shapeBuffer == null)
+                            this.shapeBuffer = FrameFactory.createShapeBuffer(AVKey.SHAPE_ELLIPSE, size, size, 0, null);
+                        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
+                        gl.glTranslatef(-size / 2.0f, -size / 2.0f, 0);
+                        FrameFactory.drawBuffer(dc, GL.GL_TRIANGLE_FAN, this.shapeBuffer);
+                    }
+                }
+            }.layer(earthquakeFeedUrl);
+            eq.setName("Earthquakes");
+            l.add(eq);
+
 
 /* //SHAPEFILE
     /tmp/shp1/buildings.shp  /tmp/shp1/places.shp    /tmp/shp1/roads.shp
     /tmp/shp1/landuse.shp    /tmp/shp1/points.shp    /tmp/shp1/waterways.shp
     /tmp/shp1/natural.shp    /tmp/shp1/railways.shp */
-//            l.add(new ShapefileLayer(new Shapefile(new File("/tmp/shp1/buildings.shp"))));
-//            l.add(new ShapefileLayer(new Shapefile(new File("/tmp/shp1/places.shp"))));
-//            l.add(new ShapefileLayer(new Shapefile(new File("/tmp/shp1/roads.shp"))));
-//            l.add(new ShapefileLayer(new Shapefile(new File("/tmp/shp1/landuse.shp"))));
-//            l.add(new ShapefileLayer(new Shapefile(new File("/tmp/shp1/points.shp"))));
-//            l.add(new ShapefileLayer(new Shapefile(new File("/tmp/shp1/waterways.shp"))));
-//            l.add(new ShapefileLayer(new Shapefile(new File("/tmp/shp1/natural.shp"))));
-//            l.add(new ShapefileLayer(new Shapefile(new File("/tmp/shp1/railways.shp"))));
             setLayers(l);
         }
     }

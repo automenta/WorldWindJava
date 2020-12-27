@@ -16,13 +16,12 @@ import gov.nasa.worldwind.util.Logging;
  * @version $Id: GlobeAnnotationBalloon.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 public class GlobeAnnotationBalloon extends AbstractAnnotationBalloon implements GlobeBalloon {
-    protected Position position;
-    protected int altitudeMode;
-
     /**
      * Annotation used to render the balloon.
      */
     protected final GlobeAnnotation annotation;
+    protected Position position;
+    protected int altitudeMode;
 
     /**
      * Create the balloon.

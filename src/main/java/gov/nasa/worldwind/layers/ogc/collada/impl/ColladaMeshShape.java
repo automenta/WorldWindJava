@@ -26,9 +26,8 @@ import java.util.*;
 /**
  * Shape to render a COLLADA line or triangle mesh. An instance of this shape can render any number of {@link
  * ColladaLines} or {@link ColladaTriangles}, but a single instance cannot render both lines and triangles. New
- * instances are created by {@link #createTriangleMesh(java.util.List, ColladaBindMaterial)
- * createTriangleMesh} and {@link #createLineMesh(java.util.List, ColladaBindMaterial)
- * createLineMesh}.
+ * instances are created by {@link #createTriangleMesh(java.util.List, ColladaBindMaterial) createTriangleMesh} and
+ * {@link #createLineMesh(java.util.List, ColladaBindMaterial) createLineMesh}.
  * <p>
  * This shape supports only COLLADA line and triangle geometries.
  *
@@ -139,6 +138,44 @@ public class ColladaMeshShape extends AbstractGeneralShape {
     }
 
     /**
+     * Indicates the reference string for an image. The image reference identifies an <i>image</i> element in this, or
+     * another COLLADA file. For example, "#myImage".
+     *
+     * @param effect  Effect that defines the texture.
+     * @param texture Texture for which to find the image reference.
+     * @return The image reference, or null if it cannot be resolved.
+     */
+    protected static String getImageRef(ColladaEffect effect, ColladaTexture texture) {
+        String sid = texture.getTexture();
+
+        ColladaNewParam param = effect.getParam(sid);
+        if (param == null)
+            return null;
+
+        ColladaSampler2D sampler = param.getSampler2D();
+        if (sampler == null)
+            return null;
+
+        ColladaSource source = sampler.getSource();
+        if (source == null)
+            return null;
+
+        sid = source.getCharacters();
+        if (sid == null)
+            return null;
+
+        param = effect.getParam(sid);
+        if (param == null)
+            return null;
+
+        ColladaSurface surface = param.getSurface();
+        if (surface != null)
+            return surface.getInitFrom();
+
+        return null;
+    }
+
+    /**
      * {@inheritDoc}
      * <p>
      * COLLADA shapes do not support intersection tests because the shape may be rendered multiple times with different
@@ -214,7 +251,7 @@ public class ColladaMeshShape extends AbstractGeneralShape {
         try {
             this.render(dc);
         }
-        catch (Exception ex) {
+        catch (RuntimeException ex) {
             ex.printStackTrace();
         }
     }
@@ -246,6 +283,10 @@ public class ColladaMeshShape extends AbstractGeneralShape {
         }
     }
 
+    //////////////////////////////////////////////////////////////////////
+    // Rendering
+    //////////////////////////////////////////////////////////////////////
+
     /**
      * {@inheritDoc} Overridden because ColladaMeshShape uses OrderedMeshShape instead of adding itself to the ordered
      * renderable queue.
@@ -267,8 +308,7 @@ public class ColladaMeshShape extends AbstractGeneralShape {
 
                 nextItem = dc.peekOrderedRenderables();
             }
-        }
-        else if (this.isEnableBatchPicking()) {
+        } else if (this.isEnableBatchPicking()) {
             super.drawBatched(dc);
             while (nextItem != null && nextItem.getClass() == this.getClass()) {
                 OrderedMeshShape or = (OrderedMeshShape) nextItem;
@@ -286,10 +326,6 @@ public class ColladaMeshShape extends AbstractGeneralShape {
             }
         }
     }
-
-    //////////////////////////////////////////////////////////////////////
-    // Rendering
-    //////////////////////////////////////////////////////////////////////
 
     /**
      * {@inheritDoc}
@@ -314,8 +350,8 @@ public class ColladaMeshShape extends AbstractGeneralShape {
     }
 
     /**
-     * {@inheritDoc} Overridden because this shape uses {@link ColladaMeshShape.OrderedMeshShape}
-     * to represent this drawn instance of the mesh in the ordered renderable queue.
+     * {@inheritDoc} Overridden because this shape uses {@link ColladaMeshShape.OrderedMeshShape} to represent this
+     * drawn instance of the mesh in the ordered renderable queue.
      */
     @Override
     protected void addOrderedRenderable(DrawContext dc) {
@@ -404,8 +440,7 @@ public class ColladaMeshShape extends AbstractGeneralShape {
 
                     gl.glTexCoordPointer(ColladaAbstractGeometry.TEX_COORDS_PER_VERTEX, GL.GL_FLOAT, 0,
                         this.textureCoordsBuffer.rewind());
-                }
-                else if (texturesEnabled) {
+                } else if (texturesEnabled) {
                     gl.glDisable(GL.GL_TEXTURE_2D);
                     gl.glDisableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
                     texturesEnabled = false;
@@ -416,8 +451,7 @@ public class ColladaMeshShape extends AbstractGeneralShape {
                 if (geometry.doubleSided && cullingEnabled) {
                     gl.glDisable(GL.GL_CULL_FACE);
                     cullingEnabled = false;
-                }
-                else if (!geometry.doubleSided && !cullingEnabled) {
+                } else if (!geometry.doubleSided && !cullingEnabled) {
                     gl.glEnable(GL.GL_CULL_FACE);
                     cullingEnabled = true;
                 }
@@ -571,6 +605,10 @@ public class ColladaMeshShape extends AbstractGeneralShape {
         }
     }
 
+    //////////////////////////////////////////////////////////////////////
+    // Geometry creation
+    //////////////////////////////////////////////////////////////////////
+
     /**
      * Create full geometry for the shape, including normals and texture coordinates.
      *
@@ -590,10 +628,6 @@ public class ColladaMeshShape extends AbstractGeneralShape {
             geometry.doubleSided = this.isDoubleSided(geometry.colladaGeometry);
         }
     }
-
-    //////////////////////////////////////////////////////////////////////
-    // Geometry creation
-    //////////////////////////////////////////////////////////////////////
 
     /**
      * Compute the shape's extent, using the active orientation matrix.
@@ -700,8 +734,7 @@ public class ColladaMeshShape extends AbstractGeneralShape {
         for (Geometry geometry : this.geometries) {
             if (geometry.colladaGeometry.getNormalAccessor() != null) {
                 geometry.colladaGeometry.getNormals(this.normalBuffer);
-            }
-            else {
+            } else {
                 int thisSize = geometry.colladaGeometry.getCount() * this.vertsPerShape
                     * ColladaAbstractGeometry.COORDS_PER_VERTEX;
                 this.normalBuffer.position(this.normalBuffer.position() + thisSize);
@@ -720,8 +753,7 @@ public class ColladaMeshShape extends AbstractGeneralShape {
             if (this.mustApplyTexture(geometry)) {
                 String semantic = this.getTexCoordSemantic(geometry);
                 geometry.colladaGeometry.getTextureCoordinates(this.textureCoordsBuffer, semantic);
-            }
-            else {
+            } else {
                 int thisSize = geometry.colladaGeometry.getCount() * this.vertsPerShape
                     * ColladaAbstractGeometry.TEX_COORDS_PER_VERTEX;
                 this.textureCoordsBuffer.position(this.textureCoordsBuffer.position() + thisSize);
@@ -853,6 +885,10 @@ public class ColladaMeshShape extends AbstractGeneralShape {
         return geometry.texture;
     }
 
+    //////////////////////////////////////////////////////////////////////
+    // Materials and textures
+    //////////////////////////////////////////////////////////////////////
+
     /**
      * Apply a material to the active draw context.
      *
@@ -867,17 +903,12 @@ public class ColladaMeshShape extends AbstractGeneralShape {
         // We don't need to enable or disable lighting; that's handled by super.prepareToDrawInterior.
         if (this.mustApplyLighting(dc, activeAttrs)) {
             material.apply(gl, GL2.GL_FRONT_AND_BACK, (float) opacity);
-        }
-        else {
+        } else {
             Color sc = material.getDiffuse();
             gl.glColor4ub((byte) sc.getRed(), (byte) sc.getGreen(), (byte) sc.getBlue(),
                 (byte) (opacity < 1 ? (int) (opacity * 255 + 0.5) : 255));
         }
     }
-
-    //////////////////////////////////////////////////////////////////////
-    // Materials and textures
-    //////////////////////////////////////////////////////////////////////
 
     /**
      * Indicates the material applied to a geometry.
@@ -890,21 +921,21 @@ public class ColladaMeshShape extends AbstractGeneralShape {
         ColladaInstanceMaterial myMaterialInstance = this.getInstanceMaterial(geometry);
 
         if (myMaterialInstance == null)
-            return DEFAULT_INTERIOR_MATERIAL;
+            return AbstractShape.DEFAULT_INTERIOR_MATERIAL;
 
         // Attempt to resolve the instance. The material may not be immediately available.
         ColladaMaterial myMaterial = myMaterialInstance.get();
         if (myMaterial == null)
-            return DEFAULT_INTERIOR_MATERIAL;
+            return AbstractShape.DEFAULT_INTERIOR_MATERIAL;
 
         ColladaInstanceEffect myEffectInstance = myMaterial.getInstanceEffect();
         if (myEffectInstance == null)
-            return DEFAULT_INTERIOR_MATERIAL;
+            return AbstractShape.DEFAULT_INTERIOR_MATERIAL;
 
         // Attempt to resolve effect. The effect may not be immediately available.
         ColladaEffect myEffect = myEffectInstance.get();
         if (myEffect == null)
-            return DEFAULT_INTERIOR_MATERIAL;
+            return AbstractShape.DEFAULT_INTERIOR_MATERIAL;
 
         return myEffect.getMaterial();
     }
@@ -1021,50 +1052,12 @@ public class ColladaMeshShape extends AbstractGeneralShape {
         // imageRef identifiers an <image> element in this or another document. If the string doesn't already contain a
         // # then treat the entire string as a fragment identifier in the current document.
         if (!imageRef.contains("#"))
-            imageRef = "#" + imageRef;
+            imageRef = '#' + imageRef;
 
         // imageRef identifiers an <image> element (may be external). This element will give us the filename.
         Object o = geometry.getRoot().resolveReference(imageRef);
         if (o instanceof ColladaImage)
             return ((ColladaImage) o).getInitFrom();
-
-        return null;
-    }
-
-    /**
-     * Indicates the reference string for an image. The image reference identifies an <i>image</i> element in this, or
-     * another COLLADA file. For example, "#myImage".
-     *
-     * @param effect  Effect that defines the texture.
-     * @param texture Texture for which to find the image reference.
-     * @return The image reference, or null if it cannot be resolved.
-     */
-    protected static String getImageRef(ColladaEffect effect, ColladaTexture texture) {
-        String sid = texture.getTexture();
-
-        ColladaNewParam param = effect.getParam(sid);
-        if (param == null)
-            return null;
-
-        ColladaSampler2D sampler = param.getSampler2D();
-        if (sampler == null)
-            return null;
-
-        ColladaSource source = sampler.getSource();
-        if (source == null)
-            return null;
-
-        sid = source.getCharacters();
-        if (sid == null)
-            return null;
-
-        param = effect.getParam(sid);
-        if (param == null)
-            return null;
-
-        ColladaSurface surface = param.getSurface();
-        if (surface != null)
-            return surface.getInitFrom();
 
         return null;
     }
@@ -1194,8 +1187,7 @@ public class ColladaMeshShape extends AbstractGeneralShape {
     protected static class ShapeData extends AbstractGeneralShape.ShapeData {
         /**
          * Matrix to orient the shape on the surface of the globe. Cached result of {@link
-         * Globe#computeSurfaceOrientationAtPosition(Position)}
-         * evaluated at the reference position.
+         * Globe#computeSurfaceOrientationAtPosition(Position)} evaluated at the reference position.
          */
         protected Matrix surfaceOrientationMatrix;
         /**

@@ -22,9 +22,39 @@ public class GeoSymAttributeExpressionProvider {
         this.loadExpressions(table);
     }
 
+    /**
+     * See MIL-HDBK-857A, section 6.4.
+     * <p>
+     * Parses the specified queue of logical expression components according to the precendence rules specified in
+     * MIL-HDBK-857A, returning a reference to a a live Expression which may be evaluated against any set of attribute
+     * values.
+     *
+     * @param queue the queue of logical expression
+     * @return a live Expression which may be evaluated against any set of attribute values.
+     */
+    protected static Expression parseExpression(Queue<?> queue) {
+        if (queue.isEmpty()) {
+            return null;
+        }
+
+        // Perform a recursive descent parsing of the attribute expression components in the queue.
+
+        ExpressionParser comparisonParser = new ComparisonParser(queue);
+        ExpressionParser logicalLevel1Parser = new LogicalExpressionParser(queue, comparisonParser,
+            EnumSet.of(LogicalOperator.AND_LEVEL1, LogicalOperator.OR_LEVEL1));
+        ExpressionParser logicalLevel2Parser = new LogicalExpressionParser(queue, logicalLevel1Parser,
+            EnumSet.of(LogicalOperator.AND_LEVEL2, LogicalOperator.OR_LEVEL2));
+
+        return logicalLevel2Parser.parse();
+    }
+
     public GeoSymAttributeExpression getAttributeExpression(int symbolId) {
         return this.expressionMap.get(symbolId);
     }
+
+    //**************************************************************//
+    //********************  Expression Parsing  ********************//
+    //**************************************************************//
 
     protected void loadExpressions(GeoSymTable table) {
         this.expressionMap.clear();
@@ -75,36 +105,6 @@ public class GeoSymAttributeExpressionProvider {
         }
     }
 
-    //**************************************************************//
-    //********************  Expression Parsing  ********************//
-    //**************************************************************//
-
-    /**
-     * See MIL-HDBK-857A, section 6.4.
-     * <p>
-     * Parses the specified queue of logical expression components according to the precendence rules specified in
-     * MIL-HDBK-857A, returning a reference to a a live Expression which may be evaluated against any set of attribute
-     * values.
-     *
-     * @param queue the queue of logical expression
-     * @return a live Expression which may be evaluated against any set of attribute values.
-     */
-    protected static Expression parseExpression(Queue<?> queue) {
-        if (queue.isEmpty()) {
-            return null;
-        }
-
-        // Perform a recursive descent parsing of the attribute expression components in the queue.
-
-        ExpressionParser comparisonParser = new ComparisonParser(queue);
-        ExpressionParser logicalLevel1Parser = new LogicalExpressionParser(queue, comparisonParser,
-            EnumSet.of(LogicalOperator.AND_LEVEL1, LogicalOperator.OR_LEVEL1));
-        ExpressionParser logicalLevel2Parser = new LogicalExpressionParser(queue, logicalLevel1Parser,
-            EnumSet.of(LogicalOperator.AND_LEVEL2, LogicalOperator.OR_LEVEL2));
-
-        return logicalLevel2Parser.parse();
-    }
-
     protected enum ComparisonOperator {
         NONE {
             public boolean evaluate(AVList params, String paramName, String value) {
@@ -113,32 +113,32 @@ public class GeoSymAttributeExpressionProvider {
         },
         EQUAL {
             public boolean evaluate(AVList params, String paramName, String value) {
-                return compare(params, paramName, value) == 0;
+                return ComparisonOperator.compare(params, paramName, value) == 0;
             }
         },
         NOT_EQUAL {
             public boolean evaluate(AVList params, String paramName, String value) {
-                return !EQUAL.evaluate(params, paramName, value);
+                return !ComparisonOperator.EQUAL.evaluate(params, paramName, value);
             }
         },
         LESS_THAN {
             public boolean evaluate(AVList params, String paramName, String value) {
-                return compare(params, paramName, value) < 0;
+                return ComparisonOperator.compare(params, paramName, value) < 0;
             }
         },
         GREATER_THAN {
             public boolean evaluate(AVList params, String paramName, String value) {
-                return compare(params, paramName, value) > 0;
+                return ComparisonOperator.compare(params, paramName, value) > 0;
             }
         },
         LESS_THAN_OR_EQUAL_TO {
             public boolean evaluate(AVList params, String paramName, String value) {
-                return compare(params, paramName, value) <= 0;
+                return ComparisonOperator.compare(params, paramName, value) <= 0;
             }
         },
         GREATER_THAN_OR_EQUAL_TO {
             public boolean evaluate(AVList params, String paramName, String value) {
-                return compare(params, paramName, value) >= 0;
+                return ComparisonOperator.compare(params, paramName, value) >= 0;
             }
         };
 
@@ -151,8 +151,7 @@ public class GeoSymAttributeExpressionProvider {
             // attribute are "equal". Otherwise, we say that the non-null quantity is greater than the null quantity.
             if (valueIsNull || o == null) {
                 return valueIsNull ? (o != null ? -1 : 0) : 1;
-            }
-            else {
+            } else {
                 // When value contains a text string, it has a leading and trailing double-quotation character.
                 if (!value.isEmpty() && value.charAt(0) == '\"' && value.charAt(value.length() - 1) == '\"')
                     value = value.substring(1, value.length() - 1);
@@ -183,7 +182,7 @@ public class GeoSymAttributeExpressionProvider {
         },
         AND_LEVEL2 {
             public boolean evaluate(AVList params, Iterable<? extends Expression> iterable) {
-                return AND_LEVEL1.evaluate(params, iterable);
+                return LogicalOperator.AND_LEVEL1.evaluate(params, iterable);
             }
         },
         AND_LEVEL1 {
@@ -199,7 +198,7 @@ public class GeoSymAttributeExpressionProvider {
         },
         OR_LEVEL2 {
             public boolean evaluate(AVList params, Iterable<? extends Expression> iterable) {
-                return OR_LEVEL1.evaluate(params, iterable);
+                return LogicalOperator.OR_LEVEL1.evaluate(params, iterable);
             }
         };
 

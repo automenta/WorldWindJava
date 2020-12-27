@@ -57,16 +57,14 @@ public class WMSLayerAttribution extends AbstractXMLEventParser {
         throws XMLStreamException {
         if (ctx.isStartElement(event, TITLE)) {
             this.setTitle(ctx.getStringParser().parseString(ctx, event));
-        }
-        else if (ctx.isStartElement(event, ONLINE_RESOURCE)) {
+        } else if (ctx.isStartElement(event, ONLINE_RESOURCE)) {
             XMLEventParser parser = this.allocate(ctx, event);
             if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
                 if (o instanceof OGCOnlineResource)
                     this.setOnlineResource((OGCOnlineResource) o);
             }
-        }
-        else if (ctx.isStartElement(event, LOGO_URL)) {
+        } else if (ctx.isStartElement(event, LOGO_URL)) {
             XMLEventParser parser = this.allocate(ctx, event);
             if (parser != null) {
                 Object o = parser.parse(ctx, event, args);

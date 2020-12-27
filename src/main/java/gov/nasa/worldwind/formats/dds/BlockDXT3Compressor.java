@@ -43,8 +43,8 @@ public class BlockDXT3Compressor {
         long bitmask = 0L;
 
         for (int i = 0; i < 8; i++) {
-            int a0 = 0xF & alpha4FromAlpha8(colorBlock.color[2 * i].a);
-            int a1 = 0xF & alpha4FromAlpha8(colorBlock.color[2 * i + 1].a);
+            int a0 = 0xF & BlockDXT3Compressor.alpha4FromAlpha8(colorBlock.color[2 * i].a);
+            int a1 = 0xF & BlockDXT3Compressor.alpha4FromAlpha8(colorBlock.color[2 * i + 1].a);
             long mask10 = (a1 << 4) | a0;
             bitmask |= (mask10 << (8 * i));
         }
@@ -64,9 +64,9 @@ public class BlockDXT3Compressor {
         q1 = (q1 << 4) | q1;
         q2 = (q2 << 4) | q2;
 
-        int d0 = alphaDistanceSquared(q0, alpha8);
-        int d1 = alphaDistanceSquared(q1, alpha8);
-        int d2 = alphaDistanceSquared(q2, alpha8);
+        int d0 = BlockDXT3Compressor.alphaDistanceSquared(q0, alpha8);
+        int d1 = BlockDXT3Compressor.alphaDistanceSquared(q1, alpha8);
+        int d2 = BlockDXT3Compressor.alphaDistanceSquared(q2, alpha8);
 
         if (d0 < d1 && d0 < d2) {
             return q0 >> 4;
@@ -88,6 +88,10 @@ public class BlockDXT3Compressor {
     //**************************************************************//
     //********************  Alpha Arithmetic  **********************//
     //**************************************************************//
+
+    protected static void compressBlockDXT3a(ColorBlock4x4 colorBlock, AlphaBlockDXT3 dxtBlock) {
+        dxtBlock.alphaValueMask = BlockDXT3Compressor.computeAlphaValueMask(colorBlock);
+    }
 
     /**
      * Compress the 4x4 color block into a DXT2/DXT3 block using 16 4 bit alpha values, and four colors. This method
@@ -127,9 +131,5 @@ public class BlockDXT3Compressor {
 
         // The DXT3 alpha block can be compressed separately.
         BlockDXT3Compressor.compressBlockDXT3a(colorBlock, dxtBlock.alphaBlock);
-    }
-
-    protected static void compressBlockDXT3a(ColorBlock4x4 colorBlock, AlphaBlockDXT3 dxtBlock) {
-        dxtBlock.alphaValueMask = computeAlphaValueMask(colorBlock);
     }
 }

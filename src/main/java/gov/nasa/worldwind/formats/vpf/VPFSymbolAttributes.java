@@ -208,11 +208,11 @@ public class VPFSymbolAttributes extends BasicShapeAttributes {
         result = 31 * result + (this.featureType != null ? this.featureType.hashCode() : 0);
         result = 31 * result + (this.symbolKey != null ? this.symbolKey.hashCode() : 0);
         result = 31 * result + (this.iconImageSource != null ? this.iconImageSource.hashCode() : 0);
-        temp = this.iconImageScale != +0.0d ? Double.doubleToLongBits(this.iconImageScale) : 0L;
+        temp = this.iconImageScale == +0.0d ? 0L : Double.doubleToLongBits(this.iconImageScale);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         result = 31 * result + (this.mipMapIconImage ? 1 : 0);
         result = 31 * result + (this.labelAttributes != null ? Arrays.hashCode(this.labelAttributes) : 0);
-        temp = this.displayPriority != +0.0d ? Double.doubleToLongBits(this.displayPriority) : 0L;
+        temp = this.displayPriority == +0.0d ? 0L : Double.doubleToLongBits(this.displayPriority);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         result = 31 * result + (this.orientationAttributeName != null ? this.orientationAttributeName.hashCode() : 0);
         result = 31 * result + (this.description != null ? this.description.hashCode() : 0);
@@ -231,9 +231,9 @@ public class VPFSymbolAttributes extends BasicShapeAttributes {
         private int abbreviationTableId;
 
         public LabelAttributes() {
-            this.font = defaultFont;
-            this.color = defaultColor;
-            this.backgroundColor = defaultBackgroundColor;
+            this.font = VPFSymbolAttributes.defaultFont;
+            this.color = VPFSymbolAttributes.defaultColor;
+            this.backgroundColor = VPFSymbolAttributes.defaultBackgroundColor;
         }
 
         public LabelAttributes(LabelAttributes attributes) {
@@ -369,7 +369,7 @@ public class VPFSymbolAttributes extends BasicShapeAttributes {
             result = this.font != null ? this.font.hashCode() : 0;
             result = 31 * result + (this.color != null ? this.color.hashCode() : 0);
             result = 31 * result + (this.backgroundColor != null ? this.backgroundColor.hashCode() : 0);
-            temp = this.offset != +0.0d ? Double.doubleToLongBits(this.offset) : 0L;
+            temp = this.offset == +0.0d ? 0L : Double.doubleToLongBits(this.offset);
             result = 31 * result + (int) (temp ^ (temp >>> 32));
             result = 31 * result + (this.offsetAngle != null ? this.offsetAngle.hashCode() : 0);
             result = 31 * result + (this.prepend != null ? this.prepend.hashCode() : 0);

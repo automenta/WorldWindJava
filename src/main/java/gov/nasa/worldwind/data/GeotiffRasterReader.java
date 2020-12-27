@@ -22,7 +22,7 @@ public class GeotiffRasterReader extends AbstractDataRasterReader {
     private static final String[] geotiffSuffixes = {"tif", "tiff", "gtif", "tif.zip", "tiff.zip", "tif.gz", "tiff.gz"};
 
     public GeotiffRasterReader() {
-        super(geotiffMimeTypes, geotiffSuffixes);
+        super(GeotiffRasterReader.geotiffMimeTypes, GeotiffRasterReader.geotiffSuffixes);
     }
 
     protected boolean doCanRead(Object source, AVList params) {
@@ -74,7 +74,7 @@ public class GeotiffRasterReader extends AbstractDataRasterReader {
             rasters = reader.readDataRaster();
 
             if (null != rasters) {
-                String[] keysToCopy = new String[] {AVKey.SECTOR};
+                String[] keysToCopy = {AVKey.SECTOR};
                 for (DataRaster raster : rasters) {
                     WWUtil.copyValues(metadata, raster, keysToCopy, false);
                 }

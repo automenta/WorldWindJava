@@ -50,8 +50,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
      * Creates a new ShapefileExtrudedPolygons with the specified shapefile. The normal attributes and the highlight
      * attributes for each ShapefileRenderable.Record are assigned default values. In order to modify
      * ShapefileRenderable.Record shape attributes or key-value attributes during construction, use {@link
-     * #ShapefileExtrudedPolygons(Shapefile, ShapeAttributes,
-     * ShapeAttributes, ShapefileRenderable.AttributeDelegate)}.
+     * #ShapefileExtrudedPolygons(Shapefile, ShapeAttributes, ShapeAttributes, ShapefileRenderable.AttributeDelegate)}.
      *
      * @param shapefile The shapefile to display.
      * @throws IllegalArgumentException if the shapefile is null.
@@ -91,6 +90,200 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
         }
 
         this.init(shapefile, normalAttrs, highlightAttrs, attributeDelegate);
+    }
+
+    protected static boolean mustRegenerateTileGeometry(DrawContext dc, Tile tile) {
+        return tile.currentData.isExpired(dc) || !tile.currentData.isValid(dc);
+    }
+
+    protected static void adjustTileExpiration(DrawContext dc, Tile tile) {
+        // If the new eye distance is significantly closer than cached data's the current eye distance, reduce the
+        // timer's remaining time by 50%. This reduction is performed only once each time the timer is reset.
+        if (tile.currentData.referencePoint != null) {
+            double newEyeDistance = dc.getView().getEyePoint().distanceTo3(tile.currentData.referencePoint);
+            tile.currentData.adjustTimer(dc, newEyeDistance);
+        }
+    }
+
+    protected static void invalidateTileGeometry(Tile tile) {
+        tile.dataCache.setAllExpired(true); // force the tile vertices to be regenerated
+
+        synchronized (tile) // synchronize access to tile intersection data
+        {
+            tile.intersectionData.invalidate();
+        }
+    }
+
+    protected static void assembleRecordIndices(PolygonTessellator tessellator, Record record) {
+        if (!tessellator.isEnabled())
+            return;
+
+        // Get the tessellated interior and boundary indices, representing a triangle tessellation and line segment
+        // tessellation of the record's top vertices. Flip each buffer in order to limit the buffer range we use to
+        // values added during tessellation.
+        IntBuffer tessInterior = tessellator.getInteriorIndices().flip();
+        IntBuffer tessBoundary = tessellator.getBoundaryIndices().flip();
+
+        // Allocate the record's interior and outline indices. This accounts for the number of tessellated interior
+        // and boundary indices, plus the indices necessary to tessellate the record's sides with triangles and lines.
+        IntBuffer interiorIndices = IntBuffer.allocate(tessInterior.remaining() + 3 * tessBoundary.remaining());
+        IntBuffer outlineIndices = IntBuffer.allocate(2 * tessBoundary.remaining());
+
+        // Fill the triangle index buffer with the triangle tessellation of the polygon's top vertices.
+        interiorIndices.put(tessInterior);
+
+        // Fill the triangle index buffer with a triangle tessellation using two triangles to connect the top and bottom
+        // vertices at each boundary line. Fill the line index buffer with a horizontal line for each boundary line
+        // segment, and a vertical line at the first vertex of each boundary line segment.
+        for (int i = tessBoundary.position(); i < tessBoundary.limit(); i += 2) {
+            int top1 = tessBoundary.get(i);
+            int top2 = tessBoundary.get(i + 1);
+            int bot1 = top1 + 1; // top and bottom vertices are adjacent
+            int bot2 = top2 + 1;
+            // side top left triangle
+            interiorIndices.put(top1);
+            interiorIndices.put(bot1);
+            interiorIndices.put(top2);
+            // side bottom right triangle
+            interiorIndices.put(top2);
+            interiorIndices.put(bot1);
+            interiorIndices.put(bot2);
+            // top horizontal line
+            outlineIndices.put(top1);
+            outlineIndices.put(top2);
+            // vertical line
+            outlineIndices.put(top1);
+            outlineIndices.put(bot1);
+        }
+
+        record.interiorIndices = interiorIndices.rewind();
+        record.outlineIndices = outlineIndices.rewind();
+    }
+
+    protected static boolean mustAssembleTileAttributeGroups(Tile tile) {
+        return tile.attributeGroups.isEmpty();
+    }
+
+    protected static void invalidateTileAttributeGroups(Tile tile) {
+        tile.attributeGroups.clear();
+    }
+
+    protected static void assembleTileAttributeGroups(Tile tile) {
+        tile.attributeGroups.clear();
+
+        // Assemble the tile's records into groups with common attributes. Attributes are grouped by reference using an
+        // InstanceHashMap, so that subsequent changes to an Attribute instance will be reflected in the record group
+        // automatically. We take care to avoid assembling groups based on any Attribute property, as those properties
+        // may change without re-assembling these groups. However, changes to a record's visibility state, highlight
+        // state, normal attributes reference and highlight attributes reference invalidate this grouping.
+        Map<ShapeAttributes, RecordGroup> attrMap = new IdentityHashMap<>();
+        for (Record record : tile.records) {
+            if (!record.isVisible()) // ignore records marked as not visible
+                continue;
+
+            ShapeAttributes attrs = ShapefileRenderable.determineActiveAttributes(record);
+            RecordGroup group = attrMap.get(attrs);
+
+            if (group == null) // create a new group if one doesn't already exist
+            {
+                group = new RecordGroup(attrs);
+                attrMap.put(attrs, group); // add it to the map to prevent duplicates
+                tile.attributeGroups.add(group); // add it to the tile's attribute group list
+            }
+
+            group.records.add(record);
+            group.interiorIndexRange.length += record.interiorIndices.remaining();
+            group.outlineIndexRange.length += record.outlineIndices.remaining();
+        }
+
+        // Make the indices for each record group. We take care to make indices for both the interior and the outline,
+        // regardless of the current state of Attributes.isDrawInterior and Attributes.isDrawOutline. This enable these
+        // properties change state without needing to re-assemble these groups.
+        for (RecordGroup group : tile.attributeGroups) {
+            int indexCount = group.interiorIndexRange.length + group.outlineIndexRange.length;
+            IntBuffer indices = Buffers.newDirectIntBuffer(indexCount);
+
+            group.interiorIndexRange.location = indices.position();
+            for (Record record : group.records) // assemble the group's triangle indices in a single contiguous range
+            {
+                indices.put(record.interiorIndices);
+                record.interiorIndices.rewind();
+            }
+
+            group.outlineIndexRange.location = indices.position();
+            for (Record record : group.records) // assemble the group's line indices in a single contiguous range
+            {
+                indices.put(record.outlineIndices);
+                record.outlineIndices.rewind();
+            }
+
+            group.indices = indices.rewind();
+            group.records.clear();
+            group.records.trimToSize(); // Reduce memory overhead from unused ArrayList capacity.
+        }
+    }
+
+    protected static void beginDrawing(DrawContext dc) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
+        gl.glEnable(GL.GL_CULL_FACE);
+        gl.glEnableClientState(GL2.GL_VERTEX_ARRAY); // all drawing uses vertex arrays
+        gl.glDepthFunc(GL.GL_LEQUAL);
+        gl.glMatrixMode(GL2.GL_MODELVIEW);
+        gl.glPushMatrix();
+
+        if (!dc.isPickingMode()) {
+            gl.glEnable(GL.GL_BLEND);
+            gl.glEnable(GL.GL_LINE_SMOOTH);
+            gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+            gl.glHint(GL.GL_LINE_SMOOTH_HINT, GL.GL_FASTEST);
+        }
+    }
+
+    protected static void endDrawing(DrawContext dc) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
+        gl.glDisable(GL.GL_CULL_FACE);
+        gl.glDisableClientState(GL2.GL_VERTEX_ARRAY);
+        gl.glColor4f(1, 1, 1, 1);
+        gl.glDepthFunc(GL.GL_LESS);
+        gl.glLineWidth(1);
+        gl.glPopMatrix();
+
+        if (!dc.isPickingMode()) {
+            gl.glDisable(GL.GL_BLEND);
+            gl.glDisable(GL.GL_LINE_SMOOTH);
+            gl.glBlendFunc(GL.GL_ONE, GL.GL_ZERO);
+            gl.glHint(GL.GL_LINE_SMOOTH_HINT, GL.GL_DONT_CARE);
+        }
+
+        if (dc.getGLRuntimeCapabilities().isUseVertexBufferObject()) {
+            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+            gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
+        }
+    }
+
+    protected static void intersectRecordInterior(Line localLine, Terrain terrain, Record record, ShapeData shapeData,
+        Collection<Intersection> results) {
+        FloatBuffer vertices = shapeData.vertices;
+        IntBuffer indices = record.interiorIndices;
+
+        List<Intersection> recordIntersections = Triangle.intersectTriangles(localLine, vertices, indices);
+        if (recordIntersections != null) {
+            for (Intersection intersection : recordIntersections) {
+                // Translate the intersection point from tile local coordinates to model coordinates.
+                Vec4 pt = intersection.getIntersectionPoint().add3(shapeData.referencePoint);
+                intersection.setIntersectionPoint(pt);
+
+                // Compute intersection position relative to ground.
+                Position pos = terrain.getGlobe().computePositionFromPoint(pt);
+                Vec4 gp = terrain.getSurfacePoint(pos.getLatitude(), pos.getLongitude(), 0);
+                double dist = Math.sqrt(pt.dotSelf3()) - Math.sqrt(gp.dotSelf3());
+                intersection.setIntersectionPosition(new Position(pos, dist));
+
+                // Associate the record with the intersection and add it to the list of intersection results.
+                intersection.setObject(record);
+                results.add(intersection);
+            }
+        }
     }
 
     @Override
@@ -275,7 +468,8 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
         // Add the tile to the list of tiles to draw, regenerating the tile's geometry and the tile's attribute groups
         // as necessary.
         if (!tile.records.isEmpty()) {
-            ShapefileExtrudedPolygons.adjustTileExpiration(dc, tile); // reduce the remaining expiration time as the eye distance decreases
+            ShapefileExtrudedPolygons.adjustTileExpiration(dc,
+                tile); // reduce the remaining expiration time as the eye distance decreases
             if (ShapefileExtrudedPolygons.mustRegenerateTileGeometry(dc, tile)) {
                 this.regenerateTileGeometry(dc, tile);
             }
@@ -307,28 +501,6 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
         }
 
         return dc.getView().getFrustumInModelCoordinates().intersects(extent);
-    }
-
-    protected static boolean mustRegenerateTileGeometry(DrawContext dc, Tile tile) {
-        return tile.currentData.isExpired(dc) || !tile.currentData.isValid(dc);
-    }
-
-    protected static void adjustTileExpiration(DrawContext dc, Tile tile) {
-        // If the new eye distance is significantly closer than cached data's the current eye distance, reduce the
-        // timer's remaining time by 50%. This reduction is performed only once each time the timer is reset.
-        if (tile.currentData.referencePoint != null) {
-            double newEyeDistance = dc.getView().getEyePoint().distanceTo3(tile.currentData.referencePoint);
-            tile.currentData.adjustTimer(dc, newEyeDistance);
-        }
-    }
-
-    protected static void invalidateTileGeometry(Tile tile) {
-        tile.dataCache.setAllExpired(true); // force the tile vertices to be regenerated
-
-        synchronized (tile) // synchronize access to tile intersection data
-        {
-            tile.intersectionData.invalidate();
-        }
     }
 
     protected void invalidateAllTileGeometry() {
@@ -459,115 +631,6 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
         shapeData.vboExpired = true;
     }
 
-    protected static void assembleRecordIndices(PolygonTessellator tessellator, Record record) {
-        if (!tessellator.isEnabled())
-            return;
-
-        // Get the tessellated interior and boundary indices, representing a triangle tessellation and line segment
-        // tessellation of the record's top vertices. Flip each buffer in order to limit the buffer range we use to
-        // values added during tessellation.
-        IntBuffer tessInterior = tessellator.getInteriorIndices().flip();
-        IntBuffer tessBoundary = tessellator.getBoundaryIndices().flip();
-
-        // Allocate the record's interior and outline indices. This accounts for the number of tessellated interior
-        // and boundary indices, plus the indices necessary to tessellate the record's sides with triangles and lines.
-        IntBuffer interiorIndices = IntBuffer.allocate(tessInterior.remaining() + 3 * tessBoundary.remaining());
-        IntBuffer outlineIndices = IntBuffer.allocate(2 * tessBoundary.remaining());
-
-        // Fill the triangle index buffer with the triangle tessellation of the polygon's top vertices.
-        interiorIndices.put(tessInterior);
-
-        // Fill the triangle index buffer with a triangle tessellation using two triangles to connect the top and bottom
-        // vertices at each boundary line. Fill the line index buffer with a horizontal line for each boundary line
-        // segment, and a vertical line at the first vertex of each boundary line segment.
-        for (int i = tessBoundary.position(); i < tessBoundary.limit(); i += 2) {
-            int top1 = tessBoundary.get(i);
-            int top2 = tessBoundary.get(i + 1);
-            int bot1 = top1 + 1; // top and bottom vertices are adjacent
-            int bot2 = top2 + 1;
-            // side top left triangle
-            interiorIndices.put(top1);
-            interiorIndices.put(bot1);
-            interiorIndices.put(top2);
-            // side bottom right triangle
-            interiorIndices.put(top2);
-            interiorIndices.put(bot1);
-            interiorIndices.put(bot2);
-            // top horizontal line
-            outlineIndices.put(top1);
-            outlineIndices.put(top2);
-            // vertical line
-            outlineIndices.put(top1);
-            outlineIndices.put(bot1);
-        }
-
-        record.interiorIndices = interiorIndices.rewind();
-        record.outlineIndices = outlineIndices.rewind();
-    }
-
-    protected static boolean mustAssembleTileAttributeGroups(Tile tile) {
-        return tile.attributeGroups.isEmpty();
-    }
-
-    protected static void invalidateTileAttributeGroups(Tile tile) {
-        tile.attributeGroups.clear();
-    }
-
-    protected static void assembleTileAttributeGroups(Tile tile) {
-        tile.attributeGroups.clear();
-
-        // Assemble the tile's records into groups with common attributes. Attributes are grouped by reference using an
-        // InstanceHashMap, so that subsequent changes to an Attribute instance will be reflected in the record group
-        // automatically. We take care to avoid assembling groups based on any Attribute property, as those properties
-        // may change without re-assembling these groups. However, changes to a record's visibility state, highlight
-        // state, normal attributes reference and highlight attributes reference invalidate this grouping.
-        Map<ShapeAttributes, RecordGroup> attrMap = new IdentityHashMap<>();
-        for (Record record : tile.records) {
-            if (!record.isVisible()) // ignore records marked as not visible
-                continue;
-
-            ShapeAttributes attrs = ShapefileRenderable.determineActiveAttributes(record);
-            RecordGroup group = attrMap.get(attrs);
-
-            if (group == null) // create a new group if one doesn't already exist
-            {
-                group = new RecordGroup(attrs);
-                attrMap.put(attrs, group); // add it to the map to prevent duplicates
-                tile.attributeGroups.add(group); // add it to the tile's attribute group list
-            }
-
-            group.records.add(record);
-            group.interiorIndexRange.length += record.interiorIndices.remaining();
-            group.outlineIndexRange.length += record.outlineIndices.remaining();
-        }
-
-        // Make the indices for each record group. We take care to make indices for both the interior and the outline,
-        // regardless of the current state of Attributes.isDrawInterior and Attributes.isDrawOutline. This enable these
-        // properties change state without needing to re-assemble these groups.
-        for (RecordGroup group : tile.attributeGroups) {
-            int indexCount = group.interiorIndexRange.length + group.outlineIndexRange.length;
-            IntBuffer indices = Buffers.newDirectIntBuffer(indexCount);
-
-            group.interiorIndexRange.location = indices.position();
-            for (Record record : group.records) // assemble the group's triangle indices in a single contiguous range
-            {
-                indices.put(record.interiorIndices);
-                record.interiorIndices.rewind();
-            }
-
-            group.outlineIndexRange.location = indices.position();
-            for (Record record : group.records) // assemble the group's line indices in a single contiguous range
-            {
-                indices.put(record.outlineIndices);
-                record.outlineIndices.rewind();
-            }
-
-            group.indices = indices.rewind();
-            group.records.clear();
-            group.records.trimToSize(); // Reduce memory overhead from unused ArrayList capacity.
-        }
-    }
-
     protected void pickOrderedSurfaceRenderable(DrawContext dc, Point pickPoint) {
         try {
             this.pickSupport.clearPickList();
@@ -616,44 +679,6 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
         }
     }
 
-    protected static void beginDrawing(DrawContext dc) {
-        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-        gl.glEnable(GL.GL_CULL_FACE);
-        gl.glEnableClientState(GL2.GL_VERTEX_ARRAY); // all drawing uses vertex arrays
-        gl.glDepthFunc(GL.GL_LEQUAL);
-        gl.glMatrixMode(GL2.GL_MODELVIEW);
-        gl.glPushMatrix();
-
-        if (!dc.isPickingMode()) {
-            gl.glEnable(GL.GL_BLEND);
-            gl.glEnable(GL.GL_LINE_SMOOTH);
-            gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
-            gl.glHint(GL.GL_LINE_SMOOTH_HINT, GL.GL_FASTEST);
-        }
-    }
-
-    protected static void endDrawing(DrawContext dc) {
-        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-        gl.glDisable(GL.GL_CULL_FACE);
-        gl.glDisableClientState(GL2.GL_VERTEX_ARRAY);
-        gl.glColor4f(1, 1, 1, 1);
-        gl.glDepthFunc(GL.GL_LESS);
-        gl.glLineWidth(1);
-        gl.glPopMatrix();
-
-        if (!dc.isPickingMode()) {
-            gl.glDisable(GL.GL_BLEND);
-            gl.glDisable(GL.GL_LINE_SMOOTH);
-            gl.glBlendFunc(GL.GL_ONE, GL.GL_ZERO);
-            gl.glHint(GL.GL_LINE_SMOOTH_HINT, GL.GL_DONT_CARE);
-        }
-
-        if (dc.getGLRuntimeCapabilities().isUseVertexBufferObject()) {
-            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-            gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
-        }
-    }
-
     protected void drawTile(DrawContext dc, Tile tile) {
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         ShapeData shapeData = tile.currentData;
@@ -668,16 +693,14 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
             gl.glBufferData(GL.GL_ARRAY_BUFFER, vboSize, shapeData.vertices, GL.GL_STATIC_DRAW);
             gl.glVertexPointer(3, GL.GL_FLOAT, 0, 0);
             dc.getGpuResourceCache().put(shapeData.vboKey, vboId, GpuResourceCache.VBO_BUFFERS, vboSize);
-        }
-        else if (useVbo) {
+        } else if (useVbo) {
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboId[0]);
             if (shapeData.vboExpired) {
                 gl.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, 4 * shapeData.vertices.remaining(), shapeData.vertices);
                 shapeData.vboExpired = false;
             }
             gl.glVertexPointer(3, GL.GL_FLOAT, 0, 0);
-        }
-        else {
+        } else {
             gl.glVertexPointer(3, GL.GL_FLOAT, 0, shapeData.vertices);
         }
 
@@ -702,8 +725,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
             gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vboId[0]);
             gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, vboSize, attributeGroup.indices, GL.GL_STATIC_DRAW);
             dc.getGpuResourceCache().put(attributeGroup.vboKey, vboId, GpuResourceCache.VBO_BUFFERS, vboSize);
-        }
-        else if (useVbo) {
+        } else if (useVbo) {
             gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vboId[0]);
         }
 
@@ -717,8 +739,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
             if (useVbo) {
                 gl.glDrawElements(GL.GL_TRIANGLES, attributeGroup.interiorIndexRange.length, GL.GL_UNSIGNED_INT,
                     4 * attributeGroup.interiorIndexRange.location);
-            }
-            else {
+            } else {
                 gl.glDrawElements(GL.GL_TRIANGLES, attributeGroup.interiorIndexRange.length, GL.GL_UNSIGNED_INT,
                     attributeGroup.indices.position(attributeGroup.interiorIndexRange.location));
                 attributeGroup.indices.rewind();
@@ -737,8 +758,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
             if (useVbo) {
                 gl.glDrawElements(GL.GL_LINES, attributeGroup.outlineIndexRange.length, GL.GL_UNSIGNED_INT,
                     4 * attributeGroup.outlineIndexRange.location);
-            }
-            else {
+            } else {
                 gl.glDrawElements(GL.GL_LINES, attributeGroup.outlineIndexRange.length, GL.GL_UNSIGNED_INT,
                     attributeGroup.indices.position(attributeGroup.outlineIndexRange.location));
                 attributeGroup.indices.rewind();
@@ -768,12 +788,10 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
             dc.getGpuResourceCache().put(this.pickColorsVboKey, vboId, GpuResourceCache.VBO_BUFFERS,
                 this.pickColors.remaining());
             colors = gl.glMapBuffer(GL.GL_ARRAY_BUFFER, GL.GL_WRITE_ONLY);
-        }
-        else if (useVbo) {
+        } else if (useVbo) {
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboId[0]);
             colors = gl.glMapBuffer(GL.GL_ARRAY_BUFFER, GL.GL_WRITE_ONLY);
-        }
-        else {
+        } else {
             colors = pickColors;
         }
 
@@ -808,8 +826,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
             if (useVbo) {
                 gl.glUnmapBuffer(GL.GL_ARRAY_BUFFER);
                 gl.glColorPointer(3, GL.GL_UNSIGNED_BYTE, 0, 0);
-            }
-            else {
+            } else {
                 gl.glColorPointer(3, GL.GL_UNSIGNED_BYTE, 0, colors);
             }
 
@@ -848,7 +865,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
         List<Intersection> intersections = new ArrayList<>();
         this.intersectTileOrDescendants(line, terrain, this.rootTile, intersections);
 
-        return !intersections.isEmpty() ? intersections : null;
+        return intersections.isEmpty() ? null : intersections;
     }
 
     protected void intersectTileOrDescendants(Line line, Terrain terrain, Tile tile, List<Intersection> results) {
@@ -939,31 +956,6 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
         return shapeData;
     }
 
-    protected static void intersectRecordInterior(Line localLine, Terrain terrain, Record record, ShapeData shapeData,
-        Collection<Intersection> results) {
-        FloatBuffer vertices = shapeData.vertices;
-        IntBuffer indices = record.interiorIndices;
-
-        List<Intersection> recordIntersections = Triangle.intersectTriangles(localLine, vertices, indices);
-        if (recordIntersections != null) {
-            for (Intersection intersection : recordIntersections) {
-                // Translate the intersection point from tile local coordinates to model coordinates.
-                Vec4 pt = intersection.getIntersectionPoint().add3(shapeData.referencePoint);
-                intersection.setIntersectionPoint(pt);
-
-                // Compute intersection position relative to ground.
-                Position pos = terrain.getGlobe().computePositionFromPoint(pt);
-                Vec4 gp = terrain.getSurfacePoint(pos.getLatitude(), pos.getLongitude(), 0);
-                double dist = Math.sqrt(pt.dotSelf3()) - Math.sqrt(gp.dotSelf3());
-                intersection.setIntersectionPosition(new Position(pos, dist));
-
-                // Associate the record with the intersection and add it to the list of intersection results.
-                intersection.setObject(record);
-                results.add(intersection);
-            }
-        }
-    }
-
     public static class Record extends ShapefileRenderable.Record {
         // Record properties.
         protected final Double height; // may be null
@@ -1004,7 +996,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
             ((ShapefileExtrudedPolygons) this.shapefileRenderable).intersectTileRecord(line, terrain, this,
                 intersections);
 
-            return !intersections.isEmpty() ? intersections : null;
+            return intersections.isEmpty() ? null : intersections;
         }
     }
 

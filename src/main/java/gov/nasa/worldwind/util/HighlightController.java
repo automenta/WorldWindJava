@@ -12,8 +12,7 @@ import gov.nasa.worldwind.render.Highlightable;
 
 /**
  * Controls highlighting of shapes implementing {@link Highlightable} in response to pick events. Monitors a specified
- * WorldWindow for an indicated {@link SelectEvent} type and turns highlighting on and off in
- * response.
+ * WorldWindow for an indicated {@link SelectEvent} type and turns highlighting on and off in response.
  *
  * @author tag
  * @version $Id: HighlightController.java 1171 2013-02-11 21:45:02Z dcollins $
@@ -46,7 +45,7 @@ public class HighlightController implements SelectListener {
             if (this.highlightEventType != null && event.getEventAction().equals(this.highlightEventType))
                 highlight(event.getTopObject());
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             // Wrap the handler in a try/catch to keep exceptions from bubbling up
             Logging.logger().warning(e.getMessage() != null ? e.getMessage() : e.toString());
         }

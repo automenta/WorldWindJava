@@ -48,7 +48,7 @@ public class WCSContents extends AbstractXMLEventParser {
                 strings.add(url);
         }
 
-        return !strings.isEmpty() ? strings : null;
+        return strings.isEmpty() ? null : strings;
     }
 
     protected void doParseEventContent(XMLEventParserContext ctx, XMLEvent event, Object... args)
@@ -60,26 +60,22 @@ public class WCSContents extends AbstractXMLEventParser {
                 if (o instanceof WCSCoverageSummary)
                     this.coverageSummaries.add((WCSCoverageSummary) o);
             }
-        }
-        else if (ctx.isStartElement(event, "OtherSource")) {
+        } else if (ctx.isStartElement(event, "OtherSource")) {
             XMLEventParser parser = this.allocate(ctx, event);
             if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
                 if (o instanceof AttributesOnlyXMLEventParser)
                     this.otherSources.add((AttributesOnlyXMLEventParser) o);
             }
-        }
-        else if (ctx.isStartElement(event, "SupportedCRS")) {
+        } else if (ctx.isStartElement(event, "SupportedCRS")) {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.supportedCRSs.add(s);
-        }
-        else if (ctx.isStartElement(event, "SupportedFormat")) {
+        } else if (ctx.isStartElement(event, "SupportedFormat")) {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.supportedFormats.add(s);
-        }
-        else {
+        } else {
             super.doParseEventContent(ctx, event, args);
         }
     }

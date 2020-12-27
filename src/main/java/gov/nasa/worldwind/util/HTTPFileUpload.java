@@ -38,11 +38,11 @@ public class HTTPFileUpload {
     private final PropertyChangeSupport propertyChangeSupport;
     protected int maxBufferSize = 1024 * 1024; // default is 1M
     protected String requestMethod = "POST";
-    protected long totalBytesToUpload = 0;
-    protected long totalBytesUploaded = 0;
-    protected int totalFilesUploaded = 0;
-    protected int totalFilesFailed = 0;
-    protected float lastProgress = 0;
+    protected long totalBytesToUpload;
+    protected long totalBytesUploaded;
+    protected int totalFilesUploaded;
+    protected int totalFilesFailed;
+    protected float lastProgress;
 
     public HTTPFileUpload(URL url) {
         if (url == null) {
@@ -55,8 +55,69 @@ public class HTTPFileUpload {
         propertyChangeSupport = new PropertyChangeSupport(this);
         this.setRequestMethod("POST");
         this.setRequestProperty("Connection", "Keep-Alive");
-        this.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + BOUNDARY);
+        this.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + HTTPFileUpload.BOUNDARY);
         this.setRequestProperty("Content-Transfer-Encoding", "binary");
+    }
+
+    protected static void handleResponse(HttpURLConnection conn) throws IOException {
+        if (null != conn) {
+            int code = conn.getResponseCode();
+            String message = conn.getResponseMessage();
+
+            if (code != 200) {
+                String reason = "(" + code + ") :" + message;
+                throw new IOException(reason);
+            }
+        } else {
+            throw new IOException(Logging.getMessage("nullValue.ConnectionIsNull"));
+        }
+    }
+
+    protected static void disconnect(HttpURLConnection conn, String name) {
+        if (null != conn) {
+            try {
+                conn.disconnect();
+            }
+            catch (RuntimeException e) {
+                String message = Logging.getMessage("WWIO.ErrorTryingToClose", name);
+                Logging.logger().log(Level.WARNING, message, e);
+            }
+        }
+    }
+
+    protected static void writeProperties(DataOutput dos, AVList params) throws IOException {
+        if (null != dos && null != params) {
+            for (Map.Entry<String, Object> param : params.getEntries()) {
+                String name = param.getKey();
+                String value = AVListImpl.getStringValue(params, name, "");
+                HTTPFileUpload.writeContentDisposition(dos, name, value);
+            }
+        }
+    }
+
+    protected static void writeContentDisposition(DataOutput dos, String filename) throws IOException {
+        if (null != dos) {
+            dos.writeBytes(HTTPFileUpload.TWO_HYPHENS + HTTPFileUpload.BOUNDARY + HTTPFileUpload.CR_LF);
+            dos.writeBytes("Content-Disposition: attachment; filename=\"" + filename + '"' + HTTPFileUpload.CR_LF);
+            dos.writeBytes("Content-type: application/octet-stream" + HTTPFileUpload.CR_LF);
+            dos.writeBytes(HTTPFileUpload.CR_LF);
+        }
+    }
+
+    protected static void writeContentDisposition(DataOutput dos, String paramName, String paramValue)
+        throws IOException {
+        if (null != dos && null != paramName) {
+            dos.writeBytes(HTTPFileUpload.TWO_HYPHENS + HTTPFileUpload.BOUNDARY + HTTPFileUpload.CR_LF);
+            dos.writeBytes("Content-Disposition: form-data; name=\"" + paramName + '"' + HTTPFileUpload.CR_LF);
+            dos.writeBytes(HTTPFileUpload.CR_LF + paramValue + HTTPFileUpload.CR_LF);
+        }
+    }
+
+    protected static void writeContentSeparator(DataOutput dos) throws IOException {
+        if (null != dos) {
+            // send multipart form data necesssary after file data...
+            dos.writeBytes(HTTPFileUpload.CR_LF + HTTPFileUpload.TWO_HYPHENS + HTTPFileUpload.BOUNDARY + HTTPFileUpload.TWO_HYPHENS + HTTPFileUpload.CR_LF);
+        }
     }
 
     public long getTotalFilesToUpload() {
@@ -104,11 +165,9 @@ public class HTTPFileUpload {
     public void setRequestMethod(String method) {
         if ("POST".equalsIgnoreCase(method)) {
             this.requestMethod = "POST";
-        }
-        else if ("GET".equalsIgnoreCase(method)) {
+        } else if ("GET".equalsIgnoreCase(method)) {
             this.requestMethod = "GET";
-        }
-        else {
+        } else {
             String message = Logging.getMessage("generic.UnknownValueForKey", method, "method={POST|GET}");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -159,8 +218,7 @@ public class HTTPFileUpload {
         if (null != file && file.exists()) {
             this.totalBytesToUpload += file.length();
             this.filesToUpload.add(new FileInfo(name, file, params));
-        }
-        else {
+        } else {
             throw new FileNotFoundException((file != null) ? file.getName() : "");
         }
     }
@@ -170,11 +228,9 @@ public class HTTPFileUpload {
             try {
                 if (info.uploadItem instanceof File) {
                     send((File) info.uploadItem, info.uploadName, info.properties);
-                }
-                else if (info.uploadItem instanceof ByteBuffer) {
+                } else if (info.uploadItem instanceof ByteBuffer) {
                     send((ByteBuffer) info.uploadItem, info.uploadName, info.properties);
-                }
-                else if (info.uploadItem instanceof String) {
+                } else if (info.uploadItem instanceof String) {
                     send((String) info.uploadItem, info.uploadName, info.properties);
                 }
 
@@ -252,33 +308,6 @@ public class HTTPFileUpload {
             WWIO.closeStream(fis, null);
             WWIO.closeStream(dos, null);
             HTTPFileUpload.disconnect(conn, this.url.toString());
-        }
-    }
-
-    protected static void handleResponse(HttpURLConnection conn) throws IOException {
-        if (null != conn) {
-            int code = conn.getResponseCode();
-            String message = conn.getResponseMessage();
-
-            if (code != 200) {
-                String reason = "(" + code + ") :" + message;
-                throw new IOException(reason);
-            }
-        }
-        else {
-            throw new IOException(Logging.getMessage("nullValue.ConnectionIsNull"));
-        }
-    }
-
-    protected static void disconnect(HttpURLConnection conn, String name) {
-        if (null != conn) {
-            try {
-                conn.disconnect();
-            }
-            catch (Exception e) {
-                String message = Logging.getMessage("WWIO.ErrorTryingToClose", name);
-                Logging.logger().log(Level.WARNING, message, e);
-            }
         }
     }
 
@@ -401,53 +430,18 @@ public class HTTPFileUpload {
         }
     }
 
-    protected static void writeProperties(DataOutput dos, AVList params) throws IOException {
-        if (null != dos && null != params) {
-            for (Map.Entry<String, Object> param : params.getEntries()) {
-                String name = param.getKey();
-                String value = AVListImpl.getStringValue(params, name, "");
-                HTTPFileUpload.writeContentDisposition(dos, name, value);
-            }
-        }
-    }
-
     /**
      * Writes HTTP request' properties (HTTP headers)
      *
      * @param conn HttpURLConnection connection
      * @throws IOException if there is any problem with a connection
      */
-    protected void writeRequestProperties(HttpURLConnection conn) throws IOException {
+    protected void writeRequestProperties(HttpURLConnection conn) throws ProtocolException {
         if (null != conn) {
             conn.setRequestMethod(this.getRequestMethod());
             this.requestProperties.getEntries().forEach(
                 (requestProperty) -> conn.setRequestProperty(requestProperty.getKey(),
                     (String) requestProperty.getValue()));
-        }
-    }
-
-    protected static void writeContentDisposition(DataOutput dos, String filename) throws IOException {
-        if (null != dos) {
-            dos.writeBytes(TWO_HYPHENS + BOUNDARY + CR_LF);
-            dos.writeBytes("Content-Disposition: attachment; filename=\"" + filename + "\"" + CR_LF);
-            dos.writeBytes("Content-type: application/octet-stream" + CR_LF);
-            dos.writeBytes(CR_LF);
-        }
-    }
-
-    protected static void writeContentDisposition(DataOutput dos, String paramName, String paramValue)
-        throws IOException {
-        if (null != dos && null != paramName) {
-            dos.writeBytes(TWO_HYPHENS + BOUNDARY + CR_LF);
-            dos.writeBytes("Content-Disposition: form-data; name=\"" + paramName + "\"" + CR_LF);
-            dos.writeBytes(CR_LF + paramValue + CR_LF);
-        }
-    }
-
-    protected static void writeContentSeparator(DataOutput dos) throws IOException {
-        if (null != dos) {
-            // send multipart form data necesssary after file data...
-            dos.writeBytes(CR_LF + TWO_HYPHENS + BOUNDARY + TWO_HYPHENS + CR_LF);
         }
     }
 

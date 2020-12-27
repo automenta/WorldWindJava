@@ -45,8 +45,7 @@ public class WCS100RequestDescription extends AbstractXMLEventParser {
                 if (o instanceof WCS100DCPType)
                     this.dcpTypes.add((WCS100DCPType) o);
             }
-        }
-        else {
+        } else {
             super.doParseEventContent(ctx, event, args);
         }
     }

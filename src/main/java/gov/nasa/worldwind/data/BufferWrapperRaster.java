@@ -5,7 +5,6 @@
  */
 package gov.nasa.worldwind.data;
 
-import gov.nasa.worldwind.Disposable;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.cache.Cacheable;
 import gov.nasa.worldwind.geom.Sector;
@@ -19,7 +18,7 @@ import java.util.Arrays;
  * @author dcollins
  * @version $Id: BufferWrapperRaster.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable, Disposable {
+public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable {
     protected BufferWrapper buffer;
 
     public BufferWrapperRaster(int width, int height, Sector sector, BufferWrapper buffer, AVList list) {
@@ -61,6 +60,79 @@ public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable
                     + ((xf) * (yf) * lr)
                     + ((xf) * (1.0 - yf) * ur);
         }
+    }
+
+    /**
+     * This returns a new sub-raster initialized with the specified properties. Called from <code>doGetSubRaster</code>
+     * to create the sub-raster instance before populating its contents. This does not place any restrictions on the
+     * specified <code>width</code>, <code>height</code>, <code>sector</code> or <code>params</code>.
+     * <p>
+     * This returns a <code>{@link BufferWrapper.ByteBufferWrapper}</code>, a subclass of BufferWrapperRaster backed by
+     * a ByteBuffer.
+     *
+     * @param width  the width of the sub-raster, in pixels.
+     * @param height the height of the sub-raster, in pixels.
+     * @param sector the sector the sub-raster occupies.
+     * @param params the parameters associated with the sub-raster.
+     * @return a new sub-raster initialized with the specified <code>width</code>, <code>height</code>,
+     * <code>sector</code> and <code>params</code>.
+     */
+    protected static BufferWrapperRaster createSubRaster(int width, int height, Sector sector, AVList params) {
+        return new ByteBufferRaster(width, height, sector, params);
+    }
+
+    protected static InterpolantLookupTable createLookupTable(int width, int height,
+        double xMin, double xMax, double yMin, double yMax, AffineTransform lookupTransform) {
+        // Compute the interpolation values for each transformed x- and y-coordinate. This assumes that the transform
+        // is composed of translations and scales (no rotations or shears). Therefore the transformed coordinates of
+        // each row or column would be identical.
+
+        InterpolantLookupTable lut = new InterpolantLookupTable(width, height);
+
+        double threshold = -1.0e-6; // Numerical roundoff error threshold.
+        boolean haveXParam = false;
+        boolean haveYParam = false;
+
+        Point2D thisPoint = new Point2D.Double();
+        Point2D canvasPoint = new Point2D.Double();
+        double x, y;
+        int index;
+
+        for (int i = 0; i < width; i++) {
+            canvasPoint.setLocation(i, 0);
+            lookupTransform.transform(canvasPoint, thisPoint);
+            x = thisPoint.getX();
+            if (((x - xMin) > threshold) && ((xMax - x) > threshold)) {
+                x = (x < xMin) ? xMin : (Math.min(x, xMax));
+                index = 3 * i;
+                lut.xParams[index] = Math.floor(x);
+                lut.xParams[index + 1] = Math.ceil(x);
+                lut.xParams[index + 2] = x - lut.xParams[index];
+
+                haveXParam = true;
+            }
+        }
+
+        for (int j = 0; j < height; j++) {
+            canvasPoint.setLocation(0, j);
+            lookupTransform.transform(canvasPoint, thisPoint);
+            y = thisPoint.getY();
+            if (((y - yMin) > threshold) && ((yMax - y) > threshold)) {
+                y = (y < yMin) ? yMin : (Math.min(y, yMax));
+                index = 3 * j;
+                lut.yParams[index] = Math.floor(y);
+                lut.yParams[index + 1] = Math.ceil(y);
+                lut.yParams[index + 2] = y - lut.yParams[index];
+
+                haveYParam = true;
+            }
+        }
+
+        if (haveXParam && haveYParam) {
+            return lut;
+        }
+
+        return null;
     }
 
     public BufferWrapper getBuffer() {
@@ -184,25 +256,6 @@ public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable
         return canvas;
     }
 
-    /**
-     * This returns a new sub-raster initialized with the specified properties. Called from <code>doGetSubRaster</code>
-     * to create the sub-raster instance before populating its contents. This does not place any restrictions on the
-     * specified <code>width</code>, <code>height</code>, <code>sector</code> or <code>params</code>.
-     * <p>
-     * This returns a <code>{@link BufferWrapper.ByteBufferWrapper}</code>, a subclass of
-     * BufferWrapperRaster backed by a ByteBuffer.
-     *
-     * @param width  the width of the sub-raster, in pixels.
-     * @param height the height of the sub-raster, in pixels.
-     * @param sector the sector the sub-raster occupies.
-     * @param params the parameters associated with the sub-raster.
-     * @return a new sub-raster initialized with the specified <code>width</code>, <code>height</code>,
-     * <code>sector</code> and <code>params</code>.
-     */
-    protected static BufferWrapperRaster createSubRaster(int width, int height, Sector sector, AVList params) {
-        return new ByteBufferRaster(width, height, sector, params);
-    }
-
     protected void doDrawOnTo(BufferWrapperRaster canvas) {
         if (!this.getSector().intersects(canvas.getSector()))
             return;
@@ -279,7 +332,7 @@ public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable
                         xf = xParams[2];
                         // Sample this raster with the interpolated coordinates. This produces a bi-linear mix
                         // of the four values surrounding the canvas pixel. Place the output in the canvas sample array.
-                        sample(thisSamples, x1, x2, xf, 0, 1, yf, xParamWidth, thisTransparentValue, canvasSamples, i);
+                        BufferWrapperRaster.sample(thisSamples, x1, x2, xf, 0, 1, yf, xParamWidth, thisTransparentValue, canvasSamples, i);
                     }
                 }
 
@@ -344,60 +397,6 @@ public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable
         return transform;
     }
 
-    protected static InterpolantLookupTable createLookupTable(int width, int height,
-        double xMin, double xMax, double yMin, double yMax, AffineTransform lookupTransform) {
-        // Compute the interpolation values for each transformed x- and y-coordinate. This assumes that the transform
-        // is composed of translations and scales (no rotations or shears). Therefore the transformed coordinates of
-        // each row or column would be identical.
-
-        InterpolantLookupTable lut = new InterpolantLookupTable(width, height);
-
-        double threshold = -1.0e-6; // Numerical roundoff error threshold.
-        boolean haveXParam = false;
-        boolean haveYParam = false;
-
-        Point2D thisPoint = new Point2D.Double();
-        Point2D canvasPoint = new Point2D.Double();
-        double x, y;
-        int index;
-
-        for (int i = 0; i < width; i++) {
-            canvasPoint.setLocation(i, 0);
-            lookupTransform.transform(canvasPoint, thisPoint);
-            x = thisPoint.getX();
-            if (((x - xMin) > threshold) && ((xMax - x) > threshold)) {
-                x = (x < xMin) ? xMin : (Math.min(x, xMax));
-                index = 3 * i;
-                lut.xParams[index] = Math.floor(x);
-                lut.xParams[index + 1] = Math.ceil(x);
-                lut.xParams[index + 2] = x - lut.xParams[index];
-
-                haveXParam = true;
-            }
-        }
-
-        for (int j = 0; j < height; j++) {
-            canvasPoint.setLocation(0, j);
-            lookupTransform.transform(canvasPoint, thisPoint);
-            y = thisPoint.getY();
-            if (((y - yMin) > threshold) && ((yMax - y) > threshold)) {
-                y = (y < yMin) ? yMin : (Math.min(y, yMax));
-                index = 3 * j;
-                lut.yParams[index] = Math.floor(y);
-                lut.yParams[index + 1] = Math.ceil(y);
-                lut.yParams[index + 2] = y - lut.yParams[index];
-
-                haveYParam = true;
-            }
-        }
-
-        if (haveXParam && haveYParam) {
-            return lut;
-        }
-
-        return null;
-    }
-
     protected static class InterpolantLookupTable {
         protected final int width;
         protected final int height;
@@ -447,11 +446,11 @@ public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable
         }
 
         public final void computeRangeX(double[] params) {
-            computeInterpolantRange(this.xParams, this.width, params);
+            InterpolantLookupTable.computeInterpolantRange(this.xParams, this.width, params);
         }
 
         public final void computeRangeY(double[] params) {
-            computeInterpolantRange(this.yParams, this.height, params);
+            InterpolantLookupTable.computeInterpolantRange(this.yParams, this.height, params);
         }
     }
 }

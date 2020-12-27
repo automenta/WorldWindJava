@@ -32,7 +32,7 @@ public class StatusBar extends JPanel implements PositionListener, RenderingList
     protected final AtomicBoolean isNetworkAvailable = new AtomicBoolean(true);
     protected Thread netCheckThread;
     private WorldWindow eventSource;
-    private String elevationUnit = UNIT_METRIC;
+    private String elevationUnit = StatusBar.UNIT_METRIC;
     private String angleFormat = Angle.ANGLE_FORMAT_DD;
 
     public StatusBar() {
@@ -63,7 +63,7 @@ public class StatusBar extends JPanel implements PositionListener, RenderingList
 
             if (!isNetworkAvailable.get()) {
                 heartBeat.setText(Logging.getMessage("term.NoNetwork"));
-                heartBeat.setForeground(new Color(255, 0, 0, MAX_ALPHA));
+                heartBeat.setForeground(new Color(255, 0, 0, StatusBar.MAX_ALPHA));
                 return;
             }
 
@@ -71,12 +71,11 @@ public class StatusBar extends JPanel implements PositionListener, RenderingList
             int alpha = color.getAlpha();
             if (isNetworkAvailable.get() && WorldWind.retrieveRemote().hasActiveTasks()) {
                 heartBeat.setText(Logging.getMessage("term.Downloading"));
-                if (alpha >= MAX_ALPHA)
-                    alpha = MAX_ALPHA;
+                if (alpha >= StatusBar.MAX_ALPHA)
+                    alpha = StatusBar.MAX_ALPHA;
                 else
-                    alpha = alpha < 16 ? 16 : Math.min(MAX_ALPHA, alpha + 20);
-            }
-            else {
+                    alpha = alpha < 16 ? 16 : Math.min(StatusBar.MAX_ALPHA, alpha + 20);
+            } else {
                 alpha = Math.max(0, alpha - 20);
             }
             heartBeat.setForeground(new Color(255, 0, 0, alpha));
@@ -122,8 +121,7 @@ public class StatusBar extends JPanel implements PositionListener, RenderingList
                 this.netCheckThread.interrupt();
 
             this.netCheckThread = this.startNetCheckThread();
-        }
-        else {
+        } else {
             if (this.netCheckThread != null)
                 this.netCheckThread.interrupt();
 
@@ -184,7 +182,7 @@ public class StatusBar extends JPanel implements PositionListener, RenderingList
     protected String makeCursorElevationDescription(double metersElevation) {
         String s;
         String elev = Logging.getMessage("term.Elev");
-        if (UNIT_IMPERIAL.equals(elevationUnit))
+        if (StatusBar.UNIT_IMPERIAL.equals(elevationUnit))
             s = String.format(elev + " %,7d feet", (int) (WWMath.convertMetersToFeet(metersElevation)));
         else // Default to metric units.
             s = String.format(elev + " %,7d meters", (int) metersElevation);
@@ -194,14 +192,13 @@ public class StatusBar extends JPanel implements PositionListener, RenderingList
     protected String makeEyeAltitudeDescription(double metersAltitude) {
         String s;
         String altitude = Logging.getMessage("term.Altitude");
-        if (UNIT_IMPERIAL.equals(elevationUnit)) {
+        if (StatusBar.UNIT_IMPERIAL.equals(elevationUnit)) {
             double miles = WWMath.convertMetersToMiles(metersAltitude);
             if (Math.abs(miles) >= 1)
                 s = String.format(altitude + " %,7d mi", (int) Math.round(miles));
             else
                 s = String.format(altitude + " %,7d ft", (int) Math.round(WWMath.convertMetersToFeet(metersAltitude)));
-        }
-        else if (Math.abs(metersAltitude) >= 1000) // Default to metric units.
+        } else if (Math.abs(metersAltitude) >= 1000) // Default to metric units.
             s = String.format(altitude + " %,7d km", (int) Math.round(metersAltitude / 1.0e3));
         else
             s = String.format(altitude + " %,7d m", (int) Math.round(metersAltitude));
@@ -227,8 +224,7 @@ public class StatusBar extends JPanel implements PositionListener, RenderingList
             latDisplay.setText(las);
             lonDisplay.setText(los);
             eleDisplay.setText(els);
-        }
-        else {
+        } else {
             latDisplay.setText("");
             lonDisplay.setText(Logging.getMessage("term.OffGlobe"));
             eleDisplay.setText("");

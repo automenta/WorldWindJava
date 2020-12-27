@@ -29,8 +29,8 @@ class RPFRetriever extends WWObjectImpl implements Retriever {
     private final URL url;
     private final RetrievalPostProcessor postProcessor;
     private volatile ByteBuffer byteBuffer;
-    private volatile int contentLength = 0;
-    private volatile String state = RETRIEVER_STATE_NOT_STARTED;
+    private volatile int contentLength;
+    private volatile String state = Retriever.RETRIEVER_STATE_NOT_STARTED;
     private volatile String contentType;
     private long submitTime;
     private long beginTime;
@@ -158,19 +158,22 @@ class RPFRetriever extends WWObjectImpl implements Retriever {
 
         try {
 
-            if (interrupted()) return this;
+            if (interrupted())
+                return this;
 
             //setState(RETRIEVER_STATE_CONNECTING);
-            setState(RETRIEVER_STATE_READING);
+            setState(Retriever.RETRIEVER_STATE_READING);
 
             this.byteBuffer = read();
 
-            setState(RETRIEVER_STATE_SUCCESSFUL);
-        } catch (Exception e) {
-            setState(RETRIEVER_STATE_ERROR);
+            setState(Retriever.RETRIEVER_STATE_SUCCESSFUL);
+        }
+        catch (Exception e) {
+            setState(Retriever.RETRIEVER_STATE_ERROR);
             Logging.logger().log(Level.SEVERE,
                 Logging.getMessage("URLRetriever.ErrorAttemptingToRetrieve", this.url.toString()), e);
-        } finally {
+        }
+        finally {
             end();
         }
 
@@ -179,7 +182,7 @@ class RPFRetriever extends WWObjectImpl implements Retriever {
 
     private boolean interrupted() {
         if (Thread.currentThread().isInterrupted()) {
-            setState(RETRIEVER_STATE_INTERRUPTED);
+            setState(Retriever.RETRIEVER_STATE_INTERRUPTED);
             String message = Logging.getMessage("URLRetriever.RetrievalInterruptedFor", this.url.toString());
             Logging.logger().fine(message);
             return true;
@@ -193,22 +196,22 @@ class RPFRetriever extends WWObjectImpl implements Retriever {
                 this.byteBuffer = this.postProcessor.run(this);
             }
         }
-        catch (Exception e) {
-            setState(RETRIEVER_STATE_ERROR);
+        catch (RuntimeException e) {
+            setState(Retriever.RETRIEVER_STATE_ERROR);
             Logging.logger().log(Level.SEVERE,
                 Logging.getMessage("Retriever.ErrorPostProcessing", this.url.toString()), e);
             throw e;
         }
     }
 
-    private ByteBuffer read() throws Exception {
+    private ByteBuffer read() throws java.io.IOException {
         ByteBuffer buffer = this.doRead(this.service, this.url);
         if (buffer == null)
             this.contentLength = 0;
         return buffer;
     }
 
-    protected ByteBuffer doRead(RPFGenerator.RPFServiceInstance service, URL url) throws Exception {
+    protected ByteBuffer doRead(RPFGenerator.RPFServiceInstance service, URL url) throws java.io.IOException {
         ByteBuffer buffer = null;
 
         BufferedImage bufferedImage = service.serviceRequest(url);
@@ -224,7 +227,7 @@ class RPFRetriever extends WWObjectImpl implements Retriever {
         }
 
         // TODO: service should provide response code
-        this.responseCode = buffer != null ? RESPONSE_CODE_OK : RESPONSE_CODE_NO_CONTENT;
+        this.responseCode = buffer != null ? RPFRetriever.RESPONSE_CODE_OK : RPFRetriever.RESPONSE_CODE_NO_CONTENT;
 
         return buffer;
     }

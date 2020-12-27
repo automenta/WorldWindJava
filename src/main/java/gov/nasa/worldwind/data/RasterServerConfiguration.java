@@ -28,19 +28,19 @@ public class RasterServerConfiguration extends AbstractXMLEventParser {
     protected XMLEventParserContext parserContext;
 
     public RasterServerConfiguration(Object docSource) {
-        super(namespaceURI);
+        super(RasterServerConfiguration.namespaceURI);
 
         this.eventReader = RasterServerConfiguration.createReader(docSource);
 
         this.initialize();
     }
 
-    protected void initialize() {
-        this.parserContext = this.createParserContext(this.eventReader);
-    }
-
     protected static XMLEventReader createReader(Object docSource) {
         return WWXML.openEventReader(docSource);
+    }
+
+    protected void initialize() {
+        this.parserContext = this.createParserContext(this.eventReader);
     }
 
     protected XMLEventParserContext createParserContext(XMLEventReader reader) {
@@ -101,8 +101,7 @@ public class RasterServerConfiguration extends AbstractXMLEventParser {
         if (ctx.isStartElement(event, "Property")) {
             Property p = (Property) ctx.getParser(event).parse(ctx, event);
             this.properties.put(p.getName(), p.getValue());
-        }
-        else {
+        } else {
             super.doParseEventContent(ctx, event, args);
         }
     }
@@ -208,8 +207,7 @@ public class RasterServerConfiguration extends AbstractXMLEventParser {
             if (ctx.isStartElement(event, "Source")) {
                 Source s = (Source) ctx.getParser(event).parse(ctx, event);
                 this.sources.add(s);
-            }
-            else {
+            } else {
                 super.doParseEventContent(ctx, event, args);
             }
         }

@@ -59,7 +59,7 @@ public class OrbitViewPropertyAccessor extends ViewPropertyAccessor {
                 this.orbitView.setCenterPosition(value);
                 return true;
             }
-            catch (Exception e) {
+            catch (RuntimeException e) {
                 return false;
             }
         }
@@ -88,7 +88,7 @@ public class OrbitViewPropertyAccessor extends ViewPropertyAccessor {
                 this.orbitView.setZoom(value);
                 return true;
             }
-            catch (Exception e) {
+            catch (RuntimeException e) {
                 return false;
             }
         }

@@ -31,9 +31,9 @@ class TMCoordConverter {
     private final static int TRANMERC_INV_F_ERROR = 0x0080;
     private final static int TRANMERC_SCALE_FACTOR_ERROR = 0x0100;
     private final static double PI = 3.14159265358979323; /* PI     */
-    public final static double PI_OVER = (PI / 2.0);            /* PI over 2 */
-    private final static double MAX_LAT = ((PI * 89.99) / 180.0);    /* 90 degrees in radians */
-    private final static double MAX_DELTA_LONG = ((PI * 90) / 180.0);    /* 90 degrees in radians */
+    public final static double PI_OVER = (TMCoordConverter.PI / 2.0);            /* PI over 2 */
+    private final static double MAX_LAT = ((TMCoordConverter.PI * 89.99) / 180.0);    /* 90 degrees in radians */
+    private final static double MAX_DELTA_LONG = ((TMCoordConverter.PI * 90) / 180.0);    /* 90 degrees in radians */
     private final static double MIN_SCALE_FACTOR = 0.3;
     private final static double MAX_SCALE_FACTOR = 3.0;
 
@@ -44,10 +44,10 @@ class TMCoordConverter {
     private double TranMerc_ebs = 0.0067394967565869;   /* Second Eccentricity squared */
 
     /* Transverse_Mercator projection Parameters */
-    private double TranMerc_Origin_Lat = 0.0;           /* Latitude of origin in radians */
-    private double TranMerc_Origin_Long = 0.0;          /* Longitude of origin in radians */
-    private double TranMerc_False_Northing = 0.0;       /* False northing in meters */
-    private double TranMerc_False_Easting = 0.0;        /* False easting in meters */
+    private double TranMerc_Origin_Lat;           /* Latitude of origin in radians */
+    private double TranMerc_Origin_Long;          /* Longitude of origin in radians */
+    private double TranMerc_False_Northing;       /* False northing in meters */
+    private double TranMerc_False_Easting;        /* False easting in meters */
     private double TranMerc_Scale_Factor = 1.0;         /* Scale factor  */
 
     /* Isometeric to geodetic latitude parameters, default to WGS 84 */
@@ -101,24 +101,24 @@ class TMCoordConverter {
         double tn5;
         double TranMerc_b; /* Semi-minor axis of ellipsoid, in meters */
         double inv_f = 1 / f;
-        long Error_Code = TRANMERC_NO_ERROR;
+        long Error_Code = TMCoordConverter.TRANMERC_NO_ERROR;
 
         if (a <= 0.0) { /* Semi-major axis must be greater than zero */
-            Error_Code |= TRANMERC_A_ERROR;
+            Error_Code |= TMCoordConverter.TRANMERC_A_ERROR;
         }
         if ((inv_f < 250) || (inv_f > 350)) { /* Inverse flattening must be between 250 and 350 */
-            Error_Code |= TRANMERC_INV_F_ERROR;
+            Error_Code |= TMCoordConverter.TRANMERC_INV_F_ERROR;
         }
-        if ((Origin_Latitude < -MAX_LAT) || (Origin_Latitude > MAX_LAT)) { /* origin latitude out of range */
-            Error_Code |= TRANMERC_ORIGIN_LAT_ERROR;
+        if ((Origin_Latitude < -TMCoordConverter.MAX_LAT) || (Origin_Latitude > TMCoordConverter.MAX_LAT)) { /* origin latitude out of range */
+            Error_Code |= TMCoordConverter.TRANMERC_ORIGIN_LAT_ERROR;
         }
-        if ((Central_Meridian < -PI) || (Central_Meridian > (2 * PI))) { /* origin longitude out of range */
-            Error_Code |= TRANMERC_CENT_MER_ERROR;
+        if ((Central_Meridian < -TMCoordConverter.PI) || (Central_Meridian > (2 * TMCoordConverter.PI))) { /* origin longitude out of range */
+            Error_Code |= TMCoordConverter.TRANMERC_CENT_MER_ERROR;
         }
-        if ((Scale_Factor < MIN_SCALE_FACTOR) || (Scale_Factor > MAX_SCALE_FACTOR)) {
-            Error_Code |= TRANMERC_SCALE_FACTOR_ERROR;
+        if ((Scale_Factor < TMCoordConverter.MIN_SCALE_FACTOR) || (Scale_Factor > TMCoordConverter.MAX_SCALE_FACTOR)) {
+            Error_Code |= TMCoordConverter.TRANMERC_SCALE_FACTOR_ERROR;
         }
-        if (Error_Code == TRANMERC_NO_ERROR) { /* no errors */
+        if (Error_Code == TMCoordConverter.TRANMERC_NO_ERROR) { /* no errors */
             TranMerc_a = a;
             TranMerc_f = f;
             TranMerc_Origin_Lat = 0;
@@ -148,17 +148,17 @@ class TMCoordConverter {
             TranMerc_dp = 35.0e0 * TranMerc_a * (tn3 - tn4 + 11.0e0 * tn5 / 16.0e0) / 48.0e0;
             TranMerc_ep = 315.0e0 * TranMerc_a * (tn4 - tn5) / 512.0e0;
 
-            convertGeodeticToTransverseMercator(MAX_LAT, MAX_DELTA_LONG);
+            convertGeodeticToTransverseMercator(TMCoordConverter.MAX_LAT, TMCoordConverter.MAX_DELTA_LONG);
 
             TranMerc_Delta_Easting = getEasting();
             TranMerc_Delta_Northing = getNorthing();
 
-            convertGeodeticToTransverseMercator(0, MAX_DELTA_LONG);
+            convertGeodeticToTransverseMercator(0, TMCoordConverter.MAX_DELTA_LONG);
             TranMerc_Delta_Easting = getEasting();
 
             TranMerc_Origin_Lat = Origin_Latitude;
-            if (Central_Meridian > PI)
-                Central_Meridian -= (2 * PI);
+            if (Central_Meridian > TMCoordConverter.PI)
+                Central_Meridian -= (2 * TMCoordConverter.PI);
             TranMerc_Origin_Long = Central_Meridian;
             TranMerc_False_Northing = False_Northing;
             TranMerc_False_Easting = False_Easting;
@@ -207,44 +207,44 @@ class TMCoordConverter {
         double t9;      /* Term in coordinate conversion formula - GP to Y */
         double tmd;     /* True Meridional distance                        */
         double tmdo;    /* True Meridional distance for latitude of origin */
-        long Error_Code = TRANMERC_NO_ERROR;
+        long Error_Code = TMCoordConverter.TRANMERC_NO_ERROR;
         double temp_Origin;
         double temp_Long;
 
-        if ((Latitude < -MAX_LAT) || (Latitude > MAX_LAT)) {  /* Latitude out of range */
-            Error_Code |= TRANMERC_LAT_ERROR;
+        if ((Latitude < -TMCoordConverter.MAX_LAT) || (Latitude > TMCoordConverter.MAX_LAT)) {  /* Latitude out of range */
+            Error_Code |= TMCoordConverter.TRANMERC_LAT_ERROR;
         }
-        if (Longitude > PI)
-            Longitude -= (2 * PI);
-        if ((Longitude < (TranMerc_Origin_Long - MAX_DELTA_LONG))
-            || (Longitude > (TranMerc_Origin_Long + MAX_DELTA_LONG))) {
+        if (Longitude > TMCoordConverter.PI)
+            Longitude -= (2 * TMCoordConverter.PI);
+        if ((Longitude < (TranMerc_Origin_Long - TMCoordConverter.MAX_DELTA_LONG))
+            || (Longitude > (TranMerc_Origin_Long + TMCoordConverter.MAX_DELTA_LONG))) {
             if (Longitude < 0)
-                temp_Long = Longitude + 2 * PI;
+                temp_Long = Longitude + 2 * TMCoordConverter.PI;
             else
                 temp_Long = Longitude;
             if (TranMerc_Origin_Long < 0)
-                temp_Origin = TranMerc_Origin_Long + 2 * PI;
+                temp_Origin = TranMerc_Origin_Long + 2 * TMCoordConverter.PI;
             else
                 temp_Origin = TranMerc_Origin_Long;
-            if ((temp_Long < (temp_Origin - MAX_DELTA_LONG))
-                || (temp_Long > (temp_Origin + MAX_DELTA_LONG)))
-                Error_Code |= TRANMERC_LON_ERROR;
+            if ((temp_Long < (temp_Origin - TMCoordConverter.MAX_DELTA_LONG))
+                || (temp_Long > (temp_Origin + TMCoordConverter.MAX_DELTA_LONG)))
+                Error_Code |= TMCoordConverter.TRANMERC_LON_ERROR;
         }
-        if (Error_Code == TRANMERC_NO_ERROR) { /* no errors */
+        if (Error_Code == TMCoordConverter.TRANMERC_NO_ERROR) { /* no errors */
             /*
              *  Delta Longitude
              */
             dlam = Longitude - TranMerc_Origin_Long;
 
-            if (Math.abs(dlam) > (9.0 * PI
+            if (Math.abs(dlam) > (9.0 * TMCoordConverter.PI
                 / 180)) { /* Distortion will result if Longitude is more than 9 degrees from the Central Meridian */
-                Error_Code |= TRANMERC_LON_WARNING;
+                Error_Code |= TMCoordConverter.TRANMERC_LON_WARNING;
             }
 
-            if (dlam > PI)
-                dlam -= (2 * PI);
-            if (dlam < -PI)
-                dlam += (2 * PI);
+            if (dlam > TMCoordConverter.PI)
+                dlam -= (2 * TMCoordConverter.PI);
+            if (dlam < -TMCoordConverter.PI)
+                dlam += (2 * TMCoordConverter.PI);
             if (Math.abs(dlam) < 2.0e-10)
                 dlam = 0.0;
 
@@ -368,18 +368,18 @@ class TMCoordConverter {
         double t17;     /* Term in coordinate conversion formula - GP to Y */
         double tmd;     /* True Meridional distance                        */
         double tmdo;    /* True Meridional distance for latitude of origin */
-        long Error_Code = TRANMERC_NO_ERROR;
+        long Error_Code = TMCoordConverter.TRANMERC_NO_ERROR;
 
         if ((Easting < (TranMerc_False_Easting - TranMerc_Delta_Easting))
             || (Easting > (TranMerc_False_Easting + TranMerc_Delta_Easting))) { /* Easting out of range  */
-            Error_Code |= TRANMERC_EASTING_ERROR;
+            Error_Code |= TMCoordConverter.TRANMERC_EASTING_ERROR;
         }
         if ((Northing < (TranMerc_False_Northing - TranMerc_Delta_Northing))
             || (Northing > (TranMerc_False_Northing + TranMerc_Delta_Northing))) { /* Northing out of range */
-            Error_Code |= TRANMERC_NORTHING_ERROR;
+            Error_Code |= TMCoordConverter.TRANMERC_NORTHING_ERROR;
         }
 
-        if (Error_Code == TRANMERC_NO_ERROR) {
+        if (Error_Code == TMCoordConverter.TRANMERC_NO_ERROR) {
             /* True Meridional Distances for latitude of origin */
             // tmdo = SPHTMD(TranMerc_Origin_Lat);
             tmdo = TranMerc_ap * TranMerc_Origin_Lat
@@ -473,24 +473,24 @@ class TMCoordConverter {
             /* Longitude */
             Longitude = TranMerc_Origin_Long + dlam;
 
-            if (Math.abs(Latitude) > (90.0 * PI / 180.0))
-                Error_Code |= TRANMERC_NORTHING_ERROR;
+            if (Math.abs(Latitude) > (90.0 * TMCoordConverter.PI / 180.0))
+                Error_Code |= TMCoordConverter.TRANMERC_NORTHING_ERROR;
 
-            if ((Longitude) > (PI)) {
-                Longitude -= (2 * PI);
-                if (Math.abs(Longitude) > PI)
-                    Error_Code |= TRANMERC_EASTING_ERROR;
+            if ((Longitude) > (TMCoordConverter.PI)) {
+                Longitude -= (2 * TMCoordConverter.PI);
+                if (Math.abs(Longitude) > TMCoordConverter.PI)
+                    Error_Code |= TMCoordConverter.TRANMERC_EASTING_ERROR;
             }
 
-            if (Math.abs(dlam) > (9.0 * PI / 180) * Math.cos(
+            if (Math.abs(dlam) > (9.0 * TMCoordConverter.PI / 180) * Math.cos(
                 Latitude)) { /* Distortion will result if Longitude is more than 9 degrees from the Central Meridian at the equator */
                 /* and decreases to 0 degrees at the poles */
                 /* As you move towards the poles, distortion will become more significant */
-                Error_Code |= TRANMERC_LON_WARNING;
+                Error_Code |= TMCoordConverter.TRANMERC_LON_WARNING;
             }
 
             if (Latitude > 1.0e10)
-                Error_Code |= TRANMERC_LON_WARNING;
+                Error_Code |= TMCoordConverter.TRANMERC_LON_WARNING;
         }
         return (Error_Code);
     }

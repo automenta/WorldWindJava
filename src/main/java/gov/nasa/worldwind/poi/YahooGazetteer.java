@@ -30,26 +30,6 @@ public class YahooGazetteer implements Gazetteer {
     protected static final String GEOCODE_SERVICE =
         "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20geo.places%20where%20text%3D";
 
-    public List<PointOfInterest> findPlaces(String lookupString) throws NoItemException, ServiceException {
-        if (lookupString == null || lookupString.length() < 1) {
-            return null;
-        }
-
-        String urlString;
-        urlString = GEOCODE_SERVICE + "%22" + URLEncoder.encode(lookupString, StandardCharsets.UTF_8) + "%22";
-
-        if (isNumber(lookupString))
-            lookupString += "%20and%20gflags%3D%22R%22";
-
-        String locationString = POIUtils.callService(urlString);
-
-        if (locationString == null || locationString.length() < 1) {
-            return null;
-        }
-
-        return YahooGazetteer.parseLocationString(locationString);
-    }
-
     protected static boolean isNumber(String lookupString) {
         lookupString = lookupString.trim();
 
@@ -118,5 +98,25 @@ public class YahooGazetteer implements Gazetteer {
             Logging.logger().log(Level.SEVERE, msg);
             throw new WWRuntimeException(msg);
         }
+    }
+
+    public List<PointOfInterest> findPlaces(String lookupString) throws NoItemException, ServiceException {
+        if (lookupString == null || lookupString.length() < 1) {
+            return null;
+        }
+
+        String urlString;
+        urlString = YahooGazetteer.GEOCODE_SERVICE + "%22" + URLEncoder.encode(lookupString, StandardCharsets.UTF_8) + "%22";
+
+        if (YahooGazetteer.isNumber(lookupString))
+            lookupString += "%20and%20gflags%3D%22R%22";
+
+        String locationString = POIUtils.callService(urlString);
+
+        if (locationString == null || locationString.length() < 1) {
+            return null;
+        }
+
+        return YahooGazetteer.parseLocationString(locationString);
     }
 }

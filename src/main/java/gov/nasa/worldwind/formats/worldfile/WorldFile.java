@@ -120,27 +120,24 @@ public class WorldFile {
         for (File file : worldFiles) {
             if (!file.getName().isEmpty()
                 && file.getName().toLowerCase().charAt(file.getName().toLowerCase().length() - 1) == 'w') {
-                scanWorldFile(file, values);
+                WorldFile.scanWorldFile(file, values);
                 //transformFile = file;
-            }
-            else if (file.getName().toLowerCase().endsWith(".hdr")) {
-                scanHdrFile(file, values);
-            }
-            else if (file.getName().toLowerCase().endsWith(".prj")) {
+            } else if (file.getName().toLowerCase().endsWith(".hdr")) {
+                WorldFile.scanHdrFile(file, values);
+            } else if (file.getName().toLowerCase().endsWith(".prj")) {
                 String text = WWIO.readTextFile(file);
-                decodeOGCCoordinateSystemWKT(text, values);
+                WorldFile.decodeOGCCoordinateSystemWKT(text, values);
             }
         }
 
         int[] size;
-        Object o = values.get(WORLD_FILE_IMAGE_SIZE);
+        Object o = values.get(WorldFile.WORLD_FILE_IMAGE_SIZE);
         if ((o instanceof int[])) {
             size = (int[]) o;
-        }
-        else {
+        } else {
             size = WorldFile.parseSize(values);
             if (size != null)
-                values.set(WORLD_FILE_IMAGE_SIZE, size);
+                values.set(WorldFile.WORLD_FILE_IMAGE_SIZE, size);
         }
 
         o = WorldFile.parseByteOrder(values);
@@ -165,8 +162,7 @@ public class WorldFile {
         if (WorldFile.worldFileValuesAppearGeographic(values)) {
             if (size != null) {
                 sector = WorldFile.parseDegrees(values, size[0], size[1]);
-            }
-            else {
+            } else {
                 RenderedImage image = (RenderedImage) values.get(AVKey.IMAGE);
                 if (image != null) {
                     sector = WorldFile.parseDegrees(values, image.getWidth(), image.getHeight());
@@ -195,15 +191,14 @@ public class WorldFile {
             for (int i = 0; i < 6; i++) {
                 if (scanner.hasNextDouble()) {
                     switch (i) {
-                        case 0 -> values.set(WORLD_FILE_X_PIXEL_SIZE, scanner.nextDouble());
-                        case 1 -> values.set(WORLD_FILE_Y_COEFFICIENT, scanner.nextDouble());
-                        case 2 -> values.set(WORLD_FILE_X_COEFFICIENT, scanner.nextDouble());
-                        case 3 -> values.set(WORLD_FILE_Y_PIXEL_SIZE, scanner.nextDouble());
-                        case 4 -> values.set(WORLD_FILE_X_LOCATION, scanner.nextDouble());
-                        case 5 -> values.set(WORLD_FILE_Y_LOCATION, scanner.nextDouble());
+                        case 0 -> values.set(WorldFile.WORLD_FILE_X_PIXEL_SIZE, scanner.nextDouble());
+                        case 1 -> values.set(WorldFile.WORLD_FILE_Y_COEFFICIENT, scanner.nextDouble());
+                        case 2 -> values.set(WorldFile.WORLD_FILE_X_COEFFICIENT, scanner.nextDouble());
+                        case 3 -> values.set(WorldFile.WORLD_FILE_Y_PIXEL_SIZE, scanner.nextDouble());
+                        case 4 -> values.set(WorldFile.WORLD_FILE_X_LOCATION, scanner.nextDouble());
+                        case 5 -> values.set(WorldFile.WORLD_FILE_Y_LOCATION, scanner.nextDouble());
                     }
-                }
-                else {
+                } else {
                     String message = Logging.getMessage("SurfaceImage.WorldFileLineMissing", i + 1);
                     Logging.logger().severe(message);
                     throw new IllegalStateException(message);
@@ -233,48 +228,36 @@ public class WorldFile {
                 else if (key.equalsIgnoreCase("BANDROWBYTES")) {
                     // BANDROWBYTES number of bytes in one row of data
                     values.set(key, scanner.nextInt());
-                }
-
-                else if (key.equalsIgnoreCase("TOTALROWBYTES")) {
+                } else if (key.equalsIgnoreCase("TOTALROWBYTES")) {
                     // TOTALROWBYTES number of bytes in one row of data (for multi-band)
                     values.set(key, scanner.nextInt());
-                }
-
-                else if (key.equalsIgnoreCase("SKIPBYTES")) {
+                } else if (key.equalsIgnoreCase("SKIPBYTES")) {
                     // SKIPBYTES number of header bytes before data starts in binary file
                     values.set(key, scanner.nextInt());
-                }
-                else if (key.equalsIgnoreCase("NODATA") || key.equalsIgnoreCase("NODATA_VALUE")) {
+                } else if (key.equalsIgnoreCase("NODATA") || key.equalsIgnoreCase("NODATA_VALUE")) {
                     // NODATA_VALUE is a newer version of the NODATA keyword, often = -9999
                     double nodata = scanner.nextDouble();
                     values.set(key, nodata);
                     values.set("NODATA", nodata);
-                }
-                else if (key.equalsIgnoreCase("ULXMAP")) {
+                } else if (key.equalsIgnoreCase("ULXMAP")) {
                     // ULXMAP center x-coordinate of grid cell in upper-left corner
                     values.set(key, scanner.nextDouble());
-                }
-                else if (key.equalsIgnoreCase("ULYMAP")) {
+                } else if (key.equalsIgnoreCase("ULYMAP")) {
                     // ULYMAP center y-coordinate of grid cell in upper-left corner
                     values.set(key, scanner.nextDouble());
-                }
-                else if (key.equalsIgnoreCase("XLLCORNER")) {
+                } else if (key.equalsIgnoreCase("XLLCORNER")) {
                     // XLLCORNER left-edge x-coordinate of grid cell in lower-left corner
                     values.set(key, scanner.nextDouble());
-                }
-                else if (key.equalsIgnoreCase("YLLCORNER")) {
+                } else if (key.equalsIgnoreCase("YLLCORNER")) {
                     // YLLCORNER bottom y-coordinate of grid cell in lower-left corner
                     values.set(key, scanner.nextDouble());
-                }
-                else if (key.equalsIgnoreCase("XLLCENTER")) {
+                } else if (key.equalsIgnoreCase("XLLCENTER")) {
                     // XLLCENTER center x-coordinate of grid cell in lower-left corner
                     values.set(key, scanner.nextDouble());
-                }
-                else if (key.equalsIgnoreCase("YLLCCENTER")) {
+                } else if (key.equalsIgnoreCase("YLLCCENTER")) {
                     // YLLCCENTER center y-coordinate of grid cell in lower-left corner
                     values.set(key, scanner.nextDouble());
-                }
-                else if (key.equalsIgnoreCase("XDIM"))
+                } else if (key.equalsIgnoreCase("XDIM"))
                     values.set(key, scanner.nextDouble());
                 else if (key.equalsIgnoreCase("YDIM"))
                     values.set(key, scanner.nextDouble());
@@ -284,16 +267,13 @@ public class WorldFile {
                     values.set(key, cell_size);
                     values.set("XDIM", cell_size);
                     values.set("YDIM", cell_size);
-                }
-                else if (key.equalsIgnoreCase("PIXELTYPE")) {
+                } else if (key.equalsIgnoreCase("PIXELTYPE")) {
                     values.set(key, scanner.next());
-                }
-                else if (key.equalsIgnoreCase("BYTEORDER")) {
+                } else if (key.equalsIgnoreCase("BYTEORDER")) {
                     // BYTEORDER byte order (only relevant for binary files, e.g. BIL, FLT)
                     // I or LSBFIRST for Intel, M or MSBFIRST for Motorola
                     values.set(key, scanner.next());
-                }
-                else
+                } else
                     values.set(key, scanner.next());
             }
 
@@ -351,8 +331,7 @@ public class WorldFile {
             for (int i = 0; i < 6; i++) {
                 if (scanner.hasNextDouble()) {
                     values[i] = scanner.nextDouble();
-                }
-                else {
+                } else {
                     String message = Logging.getMessage("SurfaceImage.WorldFileLineMissing", i + 1);
                     Logging.logger().severe(message);
                     throw new IllegalStateException(message);
@@ -376,25 +355,25 @@ public class WorldFile {
         double xPixelSize;
         double yPixelSize;
 
-        Object o = values.get(WORLD_FILE_X_LOCATION);
+        Object o = values.get(WorldFile.WORLD_FILE_X_LOCATION);
         if (o instanceof Double)
             xLocation = (Double) o;
         else
             return false;
 
-        o = values.get(WORLD_FILE_Y_LOCATION);
+        o = values.get(WorldFile.WORLD_FILE_Y_LOCATION);
         if (o instanceof Double)
             yLocation = (Double) o;
         else
             return false;
 
-        o = values.get(WORLD_FILE_X_PIXEL_SIZE);
+        o = values.get(WorldFile.WORLD_FILE_X_PIXEL_SIZE);
         if (o instanceof Double)
             xPixelSize = (Double) o;
         else
             return false;
 
-        o = values.get(WORLD_FILE_Y_PIXEL_SIZE);
+        o = values.get(WorldFile.WORLD_FILE_Y_PIXEL_SIZE);
         if (o instanceof Double)
             yPixelSize = (Double) o;
         else
@@ -516,8 +495,7 @@ public class WorldFile {
                 case 32:
                     return AVKey.FLOAT32;
             }
-        }
-        else if (values.hasKey("PIXELTYPE")) {
+        } else if (values.hasKey("PIXELTYPE")) {
             String pixelType = (String) values.get("PIXELTYPE");
             if ("FLOAT".equalsIgnoreCase(pixelType))
                 return AVKey.FLOAT32;
@@ -563,21 +541,20 @@ public class WorldFile {
             throw new IllegalArgumentException(message);
         }
 
-        Angle latOrigin = Angle.fromDegrees((Double) values.get(WORLD_FILE_Y_LOCATION));
+        Angle latOrigin = Angle.fromDegrees((Double) values.get(WorldFile.WORLD_FILE_Y_LOCATION));
         // Make y offset negative if it's not already. World file convention is upper left origin.
-        double s = (Double) values.get(WORLD_FILE_Y_PIXEL_SIZE);
+        double s = (Double) values.get(WorldFile.WORLD_FILE_Y_PIXEL_SIZE);
         // The latitude and longitude dimensions are computed by multiplying the pixel size by the image's width or
         // height. The pixel size denotes the dimension of a pixel in degrees.
         Angle latOffset = latOrigin.addDegrees((s <= 0 ? s : -s) * imageHeight);
-        Angle lonOrigin = Angle.fromDegrees((Double) values.get(WORLD_FILE_X_LOCATION));
-        Angle lonOffset = lonOrigin.addDegrees((Double) values.get(WORLD_FILE_X_PIXEL_SIZE) * imageWidth);
+        Angle lonOrigin = Angle.fromDegrees((Double) values.get(WorldFile.WORLD_FILE_X_LOCATION));
+        Angle lonOffset = lonOrigin.addDegrees((Double) values.get(WorldFile.WORLD_FILE_X_PIXEL_SIZE) * imageWidth);
 
         Angle minLon, maxLon;
         if (lonOrigin.degrees < lonOffset.degrees) {
             minLon = lonOrigin;
             maxLon = lonOffset;
-        }
-        else {
+        } else {
             minLon = lonOffset;
             maxLon = lonOrigin;
         }
@@ -586,8 +563,7 @@ public class WorldFile {
         if (latOrigin.degrees < latOffset.degrees) {
             minLat = latOrigin;
             maxLat = latOffset;
-        }
-        else {
+        } else {
             minLat = latOffset;
             maxLat = latOrigin;
         }
@@ -610,8 +586,7 @@ public class WorldFile {
      * @param imageWidth  the width of the image associated with the world file.
      * @param imageHeight the height of the image associated with the world file.
      * @param zone        the UTM zone number (1 to 60), can be zero if expected units are in decimal degrees.
-     * @param hemisphere  the UTM hemisphere, either {@link AVKey#NORTH} or {@link
-     *                    AVKey#SOUTH}.
+     * @param hemisphere  the UTM hemisphere, either {@link AVKey#NORTH} or {@link AVKey#SOUTH}.
      * @return the corresponding <code>Sector</code> or <code>null</code> if the sector could not be computed.
      * @throws IllegalArgumentException if the values array is null or has a length less than six, , the image width and
      *                                  height are less than zero, or the hemisphere indicator is not {@link
@@ -680,16 +655,14 @@ public class WorldFile {
      * href="http://www.opengeospatial.org/standards/ct">http://www.opengeospatial.org/standards/ct</a>. This recognizes
      * Geographic and UTM coordinate systems. This configures the parameter list according to the coordinate system as
      * follows: <ul> <li>Geographic - {@link AVKey#COORDINATE_SYSTEM} set to {@link
-     * AVKey#COORDINATE_SYSTEM_GEOGRAPHIC}.</li> <li>Projected coordinate system: Universal
-     * Transverse Mercator (UTM) - {@link AVKey#COORDINATE_SYSTEM} set to {@link
-     * AVKey#COORDINATE_SYSTEM_PROJECTED} and {@link AVKey#PROJECTION_NAME}
-     * set to {@link AVKey#PROJECTION_UTM}. {@link AVKey#PROJECTION_HEMISPHERE}
-     * set to either {@link AVKey#NORTH} or {@link AVKey#SOUTH}.
-     * {@link AVKey#PROJECTION_ZONE} set to an integer in the range 1-60</li> <li>Projected
-     * coordinate system: unknown projection - {@link AVKey#COORDINATE_SYSTEM} set to {@link
-     * AVKey#COORDINATE_SYSTEM_PROJECTED} and {@link AVKey#PROJECTION_NAME}
-     * set to {@link AVKey#PROJECTION_UNKNOWN}.</li> <li>Unknown coordinate system - {@link
-     * AVKey#COORDINATE_SYSTEM} set to {@link AVKey#COORDINATE_SYSTEM_UNKNOWN}.
+     * AVKey#COORDINATE_SYSTEM_GEOGRAPHIC}.</li> <li>Projected coordinate system: Universal Transverse Mercator (UTM) -
+     * {@link AVKey#COORDINATE_SYSTEM} set to {@link AVKey#COORDINATE_SYSTEM_PROJECTED} and {@link
+     * AVKey#PROJECTION_NAME} set to {@link AVKey#PROJECTION_UTM}. {@link AVKey#PROJECTION_HEMISPHERE} set to either
+     * {@link AVKey#NORTH} or {@link AVKey#SOUTH}. {@link AVKey#PROJECTION_ZONE} set to an integer in the range
+     * 1-60</li> <li>Projected coordinate system: unknown projection - {@link AVKey#COORDINATE_SYSTEM} set to {@link
+     * AVKey#COORDINATE_SYSTEM_PROJECTED} and {@link AVKey#PROJECTION_NAME} set to {@link
+     * AVKey#PROJECTION_UNKNOWN}.</li> <li>Unknown coordinate system - {@link AVKey#COORDINATE_SYSTEM} set to {@link
+     * AVKey#COORDINATE_SYSTEM_UNKNOWN}.
      * </ul> If an exception occurs while parsing the coordinate system text, the parameter list is left unchanged.
      *
      * @param text   a String containing an OGC coordinate system in well-known text format.
@@ -712,15 +685,14 @@ public class WorldFile {
         text = text.trim().toUpperCase();
 
         try {
-            Matcher csMatcher = GEOGCS_WKT_PATTERN.matcher(text);
+            Matcher csMatcher = WorldFile.GEOGCS_WKT_PATTERN.matcher(text);
             if (csMatcher.matches()) {
                 params.set(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_GEOGRAPHIC);
-            }
-            else if ((csMatcher = PROJCS_WKT_PATTERN.matcher(text)).matches()) {
+            } else if ((csMatcher = WorldFile.PROJCS_WKT_PATTERN.matcher(text)).matches()) {
                 params.set(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_PROJECTED);
 
                 String csText = csMatcher.group(1);
-                Matcher projMatcher = UTM_NAME_WKT_PATTERN.matcher(csText);
+                Matcher projMatcher = WorldFile.UTM_NAME_WKT_PATTERN.matcher(csText);
                 if (projMatcher.matches()) {
                     params.set(AVKey.PROJECTION_NAME, AVKey.PROJECTION_UTM);
 
@@ -747,16 +719,14 @@ public class WorldFile {
 
                     if (params.get(AVKey.PROJECTION_HEMISPHERE) == null)
                         Logging.logger().warning(Logging.getMessage("generic.HemisphereIsInvalid", s));
-                }
-                else {
+                } else {
                     params.set(AVKey.PROJECTION_NAME, AVKey.PROJECTION_UNKNOWN);
                 }
-            }
-            else {
+            } else {
                 params.set(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_UNKNOWN);
             }
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             Logging.logger().log(Level.SEVERE,
                 Logging.getMessage("generic.ExceptionParsingCoordinateSystem", text), e);
         }

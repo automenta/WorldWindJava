@@ -17,7 +17,7 @@ public class MercatorSector extends Sector {
 
     public MercatorSector(double minLatPercent, double maxLatPercent,
         Angle minLongitude, Angle maxLongitude) {
-        super(gudermannian(minLatPercent), gudermannian(maxLatPercent),
+        super(MercatorSector.gudermannian(minLatPercent), MercatorSector.gudermannian(maxLatPercent),
             minLongitude, maxLongitude);
         this.minLatPercent = minLatPercent;
         this.maxLatPercent = maxLatPercent;
@@ -30,14 +30,13 @@ public class MercatorSector extends Sector {
     }
 
     public static MercatorSector fromSector(Sector sector) {
-        return new MercatorSector(gudermannianInverse(sector.latMin()),
-            gudermannianInverse(sector.latMax()), new Angle(sector
-            .lonMin()),
-            new Angle(sector.lonMax()));
+        return new MercatorSector(MercatorSector.gudermannianInverse(sector.latMin()),
+            MercatorSector.gudermannianInverse(sector.latMax()), new Angle(sector.lonMin),
+            new Angle(sector.lonMax));
     }
 
     public static double gudermannianInverse(Angle latitude) {
-        return Math.log(Math.tan(Math.PI / 4.0 + latitude.radians / 2.0))
+        return Math.log(Math.tan(Math.PI / 4.0 + latitude.radians() / 2.0))
             / Math.PI;
     }
 

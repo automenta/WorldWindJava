@@ -60,8 +60,7 @@ public class GeoSymTable {
                 if (s == null || s.isEmpty()) {
                     if (!acceptNullValue)
                         iter.remove();
-                }
-                else {
+                } else {
                     if (!s.equalsIgnoreCase(value))
                         iter.remove();
                 }

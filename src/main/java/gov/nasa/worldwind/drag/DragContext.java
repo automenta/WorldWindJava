@@ -44,9 +44,8 @@ public class DragContext {
      */
     protected View view;
     /**
-     * The current drag state, which can be one of the three following values: {@link
-     * AVKey#DRAG_BEGIN}, {@link AVKey#DRAG_CHANGE}, {@link
-     * AVKey#DRAG_ENDED}.
+     * The current drag state, which can be one of the three following values: {@link AVKey#DRAG_BEGIN}, {@link
+     * AVKey#DRAG_CHANGE}, {@link AVKey#DRAG_ENDED}.
      */
     protected String dragState;
 

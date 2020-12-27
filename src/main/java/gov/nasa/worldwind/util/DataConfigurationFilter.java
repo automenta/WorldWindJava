@@ -27,39 +27,8 @@ public class DataConfigurationFilter implements FileFilter, FileStoreFilter {
     }
 
     /**
-     * Returns true if the specified file can be opened as an XML document, and calling {@link
-     * #accept(Document)} returns true.
-     *
-     * @param file the file in question.
-     * @return true if the file should be accepted; false otherwise.
-     * @throws IllegalArgumentException if the file is null.
-     */
-    public boolean accept(File file) {
-        if (file == null) {
-            String msg = Logging.getMessage("nullValue.FileIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        // First check the file path, optionally returning false if the path cannot be accepted for any reason.
-        if (!DataConfigurationFilter.acceptFilePath(file.getPath()))
-            return false;
-
-        Document doc = null;
-        try {
-            doc = WWXML.openDocumentFile(file.getPath(), this.getClass());
-        }
-        catch (Exception e) {
-            // Not interested in logging the exception. We just want to return false, indicating that the File cannot
-            // be opened as an XML document.
-        }
-
-        return (doc != null) && (doc.getDocumentElement() != null) && DataConfigurationFilter.accept(doc);
-    }
-
-    /**
-     * Returns true if the specified {@link URL} can be opened as an XML document, and calling {@link
-     * #accept(Document)} returns true.
+     * Returns true if the specified {@link URL} can be opened as an XML document, and calling {@link #accept(Document)}
+     * returns true.
      *
      * @param url the URL in question.
      * @return true if the URL should be accepted; false otherwise.
@@ -76,7 +45,7 @@ public class DataConfigurationFilter implements FileFilter, FileStoreFilter {
         try {
             doc = WWXML.openDocumentURL(url);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             // Not interested in logging the exception. We just want to return false, indicating that the URL cannot
             // be opened as an XML document.
         }
@@ -103,49 +72,12 @@ public class DataConfigurationFilter implements FileFilter, FileStoreFilter {
         try {
             doc = WWXML.openDocumentStream(inputStream);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             // Not interested in logging the exception. We just want to return false, indicating that the InputStream
             // cannot be opened as an XML document.
         }
 
         return (doc != null) && (doc.getDocumentElement() != null) && DataConfigurationFilter.accept(doc);
-    }
-
-    /**
-     * Returns true if the specified file store path can be opened as an XML document, and calling {@link
-     * #accept(Document)} returns true.
-     *
-     * @param fileStore the file store containing the named file path.
-     * @param fileName  the named file path in question.
-     * @return true if the file name should be accepted; false otherwise.
-     * @throws IllegalArgumentException if either the file store or the file name are null.
-     */
-    public boolean accept(FileStore fileStore, String fileName) {
-        if (fileStore == null) {
-            String msg = Logging.getMessage("nullValue.FileStoreIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        if (fileName == null) {
-            String message = Logging.getMessage("nullValue.FilePathIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        // Attempt to locate the named path in the FileStore, optionally checking the class path. If a file with that
-        // name cannot be located, then return false.
-        URL url = fileStore.findFile(fileName, true);
-        if (url == null)
-            return false;
-
-        // Attempt to convert the URL to a local file path. If that succeeds, then continue treating the URL as if
-        // it were a File.
-        File file = WWIO.convertURLToFile(url);
-        if (file != null)
-            return this.accept(file);
-
-        return DataConfigurationFilter.accept(url);
     }
 
     /**
@@ -196,5 +128,73 @@ public class DataConfigurationFilter implements FileFilter, FileStoreFilter {
         }
 
         return filePath.toLowerCase().endsWith(".xml");
+    }
+
+    /**
+     * Returns true if the specified file can be opened as an XML document, and calling {@link #accept(Document)}
+     * returns true.
+     *
+     * @param file the file in question.
+     * @return true if the file should be accepted; false otherwise.
+     * @throws IllegalArgumentException if the file is null.
+     */
+    public boolean accept(File file) {
+        if (file == null) {
+            String msg = Logging.getMessage("nullValue.FileIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        // First check the file path, optionally returning false if the path cannot be accepted for any reason.
+        if (!DataConfigurationFilter.acceptFilePath(file.getPath()))
+            return false;
+
+        Document doc = null;
+        try {
+            doc = WWXML.openDocumentFile(file.getPath(), this.getClass());
+        }
+        catch (RuntimeException e) {
+            // Not interested in logging the exception. We just want to return false, indicating that the File cannot
+            // be opened as an XML document.
+        }
+
+        return (doc != null) && (doc.getDocumentElement() != null) && DataConfigurationFilter.accept(doc);
+    }
+
+    /**
+     * Returns true if the specified file store path can be opened as an XML document, and calling {@link
+     * #accept(Document)} returns true.
+     *
+     * @param fileStore the file store containing the named file path.
+     * @param fileName  the named file path in question.
+     * @return true if the file name should be accepted; false otherwise.
+     * @throws IllegalArgumentException if either the file store or the file name are null.
+     */
+    public boolean accept(FileStore fileStore, String fileName) {
+        if (fileStore == null) {
+            String msg = Logging.getMessage("nullValue.FileStoreIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        if (fileName == null) {
+            String message = Logging.getMessage("nullValue.FilePathIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        // Attempt to locate the named path in the FileStore, optionally checking the class path. If a file with that
+        // name cannot be located, then return false.
+        URL url = fileStore.findFile(fileName, true);
+        if (url == null)
+            return false;
+
+        // Attempt to convert the URL to a local file path. If that succeeds, then continue treating the URL as if
+        // it were a File.
+        File file = WWIO.convertURLToFile(url);
+        if (file != null)
+            return this.accept(file);
+
+        return DataConfigurationFilter.accept(url);
     }
 }

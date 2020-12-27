@@ -30,10 +30,10 @@ public abstract class AbstractFileStore extends WWObjectImpl implements FileStor
     protected final List<StoreLocation> readLocations =
         new CopyOnWriteArrayList<>();
     private final Object fileLock = new Object();
-    protected StoreLocation writeLocation = null;
+    protected StoreLocation writeLocation;
 
     protected static String buildLocationPath(String property, String append, String wwDir) {
-        String path = propertyToPath(property);
+        String path = AbstractFileStore.propertyToPath(property);
 
         if (append != null && !append.isEmpty())
             path = WWIO.appendPathPart(path, append.trim());
@@ -57,10 +57,10 @@ public abstract class AbstractFileStore extends WWObjectImpl implements FileStor
             return prop;
 
         if (propName.equalsIgnoreCase("gov.nasa.worldwind.platform.alluser.store"))
-            return determineAllUserLocation();
+            return AbstractFileStore.determineAllUserLocation();
 
         if (propName.equalsIgnoreCase("gov.nasa.worldwind.platform.user.store"))
-            return determineSingleUserLocation();
+            return AbstractFileStore.determineSingleUserLocation();
 
         return null;
     }
@@ -68,27 +68,24 @@ public abstract class AbstractFileStore extends WWObjectImpl implements FileStor
     protected static String determineAllUserLocation() {
         if (Configuration.isMacOS()) {
             return "/Library/Caches";
-        }
-        else if (Configuration.isWindowsOS()) {
+        } else if (Configuration.isWindowsOS()) {
             String path = System.getenv("ALLUSERSPROFILE");
             if (path == null) {
                 Logging.logger().severe("generic.AllUsersWindowsProfileNotKnown");
                 return null;
             }
             return path + (Configuration.isWindows7OS() ? "" : "\\Application Data");
-        }
-        else if (Configuration.isLinuxOS() || Configuration.isUnixOS()
+        } else if (Configuration.isLinuxOS() || Configuration.isUnixOS()
             || Configuration.isSolarisOS()) {
-            return UNIX_CACHE_PATH;
-        }
-        else {
+            return AbstractFileStore.UNIX_CACHE_PATH;
+        } else {
             Logging.logger().warning("generic.UnknownOperatingSystem");
             return null;
         }
     }
 
     protected static String determineSingleUserLocation() {
-        String home = getUserHomeDir();
+        String home = AbstractFileStore.getUserHomeDir();
         if (home == null) {
             Logging.logger().warning("generic.UsersHomeDirectoryNotKnown");
             return null;
@@ -98,18 +95,15 @@ public abstract class AbstractFileStore extends WWObjectImpl implements FileStor
 
         if (Configuration.isMacOS()) {
             path = "/Library/Caches";
-        }
-        else if (Configuration.isWindowsOS()) {
+        } else if (Configuration.isWindowsOS()) {
             // This produces an incorrect path with duplicate parts,
             // like "C:\Users\PatC:\Users\Pat\Application Data".
 
             path = "\\Application Data";
-        }
-        else if (Configuration.isLinuxOS() || Configuration.isUnixOS()
+        } else if (Configuration.isLinuxOS() || Configuration.isUnixOS()
             || Configuration.isSolarisOS()) {
-            path = UNIX_CACHE_PATH;
-        }
-        else {
+            path = AbstractFileStore.UNIX_CACHE_PATH;
+        } else {
             Logging.logger().fine("generic.UnknownOperatingSystem");
         }
 
@@ -142,11 +136,11 @@ public abstract class AbstractFileStore extends WWObjectImpl implements FileStor
     }
 
     protected static File makeAbsoluteFile(File file, String fileName) {
-        return new File(file.getAbsolutePath() + "/" + fileName);
+        return new File(file.getAbsolutePath() + '/' + fileName);
     }
 
     protected static String makeAbsolutePath(File dir, String fileName) {
-        return dir.getAbsolutePath() + "/" + fileName;
+        return dir.getAbsolutePath() + '/' + fileName;
     }
 
     protected static String normalizeFileStoreName(String fileName) {
@@ -223,7 +217,7 @@ public abstract class AbstractFileStore extends WWObjectImpl implements FileStor
                 String isInstall = pathFinder.evaluate("@isInstall", location);
                 String isMarkWhenUsed = pathFinder.evaluate("@isMarkWhenUsed", location);
 
-                String path = buildLocationPath(prop, append, wwDir);
+                String path = AbstractFileStore.buildLocationPath(prop, append, wwDir);
                 if (path == null) {
                     Logging.logger().log(Level.WARNING, "FileStore.LocationInvalid",
                         prop != null ? prop : Logging.getMessage("generic.Unknown"));
@@ -278,7 +272,7 @@ public abstract class AbstractFileStore extends WWObjectImpl implements FileStor
                 String append = pathFinder.evaluate("@append", location);
                 String create = pathFinder.evaluate("@create", location);
 
-                String path = buildLocationPath(prop, append, wwDir);
+                String path = AbstractFileStore.buildLocationPath(prop, append, wwDir);
                 if (path == null) {
                     Logging.logger().log(Level.WARNING, "FileStore.LocationInvalid",
                         prop != null ? prop : Logging.getMessage("generic.Unknown"));
@@ -413,7 +407,7 @@ public abstract class AbstractFileStore extends WWObjectImpl implements FileStor
             if (fileName.startsWith(dir.getAbsolutePath()))
                 file = new File(fileName);
             else
-                file = makeAbsoluteFile(dir, fileName);
+                file = AbstractFileStore.makeAbsoluteFile(dir, fileName);
 
             if (file.exists())
                 return true;
@@ -456,13 +450,13 @@ public abstract class AbstractFileStore extends WWObjectImpl implements FileStor
             if (!dir.exists())
                 continue;
 
-            File file = new File(makeAbsolutePath(dir, fileName));
+            File file = new File(AbstractFileStore.makeAbsolutePath(dir, fileName));
             if (file.exists()) {
                 try {
                     if (location.isMarkWhenUsed())
-                        markFileUsed(file);
+                        AbstractFileStore.markFileUsed(file);
                     else
-                        markFileUsed(file.getParentFile());
+                        AbstractFileStore.markFileUsed(file.getParentFile());
 
                     return file.toURI().toURL();
                 }
@@ -489,7 +483,7 @@ public abstract class AbstractFileStore extends WWObjectImpl implements FileStor
         }
 
         if (this.writeLocation != null) {
-            String fullPath = makeAbsolutePath(this.writeLocation.getFile(), fileName);
+            String fullPath = AbstractFileStore.makeAbsolutePath(this.writeLocation.getFile(), fileName);
             File file = new File(fullPath);
             boolean canCreateFile = false;
 
@@ -598,7 +592,7 @@ public abstract class AbstractFileStore extends WWObjectImpl implements FileStor
             // named cache path.
             File dir = location.getFile();
             if (pathName != null)
-                dir = new File(makeAbsolutePath(dir, pathName));
+                dir = new File(AbstractFileStore.makeAbsolutePath(dir, pathName));
 
             // Either the location does not exists, or the speciifed path does not exist under that location. In either
             // case we skip searching this location.
@@ -635,7 +629,7 @@ public abstract class AbstractFileStore extends WWObjectImpl implements FileStor
 
             if (childFile.isDirectory()) {
                 subDirs.add(childFile);
-            }else {
+            } else {
                 if (this.listFile(location, childFile, filter, names) && exitBranchOnFirstMatch)
                     return;
             }
@@ -653,11 +647,11 @@ public abstract class AbstractFileStore extends WWObjectImpl implements FileStor
 
     protected boolean listFile(StoreLocation location, File file, FileStoreFilter filter,
         Collection<String> names) {
-        String fileName = storePathForFile(location, file);
+        String fileName = AbstractFileStore.storePathForFile(location, file);
         if (fileName == null)
             return false;
 
-        return this.listFileName(location, normalizeFileStoreName(fileName), filter, names);
+        return this.listFileName(location, AbstractFileStore.normalizeFileStoreName(fileName), filter, names);
     }
 
     @SuppressWarnings("UnusedDeclaration")
@@ -671,7 +665,7 @@ public abstract class AbstractFileStore extends WWObjectImpl implements FileStor
     }
 
     protected static class StoreLocation extends AVListImpl {
-        protected boolean markWhenUsed = false;
+        protected boolean markWhenUsed;
 
         public StoreLocation(File file, boolean isInstall) {
             this.set(AVKey.FILE_STORE_LOCATION, file);

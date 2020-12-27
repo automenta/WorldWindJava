@@ -25,7 +25,7 @@ public class SurfacePolylines extends AbstractSurfaceShape {
     protected List<Sector> sectors;
     protected CompoundVecBuffer buffer;
     protected boolean needsOutlineTessellation = true;
-    protected boolean crossesDateLine = false;
+    protected boolean crossesDateLine;
 
     public SurfacePolylines(CompoundVecBuffer buffer) {
 
@@ -36,6 +36,40 @@ public class SurfacePolylines extends AbstractSurfaceShape {
 
         this.sectors = Collections.singletonList(sector);
         this.buffer = buffer;
+    }
+
+    protected static boolean tessellatePart(GL2 gl, VecBuffer vecBuffer, final LatLon referenceLocation) {
+        Iterable<double[]> iterable = vecBuffer.getCoords(3);
+        boolean dateLineCrossed = false;
+
+        final Angle rLon = referenceLocation.getLongitude();
+        final Angle rLat = referenceLocation.getLatitude();
+
+        gl.glBegin(GL2.GL_LINE_STRIP);
+        try {
+            int sign = 0; // hemisphere offset direction
+            double lonPrev = 0;
+
+            for (double[] coords : iterable) {
+                if (Math.abs(lonPrev - coords[0]) > 180) {
+                    // Crossing date line, sum departure point longitude sign for hemisphere offset
+                    sign += (int) Math.signum(lonPrev);
+                    dateLineCrossed = true;
+                }
+
+                lonPrev = coords[0];
+
+                double lonDegrees = coords[0] - rLon.degrees;
+                double latDegrees = coords[1] - rLat.degrees;
+                lonDegrees += sign * 360; // apply hemisphere offset
+                gl.glVertex3f((float) lonDegrees, (float) latDegrees, 0);
+            }
+        }
+        finally {
+            gl.glEnd();
+        }
+
+        return dateLineCrossed;
     }
 
     /**
@@ -178,7 +212,8 @@ public class SurfacePolylines extends AbstractSurfaceShape {
                 // Apply hemisphere offset and draw again
                 gl.glTranslated(360 * hemisphereSign, 0, 0);
                 gl.glCallList(dlResource[0]);
-            } finally {
+            }
+            finally {
                 gl.glPopMatrix();
             }
         }
@@ -188,7 +223,7 @@ public class SurfacePolylines extends AbstractSurfaceShape {
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         this.crossesDateLine = false;
 
-        int[] dlResource = new int[] {gl.glGenLists(1), 1};
+        int[] dlResource = {gl.glGenLists(1), 1};
 
         gl.glNewList(dlResource[0], GL2.GL_COMPILE);
         final int n = this.buffer.size();
@@ -211,39 +246,5 @@ public class SurfacePolylines extends AbstractSurfaceShape {
             numBytes);
 
         return dlResource;
-    }
-
-    protected static boolean tessellatePart(GL2 gl, VecBuffer vecBuffer, final LatLon referenceLocation) {
-        Iterable<double[]> iterable = vecBuffer.getCoords(3);
-        boolean dateLineCrossed = false;
-
-        final Angle rLon = referenceLocation.getLongitude();
-        final Angle rLat = referenceLocation.getLatitude();
-
-        gl.glBegin(GL2.GL_LINE_STRIP);
-        try {
-            int sign = 0; // hemisphere offset direction
-            double lonPrev = 0;
-
-            for (double[] coords : iterable) {
-                if (Math.abs(lonPrev - coords[0]) > 180) {
-                    // Crossing date line, sum departure point longitude sign for hemisphere offset
-                    sign += (int) Math.signum(lonPrev);
-                    dateLineCrossed = true;
-                }
-
-                lonPrev = coords[0];
-
-                double lonDegrees = coords[0] - rLon.degrees;
-                double latDegrees = coords[1] - rLat.degrees;
-                lonDegrees += sign * 360; // apply hemisphere offset
-                gl.glVertex3f((float) lonDegrees, (float) latDegrees, 0);
-            }
-        }
-        finally {
-            gl.glEnd();
-        }
-
-        return dateLineCrossed;
     }
 }

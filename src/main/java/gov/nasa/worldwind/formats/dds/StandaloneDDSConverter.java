@@ -6,6 +6,7 @@
 package gov.nasa.worldwind.formats.dds;
 
 ////.*;
+
 import gov.nasa.worldwind.util.*;
 
 import javax.swing.*;
@@ -31,9 +32,9 @@ public class StandaloneDDSConverter {
         }
 
         if (file.isDirectory())
-            convertDirectory(file, new String[] {".jpg", "png"});
+            StandaloneDDSConverter.convertDirectory(file, new String[] {".jpg", "png"});
         else
-            convertFile(file);
+            StandaloneDDSConverter.convertFile(file);
     }
 
     private static void convertDirectory(File dir, final String[] suffixes) {
@@ -51,7 +52,7 @@ public class StandaloneDDSConverter {
         if (files != null) {
             for (File file : files) {
                 try {
-                    convertFile(file);
+                    StandaloneDDSConverter.convertFile(file);
                 }
                 catch (Exception e) {
                     System.out.printf("Exception converting %s, skipping file\n", file.getPath());
@@ -64,7 +65,7 @@ public class StandaloneDDSConverter {
 
         if (directories != null) {
             for (File directory : directories) {
-                convertDirectory(directory, suffixes);
+                StandaloneDDSConverter.convertDirectory(directory, suffixes);
             }
         }
     }
@@ -94,7 +95,7 @@ public class StandaloneDDSConverter {
 
         for (File file : files) {
             try {
-                convertToDDS(file);
+                StandaloneDDSConverter.convertToDDS(file);
             }
             catch (IOException e) {
                 System.out.printf("Exception converting input file %s, skipping file\n", file.getPath());

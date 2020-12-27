@@ -50,7 +50,7 @@ public class ForwardLineOfOwnTroops extends PhaseLine {
     /**
      * Number of intervals used to draw the arcs along the line.
      */
-    protected int intervals = DEFAULT_NUM_INTERVALS;
+    protected int intervals = ForwardLineOfOwnTroops.DEFAULT_NUM_INTERVALS;
 
     /**
      * Create a new graphic.
@@ -68,6 +68,30 @@ public class ForwardLineOfOwnTroops extends PhaseLine {
      */
     public static List<String> getSupportedGraphics() {
         return Collections.singletonList(TacGrpSidc.C2GM_GNL_LNE_FLOT);
+    }
+
+    protected static double computeDefaultWavelength(Iterable<? extends Position> positions, Extent globe) {
+        Sector sector = Sector.boundingSector(positions);
+        double diagonal = Math.hypot(toRadians(sector.latDelta), toRadians(sector.lonDelta));
+
+        return (diagonal * globe.getRadius()) / ForwardLineOfOwnTroops.DEFAULT_NUM_WAVES;
+    }
+
+    protected static Angle computeGreatCirclePathLength(Iterable<? extends Position> positions) {
+        double length = 0;
+
+        // Compute the number of vertices and the length of the path.
+        Position prev = null;
+        for (Position pos : positions) {
+            if (prev != null) {
+                Angle dist = LatLon.greatCircleDistance(pos, prev);
+                length += dist.radians();
+            }
+
+            prev = pos;
+        }
+
+        return Angle.fromRadians(length);
     }
 
     /**
@@ -216,9 +240,9 @@ public class ForwardLineOfOwnTroops extends PhaseLine {
             Angle azimuth = LatLon.greatCircleAzimuth(posA, posB);
 
             // Generate positions for a semicircle centered on the midpoint.
-            double delta = Angle.POS180.radians / intervals;
+            double delta = Angle.POS180.radians() / intervals;
             for (int i = 0; i < intervals; i++) {
-                LatLon ll = LatLon.greatCircleEndPosition(midPoint, azimuth.radians + delta * i * sign, radius);
+                LatLon ll = LatLon.greatCircleEndPosition(midPoint, azimuth.radians() + delta * i * sign, radius);
                 wavePositions.add(new Position(ll, 0));
             }
             posB = posA;
@@ -227,36 +251,12 @@ public class ForwardLineOfOwnTroops extends PhaseLine {
         return wavePositions;
     }
 
-    protected static double computeDefaultWavelength(Iterable<? extends Position> positions, Extent globe) {
-        Sector sector = Sector.boundingSector(positions);
-        double diagonal = Math.hypot(toRadians(sector.latDelta), toRadians(sector.lonDelta));
-
-        return (diagonal * globe.getRadius()) / DEFAULT_NUM_WAVES;
-    }
-
-    protected static Angle computeGreatCirclePathLength(Iterable<? extends Position> positions) {
-        double length = 0;
-
-        // Compute the number of vertices and the length of the path.
-        Position prev = null;
-        for (Position pos : positions) {
-            if (prev != null) {
-                Angle dist = LatLon.greatCircleDistance(pos, prev);
-                length += dist.radians;
-            }
-
-            prev = pos;
-        }
-
-        return Angle.fromRadians(length);
-    }
-
     @Override
     protected String getGraphicLabel() {
         StringBuilder sb = new StringBuilder();
         if (this.mustShowHostileIndicator()) {
             sb.append(SymbologyConstants.HOSTILE_ENEMY);
-            sb.append("\n");
+            sb.append('\n');
         }
         sb.append("FLOT");
         return sb.toString();
@@ -341,8 +341,7 @@ public class ForwardLineOfOwnTroops extends PhaseLine {
                 if (this.positions.hasNext()) {
                     this.thisPosition = this.nextControlPosition;
                     this.nextControlPosition = this.positions.next();
-                }
-                else {
+                } else {
                     Position next = this.nextControlPosition;
                     this.nextControlPosition = null;
 

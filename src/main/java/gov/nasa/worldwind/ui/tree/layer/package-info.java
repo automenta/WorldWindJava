@@ -6,8 +6,8 @@
 
 /**
  * <p>
- * Displays a list of layers using {@link gov.nasa.worldwind.ui.tree.BasicTree}. The layer tree also supports
- * displaying a tree of KML features.</p>
+ * Displays a list of layers using {@link gov.nasa.worldwind.ui.tree.BasicTree}. The layer tree also supports displaying
+ * a tree of KML features.</p>
  *
  * <p>
  * See {@link gov.nasa.worldwind.examples.LayerTreeUsage} for an example of how to use the layer tree. See {@link

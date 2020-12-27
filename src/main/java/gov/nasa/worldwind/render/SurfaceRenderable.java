@@ -11,10 +11,9 @@ import gov.nasa.worldwind.geom.Sector;
 import java.util.List;
 
 /**
- * Common interface for renderables that are drawn on the Globe's terrain surface, such as {@link
- * SurfaceShape}. SurfaceRenderable extends the Renderable interface by adding an interface
- * for determining the geographic region that bounds the renderable, and an interface for determining when the
- * renderable has changed.
+ * Common interface for renderables that are drawn on the Globe's terrain surface, such as {@link SurfaceShape}.
+ * SurfaceRenderable extends the Renderable interface by adding an interface for determining the geographic region that
+ * bounds the renderable, and an interface for determining when the renderable has changed.
  *
  * @author dcollins
  * @version $Id: SurfaceRenderable.java 2283 2014-08-30 15:58:43Z dcollins $

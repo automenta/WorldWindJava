@@ -76,36 +76,29 @@ public class OGCServiceInformation extends AbstractXMLEventParser {
         throws XMLStreamException {
         if (ctx.isStartElement(event, NAME)) {
             this.setServiceName(ctx.getStringParser().parseString(ctx, event));
-        }
-        else if (ctx.isStartElement(event, TITLE)) {
+        } else if (ctx.isStartElement(event, TITLE)) {
             this.setServiceTitle(ctx.getStringParser().parseString(ctx, event));
-        }
-        else if (ctx.isStartElement(event, ABSTRACT)) {
+        } else if (ctx.isStartElement(event, ABSTRACT)) {
             this.setServiceAbstract(ctx.getStringParser().parseString(ctx, event));
-        }
-        else if (ctx.isStartElement(event, FEES)) {
+        } else if (ctx.isStartElement(event, FEES)) {
             this.setFees(ctx.getStringParser().parseString(ctx, event));
-        }
-        else if (ctx.isStartElement(event, ACCESS_CONSTRAINTS)) {
+        } else if (ctx.isStartElement(event, ACCESS_CONSTRAINTS)) {
             this.setAccessConstraints(ctx.getStringParser().parseString(ctx, event));
-        }
-        else if (ctx.isStartElement(event, KEYWORD_LIST)) {
+        } else if (ctx.isStartElement(event, KEYWORD_LIST)) {
             XMLEventParser parser = this.allocate(ctx, event);
             if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
                 if (o instanceof StringSetXMLEventParser)
                     this.setKeywords(((StringSetXMLEventParser) o).getStrings());
             }
-        }
-        else if (ctx.isStartElement(event, ONLINE_RESOURCE)) {
+        } else if (ctx.isStartElement(event, ONLINE_RESOURCE)) {
             XMLEventParser parser = this.allocate(ctx, event);
             if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
                 if (o instanceof OGCOnlineResource)
                     this.setOnlineResource((OGCOnlineResource) o);
             }
-        }
-        else if (ctx.isStartElement(event, CONTACT_INFORMATION)) {
+        } else if (ctx.isStartElement(event, CONTACT_INFORMATION)) {
             XMLEventParser parser = this.allocate(ctx, event);
             if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
@@ -186,16 +179,16 @@ public class OGCServiceInformation extends AbstractXMLEventParser {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("ServiceName: ").append(this.serviceName != null ? this.serviceName : "none").append("\n");
-        sb.append("ServiceTitle: ").append(this.serviceTitle != null ? this.serviceTitle : "none").append("\n");
+        sb.append("ServiceName: ").append(this.serviceName != null ? this.serviceName : "none").append('\n');
+        sb.append("ServiceTitle: ").append(this.serviceTitle != null ? this.serviceTitle : "none").append('\n');
         sb.append("ServiceAbstract: ").append(this.serviceAbstract != null ? this.serviceAbstract : "none").append(
-            "\n");
-        sb.append("Fees: ").append(this.fees != null ? this.fees : "none").append("\n");
+            '\n');
+        sb.append("Fees: ").append(this.fees != null ? this.fees : "none").append('\n');
         sb.append("AccessConstraints: ").append(
-            this.accessConstraints != null ? this.accessConstraints : "none").append("\n");
+            this.accessConstraints != null ? this.accessConstraints : "none").append('\n');
         this.keywordsToString(sb);
-        sb.append("OnlineResource: ").append(this.onlineResource != null ? this.onlineResource : "none").append("\n");
-        sb.append(this.contactInformation != null ? this.contactInformation : "none").append("\n");
+        sb.append("OnlineResource: ").append(this.onlineResource != null ? this.onlineResource : "none").append('\n');
+        sb.append(this.contactInformation != null ? this.contactInformation : "none").append('\n');
 
         return sb.toString();
     }
@@ -209,6 +202,6 @@ public class OGCServiceInformation extends AbstractXMLEventParser {
                 sb.append(keyword != null ? keyword : "null").append(", ");
             }
         }
-        sb.append("\n");
+        sb.append('\n');
     }
 }

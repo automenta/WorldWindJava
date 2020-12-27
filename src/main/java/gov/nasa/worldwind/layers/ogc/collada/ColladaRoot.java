@@ -80,7 +80,7 @@ public class ColladaRoot extends ColladaAbstractObject
     /**
      * Flag to indicate that the scene has been retrieved from the hash map.
      */
-    protected boolean sceneFetched = false;
+    protected boolean sceneFetched;
     /**
      * Cached COLLADA scene.
      */
@@ -89,7 +89,7 @@ public class ColladaRoot extends ColladaAbstractObject
     /**
      * Flag to indicate that the scale has been computed.
      */
-    protected boolean scaleFetched = false;
+    protected boolean scaleFetched;
     /**
      * Scale applied to the model. Determined by the COLLADA/asset/unit element.
      */
@@ -215,11 +215,9 @@ public class ColladaRoot extends ColladaAbstractObject
 
         if (docSource instanceof File) {
             return new ColladaRoot((File) docSource);
-        }
-        else if (docSource instanceof URL) {
+        } else if (docSource instanceof URL) {
             return new ColladaRoot((URL) docSource);
-        }
-        else if (docSource instanceof String) {
+        } else if (docSource instanceof String) {
             File file = new File((String) docSource);
             if (file.exists()) {
                 return new ColladaRoot(file);
@@ -229,8 +227,7 @@ public class ColladaRoot extends ColladaAbstractObject
             if (url != null) {
                 return new ColladaRoot(url);
             }
-        }
-        else if (docSource instanceof InputStream) {
+        } else if (docSource instanceof InputStream) {
             return new ColladaRoot((InputStream) docSource);
         }
 
@@ -243,9 +240,9 @@ public class ColladaRoot extends ColladaAbstractObject
      *
      * @param docSource either a {@link File} or a {@link String} identifying a file path or {@link URL}.
      * @return a new {@link ColladaRoot} for the specified source, or null if the source type is not supported.
-     * @throws IllegalArgumentException            if the source is null.
-     * @throws XMLStreamException if the XML stream is not readable.
-     * @throws IOException                         if an error occurs while reading the source.
+     * @throws IllegalArgumentException if the source is null.
+     * @throws XMLStreamException       if the XML stream is not readable.
+     * @throws IOException              if an error occurs while reading the source.
      */
     public static ColladaRoot createAndParse(Object docSource) throws IOException, XMLStreamException {
         ColladaRoot colladaRoot = ColladaRoot.create(docSource);
@@ -259,6 +256,57 @@ public class ColladaRoot extends ColladaAbstractObject
         colladaRoot.parse();
 
         return colladaRoot;
+    }
+
+    /**
+     * Determines if a MIME type can be parsed as COLLADA. Parsable types are the COLLADA MIME type, as well as
+     * "text/plain" and "text/xml".
+     *
+     * @param mimeType Type to test. May be null.
+     * @return {@code true} if {@code mimeType} can be parsed as COLLADA.
+     */
+    protected static boolean canParseContentType(String mimeType) {
+        return ColladaConstants.COLLADA_MIME_TYPE.equals(mimeType)
+            || "text/plain".equals(mimeType) || "text/xml".equals(mimeType);
+    }
+
+    /**
+     * Open and parse the specified file expressed as a file: URL..
+     *
+     * @param url      the URL of the file to open, expressed as a URL with a scheme of "file".
+     * @param linkBase the original address of the document if the file is a retrieved and cached file.
+     * @return A {@code ColladaRoot} representing the file's COLLADA contents.
+     * @throws IOException        if an I/O error occurs during opening and parsing.
+     * @throws XMLStreamException if a server parsing error is encountered.
+     */
+    protected static ColladaRoot parseCachedColladaFile(URL url, String linkBase)
+        throws IOException, XMLStreamException {
+        XMLDoc colladaDoc;
+
+        InputStream refStream = url.openStream();
+
+        colladaDoc = new ColladaInputStream(refStream, WWIO.makeURI(linkBase));
+
+        try {
+            ColladaRoot refRoot = new ColladaRoot(colladaDoc);
+            refRoot.parse(); // also closes the URL's stream
+            return refRoot;
+        }
+        catch (XMLStreamException e) {
+            refStream.close(); // parsing failed, so explicitly close the stream
+            throw e;
+        }
+    }
+
+    /**
+     * Creates the event reader. Called from the constructor.
+     *
+     * @param docSource the document source to create a reader for. The type can be any of those supported by {@link
+     *                  WWXML#openEventReader(Object)}.
+     * @return a new event reader, or null if the source type cannot be determined.
+     */
+    protected static XMLEventReader createReader(Object docSource) {
+        return WWXML.openEventReader(docSource, true);
     }
 
     /**
@@ -509,13 +557,12 @@ public class ColladaRoot extends ColladaAbstractObject
             // Now check the newly opened COLLADA file for the referenced item, if a reference was specified.
             if (linkRef != null) {
                 return refRoot.getItemByID(linkRef);
-            }
-            else {
+            } else {
                 return refRoot;
             }
         }
         catch (Exception e) {
-            String message = Logging.getMessage("generic.UnableToResolveReference", linkBase + "/" + linkRef);
+            String message = Logging.getMessage("generic.UnableToResolveReference", linkBase + '/' + linkRef);
             Logging.logger().warning(message);
             return null;
         }
@@ -583,67 +630,15 @@ public class ColladaRoot extends ColladaAbstractObject
             // Now check the newly opened COLLADA file for the referenced item, if a reference was specified.
             if (linkRef != null) {
                 return refRoot.getItemByID(linkRef);
-            }
-            else {
+            } else {
                 return refRoot;
             }
         }
         catch (Exception e) {
-            String message = Logging.getMessage("generic.UnableToResolveReference", linkBase + "/" + linkRef);
+            String message = Logging.getMessage("generic.UnableToResolveReference", linkBase + '/' + linkRef);
             Logging.logger().warning(message);
             return null;
         }
-    }
-
-    /**
-     * Determines if a MIME type can be parsed as COLLADA. Parsable types are the COLLADA MIME type, as well as
-     * "text/plain" and "text/xml".
-     *
-     * @param mimeType Type to test. May be null.
-     * @return {@code true} if {@code mimeType} can be parsed as COLLADA.
-     */
-    protected static boolean canParseContentType(String mimeType) {
-        return ColladaConstants.COLLADA_MIME_TYPE.equals(mimeType)
-            || "text/plain".equals(mimeType) || "text/xml".equals(mimeType);
-    }
-
-    /**
-     * Open and parse the specified file expressed as a file: URL..
-     *
-     * @param url      the URL of the file to open, expressed as a URL with a scheme of "file".
-     * @param linkBase the original address of the document if the file is a retrieved and cached file.
-     * @return A {@code ColladaRoot} representing the file's COLLADA contents.
-     * @throws IOException        if an I/O error occurs during opening and parsing.
-     * @throws XMLStreamException if a server parsing error is encountered.
-     */
-    protected static ColladaRoot parseCachedColladaFile(URL url, String linkBase)
-        throws IOException, XMLStreamException {
-        XMLDoc colladaDoc;
-
-        InputStream refStream = url.openStream();
-
-        colladaDoc = new ColladaInputStream(refStream, WWIO.makeURI(linkBase));
-
-        try {
-            ColladaRoot refRoot = new ColladaRoot(colladaDoc);
-            refRoot.parse(); // also closes the URL's stream
-            return refRoot;
-        }
-        catch (XMLStreamException e) {
-            refStream.close(); // parsing failed, so explicitly close the stream
-            throw e;
-        }
-    }
-
-    /**
-     * Creates the event reader. Called from the constructor.
-     *
-     * @param docSource the document source to create a reader for. The type can be any of those supported by {@link
-     *                  WWXML#openEventReader(Object)}.
-     * @return a new event reader, or null if the source type cannot be determined.
-     */
-    protected static XMLEventReader createReader(Object docSource) {
-        return WWXML.openEventReader(docSource, true);
     }
 
     /**
@@ -660,7 +655,7 @@ public class ColladaRoot extends ColladaAbstractObject
 
         if (ctx == null) {
             // Register a parser context for this root's default namespace
-            String[] mimeTypes = new String[] {ColladaConstants.COLLADA_MIME_TYPE};
+            String[] mimeTypes = {ColladaConstants.COLLADA_MIME_TYPE};
             XMLEventParserContextFactory.addParserContext(mimeTypes, new ColladaParserContext(this.getNamespaceURI()));
             ctx = (ColladaParserContext) XMLEventParserContextFactory.createParserContext(
                 ColladaConstants.COLLADA_MIME_TYPE,

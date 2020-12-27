@@ -48,23 +48,6 @@ public abstract class BulkRetrievalThread extends Thread {
      */
     public BulkRetrievalThread(BulkRetrievable retrievable, Sector sector, double resolution, FileStore fileStore,
         BulkRetrievalListener listener) {
-//        if (retrievable == null) {
-//            String msg = Logging.getMessage("nullValue.RetrievableIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//
-//        if (sector == null) {
-//            String msg = Logging.getMessage("nullValue.SectorIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//
-//        if (fileStore == null) {
-//            String msg = Logging.getMessage("nullValue.FileStoreIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         this.retrievable = retrievable;
         this.sector = sector;

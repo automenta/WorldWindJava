@@ -6,6 +6,7 @@
 package gov.nasa.worldwind.formats.vpf;
 
 ////.*;
+
 import gov.nasa.worldwind.util.*;
 
 import javax.imageio.ImageIO;
@@ -37,12 +38,12 @@ public class GeoSymAttributeConverter {
     protected static final String TYPE_AREA_PLAIN = "AreaPlain";
     protected static final String TYPE_AREA_PATTERN = "AreaPattern";
     protected static final String OUT_DIR = "gsac-out";
-    protected static final String OUT_ATTRS_PATH = OUT_DIR + "/geosym/symasgn/ascii/geosym-line-area-attr.csv";
-    protected static final String OUT_PATTERNS_PATH = OUT_DIR + "/geosym/graphics/bin";
+    protected static final String OUT_ATTRS_PATH = GeoSymAttributeConverter.OUT_DIR + "/geosym/symasgn/ascii/geosym-line-area-attr.csv";
+    protected static final String OUT_PATTERNS_PATH = GeoSymAttributeConverter.OUT_DIR + "/geosym/graphics/bin";
 
     public static void main(String[] args) {
         if (args == null || args.length == 0) {
-            printUsage();
+            GeoSymAttributeConverter.printUsage();
             return;
         }
 
@@ -50,7 +51,7 @@ public class GeoSymAttributeConverter {
 
         PrintStream outAttrs = null;
         try {
-            File outFile = new File(OUT_ATTRS_PATH);
+            File outFile = new File(GeoSymAttributeConverter.OUT_ATTRS_PATH);
             //noinspection ResultOfMethodCallIgnored
             outFile.getParentFile().mkdirs();
 
@@ -64,11 +65,11 @@ public class GeoSymAttributeConverter {
                 if (file.getName().toUpperCase().endsWith(".CGM")) {
                     CGMFile cgmf = new CGMFile(file);
 
-                    if (!cgmf.type.equals(TYPE_POINT))
+                    if (!cgmf.type.equals(GeoSymAttributeConverter.TYPE_POINT))
                         outAttrs.println(cgmf.toRecordString());
 
-                    if (cgmf.type.equals(TYPE_AREA_PATTERN))
-                        writeAreaPattern(cgmf);
+                    if (cgmf.type.equals(GeoSymAttributeConverter.TYPE_AREA_PATTERN))
+                        GeoSymAttributeConverter.writeAreaPattern(cgmf);
                 }
             }
 
@@ -78,7 +79,7 @@ public class GeoSymAttributeConverter {
             e.printStackTrace();
         }
         finally {
-            WWIO.closeStream(outAttrs, OUT_ATTRS_PATH);
+            WWIO.closeStream(outAttrs, GeoSymAttributeConverter.OUT_ATTRS_PATH);
         }
     }
 
@@ -86,7 +87,7 @@ public class GeoSymAttributeConverter {
         System.out.println("GeoSymAttributeConverter");
         System.out.println();
         System.out.println("Converts GeoSym line attributes, area attributes, and area patterns into a form usable by");
-        System.out.println("WorldWind VPF shapes. Outputs to \"" + OUT_DIR + "\" a comma-separated-value file");
+        System.out.println("WorldWind VPF shapes. Outputs to \"" + GeoSymAttributeConverter.OUT_DIR + "\" a comma-separated-value file");
         System.out.println("containing line and area attributes for VPF line and area shapes, and PNG files");
         System.out.println("containing area patterns for VPF area shapes.");
         System.out.println();
@@ -97,7 +98,7 @@ public class GeoSymAttributeConverter {
 
     protected static void writeAreaPattern(CGMFile cgmf) {
         String fileName = cgmf.file.getName().toUpperCase().replace(".CGM", ".png");
-        File outFile = new File(OUT_PATTERNS_PATH, fileName);
+        File outFile = new File(GeoSymAttributeConverter.OUT_PATTERNS_PATH, fileName);
 
         try {
             //noinspection ResultOfMethodCallIgnored
@@ -116,20 +117,20 @@ public class GeoSymAttributeConverter {
         protected int[] colorTable;
         protected int[] patternTable;
 
-        protected int lineCount = 0;
-        protected int polylineCount = 0;
-        protected int shapeCount = 0;
-        protected int polygonCount = 0;
-        protected int patternCount = 0;
-        protected int pentagonCount = 0;
-        protected int lineElementCount = 0;
+        protected int lineCount;
+        protected int polylineCount;
+        protected int shapeCount;
+        protected int polygonCount;
+        protected int patternCount;
+        protected int pentagonCount;
+        protected int lineElementCount;
 
         protected int lineColorIndex = -1;
         protected int fillColorIndex = -1;
         protected int lineWidth = -1;
         protected double scale = 1;
         protected short stipplePattern;
-        protected int stippleFactor = 0;
+        protected int stippleFactor;
         protected String edgeVis = "";
 
         public CGMFile(File file) {
@@ -137,67 +138,12 @@ public class GeoSymAttributeConverter {
             processCGMFile(file);
 
             // TODO: process line stipple pattern
-            if (this.type.equals(TYPE_LINE_COMPLEX))
+            if (this.type.equals(GeoSymAttributeConverter.TYPE_LINE_COMPLEX))
                 this.processStipplePattern();
         }
 
-        protected void processCGMFile(File file) {
-            this.content = readTextFile(file).replaceAll("\r", "");
-            String[] lines = this.content.split("\n");
-            String CGMLine = "";
-            for (String line : lines) {
-                if (!(!line.isEmpty() && line.charAt(line.length() - 1) == ';'))
-                    line = line.trim() + " ";
-                CGMLine += line;
-                if (!CGMLine.isEmpty() && CGMLine.charAt(CGMLine.length() - 1) == ';') {
-                    this.processCGMLine(CGMLine);
-                    CGMLine = "";
-                }
-            }
-
-            this.type = getType();
-        }
-
-        protected void processCGMLine(String line) {
-            if (line.startsWith("LINE ")) {
-                if (getNumValues(line) == 4)
-                    this.lineCount++;
-                else
-                    this.polylineCount++;
-            }
-            else if (line.startsWith("CIRCLE "))
-                this.shapeCount++;
-            else if (line.startsWith("ELLIPARC "))
-                this.shapeCount++;
-            else if (line.startsWith("POLYGONSET "))
-                this.shapeCount++;
-            else if (line.startsWith("POLYGON ")) {
-                this.polygonCount++;
-                if (getNumValues(line) == 12)
-                    this.pentagonCount++;
-            }
-            else if (line.startsWith("PATTABLE ")) {
-                this.patternCount++;
-                this.patternTable = getIntegerValues(line);
-            }
-            else if (line.startsWith("LINECOLR "))
-                this.lineColorIndex = getIntegerValue(line);
-            else if (line.startsWith("FILLCOLR "))
-                this.fillColorIndex = getIntegerValue(line);
-            else if (line.startsWith("LINEWIDTH "))
-                this.lineWidth = getIntegerValue(line);
-            else if (line.contains("LineComponentElement"))
-                this.lineElementCount++;
-            else if (line.startsWith("EDGEVIS "))
-                this.edgeVis = getStringValue(line);
-            else if (line.startsWith("COLRTABLE "))
-                this.colorTable = getIntegerValues(line);
-            else if (line.startsWith("SCALEMODE "))
-                this.scale = getScaleValue(line);
-        }
-
         protected static int getIntegerValue(String line) {
-            return Integer.parseInt(getStringValue(line));
+            return Integer.parseInt(CGMFile.getStringValue(line));
         }
 
         protected static int[] getIntegerValues(String line) {
@@ -227,6 +173,93 @@ public class GeoSymAttributeConverter {
             return line.split(" ").length - 1;
         }
 
+        protected static String getLastValue(String line) {
+            String[] tokens = line.replaceAll("\"", "").replaceAll(";", "").split("\\s");
+            return tokens[tokens.length - 1];
+        }
+
+        public static String readTextFile(File file) {
+            if (file == null) {
+                String msg = Logging.getMessage("nullValue.FileIsNull");
+                Logging.logger().severe(msg);
+                throw new IllegalArgumentException(msg);
+            }
+
+            StringBuilder sb = new StringBuilder();
+
+            BufferedReader reader = null;
+            try {
+                reader = new BufferedReader(new FileReader(file));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line);
+                    sb.append(System.getProperty("line.separator")); // add back line separator
+                }
+            }
+            catch (IOException e) {
+                String msg = Logging.getMessage("generic.ExceptionAttemptingToReadFile", file.getPath());
+                Logging.logger().log(Level.SEVERE, msg);
+                return null;
+            }
+            finally {
+                WWIO.closeStream(reader, file.getPath());
+            }
+
+            return sb.toString();
+        }
+
+        protected void processCGMFile(File file) {
+            this.content = CGMFile.readTextFile(file).replaceAll("\r", "");
+            String[] lines = this.content.split("\n");
+            String CGMLine = "";
+            for (String line : lines) {
+                if (!(!line.isEmpty() && line.charAt(line.length() - 1) == ';'))
+                    line = line.trim() + ' ';
+                CGMLine += line;
+                if (!CGMLine.isEmpty() && CGMLine.charAt(CGMLine.length() - 1) == ';') {
+                    this.processCGMLine(CGMLine);
+                    CGMLine = "";
+                }
+            }
+
+            this.type = getType();
+        }
+
+        protected void processCGMLine(String line) {
+            if (line.startsWith("LINE ")) {
+                if (CGMFile.getNumValues(line) == 4)
+                    this.lineCount++;
+                else
+                    this.polylineCount++;
+            } else if (line.startsWith("CIRCLE "))
+                this.shapeCount++;
+            else if (line.startsWith("ELLIPARC "))
+                this.shapeCount++;
+            else if (line.startsWith("POLYGONSET "))
+                this.shapeCount++;
+            else if (line.startsWith("POLYGON ")) {
+                this.polygonCount++;
+                if (CGMFile.getNumValues(line) == 12)
+                    this.pentagonCount++;
+            } else if (line.startsWith("PATTABLE ")) {
+                this.patternCount++;
+                this.patternTable = CGMFile.getIntegerValues(line);
+            } else if (line.startsWith("LINECOLR "))
+                this.lineColorIndex = CGMFile.getIntegerValue(line);
+            else if (line.startsWith("FILLCOLR "))
+                this.fillColorIndex = CGMFile.getIntegerValue(line);
+            else if (line.startsWith("LINEWIDTH "))
+                this.lineWidth = CGMFile.getIntegerValue(line);
+            else if (line.contains("LineComponentElement"))
+                this.lineElementCount++;
+            else if (line.startsWith("EDGEVIS "))
+                this.edgeVis = CGMFile.getStringValue(line);
+            else if (line.startsWith("COLRTABLE "))
+                this.colorTable = CGMFile.getIntegerValues(line);
+            else if (line.startsWith("SCALEMODE "))
+                this.scale = CGMFile.getScaleValue(line);
+        }
+
         protected String getColor(int idx) {
             if (idx < 0 || idx * 3 + 3 > this.colorTable.length - 1)
                 return "#FFFFFF";
@@ -241,16 +274,16 @@ public class GeoSymAttributeConverter {
 
         protected String getType() {
             if (this.patternCount > 0)
-                return TYPE_AREA_PATTERN;
+                return GeoSymAttributeConverter.TYPE_AREA_PATTERN;
             else if (this.polygonCount == 1 && this.pentagonCount == 1 && this.edgeVis.equals("OFF")
                 && this.lineCount == 0 && this.polylineCount == 0 && this.shapeCount == 0)
-                return TYPE_AREA_PLAIN;
+                return GeoSymAttributeConverter.TYPE_AREA_PLAIN;
             else if (this.lineElementCount > 0)
-                return TYPE_LINE_COMPLEX;
+                return GeoSymAttributeConverter.TYPE_LINE_COMPLEX;
             else if (this.lineCount == 1 && this.polylineCount == 0 && this.shapeCount == 0 && this.polygonCount == 0)
-                return TYPE_LINE_PLAIN;
+                return GeoSymAttributeConverter.TYPE_LINE_PLAIN;
             else
-                return TYPE_POINT;
+                return GeoSymAttributeConverter.TYPE_POINT;
         }
 
         protected void processStipplePattern() {
@@ -267,14 +300,11 @@ public class GeoSymAttributeConverter {
                         totalLength += elementLength;
                         elementLength = 0;
                     }
-                }
-                else if (line.startsWith("APSATTR \"ElementType\"")) {
+                } else if (line.startsWith("APSATTR \"ElementType\"")) {
                     //elementType = getLastValue(line);
-                }
-                else if (line.startsWith("APSATTR \"ElementLength\"")) {
-                    elementLength = Double.parseDouble(getLastValue(line));
-                }
-                else if (line.contains("Component.2") || line.startsWith("BEGAPS \"IC_ViewportTable\"")) {
+                } else if (line.startsWith("APSATTR \"ElementLength\"")) {
+                    elementLength = Double.parseDouble(CGMFile.getLastValue(line));
+                } else if (line.contains("Component.2") || line.startsWith("BEGAPS \"IC_ViewportTable\"")) {
                     break;
                 }
             }
@@ -308,11 +338,6 @@ public class GeoSymAttributeConverter {
             // Trace
         }
 
-        protected static String getLastValue(String line) {
-            String[] tokens = line.replaceAll("\"", "").replaceAll(";", "").split("\\s");
-            return tokens[tokens.length - 1];
-        }
-
         protected BufferedImage getPattern() {
             if (this.patternTable == null)
                 return null;
@@ -341,17 +366,16 @@ public class GeoSymAttributeConverter {
             String stippleFactor = "";
             String fillColor = "";
 
-            if (this.type.equals(TYPE_AREA_PATTERN) || this.type.equals(TYPE_AREA_PLAIN)) {
+            if (this.type.equals(GeoSymAttributeConverter.TYPE_AREA_PATTERN) || this.type.equals(GeoSymAttributeConverter.TYPE_AREA_PLAIN)) {
                 // Set fill color for patterns too as a backup
                 fillColor = getColor(this.fillColorIndex);
-            }
-            else if (this.type.equals(TYPE_LINE_PLAIN) || this.type.equals(TYPE_LINE_COMPLEX)) {
+            } else if (this.type.equals(GeoSymAttributeConverter.TYPE_LINE_PLAIN) || this.type.equals(GeoSymAttributeConverter.TYPE_LINE_COMPLEX)) {
                 // Use .5 if no line width found
                 lineWidth = this.lineWidth > 0 ? String.format("%.1f", this.lineWidth * this.scale).replace(',', '.')
                     : ".5";
                 // Use fill color if no line color found
                 lineColor = this.lineColorIndex >= 0 ? getColor(this.lineColorIndex) : getColor(this.fillColorIndex);
-                if (this.type.equals(TYPE_LINE_COMPLEX)) {
+                if (this.type.equals(GeoSymAttributeConverter.TYPE_LINE_COMPLEX)) {
                     stipplePattern = String.format("#%04x", this.stipplePattern);
                     stippleFactor = String.valueOf(this.stippleFactor);
                 }
@@ -359,36 +383,6 @@ public class GeoSymAttributeConverter {
 
             return String.format("%s,%s,%s,%s,%s,%s,%s", code, type, lineWidth, lineColor, stipplePattern,
                 stippleFactor, fillColor);
-        }
-
-        public static String readTextFile(File file) {
-            if (file == null) {
-                String msg = Logging.getMessage("nullValue.FileIsNull");
-                Logging.logger().severe(msg);
-                throw new IllegalArgumentException(msg);
-            }
-
-            StringBuilder sb = new StringBuilder();
-
-            BufferedReader reader = null;
-            try {
-                reader = new BufferedReader(new FileReader(file));
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line);
-                    sb.append(System.getProperty("line.separator")); // add back line separator
-                }
-            }
-            catch (IOException e) {
-                String msg = Logging.getMessage("generic.ExceptionAttemptingToReadFile", file.getPath());
-                Logging.logger().log(Level.SEVERE, msg);
-                return null;
-            }
-            finally {
-                WWIO.closeStream(reader, file.getPath());
-            }
-
-            return sb.toString();
         }
     }
 }

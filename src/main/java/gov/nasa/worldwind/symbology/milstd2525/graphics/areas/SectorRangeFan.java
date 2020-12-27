@@ -56,28 +56,28 @@ public class SectorRangeFan extends AbstractMilStd2525TacticalGraphic implements
     /**
      * Length of the arrowhead from base to tip, as a fraction of the Center Of Sector line length.
      */
-    protected Angle arrowAngle = DEFAULT_ARROWHEAD_ANGLE;
+    protected Angle arrowAngle = SectorRangeFan.DEFAULT_ARROWHEAD_ANGLE;
     /**
      * Angle of the arrowhead.
      */
-    protected double arrowLength = DEFAULT_ARROWHEAD_LENGTH;
+    protected double arrowLength = SectorRangeFan.DEFAULT_ARROWHEAD_LENGTH;
     /**
      * Length of the Center Of Sector line, as a fraction of the last range fan radius.
      */
-    protected double centerOfSectorLength = DEFAULT_CENTER_OF_SECTOR_LENGTH;
+    protected double centerOfSectorLength = SectorRangeFan.DEFAULT_CENTER_OF_SECTOR_LENGTH;
     /**
      * Number of intervals used to draw each arcs.
      */
-    protected int intervals = DEFAULT_NUM_INTERVALS;
+    protected int intervals = SectorRangeFan.DEFAULT_NUM_INTERVALS;
 
     /**
      * Number format used to create azimuth labels.
      */
-    protected NumberFormat azimuthFormat = DEFAULT_NUMBER_FORMAT;
+    protected NumberFormat azimuthFormat = SectorRangeFan.DEFAULT_NUMBER_FORMAT;
     /**
      * Number format used to create radius labels.
      */
-    protected NumberFormat radiusFormat = DEFAULT_NUMBER_FORMAT;
+    protected NumberFormat radiusFormat = SectorRangeFan.DEFAULT_NUMBER_FORMAT;
 
     /**
      * Position of the center of the range fan.
@@ -138,6 +138,118 @@ public class SectorRangeFan extends AbstractMilStd2525TacticalGraphic implements
      */
     public static List<String> getSupportedGraphics() {
         return Collections.singletonList(TacGrpSidc.FSUPP_ARS_WPNRF_SCR);
+    }
+
+    /**
+     * Compute the angle of the Center Of Sector line. The center sector angle is computed as the average of the left
+     * and right azimuths of the last range fan in the graphic. MIL-STD-2525C does not specify how this angle should be
+     * computed, but the graphic template (pg. 693) suggests that the Center Of Sector line should bisect the last range
+     * fan arc.
+     *
+     * @param finalLeftAzimuth  Left azimuth of the last range fan in the graphic.
+     * @param finalRightAzimuth Right azimuth of the last range fan in the graphic.
+     * @return Azimuth, from North, of the Center Of Sector line.
+     */
+    protected static Angle computeCenterSectorAngle(Angle finalLeftAzimuth, Angle finalRightAzimuth) {
+        return finalLeftAzimuth.add(finalRightAzimuth).divide(2.0);
+    }
+
+    /**
+     * Compute the positions of the arrow head for the sector center line.
+     *
+     * @param dc          Current draw context
+     * @param base        Position of the arrow's starting point.
+     * @param tip         Position of the arrow head tip.
+     * @param arrowLength Length of the arrowhead as a fraction of the total line length.
+     * @param arrowAngle  Angle of the arrow head.
+     * @return Positions required to draw the arrow head.
+     */
+    protected static List<Position> computeArrowheadPositions(DrawContext dc, Position base, Position tip,
+        double arrowLength,
+        Angle arrowAngle) {
+        // Build a triangle to represent the arrowhead. The triangle is built from two vectors, one parallel to the
+        // segment, and one perpendicular to it.
+
+        Globe globe = dc.getGlobe();
+
+        Vec4 ptA = globe.computePointFromPosition(base);
+        Vec4 ptB = globe.computePointFromPosition(tip);
+
+        // Compute parallel component
+        Vec4 parallel = ptA.subtract3(ptB);
+
+        Vec4 surfaceNormal = globe.computeSurfaceNormalAtPoint(ptB);
+
+        // Compute perpendicular component
+        Vec4 perpendicular = surfaceNormal.cross3(parallel);
+
+        double finalArrowLength = arrowLength * parallel.getLength3();
+        double arrowHalfWidth = finalArrowLength * arrowAngle.tanHalfAngle();
+
+        perpendicular = perpendicular.normalize3().multiply3(arrowHalfWidth);
+        parallel = parallel.normalize3().multiply3(finalArrowLength);
+
+        // Compute geometry of direction arrow
+        Vec4 vertex1 = ptB.add3(parallel).add3(perpendicular);
+        Vec4 vertex2 = ptB.add3(parallel).subtract3(perpendicular);
+
+        return TacticalGraphicUtil.asPositionList(globe, vertex1, vertex2, ptB);
+    }
+
+    /**
+     * Compute an angular offset to apply to a azimuth label. This angle will be added to the azimuth of the label's
+     * azimuth in order to place the label a little bit to the side of the line that it applies to.
+     *
+     * @param radius    Radius at which the label will be placed.
+     * @param maxRadius Maximum radius in the range fan.
+     * @return Angle, in radians, to add to the range fan azimuth in order to determine the label position.
+     */
+    protected static double computeAzimuthLabelOffset(double radius, double maxRadius) {
+        return Math.asin(SectorRangeFan.AZIMUTH_LABEL_OFFSET * maxRadius / radius);
+    }
+
+    /**
+     * Determine the position of a range label for a ring in the range fan. The method finds a point to either the left
+     * or right of the center line, depending on which has more space for the label.
+     *
+     * @param center        Center of the range fan.
+     * @param centerAzimuth Azimuth of the Center Of Sector arrow.
+     * @param leftAzimuth   Left azimuth of this ring.
+     * @param rightAzimuth  Right azimuth of this ring.
+     * @param radiusRadians Radius, in radians, at which to place the label.
+     * @return Position for the range label on this ring.
+     */
+    protected static Position determineRangeLabelPosition(Position center, Angle centerAzimuth, Angle leftAzimuth,
+        Angle rightAzimuth, double radiusRadians) {
+        // If either left or right azimuth is not specified, use the center instead.
+        leftAzimuth = (leftAzimuth != null) ? leftAzimuth : centerAzimuth;
+        rightAzimuth = (rightAzimuth != null) ? rightAzimuth : centerAzimuth;
+
+        // Determine the angular distance between the Center Of Sector line and the left and right sides of the fan.
+        double deltaLeft = Math.abs(centerAzimuth.sub(leftAzimuth).degrees);
+        double deltaRight = Math.abs(centerAzimuth.sub(rightAzimuth).degrees);
+
+        // Place the range label in the larger wedge.
+        Angle labelAzimuth = (deltaLeft > deltaRight) ? leftAzimuth : rightAzimuth;
+
+        // Place the label midway between the Center Of Sector arrow and the side of the fan.
+        labelAzimuth = labelAzimuth.add(centerAzimuth).divide(2.0);
+
+        LatLon ll = LatLon.greatCircleEndPosition(center, labelAzimuth.radians(), radiusRadians);
+        return new Position(ll, 0);
+    }
+
+    /**
+     * Normalize an azimuth angle to the range [-180:180] degrees.
+     *
+     * @param azimuth Azimuth to normalize.
+     * @return Normalized azimuth. Returns null if {@code azimuth} is null.
+     */
+    protected static Angle normalizeAzimuth(Angle azimuth) {
+        // The azimuth is not actually a longitude, but the normalization formula is the same as for longitude.
+        if (azimuth != null)
+            return Angle.lonNorm(azimuth);
+        return null;
     }
 
     /**
@@ -320,35 +432,28 @@ public class SectorRangeFan extends AbstractMilStd2525TacticalGraphic implements
         if (SymbologyConstants.DISTANCE.equals(modifier)) {
             if (value instanceof Iterable) {
                 this.setRadii((Iterable) value);
-            }
-            else if (value instanceof Double) {
+            } else if (value instanceof Double) {
                 this.setRadii(Collections.singletonList((Double) value));
             }
-        }
-        else if (SymbologyConstants.AZIMUTH.equals(modifier)) {
+        } else if (SymbologyConstants.AZIMUTH.equals(modifier)) {
             if (value instanceof Iterable) {
                 // Store the Iterable in an unnecessary variable to suppress Java 7 compiler warnings on Windows.
                 Iterable<? extends Angle> iterable = (Iterable<? extends Angle>) value;
                 this.setAzimuths(iterable);
-            }
-            else if (value instanceof Angle) {
+            } else if (value instanceof Angle) {
                 this.setAzimuths(Collections.singletonList((Angle) value));
             }
-        }
-        else if (SymbologyConstants.ALTITUDE_DEPTH.equals(modifier)) {
+        } else if (SymbologyConstants.ALTITUDE_DEPTH.equals(modifier)) {
             if (value instanceof Iterable) {
                 // Store the Iterable in an unnecessary variable to suppress Java 7 compiler warnings on Windows.
                 Iterable<String> iterable = (Iterable<String>) value;
                 this.setAltitudes(iterable);
-            }
-            else if (value != null) {
+            } else if (value != null) {
                 this.setAltitudes(Collections.singletonList(value.toString()));
             }
-        }
-        else if (SymbologyConstants.SYMBOL_INDICATOR.equals(modifier) && value instanceof String) {
+        } else if (SymbologyConstants.SYMBOL_INDICATOR.equals(modifier) && value instanceof String) {
             this.setSymbol((String) value);
-        }
-        else {
+        } else {
             super.setModifier(modifier, value);
         }
     }
@@ -476,8 +581,7 @@ public class SectorRangeFan extends AbstractMilStd2525TacticalGraphic implements
                 this.symbolAttributes = new BasicTacticalSymbolAttributes();
 
             this.symbol = this.createSymbol(sidc, this.getPosition(), this.symbolAttributes);
-        }
-        else {
+        } else {
             // Null value indicates no symbol.
             this.symbol = null;
             this.symbolAttributes = null;
@@ -647,8 +751,7 @@ public class SectorRangeFan extends AbstractMilStd2525TacticalGraphic implements
         if (!fullCircle) {
             this.centerAzimuth = SectorRangeFan.computeCenterSectorAngle(prevLeftAzimuth, prevRightAzimuth);
             this.createCenterOfSectorArrow(dc, centerAzimuth, prevRadius);
-        }
-        else {
+        } else {
             this.centerAzimuth = Angle.POS180; // Due South
         }
     }
@@ -682,20 +785,6 @@ public class SectorRangeFan extends AbstractMilStd2525TacticalGraphic implements
     }
 
     /**
-     * Compute the angle of the Center Of Sector line. The center sector angle is computed as the average of the left
-     * and right azimuths of the last range fan in the graphic. MIL-STD-2525C does not specify how this angle should be
-     * computed, but the graphic template (pg. 693) suggests that the Center Of Sector line should bisect the last range
-     * fan arc.
-     *
-     * @param finalLeftAzimuth  Left azimuth of the last range fan in the graphic.
-     * @param finalRightAzimuth Right azimuth of the last range fan in the graphic.
-     * @return Azimuth, from North, of the Center Of Sector line.
-     */
-    protected static Angle computeCenterSectorAngle(Angle finalLeftAzimuth, Angle finalRightAzimuth) {
-        return finalLeftAzimuth.add(finalRightAzimuth).divide(2.0);
-    }
-
-    /**
      * Create positions to draw an arc around the graphic's center position. The arc is described by a radius, left
      * azimuth, and right azimuth. The arc positions are added onto an existing list of positions, in left to right
      * order (the arc draws from the left azimuth to the right azimuth).
@@ -721,7 +810,7 @@ public class SectorRangeFan extends AbstractMilStd2525TacticalGraphic implements
 
         // If the left and right azimuths are equal then just add a single point and return.
         if (leftAzimuth.equals(rightAzimuth)) {
-            LatLon ll = LatLon.greatCircleEndPosition(center, leftAzimuth.radians, radiusRadians);
+            LatLon ll = LatLon.greatCircleEndPosition(center, leftAzimuth.radians(), radiusRadians);
             positions.add(new Position(ll, 0));
             return;
         }
@@ -731,53 +820,11 @@ public class SectorRangeFan extends AbstractMilStd2525TacticalGraphic implements
         Angle da = arcAngle.divide(intervals);
 
         for (int i = 0; i < intervals + 1; i++) {
-            double angle = i * da.radians + leftAzimuth.radians;
+            double angle = i * da.radians() + leftAzimuth.radians();
 
             LatLon ll = LatLon.greatCircleEndPosition(center, angle, radiusRadians);
             positions.add(new Position(ll, 0));
         }
-    }
-
-    /**
-     * Compute the positions of the arrow head for the sector center line.
-     *
-     * @param dc          Current draw context
-     * @param base        Position of the arrow's starting point.
-     * @param tip         Position of the arrow head tip.
-     * @param arrowLength Length of the arrowhead as a fraction of the total line length.
-     * @param arrowAngle  Angle of the arrow head.
-     * @return Positions required to draw the arrow head.
-     */
-    protected static List<Position> computeArrowheadPositions(DrawContext dc, Position base, Position tip,
-        double arrowLength,
-        Angle arrowAngle) {
-        // Build a triangle to represent the arrowhead. The triangle is built from two vectors, one parallel to the
-        // segment, and one perpendicular to it.
-
-        Globe globe = dc.getGlobe();
-
-        Vec4 ptA = globe.computePointFromPosition(base);
-        Vec4 ptB = globe.computePointFromPosition(tip);
-
-        // Compute parallel component
-        Vec4 parallel = ptA.subtract3(ptB);
-
-        Vec4 surfaceNormal = globe.computeSurfaceNormalAtPoint(ptB);
-
-        // Compute perpendicular component
-        Vec4 perpendicular = surfaceNormal.cross3(parallel);
-
-        double finalArrowLength = arrowLength * parallel.getLength3();
-        double arrowHalfWidth = finalArrowLength * arrowAngle.tanHalfAngle();
-
-        perpendicular = perpendicular.normalize3().multiply3(arrowHalfWidth);
-        parallel = parallel.normalize3().multiply3(finalArrowLength);
-
-        // Compute geometry of direction arrow
-        Vec4 vertex1 = ptB.add3(parallel).add3(perpendicular);
-        Vec4 vertex2 = ptB.add3(parallel).subtract3(perpendicular);
-
-        return TacticalGraphicUtil.asPositionList(globe, vertex1, vertex2, ptB);
     }
 
     /**
@@ -904,7 +951,8 @@ public class SectorRangeFan extends AbstractMilStd2525TacticalGraphic implements
             double radiusRadians = avgRadius / globeRadius;
 
             // Find the range label position
-            Position position = SectorRangeFan.determineRangeLabelPosition(center, this.centerAzimuth, leftAzimuth, rightAzimuth,
+            Position position = SectorRangeFan.determineRangeLabelPosition(center, this.centerAzimuth, leftAzimuth,
+                rightAzimuth,
                 radiusRadians);
             rangeLabel.setPosition(position);
 
@@ -913,74 +961,18 @@ public class SectorRangeFan extends AbstractMilStd2525TacticalGraphic implements
 
             // Find left azimuth label position
             if (leftAzimuth != null && leftLabel != null) {
-                LatLon ll = LatLon.greatCircleEndPosition(center, leftAzimuth.radians - offset, radiusRadians);
+                LatLon ll = LatLon.greatCircleEndPosition(center, leftAzimuth.radians() - offset, radiusRadians);
                 leftLabel.setPosition(new Position(ll, 0));
             }
 
             // Find right azimuth label position
             if (rightAzimuth != null && rightLabel != null) {
-                LatLon ll = LatLon.greatCircleEndPosition(center, rightAzimuth.radians + offset, radiusRadians);
+                LatLon ll = LatLon.greatCircleEndPosition(center, rightAzimuth.radians() + offset, radiusRadians);
                 rightLabel.setPosition(new Position(ll, 0));
             }
 
             prevRadius = radius;
         }
-    }
-
-    /**
-     * Compute an angular offset to apply to a azimuth label. This angle will be added to the azimuth of the label's
-     * azimuth in order to place the label a little bit to the side of the line that it applies to.
-     *
-     * @param radius    Radius at which the label will be placed.
-     * @param maxRadius Maximum radius in the range fan.
-     * @return Angle, in radians, to add to the range fan azimuth in order to determine the label position.
-     */
-    protected static double computeAzimuthLabelOffset(double radius, double maxRadius) {
-        return Math.asin(AZIMUTH_LABEL_OFFSET * maxRadius / radius);
-    }
-
-    /**
-     * Determine the position of a range label for a ring in the range fan. The method finds a point to either the left
-     * or right of the center line, depending on which has more space for the label.
-     *
-     * @param center        Center of the range fan.
-     * @param centerAzimuth Azimuth of the Center Of Sector arrow.
-     * @param leftAzimuth   Left azimuth of this ring.
-     * @param rightAzimuth  Right azimuth of this ring.
-     * @param radiusRadians Radius, in radians, at which to place the label.
-     * @return Position for the range label on this ring.
-     */
-    protected static Position determineRangeLabelPosition(Position center, Angle centerAzimuth, Angle leftAzimuth,
-        Angle rightAzimuth, double radiusRadians) {
-        // If either left or right azimuth is not specified, use the center instead.
-        leftAzimuth = (leftAzimuth != null) ? leftAzimuth : centerAzimuth;
-        rightAzimuth = (rightAzimuth != null) ? rightAzimuth : centerAzimuth;
-
-        // Determine the angular distance between the Center Of Sector line and the left and right sides of the fan.
-        double deltaLeft = Math.abs(centerAzimuth.sub(leftAzimuth).degrees);
-        double deltaRight = Math.abs(centerAzimuth.sub(rightAzimuth).degrees);
-
-        // Place the range label in the larger wedge.
-        Angle labelAzimuth = (deltaLeft > deltaRight) ? leftAzimuth : rightAzimuth;
-
-        // Place the label midway between the Center Of Sector arrow and the side of the fan.
-        labelAzimuth = labelAzimuth.add(centerAzimuth).divide(2.0);
-
-        LatLon ll = LatLon.greatCircleEndPosition(center, labelAzimuth.radians, radiusRadians);
-        return new Position(ll, 0);
-    }
-
-    /**
-     * Normalize an azimuth angle to the range [-180:180] degrees.
-     *
-     * @param azimuth Azimuth to normalize.
-     * @return Normalized azimuth. Returns null if {@code azimuth} is null.
-     */
-    protected static Angle normalizeAzimuth(Angle azimuth) {
-        // The azimuth is not actually a longitude, but the normalization formula is the same as for longitude.
-        if (azimuth != null)
-            return Angle.lonNorm(azimuth);
-        return null;
     }
 
     /**

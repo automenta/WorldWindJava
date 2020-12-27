@@ -25,6 +25,12 @@ public class TextRendererCache implements Disposable {
         this.textRendererMap = new ConcurrentHashMap<>();
     }
 
+    protected static void dispose(TextRenderer textRenderer) {
+        if (textRenderer != null) {
+            textRenderer.dispose();
+        }
+    }
+
     public void dispose() {
         this.disposeAll();
         this.textRendererMap.clear();
@@ -85,12 +91,6 @@ public class TextRendererCache implements Disposable {
     public void clear() {
         this.disposeAll();
         this.textRendererMap.clear();
-    }
-
-    protected static void dispose(TextRenderer textRenderer) {
-        if (textRenderer != null) {
-            textRenderer.dispose();
-        }
     }
 
     protected void disposeAll() {

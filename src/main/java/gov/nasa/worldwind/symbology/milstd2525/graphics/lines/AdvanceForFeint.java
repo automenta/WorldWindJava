@@ -82,14 +82,14 @@ public class AdvanceForFeint extends AbstractAxisArrow {
         Vec4 ptN_prime = globe.computePointFromPosition(arrowHeadPositions.get(2));
 
         // Transform pt N and pt N' to find the ends of the dashed line.
-        Vec4 dir = ptN.subtract3(ptN_prime).multiply3(DASHED_LINE_DISTANCE);
+        Vec4 dir = ptN.subtract3(ptN_prime).multiply3(AdvanceForFeint.DASHED_LINE_DISTANCE);
         ptN = ptN.add3(dir);
         ptN_prime = ptN_prime.subtract3(dir);
 
-        dir = pt1.subtract3(ptN).multiply3(DASHED_LINE_DISTANCE);
+        dir = pt1.subtract3(ptN).multiply3(AdvanceForFeint.DASHED_LINE_DISTANCE);
         ptN = ptN.add3(dir);
 
-        dir = pt1.subtract3(ptN_prime).multiply3(DASHED_LINE_DISTANCE);
+        dir = pt1.subtract3(ptN_prime).multiply3(AdvanceForFeint.DASHED_LINE_DISTANCE);
         ptN_prime = ptN_prime.add3(dir);
 
         List<Position> newPositions = Arrays.asList(

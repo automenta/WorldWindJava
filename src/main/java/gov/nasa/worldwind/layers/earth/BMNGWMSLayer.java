@@ -15,7 +15,7 @@ import org.w3c.dom.Document;
  */
 public class BMNGWMSLayer extends WMSTiledImageLayer {
     public BMNGWMSLayer() {
-        super(getConfigurationDocument(), null);
+        super(BMNGWMSLayer.getConfigurationDocument(), null);
     }
 
     protected static Document getConfigurationDocument() {

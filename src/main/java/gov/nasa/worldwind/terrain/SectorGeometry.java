@@ -16,10 +16,9 @@ import java.util.List;
 /**
  * This interface provides access to individual terrain tiles, which are contained in a {@link SectorGeometryList}.
  * <p>
- * Note: Three methods of this class assume that the {@link SectorGeometryList#beginRendering(DrawContext)}
- * method of the containing sector geometry list has been called prior to calling them. They are {@link
- * #pick(DrawContext, Point)}, {@link #pick(DrawContext,
- * java.util.List)}, and {@link #renderMultiTexture(DrawContext, int)}.
+ * Note: Three methods of this class assume that the {@link SectorGeometryList#beginRendering(DrawContext)} method of
+ * the containing sector geometry list has been called prior to calling them. They are {@link #pick(DrawContext,
+ * Point)}, {@link #pick(DrawContext, java.util.List)}, and {@link #renderMultiTexture(DrawContext, int)}.
  *
  * @version $Id: SectorGeometry.java 1171 2013-02-11 21:45:02Z dcollins $
  */
@@ -42,8 +41,8 @@ public interface SectorGeometry extends Renderable {
      * Performs a pick on the geometry. The result, if any, is added to the draw context's picked-object list. See
      * {@link DrawContext#getPickedObjects()}.
      * <p>
-     * Note: This method assumes that {@link SectorGeometryList#beginRendering(DrawContext)}
-     * was called prior to this method.
+     * Note: This method assumes that {@link SectorGeometryList#beginRendering(DrawContext)} was called prior to this
+     * method.
      *
      * @param dc        the current draw context.
      * @param pickPoint a screen coordinate points to pick test.
@@ -83,8 +82,8 @@ public interface SectorGeometry extends Renderable {
      * Displays the geometry. The number of texture units to use may be specified, but at most only the number of
      * available units are used.
      * <p>
-     * Note: This method assumes that {@link SectorGeometryList#beginRendering(DrawContext)}
-     * was called prior to this method.
+     * Note: This method assumes that {@link SectorGeometryList#beginRendering(DrawContext)} was called prior to this
+     * method.
      *
      * @param dc              the current draw context.
      * @param numTextureUnits the number of texture units to attempt to use.
@@ -122,8 +121,8 @@ public interface SectorGeometry extends Renderable {
     /**
      * Performs a pick on the geometry.
      * <p>
-     * Note: This method assumes that {@link SectorGeometryList#beginRendering(DrawContext)}
-     * was called prior to this method.
+     * Note: This method assumes that {@link SectorGeometryList#beginRendering(DrawContext)} was called prior to this
+     * method.
      *
      * @param dc         the current draw context.
      * @param pickPoints a list of screen coordinate points to pick test.
@@ -171,8 +170,8 @@ public interface SectorGeometry extends Renderable {
      * Displays the geometry. The number of texture units to use may be specified, but at most only the number of
      * available units are used.
      * <p>
-     * Note: This method allows but does not require that {@link SectorGeometryList#beginRendering(DrawContext)}
-     * was called prior to this method. See the description of the <code>beginRenderingCalled</code> argument.
+     * Note: This method allows but does not require that {@link SectorGeometryList#beginRendering(DrawContext)} was
+     * called prior to this method. See the description of the <code>beginRenderingCalled</code> argument.
      *
      * @param dc                   the current draw context.
      * @param numTextureUnits      the number of texture units to attempt to use.
@@ -188,8 +187,8 @@ public interface SectorGeometry extends Renderable {
     /**
      * Displays the geometry.
      * <p>
-     * Note: This method allows but does not require that {@link SectorGeometryList#beginRendering(DrawContext)}
-     * was called prior to this method. See the description of the <code>beginRenderingCalled</code> argument.
+     * Note: This method allows but does not require that {@link SectorGeometryList#beginRendering(DrawContext)} was
+     * called prior to this method. See the description of the <code>beginRenderingCalled</code> argument.
      *
      * @param dc                   the current draw context.
      * @param beginRenderingCalled indicates whether this sector geometry's <code>beginRendering</code> method has been

@@ -37,14 +37,14 @@ public abstract class Capabilities {
         this.xpath = xpath;
 
         try {
-            this.service = (Element) this.xpath.evaluate(altPaths("*/wms:Service"), doc, XPathConstants.NODE);
+            this.service = (Element) this.xpath.evaluate(Capabilities.altPaths("*/wms:Service"), doc, XPathConstants.NODE);
             if (this.service == null) {
                 String message = Logging.getMessage("WMS.NoServiceElement", "XML document");
                 Logging.logger().severe(message);
                 throw new IllegalArgumentException(message);
             }
 
-            this.capability = (Element) this.xpath.evaluate(altPaths("*/wms:Capability"), doc, XPathConstants.NODE);
+            this.capability = (Element) this.xpath.evaluate(Capabilities.altPaths("*/wms:Capability"), doc, XPathConstants.NODE);
             if (this.capability == null) {
                 String message = Logging.getMessage("WMS.NoCapabilityElement", "XML document");
                 Logging.logger().severe(message);
@@ -56,16 +56,21 @@ public abstract class Capabilities {
         }
     }
 
-    public static Capabilities retrieve(URI uri, String service) throws Exception {
-        return retrieve(uri, service, null, null);
+    public static Capabilities retrieve(URI uri, String service)
+        throws IllegalArgumentException, WWRuntimeException, org.xml.sax.SAXException, java.io.IOException,
+        URISyntaxException {
+        return Capabilities.retrieve(uri, service, null, null);
     }
 
-    public static Capabilities retrieve(URI uri, Integer connectTimeout, Integer readTimeout) throws Exception {
-        return retrieve(uri, null, connectTimeout, readTimeout);
+    public static Capabilities retrieve(URI uri, Integer connectTimeout, Integer readTimeout)
+        throws IllegalArgumentException, WWRuntimeException, org.xml.sax.SAXException, java.io.IOException,
+        URISyntaxException {
+        return Capabilities.retrieve(uri, null, connectTimeout, readTimeout);
     }
 
     public static Capabilities retrieve(URI uri, String service, Integer connectTimeout, Integer readTimeout)
-        throws Exception {
+        throws IllegalArgumentException, WWRuntimeException, org.xml.sax.SAXException,
+        java.io.IOException, URISyntaxException {
         if (uri == null) {
             String message = Logging.getMessage("nullValue.URIIsNull");
             Logging.logger().severe(message);
@@ -146,7 +151,7 @@ public abstract class Capabilities {
                 throw new ServiceException(exceptionMessage);
             }
 
-            String version = xpath.evaluate(altPaths("*/@wms:version"), doc);
+            String version = xpath.evaluate(Capabilities.altPaths("*/@wms:version"), doc);
             if (version == null || version.isEmpty())
                 return null;
 
@@ -163,7 +168,96 @@ public abstract class Capabilities {
 
     private static String altPaths(String path) // hack for WW server layer names with leading pipe
     {
-        return path != null ? path + "|" + path.replaceAll("wms:", "") : null;
+        return path != null ? path + '|' + path.replaceAll("wms:", "") : null;
+    }
+
+    public static Long getLayerLatestLastUpdateTime(Capabilities caps, String[] layerNames) {
+        if (caps == null) {
+            String message = Logging.getMessage("nullValue.WMSCapabilities");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        if (layerNames == null) {
+            String message = Logging.getMessage("nullValue.WMSLayerNames");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        String lastUpdate = null;
+
+        for (String name : layerNames) {
+            Element layer = caps.getLayerByName(name);
+            if (layer == null)
+                continue;
+
+            String update = caps.getLayerLastUpdate(layer);
+            if (update != null && !update.isEmpty() && (lastUpdate == null || update.compareTo(lastUpdate) > 0))
+                lastUpdate = update;
+        }
+
+        if (lastUpdate != null) {
+            try {
+                return Long.parseLong(lastUpdate);
+            }
+            catch (NumberFormatException e) {
+                String message = Logging.getMessage("generic.ConversionError", lastUpdate);
+                Logging.logger().warning(message);
+            }
+        }
+
+        return null;
+    }
+
+    public static Double[] getLayerExtremeElevations(Capabilities caps, String[] layerNames) {
+        if (caps == null) {
+            String message = Logging.getMessage("nullValue.WMSCapabilities");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        if (layerNames == null) {
+            String message = Logging.getMessage("nullValue.WMSLayerNames");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        String extremeMin = null;
+        String extremeMax = null;
+
+        for (String name : layerNames) {
+            Element layer = caps.getLayerByName(name);
+            if (layer == null)
+                continue;
+
+            String min = caps.getLayerExtremeElevationsMin(layer);
+            if (min != null && (extremeMin == null || min.compareTo(min) > 0))
+                extremeMin = min;
+
+            String max = caps.getLayerExtremeElevationsMax(layer);
+            if (max != null && (extremeMax == null || max.compareTo(max) > 0))
+                extremeMax = max;
+        }
+
+        if (extremeMin != null || extremeMax != null) {
+            try {
+                Double[] extremes = {null, null};
+
+                if (extremeMin != null)
+                    extremes[0] = Double.parseDouble(extremeMin);
+                if (extremeMax != null)
+                    extremes[1] = Double.parseDouble(extremeMax);
+
+                return extremes;
+            }
+            catch (NumberFormatException e) {
+                String message = Logging.getMessage("generic.ConversionError",
+                    extremeMin != null ? extremeMin : extremeMax);
+                Logging.logger().severe(message);
+            }
+        }
+
+        return null;
     }
 
     public URL getCapsURL() {
@@ -176,7 +270,7 @@ public abstract class Capabilities {
 
     protected String getText(Element context, String path) {
         try {
-            return this.xpath.evaluate(altPaths(path), context != null ? context : doc);
+            return this.xpath.evaluate(Capabilities.altPaths(path), context != null ? context : doc);
         }
         catch (XPathExpressionException e) {
             return null;
@@ -185,7 +279,7 @@ public abstract class Capabilities {
 
     protected String[] getTextArray(Element context, String path) {
         try {
-            NodeList nodes = (NodeList) this.xpath.evaluate(altPaths(path), context != null ? context : doc,
+            NodeList nodes = (NodeList) this.xpath.evaluate(Capabilities.altPaths(path), context != null ? context : doc,
                 XPathConstants.NODESET);
             if (nodes == null || nodes.getLength() == 0)
                 return null;
@@ -217,7 +311,7 @@ public abstract class Capabilities {
 
     protected Element getElement(Element context, String path) {
         try {
-            Node node = (Node) this.xpath.evaluate(altPaths(path), context != null ? context : doc,
+            Node node = (Node) this.xpath.evaluate(Capabilities.altPaths(path), context != null ? context : doc,
                 XPathConstants.NODE);
             if (node == null)
                 return null;
@@ -231,7 +325,7 @@ public abstract class Capabilities {
 
     protected Element[] getElements(Element context, String path) {
         try {
-            NodeList nodes = (NodeList) this.xpath.evaluate(altPaths(path), context != null ? context : doc,
+            NodeList nodes = (NodeList) this.xpath.evaluate(Capabilities.altPaths(path), context != null ? context : doc,
                 XPathConstants.NODESET);
             if (nodes == null || nodes.getLength() == 0)
                 return null;
@@ -292,103 +386,14 @@ public abstract class Capabilities {
         return this.namedLayerElements.keySet().toArray(new Element[0]);
     }
 
+    // ********* Document Items ********* //
+
     public Element getLayerByName(String layerName) {
         if (this.namedLayers.isEmpty())
             this.fillLayerList();
 
         Layer l = this.namedLayers.get(layerName);
         return l != null ? l.element : null;
-    }
-
-    public static Long getLayerLatestLastUpdateTime(Capabilities caps, String[] layerNames) {
-        if (caps == null) {
-            String message = Logging.getMessage("nullValue.WMSCapabilities");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (layerNames == null) {
-            String message = Logging.getMessage("nullValue.WMSLayerNames");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        String lastUpdate = null;
-
-        for (String name : layerNames) {
-            Element layer = caps.getLayerByName(name);
-            if (layer == null)
-                continue;
-
-            String update = caps.getLayerLastUpdate(layer);
-            if (update != null && !update.isEmpty() && (lastUpdate == null || update.compareTo(lastUpdate) > 0))
-                lastUpdate = update;
-        }
-
-        if (lastUpdate != null) {
-            try {
-                return Long.parseLong(lastUpdate);
-            }
-            catch (NumberFormatException e) {
-                String message = Logging.getMessage("generic.ConversionError", lastUpdate);
-                Logging.logger().warning(message);
-            }
-        }
-
-        return null;
-    }
-
-    // ********* Document Items ********* //
-
-    public static Double[] getLayerExtremeElevations(Capabilities caps, String[] layerNames) {
-        if (caps == null) {
-            String message = Logging.getMessage("nullValue.WMSCapabilities");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (layerNames == null) {
-            String message = Logging.getMessage("nullValue.WMSLayerNames");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        String extremeMin = null;
-        String extremeMax = null;
-
-        for (String name : layerNames) {
-            Element layer = caps.getLayerByName(name);
-            if (layer == null)
-                continue;
-
-            String min = caps.getLayerExtremeElevationsMin(layer);
-            if (min != null && (extremeMin == null || min.compareTo(min) > 0))
-                extremeMin = min;
-
-            String max = caps.getLayerExtremeElevationsMax(layer);
-            if (max != null && (extremeMax == null || max.compareTo(max) > 0))
-                extremeMax = max;
-        }
-
-        if (extremeMin != null || extremeMax != null) {
-            try {
-                Double[] extremes = new Double[] {null, null};
-
-                if (extremeMin != null)
-                    extremes[0] = Double.parseDouble(extremeMin);
-                if (extremeMax != null)
-                    extremes[1] = Double.parseDouble(extremeMax);
-
-                return extremes;
-            }
-            catch (NumberFormatException e) {
-                String message = Logging.getMessage("generic.ConversionError",
-                    extremeMin != null ? extremeMin : extremeMax);
-                Logging.logger().severe(message);
-            }
-        }
-
-        return null;
     }
 
     public String getVersion() {

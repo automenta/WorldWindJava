@@ -90,349 +90,349 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
     protected static final Collection<String> emsEquipment = new HashSet<>();
 
     static {
-        schemePathMap.put("s", "war"); // Scheme Warfighting
-        schemePathMap.put("i", "sigint"); // Scheme Signals Intelligence
-        schemePathMap.put("o", "stbops"); // Scheme Stability Operations
-        schemePathMap.put("e", "ems"); // Scheme Emergency Management
+        MilStd2525IconRetriever.schemePathMap.put("s", "war"); // Scheme Warfighting
+        MilStd2525IconRetriever.schemePathMap.put("i", "sigint"); // Scheme Signals Intelligence
+        MilStd2525IconRetriever.schemePathMap.put("o", "stbops"); // Scheme Stability Operations
+        MilStd2525IconRetriever.schemePathMap.put("e", "ems"); // Scheme Emergency Management
 
         // The MIL-STD-2525 symbol fill colors for each Standard Identity.
-        fillColorMap.put("p", FILL_COLOR_LIGHT_YELLOW); // Standard Identity Pending
-        fillColorMap.put("u", FILL_COLOR_LIGHT_YELLOW); // Standard Identity Unknown
-        fillColorMap.put("f", FILL_COLOR_LIGHT_BLUE); // Standard Identity Friend
-        fillColorMap.put("n", FILL_COLOR_LIGHT_GREEN); // Standard Identity Neutral
-        fillColorMap.put("h", FILL_COLOR_LIGHT_RED); // Standard Identity Hostile
-        fillColorMap.put("a", FILL_COLOR_LIGHT_BLUE); // Standard Identity Assumed Friend
-        fillColorMap.put("s", FILL_COLOR_LIGHT_RED); // Standard Identity Suspect
-        fillColorMap.put("g", FILL_COLOR_LIGHT_YELLOW); // Standard Identity Exercise Pending
-        fillColorMap.put("w", FILL_COLOR_LIGHT_YELLOW); // Standard Identity Exercise Unknown
-        fillColorMap.put("d", FILL_COLOR_LIGHT_BLUE); // Standard Identity Exercise Friend
-        fillColorMap.put("l", FILL_COLOR_LIGHT_GREEN); // Standard Identity Exercise Neutral
-        fillColorMap.put("m", FILL_COLOR_LIGHT_BLUE); // Standard Identity Exercise Assumed Friend
-        fillColorMap.put("j", FILL_COLOR_LIGHT_RED); // Standard Identity Joker
-        fillColorMap.put("k", FILL_COLOR_LIGHT_RED); // Standard Identity Faker
+        MilStd2525IconRetriever.fillColorMap.put("p", MilStd2525IconRetriever.FILL_COLOR_LIGHT_YELLOW); // Standard Identity Pending
+        MilStd2525IconRetriever.fillColorMap.put("u", MilStd2525IconRetriever.FILL_COLOR_LIGHT_YELLOW); // Standard Identity Unknown
+        MilStd2525IconRetriever.fillColorMap.put("f", MilStd2525IconRetriever.FILL_COLOR_LIGHT_BLUE); // Standard Identity Friend
+        MilStd2525IconRetriever.fillColorMap.put("n", MilStd2525IconRetriever.FILL_COLOR_LIGHT_GREEN); // Standard Identity Neutral
+        MilStd2525IconRetriever.fillColorMap.put("h", MilStd2525IconRetriever.FILL_COLOR_LIGHT_RED); // Standard Identity Hostile
+        MilStd2525IconRetriever.fillColorMap.put("a", MilStd2525IconRetriever.FILL_COLOR_LIGHT_BLUE); // Standard Identity Assumed Friend
+        MilStd2525IconRetriever.fillColorMap.put("s", MilStd2525IconRetriever.FILL_COLOR_LIGHT_RED); // Standard Identity Suspect
+        MilStd2525IconRetriever.fillColorMap.put("g", MilStd2525IconRetriever.FILL_COLOR_LIGHT_YELLOW); // Standard Identity Exercise Pending
+        MilStd2525IconRetriever.fillColorMap.put("w", MilStd2525IconRetriever.FILL_COLOR_LIGHT_YELLOW); // Standard Identity Exercise Unknown
+        MilStd2525IconRetriever.fillColorMap.put("d", MilStd2525IconRetriever.FILL_COLOR_LIGHT_BLUE); // Standard Identity Exercise Friend
+        MilStd2525IconRetriever.fillColorMap.put("l", MilStd2525IconRetriever.FILL_COLOR_LIGHT_GREEN); // Standard Identity Exercise Neutral
+        MilStd2525IconRetriever.fillColorMap.put("m", MilStd2525IconRetriever.FILL_COLOR_LIGHT_BLUE); // Standard Identity Exercise Assumed Friend
+        MilStd2525IconRetriever.fillColorMap.put("j", MilStd2525IconRetriever.FILL_COLOR_LIGHT_RED); // Standard Identity Joker
+        MilStd2525IconRetriever.fillColorMap.put("k", MilStd2525IconRetriever.FILL_COLOR_LIGHT_RED); // Standard Identity Faker
 
         // The MIL-STD-2525 symbol frame colors for each Standard Identity.
-        frameColorMap.put("p", FRAME_COLOR_YELLOW); // Standard Identity Pending
-        frameColorMap.put("u", FRAME_COLOR_YELLOW); // Standard Identity Unknown
-        frameColorMap.put("f", FRAME_COLOR_BLUE); // Standard Identity Friend
-        frameColorMap.put("n", FRAME_COLOR_GREEN); // Standard Identity Neutral
-        frameColorMap.put("h", FRAME_COLOR_RED); // Standard Identity Hostile
-        frameColorMap.put("a", FRAME_COLOR_BLUE); // Standard Identity Assumed Friend
-        frameColorMap.put("s", FRAME_COLOR_RED); // Standard Identity Suspect
-        frameColorMap.put("g", FRAME_COLOR_YELLOW); // Standard Identity Exercise Pending
-        frameColorMap.put("w", FRAME_COLOR_YELLOW); // Standard Identity Exercise Unknown
-        frameColorMap.put("d", FRAME_COLOR_BLUE); // Standard Identity Exercise Friend
-        frameColorMap.put("l", FRAME_COLOR_GREEN); // Standard Identity Exercise Neutral
-        frameColorMap.put("m", FRAME_COLOR_BLUE); // Standard Identity Exercise Assumed Friend
-        frameColorMap.put("j", FRAME_COLOR_RED); // Standard Identity Joker
-        frameColorMap.put("k", FRAME_COLOR_RED); // Standard Identity Faker
+        MilStd2525IconRetriever.frameColorMap.put("p", MilStd2525IconRetriever.FRAME_COLOR_YELLOW); // Standard Identity Pending
+        MilStd2525IconRetriever.frameColorMap.put("u", MilStd2525IconRetriever.FRAME_COLOR_YELLOW); // Standard Identity Unknown
+        MilStd2525IconRetriever.frameColorMap.put("f", MilStd2525IconRetriever.FRAME_COLOR_BLUE); // Standard Identity Friend
+        MilStd2525IconRetriever.frameColorMap.put("n", MilStd2525IconRetriever.FRAME_COLOR_GREEN); // Standard Identity Neutral
+        MilStd2525IconRetriever.frameColorMap.put("h", MilStd2525IconRetriever.FRAME_COLOR_RED); // Standard Identity Hostile
+        MilStd2525IconRetriever.frameColorMap.put("a", MilStd2525IconRetriever.FRAME_COLOR_BLUE); // Standard Identity Assumed Friend
+        MilStd2525IconRetriever.frameColorMap.put("s", MilStd2525IconRetriever.FRAME_COLOR_RED); // Standard Identity Suspect
+        MilStd2525IconRetriever.frameColorMap.put("g", MilStd2525IconRetriever.FRAME_COLOR_YELLOW); // Standard Identity Exercise Pending
+        MilStd2525IconRetriever.frameColorMap.put("w", MilStd2525IconRetriever.FRAME_COLOR_YELLOW); // Standard Identity Exercise Unknown
+        MilStd2525IconRetriever.frameColorMap.put("d", MilStd2525IconRetriever.FRAME_COLOR_BLUE); // Standard Identity Exercise Friend
+        MilStd2525IconRetriever.frameColorMap.put("l", MilStd2525IconRetriever.FRAME_COLOR_GREEN); // Standard Identity Exercise Neutral
+        MilStd2525IconRetriever.frameColorMap.put("m", MilStd2525IconRetriever.FRAME_COLOR_BLUE); // Standard Identity Exercise Assumed Friend
+        MilStd2525IconRetriever.frameColorMap.put("j", MilStd2525IconRetriever.FRAME_COLOR_RED); // Standard Identity Joker
+        MilStd2525IconRetriever.frameColorMap.put("k", MilStd2525IconRetriever.FRAME_COLOR_RED); // Standard Identity Faker
 
         // The MIL-STD-2525 symbol icon colors for each icon that has either a white or colored fill. White is denoted
         // as a null value.
-        iconColorMap.put("e-f-a----------", null);
-        iconColorMap.put("e-f-aa---------", null);
-        iconColorMap.put("e-f-ab---------", null);
-        iconColorMap.put("e-f-ad---------", null);
-        iconColorMap.put("e-f-ag---------", null);
-        iconColorMap.put("e-f-ba---------", null);
-        iconColorMap.put("e-f-bb---------", null);
-        iconColorMap.put("e-f-bc---------", null);
-        iconColorMap.put("e-f-bd---------", null);
-        iconColorMap.put("e-f-c----------", null);
-        iconColorMap.put("e-f-ca---------", null);
-        iconColorMap.put("e-f-cb---------", null);
-        iconColorMap.put("e-f-cc---------", null);
-        iconColorMap.put("e-f-cd---------", null);
-        iconColorMap.put("e-f-ce---------", null);
-        iconColorMap.put("e-f-cf---------", null);
-        iconColorMap.put("e-f-cg---------", null);
-        iconColorMap.put("e-f-ch---------", null);
-        iconColorMap.put("e-f-ci---------", null);
-        iconColorMap.put("e-f-cj---------", null);
-        iconColorMap.put("e-f-ee---------", null);
-        iconColorMap.put("e-f-f----------", null);
-        iconColorMap.put("e-f-g----------", null);
-        iconColorMap.put("e-f-h----------", null);
-        iconColorMap.put("e-f-ha---------", null);
-        iconColorMap.put("e-f-hb---------", null);
-        iconColorMap.put("e-f-ia---------", null);
-        iconColorMap.put("e-f-id---------", null);
-        iconColorMap.put("e-f-jb---------", null);
-        iconColorMap.put("e-f-ld---------", null);
-        iconColorMap.put("e-f-le---------", null);
-        iconColorMap.put("e-f-lf---------", null);
-        iconColorMap.put("e-f-lm---------", null);
-        iconColorMap.put("e-f-lo---------", null);
-        iconColorMap.put("e-f-lp---------", null);
-        iconColorMap.put("e-f-me---------", null);
-        iconColorMap.put("e-f-mf---------", null);
-        iconColorMap.put("e-f-mg---------", null);
-        iconColorMap.put("e-f-mh---------", null);
-        iconColorMap.put("e-f-mi---------", null);
-        iconColorMap.put("e-i-b----------", null);
-        iconColorMap.put("e-i-ca---------", null);
-        iconColorMap.put("e-i-cc---------", null);
-        iconColorMap.put("e-i-d----------", null);
-        iconColorMap.put("e-i-da---------", new Color(255, 254, 111));
-        iconColorMap.put("e-i-dc---------", null);
-        iconColorMap.put("e-i-dd---------", null);
-        iconColorMap.put("e-i-de---------", null);
-        iconColorMap.put("e-i-df---------", null);
-        iconColorMap.put("e-i-dg---------", null);
-        iconColorMap.put("e-i-dh---------", null);
-        iconColorMap.put("e-i-di---------", null);
-        iconColorMap.put("e-i-dj---------", null);
-        iconColorMap.put("e-i-dm---------", null);
-        iconColorMap.put("e-i-e----------", null);
-        iconColorMap.put("e-i-ea---------", null);
-        iconColorMap.put("e-i-f----------", null);
-        iconColorMap.put("e-i-fa---------", null);
-        iconColorMap.put("e-o-ae---------", null);
-        iconColorMap.put("e-o-af---------", null);
-        iconColorMap.put("e-o-aj---------", null);
-        iconColorMap.put("e-o-ak---------", null);
-        iconColorMap.put("e-o-am---------", null);
-        iconColorMap.put("e-o-b----------", null);
-        iconColorMap.put("e-o-ba---------", null);
-        iconColorMap.put("e-o-bb---------", null);
-        iconColorMap.put("e-o-bc---------", null);
-        iconColorMap.put("e-o-bd---------", null);
-        iconColorMap.put("e-o-be---------", null);
-        iconColorMap.put("e-o-bf---------", null);
-        iconColorMap.put("e-o-bg---------", null);
-        iconColorMap.put("e-o-bh---------", null);
-        iconColorMap.put("e-o-bi---------", null);
-        iconColorMap.put("e-o-bj---------", null);
-        iconColorMap.put("e-o-cc---------", null);
-        iconColorMap.put("e-o-cd---------", null);
-        iconColorMap.put("e-o-de---------", null);
-        iconColorMap.put("e-o-dea--------", null);
-        iconColorMap.put("e-o-deb--------", null);
-        iconColorMap.put("e-o-dec--------", null);
-        iconColorMap.put("e-o-df---------", null);
-        iconColorMap.put("e-o-dfa--------", null);
-        iconColorMap.put("e-o-dfb--------", null);
-        iconColorMap.put("e-o-dfc--------", null);
-        iconColorMap.put("e-o-dk---------", null);
-        iconColorMap.put("e-o-dn---------", null);
-        iconColorMap.put("e-o-dna--------", null);
-        iconColorMap.put("e-o-dnc--------", null);
-        iconColorMap.put("e-o-do---------", null);
-        iconColorMap.put("e-o-doa--------", null);
-        iconColorMap.put("e-o-dob--------", null);
-        iconColorMap.put("e-o-doc--------", null);
-        iconColorMap.put("o-o-ha---------", null);
-        iconColorMap.put("o-o-hv---------", null);
-        iconColorMap.put("o-o-y----------", null);
-        iconColorMap.put("o-o-yh---------", null);
-        iconColorMap.put("o-o-yt---------", null);
-        iconColorMap.put("o-o-yw---------", null);
-        iconColorMap.put("s-a-cf---------", null);
-        iconColorMap.put("s-a-ch---------", null);
-        iconColorMap.put("s-a-cl---------", null);
-        iconColorMap.put("s-a-w----------", FILL_COLOR_LIGHT_YELLOW);
-        iconColorMap.put("s-a-wm---------", FILL_COLOR_LIGHT_YELLOW);
-        iconColorMap.put("s-a-wma--------", FILL_COLOR_LIGHT_YELLOW);
-        iconColorMap.put("s-a-wmaa-------", FILL_COLOR_LIGHT_YELLOW);
-        iconColorMap.put("s-a-wmap-------", FILL_COLOR_LIGHT_YELLOW);
-        iconColorMap.put("s-a-wmas-------", FILL_COLOR_LIGHT_YELLOW);
-        iconColorMap.put("s-a-wmb--------", FILL_COLOR_LIGHT_YELLOW);
-        iconColorMap.put("s-a-wmcm-------", FILL_COLOR_LIGHT_YELLOW);
-        iconColorMap.put("s-a-wms--------", FILL_COLOR_LIGHT_YELLOW);
-        iconColorMap.put("s-a-wmsa-------", FILL_COLOR_LIGHT_YELLOW);
-        iconColorMap.put("s-a-wmsb-------", FILL_COLOR_LIGHT_YELLOW);
-        iconColorMap.put("s-a-wmss-------", FILL_COLOR_LIGHT_YELLOW);
-        iconColorMap.put("s-a-wmsu-------", FILL_COLOR_LIGHT_YELLOW);
-        iconColorMap.put("s-a-wmu--------", FILL_COLOR_LIGHT_YELLOW);
-        iconColorMap.put("s-f-gp---------", null);
-        iconColorMap.put("s-f-gpa--------", null);
-        iconColorMap.put("s-f-nb---------", null);
-        iconColorMap.put("s-g-evca-------", null);
-        iconColorMap.put("s-g-evcah------", null);
-        iconColorMap.put("s-g-evcal------", null);
-        iconColorMap.put("s-g-evcam------", null);
-        iconColorMap.put("s-g-evcf-------", null);
-        iconColorMap.put("s-g-evcfh------", null);
-        iconColorMap.put("s-g-evcfl------", null);
-        iconColorMap.put("s-g-evcfm------", null);
-        iconColorMap.put("s-g-evcj-------", null);
-        iconColorMap.put("s-g-evcjh------", null);
-        iconColorMap.put("s-g-evcjl------", null);
-        iconColorMap.put("s-g-evcjm------", null);
-        iconColorMap.put("s-g-evcm-------", null);
-        iconColorMap.put("s-g-evcmh------", null);
-        iconColorMap.put("s-g-evcml------", null);
-        iconColorMap.put("s-g-evcmm------", null);
-        iconColorMap.put("s-g-evco-------", null);
-        iconColorMap.put("s-g-evcoh------", null);
-        iconColorMap.put("s-g-evcol------", null);
-        iconColorMap.put("s-g-evcom------", null);
-        iconColorMap.put("s-g-evct-------", null);
-        iconColorMap.put("s-g-evcth------", null);
-        iconColorMap.put("s-g-evctl------", null);
-        iconColorMap.put("s-g-evctm------", null);
-        iconColorMap.put("s-g-evcu-------", null);
-        iconColorMap.put("s-g-evcuh------", null);
-        iconColorMap.put("s-g-evcul------", null);
-        iconColorMap.put("s-g-evcum------", null);
-        iconColorMap.put("s-g-ucfs-------", null);
-        iconColorMap.put("s-g-ucfsa------", null);
-        iconColorMap.put("s-g-ucfsl------", null);
-        iconColorMap.put("s-g-ucfso------", null);
-        iconColorMap.put("s-g-ucfss------", null);
-        iconColorMap.put("s-g-ucfts------", null);
-        iconColorMap.put("s-g-uumrs------", null);
-        iconColorMap.put("s-g-uumrss-----", null);
-        iconColorMap.put("s-g-uusx-------", null);
-        iconColorMap.put("s-p-t----------", null);
-        iconColorMap.put("s-s-c----------", null);
-        iconColorMap.put("s-s-nh---------", null);
-        iconColorMap.put("s-s-xa---------", null);
-        iconColorMap.put("s-s-xar--------", null);
-        iconColorMap.put("s-s-xas--------", null);
-        iconColorMap.put("s-s-xf---------", null);
-        iconColorMap.put("s-s-xfdf-------", null);
-        iconColorMap.put("s-s-xfdr-------", null);
-        iconColorMap.put("s-s-xftr-------", null);
-        iconColorMap.put("s-s-xh---------", null);
-        iconColorMap.put("s-s-xl---------", null);
-        iconColorMap.put("s-s-xm---------", null);
-        iconColorMap.put("s-s-xmc--------", null);
-        iconColorMap.put("s-s-xmf--------", null);
-        iconColorMap.put("s-s-xmh--------", null);
-        iconColorMap.put("s-s-xmo--------", null);
-        iconColorMap.put("s-s-xmp--------", null);
-        iconColorMap.put("s-s-xmr--------", null);
-        iconColorMap.put("s-s-xmto-------", null);
-        iconColorMap.put("s-s-xmtu-------", null);
-        iconColorMap.put("s-s-xp---------", null);
-        iconColorMap.put("s-s-xr---------", null);
-        iconColorMap.put("s-u-e----------", ICON_COLOR_GREEN);
-        iconColorMap.put("s-u-nd---------", null);
-        iconColorMap.put("s-u-sca--------", null);
-        iconColorMap.put("s-u-scb--------", null);
-        iconColorMap.put("s-u-scg--------", null);
-        iconColorMap.put("s-u-scm--------", null);
-        iconColorMap.put("s-u-sna--------", null);
-        iconColorMap.put("s-u-snb--------", null);
-        iconColorMap.put("s-u-sng--------", null);
-        iconColorMap.put("s-u-snm--------", null);
-        iconColorMap.put("s-u-v----------", ICON_COLOR_GREEN);
-        iconColorMap.put("s-u-wdm--------", ICON_COLOR_DARK_GREEN);
-        iconColorMap.put("s-u-wdmg-------", ICON_COLOR_DARK_GREEN);
-        iconColorMap.put("s-u-wdmm-------", ICON_COLOR_DARK_GREEN);
-        iconColorMap.put("s-u-wm---------", ICON_COLOR_RED);
-        iconColorMap.put("s-u-wma--------", ICON_COLOR_DARK_GREEN);
-        iconColorMap.put("s-u-wmb--------", ICON_COLOR_YELLOW);
-        iconColorMap.put("s-u-wmbd-------", ICON_COLOR_GREEN);
-        iconColorMap.put("s-u-wmc--------", ICON_COLOR_ORANGE);
-        iconColorMap.put("s-u-wmd--------", ICON_COLOR_GREEN);
-        iconColorMap.put("s-u-wme--------", ICON_COLOR_YELLOW);
-        iconColorMap.put("s-u-wmf--------", ICON_COLOR_RED);
-        iconColorMap.put("s-u-wmfc-------", ICON_COLOR_ORANGE);
-        iconColorMap.put("s-u-wmfd-------", ICON_COLOR_GREEN);
-        iconColorMap.put("s-u-wmfe-------", ICON_COLOR_YELLOW);
-        iconColorMap.put("s-u-wmfo-------", ICON_COLOR_DARK_GREEN);
-        iconColorMap.put("s-u-wmfr-------", ICON_COLOR_YELLOW);
-        iconColorMap.put("s-u-wmfx-------", ICON_COLOR_DARK_GREEN);
-        iconColorMap.put("s-u-wmg--------", ICON_COLOR_RED);
-        iconColorMap.put("s-u-wmgc-------", ICON_COLOR_ORANGE);
-        iconColorMap.put("s-u-wmgd-------", ICON_COLOR_GREEN);
-        iconColorMap.put("s-u-wmge-------", ICON_COLOR_YELLOW);
-        iconColorMap.put("s-u-wmgo-------", ICON_COLOR_DARK_GREEN);
-        iconColorMap.put("s-u-wmgr-------", ICON_COLOR_YELLOW);
-        iconColorMap.put("s-u-wmgx-------", ICON_COLOR_DARK_GREEN);
-        iconColorMap.put("s-u-wmm--------", ICON_COLOR_RED);
-        iconColorMap.put("s-u-wmmc-------", ICON_COLOR_ORANGE);
-        iconColorMap.put("s-u-wmmd-------", ICON_COLOR_GREEN);
-        iconColorMap.put("s-u-wmme-------", ICON_COLOR_YELLOW);
-        iconColorMap.put("s-u-wmmo-------", ICON_COLOR_DARK_GREEN);
-        iconColorMap.put("s-u-wmmr-------", ICON_COLOR_YELLOW);
-        iconColorMap.put("s-u-wmmx-------", ICON_COLOR_DARK_GREEN);
-        iconColorMap.put("s-u-wmn--------", ICON_COLOR_DARK_GREEN);
-        iconColorMap.put("s-u-wmo--------", ICON_COLOR_RED);
-        iconColorMap.put("s-u-wmod-------", ICON_COLOR_GREEN);
-        iconColorMap.put("s-u-wmr--------", ICON_COLOR_YELLOW);
-        iconColorMap.put("s-u-wms--------", ICON_COLOR_RED);
-        iconColorMap.put("s-u-wmsd-------", ICON_COLOR_GREEN);
-        iconColorMap.put("s-u-wmsx-------", ICON_COLOR_DARK_GREEN);
-        iconColorMap.put("s-u-wmx--------", ICON_COLOR_DARK_GREEN);
-        iconColorMap.put("s-u-x----------", ICON_COLOR_RED);
+        MilStd2525IconRetriever.iconColorMap.put("e-f-a----------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-f-aa---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-f-ab---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-f-ad---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-f-ag---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-f-ba---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-f-bb---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-f-bc---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-f-bd---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-f-c----------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-f-ca---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-f-cb---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-f-cc---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-f-cd---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-f-ce---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-f-cf---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-f-cg---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-f-ch---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-f-ci---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-f-cj---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-f-ee---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-f-f----------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-f-g----------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-f-h----------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-f-ha---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-f-hb---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-f-ia---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-f-id---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-f-jb---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-f-ld---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-f-le---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-f-lf---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-f-lm---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-f-lo---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-f-lp---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-f-me---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-f-mf---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-f-mg---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-f-mh---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-f-mi---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-i-b----------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-i-ca---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-i-cc---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-i-d----------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-i-da---------", new Color(255, 254, 111));
+        MilStd2525IconRetriever.iconColorMap.put("e-i-dc---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-i-dd---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-i-de---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-i-df---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-i-dg---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-i-dh---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-i-di---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-i-dj---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-i-dm---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-i-e----------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-i-ea---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-i-f----------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-i-fa---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-o-ae---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-o-af---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-o-aj---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-o-ak---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-o-am---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-o-b----------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-o-ba---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-o-bb---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-o-bc---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-o-bd---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-o-be---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-o-bf---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-o-bg---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-o-bh---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-o-bi---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-o-bj---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-o-cc---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-o-cd---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-o-de---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-o-dea--------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-o-deb--------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-o-dec--------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-o-df---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-o-dfa--------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-o-dfb--------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-o-dfc--------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-o-dk---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-o-dn---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-o-dna--------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-o-dnc--------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-o-do---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-o-doa--------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-o-dob--------", null);
+        MilStd2525IconRetriever.iconColorMap.put("e-o-doc--------", null);
+        MilStd2525IconRetriever.iconColorMap.put("o-o-ha---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("o-o-hv---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("o-o-y----------", null);
+        MilStd2525IconRetriever.iconColorMap.put("o-o-yh---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("o-o-yt---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("o-o-yw---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-a-cf---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-a-ch---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-a-cl---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-a-w----------", MilStd2525IconRetriever.FILL_COLOR_LIGHT_YELLOW);
+        MilStd2525IconRetriever.iconColorMap.put("s-a-wm---------", MilStd2525IconRetriever.FILL_COLOR_LIGHT_YELLOW);
+        MilStd2525IconRetriever.iconColorMap.put("s-a-wma--------", MilStd2525IconRetriever.FILL_COLOR_LIGHT_YELLOW);
+        MilStd2525IconRetriever.iconColorMap.put("s-a-wmaa-------", MilStd2525IconRetriever.FILL_COLOR_LIGHT_YELLOW);
+        MilStd2525IconRetriever.iconColorMap.put("s-a-wmap-------", MilStd2525IconRetriever.FILL_COLOR_LIGHT_YELLOW);
+        MilStd2525IconRetriever.iconColorMap.put("s-a-wmas-------", MilStd2525IconRetriever.FILL_COLOR_LIGHT_YELLOW);
+        MilStd2525IconRetriever.iconColorMap.put("s-a-wmb--------", MilStd2525IconRetriever.FILL_COLOR_LIGHT_YELLOW);
+        MilStd2525IconRetriever.iconColorMap.put("s-a-wmcm-------", MilStd2525IconRetriever.FILL_COLOR_LIGHT_YELLOW);
+        MilStd2525IconRetriever.iconColorMap.put("s-a-wms--------", MilStd2525IconRetriever.FILL_COLOR_LIGHT_YELLOW);
+        MilStd2525IconRetriever.iconColorMap.put("s-a-wmsa-------", MilStd2525IconRetriever.FILL_COLOR_LIGHT_YELLOW);
+        MilStd2525IconRetriever.iconColorMap.put("s-a-wmsb-------", MilStd2525IconRetriever.FILL_COLOR_LIGHT_YELLOW);
+        MilStd2525IconRetriever.iconColorMap.put("s-a-wmss-------", MilStd2525IconRetriever.FILL_COLOR_LIGHT_YELLOW);
+        MilStd2525IconRetriever.iconColorMap.put("s-a-wmsu-------", MilStd2525IconRetriever.FILL_COLOR_LIGHT_YELLOW);
+        MilStd2525IconRetriever.iconColorMap.put("s-a-wmu--------", MilStd2525IconRetriever.FILL_COLOR_LIGHT_YELLOW);
+        MilStd2525IconRetriever.iconColorMap.put("s-f-gp---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-f-gpa--------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-f-nb---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-g-evca-------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-g-evcah------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-g-evcal------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-g-evcam------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-g-evcf-------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-g-evcfh------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-g-evcfl------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-g-evcfm------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-g-evcj-------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-g-evcjh------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-g-evcjl------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-g-evcjm------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-g-evcm-------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-g-evcmh------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-g-evcml------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-g-evcmm------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-g-evco-------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-g-evcoh------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-g-evcol------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-g-evcom------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-g-evct-------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-g-evcth------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-g-evctl------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-g-evctm------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-g-evcu-------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-g-evcuh------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-g-evcul------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-g-evcum------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-g-ucfs-------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-g-ucfsa------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-g-ucfsl------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-g-ucfso------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-g-ucfss------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-g-ucfts------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-g-uumrs------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-g-uumrss-----", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-g-uusx-------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-p-t----------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-s-c----------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-s-nh---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-s-xa---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-s-xar--------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-s-xas--------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-s-xf---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-s-xfdf-------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-s-xfdr-------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-s-xftr-------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-s-xh---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-s-xl---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-s-xm---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-s-xmc--------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-s-xmf--------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-s-xmh--------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-s-xmo--------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-s-xmp--------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-s-xmr--------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-s-xmto-------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-s-xmtu-------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-s-xp---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-s-xr---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-e----------", MilStd2525IconRetriever.ICON_COLOR_GREEN);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-nd---------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-sca--------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-scb--------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-scg--------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-scm--------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-sna--------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-snb--------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-sng--------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-snm--------", null);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-v----------", MilStd2525IconRetriever.ICON_COLOR_GREEN);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-wdm--------", MilStd2525IconRetriever.ICON_COLOR_DARK_GREEN);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-wdmg-------", MilStd2525IconRetriever.ICON_COLOR_DARK_GREEN);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-wdmm-------", MilStd2525IconRetriever.ICON_COLOR_DARK_GREEN);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-wm---------", MilStd2525IconRetriever.ICON_COLOR_RED);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-wma--------", MilStd2525IconRetriever.ICON_COLOR_DARK_GREEN);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-wmb--------", MilStd2525IconRetriever.ICON_COLOR_YELLOW);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-wmbd-------", MilStd2525IconRetriever.ICON_COLOR_GREEN);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-wmc--------", MilStd2525IconRetriever.ICON_COLOR_ORANGE);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-wmd--------", MilStd2525IconRetriever.ICON_COLOR_GREEN);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-wme--------", MilStd2525IconRetriever.ICON_COLOR_YELLOW);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-wmf--------", MilStd2525IconRetriever.ICON_COLOR_RED);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-wmfc-------", MilStd2525IconRetriever.ICON_COLOR_ORANGE);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-wmfd-------", MilStd2525IconRetriever.ICON_COLOR_GREEN);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-wmfe-------", MilStd2525IconRetriever.ICON_COLOR_YELLOW);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-wmfo-------", MilStd2525IconRetriever.ICON_COLOR_DARK_GREEN);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-wmfr-------", MilStd2525IconRetriever.ICON_COLOR_YELLOW);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-wmfx-------", MilStd2525IconRetriever.ICON_COLOR_DARK_GREEN);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-wmg--------", MilStd2525IconRetriever.ICON_COLOR_RED);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-wmgc-------", MilStd2525IconRetriever.ICON_COLOR_ORANGE);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-wmgd-------", MilStd2525IconRetriever.ICON_COLOR_GREEN);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-wmge-------", MilStd2525IconRetriever.ICON_COLOR_YELLOW);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-wmgo-------", MilStd2525IconRetriever.ICON_COLOR_DARK_GREEN);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-wmgr-------", MilStd2525IconRetriever.ICON_COLOR_YELLOW);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-wmgx-------", MilStd2525IconRetriever.ICON_COLOR_DARK_GREEN);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-wmm--------", MilStd2525IconRetriever.ICON_COLOR_RED);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-wmmc-------", MilStd2525IconRetriever.ICON_COLOR_ORANGE);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-wmmd-------", MilStd2525IconRetriever.ICON_COLOR_GREEN);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-wmme-------", MilStd2525IconRetriever.ICON_COLOR_YELLOW);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-wmmo-------", MilStd2525IconRetriever.ICON_COLOR_DARK_GREEN);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-wmmr-------", MilStd2525IconRetriever.ICON_COLOR_YELLOW);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-wmmx-------", MilStd2525IconRetriever.ICON_COLOR_DARK_GREEN);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-wmn--------", MilStd2525IconRetriever.ICON_COLOR_DARK_GREEN);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-wmo--------", MilStd2525IconRetriever.ICON_COLOR_RED);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-wmod-------", MilStd2525IconRetriever.ICON_COLOR_GREEN);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-wmr--------", MilStd2525IconRetriever.ICON_COLOR_YELLOW);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-wms--------", MilStd2525IconRetriever.ICON_COLOR_RED);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-wmsd-------", MilStd2525IconRetriever.ICON_COLOR_GREEN);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-wmsx-------", MilStd2525IconRetriever.ICON_COLOR_DARK_GREEN);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-wmx--------", MilStd2525IconRetriever.ICON_COLOR_DARK_GREEN);
+        MilStd2525IconRetriever.iconColorMap.put("s-u-x----------", MilStd2525IconRetriever.ICON_COLOR_RED);
 
         // The MIL-STD-2525 symbol icons that are implicitly unfilled.
-        unfilledIconMap.add("s-u-wm---------");
-        unfilledIconMap.add("s-u-wmd--------");
-        unfilledIconMap.add("s-u-wmg--------");
-        unfilledIconMap.add("s-u-wmgd-------");
-        unfilledIconMap.add("s-u-wmgx-------");
-        unfilledIconMap.add("s-u-wmge-------");
-        unfilledIconMap.add("s-u-wmgc-------");
-        unfilledIconMap.add("s-u-wmgr-------");
-        unfilledIconMap.add("s-u-wmgo-------");
-        unfilledIconMap.add("s-u-wmm--------");
-        unfilledIconMap.add("s-u-wmmd-------");
-        unfilledIconMap.add("s-u-wmmx-------");
-        unfilledIconMap.add("s-u-wmme-------");
-        unfilledIconMap.add("s-u-wmmc-------");
-        unfilledIconMap.add("s-u-wmmr-------");
-        unfilledIconMap.add("s-u-wmmo-------");
-        unfilledIconMap.add("s-u-wmf--------");
-        unfilledIconMap.add("s-u-wmfd-------");
-        unfilledIconMap.add("s-u-wmfx-------");
-        unfilledIconMap.add("s-u-wmfe-------");
-        unfilledIconMap.add("s-u-wmfc-------");
-        unfilledIconMap.add("s-u-wmfr-------");
-        unfilledIconMap.add("s-u-wmfo-------");
-        unfilledIconMap.add("s-u-wmo--------");
-        unfilledIconMap.add("s-u-wmod-------");
-        unfilledIconMap.add("s-u-wmx--------");
-        unfilledIconMap.add("s-u-wme--------");
-        unfilledIconMap.add("s-u-wma--------");
-        unfilledIconMap.add("s-u-wmc--------");
-        unfilledIconMap.add("s-u-wmr--------");
-        unfilledIconMap.add("s-u-wmb--------");
-        unfilledIconMap.add("s-u-wmbd-------");
-        unfilledIconMap.add("s-u-wmn--------");
-        unfilledIconMap.add("s-u-wms--------");
-        unfilledIconMap.add("s-u-wmsx-------");
-        unfilledIconMap.add("s-u-wmsd-------");
-        unfilledIconMap.add("s-u-wdm--------");
-        unfilledIconMap.add("s-u-wdmg-------");
-        unfilledIconMap.add("s-u-wdmm-------");
-        unfilledIconMap.add("s-u-e----------");
-        unfilledIconMap.add("s-u-v----------");
-        unfilledIconMap.add("s-u-x----------");
+        MilStd2525IconRetriever.unfilledIconMap.add("s-u-wm---------");
+        MilStd2525IconRetriever.unfilledIconMap.add("s-u-wmd--------");
+        MilStd2525IconRetriever.unfilledIconMap.add("s-u-wmg--------");
+        MilStd2525IconRetriever.unfilledIconMap.add("s-u-wmgd-------");
+        MilStd2525IconRetriever.unfilledIconMap.add("s-u-wmgx-------");
+        MilStd2525IconRetriever.unfilledIconMap.add("s-u-wmge-------");
+        MilStd2525IconRetriever.unfilledIconMap.add("s-u-wmgc-------");
+        MilStd2525IconRetriever.unfilledIconMap.add("s-u-wmgr-------");
+        MilStd2525IconRetriever.unfilledIconMap.add("s-u-wmgo-------");
+        MilStd2525IconRetriever.unfilledIconMap.add("s-u-wmm--------");
+        MilStd2525IconRetriever.unfilledIconMap.add("s-u-wmmd-------");
+        MilStd2525IconRetriever.unfilledIconMap.add("s-u-wmmx-------");
+        MilStd2525IconRetriever.unfilledIconMap.add("s-u-wmme-------");
+        MilStd2525IconRetriever.unfilledIconMap.add("s-u-wmmc-------");
+        MilStd2525IconRetriever.unfilledIconMap.add("s-u-wmmr-------");
+        MilStd2525IconRetriever.unfilledIconMap.add("s-u-wmmo-------");
+        MilStd2525IconRetriever.unfilledIconMap.add("s-u-wmf--------");
+        MilStd2525IconRetriever.unfilledIconMap.add("s-u-wmfd-------");
+        MilStd2525IconRetriever.unfilledIconMap.add("s-u-wmfx-------");
+        MilStd2525IconRetriever.unfilledIconMap.add("s-u-wmfe-------");
+        MilStd2525IconRetriever.unfilledIconMap.add("s-u-wmfc-------");
+        MilStd2525IconRetriever.unfilledIconMap.add("s-u-wmfr-------");
+        MilStd2525IconRetriever.unfilledIconMap.add("s-u-wmfo-------");
+        MilStd2525IconRetriever.unfilledIconMap.add("s-u-wmo--------");
+        MilStd2525IconRetriever.unfilledIconMap.add("s-u-wmod-------");
+        MilStd2525IconRetriever.unfilledIconMap.add("s-u-wmx--------");
+        MilStd2525IconRetriever.unfilledIconMap.add("s-u-wme--------");
+        MilStd2525IconRetriever.unfilledIconMap.add("s-u-wma--------");
+        MilStd2525IconRetriever.unfilledIconMap.add("s-u-wmc--------");
+        MilStd2525IconRetriever.unfilledIconMap.add("s-u-wmr--------");
+        MilStd2525IconRetriever.unfilledIconMap.add("s-u-wmb--------");
+        MilStd2525IconRetriever.unfilledIconMap.add("s-u-wmbd-------");
+        MilStd2525IconRetriever.unfilledIconMap.add("s-u-wmn--------");
+        MilStd2525IconRetriever.unfilledIconMap.add("s-u-wms--------");
+        MilStd2525IconRetriever.unfilledIconMap.add("s-u-wmsx-------");
+        MilStd2525IconRetriever.unfilledIconMap.add("s-u-wmsd-------");
+        MilStd2525IconRetriever.unfilledIconMap.add("s-u-wdm--------");
+        MilStd2525IconRetriever.unfilledIconMap.add("s-u-wdmg-------");
+        MilStd2525IconRetriever.unfilledIconMap.add("s-u-wdmm-------");
+        MilStd2525IconRetriever.unfilledIconMap.add("s-u-e----------");
+        MilStd2525IconRetriever.unfilledIconMap.add("s-u-v----------");
+        MilStd2525IconRetriever.unfilledIconMap.add("s-u-x----------");
 
         // The MIL-STD-2525 symbol icons that are implicitly unframed.
-        unframedIconMap.add("s-s-o----------");
-        unframedIconMap.add("s-u-nd---------");
+        MilStd2525IconRetriever.unframedIconMap.add("s-s-o----------");
+        MilStd2525IconRetriever.unframedIconMap.add("s-u-nd---------");
 
         // The MIL-STD-2525 Emergency Management symbols representing units.
-        emsEquipment.add("e-o-ab---------");
-        emsEquipment.add("e-o-ae---------");
-        emsEquipment.add("e-o-af---------");
-        emsEquipment.add("e-o-bb---------");
-        emsEquipment.add("e-o-cb---------");
-        emsEquipment.add("e-o-cc---------");
-        emsEquipment.add("e-o-db---------");
-        emsEquipment.add("e-o-ddb--------");
-        emsEquipment.add("e-o-deb--------");
-        emsEquipment.add("e-o-dfb--------");
-        emsEquipment.add("e-o-dgb--------");
-        emsEquipment.add("e-o-dhb--------");
-        emsEquipment.add("e-o-dib--------");
-        emsEquipment.add("e-o-djb--------");
-        emsEquipment.add("e-o-dlb--------");
-        emsEquipment.add("e-o-dmb--------");
-        emsEquipment.add("e-o-dob--------");
-        emsEquipment.add("e-o-pea--------");
-        emsEquipment.add("e-o-peb--------");
-        emsEquipment.add("e-o-pec--------");
-        emsEquipment.add("e-o-ped--------");
-        emsEquipment.add("e-o-pee--------");
-        emsEquipment.add("e-f-ba---------");
-        emsEquipment.add("e-f-ma---------");
-        emsEquipment.add("e-f-mc---------");
+        MilStd2525IconRetriever.emsEquipment.add("e-o-ab---------");
+        MilStd2525IconRetriever.emsEquipment.add("e-o-ae---------");
+        MilStd2525IconRetriever.emsEquipment.add("e-o-af---------");
+        MilStd2525IconRetriever.emsEquipment.add("e-o-bb---------");
+        MilStd2525IconRetriever.emsEquipment.add("e-o-cb---------");
+        MilStd2525IconRetriever.emsEquipment.add("e-o-cc---------");
+        MilStd2525IconRetriever.emsEquipment.add("e-o-db---------");
+        MilStd2525IconRetriever.emsEquipment.add("e-o-ddb--------");
+        MilStd2525IconRetriever.emsEquipment.add("e-o-deb--------");
+        MilStd2525IconRetriever.emsEquipment.add("e-o-dfb--------");
+        MilStd2525IconRetriever.emsEquipment.add("e-o-dgb--------");
+        MilStd2525IconRetriever.emsEquipment.add("e-o-dhb--------");
+        MilStd2525IconRetriever.emsEquipment.add("e-o-dib--------");
+        MilStd2525IconRetriever.emsEquipment.add("e-o-djb--------");
+        MilStd2525IconRetriever.emsEquipment.add("e-o-dlb--------");
+        MilStd2525IconRetriever.emsEquipment.add("e-o-dmb--------");
+        MilStd2525IconRetriever.emsEquipment.add("e-o-dob--------");
+        MilStd2525IconRetriever.emsEquipment.add("e-o-pea--------");
+        MilStd2525IconRetriever.emsEquipment.add("e-o-peb--------");
+        MilStd2525IconRetriever.emsEquipment.add("e-o-pec--------");
+        MilStd2525IconRetriever.emsEquipment.add("e-o-ped--------");
+        MilStd2525IconRetriever.emsEquipment.add("e-o-pee--------");
+        MilStd2525IconRetriever.emsEquipment.add("e-f-ba---------");
+        MilStd2525IconRetriever.emsEquipment.add("e-f-ma---------");
+        MilStd2525IconRetriever.emsEquipment.add("e-f-mc---------");
     }
 
     /**
@@ -444,6 +444,263 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
      */
     public MilStd2525IconRetriever(String retrieverPath) {
         super(retrieverPath);
+    }
+
+    protected static boolean mustDrawFill(SymbolCode symbolCode, AVList params) {
+        String maskedCode = symbolCode.toMaskedString().toLowerCase();
+        if (MilStd2525IconRetriever.unfilledIconMap.contains(maskedCode))
+            return false;
+
+        Object o = params != null ? params.get(SymbologyConstants.SHOW_FILL) : null;
+        return o == null || o.equals(Boolean.TRUE);
+    }
+
+    protected static boolean mustDrawFrame(SymbolCode symbolCode, AVList params) {
+        String maskedCode = symbolCode.toMaskedString().toLowerCase();
+        if (MilStd2525IconRetriever.unframedIconMap.contains(maskedCode))
+            return false;
+
+        Object o = params != null ? params.get(SymbologyConstants.SHOW_FRAME) : null;
+        return o == null || o.equals(Boolean.TRUE);
+    }
+
+    @SuppressWarnings("UnusedParameters")
+    protected static boolean mustDrawIcon(SymbolCode symbolCode, AVList params) {
+        Object o = params != null ? params.get(SymbologyConstants.SHOW_ICON) : null;
+        return o == null || o.equals(Boolean.TRUE);
+    }
+
+    protected static String composeFillPath(SymbolCode symbolCode) {
+        String maskedCode = MilStd2525IconRetriever.getMaskedFillCode(symbolCode);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(MilStd2525IconRetriever.FILLS_PATH).append('/');
+        sb.append(MilStd2525IconRetriever.TACTICAL_SYMBOLS_PATH).append('/');
+        sb.append(maskedCode.toLowerCase());
+        sb.append(WWIO.makeSuffixForMimeType(MilStd2525IconRetriever.DEFAULT_IMAGE_FORMAT));
+
+        return sb.toString();
+    }
+
+    protected static String composeFramePath(SymbolCode symbolCode) {
+        String maskedCode = MilStd2525IconRetriever.getMaskedFrameCode(symbolCode);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(MilStd2525IconRetriever.FRAMES_PATH).append('/');
+        sb.append(MilStd2525IconRetriever.TACTICAL_SYMBOLS_PATH).append('/');
+        sb.append(maskedCode.toLowerCase());
+        sb.append(WWIO.makeSuffixForMimeType(MilStd2525IconRetriever.DEFAULT_IMAGE_FORMAT));
+
+        return sb.toString();
+    }
+
+    protected static String composeIconPath(SymbolCode symbolCode, AVList params) {
+        String scheme = symbolCode.getScheme();
+        String bd = symbolCode.getBattleDimension();
+
+        if (bd != null && bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_UNKNOWN)) {
+            String maskedCode = MilStd2525IconRetriever.getMaskedUnknownIconCode(symbolCode, params);
+            StringBuilder sb = new StringBuilder();
+            sb.append(MilStd2525IconRetriever.ICONS_PATH).append('/');
+            sb.append(MilStd2525IconRetriever.UNKNOWN_PATH).append('/');
+            sb.append(maskedCode.toLowerCase());
+            sb.append(WWIO.makeSuffixForMimeType(MilStd2525IconRetriever.DEFAULT_IMAGE_FORMAT));
+            return sb.toString();
+        } else {
+            if (SymbolCode.isFieldEmpty(symbolCode.getFunctionId()))
+                return null; // Don't draw an icon if the function ID is empty.
+
+            String maskedCode = MilStd2525IconRetriever.getMaskedIconCode(symbolCode, params);
+            StringBuilder sb = new StringBuilder();
+            sb.append(MilStd2525IconRetriever.ICONS_PATH).append('/');
+            sb.append(MilStd2525IconRetriever.schemePathMap.get(scheme.toLowerCase())).append('/');
+            sb.append(maskedCode.toLowerCase());
+            sb.append(WWIO.makeSuffixForMimeType(MilStd2525IconRetriever.DEFAULT_IMAGE_FORMAT));
+            return sb.toString();
+        }
+    }
+
+    protected static String getMaskedFillCode(SymbolCode symbolCode) {
+        // Transform the symbol code to its equivalent code in the Warfighting scheme. This ensures that we can use
+        // the generic fill shape lookup logic used by Warfighting symbols.
+        symbolCode = MilStd2525IconRetriever.transformToWarfightingScheme(symbolCode);
+
+        String si = MilStd2525IconRetriever.getSimpleStandardIdentity(
+            symbolCode); // Either Unknown, Friend, Neutral, or Hostile
+        String bd = symbolCode.getBattleDimension();
+        String fid = MilStd2525IconRetriever.getGroundFunctionId(symbolCode);
+
+        StringBuilder sb = new StringBuilder();
+        SymbolCode.appendFieldValue(sb, null, 1); // Scheme
+        SymbolCode.appendFieldValue(sb, si, 1); // Standard Identity
+        SymbolCode.appendFieldValue(sb, bd, 1); // Battle Dimension
+        SymbolCode.appendFieldValue(sb, null, 1); // Status
+        SymbolCode.appendFieldValue(sb, fid, 6); // Function ID
+        SymbolCode.appendFieldValue(sb, null, 2); // Symbol Modifier
+        SymbolCode.appendFieldValue(sb, null, 2); // Country Code
+        SymbolCode.appendFieldValue(sb, null, 1); // Order of Battle
+
+        return sb.toString();
+    }
+
+    protected static String getMaskedFrameCode(SymbolCode symbolCode) {
+        // Transform the symbol code to its equivalent code in the Warfighting scheme. This ensures that we can use
+        // the generic fill shape lookup logic used by Warfighting symbols.
+        symbolCode = MilStd2525IconRetriever.transformToWarfightingScheme(symbolCode);
+
+        String si = symbolCode.getStandardIdentity();
+        String bd = symbolCode.getBattleDimension();
+        String status = MilStd2525IconRetriever.getSimpleStatus(symbolCode); // Either Present or Anticipated
+        String fid = MilStd2525IconRetriever.getGroundFunctionId(
+            symbolCode); // Either "U-----", "E-----", "I-----", or null
+
+        StringBuilder sb = new StringBuilder();
+        SymbolCode.appendFieldValue(sb, null, 1); // Scheme
+        SymbolCode.appendFieldValue(sb, si, 1); // Standard Identity
+        SymbolCode.appendFieldValue(sb, bd, 1); // Battle Dimension
+        SymbolCode.appendFieldValue(sb, status, 1); // Status
+        SymbolCode.appendFieldValue(sb, fid, 6); // Function ID
+        SymbolCode.appendFieldValue(sb, null, 2); // Symbol Modifier
+        SymbolCode.appendFieldValue(sb, null, 2); // Country Code
+        SymbolCode.appendFieldValue(sb, null, 1); // Order of Battle
+
+        return sb.toString();
+    }
+
+    protected static SymbolCode transformToWarfightingScheme(SymbolCode symbolCode) {
+        String maskedCode = symbolCode.toMaskedString().toLowerCase();
+        String scheme = symbolCode.getScheme();
+        String bd = symbolCode.getBattleDimension();
+
+        SymbolCode newCode = new SymbolCode();
+        newCode.setScheme(SymbologyConstants.SCHEME_WARFIGHTING);
+        newCode.setStandardIdentity(symbolCode.getStandardIdentity());
+        newCode.setStatus(symbolCode.getStatus());
+
+        if (scheme != null && scheme.equalsIgnoreCase(SymbologyConstants.SCHEME_INTELLIGENCE)) {
+            newCode.setBattleDimension(bd);
+
+            // Signals Intelligence ground symbols are equivalent to Warfighting ground equipment.
+            if (bd != null && bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_GROUND))
+                newCode.setFunctionId("E-----");
+
+            return newCode;
+        } else if (scheme != null && scheme.equalsIgnoreCase(SymbologyConstants.SCHEME_STABILITY_OPERATIONS)) {
+            // Stability Operations symbols frames are equivalent to Warfighting ground units.
+            newCode.setBattleDimension(SymbologyConstants.BATTLE_DIMENSION_GROUND);
+            newCode.setFunctionId("U-----");
+
+            return newCode;
+        } else if (scheme != null && scheme.equalsIgnoreCase(SymbologyConstants.SCHEME_EMERGENCY_MANAGEMENT)) {
+            // Emergency Management symbol frames are equivalent to either Warfighting ground units or ground equipment.
+            newCode.setBattleDimension(SymbologyConstants.BATTLE_DIMENSION_GROUND);
+            newCode.setFunctionId(MilStd2525IconRetriever.emsEquipment.contains(maskedCode) ? "E-----" : "U-----");
+
+            return newCode;
+        } else {
+            return symbolCode;
+        }
+    }
+
+    protected static String getMaskedIconCode(SymbolCode symbolCode, AVList params) {
+        String si = MilStd2525IconRetriever.getSimpleStandardIdentity(
+            symbolCode); // Either Unknown, Friend, Neutral, or Hostile.
+        String status = MilStd2525IconRetriever.getSimpleStatus(symbolCode); // Either Present or Anticipated.
+
+        if (MilStd2525IconRetriever.mustDrawFrame(symbolCode, params))
+            status = SymbologyConstants.STATUS_PRESENT;
+
+        SymbolCode maskedCode = new SymbolCode(symbolCode.toString());
+        maskedCode.setStandardIdentity(si);
+        maskedCode.setStatus(status);
+        maskedCode.setSymbolModifier(null); // Ignore the Symbol Modifier field.
+        maskedCode.setCountryCode(null); // Ignore the Country Code field.
+        maskedCode.setOrderOfBattle(null); // Ignore the Order of Battle field.
+
+        return maskedCode.toString();
+    }
+
+    protected static String getMaskedUnknownIconCode(SymbolCode symbolCode, AVList params) {
+        String si = MilStd2525IconRetriever.getSimpleStandardIdentity(
+            symbolCode); // Either Unknown, Friend, Neutral, or Hostile.
+        String bd = symbolCode.getBattleDimension();
+        String status = MilStd2525IconRetriever.getSimpleStatus(symbolCode); // Either Present or Anticipated.
+
+        if (MilStd2525IconRetriever.mustDrawFrame(symbolCode, params))
+            status = SymbologyConstants.STATUS_PRESENT;
+
+        StringBuilder sb = new StringBuilder();
+        SymbolCode.appendFieldValue(sb, null, 1); // Scheme
+        SymbolCode.appendFieldValue(sb, si, 1); // Standard Identity
+        SymbolCode.appendFieldValue(sb, bd, 1); // Battle Dimension
+        SymbolCode.appendFieldValue(sb, status, 1); // Status
+        SymbolCode.appendFieldValue(sb, null, 6); // Function ID
+        SymbolCode.appendFieldValue(sb, null, 2); // Symbol Modifier
+        SymbolCode.appendFieldValue(sb, null, 2); // Country Code
+        SymbolCode.appendFieldValue(sb, null, 1); // Order of Battle
+
+        return sb.toString();
+    }
+
+    protected static boolean isDashedFrame(SymbolCode symbolCode) {
+        String si = symbolCode.getStandardIdentity();
+        return si != null && (si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_PENDING)
+            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_ASSUMED_FRIEND)
+            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_SUSPECT)
+            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_PENDING)
+            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_ASSUMED_FRIEND));
+    }
+
+    protected static String getSimpleStandardIdentity(SymbolCode symbolCode) {
+        String si = symbolCode.getStandardIdentity();
+        if (si != null && (si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_PENDING)
+            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_UNKNOWN)
+            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_PENDING)
+            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_UNKNOWN))) {
+            return SymbologyConstants.STANDARD_IDENTITY_UNKNOWN;
+        } else if (si != null && (si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_FRIEND)
+            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_ASSUMED_FRIEND)
+            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_FRIEND)
+            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_ASSUMED_FRIEND)
+            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_JOKER)
+            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_FAKER))) {
+            return SymbologyConstants.STANDARD_IDENTITY_FRIEND;
+        } else if (si != null && (si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_NEUTRAL)
+            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_NEUTRAL))) {
+            return SymbologyConstants.STANDARD_IDENTITY_NEUTRAL;
+        } else if (si != null && (si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_HOSTILE) ||
+            si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_SUSPECT))) {
+            return SymbologyConstants.STANDARD_IDENTITY_HOSTILE;
+        }
+
+        return si;
+    }
+
+    protected static String getSimpleStatus(SymbolCode symbolCode) {
+        String status = symbolCode.getStatus();
+
+        if (status != null && status.equalsIgnoreCase(SymbologyConstants.STATUS_ANTICIPATED))
+            return SymbologyConstants.STATUS_ANTICIPATED;
+        else
+            return SymbologyConstants.STATUS_PRESENT;
+    }
+
+    protected static String getGroundFunctionId(SymbolCode symbolCode) {
+        String scheme = symbolCode.getScheme();
+        String bd = symbolCode.getBattleDimension();
+        String fid = symbolCode.getFunctionId();
+
+        if (scheme != null && scheme.equalsIgnoreCase(SymbologyConstants.SCHEME_WARFIGHTING)
+            && bd != null && bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_GROUND)) {
+            if (fid != null && !fid.isEmpty() && fid.toLowerCase().charAt(0) == 'u')
+                return "u-----";
+            else if (fid != null && !fid.isEmpty() && fid.toLowerCase().charAt(0) == 'e')
+                return "e-----";
+            else if (fid != null && !fid.isEmpty() && fid.toLowerCase().charAt(0) == 'i')
+                return "i-----";
+        }
+
+        return null;
     }
 
     /**
@@ -488,30 +745,6 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
         return image;
     }
 
-    protected static boolean mustDrawFill(SymbolCode symbolCode, AVList params) {
-        String maskedCode = symbolCode.toMaskedString().toLowerCase();
-        if (unfilledIconMap.contains(maskedCode))
-            return false;
-
-        Object o = params != null ? params.get(SymbologyConstants.SHOW_FILL) : null;
-        return o == null || o.equals(Boolean.TRUE);
-    }
-
-    protected static boolean mustDrawFrame(SymbolCode symbolCode, AVList params) {
-        String maskedCode = symbolCode.toMaskedString().toLowerCase();
-        if (unframedIconMap.contains(maskedCode))
-            return false;
-
-        Object o = params != null ? params.get(SymbologyConstants.SHOW_FRAME) : null;
-        return o == null || o.equals(Boolean.TRUE);
-    }
-
-    @SuppressWarnings("UnusedParameters")
-    protected static boolean mustDrawIcon(SymbolCode symbolCode, AVList params) {
-        Object o = params != null ? params.get(SymbologyConstants.SHOW_ICON) : null;
-        return o == null || o.equals(Boolean.TRUE);
-    }
-
     protected BufferedImage drawFill(SymbolCode symbolCode, AVList params, BufferedImage dest) {
         String path = MilStd2525IconRetriever.composeFillPath(symbolCode);
         Color color = this.getFillColor(symbolCode, params);
@@ -534,11 +767,12 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
     }
 
     protected BufferedImage drawCircle(SymbolCode symbolCode, AVList params, BufferedImage dest) {
-        Color fillColor = MilStd2525IconRetriever.mustDrawFill(symbolCode, params) ? this.getFillColor(symbolCode, params)
-            : DEFAULT_ICON_COLOR;
+        Color fillColor = MilStd2525IconRetriever.mustDrawFill(symbolCode, params) ? this.getFillColor(symbolCode,
+            params)
+            : MilStd2525IconRetriever.DEFAULT_ICON_COLOR;
 
         if (dest == null) {
-            int diameter = CIRCLE_RADIUS * 2;
+            int diameter = MilStd2525IconRetriever.CIRCLE_RADIUS * 2;
             dest = new BufferedImage(diameter, diameter, BufferedImage.TYPE_INT_ARGB);
         }
 
@@ -547,8 +781,8 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
             g = dest.createGraphics();
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-            int upperLeft = (int) (dest.getWidth() / 2.0 - CIRCLE_RADIUS + CIRCLE_LINE_WIDTH);
-            int width = CIRCLE_RADIUS * 2 - CIRCLE_LINE_WIDTH * 2;
+            int upperLeft = (int) (dest.getWidth() / 2.0 - MilStd2525IconRetriever.CIRCLE_RADIUS + MilStd2525IconRetriever.CIRCLE_LINE_WIDTH);
+            int width = MilStd2525IconRetriever.CIRCLE_RADIUS * 2 - MilStd2525IconRetriever.CIRCLE_LINE_WIDTH * 2;
             @SuppressWarnings("SuspiciousNameCombination")
             Shape circle = new Ellipse2D.Double(upperLeft, upperLeft, width, width);
 
@@ -559,8 +793,8 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
             // Draw the circle's border. Always draw the circle with a solid border, even if the status is not Present.
             // MIL-STD-2525C section 5.3.1.4 (pg. 18) states: "Planned status cannot be shown if the symbol is [...]
             // displayed as a dot."
-            g.setColor(DEFAULT_FRAME_COLOR);
-            g.setStroke(new BasicStroke(CIRCLE_LINE_WIDTH));
+            g.setColor(MilStd2525IconRetriever.DEFAULT_FRAME_COLOR);
+            g.setStroke(new BasicStroke(MilStd2525IconRetriever.CIRCLE_LINE_WIDTH));
             g.draw(circle);
         }
         finally {
@@ -588,60 +822,9 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
         return image;
     }
 
-    protected static String composeFillPath(SymbolCode symbolCode) {
-        String maskedCode = MilStd2525IconRetriever.getMaskedFillCode(symbolCode);
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(FILLS_PATH).append("/");
-        sb.append(TACTICAL_SYMBOLS_PATH).append("/");
-        sb.append(maskedCode.toLowerCase());
-        sb.append(WWIO.makeSuffixForMimeType(DEFAULT_IMAGE_FORMAT));
-
-        return sb.toString();
-    }
-
-    protected static String composeFramePath(SymbolCode symbolCode) {
-        String maskedCode = MilStd2525IconRetriever.getMaskedFrameCode(symbolCode);
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(FRAMES_PATH).append("/");
-        sb.append(TACTICAL_SYMBOLS_PATH).append("/");
-        sb.append(maskedCode.toLowerCase());
-        sb.append(WWIO.makeSuffixForMimeType(DEFAULT_IMAGE_FORMAT));
-
-        return sb.toString();
-    }
-
-    protected static String composeIconPath(SymbolCode symbolCode, AVList params) {
-        String scheme = symbolCode.getScheme();
-        String bd = symbolCode.getBattleDimension();
-
-        if (bd != null && bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_UNKNOWN)) {
-            String maskedCode = MilStd2525IconRetriever.getMaskedUnknownIconCode(symbolCode, params);
-            StringBuilder sb = new StringBuilder();
-            sb.append(ICONS_PATH).append("/");
-            sb.append(UNKNOWN_PATH).append("/");
-            sb.append(maskedCode.toLowerCase());
-            sb.append(WWIO.makeSuffixForMimeType(DEFAULT_IMAGE_FORMAT));
-            return sb.toString();
-        }
-        else {
-            if (SymbolCode.isFieldEmpty(symbolCode.getFunctionId()))
-                return null; // Don't draw an icon if the function ID is empty.
-
-            String maskedCode = MilStd2525IconRetriever.getMaskedIconCode(symbolCode, params);
-            StringBuilder sb = new StringBuilder();
-            sb.append(ICONS_PATH).append("/");
-            sb.append(schemePathMap.get(scheme.toLowerCase())).append("/");
-            sb.append(maskedCode.toLowerCase());
-            sb.append(WWIO.makeSuffixForMimeType(DEFAULT_IMAGE_FORMAT));
-            return sb.toString();
-        }
-    }
-
     protected Color getFillColor(SymbolCode symbolCode, AVList params) {
         Color color = this.getColorFromParams(params);
-        return color != null ? color : fillColorMap.get(symbolCode.getStandardIdentity().toLowerCase());
+        return color != null ? color : MilStd2525IconRetriever.fillColorMap.get(symbolCode.getStandardIdentity().toLowerCase());
     }
 
     protected Color getFrameColor(SymbolCode symbolCode, AVList params) {
@@ -649,10 +832,10 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
             return null; // Dashed pending or exercise frames are not colored.
 
         if (MilStd2525IconRetriever.mustDrawFill(symbolCode, params))
-            return DEFAULT_FRAME_COLOR; // Use the default color if the fill is on.
+            return MilStd2525IconRetriever.DEFAULT_FRAME_COLOR; // Use the default color if the fill is on.
 
         Color color = this.getColorFromParams(params);
-        return color != null ? color : frameColorMap.get(symbolCode.getStandardIdentity().toLowerCase());
+        return color != null ? color : MilStd2525IconRetriever.frameColorMap.get(symbolCode.getStandardIdentity().toLowerCase());
     }
 
     protected Color getIconColor(SymbolCode symbolCode, AVList params) {
@@ -661,18 +844,16 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
         if (MilStd2525IconRetriever.mustDrawFrame(symbolCode, params)) {
             // When the frame is enabled, we draw the icon in either its specified custom color or the default color. In
             // this case the app-specified color override (if any) is applied to the frame, and does apply to the icon.
-            return iconColorMap.getOrDefault(maskedCode, DEFAULT_ICON_COLOR);
-        }
-        else if (MilStd2525IconRetriever.mustDrawFill(symbolCode, params)) {
+            return MilStd2525IconRetriever.iconColorMap.getOrDefault(maskedCode, MilStd2525IconRetriever.DEFAULT_ICON_COLOR);
+        } else if (MilStd2525IconRetriever.mustDrawFill(symbolCode, params)) {
             // When the frame is disabled and the fill is enabled, we draw the icon in its corresponding standard
             // identity color (or app-specified color override).
             Color color = this.getColorFromParams(params);
-            return color != null ? color : fillColorMap.get(symbolCode.getStandardIdentity().toLowerCase());
-        }
-        else {
+            return color != null ? color : MilStd2525IconRetriever.fillColorMap.get(symbolCode.getStandardIdentity().toLowerCase());
+        } else {
             // When the frame is disabled and the fill is disabled, we draw the icon in either its specified custom
             // color or the default color. In this case the app-specified color override (if any) is ignored.
-            return iconColorMap.getOrDefault(maskedCode, DEFAULT_ICON_COLOR);
+            return MilStd2525IconRetriever.iconColorMap.getOrDefault(maskedCode, MilStd2525IconRetriever.DEFAULT_ICON_COLOR);
         }
     }
 
@@ -689,191 +870,6 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
 
         Object o = params.get(AVKey.COLOR);
         return (o instanceof Color) ? (Color) o : null;
-    }
-
-    protected static String getMaskedFillCode(SymbolCode symbolCode) {
-        // Transform the symbol code to its equivalent code in the Warfighting scheme. This ensures that we can use
-        // the generic fill shape lookup logic used by Warfighting symbols.
-        symbolCode = MilStd2525IconRetriever.transformToWarfightingScheme(symbolCode);
-
-        String si = MilStd2525IconRetriever.getSimpleStandardIdentity(symbolCode); // Either Unknown, Friend, Neutral, or Hostile
-        String bd = symbolCode.getBattleDimension();
-        String fid = MilStd2525IconRetriever.getGroundFunctionId(symbolCode);
-
-        StringBuilder sb = new StringBuilder();
-        SymbolCode.appendFieldValue(sb, null, 1); // Scheme
-        SymbolCode.appendFieldValue(sb, si, 1); // Standard Identity
-        SymbolCode.appendFieldValue(sb, bd, 1); // Battle Dimension
-        SymbolCode.appendFieldValue(sb, null, 1); // Status
-        SymbolCode.appendFieldValue(sb, fid, 6); // Function ID
-        SymbolCode.appendFieldValue(sb, null, 2); // Symbol Modifier
-        SymbolCode.appendFieldValue(sb, null, 2); // Country Code
-        SymbolCode.appendFieldValue(sb, null, 1); // Order of Battle
-
-        return sb.toString();
-    }
-
-    protected static String getMaskedFrameCode(SymbolCode symbolCode) {
-        // Transform the symbol code to its equivalent code in the Warfighting scheme. This ensures that we can use
-        // the generic fill shape lookup logic used by Warfighting symbols.
-        symbolCode = MilStd2525IconRetriever.transformToWarfightingScheme(symbolCode);
-
-        String si = symbolCode.getStandardIdentity();
-        String bd = symbolCode.getBattleDimension();
-        String status = MilStd2525IconRetriever.getSimpleStatus(symbolCode); // Either Present or Anticipated
-        String fid = MilStd2525IconRetriever.getGroundFunctionId(symbolCode); // Either "U-----", "E-----", "I-----", or null
-
-        StringBuilder sb = new StringBuilder();
-        SymbolCode.appendFieldValue(sb, null, 1); // Scheme
-        SymbolCode.appendFieldValue(sb, si, 1); // Standard Identity
-        SymbolCode.appendFieldValue(sb, bd, 1); // Battle Dimension
-        SymbolCode.appendFieldValue(sb, status, 1); // Status
-        SymbolCode.appendFieldValue(sb, fid, 6); // Function ID
-        SymbolCode.appendFieldValue(sb, null, 2); // Symbol Modifier
-        SymbolCode.appendFieldValue(sb, null, 2); // Country Code
-        SymbolCode.appendFieldValue(sb, null, 1); // Order of Battle
-
-        return sb.toString();
-    }
-
-    protected static SymbolCode transformToWarfightingScheme(SymbolCode symbolCode) {
-        String maskedCode = symbolCode.toMaskedString().toLowerCase();
-        String scheme = symbolCode.getScheme();
-        String bd = symbolCode.getBattleDimension();
-
-        SymbolCode newCode = new SymbolCode();
-        newCode.setScheme(SymbologyConstants.SCHEME_WARFIGHTING);
-        newCode.setStandardIdentity(symbolCode.getStandardIdentity());
-        newCode.setStatus(symbolCode.getStatus());
-
-        if (scheme != null && scheme.equalsIgnoreCase(SymbologyConstants.SCHEME_INTELLIGENCE)) {
-            newCode.setBattleDimension(bd);
-
-            // Signals Intelligence ground symbols are equivalent to Warfighting ground equipment.
-            if (bd != null && bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_GROUND))
-                newCode.setFunctionId("E-----");
-
-            return newCode;
-        }
-        else if (scheme != null && scheme.equalsIgnoreCase(SymbologyConstants.SCHEME_STABILITY_OPERATIONS)) {
-            // Stability Operations symbols frames are equivalent to Warfighting ground units.
-            newCode.setBattleDimension(SymbologyConstants.BATTLE_DIMENSION_GROUND);
-            newCode.setFunctionId("U-----");
-
-            return newCode;
-        }
-        else if (scheme != null && scheme.equalsIgnoreCase(SymbologyConstants.SCHEME_EMERGENCY_MANAGEMENT)) {
-            // Emergency Management symbol frames are equivalent to either Warfighting ground units or ground equipment.
-            newCode.setBattleDimension(SymbologyConstants.BATTLE_DIMENSION_GROUND);
-            newCode.setFunctionId(emsEquipment.contains(maskedCode) ? "E-----" : "U-----");
-
-            return newCode;
-        }
-        else {
-            return symbolCode;
-        }
-    }
-
-    protected static String getMaskedIconCode(SymbolCode symbolCode, AVList params) {
-        String si = MilStd2525IconRetriever.getSimpleStandardIdentity(symbolCode); // Either Unknown, Friend, Neutral, or Hostile.
-        String status = MilStd2525IconRetriever.getSimpleStatus(symbolCode); // Either Present or Anticipated.
-
-        if (MilStd2525IconRetriever.mustDrawFrame(symbolCode, params))
-            status = SymbologyConstants.STATUS_PRESENT;
-
-        SymbolCode maskedCode = new SymbolCode(symbolCode.toString());
-        maskedCode.setStandardIdentity(si);
-        maskedCode.setStatus(status);
-        maskedCode.setSymbolModifier(null); // Ignore the Symbol Modifier field.
-        maskedCode.setCountryCode(null); // Ignore the Country Code field.
-        maskedCode.setOrderOfBattle(null); // Ignore the Order of Battle field.
-
-        return maskedCode.toString();
-    }
-
-    protected static String getMaskedUnknownIconCode(SymbolCode symbolCode, AVList params) {
-        String si = MilStd2525IconRetriever.getSimpleStandardIdentity(symbolCode); // Either Unknown, Friend, Neutral, or Hostile.
-        String bd = symbolCode.getBattleDimension();
-        String status = MilStd2525IconRetriever.getSimpleStatus(symbolCode); // Either Present or Anticipated.
-
-        if (MilStd2525IconRetriever.mustDrawFrame(symbolCode, params))
-            status = SymbologyConstants.STATUS_PRESENT;
-
-        StringBuilder sb = new StringBuilder();
-        SymbolCode.appendFieldValue(sb, null, 1); // Scheme
-        SymbolCode.appendFieldValue(sb, si, 1); // Standard Identity
-        SymbolCode.appendFieldValue(sb, bd, 1); // Battle Dimension
-        SymbolCode.appendFieldValue(sb, status, 1); // Status
-        SymbolCode.appendFieldValue(sb, null, 6); // Function ID
-        SymbolCode.appendFieldValue(sb, null, 2); // Symbol Modifier
-        SymbolCode.appendFieldValue(sb, null, 2); // Country Code
-        SymbolCode.appendFieldValue(sb, null, 1); // Order of Battle
-
-        return sb.toString();
-    }
-
-    protected static boolean isDashedFrame(SymbolCode symbolCode) {
-        String si = symbolCode.getStandardIdentity();
-        return si != null && (si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_PENDING)
-            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_ASSUMED_FRIEND)
-            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_SUSPECT)
-            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_PENDING)
-            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_ASSUMED_FRIEND));
-    }
-
-    protected static String getSimpleStandardIdentity(SymbolCode symbolCode) {
-        String si = symbolCode.getStandardIdentity();
-        if (si != null && (si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_PENDING)
-            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_UNKNOWN)
-            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_PENDING)
-            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_UNKNOWN))) {
-            return SymbologyConstants.STANDARD_IDENTITY_UNKNOWN;
-        }
-        else if (si != null && (si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_FRIEND)
-            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_ASSUMED_FRIEND)
-            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_FRIEND)
-            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_ASSUMED_FRIEND)
-            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_JOKER)
-            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_FAKER))) {
-            return SymbologyConstants.STANDARD_IDENTITY_FRIEND;
-        }
-        else if (si != null && (si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_NEUTRAL)
-            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_NEUTRAL))) {
-            return SymbologyConstants.STANDARD_IDENTITY_NEUTRAL;
-        }
-        else if (si != null && (si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_HOSTILE) ||
-            si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_SUSPECT))) {
-            return SymbologyConstants.STANDARD_IDENTITY_HOSTILE;
-        }
-
-        return si;
-    }
-
-    protected static String getSimpleStatus(SymbolCode symbolCode) {
-        String status = symbolCode.getStatus();
-
-        if (status != null && status.equalsIgnoreCase(SymbologyConstants.STATUS_ANTICIPATED))
-            return SymbologyConstants.STATUS_ANTICIPATED;
-        else
-            return SymbologyConstants.STATUS_PRESENT;
-    }
-
-    protected static String getGroundFunctionId(SymbolCode symbolCode) {
-        String scheme = symbolCode.getScheme();
-        String bd = symbolCode.getBattleDimension();
-        String fid = symbolCode.getFunctionId();
-
-        if (scheme != null && scheme.equalsIgnoreCase(SymbologyConstants.SCHEME_WARFIGHTING)
-            && bd != null && bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_GROUND)) {
-            if (fid != null && !fid.isEmpty() && fid.toLowerCase().charAt(0) == 'u')
-                return "u-----";
-            else if (fid != null && !fid.isEmpty() && fid.toLowerCase().charAt(0) == 'e')
-                return "e-----";
-            else if (fid != null && !fid.isEmpty() && fid.toLowerCase().charAt(0) == 'i')
-                return "i-----";
-        }
-
-        return null;
     }
 }
 

@@ -19,11 +19,13 @@ import java.util.*;
  */
 public class Triangle {
 
-    /** used in intersects method */
+    /**
+     * used in intersects method
+     */
     private static final double EPSILON =
         Float.MIN_NORMAL
         //0.0000001
-    ;
+        ;
 
     public final Vec4 a;
     public final Vec4 b;
@@ -57,7 +59,7 @@ public class Triangle {
      * @throws IllegalArgumentException if the line or any of the triangle vertices is null.
      */
     public static Intersection intersect(Line line, Vec4 a, Vec4 b, Vec4 c) {
-        return intersect(line, a.x, a.y, a.z, b.x, b.y, b.z, c.x, c.y, c.z);
+        return Triangle.intersect(line, a.x, a.y, a.z, b.x, b.y, b.z, c.x, c.y, c.z);
     }
 
     /**
@@ -107,7 +109,7 @@ public class Triangle {
         // Get determinant.
         double det = edge1x * pvecx + edge1y * pvecy + edge1z * pvecz; // edge1 dot pvec
 
-        if (det > -EPSILON && det < EPSILON) // If det is near zero, then ray lies on plane of triangle
+        if (det > -Triangle.EPSILON && det < Triangle.EPSILON) // If det is near zero, then ray lies on plane of triangle
             return null;
 
         double detInv = 1.0d / det;
@@ -162,7 +164,7 @@ public class Triangle {
 
             // The triangle intersect method detects front and back face intersections so there's no reason to
             // order the vertices.
-            intersection = intersect(line,
+            intersection = Triangle.intersect(line,
                 vertices.get(i), vertices.get(i + 1), vertices.get(i + 2),
                 vertices.get(j), vertices.get(j + 1), vertices.get(j + 2),
                 vertices.get(k), vertices.get(k + 1), vertices.get(k + 2));
@@ -200,7 +202,7 @@ public class Triangle {
 
             // The triangle intersect method detects front and back face intersections so there's no reason to
             // order the vertices.
-            intersection = intersect(line, vertices[i], vertices[j], vertices[k]);
+            intersection = Triangle.intersect(line, vertices[i], vertices[j], vertices[k]);
 
             if (intersection != null) {
                 if (intersections == null)
@@ -241,7 +243,7 @@ public class Triangle {
 
             // The triangle intersect method detects front and back face intersections so there's no reason to
             // order the vertices.
-            intersection = intersect(line,
+            intersection = Triangle.intersect(line,
                 v0x, v0y, v0z,
                 vertices.get(i), vertices.get(i + 1), vertices.get(i + 2),
                 vertices.get(j), vertices.get(j + 1), vertices.get(j + 2));
@@ -279,7 +281,7 @@ public class Triangle {
 
             // The triangle intersect method detects front and back face intersections so there's no reason to
             // order the vertices.
-            intersection = intersect(line, v0, v1, v2);
+            intersection = Triangle.intersect(line, v0, v1, v2);
             if (intersection != null) {
                 if (intersections == null)
                     intersections = new ArrayList<>();
@@ -305,7 +307,7 @@ public class Triangle {
         vertices.rewind();
 
         while (vertices.limit() - vertices.position() >= 9) {
-            Intersection intersection = intersect(line,
+            Intersection intersection = Triangle.intersect(line,
                 vertices.get(), vertices.get(), vertices.get(),
                 vertices.get(), vertices.get(), vertices.get(),
                 vertices.get(), vertices.get(), vertices.get());
@@ -340,7 +342,7 @@ public class Triangle {
             int j = indices.get(n + 1) * 3;
             int k = indices.get(n + 2) * 3;
 
-            intersection = intersect(line,
+            intersection = Triangle.intersect(line,
                 vertices.get(i), vertices.get(i + 1), vertices.get(i + 2),
                 vertices.get(j), vertices.get(j + 1), vertices.get(j + 2),
                 vertices.get(k), vertices.get(k + 1), vertices.get(k + 2));
@@ -554,11 +556,11 @@ public class Triangle {
         double du2 = n1.dot3(u[2]) + d1;
 
         // Coplanarity robustness check.
-        if (Math.abs(du0) < EPSILON)
+        if (Math.abs(du0) < Triangle.EPSILON)
             du0 = 0;
-        if (Math.abs(du1) < EPSILON)
+        if (Math.abs(du1) < Triangle.EPSILON)
             du1 = 0;
-        if (Math.abs(du2) < EPSILON)
+        if (Math.abs(du2) < Triangle.EPSILON)
             du2 = 0;
 
         double du0du1 = du0 * du1;
@@ -583,11 +585,11 @@ public class Triangle {
         double dv2 = n2.dot3(v[2]) + d2;
 
         // Coplanarity robustness check.
-        if (Math.abs(dv0) < EPSILON)
+        if (Math.abs(dv0) < Triangle.EPSILON)
             dv0 = 0;
-        if (Math.abs(dv1) < EPSILON)
+        if (Math.abs(dv1) < Triangle.EPSILON)
             dv1 = 0;
-        if (Math.abs(dv2) < EPSILON)
+        if (Math.abs(dv2) < Triangle.EPSILON)
             dv2 = 0;
 
         double dv0dv1 = dv0 * dv1;
@@ -628,8 +630,7 @@ public class Triangle {
             up0 = u[0].y;
             up1 = u[1].y;
             up2 = u[2].y;
-        }
-        else if (index == 2) {
+        } else if (index == 2) {
             vp0 = v[0].z;
             vp1 = v[1].z;
             vp2 = v[2].z;
@@ -640,10 +641,10 @@ public class Triangle {
         }
 
         // Compute interval for triangle 1.
-        TriangleIntersection isectA = compute_intervals_isectline(v, vp0, vp1, vp2, dv0, dv1, dv2, dv0dv1, dv0dv2);
+        TriangleIntersection isectA = Triangle.compute_intervals_isectline(v, vp0, vp1, vp2, dv0, dv1, dv2, dv0dv1, dv0dv2);
 
         if (isectA == null)
-            return coplanarTriangles(n1, v, u) ? 0 : -1;
+            return Triangle.coplanarTriangles(n1, v, u) ? 0 : -1;
 
         int smallest1 = 0;
         if (isectA.s0 > isectA.s1) {
@@ -654,7 +655,7 @@ public class Triangle {
         }
 
         // Compute interval for triangle 2.
-        TriangleIntersection isectB = compute_intervals_isectline(u, up0, up1, up2, du0, du1, du2, du0du1, du0du2);
+        TriangleIntersection isectB = Triangle.compute_intervals_isectline(u, up0, up1, up2, du0, du1, du2, du0du1, du0du2);
 
         int smallest2 = 0;
         if (isectB.s0 > isectB.s1) {
@@ -681,15 +682,13 @@ public class Triangle {
                     intersectionVertices[1] = isectB.p1;
                 else
                     intersectionVertices[1] = isectB.p0;
-            }
-            else {
+            } else {
                 if (smallest1 == 0)
                     intersectionVertices[1] = isectA.p1;
                 else
                     intersectionVertices[1] = isectA.p0;
             }
-        }
-        else {
+        } else {
             if (smallest2 == 0)
                 intersectionVertices[0] = isectB.p0;
             else
@@ -700,8 +699,7 @@ public class Triangle {
                     intersectionVertices[1] = isectA.p1;
                 else
                     intersectionVertices[1] = isectA.p0;
-            }
-            else {
+            } else {
                 if (smallest2 == 0)
                     intersectionVertices[1] = isectB.p1;
                 else
@@ -716,15 +714,15 @@ public class Triangle {
         double d0, double d1, double d2,
         double d0d1, double d0d2) {
         if (d0d1 > 0) // D0, D1 are on the same side, D2 on the other or on the plane
-            return intersect(v[2], v[0], v[1], vv2, vv0, vv1, d2, d0, d1);
+            return Triangle.intersect(v[2], v[0], v[1], vv2, vv0, vv1, d2, d0, d1);
         else if (d0d2 > 0)
-            return intersect(v[1], v[0], v[2], vv1, vv0, vv2, d1, d0, d2);
+            return Triangle.intersect(v[1], v[0], v[2], vv1, vv0, vv2, d1, d0, d2);
         else if (d1 * d2 > 0 || d0 != 0)
-            return intersect(v[0], v[1], v[2], vv0, vv1, vv2, d0, d1, d2);
+            return Triangle.intersect(v[0], v[1], v[2], vv0, vv1, vv2, d0, d1, d2);
         else if (d1 != 0)
-            return intersect(v[1], v[0], v[2], vv1, vv0, vv2, d1, d0, d2);
+            return Triangle.intersect(v[1], v[0], v[2], vv1, vv0, vv2, d1, d0, d2);
         else if (d2 != 0)
-            return intersect(v[2], v[0], v[1], vv2, vv0, vv1, d2, d0, d1);
+            return Triangle.intersect(v[2], v[0], v[1], vv2, vv0, vv1, d2, d0, d1);
         else
             return null; // triangles are coplanar
     }
@@ -753,55 +751,50 @@ public class Triangle {
         int i0;
         int i1;
 
-        double[] a = new double[] {Math.abs(n.x), Math.abs(n.y), Math.abs(n.z)};
+        double[] a = {Math.abs(n.x), Math.abs(n.y), Math.abs(n.z)};
         if (a[0] > a[1]) // X > Y
         {
             if (a[0] > a[2]) { // X is greatest
                 i0 = 1;
                 i1 = 2;
-            }
-            else { // Z is greatest
+            } else { // Z is greatest
                 i0 = 0;
                 i1 = 1;
             }
-        }
-        else // X < Y
+        } else // X < Y
         {
             if (a[2] > a[1]) { // Z is greatest
                 i0 = 0;
                 i1 = 1;
-            }
-            else { // Y is greatest
+            } else { // Y is greatest
                 i0 = 0;
                 i1 = 2;
             }
         }
 
         // Test all edges of triangle 1 against the edges of triangle 2.
-        double[] v0 = new double[] {v[0].x, v[0].y, v[0].z};
-        double[] v1 = new double[] {v[1].x, v[1].y, v[1].z};
-        double[] v2 = new double[] {v[2].x, v[2].y, v[2].z};
+        double[] v0 = {v[0].x, v[0].y, v[0].z};
+        double[] v1 = {v[1].x, v[1].y, v[1].z};
+        double[] v2 = {v[2].x, v[2].y, v[2].z};
 
-        double[] u0 = new double[] {u[0].x, u[0].y, u[0].z};
-        double[] u1 = new double[] {u[1].x, u[1].y, u[1].z};
-        double[] u2 = new double[] {u[2].x, u[2].y, u[2].z};
+        double[] u0 = {u[0].x, u[0].y, u[0].z};
+        double[] u1 = {u[1].x, u[1].y, u[1].z};
+        double[] u2 = {u[2].x, u[2].y, u[2].z};
 
-
-        if (triangleEdgeTest(v0, v1, u0, u1, u2, i0, i1))
+        if (Triangle.triangleEdgeTest(v0, v1, u0, u1, u2, i0, i1))
             return true;
 
-
-        if (triangleEdgeTest(v1, v2, u0, u1, u2, i0, i1))
+        if (Triangle.triangleEdgeTest(v1, v2, u0, u1, u2, i0, i1))
             return true;
 
-        if (triangleEdgeTest(v2, v0, u0, u1, u2, i0, i1))
+        if (Triangle.triangleEdgeTest(v2, v0, u0, u1, u2, i0, i1))
             return true;
 
         // Finally, test whether one triangle is contained in the other one.
-        if (pointInTri(v0, u0, u1, u2, i0, i1))
+        if (Triangle.pointInTri(v0, u0, u1, u2, i0, i1))
             return true;
 
-        return pointInTri(u0, v0, v1, v2, i0, i1);
+        return Triangle.pointInTri(u0, v0, v1, v2, i0, i1);
     }
 
     protected static boolean triangleEdgeTest(double[] v0, double[] v1, double[] u0, double[] u1, double[] u2, int i0,
@@ -810,15 +803,15 @@ public class Triangle {
         double ay = v1[i1] - v0[i1];
 
         // Test edge u0:u1 against v0:v1
-        if (edgeEdgeTest(v0, u0, u1, i0, i1, ax, ay))
+        if (Triangle.edgeEdgeTest(v0, u0, u1, i0, i1, ax, ay))
             return true;
 
         // Test edge u1:u2 against v0:v1
-        if (edgeEdgeTest(v0, u1, u2, i0, i1, ax, ay))
+        if (Triangle.edgeEdgeTest(v0, u1, u2, i0, i1, ax, ay))
             return true;
 
         // Test edge u2:u0 against v0:v1
-        return edgeEdgeTest(v0, u2, u0, i0, i1, ax, ay);
+        return Triangle.edgeEdgeTest(v0, u2, u0, i0, i1, ax, ay);
     }
 
     protected static boolean edgeEdgeTest(double[] v0, double[] u0, double[] u1, int i0, int i1, double ax, double ay) {
@@ -856,7 +849,8 @@ public class Triangle {
             double c = -a * u1[i0] - b * u1[i1];
             d1 = a * v0[i0] + b * v0[i1] + c;
         }
-        if (d0 * d1 <= 0) return false;
+        if (d0 * d1 <= 0)
+            return false;
         {
             double a = u0[i1] - u2[i1];
             double b = -(u0[i0] - u2[i0]);
@@ -891,9 +885,10 @@ public class Triangle {
 
         // Compute barycentric coordinates
         double detInv = 1 / (dot00 * dot11 - dot01 * dot01);
-        
+
         double u = (dot11 * dot02 - dot01 * dot12) * detInv;
-        if (u < 0) return false;
+        if (u < 0)
+            return false;
         double v = (dot00 * dot12 - dot01 * dot02) * detInv;
 
         // Check if point is contained in triangle (including edges and vertices)
@@ -911,13 +906,13 @@ public class Triangle {
      * @throws IllegalArgumentException if the line is null.
      */
     public Vec4 intersect(Line line) {
-        Intersection intersection = intersect(line, this.a, this.b, this.c);
+        Intersection intersection = Triangle.intersect(line, this.a, this.b, this.c);
 
         return intersection != null ? intersection.getIntersectionPoint() : null;
     }
 
     public String toString() {
-        return "Triangle (" + a + ", " + b + ", " + c + ")";
+        return "Triangle (" + a + ", " + b + ", " + c + ')';
     }
 
     /**

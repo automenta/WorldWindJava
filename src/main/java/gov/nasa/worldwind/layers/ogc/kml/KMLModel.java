@@ -21,7 +21,7 @@ public class KMLModel extends KMLAbstractGeometry implements KMLMutable {
     /**
      * Flag to indicate that the link has been fetched from the hash map.
      */
-    protected boolean linkFetched = false;
+    protected boolean linkFetched;
     protected KMLLink link;
 
     /**
@@ -38,11 +38,11 @@ public class KMLModel extends KMLAbstractGeometry implements KMLMutable {
     }
 
     public KMLLocation getLocation() {
-        return (KMLLocation) this.getField(LOCATION_KEY);
+        return (KMLLocation) this.getField(KMLModel.LOCATION_KEY);
     }
 
     public void setLocation(KMLLocation loc) {
-        this.setField(LOCATION_KEY, loc);
+        this.setField(KMLModel.LOCATION_KEY, loc);
     }
 
     public KMLOrientation getOrientation() {
@@ -50,11 +50,11 @@ public class KMLModel extends KMLAbstractGeometry implements KMLMutable {
     }
 
     public KMLScale getScale() {
-        return (KMLScale) this.getField(SCALE_KEY);
+        return (KMLScale) this.getField(KMLModel.SCALE_KEY);
     }
 
     public void setScale(KMLScale scale) {
-        this.setField(SCALE_KEY, scale);
+        this.setField(KMLModel.SCALE_KEY, scale);
     }
 
     @Override

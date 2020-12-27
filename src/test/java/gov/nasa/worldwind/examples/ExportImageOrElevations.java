@@ -258,12 +258,12 @@ public class ExportImageOrElevations extends ApplicationTemplate {
                 Angle dLon = LatLon.greatCircleDistance(new LatLon(centroid.getLatitude(), sector.lonMin()),
                     new LatLon(centroid.getLatitude(), sector.lonMax()));
 
-                double max = Math.max(dLat.radians, dLon.radians);
-                double min = Math.min(dLat.radians, dLon.radians);
+                double max = Math.max(dLat.radians(), dLon.radians());
+                double min = Math.min(dLat.radians(), dLon.radians());
 
                 int minSize = (int) ((min == 0.0d) ? desiredSize : (desiredSize * min / max));
 
-                if (dLon.radians > dLat.radians) {
+                if (dLon.radians() > dLat.radians()) {
                     size[0] = desiredSize;      // width
                     size[1] = minSize;  // height
                 }
@@ -293,12 +293,12 @@ public class ExportImageOrElevations extends ApplicationTemplate {
         private double[] readElevations(Sector sector, int width, int height) {
             double[] elevations;
 
-            double latMin = sector.latMin().radians;
-            double latMax = sector.latMax().radians;
+            double latMin = sector.latMin().radians();
+            double latMax = sector.latMax().radians();
             double dLat = (latMax - latMin) / (height - 1);
 
-            double lonMin = sector.lonMin().radians;
-            double lonMax = sector.lonMax().radians;
+            double lonMin = sector.lonMin().radians();
+            double lonMax = sector.lonMax().radians();
             double dLon = (lonMax - lonMin) / (width - 1);
 
             List<LatLon> latlons = new ArrayList<>(width * height);

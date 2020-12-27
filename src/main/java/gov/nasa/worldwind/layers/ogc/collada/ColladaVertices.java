@@ -58,8 +58,7 @@ public class ColladaVertices extends ColladaAbstractObject {
     public void setField(String keyName, Object value) {
         if (keyName.equals("input")) {
             this.inputs.add((ColladaInput) value);
-        }
-        else {
+        } else {
             super.setField(keyName, value);
         }
     }

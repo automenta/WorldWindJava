@@ -25,6 +25,24 @@ public class ColladaTextureOrColor extends ColladaAbstractObject {
     }
 
     /**
+     * Parse a string of floats into a float[]
+     *
+     * @param floatArrayString String of floats, separated by whitespace.
+     * @return Parsed float[].
+     */
+    protected static float[] parseFloatArray(String floatArrayString) {
+        String[] arrayOfNumbers = floatArrayString.trim().split("\\s+");
+        float[] floats = new float[arrayOfNumbers.length];
+
+        int i = 0;
+        for (String s : arrayOfNumbers) {
+            floats[i++] = Float.parseFloat(s);
+        }
+
+        return floats;
+    }
+
+    /**
      * Indicates the value of the <i>texture</i> field.
      *
      * @return The value of the texture field, or null if the field is not set.
@@ -52,23 +70,5 @@ public class ColladaTextureOrColor extends ColladaAbstractObject {
         float a = (values.length > 3) ? values[3] : 1.0f;
 
         return new Color(r, g, b, a);
-    }
-
-    /**
-     * Parse a string of floats into a float[]
-     *
-     * @param floatArrayString String of floats, separated by whitespace.
-     * @return Parsed float[].
-     */
-    protected static float[] parseFloatArray(String floatArrayString) {
-        String[] arrayOfNumbers = floatArrayString.trim().split("\\s+");
-        float[] floats = new float[arrayOfNumbers.length];
-
-        int i = 0;
-        for (String s : arrayOfNumbers) {
-            floats[i++] = Float.parseFloat(s);
-        }
-
-        return floats;
     }
 }

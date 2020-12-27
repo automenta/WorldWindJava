@@ -28,10 +28,9 @@ public interface XMLEventParser {
     Object parse(XMLEventParserContext context, XMLEvent event, Object... args) throws XMLStreamException;
 
     /**
-     * Creates a new empty parser instance of the same type. This is used by {@link
-     * XMLEventParserContext} when creating parsers associated with specific event types.
-     * The returned parser has the same namespace as the instance creating it, but has empty fields for all other
-     * values.
+     * Creates a new empty parser instance of the same type. This is used by {@link XMLEventParserContext} when creating
+     * parsers associated with specific event types. The returned parser has the same namespace as the instance creating
+     * it, but has empty fields for all other values.
      *
      * @return a new parser instance. The namespace URI is the same as the creating parser, but all other fields are
      * empty.

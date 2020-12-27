@@ -30,7 +30,7 @@ public class ByteBufferRaster extends BufferWrapperRaster {
     }
 
     public ByteBufferRaster(int width, int height, Sector sector, AVList params) {
-        this(width, height, sector, createCompatibleBuffer(width, height, params), params);
+        this(width, height, sector, ByteBufferRaster.createCompatibleBuffer(width, height, params), params);
     }
 
     public static ByteBuffer createCompatibleBuffer(int width, int height, AVList params) {
@@ -124,8 +124,7 @@ public class ByteBufferRaster extends BufferWrapperRaster {
             if (AVKey.COORDINATE_SYSTEM_GEOGRAPHIC.equals(cs)) {
                 // assume WGS84
                 params.set(AVKey.PROJECTION_EPSG_CODE, GeoTiff.GCS.WGS_84);
-            }
-            else {
+            } else {
                 String msg = Logging.getMessage("generic.MissingRequiredParameter", AVKey.PROJECTION_EPSG_CODE);
                 Logging.logger().finest(msg);
                 throw new IllegalArgumentException(msg);
@@ -138,8 +137,7 @@ public class ByteBufferRaster extends BufferWrapperRaster {
             if (AVKey.COORDINATE_SYSTEM_GEOGRAPHIC.equals(cs)) {
                 double pixelWidth = sector.lonDelta / width;
                 params.set(AVKey.PIXEL_WIDTH, pixelWidth);
-            }
-            else {
+            } else {
                 String msg = Logging.getMessage("generic.MissingRequiredParameter", AVKey.PIXEL_WIDTH);
                 Logging.logger().finest(msg);
                 throw new IllegalArgumentException(msg);
@@ -152,8 +150,7 @@ public class ByteBufferRaster extends BufferWrapperRaster {
             if (AVKey.COORDINATE_SYSTEM_GEOGRAPHIC.equals(cs)) {
                 double pixelHeight = sector.latDelta / height;
                 params.set(AVKey.PIXEL_HEIGHT, pixelHeight);
-            }
-            else {
+            } else {
                 String msg = Logging.getMessage("generic.MissingRequiredParameter", AVKey.PIXEL_HEIGHT);
                 Logging.logger().finest(msg);
                 throw new IllegalArgumentException(msg);
@@ -164,8 +161,7 @@ public class ByteBufferRaster extends BufferWrapperRaster {
             String msg = Logging.getMessage("generic.MissingRequiredParameter", AVKey.PIXEL_FORMAT);
             Logging.logger().finest(msg);
             throw new IllegalArgumentException(msg);
-        }
-        else {
+        } else {
             String pixelFormat = params.getStringValue(AVKey.PIXEL_FORMAT);
             if (!AVKey.ELEVATION.equals(pixelFormat) && !AVKey.IMAGE.equals(pixelFormat)) {
                 String msg = Logging.getMessage("generic.UnknownValueForKey", pixelFormat, AVKey.PIXEL_FORMAT);

@@ -36,8 +36,7 @@ public class WCS100ContentMetadata extends AbstractXMLEventParser {
                 if (o instanceof WCS100CoverageOfferingBrief)
                     this.coverageOfferings.add((WCS100CoverageOfferingBrief) o);
             }
-        }
-        else {
+        } else {
             super.doParseEventContent(ctx, event, args);
         }
     }

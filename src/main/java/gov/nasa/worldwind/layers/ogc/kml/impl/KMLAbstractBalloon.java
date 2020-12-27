@@ -49,7 +49,7 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
     public static final String DISPLAY_MODE_DEFAULT = "default";
 
     protected KMLAbstractFeature parent;
-    protected String displayMode = DISPLAY_MODE_DEFAULT;
+    protected String displayMode = KMLAbstractBalloon.DISPLAY_MODE_DEFAULT;
     /**
      * Indicates that the balloon has default text loaded, rather than text supplied by the BalloonStyle.
      */
@@ -79,6 +79,117 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
         }
 
         this.parent = feature;
+    }
+
+    /**
+     * Build a default balloon text string for the feature's extended data. This implementation builds a simple data
+     * table.
+     *
+     * @param sb   Extended data string will be appended to this StringBuilder.
+     * @param data The feature's extended data.
+     */
+    protected static void createDefaultExtendedDataText(StringBuilder sb, Iterable<KMLData> data) {
+        sb.append("<p/><table border=\"1\">");
+        for (KMLData item : data) {
+            String value = item.getValue();
+            if (!WWUtil.isEmpty(value)) {
+                String name = item.getName() != null ? item.getName() : "";
+                sb.append("<tr><td>$[").append(name).append("/displayName]</td><td>").append(value).append(
+                    "</td></tr>");
+            }
+        }
+        sb.append("</table>");
+    }
+
+    /**
+     * Determines if URLs in the balloon text should be converted to hyperlinks. The Google KML specification states the
+     * GE will add hyperlinks to balloon text that does not contain HTML formatting. This method searches for a
+     * &lt;html&gt; tag in the content to determine if the content is HTML or plain text.
+     *
+     * @param text Balloon text to process.
+     * @return True if URLs should be converted links. Returns true if a &lt;html&gt; tag is found in the text.
+     */
+    protected static boolean mustAddHyperlinks(String text) {
+        return text != null
+            && !text.contains("<html")
+            && !text.contains("<HTML");
+    }
+
+    /**
+     * Add hyperlink tags to URLs in the balloon text. The text may include some simple HTML markup. This method
+     * attempts to identify URLs in the text while not altering URLs that are already linked.
+     * <p>
+     * This method is conservative about what is identified as a URL, in order to avoid adding links to text that the
+     * user did not intend to be linked. Only HTTP and HTTPS URLs are recognised, as well as text that begins with www.
+     * (in which case a http:// prefix will be prepended). Some punctuation characters that are valid URL characters
+     * (such as parentheses) are not treated as URL characters here because users may expect the punctuation to separate
+     * the URL from text.
+     *
+     * @param text Text to process. Each URL in the text will be replaced with &lt;a href="url" target="_blank"&gt; url
+     *             &lt;/a&gt;
+     * @return Text with hyperlinks added.
+     */
+    protected static String addHyperlinks(CharSequence text) {
+        // Regular expression to match a http(s) URL, or an entire anchor tag. Note that this does not match all valid
+        // URLs. It is designed to match obvious URLs that occur in KML balloons, with minimal chance of matching text
+        // the user did not intend to be a link.
+        String regex =
+            "<a\\s.*?</a>"               // Match all text between anchor tags
+                + '|'                    // or
+                + "[^'\"]"               // Non-quote (avoids matching quoted urls in code)
+                + '('                    // Capture group 1
+                + "(?:https?://|www\\.)" // HTTP(S) protocol or www. (non-capturing group)
+                + "[a-z0-9.$%&#+/_-]+"   // Match until a non-URL character
+                + ')';
+
+        StringBuffer sb = new StringBuffer();
+        Matcher matcher = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.DOTALL).matcher(text);
+        while (matcher.find()) {
+            // If the match is a URL then group 1 holds the matched URL. If group 1 is null then the match is an anchor
+            // tag, in which case we just skip it to avoid adding links to text that is already part of a link.
+            String url = matcher.group(1);
+            if (url != null) {
+                String prefix = url.toLowerCase().startsWith("www") ? "http://" : "";
+                matcher.appendReplacement(sb, "<a href=\"" + prefix + "$1\" target=\"_blank\">$1</a>");
+            }
+        }
+        matcher.appendTail(sb);
+
+        return sb.toString();
+    }
+
+    /**
+     * Apply a KML <i>BalloonStyle</i> to the balloon attributes object.
+     *
+     * @param style             KML style to apply.
+     * @param balloonAttributes Attributes to modify.
+     */
+    protected static void assembleBalloonAttributes(KMLBalloonStyle style, BalloonAttributes balloonAttributes) {
+        // Attempt to use the bgColor property. This is the preferred method for encoding a BalloonStyle's background
+        // color since KML 2.1, therefore we give it priority.
+        String bgColor = style.getBgColor();
+
+        // If the bgColor property is null, attempt to use the deprecated color property. color was deprecated in
+        // KML 2.1, but must be supported for backward compatibility. See the KML 2.1 reference, section 7.1.3.
+        if (bgColor == null)
+            bgColor = style.getColor();
+
+        if (bgColor != null)
+            balloonAttributes.setInteriorMaterial(new Material(WWUtil.decodeColorABGR(bgColor)));
+
+        String textColor = style.getTextColor();
+        if (textColor != null)
+            balloonAttributes.setTextColor(WWUtil.decodeColorABGR(textColor));
+    }
+
+    /**
+     * Create the text decoder that will process the text in the balloon.
+     *
+     * @param feature Feature to decode text for.
+     * @return New text decoder.
+     */
+    protected static TextDecoder createTextDecoder(KMLAbstractFeature feature) {
+        return new KMLBalloonTextDecoder(feature);
     }
 
     /**
@@ -116,14 +227,13 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
         Balloon balloon = this.getBalloon();
         if (balloon.isHighlighted() && !this.highlightAttributesResolved) {
             this.makeAttributesCurrent(KMLConstants.HIGHLIGHT);
-        }
-        else if (!this.normalAttributesResolved) {
+        } else if (!this.normalAttributesResolved) {
             this.makeAttributesCurrent(KMLConstants.NORMAL);
         }
 
         this.determineActiveText();
 
-        if (!WWUtil.isEmpty(this.getText()) && !DISPLAY_MODE_HIDE.equals(this.getDisplayMode()))
+        if (!WWUtil.isEmpty(this.getText()) && !KMLAbstractBalloon.DISPLAY_MODE_HIDE.equals(this.getDisplayMode()))
             balloon.render(dc);
     }
 
@@ -180,8 +290,7 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
 
                 this.getBalloon().setText(text);
                 this.normalText = text;
-            }
-            else if (!this.usingDefaultText) {
+            } else if (!this.usingDefaultText) {
                 text = this.createDefaultBalloonText();
                 if (KMLAbstractBalloon.mustAddHyperlinks(text))
                     text = KMLAbstractBalloon.addHyperlinks(text);
@@ -193,8 +302,7 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
 
             if (!attrs.isUnresolved() || !balloonStyle.hasFields())
                 this.normalAttributesResolved = true;
-        }
-        else {
+        } else {
             this.getBalloon().setHighlightAttributes(attrs);
 
             String text = balloonStyle.getText();
@@ -242,26 +350,6 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
     }
 
     /**
-     * Build a default balloon text string for the feature's extended data. This implementation builds a simple data
-     * table.
-     *
-     * @param sb   Extended data string will be appended to this StringBuilder.
-     * @param data The feature's extended data.
-     */
-    protected static void createDefaultExtendedDataText(StringBuilder sb, Iterable<KMLData> data) {
-        sb.append("<p/><table border=\"1\">");
-        for (KMLData item : data) {
-            String value = item.getValue();
-            if (!WWUtil.isEmpty(value)) {
-                String name = item.getName() != null ? item.getName() : "";
-                sb.append("<tr><td>$[").append(name).append("/displayName]</td><td>").append(value).append(
-                    "</td></tr>");
-            }
-        }
-        sb.append("</table>");
-    }
-
-    /**
      * Build a default balloon text string for the feature's schema data.  This implementation builds a simple data
      * table.
      *
@@ -281,9 +369,8 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
                     sb.append("<tr><td>");
                     // Insert the schema name, if the schema can be resolved. Otherwise just use the data name.
                     if (schema != null && !WWUtil.isEmpty(schema.getName()) && !WWUtil.isEmpty(dataName)) {
-                        sb.append("$[").append(schema.getName()).append("/").append(dataName).append("/displayName]");
-                    }
-                    else {
+                        sb.append("$[").append(schema.getName()).append('/').append(dataName).append("/displayName]");
+                    } else {
                         sb.append(dataName);
                     }
 
@@ -295,66 +382,9 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
     }
 
     /**
-     * Determines if URLs in the balloon text should be converted to hyperlinks. The Google KML specification states the
-     * GE will add hyperlinks to balloon text that does not contain HTML formatting. This method searches for a
-     * &lt;html&gt; tag in the content to determine if the content is HTML or plain text.
-     *
-     * @param text Balloon text to process.
-     * @return True if URLs should be converted links. Returns true if a &lt;html&gt; tag is found in the text.
-     */
-    protected static boolean mustAddHyperlinks(String text) {
-        return text != null
-            && !text.contains("<html")
-            && !text.contains("<HTML");
-    }
-
-    /**
-     * Add hyperlink tags to URLs in the balloon text. The text may include some simple HTML markup. This method
-     * attempts to identify URLs in the text while not altering URLs that are already linked.
-     * <p>
-     * This method is conservative about what is identified as a URL, in order to avoid adding links to text that the
-     * user did not intend to be linked. Only HTTP and HTTPS URLs are recognised, as well as text that begins with www.
-     * (in which case a http:// prefix will be prepended). Some punctuation characters that are valid URL characters
-     * (such as parentheses) are not treated as URL characters here because users may expect the punctuation to separate
-     * the URL from text.
-     *
-     * @param text Text to process. Each URL in the text will be replaced with &lt;a href="url" target="_blank"&gt; url
-     *             &lt;/a&gt;
-     * @return Text with hyperlinks added.
-     */
-    protected static String addHyperlinks(CharSequence text) {
-        // Regular expression to match a http(s) URL, or an entire anchor tag. Note that this does not match all valid
-        // URLs. It is designed to match obvious URLs that occur in KML balloons, with minimal chance of matching text
-        // the user did not intend to be a link.
-        String regex =
-            "<a\\s.*?</a>"               // Match all text between anchor tags
-                + "|"                    // or
-                + "[^'\"]"               // Non-quote (avoids matching quoted urls in code)
-                + "("                    // Capture group 1
-                + "(?:https?://|www\\.)" // HTTP(S) protocol or www. (non-capturing group)
-                + "[a-z0-9.$%&#+/_-]+"   // Match until a non-URL character
-                + ")";
-
-        StringBuffer sb = new StringBuffer();
-        Matcher matcher = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.DOTALL).matcher(text);
-        while (matcher.find()) {
-            // If the match is a URL then group 1 holds the matched URL. If group 1 is null then the match is an anchor
-            // tag, in which case we just skip it to avoid adding links to text that is already part of a link.
-            String url = matcher.group(1);
-            if (url != null) {
-                String prefix = url.toLowerCase().startsWith("www") ? "http://" : "";
-                matcher.appendReplacement(sb, "<a href=\"" + prefix + "$1\" target=\"_blank\">$1</a>");
-            }
-        }
-        matcher.appendTail(sb);
-
-        return sb.toString();
-    }
-
-    /**
      * Get the default attributes applied to the balloon. These attributes will be modified by {@link
-     * #assembleBalloonAttributes(KMLBalloonStyle, BalloonAttributes)
-     * assembleBalloonAttributes} to reflect the settings in the KML <i>BalloonStyle</i>.
+     * #assembleBalloonAttributes(KMLBalloonStyle, BalloonAttributes) assembleBalloonAttributes} to reflect the settings
+     * in the KML <i>BalloonStyle</i>.
      *
      * @return Initial balloon attributes.
      */
@@ -368,8 +398,7 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
             if (attrs == null && this.getAttributes() != null) {
                 attrs = new BasicBalloonAttributes(this.getAttributes());
             }
-        }
-        else {
+        } else {
             attrs = this.getAttributes();
         }
 
@@ -377,40 +406,6 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
             attrs = new BasicBalloonAttributes();
 
         return attrs;
-    }
-
-    /**
-     * Apply a KML <i>BalloonStyle</i> to the balloon attributes object.
-     *
-     * @param style             KML style to apply.
-     * @param balloonAttributes Attributes to modify.
-     */
-    protected static void assembleBalloonAttributes(KMLBalloonStyle style, BalloonAttributes balloonAttributes) {
-        // Attempt to use the bgColor property. This is the preferred method for encoding a BalloonStyle's background
-        // color since KML 2.1, therefore we give it priority.
-        String bgColor = style.getBgColor();
-
-        // If the bgColor property is null, attempt to use the deprecated color property. color was deprecated in
-        // KML 2.1, but must be supported for backward compatibility. See the KML 2.1 reference, section 7.1.3.
-        if (bgColor == null)
-            bgColor = style.getColor();
-
-        if (bgColor != null)
-            balloonAttributes.setInteriorMaterial(new Material(WWUtil.decodeColorABGR(bgColor)));
-
-        String textColor = style.getTextColor();
-        if (textColor != null)
-            balloonAttributes.setTextColor(WWUtil.decodeColorABGR(textColor));
-    }
-
-    /**
-     * Create the text decoder that will process the text in the balloon.
-     *
-     * @param feature Feature to decode text for.
-     * @return New text decoder.
-     */
-    protected static TextDecoder createTextDecoder(KMLAbstractFeature feature) {
-        return new KMLBalloonTextDecoder(feature);
     }
 
     /**
@@ -672,6 +667,7 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
 
     /**
      * {@inheritDoc}. This method passes through to the contained balloon.
+     *
      * @return
      */
     public Iterable<Object> getValues() {

@@ -41,15 +41,15 @@ public class AbsentResourceList {
     /**
      * The maximum number of times a resource is marked as absent before being marked as permanently absent.
      */
-    protected int maxTries = DEFAULT_MAX_ABSENT_RESOURCE_TRIES;
+    protected int maxTries = AbsentResourceList.DEFAULT_MAX_ABSENT_RESOURCE_TRIES;
     /**
      * The interval to wait, in milliseconds, before indicating the resource is not absent.
      */
-    protected int minCheckInterval = DEFAULT_MIN_ABSENT_RESOURCE_CHECK_INTERVAL;
+    protected int minCheckInterval = AbsentResourceList.DEFAULT_MIN_ABSENT_RESOURCE_CHECK_INTERVAL;
     /**
      * The interval at which a resource is marked as not absent after having been marked as permanently absent.
      */
-    protected int tryAgainInterval = DEFAULT_TRY_AGAIN_INTERVAL;
+    protected int tryAgainInterval = AbsentResourceList.DEFAULT_TRY_AGAIN_INTERVAL;
 
     /**
      * Construct an absent-resource list with default values for max tries (3), check interval (10 seconds) and

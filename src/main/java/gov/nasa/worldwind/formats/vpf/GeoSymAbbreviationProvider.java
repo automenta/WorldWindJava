@@ -63,8 +63,7 @@ public class GeoSymAbbreviationProvider {
                 Integer id = Integer.parseInt(s.split(":")[0]);
                 table = new HashMap<>();
                 this.abbreviationTables.put(id, table);
-            }
-            else {
+            } else {
                 // Table record
                 String[] tokens = s.split("[|]");
                 Integer id = Integer.parseInt(tokens[0]);

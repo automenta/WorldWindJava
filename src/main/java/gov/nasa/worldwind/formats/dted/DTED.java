@@ -30,9 +30,9 @@ public class DTED {
     protected static final int DTED_ACC_SIZE = 2700;
 
     protected static final long DTED_UHL_OFFSET = 0L;
-    protected static final long DTED_DSI_OFFSET = DTED_UHL_OFFSET + DTED_UHL_SIZE;
-    protected static final long DTED_ACC_OFFSET = DTED_DSI_OFFSET + DTED_DSI_SIZE;
-    protected static final long DTED_DATA_OFFSET = DTED_ACC_OFFSET + DTED_ACC_SIZE;
+    protected static final long DTED_DSI_OFFSET = DTED.DTED_UHL_OFFSET + DTED.DTED_UHL_SIZE;
+    protected static final long DTED_ACC_OFFSET = DTED.DTED_DSI_OFFSET + DTED.DTED_DSI_SIZE;
+    protected static final long DTED_DATA_OFFSET = DTED.DTED_ACC_OFFSET + DTED.DTED_ACC_SIZE;
 
     protected static final int DTED_NODATA_VALUE = -32767;
     protected static final int DTED_MIN_VALUE = -12000;
@@ -79,18 +79,18 @@ public class DTED {
         RandomAccessFile sourceFile = null;
 
         try {
-            sourceFile = open(file);
+            sourceFile = DTED.open(file);
 
             FileChannel channel = sourceFile.getChannel();
 
             metadata = new AVListImpl();
 
-            readUHL(channel, DTED_UHL_OFFSET, metadata);
-            readDSI(channel, DTED_DSI_OFFSET, metadata);
-            readACC(channel, DTED_ACC_OFFSET, metadata);
+            DTED.readUHL(channel, DTED.DTED_UHL_OFFSET, metadata);
+            DTED.readDSI(channel, DTED.DTED_DSI_OFFSET, metadata);
+            DTED.readACC(channel, DTED.DTED_ACC_OFFSET, metadata);
         }
         finally {
-            close(sourceFile);
+            DTED.close(sourceFile);
         }
 
         return metadata;
@@ -101,18 +101,18 @@ public class DTED {
         RandomAccessFile sourceFile = null;
 
         try {
-            sourceFile = open(file);
+            sourceFile = DTED.open(file);
 
             FileChannel channel = sourceFile.getChannel();
 
-            readUHL(channel, DTED_UHL_OFFSET, metadata);
-            readDSI(channel, DTED_DSI_OFFSET, metadata);
-            readACC(channel, DTED_ACC_OFFSET, metadata);
+            DTED.readUHL(channel, DTED.DTED_UHL_OFFSET, metadata);
+            DTED.readDSI(channel, DTED.DTED_DSI_OFFSET, metadata);
+            DTED.readACC(channel, DTED.DTED_ACC_OFFSET, metadata);
 
-            raster = readElevations(channel, DTED_DATA_OFFSET, metadata);
+            raster = DTED.readElevations(channel, DTED.DTED_DATA_OFFSET, metadata);
         }
         finally {
-            close(sourceFile);
+            DTED.close(sourceFile);
         }
 
         return raster;
@@ -130,7 +130,7 @@ public class DTED {
         int width = (Integer) metadata.get(AVKey.WIDTH);
         int height = (Integer) metadata.get(AVKey.HEIGHT);
 
-        int recordSize = REC_HEADER_SIZE + height * Short.SIZE / Byte.SIZE + REC_CHKSUM_SIZE;
+        int recordSize = DTED.REC_HEADER_SIZE + height * Short.SIZE / Byte.SIZE + DTED.REC_CHKSUM_SIZE;
 
         double min = +Double.MAX_VALUE;
         double max = -Double.MAX_VALUE;
@@ -141,7 +141,7 @@ public class DTED {
             bb.flip();
 
             int dataChkSum = 0;
-            for (int i = 0; i < recordSize - REC_CHKSUM_SIZE;
+            for (int i = 0; i < recordSize - DTED.REC_CHKSUM_SIZE;
                 i++) // include header and elevations, exclude checksum itself
             {
                 dataChkSum += 0xFF & bb.get(i);
@@ -152,20 +152,19 @@ public class DTED {
                 double elev = data.get(i + 4); // skip 4 shorts of header
                 int y = height - i - 1;
 
-                if (elev != DTED_NODATA_VALUE && elev >= DTED_MIN_VALUE && elev <= DTED_MAX_VALUE) {
+                if (elev != DTED.DTED_NODATA_VALUE && elev >= DTED.DTED_MIN_VALUE && elev <= DTED.DTED_MAX_VALUE) {
                     raster.setDoubleAtPosition(y, x, elev);
                     min = Math.min(elev, min);
                     max = Math.max(elev, max);
-                }
-                else {
+                } else {
                     // Interpret null DTED values and values outside the practical range of [-12000,+9000] as missing
                     // data. See MIL-PRF-89020B sections 3.11.2 and 3.11.3.
-                    raster.setDoubleAtPosition(y, x, DTED_NODATA_VALUE);
+                    raster.setDoubleAtPosition(y, x, DTED.DTED_NODATA_VALUE);
                 }
             }
 
-            short hi = data.get(height + REC_CHKSUM_SIZE);
-            short lo = data.get(height + REC_CHKSUM_SIZE + 1);
+            short hi = data.get(height + DTED.REC_CHKSUM_SIZE);
+            short lo = data.get(height + DTED.REC_CHKSUM_SIZE + 1);
 
             int expectedChkSum = (0xFFFF & hi) << 16 | (0xFFFF & lo);
 
@@ -202,20 +201,20 @@ public class DTED {
         // DDD MM SS.S H
         switch (length) {
             case 7 -> {
-                sb.insert(2, " ").insert(5, " ").insert(8, " ");
+                sb.insert(2, ' ').insert(5, ' ').insert(8, ' ');
                 return Angle.fromDMS(sb.toString());
             }
             case 8 -> {
-                sb.insert(3, " ").insert(6, " ").insert(9, " ");
+                sb.insert(3, ' ').insert(6, ' ').insert(9, ' ');
                 return Angle.fromDMS(sb.toString());
             }
             case 9 -> {
-                sb.insert(2, " ").insert(5, " ").insert(10, " ");
+                sb.insert(2, ' ').insert(5, ' ').insert(10, ' ');
                 sb.delete(8, 10);  // remove ".S" part, DTED spec not uses it anyway
                 return Angle.fromDMS(sb.toString());
             }
             case 10 -> {
-                sb.insert(3, " ").insert(6, " ").insert(11, " ");
+                sb.insert(3, ' ').insert(6, ' ').insert(11, ' ');
                 sb.delete(9, 11);   // remove ".S" part, DTED spec not uses it anyway
                 return Angle.fromDMS(sb.toString());
             }
@@ -256,7 +255,7 @@ public class DTED {
 
         theChannel.position(offset);
 
-        byte[] acc = new byte[DTED_ACC_SIZE];
+        byte[] acc = new byte[DTED.DTED_ACC_SIZE];
         ByteBuffer bb = ByteBuffer.wrap(acc).order(ByteOrder.BIG_ENDIAN);
         theChannel.read(bb);
         bb.flip();
@@ -276,7 +275,7 @@ public class DTED {
 
         theChannel.position(offset);
 
-        byte[] uhl = new byte[DTED_UHL_SIZE];
+        byte[] uhl = new byte[DTED.DTED_UHL_SIZE];
         ByteBuffer bb = ByteBuffer.wrap(uhl).order(ByteOrder.BIG_ENDIAN);
         theChannel.read(bb);
         bb.flip();
@@ -299,7 +298,7 @@ public class DTED {
         metadata.set(AVKey.PIXEL_FORMAT, AVKey.ELEVATION);
         metadata.set(AVKey.DATA_TYPE, AVKey.INT16);
         metadata.set(AVKey.ELEVATION_UNIT, AVKey.UNIT_METER);
-        metadata.set(AVKey.MISSING_DATA_SIGNAL, (double) DTED_NODATA_VALUE);
+        metadata.set(AVKey.MISSING_DATA_SIGNAL, (double) DTED.DTED_NODATA_VALUE);
 
         metadata.set(AVKey.RASTER_PIXEL, AVKey.RASTER_PIXEL_IS_POINT);
 
@@ -317,10 +316,10 @@ public class DTED {
         metadata.set(AVKey.PIXEL_HEIGHT, pixelHeight);
 
         // Longitude of origin (lower left corner) as DDDMMSSH
-        Angle lon = readAngle(new String(uhl, 4, 8));
+        Angle lon = DTED.readAngle(new String(uhl, 4, 8));
 
         // Latitude of origin (lower left corner) as DDDMMSSH
-        Angle lat = readAngle(new String(uhl, 12, 8));
+        Angle lat = DTED.readAngle(new String(uhl, 12, 8));
 
         // in DTED the original is always lower left (South-West) corner
         // and each file always contains 1" x 1" degrees tile
@@ -333,7 +332,7 @@ public class DTED {
         LatLon wwOrigin = LatLon.fromDegrees(sector.latMax, sector.lonMin);
         metadata.set(AVKey.ORIGIN, wwOrigin);
 
-        String classLevel = readClassLevel(new String(uhl, 32, 3));
+        String classLevel = DTED.readClassLevel(new String(uhl, 32, 3));
         if (null != classLevel)
             metadata.set(AVKey.CLASS_LEVEL, classLevel);
     }
@@ -345,7 +344,7 @@ public class DTED {
         theChannel.position(offset);
         theChannel.position(offset);
 
-        byte[] dsi = new byte[DTED_DSI_SIZE];
+        byte[] dsi = new byte[DTED.DTED_DSI_SIZE];
         ByteBuffer bb = ByteBuffer.wrap(dsi).order(ByteOrder.BIG_ENDIAN);
         theChannel.read(bb);
         bb.flip();
@@ -359,12 +358,12 @@ public class DTED {
         }
 
         if (!metadata.hasKey(AVKey.CLASS_LEVEL)) {
-            String classLevel = readClassLevel(new String(dsi, 3, 1));
+            String classLevel = DTED.readClassLevel(new String(dsi, 3, 1));
             if (null != classLevel)
                 metadata.set(AVKey.CLASS_LEVEL, classLevel);
         }
 
-        Integer level = readLevel(new String(dsi, 59, 5));
+        Integer level = DTED.readLevel(new String(dsi, 59, 5));
         if (null != level)
             metadata.set(AVKey.DTED_LEVEL, level);
 

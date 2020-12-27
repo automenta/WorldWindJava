@@ -78,56 +78,6 @@ public class Material {
         this.shininess = 80.0f;
     }
 
-    public final Color getAmbient() {
-        return this.ambient;
-    }
-
-    public final Color getDiffuse() {
-        return this.diffuse;
-    }
-
-    public final Color getSpecular() {
-        return this.specular;
-    }
-
-    public final Color getEmission() {
-        return this.emission;
-    }
-
-    public final double getShininess() {
-        return this.shininess;
-    }
-
-    public void apply(GLLightingFunc gl, int face) {
-        if (gl == null) {
-            String msg = Logging.getMessage("nullValue.GLIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        glMaterial(gl, face, GL2.GL_AMBIENT, this.ambient);
-        glMaterial(gl, face, GL2.GL_DIFFUSE, this.diffuse);
-        glMaterial(gl, face, GL2.GL_SPECULAR, this.specular);
-        glMaterial(gl, face, GL2.GL_EMISSION, this.emission);
-        gl.glMaterialf(face, GL2.GL_SHININESS, (float) this.shininess);
-    }
-
-    public void apply(GLLightingFunc gl, int face, float alpha) {
-        if (gl == null) {
-            String msg = Logging.getMessage("nullValue.GLIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        // The alpha value at a vertex is taken only from the diffuse material's alpha channel. Therefore we specify
-        // alpha for the diffuse value, and alpha=0 for ambient, specular and emission values.
-        glMaterial(gl, face, GL2.GL_AMBIENT, this.ambient, 0.0f);
-        glMaterial(gl, face, GL2.GL_DIFFUSE, this.diffuse, alpha);
-        glMaterial(gl, face, GL2.GL_SPECULAR, this.specular, 0.0f);
-        glMaterial(gl, face, GL2.GL_EMISSION, this.emission, 0.0f);
-        gl.glMaterialf(face, GL2.GL_SHININESS, (float) this.shininess);
-    }
-
     protected static void glMaterial(GLLightingFunc gl, int face, int name, Color color) {
         if (gl == null) {
             String msg = Logging.getMessage("nullValue.GLIsNull");
@@ -181,6 +131,56 @@ public class Material {
             Math.max(0, (int) (g * factor)),
             Math.max(0, (int) (b * factor)),
             a);
+    }
+
+    public final Color getAmbient() {
+        return this.ambient;
+    }
+
+    public final Color getDiffuse() {
+        return this.diffuse;
+    }
+
+    public final Color getSpecular() {
+        return this.specular;
+    }
+
+    public final Color getEmission() {
+        return this.emission;
+    }
+
+    public final double getShininess() {
+        return this.shininess;
+    }
+
+    public void apply(GLLightingFunc gl, int face) {
+        if (gl == null) {
+            String msg = Logging.getMessage("nullValue.GLIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        Material.glMaterial(gl, face, GL2.GL_AMBIENT, this.ambient);
+        Material.glMaterial(gl, face, GL2.GL_DIFFUSE, this.diffuse);
+        Material.glMaterial(gl, face, GL2.GL_SPECULAR, this.specular);
+        Material.glMaterial(gl, face, GL2.GL_EMISSION, this.emission);
+        gl.glMaterialf(face, GL2.GL_SHININESS, (float) this.shininess);
+    }
+
+    public void apply(GLLightingFunc gl, int face, float alpha) {
+        if (gl == null) {
+            String msg = Logging.getMessage("nullValue.GLIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        // The alpha value at a vertex is taken only from the diffuse material's alpha channel. Therefore we specify
+        // alpha for the diffuse value, and alpha=0 for ambient, specular and emission values.
+        Material.glMaterial(gl, face, GL2.GL_AMBIENT, this.ambient, 0.0f);
+        Material.glMaterial(gl, face, GL2.GL_DIFFUSE, this.diffuse, alpha);
+        Material.glMaterial(gl, face, GL2.GL_SPECULAR, this.specular, 0.0f);
+        Material.glMaterial(gl, face, GL2.GL_EMISSION, this.emission, 0.0f);
+        gl.glMaterialf(face, GL2.GL_SHININESS, (float) this.shininess);
     }
 
     public void getRestorableState(RestorableSupport rs, RestorableSupport.StateObject so) {
@@ -257,7 +257,7 @@ public class Material {
 
     public int hashCode() {
         int result;
-        long temp = (this.shininess != +0.0d) ? Double.doubleToLongBits(this.shininess) : 0L;
+        long temp = (this.shininess == +0.0d) ? 0L : Double.doubleToLongBits(this.shininess);
         result = (int) (temp ^ (temp >>> 32));
         result = 31 * result + (this.ambient != null ? this.ambient.hashCode() : 0);
         result = 31 * result + (this.diffuse != null ? this.diffuse.hashCode() : 0);

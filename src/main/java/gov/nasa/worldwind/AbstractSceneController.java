@@ -30,6 +30,8 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
      * The display name for the surface object tile count performance statistic.
      */
     protected static final String SURFACE_OBJECT_TILE_COUNT_NAME = "Surface Object Tiles";
+    public final boolean pickTerrain = false;
+    public final boolean pickNonTerrain = true;
     protected final DrawContext dc = new DrawContextImpl();
     /**
      * Map of integer color codes to picked objects used to quickly resolve the top picked objects in {@link
@@ -48,6 +50,7 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
      * keeping a reference to it does not leak memory.
      */
     protected final SurfaceObjectTileBuilder surfaceObjectTileBuilder = new SurfaceObjectTileBuilder();
+    public boolean pickDeep;
     protected Model model;
     protected View view;
     protected double verticalExaggeration = 1.00d;
@@ -61,7 +64,7 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
      * repaint. Initially <code>null</code>.
      */
     protected PickedObjectList lastObjectsInPickRect;
-    protected long frame = 0;
+    protected long frame;
     protected long timebase = System.nanoTime();
     protected double framesPerSecond;
     protected double beforePaint;
@@ -70,16 +73,12 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
      * The pick point in AWT screen coordinates, or <code>null</code> if the pick point is disabled. Initially
      * <code>null</code>.
      */
-    protected Point pickPoint = null;
+    protected Point pickPoint;
     /**
      * The pick rectangle in AWT screen coordinates, or <code>null</code> if the pick rectangle is disabled. Initially
      * <code>null</code>.
      */
-    protected Rectangle pickRect = null;
-    public boolean pickDeep = false;
-    public final boolean pickTerrain = false;
-    public final boolean pickNonTerrain = true;
-
+    protected Rectangle pickRect;
     protected GpuResourceCache gpuResourceCache;
     protected TextRendererCache textRendererCache = new TextRendererCache();
     protected ScreenCreditController screenCreditController;
@@ -87,7 +86,6 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
     protected ClutterFilter clutterFilter = new BasicClutterFilter();
     //protected Map<String, GroupingFilter> groupingFilters = new HashMap<String, GroupingFilter>();
     protected boolean deferOrderedRendering;
-
 
     public AbstractSceneController() {
         this.setVerticalExaggeration(Configuration.getDoubleValue(AVKey.VERTICAL_EXAGGERATION, 1.00d));
@@ -182,7 +180,7 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
                         layer.pick(dc, dc.getPickPoint());
                     }
                 }
-                catch (Exception e) {
+                catch (RuntimeException e) {
                     String message = Logging.getMessage("SceneController.ExceptionWhilePickingInLayer",
                         layer.getClass().getName());
                     Logging.logger().log(Level.SEVERE, message, e);
@@ -199,8 +197,7 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
         if (pol != null && pol.size() == 1) {
             // If there is only one picked object, then it must be the top object so we're done.
             pol.get(0).setOnTop();
-        }
-        else if (pol != null && pol.size() > 1) {
+        } else if (pol != null && pol.size() > 1) {
             // If there is more than one picked object, then find the picked object corresponding to the top color at
             // the pick point, and mark it as on top
             int colorCode = dc.getPickColorAtPoint(pickPoint);
@@ -625,8 +622,7 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
         if (pol != null && pol.size() == 1) {
             // If there is only one picked object, then it must be the top object so we're done.
             pol.get(0).setOnTop();
-        }
-        else if (pol != null && pol.size() > 1) {
+        } else if (pol != null && pol.size() > 1) {
             int[] minAndMaxColorCodes = null;
 
             for (PickedObject po : pol) {
@@ -906,10 +902,10 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
         OGLUtil.applyBlending(gl, true); // the RGB colors in surface object tiles are premultiplied
 
         dc.getGeographicSurfaceTileRenderer().renderTiles(dc, this.surfaceObjectTileBuilder.getTiles(dc));
-        dc.setPerFrameStatistic(PerformanceStatistic.IMAGE_TILE_COUNT, SURFACE_OBJECT_TILE_COUNT_NAME, tileCount);
+        dc.setPerFrameStatistic(PerformanceStatistic.IMAGE_TILE_COUNT,
+            AbstractSceneController.SURFACE_OBJECT_TILE_COUNT_NAME, tileCount);
 
         ogsh.pop(gl);
         this.surfaceObjectTileBuilder.clearTiles(dc);
-
     }
 }

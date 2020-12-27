@@ -24,6 +24,10 @@ public class MilStd1477IconRetriever extends AbstractIconRetriever {
         super(retrieverPath);
     }
 
+    protected static String getFilename(String code) {
+        return code.toLowerCase() + ".png";
+    }
+
     public BufferedImage createIcon(String symbolId, AVList params) {
         if (symbolId == null) {
             String msg = Logging.getMessage("nullValue.SymbolCodeIsNull");
@@ -45,9 +49,5 @@ public class MilStd1477IconRetriever extends AbstractIconRetriever {
         }
 
         return img;
-    }
-
-    protected static String getFilename(String code) {
-        return code.toLowerCase() + ".png";
     }
 }

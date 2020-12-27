@@ -25,13 +25,12 @@ public class TiledImageProducer extends TiledRasterProducer {
     // Statically reference the readers used to for unknown data sources. This drastically improves the performance of
     // reading large quantities of sources. Since the readers are invoked from a single thread, they can be
     // safely re-used.
-    protected static final DataRasterReader[] readers = new DataRasterReader[]
-        {
-            new RPFRasterReader(),
-            new GDALDataRasterReader(),
-            new ImageIORasterReader(),
-            new GeotiffRasterReader()
-        };
+    protected static final DataRasterReader[] readers = {
+        new RPFRasterReader(),
+        new GDALDataRasterReader(),
+        new ImageIORasterReader(),
+        new GeotiffRasterReader()
+    };
 
     public TiledImageProducer(MemoryCache cache, int writeThreadPoolSize) {
         super(cache, writeThreadPoolSize);
@@ -41,10 +40,30 @@ public class TiledImageProducer extends TiledRasterProducer {
         super();
     }
 
+    protected static String validateDataSourceParams(AVList params, String name) {
+        if (params.hasKey(AVKey.PIXEL_FORMAT) && params.get(AVKey.PIXEL_FORMAT) != AVKey.IMAGE) {
+            return Logging.getMessage("TiledRasterProducer.UnrecognizedRasterType",
+                params.get(AVKey.PIXEL_FORMAT), name);
+        }
+
+        if (params.hasKey(AVKey.COORDINATE_SYSTEM)
+            && params.get(AVKey.COORDINATE_SYSTEM) != AVKey.COORDINATE_SYSTEM_GEOGRAPHIC
+            && params.get(AVKey.COORDINATE_SYSTEM) != AVKey.COORDINATE_SYSTEM_PROJECTED
+        ) {
+            return Logging.getMessage("TiledRasterProducer.UnrecognizedCoordinateSystem",
+                params.get(AVKey.COORDINATE_SYSTEM), name);
+        }
+
+        if (params.get(AVKey.SECTOR) == null)
+            return Logging.getMessage("TiledRasterProducer.NoSector", name);
+
+        return null;
+    }
+
     public String getDataSourceDescription() {
         StringBuilder sb = new StringBuilder();
         sb.append(Logging.getMessage("TiledImageProducer.Description"));
-        sb.append(" (").append(super.getDataSourceDescription()).append(")");
+        sb.append(" (").append(super.getDataSourceDescription()).append(')');
         return sb.toString();
     }
 
@@ -56,7 +75,7 @@ public class TiledImageProducer extends TiledRasterProducer {
     }
 
     protected DataRasterReader[] getDataRasterReaders() {
-        return readers;
+        return TiledImageProducer.readers;
     }
 
     protected DataRasterWriter[] getDataRasterWriters() {
@@ -96,8 +115,7 @@ public class TiledImageProducer extends TiledRasterProducer {
 
             if (reader == null) {
                 return Logging.getMessage("TiledRasterProducer.UnrecognizedDataSource", source);
-            }
-            else if (reader instanceof RPFRasterReader) {
+            } else if (reader instanceof RPFRasterReader) {
                 // RPF rasters are geo-referenced, so we may skip the validation
                 return null;
             }
@@ -120,26 +138,6 @@ public class TiledImageProducer extends TiledRasterProducer {
         return null;
     }
 
-    protected static String validateDataSourceParams(AVList params, String name) {
-        if (params.hasKey(AVKey.PIXEL_FORMAT) && params.get(AVKey.PIXEL_FORMAT) != AVKey.IMAGE) {
-            return Logging.getMessage("TiledRasterProducer.UnrecognizedRasterType",
-                params.get(AVKey.PIXEL_FORMAT), name);
-        }
-
-        if (params.hasKey(AVKey.COORDINATE_SYSTEM)
-            && params.get(AVKey.COORDINATE_SYSTEM) != AVKey.COORDINATE_SYSTEM_GEOGRAPHIC
-            && params.get(AVKey.COORDINATE_SYSTEM) != AVKey.COORDINATE_SYSTEM_PROJECTED
-        ) {
-            return Logging.getMessage("TiledRasterProducer.UnrecognizedCoordinateSystem",
-                params.get(AVKey.COORDINATE_SYSTEM), name);
-        }
-
-        if (params.get(AVKey.SECTOR) == null)
-            return Logging.getMessage("TiledRasterProducer.NoSector", name);
-
-        return null;
-    }
-
     protected void initProductionParameters(AVList params) {
         // Preserve backward compatibility with previous versions of TiledImageProducer. If the caller specified a
         // format suffix parameter, use it to compute the image format properties. This gives priority to the format
@@ -158,7 +156,7 @@ public class TiledImageProducer extends TiledRasterProducer {
 
         // Use the default image format if none exists.
         if (params.get(AVKey.IMAGE_FORMAT) == null) {
-            params.set(AVKey.IMAGE_FORMAT, DEFAULT_IMAGE_FORMAT);
+            params.set(AVKey.IMAGE_FORMAT, TiledImageProducer.DEFAULT_IMAGE_FORMAT);
         }
 
         // Compute the available image formats if none exists.
@@ -198,7 +196,7 @@ public class TiledImageProducer extends TiledRasterProducer {
         configParams.set(AVKey.NETWORK_RETRIEVAL_ENABLED, Boolean.FALSE);
 
         // Set the texture format to DDS. If the texture data is already in DDS format, this parameter is benign.
-        configParams.set(AVKey.TEXTURE_FORMAT, DEFAULT_TEXTURE_FORMAT);
+        configParams.set(AVKey.TEXTURE_FORMAT, TiledImageProducer.DEFAULT_TEXTURE_FORMAT);
 
         // Set the USE_MIP_MAPS, and USE_TRANSPARENT_TEXTURES parameters to true. The imagery produced by
         // TiledImageProducer is best viewed with mipMapping enabled, and texture transparency enabled. These parameters

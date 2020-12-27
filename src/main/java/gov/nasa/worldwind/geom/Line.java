@@ -78,7 +78,7 @@ public final class Line// Instances are immutable
     }
 
     public static double distanceToSegment(Vec4 p0, Vec4 p1, Vec4 p) {
-        Vec4 pb = nearestPointOnSegment(p0, p1, p);
+        Vec4 pb = Line.nearestPointOnSegment(p0, p1, p);
 
         return p.distanceTo3(pb);
     }
@@ -95,7 +95,7 @@ public final class Line// Instances are immutable
      * segment is the portion of the original segment on that plane, clipped to the other frustum planes.
      */
     public static Vec4[] clipToFrustum(Vec4 pa, Vec4 pb, Frustum frustum) {
-        return clipToFrustum(pa, pb, frustum, 1);
+        return Line.clipToFrustum(pa, pb, frustum, 1);
     }
 
     private static Vec4[] clipToFrustum(Vec4 pa, Vec4 pb, Frustum frustum, int maxRecursionCount) {
@@ -116,7 +116,7 @@ public final class Line// Instances are immutable
         if (frustum.contains(pa) && frustum.contains(pb))
             return new Vec4[] {pa, pb};
 
-        Vec4[] segment = new Vec4[] {pa, pb};
+        Vec4[] segment = {pa, pb};
         Vec4[] ipts;
 
         for (Plane p : frustum.getAllPlanes()) {
@@ -138,7 +138,7 @@ public final class Line// Instances are immutable
         // The segment was clipped by an infinite frustum plane but may still lie outside the frustum.
         // So recurse using the clipped segment.
         if (maxRecursionCount > 0)
-            return clipToFrustum(segment[0], segment[1], frustum, --maxRecursionCount);
+            return Line.clipToFrustum(segment[0], segment[1], frustum, --maxRecursionCount);
         else
             return segment;
     }

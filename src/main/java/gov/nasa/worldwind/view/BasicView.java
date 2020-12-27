@@ -43,6 +43,11 @@ public class BasicView extends WWObjectImpl implements View {
     protected static final double COLLISION_THRESHOLD = 10;
     protected static final int COLLISION_NUM_ITERATIONS = 4;
     /**
+     * Identifier for the modelview matrix state. This number is incremented when one of the fields that affects the
+     * modelview matrix is set.
+     */
+    protected final AtomicLong viewStateID = new AtomicLong();
+    /**
      * The field of view in degrees.
      */
     protected Angle fieldOfView = Angle.fromDegrees(45);
@@ -52,14 +57,14 @@ public class BasicView extends WWObjectImpl implements View {
     // * The view can provide a reasonable value to the application until the first frame.
     // * Subclass implementations which may override the automatic update of clipping plane distances have reasonable
     //   default values to fall back on.
-    protected double nearClipDistance = MINIMUM_NEAR_DISTANCE;
-    protected double farClipDistance = MINIMUM_FAR_DISTANCE;
+    protected double nearClipDistance = BasicView.MINIMUM_NEAR_DISTANCE;
+    protected double farClipDistance = BasicView.MINIMUM_FAR_DISTANCE;
     protected Matrix modelview = Matrix.IDENTITY;
     protected Matrix modelviewInv = Matrix.IDENTITY;
     protected Matrix projection = Matrix.IDENTITY;
     protected Rectangle viewport = new Rectangle();
     protected Frustum frustum = new Frustum();
-    protected Frustum lastFrustumInModelCoords = null;
+    protected Frustum lastFrustumInModelCoords;
     protected ViewPropertyLimits viewLimits;
     protected DrawContext dc;
     protected boolean detectCollisions = true;
@@ -71,15 +76,10 @@ public class BasicView extends WWObjectImpl implements View {
     protected Angle roll = Angle.fromDegrees(0.0);
     protected Angle pitch = Angle.fromDegrees(0.0);
     protected Angle heading = Angle.fromDegrees(0.0);
-    protected Position lastEyePosition = null;
-    protected Vec4 lastEyePoint = null;
-    protected Vec4 lastUpVector = null;
-    protected Vec4 lastForwardVector = null;
-    /**
-     * Identifier for the modelview matrix state. This number is incremented when one of the fields that affects the
-     * modelview matrix is set.
-     */
-    protected final AtomicLong viewStateID = new AtomicLong();
+    protected Position lastEyePosition;
+    protected Vec4 lastEyePoint;
+    protected Vec4 lastUpVector;
+    protected Vec4 lastForwardVector;
 
     /**
      * Construct a BasicView
@@ -110,8 +110,7 @@ public class BasicView extends WWObjectImpl implements View {
             if (modelview != null) {
                 modelview.toArray(matrixArray, 0, false);
                 gl.glLoadMatrixd(matrixArray, 0);
-            }
-            else {
+            } else {
                 gl.glLoadIdentity();
             }
 
@@ -120,8 +119,7 @@ public class BasicView extends WWObjectImpl implements View {
             if (projection != null) {
                 projection.toArray(matrixArray, 0, false);
                 gl.glLoadMatrixd(matrixArray, 0);
-            }
-            else {
+            } else {
                 gl.glLoadIdentity();
             }
         }
@@ -194,7 +192,7 @@ public class BasicView extends WWObjectImpl implements View {
     }
 
     public void stopMovement() {
-        this.firePropertyChange(VIEW_STOPPED, null, this);
+        this.firePropertyChange(View.VIEW_STOPPED, null, this);
     }
 
     public Rectangle getViewport() {
@@ -509,7 +507,8 @@ public class BasicView extends WWObjectImpl implements View {
         // a predetermined minimum (usually one). The computed near distance automatically scales with the resolution of
         // the OpenGL depth buffer.
         int depthBits = this.dc.getGLRuntimeCapabilities().getDepthBits();
-        double nearDistance = ViewUtil.computePerspectiveNearDistance(this.farClipDistance, DEFAULT_DEPTH_RESOLUTION,
+        double nearDistance = ViewUtil.computePerspectiveNearDistance(this.farClipDistance,
+            BasicView.DEFAULT_DEPTH_RESOLUTION,
             depthBits);
 
         // Prevent the near clip plane from intersecting the terrain.
@@ -519,16 +518,15 @@ public class BasicView extends WWObjectImpl implements View {
                 double maxNearDistance = ViewUtil.computePerspectiveNearDistance(this.fieldOfView, distanceToSurface);
                 if (nearDistance > maxNearDistance)
                     nearDistance = maxNearDistance;
-            }
-            else {
-                nearDistance = MINIMUM_NEAR_DISTANCE;
+            } else {
+                nearDistance = BasicView.MINIMUM_NEAR_DISTANCE;
             }
         }
 
         // Prevent the near clip plane from becoming unnecessarily small. A very small clip plane is not useful for
         // rendering the WorldWind scene, and significantly reduces the depth precision in the majority of the scene.
-        if (nearDistance < MINIMUM_NEAR_DISTANCE)
-            nearDistance = MINIMUM_NEAR_DISTANCE;
+        if (nearDistance < BasicView.MINIMUM_NEAR_DISTANCE)
+            nearDistance = BasicView.MINIMUM_NEAR_DISTANCE;
 
         return nearDistance;
     }
@@ -539,7 +537,7 @@ public class BasicView extends WWObjectImpl implements View {
             far = computeHorizonDistance(eyePosition);
         }
 
-        return Math.max(far, MINIMUM_FAR_DISTANCE);
+        return Math.max(far, BasicView.MINIMUM_FAR_DISTANCE);
     }
 
     public Matrix getProjectionMatrix() {
@@ -561,7 +559,7 @@ public class BasicView extends WWObjectImpl implements View {
         try {
             rs = RestorableSupport.parse(stateInXml);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             // Parsing the document specified by stateInXml failed.
             String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", stateInXml);
             Logging.logger().severe(message);
@@ -589,7 +587,7 @@ public class BasicView extends WWObjectImpl implements View {
         rs.addStateValueAsBoolean(context, "detectCollisions", this.isDetectCollisions());
 
         if (this.getFieldOfView() != null)
-            rs.addStateValueAsDouble(context, "fieldOfView", this.getFieldOfView().getDegrees());
+            rs.addStateValueAsDouble(context, "fieldOfView", this.getFieldOfView().degrees);
 
         rs.addStateValueAsDouble(context, "nearClipDistance", this.getNearClipDistance());
         rs.addStateValueAsDouble(context, "farClipDistance", this.getFarClipDistance());
@@ -598,10 +596,10 @@ public class BasicView extends WWObjectImpl implements View {
             rs.addStateValueAsPosition(context, "eyePosition", this.getEyePosition());
 
         if (this.getHeading() != null)
-            rs.addStateValueAsDouble(context, "heading", this.getHeading().getDegrees());
+            rs.addStateValueAsDouble(context, "heading", this.getHeading().degrees);
 
         if (this.getPitch() != null)
-            rs.addStateValueAsDouble(context, "pitch", this.getPitch().getDegrees());
+            rs.addStateValueAsDouble(context, "pitch", this.getPitch().degrees);
     }
 
     protected void doRestoreState(RestorableSupport rs, RestorableSupport.StateObject context) {
@@ -758,7 +756,7 @@ public class BasicView extends WWObjectImpl implements View {
         modelview.toArray(modelviewArray, 0, false);
         projection.toArray(projectionArray, 0, false);
         // GLU expects the viewport as a four-component array.
-        int[] viewportArray = new int[] {viewport.x, viewport.y, viewport.width, viewport.height};
+        int[] viewportArray = {viewport.x, viewport.y, viewport.width, viewport.height};
 
         double[] result = new double[3];
         if (!this.dc.getGLU().gluProject(
@@ -805,7 +803,7 @@ public class BasicView extends WWObjectImpl implements View {
         modelview.toArray(modelviewArray, 0, false);
         projection.toArray(projectionArray, 0, false);
         // GLU expects the viewport as a four-component array.
-        int[] viewportArray = new int[] {viewport.x, viewport.y, viewport.width, viewport.height};
+        int[] viewportArray = {viewport.x, viewport.y, viewport.width, viewport.height};
 
         double[] result = new double[3];
         if (!this.dc.getGLU().gluUnProject(

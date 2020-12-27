@@ -32,7 +32,7 @@ public class BoundedHashMap<K, V> extends LinkedHashMap<K, V> {
      * @param accessOrder the ordering mode: true specifies access order, false specifies insertion order.
      */
     public BoundedHashMap(int capacity, boolean accessOrder) {
-        super(getInitialCapacity(capacity, DEFAULT_LOAD_FACTOR), DEFAULT_LOAD_FACTOR, accessOrder);
+        super(BoundedHashMap.getInitialCapacity(capacity, BoundedHashMap.DEFAULT_LOAD_FACTOR), BoundedHashMap.DEFAULT_LOAD_FACTOR, accessOrder);
         this.capacity = capacity;
     }
 
@@ -49,7 +49,7 @@ public class BoundedHashMap<K, V> extends LinkedHashMap<K, V> {
      * Creates a BoundedHashMap with a capacity of 16, in insertion order mode.
      */
     public BoundedHashMap() {
-        this(DEFAULT_CAPACITY);
+        this(BoundedHashMap.DEFAULT_CAPACITY);
     }
 
     protected static int getInitialCapacity(int capacity, float loadFactor) {

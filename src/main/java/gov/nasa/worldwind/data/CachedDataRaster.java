@@ -28,11 +28,11 @@ import java.util.logging.Level;
 public class CachedDataRaster extends AVListImpl implements DataRaster {
     protected final Object rasterUsageLock = new Object();
     protected final Object rasterRetrievalLock = new Object();
-    protected final String[] requiredKeys = new String[] {AVKey.SECTOR, AVKey.PIXEL_FORMAT};
-    protected Object dataSource = null;
-    protected DataRasterReader dataReader = null;
-    protected MemoryCache rasterCache = null;
-    protected MemoryCache.CacheListener cacheListener = null;
+    protected final String[] requiredKeys = {AVKey.SECTOR, AVKey.PIXEL_FORMAT};
+    protected Object dataSource;
+    protected DataRasterReader dataReader;
+    protected MemoryCache rasterCache;
+    protected MemoryCache.CacheListener cacheListener;
 
     /**
      * Create a cached data raster.
@@ -45,7 +45,7 @@ public class CachedDataRaster extends AVListImpl implements DataRaster {
      *               the source using the reader.
      * @param reader A reference to a DataRasterReader instance
      * @param cache  A reference to a MemoryCache instance
-     * @throws IOException      thrown if there is an error to read metadata from the source
+     * @throws IOException              thrown if there is an error to read metadata from the source
      * @throws IllegalArgumentException thrown when a source or a reader are null
      */
     public CachedDataRaster(Object source, AVList params, DataRasterReader reader, MemoryCache cache)
@@ -76,6 +76,19 @@ public class CachedDataRaster extends AVListImpl implements DataRaster {
     protected static long getTotalUsedMemory() {
         Runtime runtime = Runtime.getRuntime();
         return (runtime.totalMemory() - runtime.freeMemory());
+    }
+
+    protected static long getSizeInBytes(DataRaster[] rasters) {
+        long totalBytes = 0L;
+
+        if (rasters != null) {
+            for (DataRaster raster : rasters) {
+                if (raster instanceof Cacheable)
+                    totalBytes += ((Cacheable) raster).getSizeInBytes();
+            }
+        }
+
+        return totalBytes;
     }
 
     protected void assembleMetadata(Object source, AVList params, DataRasterReader reader)
@@ -124,8 +137,7 @@ public class CachedDataRaster extends AVListImpl implements DataRaster {
                         String message = Logging.getMessage("generic.MissingRequiredParameter", key);
                         Logging.logger().finest(message);
                         throw new IllegalArgumentException(message);
-                    }
-                    else
+                    } else
                         return false;
                 }
             }
@@ -193,22 +205,22 @@ public class CachedDataRaster extends AVListImpl implements DataRaster {
                     AVList rasterParams = this.copy();
 
                     try {
-                        long before = getTotalUsedMemory();
+                        long before = CachedDataRaster.getTotalUsedMemory();
                         rasters = this.dataReader.read(this.getDataSource(), rasterParams);
-                        memoryDelta = getTotalUsedMemory() - before;
+                        memoryDelta = CachedDataRaster.getTotalUsedMemory() - before;
                     }
                     catch (OutOfMemoryError e) {
                         Logging.logger().finest(this.composeExceptionReason(e));
                         this.releaseMemory();
                         // let's retry after the finalization and GC
 
-                        long before = getTotalUsedMemory();
+                        long before = CachedDataRaster.getTotalUsedMemory();
                         rasters = this.dataReader.read(this.getDataSource(), rasterParams);
-                        memoryDelta = getTotalUsedMemory() - before;
+                        memoryDelta = CachedDataRaster.getTotalUsedMemory() - before;
                     }
                 }
                 catch (Throwable t) {
-                    disposeRasters(rasters); // cleanup in case of exception
+                    CachedDataRaster.disposeRasters(rasters); // cleanup in case of exception
                     rasters = null;
                     String message = Logging.getMessage("DataRaster.CannotRead", this.composeExceptionReason(t));
                     Logging.logger().severe(message);
@@ -217,7 +229,7 @@ public class CachedDataRaster extends AVListImpl implements DataRaster {
                 finally {
                     // Add rasters to the cache, even if "rasters" is null to prevent multiple failed reads.
                     if (this.rasterCache != null) {
-                        long totalBytes = getSizeInBytes(rasters);
+                        long totalBytes = CachedDataRaster.getSizeInBytes(rasters);
                         totalBytes = Math.max(memoryDelta, totalBytes);
                         if (totalBytes > 0L)
                             this.rasterCache.add(this.dataSource, rasters, totalBytes);
@@ -323,19 +335,6 @@ public class CachedDataRaster extends AVListImpl implements DataRaster {
         return sb.toString();
     }
 
-    protected static long getSizeInBytes(DataRaster[] rasters) {
-        long totalBytes = 0L;
-
-        if (rasters != null) {
-            for (DataRaster raster : rasters) {
-                if (raster instanceof Cacheable)
-                    totalBytes += ((Cacheable) raster).getSizeInBytes();
-            }
-        }
-
-        return totalBytes;
-    }
-
     protected enum ErrorHandlerMode {
         ALLOW_EXCEPTIONS, DISABLE_EXCEPTIONS
     }
@@ -358,9 +357,9 @@ public class CachedDataRaster extends AVListImpl implements DataRaster {
             }
 
             try {
-                disposeRasters((DataRaster[]) clientObject);
+                CachedDataRaster.disposeRasters((DataRaster[]) clientObject);
             }
-            catch (Exception e) {
+            catch (RuntimeException e) {
                 String message = Logging.getMessage("generic.ExceptionWhileDisposing", clientObject);
                 Logging.logger().log(java.util.logging.Level.SEVERE, message, e);
             }

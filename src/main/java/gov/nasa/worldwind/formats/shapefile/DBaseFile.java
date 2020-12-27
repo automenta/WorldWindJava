@@ -102,127 +102,6 @@ public class DBaseFile extends AVListImpl {
         return true;
     }
 
-    public Date getLastModificationDate() {
-        return this.header.lastModificationDate;
-    }
-
-    public int getNumberOfRecords() {
-        return this.header.numberOfRecords;
-    }
-
-    public int getHeaderLength() {
-        return this.header.headerLength;
-    }
-
-    public int getRecordLength() {
-        return this.header.recordLength;
-    }
-
-    public int getNumberOfFields() {
-        return (this.header.headerLength - 1 - FIXED_HEADER_LENGTH) / FIELD_DESCRIPTOR_LENGTH;
-    }
-
-    public DBaseField[] getFields() {
-        return this.fields;
-    }
-
-    public boolean hasNext() {
-        return this.open && this.numRecordsRead < this.header.numberOfRecords;
-    }
-
-    public DBaseRecord nextRecord() {
-        if (!this.open) {
-            String message = Logging.getMessage("SHP.DBaseFileClosed", this.getStringValue(AVKey.DISPLAY_NAME));
-            Logging.logger().severe(message);
-            throw new IllegalStateException(message);
-        }
-
-        if (this.getNumberOfRecords() <= 0 || this.numRecordsRead >= this.getNumberOfRecords()) {
-            String message = Logging.getMessage("SHP.NoRecords", this.getStringValue(AVKey.DISPLAY_NAME));
-            Logging.logger().severe(message);
-            throw new IllegalStateException(message);
-        }
-
-        try {
-            return this.readNextRecord();
-        }
-        catch (IOException e) {
-            String message = Logging.getMessage("SHP.ExceptionAttemptingToReadDBaseRecord",
-                this.getStringValue(AVKey.DISPLAY_NAME));
-            Logging.logger().log(Level.SEVERE, message, e);
-            throw new WWRuntimeException(message, e);
-        }
-    }
-
-    public void close() {
-        if (this.channel != null) {
-            WWIO.closeStream(this.channel, null);
-            this.channel = null;
-        }
-
-        this.open = false;
-        this.recordBuffer = null;
-    }
-
-    //**************************************************************//
-    //********************  Initialization  ************************//
-    //**************************************************************//
-
-    protected void initializeFromFile(File file) throws IOException {
-        if (!file.exists()) {
-            String message = Logging.getMessage("generic.FileNotFound", file.getPath());
-            Logging.logger().severe(message);
-            throw new FileNotFoundException(message);
-        }
-
-        // DBase record reading performs about 200% better when the FileInputStream is wrapped in a BufferedInputStream.
-        this.channel = Channels.newChannel((new FileInputStream(file)));
-        this.initialize();
-    }
-
-    protected void initializeFromURL(URL url) throws IOException {
-        // Opening the Shapefile URL as a URL connection. Throw an IOException if the URL connection cannot be opened,
-        // or if it's an invalid Shapefile connection.
-        URLConnection connection = url.openConnection();
-
-        String message = DBaseFile.validateURLConnection(connection, DBASE_CONTENT_TYPES);
-        if (message != null) {
-            throw new IOException(message);
-        }
-
-        this.channel = Channels.newChannel((connection.getInputStream()));
-        this.initialize();
-    }
-
-    protected void initializeFromStream(InputStream stream) throws IOException {
-        this.channel = Channels.newChannel((stream));
-        this.initialize();
-    }
-
-    protected void initializeFromPath(String path) throws IOException {
-        File file = new File(path);
-        if (file.exists()) {
-            this.initializeFromFile(file);
-            return;
-        }
-
-        URL url = WWIO.makeURL(path);
-        if (url != null) {
-            this.initializeFromURL(url);
-            return;
-        }
-
-        String message = Logging.getMessage("generic.UnrecognizedSourceType", path);
-        Logging.logger().severe(message);
-        throw new IllegalArgumentException(message);
-    }
-
-    protected void initialize() throws IOException {
-        this.header = this.readHeader();
-        this.fields = this.readFields();
-        this.open = true;
-    }
-
     protected static String validateURLConnection(URLConnection connection, String[] acceptedContentTypes) {
         try {
             if (connection instanceof HttpURLConnection &&
@@ -246,29 +125,6 @@ public class DBaseFile extends AVListImpl {
 
         // Return an exception if the content type does not match the expected type.
         return Logging.getMessage("HTTP.UnexpectedContentType", contentType, Arrays.toString(acceptedContentTypes));
-    }
-
-    //**************************************************************//
-    //********************  Header  ********************************//
-    //**************************************************************//
-
-    /**
-     * Reads the {@link Header} from this DBaseFile. This file is assumed to have a header.
-     *
-     * @return a {@link Header} instance.
-     * @throws IOException if the header cannot be read for any reason.
-     */
-    protected Header readHeader() throws IOException {
-        // Read header fixed portion.
-        ByteBuffer buffer = ByteBuffer.allocate(FIXED_HEADER_LENGTH);
-        WWIO.readChannelToBuffer(this.channel, buffer);
-
-        if (buffer.remaining() < FIXED_HEADER_LENGTH) {
-            // Let the caller catch and log the message.
-            throw new WWRuntimeException(Logging.getMessage("generic.InvalidFileLength", buffer.remaining()));
-        }
-
-        return DBaseFile.readHeaderFromBuffer(buffer);
     }
 
     /**
@@ -316,14 +172,188 @@ public class DBaseFile extends AVListImpl {
         header.headerLength = headerLength;
         header.recordLength = recordLength;
 
-        buffer.position(pos + FIXED_HEADER_LENGTH); // Move to end of header.
+        buffer.position(pos + DBaseFile.FIXED_HEADER_LENGTH); // Move to end of header.
 
         return header;
+    }
+
+    protected static int readZeroTerminatedString(ByteBuffer buffer, byte[] bytes, int maxLength) {
+        if (maxLength <= 0)
+            return 0;
+
+        buffer.get(bytes, 0, maxLength);
+
+        int length;
+        for (length = 0; length < maxLength && bytes[length] != 0; length++) {
+        }
+
+        return length;
+    }
+
+    protected static String decodeString(byte[] bytes, int length) {
+        if (length <= 0)
+            return null;
+
+        return new String(bytes, 0, length, StandardCharsets.UTF_8);
+    }
+
+    protected static boolean isStringEmpty(byte[] bytes, int length) {
+        return length <= 0
+            || DBaseFile.isArrayFilled(bytes, length, (byte) 0x20)  // Space character.
+            || DBaseFile.isArrayFilled(bytes, length, (byte) 0x2A); // Asterisk character.
+    }
+
+    public Date getLastModificationDate() {
+        return this.header.lastModificationDate;
+    }
+
+    public int getNumberOfRecords() {
+        return this.header.numberOfRecords;
+    }
+
+    public int getHeaderLength() {
+        return this.header.headerLength;
+    }
+
+    public int getRecordLength() {
+        return this.header.recordLength;
+    }
+
+    //**************************************************************//
+    //********************  Initialization  ************************//
+    //**************************************************************//
+
+    public int getNumberOfFields() {
+        return (this.header.headerLength - 1 - DBaseFile.FIXED_HEADER_LENGTH) / DBaseFile.FIELD_DESCRIPTOR_LENGTH;
+    }
+
+    public DBaseField[] getFields() {
+        return this.fields;
+    }
+
+    public boolean hasNext() {
+        return this.open && this.numRecordsRead < this.header.numberOfRecords;
+    }
+
+    public DBaseRecord nextRecord() {
+        if (!this.open) {
+            String message = Logging.getMessage("SHP.DBaseFileClosed", this.getStringValue(AVKey.DISPLAY_NAME));
+            Logging.logger().severe(message);
+            throw new IllegalStateException(message);
+        }
+
+        if (this.getNumberOfRecords() <= 0 || this.numRecordsRead >= this.getNumberOfRecords()) {
+            String message = Logging.getMessage("SHP.NoRecords", this.getStringValue(AVKey.DISPLAY_NAME));
+            Logging.logger().severe(message);
+            throw new IllegalStateException(message);
+        }
+
+        try {
+            return this.readNextRecord();
+        }
+        catch (IOException e) {
+            String message = Logging.getMessage("SHP.ExceptionAttemptingToReadDBaseRecord",
+                this.getStringValue(AVKey.DISPLAY_NAME));
+            Logging.logger().log(Level.SEVERE, message, e);
+            throw new WWRuntimeException(message, e);
+        }
+    }
+
+    public void close() {
+        if (this.channel != null) {
+            WWIO.closeStream(this.channel, null);
+            this.channel = null;
+        }
+
+        this.open = false;
+        this.recordBuffer = null;
+    }
+
+    protected void initializeFromFile(File file) throws IOException {
+        if (!file.exists()) {
+            String message = Logging.getMessage("generic.FileNotFound", file.getPath());
+            Logging.logger().severe(message);
+            throw new FileNotFoundException(message);
+        }
+
+        // DBase record reading performs about 200% better when the FileInputStream is wrapped in a BufferedInputStream.
+        this.channel = Channels.newChannel((new FileInputStream(file)));
+        this.initialize();
+    }
+
+    //**************************************************************//
+    //********************  Header  ********************************//
+    //**************************************************************//
+
+    protected void initializeFromURL(URL url) throws IOException {
+        // Opening the Shapefile URL as a URL connection. Throw an IOException if the URL connection cannot be opened,
+        // or if it's an invalid Shapefile connection.
+        URLConnection connection = url.openConnection();
+
+        String message = DBaseFile.validateURLConnection(connection, DBaseFile.DBASE_CONTENT_TYPES);
+        if (message != null) {
+            throw new IOException(message);
+        }
+
+        this.channel = Channels.newChannel((connection.getInputStream()));
+        this.initialize();
+    }
+
+    protected void initializeFromStream(InputStream stream) throws IOException {
+        this.channel = Channels.newChannel((stream));
+        this.initialize();
     }
 
     //**************************************************************//
     //********************  Fields  ********************************//
     //**************************************************************//
+
+    protected void initializeFromPath(String path) throws IOException {
+        File file = new File(path);
+        if (file.exists()) {
+            this.initializeFromFile(file);
+            return;
+        }
+
+        URL url = WWIO.makeURL(path);
+        if (url != null) {
+            this.initializeFromURL(url);
+            return;
+        }
+
+        String message = Logging.getMessage("generic.UnrecognizedSourceType", path);
+        Logging.logger().severe(message);
+        throw new IllegalArgumentException(message);
+    }
+
+    protected void initialize() throws IOException {
+        this.header = this.readHeader();
+        this.fields = this.readFields();
+        this.open = true;
+    }
+
+    //**************************************************************//
+    //********************  Records  *******************************//
+    //**************************************************************//
+
+    /**
+     * Reads the {@link Header} from this DBaseFile. This file is assumed to have a header.
+     *
+     * @return a {@link Header} instance.
+     * @throws IOException if the header cannot be read for any reason.
+     */
+    protected Header readHeader() throws IOException {
+        // Read header fixed portion.
+        ByteBuffer buffer = ByteBuffer.allocate(DBaseFile.FIXED_HEADER_LENGTH);
+        WWIO.readChannelToBuffer(this.channel, buffer);
+
+        if (buffer.remaining() < DBaseFile.FIXED_HEADER_LENGTH) {
+            // Let the caller catch and log the message.
+            throw new WWRuntimeException(Logging.getMessage("generic.InvalidFileLength", buffer.remaining()));
+        }
+
+        return DBaseFile.readHeaderFromBuffer(buffer);
+    }
 
     /**
      * Reads the {@link DBaseField} descriptions from this DBaseFile. This file is assumed to have one or more fields
@@ -333,13 +363,17 @@ public class DBaseFile extends AVListImpl {
      * @throws IOException if the fields cannot be read for any reason.
      */
     protected DBaseField[] readFields() throws IOException {
-        int fieldsLength = this.header.headerLength - FIXED_HEADER_LENGTH;
+        int fieldsLength = this.header.headerLength - DBaseFile.FIXED_HEADER_LENGTH;
         ByteBuffer buffer = ByteBuffer.allocate(fieldsLength);
         WWIO.readChannelToBuffer(this.channel, buffer);
 
         // Read fields description header
         return this.readFieldsFromBuffer(buffer, this.getNumberOfFields());
     }
+
+    //**************************************************************//
+    //********************  String Parsing  ************************//
+    //**************************************************************//
 
     /**
      * Reads a sequence of {@link DBaseField} descriptions from the given {@link ByteBuffer};
@@ -360,15 +394,11 @@ public class DBaseFile extends AVListImpl {
             fields[i] = new DBaseField(this, buffer);
         }
 
-        int fieldsLength = this.header.headerLength - FIXED_HEADER_LENGTH;
+        int fieldsLength = this.header.headerLength - DBaseFile.FIXED_HEADER_LENGTH;
         buffer.position(pos + fieldsLength); // Move to end of fields.
 
         return fields;
     }
-
-    //**************************************************************//
-    //********************  Records  *******************************//
-    //**************************************************************//
 
     /**
      * Reads the next {@link DBaseRecord} instance from this DBaseFile. This file is assumed to have one or more
@@ -403,36 +433,6 @@ public class DBaseFile extends AVListImpl {
      */
     protected DBaseRecord readRecordFromBuffer(ByteBuffer buffer, int recordNumber) {
         return new DBaseRecord(this, buffer, recordNumber);
-    }
-
-    //**************************************************************//
-    //********************  String Parsing  ************************//
-    //**************************************************************//
-
-    protected static int readZeroTerminatedString(ByteBuffer buffer, byte[] bytes, int maxLength) {
-        if (maxLength <= 0)
-            return 0;
-
-        buffer.get(bytes, 0, maxLength);
-
-        int length;
-        for (length = 0; length < maxLength && bytes[length] != 0; length++) {
-        }
-
-        return length;
-    }
-
-    protected static String decodeString(byte[] bytes, int length) {
-        if (length <= 0)
-            return null;
-
-        return new String(bytes, 0, length, StandardCharsets.UTF_8);
-    }
-
-    protected static boolean isStringEmpty(byte[] bytes, int length) {
-        return length <= 0
-            || isArrayFilled(bytes, length, (byte) 0x20)  // Space character.
-            || isArrayFilled(bytes, length, (byte) 0x2A); // Asterisk character.
     }
 
     protected static class Header {

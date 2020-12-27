@@ -38,8 +38,7 @@ public class AngleAnimator extends BasicAnimator {
      * @param interpolator     the {@link Interpolator}
      * @param begin            angle the animation begins at
      * @param end              The angle the animation ends at.
-     * @param propertyAccessor The {@link PropertyAccessor} used to modify the data value being
-     *                         animated.
+     * @param propertyAccessor The {@link PropertyAccessor} used to modify the data value being animated.
      */
     public AngleAnimator(Interpolator interpolator,
         Angle begin, Angle end,
@@ -110,9 +109,8 @@ public class AngleAnimator extends BasicAnimator {
     }
 
     /**
-     * Set the value being animated via the {@link PropertyAccessor} using the passed
-     * interpolant. This implementation just does a straight liner interpolation between the {@link #begin} and {@link
-     * #end} values.
+     * Set the value being animated via the {@link PropertyAccessor} using the passed interpolant. This implementation
+     * just does a straight liner interpolation between the {@link #begin} and {@link #end} values.
      *
      * @param interpolant the interpolant used to generate the next value that will be set by the {@link
      *                    PropertyAccessor}

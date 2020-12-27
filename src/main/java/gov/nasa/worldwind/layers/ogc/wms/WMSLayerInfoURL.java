@@ -55,8 +55,7 @@ public class WMSLayerInfoURL extends AbstractXMLEventParser {
         throws XMLStreamException {
         if (ctx.isStartElement(event, FORMAT)) {
             this.setFormat(ctx.getStringParser().parseString(ctx, event));
-        }
-        else if (ctx.isStartElement(event, ONLINE_RESOURCE)) {
+        } else if (ctx.isStartElement(event, ONLINE_RESOURCE)) {
             XMLEventParser parser = this.allocate(ctx, event);
             if (parser != null) {
                 Object o = parser.parse(ctx, event, args);

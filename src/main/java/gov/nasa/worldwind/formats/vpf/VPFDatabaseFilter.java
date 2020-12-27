@@ -20,6 +20,16 @@ public class VPFDatabaseFilter implements FileFilter {
     public VPFDatabaseFilter() {
     }
 
+    protected static boolean acceptFilePath(File file) {
+        if (file == null) {
+            String msg = Logging.getMessage("nullValue.FileIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        return file.getName().equalsIgnoreCase(VPFConstants.DATABASE_HEADER_TABLE);
+    }
+
     /**
      * Returns true if the specified file can be opened as an VPF database.
      *
@@ -41,21 +51,11 @@ public class VPFDatabaseFilter implements FileFilter {
         try {
             return VPFDatabase.isDatabase(file.getPath());
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             // Not interested in logging or reporting the exception; just return false indicating that the file is not
             // a VPF database.
         }
 
         return false;
-    }
-
-    protected static boolean acceptFilePath(File file) {
-        if (file == null) {
-            String msg = Logging.getMessage("nullValue.FileIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        return file.getName().equalsIgnoreCase(VPFConstants.DATABASE_HEADER_TABLE);
     }
 }

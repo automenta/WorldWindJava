@@ -11,8 +11,8 @@ import com.jogamp.opengl.*;
 import java.util.List;
 
 /**
- * BasicGLCapabilitiesChooser provides an implementation of {@link GLCapabilitiesChooser} for use with
- * WorldWindow implementations (for example, WorldWindowGLCanvas and WorldWindowGLJPanel).
+ * BasicGLCapabilitiesChooser provides an implementation of {@link GLCapabilitiesChooser} for use with WorldWindow
+ * implementations (for example, WorldWindowGLCanvas and WorldWindowGLJPanel).
  * <p>
  * BasicGLCapabilitiesChooser extends the behavior of the default GLCapabilitiesChooser by implementing a fallback
  * behavior when device supported stereo is requested but is not supported by the hardware. In this case,

@@ -113,7 +113,7 @@ public class ImageUtil {
                     int y1 = (int) Math.ceil(vec.y);
                     double yf = vec.y - y0;
 
-                    int color = interpolateColor(xf, yf,
+                    int color = ImageUtil.interpolateColor(xf, yf,
                         image.getRGB(x0, y0),
                         image.getRGB(x1, y0),
                         image.getRGB(x0, y1),
@@ -151,18 +151,17 @@ public class ImageUtil {
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        String message = validateControlPoints(3, imagePoints, geoPoints);
+        String message = ImageUtil.validateControlPoints(3, imagePoints, geoPoints);
         if (message != null) {
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         if (imagePoints.length >= 4 && geoPoints.length >= 4) {
-            return warpImageWithControlPoints4(sourceImage, imagePoints, geoPoints, destImage);
-        }
-        else // (imagePoints.length == 3)
+            return ImageUtil.warpImageWithControlPoints4(sourceImage, imagePoints, geoPoints, destImage);
+        } else // (imagePoints.length == 3)
         {
-            return warpImageWithControlPoints3(sourceImage, imagePoints, geoPoints, destImage);
+            return ImageUtil.warpImageWithControlPoints3(sourceImage, imagePoints, geoPoints, destImage);
         }
     }
 
@@ -192,7 +191,7 @@ public class ImageUtil {
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        String message = validateControlPoints(4, imagePoints, geoPoints);
+        String message = ImageUtil.validateControlPoints(4, imagePoints, geoPoints);
         if (message != null) {
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -203,9 +202,9 @@ public class ImageUtil {
 
         Point2D[] bestFitImagePoints = new Point2D[3];
         LatLon[] bestFitGeoPoints = new LatLon[3];
-        computeBestFittingControlPoints4(imagePoints, geoPoints, bestFitImagePoints, bestFitGeoPoints);
+        ImageUtil.computeBestFittingControlPoints4(imagePoints, geoPoints, bestFitImagePoints, bestFitGeoPoints);
 
-        return warpImageWithControlPoints3(sourceImage, bestFitImagePoints, bestFitGeoPoints, destImage);
+        return ImageUtil.warpImageWithControlPoints3(sourceImage, bestFitImagePoints, bestFitGeoPoints, destImage);
     }
 
     /**
@@ -234,7 +233,7 @@ public class ImageUtil {
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        String message = validateControlPoints(3, imagePoints, geoPoints);
+        String message = ImageUtil.validateControlPoints(3, imagePoints, geoPoints);
         if (message != null) {
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -246,13 +245,12 @@ public class ImageUtil {
         // The sector we want is the sector that bounds those four geographic coordinates.
 
         Matrix gridToGeographic = Matrix.fromImageToGeographic(imagePoints, geoPoints);
-        List<LatLon> corners = computeImageCorners(sourceImage.getWidth(), sourceImage.getHeight(), gridToGeographic);
+        List<LatLon> corners = ImageUtil.computeImageCorners(sourceImage.getWidth(), sourceImage.getHeight(), gridToGeographic);
         Sector destSector = Sector.boundingSector(corners);
 
         if (Sector.isSector(corners) && destSector.isSameSector(corners)) {
-            getScaledCopy(sourceImage, destImage);
-        }
-        else {
+            ImageUtil.getScaledCopy(sourceImage, destImage);
+        } else {
             // Compute a matrix that will map from destination grid coordinates to source grid coordinates. By using
             // matrix multiplication in this order, an incoming vector will be transformed by the last matrix multiplied,
             // then the previous, and so on. So an incoming destination coordinate would be transformed into geographic
@@ -263,7 +261,7 @@ public class ImageUtil {
             transform = transform.multiply(Matrix.fromImageToGeographic(destImage.getWidth(), destImage.getHeight(),
                 destSector));
 
-            warpImageWithTransform(sourceImage, destImage, transform);
+            ImageUtil.warpImageWithTransform(sourceImage, destImage, transform);
         }
 
         return destSector;
@@ -306,19 +304,18 @@ public class ImageUtil {
             throw new IllegalArgumentException(message);
         }
 
-        List<LatLon> corners = computeImageCorners(sourceImage.getWidth(), sourceImage.getHeight(), imageToGeographic);
+        List<LatLon> corners = ImageUtil.computeImageCorners(sourceImage.getWidth(), sourceImage.getHeight(), imageToGeographic);
         Sector destSector = Sector.boundingSector(corners);
 
         if (Sector.isSector(corners) && destSector.isSameSector(corners)) {
-            getScaledCopy(sourceImage, destImage);
-        }
-        else {
+            ImageUtil.getScaledCopy(sourceImage, destImage);
+        } else {
             Matrix transform = Matrix.IDENTITY;
             transform = transform.multiply(Matrix.fromGeographicToImage(worldFileParams));
             transform = transform.multiply(Matrix.fromImageToGeographic(destImage.getWidth(), destImage.getHeight(),
                 destSector));
 
-            warpImageWithTransform(sourceImage, destImage, transform);
+            ImageUtil.warpImageWithTransform(sourceImage, destImage, transform);
         }
 
         return destSector;
@@ -341,12 +338,12 @@ public class ImageUtil {
      */
     public static void computeBestFittingControlPoints4(Point2D[] imagePoints, LatLon[] geoPoints,
         Point2D[] outImagePoints, LatLon[] outGeoPoints) {
-        String message = validateControlPoints(4, imagePoints, geoPoints);
+        String message = ImageUtil.validateControlPoints(4, imagePoints, geoPoints);
         if (message != null) {
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        message = validateControlPoints(3, outImagePoints, outGeoPoints);
+        message = ImageUtil.validateControlPoints(3, outImagePoints, outGeoPoints);
         if (message != null) {
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -363,9 +360,9 @@ public class ImageUtil {
             {0, 1, 3},
             {1, 2, 3},
             {0, 2, 3}}) {
-            Point2D[] points = new Point2D[] {
+            Point2D[] points = {
                 imagePoints[indices[0]], imagePoints[indices[1]], imagePoints[indices[2]]};
-            LatLon[] locations = new LatLon[] {geoPoints[indices[0]], geoPoints[indices[1]], geoPoints[indices[2]]};
+            LatLon[] locations = {geoPoints[indices[0]], geoPoints[indices[1]], geoPoints[indices[2]]};
             Matrix m = Matrix.fromImageToGeographic(points, locations);
 
             double error = 0.0;
@@ -523,9 +520,9 @@ public class ImageUtil {
     public static Sector positionImage(BufferedImage sourceImage, Point[] imagePoints, LatLon[] geoPoints,
         BufferedImage destImage) {
         if (imagePoints.length == 3)
-            return positionImage3(sourceImage, imagePoints, geoPoints, destImage);
+            return ImageUtil.positionImage3(sourceImage, imagePoints, geoPoints, destImage);
         else if (imagePoints.length == 4)
-            return positionImage4(sourceImage, imagePoints, geoPoints, destImage);
+            return ImageUtil.positionImage4(sourceImage, imagePoints, geoPoints, destImage);
         else
             return null;
     }
@@ -656,10 +653,9 @@ public class ImageUtil {
         // copy of the original image with the appropriate image type.
         if (image.getType() == mipmapImageType) {
             mipMapLevels[0] = image;
-        }
-        else {
+        } else {
             mipMapLevels[0] = new BufferedImage(image.getWidth(), image.getHeight(), mipmapImageType);
-            getScaledCopy(image, mipMapLevels[0]);
+            ImageUtil.getScaledCopy(image, mipMapLevels[0]);
         }
 
         for (int level = 1; level <= maxLevel; level++) {
@@ -667,7 +663,7 @@ public class ImageUtil {
             int height = Math.max(image.getHeight() >> level, 1);
 
             mipMapLevels[level] = new BufferedImage(width, height, mipmapImageType);
-            getScaledCopy(mipMapLevels[level - 1], mipMapLevels[level]);
+            ImageUtil.getScaledCopy(mipMapLevels[level - 1], mipMapLevels[level]);
         }
 
         return mipMapLevels;
@@ -690,10 +686,10 @@ public class ImageUtil {
             throw new IllegalArgumentException(message);
         }
 
-        int mipmapImageType = getMipmapType(image.getType());
-        int maxLevel = getMaxMipmapLevel(image.getWidth(), image.getHeight());
+        int mipmapImageType = ImageUtil.getMipmapType(image.getType());
+        int maxLevel = ImageUtil.getMaxMipmapLevel(image.getWidth(), image.getHeight());
 
-        return buildMipmaps(image, mipmapImageType, maxLevel);
+        return ImageUtil.buildMipmaps(image, mipmapImageType, maxLevel);
     }
 
     /**
@@ -771,8 +767,7 @@ public class ImageUtil {
             if (scaleToFit) {
                 g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
                 g2d.drawImage(image, 0, 0, potImage.getWidth(), potImage.getHeight(), null);
-            }
-            else {
+            } else {
                 g2d.drawImage(image, 0, 0, null);
             }
         }
@@ -851,7 +846,7 @@ public class ImageUtil {
         if (raster != null) {
             DataBuffer db = raster.getDataBuffer();
             if (db != null) {
-                size = computeSizeOfDataBuffer(db);
+                size = ImageUtil.computeSizeOfDataBuffer(db);
             }
         }
 
@@ -859,7 +854,7 @@ public class ImageUtil {
     }
 
     private static long computeSizeOfDataBuffer(DataBuffer dataBuffer) {
-        return dataBuffer.getSize() * computeSizeOfBufferDataType(dataBuffer.getDataType());
+        return dataBuffer.getSize() * ImageUtil.computeSizeOfBufferDataType(dataBuffer.getDataType());
     }
 
     private static long computeSizeOfBufferDataType(int bufferDataType) {
@@ -902,7 +897,7 @@ public class ImageUtil {
             int imageIndex = 0;
             image = reader.read(imageIndex);
             if (reader.isGeotiff(imageIndex)) {
-                return handleGeotiff(image, reader, imageIndex, interpolation_mode);
+                return ImageUtil.handleGeotiff(image, reader, imageIndex, interpolation_mode);
             }
         }
 
@@ -947,7 +942,7 @@ public class ImageUtil {
      * @throws IOException if there is a problem opening the file.
      */
     public static AVList openSpatialImage(File imageFile) throws IOException {
-        return openSpatialImage(imageFile, ImageUtil.NEAREST_NEIGHBOR_INTERPOLATION);
+        return ImageUtil.openSpatialImage(imageFile, ImageUtil.NEAREST_NEIGHBOR_INTERPOLATION);
     }
 
     /**
@@ -1117,8 +1112,7 @@ public class ImageUtil {
         if ((image.getColorModel() != null) && (image.getColorModel() instanceof IndexColorModel)) {
             biOut = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB,
                 (IndexColorModel) image.getColorModel());
-        }
-        else {
+        } else {
             biOut = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         }
 
@@ -1160,10 +1154,10 @@ public class ImageUtil {
         values.set(AVKey.SECTOR, sector);
 
         //moving to center of pixel
-        double yPixel = (bottomExtent.getDegrees() - topExtent.getDegrees()) / height;
-        double xPixel = (rightExtent.getDegrees() - leftExtent.getDegrees()) / width;
-        double topExtent2 = sector.latMax().getDegrees() + (yPixel * 0.5);
-        double leftExtent2 = sector.lonMin().getDegrees() + (xPixel * 0.5);
+        double yPixel = (bottomExtent.degrees - topExtent.degrees) / height;
+        double xPixel = (rightExtent.degrees - leftExtent.degrees) / width;
+        double topExtent2 = sector.latMax().degrees + (yPixel * 0.5);
+        double leftExtent2 = sector.lonMin().degrees + (xPixel * 0.5);
 
         TMCoord tmUpperLeft = TMCoord.fromLatLon(utmUpperLeft.getLatitude(), utmUpperLeft.getLongitude(),
             earth, null, null, Angle.fromDegrees(0.0), utmUpperLeft.getCentralMeridian(),
@@ -1199,14 +1193,12 @@ public class ImageUtil {
                             int b = image.getRGB(iX + 1, iY);
                             int c = image.getRGB(iX, iY + 1);
                             int d = image.getRGB(iX + 1, iY + 1);
-                            int sum = interpolateColor(dx, dy, a, b, c, d);
+                            int sum = ImageUtil.interpolateColor(dx, dy, a, b, c, d);
 
                             biOut.setRGB(x, y, Math.round(sum));
-                        }
-                        else
+                        } else
                             biOut.setRGB(x, y, 0);
-                }
-                else  //NEAREST_NEIGHBOR is default
+                } else  //NEAREST_NEIGHBOR is default
                 {
                     if ((rx > 0) && (ry > 0))
                         if ((rx < width) && (ry < height))
@@ -1298,7 +1290,7 @@ public class ImageUtil {
      */
     public static AlignedImage alignImage(BufferedImage sourceImage, float[] latitudes, float[] longitudes)
         throws InterruptedException {
-        return alignImage(sourceImage, latitudes, longitudes, null, null);
+        return ImageUtil.alignImage(sourceImage, latitudes, longitudes, null, null);
     }
 
     /**
@@ -1411,7 +1403,7 @@ public class ImageUtil {
                 // interpolating between the four pixels at the cell's corners. Otherwise, don't change the destination
                 // image. This ensures pixels which don't correspond to the source image remain transparent.
                 if (cell != null) {
-                    int color = interpolateColor(cell.uv[0], cell.uv[1],
+                    int color = ImageUtil.interpolateColor(cell.uv[0], cell.uv[1],
                         sourceColors[cell.fieldIndices[0]],
                         sourceColors[cell.fieldIndices[1]],
                         sourceColors[cell.fieldIndices[3]],
@@ -1480,11 +1472,11 @@ public class ImageUtil {
 
         // If the image is not already compatible, and is within the restrictions on dimension, then convert it
         // to a compatible image type.
-        if (!isCompatibleImage(image)
-            && (image.getWidth() <= MAX_IMAGE_SIZE_TO_CONVERT)
-            && (image.getHeight() <= MAX_IMAGE_SIZE_TO_CONVERT)) {
+        if (!ImageUtil.isCompatibleImage(image)
+            && (image.getWidth() <= ImageUtil.MAX_IMAGE_SIZE_TO_CONVERT)
+            && (image.getHeight() <= ImageUtil.MAX_IMAGE_SIZE_TO_CONVERT)) {
             BufferedImage compatibleImage =
-                createCompatibleImage(image.getWidth(), image.getHeight(), image.getTransparency());
+                ImageUtil.createCompatibleImage(image.getWidth(), image.getHeight(), image.getTransparency());
             Graphics2D g2d = compatibleImage.createGraphics();
             g2d.drawImage(image, 0, 0, null);
             g2d.dispose();
@@ -1521,7 +1513,7 @@ public class ImageUtil {
         if (GraphicsEnvironment.isHeadless())
             return false;
 
-        GraphicsConfiguration gc = getDefaultGraphicsConfiguration();
+        GraphicsConfiguration gc = ImageUtil.getDefaultGraphicsConfiguration();
         ColorModel gcColorModel = gc.getColorModel(image.getTransparency());
         return image.getColorModel().equals(gcColorModel);
     }
@@ -1536,7 +1528,7 @@ public class ImageUtil {
         try {
             InputStream inputStream = WWIO.getInputStreamFromByteBuffer(imageBuffer);
             BufferedImage image = ImageIO.read(inputStream);
-            return mapTransparencyColors(image, originalColors);
+            return ImageUtil.mapTransparencyColors(image, originalColors);
         }
         catch (IOException e) {
             Logging.logger().finest(e.getMessage());
@@ -1595,7 +1587,7 @@ public class ImageUtil {
         try {
             InputStream inputStream = WWIO.getInputStreamFromByteBuffer(imageBuffer);
             BufferedImage image = ImageIO.read(inputStream);
-            return mapColors(image, new int[] {originalColor}, new int[] {newColor});
+            return ImageUtil.mapColors(image, new int[] {originalColor}, new int[] {newColor});
         }
         catch (IOException e) {
             Logging.logger().finest(e.getMessage());
@@ -1661,11 +1653,9 @@ public class ImageUtil {
 
         if (raster instanceof BufferedImageRaster) {
             image = ((BufferedImageRaster) raster).getBufferedImage();
-        }
-        else if (raster instanceof BufferWrapperRaster) {
+        } else if (raster instanceof BufferWrapperRaster) {
             image = ImageUtil.visualize((BufferWrapperRaster) raster);
-        }
-        else {
+        } else {
             String msg = Logging.getMessage("generic.UnexpectedRasterType", raster.getClass().getName());
             Logging.logger().severe(msg);
             throw new WWRuntimeException(msg);
@@ -1697,8 +1687,7 @@ public class ImageUtil {
                     writer.write(null, new IIOImage(image, null, null), param);
                     writer.dispose();
                 }
-            }
-            else
+            } else
                 ImageIO.write(image, "jpeg", ios);
 
             buffer = ByteBuffer.wrap(imageBytes.toByteArray());
@@ -1707,7 +1696,7 @@ public class ImageUtil {
             Logging.logger().log(java.util.logging.Level.SEVERE, t.getMessage(), t);
         }
         finally {
-            close(ios);
+            ImageUtil.close(ios);
         }
 
         return buffer;
@@ -1726,11 +1715,9 @@ public class ImageUtil {
 
         if (raster instanceof BufferedImageRaster) {
             image = ((BufferedImageRaster) raster).getBufferedImage();
-        }
-        else if (raster instanceof BufferWrapperRaster) {
+        } else if (raster instanceof BufferWrapperRaster) {
             image = ImageUtil.visualize((BufferWrapperRaster) raster);
-        }
-        else {
+        } else {
             String msg = Logging.getMessage("generic.UnexpectedRasterType", raster.getClass().getName());
             Logging.logger().severe(msg);
             throw new WWRuntimeException(msg);
@@ -1756,7 +1743,7 @@ public class ImageUtil {
             Logging.logger().log(java.util.logging.Level.SEVERE, t.getMessage(), t);
         }
         finally {
-            close(ios);
+            ImageUtil.close(ios);
         }
 
         return buffer;
@@ -1803,11 +1790,10 @@ public class ImageUtil {
         int height = raster.getHeight();
         int size = width * height;
 
-        short[][] data = new short[][]
-            {
-                new short[size], // intensity band
-                new short[size]  // alpha (transparency band)
-            };
+        short[][] data = {
+            new short[size], // intensity band
+            new short[size]  // alpha (transparency band)
+        };
 
         final int BAND_Y = 0, BAND_ALPHA = 1;
 
@@ -1816,7 +1802,7 @@ public class ImageUtil {
 
         int i = 0;
         boolean hasVoids = false;
-        double norm = (max != min) ? Math.abs(65534.0d / (max - min)) : 0.0d;
+        double norm = (max == min) ? 0.0d : Math.abs(65534.0d / (max - min));
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 double v = raster.getDoubleAtPosition(y, x);
@@ -1828,8 +1814,7 @@ public class ImageUtil {
                     data[BAND_Y][i] = (short) (0xFFFF & missingDataReplacement);
                     data[BAND_ALPHA][i] = ALPHA_TRANSLUCENT;
                     hasVoids = true;
-                }
-                else {
+                } else {
                     data[BAND_Y][i] = (short) (0xFFFF & (int) ((v - min) * norm));
                     data[BAND_ALPHA][i] = ALPHA_OPAQUE;
                 }

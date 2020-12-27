@@ -18,7 +18,7 @@ public class AnimatedObjectController implements RenderingListener, SelectListen
     private final RenderableLayer objectLayer;
     private final RenderableLayer annotationLayer;
     private Globe globe;
-    private boolean started = false;
+    private boolean started;
     private Animatable selectedObject;
 
     public AnimatedObjectController(WorldWindow wwd, RenderableLayer objectLayer, RenderableLayer annotationLayer) {
@@ -46,8 +46,7 @@ public class AnimatedObjectController implements RenderingListener, SelectListen
             if (globe != null) {
                 if (started) {
                     animObjects.forEach((ao) -> ao.stepAnimation(wwd.view().getGlobe()));
-                }
-                else {
+                } else {
                     animObjects.forEach((ao) -> ao.startAnimation(wwd.view().getGlobe()));
                     started = true;
                 }
@@ -74,8 +73,7 @@ public class AnimatedObjectController implements RenderingListener, SelectListen
             Object prevNote = this.selectedObject.getField(AVKey.ANIMATION_ANNOTATION);
             if (prevNote != null) {
                 ((Annotation) prevNote).getAttributes().setVisible(true);
-            }
-            else {
+            } else {
                 String metadata = this.selectedObject.getField(AVKey.ANIMATION_META_DATA).toString();
                 if (metadata != null) {
                     Annotation note = new GlobeAnnotation(metadata, this.selectedObject.getPosition(),

@@ -1,7 +1,7 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.BasicModel;
-import gov.nasa.worldwind.video.newt.*;
+import gov.nasa.worldwind.video.newt.WorldWindowNEWT;
 import spacegraph.video.JoglWindow;
 
 public class SimplestPossibleExampleNEWT  { ;

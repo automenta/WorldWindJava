@@ -26,8 +26,8 @@ public class SkyGradientLayer extends AbstractLayer {
     protected final static int STACKS = 12;
     protected final static int SLICES = 64;
     //protected float[] horizonColor = new float[] { 0.66f, 0.70f, 0.81f, 1.0f }; // horizon color (same as fog)
-    protected final float[] horizonColor = new float[] {0.76f, 0.76f, 0.80f, 1.0f}; // horizon color
-    protected final float[] zenithColor = new float[] {0.26f, 0.47f, 0.83f, 1.0f}; // zenith color
+    protected final float[] horizonColor = {0.76f, 0.76f, 0.80f, 1.0f}; // horizon color
+    protected final float[] zenithColor = {0.26f, 0.47f, 0.83f, 1.0f}; // zenith color
     // TODO: make configurable
     protected double thickness = 100.0e3; // Atmosphere thickness
 
@@ -72,6 +72,39 @@ public class SkyGradientLayer extends AbstractLayer {
         double latitude = Math.asin(y / rho);
 
         return new Vec4(rho, latitude, longitude);
+    }
+
+    protected static void applyDrawTransform(DrawContext dc, OGLStackHandler ogsh) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
+        View view = dc.getView();
+        ogsh.pushModelview(gl);
+        // Place sky - TODO: find another ellipsoid friendlier way (the sky dome is not exactly normal...
+        // to the ground at higher latitude)
+        Vec4 camPoint = view.getEyePoint();
+        Vec4 camPosFromPoint = SkyGradientLayer.CartesianToSpherical(camPoint.x, camPoint.y, camPoint.z);
+        gl.glRotatef((float) (Angle.fromRadians(camPosFromPoint.z).degrees), 0.0f, 1.0f, 0.0f);
+        gl.glRotatef((float) (-Angle.fromRadians(camPosFromPoint.y).degrees + 90), 1.0f, 0.0f, 0.0f);
+        gl.glTranslatef(0.0f, (float) (view.getEyePoint().getLength3()), 0.0f);
+    }
+
+    protected static void applyDrawProjection(DrawContext dc, OGLStackHandler ogsh) {
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
+        View view = dc.getView();
+        double viewportWidth = view.getViewport().getWidth();
+        double viewportHeight = view.getViewport().getHeight();
+
+        // If either the viewport width or height is zero, then treat the dimension as if it had value 1.
+        if (viewportWidth <= 0)
+            viewportWidth = 1;
+        if (viewportHeight <= 0)
+            viewportHeight = 1;
+
+        Matrix projection = Matrix.fromPerspective(view.getFieldOfView(), viewportWidth, viewportHeight,
+            100, view.getHorizonDistance() + 10.0e3);
+        double[] matrixArray = new double[16];
+        projection.toArray(matrixArray, 0, false);
+        ogsh.pushProjection(gl);
+        gl.glLoadMatrixd(matrixArray, 0);
     }
 
     /**
@@ -173,39 +206,6 @@ public class SkyGradientLayer extends AbstractLayer {
         }
     }
 
-    protected static void applyDrawTransform(DrawContext dc, OGLStackHandler ogsh) {
-        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-        View view = dc.getView();
-        ogsh.pushModelview(gl);
-        // Place sky - TODO: find another ellipsoid friendlier way (the sky dome is not exactly normal...
-        // to the ground at higher latitude)
-        Vec4 camPoint = view.getEyePoint();
-        Vec4 camPosFromPoint = CartesianToSpherical(camPoint.x, camPoint.y, camPoint.z);
-        gl.glRotatef((float) (Angle.fromRadians(camPosFromPoint.z).degrees), 0.0f, 1.0f, 0.0f);
-        gl.glRotatef((float) (-Angle.fromRadians(camPosFromPoint.y).degrees + 90), 1.0f, 0.0f, 0.0f);
-        gl.glTranslatef(0.0f, (float) (view.getEyePoint().getLength3()), 0.0f);
-    }
-
-    protected static void applyDrawProjection(DrawContext dc, OGLStackHandler ogsh) {
-        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-        View view = dc.getView();
-        double viewportWidth = view.getViewport().getWidth();
-        double viewportHeight = view.getViewport().getHeight();
-
-        // If either the viewport width or height is zero, then treat the dimension as if it had value 1.
-        if (viewportWidth <= 0)
-            viewportWidth = 1;
-        if (viewportHeight <= 0)
-            viewportHeight = 1;
-
-        Matrix projection = Matrix.fromPerspective(view.getFieldOfView(), viewportWidth, viewportHeight,
-            100, view.getHorizonDistance() + 10.0e3);
-        double[] matrixArray = new double[16];
-        projection.toArray(matrixArray, 0, false);
-        ogsh.pushProjection(gl);
-        gl.glLoadMatrixd(matrixArray, 0);
-    }
-
     /**
      * Draws the positive three axes - x is red, y is green and z is blue
      *
@@ -244,7 +244,7 @@ public class SkyGradientLayer extends AbstractLayer {
             gradientBias = 1.0f + (float) factor;
         }
 
-        this.drawSkyDome(dc, (float) tangentialDistance, horizonLat, zenithLat, SLICES, STACKS, zenithOpacity,
+        this.drawSkyDome(dc, (float) tangentialDistance, horizonLat, zenithLat, SkyGradientLayer.SLICES, SkyGradientLayer.STACKS, zenithOpacity,
             gradientBias);
     }
 
@@ -280,12 +280,12 @@ public class SkyGradientLayer extends AbstractLayer {
         gl.glBegin(GL2.GL_QUAD_STRIP);
         for (int slice = 0; slice <= slices; slice++) {
             longitude = 180 - ((float) slice / slices * 360);
-            Vec4 v = SphericalToCartesian(latitude, longitude, radius);
+            Vec4 v = SkyGradientLayer.SphericalToCartesian(latitude, longitude, radius);
             gl.glColor4d(zenithColor[0], zenithColor[1], zenithColor[2], 0);
-            gl.glVertex3d(v.getX(), v.getY(), v.getZ());
-            v = SphericalToCartesian(startLat, longitude, radius);
+            gl.glVertex3d(v.x, v.y, v.z);
+            v = SkyGradientLayer.SphericalToCartesian(startLat, longitude, radius);
             gl.glColor4d(horizonColor[0], horizonColor[1], horizonColor[2], horizonColor[3]);
-            gl.glVertex3d(v.getX(), v.getY(), v.getZ());
+            gl.glVertex3d(v.x, v.y, v.z);
         }
         gl.glEnd();
 
@@ -309,20 +309,20 @@ public class SkyGradientLayer extends AbstractLayer {
             gl.glBegin(GL2.GL_QUAD_STRIP);
             for (int slice = 0; slice <= slices; slice++) {
                 longitude = 180 - ((float) slice / slices * 360);
-                Vec4 v = SphericalToCartesian(latitude, longitude, radius);
+                Vec4 v = SkyGradientLayer.SphericalToCartesian(latitude, longitude, radius);
                 gl.glColor4d(
                     (horizonColor[0] * colorFactorH + zenithColor[0] * colorFactorZ),
                     (horizonColor[1] * colorFactorH + zenithColor[1] * colorFactorZ),
                     (horizonColor[2] * colorFactorH + zenithColor[2] * colorFactorZ),
                     (horizonColor[3] * colorFactorH + zenithColor[3] * colorFactorZ) * alphaFactor);
-                gl.glVertex3d(v.getX(), v.getY(), v.getZ());
-                v = SphericalToCartesian(latitudeTop, longitude, radius);
+                gl.glVertex3d(v.x, v.y, v.z);
+                v = SkyGradientLayer.SphericalToCartesian(latitudeTop, longitude, radius);
                 gl.glColor4d(
                     (horizonColor[0] * colorFactorHTop + zenithColor[0] * colorFactorZTop),
                     (horizonColor[1] * colorFactorHTop + zenithColor[1] * colorFactorZTop),
                     (horizonColor[2] * colorFactorHTop + zenithColor[2] * colorFactorZTop),
                     (horizonColor[3] * colorFactorHTop + zenithColor[3] * colorFactorZTop) * alphaFactorTop);
-                gl.glVertex3d(v.getX(), v.getY(), v.getZ());
+                gl.glVertex3d(v.x, v.y, v.z);
             }
             gl.glEnd();
         }
@@ -331,16 +331,16 @@ public class SkyGradientLayer extends AbstractLayer {
         gl.glBegin(GL2.GL_QUAD_STRIP);
         for (int slice = 0; slice <= slices; slice++) {
             longitude = 180 - ((float) slice / slices * 360);
-            Vec4 v = SphericalToCartesian(latitudeTop, longitude, radius);
+            Vec4 v = SkyGradientLayer.SphericalToCartesian(latitudeTop, longitude, radius);
             gl.glColor4d(
                 (horizonColor[0] * colorFactorHTop + zenithColor[0] * colorFactorZTop),
                 (horizonColor[1] * colorFactorHTop + zenithColor[1] * colorFactorZTop),
                 (horizonColor[2] * colorFactorHTop + zenithColor[2] * colorFactorZTop),
                 (horizonColor[3] * colorFactorHTop + zenithColor[3] * colorFactorZTop) * alphaFactorTop);
-            gl.glVertex3d(v.getX(), v.getY(), v.getZ());
-            v = SphericalToCartesian(endLat, longitude, radius);
+            gl.glVertex3d(v.x, v.y, v.z);
+            v = SkyGradientLayer.SphericalToCartesian(endLat, longitude, radius);
             gl.glColor4d(zenithColor[0], zenithColor[1], zenithColor[2], zenithOpacity < 1 ? 0 : zenithColor[3]);
-            gl.glVertex3d(v.getX(), v.getY(), v.getZ());
+            gl.glVertex3d(v.x, v.y, v.z);
         }
         gl.glColor4d(1.0d, 1.0d, 1.0d, 1.0d); // restore the default OpenGL color
         gl.glEnd();

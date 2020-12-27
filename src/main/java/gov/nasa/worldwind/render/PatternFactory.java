@@ -54,7 +54,7 @@ public class PatternFactory {
      * @return the corresponding <code>BufferedImage</code>.
      */
     public static BufferedImage createPattern(String pattern) {
-        return createPattern(pattern, defaultDimension, defaultScale, defaultLineColor, defaultBackColor);
+        return PatternFactory.createPattern(pattern, PatternFactory.defaultDimension, PatternFactory.defaultScale, PatternFactory.defaultLineColor, PatternFactory.defaultBackColor);
     }
 
     /**
@@ -66,7 +66,7 @@ public class PatternFactory {
      * @return the corresponding <code>BufferedImage</code>.
      */
     public static BufferedImage createPattern(String pattern, Color lineColor) {
-        return createPattern(pattern, defaultDimension, defaultScale, lineColor, defaultBackColor);
+        return PatternFactory.createPattern(pattern, PatternFactory.defaultDimension, PatternFactory.defaultScale, lineColor, PatternFactory.defaultBackColor);
     }
 
     /**
@@ -78,7 +78,7 @@ public class PatternFactory {
      * @return the corresponding <code>BufferedImage</code>.
      */
     public static BufferedImage createPattern(String pattern, float scale) {
-        return createPattern(pattern, defaultDimension, scale, defaultLineColor, defaultBackColor);
+        return PatternFactory.createPattern(pattern, PatternFactory.defaultDimension, scale, PatternFactory.defaultLineColor, PatternFactory.defaultBackColor);
     }
 
     /**
@@ -91,7 +91,7 @@ public class PatternFactory {
      * @return the corresponding <code>BufferedImage</code>.
      */
     public static BufferedImage createPattern(String pattern, float scale, Color lineColor) {
-        return createPattern(pattern, defaultDimension, scale, lineColor, defaultBackColor);
+        return PatternFactory.createPattern(pattern, PatternFactory.defaultDimension, scale, lineColor, PatternFactory.defaultBackColor);
     }
 
     /**
@@ -105,7 +105,7 @@ public class PatternFactory {
      * @return the corresponding <code>BufferedImage</code>.
      */
     public static BufferedImage createPattern(String pattern, float scale, Color lineColor, Color backColor) {
-        return createPattern(pattern, defaultDimension, scale, lineColor, backColor);
+        return PatternFactory.createPattern(pattern, PatternFactory.defaultDimension, scale, lineColor, backColor);
     }
 
     /**
@@ -119,7 +119,7 @@ public class PatternFactory {
      * @return the corresponding <code>BufferedImage</code>.
      */
     public static BufferedImage createPattern(String pattern, Dimension size, float scale, Color lineColor) {
-        return createPattern(pattern, size, scale, lineColor, defaultBackColor);
+        return PatternFactory.createPattern(pattern, size, scale, lineColor, PatternFactory.defaultBackColor);
     }
 
     /**
@@ -150,27 +150,26 @@ public class PatternFactory {
         // Pattern
         g2.setPaint(lineColor);
         g2.setStroke(new BasicStroke(dim));
-        if (pattern.equals(PATTERN_HLINE)) {
+        if (pattern.equals(PatternFactory.PATTERN_HLINE)) {
             int y = halfHeight - 1 - dim / 2;
             g2.fillRect(0, y, size.width, dim);
-        }
-        else if (pattern.equals(PATTERN_VLINE)) {
+        } else if (pattern.equals(PatternFactory.PATTERN_VLINE)) {
             int x = halfWidth - 1 - dim / 2;
             g2.fillRect(x, 0, dim, size.height);
         }
         switch (pattern) {
-            case PATTERN_HVLINE -> {
+            case PatternFactory.PATTERN_HVLINE -> {
                 int x = halfWidth - 1 - dim / 2;
                 g2.fillRect(x, 0, dim, size.height);
                 int y = halfHeight - 1 - dim / 2;
                 g2.fillRect(0, y, size.width, dim);
             }
-            case PATTERN_SQUARE -> {
+            case PatternFactory.PATTERN_SQUARE -> {
                 int x = halfWidth - dim / 2;
                 int y = halfHeight - dim / 2;
                 g2.fillRect(x, y, dim, dim);
             }
-            case PATTERN_SQUARES -> {
+            case PatternFactory.PATTERN_SQUARES -> {
                 int x = halfWidth - 1 - dim / 2;
                 int y = halfHeight - 1 - dim / 2;
                 g2.fillRect(x, y, dim, dim);
@@ -179,12 +178,12 @@ public class PatternFactory {
                 g2.fillRect(x + halfWidth, y - halfHeight, dim, dim);
                 g2.fillRect(x + halfWidth, y + halfHeight, dim, dim);
             }
-            case PATTERN_CIRCLE -> {
+            case PatternFactory.PATTERN_CIRCLE -> {
                 int x = halfWidth - dim / 2;
                 int y = halfHeight - dim / 2;
                 g2.fillOval(x, y, dim, dim);
             }
-            case PATTERN_CIRCLES -> {
+            case PatternFactory.PATTERN_CIRCLES -> {
                 int x = halfWidth - 1 - dim / 2;
                 int y = halfHeight - 1 - dim / 2;
                 g2.fillOval(x, y, dim, dim);
@@ -193,7 +192,7 @@ public class PatternFactory {
                 g2.fillOval(x + halfWidth, y - halfHeight, dim, dim);
                 g2.fillOval(x + halfWidth, y + halfHeight, dim, dim);
             }
-            case PATTERN_TRIANGLE_UP -> {
+            case PatternFactory.PATTERN_TRIANGLE_UP -> {
                 GeneralPath path = new GeneralPath();
                 path.moveTo(halfWidth - 1 - dim / 2.0, halfHeight - 1 + dim / 2.0);
                 path.lineTo(halfWidth - 1, halfHeight - 1 - dim / 2.0);
@@ -201,8 +200,8 @@ public class PatternFactory {
                 path.lineTo(halfWidth - 1 - dim / 2.0, halfHeight - 1 + dim / 2.0);
                 g2.fill(path);
             }
-            case PATTERN_DIAGONAL_UP, PATTERN_DIAGONAL_DOWN -> {
-                if (pattern.equals(PATTERN_DIAGONAL_DOWN)) {
+            case PatternFactory.PATTERN_DIAGONAL_UP, PatternFactory.PATTERN_DIAGONAL_DOWN -> {
+                if (pattern.equals(PatternFactory.PATTERN_DIAGONAL_DOWN)) {
                     AffineTransform at = AffineTransform.getScaleInstance(-1, 1);
                     at.translate(-size.width, 0);
                     g2.setTransform(at);
@@ -211,13 +210,13 @@ public class PatternFactory {
                 g2.drawLine(-dim - 1, dim, dim - 1, -dim);
                 g2.drawLine(size.width - dim, size.height - 1 + dim, size.width + dim, size.height - 1 - dim);
             }
-            case GRADIENT_VLINEAR -> {
+            case PatternFactory.GRADIENT_VLINEAR -> {
                 g2.setPaint(
                     new GradientPaint(halfWidth, 0.0f, lineColor, halfWidth, (float) size.height - 1,
                         backColor));
                 g2.fillRect(0, 0, size.width, size.height);
             }
-            case GRADIENT_HLINEAR -> {
+            case PatternFactory.GRADIENT_HLINEAR -> {
                 g2.setPaint(
                     new GradientPaint(0.0f, halfHeight, lineColor, (float) size.width - 1, halfHeight, backColor));
                 g2.fillRect(0, 0, size.width, size.height);
@@ -236,7 +235,7 @@ public class PatternFactory {
      * @return the blurred image.
      */
     public static BufferedImage blur(BufferedImage sourceImage) {
-        return blur(sourceImage, 3);
+        return PatternFactory.blur(sourceImage, 3);
     }
 
     /**

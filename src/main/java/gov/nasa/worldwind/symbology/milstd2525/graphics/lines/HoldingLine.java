@@ -49,11 +49,11 @@ public class HoldingLine extends AbstractMilStd2525TacticalGraphic {
      * Scale factor that determines the curvature of the corners of the arc. Valid values are zero to one, where zero
      * produced square corners.
      */
-    protected double curvature = DEFAULT_CURVATURE;
+    protected double curvature = HoldingLine.DEFAULT_CURVATURE;
     /**
      * Number of intervals used to draw the arc.
      */
-    protected int intervals = DEFAULT_NUM_INTERVALS;
+    protected int intervals = HoldingLine.DEFAULT_NUM_INTERVALS;
 
     /**
      * First control point, defines the start of the line.
@@ -86,6 +86,102 @@ public class HoldingLine extends AbstractMilStd2525TacticalGraphic {
         return Arrays.asList(
             TacGrpSidc.C2GM_SPL_LNE_HGL,
             TacGrpSidc.C2GM_SPL_LNE_BRGH);
+    }
+
+    /**
+     * Compute positions to draw a rounded corner between three points.
+     *
+     * @param globe     Current globe.
+     * @param positions Positions will be added to this list.
+     * @param ptLeg1    Point at the end of the one leg.
+     * @param ptVertex  Point at the vertex of the corner.
+     * @param ptLeg2    Point at the end of the other let.
+     * @param distance  Distance from the vertex at which the arc should begin and end.
+     * @param intervals Number of intervals to use to generate the arc.
+     */
+    protected static void computeRoundCorner(Globe globe, Collection<Position> positions, Vec4 ptLeg1, Vec4 ptVertex,
+        Vec4 ptLeg2,
+        double distance, int intervals) {
+        Vec4 vertexTo1 = ptLeg1.subtract3(ptVertex);
+        Vec4 vertexTo2 = ptLeg2.subtract3(ptVertex);
+
+        // The angle is formed by a vertex and two legs. We'll draw the arc as a segment of a circle inscribed between
+        // the legs. We need to find the angle (theta) between the legs. This angle forms the tip of a right triangle
+        // with sides r and d where r is the radius our arc, and d is the distance from the vertex to points A and B,
+        // where the circle touches the legs.
+        //
+        //       Leg 1
+        //         |     /
+        //   Pt. B |____/.Arc center
+        //         |   /|
+        //         | /  | r
+        // Theta ->/____|________ Leg 2
+        //  Vertex   d  Pt. A
+        //
+
+        Angle theta = vertexTo1.angleBetween3(vertexTo2);
+        if (Angle.ZERO.equals(theta))
+            return;
+
+        double radius = distance * theta.tanHalfAngle();
+
+        // Find points A and B where the arc will start and end.
+        Vec4 ptA = ptVertex.add3(vertexTo1.normalize3().multiply3(distance));
+        Vec4 ptB = ptVertex.add3(vertexTo2.normalize3().multiply3(distance));
+
+        // Compute a vector perpendicular to one of the legs and the normal vector.
+        Vec4 normal = globe.computeSurfaceNormalAtPoint(ptA);
+        Vec4 perpendicular = normal.cross3(vertexTo1);
+        Vec4 offset = perpendicular.normalize3().multiply3(radius);
+
+        // Determine which direction the offset points by computing the scalar triple product of the perpendicular
+        // vector and the vector from the vertex along leg 2. Reverse the sign of offset if necessary.
+        double tripleProduct = perpendicular.dot3(vertexTo2);
+        if (tripleProduct < 0) {
+            offset = offset.multiply3(-1);
+        }
+
+        // Find the center point of the arc by adding the offset to Pt. A
+        Vec4 ptArcCenter = ptA.add3(offset);
+
+        Position arcCenter = globe.computePositionFromPoint(ptArcCenter);
+        Position posA = globe.computePositionFromPoint(ptA);
+        Position posB = globe.computePositionFromPoint(ptB);
+
+        // Compute the arc from A to B
+        HoldingLine.computeArc(globe, positions, arcCenter,
+            LatLon.greatCircleAzimuth(arcCenter, posA),
+            LatLon.greatCircleAzimuth(arcCenter, posB),
+            radius, intervals);
+    }
+
+    /**
+     * Compute the positions required to draw an arc.
+     *
+     * @param globe        Current globe.
+     * @param positions    Add arc positions to this list.
+     * @param center       Center point of the arc.
+     * @param startAzimuth Starting azimuth.
+     * @param endAzimuth   Ending azimuth.
+     * @param radius       Radius of the arc, in meters.
+     * @param intervals    Number of intervals to generate.
+     */
+    protected static void computeArc(Globe globe, Collection<Position> positions, Position center, Angle startAzimuth,
+        Angle endAzimuth, double radius, int intervals) {
+        // Compute the sweep between the start and end positions, and normalize to the range [-180, 180].
+        Angle sweep = endAzimuth.sub(startAzimuth).lonNorm();
+
+        Angle da = sweep.divide(intervals);
+        double globeRadius = globe.getRadiusAt(center.getLatitude(), center.getLongitude());
+        double radiusRadians = radius / globeRadius;
+
+        // Compute the arc positions
+        for (int i = 0; i < intervals; i++) {
+            double angle = i * da.radians() + startAzimuth.radians();
+
+            LatLon ll = LatLon.greatCircleEndPosition(center, angle, radiusRadians);
+            positions.add(new Position(ll, 0));
+        }
     }
 
     /**
@@ -254,102 +350,6 @@ public class HoldingLine extends AbstractMilStd2525TacticalGraphic {
 
         this.path = this.createPath();
         this.path.setPositions(positions);
-    }
-
-    /**
-     * Compute positions to draw a rounded corner between three points.
-     *
-     * @param globe     Current globe.
-     * @param positions Positions will be added to this list.
-     * @param ptLeg1    Point at the end of the one leg.
-     * @param ptVertex  Point at the vertex of the corner.
-     * @param ptLeg2    Point at the end of the other let.
-     * @param distance  Distance from the vertex at which the arc should begin and end.
-     * @param intervals Number of intervals to use to generate the arc.
-     */
-    protected static void computeRoundCorner(Globe globe, Collection<Position> positions, Vec4 ptLeg1, Vec4 ptVertex,
-        Vec4 ptLeg2,
-        double distance, int intervals) {
-        Vec4 vertexTo1 = ptLeg1.subtract3(ptVertex);
-        Vec4 vertexTo2 = ptLeg2.subtract3(ptVertex);
-
-        // The angle is formed by a vertex and two legs. We'll draw the arc as a segment of a circle inscribed between
-        // the legs. We need to find the angle (theta) between the legs. This angle forms the tip of a right triangle
-        // with sides r and d where r is the radius our arc, and d is the distance from the vertex to points A and B,
-        // where the circle touches the legs.
-        //
-        //       Leg 1
-        //         |     /
-        //   Pt. B |____/.Arc center
-        //         |   /|
-        //         | /  | r
-        // Theta ->/____|________ Leg 2
-        //  Vertex   d  Pt. A
-        //
-
-        Angle theta = vertexTo1.angleBetween3(vertexTo2);
-        if (Angle.ZERO.equals(theta))
-            return;
-
-        double radius = distance * theta.tanHalfAngle();
-
-        // Find points A and B where the arc will start and end.
-        Vec4 ptA = ptVertex.add3(vertexTo1.normalize3().multiply3(distance));
-        Vec4 ptB = ptVertex.add3(vertexTo2.normalize3().multiply3(distance));
-
-        // Compute a vector perpendicular to one of the legs and the normal vector.
-        Vec4 normal = globe.computeSurfaceNormalAtPoint(ptA);
-        Vec4 perpendicular = normal.cross3(vertexTo1);
-        Vec4 offset = perpendicular.normalize3().multiply3(radius);
-
-        // Determine which direction the offset points by computing the scalar triple product of the perpendicular
-        // vector and the vector from the vertex along leg 2. Reverse the sign of offset if necessary.
-        double tripleProduct = perpendicular.dot3(vertexTo2);
-        if (tripleProduct < 0) {
-            offset = offset.multiply3(-1);
-        }
-
-        // Find the center point of the arc by adding the offset to Pt. A
-        Vec4 ptArcCenter = ptA.add3(offset);
-
-        Position arcCenter = globe.computePositionFromPoint(ptArcCenter);
-        Position posA = globe.computePositionFromPoint(ptA);
-        Position posB = globe.computePositionFromPoint(ptB);
-
-        // Compute the arc from A to B
-        HoldingLine.computeArc(globe, positions, arcCenter,
-            LatLon.greatCircleAzimuth(arcCenter, posA),
-            LatLon.greatCircleAzimuth(arcCenter, posB),
-            radius, intervals);
-    }
-
-    /**
-     * Compute the positions required to draw an arc.
-     *
-     * @param globe        Current globe.
-     * @param positions    Add arc positions to this list.
-     * @param center       Center point of the arc.
-     * @param startAzimuth Starting azimuth.
-     * @param endAzimuth   Ending azimuth.
-     * @param radius       Radius of the arc, in meters.
-     * @param intervals    Number of intervals to generate.
-     */
-    protected static void computeArc(Globe globe, Collection<Position> positions, Position center, Angle startAzimuth,
-        Angle endAzimuth, double radius, int intervals) {
-        // Compute the sweep between the start and end positions, and normalize to the range [-180, 180].
-        Angle sweep = endAzimuth.sub(startAzimuth).lonNorm();
-
-        Angle da = sweep.divide(intervals);
-        double globeRadius = globe.getRadiusAt(center.getLatitude(), center.getLongitude());
-        double radiusRadians = radius / globeRadius;
-
-        // Compute the arc positions
-        for (int i = 0; i < intervals; i++) {
-            double angle = i * da.radians + startAzimuth.radians;
-
-            LatLon ll = LatLon.greatCircleEndPosition(center, angle, radiusRadians);
-            positions.add(new Position(ll, 0));
-        }
     }
 
     /**

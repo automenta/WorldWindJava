@@ -122,7 +122,7 @@ public class KMLGroundOverlayPolygonImpl extends Polygon implements KMLRenderabl
             catch (IOException ignored) {
             }
 
-            float[] texCoords = new float[] {0, 0, 1, 0, 1, 1, 0, 1};
+            float[] texCoords = {0, 0, 1, 0, 1, 1, 0, 1};
             this.setTextureImageSource((localAddress != null ? localAddress : href), texCoords, 4);
         }
 

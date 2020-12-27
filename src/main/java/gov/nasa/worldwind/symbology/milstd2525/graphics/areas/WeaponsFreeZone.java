@@ -39,6 +39,15 @@ public class WeaponsFreeZone extends AviationZone {
     }
 
     /**
+     * Indicates the source of the image that provides the polygon fill pattern.
+     *
+     * @return The source of the polygon fill pattern.
+     */
+    protected static Object getImageSource() {
+        return WeaponsFreeZone.DIAGONAL_FILL_PATH;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -73,14 +82,5 @@ public class WeaponsFreeZone extends AviationZone {
     @Override
     protected String createLabelText() {
         return this.doCreateLabelText(false);
-    }
-
-    /**
-     * Indicates the source of the image that provides the polygon fill pattern.
-     *
-     * @return The source of the polygon fill pattern.
-     */
-    protected static Object getImageSource() {
-        return DIAGONAL_FILL_PATH;
     }
 }

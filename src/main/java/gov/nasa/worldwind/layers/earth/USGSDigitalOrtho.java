@@ -15,7 +15,7 @@ import org.w3c.dom.Document;
  */
 public class USGSDigitalOrtho extends BasicTiledImageLayer {
     public USGSDigitalOrtho() {
-        super(getConfigurationDocument(), null);
+        super(USGSDigitalOrtho.getConfigurationDocument(), null);
     }
 
     protected static Document getConfigurationDocument() {

@@ -22,10 +22,10 @@ import java.util.*;
  * Represents the KML <i>Feature</i> element and provides access to its contents.
  * <p>
  * <code>KMLAbstractFeature</code> implements the <code>KMLRenderable</code> interface, but does not actually render
- * anything. Subclasses should override the methods <code>{@link #doPreRender(KMLTraversalContext,
- * DrawContext)}</code> and <code>{@link #doRender(KMLTraversalContext,
- * DrawContext)}</code> to render their contents. If the <code>visibility</code> property is
- * set to <code>false</code>, this does not call <code>doPreRender</code> and <code>doRender</code> during rendering.
+ * anything. Subclasses should override the methods <code>{@link #doPreRender(KMLTraversalContext, DrawContext)}</code>
+ * and <code>{@link #doRender(KMLTraversalContext, DrawContext)}</code> to render their contents. If the
+ * <code>visibility</code> property is set to <code>false</code>, this does not call <code>doPreRender</code> and
+ * <code>doRender</code> during rendering.
  *
  * @author tag
  * @version $Id: KMLAbstractFeature.java 1171 2013-02-11 21:45:02Z dcollins $
@@ -315,8 +315,8 @@ public abstract class KMLAbstractFeature extends KMLAbstractObject implements KM
     }
 
     /**
-     * Draws the <code>{@link Balloon}</code> associated with this KML feature. This does
-     * nothing if there is no <code>Balloon</code> associated with this feature.
+     * Draws the <code>{@link Balloon}</code> associated with this KML feature. This does nothing if there is no
+     * <code>Balloon</code> associated with this feature.
      *
      * @param tc the current KML traversal context.
      * @param dc the current draw context.
@@ -337,11 +337,11 @@ public abstract class KMLAbstractFeature extends KMLAbstractObject implements KM
      * StyleMap style selector contains a reference to an external Style and that reference has not been resolved.
      *
      * @param styleState the style mode, either \"normal\" or \"highlight\".
-     * @param subStyle   an instance of the sub-style desired, such as {@link KMLIconStyle}.
-     *                   The effective sub-style values are accumulated and merged into this instance. The instance
-     *                   should not be one from within the KML document because its values are overridden and augmented;
-     *                   it's just an independent variable in which to return the merged attribute values. For
-     *                   convenience, the instance specified is returned as the return value of this method.
+     * @param subStyle   an instance of the sub-style desired, such as {@link KMLIconStyle}. The effective sub-style
+     *                   values are accumulated and merged into this instance. The instance should not be one from
+     *                   within the KML document because its values are overridden and augmented; it's just an
+     *                   independent variable in which to return the merged attribute values. For convenience, the
+     *                   instance specified is returned as the return value of this method.
      * @return the sub-style values for the specified type and state. The reference returned is the one passed in as the
      * <code>subStyle</code> argument.
      */

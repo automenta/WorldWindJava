@@ -3,17 +3,15 @@ package gov.nasa.worldwind.video.newt;
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.video.*;
-import spacegraph.layer.*;
+import gov.nasa.worldwind.event.InputHandler;
+import gov.nasa.worldwind.video.WorldWindowGLAutoDrawable;
+import spacegraph.layer.AbstractLayer;
 
 import java.beans.PropertyChangeListener;
-
 
 public class WorldWindowNEWT extends AbstractLayer implements WorldWindow, GLEventListener {
 
     private final WorldWindowGLAutoDrawable wwd;
-
 
     public WorldWindowNEWT(Model model) {
         super();
@@ -27,8 +25,11 @@ public class WorldWindowNEWT extends AbstractLayer implements WorldWindow, GLEve
         wwd().initDrawable(window.window, this);
     }
 
-    /** TODO return false when possible */
-    @Override public boolean changed() {
+    /**
+     * TODO return false when possible
+     */
+    @Override
+    public boolean changed() {
         return wwd().redrawNecessary.getOpaque();
     }
 
@@ -57,13 +58,13 @@ public class WorldWindowNEWT extends AbstractLayer implements WorldWindow, GLEve
         redraw();
     }
 
-
     @Override
     public void redraw() {
         wwd.redraw();
     }
 
-    @Override public WorldWindowGLAutoDrawable wwd() {
+    @Override
+    public WorldWindowGLAutoDrawable wwd() {
         return wwd;
     }
 
@@ -103,5 +104,4 @@ public class WorldWindowNEWT extends AbstractLayer implements WorldWindow, GLEve
         window.window.removeMouseListener(h);
         window.window.removeWindowListener(h);
     }
-
 }

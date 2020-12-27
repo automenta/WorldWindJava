@@ -26,12 +26,12 @@ abstract public class AbstractElevationModel extends WWObjectImpl implements Ele
 
     protected double missingDataFlag =
         -9999.0;
-        //-Double.MAX_VALUE;
+    //-Double.MAX_VALUE;
 
-    protected double missingDataValue = 0;
+    protected double missingDataValue;
 
     protected boolean networkRetrievalEnabled = true;
-    protected long expiryTime = 0;
+    protected long expiryTime;
     protected boolean enabled = true;
 
     /**

@@ -26,7 +26,7 @@ public abstract class AbstractBalloon extends WWObjectImpl implements Balloon {
     }
 
     protected final BalloonAttributes activeAttributes = new BasicBalloonAttributes(); // re-determined each frame
-    protected boolean alwaysOnTop = false;
+    protected boolean alwaysOnTop;
     protected boolean pickEnabled = true;
     protected Object delegateOwner;
     protected BalloonAttributes attributes;
@@ -187,14 +187,12 @@ public abstract class AbstractBalloon extends WWObjectImpl implements Balloon {
                 if (this.getAttributes() != null)
                     this.activeAttributes.copy(this.getAttributes());
                 else
-                    this.activeAttributes.copy(defaultAttributes);
+                    this.activeAttributes.copy(AbstractBalloon.defaultAttributes);
             }
-        }
-        else if (this.getAttributes() != null) {
+        } else if (this.getAttributes() != null) {
             this.activeAttributes.copy(this.getAttributes());
-        }
-        else {
-            this.activeAttributes.copy(defaultAttributes);
+        } else {
+            this.activeAttributes.copy(AbstractBalloon.defaultAttributes);
         }
     }
 

@@ -68,8 +68,8 @@ public abstract class AbstractAirspace extends WWObjectImpl
     static {
         // Create and populate the default attributes.
         defaultAttributes = new BasicAirspaceAttributes();
-        defaultAttributes.setInteriorMaterial(DEFAULT_INTERIOR_MATERIAL);
-        defaultAttributes.setOutlineMaterial(DEFAULT_OUTLINE_MATERIAL);
+        AbstractAirspace.defaultAttributes.setInteriorMaterial(AbstractAirspace.DEFAULT_INTERIOR_MATERIAL);
+        AbstractAirspace.defaultAttributes.setOutlineMaterial(AbstractAirspace.DEFAULT_OUTLINE_MATERIAL);
     }
 
     protected final AirspaceAttributes activeAttributes = new BasicAirspaceAttributes(); // re-determined each frame
@@ -83,13 +83,13 @@ public abstract class AbstractAirspace extends WWObjectImpl
     protected boolean visible = true;
     protected boolean highlighted;
     protected boolean dragEnabled = true;
-    protected DraggableSupport draggableSupport = null;
+    protected DraggableSupport draggableSupport;
     protected AirspaceAttributes attributes;
     protected AirspaceAttributes highlightAttributes;
-    protected double lowerAltitude = 0.0;
+    protected double lowerAltitude;
     protected double upperAltitude = 1.0;
-    protected boolean lowerTerrainConforming = false;
-    protected boolean upperTerrainConforming = false;
+    protected boolean lowerTerrainConforming;
+    protected boolean upperTerrainConforming;
     protected String lowerAltitudeDatum = AVKey.ABOVE_MEAN_SEA_LEVEL;
     protected String upperAltitudeDatum = AVKey.ABOVE_MEAN_SEA_LEVEL;
     protected LatLon groundReference;
@@ -98,7 +98,7 @@ public abstract class AbstractAirspace extends WWObjectImpl
     protected boolean enableBatchRendering = true;
     protected boolean enableBatchPicking = true;
     protected boolean enableDepthOffset;
-    protected int outlinePickWidth = DEFAULT_OUTLINE_PICK_WIDTH;
+    protected int outlinePickWidth = AbstractAirspace.DEFAULT_OUTLINE_PICK_WIDTH;
     // Implements the the interface used by the draw context's outlined-shape renderer.
     protected final OutlinedShape outlineShapeRenderer = new OutlinedShape() {
         public boolean isDrawOutline(DrawContext dc, Object shape) {
@@ -134,7 +134,7 @@ public abstract class AbstractAirspace extends WWObjectImpl
     protected boolean mustRegenerateSurfaceShape;
     protected boolean drawSurfaceShape;
     protected long frameTimeStamp;
-    protected boolean alwaysOnTop = false;
+    protected boolean alwaysOnTop;
     // Geometry computation and rendering support.
     protected AirspaceInfo currentInfo;
     protected Layer pickLayer;
@@ -155,11 +155,12 @@ public abstract class AbstractAirspace extends WWObjectImpl
 
         this.attributes = attributes;
 
-        if (!WorldWind.getMemoryCacheSet().containsCache(GEOMETRY_CACHE_KEY)) {
-            long size = Configuration.getLongValue(AVKey.AIRSPACE_GEOMETRY_CACHE_SIZE, DEFAULT_GEOMETRY_CACHE_SIZE);
+        if (!WorldWind.getMemoryCacheSet().containsCache(AbstractAirspace.GEOMETRY_CACHE_KEY)) {
+            long size = Configuration.getLongValue(AVKey.AIRSPACE_GEOMETRY_CACHE_SIZE,
+                AbstractAirspace.DEFAULT_GEOMETRY_CACHE_SIZE);
             MemoryCache cache = new BasicMemoryCache((long) (0.85 * size), size);
-            cache.setName(GEOMETRY_CACHE_NAME);
-            WorldWind.getMemoryCacheSet().addCache(GEOMETRY_CACHE_KEY, cache);
+            cache.setName(AbstractAirspace.GEOMETRY_CACHE_NAME);
+            WorldWind.getMemoryCacheSet().addCache(AbstractAirspace.GEOMETRY_CACHE_KEY, cache);
         }
     }
 
@@ -191,8 +192,68 @@ public abstract class AbstractAirspace extends WWObjectImpl
 
     private static long nextLong(long lo, long hi) {
         long n = hi - lo + 1;
-        long i = rand.nextLong() % n;
+        long i = AbstractAirspace.rand.nextLong() % n;
         return lo + ((i < 0) ? -i : i);
+    }
+
+    protected static Position computeReferencePosition(List<? extends LatLon> locations, double[] altitudes) {
+        if (locations == null) {
+            String message = "nullValue.LocationsIsNull";
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+        if (altitudes == null) {
+            String message = "nullValue.AltitudesIsNull";
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        int count = locations.size();
+        if (count == 0)
+            return null;
+
+        LatLon ll;
+        if (count < 3)
+            ll = locations.get(0);
+        else
+            ll = locations.get(count / 2);
+
+        return new Position(ll, altitudes[0]);
+    }
+
+    protected static MemoryCache getGeometryCache() {
+        return WorldWind.cache(AbstractAirspace.GEOMETRY_CACHE_KEY);
+    }
+
+    protected static boolean isExpired(DrawContext dc, AVList geom) {
+        if (dc == null) {
+            String message = Logging.getMessage("nullValue.DrawContextIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        if (dc.getGlobe() == null) {
+            String message = Logging.getMessage("nullValue.DrawingContextGlobeIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        if (geom == null) {
+            String message = "nullValue.AirspaceGeometryIsNull";
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        Object o = geom.get(AbstractAirspace.EXPIRY_TIME);
+        if (o instanceof Long && dc.getFrameTimeStamp() > (Long) o)
+            return true;
+
+        o = geom.get(AbstractAirspace.GLOBE_KEY);
+        //noinspection RedundantIfStatement
+        if (o != null && !dc.getGlobe().getStateKey(dc).equals(o))
+            return true;
+
+        return false;
     }
 
     protected abstract Extent computeExtent(Globe globe, double verticalExaggeration);
@@ -277,6 +338,8 @@ public abstract class AbstractAirspace extends WWObjectImpl
         this.setAltitudes(altitude, altitude);
     }
 
+    // TODO: The altitude datum logic is currently implemented only for Polygon. Implement it for the rest of them.
+
     public boolean[] isTerrainConforming() {
         // This method is here for backwards compatibility. The new scheme uses enumerations (in the form of Strings).
 
@@ -301,8 +364,6 @@ public abstract class AbstractAirspace extends WWObjectImpl
     public String[] getAltitudeDatum() {
         return new String[] {this.lowerAltitudeDatum, this.upperAltitudeDatum};
     }
-
-    // TODO: The altitude datum logic is currently implemented only for Polygon. Implement it for the rest of them.
 
     public void setAltitudeDatum(String lowerAltitudeDatum, String upperAltitudeDatum) {
         if (lowerAltitudeDatum == null || upperAltitudeDatum == null) {
@@ -582,25 +643,23 @@ public abstract class AbstractAirspace extends WWObjectImpl
                 if (this.getAttributes() != null)
                     this.activeAttributes.copy(this.getAttributes());
                 else
-                    this.activeAttributes.copy(defaultAttributes);
+                    this.activeAttributes.copy(AbstractAirspace.defaultAttributes);
 
-                this.activeAttributes.setOutlineMaterial(DEFAULT_HIGHLIGHT_MATERIAL);
-                this.activeAttributes.setInteriorMaterial(DEFAULT_HIGHLIGHT_MATERIAL);
+                this.activeAttributes.setOutlineMaterial(AbstractAirspace.DEFAULT_HIGHLIGHT_MATERIAL);
+                this.activeAttributes.setInteriorMaterial(AbstractAirspace.DEFAULT_HIGHLIGHT_MATERIAL);
             }
-        }
-        else if (this.getAttributes() != null) {
+        } else if (this.getAttributes() != null) {
             this.activeAttributes.copy(this.getAttributes());
-        }
-        else {
-            this.activeAttributes.copy(defaultAttributes);
+        } else {
+            this.activeAttributes.copy(AbstractAirspace.defaultAttributes);
         }
     }
 
     /**
      * Returns this shape's currently active attributes, as determined during the most recent call to {@link
-     * #determineActiveAttributes(DrawContext)}. The active attributes are either the normal
-     * or highlight attributes, depending on this shape's highlight flag, and incorporates default attributes for those
-     * not specified in the applicable attribute set.
+     * #determineActiveAttributes(DrawContext)}. The active attributes are either the normal or highlight attributes,
+     * depending on this shape's highlight flag, and incorporates default attributes for those not specified in the
+     * applicable attribute set.
      *
      * @return this shape's currently active attributes.
      */
@@ -774,8 +833,7 @@ public abstract class AbstractAirspace extends WWObjectImpl
 
                 nextItem = dc.peekOrderedRenderables();
             }
-        }
-        else if (this.isEnableBatchPicking()) {
+        } else if (this.isEnableBatchPicking()) {
             while (nextItem instanceof AbstractAirspace) {
                 AbstractAirspace airspace = (AbstractAirspace) nextItem;
                 if (!airspace.isEnableBatchRendering() || !airspace.isEnableBatchPicking())
@@ -884,6 +942,10 @@ public abstract class AbstractAirspace extends WWObjectImpl
         this.doMoveTo(oldRef, newRef);
     }
 
+    //**************************************************************//
+    //********************  Geometry Rendering  ********************//
+    //**************************************************************//
+
     protected void doMoveTo(Position oldRef, Position newRef) {
         if (oldRef == null) {
             String message = "nullValue.OldRefIsNull";
@@ -899,31 +961,6 @@ public abstract class AbstractAirspace extends WWObjectImpl
         double[] altitudes = this.getAltitudes();
         double elevDelta = newRef.getElevation() - oldRef.getElevation();
         this.setAltitudes(altitudes[0] + elevDelta, altitudes[1] + elevDelta);
-    }
-
-    protected static Position computeReferencePosition(List<? extends LatLon> locations, double[] altitudes) {
-        if (locations == null) {
-            String message = "nullValue.LocationsIsNull";
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (altitudes == null) {
-            String message = "nullValue.AltitudesIsNull";
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        int count = locations.size();
-        if (count == 0)
-            return null;
-
-        LatLon ll;
-        if (count < 3)
-            ll = locations.get(0);
-        else
-            ll = locations.get(count / 2);
-
-        return new Position(ll, altitudes[0]);
     }
 
     protected double computeEyeDistance(DrawContext dc) {
@@ -943,10 +980,6 @@ public abstract class AbstractAirspace extends WWObjectImpl
 
         return Math.sqrt(minDistanceSquared);
     }
-
-    //**************************************************************//
-    //********************  Geometry Rendering  ********************//
-    //**************************************************************//
 
     protected abstract void doRenderGeometry(DrawContext dc, String drawStyle);
 
@@ -969,8 +1002,7 @@ public abstract class AbstractAirspace extends WWObjectImpl
 
             // Setup standard lighting by default. This must be disabled by airspaces that don't enable lighting.
             dc.beginStandardLighting();
-        }
-        else {
+        } else {
             int attribMask = GL2.GL_CURRENT_BIT // For current color.
                 | GL2.GL_LINE_BIT; // For line width.
             gl.glPushAttrib(attribMask);
@@ -1005,8 +1037,7 @@ public abstract class AbstractAirspace extends WWObjectImpl
                 gl.glEnable(GL2.GL_LIGHTING);
                 gl.glEnableClientState(GL2.GL_NORMAL_ARRAY);
                 attrs.getInteriorMaterial().apply(gl, GL2.GL_FRONT_AND_BACK, (float) attrs.getInteriorOpacity());
-            }
-            else // Disable GL lighting state and set the current GL color state.
+            } else // Disable GL lighting state and set the current GL color state.
             {
                 gl.glDisable(GL2.GL_LIGHTING);
                 gl.glDisableClientState(GL2.GL_NORMAL_ARRAY);
@@ -1040,8 +1071,7 @@ public abstract class AbstractAirspace extends WWObjectImpl
 
             if (attrs.isEnableAntialiasing()) {
                 gl.glEnable(GL.GL_LINE_SMOOTH);
-            }
-            else {
+            } else {
                 gl.glDisable(GL.GL_LINE_SMOOTH);
             }
         }
@@ -1054,8 +1084,7 @@ public abstract class AbstractAirspace extends WWObjectImpl
         if (attrs.getOutlineStippleFactor() > 0) {
             gl.glEnable(GL2.GL_LINE_STIPPLE);
             gl.glLineStipple(attrs.getOutlineStippleFactor(), attrs.getOutlineStipplePattern());
-        }
-        else {
+        } else {
             gl.glDisable(GL2.GL_LINE_STIPPLE);
         }
 
@@ -1129,41 +1158,6 @@ public abstract class AbstractAirspace extends WWObjectImpl
         return level;
     }
 
-    protected static MemoryCache getGeometryCache() {
-        return WorldWind.cache(GEOMETRY_CACHE_KEY);
-    }
-
-    protected static boolean isExpired(DrawContext dc, AVList geom) {
-        if (dc == null) {
-            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (dc.getGlobe() == null) {
-            String message = Logging.getMessage("nullValue.DrawingContextGlobeIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (geom == null) {
-            String message = "nullValue.AirspaceGeometryIsNull";
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        Object o = geom.get(EXPIRY_TIME);
-        if (o instanceof Long && dc.getFrameTimeStamp() > (Long) o)
-            return true;
-
-        o = geom.get(GLOBE_KEY);
-        //noinspection RedundantIfStatement
-        if (o != null && !dc.getGlobe().getStateKey(dc).equals(o))
-            return true;
-
-        return false;
-    }
-
     protected void updateExpiryCriteria(DrawContext dc, AVList geom) {
         if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
@@ -1178,8 +1172,8 @@ public abstract class AbstractAirspace extends WWObjectImpl
         }
 
         long expiryTime = this.getExpiryTime();
-        geom.set(EXPIRY_TIME, (expiryTime >= 0L) ? expiryTime : null);
-        geom.set(GLOBE_KEY, dc.getGlobe().getStateKey(dc));
+        geom.set(AbstractAirspace.EXPIRY_TIME, (expiryTime >= 0L) ? expiryTime : null);
+        geom.set(AbstractAirspace.GLOBE_KEY, dc.getGlobe().getStateKey(dc));
     }
 
     protected long getExpiryTime() {
@@ -1211,10 +1205,9 @@ public abstract class AbstractAirspace extends WWObjectImpl
 
         long expiryTime;
         if (terrainConformance[0] || terrainConformance[1]) {
-            long time = nextLong(this.minExpiryTime, this.maxExpiryTime);
+            long time = AbstractAirspace.nextLong(this.minExpiryTime, this.maxExpiryTime);
             expiryTime = dc.getFrameTimeStamp() + time;
-        }
-        else {
+        } else {
             expiryTime = -1L;
         }
         return expiryTime;
@@ -1285,8 +1278,7 @@ public abstract class AbstractAirspace extends WWObjectImpl
             if (surfacePoint != null) {
                 surfacePos = globe.computePositionFromPoint(surfacePoint);
                 elevation += surfacePos.getElevation();
-            }
-            else {
+            } else {
                 elevation += dc.getVerticalExaggeration() * globe.getElevation(latitude, longitude);
             }
 
@@ -1324,8 +1316,7 @@ public abstract class AbstractAirspace extends WWObjectImpl
                 double[] b = globe.getMinAndMaxElevations(splitSector[1]);
                 extremeElevations[0] = Math.min(a[0], b[0]); // Take the smallest min elevation.
                 extremeElevations[1] = Math.max(a[1], b[1]); // Take the largest max elevation.
-            }
-            else {
+            } else {
                 Sector sector = Sector.boundingSector(locations);
                 extremeElevations = globe.getMinAndMaxElevations(sector);
             }
@@ -1399,7 +1390,7 @@ public abstract class AbstractAirspace extends WWObjectImpl
         try {
             rs = RestorableSupport.parse(stateInXml);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             // Parsing the document specified by stateInXml failed.
             String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", stateInXml);
             Logging.logger().severe(message);

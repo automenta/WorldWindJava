@@ -17,7 +17,7 @@ public class FileTree implements Iterable<File> {
     public static final int DIRECTORIES_ONLY = 2;
     public static final int FILES_AND_DIRECTORIES = 3;
     private File root;
-    private int mode = FILES_AND_DIRECTORIES;
+    private int mode = FileTree.FILES_AND_DIRECTORIES;
 
     public FileTree() {
         this(null);
@@ -29,12 +29,12 @@ public class FileTree implements Iterable<File> {
 
     private static List<File> makeList(File root, FileFilter fileFilter, int mode) {
         Queue<File> dirs = new LinkedList<>();
-        if (isDirectory(root))
+        if (FileTree.isDirectory(root))
             dirs.offer(root);
 
         LinkedList<File> result = new LinkedList<>();
         while (dirs.peek() != null) {
-            expand(dirs.poll(), fileFilter, mode, result, dirs);
+            FileTree.expand(dirs.poll(), fileFilter, mode, result, dirs);
         }
 
         return result;
@@ -52,7 +52,7 @@ public class FileTree implements Iterable<File> {
                             outDirs.offer(child);
                         }
 
-                        if ((!isDir && isDisplayFiles(mode)) || (isDir && isDisplayDirectories(mode))) {
+                        if ((!isDir && FileTree.isDisplayFiles(mode)) || (isDir && FileTree.isDisplayDirectories(mode))) {
                             if (fileFilter == null || fileFilter.accept(child)) {
                                 outFiles.offer(child);
                             }
@@ -68,17 +68,17 @@ public class FileTree implements Iterable<File> {
     }
 
     private static boolean isDisplayFiles(int mode) {
-        return mode == FILES_ONLY || mode == FILES_AND_DIRECTORIES;
+        return mode == FileTree.FILES_ONLY || mode == FileTree.FILES_AND_DIRECTORIES;
     }
 
     private static boolean isDisplayDirectories(int mode) {
-        return mode == DIRECTORIES_ONLY || mode == FILES_AND_DIRECTORIES;
+        return mode == FileTree.DIRECTORIES_ONLY || mode == FileTree.FILES_AND_DIRECTORIES;
     }
 
     private static boolean validate(int mode) {
-        return mode == FILES_ONLY
-            || mode == DIRECTORIES_ONLY
-            || mode == FILES_AND_DIRECTORIES;
+        return mode == FileTree.FILES_ONLY
+            || mode == FileTree.DIRECTORIES_ONLY
+            || mode == FileTree.FILES_AND_DIRECTORIES;
     }
 
     public File getRoot() {
@@ -94,7 +94,7 @@ public class FileTree implements Iterable<File> {
     }
 
     public void setMode(int mode) {
-        if (!validate(mode))
+        if (!FileTree.validate(mode))
             throw new IllegalArgumentException("mode:" + mode);
 
         this.mode = mode;
@@ -105,7 +105,7 @@ public class FileTree implements Iterable<File> {
     }
 
     public List<File> asList(FileFilter fileFilter) {
-        return makeList(this.root, fileFilter, this.mode);
+        return FileTree.makeList(this.root, fileFilter, this.mode);
     }
 
     public Iterator<File> iterator() {
@@ -123,7 +123,7 @@ public class FileTree implements Iterable<File> {
         private final int mode;
 
         private FileTreeIterator(File root, FileFilter fileFilter, int mode) {
-            if (isDirectory(root))
+            if (FileTree.isDirectory(root))
                 this.dirs.offer(root);
             this.fileFilter = fileFilter;
             this.mode = mode;

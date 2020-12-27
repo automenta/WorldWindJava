@@ -30,7 +30,7 @@ public class AirspaceEditorUtil {
 
         for (AirspaceControlPoint controlPoint : controlPoints) {
             if (altitudeIndex == controlPoint.getAltitudeIndex()) {
-                double height = computeHeightAboveSurface(wwd, controlPoint.getPoint());
+                double height = AirspaceEditorUtil.computeHeightAboveSurface(wwd, controlPoint.getPoint());
                 if (height < minHeight) {
                     minHeight = height;
                 }
@@ -42,7 +42,7 @@ public class AirspaceEditorUtil {
 
     public static double computeHeightAboveSurface(WorldWindow wwd, Vec4 point) {
         Position pos = wwd.model().getGlobe().computePositionFromPoint(point);
-        Vec4 surfacePoint = computeSurfacePoint(wwd, pos.getLatitude(), pos.getLongitude());
+        Vec4 surfacePoint = AirspaceEditorUtil.computeSurfacePoint(wwd, pos.getLatitude(), pos.getLongitude());
         Vec4 surfaceNormal = wwd.model().getGlobe().computeSurfaceNormalAtPoint(point);
         return point.subtract3(surfacePoint).dot3(surfaceNormal);
     }
@@ -61,8 +61,8 @@ public class AirspaceEditorUtil {
         }
 
         for (int locationIndex = 0; locationIndex < numLocations; locationIndex++) {
-            Object lowerKey = BasicAirspaceControlPoint.keyFor(locationIndex, LOWER_ALTITUDE);
-            Object upperKey = BasicAirspaceControlPoint.keyFor(locationIndex, UPPER_ALTITUDE);
+            Object lowerKey = BasicAirspaceControlPoint.keyFor(locationIndex, AirspaceEditorUtil.LOWER_ALTITUDE);
+            Object upperKey = BasicAirspaceControlPoint.keyFor(locationIndex, AirspaceEditorUtil.UPPER_ALTITUDE);
 
             AirspaceControlPoint lowerControlPoint = map.get(lowerKey);
             AirspaceControlPoint upperControlPoint = map.get(upperKey);
@@ -88,19 +88,17 @@ public class AirspaceEditorUtil {
         // nearest point occurs after the line segment, then insert the new point after the segment. If the nearest
         // point occurs inside the line segment, then insert the new point in the segment.
 
-        Vec4 newPoint = intersectAirspaceAltitudeAt(wwd, airspace, edge.altitudeIndex, ray);
-        Vec4 pointOnEdge = nearestPointOnSegment(edge.point1, edge.point2, newPoint);
+        Vec4 newPoint = AirspaceEditorUtil.intersectAirspaceAltitudeAt(wwd, airspace, edge.altitudeIndex, ray);
+        Vec4 pointOnEdge = AirspaceEditorUtil.nearestPointOnSegment(edge.point1, edge.point2, newPoint);
 
         int locationIndex;
         int altitudeIndex = edge.altitudeIndex;
 
         if (pointOnEdge == edge.point1) {
             locationIndex = edge.locationIndex;
-        }
-        else if (pointOnEdge == edge.point2) {
+        } else if (pointOnEdge == edge.point2) {
             locationIndex = edge.nextLocationIndex + 1;
-        }
-        else // (o == Orientation.INSIDE)
+        } else // (o == Orientation.INSIDE)
         {
             locationIndex = edge.nextLocationIndex;
         }
@@ -151,16 +149,16 @@ public class AirspaceEditorUtil {
         // an edge if its nearest point is behind the ray origin.
 
         Vec4[] pointOnLine = new Vec4[2];
-        pointOnLine[LOWER_ALTITUDE] = intersectAirspaceAltitudeAt(wwd, airspace, LOWER_ALTITUDE, ray);
-        pointOnLine[UPPER_ALTITUDE] = intersectAirspaceAltitudeAt(wwd, airspace, UPPER_ALTITUDE, ray);
+        pointOnLine[AirspaceEditorUtil.LOWER_ALTITUDE] = AirspaceEditorUtil.intersectAirspaceAltitudeAt(wwd, airspace, AirspaceEditorUtil.LOWER_ALTITUDE, ray);
+        pointOnLine[AirspaceEditorUtil.UPPER_ALTITUDE] = AirspaceEditorUtil.intersectAirspaceAltitudeAt(wwd, airspace, AirspaceEditorUtil.UPPER_ALTITUDE, ray);
 
         EdgeInfo bestEdge = null;
         double nearestDistance = Double.MAX_VALUE;
 
         for (EdgeInfo edge : edgeInfoList) {
             for (int index = 0; index < 2; index++) {
-                Vec4 pointOnEdge = nearestPointOnSegment(edge.point1, edge.point2, pointOnLine[index]);
-                if (!isPointBehindLineOrigin(ray, pointOnEdge)) {
+                Vec4 pointOnEdge = AirspaceEditorUtil.nearestPointOnSegment(edge.point1, edge.point2, pointOnLine[index]);
+                if (!AirspaceEditorUtil.isPointBehindLineOrigin(ray, pointOnEdge)) {
                     double d = pointOnEdge.distanceTo3(pointOnLine[index]);
                     if (d < nearestDistance) {
                         bestEdge = edge;
@@ -180,7 +178,7 @@ public class AirspaceEditorUtil {
         if (terrainConformant) {
             Intersection[] intersections = wwd.sceneControl().getTerrain().intersect(ray);
             if (intersections != null) {
-                Vec4 point = nearestIntersectionPoint(ray, intersections);
+                Vec4 point = AirspaceEditorUtil.nearestIntersectionPoint(ray, intersections);
                 if (point != null) {
                     Position pos = wwd.model().getGlobe().computePositionFromPoint(point);
                     elevation += pos.getElevation();
@@ -188,7 +186,7 @@ public class AirspaceEditorUtil {
             }
         }
 
-        return intersectGlobeAt(wwd, elevation, ray);
+        return AirspaceEditorUtil.intersectGlobeAt(wwd, elevation, ray);
     }
 
     //**************************************************************//
@@ -201,7 +199,7 @@ public class AirspaceEditorUtil {
             return null;
         }
 
-        return nearestIntersectionPoint(ray, intersections);
+        return AirspaceEditorUtil.nearestIntersectionPoint(ray, intersections);
     }
 
     public static double surfaceElevationAt(WorldWindow wwd, Line ray) {
@@ -212,7 +210,7 @@ public class AirspaceEditorUtil {
         if (wwd.sceneControl().getTerrain() != null) {
             Intersection[] intersections = wwd.sceneControl().getTerrain().intersect(ray);
             if (intersections != null) {
-                Vec4 point = nearestIntersectionPoint(ray, intersections);
+                Vec4 point = AirspaceEditorUtil.nearestIntersectionPoint(ray, intersections);
                 if (point != null) {
                     Position pos = wwd.model().getGlobe().computePositionFromPoint(point);
                     surfaceElevation = pos.getElevation();
@@ -260,11 +258,9 @@ public class AirspaceEditorUtil {
         double dot = point.subtract3(p1).dot3(dir);
         if (dot < 0.0) {
             return p1;
-        }
-        else if (dot > segment.getLength3()) {
+        } else if (dot > segment.getLength3()) {
             return p2;
-        }
-        else {
+        } else {
             return Vec4.fromLine3(p1, dot, dir);
         }
     }
@@ -276,7 +272,7 @@ public class AirspaceEditorUtil {
         double nearestDistance = Double.MAX_VALUE;
         for (Intersection intersection : intersections) {
             // Ignore any intersections behind the line origin.
-            if (!isPointBehindLineOrigin(line, intersection.getIntersectionPoint())) {
+            if (!AirspaceEditorUtil.isPointBehindLineOrigin(line, intersection.getIntersectionPoint())) {
                 double d = intersection.getIntersectionPoint().distanceTo3(line.origin);
                 if (d < nearestDistance) {
                     intersectionPoint = intersection.getIntersectionPoint();

@@ -31,38 +31,38 @@ public class AnnotationAttributes implements Restorable {
     private static final AnnotationAttributes defaults = new AnnotationAttributes();
 
     static {
-        defaults.setFrameShape(AVKey.SHAPE_RECTANGLE);
-        defaults.setSize(new Dimension(160, 0));
-        defaults.setScale(1);
-        defaults.setOpacity(1);
-        defaults.setLeader(AVKey.SHAPE_TRIANGLE);
-        defaults.setLeaderGapWidth(40);
-        defaults.setCornerRadius(20);
-        defaults.setAdjustWidthToText(AVKey.SIZE_FIT_TEXT);
-        defaults.setDrawOffset(new Point(40, 60));
-        defaults.setHighlightScale(1.2);
-        defaults.setInsets(new Insets(20, 15, 15, 15));
-        defaults.setFont(Font.decode("Arial-PLAIN-12"));
-        defaults.setTextAlign(AVKey.LEFT);
-        defaults.setTextColor(Color.BLACK);
-        defaults.setBackgroundColor(Color.WHITE);
-        defaults.setBorderColor(new Color(171, 171, 171));
-        defaults.setBorderWidth(1);
-        defaults.setBorderStippleFactor(0);
-        defaults.setBorderStipplePattern((short) 0xAAAA);
-        defaults.setAntiAliasHint(Annotation.ANTIALIAS_NICEST);
-        defaults.setImageScale(1);
-        defaults.setImageOffset(new Point(0, 0));
-        defaults.setImageOpacity(1);
-        defaults.setImageRepeat(AVKey.REPEAT_XY);
-        defaults.setDistanceMinScale(1);
-        defaults.setDistanceMaxScale(1);
-        defaults.setDistanceMinOpacity(0.3);
-        defaults.setEffect(AVKey.TEXT_EFFECT_NONE);
+        AnnotationAttributes.defaults.setFrameShape(AVKey.SHAPE_RECTANGLE);
+        AnnotationAttributes.defaults.setSize(new Dimension(160, 0));
+        AnnotationAttributes.defaults.setScale(1);
+        AnnotationAttributes.defaults.setOpacity(1);
+        AnnotationAttributes.defaults.setLeader(AVKey.SHAPE_TRIANGLE);
+        AnnotationAttributes.defaults.setLeaderGapWidth(40);
+        AnnotationAttributes.defaults.setCornerRadius(20);
+        AnnotationAttributes.defaults.setAdjustWidthToText(AVKey.SIZE_FIT_TEXT);
+        AnnotationAttributes.defaults.setDrawOffset(new Point(40, 60));
+        AnnotationAttributes.defaults.setHighlightScale(1.2);
+        AnnotationAttributes.defaults.setInsets(new Insets(20, 15, 15, 15));
+        AnnotationAttributes.defaults.setFont(Font.decode("Arial-PLAIN-12"));
+        AnnotationAttributes.defaults.setTextAlign(AVKey.LEFT);
+        AnnotationAttributes.defaults.setTextColor(Color.BLACK);
+        AnnotationAttributes.defaults.setBackgroundColor(Color.WHITE);
+        AnnotationAttributes.defaults.setBorderColor(new Color(171, 171, 171));
+        AnnotationAttributes.defaults.setBorderWidth(1);
+        AnnotationAttributes.defaults.setBorderStippleFactor(0);
+        AnnotationAttributes.defaults.setBorderStipplePattern((short) 0xAAAA);
+        AnnotationAttributes.defaults.setAntiAliasHint(Annotation.ANTIALIAS_NICEST);
+        AnnotationAttributes.defaults.setImageScale(1);
+        AnnotationAttributes.defaults.setImageOffset(new Point(0, 0));
+        AnnotationAttributes.defaults.setImageOpacity(1);
+        AnnotationAttributes.defaults.setImageRepeat(AVKey.REPEAT_XY);
+        AnnotationAttributes.defaults.setDistanceMinScale(1);
+        AnnotationAttributes.defaults.setDistanceMaxScale(1);
+        AnnotationAttributes.defaults.setDistanceMinOpacity(0.3);
+        AnnotationAttributes.defaults.setEffect(AVKey.TEXT_EFFECT_NONE);
     }
 
     protected boolean unresolved;
-    private AnnotationAttributes defaultAttributes = defaults;
+    private AnnotationAttributes defaultAttributes = AnnotationAttributes.defaults;
     private String frameShape;                              // Use default (null)
     private Dimension size;                                 // Use default (null)
     private double scale = -1;                              // Use default (-1)
@@ -72,7 +72,7 @@ public class AnnotationAttributes implements Restorable {
     private int cornerRadius = -1;                          // Use default (-1)
     private String adjustWidthToText;                       // Use default (null)
     private Point drawOffset;                               // Use default (null)
-    private boolean isHighlighted = false;
+    private boolean isHighlighted;
     private boolean isVisible = true;
     private double highlightScale = -1;                     // Use default (-1)
     private Font font;                                      // Use default (null)
@@ -82,7 +82,7 @@ public class AnnotationAttributes implements Restorable {
     private Color borderColor;                              // Use default (null)
     private double borderWidth = -1;                        // Use default (-1)
     private int borderStippleFactor = -1;                   // Use default (-1)
-    private short borderStipplePattern = 0x0000;    // Use default (zero)
+    private short borderStipplePattern;    // Use default (zero)
     private int antiAliasHint = -1;                         // Use default (-1)
     private Insets insets;                                  // Use default (null)
     private WWTexture backgroundTexture;
@@ -407,8 +407,7 @@ public class AnnotationAttributes implements Restorable {
             Integer textAlignInt = WWUtil.makeInteger(textAlignState);
             if (textAlignInt != null) {
                 dest.setTextAlign(textAlignInt == 0 ? AVKey.LEFT : (textAlignInt == 1 ? AVKey.CENTER : AVKey.RIGHT));
-            }
-            else {
+            } else {
                 dest.setTextAlign(textAlignState);
             }
         }
@@ -1178,14 +1177,14 @@ public class AnnotationAttributes implements Restorable {
         // Creating a new RestorableSupport failed. RestorableSupport logged the problem, so just return null.
 
         // Save application set attributes to the document root.
-        saveAttributes(this, restorableSupport, null);
+        AnnotationAttributes.saveAttributes(this, restorableSupport, null);
 
         // We only save this AnnotationAttributes' defaultAttributes when the application has set them to
         // something other than the static member "defaults".
         if (this.defaultAttributes != AnnotationAttributes.defaults) {
             RestorableSupport.StateObject defaultAttributesStateObj =
                 restorableSupport.addStateObject("defaultAttributes");
-            saveAttributes(this.defaultAttributes, restorableSupport, defaultAttributesStateObj);
+            AnnotationAttributes.saveAttributes(this.defaultAttributes, restorableSupport, defaultAttributesStateObj);
         }
 
         return restorableSupport.getStateAsXml();
@@ -1212,7 +1211,7 @@ public class AnnotationAttributes implements Restorable {
         try {
             restorableSupport = RestorableSupport.parse(stateInXml);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             // Parsing the document specified by stateInXml failed.
             String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", stateInXml);
             Logging.logger().severe(message);
@@ -1220,7 +1219,7 @@ public class AnnotationAttributes implements Restorable {
         }
 
         // Restore application set attributes from under the document root.
-        restoreAttributes(restorableSupport, null, this);
+        AnnotationAttributes.restoreAttributes(restorableSupport, null, this);
 
         // Restore application set default attributes from under the "defaultAttributes" state element.
         RestorableSupport.StateObject defaultAttributesStateObj =
@@ -1231,7 +1230,7 @@ public class AnnotationAttributes implements Restorable {
             // have it's own defaultAttributes instance, we create one for it
             if (newDefaultAttributes == AnnotationAttributes.defaults)
                 newDefaultAttributes = new AnnotationAttributes();
-            restoreAttributes(restorableSupport, defaultAttributesStateObj, newDefaultAttributes);
+            AnnotationAttributes.restoreAttributes(restorableSupport, defaultAttributesStateObj, newDefaultAttributes);
             setDefaults(newDefaultAttributes);
         }
     }

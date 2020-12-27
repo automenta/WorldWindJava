@@ -24,15 +24,28 @@ import java.util.*;
 public class GeotiffImageReader extends ImageReader {
 
     private final ArrayList<TiffIFDEntry[]> ifds = new ArrayList<>(1);
-    private ImageInputStream theStream = null;
+    private ImageInputStream theStream;
     // Geotiff info...
-    private double[] geoPixelScale = null;
-    private double[] geoTiePoints = null;
-    private double[] geoMatrix = null;
-    private GeoKey[] geoKeys = null;
+    private double[] geoPixelScale;
+    private double[] geoTiePoints;
+    private double[] geoMatrix;
+    private GeoKey[] geoKeys;
 
     public GeotiffImageReader(ImageReaderSpi provider) {
         super(provider);
+    }
+
+    /*
+     * Returns the (first!) IFD-Entry with the given tag, or null if not found.
+     *
+     */
+    private static TiffIFDEntry getByTag(TiffIFDEntry[] ifds, int tag) {
+        for (TiffIFDEntry ifd : ifds) {
+            if (ifd.tag == tag) {
+                return ifd;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -50,7 +63,7 @@ public class GeotiffImageReader extends ImageReader {
         if (ifds.isEmpty())
             readIFDs();
 
-        TiffIFDEntry widthEntry = getByTag(ifds.get(imageIndex), Tiff.Tag.IMAGE_WIDTH);
+        TiffIFDEntry widthEntry = GeotiffImageReader.getByTag(ifds.get(imageIndex), Tiff.Tag.IMAGE_WIDTH);
         return (int) widthEntry.asLong();
     }
 
@@ -63,7 +76,7 @@ public class GeotiffImageReader extends ImageReader {
         if (ifds.isEmpty())
             readIFDs();
 
-        TiffIFDEntry heightEntry = getByTag(ifds.get(imageIndex), Tiff.Tag.IMAGE_LENGTH);
+        TiffIFDEntry heightEntry = GeotiffImageReader.getByTag(ifds.get(imageIndex), Tiff.Tag.IMAGE_LENGTH);
         return (int) heightEntry.asLong();
     }
 
@@ -157,7 +170,7 @@ public class GeotiffImageReader extends ImageReader {
 
             colorModel = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_GRAY), bitsPerSample, false,
                 false, Transparency.OPAQUE, dataBuffType);
-            int[] offsets = new int[] {0};
+            int[] offsets = {0};
             ComponentSampleModel sampleModel = new ComponentSampleModel(dataBuffType, width, height, 1, width, offsets);
             short[][] imageData = readPlanar16(width, height, samplesPerPixel, stripOffsets, stripCounts, rowsPerStrip);
             DataBuffer dataBuff = (dataBuffType == DataBuffer.TYPE_SHORT) ?
@@ -165,21 +178,19 @@ public class GeotiffImageReader extends ImageReader {
                 new DataBufferUShort(imageData, width * height, offsets);
 
             raster = Raster.createWritableRaster(sampleModel, dataBuff, new Point(0, 0));
-        }
-        else if (samplesPerPixel == 1 && bitsPerSample.length == 1 && bitsPerSample[0] == 32 &&
+        } else if (samplesPerPixel == 1 && bitsPerSample.length == 1 && bitsPerSample[0] == 32 &&
             sampleFormatEntry != null && sampleFormatEntry.asLong() == Tiff.SampleFormat.IEEEFLOAT) {
             // 32-bit grayscale (typical of elevation data, for example)...
             colorModel = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_GRAY), bitsPerSample, false,
                 false, Transparency.OPAQUE, DataBuffer.TYPE_FLOAT);
-            int[] offsets = new int[] {0};
+            int[] offsets = {0};
             ComponentSampleModel sampleModel = new ComponentSampleModel(DataBuffer.TYPE_FLOAT, width, height, 1, width,
                 offsets);
             float[][] imageData = readPlanarFloat32(width, height, samplesPerPixel, stripOffsets, stripCounts,
                 rowsPerStrip);
             DataBuffer dataBuff = new DataBufferFloat(imageData, width * height, offsets);
             raster = Raster.createWritableRaster(sampleModel, dataBuff, new Point(0, 0));
-        }
-        else {
+        } else {
 
             // make sure a DataBufferByte is going to do the trick
             for (int bits : bitsPerSample) {
@@ -201,8 +212,7 @@ public class GeotiffImageReader extends ImageReader {
                 colorModel = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), bitsPerSample,
                     hasAlpha,
                     false, transparency, DataBuffer.TYPE_BYTE);
-            }
-            else {
+            } else {
                 // grayscale or indexed-color?
                 if (photoInterp == Tiff.Photometric.Color_Palette) {
                     // indexed...
@@ -212,8 +222,7 @@ public class GeotiffImageReader extends ImageReader {
                     byte[][] cmap = readColorMap(colorMapEntry);
                     colorModel = new IndexColorModel(bitsPerSample[0], (int) colorMapEntry.count / 3, cmap[0], cmap[1],
                         cmap[2]);
-                }
-                else {
+                } else {
                     // grayscale...
                     colorModel = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_GRAY), bitsPerSample,
                         false,
@@ -298,11 +307,9 @@ public class GeotiffImageReader extends ImageReader {
             theStream.readFully(ifh);
             if (ifh[0] == 0x4D && ifh[1] == 0x4D) {
                 theStream.setByteOrder(ByteOrder.BIG_ENDIAN);
-            }
-            else if (ifh[0] == 0x49 && ifh[1] == 0x49) {
+            } else if (ifh[0] == 0x49 && ifh[1] == 0x49) {
                 theStream.setByteOrder(ByteOrder.LITTLE_ENDIAN);
-            }
-            else {
+            } else {
                 throw new IOException();
             }
         }
@@ -336,8 +343,7 @@ public class GeotiffImageReader extends ImageReader {
                     int upper = theStream.readUnsignedShort();
                     int lower = theStream.readUnsignedShort();
                     valoffset = (0xffff & upper) << 16 | (0xffff & lower);
-                }
-                else
+                } else
                     valoffset = theStream.readUnsignedInt();
                 ifd[i] = new TiffIFDEntry(tag, type, count, valoffset);
             }
@@ -517,23 +523,10 @@ public class GeotiffImageReader extends ImageReader {
                 key.value = (int) keyValRec[i + 3];
             else {
                 // TODO: This isn't quite right....
-                key.value = getByTag(ifds.get(0), (0x0000ffff & keyValRec[i + 1]));
+                key.value = GeotiffImageReader.getByTag(ifds.get(0), (0x0000ffff & keyValRec[i + 1]));
             }
             geoKeys[j++] = key;
         }
-    }
-
-    /*
-     * Returns the (first!) IFD-Entry with the given tag, or null if not found.
-     *
-     */
-    private static TiffIFDEntry getByTag(TiffIFDEntry[] ifds, int tag) {
-        for (TiffIFDEntry ifd : ifds) {
-            if (ifd.tag == tag) {
-                return ifd;
-            }
-        }
-        return null;
     }
 
     /*
@@ -544,8 +537,7 @@ public class GeotiffImageReader extends ImageReader {
         if (stripsEntry.count == 1) {
             // this is a special case, and it *does* happen!
             offsets[0] = stripsEntry.asLong();
-        }
-        else {
+        } else {
             long fileOffset = stripsEntry.asLong();
             this.theStream.seek(fileOffset);
             if (stripsEntry.type == Tiff.Type.SHORT)

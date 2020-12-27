@@ -19,14 +19,14 @@ public class JOGLVersionInfo {
 
     private JOGLVersionInfo() {
         ClassLoader classLoader = getClass().getClassLoader();
-        this.p = pkgInfo(classLoader, "com.jogamp.opengl", "GL");
+        this.p = JOGLVersionInfo.pkgInfo(classLoader, "com.jogamp.opengl", "GL");
     }
 
     private static Package pkgInfo(ClassLoader classLoader, String pkgName, String className) {
         Package p = null;
 
         try {
-            classLoader.loadClass(pkgName + "." + className);
+            classLoader.loadClass(pkgName + '.' + className);
 
             // TODO: message logging
             p = classLoader.getDefinedPackage(pkgName);
@@ -42,31 +42,31 @@ public class JOGLVersionInfo {
     }
 
     public static Package getPackage() {
-        return svi.p;
+        return JOGLVersionInfo.svi.p;
     }
 
     public static boolean isCompatibleWith(String version) {
-        return svi.p != null && svi.p.isCompatibleWith(version);
+        return JOGLVersionInfo.svi.p != null && JOGLVersionInfo.svi.p.isCompatibleWith(version);
     }
 
     public static String getSpecificationTitle() {
-        return svi.p != null ? svi.p.getSpecificationTitle() : null;
+        return JOGLVersionInfo.svi.p != null ? JOGLVersionInfo.svi.p.getSpecificationTitle() : null;
     }
 
     public static String getSpecificationVendor() {
-        return svi.p != null ? svi.p.getSpecificationVendor() : null;
+        return JOGLVersionInfo.svi.p != null ? JOGLVersionInfo.svi.p.getSpecificationVendor() : null;
     }
 
     public static String getSpecificationVersion() {
-        return svi.p != null ? svi.p.getSpecificationVersion() : null;
+        return JOGLVersionInfo.svi.p != null ? JOGLVersionInfo.svi.p.getSpecificationVersion() : null;
     }
 
     public static String getImplementationTitle() {
-        return svi.p != null ? svi.p.getImplementationTitle() : null;
+        return JOGLVersionInfo.svi.p != null ? JOGLVersionInfo.svi.p.getImplementationTitle() : null;
     }
 
     public static String getImplementationVersion() {
-        return svi.p != null ? svi.p.getImplementationVersion() : null;
+        return JOGLVersionInfo.svi.p != null ? JOGLVersionInfo.svi.p.getImplementationVersion() : null;
     }
 
     public static void main(String[] args) {

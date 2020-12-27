@@ -18,8 +18,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 /**
- * Provides an implementation of {@link XMLEventParserContext}. This class is meant to be
- * the base class for schema-specific parsers.
+ * Provides an implementation of {@link XMLEventParserContext}. This class is meant to be the base class for
+ * schema-specific parsers.
  *
  * @author tag
  * @version $Id: BasicXMLEventParserContext.java 1981 2014-05-08 03:59:04Z tgaskins $
@@ -48,7 +48,7 @@ public class BasicXMLEventParserContext extends AVListImpl implements XMLEventPa
     /**
      * The parser name of the unrecognized-element parser.
      */
-    public static final QName UNRECOGNIZED = new QName(UNRECOGNIZED_ELEMENT_PARSER);
+    public static final QName UNRECOGNIZED = new QName(XMLEventParserContext.UNRECOGNIZED_ELEMENT_PARSER);
     protected final Map<String, Object> idTable = new ConcurrentHashMap<>();
     protected XMLEventReader reader;
     protected StringXMLEventParser stringParser;
@@ -136,8 +136,7 @@ public class BasicXMLEventParserContext extends AVListImpl implements XMLEventPa
                     notification.getEvent().getLocation().getLineNumber(),
                     notification.getEvent().getLocation().getColumnNumber(),
                     notification.getEvent().getLocation().getCharacterOffset());
-            }
-            else {
+            } else {
                 msg = Logging.getMessage(notification.getMessage(), "", "");
             }
 
@@ -153,12 +152,12 @@ public class BasicXMLEventParserContext extends AVListImpl implements XMLEventPa
      * namespace.
      */
     protected void initializeParsers() {
-        this.parsers.put(STRING, new StringXMLEventParser());
-        this.parsers.put(DOUBLE, new DoubleXMLEventParser());
-        this.parsers.put(INTEGER, new IntegerXMLEventParser());
-        this.parsers.put(BOOLEAN, new BooleanXMLEventParser());
-        this.parsers.put(BOOLEAN_INTEGER, new BooleanIntegerXMLEventParser());
-        this.parsers.put(UNRECOGNIZED, new UnrecognizedXMLEventParser(null));
+        this.parsers.put(BasicXMLEventParserContext.STRING, new StringXMLEventParser());
+        this.parsers.put(BasicXMLEventParserContext.DOUBLE, new DoubleXMLEventParser());
+        this.parsers.put(BasicXMLEventParserContext.INTEGER, new IntegerXMLEventParser());
+        this.parsers.put(BasicXMLEventParserContext.BOOLEAN, new BooleanXMLEventParser());
+        this.parsers.put(BasicXMLEventParserContext.BOOLEAN_INTEGER, new BooleanIntegerXMLEventParser());
+        this.parsers.put(BasicXMLEventParserContext.UNRECOGNIZED, new UnrecognizedXMLEventParser(null));
     }
 
     @Override
@@ -298,49 +297,49 @@ public class BasicXMLEventParserContext extends AVListImpl implements XMLEventPa
 
     public StringXMLEventParser getStringParser() {
         if (this.stringParser == null)
-            this.stringParser = (StringXMLEventParser) this.getParser(STRING);
+            this.stringParser = (StringXMLEventParser) this.getParser(BasicXMLEventParserContext.STRING);
 
         return this.stringParser;
     }
 
     public DoubleXMLEventParser getDoubleParser() {
         if (this.doubleParser == null)
-            this.doubleParser = (DoubleXMLEventParser) this.getParser(DOUBLE);
+            this.doubleParser = (DoubleXMLEventParser) this.getParser(BasicXMLEventParserContext.DOUBLE);
 
         return this.doubleParser;
     }
 
     public IntegerXMLEventParser getIntegerParser() {
         if (this.integerParser == null)
-            this.integerParser = (IntegerXMLEventParser) this.getParser(INTEGER);
+            this.integerParser = (IntegerXMLEventParser) this.getParser(BasicXMLEventParserContext.INTEGER);
 
         return this.integerParser;
     }
 
     public BooleanXMLEventParser getBooleanParser() {
         if (this.booleanParser == null)
-            this.booleanParser = (BooleanXMLEventParser) this.getParser(BOOLEAN);
+            this.booleanParser = (BooleanXMLEventParser) this.getParser(BasicXMLEventParserContext.BOOLEAN);
 
         return this.booleanParser;
     }
 
     public BooleanIntegerXMLEventParser getBooleanIntegerParser() {
         if (this.booleanIntegerParser == null)
-            this.booleanIntegerParser = (BooleanIntegerXMLEventParser) this.getParser(BOOLEAN_INTEGER);
+            this.booleanIntegerParser = (BooleanIntegerXMLEventParser) this.getParser(
+                BasicXMLEventParserContext.BOOLEAN_INTEGER);
 
         return this.booleanIntegerParser;
     }
 
     /**
      * Returns a parser to handle unrecognized elements. The default unrecognized event parser is {@link
-     * UnrecognizedXMLEventParser}, and may be replaced by calling {@link
-     * #registerParser(QName, XMLEventParser)} and specifying {@link #UNRECOGNIZED} as the parser
-     * name.
+     * UnrecognizedXMLEventParser}, and may be replaced by calling {@link #registerParser(QName, XMLEventParser)} and
+     * specifying {@link #UNRECOGNIZED} as the parser name.
      *
      * @return a parser to handle unrecognized elements.
      */
     public XMLEventParser getUnrecognizedElementParser() {
-        return this.getParser(UNRECOGNIZED);
+        return this.getParser(BasicXMLEventParserContext.UNRECOGNIZED);
     }
 
     public String getCharacters(XMLEvent event) {
@@ -414,7 +413,7 @@ public class BasicXMLEventParserContext extends AVListImpl implements XMLEventPa
             throw new IllegalArgumentException(message);
         }
 
-        return isEndElementEvent(event, startElement);
+        return BasicXMLEventParserContext.isEndElementEvent(event, startElement);
     }
 
     public void registerParser(QName elementName, XMLEventParser parser) {
@@ -443,12 +442,11 @@ public class BasicXMLEventParserContext extends AVListImpl implements XMLEventPa
         XMLEventParser factoryParser = this.parsers.get(name);
         if (factoryParser == null) {
             // Try alternate forms that assume a default namespace in either the input name or the table key.
-            if (isNullNamespace(name.getNamespaceURI())) {
+            if (BasicXMLEventParserContext.isNullNamespace(name.getNamespaceURI())) {
                 // input name has no namespace but table key has the default namespace
                 QName altName = new QName(this.getDefaultNamespaceURI(), name.getLocalPart());
                 factoryParser = this.parsers.get(altName);
-            }
-            else if (this.isDefaultNamespace(name.getNamespaceURI())) {
+            } else if (this.isDefaultNamespace(name.getNamespaceURI())) {
                 // input name has the default namespace but table name has no namespace
                 QName altName = new QName(name.getLocalPart());
                 factoryParser = this.parsers.get(altName);
