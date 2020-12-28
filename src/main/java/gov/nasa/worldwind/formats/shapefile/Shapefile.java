@@ -123,7 +123,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
             "application/octet-stream",
             "text/plain"
         };
-    protected static final Collection<String> measureTypes = new ArrayList<>(Arrays.asList(
+    protected static final Collection<String> measureTypes = new ArrayList<>(List.of(
         Shapefile.SHAPE_POINT_M, Shapefile.SHAPE_POINT_Z,
         Shapefile.SHAPE_MULTI_POINT_M, Shapefile.SHAPE_MULTI_POINT_Z,
         Shapefile.SHAPE_POLYLINE_M, Shapefile.SHAPE_POLYLINE_Z,
@@ -131,7 +131,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
         Shapefile.SHAPE_MULTI_PATCH
     ));
 
-    protected static final Collection<String> zTypes = new ArrayList<>(Arrays.asList(
+    protected static final Collection<String> zTypes = new ArrayList<>(List.of(
         Shapefile.SHAPE_POINT_Z,
         Shapefile.SHAPE_MULTI_POINT_Z,
         Shapefile.SHAPE_POLYLINE_Z,

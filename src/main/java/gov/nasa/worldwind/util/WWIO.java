@@ -7,11 +7,13 @@
 package gov.nasa.worldwind.util;
 
 import com.jogamp.common.nio.*;
+import com.jogamp.common.util.IOUtil;
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import jcog.Log;
 import okhttp3.*;
+import org.apache.commons.io.IOUtils;
 import org.eclipse.jetty.io.ByteBufferOutputStream;
 import org.junit.jupiter.api.function.ThrowingConsumer;
 import org.slf4j.Logger;
@@ -791,8 +793,9 @@ public class WWIO {
      */
     public static String readStreamToString(InputStream stream, String encoding) throws IOException {
 
-        return WWIO.readCharacterStreamToString(
-            new InputStreamReader(stream, encoding != null ? encoding : WWIO.DEFAULT_CHARACTER_ENCODING));
+        return IOUtils.toString(stream, encoding);
+//        return WWIO.readCharacterStreamToString(
+//            new InputStreamReader(stream, encoding != null ? encoding : WWIO.DEFAULT_CHARACTER_ENCODING));
     }
 
     /**
@@ -834,8 +837,8 @@ public class WWIO {
             }
         }
 
-        if (buffer != null)
-            buffer.flip();
+//        if (buffer != null)
+        buffer.flip();
 
         return buffer;
     }
@@ -852,17 +855,17 @@ public class WWIO {
      * @throws IOException              if an I/O error occurs.
      */
     public static ByteBuffer readInputStreamToBuffer(ReadableByteChannel channel, ByteBuffer buffer) throws IOException {
-        if (channel == null) {
-            String message = Logging.getMessage("nullValue.ChannelIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (buffer == null) {
-            String message = Logging.getMessage("nullValue.BufferIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (channel == null) {
+//            String message = Logging.getMessage("nullValue.ChannelIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//
+//        if (buffer == null) {
+//            String message = Logging.getMessage("nullValue.BufferIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         int count = 0;
         while (count >= 0 && buffer.hasRemaining()) {
@@ -885,11 +888,11 @@ public class WWIO {
      * @throws IOException              if an I/O error occurs.
      */
     public static String readChannelToString(ReadableByteChannel channel, String encoding) throws IOException {
-        if (channel == null) {
-            String message = Logging.getMessage("nullValue.ChannelIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (channel == null) {
+//            String message = Logging.getMessage("nullValue.ChannelIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         return WWIO.readCharacterStreamToString(
             Channels.newReader(channel, encoding != null ? encoding : WWIO.DEFAULT_CHARACTER_ENCODING));
@@ -905,11 +908,11 @@ public class WWIO {
      * @throws IOException              if an I/O error occurs.
      */
     public static String readCharacterStreamToString(Reader reader) throws IOException {
-        if (reader == null) {
-            String message = Logging.getMessage("nullValue.ReaderIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (reader == null) {
+//            String message = Logging.getMessage("nullValue.ReaderIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         StringBuilder sb = new StringBuilder();
         BufferedReader br = new BufferedReader(reader);
