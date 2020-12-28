@@ -10,7 +10,6 @@ import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.cache.*;
 import gov.nasa.worldwind.data.*;
-import gov.nasa.worldwind.event.BulkRetrievalListener;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.ogc.wms.WMSCapabilities;
 import gov.nasa.worldwind.retrieve.*;
@@ -25,7 +24,6 @@ import java.io.*;
 import java.net.*;
 import java.nio.*;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 // Implementation notes, not for API doc:
 //
@@ -57,8 +55,8 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
     protected final double minElevation;
     protected final double maxElevation;
     protected final Object fileLock = new Object();
-    protected final ConcurrentHashMap<TileKey, ElevationTile> levelZeroTiles =
-        new ConcurrentHashMap<>();
+//    protected final ConcurrentHashMap<TileKey, ElevationTile> levelZeroTiles =
+//        new ConcurrentHashMap<>();
     protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
     protected String elevationDataType = AVKey.INT16;
     protected String elevationDataByteOrder = AVKey.LITTLE_ENDIAN;
@@ -69,11 +67,11 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
     protected BufferWrapper extremes;
 
     public BasicElevationModel(AVList params) {
-        if (params == null) {
-            String message = Logging.getMessage("nullValue.ElevationModelConfigParams");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (params == null) {
+//            String message = Logging.getMessage("nullValue.ElevationModelConfigParams");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         String s = params.getStringValue(AVKey.BYTE_ORDER);
         if (s != null)
@@ -552,17 +550,13 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         return value != null ? value : this.getLevels().get(key); // see if the level set has it
     }
 
-    protected MemoryCache getMemoryCache() {
-        return memoryCache;
-    }
-
     public LevelSet getLevels() {
         return this.levels;
     }
 
-    protected Map<TileKey, ElevationTile> getLevelZeroTiles() {
-        return levelZeroTiles;
-    }
+//    protected Map<TileKey, ElevationTile> getLevelZeroTiles() {
+//        return levelZeroTiles;
+//    }
 
     protected int getExtremesLevel() {
         return extremesLevel;
@@ -685,7 +679,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
     // be read using System.getResource(URL), which will draw the data from a jar file in the classpath.
 
     protected ElevationTile createTile(TileKey key) {
-        Level level = this.levels.getLevel(key.getLevelNumber());
+        Level level = this.levels.getLevel(key.level);
 
         // Compute the tile's SW lat/lon based on its row/col in the level's data set.
         Angle dLat = level.getTileDelta().getLatitude();
@@ -693,23 +687,19 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         Angle latOrigin = this.levels.getTileOrigin().getLatitude();
         Angle lonOrigin = this.levels.getTileOrigin().getLongitude();
 
-        Angle minLatitude = ElevationTile.computeRowLatitude(key.getRow(), dLat, latOrigin);
-        Angle minLongitude = ElevationTile.computeColumnLongitude(key.getColumn(), dLon, lonOrigin);
+        Angle minLatitude = ElevationTile.computeRowLatitude(key.row, dLat, latOrigin);
+        Angle minLongitude = ElevationTile.computeColumnLongitude(key.col, dLon, lonOrigin);
 
         Sector tileSector = new Sector(minLatitude, minLatitude.add(dLat), minLongitude, minLongitude.add(dLon));
 
-        return new ElevationTile(tileSector, level, key.getRow(), key.getColumn());
+        return new ElevationTile(tileSector, level, key.row, key.col);
     }
 
     protected void requestTile(TileKey key) {
-        if (WorldWind.tasks().isFull())
-            return;
-
-        if (this.getLevels().missing(key))
-            return;
-
-        Runnable request = new RequestTask(key, this);
-        WorldWind.tasks().addTask(request);
+//        if (WorldWind.tasks().isFull())
+//            return;
+        if (!this.getLevels().missing(key))
+            WorldWind.tasks().addTask(new RequestTask(key, this));
     }
 
     protected boolean loadElevations(ElevationTile tile, URL url) throws Exception {
@@ -718,18 +708,8 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
             return false;
 
         tile.setElevations(elevations, this);
-        this.addTileToCache(tile, elevations);
-
+        memoryCache.add(tile.tileKey, tile, elevations.getSizeInBytes());
         return true;
-    }
-
-    protected void addTileToCache(ElevationTile tile, BufferWrapper elevations) {
-        // Level 0 tiles are held in the model itself; other levels are placed in the memory cache.
-        if (tile.getLevelNumber() == 0)
-            this.levelZeroTiles.put(tile.tileKey, tile);
-        else {
-            this.getMemoryCache().add(tile.tileKey, tile, elevations.getSizeInBytes());
-        }
     }
 
     // *** Bulk download ***
@@ -741,19 +721,22 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         // * Exists in the memory cache.
         // * Has non-null elevation data.
         // * Has not exipired.
-        ElevationTile tile = this.getTileFromMemory(key);
+        ElevationTile tile = this.tileFromMemory(key);
         return (tile != null && tile.getElevations() != null && !tile.isElevationsExpired());
     }
 
-    protected ElevationTile getTileFromMemory(TileKey tileKey) {
-        if (tileKey.getLevelNumber() == 0)
-            return this.levelZeroTiles.get(tileKey);
-        else
-            return (ElevationTile) this.getMemoryCache().getObject(tileKey);
+    protected ElevationTile tileFromMemory(TileKey tileKey) {
+//        if (tileKey.getLevelNumber() == 0)
+//            return this.levelZeroTiles.get(tileKey);
+//        else
+        return (ElevationTile) memoryCache.getObject(tileKey);
     }
 
     protected BufferWrapper readElevations(URL url) throws IOException, URISyntaxException {
-        return url.getPath().endsWith("tif") ? this.makeTiffElevations(url) : this.makeBilElevations(url);
+        //return url.getPath().endsWith("tif") ? this.makeTiffElevations(url) : this.makeBilElevations(url);
+        return url.getPath().endsWith("tif") ?
+            this.makeTiffElevations(url) :
+            this.makeBilElevations(url);
     }
 
     protected BufferWrapper makeBilElevations(URL url) throws IOException {
@@ -846,62 +829,62 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         return bufferWrapper;
     }
 
-    /**
-     * Start a new {@link BulkRetrievalThread} that downloads all elevations for a given sector and resolution to the
-     * current WorldWind file cache, without downloading imagery already in the cache.
-     * <p>
-     * This method creates and starts a thread to perform the download. A reference to the thread is returned. To create
-     * a downloader that has not been started, construct a {@link BasicElevationModelBulkDownloader}.
-     * <p>
-     * Note that the target resolution must be provided in radians of latitude per texel, which is the resolution in
-     * meters divided by the globe radius.
-     *
-     * @param sector     the sector to download data for.
-     * @param resolution the target resolution, provided in radians of latitude per texel.
-     * @param listener   an optional retrieval listener. May be null.
-     * @return the {@link BulkRetrievalThread} executing the retrieval or <code>null</code> if the specified sector does
-     * not intersect the elevation model bounding sector.
-     * @throws IllegalArgumentException if the sector is null or the resolution is less than  zero.
-     * @see BasicElevationModelBulkDownloader
-     */
-    public BulkRetrievalThread makeLocal(Sector sector, double resolution, BulkRetrievalListener listener) {
-        return this.makeLocal(sector, resolution, null, listener);
-    }
+//    /**
+//     * Start a new {@link BulkRetrievalThread} that downloads all elevations for a given sector and resolution to the
+//     * current WorldWind file cache, without downloading imagery already in the cache.
+//     * <p>
+//     * This method creates and starts a thread to perform the download. A reference to the thread is returned. To create
+//     * a downloader that has not been started, construct a {@link BasicElevationModelBulkDownloader}.
+//     * <p>
+//     * Note that the target resolution must be provided in radians of latitude per texel, which is the resolution in
+//     * meters divided by the globe radius.
+//     *
+//     * @param sector     the sector to download data for.
+//     * @param resolution the target resolution, provided in radians of latitude per texel.
+//     * @param listener   an optional retrieval listener. May be null.
+//     * @return the {@link BulkRetrievalThread} executing the retrieval or <code>null</code> if the specified sector does
+//     * not intersect the elevation model bounding sector.
+//     * @throws IllegalArgumentException if the sector is null or the resolution is less than  zero.
+//     * @see BasicElevationModelBulkDownloader
+//     */
+//    public BulkRetrievalThread makeLocal(Sector sector, double resolution, BulkRetrievalListener listener) {
+//        return this.makeLocal(sector, resolution, null, listener);
+//    }
 
-    /**
-     * Start a new {@link BulkRetrievalThread} that downloads all elevations for a given sector and resolution to a
-     * specified file store, without downloading imagery already in the file store.
-     * <p>
-     * This method creates and starts a thread to perform the download. A reference to the thread is returned. To create
-     * a downloader that has not been started, construct a {@link BasicElevationModelBulkDownloader}.
-     * <p>
-     * Note that the target resolution must be provided in radians of latitude per texel, which is the resolution in
-     * meters divided by the globe radius.
-     *
-     * @param sector     the sector to download data for.
-     * @param resolution the target resolution, provided in radians of latitude per texel.
-     * @param fileStore  the file store in which to place the downloaded elevations. If null the current WorldWind file
-     *                   cache is used.
-     * @param listener   an optional retrieval listener. May be null.
-     * @return the {@link BulkRetrievalThread} executing the retrieval or <code>null</code> if the specified sector does
-     * not intersect the elevation model bounding sector.
-     * @throws IllegalArgumentException if  the sector is null or the resolution is less than zero.
-     * @see BasicElevationModelBulkDownloader
-     */
-    public BulkRetrievalThread makeLocal(Sector sector, double resolution, FileStore fileStore,
-        BulkRetrievalListener listener) {
-        Sector targetSector = sector != null ? getLevels().getSector().intersection(sector) : null;
-        if (targetSector == null)
-            return null;
-
-        // Args checked in downloader constructor
-        BasicElevationModelBulkDownloader thread =
-            new BasicElevationModelBulkDownloader(this, targetSector, resolution,
-                fileStore != null ? fileStore : this.getDataFileStore(), listener);
-        thread.setDaemon(true);
-        thread.start();
-        return thread;
-    }
+//    /**
+//     * Start a new {@link BulkRetrievalThread} that downloads all elevations for a given sector and resolution to a
+//     * specified file store, without downloading imagery already in the file store.
+//     * <p>
+//     * This method creates and starts a thread to perform the download. A reference to the thread is returned. To create
+//     * a downloader that has not been started, construct a {@link BasicElevationModelBulkDownloader}.
+//     * <p>
+//     * Note that the target resolution must be provided in radians of latitude per texel, which is the resolution in
+//     * meters divided by the globe radius.
+//     *
+//     * @param sector     the sector to download data for.
+//     * @param resolution the target resolution, provided in radians of latitude per texel.
+//     * @param fileStore  the file store in which to place the downloaded elevations. If null the current WorldWind file
+//     *                   cache is used.
+//     * @param listener   an optional retrieval listener. May be null.
+//     * @return the {@link BulkRetrievalThread} executing the retrieval or <code>null</code> if the specified sector does
+//     * not intersect the elevation model bounding sector.
+//     * @throws IllegalArgumentException if  the sector is null or the resolution is less than zero.
+//     * @see BasicElevationModelBulkDownloader
+//     */
+//    public BulkRetrievalThread makeLocal(Sector sector, double resolution, FileStore fileStore,
+//        BulkRetrievalListener listener) {
+//        Sector targetSector = sector != null ? getLevels().getSector().intersection(sector) : null;
+//        if (targetSector == null)
+//            return null;
+//
+//        // Args checked in downloader constructor
+//        BasicElevationModelBulkDownloader thread =
+//            new BasicElevationModelBulkDownloader(this, targetSector, resolution,
+//                fileStore != null ? fileStore : this.getDataFileStore(), listener);
+//        thread.setDaemon(true);
+//        thread.start();
+//        return thread;
+//    }
 
     /**
      * Get the estimated size in bytes of the elevations not in the WorldWind file cache for the given sector and
@@ -947,10 +930,6 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
 
     protected void downloadElevations(final Tile tile) {
         retrieveElevations(tile, new DownloadPostProcessor(tile, this));
-    }
-
-    protected void downloadElevations(final Tile tile, DownloadPostProcessor postProcessor) {
-        retrieveElevations(tile, postProcessor);
     }
 
     protected void retrieveElevations(final Tile tile, DownloadPostProcessor postProcessor) {
@@ -1030,12 +1009,12 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
 
         Level lastLevel = this.levels.getLastLevel(latitude, longitude);
         final TileKey tileKey = new TileKey(latitude, longitude, this.levels, lastLevel.getLevelNumber());
-        ElevationTile tile = this.getTileFromMemory(tileKey);
+        ElevationTile tile = this.tileFromMemory(tileKey);
 
         if (tile == null) {
-            int fallbackRow = tileKey.getRow();
-            int fallbackCol = tileKey.getColumn();
-            for (int fallbackLevelNum = tileKey.getLevelNumber() - 1; fallbackLevelNum >= 0; fallbackLevelNum--) {
+            int fallbackRow = tileKey.row;
+            int fallbackCol = tileKey.col;
+            for (int fallbackLevelNum = tileKey.level - 1; fallbackLevelNum >= 0; fallbackLevelNum--) {
                 fallbackRow /= 2;
                 fallbackCol /= 2;
 
@@ -1044,7 +1023,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
 
                 TileKey fallbackKey = new TileKey(fallbackLevelNum, fallbackRow, fallbackCol,
                     this.levels.getLevel(fallbackLevelNum).getCacheName());
-                tile = this.getTileFromMemory(fallbackKey);
+                tile = this.tileFromMemory(fallbackKey);
                 if (tile != null)
                     break;
             }
@@ -1084,11 +1063,11 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
 
         Level lastLevel = this.levels.getLastLevel(latitude, longitude);
         final TileKey tileKey = new TileKey(latitude, longitude, this.levels, lastLevel.getLevelNumber());
-        ElevationTile tile = this.getTileFromMemory(tileKey);
 
-        if (tile != null) {
+        ElevationTile tile = this.tileFromMemory(tileKey);
+        if (tile != null)
             return this.lookupElevation(latitude, longitude, tile);
-        }
+
 
         try {
             tile = this.createTile(tileKey);
@@ -1103,7 +1082,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
             Logging.logger().log(java.util.logging.Level.FINE, msg, e);
         }
 
-        tile = this.getTileFromMemory(tileKey);
+        tile = this.tileFromMemory(tileKey);
         return tile != null ? this.lookupElevation(latitude, longitude, tile) : this.getMissingDataSignal();
     }
 
@@ -1406,7 +1385,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
             for (int col = nwCol; col <= seCol; col++) {
 
                 TileKey key = new TileKey(targetLevelNum, row, col, targetLevelCacheName);
-                ElevationTile tile = this.getTileFromMemory(key);
+                ElevationTile tile = this.tileFromMemory(key);
                 if (tile != null) {
                     tiles.add(tile);
                     continue;
@@ -1422,13 +1401,13 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
                 TileKey fallbackKey;
                 int fallbackRow = row;
                 int fallbackCol = col;
-                for (int fallbackLevelNum = key.getLevelNumber() - 1; fallbackLevelNum >= 0; fallbackLevelNum--) {
+                for (int fallbackLevelNum = key.level - 1; fallbackLevelNum >= 0; fallbackLevelNum--) {
                     fallbackRow /= 2;
                     fallbackCol /= 2;
                     fallbackKey = new TileKey(fallbackLevelNum, fallbackRow, fallbackCol,
                         this.levels.getLevel(fallbackLevelNum).getCacheName());
 
-                    tile = this.getTileFromMemory(fallbackKey);
+                    tile = this.tileFromMemory(fallbackKey);
                     if (tile != null) {
                         tiles.add(tile);
                         break;
@@ -1913,8 +1892,8 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         }
 
         public final void run() {
-            if (Thread.currentThread().isInterrupted())
-                return; // the task was cancelled because it's a duplicate or for some other reason
+//            if (Thread.currentThread().isInterrupted())
+//                return; // the task was cancelled because it's a duplicate or for some other reason
 
             try {
                 // check to ensure load is still needed
@@ -1931,19 +1910,17 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
                         return;
                     } else {
                         // Assume that something's wrong with the file and delete it.
-                        this.elevationModel.getDataFileStore().removeFile(url);
                         this.elevationModel.levels.miss(tile);
-                        String message = Logging.getMessage("generic.DeletedCorruptDataFile", url);
-                        Logging.logger().info(message);
+                        this.elevationModel.getDataFileStore().removeFile(url);
+                        Logging.logger().info(Logging.getMessage("generic.DeletedCorruptDataFile", url));
                     }
                 }
 
                 this.elevationModel.downloadElevations(tile);
             }
             catch (Exception e) {
-                String msg = Logging.getMessage("ElevationModel.ExceptionRequestingElevations",
-                    this.tileKey.toString());
-                Logging.logger().log(java.util.logging.Level.FINE, msg, e);
+                Logging.logger().log(java.util.logging.Level.FINE, Logging.getMessage("ElevationModel.ExceptionRequestingElevations",
+                    this.tileKey.toString()), e);
             }
         }
 
@@ -2053,7 +2030,6 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
             if (this.tiles == null)
                 return null;
 
-            try {
                 for (ElevationTile tile : this.tiles) {
                     if (tile.sector.contains(latitude, longitude))
                         return this.elevationModel.lookupElevation(latitude, longitude, tile);
@@ -2061,15 +2037,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
 
                 // Location is not within this group of tiles, so is outside the coverage of this elevation model.
                 return null;
-            }
-            catch (RuntimeException e) {
-                // Throwing an exception within what's likely to be the caller's geometry creation loop
-                // would be hard to recover from, and a reasonable response to the exception can be done here.
-                Logging.logger().log(java.util.logging.Level.SEVERE,
-                    Logging.getMessage("BasicElevationModel.ExceptionComputingElevation", latitude, longitude), e);
 
-                return null;
-            }
         }
 
         protected double[] getExtremes(Angle latitude, Angle longitude) {

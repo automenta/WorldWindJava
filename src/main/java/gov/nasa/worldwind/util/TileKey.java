@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.util;
 
-import gov.nasa.worldwind.geom.Angle;
+import gov.nasa.worldwind.geom.*;
 
 import java.util.Objects;
 
@@ -14,10 +14,10 @@ import java.util.Objects;
  * @version $Id: TileKey.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 public class TileKey implements Comparable<TileKey> {
-    private final int level;
-    private final int row;
-    private final int col;
-    private final String cacheName;
+    public final int level;
+    public final int row;
+    public final int col;
+    public final String cacheName;
     private final int hash;
 
     /**
@@ -55,21 +55,24 @@ public class TileKey implements Comparable<TileKey> {
      * @throws IllegalArgumentException if any parameter is null
      */
     public TileKey(Angle latitude, Angle longitude, LevelSet levelSet, int levelNumber) {
-        if (latitude == null || longitude == null) {
-            String msg = Logging.getMessage("nullValue.AngleIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-        if (levelSet == null) {
-            String msg = Logging.getMessage("nullValue.LevelSetIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (latitude == null || longitude == null) {
+//            String msg = Logging.getMessage("nullValue.AngleIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
+//        if (levelSet == null) {
+//            String msg = Logging.getMessage("nullValue.LevelSetIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
         Level l = levelSet.getLevel(levelNumber);
         this.level = levelNumber;
-        this.row = Tile.computeRow(l.getTileDelta().getLatitude(), latitude, levelSet.getTileOrigin().getLatitude());
-        this.col = Tile.computeColumn(l.getTileDelta().getLongitude(), longitude,
-            levelSet.getTileOrigin().getLongitude());
+        final LatLon tileDelta = l.getTileDelta();
+        final LatLon tileOrigin = levelSet.getTileOrigin();
+        this.row = Tile.computeRow(
+            tileDelta.getLatitude(), latitude, tileOrigin.getLatitude());
+        this.col = Tile.computeColumn(
+            tileDelta.getLongitude(), longitude, tileOrigin.getLongitude());
         this.cacheName = l.getCacheName();
         this.hash = this.computeHash();
     }
@@ -79,32 +82,16 @@ public class TileKey implements Comparable<TileKey> {
      * @throws IllegalArgumentException if <code>tile</code> is null
      */
     public TileKey(Tile tile) {
-        if (tile == null) {
-            String msg = Logging.getMessage("nullValue.TileIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (tile == null) {
+//            String msg = Logging.getMessage("nullValue.TileIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
         this.level = tile.getLevelNumber();
         this.row = tile.row;
         this.col = tile.col;
         this.cacheName = tile.getCacheName();
         this.hash = this.computeHash();
-    }
-
-    public int getLevelNumber() {
-        return level;
-    }
-
-    public int getRow() {
-        return row;
-    }
-
-    public int getColumn() {
-        return col;
-    }
-
-    public String getCacheName() {
-        return cacheName;
     }
 
     private int computeHash() {

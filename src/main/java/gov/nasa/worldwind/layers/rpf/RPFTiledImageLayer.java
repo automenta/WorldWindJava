@@ -11,7 +11,7 @@ import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.cache.FileStore;
 import gov.nasa.worldwind.formats.dds.DDSCompressor;
 import gov.nasa.worldwind.geom.*;
-import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.layers.TiledImageLayer;
 import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.retrieve.*;
 import gov.nasa.worldwind.util.*;
@@ -421,7 +421,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
         // Load the RPFFileIndex associated with this RPFTiledImageLayer, and update the layer's expiry time according
         // to the last modified time on the RPFFileIndex.
 
-        FileStore fileStore = WorldWind.store();
+        FileStore fileStore = Configuration.data;
 
         // Root path and data series ID parameters should have already been validated in initParams().
         String rootPath = params.getStringValue(RPFTiledImageLayer.RPF_ROOT_PATH);
@@ -508,13 +508,13 @@ public class RPFTiledImageLayer extends TiledImageLayer {
         throw new UnsupportedOperationException(message);
     }
 
-    protected void forceTextureLoad(TextureTile tile) {
-        final URL textureURL = WorldWind.store().findFile(tile.getPath(), true);
-
-        if (textureURL != null) {
-            this.loadTexture(tile, textureURL);
-        }
-    }
+//    protected void forceTextureLoad(TextureTile tile) {
+//        final URL textureURL = Configuration.data.findFile(tile.getPath(), true);
+//
+//        if (textureURL != null) {
+//            this.loadTexture(tile, textureURL);
+//        }
+//    }
 
     protected void requestTexture(DrawContext dc, TextureTile tile) {
         Vec4 centroid = tile.getCentroidPoint(dc.getGlobe());
@@ -528,7 +528,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
     private boolean loadTexture(TextureTile tile, URL textureURL) {
         if (WWIO.isFileOutOfDate(textureURL, tile.level.getExpiryTime())) {
             // The file has expired. Delete it then request download of newer.
-            WorldWind.store().removeFile(textureURL);
+            Configuration.data.removeFile(textureURL);
             String message = Logging.getMessage("generic.DataFileExpired", textureURL);
             Logging.logger().fine(message);
             return false;
@@ -634,7 +634,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
 
             // TODO: check to ensure load is still needed
 
-            final URL textureURL = WorldWind.store().findFile(tile.getPath(), false);
+            final URL textureURL = Configuration.data.findFile(tile.getPath(), false);
             if (textureURL != null) {
                 if (this.layer.loadTexture(tile, textureURL)) {
                     layer.getLevels().has(tile);
@@ -642,7 +642,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
                     return;
                 } else {
                     // Assume that something's wrong with the file and delete it.
-                    WorldWind.store().removeFile(textureURL);
+                    Configuration.data.removeFile(textureURL);
                     layer.getLevels().miss(tile);
                     String message = Logging.getMessage("generic.DeletedCorruptDataFile", textureURL);
                     Logging.logger().info(message);
@@ -673,7 +673,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
         }
 
         protected File doGetOutputFile() {
-            return WorldWind.store().newFile(this.tile.getPath());
+            return Configuration.data.newFile(this.tile.getPath());
         }
 
         @Override
@@ -722,7 +722,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
             try {
                 ByteBuffer buffer = RPFTiledImageLayer.createImage(this.service, this.url);
                 if (buffer != null) {
-                    final File outFile = WorldWind.store().newFile(tile.getPath());
+                    final File outFile = Configuration.data.newFile(tile.getPath());
                     if (outFile != null) {
                         this.layer.saveBuffer(buffer, outFile);
                     }

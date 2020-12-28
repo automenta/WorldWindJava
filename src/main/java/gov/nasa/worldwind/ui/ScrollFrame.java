@@ -9,7 +9,7 @@ package gov.nasa.worldwind.ui;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.texture.*;
-import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.pick.PickSupport;
@@ -2086,7 +2086,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
     protected BasicWWTexture initializeTexture() {
         Object imageSource = this.getIconImageSource();
         if (imageSource instanceof String || imageSource instanceof URL) {
-            URL imageURL = WorldWind.store().requestFile(imageSource.toString());
+            URL imageURL = Configuration.data.requestFile(imageSource.toString());
             if (imageURL != null) {
                 this.texture = new BasicWWTexture(imageURL, true);
             }

@@ -345,7 +345,7 @@ public class DBaseFile extends AVListImpl {
     protected Header readHeader() throws IOException {
         // Read header fixed portion.
         ByteBuffer buffer = ByteBuffer.allocate(DBaseFile.FIXED_HEADER_LENGTH);
-        WWIO.readChannelToBuffer(this.channel, buffer);
+        WWIO.readInputStreamToBuffer(this.channel, buffer);
 
         if (buffer.remaining() < DBaseFile.FIXED_HEADER_LENGTH) {
             // Let the caller catch and log the message.
@@ -365,7 +365,7 @@ public class DBaseFile extends AVListImpl {
     protected DBaseField[] readFields() throws IOException {
         int fieldsLength = this.header.headerLength - DBaseFile.FIXED_HEADER_LENGTH;
         ByteBuffer buffer = ByteBuffer.allocate(fieldsLength);
-        WWIO.readChannelToBuffer(this.channel, buffer);
+        WWIO.readInputStreamToBuffer(this.channel, buffer);
 
         // Read fields description header
         return this.readFieldsFromBuffer(buffer, this.getNumberOfFields());
@@ -415,7 +415,7 @@ public class DBaseFile extends AVListImpl {
         // Read the record content.
         this.recordBuffer.limit(this.getRecordLength());
         this.recordBuffer.rewind();
-        WWIO.readChannelToBuffer(this.channel, this.recordBuffer);
+        WWIO.readInputStreamToBuffer(this.channel, this.recordBuffer);
 
         // Create a record object from the record buffer.
         return this.readRecordFromBuffer(this.recordBuffer, ++this.numRecordsRead);

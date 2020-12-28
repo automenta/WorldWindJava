@@ -34,7 +34,7 @@ public class DataInstallerPanel extends JPanel {
         this.fileSetPanel = new FileSetPanel(wwd);
 
         this.fileStorePanel = new FileStorePanel(wwd);
-        this.fileStorePanel.update(WorldWind.store());
+        this.fileStorePanel.update(Configuration.data);
 
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.add("Available Data", this.fileSetPanel);
@@ -50,7 +50,7 @@ public class DataInstallerPanel extends JPanel {
         this.fileSetPanel.addPropertyChangeListener(propertyChangeEvent -> {
             // Update the installed-data panel when a new data set is installed.
             if (propertyChangeEvent.getPropertyName().equals(DataInstaller.INSTALL_COMPLETE))
-                fileStorePanel.update(WorldWind.store());
+                fileStorePanel.update(Configuration.data);
         });
     }
 }

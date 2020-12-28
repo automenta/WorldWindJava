@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.layers.rpf;
 
-import gov.nasa.worldwind.WorldWind;
+import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.formats.dds.DDSCompressor;
 import gov.nasa.worldwind.formats.nitfs.*;
@@ -276,7 +276,7 @@ public class RPFTiledImageProcessor {
             String dataSeriesId = fileIndex.getIndexProperties().getDataSeriesIdentifier();
 
             // Save the RPFFileIndex to the file cache.
-            File indexFile = WorldWind.store().newFile(
+            File indexFile = Configuration.data.newFile(
                 RPFTiledImageLayer.getFileIndexCachePath(rootPath, dataSeriesId));
             RPFTiledImageProcessor.saveFileIndex(fileIndex, indexFile);
 
@@ -365,7 +365,7 @@ public class RPFTiledImageProcessor {
             // Create the wavelet file path.
             synchronized (this.fileLock) {
                 String cachePath = RPFTiledImageProcessor.makeWaveletCachePath(fileIndex, record.getKey());
-                waveletFile = WorldWind.store().newFile(cachePath);
+                waveletFile = Configuration.data.newFile(cachePath);
             }
 
             // Create a record for the wavelet file.
@@ -455,7 +455,7 @@ public class RPFTiledImageProcessor {
         File outFile = null;
         if (!this.doStop) {
             synchronized (this.fileLock) {
-                outFile = WorldWind.store().newFile(tile.getPath());
+                outFile = Configuration.data.newFile(tile.getPath());
             }
         }
 

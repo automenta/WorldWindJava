@@ -551,13 +551,13 @@ public class BasicDataFileStore extends AbstractFileStore {
         // findFile will attempt to retrieve from that URL on the thread that called this method, which might be the EDT
         // (See WWJ-434).
         if (cacheFileUrl == null && (addressProtocol == null || addressProtocol.equals("file")))
-            cacheFileUrl = WorldWind.store().findFile(address, true);
+            cacheFileUrl = Configuration.data.findFile(address, true);
 
         // Look for the file in the WorldWind disk cache by creating a cache path from the file's address. We ignore this
         // step if searchLocalCache is false.
         if (cacheFileUrl == null && retrievalUrl != null && searchLocalCache) {
             String cachePath = BasicDataFileStore.makeCachePath(retrievalUrl, null);
-            cacheFileUrl = WorldWind.store().findFile(cachePath, true);
+            cacheFileUrl = Configuration.data.findFile(cachePath, true);
 
             // If a address is requested that does not have a format suffix, then any previous call to makeLocal for the
             // same address has appended a suffix to the file's cache path that is appropriate for the content type
@@ -569,7 +569,7 @@ public class BasicDataFileStore extends AbstractFileStore {
             if (cacheFileUrl == null && (suffix == null || suffix.length() > 4)) {
                 for (String contentType : this.getCacheContentTypes()) {
                     String pathWithSuffix = cachePath + WWIO.mimeSuffix(contentType);
-                    cacheFileUrl = WorldWind.store().findFile(pathWithSuffix, true);
+                    cacheFileUrl = Configuration.data.findFile(pathWithSuffix, true);
                     if (cacheFileUrl != null)
                         break;
                 }
@@ -694,7 +694,7 @@ public class BasicDataFileStore extends AbstractFileStore {
 
             String path = BasicDataFileStore.makeCachePath(this.retrievalUrl, this.getRetriever().getContentType());
             if (this.saveInLocalCache && path.length() <= WWIO.MAX_FILE_PATH_LENGTH)
-                file = WorldWind.store().newFile(path);
+                file = Configuration.data.newFile(path);
             else
                 file = BasicDataFileStore.makeTempFile(this.retrievalUrl, this.getRetriever().getContentType());
 

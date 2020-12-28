@@ -219,7 +219,7 @@ public class DataInstaller extends AVListImpl {
         // Create a DataStoreProducer that is capable of processing the file.
         final DataStoreProducer producer = createDataStoreProducerFromFiles(fileSet);
 
-        File installLocation = DataInstaller.getDefaultInstallLocation(WorldWind.store());
+        File installLocation = DataInstaller.getDefaultInstallLocation(Configuration.data);
         if (installLocation == null) {
             String message = Logging.getMessage("generic.NoDefaultImportLocation");
             Logging.logger().severe(message);

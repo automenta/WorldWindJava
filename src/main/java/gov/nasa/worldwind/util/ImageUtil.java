@@ -1097,11 +1097,11 @@ public class ImageUtil {
         double Scale = 0.9996;
         Globe earth = new Earth(); //need globe for TM
 
-        if (values == null) {
-            String message = Logging.getMessage("nullValue.AVListIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalStateException(message);
-        }
+//        if (values == null) {
+//            String message = Logging.getMessage("nullValue.AVListIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalStateException(message);
+//        }
 
         BufferedImage image = (BufferedImage) values.get(AVKey.IMAGE);
         int width = image.getWidth();

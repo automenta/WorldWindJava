@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.formats.csv;
 
-import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.tracks.TrackPoint;
 import gov.nasa.worldwind.util.Logging;
 

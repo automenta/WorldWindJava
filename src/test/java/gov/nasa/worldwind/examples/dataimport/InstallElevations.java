@@ -67,7 +67,7 @@ public class InstallElevations extends ApplicationTemplate {
             File sourceFile = ExampleUtil.saveResourceToTempFile(ELEVATIONS_PATH, ".tif");
 
             // Get a reference to the FileStore into which we'll install the elevations.
-            FileStore fileStore = WorldWind.store();
+            FileStore fileStore = Configuration.data;
 
             // Install the elevations and get the resulting elevation model.
             final ElevationModel em = installElevations("Crater Lake Elevations 16bit 30m", sourceFile, fileStore);

@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.examples.worldwindow.features;
 
-import gov.nasa.worldwind.WorldWind;
+import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.cache.FileStore;
 import gov.nasa.worldwind.data.*;
@@ -255,7 +255,7 @@ public class ImportedDataDialog extends AbstractFeatureDialog implements Network
         if (fileMenu != null)
             fileMenu.addMenu(this.getFeatureID());
 
-        this.fileStore = WorldWind.store();
+        this.fileStore = Configuration.data;
 
         this.layoutComponents();
         this.loadPreviouslyImportedData();

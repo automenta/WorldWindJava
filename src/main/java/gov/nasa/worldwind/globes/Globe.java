@@ -188,7 +188,7 @@ public interface Globe extends WWObject, Extent {
      */
     Vec4 computePointFromPosition(Angle latitude, Angle longitude, double metersElevation);
 
-    default Vec4 computePointFromPosition(double latitude, double longitude, double metersElevation) {
+    @Deprecated default Vec4 computePointFromPosition(double latitude, double longitude, double metersElevation) {
         return computePointFromPosition(Angle.fromDegrees(latitude), Angle.fromDegrees(longitude), metersElevation);
     }
 

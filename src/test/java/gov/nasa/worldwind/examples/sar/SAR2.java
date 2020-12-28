@@ -76,7 +76,6 @@ public class SAR2 extends JFrame {
     private JButton showTrackInfoButton;
     private JFileChooser openFileChooser;
     private SaveTrackDialog saveTrackDialog;
-    private BulkDownloadFrame bulkDownloadFrame;
     private SARTrack toolbarTrack;
 
     public SAR2() {
@@ -581,12 +580,12 @@ public class SAR2 extends JFrame {
     }
 
     private void bulkDownload() {
-        if (this.bulkDownloadFrame == null) {
-            this.bulkDownloadFrame = new BulkDownloadFrame(this.wwd);
-            this.bulkDownloadFrame.setLocation(new Point(this.getLocationOnScreen().x + 100,
-                this.getLocationOnScreen().y + 100));
-        }
-        this.bulkDownloadFrame.setVisible(true);
+//        if (this.bulkDownloadFrame == null) {
+//            this.bulkDownloadFrame = new BulkDownloadFrame(this.wwd);
+//            this.bulkDownloadFrame.setLocation(new Point(this.getLocationOnScreen().x + 100,
+//                this.getLocationOnScreen().y + 100));
+//        }
+//        this.bulkDownloadFrame.setVisible(true);
     }
 
     private SARAnnotation getCurrentAnnotation() {

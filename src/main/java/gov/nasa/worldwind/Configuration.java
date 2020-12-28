@@ -8,14 +8,18 @@ package gov.nasa.worldwind;
 
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.cache.FileStore;
 import gov.nasa.worldwind.geom.Angle;
+import gov.nasa.worldwind.globes.*;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.video.awt.WorldWindowGLCanvas;
+import okhttp3.*;
 import org.w3c.dom.*;
 
 import javax.xml.xpath.*;
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 /**
@@ -71,26 +75,34 @@ public class Configuration // Singleton
 
     private static final String CONFIG_WW_DOCUMENT_KEY = "gov.nasa.worldwind.config.document";
     private static final String CONFIG_WW_DOCUMENT_NAME =
-        //"config/worldwind.xml";
         "config/worldwind.xml";
 
     private static final String CONFIG_APP_DOCUMENT_KEY = "gov.nasa.worldwind.app.config.document";
 
-    private static final Configuration ourInstance = new Configuration();
-    private final Properties properties;
-    private final ArrayList<Document> configDocs = new ArrayList<>();
+    static final Properties properties = Configuration.initializeDefaults();
+    private static final ArrayList<Document> configDocs = new ArrayList<>();
+
+    public static final FileStore data;
+
+    public static final Globe globe;
+
+    public static final OkHttpClient http;
+    public static final CacheControl cacheControl;
+
+    public static final String userAgent = "Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0";
+
+    public static final Request.Builder requestBuilder;
 
     /**
      * Private constructor invoked only internally.
      */
-    private Configuration() {
-        this.properties = Configuration.initializeDefaults();
+    static {
 
         // Load the app's configuration if there is one
         try {
             String appConfigLocation = System.getProperty(Configuration.CONFIG_APP_DOCUMENT_KEY);
             if (appConfigLocation != null)
-                this.loadConfigDoc(System.getProperty(Configuration.CONFIG_APP_DOCUMENT_KEY)); // Load app's config first
+                loadConfigDoc(System.getProperty(Configuration.CONFIG_APP_DOCUMENT_KEY)); // Load app's config first
         }
         catch (RuntimeException e) {
             Logging.logger(Configuration.DEFAULT_LOGGER_NAME).log(Level.WARNING, "Configuration.ConfigNotFound",
@@ -100,11 +112,11 @@ public class Configuration // Singleton
 
         try {
             // Load the default configuration
-            this.loadConfigDoc(System.getProperty(Configuration.CONFIG_WW_DOCUMENT_KEY, Configuration.CONFIG_WW_DOCUMENT_NAME));
+            loadConfigDoc(System.getProperty(Configuration.CONFIG_WW_DOCUMENT_KEY, Configuration.CONFIG_WW_DOCUMENT_NAME));
 
             // Load config properties, ensuring that the app's config takes precedence over wwj's
-            for (int i = this.configDocs.size() - 1; i >= 0; i--) {
-                this.loadConfigProperties(this.configDocs.get(i));
+            for (int i = configDocs.size() - 1; i >= 0; i--) {
+                loadConfigProperties(configDocs.get(i));
             }
         }
         catch (RuntimeException e) {
@@ -114,7 +126,25 @@ public class Configuration // Singleton
 
         // To support old-style configuration, read an existing config properties file and give the properties
         // specified there precedence.
-        this.initializeCustom();
+        initializeCustom();
+
+        data = (FileStore) WorldWind.createConfigurationComponent(AVKey.DATA_FILE_STORE_CLASS_NAME);
+        http = new OkHttpClient.Builder()
+            .cache(new Cache(
+                Configuration.data.newFile(""),
+                512 * 1024L * 1024L))
+            .connectTimeout(15, TimeUnit.SECONDS)
+            .readTimeout(15, TimeUnit.SECONDS)
+            //.callTimeout(10, TimeUnit.SECONDS)
+            .build();
+        int CACHE_STALE_DAYS = 365;
+        cacheControl = new CacheControl.Builder()
+            .maxStale(CACHE_STALE_DAYS, TimeUnit.DAYS)
+            .build();
+        requestBuilder = new Request.Builder()
+            .cacheControl(Configuration.cacheControl)
+            .header("User-Agent", Configuration.userAgent);
+        globe = new Earth();
     }
 
     /**
@@ -136,7 +166,7 @@ public class Configuration // Singleton
      * @return the value associated with the key, or null if the key does not exist.
      */
     public static String getStringValue(String key) {
-        Object o = Configuration.ourInstance.properties.getProperty(key);
+        Object o = Configuration.properties.getProperty(key);
         return o != null ? o.toString() : null;
     }
 
@@ -295,7 +325,7 @@ public class Configuration // Singleton
      * @return true if the key exists, otherwise false.
      */
     public static boolean hasKey(String key) {
-        return Configuration.ourInstance.properties.contains(key);
+        return Configuration.properties.contains(key);
     }
 
     /**
@@ -304,7 +334,7 @@ public class Configuration // Singleton
      * @param key the key of interest.
      */
     public static void removeKey(String key) {
-        Configuration.ourInstance.properties.remove(key);
+        Configuration.properties.remove(key);
     }
 
     /**
@@ -315,7 +345,7 @@ public class Configuration // Singleton
      * @param value the value to associate with the key.
      */
     public static void setValue(String key, Object value) {
-        Configuration.ourInstance.properties.put(key, value.toString());
+        Configuration.properties.put(key, value.toString());
     }
 
     /**
@@ -476,9 +506,12 @@ public class Configuration // Singleton
      *
      * @return the highest compatible OpenGL profile.
      */
+    private final static GLProfile maxCompatible = GLProfile.getMaxFixedFunc(true); // Favor a hardware rasterizer
     public static GLProfile getMaxCompatibleGLProfile() {
-        return GLProfile.getMaxFixedFunc(true); // Favor a hardware rasterizer.
+        return maxCompatible;
     }
+
+
 
     /**
      * Returns a {@link GLCapabilities} identifying graphics features required by WorldWind. The capabilities instance
@@ -516,7 +549,7 @@ public class Configuration // Singleton
     public static Element getElement(String xpathExpression) {
         XPath xpath = WWXML.makeXPath();
 
-        for (Document doc : Configuration.ourInstance.configDocs) {
+        for (Document doc : Configuration.configDocs) {
             try {
                 Node node = (Node) xpath.evaluate(xpathExpression, doc.getDocumentElement(), XPathConstants.NODE);
                 if (node != null)
@@ -540,11 +573,11 @@ public class Configuration // Singleton
         return defaults;
     }
 
-    private void loadConfigDoc(String configLocation) {
+    private static void loadConfigDoc(String configLocation) {
         if (!WWUtil.isEmpty(configLocation)) {
             Document doc = WWXML.openDocument(configLocation);
             if (doc != null) {
-                this.configDocs.add(doc);
+                configDocs.add(doc);
 //                this.loadConfigProperties(doc);
             }
         }
@@ -560,7 +593,7 @@ public class Configuration // Singleton
         }
     }
 
-    private void loadConfigProperties(Document doc) {
+    private static void loadConfigProperties(Document doc) {
         try {
             XPath xpath = WWXML.makeXPath();
 
@@ -575,7 +608,7 @@ public class Configuration // Singleton
                 if (WWUtil.isEmpty(prop))// || WWUtil.isEmpty(value))
                     continue;
 
-                this.properties.setProperty(prop, value);
+                properties.setProperty(prop, value);
             }
         }
         catch (XPathExpressionException e) {
@@ -583,7 +616,7 @@ public class Configuration // Singleton
         }
     }
 
-    private void initializeCustom() {
+    private static void initializeCustom() {
         // IMPORTANT NOTE: Always use the single argument version of Logging.logger in this method because the non-arg
         // method assumes an instance of Configuration already exists.
 
@@ -602,11 +635,11 @@ public class Configuration // Singleton
             }
 
             if (propsStream == null) {
-                propsStream = this.getClass().getResourceAsStream('/' + configFileName);
+                propsStream = Configuration.class.getResourceAsStream('/' + configFileName);
             }
 
             if (propsStream != null)
-                this.properties.load(propsStream);
+                properties.load(propsStream);
         }
         // Use a named logger in all the catch statements below to prevent Logger from calling back into
         // Configuration when this Configuration instance is not yet fully instantiated.
@@ -614,4 +647,5 @@ public class Configuration // Singleton
             Logging.logger(Configuration.DEFAULT_LOGGER_NAME).log(Level.SEVERE, "Configuration.ExceptionReadingPropsFile", e);
         }
     }
+
 }

@@ -291,9 +291,9 @@ public class LevelSet extends WWObjectImpl {
     }
 
     private long getTileNumber(TileKey tileKey) {
-        return tileKey.getRow() < 0 ? -1 :
-            (long) tileKey.getRow() * this.numColumnsInLevel(this.getLevel(tileKey.getLevelNumber()))
-                + tileKey.getColumn();
+        return tileKey.row < 0 ? -1 :
+            (long) tileKey.row * this.numColumnsInLevel(this.getLevel(tileKey.level))
+                + tileKey.col;
     }
 
     /**
@@ -316,7 +316,7 @@ public class LevelSet extends WWObjectImpl {
      */
     public final boolean missing(TileKey tileKey) {
 
-        Level level = this.getLevel(tileKey.getLevelNumber());
+        Level level = this.getLevel(tileKey.level);
         return level.isEmpty() || level.isResourceAbsent(this.getTileNumber(tileKey));
     }
 
@@ -346,7 +346,7 @@ public class LevelSet extends WWObjectImpl {
     // Create the tile corresponding to a specified key.
     public Sector computeSectorForKey(TileKey key) {
 
-        Level level = this.getLevel(key.getLevelNumber());
+        Level level = this.getLevel(key.level);
 
         // Compute the tile's SW lat/lon based on its row/col in the level's data set.
         Angle dLat = level.getTileDelta().getLatitude();
@@ -354,8 +354,8 @@ public class LevelSet extends WWObjectImpl {
         Angle latOrigin = this.tileOrigin.getLatitude();
         Angle lonOrigin = this.tileOrigin.getLongitude();
 
-        Angle minLatitude = Tile.computeRowLatitude(key.getRow(), dLat, latOrigin);
-        Angle minLongitude = Tile.computeColumnLongitude(key.getColumn(), dLon, lonOrigin);
+        Angle minLatitude = Tile.computeRowLatitude(key.row, dLat, latOrigin);
+        Angle minLongitude = Tile.computeColumnLongitude(key.col, dLon, lonOrigin);
 
         return new Sector(minLatitude, minLatitude.add(dLat), minLongitude, minLongitude.add(dLon));
     }
@@ -368,7 +368,7 @@ public class LevelSet extends WWObjectImpl {
             throw new IllegalArgumentException(msg);
         }
 
-        Level level = this.getLevel(key.getLevelNumber());
+        Level level = this.getLevel(key.level);
 
         // Compute the tile's SW lat/lon based on its row/col in the level's data set.
         Angle dLat = level.getTileDelta().getLatitude();
@@ -376,12 +376,12 @@ public class LevelSet extends WWObjectImpl {
         Angle latOrigin = this.tileOrigin.getLatitude();
         Angle lonOrigin = this.tileOrigin.getLongitude();
 
-        Angle minLatitude = Tile.computeRowLatitude(key.getRow(), dLat, latOrigin);
-        Angle minLongitude = Tile.computeColumnLongitude(key.getColumn(), dLon, lonOrigin);
+        Angle minLatitude = Tile.computeRowLatitude(key.row, dLat, latOrigin);
+        Angle minLongitude = Tile.computeColumnLongitude(key.col, dLon, lonOrigin);
 
         Sector tileSector = new Sector(minLatitude, minLatitude.add(dLat), minLongitude, minLongitude.add(dLon));
 
-        return new Tile(tileSector, level, key.getRow(), key.getColumn());
+        return new Tile(tileSector, level, key.row, key.col);
     }
 
     public void setExpiryTime(long expiryTime) {

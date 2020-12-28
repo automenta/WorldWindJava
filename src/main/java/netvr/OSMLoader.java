@@ -3,15 +3,13 @@ package netvr;
 import com.graphhopper.reader.ReaderElement;
 import com.graphhopper.reader.osm.*;
 import com.graphhopper.reader.osm.pbf.*;
-import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.geom.Sector;
+import gov.nasa.worldwind.util.WWIO;
 import jcog.Str;
-import okhttp3.*;
 
 import javax.xml.stream.*;
 import java.io.*;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.zip.*;
 
@@ -19,19 +17,7 @@ import static com.graphhopper.reader.osm.OSMXMLHelper.*;
 import static java.lang.Long.parseLong;
 
 public class OSMLoader {
-    static final OkHttpClient http = new OkHttpClient.Builder()
-        .cache(new Cache(
-            WorldWind.store().newFile("OSM"),
-            512 * 1024L * 1024L))
-        .connectTimeout(15, TimeUnit.SECONDS)
-        .readTimeout(15, TimeUnit.SECONDS)
-        //.callTimeout(10, TimeUnit.SECONDS)
-        .build();
 
-    static final int CACHE_STALE_DAYS = 365;
-    static final CacheControl cacheControl = new CacheControl.Builder()
-        .maxStale(OSMLoader.CACHE_STALE_DAYS, TimeUnit.DAYS)
-        .build();
     static final String[] osmHost = {
         "overpass-api.de",
 //        "overpass.openstreetmap.ru",
@@ -52,21 +38,20 @@ public class OSMLoader {
 
         final String uu = "https://" + host + "/api/map?" + request;
 
-        System.out.println("load: " + uu);
 
-        try {
-            final Response r = OSMLoader.http.newCall(new Request.Builder()
-                .cacheControl(OSMLoader.cacheControl)
-                .url(uu).build()).execute();
-            final Response rn = r.networkResponse();
-            if (rn == null || rn.isSuccessful())
-                OSMLoader.read(r.body().byteStream(), each);
-            else
-                throw new IOException("unsuccessful: " + uu);
-        }
-        catch (Exception e) {
-            throw new IOException("fail to load: " + uu);
-        }
+        WWIO.get(uu, (b)->OSMLoader.read(b.byteStream(), each));
+//        try {
+//            final Response r = WWIO.http.newCall(new Request.Builder()
+//                .cacheControl(OSMLoader.cacheControl)
+//                .url(uu).build()).execute();
+//            final Response rn = r.networkResponse();
+//            if (rn == null || rn.isSuccessful())
+//                OSMLoader.read(r.body().byteStream(), each);
+//            else
+//                throw new IOException("unsuccessful: " + uu);
+//        } catch (Exception e) {
+//            throw new IOException("fail to load: " + uu);
+//        }
     }
 
     private static void read(InputStream i, Consumer<ReaderElement> each) throws IOException {

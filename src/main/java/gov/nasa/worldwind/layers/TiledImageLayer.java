@@ -8,6 +8,7 @@ package gov.nasa.worldwind.layers;
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.cache.GpuResourceCache;
 import gov.nasa.worldwind.geom.Box;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.*;
@@ -55,7 +56,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
     protected final ArrayList<TextureTile> currentTiles = new ArrayList<>();
     protected final PriorityBlockingQueue<Runnable> requestQ = new PriorityBlockingQueue<>(TiledImageLayer.QUEUE_SIZE);
     protected ArrayList<TextureTile> topLevels;
-    protected boolean forceLevelZeroLoads;
+//    protected boolean forceLevelZeroLoads;
     protected boolean levelZeroLoaded;
     protected boolean retainLevelZeroTiles;
     protected String tileCountName;
@@ -298,8 +299,12 @@ public abstract class TiledImageLayer extends AbstractLayer {
     }
 
     protected static boolean isTileVisible(DrawContext dc, TextureTile tile) {
-        return tile.getExtent(dc).intersects(dc.getView().getFrustumInModelCoordinates()) &&
-            (dc.getVisibleSector() == null || dc.getVisibleSector().intersects(tile.sector));
+        final Frustum viewFrust = dc.getView().getFrustumInModelCoordinates();
+        if (tile.getExtent(dc).intersects(viewFrust)) {
+            final Sector visibleSector = dc.getVisibleSector();
+            return (visibleSector == null || visibleSector.intersects(tile.sector));
+        }
+        return false;
     }
 
     protected static Vec4 computeReferencePoint(DrawContext dc) {
@@ -353,7 +358,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
 
     abstract protected void requestTexture(DrawContext dc, TextureTile tile);
 
-    abstract protected void forceTextureLoad(TextureTile tile);
+//    abstract protected void forceTextureLoad(TextureTile tile);
 
     @Override
     public Object set(String key, Object value) {
@@ -377,13 +382,13 @@ public abstract class TiledImageLayer extends AbstractLayer {
         this.tileCountName = this.name() + " Tiles";
     }
 
-    public boolean isForceLevelZeroLoads() {
-        return this.forceLevelZeroLoads;
-    }
+//    public boolean isForceLevelZeroLoads() {
+//        return this.forceLevelZeroLoads;
+//    }
 
-    public void setForceLevelZeroLoads(boolean forceLevelZeroLoads) {
-        this.forceLevelZeroLoads = forceLevelZeroLoads;
-    }
+//    public void setForceLevelZeroLoads(boolean forceLevelZeroLoads) {
+//        this.forceLevelZeroLoads = forceLevelZeroLoads;
+//    }
 
     public boolean isRetainLevelZeroTiles() {
         return retainLevelZeroTiles;
@@ -571,14 +576,14 @@ public abstract class TiledImageLayer extends AbstractLayer {
         }
     }
 
-    protected void loadAllTopLevelTextures(DrawContext dc) {
-        for (TextureTile tile : this.getTopLevels()) {
-            if (!tile.isTextureInMemory(dc.getTextureCache()))
-                this.forceTextureLoad(tile);
-        }
-
-        this.levelZeroLoaded = true;
-    }
+//    protected void loadAllTopLevelTextures(DrawContext dc) {
+//        for (TextureTile tile : this.getTopLevels()) {
+//            if (!tile.isTextureInMemory(dc.getTextureCache()))
+//                this.forceTextureLoad(tile);
+//        }
+//
+//        this.levelZeroLoaded = true;
+//    }
 
     protected void assembleTiles(DrawContext dc) {
         this.currentTiles.clear();
@@ -653,19 +658,20 @@ public abstract class TiledImageLayer extends AbstractLayer {
     protected void addTile(DrawContext dc, TextureTile tile) {
         tile.setFallbackTile(null);
 
-        if (tile.isTextureInMemory(dc.getTextureCache())) {
+        final GpuResourceCache textureCache = dc.getTextureCache();
+        if (tile.isTextureInMemory(textureCache)) {
             this.addTileToCurrent(tile);
             return;
         }
 
-        // Level 0 loads may be forced
-        if (tile.getLevelNumber() == 0 && this.forceLevelZeroLoads && !tile.isTextureInMemory(dc.getTextureCache())) {
-            this.forceTextureLoad(tile);
-            if (tile.isTextureInMemory(dc.getTextureCache())) {
-                this.addTileToCurrent(tile);
-                return;
-            }
-        }
+//        // Level 0 loads may be forced
+//        if (tile.getLevelNumber() == 0 && this.forceLevelZeroLoads && !tile.isTextureInMemory(textureCache)) {
+//            this.forceTextureLoad(tile);
+//            if (tile.isTextureInMemory(textureCache)) {
+//                this.addTileToCurrent(tile);
+//                return;
+//            }
+//        }
 
         // Tile's texture isn't available, so request it
         if (tile.getLevelNumber() < this.levels.getNumLevels()) {
@@ -676,12 +682,12 @@ public abstract class TiledImageLayer extends AbstractLayer {
 
         // Set up to use the currentResource tile's texture
         if (this.currentResourceTile != null) {
-            if (this.currentResourceTile.getLevelNumber() == 0 && this.forceLevelZeroLoads &&
-                //!this.currentResourceTile.isTextureInMemory(dc.getTextureCache()) &&
-                !this.currentResourceTile.isTextureInMemory(dc.getTextureCache()))
-                this.forceTextureLoad(this.currentResourceTile);
+//            if (this.currentResourceTile.getLevelNumber() == 0 && this.forceLevelZeroLoads &&
+//                //!this.currentResourceTile.isTextureInMemory(dc.getTextureCache()) &&
+//                !this.currentResourceTile.isTextureInMemory(textureCache))
+//                this.forceTextureLoad(this.currentResourceTile);
 
-            if (this.currentResourceTile.isTextureInMemory(dc.getTextureCache())) {
+            if (this.currentResourceTile.isTextureInMemory(textureCache)) {
                 tile.setFallbackTile(currentResourceTile);
                 this.addTileToCurrent(tile);
             }
@@ -752,7 +758,8 @@ public abstract class TiledImageLayer extends AbstractLayer {
             radius = Earth.WGS84_EQUATORIAL_RADIUS;
 
         // Find first non-empty level. Compute altitude at which it comes into effect.
-        for (int i = 0; i < this.getLevels().getLastLevel().getLevelNumber(); i++) {
+        final int n = this.getLevels().getLastLevel().getLevelNumber();
+        for (int i = 0; i < n; i++) {
             if (this.levels.isLevelEmpty(i))
                 continue;
 
@@ -772,7 +779,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
         if (dc.getView() == null || this.getLevels() == null || vpc == null)
             return false;
 
-        if (!this.getLevels().getSector().contains(vpc.getLatitude(), vpc.getLongitude()))
+        if (!this.getLevels().getSector().contains(vpc))
             return true;
 
         Level nextToLast = this.getLevels().getNextToLastLevel();
@@ -793,8 +800,8 @@ public abstract class TiledImageLayer extends AbstractLayer {
 
     @Override
     protected final void doRender(DrawContext dc) {
-        if (this.forceLevelZeroLoads && !this.levelZeroLoaded)
-            this.loadAllTopLevelTextures(dc);
+//        if (this.forceLevelZeroLoads && !this.levelZeroLoaded)
+//            this.loadAllTopLevelTextures(dc);
         if (dc.getSurfaceGeometry() == null || dc.getSurfaceGeometry().size() < 1)
             return;
 
@@ -854,7 +861,6 @@ public abstract class TiledImageLayer extends AbstractLayer {
         }
 
         WorldWind.tasks().drain(requestQ);
-        //this.requestQ.clear();
     }
 
     //**************************************************************//

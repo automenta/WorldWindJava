@@ -331,7 +331,7 @@ public class TextureAtlasElement implements Disposable {
      * @return <code>true</code> if the image source has been loaded successfully, and <code>false</code> otherwise.
      */
     protected boolean loadImage() {
-        URL fileUrl = WorldWind.store().requestFile(this.getImageSource().toString());
+        URL fileUrl = Configuration.data.requestFile(this.getImageSource().toString());
         if (fileUrl != null) {
             BufferedImage image = this.readImage(fileUrl);
             if (image != null)

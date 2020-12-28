@@ -51,7 +51,7 @@ public class DDSHeader {
             ByteBuffer buffer = ByteBuffer.allocate(size);
             buffer.order(ByteOrder.LITTLE_ENDIAN);
 
-            WWIO.readChannelToBuffer(channel, buffer);
+            WWIO.readInputStreamToBuffer(channel, buffer);
             return DDSHeader.readFrom(buffer);
         }
         finally {

@@ -46,13 +46,14 @@ public final class WorldWind {
 
     private final WWObjectImpl wwo;
     private final MemoryCacheSet memoryCacheSet;
-    private final FileStore dataFileStore;
     private final RetrievalService remoteRetrievalService;
     private final RetrievalService localRetrievalService;
     private final TaskService taskService;
     private final ScheduledTaskService scheduledTaskService;
     private final NetworkStatus networkStatus;
     private final SessionCache sessionCache;
+    private final Configuration configuration = new Configuration();
+
 
     private WorldWind() // Singleton, prevent public instantiation.
     {
@@ -62,7 +63,7 @@ public final class WorldWind {
         this.localRetrievalService =
             (RetrievalService) WorldWind.createConfigurationComponent(AVKey.RETRIEVAL_SERVICE_CLASS_NAME);
         this.taskService = (TaskService) WorldWind.createConfigurationComponent(AVKey.TASK_SERVICE_CLASS_NAME);
-        this.dataFileStore = (FileStore) WorldWind.createConfigurationComponent(AVKey.DATA_FILE_STORE_CLASS_NAME);
+
         this.memoryCacheSet = (MemoryCacheSet) WorldWind.createConfigurationComponent(AVKey.MEMORY_CACHE_SET_CLASS_NAME);
         this.networkStatus = (NetworkStatus) WorldWind.createConfigurationComponent(AVKey.NETWORK_STATUS_CLASS_NAME);
         this.sessionCache = (SessionCache) WorldWind.createConfigurationComponent(AVKey.SESSION_CACHE_CLASS_NAME);
@@ -98,9 +99,7 @@ public final class WorldWind {
         return WorldWind.instance.memoryCacheSet.getCache(key);
     }
 
-    public static FileStore store() {
-        return WorldWind.instance.dataFileStore;
-    }
+
 
     public static RetrievalService retrieveRemote() {
         return WorldWind.instance.remoteRetrievalService;

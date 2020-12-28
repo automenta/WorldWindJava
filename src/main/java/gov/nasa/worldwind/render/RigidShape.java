@@ -8,8 +8,7 @@ package gov.nasa.worldwind.render;
 
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.*;
-import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.cache.*;
 import gov.nasa.worldwind.geom.Box;
 import gov.nasa.worldwind.geom.*;

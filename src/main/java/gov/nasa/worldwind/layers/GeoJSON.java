@@ -13,7 +13,6 @@ import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
 
-import java.io.IOException;
 import java.util.logging.Level;
 
 /**

@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.layers.ogc.kml.impl;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.layers.ogc.kml.KMLConstants;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.Logging;

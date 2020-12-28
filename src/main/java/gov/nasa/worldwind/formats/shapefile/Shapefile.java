@@ -1202,7 +1202,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
             buffer = this.mappedShpBuffer;
         } else {
             buffer = ByteBuffer.allocate(Shapefile.HEADER_LENGTH);
-            WWIO.readChannelToBuffer(this.shpChannel, buffer);
+            WWIO.readInputStreamToBuffer(this.shpChannel, buffer);
         }
 
         if (buffer.remaining() < Shapefile.HEADER_LENGTH) {
@@ -1294,7 +1294,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
             return null;
 
         ByteBuffer buffer = ByteBuffer.allocate(Shapefile.HEADER_LENGTH);
-        WWIO.readChannelToBuffer(this.shxChannel, buffer);
+        WWIO.readInputStreamToBuffer(this.shxChannel, buffer);
 
         // Return null if the index is empty or is smaller than the minimum required size.
         if (buffer.remaining() < Shapefile.HEADER_LENGTH)
@@ -1319,7 +1319,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
         }
 
         buffer.order(ByteOrder.BIG_ENDIAN);
-        WWIO.readChannelToBuffer(this.shxChannel, buffer);
+        WWIO.readInputStreamToBuffer(this.shxChannel, buffer);
 
         buffer.asIntBuffer().get(array);
 
@@ -1415,7 +1415,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
             // Read the header bytes.
             this.recordHeaderBuffer.clear();
             this.recordHeaderBuffer.order(ByteOrder.BIG_ENDIAN);
-            WWIO.readChannelToBuffer(this.shpChannel, this.recordHeaderBuffer);
+            WWIO.readInputStreamToBuffer(this.shpChannel, this.recordHeaderBuffer);
 
             // Read the record number and the content length.
             //int recordNumber = this.recordHeaderBuffer.getInt(0);
@@ -1430,7 +1430,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
 
             // Put the record header in the record buffer, and read the remaining record content.
             this.recordContentBuffer.put(this.recordHeaderBuffer);
-            WWIO.readChannelToBuffer(this.shpChannel, this.recordContentBuffer);
+            WWIO.readInputStreamToBuffer(this.shpChannel, this.recordContentBuffer);
             this.numBytesRead += recordLength;
 
             buffer = this.recordContentBuffer;

@@ -8,7 +8,7 @@ package gov.nasa.worldwind.layers.wms;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
-import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.layers.BasicTiledImageLayer;
 import gov.nasa.worldwind.layers.ogc.wms.WMSCapabilities;
 import gov.nasa.worldwind.util.*;
 import org.w3c.dom.*;
@@ -222,11 +222,7 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer {
     @Override
     public BufferedImage composeImageForSector(Sector sector, int canvasWidth, int canvasHeight, double aspectRatio,
         int levelNumber, String mimeType, boolean abortOnError, BufferedImage image, int timeout) throws Exception {
-        if (sector == null) {
-            String message = Logging.getMessage("nullValue.SectorIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+
 
         Level requestedLevel;
         if ((levelNumber >= 0) && (levelNumber < this.getLevels().getNumLevels()))

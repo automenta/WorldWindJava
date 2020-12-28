@@ -1,6 +1,5 @@
 package gov.nasa.worldwind.layers;
 
-import gov.nasa.worldwind.layers.*;
 import jcog.exe.Exe;
 
 public class GeoJSONLayer extends RenderableLayer {

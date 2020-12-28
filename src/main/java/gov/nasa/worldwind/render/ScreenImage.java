@@ -262,7 +262,7 @@ public class ScreenImage extends WWObjectImpl implements Renderable, Exportable 
     protected BasicWWTexture initializeTexture() {
         Object imageSource = this.getImageSource();
         if (imageSource instanceof String || imageSource instanceof URL) {
-            URL imageURL = WorldWind.store().requestFile(imageSource.toString());
+            URL imageURL = Configuration.data.requestFile(imageSource.toString());
             if (imageURL != null) {
                 this.texture = new BasicWWTexture(imageURL, true);
                 this.texture.setUseAnisotropy(false);

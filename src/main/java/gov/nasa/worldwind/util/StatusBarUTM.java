@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.util;
 
 import gov.nasa.worldwind.event.PositionEvent;
-import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.geom.coords.UTMCoord;
 
 /**

@@ -364,13 +364,19 @@ public class OGLUtil {
      */
     public static TextureData newTextureData(GLProfile glp, InputStream stream, boolean useMipMaps) throws IOException {
 
-        String fileSuffix = ImageType.Util.getFileSuffix(stream);
+        byte[] bytes = stream.readAllBytes();
+        stream.close();
+
+        String fileSuffix = ImageType.Util.getFileSuffix(bytes);
+        stream = new ByteArrayInputStream(bytes);
+
         boolean ddsFormat = fileSuffix != null && fileSuffix.equalsIgnoreCase(ImageType.T_DDS);
 
         // If the image is not in DDS format, attempt to load it using ImageIO. This works around an issue with the
         // JOGL PNG reader (WWJ-369). However, ImageIO does not support DDS, so in this case just send the image to
         // TextureIO, for better performance.
         if (!ddsFormat) {
+
             BufferedImage img = ImageIO.read(stream);
             if (img != null)
                 return AWTTextureIO.newTextureData(glp, img, useMipMaps);

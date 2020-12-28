@@ -7,9 +7,14 @@
 package gov.nasa.worldwind.util;
 
 import com.jogamp.common.nio.*;
-import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.exception.WWRuntimeException;
+import jcog.Log;
+import okhttp3.*;
+import org.eclipse.jetty.io.ByteBufferOutputStream;
+import org.junit.jupiter.api.function.ThrowingConsumer;
+import org.slf4j.Logger;
 
 import java.io.*;
 import java.net.*;
@@ -17,6 +22,7 @@ import java.nio.*;
 import java.nio.channels.*;
 import java.nio.charset.Charset;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.zip.*;
 
@@ -37,6 +43,40 @@ public class WWIO {
     protected static final String DEFAULT_CHARACTER_ENCODING = "UTF-8";
     protected static final Map<String, String> mimeTypeToSuffixMap = new HashMap<>();
     protected static final Map<String, String> suffixToMimeTypeMap = new HashMap<>();
+
+
+
+
+    public static void get(String url, ThrowingConsumer<ResponseBody> success)  {
+        get(url, success, z -> true);
+    }
+
+    private final static Logger logger = Log.log(WWIO.class);
+
+    /** fail predicate returns true to bubble up the exception */
+    public static void get(String url, ThrowingConsumer<ResponseBody> success, Predicate<Throwable> fail)  {
+
+        logger.info("load {}", url);
+        try {
+            try (Response r = Configuration.http.newCall(Configuration.requestBuilder.url(url).build()).execute()) {
+                final Response rn = r.networkResponse();
+                if (rn != null && !rn.isSuccessful())
+                    throw new IOException(rn.toString());
+
+                success.accept(r.body());
+            }
+        } catch(Throwable e) {
+            if (fail.test(e)) {
+                if (e instanceof RuntimeException)
+                    throw (RuntimeException) e;
+                else {
+                    logger.warn("load {}", e);
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+    }
 
     static {
         WWIO.mimeTypeToSuffixMap.put("application/acad", "dwg");
@@ -736,8 +776,7 @@ public class WWIO {
      */
     public static ByteBuffer readStreamToBuffer(InputStream inputStream, boolean allocateDirect) throws IOException {
 
-        ReadableByteChannel channel = Channels.newChannel(inputStream);
-        return WWIO.readChannelToBuffer(channel, allocateDirect);
+        return WWIO.readInputStreamToBuffer(inputStream, allocateDirect);
     }
 
     /**
@@ -762,30 +801,34 @@ public class WWIO {
      * returns a non-direct ByteBuffer otherwise. Direct buffers are backed by native memory, and may reside outside of
      * the normal garbage-collected heap. Non-direct buffers are backed by JVM heap memory.
      *
-     * @param channel        the channel to read.
+     * @param stream        the channel to read.
      * @param allocateDirect true to allocate and return a direct buffer, false to allocate and return a non-direct
      *                       buffer.
      * @return the bytes from the specified channel, with the current JVM byte order.
      * @throws IllegalArgumentException if the channel is null.
      * @throws IOException              if an I/O error occurs.
      */
-    public static ByteBuffer readChannelToBuffer(ReadableByteChannel channel, boolean allocateDirect)
+    public static ByteBuffer readInputStreamToBuffer(InputStream stream, boolean allocateDirect)
         throws IOException {
-        if (channel == null) {
-            String message = Logging.getMessage("nullValue.ChannelIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (channel == null) {
+//            String message = Logging.getMessage("nullValue.ChannelIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
+        ReadableByteChannel channel = Channels.newChannel(stream);
         final int PAGE_SIZE = (int) Math.round(Math.pow(2, 16));
-        ByteBuffer buffer = WWBufferUtil.newByteBuffer(PAGE_SIZE, allocateDirect);
-
+        final int initialSize = Math.max(stream.available(), PAGE_SIZE);
+        ByteBuffer buffer = WWBufferUtil.newByteBuffer(initialSize, allocateDirect);
+//
+//        stream.transferTo(new ByteBufferOutputStream(buffer));
         int count = 0;
         while (count >= 0) {
             count = channel.read(buffer);
+
             if (count > 0 && !buffer.hasRemaining()) {
-                ByteBuffer biggerBuffer = allocateDirect ? ByteBuffer.allocateDirect(buffer.limit() + PAGE_SIZE)
-                    : ByteBuffer.allocate(buffer.limit() + PAGE_SIZE);
+                int newCap = buffer.limit() + PAGE_SIZE;
+                ByteBuffer biggerBuffer = allocateDirect ? ByteBuffer.allocateDirect(newCap) : ByteBuffer.allocate(newCap);
                 biggerBuffer.put(buffer.rewind());
                 buffer = biggerBuffer;
             }
@@ -808,7 +851,7 @@ public class WWIO {
      * @throws IllegalArgumentException if the channel or the buffer is null.
      * @throws IOException              if an I/O error occurs.
      */
-    public static ByteBuffer readChannelToBuffer(ReadableByteChannel channel, ByteBuffer buffer) throws IOException {
+    public static ByteBuffer readInputStreamToBuffer(ReadableByteChannel channel, ByteBuffer buffer) throws IOException {
         if (channel == null) {
             String message = Logging.getMessage("nullValue.ChannelIsNull");
             Logging.logger().severe(message);
@@ -1918,6 +1961,6 @@ public class WWIO {
     }
 
     public static InputStream stream(String path) throws IOException {
-        return WorldWind.store().findFile(path, false).openStream();
+        return Configuration.data.findFile(path, false).openStream();
     }
 }

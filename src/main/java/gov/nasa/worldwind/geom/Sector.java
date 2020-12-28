@@ -913,7 +913,6 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
      * @throws IllegalArgumentException if <code>latlon</code> is null.
      */
     public final boolean contains(LatLon latLon) {
-
         return this.containsDegrees(latLon.latitude, latLon.longitude);
     }
 

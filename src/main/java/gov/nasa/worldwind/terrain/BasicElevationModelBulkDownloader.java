@@ -37,26 +37,26 @@ public class BasicElevationModelBulkDownloader extends BulkRetrievalThread {
 
     protected ArrayList<Tile> missingTiles;
 
-    /**
-     * Constructs a downloader to retrieve elevations not currently available in the WorldWind file cache.
-     * <p>
-     * The thread returned is not started during construction, the caller must start the thread.
-     *
-     * @param elevationModel the elevation model for which to download elevations.
-     * @param sector         the sector to download data for. This value is final.
-     * @param resolution     the target resolution, provided in radians of latitude per texel. This value is final.
-     * @param listener       an optional retrieval listener. May be null.
-     * @throws IllegalArgumentException if either the elevation model or sector are null, or the resolution is less than
-     *                                  zero.
-     */
-    public BasicElevationModelBulkDownloader(BasicElevationModel elevationModel, Sector sector, double resolution,
-        BulkRetrievalListener listener) {
-        // Arguments checked in parent constructor
-        super(elevationModel, sector, resolution, elevationModel.getDataFileStore(), listener);
-
-        this.elevationModel = elevationModel;
-        this.level = computeLevelForResolution(sector, resolution);
-    }
+//    /**
+//     * Constructs a downloader to retrieve elevations not currently available in the WorldWind file cache.
+//     * <p>
+//     * The thread returned is not started during construction, the caller must start the thread.
+//     *
+//     * @param elevationModel the elevation model for which to download elevations.
+//     * @param sector         the sector to download data for. This value is final.
+//     * @param resolution     the target resolution, provided in radians of latitude per texel. This value is final.
+//     * @param listener       an optional retrieval listener. May be null.
+//     * @throws IllegalArgumentException if either the elevation model or sector are null, or the resolution is less than
+//     *                                  zero.
+//     */
+//    public BasicElevationModelBulkDownloader(BasicElevationModel elevationModel, Sector sector, double resolution,
+//        BulkRetrievalListener listener) {
+//        // Arguments checked in parent constructor
+//        super(elevationModel, sector, resolution, elevationModel.getDataFileStore(), listener);
+//
+//        this.elevationModel = elevationModel;
+//        this.level = computeLevelForResolution(sector, resolution);
+//    }
 
     /**
      * Constructs a downloader to retrieve elevations not currently available in a specified file store.
@@ -231,7 +231,7 @@ public class BasicElevationModelBulkDownloader extends BulkRetrievalThread {
                 continue;
             }
 
-            this.elevationModel.downloadElevations(tile,
+            this.elevationModel.retrieveElevations(tile,
                 new BulkDownloadPostProcessor(tile, this.elevationModel, this.fileStore));
             i++;
         }

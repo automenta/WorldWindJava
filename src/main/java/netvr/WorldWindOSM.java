@@ -1,7 +1,7 @@
 package netvr;
 
-import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.BasicModel;
+import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.layers.earth.*;
@@ -19,10 +19,10 @@ import spacegraph.space2d.container.*;
 import spacegraph.space2d.container.grid.Gridding;
 import spacegraph.space2d.widget.Widget;
 import spacegraph.space2d.widget.button.*;
-import spacegraph.space2d.widget.meta.*;
+import spacegraph.space2d.widget.meta.Surfaces;
 import spacegraph.space2d.widget.slider.FloatSlider;
 import spacegraph.space2d.widget.textedit.TextEdit;
-import spacegraph.video.*;
+import spacegraph.video.JoglWindow;
 
 import java.awt.*;
 import java.awt.event.*;

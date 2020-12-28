@@ -24,13 +24,13 @@ import java.beans.PropertyChangeEvent;
 public abstract class AbstractLayer extends WWObjectImpl implements Layer {
     private boolean enabled = true;
     private boolean pickable = true;
-    private double opacity = 1.0d;
-    private double minActiveAltitude = -Double.MAX_VALUE;
-    private double maxActiveAltitude = Double.MAX_VALUE;
+    private double opacity = 1;
+    private double minActiveAltitude = Double.NEGATIVE_INFINITY;
+    private double maxActiveAltitude = Double.POSITIVE_INFINITY;
     private boolean networkDownloadEnabled = true;
     private long expiryTime;
     private ScreenCredit screenCredit;
-    private FileStore dataFileStore = WorldWind.store();
+    private FileStore dataFileStore = Configuration.data;
 
     /**
      * Returns true if a specified DOM document is a Layer configuration document, and false otherwise.

@@ -40,7 +40,7 @@ public class LazilyLoadedTexture extends AVListImpl implements WWTexture {
     /**
      * Identifies the {@link FileStore} of the supporting file cache for this model.
      */
-    protected final FileStore fileStore = WorldWind.store();
+    protected final FileStore fileStore = Configuration.data;
     /**
      * Provides a semaphore to synchronize access to the texture file if duplicate request tasks are active.
      */

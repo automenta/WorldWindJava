@@ -7,6 +7,7 @@ package gov.nasa.worldwind.layers.mercator;
 
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.cache.GpuResourceCache;
 import gov.nasa.worldwind.geom.Cylinder;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
@@ -47,7 +48,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
     final PriorityBlockingQueue<Runnable> requestQ = new PriorityBlockingQueue<>(
         200);
     private ArrayList<MercatorTextureTile> topLevels;
-    private boolean forceLevelZeroLoads;
+//    private boolean forceLevelZeroLoads;
     private boolean levelZeroLoaded;
     private boolean retainLevelZeroTiles;
     private String tileCountName;
@@ -63,11 +64,11 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
     private boolean atMaxResolution;
 
     public MercatorTiledImageLayer(LevelSet levelSet) {
-        if (levelSet == null) {
-            String message = Logging.getMessage("nullValue.LevelSetIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (levelSet == null) {
+//            String message = Logging.getMessage("nullValue.LevelSetIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         this.levels = new LevelSet(levelSet); // the caller's levelSet may change internally, so we copy it.
 
@@ -85,8 +86,9 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
     }
 
     private static Vec4 computeReferencePoint(DrawContext dc) {
+        final Globe g = dc.getGlobe();
         if (dc.getViewportCenterPosition() != null)
-            return dc.getGlobe().computePointFromPosition(
+            return g.computePointFromPosition(
                 dc.getViewportCenterPosition());
 
         final View view = dc.getView();
@@ -95,7 +97,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
         for (int y = (int) (0.5 * viewport.getHeight()); y >= 0; y--) {
             Position pos = view.computePositionFromScreenPoint(x, y);
             if (pos != null)
-                return dc.getGlobe().computePointFromPosition(pos.getLatitude(),
+                return g.computePointFromPosition(pos.getLatitude(),
                     pos.getLongitude(), 0);
         }
 
@@ -132,7 +134,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
 
     abstract protected void requestTexture(DrawContext dc, MercatorTextureTile tile);
 
-    abstract protected void forceTextureLoad(MercatorTextureTile tile);
+//    abstract protected void forceTextureLoad(MercatorTextureTile tile);
 
     @Override
     public void setName(String name) {
@@ -148,13 +150,13 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
         this.useTransparentTextures = useTransparentTextures;
     }
 
-    public boolean isForceLevelZeroLoads() {
-        return this.forceLevelZeroLoads;
-    }
-
-    public void setForceLevelZeroLoads(boolean forceLevelZeroLoads) {
-        this.forceLevelZeroLoads = forceLevelZeroLoads;
-    }
+//    public boolean isForceLevelZeroLoads() {
+//        return this.forceLevelZeroLoads;
+//    }
+//
+//    public void setForceLevelZeroLoads(boolean forceLevelZeroLoads) {
+//        this.forceLevelZeroLoads = forceLevelZeroLoads;
+//    }
 
     public boolean isRetainLevelZeroTiles() {
         return retainLevelZeroTiles;
@@ -255,14 +257,14 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
         }
     }
 
-    private void loadAllTopLevelTextures(DrawContext dc) {
-        for (MercatorTextureTile tile : this.topLevels) {
-            if (!tile.isTextureInMemory(dc.getTextureCache()))
-                this.forceTextureLoad(tile);
-        }
-
-        this.levelZeroLoaded = true;
-    }
+//    private void loadAllTopLevelTextures(DrawContext dc) {
+//        for (MercatorTextureTile tile : this.topLevels) {
+//            if (!tile.isTextureInMemory(dc.getTextureCache()))
+//                this.forceTextureLoad(tile);
+//        }
+//
+//        this.levelZeroLoaded = true;
+//    }
 
     private void assembleTiles(DrawContext dc) {
         this.currentTiles.clear();
@@ -339,20 +341,32 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
     private void addTile(DrawContext dc, MercatorTextureTile tile) {
         tile.setFallbackTile(null);
 
-        if (tile.isTextureInMemory(dc.getTextureCache())) {
+        final GpuResourceCache texCache = dc.getTextureCache();
+
+        if (tile.isTextureInMemory(texCache)) {
             this.addTileToCurrent(tile);
             return;
         }
 
-        // Level 0 loads may be forced
-        if (tile.getLevelNumber() == 0 && this.forceLevelZeroLoads
-            && !tile.isTextureInMemory(dc.getTextureCache())) {
-            this.forceTextureLoad(tile);
-            if (tile.isTextureInMemory(dc.getTextureCache())) {
-                this.addTileToCurrent(tile);
-                return;
-            }
-        }
+//        // Level 0 loads may be forced
+//        if (tile.getLevelNumber() == 0 && this.forceLevelZeroLoads
+//            && !tile.isTextureInMemory(texCache)) {
+//            this.forceTextureLoad(tile);
+//            if (tile.isTextureInMemory(texCache)) {
+//                this.addTileToCurrent(tile);
+//                return;
+//            }
+//        }
+
+//        // Level 0 loads may be forced
+//        if (tile.getLevelNumber() == 0 && this.forceLevelZeroLoads
+//            && !tile.isTextureInMemory(texCache)) {
+//            this.forceTextureLoad(tile);
+//            if (tile.isTextureInMemory(texCache)) {
+//                this.addTileToCurrent(tile);
+//                return;
+//            }
+//        }
 
         // Tile's texture isn't available, so request it
         if (tile.getLevelNumber() < this.levels.getNumLevels()) {
@@ -363,16 +377,13 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
 
         // Set up to use the currentResource tile's texture
         if (this.currentResourceTile != null) {
-            if (this.currentResourceTile.getLevelNumber() == 0
-                && this.forceLevelZeroLoads
-                && !this.currentResourceTile.isTextureInMemory(dc
-                .getTextureCache())
-                && !this.currentResourceTile.isTextureInMemory(dc
-                .getTextureCache()))
-                this.forceTextureLoad(this.currentResourceTile);
+//            if (this.currentResourceTile.getLevelNumber() == 0
+//                && this.forceLevelZeroLoads
+//                //&& !this.currentResourceTile.isTextureInMemory(texCache)
+//                && !this.currentResourceTile.isTextureInMemory(texCache))
+//                this.forceTextureLoad(this.currentResourceTile);
 
-            if (this.currentResourceTile
-                .isTextureInMemory(dc.getTextureCache())) {
+            if (this.currentResourceTile.isTextureInMemory(texCache)) {
                 tile.setFallbackTile(currentResourceTile);
                 this.addTileToCurrent(tile);
             }
@@ -449,8 +460,8 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
 
     @Override
     protected final void doRender(DrawContext dc) {
-        if (this.forceLevelZeroLoads && !this.levelZeroLoaded)
-            this.loadAllTopLevelTextures(dc);
+//        if (this.forceLevelZeroLoads && !this.levelZeroLoaded)
+//            this.loadAllTopLevelTextures(dc);
 
         final SectorGeometryList surfaceGeometry = dc.getSurfaceGeometry();
         if (surfaceGeometry == null || surfaceGeometry.size() < 1)

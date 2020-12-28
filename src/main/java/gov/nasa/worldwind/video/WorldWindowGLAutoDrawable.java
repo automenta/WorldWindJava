@@ -78,7 +78,7 @@ public class WorldWindowGLAutoDrawable extends WWObjectImpl implements WorldWind
             AVKey.SCENE_CONTROLLER_CLASS_NAME);
 
         // Set up to initiate a repaint whenever a file is retrieved and added to the local file store.
-        WorldWind.store().addPropertyChangeListener(this);
+        Configuration.data.addPropertyChangeListener(this);
         SceneController sc = this.sceneControl();
         if (sc != null)
             sc.addPropertyChangeListener(this);

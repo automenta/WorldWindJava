@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.formats.shapefile;
 
-import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.util.VecBuffer;
 
 import javax.xml.stream.*;

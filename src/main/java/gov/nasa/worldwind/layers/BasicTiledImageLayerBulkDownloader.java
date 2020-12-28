@@ -36,25 +36,25 @@ public class BasicTiledImageLayerBulkDownloader extends BulkRetrievalThread {
     protected final int level;
     protected ArrayList<TextureTile> missingTiles;
 
-    /**
-     * Constructs a downloader to retrieve imagery not currently available in the WorldWind file cache.
-     * <p>
-     * The thread returned is not started during construction, the caller must start the thread.
-     *
-     * @param layer      the layer for which to download imagery.
-     * @param sector     the sector to download data for. This value is final.
-     * @param resolution the target resolution, provided in radians of latitude per texel. This value is final.
-     * @param listener   an optional retrieval listener. May be null.
-     * @throws IllegalArgumentException if either the layer or sector are null, or the resolution is less than zero.
-     */
-    public BasicTiledImageLayerBulkDownloader(BasicTiledImageLayer layer, Sector sector, double resolution,
-        BulkRetrievalListener listener) {
-        // Arguments checked in parent constructor
-        super(layer, sector, resolution, layer.getDataFileStore(), listener);
-
-        this.layer = layer;
-        this.level = this.layer.computeLevelForResolution(sector, resolution);
-    }
+//    /**
+//     * Constructs a downloader to retrieve imagery not currently available in the WorldWind file cache.
+//     * <p>
+//     * The thread returned is not started during construction, the caller must start the thread.
+//     *
+//     * @param layer      the layer for which to download imagery.
+//     * @param sector     the sector to download data for. This value is final.
+//     * @param resolution the target resolution, provided in radians of latitude per texel. This value is final.
+//     * @param listener   an optional retrieval listener. May be null.
+//     * @throws IllegalArgumentException if either the layer or sector are null, or the resolution is less than zero.
+//     */
+//    public BasicTiledImageLayerBulkDownloader(BasicTiledImageLayer layer, Sector sector, double resolution,
+//        BulkRetrievalListener listener) {
+//        // Arguments checked in parent constructor
+//        super(layer, sector, resolution, layer.getDataFileStore(), listener);
+//
+//        this.layer = layer;
+//        this.level = this.layer.computeLevelForResolution(sector, resolution);
+//    }
 
     /**
      * Constructs a downloader to retrieve imagery not currently available in a specified file store.

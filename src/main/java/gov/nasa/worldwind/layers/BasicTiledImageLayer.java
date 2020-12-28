@@ -75,11 +75,11 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
         if (d != null)
             this.setDetailHint(d);
 
-        Boolean b = (Boolean) params.get(AVKey.FORCE_LEVEL_ZERO_LOADS);
-        if (b != null)
-            this.setForceLevelZeroLoads(b);
+//        Boolean b = (Boolean) params.get(AVKey.FORCE_LEVEL_ZERO_LOADS);
+//        if (b != null)
+//            this.setForceLevelZeroLoads(b);
 
-        b = (Boolean) params.get(AVKey.RETAIN_LEVEL_ZERO_TILES);
+        Boolean b = (Boolean) params.get(AVKey.RETAIN_LEVEL_ZERO_TILES);
         if (b != null)
             this.setRetainLevelZeroTiles(b);
 
@@ -322,14 +322,14 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
         TextureTile.getMemoryCache().add(tile.tileKey, tile);
     }
 
-    protected void forceTextureLoad(TextureTile tile) {
-        final URL textureURL = this.getDataFileStore().findFile(tile.getPath(), true);
-
-        if (textureURL != null && !BasicTiledImageLayer.isTextureFileExpired(tile, textureURL,
-            this.getDataFileStore())) {
-            this.loadTexture(tile, textureURL);
-        }
-    }
+//    protected void forceTextureLoad(TextureTile tile) {
+//        final URL textureURL = this.getDataFileStore().findFile(tile.getPath(), true);
+//
+//        if (textureURL != null && !BasicTiledImageLayer.isTextureFileExpired(tile, textureURL,
+//            this.getDataFileStore())) {
+//            this.loadTexture(tile, textureURL);
+//        }
+//    }
 
     protected void requestTexture(DrawContext dc, TextureTile tile) {
         Vec4 centroid = tile.getCentroidPoint(dc.getGlobe());
@@ -337,11 +337,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
         if (referencePoint != null)
             tile.setPriorityDistance(centroid.distanceTo3(referencePoint));
 
-        requestQ.add(this.createRequestTask(tile));
-    }
-
-    protected RequestTask createRequestTask(TextureTile tile) {
-        return new RequestTask(tile, this);
+        requestQ.add(new RequestTask(tile, this));
     }
 
     // *** Bulk download ***
@@ -365,60 +361,60 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
         return true;
     }
 
-    /**
-     * Start a new {@link BulkRetrievalThread} that downloads all imagery for a given sector and resolution to the
-     * current WorldWind file cache, without downloading imagery that is already in the cache.
-     * <p>
-     * This method creates and starts a thread to perform the download. A reference to the thread is returned. To create
-     * a downloader that has not been started, construct a {@link BasicTiledImageLayerBulkDownloader}.
-     * <p>
-     * Note that the target resolution must be provided in radians of latitude per texel, which is the resolution in
-     * meters divided by the globe radius.
-     *
-     * @param sector     the sector to download imagery for.
-     * @param resolution the target resolution, provided in radians of latitude per texel.
-     * @param listener   an optional retrieval listener. May be null.
-     * @return the {@link BulkRetrievalThread} executing the retrieval or <code>null</code> if the specified sector does
-     * not intersect the layer bounding sector.
-     * @throws IllegalArgumentException if the sector is null or the resolution is less than zero.
-     * @see BasicTiledImageLayerBulkDownloader
-     */
-    public BulkRetrievalThread makeLocal(Sector sector, double resolution, BulkRetrievalListener listener) {
-        return makeLocal(sector, resolution, null, listener);
-    }
+//    /**
+//     * Start a new {@link BulkRetrievalThread} that downloads all imagery for a given sector and resolution to the
+//     * current WorldWind file cache, without downloading imagery that is already in the cache.
+//     * <p>
+//     * This method creates and starts a thread to perform the download. A reference to the thread is returned. To create
+//     * a downloader that has not been started, construct a {@link BasicTiledImageLayerBulkDownloader}.
+//     * <p>
+//     * Note that the target resolution must be provided in radians of latitude per texel, which is the resolution in
+//     * meters divided by the globe radius.
+//     *
+//     * @param sector     the sector to download imagery for.
+//     * @param resolution the target resolution, provided in radians of latitude per texel.
+//     * @param listener   an optional retrieval listener. May be null.
+//     * @return the {@link BulkRetrievalThread} executing the retrieval or <code>null</code> if the specified sector does
+//     * not intersect the layer bounding sector.
+//     * @throws IllegalArgumentException if the sector is null or the resolution is less than zero.
+//     * @see BasicTiledImageLayerBulkDownloader
+//     */
+//    public BulkRetrievalThread makeLocal(Sector sector, double resolution, BulkRetrievalListener listener) {
+//        return makeLocal(sector, resolution, null, listener);
+//    }
 
-    /**
-     * Start a new {@link BulkRetrievalThread} that downloads all imagery for a given sector and resolution to a
-     * specified {@link FileStore}, without downloading imagery that is already in the file store.
-     * <p>
-     * This method creates and starts a thread to perform the download. A reference to the thread is returned. To create
-     * a downloader that has not been started, construct a {@link BasicTiledImageLayerBulkDownloader}.
-     * <p>
-     * Note that the target resolution must be provided in radians of latitude per texel, which is the resolution in
-     * meters divided by the globe radius.
-     *
-     * @param sector     the sector to download data for.
-     * @param resolution the target resolution, provided in radians of latitude per texel.
-     * @param fileStore  the file store in which to place the downloaded imagery. If null the current WorldWind file
-     *                   cache is used.
-     * @param listener   an optional retrieval listener. May be null.
-     * @return the {@link BulkRetrievalThread} executing the retrieval or <code>null</code> if the specified sector does
-     * not intersect the layer bounding sector.
-     * @throws IllegalArgumentException if the sector is null or the resolution is less than zero.
-     * @see BasicTiledImageLayerBulkDownloader
-     */
-    public BulkRetrievalThread makeLocal(Sector sector, double resolution, FileStore fileStore,
-        BulkRetrievalListener listener) {
-        Sector targetSector = sector != null ? getLevels().getSector().intersection(sector) : null;
-        if (targetSector == null)
-            return null;
-
-        BasicTiledImageLayerBulkDownloader thread = new BasicTiledImageLayerBulkDownloader(this, targetSector,
-            resolution, fileStore != null ? fileStore : this.getDataFileStore(), listener);
-        thread.setDaemon(true);
-        thread.start();
-        return thread;
-    }
+//    /**
+//     * Start a new {@link BulkRetrievalThread} that downloads all imagery for a given sector and resolution to a
+//     * specified {@link FileStore}, without downloading imagery that is already in the file store.
+//     * <p>
+//     * This method creates and starts a thread to perform the download. A reference to the thread is returned. To create
+//     * a downloader that has not been started, construct a {@link BasicTiledImageLayerBulkDownloader}.
+//     * <p>
+//     * Note that the target resolution must be provided in radians of latitude per texel, which is the resolution in
+//     * meters divided by the globe radius.
+//     *
+//     * @param sector     the sector to download data for.
+//     * @param resolution the target resolution, provided in radians of latitude per texel.
+//     * @param fileStore  the file store in which to place the downloaded imagery. If null the current WorldWind file
+//     *                   cache is used.
+//     * @param listener   an optional retrieval listener. May be null.
+//     * @return the {@link BulkRetrievalThread} executing the retrieval or <code>null</code> if the specified sector does
+//     * not intersect the layer bounding sector.
+//     * @throws IllegalArgumentException if the sector is null or the resolution is less than zero.
+//     * @see BasicTiledImageLayerBulkDownloader
+//     */
+//    public BulkRetrievalThread makeLocal(Sector sector, double resolution, FileStore fileStore,
+//        BulkRetrievalListener listener) {
+//        Sector targetSector = sector != null ? getLevels().getSector().intersection(sector) : null;
+//        if (targetSector == null)
+//            return null;
+//
+//        BasicTiledImageLayerBulkDownloader thread = new BasicTiledImageLayerBulkDownloader(this, targetSector,
+//            resolution, fileStore != null ? fileStore : this.getDataFileStore(), listener);
+//        thread.setDaemon(true);
+//        thread.start();
+//        return thread;
+//    }
 
     /**
      * Get the estimated size in bytes of the imagery not in the WorldWind file cache for the given sector and

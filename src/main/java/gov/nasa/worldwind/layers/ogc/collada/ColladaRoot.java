@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.layers.ogc.collada;
 
-import gov.nasa.worldwind.WorldWind;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.animation.Animatable;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.Box;
@@ -600,14 +600,14 @@ public class ColladaRoot extends ColladaAbstractObject
 
         try {
             // See if it's in the cache. If not, requestFile will start another thread to retrieve it and return null.
-            URL url = WorldWind.store().requestFile(linkBase);
+            URL url = Configuration.data.requestFile(linkBase);
             if (url == null) {
                 return null;
             }
 
             // It's in the cache. If it's a COLLADA file try to parse it so we can search for the specified reference.
             // If it's not COLLADA, just return the url for the cached file.
-            String contentType = WorldWind.store().getContentType(linkBase);
+            String contentType = Configuration.data.getContentType(linkBase);
             if (contentType == null) {
                 String suffix = WWIO.getSuffix(linkBase.split(";")[0]); // strip of trailing garbage
                 if (!WWUtil.isEmpty(suffix)) {

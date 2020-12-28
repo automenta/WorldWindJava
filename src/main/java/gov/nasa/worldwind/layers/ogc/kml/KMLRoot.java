@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.layers.ogc.kml;
 
-import gov.nasa.worldwind.WorldWind;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.Message;
 import gov.nasa.worldwind.exception.*;
@@ -415,7 +415,7 @@ public class KMLRoot extends KMLAbstractObject implements KMLRenderable, XMLRoot
      */
     public static void evictIfExpired(String link, long expirationTime) {
         try {
-            URL url = WorldWind.store().requestFile(link, false);
+            URL url = Configuration.data.requestFile(link, false);
             if (url != null) {
                 // Check the file's modification time against the link update time. If the file was last modified
                 // earlier than the link update time then we need to remove the cached file from the file store,
@@ -423,7 +423,7 @@ public class KMLRoot extends KMLAbstractObject implements KMLRenderable, XMLRoot
                 File file = new File(url.toURI());
 
                 if (file.lastModified() < expirationTime)
-                    WorldWind.store().removeFile(link);
+                    Configuration.data.removeFile(link);
             }
         }
         catch (URISyntaxException e) {
@@ -777,13 +777,13 @@ public class KMLRoot extends KMLAbstractObject implements KMLRenderable, XMLRoot
 
         try {
             // See if it's in the cache. If not, requestFile will start another thread to retrieve it and return null.
-            URL url = WorldWind.store().requestFile(linkBase, cacheRemoteFile);
+            URL url = Configuration.data.requestFile(linkBase, cacheRemoteFile);
             if (url == null)
                 return null;
 
             // It's in the cache. If it's a KML/Z, try to parse it so we can search for the specified reference. If it's
             // not KML/Z, just return the url for the cached file.
-            String contentType = WorldWind.store().getContentType(linkBase);
+            String contentType = Configuration.data.getContentType(linkBase);
             if (contentType == null) {
                 String suffix = WWIO.getSuffix(linkBase.split(";")[0]); // strip of trailing garbage
                 if (!WWUtil.isEmpty(suffix))
@@ -880,14 +880,14 @@ public class KMLRoot extends KMLAbstractObject implements KMLRenderable, XMLRoot
 
             // If we didn't find a local file, treat it as a remote reference.
             if (o == null) {
-                url = WorldWind.store().requestFile(path, cacheRemoteFile);
+                url = Configuration.data.requestFile(path, cacheRemoteFile);
                 if (url != null) {
                     // Check the file's modification time against the link update time. If the file was last modified
                     // earlier than the link update time then we need to remove the cached file from the file store,
                     // and start a new file retrieval.
                     File file = new File(url.toURI());
                     if (file.lastModified() < updateTime) {
-                        WorldWind.store().removeFile(link);
+                        Configuration.data.removeFile(link);
                     }
                 }
 
@@ -923,7 +923,7 @@ public class KMLRoot extends KMLAbstractObject implements KMLRenderable, XMLRoot
             if (path == null)
                 path = link;
 
-            return WorldWind.store().getExpirationTime(path);
+            return Configuration.data.getExpirationTime(path);
         }
         catch (IOException e) {
             String message = Logging.getMessage("generic.UnableToResolveReference", link);

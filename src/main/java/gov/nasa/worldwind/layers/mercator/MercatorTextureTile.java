@@ -5,16 +5,14 @@
  */
 package gov.nasa.worldwind.layers.mercator;
 
-import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.geom.Angle;
-import gov.nasa.worldwind.util.TextureTile;
 import gov.nasa.worldwind.util.*;
 
 /**
  * @version $Id: MercatorTextureTile.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 public class MercatorTextureTile extends TextureTile {
-    private final MercatorSector mercatorSector;
+    public final MercatorSector mercatorSector;
 
     public MercatorTextureTile(MercatorSector mercatorSector, Level level,
         int row, int col) {
@@ -24,13 +22,13 @@ public class MercatorTextureTile extends TextureTile {
 
     @Override
     public MercatorTextureTile[] createSubTiles(Level nextLevel) {
-        if (nextLevel == null) {
-            String msg = Logging.getMessage("nullValue.LevelIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-        double d0 = this.getMercatorSector().getMinLatPercent();
-        double d2 = this.getMercatorSector().getMaxLatPercent();
+//        if (nextLevel == null) {
+//            String msg = Logging.getMessage("nullValue.LevelIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
+        double d0 = mercatorSector.getMinLatPercent();
+        double d2 = mercatorSector.getMaxLatPercent();
         double d1 = d0 + (d2 - d0) / 2.0;
 
         Angle t0 = sector.lonMin();
@@ -84,11 +82,6 @@ public class MercatorTextureTile extends TextureTile {
     }
 
     protected MercatorTextureTile getTileFromMemoryCache(TileKey tileKey) {
-        return (MercatorTextureTile) WorldWind.cache(
-            MercatorTextureTile.class.getName()).getObject(tileKey);
-    }
-
-    public MercatorSector getMercatorSector() {
-        return mercatorSector;
+        return (MercatorTextureTile) TextureTile.cache.getObject(tileKey);
     }
 }
