@@ -515,12 +515,12 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
 
     public boolean isLayerInView(DrawContext dc) {
 
-        if (dc.getView() == null) {
-            String message = Logging
-                .getMessage("layers.AbstractLayer.NoViewSpecifiedInDrawingContext");
-            Logging.logger().severe(message);
-            throw new IllegalStateException(message);
-        }
+//        if (dc.getView() == null) {
+//            String message = Logging
+//                .getMessage("layers.AbstractLayer.NoViewSpecifiedInDrawingContext");
+//            Logging.logger().severe(message);
+//            throw new IllegalStateException(message);
+//        }
 
         return !(dc.getVisibleSector() != null && !this.levels.getSector()
             .intersects(dc.getVisibleSector()));
