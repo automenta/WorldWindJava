@@ -59,7 +59,11 @@ public class WWIO {
 
         logger.info("load {}", url);
         try {
-            try (Response r = Configuration.http.newCall(Configuration.requestBuilder.url(url).build()).execute()) {
+            Request.Builder requestBuilder = new Request.Builder()
+                .cacheControl(Configuration.cacheControl)
+                .header("User-Agent", Configuration.userAgent);
+
+            try (Response r = Configuration.http.newCall(requestBuilder.url(url).build()).execute()) {
                 final Response rn = r.networkResponse();
                 if (rn != null && !rn.isSuccessful())
                     throw new IOException(rn.toString());

@@ -91,7 +91,7 @@ public class Configuration // Singleton
 
     public static final String userAgent = "Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0";
 
-    public static final Request.Builder requestBuilder;
+
 
     /**
      * Private constructor invoked only internally.
@@ -141,9 +141,6 @@ public class Configuration // Singleton
         cacheControl = new CacheControl.Builder()
             .maxStale(CACHE_STALE_DAYS, TimeUnit.DAYS)
             .build();
-        requestBuilder = new Request.Builder()
-            .cacheControl(Configuration.cacheControl)
-            .header("User-Agent", Configuration.userAgent);
         globe = new Earth();
     }
 
