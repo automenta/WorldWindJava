@@ -656,7 +656,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
     // ============== Rendering ======================= //
 
     protected void addTile(DrawContext dc, TextureTile tile) {
-        tile.setFallbackTile(null);
+        //tile.setFallbackTile(null);
 
         final GpuResourceCache textureCache = dc.getTextureCache();
         if (tile.isTextureInMemory(textureCache)) {

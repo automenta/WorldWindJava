@@ -29,9 +29,9 @@ import java.awt.event.*;
 import java.util.*;
 
 public class WorldWindOSM {
-    static {
-        System.setProperty("java.awt.headless", "true");
-    }
+//    static {
+//        System.setProperty("java.awt.headless", "true");
+//    }
 
 
 
@@ -46,7 +46,7 @@ public class WorldWindOSM {
     private static void mainNEWT() {
         JoglWindow j = new JoglWindow(1024, 800);
 
-        final OSMModel world = new OSMModel();
+        final NetVRModel world = new NetVRModel();
 
         final WorldWindowNEWT w =
             //new WorldWindowNEWT(world, 1024, 800);
@@ -118,7 +118,7 @@ public class WorldWindOSM {
         });
     }
 
-    private static void focus(OSMModel world, WorldWindowNEWT w, double lon, double lat, float rad) {
+    private static void focus(NetVRModel world, WorldWindowNEWT w, double lon, double lat, float rad) {
         Exe.runLater(() -> {
             world.osm.focus(
                 LatLon.fromDegrees(lat, lon), rad
@@ -138,14 +138,14 @@ public class WorldWindOSM {
         return x.toString();
     }
 
-    static class OSMModel extends BasicModel {
+    static class NetVRModel extends BasicModel {
 
-        public final RenderableLayer renderables = new RenderableLayer();
-        public final AnnotationLayer notes;
-        public final MarkerLayer markers;
+//        public final RenderableLayer renderables = new RenderableLayer();
+//        public final AnnotationLayer notes;
+//        public final MarkerLayer markers;
         private final AdaptiveOSMLayer osm;
 
-        public OSMModel() {
+        public NetVRModel() {
             super(new LayerList());
             LayerList l = getLayers();
             l.add(new StarsLayer());
@@ -153,17 +153,18 @@ public class WorldWindOSM {
 
             l.add(new OSMMapnikLayer());
             l.add(new BMNGWMSLayer().setEnabled(false));
+            l.add(new LandsatI3WMSLayer().setEnabled(false));
 
             osm = new AdaptiveOSMLayer();
             l.add(osm);
 
-            markers = new MarkerLayer();
-            l.add(markers);
-
-            notes = new AnnotationLayer();
-            l.add(notes);
-
-            l.add(renderables);
+//            markers = new MarkerLayer();
+//            l.add(markers);
+//
+//            notes = new AnnotationLayer();
+//            l.add(notes);
+//
+//            l.add(renderables);
 
             String earthquakeFeedUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson";
 

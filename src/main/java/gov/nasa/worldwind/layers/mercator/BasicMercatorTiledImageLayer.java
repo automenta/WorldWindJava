@@ -259,12 +259,12 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
              * @throws IllegalArgumentException if <code>that</code> is null
              */
         public int compareTo(RequestTask that) {
-            if (this==that || tile.equals(that.tile))
+            if (this==that/* || tile.equals(that.tile)*/)
                 return 0;
             int c = Double.compare(this.tile.getPriority(), that.tile.getPriority());
             if (c != 0)
                 return c;
-            return Integer.compare(System.identityHashCode(tile), System.identityHashCode(that.tile));
+            return tile.compareTo(that.tile); //Integer.compare(System.identityHashCode(tile), System.identityHashCode(that.tile));
         }
 
         public boolean equals(Object o) {

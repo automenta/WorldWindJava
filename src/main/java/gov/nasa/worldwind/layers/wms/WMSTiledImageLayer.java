@@ -71,11 +71,6 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer {
      * @throws IllegalArgumentException if the DOM element is null.
      */
     protected static AVList wmsGetParamsFromDocument(Element domElement, AVList params) {
-        if (domElement == null) {
-            String message = Logging.getMessage("nullValue.DocumentIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         if (params == null)
             params = new AVListImpl();
@@ -99,11 +94,6 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer {
      * @throws IllegalArgumentException if the capabilities document reference is null.
      */
     public static AVList wmsGetParamsFromCapsDoc(WMSCapabilities caps, AVList params) {
-        if (caps == null) {
-            String message = Logging.getMessage("nullValue.WMSCapabilities");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         if (params == null)
             params = new AVListImpl();
@@ -140,11 +130,6 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer {
      * @throws IllegalArgumentException if the state reference is null.
      */
     public static AVList wmsRestorableStateToParams(String stateInXml) {
-        if (stateInXml == null) {
-            String message = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         RestorableSupport rs;
         try {
@@ -223,7 +208,6 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer {
     public BufferedImage composeImageForSector(Sector sector, int canvasWidth, int canvasHeight, double aspectRatio,
         int levelNumber, String mimeType, boolean abortOnError, BufferedImage image, int timeout) throws Exception {
 
-
         Level requestedLevel;
         if ((levelNumber >= 0) && (levelNumber < this.getLevels().getNumLevels()))
             requestedLevel = this.getLevels().getLevel(levelNumber);
@@ -236,13 +220,13 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer {
                 image = new BufferedImage(canvasWidth, canvasHeight, BufferedImage.TYPE_INT_RGB);
 
             downloadImage(tile, mimeType, timeout);
-            Thread.sleep(1); // generates InterruptedException if thread has been interupted
+//            Thread.sleep(1); // generates InterruptedException if thread has been interupted
 
             BufferedImage tileImage = ImageIO.read(tile.getFile());
-            Thread.sleep(1); // generates InterruptedException if thread has been interupted
+//            Thread.sleep(1); // generates InterruptedException if thread has been interupted
 
             ImageUtil.mergeImage(sector, tile.sector, aspectRatio, tileImage, image);
-            Thread.sleep(1); // generates InterruptedException if thread has been interupted
+//            Thread.sleep(1); // generates InterruptedException if thread has been interupted
 
             this.firePropertyChange(AVKey.PROGRESS, 0.0d, 1.0d);
         }
@@ -314,8 +298,7 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer {
             if (version == null || WWUtil.compareVersion(version, "1.3.0") >= 0) {
                 this.wmsVersion = URLBuilder.MAX_VERSION;
                 coordSystemKey = "&crs=";
-                defaultCS
-                    = "CRS:84"; // would like to do EPSG:4326 but that's incompatible with our old WMS server, see WWJ-474
+                defaultCS = "CRS:84"; // would like to do EPSG:4326 but that's incompatible with our old WMS server, see WWJ-474
             } else {
                 this.wmsVersion = version;
                 coordSystemKey = "&srs=";
@@ -368,13 +351,13 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer {
                 sb.append(s.latMax().degrees);
             } else {
                 // 1.3.0 uses lat/lon ordering
-                sb.append(s.latMin().degrees);
+                sb.append(s.latMin);
                 sb.append(',');
-                sb.append(s.lonMin().degrees);
+                sb.append(s.lonMin);
                 sb.append(',');
-                sb.append(s.latMax().degrees);
+                sb.append(s.latMax);
                 sb.append(',');
-                sb.append(s.lonMax().degrees);
+                sb.append(s.lonMax);
             }
 
             return new URL(sb.toString().replace(" ", "%20"));
