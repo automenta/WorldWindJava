@@ -12,6 +12,7 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import jcog.Log;
 import okhttp3.*;
+import org.apache.commons.io.IOUtils;
 import org.eclipse.jetty.io.ByteBufferOutputStream;
 import org.junit.jupiter.api.function.ThrowingConsumer;
 import org.slf4j.Logger;
@@ -791,8 +792,9 @@ public class WWIO {
      */
     public static String readStreamToString(InputStream stream, String encoding) throws IOException {
 
-        return WWIO.readCharacterStreamToString(
-            new InputStreamReader(stream, encoding != null ? encoding : WWIO.DEFAULT_CHARACTER_ENCODING));
+        return IOUtils.toString(stream, encoding);
+//        return WWIO.readCharacterStreamToString(
+//            new InputStreamReader(stream, encoding != null ? encoding : WWIO.DEFAULT_CHARACTER_ENCODING));
     }
 
     /**
