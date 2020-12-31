@@ -61,8 +61,4 @@ public class OrbitViewCenterAnimator extends MoveToPositionAnimator {
         this.propertyAccessor.setPosition(newValue);
         this.orbitView.setViewOutOfFocus(true);
     }
-
-    public void stop() {
-        super.stop();
-    }
 }

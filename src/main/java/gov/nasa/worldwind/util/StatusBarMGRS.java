@@ -14,9 +14,6 @@ import gov.nasa.worldwind.geom.coords.MGRSCoord;
  * @version $Id: StatusBarMGRS.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 public class StatusBarMGRS extends StatusBar {
-    public void moved(PositionEvent event) {
-        this.handleCursorPositionChange(event);
-    }
 
     protected void handleCursorPositionChange(PositionEvent event) {
         Position newPos = event.getPosition();

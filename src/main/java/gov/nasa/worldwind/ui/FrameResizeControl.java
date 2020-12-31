@@ -36,22 +36,6 @@ public class FrameResizeControl extends AbstractResizeHotSpot {
      * {@inheritDoc}
      */
     @Override
-    protected void beginDrag(Point point) {
-        super.beginDrag(point);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void endDrag() {
-        super.endDrag();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     protected Dimension getSize() {
         return this.frame.getCurrentSize();
     }

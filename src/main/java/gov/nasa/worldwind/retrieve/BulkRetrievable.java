@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.retrieve;
 
 import gov.nasa.worldwind.cache.FileStore;
-import gov.nasa.worldwind.event.BulkRetrievalListener;
 import gov.nasa.worldwind.geom.Sector;
 
 /**

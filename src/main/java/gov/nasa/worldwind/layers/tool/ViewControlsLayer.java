@@ -212,28 +212,6 @@ public class ViewControlsLayer extends RenderableLayer {
     }
 
     /**
-     * Returns the layer's opacity value, which is ignored by this layer. Opacity is controlled by the alpha values of
-     * the operation images.
-     *
-     * @return The layer opacity, a value between 0 and 1.
-     */
-    @Override
-    public double getOpacity() {
-        return super.getOpacity();
-    }
-
-    /**
-     * Layer opacity is not applied to layers of this type. Opacity is controlled by the alpha values of the operation
-     * images.
-     *
-     * @param opacity the current opacity value, which is ignored by this layer.
-     */
-    @Override
-    public void setOpacity(double opacity) {
-        super.setOpacity(opacity);
-    }
-
-    /**
      * Returns the current layer image location.
      *
      * @return the current location center. May be null.

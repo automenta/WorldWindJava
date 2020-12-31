@@ -210,49 +210,6 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer {
     }
 
     /**
-     * Returns the line color of the specified graticule.
-     *
-     * @param graticuleType one of GRATICULE_UTM, GRATICULE_UTM_GRID, GRATICULE_100000M, GRATICULE_10000M,
-     *                      GRATICULE_1000M, GRATICULE_100M, GRATICULE_10M, or GRATICULE_1M.
-     * @return Color of the the graticule line.
-     * @throws IllegalArgumentException if <code>graticuleType</code> is null, or if <code>graticuleType</code> is not a
-     *                                  valid type.
-     */
-    public Color getGraticuleLineColor(String graticuleType) {
-        if (graticuleType == null) {
-            String message = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        return getRenderingParams(graticuleType).getLineColor();
-    }
-
-    /**
-     * Sets the line rendering color for the specified graticule.
-     *
-     * @param color         the line color for the specified graticule.
-     * @param graticuleType one of GRATICULE_UTM, GRATICULE_UTM_GRID, GRATICULE_100000M, GRATICULE_10000M,
-     *                      GRATICULE_1000M, GRATICULE_100M, GRATICULE_10M, or GRATICULE_1M.
-     * @throws IllegalArgumentException if<code>color</code> is null, if <code>graticuleType</code> is null, or if
-     *                                  <code>graticuleType</code> is not a valid type.
-     */
-    public void setGraticuleLineColor(Color color, String graticuleType) {
-        if (color == null) {
-            String message = Logging.getMessage("nullValue.ColorIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (graticuleType == null) {
-            String message = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        getRenderingParams(graticuleType).setLineColor(color);
-    }
-
-    /**
      * Sets the line rendering color for the specified graticules.
      *
      * @param color         the line color for the specified graticules.
@@ -298,44 +255,6 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer {
     }
 
     /**
-     * Returns the line width of the specified graticule.
-     *
-     * @param graticuleType one of GRATICULE_UTM, GRATICULE_UTM_GRID, GRATICULE_100000M, GRATICULE_10000M,
-     *                      GRATICULE_1000M, GRATICULE_100M, GRATICULE_10M, or GRATICULE_1M.
-     * @return width of the graticule line.
-     * @throws IllegalArgumentException if <code>graticuleType</code> is null, or if <code>graticuleType</code> is not a
-     *                                  valid type.
-     */
-    public double getGraticuleLineWidth(String graticuleType) {
-        if (graticuleType == null) {
-            String message = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        return getRenderingParams(graticuleType).getLineWidth();
-    }
-
-    /**
-     * Sets the line rendering width for the specified graticule.
-     *
-     * @param lineWidth     the line rendering width for the specified graticule.
-     * @param graticuleType one of GRATICULE_UTM, GRATICULE_UTM_GRID, GRATICULE_100000M, GRATICULE_10000M,
-     *                      GRATICULE_1000M, GRATICULE_100M, GRATICULE_10M, or GRATICULE_1M.
-     * @throws IllegalArgumentException if <code>graticuleType</code> is null, or if <code>graticuleType</code> is not a
-     *                                  valid type.
-     */
-    public void setGraticuleLineWidth(double lineWidth, String graticuleType) {
-        if (graticuleType == null) {
-            String message = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        getRenderingParams(graticuleType).setLineWidth(lineWidth);
-    }
-
-    /**
      * Sets the line rendering width for the specified graticules.
      *
      * @param lineWidth     the line rendering width for the specified graticules.
@@ -366,50 +285,6 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer {
         for (String type : graticuleType) {
             setGraticuleLineWidth(lineWidth, type);
         }
-    }
-
-    /**
-     * Returns the line rendering style of the specified graticule.
-     *
-     * @param graticuleType one of GRATICULE_UTM, GRATICULE_UTM_GRID, GRATICULE_100000M, GRATICULE_10000M,
-     *                      GRATICULE_1000M, GRATICULE_100M, GRATICULE_10M, or GRATICULE_1M.
-     * @return line rendering style of the graticule.
-     * @throws IllegalArgumentException if <code>graticuleType</code> is null, or if <code>graticuleType</code> is not a
-     *                                  valid type.
-     */
-    public String getGraticuleLineStyle(String graticuleType) {
-        if (graticuleType == null) {
-            String message = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        return getRenderingParams(graticuleType).getLineStyle();
-    }
-
-    /**
-     * Sets the line rendering style for the specified graticule.
-     *
-     * @param lineStyle     the line rendering style for the specified graticule. One of LINE_STYLE_PLAIN,
-     *                      LINE_STYLE_DASHED, or LINE_STYLE_DOTTED.
-     * @param graticuleType one of GRATICULE_UTM, GRATICULE_UTM_GRID, GRATICULE_100000M, GRATICULE_10000M,
-     *                      GRATICULE_1000M, GRATICULE_100M, GRATICULE_10M, or GRATICULE_1M
-     * @throws IllegalArgumentException if <code>lineStyle</code> is null, if <code>graticuleType</code> is null, or if
-     *                                  <code>graticuleType</code> is not a valid type.
-     */
-    public void setGraticuleLineStyle(String lineStyle, String graticuleType) {
-        if (lineStyle == null) {
-            String message = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (graticuleType == null) {
-            String message = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        getRenderingParams(graticuleType).setLineStyle(lineStyle);
     }
 
     /**
@@ -459,45 +334,6 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer {
     }
 
     /**
-     * Returns whether specified graticule labels will be rendered.
-     *
-     * @param graticuleType one of GRATICULE_UTM, GRATICULE_UTM_GRID, GRATICULE_100000M, GRATICULE_10000M,
-     *                      GRATICULE_1000M, GRATICULE_100M, GRATICULE_10M, or GRATICULE_1M.
-     * @return true if graticule labels are will be rendered; false otherwise.
-     * @throws IllegalArgumentException if <code>graticuleType</code> is null, or if <code>graticuleType</code> is not a
-     *                                  valid type.
-     */
-    public boolean isDrawLabels(String graticuleType) {
-        if (graticuleType == null) {
-            String message = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        return getRenderingParams(graticuleType).isDrawLabels();
-    }
-
-    /**
-     * Sets whether the specified graticule labels will be rendered. If true, the graticule labels will be rendered.
-     * Otherwise, the graticule labels will not be rendered, but other graticules will not be affected.
-     *
-     * @param drawLabels    true to render graticule labels; false to disable rendering.
-     * @param graticuleType one of GRATICULE_UTM, GRATICULE_UTM_GRID, GRATICULE_100000M, GRATICULE_10000M,
-     *                      GRATICULE_1000M, GRATICULE_100M, GRATICULE_10M, or GRATICULE_1M.
-     * @throws IllegalArgumentException if <code>graticuleType</code> is null, or if <code>graticuleType</code> is not a
-     *                                  valid type.
-     */
-    public void setDrawLabels(boolean drawLabels, String graticuleType) {
-        if (graticuleType == null) {
-            String message = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        getRenderingParams(graticuleType).setDrawLabels(drawLabels);
-    }
-
-    /**
      * Sets whether the specified graticule labels will be rendered. If true, the graticule labels will be rendered.
      * Otherwise, the graticule labels will not be rendered, but other graticules will not be affected.
      *
@@ -530,49 +366,6 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer {
         for (String type : graticuleType) {
             setDrawLabels(drawLabels, type);
         }
-    }
-
-    /**
-     * Returns the label color of the specified graticule.
-     *
-     * @param graticuleType one of GRATICULE_UTM, GRATICULE_UTM_GRID, GRATICULE_100000M, GRATICULE_10000M,
-     *                      GRATICULE_1000M, GRATICULE_100M, GRATICULE_10M, or GRATICULE_1M.
-     * @return Color of the the graticule label.
-     * @throws IllegalArgumentException if <code>graticuleType</code> is null, or if <code>graticuleType</code> is not a
-     *                                  valid type.
-     */
-    public Color getLabelColor(String graticuleType) {
-        if (graticuleType == null) {
-            String message = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        return getRenderingParams(graticuleType).getLabelColor();
-    }
-
-    /**
-     * Sets the label rendering color for the specified graticule.
-     *
-     * @param color         the label color for the specified graticule.
-     * @param graticuleType one of GRATICULE_UTM, GRATICULE_UTM_GRID, GRATICULE_100000M, GRATICULE_10000M,
-     *                      GRATICULE_1000M, GRATICULE_100M, GRATICULE_10M, or GRATICULE_1M.
-     * @throws IllegalArgumentException if<code>color</code> is null, if <code>graticuleType</code> is null, or if
-     *                                  <code>graticuleType</code> is not a valid type.
-     */
-    public void setLabelColor(Color color, String graticuleType) {
-        if (color == null) {
-            String message = Logging.getMessage("nullValue.ColorIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (graticuleType == null) {
-            String message = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        getRenderingParams(graticuleType).setLabelColor(color);
     }
 
     /**
@@ -620,50 +413,7 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer {
         }
     }
 
-    /**
-     * Returns the label font of the specified graticule.
-     *
-     * @param graticuleType one of GRATICULE_UTM, GRATICULE_UTM_GRID, GRATICULE_100000M, GRATICULE_10000M,
-     *                      GRATICULE_1000M, GRATICULE_100M, GRATICULE_10M, or GRATICULE_1M.
-     * @return Font of the graticule label.
-     * @throws IllegalArgumentException if <code>graticuleType</code> is null, or if <code>graticuleType</code> is not a
-     *                                  valid type.
-     */
-    public Font getLabelFont(String graticuleType) {
-        if (graticuleType == null) {
-            String message = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        return getRenderingParams(graticuleType).getLabelFont();
-    }
-
     // --- Renderable layer --------------------------------------------------------------
-
-    /**
-     * Sets the label rendering font for the specified graticule.
-     *
-     * @param font          the label font for the specified graticule.
-     * @param graticuleType one of GRATICULE_UTM, GRATICULE_UTM_GRID, GRATICULE_100000M, GRATICULE_10000M,
-     *                      GRATICULE_1000M, GRATICULE_100M, GRATICULE_10M, or GRATICULE_1M.
-     * @throws IllegalArgumentException if<code>font</code> is null, if <code>graticuleType</code> is null, or if
-     *                                  <code>graticuleType</code> is not a valid type.
-     */
-    public void setLabelFont(Font font, String graticuleType) {
-        if (font == null) {
-            String message = Logging.getMessage("nullValue.FontIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (graticuleType == null) {
-            String message = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        getRenderingParams(graticuleType).setLabelFont(font);
-    }
 
     /**
      * Sets the label rendering font for the specified graticules.

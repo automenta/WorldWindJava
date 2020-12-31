@@ -194,11 +194,6 @@ public class Wedge extends RigidShape {
         RigidShape.setUpGeometryCache();
     }
 
-    @Override
-    protected void initialize() {
-        // Nothing to override
-    }
-
     /**
      * Returns the angle covered by this wedge.
      *

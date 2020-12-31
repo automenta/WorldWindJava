@@ -12,7 +12,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.impl.map.mutable.primitive.ObjectFloatHashMap;
 import spacegraph.layer.AbstractLayer;
 
-import javax.xml.stream.events.Characters;
 import java.beans.PropertyChangeListener;
 import java.util.*;
 import java.util.function.Predicate;

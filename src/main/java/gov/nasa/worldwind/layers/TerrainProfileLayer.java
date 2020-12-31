@@ -230,30 +230,6 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
     }
 
     /**
-     * Returns the layer's opacity value. The opacity is modified slightly for various elements of the chart to
-     * distinguish among them.
-     *
-     * @return The layer opacity, a value between 0 and 1.
-     * @see #getColor
-     */
-    @Override
-    public double getOpacity() {
-        return super.getOpacity();
-    }
-
-    /**
-     * Sets the layer opacity, which is applied to the layer's chart. The opacity is modified slightly for various
-     * elements of the chart to distinguish among them.
-     *
-     * @param opacity the current opacity value, which is ignored by this layer.
-     * @see #setColor
-     */
-    @Override
-    public void setOpacity(double opacity) {
-        super.setOpacity(opacity);
-    }
-
-    /**
      * Returns the graphic-to-viewport scale factor.
      *
      * @return the graphic-to-viewport scale factor.

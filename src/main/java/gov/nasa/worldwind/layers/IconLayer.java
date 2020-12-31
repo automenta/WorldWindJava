@@ -332,27 +332,6 @@ public class IconLayer extends AbstractLayer {
     }
 
     /**
-     * Returns the layer's opacity value, which is ignored by this layer the icon's image is assumed to indicate its
-     * opacity.
-     *
-     * @return The layer opacity, a value between 0 and 1.
-     */
-    @Override
-    public double getOpacity() {
-        return super.getOpacity();
-    }
-
-    /**
-     * Opacity is not applied to layers of this type. The icon image is assumed to indicates its opacity.
-     *
-     * @param opacity the current opacity value, which is ignored by this layer.
-     */
-    @Override
-    public void setOpacity(double opacity) {
-        super.setOpacity(opacity);
-    }
-
-    /**
      * Indicates whether icons are picked as a batch and therefore a {@link gov.nasa.worldwind.event.SelectEvent} will
      * contain only one icon from the layer. Batch picking is much faster than individual picking, so this attribute
      * should be used judiciously.

@@ -25,10 +25,6 @@ public class FileChooserPanelDescriptor extends DefaultPanelDescriptor {
         setPanelComponent(this.panelComponent);
     }
 
-    public Object getBackPanelDescriptor() {
-        return null;
-    }
-
     public Object getNextPanelDescriptor() {
         Object nextDescriptor;
         if (!RPFWizardUtil.isFileListCurrent(getWizardModel()))

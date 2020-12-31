@@ -52,10 +52,6 @@ public class WWPanelImpl extends AbstractFeature implements WWPanel {
         this.panel.add(this.wwd, BorderLayout.CENTER);
     }
 
-    public void initialize(Controller controller) {
-        super.initialize(controller);
-    }
-
     public WorldWindow getWWd() {
         return wwd;
     }

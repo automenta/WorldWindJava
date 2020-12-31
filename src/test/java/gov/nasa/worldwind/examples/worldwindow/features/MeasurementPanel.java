@@ -92,11 +92,6 @@ public class MeasurementPanel extends AbstractFeaturePanel {
         return this.measureTool != null ? this.measureTool.getShape() : null;
     }
 
-    @Override
-    public JComponent[] getDialogControls() {
-        return null;
-    }
-
     public WWOMeasureTool getMeasureTool() {
         return this.measureTool;
     }

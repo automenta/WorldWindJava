@@ -95,29 +95,9 @@ public class WWOMeasureToolControlPoints implements WWOMeasureTool.ControlPointL
             return WWOMeasureToolControlPoints.this.measureTool;
         }
 
-        @Override
-        public Position getPosition() {
-            return super.getPosition();
-        }
-
-        @Override
-        public void setPosition(Position position) {
-            super.setPosition(position);
-        }
-
         public void highlight(boolean tf) {
             this.getAttributes().setHighlighted(tf);
             this.getAttributes().setBackgroundColor(tf ? this.getAttributes().getTextColor() : null);
-        }
-
-        @Override
-        public Object set(String key, Object value) {
-            return super.set(key, value);
-        }
-
-        @Override
-        public Object get(String key) {
-            return super.get(key);
         }
     }
 }

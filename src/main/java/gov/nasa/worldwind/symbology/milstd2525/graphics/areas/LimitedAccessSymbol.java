@@ -133,21 +133,5 @@ public class LimitedAccessSymbol extends AbstractTacticalSymbol {
 
             return pentagonImg;
         }
-
-        /**
-         * Retrieves the value of the AVKey.COLOR parameter.
-         *
-         * @param params Parameter list.
-         * @return The value of the AVKey.COLOR parameter, if such a parameter exists and is of type java.awt.Color.
-         * Returns null if the parameter list is null, if there is no value for key AVKey.COLOR, or if the value is not
-         * a Color.
-         */
-        protected Color getColorFromParams(AVList params) {
-            if (params == null)
-                return null;
-
-            Object o = params.get(AVKey.COLOR);
-            return (o instanceof Color) ? (Color) o : null;
-        }
     }
 }

@@ -45,11 +45,6 @@ abstract public class GraphOSM extends GraphHopperOSM {
         }
 
         @Override
-        protected void processNode(ReaderNode node) {
-            super.processNode(node);
-        }
-
-        @Override
         protected void processRelation(ReaderRelation relation) {
 
         }

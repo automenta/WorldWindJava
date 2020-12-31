@@ -173,27 +173,6 @@ public class AnnotationLayer extends AbstractLayer {
     }
 
     /**
-     * Returns the layer's opacity value, which is ignored by this layer because each of its annotations has an
-     * attribute with its own opacity control.
-     *
-     * @return The layer opacity, a value between 0 and 1.
-     */
-    @Override
-    public double getOpacity() {
-        return super.getOpacity();
-    }
-
-    /**
-     * Opacity is not applied to layers of this type because each annotation has an attribute set with opacity control.
-     *
-     * @param opacity the current opacity value, which is ignored by this layer.
-     */
-    @Override
-    public void setOpacity(double opacity) {
-        super.setOpacity(opacity);
-    }
-
-    /**
      * Returns the <code>AnnotationRenderer</code> this layer delegates to during picking and rendering.
      *
      * @return <code>AnnotationRenderer</code> used to pick and render <code>Annotations</code>.

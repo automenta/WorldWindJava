@@ -283,10 +283,6 @@ public class MeasureToolController extends MouseAdapter
         }
     }
 
-    public void mouseMoved(MouseEvent mouseEvent) {
-
-    }
-
     // Handle cursor position change for rubber band
     public void moved(PositionEvent event) {
         if (measureTool == null || (!this.active && !this.moving))

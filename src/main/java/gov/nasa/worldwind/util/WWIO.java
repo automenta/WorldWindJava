@@ -13,7 +13,6 @@ import gov.nasa.worldwind.exception.WWRuntimeException;
 import jcog.Log;
 import okhttp3.*;
 import org.apache.commons.io.IOUtils;
-import org.eclipse.jetty.io.ByteBufferOutputStream;
 import org.junit.jupiter.api.function.ThrowingConsumer;
 import org.slf4j.Logger;
 

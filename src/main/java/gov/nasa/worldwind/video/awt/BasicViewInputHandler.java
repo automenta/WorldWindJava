@@ -143,10 +143,6 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler {
 
     protected abstract void onResetHeadingPitchRoll(ViewInputAttributes.ActionAttributes actionAttribs);
 
-    public void apply() {
-        super.apply();
-    }
-
     //**************************************************************//
     //********************  Key Events  ****************************//
     //**************************************************************//

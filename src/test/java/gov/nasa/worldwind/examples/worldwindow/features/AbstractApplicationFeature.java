@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.examples.worldwindow.features;
 
-import gov.nasa.worldwind.examples.worldwindow.core.*;
+import gov.nasa.worldwind.examples.worldwindow.core.Registry;
 import gov.nasa.worldwind.examples.worldwindow.core.layermanager.*;
 import gov.nasa.worldwind.examples.worldwindow.util.*;
 import gov.nasa.worldwind.layers.Layer;
@@ -34,11 +34,6 @@ public abstract class AbstractApplicationFeature extends AbstractFeature impleme
     protected abstract String getLayerGroupName();
 
     protected abstract void doCreateLayers();
-
-    @Override
-    public void initialize(Controller controller) {
-        super.initialize(controller);
-    }
 
     public boolean hasNetworkActivity() {
         return this.createLayersThread != null && this.createLayersThread.isAlive();

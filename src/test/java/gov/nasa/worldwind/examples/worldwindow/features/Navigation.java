@@ -44,10 +44,6 @@ public class Navigation extends AbstractFeatureLayer {
             "gov/nasa/worldwind/examples/worldwindow/images/navegacion-64x64.png", true, registry);
     }
 
-    public void initialize(Controller controller) {
-        super.initialize(controller);
-    }
-
     protected Layer doAddLayer() {
         ViewControlsLayer layer = new ViewControlsLayer();
 

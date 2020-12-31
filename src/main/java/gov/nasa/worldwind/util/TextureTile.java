@@ -435,11 +435,6 @@ public class TextureTile extends Tile implements SurfaceTile {
     }
 
     @Override
-    public int hashCode() {
-        return (this.tileKey != null ? this.tileKey.hashCode() : 0);
-    }
-
-    @Override
     public String toString() {
         return sector.toString();
     }

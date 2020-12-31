@@ -15,10 +15,6 @@ public class WCS100CoverageOffering extends WCS100CoverageOfferingBrief {
         super(namespaceURI);
     }
 
-    public WCS100LonLatEnvelope getLonLatEnvelope() {
-        return (WCS100LonLatEnvelope) this.getField("lonLatEnvelope");
-    }
-
     public WCS100DomainSet getDomainSet() {
         return (WCS100DomainSet) this.getField("domainSet");
     }

@@ -107,14 +107,6 @@ public abstract class AbstractMilStd2525TacticalGraphic extends AbstractTactical
     /**
      * {@inheritDoc}
      */
-    @Override
-    public String getText() {
-        return this.text;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public String getStatus() {
         return this.symbolCode.getStatus();
     }

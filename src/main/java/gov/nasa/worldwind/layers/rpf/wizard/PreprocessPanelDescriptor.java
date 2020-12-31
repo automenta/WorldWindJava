@@ -87,10 +87,6 @@ public class PreprocessPanelDescriptor extends DefaultPanelDescriptor {
         return sb.toString();
     }
 
-    public Object getBackPanelDescriptor() {
-        return null;
-    }
-
     public Object getNextPanelDescriptor() {
         return Wizard.FINISH;
     }

@@ -1380,13 +1380,6 @@ public abstract class RigidShape extends AbstractShape {
         return intersections;
     }
 
-    public String getRestorableState() {
-        RestorableSupport rs = RestorableSupport.newRestorableSupport();
-        this.doGetRestorableState(rs, null);
-
-        return rs.getStateAsXml();
-    }
-
     protected void doGetRestorableState(RestorableSupport rs, RestorableSupport.StateObject context) {
         // Method is invoked by subclasses to have superclass add its state and only its state
         this.doMyGetRestorableState(rs, context);

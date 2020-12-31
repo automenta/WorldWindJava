@@ -201,11 +201,6 @@ public class AntennaAxes extends AbstractShape {
     }
 
     @Override
-    public void render(DrawContext dc) {
-        super.render(dc);
-    }
-
-    @Override
     protected boolean mustDrawOutline() {
         return false;
     }

@@ -197,17 +197,6 @@ public class DirectedPath extends Path {
     /**
      * {@inheritDoc}
      * <p>
-     * Overridden to also compute the geometry of the direction arrows.
-     */
-    @Override
-    protected void computePath(DrawContext dc, List<Position> positions, PathData pathData) {
-        super.computePath(dc, positions, pathData);
-//        this.computeDirectionArrows(dc, pathData);
-    }
-
-    /**
-     * {@inheritDoc}
-     * <p>
      * Overridden to return a {@link DirectedSurfacePolyline}.
      */
     @Override

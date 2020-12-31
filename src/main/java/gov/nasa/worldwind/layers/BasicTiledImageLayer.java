@@ -9,7 +9,6 @@ import com.jogamp.opengl.util.texture.TextureData;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.cache.FileStore;
-import gov.nasa.worldwind.event.BulkRetrievalListener;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.formats.dds.*;
 import gov.nasa.worldwind.geom.*;

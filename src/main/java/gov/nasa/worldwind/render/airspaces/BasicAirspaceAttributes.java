@@ -115,13 +115,6 @@ public class BasicAirspaceAttributes extends BasicShapeAttributes implements Air
 
     /**
      * {@inheritDoc}
-     */
-    public void copy(ShapeAttributes attributes) {
-        super.copy(attributes);
-    }
-
-    /**
-     * {@inheritDoc}
      *
      * @deprecated Use {@link #getInteriorMaterial()} instead.
      */

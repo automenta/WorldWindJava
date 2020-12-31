@@ -8,7 +8,6 @@ package gov.nasa.worldwind.layers.placename;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.cache.*;
-import gov.nasa.worldwind.event.BulkRetrievalListener;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe2D;
 import gov.nasa.worldwind.layers.AbstractLayer;

@@ -3,7 +3,7 @@ package netvr;
 import gov.nasa.worldwind.BasicModel;
 import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.geom.*;
-import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.layers.earth.*;
 import gov.nasa.worldwind.layers.sky.*;
 import gov.nasa.worldwind.pick.PickedObject;
@@ -22,7 +22,6 @@ import spacegraph.space2d.widget.Widget;
 import spacegraph.space2d.widget.button.*;
 import spacegraph.space2d.widget.meta.TagCloud;
 import spacegraph.space2d.widget.slider.FloatSlider;
-import spacegraph.space2d.widget.text.VectorLabel;
 import spacegraph.space2d.widget.textedit.TextEdit;
 import spacegraph.video.JoglWindow;
 
@@ -98,10 +97,6 @@ public class WorldWindOSM {
                         Position p = w.view().computePositionFromScreenPoint(e.getPoint());
                         WorldWindOSM.focus(world, w, p.longitude, p.latitude, 0.001f);
                     }
-                }
-
-                @Override
-                public void mouseClicked(MouseEvent e) {
                 }
             });
             w.addSelectListener(s -> {

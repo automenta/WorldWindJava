@@ -138,11 +138,6 @@ public class Pyramid extends RigidShape {
         RigidShape.setUpGeometryCache();
     }
 
-    @Override
-    protected void initialize() {
-        // Nothing to override
-    }
-
     /**
      * Returns the height of the Pyramid, which is just twice its vertical radius.
      *

@@ -210,17 +210,4 @@ public class ViewElevationAnimator extends DoubleAnimator {
 
         return elevation;
     }
-
-    protected void setImpl(double interpolant) {
-        Double newValue = this.nextDouble(interpolant);
-        if (newValue == null)
-            return;
-
-        boolean success = this.propertyAccessor.setDouble(newValue);
-        if (!success) {
-            this.flagLastStateInvalid();
-        }
-        if (interpolant >= 1.0)
-            this.stop();
-    }
 }
