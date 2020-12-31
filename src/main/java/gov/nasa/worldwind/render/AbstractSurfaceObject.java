@@ -362,7 +362,7 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
      * @param dc the draw context the SurfaceObject is related to.
      * @return true if this SurfaceObject intersects the draw context's frustum; false otherwise.
      */
-    protected boolean intersectsFrustum(DrawContext dc) {
+    public boolean intersectsFrustum(DrawContext dc) {
         // A null extent indicates an object which has no location.
         Extent extent = this.getExtent(dc);
         if (extent == null)
@@ -375,6 +375,7 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
         // Test this object's extent against the viewing frustum.
         return dc.getView().getFrustumInModelCoordinates().intersects(extent);
     }
+
 
     /**
      * Test if this SurfaceObject intersects the specified draw context's pick frustums.

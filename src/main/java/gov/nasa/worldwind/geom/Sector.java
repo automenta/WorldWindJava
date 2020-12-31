@@ -239,13 +239,13 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
         double maxLon = Angle.NEG180degrees;
 
         for (LatLon p : locations) {
-            double lat = p.getLatitude().degrees;
+            double lat = p.latitude;
             if (lat < minLat)
                 minLat = lat;
             if (lat > maxLat)
                 maxLat = lat;
 
-            double lon = p.getLongitude().degrees;
+            double lon = p.longitude;
             if (lon < minLon)
                 minLon = lon;
             if (lon > maxLon)
@@ -302,20 +302,20 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
 
     public static Sector boundingSector(LatLon pA, LatLon pB) {
 
-        double minLat = pA.getLatitude().degrees;
-        double minLon = pA.getLongitude().degrees;
-        double maxLat = pA.getLatitude().degrees;
-        double maxLon = pA.getLongitude().degrees;
+        double minLat = pA.latitude;
+        double minLon = pA.longitude;
+        double maxLat = pA.latitude;
+        double maxLon = pA.longitude;
 
-        if (pB.getLatitude().degrees < minLat)
-            minLat = pB.getLatitude().degrees;
-        else if (pB.getLatitude().degrees > maxLat)
-            maxLat = pB.getLatitude().degrees;
+        if (pB.latitude < minLat)
+            minLat = pB.latitude;
+        else if (pB.latitude > maxLat)
+            maxLat = pB.latitude;
 
-        if (pB.getLongitude().degrees < minLon)
-            minLon = pB.getLongitude().degrees;
-        else if (pB.getLongitude().degrees > maxLon)
-            maxLon = pB.getLongitude().degrees;
+        if (pB.longitude < minLon)
+            minLon = pB.longitude;
+        else if (pB.longitude > maxLon)
+            maxLon = pB.longitude;
 
         return Sector.fromDegrees(minLat, maxLat, minLon, maxLon);
     }
@@ -489,11 +489,11 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
      * @throws IllegalArgumentException if <code>globe</code> or <code>sector</code> is null
      */
     static public Sphere computeBoundingSphere(Globe globe, double verticalExaggeration, Sector sector) {
-        if (sector == null) {
-            String msg = Logging.getMessage("nullValue.SectorIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (sector == null) {
+//            String msg = Logging.getMessage("nullValue.SectorIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         LatLon center = sector.getCentroid();
         double[] minAndMaxElevations = globe.getMinAndMaxElevations(sector);
@@ -581,12 +581,12 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
         Vec4[] points = new Vec4[15];
         globe.computePointsFromPositions(sector, 3, 5, elevations, points);
 
-        try {
+//        try {
             return Box.computeBoundingBox(Arrays.asList(points));
-        }
-        catch (RuntimeException e) {
-            return new Box(points[0]); // unit box around point
-        }
+//        }
+//        catch (RuntimeException e) {
+//            return new Box(points[0]); // unit box around point
+//        }
     }
 
     /**

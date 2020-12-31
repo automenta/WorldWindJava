@@ -32,7 +32,7 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
     protected static final String SURFACE_OBJECT_TILE_COUNT_NAME = "Surface Object Tiles";
     public final boolean pickTerrain = false;
     public final boolean pickNonTerrain = true;
-    protected final DrawContext dc = new DrawContextImpl();
+    public final DrawContext dc = new DrawContextImpl();
     /**
      * Map of integer color codes to picked objects used to quickly resolve the top picked objects in {@link
      * #doResolveTopPick(DrawContext, Rectangle)}. This map is used only when a pick rectangle is specified. Initialized

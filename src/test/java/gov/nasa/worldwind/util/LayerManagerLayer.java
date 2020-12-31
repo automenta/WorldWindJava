@@ -99,9 +99,9 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
         return this.annotation;
     }
 
-    public boolean isEnabled() {
-        return !this.isMinimized();
-    }
+//    public boolean isEnabled() {
+//        return !this.isMinimized();
+//    }
 
     @Override public Layer setEnabled(boolean enabled) {
         this.setMinimized(!enabled);

@@ -2,12 +2,22 @@ package gov.nasa.worldwind.video.newt;
 
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.event.InputHandler;
+import gov.nasa.worldwind.geom.ExtentHolder;
+import gov.nasa.worldwind.layers.RenderableLayer;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.video.WorldWindowGLAutoDrawable;
+import org.apache.commons.lang3.StringUtils;
+import org.eclipse.collections.impl.map.mutable.primitive.ObjectFloatHashMap;
 import spacegraph.layer.AbstractLayer;
 
+import javax.xml.stream.events.Characters;
 import java.beans.PropertyChangeListener;
+import java.util.*;
+import java.util.function.Predicate;
+
+import static netvr.layer.AdaptiveOSMLayer.DESCRIPTION;
 
 public class WorldWindowNEWT extends AbstractLayer implements WorldWindow, GLEventListener {
 
@@ -103,5 +113,50 @@ public class WorldWindowNEWT extends AbstractLayer implements WorldWindow, GLEve
     public void stopEvents(InputHandler h) {
         window.window.removeMouseListener(h);
         window.window.removeWindowListener(h);
+    }
+
+    private final static Set<String> excludedTags = Set.of("yes", "no", "none", "amenity", "name");
+
+    public boolean tag(String x) {
+        //TODO refine
+        return x.length() > 1 && StringUtils.isAlpha(x) && !excludedTags.contains(x);
+    }
+
+    public ObjectFloatHashMap<String> tagsInView() {
+
+//        final Frustum viewFrust = view().getFrustum();
+
+        ObjectFloatHashMap<String> h = new ObjectFloatHashMap<>();
+
+        DrawContext dc = sceneControl().getDrawContext();
+        Predicate<ExtentHolder> intersectsFrustrum = dc.intersectsFrustrum();
+        for (gov.nasa.worldwind.layers.Layer l : this.model().getLayers()) {
+            //if (l.isLayerInView(dc)
+            if (l instanceof RenderableLayer) {
+                if (l.isEnabled()) {
+                    var L = (RenderableLayer) l;
+                    for (Renderable r : L.all()) {
+                        if (r instanceof AVList) {
+                            if (r instanceof ExtentHolder) {
+                                if (intersectsFrustrum.test(((ExtentHolder) r))) {
+                                    Object m = ((AVList) r).get(DESCRIPTION);
+//                                    System.out.println(m);
+                                    for (Map.Entry<String, String> entry : ((Map<String, String>) m).entrySet()) {
+                                        String k = entry.getKey();
+                                        if (tag(k))
+                                            h.addToValue(k, 1);
+                                        String v = entry.getValue();
+                                        if (tag(v))
+                                            h.addToValue(v, 1);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return h;
     }
 }

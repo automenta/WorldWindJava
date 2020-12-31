@@ -23,6 +23,7 @@ import java.nio.FloatBuffer;
 import java.util.List;
 import java.util.Queue;
 import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * @author Tom Gaskins
@@ -966,5 +967,12 @@ public interface DrawContext extends WWObject, Disposable {
 
     default GL2 getGL2() {
         return getGL().getGL2();
+    }
+
+    default Predicate<ExtentHolder> intersectsFrustrum() {
+        final Frustum f = getView().getFrustumInModelCoordinates();
+        final Globe g = getGlobe();
+        final double v = getVerticalExaggeration();
+        return r-> f.intersects(r.getExtent(g, v));
     }
 }

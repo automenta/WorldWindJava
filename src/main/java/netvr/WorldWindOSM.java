@@ -13,14 +13,16 @@ import gov.nasa.worldwind.video.LayerList;
 import gov.nasa.worldwind.video.newt.WorldWindowNEWT;
 import jcog.exe.Exe;
 import netvr.layer.*;
+import org.eclipse.collections.impl.map.mutable.primitive.ObjectFloatHashMap;
 import spacegraph.layer.OrthoSurfaceGraph;
 import spacegraph.space2d.Surface;
 import spacegraph.space2d.container.*;
 import spacegraph.space2d.container.grid.Gridding;
 import spacegraph.space2d.widget.Widget;
 import spacegraph.space2d.widget.button.*;
-import spacegraph.space2d.widget.meta.Surfaces;
+import spacegraph.space2d.widget.meta.TagCloud;
 import spacegraph.space2d.widget.slider.FloatSlider;
+import spacegraph.space2d.widget.text.VectorLabel;
 import spacegraph.space2d.widget.textedit.TextEdit;
 import spacegraph.video.JoglWindow;
 
@@ -70,7 +72,10 @@ public class WorldWindOSM {
         final BorderingView z = new BorderingView();
         z.north(param);
         z.west(new Gridding(
-            z.togglerIcon("home", Surfaces.TODO),
+            z.togglerIcon("home", ()->{
+                ObjectFloatHashMap<String> t = w.tagsInView();
+                return new TagCloud(t); //HACK TODO
+            }),
             z.togglerIcon("cogs", ()-> new Gridding(
                 world.getLayers().stream().map(ll ->
                     Splitting.column(
@@ -79,7 +84,8 @@ public class WorldWindOSM {
                         new CheckBox(ll.name(), ll::setEnabled).on(ll.isEnabled())
                     )
                 )
-            )), new Widget(out), scan));
+            ))
+            , new Widget(out), scan));
 
         new OrthoSurfaceGraph(z, j);
 
@@ -117,6 +123,7 @@ public class WorldWindOSM {
             });
         });
     }
+
 
     private static void focus(NetVRModel world, WorldWindowNEWT w, double lon, double lat, float rad) {
         Exe.runLater(() -> {
@@ -177,6 +184,8 @@ public class WorldWindOSM {
     /tmp/shp1/natural.shp    /tmp/shp1/railways.shp */
             setLayers(l);
         }
+
+
     }
 
     protected static class OSMShapes {

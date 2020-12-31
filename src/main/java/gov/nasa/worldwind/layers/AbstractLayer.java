@@ -128,7 +128,7 @@ public abstract class AbstractLayer extends WWObjectImpl implements Layer {
         return params;
     }
 
-    public boolean isEnabled() {
+    public final boolean isEnabled() {
         return this.enabled;
     }
 
@@ -136,7 +136,8 @@ public abstract class AbstractLayer extends WWObjectImpl implements Layer {
     public Layer setEnabled(boolean enabled) {
         Boolean oldEnabled = this.enabled;
         this.enabled = enabled;
-        this.propertyChange(new PropertyChangeEvent(this, "Enabled", oldEnabled, this.enabled));
+        if (oldEnabled!=enabled)
+            this.propertyChange(new PropertyChangeEvent(this, "Enabled", oldEnabled, this.enabled));
         return this;
     }
 
@@ -244,17 +245,9 @@ public abstract class AbstractLayer extends WWObjectImpl implements Layer {
         return altitude >= this.minActiveAltitude && altitude <= this.maxActiveAltitude;
     }
 
-    public void preRender(DrawContext dc) {
-        if (!this.enabled)
-            return; // Don't check for arg errors if we're disabled
-
-        if (!this.isLayerActive(dc))
-            return;
-
-        if (!this.isLayerInView(dc))
-            return;
-
-        this.doPreRender(dc);
+    public final void preRender(DrawContext dc) {
+        if (this.enabled && this.isLayerActive(dc) && this.isLayerInView(dc))
+            this.doPreRender(dc);
     }
 
     /**

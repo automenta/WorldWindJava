@@ -53,14 +53,14 @@ public abstract class AbstractSurfaceRenderable extends AbstractSurfaceObject {
     }
 
     protected static Sector computeRotatedSectorBounds(Sector sector, LatLon location, Angle heading) {
-        if (Math.abs(heading.degrees) < 0.001)
+        if (Math.abs(heading.degrees) < 0.0001)
             return sector;
 
         LatLon[] corners = {
-            new LatLon(sector.latMax(), sector.lonMin()),  // nw
-            new LatLon(sector.latMax(), sector.lonMax()),  // ne
-            new LatLon(sector.latMin(), sector.lonMin()),  // sw
-            new LatLon(sector.latMin(), sector.lonMax()),  // se
+            new LatLon(sector.latMax, sector.lonMin),  // nw
+            new LatLon(sector.latMax, sector.lonMax),  // ne
+            new LatLon(sector.latMin, sector.lonMin),  // sw
+            new LatLon(sector.latMin, sector.lonMax),  // se
         };
         // Rotate corners around location
         for (int i = 0; i < corners.length; i++) {
@@ -98,7 +98,7 @@ public abstract class AbstractSurfaceRenderable extends AbstractSurfaceObject {
                 }
                 if (minLat.degrees > maxLat.degrees) {
                     sector = new Sector(minLat, maxLat, minLon, maxLon);
-                    sectors.addAll(Arrays.asList(Sector.splitBoundingSectors(sector)));
+                    Collections.addAll(sectors, Sector.splitBoundingSectors(sector));
                 } else {
                     // min and max lon overlap - span the whole ongitude range
                     sectors.add(new Sector(minLat, maxLat, Angle.NEG180, Angle.POS180));
@@ -142,7 +142,10 @@ public abstract class AbstractSurfaceRenderable extends AbstractSurfaceObject {
     }
 
     public void setOpacity(double opacity) {
-        this.opacity = opacity < 0 ? 0 : opacity > 1 ? 1 : opacity;  // clamp to 0..1
-        this.updateModifiedTime();
+        var o = this.opacity;
+        if (o!=opacity) {
+            this.opacity = opacity < 0 ? 0 : opacity > 1 ? 1 : opacity;  // clamp to 0..1
+            this.updateModifiedTime();
+        }
     }
 }
