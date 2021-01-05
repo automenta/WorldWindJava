@@ -581,7 +581,7 @@ public abstract class RigidShape extends AbstractShape {
     }
 
     @Override
-    protected AbstractShapeData createCacheEntry(DrawContext dc) {
+    protected AbstractShape.AbstractShapeData createCacheEntry(DrawContext dc) {
         return new ShapeData(dc, this);
     }
 
@@ -1487,7 +1487,7 @@ public abstract class RigidShape extends AbstractShape {
      * distinct globe that this shape encounters in calls to {@link AbstractShape#render(DrawContext)}. See {@link
      * AbstractShape}.
      */
-    protected static class ShapeData extends AbstractShapeData {
+    protected static class ShapeData extends AbstractShape.AbstractShapeData {
         /**
          * The GPU-resource cache keys to use for this entry's VBOs (one for eack LOD), if VBOs are used.
          */

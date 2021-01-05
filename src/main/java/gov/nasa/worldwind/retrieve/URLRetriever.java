@@ -15,7 +15,6 @@ import java.net.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedByInterruptException;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.logging.Level;
 import java.util.regex.*;
 import java.util.zip.*;
 
@@ -262,6 +261,9 @@ public class URLRetriever extends WWObjectImpl implements Retriever {
         catch (ClosedByInterruptException e) {
             this.interrupted();
         }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
         catch (Exception e) {
             setState(Retriever.RETRIEVER_STATE_ERROR);
 //            this.contentLength = 0;
@@ -319,14 +321,13 @@ public class URLRetriever extends WWObjectImpl implements Retriever {
      */
     protected ByteBuffer doRead(URLConnection connection) throws Exception {
 
-        InputStream inputStream = this.connection.getInputStream();
-        if (inputStream == null) {
-            Logging.logger().log(Level.SEVERE, "URLRetriever.InputStreamFromConnectionNull", connection.getURL());
-            return null;
-        }
+        try (InputStream inputStream = this.connection.getInputStream()) {
+//        if (inputStream == null) {
+//            Logging.logger().log(Level.SEVERE, "URLRetriever.InputStreamFromConnectionNull", connection.getURL());
+//            return null;
+//        }
 
-        try {
-//            this.contentLength = this.connection.getContentLength();
+            //            this.contentLength = this.connection.getContentLength();
             this.expiration.set(URLRetriever.getExpiration(connection));
 
             // The legacy WW servers send data with application/zip as the content type, and the retrieval initiator is
@@ -339,9 +340,6 @@ public class URLRetriever extends WWObjectImpl implements Retriever {
                 return URLRetriever.readZipStream(inputStream, connection.getURL());
             else
                 return URLRetriever.readStream(inputStream);
-        }
-        finally {
-            WWIO.closeStream(inputStream, getName());
         }
     }
 

@@ -364,7 +364,7 @@ public class Polygon extends AbstractShape {
         xmlWriter.writeEndElement(); // LinearRing
     }
 
-    protected AbstractShapeData createCacheEntry(DrawContext dc) {
+    protected AbstractShape.AbstractShapeData createCacheEntry(DrawContext dc) {
         return new ShapeData(dc, this);
     }
 
@@ -1333,7 +1333,7 @@ public class Polygon extends AbstractShape {
      * This class holds globe-specific data for this shape. It's managed via the shape-data cache in {@link
      * AbstractShape.AbstractShapeData}.
      */
-    protected static class ShapeData extends AbstractShapeData implements Iterable<BoundaryInfo> {
+    protected static class ShapeData extends AbstractShape.AbstractShapeData implements Iterable<BoundaryInfo> {
         /**
          * This class holds the per-globe data for this shape.
          */

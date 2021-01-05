@@ -55,16 +55,6 @@ public class TileKey implements Comparable<TileKey> {
      * @throws IllegalArgumentException if any parameter is null
      */
     public TileKey(Angle latitude, Angle longitude, LevelSet levelSet, int levelNumber) {
-//        if (latitude == null || longitude == null) {
-//            String msg = Logging.getMessage("nullValue.AngleIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//        if (levelSet == null) {
-//            String msg = Logging.getMessage("nullValue.LevelSetIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
         Level l = levelSet.getLevel(levelNumber);
         this.level = levelNumber;
         final LatLon tileDelta = l.getTileDelta();
@@ -82,11 +72,6 @@ public class TileKey implements Comparable<TileKey> {
      * @throws IllegalArgumentException if <code>tile</code> is null
      */
     public TileKey(Tile tile) {
-//        if (tile == null) {
-//            String msg = Logging.getMessage("nullValue.TileIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
         this.level = tile.getLevelNumber();
         this.row = tile.row;
         this.col = tile.col;

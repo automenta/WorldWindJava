@@ -218,7 +218,7 @@ public class BasicWWTexture implements WWTexture {
             return null;
 
         Texture t;
-        boolean haveMipMapData;
+        boolean haveMipMapData = false;
         GL gl = dc.getGL();
 
         if (imageSource instanceof String) {
@@ -237,8 +237,7 @@ public class BasicWWTexture implements WWTexture {
                     this.useMipMaps);
                 t = TextureIO.newTexture(td);
                 haveMipMapData = td.getMipmapData() != null;
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 String msg = Logging.getMessage("layers.TextureLayer.ExceptionAttemptingToReadTextureFile",
                     imageSource);
                 Logging.logger().log(Level.SEVERE, msg, e);
@@ -251,8 +250,7 @@ public class BasicWWTexture implements WWTexture {
                     this.useMipMaps);
                 t = TextureIO.newTexture(td);
                 haveMipMapData = td.getMipmapData() != null;
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 String msg = Logging.getMessage("generic.IOExceptionDuringTextureInitialization");
                 Logging.logger().log(Level.SEVERE, msg, e);
                 this.textureInitializationFailed = true;
@@ -260,19 +258,20 @@ public class BasicWWTexture implements WWTexture {
             }
         } else if (imageSource instanceof URL) {
             try {
-                InputStream stream = ((URL) imageSource).openStream();
-                if (stream == null) {
-                    Logging.logger().log(Level.SEVERE, "generic.ExceptionAttemptingToReadImageFile",
-                        imageSource);
-                    this.textureInitializationFailed = true;
-                    return null;
-                }
+                TextureData td;
+                try (InputStream stream = ((URL) imageSource).openStream()) {
+                    if (stream == null) {
+                        Logging.logger().log(Level.SEVERE, "generic.ExceptionAttemptingToReadImageFile",
+                            imageSource);
+                        this.textureInitializationFailed = true;
+                        return null;
+                    }
 
-                TextureData td = OGLUtil.newTextureData(gl.getGLProfile(), stream, this.useMipMaps);
+                    td = OGLUtil.newTextureData(gl.getGLProfile(), stream, this.useMipMaps);
+                }
                 t = TextureIO.newTexture(td);
                 haveMipMapData = td.getMipmapData() != null;
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 String msg = Logging.getMessage("layers.TextureLayer.ExceptionAttemptingToReadTextureFile",
                     imageSource);
                 Logging.logger().log(Level.SEVERE, msg, e);

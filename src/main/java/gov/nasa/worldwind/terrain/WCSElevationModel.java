@@ -55,11 +55,6 @@ public class WCSElevationModel extends BasicElevationModel {
     }
 
     protected static AVList wcsGetParamsFromDocument(Element domElement, AVList params) {
-//        if (domElement == null) {
-//            String message = Logging.getMessage("nullValue.DocumentIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (params == null)
             params = new AVListImpl();
@@ -74,24 +69,8 @@ public class WCSElevationModel extends BasicElevationModel {
     }
 
     protected static AVList wcsGetParamsFromCapsDoc(WCS100Capabilities caps, AVList params) {
-//        if (caps == null) {
-//            String message = Logging.getMessage("nullValue.WCSCapabilities");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//
-//        if (params == null) {
-//            String message = Logging.getMessage("nullValue.ElevationModelConfigParams");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         WCS100DescribeCoverage coverage = (WCS100DescribeCoverage) params.get(AVKey.DOCUMENT);
-//        if (coverage == null) {
-//            String message = Logging.getMessage("nullValue.WCSDescribeCoverage");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         WCSElevationModel.getWCSElevationModelConfigParams(caps, coverage, params);
 
@@ -201,11 +180,6 @@ public class WCSElevationModel extends BasicElevationModel {
     }
 
     protected static AVList wcsRestorableStateToParams(String stateInXml) {
-//        if (stateInXml == null) {
-//            String message = Logging.getMessage("nullValue.StringIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         RestorableSupport rs;
         try {
@@ -251,7 +225,8 @@ public class WCSElevationModel extends BasicElevationModel {
             params.set(AVKey.TILE_URL_BUILDER, new URLBuilder(s, params));
     }
 
-    protected static void downloadElevations(WMSBasicElevationModel.ElevationCompositionTile tile) throws Exception {
+    protected static void downloadElevations(WMSBasicElevationModel.ElevationCompositionTile tile) throws Exception,
+        MalformedURLException {
         URL url = tile.getResourceURL();
 
         Retriever retriever = new HTTPRetriever(url,
@@ -282,7 +257,7 @@ public class WCSElevationModel extends BasicElevationModel {
     //**************************************************************//
 
     public void composeElevations(Sector sector, List<? extends LatLon> latlons, int tileWidth, double[] buffer)
-        throws Exception {
+        throws Exception, IllegalArgumentException, java.io.IOException, URISyntaxException, MalformedURLException {
 
         final int n = latlons.size();
         if (buffer.length < n || tileWidth > n) {

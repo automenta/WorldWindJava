@@ -560,8 +560,7 @@ public class ColladaRoot extends ColladaAbstractObject
             } else {
                 return refRoot;
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             String message = Logging.getMessage("generic.UnableToResolveReference", linkBase + '/' + linkRef);
             Logging.logger().warning(message);
             return null;
@@ -586,11 +585,11 @@ public class ColladaRoot extends ColladaAbstractObject
      * @throws IllegalArgumentException if the {@code linkBase} is null.
      */
     public Object resolveRemoteReference(String linkBase, String linkRef, boolean cacheRemoteFile) {
-        if (linkBase == null) {
-            String message = Logging.getMessage("nullValue.DocumentSourceIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (linkBase == null) {
+//            String message = Logging.getMessage("nullValue.DocumentSourceIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         if (cacheRemoteFile) {
             String message = Logging.getMessage("generic.UnsupportedOperation", "caching");
@@ -601,9 +600,9 @@ public class ColladaRoot extends ColladaAbstractObject
         try {
             // See if it's in the cache. If not, requestFile will start another thread to retrieve it and return null.
             URL url = Configuration.data.requestFile(linkBase);
-            if (url == null) {
+            if (url == null)
                 return null;
-            }
+
 
             // It's in the cache. If it's a COLLADA file try to parse it so we can search for the specified reference.
             // If it's not COLLADA, just return the url for the cached file.
@@ -633,8 +632,7 @@ public class ColladaRoot extends ColladaAbstractObject
             } else {
                 return refRoot;
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             String message = Logging.getMessage("generic.UnableToResolveReference", linkBase + '/' + linkRef);
             Logging.logger().warning(message);
             return null;

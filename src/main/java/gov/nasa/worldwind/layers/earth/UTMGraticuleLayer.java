@@ -248,8 +248,8 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
         private final int zone;
         private final String hemisphere;
 
-        private ArrayList<GridElement> gridElements;
-        private ArrayList<SquareZone> squares;
+        private ArrayList<GraticuleLayer.GridElement> gridElements;
+        private ArrayList<UTMBaseGraticuleLayer.SquareZone> squares;
 
         public GraticuleTile(Sector sector) {
             this.sector = sector;
@@ -286,7 +286,7 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
             // Select tile grid elements
             int resolution = 500000;  // Top level 6 degrees zones
             String graticuleType = getTypeFor(resolution);
-            for (GridElement ge : this.gridElements) {
+            for (GraticuleLayer.GridElement ge : this.gridElements) {
                 if (ge.isInView(dc))
                     addRenderable(ge.renderable, graticuleType);
             }
@@ -297,7 +297,7 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
             // Select child elements
             if (this.squares == null)
                 createSquares();
-            for (SquareZone sz : this.squares) {
+            for (UTMBaseGraticuleLayer.SquareZone sz : this.squares) {
                 if (sz.isInView(dc)) {
                     sz.selectRenderables(dc, dc.getVisibleSector());
                 } else
@@ -311,7 +311,7 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
                 this.gridElements = null;
             }
             if (this.squares != null) {
-                for (SquareZone sz : this.squares) {
+                for (UTMBaseGraticuleLayer.SquareZone sz : this.squares) {
                     sz.clearRenderables();
                 }
                 this.squares.clear();
@@ -358,7 +358,7 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
             Object polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), AVKey.LINEAR);
             Sector lineSector = new Sector(this.sector.latMin(), this.sector.latMax(),
                 this.sector.lonMin(), this.sector.lonMin());
-            GridElement ge = new GridElement(lineSector, polyline, GridElement.TYPE_LINE);
+            GraticuleLayer.GridElement ge = new GraticuleLayer.GridElement(lineSector, polyline, GraticuleLayer.GridElement.TYPE_LINE);
             ge.value = this.sector.lonMin;
             this.gridElements.add(ge);
 
@@ -370,7 +370,7 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
                 polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), AVKey.LINEAR);
                 lineSector = new Sector(this.sector.latMin(), this.sector.latMin(),
                     this.sector.lonMin(), this.sector.lonMax());
-                ge = new GridElement(lineSector, polyline, GridElement.TYPE_LINE);
+                ge = new GraticuleLayer.GridElement(lineSector, polyline, GraticuleLayer.GridElement.TYPE_LINE);
                 ge.value = this.sector.latMin;
                 this.gridElements.add(ge);
             }
@@ -383,7 +383,7 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
                 polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), AVKey.LINEAR);
                 lineSector = new Sector(this.sector.latMax(), this.sector.latMax(),
                     this.sector.lonMin(), this.sector.lonMax());
-                ge = new GridElement(lineSector, polyline, GridElement.TYPE_LINE);
+                ge = new GraticuleLayer.GridElement(lineSector, polyline, GraticuleLayer.GridElement.TYPE_LINE);
                 ge.value = this.sector.latMax;
                 this.gridElements.add(ge);
             }
@@ -393,7 +393,7 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
                 StringBuilder sb = new StringBuilder();
                 sb.append(this.zone).append(AVKey.NORTH.equals(this.hemisphere) ? "N" : "S");
                 GeographicText text = new UserFacingText(sb.toString(), new Position(this.sector.getCentroid(), 0));
-                this.gridElements.add(new GridElement(this.sector, text, GridElement.TYPE_GRIDZONE_LABEL));
+                this.gridElements.add(new GraticuleLayer.GridElement(this.sector, text, GraticuleLayer.GridElement.TYPE_GRIDZONE_LABEL));
             }
         }
 

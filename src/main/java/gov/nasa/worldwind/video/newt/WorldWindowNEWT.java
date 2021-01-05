@@ -8,15 +8,14 @@ import gov.nasa.worldwind.geom.ExtentHolder;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.video.WorldWindowGLAutoDrawable;
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.impl.map.mutable.primitive.ObjectFloatHashMap;
 import spacegraph.layer.AbstractLayer;
+import tech.tablesaw.util.StringUtils;
 
 import java.beans.PropertyChangeListener;
 import java.util.*;
 import java.util.function.Predicate;
 
-import static netvr.layer.AdaptiveOSMLayer.DESCRIPTION;
 
 public class WorldWindowNEWT extends AbstractLayer implements WorldWindow, GLEventListener {
 
@@ -117,9 +116,9 @@ public class WorldWindowNEWT extends AbstractLayer implements WorldWindow, GLEve
 
     private final static Set<String> excludedTags = Set.of("yes", "no", "none", "amenity", "name");
 
-    public boolean tag(String x) {
+    public static boolean tag(String x) {
         //TODO refine
-        return x.length() > 1 && StringUtils.isAlpha(x) && !excludedTags.contains(x);
+        return x.length() > 1 && StringUtils.isAlpha(x) && !WorldWindowNEWT.excludedTags.contains(x);
     }
 
     public ObjectFloatHashMap<String> tagsInView() {
@@ -139,7 +138,7 @@ public class WorldWindowNEWT extends AbstractLayer implements WorldWindow, GLEve
                         if (r instanceof AVList) {
                             if (r instanceof ExtentHolder) {
                                 if (intersectsFrustrum.test(((ExtentHolder) r))) {
-                                    Object m = ((AVList) r).get(DESCRIPTION);
+                                    Object m = ((AVList) r).get("_"/*DESCRIPTION*/);
 //                                    System.out.println(m);
                                     for (Map.Entry<String, String> entry : ((Map<String, String>) m).entrySet()) {
                                         String k = entry.getKey();

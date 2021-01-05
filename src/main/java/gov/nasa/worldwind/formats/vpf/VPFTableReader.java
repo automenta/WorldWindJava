@@ -260,8 +260,7 @@ public class VPFTableReader {
             }
 
             return index;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             String message = Logging.getMessage("VPF.ExceptionAttemptingToReadRecordIndex", file.getPath());
             Logging.logger().log(Level.SEVERE, message, e);
             throw new WWRuntimeException(message, e);

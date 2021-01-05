@@ -89,7 +89,7 @@ public class GlobeBrowserBalloon extends AbstractBrowserBalloon implements Globe
     }
 
     @Override
-    protected OrderedBrowserBalloon createOrderedRenderable() {
+    protected AbstractBrowserBalloon.OrderedBrowserBalloon createOrderedRenderable() {
         return new OrderedGlobeBrowserBalloon();
     }
 
@@ -107,7 +107,7 @@ public class GlobeBrowserBalloon extends AbstractBrowserBalloon implements Globe
      *
      * @param dc the current draw context.
      */
-    protected void computeBalloonPoints(DrawContext dc, OrderedBrowserBalloon obb) {
+    protected void computeBalloonPoints(DrawContext dc, AbstractBrowserBalloon.OrderedBrowserBalloon obb) {
         OrderedGlobeBrowserBalloon ogpm = (OrderedGlobeBrowserBalloon) obb;
 
         ogpm.placePoint = null;
@@ -168,7 +168,7 @@ public class GlobeBrowserBalloon extends AbstractBrowserBalloon implements Globe
     /**
      * {@inheritDoc}
      */
-    protected void setupDepthTest(DrawContext dc, OrderedBrowserBalloon obb) {
+    protected void setupDepthTest(DrawContext dc, AbstractBrowserBalloon.OrderedBrowserBalloon obb) {
         OrderedGlobeBrowserBalloon ogpm = (OrderedGlobeBrowserBalloon) obb;
 
         GL gl = dc.getGL();
@@ -197,7 +197,7 @@ public class GlobeBrowserBalloon extends AbstractBrowserBalloon implements Globe
      * class' behavior.
      */
     @Override
-    protected boolean intersectsFrustum(DrawContext dc, OrderedBrowserBalloon obb) {
+    protected boolean intersectsFrustum(DrawContext dc, AbstractBrowserBalloon.OrderedBrowserBalloon obb) {
         OrderedGlobeBrowserBalloon ogpm = (OrderedGlobeBrowserBalloon) obb;
 
         View view = dc.getView();
@@ -228,7 +228,7 @@ public class GlobeBrowserBalloon extends AbstractBrowserBalloon implements Globe
         return po;
     }
 
-    protected class OrderedGlobeBrowserBalloon extends OrderedBrowserBalloon {
+    protected class OrderedGlobeBrowserBalloon extends AbstractBrowserBalloon.OrderedBrowserBalloon {
         /**
          * The model-coordinate point corresponding to this balloon's position. May be <code>null</code>.
          */

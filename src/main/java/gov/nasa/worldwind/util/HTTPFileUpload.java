@@ -236,6 +236,9 @@ public class HTTPFileUpload {
 
                 this.totalFilesUploaded++;
             }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
             catch (Exception e) {
                 this.totalFilesFailed++;
 
@@ -249,7 +252,7 @@ public class HTTPFileUpload {
     }
 
     protected void send(File fileToUpload, String uploadName, AVList params)
-        throws IOException, NullPointerException {
+        throws IOException, NullPointerException, FileNotFoundException, ProtocolException {
         if (null == fileToUpload || !fileToUpload.exists()) {
             throw new FileNotFoundException();
         }
@@ -311,7 +314,8 @@ public class HTTPFileUpload {
         }
     }
 
-    protected void send(ByteBuffer bufferToUpload, String fileName, AVList params) throws IOException {
+    protected void send(ByteBuffer bufferToUpload, String fileName, AVList params) throws IOException,
+        ProtocolException {
         if (null == bufferToUpload) {
             String message = Logging.getMessage("nullValue.ByteBufferIsNull");
             Logging.logger().severe(message);
@@ -379,7 +383,7 @@ public class HTTPFileUpload {
         }
     }
 
-    protected void send(String stringToUpload, String fileName, AVList params) throws IOException {
+    protected void send(String stringToUpload, String fileName, AVList params) throws IOException, ProtocolException {
         if (WWUtil.isEmpty(stringToUpload)) {
             String message = Logging.getMessage("nullValue.StringIsNull");
             Logging.logger().severe(message);

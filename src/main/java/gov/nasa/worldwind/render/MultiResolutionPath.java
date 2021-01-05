@@ -116,7 +116,7 @@ public class MultiResolutionPath extends Path {
      * Overridden to initialize and build the PathData's positionOrdinals buffer.
      */
     @Override
-    protected void makeTessellatedPositions(DrawContext dc, PathData pathData) {
+    protected void makeTessellatedPositions(DrawContext dc, Path.PathData pathData) {
         if (this.numPositions < 2)
             return;
 
@@ -140,7 +140,7 @@ public class MultiResolutionPath extends Path {
      * either very small or not visible.
      */
     @Override
-    protected void makePositions(DrawContext dc, PathData pathData) {
+    protected void makePositions(DrawContext dc, Path.PathData pathData) {
         Iterator<? extends Position> iter = this.positions.iterator();
         Position posA = iter.next();
         int ordinalA = 0;
@@ -184,7 +184,7 @@ public class MultiResolutionPath extends Path {
      * is not null.
      */
     @Override
-    protected void addTessellatedPosition(Position pos, Color color, Integer ordinal, PathData pathData) {
+    protected void addTessellatedPosition(Position pos, Color color, Integer ordinal, Path.PathData pathData) {
         if (ordinal != null) {
             // NOTE: Assign these indices before adding the new position to the tessellatedPositions list.
             MultiResolutionPathData mrpd = (MultiResolutionPathData) pathData;
@@ -210,7 +210,7 @@ public class MultiResolutionPath extends Path {
      * This interface provides the means for the application to specify the algorithm used to determine the number of
      * specified positions skipped during path tessellation.
      * <p>
-     * This class overrides the method {@link Path#makePositions(DrawContext, PathData)}.
+     * This class overrides the method {@link Path#makePositions(DrawContext, Path.PathData)}.
      */
     public interface SkipCountComputer {
         /**
@@ -221,13 +221,13 @@ public class MultiResolutionPath extends Path {
          * @param pathData this shape's current path data.
          * @return the number of positions to skip when computing the tessellated or non-tessellated path.
          */
-        int computeSkipCount(DrawContext dc, PathData pathData);
+        int computeSkipCount(DrawContext dc, Path.PathData pathData);
     }
 
     /**
      * Subclass of PathData that adds the capability to map which ordinal number corresponds to each rendered position.
      */
-    protected static class MultiResolutionPathData extends PathData {
+    protected static class MultiResolutionPathData extends Path.PathData {
         /**
          * Maps indices of rendered positions to their corresponding ordinal numbers.
          */

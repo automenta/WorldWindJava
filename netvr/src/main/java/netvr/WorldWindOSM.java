@@ -20,7 +20,6 @@ import spacegraph.space2d.container.*;
 import spacegraph.space2d.container.grid.Gridding;
 import spacegraph.space2d.widget.Widget;
 import spacegraph.space2d.widget.button.*;
-import spacegraph.space2d.widget.meta.TagCloud;
 import spacegraph.space2d.widget.slider.FloatSlider;
 import spacegraph.space2d.widget.textedit.TextEdit;
 import spacegraph.video.JoglWindow;
@@ -35,6 +34,15 @@ public class WorldWindOSM {
 //    }
 
 
+    abstract static class NFocus {
+        abstract String name();
+        abstract String icon();
+    }
+
+    abstract static class NMode {
+        abstract String name();
+        abstract String icon();
+    }
 
     public WorldWindOSM() {
     }

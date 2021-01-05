@@ -102,7 +102,7 @@ public class Configuration // Singleton
         try {
             String appConfigLocation = System.getProperty(Configuration.CONFIG_APP_DOCUMENT_KEY);
             if (appConfigLocation != null)
-                loadConfigDoc(System.getProperty(Configuration.CONFIG_APP_DOCUMENT_KEY)); // Load app's config first
+                Configuration.loadConfigDoc(System.getProperty(Configuration.CONFIG_APP_DOCUMENT_KEY)); // Load app's config first
         }
         catch (RuntimeException e) {
             Logging.logger(Configuration.DEFAULT_LOGGER_NAME).log(Level.WARNING, "Configuration.ConfigNotFound",
@@ -112,11 +112,11 @@ public class Configuration // Singleton
 
         try {
             // Load the default configuration
-            loadConfigDoc(System.getProperty(Configuration.CONFIG_WW_DOCUMENT_KEY, Configuration.CONFIG_WW_DOCUMENT_NAME));
+            Configuration.loadConfigDoc(System.getProperty(Configuration.CONFIG_WW_DOCUMENT_KEY, Configuration.CONFIG_WW_DOCUMENT_NAME));
 
             // Load config properties, ensuring that the app's config takes precedence over wwj's
-            for (int i = configDocs.size() - 1; i >= 0; i--) {
-                loadConfigProperties(configDocs.get(i));
+            for (int i = Configuration.configDocs.size() - 1; i >= 0; i--) {
+                Configuration.loadConfigProperties(Configuration.configDocs.get(i));
             }
         }
         catch (RuntimeException e) {
@@ -126,7 +126,7 @@ public class Configuration // Singleton
 
         // To support old-style configuration, read an existing config properties file and give the properties
         // specified there precedence.
-        initializeCustom();
+        Configuration.initializeCustom();
 
         data = (FileStore) WorldWind.createConfigurationComponent(AVKey.DATA_FILE_STORE_CLASS_NAME);
         http = new OkHttpClient.Builder()
@@ -505,7 +505,7 @@ public class Configuration // Singleton
      */
     private final static GLProfile maxCompatible = GLProfile.getMaxFixedFunc(true); // Favor a hardware rasterizer
     public static GLProfile getMaxCompatibleGLProfile() {
-        return maxCompatible;
+        return Configuration.maxCompatible;
     }
 
 
@@ -574,18 +574,18 @@ public class Configuration // Singleton
         if (!WWUtil.isEmpty(configLocation)) {
             Document doc = WWXML.openDocument(configLocation);
             if (doc != null) {
-                configDocs.add(doc);
+                Configuration.configDocs.add(doc);
 //                this.loadConfigProperties(doc);
             }
         }
     }
 
-    private void insertConfigDoc(String configLocation) {
+    private static void insertConfigDoc(String configLocation) {
         if (!WWUtil.isEmpty(configLocation)) {
             Document doc = WWXML.openDocument(configLocation);
             if (doc != null) {
-                this.configDocs.add(0, doc);
-                this.loadConfigProperties(doc);
+                configDocs.add(0, doc);
+                loadConfigProperties(doc);
             }
         }
     }
@@ -605,7 +605,7 @@ public class Configuration // Singleton
                 if (WWUtil.isEmpty(prop))// || WWUtil.isEmpty(value))
                     continue;
 
-                properties.setProperty(prop, value);
+                Configuration.properties.setProperty(prop, value);
             }
         }
         catch (XPathExpressionException e) {
@@ -636,7 +636,7 @@ public class Configuration // Singleton
             }
 
             if (propsStream != null)
-                properties.load(propsStream);
+                Configuration.properties.load(propsStream);
         }
         // Use a named logger in all the catch statements below to prevent Logger from calling back into
         // Configuration when this Configuration instance is not yet fully instantiated.

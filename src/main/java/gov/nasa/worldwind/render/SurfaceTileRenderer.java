@@ -233,6 +233,9 @@ public abstract class SurfaceTileRenderer implements Disposable {
                     sg.endRendering(dc);
             }
         }
+        catch (GLException e) {
+            e.printStackTrace();
+        }
         catch (Exception e) {
             Logging.logger().log(Level.SEVERE,
                 Logging.getMessage("generic.ExceptionWhileRenderingLayer", this.getClass().getName()), e);

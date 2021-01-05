@@ -279,8 +279,8 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
 
             if (lastLocation != null) {
                 double lastLon = lastLocation.getLongitude().degrees;
-                if (Math.signum(lon) != Math.signum(lastLon)) {
-                    if (Math.abs(lon - lastLon) < 180) {
+                if (signum(lon) != signum(lastLon)) {
+                    if (abs(lon - lastLon) < 180) {
                         // Crossing the zero longitude line too
                         maxLon = 0;
                         minLon = 0;
@@ -331,7 +331,7 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
      */
     public static Sector boundingSector(Globe globe, LatLon center, double radius) {
         double halfDeltaLatRadians = radius / globe.getRadiusAt(center);
-        double halfDeltaLonRadians = Math.PI * 2;
+        double halfDeltaLonRadians = PI * 2;
         final Angle lat = center.getLatitude();
         if (lat.cos() > 0)
             halfDeltaLonRadians = halfDeltaLatRadians / lat.cos();
@@ -416,8 +416,8 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
             // defined because the center lat is in the range -90 to 90 exclusive. If it were equal to 90, then the
             // circle would cover a pole.
             // Consider within 1/1000th of a radian to be equal
-            double az = Math.abs(Angle.POS90.radians() - halfDeltaLatRadians) > 0.001 ?
-                Math.acos(Math.tan(halfDeltaLatRadians) * Math.tan(latRad)) :
+            double az = abs(Angle.POS90.radians() - halfDeltaLatRadians) > 0.001 ?
+                acos(tan(halfDeltaLatRadians) * tan(latRad)) :
                 Angle.POS90.radians();
 
             LatLon east = LatLon.greatCircleEndPosition(center, az, halfDeltaLatRadians);
@@ -489,11 +489,6 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
      * @throws IllegalArgumentException if <code>globe</code> or <code>sector</code> is null
      */
     static public Sphere computeBoundingSphere(Globe globe, double verticalExaggeration, Sector sector) {
-//        if (sector == null) {
-//            String msg = Logging.getMessage("nullValue.SectorIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         LatLon center = sector.getCentroid();
         double[] minAndMaxElevations = globe.getMinAndMaxElevations(sector);
@@ -1043,13 +1038,13 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
         if (that == null)
             return this;
 
-        double minLat = Math.max(this.latMin, that.latMin);
-        double maxLat = Math.min(this.latMax, that.latMax);
+        double minLat = max(this.latMin, that.latMin);
+        double maxLat = min(this.latMax, that.latMax);
         if (minLat > maxLat)
             return null;
 
-        double minLon = Math.max(this.lonMin, that.lonMin);
-        double maxLon = Math.min(this.lonMax, that.lonMax);
+        double minLon = max(this.lonMin, that.lonMin);
+        double maxLon = min(this.lonMax, that.lonMax);
         if (minLon > maxLon)
             return null;
 

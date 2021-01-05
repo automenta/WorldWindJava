@@ -80,7 +80,7 @@ public class AdaptiveOSMLayer extends RenderableLayer {
         return this;
     }
 
-    private double area(Polygon x, Globe g) {
+    private static double area(Polygon x, Globe g) {
         return new AreaMeasurer(x.outerBoundary()).getArea(g);
     }
 
@@ -108,7 +108,7 @@ public class AdaptiveOSMLayer extends RenderableLayer {
         nodes.put(z.getId(), (ReaderNode) z);
     }
 
-    private void readRelation(ReaderRelation z) {
+    private static void readRelation(ReaderRelation z) {
         ReaderRelation r = z;
     }
 
@@ -156,14 +156,14 @@ public class AdaptiveOSMLayer extends RenderableLayer {
         }
     }
 
-    private Path readPath(ReaderWay w, Map<String, String> properties, List<Position> latlon) {
+    private static Path readPath(ReaderWay w, Map<String, String> properties, List<Position> latlon) {
         Path p = new Path(latlon);
         p.setFollowTerrain(true);
         p.setSurfacePath(true);
         return p;
     }
 
-    private Polygon readArea(ReaderWay w, Map<String, String> properties, List<Position> latlon) {
+    private static Polygon readArea(ReaderWay w, Map<String, String> properties, List<Position> latlon) {
 
         Polygon p = new Polygon(latlon);/* {
                 @Override

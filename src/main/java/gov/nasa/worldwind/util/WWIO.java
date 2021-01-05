@@ -43,44 +43,7 @@ public class WWIO {
     protected static final String DEFAULT_CHARACTER_ENCODING = "UTF-8";
     protected static final Map<String, String> mimeTypeToSuffixMap = new HashMap<>();
     protected static final Map<String, String> suffixToMimeTypeMap = new HashMap<>();
-
-
-
-
-    public static void get(String url, ThrowingConsumer<ResponseBody> success)  {
-        get(url, success, z -> true);
-    }
-
     private final static Logger logger = Log.log(WWIO.class);
-
-    /** fail predicate returns true to bubble up the exception */
-    public static void get(String url, ThrowingConsumer<ResponseBody> success, Predicate<Throwable> fail)  {
-
-        logger.info("load {}", url);
-        try {
-            Request.Builder requestBuilder = new Request.Builder()
-                .cacheControl(Configuration.cacheControl)
-                .header("User-Agent", Configuration.userAgent);
-
-            try (Response r = Configuration.http.newCall(requestBuilder.url(url).build()).execute()) {
-                final Response rn = r.networkResponse();
-                if (rn != null && !rn.isSuccessful())
-                    throw new IOException(rn.toString());
-
-                success.accept(r.body());
-            }
-        } catch(Throwable e) {
-            if (fail.test(e)) {
-                if (e instanceof RuntimeException)
-                    throw (RuntimeException) e;
-                else {
-                    logger.warn("load {}", e);
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-
-    }
 
     static {
         WWIO.mimeTypeToSuffixMap.put("application/acad", "dwg");
@@ -183,6 +146,41 @@ public class WWIO {
         WWIO.suffixToMimeTypeMap.put("wrl", "world/x-vrml");
         WWIO.suffixToMimeTypeMap.put("xml", "application/xml");
         WWIO.suffixToMimeTypeMap.put("zip", "application/zip");
+    }
+
+    public static void get(String url, ThrowingConsumer<ResponseBody> success) {
+        WWIO.get(url, success, z -> true);
+    }
+
+    /**
+     * fail predicate returns true to bubble up the exception
+     */
+    public static void get(String url, ThrowingConsumer<ResponseBody> success, Predicate<Throwable> fail) {
+
+        WWIO.logger.info("load {}", url);
+        try {
+            Request.Builder requestBuilder = new Request.Builder()
+                .cacheControl(Configuration.cacheControl)
+                .header("User-Agent", Configuration.userAgent);
+
+            try (Response r = Configuration.http.newCall(requestBuilder.url(url).build()).execute()) {
+                final Response rn = r.networkResponse();
+                if (rn != null && !rn.isSuccessful())
+                    throw new IOException(rn.toString());
+
+                success.accept(r.body());
+            }
+        }
+        catch (Throwable e) {
+            if (fail.test(e)) {
+                if (e instanceof RuntimeException)
+                    throw (RuntimeException) e;
+                else {
+                    WWIO.logger.warn("load", e);
+                    throw new RuntimeException(e);
+                }
+            }
+        }
     }
 
     public static String formPath(String... pathParts) {
@@ -347,7 +345,8 @@ public class WWIO {
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    public static boolean saveBuffer(ByteBuffer buffer, File file, boolean forceFilesystemWrite) throws IOException {
+    public static boolean saveBuffer(ByteBuffer buffer, File file, boolean forceFilesystemWrite) throws IOException,
+        ClosedByInterruptException {
 
         FileOutputStream fos = null;
         FileChannel channel = null;
@@ -445,7 +444,8 @@ public class WWIO {
      * @return a MappedByteBuffer representing the File's bytes.
      * @throws IOException if the file cannot be mapped for any reason.
      */
-    public static MappedByteBuffer mapFile(File file, FileChannel.MapMode mode) throws IOException {
+    public static MappedByteBuffer mapFile(File file, FileChannel.MapMode mode) throws IOException,
+        FileNotFoundException {
 
         String accessMode;
         if (mode == FileChannel.MapMode.READ_ONLY)
@@ -456,8 +456,9 @@ public class WWIO {
         RandomAccessFile raf = null;
         try {
             raf = new RandomAccessFile(file, accessMode);
-            FileChannel fc = raf.getChannel();
-            return fc.map(mode, 0, fc.size());
+            try (FileChannel fc = raf.getChannel()) {
+                return fc.map(mode, 0, fc.size());
+            }
         }
         finally {
             WWIO.closeStream(raf, file.getPath());
@@ -573,30 +574,28 @@ public class WWIO {
      * @throws IllegalArgumentException if the file is null.
      * @throws IOException              if an I/O error occurs.
      */
-    public static ByteBuffer readFileToBuffer(File file, boolean allocateDirect) throws IOException {
+    public static ByteBuffer readFileToBuffer(File file, boolean allocateDirect) throws IOException,
+        FileNotFoundException {
         if (file == null) {
             String message = Logging.getMessage("nullValue.FileIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        FileInputStream is = new FileInputStream(file);
-        try {
-            FileChannel fc = is.getChannel();
-            int size = (int) fc.size();
-            ByteBuffer buffer = allocateDirect ? ByteBuffer.allocateDirect(size) : ByteBuffer.allocate(size);
-            for (int count = 0; count >= 0 && buffer.hasRemaining(); ) {
-                count = fc.read(buffer);
+        try (FileInputStream is = new FileInputStream(file)) {
+            try (FileChannel fc = is.getChannel()) {
+                int size = (int) fc.size();
+                ByteBuffer buffer = allocateDirect ? ByteBuffer.allocateDirect(size) : ByteBuffer.allocate(size);
+                for (int count = 0; count >= 0 && buffer.hasRemaining(); ) {
+                    count = fc.read(buffer);
+                }
+                buffer.flip();
+                return buffer;
             }
-            buffer.flip();
-            return buffer;
-        }
-        finally {
-            WWIO.closeStream(is, file.getPath());
         }
     }
 
-    public static ByteBuffer inflateFileToBuffer(File file) throws IOException {
+    public static ByteBuffer inflateFileToBuffer(File file) throws IOException, FileNotFoundException {
         if (file == null) {
             String message = Logging.getMessage("nullValue.FileIsNull");
             Logging.logger().severe(message);
@@ -612,15 +611,16 @@ public class WWIO {
         }
     }
 
-    public static boolean saveBufferToGZipFile(ByteBuffer buffer, File file) throws IOException {
+    public static boolean saveBufferToGZipFile(ByteBuffer buffer, File file) throws IOException, FileNotFoundException {
         return WWIO.saveBufferToStream(buffer, new GZIPOutputStream(new FileOutputStream(file)));
     }
 
-    public static boolean deflateBufferToFile(ByteBuffer buffer, File file) throws IOException {
+    public static boolean deflateBufferToFile(ByteBuffer buffer, File file) throws IOException, FileNotFoundException {
         return WWIO.saveBufferToStream(buffer, new DeflaterOutputStream(new FileOutputStream(file)));
     }
 
-    public static ByteBuffer readGZipFileToBuffer(File gzFile) throws IllegalArgumentException, IOException {
+    public static ByteBuffer readGZipFileToBuffer(File gzFile) throws IllegalArgumentException, IOException,
+        FileNotFoundException {
         if (gzFile == null) {
             String message = Logging.getMessage("nullValue.FileIsNull");
             Logging.logger().severe(message);
@@ -659,7 +659,7 @@ public class WWIO {
         return buffer;
     }
 
-    private static int gzipGetInflatedLength(File gzFile) throws IOException {
+    private static int gzipGetInflatedLength(File gzFile) throws IOException, FileNotFoundException {
         RandomAccessFile raf = null;
         int length = 0;
         try {
@@ -678,7 +678,7 @@ public class WWIO {
         return length;
     }
 
-    public static ByteBuffer readZipEntryToBuffer(File zipFile, String entryName) throws IOException {
+    public static ByteBuffer readZipEntryToBuffer(File zipFile, String entryName) throws IOException, ZipException {
         if (zipFile == null) {
             String message = Logging.getMessage("nullValue.FileIsNull");
             Logging.logger().severe(message);
@@ -688,37 +688,38 @@ public class WWIO {
         InputStream is = null;
         ZipEntry ze = null;
         try {
-            ZipFile zf = new ZipFile(zipFile);
-            if (zf.size() < 1) {
-                String message = Logging.getMessage("WWIO.ZipFileIsEmpty", zipFile.getPath());
-                Logging.logger().severe(message);
-                throw new IOException(message);
-            }
-
-            if (entryName != null) {   // Read the specified entry
-                ze = zf.getEntry(entryName);
-                if (ze == null) {
-                    String message = Logging.getMessage("WWIO.ZipFileEntryNIF", entryName, zipFile.getPath());
-                    Logging.logger().severe(message);
-                    throw new IOException(message);
-                }
-            } else {   // Grab first first file entry
-                Enumeration entries = zf.entries();
-                while (entries.hasMoreElements()) {
-                    ZipEntry entry = (ZipEntry) entries.nextElement();
-                    if (null != entry && !entry.isDirectory()) {
-                        ze = entry;
-                        break;
-                    }
-                }
-                if (null == ze) {
+            try (ZipFile zf = new ZipFile(zipFile)) {
+                if (zf.size() < 1) {
                     String message = Logging.getMessage("WWIO.ZipFileIsEmpty", zipFile.getPath());
                     Logging.logger().severe(message);
                     throw new IOException(message);
                 }
-            }
 
-            is = zf.getInputStream(ze);
+                if (entryName != null) {   // Read the specified entry
+                    ze = zf.getEntry(entryName);
+                    if (ze == null) {
+                        String message = Logging.getMessage("WWIO.ZipFileEntryNIF", entryName, zipFile.getPath());
+                        Logging.logger().severe(message);
+                        throw new IOException(message);
+                    }
+                } else {   // Grab first first file entry
+                    Enumeration entries = zf.entries();
+                    while (entries.hasMoreElements()) {
+                        ZipEntry entry = (ZipEntry) entries.nextElement();
+                        if (null != entry && !entry.isDirectory()) {
+                            ze = entry;
+                            break;
+                        }
+                    }
+                    if (null == ze) {
+                        String message = Logging.getMessage("WWIO.ZipFileIsEmpty", zipFile.getPath());
+                        Logging.logger().severe(message);
+                        throw new IOException(message);
+                    }
+                }
+
+                is = zf.getInputStream(ze);
+            }
             ByteBuffer buffer = null;
             if (ze.getSize() > 0) {
                 buffer = WWIO.transferStreamToByteBuffer(is, (int) ze.getSize());
@@ -796,8 +797,6 @@ public class WWIO {
     public static String readStreamToString(InputStream stream, String encoding) throws IOException {
 
         return IOUtils.toString(stream, encoding);
-//        return WWIO.readCharacterStreamToString(
-//            new InputStreamReader(stream, encoding != null ? encoding : WWIO.DEFAULT_CHARACTER_ENCODING));
     }
 
     /**
@@ -806,7 +805,7 @@ public class WWIO {
      * returns a non-direct ByteBuffer otherwise. Direct buffers are backed by native memory, and may reside outside of
      * the normal garbage-collected heap. Non-direct buffers are backed by JVM heap memory.
      *
-     * @param stream        the channel to read.
+     * @param stream         the channel to read.
      * @param allocateDirect true to allocate and return a direct buffer, false to allocate and return a non-direct
      *                       buffer.
      * @return the bytes from the specified channel, with the current JVM byte order.
@@ -815,11 +814,6 @@ public class WWIO {
      */
     public static ByteBuffer readInputStreamToBuffer(InputStream stream, boolean allocateDirect)
         throws IOException {
-//        if (channel == null) {
-//            String message = Logging.getMessage("nullValue.ChannelIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         ReadableByteChannel channel = Channels.newChannel(stream);
         final int PAGE_SIZE = (int) Math.round(Math.pow(2, 16));
@@ -833,7 +827,8 @@ public class WWIO {
 
             if (count > 0 && !buffer.hasRemaining()) {
                 int newCap = buffer.limit() + PAGE_SIZE;
-                ByteBuffer biggerBuffer = allocateDirect ? ByteBuffer.allocateDirect(newCap) : ByteBuffer.allocate(newCap);
+                ByteBuffer biggerBuffer = allocateDirect ? ByteBuffer.allocateDirect(newCap)
+                    : ByteBuffer.allocate(newCap);
                 biggerBuffer.put(buffer.rewind());
                 buffer = biggerBuffer;
             }
@@ -856,7 +851,8 @@ public class WWIO {
      * @throws IllegalArgumentException if the channel or the buffer is null.
      * @throws IOException              if an I/O error occurs.
      */
-    public static ByteBuffer readInputStreamToBuffer(ReadableByteChannel channel, ByteBuffer buffer) throws IOException {
+    public static ByteBuffer readInputStreamToBuffer(ReadableByteChannel channel, ByteBuffer buffer)
+        throws IOException {
         if (channel == null) {
             String message = Logging.getMessage("nullValue.ChannelIsNull");
             Logging.logger().severe(message);
@@ -1236,7 +1232,8 @@ public class WWIO {
         if (file.exists()) {
             try {
                 return new FileInputStream(file);
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 return e;
             }
         }
@@ -1334,7 +1331,7 @@ public class WWIO {
         return cur != null;
     }
 
-    public static void copyFile(File source, File destination) throws IOException {
+    public static void copyFile(File source, File destination) throws IOException, FileNotFoundException {
 
         FileInputStream fis = null;
         FileOutputStream fos = null;
@@ -1595,7 +1592,7 @@ public class WWIO {
      * @return a reader for the input source.
      * @throws IOException if i/o or other errors occur trying to create the reader.
      */
-    public static Reader openReader(Object src) throws IOException {
+    public static Reader openReader(Object src) throws IOException, FileNotFoundException {
         Reader r = null;
 
         if (src instanceof Reader)
@@ -1623,7 +1620,8 @@ public class WWIO {
      * @throws IllegalArgumentException if the source is null, an empty string, or is not one of the above types.
      * @throws Exception                if the source cannot be opened for any reason.
      */
-    public static InputStream openStream(Object src) throws Exception {
+    public static InputStream openStream(Object src) throws Exception, IllegalArgumentException, IOException,
+        MalformedURLException {
         if (WWUtil.isEmpty(src)) {
             String message = Logging.getMessage("nullValue.SourceIsNull");
             Logging.logger().severe(message);

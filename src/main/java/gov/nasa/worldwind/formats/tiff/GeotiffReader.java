@@ -36,7 +36,7 @@ public class GeotiffReader implements Disposable {
     private ArrayList<TiffIFDEntry[]> tiffIFDs;
     private ArrayList<AVList> metadata;
 
-    public GeotiffReader(String sourceFilename) throws IOException {
+    public GeotiffReader(String sourceFilename) throws IOException, FileNotFoundException {
         this.sourceFilename = sourceFilename;
         this.sourceFile = new RandomAccessFile(sourceFilename, "r");
         this.theChannel = this.sourceFile.getChannel();

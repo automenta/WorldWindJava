@@ -138,7 +138,7 @@ public class GpxWriter {
         }
     }
 
-    private void doFlush() throws TransformerException {
+    private void doFlush() throws TransformerException, TransformerConfigurationException {
         TransformerFactory factory = TransformerFactory.newInstance();
         Transformer transformer = factory.newTransformer();
         Source source = new DOMSource(this.doc);

@@ -52,11 +52,6 @@ public class Cylinder extends RigidShape {
      * @throws IllegalArgumentException if the center position is null or any of the radii are not greater than 0.
      */
     public Cylinder(Position centerPosition, double height, double radius) {
-//        if (centerPosition == null) {
-//            String message = Logging.getMessage("nullValue.PositionIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (radius <= 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "radius <= 0");
@@ -88,11 +83,6 @@ public class Cylinder extends RigidShape {
      * @throws IllegalArgumentException if the center position is null or any of the radii are not greater than 0.
      */
     public Cylinder(Position centerPosition, double northSouthRadius, double verticalRadius, double eastWestRadius) {
-//        if (centerPosition == null) {
-//            String message = Logging.getMessage("nullValue.PositionIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (northSouthRadius <= 0 || eastWestRadius <= 0 || verticalRadius <= 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "radius <= 0");
@@ -121,11 +111,6 @@ public class Cylinder extends RigidShape {
      */
     public Cylinder(Position centerPosition, double northSouthRadius, double verticalRadius, double eastWestRadius,
         Angle heading, Angle tilt, Angle roll) {
-//        if (centerPosition == null) {
-//            String message = Logging.getMessage("nullValue.PositionIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (northSouthRadius <= 0 || eastWestRadius <= 0 || verticalRadius <= 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "radius <= 0");
@@ -146,27 +131,12 @@ public class Cylinder extends RigidShape {
 
     @Override
     public int getFaceCount() {
-        return this.faceCount;
+        return faceCount;
     }
 
     public int getSlices() {
         return this.slices;
     }
-
-//    /**
-//     * Computes a threshold value, based on the current detailHint, for use in the sufficientDetail() calculation.
-//     *
-//     * @return the detailThreshold
-//     */
-//    protected double computeDetailThreshold() {
-//        // these values must be calibrated on a shape-by-shape basis
-//        double detailThreshold = 20;
-//        double rangeDetailThreshold = 40;
-//
-//        detailThreshold += this.getDetailHint() * rangeDetailThreshold;
-//
-//        return detailThreshold;
-//    }
 
     /**
      * Computes the number of subdivisions necessary to achieve the expected Level of Detail given the shape's
@@ -176,48 +146,7 @@ public class Cylinder extends RigidShape {
      * @param shapeData the current globe-specific shape data
      */
     protected void computeSubdivisions(DrawContext dc, ShapeData shapeData) {
-//        // test again possible subdivision values
-//        int minDivisions = 3;
-//        int maxDivisions = 6;
-//
-//        if (shapeData.getExtent() != null) {
-//            for (int divisions = minDivisions; divisions <= maxDivisions; divisions++) {
-//                this.slices = divisions;
-//                if (this.sufficientDetail(dc, divisions, shapeData))
-//                    break;
-//            }
-//        }
     }
-
-//    protected boolean sufficientDetail(DrawContext dc, int subdivisions, ShapeData shapeData) {
-////        if (dc.getView() == null) {
-////            String message = "nullValue.DrawingContextViewIsNull";
-////            Logging.logger().severe(message);
-////            throw new IllegalArgumentException(message);
-////        }
-//        if (subdivisions < 0) {
-//            String message = Logging.getMessage("generic.ArgumentOutOfRange", "subdivisions < 0");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//
-//        if (shapeData == null)
-//            return false;
-//
-//        Extent extent = shapeData.getExtent();
-//        if (extent == null)
-//            return true;
-//
-//        double thresholdDensity = this.computeDetailThreshold();
-//
-//        double d = dc.getView().getEyePoint().distanceTo3(extent.getCenter());
-//        double shapeScreenSize = extent.getDiameter() / d;
-//
-//        // formula for this object's current vertex density
-//        double vertexDensity = Math.pow(subdivisions, 3) / shapeScreenSize;
-//
-//        return vertexDensity > thresholdDensity;
-//    }
 
     protected boolean mustRegenerateGeometry(DrawContext dc) {
         // check if current LOD is sufficient

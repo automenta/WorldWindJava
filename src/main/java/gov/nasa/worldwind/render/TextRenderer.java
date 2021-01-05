@@ -1501,6 +1501,9 @@ public class TextRenderer {
                 mPipelinedQuadRenderer.glVertex3f(x,
                     y + (height * scaleFactor), z);
             }
+            catch (GLException e) {
+                e.printStackTrace();
+            }
             catch (Exception e) {
                 e.printStackTrace();
             }

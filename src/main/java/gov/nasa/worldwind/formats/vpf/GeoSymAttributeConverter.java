@@ -75,6 +75,9 @@ public class GeoSymAttributeConverter {
 
             System.out.println("Done.");
         }
+        catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
         catch (IOException e) {
             e.printStackTrace();
         }
@@ -104,6 +107,9 @@ public class GeoSymAttributeConverter {
             //noinspection ResultOfMethodCallIgnored
             outFile.getParentFile().mkdirs();
             ImageIO.write(cgmf.getPattern(), "png", outFile);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
         }
         catch (Exception e) {
             System.out.println("Could not save pattern " + fileName);
@@ -195,6 +201,9 @@ public class GeoSymAttributeConverter {
                     sb.append(line);
                     sb.append(System.getProperty("line.separator")); // add back line separator
                 }
+            }
+            catch (FileNotFoundException e) {
+                e.printStackTrace();
             }
             catch (IOException e) {
                 String msg = Logging.getMessage("generic.ExceptionAttemptingToReadFile", file.getPath());

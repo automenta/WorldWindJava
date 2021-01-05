@@ -46,7 +46,7 @@ public class TextureTile extends Tile implements SurfaceTile {
      */
     public static final MemoryCache cache = WorldWind.getMemoryCacheSet().getCache(TextureTile.class.getName(), SoftMemoryCache::new);
     public static MemoryCache getMemoryCache() {
-        return cache;
+        return TextureTile.cache;
     }
 
     @Override

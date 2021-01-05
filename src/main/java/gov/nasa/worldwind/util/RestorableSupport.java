@@ -125,11 +125,6 @@ public class RestorableSupport {
      *                                  XML document.
      */
     public static RestorableSupport parse(String stateInXml) {
-//        if (stateInXml == null) {
-//            String message = Logging.getMessage("nullValue.StringIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         DocumentBuilderFactory docBuilderFactory =
             DocumentBuilderFactory.newInstance();
@@ -204,11 +199,6 @@ public class RestorableSupport {
      * @throws IllegalArgumentException If <code>encodedString</code> is null.
      */
     public static Color decodeColor(String encodedString) {
-//        if (encodedString == null) {
-//            String message = Logging.getMessage("nullValue.StringIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (!encodedString.startsWith("0x") && !encodedString.startsWith("0X"))
             return null;
@@ -263,12 +253,13 @@ public class RestorableSupport {
                 new StreamResult(stringWriter));
             // If successful, return the StringWriter contents as a String.
             return stringWriter.toString();
-        }
-        catch (TransformerException e) {
+        } catch (TransformerConfigurationException e) {
+            e.printStackTrace();
+        } catch (TransformerException e) {
             String message = Logging.getMessage("generic.ExceptionWritingXml");
             Logging.logger().severe(message);
-            return null;
         }
+        return null;
     }
 
     /**
@@ -310,11 +301,6 @@ public class RestorableSupport {
      * @throws IllegalArgumentException If <code>stateObjectTagName</code> is null.
      */
     public void setStateObjectTagName(String stateObjectTagName) {
-//        if (stateObjectTagName == null) {
-//            String message = Logging.getMessage("nullValue.StringIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         this.stateObjectTagName = stateObjectTagName;
     }

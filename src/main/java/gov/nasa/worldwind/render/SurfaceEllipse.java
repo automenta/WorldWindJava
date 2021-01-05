@@ -394,22 +394,12 @@ public class SurfaceEllipse extends AbstractSurfaceShape {
     }
 
     protected int computeNumIntervals(Globe globe, double edgeIntervalsPerDegree) {
-//        if (globe == null) {
-//            String message = Logging.getMessage("nullValue.GlobeIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         int numEdgeIntervals = this.computeNumEdgeIntervals(globe, edgeIntervalsPerDegree);
         return numEdgeIntervals * this.intervals;
     }
 
     protected int computeNumEdgeIntervals(Globe globe, double edgeIntervalsPerDegree) {
-//        if (globe == null) {
-//            String message = Logging.getMessage("nullValue.GlobeIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         int numPositions = 1 + Math.max(SurfaceEllipse.MIN_NUM_INTERVALS, intervals);
         double radius = Math.max(this.majorRadius, this.minorRadius);

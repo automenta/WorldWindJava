@@ -97,20 +97,21 @@ public class NITFSUtil {
         return NITFSUtil.readFileToBuffer(file);
     }
 
-    private static ByteBuffer readFileToBuffer(File file) throws IOException {
+    private static ByteBuffer readFileToBuffer(File file) throws IOException, FileNotFoundException {
         try (FileInputStream is = new FileInputStream(file)) {
-            FileChannel fc = is.getChannel();
-            ByteBuffer buffer = ByteBuffer.allocate((int) fc.size());
-            for (int count = 0; count >= 0 && buffer.hasRemaining(); ) {
-                count = fc.read(buffer);
+            try (FileChannel fc = is.getChannel()) {
+                ByteBuffer buffer = ByteBuffer.allocate((int) fc.size());
+                for (int count = 0; count >= 0 && buffer.hasRemaining(); ) {
+                    count = fc.read(buffer);
+                }
+                buffer.flip();
+                return buffer;
             }
-            buffer.flip();
-            return buffer;
         }
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    private static ByteBuffer readFile(File file) throws IOException {
+    private static ByteBuffer readFile(File file) throws IOException, FileNotFoundException {
         FileInputStream fis = new FileInputStream(file);
         ByteBuffer buffer = ByteBuffer.allocate(NITFSUtil.PAGE_SIZE);
         ReadableByteChannel channel = Channels.newChannel(fis);
@@ -131,13 +132,14 @@ public class NITFSUtil {
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    private static ByteBuffer memoryMapFile(File file) throws IOException {
-        FileChannel roChannel = new RandomAccessFile(file, "r").getChannel();
-        long fileSize = roChannel.size();
-        MappedByteBuffer mapFile = roChannel.map(FileChannel.MapMode.READ_ONLY, 0, fileSize);
-        if (!mapFile.isLoaded())
-            mapFile.load();
-        roChannel.close();
+    private static ByteBuffer memoryMapFile(File file) throws IOException, FileNotFoundException {
+        MappedByteBuffer mapFile;
+        try (FileChannel roChannel = new RandomAccessFile(file, "r").getChannel()) {
+            long fileSize = roChannel.size();
+            mapFile = roChannel.map(FileChannel.MapMode.READ_ONLY, 0, fileSize);
+            if (!mapFile.isLoaded())
+                mapFile.load();
+        }
         return mapFile;
     }
 }

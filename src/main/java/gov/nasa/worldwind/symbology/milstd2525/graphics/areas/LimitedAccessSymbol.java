@@ -107,7 +107,7 @@ public class LimitedAccessSymbol extends AbstractTacticalSymbol {
 
             int lineWidth = (int) Math.max(imgWidth * 0.03, 1);
 
-            Color color = this.getColorFromParams(params);
+            Color color = MilStd2525IconRetriever.getColorFromParams(params);
             if (color == null)
                 color = IconRetriever.getColorForStandardIdentity(symbolCode);
 

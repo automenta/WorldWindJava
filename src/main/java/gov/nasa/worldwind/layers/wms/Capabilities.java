@@ -70,7 +70,7 @@ public abstract class Capabilities {
 
     public static Capabilities retrieve(URI uri, String service, Integer connectTimeout, Integer readTimeout)
         throws IllegalArgumentException, WWRuntimeException, org.xml.sax.SAXException,
-        java.io.IOException, URISyntaxException {
+        java.io.IOException, URISyntaxException, MalformedURLException {
         if (uri == null) {
             String message = Logging.getMessage("nullValue.URIIsNull");
             Logging.logger().severe(message);

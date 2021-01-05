@@ -41,7 +41,7 @@ public class HTTPRetriever extends URLRetriever {
     }
 
     @Override
-    protected ByteBuffer doRead(URLConnection connection) throws Exception {
+    protected ByteBuffer doRead(URLConnection connection) throws Exception, IOException {
 
         HttpURLConnection htpc = (HttpURLConnection) connection;
         this.responseCode = htpc.getResponseCode();

@@ -159,6 +159,9 @@ public class LocalRasterServerRetriever extends WWObjectImpl implements Retrieve
             if (this.postProcessor != null)
                 this.byteBuffer = this.postProcessor.run(this);
         }
+        catch (WWRuntimeException e) {
+            e.printStackTrace();
+        }
         catch (Exception e) {
             setState(Retriever.RETRIEVER_STATE_ERROR);
 

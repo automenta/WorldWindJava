@@ -36,17 +36,6 @@ public class PickSupport {
      */
     protected int[] minAndMaxColorCodes;
 
-//    /**
-//     * Indicates whether two picked objects refer to the same user object.
-//     *
-//     * @param a the first picked object.
-//     * @param b the second picked object.
-//     * @return true if both objects are not null and they refer to the same user object, otherwise false.
-//     */
-//    public static boolean areSelectionsTheSame(PickedObject a, PickedObject b) {
-//        return a != null && b != null && a.get() == b.get();
-//    }
-
     /**
      * Returns the framebuffer RGB color for a point in AWT screen coordinates, formatted as a pick color code. The red,
      * green, and blue components are each stored as an 8-bit unsigned integer, and packed into bits 0-23 of the

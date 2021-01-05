@@ -96,18 +96,6 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
         return trans;
     }
 
-//    protected void forceTextureLoad(MercatorTextureTile tile) {
-//        final URL textureURL = this.getDataFileStore().findFile(tile.getPath(), true);
-//
-//        if (textureURL != null && !this.isTextureExpired(tile, textureURL)) {
-//            try {
-//                this.loadTexture(tile, textureURL.openStream());
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
-
     protected void requestTexture(DrawContext dc, MercatorTextureTile tile) {
         Vec4 centroid = tile.getCentroidPoint(dc.getGlobe());
         if (this.referencePoint != null)
@@ -115,19 +103,6 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
 
         requestQ.add(new RequestTask(tile, this));
     }
-
-//    private boolean isTextureExpired(MercatorTextureTile tile,
-//        URL textureURL) {
-//        if (!WWIO.isFileOutOfDate(textureURL, tile.level.getExpiryTime()))
-//            return false;
-//
-//        // The file has expired. Delete it.
-//        this.getDataFileStore().removeFile(textureURL);
-//        String message = Logging.getMessage("generic.DataFileExpired",
-//            textureURL);
-//        Logging.logger().fine(message);
-//        return true;
-//    }
 
     private boolean loadTexture(MercatorTextureTile tile, InputStream in) throws IOException {
         TextureData textureData;
@@ -145,56 +120,6 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
 
         return true;
     }
-
-//    protected void downloadTexture(final MercatorTextureTile tile) {
-//        if (!WorldWind.retrieveRemote().isAvailable())
-//            return;
-//
-//        URL url;
-//        try {
-//            url = tile.getResourceURL();
-//            if (url == null)
-//                return;
-//
-//            if (WorldWind.getNetworkStatus().isHostUnavailable(url))
-//                return;
-//        }
-//        catch (MalformedURLException e) {
-//            Logging.logger().log(
-//                Level.SEVERE,
-//                Logging.getMessage(
-//                    "layers.TextureLayer.ExceptionCreatingTextureUrl",
-//                    tile), e);
-//            return;
-//        }
-//
-//        Retriever retriever;
-//
-//        final String protocol = url.getProtocol();
-//        if ("http".equalsIgnoreCase(protocol) || "https".equalsIgnoreCase(protocol)) {
-//            retriever = new HTTPRetriever(url, new DownloadPostProcessor(tile, this));
-//            retriever.set(URLRetriever.EXTRACT_ZIP_ENTRY, "true"); // supports legacy layers
-//        } else {
-//            Logging.logger().severe(
-//                Logging.getMessage("layers.TextureLayer.UnknownRetrievalProtocol", url.toString()));
-//            return;
-//        }
-//
-//        // Apply any overridden timeouts.
-//        Integer cto = AVListImpl.getIntegerValue(this,
-//            AVKey.URL_CONNECT_TIMEOUT);
-//        if (cto != null && cto > 0)
-//            retriever.setConnectTimeout(cto);
-//        Integer cro = AVListImpl.getIntegerValue(this, AVKey.URL_READ_TIMEOUT);
-//        if (cro != null && cro > 0)
-//            retriever.setReadTimeout(cro);
-//        Integer srl = AVListImpl.getIntegerValue(this,
-//            AVKey.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT);
-//        if (srl != null && srl > 0)
-//            retriever.setStaleRequestLimit(srl);
-//
-//        WorldWind.retrieveRemote().run(retriever, tile.getPriority());
-//    }
 
     private void saveBuffer(ByteBuffer buffer, File outFile)
         throws IOException {
@@ -310,7 +235,7 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
                         throw new IOException("http fail: " + htr.getUrl().toString());
                 }
 
-                return load(retriever.getBuffer(), retriever.getContentType(), tile, layer);
+                return BasicMercatorTiledImageLayer.load(retriever.getBuffer(), retriever.getContentType(), tile, layer);
             } catch (IOException e) {
                 e.printStackTrace();
                 return null;

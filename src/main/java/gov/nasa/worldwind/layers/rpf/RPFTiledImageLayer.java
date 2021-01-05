@@ -508,14 +508,6 @@ public class RPFTiledImageLayer extends TiledImageLayer {
         throw new UnsupportedOperationException(message);
     }
 
-//    protected void forceTextureLoad(TextureTile tile) {
-//        final URL textureURL = Configuration.data.findFile(tile.getPath(), true);
-//
-//        if (textureURL != null) {
-//            this.loadTexture(tile, textureURL);
-//        }
-//    }
-
     protected void requestTexture(DrawContext dc, TextureTile tile) {
         Vec4 centroid = tile.getCentroidPoint(dc.getGlobe());
         Vec4 referencePoint = TiledImageLayer.getReferencePoint(dc);

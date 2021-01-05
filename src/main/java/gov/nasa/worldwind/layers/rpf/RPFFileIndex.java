@@ -224,7 +224,7 @@ public class RPFFileIndex {
         this.properties.setBoundingSector(bs);
     }
 
-    public void load(ByteBuffer buffer) throws IOException {
+    public void load(ByteBuffer buffer) throws IOException, UnsupportedEncodingException {
         if (buffer == null) {
             String message = Logging.getMessage("nullValue.ByteBufferIsNull");
             Logging.logger().severe(message);
@@ -247,7 +247,7 @@ public class RPFFileIndex {
         this.directoryTable.load(buffer, locationSection.getDirectoryTableSectionLocation());
     }
 
-    public ByteBuffer save() throws IOException {
+    public ByteBuffer save() throws IOException, UnsupportedEncodingException {
         ByteBuffer informationSectionBuffer = this.properties.save();
         ByteBuffer rpfFileTableBuffer = this.rpfFileTable.save();
         ByteBuffer waveletTableBuffer = this.waveletTable.save();

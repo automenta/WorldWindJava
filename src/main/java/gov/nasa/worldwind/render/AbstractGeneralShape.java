@@ -264,7 +264,7 @@ public abstract class AbstractGeneralShape extends AbstractShape {
      * This class holds globe-specific data for this shape. It's managed via the shape-data cache in {@link
      * AbstractShape.AbstractShapeData}.
      */
-    protected static class ShapeData extends AbstractShapeData {
+    protected static class ShapeData extends AbstractShape.AbstractShapeData {
         /**
          * Construct a cache entry for this shape.
          *

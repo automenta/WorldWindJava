@@ -1,7 +1,6 @@
-package spacegraph.space2d.widget.meta;
+package netvr;
 
 import jcog.data.map.CellMap;
-import netvr.WordNet;
 import org.eclipse.collections.api.tuple.primitive.ObjectFloatPair;
 import org.eclipse.collections.impl.map.mutable.primitive.ObjectFloatHashMap;
 import spacegraph.SpaceGraph;

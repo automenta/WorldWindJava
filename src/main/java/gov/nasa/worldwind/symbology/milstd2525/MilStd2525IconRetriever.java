@@ -740,34 +740,34 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
 
         // Draw a dot if both frame and icon are turned off
         if (image == null)
-            image = this.drawCircle(symbolCode, params, image);
+            image = MilStd2525IconRetriever.drawCircle(symbolCode, params, image);
 
         return image;
     }
 
     protected BufferedImage drawFill(SymbolCode symbolCode, AVList params, BufferedImage dest) {
         String path = MilStd2525IconRetriever.composeFillPath(symbolCode);
-        Color color = this.getFillColor(symbolCode, params);
+        Color color = MilStd2525IconRetriever.getFillColor(symbolCode, params);
 
         return path != null ? this.drawIconComponent(path, color, dest) : dest;
     }
 
     protected BufferedImage drawFrame(SymbolCode symbolCode, AVList params, BufferedImage dest) {
         String path = MilStd2525IconRetriever.composeFramePath(symbolCode);
-        Color color = this.getFrameColor(symbolCode, params);
+        Color color = MilStd2525IconRetriever.getFrameColor(symbolCode, params);
 
         return path != null ? this.drawIconComponent(path, color, dest) : dest;
     }
 
     protected BufferedImage drawIcon(SymbolCode symbolCode, AVList params, BufferedImage dest) {
         String path = MilStd2525IconRetriever.composeIconPath(symbolCode, params);
-        Color color = this.getIconColor(symbolCode, params);
+        Color color = MilStd2525IconRetriever.getIconColor(symbolCode, params);
 
         return path != null ? this.drawIconComponent(path, color, dest) : dest;
     }
 
-    protected BufferedImage drawCircle(SymbolCode symbolCode, AVList params, BufferedImage dest) {
-        Color fillColor = MilStd2525IconRetriever.mustDrawFill(symbolCode, params) ? this.getFillColor(symbolCode,
+    protected static BufferedImage drawCircle(SymbolCode symbolCode, AVList params, BufferedImage dest) {
+        Color fillColor = MilStd2525IconRetriever.mustDrawFill(symbolCode, params) ? MilStd2525IconRetriever.getFillColor(symbolCode,
             params)
             : MilStd2525IconRetriever.DEFAULT_ICON_COLOR;
 
@@ -822,23 +822,23 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
         return image;
     }
 
-    protected Color getFillColor(SymbolCode symbolCode, AVList params) {
-        Color color = this.getColorFromParams(params);
+    protected static Color getFillColor(SymbolCode symbolCode, AVList params) {
+        Color color = MilStd2525IconRetriever.getColorFromParams(params);
         return color != null ? color : MilStd2525IconRetriever.fillColorMap.get(symbolCode.getStandardIdentity().toLowerCase());
     }
 
-    protected Color getFrameColor(SymbolCode symbolCode, AVList params) {
+    protected static Color getFrameColor(SymbolCode symbolCode, AVList params) {
         if (MilStd2525IconRetriever.isDashedFrame(symbolCode))
             return null; // Dashed pending or exercise frames are not colored.
 
         if (MilStd2525IconRetriever.mustDrawFill(symbolCode, params))
             return MilStd2525IconRetriever.DEFAULT_FRAME_COLOR; // Use the default color if the fill is on.
 
-        Color color = this.getColorFromParams(params);
+        Color color = MilStd2525IconRetriever.getColorFromParams(params);
         return color != null ? color : MilStd2525IconRetriever.frameColorMap.get(symbolCode.getStandardIdentity().toLowerCase());
     }
 
-    protected Color getIconColor(SymbolCode symbolCode, AVList params) {
+    protected static Color getIconColor(SymbolCode symbolCode, AVList params) {
         String maskedCode = symbolCode.toMaskedString().toLowerCase();
 
         if (MilStd2525IconRetriever.mustDrawFrame(symbolCode, params)) {
@@ -848,7 +848,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
         } else if (MilStd2525IconRetriever.mustDrawFill(symbolCode, params)) {
             // When the frame is disabled and the fill is enabled, we draw the icon in its corresponding standard
             // identity color (or app-specified color override).
-            Color color = this.getColorFromParams(params);
+            Color color = MilStd2525IconRetriever.getColorFromParams(params);
             return color != null ? color : MilStd2525IconRetriever.fillColorMap.get(symbolCode.getStandardIdentity().toLowerCase());
         } else {
             // When the frame is disabled and the fill is disabled, we draw the icon in either its specified custom
@@ -864,7 +864,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
      * @return The value of the AVKey.COLOR parameter, if such a parameter exists and is of type java.awt.Color. Returns
      * null if the parameter list is null, if there is no value for key AVKey.COLOR, or if the value is not a Color.
      */
-    protected Color getColorFromParams(AVList params) {
+    protected static Color getColorFromParams(AVList params) {
         if (params == null)
             return null;
 

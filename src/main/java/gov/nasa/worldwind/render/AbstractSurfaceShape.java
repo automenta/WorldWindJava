@@ -514,11 +514,6 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject
      * @throws IllegalArgumentException if the Globe is null.
      */
     public Extent getExtent(Globe globe, double verticalExaggeration) {
-//        if (globe == null) {
-//            String message = Logging.getMessage("nullValue.GlobeIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         Sector[] sectors = this.computeSectors(globe);
         if (sectors == null)
@@ -1439,7 +1434,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject
      * but also distinguishes the shape's active ShapeAttributes from any previous attributes, and distinguishes between
      * different globes via the globe state key.
      */
-    protected static class SurfaceShapeStateKey extends SurfaceObjectStateKey {
+    protected static class SurfaceShapeStateKey extends AbstractSurfaceObject.SurfaceObjectStateKey {
         /**
          * The SurfaceShape's attributes. May be null if the shape has no attributes.
          */

@@ -382,14 +382,6 @@ public abstract class TiledImageLayer extends AbstractLayer {
         this.tileCountName = this.name() + " Tiles";
     }
 
-//    public boolean isForceLevelZeroLoads() {
-//        return this.forceLevelZeroLoads;
-//    }
-
-//    public void setForceLevelZeroLoads(boolean forceLevelZeroLoads) {
-//        this.forceLevelZeroLoads = forceLevelZeroLoads;
-//    }
-
     public boolean isRetainLevelZeroTiles() {
         return retainLevelZeroTiles;
     }
@@ -576,15 +568,6 @@ public abstract class TiledImageLayer extends AbstractLayer {
         }
     }
 
-//    protected void loadAllTopLevelTextures(DrawContext dc) {
-//        for (TextureTile tile : this.getTopLevels()) {
-//            if (!tile.isTextureInMemory(dc.getTextureCache()))
-//                this.forceTextureLoad(tile);
-//        }
-//
-//        this.levelZeroLoaded = true;
-//    }
-
     protected void assembleTiles(DrawContext dc) {
         this.currentTiles.clear();
 
@@ -682,10 +665,6 @@ public abstract class TiledImageLayer extends AbstractLayer {
 
         // Set up to use the currentResource tile's texture
         if (this.currentResourceTile != null) {
-//            if (this.currentResourceTile.getLevelNumber() == 0 && this.forceLevelZeroLoads &&
-//                //!this.currentResourceTile.isTextureInMemory(dc.getTextureCache()) &&
-//                !this.currentResourceTile.isTextureInMemory(textureCache))
-//                this.forceTextureLoad(this.currentResourceTile);
 
             if (this.currentResourceTile.isTextureInMemory(textureCache)) {
                 tile.setFallbackTile(currentResourceTile);
@@ -800,8 +779,6 @@ public abstract class TiledImageLayer extends AbstractLayer {
 
     @Override
     protected final void doRender(DrawContext dc) {
-//        if (this.forceLevelZeroLoads && !this.levelZeroLoaded)
-//            this.loadAllTopLevelTextures(dc);
         if (dc.getSurfaceGeometry() == null || dc.getSurfaceGeometry().size() < 1)
             return;
 
@@ -937,7 +914,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
     }
 
     protected BufferedImage requestImage(TextureTile tile, String mimeType)
-        throws URISyntaxException, IOException {
+        throws IOException, MalformedURLException {
 
         InputStream in;
         String path = tile.getPathBase() + WWIO.mimeSuffix(mimeType);
@@ -997,7 +974,8 @@ public abstract class TiledImageLayer extends AbstractLayer {
             this.retrieveRemoteImage(tile, mimeType, timeout);
     }
 
-    protected void retrieveRemoteImage(final TextureTile tile, String mimeType, int timeout) throws Exception {
+    protected void retrieveRemoteImage(final TextureTile tile, String mimeType, int timeout) throws Exception,
+        MalformedURLException, RuntimeException {
         // TODO: apply retriever-factory pattern for remote retrieval case.
         final URL resourceURL = tile.getResourceURL(mimeType);
         if (resourceURL == null)
@@ -1256,7 +1234,8 @@ public abstract class TiledImageLayer extends AbstractLayer {
         return sectorTiles;
     }
 
-    protected BufferedImage getImage(TextureTile tile, String mimeType, int timeout) throws Exception {
+    protected BufferedImage getImage(TextureTile tile, String mimeType, int timeout) throws Exception,
+        URISyntaxException, IOException, RuntimeException {
         // Read the image from disk.
         BufferedImage image = this.requestImage(tile, mimeType);
         //Thread.sleep(1); // generates InterruptedException if thread has been interrupted

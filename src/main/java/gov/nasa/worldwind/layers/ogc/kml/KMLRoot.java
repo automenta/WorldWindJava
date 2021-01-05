@@ -129,7 +129,7 @@ public class KMLRoot extends KMLAbstractObject implements KMLRenderable, XMLRoot
      * @throws IllegalArgumentException if the document source is null.
      * @throws IOException              if an error occurs while reading the KML document.
      */
-    public KMLRoot(File docSource, boolean namespaceAware) throws IOException {
+    public KMLRoot(File docSource, boolean namespaceAware) throws IOException, FileNotFoundException {
         super(KMLConstants.KML_NAMESPACE);
 
         if (docSource == null) {
@@ -708,7 +708,7 @@ public class KMLRoot extends KMLAbstractObject implements KMLRenderable, XMLRoot
             else
                 return refRoot;
         }
-        catch (Exception e) {
+         catch (Exception e) {
             String message = Logging.getMessage("generic.UnableToResolveReference", linkBase + '/' + linkRef);
             Logging.logger().warning(message);
             return null;
@@ -769,12 +769,6 @@ public class KMLRoot extends KMLAbstractObject implements KMLRenderable, XMLRoot
      * @throws IllegalArgumentException if the {@code linkBase} is null.
      */
     public Object resolveRemoteReference(String linkBase, String linkRef, boolean cacheRemoteFile) {
-        if (linkBase == null) {
-            String message = Logging.getMessage("nullValue.DocumentSourceIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
         try {
             // See if it's in the cache. If not, requestFile will start another thread to retrieve it and return null.
             URL url = Configuration.data.requestFile(linkBase, cacheRemoteFile);
@@ -816,14 +810,9 @@ public class KMLRoot extends KMLAbstractObject implements KMLRenderable, XMLRoot
             WorldWind.getSessionCache().put(linkBase, refRoot);
 
             // Now check the newly opened KML/Z file for the referenced item, if a reference was specified.
-            if (linkRef != null)
-                return refRoot.getItemByID(linkRef);
-            else
-                return refRoot;
-        }
-        catch (Exception e) {
-            String message = Logging.getMessage("generic.UnableToResolveReference", linkBase + '/' + linkRef);
-            Logging.logger().warning(message);
+            return linkRef != null ? refRoot.getItemByID(linkRef) : refRoot;
+        } catch (Exception e) {
+            Logging.logger().warning(Logging.getMessage("generic.UnableToResolveReference", linkBase + '/' + linkRef));
             return null;
         }
     }
@@ -894,6 +883,9 @@ public class KMLRoot extends KMLAbstractObject implements KMLRenderable, XMLRoot
                 // Call resolveRemoteReference to retrieve and parse the file.
                 o = this.resolveRemoteReference(path, null, cacheRemoteFile);
             }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
         }
         catch (Exception e) {
             String message = Logging.getMessage("generic.UnableToResolveReference", link);

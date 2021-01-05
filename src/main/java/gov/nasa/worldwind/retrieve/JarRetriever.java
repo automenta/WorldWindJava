@@ -38,8 +38,7 @@ public class JarRetriever extends URLRetriever {
 
     protected ByteBuffer doRead(URLConnection connection) throws Exception {
 
-        URLConnection htpc = connection;
-        this.responseCode = htpc.getContentLength() >= 0 ? HttpURLConnection.HTTP_OK : -1;
+        this.responseCode = connection.getContentLength() >= 0 ? HttpURLConnection.HTTP_OK : -1;
         this.responseMessage = this.responseCode >= 0 ? "OK" : "FAILED";
 
         String contentType = connection.getContentType();

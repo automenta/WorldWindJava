@@ -62,8 +62,8 @@ public class Angle implements Comparable<Angle> {
      * Represents an angle of 1 second
      */
     public final static Angle SECOND = Angle.fromDegrees(1.0d / 3600.0d);
-    private final static double RADIANS_TO_DEGREES = 180.0d / Math.PI;
-    private static final double PIOver2 = Math.PI / 2;
+    private final static double RADIANS_TO_DEGREES = 180.0d / PI;
+    private static final double PIOver2 = PI / 2;
 
     public static final double POS90degrees = Angle.POS90.degrees;
     public static final double NEG90degrees = Angle.NEG90.degrees;
@@ -116,13 +116,13 @@ public class Angle implements Comparable<Angle> {
     public static Angle fromDegreesLongitude(double degrees) {
         degrees = degrees < -180 ? -180 : degrees > 180 ? 180 : degrees;
         double radians = toRadians(degrees);
-        radians = radians < -Math.PI ? -Math.PI : Math.min(radians, Math.PI);
+        radians = radians < -PI ? -PI : Math.min(radians, PI);
 
         return new Angle(toDegrees(radians));
     }
 
     public static Angle fromRadiansLongitude(double radians) {
-        radians = radians < -Math.PI ? -Math.PI : Math.min(radians, Math.PI);
+        radians = radians < -PI ? -PI : Math.min(radians, PI);
         double degrees = toDegrees(radians);
         degrees = degrees < -180 ? -180 : degrees > 180 ? 180 : degrees;
 
@@ -137,7 +137,7 @@ public class Angle implements Comparable<Angle> {
      * @return a new angle, whose size is determined from <code>x</code> and <code>y</code>.
      */
     public static Angle fromXY(double x, double y) {
-        double radians = Math.atan2(y, x);
+        double radians = atan2(y, x);
         return new Angle(Angle.RADIANS_TO_DEGREES * radians);
     }
 
@@ -261,7 +261,7 @@ public class Angle implements Comparable<Angle> {
     }
 
     public static double arctanh(double radians) {
-        return 0.5 * Math.log((1 + radians) / (1 - radians));
+        return 0.5 * log((1 + radians) / (1 - radians));
     }
 
     public static Angle acos(double cosine) {   //Tom: this method is not used, should we delete it? (13th Dec 06)
@@ -401,8 +401,8 @@ public class Angle implements Comparable<Angle> {
 
         // A segment cross the line if end pos have different longitude signs
         // and are more than 180 degrees longitude apart
-        return (Math.signum(angleA.degrees) != Math.signum(angleB.degrees))
-            && (Math.abs(angleA.degrees - angleB.degrees) > 180);
+        return (signum(angleA.degrees) != signum(angleB.degrees))
+            && (abs(angleA.degrees - angleB.degrees) > 180);
     }
 
     public static boolean isValidLatitude(double value) {
@@ -538,7 +538,7 @@ public class Angle implements Comparable<Angle> {
         else if (differenceDegrees > 180)
             differenceDegrees -= 360;
 
-        return Angle.fromDegrees(Math.abs(differenceDegrees));
+        return Angle.fromDegrees(abs(differenceDegrees));
     }
 
     /**
@@ -573,7 +573,7 @@ public class Angle implements Comparable<Angle> {
      * @return the trigonometric tangent of half of this angle.
      */
     public final double tanHalfAngle() {
-        return Math.tan(0.5 * this.radians());
+        return tan(0.5 * this.radians());
     }
 
     /**
@@ -637,13 +637,13 @@ public class Angle implements Comparable<Angle> {
      */
     public final String toDMSString() {
         double temp = this.degrees;
-        int sign = (int) Math.signum(temp);
+        int sign = (int) signum(temp);
         temp *= sign;
-        int d = (int) Math.floor(temp);
+        int d = (int) floor(temp);
         temp = (temp - d) * 60.0d;
-        int m = (int) Math.floor(temp);
+        int m = (int) floor(temp);
         temp = (temp - m) * 60.0d;
-        int s = (int) Math.round(temp);
+        int s = (int) round(temp);
 
         if (s == 60) {
             m++;
@@ -664,13 +664,13 @@ public class Angle implements Comparable<Angle> {
      */
     public final String toDMString() {
         double temp = this.degrees;
-        int sign = (int) Math.signum(temp);
+        int sign = (int) signum(temp);
         temp *= sign;
-        int d = (int) Math.floor(temp);
+        int d = (int) floor(temp);
         temp = (temp - d) * 60.0d;
-        int m = (int) Math.floor(temp);
+        int m = (int) floor(temp);
         temp = (temp - m) * 60.0d;
-        int s = (int) Math.round(temp);
+        int s = (int) round(temp);
 
         if (s == 60) {
             m++;
@@ -688,14 +688,14 @@ public class Angle implements Comparable<Angle> {
 
     public final String toFormattedDMSString() {
         double temp = this.degrees;
-        int sign = (int) Math.signum(temp);
+        int sign = (int) signum(temp);
 
         temp *= sign;
-        int d = (int) Math.floor(temp);
+        int d = (int) floor(temp);
         temp = (temp - d) * 60.0d;
-        int m = (int) Math.floor(temp);
+        int m = (int) floor(temp);
         temp = (temp - m) * 60.0d;
-        double s = Math.rint(temp * 100) / 100;  // keep two decimals for seconds
+        double s = rint(temp * 100) / 100;  // keep two decimals for seconds
 
         if (s == 60) {
             m++;
@@ -711,14 +711,14 @@ public class Angle implements Comparable<Angle> {
 
     public final double[] toDMS() {
         double temp = this.degrees;
-        int sign = (int) Math.signum(temp);
+        int sign = (int) signum(temp);
 
         temp *= sign;
-        int d = (int) Math.floor(temp);
+        int d = (int) floor(temp);
         temp = (temp - d) * 60.0d;
-        int m = (int) Math.floor(temp);
+        int m = (int) floor(temp);
         temp = (temp - m) * 60.0d;
-        double s = Math.rint(temp * 100) / 100;  // keep two decimals for seconds
+        double s = rint(temp * 100) / 100;  // keep two decimals for seconds
 
         if (s == 60) {
             m++;

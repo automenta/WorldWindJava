@@ -350,11 +350,9 @@ public class TextureAtlasElement implements Disposable {
     protected BufferedImage readImage(URL fileUrl) {
         try {
             return ImageIO.read(fileUrl);
-        }
-        catch (Exception e) {
-            String msg = Logging.getMessage("generic.ExceptionAttemptingToReadImageFile",
-                this.getImageSource().toString());
-            Logging.logger().log(java.util.logging.Level.SEVERE, msg, e);
+        } catch (Exception e) {
+            Logging.logger().log(java.util.logging.Level.SEVERE, Logging.getMessage("generic.ExceptionAttemptingToReadImageFile",
+                this.getImageSource().toString()), e);
             this.imageInitializationFailed = true;
             return null;
         }
@@ -390,11 +388,11 @@ public class TextureAtlasElement implements Disposable {
          * @throws IllegalArgumentException if the element is <code>null</code>.
          */
         protected RequestTask(TextureAtlasElement elem) {
-            if (elem == null) {
-                String message = Logging.getMessage("nullValue.ElementIsNull");
-                Logging.logger().severe(message);
-                throw new IllegalArgumentException(message);
-            }
+//            if (elem == null) {
+//                String message = Logging.getMessage("nullValue.ElementIsNull");
+//                Logging.logger().severe(message);
+//                throw new IllegalArgumentException(message);
+//            }
 
             this.elem = elem;
         }

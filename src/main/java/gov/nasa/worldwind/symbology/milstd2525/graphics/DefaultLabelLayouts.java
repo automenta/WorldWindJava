@@ -13,7 +13,6 @@ import gov.nasa.worldwind.util.Logging;
 import java.util.*;
 
 import static gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc.*;
-import static gov.nasa.worldwind.symbology.milstd2525.graphics.TacticalGraphicSymbol.LabelLayout;
 
 /**
  * Object to provide default label layouts for MIL-STD-2525C tactical point graphics. The layout is used to arrange text
@@ -26,7 +25,7 @@ public class DefaultLabelLayouts {
     /**
      * Map to hold layouts.
      */
-    protected final Map<String, List<LabelLayout>> layouts = new HashMap<>();
+    protected final Map<String, List<TacticalGraphicSymbol.LabelLayout>> layouts = new HashMap<>();
 
     /**
      * Create the map and populate it with the default layouts.
@@ -43,8 +42,8 @@ public class DefaultLabelLayouts {
      * @param hotspot Offset within the label to align with the label point in the image.
      * @return New map, populated with one entry for the key/value pair specified in the parameters.
      */
-    protected static List<LabelLayout> createLayout(String key, Offset offset, Offset hotspot) {
-        LabelLayout layout = new LabelLayout(key);
+    protected static List<TacticalGraphicSymbol.LabelLayout> createLayout(String key, Offset offset, Offset hotspot) {
+        TacticalGraphicSymbol.LabelLayout layout = new TacticalGraphicSymbol.LabelLayout(key);
         layout.add(offset, hotspot);
 
         return Collections.singletonList(layout);
@@ -60,14 +59,14 @@ public class DefaultLabelLayouts {
      *                   then multiple LabelLayouts will be created and added to the map.
      * @throws IllegalArgumentException if offsets does not have even length.
      */
-    protected static void addLayout(Collection<LabelLayout> layoutList, String key, Offset... offsets) {
+    protected static void addLayout(Collection<TacticalGraphicSymbol.LabelLayout> layoutList, String key, Offset... offsets) {
         if (offsets.length % 2 != 0) {
             String msg = Logging.getMessage("generic.ArrayInvalidLength", offsets.length);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        LabelLayout layout = new LabelLayout(key);
+        TacticalGraphicSymbol.LabelLayout layout = new TacticalGraphicSymbol.LabelLayout(key);
         for (int i = 0; i < offsets.length; i += 2) {
             Offset offset = offsets[i];
             Offset hotspot = offsets[i + 1];
@@ -86,8 +85,8 @@ public class DefaultLabelLayouts {
      * info, etc.). The values are lists of LabelLayout. Most modifiers will only specify a single layout, but some
      * graphics support multiple instances of the same modifier, in which case the list will contain multiple layouts.
      */
-    public List<LabelLayout> get(String sidc) {
-        List<LabelLayout> layout = this.layouts.get(sidc);
+    public List<TacticalGraphicSymbol.LabelLayout> get(String sidc) {
+        List<TacticalGraphicSymbol.LabelLayout> layout = this.layouts.get(sidc);
         return layout != null ? layout : Collections.emptyList();
     }
 
@@ -104,7 +103,7 @@ public class DefaultLabelLayouts {
             DefaultLabelLayouts.createLayout(SymbologyConstants.UNIQUE_DESIGNATION, Offset.CENTER, Offset.CENTER));
 
         // Most pentagon shaped graphics support the same modifiers around the pentagon.
-        List<LabelLayout> layout = new ArrayList<>();
+        List<TacticalGraphicSymbol.LabelLayout> layout = new ArrayList<>();
         DefaultLabelLayouts.addLayout(layout, SymbologyConstants.UNIQUE_DESIGNATION,
             Offset.fromFraction(1.1, 1.0),
             Offset.fromFraction(0.0, 1.0));
@@ -270,7 +269,7 @@ public class DefaultLabelLayouts {
      * @param value Value to add.
      * @param keys  Keys that map to the value.
      */
-    protected void putAll(List<LabelLayout> value, String... keys) {
+    protected void putAll(List<TacticalGraphicSymbol.LabelLayout> value, String... keys) {
         for (String sidc : keys) {
             this.layouts.put(sidc, value);
         }

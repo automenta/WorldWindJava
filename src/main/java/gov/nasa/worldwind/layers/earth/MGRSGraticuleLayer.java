@@ -638,8 +638,8 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer {
         private int UTMZone;
         private String hemisphere;
 
-        private ArrayList<GridElement> gridElements;
-        private ArrayList<SquareZone> squares;
+        private ArrayList<GraticuleLayer.GridElement> gridElements;
+        private ArrayList<UTMBaseGraticuleLayer.SquareZone> squares;
 
         public GridZone(Sector sector) {
             this.sector = sector;
@@ -677,11 +677,11 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer {
             if (this.gridElements == null)
                 createRenderables();
 
-            for (GridElement ge : this.gridElements) {
+            for (GraticuleLayer.GridElement ge : this.gridElements) {
                 if (ge.isInView(dc, vs)) {
-                    if (ge.type.equals(GridElement.TYPE_LINE_NORTH) && isNorthNeighborInView(this, dc))
+                    if (ge.type.equals(GraticuleLayer.GridElement.TYPE_LINE_NORTH) && isNorthNeighborInView(this, dc))
                         continue;
-                    if (ge.type.equals(GridElement.TYPE_LINE_EAST) && isEastNeighborInView(this, dc))
+                    if (ge.type.equals(GraticuleLayer.GridElement.TYPE_LINE_EAST) && isEastNeighborInView(this, dc))
                         continue;
 
                     layer.addRenderable(ge.renderable, MGRSGraticuleLayer.GRATICULE_UTM_GRID);
@@ -694,7 +694,7 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer {
             // Select 100km squares elements
             if (this.squares == null)
                 createSquares();
-            for (SquareZone sz : this.squares) {
+            for (UTMBaseGraticuleLayer.SquareZone sz : this.squares) {
                 if (sz.isInView(dc)) {
                     sz.selectRenderables(dc, vs);
                 } else
@@ -708,7 +708,7 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer {
                 this.gridElements = null;
             }
             if (this.squares != null) {
-                for (SquareZone sz : this.squares) {
+                for (UTMBaseGraticuleLayer.SquareZone sz : this.squares) {
                     sz.clearRenderables();
                 }
                 this.squares.clear();
@@ -779,12 +779,12 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer {
         }
 
         private void setSquareNames() {
-            for (SquareZone sz : this.squares) {
+            for (UTMBaseGraticuleLayer.SquareZone sz : this.squares) {
                 this.setSquareName(sz);
             }
         }
 
-        private void setSquareName(SquareZone sz) {
+        private void setSquareName(UTMBaseGraticuleLayer.SquareZone sz) {
             // Find out MGRS 100Km square name
             double tenMeterRadian = 10.0d / 6378137.0d;
             try {
@@ -827,7 +827,7 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer {
             Object polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), AVKey.LINEAR);
             Sector lineSector = new Sector(s.latMin, s.latMax,
                 s.lonMin, s.lonMin);
-            this.gridElements.add(new GridElement(lineSector, polyline, GridElement.TYPE_LINE_WEST));
+            this.gridElements.add(new GraticuleLayer.GridElement(lineSector, polyline, GraticuleLayer.GridElement.TYPE_LINE_WEST));
 
             if (!this.isUPS) {
                 // right meridian segment
@@ -836,7 +836,7 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer {
                 positions.add(new Position(s.latMax, s.lonMax, 10.0e3));
                 polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), AVKey.LINEAR);
                 lineSector = new Sector(s.latMin, s.latMax, s.lonMax, s.lonMax);
-                this.gridElements.add(new GridElement(lineSector, polyline, GridElement.TYPE_LINE_EAST));
+                this.gridElements.add(new GraticuleLayer.GridElement(lineSector, polyline, GraticuleLayer.GridElement.TYPE_LINE_EAST));
 
                 // bottom parallel segment
                 positions.clear();
@@ -844,7 +844,7 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer {
                 positions.add(new Position(s.latMin, s.lonMax, 10.0e3));
                 polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), AVKey.LINEAR);
                 lineSector = new Sector(s.latMin, s.latMin, s.lonMin, s.lonMax);
-                this.gridElements.add(new GridElement(lineSector, polyline, GridElement.TYPE_LINE_SOUTH));
+                this.gridElements.add(new GraticuleLayer.GridElement(lineSector, polyline, GraticuleLayer.GridElement.TYPE_LINE_SOUTH));
 
                 // top parallel segment
                 positions.clear();
@@ -852,13 +852,13 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer {
                 positions.add(new Position(s.latMax, s.lonMax, 10.0e3));
                 polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), AVKey.LINEAR);
                 lineSector = new Sector(s.latMax, s.latMax, s.lonMin, s.lonMax);
-                this.gridElements.add(new GridElement(lineSector, polyline, GridElement.TYPE_LINE_NORTH));
+                this.gridElements.add(new GraticuleLayer.GridElement(lineSector, polyline, GraticuleLayer.GridElement.TYPE_LINE_NORTH));
             }
 
             // Label
             GeographicText text = new UserFacingText(this.name, new Position(s.getCentroid(), 0));
             text.setPriority(10.0e6);
-            this.gridElements.add(new GridElement(s, text, GridElement.TYPE_GRIDZONE_LABEL));
+            this.gridElements.add(new GraticuleLayer.GridElement(s, text, GraticuleLayer.GridElement.TYPE_GRIDZONE_LABEL));
         }
     }
 }

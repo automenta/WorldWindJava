@@ -885,7 +885,8 @@ public class ImageUtil {
      * @throws IOException        if there is a problem opening the file.
      * @throws WWRuntimeException if the image type is unsupported.
      */
-    public static AVList openSpatialImage(File imageFile, int interpolation_mode) throws IOException {
+    public static AVList openSpatialImage(File imageFile, int interpolation_mode) throws IOException,
+        FileNotFoundException {
         AVList values = new AVListImpl();
         BufferedImage image;
         Sector sector;
@@ -1096,12 +1097,6 @@ public class ImageUtil {
         double False_Northing = 0;
         double Scale = 0.9996;
         Globe earth = new Earth(); //need globe for TM
-
-//        if (values == null) {
-//            String message = Logging.getMessage("nullValue.AVListIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
-//        }
 
         BufferedImage image = (BufferedImage) values.get(AVKey.IMAGE);
         int width = image.getWidth();

@@ -138,10 +138,6 @@ public class WWXML {
      *                                  .
      */
     public static Document openDocumentFile(String filePath, Class c) {
-//        if (filePath == null) {
-//            String message = Logging.getMessage("nullValue.FileIsNull");
-//            throw new IllegalArgumentException(message);
-//        }
 
         InputStream inputStream = WWIO.openFileOrResourceStream(filePath, c);
 

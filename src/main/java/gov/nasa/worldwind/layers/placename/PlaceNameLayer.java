@@ -204,6 +204,9 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
             p.parse(is, handler);
             return handler.createPlaceNameChunk(tile.placeNameService);
         }
+        catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        }
         catch (Exception e) {
             //todo log actual error
             Logging.logger().log(Level.FINE,
@@ -487,59 +490,6 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
             WWIO.saveBuffer(buffer, outFile);
         }
     }
-
-//    /**
-//     * Start a new {@link BulkRetrievalThread} that downloads all placenames for a given sector and resolution to the
-//     * current WorldWind file cache.
-//     * <p>
-//     * This method creates and starts a thread to perform the download. A reference to the thread is returned. To create
-//     * a downloader that has not been started, construct a {@link PlaceNameLayerBulkDownloader}.
-//     * <p>
-//     * Note that the target resolution must be provided in radians of latitude per texel, which is the resolution in
-//     * meters divided by the globe radius.
-//     *
-//     * @param sector     the sector to download data for.
-//     * @param resolution the target resolution, provided in radians of latitude per texel.
-//     * @param listener   an optional retrieval listener. May be null.
-//     * @return the {@link PlaceNameLayerBulkDownloader} that executes the retrieval.
-//     * @throws IllegalArgumentException if the sector is null or the resolution is less than zero.
-//     * @see PlaceNameLayerBulkDownloader
-//     */
-//    public BulkRetrievalThread makeLocal(Sector sector, double resolution, BulkRetrievalListener listener) {
-//        PlaceNameLayerBulkDownloader thread = new PlaceNameLayerBulkDownloader(this, sector, resolution,
-//            this.getDataFileStore(), listener);
-//        thread.setDaemon(true);
-//        thread.start();
-//        return thread;
-//    }
-//
-//    /**
-//     * Start a new {@link BulkRetrievalThread} that downloads all placenames for a given sector and resolution to a
-//     * specified file store.
-//     * <p>
-//     * This method creates and starts a thread to perform the download. A reference to the thread is returned. To create
-//     * a downloader that has not been started, construct a {@link PlaceNameLayerBulkDownloader}.
-//     * <p>
-//     * Note that the target resolution must be provided in radians of latitude per texel, which is the resolution in
-//     * meters divided by the globe radius.
-//     *
-//     * @param sector     the sector to download data for.
-//     * @param resolution the target resolution, provided in radians of latitude per texel.
-//     * @param fileStore  the file store in which to place the downloaded elevations. If null the current WorldWind file
-//     *                   cache is used.
-//     * @param listener   an optional retrieval listener. May be null.
-//     * @return the {@link PlaceNameLayerBulkDownloader} that executes the retrieval.
-//     * @throws IllegalArgumentException if the sector is null or the resolution is less than zero.
-//     * @see PlaceNameLayerBulkDownloader
-//     */
-//    public BulkRetrievalThread makeLocal(Sector sector, double resolution, FileStore fileStore,
-//        BulkRetrievalListener listener) {
-//        PlaceNameLayerBulkDownloader thread = new PlaceNameLayerBulkDownloader(this, sector, resolution,
-//            fileStore != null ? fileStore : this.getDataFileStore(), listener);
-//        thread.setDaemon(true);
-//        thread.start();
-//        return thread;
-//    }
 
     /**
      * Get the estimated size in bytes of the placenames not in the WorldWind file cache for the given sector and

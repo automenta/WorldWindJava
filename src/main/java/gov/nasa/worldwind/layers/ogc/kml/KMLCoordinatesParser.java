@@ -42,6 +42,9 @@ public class KMLCoordinatesParser extends AbstractXMLEventParser {
             try {
                 positions.add(tokenizer.nextPosition());
             }
+            catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
             catch (Exception e) {
                 continue; // TODO: issue warning?
             }// TODO: issue warning

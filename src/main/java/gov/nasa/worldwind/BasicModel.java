@@ -7,6 +7,7 @@ package gov.nasa.worldwind;
 
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.Message;
+import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.util.Logging;
@@ -111,6 +112,9 @@ public class BasicModel extends WWObjectImpl implements Model {
                     Layer l = (Layer) WorldWind.createComponent(name);
                     layers.add(l);
                 }
+            }
+            catch (WWRuntimeException e) {
+                e.printStackTrace();
             }
             catch (Exception e) {
                 Logging.logger().log(Level.WARNING, Logging.getMessage("BasicModel.LayerNotFound", name), e);

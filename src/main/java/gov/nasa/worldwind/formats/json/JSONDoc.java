@@ -20,7 +20,7 @@ public class JSONDoc {
     protected Object root;
     protected String name;
 
-    public JSONDoc(Object source) throws Exception {
+    public JSONDoc(Object source) throws Exception, IllegalArgumentException, WWRuntimeException {
         if (WWUtil.isEmpty(source)) {
             String message = Logging.getMessage("nullValue.SourceIsNull");
             Logging.logger().severe(message);

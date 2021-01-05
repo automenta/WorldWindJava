@@ -60,7 +60,7 @@ public class DefaultInputHandler extends WWObjectImpl
     public DefaultInputHandler() {
     }
 
-    private KeyEvent keyEvent(com.jogamp.newt.event.KeyEvent e, int event) {
+    private static KeyEvent keyEvent(com.jogamp.newt.event.KeyEvent e, int event) {
         return new KeyEvent(DefaultInputHandler.dummySource, event, e.getWhen(),
             e.getKeyCode(), e.getKeyChar()
         );

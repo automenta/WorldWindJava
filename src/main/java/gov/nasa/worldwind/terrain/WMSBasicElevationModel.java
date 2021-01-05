@@ -281,7 +281,7 @@ public class WMSBasicElevationModel extends BasicElevationModel {
     //********************  Composition  ***************************//
     //**************************************************************//
 
-    protected static void downloadElevations(ElevationCompositionTile tile) throws Exception {
+    protected static void downloadElevations(ElevationCompositionTile tile) throws Exception, MalformedURLException {
         URL url = tile.getResourceURL();
 
         Retriever retriever = new HTTPRetriever(url, new CompositionRetrievalPostProcessor(tile.getFile()));
@@ -308,23 +308,6 @@ public class WMSBasicElevationModel extends BasicElevationModel {
 
     public void composeElevations(Sector sector, List<? extends LatLon> latlons, int tileWidth, double[] buffer)
         throws Exception {
-//        if (sector == null) {
-//            String msg = Logging.getMessage("nullValue.SectorIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//
-//        if (latlons == null) {
-//            String msg = Logging.getMessage("nullValue.LatLonListIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//
-//        if (buffer == null) {
-//            String msg = Logging.getMessage("nullValue.ElevationsBufferIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         final int n = latlons.size();
         if (buffer.length < n || tileWidth > n) {
@@ -463,7 +446,7 @@ public class WMSBasicElevationModel extends BasicElevationModel {
         }
     }
 
-    protected static class ElevationCompositionTile extends ElevationTile {
+    protected static class ElevationCompositionTile extends BasicElevationModel.ElevationTile {
         private final int width;
         private final int height;
         private final File file;

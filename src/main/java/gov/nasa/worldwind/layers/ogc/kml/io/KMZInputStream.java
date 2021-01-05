@@ -86,7 +86,7 @@ public class KMZInputStream extends XMLDoc {
      * KML file.
      * @throws IOException if an error occurs while reading the stream.
      */
-    public synchronized InputStream getInputStream() throws IOException {
+    public synchronized InputStream getInputStream() throws IOException, FileNotFoundException {
         // Iterate through the stream's entries to find the KML file. It will normally be the first entry, but there's
         // no guarantee of that. If another file is encountered before the KML file, copy it to temp dir created to
         // capture the KMZ document's directory hierarchy.
@@ -119,7 +119,7 @@ public class KMZInputStream extends XMLDoc {
      * @throws IllegalArgumentException if the path is null.
      * @throws IOException              if an error occurs while attempting to read the input stream.
      */
-    public synchronized InputStream getSupportFileStream(String path) throws IOException {
+    public synchronized InputStream getSupportFileStream(String path) throws IOException, FileNotFoundException {
         // This method is called by the native WebView implementation to resolve resources in KMZ balloons. It may
         // not perform any synchronization with the EDT (such as calling invokeAndWait), or it will introduce a
         // potential deadlock when called by the WebView's native UI thread.

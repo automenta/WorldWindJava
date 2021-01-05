@@ -49,7 +49,7 @@ public class GeographicImageInterpolator extends ImageInterpolator {
      * @return a new GeographicCell with the specified image coordinates.
      */
     @Override
-    protected Cell makeRootCell(int m0, int m1, int n0, int n1) {
+    protected ImageInterpolator.Cell makeRootCell(int m0, int m1, int n0, int n1) {
         return new GeographicCell(m0, m1, n0, n1);
     }
 
@@ -77,7 +77,7 @@ public class GeographicImageInterpolator extends ImageInterpolator {
      * not intersect the cell.
      */
     @Override
-    protected double[] computeBilinearCoordinates(float x, float y, Cell cell) {
+    protected double[] computeBilinearCoordinates(float x, float y, ImageInterpolator.Cell cell) {
         // Invoke the superclass functionality if the cell doesn't cross the international dateline.
         if (!((GeographicCell) cell).isCrossesDateline()) {
             return super.computeBilinearCoordinates(x, y, cell);
@@ -117,7 +117,7 @@ public class GeographicImageInterpolator extends ImageInterpolator {
      * coordinates. Unlike its superclass, which works in Cartesian coordinates, GeographicCell handles the
      * singularities of geographic coordinates, such as image cells which cross the international dateline.
      */
-    protected static class GeographicCell extends Cell {
+    protected static class GeographicCell extends ImageInterpolator.Cell {
         /**
          * Denotes if the pixels in this geographic image cell crosses the international dateline.
          */
@@ -145,7 +145,7 @@ public class GeographicImageInterpolator extends ImageInterpolator {
          * @return a new GeographicCell with the specified image coordinates.
          */
         @Override
-        protected Cell makeChildCell(int m0, int m1, int n0, int n1) {
+        protected ImageInterpolator.Cell makeChildCell(int m0, int m1, int n0, int n1) {
             return new GeographicCell(m0, m1, n0, n1);
         }
 
@@ -253,7 +253,7 @@ public class GeographicImageInterpolator extends ImageInterpolator {
             // Assume that dateline crossing cells span the shorter of two possible paths around the globe. Therefore
             // each location contributes to the extreme in its hemisphere. minx is the furthest value from the dateline
             // in the eastern hemisphere. maxx is the furthest value from the dateline in the western hemisphere.
-            for (Cell t : this.children) {
+            for (ImageInterpolator.Cell t : this.children) {
                 // The child cell crosses the dateline. This cell's minx and maxx have the same meaning as the child
                 // cell, so a simple comparison determines this cell's extreme x values.
                 if (((GeographicCell) t).isCrossesDateline()) {
@@ -326,7 +326,7 @@ public class GeographicImageInterpolator extends ImageInterpolator {
             if (this.children == null || this.children.length == 0)
                 return false;
 
-            for (Cell t : this.children) {
+            for (ImageInterpolator.Cell t : this.children) {
                 if (((GeographicCell) t).isCrossesDateline())
                     return true;
             }

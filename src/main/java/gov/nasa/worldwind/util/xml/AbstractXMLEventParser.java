@@ -89,8 +89,7 @@ abstract public class AbstractXMLEventParser implements XMLEventParser {
         this.namespaceURI = namespaceURI;
     }
 
-    public XMLEventParser newInstance() throws
-        Exception {
+    public XMLEventParser newInstance() throws Exception {
         Constructor<? extends AbstractXMLEventParser> constructor = this.getAConstructor(String.class);
         if (constructor != null)
             return constructor.newInstance(this.getNamespaceURI());

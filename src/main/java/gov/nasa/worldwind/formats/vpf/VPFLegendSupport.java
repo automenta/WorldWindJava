@@ -11,7 +11,7 @@ import gov.nasa.worldwind.util.*;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.*;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.logging.Level;
 
@@ -139,6 +139,9 @@ public class VPFLegendSupport {
 
             try {
                 return ImageIO.read((InputStream) streamOrException);
+            }
+            catch (IOException e) {
+                e.printStackTrace();
             }
             catch (Exception e) {
                 Logging.logger().log(Level.SEVERE, "generic.ExceptionAttemptingToReadImageFile",

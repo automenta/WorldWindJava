@@ -443,8 +443,7 @@ public class LazilyLoadedTexture extends AVListImpl implements WWTexture {
             this.setTextureData(null);
 
             return texture;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             String name = this.isBufferedImageSource() ? "BufferedImage" : this.getImageSource().toString();
             String msg = Logging.getMessage("generic.ExceptionAttemptingToCreateTexture", name);
             Logging.logger().log(Level.SEVERE, msg, e);
@@ -515,8 +514,7 @@ public class LazilyLoadedTexture extends AVListImpl implements WWTexture {
     protected TextureData readImage(URL fileUrl) {
         try {
             return OGLUtil.newTextureData(Configuration.getMaxCompatibleGLProfile(), fileUrl, this.isUseMipMaps());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             String msg = Logging.getMessage("layers.TextureLayer.ExceptionAttemptingToReadTextureFile",
                 this.getImageSource());
             Logging.logger().log(Level.SEVERE, msg, e);

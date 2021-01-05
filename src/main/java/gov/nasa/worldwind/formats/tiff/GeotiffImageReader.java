@@ -96,7 +96,7 @@ public class GeotiffImageReader extends ImageReader {
     }
 
     @Override
-    public BufferedImage read(int imageIndex, ImageReadParam param) throws IOException {
+    public BufferedImage read(int imageIndex, ImageReadParam param) throws IOException, IIOException {
         // TODO: For this first implementation, we are completely ignoring the ImageReadParam given to us.
         //       Our target functionality is not the entire ImageIO, but only that needed to support the static
         //       read method ImageIO.read("myImage.tif").
@@ -292,7 +292,7 @@ public class GeotiffImageReader extends ImageReader {
      * Coordinates reading all the ImageFileDirectories in a Tiff file (there's typically only one).
      *
      */
-    private void readIFDs() throws IOException {
+    private void readIFDs() throws IOException, IIOException {
         if (this.theStream != null)
             return;
 

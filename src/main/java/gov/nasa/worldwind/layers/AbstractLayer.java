@@ -134,7 +134,7 @@ public abstract class AbstractLayer extends WWObjectImpl implements Layer {
 
     @Override
     public Layer setEnabled(boolean enabled) {
-        Boolean oldEnabled = this.enabled;
+        boolean oldEnabled = this.enabled;
         this.enabled = enabled;
         if (oldEnabled!=enabled)
             this.propertyChange(new PropertyChangeEvent(this, "Enabled", oldEnabled, this.enabled));

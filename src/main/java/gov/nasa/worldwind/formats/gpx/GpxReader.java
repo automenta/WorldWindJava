@@ -37,7 +37,7 @@ public class GpxReader // TODO: I18N, proper exception handling, remove stack-tr
      * @throws IOException              if no file exists at the location specified by <code>path</code>
      * @throws SAXException             if a parsing error occurs.
      */
-    public void readFile(String path) throws IOException, SAXException {
+    public void readFile(String path) throws IOException, SAXException, FileNotFoundException {
         if (path == null) {
             String msg = Logging.getMessage("nullValue.PathIsNull");
             Logging.logger().severe(msg);

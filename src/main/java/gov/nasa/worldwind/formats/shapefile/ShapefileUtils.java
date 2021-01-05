@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.formats.shapefile;
 
-import gov.nasa.worldwind.exception.*;
+import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.util.*;
 
 import java.io.*;
@@ -29,24 +29,25 @@ public class ShapefileUtils {
 
         InputStream shpStream = null, shxStream = null, dbfStream = null, prjStream = null;
 
-        ZipFile zipFile;
+
         try {
-            zipFile = new ZipFile(file);
-            Enumeration<? extends ZipEntry> zipEntries = zipFile.entries();
+            try (var zipFile = new ZipFile(file)) {
+                Enumeration<? extends ZipEntry> zipEntries = zipFile.entries();
 
-            while (zipEntries.hasMoreElements()) {
-                ZipEntry entry = zipEntries.nextElement();
-                if (entry == null)
-                    continue;
-
-                if (entry.getName().toLowerCase().endsWith(Shapefile.SHAPE_FILE_SUFFIX)) {
-                    shpStream = zipFile.getInputStream(entry);
-                } else if (entry.getName().toLowerCase().endsWith(Shapefile.INDEX_FILE_SUFFIX)) {
-                    shxStream = zipFile.getInputStream(entry);
-                } else if (entry.getName().toLowerCase().endsWith(Shapefile.ATTRIBUTE_FILE_SUFFIX)) {
-                    dbfStream = zipFile.getInputStream(entry);
-                } else if (entry.getName().toLowerCase().endsWith(Shapefile.PROJECTION_FILE_SUFFIX)) {
-                    prjStream = zipFile.getInputStream(entry);
+                while (zipEntries.hasMoreElements()) {
+                    ZipEntry entry = zipEntries.nextElement();
+                    if (entry != null) {
+                        final String e = entry.getName().toLowerCase();
+                        if (e.endsWith(Shapefile.SHAPE_FILE_SUFFIX)) {
+                            shpStream = zipFile.getInputStream(entry);
+                        } else if (e.endsWith(Shapefile.INDEX_FILE_SUFFIX)) {
+                            shxStream = zipFile.getInputStream(entry);
+                        } else if (e.endsWith(Shapefile.ATTRIBUTE_FILE_SUFFIX)) {
+                            dbfStream = zipFile.getInputStream(entry);
+                        } else if (e.endsWith(Shapefile.PROJECTION_FILE_SUFFIX)) {
+                            prjStream = zipFile.getInputStream(entry);
+                        }
+                    }
                 }
             }
         }
@@ -55,11 +56,11 @@ public class ShapefileUtils {
                 Logging.getMessage("generic.ExceptionAttemptingToReadFrom", file.getPath()), e);
         }
 
-        if (shpStream == null) {
-            String message = Logging.getMessage("SHP.UnrecognizedShapefile", file.getPath());
-            Logging.logger().severe(message);
-            throw new WWUnrecognizedException(message);
-        }
+//        if (shpStream == null) {
+//            String message = Logging.getMessage("SHP.UnrecognizedShapefile", file.getPath());
+//            Logging.logger().severe(message);
+//            throw new WWUnrecognizedException(message);
+//        }
 
         return new Shapefile(shpStream, shxStream, dbfStream, prjStream);
     }

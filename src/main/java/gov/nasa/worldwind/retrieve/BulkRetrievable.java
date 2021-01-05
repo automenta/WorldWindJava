@@ -17,21 +17,6 @@ import gov.nasa.worldwind.geom.Sector;
  * @version $Id: BulkRetrievable.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 @Deprecated public interface BulkRetrievable {
-//    /**
-//     * Initiates data retrieval to the current WorldWind data cache. The method starts a new thread to perform the
-//     * retrieval. The thread terminates when either all the requested data has been retrieved or when any data not
-//     * retrieved is determined to be unretrievable.
-//     *
-//     * @param sector     the sector for which to retrieve the data.
-//     * @param resolution the resolution desired. All data within the specified sector up to and including this
-//     *                   resolution is downloaded.
-//     * @param listener   an optional bulk-download listener that can be used to monitor the success or failure of
-//     *                   individual retrievals. Note: The listener is called on the thread performing the download,
-//     *                   which is not the event dispatch thread. Therefore any interaction with AWT or Swing within the
-//     *                   call must be done within a call to SwingUtilities.invokeLater().
-//     * @return returns the running thread created to perform the retrieval.
-//     */
-//    BulkRetrievalThread makeLocal(Sector sector, double resolution, BulkRetrievalListener listener);
 
     /**
      * Estimates the amount of data, in bytes, that must be retrieved to the WorldWind data cache for a specified sector
@@ -55,24 +40,6 @@ import gov.nasa.worldwind.geom.Sector;
      * @return the estimated data size, in bytes.
      */
     long getEstimatedMissingDataSize(Sector sector, double resolution, FileStore fileStore);
-
-//    /**
-//     * Initiates data retrieval to a specified filestore. The method starts a new thread to perform the retrieval. The
-//     * thread terminates when either all the requested data has been retrieved or when any data not retrieved is
-//     * determined to be unretrievable.
-//     *
-//     * @param sector     the sector for which to retrieve the data.
-//     * @param resolution the resolution desired. All data within the specified sector up to and including this
-//     *                   resolution is downloaded.
-//     * @param listener   an optional bulk-download listener that can be used to monitor the success or failure of
-//     *                   individual retrievals. Note: The listener is called on the thread performing the download,
-//     *                   which is not the event dispatch thread. Therefore any interaction with AWT or Swing within the
-//     *                   call must be done within a call to SwingUtilities.invokeLater().
-//     * @param fileStore  the location to place the data. If null, the current WorldWind cache is used.
-//     * @return returns the running thread created to perform the retrieval.
-//     */
-//    BulkRetrievalThread makeLocal(Sector sector, double resolution, FileStore fileStore,
-//        BulkRetrievalListener listener);
 
     String name();
 }

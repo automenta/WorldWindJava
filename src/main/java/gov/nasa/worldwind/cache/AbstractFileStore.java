@@ -424,11 +424,6 @@ public abstract class AbstractFileStore extends WWObjectImpl implements FileStor
      * @throws IllegalArgumentException if <code>fileName</code> is null
      */
     public URL findFile(String fileName, boolean checkClassPath) {
-//        if (fileName == null) {
-//            String message = Logging.getMessage("nullValue.FilePathIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (checkClassPath) {
             URL url = this.getClass().getClassLoader().getResource(fileName);

@@ -106,7 +106,7 @@ public class ScheduledTaskService extends WWObjectImpl implements Thread.Uncaugh
                     thread.setUncaughtExceptionHandler(ScheduledTaskService.this);
                     return thread;
                 },
-                new DiscardPolicy() {
+                new ThreadPoolExecutor.DiscardPolicy() {
                     public void rejectedExecution(Runnable runnable, ScheduledThreadPoolExecutor threadPoolExecutor) {
                         // Interposes logging for rejected execution
                         String message = Logging.getMessage("ThreadedTaskService.ResourceRejected", runnable);

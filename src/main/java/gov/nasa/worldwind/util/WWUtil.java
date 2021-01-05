@@ -657,12 +657,6 @@ public class WWUtil {
             throw new IllegalArgumentException(message);
         }
 
-//        if (buffer == null) {
-//            String message = Logging.getMessage("nullValue.BufferIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-
         if ((buffer.remaining() % 2) != 0) {
             String message = Logging.getMessage("generic.BufferSize", buffer.remaining());
             Logging.logger().severe(message);
@@ -693,11 +687,6 @@ public class WWUtil {
      *                                  <code>buffer</code> is not a multiple of two.
      */
     public static void normalizeGeographicCoordinates(DoubleBuffer buffer) {
-//        if (buffer == null) {
-//            String message = Logging.getMessage("nullValue.BufferIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if ((buffer.remaining() % 2) != 0) {
             String message = Logging.getMessage("generic.BufferSize", buffer.remaining());
@@ -734,17 +723,6 @@ public class WWUtil {
      */
     public static Object invokePropertyMethod(Object parent, String propertyName, String propertyValue)
         throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-//        if (parent == null) {
-//            String message = Logging.getMessage("nullValue.nullValue.ParentIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-
-//        if (propertyName == null) {
-//            String message = Logging.getMessage("nullValue.PropertyNameIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         String methodName = "set" + propertyName;
 

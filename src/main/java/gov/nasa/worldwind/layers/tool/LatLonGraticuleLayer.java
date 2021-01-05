@@ -277,7 +277,7 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
 
     protected void addLabel(double value, String labelType, String graticuleType, double resolution,
         LatLon labelOffset) {
-        if (labelType.equals(GridElement.TYPE_LATITUDE_LABEL)) {
+        if (labelType.equals(GraticuleLayer.GridElement.TYPE_LATITUDE_LABEL)) {
             if (!this.latitudeLabels.contains(value)) {
                 this.latitudeLabels.add(value);
                 String label = makeAngleLabel(Angle.fromDegrees(value), resolution);
@@ -286,7 +286,7 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
                 text.setPriority(resolution * 1.0e6);
                 this.addRenderable(text, graticuleType);
             }
-        } else if (labelType.equals(GridElement.TYPE_LONGITUDE_LABEL)) {
+        } else if (labelType.equals(GraticuleLayer.GridElement.TYPE_LONGITUDE_LABEL)) {
             if (!this.longitudeLabels.contains(value)) {
                 this.longitudeLabels.add(value);
                 String label = makeAngleLabel(Angle.fromDegrees(value), resolution);
@@ -305,7 +305,7 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
         private final int divisions;
         private final int level;
 
-        private ArrayList<GridElement> gridElements;
+        private ArrayList<GraticuleLayer.GridElement> gridElements;
         private ArrayList<GraticuleTile> subTiles;
 
         public GraticuleTile(Sector sector, int divisions, int level) {
@@ -347,15 +347,15 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
             LatLon labelOffset = GraticuleLayer.computeLabelOffset(dc);
             String graticuleType = LatLonGraticuleLayer.getTypeFor(this.sector.latDelta);
             if (this.level == 0) {
-                for (GridElement ge : this.gridElements) {
+                for (GraticuleLayer.GridElement ge : this.gridElements) {
                     if (ge.isInView(dc)) {
                         // Add level zero bounding lines and labels
-                        if (ge.type.equals(GridElement.TYPE_LINE_SOUTH) || ge.type.equals(GridElement.TYPE_LINE_NORTH)
-                            || ge.type.equals(GridElement.TYPE_LINE_WEST)) {
+                        if (ge.type.equals(GraticuleLayer.GridElement.TYPE_LINE_SOUTH) || ge.type.equals(GraticuleLayer.GridElement.TYPE_LINE_NORTH)
+                            || ge.type.equals(GraticuleLayer.GridElement.TYPE_LINE_WEST)) {
                             addRenderable(ge.renderable, graticuleType);
-                            String labelType = ge.type.equals(GridElement.TYPE_LINE_SOUTH)
-                                || ge.type.equals(GridElement.TYPE_LINE_NORTH) ?
-                                GridElement.TYPE_LATITUDE_LABEL : GridElement.TYPE_LONGITUDE_LABEL;
+                            String labelType = ge.type.equals(GraticuleLayer.GridElement.TYPE_LINE_SOUTH)
+                                || ge.type.equals(GraticuleLayer.GridElement.TYPE_LINE_NORTH) ?
+                                GraticuleLayer.GridElement.TYPE_LATITUDE_LABEL : GraticuleLayer.GridElement.TYPE_LONGITUDE_LABEL;
                             addLabel(ge.value, labelType, graticuleType, this.sector.latDelta, labelOffset);
                         }
                     }
@@ -367,12 +367,12 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
             // Select tile grid elements
             double resolution = this.sector.latDelta / this.divisions;
             graticuleType = LatLonGraticuleLayer.getTypeFor(resolution);
-            for (GridElement ge : this.gridElements) {
+            for (GraticuleLayer.GridElement ge : this.gridElements) {
                 if (ge.isInView(dc)) {
-                    if (ge.type.equals(GridElement.TYPE_LINE)) {
+                    if (ge.type.equals(GraticuleLayer.GridElement.TYPE_LINE)) {
                         addRenderable(ge.renderable, graticuleType);
                         String labelType = ge.sector.latDelta == 0 ?
-                            GridElement.TYPE_LATITUDE_LABEL : GridElement.TYPE_LONGITUDE_LABEL;
+                            GraticuleLayer.GridElement.TYPE_LATITUDE_LABEL : GraticuleLayer.GridElement.TYPE_LONGITUDE_LABEL;
                         addLabel(ge.value, labelType, graticuleType, resolution, labelOffset);
                     }
                 }
@@ -439,8 +439,8 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
                 Sector sector = Sector.fromDegrees(
                     this.sector.latMin, this.sector.latMax, lon, lon);
                 String lineType = lon == this.sector.lonMin ?
-                    GridElement.TYPE_LINE_WEST : GridElement.TYPE_LINE;
-                GridElement ge = new GridElement(sector, line, lineType);
+                    GraticuleLayer.GridElement.TYPE_LINE_WEST : GraticuleLayer.GridElement.TYPE_LINE;
+                GraticuleLayer.GridElement ge = new GraticuleLayer.GridElement(sector, line, lineType);
                 ge.value = lon;
                 this.gridElements.add(ge);
 
@@ -460,8 +460,8 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
                 Sector sector = Sector.fromDegrees(
                     lat, lat, this.sector.lonMin, this.sector.lonMax);
                 String lineType = lat == this.sector.latMin ?
-                    GridElement.TYPE_LINE_SOUTH : GridElement.TYPE_LINE;
-                GridElement ge = new GridElement(sector, line, lineType);
+                    GraticuleLayer.GridElement.TYPE_LINE_SOUTH : GraticuleLayer.GridElement.TYPE_LINE;
+                GraticuleLayer.GridElement ge = new GraticuleLayer.GridElement(sector, line, lineType);
                 ge.value = lat;
                 this.gridElements.add(ge);
 
@@ -478,7 +478,7 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
                 Object line = GraticuleLayer.createLineRenderable(positions, AVKey.LINEAR);
                 Sector sector = Sector.fromDegrees(
                     90, 90, this.sector.lonMin, this.sector.lonMax);
-                GridElement ge = new GridElement(sector, line, GridElement.TYPE_LINE_NORTH);
+                GraticuleLayer.GridElement ge = new GraticuleLayer.GridElement(sector, line, GraticuleLayer.GridElement.TYPE_LINE_NORTH);
                 ge.value = 90;
                 this.gridElements.add(ge);
             }

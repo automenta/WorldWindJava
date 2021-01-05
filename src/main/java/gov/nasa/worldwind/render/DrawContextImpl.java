@@ -5,7 +5,6 @@
  */
 package gov.nasa.worldwind.render;
 
-import com.graphhopper.coll.GHIntHashSet;
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.glu.GLU;
@@ -20,6 +19,7 @@ import gov.nasa.worldwind.pick.*;
 import gov.nasa.worldwind.terrain.*;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.video.LayerList;
+import org.eclipse.collections.impl.set.mutable.primitive.IntHashSet;
 
 import java.awt.*;
 import java.nio.*;
@@ -59,7 +59,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
      * insertion, and to reduce overhead associated associated with storing integer primitives in a HashSet.
      */
     //protected final IntSet uniquePixelColors = new IntSet();
-    protected final GHIntHashSet uniquePixelColors = new GHIntHashSet();
+    protected final IntHashSet uniquePixelColors = new IntHashSet();
     protected final SurfaceTileRenderer geographicSurfaceTileRenderer = new GeographicSurfaceTileRenderer();
     protected final PickPointFrustumList pickFrustumList = new PickPointFrustumList();
     protected final DeclutteringTextRenderer declutteringTextRenderer = new DeclutteringTextRenderer();

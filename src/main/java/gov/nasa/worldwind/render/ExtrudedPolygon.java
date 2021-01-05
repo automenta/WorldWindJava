@@ -724,7 +724,7 @@ public class ExtrudedPolygon extends AbstractShape {
     }
 
     @Override
-    protected AbstractShapeData createCacheEntry(DrawContext dc) {
+    protected AbstractShape.AbstractShapeData createCacheEntry(DrawContext dc) {
         return new ShapeData(dc, this);
     }
 
@@ -2169,7 +2169,7 @@ public class ExtrudedPolygon extends AbstractShape {
     /**
      * The <code>ShapeData</code> class holds globe-specific data for this shape.
      */
-    protected static class ShapeData extends AbstractShapeData implements Iterable<ExtrudedBoundaryInfo> {
+    protected static class ShapeData extends AbstractShape.AbstractShapeData implements Iterable<ExtrudedBoundaryInfo> {
         /**
          * The boundary locations of the associated shape. Copied from that shape during construction.
          */

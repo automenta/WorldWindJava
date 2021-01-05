@@ -206,7 +206,8 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer {
 
     @Override
     public BufferedImage composeImageForSector(Sector sector, int canvasWidth, int canvasHeight, double aspectRatio,
-        int levelNumber, String mimeType, boolean abortOnError, BufferedImage image, int timeout) throws Exception {
+        int levelNumber, String mimeType, boolean abortOnError, BufferedImage image, int timeout) throws Exception,
+        IOException, InterruptedIOException {
 
         Level requestedLevel;
         if ((levelNumber >= 0) && (levelNumber < this.getLevels().getNumLevels()))

@@ -22,11 +22,6 @@ public class MercatorTextureTile extends TextureTile {
 
     @Override
     public MercatorTextureTile[] createSubTiles(Level nextLevel) {
-//        if (nextLevel == null) {
-//            String msg = Logging.getMessage("nullValue.LevelIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
         double d0 = mercatorSector.getMinLatPercent();
         double d2 = mercatorSector.getMaxLatPercent();
         double d1 = d0 + (d2 - d0) / 2.0;

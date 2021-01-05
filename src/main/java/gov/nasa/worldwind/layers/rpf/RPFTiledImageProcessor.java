@@ -180,6 +180,9 @@ public class RPFTiledImageProcessor {
                 WWIO.saveBuffer(buffer, file);
             }
         }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
         catch (Exception e) {
             String message = String.format("Exception while saving RPFFileIndex: %s", file);
             Logging.logger().log(Level.SEVERE, message, e);
@@ -316,6 +319,9 @@ public class RPFTiledImageProcessor {
                         processRecord(fileIndex, record, waveletWidth, waveletHeight);
                         firePropertyChange(RPFTiledImageProcessor.SUB_TASK_STEP_COMPLETE, null, file.getName());
                     }
+                    catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     catch (Throwable t) {
                         String message = String.format("Exception while processing file: %s", file);
                         Logging.logger().log(Level.SEVERE, message, t);
@@ -423,6 +429,9 @@ public class RPFTiledImageProcessor {
                     createTileImage(tile, service);
                     firePropertyChange(RPFTiledImageProcessor.SUB_TASK_STEP_COMPLETE, null, tile.getPath());
                 }
+                catch (IllegalArgumentException e) {
+                    e.printStackTrace();
+                }
                 catch (Throwable t) {
                     String message = String.format("Exception while processing image: %s", tile.getPath());
                     Logging.logger().log(Level.SEVERE, message, t);
@@ -440,7 +449,7 @@ public class RPFTiledImageProcessor {
     }
 
     private void createTileImage(Tile tile, RPFGenerator.RPFServiceInstance service)
-        throws IllegalArgumentException, IOException {
+        throws IllegalArgumentException, IOException, java.net.MalformedURLException {
         if (tile == null) {
             String message = "Tile is null";
             Logging.logger().severe(message);
@@ -514,6 +523,9 @@ public class RPFTiledImageProcessor {
                 while (blockUntilFinished && !executor.awaitTermination(1000L, TimeUnit.MILLISECONDS)) {
                 }
             }
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
         }
         catch (Exception e) {
             String message = "Exception while executing tasks";

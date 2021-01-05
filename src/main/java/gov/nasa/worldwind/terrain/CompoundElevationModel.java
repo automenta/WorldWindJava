@@ -493,7 +493,7 @@ public class CompoundElevationModel extends AbstractElevationModel {
     }
 
     public void composeElevations(Sector sector, List<? extends LatLon> latlons, int tileWidth,
-        double[] buffer) throws Exception {
+        double[] buffer) throws Exception, IllegalArgumentException {
 
         if (buffer.length < latlons.size()) {
             String msg = Logging.getMessage("ElevationModel.ElevationsBufferTooSmall", latlons.size());

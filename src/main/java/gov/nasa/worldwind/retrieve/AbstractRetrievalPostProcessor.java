@@ -131,8 +131,7 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
     protected ByteBuffer handleSuccessfulRetrieval() {
         try {
             return this.handleContent();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             this.handleContentException(e);
             return null;
         }
@@ -146,12 +145,13 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
      */
     protected boolean validateResponseCode() {
         //noinspection SimplifiableIfStatement
-        if (this.getRetriever() instanceof HTTPRetriever)
+        final Retriever r = this.getRetriever();
+        if (r instanceof HTTPRetriever)
             return this.validateHTTPResponseCode();
-        else if (this.getRetriever() instanceof JarRetriever)
+        else if (r instanceof JarRetriever)
             return this.validateJarResponseCode();
         else
-            return this.getRetriever() instanceof LocalRasterServerRetriever;
+            return r instanceof LocalRasterServerRetriever;
     }
 
     /**
@@ -161,9 +161,7 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
      * @return true if the response code is {@link HttpURLConnection#HTTP_OK}, otherwise false.
      */
     protected boolean validateHTTPResponseCode() {
-        HTTPRetriever htr = (HTTPRetriever) this.getRetriever();
-
-        return htr.getResponseCode() == HttpURLConnection.HTTP_OK;
+        return ((HTTPRetriever) this.getRetriever()).getResponseCode() == HttpURLConnection.HTTP_OK;
     }
 
     /**
@@ -173,9 +171,7 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
      * @return true if the response code is {@link HttpURLConnection#HTTP_OK}, otherwise false.
      */
     protected boolean validateJarResponseCode() {
-        JarRetriever htr = (JarRetriever) this.getRetriever();
-
-        return htr.getResponseCode() == HttpURLConnection.HTTP_OK; // Re-using the HTTP response code for OK
+        return ((JarRetriever) this.getRetriever()).getResponseCode() == HttpURLConnection.HTTP_OK; // Re-using the HTTP response code for OK
     }
 
     /**

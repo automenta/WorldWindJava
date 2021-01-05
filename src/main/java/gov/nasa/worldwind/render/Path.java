@@ -407,7 +407,7 @@ public class Path extends AbstractShape {
     }
 
     @Override
-    protected AbstractShapeData createCacheEntry(DrawContext dc) {
+    protected AbstractShape.AbstractShapeData createCacheEntry(DrawContext dc) {
         return new PathData(dc, this);
     }
 
@@ -2077,7 +2077,7 @@ public class Path extends AbstractShape {
      * distinct globe that this shape encounters in calls to {@link AbstractShape#render(DrawContext)}. See {@link
      * AbstractShape}.
      */
-    protected static class PathData extends AbstractShapeData {
+    protected static class PathData extends AbstractShape.AbstractShapeData {
 
         /**
          * The positions formed from applying path type and terrain conformance.

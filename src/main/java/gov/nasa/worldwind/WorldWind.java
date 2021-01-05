@@ -159,16 +159,9 @@ public final class WorldWind {
      * @throws IllegalArgumentException if <code>className</code> is null or zero length
      */
     public static Object createComponent(String className) throws WWRuntimeException {
-
         try {
-            Class<?> c = Class.forName(className.trim());
-            return c.getConstructor().newInstance();
-        }
-        catch (Exception e) {
-            Logging.logger().log(Level.SEVERE, "WorldWind.ExceptionCreatingComponent", className);
-            throw new WWRuntimeException(Logging.getMessage("WorldWind.ExceptionCreatingComponent", className), e);
-        }
-        catch (Throwable t) {
+            return Class.forName(className.trim()).getConstructor().newInstance();
+        } catch (Throwable t) {
             Logging.logger().log(Level.SEVERE, "WorldWind.ErrorCreatingComponent", className);
             throw new WWRuntimeException(Logging.getMessage("WorldWind.ErrorCreatingComponent", className), t);
         }
@@ -197,8 +190,7 @@ public final class WorldWind {
 
         try {
             return WorldWind.createComponent(name.trim());
-        }
-        catch (Throwable e) {
+        } catch (Throwable e) {
             Logging.logger().log(Level.SEVERE, "WorldWind.UnableToCreateClassForConfigurationKey", name);
             throw new IllegalStateException(
                 Logging.getMessage("WorldWind.UnableToCreateClassForConfigurationKey", name), e);
