@@ -104,6 +104,7 @@ public class WorldWindowNEWT extends AbstractLayer implements WorldWindow, GLEve
 
     @Override
     public void startEvents(InputHandler h) {
+        window.window.addKeyListener(h);
         window.window.addMouseListener(h);
         window.window.addWindowListener(h);
     }

@@ -281,12 +281,11 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler {
         boolean eventHandled = false;
         if (actionList != null) {
             for (ViewInputAttributes.ActionAttributes actionAttr : actionList) {
-                if (actionAttr.getMouseActionListener() == null ||
-                    actionAttr.getActionTrigger() != trigger) {
-                    continue;
-                }
-                if (actionAttr.getMouseActionListener().inputActionPerformed(this, e, actionAttr)) {
-                    eventHandled = true;
+                final MouseInputActionHandler l = actionAttr.getMouseActionListener();
+                if (l != null && actionAttr.getActionTrigger() == trigger) {
+                    if (l.inputActionPerformed(this, e, actionAttr)) {
+                        eventHandled = true;
+                    }
                 }
             }
         }
@@ -299,12 +298,11 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler {
         boolean eventHandled = false;
         if (actionList != null) {
             for (ViewInputAttributes.ActionAttributes actionAttr : actionList) {
-                if (actionAttr.getMouseActionListener() == null ||
-                    actionAttr.getActionTrigger() != trigger) {
-                    continue;
-                }
-                if (actionAttr.getMouseActionListener().inputActionPerformed(this, e, actionAttr)) {
-                    eventHandled = true;
+                if (actionAttr.getMouseActionListener() != null &&
+                    actionAttr.getActionTrigger() == trigger) {
+                    if (actionAttr.getMouseActionListener().inputActionPerformed(this, e, actionAttr)) {
+                        eventHandled = true;
+                    }
                 }
             }
         }
@@ -317,12 +315,11 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler {
         boolean eventHandled = false;
         if (actionList != null) {
             for (ViewInputAttributes.ActionAttributes actionAttr : actionList) {
-                if (actionAttr.getActionListener() == null ||
-                    actionAttr.getActionTrigger() != trigger) {
-                    continue;
-                }
-                if (actionAttr.getActionListener().inputActionPerformed(this, e, actionAttr)) {
-                    eventHandled = true;
+                if (actionAttr.getActionListener() != null &&
+                    actionAttr.getActionTrigger() == trigger) {
+                    if (actionAttr.getActionListener().inputActionPerformed(this, e, actionAttr)) {
+                        eventHandled = true;
+                    }
                 }
             }
         }
@@ -335,12 +332,10 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler {
         boolean eventHandled = false;
         if (actionList != null) {
             for (ViewInputAttributes.ActionAttributes actionAttr : actionList) {
-                if (actionAttr.getActionTrigger() != trigger) {
-                    continue;
-                }
-
-                if (callActionListener(keys, target, actionAttr)) {
-                    eventHandled = true;
+                if (actionAttr.getActionTrigger() == trigger) {
+                    if (callActionListener(keys, target, actionAttr)) {
+                        eventHandled = true;
+                    }
                 }
             }
         }

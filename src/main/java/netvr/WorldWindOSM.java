@@ -86,9 +86,10 @@ public class WorldWindOSM {
             ))
             , new Widget(out), scan));
 
-        new OrthoSurfaceGraph(z, j);
+        var o = new OrthoSurfaceGraph(z, j);
 
         j.runLater(() -> {
+//            o.keyboard.focus(z);
 
             w.input().addMouseListener(new MouseAdapter() {
                 @Override

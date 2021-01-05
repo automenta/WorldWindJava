@@ -146,4 +146,14 @@ public class NoOpInputHandler extends WWObjectImpl implements InputHandler {
     public void windowRepaint(WindowUpdateEvent e) {
 
     }
+
+    @Override
+    public void keyPressed(com.jogamp.newt.event.KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyReleased(com.jogamp.newt.event.KeyEvent e) {
+
+    }
 }

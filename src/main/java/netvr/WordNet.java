@@ -36,18 +36,16 @@ public class WordNet {
     }
 
     @SuppressWarnings("SameReturnValue")
-    public static boolean run(final String wnhome, final String lemma) throws IOException {
+    public static void run(final String wnhome, final String lemma) throws IOException {
         new WordNet(wnhome).walk(lemma);
-        return true;
     }
 
     public static String toString(final ISynset synset) {
-        return WordNet.getMembers(synset) + synset.getGloss();
+        return WordNet.members(synset) + synset.getGloss();
     }
 
-    public static String getMembers(final ISynset synset) {
-        final StringBuilder sb = new StringBuilder();
-        sb.append('{');
+    public static String members(final ISynset synset) {
+        final StringBuilder sb = new StringBuilder().append('{');
         boolean first = true;
         for (final IWord sense : synset.getWords()) {
             if (first) {
@@ -57,12 +55,10 @@ public class WordNet {
             }
             sb.append(sense.getLemma());
         }
-        sb.append('}');
-        sb.append(' ');
-        return sb.toString();
+        return sb.append('}').append(' ').toString();
     }
 
-    private static boolean canRecurse(IPointer p) {
+    private static boolean recurse(IPointer p) {
         String symbol = p.getSymbol();
         //noinspection EnhancedSwitchMigration
         switch (symbol) {
@@ -86,76 +82,84 @@ public class WordNet {
     }
 
     public void walk(final String lemma, PrintStream out) {
-        for (final POS pos : POS.values()) {
-            // a line in an index file
-            final IIndexWord idx = this.dict.getIndexWord(lemma, pos);
-            if (idx != null) {
-                // index
-                out.println();
-                out.println("================================================================================");
-                out.println("■ pos = " + pos.name());
-                // out.println("lemma = " + idx.getLemma());
-                Set<IPointer> pointers = idx.getPointers();
-                for (IPointer ptr : pointers) {
-                    out.println("has relation = " + ptr.toString());
-                }
+        for (final POS pos : POS.values())
+            walk(lemma, pos, out);
+    }
 
-                // senseid=(lemma, synsetid, sensenum)
-                final List<IWordID> senseids = idx.getWordIDs();
-                for (final IWordID senseid : senseids) // synset id, sense number, and lemma
-                {
-                    out.println(
-                        "--------------------------------------------------------------------------------");
-                    //out.println("senseid = " + senseid.toString());
+    private boolean walk(String lemma, POS pos, PrintStream out) {
+        // a line in an index file
+        final IIndexWord idx = this.dict.getIndexWord(lemma, pos);
+        if (idx == null)
+            return false;
 
-                    // sense=(senseid, lexid, sensekey, synset)
-                    IWord sense = this.dict.getWord(senseid);
-                    out.println("● sense = " + sense.toString() + " lexid=" + sense.getLexicalID() + " sensekey="
-                        + sense.getSenseKey());
-                    Map<IPointer, List<IWordID>> relatedmap = sense.getRelatedMap();
-                    if (relatedmap != null) {
-                        for (Map.Entry<IPointer, List<IWordID>> entry : relatedmap.entrySet()) {
-                            IPointer pointer = entry.getKey();
-                            for (IWordID relatedid : entry.getValue()) {
-                                IWord related = this.dict.getWord(relatedid);
-                                out.println("  related " + pointer + " = " + related.getLemma() + " synset="
-                                    + related.getSynset().toString());
-                            }
-                        }
-                    }
+        // index
+        out.println();
+        out.println("================================================================================");
+        out.println("■ pos = " + pos.name());
+        // out.println("lemma = " + idx.getLemma());
+        Set<IPointer> pointers = idx.getPointers();
+        for (IPointer ptr : pointers) {
+            out.println("has relation = " + ptr.toString());
+        }
 
-                    AdjMarker marker = sense.getAdjectiveMarker();
-                    if (marker != null)
-                        out.println("  marker = " + marker);
-                    List<IVerbFrame> verbFrames = sense.getVerbFrames();
-                    if (verbFrames != null) {
-                        for (IVerbFrame verbFrame : verbFrames) {
-                            out.println(
-                                "  verbframe = " + verbFrame.getTemplate() + " : " + verbFrame.instantiateTemplate(
-                                    lemma));
-                        }
-                    }
-                    ISenseEntry senseEntry = this.dict.getSenseEntry(sense.getSenseKey());
-                    if (senseEntry == null)
-                        throw new IllegalArgumentException(
-                            sense.getSenseKey().toString() + " at offset " + sense.getSynset().getOffset()
-                                + " with pos " + sense.getPOS().toString());
-                    out.println(
-                        "  sensenum = " + senseEntry.getSenseNumber() + " tagcnt=" + senseEntry.getTagCount());
+        // senseid=(lemma, synsetid, sensenum)
+        final List<IWordID> senseids = idx.getWordIDs();
+        for (final IWordID senseid : senseids) { // synset id, sense number, and lemma
+            walk(lemma, senseid, out);
+        }
+        return true;
+    }
 
-                    // synset
-                    final ISynsetID synsetid = senseid.getSynsetID();
-                    final ISynset synset = this.dict.getSynset(synsetid);
-                    out.println("● synset = " + WordNet.toString(synset));
+    private void walk(String lemma, IWordID senseid, PrintStream out) {
+        out.println(
+            "--------------------------------------------------------------------------------");
+        //out.println("senseid = " + senseid.toString());
 
-                    walk(synset, 1, out);
+        // sense=(senseid, lexid, sensekey, synset)
+        IWord sense = this.dict.getWord(senseid);
+        out.println("● sense = " + sense.toString() + " lexid=" + sense.getLexicalID() + " sensekey="
+            + sense.getSenseKey());
+        Map<IPointer, List<IWordID>> relatedmap = sense.getRelatedMap();
+        if (relatedmap != null) {
+            for (Map.Entry<IPointer, List<IWordID>> entry : relatedmap.entrySet()) {
+                IPointer pointer = entry.getKey();
+                for (IWordID relatedid : entry.getValue()) {
+                    IWord related = this.dict.getWord(relatedid);
+                    out.println("  related " + pointer + " = " + related.getLemma() + " synset="
+                        + related.getSynset().toString());
                 }
             }
         }
+
+        AdjMarker marker = sense.getAdjectiveMarker();
+        if (marker != null)
+            out.println("  marker = " + marker);
+        List<IVerbFrame> verbFrames = sense.getVerbFrames();
+        if (verbFrames != null) {
+            for (IVerbFrame verbFrame : verbFrames) {
+                out.println(
+                    "  verbframe = " + verbFrame.getTemplate() + " : " + verbFrame.instantiateTemplate(
+                        lemma));
+            }
+        }
+        ISenseEntry senseEntry = this.dict.getSenseEntry(sense.getSenseKey());
+        if (senseEntry == null)
+            throw new IllegalArgumentException(
+                sense.getSenseKey().toString() + " at offset " + sense.getSynset().getOffset()
+                    + " with pos " + sense.getPOS().toString());
+        out.println(
+            "  sensenum = " + senseEntry.getSenseNumber() + " tagcnt=" + senseEntry.getTagCount());
+
+        // synset
+        final ISynsetID synsetid = senseid.getSynsetID();
+        final ISynset synset = this.dict.getSynset(synsetid);
+        out.println("● synset = " + WordNet.toString(synset));
+
+        walk(synset, 1, out);
     }
 
     public void walk(final ISynset synset, final int level, PrintStream out) {
-        final String indentSpace = new String(new char[level]).replace('\0', '\t');
+        final String indentSpace = indent(level);
         final Map<IPointer, List<ISynsetID>> links = synset.getRelatedMap();
         for (final Map.Entry<IPointer, List<ISynsetID>> entry : links.entrySet()) {
             final IPointer p = entry.getKey();
@@ -170,14 +174,20 @@ public class WordNet {
         }
     }
 
+
     public void walk(final ISynset synset, final IPointer p, final int level, PrintStream out) {
-        final String indentSpace = new String(new char[level]).replace('\0', '\t');
+        final String indentSpace = indent(level);
         final List<ISynsetID> relations2 = synset.getRelatedSynsets(p);
         for (final ISynsetID synsetid2 : relations2) {
             final ISynset synset2 = this.dict.getSynset(synsetid2);
             out.println(indentSpace + WordNet.toString(synset2));
-            if (WordNet.canRecurse(p))
+            if (WordNet.recurse(p))
                 walk(synset2, p, level + 1, out);
         }
     }
+
+    private static String indent(int level) {
+        return new String(new char[level]).replace('\0', '\t');
+    }
+
 }
