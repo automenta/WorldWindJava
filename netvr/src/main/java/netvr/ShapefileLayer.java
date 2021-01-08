@@ -11,13 +11,13 @@ import java.util.*;
 
 import static gov.nasa.worldwind.WorldWind.RELATIVE_TO_GROUND;
 
-public class ShapefileLayer extends WorldWindOSM.TextAndShapesLayer {
-    static final WorldWindOSM.OSMShapes[] shapeArray = {
-        new WorldWindOSM.OSMShapes(Color.BLACK, 0.5D, 30000.0D),
-        new WorldWindOSM.OSMShapes(Color.GREEN, 0.5D, 100000.0D),
-        new WorldWindOSM.OSMShapes(Color.CYAN, 1.0D, 500000.0D),
-        new WorldWindOSM.OSMShapes(Color.YELLOW, 2.0D, 3000000.0D),
-        new WorldWindOSM.OSMShapes(Color.ORANGE, 0.25D, 10000.0D)
+public class ShapefileLayer extends NetVR.TextAndShapesLayer {
+    static final NetVR.OSMShapes[] shapeArray = {
+        new NetVR.OSMShapes(Color.BLACK, 0.5D, 30000.0D),
+        new NetVR.OSMShapes(Color.GREEN, 0.5D, 100000.0D),
+        new NetVR.OSMShapes(Color.CYAN, 1.0D, 500000.0D),
+        new NetVR.OSMShapes(Color.YELLOW, 2.0D, 3000000.0D),
+        new NetVR.OSMShapes(Color.ORANGE, 0.25D, 10000.0D)
     };
     private final Shapefile shp;
 
@@ -31,7 +31,7 @@ public class ShapefileLayer extends WorldWindOSM.TextAndShapesLayer {
             accept(shp.nextRecord());
         }
 
-        for (WorldWindOSM.OSMShapes ss : ShapefileLayer.shapeArray) {
+        for (NetVR.OSMShapes ss : ShapefileLayer.shapeArray) {
             if (!ss.locations.isEmpty()) {
                 SurfaceIcons l = ShapefileLayer.surfaceIcons(ss, ss.locations);
                 l.setUseMipMaps(false);
@@ -39,14 +39,14 @@ public class ShapefileLayer extends WorldWindOSM.TextAndShapesLayer {
             }
 
             if (!ss.labels.isEmpty()) {
-                for (WorldWindOSM.Label v : ss.labels) {
+                for (NetVR.Label v : ss.labels) {
                     addLabel(v);
                 }
             }
         }
     }
 
-    private static SurfaceIcons surfaceIcons(WorldWindOSM.OSMShapes ss, Iterable<? extends LatLon> locations) {
+    private static SurfaceIcons surfaceIcons(NetVR.OSMShapes ss, Iterable<? extends LatLon> locations) {
         SurfaceIcons l = new SurfaceIcons(
             PatternFactory.createPattern("PatternFactory.PatternCircle",
                 0.8F, ss.foreground), locations);
@@ -176,7 +176,7 @@ public class ShapefileLayer extends WorldWindOSM.TextAndShapesLayer {
 
             String type = (String) attr.get("type");
 
-            WorldWindOSM.OSMShapes shapes;
+            NetVR.OSMShapes shapes;
             if (type.equalsIgnoreCase("hamlet")) {
                 shapes = ShapefileLayer.shapeArray[0];
             } else if (type.equalsIgnoreCase("village")) {
@@ -198,7 +198,7 @@ public class ShapefileLayer extends WorldWindOSM.TextAndShapesLayer {
                 }
             }
             if (!WWUtil.isEmpty(name)) {
-                WorldWindOSM.Label label = new WorldWindOSM.Label(name, new Position(location, 0.0D));
+                NetVR.Label label = new NetVR.Label(name, new Position(location, 0.0D));
                 label.setFont(shapes.font);
                 label.setColor(shapes.foreground);
                 label.setBackgroundColor(shapes.background);

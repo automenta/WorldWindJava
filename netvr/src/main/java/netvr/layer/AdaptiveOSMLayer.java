@@ -113,13 +113,14 @@ public class AdaptiveOSMLayer extends RenderableLayer {
     }
 
     private void readWay(ReaderWay z) {
-        if (ways.put(z.getId(), z) != null)
+        final long zid = z.getId();
+        if (ways.put(zid, z) != null)
             return; //already read
 
         //TODO use VarHandle to access private field 'properties'
         boolean landUse = false;
         Map<String, String> m = new HashMap();
-        meta.put(z.getId(), m);
+        meta.put(zid, m);
         for (String k : z.getKeysWithPrefix("")) {
             if (!AdaptiveOSMLayer.keysExcl.contains(k))
                 m.put(k, z.getTag(k));
@@ -158,8 +159,9 @@ public class AdaptiveOSMLayer extends RenderableLayer {
 
     private static Path readPath(ReaderWay w, Map<String, String> properties, List<Position> latlon) {
         Path p = new Path(latlon);
-        p.setFollowTerrain(true);
+//        p.setFollowTerrain(true);
         p.setSurfacePath(true);
+
         return p;
     }
 

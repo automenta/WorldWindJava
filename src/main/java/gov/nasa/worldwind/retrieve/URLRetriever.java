@@ -261,9 +261,6 @@ public class URLRetriever extends WWObjectImpl implements Retriever {
         catch (ClosedByInterruptException e) {
             this.interrupted();
         }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
         catch (Exception e) {
             setState(Retriever.RETRIEVER_STATE_ERROR);
 //            this.contentLength = 0;

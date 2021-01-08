@@ -9,6 +9,7 @@ import gov.nasa.worldwind.util.Logging;
 
 import java.awt.event.*;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author dcollins
@@ -16,7 +17,7 @@ import java.util.*;
  */
 public class KeyEventState implements KeyListener, MouseListener {
 
-    private final Map<Object, InputState> keyStateMap = new HashMap<>();
+    private final Map<Object, InputState> keyStateMap = new ConcurrentHashMap<>();
     private int modifiersEx;
     private int mouseModifiersEx;
 
