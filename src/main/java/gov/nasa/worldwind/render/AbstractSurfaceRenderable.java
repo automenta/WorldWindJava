@@ -36,7 +36,7 @@ public abstract class AbstractSurfaceRenderable extends AbstractSurfaceObject {
     protected static double computePixelSizeAtLocation(DrawContext dc, LatLon location) {
         Globe globe = dc.getGlobe();
         Vec4 locationPoint = globe.computePointFromPosition(location.getLatitude(), location.getLongitude(),
-            globe.getElevation(location.getLatitude(), location.getLongitude()));
+            globe.elevation(location.getLatitude(), location.getLongitude()));
         double distance = dc.getView().getEyePoint().distanceTo3(locationPoint);
         return dc.getView().computePixelSizeAtDistance(distance);
     }

@@ -190,7 +190,7 @@ public class TrackSegmentInfo implements Renderable {
             }
         }
 
-        return dc.getGlobe().getElevation(latitude, longitude);
+        return dc.getGlobe().elevation(latitude, longitude);
     }
 
     protected String formatAngle(Angle angle) {

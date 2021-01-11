@@ -71,7 +71,8 @@ public class BasicOrbitView extends BasicView implements OrbitView {
 
         double degrees = unnormalizedHeading.degrees;
         double heading = degrees % 360;
-        return Angle.fromDegrees(heading > 180 ? heading - 360 : (heading < -180 ? 360 + heading : heading));
+        double degrees1 = heading > 180 ? heading - 360 : (heading < -180 ? 360 + heading : heading);
+        return new Angle(degrees1);
     }
 
     public static Angle normalizedPitch(Angle unnormalizedPitch) {
@@ -84,7 +85,8 @@ public class BasicOrbitView extends BasicView implements OrbitView {
         // Normalize pitch to the range [-180, 180].
         double degrees = unnormalizedPitch.degrees;
         double pitch = degrees % 360;
-        return Angle.fromDegrees(pitch > 180 ? pitch - 360 : (pitch < -180 ? 360 + pitch : pitch));
+        double degrees1 = pitch > 180 ? pitch - 360 : (pitch < -180 ? 360 + pitch : pitch);
+        return new Angle(degrees1);
     }
 
     protected static boolean validateModelCoordinates(OrbitViewInputSupport.OrbitViewState c) {
@@ -115,11 +117,11 @@ public class BasicOrbitView extends BasicView implements OrbitView {
 
         Double initHeading = Configuration.getDoubleValue(AVKey.INITIAL_HEADING);
         if (initHeading != null)
-            setHeading(Angle.fromDegrees(initHeading));
+            setHeading(new Angle(initHeading));
 
         Double initPitch = Configuration.getDoubleValue(AVKey.INITIAL_PITCH);
         if (initPitch != null)
-            setPitch(Angle.fromDegrees(initPitch));
+            setPitch(new Angle(initPitch));
 
         Double initAltitude = Configuration.getDoubleValue(AVKey.INITIAL_ALTITUDE);
         if (initAltitude != null)
@@ -127,7 +129,7 @@ public class BasicOrbitView extends BasicView implements OrbitView {
 
         Double initFov = Configuration.getDoubleValue(AVKey.FOV);
         if (initFov != null)
-            setFieldOfView(Angle.fromDegrees(initFov));
+            setFieldOfView(new Angle(initFov));
 
         this.setViewOutOfFocus(true);
     }
@@ -355,7 +357,7 @@ public class BasicOrbitView extends BasicView implements OrbitView {
         // We want the actual "geometric point" here, which must be adjusted for vertical exaggeration.
         Vec4 viewportCenterPoint = this.globe.computePointFromPosition(
             viewportCenterPos.getLatitude(), viewportCenterPos.getLongitude(),
-            this.globe.getElevation(viewportCenterPos.getLatitude(), viewportCenterPos.getLongitude())
+            this.globe.elevation(viewportCenterPos.getLatitude(), viewportCenterPos.getLongitude())
                 * dc.getVerticalExaggeration());
 
         if (viewportCenterPoint != null) {

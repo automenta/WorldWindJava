@@ -88,7 +88,7 @@ public class WorldMapLayer extends AbstractLayer {
         if (groundPos == null)
             return null;
 
-        double elevation = dc.getGlobe().getElevation(groundPos.getLatitude(), groundPos.getLongitude());
+        double elevation = dc.getGlobe().elevation(groundPos.getLatitude(), groundPos.getLongitude());
         return new Position(
             groundPos.getLatitude(),
             groundPos.getLongitude(),
@@ -118,7 +118,7 @@ public class WorldMapLayer extends AbstractLayer {
                 double lon = (pickPoint.getX() - locationSW.x) / mapSize.width * 360 - 180;
                 double lat = (viewport.height - pickPoint.getY() - locationSW.y) / mapSize.height * 180 - 90;
                 double pickAltitude = 1000.0e3;
-                pickPosition = new Position(Angle.fromDegrees(lat), Angle.fromDegrees(lon), pickAltitude);
+                pickPosition = new Position(new Angle(lat), new Angle(lon), pickAltitude);
             }
         }
         return pickPosition;

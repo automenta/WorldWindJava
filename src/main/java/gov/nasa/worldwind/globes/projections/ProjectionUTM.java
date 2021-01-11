@@ -44,7 +44,8 @@ public class ProjectionUTM extends ProjectionTransverseMercator {
             throw new IllegalArgumentException(message);
         }
 
-        return Angle.fromDegrees((3 + (zone - 1) * 6) - (zone > 30 ? 360 : 0));
+        double degrees = (3 + (zone - 1) * 6) - (zone > 30 ? 360 : 0);
+        return new Angle(degrees);
     }
 
     protected double getScale() {

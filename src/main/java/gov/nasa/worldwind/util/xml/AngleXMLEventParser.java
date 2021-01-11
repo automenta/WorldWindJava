@@ -33,7 +33,7 @@ public class AngleXMLEventParser extends AbstractXMLEventParser {
             if (ctx.isStartElement(event, this.elementName)) {
                 Double d = ctx.getDoubleParser().parseDouble(ctx, event);
                 if (d != null)
-                    angle = Angle.fromDegrees(d);
+                    angle = new Angle(d);
             }
         }
 

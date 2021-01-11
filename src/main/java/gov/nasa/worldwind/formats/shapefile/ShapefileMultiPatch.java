@@ -114,7 +114,7 @@ public class ShapefileMultiPatch { //extends ShapefileRenderable implements Orde
                     Position[] locations = new Position[points.getSize()];
                     for (int j = 0; j < points.getSize(); j++) {
                         points.get(j, location);
-                        locations[j] = new Position(Angle.fromDegrees(location[1]), Angle.fromDegrees(location[0]),
+                        locations[j] = new Position(new Angle(location[1]), new Angle(location[0]),
                             zValues[j]);
                     }
                     switch (record.getBoundaryType(i)) {

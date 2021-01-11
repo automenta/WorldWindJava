@@ -84,7 +84,7 @@ public class AddAnimator extends ApplicationTemplate {
                     if (location == null) {
                         return;
                     }
-                    double elevation = view.getGlobe().getElevation(
+                    double elevation = view.getGlobe().elevation(
                         location.getLatlon().getLatitude(), location.getLatlon().getLongitude());
                     FlyToFlyViewAnimator animator =
                         FlyToFlyViewAnimator.createFlyToFlyViewAnimator(view,

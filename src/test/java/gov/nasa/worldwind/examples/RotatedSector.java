@@ -56,7 +56,7 @@ public class RotatedSector extends ApplicationTemplate {
                 Timer timer = new Timer(50, actionEvent -> {
                     // Increment the current heading if the layer is visible
                     if (layer.isEnabled()) {
-                        quad.setHeading(Angle.fromDegrees((quad.getHeading().degrees + 1) % 360));
+                        quad.setHeading(new Angle((quad.getHeading().degrees + 1) % 360));
                         wwd().redraw();
                     }
                 });

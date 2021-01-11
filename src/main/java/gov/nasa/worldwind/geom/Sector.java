@@ -772,7 +772,7 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
      */
     @Deprecated
     public final Angle latMin() {
-        return Angle.fromDegrees(latMin);
+        return new Angle(latMin);
     }
 
     /**
@@ -782,7 +782,7 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
      */
     @Deprecated
     public final Angle lonMin() {
-        return Angle.fromDegrees(lonMin);
+        return new Angle(lonMin);
     }
 
     /**
@@ -792,7 +792,7 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
      */
     @Deprecated
     public final Angle latMax() {
-        return Angle.fromDegrees(latMax);
+        return new Angle(latMax);
     }
 
     /**
@@ -802,7 +802,7 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
      */
     @Deprecated
     public final Angle lonMax() {
-        return Angle.fromDegrees(lonMax);
+        return new Angle(lonMax);
     }
 
     /**
@@ -812,8 +812,8 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
      */
     @Deprecated
     public final Angle latDelta() {
-        return Angle.fromDegrees(
-            this.latDelta);//Angle.fromDegrees(this.maxLatitude.degrees - this.minLatitude.degrees);
+        //Angle.fromDegrees(this.maxLatitude.degrees - this.minLatitude.degrees);
+        return new Angle(this.latDelta);
     }
 
     /**
@@ -823,8 +823,8 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
      */
     @Deprecated
     public final Angle lonDelta() {
-        return Angle.fromDegrees(
-            this.lonDelta);//Angle.fromDegrees(this.maxLongitude.degrees - this.minLongitude.degrees);
+        //Angle.fromDegrees(this.maxLongitude.degrees - this.minLongitude.degrees);
+        return new Angle(this.lonDelta);
     }
 
     public boolean isWithinLatLonLimits() {
@@ -844,8 +844,8 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
      */
     public LatLon getCentroid() {
         return new LatLon(
-            Angle.fromDegrees(0.5 * (this.latMax + this.latMin)),
-            Angle.fromDegrees(0.5 * (this.lonMax + this.lonMin))
+            new Angle(0.5 * (this.latMax + this.latMin)),
+            new Angle(0.5 * (this.lonMax + this.lonMin))
         );
     }
 
@@ -859,9 +859,9 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
      */
     public Vec4 computeCenterPoint(Globe globe, double exaggeration) {
 
-        Angle lat = Angle.fromDegrees((this.latMin + this.latMax) / 2);
-        Angle lon = Angle.fromDegrees((this.lonMin + this.lonMax) / 2);
-        final double ele = globe.getElevation(lat, lon);
+        Angle lat = new Angle((this.latMin + this.latMax) / 2);
+        Angle lon = new Angle((this.lonMin + this.lonMax) / 2);
+        final double ele = globe.elevation(lat, lon);
         return globe.computePointFromPosition(lat, lon, exaggeration * ele);
     }
 
@@ -885,17 +885,17 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
         final Angle lonMin = lonMin();
         final Angle lonMax = lonMax();
         final Angle latMax = latMax();
-        corners[0] = g.computePointFromPosition(minLat, minLon, exaggeration * g.getElevation(latMin, lonMin));
-        corners[1] = g.computePointFromPosition(minLat, maxLon, exaggeration * g.getElevation(latMin, lonMax));
-        corners[2] = g.computePointFromPosition(maxLat, maxLon, exaggeration * g.getElevation(latMax, lonMax));
-        corners[3] = g.computePointFromPosition(maxLat, minLon, exaggeration * g.getElevation(latMax, lonMin));
+        corners[0] = g.computePointFromPosition(minLat, minLon, exaggeration * g.elevation(latMin, lonMin));
+        corners[1] = g.computePointFromPosition(minLat, maxLon, exaggeration * g.elevation(latMin, lonMax));
+        corners[2] = g.computePointFromPosition(maxLat, maxLon, exaggeration * g.elevation(latMax, lonMax));
+        corners[3] = g.computePointFromPosition(maxLat, minLon, exaggeration * g.elevation(latMax, lonMin));
 
         return corners;
     }
 
     @Deprecated
     public final boolean contains(Angle latitude, Angle longitude) {
-        return containsDegrees(latitude.degrees, longitude.degrees);
+        return contains(latitude.degrees, longitude.degrees);
     }
 
     /**
@@ -908,10 +908,10 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
      * @throws IllegalArgumentException if <code>latlon</code> is null.
      */
     public final boolean contains(LatLon latLon) {
-        return this.containsDegrees(latLon.latitude, latLon.longitude);
+        return this.contains(latLon.latitude, latLon.longitude);
     }
 
-    public boolean containsDegrees(double degreesLatitude, double degreesLongitude) {
+    public boolean contains(double degreesLatitude, double degreesLongitude) {
         return degreesLatitude >= this.latMin && degreesLatitude <= this.latMax
             && degreesLongitude >= this.lonMin && degreesLongitude <= this.lonMax;
     }
@@ -1028,7 +1028,7 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
             return this;
 
         double lat = latitude.degrees, lon = longitude.degrees;
-        if (containsDegrees(lat, lon))
+        if (contains(lat, lon))
             return this;
         else
             return new Sector(min(latMin, lat), max(latMax, lat), min(lonMin, lon), max(lonMax, lon));

@@ -909,8 +909,8 @@ public class SurfaceObjectTileBuilder {
         Level level = levelSet.getFirstLevel();
         Angle dLat = level.getTileDelta().getLatitude();
         Angle dLon = level.getTileDelta().getLongitude();
-        Angle latOrigin = levelSet.getTileOrigin().getLatitude();
-        Angle lonOrigin = levelSet.getTileOrigin().getLongitude();
+        Angle latOrigin = levelSet.tileOrigin.getLatitude();
+        Angle lonOrigin = levelSet.tileOrigin.getLongitude();
 
         // Store the top level tiles in a set to ensure that each top level tile is added only once. Store the tiles
         // that intersect each surface renderable in a set to ensure that each object is added to a tile at most once.
@@ -940,12 +940,12 @@ public class SurfaceObjectTileBuilder {
                 int lastRow = Tile.computeRow(dLat, s.latMax(), latOrigin);
                 int lastCol = Tile.computeColumn(dLon, s.lonMax(), lonOrigin);
 
-                Angle p1 = Tile.computeRowLatitude(firstRow, dLat, latOrigin);
+                Angle p1 = Tile.rowLat(firstRow, dLat, latOrigin);
                 for (int row = firstRow; row <= lastRow; row++) {
                     Angle p2;
                     p2 = p1.add(dLat);
 
-                    Angle t1 = Tile.computeColumnLongitude(firstCol, dLon, lonOrigin);
+                    Angle t1 = Tile.columnLon(firstCol, dLon, lonOrigin);
                     for (int col = firstCol; col <= lastCol; col++) {
                         Angle t2;
                         t2 = t1.add(dLon);
@@ -1084,7 +1084,7 @@ public class SurfaceObjectTileBuilder {
         if (tile.sector.latMin >= 75 || tile.sector.latMax <= -75)
             s *= 0.85;
         double detailScale = Math.pow(10, -s);
-        double fieldOfViewScale = dc.getView().getFieldOfView().tanHalfAngle() / Angle.fromDegrees(45).tanHalfAngle();
+        double fieldOfViewScale = dc.getView().getFieldOfView().tanHalfAngle() / new Angle(45).tanHalfAngle();
         fieldOfViewScale = WWMath.clamp(fieldOfViewScale, 0, 1);
 
         // Compute the distance between the eye point and the sector in meters, and compute a fraction of that distance

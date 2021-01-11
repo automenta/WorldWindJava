@@ -534,7 +534,7 @@ public class WWOMeasureTool extends AVListImpl
             return getWwd().model().getGlobe().computePositionFromPoint(surfacePoint);
         }
         else {
-            return new Position(latLon, getWwd().model().getGlobe().getElevation(latLon.getLatitude(),
+            return new Position(latLon, getWwd().model().getGlobe().elevation(latLon.getLatitude(),
                 latLon.getLongitude()));
         }
     }

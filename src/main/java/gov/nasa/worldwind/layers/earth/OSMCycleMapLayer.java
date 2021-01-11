@@ -31,8 +31,7 @@ public class OSMCycleMapLayer extends BasicMercatorTiledImageLayer {
         params.set(AVKey.FORMAT_SUFFIX, ".png");
         params.set(AVKey.NUM_LEVELS, 16);
         params.set(AVKey.NUM_EMPTY_LEVELS, 0);
-        params.set(AVKey.LEVEL_ZERO_TILE_DELTA, new LatLon(Angle
-            .fromDegrees(22.5d), Angle.fromDegrees(45.0d)));
+        params.set(AVKey.LEVEL_ZERO_TILE_DELTA, new LatLon(new Angle(22.5d), new Angle(45.0d)));
         params.set(AVKey.SECTOR, new MercatorSector(-1.0, 1.0,
             Angle.NEG180, Angle.POS180));
         params.set(AVKey.TILE_URL_BUILDER, new URLBuilder());

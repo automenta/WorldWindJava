@@ -28,7 +28,7 @@ public class TrackAirspace extends AbstractAirspace {
      * Denotes the the threshold that defines whether the angle between two adjacent legs is small. Initially 22.5
      * degrees.
      */
-    protected Angle smallAngleThreshold = Angle.fromDegrees(22.5);
+    protected Angle smallAngleThreshold = new Angle(22.5);
 
     public TrackAirspace(Iterable<gov.nasa.worldwind.render.airspaces.Box> legs) {
         this.addLegs(legs);
@@ -539,7 +539,7 @@ public class TrackAirspace extends AbstractAirspace {
 
         Double d = rs.getStateValueAsDouble(context, "smallAngleThresholdDegrees");
         if (d != null)
-            this.setSmallAngleThreshold(Angle.fromDegrees(d));
+            this.setSmallAngleThreshold(new Angle(d));
 
         RestorableSupport.StateObject so = rs.getStateObject(context, "legs");
         if (so == null)

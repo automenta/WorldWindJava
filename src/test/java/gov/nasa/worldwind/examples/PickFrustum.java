@@ -159,8 +159,7 @@ public class PickFrustum extends ApplicationTemplate {
             for (int x = -180; x < 180; x += 5) {
                 for (int y = -90; y < 90; y += 5) {
                     WWIcon icon = new UserFacingIcon("gov/nasa/worldwind/examples/images/georss.png",
-                        new Position(Angle.fromDegrees(y), Angle
-                            .fromDegrees(x), 0));
+                        new Position(new Angle(y), new Angle(x), 0));
                     icon.setSize(new Dimension(32, 32));
                     icon.setHighlightScale(1.3);
                     iconLayer.addIcon(icon);

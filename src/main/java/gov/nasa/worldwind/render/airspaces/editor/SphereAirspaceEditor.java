@@ -64,7 +64,7 @@ public class SphereAirspaceEditor extends AbstractAirspaceEditor {
                 point = wwd.sceneControl().getTerrain().getSurfacePoint(
                     location.getLatitude(), location.getLongitude(), altitude);
             } else {
-                double elevation = wwd.model().getGlobe().getElevation(
+                double elevation = wwd.model().getGlobe().elevation(
                     location.getLatitude(), location.getLongitude());
                 point = wwd.model().getGlobe().computePointFromPosition(
                     location.getLatitude(), location.getLongitude(), elevation + altitude);

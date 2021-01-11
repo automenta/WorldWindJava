@@ -26,7 +26,8 @@ import java.io.*;
  * @version $Id: EGM96.java 770 2012-09-13 02:48:23Z tgaskins $
  */
 public class EGM96 {
-    protected static final Angle INTERVAL = Angle.fromDegrees(15.0d / 60.0d); // 15' angle delta
+    protected static final Angle INTERVAL = new Angle(15.0d / 60.0d); // 15' angle delta
+
     protected static final int NUM_ROWS = 721;
     protected static final int NUM_COLS = 1440;
     protected String offsetsFilePath;

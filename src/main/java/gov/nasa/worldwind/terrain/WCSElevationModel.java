@@ -92,7 +92,7 @@ public class WCSElevationModel extends BasicElevationModel {
 
     protected static void wcsSetFallbacks(AVList params) {
         if (params.get(AVKey.LEVEL_ZERO_TILE_DELTA) == null) {
-            Angle delta = Angle.fromDegrees(20);
+            Angle delta = new Angle(20);
             params.set(AVKey.LEVEL_ZERO_TILE_DELTA, new LatLon(delta, delta));
         }
 

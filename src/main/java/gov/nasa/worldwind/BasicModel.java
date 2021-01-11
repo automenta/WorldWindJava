@@ -109,7 +109,7 @@ public class BasicModel extends WWObjectImpl implements Model {
         for (String name : names) {
             try {
                 if (!name.isEmpty()) {
-                    Layer l = (Layer) WorldWind.createComponent(name);
+                    Layer l = (Layer) WorldWind.create(name);
                     layers.add(l);
                 }
             }

@@ -225,8 +225,9 @@ public class StarsLayer extends RenderableLayer {
             Matrix modelview = view.getModelviewMatrix();
             modelview = modelview.multiply(Matrix.fromTranslation(view.getEyePoint()));
             modelview = modelview.multiply(Matrix.fromAxisAngle(this.longitudeOffset, 0, 1, 0));
+            double degrees = -this.latitudeOffset.degrees;
             modelview = modelview.multiply(
-                Matrix.fromAxisAngle(Angle.fromDegrees(-this.latitudeOffset.degrees), 1, 0, 0));
+                Matrix.fromAxisAngle(new Angle(degrees), 1, 0, 0));
             ogsh.pushModelviewIdentity(gl);
             gl.glLoadMatrixd(modelview.toArray(matrixArray, 0, false), 0);
 

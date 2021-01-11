@@ -74,7 +74,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
     public TiledImageLayer(LevelSet levelSet) {
 
         this.levels = new LevelSet(levelSet); // the caller's levelSet may change internally, so we copy it.
-        this.set(AVKey.SECTOR, this.levels.getSector());
+        this.set(AVKey.SECTOR, this.levels.sector);
 
         this.setPickEnabled(false); // textures are assumed to be terrain unless specifically indicated otherwise.
         this.tileCountName = this.name() + " Tiles";
@@ -348,7 +348,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
 
             LatLon ll = tile.sector.getCentroid();
             Vec4 pt = dc.getGlobe().computePointFromPosition(ll.getLatitude(), ll.getLongitude(),
-                dc.getGlobe().getElevation(ll.getLatitude(), ll.getLongitude()));
+                dc.getGlobe().elevation(ll.getLatitude(), ll.getLongitude()));
             pt = dc.getView().project(pt);
             textRenderer.draw(tileLabel, (int) pt.x, (int) pt.y);
         }
@@ -529,13 +529,13 @@ public abstract class TiledImageLayer extends AbstractLayer {
     }
 
     protected void createTopLevelTiles() {
-        Sector sector = this.levels.getSector();
+        Sector sector = this.levels.sector;
 
         Level level = levels.getFirstLevel();
         double dLat = level.getTileDelta().latitude;
         double dLon = level.getTileDelta().longitude;
-        double latOrigin = this.levels.getTileOrigin().latitude;
-        double lonOrigin = this.levels.getTileOrigin().longitude;
+        double latOrigin = this.levels.tileOrigin.latitude;
+        double lonOrigin = this.levels.tileOrigin.longitude;
 
         // Determine the row and column offset from the common WorldWind global tiling origin.
         int firstRow = Tile.computeRow(dLat, sector.latMin, latOrigin);
@@ -548,15 +548,15 @@ public abstract class TiledImageLayer extends AbstractLayer {
 
         this.topLevels = new ArrayList<>(nLatTiles * nLonTiles);
 
-        final Angle LAT_ORIGIN = Angle.fromDegrees(latOrigin);
-        final Angle LON_ORIGIN = Angle.fromDegrees(lonOrigin);
-        final Angle DLON = Angle.fromDegrees(dLon);
-        final Angle DLAT = Angle.fromDegrees(dLat);
-        Angle p1 = Tile.computeRowLatitude(firstRow, Angle.fromDegrees(dLat), LAT_ORIGIN);
+        final Angle LAT_ORIGIN = new Angle(latOrigin);
+        final Angle LON_ORIGIN = new Angle(lonOrigin);
+        final Angle DLON = new Angle(dLon);
+        final Angle DLAT = new Angle(dLat);
+        Angle p1 = Tile.rowLat(firstRow, new Angle(dLat), LAT_ORIGIN);
         for (int row = firstRow; row <= lastRow; row++) {
             Angle p2 = p1.add(DLAT);
 
-            Angle t1 = Tile.computeColumnLongitude(firstCol, DLON, LON_ORIGIN);
+            Angle t1 = Tile.columnLon(firstCol, DLON, LON_ORIGIN);
             for (int col = firstCol; col <= lastCol; col++) {
                 Angle t2;
                 t2 = t1.add(DLON);
@@ -621,7 +621,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
                 // Issue a request for the parent before descending to the children.
             }
 
-            final Sector sector = this.getLevels().getSector();
+            final Sector sector = this.getLevels().sector;
             TextureTile[] subTiles = tile.createSubTiles(this.levels.getLevel(tile.getLevelNumber() + 1));
             for (TextureTile child : subTiles) {
                 if (sector.intersects(child.sector) && TiledImageLayer.isTileVisible(dc, child))
@@ -703,7 +703,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
         if (sector.latMin >= 75 || sector.latMax <= -75)
             s *= 0.9;
         double detailScale = Math.pow(10, -s);
-        double fieldOfViewScale = dc.getView().getFieldOfView().tanHalfAngle() / Angle.fromDegrees(45).tanHalfAngle();
+        double fieldOfViewScale = dc.getView().getFieldOfView().tanHalfAngle() / new Angle(45).tanHalfAngle();
         fieldOfViewScale = WWMath.clamp(fieldOfViewScale, 0, 1);
 
         // Compute the distance between the eye point and the sector in meters, and compute a fraction of that distance
@@ -758,7 +758,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
         if (dc.getView() == null || this.getLevels() == null || vpc == null)
             return false;
 
-        if (!this.getLevels().getSector().contains(vpc))
+        if (!this.getLevels().sector.contains(vpc))
             return true;
 
         Level nextToLast = this.getLevels().getNextToLastLevel();
@@ -766,7 +766,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
             return true;
 
         Sector centerSector = nextToLast.computeSectorForPosition(vpc.getLatitude(), vpc.getLongitude(),
-            this.levels.getTileOrigin());
+            this.levels.tileOrigin);
 
         return this.needToSplit(dc, centerSector, nextToLast);
     }
@@ -868,7 +868,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
     public boolean isLayerInView(DrawContext dc) {
 
         final Sector visibleSector = dc.getVisibleSector();
-        return !(visibleSector != null && !this.levels.getSector().intersects(visibleSector));
+        return !(visibleSector != null && !this.levels.sector.intersects(visibleSector));
     }
 
     protected void drawBoundingVolumes(DrawContext dc, Iterable<TextureTile> tiles) {
@@ -883,7 +883,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
                 ((Renderable) tile.getExtent(dc)).render(dc);
         }
 
-        Box c = Sector.computeBoundingBox(dc.getGlobe(), dc.getVerticalExaggeration(), this.levels.getSector());
+        Box c = Sector.computeBoundingBox(dc.getGlobe(), dc.getVerticalExaggeration(), this.levels.sector);
         gl.glColor3d(1, 1, 0);
         c.render(dc);
 
@@ -1090,13 +1090,13 @@ public abstract class TiledImageLayer extends AbstractLayer {
     public BufferedImage composeImageForSector(Sector sector, int canvasWidth, int canvasHeight, double aspectRatio,
         int levelNumber, String mimeType, boolean abortOnError, BufferedImage image, int timeout) throws Exception {
 
-        if (!this.levels.getSector().intersects(sector)) {
+        if (!this.levels.sector.intersects(sector)) {
             Logging.logger().severe(Logging.getMessage("generic.SectorRequestedOutsideCoverageArea", sector,
-                this.levels.getSector()));
+                this.levels.sector));
             return image;
         }
 
-        Sector intersection = this.levels.getSector().intersection(sector);
+        Sector intersection = this.levels.sector.intersection(sector);
 
         if (levelNumber < 0) {
             levelNumber = this.levels.getLastLevel().getLevelNumber();
@@ -1181,7 +1181,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
 
         // Collect all the tiles intersecting the input sector.
         LatLon delta = targetLevel.getTileDelta();
-        LatLon origin = this.levels.getTileOrigin();
+        LatLon origin = this.levels.tileOrigin;
         final int nwRow = Tile.computeRow(delta.getLatitude(), sector.latMax(), origin.getLatitude());
         final int nwCol = Tile.computeColumn(delta.getLongitude(), sector.lonMin(), origin.getLongitude());
         final int seRow = Tile.computeRow(delta.getLatitude(), sector.latMin(), origin.getLatitude());
@@ -1213,7 +1213,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
 
         // Collect all the tiles intersecting the input sector.
         LatLon delta = targetLevel.getTileDelta();
-        LatLon origin = this.levels.getTileOrigin();
+        LatLon origin = this.levels.tileOrigin;
         final int nwRow = Tile.computeRow(delta.getLatitude(), sector.latMax(), origin.getLatitude());
         final int nwCol = Tile.computeColumn(delta.getLongitude(), sector.lonMin(), origin.getLongitude());
         final int seRow = Tile.computeRow(delta.getLatitude(), sector.latMin(), origin.getLatitude());

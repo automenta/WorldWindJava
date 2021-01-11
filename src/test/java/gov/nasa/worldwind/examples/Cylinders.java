@@ -100,7 +100,7 @@ public class Cylinders extends ApplicationTemplate {
 
             // Scaled Cylinder with a pre-set orientation
             Cylinder cylinder2 = new Cylinder(Position.fromDegrees(0, 30, 750000), 1000000, 500000, 100000,
-                Angle.fromDegrees(90), Angle.fromDegrees(45), Angle.fromDegrees(30));
+                new Angle(90), new Angle(45), new Angle(30));
             cylinder2.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             cylinder2.setAttributes(attrs2);
             cylinder2.set(AVKey.DISPLAY_NAME, "Scaled Cylinder with a pre-set orientation");
@@ -110,7 +110,7 @@ public class Cylinders extends ApplicationTemplate {
 
             // Scaled Cylinder with a pre-set orientation
             Cylinder cylinder6 = new Cylinder(Position.fromDegrees(30, 30, 750000), 1000000, 500000, 100000,
-                Angle.fromDegrees(90), Angle.fromDegrees(45), Angle.fromDegrees(30));
+                new Angle(90), new Angle(45), new Angle(30));
             cylinder6.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             cylinder6.setImageSources("gov/nasa/worldwind/examples/images/500px-Checkerboard_pattern.png");
             cylinder6.setAttributes(attrs2);
@@ -120,7 +120,7 @@ public class Cylinders extends ApplicationTemplate {
 
             // Scaled Cylinder with a pre-set orientation
             Cylinder cylinder7 = new Cylinder(Position.fromDegrees(60, 30, 750000), 1000000, 500000, 100000,
-                Angle.fromDegrees(90), Angle.fromDegrees(45), Angle.fromDegrees(30));
+                new Angle(90), new Angle(45), new Angle(30));
             cylinder7.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             cylinder7.setAttributes(attrs2);
             cylinder7.setVisible(true);
@@ -129,7 +129,7 @@ public class Cylinders extends ApplicationTemplate {
 
             // Scaled, oriented Cylinder in 3rd "quadrant" (-X, -Y, -Z)
             Cylinder cylinder8 = new Cylinder(Position.fromDegrees(-45, -180, 750000), 1000000, 500000, 100000,
-                Angle.fromDegrees(90), Angle.fromDegrees(45), Angle.fromDegrees(30));
+                new Angle(90), new Angle(45), new Angle(30));
             cylinder8.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             cylinder8.setAttributes(attrs2);
             cylinder8.setVisible(true);

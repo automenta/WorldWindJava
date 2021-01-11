@@ -541,13 +541,13 @@ public class WorldFile {
             throw new IllegalArgumentException(message);
         }
 
-        Angle latOrigin = Angle.fromDegrees((Double) values.get(WorldFile.WORLD_FILE_Y_LOCATION));
+        Angle latOrigin = new Angle((Double) values.get(WorldFile.WORLD_FILE_Y_LOCATION));
         // Make y offset negative if it's not already. World file convention is upper left origin.
         double s = (Double) values.get(WorldFile.WORLD_FILE_Y_PIXEL_SIZE);
         // The latitude and longitude dimensions are computed by multiplying the pixel size by the image's width or
         // height. The pixel size denotes the dimension of a pixel in degrees.
         Angle latOffset = latOrigin.addDegrees((s <= 0 ? s : -s) * imageHeight);
-        Angle lonOrigin = Angle.fromDegrees((Double) values.get(WorldFile.WORLD_FILE_X_LOCATION));
+        Angle lonOrigin = new Angle((Double) values.get(WorldFile.WORLD_FILE_X_LOCATION));
         Angle lonOffset = lonOrigin.addDegrees((Double) values.get(WorldFile.WORLD_FILE_X_PIXEL_SIZE) * imageWidth);
 
         Angle minLon, maxLon;

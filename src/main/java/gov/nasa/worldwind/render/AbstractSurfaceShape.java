@@ -287,7 +287,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject
         final double globeRad = dc.getGlobe().getRadius();
         double regionPixelSize = globeRad * toRadians(sdc.getSector().latDelta)
             / sdc.getViewport().height;
-        double texturePixelSize = globeRad * Angle.fromDegrees(1).radians() / texture.getHeight(dc);
+        double texturePixelSize = globeRad * new Angle(1).radians() / texture.getHeight(dc);
         double drawScale = texturePixelSize / regionPixelSize;
         transform = Matrix.fromScale(drawScale, drawScale, 1.0d).multiply(transform); // Pre multiply
         // Apply texture coordinates transform

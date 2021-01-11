@@ -174,7 +174,7 @@ public class PositionTable extends JTable {
         else {
             try {
                 Number number = NumberFormat.getInstance().parse(string.trim());
-                return Angle.fromDegrees(number.doubleValue());
+                return new Angle(number.doubleValue());
             }
             catch (Exception ignore) {
                 return null;
@@ -183,7 +183,7 @@ public class PositionTable extends JTable {
     }
 
     private String makeAngleDescription(double degrees) {
-        return SAR2.formatAngle(this.angleFormat, Angle.fromDegrees(degrees));
+        return SAR2.formatAngle(this.angleFormat, new Angle(degrees));
     }
 
     private String makeElevationDescription(double metersElevation) {

@@ -587,7 +587,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
                 VecBuffer points = record.getBoundaryPoints(i);
                 for (int j = 0; j < points.getSize(); j++) {
                     points.get(j, location);
-                    Vec4 p = terrain.getSurfacePoint(Angle.fromDegrees(location[1]), Angle.fromDegrees(location[0]), 0);
+                    Vec4 p = terrain.getSurfacePoint(new Angle(location[1]), new Angle(location[0]), 0);
 
                     // Tessellate indices in geographic coordinates. This produces an index tessellation that is
                     // independent of the record's model coordinates, since the count and organization of top and bottom

@@ -130,7 +130,7 @@ public class ShapeEditing extends ApplicationTemplate {
             layer.add(sphere);
 
             PartialCappedCylinder partialCylinder = new PartialCappedCylinder(LatLon.fromDegrees(40.5, -105), 5.0e4);
-            partialCylinder.setAzimuths(Angle.fromDegrees(270), Angle.fromDegrees(90));
+            partialCylinder.setAzimuths(new Angle(270), new Angle(90));
             partialCylinder.setRadii(3.0e4, 5.0e4);
             partialCylinder.setDrawSurfaceShape(false);
             partialCylinder.setAttributes(attrs);
@@ -152,7 +152,7 @@ public class ShapeEditing extends ApplicationTemplate {
             layer.add(track);
 
             CappedEllipticalCylinder cec = new CappedEllipticalCylinder(LatLon.fromDegrees(40.5, -100), 5.0e4, 6.0e4,
-                Angle.fromDegrees(0));
+                new Angle(0));
             cec.setRadii(3.0e4, 4.0e4, 5.0e4, 6.0e4);
             cec.setDrawSurfaceShape(false);
             cec.setAttributes(attrs);
@@ -193,17 +193,17 @@ public class ShapeEditing extends ApplicationTemplate {
             layer.add(circle);
 
             SurfaceSquare square = new SurfaceSquare(attrs, LatLon.fromDegrees(42.5, -113), 1.0e5);
-            square.setHeading(Angle.fromDegrees(30));
+            square.setHeading(new Angle(30));
             square.setHighlightAttributes(highlightAttrs);
             layer.add(square);
 
             SurfaceQuad quad = new SurfaceQuad(attrs, LatLon.fromDegrees(42.5, -111), 1.0e5, 1.0e5);
-            quad.setHeading(Angle.fromDegrees(30));
+            quad.setHeading(new Angle(30));
             quad.setHighlightAttributes(highlightAttrs);
             layer.add(quad);
 
             SurfaceEllipse ellipse = new SurfaceEllipse(attrs, LatLon.fromDegrees(42.5, -108), 1.0e5, 1.5e5);
-            ellipse.setHeading(Angle.fromDegrees(30));
+            ellipse.setHeading(new Angle(30));
             ellipse.setHighlightAttributes(highlightAttrs);
             layer.add(ellipse);
 

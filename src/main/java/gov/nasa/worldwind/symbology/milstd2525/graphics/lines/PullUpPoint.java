@@ -106,10 +106,10 @@ public class PullUpPoint extends AbstractCircularGraphic {
         double dist = this.circle.getRadius() * 0.75;
         Angle distance = Angle.fromRadians(dist / dc.getGlobe().getRadius());
 
-        LatLon a = LatLon.greatCircleEndPosition(center, Angle.fromDegrees(-65.0), distance);
-        LatLon b = LatLon.greatCircleEndPosition(center, Angle.fromDegrees(-115.0), distance);
-        LatLon c = LatLon.greatCircleEndPosition(center, Angle.fromDegrees(65.0), distance);
-        LatLon d = LatLon.greatCircleEndPosition(center, Angle.fromDegrees(115.0), distance);
+        LatLon a = LatLon.greatCircleEndPosition(center, new Angle(-65.0), distance);
+        LatLon b = LatLon.greatCircleEndPosition(center, new Angle(-115.0), distance);
+        LatLon c = LatLon.greatCircleEndPosition(center, new Angle(65.0), distance);
+        LatLon d = LatLon.greatCircleEndPosition(center, new Angle(115.0), distance);
 
         Path bowtie = this.createPath();
         bowtie.setPositions(PullUpPoint.asPositionList(a, b, c, d, a));

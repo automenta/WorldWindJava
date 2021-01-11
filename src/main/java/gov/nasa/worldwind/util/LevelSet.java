@@ -17,10 +17,10 @@ import java.util.*;
  * @version $Id: LevelSet.java 2060 2014-06-18 03:19:17Z tgaskins $
  */
 public class LevelSet extends WWObjectImpl {
-    private final Sector sector;
-    private final LatLon levelZeroTileDelta;
-    private final LatLon tileOrigin;
-    private final int numLevelZeroColumns;
+    public final Sector sector;
+    public final LatLon levelZeroTileDelta;
+    public final LatLon tileOrigin;
+    public final int numLevelZeroColumns;
     private final ArrayList<Level> levels = new ArrayList<>();
     private final SectorResolution[] sectorLevelLimits;
 
@@ -187,18 +187,6 @@ public class LevelSet extends WWObjectImpl {
         return null;
     }
 
-    public final Sector getSector() {
-        return this.sector;
-    }
-
-    public final LatLon getLevelZeroTileDelta() {
-        return this.levelZeroTileDelta;
-    }
-
-    public final LatLon getTileOrigin() {
-        return this.tileOrigin;
-    }
-
     public final SectorResolution[] getSectorLevelLimits() {
         if (this.sectorLevelLimits == null)
             return null;
@@ -242,7 +230,7 @@ public class LevelSet extends WWObjectImpl {
             throw new IllegalArgumentException(msg);
         }
 
-        if (!this.getSector().intersects(sector))
+        if (!this.sector.intersects(sector))
             return null;
 
         Level level = this.getLevel(this.getNumLevels() - 1);
@@ -354,8 +342,8 @@ public class LevelSet extends WWObjectImpl {
         Angle latOrigin = this.tileOrigin.getLatitude();
         Angle lonOrigin = this.tileOrigin.getLongitude();
 
-        Angle minLatitude = Tile.computeRowLatitude(key.row, dLat, latOrigin);
-        Angle minLongitude = Tile.computeColumnLongitude(key.col, dLon, lonOrigin);
+        Angle minLatitude = Tile.rowLat(key.row, dLat, latOrigin);
+        Angle minLongitude = Tile.columnLon(key.col, dLon, lonOrigin);
 
         return new Sector(minLatitude, minLatitude.add(dLat), minLongitude, minLongitude.add(dLon));
     }
@@ -376,8 +364,8 @@ public class LevelSet extends WWObjectImpl {
         Angle latOrigin = this.tileOrigin.getLatitude();
         Angle lonOrigin = this.tileOrigin.getLongitude();
 
-        Angle minLatitude = Tile.computeRowLatitude(key.row, dLat, latOrigin);
-        Angle minLongitude = Tile.computeColumnLongitude(key.col, dLon, lonOrigin);
+        Angle minLatitude = Tile.rowLat(key.row, dLat, latOrigin);
+        Angle minLongitude = Tile.columnLon(key.col, dLon, lonOrigin);
 
         Sector tileSector = new Sector(minLatitude, minLatitude.add(dLat), minLongitude, minLongitude.add(dLon));
 

@@ -77,7 +77,7 @@ public class TacticalSymbols extends ApplicationTemplate {
             airSymbol.set(AVKey.DISPLAY_NAME, "MIL-STD-2525 Friendly SOF Drone Aircraft"); // Tool tip text.
             airSymbol.setAttributes(this.sharedAttrs);
             airSymbol.setHighlightAttributes(this.sharedHighlightAttrs);
-            airSymbol.setModifier(SymbologyConstants.DIRECTION_OF_MOVEMENT, Angle.fromDegrees(235));
+            airSymbol.setModifier(SymbologyConstants.DIRECTION_OF_MOVEMENT, new Angle(235));
             airSymbol.setShowLocation(false);
             this.symbolLayer.add(airSymbol);
 
@@ -94,7 +94,7 @@ public class TacticalSymbols extends ApplicationTemplate {
             groundSymbol.set(AVKey.DISPLAY_NAME, "MIL-STD-2525 Hostile Self-Propelled Rocket Launchers");
             groundSymbol.setAttributes(this.sharedAttrs);
             groundSymbol.setHighlightAttributes(this.sharedHighlightAttrs);
-            groundSymbol.setModifier(SymbologyConstants.DIRECTION_OF_MOVEMENT, Angle.fromDegrees(90));
+            groundSymbol.setModifier(SymbologyConstants.DIRECTION_OF_MOVEMENT, new Angle(90));
             groundSymbol.setModifier(SymbologyConstants.SPEED_LEADER_SCALE, 0.5);
             groundSymbol.setShowLocation(false);
             this.symbolLayer.add(groundSymbol);

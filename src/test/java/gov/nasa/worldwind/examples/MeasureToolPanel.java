@@ -364,7 +364,7 @@ public class MeasureToolPanel extends JPanel {
         bt.addActionListener((ActionEvent actionEvent) -> {
             shapeCombo.setSelectedIndex(6);
             measureTool.setMeasureShape(
-                new SurfaceQuad(Position.fromDegrees(44, 7, 0), 100.0e3, 50.0e3, Angle.fromDegrees(30)));
+                new SurfaceQuad(Position.fromDegrees(44, 7, 0), 100.0e3, 50.0e3, new Angle(30)));
         });
         presetPanel.add(bt);
         bt = new JButton("Polygon");

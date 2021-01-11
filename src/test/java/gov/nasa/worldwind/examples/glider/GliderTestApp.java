@@ -101,7 +101,7 @@ public class GliderTestApp extends ApplicationTemplate {
             stream = WWIO.openFileOrResourceStream(cloudImagePath, null);
             testImage = ImageIO.read(stream);
             long start = System.currentTimeMillis();
-            float[][] field = makeField(corners, testImage.getWidth(), testImage.getHeight(), Angle.fromDegrees(15));
+            float[][] field = makeField(corners, testImage.getWidth(), testImage.getHeight(), new Angle(15));
             makeBorder(field, testImage.getWidth(), testImage.getHeight(), latLons);
             projectedImage = GliderImage.alignImage(testImage, field[0], field[1]);
             System.out.printf("Image projected, %d ms\n", System.currentTimeMillis() - start);

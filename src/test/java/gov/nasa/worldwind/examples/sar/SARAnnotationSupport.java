@@ -214,7 +214,7 @@ public class SARAnnotationSupport {
             if (surfacePoint == null) {
                 Globe globe = this.getWwd().model().getGlobe();
                 surfacePoint = globe.computePointFromPosition(pos.getLatitude(), pos.getLongitude(),
-                    globe.getElevation(pos.getLatitude(), pos.getLongitude()));
+                    globe.elevation(pos.getLatitude(), pos.getLongitude()));
             }
             Vec4 screenPoint = this.getWwd().view().project(surfacePoint);
             if (screenPoint != null)

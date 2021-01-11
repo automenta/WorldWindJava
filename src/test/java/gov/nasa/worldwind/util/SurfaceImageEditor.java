@@ -260,7 +260,7 @@ public class SurfaceImageEditor implements SelectListener {
             }
         }
 
-        return wwd.model().getGlobe().getElevation(latLon.getLatitude(), latLon.getLongitude());
+        return wwd.model().getGlobe().elevation(latLon.getLatitude(), latLon.getLongitude());
     }
 
     protected static class ControlPointMarker extends BasicMarker {

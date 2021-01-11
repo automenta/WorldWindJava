@@ -141,7 +141,7 @@ public class ViewSwitch extends ApplicationTemplate {
 
             public void setViewer(ViewerClass vc, boolean copyValues) {
                 if (vc.view == null) {
-                    vc.view = (View) WorldWind.createComponent(vc.viewClassName);
+                    vc.view = (View) WorldWind.create(vc.viewClassName);
                     vc.viewInputHandler =
                         vc.view.getViewInputHandler();
                 }

@@ -106,7 +106,7 @@ public class LengthMeasurer implements MeasurableLength {
         // Add first position
         Position pos1 = positions.get(start);
         if (followTerrain) {
-            newPositions.add(new Position(pos1, globe.getElevation(pos1.getLatitude(), pos1.getLongitude())));
+            newPositions.add(new Position(pos1, globe.elevation(pos1.getLatitude(), pos1.getLongitude())));
         } else {
             newPositions.add(pos1);
         }
@@ -149,7 +149,7 @@ public class LengthMeasurer implements MeasurableLength {
                     // Set elevation
                     double elevation;
                     if (followTerrain) {
-                        elevation = globe.getElevation(destLatLon.getLatitude(), destLatLon.getLongitude());
+                        elevation = globe.elevation(destLatLon.getLatitude(), destLatLon.getLongitude());
                     } else {
                         elevation = pos1.getElevation() * (1 - s) + pos2.getElevation() * s;
                     }
@@ -159,7 +159,7 @@ public class LengthMeasurer implements MeasurableLength {
             }
             // Finally add the segment end position
             if (followTerrain) {
-                newPositions.add(new Position(pos2, globe.getElevation(pos2.getLatitude(), pos2.getLongitude())));
+                newPositions.add(new Position(pos2, globe.elevation(pos2.getLatitude(), pos2.getLongitude())));
             } else {
                 newPositions.add(pos2);
             }

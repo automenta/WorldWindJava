@@ -400,7 +400,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
             Globe globe = wwd.model().getGlobe();
 
             for (LatLon ll : locations) {
-                double e = globe.getElevation(ll.getLatitude(), ll.getLongitude());
+                double e = globe.elevation(ll.getLatitude(), ll.getLongitude());
                 if (e > maxElevation) {
                     maxElevation = e;
                 }
@@ -710,7 +710,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
                     case OPEN_DEMO_AIRSPACES:
                         this.openFromPath(DEMO_AIRSPACES_PATH);
                         this.zoomTo(LatLon.fromDegrees(47.6584074779224, -122.3059199579634),
-                            Angle.fromDegrees(-152), Angle.fromDegrees(75), 750);
+                            new Angle(-152), new Angle(75), 750);
                         break;
                     case REMOVE_SELECTED:
                         this.removeEntries(Arrays.asList(this.getSelectedEntries()));
@@ -876,7 +876,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
             }
 
             if (point == null) {
-                double e = globe.getElevation(latlon.getLatitude(), latlon.getLongitude());
+                double e = globe.elevation(latlon.getLatitude(), latlon.getLongitude());
                 point = globe.computePointFromPosition(
                     latlon.getLatitude(), latlon.getLongitude(), (e + elevation) * sc.getVerticalExaggeration());
             }
@@ -887,7 +887,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
         protected Vec4 getPoint(LatLon latlon, double elevation) {
             SceneController sc = this.getApp().wwd().sceneControl();
             Globe globe = this.getApp().wwd().model().getGlobe();
-            double e = globe.getElevation(latlon.getLatitude(), latlon.getLongitude());
+            double e = globe.elevation(latlon.getLatitude(), latlon.getLongitude());
             return globe.computePointFromPosition(
                 latlon.getLatitude(), latlon.getLongitude(), (e + elevation) * sc.getVerticalExaggeration());
         }

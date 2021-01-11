@@ -522,7 +522,7 @@ public class SegmentPlaneRenderer {
         Angle heading = LatLon.rhumbAzimuth(locations[0], locations[1]);
         Angle distance = LatLon.rhumbDistance(locations[0], locations[1]);
 
-        Angle d = Angle.fromDegrees(distance.degrees * u);
+        Angle d = new Angle(distance.degrees * u);
         LatLon location = LatLon.rhumbEndPosition(locations[0], heading, d);
         double altitude;
 
@@ -548,7 +548,7 @@ public class SegmentPlaneRenderer {
             }
         }
 
-        return globe.getElevation(latitude, longitude);
+        return globe.elevation(latitude, longitude);
     }
 
     protected static void computePlaneParameterization(Extent globe, SegmentPlane segmentPlane,

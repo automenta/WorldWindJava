@@ -269,7 +269,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
     protected static Angle computeNormalizedHeading(Angle heading) {
         double a = heading.degrees % 360;
         double degrees = a > 360 ? a - 360 : a < 0 ? 360 + a : a;
-        return Angle.fromDegrees(degrees);
+        return new Angle(degrees);
     }
 
     protected static String getPathType(Collection<? extends Position> positions) {
@@ -372,7 +372,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
                 azimuth = Angle.POS180;
                 break;
             case MeasureTool.WEST:
-                azimuth = Angle.fromDegrees(270);
+                azimuth = new Angle(270);
                 break;
             case MeasureTool.NORTHEAST:
                 azimuth = Angle.fromRadians(Math.atan2(width, height));
@@ -1271,7 +1271,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
         if (surfacePoint != null) {
             return wwd.model().getGlobe().computePositionFromPoint(surfacePoint);
         } else {
-            return new Position(latLon, wwd.model().getGlobe().getElevation(latLon.getLatitude(),
+            return new Position(latLon, wwd.model().getGlobe().elevation(latLon.getLatitude(),
                 latLon.getLongitude()));
         }
     }

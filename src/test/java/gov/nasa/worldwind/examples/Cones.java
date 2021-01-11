@@ -99,7 +99,7 @@ public class Cones extends ApplicationTemplate {
 
             // Scaled Cone with a pre-set orientation
             Cone cone2 = new Cone(Position.fromDegrees(0, 30, 750000), 1000000, 500000, 100000,
-                Angle.fromDegrees(90), Angle.fromDegrees(45), Angle.fromDegrees(30));
+                new Angle(90), new Angle(45), new Angle(30));
             cone2.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             cone2.setAttributes(attrs2);
             cone2.set(AVKey.DISPLAY_NAME, "Scaled Cone with a pre-set orientation");
@@ -109,7 +109,7 @@ public class Cones extends ApplicationTemplate {
 
             // Scaled Cone with a pre-set orientation
             Cone cone6 = new Cone(Position.fromDegrees(30, 30, 750000), 1000000, 500000, 100000,
-                Angle.fromDegrees(90), Angle.fromDegrees(45), Angle.fromDegrees(30));
+                new Angle(90), new Angle(45), new Angle(30));
             cone6.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             cone6.setImageSources("gov/nasa/worldwind/examples/images/500px-Checkerboard_pattern.png");
             cone6.setAttributes(attrs2);
@@ -119,7 +119,7 @@ public class Cones extends ApplicationTemplate {
 
             // Scaled Cone with a pre-set orientation
             Cone cone7 = new Cone(Position.fromDegrees(60, 30, 750000), 1000000, 500000, 100000,
-                Angle.fromDegrees(90), Angle.fromDegrees(45), Angle.fromDegrees(30));
+                new Angle(90), new Angle(45), new Angle(30));
             cone7.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             cone7.setAttributes(attrs2);
             cone7.setVisible(true);
@@ -128,7 +128,7 @@ public class Cones extends ApplicationTemplate {
 
             // Scaled, oriented Cone in 3rd "quadrant" (-X, -Y, -Z)
             Cone cone8 = new Cone(Position.fromDegrees(-45, -180, 750000), 1000000, 500000, 100000,
-                Angle.fromDegrees(90), Angle.fromDegrees(45), Angle.fromDegrees(30));
+                new Angle(90), new Angle(45), new Angle(30));
             cone8.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             cone8.setAttributes(attrs2);
             cone8.setVisible(true);

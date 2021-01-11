@@ -31,7 +31,7 @@ public class PrincipleDirectionOfFire extends AbstractMilStd2525TacticalGraphic 
     /**
      * Default angle of the arrowhead.
      */
-    public final static Angle DEFAULT_ARROWHEAD_ANGLE = Angle.fromDegrees(60.0);
+    public final static Angle DEFAULT_ARROWHEAD_ANGLE = new Angle(60.0);
     /**
      * Default width of the arrowhead outline.
      */
@@ -434,7 +434,7 @@ public class PrincipleDirectionOfFire extends AbstractMilStd2525TacticalGraphic 
 
         Angle azimuth = LatLon.greatCircleAzimuth(this.position1, this.position2);
         Angle distance = LatLon.greatCircleDistance(this.position1, this.position2);
-        Angle pathLength = Angle.fromDegrees(1.1 * distance.degrees);
+        Angle pathLength = new Angle(1.1 * distance.degrees);
 
         LatLon ll = LatLon.greatCircleEndPosition(this.position1, azimuth, pathLength);
         this.labels.get(0).setPosition(new Position(ll, 0));

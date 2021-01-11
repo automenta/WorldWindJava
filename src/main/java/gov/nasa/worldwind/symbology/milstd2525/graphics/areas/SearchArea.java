@@ -31,7 +31,7 @@ public class SearchArea extends AbstractMilStd2525TacticalGraphic implements Pre
     /**
      * Default angle of the arrowhead.
      */
-    public final static Angle DEFAULT_ARROWHEAD_ANGLE = Angle.fromDegrees(60.0);
+    public final static Angle DEFAULT_ARROWHEAD_ANGLE = new Angle(60.0);
 
     /**
      * Length of the arrowhead from base to tip, as a fraction of the total line length.
@@ -385,7 +385,7 @@ public class SearchArea extends AbstractMilStd2525TacticalGraphic implements Pre
         Angle delta = azimuth2.sub(azimuth1);
         int sign = delta.degrees > 0 ? 1 : -1;
 
-        delta = Angle.fromDegrees(sign * 5.0);
+        delta = new Angle(sign * 5.0);
 
         // Create a path for the line part of the arrow
         List<Position> positions = SearchArea.computePathPositions(this.position1, this.position2, delta);

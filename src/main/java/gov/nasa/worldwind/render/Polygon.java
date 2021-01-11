@@ -864,7 +864,7 @@ public class Polygon extends AbstractShape {
 
         Matrix m1 = Matrix.fromTranslation(center.multiply3(-1));
         Matrix m3 = Matrix.fromTranslation(center);
-        Matrix m2 = Matrix.fromAxisAngle(Angle.fromDegrees(this.getRotation()), normalVec);
+        Matrix m2 = Matrix.fromAxisAngle(new Angle(this.getRotation()), normalVec);
         return m3.multiply(m2).multiply(m1);
     }
 

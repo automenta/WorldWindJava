@@ -318,7 +318,7 @@ public class SectorGeometryList extends ArrayList<SectorGeometry> {
 
         double latitude = lat.degrees, longitude = lon.degrees;
         for (SectorGeometry sg : this) {
-            if (sg.getSector().containsDegrees(latitude, longitude)) {
+            if (sg.getSector().contains(latitude, longitude)) {
                 Vec4 point = sg.getSurfacePoint(latitude, longitude, metersOffset);
                 if (point != null)
                     return point;

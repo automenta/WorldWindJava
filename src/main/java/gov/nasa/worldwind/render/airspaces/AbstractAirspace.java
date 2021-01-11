@@ -1277,7 +1277,7 @@ public abstract class AbstractAirspace extends WWObjectImpl
                 surfacePos = globe.computePositionFromPoint(surfacePoint);
                 elevation += surfacePos.getElevation();
             } else {
-                elevation += dc.getVerticalExaggeration() * globe.getElevation(latitude, longitude);
+                elevation += dc.getVerticalExaggeration() * globe.elevation(latitude, longitude);
             }
 
             this.elevationMap.put(latlon, elevation);

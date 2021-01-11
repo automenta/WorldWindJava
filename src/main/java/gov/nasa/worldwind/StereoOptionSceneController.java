@@ -46,7 +46,7 @@ public class StereoOptionSceneController extends BasicSceneController implements
     /**
      * The angle between eyes. Larger angles give increased 3D effect.
      */
-    protected Angle focusAngle = Angle.fromDegrees(StereoOptionSceneController.DEFAULT_FOCUS_ANGLE);
+    protected Angle focusAngle = new Angle(StereoOptionSceneController.DEFAULT_FOCUS_ANGLE);
     /**
      * Indicates whether left and right eye positions are swapped.
      */
@@ -143,7 +143,7 @@ public class StereoOptionSceneController extends BasicSceneController implements
         // Check if pitch is in correct range (50 - 90 degrees) for current stereo implementation to
         // work correctly (temporary hack)
         View dcView = dc.getView();
-        boolean pitchInRange = (dcView.getPitch().compareTo(Angle.fromDegrees(50)) > 0
+        boolean pitchInRange = (dcView.getPitch().compareTo(new Angle(50)) > 0
             && dcView.getPitch().compareTo(Angle.POS90) < 0);
 
         if (AVKey.STEREO_MODE_DEVICE.equals(this.stereoMode) && this.isHardwareStereo() && pitchInRange)

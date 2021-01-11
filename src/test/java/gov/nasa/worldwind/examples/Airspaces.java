@@ -1028,19 +1028,19 @@ public class Airspaces extends ApplicationTemplate {
             partCyl.setCenter(LatLon.fromDegrees(46.7477, -122.6372));
             partCyl.setRadii(15000.0, 30000.0);
             partCyl.setAltitudes(5000.0, 10000.0);
-            partCyl.setAzimuths(Angle.fromDegrees(90.0), Angle.fromDegrees(0.0));
+            partCyl.setAzimuths(new Angle(90.0), new Angle(0.0));
             partCyl.setTerrainConforming(true, true);
             partCyl.set(AVKey.DISPLAY_NAME, "Partial Cylinder from 90 to 0 degrees");
             layer.add(partCyl);
 
             Cake cake = new Cake(attrs);
             cake.setLayers(Arrays.asList(
-                new Cake.Layer(LatLon.fromDegrees(36, -121), 10000.0, Angle.fromDegrees(0.0),
-                    Angle.fromDegrees(360.0), 10000.0, 15000.0),
-                new Cake.Layer(LatLon.fromDegrees(36.1, -121.1), 15000.0, Angle.fromDegrees(0.0),
-                    Angle.fromDegrees(360.0), 16000.0, 21000.0),
-                new Cake.Layer(LatLon.fromDegrees(35.9, -120.9), 12500.0, Angle.fromDegrees(0.0),
-                    Angle.fromDegrees(360.0), 22000.0, 27000.0)));
+                new Cake.Layer(LatLon.fromDegrees(36, -121), 10000.0, new Angle(0.0),
+                    new Angle(360.0), 10000.0, 15000.0),
+                new Cake.Layer(LatLon.fromDegrees(36.1, -121.1), 15000.0, new Angle(0.0),
+                    new Angle(360.0), 16000.0, 21000.0),
+                new Cake.Layer(LatLon.fromDegrees(35.9, -120.9), 12500.0, new Angle(0.0),
+                    new Angle(360.0), 22000.0, 27000.0)));
             cake.getLayers().get(0).setTerrainConforming(true, true);
             cake.getLayers().get(1).setTerrainConforming(true, true);
             cake.getLayers().get(2).setTerrainConforming(true, true);
@@ -1180,7 +1180,7 @@ public class Airspaces extends ApplicationTemplate {
             ellipticalCylinder.setCenter(LatLon.fromDegrees(51, -110));
             ellipticalCylinder.setRadii(10.0e3, 15.0e3, 50.0e3, 75.0e3);
             ellipticalCylinder.setAltitudes(100000.0, 500000.0);
-            ellipticalCylinder.setHeading(Angle.fromDegrees(180));
+            ellipticalCylinder.setHeading(new Angle(180));
             ellipticalCylinder.setTerrainConforming(true);
             ellipticalCylinder.set(AVKey.DISPLAY_NAME, "Elliptical Cylinder above terrain");
             layer.add(ellipticalCylinder);
@@ -1218,7 +1218,7 @@ public class Airspaces extends ApplicationTemplate {
             partCyl.setCenter(LatLon.fromDegrees(46.7477, -123.6372));
             partCyl.setRadii(15000.0, 30000.0);
             partCyl.setAltitudes(5000.0, 10000.0);
-            partCyl.setAzimuths(Angle.fromDegrees(0.0), Angle.fromDegrees(90.0));
+            partCyl.setAzimuths(new Angle(0.0), new Angle(90.0));
             partCyl.setTerrainConforming(false, false);
             partCyl.set(AVKey.DISPLAY_NAME, "Partial Cylinder from 0 to 90 degrees");
             layer.add(partCyl);
@@ -1226,12 +1226,12 @@ public class Airspaces extends ApplicationTemplate {
             // Cake
             Cake cake = new Cake(attrs);
             cake.setLayers(Arrays.asList(
-                new Cake.Layer(LatLon.fromDegrees(46.7477, -121.6372), 10000.0, Angle.fromDegrees(190.0),
-                    Angle.fromDegrees(170.0), 10000.0, 15000.0),
-                new Cake.Layer(LatLon.fromDegrees(46.7477, -121.6372), 15000.0, Angle.fromDegrees(190.0),
-                    Angle.fromDegrees(90.0), 16000.0, 21000.0),
-                new Cake.Layer(LatLon.fromDegrees(46.7477, -121.6372), 12500.0, Angle.fromDegrees(270.0),
-                    Angle.fromDegrees(60.0), 22000.0, 27000.0)));
+                new Cake.Layer(LatLon.fromDegrees(46.7477, -121.6372), 10000.0, new Angle(190.0),
+                    new Angle(170.0), 10000.0, 15000.0),
+                new Cake.Layer(LatLon.fromDegrees(46.7477, -121.6372), 15000.0, new Angle(190.0),
+                    new Angle(90.0), 16000.0, 21000.0),
+                new Cake.Layer(LatLon.fromDegrees(46.7477, -121.6372), 12500.0, new Angle(270.0),
+                    new Angle(60.0), 22000.0, 27000.0)));
             cake.getLayers().get(0).setTerrainConforming(false, false);
             cake.getLayers().get(1).setTerrainConforming(false, false);
             cake.getLayers().get(2).setTerrainConforming(false, false);
@@ -1267,7 +1267,7 @@ public class Airspaces extends ApplicationTemplate {
                 LatLon.fromDegrees(45.5, -121.0)));
             polyArc.setAltitudes(5000.0, 10000.0);
             polyArc.setRadius(30000.0);
-            polyArc.setAzimuths(Angle.fromDegrees(-45.0), Angle.fromDegrees(135.0));
+            polyArc.setAzimuths(new Angle(-45.0), new Angle(135.0));
             polyArc.setTerrainConforming(false, false);
             polyArc.set(AVKey.DISPLAY_NAME, "PolyArc with 30km radius from -45 to 135 degrees");
             layer.add(polyArc);

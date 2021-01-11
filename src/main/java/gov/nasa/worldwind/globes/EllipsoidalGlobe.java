@@ -134,7 +134,7 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
 
     public double getRadiusAt(LatLon location) {
 
-        return this.getRadiusAt(Angle.fromDegrees(location.latitude), Angle.fromDegrees(location.longitude));
+        return this.getRadiusAt(new Angle(location.latitude), new Angle(location.longitude));
     }
 
     public double getEccentricitySquared() {
@@ -327,7 +327,7 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
         return resolution;
     }
 
-    public double getElevation(Angle latitude, Angle longitude) {
+    public double elevation(Angle latitude, Angle longitude) {
 
         if (this.elevationModel == null)
             return 0;

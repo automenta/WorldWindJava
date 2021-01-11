@@ -230,11 +230,11 @@ public class AnalysisPanel extends JPanel implements Restorable {
 
     @SuppressWarnings("UnusedDeclaration")
     private static Angle getControlPitch() {
-        return Angle.fromDegrees(80);
+        return new Angle(80);
     }
 
     private static Angle getControlFOV() {
-        return Angle.fromDegrees(45);
+        return new Angle(45);
     }
 
     private void updateView(boolean goSmoothly) {
@@ -267,7 +267,7 @@ public class AnalysisPanel extends JPanel implements Restorable {
                     groundPos = getGroundPositionAlongSegment();
 
                 if (goSmoothly) {
-                    Angle initialPitch = Angle.fromDegrees(Math.min(60, view.getPitch().degrees));
+                    Angle initialPitch = new Angle(Math.min(60, view.getPitch().degrees));
                     Angle initialHeading = view.getHeading();
                     double initialZoom = 10000;
                     if (this.examineViewState != null) {
@@ -503,7 +503,7 @@ public class AnalysisPanel extends JPanel implements Restorable {
     }
 
     private Position getGroundPosition(LatLon location) {
-        double elevation = this.wwd.model().getGlobe().getElevation(location.getLatitude(), location.getLongitude());
+        double elevation = this.wwd.model().getGlobe().elevation(location.getLatitude(), location.getLongitude());
         return new Position(location, elevation);
     }
 
@@ -545,7 +545,7 @@ public class AnalysisPanel extends JPanel implements Restorable {
             else if (tt < 0 && n > 0) // Position is in the previous track segment.
                 pos = interpolateTrackPosition(tt + 1, this.currentTrack.get(n - 1), start);
             if (pos != null) {
-                double e = globe.getElevation(pos.getLatitude(), pos.getLongitude());
+                double e = globe.elevation(pos.getLatitude(), pos.getLongitude());
                 elev += (numWeights - i) * e;
                 sumOfWeights += (numWeights - i);
             }
@@ -560,7 +560,7 @@ public class AnalysisPanel extends JPanel implements Restorable {
                 else if (tt > 1 && !isLastPosition(n + 1)) // Position is in the next track segment.
                     pos = interpolateTrackPosition(tt - 1, end, this.currentTrack.get(n + 2));
                 if (pos != null) {
-                    double e = globe.getElevation(pos.getLatitude(), pos.getLongitude());
+                    double e = globe.elevation(pos.getLatitude(), pos.getLongitude());
                     elev += (numWeights - i) * e;
                     sumOfWeights += (numWeights - i);
                 }
@@ -767,8 +767,8 @@ public class AnalysisPanel extends JPanel implements Restorable {
         LatLon examineCenterState = rs.getStateValueAsLatLon(context, "examineCenter");
         if (examinePitchState != null && examineRelativeHeadingState != null && examineZoomState != null
             && examineCenterState != null) {
-            this.examineViewState = new ViewState(Angle.fromDegrees(examineRelativeHeadingState),
-                Angle.fromDegrees(examinePitchState), examineZoomState, examineCenterState);
+            this.examineViewState = new ViewState(new Angle(examineRelativeHeadingState),
+                new Angle(examinePitchState), examineZoomState, examineCenterState);
             // this prevents the restored examine view state from being overwritten at next view update.
             this.lastUpdateViewMode = null;
         }

@@ -87,23 +87,19 @@ public class GeoQuad {
     }
 
     public Angle distanceToNorthEdge(LatLon p) {
-        return Angle.fromDegrees(
-            this.northEdge.distanceTo(new Vec4(p.getLongitude().degrees, p.getLatitude().degrees, 0)));
+        return new Angle(this.northEdge.distanceTo(new Vec4(p.getLongitude().degrees, p.getLatitude().degrees, 0)));
     }
 
     public Angle distanceToSouthEdge(LatLon p) {
-        return Angle.fromDegrees(
-            this.southEdge.distanceTo(new Vec4(p.getLongitude().degrees, p.getLatitude().degrees, 0)));
+        return new Angle(this.southEdge.distanceTo(new Vec4(p.getLongitude().degrees, p.getLatitude().degrees, 0)));
     }
 
     public Angle distanceToEastEdge(LatLon p) {
-        return Angle.fromDegrees(
-            this.eastEdge.distanceTo(new Vec4(p.getLongitude().degrees, p.getLatitude().degrees, 0)));
+        return new Angle(this.eastEdge.distanceTo(new Vec4(p.getLongitude().degrees, p.getLatitude().degrees, 0)));
     }
 
     public Angle distanceToWestEdge(LatLon p) {
-        return Angle.fromDegrees(
-            this.westEdge.distanceTo(new Vec4(p.getLongitude().degrees, p.getLatitude().degrees, 0)));
+        return new Angle(this.westEdge.distanceTo(new Vec4(p.getLongitude().degrees, p.getLatitude().degrees, 0)));
     }
 
     public LatLon interpolate(double t, double s) {

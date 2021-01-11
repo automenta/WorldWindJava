@@ -738,7 +738,7 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
 
         Position eyePos = view.getEyePosition();
         double radius = this.wwd.model().getGlobe().getRadius();
-        double surfaceElevation = this.wwd.model().getGlobe().getElevation(eyePos.getLatitude(),
+        double surfaceElevation = this.wwd.model().getGlobe().elevation(eyePos.getLatitude(),
             eyePos.getLongitude());
         double t = (eyePos.getElevation() - surfaceElevation) / (3.0 * radius);
         return (t < 0 ? 0 : (t > 1 ? 1 : t));
@@ -774,7 +774,7 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
 
         Position eyePos = view.getEyePosition();
         double radius = this.wwd.model().getGlobe().getRadius();
-        double surfaceElevation = this.wwd.model().getGlobe().getElevation(eyePos.getLatitude(),
+        double surfaceElevation = this.wwd.model().getGlobe().elevation(eyePos.getLatitude(),
             eyePos.getLongitude());
         double t = AbstractViewInputHandler.getScaleValue(range[0], range[1],
             eyePos.getElevation() - surfaceElevation, 3.0 * radius, true);

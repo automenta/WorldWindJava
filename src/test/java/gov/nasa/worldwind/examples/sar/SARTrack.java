@@ -165,7 +165,7 @@ public class SARTrack extends WWObjectImpl implements Iterable<Position> {
         while (tpi.hasNext()) {
             TrackPoint tp = tpi.next();
             SARPosition sp = new SARPosition(
-                Angle.fromDegrees(tp.getLatitude()), Angle.fromDegrees(tp.getLongitude()), tp.getElevation());
+                new Angle(tp.getLatitude()), new Angle(tp.getLongitude()), tp.getElevation());
             positions.add(sp);
         }
 

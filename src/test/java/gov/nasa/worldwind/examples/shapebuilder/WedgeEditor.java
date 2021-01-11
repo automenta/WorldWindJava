@@ -657,7 +657,7 @@ public class WedgeEditor extends RigidShapeEditor {
             skewChange *= -1;
 
         if (skew + skewChange >= 0 && skew + skewChange < 180)
-            this.shape.setSkewEastWest(Angle.fromDegrees(skew + skewChange));
+            this.shape.setSkewEastWest(new Angle(skew + skewChange));
 
         // finally, reposition the shape's centerPoint to allow the base to stay fixed:
 
@@ -733,7 +733,7 @@ public class WedgeEditor extends RigidShapeEditor {
             skewChange *= -1;
 
         if (skew + skewChange >= 0 && skew + skewChange < 180)
-            this.shape.setSkewNorthSouth(Angle.fromDegrees(skew + skewChange));
+            this.shape.setSkewNorthSouth(new Angle(skew + skewChange));
 
         // finally, reposition the shape's centerPoint to allow the base to stay fixed:
 

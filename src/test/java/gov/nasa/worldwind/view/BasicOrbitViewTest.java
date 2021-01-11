@@ -100,7 +100,7 @@ public class BasicOrbitViewTest
 
         BasicOrbitView expected = new BasicOrbitView();
         assignNullValues(expected);
-        expected.setFieldOfView(Angle.fromDegrees(10.5));
+        expected.setFieldOfView(new Angle(10.5));
         expected.setZoom(1000.5);
         assertOrbitViewEquals(expected, orbitView);
     }
@@ -138,8 +138,8 @@ public class BasicOrbitViewTest
         OrbitViewLimits limits = new BasicOrbitViewLimits();
         limits.setCenterLocationLimits(Sector.fromDegrees(-10, 10, 30, 50));
         limits.setCenterElevationLimits(-10, 100);
-        limits.setHeadingLimits(Angle.fromDegrees(-1), Angle.fromDegrees(1));
-        limits.setPitchLimits(Angle.fromDegrees(-40), Angle.fromDegrees(-20));
+        limits.setHeadingLimits(new Angle(-1), new Angle(1));
+        limits.setPitchLimits(new Angle(-40), new Angle(-20));
         limits.setZoomLimits(1000, 2000);
         expected.setOrbitViewLimits(limits);
 
@@ -167,10 +167,10 @@ public class BasicOrbitViewTest
 
         BasicOrbitView expected = new BasicOrbitView();
         expected.setCenterPosition(Position.fromDegrees(-20.5, 30.5, 100.5));
-        expected.setHeading(Angle.fromDegrees(-40.5));
-        expected.setPitch(Angle.fromDegrees(50.5));
+        expected.setHeading(new Angle(-40.5));
+        expected.setPitch(new Angle(50.5));
         expected.setZoom(1000.5);
-        expected.setFieldOfView(Angle.fromDegrees(10.5));
+        expected.setFieldOfView(new Angle(10.5));
 
         assertOrbitViewEquals(expected, orbitView);
     }
@@ -184,16 +184,16 @@ public class BasicOrbitViewTest
         OrbitViewLimits limits = new BasicOrbitViewLimits();
         limits.setCenterLocationLimits(Sector.fromDegrees(-10, 10, 30, 50));
         limits.setCenterElevationLimits(-10, 100);
-        limits.setHeadingLimits(Angle.fromDegrees(-10), Angle.fromDegrees(10));
-        limits.setPitchLimits(Angle.fromDegrees(20), Angle.fromDegrees(40));
+        limits.setHeadingLimits(new Angle(-10), new Angle(10));
+        limits.setPitchLimits(new Angle(20), new Angle(40));
         limits.setZoomLimits(1000, 2000);
         orbitView.setOrbitViewLimits(limits);
 
         orbitView.setCenterPosition(Position.fromDegrees(-5.5, 30.5, 90.5));
-        orbitView.setHeading(Angle.fromDegrees(-1.5));
-        orbitView.setPitch(Angle.fromDegrees(30.5));
+        orbitView.setHeading(new Angle(-1.5));
+        orbitView.setPitch(new Angle(30.5));
         orbitView.setZoom(1000.5);
-        orbitView.setFieldOfView(Angle.fromDegrees(10.5));
+        orbitView.setFieldOfView(new Angle(10.5));
 
         orbitView.setDetectCollisions(false);
     }
@@ -201,10 +201,10 @@ public class BasicOrbitViewTest
     private static void assignNullValues(OrbitView orbitView)
     {
         orbitView.setCenterPosition(Position.fromDegrees(0.0, 0.0, 0.0));
-        orbitView.setHeading(Angle.fromDegrees(0.0));
-        orbitView.setPitch(Angle.fromDegrees(0.0));
+        orbitView.setHeading(new Angle(0.0));
+        orbitView.setPitch(new Angle(0.0));
         orbitView.setZoom(0.0);
-        orbitView.setFieldOfView(Angle.fromDegrees(0.0));
+        orbitView.setFieldOfView(new Angle(0.0));
 
         orbitView.setDetectCollisions(true);
 

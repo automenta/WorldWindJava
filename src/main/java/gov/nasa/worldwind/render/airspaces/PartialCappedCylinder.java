@@ -70,7 +70,7 @@ public class PartialCappedCylinder extends CappedCylinder {
 
         double degrees = azimuth.degrees;
         double normalizedDegrees = degrees < 0.0 ? degrees + 360.0 : (degrees >= 360.0 ? degrees - 360.0 : degrees);
-        return Angle.fromDegrees(normalizedDegrees);
+        return new Angle(normalizedDegrees);
     }
 
     public Angle[] getAzimuths() {
@@ -589,6 +589,6 @@ public class PartialCappedCylinder extends CappedCylinder {
         if (ra == null)
             ra = this.rightAzimuth.degrees;
 
-        this.setAzimuths(Angle.fromDegrees(la), Angle.fromDegrees(ra));
+        this.setAzimuths(new Angle(la), new Angle(ra));
     }
 }

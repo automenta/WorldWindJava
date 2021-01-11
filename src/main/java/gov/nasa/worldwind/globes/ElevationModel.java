@@ -207,6 +207,10 @@ public interface ElevationModel extends WWObject, Restorable, Disposable {
      */
     double getUnmappedElevation(Angle latitude, Angle longitude);
 
+    @Deprecated default double getUnmappedElevation(double latitude, double longitude) {
+        return getUnmappedElevation(new Angle(latitude), new Angle(longitude));
+    }
+
     /**
      * Returns the elevations of a collection of locations. Replaces any elevation values corresponding to the missing
      * data signal with the elevation model's missing data replacement value. If a location within the elevation model's

@@ -1521,7 +1521,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
 
     protected void setPosition(int index, LatLon latLon) {
         double elevation
-            = this.wwd.model().getGlobe().getElevation(latLon.getLatitude(), latLon.getLongitude());
+            = this.wwd.model().getGlobe().elevation(latLon.getLatitude(), latLon.getLongitude());
         this.minElevation = Math.min(elevation, this.minElevation);
         this.maxElevation = Math.max(elevation, this.maxElevation);
         // Add position to the list

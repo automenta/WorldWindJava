@@ -64,7 +64,7 @@ public class IconPicking extends ApplicationTemplate {
             layer.addIcon(icon);
 
             icon = new UserFacingIcon("src/images/32x32-icon-nasa.png",
-                new Position(Angle.fromRadians(0), Angle.fromDegrees(180), 0));
+                new Position(Angle.fromRadians(0), new Angle(180), 0));
             icon.setSize(new Dimension(24, 24));
             layer.addIcon(icon);
 

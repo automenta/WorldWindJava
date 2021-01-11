@@ -137,7 +137,7 @@ public class EllipsoidsEverywhere extends ApplicationTemplate {
                     else if (shapeType.equalsIgnoreCase("cone"))
                         shape = new Cone(position, 50000, 10000, 50000);
                     else
-                        shape = new Wedge(position, Angle.fromDegrees(227), 50000, 10000, 50000);
+                        shape = new Wedge(position, new Angle(227), 50000, 10000, 50000);
 
                     shape.setAltitudeMode(altitudeMode);
                     ShapeAttributes attrs = new BasicShapeAttributes();

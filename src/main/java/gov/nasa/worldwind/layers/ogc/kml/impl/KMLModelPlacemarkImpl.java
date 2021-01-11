@@ -151,15 +151,19 @@ public class KMLModelPlacemarkImpl extends WWObjectImpl implements KMLRenderable
         if (orientation != null) {
             Double d = orientation.getHeading();
             if (d != null)
-                root.setHeading(Angle.fromDegrees(d));
+                root.setHeading(new Angle(d));
 
             d = orientation.getTilt();
-            if (d != null)
-                root.setPitch(Angle.fromDegrees(-d));
+            if (d != null) {
+                double degrees = -d;
+                root.setPitch(new Angle(degrees));
+            }
 
             d = orientation.getRoll();
-            if (d != null)
-                root.setRoll(Angle.fromDegrees(-d));
+            if (d != null) {
+                double degrees = -d;
+                root.setRoll(new Angle(degrees));
+            }
         }
 
         KMLScale scale = this.model.getScale();

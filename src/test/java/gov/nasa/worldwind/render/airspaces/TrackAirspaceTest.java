@@ -34,7 +34,7 @@ public class TrackAirspaceTest
         // TrackAirspace properties
         expected.setEnableInnerCaps(false);
         expected.setEnableCenterLine(true);
-        expected.setSmallAngleThreshold(Angle.fromDegrees(21));
+        expected.setSmallAngleThreshold(new Angle(21));
         expected.addLeg(LatLon.fromDegrees(1, 2), LatLon.fromDegrees(3, 4), 1, 2, 3, 4);
         expected.addLeg(LatLon.fromDegrees(3, 4), LatLon.fromDegrees(5, 6), 5, 6, 7, 8);
         expected.addLeg(LatLon.fromDegrees(5, 6), LatLon.fromDegrees(7, 8), 9, 10, 11, 12);

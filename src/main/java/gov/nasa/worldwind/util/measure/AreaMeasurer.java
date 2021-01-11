@@ -280,11 +280,11 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
                             // Compute surface area using terrain normal in SW corner
                             // Corners elevation
                             double eleSW = sectorEleI[j] != null ? sectorEleI[j]
-                                : globe.getElevation(latAngle, Angle.fromRadians(lon));
+                                : globe.elevation(latAngle, Angle.fromRadians(lon));
                             double eleSE = sectorEleI[j + 1] != null ? sectorEleI[j + 1]
-                                : globe.getElevation(latAngle, Angle.fromRadians(lon + lonStepRadians));
+                                : globe.elevation(latAngle, Angle.fromRadians(lon + lonStepRadians));
                             double eleNW = sectorElevations[i + 1][j] != null ? sectorElevations[i + 1][j]
-                                : globe.getElevation(Angle.fromRadians(lat + latStepRadians), Angle.fromRadians(lon));
+                                : globe.elevation(Angle.fromRadians(lat + latStepRadians), Angle.fromRadians(lon));
                             // Cache elevations
                             sectorEleI[j] = eleSW;
                             sectorEleI[j + 1] = eleSE;

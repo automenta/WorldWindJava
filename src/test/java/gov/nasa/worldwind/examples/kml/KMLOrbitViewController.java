@@ -72,7 +72,7 @@ public class KMLOrbitViewController extends KMLViewController {
 
         FlyToOrbitViewAnimator animator = FlyToOrbitViewAnimator.createFlyToOrbitViewAnimator(this.orbitView,
             this.orbitView.getCenterPosition(), lookAtPosition, this.orbitView.getHeading(),
-            Angle.fromDegrees(heading), this.orbitView.getPitch(), Angle.fromDegrees(tilt),
+            new Angle(heading), this.orbitView.getPitch(), new Angle(tilt),
             this.orbitView.getZoom(), range, timeToMove,
             KMLUtil.convertAltitudeMode(altitudeMode, WorldWind.CLAMP_TO_GROUND)); // KML default
 
@@ -105,7 +105,7 @@ public class KMLOrbitViewController extends KMLViewController {
             MIN_LENGTH_MILLIS, MAX_LENGTH_MILLIS);
 
         FlyToOrbitViewAnimator panAnimator = createFlyToOrbitViewAnimator(this.orbitView, cameraPosition,
-            Angle.fromDegrees(heading), Angle.fromDegrees(tilt), Angle.fromDegrees(roll), timeToMove,
+            new Angle(heading), new Angle(tilt), new Angle(roll), timeToMove,
             KMLUtil.convertAltitudeMode(altitudeMode,
                 WorldWind.RELATIVE_TO_GROUND)); // Camera default, differs from KML default
 
@@ -199,9 +199,9 @@ public class KMLOrbitViewController extends KMLViewController {
         Globe globe = this.wwd.model().getGlobe();
 
         if (altitudeMode == WorldWind.CLAMP_TO_GROUND)
-            height = globe.getElevation(latitude, longitude);
+            height = globe.elevation(latitude, longitude);
         else if (altitudeMode == WorldWind.RELATIVE_TO_GROUND)
-            height = globe.getElevation(latitude, longitude) + eyePosition.getAltitude();
+            height = globe.elevation(latitude, longitude) + eyePosition.getAltitude();
         else
             height = eyePosition.getAltitude();
 

@@ -108,13 +108,13 @@ public class RPFTiledImageLayer extends TiledImageLayer {
         }
 
         LevelSet levels = new LevelSet(RPFTiledImageLayer.initParams(params));
-        Sector sector = levels.getSector();
+        Sector sector = levels.sector;
 
         Level level = levels.getFirstLevel();
         Angle dLat = level.getTileDelta().getLatitude();
         Angle dLon = level.getTileDelta().getLongitude();
-        Angle latOrigin = levels.getTileOrigin().getLatitude();
-        Angle lonOrigin = levels.getTileOrigin().getLongitude();
+        Angle latOrigin = levels.tileOrigin.getLatitude();
+        Angle lonOrigin = levels.tileOrigin.getLongitude();
 
         // Determine the row and column offset from the common WorldWind global tiling origin.
         int firstRow = Tile.computeRow(dLat, sector.latMin(), latOrigin);
@@ -127,12 +127,12 @@ public class RPFTiledImageLayer extends TiledImageLayer {
 
         Collection<Tile> topLevels = new ArrayList<>(nLatTiles * nLonTiles);
 
-        Angle p1 = Tile.computeRowLatitude(firstRow, dLat, latOrigin);
+        Angle p1 = Tile.rowLat(firstRow, dLat, latOrigin);
         for (int row = firstRow; row <= lastRow; row++) {
             Angle p2;
             p2 = p1.add(dLat);
 
-            Angle t1 = Tile.computeColumnLongitude(firstCol, dLon, lonOrigin);
+            Angle t1 = Tile.columnLon(firstCol, dLon, lonOrigin);
             for (int col = firstCol; col <= lastCol; col++) {
                 Angle t2;
                 t2 = t1.add(dLon);
@@ -197,7 +197,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
             params.set(AVKey.DATASET_NAME, dataSeriesId);
 
         if (params.get(AVKey.LEVEL_ZERO_TILE_DELTA) == null) {
-            Angle delta = Angle.fromDegrees(36);
+            Angle delta = new Angle(36);
             params.set(AVKey.LEVEL_ZERO_TILE_DELTA, new LatLon(delta, delta));
         }
 

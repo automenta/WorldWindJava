@@ -34,7 +34,7 @@ public class DirectedPath extends Path {
     /**
      * Default arrow angle.
      */
-    public static final Angle DEFAULT_ARROW_ANGLE = Angle.fromDegrees(45.0);
+    public static final Angle DEFAULT_ARROW_ANGLE = new Angle(45.0);
     /**
      * Default maximum screen size of the arrowheads, in pixels.
      */

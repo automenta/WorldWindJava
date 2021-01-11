@@ -63,7 +63,7 @@ public class PolarPoint {
      * @return a new <code>PolarPoint</code>
      */
     public static PolarPoint fromDegrees(double latitude, double longitude, double radius) {
-        return new PolarPoint(Angle.fromDegrees(latitude), Angle.fromDegrees(longitude), radius);
+        return new PolarPoint(new Angle(latitude), new Angle(longitude), radius);
     }
 
     /**

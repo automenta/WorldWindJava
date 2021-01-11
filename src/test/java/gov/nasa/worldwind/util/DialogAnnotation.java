@@ -155,7 +155,7 @@ public abstract class DialogAnnotation extends GlobeAnnotation implements Action
             this.setUseMipmaps(false);
 
             this.angle = Angle.ZERO;
-            this.increment = Angle.fromDegrees(300);
+            this.increment = new Angle(300);
         }
 
         public Angle getAngle() {
@@ -171,7 +171,7 @@ public abstract class DialogAnnotation extends GlobeAnnotation implements Action
 
             double a = angle.degrees % 360;
             a = (a > 180) ? (a - 360) : (a < -180 ? 360 + a : a);
-            this.angle = Angle.fromDegrees(a);
+            this.angle = new Angle(a);
         }
 
         public Angle getIncrement() {
@@ -225,7 +225,7 @@ public abstract class DialogAnnotation extends GlobeAnnotation implements Action
             double seconds = millis / 1000.0;
             double degrees = seconds * unitsPerSecond.degrees;
 
-            return Angle.fromDegrees(degrees);
+            return new Angle(degrees);
         }
     }
 }

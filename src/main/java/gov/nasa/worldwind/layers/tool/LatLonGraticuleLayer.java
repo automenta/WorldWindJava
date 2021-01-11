@@ -280,7 +280,7 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
         if (labelType.equals(GraticuleLayer.GridElement.TYPE_LATITUDE_LABEL)) {
             if (!this.latitudeLabels.contains(value)) {
                 this.latitudeLabels.add(value);
-                String label = makeAngleLabel(Angle.fromDegrees(value), resolution);
+                String label = makeAngleLabel(new Angle(value), resolution);
                 GeographicText text = new UserFacingText(label,
                     Position.fromDegrees(value, labelOffset.getLongitude().degrees, 0));
                 text.setPriority(resolution * 1.0e6);
@@ -289,7 +289,7 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
         } else if (labelType.equals(GraticuleLayer.GridElement.TYPE_LONGITUDE_LABEL)) {
             if (!this.longitudeLabels.contains(value)) {
                 this.longitudeLabels.add(value);
-                String label = makeAngleLabel(Angle.fromDegrees(value), resolution);
+                String label = makeAngleLabel(new Angle(value), resolution);
                 GeographicText text = new UserFacingText(label,
                     Position.fromDegrees(labelOffset.getLatitude().degrees, value, 0));
                 text.setPriority(resolution * 1.0e6);
@@ -429,7 +429,7 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
             // Generate meridians with labels
             double lon = sector.lonMin + (this.level == 0 ? 0 : step);
             while (lon < sector.lonMax - step / 2) {
-                Angle longitude = Angle.fromDegrees(lon);
+                Angle longitude = new Angle(lon);
                 // Meridian
                 Collection<Position> positions = new ArrayList<>(2);
                 positions.add(new Position(this.sector.latMin(), longitude, 0));
@@ -451,7 +451,7 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
             // Generate parallels
             double lat = this.sector.latMin + (this.level == 0 ? 0 : step);
             while (lat < this.sector.latMax - step / 2) {
-                Angle latitude = Angle.fromDegrees(lat);
+                Angle latitude = new Angle(lat);
                 Collection<Position> positions = new ArrayList<>(2);
                 positions.add(new Position(latitude, this.sector.lonMin(), 0));
                 positions.add(new Position(latitude, this.sector.lonMax(), 0));

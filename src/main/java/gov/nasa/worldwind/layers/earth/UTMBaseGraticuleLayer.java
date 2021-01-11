@@ -240,7 +240,7 @@ public class UTMBaseGraticuleLayer extends GraticuleLayer {
             centerPos.getLongitude().degrees - labelOffsetDegrees, 0);
         double labelLatDegrees = labelPos.getLatitude().latNorm().degrees;
         labelLatDegrees = Math.min(Math.max(labelLatDegrees, -76), 78);
-        labelPos = new Position(Angle.fromDegrees(labelLatDegrees), labelPos.getLongitude().lonNorm(), 0);
+        labelPos = new Position(new Angle(labelLatDegrees), labelPos.getLongitude().lonNorm(), 0);
 
         if (vs != null) {
             for (GraticuleLayer.GridElement ge : this.gridElements) {
@@ -281,28 +281,28 @@ public class UTMBaseGraticuleLayer extends GraticuleLayer {
         int zoneNumber = 1;
         int maxLat;
         for (int i = 0; i < 60; i++) {
-            Angle longitude = Angle.fromDegrees(lon);
+            Angle longitude = new Angle(lon);
             // Meridian
             positions.clear();
-            positions.add(new Position(Angle.fromDegrees(-80), longitude, 10.0e3));
-            positions.add(new Position(Angle.fromDegrees(-60), longitude, 10.0e3));
-            positions.add(new Position(Angle.fromDegrees(-30), longitude, 10.0e3));
+            positions.add(new Position(new Angle(-80), longitude, 10.0e3));
+            positions.add(new Position(new Angle(-60), longitude, 10.0e3));
+            positions.add(new Position(new Angle(-30), longitude, 10.0e3));
             positions.add(new Position(Angle.ZERO, longitude, 10.0e3));
-            positions.add(new Position(Angle.fromDegrees(30), longitude, 10.0e3));
+            positions.add(new Position(new Angle(30), longitude, 10.0e3));
             if (lon < 6 || lon > 36) {
                 // 'regular' UTM meridians
                 maxLat = 84;
-                positions.add(new Position(Angle.fromDegrees(60), longitude, 10.0e3));
+                positions.add(new Position(new Angle(60), longitude, 10.0e3));
             } else {
                 // Exceptions: shorter meridians around and north-east of Norway
                 if (lon == 6) {
                     maxLat = 56;
                 } else {
                     maxLat = 72;
-                    positions.add(new Position(Angle.fromDegrees(60), longitude, 10.0e3));
+                    positions.add(new Position(new Angle(60), longitude, 10.0e3));
                 }
             }
-            positions.add(new Position(Angle.fromDegrees(maxLat), longitude, 10.0e3));
+            positions.add(new Position(new Angle(maxLat), longitude, 10.0e3));
             Object polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), AVKey.GREAT_CIRCLE);
             Sector sector = Sector.fromDegrees(-80, maxLat, lon, lon);
             this.gridElements.add(new GraticuleLayer.GridElement(sector, polyline, GraticuleLayer.GridElement.TYPE_LINE));
@@ -322,8 +322,8 @@ public class UTMBaseGraticuleLayer extends GraticuleLayer {
         for (int i = 0; i < 5; i++) {
             positions.clear();
             lon = UTMBaseGraticuleLayer.specialMeridians[i][0];
-            positions.add(new Position(Angle.fromDegrees(UTMBaseGraticuleLayer.specialMeridians[i][1]), Angle.fromDegrees(lon), 10.0e3));
-            positions.add(new Position(Angle.fromDegrees(UTMBaseGraticuleLayer.specialMeridians[i][2]), Angle.fromDegrees(lon), 10.0e3));
+            positions.add(new Position(new Angle(UTMBaseGraticuleLayer.specialMeridians[i][1]), new Angle(lon), 10.0e3));
+            positions.add(new Position(new Angle(UTMBaseGraticuleLayer.specialMeridians[i][2]), new Angle(lon), 10.0e3));
             Object polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), AVKey.GREAT_CIRCLE);
             Sector sector = Sector.fromDegrees(UTMBaseGraticuleLayer.specialMeridians[i][1], UTMBaseGraticuleLayer.specialMeridians[i][2], lon, lon);
             this.gridElements.add(new GraticuleLayer.GridElement(sector, polyline, GraticuleLayer.GridElement.TYPE_LINE));
@@ -332,15 +332,15 @@ public class UTMBaseGraticuleLayer extends GraticuleLayer {
         // Generate parallels - no exceptions
         int lat = -80;
         for (int i = 0; i < 21; i++) {
-            Angle latitude = Angle.fromDegrees(lat);
+            Angle latitude = new Angle(lat);
             for (int j = 0; j < 4; j++) {
                 // Each prallel is divided into four 90 degrees segments
                 positions.clear();
                 lon = -180 + j * 90;
-                positions.add(new Position(latitude, Angle.fromDegrees(lon), 10.0e3));
-                positions.add(new Position(latitude, Angle.fromDegrees(lon + 30), 10.0e3));
-                positions.add(new Position(latitude, Angle.fromDegrees(lon + 60), 10.0e3));
-                positions.add(new Position(latitude, Angle.fromDegrees(lon + 90), 10.0e3));
+                positions.add(new Position(latitude, new Angle(lon), 10.0e3));
+                positions.add(new Position(latitude, new Angle(lon + 30), 10.0e3));
+                positions.add(new Position(latitude, new Angle(lon + 60), 10.0e3));
+                positions.add(new Position(latitude, new Angle(lon + 90), 10.0e3));
                 Object polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), AVKey.LINEAR);
                 Sector sector = Sector.fromDegrees(lat, lat, lon, lon + 90);
                 this.gridElements.add(new GraticuleLayer.GridElement(sector, polyline, GraticuleLayer.GridElement.TYPE_LINE));

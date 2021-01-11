@@ -227,9 +227,9 @@ public class KMLUtil {
 
         int altMode = KMLUtil.convertAltitudeMode(altitudeMode, WorldWind.CLAMP_TO_GROUND); // KML default
         if (altMode == WorldWind.CLAMP_TO_GROUND)
-            height = globe.getElevation(latitude, longitude);
+            height = globe.elevation(latitude, longitude);
         else if (altMode == WorldWind.RELATIVE_TO_GROUND)
-            height = globe.getElevation(latitude, longitude) + position.getAltitude();
+            height = globe.elevation(latitude, longitude) + position.getAltitude();
         else
             height = position.getAltitude();
 

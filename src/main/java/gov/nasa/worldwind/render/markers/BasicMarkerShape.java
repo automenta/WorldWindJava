@@ -188,7 +188,7 @@ public class BasicMarkerShape {
             // To compute rotation of the shape toward the proper heading, find a second point in that direction.
             Globe globe = dc.getGlobe();
             Position pos = globe.computePositionFromPoint(point);
-            LatLon p2ll = LatLon.greatCircleEndPosition(pos, heading, Angle.fromDegrees(0.1));
+            LatLon p2ll = LatLon.greatCircleEndPosition(pos, heading, new Angle(0.1));
             Vec4 p2 = globe.computePointFromPosition(p2ll.getLatitude(), p2ll.getLongitude(),
                 pos.getElevation());
 

@@ -92,7 +92,7 @@ public class Boxes extends ApplicationTemplate {
 
             // Scaled Box with a pre-set orientation
             Box box2 = new Box(Position.fromDegrees(0, 30, 750000), 1000000, 500000, 100000,
-                Angle.fromDegrees(90), Angle.fromDegrees(45), Angle.fromDegrees(30));
+                new Angle(90), new Angle(45), new Angle(30));
             box2.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             box2.setAttributes(attrs2);
             box2.setVisible(true);
@@ -101,7 +101,7 @@ public class Boxes extends ApplicationTemplate {
 
             // Scaled Box with a pre-set orientation
             Box box6 = new Box(Position.fromDegrees(30, 30, 750000), 1000000, 500000, 100000,
-                Angle.fromDegrees(90), Angle.fromDegrees(45), Angle.fromDegrees(30));
+                new Angle(90), new Angle(45), new Angle(30));
             box6.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             box6.setImageSources("gov/nasa/worldwind/examples/images/500px-Checkerboard_pattern.png");
             box6.setAttributes(attrs2);
@@ -111,7 +111,7 @@ public class Boxes extends ApplicationTemplate {
 
             // Scaled Box with a pre-set orientation
             Box box7 = new Box(Position.fromDegrees(60, 30, 750000), 1000000, 500000, 100000,
-                Angle.fromDegrees(90), Angle.fromDegrees(45), Angle.fromDegrees(30));
+                new Angle(90), new Angle(45), new Angle(30));
             box7.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             box7.setAttributes(attrs2);
             box7.setVisible(true);
@@ -120,7 +120,7 @@ public class Boxes extends ApplicationTemplate {
 
             // Scaled, oriented Box in 3rd "quadrant" (-X, -Y, -Z)
             Box box8 = new Box(Position.fromDegrees(-45, -180, 750000), 1000000, 500000, 100000,
-                Angle.fromDegrees(90), Angle.fromDegrees(45), Angle.fromDegrees(30));
+                new Angle(90), new Angle(45), new Angle(30));
             box8.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             box8.setAttributes(attrs2);
             box8.setVisible(true);

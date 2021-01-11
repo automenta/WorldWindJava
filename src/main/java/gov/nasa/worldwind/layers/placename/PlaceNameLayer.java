@@ -48,16 +48,16 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
     public static final double LEVEL_N = 0x1 << 12; // 4 km
     public static final double LEVEL_O = 0x1 << 11; // 2 km
     public static final double LEVEL_P = 0x1 << 10; // 1 km
-    public static final LatLon GRID_1x1 = new LatLon(Angle.fromDegrees(180.0d), Angle.fromDegrees(360.0d));
-    public static final LatLon GRID_4x8 = new LatLon(Angle.fromDegrees(45.0d), Angle.fromDegrees(45.0d));
-    public static final LatLon GRID_8x16 = new LatLon(Angle.fromDegrees(22.5d), Angle.fromDegrees(22.5d));
-    public static final LatLon GRID_16x32 = new LatLon(Angle.fromDegrees(11.25d), Angle.fromDegrees(11.25d));
-    public static final LatLon GRID_36x72 = new LatLon(Angle.fromDegrees(5.0d), Angle.fromDegrees(5.0d));
-    public static final LatLon GRID_72x144 = new LatLon(Angle.fromDegrees(2.5d), Angle.fromDegrees(2.5d));
-    public static final LatLon GRID_144x288 = new LatLon(Angle.fromDegrees(1.25d), Angle.fromDegrees(1.25d));
-    public static final LatLon GRID_288x576 = new LatLon(Angle.fromDegrees(0.625d), Angle.fromDegrees(0.625d));
-    public static final LatLon GRID_576x1152 = new LatLon(Angle.fromDegrees(0.3125d), Angle.fromDegrees(0.3125d));
-    public static final LatLon GRID_1152x2304 = new LatLon(Angle.fromDegrees(0.1563d), Angle.fromDegrees(0.1563d));
+    public static final LatLon GRID_1x1 = new LatLon(new Angle(180.0d), new Angle(360.0d));
+    public static final LatLon GRID_4x8 = new LatLon(new Angle(45.0d), new Angle(45.0d));
+    public static final LatLon GRID_8x16 = new LatLon(new Angle(22.5d), new Angle(22.5d));
+    public static final LatLon GRID_16x32 = new LatLon(new Angle(11.25d), new Angle(11.25d));
+    public static final LatLon GRID_36x72 = new LatLon(new Angle(5.0d), new Angle(5.0d));
+    public static final LatLon GRID_72x144 = new LatLon(new Angle(2.5d), new Angle(2.5d));
+    public static final LatLon GRID_144x288 = new LatLon(new Angle(1.25d), new Angle(1.25d));
+    public static final LatLon GRID_288x576 = new LatLon(new Angle(0.625d), new Angle(0.625d));
+    public static final LatLon GRID_576x1152 = new LatLon(new Angle(0.3125d), new Angle(0.3125d));
+    public static final LatLon GRID_1152x2304 = new LatLon(new Angle(0.1563d), new Angle(0.1563d));
     static final SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
     protected final PlaceNameServiceSet placeNameServiceSet;
     protected final PriorityBlockingQueue<Runnable> requestQ = new PriorityBlockingQueue<>(64);
@@ -184,7 +184,8 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
         double degrees = a.degrees;
         double minDegrees = min.degrees;
         double maxDegrees = max.degrees;
-        return Angle.fromDegrees(degrees < minDegrees ? minDegrees : (Math.min(degrees, maxDegrees)));
+        double degrees1 = degrees < minDegrees ? minDegrees : (Math.min(degrees, maxDegrees));
+        return new Angle(degrees1);
     }
 
     protected static PlaceNameChunk readTileData(Tile tile, URL url) {
@@ -578,7 +579,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
                 Logging.logger().severe(msg);
                 throw new IllegalArgumentException(msg);
             }
-            return Angle.fromDegrees(-90.0d + delta.degrees * row);
+            return new Angle(-90.0d + delta.degrees * row);
         }
 
         static Angle computeColumnLongitude(int column, Angle delta) {
@@ -587,7 +588,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
                 Logging.logger().severe(msg);
                 throw new IllegalArgumentException(msg);
             }
-            return Angle.fromDegrees(-180 + delta.degrees * column);
+            return new Angle(-180 + delta.degrees * column);
         }
 
         public PlaceNameChunk getDataChunk() {

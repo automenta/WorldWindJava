@@ -26,15 +26,15 @@ import spacegraph.space2d.widget.Widget;
 import spacegraph.space2d.widget.button.*;
 import spacegraph.space2d.widget.meta.ObjectSurface;
 import spacegraph.space2d.widget.slider.FloatSlider;
-import spacegraph.space2d.widget.text.BitmapLabel;
-import spacegraph.space2d.widget.textedit.TextEdit;
+import spacegraph.space2d.widget.text.*;
 import spacegraph.video.JoglWindow;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import java.util.function.Consumer;
 
-public class NetVR extends Thing<NetVR,Object> {
+public class NetVR extends Thing<NetVR,String> {
 
     private final JoglWindow j;
     private final NetVRModel world;
@@ -64,27 +64,35 @@ public class NetVR extends Thing<NetVR,Object> {
         if (next==prev) return;
         if (prev!=null)
             remove(prev);
+
+        Surface nextNorth;
+        if (next!=null) {
         add(next);
 
         final Object oo = next.menu();
         final Surface OO = oo instanceof Surface ? (Surface)oo : (oo != null ? new ObjectSurface(oo) : new BitmapLabel(next.name()));
 
-        z.north(new Widget(OO));
+            nextNorth = new Widget(OO);
+        } else
+            nextNorth = null;
 
+        z.north(nextNorth);
         focus = next;
     }
 
     public void add(NMode f) {
-        add(f, f);
+        add(f.name(), f);
     }
 
     public static class WhereIs extends NMode {
 
         final Object target;
+        private final Consumer<Object> where;
         private WorldWindowNEWT w;
 
-        public WhereIs(Object target) {
+        public WhereIs(Object target, Consumer<Object> where) {
             this.target = target;
+            this.where = where;
         }
 
         @Override
@@ -110,11 +118,11 @@ public class NetVR extends Thing<NetVR,Object> {
         }
 
         protected void select(Position p) {
-            System.out.println("select " + p);
+            where.accept(p);
         }
 
         protected void select(PickedObject p) {
-            System.out.println("select " + p);
+            where.accept(p);
         }
 
         final LatLonGraticuleLayer grat = new LatLonGraticuleLayer();
@@ -161,6 +169,8 @@ public class NetVR extends Thing<NetVR,Object> {
         @Override
         protected void stop(NetVR n) {
             n.world.getLayers().remove(grat);
+            w.input().removeMouseListener(l1);
+            w.removeSelectListener(l2);
             w = null;
         }
     }
@@ -171,7 +181,7 @@ public class NetVR extends Thing<NetVR,Object> {
 
             @Override
             public String name() {
-                return "UI"; /* base */
+                return "ui"; /* base */
             }
 
             @Override
@@ -192,14 +202,13 @@ public class NetVR extends Thing<NetVR,Object> {
 
             @Override
             protected void start(NetVR N) {
-                var j = N.j;
                 var world = N.world;
                 var w = N.window;
 
-                final TextEdit out = new TextEdit(64, 24);
-
-                final PushButton scan = new PushButton("Scan", () -> {
-                });
+//                final TextEdit out = new TextEdit(64, 24);
+//
+//                final PushButton scan = new PushButton("Scan", () -> {
+//                });
 
                 var z = N.z;
 //                Surface param = new Gridding(
@@ -211,8 +220,19 @@ public class NetVR extends Thing<NetVR,Object> {
 //                );
 
 //                z.north(param);
-                z.west(new Gridding(
+                z.northwest(new Gridding(
                     z.togglerIcon("home", ()->{
+                        return LabeledPane.the("Me", new Gridding(
+                            new PushButton("Name"),
+                            new PushButton("Where", ()-> {
+                                n.setFocus(new WhereIs("user", where -> {
+                                    n.setFocus(null);
+                                    System.out.println("user at " + where);
+                                }));
+                            })
+                        ));
+                    }),
+                    z.togglerIcon("bullseye", ()->{
                         ObjectFloatHashMap<String> t = w.tagsInView();
                         return new TagCloud(t); //HACK TODO
                     }),
@@ -225,10 +245,11 @@ public class NetVR extends Thing<NetVR,Object> {
                             )
                         )
                     ))
-                    , new Widget(out), scan));
+                    //, new Widget(out), scan
+                ));
 
 
-                j.runLater(() -> {
+//                j.runLater(() -> {
 //            o.keyboard.focus(z);
 //
 //                    final MouseAdapter l1 = new MouseAdapter() {
@@ -260,7 +281,7 @@ public class NetVR extends Thing<NetVR,Object> {
 //
 //                    w.input().addMouseListener(l1);
 //                    w.addSelectListener(l2);
-                });
+//                });
 
             }
 
@@ -269,7 +290,7 @@ public class NetVR extends Thing<NetVR,Object> {
 
             }
         });
-        n.setFocus(new WhereIs("user"));
+
     }
 
     public NetVR() {

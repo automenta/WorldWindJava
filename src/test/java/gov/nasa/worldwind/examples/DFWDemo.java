@@ -333,7 +333,7 @@ public class DFWDemo {
                     configParams.set(AVKey.TILE_HEIGHT, 1024);
                     configParams.set(AVKey.NUM_LEVELS, 9);
                     // configParams.setValue(AVKey.IMAGE_FORMAT,"image/png");
-                    Angle delta = Angle.fromDegrees(0.01);
+                    Angle delta = new Angle(0.01);
                     configParams.set(AVKey.LEVEL_ZERO_TILE_DELTA, new LatLon(delta, delta));
                     WMSBasicElevationModel wmsElevations = new WMSBasicElevationModel(dynamicLayer.getCaps(),
                         configParams);

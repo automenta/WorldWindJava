@@ -542,7 +542,7 @@ public class LocalElevationModel extends AbstractElevationModel {
      */
     protected LocalTile findTile(final double lat, final double lon) {
         for (LocalTile tile : this.tiles) {
-            if (tile.sector.containsDegrees(lat, lon))
+            if (tile.sector.contains(lat, lon))
                 return tile;
         }
 

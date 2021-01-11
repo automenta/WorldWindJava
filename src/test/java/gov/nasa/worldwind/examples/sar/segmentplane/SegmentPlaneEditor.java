@@ -472,7 +472,7 @@ public class SegmentPlaneEditor extends AbstractLayer {
             }
         }
 
-        double elev = wwd.model().getGlobe().getElevation(position.getLatitude(), position.getLongitude());
+        double elev = wwd.model().getGlobe().elevation(position.getLatitude(), position.getLongitude());
         if (position.getElevation() < elev)
             return new Position(position, elev);
 

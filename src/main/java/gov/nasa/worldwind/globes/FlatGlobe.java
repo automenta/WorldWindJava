@@ -43,7 +43,7 @@ public class FlatGlobe extends EllipsoidalGlobe implements Globe2D {
     public final static String PROJECTION_MODIFIED_SINUSOIDAL =
         "gov.nasa.worldwind.globes.projectionModifiedSinusoidal";
     private final GlobeStateKey stateKey = new FlatStateKey();
-    protected GeographicProjection projection = (GeographicProjection) WorldWind.createComponent(
+    protected GeographicProjection projection = (GeographicProjection) WorldWind.create(
         Configuration.getStringValue(AVKey.GEOGRAPHIC_PROJECTION_CLASS_NAME,
             "gov.nasa.worldwind.globes.projections.ProjectionEquirectangular"));
     protected boolean continuous;
@@ -211,7 +211,7 @@ public class FlatGlobe extends EllipsoidalGlobe implements Globe2D {
     }
 
     @Override
-    public double getElevation(Angle latitude, Angle longitude) {
+    public double elevation(Angle latitude, Angle longitude) {
 //        if (latitude == null || longitude == null) {
 //            String message = Logging.getMessage("nullValue.LatitudeOrLongitudeIsNull");
 //            Logging.logger().severe(message);
@@ -222,7 +222,7 @@ public class FlatGlobe extends EllipsoidalGlobe implements Globe2D {
         if (latitude.degrees < -90 || latitude.degrees > 90 || longitude.degrees < -180 || longitude.degrees > 180)
             return 0.0d;
 
-        return super.getElevation(latitude, longitude);
+        return super.elevation(latitude, longitude);
     }
 
     /**

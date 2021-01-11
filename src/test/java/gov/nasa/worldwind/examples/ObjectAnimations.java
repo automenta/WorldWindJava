@@ -382,10 +382,10 @@ public class ObjectAnimations extends ApplicationTemplate {
                     final Position pos = view.getEyePosition();
 
                     // Set view heading, pitch and fov
-                    view.setHeading(Angle.fromDegrees(this.headingSlider.getValue()));
-                    view.setPitch(Angle.fromDegrees(this.pitchSlider.getValue()));
-                    view.setFieldOfView(Angle.fromDegrees(this.fovSlider.getValue()));
-                    view.setRoll(Angle.fromDegrees(this.rollSlider.getValue()));
+                    view.setHeading(new Angle(this.headingSlider.getValue()));
+                    view.setPitch(new Angle(this.pitchSlider.getValue()));
+                    view.setFieldOfView(new Angle(this.fovSlider.getValue()));
+                    view.setRoll(new Angle(this.rollSlider.getValue()));
 
                     // Restore eye position
                     view.setEyePosition(pos);

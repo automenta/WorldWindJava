@@ -343,7 +343,7 @@ public class IconRenderer {
                 Angle lon = pos.getLongitude();
                 double elevation = pos.getElevation();
                 if (!this.isAlwaysUseAbsoluteElevation())
-                    elevation += dc.getGlobe().getElevation(lat, lon);
+                    elevation += dc.getGlobe().elevation(lat, lon);
                 iconPoint = dc.getGlobe().computePointFromPosition(lat, lon, elevation);
             }
 

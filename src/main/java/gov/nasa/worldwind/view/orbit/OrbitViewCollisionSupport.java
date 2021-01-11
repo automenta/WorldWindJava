@@ -56,7 +56,7 @@ public class OrbitViewCollisionSupport {
             // Fallback to using globe elevation values.
             if (surfacePosition == null)
                 surfacePosition = new Position(position,
-                    globe.getElevation(position.getLatitude(), position.getLongitude()) * dc.getVerticalExaggeration());
+                    globe.elevation(position.getLatitude(), position.getLongitude()) * dc.getVerticalExaggeration());
             height = position.getElevation() - surfacePosition.getElevation();
         }
         return height;

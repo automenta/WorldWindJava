@@ -746,8 +746,8 @@ public class KMLTest
         assertTrue("Geometry not a Point", geometry instanceof KMLPoint);
 
         Position coords = ((KMLPoint) geometry).getCoordinates();
-        assertEquals("Incorrect latitude", Angle.fromDegrees(37.42228990140251), coords.getLatitude());
-        assertEquals("Incorrect longitude", Angle.fromDegrees(-122.0822035425683), coords.getLongitude());
+        assertEquals("Incorrect latitude", new Angle(37.42228990140251), coords.getLatitude());
+        assertEquals("Incorrect longitude", new Angle(-122.0822035425683), coords.getLongitude());
         assertEquals("Incorrect altitude", 0d, coords.getAltitude(), 0.0);
     }
 
@@ -779,8 +779,8 @@ public class KMLTest
         assertTrue("Geometry not a Point", geometry instanceof KMLPoint);
 
         Position coords = ((KMLPoint) geometry).getCoordinates();
-        assertEquals("Incorrect latitude", Angle.fromDegrees(14.996729), coords.getLatitude());
-        assertEquals("Incorrect longitude", Angle.fromDegrees(102.595626), coords.getLongitude());
+        assertEquals("Incorrect latitude", new Angle(14.996729), coords.getLatitude());
+        assertEquals("Incorrect longitude", new Angle(102.595626), coords.getLongitude());
         assertEquals("Incorrect altitude", 0d, coords.getAltitude(), 0.0);
     }
 
@@ -808,8 +808,8 @@ public class KMLTest
         assertTrue("Geometry not a Point", geometry instanceof KMLPoint);
 
         Position coords = ((KMLPoint) geometry).getCoordinates();
-        assertEquals("Incorrect latitude", Angle.fromDegrees(14.998518), coords.getLatitude());
-        assertEquals("Incorrect longitude", Angle.fromDegrees(102.594411), coords.getLongitude());
+        assertEquals("Incorrect latitude", new Angle(14.998518), coords.getLatitude());
+        assertEquals("Incorrect longitude", new Angle(102.594411), coords.getLongitude());
         assertEquals("Incorrect altitude", 0d, coords.getAltitude(), 0.0);
     }
 

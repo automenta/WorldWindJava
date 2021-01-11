@@ -33,7 +33,7 @@ public class BasicFlyView extends BasicView {
     protected final static double DEFAULT_MIN_ELEVATION = 0;
     protected final static double DEFAULT_MAX_ELEVATION = 4000000;
     protected final static Angle DEFAULT_MIN_PITCH = Angle.ZERO;
-    protected final static Angle DEFAULT_MAX_PITCH = Angle.fromDegrees(180);
+    protected final static Angle DEFAULT_MAX_PITCH = new Angle(180);
 
     public BasicFlyView() {
         this.viewInputHandler = new FlyViewInputHandler();
@@ -69,17 +69,17 @@ public class BasicFlyView extends BasicView {
 
         Double initHeading = Configuration.getDoubleValue(AVKey.INITIAL_HEADING);
         if (initHeading != null) {
-            setHeading(Angle.fromDegrees(initHeading));
+            setHeading(new Angle(initHeading));
         }
 
         Double initPitch = Configuration.getDoubleValue(AVKey.INITIAL_PITCH);
         if (initPitch != null) {
-            setPitch(Angle.fromDegrees(initPitch));
+            setPitch(new Angle(initPitch));
         }
 
         Double initFov = Configuration.getDoubleValue(AVKey.FOV);
         if (initFov != null) {
-            setFieldOfView(Angle.fromDegrees(initFov));
+            setFieldOfView(new Angle(initFov));
         }
     }
 

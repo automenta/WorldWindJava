@@ -150,7 +150,7 @@ public class GraticuleLayer extends AbstractLayer {
                 centerPos.getLongitude().degrees - labelOffsetDegrees);
             double labelLatDegrees = labelPos.getLatitude().latNorm().degrees;
             labelLatDegrees = Math.min(Math.max(labelLatDegrees, -70), 70);
-            labelPos = new LatLon(Angle.fromDegrees(labelLatDegrees), labelPos.getLongitude().lonNorm());
+            labelPos = new LatLon(new Angle(labelLatDegrees), labelPos.getLongitude().lonNorm());
         } else
             labelPos = dc.getView().getEyePosition(); // fall back if no orbit view
 
@@ -169,7 +169,7 @@ public class GraticuleLayer extends AbstractLayer {
         Vec4 surfacePoint = dc.getSurfaceGeometry().getSurfacePoint(latitude, longitude);
         if (surfacePoint == null)
             surfacePoint = dc.getGlobe().computePointFromPosition(new Position(latitude, longitude,
-                dc.getGlobe().getElevation(latitude, longitude)));
+                dc.getGlobe().elevation(latitude, longitude)));
 
         return surfacePoint;
     }
@@ -313,7 +313,8 @@ public class GraticuleLayer extends AbstractLayer {
 
     protected static Angle getDeltaLongitude(LatLon p1, Angle longitude) {
         double deltaLon = Math.abs(p1.getLongitude().degrees - longitude.degrees);
-        return Angle.fromDegrees(deltaLon < 180 ? deltaLon : 360 - deltaLon);
+        double degrees = deltaLon < 180 ? deltaLon : 360 - deltaLon;
+        return new Angle(degrees);
     }
 
     /**

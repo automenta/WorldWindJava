@@ -713,10 +713,10 @@ public class LatLonTest
     public void testRhumEndPosition_ProblemPointsA()
     {
         // This specific lat/lon and distance identified a floating point error
-        Angle initialLat = Angle.fromDegrees(4.076552742498428);
-        Angle initialLon = Angle.fromDegrees(-21.377644877408443);
-        Angle azimuth = Angle.fromDegrees(90.0);
-        Angle distance = Angle.fromDegrees(8.963656110719409);
+        Angle initialLat = new Angle(4.076552742498428);
+        Angle initialLon = new Angle(-21.377644877408443);
+        Angle azimuth = new Angle(90.0);
+        Angle distance = new Angle(8.963656110719409);
         LatLon begin = LatLon.fromRadians(initialLat.radians(), initialLon.radians());
         LatLon end = LatLon.rhumbEndPosition(begin, azimuth, distance);
         assertEquals("Problem points A (lat)", initialLat.degrees, end.getLatitude().degrees,
@@ -793,7 +793,7 @@ public class LatLonTest
         LatLon end = LatLon.fromDegrees(48.0000, -122.0000);
         Angle theta = LatLon.ellipsoidalForwardAzimuth(begin, end, globe.getEquatorialRadius(),
             globe.getPolarRadius());
-        assertEquals("Known ellipsoidal Azimuth B", Angle.lonNorm(Angle.fromDegrees(325.10111)).degrees,
+        assertEquals("Known ellipsoidal Azimuth B", Angle.lonNorm(new Angle(325.10111)).degrees,
             theta.degrees, TOLERANCE);
     }
 
@@ -814,7 +814,7 @@ public class LatLonTest
         LatLon end = LatLon.fromDegrees(42.0000, -71.0000);
         Angle theta = LatLon.ellipsoidalForwardAzimuth(begin, end, globe.getEquatorialRadius(),
             globe.getPolarRadius());
-        assertEquals("Known ellipsoidal Azimuth D", Angle.lonNorm(Angle.fromDegrees(287.95372)).degrees,
+        assertEquals("Known ellipsoidal Azimuth D", Angle.lonNorm(new Angle(287.95372)).degrees,
             theta.degrees, TOLERANCE);
     }
 }

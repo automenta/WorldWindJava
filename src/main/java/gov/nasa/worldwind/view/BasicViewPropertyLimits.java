@@ -443,11 +443,11 @@ public class BasicViewPropertyLimits implements ViewPropertyLimits {
         Angle[] minAndMaxAngle = this.getHeadingLimits();
         min = rs.getStateValueAsDouble(context, "minHeadingDegrees");
         if (min != null)
-            minAndMaxAngle[0] = Angle.fromDegrees(min);
+            minAndMaxAngle[0] = new Angle(min);
 
         max = rs.getStateValueAsDouble(context, "maxHeadingDegrees");
         if (max != null)
-            minAndMaxAngle[1] = Angle.fromDegrees(max);
+            minAndMaxAngle[1] = new Angle(max);
 
         if (min != null || max != null)
             this.setHeadingLimits(minAndMaxAngle[0], minAndMaxAngle[1]);
@@ -456,11 +456,11 @@ public class BasicViewPropertyLimits implements ViewPropertyLimits {
         minAndMaxAngle = this.getPitchLimits();
         min = rs.getStateValueAsDouble(context, "minPitchDegrees");
         if (min != null)
-            minAndMaxAngle[0] = Angle.fromDegrees(min);
+            minAndMaxAngle[0] = new Angle(min);
 
         max = rs.getStateValueAsDouble(context, "maxPitchDegrees");
         if (max != null)
-            minAndMaxAngle[1] = Angle.fromDegrees(max);
+            minAndMaxAngle[1] = new Angle(max);
 
         if (min != null || max != null)
             this.setPitchLimits(minAndMaxAngle[0], minAndMaxAngle[1]);

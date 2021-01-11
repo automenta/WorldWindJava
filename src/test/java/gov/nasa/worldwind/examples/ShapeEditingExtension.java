@@ -355,7 +355,7 @@ public class ShapeEditingExtension extends ApplicationTemplate {
             highlightAttrs.setOutlineMaterial(Material.RED);
 
             SurfaceEllipse ellipse = new SurfaceEllipse(attrs, LatLon.fromDegrees(40, -115), 1.0e5, 1.5e5);
-            ellipse.setHeading(Angle.fromDegrees(30));
+            ellipse.setHeading(new Angle(30));
             ellipse.setHighlightAttributes(highlightAttrs);
             layer.add(ellipse);
 

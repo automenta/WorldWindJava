@@ -1114,7 +1114,7 @@ public class ViewControlsLayer extends RenderableLayer {
             double expBase = 2.0; // Exponential curve parameter.
             double value = minValue + (maxValue - minValue) * ((Math.pow(expBase, a) - 1.0) / (expBase - 1.0));
 
-            return Angle.fromDegrees(value * pickDistanceFactor * panStep);
+            return new Angle(value * pickDistanceFactor * panStep);
         }
 
         protected Angle computeLookHeading(View view, ScreenAnnotation control, double headingStep) {
@@ -1137,7 +1137,7 @@ public class ViewControlsLayer extends RenderableLayer {
             double pickDistanceFactor = Math.min(Math.abs(py) / 3000, 5) * Math.signum(py);
             // New pitch
             Angle pitch = view.getPitch().add(Angle.fromRadians(pitchStep * pickDistanceFactor));
-            pitch = pitch.degrees >= 0 ? (pitch.degrees <= 90 ? pitch : Angle.fromDegrees(90)) : Angle.ZERO;
+            pitch = pitch.degrees >= 0 ? (pitch.degrees <= 90 ? pitch : new Angle(90)) : Angle.ZERO;
             return pitch;
         }
 

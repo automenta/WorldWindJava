@@ -359,7 +359,7 @@ public class ForwardLineOfOwnTroops extends PhaseLine {
             }
 
             Angle azimuth = LatLon.greatCircleAzimuth(this.thisPosition, this.nextControlPosition);
-            LatLon ll = LatLon.greatCircleEndPosition(this.thisPosition, azimuth, Angle.fromDegrees(thisStep));
+            LatLon ll = LatLon.greatCircleEndPosition(this.thisPosition, azimuth, new Angle(thisStep));
 
             this.thisPosition = new Position(ll, 0);
             return this.thisPosition;

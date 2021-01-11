@@ -84,7 +84,7 @@ public class Wedges extends ApplicationTemplate {
             layer.add(wedge5);
 
             // Wedge with a texture, using Wedge(position, angle, height, radius) constructor
-            Wedge wedge9 = new Wedge(Position.fromDegrees(0, -90, 600000), Angle.fromDegrees(225), 1200000, 600000);
+            Wedge wedge9 = new Wedge(Position.fromDegrees(0, -90, 600000), new Angle(225), 1200000, 600000);
             wedge9.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             wedge9.setImageSources("gov/nasa/worldwind/examples/images/500px-Checkerboard_pattern.png");
             wedge9.setAttributes(attrs);
@@ -93,7 +93,7 @@ public class Wedges extends ApplicationTemplate {
             layer.add(wedge9);
 
             // Scaled Wedge with default orientation
-            Wedge wedge = new Wedge(Position.ZERO, Angle.fromDegrees(125), 500000, 500000, 500000);
+            Wedge wedge = new Wedge(Position.ZERO, new Angle(125), 500000, 500000, 500000);
             wedge.setAltitudeMode(WorldWind.ABSOLUTE);
             wedge.setAttributes(attrs);
             wedge.setVisible(true);
@@ -102,7 +102,7 @@ public class Wedges extends ApplicationTemplate {
 
             // Scaled Wedge with a pre-set orientation
             Wedge wedge2 = new Wedge(Position.fromDegrees(0, 30, 750000), Angle.POS90, 500000, 500000, 500000,
-                Angle.fromDegrees(90), Angle.fromDegrees(45), Angle.fromDegrees(30));
+                new Angle(90), new Angle(45), new Angle(30));
             wedge2.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             wedge2.setAttributes(attrs2);
             wedge2.setVisible(true);
@@ -111,7 +111,7 @@ public class Wedges extends ApplicationTemplate {
 
             // Scaled Wedge with a pre-set orientation
             Wedge wedge6 = new Wedge(Position.fromDegrees(30, 30, 750000), Angle.POS90, 500000, 500000, 500000,
-                Angle.fromDegrees(90), Angle.fromDegrees(45), Angle.fromDegrees(30));
+                new Angle(90), new Angle(45), new Angle(30));
             wedge6.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             wedge6.setImageSources("gov/nasa/worldwind/examples/images/500px-Checkerboard_pattern.png");
             wedge6.setAttributes(attrs2);
@@ -121,7 +121,7 @@ public class Wedges extends ApplicationTemplate {
 
             // Scaled Wedge with a pre-set orientation
             Wedge wedge7 = new Wedge(Position.fromDegrees(60, 30, 750000), Angle.POS90, 500000, 500000, 500000,
-                Angle.fromDegrees(90), Angle.fromDegrees(45), Angle.fromDegrees(30));
+                new Angle(90), new Angle(45), new Angle(30));
             wedge7.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             wedge7.setAttributes(attrs2);
             wedge7.setVisible(true);
@@ -130,7 +130,7 @@ public class Wedges extends ApplicationTemplate {
 
             // Scaled, oriented Wedge in 3rd "quadrant" (-X, -Y, -Z)
             Wedge wedge8 = new Wedge(Position.fromDegrees(-45, -180, 750000), Angle.POS90, 500000, 1000000, 500000,
-                Angle.fromDegrees(90), Angle.fromDegrees(45), Angle.fromDegrees(30));
+                new Angle(90), new Angle(45), new Angle(30));
             wedge8.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             wedge8.setAttributes(attrs2);
             wedge8.setVisible(true);

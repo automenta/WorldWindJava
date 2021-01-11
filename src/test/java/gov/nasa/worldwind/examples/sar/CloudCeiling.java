@@ -125,7 +125,7 @@ public class CloudCeiling implements Restorable {
         while (a < 0) {
             a += 360;
         }
-        return Angle.fromDegrees(a);
+        return new Angle(a);
     }
 
     private static Color computePremultipliedAlphaColor(Color color, double opacity) {

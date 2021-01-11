@@ -41,9 +41,9 @@ public class EGM96Test
         // The EGM96 data has an interval of 0.25 degrees in both the horizontal and vertical dimensions. To test and
         // demonstrate the fractional value being determined is correct, this setup will isolate a vertical
         // interpolation by landing on the horizontal grid points (e.g. longitudes ending with 0.0, 0.25, 0.5, 0.75)
-        Angle longitude = Angle.fromDegrees(-105.0);
+        Angle longitude = new Angle(-105.0);
         // This is a non-interpolated baseline latitude for the top grid point of our testing points
-        Angle latitude = Angle.fromDegrees(38.75);
+        Angle latitude = new Angle(38.75);
 
         // Find the row and column values using the identical method the getOffset method uses
         // Code below is directly copied from the getOffset method accept where static class references were added
@@ -95,10 +95,10 @@ public class EGM96Test
         // The EGM96 data has an interval of 0.25 degrees in both the horizontal and vertical dimensions. To test and
         // demonstrate the fractional value being determined is correct, this setup will isolate a vertical
         // interpolation by landing on the horizontal grid points (e.g. longitudes ending with .0, 0.25, 0.5, 0.75)
-        Angle longitude = Angle.fromDegrees(-105.0);
+        Angle longitude = new Angle(-105.0);
         // This is a non-interpolated baseline latitude for the top grid point of our testing points, it is closer to
         // the top grid point
-        Angle latitude = Angle.fromDegrees(38.72);
+        Angle latitude = new Angle(38.72);
 
         // Find the row and column values using the identical method the getOffset method uses
         // Code below is directly copied from the getOffset method accept where static class references were added
@@ -157,9 +157,9 @@ public class EGM96Test
         // The EGM96 data has an interval of 0.25 degrees in both the horizontal and vertical dimensions. To test and
         // demonstrate the fractional value being determined is correct, this setup will isolate a horizontal
         // interpolation by landing on the vertical grid points (e.g. latitudes ending with .0, 0.25, 0.5, 0.75)
-        Angle latitude = Angle.fromDegrees(38.75);
+        Angle latitude = new Angle(38.75);
         // This is a non-interpolated baseline latitude for the left grid point of our testing points
-        Angle longitude = Angle.fromDegrees(-105.0);
+        Angle longitude = new Angle(-105.0);
 
         // Find the row and column values using the identical method the getOffset method uses
         // Code below is directly copied from the getOffset method accept where static class references were added
@@ -212,10 +212,10 @@ public class EGM96Test
         // The EGM96 data has an interval of 0.25 degrees in both the horizontal and vertical dimensions. To test and
         // demonstrate the fractional value being determined is correct, this setup will isolate a horizontal
         // interpolation by landing on the vertical grid points (e.g. latitudes ending with .0, 0.25, 0.5, 0.75)
-        Angle latitude = Angle.fromDegrees(38.75);
+        Angle latitude = new Angle(38.75);
         // This is a baseline longitude for the left grid point of our testing points, it is closer to the left grid
         // point
-        Angle longitude = Angle.fromDegrees(-104.9);
+        Angle longitude = new Angle(-104.9);
 
         // Find the row and column values using the identical method the getOffset method uses
         // Code below is directly copied from the getOffset method accept where static class references were added

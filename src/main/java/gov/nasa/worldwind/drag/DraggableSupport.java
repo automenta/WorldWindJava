@@ -529,7 +529,7 @@ public class DraggableSupport {
 
                 intersectionPoint = Vec4.mix3(mixPoint, surface, eye);
                 Position pointPos = globe.computePositionFromPoint(intersectionPoint);
-                pointAlt = globe.getElevation(pointPos.getLatitude(), pointPos.getLongitude());
+                pointAlt = globe.elevation(pointPos.getLatitude(), pointPos.getLongitude());
                 pointAlt = pointPos.getElevation() - pointAlt;
 
                 if (Math.abs(pointAlt - altitude) < this.convergenceThreshold) {

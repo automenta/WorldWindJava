@@ -6,6 +6,7 @@
 package gov.nasa.worldwind.geom;
 
 import gov.nasa.worldwind.util.Logging;
+import jcog.Util;
 
 import java.util.regex.*;
 
@@ -29,39 +30,39 @@ public class Angle implements Comparable<Angle> {
     /**
      * Represents an angle of zero degrees
      */
-    public final static Angle ZERO = Angle.fromDegrees(0);
+    public final static Angle ZERO = new Angle(0);
     /**
      * Represents a right angle of positive 90 degrees
      */
-    public static final Angle POS90 = Angle.fromDegrees(90);
+    public static final Angle POS90 = new Angle(90);
     /**
      * Represents a right angle of negative 90 degrees
      */
-    public final static Angle NEG90 = Angle.fromDegrees(-90);
+    public final static Angle NEG90 = new Angle(-90);
     /**
      * Represents an angle of positive 180 degrees
      */
-    public final static Angle POS180 = Angle.fromDegrees(180);
+    public final static Angle POS180 = new Angle(180);
     /**
      * Represents an angle of negative 180 degrees
      */
-    public final static Angle NEG180 = Angle.fromDegrees(-180);
+    public final static Angle NEG180 = new Angle(-180);
     /**
      * Represents an angle of positive 360 degrees
      */
-    public final static Angle POS360 = Angle.fromDegrees(360);
+    public final static Angle POS360 = new Angle(360);
     /**
      * Represents an angle of negative 360 degrees
      */
-    public final static Angle NEG360 = Angle.fromDegrees(-360);
+    public final static Angle NEG360 = new Angle(-360);
     /**
      * Represents an angle of 1 minute
      */
-    public final static Angle MINUTE = Angle.fromDegrees(1.0d / 60.0d);
+    public final static Angle MINUTE = new Angle(1.0d / 60.0d);
     /**
      * Represents an angle of 1 second
      */
-    public final static Angle SECOND = Angle.fromDegrees(1.0d / 3600.0d);
+    public final static Angle SECOND = new Angle(1.0d / 3600.0d);
     private final static double RADIANS_TO_DEGREES = 180.0d / PI;
     private static final double PIOver2 = PI / 2;
 
@@ -74,16 +75,6 @@ public class Angle implements Comparable<Angle> {
 
     public Angle(double degrees) {
         this.degrees = degrees;
-    }
-
-    /**
-     * Obtains an angle from a specified number of degrees.
-     *
-     * @param degrees the size in degrees of the angle to be obtained
-     * @return a new angle, whose size in degrees is given by <code>degrees</code>
-     */
-    public static Angle fromDegrees(double degrees) {
-        return new Angle(degrees);
     }
 
     /**
@@ -168,7 +159,7 @@ public class Angle implements Comparable<Angle> {
             throw new IllegalArgumentException(message);
         }
 
-        return Angle.fromDegrees(degrees + minutes / 60.0d + seconds / 3600.0d);
+        return new Angle(degrees + minutes / 60.0d + seconds / 3600.0d);
     }
 
     /**
@@ -191,7 +182,7 @@ public class Angle implements Comparable<Angle> {
             throw new IllegalArgumentException(message);
         }
 
-        return Angle.fromDegrees(degrees + minutes / 60.0d);
+        return new Angle(degrees + minutes / 60.0d);
     }
 
     /**
@@ -283,7 +274,7 @@ public class Angle implements Comparable<Angle> {
      */
     public static Angle midAngle(Angle a1, Angle a2) {
 
-        return Angle.fromDegrees(0.5 * (a1.degrees + a2.degrees));
+        return new Angle(0.5 * (a1.degrees + a2.degrees));
     }
 
     /**
@@ -296,7 +287,7 @@ public class Angle implements Comparable<Angle> {
      */
     public static Angle average(Angle a, Angle b) {
 
-        return Angle.fromDegrees(0.5 * (a.degrees + b.degrees));
+        return new Angle(0.5 * (a.degrees + b.degrees));
     }
 
     /**
@@ -310,7 +301,7 @@ public class Angle implements Comparable<Angle> {
      */
     public static Angle average(Angle a, Angle b, Angle c) {
 
-        return Angle.fromDegrees((a.degrees + b.degrees + c.degrees) / 3);
+        return new Angle((a.degrees + b.degrees + c.degrees) / 3);
     }
 
     /**
@@ -379,17 +370,17 @@ public class Angle implements Comparable<Angle> {
 
     public static Angle normalizedAngle(Angle unnormalizedAngle) {
 
-        return Angle.fromDegrees(Angle.normalizedDegrees(unnormalizedAngle.degrees));
+        return new Angle(Angle.normalizedDegrees(unnormalizedAngle.degrees));
     }
 
     public static Angle latNorm(Angle unnormalizedAngle) {
 
-        return Angle.fromDegrees(Angle.normalizedDegreesLatitude(unnormalizedAngle.degrees));
+        return new Angle(Angle.normalizedDegreesLatitude(unnormalizedAngle.degrees));
     }
 
     public static Angle lonNorm(Angle unnormalizedAngle) {
 
-        return Angle.fromDegrees(Angle.normalizedDegreesLongitude(unnormalizedAngle.degrees));
+        return new Angle(Angle.normalizedDegreesLongitude(unnormalizedAngle.degrees));
     }
 
     public static boolean crossesLongitudeBoundary(Angle angleA, Angle angleB) {
@@ -451,8 +442,12 @@ public class Angle implements Comparable<Angle> {
      * @throws IllegalArgumentException if angle is null.
      */
     public final Angle add(Angle angle) {
+        //return Angle.fromDegrees(this.degrees + angle.degrees);
+        return add(angle.degrees);
+    }
 
-        return Angle.fromDegrees(this.degrees + angle.degrees);
+    public final Angle add(double angle) {
+        return new Angle(this.degrees + angle);
     }
 
     /**
@@ -465,7 +460,7 @@ public class Angle implements Comparable<Angle> {
      */
     public final Angle sub(Angle angle) {
 
-        return Angle.fromDegrees(this.degrees - angle.degrees);
+        return new Angle(this.degrees - angle.degrees);
     }
 
     /**
@@ -476,7 +471,7 @@ public class Angle implements Comparable<Angle> {
      * @return a new angle whose size equals this angle's size multiplied by <code>multiplier</code>.
      */
     public final Angle multiply(double multiplier) {
-        return Angle.fromDegrees(this.degrees * multiplier);
+        return new Angle(this.degrees * multiplier);
     }
 
     /**
@@ -488,7 +483,7 @@ public class Angle implements Comparable<Angle> {
      * @throws IllegalArgumentException if angle is null.
      */
     public final double divide(Angle angle) {
-        if (angle.degrees == 0.0) {
+        if (Util.equals(angle.degrees, 0.0)) {
             String message = Logging.getMessage("generic.DivideByZero");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -498,11 +493,11 @@ public class Angle implements Comparable<Angle> {
     }
 
     public final Angle addDegrees(double degrees) {
-        return Angle.fromDegrees(this.degrees + degrees);
+        return new Angle(this.degrees + degrees);
     }
 
     public final Angle subtractDegrees(double degrees) {
-        return Angle.fromDegrees(this.degrees - degrees);
+        return new Angle(this.degrees - degrees);
     }
 
     /**
@@ -513,7 +508,7 @@ public class Angle implements Comparable<Angle> {
      * @return a new angle equivalent to this angle divided by <code>divisor</code>.
      */
     public final Angle divide(double divisor) {
-        return Angle.fromDegrees(this.degrees / divisor);
+        return new Angle(this.degrees / divisor);
     }
 
     public final Angle addRadians(double radians) {
@@ -538,7 +533,7 @@ public class Angle implements Comparable<Angle> {
         else if (differenceDegrees > 180)
             differenceDegrees -= 360;
 
-        return Angle.fromDegrees(abs(differenceDegrees));
+        return new Angle(abs(differenceDegrees));
     }
 
     /**

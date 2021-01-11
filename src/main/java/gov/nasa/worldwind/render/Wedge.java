@@ -29,7 +29,8 @@ public class Wedge extends RigidShape {
     // Geometry.
     @SuppressWarnings("FieldCanBeLocal")
     protected final int faceCount = 5;   // number of separate Geometry pieces that comprise this Wedge
-    protected Angle wedgeAngle = Angle.fromDegrees(220);     // default value for angle consumed by the wedge
+    protected Angle wedgeAngle = new Angle(220);     // default value for angle consumed by the wedge
+
     // The faces are numbered as follows:
     // face 0: Wedge top
     // face 1: Wedge bottom
@@ -557,6 +558,6 @@ public class Wedge extends RigidShape {
 
         Double doubleState = rs.getStateValueAsDouble(context, "wedgeAngle");
         if (doubleState != null)
-            this.setWedgeAngle(Angle.fromDegrees(doubleState));
+            this.setWedgeAngle(new Angle(doubleState));
     }
 }

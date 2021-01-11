@@ -87,8 +87,8 @@ public class ViewLimits extends ApplicationTemplate {
         public Angle[] getHeadingLimits() {
             return new Angle[]
                 {
-                    Angle.fromDegrees((Double) this.minHeading.getValue()),
-                    Angle.fromDegrees((Double) this.maxHeading.getValue())
+                    new Angle((Double) this.minHeading.getValue()),
+                    new Angle((Double) this.maxHeading.getValue())
                 };
         }
 
@@ -112,8 +112,8 @@ public class ViewLimits extends ApplicationTemplate {
         public Angle[] getPitchLimits() {
             return new Angle[]
                 {
-                    Angle.fromDegrees((Double) this.minPitch.getValue()),
-                    Angle.fromDegrees((Double) this.maxPitch.getValue())
+                    new Angle((Double) this.minPitch.getValue()),
+                    new Angle((Double) this.maxPitch.getValue())
                 };
         }
 

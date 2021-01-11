@@ -374,7 +374,7 @@ public class CappedCylinder extends AbstractAirspace {
 
         double[] altitudes = this.getAltitudes(verticalExaggeration);
         return globe.computeEllipsoidalOrientationAtPosition(
-            Angle.fromDegrees(this.center.latitude), Angle.fromDegrees(this.center.longitude), altitudes[0]);
+            new Angle(this.center.latitude), new Angle(this.center.longitude), altitudes[0]);
     }
 
     protected void doRenderGeometry(DrawContext dc, String drawStyle) {

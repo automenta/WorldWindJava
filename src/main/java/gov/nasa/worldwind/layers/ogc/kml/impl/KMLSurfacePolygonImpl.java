@@ -284,7 +284,7 @@ public class KMLSurfacePolygonImpl extends SurfacePolygon implements KMLRenderab
             if (rotation != null) {
                 Sector sector = KMLUtil.createSectorFromLatLonBox(box);
                 List<LatLon> corners = KMLUtil.rotateSector(dc.getGlobe(), sector,
-                    Angle.fromDegrees(rotation));
+                    new Angle(rotation));
                 this.setOuterBoundary(corners);
             }
         }

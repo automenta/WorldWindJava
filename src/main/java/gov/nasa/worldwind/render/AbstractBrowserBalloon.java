@@ -1222,7 +1222,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
             // default factory if the configuration does not specify a one.
             String className = Configuration.getStringValue(AVKey.WEB_VIEW_FACTORY,
                 AbstractBrowserBalloon.DEFAULT_WEB_VIEW_FACTORY);
-            WebViewFactory factory = (WebViewFactory) WorldWind.createComponent(className);
+            WebViewFactory factory = (WebViewFactory) WorldWind.create(className);
             this.webView = factory.createWebView(frameSize);
         }
         catch (Throwable t) {

@@ -263,7 +263,7 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
 
         if (shapeData == null) {
             shapeData = this.tessellateContours(this.assembleContours(
-                Angle.fromDegrees(1.0 / this.computeEdgeIntervalsPerDegree(sdc))));
+                new Angle(1.0 / this.computeEdgeIntervalsPerDegree(sdc))));
 
             this.shapeDataCache.put(key, shapeData);
         }

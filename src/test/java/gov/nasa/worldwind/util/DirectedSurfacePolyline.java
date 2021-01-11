@@ -31,7 +31,7 @@ public class DirectedSurfacePolyline extends SurfacePolyline {
     /**
      * Default arrow angle.
      */
-    public static final Angle DEFAULT_ARROW_ANGLE = Angle.fromDegrees(45.0);
+    public static final Angle DEFAULT_ARROW_ANGLE = new Angle(45.0);
     /**
      * Default maximum screen size of the arrowheads, in pixels.
      */
@@ -291,12 +291,12 @@ public class DirectedSurfacePolyline extends SurfacePolyline {
         }
 
         // Compute the locations of the arrowhead's base and tip.
-        Angle halfArrowLength = Angle.fromDegrees(arrowLength / 2);
+        Angle halfArrowLength = new Angle(arrowLength / 2);
         LatLon base = LatLon.greatCircleEndPosition(mid, LatLon.greatCircleAzimuth(mid, begin), halfArrowLength);
         LatLon tip = LatLon.greatCircleEndPosition(mid, LatLon.greatCircleAzimuth(mid, end), halfArrowLength);
 
         // Compute the locations of the arrowhead's left and right vertices.
-        Angle halfBaseLength = Angle.fromDegrees(arrowLength * this.arrowAngle.tanHalfAngle());
+        Angle halfBaseLength = new Angle(arrowLength * this.arrowAngle.tanHalfAngle());
         Angle azimuth = LatLon.greatCircleAzimuth(base, tip);
         LatLon left = LatLon.greatCircleEndPosition(base, azimuth.add(Angle.NEG90), halfBaseLength);
         LatLon right = LatLon.greatCircleEndPosition(base, azimuth.sub(Angle.NEG90), halfBaseLength);

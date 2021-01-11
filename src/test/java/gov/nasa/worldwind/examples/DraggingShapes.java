@@ -94,7 +94,7 @@ public class DraggingShapes extends ApplicationTemplate {
             attrs.setOutlineOpacity(0.8);
             attrs.setOutlineWidth(3);
 
-            shape = new SurfaceEllipse(LatLon.fromDegrees(38, -104), 1.5e5, 1.0e5, Angle.fromDegrees(15));
+            shape = new SurfaceEllipse(LatLon.fromDegrees(38, -104), 1.5e5, 1.0e5, new Angle(15));
             shape.setAttributes(attrs);
             layer.add(shape);
 
@@ -123,7 +123,7 @@ public class DraggingShapes extends ApplicationTemplate {
             attrs.setOutlineOpacity(0.8);
             attrs.setOutlineWidth(3);
 
-            shape = new SurfaceQuad(LatLon.fromDegrees(42, -104), 1.0e5, 1.3e5, Angle.fromDegrees(20));
+            shape = new SurfaceQuad(LatLon.fromDegrees(42, -104), 1.0e5, 1.3e5, new Angle(20));
             shape.setAttributes(attrs);
             layer.add(shape);
 
@@ -148,8 +148,8 @@ public class DraggingShapes extends ApplicationTemplate {
             attrs.setOutlineWidth(3);
 
             shape = new SurfaceSector(new Sector(
-                Angle.fromDegrees(41.0), Angle.fromDegrees(41.6),
-                Angle.fromDegrees(-122.5), Angle.fromDegrees(-121.7)));
+                new Angle(41.0), new Angle(41.6),
+                new Angle(-122.5), new Angle(-121.7)));
             shape.setAttributes(attrs);
             layer.add(shape);
 
@@ -162,8 +162,8 @@ public class DraggingShapes extends ApplicationTemplate {
             attrs.setOutlineWidth(3);
 
             shape = new SurfaceSector(new Sector(
-                Angle.fromDegrees(38.9), Angle.fromDegrees(39.3),
-                Angle.fromDegrees(-120.2), Angle.fromDegrees(-119.9)));
+                new Angle(38.9), new Angle(39.3),
+                new Angle(-120.2), new Angle(-119.9)));
             shape.setAttributes(attrs);
             layer.add(shape);
 

@@ -622,10 +622,10 @@ public class TacticalGraphics extends ApplicationTemplate {
             //////////////////////////////////////////////////
 
             List<Angle> azimuths = Arrays.asList(
-                Angle.fromDegrees(290), Angle.fromDegrees(30), // Range 1, left azimuth, right azimuth
-                Angle.fromDegrees(290), Angle.fromDegrees(30), // Range 2, left azimuth, right azimuth
-                Angle.fromDegrees(315), Angle.fromDegrees(30), // Range 3, left azimuth, right azimuth
-                Angle.fromDegrees(315), Angle.fromDegrees(35));
+                new Angle(290), new Angle(30), // Range 1, left azimuth, right azimuth
+                new Angle(290), new Angle(30), // Range 2, left azimuth, right azimuth
+                new Angle(315), new Angle(30), // Range 3, left azimuth, right azimuth
+                new Angle(315), new Angle(35));
 
             position = (Position.fromDegrees(34.5798, -116.6591));
             graphic = factory.createGraphic("GFFPAXS-------X", Collections.singletonList(position), null);

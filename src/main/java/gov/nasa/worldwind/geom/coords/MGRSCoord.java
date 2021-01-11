@@ -97,7 +97,7 @@ public class MGRSCoord {
     }
 
     public static MGRSCoord fromLatLon(double latitude, double longitude, Globe globe) {
-        return MGRSCoord.fromLatLon(Angle.fromDegrees(latitude), Angle.fromDegrees(longitude), globe);
+        return MGRSCoord.fromLatLon(new Angle(latitude), new Angle(longitude), globe);
     }
 
     /**

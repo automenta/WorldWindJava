@@ -95,7 +95,7 @@ public interface Globe extends WWObject, Extent {
      * value if there is no elevation for the given location. Returns zero if no elevation model is available.
      * @see #getElevationModel()
      */
-    double getElevation(Angle latitude, Angle longitude);
+    double elevation(Angle latitude, Angle longitude);
 
     /**
      * Indicates the elevations of a collection of locations. Replaces any elevation values corresponding to the missing
@@ -189,7 +189,7 @@ public interface Globe extends WWObject, Extent {
     Vec4 computePointFromPosition(Angle latitude, Angle longitude, double metersElevation);
 
     @Deprecated default Vec4 computePointFromPosition(double latitude, double longitude, double metersElevation) {
-        return computePointFromPosition(Angle.fromDegrees(latitude), Angle.fromDegrees(longitude), metersElevation);
+        return computePointFromPosition(new Angle(latitude), new Angle(longitude), metersElevation);
     }
 
     /**
@@ -533,7 +533,7 @@ public interface Globe extends WWObject, Extent {
      */
     boolean isPointAboveElevation(Vec4 point, double elevation);
 
-    default double getElevation(Position pos) {
-        return getElevation(pos.getLatitude(), pos.getLongitude());
+    default double elevation(Position pos) {
+        return elevation(pos.getLatitude(), pos.getLongitude());
     }
 }

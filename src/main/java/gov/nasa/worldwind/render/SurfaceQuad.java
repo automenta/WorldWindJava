@@ -363,7 +363,7 @@ public class SurfaceQuad extends AbstractSurfaceShape implements Exportable {
 
         d = rs.getStateValueAsDouble(context, "headingDegrees");
         if (d != null)
-            this.setHeading(Angle.fromDegrees(d));
+            this.setHeading(new Angle(d));
     }
 
     protected void legacyRestoreState(RestorableSupport rs, RestorableSupport.StateObject context) {
@@ -380,7 +380,7 @@ public class SurfaceQuad extends AbstractSurfaceShape implements Exportable {
 
         Double od = rs.getStateValueAsDouble(context, "orientationDegrees");
         if (od != null)
-            this.setHeading(Angle.fromDegrees(od));
+            this.setHeading(new Angle(od));
     }
 
     /**
@@ -463,7 +463,7 @@ public class SurfaceQuad extends AbstractSurfaceShape implements Exportable {
         xmlWriter.writeEndElement();
 
         String globeName = Configuration.getStringValue(AVKey.GLOBE_CLASS_NAME, "gov.nasa.worldwind.globes.Earth");
-        Globe globe = (Globe) WorldWind.createComponent(globeName);
+        Globe globe = (Globe) WorldWind.create(globeName);
 
         // Outer boundary
         Iterable<? extends LatLon> outerBoundary = this.getLocations(globe);

@@ -956,7 +956,7 @@ public class AnalyticSurface implements Renderable, PreRenderable {
             double lon = this.sector.lonMin;
             for (int x = 0; x < this.width; x++) {
                 GridPointAttributes attr = iter.hasNext() ? iter.next() : null;
-                this.updateNextSurfacePoint(dc, Angle.fromDegrees(lat), Angle.fromDegrees(lon), attr, outRenderInfo);
+                this.updateNextSurfacePoint(dc, new Angle(lat), new Angle(lon), attr, outRenderInfo);
 
                 lon += lonStep;
             }

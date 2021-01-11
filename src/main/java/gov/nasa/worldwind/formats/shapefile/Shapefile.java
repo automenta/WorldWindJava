@@ -680,7 +680,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
         // The bounding rectangle's min latitude exceeds -90. Set the min latitude to -90. Correct the max latitude if
         // the normalized min latitude is greater than the max latitude.
         if (rect.coords[0] < -90) {
-            double normalizedLat = Angle.latNorm(Angle.fromDegrees(rect.coords[0])).degrees;
+            double normalizedLat = Angle.latNorm(new Angle(rect.coords[0])).degrees;
 
             rect.coords[0] = -90;
             rect.isNormalized = true;
@@ -692,7 +692,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
         // The bounding rectangle's max latitude exceeds +90. Set the max latitude to +90. Correct the min latitude if
         // the normalized max latitude is less than the min latitude.
         if (rect.coords[1] > 90) {
-            double normalizedLat = Angle.latNorm(Angle.fromDegrees(rect.coords[1])).degrees;
+            double normalizedLat = Angle.latNorm(new Angle(rect.coords[1])).degrees;
 
             rect.coords[1] = 90;
             rect.isNormalized = true;

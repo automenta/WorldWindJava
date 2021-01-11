@@ -429,7 +429,7 @@ public abstract class RigidShape extends AbstractShape {
             degrees -= 360;
         }
 
-        this.heading = Angle.fromDegrees(degrees);
+        this.heading = new Angle(degrees);
 
         reset();
     }
@@ -458,7 +458,7 @@ public abstract class RigidShape extends AbstractShape {
             degrees -= 360;
         }
 
-        this.tilt = Angle.fromDegrees(degrees);
+        this.tilt = new Angle(degrees);
 
         reset();
     }
@@ -488,7 +488,7 @@ public abstract class RigidShape extends AbstractShape {
             degrees -= 360;
         }
 
-        this.roll = Angle.fromDegrees(degrees);
+        this.roll = new Angle(degrees);
 
         reset();
     }
@@ -881,7 +881,7 @@ public abstract class RigidShape extends AbstractShape {
         if (pos == null)
             return null;
 
-        double elevation = globe.getElevation(pos);
+        double elevation = globe.elevation(pos);
 
         double height;
         final int altMode = this.getAltitudeMode();
@@ -1452,23 +1452,23 @@ public abstract class RigidShape extends AbstractShape {
 
         doubleState = rs.getStateValueAsDouble(context, "heading");
         if (doubleState != null)
-            this.setHeading(Angle.fromDegrees(doubleState));
+            this.setHeading(new Angle(doubleState));
 
         doubleState = rs.getStateValueAsDouble(context, "tilt");
         if (doubleState != null)
-            this.setTilt(Angle.fromDegrees(doubleState));
+            this.setTilt(new Angle(doubleState));
 
         doubleState = rs.getStateValueAsDouble(context, "roll");
         if (doubleState != null)
-            this.setRoll(Angle.fromDegrees(doubleState));
+            this.setRoll(new Angle(doubleState));
 
         doubleState = rs.getStateValueAsDouble(context, "skewNorthSouth");
         if (doubleState != null)
-            this.setSkewNorthSouth(Angle.fromDegrees(doubleState));
+            this.setSkewNorthSouth(new Angle(doubleState));
 
         doubleState = rs.getStateValueAsDouble(context, "skewEastWest");
         if (doubleState != null)
-            this.setSkewEastWest(Angle.fromDegrees(doubleState));
+            this.setSkewEastWest(new Angle(doubleState));
 
         HashMap<Integer, OffsetsList> offsetsListState = rs.getStateValueAsOffsetsList(context, "offsets");
         if (offsetsListState != null)

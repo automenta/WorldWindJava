@@ -47,7 +47,7 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
     }
 
     protected static Position computeNewPosition(OrbitView view, Position position) {
-        Angle newLat = Angle.fromDegrees(WWMath.clamp(position.latitude, -90, 90));
+        Angle newLat = new Angle(WWMath.clamp(position.latitude, -90, 90));
         Angle newLon = Angle.lonNorm(position.getLongitude());
         return view.getOrbitViewLimits().limitCenterPosition(view, new Position(newLat, newLon, position.elevation));
     }
@@ -244,10 +244,8 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
 
         // Cursor is off the globe, we potentially want to simulate globe dragging.
         // or this is a keyboard event.
-        Angle forwardChange = Angle.fromDegrees(
-            forwardInput * getScaleValueHorizTransRel(deviceAttributes, actionAttributes));
-        Angle sideChange = Angle.fromDegrees(
-            sideInput * getScaleValueHorizTransRel(deviceAttributes, actionAttributes));
+        Angle forwardChange = new Angle(forwardInput * getScaleValueHorizTransRel(deviceAttributes, actionAttributes));
+        Angle sideChange = new Angle(sideInput * getScaleValueHorizTransRel(deviceAttributes, actionAttributes));
         onHorizontalTranslateRel(forwardChange, sideChange, actionAttributes);
     }
 
@@ -410,10 +408,8 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
             }
         }
 
-        Angle headingChange = Angle.fromDegrees(
-            headingInput * getScaleValueRotate(actionAttributes));
-        Angle pitchChange = Angle.fromDegrees(
-            pitchInput * getScaleValueRotate(actionAttributes));
+        Angle headingChange = new Angle(headingInput * getScaleValueRotate(actionAttributes));
+        Angle pitchChange = new Angle(pitchInput * getScaleValueRotate(actionAttributes));
 
         onRotateView(headingChange, pitchChange, actionAttributes);
     }

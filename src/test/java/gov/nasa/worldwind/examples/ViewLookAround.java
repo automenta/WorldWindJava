@@ -42,12 +42,12 @@ public class ViewLookAround extends ApplicationTemplate {
             BasicFlyView flyView = new BasicFlyView();
             wwd().setView(flyView);
             this.getControlPanel().add(this.vcp, BorderLayout.SOUTH);
-            Position pos = new Position(new LatLon(Angle.fromDegrees(45), Angle.fromDegrees(-120)), 2000);
+            Position pos = new Position(new LatLon(new Angle(45), new Angle(-120)), 2000);
             flyView.setEyePosition(pos);
-            flyView.setHeading(Angle.fromDegrees(0));
-            flyView.setPitch(Angle.fromDegrees(90));
-            flyView.setFieldOfView(Angle.fromDegrees(45));
-            flyView.setRoll(Angle.fromDegrees(0));
+            flyView.setHeading(new Angle(0));
+            flyView.setPitch(new Angle(90));
+            flyView.setFieldOfView(new Angle(45));
+            flyView.setRoll(new Angle(0));
         }
 
         private class ViewControlPanel extends JPanel {
@@ -135,10 +135,10 @@ public class ViewLookAround extends ApplicationTemplate {
                     final Position pos = view.getEyePosition();
 
                     // Set view heading, pitch and fov
-                    view.setHeading(Angle.fromDegrees(this.headingSlider.getValue()));
-                    view.setPitch(Angle.fromDegrees(this.pitchSlider.getValue()));
-                    view.setFieldOfView(Angle.fromDegrees(this.fovSlider.getValue()));
-                    view.setRoll(Angle.fromDegrees(this.rollSlider.getValue()));
+                    view.setHeading(new Angle(this.headingSlider.getValue()));
+                    view.setPitch(new Angle(this.pitchSlider.getValue()));
+                    view.setFieldOfView(new Angle(this.fovSlider.getValue()));
+                    view.setRoll(new Angle(this.rollSlider.getValue()));
 
                     // Restore eye position
                     view.setEyePosition(pos);

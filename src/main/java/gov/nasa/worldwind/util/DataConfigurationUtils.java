@@ -1333,7 +1333,7 @@ public class DataConfigurationUtils {
 
         o = params.get(AVKey.SECTOR);
         if (o == null) {
-            Sector sector = levelSet.getSector();
+            Sector sector = levelSet.sector;
             if (sector != null) {
                 params.set(AVKey.SECTOR, sector);
             }
@@ -1349,7 +1349,7 @@ public class DataConfigurationUtils {
 
         o = params.get(AVKey.TILE_ORIGIN);
         if (o == null) {
-            LatLon ll = levelSet.getTileOrigin();
+            LatLon ll = levelSet.tileOrigin;
             if (ll != null) {
                 params.set(AVKey.TILE_ORIGIN, ll);
             }
@@ -1367,7 +1367,7 @@ public class DataConfigurationUtils {
 
         o = params.get(AVKey.LEVEL_ZERO_TILE_DELTA);
         if (o == null) {
-            LatLon ll = levelSet.getLevelZeroTileDelta();
+            LatLon ll = levelSet.levelZeroTileDelta;
             if (ll != null) {
                 params.set(AVKey.LEVEL_ZERO_TILE_DELTA, ll);
             }

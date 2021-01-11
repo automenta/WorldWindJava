@@ -236,15 +236,15 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
 
         this.stopGoToAnimators();
         if (actionAttributes.getMouseActions() != null) {
-            forwardChange = Angle.fromDegrees(-totalForwardInput
-                * getScaleValueElevation(deviceAttributes, actionAttributes));
-            sideChange = Angle.fromDegrees(totalSideInput
+            double degrees = -totalForwardInput
+                * getScaleValueElevation(deviceAttributes, actionAttributes);
+            forwardChange = new Angle(degrees);
+            sideChange = new Angle(totalSideInput
                 * getScaleValueElevation(deviceAttributes, actionAttributes));
         } else {
-            forwardChange = Angle.fromDegrees(
+            forwardChange = new Angle(
                 forwardInput * speed * getScaleValueElevation(deviceAttributes, actionAttributes));
-            sideChange = Angle.fromDegrees(
-                sideInput * speed * getScaleValueElevation(deviceAttributes, actionAttributes));
+            sideChange = new Angle(sideInput * speed * getScaleValueElevation(deviceAttributes, actionAttributes));
         }
         onHorizontalTranslateRel(forwardChange, sideChange, actionAttributes);
     }
@@ -265,7 +265,7 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
 
             Vec4 forward = view.getForwardVector();
             Vec4 up = view.getUpVector();
-            Vec4 side = forward.transformBy3(Matrix.fromAxisAngle(Angle.fromDegrees(90), up));
+            Vec4 side = forward.transformBy3(Matrix.fromAxisAngle(new Angle(90), up));
 
             forward = forward.multiply3(forwardChange.degrees);
             side = side.multiply3(sideChange.degrees);
@@ -342,10 +342,8 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
         Angle headingChange;
         Angle pitchChange;
         this.stopGoToAnimators();
-        headingChange = Angle.fromDegrees(
-            totalHeadingInput * getScaleValueElevation(deviceAttributes, actionAttributes));
-        pitchChange = Angle.fromDegrees(
-            totalPitchInput * getScaleValueElevation(deviceAttributes, actionAttributes));
+        headingChange = new Angle(totalHeadingInput * getScaleValueElevation(deviceAttributes, actionAttributes));
+        pitchChange = new Angle(totalPitchInput * getScaleValueElevation(deviceAttributes, actionAttributes));
         onRotateView(headingChange, pitchChange, actionAttributes);
     }
 
@@ -379,7 +377,7 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
         Angle rollChange;
         this.stopGoToAnimators();
 
-        rollChange = Angle.fromDegrees(rollInput * getScaleValueElevation(deviceAttributes, actionAttributes));
+        rollChange = new Angle(rollInput * getScaleValueElevation(deviceAttributes, actionAttributes));
 
         this.onRoll(rollChange, actionAttributes);
     }
@@ -520,7 +518,7 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
         BasicFlyView view = (BasicFlyView) this.getView();
 
         Position lookFromPos = new Position(lookAtPos,
-            globe.getElevation(lookAtPos.getLatitude(), lookAtPos.getLongitude()) + distance);
+            globe.elevation(lookAtPos.getLatitude(), lookAtPos.getLongitude()) + distance);
 
         // TODO: scale on mid-altitude?
         final long MIN_LENGTH_MILLIS = 4000;
@@ -548,7 +546,7 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
         Position newPosition;
         if (currentLookAtPt == null) {
             view.getGlobe().computePointFromPosition(lookAtPos);
-            double elevAtLookAtPos = view.getGlobe().getElevation(
+            double elevAtLookAtPos = view.getGlobe().elevation(
                 lookAtPos.getLatitude(), lookAtPos.getLongitude());
             newPosition = new Position(lookAtPos, elevAtLookAtPos + 10000);
         } else {

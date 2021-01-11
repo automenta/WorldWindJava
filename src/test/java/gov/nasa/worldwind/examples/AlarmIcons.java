@@ -44,7 +44,7 @@ public class AlarmIcons extends ApplicationTemplate {
 
             IconLayer layer = new IconLayer();
             icon = new UserFacingIcon("src/images/32x32-icon-nasa.png",
-                new Position(Angle.fromDegrees(38), Angle.fromDegrees(-116), 0));
+                new Position(new Angle(38), new Angle(-116), 0));
             icon.setSize(new Dimension(64, 64));
             layer.addIcon(icon);
             WorldWindow.insertAfterPlacenames(this.wwd(), layer);

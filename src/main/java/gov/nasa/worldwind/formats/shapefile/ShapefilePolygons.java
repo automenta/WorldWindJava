@@ -537,8 +537,8 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
     }
 
     protected void createTopLevelTiles() {
-        Angle latDelta = Angle.fromDegrees(45);
-        Angle lonDelta = Angle.fromDegrees(45);
+        Angle latDelta = new Angle(45);
+        Angle lonDelta = new Angle(45);
         double resolution = latDelta.radians() / 512;
 
         int firstRow = Tile.computeRow(latDelta, this.sector.latMin(), Angle.NEG90);
@@ -546,10 +546,10 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
         int firstCol = Tile.computeColumn(lonDelta, this.sector.lonMin(), Angle.NEG180);
         int lastCol = Tile.computeColumn(lonDelta, this.sector.lonMax(), Angle.NEG180);
 
-        Angle p1 = Tile.computeRowLatitude(firstRow, latDelta, Angle.NEG90);
+        Angle p1 = Tile.rowLat(firstRow, latDelta, Angle.NEG90);
         for (int row = firstRow; row <= lastRow; row++) {
             Angle p2 = p1.add(latDelta);
-            Angle t1 = Tile.computeColumnLongitude(firstCol, lonDelta, Angle.NEG180);
+            Angle t1 = Tile.columnLon(firstCol, lonDelta, Angle.NEG180);
             for (int col = firstCol; col <= lastCol; col++) {
                 Angle t2 = t1.add(lonDelta);
                 this.topLevelTiles.add(new ShapefileTile(this, new Sector(p1, p2, t1, t2), resolution));
@@ -632,7 +632,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
         // field of view and a the default field of view. In a perspective projection, decreasing the field of view by
         // 50% has the same effect on object size as decreasing the distance between the eye and the object by 50%.
         double detailScale = Math.pow(10, -this.getDetailFactor());
-        double fieldOfViewScale = dc.getView().getFieldOfView().tanHalfAngle() / Angle.fromDegrees(45).tanHalfAngle();
+        double fieldOfViewScale = dc.getView().getFieldOfView().tanHalfAngle() / new Angle(45).tanHalfAngle();
         fieldOfViewScale = WWMath.clamp(fieldOfViewScale, 0, 1);
 
         // Compute the distance between the eye point and the sector in meters, and compute a fraction of that distance

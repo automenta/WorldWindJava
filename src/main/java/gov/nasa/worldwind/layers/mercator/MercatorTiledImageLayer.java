@@ -120,7 +120,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
 
             LatLon ll = tile.sector.getCentroid();
             Vec4 pt = g.computePointFromPosition(ll.latitude, ll.longitude,
-                g.getElevation(ll.getLatitude(), ll.getLongitude()));
+                g.elevation(ll.getLatitude(), ll.getLongitude()));
             pt = dc.getView().project(pt);
             textRenderer.draw(tileLabel, (int) pt.x, (int) pt.y);
         }
@@ -206,14 +206,14 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
     }
 
     private void createTopLevelTiles() {
-        MercatorSector sector = (MercatorSector) this.levels.getSector();
+        MercatorSector sector = (MercatorSector) this.levels.sector;
 
         Level level = levels.getFirstLevel();
         Angle dLat = level.getTileDelta().getLatitude();
         Angle dLon = level.getTileDelta().getLongitude();
 
-        Angle latOrigin = this.levels.getTileOrigin().getLatitude();
-        Angle lonOrigin = this.levels.getTileOrigin().getLongitude();
+        Angle latOrigin = this.levels.tileOrigin.getLatitude();
+        Angle lonOrigin = this.levels.tileOrigin.getLongitude();
 
         // Determine the row and column offset from the common WorldWind global tiling origin.
         int firstRow = Tile.computeRow(dLat, sector.latMin(), latOrigin);
@@ -232,7 +232,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
         for (int row = firstRow; row <= lastRow; row++) {
             double d2 = d1 + deltaLat;
 
-            Angle t1 = Tile.computeColumnLongitude(firstCol, dLon, lonOrigin);
+            Angle t1 = Tile.columnLon(firstCol, dLon, lonOrigin);
             for (int col = firstCol; col <= lastCol; col++) {
                 Angle t2 = t1.add(dLon);
 
@@ -413,7 +413,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
         if (vpc == null)
             return false;
 
-        if (!levels.getSector().contains(vpc.getLatitude(), vpc.getLongitude()))
+        if (!levels.sector.contains(vpc.getLatitude(), vpc.getLongitude()))
             return true;
 
         Level nextToLast = levels.getNextToLastLevel();
@@ -421,7 +421,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
             return true;
 
         Sector centerSector = nextToLast.computeSectorForPosition(vpc.getLatitude(), vpc.getLongitude(),
-            levels.getTileOrigin());
+            levels.tileOrigin);
         return this.needToSplit(dc, centerSector);
     }
 
@@ -498,7 +498,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
             throw new IllegalStateException(message);
         }
 
-        return !(dc.getVisibleSector() != null && !this.levels.getSector()
+        return !(dc.getVisibleSector() != null && !this.levels.sector
             .intersects(dc.getVisibleSector()));
     }
 
@@ -515,7 +515,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
         }
 
         Cylinder c = Sector.computeBoundingCylinder(dc.getGlobe(), dc.getVerticalExaggeration(),
-            this.levels.getSector());
+            this.levels.sector);
         gl.glColor3d(1, 1, 0);
         c.render(dc);
 
@@ -735,8 +735,8 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
 
         // Collect all the tiles intersecting the input sector.
         LatLon delta = targetLevel.getTileDelta();
-        Angle latOrigin = this.levels.getTileOrigin().getLatitude();
-        Angle lonOrigin = this.levels.getTileOrigin().getLongitude();
+        Angle latOrigin = this.levels.tileOrigin.getLatitude();
+        Angle lonOrigin = this.levels.tileOrigin.getLongitude();
         final int nwRow = Tile.computeRow(delta.getLatitude(), sector
             .latMax(), latOrigin);
         final int nwCol = Tile.computeColumn(delta.getLongitude(), sector
@@ -774,8 +774,8 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
 
         // Collect all the tiles intersecting the input sector.
         LatLon delta = targetLevel.getTileDelta();
-        Angle latOrigin = this.levels.getTileOrigin().getLatitude();
-        Angle lonOrigin = this.levels.getTileOrigin().getLongitude();
+        Angle latOrigin = this.levels.tileOrigin.getLatitude();
+        Angle lonOrigin = this.levels.tileOrigin.getLongitude();
         final int nwRow = Tile.computeRow(delta.getLatitude(), sector
             .latMax(), latOrigin);
         final int nwCol = Tile.computeColumn(delta.getLongitude(), sector

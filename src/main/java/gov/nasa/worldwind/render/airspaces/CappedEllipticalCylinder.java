@@ -762,6 +762,6 @@ public class CappedEllipticalCylinder extends AbstractAirspace {
         if (heading == null)
             heading = this.getHeading().degrees;
 
-        this.setHeading(Angle.fromDegrees(heading));
+        this.setHeading(new Angle(heading));
     }
 }

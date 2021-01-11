@@ -257,14 +257,14 @@ public class SurfaceShapeTest
             ((SurfaceEllipse) shape).setCenter(sampleLocations.get(0));
             ((SurfaceEllipse) shape).setMajorRadius(100);
             ((SurfaceEllipse) shape).setMinorRadius(25);
-            ((SurfaceEllipse) shape).setHeading(Angle.fromDegrees(30));
+            ((SurfaceEllipse) shape).setHeading(new Angle(30));
         }
         else if (shape instanceof SurfaceQuad)
         {
             ((SurfaceQuad) shape).setCenter(sampleLocations.get(0));
             ((SurfaceQuad) shape).setWidth(3);
             ((SurfaceQuad) shape).setHeight(200);
-            ((SurfaceQuad) shape).setHeading(Angle.fromDegrees(50));
+            ((SurfaceQuad) shape).setHeading(new Angle(50));
         }
     }
 

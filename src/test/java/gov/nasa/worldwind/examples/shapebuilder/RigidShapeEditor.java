@@ -1439,7 +1439,7 @@ public class RigidShapeEditor extends AbstractShapeEditor {
             skewChange *= -1;
 
         if (skew + skewChange >= 0 && skew + skewChange < 180)
-            this.shape.setSkewEastWest(Angle.fromDegrees(skew + skewChange));
+            this.shape.setSkewEastWest(new Angle(skew + skewChange));
     }
 
     protected void skewShapeNorthSouth(Point previousMousePoint, Point mousePoint) {
@@ -1495,7 +1495,7 @@ public class RigidShapeEditor extends AbstractShapeEditor {
             skewChange *= -1;
 
         if (skew + skewChange >= 0 && skew + skewChange < 180)
-            this.shape.setSkewNorthSouth(Angle.fromDegrees(skew + skewChange));
+            this.shape.setSkewNorthSouth(new Angle(skew + skewChange));
     }
 
     protected void skewShape(Point previousMousePoint, Point mousePoint) {
@@ -1561,9 +1561,9 @@ public class RigidShapeEditor extends AbstractShapeEditor {
         northSkewChange *= 50;
 
         if (eastSkew + eastSkewChange >= 0 && eastSkew + eastSkewChange < 180)
-            this.shape.setSkewEastWest(Angle.fromDegrees(eastSkew + eastSkewChange));
+            this.shape.setSkewEastWest(new Angle(eastSkew + eastSkewChange));
         if (northSkew + northSkewChange >= 0 && northSkew + northSkewChange < 180)
-            this.shape.setSkewNorthSouth(Angle.fromDegrees(northSkew + northSkewChange));
+            this.shape.setSkewNorthSouth(new Angle(northSkew + northSkewChange));
     }
 
     protected void moveTexture(Point previousMousePoint, Point mousePoint) {
@@ -1692,7 +1692,7 @@ public class RigidShapeEditor extends AbstractShapeEditor {
         if (surfacePoint == null) {
             Globe globe = this.wwd.model().getGlobe();
             surfacePoint = globe.computePointFromPosition(pos.getLatitude(), pos.getLongitude(),
-                globe.getElevation(pos.getLatitude(), pos.getLongitude()));
+                globe.elevation(pos.getLatitude(), pos.getLongitude()));
         }
 
         return this.wwd.view().project(surfacePoint);

@@ -43,7 +43,7 @@ public class SectorRangeFan extends AbstractMilStd2525TacticalGraphic implements
     /**
      * Default angle of the arrowhead.
      */
-    public final static Angle DEFAULT_ARROWHEAD_ANGLE = Angle.fromDegrees(60.0);
+    public final static Angle DEFAULT_ARROWHEAD_ANGLE = new Angle(60.0);
     /**
      * Default number format used to create azimuth and radius labels.
      */

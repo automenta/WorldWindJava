@@ -129,7 +129,7 @@ public class ViewIteration extends ApplicationTemplate {
             public void actionPerformed(ActionEvent actionEvent) {
                 if (pathPosition < path.size() - 1) {
                     BasicOrbitView view = (BasicOrbitView) wwjPanel.wwd().view();
-                    view.setHeading(Angle.fromDegrees(90));
+                    view.setHeading(new Angle(90));
                     view.addEyePositionAnimator(4000, view.getEyePosition(), path.get(++pathPosition));
                 }
             }

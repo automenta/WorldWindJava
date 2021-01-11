@@ -775,10 +775,10 @@ public class UnitsFormat extends AVListImpl {
             throw new IllegalArgumentException(msg);
         }
 
-        String latAngle = this.angle("", Angle.fromDegrees(Math.abs(latlon.getLatitude().degrees)));
+        String latAngle = this.angle("", new Angle(Math.abs(latlon.getLatitude().degrees)));
         String latString = String.format("%s%s", latAngle, latlon.getLatitude().degrees >= 0 ? "N" : "S");
 
-        String lonAngle = this.angle("", Angle.fromDegrees(Math.abs(latlon.getLongitude().degrees)));
+        String lonAngle = this.angle("", new Angle(Math.abs(latlon.getLongitude().degrees)));
         String lonString = String.format("%s%s", lonAngle, latlon.getLongitude().degrees >= 0 ? "E" : "W");
 
         return String.format("%s %s", latString, lonString);

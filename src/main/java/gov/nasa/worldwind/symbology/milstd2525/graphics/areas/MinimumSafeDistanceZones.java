@@ -29,7 +29,7 @@ public class MinimumSafeDistanceZones extends AbstractMilStd2525TacticalGraphic 
      * Default angle used to position the graphic's labels. This default angle (60 degrees) is chosen to match the
      * graphic template defined by MIL-STD-2525C, pg. 613.
      */
-    public final static Angle DEFAULT_LABEL_ANGLE = Angle.fromDegrees(60.0);
+    public final static Angle DEFAULT_LABEL_ANGLE = new Angle(60.0);
 
     /**
      * Position of the center of the range fan.

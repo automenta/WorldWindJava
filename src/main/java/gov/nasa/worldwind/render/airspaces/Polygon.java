@@ -119,7 +119,7 @@ public class Polygon extends AbstractAirspace {
         // of the points and oriented with the globe surface.
         Position centerPos = globe.computePositionFromEllipsoidalPoint(centerPoint);
         Matrix tx = globe.computeEllipsoidalOrientationAtPosition(
-            Angle.fromDegrees(centerPos.latitude), Angle.fromDegrees(centerPos.longitude),
+            new Angle(centerPos.latitude), new Angle(centerPos.longitude),
             centerPos.elevation);
         Matrix txInv = tx.getInverse();
         // Map the cartesian points to a local coordinate space.
@@ -145,8 +145,8 @@ public class Polygon extends AbstractAirspace {
         Collection<LatLon> tessellatedLocations) {
         List<Vec4> points = new ArrayList<>(locations.size());
         for (LatLon ll : locations) {
-            points.add(globe.computeEllipsoidalPointFromPosition(Angle.fromDegrees(ll.latitude),
-                Angle.fromDegrees(ll.longitude), 0));
+            points.add(globe.computeEllipsoidalPointFromPosition(new Angle(ll.latitude),
+                new Angle(ll.longitude), 0));
         }
 
         //noinspection StringEquality
@@ -155,8 +155,8 @@ public class Polygon extends AbstractAirspace {
 
         Vec4 centerPoint = Vec4.computeAveragePoint(points);
         Position centerPos = globe.computePositionFromEllipsoidalPoint(centerPoint);
-        Vec4 surfaceNormal = globe.computeEllipsoidalNormalAtLocation(Angle.fromDegrees(centerPos.latitude),
-            Angle.fromDegrees(centerPos.longitude));
+        Vec4 surfaceNormal = globe.computeEllipsoidalNormalAtLocation(new Angle(centerPos.latitude),
+            new Angle(centerPos.longitude));
 
         int numPoints = points.size();
         float[] coords = new float[3 * numPoints];

@@ -16,6 +16,7 @@ import org.w3c.dom.*;
 
 import java.io.*;
 import java.net.*;
+import java.nio.ByteBuffer;
 import java.util.List;
 
 /**
@@ -113,7 +114,7 @@ public class WMSBasicElevationModel extends BasicElevationModel {
 
     protected static void wmsSetFallbacks(AVList params) {
         if (params.get(AVKey.LEVEL_ZERO_TILE_DELTA) == null) {
-            Angle delta = Angle.fromDegrees(20);
+            Angle delta = new Angle(20);
             params.set(AVKey.LEVEL_ZERO_TILE_DELTA, new LatLon(delta, delta));
         }
 
@@ -281,13 +282,12 @@ public class WMSBasicElevationModel extends BasicElevationModel {
     //********************  Composition  ***************************//
     //**************************************************************//
 
-    protected static void downloadElevations(ElevationCompositionTile tile) throws Exception, MalformedURLException {
-        URL url = tile.getResourceURL();
+    protected static Retriever downloadElevations(ElevationCompositionTile tile) throws Exception {
 
-        Retriever retriever = new HTTPRetriever(url, new CompositionRetrievalPostProcessor(tile.getFile()));
-        retriever.setConnectTimeout(10000);
-        retriever.setReadTimeout(60000);
-        retriever.call();
+        Retriever retriever = new HTTPRetriever(tile.getResourceURL(), new CompositionRetrievalPostProcessor(tile.getFile()));
+//        retriever.setConnectTimeout(10000);
+//        retriever.setReadTimeout(60000);
+        return retriever.call();
     }
 
     /**
@@ -319,8 +319,13 @@ public class WMSBasicElevationModel extends BasicElevationModel {
         ElevationCompositionTile tile = new ElevationCompositionTile(sector, this.getLevels().getLastLevel(),
             tileWidth, n / tileWidth);
 
-        WMSBasicElevationModel.downloadElevations(tile);
-        tile.setElevations(this.readElevations(tile.getFile().toURI().toURL()), this);
+        ByteBuffer b = WMSBasicElevationModel.downloadElevations(tile).getBuffer();
+        //final BufferWrapper re = this.readElevations(tile.getFile().toURI().toURL());
+        if (b!=null)
+            tile.setElevations(BufferWrapper.ByteBufferWrapper.wrap(b, AVKey.INT8), this);
+        else
+            return;
+
 
         for (int i = 0; i < n; i++) {
             LatLon ll = latlons.get(i);

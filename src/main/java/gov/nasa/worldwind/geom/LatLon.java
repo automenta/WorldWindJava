@@ -161,7 +161,7 @@ public class LatLon {
         double t = WWMath.clamp(amount, 0.0d, 1.0d);
         Angle azimuth = LatLon.greatCircleAzimuth(value1, value2);
         Angle distance = LatLon.greatCircleDistance(value1, value2);
-        Angle pathLength = Angle.fromDegrees(t * distance.degrees);
+        Angle pathLength = new Angle(t * distance.degrees);
 
         return LatLon.greatCircleEndPosition(value1, azimuth, pathLength);
     }
@@ -188,7 +188,7 @@ public class LatLon {
         double t = WWMath.clamp(amount, 0.0d, 1.0d);
         Angle azimuth = LatLon.rhumbAzimuth(value1, value2);
         Angle distance = LatLon.rhumbDistance(value1, value2);
-        Angle pathLength = Angle.fromDegrees(t * distance.degrees);
+        Angle pathLength = new Angle(t * distance.degrees);
 
         return LatLon.rhumbEndPosition(value1, azimuth, pathLength);
     }
@@ -1388,7 +1388,7 @@ public class LatLon {
      */
     @Deprecated
     public final Angle getLatitude() {
-        return Angle.fromDegrees(this.latitude);
+        return new Angle(this.latitude);
     }
 
     /**
@@ -1398,7 +1398,7 @@ public class LatLon {
      */
     @Deprecated
     public final Angle getLongitude() {
-        return Angle.fromDegrees(this.longitude);
+        return new Angle(this.longitude);
     }
 
     /**

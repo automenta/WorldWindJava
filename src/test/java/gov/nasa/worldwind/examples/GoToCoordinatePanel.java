@@ -125,8 +125,8 @@ public class GoToCoordinatePanel extends JPanel {
                     sLon = sLon.trim();
                 }
 
-                lat = Angle.fromDegrees(Double.parseDouble(sLat) * signLat);
-                lon = Angle.fromDegrees(Double.parseDouble(sLon) * signLon);
+                lat = new Angle(Double.parseDouble(sLat) * signLat);
+                lon = new Angle(Double.parseDouble(sLon) * signLon);
             }
         }
 
@@ -191,7 +191,7 @@ public class GoToCoordinatePanel extends JPanel {
         double s = DMS.length > 2 ? Integer.parseInt(DMS[2]) : 0;
 
         if (m >= 0 && m <= 60 && s >= 0 && s <= 60)
-            return Angle.fromDegrees(d * sign + m / 60 * sign + s / 3600 * sign);
+            return new Angle(d * sign + m / 60 * sign + s / 3600 * sign);
 
         return null;
     }

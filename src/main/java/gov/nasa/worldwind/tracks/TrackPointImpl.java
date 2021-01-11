@@ -37,7 +37,7 @@ public class TrackPointImpl implements TrackPoint {
     }
 
     public void setLatitude(double latitude) {
-        this.position = new Position(Angle.fromDegrees(latitude), this.position.getLongitude(),
+        this.position = new Position(new Angle(latitude), this.position.getLongitude(),
             this.position.getElevation());
     }
 
@@ -46,7 +46,7 @@ public class TrackPointImpl implements TrackPoint {
     }
 
     public void setLongitude(double longitude) {
-        this.position = new Position(this.position.getLatitude(), Angle.fromDegrees(longitude),
+        this.position = new Position(this.position.getLatitude(), new Angle(longitude),
             this.position.getElevation());
     }
 

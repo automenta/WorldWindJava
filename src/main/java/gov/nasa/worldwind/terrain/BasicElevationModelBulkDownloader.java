@@ -388,7 +388,7 @@ public class BasicElevationModelBulkDownloader extends BulkRetrievalThread {
 
         // Collect all the tiles intersecting the input sector.
         LatLon delta = targetLevel.getTileDelta();
-        LatLon origin = this.elevationModel.getLevels().getTileOrigin();
+        LatLon origin = this.elevationModel.getLevels().tileOrigin;
         final int nwRow = Tile.computeRow(delta.getLatitude(), sector.latMax(), origin.getLatitude());
         final int nwCol = Tile.computeColumn(delta.getLongitude(), sector.lonMin(), origin.getLongitude());
         final int seRow = Tile.computeRow(delta.getLatitude(), sector.latMin(), origin.getLatitude());
@@ -420,7 +420,7 @@ public class BasicElevationModelBulkDownloader extends BulkRetrievalThread {
 
         // Collect all the tiles intersecting the input sector.
         LatLon delta = targetLevel.getTileDelta();
-        LatLon origin = this.elevationModel.getLevels().getTileOrigin();
+        LatLon origin = this.elevationModel.getLevels().tileOrigin;
         final int nwRow = Tile.computeRow(delta.getLatitude(), sector.latMax(), origin.getLatitude());
         final int nwCol = Tile.computeColumn(delta.getLongitude(), sector.lonMin(), origin.getLongitude());
         final int seRow = Tile.computeRow(delta.getLatitude(), sector.latMin(), origin.getLatitude());

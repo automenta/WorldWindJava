@@ -197,13 +197,13 @@ public class Tile implements Comparable<Tile>, Cacheable {
      * @throws IllegalArgumentException if the grid interval (<code>delta</code>) is null or zero or the row index is
      *                                  negative.
      */
-    public static Angle computeRowLatitude(int row, Angle delta, Angle origin) {
+    public static Angle rowLat(int row, Angle delta, Angle origin) {
         Tile.assertPositiveRow(row);
 
         Tile.assertPositiveDelta(delta);
 
         double latDegrees = origin.degrees + (row * delta.degrees);
-        return Angle.fromDegrees(latDegrees);
+        return new Angle(latDegrees);
     }
 
     private static void assertPositiveRow(int row) {
@@ -224,7 +224,7 @@ public class Tile implements Comparable<Tile>, Cacheable {
      * @throws IllegalArgumentException if the grid interval (<code>delta</code>) is null or zero or the column index is
      *                                  negative.
      */
-    public static Angle computeColumnLongitude(int column, Angle delta, Angle origin) {
+    public static Angle columnLon(int column, Angle delta, Angle origin) {
         if (column < 0) {
             String msg = Logging.getMessage("generic.ColumnIndexOutOfRange", column);
             Logging.logger().severe(msg);
@@ -234,7 +234,7 @@ public class Tile implements Comparable<Tile>, Cacheable {
         Tile.assertPositiveDelta(delta);
 
         double lonDegrees = origin.degrees + (column * delta.degrees);
-        return Angle.fromDegrees(lonDegrees);
+        return new Angle(lonDegrees);
     }
 
     @Deprecated

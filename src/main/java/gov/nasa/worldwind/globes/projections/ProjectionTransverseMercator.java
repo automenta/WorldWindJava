@@ -25,7 +25,7 @@ import gov.nasa.worldwind.util.*;
  * @version $Id: ProjectionTransverseMercator.java 2393 2014-10-20 20:21:55Z tgaskins $
  */
 public class ProjectionTransverseMercator extends AbstractGeographicProjection {
-    protected static final Angle DEFAULT_WIDTH = Angle.fromDegrees(30);
+    protected static final Angle DEFAULT_WIDTH = new Angle(30);
     protected static final Angle DEFAULT_CENTRAL_MERIDIAN = Angle.ZERO;
     protected static final Angle DEFAULT_CENTRAL_LATITUDE = Angle.ZERO;
 
@@ -173,14 +173,14 @@ public class ProjectionTransverseMercator extends AbstractGeographicProjection {
     public Vec4 geographicToCartesian(Globe globe, Angle latitude, Angle longitude, double metersElevation,
         Vec4 offset) {
         if (latitude.degrees > 86)
-            latitude = Angle.fromDegrees(86);
+            latitude = new Angle(86);
         else if (latitude.degrees < -82)
-            latitude = Angle.fromDegrees(-82);
+            latitude = new Angle(-82);
 
         if (longitude.degrees > this.centralMeridian.degrees + this.width.degrees)
-            longitude = Angle.fromDegrees(this.centralMeridian.degrees + this.width.degrees);
+            longitude = new Angle(this.centralMeridian.degrees + this.width.degrees);
         else if (longitude.degrees < this.centralMeridian.degrees - this.width.degrees)
-            longitude = Angle.fromDegrees(this.centralMeridian.degrees - this.width.degrees);
+            longitude = new Angle(this.centralMeridian.degrees - this.width.degrees);
 
         TMCoord tm = TMCoord.fromLatLon(latitude, longitude,
             globe, null, null, this.centralLatitude, this.centralMeridian, 0, 0, this.getScale());

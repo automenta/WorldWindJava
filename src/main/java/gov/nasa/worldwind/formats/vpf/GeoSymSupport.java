@@ -167,7 +167,7 @@ public class GeoSymSupport {
 
         i = (Integer) row.get("tdir");
         if (i != null)
-            attr.setOffsetAngle(Angle.fromDegrees(i));
+            attr.setOffsetAngle(new Angle((double) i));
 
         return attr;
     }

@@ -152,7 +152,7 @@ public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay {
         if (surfacePoint == null) {
             Globe globe = mt.getWwd().model().getGlobe();
             surfacePoint = globe.computePointFromPosition(pos.getLatitude(), pos.getLongitude(),
-                globe.getElevation(pos.getLatitude(), pos.getLongitude()));
+                globe.elevation(pos.getLatitude(), pos.getLongitude()));
         }
 
         return mt.getWwd().view().project(surfacePoint);

@@ -40,7 +40,7 @@ public class MatrixTest
     {
         Matrix m = Matrix.IDENTITY;
         m = m.multiply(Matrix.fromTranslation(100, 200, 300));
-        m = m.multiply(Matrix.fromRotationXYZ(Angle.fromDegrees(10), Angle.fromDegrees(20), Angle.fromDegrees(30)));
+        m = m.multiply(Matrix.fromRotationXYZ(new Angle(10), new Angle(20), new Angle(30)));
 
         Matrix mInv = m.getInverse();
         assertNotNull("Matrix inverse is null", mInv);

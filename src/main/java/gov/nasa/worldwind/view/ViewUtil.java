@@ -285,7 +285,8 @@ public class ViewUtil {
 
         double degrees = unnormalizedHeading.degrees;
         double heading = degrees % 360;
-        return Angle.fromDegrees(heading > 180 ? heading - 360 : (heading < -180 ? 360 + heading : heading));
+        double degrees1 = heading > 180 ? heading - 360 : (heading < -180 ? 360 + heading : heading);
+        return new Angle(degrees1);
     }
 
     public static Angle normalizedPitch(Angle unnormalizedPitch) {
@@ -298,14 +299,16 @@ public class ViewUtil {
         // Normalize pitch to the range [-180, 180].
         double degrees = unnormalizedPitch.degrees;
         double pitch = degrees % 360;
-        return Angle.fromDegrees(pitch > 180 ? pitch - 360 : (pitch < -180 ? 360 + pitch : pitch));
+        double degrees1 = pitch > 180 ? pitch - 360 : (pitch < -180 ? 360 + pitch : pitch);
+        return new Angle(degrees1);
     }
 
     public static Angle normalizedRoll(Angle unnormalizedRoll) {
 
         double degrees = unnormalizedRoll.degrees;
         double roll = degrees % 360;
-        return Angle.fromDegrees(roll > 180 ? roll - 360 : (roll < -180 ? 360 + roll : roll));
+        double degrees1 = roll > 180 ? roll - 360 : (roll < -180 ? 360 + roll : roll);
+        return new Angle(degrees1);
     }
 
     public static Line computeRayFromScreenPoint(View view, double x, double y,
@@ -419,7 +422,7 @@ public class ViewUtil {
         if (surfacePosition == null)
             surfacePosition = new Position(
                 position,
-                globe.getElevation(position.getLatitude(), position.getLongitude()) * dc.getVerticalExaggeration());
+                globe.elevation(position.getLatitude(), position.getLongitude()) * dc.getVerticalExaggeration());
 
         return position.getElevation() - surfacePosition.getElevation();
     }

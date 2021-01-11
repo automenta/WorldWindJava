@@ -13,7 +13,6 @@ import javax.net.ssl.*;
 import java.io.*;
 import java.net.*;
 import java.nio.ByteBuffer;
-import java.nio.channels.ClosedByInterruptException;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.*;
 import java.util.zip.*;
@@ -40,7 +39,7 @@ public class URLRetriever extends WWObjectImpl implements Retriever {
     protected volatile String contentType;
     protected volatile ByteBuffer byteBuffer;
     protected volatile URLConnection connection;
-    protected int connectTimeout = Configuration.getIntegerValue(AVKey.URL_CONNECT_TIMEOUT, 8000);
+    protected int connectTimeout = Configuration.getIntegerValue(AVKey.URL_CONNECT_TIMEOUT, 15000);
     protected int readTimeout = Configuration.getIntegerValue(AVKey.URL_READ_TIMEOUT, 5000);
     protected int staleRequestLimit = -1;
     protected long submitEpoch;
@@ -80,7 +79,6 @@ public class URLRetriever extends WWObjectImpl implements Retriever {
     }
 
     protected static ByteBuffer readStream(InputStream inputStream) throws IOException {
-
         return ByteBuffer.wrap(inputStream.readAllBytes());
     }
 
@@ -251,15 +249,18 @@ public class URLRetriever extends WWObjectImpl implements Retriever {
             if ((this.byteBuffer = this.doRead(this.connection)) == null)
                 throw new IOException("empty");
 
-            setState(Retriever.RETRIEVER_STATE_SUCCESSFUL);
-
             if (this.postProcessor != null)
                 this.byteBuffer = this.postProcessor.run(this);
 
             WorldWind.getNetworkStatus().logAvailableHost(this.url);
+            setState(Retriever.RETRIEVER_STATE_SUCCESSFUL);
+
+
         }
-        catch (ClosedByInterruptException e) {
-            this.interrupted();
+        catch (IOException e) {
+            setState(Retriever.RETRIEVER_STATE_ERROR);
+            System.err.println(url + " " + e);
+            //e.printStackTrace();
         }
         catch (Exception e) {
             setState(Retriever.RETRIEVER_STATE_ERROR);

@@ -95,7 +95,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
 
             Vec4 pt = sectorGeometry.getSurfacePoint(position);
             if (pt == null) {
-                double elevation = this.getGlobe().getElevation(position.getLatitude(), position.getLongitude());
+                double elevation = this.getGlobe().elevation(position.getLatitude(), position.getLongitude());
                 pt = this.getGlobe().computePointFromPosition(position,
                     position.getAltitude() + elevation * this.getVerticalExaggeration());
             }
@@ -112,7 +112,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
             Vec4 pt = sectorGeometry.getSurfacePoint(latitude, longitude, metersOffset);
 
             if (pt == null) {
-                double elevation = this.getGlobe().getElevation(latitude, longitude);
+                double elevation = this.getGlobe().elevation(latitude, longitude);
                 pt = this.getGlobe().computePointFromPosition(latitude, longitude,
                     metersOffset + elevation * this.getVerticalExaggeration());
             }

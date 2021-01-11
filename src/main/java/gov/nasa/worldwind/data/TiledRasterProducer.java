@@ -659,13 +659,13 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
         this.calculateTileCount(levelSet, params);
         this.startProgress();
 
-        Sector sector = levelSet.getSector();
+        Sector sector = levelSet.sector;
         Level level = levelSet.getFirstLevel();
 
         Angle dLat = level.getTileDelta().getLatitude();
         Angle dLon = level.getTileDelta().getLongitude();
-        Angle latOrigin = levelSet.getTileOrigin().getLatitude();
-        Angle lonOrigin = levelSet.getTileOrigin().getLongitude();
+        Angle latOrigin = levelSet.tileOrigin.getLatitude();
+        Angle lonOrigin = levelSet.tileOrigin.getLongitude();
         int firstRow = Tile.computeRow(dLat, sector.latMin(), latOrigin);
         int firstCol = Tile.computeColumn(dLon, sector.lonMin(), lonOrigin);
         int lastRow = Tile.computeRow(dLat, sector.latMax(), latOrigin);
@@ -673,13 +673,13 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
 
         buildLoop:
         {
-            Angle p1 = Tile.computeRowLatitude(firstRow, dLat, latOrigin);
+            Angle p1 = Tile.rowLat(firstRow, dLat, latOrigin);
             for (int row = firstRow; row <= lastRow; row++) {
                 Angle p2 = p1.add(dLat);
-                Angle t1 = Tile.computeColumnLongitude(firstCol, dLon, lonOrigin);
+                Angle t1 = Tile.columnLon(firstCol, dLon, lonOrigin);
                 for (int col = firstCol; col <= lastCol; col++) {
                     // Exit if the caller has instructed us to stop production.
-                    Thread.yield();
+//                    Thread.yield();
                     if (this.isStopped())
                         break buildLoop;
 
@@ -726,7 +726,7 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
         // Find the data sources that intersect this tile and intersect the LevelSet sector.
         Collection<DataRaster> intersectingRasters = new ArrayList<>();
         for (DataRaster raster : dataRasters) {
-            if (raster.getSector().intersects(tile.sector) && raster.getSector().intersects(levelSet.getSector()))
+            if (raster.getSector().intersects(tile.sector) && raster.getSector().intersects(levelSet.sector))
                 intersectingRasters.add(raster);
         }
 
@@ -759,7 +759,7 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
         DataRaster[] subRasters = new DataRaster[subTiles.length];
         for (int index = 0; index < subTiles.length; index++) {
             // If the sub-tile does not intersect the level set, then skip that sub-tile.
-            if (subTiles[index].sector.intersects(levelSet.getSector())) {
+            if (subTiles[index].sector.intersects(levelSet.sector)) {
                 // Recursively create the sub-tile raster.
                 DataRaster subRaster = this.createTileRaster(levelSet, subTiles[index], params);
                 // If creating the sub-tile raster fails, then skip that sub-tile.
@@ -1043,14 +1043,14 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
     //**************************************************************//
 
     protected void calculateTileCount(LevelSet levelSet, AVList params) {
-        Sector sector = levelSet.getSector();
+        Sector sector = levelSet.sector;
 
         this.tileCount = 0;
         for (Level level : levelSet.getLevels()) {
             Angle dLat = level.getTileDelta().getLatitude();
             Angle dLon = level.getTileDelta().getLongitude();
-            Angle latOrigin = levelSet.getTileOrigin().getLatitude();
-            Angle lonOrigin = levelSet.getTileOrigin().getLongitude();
+            Angle latOrigin = levelSet.tileOrigin.getLatitude();
+            Angle lonOrigin = levelSet.tileOrigin.getLongitude();
             int firstRow = Tile.computeRow(dLat, sector.latMin(), latOrigin);
             int firstCol = Tile.computeColumn(dLon, sector.lonMin(), lonOrigin);
             int lastRow = Tile.computeRow(dLat, sector.latMax(), latOrigin);

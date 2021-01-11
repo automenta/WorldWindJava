@@ -25,8 +25,7 @@ public class MercatorSector extends Sector {
 
     public static MercatorSector fromDegrees(double minLatPercent,
         double maxLatPercent, double minLongitude, double maxLongitude) {
-        return new MercatorSector(minLatPercent, maxLatPercent, Angle
-            .fromDegrees(minLongitude), Angle.fromDegrees(maxLongitude));
+        return new MercatorSector(minLatPercent, maxLatPercent, new Angle(minLongitude), new Angle(maxLongitude));
     }
 
     public static MercatorSector fromSector(Sector sector) {

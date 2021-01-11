@@ -167,7 +167,7 @@ public class RetrieveElevations extends ApplicationTemplate {
             double[] elevations = new double[latlons.size()];
 
             // request resolution of DTED2 (1degree / 3600 )
-            double targetResolution = Angle.fromDegrees(1.0d).radians() / 3600;
+            double targetResolution = new Angle(1.0d).radians() / 3600;
 
             double resolutionAchieved = this.wwd.model().getGlobe().getElevationModel().getElevations(
                 sector, latlons, targetResolution, elevations);

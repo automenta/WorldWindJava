@@ -566,7 +566,7 @@ public class Configuration // Singleton
         if (tz != null)
             defaults.setProperty(AVKey.INITIAL_LONGITUDE,
                 Double.toString(
-                    Angle.fromDegrees(180.0 * tz.getOffset(System.currentTimeMillis()) / (12.0 * 3.6e6)).degrees));
+                    new Angle(180.0 * tz.getOffset(System.currentTimeMillis()) / (12.0 * 3.6e6)).degrees));
         return defaults;
     }
 

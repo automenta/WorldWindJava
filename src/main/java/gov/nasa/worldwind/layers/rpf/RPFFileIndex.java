@@ -69,7 +69,7 @@ public class RPFFileIndex {
         if (buffer != null) {
             double value = buffer.getDouble();
             if (!Double.isNaN(value)) {
-                a = Angle.fromDegrees(value);
+                a = new Angle(value);
             }
         }
         return a;

@@ -285,7 +285,7 @@ public class Shapes {
         }
 
         private static Info[] buildSurfaceShapes() {
-            LatLon position = new LatLon(Angle.fromDegrees(38), Angle.fromDegrees(-105));
+            LatLon position = new LatLon(new Angle(38), new Angle(-105));
 
             ArrayList<LatLon> surfaceLinePositions = new ArrayList<>();
             surfaceLinePositions.add(position);
@@ -305,23 +305,23 @@ public class Shapes {
         private static Info[] buildFreeShapes() {
             double elevation = 10.0e3;
             ArrayList<Position> positions = new ArrayList<>();
-            positions.add(new Position(Angle.fromDegrees(37.8484), Angle.fromDegrees(-119.9754), elevation));
-            positions.add(new Position(Angle.fromDegrees(39.3540), Angle.fromDegrees(-110.1526), elevation));
-            positions.add(new Position(Angle.fromDegrees(38.3540), Angle.fromDegrees(-100.1526), elevation));
+            positions.add(new Position(new Angle(37.8484), new Angle(-119.9754), elevation));
+            positions.add(new Position(new Angle(39.3540), new Angle(-110.1526), elevation));
+            positions.add(new Position(new Angle(38.3540), new Angle(-100.1526), elevation));
 
             ArrayList<Position> positions2 = new ArrayList<>();
-            positions2.add(new Position(Angle.fromDegrees(0), Angle.fromDegrees(-150), elevation));
-            positions2.add(new Position(Angle.fromDegrees(25), Angle.fromDegrees(-75), elevation));
-            positions2.add(new Position(Angle.fromDegrees(50), Angle.fromDegrees(0), elevation));
+            positions2.add(new Position(new Angle(0), new Angle(-150), elevation));
+            positions2.add(new Position(new Angle(25), new Angle(-75), elevation));
+            positions2.add(new Position(new Angle(50), new Angle(0), elevation));
 
             ArrayList<Position> positions3 = new ArrayList<>();
             for (double lat = 42, lon = -100; lat <= 45; lat += 0.1, lon += 0.1) {
-                positions3.add(new Position(Angle.fromDegrees(lat), Angle.fromDegrees(lon), elevation));
+                positions3.add(new Position(new Angle(lat), new Angle(lon), elevation));
             }
 
             ArrayList<Position> positions4 = new ArrayList<>();
-            positions4.add(new Position(Angle.fromDegrees(90), Angle.fromDegrees(-110), elevation));
-            positions4.add(new Position(Angle.fromDegrees(-90), Angle.fromDegrees(-110), elevation));
+            positions4.add(new Position(new Angle(90), new Angle(-110), elevation));
+            positions4.add(new Position(new Angle(-90), new Angle(-110), elevation));
 
             ArrayList<Position> positions5 = new ArrayList<>();
             for (int i = 0; i < 100; i++) {

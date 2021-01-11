@@ -61,8 +61,8 @@ public class AntennaViewer extends ApplicationTemplate {
             AntennaModel gain = new AntennaModel(makeInterpolator());
             gain.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             gain.setPosition(ANTENNA_POSITION);
-            gain.setAzimuth(Angle.fromDegrees(30));
-            gain.setElevationAngle(Angle.fromDegrees(20));
+            gain.setAzimuth(new Angle(30));
+            gain.setElevationAngle(new Angle(20));
             gain.setAttributes(normalAttributes);
             gain.setHighlightAttributes(highlightAttributes);
             gain.setGainOffset(640);

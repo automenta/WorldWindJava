@@ -656,7 +656,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
 
             // wedges only
             Wedge wedgeShape = (Wedge) shape;
-            wedgeShape.setWedgeAngle(Angle.fromDegrees(220));
+            wedgeShape.setWedgeAngle(new Angle(220));
         }
 
         public String toString() {

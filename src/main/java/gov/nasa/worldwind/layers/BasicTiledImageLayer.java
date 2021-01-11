@@ -165,7 +165,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
 
     protected static void setFallbacks(AVList params) {
         if (params.get(AVKey.LEVEL_ZERO_TILE_DELTA) == null) {
-            Angle delta = Angle.fromDegrees(36);
+            Angle delta = new Angle(36);
             params.set(AVKey.LEVEL_ZERO_TILE_DELTA, new LatLon(delta, delta));
         }
 
@@ -381,7 +381,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
      * @throws IllegalArgumentException if the sector is null or the resolution is less than zero.
      */
     public long getEstimatedMissingDataSize(Sector sector, double resolution, FileStore fileStore) {
-        Sector targetSector = sector != null ? getLevels().getSector().intersection(sector) : null;
+        Sector targetSector = sector != null ? getLevels().sector.intersection(sector) : null;
         if (targetSector == null)
             return 0;
 

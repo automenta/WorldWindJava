@@ -247,7 +247,7 @@ public class TriangleWavePositionIterator implements Iterator {
         }
 
         Angle azimuth = LatLon.greatCircleAzimuth(this.thisPosition, this.nextControlPosition);
-        LatLon ll = LatLon.greatCircleEndPosition(this.thisPosition, azimuth, Angle.fromDegrees(this.thisStep));
+        LatLon ll = LatLon.greatCircleEndPosition(this.thisPosition, azimuth, new Angle(this.thisStep));
 
         // Transition to the next state. If we were drawing a line we are now drawing a wave. If we were starting a
         // wave, we're now at the wave peak.

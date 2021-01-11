@@ -22,7 +22,7 @@ import java.util.*;
 public class VeryManyPaths extends ApplicationTemplate {
     protected static final int NUM_PATHS = 2000;
     protected static final int NUM_POSITIONS = 300;
-    protected static final Angle PATH_LENGTH = Angle.fromDegrees(5);
+    protected static final Angle PATH_LENGTH = new Angle(5);
     protected static final double PATH_HEIGHT = 1.0e3;
     protected static final LatLon START_LOCATION = LatLon.fromDegrees(48.86, 2.33);
     protected static final int ALTITUDE_MODE = WorldWind.ABSOLUTE;
@@ -53,7 +53,7 @@ public class VeryManyPaths extends ApplicationTemplate {
             double dAngle = 360.0d / numPaths;
 
             for (int i = 0; i < numPaths; i++) {
-                Angle heading = Angle.fromDegrees(i * dAngle);
+                Angle heading = new Angle(i * dAngle);
                 layer.add(AppFrame.makePath(origin, heading, length, numPositions));
             }
 

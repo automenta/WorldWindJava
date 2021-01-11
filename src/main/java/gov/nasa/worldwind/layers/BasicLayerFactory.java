@@ -271,7 +271,7 @@ public class BasicLayerFactory extends BasicFactory {
     protected Layer createFromLayerDocument(Element domElement, AVList params) {
         String className = WWXML.getText(domElement, "@className");
         if (className != null && !className.isEmpty()) {
-            Layer layer = (Layer) WorldWind.createComponent(className);
+            Layer layer = (Layer) WorldWind.create(className);
             String actuate = WWXML.getText(domElement, "@actuate");
             layer.setEnabled(WWUtil.isEmpty(actuate) || actuate.equals("onLoad"));
             WWXML.invokePropertySetters(layer, domElement);

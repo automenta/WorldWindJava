@@ -499,7 +499,7 @@ public class ExtrudedPolygonEditor extends AbstractShapeEditor {
         if (surfacePoint == null) {
             Globe globe = this.wwd.model().getGlobe();
             surfacePoint = globe.computePointFromPosition(pos.getLatitude(), pos.getLongitude(),
-                globe.getElevation(pos.getLatitude(), pos.getLongitude()));
+                globe.elevation(pos.getLatitude(), pos.getLongitude()));
         }
 
         return this.wwd.view().project(surfacePoint);

@@ -79,7 +79,7 @@ public class KMLFlyViewController extends KMLViewController {
             MIN_LENGTH_MILLIS, MAX_LENGTH_MILLIS);
 
         Animator animator = createFlyToLookAtAnimator(this.flyView, lookAtPosition,
-            Angle.fromDegrees(heading), Angle.fromDegrees(tilt), range,
+            new Angle(heading), new Angle(tilt), range,
             timeToMove, KMLUtil.convertAltitudeMode(altitudeMode, WorldWind.CLAMP_TO_GROUND)); // KML default
 
         ViewInputHandler inputHandler = this.flyView.getViewInputHandler();
@@ -112,9 +112,9 @@ public class KMLFlyViewController extends KMLViewController {
 
         Animator animator = FlyToFlyViewAnimator.createFlyToFlyViewAnimator(this.flyView,
             this.flyView.getEyePosition(), cameraPosition,
-            this.flyView.getHeading(), Angle.fromDegrees(heading),
-            this.flyView.getPitch(), Angle.fromDegrees(tilt),
-            this.flyView.getRoll(), Angle.fromDegrees(roll),
+            this.flyView.getHeading(), new Angle(heading),
+            this.flyView.getPitch(), new Angle(tilt),
+            this.flyView.getRoll(), new Angle(roll),
             this.flyView.getEyePosition().getElevation(), cameraPosition.getElevation(),
             timeToMove, KMLUtil.convertAltitudeMode(altitudeMode,
                 WorldWind.RELATIVE_TO_GROUND)); // Camera default, differs from KML default
@@ -236,13 +236,13 @@ public class KMLFlyViewController extends KMLViewController {
 
             if (this.altitudeMode == WorldWind.CLAMP_TO_GROUND) {
                 overrideEndElevation = true;
-                lookAtElevation = this.targetView.getGlobe().getElevation(this.lookAtPosition.getLatitude(),
+                lookAtElevation = this.targetView.getGlobe().elevation(this.lookAtPosition.getLatitude(),
                     this.lookAtPosition.getLongitude());
             }
             else if (this.altitudeMode == WorldWind.RELATIVE_TO_GROUND) {
                 overrideEndElevation = true;
                 lookAtElevation =
-                    this.targetView.getGlobe().getElevation(this.lookAtPosition.getLatitude(),
+                    this.targetView.getGlobe().elevation(this.lookAtPosition.getLatitude(),
                         this.lookAtPosition.getLongitude()) + this.lookAtPosition.getAltitude();
             }
 

@@ -1155,7 +1155,7 @@ public class ImageUtil {
         double leftExtent2 = sector.lonMin().degrees + (xPixel * 0.5);
 
         TMCoord tmUpperLeft = TMCoord.fromLatLon(utmUpperLeft.getLatitude(), utmUpperLeft.getLongitude(),
-            earth, null, null, Angle.fromDegrees(0.0), utmUpperLeft.getCentralMeridian(),
+            earth, null, null, new Angle(0.0), utmUpperLeft.getCentralMeridian(),
             False_Easting, False_Northing, Scale);
 
         double srcTop = tmUpperLeft.getNorthing() + (yPixelSize * 0.5);
@@ -1166,7 +1166,7 @@ public class ImageUtil {
                 double yTarget = topExtent2 + y * yPixel;
                 double xTarget = leftExtent2 + x * xPixel;
                 TMCoord TM = TMCoord.fromLatLon(Angle.fromDegreesLatitude(yTarget), Angle.fromDegreesLongitude(xTarget),
-                    earth, null, null, Angle.fromDegrees(0.0), utmUpperLeft.getCentralMeridian(),
+                    earth, null, null, new Angle(0.0), utmUpperLeft.getCentralMeridian(),
                     False_Easting, False_Northing, Scale);
 
                 double distFromCornerX = TM.getEasting() - srcLeft;

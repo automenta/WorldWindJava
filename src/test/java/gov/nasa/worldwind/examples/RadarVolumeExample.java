@@ -49,19 +49,19 @@ public class RadarVolumeExample extends ApplicationTemplate {
         protected final double outerRange = 30.0e3;
         protected final int numAz = 25; // number of azimuth samplings
         protected final int numEl = 25; // number of elevation samplings
-        protected final Angle minimumElevation = Angle.fromDegrees(0);
+        protected final Angle minimumElevation = new Angle(0);
 
         public AppFrame() {
             super(true, true, false);
 
             Position center = Position.fromDegrees(36.8378, -118.8743, 100.0e2); // radar location
-            Angle startAzimuth = Angle.fromDegrees(140);
-            Angle endAzimuth = Angle.fromDegrees(270);
-            Angle startElevation = Angle.fromDegrees(-50);
-            Angle endElevation = Angle.fromDegrees(50);
-            Angle coneFieldOfView = Angle.fromDegrees(100);
-            Angle coneElevation = Angle.fromDegrees(20);
-            Angle coneAzimuth = Angle.fromDegrees(205);
+            Angle startAzimuth = new Angle(140);
+            Angle endAzimuth = new Angle(270);
+            Angle startElevation = new Angle(-50);
+            Angle endElevation = new Angle(50);
+            Angle coneFieldOfView = new Angle(100);
+            Angle coneElevation = new Angle(20);
+            Angle coneAzimuth = new Angle(205);
 
             // Initialize the high-resolution terrain class. Construct it to use 50 meter resolution elevations.
             this.terrain = new HighResolutionTerrain(this.wwd().model().getGlobe(), 50.0d);

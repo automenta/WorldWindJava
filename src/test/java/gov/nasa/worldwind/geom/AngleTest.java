@@ -145,7 +145,7 @@ public class AngleTest
         int degrees = 16;
         int minutes = 58;
         int seconds = 27;
-        double expectedValue = Angle.fromDegrees(degrees + minutes / 60d + seconds / 3600d).degrees;
+        double expectedValue = new Angle(degrees + minutes / 60d + seconds / 3600d).degrees;
         String angleString = degrees + " " + minutes + " " + seconds;
 
         double actualValue = Angle.fromDMS(angleString).degrees;
@@ -159,7 +159,7 @@ public class AngleTest
         int degrees = 16;
         int minutes = 58;
         int seconds = 27;
-        double expectedValue = Angle.fromDegrees(degrees + minutes / 60d + seconds / 3600d).degrees;
+        double expectedValue = new Angle(degrees + minutes / 60d + seconds / 3600d).degrees;
         String angleString = "+" + degrees + " " + minutes + " " + seconds;
 
         double actualValue = Angle.fromDMS(angleString).degrees;
@@ -173,7 +173,7 @@ public class AngleTest
         int degrees = 16;
         int minutes = 58;
         int seconds = 27;
-        double expectedValue = Angle.fromDegrees(degrees + minutes / 60d + seconds / 3600d).degrees;
+        double expectedValue = new Angle(degrees + minutes / 60d + seconds / 3600d).degrees;
         String angleString = degrees + " " + minutes + " " + seconds + " N";
 
         double actualValue = Angle.fromDMS(angleString).degrees;
@@ -187,7 +187,7 @@ public class AngleTest
         int degrees = 16;
         int minutes = 58;
         int seconds = 27;
-        double expectedValue = Angle.fromDegrees(degrees + minutes / 60d + seconds / 3600d).multiply(-1.0).degrees;
+        double expectedValue = new Angle(degrees + minutes / 60d + seconds / 3600d).multiply(-1.0).degrees;
         String angleString = "-" + degrees + " " + minutes + " " + seconds;
 
         double actualValue = Angle.fromDMS(angleString).degrees;
@@ -201,7 +201,7 @@ public class AngleTest
         int degrees = 16;
         int minutes = 58;
         int seconds = 27;
-        double expectedValue = Angle.fromDegrees(degrees + minutes / 60d + seconds / 3600d).multiply(-1.0).degrees;
+        double expectedValue = new Angle(degrees + minutes / 60d + seconds / 3600d).multiply(-1.0).degrees;
         String angleString = degrees + " " + minutes + " " + seconds + " S";
 
         double actualValue = Angle.fromDMS(angleString).degrees;
@@ -215,7 +215,7 @@ public class AngleTest
         int degrees = 16;
         int minutes = 58;
         int seconds = 27;
-        double expectedValue = Angle.fromDegrees(degrees + minutes / 60d + seconds / 3600d).multiply(-1.0).degrees;
+        double expectedValue = new Angle(degrees + minutes / 60d + seconds / 3600d).multiply(-1.0).degrees;
         String angleString = "+" + degrees + " " + minutes + " " + seconds + " S";
 
         double actualValue = Angle.fromDMS(angleString).degrees;
@@ -230,7 +230,7 @@ public class AngleTest
         int degrees = 16;
         int minutes = 58;
         int seconds = 27;
-        double expectedValue = Angle.fromDegrees(degrees + minutes / 60d + seconds / 3600d).degrees; // North
+        double expectedValue = new Angle(degrees + minutes / 60d + seconds / 3600d).degrees; // North
         String angleString = "-" + degrees + " " + minutes + " " + seconds + " N";
 
         double actualValue = Angle.fromDMS(angleString).degrees;
@@ -245,7 +245,7 @@ public class AngleTest
         int degrees = 16;
         int minutes = 58;
         int seconds = 27;
-        double expectedValue = Angle.fromDegrees(degrees + minutes / 60d + seconds / 3600d).multiply(-1.0).degrees;
+        double expectedValue = new Angle(degrees + minutes / 60d + seconds / 3600d).multiply(-1.0).degrees;
         String angleString = "-" + degrees + " " + minutes + " " + seconds + " S";
 
         double actualValue = Angle.fromDMS(angleString).degrees;
@@ -260,7 +260,7 @@ public class AngleTest
         int degrees = 16;
         int minutes = 58;
         int seconds = 27;
-        double expectedValue = Angle.fromDegrees(degrees + minutes / 60d + seconds / 3600d).degrees; // North
+        double expectedValue = new Angle(degrees + minutes / 60d + seconds / 3600d).degrees; // North
         String angleString = "+" + degrees + " " + minutes + " " + seconds + " N";
 
         double actualValue = Angle.fromDMS(angleString).degrees;

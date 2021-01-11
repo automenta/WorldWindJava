@@ -392,7 +392,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
             s *= 0.5;
         }
         double detailScale = Math.pow(10, -s);
-        double fieldOfViewScale = dc.getView().getFieldOfView().tanHalfAngle() / Angle.fromDegrees(45).tanHalfAngle();
+        double fieldOfViewScale = dc.getView().getFieldOfView().tanHalfAngle() / new Angle(45).tanHalfAngle();
         fieldOfViewScale = WWMath.clamp(fieldOfViewScale, 0, 1);
 
         // Compute the distance between the eye point and the sector in meters, and compute a fraction of that distance
@@ -796,7 +796,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
         Position pp = dc.getGlobe().computePositionFromPoint(intersect);
 
         // Draw the elevation from the elevation model, not the geode.
-        double elev = dc.getGlobe().getElevation(pp.getLatitude(), pp.getLongitude());
+        double elev = dc.getGlobe().elevation(pp.getLatitude(), pp.getLongitude());
         elev *= dc.getVerticalExaggeration();
         Position p = new Position(pp.getLatitude(), pp.getLongitude(), elev);
 
@@ -805,7 +805,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
 
     protected static Vec4 getSurfacePoint(RectTile tile, double lat, double lon) {
 
-        if (!tile.sector.containsDegrees(lat, lon))
+        if (!tile.sector.contains(lat, lon))
             return null; // not on this geometry
 
         if (tile.ri == null)
@@ -1134,7 +1134,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
 
             LatLon ll = tile.getSector().getCentroid();
             Vec4 pt = dc.getGlobe().computePointFromPosition(ll.getLatitude(), ll.getLongitude(),
-                dc.getGlobe().getElevation(ll.getLatitude(), ll.getLongitude()));
+                dc.getGlobe().elevation(ll.getLatitude(), ll.getLongitude()));
             pt = dc.getView().project(pt);
             textRenderer.draw(tileLabel, (int) pt.x, (int) pt.y);
             textRenderer.setColor(Color.WHITE);

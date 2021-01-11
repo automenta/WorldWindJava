@@ -278,8 +278,8 @@ public class Level extends AVListImpl implements Comparable<Level> {
 
         int row = Tile.computeRow(dLat, latitude, latOrigin);
         int col = Tile.computeColumn(dLon, longitude, lonOrigin);
-        Angle minLatitude = Tile.computeRowLatitude(row, dLat, latOrigin);
-        Angle minLongitude = Tile.computeColumnLongitude(col, dLon, lonOrigin);
+        Angle minLatitude = Tile.rowLat(row, dLat, latOrigin);
+        Angle minLongitude = Tile.columnLon(col, dLon, lonOrigin);
 
         return new Sector(minLatitude, minLatitude.add(dLat), minLongitude, minLongitude.add(dLon));
     }

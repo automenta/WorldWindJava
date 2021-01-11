@@ -696,8 +696,8 @@ public class WWUtil {
 
         while (buffer.hasRemaining()) {
             buffer.mark();
-            Angle lon = Angle.fromDegrees(buffer.get());
-            Angle lat = Angle.fromDegrees(buffer.get());
+            Angle lon = new Angle(buffer.get());
+            Angle lat = new Angle(buffer.get());
 
             buffer.reset();
             buffer.put(Angle.lonNorm(lon).degrees);

@@ -31,7 +31,7 @@ public class AttackByFirePosition extends AbstractMilStd2525TacticalGraphic {
     /**
      * Default angle of the arrowhead.
      */
-    public final static Angle DEFAULT_ARROWHEAD_ANGLE = Angle.fromDegrees(70.0);
+    public final static Angle DEFAULT_ARROWHEAD_ANGLE = new Angle(70.0);
     /**
      * Default length of the legs of the graphic's base, as a fraction of the distance between the control points the
      * define the base.

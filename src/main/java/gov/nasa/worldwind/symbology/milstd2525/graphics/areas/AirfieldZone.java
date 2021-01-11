@@ -109,8 +109,8 @@ public class AirfieldZone extends BasicArea {
         paths.add(newPath);
 
         // Construct a path skewed 40 degrees to the first path
-        p1 = LatLon.greatCircleEndPosition(centroid, Angle.fromDegrees(50), distance);
-        p2 = LatLon.greatCircleEndPosition(centroid, Angle.fromDegrees(-130), distance);
+        p1 = LatLon.greatCircleEndPosition(centroid, new Angle(50), distance);
+        p2 = LatLon.greatCircleEndPosition(centroid, new Angle(-130), distance);
         newPath = new Path(new Position(p1, 0), new Position(p2, 0));
         this.configurePath(newPath);
         paths.add(newPath);

@@ -50,7 +50,7 @@ public class BasicView extends WWObjectImpl implements View {
     /**
      * The field of view in degrees.
      */
-    protected Angle fieldOfView = Angle.fromDegrees(45);
+    protected Angle fieldOfView = new Angle(45);
     // Provide reasonable default values for the near and far clip distances. By default, BasicView automatically
     // updates these values each frame based on the current eye position relative to the surface. These default values
     // are provided for two reasons:
@@ -73,9 +73,9 @@ public class BasicView extends WWObjectImpl implements View {
     protected Globe globe;
     protected Position eyePosition = Position.ZERO;
     protected double horizonDistance;
-    protected Angle roll = Angle.fromDegrees(0.0);
-    protected Angle pitch = Angle.fromDegrees(0.0);
-    protected Angle heading = Angle.fromDegrees(0.0);
+    protected Angle roll = new Angle(0.0);
+    protected Angle pitch = new Angle(0.0);
+    protected Angle heading = new Angle(0.0);
     protected Position lastEyePosition;
     protected Vec4 lastEyePoint;
     protected Vec4 lastUpVector;
@@ -617,7 +617,7 @@ public class BasicView extends WWObjectImpl implements View {
 
         Double d = rs.getStateValueAsDouble(context, "fieldOfView");
         if (d != null)
-            this.setFieldOfView(Angle.fromDegrees(d));
+            this.setFieldOfView(new Angle(d));
 
         d = rs.getStateValueAsDouble(context, "nearClipDistance");
         if (d != null)
@@ -633,11 +633,11 @@ public class BasicView extends WWObjectImpl implements View {
 
         d = rs.getStateValueAsDouble(context, "heading");
         if (d != null)
-            this.setHeading(Angle.fromDegrees(d));
+            this.setHeading(new Angle(d));
 
         d = rs.getStateValueAsDouble(context, "pitch");
         if (d != null)
-            this.setPitch(Angle.fromDegrees(d));
+            this.setPitch(new Angle(d));
     }
 
     public Matrix pushReferenceCenter(DrawContext dc, Vec4 referenceCenter) {

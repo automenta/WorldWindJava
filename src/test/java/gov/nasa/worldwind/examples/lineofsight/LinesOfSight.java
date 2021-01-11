@@ -45,7 +45,7 @@ public class LinesOfSight extends ApplicationTemplate {
     /**
      * The width and height in degrees of the grid used to calculate intersections.
      */
-    protected static final Angle GRID_RADIUS = Angle.fromDegrees(0.005);
+    protected static final Angle GRID_RADIUS = new Angle(0.005);
 
     /**
      * The number of cells along each edge of the grid.

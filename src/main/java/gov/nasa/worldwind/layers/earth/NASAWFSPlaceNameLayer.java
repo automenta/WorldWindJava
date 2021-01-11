@@ -204,8 +204,8 @@ public class NASAWFSPlaceNameLayer extends PlaceNameLayer {
         // US Cities (Population Over 0)
         if (NASAWFSPlaceNameLayer.activeNamesList.contains(NASAWFSPlaceNameLayer.USCITIESOVER0)) {
             //values for masking sector pulled from wfs capabilities request
-            Sector maskingSector = new Sector(Angle.fromDegrees(18.0), Angle.fromDegrees(70.7),
-                Angle.fromDegrees(-176.66), Angle.fromDegrees(-66.0));
+            Sector maskingSector = new Sector(new Angle(18.0), new Angle(70.7),
+                new Angle(-176.66), new Angle(-66.0));
             placeNameService = new PlaceNameService(service, "topp:wpl_uscitiesover0", fileCachePath, maskingSector,
                 PlaceNameLayer.GRID_36x72, Font.decode("Arial-PLAIN-10"), addVersionTag);
             placeNameService.setColor(Color.yellow);
@@ -216,8 +216,8 @@ public class NASAWFSPlaceNameLayer extends PlaceNameLayer {
         // US Cities (No Population)
         if (NASAWFSPlaceNameLayer.activeNamesList.contains(NASAWFSPlaceNameLayer.USCITIES0)) {
             //values for masking sector pulled from wfs capabilities request
-            Sector maskingSector = new Sector(Angle.fromDegrees(-14.4), Angle.fromDegrees(71.3),
-                Angle.fromDegrees(-176.66), Angle.fromDegrees(178.88));
+            Sector maskingSector = new Sector(new Angle(-14.4), new Angle(71.3),
+                new Angle(-176.66), new Angle(178.88));
             placeNameService = new PlaceNameService(service, "topp:wpl_uscities0", fileCachePath, maskingSector,
                 PlaceNameLayer.GRID_288x576, Font.decode("Arial-PLAIN-10"), addVersionTag);
             placeNameService.setColor(Color.orange);

@@ -42,7 +42,7 @@ public final class WorldWind {
     public final static int ANTIALIAS_FASTEST = GL.GL_FASTEST;
     public final static int ANTIALIAS_NICEST = GL.GL_NICEST;
 
-    private static final WorldWind instance = new WorldWind();
+    private static final WorldWind the = new WorldWind();
 
     private final WWObjectImpl wwo;
     private final MemoryCacheSet memoryCacheSet;
@@ -52,7 +52,7 @@ public final class WorldWind {
     private final ScheduledTaskService scheduledTaskService;
     private final NetworkStatus networkStatus;
     private final SessionCache sessionCache;
-    private final Configuration configuration = new Configuration();
+//    private final Configuration configuration = new Configuration();
 
 
     private WorldWind() // Singleton, prevent public instantiation.
@@ -86,31 +86,31 @@ public final class WorldWind {
      * WorldWind can continue to be used after calling this method.
      */
     public static synchronized void shutDown() {
-        WorldWind.instance.wwo.firePropertyChange(WorldWind.SHUTDOWN_EVENT, null, -1);
-        WorldWind.instance.dispose();
+        WorldWind.the.wwo.firePropertyChange(WorldWind.SHUTDOWN_EVENT, null, -1);
+        WorldWind.the.dispose();
 //        instance = new WorldWind();
     }
 
     public static MemoryCacheSet getMemoryCacheSet() {
-        return WorldWind.instance.memoryCacheSet;
+        return WorldWind.the.memoryCacheSet;
     }
 
     public static MemoryCache cache(String key) {
-        return WorldWind.instance.memoryCacheSet.getCache(key);
+        return WorldWind.the.memoryCacheSet.getCache(key);
     }
 
 
 
     public static RetrievalService retrieveRemote() {
-        return WorldWind.instance.remoteRetrievalService;
+        return WorldWind.the.remoteRetrievalService;
     }
 
     public static RetrievalService retrieveLocal() {
-        return WorldWind.instance.localRetrievalService;
+        return WorldWind.the.localRetrievalService;
     }
 
     public static TaskService tasks() {
-        return WorldWind.instance.taskService;
+        return WorldWind.the.taskService;
     }
 
     /**
@@ -120,15 +120,15 @@ public final class WorldWind {
      * @return the scheduled task service.
      */
     public static ScheduledTaskService scheduler() {
-        return WorldWind.instance.scheduledTaskService;
+        return WorldWind.the.scheduledTaskService;
     }
 
     public static NetworkStatus getNetworkStatus() {
-        return WorldWind.instance.networkStatus;
+        return WorldWind.the.networkStatus;
     }
 
     public static SessionCache getSessionCache() {
-        return WorldWind.instance.sessionCache;
+        return WorldWind.the.sessionCache;
     }
 
     /**
@@ -158,7 +158,7 @@ public final class WorldWind {
      * @throws WWRuntimeException       if the <code>Object</code> could not be created
      * @throws IllegalArgumentException if <code>className</code> is null or zero length
      */
-    public static Object createComponent(String className) throws WWRuntimeException {
+    public static Object create(String className) throws WWRuntimeException {
         try {
             return Class.forName(className.trim()).getConstructor().newInstance();
         } catch (Throwable t) {
@@ -176,65 +176,60 @@ public final class WorldWind {
      */
     public static Object createConfigurationComponent(String classNameKey)
         throws IllegalStateException, IllegalArgumentException {
-        if (classNameKey == null || classNameKey.isEmpty()) {
+        if (classNameKey.isEmpty()) {
             Logging.logger().severe("nullValue.ClassNameKeyNullZero");
             throw new IllegalArgumentException(Logging.getMessage("nullValue.ClassNameKeyNullZero"));
         }
 
         String name = Configuration.getStringValue(classNameKey);
-        if (name == null) {
-            Logging.logger().log(Level.SEVERE, "WorldWind.NoClassNameInConfigurationForKey", classNameKey);
-            throw new WWRuntimeException(
-                Logging.getMessage("WorldWind.NoClassNameInConfigurationForKey", classNameKey));
-        }
+//        if (name == null) {
+//            Logging.logger().log(Level.SEVERE, "WorldWind.NoClassNameInConfigurationForKey", classNameKey);
+//            throw new WWRuntimeException(
+//                Logging.getMessage("WorldWind.NoClassNameInConfigurationForKey", classNameKey));
+//        }
 
-        try {
-            return WorldWind.createComponent(name.trim());
-        } catch (Throwable e) {
-            Logging.logger().log(Level.SEVERE, "WorldWind.UnableToCreateClassForConfigurationKey", name);
-            throw new IllegalStateException(
-                Logging.getMessage("WorldWind.UnableToCreateClassForConfigurationKey", name), e);
-        }
+            return WorldWind.create(name.trim());
+
     }
 
     public static void setValue(String key, Object value) {
-        WorldWind.instance.wwo.set(key, value);
+        WorldWind.the.wwo.set(key, value);
     }
 
     public static void setValue(String key, String value) {
-        WorldWind.instance.wwo.set(key, value);
+        WorldWind.the.wwo.set(key, value);
     }
 
     public static Object getValue(String key) {
-        return WorldWind.instance.wwo.get(key);
+        return WorldWind.the.wwo.get(key);
     }
 
     public static String getStringValue(String key) {
-        return WorldWind.instance.wwo.getStringValue(key);
+        return WorldWind.the.wwo.getStringValue(key);
     }
 
     public static boolean hasKey(String key) {
-        return WorldWind.instance.wwo.hasKey(key);
+        return WorldWind.the.wwo.hasKey(key);
     }
 
     public static void removeKey(String key) {
-        WorldWind.instance.wwo.removeKey(key);
+        WorldWind.the.wwo.removeKey(key);
     }
 
     public static void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
-        WorldWind.instance.wwo.addPropertyChangeListener(propertyName, listener);
+        WorldWind.the.wwo.addPropertyChangeListener(propertyName, listener);
     }
 
     public static void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
-        WorldWind.instance.wwo.removePropertyChangeListener(propertyName, listener);
+        WorldWind.the.wwo.removePropertyChangeListener(propertyName, listener);
     }
 
     public static void addPropertyChangeListener(PropertyChangeListener listener) {
-        WorldWind.instance.wwo.addPropertyChangeListener(listener);
+        WorldWind.the.wwo.addPropertyChangeListener(listener);
     }
 
     public static void removePropertyChangeListener(PropertyChangeListener listener) {
-        WorldWind.instance.wwo.removePropertyChangeListener(listener);
+        WorldWind.the.wwo.removePropertyChangeListener(listener);
     }
 
     private void dispose() {

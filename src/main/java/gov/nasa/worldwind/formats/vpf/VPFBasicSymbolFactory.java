@@ -92,11 +92,11 @@ public class VPFBasicSymbolFactory implements VPFSymbolFactory {
         Object o = featureAttributes.get(attr.getOrientationAttributeName());
         if (o instanceof Number) {
             double d = ((Number) o).doubleValue();
-            return Angle.fromDegrees(d);
+            return new Angle(d);
         } else if (o instanceof String) {
             Double d = WWUtil.convertStringToDouble((String) o);
             if (d != null)
-                return Angle.fromDegrees(d);
+                return new Angle(d);
         }
 
         return null;

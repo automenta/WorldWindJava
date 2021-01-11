@@ -186,7 +186,7 @@ public class KMLSurfaceImageImpl extends SurfaceImage implements KMLRenderable {
             Double rotation = box.getRotation();
             if (rotation != null) {
                 List<LatLon> corners = KMLUtil.rotateSector(dc.getGlobe(), this.getSector(),
-                    Angle.fromDegrees(rotation));
+                    new Angle(rotation));
                 this.setCorners(corners);
             }
         }

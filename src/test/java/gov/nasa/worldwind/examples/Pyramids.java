@@ -94,7 +94,7 @@ public class Pyramids extends ApplicationTemplate {
 
             // Scaled Pyramid with a pre-set orientation
             Pyramid pyramid2 = new Pyramid(Position.fromDegrees(0, 30, 750000), 1000000, 500000, 100000,
-                Angle.fromDegrees(90), Angle.fromDegrees(45), Angle.fromDegrees(30));
+                new Angle(90), new Angle(45), new Angle(30));
             pyramid2.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             pyramid2.setAttributes(attrs2);
             pyramid2.setVisible(true);
@@ -103,7 +103,7 @@ public class Pyramids extends ApplicationTemplate {
 
             // Scaled Pyramid with a pre-set orientation
             Pyramid pyramid6 = new Pyramid(Position.fromDegrees(30, 30, 750000), 1000000, 500000, 100000,
-                Angle.fromDegrees(90), Angle.fromDegrees(45), Angle.fromDegrees(30));
+                new Angle(90), new Angle(45), new Angle(30));
             pyramid6.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             pyramid6.setImageSources("gov/nasa/worldwind/examples/images/500px-Checkerboard_pattern.png");
             pyramid6.setAttributes(attrs2);
@@ -113,7 +113,7 @@ public class Pyramids extends ApplicationTemplate {
 
             // Scaled Pyramid with a pre-set orientation
             Pyramid pyramid7 = new Pyramid(Position.fromDegrees(60, 30, 750000), 1000000, 500000, 100000,
-                Angle.fromDegrees(90), Angle.fromDegrees(45), Angle.fromDegrees(30));
+                new Angle(90), new Angle(45), new Angle(30));
             pyramid7.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             pyramid7.setAttributes(attrs2);
             pyramid7.setVisible(true);
@@ -122,7 +122,7 @@ public class Pyramids extends ApplicationTemplate {
 
             // Scaled, oriented pyramid in 3rd "quadrant" (-X, -Y, -Z)
             Pyramid pyramid8 = new Pyramid(Position.fromDegrees(-45, -180, 750000), 1000000, 500000, 100000,
-                Angle.fromDegrees(90), Angle.fromDegrees(45), Angle.fromDegrees(30));
+                new Angle(90), new Angle(45), new Angle(30));
             pyramid8.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             pyramid8.setAttributes(attrs2);
             pyramid8.setVisible(true);

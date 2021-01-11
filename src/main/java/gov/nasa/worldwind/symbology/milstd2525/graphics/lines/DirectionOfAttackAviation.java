@@ -37,7 +37,7 @@ public class DirectionOfAttackAviation extends DirectionOfAttack {
     /**
      * Default angle that determines the curvature of the line.
      */
-    public final static Angle DEFAULT_CURVATURE = Angle.fromDegrees(25);
+    public final static Angle DEFAULT_CURVATURE = new Angle(25);
 
     /**
      * Number of intervals used to draw the curve.

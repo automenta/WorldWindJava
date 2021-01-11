@@ -443,7 +443,7 @@ public class SurfaceEllipse extends AbstractSurfaceShape {
 
         d = rs.getStateValueAsDouble(context, "headingDegrees");
         if (d != null)
-            this.setHeading(Angle.fromDegrees(d));
+            this.setHeading(new Angle(d));
 
         Integer i = rs.getStateValueAsInteger(context, "intervals");
         if (d != null)
@@ -468,7 +468,7 @@ public class SurfaceEllipse extends AbstractSurfaceShape {
 
         Double od = rs.getStateValueAsDouble(context, "orientationDegrees");
         if (od != null)
-            this.setHeading(Angle.fromDegrees(od));
+            this.setHeading(new Angle(od));
     }
 }
 

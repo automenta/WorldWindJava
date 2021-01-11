@@ -85,7 +85,7 @@ public class SARSegmentPlane extends WWObjectImpl {
             }
         }
 
-        return globe.getElevation(latitude, longitude);
+        return globe.elevation(latitude, longitude);
     }
 
     protected static double[] computeAltitudesToFitPositions(WorldWindow wwd, SegmentPlane segmentPlane,

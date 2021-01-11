@@ -116,8 +116,8 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
         BasicElevationModel.setFallbacks(params);
 
         this.levels = new LevelSet(params);
-        if (this.levels.getSector() != null && this.get(AVKey.SECTOR) == null)
-            this.set(AVKey.SECTOR, this.levels.getSector());
+        if (this.levels.sector != null && this.get(AVKey.SECTOR) == null)
+            this.set(AVKey.SECTOR, this.levels.sector);
 
         this.memoryCache = BasicElevationModel.createMemoryCache(ElevationTile.class.getName());
 
@@ -638,10 +638,10 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
     // Reads a tile's elevations from the file cache and adds the tile to the memory cache.
 
     public int intersects(Sector sector) {
-        if (this.levels.getSector().contains(sector))
+        if (this.levels.sector.contains(sector))
             return 0;
 
-        return this.levels.getSector().intersects(sector) ? 1 : -1;
+        return this.levels.sector.intersects(sector) ? 1 : -1;
     }
 
     public boolean contains(Angle latitude, Angle longitude) {
@@ -651,7 +651,7 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
             throw new IllegalArgumentException(msg);
         }
 
-        return this.levels.getSector().contains(latitude, longitude);
+        return this.levels.sector.contains(latitude, longitude);
     }
 
     @Override
@@ -673,11 +673,11 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
         // Compute the tile's SW lat/lon based on its row/col in the level's data set.
         Angle dLat = level.getTileDelta().getLatitude();
         Angle dLon = level.getTileDelta().getLongitude();
-        Angle latOrigin = this.levels.getTileOrigin().getLatitude();
-        Angle lonOrigin = this.levels.getTileOrigin().getLongitude();
+        Angle latOrigin = this.levels.tileOrigin.getLatitude();
+        Angle lonOrigin = this.levels.tileOrigin.getLongitude();
 
-        Angle minLatitude = ElevationTile.computeRowLatitude(key.row, dLat, latOrigin);
-        Angle minLongitude = ElevationTile.computeColumnLongitude(key.col, dLon, lonOrigin);
+        Angle minLatitude = ElevationTile.rowLat(key.row, dLat, latOrigin);
+        Angle minLongitude = ElevationTile.columnLon(key.col, dLon, lonOrigin);
 
         Sector tileSector = new Sector(minLatitude, minLatitude.add(dLat), minLongitude, minLongitude.add(dLon));
 
@@ -830,7 +830,7 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
      * @throws IllegalArgumentException if the sector is null or the resolution is less than zero.
      */
     public long getEstimatedMissingDataSize(Sector sector, double resolution, FileStore fileStore) {
-        Sector targetSector = sector != null ? getLevels().getSector().intersection(sector) : null;
+        Sector targetSector = sector != null ? getLevels().sector.intersection(sector) : null;
         if (targetSector == null)
             return 0;
 
@@ -868,19 +868,17 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
         avList.set(AVKey.HEIGHT, tile.getHeight());
         avList.set(AVKey.FILE_NAME, tile.getPath());
 
-        Retriever retriever = retrieverFactory.retriever(avList, postProcessor);
-
-        WorldWind.retrieveLocal().run(retriever, tile.getPriority());
+        WorldWind.retrieveLocal().run(
+            retrieverFactory.retriever(avList, postProcessor),
+            tile.getPriority()
+        );
     }
 
     protected void retrieveRemoteElevations(final Tile tile, DownloadPostProcessor postProcessor) {
-        if (!this.isNetworkRetrievalEnabled()) {
+        if (!WorldWind.retrieveRemote().isAvailable() || !this.isNetworkRetrievalEnabled()) {
             this.getLevels().miss(tile);
             return;
         }
-
-        if (!WorldWind.retrieveRemote().isAvailable())
-            return;
 
         URL url = null;
         try {
@@ -889,20 +887,17 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
                 this.getLevels().miss(tile);
                 return;
             }
-        }
-        catch (MalformedURLException e) {
+        } catch (MalformedURLException e) {
             this.getLevels().miss(tile);
             Logging.logger().log(java.util.logging.Level.SEVERE,
                 Logging.getMessage("TiledElevationModel.ExceptionCreatingElevationsUrl", url), e);
             return;
         }
 
-        if (postProcessor == null)
-            postProcessor = new DownloadPostProcessor(tile, this);
-        Retriever retriever = new HTTPRetriever(url, postProcessor);
+        Retriever retriever = new HTTPRetriever(url, postProcessor!=null ? postProcessor : new DownloadPostProcessor(tile, this));
         retriever.set(URLRetriever.EXTRACT_ZIP_ENTRY, "true"); // supports legacy elevation models
 
-        WorldWind.retrieveRemote().run(retriever, 0);
+        WorldWind.retrieveRemote().run(retriever, tile.getPriority());
     }
 
     protected void determineExtremes(double value, double[] extremes) {
@@ -1127,7 +1122,7 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
             return new double[] {this.getMinElevation(), this.getMaxElevation()};
 
         LatLon delta = this.levels.getLevel(this.extremesLevel).getTileDelta();
-        LatLon origin = this.levels.getTileOrigin();
+        LatLon origin = this.levels.tileOrigin;
         final int row = ElevationTile.computeRow(delta.getLatitude(), latitude, origin.getLatitude());
         final int col = ElevationTile.computeColumn(delta.getLongitude(), longitude, origin.getLongitude());
 
@@ -1217,7 +1212,7 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
 
     protected double[] computeExtremeElevations(Sector sector) {
         LatLon delta = this.levels.getLevel(this.extremesLevel).getTileDelta();
-        LatLon origin = this.levels.getTileOrigin();
+        LatLon origin = this.levels.tileOrigin;
         final int nwRow = ElevationTile.computeRow(delta.getLatitude(), sector.latMax(),
             origin.getLatitude());
         final int nwCol = ElevationTile.computeColumn(delta.getLongitude(), sector.lonMin(),
@@ -1266,11 +1261,11 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
     protected Elevations getElevations(Sector requestedSector, LevelSet levelSet, int targetLevelNumber) {
         // Compute the intersection of the requested sector with the LevelSet's sector.
         // The intersection will be used to determine which Tiles in the LevelSet are in the requested sector.
-        Sector sector = requestedSector.intersection(levelSet.getSector());
+        Sector sector = requestedSector.intersection(levelSet.sector);
 
         Level targetLevel = levelSet.getLevel(targetLevelNumber);
         LatLon delta = targetLevel.getTileDelta();
-        LatLon origin = levelSet.getTileOrigin();
+        LatLon origin = levelSet.tileOrigin;
         final int nwRow = Tile.computeRow(delta.latitude, sector.latMax, origin.latitude);
         final int nwCol = Tile.computeColumn(delta.longitude, sector.lonMin, origin.longitude);
         final int seRow = Tile.computeRow(delta.latitude, sector.latMin, origin.latitude);
@@ -1754,7 +1749,7 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
 
         // Compute intersection of the requested sector and the sector covered by the elevation model.
         LevelSet levelSet = this.getLevels();
-        Sector sector = requestedSector.intersection(levelSet.getSector());
+        Sector sector = requestedSector.intersection(levelSet.sector);
 
         // If there is no intersection there is no data to retrieve
         if (sector == null)
@@ -1767,7 +1762,7 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
         long numLocalTiles = 0;
         long numMissingTiles = 0;
         LatLon delta = targetLevel.getTileDelta();
-        LatLon origin = levelSet.getTileOrigin();
+        LatLon origin = levelSet.tileOrigin;
         final int nwRow = Tile.computeRow(delta.getLatitude(), sector.latMax(), origin.getLatitude());
         final int nwCol = Tile.computeColumn(delta.getLongitude(), sector.lonMin(), origin.getLongitude());
         final int seRow = Tile.computeRow(delta.getLatitude(), sector.latMin(), origin.getLatitude());

@@ -99,7 +99,7 @@ public class Ellipsoids extends ApplicationTemplate {
 
             // Scaled Ellipsoid with a pre-set orientation
             Ellipsoid ellipsoid2 = new Ellipsoid(Position.fromDegrees(0, 30, 750000), 1000000, 500000, 100000,
-                Angle.fromDegrees(90), Angle.fromDegrees(45), Angle.fromDegrees(30));
+                new Angle(90), new Angle(45), new Angle(30));
             ellipsoid2.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             ellipsoid2.setAttributes(attrs2);
             ellipsoid2.setVisible(true);
@@ -108,7 +108,7 @@ public class Ellipsoids extends ApplicationTemplate {
 
             // Scaled Ellipsoid with a pre-set orientation
             Ellipsoid ellipsoid6 = new Ellipsoid(Position.fromDegrees(30, 30, 750000), 1000000, 500000, 100000,
-                Angle.fromDegrees(90), Angle.fromDegrees(45), Angle.fromDegrees(30));
+                new Angle(90), new Angle(45), new Angle(30));
             ellipsoid6.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             ellipsoid6.setImageSources("gov/nasa/worldwind/examples/images/500px-Checkerboard_pattern.png");
             ellipsoid6.setAttributes(attrs2);
@@ -118,7 +118,7 @@ public class Ellipsoids extends ApplicationTemplate {
 
             // Scaled Ellipsoid with a pre-set orientation
             Ellipsoid ellipsoid7 = new Ellipsoid(Position.fromDegrees(60, 30, 750000), 1000000, 500000, 100000,
-                Angle.fromDegrees(90), Angle.fromDegrees(45), Angle.fromDegrees(30));
+                new Angle(90), new Angle(45), new Angle(30));
             ellipsoid7.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             ellipsoid7.setAttributes(attrs2);
             ellipsoid7.setVisible(true);
@@ -127,7 +127,7 @@ public class Ellipsoids extends ApplicationTemplate {
 
             // Scaled, oriented Ellipsoid in 3rd "quadrant" (-X, -Y, -Z)
             Ellipsoid ellipsoid8 = new Ellipsoid(Position.fromDegrees(-45, -180, 750000), 1000000, 500000, 100000,
-                Angle.fromDegrees(90), Angle.fromDegrees(45), Angle.fromDegrees(30));
+                new Angle(90), new Angle(45), new Angle(30));
             ellipsoid8.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             ellipsoid8.setAttributes(attrs2);
             ellipsoid8.setVisible(true);

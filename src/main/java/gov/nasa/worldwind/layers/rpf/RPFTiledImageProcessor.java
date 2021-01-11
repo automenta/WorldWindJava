@@ -126,7 +126,7 @@ public class RPFTiledImageProcessor {
                 if (Angle.crossesLongitudeBoundary(minLon, maxLon)) {
                     if (minLon.compareTo(maxLon) > 0) {
                         double degrees = 360 + maxLon.degrees;
-                        maxLon = Angle.fromDegrees(degrees);
+                        maxLon = new Angle(degrees);
                     }
                 }
                 sector = new Sector(minLat, maxLat, minLon, maxLon);

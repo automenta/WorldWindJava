@@ -611,10 +611,12 @@ public class GeographicTextRenderer {
 
         // When overlapping text are culled we want to sort them front to back by priority.
         public int compareTo(OrderedText t) {
-            if (t.text.getPriority() - this.text.getPriority() == 0) {
-                return (int) (this.eyeDistance - t.eyeDistance);
-            } else
-                return (int) (t.text.getPriority() - this.text.getPriority());
+            if (this==t) return 0;
+
+//            if (t.text.getPriority() - this.text.getPriority() == 0) {
+//                return (int) (this.eyeDistance - t.eyeDistance);
+//            } else
+                return Double.compare(t.text.getPriority(), this.text.getPriority());
         }
 
         public double getDistanceFromEye() {
