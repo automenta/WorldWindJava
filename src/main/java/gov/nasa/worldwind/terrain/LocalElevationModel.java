@@ -10,6 +10,7 @@ import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.data.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.globes.ElevationModel;
 import gov.nasa.worldwind.util.*;
 
 import java.io.*;
@@ -152,7 +153,7 @@ public class LocalElevationModel extends AbstractElevationModel {
         }
 
         if (!this.contains(latitude, longitude))
-            return this.missingDataFlag;
+            return ElevationModel.MISSING;
 
         Double e = this.lookupElevation(latitude.radians(), longitude.radians());
 
@@ -237,11 +238,11 @@ public class LocalElevationModel extends AbstractElevationModel {
             // elevation models extreme elevation at the location. Do nothing if the location is not within the
             // elevation model's coverage.
             Double e = this.lookupElevation(ll.getLatitude().radians(), ll.getLongitude().radians());
-            if (e != null && e != this.missingDataFlag)
+            if (e != null && e != ElevationModel.MISSING)
                 buffer[i] = e;
             if (e == null)
                 buffer[i] = this.getExtremeElevations(sector)[0];
-            else if (mapMissingData && e == this.missingDataFlag)
+            else if (mapMissingData && e == ElevationModel.MISSING)
                 buffer[i] = this.getMissingDataReplacement();
         }
 
@@ -511,7 +512,7 @@ public class LocalElevationModel extends AbstractElevationModel {
 
         // Notice that the below test is against the tile flag, but the value returned is the model's flag.
         if (tile.isMissingData(eLeft) || tile.isMissingData(eRight))
-            return this.missingDataFlag;
+            return ElevationModel.MISSING;
 
         double dw = sectorDeltaLon / (tile.tileWidth - 1);
         double dh = sectorDeltaLat / (tile.tileHeight - 1);
@@ -526,7 +527,7 @@ public class LocalElevationModel extends AbstractElevationModel {
 
             // Notice that the below test is against the tile flag, but the value returned is the model's flag.
             if (tile.isMissingData(eLeft) || tile.isMissingData(eRight))
-                return this.missingDataFlag;
+                return ElevationModel.MISSING;
         }
 
         double eBot = eLeft + ssLon * (eRight - eLeft);

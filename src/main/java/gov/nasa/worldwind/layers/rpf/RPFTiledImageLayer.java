@@ -414,7 +414,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
     }
 
     private static void addTileToCache(TextureTile tile) {
-        TextureTile.getMemoryCache().add(tile.tileKey, tile);
+        TextureTile.getMemoryCache().add(tile.key, tile);
     }
 
     protected void initRPFFileIndex(AVList params) {

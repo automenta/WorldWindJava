@@ -11,9 +11,12 @@ import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.cache.*;
 import gov.nasa.worldwind.data.*;
 import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.globes.ElevationModel;
 import gov.nasa.worldwind.layers.ogc.wms.WMSCapabilities;
 import gov.nasa.worldwind.retrieve.*;
 import gov.nasa.worldwind.util.*;
+import jcog.Util;
+import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.*;
 
 import javax.imageio.ImageIO;
@@ -645,11 +648,11 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
     }
 
     public boolean contains(Angle latitude, Angle longitude) {
-        if (latitude == null || longitude == null) {
-            String msg = Logging.getMessage("nullValue.AngleIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (latitude == null || longitude == null) {
+//            String msg = Logging.getMessage("nullValue.AngleIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         return this.levels.sector.contains(latitude, longitude);
     }
@@ -689,16 +692,6 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
             WorldWind.tasks().addTask(new RequestTask(key, this));
     }
 
-    protected boolean loadElevations(ElevationTile tile, URL url) throws IOException, URISyntaxException {
-        BufferWrapper elevations = this.readElevations(url);
-        if (elevations == null || elevations.length() == 0)
-            return false;
-
-        tile.setElevations(elevations, this);
-        memoryCache.add(tile.tileKey, tile, elevations.getSizeInBytes());
-        return true;
-    }
-
     // *** Bulk download ***
     // *** Bulk download ***
     // *** Bulk download ***
@@ -712,6 +705,7 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
         return (tile != null && tile.getElevations() != null && !tile.isElevationsExpired());
     }
 
+    @Nullable
     protected ElevationTile tileFromMemory(TileKey tileKey) {
 //        if (tileKey.getLevelNumber() == 0)
 //            return this.levelZeroTiles.get(tileKey);
@@ -719,18 +713,18 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
         return (ElevationTile) memoryCache.getObject(tileKey);
     }
 
-    protected BufferWrapper readElevations(URL url) throws IOException, URISyntaxException {
+    protected BufferWrapper readElevations(ByteBuffer b, URL url) throws IOException, URISyntaxException {
         //return url.getPath().endsWith("tif") ? this.makeTiffElevations(url) : this.makeBilElevations(url);
         return url.getPath().endsWith("tif") ?
-            this.makeTiffElevations(url) :
-            this.makeBilElevations(url);
+            this.makeTiffElevations(b) :
+            this.makeBilElevations(b);
     }
 
-    protected BufferWrapper makeBilElevations(URL url) throws IOException {
-        ByteBuffer byteBuffer;
-        synchronized (this.fileLock) {
-            byteBuffer = WWIO.readURLContentToBuffer(url);
-        }
+    protected BufferWrapper makeBilElevations(ByteBuffer byteBuffer)  {
+//        ByteBuffer byteBuffer;
+//        synchronized (this.fileLock) {
+//            byteBuffer = WWIO.readURLContentToBuffer(url);
+//        }
 
         // Setup parameters to instruct BufferWrapper on how to interpret the ByteBuffer.
         AVList bufferParams = new AVListImpl();
@@ -743,13 +737,13 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
     // *** Tile download ***
     // *** Tile download ***
 
-    protected BufferWrapper makeTiffElevations(URL url) throws IOException, URISyntaxException {
-        File file = new File(url.toURI());
+    protected BufferWrapper makeTiffElevations(ByteBuffer b) throws IOException {
+        //File file = new File(url.toURI());
 
         // Create a raster reader for the file type.
         DataRasterReaderFactory readerFactory = (DataRasterReaderFactory) WorldWind.createConfigurationComponent(
             AVKey.DATA_RASTER_READER_FACTORY_CLASS_NAME);
-        DataRasterReader reader = readerFactory.findReaderFor(file, null);
+        DataRasterReader reader = readerFactory.findReaderFor(b, null);
 //        if (reader == null) {
 //            String msg = Logging.getMessage("generic.UnknownFileFormatOrMatchingReaderNotFound", file.getPath());
 //            Logging.logger().severe(msg);
@@ -759,7 +753,7 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
         // Read the file into the raster.
         DataRaster[] rasters;
         synchronized (this.fileLock) {
-            rasters = reader.read(file, null);
+            rasters = reader.read(b, null);
         }
 
         DataRaster raster = rasters[0];
@@ -842,39 +836,11 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
         return downloader.getEstimatedMissingDataSize();
     }
 
-    protected void downloadElevations(final Tile tile) {
-        retrieveElevations(tile, new DownloadPostProcessor(tile, this));
-    }
-
-    protected void retrieveElevations(final Tile tile, DownloadPostProcessor postProcessor) {
-        if (this.get(AVKey.RETRIEVER_FACTORY_LOCAL) != null)
-            this.retrieveLocalElevations(tile, postProcessor);
-        else
-            // Assume it's remote, which handles the legacy cases.
-            this.retrieveRemoteElevations(tile, postProcessor);
-    }
-
-    protected void retrieveLocalElevations(Tile tile, RetrievalPostProcessor postProcessor) {
-        if (!WorldWind.retrieveLocal().isAvailable())
-            return;
-
-        RetrieverFactory retrieverFactory = (RetrieverFactory) this.get(AVKey.RETRIEVER_FACTORY_LOCAL);
-        if (retrieverFactory == null)
-            return;
-
-        AVList avList = new AVListImpl();
-        avList.set(AVKey.SECTOR, tile.sector);
-        avList.set(AVKey.WIDTH, tile.getWidth());
-        avList.set(AVKey.HEIGHT, tile.getHeight());
-        avList.set(AVKey.FILE_NAME, tile.getPath());
-
-        WorldWind.retrieveLocal().run(
-            retrieverFactory.retriever(avList, postProcessor),
-            tile.getPriority()
-        );
-    }
-
-    protected void retrieveRemoteElevations(final Tile tile, DownloadPostProcessor postProcessor) {
+    protected void retrieveElevations(final ElevationTile tile, DownloadPostProcessor postProcessor) {
+//        if (this.get(AVKey.RETRIEVER_FACTORY_LOCAL) != null)
+//            this.retrieveLocalElevations(tile, postProcessor);
+//        else
+//            // Assume it's remote, which handles the legacy cases.
         if (!WorldWind.retrieveRemote().isAvailable() || !this.isNetworkRetrievalEnabled()) {
             this.getLevels().miss(tile);
             return;
@@ -887,18 +853,42 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
                 this.getLevels().miss(tile);
                 return;
             }
-        } catch (MalformedURLException e) {
+            final DownloadPostProcessor pp = postProcessor != null ? postProcessor
+                : new DownloadPostProcessor(tile, this);
+            HTTPRetriever retriever = new HTTPRetriever(url, pp);
+            retriever.set(URLRetriever.EXTRACT_ZIP_ENTRY, "true"); // supports legacy elevation models
+
+            WorldWind.retrieveRemote().run(retriever, tile.getPriority());
+//        WWIO.get(url, r->{
+//            pp.apply()
+//        });
+
+        } catch (Exception e) {
             this.getLevels().miss(tile);
             Logging.logger().log(java.util.logging.Level.SEVERE,
                 Logging.getMessage("TiledElevationModel.ExceptionCreatingElevationsUrl", url), e);
-            return;
         }
-
-        Retriever retriever = new HTTPRetriever(url, postProcessor!=null ? postProcessor : new DownloadPostProcessor(tile, this));
-        retriever.set(URLRetriever.EXTRACT_ZIP_ENTRY, "true"); // supports legacy elevation models
-
-        WorldWind.retrieveRemote().run(retriever, tile.getPriority());
     }
+
+//    protected void retrieveLocalElevations(Tile tile, RetrievalPostProcessor postProcessor) {
+//        if (!WorldWind.retrieveLocal().isAvailable())
+//            return;
+//
+//        RetrieverFactory retrieverFactory = (RetrieverFactory) this.get(AVKey.RETRIEVER_FACTORY_LOCAL);
+//        if (retrieverFactory == null)
+//            return;
+//
+//        AVList avList = new AVListImpl();
+//        avList.set(AVKey.SECTOR, tile.sector);
+//        avList.set(AVKey.WIDTH, tile.getWidth());
+//        avList.set(AVKey.HEIGHT, tile.getHeight());
+//        avList.set(AVKey.FILE_NAME, tile.getPath());
+//
+//        WorldWind.retrieveLocal().run(
+//            retrieverFactory.retriever(avList, postProcessor),
+//            tile.getPriority()
+//        );
+//    }
 
     protected void determineExtremes(double value, double[] extremes) {
         if (value == this.getMissingDataSignal())
@@ -920,6 +910,11 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
         final TileKey tileKey = new TileKey(latitude, longitude, this.levels, lastLevel.getLevelNumber());
         ElevationTile tile = this.tileFromMemory(tileKey);
 
+        if (tile==null)
+            requestTile(tileKey);
+        else
+            Util.nop();
+
         if (tile == null) {
             int fallbackRow = tileKey.row;
             int fallbackCol = tileKey.col;
@@ -940,9 +935,9 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
 
         if (tile == null && !this.levels.getFirstLevel().isEmpty()) {
             // Request the level-zero tile since it's not in memory
-            Level firstLevel = this.levels.getFirstLevel();
-            final TileKey zeroKey = new TileKey(latitude, longitude, this.levels, firstLevel.getLevelNumber());
-            this.requestTile(zeroKey);
+//            Level firstLevel = this.levels.getFirstLevel();
+//            final TileKey zeroKey = new TileKey(latitude, longitude, this.levels, firstLevel.getLevelNumber());
+//            this.requestTile(zeroKey);
 
             // Return the best we know about the location's elevation
             return this.getExtremeElevations(latitude, longitude)[0];
@@ -978,18 +973,18 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
             return this.lookupElevation(latitude, longitude, tile);
 
 
-        try {
-            tile = this.createTile(tileKey);
-            final URL url = this.getDataFileStore().findFile(tile.getPath(), false);
-            if (url != null) {
-                this.loadElevations(tile, url);
-            }
-        }
-        catch (Exception e) {
-            String msg = Logging.getMessage("ElevationModel.ExceptionRequestingElevations",
-                tileKey.toString());
-            Logging.logger().log(java.util.logging.Level.FINE, msg, e);
-        }
+//        try {
+//            tile = this.createTile(tileKey);
+//            final URL url = this.getDataFileStore().findFile(tile.getPath(), false);
+//            if (url != null) {
+//                this.loadElevations(tile, url);
+//            }
+//        }
+//        catch (Exception e) {
+//            String msg = Logging.getMessage("ElevationModel.ExceptionRequestingElevations",
+//                tileKey.toString());
+//            Logging.logger().log(java.util.logging.Level.FINE, msg, e);
+//        }
 
         tile = this.tileFromMemory(tileKey);
         return tile != null ? this.lookupElevation(latitude, longitude, tile) : this.getMissingDataSignal();
@@ -1012,14 +1007,14 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
 
         Level targetLevel = this.getTargetLevel(sector, targetResolution);
         if (targetLevel == null)
-            return Double.MAX_VALUE;
+            return Double.NEGATIVE_INFINITY;
 
         Elevations elevations = this.getElevations(sector, this.levels, targetLevel.getLevelNumber());
         if (elevations == null)
-            return Double.MAX_VALUE;
+            return Double.NEGATIVE_INFINITY;
 
         if (this.intersects(sector) == -1)
-            return Double.MAX_VALUE;
+            return Double.NEGATIVE_INFINITY;
 
         // Mark the model as used this frame.
         this.set(AVKey.FRAME_TIMESTAMP, System.currentTimeMillis());
@@ -1073,6 +1068,9 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
     /** TODO by degrees */
     protected double lookupElevation(Angle latitude, Angle longitude, final ElevationTile tile) {
         BufferWrapper elevations = tile.getElevations();
+        if (elevations == null)
+            return ElevationModel.MISSING;
+
         Sector sector = tile.sector;
         final int tileHeight = tile.getHeight();
         final int tileWidth = tile.getWidth();
@@ -1338,7 +1336,7 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
 
         if (missingLevelZeroTiles || tiles.isEmpty()) {
             // Double.MAX_VALUE is a signal for no in-memory tile for a given region of the sector.
-            elevations = new Elevations(this, Double.MAX_VALUE);
+            elevations = new Elevations(this, Double.POSITIVE_INFINITY);
             elevations.tiles = tiles;
         } else if (missingTargetTiles) {
             // Use the level of the the lowest resolution found to denote the resolution of this elevation set.
@@ -1374,7 +1372,7 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
 
     protected void checkElevationExpiration(ElevationTile tile) {
         if (tile.isElevationsExpired())
-            this.requestTile(tile.tileKey);
+            this.requestTile(tile.key);
     }
 
 //    public final int getTileCount(Sector sector, int resolution)
@@ -1406,7 +1404,7 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
     protected void checkElevationExpiration(Iterable<? extends ElevationTile> tiles) {
         for (ElevationTile tile : tiles) {
             if (tile.isElevationsExpired())
-                this.requestTile(tile.tileKey);
+                this.requestTile(tile.key);
         }
     }
 
@@ -1809,22 +1807,26 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
                     return;
 
                 ElevationTile tile = this.elevationModel.createTile(this.tileKey);
-                final URL url = this.elevationModel.getDataFileStore().findFile(tile.getPath(), false);
-                if (url != null && !BasicElevationModel.isFileExpired(tile, url,
-                    this.elevationModel.getDataFileStore())) {
-                    if (this.elevationModel.loadElevations(tile, url)) {
-                        this.elevationModel.levels.has(tile);
-                        this.elevationModel.firePropertyChange(AVKey.ELEVATION_MODEL, null, this);
-                        return;
-                    } else {
-                        // Assume that something's wrong with the file and delete it.
-                        this.elevationModel.levels.miss(tile);
-                        this.elevationModel.getDataFileStore().removeFile(url);
-                        Logging.logger().info(Logging.getMessage("generic.DeletedCorruptDataFile", url));
-                    }
-                }
+//                final URL url = this.elevationModel.getDataFileStore().findFile(tile.getPath(), false);
+//                if (url != null && !BasicElevationModel.isFileExpired(tile, url,
+//                    this.elevationModel.getDataFileStore())) {
+//                    if (this.elevationModel.loadElevations(tile, url)) {
+//                        this.elevationModel.levels.has(tile);
+//                        this.elevationModel.firePropertyChange(AVKey.ELEVATION_MODEL, null, this);
+//                        return;
+//                    } else {
+//                        // Assume that something's wrong with the file and delete it.
+//                        this.elevationModel.levels.miss(tile);
+//                        this.elevationModel.getDataFileStore().removeFile(url);
+//                        Logging.logger().info(Logging.getMessage("generic.DeletedCorruptDataFile", url));
+//                    }
+//                }
 
-                this.elevationModel.downloadElevations(tile);
+                //TODO refine
+                //tile.setPriority(1.0/(1+tile.sector.latDelta*tile.sector.lonDelta));
+                tile.setPriority(0.5);
+
+                this.elevationModel.retrieveElevations(tile, new DownloadPostProcessor(tile, this.elevationModel));
             }
             catch (Exception e) {
                 Logging.logger().log(java.util.logging.Level.FINE, Logging.getMessage("ElevationModel.ExceptionRequestingElevations",
@@ -1854,15 +1856,15 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
     }
 
     protected static class DownloadPostProcessor extends AbstractRetrievalPostProcessor {
-        protected final Tile tile;
+        protected final ElevationTile tile;
         protected final BasicElevationModel elevationModel;
         protected final FileStore fileStore;
 
-        public DownloadPostProcessor(Tile tile, BasicElevationModel em) {
+        public DownloadPostProcessor(ElevationTile tile, BasicElevationModel em) {
             this(tile, em, null);
         }
 
-        public DownloadPostProcessor(Tile tile, BasicElevationModel em, FileStore fileStore) {
+        public DownloadPostProcessor(ElevationTile tile, BasicElevationModel em, FileStore fileStore) {
             //noinspection RedundantCast
             super((AVList) em);
 
@@ -1900,12 +1902,27 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
             ByteBuffer buffer = super.handleSuccessfulRetrieval();
 
             if (buffer != null) {
+
+                try {
+                    BufferWrapper elevations = elevationModel.readElevations(buffer, tile.getResourceURL());
+                    if (elevations != null /*&& elevations.length() != 0*/) {
+                        tile.setElevations(elevations, elevationModel);
+                        elevationModel.memoryCache.add(tile.key, tile, elevations.getSizeInBytes());
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                catch (URISyntaxException e) {
+                    e.printStackTrace();
+                }
+
                 // We've successfully cached data. Check whether there's a configuration file for this elevation model
                 // in the cache and create one if there isn't.
                 this.elevationModel.writeConfigurationFile(this.getFileStore());
 
                 // Fire a property change to denote that the model's backing data has changed.
                 this.elevationModel.firePropertyChange(AVKey.ELEVATION_MODEL, null, this);
+
             }
 
             return buffer;
@@ -1939,7 +1956,7 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
                 return null;
 
                 for (ElevationTile tile : this.tiles) {
-                    if (tile.sector.contains(latitude, longitude))
+                    if (tile.elevations!=null && tile.sector.contains(latitude, longitude))
                         return this.elevationModel.lookupElevation(latitude, longitude, tile);
                 }
 
@@ -2050,16 +2067,18 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
         }
 
         public void setElevations(BufferWrapper elevations, BasicElevationModel em) {
-            this.elevations = elevations;
+
             this.updateTime = System.currentTimeMillis();
 
-            final int n = this.elevations.length();
+            final int n = elevations.length();
             if (n > 0) {
+                this.elevations = elevations;
                 this.extremes = WWUtil.defaultMinMix();
                 for (int i = 0; i < n; i++) {
                     em.determineExtremes(this.elevations.getDouble(i), this.extremes);
                 }
-            }
+            } else
+                this.elevations = null;
         }
 
         public boolean isElevationsExpired() {

@@ -8,12 +8,17 @@ package gov.nasa.worldwind.retrieve;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.util.*;
+import jcog.*;
+import okhttp3.ResponseBody;
+import org.slf4j.Logger;
 
 import javax.net.ssl.*;
 import java.io.*;
 import java.net.*;
 import java.nio.ByteBuffer;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Function;
 import java.util.regex.*;
 import java.util.zip.*;
 
@@ -33,12 +38,12 @@ public class URLRetriever extends WWObjectImpl implements Retriever {
     //    protected final AtomicInteger contentLengthRead = new AtomicInteger(0);
     protected final AtomicLong expiration = new AtomicLong(0);
     protected final URL url;
-    protected final RetrievalPostProcessor postProcessor;
+    protected final Function<Retriever, ByteBuffer> postProcessor;
     protected volatile String state = Retriever.RETRIEVER_STATE_NOT_STARTED;
     //    protected volatile int contentLength = 0;
     protected volatile String contentType;
     protected volatile ByteBuffer byteBuffer;
-    protected volatile URLConnection connection;
+    @Deprecated protected volatile URLConnection connection;
     protected int connectTimeout = Configuration.getIntegerValue(AVKey.URL_CONNECT_TIMEOUT, 15000);
     protected int readTimeout = Configuration.getIntegerValue(AVKey.URL_READ_TIMEOUT, 5000);
     protected int staleRequestLimit = -1;
@@ -49,7 +54,7 @@ public class URLRetriever extends WWObjectImpl implements Retriever {
      * @param postProcessor the retrieval post-processor to invoke when the resource is retrieved. May be null.
      * @throws IllegalArgumentException if <code>url</code>.
      */
-    public URLRetriever(URL url, RetrievalPostProcessor postProcessor) {
+    public URLRetriever(URL url, Function<Retriever, ByteBuffer> postProcessor) {
 
         this.url = url;
         this.postProcessor = postProcessor;
@@ -63,7 +68,7 @@ public class URLRetriever extends WWObjectImpl implements Retriever {
      * @return a retriever for the protocol specified in the url, or null if no retriever exists for the protocol.
      * @throws IllegalArgumentException if the url is null.
      */
-    public static URLRetriever createRetriever(URL url, RetrievalPostProcessor postProcessor) {
+    public static URLRetriever createRetriever(URL url, Function<Retriever, ByteBuffer> postProcessor) {
         return switch (url.getProtocol().toLowerCase()) {
             case "http", "https" -> new HTTPRetriever(url, postProcessor);
             case "jar" -> new JarRetriever(url, postProcessor);
@@ -93,10 +98,10 @@ public class URLRetriever extends WWObjectImpl implements Retriever {
     protected static ByteBuffer readZipStream(InputStream inputStream, URL url) throws IOException {
         ZipInputStream zis = new ZipInputStream(inputStream);
         ZipEntry ze = zis.getNextEntry();
-        if (ze == null) {
-            Logging.logger().severe(Logging.getMessage("URLRetriever.NoZipEntryFor") + url);
-            return null;
-        }
+//        if (ze == null) {
+//            Logging.logger().severe(Logging.getMessage("URLRetriever.NoZipEntryFor") + url);
+//            return null;
+//        }
 
 //        if (ze.getSize() > 0) {
         return ByteBuffer.wrap(zis.readNBytes((int) ze.getSize()));
@@ -191,7 +196,7 @@ public class URLRetriever extends WWObjectImpl implements Retriever {
         firePropertyChange(AVKey.RETRIEVER_STATE, oldState, this.state = state);
     }
 
-    public final RetrievalPostProcessor getPostProcessor() {
+    public final Function<Retriever, ByteBuffer> getPostProcessor() {
         return postProcessor;
     }
 
@@ -227,42 +232,52 @@ public class URLRetriever extends WWObjectImpl implements Retriever {
         this.submitEpoch = e;
     }
 
+    private static final Set<String> REMOTE_PROTOCOLS = Set.of("http", "https", "ftp" /*?*/);
+
     public final Retriever call() {
 
+        if (WorldWind.getNetworkStatus().isHostUnavailable(url)) {
+            setState(Retriever.RETRIEVER_STATE_NOT_STARTED);
+            return this;
+        }
+        if (!REMOTE_PROTOCOLS.contains(url.getProtocol()))
+            throw new WTF();
         try {
-            if (WorldWind.getNetworkStatus().isHostUnavailable(url)) {
-                setState(Retriever.RETRIEVER_STATE_NOT_STARTED);
-                return this;
-            }
 
-            if (interrupted())
-                return this;
+            WWIO.get(url.toString(), (response)->{
+                if ((this.byteBuffer = this.read(url, response)) == null)
+                    throw new IOException("empty");
 
-            setState(Retriever.RETRIEVER_STATE_CONNECTING);
-            this.connection = this.openConnection();
+                setState(Retriever.RETRIEVER_STATE_SUCCESSFUL); //before postProcessor
+                WorldWind.getNetworkStatus().logAvailableHost(this.url);
 
-            if (interrupted())
-                return this;
+                if (this.postProcessor != null)
+                    this.byteBuffer = this.postProcessor.apply(this);
 
-            setState(Retriever.RETRIEVER_STATE_READING);
+            });
+//            if (interrupted())
+//                return this;
 
-            if ((this.byteBuffer = this.doRead(this.connection)) == null)
-                throw new IOException("empty");
+//            setState(Retriever.RETRIEVER_STATE_CONNECTING);
+//            this.connection = this.openConnection();
 
-            if (this.postProcessor != null)
-                this.byteBuffer = this.postProcessor.run(this);
+//            if (interrupted())
+//                return this;
 
-            WorldWind.getNetworkStatus().logAvailableHost(this.url);
-            setState(Retriever.RETRIEVER_STATE_SUCCESSFUL);
+//            setState(Retriever.RETRIEVER_STATE_READING);
+
+//            if ((this.byteBuffer = this.doRead(this.connection)) == null)
+//                throw new IOException("empty");
+//
+//            if (this.postProcessor != null)
+//                this.byteBuffer = this.postProcessor.apply(this);
+//
+//            WorldWind.getNetworkStatus().logAvailableHost(this.url);
+//            setState(Retriever.RETRIEVER_STATE_SUCCESSFUL);
 
 
-        }
-        catch (IOException e) {
-            setState(Retriever.RETRIEVER_STATE_ERROR);
-            System.err.println(url + " " + e);
-            //e.printStackTrace();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
+//            logger.error("{} {}", e.getMessage(), url);
             setState(Retriever.RETRIEVER_STATE_ERROR);
 //            this.contentLength = 0;
             WorldWind.getNetworkStatus().logUnavailableHost(this.url);
@@ -271,6 +286,8 @@ public class URLRetriever extends WWObjectImpl implements Retriever {
 
         return this;
     }
+
+    private static final Logger logger = Log.log(URLRetriever.class);
 
     protected boolean interrupted() {
         if (Thread.currentThread().isInterrupted()) {
@@ -312,12 +329,46 @@ public class URLRetriever extends WWObjectImpl implements Retriever {
     }
 
     /**
+     *
+     * @param url
      * @param connection the connection to read from.
      * @return a buffer containing the content read from the connection
      * @throws Exception                if <code>connection</code> is null or an exception occurs during reading.
      * @throws IllegalArgumentException if <code>connection</code> is null
      */
-    protected ByteBuffer doRead(URLConnection connection) throws Exception {
+    public ByteBuffer read(URL url, ResponseBody connection) throws Exception {
+
+        assert(this.connection == null);
+
+        try (InputStream inputStream = connection.byteStream()) {
+//        if (inputStream == null) {
+//            Logging.logger().log(Level.SEVERE, "URLRetriever.InputStreamFromConnectionNull", connection.getURL());
+//            return null;
+//        }
+
+            //            this.contentLength = this.connection.getContentLength();
+            //this.expiration.set(URLRetriever.getExpiration(connection));
+
+            // The legacy WW servers send data with application/zip as the content type, and the retrieval initiator is
+            // expected to know what type the unzipped content is. This is a kludge, but we have to deal with it. So
+            // automatically unzip the content if the content type is application/zip.
+            this.contentType = connection.contentType().type();
+            if (this.contentType != null && this.contentType.equalsIgnoreCase("application/zip")
+                && !WWUtil.isEmpty(this.get(URLRetriever.EXTRACT_ZIP_ENTRY)))
+                // Assume single file in zip and decompress it
+                return URLRetriever.readZipStream(inputStream, url);
+            else
+                return URLRetriever.readStream(inputStream);
+        }
+    }
+
+    /**
+     * @param connection the connection to read from.
+     * @return a buffer containing the content read from the connection
+     * @throws Exception                if <code>connection</code> is null or an exception occurs during reading.
+     * @throws IllegalArgumentException if <code>connection</code> is null
+     */
+    @Deprecated protected ByteBuffer doRead(URLConnection connection) throws Exception {
 
         try (InputStream inputStream = this.connection.getInputStream()) {
 //        if (inputStream == null) {

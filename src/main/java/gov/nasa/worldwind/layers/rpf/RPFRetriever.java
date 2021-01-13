@@ -15,6 +15,7 @@ import java.awt.image.*;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import java.util.logging.Level;
 
 /**
@@ -27,7 +28,7 @@ class RPFRetriever extends WWObjectImpl implements Retriever {
     private final AtomicInteger contentLengthRead = new AtomicInteger(0);
     private final RPFGenerator.RPFServiceInstance service;
     private final URL url;
-    private final RetrievalPostProcessor postProcessor;
+    private final Function<Retriever, ByteBuffer> postProcessor;
     private volatile ByteBuffer byteBuffer;
     private volatile int contentLength;
     private volatile String state = Retriever.RETRIEVER_STATE_NOT_STARTED;
@@ -40,7 +41,7 @@ class RPFRetriever extends WWObjectImpl implements Retriever {
     private int staleRequestLimit = -1;
     private int responseCode;
 
-    public RPFRetriever(RPFGenerator.RPFServiceInstance service, URL url, RetrievalPostProcessor postProcessor) {
+    public RPFRetriever(RPFGenerator.RPFServiceInstance service, URL url, Function<Retriever, ByteBuffer> postProcessor) {
 
         this.service = service;
         this.url = url;
@@ -146,7 +147,7 @@ class RPFRetriever extends WWObjectImpl implements Retriever {
         return this.url;
     }
 
-    public final RetrievalPostProcessor getPostProcessor() {
+    public final Function<Retriever, ByteBuffer> getPostProcessor() {
         return this.postProcessor;
     }
 
@@ -193,7 +194,7 @@ class RPFRetriever extends WWObjectImpl implements Retriever {
     private void end() {
         try {
             if (this.postProcessor != null) {
-                this.byteBuffer = this.postProcessor.run(this);
+                this.byteBuffer = this.postProcessor.apply(this);
             }
         }
         catch (RuntimeException e) {

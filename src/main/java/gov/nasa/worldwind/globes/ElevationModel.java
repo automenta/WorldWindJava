@@ -26,6 +26,9 @@ import java.util.List;
  * @version $Id: ElevationModel.java 3420 2015-09-10 23:25:43Z tgaskins $
  */
 public interface ElevationModel extends WWObject, Restorable, Disposable {
+    double MISSING =
+        Double.NEGATIVE_INFINITY;
+
     /**
      * Returns the elevation model's name.
      *
@@ -206,10 +209,6 @@ public interface ElevationModel extends WWObject, Restorable, Disposable {
      * elevation model's minimum elevation at that location is returned.
      */
     double getUnmappedElevation(Angle latitude, Angle longitude);
-
-    @Deprecated default double getUnmappedElevation(double latitude, double longitude) {
-        return getUnmappedElevation(new Angle(latitude), new Angle(longitude));
-    }
 
     /**
      * Returns the elevations of a collection of locations. Replaces any elevation values corresponding to the missing

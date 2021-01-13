@@ -12,6 +12,7 @@ import gov.nasa.worldwind.cache.FileStore;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.ElevationModel;
 import gov.nasa.worldwind.util.*;
+import jcog.WTF;
 import org.w3c.dom.Element;
 
 import javax.xml.xpath.XPath;
@@ -23,10 +24,6 @@ import java.util.List;
  */
 abstract public class AbstractElevationModel extends WWObjectImpl implements ElevationModel {
     protected FileStore dataFileStore = Configuration.data;
-
-    protected double missingDataFlag =
-        -9999.0;
-    //-Double.MAX_VALUE;
 
     protected double missingDataValue;
 
@@ -175,11 +172,13 @@ abstract public class AbstractElevationModel extends WWObjectImpl implements Ele
     }
 
     public double getMissingDataSignal() {
-        return missingDataFlag;
+        return MISSING;
     }
 
-    public void setMissingDataSignal(double missingDataFlag) {
-        this.missingDataFlag = missingDataFlag;
+    @Deprecated public void setMissingDataSignal(double missingDataFlag) {
+        if (missingDataFlag!= ElevationModel.MISSING)
+            throw new WTF();
+        //this.missingDataFlag = missingDataFlag;
     }
 
     public double getMissingDataReplacement() {

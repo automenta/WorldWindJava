@@ -16,6 +16,7 @@ import gov.nasa.worldwind.layers.ogc.wms.WMSCapabilities;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.retrieve.*;
 import gov.nasa.worldwind.util.*;
+import jcog.WTF;
 import org.w3c.dom.*;
 
 import javax.swing.*;
@@ -24,6 +25,7 @@ import java.io.*;
 import java.net.*;
 import java.nio.ByteBuffer;
 import java.util.*;
+import java.util.function.Function;
 import java.util.logging.Level;
 
 /**
@@ -314,7 +316,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
     }
 
     protected static void addTileToCache(TextureTile tile) {
-        TextureTile.getMemoryCache().add(tile.tileKey, tile);
+        TextureTile.getMemoryCache().add(tile.key, tile);
     }
 
     protected void requestTexture(DrawContext dc, TextureTile tile) {
@@ -399,7 +401,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
             this.retrieveRemoteTexture(tile, postProcessor);
     }
 
-    protected void retrieveLocalTexture(TextureTile tile, RetrievalPostProcessor postProcessor) {
+    protected void retrieveLocalTexture(TextureTile tile, Function<Retriever, ByteBuffer> postProcessor) {
         if (!WorldWind.retrieveLocal().isAvailable())
             return;
 
@@ -806,6 +808,8 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
         protected RequestTask(TextureTile tile, BasicTiledImageLayer layer) {
             this.layer = layer;
             this.tile = tile;
+            if (!Double.isFinite(tile.getPriority()))
+                throw new WTF();
         }
 
         public void run() {
@@ -815,7 +819,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
             final FileStore store = this.layer.getDataFileStore();
 
             final URL textureURL = store.findFile(tile.getPath(), false);
-            if (textureURL != null)
+            if (textureURL != null) {
                 if (!BasicTiledImageLayer.isTextureFileExpired(tile, textureURL, store)) {
                     if (this.layer.loadTexture(tile, textureURL)) {
                         layer.getLevels().has(tile);
@@ -827,6 +831,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
                         Logging.logger().info(Logging.getMessage("generic.DeletedCorruptDataFile", textureURL));
                     }
                 }
+            }
 
             this.layer.retrieveTexture(this.tile, this.layer.createDownloadPostProcessor(this.tile));
         }

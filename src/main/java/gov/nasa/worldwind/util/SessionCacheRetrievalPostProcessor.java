@@ -45,17 +45,17 @@ public class SessionCacheRetrievalPostProcessor implements RetrievalPostProcesso
     public SessionCacheRetrievalPostProcessor(SessionCache cache, Object cacheKey,
         AbsentResourceList absentResourceList, long resourceID,
         PropertyChangeListener propertyListener, String propertyName) {
-        if (cache == null) {
-            String message = Logging.getMessage("nullValue.CacheIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (cacheKey == null) {
-            String message = Logging.getMessage("nullValue.CacheKeyIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (cache == null) {
+//            String message = Logging.getMessage("nullValue.CacheIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//
+//        if (cacheKey == null) {
+//            String message = Logging.getMessage("nullValue.CacheKeyIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         this.cache = cache;
         this.cacheKey = cacheKey;
@@ -149,7 +149,7 @@ public class SessionCacheRetrievalPostProcessor implements RetrievalPostProcesso
      * @param retriever the Retriever which has either succeeded or failed in fetching the data.
      * @return the retrieved data.
      */
-    public ByteBuffer run(Retriever retriever) {
+    public final ByteBuffer apply(Retriever retriever) {
 
         String message = this.validate(retriever);
 
@@ -211,8 +211,7 @@ public class SessionCacheRetrievalPostProcessor implements RetrievalPostProcesso
     }
 
     protected void handleWMSCapabilitiesContent(Retriever retriever) throws javax.xml.stream.XMLStreamException {
-        WMSCapabilities caps = new WMSCapabilities(retriever.getBuffer());
-        this.cache.put(this.cacheKey, caps.parse());
+        this.cache.put(this.cacheKey, new WMSCapabilities(retriever.getBuffer()).parse());
     }
 
     protected void handleUnknownContent(Retriever retriever) {

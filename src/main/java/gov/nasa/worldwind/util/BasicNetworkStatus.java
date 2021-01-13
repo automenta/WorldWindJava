@@ -21,8 +21,8 @@ import java.util.concurrent.atomic.*;
  * @version $Id: BasicNetworkStatus.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 public class BasicNetworkStatus extends AVListImpl implements NetworkStatus {
-    protected static final long DEFAULT_TRY_AGAIN_INTERVAL_MS = 5 * 60_000L;
-    protected static final int DEFAULT_ATTEMPT_LIMIT = 3; // number of unavailable events to declare host unavailable
+    protected static final long DEFAULT_TRY_AGAIN_INTERVAL_MS = 2 * 60_000L;
+    protected static final int DEFAULT_ATTEMPT_LIMIT = 8; // number of unavailable events to declare host unavailable
     protected static final long NETWORK_STATUS_REPORT_INTERVAL_MS = (long) 120.000e3;
     protected static final String[] DEFAULT_NETWORK_TEST_SITES = {
         "cloudflare.com", "archive.org", "w3c.org", "wikipedia.org", "github.com"
@@ -83,10 +83,7 @@ public class BasicNetworkStatus extends AVListImpl implements NetworkStatus {
                 URL url = new URL(protocol + hostName);
 
                 Proxy proxy = WWIO.configureProxy();
-                if (proxy != null)
-                    connection = url.openConnection(proxy);
-                else
-                    connection = url.openConnection();
+                connection = proxy != null ? url.openConnection(proxy) : url.openConnection();
 
                 connection.setConnectTimeout(2000);
                 connection.setReadTimeout(2000);
@@ -94,12 +91,10 @@ public class BasicNetworkStatus extends AVListImpl implements NetworkStatus {
                 if (ct != null)
                     return true;
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             String message = Logging.getMessage("NetworkStatus.ExceptionTestingHost", hostName);
             Logging.logger().info(message);
-        }
-        finally {
+        } finally {
             if (connection instanceof HttpURLConnection)
                 ((HttpURLConnection) connection).disconnect();
         }
@@ -215,24 +210,27 @@ public class BasicNetworkStatus extends AVListImpl implements NetworkStatus {
         if (this.offlineMode)
             return;
 
-        String hostName = url.getHost();
-        HostInfo hi = this.hostMap.get(hostName);
-        if (hi != null) {
-            if (!hi.isUnavailable()) {
-                hi.logCount.incrementAndGet();
-                if (hi.isUnavailable()) // host just became unavailable
-                    this.firePropertyChange(NetworkStatus.HOST_UNAVAILABLE, null, url);
-            }
-            hi.lastLogTime.set(System.currentTimeMillis());
-        } else {
-            hi = new HostInfo(this.attemptLimit.get(), this.tryAgainInterval.get());
-            hi.logCount.set(1);
-            if (hi.isUnavailable()) // the attempt limit may be as low as 1, so handle that case here
-                this.firePropertyChange(NetworkStatus.HOST_UNAVAILABLE, null, url);
-            this.hostMap.put(hostName, hi);
-        }
+        final long now = System.currentTimeMillis();
+        this.lastUnavailableLogTime.set(now);
 
-        this.lastUnavailableLogTime.set(System.currentTimeMillis());
+        hostMap.compute(url.getHost(), (hn, hi)-> {
+
+
+            if (hi != null) {
+                hi.lastLogTime.set(now);
+                if (!hi.isUnavailable())
+                    hi.logCount.incrementAndGet();
+//                    if (hi.isUnavailable()) // host just became unavailable
+//                        this.firePropertyChange(NetworkStatus.HOST_UNAVAILABLE, null, url);
+            } else {
+                hi = new HostInfo(this.attemptLimit.get(), this.tryAgainInterval.get());
+                hi.logCount.set(1);
+//                if (hi.isUnavailable()) // the attempt limit may be as low as 1, so handle that case here
+//                    this.firePropertyChange(NetworkStatus.HOST_UNAVAILABLE, null, url);
+            }
+            return hi;
+        });
+
     }
 
     /**
@@ -244,9 +242,9 @@ public class BasicNetworkStatus extends AVListImpl implements NetworkStatus {
 
         String hostName = url.getHost();
         HostInfo hi = this.hostMap.remove(hostName);
-        if (hi != null) {
-            firePropertyChange(NetworkStatus.HOST_AVAILABLE, null, url);
-        }
+//        if (hi != null)
+//            firePropertyChange(NetworkStatus.HOST_AVAILABLE, null, url);
+
 
         this.lastAvailableLogTime.set(System.currentTimeMillis());
     }

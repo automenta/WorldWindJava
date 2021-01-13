@@ -14,6 +14,7 @@ import gov.nasa.worldwind.util.*;
 
 import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import java.util.logging.Level;
 
 /**
@@ -22,7 +23,7 @@ import java.util.logging.Level;
  */
 public class LocalRasterServerRetriever extends WWObjectImpl implements Retriever {
     //    protected AVList params;
-    protected final RetrievalPostProcessor postProcessor;
+    protected final Function<Retriever, ByteBuffer> postProcessor;
     protected final AtomicInteger contentLengthRead = new AtomicInteger(0);
     protected RasterServer server;
     protected volatile String state = Retriever.RETRIEVER_STATE_NOT_STARTED;
@@ -33,7 +34,7 @@ public class LocalRasterServerRetriever extends WWObjectImpl implements Retrieve
     protected long beginTime;
     protected long endTime;
 
-    public LocalRasterServerRetriever(AVList params, RasterServer rasterServer, RetrievalPostProcessor postProcessor) {
+    public LocalRasterServerRetriever(AVList params, RasterServer rasterServer, Function<Retriever, ByteBuffer> postProcessor) {
         if (null != params)
             this.setValues(params);
         this.server = rasterServer;
@@ -157,7 +158,7 @@ public class LocalRasterServerRetriever extends WWObjectImpl implements Retrieve
                 setState(Retriever.RETRIEVER_STATE_ERROR);
 
             if (this.postProcessor != null)
-                this.byteBuffer = this.postProcessor.run(this);
+                this.byteBuffer = this.postProcessor.apply(this);
         }
         catch (WWRuntimeException e) {
             e.printStackTrace();

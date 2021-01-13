@@ -861,7 +861,10 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
 
         Angle lat = new Angle((this.latMin + this.latMax) / 2);
         Angle lon = new Angle((this.lonMin + this.lonMax) / 2);
-        final double ele = globe.elevation(lat, lon);
+        double ele = globe.elevation(lat, lon);
+
+        if (!Double.isFinite(ele)) ele = 0;
+
         return globe.computePointFromPosition(lat, lon, exaggeration * ele);
     }
 
@@ -885,10 +888,10 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
         final Angle lonMin = lonMin();
         final Angle lonMax = lonMax();
         final Angle latMax = latMax();
-        corners[0] = g.computePointFromPosition(minLat, minLon, exaggeration * g.elevation(latMin, lonMin));
-        corners[1] = g.computePointFromPosition(minLat, maxLon, exaggeration * g.elevation(latMin, lonMax));
-        corners[2] = g.computePointFromPosition(maxLat, maxLon, exaggeration * g.elevation(latMax, lonMax));
-        corners[3] = g.computePointFromPosition(maxLat, minLon, exaggeration * g.elevation(latMax, lonMin));
+        corners[0] = g.computePointFromPosition(minLat, minLon, exaggeration * g.elevationOrZero(latMin, lonMin));
+        corners[1] = g.computePointFromPosition(minLat, maxLon, exaggeration * g.elevationOrZero(latMin, lonMax));
+        corners[2] = g.computePointFromPosition(maxLat, maxLon, exaggeration * g.elevationOrZero(latMax, lonMax));
+        corners[3] = g.computePointFromPosition(maxLat, minLon, exaggeration * g.elevationOrZero(latMax, lonMin));
 
         return corners;
     }

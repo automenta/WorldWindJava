@@ -32,7 +32,7 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
      */
     protected AVList avList;
     /**
-     * The retriever associated with the post-processor. Only non-null after {@link #run(Retriever)} is called.
+     * The retriever associated with the post-processor. Only non-null after {@link #apply(Retriever)} is called.
      */
     protected Retriever retriever;
 
@@ -87,7 +87,7 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
      * fatal problem occurred during post-processing.
      * @throws IllegalArgumentException if the retriever is null.
      */
-    public ByteBuffer run(Retriever retriever) {
+    public ByteBuffer apply(Retriever retriever) {
 
         this.retriever = retriever;
 
@@ -96,10 +96,10 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
             return null;
         }
 
-        if (!this.validateResponseCode()) {
-            this.handleInvalidResponseCode();
-            return null;
-        }
+//        if (!this.validateResponseCode()) {
+//            this.handleInvalidResponseCode();
+//            return null;
+//        }
 
         return this.handleSuccessfulRetrieval();
     }
@@ -299,7 +299,7 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
      * @return a buffer containing the retrieved data, which may have been transformed during content handling.
      * @throws IOException if an IO error occurs while processing the data.
      */
-    protected ByteBuffer handleContent() throws IOException {
+    public ByteBuffer handleContent() throws IOException {
         String contentType = this.getRetriever().getContentType();
         if (WWUtil.isEmpty(contentType)) {
             // Try to determine the content type from the URL's suffix, if any.

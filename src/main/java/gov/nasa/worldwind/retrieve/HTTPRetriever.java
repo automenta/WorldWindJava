@@ -10,6 +10,7 @@ import gov.nasa.worldwind.Configuration;
 import java.io.IOException;
 import java.net.*;
 import java.nio.ByteBuffer;
+import java.util.function.Function;
 
 /**
  * @author Tom Gaskins
@@ -21,7 +22,7 @@ public class HTTPRetriever extends URLRetriever {
     private int responseCode;
     private String responseMessage;
 
-    public HTTPRetriever(URL url, RetrievalPostProcessor postProcessor) {
+    public HTTPRetriever(URL url, Function<Retriever, ByteBuffer> postProcessor) {
         super(url, postProcessor);
     }
 

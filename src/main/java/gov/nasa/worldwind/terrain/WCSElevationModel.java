@@ -106,7 +106,7 @@ public class WCSElevationModel extends BasicElevationModel {
             params.set(AVKey.FORMAT_SUFFIX, ".tif");
 
         if (params.get(AVKey.MISSING_DATA_SIGNAL) == null)
-            params.set(AVKey.MISSING_DATA_SIGNAL, -9999.0d);
+            params.set(AVKey.MISSING_DATA_SIGNAL, Double.NEGATIVE_INFINITY);
 
         if (params.get(AVKey.NUM_LEVELS) == null)
             params.set(AVKey.NUM_LEVELS, 18); // approximately 20 cm per pixel
@@ -225,8 +225,7 @@ public class WCSElevationModel extends BasicElevationModel {
             params.set(AVKey.TILE_URL_BUILDER, new URLBuilder(s, params));
     }
 
-    protected static void downloadElevations(WMSBasicElevationModel.ElevationCompositionTile tile) throws Exception,
-        MalformedURLException {
+    protected static Retriever downloadElevations(WMSBasicElevationModel.ElevationCompositionTile tile) throws Exception {
         URL url = tile.getResourceURL();
 
         Retriever retriever = new HTTPRetriever(url,
@@ -234,6 +233,7 @@ public class WCSElevationModel extends BasicElevationModel {
         retriever.setConnectTimeout(10000);
         retriever.setReadTimeout(60000);
         retriever.call();
+        return retriever;
     }
 
     /**
@@ -270,8 +270,8 @@ public class WCSElevationModel extends BasicElevationModel {
             sector, this.getLevels().getLastLevel(),
             tileWidth, n / tileWidth);
 
-        WCSElevationModel.downloadElevations(tile);
-        tile.setElevations(this.readElevations(tile.getFile().toURI().toURL()), this);
+        Retriever rr = WCSElevationModel.downloadElevations(tile);
+        tile.setElevations(this.readElevations(rr.getBuffer(), tile.getFile().toURI().toURL()), this);
 
         for (int i = 0; i < n; i++) {
             LatLon ll = latlons.get(i);

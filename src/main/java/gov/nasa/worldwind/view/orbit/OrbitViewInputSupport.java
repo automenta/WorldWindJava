@@ -21,26 +21,26 @@ public class OrbitViewInputSupport {
 
     public static Matrix computeTransformMatrix(Globe globe, Position center, Angle heading, Angle pitch, Angle roll,
         double zoom) {
-        if (globe == null) {
-            String message = Logging.getMessage("nullValue.GlobeIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (center == null) {
-            String message = Logging.getMessage("nullValue.CenterIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (heading == null) {
-            String message = Logging.getMessage("nullValue.HeadingIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (pitch == null) {
-            String message = Logging.getMessage("nullValue.PitchIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (globe == null) {
+//            String message = Logging.getMessage("nullValue.GlobeIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//        if (center == null) {
+//            String message = Logging.getMessage("nullValue.CenterIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//        if (heading == null) {
+//            String message = Logging.getMessage("nullValue.HeadingIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//        if (pitch == null) {
+//            String message = Logging.getMessage("nullValue.PitchIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         // Construct the model-view transform matrix for the specified coordinates.
         // Because this is a model-view transform, matrices are applied in reverse order.
@@ -54,58 +54,58 @@ public class OrbitViewInputSupport {
     }
 
     public static OrbitViewState computeOrbitViewState(Globe globe, Vec4 eyePoint, Vec4 centerPoint, Vec4 up) {
-        if (globe == null) {
-            String message = Logging.getMessage("nullValue.GlobeIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (eyePoint == null) {
-            String message = "nullValue.EyePointIsNull";
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (centerPoint == null) {
-            String message = "nullValue.CenterPointIsNull";
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (up == null) {
-            String message = "nullValue.UpIsNull";
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (globe == null) {
+//            String message = Logging.getMessage("nullValue.GlobeIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//        if (eyePoint == null) {
+//            String message = "nullValue.EyePointIsNull";
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//        if (centerPoint == null) {
+//            String message = "nullValue.CenterPointIsNull";
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//        if (up == null) {
+//            String message = "nullValue.UpIsNull";
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         Matrix modelview = Matrix.fromViewLookAt(eyePoint, centerPoint, up);
         return OrbitViewInputSupport.computeOrbitViewState(globe, modelview, centerPoint);
     }
 
     public static OrbitViewState computeOrbitViewState(Globe globe, Matrix modelTransform, Vec4 centerPoint) {
-        if (globe == null) {
-            String message = Logging.getMessage("nullValue.GlobeIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (modelTransform == null) {
-            String message = "nullValue.ModelTransformIsNull";
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (centerPoint == null) {
-            String message = "nullValue.CenterPointIsNull";
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (globe == null) {
+//            String message = Logging.getMessage("nullValue.GlobeIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//        if (modelTransform == null) {
+//            String message = "nullValue.ModelTransformIsNull";
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//        if (centerPoint == null) {
+//            String message = "nullValue.CenterPointIsNull";
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         // Compute the center position.
         Position centerPos = globe.computePositionFromPoint(centerPoint);
         // Compute the center position transform.
         Matrix centerTransform = OrbitViewInputSupport.computeCenterTransform(globe, centerPos);
         Matrix centerTransformInv = centerTransform.getInverse();
-        if (centerTransformInv == null) {
-            String message = Logging.getMessage("generic.NoninvertibleMatrix");
-            Logging.logger().severe(message);
-            throw new IllegalStateException(message);
-        }
+//        if (centerTransformInv == null) {
+//            String message = Logging.getMessage("generic.NoninvertibleMatrix");
+//            Logging.logger().severe(message);
+//            throw new IllegalStateException(message);
+//        }
 
         // Compute the heading-pitch-zoom transform.
         Matrix hpzTransform = modelTransform.multiply(centerTransformInv);
@@ -220,21 +220,21 @@ public class OrbitViewInputSupport {
         private final double zoom;
 
         public OrbitViewState(Position center, Angle heading, Angle pitch, double zoom) {
-            if (center == null) {
-                String message = Logging.getMessage("nullValue.CenterIsNull");
-                Logging.logger().severe(message);
-                throw new IllegalArgumentException(message);
-            }
-            if (heading == null) {
-                String message = Logging.getMessage("nullValue.HeadingIsNull");
-                Logging.logger().severe(message);
-                throw new IllegalArgumentException(message);
-            }
-            if (pitch == null) {
-                String message = Logging.getMessage("nullValue.PitchIsNull");
-                Logging.logger().severe(message);
-                throw new IllegalArgumentException(message);
-            }
+//            if (center == null) {
+//                String message = Logging.getMessage("nullValue.CenterIsNull");
+//                Logging.logger().severe(message);
+//                throw new IllegalArgumentException(message);
+//            }
+//            if (heading == null) {
+//                String message = Logging.getMessage("nullValue.HeadingIsNull");
+//                Logging.logger().severe(message);
+//                throw new IllegalArgumentException(message);
+//            }
+//            if (pitch == null) {
+//                String message = Logging.getMessage("nullValue.PitchIsNull");
+//                Logging.logger().severe(message);
+//                throw new IllegalArgumentException(message);
+//            }
 
             this.center = center;
             this.heading = heading;

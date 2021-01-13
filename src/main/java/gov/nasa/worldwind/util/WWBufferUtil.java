@@ -283,8 +283,7 @@ public class WWBufferUtil {
         try {
             newBuffer.put(buffer);
             newBuffer.rewind();
-        }
-        finally {
+        } finally {
             buffer.position(pos); // Restore the input buffer's original position.
         }
 

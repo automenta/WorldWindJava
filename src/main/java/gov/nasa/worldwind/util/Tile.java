@@ -32,8 +32,8 @@ public class Tile implements Comparable<Tile>, Cacheable {
      * An optional cache name. Overrides the Level's cache name when non-null.
      */
     public final String cacheName;
-    public final TileKey tileKey;
-    private double priority = Double.MAX_VALUE; // Default is minimum priority
+    public final TileKey key;
+    private double priority = Double.NaN;
     // The following is late bound because it's only selectively needed and costly to create
     private String path;
 
@@ -47,24 +47,24 @@ public class Tile implements Comparable<Tile>, Cacheable {
      * @throws IllegalArgumentException if <code>sector</code> or <code>level</code> is null.
      */
     public Tile(Sector sector, Level level, int row, int col) {
-        if (sector == null) {
-            String msg = Logging.getMessage("nullValue.SectorIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        if (level == null) {
-            String msg = Logging.getMessage("nullValue.LevelIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (sector == null) {
+//            String msg = Logging.getMessage("nullValue.SectorIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
+//
+//        if (level == null) {
+//            String msg = Logging.getMessage("nullValue.LevelIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         this.sector = sector;
         this.level = level;
         this.row = row;
         this.col = col;
         this.cacheName = null;
-        this.tileKey = new TileKey(this);
+        this.key = new TileKey(this);
         this.path = null;
     }
 
@@ -87,7 +87,7 @@ public class Tile implements Comparable<Tile>, Cacheable {
         this.row = row;
         this.col = col;
         this.cacheName = cacheName;
-        this.tileKey = new TileKey(this);
+        this.key = new TileKey(this);
         this.path = null;
     }
 
@@ -105,7 +105,7 @@ public class Tile implements Comparable<Tile>, Cacheable {
         this.row = Tile.computeRow(sector.latDelta(), sector.latMin(), Angle.NEG90);
         this.col = Tile.computeColumn(sector.lonDelta(), sector.lonMin(), Angle.NEG180);
         this.cacheName = null;
-        this.tileKey = new TileKey(this);
+        this.key = new TileKey(this);
         this.path = null;
     }
 
@@ -369,12 +369,12 @@ public class Tile implements Comparable<Tile>, Cacheable {
 
         final Tile tile = (Tile) o;
 
-        return Objects.equals(tileKey, tile.tileKey);
+        return Objects.equals(key, tile.key);
     }
 
     @Override
     public int hashCode() {
-        return (tileKey != null ? tileKey.hashCode() : 0);
+        return (key != null ? key.hashCode() : 0);
     }
 
     @Override

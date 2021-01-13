@@ -56,7 +56,7 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
     }
 
     private static void addTileToCache(MercatorTextureTile tile) {
-        TextureTile.cache.add(tile.tileKey, tile);
+        TextureTile.cache.add(tile.key, tile);
     }
 
     protected static boolean isTileValid(BufferedImage image) {
@@ -157,23 +157,31 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
         @Deprecated public void run() {
             // TODO: check to ensure load is still needed
 
+//            try {
+            final String url;
             try {
-                WWIO.get(tile.getResourceURL().toString(), (response)->{
+                url = tile.getResourceURL().toString();
+            }
+            catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
+
+            WWIO.get(url, (response)->{
                     if (layer.loadTexture(tile, response.byteStream())) {
                         layer.getLevels().has(tile);
                         layer.firePropertyChange(AVKey.LAYER, null, this);
                     }
                 }, e->{
                     layer.getLevels().miss(tile);
-                    Logging.logger().info(Logging.getMessage("http fail", e));
+//                    Logging.logger().info(Logging.getMessage("http fail", e));
                     return false;
                 });
-            }
-            catch (MalformedURLException e) {
-                e.printStackTrace();
-                layer.getLevels().miss(tile);
-                Logging.logger().info(Logging.getMessage("http fail", e));
-            }
+//            }
+//            catch (MalformedURLException e) {
+//                e.printStackTrace();
+//                layer.getLevels().miss(tile);
+//                Logging.logger().info("http fail", e);
+//            }
 
 
         }
@@ -223,7 +231,7 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
             this.layer = layer;
         }
 
-        public ByteBuffer run(Retriever retriever) {
+        public ByteBuffer apply(Retriever retriever) {
             try {
                 if (!retriever.getState().equals(Retriever.RETRIEVER_STATE_SUCCESSFUL))
                     throw new IOException("retriever fail: " + retriever.getState());

@@ -115,7 +115,7 @@ public class TextureTile extends Tile implements SurfaceTile {
 
     public Texture getTexture(GpuResourceCache tc) {
 
-        return tc.getTexture(this.tileKey);
+        return tc.getTexture(this.key);
     }
 
     public boolean isTextureInMemory(GpuResourceCache tc) {
@@ -137,7 +137,7 @@ public class TextureTile extends Tile implements SurfaceTile {
 
     public void setTexture(GpuResourceCache tc, Texture texture) {
 
-        tc.put(this.tileKey, texture);
+        tc.put(this.key, texture);
         this.updateTime.set(System.currentTimeMillis());
 
         // No more need for texture data; allow garbage collector and memory cache to reclaim it.
@@ -238,8 +238,8 @@ public class TextureTile extends Tile implements SurfaceTile {
     }
 
     protected void updateMemoryCache() {
-        if (this.getTileFromMemoryCache(this.tileKey) != null)
-            TextureTile.getMemoryCache().add(this.tileKey, this);
+        if (this.getTileFromMemoryCache(this.key) != null)
+            TextureTile.getMemoryCache().add(this.key, this);
     }
 
     protected Texture initializeTexture(DrawContext dc) {
@@ -431,7 +431,7 @@ public class TextureTile extends Tile implements SurfaceTile {
         if (o == null || getClass() != o.getClass())
             return false;
 
-        return Objects.equals(this.tileKey, ((Tile) o).tileKey);
+        return Objects.equals(this.key, ((Tile) o).key);
     }
 
     @Override

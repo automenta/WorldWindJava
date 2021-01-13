@@ -14,6 +14,7 @@ import org.w3c.dom.*;
 
 import java.io.File;
 import java.net.URL;
+import java.util.function.Function;
 
 /**
  * Implements an {@link gov.nasa.worldwind.globes.ElevationModel} for a local dataset accessed via a local raster server
@@ -143,7 +144,7 @@ public class LocalRasterServerElevationModel extends BasicElevationModel {
         RetrieverFactory retrieverFactory = new RetrieverFactory() {
             final protected RasterServer rasterServer = new BasicRasterServer(rasterServerFileURL, rasterServerParams);
 
-            public Retriever retriever(AVList tileParams, RetrievalPostProcessor postProcessor) {
+            public Retriever retriever(AVList tileParams, Function<Retriever,java.nio.ByteBuffer> postProcessor) {
                 Retriever retriever =
                     new LocalRasterServerRetriever(tileParams, rasterServer, postProcessor);
 

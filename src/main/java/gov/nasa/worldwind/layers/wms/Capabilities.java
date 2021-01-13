@@ -71,11 +71,11 @@ public abstract class Capabilities {
     public static Capabilities retrieve(URI uri, String service, Integer connectTimeout, Integer readTimeout)
         throws IllegalArgumentException, WWRuntimeException, org.xml.sax.SAXException,
         java.io.IOException, URISyntaxException, MalformedURLException {
-        if (uri == null) {
-            String message = Logging.getMessage("nullValue.URIIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (uri == null) {
+//            String message = Logging.getMessage("nullValue.URIIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         InputStream is = null;
 
@@ -86,11 +86,11 @@ public abstract class Capabilities {
 
             URLRetriever retriever = URLRetriever.createRetriever(capsURL, Retriever::getBuffer);
 
-            if (retriever == null) {
-                String message = Logging.getMessage("generic.UnrecognizedProtocol");
-                Logging.logger().severe(message);
-                throw new WWRuntimeException(message);
-            }
+//            if (retriever == null) {
+//                String message = Logging.getMessage("generic.UnrecognizedProtocol");
+//                Logging.logger().severe(message);
+//                throw new WWRuntimeException(message);
+//            }
 
             if (connectTimeout != null)
                 retriever.setConnectTimeout(connectTimeout);

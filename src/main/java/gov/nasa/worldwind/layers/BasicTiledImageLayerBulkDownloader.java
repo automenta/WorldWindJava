@@ -375,8 +375,8 @@ public class BasicTiledImageLayerBulkDownloader extends BulkRetrievalThread {
             super(tile, layer, fileStore);
         }
 
-        public ByteBuffer run(Retriever retriever) {
-            ByteBuffer buffer = super.run(retriever);
+        public ByteBuffer apply(Retriever retriever) {
+            ByteBuffer buffer = super.apply(retriever);
 
             if (retriever.getState().equals(Retriever.RETRIEVER_STATE_SUCCESSFUL))
                 removeRetrievedTile(this.tile);

@@ -843,7 +843,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
             this.tile = tile;
         }
 
-        public ByteBuffer run(Retriever retriever) {
+        public ByteBuffer apply(Retriever retriever) {
             if (!retriever.getState().equals(
                 Retriever.RETRIEVER_STATE_SUCCESSFUL))
                 return null;

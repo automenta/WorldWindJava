@@ -10,6 +10,7 @@ import gov.nasa.worldwind.util.Logging;
 
 import java.net.*;
 import java.nio.ByteBuffer;
+import java.util.function.Function;
 import java.util.logging.Level;
 
 /**
@@ -24,7 +25,7 @@ public class JarRetriever extends URLRetriever {
     private int responseCode;
     private String responseMessage;
 
-    public JarRetriever(URL url, RetrievalPostProcessor postProcessor) {
+    public JarRetriever(URL url, Function<Retriever, ByteBuffer> postProcessor) {
         super(url, postProcessor);
     }
 

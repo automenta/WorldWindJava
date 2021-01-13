@@ -753,9 +753,9 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
             final URL tileURL = this.layer.getDataFileStore().findFile(tile.getFileCachePath(), false);
             if (tileURL != null) {
                 if (this.layer.loadTile(this.tile, tileURL)) {
-                    tile.placeNameService.unmarkResourceAbsent(tile.placeNameService.getTileNumber(
-                        tile.row,
-                        tile.column));
+                    tile.placeNameService.unmarkResourceAbsent(
+                        tile.placeNameService.getTileNumber(tile.row, tile.column)
+                    );
                     this.layer.firePropertyChange(AVKey.LAYER, null, this);
                     return;
                 }
@@ -770,11 +770,11 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
          * @throws IllegalArgumentException if <code>that</code> is null
          */
         public int compareTo(RequestTask that) {
-            if (that == null) {
-                String msg = Logging.getMessage("nullValue.RequestTaskIsNull");
-                Logging.logger().severe(msg);
-                throw new IllegalArgumentException(msg);
-            }
+//            if (that == null) {
+//                String msg = Logging.getMessage("nullValue.RequestTaskIsNull");
+//                Logging.logger().severe(msg);
+//                throw new IllegalArgumentException(msg);
+//            }
             return Double.compare(this.tile.getPriority(), that.tile.getPriority());
         }
 

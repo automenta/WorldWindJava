@@ -1037,7 +1037,7 @@ public class SurfaceObjectTileBuilder {
      */
     protected void addTile(SurfaceObjectTile tile) {
         this.currentInfo.tiles.add(tile);
-        TextureTile.getMemoryCache().add(tile.tileKey, tile);
+        TextureTile.getMemoryCache().add(tile.key, tile);
     }
 
     //**************************************************************//
@@ -1370,7 +1370,7 @@ public class SurfaceObjectTileBuilder {
          */
         public SurfaceObjectTileStateKey(DrawContext dc, SurfaceObjectTile tile) {
             if (tile != null && tile.hasObjects()) {
-                this.tileKey = tile.tileKey;
+                this.tileKey = tile.key;
                 this.intersectingObjectKeys = new Object[tile.getObjectList().size()];
 
                 int index = 0;

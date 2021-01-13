@@ -131,8 +131,10 @@ public abstract class BufferWrapper {
 //            throw new IllegalArgumentException(message);
 //        }
 
+        byteBuffer.rewind();
         return BufferWrapper.wrap(byteBuffer, params.get(AVKey.DATA_TYPE), params.get(AVKey.BYTE_ORDER));
     }
+
 
     /**
      * Returns the length of the buffer, in units of the underlying data type (e.g. bytes, shorts, ints, floats,
@@ -409,11 +411,11 @@ public abstract class BufferWrapper {
         protected T buffer;
 
         public AbstractBufferWrapper(T buffer) {
-            if (buffer == null) {
-                String message = Logging.getMessage("nullValue.BufferIsNull");
-                Logging.logger().severe(message);
-                throw new IllegalArgumentException(message);
-            }
+//            if (buffer == null) {
+//                String message = Logging.getMessage("nullValue.BufferIsNull");
+//                Logging.logger().severe(message);
+//                throw new IllegalArgumentException(message);
+//            }
 
             this.buffer = buffer;
         }
@@ -423,11 +425,11 @@ public abstract class BufferWrapper {
         }
 
         public void getByte(int index, byte[] array, int offset, int length) {
-            if (array == null) {
-                String message = Logging.getMessage("nullValue.ArrayIsNull");
-                Logging.logger().severe(message);
-                throw new IllegalArgumentException(message);
-            }
+//            if (array == null) {
+//                String message = Logging.getMessage("nullValue.ArrayIsNull");
+//                Logging.logger().severe(message);
+//                throw new IllegalArgumentException(message);
+//            }
 
             if (length <= 0)
                 return;
@@ -443,11 +445,11 @@ public abstract class BufferWrapper {
         }
 
         public void putByte(int index, byte[] array, int offset, int length) {
-            if (array == null) {
-                String message = Logging.getMessage("nullValue.ArrayIsNull");
-                Logging.logger().severe(message);
-                throw new IllegalArgumentException(message);
-            }
+//            if (array == null) {
+//                String message = Logging.getMessage("nullValue.ArrayIsNull");
+//                Logging.logger().severe(message);
+//                throw new IllegalArgumentException(message);
+//            }
 
             if (length <= 0)
                 return;

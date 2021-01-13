@@ -15,6 +15,7 @@ import gov.nasa.worldwind.util.*;
 import java.io.IOException;
 import java.util.List;
 
+import static gov.nasa.worldwind.globes.ElevationModel.MISSING;
 import static gov.nasa.worldwind.util.WWMath.sqr;
 
 /**
@@ -312,15 +313,17 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
     public double[] getElevations(Sector sector, List<? extends LatLon> latLons, double[] targetResolution,
         double[] elevations) {
         if (this.elevationModel == null)
-            return new double[] {0};
+            return new double[] {MISSING};
 
         double[] resolution = this.elevationModel.getElevations(sector, latLons, targetResolution, elevations);
 
         if (this.egm96 != null) {
             final int n = elevations.length;
             for (int i = 0; i < n; i++) {
-                final LatLon ii = latLons.get(i);
-                elevations[i] += this.egm96.getOffset(ii.getLatitude(), ii.getLongitude());
+                if (Double.isFinite(elevations[i])) {
+                    final LatLon ii = latLons.get(i);
+                    elevations[i] += this.egm96.getOffset(ii.getLatitude(), ii.getLongitude());
+                }
             }
         }
 
@@ -330,12 +333,14 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
     public double elevation(Angle latitude, Angle longitude) {
 
         if (this.elevationModel == null)
-            return 0;
+            return MISSING;
 
         double elevation = this.elevationModel.getElevation(latitude, longitude);
+        if (Double.isFinite(elevation)) {
 
-        if (this.egm96 != null)
-            elevation += this.egm96.getOffset(latitude, longitude);
+            if (this.egm96 != null)
+                elevation += this.egm96.getOffset(latitude, longitude);
+        }
 
         return elevation;
     }

@@ -97,6 +97,12 @@ public interface Globe extends WWObject, Extent {
      */
     double elevation(Angle latitude, Angle longitude);
 
+    default double elevationOrZero(Angle latitude, Angle longitude) {
+        double e = elevation(latitude, longitude);
+        if (!Double.isFinite(e)) return 0;
+        else return e;
+    }
+
     /**
      * Indicates the elevations of a collection of locations. Replaces any elevation values corresponding to the missing
      * data signal with the elevation model's missing data replacement value. If a location within the elevation model's

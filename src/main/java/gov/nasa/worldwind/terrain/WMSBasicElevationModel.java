@@ -40,29 +40,29 @@ public class WMSBasicElevationModel extends BasicElevationModel {
         this(WMSBasicElevationModel.wmsGetParamsFromCapsDoc(caps, params));
     }
 
-    public WMSBasicElevationModel(String restorableStateInXml) {
-        super(WMSBasicElevationModel.wmsRestorableStateToParams(restorableStateInXml));
-
-        RestorableSupport rs;
-        try {
-            rs = RestorableSupport.parse(restorableStateInXml);
-        }
-        catch (RuntimeException e) {
-            // Parsing the document specified by stateInXml failed.
-            String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", restorableStateInXml);
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message, e);
-        }
-
-        this.doRestoreState(rs, null);
-    }
+//    public WMSBasicElevationModel(String restorableStateInXml) {
+//        super(WMSBasicElevationModel.wmsRestorableStateToParams(restorableStateInXml));
+//
+//        RestorableSupport rs;
+//        try {
+//            rs = RestorableSupport.parse(restorableStateInXml);
+//        }
+//        catch (RuntimeException e) {
+//            // Parsing the document specified by stateInXml failed.
+//            String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", restorableStateInXml);
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message, e);
+//        }
+//
+//        this.doRestoreState(rs, null);
+//    }
 
     protected static AVList wmsGetParamsFromDocument(Element domElement, AVList params) {
-        if (domElement == null) {
-            String message = Logging.getMessage("nullValue.DocumentIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (domElement == null) {
+//            String message = Logging.getMessage("nullValue.DocumentIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         if (params == null)
             params = new AVListImpl();
@@ -77,17 +77,17 @@ public class WMSBasicElevationModel extends BasicElevationModel {
     }
 
     protected static AVList wmsGetParamsFromCapsDoc(WMSCapabilities caps, AVList params) {
-        if (caps == null) {
-            String message = Logging.getMessage("nullValue.WMSCapabilities");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (params == null) {
-            String message = Logging.getMessage("nullValue.ElevationModelConfigParams");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (caps == null) {
+//            String message = Logging.getMessage("nullValue.WMSCapabilities");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//
+//        if (params == null) {
+//            String message = Logging.getMessage("nullValue.ElevationModelConfigParams");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         String wmsVersion;
         try {
@@ -128,7 +128,7 @@ public class WMSBasicElevationModel extends BasicElevationModel {
             params.set(AVKey.FORMAT_SUFFIX, ".bil");
 
         if (params.get(AVKey.MISSING_DATA_SIGNAL) == null)
-            params.set(AVKey.MISSING_DATA_SIGNAL, -9999.0d);
+            params.set(AVKey.MISSING_DATA_SIGNAL, Double.NEGATIVE_INFINITY);
 
         if (params.get(AVKey.NUM_LEVELS) == null)
             params.set(AVKey.NUM_LEVELS, 18); // approximately 20 cm per pixel
@@ -161,17 +161,17 @@ public class WMSBasicElevationModel extends BasicElevationModel {
      */
     public static AVList getWMSElevationModelConfigParams(WMSCapabilities caps, String[] formatOrderPreference,
         AVList params) {
-        if (caps == null) {
-            String message = Logging.getMessage("nullValue.WMSCapabilities");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (params == null) {
-            String message = Logging.getMessage("nullValue.ElevationModelConfigParams");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (caps == null) {
+//            String message = Logging.getMessage("nullValue.WMSCapabilities");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//
+//        if (params == null) {
+//            String message = Logging.getMessage("nullValue.ElevationModelConfigParams");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         // Get common WMS layer parameters.
         DataConfigurationUtils.getWMSLayerConfigParams(caps, formatOrderPreference, params);
@@ -225,11 +225,11 @@ public class WMSBasicElevationModel extends BasicElevationModel {
     //**************************************************************//
 
     protected static AVList wmsRestorableStateToParams(String stateInXml) {
-        if (stateInXml == null) {
-            String message = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (stateInXml == null) {
+//            String message = Logging.getMessage("nullValue.StringIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         RestorableSupport rs;
         try {
@@ -285,8 +285,8 @@ public class WMSBasicElevationModel extends BasicElevationModel {
     protected static Retriever downloadElevations(ElevationCompositionTile tile) throws Exception {
 
         Retriever retriever = new HTTPRetriever(tile.getResourceURL(), new CompositionRetrievalPostProcessor(tile.getFile()));
-//        retriever.setConnectTimeout(10000);
-//        retriever.setReadTimeout(60000);
+        retriever.setConnectTimeout(10000);
+        retriever.setReadTimeout(60000);
         return retriever.call();
     }
 
@@ -436,16 +436,13 @@ public class WMSBasicElevationModel extends BasicElevationModel {
                 sb.append(s.latMax);
             } else {
                 // 1.3.0 uses lat/lon ordering
-                sb.append(s.latMin);
-                sb.append(',');
-                sb.append(s.lonMin);
-                sb.append(',');
-                sb.append(s.latMax);
-                sb.append(',');
+                sb.append(s.latMin).append(',');
+                sb.append(s.lonMin).append(',');
+                sb.append(s.latMax).append(',');
                 sb.append(s.lonMax);
             }
 
-            sb.append('&'); // terminate the query string
+            //sb.append('&'); // terminate the query string
 
             return new URL(sb.toString().replace(" ", "%20"));
         }

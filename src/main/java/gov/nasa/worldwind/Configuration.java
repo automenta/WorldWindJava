@@ -91,6 +91,7 @@ public class Configuration // Singleton
 
     public static final String userAgent = "Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0";
 
+    static private final int CACHE_STALE_DAYS = 365;
 
 
     /**
@@ -133,11 +134,10 @@ public class Configuration // Singleton
             .cache(new Cache(
                 Configuration.data.newFile(""),
                 512 * 1024L * 1024L))
-            .connectTimeout(15, TimeUnit.SECONDS)
-            .readTimeout(15, TimeUnit.SECONDS)
-            //.callTimeout(10, TimeUnit.SECONDS)
+            .connectTimeout(1, TimeUnit.MINUTES)
+            .readTimeout(1, TimeUnit.MINUTES)
+            .callTimeout(1, TimeUnit.MINUTES)
             .build();
-        int CACHE_STALE_DAYS = 365;
         cacheControl = new CacheControl.Builder()
             .maxStale(CACHE_STALE_DAYS, TimeUnit.DAYS)
             .build();

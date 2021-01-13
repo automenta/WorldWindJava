@@ -10,7 +10,7 @@ import com.jogamp.common.nio.*;
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.exception.WWRuntimeException;
-import jcog.Log;
+import jcog.*;
 import okhttp3.*;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.function.ThrowingConsumer;
@@ -22,6 +22,7 @@ import java.nio.*;
 import java.nio.channels.*;
 import java.nio.charset.Charset;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.zip.*;
@@ -157,26 +158,27 @@ public class WWIO {
      */
     public static void get(String url, ThrowingConsumer<ResponseBody> success, Predicate<Throwable> fail) {
 
-        WWIO.logger.info("load {}", url);
         try {
             Request.Builder requestBuilder = new Request.Builder()
                 .cacheControl(Configuration.cacheControl)
                 .header("User-Agent", Configuration.userAgent);
 
-            try (Response r = Configuration.http.newCall(requestBuilder.url(url).build()).execute()) {
-                final Response rn = r.networkResponse();
-                if (rn != null && !rn.isSuccessful())
-                    throw new IOException(rn.toString());
+            final Call call = Configuration.http.newCall(requestBuilder.url(url).build());
+
+            try (Response r = call.execute()) {
+                if (!r.isSuccessful())
+                    throw new IOException(r.toString());
 
                 success.accept(r.body());
+                WWIO.logger.info("{} {}", r.cacheResponse()!=null ? "GOT" : "GET", url);
+
             }
-        }
-        catch (Throwable e) {
+        } catch (Throwable e) {
             if (fail.test(e)) {
+                WWIO.logger.warn("{} {}", e.getMessage(), url);
                 if (e instanceof RuntimeException)
                     throw (RuntimeException) e;
                 else {
-                    WWIO.logger.warn("load", e);
                     throw new RuntimeException(e);
                 }
             }

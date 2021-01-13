@@ -17,7 +17,7 @@ import gov.nasa.worldwind.data.ByteBufferRaster;
 public class ElevationsUtil {
     public static final double DTED_DEFAULT_MISSING_SIGNAL = -32767.0d;
     public static final double SRTM_DEFAULT_MISSING_SIGNAL = -32768.0d;
-    public static final double DEM_DEFAULT_MISSING_SIGNAL = -9999.0d;
+    public static final double DEM_DEFAULT_MISSING_SIGNAL = Double.NEGATIVE_INFINITY;
 
     protected static final double[] knownMissingSignals = {
         ElevationsUtil.DTED_DEFAULT_MISSING_SIGNAL, ElevationsUtil.SRTM_DEFAULT_MISSING_SIGNAL, ElevationsUtil.DEM_DEFAULT_MISSING_SIGNAL

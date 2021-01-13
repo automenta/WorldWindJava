@@ -422,7 +422,7 @@ public class ViewUtil {
         if (surfacePosition == null)
             surfacePosition = new Position(
                 position,
-                globe.elevation(position.getLatitude(), position.getLongitude()) * dc.getVerticalExaggeration());
+                globe.elevationOrZero(position.getLatitude(), position.getLongitude()) * dc.getVerticalExaggeration());
 
         return position.getElevation() - surfacePosition.getElevation();
     }

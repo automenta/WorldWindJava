@@ -79,6 +79,8 @@ public final class BasicRetrievalService extends WWObjectImpl
      */
     public synchronized RetrievalFuture run(Retriever retrieval, double priority) {
 
+        assert(Double.isFinite(priority));
+
         if (!this.isAvailable()) {
             Logging.logger().finer(Logging.getMessage("BasicRetrievalService.ResourceRejected", retrieval.getName()));
             return null;

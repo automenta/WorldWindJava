@@ -199,7 +199,7 @@ public class BasicElevationModelBulkDownloader extends BulkRetrievalThread {
         while (this.missingTiles.size() > i && rs.isAvailable()) {
             Thread.sleep(1); // generates InterruptedException if thread has been interrupted
 
-            Tile tile = this.missingTiles.get(i);
+            BasicElevationModel.ElevationTile tile = (BasicElevationModel.ElevationTile) this.missingTiles.get(i);
 
             if (this.elevationModel.getLevels().missing(tile)) {
                 removeAbsentTile(tile);  // tile is absent, count it off.
@@ -481,12 +481,12 @@ public class BasicElevationModelBulkDownloader extends BulkRetrievalThread {
     }
 
     protected class BulkDownloadPostProcessor extends BasicElevationModel.DownloadPostProcessor {
-        public BulkDownloadPostProcessor(Tile tile, BasicElevationModel elevationModel, FileStore fileStore) {
+        public BulkDownloadPostProcessor(BasicElevationModel.ElevationTile tile, BasicElevationModel elevationModel, FileStore fileStore) {
             super(tile, elevationModel, fileStore);
         }
 
-        public ByteBuffer run(Retriever retriever) {
-            ByteBuffer buffer = super.run(retriever);
+        public ByteBuffer apply(Retriever retriever) {
+            ByteBuffer buffer = super.apply(retriever);
 
             if (retriever.getState().equals(Retriever.RETRIEVER_STATE_SUCCESSFUL))
                 removeRetrievedTile(this.tile);
