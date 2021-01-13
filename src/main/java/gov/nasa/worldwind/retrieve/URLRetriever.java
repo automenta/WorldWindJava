@@ -234,7 +234,7 @@ public class URLRetriever extends WWObjectImpl implements Retriever {
 
     private static final Set<String> REMOTE_PROTOCOLS = Set.of("http", "https", "ftp" /*?*/);
 
-    public final Retriever call() {
+    @Override public final URLRetriever call() {
 
         if (WorldWind.getNetworkStatus().isHostUnavailable(url)) {
             setState(Retriever.RETRIEVER_STATE_NOT_STARTED);

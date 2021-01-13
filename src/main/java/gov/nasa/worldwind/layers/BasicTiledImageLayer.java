@@ -397,7 +397,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
         if (this.get(AVKey.RETRIEVER_FACTORY_LOCAL) != null)
             this.retrieveLocalTexture(tile, postProcessor);
         else
-            // Assume it's remote, which handles the legacy cases.
+//            // Assume it's remote, which handles the legacy cases.
             this.retrieveRemoteTexture(tile, postProcessor);
     }
 
@@ -419,7 +419,6 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
 
         WorldWind.retrieveLocal().run(retriever, tile.getPriority());
     }
-
     protected void retrieveRemoteTexture(TextureTile tile, DownloadPostProcessor postProcessor) {
         if (!this.isNetworkRetrievalEnabled()) {
             this.getLevels().miss(tile);
@@ -471,6 +470,48 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
 
         WorldWind.retrieveRemote().run(retriever, tile.getPriority());
     }
+
+//    protected void retrieveRemoteTexture0(TextureTile tile, DownloadPostProcessor postProcessor) {
+//        if (!this.isNetworkRetrievalEnabled() || !WorldWind.retrieveRemote().isAvailable()) {
+//            this.getLevels().miss(tile);
+//            return;
+//        }
+//
+//        URL url;
+//        try {
+//            url = tile.getResourceURL();
+//            if (url == null)
+//                return;
+//        } catch (MalformedURLException e) {
+//            this.getLevels().miss(tile);
+//            Logging.logger().log(Level.SEVERE,
+//                Logging.getMessage("layers.TextureLayer.ExceptionCreatingTextureUrl", tile), e);
+//            return;
+//        }
+//        if (WorldWind.getNetworkStatus().isHostUnavailable(url)) {
+//            this.getLevels().miss(tile);
+//            return;
+//        }
+//
+//        URLRetriever retriever = new URLRetriever(url, postProcessor!=null ? postProcessor : this.createDownloadPostProcessor(tile));
+//
+//        retriever.set(URLRetriever.EXTRACT_ZIP_ENTRY, "true"); // supports legacy layers
+//
+//        // Apply any overridden timeouts.
+//        Integer cto = AVListImpl.getIntegerValue(this, AVKey.URL_CONNECT_TIMEOUT);
+//        if (cto != null && cto > 0)
+//            retriever.setConnectTimeout(cto);
+//        Integer cro = AVListImpl.getIntegerValue(this, AVKey.URL_READ_TIMEOUT);
+//        if (cro != null && cro > 0)
+//            retriever.setReadTimeout(cro);
+//        Integer srl = AVListImpl.getIntegerValue(this, AVKey.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT);
+//        if (srl != null && srl > 0)
+//            retriever.setStaleRequestLimit(srl);
+//
+//        //WorldWind.retrieveRemote().run(retriever, tile.getPriority());
+//
+//        retriever.call().call();
+//    }
 
     protected DownloadPostProcessor createDownloadPostProcessor(TextureTile tile) {
         return new DownloadPostProcessor(tile, this);
@@ -911,8 +952,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
             ByteBuffer buffer = super.handleSuccessfulRetrieval();
 
             if (buffer != null) {
-                // We've successfully cached data. Check if there's a configuration file for this layer, create one
-                // if there's not.
+                // We've successfully cached data. Check if there's a configuration file for this layer, create one if there's not.
                 this.layer.writeConfigurationFile(this.getFileStore());
 
                 // Fire a property change to denote that the layer's backing data has changed.

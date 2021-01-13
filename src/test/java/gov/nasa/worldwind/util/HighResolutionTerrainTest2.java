@@ -20,7 +20,6 @@ import static org.junit.Assert.fail;
 /**
  * Checks for re-occurrence of WWJ-521.
  */
-@Ignore
 @RunWith(JUnit4.class)
 public class HighResolutionTerrainTest2
 {
