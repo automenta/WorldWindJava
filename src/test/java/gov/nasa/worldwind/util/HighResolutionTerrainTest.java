@@ -18,7 +18,6 @@ import java.util.concurrent.*;
 
 import static org.junit.Assert.*;
 
-@Ignore
 @RunWith(JUnit4.class)
 public class HighResolutionTerrainTest
 {

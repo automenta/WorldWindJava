@@ -70,8 +70,8 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
      */
     public static ElevationModel makeElevationModel(String key, String defaultValue) {
 
-        Object configSource = Configuration.getStringValue(key, defaultValue);
-        return (ElevationModel) BasicFactory.create(AVKey.ELEVATION_MODEL_FACTORY, configSource);
+        return (ElevationModel) BasicFactory.create(AVKey.ELEVATION_MODEL_FACTORY,
+            Configuration.getStringValue(key, defaultValue));
     }
 
     @Override

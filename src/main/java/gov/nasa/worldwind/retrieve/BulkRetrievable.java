@@ -17,29 +17,29 @@ import gov.nasa.worldwind.geom.Sector;
  * @version $Id: BulkRetrievable.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 @Deprecated public interface BulkRetrievable {
+//
+//    /**
+//     * Estimates the amount of data, in bytes, that must be retrieved to the WorldWind data cache for a specified sector
+//     * and resolution.
+//     *
+//     * @param sector     the sector for which to retrieve the data.
+//     * @param resolution the resolution desired. All data within the specified sector up to and including this
+//     *                   resolution is downloaded.
+//     * @return the estimated data size, in bytes.
+//     */
+//    long getEstimatedMissingDataSize(Sector sector, double resolution);
 
-    /**
-     * Estimates the amount of data, in bytes, that must be retrieved to the WorldWind data cache for a specified sector
-     * and resolution.
-     *
-     * @param sector     the sector for which to retrieve the data.
-     * @param resolution the resolution desired. All data within the specified sector up to and including this
-     *                   resolution is downloaded.
-     * @return the estimated data size, in bytes.
-     */
-    long getEstimatedMissingDataSize(Sector sector, double resolution);
-
-    /**
-     * Estimates the amount of data, in bytes, that must be retrieved to a specified filestore for a specified sector
-     * and resolution.
-     *
-     * @param sector     the sector for which to retrieve the data.
-     * @param resolution the resolution desired. All data within the specified sector up to and including this
-     *                   resolution is downloaded.
-     * @param fileStore  the location to place the data. If null, the current WorldWind cache is used.
-     * @return the estimated data size, in bytes.
-     */
-    long getEstimatedMissingDataSize(Sector sector, double resolution, FileStore fileStore);
+//    /**
+//     * Estimates the amount of data, in bytes, that must be retrieved to a specified filestore for a specified sector
+//     * and resolution.
+//     *
+//     * @param sector     the sector for which to retrieve the data.
+//     * @param resolution the resolution desired. All data within the specified sector up to and including this
+//     *                   resolution is downloaded.
+//     * @param fileStore  the location to place the data. If null, the current WorldWind cache is used.
+//     * @return the estimated data size, in bytes.
+//     */
+//    long getEstimatedMissingDataSize(Sector sector, double resolution, FileStore fileStore);
 
     String name();
 }

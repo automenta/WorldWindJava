@@ -34,11 +34,11 @@ public class CompoundElevationModel extends AbstractElevationModel {
      * @throws IllegalArgumentException if the ElevationModel is null.
      */
     public boolean containsElevationModel(ElevationModel em) {
-        if (em == null) {
-            String msg = Logging.getMessage("nullValue.ElevationModelIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (em == null) {
+//            String msg = Logging.getMessage("nullValue.ElevationModelIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         // Check if the elevation model is one of the models in our list.
         if (this.elevationModels.contains(em))

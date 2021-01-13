@@ -182,13 +182,13 @@ public final class WorldWind {
         }
 
         String name = Configuration.getStringValue(classNameKey);
-//        if (name == null) {
-//            Logging.logger().log(Level.SEVERE, "WorldWind.NoClassNameInConfigurationForKey", classNameKey);
-//            throw new WWRuntimeException(
-//                Logging.getMessage("WorldWind.NoClassNameInConfigurationForKey", classNameKey));
-//        }
+        if (name == null) {
+            Logging.logger().log(Level.SEVERE, "WorldWind.NoClassNameInConfigurationForKey", classNameKey);
+            throw new WWRuntimeException(
+                Logging.getMessage("WorldWind.NoClassNameInConfigurationForKey", classNameKey));
+        }
 
-            return WorldWind.create(name.trim());
+        return WorldWind.create(name.trim());
 
     }
 

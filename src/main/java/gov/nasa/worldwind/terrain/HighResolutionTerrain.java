@@ -77,11 +77,11 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
      * @throws IllegalArgumentException if the globe is null.
      */
     public HighResolutionTerrain(Globe globe, Sector sector, Double targetResolution, Double verticalExaggeration) {
-        if (globe == null) {
-            String msg = Logging.getMessage("nullValue.GlobeIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (globe == null) {
+//            String msg = Logging.getMessage("nullValue.GlobeIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         this.globe = globe;
         this.sector = sector != null ? sector : Sector.FULL_SPHERE;

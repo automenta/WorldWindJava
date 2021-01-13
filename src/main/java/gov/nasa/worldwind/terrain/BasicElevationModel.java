@@ -794,47 +794,47 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
         return bufferWrapper;
     }
 
-    /**
-     * Get the estimated size in bytes of the elevations not in the WorldWind file cache for the given sector and
-     * resolution.
-     * <p>
-     * Note that the target resolution must be provided in radians of latitude per texel, which is the resolution in
-     * meters divided by the globe radius.
-     *
-     * @param sector     the sector to estimate.
-     * @param resolution the target resolution, provided in radians of latitude per texel.
-     * @return the estimated size in bytes of the missing elevations.
-     * @throws IllegalArgumentException if the sector is null or the resolution is less than zero.
-     */
-    public long getEstimatedMissingDataSize(Sector sector, double resolution) {
-        return this.getEstimatedMissingDataSize(sector, resolution, null);
-    }
+//    /**
+//     * Get the estimated size in bytes of the elevations not in the WorldWind file cache for the given sector and
+//     * resolution.
+//     * <p>
+//     * Note that the target resolution must be provided in radians of latitude per texel, which is the resolution in
+//     * meters divided by the globe radius.
+//     *
+//     * @param sector     the sector to estimate.
+//     * @param resolution the target resolution, provided in radians of latitude per texel.
+//     * @return the estimated size in bytes of the missing elevations.
+//     * @throws IllegalArgumentException if the sector is null or the resolution is less than zero.
+//     */
+//    public long getEstimatedMissingDataSize(Sector sector, double resolution) {
+//        return this.getEstimatedMissingDataSize(sector, resolution, null);
+//    }
 
-    /**
-     * Get the estimated size in bytes of the elevations not in a specified file store for the given sector and
-     * resolution.
-     * <p>
-     * Note that the target resolution must be provided in radians of latitude per texel, which is the resolution in
-     * meters divided by the globe radius.
-     *
-     * @param sector     the sector to estimate.
-     * @param resolution the target resolution, provided in radians of latitude per texel.
-     * @param fileStore  the file store to examine. If null the current WorldWind file cache is used.
-     * @return the estimated size in bytes of the missing elevations.
-     * @throws IllegalArgumentException if the sector is null or the resolution is less than zero.
-     */
-    public long getEstimatedMissingDataSize(Sector sector, double resolution, FileStore fileStore) {
-        Sector targetSector = sector != null ? getLevels().sector.intersection(sector) : null;
-        if (targetSector == null)
-            return 0;
-
-        // Args checked by downloader constructor
-        // Need a downloader to compute the missing data size.
-        BasicElevationModelBulkDownloader downloader = new BasicElevationModelBulkDownloader(this, targetSector,
-            resolution, fileStore != null ? fileStore : this.getDataFileStore(), null);
-
-        return downloader.getEstimatedMissingDataSize();
-    }
+//    /**
+//     * Get the estimated size in bytes of the elevations not in a specified file store for the given sector and
+//     * resolution.
+//     * <p>
+//     * Note that the target resolution must be provided in radians of latitude per texel, which is the resolution in
+//     * meters divided by the globe radius.
+//     *
+//     * @param sector     the sector to estimate.
+//     * @param resolution the target resolution, provided in radians of latitude per texel.
+//     * @param fileStore  the file store to examine. If null the current WorldWind file cache is used.
+//     * @return the estimated size in bytes of the missing elevations.
+//     * @throws IllegalArgumentException if the sector is null or the resolution is less than zero.
+//     */
+//    public long getEstimatedMissingDataSize(Sector sector, double resolution, FileStore fileStore) {
+//        Sector targetSector = sector != null ? getLevels().sector.intersection(sector) : null;
+//        if (targetSector == null)
+//            return 0;
+//
+//        // Args checked by downloader constructor
+//        // Need a downloader to compute the missing data size.
+//        BasicElevationModelBulkDownloader downloader = new BasicElevationModelBulkDownloader(this, targetSector,
+//            resolution, fileStore != null ? fileStore : this.getDataFileStore(), null);
+//
+//        return downloader.getEstimatedMissingDataSize();
+//    }
 
     protected void retrieveElevations(final ElevationTile tile, DownloadPostProcessor postProcessor) {
 //        if (this.get(AVKey.RETRIEVER_FACTORY_LOCAL) != null)
@@ -1523,88 +1523,88 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
         t.start();
     }
 
-    protected void writeConfigurationFile(FileStore fileStore) {
-        // TODO: configurable max attempts for creating a configuration file.
-
-        AVList configParams = this.getConfigurationParams(null);
-        this.writeConfigurationParams(configParams, fileStore);
-    }
-
-    protected void writeConfigurationParams(AVList params, FileStore fileStore) {
-        // Determine what the configuration file name should be based on the configuration parameters. Assume an XML
-        // configuration document type, and append the XML file suffix.
-        String fileName = DataConfigurationUtils.getDataConfigFilename(params, ".xml");
-//        if (fileName == null) {
-//            String message = Logging.getMessage("nullValue.FilePathIsNull");
-//            Logging.logger().severe(message);
-//            throw new WWRuntimeException(message);
+//    protected void writeConfigurationFile(FileStore fileStore) {
+//        // TODO: configurable max attempts for creating a configuration file.
+//
+//        AVList configParams = this.getConfigurationParams(null);
+//        this.writeConfigurationParams(configParams, fileStore);
+//    }
+//
+//    protected void writeConfigurationParams(AVList params, FileStore fileStore) {
+//        // Determine what the configuration file name should be based on the configuration parameters. Assume an XML
+//        // configuration document type, and append the XML file suffix.
+//        String fileName = DataConfigurationUtils.getDataConfigFilename(params, ".xml");
+////        if (fileName == null) {
+////            String message = Logging.getMessage("nullValue.FilePathIsNull");
+////            Logging.logger().severe(message);
+////            throw new WWRuntimeException(message);
+////        }
+//
+//        // Check if this component needs to write a configuration file. This happens outside of the synchronized block
+//        // to improve multithreaded performance for the common case: the configuration file already exists, this just
+//        // need to check that it's there and return. If the file exists but is expired, do not remove it -  this
+//        // removes the file inside the synchronized block below.
+//        if (!this.needsConfigurationFile(fileStore, fileName, params, false))
+//            return;
+//
+//        synchronized (this.fileLock) {
+//            // Check again if the component needs to write a configuration file, potentially removing any existing file
+//            // which has expired. This additional check is necessary because the file could have been created by
+//            // another thread while we were waiting for the lock.
+//            if (!this.needsConfigurationFile(fileStore, fileName, params, true))
+//                return;
+//
+//            this.doWriteConfigurationParams(fileStore, fileName, params);
 //        }
-
-        // Check if this component needs to write a configuration file. This happens outside of the synchronized block
-        // to improve multithreaded performance for the common case: the configuration file already exists, this just
-        // need to check that it's there and return. If the file exists but is expired, do not remove it -  this
-        // removes the file inside the synchronized block below.
-        if (!this.needsConfigurationFile(fileStore, fileName, params, false))
-            return;
-
-        synchronized (this.fileLock) {
-            // Check again if the component needs to write a configuration file, potentially removing any existing file
-            // which has expired. This additional check is necessary because the file could have been created by
-            // another thread while we were waiting for the lock.
-            if (!this.needsConfigurationFile(fileStore, fileName, params, true))
-                return;
-
-            this.doWriteConfigurationParams(fileStore, fileName, params);
-        }
-    }
-
-    protected void doWriteConfigurationParams(FileStore fileStore, String fileName, AVList params) {
-        File file = fileStore.newFile(fileName);
-
-        Document doc = this.createConfigurationDocument(params);
-        WWXML.saveDocumentToFile(doc, file.getPath());
-
-        String message = Logging.getMessage("generic.ConfigurationFileCreated", fileName);
-        Logging.logger().fine(message);
-    }
-
-    protected boolean needsConfigurationFile(FileStore fileStore, String fileName, AVList params,
-        boolean removeIfExpired) {
-        long expiryTime = this.getExpiryTime();
-        if (expiryTime <= 0)
-            expiryTime = AVListImpl.getLongValue(params, AVKey.EXPIRY_TIME, 0L);
-
-        return !DataConfigurationUtils.hasDataConfigFile(fileStore, fileName, removeIfExpired, expiryTime);
-    }
-
-    protected AVList getConfigurationParams(AVList params) {
-        if (params == null)
-            params = new AVListImpl();
-
-        // Gather all the construction parameters if they are available.
-        AVList constructionParams = (AVList) this.get(AVKey.CONSTRUCTION_PARAMETERS);
-        if (constructionParams != null)
-            params.setValues(constructionParams);
-
-        // Gather any missing LevelSet parameters from the LevelSet itself.
-        DataConfigurationUtils.getLevelSetConfigParams(this.getLevels(), params);
-
-        // Gather any missing parameters about the elevation data. These values must be available for consumers of the
-        // model configuration to property interpret the cached elevation files. While the elevation model assumes
-        // default values when these properties are missing, a different system does not know what those default values
-        // should be, and thus cannot assume anything about the value of these properties.
-
-        if (params.get(AVKey.BYTE_ORDER) == null)
-            params.set(AVKey.BYTE_ORDER, this.getElevationDataByteOrder());
-
-        if (params.get(AVKey.DATA_TYPE) == null)
-            params.set(AVKey.DATA_TYPE, this.getElevationDataType());
-
-        if (params.get(AVKey.MISSING_DATA_SIGNAL) == null)
-            params.set(AVKey.MISSING_DATA_SIGNAL, this.getMissingDataSignal());
-
-        return params;
-    }
+//    }
+//
+//    protected void doWriteConfigurationParams(FileStore fileStore, String fileName, AVList params) {
+//        File file = fileStore.newFile(fileName);
+//
+//        Document doc = this.createConfigurationDocument(params);
+//        WWXML.saveDocumentToFile(doc, file.getPath());
+//
+//        String message = Logging.getMessage("generic.ConfigurationFileCreated", fileName);
+//        Logging.logger().fine(message);
+//    }
+//
+//    protected boolean needsConfigurationFile(FileStore fileStore, String fileName, AVList params,
+//        boolean removeIfExpired) {
+//        long expiryTime = this.getExpiryTime();
+//        if (expiryTime <= 0)
+//            expiryTime = AVListImpl.getLongValue(params, AVKey.EXPIRY_TIME, 0L);
+//
+//        return !DataConfigurationUtils.hasDataConfigFile(fileStore, fileName, removeIfExpired, expiryTime);
+//    }
+//
+//    protected AVList getConfigurationParams(AVList params) {
+//        if (params == null)
+//            params = new AVListImpl();
+//
+//        // Gather all the construction parameters if they are available.
+//        AVList constructionParams = (AVList) this.get(AVKey.CONSTRUCTION_PARAMETERS);
+//        if (constructionParams != null)
+//            params.setValues(constructionParams);
+//
+//        // Gather any missing LevelSet parameters from the LevelSet itself.
+//        DataConfigurationUtils.getLevelSetConfigParams(this.getLevels(), params);
+//
+//        // Gather any missing parameters about the elevation data. These values must be available for consumers of the
+//        // model configuration to property interpret the cached elevation files. While the elevation model assumes
+//        // default values when these properties are missing, a different system does not know what those default values
+//        // should be, and thus cannot assume anything about the value of these properties.
+//
+//        if (params.get(AVKey.BYTE_ORDER) == null)
+//            params.set(AVKey.BYTE_ORDER, this.getElevationDataByteOrder());
+//
+//        if (params.get(AVKey.DATA_TYPE) == null)
+//            params.set(AVKey.DATA_TYPE, this.getElevationDataType());
+//
+//        if (params.get(AVKey.MISSING_DATA_SIGNAL) == null)
+//            params.set(AVKey.MISSING_DATA_SIGNAL, this.getMissingDataSignal());
+//
+//        return params;
+//    }
 
     protected Document createConfigurationDocument(AVList params) {
         return BasicElevationModel.createBasicElevationModelConfigDocument(params);
@@ -1918,7 +1918,7 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
 
                 // We've successfully cached data. Check whether there's a configuration file for this elevation model
                 // in the cache and create one if there isn't.
-                this.elevationModel.writeConfigurationFile(this.getFileStore());
+//                this.elevationModel.writeConfigurationFile(this.getFileStore());
 
                 // Fire a property change to denote that the model's backing data has changed.
                 this.elevationModel.firePropertyChange(AVKey.ELEVATION_MODEL, null, this);

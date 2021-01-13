@@ -349,49 +349,49 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
         return true;
     }
 
-    /**
-     * Get the estimated size in bytes of the imagery not in the WorldWind file cache for the given sector and
-     * resolution.
-     * <p>
-     * Note that the target resolution must be provided in radians of latitude per texel, which is the resolution in
-     * meters divided by the globe radius.
-     *
-     * @param sector     the sector to estimate.
-     * @param resolution the target resolution, provided in radians of latitude per texel.
-     * @return the estimated size in bytes of the missing imagery.
-     * @throws IllegalArgumentException if the sector is null or the resolution is less than zero.
-     */
-    public long getEstimatedMissingDataSize(Sector sector, double resolution) {
-        return this.getEstimatedMissingDataSize(sector, resolution, null);
-    }
+//    /**
+//     * Get the estimated size in bytes of the imagery not in the WorldWind file cache for the given sector and
+//     * resolution.
+//     * <p>
+//     * Note that the target resolution must be provided in radians of latitude per texel, which is the resolution in
+//     * meters divided by the globe radius.
+//     *
+//     * @param sector     the sector to estimate.
+//     * @param resolution the target resolution, provided in radians of latitude per texel.
+//     * @return the estimated size in bytes of the missing imagery.
+//     * @throws IllegalArgumentException if the sector is null or the resolution is less than zero.
+//     */
+//    public long getEstimatedMissingDataSize(Sector sector, double resolution) {
+//        return this.getEstimatedMissingDataSize(sector, resolution, null);
+//    }
 
     // *** Tile download ***
     // *** Tile download ***
     // *** Tile download ***
 
-    /**
-     * Get the estimated size in bytes of the imagery not in a specified file store for a specified sector and
-     * resolution.
-     * <p>
-     * Note that the target resolution must be provided in radians of latitude per texel, which is the resolution in
-     * meters divided by the globe radius.
-     *
-     * @param sector     the sector to estimate.
-     * @param resolution the target resolution, provided in radians of latitude per texel.
-     * @param fileStore  the file store to examine. If null the current WorldWind file cache is used.
-     * @return the estimated size in byte of the missing imagery.
-     * @throws IllegalArgumentException if the sector is null or the resolution is less than zero.
-     */
-    public long getEstimatedMissingDataSize(Sector sector, double resolution, FileStore fileStore) {
-        Sector targetSector = sector != null ? getLevels().sector.intersection(sector) : null;
-        if (targetSector == null)
-            return 0;
-
-        BasicTiledImageLayerBulkDownloader downloader = new BasicTiledImageLayerBulkDownloader(this, sector, resolution,
-            fileStore != null ? fileStore : this.getDataFileStore(), null);
-
-        return downloader.getEstimatedMissingDataSize();
-    }
+//    /**
+//     * Get the estimated size in bytes of the imagery not in a specified file store for a specified sector and
+//     * resolution.
+//     * <p>
+//     * Note that the target resolution must be provided in radians of latitude per texel, which is the resolution in
+//     * meters divided by the globe radius.
+//     *
+//     * @param sector     the sector to estimate.
+//     * @param resolution the target resolution, provided in radians of latitude per texel.
+//     * @param fileStore  the file store to examine. If null the current WorldWind file cache is used.
+//     * @return the estimated size in byte of the missing imagery.
+//     * @throws IllegalArgumentException if the sector is null or the resolution is less than zero.
+//     */
+//    public long getEstimatedMissingDataSize(Sector sector, double resolution, FileStore fileStore) {
+//        Sector targetSector = sector != null ? getLevels().sector.intersection(sector) : null;
+//        if (targetSector == null)
+//            return 0;
+//
+//        BasicTiledImageLayerBulkDownloader downloader = new BasicTiledImageLayerBulkDownloader(this, sector, resolution,
+//            fileStore != null ? fileStore : this.getDataFileStore(), null);
+//
+//        return downloader.getEstimatedMissingDataSize();
+//    }
 
     protected void retrieveTexture(TextureTile tile, DownloadPostProcessor postProcessor) {
         if (this.get(AVKey.RETRIEVER_FACTORY_LOCAL) != null)

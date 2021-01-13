@@ -19,7 +19,7 @@
     <Property name="gov.nasa.worldwind.avkey.GlobeClassName"
               value="gov.nasa.worldwind.globes.Earth"/>
     <Property name="gov.nasa.worldwind.avkey.EarthElevationModelConfigFile"
-              value="config/Earth/EarthElevations2.xml"/>
+              value="config/Earth/EarthElevations256.xml"/>
     <Property name="gov.nasa.worldwind.globes.GeographicProjectionClassName"
               value="gov.nasa.worldwind.globes.projections.ProjectionEquirectangular"/>
     <Property name="gov.nasa.worldwind.avkey.InitialLatitude" value="38"/>
@@ -57,7 +57,7 @@
     <!-- The following lists the sites to test for public network access. Specify an empty string, "", for no sites.-->
     <!-- Don't specify the property at all to use the default list. -->
     <Property name="gov.nasa.worldwind.avkey.NetworkStatusTestSites"
-              value="www.nasa.gov, worldwind.arc.nasa.gov, google.com, microsoft.com, yahoo.com"/>
+              value="ietf.org, w3c.org, wikipedia.org, archive.org"/>
     <Property name="gov.nasa.worldwind.avkey.TaskServiceClassName" value="gov.nasa.worldwind.util.TaskService"/>
     <Property name="gov.nasa.worldwind.avkey.DataFileStoreClassName"
               value="gov.nasa.worldwind.cache.BasicDataFileStore"/>
@@ -67,15 +67,15 @@
     <Property name="gov.nasa.worldwind.avkey.WorldMapImagePath" value="images/earth-map-512x256.dds"/>
     <Property name="gov.nasa.worldwind.StarsLayer.StarsFileName" value="config/Hipparcos_Stars_Mag6x5044.dat"/>
     <!--The following are tuning parameters for various WorldWind internals-->
-    <Property name="gov.nasa.worldwind.avkey.RetrievalPoolSize" value="4"/>
-    <Property name="gov.nasa.worldwind.avkey.RetrievalQueueSize" value="1024"/>
+    <Property name="gov.nasa.worldwind.avkey.RetrievalPoolSize" value="6"/>
+    <Property name="gov.nasa.worldwind.avkey.RetrievalQueueSize" value="2048"/>
     <Property name="gov.nasa.worldwind.avkey.RetrievalStaleRequestLimit" value="9000"/>
-    <Property name="gov.nasa.worldwind.avkey.TaskPoolSize" value="4"/>
-    <Property name="gov.nasa.worldwind.avkey.TaskQueueSize" value="20"/>
+    <Property name="gov.nasa.worldwind.avkey.TaskPoolSize" value="6"/>
+    <Property name="gov.nasa.worldwind.avkey.TaskQueueSize" value="256"/>
     <Property name="gov.nasa.worldwind.avkey.ScheduledTaskPoolSize" value="1"/>
     <Property name="gov.nasa.worldwind.avkey.VerticalExaggeration" value="1"/>
-    <Property name="gov.nasa.worldwind.avkey.URLConnectTimeout" value="15000"/>
-    <Property name="gov.nasa.worldwind.avkey.URLReadTimeout" value="10000"/>
+    <Property name="gov.nasa.worldwind.avkey.URLConnectTimeout" value="30000"/>
+    <Property name="gov.nasa.worldwind.avkey.URLReadTimeout" value="30000"/>
     <Property name="gov.nasa.worldwind.avkey.TextureCacheSize" value="500000000"/>
     <Property name="gov.nasa.worldwind.avkey.ElevationTileCacheSize" value="20000000"/>
     <Property name="gov.nasa.worldwind.avkey.ElevationExtremesLookupCacheSize" value="20000000"/>

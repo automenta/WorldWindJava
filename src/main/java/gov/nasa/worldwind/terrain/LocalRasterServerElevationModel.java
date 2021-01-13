@@ -97,12 +97,12 @@ public class LocalRasterServerElevationModel extends BasicElevationModel {
     }
 
     protected void createRasterServer(AVList params) {
-        if (params == null) {
-            String reason = Logging.getMessage("nullValue.ParamsIsNull");
-            String msg = Logging.getMessage("generic.CannotCreateRasterServer", reason);
-            Logging.logger().severe(msg);
-            throw new IllegalStateException(msg);
-        }
+//        if (params == null) {
+//            String reason = Logging.getMessage("nullValue.ParamsIsNull");
+//            String msg = Logging.getMessage("generic.CannotCreateRasterServer", reason);
+//            Logging.logger().severe(msg);
+//            throw new IllegalStateException(msg);
+//        }
 
         if (this.getDataFileStore() == null) {
             String reason = Logging.getMessage("nullValue.FileStoreIsNull");

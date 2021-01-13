@@ -34,10 +34,10 @@ public class BasicFactory implements Factory {
      *                                  string.
      */
     public static Object create(String factoryKey, Object configSource) {
-        if (factoryKey == null) {
-            String message = Logging.getMessage("generic.FactoryKeyIsNull");
-            throw new IllegalArgumentException(message);
-        }
+//        if (factoryKey == null) {
+//            String message = Logging.getMessage("generic.FactoryKeyIsNull");
+//            throw new IllegalArgumentException(message);
+//        }
 
         if (WWUtil.isEmpty(configSource)) {
             String message = Logging.getMessage("generic.ConfigurationSourceIsInvalid", configSource);

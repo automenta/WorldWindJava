@@ -220,18 +220,18 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
      * @throws IOException if an IO error occurred when attempting to save the buffer.
      */
     protected boolean saveBuffer(ByteBuffer buffer) throws IOException {
-        File outFile = this.getOutputFile();
-
-        if (outFile == null)
-            return false;
-
-        if (outFile.exists() && !this.overwriteExistingFile())
-            return false;
-
-        synchronized (this.getFileLock()) // synchronize with read of file in another class
-        {
-            WWIO.saveBuffer(buffer != null ? buffer : this.getRetriever().getBuffer(), outFile);
-        }
+//        File outFile = this.getOutputFile();
+//
+//        if (outFile == null)
+//            return false;
+//
+//        if (outFile.exists() && !this.overwriteExistingFile())
+//            return false;
+//
+//        synchronized (this.getFileLock()) // synchronize with read of file in another class
+//        {
+//            WWIO.saveBuffer(buffer != null ? buffer : this.getRetriever().getBuffer(), outFile);
+//        }
 
         return true;
     }
