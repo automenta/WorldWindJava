@@ -50,7 +50,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
             return Integer.compare(System.identityHashCode(ta), System.identityHashCode(tb));
     };
     private static final int QUEUE_SIZE = 2048;
-    protected final LevelSet levels;
+    public final LevelSet levels;
     protected final ArrayList<String> supportedImageFormats = new ArrayList<>();
     // Stuff computed each frame
     protected final ArrayList<TextureTile> currentTiles = new ArrayList<>();
@@ -363,8 +363,8 @@ public abstract class TiledImageLayer extends AbstractLayer {
     @Override
     public Object set(String key, Object value) {
         // Offer it to the level set
-        if (this.getLevels() != null)
-            this.getLevels().set(key, value);
+        if (levels != null)
+            levels.set(key, value);
 
         return super.set(key, value);
     }
@@ -373,7 +373,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
     public Object get(String key) {
         Object value = super.get(key);
 
-        return value != null ? value : this.getLevels().get(key); // see if the level set has it
+        return value != null ? value : levels.get(key); // see if the level set has it
     }
 
     @Override
@@ -446,13 +446,9 @@ public abstract class TiledImageLayer extends AbstractLayer {
         this.detailHint = detailHint;
     }
 
-    public LevelSet getLevels() {
-        return levels;
-    }
-
     @Override
     public boolean isMultiResolution() {
-        return this.getLevels() != null && this.getLevels().getNumLevels() > 1;
+        return levels != null && levels.getNumLevels() > 1;
     }
 
     @Override
@@ -621,7 +617,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
                 // Issue a request for the parent before descending to the children.
             }
 
-            final Sector sector = this.getLevels().sector;
+            final Sector sector = levels.sector;
             TextureTile[] subTiles = tile.createSubTiles(this.levels.getLevel(tile.getLevelNumber() + 1));
             for (TextureTile child : subTiles) {
                 if (sector.intersects(child.sector) && TiledImageLayer.isTileVisible(dc, child))
@@ -725,7 +721,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
             radius = Earth.WGS84_EQUATORIAL_RADIUS;
 
         // Get the texel size in meters for the highest-resolution level.
-        double texelSizeRadians = this.getLevels().getLastLevel().getTexelSize();
+        double texelSizeRadians = levels.getLastLevel().getTexelSize();
         double texelSizeMeters = radius * texelSizeRadians;
 
         // Compute altitude associated with the texel size at which it would switch if it had higher-res levels.
@@ -737,7 +733,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
             radius = Earth.WGS84_EQUATORIAL_RADIUS;
 
         // Find first non-empty level. Compute altitude at which it comes into effect.
-        final int n = this.getLevels().getLastLevel().getLevelNumber();
+        final int n = levels.getLastLevel().getLevelNumber();
         for (int i = 0; i < n; i++) {
             if (this.levels.isLevelEmpty(i))
                 continue;
@@ -755,13 +751,13 @@ public abstract class TiledImageLayer extends AbstractLayer {
 
     protected boolean atMaxLevel(DrawContext dc) {
         Position vpc = dc.getViewportCenterPosition();
-        if (dc.getView() == null || this.getLevels() == null || vpc == null)
+        if (dc.getView() == null || levels == null || vpc == null)
             return false;
 
-        if (!this.getLevels().sector.contains(vpc))
+        if (!levels.sector.contains(vpc))
             return true;
 
-        Level nextToLast = this.getLevels().getNextToLastLevel();
+        Level nextToLast = levels.getNextToLastLevel();
         if (nextToLast == null)
             return true;
 
@@ -1031,7 +1027,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
         // Find the first level exceeding the desired resolution
         double texelSize;
         Level targetLevel = this.levels.getLastLevel();
-        for (int i = 0; i < this.getLevels().getLastLevel().getLevelNumber(); i++) {
+        for (int i = 0; i < levels.getLastLevel().getLevelNumber(); i++) {
             if (this.levels.isLevelEmpty(i))
                 continue;
 
@@ -1154,7 +1150,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
 
     public long countImagesInSector(Sector sector) {
         long count = 0;
-        for (int i = 0; i <= this.getLevels().getLastLevel().getLevelNumber(); i++) {
+        for (int i = 0; i <= levels.getLastLevel().getLevelNumber(); i++) {
             if (!this.levels.isLevelEmpty(i))
                 count += countImagesInSector(sector, i);
         }
@@ -1170,7 +1166,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
 
         Level targetLevel = this.levels.getLastLevel();
         if (levelNumber >= 0) {
-            for (int i = levelNumber; i < this.getLevels().getLastLevel().getLevelNumber(); i++) {
+            for (int i = levelNumber; i < levels.getLastLevel().getLevelNumber(); i++) {
                 if (this.levels.isLevelEmpty(i))
                     continue;
 
@@ -1202,7 +1198,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
 
         Level targetLevel = this.levels.getLastLevel();
         if (levelNumber >= 0) {
-            for (int i = levelNumber; i < this.getLevels().getLastLevel().getLevelNumber(); i++) {
+            for (int i = levelNumber; i < levels.getLastLevel().getLevelNumber(); i++) {
                 if (this.levels.isLevelEmpty(i))
                     continue;
 

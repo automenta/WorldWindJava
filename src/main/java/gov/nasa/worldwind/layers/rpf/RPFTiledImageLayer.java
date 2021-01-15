@@ -393,7 +393,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
 
     private static TextureData readTexture(URL url, boolean useMipMaps) {
         try {
-            return OGLUtil.newTextureData(Configuration.getMaxCompatibleGLProfile(), url, useMipMaps);
+            return OGLUtil.newTextureData(url, useMipMaps, Configuration.getMaxCompatibleGLProfile());
         }
         catch (Exception e) {
             String msg = Logging.getMessage("layers.TextureLayer.ExceptionAttemptingToReadTextureFile", url.toString());
@@ -629,13 +629,13 @@ public class RPFTiledImageLayer extends TiledImageLayer {
             final URL textureURL = Configuration.data.findFile(tile.getPath(), false);
             if (textureURL != null) {
                 if (this.layer.loadTexture(tile, textureURL)) {
-                    layer.getLevels().has(tile);
+                    layer.levels.has(tile);
                     this.layer.firePropertyChange(AVKey.LAYER, null, this);
                     return;
                 } else {
                     // Assume that something's wrong with the file and delete it.
                     Configuration.data.removeFile(textureURL);
-                    layer.getLevels().miss(tile);
+                    layer.levels.miss(tile);
                     String message = Logging.getMessage("generic.DeletedCorruptDataFile", textureURL);
                     Logging.logger().info(message);
                 }
@@ -656,7 +656,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
 
         @Override
         protected void markResourceAbsent() {
-            this.layer.getLevels().miss(this.tile);
+            this.layer.levels.miss(this.tile);
         }
 
         @Override
@@ -723,7 +723,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
             catch (Exception e) {
                 Logging.logger().log(
                     java.util.logging.Level.SEVERE, "layers.TextureLayer.ExceptionAttemptingToCreateTileImage", e);
-                this.layer.getLevels().miss(tile);
+                this.layer.levels.miss(tile);
             }
         }
     }

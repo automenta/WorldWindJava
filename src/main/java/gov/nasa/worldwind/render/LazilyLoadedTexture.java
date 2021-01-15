@@ -513,7 +513,7 @@ public class LazilyLoadedTexture extends AVListImpl implements WWTexture {
      */
     protected TextureData readImage(URL fileUrl) {
         try {
-            return OGLUtil.newTextureData(Configuration.getMaxCompatibleGLProfile(), fileUrl, this.isUseMipMaps());
+            return OGLUtil.newTextureData(fileUrl, this.isUseMipMaps(), Configuration.getMaxCompatibleGLProfile());
         } catch (Exception e) {
             String msg = Logging.getMessage("layers.TextureLayer.ExceptionAttemptingToReadTextureFile",
                 this.getImageSource());

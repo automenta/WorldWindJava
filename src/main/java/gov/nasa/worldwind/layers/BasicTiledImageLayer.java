@@ -16,7 +16,6 @@ import gov.nasa.worldwind.layers.ogc.wms.WMSCapabilities;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.retrieve.*;
 import gov.nasa.worldwind.util.*;
-import jcog.WTF;
 import org.w3c.dom.*;
 
 import javax.swing.*;
@@ -301,11 +300,10 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
 
                 return OGLUtil.newTextureData(Configuration.getMaxCompatibleGLProfile(),
                     WWIO.getInputStreamFromByteBuffer(buffer), useMipMaps);
-            }
-            // If the caller has disabled texture compression, or if the texture data is already a DDS file, then read
-            // the texture data without converting it.
-            else {
-                return OGLUtil.newTextureData(Configuration.getMaxCompatibleGLProfile(), url, useMipMaps);
+            } else {
+                // If the caller has disabled texture compression, or if the texture data is already a DDS file, then read
+                // the texture data without converting it.
+                return OGLUtil.newTextureData(url, useMipMaps, Configuration.getMaxCompatibleGLProfile());
             }
         }
         catch (Exception e) {
@@ -313,10 +311,6 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
             Logging.logger().log(Level.SEVERE, msg, e);
             return null;
         }
-    }
-
-    protected static void addTileToCache(TextureTile tile) {
-        TextureTile.getMemoryCache().add(tile.key, tile);
     }
 
     protected void requestTexture(DrawContext dc, TextureTile tile) {
@@ -343,8 +337,9 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
             return false;
 
         tile.setTextureData(textureData);
+
         if (tile.getLevelNumber() != 0 || !this.isRetainLevelZeroTiles())
-            BasicTiledImageLayer.addTileToCache(tile);
+            TextureTile.cache.add(tile.key, tile);
 
         return true;
     }
@@ -397,7 +392,6 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
         if (this.get(AVKey.RETRIEVER_FACTORY_LOCAL) != null)
             this.retrieveLocalTexture(tile, postProcessor);
         else
-//            // Assume it's remote, which handles the legacy cases.
             this.retrieveRemoteTexture(tile, postProcessor);
     }
 
@@ -421,7 +415,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
     }
     protected void retrieveRemoteTexture(TextureTile tile, DownloadPostProcessor postProcessor) {
         if (!this.isNetworkRetrievalEnabled()) {
-            this.getLevels().miss(tile);
+            levels.miss(tile);
             return;
         }
 
@@ -431,11 +425,11 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
         URL url;
         try {
             url = tile.getResourceURL();
-            if (url == null)
-                return;
+//            if (url == null)
+//                return;
 
             if (WorldWind.getNetworkStatus().isHostUnavailable(url)) {
-                this.getLevels().miss(tile);
+                levels.miss(tile);
                 return;
             }
         }
@@ -450,11 +444,11 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
         if (postProcessor == null)
             postProcessor = this.createDownloadPostProcessor(tile);
         retriever = URLRetriever.createRetriever(url, postProcessor);
-        if (retriever == null) {
-            Logging.logger().severe(
-                Logging.getMessage("layers.TextureLayer.UnknownRetrievalProtocol", url.toString()));
-            return;
-        }
+//        if (retriever == null) {
+//            Logging.logger().severe(
+//                Logging.getMessage("layers.TextureLayer.UnknownRetrievalProtocol", url.toString()));
+//            return;
+//        }
         retriever.set(URLRetriever.EXTRACT_ZIP_ENTRY, "true"); // supports legacy layers
 
         // Apply any overridden timeouts.
@@ -709,7 +703,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
             params.setValues(constructionParams);
 
         // Gather any missing LevelSet parameters from the LevelSet itself.
-        DataConfigurationUtils.getLevelSetConfigParams(this.getLevels(), params);
+        DataConfigurationUtils.getLevelSetConfigParams(levels, params);
 
         return params;
     }
@@ -849,26 +843,28 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
         protected RequestTask(TextureTile tile, BasicTiledImageLayer layer) {
             this.layer = layer;
             this.tile = tile;
-            if (!Double.isFinite(tile.getPriority()))
-                throw new WTF();
+            assert(Double.isFinite(tile.getPriority()));
         }
 
         public void run() {
-            if (Thread.currentThread().isInterrupted())
-                return; // the task was cancelled because it's a duplicate or for some other reason
+//            if (Thread.currentThread().isInterrupted())
+//                return; // the task was cancelled because it's a duplicate or for some other reason
 
             final FileStore store = this.layer.getDataFileStore();
+
+            //TODO this ends up caching the texture twice in 2 different places: OK HTTP and the old file storage.  fix this
 
             final URL textureURL = store.findFile(tile.getPath(), false);
             if (textureURL != null) {
                 if (!BasicTiledImageLayer.isTextureFileExpired(tile, textureURL, store)) {
                     if (this.layer.loadTexture(tile, textureURL)) {
-                        layer.getLevels().has(tile);
+                        layer.levels.has(tile);
                         this.layer.firePropertyChange(AVKey.LAYER, null, this);
                         return;
                     } else {
                         // Assume that something is wrong with the file and delete it.
                         store.removeFile(textureURL);
+                        layer.levels.miss(tile);
                         Logging.logger().info(Logging.getMessage("generic.DeletedCorruptDataFile", textureURL));
                     }
                 }
@@ -910,9 +906,8 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
         }
     }
 
-    protected static class DownloadPostProcessor extends AbstractRetrievalPostProcessor {
+    protected final class DownloadPostProcessor extends AbstractRetrievalPostProcessor {
         protected final TextureTile tile;
-        protected final BasicTiledImageLayer layer;
         protected final FileStore fileStore;
 
         public DownloadPostProcessor(TextureTile tile, BasicTiledImageLayer layer) {
@@ -921,25 +916,24 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
 
         public DownloadPostProcessor(TextureTile tile, BasicTiledImageLayer layer, FileStore fileStore) {
             //noinspection RedundantCast
-            super((AVList) layer);
+            super((AVList) BasicTiledImageLayer.this);
 
             this.tile = tile;
-            this.layer = layer;
             this.fileStore = fileStore;
         }
 
         protected FileStore getFileStore() {
-            return this.fileStore != null ? this.fileStore : this.layer.getDataFileStore();
+            return this.fileStore != null ? this.fileStore : getDataFileStore();
         }
 
         @Override
         protected void markResourceAbsent() {
-            this.layer.getLevels().miss(this.tile);
+            levels.miss(this.tile);
         }
 
         @Override
         protected Object getFileLock() {
-            return this.layer.fileLock;
+            return fileLock;
         }
 
         @Override
@@ -953,10 +947,10 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
 
             if (buffer != null) {
                 // We've successfully cached data. Check if there's a configuration file for this layer, create one if there's not.
-                this.layer.writeConfigurationFile(this.getFileStore());
+                writeConfigurationFile(this.getFileStore());
 
                 // Fire a property change to denote that the layer's backing data has changed.
-                this.layer.firePropertyChange(AVKey.LAYER, null, this);
+                firePropertyChange(AVKey.LAYER, null, this);
             }
 
             return buffer;

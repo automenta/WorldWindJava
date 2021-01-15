@@ -8,7 +8,7 @@ package gov.nasa.worldwind.layers.wms;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
-import gov.nasa.worldwind.layers.BasicTiledImageLayer;
+import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.layers.ogc.wms.WMSCapabilities;
 import gov.nasa.worldwind.util.*;
 import org.w3c.dom.*;
@@ -210,10 +210,10 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer {
         IOException, InterruptedIOException {
 
         Level requestedLevel;
-        if ((levelNumber >= 0) && (levelNumber < this.getLevels().getNumLevels()))
-            requestedLevel = this.getLevels().getLevel(levelNumber);
+        if ((levelNumber >= 0) && (levelNumber < levels.getNumLevels()))
+            requestedLevel = levels.getLevel(levelNumber);
         else
-            requestedLevel = this.getLevels().getLastLevel();
+            requestedLevel = levels.getLastLevel();
         ComposeImageTile tile =
             new ComposeImageTile(sector, mimeType, requestedLevel, canvasWidth, canvasHeight);
         try {
