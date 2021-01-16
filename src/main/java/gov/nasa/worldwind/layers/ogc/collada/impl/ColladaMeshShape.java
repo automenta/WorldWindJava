@@ -774,7 +774,7 @@ public class ColladaMeshShape extends AbstractGeneralShape {
 
             vboIds = new int[1];
             gl.glGenBuffers(vboIds.length, vboIds, 0);
-            dc.getGpuResourceCache().put(shapeData.getVboCacheKey(), vboIds, GpuResourceCache.VBO_BUFFERS,
+            dc.gpuCache().put(shapeData.getVboCacheKey(), vboIds, GpuResourceCache.VBO_BUFFERS,
                 size);
         }
 

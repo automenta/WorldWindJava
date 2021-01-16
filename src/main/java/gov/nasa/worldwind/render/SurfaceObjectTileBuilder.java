@@ -731,7 +731,7 @@ public class SurfaceObjectTileBuilder {
     protected void updateTile(DrawContext dc, SurfaceObjectTile tile) {
         // Get the tile's texture from the draw context's texture cache. If null we create a new texture and update the
         // texture cache below.
-        Texture texture = tile.getTexture(dc.getTextureCache());
+        Texture texture = tile.getTexture(dc.gpuCache());
 
         // If force tile updates is off, compare the previous tile state against the currently computed state to
         // determine if the tile needs to be updated. The tile needs to be updated if any the following conditions are
@@ -753,7 +753,7 @@ public class SurfaceObjectTileBuilder {
         if (texture == null) // Create the tile's texture if it doesn't already have one.
         {
             texture = this.createTileTexture(dc, tile.getWidth(), tile.getHeight());
-            tile.setTexture(dc.getTextureCache(), texture);
+            tile.setTexture(dc.gpuCache(), texture);
         }
 
         if (texture == null) // This should never happen, but we check anyway.
@@ -1019,7 +1019,7 @@ public class SurfaceObjectTileBuilder {
             } else {
 
                 Level nextLevel = levelSet.getLevel(tile.getLevelNumber() + 1);
-                for (TextureTile subTile : tile.createSubTiles(nextLevel)) {
+                for (TextureTile subTile : tile.subTiles(nextLevel)) {
                     this.addTileOrDescendants(dc, levelSet, tile, (SurfaceObjectTile) subTile);
                 }
 

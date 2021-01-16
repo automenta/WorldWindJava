@@ -33,19 +33,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @version $Id: DrawContextImpl.java 2281 2014-08-29 23:08:04Z dcollins $
  */
 public class DrawContextImpl extends WWObjectImpl implements DrawContext {
-    public static final float DEFAULT_DEPTH_OFFSET_FACTOR = 1.0f;
-    public static final float DEFAULT_DEPTH_OFFSET_UNITS = 1.0f;
-    private static final Comparator<OrderedRenderableEntry> distanceSort = (orA, orB) -> {
-        if (orA == orB)
-            return 0;
 
-        double eA = orA.eyeDistance, eB = orB.eyeDistance;
-        int eAD = Double.compare(eB, eA);
-        if (eAD != 0)
-            return eAD;
-
-        return Integer.compare(System.identityHashCode(orA), System.identityHashCode(orB));
-    };
     public final AtomicBoolean pickChanged = new AtomicBoolean(true);
     protected final GLU glu = new GLUgl2();
     /**
@@ -95,8 +83,9 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
 
             Vec4 pt = sectorGeometry.getSurfacePoint(position);
             if (pt == null) {
-                double elevation = this.getGlobe().elevation(position.getLatitude(), position.getLongitude());
-                pt = this.getGlobe().computePointFromPosition(position,
+                final Globe g = this.getGlobe();
+                double elevation = g.elevation(position.getLatitude(), position.getLongitude());
+                pt = g.computePointFromPosition(position,
                     position.getAltitude() + elevation * this.getVerticalExaggeration());
             }
 
@@ -112,8 +101,9 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
             Vec4 pt = sectorGeometry.getSurfacePoint(latitude, longitude, metersOffset);
 
             if (pt == null) {
-                double elevation = this.getGlobe().elevation(latitude, longitude);
-                pt = this.getGlobe().computePointFromPosition(latitude, longitude,
+                final Globe g = this.getGlobe();
+                double elevation = g.elevation(latitude, longitude);
+                pt = g.computePointFromPosition(latitude, longitude,
                     metersOffset + elevation * this.getVerticalExaggeration());
             }
 
@@ -140,8 +130,8 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
 //            }
 
             // The intersect method expects altitudes to be relative to ground, so make them so if they aren't already.
-            double altitudeA = pA.getAltitude();
-            double altitudeB = pB.getAltitude();
+            double altitudeA = pA.elevation;
+            double altitudeB = pB.elevation;
             if (altitudeMode == WorldWind.ABSOLUTE) {
                 altitudeA -= this.getElevation(pA);
                 altitudeB -= this.getElevation(pB);
@@ -157,10 +147,10 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
             Vec4 pt = this.getSurfacePoint(location.getLatitude(), location.getLongitude(), 0);
             if (pt == null)
                 return null;
-
-            Vec4 p = this.getGlobe().computePointFromPosition(location.getLatitude(), location.getLongitude(), 0);
-
-            return p.distanceTo3(pt);
+            else {
+                return this.getGlobe().computePointFromPosition(location.getLatitude(), location.getLongitude(), 0)
+                    .distanceTo3(pt);
+            }
         }
     };
     /**
@@ -190,7 +180,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     protected Point viewportCenterScreenPoint;
     protected Position viewportCenterPosition;
     protected AnnotationRenderer annotationRenderer = new BasicAnnotationRenderer();
-    protected GpuResourceCache gpuResourceCache;
+    protected GpuResourceCache gpuCache;
     protected TextRendererCache textRendererCache;
     protected Set<String> perFrameStatisticsKeys;
     protected Collection<PerformanceStatistic> perFrameStatistics;
@@ -326,17 +316,12 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
         this.verticalExaggeration = verticalExaggeration;
     }
 
-    public GpuResourceCache getTextureCache() {
-        return this.gpuResourceCache;
+    public GpuResourceCache gpuCache() {
+        return this.gpuCache;
     }
 
-    public GpuResourceCache getGpuResourceCache() {
-        return this.gpuResourceCache;
-    }
-
-    public void setGpuResourceCache(GpuResourceCache gpuResourceCache) {
-
-        this.gpuResourceCache = gpuResourceCache;
+    public void setGpuCache(GpuResourceCache gpuResourceCache) {
+        this.gpuCache = gpuResourceCache;
     }
 
     public TextRendererCache getTextRendererCache() {
@@ -344,7 +329,6 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public void setTextRendererCache(TextRendererCache textRendererCache) {
-
         this.textRendererCache = textRendererCache;
     }
 
@@ -1213,4 +1197,18 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
             }
         }
     }
+
+    public static final float DEFAULT_DEPTH_OFFSET_FACTOR = 1.0f;
+    public static final float DEFAULT_DEPTH_OFFSET_UNITS = 1.0f;
+    private static final Comparator<OrderedRenderableEntry> distanceSort = (orA, orB) -> {
+        if (orA == orB)
+            return 0;
+
+        double eA = orA.eyeDistance, eB = orB.eyeDistance;
+        int eAD = Double.compare(eB, eA);
+        if (eAD != 0)
+            return eAD;
+
+        return Integer.compare(System.identityHashCode(orA), System.identityHashCode(orB));
+    };
 }

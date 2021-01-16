@@ -237,7 +237,7 @@ public class SurfaceImage extends WWObjectImpl
             return; // preRender is called twice - during layer rendering then again during ordered surface rendering
 
         if (this.previousSourceTexture != null) {
-            dc.getTextureCache().remove(this.previousSourceTexture.getImageSource());
+            dc.gpuCache().remove(this.previousSourceTexture.getImageSource());
             this.previousSourceTexture = null;
         }
 
@@ -255,7 +255,7 @@ public class SurfaceImage extends WWObjectImpl
                 this.generatedTexture = gt;
                 this.generatedTextureExpired = false;
                 if (this.previousGeneratedTexture != null) {
-                    dc.getTextureCache().remove(this.previousGeneratedTexture);
+                    dc.gpuCache().remove(this.previousGeneratedTexture);
                     this.previousGeneratedTexture = null;
                 }
             }

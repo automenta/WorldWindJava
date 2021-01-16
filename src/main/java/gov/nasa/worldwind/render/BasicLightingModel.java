@@ -21,7 +21,7 @@ public class BasicLightingModel implements LightingModel {
     protected final OGLStackHandler lightingStackHandler = new OGLStackHandler();
     protected Vec4 lightDirection = new Vec4(1.0, 0.5, 1.0);
     protected Material lightMaterial = Material.WHITE;
-    protected long frameID;
+//    protected long frameID;
 
     protected static void applyStandardLightMaterial(GLLightingFunc gl, int light, Material material) {
         // The alpha value at a vertex is taken only from the diffuse material's alpha channel, without any

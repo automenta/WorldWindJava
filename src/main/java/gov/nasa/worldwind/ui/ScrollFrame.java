@@ -791,7 +791,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
             return false;
 
         // Make sure that our texture is available. If the texture has been evicted it will need to be regenerated.
-        if (dc.getTextureCache().getTexture(this.textureCacheKey) == null)
+        if (dc.gpuCache().getTexture(this.textureCacheKey) == null)
             return true;
 
         if (tiles.isEmpty())
@@ -837,7 +837,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
         // GL_RGB and GL_RGBA.
         this.rttSupport.setEnableFramebufferObject(true);
 
-        Texture texture = dc.getTextureCache().getTexture(this.textureCacheKey);
+        Texture texture = dc.gpuCache().getTexture(this.textureCacheKey);
 
         // Determine how large of a texture is required to render the full frame bounds.
         int dim = this.computeTileTextureDimension(this.contentBounds.getSize(), this.contentSize);
@@ -854,7 +854,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
         // If we don't have a texture, or if we need a different size of texture, allocate a new one
         if (texture == null || this.textureDimension != dim) {
             texture = this.createTileTexture(dc, dim, dim);
-            dc.getTextureCache().put(this.textureCacheKey, texture);
+            dc.gpuCache().put(this.textureCacheKey, texture);
             this.textureDimension = dim;
 
             int numTiles = dim / this.textureTileDimension;
@@ -963,7 +963,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
         Rectangle scrollBounds = new Rectangle(x, y, this.contentBounds.width, this.textureTileDimension);
 
         try {
-            Texture texture = dc.getTextureCache().getTexture(this.textureCacheKey);
+            Texture texture = dc.gpuCache().getTexture(this.textureCacheKey);
 
             this.rttSupport.setColorTarget(dc, texture);
             this.rttSupport.clear(dc, new Color(0, 0, 0, 0)); // Set all texture pixels to transparent black.
@@ -1483,7 +1483,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
             // Set up blending with pre-multiplied colors
             OGLUtil.applyBlending(gl, true);
 
-            Texture texture = dc.getTextureCache().getTexture(this.textureCacheKey);
+            Texture texture = dc.gpuCache().getTexture(this.textureCacheKey);
             if (texture == null)
                 return;
 

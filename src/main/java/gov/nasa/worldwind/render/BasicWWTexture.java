@@ -148,7 +148,7 @@ public class BasicWWTexture implements WWTexture {
     }
 
     protected Texture getTextureFromCache(DrawContext dc) {
-        Texture t = dc.getTextureCache().getTexture(this.imageSource);
+        Texture t = dc.gpuCache().getTexture(this.imageSource);
         if (t != null && this.width == null) {
             this.width = t.getWidth();
             this.height = t.getHeight();
@@ -287,7 +287,7 @@ public class BasicWWTexture implements WWTexture {
 
         // Textures with the same path are assumed to be identical textures, so key the texture id off the
         // image source.
-        dc.getTextureCache().put(imageSource, t);
+        dc.gpuCache().put(imageSource, t);
         t.bind(gl);
 
         // Enable the appropriate mip-mapping texture filters if the caller has specified that mip-mapping should be

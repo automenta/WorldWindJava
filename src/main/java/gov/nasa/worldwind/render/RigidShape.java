@@ -1155,7 +1155,7 @@ public abstract class RigidShape extends AbstractShape {
         if (data != null) {
             Object key = data.getVboCacheKey(index);
             if (key != null)
-                return (int[]) dc.getGpuResourceCache().get(key);
+                return (int[]) dc.gpuCache().get(key);
         }
 
         return null;
@@ -1175,7 +1175,7 @@ public abstract class RigidShape extends AbstractShape {
     @Override
     protected void clearCachedVbos(DrawContext dc) {
         for (Integer key : ((ShapeData) this.getCurrentData()).vboCacheKeys.keySet()) {
-            dc.getGpuResourceCache().remove(((ShapeData) this.getCurrentData()).getVboCacheKey(key));
+            dc.gpuCache().remove(((ShapeData) this.getCurrentData()).getVboCacheKey(key));
         }
     }
 
@@ -1193,7 +1193,7 @@ public abstract class RigidShape extends AbstractShape {
         if (shapeData.getVboCacheKey(getSlices()) == null) {
             shapeData.setVboCacheKey(getSlices(), this.getClass().toString() + getSlices());
         }
-        int[] vboIds = (int[]) dc.getGpuResourceCache().get(shapeData.getVboCacheKey(getSlices()));
+        int[] vboIds = (int[]) dc.gpuCache().get(shapeData.getVboCacheKey(getSlices()));
         if (vboIds == null) {
             int size = 0;
             for (int face = 0; face < getFaceCount(); face++) {
@@ -1203,7 +1203,7 @@ public abstract class RigidShape extends AbstractShape {
 
             vboIds = new int[2 * getFaceCount()];
             gl.glGenBuffers(vboIds.length, vboIds, 0);
-            dc.getGpuResourceCache().put(shapeData.getVboCacheKey(getSlices()), vboIds,
+            dc.gpuCache().put(shapeData.getVboCacheKey(getSlices()), vboIds,
                 GpuResourceCache.VBO_BUFFERS, size);
 
             shapeData.refillIndexVBO = true;

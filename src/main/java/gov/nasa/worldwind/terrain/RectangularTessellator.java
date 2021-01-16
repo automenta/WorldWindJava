@@ -546,10 +546,10 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
     }
 
     protected static boolean bindVbos(DrawContext dc, RectTile tile, int numTextureUnits) {
-        int[] verticesVboId = (int[]) dc.getGpuResourceCache().get(tile.ri.vboCacheKey);
+        int[] verticesVboId = (int[]) dc.gpuCache().get(tile.ri.vboCacheKey);
         if (verticesVboId == null) {
             tile.ri.fillVerticesVBO(dc);
-            verticesVboId = (int[]) dc.getGpuResourceCache().get(tile.ri.vboCacheKey);
+            verticesVboId = (int[]) dc.gpuCache().get(tile.ri.vboCacheKey);
             if (verticesVboId == null) {
                 return false;
             }
@@ -564,7 +564,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
         // Bind texture coordinates
         if (numTextureUnits > 0) {
             Object texCoordsVboCacheKey = RectangularTessellator.textureCoordVboCacheKeys.get(tile.density);
-            int[] texCoordsVboId = (int[]) (texCoordsVboCacheKey != null ? dc.getGpuResourceCache().get(
+            int[] texCoordsVboId = (int[]) (texCoordsVboCacheKey != null ? dc.gpuCache().get(
                 texCoordsVboCacheKey) : null);
             if (texCoordsVboId == null) {
                 texCoordsVboId = RectangularTessellator.fillTextureCoordsVbo(dc, tile.density, tile.ri.texCoords);
@@ -580,7 +580,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
 
         // Bind index list
         Object indexListVboCacheKey = RectangularTessellator.indexListsVboCacheKeys.get(tile.density);
-        int[] indexListVboId = (int[]) (indexListVboCacheKey != null ? dc.getGpuResourceCache().get(
+        int[] indexListVboId = (int[]) (indexListVboCacheKey != null ? dc.gpuCache().get(
             indexListVboCacheKey) : null);
         if (indexListVboId == null) {
             indexListVboId = RectangularTessellator.fillIndexListVbo(dc, tile.density, tile.ri.indices);
@@ -594,7 +594,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
         GL gl = dc.getGL();
 
         Object indexListVboCacheKey = RectangularTessellator.indexListsVboCacheKeys.get(density);
-        int[] indexListVboId = (int[]) (indexListVboCacheKey != null ? dc.getGpuResourceCache().get(
+        int[] indexListVboId = (int[]) (indexListVboCacheKey != null ? dc.gpuCache().get(
             indexListVboCacheKey) : null);
         if (indexListVboId == null) {
             indexListVboId = new int[1];
@@ -606,7 +606,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
             }
 
             int size = indices.limit() * 4;
-            dc.getGpuResourceCache().put(indexListVboCacheKey, indexListVboId, GpuResourceCache.VBO_BUFFERS, size);
+            dc.gpuCache().put(indexListVboCacheKey, indexListVboId, GpuResourceCache.VBO_BUFFERS, size);
         }
 
         try {
@@ -624,7 +624,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
         GL gl = dc.getGL();
 
         Object texCoordVboCacheKey = RectangularTessellator.textureCoordVboCacheKeys.get(density);
-        int[] texCoordVboId = (int[]) (texCoordVboCacheKey != null ? dc.getGpuResourceCache().get(texCoordVboCacheKey)
+        int[] texCoordVboId = (int[]) (texCoordVboCacheKey != null ? dc.gpuCache().get(texCoordVboCacheKey)
             : null);
         if (texCoordVboId == null) {
             texCoordVboId = new int[1];
@@ -636,7 +636,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
             }
 
             int size = texCoords.limit() * 4;
-            dc.getGpuResourceCache().put(texCoordVboCacheKey, texCoordVboId, GpuResourceCache.VBO_BUFFERS, size);
+            dc.gpuCache().put(texCoordVboCacheKey, texCoordVboId, GpuResourceCache.VBO_BUFFERS, size);
         }
 
         try {
@@ -1646,12 +1646,12 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
         protected void fillVerticesVBO(DrawContext dc) {
             GL gl = dc.getGL();
 
-            int[] vboIds = (int[]) dc.getGpuResourceCache().get(this.vboCacheKey);
+            int[] vboIds = (int[]) dc.gpuCache().get(this.vboCacheKey);
             if (vboIds == null) {
                 vboIds = new int[1];
                 gl.glGenBuffers(vboIds.length, vboIds, 0);
                 int size = this.vertices.limit() * 4;
-                dc.getGpuResourceCache().put(this.vboCacheKey, vboIds, GpuResourceCache.VBO_BUFFERS, size);
+                dc.gpuCache().put(this.vboCacheKey, vboIds, GpuResourceCache.VBO_BUFFERS, size);
             }
 
             try {

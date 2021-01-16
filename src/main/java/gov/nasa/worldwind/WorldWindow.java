@@ -51,10 +51,6 @@ public interface WorldWindow extends AVList, PropertyChangeListener {
         });
     }
 
-    static GpuResourceCache createGpuResourceCache() {
-        return new BasicGpuResourceCache();
-    }
-
     static void insertBeforeCompass(WorldWindow wwd, Layer layer) {
         // Insert the layer into the layer list just before the compass.
         int compassPosition = 0;

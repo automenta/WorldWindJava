@@ -496,27 +496,18 @@ public interface DrawContext extends WWObject, Disposable {
     void setPickRectangle(Rectangle pickRect);
 
     /**
-     * Returns the GPU resource cache for this draw context. This method returns the same value as {@link
-     * #getGpuResourceCache()}.
-     *
-     * @return the GPU resource cache for this draw context.
-     * @see #getGpuResourceCache()
-     */
-    GpuResourceCache getTextureCache();
-
-    /**
      * Returns the GPU resource cache used by this draw context.
      *
      * @return the GPU resource cache used by this draw context.
      */
-    GpuResourceCache getGpuResourceCache();
+    GpuResourceCache gpuCache();
 
     /**
      * Specifies the GPU resource cache for this draw context.
      *
      * @param gpuResourceCache the GPU resource cache for this draw context.
      */
-    void setGpuResourceCache(GpuResourceCache gpuResourceCache);
+    void setGpuCache(GpuResourceCache gpuResourceCache);
 
     /**
      * Returns the performance statistics that are gathered during each frame.

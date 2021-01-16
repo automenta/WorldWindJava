@@ -133,7 +133,7 @@ public class VPFSurfaceArea extends SurfacePolygon // TODO: consolidate with Sur
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         this.applyInteriorState(dc, sdc, this.getActiveAttributes(), this.getInteriorTexture(), LatLon.ZERO);
 
-        int[] dlResource = (int[]) dc.getGpuResourceCache().get(this.interiorDisplayListCacheKey);
+        int[] dlResource = (int[]) dc.gpuCache().get(this.interiorDisplayListCacheKey);
         if (dlResource == null) {
             dlResource = new int[] {gl.glGenLists(1), 1};
             gl.glNewList(dlResource[0], GL2.GL_COMPILE);
@@ -146,7 +146,7 @@ public class VPFSurfaceArea extends SurfacePolygon // TODO: consolidate with Sur
                 gl.glDeleteLists(dlResource[0], dlResource[1]);
                 dlResource = null;
             } else {
-                dc.getGpuResourceCache().put(this.interiorDisplayListCacheKey, dlResource,
+                dc.gpuCache().put(this.interiorDisplayListCacheKey, dlResource,
                     GpuResourceCache.DISPLAY_LISTS, numBytes);
             }
         }

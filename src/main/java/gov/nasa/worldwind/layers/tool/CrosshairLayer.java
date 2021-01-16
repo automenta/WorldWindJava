@@ -178,10 +178,10 @@ public class CrosshairLayer extends AbstractLayer {
                 | GL2.GL_CURRENT_BIT);
             attribsPushed = true;
 
-            Texture iconTexture = dc.getTextureCache().getTexture(this.getIconFilePath());
+            Texture iconTexture = dc.gpuCache().getTexture(this.getIconFilePath());
             if (iconTexture == null) {
                 this.initializeTexture(dc);
-                iconTexture = dc.getTextureCache().getTexture(this.getIconFilePath());
+                iconTexture = dc.gpuCache().getTexture(this.getIconFilePath());
                 if (iconTexture == null) {
                     String msg = Logging.getMessage("generic.ImageReadFailed");
                     Logging.logger().finer(msg);
@@ -286,7 +286,7 @@ public class CrosshairLayer extends AbstractLayer {
     }
 
     private void initializeTexture(DrawContext dc) {
-        Texture iconTexture = dc.getTextureCache().getTexture(this.getIconFilePath());
+        Texture iconTexture = dc.gpuCache().getTexture(this.getIconFilePath());
         if (iconTexture != null)
             return;
 
@@ -306,7 +306,7 @@ public class CrosshairLayer extends AbstractLayer {
             iconTexture.bind(gl);
             this.iconWidth = iconTexture.getWidth();
             this.iconHeight = iconTexture.getHeight();
-            dc.getTextureCache().put(this.getIconFilePath(), iconTexture);
+            dc.gpuCache().put(this.getIconFilePath(), iconTexture);
         }
         catch (IOException e) {
             String msg = Logging.getMessage("layers.IOExceptionDuringInitialization");

@@ -119,10 +119,10 @@ public abstract class SurfaceTileRenderer implements Disposable {
             | GL2.GL_TRANSFORM_BIT);
 
         try {
-            this.alphaTexture = dc.getTextureCache().getTexture(this);
+            this.alphaTexture = dc.gpuCache().getTexture(this);
             if (this.alphaTexture == null) {
                 this.initAlphaTexture(dc, SurfaceTileRenderer.DEFAULT_ALPHA_TEXTURE_SIZE); // TODO: choose size to match incoming tile size?
-                dc.getTextureCache().put(this, this.alphaTexture);
+                dc.gpuCache().put(this, this.alphaTexture);
             }
 
             if (showOutlines && this.outlineTexture == null)

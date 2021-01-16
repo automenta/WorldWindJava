@@ -190,8 +190,7 @@ public class BasicMemoryCache extends AbstractMemoryCache {
             for (MemoryCache.CacheListener listener : this.listeners) {
                 try {
                     listener.entryRemoved(entry.key, entry.clientObject);
-                }
-                catch (RuntimeException e) {
+                } catch (RuntimeException e) {
                     listener.removalException(e, entry.key, entry.clientObject);
                 }
             }

@@ -1343,7 +1343,7 @@ public abstract class AbstractShape extends WWObjectImpl
      * in the second position.
      */
     protected int[] getVboIds(DrawContext dc) {
-        return (int[]) dc.getGpuResourceCache().get(this.getCurrentData().getVboCacheKey());
+        return (int[]) dc.gpuCache().get(this.getCurrentData().getVboCacheKey());
     }
 
     /**
@@ -1354,7 +1354,7 @@ public abstract class AbstractShape extends WWObjectImpl
      * @param dc the current draw context.
      */
     protected void clearCachedVbos(DrawContext dc) {
-        dc.getGpuResourceCache().remove(this.getCurrentData().getVboCacheKey());
+        dc.gpuCache().remove(this.getCurrentData().getVboCacheKey());
     }
 
     public void move(Position delta) {

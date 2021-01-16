@@ -53,7 +53,8 @@ public class BasicLayerFactory extends BasicFactory {
         } else if (OGCConstants.WMS_SERVICE_NAME.equals(serviceName)) {
             layer = new WMSTiledImageLayer(domElement, params);
         } else if (AVKey.SERVICE_NAME_LOCAL_RASTER_SERVER.equals(serviceName)) {
-            layer = new LocalRasterServerLayer(domElement, params);
+            throw new UnsupportedOperationException();
+            //layer = new LocalRasterServerLayer(domElement, params);
         } else {
             String msg = Logging.getMessage("generic.UnrecognizedServiceName", serviceName);
             throw new WWUnrecognizedException(msg);

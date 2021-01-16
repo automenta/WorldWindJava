@@ -343,13 +343,13 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer {
             // The order of the coordinate specification matters, and it changed with WMS 1.3.0.
             if (WWUtil.compareVersion(this.wmsVersion, "1.1.1") <= 0 || this.crs.contains("CRS:84")) {
                 // 1.1.1 and earlier and CRS:84 use lon/lat order
-                sb.append(s.lonMin().degrees);
+                sb.append(s.lonMin);
                 sb.append(',');
-                sb.append(s.latMin().degrees);
+                sb.append(s.latMin);
                 sb.append(',');
-                sb.append(s.lonMax().degrees);
+                sb.append(s.lonMax);
                 sb.append(',');
-                sb.append(s.latMax().degrees);
+                sb.append(s.latMax);
             } else {
                 // 1.3.0 uses lat/lon ordering
                 sb.append(s.latMin);
@@ -365,38 +365,38 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer {
         }
     }
 
-    protected static class ComposeImageTile extends TextureTile {
-        protected final int width;
-        protected final int height;
-        protected File file;
-
-        public ComposeImageTile(Sector sector, String mimeType, Level level, int width, int height)
-            throws IOException {
-            super(sector, level, -1, -1); // row and column aren't used and need to signal that
-
-            this.width = width;
-            this.height = height;
-
-            this.file = File.createTempFile(WWIO.DELETE_ON_EXIT_PREFIX, WWIO.mimeSuffix(mimeType));
-        }
-
-        @Override
-        public int getWidth() {
-            return this.width;
-        }
-
-        @Override
-        public int getHeight() {
-            return this.height;
-        }
-
-        @Override
-        public String getPath() {
-            return this.file.getPath();
-        }
-
-        public File getFile() {
-            return this.file;
-        }
-    }
+//    protected static class ComposeImageTile extends TextureTile {
+//        protected final int width;
+//        protected final int height;
+//        protected File file;
+//
+//        public ComposeImageTile(Sector sector, String mimeType, Level level, int width, int height)
+//            throws IOException {
+//            super(sector, level, -1, -1); // row and column aren't used and need to signal that
+//
+//            this.width = width;
+//            this.height = height;
+//
+//            this.file = File.createTempFile(WWIO.DELETE_ON_EXIT_PREFIX, WWIO.mimeSuffix(mimeType));
+//        }
+//
+//        @Override
+//        public int getWidth() {
+//            return this.width;
+//        }
+//
+//        @Override
+//        public int getHeight() {
+//            return this.height;
+//        }
+//
+//        @Override
+//        public String getPath() {
+//            return this.file.getPath();
+//        }
+//
+//        public File getFile() {
+//            return this.file;
+//        }
+//    }
 }

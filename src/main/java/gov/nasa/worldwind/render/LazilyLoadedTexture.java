@@ -11,7 +11,7 @@ import com.jogamp.opengl.util.texture.*;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.cache.FileStore;
+import gov.nasa.worldwind.cache.*;
 import gov.nasa.worldwind.util.*;
 
 import java.awt.image.*;
@@ -249,7 +249,7 @@ public class LazilyLoadedTexture extends AVListImpl implements WWTexture {
         if (this.getImageSource() == null)
             return null;
 
-        Texture texture = dc.getTextureCache().getTexture(this.getImageSource());
+        Texture texture = dc.gpuCache().getTexture(this.getImageSource());
 
         if (this.width == null && texture != null) {
             this.width = texture.getWidth();
@@ -439,7 +439,7 @@ public class LazilyLoadedTexture extends AVListImpl implements WWTexture {
             this.setTextureParameters(dc, texture);
 
             // Cache the texture and release the texture data.
-            dc.getTextureCache().put(this.getImageSource(), texture);
+            dc.gpuCache().put(this.getImageSource(), texture);
             this.setTextureData(null);
 
             return texture;

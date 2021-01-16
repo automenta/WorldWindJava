@@ -44,10 +44,11 @@ public class BasicElevationModelFactory extends BasicFactory {
             case "Offline", "WWTileService" -> em = new BasicElevationModel(domElement, params);
             case OGCConstants.WMS_SERVICE_NAME -> em = new WMSBasicElevationModel(domElement, params);
             case OGCConstants.WCS_SERVICE_NAME -> em = new WCSElevationModel(domElement, params);
-            case AVKey.SERVICE_NAME_LOCAL_RASTER_SERVER -> em = new LocalRasterServerElevationModel(domElement, params);
+            case AVKey.SERVICE_NAME_LOCAL_RASTER_SERVER ->
+                throw new UnsupportedOperationException();
+                //em = new LocalRasterServerElevationModel(domElement, params);
             default -> {
-                String msg = Logging.getMessage("generic.UnrecognizedServiceName", serviceName);
-                throw new WWUnrecognizedException(msg);
+                throw new WWUnrecognizedException(Logging.getMessage("generic.UnrecognizedServiceName", serviceName));
             }
         }
 

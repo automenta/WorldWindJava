@@ -1200,12 +1200,12 @@ public class Matrix {
             return null;
 
         int count = 0;
-        double c11 = 0.0d;
-        double c22 = 0.0d;
-        double c33 = 0.0d;
-        double c12 = 0.0d;
-        double c13 = 0.0d;
-        double c23 = 0.0d;
+        double c11 = 0;
+        double c22 = 0;
+        double c33 = 0;
+        double c12 = 0;
+        double c13 = 0;
+        double c23 = 0;
 
         final double meanX = mean.x;
         final double meanY = mean.y;

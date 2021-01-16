@@ -255,10 +255,10 @@ public class StarsLayer extends RenderableLayer {
     }
 
     protected boolean drawWithVBO(DrawContext dc) {
-        int[] vboId = (int[]) dc.getGpuResourceCache().get(this.vboCacheKey);
+        int[] vboId = (int[]) dc.gpuCache().get(this.vboCacheKey);
         if (vboId == null) {
             this.fillVbo(dc);
-            vboId = (int[]) dc.getGpuResourceCache().get(this.vboCacheKey);
+            vboId = (int[]) dc.gpuCache().get(this.vboCacheKey);
             if (vboId == null)
                 return false;
         }
@@ -290,7 +290,7 @@ public class StarsLayer extends RenderableLayer {
         gl.glBufferData(GL.GL_ARRAY_BUFFER, this.starsBuffer.limit() * 4, this.starsBuffer, GL.GL_STATIC_DRAW);
 
         // Add it to the gpu resource cache
-        dc.getGpuResourceCache().put(this.vboCacheKey, glBuf, GpuResourceCache.VBO_BUFFERS,
+        dc.gpuCache().put(this.vboCacheKey, glBuf, GpuResourceCache.VBO_BUFFERS,
             this.starsBuffer.limit() * 4);
     }
 

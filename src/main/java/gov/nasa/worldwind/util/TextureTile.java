@@ -165,7 +165,7 @@ public class TextureTile extends Tile implements SurfaceTile {
      * @return a four-element array containing this texture tile's sub tiles.
      * @throws IllegalArgumentException if the level is null.
      */
-    public TextureTile[] createSubTiles(Level nextLevel) {
+    public TextureTile[] subTiles(Level nextLevel) {
 
         Angle p0 = sector.latMin();
         Angle p2 = sector.latMax();
@@ -182,10 +182,8 @@ public class TextureTile extends Tile implements SurfaceTile {
 
         TileKey key = this.createSubTileKey(nextLevel, 2 * row, 2 * col);
         TextureTile subTile = this.getTileFromMemoryCache(key);
-        if (subTile != null)
-            subTiles[0] = subTile;
-        else
-            subTiles[0] = this.createSubTile(new Sector(p0, p1, t0, t1), nextLevel, 2 * row, 2 * col);
+        subTiles[0] = subTile != null ? subTile
+            : this.createSubTile(new Sector(p0, p1, t0, t1), nextLevel, 2 * row, 2 * col);
 
         key = this.createSubTileKey(nextLevel, 2 * row, 2 * col + 1);
         subTile = this.getTileFromMemoryCache(key);
@@ -207,7 +205,7 @@ public class TextureTile extends Tile implements SurfaceTile {
 
     /**
      * Creates a sub tile of this texture tile with the specified {@link Sector}, {@link Level}, row, and column. This
-     * is called by {@link #createSubTiles(Level)}, to construct a sub tile for each quadrant of this tile. Subclasses
+     * is called by {@link #subTiles(Level)}, to construct a sub tile for each quadrant of this tile. Subclasses
      * must override this method to return an instance of the derived version.
      *
      * @param sector the sub tile's sector.
@@ -222,7 +220,7 @@ public class TextureTile extends Tile implements SurfaceTile {
 
     /**
      * Returns a key for a sub tile of this texture tile with the specified {@link Level}, row, and column. This is
-     * called by {@link #createSubTiles(Level)}, to create a sub tile key for each quadrant of this tile.
+     * called by {@link #subTiles(Level)}, to create a sub tile key for each quadrant of this tile.
      *
      * @param level the sub tile's level.
      * @param row   the sub tile's row.
@@ -243,13 +241,13 @@ public class TextureTile extends Tile implements SurfaceTile {
     }
 
     protected Texture initializeTexture(DrawContext dc) {
-        if (dc == null) {
-            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalStateException(message);
-        }
+//        if (dc == null) {
+//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalStateException(message);
+//        }
 
-        Texture t = this.getTexture(dc.getTextureCache());
+        Texture t = this.getTexture(dc.gpuCache());
         // Return texture if found and there is no new texture data
         if (t != null && this.getTextureData() == null)
             return t;
@@ -270,7 +268,7 @@ public class TextureTile extends Tile implements SurfaceTile {
             return null;
         }
 
-        this.setTexture(dc.getTextureCache(), t);
+        this.setTexture(dc.gpuCache(), t);
         t.bind(dc.getGL());
 
         this.setTextureParameters(dc, t);
@@ -338,11 +336,11 @@ public class TextureTile extends Tile implements SurfaceTile {
                 return true; // texture was bound during initialization.
         }
 
-        Texture t = this.getTexture(dc.getTextureCache());
+        Texture t = this.getTexture(dc.gpuCache());
 
         if (t == null && this.getFallbackTile() != null) {
             TextureTile resourceTile = this.getFallbackTile();
-            t = resourceTile.getTexture(dc.getTextureCache());
+            t = resourceTile.getTexture(dc.gpuCache());
             if (t == null) {
                 t = resourceTile.initializeTexture(dc);
                 if (t != null)
@@ -364,7 +362,7 @@ public class TextureTile extends Tile implements SurfaceTile {
         if (this.getTextureData() != null) // Reinitialize if new texture data
             t = this.initializeTexture(dc);
         else
-            t = this.getTexture(dc.getTextureCache()); // Use the tile's texture if available
+            t = this.getTexture(dc.gpuCache()); // Use the tile's texture if available
 
         if (t != null) {
             if (t.getMustFlipVertically()) {
@@ -383,7 +381,7 @@ public class TextureTile extends Tile implements SurfaceTile {
         if (resourceTile == null) // no fallback specified
             return;
 
-        t = resourceTile.getTexture(dc.getTextureCache());
+        t = resourceTile.getTexture(dc.gpuCache());
         if (t == null && resourceTile.getTextureData() != null)
             t = resourceTile.initializeTexture(dc);
 

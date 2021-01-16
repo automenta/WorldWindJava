@@ -1880,7 +1880,7 @@ public class Path extends AbstractShape {
         PathData pathData = this.getCurrentPathData();
         int numIds = this.isShowPositions() ? 3 : pathData.hasExtrusionPoints && this.isDrawVerticals() ? 2 : 1;
 
-        int[] vboIds = (int[]) dc.getGpuResourceCache().get(pathData.getVboCacheKey());
+        int[] vboIds = (int[]) dc.gpuCache().get(pathData.getVboCacheKey());
         if (vboIds != null && vboIds.length != numIds) {
             this.clearCachedVbos(dc);
             vboIds = null;
@@ -1898,7 +1898,7 @@ public class Path extends AbstractShape {
         if (vboIds == null) {
             vboIds = new int[numIds];
             gl.glGenBuffers(vboIds.length, vboIds, 0);
-            dc.getGpuResourceCache().put(pathData.getVboCacheKey(), vboIds, GpuResourceCache.VBO_BUFFERS,
+            dc.gpuCache().put(pathData.getVboCacheKey(), vboIds, GpuResourceCache.VBO_BUFFERS,
                 vSize + iSize);
         }
 

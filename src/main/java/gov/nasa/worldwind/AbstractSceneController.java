@@ -514,9 +514,9 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
         }
 
         if (perfKeys.contains(PerformanceStatistic.TEXTURE_CACHE) || perfKeys.contains(PerformanceStatistic.ALL)) {
-            if (dc.getTextureCache() != null)
+            if (dc.gpuCache() != null)
                 this.dc.setPerFrameStatistic(PerformanceStatistic.TEXTURE_CACHE,
-                    "Texture Cache size (Kb)", this.dc.getTextureCache().getUsedCapacity() / 1000);
+                    "Texture Cache size (Kb)", this.dc.gpuCache().getUsedCapacity() / 1000);
         }
 
         if (perfKeys.contains(PerformanceStatistic.JVM_HEAP) || perfKeys.contains(PerformanceStatistic.ALL)) {
@@ -536,7 +536,7 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
         dc.setGLRuntimeCapabilities(this.glRuntimeCaps);
         dc.setPerFrameStatisticsKeys(this.perFrameStatisticsKeys, this.perFrameStatistics);
         dc.setRenderingExceptions(this.renderingExceptions);
-        dc.setGpuResourceCache(this.gpuResourceCache);
+        dc.setGpuCache(this.gpuResourceCache);
         dc.setTextRendererCache(this.textRendererCache);
         dc.setModel(this.model);
         dc.setView(this.view);

@@ -12,7 +12,7 @@ import com.jogamp.opengl.awt.AWTGLAutoDrawable;
 import com.jogamp.opengl.util.texture.TextureIO;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.cache.GpuResourceCache;
+import gov.nasa.worldwind.cache.*;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.exception.WWAbsentRequirementException;
 import gov.nasa.worldwind.geom.Position;
@@ -55,7 +55,7 @@ public class WorldWindowGLAutoDrawable extends WWObjectImpl implements WorldWind
      * @see View#getViewStateID()
      */
     protected long lastViewID;
-    protected GpuResourceCache gpuResourceCache;
+    private final GpuResourceCache gpuResourceCache = new BasicGpuResourceCache();
     protected SceneController sceneController;
     private final Runnable viewStoppedTask = () -> WorldWindowGLAutoDrawable.this.onMessage(viewStopMsg);
     /**
@@ -64,9 +64,7 @@ public class WorldWindowGLAutoDrawable extends WWObjectImpl implements WorldWind
     private ScheduledFuture viewRefreshTask;
     private GLAutoDrawable drawable;
     private boolean shuttingDown;
-    private Timer redrawTimer;
     private boolean firstInit = true;
-    //    private static final long FALLBACK_TEXTURE_CACHE_SIZE = 60000000;
     private EventListenerList eventListeners;
     private InputHandler inputHandler;
 
@@ -76,6 +74,7 @@ public class WorldWindowGLAutoDrawable extends WWObjectImpl implements WorldWind
     public WorldWindowGLAutoDrawable() {
         this.sceneController = (SceneController) WorldWind.createConfigurationComponent(
             AVKey.SCENE_CONTROLLER_CLASS_NAME);
+        this.sceneController.setGpuResourceCache(this.gpuResourceCache);
 
         // Set up to initiate a repaint whenever a file is retrieved and added to the local file store.
         Configuration.data.addPropertyChangeListener(this);
@@ -98,11 +97,11 @@ public class WorldWindowGLAutoDrawable extends WWObjectImpl implements WorldWind
      * @param surface The surface to configure.
      */
     public static void configureIdentityPixelScale(ScalableSurface surface) {
-        if (surface == null) {
-            String message = Logging.getMessage("nullValue.SurfaceIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (surface == null) {
+//            String message = Logging.getMessage("nullValue.SurfaceIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         float[] identityScale = {ScalableSurface.IDENTITY_PIXELSCALE, ScalableSurface.IDENTITY_PIXELSCALE};
         surface.setSurfaceScale(identityScale);
@@ -130,16 +129,16 @@ public class WorldWindowGLAutoDrawable extends WWObjectImpl implements WorldWind
         return this.viewStopTime;
     }
 
-    /**
-     * Specifies the amount of time, in milliseconds, that the View must remain unchanged before a {@link
-     * View#VIEW_STOPPED} event is triggered.
-     *
-     * @param time Time in milliseconds that the View must must remain unchanged before the view stopped event is
-     *             triggered.
-     */
-    public void setViewStopTime(long time) {
-        this.viewStopTime = time;
-    }
+//    /**
+//     * Specifies the amount of time, in milliseconds, that the View must remain unchanged before a {@link
+//     * View#VIEW_STOPPED} event is triggered.
+//     *
+//     * @param time Time in milliseconds that the View must must remain unchanged before the view stopped event is
+//     *             triggered.
+//     */
+//    public void setViewStopTime(long time) {
+//        this.viewStopTime = time;
+//    }
 
     public void initDrawable(GLAutoDrawable g, WorldWindow w) {
 
@@ -147,7 +146,7 @@ public class WorldWindowGLAutoDrawable extends WWObjectImpl implements WorldWind
 
         addPropertyChangeListener(w);
 
-        this.setGpuResourceCache(WorldWindow.createGpuResourceCache());
+
 
         g.addGLEventListener(this);
 
@@ -237,8 +236,7 @@ public class WorldWindowGLAutoDrawable extends WWObjectImpl implements WorldWind
     @SuppressWarnings("UnusedParameters")
     protected void reinitialize(GLAutoDrawable glAutoDrawable) {
         // Clear the gpu resource cache if the window is reinitializing, most likely with a new gl hardware context.
-        if (this.resourceCache() != null)
-            this.resourceCache().clear();
+        this.resourceCache().clear();
 
         this.sceneControl().reinitialize();
     }
@@ -414,14 +412,7 @@ public class WorldWindowGLAutoDrawable extends WWObjectImpl implements WorldWind
         return this;
     }
 
-    public GpuResourceCache resourceCache() {
-        return this.gpuResourceCache;
-    }
 
-    public void setGpuResourceCache(GpuResourceCache gpuResourceCache) {
-        this.gpuResourceCache = gpuResourceCache;
-        this.sceneController.setGpuResourceCache(this.gpuResourceCache);
-    }
 
     public Model model() {
         return this.sceneController != null ? this.sceneController.getModel() : null;

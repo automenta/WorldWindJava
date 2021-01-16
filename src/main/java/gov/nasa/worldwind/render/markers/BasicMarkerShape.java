@@ -267,7 +267,7 @@ public class BasicMarkerShape {
                 gl.glTranslated(point.x, point.y, point.z);
             }
 
-            int[] dlResource = (int[]) dc.getGpuResourceCache().get(this.displayListCacheKey);
+            int[] dlResource = (int[]) dc.gpuCache().get(this.displayListCacheKey);
             if (dlResource == null)
                 dlResource = this.createDisplayList(dc, radius);
 
@@ -295,7 +295,7 @@ public class BasicMarkerShape {
                 return null;
             }
 
-            dc.getGpuResourceCache().put(this.displayListCacheKey, dlResource, GpuResourceCache.DISPLAY_LISTS, size);
+            dc.gpuCache().put(this.displayListCacheKey, dlResource, GpuResourceCache.DISPLAY_LISTS, size);
 
             return dlResource;
         }

@@ -685,14 +685,14 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
 
         int[] vboId = null;
         boolean useVbo = dc.getGLRuntimeCapabilities().isUseVertexBufferObject();
-        if (useVbo && (vboId = (int[]) dc.getGpuResourceCache().get(shapeData.vboKey)) == null) {
+        if (useVbo && (vboId = (int[]) dc.gpuCache().get(shapeData.vboKey)) == null) {
             long vboSize = 4 * shapeData.vertices.remaining(); // 4 bytes for each float vertex component
             vboId = new int[1];
             gl.glGenBuffers(1, vboId, 0);
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboId[0]);
             gl.glBufferData(GL.GL_ARRAY_BUFFER, vboSize, shapeData.vertices, GL.GL_STATIC_DRAW);
             gl.glVertexPointer(3, GL.GL_FLOAT, 0, 0);
-            dc.getGpuResourceCache().put(shapeData.vboKey, vboId, GpuResourceCache.VBO_BUFFERS, vboSize);
+            dc.gpuCache().put(shapeData.vboKey, vboId, GpuResourceCache.VBO_BUFFERS, vboSize);
         } else if (useVbo) {
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboId[0]);
             if (shapeData.vboExpired) {
@@ -718,13 +718,13 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
 
         int[] vboId = null;
         boolean useVbo = dc.getGLRuntimeCapabilities().isUseVertexBufferObject();
-        if (useVbo && (vboId = (int[]) dc.getGpuResourceCache().get(attributeGroup.vboKey)) == null) {
+        if (useVbo && (vboId = (int[]) dc.gpuCache().get(attributeGroup.vboKey)) == null) {
             long vboSize = 4 * attributeGroup.indices.remaining(); // 4 bytes for each unsigned int index
             vboId = new int[1];
             gl.glGenBuffers(1, vboId, 0);
             gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vboId[0]);
             gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, vboSize, attributeGroup.indices, GL.GL_STATIC_DRAW);
-            dc.getGpuResourceCache().put(attributeGroup.vboKey, vboId, GpuResourceCache.VBO_BUFFERS, vboSize);
+            dc.gpuCache().put(attributeGroup.vboKey, vboId, GpuResourceCache.VBO_BUFFERS, vboSize);
         } else if (useVbo) {
             gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vboId[0]);
         }
@@ -773,19 +773,19 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
         int pickColorsSize = shapeData.vertices.remaining(); // 1 RGB color for each XYZ vertex
         if (this.pickColors == null || this.pickColors.capacity() < pickColorsSize) {
             this.pickColors = Buffers.newDirectByteBuffer(pickColorsSize);
-            dc.getGpuResourceCache().remove(this.pickColorsVboKey); // remove any associated VBO from GPU memory
+            dc.gpuCache().remove(this.pickColorsVboKey); // remove any associated VBO from GPU memory
         }
         this.pickColors.clear();
 
         ByteBuffer colors;
         int[] vboId = null;
         boolean useVbo = dc.getGLRuntimeCapabilities().isUseVertexBufferObject();
-        if (useVbo && (vboId = (int[]) dc.getGpuResourceCache().get(this.pickColorsVboKey)) == null) {
+        if (useVbo && (vboId = (int[]) dc.gpuCache().get(this.pickColorsVboKey)) == null) {
             vboId = new int[1];
             gl.glGenBuffers(1, vboId, 0);
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboId[0]);
             gl.glBufferData(GL.GL_ARRAY_BUFFER, this.pickColors.remaining(), this.pickColors, GL2.GL_DYNAMIC_DRAW);
-            dc.getGpuResourceCache().put(this.pickColorsVboKey, vboId, GpuResourceCache.VBO_BUFFERS,
+            dc.gpuCache().put(this.pickColorsVboKey, vboId, GpuResourceCache.VBO_BUFFERS,
                 this.pickColors.remaining());
             colors = gl.glMapBuffer(GL.GL_ARRAY_BUFFER, GL.GL_WRITE_ONLY);
         } else if (useVbo) {

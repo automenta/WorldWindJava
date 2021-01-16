@@ -287,7 +287,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
             // progressive resolution increase, this ensures that the parents are available as the user zooms out, and
             // therefore the layer remains visible until the user is zoomed out to the point the layer is no longer
             // active.
-            if (tile.isTextureInMemory(dc.getTextureCache())
+            if (tile.isTextureInMemory(dc.gpuCache())
                 || tile.getLevelNumber() == 0) {
                 ancestorResource = this.currentResourceTile;
                 this.currentResourceTile = tile;
@@ -303,7 +303,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
                 }
             }
 
-            MercatorTextureTile[] subTiles = tile.createSubTiles(this.levels
+            MercatorTextureTile[] subTiles = tile.subTiles(this.levels
                 .getLevel(tile.getLevelNumber() + 1));
             for (MercatorTextureTile child : subTiles) {
                 if (MercatorTiledImageLayer.isTileVisible(dc, child))
@@ -319,7 +319,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
     private void addTile(DrawContext dc, MercatorTextureTile tile) {
         tile.setFallbackTile(null);
 
-        final GpuResourceCache texCache = dc.getTextureCache();
+        final GpuResourceCache texCache = dc.gpuCache();
 
         if (tile.isTextureInMemory(texCache)) {
             this.addTileToCurrent(tile);

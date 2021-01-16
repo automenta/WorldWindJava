@@ -75,7 +75,7 @@ public class FBOTexture extends FramebufferTexture {
                 throw new IllegalStateException(msg);
             }
 
-            dc.getTextureCache().put(this, t);
+            dc.gpuCache().put(this, t);
 
             return t;
         }

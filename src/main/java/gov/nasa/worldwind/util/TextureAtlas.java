@@ -858,7 +858,7 @@ public class TextureAtlas {
      * @return this instance's OpenGL texture, or <code>null</code> if the texture does not currently exist.
      */
     protected Texture getTexture(DrawContext dc) {
-        return dc.getTextureCache().getTexture(this.textureKey);
+        return dc.gpuCache().getTexture(this.textureKey);
     }
 
     /**
@@ -869,7 +869,7 @@ public class TextureAtlas {
      *                texture.
      */
     protected void setTexture(DrawContext dc, Texture texture) {
-        dc.getTextureCache().put(this.textureKey, texture);
+        dc.gpuCache().put(this.textureKey, texture);
     }
 
     /**
@@ -889,8 +889,8 @@ public class TextureAtlas {
         while ((key = this.disposedTextureKeys.poll()) != null) {
             // The key may never have been be associated with a texture if this texture atlas was expanded or contracted
             // more than once between calls to bind. In this case we just ignore the disposed key and continue.
-            if (dc.getTextureCache().contains(key))
-                dc.getTextureCache().remove(key);
+//            if (dc.gpuCache().contains(key))
+                dc.gpuCache().remove(key);
         }
     }
 

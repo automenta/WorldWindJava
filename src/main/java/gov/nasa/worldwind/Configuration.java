@@ -92,6 +92,7 @@ public class Configuration // Singleton
     public static final String userAgent = "Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0";
 
     static private final int CACHE_STALE_DAYS = 365;
+    static private final long DISK_CACHE_MB = 1024;
 
 
     /**
@@ -125,15 +126,11 @@ public class Configuration // Singleton
                 System.getProperty(Configuration.CONFIG_WW_DOCUMENT_KEY));
         }
 
-        // To support old-style configuration, read an existing config properties file and give the properties
-        // specified there precedence.
-        Configuration.initializeCustom();
-
         data = (FileStore) WorldWind.createConfigurationComponent(AVKey.DATA_FILE_STORE_CLASS_NAME);
         http = new OkHttpClient.Builder()
             .cache(new Cache(
-                Configuration.data.newFile(""),
-                512 * 1024L * 1024L))
+                data.newFile(""),
+                DISK_CACHE_MB * 1024L * 1024L))
             .connectTimeout(1, TimeUnit.MINUTES)
             .readTimeout(1, TimeUnit.MINUTES)
             .callTimeout(1, TimeUnit.MINUTES)
@@ -141,6 +138,11 @@ public class Configuration // Singleton
         cacheControl = new CacheControl.Builder()
             .maxStale(CACHE_STALE_DAYS, TimeUnit.DAYS)
             .build();
+
+        // To support old-style configuration, read an existing config properties file and give the properties
+        // specified there precedence.
+        Configuration.initializeCustom();
+
         globe = new Earth();
     }
 

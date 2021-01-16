@@ -133,7 +133,7 @@ public class FramebufferTexture implements WWTexture {
     }
 
     public boolean isTextureCurrent(DrawContext dc) {
-        return dc.getTextureCache().getTexture(this) != null;
+        return dc.gpuCache().getTexture(this) != null;
     }
 
     public Object getImageSource() {
@@ -149,13 +149,13 @@ public class FramebufferTexture implements WWTexture {
     }
 
     public boolean bind(DrawContext dc) {
-        if (dc == null) {
-            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalStateException(message);
-        }
+//        if (dc == null) {
+//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalStateException(message);
+//        }
 
-        Texture t = dc.getTextureCache().getTexture(this);
+        Texture t = dc.gpuCache().getTexture(this);
 
         if (t == null)
             t = this.initializeTexture(dc);
@@ -212,7 +212,7 @@ public class FramebufferTexture implements WWTexture {
         gl.glCopyTexImage2D(GL.GL_TEXTURE_2D, 0, td.getInternalFormat(), 0, 0, td.getWidth(), td.getHeight(),
             td.getBorder());
 
-        dc.getTextureCache().put(this, t);
+        dc.gpuCache().put(this, t);
 
         return t;
     }

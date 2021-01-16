@@ -973,7 +973,7 @@ public class AnnotationAttributes implements Restorable {
      */
     public WWTexture getBackgroundTexture(DrawContext dc) {
         if (this.previousBackgroundTexture != null) {
-            dc.getTextureCache().remove(this.previousBackgroundTexture.getImageSource());
+            dc.gpuCache().remove(this.previousBackgroundTexture.getImageSource());
             this.previousBackgroundTexture = null;
         }
 

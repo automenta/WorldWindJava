@@ -1825,6 +1825,7 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
                 //TODO refine
                 //tile.setPriority(1.0/(1+tile.sector.latDelta*tile.sector.lonDelta));
                 tile.setPriority(0.5);
+                //tile.setPriority(0);
 
                 this.elevationModel.retrieveElevations(tile, new DownloadPostProcessor(tile, this.elevationModel));
             }

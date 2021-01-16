@@ -180,7 +180,7 @@ public class SurfacePolygons extends SurfacePolylines // TODO: Review
 
         // Attempt to tessellate the polygon's interior if the polygon's interior display list is uninitialized, or if
         // the polygon is marked as needing tessellation.
-        int[] dlResource = (int[]) dc.getGpuResourceCache().get(this.interiorDisplayListCacheKey);
+        int[] dlResource = (int[]) dc.gpuCache().get(this.interiorDisplayListCacheKey);
         if (dlResource == null || this.needsInteriorTessellation)
             dlResource = this.tessellateInterior(dc, referencePos);
 
@@ -255,7 +255,7 @@ public class SurfacePolygons extends SurfacePolylines // TODO: Review
             gl.glEndList();
             this.needsInteriorTessellation = false;
 
-            dc.getGpuResourceCache().put(this.interiorDisplayListCacheKey, dlResource, GpuResourceCache.DISPLAY_LISTS,
+            dc.gpuCache().put(this.interiorDisplayListCacheKey, dlResource, GpuResourceCache.DISPLAY_LISTS,
                 numBytes);
 
             return dlResource;

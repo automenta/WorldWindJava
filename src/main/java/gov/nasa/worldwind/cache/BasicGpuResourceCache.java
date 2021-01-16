@@ -41,8 +41,8 @@ public class BasicGpuResourceCache implements GpuResourceCache {
             }
 
             public void removalException(Throwable e, Object key, Object clientObject) {
-                String msg = Logging.getMessage("BasicMemoryCache.ExceptionFromRemovalListener", e.getMessage());
-                Logging.logger().log(Level.INFO, msg);
+                Logging.logger().log(Level.INFO,
+                    Logging.getMessage("BasicMemoryCache.ExceptionFromRemovalListener", e.getMessage()));
             }
         });
     }

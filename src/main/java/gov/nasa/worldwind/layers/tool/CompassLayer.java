@@ -284,10 +284,10 @@ public class CompassLayer extends AbstractLayer {
         try {
             gl.glDisable(GL.GL_DEPTH_TEST);
 
-            Texture iconTexture = dc.getTextureCache().getTexture(this.getIconFilePath());
+            Texture iconTexture = dc.gpuCache().getTexture(this.getIconFilePath());
             if (iconTexture == null) {
                 this.initializeTexture(dc);
-                iconTexture = dc.getTextureCache().getTexture(this.getIconFilePath());
+                iconTexture = dc.gpuCache().getTexture(this.getIconFilePath());
                 if (iconTexture == null) {
                     String msg = Logging.getMessage("generic.ImageReadFailed");
                     Logging.logger().finer(msg);
@@ -443,7 +443,7 @@ public class CompassLayer extends AbstractLayer {
     }
 
     protected void initializeTexture(DrawContext dc) {
-        Texture iconTexture = dc.getTextureCache().getTexture(this.getIconFilePath());
+        Texture iconTexture = dc.gpuCache().getTexture(this.getIconFilePath());
         if (iconTexture != null)
             return;
 
@@ -463,7 +463,7 @@ public class CompassLayer extends AbstractLayer {
             iconTexture.bind(gl);
             this.iconWidth = iconTexture.getWidth();
             this.iconHeight = iconTexture.getHeight();
-            dc.getTextureCache().put(this.getIconFilePath(), iconTexture);
+            dc.gpuCache().put(this.getIconFilePath(), iconTexture);
         }
         catch (IOException e) {
             String msg = Logging.getMessage("layers.IOExceptionDuringInitialization");

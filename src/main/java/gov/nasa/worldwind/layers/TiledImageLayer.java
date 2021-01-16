@@ -13,8 +13,8 @@ import gov.nasa.worldwind.geom.Box;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.*;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.retrieve.*;
 import gov.nasa.worldwind.util.*;
+import jcog.data.list.Lst;
 import org.w3c.dom.*;
 
 import javax.imageio.ImageIO;
@@ -23,7 +23,6 @@ import java.awt.*;
 import java.awt.geom.*;
 import java.awt.image.*;
 import java.io.*;
-import java.net.*;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.PriorityBlockingQueue;
@@ -53,7 +52,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
     public final LevelSet levels;
     protected final ArrayList<String> supportedImageFormats = new ArrayList<>();
     // Stuff computed each frame
-    protected final ArrayList<TextureTile> currentTiles = new ArrayList<>();
+    private final List<TextureTile> currentTiles = new Lst<>();
     protected final PriorityBlockingQueue<Runnable> requestQ = new PriorityBlockingQueue<>(TiledImageLayer.QUEUE_SIZE);
     protected ArrayList<TextureTile> topLevels;
 //    protected boolean forceLevelZeroLoads;
@@ -298,9 +297,8 @@ public abstract class TiledImageLayer extends AbstractLayer {
         return params;
     }
 
-    protected static boolean isTileVisible(DrawContext dc, TextureTile tile) {
-        final Frustum viewFrust = dc.getView().getFrustumInModelCoordinates();
-        if (tile.getExtent(dc).intersects(viewFrust)) {
+    protected static boolean isTileVisible(TextureTile tile, Frustum viewFrust, DrawContext dc) {
+        if (viewFrust.intersects(tile.getExtent(dc))) {
             final Sector visibleSector = dc.getVisibleSector();
             return (visibleSector == null || visibleSector.intersects(tile.sector));
         }
@@ -564,84 +562,66 @@ public abstract class TiledImageLayer extends AbstractLayer {
         }
     }
 
-    protected void assembleTiles(DrawContext dc) {
-        this.currentTiles.clear();
-
-        for (TextureTile tile : this.getTopLevels()) {
-            if (TiledImageLayer.isTileVisible(dc, tile)) {
-                this.currentResourceTile = null;
-                this.addTileOrDescendants(dc, tile);
-            }
-        }
-    }
-
-    protected void addTileOrDescendants(DrawContext dc, TextureTile tile) {
-        if (this.meetsRenderCriteria(dc, tile)) {
+    protected void addTileOrDescendants(DrawContext dc, Frustum f, TextureTile tile) {
+        if (this.renderable(tile, dc)) {
             this.addTile(dc, tile);
-            return;
-        }
+        } else {
 
-        // The incoming tile does not meet the rendering criteria, so it must be subdivided and those
-        // subdivisions tested against the criteria.
+            // The incoming tile does not meet the rendering criteria, so it must be subdivided and those
+            // subdivisions tested against the criteria.
 
-        // All tiles that meet the selection criteria are drawn, but some of those tiles will not have
-        // textures associated with them either because their texture isn't loaded yet or because they
-        // are finer grain than the layer has textures for. In these cases the tiles use the texture of
-        // the closest ancestor that has a texture loaded. This ancestor is called the currentResourceTile.
-        // A texture transform is applied during rendering to align the sector's texture coordinates with the
-        // appropriate region of the ancestor's texture.
+            // All tiles that meet the selection criteria are drawn, but some of those tiles will not have
+            // textures associated with them either because their texture isn't loaded yet or because they
+            // are finer grain than the layer has textures for. In these cases the tiles use the texture of
+            // the closest ancestor that has a texture loaded. This ancestor is called the currentResourceTile.
+            // A texture transform is applied during rendering to align the sector's texture coordinates with the
+            // appropriate region of the ancestor's texture.
 
         TextureTile ancestorResource = null;
 
-        try {
-            // TODO: Revise this to reflect that the parent layer is only requested while the algorithm continues
-            // to search for the layer matching the criteria.
-            // At this point the tile does not meet the render criteria but it may have its texture in memory.
-            // If so, register this tile as the resource tile. If not, then this tile will be the next level
-            // below a tile with texture in memory. So to provide progressive resolution increase, add this tile
-            // to the draw list. That will cause the tile to be drawn using its parent tile's texture, and it will
-            // cause it's texture to be requested. At some future call to this method the tile's texture will be in
-            // memory, it will not meet the render criteria, but will serve as the parent to a tile that goes
-            // through this same process as this method recurses. The result of all this is that a tile isn't rendered
-            // with its own texture unless all its parents have their textures loaded. In addition to causing
-            // progressive resolution increase, this ensures that the parents are available as the user zooms out, and
-            // therefore the layer remains visible until the user is zoomed out to the point the layer is no longer
-            // active.
-            if (tile.isTextureInMemory(dc.getTextureCache()) || tile.getLevelNumber() == 0) {
-                ancestorResource = this.currentResourceTile;
-                this.currentResourceTile = tile;
-            } else if (!tile.level.isEmpty()) {
-//                this.addTile(dc, tile);
-//                return;
-
-                // Issue a request for the parent before descending to the children.
+            try {
+                // TODO: Revise this to reflect that the parent layer is only requested while the algorithm continues
+                // to search for the layer matching the criteria.
+                // At this point the tile does not meet the render criteria but it may have its texture in memory.
+                // If so, register this tile as the resource tile. If not, then this tile will be the next level
+                // below a tile with texture in memory. So to provide progressive resolution increase, add this tile
+                // to the draw list. That will cause the tile to be drawn using its parent tile's texture, and it will
+                // cause it's texture to be requested. At some future call to this method the tile's texture will be in
+                // memory, it will not meet the render criteria, but will serve as the parent to a tile that goes
+                // through this same process as this method recurses. The result of all this is that a tile isn't rendered
+                // with its own texture unless all its parents have their textures loaded. In addition to causing
+                // progressive resolution increase, this ensures that the parents are available as the user zooms out, and
+                // therefore the layer remains visible until the user is zoomed out to the point the layer is no longer
+                // active.
+                if (tile.isTextureInMemory(dc.gpuCache()) || tile.getLevelNumber() == 0) {
+                    ancestorResource = this.currentResourceTile;
+                    this.currentResourceTile = tile;
+                } else if (!tile.level.isEmpty()) {
+                    // Issue a request for the parent before descending to the children.
+                    this.addTile(dc, tile);
+                    return;
+                }
+                for (TextureTile child : tile.subTiles(this.levels.getLevel(tile.getLevelNumber() + 1))) {
+                    if (levels.sector.intersects(child.sector) && TiledImageLayer.isTileVisible(child, f, dc))
+                        this.addTileOrDescendants(dc, f, child);
+                }
             }
-
-            final Sector sector = levels.sector;
-            TextureTile[] subTiles = tile.createSubTiles(this.levels.getLevel(tile.getLevelNumber() + 1));
-            for (TextureTile child : subTiles) {
-                if (sector.intersects(child.sector) && TiledImageLayer.isTileVisible(dc, child))
-                    this.addTileOrDescendants(dc, child);
-            }
-        }
-        finally {
-            if (ancestorResource != null) // Pop this tile as the currentResource ancestor
+            finally {
+                if (ancestorResource != null) // Pop this tile as the currentResource ancestor
                 this.currentResourceTile = ancestorResource;
+            }
         }
     }
 
-    // ============== Rendering ======================= //
-    // ============== Rendering ======================= //
-    // ============== Rendering ======================= //
 
     protected void addTile(DrawContext dc, TextureTile tile) {
         //tile.setFallbackTile(null);
 
-        final GpuResourceCache textureCache = dc.getTextureCache();
+        final GpuResourceCache textureCache = dc.gpuCache();
         if (tile.isTextureInMemory(textureCache)) {
             this.addTileToCurrent(tile);
-            return;
-        }
+
+        } else {
 
 //        // Level 0 loads may be forced
 //        if (tile.getLevelNumber() == 0 && this.forceLevelZeroLoads && !tile.isTextureInMemory(textureCache)) {
@@ -652,19 +632,20 @@ public abstract class TiledImageLayer extends AbstractLayer {
 //            }
 //        }
 
-        // Tile's texture isn't available, so request it
-        if (tile.getLevelNumber() < this.levels.getNumLevels()) {
-            // Request only tiles with data associated at this level
-            if (!this.levels.missing(tile))
-                this.requestTexture(dc, tile);
-        }
+            // Tile's texture isn't available, so request it
+            if (tile.getLevelNumber() < this.levels.getNumLevels()) {
+                // Request only tiles with data associated at this level
+                if (!this.levels.missing(tile))
+                    this.requestTexture(dc, tile);
+            }
 
-        // Set up to use the currentResource tile's texture
-        if (this.currentResourceTile != null) {
+            // Set up to use the currentResource tile's texture
+            if (this.currentResourceTile != null) {
 
-            if (this.currentResourceTile.isTextureInMemory(textureCache)) {
-                tile.setFallbackTile(currentResourceTile);
-                this.addTileToCurrent(tile);
+                if (this.currentResourceTile.isTextureInMemory(textureCache)) {
+                    tile.setFallbackTile(currentResourceTile);
+                    this.addTileToCurrent(tile);
+                }
             }
         }
     }
@@ -673,7 +654,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
         this.currentTiles.add(tile);
     }
 
-    protected boolean meetsRenderCriteria(DrawContext dc, TextureTile tile) {
+    protected boolean renderable(TextureTile tile, DrawContext dc) {
         return this.levels.isFinalLevel(tile.getLevelNumber()) || !needToSplit(dc, tile.sector, tile.level);
     }
 
@@ -784,7 +765,15 @@ public abstract class TiledImageLayer extends AbstractLayer {
     }
 
     protected void draw(DrawContext dc) {
-        this.assembleTiles(dc); // Determine the tiles to draw.
+        // Determine the tiles to draw.
+        this.currentTiles.clear();
+        final Frustum f = dc.getView().getFrustumInModelCoordinates();
+        for (TextureTile tile : this.getTopLevels()) {
+            if (TiledImageLayer.isTileVisible(tile, f, dc)) {
+                this.currentResourceTile = null;
+                this.addTileOrDescendants(dc, f, tile);
+            }
+        }
 
         if (this.currentTiles.size() >= 1) {
             // Indicate that this layer rendered something this frame.

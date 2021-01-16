@@ -78,7 +78,7 @@ public class WebViewTexture extends BasicWWTexture {
                 null); // flusher
             t = TextureIO.newTexture(td);
 
-            dc.getTextureCache().put(imageSource, t);
+            dc.gpuCache().put(imageSource, t);
             t.bind(gl);
 
             // Configure the texture to use nearest-neighbor filtering. This ensures that the texels are aligned exactly

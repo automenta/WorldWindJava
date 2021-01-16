@@ -193,7 +193,7 @@ public class SurfacePolylines extends AbstractSurfaceShape {
 
         // Attempt to tessellate the Polyline's outline if the Polyline's outline display list is uninitialized, or if
         // the Polyline is marked as needing tessellation.
-        int[] dlResource = (int[]) dc.getGpuResourceCache().get(this.outlineDisplayListCacheKey);
+        int[] dlResource = (int[]) dc.gpuCache().get(this.outlineDisplayListCacheKey);
         if (dlResource == null || this.needsOutlineTessellation)
             dlResource = this.tessellateOutline(dc, referencePos);
 
@@ -242,7 +242,7 @@ public class SurfacePolylines extends AbstractSurfaceShape {
         this.needsOutlineTessellation = false;
 
         int numBytes = n * 3 * 4; // 3 float coords
-        dc.getGpuResourceCache().put(this.outlineDisplayListCacheKey, dlResource, GpuResourceCache.DISPLAY_LISTS,
+        dc.gpuCache().put(this.outlineDisplayListCacheKey, dlResource, GpuResourceCache.DISPLAY_LISTS,
             numBytes);
 
         return dlResource;

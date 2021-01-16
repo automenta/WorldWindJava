@@ -1011,14 +1011,14 @@ public class Polygon extends AbstractShape {
         GL gl = dc.getGL();
         ShapeData shapeData = this.getCurrent();
 
-        int[] vboIds = (int[]) dc.getGpuResourceCache().get(shapeData.getVboCacheKey());
+        int[] vboIds = (int[]) dc.gpuCache().get(shapeData.getVboCacheKey());
         if (vboIds == null) {
             int size = shapeData.coordBuffer.limit() * 4;
             size += shapeData.interiorIndicesBuffer.limit() * 4;
 
             vboIds = new int[2];
             gl.glGenBuffers(vboIds.length, vboIds, 0);
-            dc.getGpuResourceCache().put(shapeData.getVboCacheKey(), vboIds, GpuResourceCache.VBO_BUFFERS, size);
+            dc.gpuCache().put(shapeData.getVboCacheKey(), vboIds, GpuResourceCache.VBO_BUFFERS, size);
             shapeData.refillIndexVBO = true;
         }
 
