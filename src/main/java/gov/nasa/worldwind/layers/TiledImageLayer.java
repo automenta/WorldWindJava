@@ -901,21 +901,21 @@ public abstract class TiledImageLayer extends AbstractLayer {
             this.supportedImageFormats.addAll(Arrays.asList(formats));
     }
 
-    public boolean isImageFormatAvailable(String imageFormat) {
-        return imageFormat != null && this.supportedImageFormats.contains(imageFormat);
-    }
+//    public boolean isImageFormatAvailable(String imageFormat) {
+//        return imageFormat != null && this.supportedImageFormats.contains(imageFormat);
+//    }
+//
+//    public String getDefaultImageFormat() {
+//        return this.supportedImageFormats.isEmpty() ? null : this.supportedImageFormats.get(0);
+//    }
 
-    public String getDefaultImageFormat() {
-        return this.supportedImageFormats.isEmpty() ? null : this.supportedImageFormats.get(0);
-    }
+    protected BufferedImage requestImage(TextureTile tile, String mimeType) throws IOException {
 
-    protected BufferedImage requestImage(TextureTile tile, String mimeType)
-        throws IOException, MalformedURLException {
 
-        InputStream in;
         String path = tile.getPathBase() + WWIO.mimeSuffix(mimeType);
         File f = new File(path);
 
+        InputStream in;
         if (f.isAbsolute() && f.exists())
             in = f.toURI().toURL().openStream();
         else
@@ -962,191 +962,95 @@ public abstract class TiledImageLayer extends AbstractLayer {
 //        return null;
     }
 
-    protected void downloadImage(final TextureTile tile, String mimeType, int timeout) throws Exception {
-        if (this.get(AVKey.RETRIEVER_FACTORY_LOCAL) != null)
-            this.retrieveLocalImage(tile, mimeType, timeout);
-        else
-            // Assume it's remote.
-            this.retrieveRemoteImage(tile, mimeType, timeout);
-    }
+//    protected void downloadImage(final TextureTile tile, String mimeType, int timeout) throws Exception {
+//        if (this.get(AVKey.RETRIEVER_FACTORY_LOCAL) != null)
+//            this.retrieveLocalImage(tile, mimeType, timeout);
+//        else
+//            // Assume it's remote.
+//            this.retrieveRemoteImage(tile, mimeType, timeout);
+//    }
 
-    protected void retrieveRemoteImage(final TextureTile tile, String mimeType, int timeout) throws Exception,
-        MalformedURLException, RuntimeException {
-        // TODO: apply retriever-factory pattern for remote retrieval case.
-        final URL resourceURL = tile.getResourceURL(mimeType);
-        if (resourceURL == null)
-            return;
-
-        Retriever retriever;
-
-        String protocol = resourceURL.getProtocol();
-
-        if ("http".equalsIgnoreCase(protocol) || "https".equalsIgnoreCase(protocol)) {
-            retriever = new HTTPRetriever(resourceURL, new CompositionRetrievalPostProcessor(tile));
-            retriever.set(URLRetriever.EXTRACT_ZIP_ENTRY, "true"); // supports legacy layers
-        } else {
-            String message = Logging.getMessage("layers.TextureLayer.UnknownRetrievalProtocol", resourceURL);
-            throw new RuntimeException(message);
-        }
-
-        Logging.logger().log(java.util.logging.Level.FINE, "Retrieving " + resourceURL.toString());
-        retriever.setConnectTimeout(10000);
-        retriever.setReadTimeout(timeout);
-        retriever.call();
-    }
-
-    protected void retrieveLocalImage(TextureTile tile, String mimeType, int timeout) throws Exception {
-        if (!WorldWind.retrieveLocal().isAvailable())
-            return;
-
-        RetrieverFactory retrieverFactory = (RetrieverFactory) this.get(AVKey.RETRIEVER_FACTORY_LOCAL);
-        if (retrieverFactory == null)
-            return;
-
-        AVList avList = new AVListImpl();
-        avList.set(AVKey.SECTOR, tile.sector);
-        avList.set(AVKey.WIDTH, tile.getWidth());
-        avList.set(AVKey.HEIGHT, tile.getHeight());
-        avList.set(AVKey.FILE_NAME, tile.getPath());
-        avList.set(AVKey.IMAGE_FORMAT, mimeType);
-
-        Retriever retriever = retrieverFactory.retriever(avList, new CompositionRetrievalPostProcessor(tile));
-
-        Logging.logger().log(java.util.logging.Level.FINE, "Locally retrieving " + tile.getPath());
-        retriever.setReadTimeout(timeout);
-        retriever.call();
-    }
-
-    public int computeLevelForResolution(Sector sector, double resolution) {
-//        if (sector == null) {
-//            String message = Logging.getMessage("nullValue.SectorIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
+//    protected void retrieveRemoteImage(final TextureTile tile, String mimeType, int timeout) throws Exception {
+//        // TODO: apply retriever-factory pattern for remote retrieval case.
+//        final URL resourceURL = tile.getResourceURL(mimeType);
+//        if (resourceURL == null)
+//            return;
+//
+//        Retriever retriever;
+//
+//        String protocol = resourceURL.getProtocol();
+//
+//        if ("http".equalsIgnoreCase(protocol) || "https".equalsIgnoreCase(protocol)) {
+//            retriever = new HTTPRetriever(resourceURL, new CompositionRetrievalPostProcessor(tile));
+//            retriever.set(URLRetriever.EXTRACT_ZIP_ENTRY, "true"); // supports legacy layers
+//        } else {
+//            String message = Logging.getMessage("layers.TextureLayer.UnknownRetrievalProtocol", resourceURL);
+//            throw new RuntimeException(message);
 //        }
+//
+//        Logging.logger().log(java.util.logging.Level.FINE, "Retrieving " + resourceURL.toString());
+//        retriever.setConnectTimeout(10000);
+//        retriever.setReadTimeout(timeout);
+//        retriever.call();
+//    }
+//
+//    protected void retrieveLocalImage(TextureTile tile, String mimeType, int timeout) throws Exception {
+//        if (!WorldWind.retrieveLocal().isAvailable())
+//            return;
+//
+//        RetrieverFactory retrieverFactory = (RetrieverFactory) this.get(AVKey.RETRIEVER_FACTORY_LOCAL);
+//        if (retrieverFactory == null)
+//            return;
+//
+//        AVList avList = new AVListImpl();
+//        avList.set(AVKey.SECTOR, tile.sector);
+//        avList.set(AVKey.WIDTH, tile.getWidth());
+//        avList.set(AVKey.HEIGHT, tile.getHeight());
+//        avList.set(AVKey.FILE_NAME, tile.getPath());
+//        avList.set(AVKey.IMAGE_FORMAT, mimeType);
+//
+//        Retriever retriever = retrieverFactory.retriever(avList, new CompositionRetrievalPostProcessor(tile));
+//
+//        Logging.logger().log(java.util.logging.Level.FINE, "Locally retrieving " + tile.getPath());
+//        retriever.setReadTimeout(timeout);
+//        retriever.call();
+//    }
 
-        // Find the first level exceeding the desired resolution
-        double texelSize;
-        Level targetLevel = this.levels.getLastLevel();
-        for (int i = 0; i < levels.getLastLevel().getLevelNumber(); i++) {
-            if (this.levels.isLevelEmpty(i))
-                continue;
-
-            texelSize = this.levels.getLevel(i).getTexelSize();
-            if (texelSize > resolution)
-                continue;
-
-            targetLevel = this.levels.getLevel(i);
-            break;
-        }
-
-        // Choose the level closest to the resolution desired
-        if (targetLevel.getLevelNumber() != 0 && !this.levels.isLevelEmpty(targetLevel.getLevelNumber() - 1)) {
-            Level nextLowerLevel = this.levels.getLevel(targetLevel.getLevelNumber() - 1);
-            double dless = Math.abs(nextLowerLevel.getTexelSize() - resolution);
-            double dmore = Math.abs(targetLevel.getTexelSize() - resolution);
-            if (dless < dmore)
-                targetLevel = nextLowerLevel;
-        }
-
-        Logging.logger().fine(Logging.getMessage("layers.TiledImageLayer.LevelSelection",
-            targetLevel.getLevelNumber(), Double.toString(targetLevel.getTexelSize())));
-        return targetLevel.getLevelNumber();
-    }
-
-    /**
-     * Create an image for the portion of this layer lying within a specified sector.The image is created at a specified
-     * aspect ratio within a canvas of a specified size. This returns the specified image if this layer has no content
-     * in the specified sector.
-     *
-     * @param sector       the sector of interest.
-     * @param canvasWidth  the width of the canvas.
-     * @param canvasHeight the height of the canvas.
-     * @param aspectRatio  the aspect ratio, width/height, of the window. If the aspect ratio is greater or equal to
-     *                     one, the full width of the canvas is used for the image; the height used is proportional to
-     *                     the inverse of the aspect ratio. If the aspect ratio is less than one, the full height of the
-     *                     canvas is used, and the width used is proportional to the aspect ratio.
-     * @param levelNumber  the target level of the tiled image layer.
-     * @param mimeType     the type of image to create, e.g., "png" and "jpg".
-     * @param abortOnError indicates whether to stop assembling the image if an error occurs. If false, processing
-     *                     continues until all portions of the layer that intersect the specified sector have been added
-     *                     to the image. Portions for which an error occurs will be blank.
-     * @param image        if non-null, a {@link BufferedImage} in which to place the image. If null, a new buffered
-     *                     image is created. The image must be the width and height specified in the
-     *                     <code>canvasWidth</code> and <code>canvasHeight</code> arguments.
-     * @param timeout      The amount of time to allow for reading the image from the server.
-     * @return image        the assembled image, of size indicated by the <code>canvasWidth</code> and
-     * <code>canvasHeight</code>. If the specified aspect ratio is one, all pixels contain values. If the aspect ratio
-     * is greater than one, a full-width segment along the top of the canvas is blank. If the aspect ratio is less than
-     * one, a full-height segment along the right side of the canvase is blank. If the <code>image</code> argument was
-     * non-null, that buffered image is returned.
-     * @throws IllegalArgumentException if <code>sector</code> is null.
-     * @throws Exception                Other errors.
-     * @see ImageUtil#mergeImage(Sector, Sector, double, BufferedImage, BufferedImage)  ;
-     */
-    public BufferedImage composeImageForSector(Sector sector, int canvasWidth, int canvasHeight, double aspectRatio,
-        int levelNumber, String mimeType, boolean abortOnError, BufferedImage image, int timeout) throws Exception {
-
-        if (!this.levels.sector.intersects(sector)) {
-            Logging.logger().severe(Logging.getMessage("generic.SectorRequestedOutsideCoverageArea", sector,
-                this.levels.sector));
-            return image;
-        }
-
-        Sector intersection = this.levels.sector.intersection(sector);
-
-        if (levelNumber < 0) {
-            levelNumber = this.levels.getLastLevel().getLevelNumber();
-        } else if (levelNumber > this.levels.getLastLevel().getLevelNumber()) {
-            Logging.logger().warning(Logging.getMessage("generic.LevelRequestedGreaterThanMaxLevel",
-                levelNumber, this.levels.getLastLevel().getLevelNumber()));
-            levelNumber = this.levels.getLastLevel().getLevelNumber();
-        }
-
-        int numTiles = 0;
-        TextureTile[][] tiles = this.getTilesInSector(intersection, levelNumber);
-        for (TextureTile[] row : tiles) {
-            numTiles += row.length;
-        }
-
-        if (tiles.length == 0 || tiles[0].length == 0) {
-            Logging.logger().severe(Logging.getMessage("layers.TiledImageLayer.NoImagesAvailable"));
-            return image;
-        }
-
-        if (image == null)
-            image = new BufferedImage(canvasWidth, canvasHeight, BufferedImage.TYPE_INT_RGB);
-
-        double tileCount = 0;
-        for (TextureTile[] row : tiles) {
-            for (TextureTile tile : row) {
-                if (tile == null)
-                    continue;
-
-                BufferedImage tileImage;
-                try {
-                    tileImage = this.getImage(tile, mimeType, timeout);
-                    Thread.sleep(1); // generates InterruptedException if thread has been interupted
-
-                    if (tileImage != null)
-                        ImageUtil.mergeImage(sector, tile.sector, aspectRatio, tileImage, image);
-
-                    this.firePropertyChange(AVKey.PROGRESS, tileCount / numTiles, ++tileCount / numTiles);
-                }
-                catch (InterruptedException | InterruptedIOException e) {
-                    throw e;
-                }
-                catch (Exception e) {
-                    if (abortOnError)
-                        throw e;
-
-                    String message = Logging.getMessage("generic.ExceptionWhileRequestingImage", tile.getPath());
-                    Logging.logger().log(java.util.logging.Level.WARNING, message, e);
-                }
-            }
-        }
-
-        return image;
-    }
+//    public int computeLevelForResolution(Sector sector, double resolution) {
+////        if (sector == null) {
+////            String message = Logging.getMessage("nullValue.SectorIsNull");
+////            Logging.logger().severe(message);
+////            throw new IllegalStateException(message);
+////        }
+//
+//        // Find the first level exceeding the desired resolution
+//        double texelSize;
+//        Level targetLevel = this.levels.getLastLevel();
+//        for (int i = 0; i < levels.getLastLevel().getLevelNumber(); i++) {
+//            if (this.levels.isLevelEmpty(i))
+//                continue;
+//
+//            texelSize = this.levels.getLevel(i).getTexelSize();
+//            if (texelSize > resolution)
+//                continue;
+//
+//            targetLevel = this.levels.getLevel(i);
+//            break;
+//        }
+//
+//        // Choose the level closest to the resolution desired
+//        if (targetLevel.getLevelNumber() != 0 && !this.levels.isLevelEmpty(targetLevel.getLevelNumber() - 1)) {
+//            Level nextLowerLevel = this.levels.getLevel(targetLevel.getLevelNumber() - 1);
+//            double dless = Math.abs(nextLowerLevel.getTexelSize() - resolution);
+//            double dmore = Math.abs(targetLevel.getTexelSize() - resolution);
+//            if (dless < dmore)
+//                targetLevel = nextLowerLevel;
+//        }
+//
+//        Logging.logger().fine(Logging.getMessage("layers.TiledImageLayer.LevelSelection",
+//            targetLevel.getLevelNumber(), Double.toString(targetLevel.getTexelSize())));
+//        return targetLevel.getLevelNumber();
+//    }
 
     public long countImagesInSector(Sector sector) {
         long count = 0;
@@ -1158,11 +1062,6 @@ public abstract class TiledImageLayer extends AbstractLayer {
     }
 
     public long countImagesInSector(Sector sector, int levelNumber) {
-        if (sector == null) {
-            String msg = Logging.getMessage("nullValue.SectorIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
 
         Level targetLevel = this.levels.getLastLevel();
         if (levelNumber >= 0) {
@@ -1189,102 +1088,77 @@ public abstract class TiledImageLayer extends AbstractLayer {
         return numRows * numCols;
     }
 
-    public TextureTile[][] getTilesInSector(Sector sector, int levelNumber) {
-        if (sector == null) {
-            String msg = Logging.getMessage("nullValue.SectorIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        Level targetLevel = this.levels.getLastLevel();
-        if (levelNumber >= 0) {
-            for (int i = levelNumber; i < levels.getLastLevel().getLevelNumber(); i++) {
-                if (this.levels.isLevelEmpty(i))
-                    continue;
-
-                targetLevel = this.levels.getLevel(i);
-                break;
-            }
-        }
-
-        // Collect all the tiles intersecting the input sector.
-        LatLon delta = targetLevel.getTileDelta();
-        LatLon origin = this.levels.tileOrigin;
-        final int nwRow = Tile.computeRow(delta.getLatitude(), sector.latMax(), origin.getLatitude());
-        final int nwCol = Tile.computeColumn(delta.getLongitude(), sector.lonMin(), origin.getLongitude());
-        final int seRow = Tile.computeRow(delta.getLatitude(), sector.latMin(), origin.getLatitude());
-        final int seCol = Tile.computeColumn(delta.getLongitude(), sector.lonMax(), origin.getLongitude());
-
-        int numRows = nwRow - seRow + 1;
-        int numCols = seCol - nwCol + 1;
-        TextureTile[][] sectorTiles = new TextureTile[numRows][numCols];
-
-        for (int row = nwRow; row >= seRow; row--) {
-            for (int col = nwCol; col <= seCol; col++) {
-                TileKey key = new TileKey(targetLevel.getLevelNumber(), row, col, targetLevel.getCacheName());
-                Sector tileSector = this.levels.computeSectorForKey(key);
-                sectorTiles[nwRow - row][col - nwCol] = new TextureTile(tileSector, targetLevel, row, col);
-            }
-        }
-
-        return sectorTiles;
-    }
-
-    protected BufferedImage getImage(TextureTile tile, String mimeType, int timeout) throws Exception,
-        URISyntaxException, IOException, RuntimeException {
-        // Read the image from disk.
-        BufferedImage image = this.requestImage(tile, mimeType);
-        //Thread.sleep(1); // generates InterruptedException if thread has been interrupted
-        if (image != null)
-            return image;
-
-        // Retrieve it from the net since it's not on disk.
-        this.downloadImage(tile, mimeType, timeout);
-
-        // Try to read from disk again after retrieving it from the net.
-        image = this.requestImage(tile, mimeType);
-        //Thread.sleep(1); // generates InterruptedException if thread has been interupted
-        if (image == null) {
-            throw new RuntimeException(Logging.getMessage("layers.TiledImageLayer.ImageUnavailable", tile.getPath()));
-        }
-
-        return image;
-    }
-
-    protected class CompositionRetrievalPostProcessor extends AbstractRetrievalPostProcessor {
-        protected final TextureTile tile;
-
-        public CompositionRetrievalPostProcessor(TextureTile tile) {
-            this.tile = tile;
-        }
-
-        protected File doGetOutputFile() {
-            String suffix = WWIO.mimeSuffix(this.getRetriever().getContentType());
-
-            String path = this.tile.getPathBase();
-            path += suffix;
-
-            File f = new File(path);
-
-            return f.isAbsolute() ? f : getDataFileStore().newFile(path);
-        }
-
-        @Override
-        protected boolean isDeleteOnExit(File outFile) {
-            return outFile.getPath().contains(WWIO.DELETE_ON_EXIT_PREFIX);
-        }
-
-        @Override
-        protected boolean overwriteExistingFile() {
-            return true;
-        }
-
-        protected void markResourceAbsent() {
-            TiledImageLayer.this.levels.miss(tile);
-        }
-
-        protected void handleUnsuccessfulRetrieval() {
-            // Don't mark the tile as absent because the caller may want to try again.
-        }
-    }
+//    public TextureTile[][] getTilesInSector(Sector sector, int levelNumber) {
+//
+//        Level targetLevel = this.levels.getLastLevel();
+//        if (levelNumber >= 0) {
+//            for (int i = levelNumber; i < levels.getLastLevel().getLevelNumber(); i++) {
+//                if (this.levels.isLevelEmpty(i))
+//                    continue;
+//
+//                targetLevel = this.levels.getLevel(i);
+//                break;
+//            }
+//        }
+//
+//        // Collect all the tiles intersecting the input sector.
+//        LatLon delta = targetLevel.getTileDelta();
+//        LatLon origin = this.levels.tileOrigin;
+//        final int nwRow = Tile.computeRow(delta.getLatitude(), sector.latMax(), origin.getLatitude());
+//        final int nwCol = Tile.computeColumn(delta.getLongitude(), sector.lonMin(), origin.getLongitude());
+//        final int seRow = Tile.computeRow(delta.getLatitude(), sector.latMin(), origin.getLatitude());
+//        final int seCol = Tile.computeColumn(delta.getLongitude(), sector.lonMax(), origin.getLongitude());
+//
+//        int numRows = nwRow - seRow + 1;
+//        int numCols = seCol - nwCol + 1;
+//        TextureTile[][] sectorTiles = new TextureTile[numRows][numCols];
+//
+//        for (int row = nwRow; row >= seRow; row--) {
+//            for (int col = nwCol; col <= seCol; col++) {
+//                TileKey key = new TileKey(targetLevel.getLevelNumber(), row, col, targetLevel.getCacheName());
+//                Sector tileSector = this.levels.computeSectorForKey(key);
+//                sectorTiles[nwRow - row][col - nwCol] = new TextureTile(tileSector, targetLevel, row, col);
+//            }
+//        }
+//
+//        return sectorTiles;
+//    }
+//
+//
+//    protected class CompositionRetrievalPostProcessor extends AbstractRetrievalPostProcessor {
+//        protected final TextureTile tile;
+//
+//        public CompositionRetrievalPostProcessor(TextureTile tile) {
+//            this.tile = tile;
+//        }
+//
+//        protected File doGetOutputFile() {
+//            String suffix = WWIO.mimeSuffix(this.getRetriever().getContentType());
+//
+//            String path = this.tile.getPathBase();
+//            path += suffix;
+//
+//            File f = new File(path);
+//
+//            return f.isAbsolute() ? f : getDataFileStore().newFile(path);
+//        }
+//
+//        @Override
+//        protected boolean isDeleteOnExit(File outFile) {
+//            return outFile.getPath().contains(WWIO.DELETE_ON_EXIT_PREFIX);
+//        }
+//
+//        @Override
+//        protected boolean overwriteExistingFile() {
+//            return true;
+//        }
+//
+//        protected void markResourceAbsent() {
+//            TiledImageLayer.this.levels.miss(tile);
+//        }
+//
+//        protected void handleUnsuccessfulRetrieval() {
+//            // Don't mark the tile as absent because the caller may want to try again.
+//        }
+//    }
 }

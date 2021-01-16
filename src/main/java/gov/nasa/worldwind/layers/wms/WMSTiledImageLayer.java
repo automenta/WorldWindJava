@@ -204,46 +204,46 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer {
     //********************  Configuration  *************************//
     //**************************************************************//
 
-    @Override
-    public BufferedImage composeImageForSector(Sector sector, int canvasWidth, int canvasHeight, double aspectRatio,
-        int levelNumber, String mimeType, boolean abortOnError, BufferedImage image, int timeout) throws Exception,
-        IOException, InterruptedIOException {
-
-        Level requestedLevel;
-        if ((levelNumber >= 0) && (levelNumber < levels.getNumLevels()))
-            requestedLevel = levels.getLevel(levelNumber);
-        else
-            requestedLevel = levels.getLastLevel();
-        ComposeImageTile tile =
-            new ComposeImageTile(sector, mimeType, requestedLevel, canvasWidth, canvasHeight);
-        try {
-            if (image == null)
-                image = new BufferedImage(canvasWidth, canvasHeight, BufferedImage.TYPE_INT_RGB);
-
-            downloadImage(tile, mimeType, timeout);
-//            Thread.sleep(1); // generates InterruptedException if thread has been interupted
-
-            BufferedImage tileImage = ImageIO.read(tile.getFile());
-//            Thread.sleep(1); // generates InterruptedException if thread has been interupted
-
-            ImageUtil.mergeImage(sector, tile.sector, aspectRatio, tileImage, image);
-//            Thread.sleep(1); // generates InterruptedException if thread has been interupted
-
-            this.firePropertyChange(AVKey.PROGRESS, 0.0d, 1.0d);
-        }
-        catch (InterruptedIOException e) {
-            throw e;
-        }
-        catch (Exception e) {
-            if (abortOnError)
-                throw e;
-
-            String message = Logging.getMessage("generic.ExceptionWhileRequestingImage", tile.getPath());
-            Logging.logger().log(java.util.logging.Level.WARNING, message, e);
-        }
-
-        return image;
-    }
+//    @Override
+//    public BufferedImage composeImageForSector(Sector sector, int canvasWidth, int canvasHeight, double aspectRatio,
+//        int levelNumber, String mimeType, boolean abortOnError, BufferedImage image, int timeout) throws Exception,
+//        IOException, InterruptedIOException {
+//
+//        Level requestedLevel;
+//        if ((levelNumber >= 0) && (levelNumber < levels.getNumLevels()))
+//            requestedLevel = levels.getLevel(levelNumber);
+//        else
+//            requestedLevel = levels.getLastLevel();
+//        ComposeImageTile tile =
+//            new ComposeImageTile(sector, mimeType, requestedLevel, canvasWidth, canvasHeight);
+//        try {
+//            if (image == null)
+//                image = new BufferedImage(canvasWidth, canvasHeight, BufferedImage.TYPE_INT_RGB);
+//
+//            downloadImage(tile, mimeType, timeout);
+////            Thread.sleep(1); // generates InterruptedException if thread has been interupted
+//
+//            BufferedImage tileImage = ImageIO.read(tile.getFile());
+////            Thread.sleep(1); // generates InterruptedException if thread has been interupted
+//
+//            ImageUtil.mergeImage(sector, tile.sector, aspectRatio, tileImage, image);
+////            Thread.sleep(1); // generates InterruptedException if thread has been interupted
+//
+//            this.firePropertyChange(AVKey.PROGRESS, 0.0d, 1.0d);
+//        }
+//        catch (InterruptedIOException e) {
+//            throw e;
+//        }
+//        catch (Exception e) {
+//            if (abortOnError)
+//                throw e;
+//
+//            String message = Logging.getMessage("generic.ExceptionWhileRequestingImage", tile.getPath());
+//            Logging.logger().log(java.util.logging.Level.WARNING, message, e);
+//        }
+//
+//        return image;
+//    }
 
     //**************************************************************//
     //********************  Restorable Support  ********************//
