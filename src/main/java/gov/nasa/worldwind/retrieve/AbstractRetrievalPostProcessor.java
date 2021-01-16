@@ -9,7 +9,6 @@ import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.formats.dds.DDSCompressor;
 import gov.nasa.worldwind.util.*;
 
-import javax.imageio.ImageIO;
 import java.awt.image.*;
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -72,14 +71,6 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
     }
 
     /**
-     * Abstract method that subclasses must provide to identify the output file for the post-processor's retrieval
-     * content.
-     *
-     * @return the output file.
-     */
-    abstract protected File doGetOutputFile();
-
-    /**
      * Runs the post-processor.
      *
      * @param retriever the retriever to associate with the post-processor.
@@ -95,11 +86,6 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
             this.handleUnsuccessfulRetrieval();
             return null;
         }
-
-//        if (!this.validateResponseCode()) {
-//            this.handleInvalidResponseCode();
-//            return null;
-//        }
 
         return this.handleSuccessfulRetrieval();
     }
@@ -207,7 +193,8 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
      * @throws IOException if an IO error occurs while attempting to save the buffer.
      */
     protected boolean saveBuffer() throws IOException {
-        return this.saveBuffer(null);
+        //return this.saveBuffer(null);
+        return true;
     }
 
     /**
@@ -217,37 +204,10 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
      * @param buffer the buffer to save.
      * @return true if the buffer was saved, false if the output file could not be determined or already exists and not
      * overwritten.
-     * @throws IOException if an IO error occurred when attempting to save the buffer.
      */
-    protected boolean saveBuffer(ByteBuffer buffer) throws IOException {
-        File outFile = this.getOutputFile();
-
-        if (outFile == null)
-            return false;
-
-        if (outFile.exists() && !this.overwriteExistingFile())
-            return false;
-
-        synchronized (this.getFileLock()) // synchronize with read of file in another class
-        {
-            WWIO.saveBuffer(buffer != null ? buffer : this.getRetriever().getBuffer(), outFile);
-        }
+    protected static boolean saveBuffer(ByteBuffer buffer) {
 
         return true;
-    }
-
-    /**
-     * Determines and returns the output file for the retrieved data.
-     *
-     * @return the output file, or null if a file could not be determined.
-     */
-    public File getOutputFile() {
-        File outFile = this.doGetOutputFile();
-
-        if (outFile != null && this.isDeleteOnExit(outFile))
-            outFile.deleteOnExit();
-
-        return outFile;
     }
 
     /**
@@ -413,14 +373,8 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
      * unzipping it.
      *
      * @return a buffer containing the retrieved data.
-     * @throws IOException if an IO error occurs while processing the data.
      */
-    protected ByteBuffer handleZipContent() throws IOException {
-        File outFile = this.getOutputFile();
-        if (outFile == null)
-            return null;
-
-        this.saveBuffer();
+    protected ByteBuffer handleZipContent() {
 
         return this.getRetriever().getBuffer();
     }
@@ -463,28 +417,8 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
      * exists and {@link #overwriteExistingFile()} returns false.
      *
      * @return a buffer containing the retrieved data.
-     * @throws IOException if an IO error occurs while processing the data.
      */
-    protected ByteBuffer handleImageContent() throws IOException {
-        // BE CAREFUL: This method may be overridden by subclasses to handle special image cases. It's also implemented
-        // to handle elevations as images correctly (just save them to the filestore).
-
-        File outFile = this.getOutputFile();
-        if (outFile == null || (outFile.exists() && !this.overwriteExistingFile()))
-            return this.getRetriever().getBuffer();
-
-        if (outFile.getPath().endsWith("dds"))
-            return this.saveDDS();
-
-        BufferedImage image = this.transformPixels();
-
-        if (image != null) {
-            synchronized (this.getFileLock()) // synchronize with read of file in another class
-            {
-                ImageIO.write(image, this.getRetriever().getContentType().split("/")[1], outFile);
-            }
-        } else
-            this.saveBuffer();
+    protected final ByteBuffer handleImageContent() {
 
         return this.getRetriever().getBuffer();
     }
@@ -519,7 +453,7 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
         if (!this.getRetriever().getContentType().contains("dds"))
             buffer = this.convertToDDS();
 
-        this.saveBuffer(buffer);
+        AbstractRetrievalPostProcessor.saveBuffer(buffer);
 
         return buffer;
     }

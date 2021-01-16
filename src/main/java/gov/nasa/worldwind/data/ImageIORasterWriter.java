@@ -120,8 +120,7 @@ public class ImageIORasterWriter extends AbstractDataRasterWriter {
         return (raster instanceof BufferedImageRaster);
     }
 
-    protected void doWrite(DataRaster raster, String formatSuffix, File file) throws IOException,
-        FileNotFoundException {
+    protected void doWrite(DataRaster raster, String formatSuffix, File file) throws IOException {
         ImageIORasterWriter.writeImage(raster, formatSuffix, file);
 
         if (this.isWriteGeoreferenceFiles()) {

@@ -55,9 +55,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
     private final List<TextureTile> currentTiles = new Lst<>();
     protected final PriorityBlockingQueue<Runnable> requestQ = new PriorityBlockingQueue<>(TiledImageLayer.QUEUE_SIZE);
     protected ArrayList<TextureTile> topLevels;
-//    protected boolean forceLevelZeroLoads;
-    protected boolean levelZeroLoaded;
-    protected boolean retainLevelZeroTiles;
+protected boolean retainLevelZeroTiles;
     protected String tileCountName;
     protected double detailHint;
     protected boolean useMipMaps = true;
@@ -605,10 +603,9 @@ public abstract class TiledImageLayer extends AbstractLayer {
                     if (levels.sector.intersects(child.sector) && TiledImageLayer.isTileVisible(child, f, dc))
                         this.addTileOrDescendants(dc, f, child);
                 }
-            }
-            finally {
+            } finally {
                 if (ancestorResource != null) // Pop this tile as the currentResource ancestor
-                this.currentResourceTile = ancestorResource;
+                    this.currentResourceTile = ancestorResource;
             }
         }
     }
@@ -890,14 +887,6 @@ public abstract class TiledImageLayer extends AbstractLayer {
             this.supportedImageFormats.addAll(Arrays.asList(formats));
     }
 
-//    public boolean isImageFormatAvailable(String imageFormat) {
-//        return imageFormat != null && this.supportedImageFormats.contains(imageFormat);
-//    }
-//
-//    public String getDefaultImageFormat() {
-//        return this.supportedImageFormats.isEmpty() ? null : this.supportedImageFormats.get(0);
-//    }
-
     protected BufferedImage requestImage(TextureTile tile, String mimeType) throws IOException {
 
 
@@ -951,96 +940,6 @@ public abstract class TiledImageLayer extends AbstractLayer {
 //        return null;
     }
 
-//    protected void downloadImage(final TextureTile tile, String mimeType, int timeout) throws Exception {
-//        if (this.get(AVKey.RETRIEVER_FACTORY_LOCAL) != null)
-//            this.retrieveLocalImage(tile, mimeType, timeout);
-//        else
-//            // Assume it's remote.
-//            this.retrieveRemoteImage(tile, mimeType, timeout);
-//    }
-
-//    protected void retrieveRemoteImage(final TextureTile tile, String mimeType, int timeout) throws Exception {
-//        // TODO: apply retriever-factory pattern for remote retrieval case.
-//        final URL resourceURL = tile.getResourceURL(mimeType);
-//        if (resourceURL == null)
-//            return;
-//
-//        Retriever retriever;
-//
-//        String protocol = resourceURL.getProtocol();
-//
-//        if ("http".equalsIgnoreCase(protocol) || "https".equalsIgnoreCase(protocol)) {
-//            retriever = new HTTPRetriever(resourceURL, new CompositionRetrievalPostProcessor(tile));
-//            retriever.set(URLRetriever.EXTRACT_ZIP_ENTRY, "true"); // supports legacy layers
-//        } else {
-//            String message = Logging.getMessage("layers.TextureLayer.UnknownRetrievalProtocol", resourceURL);
-//            throw new RuntimeException(message);
-//        }
-//
-//        Logging.logger().log(java.util.logging.Level.FINE, "Retrieving " + resourceURL.toString());
-//        retriever.setConnectTimeout(10000);
-//        retriever.setReadTimeout(timeout);
-//        retriever.call();
-//    }
-//
-//    protected void retrieveLocalImage(TextureTile tile, String mimeType, int timeout) throws Exception {
-//        if (!WorldWind.retrieveLocal().isAvailable())
-//            return;
-//
-//        RetrieverFactory retrieverFactory = (RetrieverFactory) this.get(AVKey.RETRIEVER_FACTORY_LOCAL);
-//        if (retrieverFactory == null)
-//            return;
-//
-//        AVList avList = new AVListImpl();
-//        avList.set(AVKey.SECTOR, tile.sector);
-//        avList.set(AVKey.WIDTH, tile.getWidth());
-//        avList.set(AVKey.HEIGHT, tile.getHeight());
-//        avList.set(AVKey.FILE_NAME, tile.getPath());
-//        avList.set(AVKey.IMAGE_FORMAT, mimeType);
-//
-//        Retriever retriever = retrieverFactory.retriever(avList, new CompositionRetrievalPostProcessor(tile));
-//
-//        Logging.logger().log(java.util.logging.Level.FINE, "Locally retrieving " + tile.getPath());
-//        retriever.setReadTimeout(timeout);
-//        retriever.call();
-//    }
-
-//    public int computeLevelForResolution(Sector sector, double resolution) {
-////        if (sector == null) {
-////            String message = Logging.getMessage("nullValue.SectorIsNull");
-////            Logging.logger().severe(message);
-////            throw new IllegalStateException(message);
-////        }
-//
-//        // Find the first level exceeding the desired resolution
-//        double texelSize;
-//        Level targetLevel = this.levels.getLastLevel();
-//        for (int i = 0; i < levels.getLastLevel().getLevelNumber(); i++) {
-//            if (this.levels.isLevelEmpty(i))
-//                continue;
-//
-//            texelSize = this.levels.getLevel(i).getTexelSize();
-//            if (texelSize > resolution)
-//                continue;
-//
-//            targetLevel = this.levels.getLevel(i);
-//            break;
-//        }
-//
-//        // Choose the level closest to the resolution desired
-//        if (targetLevel.getLevelNumber() != 0 && !this.levels.isLevelEmpty(targetLevel.getLevelNumber() - 1)) {
-//            Level nextLowerLevel = this.levels.getLevel(targetLevel.getLevelNumber() - 1);
-//            double dless = Math.abs(nextLowerLevel.getTexelSize() - resolution);
-//            double dmore = Math.abs(targetLevel.getTexelSize() - resolution);
-//            if (dless < dmore)
-//                targetLevel = nextLowerLevel;
-//        }
-//
-//        Logging.logger().fine(Logging.getMessage("layers.TiledImageLayer.LevelSelection",
-//            targetLevel.getLevelNumber(), Double.toString(targetLevel.getTexelSize())));
-//        return targetLevel.getLevelNumber();
-//    }
-
     public long countImagesInSector(Sector sector) {
         long count = 0;
         for (int i = 0; i <= levels.getLastLevel().getLevelNumber(); i++) {
@@ -1076,78 +975,4 @@ public abstract class TiledImageLayer extends AbstractLayer {
 
         return numRows * numCols;
     }
-
-//    public TextureTile[][] getTilesInSector(Sector sector, int levelNumber) {
-//
-//        Level targetLevel = this.levels.getLastLevel();
-//        if (levelNumber >= 0) {
-//            for (int i = levelNumber; i < levels.getLastLevel().getLevelNumber(); i++) {
-//                if (this.levels.isLevelEmpty(i))
-//                    continue;
-//
-//                targetLevel = this.levels.getLevel(i);
-//                break;
-//            }
-//        }
-//
-//        // Collect all the tiles intersecting the input sector.
-//        LatLon delta = targetLevel.getTileDelta();
-//        LatLon origin = this.levels.tileOrigin;
-//        final int nwRow = Tile.computeRow(delta.getLatitude(), sector.latMax(), origin.getLatitude());
-//        final int nwCol = Tile.computeColumn(delta.getLongitude(), sector.lonMin(), origin.getLongitude());
-//        final int seRow = Tile.computeRow(delta.getLatitude(), sector.latMin(), origin.getLatitude());
-//        final int seCol = Tile.computeColumn(delta.getLongitude(), sector.lonMax(), origin.getLongitude());
-//
-//        int numRows = nwRow - seRow + 1;
-//        int numCols = seCol - nwCol + 1;
-//        TextureTile[][] sectorTiles = new TextureTile[numRows][numCols];
-//
-//        for (int row = nwRow; row >= seRow; row--) {
-//            for (int col = nwCol; col <= seCol; col++) {
-//                TileKey key = new TileKey(targetLevel.getLevelNumber(), row, col, targetLevel.getCacheName());
-//                Sector tileSector = this.levels.computeSectorForKey(key);
-//                sectorTiles[nwRow - row][col - nwCol] = new TextureTile(tileSector, targetLevel, row, col);
-//            }
-//        }
-//
-//        return sectorTiles;
-//    }
-//
-//
-//    protected class CompositionRetrievalPostProcessor extends AbstractRetrievalPostProcessor {
-//        protected final TextureTile tile;
-//
-//        public CompositionRetrievalPostProcessor(TextureTile tile) {
-//            this.tile = tile;
-//        }
-//
-//        protected File doGetOutputFile() {
-//            String suffix = WWIO.mimeSuffix(this.getRetriever().getContentType());
-//
-//            String path = this.tile.getPathBase();
-//            path += suffix;
-//
-//            File f = new File(path);
-//
-//            return f.isAbsolute() ? f : getDataFileStore().newFile(path);
-//        }
-//
-//        @Override
-//        protected boolean isDeleteOnExit(File outFile) {
-//            return outFile.getPath().contains(WWIO.DELETE_ON_EXIT_PREFIX);
-//        }
-//
-//        @Override
-//        protected boolean overwriteExistingFile() {
-//            return true;
-//        }
-//
-//        protected void markResourceAbsent() {
-//            TiledImageLayer.this.levels.miss(tile);
-//        }
-//
-//        protected void handleUnsuccessfulRetrieval() {
-//            // Don't mark the tile as absent because the caller may want to try again.
-//        }
-//    }
 }

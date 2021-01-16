@@ -255,27 +255,6 @@ public class URLRetriever extends WWObjectImpl implements Retriever {
                     this.byteBuffer = this.postProcessor.apply(this);
 
             });
-//            if (interrupted())
-//                return this;
-
-//            setState(Retriever.RETRIEVER_STATE_CONNECTING);
-//            this.connection = this.openConnection();
-
-//            if (interrupted())
-//                return this;
-
-//            setState(Retriever.RETRIEVER_STATE_READING);
-
-//            if ((this.byteBuffer = this.doRead(this.connection)) == null)
-//                throw new IOException("empty");
-//
-//            if (this.postProcessor != null)
-//                this.byteBuffer = this.postProcessor.apply(this);
-//
-//            WorldWind.getNetworkStatus().logAvailableHost(this.url);
-//            setState(Retriever.RETRIEVER_STATE_SUCCESSFUL);
-
-
         } catch (Exception e) {
 //            logger.error("{} {}", e.getMessage(), url);
             setState(Retriever.RETRIEVER_STATE_ERROR);
@@ -371,12 +350,7 @@ public class URLRetriever extends WWObjectImpl implements Retriever {
     @Deprecated protected ByteBuffer doRead(URLConnection connection) throws Exception {
 
         try (InputStream inputStream = this.connection.getInputStream()) {
-//        if (inputStream == null) {
-//            Logging.logger().log(Level.SEVERE, "URLRetriever.InputStreamFromConnectionNull", connection.getURL());
-//            return null;
-//        }
 
-            //            this.contentLength = this.connection.getContentLength();
             this.expiration.set(URLRetriever.getExpiration(connection));
 
             // The legacy WW servers send data with application/zip as the content type, and the retrieval initiator is

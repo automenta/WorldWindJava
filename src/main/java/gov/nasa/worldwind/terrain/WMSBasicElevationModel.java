@@ -40,29 +40,7 @@ public class WMSBasicElevationModel extends BasicElevationModel {
         this(WMSBasicElevationModel.wmsGetParamsFromCapsDoc(caps, params));
     }
 
-//    public WMSBasicElevationModel(String restorableStateInXml) {
-//        super(WMSBasicElevationModel.wmsRestorableStateToParams(restorableStateInXml));
-//
-//        RestorableSupport rs;
-//        try {
-//            rs = RestorableSupport.parse(restorableStateInXml);
-//        }
-//        catch (RuntimeException e) {
-//            // Parsing the document specified by stateInXml failed.
-//            String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", restorableStateInXml);
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message, e);
-//        }
-//
-//        this.doRestoreState(rs, null);
-//    }
-
     protected static AVList wmsGetParamsFromDocument(Element domElement, AVList params) {
-//        if (domElement == null) {
-//            String message = Logging.getMessage("nullValue.DocumentIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (params == null)
             params = new AVListImpl();
@@ -77,17 +55,6 @@ public class WMSBasicElevationModel extends BasicElevationModel {
     }
 
     protected static AVList wmsGetParamsFromCapsDoc(WMSCapabilities caps, AVList params) {
-//        if (caps == null) {
-//            String message = Logging.getMessage("nullValue.WMSCapabilities");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//
-//        if (params == null) {
-//            String message = Logging.getMessage("nullValue.ElevationModelConfigParams");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         String wmsVersion;
         try {
@@ -225,11 +192,6 @@ public class WMSBasicElevationModel extends BasicElevationModel {
     //**************************************************************//
 
     protected static AVList wmsRestorableStateToParams(String stateInXml) {
-//        if (stateInXml == null) {
-//            String message = Logging.getMessage("nullValue.StringIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         RestorableSupport rs;
         try {

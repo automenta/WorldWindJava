@@ -220,13 +220,9 @@ public class BasicNetworkStatus extends AVListImpl implements NetworkStatus {
                 hi.lastLogTime.set(now);
                 if (!hi.isUnavailable())
                     hi.logCount.incrementAndGet();
-//                    if (hi.isUnavailable()) // host just became unavailable
-//                        this.firePropertyChange(NetworkStatus.HOST_UNAVAILABLE, null, url);
             } else {
                 hi = new HostInfo(this.attemptLimit.get(), this.tryAgainInterval.get());
                 hi.logCount.set(1);
-//                if (hi.isUnavailable()) // the attempt limit may be as low as 1, so handle that case here
-//                    this.firePropertyChange(NetworkStatus.HOST_UNAVAILABLE, null, url);
             }
             return hi;
         });
@@ -242,9 +238,6 @@ public class BasicNetworkStatus extends AVListImpl implements NetworkStatus {
 
         String hostName = url.getHost();
         HostInfo hi = this.hostMap.remove(hostName);
-//        if (hi != null)
-//            firePropertyChange(NetworkStatus.HOST_AVAILABLE, null, url);
-
 
         this.lastAvailableLogTime.set(System.currentTimeMillis());
     }

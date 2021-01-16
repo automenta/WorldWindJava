@@ -26,8 +26,7 @@ public class GeotiffRasterWriter extends AbstractDataRasterWriter {
         return (raster instanceof BufferedImageRaster || raster instanceof BufferWrapperRaster);
     }
 
-    protected void doWrite(DataRaster raster, String formatSuffix, File file) throws IOException,
-        FileNotFoundException {
+    protected void doWrite(DataRaster raster, String formatSuffix, File file) throws IOException {
         if (null == file) {
             String message = Logging.getMessage("nullValue.FileIsNull");
             Logging.logger().severe(message);

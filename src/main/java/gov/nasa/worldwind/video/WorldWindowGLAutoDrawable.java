@@ -19,7 +19,6 @@ import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.pick.*;
 import gov.nasa.worldwind.util.*;
 
-import javax.swing.Timer;
 import javax.swing.event.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
@@ -97,11 +96,6 @@ public class WorldWindowGLAutoDrawable extends WWObjectImpl implements WorldWind
      * @param surface The surface to configure.
      */
     public static void configureIdentityPixelScale(ScalableSurface surface) {
-//        if (surface == null) {
-//            String message = Logging.getMessage("nullValue.SurfaceIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         float[] identityScale = {ScalableSurface.IDENTITY_PIXELSCALE, ScalableSurface.IDENTITY_PIXELSCALE};
         surface.setSurfaceScale(identityScale);
@@ -128,17 +122,6 @@ public class WorldWindowGLAutoDrawable extends WWObjectImpl implements WorldWind
     public long getViewStopTime() {
         return this.viewStopTime;
     }
-
-//    /**
-//     * Specifies the amount of time, in milliseconds, that the View must remain unchanged before a {@link
-//     * View#VIEW_STOPPED} event is triggered.
-//     *
-//     * @param time Time in milliseconds that the View must must remain unchanged before the view stopped event is
-//     *             triggered.
-//     */
-//    public void setViewStopTime(long time) {
-//        this.viewStopTime = time;
-//    }
 
     public void initDrawable(GLAutoDrawable g, WorldWindow w) {
 

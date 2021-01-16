@@ -10,7 +10,7 @@ import com.jogamp.common.nio.*;
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.exception.WWRuntimeException;
-import jcog.*;
+import jcog.Log;
 import okhttp3.*;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.function.ThrowingConsumer;
@@ -22,7 +22,6 @@ import java.nio.*;
 import java.nio.channels.*;
 import java.nio.charset.Charset;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.zip.*;
@@ -347,8 +346,7 @@ public class WWIO {
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    public static boolean saveBuffer(ByteBuffer buffer, File file, boolean forceFilesystemWrite) throws IOException,
-        ClosedByInterruptException {
+    public static boolean saveBuffer(ByteBuffer buffer, File file, boolean forceFilesystemWrite) throws IOException {
 
         FileOutputStream fos = null;
         FileChannel channel = null;
@@ -446,8 +444,7 @@ public class WWIO {
      * @return a MappedByteBuffer representing the File's bytes.
      * @throws IOException if the file cannot be mapped for any reason.
      */
-    public static MappedByteBuffer mapFile(File file, FileChannel.MapMode mode) throws IOException,
-        FileNotFoundException {
+    public static MappedByteBuffer mapFile(File file, FileChannel.MapMode mode) throws IOException {
 
         String accessMode;
         if (mode == FileChannel.MapMode.READ_ONLY)
@@ -576,8 +573,7 @@ public class WWIO {
      * @throws IllegalArgumentException if the file is null.
      * @throws IOException              if an I/O error occurs.
      */
-    public static ByteBuffer readFileToBuffer(File file, boolean allocateDirect) throws IOException,
-        FileNotFoundException {
+    public static ByteBuffer readFileToBuffer(File file, boolean allocateDirect) throws IOException {
         if (file == null) {
             String message = Logging.getMessage("nullValue.FileIsNull");
             Logging.logger().severe(message);
@@ -597,7 +593,7 @@ public class WWIO {
         }
     }
 
-    public static ByteBuffer inflateFileToBuffer(File file) throws IOException, FileNotFoundException {
+    public static ByteBuffer inflateFileToBuffer(File file) throws IOException {
         if (file == null) {
             String message = Logging.getMessage("nullValue.FileIsNull");
             Logging.logger().severe(message);
@@ -613,16 +609,15 @@ public class WWIO {
         }
     }
 
-    public static boolean saveBufferToGZipFile(ByteBuffer buffer, File file) throws IOException, FileNotFoundException {
+    public static boolean saveBufferToGZipFile(ByteBuffer buffer, File file) throws IOException {
         return WWIO.saveBufferToStream(buffer, new GZIPOutputStream(new FileOutputStream(file)));
     }
 
-    public static boolean deflateBufferToFile(ByteBuffer buffer, File file) throws IOException, FileNotFoundException {
+    public static boolean deflateBufferToFile(ByteBuffer buffer, File file) throws IOException {
         return WWIO.saveBufferToStream(buffer, new DeflaterOutputStream(new FileOutputStream(file)));
     }
 
-    public static ByteBuffer readGZipFileToBuffer(File gzFile) throws IllegalArgumentException, IOException,
-        FileNotFoundException {
+    public static ByteBuffer readGZipFileToBuffer(File gzFile) throws IllegalArgumentException, IOException {
         if (gzFile == null) {
             String message = Logging.getMessage("nullValue.FileIsNull");
             Logging.logger().severe(message);
@@ -661,7 +656,7 @@ public class WWIO {
         return buffer;
     }
 
-    private static int gzipGetInflatedLength(File gzFile) throws IOException, FileNotFoundException {
+    private static int gzipGetInflatedLength(File gzFile) throws IOException {
         RandomAccessFile raf = null;
         int length = 0;
         try {
@@ -680,7 +675,7 @@ public class WWIO {
         return length;
     }
 
-    public static ByteBuffer readZipEntryToBuffer(File zipFile, String entryName) throws IOException, ZipException {
+    public static ByteBuffer readZipEntryToBuffer(File zipFile, String entryName) throws IOException {
         if (zipFile == null) {
             String message = Logging.getMessage("nullValue.FileIsNull");
             Logging.logger().severe(message);
@@ -1333,7 +1328,7 @@ public class WWIO {
         return cur != null;
     }
 
-    public static void copyFile(File source, File destination) throws IOException, FileNotFoundException {
+    public static void copyFile(File source, File destination) throws IOException {
 
         FileInputStream fis = null;
         FileOutputStream fos = null;
@@ -1594,7 +1589,7 @@ public class WWIO {
      * @return a reader for the input source.
      * @throws IOException if i/o or other errors occur trying to create the reader.
      */
-    public static Reader openReader(Object src) throws IOException, FileNotFoundException {
+    public static Reader openReader(Object src) throws IOException {
         Reader r = null;
 
         if (src instanceof Reader)

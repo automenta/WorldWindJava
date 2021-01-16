@@ -109,23 +109,6 @@ public class SessionCacheUtils {
     public static WMSCapabilities getOrRetrieveSessionCapabilities(URL url, SessionCache cache,
         Object cacheKey, AbsentResourceList absentResourceList, long resourceID,
         PropertyChangeListener propertyListener, String propertyName) {
-//        if (url == null) {
-//            String message = Logging.getMessage("nullValue.URLIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-
-//        if (cache == null) {
-//            String message = Logging.getMessage("nullValue.CacheIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//
-//        if (cacheKey == null) {
-//            String message = Logging.getMessage("nullValue.CacheKeyIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         WMSCapabilities caps = SessionCacheUtils.getSessionCapabilities(cache, cacheKey, url.toString());
         if (caps != null)

@@ -471,11 +471,6 @@ public abstract class AbstractFileStore extends WWObjectImpl implements FileStor
      * @throws IllegalArgumentException if <code>fileName</code> is null
      */
     public File newFile(String fileName) {
-//        if (fileName == null) {
-//            String message = Logging.getMessage("nullValue.FilePathIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (this.writeLocation != null) {
             String fullPath = AbstractFileStore.makeAbsolutePath(this.writeLocation.getFile(), fileName);

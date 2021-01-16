@@ -331,7 +331,7 @@ public class GLUTessellatorSupport {
         /**
          * The GLU tessellator that receives the tessellation results sent to this callback.
          */
-        protected GLUtessellator tess;
+        protected final GLUtessellator tess;
 
         /**
          * Creates a new RecursiveCallback with the GLU tessellator that receives boundary tessellation results.

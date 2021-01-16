@@ -15,7 +15,7 @@ import java.net.URL;
  * @version $Id: BrowserOpener.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 public class BrowserOpener {
-    public static void browse(URL url) throws Exception, IllegalArgumentException {
+    public static void browse(URL url) throws Exception {
         if (url == null) {
             String message = Logging.getMessage("nullValue.URLIsNull");
             Logging.logger().severe(message);
@@ -48,7 +48,7 @@ public class BrowserOpener {
         Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + urlString);
     }
 
-    private static void browseUnix(String urlString) throws Exception, InterruptedException, java.io.IOException {
+    private static void browseUnix(String urlString) throws Exception {
         String browser = null;
 
         String[] browsers = {"firefox", "opera", "konqueror", "epiphany", "mozilla", "netscape"};

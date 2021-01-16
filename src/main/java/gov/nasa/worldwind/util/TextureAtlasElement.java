@@ -377,7 +377,7 @@ public class TextureAtlasElement implements Disposable {
         /**
          * The texture atlas element associated with this request task. Specified during construction.
          */
-        protected TextureAtlasElement elem;
+        protected final TextureAtlasElement elem;
 
         /**
          * Constructs a new request task with the specified texture atlas element, but otherwise does nothing. Calling
@@ -388,11 +388,6 @@ public class TextureAtlasElement implements Disposable {
          * @throws IllegalArgumentException if the element is <code>null</code>.
          */
         protected RequestTask(TextureAtlasElement elem) {
-//            if (elem == null) {
-//                String message = Logging.getMessage("nullValue.ElementIsNull");
-//                Logging.logger().severe(message);
-//                throw new IllegalArgumentException(message);
-//            }
 
             this.elem = elem;
         }

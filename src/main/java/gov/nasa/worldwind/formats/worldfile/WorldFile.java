@@ -774,7 +774,7 @@ public class WorldFile {
      * @param params AVList for storing parameters
      * @throws IOException if the world file could not be read
      */
-    public static void readWorldFiles(Object source, AVList params) throws IOException, FileNotFoundException {
+    public static void readWorldFiles(Object source, AVList params) throws IOException {
         File file = WWIO.getFileForLocalAddress(source);
         if (null == file) {
             String message = Logging.getMessage("generic.UnrecognizedSourceType", source);

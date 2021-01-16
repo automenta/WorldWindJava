@@ -585,11 +585,6 @@ public class ColladaRoot extends ColladaAbstractObject
      * @throws IllegalArgumentException if the {@code linkBase} is null.
      */
     public Object resolveRemoteReference(String linkBase, String linkRef, boolean cacheRemoteFile) {
-//        if (linkBase == null) {
-//            String message = Logging.getMessage("nullValue.DocumentSourceIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (cacheRemoteFile) {
             String message = Logging.getMessage("generic.UnsupportedOperation", "caching");

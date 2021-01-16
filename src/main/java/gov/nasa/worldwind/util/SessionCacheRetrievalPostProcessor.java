@@ -45,17 +45,6 @@ public class SessionCacheRetrievalPostProcessor implements RetrievalPostProcesso
     public SessionCacheRetrievalPostProcessor(SessionCache cache, Object cacheKey,
         AbsentResourceList absentResourceList, long resourceID,
         PropertyChangeListener propertyListener, String propertyName) {
-//        if (cache == null) {
-//            String message = Logging.getMessage("nullValue.CacheIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//
-//        if (cacheKey == null) {
-//            String message = Logging.getMessage("nullValue.CacheKeyIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         this.cache = cache;
         this.cacheKey = cacheKey;

@@ -8,14 +8,11 @@ package gov.nasa.worldwind.layers.wms;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
-import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.layers.BasicTiledImageLayer;
 import gov.nasa.worldwind.layers.ogc.wms.WMSCapabilities;
 import gov.nasa.worldwind.util.*;
 import org.w3c.dom.*;
 
-import javax.imageio.ImageIO;
-import java.awt.image.*;
-import java.io.*;
 import java.net.*;
 
 /**
@@ -364,39 +361,4 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer {
             return new URL(sb.toString().replace(" ", "%20"));
         }
     }
-
-//    protected static class ComposeImageTile extends TextureTile {
-//        protected final int width;
-//        protected final int height;
-//        protected File file;
-//
-//        public ComposeImageTile(Sector sector, String mimeType, Level level, int width, int height)
-//            throws IOException {
-//            super(sector, level, -1, -1); // row and column aren't used and need to signal that
-//
-//            this.width = width;
-//            this.height = height;
-//
-//            this.file = File.createTempFile(WWIO.DELETE_ON_EXIT_PREFIX, WWIO.mimeSuffix(mimeType));
-//        }
-//
-//        @Override
-//        public int getWidth() {
-//            return this.width;
-//        }
-//
-//        @Override
-//        public int getHeight() {
-//            return this.height;
-//        }
-//
-//        @Override
-//        public String getPath() {
-//            return this.file.getPath();
-//        }
-//
-//        public File getFile() {
-//            return this.file;
-//        }
-//    }
 }

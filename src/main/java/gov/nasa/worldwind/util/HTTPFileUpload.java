@@ -252,7 +252,7 @@ public class HTTPFileUpload {
     }
 
     protected void send(File fileToUpload, String uploadName, AVList params)
-        throws IOException, NullPointerException, FileNotFoundException, ProtocolException {
+        throws IOException, NullPointerException {
         if (null == fileToUpload || !fileToUpload.exists()) {
             throw new FileNotFoundException();
         }
@@ -314,8 +314,7 @@ public class HTTPFileUpload {
         }
     }
 
-    protected void send(ByteBuffer bufferToUpload, String fileName, AVList params) throws IOException,
-        ProtocolException {
+    protected void send(ByteBuffer bufferToUpload, String fileName, AVList params) throws IOException {
         if (null == bufferToUpload) {
             String message = Logging.getMessage("nullValue.ByteBufferIsNull");
             Logging.logger().severe(message);
@@ -383,7 +382,7 @@ public class HTTPFileUpload {
         }
     }
 
-    protected void send(String stringToUpload, String fileName, AVList params) throws IOException, ProtocolException {
+    protected void send(String stringToUpload, String fileName, AVList params) throws IOException {
         if (WWUtil.isEmpty(stringToUpload)) {
             String message = Logging.getMessage("nullValue.StringIsNull");
             Logging.logger().severe(message);

@@ -134,7 +134,7 @@ public abstract class AbstractDataStoreProducer extends WWObjectImpl implements 
         this.dataSourceList.clear();
     }
 
-    public void startProduction() throws Exception, IllegalStateException {
+    public void startProduction() throws Exception {
         if (this.isStopped()) {
             String message = Logging.getMessage("DataStoreProducer.Stopped");
             Logging.logger().warning(message);
@@ -174,7 +174,7 @@ public abstract class AbstractDataStoreProducer extends WWObjectImpl implements 
         return this.productionResults;
     }
 
-    protected abstract void doStartProduction(AVList parameters) throws Exception;
+    protected abstract void doStartProduction(AVList parameters);
 
     protected abstract String validateProductionParameters(AVList parameters);
 

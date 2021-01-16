@@ -43,17 +43,6 @@ public abstract class BufferWrapper {
      * @throws IllegalArgumentException if either the byteBuffer or the data type are null.
      */
     public static BufferWrapper wrap(ByteBuffer byteBuffer, Object dataType, Object byteOrder) {
-//        if (byteBuffer == null) {
-//            String message = Logging.getMessage("nullValue.ByteBufferIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-
-//        if (dataType == null) {
-//            String message = Logging.getMessage("nullValue.DataTypeIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (byteOrder != null) {
             byteBuffer.order(AVKey.LITTLE_ENDIAN.equals(byteOrder) ? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN);
@@ -84,17 +73,6 @@ public abstract class BufferWrapper {
      * @throws IllegalArgumentException if either the byteBuffer or the data type are null.
      */
     public static BufferWrapper wrap(ByteBuffer byteBuffer, Object dataType) {
-//        if (byteBuffer == null) {
-//            String message = Logging.getMessage("nullValue.ByteBufferIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//
-//        if (dataType == null) {
-//            String message = Logging.getMessage("nullValue.DataTypeIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         return BufferWrapper.wrap(byteBuffer, dataType, null);
     }
@@ -112,24 +90,6 @@ public abstract class BufferWrapper {
      *                                  parameter is missing.
      */
     public static BufferWrapper wrap(ByteBuffer byteBuffer, AVList params) {
-//        if (byteBuffer == null) {
-//            String message = Logging.getMessage("nullValue.ByteBufferIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//
-//        if (params == null) {
-//            String message = Logging.getMessage("nullValue.ParametersIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-
-//        if (params.get(AVKey.DATA_TYPE) == null) {
-//            String message = Logging.getMessage("generic.MissingRequiredParameter",
-//                Logging.getMessage("term.dataType"));
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         byteBuffer.rewind();
         return BufferWrapper.wrap(byteBuffer, params.get(AVKey.DATA_TYPE), params.get(AVKey.BYTE_ORDER));
@@ -408,14 +368,9 @@ public abstract class BufferWrapper {
     //**************************************************************//
 
     public abstract static class AbstractBufferWrapper<T extends Buffer> extends BufferWrapper {
-        protected T buffer;
+        protected final T buffer;
 
         public AbstractBufferWrapper(T buffer) {
-//            if (buffer == null) {
-//                String message = Logging.getMessage("nullValue.BufferIsNull");
-//                Logging.logger().severe(message);
-//                throw new IllegalArgumentException(message);
-//            }
 
             this.buffer = buffer;
         }
@@ -425,11 +380,6 @@ public abstract class BufferWrapper {
         }
 
         public void getByte(int index, byte[] array, int offset, int length) {
-//            if (array == null) {
-//                String message = Logging.getMessage("nullValue.ArrayIsNull");
-//                Logging.logger().severe(message);
-//                throw new IllegalArgumentException(message);
-//            }
 
             if (length <= 0)
                 return;
@@ -445,11 +395,6 @@ public abstract class BufferWrapper {
         }
 
         public void putByte(int index, byte[] array, int offset, int length) {
-//            if (array == null) {
-//                String message = Logging.getMessage("nullValue.ArrayIsNull");
-//                Logging.logger().severe(message);
-//                throw new IllegalArgumentException(message);
-//            }
 
             if (length <= 0)
                 return;

@@ -41,8 +41,7 @@ public class DTED {
     protected DTED() {
     }
 
-    protected static RandomAccessFile open(File file) throws IOException, IllegalArgumentException,
-        FileNotFoundException {
+    protected static RandomAccessFile open(File file) throws IOException, IllegalArgumentException {
         if (null == file) {
             String message = Logging.getMessage("nullValue.FileIsNull");
             Logging.logger().severe(message);

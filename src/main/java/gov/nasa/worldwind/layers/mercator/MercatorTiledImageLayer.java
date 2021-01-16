@@ -804,7 +804,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
     }
 
     private BufferedImage getImage(MercatorTextureTile tile, String mimeType)
-        throws Exception, MalformedURLException {
+        throws Exception {
         // Read the image from disk.
         BufferedImage image = this.requestImage(tile, mimeType);
         if (image != null)

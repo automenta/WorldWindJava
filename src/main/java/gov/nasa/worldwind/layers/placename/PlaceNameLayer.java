@@ -492,48 +492,6 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
         }
     }
 
-//    /**
-//     * Get the estimated size in bytes of the placenames not in the WorldWind file cache for the given sector and
-//     * resolution.
-//     * <p>
-//     * Note that the target resolution must be provided in radians of latitude per texel, which is the resolution in
-//     * meters divided by the globe radius.
-//     *
-//     * @param sector     the sector to estimate.
-//     * @param resolution the target resolution, provided in radians of latitude per texel.
-//     * @return the estimated size in bytes of the missing placenames.
-//     * @throws IllegalArgumentException if the sector is null or the resolution is less than zero.
-//     */
-//    public long getEstimatedMissingDataSize(Sector sector, double resolution) {
-//        return this.getEstimatedMissingDataSize(sector, resolution, this.getDataFileStore());
-//    }
-//
-//    /**
-//     * Get the estimated size in bytes of the placenames not in a specified file store for the given sector and
-//     * resolution.
-//     * <p>
-//     * Note that the target resolution must be provided in radians of latitude per texel, which is the resolution in
-//     * meters divided by the globe radius.
-//     *
-//     * @param sector     the sector to estimate.
-//     * @param resolution the target resolution, provided in radians of latitude per texel.
-//     * @param fileStore  the file store to examine. If null the current WorldWind file cache is used.
-//     * @return the estimated size in byte of the missing placenames.
-//     * @throws IllegalArgumentException if the sector is null or the resolution is less than zero.
-//     */
-//    public long getEstimatedMissingDataSize(Sector sector, double resolution, FileStore fileStore) {
-//        try {
-//            PlaceNameLayerBulkDownloader downloader = new PlaceNameLayerBulkDownloader(this, sector, resolution,
-//                fileStore != null ? fileStore : this.getDataFileStore(), null);
-//            return downloader.getEstimatedMissingDataSize();
-//        }
-//        catch (RuntimeException e) {
-//            String message = Logging.getMessage("generic.ExceptionDuringDataSizeEstimate", this.name());
-//            Logging.logger().severe(message);
-//            throw new RuntimeException(message);
-//        }
-//    }
-
     protected static class Tile implements Cacheable {
         public final PlaceNameService placeNameService;
         public final Sector sector;
@@ -556,38 +514,18 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
         }
 
         static int computeRow(Angle delta, Angle latitude) {
-//            if (delta == null || latitude == null) {
-//                String msg = Logging.getMessage("nullValue.AngleIsNull");
-//                Logging.logger().severe(msg);
-//                throw new IllegalArgumentException(msg);
-//            }
             return (int) ((latitude.degrees + 90.0d) / delta.degrees);
         }
 
         static int computeColumn(Angle delta, Angle longitude) {
-//            if (delta == null || longitude == null) {
-//                String msg = Logging.getMessage("nullValue.AngleIsNull");
-//                Logging.logger().severe(msg);
-//                throw new IllegalArgumentException(msg);
-//            }
             return (int) ((longitude.degrees + 180.0d) / delta.degrees);
         }
 
         static Angle computeRowLatitude(int row, Angle delta) {
-//            if (delta == null) {
-//                String msg = Logging.getMessage("nullValue.AngleIsNull");
-//                Logging.logger().severe(msg);
-//                throw new IllegalArgumentException(msg);
-//            }
             return new Angle(-90.0d + delta.degrees * row);
         }
 
         static Angle computeColumnLongitude(int column, Angle delta) {
-//            if (delta == null) {
-//                String msg = Logging.getMessage("nullValue.AngleIsNull");
-//                Logging.logger().severe(msg);
-//                throw new IllegalArgumentException(msg);
-//            }
             return new Angle(-180 + delta.degrees * column);
         }
 
@@ -770,11 +708,6 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
          * @throws IllegalArgumentException if <code>that</code> is null
          */
         public int compareTo(RequestTask that) {
-//            if (that == null) {
-//                String msg = Logging.getMessage("nullValue.RequestTaskIsNull");
-//                Logging.logger().severe(msg);
-//                throw new IllegalArgumentException(msg);
-//            }
             return Double.compare(this.tile.getPriority(), that.tile.getPriority());
         }
 

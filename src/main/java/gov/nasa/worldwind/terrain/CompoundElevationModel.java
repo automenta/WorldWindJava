@@ -83,46 +83,12 @@ public class CompoundElevationModel extends AbstractElevationModel {
      * @throws IllegalArgumentException if the specified elevation model is null.
      */
     public void addElevationModel(ElevationModel em) {
-//        if (em == null) {
-//            String msg = Logging.getMessage("nullValue.ElevationModelIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         this.elevationModels.add(em);
         this.sortElevationModels();
     }
 
-//    /**
-//     * Adds a specified elevation model to a specified position in this compound elevation model's elevation model list.
-//     * It's expected that this class' elevation model list is sorted from lowest resolution to highest. The method
-//     * {@link #addElevationModel(ElevationModel)} inserts added elevation models at the appropriate place in the list.
-//     * This method, however, inserts the elevation model at the specified position in the list. For proper operation of
-//     * this compound elevation model, the caller should ensure that the specified position is the appropriate one for
-//     * the inserted elevation model's resolution.
-//     *
-//     * @param index The position at which to insert the specified model, zero origin. Existing models are shifted to the
-//     *              right.
-//     * @param em    The elevation model to insert.
-//     * @throws IllegalArgumentException  if the specified elevation model is null.
-//     * @throws IndexOutOfBoundsException if the specified index is invalid.
-//     */
-//    public void addElevationModel(int index, ElevationModel em) {
-////        if (em == null) {
-////            String msg = Logging.getMessage("nullValue.ElevationModelIsNull");
-////            Logging.logger().severe(msg);
-////            throw new IllegalArgumentException(msg);
-////        }
-//
-//        this.elevationModels.add(index, em); // the list's add method will throw exception for invalid index
-//    }
-
     public void removeElevationModel(ElevationModel em) {
-//        if (em == null) {
-//            String msg = Logging.getMessage("nullValue.ElevationModelIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         for (ElevationModel child : this.elevationModels) {
             if (child instanceof CompoundElevationModel)
@@ -143,11 +109,6 @@ public class CompoundElevationModel extends AbstractElevationModel {
     }
 
     public void setElevationModel(int index, ElevationModel em) {
-//        if (em == null) {
-//            String msg = Logging.getMessage("nullValue.ElevationModelIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         if (index < 0 || index >= this.elevationModels.size()) {
             String msg = Logging.getMessage("generic.indexOutOfRange", index);
@@ -209,11 +170,6 @@ public class CompoundElevationModel extends AbstractElevationModel {
     }
 
     public double[] getExtremeElevations(Angle latitude, Angle longitude) {
-//        if (latitude == null || longitude == null) {
-//            String msg = Logging.getMessage("nullValue.AngleIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         double[] retVal = null;
 
@@ -236,11 +192,6 @@ public class CompoundElevationModel extends AbstractElevationModel {
     }
 
     public double[] getExtremeElevations(Sector sector) {
-//        if (sector == null) {
-//            String msg = Logging.getMessage("nullValue.SectorIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         double[] retVal = null;
 
@@ -321,11 +272,6 @@ public class CompoundElevationModel extends AbstractElevationModel {
     }
 
     public int intersects(Sector sector) {
-//        if (sector == null) {
-//            String msg = Logging.getMessage("nullValue.SectorIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         boolean intersects = false;
 
@@ -345,11 +291,6 @@ public class CompoundElevationModel extends AbstractElevationModel {
     }
 
     public boolean contains(Angle latitude, Angle longitude) {
-//        if (latitude == null || longitude == null) {
-//            String message = Logging.getMessage("nullValue.LatLonIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         for (ElevationModel em : this.elevationModels) {
             if (!em.isEnabled())

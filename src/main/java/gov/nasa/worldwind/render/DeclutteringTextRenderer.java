@@ -229,8 +229,7 @@ public class DeclutteringTextRenderer {
         gl.glAlphaFunc(GL2.GL_GREATER, 0.001f);
     }
 
-    protected Vec4 drawText(DrawContext dc, DeclutterableText uText, double scale, double opacity) throws Exception,
-        GLException {
+    protected Vec4 drawText(DrawContext dc, DeclutterableText uText, double scale, double opacity) throws Exception {
         if (uText.getPoint() == null) {
             String msg = Logging.getMessage("nullValue.PointIsNull");
             Logging.logger().fine(msg);

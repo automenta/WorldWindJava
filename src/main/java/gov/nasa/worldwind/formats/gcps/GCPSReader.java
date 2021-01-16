@@ -130,7 +130,7 @@ public class GCPSReader {
         }
     }
 
-    public RasterControlPointList read(File file) throws IOException, FileNotFoundException {
+    public RasterControlPointList read(File file) throws IOException {
         if (file == null) {
             String message = Logging.getMessage("nullValue.FileIsNull");
             Logging.logger().severe(message);

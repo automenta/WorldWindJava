@@ -47,9 +47,7 @@ public class BasicElevationModelFactory extends BasicFactory {
             case AVKey.SERVICE_NAME_LOCAL_RASTER_SERVER ->
                 throw new UnsupportedOperationException();
                 //em = new LocalRasterServerElevationModel(domElement, params);
-            default -> {
-                throw new WWUnrecognizedException(Logging.getMessage("generic.UnrecognizedServiceName", serviceName));
-            }
+            default -> throw new WWUnrecognizedException(Logging.getMessage("generic.UnrecognizedServiceName", serviceName));
         }
 
         return em;

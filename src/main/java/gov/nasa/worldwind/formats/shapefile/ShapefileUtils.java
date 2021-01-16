@@ -56,12 +56,6 @@ public class ShapefileUtils {
                 Logging.getMessage("generic.ExceptionAttemptingToReadFrom", file.getPath()), e);
         }
 
-//        if (shpStream == null) {
-//            String message = Logging.getMessage("SHP.UnrecognizedShapefile", file.getPath());
-//            Logging.logger().severe(message);
-//            throw new WWUnrecognizedException(message);
-//        }
-
         return new Shapefile(shpStream, shxStream, dbfStream, prjStream);
     }
 

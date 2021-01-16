@@ -47,17 +47,6 @@ public class Tile implements Comparable<Tile>, Cacheable {
      * @throws IllegalArgumentException if <code>sector</code> or <code>level</code> is null.
      */
     public Tile(Sector sector, Level level, int row, int col) {
-//        if (sector == null) {
-//            String msg = Logging.getMessage("nullValue.SectorIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//
-//        if (level == null) {
-//            String msg = Logging.getMessage("nullValue.LevelIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         this.sector = sector;
         this.level = level;
@@ -391,6 +380,7 @@ public class Tile implements Comparable<Tile>, Cacheable {
     }
 
     public void setPriorityDistance(double dist) {
-        setPriority(1.0 / (1.0 + dist));
+        //setPriority(1.0 / (1.0 + dist));
+        setPriority(dist);
     }
 }

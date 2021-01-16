@@ -885,8 +885,7 @@ public class ImageUtil {
      * @throws IOException        if there is a problem opening the file.
      * @throws WWRuntimeException if the image type is unsupported.
      */
-    public static AVList openSpatialImage(File imageFile, int interpolation_mode) throws IOException,
-        FileNotFoundException {
+    public static AVList openSpatialImage(File imageFile, int interpolation_mode) throws IOException {
         AVList values = new AVListImpl();
         BufferedImage image;
         Sector sector;

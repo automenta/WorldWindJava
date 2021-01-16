@@ -11,7 +11,6 @@ import gov.nasa.worldwind.geom.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.net.URL;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -83,22 +82,6 @@ public class StatusBar extends JPanel implements PositionListener, RenderingList
         downloadTimer.start();
 
         this.netCheckThread = this.startNetCheckThread();
-
-//        WorldWind.getNetworkStatus().addPropertyChangeListener(NetworkStatus.HOST_UNAVAILABLE,
-//            evt -> {
-//                Object nv = evt.getNewValue();
-//                String message = Logging.getMessage("NetworkStatus.UnavailableHost",
-//                    nv instanceof URL ? ((URL) nv).getHost() : "Unknown");
-//                Logging.logger().info(message);
-//            });
-//
-//        WorldWind.getNetworkStatus().addPropertyChangeListener(NetworkStatus.HOST_AVAILABLE,
-//            evt -> {
-//                Object nv = evt.getNewValue();
-//                String message = Logging.getMessage("NetworkStatus.HostNowAvailable",
-//                    nv instanceof URL ? ((URL) nv).getHost() : "Unknown");
-//                Logging.logger().info(message);
-//            });
     }
 
     protected NetworkCheckThread startNetCheckThread() {

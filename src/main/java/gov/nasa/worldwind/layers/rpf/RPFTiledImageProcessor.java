@@ -449,7 +449,7 @@ public class RPFTiledImageProcessor {
     }
 
     private void createTileImage(Tile tile, RPFGenerator.RPFServiceInstance service)
-        throws IllegalArgumentException, IOException, java.net.MalformedURLException {
+        throws IllegalArgumentException, IOException {
         if (tile == null) {
             String message = "Tile is null";
             Logging.logger().severe(message);

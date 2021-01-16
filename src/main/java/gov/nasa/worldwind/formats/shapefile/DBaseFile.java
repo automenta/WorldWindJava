@@ -269,7 +269,7 @@ public class DBaseFile extends AVListImpl {
         this.recordBuffer = null;
     }
 
-    protected void initializeFromFile(File file) throws IOException, FileNotFoundException {
+    protected void initializeFromFile(File file) throws IOException {
         if (!file.exists()) {
             String message = Logging.getMessage("generic.FileNotFound", file.getPath());
             Logging.logger().severe(message);

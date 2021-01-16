@@ -149,11 +149,6 @@ public class FramebufferTexture implements WWTexture {
     }
 
     public boolean bind(DrawContext dc) {
-//        if (dc == null) {
-//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
-//        }
 
         Texture t = dc.gpuCache().getTexture(this);
 

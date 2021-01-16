@@ -953,7 +953,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
         this.normalizePoints = normalizePoints;
     }
 
-    protected void initializeFromFile(File file, AVList params) throws IOException, FileNotFoundException {
+    protected void initializeFromFile(File file, AVList params) throws IOException {
         if (!file.exists()) {
             String message = Logging.getMessage("generic.FileNotFound", file.getPath());
             Logging.logger().severe(message);

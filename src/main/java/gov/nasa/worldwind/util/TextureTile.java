@@ -241,11 +241,6 @@ public class TextureTile extends Tile implements SurfaceTile {
     }
 
     protected Texture initializeTexture(DrawContext dc) {
-//        if (dc == null) {
-//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
-//        }
 
         Texture t = this.getTexture(dc.gpuCache());
         // Return texture if found and there is no new texture data

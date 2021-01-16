@@ -677,7 +677,7 @@ public class UTMBaseGraticuleLayer extends GraticuleLayer {
         protected Position sw, se, nw, ne;  // Four corners position
         protected Sector boundingSector;
         protected LatLon centroid;
-        protected boolean isTruncated;
+        protected final boolean isTruncated;
 
         public SquareSector(int UTMZone, String hemisphere, Sector UTMZoneSector, double SWEasting,
             double SWNorthing, double size) {

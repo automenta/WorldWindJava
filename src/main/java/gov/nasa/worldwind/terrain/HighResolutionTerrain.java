@@ -34,18 +34,18 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
     protected static final long DEFAULT_CACHE_CAPACITY = (long) 200.0e6;
     protected final ThreadLocal<Long> startTime = new ThreadLocal<>();
     // User-specified fields.
-    protected Globe globe;
-    protected Sector sector;
+    protected final Globe globe;
+    protected final Sector sector;
     protected double verticalExaggeration = 1;
     protected Long timeout;
     // Internal fields.
     protected int density = HighResolutionTerrain.DEFAULT_DENSITY;
-    protected double targetResolution;
+    protected final double targetResolution;
     protected double latTileSize;
     protected double lonTileSize;
     protected int numRows;
     protected int numCols;
-    protected MemoryCache geometryCache;
+    protected final MemoryCache geometryCache;
     /**
      * Indicates whether cached elevations are used exclusively. When this flag is true this high resolution terrain
      * instance uses {@link ElevationModel#getUnmappedLocalSourceElevation(Angle, Angle)} to retrieve elevations. This
@@ -77,11 +77,6 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
      * @throws IllegalArgumentException if the globe is null.
      */
     public HighResolutionTerrain(Globe globe, Sector sector, Double targetResolution, Double verticalExaggeration) {
-//        if (globe == null) {
-//            String msg = Logging.getMessage("nullValue.GlobeIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         this.globe = globe;
         this.sector = sector != null ? sector : Sector.FULL_SPHERE;

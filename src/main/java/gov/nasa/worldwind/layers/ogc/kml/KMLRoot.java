@@ -129,7 +129,7 @@ public class KMLRoot extends KMLAbstractObject implements KMLRenderable, XMLRoot
      * @throws IllegalArgumentException if the document source is null.
      * @throws IOException              if an error occurs while reading the KML document.
      */
-    public KMLRoot(File docSource, boolean namespaceAware) throws IOException, FileNotFoundException {
+    public KMLRoot(File docSource, boolean namespaceAware) throws IOException {
         super(KMLConstants.KML_NAMESPACE);
 
         if (docSource == null) {

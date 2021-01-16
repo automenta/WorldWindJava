@@ -97,7 +97,7 @@ public class NITFSUtil {
         return NITFSUtil.readFileToBuffer(file);
     }
 
-    private static ByteBuffer readFileToBuffer(File file) throws IOException, FileNotFoundException {
+    private static ByteBuffer readFileToBuffer(File file) throws IOException {
         try (FileInputStream is = new FileInputStream(file)) {
             try (FileChannel fc = is.getChannel()) {
                 ByteBuffer buffer = ByteBuffer.allocate((int) fc.size());
@@ -111,7 +111,7 @@ public class NITFSUtil {
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    private static ByteBuffer readFile(File file) throws IOException, FileNotFoundException {
+    private static ByteBuffer readFile(File file) throws IOException {
         FileInputStream fis = new FileInputStream(file);
         ByteBuffer buffer = ByteBuffer.allocate(NITFSUtil.PAGE_SIZE);
         ReadableByteChannel channel = Channels.newChannel(fis);
@@ -132,7 +132,7 @@ public class NITFSUtil {
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    private static ByteBuffer memoryMapFile(File file) throws IOException, FileNotFoundException {
+    private static ByteBuffer memoryMapFile(File file) throws IOException {
         MappedByteBuffer mapFile;
         try (FileChannel roChannel = new RandomAccessFile(file, "r").getChannel()) {
             long fileSize = roChannel.size();

@@ -257,7 +257,7 @@ public class WCSElevationModel extends BasicElevationModel {
     //**************************************************************//
 
     public void composeElevations(Sector sector, List<? extends LatLon> latlons, int tileWidth, double[] buffer)
-        throws Exception, IllegalArgumentException, java.io.IOException, URISyntaxException, MalformedURLException {
+        throws Exception {
 
         final int n = latlons.size();
         if (buffer.length < n || tileWidth > n) {

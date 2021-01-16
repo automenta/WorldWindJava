@@ -39,7 +39,7 @@ public class DDSHeader {
         this.pixelFormat = new DDSPixelFormat();
     }
 
-    public static DDSHeader readFrom(Object source) throws Exception, IOException, IllegalArgumentException {
+    public static DDSHeader readFrom(Object source) throws Exception {
         boolean sourceIsInputStream = (source instanceof InputStream);
 
         InputStream inputStream = WWIO.openStream(source);

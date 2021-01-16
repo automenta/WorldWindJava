@@ -144,7 +144,7 @@ public class ImageIORasterReader extends AbstractDataRasterReader {
         }
     }
 
-    private static void readWorldFiles(Object source, AVList params) throws IOException, FileNotFoundException {
+    private static void readWorldFiles(Object source, AVList params) throws IOException {
         if (!(source instanceof File)) {
             String message = Logging.getMessage("DataRaster.CannotRead", source);
             Logging.logger().severe(message);

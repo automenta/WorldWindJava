@@ -118,7 +118,7 @@ public class TABRasterReader {
         //noinspection EmptyCatchBlock
     }
 
-    public static RasterControlPointList read(File file) throws IOException, FileNotFoundException {
+    public static RasterControlPointList read(File file) throws IOException {
         if (file == null) {
             String message = Logging.getMessage("nullValue.FileIsNull");
             Logging.logger().severe(message);

@@ -43,11 +43,6 @@ public class BasicOrbitView extends BasicView implements OrbitView {
     }
 
     public static Position normalizedCenterPosition(Position unnormalizedPosition) {
-//        if (unnormalizedPosition == null) {
-//            String message = Logging.getMessage("nullValue.PositionIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         return new Position(
             Angle.latNorm(unnormalizedPosition.getLatitude()),

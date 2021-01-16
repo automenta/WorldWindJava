@@ -186,8 +186,7 @@ public class BILRasterWriter extends AbstractDataRasterWriter {
         return (raster instanceof ByteBufferRaster);
     }
 
-    protected void doWrite(DataRaster raster, String formatSuffix, File file) throws IOException,
-        FileNotFoundException {
+    protected void doWrite(DataRaster raster, String formatSuffix, File file) throws IOException {
         BILRasterWriter.writeRaster(raster, file);
 
         if (this.isWriteGeoreferenceFiles()) {

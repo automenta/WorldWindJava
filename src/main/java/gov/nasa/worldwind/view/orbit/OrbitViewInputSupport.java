@@ -54,26 +54,6 @@ public class OrbitViewInputSupport {
     }
 
     public static OrbitViewState computeOrbitViewState(Globe globe, Vec4 eyePoint, Vec4 centerPoint, Vec4 up) {
-//        if (globe == null) {
-//            String message = Logging.getMessage("nullValue.GlobeIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//        if (eyePoint == null) {
-//            String message = "nullValue.EyePointIsNull";
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//        if (centerPoint == null) {
-//            String message = "nullValue.CenterPointIsNull";
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//        if (up == null) {
-//            String message = "nullValue.UpIsNull";
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         Matrix modelview = Matrix.fromViewLookAt(eyePoint, centerPoint, up);
         return OrbitViewInputSupport.computeOrbitViewState(globe, modelview, centerPoint);
@@ -220,21 +200,6 @@ public class OrbitViewInputSupport {
         private final double zoom;
 
         public OrbitViewState(Position center, Angle heading, Angle pitch, double zoom) {
-//            if (center == null) {
-//                String message = Logging.getMessage("nullValue.CenterIsNull");
-//                Logging.logger().severe(message);
-//                throw new IllegalArgumentException(message);
-//            }
-//            if (heading == null) {
-//                String message = Logging.getMessage("nullValue.HeadingIsNull");
-//                Logging.logger().severe(message);
-//                throw new IllegalArgumentException(message);
-//            }
-//            if (pitch == null) {
-//                String message = Logging.getMessage("nullValue.PitchIsNull");
-//                Logging.logger().severe(message);
-//                throw new IllegalArgumentException(message);
-//            }
 
             this.center = center;
             this.heading = heading;

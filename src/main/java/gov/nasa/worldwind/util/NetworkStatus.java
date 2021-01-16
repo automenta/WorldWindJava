@@ -32,8 +32,6 @@ import java.util.List;
  * @version $Id: NetworkStatus.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 public interface NetworkStatus extends AVList {
-//    String HOST_UNAVAILABLE = "gov.nasa.worldwind.examples.util.NetworkStatus.HostUnavailable";
-//    String HOST_AVAILABLE = "gov.nasa.worldwind.examples.util.NetworkStatus.HostAvailable";
 
     /**
      * Log a host as unavailable. Each invocation increments the host's attempt count. When the count equals or exceeds

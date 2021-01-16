@@ -370,7 +370,7 @@ public class OGLUtil {
         return newTextureData(bytes, useMipMaps, glp);
     }
 
-    private static TextureData newTextureData(byte[] bytes, boolean useMipMaps, GLProfile glp) throws IOException {
+    public static TextureData newTextureData(byte[] bytes, boolean useMipMaps, GLProfile glp) throws IOException {
         String fileSuffix = ImageType.Util.getFileSuffix(bytes);
 
 

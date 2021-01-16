@@ -24,7 +24,7 @@ import javax.swing.*;
 import javax.xml.xpath.XPath;
 import java.awt.image.*;
 import java.io.*;
-import java.net.*;
+import java.net.URL;
 import java.nio.*;
 import java.util.*;
 
@@ -62,7 +62,7 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
     protected String elevationDataType = AVKey.INT16;
     protected String elevationDataByteOrder = AVKey.LITTLE_ENDIAN;
     protected double detailHint;
-    protected MemoryCache memoryCache;
+    protected final MemoryCache memoryCache;
     protected int extremesLevel = -1;
     protected boolean extremesCachingEnabled = true;
     protected BufferWrapper extremes;
@@ -648,11 +648,6 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
     }
 
     public boolean contains(Angle latitude, Angle longitude) {
-//        if (latitude == null || longitude == null) {
-//            String msg = Logging.getMessage("nullValue.AngleIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         return this.levels.sector.contains(latitude, longitude);
     }
@@ -713,7 +708,7 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
         return (ElevationTile) memoryCache.getObject(tileKey);
     }
 
-    protected BufferWrapper readElevations(ByteBuffer b, URL url) throws IOException, URISyntaxException {
+    protected BufferWrapper readElevations(ByteBuffer b, URL url) throws IOException {
         //return url.getPath().endsWith("tif") ? this.makeTiffElevations(url) : this.makeBilElevations(url);
         return url.getPath().endsWith("tif") ?
             this.makeTiffElevations(b) :
@@ -794,48 +789,6 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
         return bufferWrapper;
     }
 
-//    /**
-//     * Get the estimated size in bytes of the elevations not in the WorldWind file cache for the given sector and
-//     * resolution.
-//     * <p>
-//     * Note that the target resolution must be provided in radians of latitude per texel, which is the resolution in
-//     * meters divided by the globe radius.
-//     *
-//     * @param sector     the sector to estimate.
-//     * @param resolution the target resolution, provided in radians of latitude per texel.
-//     * @return the estimated size in bytes of the missing elevations.
-//     * @throws IllegalArgumentException if the sector is null or the resolution is less than zero.
-//     */
-//    public long getEstimatedMissingDataSize(Sector sector, double resolution) {
-//        return this.getEstimatedMissingDataSize(sector, resolution, null);
-//    }
-
-//    /**
-//     * Get the estimated size in bytes of the elevations not in a specified file store for the given sector and
-//     * resolution.
-//     * <p>
-//     * Note that the target resolution must be provided in radians of latitude per texel, which is the resolution in
-//     * meters divided by the globe radius.
-//     *
-//     * @param sector     the sector to estimate.
-//     * @param resolution the target resolution, provided in radians of latitude per texel.
-//     * @param fileStore  the file store to examine. If null the current WorldWind file cache is used.
-//     * @return the estimated size in bytes of the missing elevations.
-//     * @throws IllegalArgumentException if the sector is null or the resolution is less than zero.
-//     */
-//    public long getEstimatedMissingDataSize(Sector sector, double resolution, FileStore fileStore) {
-//        Sector targetSector = sector != null ? getLevels().sector.intersection(sector) : null;
-//        if (targetSector == null)
-//            return 0;
-//
-//        // Args checked by downloader constructor
-//        // Need a downloader to compute the missing data size.
-//        BasicElevationModelBulkDownloader downloader = new BasicElevationModelBulkDownloader(this, targetSector,
-//            resolution, fileStore != null ? fileStore : this.getDataFileStore(), null);
-//
-//        return downloader.getEstimatedMissingDataSize();
-//    }
-
     protected void retrieveElevations(final ElevationTile tile, DownloadPostProcessor postProcessor) {
 //        if (this.get(AVKey.RETRIEVER_FACTORY_LOCAL) != null)
 //            this.retrieveLocalElevations(tile, postProcessor);
@@ -869,26 +822,6 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
                 Logging.getMessage("TiledElevationModel.ExceptionCreatingElevationsUrl", url), e);
         }
     }
-
-//    protected void retrieveLocalElevations(Tile tile, RetrievalPostProcessor postProcessor) {
-//        if (!WorldWind.retrieveLocal().isAvailable())
-//            return;
-//
-//        RetrieverFactory retrieverFactory = (RetrieverFactory) this.get(AVKey.RETRIEVER_FACTORY_LOCAL);
-//        if (retrieverFactory == null)
-//            return;
-//
-//        AVList avList = new AVListImpl();
-//        avList.set(AVKey.SECTOR, tile.sector);
-//        avList.set(AVKey.WIDTH, tile.getWidth());
-//        avList.set(AVKey.HEIGHT, tile.getHeight());
-//        avList.set(AVKey.FILE_NAME, tile.getPath());
-//
-//        WorldWind.retrieveLocal().run(
-//            retrieverFactory.retriever(avList, postProcessor),
-//            tile.getPriority()
-//        );
-//    }
 
     protected void determineExtremes(double value, double[] extremes) {
         if (value == this.getMissingDataSignal())
@@ -971,20 +904,6 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
         ElevationTile tile = this.tileFromMemory(tileKey);
         if (tile != null)
             return this.lookupElevation(latitude, longitude, tile);
-
-
-//        try {
-//            tile = this.createTile(tileKey);
-//            final URL url = this.getDataFileStore().findFile(tile.getPath(), false);
-//            if (url != null) {
-//                this.loadElevations(tile, url);
-//            }
-//        }
-//        catch (Exception e) {
-//            String msg = Logging.getMessage("ElevationModel.ExceptionRequestingElevations",
-//                tileKey.toString());
-//            Logging.logger().log(java.util.logging.Level.FINE, msg, e);
-//        }
 
         tile = this.tileFromMemory(tileKey);
         return tile != null ? this.lookupElevation(latitude, longitude, tile) : this.getMissingDataSignal();
@@ -1523,89 +1442,6 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
         t.start();
     }
 
-//    protected void writeConfigurationFile(FileStore fileStore) {
-//        // TODO: configurable max attempts for creating a configuration file.
-//
-//        AVList configParams = this.getConfigurationParams(null);
-//        this.writeConfigurationParams(configParams, fileStore);
-//    }
-//
-//    protected void writeConfigurationParams(AVList params, FileStore fileStore) {
-//        // Determine what the configuration file name should be based on the configuration parameters. Assume an XML
-//        // configuration document type, and append the XML file suffix.
-//        String fileName = DataConfigurationUtils.getDataConfigFilename(params, ".xml");
-////        if (fileName == null) {
-////            String message = Logging.getMessage("nullValue.FilePathIsNull");
-////            Logging.logger().severe(message);
-////            throw new WWRuntimeException(message);
-////        }
-//
-//        // Check if this component needs to write a configuration file. This happens outside of the synchronized block
-//        // to improve multithreaded performance for the common case: the configuration file already exists, this just
-//        // need to check that it's there and return. If the file exists but is expired, do not remove it -  this
-//        // removes the file inside the synchronized block below.
-//        if (!this.needsConfigurationFile(fileStore, fileName, params, false))
-//            return;
-//
-//        synchronized (this.fileLock) {
-//            // Check again if the component needs to write a configuration file, potentially removing any existing file
-//            // which has expired. This additional check is necessary because the file could have been created by
-//            // another thread while we were waiting for the lock.
-//            if (!this.needsConfigurationFile(fileStore, fileName, params, true))
-//                return;
-//
-//            this.doWriteConfigurationParams(fileStore, fileName, params);
-//        }
-//    }
-//
-//    protected void doWriteConfigurationParams(FileStore fileStore, String fileName, AVList params) {
-//        File file = fileStore.newFile(fileName);
-//
-//        Document doc = this.createConfigurationDocument(params);
-//        WWXML.saveDocumentToFile(doc, file.getPath());
-//
-//        String message = Logging.getMessage("generic.ConfigurationFileCreated", fileName);
-//        Logging.logger().fine(message);
-//    }
-//
-//    protected boolean needsConfigurationFile(FileStore fileStore, String fileName, AVList params,
-//        boolean removeIfExpired) {
-//        long expiryTime = this.getExpiryTime();
-//        if (expiryTime <= 0)
-//            expiryTime = AVListImpl.getLongValue(params, AVKey.EXPIRY_TIME, 0L);
-//
-//        return !DataConfigurationUtils.hasDataConfigFile(fileStore, fileName, removeIfExpired, expiryTime);
-//    }
-//
-//    protected AVList getConfigurationParams(AVList params) {
-//        if (params == null)
-//            params = new AVListImpl();
-//
-//        // Gather all the construction parameters if they are available.
-//        AVList constructionParams = (AVList) this.get(AVKey.CONSTRUCTION_PARAMETERS);
-//        if (constructionParams != null)
-//            params.setValues(constructionParams);
-//
-//        // Gather any missing LevelSet parameters from the LevelSet itself.
-//        DataConfigurationUtils.getLevelSetConfigParams(this.getLevels(), params);
-//
-//        // Gather any missing parameters about the elevation data. These values must be available for consumers of the
-//        // model configuration to property interpret the cached elevation files. While the elevation model assumes
-//        // default values when these properties are missing, a different system does not know what those default values
-//        // should be, and thus cannot assume anything about the value of these properties.
-//
-//        if (params.get(AVKey.BYTE_ORDER) == null)
-//            params.set(AVKey.BYTE_ORDER, this.getElevationDataByteOrder());
-//
-//        if (params.get(AVKey.DATA_TYPE) == null)
-//            params.set(AVKey.DATA_TYPE, this.getElevationDataType());
-//
-//        if (params.get(AVKey.MISSING_DATA_SIGNAL) == null)
-//            params.set(AVKey.MISSING_DATA_SIGNAL, this.getMissingDataSignal());
-//
-//        return params;
-//    }
-
     protected Document createConfigurationDocument(AVList params) {
         return BasicElevationModel.createBasicElevationModelConfigDocument(params);
     }
@@ -1894,11 +1730,6 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
         }
 
         @Override
-        protected File doGetOutputFile() {
-            return this.getFileStore().newFile(this.tile.getPath());
-        }
-
-        @Override
         protected ByteBuffer handleSuccessfulRetrieval() {
             ByteBuffer buffer = super.handleSuccessfulRetrieval();
 
@@ -1912,9 +1743,6 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
                     }
                 } catch (IOException e) {
                     throw new RuntimeException(e);
-                }
-                catch (URISyntaxException e) {
-                    e.printStackTrace();
                 }
 
                 // We've successfully cached data. Check whether there's a configuration file for this elevation model

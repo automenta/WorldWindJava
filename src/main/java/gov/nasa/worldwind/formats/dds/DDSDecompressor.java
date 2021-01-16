@@ -42,8 +42,7 @@ public class DDSDecompressor {
         return DDSDecompressor.doDecompress(source, params);
     }
 
-    protected static DataRaster doDecompress(Object source, AVList params) throws Exception, WWRuntimeException,
-        IllegalArgumentException, FileNotFoundException, IOException {
+    protected static DataRaster doDecompress(Object source, AVList params) throws Exception {
         if (null == params || !params.hasKey(AVKey.SECTOR)) {
             String message = Logging.getMessage("generic.MissingRequiredParameter", AVKey.SECTOR);
             Logging.logger().severe(message);

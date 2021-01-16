@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.render;
 
 import gov.nasa.worldwind.Disposable;
-import gov.nasa.worldwind.util.Logging;
 
 import java.awt.*;
 import java.util.Map;
@@ -36,26 +35,12 @@ public class TextRendererCache implements Disposable {
         this.textRendererMap.clear();
     }
 
-//    public int getNumObjects() {
-//        return this.textRendererMap.size();
-//    }
-
     public TextRenderer get(Object key) {
-//        if (key == null) {
-//            String message = Logging.getMessage("nullValue.KeyIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         return this.textRendererMap.get(key);
     }
 
     public void put(Object key, TextRenderer textRenderer) {
-//        if (key == null) {
-//            String message = Logging.getMessage("nullValue.KeyIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         TextRenderer oldTextRenderer = this.textRendererMap.put(key, textRenderer);
 
@@ -65,11 +50,6 @@ public class TextRendererCache implements Disposable {
     }
 
     public void remove(Object key) {
-//        if (key == null) {
-//            String message = Logging.getMessage("nullValue.KeyIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         TextRenderer textRenderer = this.textRendererMap.remove(key);
 
@@ -79,11 +59,6 @@ public class TextRendererCache implements Disposable {
     }
 
     public boolean contains(Object key) {
-//        if (key == null) {
-//            String message = Logging.getMessage("nullValue.KeyIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         return this.textRendererMap.containsKey(key);
     }
@@ -108,11 +83,6 @@ public class TextRendererCache implements Disposable {
         private final boolean mipmap;
 
         public CacheKey(Font font, boolean antialiased, boolean useFractionalMetrics, boolean mipmap) {
-//            if (font == null) {
-//                String message = Logging.getMessage("nullValue.FontIsNull");
-//                Logging.logger().severe(message);
-//                throw new IllegalArgumentException(message);
-//            }
 
             this.font = font;
             this.antialiased = antialiased;
