@@ -27,35 +27,34 @@ import java.util.logging.Level;
     // These constants are last-ditch values in case Configuration lacks defaults
     private static final int DEFAULT_QUEUE_SIZE = 2048;
     private static final int DEFAULT_POOL_SIZE = 1;
-    private static final long DEFAULT_STALE_REQUEST_LIMIT = 30000; // milliseconds
+//    private static final long DEFAULT_STALE_REQUEST_LIMIT = 30000; // milliseconds
     private static final String IDLE_THREAD_NAME_PREFIX = Logging.getMessage(
         "BasicRetrievalService.IdleThreadNamePrefix");
 
     private final RetrievalExecutor executor; // thread pool for running retrievers
-    private final Map<String, RetrievalTask> activeTasks; // tasks currently allocated a thread
+
+    // this.activeTasks holds the list of currently executing tasks (*not* those pending on the queue)
+    private final Map<String, RetrievalTask> activeTasks = new ConcurrentHashMap(); // tasks currently allocated a thread
     private final int queueSize; // maximum queue size
-    protected SSLExceptionListener sslExceptionListener;
+//    protected SSLExceptionListener sslExceptionListener;
 
     public BasicRetrievalService() {
-        Integer poolSize = Configuration.getIntegerValue(AVKey.RETRIEVAL_POOL_SIZE,
+        int poolSize = Configuration.getIntegerValue(AVKey.RETRIEVAL_POOL_SIZE,
             BasicRetrievalService.DEFAULT_POOL_SIZE);
         this.queueSize = Configuration.getIntegerValue(AVKey.RETRIEVAL_QUEUE_SIZE,
             BasicRetrievalService.DEFAULT_QUEUE_SIZE);
 
         // this.executor runs the retrievers, each in their own thread
         this.executor = new RetrievalExecutor(poolSize, this.queueSize);
-
-        // this.activeTasks holds the list of currently executing tasks (*not* those pending on the queue)
-        this.activeTasks = new ConcurrentHashMap();
     }
 
-    public SSLExceptionListener getSSLExceptionListener() {
-        return sslExceptionListener;
-    }
-
-    public void setSSLExceptionListener(SSLExceptionListener sslExceptionListener) {
-        this.sslExceptionListener = sslExceptionListener;
-    }
+//    public SSLExceptionListener getSSLExceptionListener() {
+//        return sslExceptionListener;
+//    }
+//
+//    public void setSSLExceptionListener(SSLExceptionListener sslExceptionListener) {
+//        this.sslExceptionListener = sslExceptionListener;
+//    }
 
     public void uncaughtException(Thread thread, Throwable throwable) {
         Logging.logger().fine(Logging.getMessage("BasicRetrievalService.UncaughtExceptionDuringRetrieval",
@@ -204,7 +203,7 @@ import java.util.logging.Level;
 
     private class RetrievalExecutor extends ThreadPoolExecutor {
         private static final long THREAD_TIMEOUT = 2; // keep idle threads alive this many seconds
-        private final long staleRequestLimit; // reject requests older than this
+//        private final long staleRequestLimit; // reject requests older than this
 
         private RetrievalExecutor(int poolSize, int queueSize) {
             super(poolSize, poolSize, RetrievalExecutor.THREAD_TIMEOUT, TimeUnit.SECONDS, new PriorityBlockingQueue<>(queueSize),
@@ -226,8 +225,8 @@ import java.util.logging.Level;
                     }
                 });
 
-            this.staleRequestLimit = Configuration.getLongValue(AVKey.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT,
-                BasicRetrievalService.DEFAULT_STALE_REQUEST_LIMIT);
+//            this.staleRequestLimit = Configuration.getLongValue(AVKey.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT,
+//                BasicRetrievalService.DEFAULT_STALE_REQUEST_LIMIT);
         }
 
         /**
@@ -293,10 +292,10 @@ import java.util.logging.Level;
                 if (cause instanceof SocketTimeoutException || cause instanceof ConnectException) {
                     Logging.logger().fine(message + ' ' + cause.getLocalizedMessage());
                 } else if (cause instanceof SSLHandshakeException) {
-                    if (sslExceptionListener != null)
-                        sslExceptionListener.onException(cause, task.getRetriever().getName());
-                    else
-                        Logging.logger().fine(message + ' ' + cause.getLocalizedMessage());
+//                    if (sslExceptionListener != null)
+//                        sslExceptionListener.onException(cause, task.getRetriever().getName());
+//                    else
+                    Logging.logger().fine(message + ' ' + cause.getLocalizedMessage());
                 } else {
                     Logging.logger().log(Level.FINE, message, e);
                 }

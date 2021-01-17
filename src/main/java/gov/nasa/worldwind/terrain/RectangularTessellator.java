@@ -366,7 +366,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
     }
 
     protected static boolean atBestResolution(DrawContext dc, RectTile tile) {
-        double bestResolution = dc.getGlobe().getElevationModel().getBestResolution(tile.getSector());
+        double bestResolution = dc.getGlobe().getElevationModel().getBestResolution(tile.sector);
 
         return tile.getCellSize() <= bestResolution;
     }
@@ -386,7 +386,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
         // 50% has the same effect on object size as decreasing the distance between the eye and the object by 50%.
         // The detail hint is reduced by 50% for tiles above 75 degrees north and below 75 degrees south.
         double s = RectangularTessellator.computeTileResolutionTarget(dc, tile);
-        final Sector sector = tile.getSector();
+        final Sector sector = tile.sector;
         if (sector.latMin >= 75 || sector.latMax <= -75) {
             s *= 0.5;
         }
@@ -1003,16 +1003,16 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
     }
 
     protected void selectVisibleTiles(DrawContext dc, RectTile tile) {
-        if (dc.is2DGlobe() && RectangularTessellator.skipTile(dc, tile.getSector()))
+        if (dc.is2DGlobe() && RectangularTessellator.skipTile(dc, tile.sector))
             return;
 
-        Extent extent = tile.getExtent();
+        Extent extent = tile.extent;
         if (extent != null && !extent.intersects(this.currentFrustum))
             return;
 
         if (this.currentLevel >= this.maxLevel - 1 || RectangularTessellator.atBestResolution(dc, tile)
             || !RectangularTessellator.needToSplit(dc, tile)) {
-            this.currentCoverage = tile.getSector().union(this.currentCoverage);
+            this.currentCoverage = tile.sector.union(this.currentCoverage);
             this.currentTiles.add(tile);
         } else {
             ++this.currentLevel;
@@ -1126,12 +1126,12 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
             textRenderer.beginRendering(viewport.width, viewport.height);
             textRenderer.setColor(Color.RED);
             String tileLabel = Integer.toString(tile.level);
-            double[] elevs = this.globe.getMinAndMaxElevations(tile.getSector());
+            double[] elevs = this.globe.getMinAndMaxElevations(tile.sector);
             if (elevs != null) {
                 tileLabel += ", " + (int) elevs[0] + '/' + (int) elevs[1];
             }
 
-            LatLon ll = tile.getSector().getCentroid();
+            LatLon ll = tile.sector.getCentroid();
             Vec4 pt = dc.getGlobe().computePointFromPosition(ll.getLatitude(), ll.getLongitude(),
                 dc.getGlobe().elevation(ll.getLatitude(), ll.getLongitude()));
             pt = dc.getView().project(pt);
@@ -1331,14 +1331,14 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
         {
             Vec4 normalV = line.direction.cross3(globe.computeSurfaceNormalAtPoint(line.origin));
             verticalPlane = new Plane(normalV.x, normalV.y, normalV.z, -line.origin.dot3(normalV));
-            if (!tile.getExtent().intersects(verticalPlane)) {
+            if (!tile.extent.intersects(verticalPlane)) {
                 return null;
             }
 
             // Compute 'horizontal' plane perpendicular to the vertical plane, that contains the ray
             Vec4 normalH = line.direction.cross3(normalV);
             horizontalPlane = new Plane(normalH.x, normalH.y, normalH.z, -line.origin.dot3(normalH));
-            if (!tile.getExtent().intersects(horizontalPlane)) {
+            if (!tile.extent.intersects(horizontalPlane)) {
                 return null;
             }
 
@@ -1466,8 +1466,8 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
 
         // Check whether the tile includes the intersection elevation - assume cylinder as Extent
         // TODO: replace this test with a generic test against Extent
-        if (tile.getExtent() instanceof Cylinder) {
-            Cylinder cylinder = ((Cylinder) tile.getExtent());
+        if (tile.extent instanceof Cylinder) {
+            Cylinder cylinder = ((Cylinder) tile.extent);
             if (globe.isPointAboveElevation(cylinder.getBottomCenter(), elevation) == globe.isPointAboveElevation(
                 cylinder.getTopCenter(), elevation)) {
                 return null;
@@ -1666,12 +1666,12 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
 
     protected static class RectTile implements SectorGeometry {
 
-        protected final RectangularTessellator tessellator; // not needed if not a static class
-        protected final int level;
-        protected final Sector sector;
+        public final RectangularTessellator tessellator; // not needed if not a static class
+        public final int level;
+        public final Sector sector;
         protected final int density;
         protected final double cellSize;
-        protected final Extent extent; // extent of sector in object coordinates
+        public final Extent extent; // extent of sector in object coordinates
         protected RenderInfo ri;
 
         protected int minColorCode;

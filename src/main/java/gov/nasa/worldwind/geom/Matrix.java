@@ -1352,7 +1352,10 @@ public class Matrix {
         double m33 = matrix.m33;
 
         double[][] r = new double[3][3];
-        r[0][0] = r[1][1] = r[2][2] = 1.0d;
+        final double[] r0 = r[0];
+        final double[] r1 = r[1];
+        final double[] r2 = r[2];
+        r0[0] = r1[1] = r2[2] = 1;
 
         for (int a = 0; a < MAX_SWEEPS; a++) {
             // Exit if off-diagonal entries small enough
@@ -1363,14 +1366,15 @@ public class Matrix {
             if (m12 != 0.0d) {
                 double u = (m22 - m11) / (2 * m12);
                 double u2 = u * u;
-                double u2p1 = u2 + 1.0d;
-                double t = (u2p1 == u2) ? 0.5 / u : ((u < 0.0d) ? -1.0d : 1.0d) * (Math.sqrt(u2p1) - Math.abs(u));
+                double u2p1 = u2 + 1;
+                double t = (u2p1 == u2) ? 0.5 / u : ((u < 0) ? -1 : 1) * (Math.sqrt(u2p1) - Math.abs(u));
                 double c = Math.pow(t * t + 1.0d, -0.5);
                 double s = c * t;
 
-                m11 -= t * m12;
-                m22 += t * m12;
-                m12 = 0.0d;
+                final double TM12 = t * m12;
+                m11 -= TM12;
+                m22 += TM12;
+                m12 = 0;
 
                 double temp = c * m13 - s * m23;
                 m23 = s * m13 + c * m23;
@@ -1378,14 +1382,16 @@ public class Matrix {
 
                 for (int i = 0; i < 3; i++) {
                     final double[] ri = r[i];
-                    double x = c * ri[0] - s * ri[1];
-                    ri[1] = s * ri[0] + c * ri[1];
+                    final double ri0 = ri[0];
+                    final double ri1 = ri[1];
+                    double x = c * ri0 - s * ri1;
+                    ri[1] = s * ri0 + c * ri1;
                     ri[0] = x;
                 }
             }
 
             // Annihilate (1,3) entry
-            if (m13 != 0.0d) {
+            if (Math.abs(m13) > Double.MIN_NORMAL) {
                 double u = (m33 - m11) / (2 * m13);
                 double u2 = u * u;
                 double u2p1 = u2 + 1.0d;
@@ -1393,9 +1399,10 @@ public class Matrix {
                 double c = Math.pow(t * t + 1.0d, -0.5);
                 double s = c * t;
 
-                m11 -= t * m13;
-                m33 += t * m13;
-                m13 = 0.0d;
+                final double TM13 = t * m13;
+                m11 -= TM13;
+                m33 += TM13;
+                m13 = 0;
 
                 double temp = c * m12 - s * m23;
                 m23 = s * m12 + c * m23;
@@ -1418,9 +1425,10 @@ public class Matrix {
                 double c = Math.pow(t * t + 1.0d, -0.5);
                 double s = c * t;
 
-                m22 -= t * m23;
-                m33 += t * m23;
-                m23 = 0.0d;
+                final double TM23 = t * m23;
+                m22 -= TM23;
+                m33 += TM23;
+                m23 = 0;
 
                 double temp = c * m12 - s * m13;
                 m13 = s * m12 + c * m13;
@@ -1439,9 +1447,9 @@ public class Matrix {
         outEigenvalues[1] = m22;
         outEigenvalues[2] = m33;
 
-        outEigenvectors[0] = new Vec4(r[0][0], r[1][0], r[2][0]);
-        outEigenvectors[1] = new Vec4(r[0][1], r[1][1], r[2][1]);
-        outEigenvectors[2] = new Vec4(r[0][2], r[1][2], r[2][2]);
+        outEigenvectors[0] = new Vec4(r0[0], r1[0], r2[0]);
+        outEigenvectors[1] = new Vec4(r0[1], r1[1], r2[1]);
+        outEigenvectors[2] = new Vec4(r0[2], r1[2], r2[2]);
     }
 
     private static Matrix computeTransformInverse(Matrix a) {
@@ -1499,9 +1507,8 @@ public class Matrix {
             col[j] = 1.0;
             Matrix.lubksb(A, indx, col);
 
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < 4; i++)
                 Y[i][j] = col[i];
-            }
         }
 
         return new Matrix(
@@ -1625,11 +1632,11 @@ public class Matrix {
     }
 
     public static Vec4 transformBy3(Matrix matrix, double x, double y, double z) {
-        if (matrix == null) {
-            String msg = Logging.getMessage("nullValue.MatrixIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (matrix == null) {
+//            String msg = Logging.getMessage("nullValue.MatrixIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         return new Vec4(
             (matrix.m11 * x) + (matrix.m12 * y) + (matrix.m13 * z),
@@ -1897,11 +1904,11 @@ public class Matrix {
     // ============== Matrix Arithmetic Functions ======================= //
 
     public final Matrix add(Matrix matrix) {
-        if (matrix == null) {
-            String msg = Logging.getMessage("nullValue.MatrixIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (matrix == null) {
+//            String msg = Logging.getMessage("nullValue.MatrixIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         return new Matrix(
             this.m11 + matrix.m11, this.m12 + matrix.m12, this.m13 + matrix.m13, this.m14 + matrix.m14,
@@ -1911,11 +1918,11 @@ public class Matrix {
     }
 
     public final Matrix subtract(Matrix matrix) {
-        if (matrix == null) {
-            String msg = Logging.getMessage("nullValue.MatrixIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (matrix == null) {
+//            String msg = Logging.getMessage("nullValue.MatrixIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         return new Matrix(
             this.m11 - matrix.m11, this.m12 - matrix.m12, this.m13 - matrix.m13, this.m14 - matrix.m14,
@@ -1933,11 +1940,11 @@ public class Matrix {
     }
 
     public final Matrix multiply(Matrix matrix) {
-        if (matrix == null) {
-            String msg = Logging.getMessage("nullValue.MatrixIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (matrix == null) {
+//            String msg = Logging.getMessage("nullValue.MatrixIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         return new Matrix(
             // Row 1
@@ -1979,11 +1986,11 @@ public class Matrix {
     }
 
     public final Matrix divideComponents(Matrix matrix) {
-        if (matrix == null) {
-            String msg = Logging.getMessage("nullValue.MatrixIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (matrix == null) {
+//            String msg = Logging.getMessage("nullValue.MatrixIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         return new Matrix(
             this.m11 / matrix.m11, this.m12 / matrix.m12, this.m13 / matrix.m13, this.m14 / matrix.m14,
@@ -2082,10 +2089,7 @@ public class Matrix {
 
     public final Angle getRotationY() {
         double yRadians = Math.asin(this.m13);
-        if (Double.isNaN(yRadians))
-            return null;
-
-        return Angle.fromRadians(yRadians);
+        return Double.isNaN(yRadians) ? null : Angle.fromRadians(yRadians);
     }
 
     public final Angle getRotationZ() {
@@ -2104,19 +2108,14 @@ public class Matrix {
             zRadians = Math.atan2(this.m21, this.m22);
         }
 
-        if (Double.isNaN(zRadians))
-            return null;
-
-        return Angle.fromRadians(zRadians);
+        return Double.isNaN(zRadians) ? null : Angle.fromRadians(zRadians);
     }
 
     public final Angle getKMLRotationX()    // KML assumes the order of rotations is YXZ, positive CW
     {
         double xRadians = Math.asin(-this.m23);
-        if (Double.isNaN(xRadians))
-            return null;
-
-        return Angle.fromRadians(-xRadians);    // negate to make angle CW
+        // negate to make angle CW
+        return Double.isNaN(xRadians) ? null : Angle.fromRadians(-xRadians);
     }
 
     public final Angle getKMLRotationY()    // KML assumes the order of rotations is YXZ, positive CW
@@ -2136,10 +2135,8 @@ public class Matrix {
             yRadians = Math.atan2(-this.m12, this.m11);
         }
 
-        if (Double.isNaN(yRadians))
-            return null;
-
-        return Angle.fromRadians(-yRadians);    // negate angle to make it CW
+        // negate angle to make it CW
+        return Double.isNaN(yRadians) ? null : Angle.fromRadians(-yRadians);
     }
 
     public final Angle getKMLRotationZ()    // KML assumes the order of rotations is YXZ, positive CW
@@ -2155,10 +2152,8 @@ public class Matrix {
             zRadians = 0;
         }
 
-        if (Double.isNaN(zRadians))
-            return null;
-
-        return Angle.fromRadians(-zRadians);    // negate angle to make it CW
+        // negate angle to make it CW
+        return Double.isNaN(zRadians) ? null : Angle.fromRadians(-zRadians);
     }
 
     public final Vec4 getTranslation() {
@@ -2236,23 +2231,23 @@ public class Matrix {
      * @throws IllegalArgumentException if any argument is null.
      */
     public AVList extractViewingParameters(Vec4 origin, Angle roll, Globe globe) {
-        if (origin == null) {
-            String msg = Logging.getMessage("nullValue.OriginIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        if (roll == null) {
-            String msg = Logging.getMessage("nullValue.RollIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        if (globe == null) {
-            String msg = Logging.getMessage("nullValue.GlobeIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (origin == null) {
+//            String msg = Logging.getMessage("nullValue.OriginIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
+//
+//        if (roll == null) {
+//            String msg = Logging.getMessage("nullValue.RollIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
+//
+//        if (globe == null) {
+//            String msg = Logging.getMessage("nullValue.GlobeIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         // Transform the modelview matrix to a local coordinate system at the origin. This eliminates the geographic
         // transform contained in the modelview matrix while maintaining rotation and translation relative to the origin.

@@ -238,12 +238,12 @@ public class Box implements Extent, Renderable {
         Vec4 t = axes[2];
 
         // Find the extremes along each axis.
-        double minDotR = Double.MAX_VALUE;
-        double maxDotR = -minDotR;
-        double minDotS = Double.MAX_VALUE;
-        double maxDotS = -minDotS;
-        double minDotT = Double.MAX_VALUE;
-        double maxDotT = -minDotT;
+        double minDotR = Double.POSITIVE_INFINITY;
+        double maxDotR = Double.NEGATIVE_INFINITY;
+        double minDotS = Double.POSITIVE_INFINITY;
+        double maxDotS = Double.NEGATIVE_INFINITY;
+        double minDotT = Double.POSITIVE_INFINITY;
+        double maxDotT = Double.NEGATIVE_INFINITY;
 
         for (Vec4 p : points) {
             if (p == null)
@@ -268,12 +268,13 @@ public class Box implements Extent, Renderable {
                 maxDotT = pdt;
         }
 
-        if (maxDotR == minDotR)
-            maxDotR = minDotR + 1;
-        if (maxDotS == minDotS)
-            maxDotS = minDotS + 1;
-        if (maxDotT == minDotT)
-            maxDotT = minDotT + 1;
+        final double EPSILON = 0.5;
+        if (maxDotR - minDotR < EPSILON)
+            maxDotR = minDotR + EPSILON;
+        if (maxDotS - minDotS < EPSILON)
+            maxDotS = minDotS + EPSILON;
+        if (maxDotT - minDotT < EPSILON)
+            maxDotT = minDotT + EPSILON;
 
         return new Box(axes, minDotR, maxDotR, minDotS, maxDotS, minDotT, maxDotT);
     }

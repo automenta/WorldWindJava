@@ -841,7 +841,7 @@ public class Vec4 {
     public final Vec4 normalize3() {
         double length = this.getLength3();
         // Vector has zero length.
-        if (length == 0) {
+        if (Math.abs(length) < Double.MIN_NORMAL) {
             return this;
         } else {
             return new Vec4(

@@ -37,6 +37,9 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
     public static final Sector FULL_SPHERE = new Sector(Angle.NEG90, Angle.POS90, Angle.NEG180, Angle.POS180);
     public static final Sector EMPTY_SECTOR = new Sector(Angle.ZERO, Angle.ZERO, Angle.ZERO, Angle.ZERO);
 
+    /** TODO what units are these in, meters? */
+    private static final double ELEVATION_EPSILON = 0.5f;
+
     /**
      * in angles, degrees
      */
@@ -561,8 +564,10 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
         double max = maxElevation * verticalExaggeration;
 
         // Ensure the top and bottom heights are not equal.
-        if (min == max) {
-            max = min + 10;
+        if (max - min < ELEVATION_EPSILON) {
+            final double mean = (max + min)/2;
+            min = mean - ELEVATION_EPSILON/2;
+            max = mean + ELEVATION_EPSILON/2;
         }
 
         // Create an array for a 3x5 grid of elevations. Use min height at the corners and max height everywhere else.

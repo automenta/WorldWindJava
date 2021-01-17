@@ -236,7 +236,7 @@ public class TextureTile extends Tile implements SurfaceTile {
     }
 
     protected void updateMemoryCache() {
-        if (this.getTileFromMemoryCache(this.key) != null)
+//        if (this.getTileFromMemoryCache(this.key) != null)
             TextureTile.getMemoryCache().add(this.key, this);
     }
 
@@ -247,21 +247,21 @@ public class TextureTile extends Tile implements SurfaceTile {
         if (t != null && this.getTextureData() == null)
             return t;
 
-        if (this.getTextureData() == null) // texture not in cache yet texture data is null, can't initialize
-        {
-            String msg = Logging.getMessage("nullValue.TextureDataIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalStateException(msg);
-        }
+//        if (this.getTextureData() == null) // texture not in cache yet texture data is null, can't initialize
+//        {
+//            String msg = Logging.getMessage("nullValue.TextureDataIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalStateException(msg);
+//        }
 
-        try {
+//        try {
             t = TextureIO.newTexture(this.getTextureData());
-        }
-        catch (Exception e) {
-            String msg = Logging.getMessage("layers.TextureLayer.ExceptionAttemptingToReadTextureFile", "");
-            Logging.logger().log(java.util.logging.Level.SEVERE, msg, e);
-            return null;
-        }
+//        }
+//        catch (Exception e) {
+//            String msg = Logging.getMessage("layers.TextureLayer.ExceptionAttemptingToReadTextureFile", "");
+//            Logging.logger().log(java.util.logging.Level.SEVERE, msg, e);
+//            return null;
+//        }
 
         this.setTexture(dc.gpuCache(), t);
         t.bind(dc.getGL());
