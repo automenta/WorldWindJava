@@ -21,6 +21,7 @@ import java.net.*;
 import java.nio.*;
 import java.nio.channels.*;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.logging.Level;
@@ -33,10 +34,10 @@ import java.util.zip.*;
 public class WWIO {
     public static final String DELETE_ON_EXIT_PREFIX = "WWJDeleteOnExit";
     public static final String ILLEGAL_FILE_PATH_PART_CHARACTERS = '[' + "?/\\\\=+<>:;,\"|^\\[\\]" + ']';
-    /**
-     * The maximum number of characters allowed in a file path. Covers Windows, Linux and OS X.
-     */
-    public static final int MAX_FILE_PATH_LENGTH = 255;
+//    /**
+//     * The maximum number of characters allowed in a file path. Covers Windows, Linux and OS X.
+//     */
+//    public static final int MAX_FILE_PATH_LENGTH = 255;
     /**
      * The default character encoding used if none is specified.
      */
@@ -164,22 +165,39 @@ public class WWIO {
 
             final Call call = Configuration.http.newCall(requestBuilder.url(url).build());
 
-            try (Response r = call.execute()) {
-                if (!r.isSuccessful())
-                    throw new IOException(r.toString());
 
-                success.accept(r.body());
-                WWIO.logger.info("{} {}", r.cacheResponse()!=null ? "GOT" : "GET", url);
+            call.enqueue(new Callback() {
 
-            }
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+                @Override
+                public void onResponse(Call call, Response r) throws IOException {
+                    try {
+                        success.accept(r.body());
+                        WWIO.logger.info("{} {}", r.cacheResponse()!=null ? "GOT" : "GET", url);
+                    } catch (Throwable throwable) {
+                        throw new RuntimeException(throwable);
+                    }
+                }
+            });
+//            try (Response r = call.execute()) {
+//                if (!r.isSuccessful())
+//                    throw new IOException(r.toString());
+//
+//                success.accept(r.body());
+//                WWIO.logger.info("{} {}", r.cacheResponse()!=null ? "GOT" : "GET", url);
+//
+//            }
         } catch (Throwable e) {
             if (fail.test(e)) {
                 WWIO.logger.warn("{} {}", e.getMessage(), url);
                 if (e instanceof RuntimeException)
                     throw (RuntimeException) e;
-                else {
+                else
                     throw new RuntimeException(e);
-                }
             }
         }
     }
@@ -523,30 +541,6 @@ public class WWIO {
     }
 
     /**
-     * Reads all the bytes from the specified <code>{@link URL}</code>, returning the bytes as a String. The bytes are
-     * interpreted according to the specified encoding, or UTF-8 if no encoding is specified.
-     *
-     * @param url      the URL to read.
-     * @param encoding the encoding do use. If <code>null</code> is specified then UTF-8 is used.
-     * @return the string representation of the bytes at the <code>URL</code> decoded according to the specified
-     * encoding.
-     * @throws IllegalArgumentException                     if the <code>url</code> is null.
-     * @throws IOException                                  if an I/O error occurs.
-     * @throws java.nio.charset.IllegalCharsetNameException if the specified encoding name is illegal.
-     * @throws java.nio.charset.UnsupportedCharsetException if no support for the named encoding is available.
-     */
-    public static String readURLContentToString(URL url, String encoding) throws IOException {
-        if (url == null) {
-            String message = Logging.getMessage("nullValue.URLIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        ByteBuffer buffer = WWIO.readURLContentToBuffer(url);
-        return WWIO.byteBufferToString(buffer, encoding);
-    }
-
-    /**
      * Reads all the bytes from the specified {@link File}, returning the bytes as a non-direct {@link ByteBuffer} with
      * the current JVM byte order. Non-direct buffers are backed by JVM heap memory.
      *
@@ -574,11 +568,6 @@ public class WWIO {
      * @throws IOException              if an I/O error occurs.
      */
     public static ByteBuffer readFileToBuffer(File file, boolean allocateDirect) throws IOException {
-        if (file == null) {
-            String message = Logging.getMessage("nullValue.FileIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         try (FileInputStream is = new FileInputStream(file)) {
             try (FileChannel fc = is.getChannel()) {
@@ -593,36 +582,7 @@ public class WWIO {
         }
     }
 
-    public static ByteBuffer inflateFileToBuffer(File file) throws IOException {
-        if (file == null) {
-            String message = Logging.getMessage("nullValue.FileIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        FileInputStream is = new FileInputStream(file);
-        try {
-            return WWIO.inflateStreamToBuffer(is);
-        }
-        finally {
-            WWIO.closeStream(is, file.getPath());
-        }
-    }
-
-    public static boolean saveBufferToGZipFile(ByteBuffer buffer, File file) throws IOException {
-        return WWIO.saveBufferToStream(buffer, new GZIPOutputStream(new FileOutputStream(file)));
-    }
-
-    public static boolean deflateBufferToFile(ByteBuffer buffer, File file) throws IOException {
-        return WWIO.saveBufferToStream(buffer, new DeflaterOutputStream(new FileOutputStream(file)));
-    }
-
     public static ByteBuffer readGZipFileToBuffer(File gzFile) throws IllegalArgumentException, IOException {
-        if (gzFile == null) {
-            String message = Logging.getMessage("nullValue.FileIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
         if (!gzFile.exists()) {
             String message = Logging.getMessage("generic.FileNotFound", gzFile.getAbsolutePath());
             Logging.logger().severe(message);
@@ -676,11 +636,6 @@ public class WWIO {
     }
 
     public static ByteBuffer readZipEntryToBuffer(File zipFile, String entryName) throws IOException {
-        if (zipFile == null) {
-            String message = Logging.getMessage("nullValue.FileIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         InputStream is = null;
         ZipEntry ze = null;
@@ -816,8 +771,6 @@ public class WWIO {
         final int PAGE_SIZE = (int) Math.round(Math.pow(2, 16));
         final int initialSize = Math.max(stream.available(), PAGE_SIZE);
         ByteBuffer buffer = WWBufferUtil.newByteBuffer(initialSize, allocateDirect);
-//
-//        stream.transferTo(new ByteBufferOutputStream(buffer));
         int count = 0;
         while (count >= 0) {
             count = channel.read(buffer);
@@ -848,19 +801,7 @@ public class WWIO {
      * @throws IllegalArgumentException if the channel or the buffer is null.
      * @throws IOException              if an I/O error occurs.
      */
-    public static ByteBuffer readInputStreamToBuffer(ReadableByteChannel channel, ByteBuffer buffer)
-        throws IOException {
-        if (channel == null) {
-            String message = Logging.getMessage("nullValue.ChannelIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (buffer == null) {
-            String message = Logging.getMessage("nullValue.BufferIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+    public static ByteBuffer readInputStreamToBuffer(ReadableByteChannel channel, ByteBuffer buffer) throws IOException {
 
         int count = 0;
         while (count >= 0 && buffer.hasRemaining()) {
@@ -883,11 +824,6 @@ public class WWIO {
      * @throws IOException              if an I/O error occurs.
      */
     public static String readChannelToString(ReadableByteChannel channel, String encoding) throws IOException {
-        if (channel == null) {
-            String message = Logging.getMessage("nullValue.ChannelIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         return WWIO.readCharacterStreamToString(
             Channels.newReader(channel, encoding != null ? encoding : WWIO.DEFAULT_CHARACTER_ENCODING));
@@ -903,11 +839,6 @@ public class WWIO {
      * @throws IOException              if an I/O error occurs.
      */
     public static String readCharacterStreamToString(Reader reader) throws IOException {
-        if (reader == null) {
-            String message = Logging.getMessage("nullValue.ReaderIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         StringBuilder sb = new StringBuilder();
         BufferedReader br = new BufferedReader(reader);
@@ -920,16 +851,7 @@ public class WWIO {
         return sb.toString();
     }
 
-    public static ByteBuffer inflateStreamToBuffer(InputStream inputStream) throws IOException {
-        return WWIO.readStreamToBuffer(new InflaterInputStream(inputStream));
-    }
-
     public static String replaceSuffix(String in, String newSuffix) {
-        if (in == null) {
-            String message = Logging.getMessage("nullValue.FilePathIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         String suffix = newSuffix != null ? newSuffix : "";
         int p = in.lastIndexOf('.');
@@ -937,11 +859,6 @@ public class WWIO {
     }
 
     public static String getSuffix(String filePath) {
-        if (filePath == null) {
-            String message = Logging.getMessage("nullValue.FilePathIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         int len = filePath.length();
         int p = filePath.lastIndexOf('.');
@@ -965,11 +882,6 @@ public class WWIO {
      * @throws IllegalArgumentException if the file path is null.
      */
     public static String getFilename(String filePath) {
-        if (filePath == null) {
-            String message = Logging.getMessage("nullValue.FilePathIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         filePath = WWIO.stripTrailingSeparator(filePath);
 
@@ -988,11 +900,6 @@ public class WWIO {
      * @throws IllegalArgumentException if the file path is null.
      */
     public static String getParentFilePath(String filePath) {
-        if (filePath == null) {
-            String message = Logging.getMessage("nullValue.FilePathIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         filePath = WWIO.stripTrailingSeparator(filePath);
 
@@ -1304,30 +1211,6 @@ public class WWIO {
             ? (BufferedInputStream) is : new BufferedInputStream(is);
     }
 
-    public static boolean isAncestorOf(File file, File ancestor) {
-//        if (file == null) {
-//            String message = Logging.getMessage("nullValue.FileIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//        if (ancestor == null) {
-//            String message = Logging.getMessage("nullValue.AncestorIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-
-        // Traverse up the directory tree, visiting each node. If any node is equal to the specified ancestor,
-        // then the files are related.
-        File cur = file;
-        while (cur != null && !cur.equals(ancestor)) {
-            cur = cur.getParentFile();
-        }
-
-        // If the ancestor appeared in the traversal, then we will have stopped before reaching the root and
-        // cur will be non-null. Otherwise we exhaused our traversal and cur is null.
-        return cur != null;
-    }
-
     public static void copyFile(File source, File destination) throws IOException {
 
         FileInputStream fis = null;
@@ -1350,47 +1233,6 @@ public class WWIO {
         finally {
             WWIO.closeStream(fis, source.getPath());
             WWIO.closeStream(fos, destination.getPath());
-        }
-    }
-
-    public static void copyDirectory(File source, File destination, boolean copySubDirectories) throws IOException {
-
-        if (!destination.exists())
-            //noinspection ResultOfMethodCallIgnored
-            destination.mkdirs();
-
-        if (!destination.exists()) {
-            String message = Logging.getMessage("generic.CannotCreateFile", destination);
-            Logging.logger().severe(message);
-            throw new IOException(message);
-        }
-
-        File[] fileList = source.listFiles();
-        if (fileList == null)
-            return;
-
-        Collection<File> childFiles = new ArrayList<>();
-        Collection<File> childDirs = new ArrayList<>();
-        for (File child : fileList) {
-            if (child == null)
-                continue;
-
-            if (child.isDirectory())
-                childDirs.add(child);
-            else
-                childFiles.add(child);
-        }
-
-        for (File childFile : childFiles) {
-            File destFile = new File(destination, childFile.getName());
-            WWIO.copyFile(childFile, destFile);
-        }
-
-        if (copySubDirectories) {
-            for (File childDir : childDirs) {
-                File destDir = new File(destination, childDir.getName());
-                WWIO.copyDirectory(childDir, destDir, true);
-            }
         }
     }
 
@@ -1454,27 +1296,14 @@ public class WWIO {
      * @throws IllegalArgumentException if the file is null.
      */
     public static String readTextFile(File file) {
-
-        StringBuilder sb = new StringBuilder();
-
-        BufferedReader reader = null;
         try {
-            reader = new BufferedReader(new FileReader(file));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                sb.append(line);
-            }
+            return Files.readString(file.toPath());
         }
         catch (IOException e) {
             String msg = Logging.getMessage("generic.ExceptionAttemptingToReadFile", file.getPath());
             Logging.logger().log(java.util.logging.Level.SEVERE, msg);
             return null;
         }
-        finally {
-            WWIO.closeStream(reader, file.getPath());
-        }
-
-        return sb.toString();
     }
 
     /**
@@ -1523,21 +1352,6 @@ public class WWIO {
     }
 
     /**
-     * Create a {@link String} from a {@link ByteBuffer}.
-     *
-     * @param buffer   the byte buffer to convert.
-     * @param encoding the encoding do use. If null is specified then UTF-8 is used.
-     * @return the string representation of the bytes in the buffer decoded according to the specified encoding.
-     * @throws IllegalArgumentException                     if the buffer is null.
-     * @throws java.nio.charset.IllegalCharsetNameException if the specified encoding name is illegal.
-     * @throws java.nio.charset.UnsupportedCharsetException if no support for the named encoding is available.
-     */
-    public static String byteBufferToString(ByteBuffer buffer, String encoding) {
-
-        return Charset.forName(encoding != null ? encoding : WWIO.DEFAULT_CHARACTER_ENCODING).decode(buffer).toString();
-    }
-
-    /**
      * Create a {@link String} of limited size from a {@link ByteBuffer}.
      *
      * @param buffer   the byte buffer to convert.
@@ -1564,46 +1378,6 @@ public class WWIO {
         }
 
         return charBuffer.toString();
-    }
-
-    /**
-     * Create a {@link ByteBuffer} from a {@link String}.
-     *
-     * @param string   the string to convert.
-     * @param encoding the encoding do use. If null is specified then UTF-8 is used.
-     * @return the ByteBuffer representation of the string decoded according to the specified encoding.
-     * @throws UnsupportedEncodingException if the specified encoding is not supported
-     */
-    public static ByteBuffer stringToByteBuffer(String string, String encoding) throws UnsupportedEncodingException {
-
-        return ByteBuffer.wrap(string.getBytes(encoding != null ? encoding : WWIO.DEFAULT_CHARACTER_ENCODING));
-    }
-
-    /**
-     * Open a reader on an input source. The source may be one of the following: <ul> <li>{@link Reader}</li> <li>{@link
-     * InputStream}</li> <li>{@link File}</li> <li>{@link URL}</li> <li>{@link String}</li> </ul>
-     * <p>
-     * Readers are used to read character streams.
-     *
-     * @param src the input source of one of the above types.
-     * @return a reader for the input source.
-     * @throws IOException if i/o or other errors occur trying to create the reader.
-     */
-    public static Reader openReader(Object src) throws IOException {
-        Reader r = null;
-
-        if (src instanceof Reader)
-            r = (Reader) src;
-        else if (src instanceof InputStream)
-            r = new InputStreamReader((InputStream) src);
-        else if (src instanceof File)
-            r = new FileReader((File) src);
-        else if (src instanceof URL)
-            r = new InputStreamReader(((URL) src).openStream());
-        else if (src instanceof String)
-            r = new StringReader((String) src);
-
-        return r;
     }
 
     /**
@@ -1696,7 +1470,6 @@ public class WWIO {
             return new URL(path);
         }
         catch (Exception e) {
-            //e.printStackTrace();
             return null;
         }
     }
@@ -1808,23 +1581,6 @@ public class WWIO {
 
     /**
      * Returns an array of relative file paths naming the files and directories in the directory tree rooted by the
-     * specified file, that satisfy the specified filter. The returned paths are relative to the specified file. If the
-     * filter is null, then all files and directories are accepted. This returns null if the specified file is not a
-     * directory.
-     *
-     * @param file   the directory tree who's contents to list.
-     * @param filter a file filter.
-     * @return an array of relative file paths naming the files and directories in the directory tree rooted by the
-     * specified file, or null if the specified file is not a directory.
-     * @throws IllegalArgumentException if the file is null.
-     */
-    public static String[] listDescendantFilenames(File file, FileFilter filter) {
-
-        return WWIO.listDescendantFilenames(file, filter, true);
-    }
-
-    /**
-     * Returns an array of relative file paths naming the files and directories in the directory tree rooted by the
      * specified file, that satisfy the specified filter. If the parameter <code>recurseAfterMatch</code> is false, then
      * this ignores any directory branches beneath a matched file. This has the effect of listing the top matches in the
      * directory tree. The returned paths are relative to the specified file. If the filter is null, then all files and
@@ -1898,58 +1654,6 @@ public class WWIO {
     }
 
     /**
-     * Skip over a specified number of bytes in an input stream.
-     *
-     * @param is       the input stream.
-     * @param numBytes the number of bytes to skip over.
-     * @throws IllegalArgumentException if the specified input stream is null.
-     * @throws IOException              is an exception occurs while skipping the bytes.
-     */
-    public static void skipBytes(InputStream is, int numBytes) throws IOException {
-
-        int byteSkipped = 0;
-        while (byteSkipped < numBytes) {
-            byteSkipped += is.skip(numBytes - byteSkipped);
-        }
-    }
-
-    public static String[] makeCachePathForURL(URL url) {
-        String cacheDir = WWIO.replaceIllegalFileNameCharacters(url.getHost());
-        String fileName = WWIO.replaceIllegalFileNameCharacters(url.getPath());
-
-        return new String[] {cacheDir, fileName};
-    }
-
-    public static void reverseFloatArray(int pos, int count, float[] array) {
-        if (pos < 0) {
-            String message = Logging.getMessage("generic.ArgumentOutOfRange", "pos=" + pos);
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (count < 0) {
-            String message = Logging.getMessage("generic.ArgumentOutOfRange", "count=" + count);
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (array.length < (pos + count)) {
-            String message = Logging.getMessage("generic.ArrayInvalidLength", "points.length < " + (pos + count));
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        float tmp;
-        int i, j, mid;
-
-        for (i = 0, mid = count >> 1, j = count - 1; i < mid; i++, j--) {
-            tmp = array[pos + i];
-            array[pos + i] = array[pos + j];
-            array[pos + j] = tmp;
-        }
-    }
-
-    /**
      * Determines whether a jar URL is a reference to a local jar file or an entry in a local jar file. See {@link
      * JarURLConnection} for a description of jar URLs.
      *
@@ -1958,9 +1662,5 @@ public class WWIO {
      */
     public static boolean isLocalJarAddress(URL jarUrl) {
         return jarUrl != null && jarUrl.getFile().startsWith("file:");
-    }
-
-    public static InputStream stream(String path) throws IOException {
-        return Configuration.data.findFile(path, false).openStream();
     }
 }

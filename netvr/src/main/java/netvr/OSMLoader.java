@@ -33,7 +33,7 @@ public class OSMLoader {
     /**
      * https://overpass-api.de/api/map?bbox=left,bottom,right,top
      */
-    private static void osm(String request, Consumer<ReaderElement> each) throws IOException {
+    private static void osm(String request, Consumer<ReaderElement> each) {
         String host = OSMLoader.osmHost[0];
 
         final String uu = "https://" + host + "/api/map?" + request;

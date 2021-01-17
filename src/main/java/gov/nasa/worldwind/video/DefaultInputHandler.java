@@ -69,13 +69,11 @@ public class DefaultInputHandler extends WWObjectImpl
     }
 
     private static MouseEvent mouseEvent(com.jogamp.newt.event.MouseEvent e, int event) {
-//        e.setConsumed(true);
         return new MouseEvent(DefaultInputHandler.dummySource, event, e.getWhen(),
             DefaultInputHandler.awtModifiers(e), e.getX(), e.getY(), e.getClickCount(), false, e.getButton());
     }
 
     private static MouseWheelEvent mouseWheelEvent(com.jogamp.newt.event.MouseEvent e) {
-//        e.setConsumed(true);
         return new MouseWheelEvent(DefaultInputHandler.dummySource, MouseEvent.MOUSE_WHEEL, e.getWhen(), 0, e.getX(), e.getY(),
             e.getClickCount(), false, MouseWheelEvent.WHEEL_UNIT_SCROLL,
             1, -Math.round(e.getRotation()[1]));
@@ -125,8 +123,6 @@ public class DefaultInputHandler extends WWObjectImpl
 
         if (newWorldWindow == this.wwd)
             return; //same
-
-        //this.eventListeners = new EventListenerList(); // make orphans of listener references
 
         if (wwd != null) {
             wwd.stopEvents(this);

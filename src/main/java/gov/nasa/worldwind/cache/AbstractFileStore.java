@@ -321,38 +321,6 @@ public abstract class AbstractFileStore extends WWObjectImpl implements FileStor
         return (this.writeLocation != null) ? this.writeLocation.getFile() : null;
     }
 
-    public void addLocation(String newPath, boolean isInstall) {
-        this.addLocation(this.readLocations.size(), newPath, isInstall);
-    }
-
-    //**************************************************************//
-    //********************  File Store Contents  *******************//
-    //**************************************************************//
-
-    public void addLocation(int index, String newPath, boolean isInstall) {
-        if (newPath == null || newPath.isEmpty()) {
-            String message = Logging.getMessage("nullValue.FileStorePathIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (index < 0) {
-            String message = Logging.getMessage("generic.InvalidIndex", index);
-            Logging.logger().fine(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        StoreLocation oldLocation = this.storeLocationFor(newPath);
-        if (oldLocation != null)
-            this.readLocations.remove(oldLocation);
-
-        if (index > 0 && index > this.readLocations.size())
-            index = this.readLocations.size();
-        File newFile = new File(newPath);
-        StoreLocation newLocation = new StoreLocation(newFile, isInstall);
-        this.readLocations.add(index, newLocation);
-    }
-
     public void removeLocation(String path) {
         if (path == null || path.isEmpty()) {
             String message = Logging.getMessage("nullValue.FileStorePathIsNull");
@@ -374,17 +342,6 @@ public abstract class AbstractFileStore extends WWObjectImpl implements FileStor
         this.readLocations.remove(location);
     }
 
-    public boolean isInstallLocation(String path) {
-        if (path == null || path.isEmpty()) {
-            String message = Logging.getMessage("nullValue.FileStorePathIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        StoreLocation location = this.storeLocationFor(path);
-        return location != null && location.isInstall();
-    }
-
     protected StoreLocation storeLocationFor(String path) {
         File file = new File(path);
 
@@ -394,26 +351,6 @@ public abstract class AbstractFileStore extends WWObjectImpl implements FileStor
         }
 
         return null;
-    }
-
-    public boolean containsFile(String fileName) {
-        if (fileName == null)
-            return false;
-
-        for (StoreLocation location : this.readLocations) {
-            File dir = location.getFile();
-            File file;
-
-            if (fileName.startsWith(dir.getAbsolutePath()))
-                file = new File(fileName);
-            else
-                file = AbstractFileStore.makeAbsoluteFile(dir, fileName);
-
-            if (file.exists())
-                return true;
-        }
-
-        return false;
     }
 
     /**

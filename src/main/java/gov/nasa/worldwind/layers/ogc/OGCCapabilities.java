@@ -6,8 +6,6 @@
 
 package gov.nasa.worldwind.layers.ogc;
 
-////.*;
-
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.util.xml.*;
 

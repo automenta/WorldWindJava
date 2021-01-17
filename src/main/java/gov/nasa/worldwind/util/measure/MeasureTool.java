@@ -1196,7 +1196,6 @@ public class MeasureTool extends AVListImpl implements Disposable {
             // Update shape properties
             updateShapeProperties((String) point.get(MeasureTool.CONTROL_TYPE_REGULAR_SHAPE), point.getPosition(), mode);
             updateShapeControlPoints();
-            //positions = makeShapePositions();
         }
 
         if (point.get(MeasureTool.CONTROL_TYPE_LOCATION_INDEX) != null) {
@@ -1867,7 +1866,6 @@ public class MeasureTool extends AVListImpl implements Disposable {
         this.layer.clear();
         this.shapeLayer.clear();
         this.controlPoints.clear();
-//        this.controlPointsLayer.removeAllRenderables(); // TODO: why commented out? Are annotations being disposed?
     }
 
     protected void addControlPoint(Position position, String key, Object value) {

@@ -50,7 +50,6 @@ public class BostonBuildings extends ApplicationTemplate {
             // Load the shapefile. Define the completion callback.
             Position eyePos = new Position(Angle.fromDegreesLatitude(42.3638), Angle.fromDegreesLongitude(-71.0607),
                 3000.0); // Boston
-//            Position eyePos = new Position(Angle.fromDegreesLatitude(2.5), Angle.fromDegreesLongitude(2.5), 25000.0);
             this.wwd().view().setEyePosition(eyePos);
 //            factory.createFromShapefileSource("/home/mpeterson/d/temp/multi.shp",
             factory.createFromShapefileSource("/home/mpeterson/d/temp/boston/boston4236.shp",

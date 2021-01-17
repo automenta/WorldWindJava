@@ -143,7 +143,6 @@ public class ShapeEditing extends ApplicationTemplate {
             track.addLeg(LatLon.fromDegrees(40, -103), LatLon.fromDegrees(41, -103), 1.0e4, 2.0e4, 2.0e4, 2.0e4);
             track.addLeg(LatLon.fromDegrees(41, -103), LatLon.fromDegrees(41, -102), 1.0e4, 2.0e4, 2.0e4, 2.0e4);
             track.addLeg(LatLon.fromDegrees(41, -102), LatLon.fromDegrees(40, -102), 1.0e4, 2.0e4, 2.0e4, 2.0e4);
-//            track.addLeg(LatLon.fromDegrees(39.5, -102), LatLon.fromDegrees(39.5, -103), 1e4, 2e4, 2e4, 2e4);
             track.setDrawSurfaceShape(false);
             track.setAttributes(attrs);
             track.setHighlightAttributes(highlightAttrs);

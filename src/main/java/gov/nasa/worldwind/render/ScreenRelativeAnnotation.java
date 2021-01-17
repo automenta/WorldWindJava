@@ -6,8 +6,6 @@
 
 package gov.nasa.worldwind.render;
 
-////.*;
-
 import gov.nasa.worldwind.util.*;
 
 import java.awt.*;

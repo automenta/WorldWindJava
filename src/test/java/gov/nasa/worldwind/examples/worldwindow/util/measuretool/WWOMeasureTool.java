@@ -78,7 +78,7 @@ public class WWOMeasureTool extends AVListImpl
         this.wwd = wwd;
 
         this.controlPoints = this.createControlPoints();
-        this.controlPointsLayer = controlPointsLayer; // new RenderableLayer();
+        this.controlPointsLayer = controlPointsLayer;
         this.controlPoints.addToLayer(this.controlPointsLayer);
 
         this.measureDisplay = this.createMeasureDisplay();
@@ -457,7 +457,6 @@ public class WWOMeasureTool extends AVListImpl
             // Update shape properties
             updateShapeProperties((String) point.get("Control"), point.getPosition());
             updateShapeControlPoints();
-            //positions = makeShapePositions();
         }
 
         if (point.get("PositionIndex") != null) {
@@ -859,7 +858,6 @@ public class WWOMeasureTool extends AVListImpl
             Position lastPosition = movingTarget.getPosition();
             Position newPosition = this.getWwd().position();
             this.moveToPosition(lastPosition, newPosition);
-            //measureTool.getWwd().redraw();
         }
     }
 

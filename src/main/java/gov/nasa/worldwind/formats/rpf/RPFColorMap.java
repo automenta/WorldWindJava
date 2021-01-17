@@ -29,10 +29,8 @@ public class RPFColorMap {
         int saveOffset = buffer.position();
         this.loadColorMaps(buffer, colormapSubsectionOffset);
         // ok, we can skip histogram for now
-        // this.loadHistogram(buffer, colormapSubsectionOffset);
         buffer.position(saveOffset);
     }
-    // private byte[]  histogramMap;
 
     public int getTableID() {
         return tableID;

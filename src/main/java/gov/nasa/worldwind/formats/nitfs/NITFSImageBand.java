@@ -21,7 +21,6 @@ class NITFSImageBand {
     private final short numOfLookupTableEntries;
     private final boolean isGrayImage;
     private final boolean hasTransparentEntry;
-    // public int[]  lookupTablesOffset; // one byte per entry per band
     private byte[][] lut;
 
     public NITFSImageBand(ByteBuffer buffer) {

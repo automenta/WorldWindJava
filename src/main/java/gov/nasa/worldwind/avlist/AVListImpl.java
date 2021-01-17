@@ -5,8 +5,6 @@
  */
 package gov.nasa.worldwind.avlist;
 
-////.*;
-
 import gov.nasa.worldwind.util.*;
 
 import java.beans.*;
@@ -172,7 +170,6 @@ public class AVListImpl implements AVList {
 
     private static Map<String, Object> newAvList() {
         return new ConcurrentHashMap<>(1);
-        //Collections.synchronizedMap(new HashMap<>(1));
     }
 
     private static Object i(Object value) {

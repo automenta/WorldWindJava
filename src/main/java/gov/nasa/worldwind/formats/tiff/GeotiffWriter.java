@@ -457,7 +457,6 @@ public class GeotiffWriter {
             }
         }
 
-        //            break;
         switch (type) {
             case BufferedImage.TYPE_3BYTE_BGR, BufferedImage.TYPE_4BYTE_ABGR, BufferedImage.TYPE_4BYTE_ABGR_PRE, BufferedImage.TYPE_INT_RGB, BufferedImage.TYPE_INT_BGR, BufferedImage.TYPE_INT_ARGB, BufferedImage.TYPE_INT_ARGB_PRE -> this.writeColorImage(
                 image, params);
@@ -1057,7 +1056,6 @@ public class GeotiffWriter {
                         byte green = (byte) (0xFF & (color >> 8));
                         byte blue = (byte) (0xFF & color);
 
-//                        dataBuff.put(0xFF & (color >> 24)); // alpha
                         dataBuff.put(red).put(green).put(blue);
                     }
                     dataBuff.flip();

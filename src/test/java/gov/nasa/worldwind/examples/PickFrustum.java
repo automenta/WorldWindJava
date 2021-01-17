@@ -206,12 +206,10 @@ public class PickFrustum extends ApplicationTemplate {
             butToggleViewClipping = new JToggleButton();
             butToggleViewClipping.addActionListener(e -> {
                 if (butToggleViewClipping.isSelected()) {
-//                        System.out.println("layer.setViewClippingEnabled(true);");
                     iconLayer.setViewClippingEnabled(true);
                     butToggleViewClipping.setText("Disable View Clipping");
                 }
                 else {
-//                        System.out.println("layer.setViewClippingEnabled(false);");
                     iconLayer.setViewClippingEnabled(false);
                     butToggleViewClipping.setText("Enable View Clipping");
                 }

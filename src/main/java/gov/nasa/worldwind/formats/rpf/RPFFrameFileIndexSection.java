@@ -28,7 +28,6 @@ public class RPFFrameFileIndexSection {
     //      [ frame file index table ]
     private final List<RPFFrameFileIndexRecord> frameFileIndexTable = new ArrayList<>();
     //      [ pathname table ]
-    // private ArrayList<String> pathnameTable = new ArrayList<String>();
 
     public RPFFrameFileIndexSection(ByteBuffer buffer) {
         // [ frame file index section subheader ]

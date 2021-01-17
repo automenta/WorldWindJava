@@ -380,7 +380,6 @@ public class Tile implements Comparable<Tile>, Cacheable {
     }
 
     public void setPriorityDistance(double dist) {
-        //setPriority(1.0 / (1.0 + dist));
         setPriority(dist);
     }
 }

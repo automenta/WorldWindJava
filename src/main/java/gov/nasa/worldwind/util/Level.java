@@ -138,10 +138,6 @@ public class Level extends AVListImpl implements Comparable<Level> {
         return Logging.getMessage("layers.LevelSet.InvalidLevelDescriptorFields", sb.toString());
     }
 
-    public AVList getParams() {
-        return params;
-    }
-
     public String getPath() {
         return this.path;
     }
@@ -218,10 +214,6 @@ public class Level extends AVListImpl implements Comparable<Level> {
 
     public void setActive(boolean active) {
         this.active = active;
-    }
-
-    public AbsentResourceList getAbsentTiles() {
-        return absentTiles;
     }
 
     @Override

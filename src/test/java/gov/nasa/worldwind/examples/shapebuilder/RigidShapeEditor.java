@@ -179,7 +179,6 @@ public class RigidShapeEditor extends AbstractShapeEditor {
         RigidShape shape = this.getShape();
         double radiusScaleFactor;
 
-        //Matrix matrix = shape.computeRenderMatrix(dc);
         Vec4 refPt = shape.computeReferencePoint(dc);
         Position refPos = shape.getReferencePosition();
 
@@ -205,7 +204,6 @@ public class RigidShapeEditor extends AbstractShapeEditor {
             double width2 = Math.abs(Math.cos(this.shape.getHeading().radians()) * this.shape.getEastWestRadius());
             radiusScaleFactor = Math.max(width1, width2);
 
-            //vert = matrix.transformBy3(matrix, 1, 0, 0).add3(refPt);   // right
             Vec4 vert = refPt.add3(rightVec.multiply3(radiusScaleFactor + 2 * radius));
             Position vertexPosition = this.wwd.model().getGlobe().computePositionFromPoint(vert);
             RigidShape controlPoint = new Pyramid(vertexPosition, radius, radius, radius);
@@ -226,7 +224,6 @@ public class RigidShapeEditor extends AbstractShapeEditor {
             double height2 = Math.abs(Math.sin(this.shape.getHeading().radians()) * this.shape.getEastWestRadius());
             radiusScaleFactor = Math.max(height1, height2);
 
-            //Vec4 vert = matrix.transformBy3(matrix, 0, 1, 0).add3(refPt);   // top
             vert = refPt.add3(northVec.multiply3(radiusScaleFactor + 2 * radius));
             vertexPosition = this.wwd.model().getGlobe().computePositionFromPoint(vert);
             controlPoint = new Pyramid(vertexPosition, radius, radius, radius);
@@ -241,7 +238,6 @@ public class RigidShapeEditor extends AbstractShapeEditor {
             rod.setAttributes(this.translationRodAttributes);
             this.controlPointRods.add(rod);
 
-            //vert = matrix.transformBy3(matrix, 0, 0, 1).add3(refPt);   // front
             vert = refPt.add3(upVec.multiply3(this.shape.getVerticalRadius() + 2 * radius));
             vertexPosition = this.wwd.model().getGlobe().computePositionFromPoint(vert);
             controlPoint = new Pyramid(vertexPosition, radius, radius, radius);
@@ -478,7 +474,6 @@ public class RigidShapeEditor extends AbstractShapeEditor {
             controlPoint = new Ellipsoid(vertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.rotationControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            //controlPoint.setValue(AVKey.ACTION, SKEW_EAST_WEST_ACTION);
             controlPoint.setVisible(false);
             this.controlPoints.add(controlPoint);
 
@@ -487,7 +482,6 @@ public class RigidShapeEditor extends AbstractShapeEditor {
             controlPoint = new Ellipsoid(vertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.rotationControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            //controlPoint.setValue(AVKey.ACTION, SKEW_NORTH_SOUTH_ACTION);
             controlPoint.setVisible(false);
             this.controlPoints.add(controlPoint);
 
@@ -496,7 +490,6 @@ public class RigidShapeEditor extends AbstractShapeEditor {
             controlPoint = new Ellipsoid(vertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.rotationControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            //controlPoint.setValue(AVKey.ACTION, SKEW_NORTH_SOUTH_ACTION);
             controlPoint.setVisible(false);
             this.controlPoints.add(controlPoint);
         }
@@ -856,7 +849,6 @@ public class RigidShapeEditor extends AbstractShapeEditor {
                 updateAnnotation(this.activeControlPoint.getReferencePosition());
             }
 
-            // update controlPointIndex;
             int i = 0;
             for (RigidShape controlPoint : this.controlPoints) {
                 if (controlPoint.equals(topObject))

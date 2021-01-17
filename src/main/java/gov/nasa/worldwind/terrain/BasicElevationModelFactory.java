@@ -46,7 +46,6 @@ public class BasicElevationModelFactory extends BasicFactory {
             case OGCConstants.WCS_SERVICE_NAME -> em = new WCSElevationModel(domElement, params);
             case AVKey.SERVICE_NAME_LOCAL_RASTER_SERVER ->
                 throw new UnsupportedOperationException();
-                //em = new LocalRasterServerElevationModel(domElement, params);
             default -> throw new WWUnrecognizedException(Logging.getMessage("generic.UnrecognizedServiceName", serviceName));
         }
 

@@ -104,8 +104,6 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
             return false;
 
         return (dc.getVisibleSector() != null) && placeNameService.getMaskingSector().intersects(dc.getVisibleSector());
-//
-//        return placeNameService.getExtent(dc).intersects(dc.getView().getFrustumInModelCoordinates());
     }
 
     protected static boolean isSectorVisible(DrawContext dc, Sector sector, double minDistanceSquared,
@@ -198,7 +196,6 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
             path = path.replaceAll("%20", " "); // TODO: find a better way to get a path usable by FileInputStream
 
             FileInputStream fis = new FileInputStream(path);
-//            java.io.BufferedInputStream buf = new java.io.BufferedInputStream(fis);
             is = new GZIPInputStream(fis);
 
             GMLPlaceNameSAXHandler handler = new GMLPlaceNameSAXHandler();
@@ -392,8 +389,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
         if (this.getReferencePoint() != null)
             tile.setPriority(centroid.distanceTo3(this.getReferencePoint()));
 
-        Runnable task = new RequestTask(tile, this);
-        this.getRequestQ().add(task);
+        this.getRequestQ().add(new RequestTask(tile, this));
     }
 
     protected void sendRequests() {
@@ -404,35 +400,6 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
             }
             task = this.requestQ.poll();
         }
-    }
-
-    protected boolean loadTile(Tile tile, URL url) {
-        if (WWIO.isFileOutOfDate(url, this.placeNameServiceSet.getExpiryTime())) {
-            // The file has expired. Delete it then request download of newer.
-            this.getDataFileStore().removeFile(url);
-            String message = Logging.getMessage("generic.DataFileExpired", url);
-            Logging.logger().fine(message);
-            return false;
-        }
-
-        PlaceNameChunk tileData;
-        synchronized (this.fileLock) {
-            tileData = PlaceNameLayer.readTileData(tile, url);
-        }
-
-        if (tileData == null) {
-            // Assume that something's wrong with the file and delete it.
-            this.getDataFileStore().removeFile(url);
-            tile.placeNameService.markResourceAbsent(tile.placeNameService.getTileNumber(tile.row,
-                tile.column));
-            String message = Logging.getMessage("generic.DeletedCorruptDataFile", url);
-            Logging.logger().fine(message);
-            return false;
-        }
-
-        tile.setDataChunk(tileData);
-        WorldWind.cache(Tile.class.getName()).add(tile.getFileCachePath(), tile);
-        return true;
     }
 
     protected void downloadTile(final Tile tile) {
@@ -500,8 +467,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
         private final int hashInt;
         // Computed data.
         protected String fileCachePath;
-//        protected double extentVerticalExaggeration = Double.MIN_VALUE;
-        protected double priority = Double.MAX_VALUE; // Default is minimum priority
+protected double priority = Double.MAX_VALUE; // Default is minimum priority
         protected PlaceNameChunk dataChunk;
 
         Tile(PlaceNameService placeNameService, Sector sector, int row, int column) {
@@ -688,17 +654,6 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
             if (this.tile.isTileInMemoryWithData())
                 return;
 
-            final URL tileURL = this.layer.getDataFileStore().findFile(tile.getFileCachePath(), false);
-            if (tileURL != null) {
-                if (this.layer.loadTile(this.tile, tileURL)) {
-                    tile.placeNameService.unmarkResourceAbsent(
-                        tile.placeNameService.getTileNumber(tile.row, tile.column)
-                    );
-                    this.layer.firePropertyChange(AVKey.LAYER, null, this);
-                    return;
-                }
-            }
-
             this.layer.downloadTile(this.tile);
         }
 
@@ -862,41 +817,20 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
     protected static class DownloadPostProcessor extends AbstractRetrievalPostProcessor {
         protected final PlaceNameLayer layer;
         protected final Tile tile;
-        protected final FileStore fileStore;
 
         public DownloadPostProcessor(PlaceNameLayer layer, Tile tile) {
-            // No arg check; the class has protected access.
-            this(layer, tile, null);
-        }
-
-        public DownloadPostProcessor(PlaceNameLayer layer, Tile tile, FileStore fileStore) {
-            // No arg check; the class has protected access.
 
             //noinspection RedundantCast
             super((AVList) layer);
 
             this.layer = layer;
             this.tile = tile;
-            this.fileStore = fileStore;
-        }
-
-        protected FileStore getFileStore() {
-            return this.fileStore != null ? this.fileStore : this.layer.getDataFileStore();
         }
 
         @Override
         protected void markResourceAbsent() {
             this.tile.placeNameService.markResourceAbsent(
                 this.tile.placeNameService.getTileNumber(this.tile.row, this.tile.column));
-        }
-
-        @Override
-        protected Object getFileLock() {
-            return this.layer.fileLock;
-        }
-
-        protected File doGetOutputFile() {
-            return this.getFileStore().newFile(this.tile.getFileCachePath());
         }
 
         @Override
@@ -912,7 +846,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
         }
 
         @Override
-        protected ByteBuffer handleXMLContent() throws IOException {
+        protected ByteBuffer handleXMLContent() {
             // Check for an exception report
             String s = WWIO.byteBufferToString(this.getRetriever().getBuffer(), 1024, null);
             if (s.contains("<ExceptionReport>")) {
@@ -926,8 +860,6 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
 
                 return null;
             }
-
-            this.saveBuffer();
 
             return this.getRetriever().getBuffer();
         }

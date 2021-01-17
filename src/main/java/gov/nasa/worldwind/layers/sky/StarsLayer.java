@@ -559,7 +559,6 @@ public class StarsLayer extends RenderableLayer {
             }
             catch (IOException e) {
                 // TODO: Log proper message
-                //String message = WorldWind.retrieveErrMsg("generic.IOExceptionWhileLoadingData");
                 String message = "IOException while loading stars data from " + starsFileName;
                 Logging.logger().severe(message);
             }

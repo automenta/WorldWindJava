@@ -191,7 +191,6 @@ public class NITFSImageSegment extends NITFSSegment {
 
                     super.buffer.get(rowBytes, 0, rowSize);
 
-                    // short[] codes = new short[(int) this.numOfImageCodesPerRow];
                     for (int i = 0, cidx = 0, bidx = 0; i < (int) this.numOfImageCodesPerRow / 2; i++) {
                         aa = (short) ((0x00FF & (short) rowBytes[bidx++]) << 4);
                         ab = (short) (0x00FF & (short) rowBytes[bidx++]);

@@ -21,12 +21,12 @@ import java.util.logging.Level;
  * @author Tom Gaskins
  * @version $Id: BasicRetrievalService.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public final class BasicRetrievalService extends WWObjectImpl
+@Deprecated public final class BasicRetrievalService extends WWObjectImpl
     implements RetrievalService, Thread.UncaughtExceptionHandler {
     static final int DEFAULT_TIME_PRIORITY_GRANULARITY = 1000; // milliseconds
     // These constants are last-ditch values in case Configuration lacks defaults
     private static final int DEFAULT_QUEUE_SIZE = 2048;
-    private static final int DEFAULT_POOL_SIZE = 4;
+    private static final int DEFAULT_POOL_SIZE = 1;
     private static final long DEFAULT_STALE_REQUEST_LIMIT = 30000; // milliseconds
     private static final String IDLE_THREAD_NAME_PREFIX = Logging.getMessage(
         "BasicRetrievalService.IdleThreadNamePrefix");
@@ -274,8 +274,6 @@ public final class BasicRetrievalService extends WWObjectImpl
             boolean removed = BasicRetrievalService.this.activeTasks.remove(task.name) != null;
             if (!removed)
                 throw new RuntimeException();
-
-//            task.retriever.setEndTime(System.currentTimeMillis());
 
             super.afterExecute(runnable, throwable);
 

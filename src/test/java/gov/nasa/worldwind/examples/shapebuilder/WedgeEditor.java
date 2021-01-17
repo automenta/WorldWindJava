@@ -296,7 +296,6 @@ public class WedgeEditor extends RigidShapeEditor {
             controlPoint.setAttributes(this.radiusControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
             controlPoint.set(AVKey.ACTION, TEXTURE_MOVE_ACTION);
-            //this.controlPoints.add(controlPoint);                                   // center
 
             Path rod = new Path(ULvertexPosition, URvertexPosition);
             rod.setAltitudeMode(this.getAltitudeMode());

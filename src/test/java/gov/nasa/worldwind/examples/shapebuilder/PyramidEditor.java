@@ -270,7 +270,6 @@ public class PyramidEditor extends RigidShapeEditor {
             controlPoint.setAttributes(this.radiusControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
             controlPoint.set(AVKey.ACTION, TEXTURE_MOVE_ACTION);
-            //this.controlPoints.add(controlPoint);                                   // center
 
             Path rod = new Path(ULvertexPosition, URvertexPosition);
             rod.setAltitudeMode(this.getAltitudeMode());
@@ -453,7 +452,6 @@ public class PyramidEditor extends RigidShapeEditor {
 
         Position controlPosition = this.controlPoints.get(2).getCenterPosition();
         Vec4 controlPoint = this.wwd.model().getGlobe().computePointFromPosition(controlPosition);
-        //Vec4 scaleVector = controlPoint.subtract3(referencePoint).normalize3();
 
         double distance = nearestPointOnLine.distanceTo3(referencePoint);
         double previousDistance = previousNearestPointOnLine.distanceTo3(referencePoint);

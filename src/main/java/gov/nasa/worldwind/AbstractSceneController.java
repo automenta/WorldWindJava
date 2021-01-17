@@ -84,7 +84,6 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
     protected ScreenCreditController screenCreditController;
     protected GLRuntimeCapabilities glRuntimeCaps = new GLRuntimeCapabilities();
     protected ClutterFilter clutterFilter = new BasicClutterFilter();
-    //protected Map<String, GroupingFilter> groupingFilters = new HashMap<String, GroupingFilter>();
     protected boolean deferOrderedRendering;
 
     public AbstractSceneController() {
@@ -136,15 +135,11 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
         gl.glPopMatrix();
 
         gl.glPopAttrib();
-
-//        checkGLErrors(dc);
     }
 
     protected static void applyView(DrawContext dc) {
         if (dc.getView() != null)
             dc.getView().apply(dc);
-//
-//        this.resetGroupingFilters();
     }
 
     protected static void createPickFrustum(DrawContext dc) {
@@ -546,7 +541,6 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
         dc.setViewportCenterScreenPoint(AbstractSceneController.getViewportCenter(dc));
         dc.setViewportCenterPosition(null);
         dc.setClutterFilter(this.getClutterFilter());
-//        dc.setGroupingFilters(this.groupingFilters);
 
         long frameTimeStamp = System.currentTimeMillis();
         // Ensure that the frame time stamps differ between frames. This is necessary on machines with low-resolution
@@ -717,7 +711,6 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
 
         // Pick against the deferred/ordered renderables.
         dc.setOrderedRenderingMode(true);
-//        dc.applyGroupingFilters();
         dc.applyClutterFilter();
 
         OrderedRenderable next;
@@ -777,7 +770,6 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
 
         // Draw the deferred/ordered renderables.
         dc.setOrderedRenderingMode(true);
-//            dc.applyGroupingFilters();
         dc.applyClutterFilter();
         OrderedRenderable next;
         while ((next = dc.pollOrderedRenderables()) != null) {

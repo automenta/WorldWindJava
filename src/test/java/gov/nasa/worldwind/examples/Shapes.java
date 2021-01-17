@@ -609,7 +609,6 @@ public class Shapes {
                         }
                     } // Have rollover events highlight the rolled-over object.
                     else if (event.getEventAction().equals(SelectEvent.ROLLOVER) && !this.dragger.isDragging()) {
-//                        AppFrame.this.highlight(event.getTopObject());
                     } // Have drag events drag the selected object.
                     else if (event.getEventAction().equals(SelectEvent.DRAG_END)
                         || event.getEventAction().equals(SelectEvent.DRAG)) {
@@ -621,7 +620,6 @@ public class Shapes {
                         if (event.getEventAction().equals(SelectEvent.DRAG_END)) {
                             PickedObjectList pol = wwjPanel.wwd().objectsAtPosition();
                             if (pol != null) {
-//                                AppFrame.this.highlight(pol.getTopObject());
                                 AppFrame.this.wwjPanel.wwd().redraw();
                             }
                         }

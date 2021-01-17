@@ -23,7 +23,6 @@ public class UserFacingIcon extends AVListImpl implements WWIcon, Movable, Dragg
     protected BasicWWTexture backgroundTexture;
     protected boolean dragEnabled = true;
     protected DraggableSupport draggableSupport;
-    //    private final String iconPath;
     private Position iconPosition; // may be null because placement may be relative
     private Dimension iconSize; // may be null to indicate "use native image size"
     private boolean isHighlighted;

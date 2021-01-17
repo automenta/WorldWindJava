@@ -149,7 +149,6 @@ public class TrackViewPanel extends JPanel {
 
         this.fastReverseButton.setEnabled(state);
         this.reverseButton.setEnabled(state);
-//        this.stopButton.setEnabled(state);
         this.forwardButton.setEnabled(state);
         this.fastForwardButton.setEnabled(state);
         this.speedLabel.setEnabled(state);

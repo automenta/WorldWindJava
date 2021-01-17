@@ -96,12 +96,9 @@ public class EllipsoidsEverywhere extends ApplicationTemplate {
         public AppFrame() {
             super(true, true, false);
 
-            //getWwd().getSceneController().getGLRuntimeCapabilities().setVertexBufferObjectEnabled(true);
-
             this.getControlPanel().add(makeShapesControlPanel(), BorderLayout.SOUTH);
 
             Layer layer = new RenderableLayer();
-            //layer.setPickEnabled(true);
             WorldWindow.insertBeforeCompass(wwd(), layer);
 
             makeMany();

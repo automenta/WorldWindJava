@@ -135,7 +135,6 @@ public class SelectEvent extends WWEvent {
     }
 
     public String getEventAction() {
-        //return this.eventAction != null ? this.eventAction : "gov.nasa.worldwind.SelectEvent.UnknownEventAction";
         return eventAction;
     }
 

@@ -164,13 +164,11 @@ public class SARAnnotationSupport {
     private void select(Object o) {
         if (this.currentAnnotation != null) {
             // Unselect current
-            //this.currentAnnotation.getAttributes().setHighlighted(false);
             this.currentAnnotation.getAttributes().setBorderColor(SARAnnotationSupport.this.savedBorderColor);
         }
         if (o instanceof SARAnnotation && this.currentAnnotation != o) {
             // Select new one if not current one already
             this.currentAnnotation = (SARAnnotation) o;
-            //this.currentAnnotation.getAttributes().setHighlighted(true);
             this.savedBorderColor = this.currentAnnotation.getAttributes().getBorderColor();
             this.currentAnnotation.getAttributes().setBorderColor(Color.YELLOW);
         }
@@ -254,7 +252,6 @@ public class SARAnnotationSupport {
             if (owner != null) {
                 annotation.setOwner(owner);
                 annotation.getAttributes().setTextColor(owner.getColor());
-                //annotation.getAttributes().setBorderColor(color);
             }
             add(annotation);
         }

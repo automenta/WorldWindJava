@@ -11,17 +11,14 @@ import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.DrawContext;
-import gov.nasa.worldwind.retrieve.*;
 import gov.nasa.worldwind.util.*;
 import jcog.Util;
-import org.jetbrains.annotations.Nullable;
 
 import javax.imageio.ImageIO;
 import java.awt.image.*;
 import java.io.*;
-import java.net.*;
+import java.net.MalformedURLException;
 import java.nio.ByteBuffer;
-import java.util.logging.Level;
 
 import static java.lang.Math.toRadians;
 
@@ -173,8 +170,7 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
                     }
                 }, e->{
                     layer.getLevels().miss(tile);
-//                    Logging.logger().info(Logging.getMessage("http fail", e));
-                    return false;
+                return false;
                 });
 //            }
 //            catch (MalformedURLException e) {
@@ -197,7 +193,7 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
             int c = Double.compare(this.tile.getPriority(), that.tile.getPriority());
             if (c != 0)
                 return c;
-            return tile.compareTo(that.tile); //Integer.compare(System.identityHashCode(tile), System.identityHashCode(that.tile));
+            return tile.compareTo(that.tile);
         }
 
         public boolean equals(Object o) {
@@ -220,94 +216,6 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
             return this.tile.toString();
         }
     }
-
-    private static class DownloadPostProcessor implements RetrievalPostProcessor {
-        // TODO: Rewrite this inner class, factoring out the generic parts.
-        private final MercatorTextureTile tile;
-        private final BasicMercatorTiledImageLayer layer;
-
-        public DownloadPostProcessor(MercatorTextureTile tile, BasicMercatorTiledImageLayer layer) {
-            this.tile = tile;
-            this.layer = layer;
-        }
-
-        public ByteBuffer apply(Retriever retriever) {
-            try {
-                if (!retriever.getState().equals(Retriever.RETRIEVER_STATE_SUCCESSFUL))
-                    throw new IOException("retriever fail: " + retriever.getState());
-
-                if (retriever instanceof HTTPRetriever) {
-                    HTTPRetriever htr = (HTTPRetriever) retriever;
-                    final int code = htr.getResponseCode();
-                    if (code != HttpURLConnection.HTTP_OK)
-                        throw new IOException("http fail: " + htr.getUrl().toString());
-                }
-
-                return BasicMercatorTiledImageLayer.load(retriever.getBuffer(), retriever.getContentType(), tile, layer);
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-
-    }
-
-    @Nullable
-    public static ByteBuffer load(ByteBuffer buffer, String contentType, MercatorTextureTile tile, BasicMercatorTiledImageLayer layer) {
-        try {
-
-
-            final File outFile = layer.getDataFileStore().newFile(tile.getPath());
-//                if (outFile == null) return null;
-            if (outFile.exists())
-                return buffer;
-
-            // TODO: Better, more generic and flexible handling of file-format type
-            if (buffer != null) {
-                if (contentType == null)
-                    throw new IOException("unknown ContentType");
-
-                if (contentType.contains("xml")
-                    || contentType.contains("html")
-                    || contentType.contains("text")) {
-                    layer.getLevels().miss(tile);
-
-                    StringBuilder sb = new StringBuilder(buffer.remaining());
-                    while (buffer.hasRemaining()) {
-                        sb.append((char) buffer.get());
-                    }
-                    // TODO: parse out the message if the content is xml or html.
-                    throw new IOException(sb.toString());
-                } else if (contentType.contains("dds")) {
-                    layer.saveBuffer(buffer, outFile);
-                } else if (contentType.contains("zip")) {
-                    // Assume it's zipped DDS, which the retriever would have unzipped into the buffer.
-                    layer.saveBuffer(buffer, outFile);
-                }
-//                    else if (outFile.getName().endsWith(".dds"))
-                else if (contentType.contains("image")) {
-                    BufferedImage image = BasicMercatorTiledImageLayer.convertBufferToImage(buffer);
-
-                    image = BasicMercatorTiledImageLayer.modifyImage(image);
-                    if (BasicMercatorTiledImageLayer.isTileValid(image)) {
-                        if (!layer.transformAndSave(image, tile.mercatorSector, outFile))
-                            image = null;
-                    }
-
-                }
-
-                //layer.firePropertyChange(AVKey.LAYER, null, this);
-                return buffer;
-            }
-        }
-        catch (IOException e) {
-            layer.getLevels().miss(tile);
-            Logging.logger().log(Level.SEVERE,
-                Logging.getMessage("layers.TextureLayer.ExceptionSavingRetrievedTextureFile", tile.getPath()), e);
-        }
-        return null;
-    }
-
 }
 //        @Deprecated public void run0() {
 //            // TODO: check to ensure load is still needed

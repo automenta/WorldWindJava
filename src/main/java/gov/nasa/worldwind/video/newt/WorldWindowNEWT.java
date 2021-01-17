@@ -123,8 +123,6 @@ public class WorldWindowNEWT extends AbstractLayer implements WorldWindow, GLEve
 
     public ObjectFloatHashMap<String> tagsInView() {
 
-//        final Frustum viewFrust = view().getFrustum();
-
         ObjectFloatHashMap<String> h = new ObjectFloatHashMap<>();
 
         DrawContext dc = sceneControl().getDrawContext();
@@ -139,7 +137,6 @@ public class WorldWindowNEWT extends AbstractLayer implements WorldWindow, GLEve
                             if (r instanceof ExtentHolder) {
                                 if (intersectsFrustrum.test(((ExtentHolder) r))) {
                                     Object m = ((AVList) r).get("_"/*DESCRIPTION*/);
-//                                    System.out.println(m);
                                     for (Map.Entry<String, String> entry : ((Map<String, String>) m).entrySet()) {
                                         String k = entry.getKey();
                                         if (tag(k))

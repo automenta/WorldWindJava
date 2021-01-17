@@ -27,8 +27,6 @@ import java.util.List;
 
 public class DFWDemo {
 
-    //public static Logger logger;
-
     static {
         System.setProperty("java.net.useSystemProxies", "true");
         if (Configuration.isMacOS()) {
@@ -332,7 +330,6 @@ public class DFWDemo {
                     configParams.set(AVKey.TILE_WIDTH, 1024);
                     configParams.set(AVKey.TILE_HEIGHT, 1024);
                     configParams.set(AVKey.NUM_LEVELS, 9);
-                    // configParams.setValue(AVKey.IMAGE_FORMAT,"image/png");
                     Angle delta = new Angle(0.01);
                     configParams.set(AVKey.LEVEL_ZERO_TILE_DELTA, new LatLon(delta, delta));
                     WMSBasicElevationModel wmsElevations = new WMSBasicElevationModel(dynamicLayer.getCaps(),

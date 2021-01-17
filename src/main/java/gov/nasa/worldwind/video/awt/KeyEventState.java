@@ -8,7 +8,7 @@ package gov.nasa.worldwind.video.awt;
 import gov.nasa.worldwind.util.Logging;
 
 import java.awt.event.*;
-import java.util.*;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -48,7 +48,6 @@ public class KeyEventState implements KeyListener, MouseListener {
         }
         int numKeys = 0;
         for (InputState is : this.keyStateMap.values()) {
-            //Integer key = (KeyEvent) o;
             if (is.eventType == KeyEvent.KEY_PRESSED) {
                 numKeys++;
             }

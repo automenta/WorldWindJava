@@ -80,7 +80,7 @@ public class WMSPanel extends AbstractFeaturePanel implements TreeModelListener,
         // listen for triggers to cause WMS server contact
         this.urlField.addActionListener(actionEvent -> {
             try {
-                String serverURLString = urlField.getText();//getSelectedItem().toString();
+                String serverURLString = urlField.getText();
                 if (!WWUtil.isEmpty(serverURLString)) {
                     if (serverURI == null || !serverURI.toString().contains(serverURLString)) {
                         if (getTopGroup() != null)
@@ -425,7 +425,6 @@ public class WMSPanel extends AbstractFeaturePanel implements TreeModelListener,
         this.urlField = new JTextField();//JComboBox(INITIAL_SERVER_LIST);
         this.urlField.setOpaque(false);
         this.urlField.setEditable(true);
-//        this.urlField.setSelectedIndex(-1);
         this.urlField.setToolTipText("Enter a WMS server URL");
 
         int t = 5, l = 5, b = 5, r = 5;
@@ -478,7 +477,6 @@ public class WMSPanel extends AbstractFeaturePanel implements TreeModelListener,
     protected JPanel makeTreePanel() {
         this.layerTree.setBorder(new EmptyBorder(10, 10, 10, 10));
         this.layerTree.setVisibleRowCount(15);
-//        this.layerTree.setToolTipText("Seleccionar las capas para agregar a la lista de capas disponibles");
 
         JScrollPane scrollPane = new JScrollPane(layerTree);
         scrollPane.setOpaque(false);

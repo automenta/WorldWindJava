@@ -242,7 +242,6 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
             if (error != null) {
                 String message = Logging.getMessage("gdal.InternalError", error);
                 Logging.logger().severe(message);
-//                throw new WWRuntimeException( message );
             }
 
             if (null != this.srs) {
@@ -253,7 +252,6 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
             if (error != null) {
                 String message = Logging.getMessage("gdal.InternalError", error);
                 Logging.logger().severe(message);
-//                throw new WWRuntimeException( message );
             }
 
             this.srs = this.readSpatialReference(this.dsVRT);
@@ -563,7 +561,6 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
                 continue;
             }
 
-//          double ovWidthRes = Math.abs(extent.getDeltaLonDegrees() / (double) w);
             double ovHeightRes = Math.abs(extent.latDelta / h);
 
             if (ovHeightRes <= reqHeightRes /*&& ovWidthRes <= reqWidthRes*/) {
@@ -614,7 +611,6 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
             // no overview was found, will use image's source bands
             srcWidth = this.getWidth();
             srcHeight = this.getHeight();
-//            return this.dsVRT;
         } else {
             String msg = Logging.getMessage("gdal.UseOverviewRaster", srcWidth, srcHeight, reqWidth, reqHeight);
             Logging.logger().finest(msg);
@@ -845,7 +841,6 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
 
         Dataset ds = drvMem.Create("roi", width, height, destNumOfBands, bandDataType);
 
-//        Double nodata = this.calcNoDataForDestinationRaster(destParams);
         Double missingDataSignal = AVListImpl.getDoubleValue(this, AVKey.MISSING_DATA_SIGNAL, null);
         Double minValue = AVListImpl.getDoubleValue(this, AVKey.ELEVATION_MIN, null);
         Double maxValue = AVListImpl.getDoubleValue(this, AVKey.ELEVATION_MAX, null);
@@ -1016,7 +1011,6 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
                 if (error != null) {
                     String message = Logging.getMessage("gdal.InternalError", error);
                     Logging.logger().severe(message);
-//            throw new WWRuntimeException( message );
                 }
 
                 roiParams.set(AVKey.GDAL_MASK_DATASET, maskDS);

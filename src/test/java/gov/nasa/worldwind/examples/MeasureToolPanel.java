@@ -431,7 +431,6 @@ public class MeasureToolPanel extends JPanel {
         outerPanel.add(anglesPanel);
         outerPanel.add(checkPanel);
         outerPanel.add(buttonPanel);
-        //outerPanel.add(presetPanel);
         outerPanel.add(metricPanel);
         outerPanel.add(scrollPane);
 

@@ -95,7 +95,6 @@ public class RPFTiledImageLayer extends TiledImageLayer {
         this.rpfGenerator = new RPFGenerator(params);
 
         this.set(AVKey.CONSTRUCTION_PARAMETERS, params);
-        //this.setUseMipMaps(true);
         this.setUseTransparentTextures(true);
         this.setName(RPFTiledImageLayer.makeTitle(params));
     }
@@ -657,15 +656,6 @@ public class RPFTiledImageLayer extends TiledImageLayer {
         @Override
         protected void markResourceAbsent() {
             this.layer.levels.miss(this.tile);
-        }
-
-        @Override
-        protected Object getFileLock() {
-            return this.layer.fileLock;
-        }
-
-        protected File doGetOutputFile() {
-            return Configuration.data.newFile(this.tile.getPath());
         }
 
         @Override

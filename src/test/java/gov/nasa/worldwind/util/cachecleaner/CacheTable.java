@@ -26,7 +26,6 @@ public class CacheTable extends JTable {
         super(new CacheModel());
 
         this.model = ((CacheModel) this.getModel());
-//        this.setAutoResizeMode(AUTO_RESIZE_OFF);
         this.setShowGrid(true);
         this.setGridColor(Color.BLACK);
         this.setShowHorizontalLines(true);

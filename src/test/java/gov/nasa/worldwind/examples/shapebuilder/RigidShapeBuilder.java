@@ -134,37 +134,31 @@ public class RigidShapeBuilder extends ApplicationTemplate {
         else if (shape instanceof Ellipsoid) {
             RigidShapeEditor editor = new RigidShapeEditor();
             editor.setShape(shape);
-            //setEditorAttributes(editor);
             return editor;
         }
         else if (shape instanceof Box) {
             RigidShapeEditor editor = new BoxEditor();
             editor.setShape(shape);
-            //setEditorAttributes(editor);
             return editor;
         }
         else if (shape instanceof Cylinder) {
             RigidShapeEditor editor = new CylinderEditor();
             editor.setShape(shape);
-            //setEditorAttributes(editor);
             return editor;
         }
         else if (shape instanceof Pyramid) {
             RigidShapeEditor editor = new PyramidEditor();
             editor.setShape(shape);
-            //setEditorAttributes(editor);
             return editor;
         }
         else if (shape instanceof Cone) {
             RigidShapeEditor editor = new ConeEditor();
             editor.setShape(shape);
-            //setEditorAttributes(editor);
             return editor;
         }
         else if (shape instanceof Wedge) {
             RigidShapeEditor editor = new WedgeEditor();
             editor.setShape(shape);
-            //setEditorAttributes(editor);
             return editor;
         }
 

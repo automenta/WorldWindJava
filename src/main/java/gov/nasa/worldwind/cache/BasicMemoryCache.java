@@ -57,22 +57,6 @@ public class BasicMemoryCache extends AbstractMemoryCache {
     }
 
     /**
-     * Sets the new low water level in cache units, which controls how aggresively the cache discards items.
-     * <p>
-     * When the cache fills, it removes items until it reaches the low water level.
-     * <p>
-     * Setting a high loWater level will increase cache misses, but decrease average add time, but setting a low loWater
-     * will do the opposite.
-     *
-     * @param loWater the new low water level.
-     */
-    public void setLowWater(long loWater) {
-        if (loWater < this.capacity.get() && loWater >= 0) {
-            this.lowWater = loWater;
-        }
-    }
-
-    /**
      * Adds an object to the cache. The add fails if the object or key is null, or if the size is zero, negative or
      * greater than the maximmum capacity.
      *

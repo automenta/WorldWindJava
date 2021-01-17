@@ -264,7 +264,6 @@ public class UTMBaseGraticuleLayer extends GraticuleLayer {
                     this.graticuleSupport.addRenderable(ge.renderable, UTMBaseGraticuleLayer.GRATICULE_UTM);
                 }
             }
-            //System.out.println("Total elements: " + count + " visible sector: " + vs);
         }
     }
 
@@ -704,7 +703,6 @@ public class UTMBaseGraticuleLayer extends GraticuleLayer {
                     this.boundingSector = this.UTMZoneSector.intersection(this.boundingSector);
 
                 this.centroid = this.boundingSector != null ? this.boundingSector.getCentroid() : this.squareCenter;
-                //this.squareCenter = this.boundingSector.getCentroid();
             }
 
             // Check whether this square is truncated by the grid zone boundary

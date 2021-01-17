@@ -255,7 +255,6 @@ public class GraticuleAttributesPanel extends JPanel {
             };
 
             this.linePanel = new JPanel();
-            //this.lineEnabled = new JCheckBox("Show Graticule");
             this.lineColorPanel = new ColorPanel();
             //noinspection PointlessArithmeticExpression
             this.lineWidthSlider = new JSlider(

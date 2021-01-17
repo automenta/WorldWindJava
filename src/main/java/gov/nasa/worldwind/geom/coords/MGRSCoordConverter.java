@@ -116,7 +116,6 @@ class MGRSCoordConverter {
     // Ellipsoid parameters, default to WGS 84
     private double MGRS_a = 6378137.0;          // Semi-major axis of ellipsoid in meters
     private double MGRS_f = 1 / 298.257223563;  // Flattening of ellipsoid
-    //private final double MGRS_recpf = 298.257223563;
     private String MGRS_Ellipsoid_Code = "WE";
     private String MGRSString = "";
     private long ltr2_low_value;
@@ -804,7 +803,6 @@ class MGRSCoordConverter {
             lastLetter = MGRSCoordConverter.LETTER_X;
         else if (lat_deg > -80.5 && lat_deg < 72) {
             temp = ((latitude + (80.0 * MGRSCoordConverter.DEG_TO_RAD)) / (8.0 * MGRSCoordConverter.DEG_TO_RAD)) + 1.0e-12;
-            // lastLetter = Latitude_Band_Table.get((int) temp).letter;
             lastLetter = (long) MGRSCoordConverter.latitudeBandConstants[(int) temp][0];
         } else
             error_code |= MGRSCoordConverter.MGRS_LAT_ERROR;

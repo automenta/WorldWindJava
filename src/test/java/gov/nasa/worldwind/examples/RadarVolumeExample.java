@@ -96,7 +96,6 @@ public class RadarVolumeExample extends ApplicationTemplate {
                 SwingUtilities.invokeLater(() -> {
                     try {
                         showRadarVolume(positions, obstructionFlags, numAz, numEl);
-//                                showPositionsAndRays(positions, obstructionFlags);
                         wwd().redraw();
                     }
                     finally {

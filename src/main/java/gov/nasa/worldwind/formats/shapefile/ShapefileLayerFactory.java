@@ -662,7 +662,6 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
     protected void addRenderablesForMultiPatch(Shapefile shp, RenderableLayer layer) {
         ShapefileMultiPatch shape = new ShapefileMultiPatch(shp, this.normalShapeAttributes,
             this.highlightShapeAttributes, this);
-        //layer.addRenderable(shape);
         layer.addAll(shape.getRenderables());
     }
 

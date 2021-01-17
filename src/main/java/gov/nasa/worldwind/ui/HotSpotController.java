@@ -220,7 +220,6 @@ public class HotSpotController implements SelectListener, MouseMotionListener {
         this.activeHotSpot = hotSpot;
 
         if (this.activeHotSpot != null) {
-            //System.out.println("active hotspot: " + activeHotSpot);
             this.activeHotSpot.setActive(true);
             this.wwd.input().addKeyListener(this.activeHotSpot);
             this.wwd.input().addMouseListener(this.activeHotSpot);

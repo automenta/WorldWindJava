@@ -1396,7 +1396,6 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
 
             // Read the record number and the content length from the record header.
             this.mappedShpBuffer.order(ByteOrder.BIG_ENDIAN);
-            //int recordNumber = this.shpMappedBuffer.getInt(pos);
             int contentLength = this.mappedShpBuffer.getInt(pos + 4) * 2;
             int recordLength = ShapefileRecord.RECORD_HEADER_LENGTH + contentLength;
 
@@ -1418,7 +1417,6 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
             WWIO.readInputStreamToBuffer(this.shpChannel, this.recordHeaderBuffer);
 
             // Read the record number and the content length.
-            //int recordNumber = this.recordHeaderBuffer.getInt(0);
             int contentLength = this.recordHeaderBuffer.getInt(4) * 2;
             int recordLength = ShapefileRecord.RECORD_HEADER_LENGTH + contentLength;
 

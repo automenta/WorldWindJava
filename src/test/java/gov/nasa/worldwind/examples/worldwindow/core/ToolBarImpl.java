@@ -198,7 +198,6 @@ public class ToolBarImpl extends AbstractFeature implements ToolBar {
 
         @Override
         protected void paintComponent(Graphics g) {
-//        this.setIconSize(this.getSize().width);
             super.paintComponent(g);
 
             if (this.getFeature().isOn())

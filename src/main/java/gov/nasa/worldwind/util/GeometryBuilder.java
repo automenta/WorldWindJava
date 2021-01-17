@@ -2387,7 +2387,6 @@ public class GeometryBuilder {
         int i, index;
         float x, y, z, u, v, a, phi;
 
-//        int slices = (int) Math.pow(2, 2 + subdivisions);
         float da = 2.0f * (float) Math.PI / slices;
 
         if (face == 2)      // cylinder core
@@ -4568,7 +4567,6 @@ public class GeometryBuilder {
         int i, index;
         float x, y, z, a;
 
-//        int slices = (int) Math.pow(2, 2 + subdivisions);
         float da = 2.0f * (float) Math.PI / slices;
 
         int cylinderIndexCount = 12 * slices;
@@ -4640,7 +4638,6 @@ public class GeometryBuilder {
         // INDICES
 
         int coreIndex = (2 * slices) + 2;
-//        int centerPoint = 0;
 
         for (i = 0; i < slices; i++) {
             // cylinder top
@@ -4718,7 +4715,6 @@ public class GeometryBuilder {
         // face 1 = bottom
         // face 2 = round cylinder core
 
-        //int slices = (int) Math.pow(2, 2 + subdivisions);
         float da = (float) (2.0 * Math.PI / slices);
 
         int cylinderIndexCount = 3 * slices;

@@ -266,11 +266,9 @@ class TMCoordConverter {
             eta4 = eta3 * eta;
 
             /* radius of curvature in prime vertical */
-            // sn = SPHSN(Latitude);
             sn = TranMerc_a * Math.pow(1 - TranMerc_es * Math.pow(Math.sin(Latitude), 2), -0.5);
 
             /* True Meridianal Distances */
-            // tmd = SPHTMD(Latitude);
             tmd = TranMerc_ap * Latitude
                 - TranMerc_bp * Math.sin(2.0 * Latitude)
                 + TranMerc_cp * Math.sin(4.0 * Latitude)
@@ -278,7 +276,6 @@ class TMCoordConverter {
                 + TranMerc_ep * Math.sin(8.0 * Latitude);
             /*  Origin  */
 
-            // tmdo = SPHTMD (TranMerc_Origin_Lat);
             tmdo = TranMerc_ap * TranMerc_Origin_Lat
                 - TranMerc_bp * Math.sin(2.0 * TranMerc_Origin_Lat)
                 + TranMerc_cp * Math.sin(4.0 * TranMerc_Origin_Lat)
@@ -381,7 +378,6 @@ class TMCoordConverter {
 
         if (Error_Code == TMCoordConverter.TRANMERC_NO_ERROR) {
             /* True Meridional Distances for latitude of origin */
-            // tmdo = SPHTMD(TranMerc_Origin_Lat);
             tmdo = TranMerc_ap * TranMerc_Origin_Lat
                 - TranMerc_bp * Math.sin(2.0 * TranMerc_Origin_Lat)
                 + TranMerc_cp * Math.sin(4.0 * TranMerc_Origin_Lat)
@@ -392,32 +388,27 @@ class TMCoordConverter {
             tmd = tmdo + (Northing - TranMerc_False_Northing) / TranMerc_Scale_Factor;
 
             /* First Estimate */
-            //sr = SPHSR(0.e0);
             sr = TranMerc_a * (1.0e0 - TranMerc_es) /
                 Math.pow(Math.sqrt(1.0e0 - TranMerc_es * Math.pow(Math.sin(0.0e0), 2)), 3);
 
             ftphi = tmd / sr;
 
             for (i = 0; i < 5; i++) {
-                // t10 = SPHTMD (ftphi);
                 t10 = TranMerc_ap * ftphi
                     - TranMerc_bp * Math.sin(2.0 * ftphi)
                     + TranMerc_cp * Math.sin(4.0 * ftphi)
                     - TranMerc_dp * Math.sin(6.0 * ftphi)
                     + TranMerc_ep * Math.sin(8.0 * ftphi);
-                // sr = SPHSR(ftphi);
                 sr = TranMerc_a * (1.0e0 - TranMerc_es) /
                     Math.pow(Math.sqrt(1.0e0 - TranMerc_es * Math.pow(Math.sin(ftphi), 2)), 3);
                 ftphi = ftphi + (tmd - t10) / sr;
             }
 
             /* Radius of Curvature in the meridian */
-            // sr = SPHSR(ftphi);
             sr = TranMerc_a * (1.0e0 - TranMerc_es) /
                 Math.pow(Math.sqrt(1.0e0 - TranMerc_es * Math.pow(Math.sin(ftphi), 2)), 3);
 
             /* Radius of Curvature in the meridian */
-            // sn = SPHSN(ftphi);
             sn = TranMerc_a * Math.pow(1.0e0 - TranMerc_es * Math.pow(Math.sin(ftphi), 2), -0.5);
 
             /* Sine Cosine terms */

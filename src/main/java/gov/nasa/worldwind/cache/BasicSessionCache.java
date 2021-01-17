@@ -5,8 +5,6 @@
  */
 package gov.nasa.worldwind.cache;
 
-////.*;
-
 import gov.nasa.worldwind.util.*;
 
 import java.util.*;

@@ -1530,7 +1530,6 @@ public abstract class AbstractShape extends WWObjectImpl
         rs.addStateValueAsInteger(context, "altitudeMode", this.getAltitudeMode());
 
         this.normalAttrs.getRestorableState(rs, rs.addStateObject(context, "attributes"));
-        //this.highlightAttrs.getRestorableState(rs, rs.addStateObject(context, "highlightAttrs"));
     }
 
     public void restoreState(String stateInXml) {

@@ -5,9 +5,8 @@
  */
 package gov.nasa.worldwind.layers;
 
-import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.WWObjectImpl;
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.cache.FileStore;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
@@ -30,7 +29,6 @@ public abstract class AbstractLayer extends WWObjectImpl implements Layer {
     private boolean networkDownloadEnabled = true;
     private long expiryTime;
     private ScreenCredit screenCredit;
-    private FileStore dataFileStore = Configuration.data;
 
     /**
      * Returns true if a specified DOM document is a Layer configuration document, and false otherwise.
@@ -208,15 +206,6 @@ public abstract class AbstractLayer extends WWObjectImpl implements Layer {
 
     public void setNetworkRetrievalEnabled(boolean networkDownloadEnabled) {
         this.networkDownloadEnabled = networkDownloadEnabled;
-    }
-
-    public FileStore getDataFileStore() {
-        return this.dataFileStore;
-    }
-
-    public void setDataFileStore(FileStore fileStore) {
-
-        this.dataFileStore = fileStore;
     }
 
     public boolean isLayerInView(DrawContext dc) {

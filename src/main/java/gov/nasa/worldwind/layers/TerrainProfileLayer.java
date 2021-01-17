@@ -759,7 +759,6 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
 
         if (this.wwd != null) {
             this.computeProfile(dc);
-//            this.expirySupport.restart(dc);
         }
 
         if (this.positions != null) {
@@ -888,7 +887,6 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
             }
         }
         catch (RuntimeException e) {
-            //e.printStackTrace();
         }
         finally {
             if (projectionPushed) {
@@ -1330,14 +1328,12 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
         if (this.wwd != null) {
             this.wwd.removePositionListener(this);
             this.wwd.view().removePropertyChangeListener(this);
-//            this.wwd.getModel().getGlobe().getElevationModel().removePropertyChangeListener(this);
             this.wwd.removeSelectListener(this);
         }
         this.wwd = wwd;
         if (this.wwd != null) {
             this.wwd.addPositionListener(this);
             this.wwd.view().addPropertyChangeListener(this);
-//            this.wwd.getModel().getGlobe().getElevationModel().addPropertyChangeListener(this);
             this.wwd.addSelectListener(this);
         }
     }
@@ -1452,7 +1448,6 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
                     azimuth = this.objectHeading.sub(Angle.POS90).radians();
                 }
                 if (i > (this.samples - 1) / 2.0f) {
-                    //azimuth = view.getHeading().subtract(Angle.NEG90).radians;
                     azimuth += Math.PI;
                 }
                 double distance = Math.abs((i - ((this.samples - 1) / 2.0d)) * step);

@@ -44,7 +44,6 @@ public class LayerTreeUsage extends ApplicationTemplate {
             // Add a controller to handle input events on the layer tree.
             HotSpotController controller = new HotSpotController(w.wwd());
 
-            //WorldWindow.insertBeforeCompass(w.wwd(), ui);
             m.getLayers().add(ui);
         });
     }

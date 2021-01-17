@@ -300,7 +300,6 @@ public class MGRSAttributesPanel extends JPanel {
 
     private void updateLayerState(GraticuleAttributesPanel attributesPanel, String graticuleType) {
         if (this.layer != null && attributesPanel != null && graticuleType != null) {
-            //this.layer.setDrawGraticule(attributesPanel.isLineEnableSelected(), graticuleType);
             this.layer.setGraticuleLineColor(attributesPanel.getSelectedLineColor(), graticuleType);
             this.layer.setGraticuleLineWidth(attributesPanel.getSelectedLineWidth(), graticuleType);
             this.layer.setGraticuleLineStyle(attributesPanel.getSelectedLineStyle(), graticuleType);

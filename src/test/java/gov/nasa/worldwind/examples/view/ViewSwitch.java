@@ -67,7 +67,6 @@ public class ViewSwitch extends ApplicationTemplate {
             // Units constants
             public final static String UNIT_METRIC = "gov.nasa.worldwind.StatusBar.Metric";
             public final static String UNIT_IMPERIAL = "gov.nasa.worldwind.StatusBar.Imperial";
-            //private final static double METER_TO_FEET = 3.280839895;
             private final static double METER_TO_MILE = 0.000621371192;
             public final ViewerClassMap classNameList = new ViewerClassMap();
             // Orbit view class information

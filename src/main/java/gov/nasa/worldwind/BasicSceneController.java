@@ -123,7 +123,6 @@ public class BasicSceneController extends AbstractSceneController {
             this.makeCurrent(dc, -1);
             this.draw(dc);
         }
-//        System.out.println("DRAWING " + drawing);
     }
 
     protected void preRender2DContiguous(DrawContext dc) {

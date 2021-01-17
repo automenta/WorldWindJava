@@ -64,7 +64,6 @@ public class BasicModel extends WWObjectImpl implements Model {
     }
 
     static private Globe globeDefault() {
-        //return (Globe) WorldWind.createComponent(Configuration.getStringValue(AVKey.GLOBE_CLASS_NAME));
         return Configuration.globe;
     }
 

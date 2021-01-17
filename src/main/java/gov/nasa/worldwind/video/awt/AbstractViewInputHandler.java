@@ -151,14 +151,12 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
             return;
 
         if (this.wwd != null) {
-            //this.wwd.removeRenderingListener(this);
             this.wwd.sceneControl().removePropertyChangeListener(this);
         }
 
         this.wwd = newWorldWindow;
 
         if (this.wwd != null) {
-            //this.wwd.addRenderingListener(this);
             this.wwd.sceneControl().addPropertyChangeListener(this);
         }
     }

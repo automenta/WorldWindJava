@@ -72,7 +72,6 @@ public class RPFImageFile extends RPFFile {
         WritableRaster raster = bimage.getRaster();
         DataBufferInt dataBuffer = (DataBufferInt) raster.getDataBuffer();
 
-//        IntBuffer buffer = IntBuffer.wrap(dataBuffer.getData());
         int[] buffer = dataBuffer.getData();
         this.getImageSegment().getImagePixelsAsArray(buffer, RPFImageType.IMAGE_TYPE_ALPHA_RGB);
         return bimage;

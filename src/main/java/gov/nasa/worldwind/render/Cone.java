@@ -387,7 +387,6 @@ public class Cone extends RigidShape {
         gl.glDisable(GL2.GL_RESCALE_NORMAL);
 
         // disable back face culling
-        // gl.glDisable(GL.GL_CULL_FACE);
 
         dc.getGLRuntimeCapabilities().setVertexBufferObjectEnabled(vboState);
 
@@ -397,7 +396,6 @@ public class Cone extends RigidShape {
                 if (normalBuffer == null)
                     gl.glEnableClientState(GL2.GL_NORMAL_ARRAY);
             }
-            // this.logGeometryStatistics(dc, geom);
         }
     }
 

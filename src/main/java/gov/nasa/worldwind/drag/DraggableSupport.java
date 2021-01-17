@@ -510,7 +510,6 @@ public class DraggableSupport {
             if (maxDifference > (5 * altitude)) {
                 double mixAmount = (5 * altitude) / maxDifference;
                 eye = Vec4.mix3(mixAmount, surface, eye);
-                // maxDifference = eye.getLength3() - surface.getLength3();
             }
 
             // False position approximation range reduction method. In testing, using this method decreased the average

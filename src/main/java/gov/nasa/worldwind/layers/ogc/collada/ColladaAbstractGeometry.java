@@ -189,7 +189,6 @@ public abstract class ColladaAbstractGeometry extends ColladaAbstractObject {
             }
             intData = adjustedIntData;
         }
-        //System.out.println(reqDataLen+","+intData.length);
         for (int i = 0; i < this.getCount(); i++) {
             for (int j = 0; j < vertsPerShape; j++) {
                 int index = i * (vertsPerShape * sourcesStride) + j * sourcesStride;

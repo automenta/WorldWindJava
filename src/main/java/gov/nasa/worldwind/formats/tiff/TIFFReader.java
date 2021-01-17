@@ -134,7 +134,6 @@ class TIFFReader {
             if (i > 0) {
                 long skip = stripOffsets[i] - stripOffsets[i - 1] - stripCounts[i - 1];
                 if (skip > 0) {
-                    //in.skip(skip);
                     this.theChannel.position(this.theChannel.position() + skip);
                 }
             }

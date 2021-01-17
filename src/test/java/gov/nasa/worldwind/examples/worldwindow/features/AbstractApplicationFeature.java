@@ -149,7 +149,6 @@ public abstract class AbstractApplicationFeature extends AbstractFeature impleme
         }
 
         // Cause the cache files to be deleted when the JVM exits.
-//        layer.setValue(AVKey.DELETE_CACHE_ON_EXIT, true);
 
         this.appLayers.add(layer);
         layerManager.addLayer(layer, path.lastButOne());

@@ -709,7 +709,6 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
     }
 
     protected BufferWrapper readElevations(ByteBuffer b, URL url) throws IOException {
-        //return url.getPath().endsWith("tif") ? this.makeTiffElevations(url) : this.makeBilElevations(url);
         return url.getPath().endsWith("tif") ?
             this.makeTiffElevations(b) :
             this.makeBilElevations(b);
@@ -1618,12 +1617,7 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
     }
 
     protected boolean isTileLocalOrAbsent(Tile tile) {
-        if (this.getLevels().missing(tile))
-            return true;  // tile is absent
-
-        URL url = this.getDataFileStore().findFile(tile.getPath(), false);
-
-        return url != null && !BasicElevationModel.isFileExpired(tile, url, this.getDataFileStore());
+        return this.getLevels().missing(tile);
     }
 
     protected static class RequestTask implements Runnable {
@@ -1659,9 +1653,7 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
 //                }
 
                 //TODO refine
-                //tile.setPriority(1.0/(1+tile.sector.latDelta*tile.sector.lonDelta));
                 tile.setPriority(0.5);
-                //tile.setPriority(0);
 
                 this.elevationModel.retrieveElevations(tile, new DownloadPostProcessor(tile, this.elevationModel));
             }
@@ -1695,38 +1687,18 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
     protected static class DownloadPostProcessor extends AbstractRetrievalPostProcessor {
         protected final ElevationTile tile;
         protected final BasicElevationModel elevationModel;
-        protected final FileStore fileStore;
 
         public DownloadPostProcessor(ElevationTile tile, BasicElevationModel em) {
-            this(tile, em, null);
-        }
-
-        public DownloadPostProcessor(ElevationTile tile, BasicElevationModel em, FileStore fileStore) {
             //noinspection RedundantCast
             super((AVList) em);
 
             this.tile = tile;
             this.elevationModel = em;
-            this.fileStore = fileStore;
-        }
-
-        protected FileStore getFileStore() {
-            return this.fileStore != null ? this.fileStore : this.elevationModel.getDataFileStore();
-        }
-
-        @Override
-        protected boolean overwriteExistingFile() {
-            return true;
         }
 
         @Override
         protected void markResourceAbsent() {
             this.elevationModel.getLevels().miss(this.tile);
-        }
-
-        @Override
-        protected Object getFileLock() {
-            return this.elevationModel.fileLock;
         }
 
         @Override

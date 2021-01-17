@@ -79,7 +79,6 @@ public class CloudCeiling implements Restorable {
         end = end.degrees > start.degrees ? end : end.addDegrees(360);
         ArrayList<LatLon> positions = new ArrayList<>();
         Angle radiusAngle = Angle.fromRadians(radius / globe.getRadiusAt(center));
-        //positions.add(LatLon.greatCircleEndPosition(center, start, radiusAngle)); // Skip first pos
         positions.add(LatLon.greatCircleEndPosition(center, Angle.midAngle(start, end), radiusAngle));
         positions.add(LatLon.greatCircleEndPosition(center, end, radiusAngle));
         return positions;

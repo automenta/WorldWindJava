@@ -43,7 +43,6 @@ public abstract class AbstractDataRaster extends AVListImpl implements DataRaste
         if (sector == null) {
             String message = Logging.getMessage("nullValue.SectorIsNull");
             Logging.logger().finest(message);
-//            throw new IllegalArgumentException(message);
         }
 
         // for performance reasons we are "caching" these parameters in addition to AVList
@@ -97,13 +96,11 @@ public abstract class AbstractDataRaster extends AVListImpl implements DataRaste
                 String message = Logging.getMessage("generic.AttemptToChangeReadOnlyProperty", key);
                 Logging.logger().finest(message);
                 // relax restriction, just log and continue
-//                throw new IllegalArgumentException(message);
                 return this;
             } else if (AVKey.HEIGHT.equals(key) && this.getHeight() != (Integer) value) {
                 String message = Logging.getMessage("generic.AttemptToChangeReadOnlyProperty", key);
                 Logging.logger().finest(message);
                 // relax restriction, just log and continue
-//                throw new IllegalArgumentException(message);
                 return this;
             }
         }

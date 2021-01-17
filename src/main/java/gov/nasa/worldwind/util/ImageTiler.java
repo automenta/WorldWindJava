@@ -147,7 +147,6 @@ public class ImageTiler {
                     Angle minLon = baseSector.lonMin().add(baseSector.lonDelta().multiply(s0));
                     Angle maxLon = baseSector.lonMin().add(baseSector.lonDelta().multiply(s1));
 
-//                    System.out.println(new Sector(minLat, maxLat, minLon, maxLon));
                     listener.newTile(image, new Sector(minLat, maxLat, minLon, maxLon));
                 } else {
                     // The source image does not fill this tile, so create a smaller tile with an alpha channel.
@@ -172,7 +171,6 @@ public class ImageTiler {
                     double t00 = (double) (y + image.getHeight()) / N;
                     Angle minLat0 = baseSector.latMax().sub(baseSector.latDelta().multiply(t00));
 
-//                    System.out.println(new Sector(minLat0, maxLat, minLon, maxLon));
                     listener.newTile(image, new Sector(minLat0, maxLat, minLon, maxLon));
                 }
             }

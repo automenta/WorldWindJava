@@ -560,14 +560,12 @@ public class Annotations extends ApplicationTemplate {
                                 // Left click on an annotation - select
                                 if (AppFrame.this.currentAnnotation != null) {
                                     // Unselect current
-                                    //AppFrame.this.currentAnnotation.getAttributes().setHighlighted(false);
                                     AppFrame.this.currentAnnotation.getAttributes().setBorderColor(
                                         AppFrame.this.savedBorderColor);
                                 }
                                 if (AppFrame.this.currentAnnotation != event.getTopObject()) {
                                     // Select new one if not current one already
                                     AppFrame.this.currentAnnotation = (Annotation) event.getTopObject();
-                                    //AppFrame.this.currentAnnotation.getAttributes().setHighlighted(true);
                                     AppFrame.this.savedBorderColor = AppFrame.this.currentAnnotation
                                         .getAttributes().getBorderColor();
                                     AppFrame.this.savedImage = AppFrame.this.currentAnnotation.getAttributes()
@@ -654,7 +652,6 @@ public class Annotations extends ApplicationTemplate {
             this.widthSlider = new JSlider(JSlider.HORIZONTAL, 0, 800, 160);
             this.widthSlider.setMajorTickSpacing(100);
             this.widthSlider.setMinorTickSpacing(10);
-            //this.widthSlider.setPaintTicks(true);
             this.widthSlider.setPaintLabels(true);
             this.widthSlider.setToolTipText("Preferred annotation width");
             this.widthSlider.addChangeListener(event -> {
@@ -666,7 +663,6 @@ public class Annotations extends ApplicationTemplate {
             this.heightSlider = new JSlider(JSlider.HORIZONTAL, 0, 800, 0);
             this.heightSlider.setMajorTickSpacing(100);
             this.heightSlider.setMinorTickSpacing(10);
-            //this.widthSlider.setPaintTicks(true);
             this.heightSlider.setPaintLabels(true);
             this.heightSlider.setToolTipText("Preferred annotation height, zero = no limit");
             this.heightSlider.addChangeListener(event -> {
@@ -685,7 +681,6 @@ public class Annotations extends ApplicationTemplate {
             this.cornerRadiusSlider = new JSlider(JSlider.HORIZONTAL, 0, 50, 10);
             this.cornerRadiusSlider.setMajorTickSpacing(10);
             this.cornerRadiusSlider.setMinorTickSpacing(1);
-            //this.cornerRadiusSlider.setPaintTicks(true);
             this.cornerRadiusSlider.setPaintLabels(true);
             this.cornerRadiusSlider.setToolTipText("Rounded corners radius");
             this.cornerRadiusSlider.addChangeListener(event -> {
@@ -742,7 +737,6 @@ public class Annotations extends ApplicationTemplate {
             this.borderWidthSlider = new JSlider(JSlider.HORIZONTAL, 0, 50, 10);
             this.borderWidthSlider.setMajorTickSpacing(10);
             this.borderWidthSlider.setMinorTickSpacing(1);
-            //this.borderWidthSlider.setPaintTicks(true);
             this.borderWidthSlider.setPaintLabels(true);
             this.borderWidthSlider.setToolTipText("Border width 1/10th");
             this.borderWidthSlider.addChangeListener(event -> {
@@ -776,7 +770,6 @@ public class Annotations extends ApplicationTemplate {
             this.scaleSlider = new JSlider(JSlider.HORIZONTAL, 0, 30, 10);
             this.scaleSlider.setMajorTickSpacing(10);
             this.scaleSlider.setMinorTickSpacing(1);
-            //this.scaleSlider.setPaintTicks(true);
             this.scaleSlider.setPaintLabels(true);
             this.scaleSlider.setToolTipText("Annotation scaling");
             this.scaleSlider.addChangeListener(event -> {

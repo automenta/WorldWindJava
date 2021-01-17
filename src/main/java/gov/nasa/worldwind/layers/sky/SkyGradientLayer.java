@@ -25,7 +25,6 @@ import java.awt.*;
 public class SkyGradientLayer extends AbstractLayer {
     protected final static int STACKS = 12;
     protected final static int SLICES = 64;
-    //protected float[] horizonColor = new float[] { 0.66f, 0.70f, 0.81f, 1.0f }; // horizon color (same as fog)
     protected final float[] horizonColor = {0.76f, 0.76f, 0.80f, 1.0f}; // horizon color
     protected final float[] zenithColor = {0.26f, 0.47f, 0.83f, 1.0f}; // zenith color
     // TODO: make configurable

@@ -157,7 +157,6 @@ public class AnalysisPanel extends JPanel implements Restorable {
     public void setWwd(WorldWindow wwd) {
         if (this.wwd != null) {
             this.wwd.removePropertyChangeListener(this.propertyChangeListener);
-//            this.wwd.getModel().getGlobe().getElevationModel().removePropertyChangeListener(this.propertyChangeListener);
             this.wwd.view().removePropertyChangeListener(this.propertyChangeListener);
             this.wwd.removeRenderingListener(this.renderingListener);
         }
@@ -165,7 +164,6 @@ public class AnalysisPanel extends JPanel implements Restorable {
         this.terrainProfilePanel.setWwd(wwd);
         if (this.wwd != null) {
             this.wwd.addPropertyChangeListener(this.propertyChangeListener);
-//            this.wwd.getModel().getGlobe().getElevationModel().addPropertyChangeListener(this.propertyChangeListener);
             this.wwd.view().addPropertyChangeListener(this.propertyChangeListener);
             this.wwd.addRenderingListener(this.renderingListener);
             WorldWindow.insertBeforeCompass(wwd, this.trackRenderables);
@@ -238,7 +236,6 @@ public class AnalysisPanel extends JPanel implements Restorable {
     }
 
     private void updateView(boolean goSmoothly) {
-        //System.out.println("AnalysisPanel.updateView(" + goSmoothly + "): view mode: " + this.trackViewPanel.getViewMode());
         BasicOrbitView view = (BasicOrbitView) this.wwd.view();
         view.setFieldOfView(AnalysisPanel.getControlFOV());
 
@@ -373,7 +370,6 @@ public class AnalysisPanel extends JPanel implements Restorable {
     private void saveExamineViewState() {
         this.examineViewState = new ViewState((OrbitView) this.wwd.view(), this.getHeading(),
             this.getPositionAlongSegment());
-        //System.out.println("AnalysisPanel.saveExamineViewState(): Saved examine view state.");
     }
 
     private int getCurrentPositionNumber() {

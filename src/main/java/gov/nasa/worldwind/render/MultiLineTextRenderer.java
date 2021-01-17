@@ -598,7 +598,6 @@ public class MultiLineTextRenderer {
         DrawContext dc, PickSupport pickSupport, Object refObject, Position refPosition) {
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
-        //float spaceWidth = this.textRenderer.getCharWidth(' ');
         float drawX;
         String source = text.trim();
         int start = 0;

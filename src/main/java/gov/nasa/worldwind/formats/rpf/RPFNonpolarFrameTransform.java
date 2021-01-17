@@ -238,7 +238,6 @@ class RPFNonpolarFrameTransform extends RPFFrameTransform {
             RPFFrameStructure.getPixelRowsPerFrame());
         double e = w + RPFNonpolarFrameTransform.frameDeltaLongitude(this.frameStructure.getEastWestPixelConstant(),
             RPFFrameStructure.getPixelRowsPerFrame());
-        //e = normalizedDegreesLongitude(e);
 
         return Sector.fromDegrees(s, n, w, e);
     }

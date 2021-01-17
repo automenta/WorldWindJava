@@ -91,7 +91,6 @@ public class DDSDecompressor {
             }
 
             int mipMapCount = header.getMipMapCount();
-//            int ddsFlags = header.getFlags();
 
             DDSPixelFormat pixelFormat = header.getPixelFormat();
             if (null == pixelFormat) {

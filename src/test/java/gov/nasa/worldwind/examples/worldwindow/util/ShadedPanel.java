@@ -70,7 +70,6 @@ public class ShadedPanel extends JPanel {
         g2.setPaint(oldPaint);
 
         // Paints borders, text...
-//            super.paintComponent(g);
 
     }
 }

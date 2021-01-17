@@ -46,7 +46,6 @@ public class ActiveLayersPanel extends AbstractFeaturePanel implements ActiveLay
         this.jlist = new ActiveLayersList(this.model);
         this.jlist.setBorder(new EmptyBorder(15, 15, 10, 10));
         this.jlist.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-//        this.jlist.setToolTipText(TOOL_TIP);
         this.jlist.setAutoscrolls(true);
 
         JScrollPane scrollPane = new JScrollPane(jlist);

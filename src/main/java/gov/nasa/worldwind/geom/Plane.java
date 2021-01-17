@@ -119,7 +119,7 @@ public final class Plane {
      * @return the plane's normal vector.
      */
     public final Vec4 getNormal() {
-        return this.n;//new Vec4(this.n.x, this.n.y, this.n.z);
+        return this.n;
     }
 
     /**

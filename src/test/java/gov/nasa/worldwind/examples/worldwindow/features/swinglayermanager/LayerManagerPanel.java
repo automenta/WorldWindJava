@@ -49,7 +49,6 @@ public class LayerManagerPanel extends AbstractFeaturePanel implements LayerMana
         layerTree = new LayerTree(new LayerTreeModel(layerList));
         layerTree.setOpaque(false);
         layerTree.setBorder(new EmptyBorder(10, 10, 10, 10));
-//        layerTree.setToolTipText(TOOL_TIP);
 
         this.layerTree.getModel().addTreeModelListener(this);
 

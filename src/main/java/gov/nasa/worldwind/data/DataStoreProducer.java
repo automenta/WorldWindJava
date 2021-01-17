@@ -33,7 +33,7 @@ public interface DataStoreProducer extends WWObject {
 
     void removeAllDataSources();
 
-    void startProduction() throws Exception;
+    void startProduction();
 
     void stopProduction();
 

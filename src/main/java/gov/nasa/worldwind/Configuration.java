@@ -577,7 +577,6 @@ public class Configuration // Singleton
             Document doc = WWXML.openDocument(configLocation);
             if (doc != null) {
                 Configuration.configDocs.add(doc);
-//                this.loadConfigProperties(doc);
             }
         }
     }

@@ -33,7 +33,6 @@ abstract public class AbstractMemoryCache implements MemoryCache {
      * @param newCapacity the new capacity of the cache.
      */
     public void setCapacity(long newCapacity) {
-//        this.makeSpace(this.capacity - newCapacity);
         this.capacity.set(newCapacity);
     }
 

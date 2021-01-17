@@ -8,7 +8,7 @@ package gov.nasa.worldwind.layers.rpf;
 import gov.nasa.worldwind.WWObjectImpl;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.formats.dds.DDSCompressor;
-import gov.nasa.worldwind.retrieve.*;
+import gov.nasa.worldwind.retrieve.Retriever;
 import gov.nasa.worldwind.util.Logging;
 
 import java.awt.image.*;
@@ -162,7 +162,6 @@ class RPFRetriever extends WWObjectImpl implements Retriever {
             if (interrupted())
                 return this;
 
-            //setState(RETRIEVER_STATE_CONNECTING);
             setState(Retriever.RETRIEVER_STATE_READING);
 
             this.byteBuffer = read();

@@ -297,7 +297,6 @@ public class PolarCoordConverter {
 
                 if (Southern_Hemisphere != 0) {
                     Easting = -(rho * Math.sin(dlam) - Polar_False_Easting);
-                    //Easting *= -1.0;
                     Northing = rho * Math.cos(dlam) + Polar_False_Northing;
                 } else
                     Easting = rho * Math.sin(dlam) + Polar_False_Easting;

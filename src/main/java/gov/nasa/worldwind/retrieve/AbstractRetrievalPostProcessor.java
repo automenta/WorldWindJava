@@ -5,12 +5,10 @@
  */
 package gov.nasa.worldwind.retrieve;
 
-import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.formats.dds.DDSCompressor;
+import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.util.*;
 
-import java.awt.image.*;
-import java.io.*;
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedByInterruptException;
@@ -85,9 +83,8 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
         if (!retriever.getState().equals(Retriever.RETRIEVER_STATE_SUCCESSFUL)) {
             this.handleUnsuccessfulRetrieval();
             return null;
-        }
-
-        return this.handleSuccessfulRetrieval();
+        } else
+            return this.handleSuccessfulRetrieval();
     }
 
     /**
@@ -137,7 +134,7 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
         else if (r instanceof JarRetriever)
             return this.validateJarResponseCode();
         else
-            return r instanceof LocalRasterServerRetriever;
+            return false;
     }
 
     /**
@@ -161,85 +158,10 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
     }
 
     /**
-     * Handle the case of an invalid response code. Subclasses can override this method to handle special cases. The
-     * default implementation calls {@link #markResourceAbsent()} and logs the contents of the retrieval buffer if it
-     * contains content of type "text".
-     */
-    protected void handleInvalidResponseCode() {
-        this.markResourceAbsent();
-
-        if (this.isWMSException())
-            this.handleWMSExceptionContent();
-
-        else if (AbstractRetrievalPostProcessor.isPrimaryContentType("text", this.getRetriever().getContentType()))
-            AbstractRetrievalPostProcessor.logTextBuffer(
-                this.getRetriever().getBuffer()); // the buffer might contain error info, so log it
-    }
-
-    /**
      * Marks the retrieval target absent. Subclasses should override this method if they keep track of absent-resources.
      * The default implementation does nothing.
      */
     protected void markResourceAbsent() {
-    }
-
-    /**
-     * Saves the retrieved and possibly transformed data. The data may have been transformed during content handling.
-     * <p>
-     * The default implementation of this method simply calls {@link #saveBuffer(ByteBuffer)} with an argument of null.
-     *
-     * @return true if the buffer was saved, false if the output file could not be determined or already exists and not
-     * overwritten.
-     * @throws IOException if an IO error occurs while attempting to save the buffer.
-     */
-    protected boolean saveBuffer() throws IOException {
-        //return this.saveBuffer(null);
-        return true;
-    }
-
-    /**
-     * Saves the retrieved and possibly transformed data. The data may have been transformed during content handling.
-     * The data is not saved if the output file already exists unless {@link #overwriteExistingFile()} returns true.
-     *
-     * @param buffer the buffer to save.
-     * @return true if the buffer was saved, false if the output file could not be determined or already exists and not
-     * overwritten.
-     */
-    protected static boolean saveBuffer(ByteBuffer buffer) {
-
-        return true;
-    }
-
-    /**
-     * Indicates whether the retrieved data should be written to the output file if a file of the same name already
-     * exists. The default implementation of this method returns false (files are not overwritten).
-     *
-     * @return true if an existing file should be overwritten, otherwise false.
-     */
-    protected boolean overwriteExistingFile() {
-        return false;
-    }
-
-    /**
-     * Indicates whether the output file should have its delete-on-exit flag set so that it's deleted when the JVM
-     * terminates.
-     *
-     * @param outFile the output file.
-     * @return true if the output file's delete-on-exit flag should be set, otherwise false.
-     */
-    protected boolean isDeleteOnExit(File outFile) {
-        return !outFile.exists() && this.avList != null && this.avList.get(AVKey.DELETE_CACHE_ON_EXIT) != null;
-    }
-
-    /**
-     * Returns an object that can be used to synchronize writing to the output file. Superclasses should override this
-     * method and return the object used as a lock by other objects that read or otherwise interact with the output
-     * file.
-     *
-     * @return an object to use for read/write synchronization, or null if no lock is needed.
-     */
-    protected Object getFileLock() {
-        return this;
     }
 
     protected boolean isWMSException() {
@@ -349,9 +271,8 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
      * Handles XML content. The default implementation only calls {@link #logTextBuffer(ByteBuffer)} and returns.
      *
      * @return a buffer containing the retrieved XML.
-     * @throws IOException if an IO error occurs while processing the data.
      */
-    protected ByteBuffer handleXMLContent() throws IOException {
+    protected ByteBuffer handleXMLContent() {
         AbstractRetrievalPostProcessor.logTextBuffer(this.getRetriever().getBuffer());
 
         return null;
@@ -384,11 +305,8 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
      * #saveBuffer()} without.
      *
      * @return a buffer containing the retrieved data.
-     * @throws IOException if an IO error occurs while processing the data.
      */
-    protected ByteBuffer handleApplicationContent() throws IOException {
-        this.saveBuffer();
-
+    protected ByteBuffer handleApplicationContent() {
         return this.getRetriever().getBuffer();
     }
 
@@ -401,7 +319,6 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
         // TODO: Parse the xml and include only the message text in the log message.
 
         StringBuilder sb = new StringBuilder(this.getRetriever().getName());
-
         sb.append('\n');
         sb.append(WWIO.byteBufferToString(this.getRetriever().getBuffer(), 2048, null));
         Logging.logger().warning(sb.toString());
@@ -421,59 +338,5 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
     protected final ByteBuffer handleImageContent() {
 
         return this.getRetriever().getBuffer();
-    }
-
-    /**
-     * Transform the retrieved data in some purpose-specific way. May be overridden by subclasses to perform special
-     * transformations. The default implementation calls {@link ImageUtil#mapTransparencyColors(BufferedImage, int[])}
-     * if the attribute-value list specified at construction contains transparency colors (includes the {@link
-     * AVKey#TRANSPARENCY_COLORS} key).
-     *
-     * @return returns the transformed data if a transform is performed, otherwise returns the original data.
-     */
-    protected BufferedImage transformPixels() {
-        if (this.avList != null) {
-            int[] colors = (int[]) this.avList.get(AVKey.TRANSPARENCY_COLORS);
-            if (colors != null)
-                return ImageUtil.mapTransparencyColors(this.getRetriever().getBuffer(), colors);
-        }
-
-        return null;
-    }
-
-    /**
-     * Saves a DDS image file after first converting any other image format to DDS.
-     *
-     * @return the converted image data if a conversion is performed, otherwise the original image data.
-     * @throws IOException if an IO error occurs while converting or saving the image.
-     */
-    protected ByteBuffer saveDDS() throws IOException {
-        ByteBuffer buffer = this.getRetriever().getBuffer();
-
-        if (!this.getRetriever().getContentType().contains("dds"))
-            buffer = this.convertToDDS();
-
-        AbstractRetrievalPostProcessor.saveBuffer(buffer);
-
-        return buffer;
-    }
-
-    /**
-     * Converts an image to DDS. If the image format is not originally DDS, calls {@link #transformPixels()} to perform
-     * any defined image transform.
-     *
-     * @return the converted image data if a conversion is performed, otherwise the original image data.
-     * @throws IOException if an IO error occurs while converting the image.
-     */
-    protected ByteBuffer convertToDDS() throws IOException {
-        ByteBuffer buffer;
-
-        BufferedImage image = this.transformPixels();
-        if (image != null)
-            buffer = DDSCompressor.compressImage(image);
-        else
-            buffer = DDSCompressor.compressImageBuffer(this.getRetriever().getBuffer());
-
-        return buffer;
     }
 }

@@ -74,7 +74,6 @@ public class ShapeDataCache implements Iterable<ShapeDataCache.ShapeDataCacheEnt
      * @return the entry if it exists, otherwise null.
      */
     public ShapeDataCacheEntry getEntry(Globe globe) {
-        //        this.removeDeadEntries(now);
 
         if (globe == null)
             return null;

@@ -32,7 +32,6 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
     protected static final double DEFAULT_MOUSE_ROTATE_MIN_VALUE = 0.014; // Speed in degrees per mouse movement
     protected static final double DEFAULT_MOUSE_ROTATE_MAX_VALUE = 0.018; // Speed in degrees per mouse movement
     // Keyboard/Action calibration values for extensible view/navigation support
-    //protected static final double DEFAULT_KEY_HORIZONTAL_TRANSLATE_MIN_VALUE = 10;
     protected static final double DEFAULT_KEY_TRANSLATE_SMOOTHING_VALUE = 0.9;
     protected static final double DEFAULT_KEY_HORIZONTAL_TRANSLATE_MAX_VALUE = 1000000.0;
     protected static final double DEFAULT_KEY_HORIZONTAL_TRANSLATE_MIN_VALUE = 100;

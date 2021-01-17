@@ -118,7 +118,6 @@ public class VPFLegendSupport {
         if (attr.getImageSource() == null)
             return attr.getInteriorMaterial().getDiffuse();
 
-        //int patternSize = Math.min(width, height); // fit one pattern tiles
         BufferedImage pattern = getImage(attr.getImageSource());
         if (pattern != null)
             return new TexturePaint(pattern, new Rectangle(0, 0, pattern.getWidth(), pattern.getHeight()));

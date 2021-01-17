@@ -5,7 +5,6 @@
  */
 package gov.nasa.worldwind.examples.sar.tracks;
 
-////.*;
 import gov.nasa.worldwind.util.*;
 
 import java.io.*;

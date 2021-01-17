@@ -5,8 +5,6 @@
  */
 package gov.nasa.worldwind.layers.wms;
 
-////.*;
-
 import gov.nasa.worldwind.util.*;
 
 import java.net.*;

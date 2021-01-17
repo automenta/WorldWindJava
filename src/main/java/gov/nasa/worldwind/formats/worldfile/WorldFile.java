@@ -116,12 +116,10 @@ public class WorldFile {
             }
         }
 
-        //File transformFile = null;
         for (File file : worldFiles) {
             if (!file.getName().isEmpty()
                 && file.getName().toLowerCase().charAt(file.getName().toLowerCase().length() - 1) == 'w') {
                 WorldFile.scanWorldFile(file, values);
-                //transformFile = file;
             } else if (file.getName().toLowerCase().endsWith(".hdr")) {
                 WorldFile.scanHdrFile(file, values);
             } else if (file.getName().toLowerCase().endsWith(".prj")) {

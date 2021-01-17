@@ -5,8 +5,6 @@
  */
 package gov.nasa.worldwind.formats.wvt;
 
-////.*;
-
 import gov.nasa.worldwind.util.*;
 
 import java.awt.*;
@@ -191,9 +189,7 @@ public class WaveletCodec {
         // temp working space and we don't want to corrupt the BufferedImage's data...
 
         int bandSize = xRes * yRes;
-        //int next = 0;
         Raster rast = image.getRaster();
-        //float[] dataElems = new float[numBands];
         float[][] imageData = new float[numBands][bandSize];
 
         for (int k = 0; k < numBands; k++) {

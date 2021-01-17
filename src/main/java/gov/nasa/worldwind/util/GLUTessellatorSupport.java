@@ -187,7 +187,6 @@ public class GLUTessellatorSupport {
         }
 
         public void combine(double[] coords, Object[] data, float[] weight, Object[] outData) {
-//            System.out.println("COMBINE CALLED");
             outData[0] = data[0];
         }
     }

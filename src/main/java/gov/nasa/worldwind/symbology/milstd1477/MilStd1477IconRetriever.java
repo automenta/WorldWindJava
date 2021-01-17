@@ -37,8 +37,6 @@ public class MilStd1477IconRetriever extends AbstractIconRetriever {
 
         // retrieve desired symbol and convert to bufferedImage
 
-        // SymbolCode symbolCode = new SymbolCode(symbolIdentifier);
-
         String filename = MilStd1477IconRetriever.getFilename(symbolId);
         BufferedImage img = this.readImage(filename);
 

@@ -867,7 +867,6 @@ public class KMLTest
     {
         try
         {
-            //File file = new File("KML/kmztest01.kmz");
             KMLRoot root = new KMLRoot(testResourceFile("KML/kmztest01.kmz"));
             root.parse();
 

@@ -588,7 +588,6 @@ public interface MetocSidc {
      */
     String AMPHC_ISP_ODFF = "WA-DIPFF---L---";
     /** Surface dry without cracks or appreciable dust or loose sand. */
-//    final String AMPHC_STOG_WOSMIC_SUFDRY = "WAS-GND-NCP----";
     /**
      * Surface moist.
      */

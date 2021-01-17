@@ -292,7 +292,6 @@ public class Box extends RigidShape {
         // dc.getGLRuntimeCapabilities().setVertexBufferObjectEnabled(false);
 
         // disable back face culling
-        // gl.glDisable(GL.GL_CULL_FACE);
 
         if (!dc.isPickingMode()) {
             if (mustApplyLighting(dc, null)) {
@@ -300,7 +299,6 @@ public class Box extends RigidShape {
                 if (normalBuffer == null)
                     gl.glEnableClientState(GL2.GL_NORMAL_ARRAY);
             }
-            // this.logGeometryStatistics(dc, geom);
         }
     }
 

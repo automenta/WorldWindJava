@@ -282,7 +282,6 @@ public class WMSBasicElevationModel extends BasicElevationModel {
             tileWidth, n / tileWidth);
 
         ByteBuffer b = WMSBasicElevationModel.downloadElevations(tile).getBuffer();
-        //final BufferWrapper re = this.readElevations(tile.getFile().toURI().toURL());
         if (b!=null)
             tile.setElevations(BufferWrapper.ByteBufferWrapper.wrap(b, AVKey.INT8), this);
         else
@@ -329,7 +328,6 @@ public class WMSBasicElevationModel extends BasicElevationModel {
         protected String URLTemplate;
 
         protected URLBuilder(String version, AVList params) {
-//            Double d = (Double) params.get(AVKey.MISSING_DATA_SIGNAL);
 
             this.layerNames = params.getStringValue(AVKey.LAYER_NAMES);
             this.styleNames = params.getStringValue(AVKey.STYLE_NAMES);
@@ -404,8 +402,6 @@ public class WMSBasicElevationModel extends BasicElevationModel {
                 sb.append(s.lonMax);
             }
 
-            //sb.append('&'); // terminate the query string
-
             return new URL(sb.toString().replace(" ", "%20"));
         }
     }
@@ -450,20 +446,6 @@ public class WMSBasicElevationModel extends BasicElevationModel {
 
         public CompositionRetrievalPostProcessor(File outFile) {
             this.outFile = outFile;
-        }
-
-        protected File doGetOutputFile() {
-            return this.outFile;
-        }
-
-        @Override
-        protected boolean overwriteExistingFile() {
-            return true;
-        }
-
-        @Override
-        protected boolean isDeleteOnExit(File outFile) {
-            return outFile.getPath().contains(WWIO.DELETE_ON_EXIT_PREFIX);
         }
     }
 }

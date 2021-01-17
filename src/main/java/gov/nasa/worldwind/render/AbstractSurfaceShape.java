@@ -179,7 +179,6 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject
 
     @SuppressWarnings("UnnecessaryLocalVariable")
     protected static double computeEdgeIntervalsPerDegree(double resolution) {
-        //return 1.0 / (resolution * WWMath.OneEightyOverPI);
         return WWMath.PiOverOneEighty / resolution;
     }
 
@@ -191,7 +190,6 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject
 
             double[] vertex = new double[3];
             for (LatLon location : contour) {
-                //double[] vertex = {location.longitude.degrees, location.latitude.degrees, 0};
                 vertex[0] = location.longitude;
                 vertex[1] = location.latitude;
                 GLU.gluTessVertex(tess, vertex, 0, vertex);

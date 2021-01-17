@@ -8,7 +8,7 @@ package gov.nasa.worldwind;
 
 import com.jogamp.nativewindow.ScalableSurface;
 import gov.nasa.worldwind.avlist.AVList;
-import gov.nasa.worldwind.cache.*;
+import gov.nasa.worldwind.cache.GpuResourceCache;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.Layer;
@@ -30,7 +30,6 @@ import static gov.nasa.worldwind.avlist.AVKey.*;
  * @version $Id: WorldWindow.java 2047 2014-06-06 22:48:33Z tgaskins $
  */
 public interface WorldWindow extends AVList, PropertyChangeListener {
-//    long FALLBACK_TEXTURE_CACHE_SIZE = 60000000;
 
     /**
      * Configures JOGL's surface pixel scaling on the specified

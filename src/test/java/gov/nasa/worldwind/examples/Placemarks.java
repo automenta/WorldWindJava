@@ -97,7 +97,6 @@ public class Placemarks extends ApplicationTemplate {
             attrs.setImageAddress("gov/nasa/worldwind/examples/images/audioicon-64.png");
             attrs.setImageColor(new Color(1.0f, 1.0f, 1.0f, 0.6f));
             attrs.setScale(0.6);
-//            attrs.setImageOffset(new Offset(19d, 8d, AVKey.PIXELS, AVKey.PIXELS));
             attrs.setLabelOffset(new Offset(0.9d, 0.6d, AVKey.FRACTION, AVKey.FRACTION));
             pp.setAttributes(attrs);
             layer.add(pp);
@@ -211,7 +210,6 @@ public class Placemarks extends ApplicationTemplate {
             attrs.setHeading(-45.0d);
             attrs.setHeadingReference(AVKey.RELATIVE_TO_GLOBE);
             attrs.setScale(0.6);
-//            attrs.setImageOffset(new Offset(0.5, 0.5, AVKey.FRACTION, AVKey.FRACTION));
             attrs.setImageOffset(new Offset(19.0d, 8.0d, AVKey.PIXELS, AVKey.PIXELS));
             attrs.setLabelColor("ffffffff");
             attrs.setLabelOffset(new Offset(0.9d, 0.6d, AVKey.FRACTION, AVKey.FRACTION));

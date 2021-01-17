@@ -5,8 +5,6 @@
  */
 package gov.nasa.worldwind.formats.vpf;
 
-////.*;
-
 import gov.nasa.worldwind.util.*;
 
 import java.util.*;

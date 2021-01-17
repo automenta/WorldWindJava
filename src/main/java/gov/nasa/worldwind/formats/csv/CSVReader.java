@@ -21,7 +21,6 @@ public class CSVReader implements Track, TrackSegment {
     private final List<TrackSegment> segments = new ArrayList<>();
     private final List<TrackPoint> points = new ArrayList<>();
     private String name;
-//    private int lineNumber = 0;
 
     public CSVReader() {
         this.tracks.add(this);
@@ -115,7 +114,6 @@ public class CSVReader implements Track, TrackSegment {
             do {
                 sentence = scanner.nextLine();
                 if (sentence != null) {
-//                    ++this.lineNumber;
                     this.parseLine(sentence);
                 }
             }

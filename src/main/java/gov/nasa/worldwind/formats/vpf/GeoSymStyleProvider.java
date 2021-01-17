@@ -18,7 +18,6 @@ import java.util.*;
  * @version $Id: GeoSymStyleProvider.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 public class GeoSymStyleProvider {
-    //private static String TYPE_POINT = "Point";
     private static final String TYPE_LINE_PLAIN = "LinePlain";
     private static final String TYPE_LINE_COMPLEX = "LineComplex";
     private static final String TYPE_AREA_PLAIN = "AreaPlain";

@@ -57,7 +57,6 @@ public abstract class RigidShape extends AbstractShape {
     // Geometry
     protected double detailHint;
     // texture coordinate offsets for each piece
-    //protected Map<Integer, Offsets> offsets = new HashMap<Integer, Offsets>();
     protected Map<Integer, OffsetsList> offsets = new HashMap<>();
     // texture coordinates for each piece       // TODO: is this necessary?
     protected Map<Integer, FloatBuffer> offsetTextureCoords = new HashMap<>();
@@ -1507,7 +1506,6 @@ public abstract class RigidShape extends AbstractShape {
 
         public ShapeData(DrawContext dc, RigidShape shape) {
             super(dc, shape.minExpiryTime, shape.maxExpiryTime);
-            //super(dc, 0, 0); // specify 0 as expiry time since only size/position transform changes with time
         }
 
         public Geometry getMesh() {

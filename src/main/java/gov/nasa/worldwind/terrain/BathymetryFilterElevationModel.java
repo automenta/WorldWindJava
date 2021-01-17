@@ -40,15 +40,6 @@ public class BathymetryFilterElevationModel extends AbstractElevationModel {
     }
 
     /**
-     * Returns the source elevation model.
-     *
-     * @return the source elevation model.
-     */
-    public ElevationModel getSourceModel() {
-        return this.sourceModel;
-    }
-
-    /**
      * Returns the threshold value.
      *
      * @return the threshold.

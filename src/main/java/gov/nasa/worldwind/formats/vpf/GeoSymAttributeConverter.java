@@ -5,8 +5,6 @@
  */
 package gov.nasa.worldwind.formats.vpf;
 
-////.*;
-
 import gov.nasa.worldwind.util.*;
 
 import javax.imageio.ImageIO;
@@ -293,7 +291,6 @@ public class GeoSymAttributeConverter {
         }
 
         protected void processStipplePattern() {
-            //String elementType = "";
             double elementLength = 0;
             double totalLength = 0;
             Collection<Double> lengths = new ArrayList<>();
@@ -307,7 +304,6 @@ public class GeoSymAttributeConverter {
                         elementLength = 0;
                     }
                 } else if (line.startsWith("APSATTR \"ElementType\"")) {
-                    //elementType = getLastValue(line);
                 } else if (line.startsWith("APSATTR \"ElementLength\"")) {
                     elementLength = Double.parseDouble(CGMFile.getLastValue(line));
                 } else if (line.contains("Component.2") || line.startsWith("BEGAPS \"IC_ViewportTable\"")) {

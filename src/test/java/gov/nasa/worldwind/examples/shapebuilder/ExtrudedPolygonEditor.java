@@ -250,7 +250,6 @@ public class ExtrudedPolygonEditor extends AbstractShapeEditor {
             setShowAnnotation(true);
             updateAnnotation(this.activeControlPoint.getPosition());
 
-            // update controlPointIndex;
             int i = 0;
             for (Marker controlPoint : this.controlPoints) {
                 if (controlPoint.equals(topObject))

@@ -47,7 +47,6 @@ public class HTTPRetriever extends URLRetriever {
         HttpURLConnection htpc = (HttpURLConnection) connection;
         this.responseCode = htpc.getResponseCode();
         this.responseMessage = htpc.getResponseMessage();
-//        String contentType = connection.getContentType();
 
         return this.responseCode == HttpURLConnection.HTTP_OK ? super.doRead(connection) : null;
     }

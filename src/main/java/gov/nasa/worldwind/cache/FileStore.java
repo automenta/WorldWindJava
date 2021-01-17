@@ -15,7 +15,7 @@ import java.util.List;
  * @author Tom Gaskins
  * @version $Id: FileStore.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface FileStore extends WWObject {
+@Deprecated public interface FileStore extends WWObject {
     /**
      * Returns the locations that the file store will look for files.
      *
@@ -31,54 +31,12 @@ public interface FileStore extends WWObject {
     File getWriteLocation();
 
     /**
-     * Adds a location to search when files are requested from the file store.
-     *
-     * @param newPath   the location to add. If the location already exists in the list of read locations its entry is
-     *                  removed and a new entry is added to the end of the search list.
-     * @param isInstall indicates whether the location is an "installed data" location and therefore not subject to
-     *                  automatic removal of its contents.
-     * @throws IllegalArgumentException if the specified path is null or empty.
-     */
-    void addLocation(String newPath, boolean isInstall);
-
-    /**
-     * Adds a location to search when files are requested from the file store and specifies its location in the search
-     * order.
-     *
-     * @param index     the location in the search list at which to add the new location.
-     * @param newPath   the location to add.
-     * @param isInstall indicates whether the location is an installed-data location and therefore not subject to
-     *                  automatic removal of its contents.
-     * @throws IllegalArgumentException if the specified path is null or empty or the specified index is less than 0.
-     */
-    void addLocation(int index, String newPath, boolean isInstall);
-
-    /**
      * Remove a specified read location from the file store. The current write location cannot be removed.
      *
      * @param path the read location to remove.
      * @throws IllegalArgumentException if the specified path is null or identifies the current write location.
      */
     void removeLocation(String path);
-
-    /**
-     * Indicates whether a specified location is considered an installed-data location and therefore not subject to
-     * automatic removal of its contents.
-     *
-     * @param path the path in question.
-     * @return true if the location is an installed-data location, otherwise false.
-     * @throws IllegalArgumentException if the specified path is null or empty.
-     */
-    boolean isInstallLocation(String path);
-
-    /**
-     * Indicates whether the file store contains a specified file.
-     *
-     * @param fileName the file in question.
-     * @return true if the file store contains the file, false if the file store does not contain the file or the
-     * specified path is null.
-     */
-    boolean containsFile(String fileName);
 
     /**
      * Searches the file store for a specified file and returns a reference to it if it is.
@@ -131,35 +89,6 @@ public interface FileStore extends WWObject {
      * @throws IllegalArgumentException if the filter is null.
      */
     String[] listFileNames(String pathName, FileStoreFilter filter);
-
-    /**
-     * Returns an array of strings naming the files discovered under a specified file store path name. If the path name
-     * is null, the entire file store will be searched. Otherwise the file store is recursively searched under the
-     * specified path name for files accepted by the specified filter, until the entire path tree is exhausted. This
-     * returns null if the path does not exist in the store. Returned names are relative pointers to a file in the
-     * store; they are not necessarily a file system path.
-     *
-     * @param pathName relative path in the file store to search, or null to search the entire file store.
-     * @param filter   a file filter.
-     * @return an array of file store names. Returns null if the path does not exist in the file store.
-     * @throws IllegalArgumentException if the filter is null.
-     */
-    String[] listAllFileNames(String pathName, FileStoreFilter filter);
-
-    /**
-     * Returns an array of strings naming the files discovered under a specified file store path name. If the path name
-     * is null, the entire file store will be searched. Otherwise the file store is recursively searched under each
-     * branch of the the specified path name until a matching file is found, or that branch is exhausted. Unlike {@link
-     * #listAllFileNames(String, FileStoreFilter)}, This has the effect of locating the top file name under each branch.
-     * This returns null if the path does not exist in the store. Returned names are relative pointers to a file in the
-     * store; they are not necessarily a file system path.
-     *
-     * @param pathName relative path in the file store to search, or null to search the entire file store.
-     * @param filter   a file filter.
-     * @return an array of file store names. Returns null if the path does not exist in the file store.
-     * @throws IllegalArgumentException if the filter is null.
-     */
-    String[] listTopFileNames(String pathName, FileStoreFilter filter);
 
     /**
      * Returns the content type of a cached file.

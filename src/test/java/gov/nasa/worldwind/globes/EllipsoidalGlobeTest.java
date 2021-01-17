@@ -207,7 +207,6 @@ public class EllipsoidalGlobeTest
 
             // Longitude is unspecifiable along the axis
             assertEquals(msg, Math.PI / 2 * Math.signum(y), p.getLatitude().radians(), THRESHOLD);
-            // System.out.println("Relative error at y=\t"+y+"\t"+((Math.abs(y)-b)/(p.elevation)));
             assertEquals(msg, Math.abs(y) - b, p.elevation, THRESHOLD);
 
             // Check geodetic->cartesian

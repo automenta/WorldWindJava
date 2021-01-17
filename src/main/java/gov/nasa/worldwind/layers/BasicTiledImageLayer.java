@@ -8,8 +8,6 @@ package gov.nasa.worldwind.layers;
 import com.jogamp.opengl.util.texture.TextureData;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.cache.FileStore;
-import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.ogc.wms.WMSCapabilities;
 import gov.nasa.worldwind.render.*;
@@ -19,7 +17,7 @@ import org.w3c.dom.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.*;
+import java.io.IOException;
 import java.net.*;
 import java.nio.ByteBuffer;
 import java.util.*;
@@ -257,17 +255,6 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
         Sector sector = rs.getStateValueAsSector(context, AVKey.SECTOR);
         if (sector != null)
             params.set(AVKey.SECTOR, sector);
-    }
-
-    protected static boolean isTextureFileExpired(TextureTile tile, URL textureURL, FileStore fileStore) {
-        if (!WWIO.isFileOutOfDate(textureURL, tile.level.getExpiryTime()))
-            return false;
-
-        // The file has expired. Delete it.
-        fileStore.removeFile(textureURL);
-        String message = Logging.getMessage("generic.DataFileExpired", textureURL);
-        Logging.logger().fine(message);
-        return true;
     }
 
     protected void requestTexture(DrawContext dc, TextureTile tile) {
@@ -525,90 +512,6 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
         t.start();
     }
 
-    //**************************************************************//
-    //********************  Configuration  *************************//
-    //**************************************************************//
-
-    protected void writeConfigurationFile(FileStore fileStore) {
-        // TODO: configurable max attempts for creating a configuration file.
-
-        try {
-            AVList configParams = this.getConfigurationParams(null);
-            this.writeConfigurationParams(fileStore, configParams);
-        }
-        catch (RuntimeException e) {
-            String message = Logging.getMessage("generic.ExceptionAttemptingToWriteConfigurationFile");
-            Logging.logger().log(Level.SEVERE, message, e);
-        }
-    }
-
-    protected void writeConfigurationParams(FileStore fileStore, AVList params) {
-        // Determine what the configuration file name should be based on the configuration parameters. Assume an XML
-        // configuration document type, and append the XML file suffix.
-        String fileName = DataConfigurationUtils.getDataConfigFilename(params, ".xml");
-        if (fileName == null) {
-            String message = Logging.getMessage("nullValue.FilePathIsNull");
-            Logging.logger().severe(message);
-            throw new WWRuntimeException(message);
-        }
-
-        // Check if this component needs to write a configuration file. This happens outside of the synchronized block
-        // to improve multithreaded performance for the common case: the configuration file already exists, this just
-        // need to check that it's there and return. If the file exists but is expired, do not remove it -  this
-        // removes the file inside the synchronized block below.
-        if (!this.needsConfigurationFile(fileStore, fileName, params, false))
-            return;
-
-        synchronized (this.fileLock) {
-            // Check again if the component needs to write a configuration file, potentially removing any existing file
-            // which has expired. This additional check is necessary because the file could have been created by
-            // another thread while we were waiting for the lock.
-            if (!this.needsConfigurationFile(fileStore, fileName, params, true))
-                return;
-
-            this.doWriteConfigurationParams(fileStore, fileName, params);
-        }
-    }
-
-    protected void doWriteConfigurationParams(FileStore fileStore, String fileName, AVList params) {
-        File file = fileStore.newFile(fileName);
-        if (file == null) {
-            String message = Logging.getMessage("generic.CannotCreateFile", fileName);
-            Logging.logger().severe(message);
-            throw new WWRuntimeException(message);
-        }
-
-        Document doc = this.createConfigurationDocument(params);
-        WWXML.saveDocumentToFile(doc, file.getPath());
-
-        String message = Logging.getMessage("generic.ConfigurationFileCreated", fileName);
-        Logging.logger().fine(message);
-    }
-
-    protected boolean needsConfigurationFile(FileStore fileStore, String fileName, AVList params,
-        boolean removeIfExpired) {
-        long expiryTime = this.getExpiryTime();
-        if (expiryTime <= 0)
-            expiryTime = AVListImpl.getLongValue(params, AVKey.EXPIRY_TIME, 0L);
-
-        return !DataConfigurationUtils.hasDataConfigFile(fileStore, fileName, removeIfExpired, expiryTime);
-    }
-
-    protected AVList getConfigurationParams(AVList params) {
-        if (params == null)
-            params = new AVListImpl();
-
-        // Gather all the construction parameters if they are available.
-        AVList constructionParams = (AVList) this.get(AVKey.CONSTRUCTION_PARAMETERS);
-        if (constructionParams != null)
-            params.setValues(constructionParams);
-
-        // Gather any missing LevelSet parameters from the LevelSet itself.
-        DataConfigurationUtils.getLevelSetConfigParams(levels, params);
-
-        return params;
-    }
-
     protected Document createConfigurationDocument(AVList params) {
         return TiledImageLayer.createTiledImageLayerConfigDocument(params);
     }
@@ -796,25 +699,17 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
 
     protected final class DownloadPostProcessor extends AbstractRetrievalPostProcessor {
         protected final TextureTile tile;
-//        protected final FileStore fileStore;
-
 
         public DownloadPostProcessor(TextureTile tile) {
             //noinspection RedundantCast
             super((AVList) BasicTiledImageLayer.this);
 
             this.tile = tile;
-//            this.fileStore = fileStore;
         }
 
         @Override
         protected void markResourceAbsent() {
             levels.miss(this.tile);
-        }
-
-        @Override
-        protected Object getFileLock() {
-            return fileLock;
         }
 
         @Override
@@ -843,7 +738,6 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
                 e.printStackTrace();
                 return false;
             }
-            //TextureData td = this.layer.loadTexture(textureURL);
             if (td!=null) {
                 //if (this.layer.loadTexture(tile, textureURL)) {
                 tile.setTextureData(td);

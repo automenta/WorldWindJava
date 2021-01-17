@@ -6,7 +6,6 @@
 
 package gov.nasa.worldwind.util;
 
-import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 
 /**
@@ -28,23 +27,5 @@ public class NativeLibraryLoader {
             String message = Logging.getMessage("generic.LibraryNotLoaded", libName, ule.getMessage());
             throw new WWRuntimeException(message);
         }
-    }
-
-    protected static String makeFullLibName(String libName) {
-        if (WWUtil.isEmpty(libName))
-            return null;
-
-        if (Configuration.isWindowsOS()) {
-            if (!libName.toLowerCase().endsWith(".dll"))
-                return libName + ".dll";
-        } else if (Configuration.isMacOS()) {
-            if (!libName.toLowerCase().endsWith(".jnilib") && !libName.toLowerCase().startsWith("lib"))
-                return "lib" + libName + ".jnilib";
-        } else if (Configuration.isUnixOS())  // covers Solaris and Linux
-        {
-            if (!libName.toLowerCase().endsWith(".so") && !libName.toLowerCase().startsWith("lib"))
-                return "lib" + libName + ".so";
-        }
-        return libName;
     }
 }

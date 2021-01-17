@@ -6,7 +6,6 @@
 
 package gov.nasa.worldwind.examples.worldwindow.util;
 
-////.*;
 import gov.nasa.worldwind.util.*;
 
 import javax.swing.*;
@@ -49,7 +48,7 @@ public class Util {
     public static void centerDialogInContainer(JDialog dialog, Container frame) {
         Dimension prefSize = dialog.getPreferredSize();
         Point parentLocation = frame.getLocationOnScreen();
-        Dimension parentSize = frame.getSize();//Toolkit.getDefaultToolkit().getScreenSize();
+        Dimension parentSize = frame.getSize();
         int x = parentLocation.x + (parentSize.width - prefSize.width) / 2;
         int y = parentLocation.y + (parentSize.height - prefSize.height) / 2;
         dialog.setLocation(x, y);
@@ -105,7 +104,6 @@ public class Util {
         if (!original.trim().toLowerCase().startsWith("<html>"))
             sb.append("<html>");
 
-//        Pattern p = Pattern.compile("(.{0,80}\\b\\s*)|(.{80}\\B)");
         Pattern p = Pattern.compile("(.{0,80}\\b\\s*)");
         Matcher m = p.matcher(original);
         if (m.find())

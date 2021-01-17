@@ -6,9 +6,8 @@
 
 package gov.nasa.worldwind.terrain;
 
-import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.WWObjectImpl;
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.cache.FileStore;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.ElevationModel;
 import gov.nasa.worldwind.util.*;
@@ -23,7 +22,6 @@ import java.util.List;
  * @version $Id: AbstractElevationModel.java 3420 2015-09-10 23:25:43Z tgaskins $
  */
 abstract public class AbstractElevationModel extends WWObjectImpl implements ElevationModel {
-    protected FileStore dataFileStore = Configuration.data;
 
     protected double missingDataValue;
 
@@ -178,7 +176,6 @@ abstract public class AbstractElevationModel extends WWObjectImpl implements Ele
     @Deprecated public void setMissingDataSignal(double missingDataFlag) {
         if (missingDataFlag!= ElevationModel.MISSING)
             throw new WTF();
-        //this.missingDataFlag = missingDataFlag;
     }
 
     public double getMissingDataReplacement() {
@@ -194,18 +191,9 @@ abstract public class AbstractElevationModel extends WWObjectImpl implements Ele
         return 0.0;
     }
 
-    public FileStore getDataFileStore() {
-        return dataFileStore;
-    }
-
-    public void setDataFileStore(FileStore dataFileStore) {
-        this.dataFileStore = dataFileStore;
-    }
-
     public double getElevation(Angle latitude, Angle longitude) {
 
         return this.getUnmappedElevation(latitude, longitude);
-        //return e == this.missingDataFlag ? this.missingDataValue : e;
     }
 
     public double[] getElevations(Sector sector, List<? extends LatLon> latLons, double[] targetResolutions,

@@ -348,30 +348,6 @@ public class LevelSet extends WWObjectImpl {
         return new Sector(minLatitude, minLatitude.add(dLat), minLongitude, minLongitude.add(dLon));
     }
 
-    // Create the tile corresponding to a specified key.
-    public Tile createTile(TileKey key) {
-        if (key == null) {
-            String msg = Logging.getMessage("nullValue.KeyIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        Level level = this.getLevel(key.level);
-
-        // Compute the tile's SW lat/lon based on its row/col in the level's data set.
-        Angle dLat = level.getTileDelta().getLatitude();
-        Angle dLon = level.getTileDelta().getLongitude();
-        Angle latOrigin = this.tileOrigin.getLatitude();
-        Angle lonOrigin = this.tileOrigin.getLongitude();
-
-        Angle minLatitude = Tile.rowLat(key.row, dLat, latOrigin);
-        Angle minLongitude = Tile.columnLon(key.col, dLon, lonOrigin);
-
-        Sector tileSector = new Sector(minLatitude, minLatitude.add(dLat), minLongitude, minLongitude.add(dLon));
-
-        return new Tile(tileSector, level, key.row, key.col);
-    }
-
     public void setExpiryTime(long expiryTime) {
         for (Level level : this.levels) {
             level.setExpiryTime(expiryTime);

@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.util;
 
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.cache.FileStore;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.AbstractLayer;
@@ -19,9 +18,7 @@ import org.w3c.dom.*;
 
 import javax.xml.stream.events.XMLEvent;
 import javax.xml.xpath.XPath;
-import java.io.File;
 import java.net.*;
-import java.util.concurrent.*;
 
 /**
  * A collection of static methods useful for opening, reading, and otherwise working with WorldWind data configuration
@@ -70,321 +67,321 @@ public class DataConfigurationUtils {
         return false;
     }
 
-    /**
-     * Returns the specified data configuration document transformed to a standard Layer or ElevationModel configuration
-     * document. This returns the original document if the document is already in a standard form, or if the document is
-     * not one of the recognized types. Installed DataDescriptor documents are transformed to standard Layer or
-     * ElevationModel configuration documents, depending on the document contents. WorldWind .NET LayerSet documents are
-     * transformed to standard Layer configuration documents. This returns null if the document's root element is null.
-     *
-     * @param doc the document to transform.
-     * @return the specified document transformed to a standard data configuration document, the original document if
-     * it's already in a standard form or is unrecognized, or null if the document's root element is null.
-     * @throws IllegalArgumentException if the document is null.
-     */
-    public static Document convertToStandardDataConfigDocument(Document doc) {
-        if (doc == null) {
-            String message = Logging.getMessage("nullValue.DocumentIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//    /**
+//     * Returns the specified data configuration document transformed to a standard Layer or ElevationModel configuration
+//     * document. This returns the original document if the document is already in a standard form, or if the document is
+//     * not one of the recognized types. Installed DataDescriptor documents are transformed to standard Layer or
+//     * ElevationModel configuration documents, depending on the document contents. WorldWind .NET LayerSet documents are
+//     * transformed to standard Layer configuration documents. This returns null if the document's root element is null.
+//     *
+//     * @param doc the document to transform.
+//     * @return the specified document transformed to a standard data configuration document, the original document if
+//     * it's already in a standard form or is unrecognized, or null if the document's root element is null.
+//     * @throws IllegalArgumentException if the document is null.
+//     */
+//    public static Document convertToStandardDataConfigDocument(Document doc) {
+//        if (doc == null) {
+//            String message = Logging.getMessage("nullValue.DocumentIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//
+//        Element el = doc.getDocumentElement();
+//        if (el == null) {
+//            return null;
+//        }
+//
+//        if (DataConfigurationUtils.isInstalledDataDescriptorConfigDocument(el)) {
+//            return DataConfigurationUtils.transformInstalledDataDescriptorConfigDocument(el);
+//        }
+//
+//        if (DataConfigurationUtils.isWWDotNetLayerSetConfigDocument(el)) {
+//            return DataConfigurationUtils.transformWWDotNetLayerSetConfigDocument(el);
+//        }
+//
+//        return doc;
+//    }
+//
+//    /**
+//     * Returns the specified data configuration document's display name as a string, or null if the document is not one
+//     * of the recognized types. This determines the display name for each type of data configuration document as
+//     * follows: <table> <caption style="font-weight: bold;">Mapping</caption><tr><th>Document Type</th><th>Path to
+//     * Display Name</th></tr> <tr><td>Layer Configuration</td><td>./DisplayName</td></tr> <tr><td>Elevation Model
+//     * Configuration</td><td>./DisplayName</td></tr>
+//     * <tr><td>Installed DataDescriptor</td><td>./property[@name="dataSet"]/property[@name="gov.nasa.worldwind.avkey.DatasetNameKey"]</td></tr>
+//     * <tr><td>WorldWind .NET LayerSet</td><td>./QuadTileSet/Name</td></tr> <tr><td>Other</td><td>null</td></tr>
+//     * </table>
+//     *
+//     * @param domElement the data configuration document who's display name is returned.
+//     * @return a String representing the data configuration document's display name, or null if the document is not
+//     * recognized.
+//     * @throws IllegalArgumentException if the document is null.
+//     */
+//    public static String getDataConfigDisplayName(Element domElement) {
+//        if (domElement == null) {
+//            String message = Logging.getMessage("nullValue.DocumentIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//
+//        if (AbstractLayer.isLayerConfigDocument(domElement) || AbstractElevationModel.isElevationModelConfigDocument(
+//            domElement)) {
+//            return WWXML.getText(domElement, "DisplayName");
+//        }
+//
+//        if (DataConfigurationUtils.isInstalledDataDescriptorConfigDocument(domElement)) {
+//            return WWXML.getText(domElement,
+//                "property[@name=\"dataSet\"]/property[@name=\"gov.nasa.worldwind.avkey.DatasetNameKey\"]");
+//        }
+//
+//        if (DataConfigurationUtils.isWWDotNetLayerSetConfigDocument(domElement)) {
+//            return WWXML.getText(domElement, "QuadTileSet/Name");
+//        }
+//
+//        return null;
+//    }
 
-        Element el = doc.getDocumentElement();
-        if (el == null) {
-            return null;
-        }
+//    /**
+//     * Returns the specified data configuration document's type as a string, or null if the document is not one of the
+//     * recognized types. This maps data configuration documents to a type string as follows: <table><caption
+//     * style="font-weight: bold;">Mapping</caption> <tr><th>Document Type</th><th>Type String</th></tr> <tr><td>Layer
+//     * Configuration</td><td>"Layer"</td></tr> <tr><td>Elevation Model Configuration</td><td>"Elevation
+//     * Model"</td></tr>
+//     * <tr><td>Installed DataDescriptor</td><td>"Layer" or "ElevationModel"</td></tr> <tr><td>WorldWind .NET
+//     * LayerSet</td><td>"Layer"</td></tr>
+//     * <tr><td>Other</td><td>null</td></tr> </table>
+//     *
+//     * @param domElement the data configuration document to determine a type for.
+//     * @return a String representing the data configuration document's type, or null if the document is not recognized.
+//     * @throws IllegalArgumentException if the document is null.
+//     */
+//    public static String getDataConfigType(Element domElement) {
+//        if (domElement == null) {
+//            String message = Logging.getMessage("nullValue.DocumentIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//
+//        if (AbstractLayer.isLayerConfigDocument(domElement)) {
+//            return "Layer";
+//        }
+//
+//        if (AbstractElevationModel.isElevationModelConfigDocument(domElement)) {
+//            return "ElevationModel";
+//        }
+//
+//        if (DataConfigurationUtils.isInstalledDataDescriptorConfigDocument(domElement)) {
+//            String s = WWXML.getText(domElement,
+//                "property[@name=\"dataSet\"]/property[@name=\"gov.nasa.worldwind.avkey.DataType\"]",
+//                null);
+//            if (s != null && s.equals("gov.nasa.worldwind.avkey.TiledElevations")) {
+//                return "ElevationModel";
+//            } else {
+//                return "Layer";
+//            }
+//        }
+//
+//        if (DataConfigurationUtils.isWWDotNetLayerSetConfigDocument(domElement)) {
+//            return "Layer";
+//        }
+//
+//        return null;
+//    }
 
-        if (DataConfigurationUtils.isInstalledDataDescriptorConfigDocument(el)) {
-            return DataConfigurationUtils.transformInstalledDataDescriptorConfigDocument(el);
-        }
-
-        if (DataConfigurationUtils.isWWDotNetLayerSetConfigDocument(el)) {
-            return DataConfigurationUtils.transformWWDotNetLayerSetConfigDocument(el);
-        }
-
-        return doc;
-    }
-
-    /**
-     * Returns the specified data configuration document's display name as a string, or null if the document is not one
-     * of the recognized types. This determines the display name for each type of data configuration document as
-     * follows: <table> <caption style="font-weight: bold;">Mapping</caption><tr><th>Document Type</th><th>Path to
-     * Display Name</th></tr> <tr><td>Layer Configuration</td><td>./DisplayName</td></tr> <tr><td>Elevation Model
-     * Configuration</td><td>./DisplayName</td></tr>
-     * <tr><td>Installed DataDescriptor</td><td>./property[@name="dataSet"]/property[@name="gov.nasa.worldwind.avkey.DatasetNameKey"]</td></tr>
-     * <tr><td>WorldWind .NET LayerSet</td><td>./QuadTileSet/Name</td></tr> <tr><td>Other</td><td>null</td></tr>
-     * </table>
-     *
-     * @param domElement the data configuration document who's display name is returned.
-     * @return a String representing the data configuration document's display name, or null if the document is not
-     * recognized.
-     * @throws IllegalArgumentException if the document is null.
-     */
-    public static String getDataConfigDisplayName(Element domElement) {
-        if (domElement == null) {
-            String message = Logging.getMessage("nullValue.DocumentIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (AbstractLayer.isLayerConfigDocument(domElement) || AbstractElevationModel.isElevationModelConfigDocument(
-            domElement)) {
-            return WWXML.getText(domElement, "DisplayName");
-        }
-
-        if (DataConfigurationUtils.isInstalledDataDescriptorConfigDocument(domElement)) {
-            return WWXML.getText(domElement,
-                "property[@name=\"dataSet\"]/property[@name=\"gov.nasa.worldwind.avkey.DatasetNameKey\"]");
-        }
-
-        if (DataConfigurationUtils.isWWDotNetLayerSetConfigDocument(domElement)) {
-            return WWXML.getText(domElement, "QuadTileSet/Name");
-        }
-
-        return null;
-    }
-
-    /**
-     * Returns the specified data configuration document's type as a string, or null if the document is not one of the
-     * recognized types. This maps data configuration documents to a type string as follows: <table><caption
-     * style="font-weight: bold;">Mapping</caption> <tr><th>Document Type</th><th>Type String</th></tr> <tr><td>Layer
-     * Configuration</td><td>"Layer"</td></tr> <tr><td>Elevation Model Configuration</td><td>"Elevation
-     * Model"</td></tr>
-     * <tr><td>Installed DataDescriptor</td><td>"Layer" or "ElevationModel"</td></tr> <tr><td>WorldWind .NET
-     * LayerSet</td><td>"Layer"</td></tr>
-     * <tr><td>Other</td><td>null</td></tr> </table>
-     *
-     * @param domElement the data configuration document to determine a type for.
-     * @return a String representing the data configuration document's type, or null if the document is not recognized.
-     * @throws IllegalArgumentException if the document is null.
-     */
-    public static String getDataConfigType(Element domElement) {
-        if (domElement == null) {
-            String message = Logging.getMessage("nullValue.DocumentIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (AbstractLayer.isLayerConfigDocument(domElement)) {
-            return "Layer";
-        }
-
-        if (AbstractElevationModel.isElevationModelConfigDocument(domElement)) {
-            return "ElevationModel";
-        }
-
-        if (DataConfigurationUtils.isInstalledDataDescriptorConfigDocument(domElement)) {
-            String s = WWXML.getText(domElement,
-                "property[@name=\"dataSet\"]/property[@name=\"gov.nasa.worldwind.avkey.DataType\"]",
-                null);
-            if (s != null && s.equals("gov.nasa.worldwind.avkey.TiledElevations")) {
-                return "ElevationModel";
-            } else {
-                return "Layer";
-            }
-        }
-
-        if (DataConfigurationUtils.isWWDotNetLayerSetConfigDocument(domElement)) {
-            return "Layer";
-        }
-
-        return null;
-    }
-
-    /**
-     * Returns a file store path name for the specified parameters list. This returns null if the parameter list does
-     * not contain enough information to construct a path name.
-     *
-     * @param params the parameter list to extract a configuration filename from.
-     * @param suffix the file suffix to append on the path name, or null to append no suffix.
-     * @return a file store path name with the specified suffix, or null if a path name cannot be constructed.
-     * @throws IllegalArgumentException if the parameter list is null.
-     */
-    public static String getDataConfigFilename(AVList params, String suffix) {
-        if (params == null) {
-            String message = Logging.getMessage("nullValue.ParametersIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        String path = params.getStringValue(AVKey.DATA_CACHE_NAME);
-        if (path == null || path.isEmpty()) {
-            return null;
-        }
-
-        String filename = params.getStringValue(AVKey.DATASET_NAME);
-
-        if (filename == null || filename.isEmpty()) {
-            filename = params.getStringValue(AVKey.DISPLAY_NAME);
-        }
-
-        if (filename == null || filename.isEmpty()) {
-            filename = "DataConfiguration";
-        }
-
-        filename = WWIO.replaceIllegalFileNameCharacters(filename);
-
-        return path + File.separator + filename + (suffix != null ? suffix : "");
-    }
-
-    /**
-     * Convenience method for computing a data configuration file's cache name in a FileStore, given the file's cache
-     * path. This writes the computed cache name to the specified parameter list under the key {@link
-     * AVKey#DATA_CACHE_NAME}. If the parameter already exists, it's left unchanged.
-     * <p>
-     * A data configuration file's cache name is its parent directory in the cache. The cache name therefore points to
-     * the directory containing both the configuration file and any cached data associated with it. Determining the
-     * cache name at run time - instead of hard wiring it in the data configuration file - enables cache data to be
-     * moved to an arbitrary location within the cache.
-     *
-     * @param dataConfigCachePath the data configuration file's cache path.
-     * @param params              the output key-value pairs which receive the DATA_CACHE_NAME parameter. A null
-     *                            reference is permitted.
-     * @return a reference to params, or a new AVList if params is null.
-     * @throws IllegalArgumentException if the data config file's cache path is null or has length zero.
-     */
-    public static AVList getDataConfigCacheName(String dataConfigCachePath, AVList params) {
-        if (dataConfigCachePath == null || dataConfigCachePath.isEmpty()) {
-            String message = Logging.getMessage("nullValue.FilePathIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (params == null) {
-            params = new AVListImpl();
-        }
-
-        String s = params.getStringValue(AVKey.DATA_CACHE_NAME);
-        if (s == null || s.isEmpty()) {
-            // Get the data configuration file's parent cache name.
-            s = WWIO.getParentFilePath(dataConfigCachePath);
-            if (s != null && !s.isEmpty()) {
-                // Replace any windows-style path separators with the unix-style path separator, which is the convention
-                // for cache paths.
-                s = s.replaceAll("\\\\", "/");
-                params.set(AVKey.DATA_CACHE_NAME, s);
-            }
-        }
-
-        return params;
-    }
-
-    /**
-     * Returns true if a configuration file name exists in the store which has not expired. This returns false if a
-     * configuration file does not exist, or it has expired. This invokes {@link #findExistingDataConfigFile(FileStore,
-     * String)} to determine the URL of any existing file names. If an existing file has expired, and removeIfExpired is
-     * true, this removes the existing file.
-     *
-     * @param fileStore       the file store in which to look.
-     * @param fileName        the file name to look for. If a file with this name does not exist in the store, this
-     *                        looks at the file's siblings for a match.
-     * @param removeIfExpired true to remove the existing file, if it exists and is expired; false otherwise.
-     * @param expiryTime      the time in milliseconds, before which a file is considered to be expired.
-     * @return whether a configuration file already exists which has not expired.
-     * @throws IllegalArgumentException if either the file store or file name are null.
-     */
-    public static boolean hasDataConfigFile(FileStore fileStore, String fileName, boolean removeIfExpired,
-        long expiryTime) {
-        if (fileStore == null) {
-            String message = Logging.getMessage("nullValue.FileStoreIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (fileName == null) {
-            String message = Logging.getMessage("nullValue.FilePathIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        // Look for an existing configuration file in the store. Return true if a configuration file does not exist,
-        // or it has expired; otherwise return false.
-        URL url = DataConfigurationUtils.findExistingDataConfigFile(fileStore, fileName);
-        if (url != null && !WWIO.isFileOutOfDate(url, expiryTime)) {
-            return true;
-        }
-
-        // A configuration file exists but it is expired. Remove the file and return false, indicating that there is
-        // no configuration document.
-        if (url != null && removeIfExpired) {
-            fileStore.removeFile(url);
-
-            String message = Logging.getMessage("generic.DataFileExpired", url);
-            Logging.logger().fine(message);
-        }
-
-        return false;
-    }
-
-    /**
-     * Returns the URL of an existing data configuration file under the specified file store, or null if no
-     * configuration file exists. This first looks for a configuration file with the specified name. If that does not
-     * exist, this checks the siblings of the specified file for a configuration file match.
-     *
-     * @param fileStore the file store in which to look.
-     * @param fileName  the file name to look for. If a file with this name does not exist in the store, this looks at
-     *                  the file's siblings for a match.
-     * @return the URL of an existing configuration file in the store, or null if none exists.
-     * @throws IllegalArgumentException if either the file store or file name are null.
-     */
-    public static URL findExistingDataConfigFile(FileStore fileStore, String fileName) {
-        if (fileStore == null) {
-            String message = Logging.getMessage("nullValue.FileStoreIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (fileName == null) {
-            String message = Logging.getMessage("nullValue.FilePathIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        // Attempt to find the specified file name in the store. If it exists, then we've found a match and we're done.
-        URL url = fileStore.findFile(fileName, false);
-        if (url != null) {
-            return url;
-        }
-
-        // If the specified name did not exist, then try to find any data configuration file under the file's parent
-        // path. Find only the file names which are siblings of the specified file name.
-        String path = WWIO.getParentFilePath(fileName);
-        if (path == null || path.isEmpty()) {
-            return null;
-        }
-
-        String[] names = fileStore.listFileNames(path, new DataConfigurationFilter());
-        if (names == null || names.length == 0) {
-            return null;
-        }
-
-        // Ignore all but the first file match.
-        return fileStore.findFile(names[0], false);
-    }
-
-    /**
-     * Convenience method to create a {@link ScheduledExecutorService} which can be used by World Wind components to
-     * schedule periodic resource checks. The returned ExecutorService is backed by a single daemon thread with minimum
-     * priority.
-     *
-     * @param threadName the String name for the ExecutorService's thread, may be <code>null</code>.
-     * @return a new ScheduledExecutorService appropriate for scheduling periodic resource checks.
-     */
-    public static ScheduledExecutorService createResourceRetrievalService(final String threadName) {
-        ThreadFactory threadFactory = r -> {
-            Thread thread = new Thread(r);
-            thread.setDaemon(true);
-            thread.setPriority(Thread.MIN_PRIORITY);
-
-            if (threadName != null) {
-                thread.setName(threadName);
-            }
-
-            return thread;
-        };
-
-        return Executors.newSingleThreadScheduledExecutor(threadFactory);
-    }
+//    /**
+//     * Returns a file store path name for the specified parameters list. This returns null if the parameter list does
+//     * not contain enough information to construct a path name.
+//     *
+//     * @param params the parameter list to extract a configuration filename from.
+//     * @param suffix the file suffix to append on the path name, or null to append no suffix.
+//     * @return a file store path name with the specified suffix, or null if a path name cannot be constructed.
+//     * @throws IllegalArgumentException if the parameter list is null.
+//     */
+//    public static String getDataConfigFilename(AVList params, String suffix) {
+////        if (params == null) {
+////            String message = Logging.getMessage("nullValue.ParametersIsNull");
+////            Logging.logger().severe(message);
+////            throw new IllegalArgumentException(message);
+////        }
+//
+//        String path = params.getStringValue(AVKey.DATA_CACHE_NAME);
+//        if (path == null || path.isEmpty()) {
+//            return null;
+//        }
+//
+//        String filename = params.getStringValue(AVKey.DATASET_NAME);
+//
+//        if (filename == null || filename.isEmpty()) {
+//            filename = params.getStringValue(AVKey.DISPLAY_NAME);
+//        }
+//
+//        if (filename == null || filename.isEmpty()) {
+//            filename = "DataConfiguration";
+//        }
+//
+//        filename = WWIO.replaceIllegalFileNameCharacters(filename);
+//
+//        return path + File.separator + filename + (suffix != null ? suffix : "");
+//    }
+//
+//    /**
+//     * Convenience method for computing a data configuration file's cache name in a FileStore, given the file's cache
+//     * path. This writes the computed cache name to the specified parameter list under the key {@link
+//     * AVKey#DATA_CACHE_NAME}. If the parameter already exists, it's left unchanged.
+//     * <p>
+//     * A data configuration file's cache name is its parent directory in the cache. The cache name therefore points to
+//     * the directory containing both the configuration file and any cached data associated with it. Determining the
+//     * cache name at run time - instead of hard wiring it in the data configuration file - enables cache data to be
+//     * moved to an arbitrary location within the cache.
+//     *
+//     * @param dataConfigCachePath the data configuration file's cache path.
+//     * @param params              the output key-value pairs which receive the DATA_CACHE_NAME parameter. A null
+//     *                            reference is permitted.
+//     * @return a reference to params, or a new AVList if params is null.
+//     * @throws IllegalArgumentException if the data config file's cache path is null or has length zero.
+//     */
+//    public static AVList getDataConfigCacheName(String dataConfigCachePath, AVList params) {
+//        if (dataConfigCachePath == null || dataConfigCachePath.isEmpty()) {
+//            String message = Logging.getMessage("nullValue.FilePathIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//
+//        if (params == null) {
+//            params = new AVListImpl();
+//        }
+//
+//        String s = params.getStringValue(AVKey.DATA_CACHE_NAME);
+//        if (s == null || s.isEmpty()) {
+//            // Get the data configuration file's parent cache name.
+//            s = WWIO.getParentFilePath(dataConfigCachePath);
+//            if (s != null && !s.isEmpty()) {
+//                // Replace any windows-style path separators with the unix-style path separator, which is the convention
+//                // for cache paths.
+//                s = s.replaceAll("\\\\", "/");
+//                params.set(AVKey.DATA_CACHE_NAME, s);
+//            }
+//        }
+//
+//        return params;
+//    }
+//
+//    /**
+//     * Returns true if a configuration file name exists in the store which has not expired. This returns false if a
+//     * configuration file does not exist, or it has expired. This invokes {@link #findExistingDataConfigFile(FileStore,
+//     * String)} to determine the URL of any existing file names. If an existing file has expired, and removeIfExpired is
+//     * true, this removes the existing file.
+//     *
+//     * @param fileStore       the file store in which to look.
+//     * @param fileName        the file name to look for. If a file with this name does not exist in the store, this
+//     *                        looks at the file's siblings for a match.
+//     * @param removeIfExpired true to remove the existing file, if it exists and is expired; false otherwise.
+//     * @param expiryTime      the time in milliseconds, before which a file is considered to be expired.
+//     * @return whether a configuration file already exists which has not expired.
+//     * @throws IllegalArgumentException if either the file store or file name are null.
+//     */
+//    public static boolean hasDataConfigFile(FileStore fileStore, String fileName, boolean removeIfExpired,
+//        long expiryTime) {
+//        if (fileStore == null) {
+//            String message = Logging.getMessage("nullValue.FileStoreIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//
+//        if (fileName == null) {
+//            String message = Logging.getMessage("nullValue.FilePathIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//
+//        // Look for an existing configuration file in the store. Return true if a configuration file does not exist,
+//        // or it has expired; otherwise return false.
+//        URL url = DataConfigurationUtils.findExistingDataConfigFile(fileStore, fileName);
+//        if (url != null && !WWIO.isFileOutOfDate(url, expiryTime)) {
+//            return true;
+//        }
+//
+//        // A configuration file exists but it is expired. Remove the file and return false, indicating that there is
+//        // no configuration document.
+//        if (url != null && removeIfExpired) {
+//            fileStore.removeFile(url);
+//
+//            String message = Logging.getMessage("generic.DataFileExpired", url);
+//            Logging.logger().fine(message);
+//        }
+//
+//        return false;
+//    }
+//
+//    /**
+//     * Returns the URL of an existing data configuration file under the specified file store, or null if no
+//     * configuration file exists. This first looks for a configuration file with the specified name. If that does not
+//     * exist, this checks the siblings of the specified file for a configuration file match.
+//     *
+//     * @param fileStore the file store in which to look.
+//     * @param fileName  the file name to look for. If a file with this name does not exist in the store, this looks at
+//     *                  the file's siblings for a match.
+//     * @return the URL of an existing configuration file in the store, or null if none exists.
+//     * @throws IllegalArgumentException if either the file store or file name are null.
+//     */
+//    public static URL findExistingDataConfigFile(FileStore fileStore, String fileName) {
+//        if (fileStore == null) {
+//            String message = Logging.getMessage("nullValue.FileStoreIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//
+//        if (fileName == null) {
+//            String message = Logging.getMessage("nullValue.FilePathIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//
+//        // Attempt to find the specified file name in the store. If it exists, then we've found a match and we're done.
+//        URL url = fileStore.findFile(fileName, false);
+//        if (url != null) {
+//            return url;
+//        }
+//
+//        // If the specified name did not exist, then try to find any data configuration file under the file's parent
+//        // path. Find only the file names which are siblings of the specified file name.
+//        String path = WWIO.getParentFilePath(fileName);
+//        if (path == null || path.isEmpty()) {
+//            return null;
+//        }
+//
+//        String[] names = fileStore.listFileNames(path, new DataConfigurationFilter());
+//        if (names == null || names.length == 0) {
+//            return null;
+//        }
+//
+//        // Ignore all but the first file match.
+//        return fileStore.findFile(names[0], false);
+//    }
+//
+//    /**
+//     * Convenience method to create a {@link ScheduledExecutorService} which can be used by World Wind components to
+//     * schedule periodic resource checks. The returned ExecutorService is backed by a single daemon thread with minimum
+//     * priority.
+//     *
+//     * @param threadName the String name for the ExecutorService's thread, may be <code>null</code>.
+//     * @return a new ScheduledExecutorService appropriate for scheduling periodic resource checks.
+//     */
+//    public static ScheduledExecutorService createResourceRetrievalService(final String threadName) {
+//        ThreadFactory threadFactory = r -> {
+//            Thread thread = new Thread(r);
+//            thread.setDaemon(true);
+//            thread.setPriority(Thread.MIN_PRIORITY);
+//
+//            if (threadName != null) {
+//                thread.setName(threadName);
+//            }
+//
+//            return thread;
+//        };
+//
+//        return Executors.newSingleThreadScheduledExecutor(threadFactory);
+//    }
 
     //**************************************************************//
     //********************  WMS Common Configuration  **************//
@@ -407,17 +404,6 @@ public class DataConfigurationUtils {
      * @throws IllegalArgumentException if either the parameters or the context are null.
      */
     public static Element createWMSLayerConfigElements(AVList params, Element context) {
-        if (params == null) {
-            String message = Logging.getMessage("nullValue.ParametersIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (context == null) {
-            String message = Logging.getMessage("nullValue.ContextIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         XPath xpath = WWXML.makeXPath();
 
@@ -473,17 +459,6 @@ public class DataConfigurationUtils {
      * @throws IllegalArgumentException if either the parameters or the context are null.
      */
     public static Element createWCSLayerConfigElements(AVList params, Element context) {
-        if (params == null) {
-            String message = Logging.getMessage("nullValue.ParametersIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (context == null) {
-            String message = Logging.getMessage("nullValue.ContextIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         XPath xpath = WWXML.makeXPath();
 
@@ -542,11 +517,6 @@ public class DataConfigurationUtils {
      * @throws IllegalArgumentException if the document is null.
      */
     public static AVList getWMSLayerConfigParams(Element domElement, AVList params) {
-        if (domElement == null) {
-            String message = Logging.getMessage("nullValue.DocumentIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         if (params == null) {
             params = new AVListImpl();
@@ -578,11 +548,6 @@ public class DataConfigurationUtils {
     }
 
     public static AVList getWCSConfigParams(Element domElement, AVList params) {
-        if (domElement == null) {
-            String message = Logging.getMessage("nullValue.DocumentIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         if (params == null) {
             params = new AVListImpl();
@@ -614,17 +579,6 @@ public class DataConfigurationUtils {
     }
 
     public static AVList getWMSLayerConfigParams(WMSCapabilities caps, String[] formatOrderPreference, AVList params) {
-        if (caps == null) {
-            String message = Logging.getMessage("nullValue.WMSCapabilities");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (params == null) {
-            String message = Logging.getMessage("nullValue.ParametersIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         String layerNames = params.getStringValue(AVKey.LAYER_NAMES);
         String styleNames = params.getStringValue(AVKey.STYLE_NAMES);
@@ -763,23 +717,6 @@ public class DataConfigurationUtils {
 
     public static AVList getWCSConfigParameters(WCS100Capabilities caps, WCS100DescribeCoverage coverage,
         AVList params) {
-        if (caps == null) {
-            String message = Logging.getMessage("nullValue.WMSCapabilities");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (coverage == null) {
-            String message = Logging.getMessage("nullValue.WCSDescribeCoverage");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (params == null) {
-            String message = Logging.getMessage("nullValue.ParametersIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         WCS100CoverageOffering offering = coverage.getCoverageOfferings().get(0);
 
@@ -874,11 +811,6 @@ public class DataConfigurationUtils {
      * @throws IllegalArgumentException if the parameter list is null.
      */
     public static URL getOGCGetCapabilitiesURL(AVList params) {
-        if (params == null) {
-            String message = Logging.getMessage("nullValue.ParametersIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         String uri = params.getStringValue(AVKey.GET_CAPABILITIES_URL);
         if (uri == null || uri.isEmpty()) {
@@ -915,11 +847,6 @@ public class DataConfigurationUtils {
      * @throws IllegalArgumentException if the parameter list is null.
      */
     public static String[] getOGCLayerNames(AVList params) {
-        if (params == null) {
-            String message = Logging.getMessage("nullValue.ParametersIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         String s = params.getStringValue(AVKey.LAYER_NAMES);
         if (s == null || s.isEmpty()) {

@@ -68,7 +68,6 @@ public abstract class AbstractDataStoreProducer extends WWObjectImpl implements 
         //noinspection RedundantIfStatement
         if (message != null) {
             // TODO garakl Do we want to log these files which we do not have readers for?
-//            Logging.logger().finest(message);
             return false;
         }
 
@@ -134,7 +133,7 @@ public abstract class AbstractDataStoreProducer extends WWObjectImpl implements 
         this.dataSourceList.clear();
     }
 
-    public void startProduction() throws Exception {
+    public void startProduction() {
         if (this.isStopped()) {
             String message = Logging.getMessage("DataStoreProducer.Stopped");
             Logging.logger().warning(message);

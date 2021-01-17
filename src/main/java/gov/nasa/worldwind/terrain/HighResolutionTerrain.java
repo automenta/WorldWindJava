@@ -92,7 +92,6 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
 
         this.geometryCache =
             new SoftMemoryCache();
-        //new BasicMemoryCache((long) (0.85 * DEFAULT_CACHE_CAPACITY), DEFAULT_CACHE_CAPACITY);
     }
 
     protected static double createPosition(int start, double decimal, int density) {
@@ -1219,7 +1218,6 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
                 int status = Triangle.intersectTriangles(triangle, triA, iVerts);
                 if (status == 1) {
                     intersections.add(new Vec4[] {iVerts[0], iVerts[1]});
-//                    intersections.add(new Vec4[] {triA[0], triA[1], triA[2], triA[0]});
                 } else if (status == 0) {
                     intersections.add(new Vec4[] {triA[0], triA[1], triA[2]});
                 }
@@ -1227,7 +1225,6 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
                 status = Triangle.intersectTriangles(triangle, triB, iVerts);
                 if (status == 1) {
                     intersections.add(new Vec4[] {iVerts[0], iVerts[1]});
-//                    intersections.add(new Vec4[] {triB[0], triB[1], triB[2], triB[0]});
                 } else if (status == 0) {
                     intersections.add(new Vec4[] {triB[0], triB[1], triB[2]});
                 }
@@ -1405,7 +1402,6 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
 
         protected long getSizeInBytes() {
             // 2 references, an int, and vertices. (indices are shared among all tiles)
-//            System.out.println(2 * 4 + 4 + this.vertices.length * 3 * 4);
             return 2 * 4 + 4 + this.vertices.length * 3 * 4; // 588 bytes at a density of 3
         }
     }

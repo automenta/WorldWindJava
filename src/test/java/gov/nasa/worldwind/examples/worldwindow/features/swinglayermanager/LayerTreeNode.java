@@ -88,10 +88,7 @@ public class LayerTreeNode extends DefaultMutableTreeNode implements LayerNode {
     }
 
     public void setSelected(boolean selected) {
-//        boolean old = this.selected;
         this.selected = selected;
-//
-//        this.layer.firePropertyChange(Constants.SELECTED, old, this.selected); // Not enabled yet. Must test first.
     }
 
     public WMSLayerInfo getWmsLayerInfo() {

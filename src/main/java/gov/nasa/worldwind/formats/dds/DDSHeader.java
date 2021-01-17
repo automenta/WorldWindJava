@@ -5,8 +5,6 @@
  */
 package gov.nasa.worldwind.formats.dds;
 
-////.*;
-
 import gov.nasa.worldwind.util.*;
 
 import java.io.*;
@@ -27,13 +25,11 @@ public class DDSHeader {
     protected int linearSize;
     protected int depth;
     protected int mipMapCount;
-    //protected int[] reserved1 = new int[11]; // Unused
     protected DDSPixelFormat pixelFormat;
     protected int caps;
     protected int caps2;
     protected int caps3;
     protected int caps4;
-    //protected int reserved2; // Unused
 
     public DDSHeader() {
         this.pixelFormat = new DDSPixelFormat();

@@ -220,7 +220,6 @@ public class TerrainIntersections extends ApplicationTemplate {
         protected void showResults() {
             this.showIntersections(firstIntersectionPositions);
             this.showSightLines(sightLines);
-//            this.showIntersectingTiles(this.grid, this.referencePosition);
             this.wwd().redraw();
         }
 

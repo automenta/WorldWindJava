@@ -35,12 +35,10 @@ public class URLRetriever extends WWObjectImpl implements Retriever {
      */
     public static final String EXTRACT_ZIP_ENTRY = "URLRetriever.ExtractZipEntry";
     private static final Pattern maxAge = Pattern.compile("max-age=(\\d+)");
-    //    protected final AtomicInteger contentLengthRead = new AtomicInteger(0);
     protected final AtomicLong expiration = new AtomicLong(0);
     protected final URL url;
     protected final Function<Retriever, ByteBuffer> postProcessor;
     protected volatile String state = Retriever.RETRIEVER_STATE_NOT_STARTED;
-    //    protected volatile int contentLength = 0;
     protected volatile String contentType;
     protected volatile ByteBuffer byteBuffer;
     @Deprecated protected volatile URLConnection connection;
@@ -256,11 +254,8 @@ public class URLRetriever extends WWObjectImpl implements Retriever {
 
             });
         } catch (Exception e) {
-//            logger.error("{} {}", e.getMessage(), url);
             setState(Retriever.RETRIEVER_STATE_ERROR);
-//            this.contentLength = 0;
             WorldWind.getNetworkStatus().logUnavailableHost(this.url);
-            //throw e;
         }
 
         return this;
@@ -271,7 +266,6 @@ public class URLRetriever extends WWObjectImpl implements Retriever {
     protected boolean interrupted() {
         if (Thread.currentThread().isInterrupted()) {
             setState(Retriever.RETRIEVER_STATE_INTERRUPTED);
-//            this.contentLength = 0;
             Logging.logger().fine(Logging.getMessage("URLRetriever.RetrievalInterruptedFor", this.url.toString()));
             return true;
         }

@@ -52,8 +52,6 @@ public final class WorldWind {
     private final ScheduledTaskService scheduledTaskService;
     private final NetworkStatus networkStatus;
     private final SessionCache sessionCache;
-//    private final Configuration configuration = new Configuration();
-
 
     private WorldWind() // Singleton, prevent public instantiation.
     {
@@ -88,7 +86,6 @@ public final class WorldWind {
     public static synchronized void shutDown() {
         WorldWind.the.wwo.firePropertyChange(WorldWind.SHUTDOWN_EVENT, null, -1);
         WorldWind.the.dispose();
-//        instance = new WorldWind();
     }
 
     public static MemoryCacheSet getMemoryCacheSet() {

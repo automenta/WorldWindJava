@@ -46,7 +46,6 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
      * specified rectangle. This consolidates duplicate colors to a single entry. We use IntSet to achieve constant time
      * insertion, and to reduce overhead associated associated with storing integer primitives in a HashSet.
      */
-    //protected final IntSet uniquePixelColors = new IntSet();
     protected final IntHashSet uniquePixelColors = new IntHashSet();
     protected final SurfaceTileRenderer geographicSurfaceTileRenderer = new GeographicSurfaceTileRenderer();
     protected final PickPointFrustumList pickFrustumList = new PickPointFrustumList();
@@ -185,7 +184,6 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     protected Set<String> perFrameStatisticsKeys;
     protected Collection<PerformanceStatistic> perFrameStatistics;
     protected SectorVisibilityTree visibleSectors;
-    //    protected Map<String, GroupingFilter> groupingFilters;
     protected Layer currentLayer;
     protected Collection<Throwable> renderingExceptions;
     protected Dimension pickPointFrustumDimension = new Dimension(3, 3);
@@ -536,7 +534,6 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
 
         // Copy the unique color set to an int array that we return to the caller, then clear the set to ensure that the
         // colors computed during this call do not affect the next call.
-        //int[] array = new int[this.uniquePixelColors.size()];
         int[] array = this.uniquePixelColors.toArray();
         this.uniquePixelColors.clear();
 

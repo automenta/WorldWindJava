@@ -6,7 +6,6 @@
 
 package gov.nasa.worldwind.examples.worldwindow.core;
 
-////.*;
 import gov.nasa.worldwind.examples.worldwindow.util.Util;
 import gov.nasa.worldwind.util.*;
 

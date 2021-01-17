@@ -6,8 +6,6 @@
 
 package gov.nasa.worldwind.symbology;
 
-////.*;
-
 import gov.nasa.worldwind.util.*;
 
 import javax.imageio.ImageIO;

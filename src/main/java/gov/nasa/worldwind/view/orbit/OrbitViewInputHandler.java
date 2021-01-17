@@ -125,7 +125,6 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
             // We're treating a speed parameter as smoothing here. A greater speed results in greater smoothing and
             // slower response. Therefore the min speed used at lower altitudes ought to be *greater* than the max
             // speed used at higher altitudes.
-            //double[] values = actionAttribs.getValues();
             double smoothing = this.getScaleValueZoom(actionAttribs);
             if (!actionAttribs.isEnableSmoothing())
                 smoothing = 0.0;

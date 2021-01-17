@@ -143,10 +143,8 @@ public class ShapefileMultiPatch { //extends ShapefileRenderable implements Orde
             return;
         }
 
-//        this.sector = Sector.fromDegrees(boundingRect);
         this.initNormalAttrs = normalAttrs;
         this.initHighlightAttrs = highlightAttrs;
-//        this.initAttributeDelegate = attributeDelegate;
         this.assembleRecords(shapefile);
     }
 
@@ -298,14 +296,12 @@ public class ShapefileMultiPatch { //extends ShapefileRenderable implements Orde
         final ShapefileRecordMultiPatch.PartType[] partTypes;
 
         public Record(ShapefileRecord shapefileRecord) {
-            //super(shapefileRenderable, shapefileRecord);
             this.firstPartNumber = shapefileRecord.getFirstPartNumber();
             this.numberOfParts = shapefileRecord.getNumberOfParts();
             this.numberOfPoints = shapefileRecord.getNumberOfPoints();
             this.pointBuffer = shapefileRecord.getShapeFile().getPointBuffer();
             this.zValues = ((ShapefileRecordMultiPatch) shapefileRecord).getZValues();
             this.partTypes = ((ShapefileRecordMultiPatch) shapefileRecord).getPartTypes();
-//            this.height = ShapefileUtils.extractHeightAttribute(shapefileRecord); // may be null
         }
 
         public int getBoundaryCount() {

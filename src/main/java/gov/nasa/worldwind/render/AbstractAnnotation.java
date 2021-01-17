@@ -240,7 +240,6 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
 
         MultiLineTextRenderer mltr = new MultiLineTextRenderer(tr);
         // Tighten lines together a bit
-//        mltr.setLineSpacing(-2);
         mltr.setTextAlign(align);
 
         return mltr;

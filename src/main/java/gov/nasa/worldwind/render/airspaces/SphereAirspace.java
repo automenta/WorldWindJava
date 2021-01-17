@@ -75,37 +75,30 @@ public class SphereAirspace extends AbstractAirspace {
         DetailLevel level;
         level = new ScreenSizeDetailLevel(ramp[0], "Detail-Level-0");
         level.set(AbstractAirspace.SUBDIVISIONS, 6);
-        //level.setValue(DISABLE_TERRAIN_CONFORMANCE, false);
         levels.add(level);
 
         level = new ScreenSizeDetailLevel(ramp[1], "Detail-Level-1");
         level.set(AbstractAirspace.SUBDIVISIONS, 5);
-        //level.setValue(DISABLE_TERRAIN_CONFORMANCE, false);
         levels.add(level);
 
         level = new ScreenSizeDetailLevel(ramp[2], "Detail-Level-2");
         level.set(AbstractAirspace.SUBDIVISIONS, 4);
-        //level.setValue(DISABLE_TERRAIN_CONFORMANCE, false);
         levels.add(level);
 
         level = new ScreenSizeDetailLevel(ramp[3], "Detail-Level-3");
         level.set(AbstractAirspace.SUBDIVISIONS, 3);
-        //level.setValue(DISABLE_TERRAIN_CONFORMANCE, false);
         levels.add(level);
 
         level = new ScreenSizeDetailLevel(ramp[4], "Detail-Level-4");
         level.set(AbstractAirspace.SUBDIVISIONS, 2);
-        //level.setValue(DISABLE_TERRAIN_CONFORMANCE, true);
         levels.add(level);
 
         level = new ScreenSizeDetailLevel(ramp[5], "Detail-Level-5");
         level.set(AbstractAirspace.SUBDIVISIONS, 1);
-        //level.setValue(DISABLE_TERRAIN_CONFORMANCE, true);
         levels.add(level);
 
         level = new ScreenSizeDetailLevel(ramp[6], "Detail-Level-6");
         level.set(AbstractAirspace.SUBDIVISIONS, 0);
-        //level.setValue(DISABLE_TERRAIN_CONFORMANCE, true);
         levels.add(level);
 
         this.setDetailLevels(levels);

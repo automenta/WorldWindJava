@@ -212,8 +212,6 @@ public class WorldWindowGLAutoDrawable extends WWObjectImpl implements WorldWind
         // 2) WorldWind assumes that a texture's target is always GL_TEXTURE_2D, and therefore incorrectly displays
         //    textures with the target GL_TEXTURE_RECTANGLE.
         TextureIO.setTexRectEnabled(false);
-
-//        this.drawable.setGL(new DebugGL(this.drawable.getGL())); // uncomment to use the debug drawable
     }
 
     @SuppressWarnings("UnusedParameters")

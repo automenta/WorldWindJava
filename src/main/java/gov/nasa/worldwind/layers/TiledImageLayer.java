@@ -17,12 +17,9 @@ import gov.nasa.worldwind.util.*;
 import jcog.data.list.Lst;
 import org.w3c.dom.*;
 
-import javax.imageio.ImageIO;
 import javax.xml.xpath.XPath;
 import java.awt.*;
 import java.awt.geom.*;
-import java.awt.image.*;
-import java.io.*;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.PriorityBlockingQueue;
@@ -354,8 +351,6 @@ protected boolean retainLevelZeroTiles;
 
     abstract protected void requestTexture(DrawContext dc, TextureTile tile);
 
-//    abstract protected void forceTextureLoad(TextureTile tile);
-
     @Override
     public Object set(String key, Object value) {
         // Offer it to the level set
@@ -612,7 +607,6 @@ protected boolean retainLevelZeroTiles;
 
 
     protected void addTile(DrawContext dc, TextureTile tile) {
-        //tile.setFallbackTile(null);
 
         final GpuResourceCache textureCache = dc.gpuCache();
         if (tile.isTextureInMemory(textureCache)) {
@@ -885,59 +879,6 @@ protected boolean retainLevelZeroTiles;
 
         if (formats != null)
             this.supportedImageFormats.addAll(Arrays.asList(formats));
-    }
-
-    protected BufferedImage requestImage(TextureTile tile, String mimeType) throws IOException {
-
-
-        String path = tile.getPathBase() + WWIO.mimeSuffix(mimeType);
-        File f = new File(path);
-
-        InputStream in;
-        if (f.isAbsolute() && f.exists())
-            in = f.toURI().toURL().openStream();
-        else
-            in = WWIO.stream(path);
-
-        try {
-//        if (in == null) // image is not local
-//            return null;
-//
-//        if (WWIO.isFileOutOfDate(in, tile.level.getExpiryTime())) {
-//            // The file has expired. Delete it.
-//            this.levels.miss(tile);
-//            this.getDataFileStore().removeFile(in);
-//            String message = Logging.getMessage("generic.DataFileExpired", in);
-//            Logging.logger().fine(message);
-//        } else {
-            BufferedImage image = ImageIO.read(in);
-            if (image != null) {
-                this.levels.has(tile);
-                return image;
-            } else {
-                throw new IOException(Logging.getMessage("generic.ImageReadFailed", in));
-            }
-
-        } catch (Exception e) {
-            this.levels.miss(tile);
-            throw e;
-        } finally {
-            in.close();
-        }
-
-//            catch (InterruptedIOException e) {
-//                this.levels.miss(tile);
-//                throw e;
-//            }
-//            catch (IOException e) {
-//                // Assume that something's wrong with the file and delete it.
-//                this.getDataFileStore().removeFile(url);
-//                this.levels.miss(tile);
-//                Logging.logger().info(Logging.getMessage("generic.DeletedCorruptDataFile", url));
-//            }
-//        }
-
-//        return null;
     }
 
     public long countImagesInSector(Sector sector) {

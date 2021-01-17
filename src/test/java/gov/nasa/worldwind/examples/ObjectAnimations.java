@@ -157,7 +157,6 @@ public class ObjectAnimations extends ApplicationTemplate {
             ArrayList<AOLPosition> positions = messageParser.getPositions();
             positions.forEach((p) -> {
                 PointPlacemark pp = new PointPlacemark(p.getLLA());
-                //pp.setLabelText(callSigns.get(p.getGufi()));
                 pp.set(AVKey.DISPLAY_NAME, callSigns.get(p.getGufi()));
                 pp.setLineEnabled(false);
                 pp.setAltitudeMode(WorldWind.ABSOLUTE);
@@ -167,7 +166,6 @@ public class ObjectAnimations extends ApplicationTemplate {
                 Color c = colors.get(p.getGufi());
                 c = (c == null) ? Color.MAGENTA : c;
                 attrs.setImageColor(c);
-                //attrs.setScale(0.6);
                 attrs.setLabelOffset(new Offset(0.9d, 0.6d, AVKey.FRACTION, AVKey.FRACTION));
                 pp.setAttributes(attrs);
                 layer.add(pp);
@@ -189,7 +187,6 @@ public class ObjectAnimations extends ApplicationTemplate {
             attrs.setOutlineWidth(2.0d);
             Position.PositionList flightPositions = getPositionsFromKml("KML/dfw-path.kml");
             int nPositions = flightPositions.list.size();
-            //int nFlights = 50;
             double curAltitude = 2500;
             for (int i = 0; i < nFlights; i++) {
                 ColladaRoot planeModel = ColladaRoot.createAndParse("collada/airliner.dae");
@@ -372,7 +369,6 @@ public class ObjectAnimations extends ApplicationTemplate {
             // Update view settings from control panel in a 'first person' perspective
             private void updateView() {
                 if (!suspendEvents) {
-//                    BasicFlyView view = (BasicFlyView) this.wwd.getView();
                     View view = this.wwd.view();
 
                     // Stop iterators first

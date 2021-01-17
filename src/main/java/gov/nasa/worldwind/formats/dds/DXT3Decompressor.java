@@ -67,7 +67,6 @@ public class DXT3Decompressor implements DXTDecompressor {
                         int colorIndex = (colorIndexMask >>> k * 2) & 0x03;
 
                         // No need to multiply alpha, it is already pre-multiplied
-//                      Color24 color = Color24.multiplyAlpha(lookupTable[colorIndex], alpha );
 
                         Color24 color = lookupTable[colorIndex];
                         int pixel8888 = (alpha << 24) | color.getPixel888();

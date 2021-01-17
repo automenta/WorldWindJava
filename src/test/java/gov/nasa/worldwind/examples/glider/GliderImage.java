@@ -192,7 +192,6 @@ public class GliderImage extends AVListImpl {
             throw new IllegalArgumentException(message);
         }
 
-//        GliderImage oldImage = new GliderImage(this);
         this.name = newName;
         this.imageSource = newSource;
         this.firePropertyChange(GLIDER_IMAGE_SOURCE, null, this);
@@ -304,7 +303,6 @@ public class GliderImage extends AVListImpl {
         result = 31 * result + (corners != null ? corners.hashCode() : 0);
         temp = altitude != +0.0d ? Double.doubleToLongBits(altitude) : 0L;
         result = 31 * result + (int) (temp ^ (temp >>> 32));
-//        result = 31 * result + (imageSource != null ? imageSource.hashCode() : 0);
         return result;
     }
 

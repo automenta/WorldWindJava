@@ -89,7 +89,6 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
      * @return the new <code>Sector</code>
      */
     public static Sector fromDegrees(double minLatitude, double maxLatitude, double minLongitude, double maxLongitude) {
-        //return new Sector(Angle.fromDegrees(minLatitude), Angle.fromDegrees(maxLatitude), Angle.fromDegrees(minLongitude), Angle.fromDegrees(maxLongitude));
         return new Sector(minLatitude, maxLatitude, minLongitude, maxLongitude);
     }
 
@@ -812,7 +811,6 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
      */
     @Deprecated
     public final Angle latDelta() {
-        //Angle.fromDegrees(this.maxLatitude.degrees - this.minLatitude.degrees);
         return new Angle(this.latDelta);
     }
 
@@ -823,7 +821,6 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
      */
     @Deprecated
     public final Angle lonDelta() {
-        //Angle.fromDegrees(this.maxLongitude.degrees - this.minLongitude.degrees);
         return new Angle(this.lonDelta);
     }
 

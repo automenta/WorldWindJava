@@ -33,7 +33,6 @@ public class TerrainProfilePanel extends JPanel implements Restorable {
     private static final String GRAPH_SIZE_LARGE_TEXT = "Large Graph";
     private static final String FOLLOW_VIEW_TEXT = "Profile At Screen Center";
     private static final String FOLLOW_CURSOR_TEXT = "Profile Under Cursor";
-    //private static final String FOLLOW_EYE_TEXT    = "Profile Under Eye";
     private static final String FOLLOW_OBJECT_TEXT = "Profile Under Aircraft";
     private static final String FOLLOW_NONE_TEXT = "No Profile";
     private final TerrainProfileController controller;
@@ -494,7 +493,6 @@ public class TerrainProfilePanel extends JPanel implements Restorable {
         static {
             follows.put(FOLLOW_VIEW_TEXT, TerrainProfileLayer.FOLLOW_VIEW);
             follows.put(FOLLOW_CURSOR_TEXT, TerrainProfileLayer.FOLLOW_CURSOR);
-            //follows.put(FOLLOW_EYE_TEXT, TerrainProfileLayer.FOLLOW_EYE);
             follows.put(FOLLOW_OBJECT_TEXT, TerrainProfileLayer.FOLLOW_OBJECT);
             follows.put(FOLLOW_NONE_TEXT, TerrainProfileLayer.FOLLOW_NONE);
         }

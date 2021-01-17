@@ -442,7 +442,6 @@ public class Angle implements Comparable<Angle> {
      * @throws IllegalArgumentException if angle is null.
      */
     public final Angle add(Angle angle) {
-        //return Angle.fromDegrees(this.degrees + angle.degrees);
         return add(angle.degrees);
     }
 

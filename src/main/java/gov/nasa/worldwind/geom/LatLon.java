@@ -1247,7 +1247,7 @@ public class LatLon {
     public static double ellipsoidalDistance(LatLon p1, LatLon p2, double equatorialRadius, double polarRadius) {
         // TODO: I think there is a non-iterative way to calculate the distance. Find it and compare with this one.
         // TODO: What if polar radius is larger than equatorial radius?
-        final double F = (equatorialRadius - polarRadius) / equatorialRadius; // flattening = 1.0 / 298.257223563;
+        final double F = (equatorialRadius - polarRadius) / equatorialRadius;
         final double R = 1.0 - F;
         final double EPS = 0.5E-13;
 

@@ -5,8 +5,6 @@
  */
 package gov.nasa.worldwind.geom;
 
-////.*;
-
 import gov.nasa.worldwind.util.*;
 import jcog.Util;
 

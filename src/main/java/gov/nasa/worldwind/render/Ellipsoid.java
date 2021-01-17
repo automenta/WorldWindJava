@@ -163,7 +163,6 @@ public class Ellipsoid extends RigidShape {
         double thresholdDensity = this.computeDetailThreshold();
 
         double d = dc.getView().getEyePoint().distanceTo3(extent.getCenter());
-        //double pixelSize = dc.getView().computePixelSizeAtDistance(d);
         double shapeScreenSize = extent.getDiameter() / d;
 
         // formula for this object's current vertex density
@@ -200,7 +199,6 @@ public class Ellipsoid extends RigidShape {
             // if none exists, create a new one
             shapeData.addMesh(0, new Geometry());
             makeUnitSphere(this.subdivisions, shapeData.getMesh(0));
-            //this.restart(dc, geom);
             RigidShape.getGeometryCache().add(cacheKey, shapeData.getMesh(0));
         } else {
             // otherwise, just use the one from the cache
@@ -332,7 +330,6 @@ public class Ellipsoid extends RigidShape {
                 if (normalBuffer == null)
                     gl.glEnableClientState(GL2.GL_NORMAL_ARRAY);
             }
-            // this.logGeometryStatistics(dc, geom);
         }
     }
 

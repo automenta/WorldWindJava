@@ -758,7 +758,6 @@ public class GeotiffReader implements Disposable {
             } else {
                 String message = Logging.getMessage("generic.UnknownProjection", projection);
                 Logging.logger().severe(message);
-//                throw new IOException(message);
                 return;
             }
 

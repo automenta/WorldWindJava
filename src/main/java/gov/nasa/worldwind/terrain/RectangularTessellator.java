@@ -117,7 +117,6 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
 
         int numVertsTimesThree = numVerticesPerEdge * 3;
 
-//        double[] a = new double[6];
         ri.vertices.position(bottomLeft);
         Vec4 bL = new Vec4(ri.vertices.get(), ri.vertices.get(), ri.vertices.get());
         Vec4 bR = new Vec4(ri.vertices.get(), ri.vertices.get(), ri.vertices.get());

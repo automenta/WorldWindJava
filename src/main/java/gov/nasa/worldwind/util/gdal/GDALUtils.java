@@ -115,7 +115,6 @@ public class GDALUtils {
                 String newJavaLibraryPath = GDALUtils.buildPathString(folders, true);
                 try {
                     GDALUtils.alterJavaLibraryPath(newJavaLibraryPath);
-//                    gdalNativeLibraryLoaded = gdalLoadNativeLibrary(true);
                 }
                 catch (Exception e) {
                     String message = Logging.getMessage("gdal.UnableToAlterLibraryPath");
@@ -213,7 +212,6 @@ public class GDALUtils {
 
         String message = Logging.getMessage("gdal.SharedDataFolderNotFound");
         Logging.logger().severe(message);
-        // throw new WWRuntimeException( message );
         return null;
     }
 
@@ -800,7 +798,6 @@ public class GDALUtils {
         int w = img.getWidth();
         int h = img.getHeight();
 
-//        BufferedImage flipImg = new BufferedImage(w, h, img.getColorModel().getTransparency() );
         BufferedImage flipImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = flipImg.createGraphics();
         Composite prevComposite = g2d.getComposite();
@@ -1346,7 +1343,6 @@ public class GDALUtils {
                 params.set(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_UNKNOWN);
                 String msg = Logging.getMessage("generic.UnknownCoordinateSystem", proj_wkt);
                 Logging.logger().severe(msg);
-//                throw new WWRuntimeException(msg);
             }
         }
 
@@ -1371,7 +1367,6 @@ public class GDALUtils {
             Double maxValue = GDALUtils.convertStringToDouble(ds.GetMetadataItem("TIFFTAG_MAXSAMPLEVALUE"));
 
             // TODO garakl This feature is not working for GeoTiff files
-//            String type = band.GetUnitType();
             if (minValue == null || maxValue == null) {
                 band.GetMinimum(dbls);
                 minValue = (null != dbls[0]) ? dbls[0] : minValue;

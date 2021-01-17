@@ -109,7 +109,6 @@ public class Path extends AbstractShape {
      */
     protected static final double DEFAULT_DRAW_POSITIONS_SCALE = 10;
     protected static ByteBuffer pickPositionColors; // defines the colors used to resolve position point picking.
-    //    protected final LengthMeasurer measurer = new LengthMeasurer();
     protected Iterable<? extends Position> positions; // the positions as provided by the application
     protected int numPositions; // the number of positions in the positions field.
     protected PositionColors positionColors; // defines a color at each application-provided position.
@@ -470,7 +469,6 @@ public class Path extends AbstractShape {
         }
 
         this.positionsSpanDateline = LatLon.locationsCrossDateLine(this.positions);
-//        this.measurer.setPositions(this.positions);
 
         this.reset();
     }

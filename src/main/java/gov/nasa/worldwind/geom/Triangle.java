@@ -858,7 +858,6 @@ public class Triangle {
             d2 = a * v0[i0] + b * v0[i1] + c;
         }
         return d0 * d2 > 0;
-        //return d0 * d1 > 0 && d0 * d2 > 0;
     }
 
     /**
@@ -895,7 +894,6 @@ public class Triangle {
         return /*(u >= 0.0d) && */(v >= 0) && (u + v <= 1);
 
         // Check if point is contained inside triangle (NOT including edges or vertices)
-//        return (u > 0d) && (v > 0d) && (u + v < 1d);
     }
 
     /**

@@ -6,7 +6,6 @@
 
 package gov.nasa.worldwind.examples.sar;
 
-////.*;
 import gov.nasa.worldwind.util.*;
 
 import javax.swing.*;
