@@ -19,7 +19,7 @@ import org.w3c.dom.*;
 import javax.xml.xpath.*;
 import java.io.*;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.logging.Level;
 
 /**
@@ -128,6 +128,7 @@ public class Configuration // Singleton
 
         data = (FileStore) WorldWind.createConfigurationComponent(AVKey.DATA_FILE_STORE_CLASS_NAME);
         http = new OkHttpClient.Builder()
+            .dispatcher(new Dispatcher(ForkJoinPool.commonPool()))
             .cache(new Cache(
                 data.newFile(""),
                 DISK_CACHE_MB * 1024L * 1024L))

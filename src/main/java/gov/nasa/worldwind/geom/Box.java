@@ -268,7 +268,7 @@ public class Box implements Extent, Renderable {
                 maxDotT = pdt;
         }
 
-        final double EPSILON = 0.5;
+        final double EPSILON = Double.MIN_NORMAL*2; //0.5;
         if (maxDotR - minDotR < EPSILON)
             maxDotR = minDotR + EPSILON;
         if (maxDotS - minDotS < EPSILON)
@@ -306,11 +306,11 @@ public class Box implements Extent, Renderable {
         }
 
         Vec4[] axes = WWMath.computePrincipalAxes(coordinates, stride);
-        if (axes == null) {
-            String msg = Logging.getMessage("generic.ListIsEmpty");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (axes == null) {
+//            String msg = Logging.getMessage("generic.ListIsEmpty");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         Vec4 r = axes[0];
         Vec4 s = axes[1];
@@ -374,29 +374,28 @@ public class Box implements Extent, Renderable {
         ArrayList<Box> boxes = new ArrayList<>(sizeEstimate(iterable));
 
         for (Box box : iterable) {
-            if (box == null)
-                continue;
-
-            boxes.add(box);
+            if (box != null)
+                boxes.add(box);
         }
 
-        if (boxes.isEmpty()) {
-            return null;
-        } else if (boxes.size() == 1) {
-            // If the iterable contains only a single non-null box, we avoid unnecessarily computing its bouding box and
-            // just return it directly. This also ensures that we do not return a box larger than the original box, by
-            // performing a principal component analysis on the corners of a single box.
-            return boxes.get(0);
-        } else {
-            // If the iterable contains two or more boxes, gather up their corners and return a box that encloses the
-            // boxes corners. We create an ArrayList with enough room to hold all the boxes corners to avoid unnecessary
-            // overhead.
-            Collection<Vec4> corners = new ArrayList<>(8 * boxes.size());
-            for (Box box : boxes) {
-                Collections.addAll(corners, box.getCorners());
-            }
+        final int n = boxes.size();
+        switch (n) {
+            case 0:
+                return null;
+            case 1:
+                // If the iterable contains only a single non-null box, we avoid unnecessarily computing its bouding box and
+                // just return it directly. This also ensures that we do not return a box larger than the original box, by
+                // performing a principal component analysis on the corners of a single box.
+                return boxes.get(0);
+            default:
+                // If the iterable contains two or more boxes, gather up their corners and return a box that encloses the
+                // boxes corners. We create an ArrayList with enough room to hold all the boxes corners to avoid unnecessary
+                // overhead.
+                Collection<Vec4> corners = new ArrayList<>(8 * n);
+                for (Box box : boxes)
+                    Collections.addAll(corners, box.getCorners());
 
-            return Box.computeBoundingBox(corners);
+                return Box.computeBoundingBox(corners);
         }
     }
 
@@ -670,7 +669,7 @@ public class Box implements Extent, Renderable {
         // Determine the effective radius of the box axis relative to the plane, use only the S and T axes because the
         // R axis is incorporated into the endpoints of the line this place is being tested against.
         Vec4 n = plane.getNormal();
-        return 0.5 * (Math.abs(this.s.dot3(n)) + Math.abs(this.t.dot3(n)));
+        return (Math.abs(n.dot3(this.s)) + Math.abs(n.dot3(this.t)))/2;
     }
 
     /**

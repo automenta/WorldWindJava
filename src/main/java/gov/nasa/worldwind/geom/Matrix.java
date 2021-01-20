@@ -1659,41 +1659,41 @@ public class Matrix {
 
     public final int hashCode() {
         if (this.hashCode == 0) {
-            int result;
-            long tmp;
-            tmp = Double.doubleToLongBits(this.m11);
-            result = (int) (tmp ^ (tmp >>> 32));
-            tmp = Double.doubleToLongBits(this.m12);
-            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-            tmp = Double.doubleToLongBits(this.m13);
-            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-            tmp = Double.doubleToLongBits(this.m14);
-            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-            tmp = Double.doubleToLongBits(this.m21);
-            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-            tmp = Double.doubleToLongBits(this.m22);
-            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-            tmp = Double.doubleToLongBits(this.m23);
-            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-            tmp = Double.doubleToLongBits(this.m24);
-            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-            tmp = Double.doubleToLongBits(this.m31);
-            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-            tmp = Double.doubleToLongBits(this.m32);
-            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-            tmp = Double.doubleToLongBits(this.m33);
-            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-            tmp = Double.doubleToLongBits(this.m34);
-            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-            tmp = Double.doubleToLongBits(this.m41);
-            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-            tmp = Double.doubleToLongBits(this.m42);
-            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-            tmp = Double.doubleToLongBits(this.m43);
-            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-            tmp = Double.doubleToLongBits(this.m44);
-            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-            this.hashCode = result;
+            int r;
+            long t;
+            t = Double.doubleToLongBits(this.m11);
+            r = (int) (t ^ (t >>> 32));
+            t = Double.doubleToLongBits(this.m12);
+            r = 29 * r + (int) (t ^ (t >>> 32));
+            t = Double.doubleToLongBits(this.m13);
+            r = 29 * r + (int) (t ^ (t >>> 32));
+            t = Double.doubleToLongBits(this.m14);
+            r = 29 * r + (int) (t ^ (t >>> 32));
+            t = Double.doubleToLongBits(this.m21);
+            r = 29 * r + (int) (t ^ (t >>> 32));
+            t = Double.doubleToLongBits(this.m22);
+            r = 29 * r + (int) (t ^ (t >>> 32));
+            t = Double.doubleToLongBits(this.m23);
+            r = 29 * r + (int) (t ^ (t >>> 32));
+            t = Double.doubleToLongBits(this.m24);
+            r = 29 * r + (int) (t ^ (t >>> 32));
+            t = Double.doubleToLongBits(this.m31);
+            r = 29 * r + (int) (t ^ (t >>> 32));
+            t = Double.doubleToLongBits(this.m32);
+            r = 29 * r + (int) (t ^ (t >>> 32));
+            t = Double.doubleToLongBits(this.m33);
+            r = 29 * r + (int) (t ^ (t >>> 32));
+            t = Double.doubleToLongBits(this.m34);
+            r = 29 * r + (int) (t ^ (t >>> 32));
+            t = Double.doubleToLongBits(this.m41);
+            r = 29 * r + (int) (t ^ (t >>> 32));
+            t = Double.doubleToLongBits(this.m42);
+            r = 29 * r + (int) (t ^ (t >>> 32));
+            t = Double.doubleToLongBits(this.m43);
+            r = 29 * r + (int) (t ^ (t >>> 32));
+            t = Double.doubleToLongBits(this.m44);
+            r = 29 * r + (int) (t ^ (t >>> 32));
+            this.hashCode = r;
         }
         return this.hashCode;
     }
@@ -1767,143 +1767,12 @@ public class Matrix {
         return sb.toString();
     }
 
-    public final double getM11() {
-        return this.m11;
-    }
-
-    public final double getM12() {
-        return this.m12;
-    }
-
-    public final double getM13() {
-        return this.m13;
-    }
-
-    public final double getM14() {
-        return this.m14;
-    }
-
-    public final double getM21() {
-        return this.m21;
-    }
-
-    public final double getM22() {
-        return this.m22;
-    }
-
-    public final double getM23() {
-        return this.m23;
-    }
-
-    public final double getM24() {
-        return this.m24;
-    }
-
-    public final double getM31() {
-        return this.m31;
-    }
-
-    public final double getM32() {
-        return this.m32;
-    }
-
-    public final double getM33() {
-        return this.m33;
-    }
-
-    public final double getM34() {
-        return this.m34;
-    }
-
-    public final double getM41() {
-        return this.m41;
-    }
-
-    public final double getM42() {
-        return this.m42;
-    }
-
-    public final double getM43() {
-        return this.m43;
-    }
-
-    public final double getM44() {
-        return this.m44;
-    }
-
-    public final double m11() {
-        return this.m11;
-    }
-
-    public final double m12() {
-        return this.m12;
-    }
-
-    public final double m13() {
-        return this.m13;
-    }
-
-    public final double m14() {
-        return this.m14;
-    }
-
-    public final double m21() {
-        return this.m21;
-    }
-
-    public final double m22() {
-        return this.m22;
-    }
-
-    public final double m23() {
-        return this.m23;
-    }
-
-    public final double m24() {
-        return this.m24;
-    }
-
-    // ============== Arithmetic Functions ======================= //
-    // ============== Arithmetic Functions ======================= //
-    // ============== Arithmetic Functions ======================= //
-
-    public final double m31() {
-        return this.m31;
-    }
-
-    public final double m32() {
-        return this.m32;
-    }
-
-    public final double m33() {
-        return this.m33;
-    }
-
-    public final double m34() {
-        return this.m34;
-    }
-
-    public final double m41() {
-        return this.m41;
-    }
-
-    public final double m42() {
-        return this.m42;
-    }
-
-    public final double m43() {
-        return this.m43;
-    }
-
-    public final double m44() {
-        return this.m44;
-    }
 
     // ============== Matrix Arithmetic Functions ======================= //
     // ============== Matrix Arithmetic Functions ======================= //
     // ============== Matrix Arithmetic Functions ======================= //
 
-    public final Matrix add(Matrix matrix) {
+    public final Matrix add(Matrix m) {
 //        if (matrix == null) {
 //            String msg = Logging.getMessage("nullValue.MatrixIsNull");
 //            Logging.logger().severe(msg);
@@ -1911,13 +1780,13 @@ public class Matrix {
 //        }
 
         return new Matrix(
-            this.m11 + matrix.m11, this.m12 + matrix.m12, this.m13 + matrix.m13, this.m14 + matrix.m14,
-            this.m21 + matrix.m21, this.m22 + matrix.m22, this.m23 + matrix.m23, this.m24 + matrix.m24,
-            this.m31 + matrix.m31, this.m32 + matrix.m32, this.m33 + matrix.m33, this.m34 + matrix.m34,
-            this.m41 + matrix.m41, this.m42 + matrix.m42, this.m43 + matrix.m43, this.m44 + matrix.m44);
+            this.m11 + m.m11, this.m12 + m.m12, this.m13 + m.m13, this.m14 + m.m14,
+            this.m21 + m.m21, this.m22 + m.m22, this.m23 + m.m23, this.m24 + m.m24,
+            this.m31 + m.m31, this.m32 + m.m32, this.m33 + m.m33, this.m34 + m.m34,
+            this.m41 + m.m41, this.m42 + m.m42, this.m43 + m.m43, this.m44 + m.m44);
     }
 
-    public final Matrix subtract(Matrix matrix) {
+    public final Matrix subtract(Matrix m) {
 //        if (matrix == null) {
 //            String msg = Logging.getMessage("nullValue.MatrixIsNull");
 //            Logging.logger().severe(msg);
@@ -1925,18 +1794,18 @@ public class Matrix {
 //        }
 
         return new Matrix(
-            this.m11 - matrix.m11, this.m12 - matrix.m12, this.m13 - matrix.m13, this.m14 - matrix.m14,
-            this.m21 - matrix.m21, this.m22 - matrix.m22, this.m23 - matrix.m23, this.m24 - matrix.m24,
-            this.m31 - matrix.m31, this.m32 - matrix.m32, this.m33 - matrix.m33, this.m34 - matrix.m34,
-            this.m41 - matrix.m41, this.m42 - matrix.m42, this.m43 - matrix.m43, this.m44 - matrix.m44);
+            this.m11 - m.m11, this.m12 - m.m12, this.m13 - m.m13, this.m14 - m.m14,
+            this.m21 - m.m21, this.m22 - m.m22, this.m23 - m.m23, this.m24 - m.m24,
+            this.m31 - m.m31, this.m32 - m.m32, this.m33 - m.m33, this.m34 - m.m34,
+            this.m41 - m.m41, this.m42 - m.m42, this.m43 - m.m43, this.m44 - m.m44);
     }
 
-    public final Matrix multiplyComponents(double value) {
+    public final Matrix multiplyComponents(double v) {
         return new Matrix(
-            this.m11 * value, this.m12 * value, this.m13 * value, this.m14 * value,
-            this.m21 * value, this.m22 * value, this.m23 * value, this.m24 * value,
-            this.m31 * value, this.m32 * value, this.m33 * value, this.m34 * value,
-            this.m41 * value, this.m42 * value, this.m43 * value, this.m44 * value);
+            this.m11 * v, this.m12 * v, this.m13 * v, this.m14 * v,
+            this.m21 * v, this.m22 * v, this.m23 * v, this.m24 * v,
+            this.m31 * v, this.m32 * v, this.m33 * v, this.m34 * v,
+            this.m41 * v, this.m42 * v, this.m43 * v, this.m44 * v);
     }
 
     public final Matrix multiply(Matrix matrix) {
@@ -2001,16 +1870,16 @@ public class Matrix {
 
     public final Matrix negate() {
         return new Matrix(
-            0.0 - this.m11, 0.0 - this.m12, 0.0 - this.m13, 0.0 - this.m14,
-            0.0 - this.m21, 0.0 - this.m22, 0.0 - this.m23, 0.0 - this.m24,
-            0.0 - this.m31, 0.0 - this.m32, 0.0 - this.m33, 0.0 - this.m34,
-            0.0 - this.m41, 0.0 - this.m42, 0.0 - this.m43, 0.0 - this.m44,
+            -this.m11, -this.m12, -this.m13, -this.m14,
+            -this.m21, -this.m22, -this.m23, -this.m24,
+            -this.m31, -this.m32, -this.m33, -this.m34,
+            -this.m41, -this.m42, -this.m43, -this.m44,
             // Negative of orthonormal 3D transform matrix is also an orthonormal 3D transform.
             this.isOrthonormalTransform);
     }
 
     public final double getDeterminant() {
-        double result = 0.0;
+        double result = 0;
         // Columns 2, 3, 4.
         result += this.m11 *
             (this.m22 * (this.m33 * this.m44 - this.m43 * this.m34)
@@ -2099,13 +1968,11 @@ public class Matrix {
             return null;
 
         double zRadians;
-        // No Gimball lock.
+
         if (Math.abs(cosY) > 0.005) {
-            zRadians = Math.atan2(-this.m12 / cosY, this.m11 / cosY);
-        }
-        // Gimball lock has occurred. Rotation around X axis becomes rotation around Z axis.
-        else {
-            zRadians = Math.atan2(this.m21, this.m22);
+            zRadians = Math.atan2(-this.m12 / cosY, this.m11 / cosY); // No Gimball lock.
+        } else {
+            zRadians = Math.atan2(this.m21, this.m22); // Gimball lock has occurred. Rotation around X axis becomes rotation around Z axis.
         }
 
         return Double.isNaN(zRadians) ? null : Angle.fromRadians(zRadians);
@@ -2126,11 +1993,8 @@ public class Matrix {
 
         double yRadians;
         if (xRadians < Math.PI / 2) {
-            if (xRadians > -Math.PI / 2) {
-                yRadians = Math.atan2(this.m13, this.m33);
-            } else {
-                yRadians = -Math.atan2(-this.m12, this.m11);
-            }
+            yRadians = xRadians > -Math.PI / 2 ?
+                Math.atan2(this.m13, this.m33) : -Math.atan2(-this.m12, this.m11);
         } else {
             yRadians = Math.atan2(-this.m12, this.m11);
         }
@@ -2145,12 +2009,7 @@ public class Matrix {
         if (Double.isNaN(xRadians))
             return null;
 
-        double zRadians;
-        if (xRadians < Math.PI / 2 && xRadians > -Math.PI / 2) {
-            zRadians = Math.atan2(this.m21, this.m22);
-        } else {
-            zRadians = 0;
-        }
+        double zRadians = xRadians < Math.PI / 2 && xRadians > -Math.PI / 2 ? Math.atan2(this.m21, this.m22) : 0;
 
         // negate angle to make it CW
         return Double.isNaN(zRadians) ? null : Angle.fromRadians(-zRadians);
@@ -2256,21 +2115,22 @@ public class Matrix {
         // Extract the viewing parameters from the transform in local coordinates.
         // TODO: Document how these parameters are extracted. See [WWMatrix extractViewingParameters] in WWiOS.
 
-        double range = -this.multiply(globe.computeModelCoordinateOriginTransform(originPos)).m34;
+        final Matrix oo = globe.computeModelCoordinateOriginTransform(originPos);
+        double range = -this.multiply(oo).m34;
 
         double st = Math.sqrt(
-            this.multiply(globe.computeModelCoordinateOriginTransform(originPos)).m13 * this.multiply(
-                globe.computeModelCoordinateOriginTransform(originPos)).m13
-                + this.multiply(globe.computeModelCoordinateOriginTransform(originPos)).m23 * this.multiply(
-                globe.computeModelCoordinateOriginTransform(originPos)).m23);
-        double tilt = Math.atan2(st, this.multiply(globe.computeModelCoordinateOriginTransform(originPos)).m33);
+            this.multiply(oo).m13 * this.multiply(
+                oo).m13
+                + this.multiply(oo).m23 * this.multiply(
+                oo).m23);
+        double tilt = Math.atan2(st, this.multiply(oo).m33);
 
         double cr = Math.cos(roll.radians());
         double sr = Math.sin(roll.radians());
-        double ch = cr * this.multiply(globe.computeModelCoordinateOriginTransform(originPos)).m11 - sr * this.multiply(
-            globe.computeModelCoordinateOriginTransform(originPos)).m21;
-        double sh = sr * this.multiply(globe.computeModelCoordinateOriginTransform(originPos)).m22 - cr * this.multiply(
-            globe.computeModelCoordinateOriginTransform(originPos)).m12;
+        double ch = cr * this.multiply(oo).m11 - sr * this.multiply(
+            oo).m21;
+        double sh = sr * this.multiply(oo).m22 - cr * this.multiply(
+            oo).m12;
         double heading = Math.atan2(sh, ch);
 
         AVList params = new AVListImpl();

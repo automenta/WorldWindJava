@@ -174,7 +174,7 @@ public class WWIO {
                 }
 
                 @Override
-                public void onResponse(Call call, Response r) throws IOException {
+                public void onResponse(Call call, Response r) {
                     try {
                         success.accept(r.body());
                         WWIO.logger.info("{} {}", r.cacheResponse()!=null ? "GOT" : "GET", url);
