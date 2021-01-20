@@ -7,7 +7,6 @@ package gov.nasa.worldwind.examples;
 
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
@@ -154,12 +153,12 @@ public class Annotations extends ApplicationTemplate {
             // Geographical features - use a common default AnnotationAttributes object
             AnnotationAttributes geoAttr = new AnnotationAttributes();
             geoAttr.setDefaults(defaultAttributes);
-            geoAttr.setFrameShape(AVKey.SHAPE_NONE);  // No frame
+            geoAttr.setFrameShape(Keys.SHAPE_NONE);  // No frame
             geoAttr.setFont(Font.decode("Arial-ITALIC-12"));
             geoAttr.setTextColor(Color.GREEN);
-            geoAttr.setTextAlign(AVKey.CENTER);
+            geoAttr.setTextAlign(Keys.CENTER);
             geoAttr.setDrawOffset(new Point(0, 5)); // centered just above
-            geoAttr.setEffect(AVKey.TEXT_EFFECT_OUTLINE);  // Black outline
+            geoAttr.setEffect(Keys.TEXT_EFFECT_OUTLINE);  // Black outline
             geoAttr.setBackgroundColor(Color.BLACK);
             layer.addAnnotation(new GlobeAnnotation("Mont Chauve\nFort militaire\nAlt: 853m",
                 Position.fromDegrees(43.7701, 7.2544, 0), geoAttr));
@@ -193,8 +192,8 @@ public class Annotations extends ApplicationTemplate {
             // Water bodies - ellipse shape and centered text
             AnnotationAttributes waterAttr = new AnnotationAttributes();
             waterAttr.setDefaults(defaultAttributes);
-            waterAttr.setFrameShape(AVKey.SHAPE_ELLIPSE);
-            waterAttr.setTextAlign(AVKey.CENTER);
+            waterAttr.setFrameShape(Keys.SHAPE_ELLIPSE);
+            waterAttr.setTextAlign(Keys.CENTER);
             waterAttr.setFont(Font.decode("Arial-ITALIC-12"));
             waterAttr.setTextColor(Color.CYAN);
             waterAttr.setInsets(new Insets(8, 12, 9, 12));
@@ -209,7 +208,7 @@ public class Annotations extends ApplicationTemplate {
             ga = new GlobeAnnotation("Transition Permien-Trias\nDate: 251Ma \nPlus grand \u00e9pisode "
                 + "d'extinction massive.",
                 Position.fromDegrees(44.0551, 7.1215, 0), Font.decode("Arial-ITALIC-12"), Color.DARK_GRAY);
-            ga.getAttributes().setTextAlign(AVKey.RIGHT);
+            ga.getAttributes().setTextAlign(Keys.RIGHT);
             ga.getAttributes().setBackgroundColor(new Color(0.8f, 0.8f, 0.8f, 0.7f));
             ga.getAttributes().setBorderColor(Color.BLACK);
             layer.addAnnotation(ga);
@@ -223,13 +222,13 @@ public class Annotations extends ApplicationTemplate {
                 Position.fromDegrees(44.2522, 6.9424, 0), Font.decode("Serif-PLAIN-14"), Color.DARK_GRAY);
             ga.setMinActiveAltitude(10.0e3);
             ga.setMaxActiveAltitude(1.0e6);
-            ga.getAttributes().setTextAlign(AVKey.RIGHT);
+            ga.getAttributes().setTextAlign(Keys.RIGHT);
             ga.getAttributes().setBackgroundColor(new Color(1.0f, 1.0f, 1.0f, 0.7f));
             ga.getAttributes().setBorderColor(Color.BLACK);
             ga.getAttributes().setSize(
                 new Dimension(220, 0));  // Preferred max width, no length limit (default max width is 160)
             ga.getAttributes().setImageSource(IMAGE_EARTH.getPowerOfTwoImage());
-            ga.getAttributes().setImageRepeat(AVKey.REPEAT_NONE);
+            ga.getAttributes().setImageRepeat(Keys.REPEAT_NONE);
             ga.getAttributes().setImageOpacity(0.6);
             ga.getAttributes().setImageScale(0.7);
             ga.getAttributes().setImageOffset(new Point(7, 7));
@@ -238,7 +237,7 @@ public class Annotations extends ApplicationTemplate {
             // With some border stippling, width and antialias
             ga = new GlobeAnnotation("Latitude: 44.0 N\nLongitude: 7.0 W",
                 Position.fromDegrees(44.0000, 7.000, 0), Font.decode("Arial-ITALIC-12"), Color.DARK_GRAY);
-            ga.getAttributes().setTextAlign(AVKey.CENTER);
+            ga.getAttributes().setTextAlign(Keys.CENTER);
             ga.getAttributes().setBackgroundColor(new Color(0.9f, 0.9f, 0.8f, 0.7f));
             ga.getAttributes().setBorderColor(Color.BLACK);
             ga.getAttributes().setBorderWidth(2);
@@ -251,7 +250,7 @@ public class Annotations extends ApplicationTemplate {
                 + "of northern Africa. ", Position.fromDegrees(22, 12, 0), Font.decode("Arial-BOLD-12"));
             ga.getAttributes().setDefaults(defaultAttributes);
             ga.getAttributes().setImageSource(IMAGE_NASA.getPowerOfTwoImage());
-            ga.getAttributes().setImageRepeat(AVKey.REPEAT_Y);
+            ga.getAttributes().setImageRepeat(Keys.REPEAT_Y);
             ga.getAttributes().setImageOpacity(0.6);
             ga.getAttributes().setImageScale(0.7);
             ga.getAttributes().setImageOffset(new Point(1, 1));
@@ -260,13 +259,13 @@ public class Annotations extends ApplicationTemplate {
 
             // Splash screen with NPOT background texture
             ga = new GlobeAnnotation("Java SDK", Position.fromDegrees(20, 0, 0), Font.decode("Arial-BOLD-14"));
-            ga.getAttributes().setTextAlign(AVKey.RIGHT);
+            ga.getAttributes().setTextAlign(Keys.RIGHT);
             ga.getAttributes().setImageSource(IMAGE_WWJ_SPLASH.getPowerOfTwoImage());
-            ga.getAttributes().setImageRepeat(AVKey.REPEAT_NONE);
+            ga.getAttributes().setImageRepeat(Keys.REPEAT_NONE);
             ga.getAttributes().setImageScale(0.5);    // scale texture to half size
             ga.getAttributes().setSize(new Dimension(200, 115));  // use this dimensions (half texture)
             ga.getAttributes().setAdjustWidthToText(
-                AVKey.SIZE_FIXED);  // use strict dimension - dont follow text width
+                Keys.SIZE_FIXED);  // use strict dimension - dont follow text width
             ga.getAttributes().setCornerRadius(0);
             layer.addAnnotation(ga);
 
@@ -310,14 +309,14 @@ public class Annotations extends ApplicationTemplate {
             ga = new GlobeAnnotation("Background patterns...", Position.fromDegrees(-10, 100, 0), patternAttr);
             ga.getAttributes().setImageSource(PatternFactory.createPattern(PatternFactory.GRADIENT_HLINEAR,
                 new Dimension(16, 16), 1.0f, Color.BLACK, Color.WHITE));  // Black to white
-            ga.getAttributes().setImageRepeat(AVKey.REPEAT_Y);
+            ga.getAttributes().setImageRepeat(Keys.REPEAT_Y);
             ga.getAttributes().setBackgroundColor(Color.WHITE);
             ga.getAttributes().setSize(new Dimension(200, 128));
             layer.addAnnotation(ga);
             ga = new GlobeAnnotation("Background patterns...", Position.fromDegrees(-10, 110, 0), patternAttr);
             ga.getAttributes().setImageSource(PatternFactory.createPattern(PatternFactory.GRADIENT_VLINEAR,
                 new Dimension(16, 16), 1.0f, Color.BLACK, Color.WHITE));  // Black to white
-            ga.getAttributes().setImageRepeat(AVKey.REPEAT_X);
+            ga.getAttributes().setImageRepeat(Keys.REPEAT_X);
             ga.getAttributes().setBackgroundColor(Color.WHITE);
             ga.getAttributes().setSize(new Dimension(200, 128));
             layer.addAnnotation(ga);
@@ -379,7 +378,7 @@ public class Annotations extends ApplicationTemplate {
                     gl.glDisable(GL2.GL_LINE_STIPPLE);
                     gl.glLineWidth(1);
                     gl.glTranslated(-1, -1, 0);
-                    FrameFactory.drawShape(dc, AVKey.SHAPE_RECTANGLE, 3, 3, GL.GL_LINE_STRIP, 0);
+                    FrameFactory.drawShape(dc, Keys.SHAPE_RECTANGLE, 3, 3, GL.GL_LINE_STRIP, 0);
                 }
             }
 
@@ -422,18 +421,18 @@ public class Annotations extends ApplicationTemplate {
                     // Translate to draw area bottom left corner, 3 pixels outside
                     GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
                     gl.glTranslated(insetBounds.x - 3, insetBounds.y - 3, 0);
-                    FrameFactory.drawShape(dc, AVKey.SHAPE_RECTANGLE, insetBounds.width + 6,
+                    FrameFactory.drawShape(dc, Keys.SHAPE_RECTANGLE, insetBounds.width + 6,
                         insetBounds.height + 6, GL.GL_LINE_STRIP, 4);
 
                     // Draw another frame in the free space if any
                     if (freeBounds.height > 0) {
                         gl.glTranslated(+3, +3, 0);
-                        FrameFactory.drawShape(dc, AVKey.SHAPE_ELLIPSE, freeBounds.width,
+                        FrameFactory.drawShape(dc, Keys.SHAPE_ELLIPSE, freeBounds.width,
                             freeBounds.height, GL.GL_TRIANGLE_FAN, 0);
                     }
                 }
             };
-            ga.getAttributes().setTextAlign(AVKey.CENTER);
+            ga.getAttributes().setTextAlign(Keys.CENTER);
             ga.getAttributes().setBackgroundColor(new Color(1.0f, 1.0f, 1.0f, 0.7f));
             ga.getAttributes().setBorderColor(Color.BLACK);
             ga.getAttributes().setSize(new Dimension(160, 200));
@@ -444,7 +443,7 @@ public class Annotations extends ApplicationTemplate {
             sa.getAttributes().setDefaults(defaultAttributes);
             sa.getAttributes().setCornerRadius(0);
             sa.getAttributes().setSize(new Dimension(200, 0));
-            sa.getAttributes().setAdjustWidthToText(AVKey.SIZE_FIXED); // use strict dimension width - 200
+            sa.getAttributes().setAdjustWidthToText(Keys.SIZE_FIXED); // use strict dimension width - 200
             sa.getAttributes().setDrawOffset(new Point(100, 0)); // screen point is annotation bottom left corner
             sa.getAttributes().setHighlightScale(1);             // No highlighting either
             layer.addAnnotation(sa);
@@ -462,7 +461,7 @@ public class Annotations extends ApplicationTemplate {
             defaultAttributes.setLeaderGapWidth(14);
             defaultAttributes.setCornerRadius(0);
             defaultAttributes.setSize(new Dimension(300, 0));
-            defaultAttributes.setAdjustWidthToText(AVKey.SIZE_FIT_TEXT); // use strict dimension width - 200
+            defaultAttributes.setAdjustWidthToText(Keys.SIZE_FIT_TEXT); // use strict dimension width - 200
             defaultAttributes.setFont(Font.decode("Arial-BOLD-24"));
             defaultAttributes.setBorderWidth(0);
             defaultAttributes.setHighlightScale(1);             // No highlighting either
@@ -513,10 +512,10 @@ public class Annotations extends ApplicationTemplate {
             ga.getAttributes().setInsets(new Insets(image.getOriginalHeight() + inset * 2, inset, inset, inset));
             ga.getAttributes().setImageSource(image.getPowerOfTwoImage());
             ga.getAttributes().setImageOffset(new Point(inset, inset));
-            ga.getAttributes().setImageRepeat(AVKey.REPEAT_NONE);
+            ga.getAttributes().setImageRepeat(Keys.REPEAT_NONE);
             ga.getAttributes().setImageOpacity(1);
             ga.getAttributes().setSize(new Dimension(image.getOriginalWidth() + inset * 2, 0));
-            ga.getAttributes().setAdjustWidthToText(AVKey.SIZE_FIXED);
+            ga.getAttributes().setAdjustWidthToText(Keys.SIZE_FIXED);
             ga.getAttributes().setBackgroundColor(Color.WHITE);
             ga.getAttributes().setTextColor(Color.BLACK);
             ga.getAttributes().setBorderColor(Color.BLACK);
@@ -531,7 +530,7 @@ public class Annotations extends ApplicationTemplate {
                 public void accept(SelectEvent event) {
                     if (event.hasObjects() && event.getTopObject() instanceof Annotation) {
                         // Handle cursor change on hyperlink
-                        if (event.getTopPickedObject().get(AVKey.URL) != null)
+                        if (event.getTopPickedObject().get(Keys.URL) != null)
                             ((Component) wwd()).setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                         else
                             ((Component) wwd()).setCursor(Cursor.getDefaultCursor());
@@ -543,13 +542,13 @@ public class Annotations extends ApplicationTemplate {
                             if (event.getTopObject() instanceof Annotation) {
                                 // Check for text or url
                                 PickedObject po = event.getTopPickedObject();
-                                if (po.get(AVKey.TEXT) != null) {
-                                    System.out.println("Text: \"" + po.get(AVKey.TEXT) + "\" Hyperlink: "
-                                        + po.get(AVKey.URL));
-                                    if (po.get(AVKey.URL) != null) {
+                                if (po.get(Keys.TEXT) != null) {
+                                    System.out.println("Text: \"" + po.get(Keys.TEXT) + "\" Hyperlink: "
+                                        + po.get(Keys.URL));
+                                    if (po.get(Keys.URL) != null) {
                                         // Try to launch a browser with the clicked URL
                                         try {
-                                            BrowserOpener.browse(new URL((String) po.get(AVKey.URL)));
+                                            BrowserOpener.browse(new URL((String) po.get(Keys.URL)));
                                         }
                                         catch (Exception ignore) {
                                         }
@@ -1246,7 +1245,7 @@ public class Annotations extends ApplicationTemplate {
                 this.scaleSlider.setValue((int) (this.currentAnnotation.getAttributes().getScale() * 10));
                 this.opacitySlider.setValue((int) (this.currentAnnotation.getAttributes().getOpacity() * 10));
                 this.cbAdjustWidth.setSelected(this.currentAnnotation.getAttributes()
-                    .getAdjustWidthToText().equals(AVKey.SIZE_FIT_TEXT));
+                    .getAdjustWidthToText().equals(Keys.SIZE_FIT_TEXT));
 
                 Font font = currentAnnotation.getAttributes().getFont();
                 if (font != null) {
@@ -1278,25 +1277,25 @@ public class Annotations extends ApplicationTemplate {
                 this.cbBorderColorAlpha.setSelectedItem(colorAlpha);
 
                 switch (currentAnnotation.getAttributes().getTextAlign()) {
-                    case AVKey.LEFT -> cbTextAlign.setSelectedIndex(0);
-                    case AVKey.CENTER -> cbTextAlign.setSelectedIndex(1);
-                    case AVKey.RIGHT -> cbTextAlign.setSelectedIndex(2);
+                    case Keys.LEFT -> cbTextAlign.setSelectedIndex(0);
+                    case Keys.CENTER -> cbTextAlign.setSelectedIndex(1);
+                    case Keys.RIGHT -> cbTextAlign.setSelectedIndex(2);
                 }
 
                 switch (currentAnnotation.getAttributes().getEffect()) {
-                    case AVKey.TEXT_EFFECT_NONE -> cbTextEffect.setSelectedIndex(0);
-                    case AVKey.TEXT_EFFECT_SHADOW -> cbTextEffect.setSelectedIndex(1);
-                    case AVKey.TEXT_EFFECT_OUTLINE -> cbTextEffect.setSelectedIndex(2);
+                    case Keys.TEXT_EFFECT_NONE -> cbTextEffect.setSelectedIndex(0);
+                    case Keys.TEXT_EFFECT_SHADOW -> cbTextEffect.setSelectedIndex(1);
+                    case Keys.TEXT_EFFECT_OUTLINE -> cbTextEffect.setSelectedIndex(2);
                 }
 
-                if (currentAnnotation.getAttributes().getFrameShape().equals(AVKey.SHAPE_RECTANGLE))
+                if (currentAnnotation.getAttributes().getFrameShape().equals(Keys.SHAPE_RECTANGLE))
                     cbShape.setSelectedIndex(0);
-                else if (currentAnnotation.getAttributes().getFrameShape().equals(AVKey.SHAPE_ELLIPSE))
+                else if (currentAnnotation.getAttributes().getFrameShape().equals(Keys.SHAPE_ELLIPSE))
                     cbShape.setSelectedIndex(1);
                 else
                     cbShape.setSelectedIndex(2);
 
-                if (currentAnnotation.getAttributes().getLeader().equals(AVKey.SHAPE_TRIANGLE))
+                if (currentAnnotation.getAttributes().getLeader().equals(Keys.SHAPE_TRIANGLE))
                     cbLeader.setSelectedIndex(0);
                 else
                     cbLeader.setSelectedIndex(1);
@@ -1331,10 +1330,10 @@ public class Annotations extends ApplicationTemplate {
 
                 String imageRepeat = currentAnnotation.getAttributes().getImageRepeat();
                 switch (imageRepeat) {
-                    case AVKey.REPEAT_NONE -> this.cbImageRepeat.setSelectedIndex(0);
-                    case AVKey.REPEAT_X -> this.cbImageRepeat.setSelectedIndex(1);
-                    case AVKey.REPEAT_Y -> this.cbImageRepeat.setSelectedIndex(2);
-                    case AVKey.REPEAT_XY -> this.cbImageRepeat.setSelectedIndex(3);
+                    case Keys.REPEAT_NONE -> this.cbImageRepeat.setSelectedIndex(0);
+                    case Keys.REPEAT_X -> this.cbImageRepeat.setSelectedIndex(1);
+                    case Keys.REPEAT_Y -> this.cbImageRepeat.setSelectedIndex(2);
+                    case Keys.REPEAT_XY -> this.cbImageRepeat.setSelectedIndex(3);
                 }
 
                 this.imageScaleSlider.setValue((int) (this.currentAnnotation.getAttributes().getImageScale() * 10));
@@ -1430,7 +1429,7 @@ public class Annotations extends ApplicationTemplate {
                 a.setScale((double) this.scaleSlider.getValue() / 10);
                 a.setOpacity((double) this.opacitySlider.getValue() / 10);
                 a.setAdjustWidthToText(this.cbAdjustWidth.isSelected() ?
-                    AVKey.SIZE_FIT_TEXT : AVKey.SIZE_FIXED);
+                    Keys.SIZE_FIT_TEXT : Keys.SIZE_FIXED);
 
                 String fontString = this.cbFontName.getSelectedItem() + "-"
                     + this.cbFontStyle.getSelectedItem().toString().toUpperCase() + "-"
@@ -1453,23 +1452,23 @@ public class Annotations extends ApplicationTemplate {
                 this.savedBorderColor = a.getBorderColor();
 
                 switch (cbTextAlign.getSelectedIndex()) {
-                    case 0 -> a.setTextAlign(AVKey.LEFT);
-                    case 1 -> a.setTextAlign(AVKey.CENTER);
-                    case 2 -> a.setTextAlign(AVKey.RIGHT);
+                    case 0 -> a.setTextAlign(Keys.LEFT);
+                    case 1 -> a.setTextAlign(Keys.CENTER);
+                    case 2 -> a.setTextAlign(Keys.RIGHT);
                 }
                 switch (cbTextEffect.getSelectedIndex()) {
-                    case 0 -> a.setEffect(AVKey.TEXT_EFFECT_NONE);
-                    case 1 -> a.setEffect(AVKey.TEXT_EFFECT_SHADOW);
-                    case 2 -> a.setEffect(AVKey.TEXT_EFFECT_OUTLINE);
+                    case 0 -> a.setEffect(Keys.TEXT_EFFECT_NONE);
+                    case 1 -> a.setEffect(Keys.TEXT_EFFECT_SHADOW);
+                    case 2 -> a.setEffect(Keys.TEXT_EFFECT_OUTLINE);
                 }
                 switch (cbShape.getSelectedIndex()) {
-                    case 0 -> a.setFrameShape(AVKey.SHAPE_RECTANGLE);
-                    case 1 -> a.setFrameShape(AVKey.SHAPE_ELLIPSE);
-                    case 2 -> a.setFrameShape(AVKey.SHAPE_NONE);
+                    case 0 -> a.setFrameShape(Keys.SHAPE_RECTANGLE);
+                    case 1 -> a.setFrameShape(Keys.SHAPE_ELLIPSE);
+                    case 2 -> a.setFrameShape(Keys.SHAPE_NONE);
                 }
                 switch (cbLeader.getSelectedIndex()) {
-                    case 0 -> a.setLeader(AVKey.SHAPE_TRIANGLE);
-                    case 1 -> a.setLeader(AVKey.SHAPE_NONE);
+                    case 0 -> a.setLeader(Keys.SHAPE_TRIANGLE);
+                    case 1 -> a.setLeader(Keys.SHAPE_NONE);
                 }
                 currentAnnotation.getAttributes().setLeaderGapWidth(this.leaderGapWidthSlider.getValue());
                 currentAnnotation.getAttributes().setCornerRadius(this.cornerRadiusSlider.getValue());
@@ -1490,10 +1489,10 @@ public class Annotations extends ApplicationTemplate {
                     case 4 -> currentAnnotation.getAttributes().setImageSource(savedImage);
                 }
                 switch (cbImageRepeat.getSelectedIndex()) {
-                    case 0 -> currentAnnotation.getAttributes().setImageRepeat(AVKey.REPEAT_NONE);
-                    case 1 -> currentAnnotation.getAttributes().setImageRepeat(AVKey.REPEAT_X);
-                    case 2 -> currentAnnotation.getAttributes().setImageRepeat(AVKey.REPEAT_Y);
-                    case 3 -> currentAnnotation.getAttributes().setImageRepeat(AVKey.REPEAT_XY);
+                    case 0 -> currentAnnotation.getAttributes().setImageRepeat(Keys.REPEAT_NONE);
+                    case 1 -> currentAnnotation.getAttributes().setImageRepeat(Keys.REPEAT_X);
+                    case 2 -> currentAnnotation.getAttributes().setImageRepeat(Keys.REPEAT_Y);
+                    case 3 -> currentAnnotation.getAttributes().setImageRepeat(Keys.REPEAT_XY);
                 }
 
                 a.setImageScale((double) this.imageScaleSlider.getValue() / 10);

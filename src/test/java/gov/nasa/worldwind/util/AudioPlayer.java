@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.util;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 
 import javax.sound.sampled.*;
 import javax.swing.event.*;
@@ -21,7 +21,7 @@ public class AudioPlayer {
     protected final EventListenerList listenerList = new EventListenerList();
     protected long pausedMicrosecondPosition;
     private Clip clip;
-    private String status = AVKey.STOP;
+    private String status = Keys.STOP;
     protected final LineListener lineListener = this::onLineEvent;
 
     public AudioPlayer() {
@@ -83,10 +83,10 @@ public class AudioPlayer {
         if (this.clip == null)
             return;
 
-        if (this.getStatus() == AVKey.PAUSE) {
+        if (this.getStatus() == Keys.PAUSE) {
             this.doStart(this.pausedMicrosecondPosition);
         }
-        else if (this.getStatus() == AVKey.STOP) {
+        else if (this.getStatus() == Keys.STOP) {
             this.doStart(0);
         }
 
@@ -106,7 +106,7 @@ public class AudioPlayer {
         if (this.clip == null)
             return;
 
-        if (this.getStatus() == AVKey.PLAY) {
+        if (this.getStatus() == Keys.PLAY) {
             this.doPause();
         }
     }
@@ -124,16 +124,16 @@ public class AudioPlayer {
     }
 
     protected void doStart(long microsecondPosition) {
-        this.status = AVKey.PLAY;
+        this.status = Keys.PLAY;
         this.clip.setMicrosecondPosition(microsecondPosition);
         this.clip.start();
     }
 
     @SuppressWarnings("StringEquality")
     protected void doStop(long microsecondPosition) {
-        boolean needToStop = (this.getStatus() != AVKey.STOP);
+        boolean needToStop = (this.getStatus() != Keys.STOP);
 
-        this.status = AVKey.STOP;
+        this.status = Keys.STOP;
         this.pausedMicrosecondPosition = microsecondPosition;
         this.clip.setMicrosecondPosition(microsecondPosition);
 
@@ -143,7 +143,7 @@ public class AudioPlayer {
     }
 
     protected void doPause() {
-        this.status = AVKey.PAUSE;
+        this.status = Keys.PAUSE;
         this.pausedMicrosecondPosition = this.clip.getMicrosecondPosition();
         this.clip.stop();
     }
@@ -160,7 +160,7 @@ public class AudioPlayer {
             // If the player's statis is STATUS_PLAY, then this event is arriving because the clip has reached its end,
             // but not due to an explicit call to Clip.stop(). In this case, we must explicity stop the clip to keep
             // the player's state synchronized with the clip.
-            if (this.getStatus() == AVKey.PLAY) {
+            if (this.getStatus() == Keys.PLAY) {
                 long microsecondLength = this.getClip().getMicrosecondLength();
                 this.doStop(microsecondLength);
             }

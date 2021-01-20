@@ -5,8 +5,7 @@
  */
 package gov.nasa.worldwind.layers.earth;
 
-import gov.nasa.worldwind.View;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.geom.coords.UTMCoord;
 import gov.nasa.worldwind.globes.Globe;
@@ -254,7 +253,7 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
         public GraticuleTile(Sector sector) {
             this.sector = sector;
             this.zone = UTMGraticuleLayer.getGridColumn(this.sector.getCentroid().getLongitude().degrees) + 1;
-            this.hemisphere = this.sector.getCentroid().latitude > 0 ? AVKey.NORTH : AVKey.SOUTH;
+            this.hemisphere = this.sector.getCentroid().latitude > 0 ? Keys.NORTH : Keys.SOUTH;
         }
 
         public Extent getExtent(Globe globe, double ve) {
@@ -355,7 +354,7 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
             // Generate west meridian
             positions.add(new Position(this.sector.latMin(), this.sector.lonMin(), 0));
             positions.add(new Position(this.sector.latMax(), this.sector.lonMin(), 0));
-            Object polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), AVKey.LINEAR);
+            Object polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), Keys.LINEAR);
             Sector lineSector = new Sector(this.sector.latMin(), this.sector.latMax(),
                 this.sector.lonMin(), this.sector.lonMin());
             GraticuleLayer.GridElement ge = new GraticuleLayer.GridElement(lineSector, polyline, GraticuleLayer.GridElement.TYPE_LINE);
@@ -367,7 +366,7 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
                 positions.clear();
                 positions.add(new Position(this.sector.latMin(), this.sector.lonMin(), 0));
                 positions.add(new Position(this.sector.latMin(), this.sector.lonMax(), 0));
-                polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), AVKey.LINEAR);
+                polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), Keys.LINEAR);
                 lineSector = new Sector(this.sector.latMin(), this.sector.latMin(),
                     this.sector.lonMin(), this.sector.lonMax());
                 ge = new GraticuleLayer.GridElement(lineSector, polyline, GraticuleLayer.GridElement.TYPE_LINE);
@@ -380,7 +379,7 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
                 positions.clear();
                 positions.add(new Position(this.sector.latMax(), this.sector.lonMin(), 0));
                 positions.add(new Position(this.sector.latMax(), this.sector.lonMax(), 0));
-                polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), AVKey.LINEAR);
+                polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), Keys.LINEAR);
                 lineSector = new Sector(this.sector.latMax(), this.sector.latMax(),
                     this.sector.lonMin(), this.sector.lonMax());
                 ge = new GraticuleLayer.GridElement(lineSector, polyline, GraticuleLayer.GridElement.TYPE_LINE);
@@ -391,7 +390,7 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
             // Add label
             if (this.hasLabel()) {
                 StringBuilder sb = new StringBuilder();
-                sb.append(this.zone).append(AVKey.NORTH.equals(this.hemisphere) ? "N" : "S");
+                sb.append(this.zone).append(Keys.NORTH.equals(this.hemisphere) ? "N" : "S");
                 GeographicText text = new UserFacingText(sb.toString(), new Position(this.sector.getCentroid(), 0));
                 this.gridElements.add(new GraticuleLayer.GridElement(this.sector, text, GraticuleLayer.GridElement.TYPE_GRIDZONE_LABEL));
             }

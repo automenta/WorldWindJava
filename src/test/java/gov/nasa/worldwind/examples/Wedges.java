@@ -7,7 +7,6 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.render.*;
@@ -64,7 +63,7 @@ public class Wedges extends ApplicationTemplate {
             wedge3.setAltitudeMode(WorldWind.ABSOLUTE);
             wedge3.setAttributes(attrs);
             wedge3.setVisible(true);
-            wedge3.set(AVKey.DISPLAY_NAME, "Wedge with equal axes, ABSOLUTE altitude mode");
+            wedge3.set(Keys.DISPLAY_NAME, "Wedge with equal axes, ABSOLUTE altitude mode");
             layer.add(wedge3);
 
             // Wedge with equal axes, RELATIVE_TO_GROUND
@@ -72,7 +71,7 @@ public class Wedges extends ApplicationTemplate {
             wedge4.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             wedge4.setAttributes(attrs);
             wedge4.setVisible(true);
-            wedge4.set(AVKey.DISPLAY_NAME, "Wedge with equal axes, RELATIVE_TO_GROUND altitude mode");
+            wedge4.set(Keys.DISPLAY_NAME, "Wedge with equal axes, RELATIVE_TO_GROUND altitude mode");
             layer.add(wedge4);
 
             // Wedge with equal axes, CLAMP_TO_GROUND
@@ -80,7 +79,7 @@ public class Wedges extends ApplicationTemplate {
             wedge5.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
             wedge5.setAttributes(attrs);
             wedge5.setVisible(true);
-            wedge5.set(AVKey.DISPLAY_NAME, "Wedge with equal axes, CLAMP_TO_GROUND altitude mode");
+            wedge5.set(Keys.DISPLAY_NAME, "Wedge with equal axes, CLAMP_TO_GROUND altitude mode");
             layer.add(wedge5);
 
             // Wedge with a texture, using Wedge(position, angle, height, radius) constructor
@@ -89,7 +88,7 @@ public class Wedges extends ApplicationTemplate {
             wedge9.setImageSources("gov/nasa/worldwind/examples/images/500px-Checkerboard_pattern.png");
             wedge9.setAttributes(attrs);
             wedge9.setVisible(true);
-            wedge9.set(AVKey.DISPLAY_NAME, "Wedge with a texture");
+            wedge9.set(Keys.DISPLAY_NAME, "Wedge with a texture");
             layer.add(wedge9);
 
             // Scaled Wedge with default orientation
@@ -97,7 +96,7 @@ public class Wedges extends ApplicationTemplate {
             wedge.setAltitudeMode(WorldWind.ABSOLUTE);
             wedge.setAttributes(attrs);
             wedge.setVisible(true);
-            wedge.set(AVKey.DISPLAY_NAME, "Scaled Wedge with default orientation");
+            wedge.set(Keys.DISPLAY_NAME, "Scaled Wedge with default orientation");
             layer.add(wedge);
 
             // Scaled Wedge with a pre-set orientation
@@ -106,7 +105,7 @@ public class Wedges extends ApplicationTemplate {
             wedge2.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             wedge2.setAttributes(attrs2);
             wedge2.setVisible(true);
-            wedge2.set(AVKey.DISPLAY_NAME, "Scaled Wedge with a pre-set orientation");
+            wedge2.set(Keys.DISPLAY_NAME, "Scaled Wedge with a pre-set orientation");
             layer.add(wedge2);
 
             // Scaled Wedge with a pre-set orientation
@@ -116,7 +115,7 @@ public class Wedges extends ApplicationTemplate {
             wedge6.setImageSources("gov/nasa/worldwind/examples/images/500px-Checkerboard_pattern.png");
             wedge6.setAttributes(attrs2);
             wedge6.setVisible(true);
-            wedge6.set(AVKey.DISPLAY_NAME, "Scaled Wedge with a pre-set orientation");
+            wedge6.set(Keys.DISPLAY_NAME, "Scaled Wedge with a pre-set orientation");
             layer.add(wedge6);
 
             // Scaled Wedge with a pre-set orientation
@@ -125,7 +124,7 @@ public class Wedges extends ApplicationTemplate {
             wedge7.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             wedge7.setAttributes(attrs2);
             wedge7.setVisible(true);
-            wedge7.set(AVKey.DISPLAY_NAME, "Scaled Wedge with a pre-set orientation");
+            wedge7.set(Keys.DISPLAY_NAME, "Scaled Wedge with a pre-set orientation");
             layer.add(wedge7);
 
             // Scaled, oriented Wedge in 3rd "quadrant" (-X, -Y, -Z)
@@ -134,7 +133,7 @@ public class Wedges extends ApplicationTemplate {
             wedge8.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             wedge8.setAttributes(attrs2);
             wedge8.setVisible(true);
-            wedge8.set(AVKey.DISPLAY_NAME, "Scaled, oriented Wedge with in the 3rd 'quadrant' (-X, -Y, -Z)");
+            wedge8.set(Keys.DISPLAY_NAME, "Scaled, oriented Wedge with in the 3rd 'quadrant' (-X, -Y, -Z)");
             layer.add(wedge8);
 
             // Add the layer to the model.
@@ -195,4 +194,3 @@ public class Wedges extends ApplicationTemplate {
         }
     }
 }
-

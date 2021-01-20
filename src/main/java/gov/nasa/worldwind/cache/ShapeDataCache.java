@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.cache;
 
-import gov.nasa.worldwind.avlist.AVListImpl;
+import gov.nasa.worldwind.avlist.KVMap;
 import gov.nasa.worldwind.geom.Extent;
 import gov.nasa.worldwind.globes.*;
 import gov.nasa.worldwind.render.DrawContext;
@@ -112,7 +112,7 @@ public class ShapeDataCache implements Iterable<ShapeDataCache.ShapeDataCacheEnt
         this.entries.clear();
     }
 
-    public static class ShapeDataCacheEntry extends AVListImpl {
+    public static class ShapeDataCacheEntry extends KVMap {
         /**
          * Determines whether the cache entry has expired.
          */

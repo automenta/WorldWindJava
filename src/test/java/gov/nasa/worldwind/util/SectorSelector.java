@@ -7,7 +7,6 @@
 package gov.nasa.worldwind.util;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
@@ -531,8 +530,8 @@ public class SectorSelector extends WWObjectImpl
             this.setBorder(new SurfaceSector(sector));
 
             // The edges of the region shape should be constant lines of latitude and longitude.
-            this.setPathType(AVKey.LINEAR);
-            this.getBorder().setPathType(AVKey.LINEAR);
+            this.setPathType(Keys.LINEAR);
+            this.getBorder().setPathType(Keys.LINEAR);
 
             // Setup default interior rendering attributes. Note that the interior rendering attributes are
             // configured so only the SurfaceSector's interior is rendered.

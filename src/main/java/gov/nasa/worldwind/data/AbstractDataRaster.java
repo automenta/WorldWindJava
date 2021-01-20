@@ -5,6 +5,7 @@
  */
 package gov.nasa.worldwind.data;
 
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.util.*;
@@ -17,7 +18,7 @@ import java.util.Map;
  * @author Lado Garakanidze
  * @version $Id: AbstractDataRaster.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public abstract class AbstractDataRaster extends AVListImpl implements DataRaster {
+public abstract class AbstractDataRaster extends KVMap implements DataRaster {
     protected int width;
     protected int height;
 
@@ -40,24 +41,24 @@ public abstract class AbstractDataRaster extends AVListImpl implements DataRaste
             throw new IllegalArgumentException(message);
         }
 
-        if (sector == null) {
-            String message = Logging.getMessage("nullValue.SectorIsNull");
-            Logging.logger().finest(message);
-        }
+//        if (sector == null) {
+//            String message = Logging.getMessage("nullValue.SectorIsNull");
+//            Logging.logger().finest(message);
+//        }
 
         // for performance reasons we are "caching" these parameters in addition to AVList
         this.width = width;
         this.height = height;
 
         if (null != sector) {
-            this.set(AVKey.SECTOR, sector);
+            this.set(Keys.SECTOR, sector);
         }
 
-        this.set(AVKey.WIDTH, width);
-        this.set(AVKey.HEIGHT, height);
+        this.set(Keys.WIDTH, width);
+        this.set(Keys.HEIGHT, height);
     }
 
-    protected AbstractDataRaster(int width, int height, Sector sector, AVList list) throws IllegalArgumentException {
+    protected AbstractDataRaster(int width, int height, Sector sector, KV list) throws IllegalArgumentException {
         this(width, height, sector);
 
         if (null != list) {
@@ -76,8 +77,8 @@ public abstract class AbstractDataRaster extends AVListImpl implements DataRaste
     }
 
     public Sector getSector() {
-        if (this.hasKey(AVKey.SECTOR)) {
-            return (Sector) this.get(AVKey.SECTOR);
+        if (this.hasKey(Keys.SECTOR)) {
+            return (Sector) this.get(Keys.SECTOR);
         }
         return null;
     }
@@ -92,12 +93,12 @@ public abstract class AbstractDataRaster extends AVListImpl implements DataRaste
         // Do not allow to change existing WIDTH or HEIGHT
 
         if (this.hasKey(key)) {
-            if (AVKey.WIDTH.equals(key) && this.getWidth() != (Integer) value) {
+            if (Keys.WIDTH.equals(key) && this.getWidth() != (Integer) value) {
                 String message = Logging.getMessage("generic.AttemptToChangeReadOnlyProperty", key);
                 Logging.logger().finest(message);
                 // relax restriction, just log and continue
                 return this;
-            } else if (AVKey.HEIGHT.equals(key) && this.getHeight() != (Integer) value) {
+            } else if (Keys.HEIGHT.equals(key) && this.getHeight() != (Integer) value) {
                 String message = Logging.getMessage("generic.AttemptToChangeReadOnlyProperty", key);
                 Logging.logger().finest(message);
                 // relax restriction, just log and continue
@@ -167,19 +168,19 @@ public abstract class AbstractDataRaster extends AVListImpl implements DataRaste
         return transform;
     }
 
-    public DataRaster getSubRaster(int width, int height, Sector sector, AVList params) {
-        params = (null == params) ? new AVListImpl() : params;
+    public DataRaster getSubRaster(int width, int height, Sector sector, KV params) {
+        params = (null == params) ? new KVMap() : params;
 
         // copy parent raster keys/values; only those key/value will be copied that do exist in the parent raster
         // AND does NOT exist in the requested raster
         String[] keysToCopy = {
-            AVKey.DATA_TYPE, AVKey.MISSING_DATA_SIGNAL, AVKey.BYTE_ORDER, AVKey.PIXEL_FORMAT, AVKey.ELEVATION_UNIT
+            Keys.DATA_TYPE, Keys.MISSING_DATA_SIGNAL, Keys.BYTE_ORDER, Keys.PIXEL_FORMAT, Keys.ELEVATION_UNIT
         };
         WWUtil.copyValues(this, params, keysToCopy, false);
 
-        params.set(AVKey.WIDTH, width);
-        params.set(AVKey.HEIGHT, height);
-        params.set(AVKey.SECTOR, sector);
+        params.set(Keys.WIDTH, width);
+        params.set(Keys.HEIGHT, height);
+        params.set(Keys.SECTOR, sector);
 
         return this.getSubRaster(params);
     }
@@ -199,46 +200,46 @@ public abstract class AbstractDataRaster extends AVListImpl implements DataRaste
      *               0, 1, 2 } or only Intensity (4th) band of the specific aerial image: new int[] { 3 }
      * @return DataRaster (BufferedImageRaster for imagery or ByteBufferDataRaster for elevations)
      */
-    public DataRaster getSubRaster(AVList params) {
+    public DataRaster getSubRaster(KV params) {
         if (null == params) {
             String message = Logging.getMessage("nullValue.ParamsIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (!params.hasKey(AVKey.WIDTH)) {
-            String message = Logging.getMessage("generic.MissingRequiredParameter", AVKey.WIDTH);
+        if (!params.hasKey(Keys.WIDTH)) {
+            String message = Logging.getMessage("generic.MissingRequiredParameter", Keys.WIDTH);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        int roiWidth = (Integer) params.get(AVKey.WIDTH);
+        int roiWidth = (Integer) params.get(Keys.WIDTH);
         if (roiWidth <= 0) {
             String message = Logging.getMessage("generic.InvalidWidth", roiWidth);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (!params.hasKey(AVKey.HEIGHT)) {
-            String message = Logging.getMessage("generic.MissingRequiredParameter", AVKey.HEIGHT);
+        if (!params.hasKey(Keys.HEIGHT)) {
+            String message = Logging.getMessage("generic.MissingRequiredParameter", Keys.HEIGHT);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        int roiHeight = (Integer) params.get(AVKey.HEIGHT);
+        int roiHeight = (Integer) params.get(Keys.HEIGHT);
         if (roiHeight <= 0) {
             String message = Logging.getMessage("generic.InvalidHeight", roiHeight);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (!params.hasKey(AVKey.SECTOR)) {
-            String message = Logging.getMessage("generic.MissingRequiredParameter", AVKey.SECTOR);
+        if (!params.hasKey(Keys.SECTOR)) {
+            String message = Logging.getMessage("generic.MissingRequiredParameter", Keys.SECTOR);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        Sector roiSector = (Sector) params.get(AVKey.SECTOR);
+        Sector roiSector = (Sector) params.get(Keys.SECTOR);
 
         if (Sector.EMPTY_SECTOR.equals(roiSector)) {
             String message = Logging.getMessage("nullValue.SectorGeometryIsNull");
@@ -249,12 +250,12 @@ public abstract class AbstractDataRaster extends AVListImpl implements DataRaste
         // copy parent raster keys/values; only those key/value will be copied that do exist in the parent raster
         // AND does NOT exist in the requested raster
         String[] keysToCopy = {
-            AVKey.DATA_TYPE, AVKey.MISSING_DATA_SIGNAL, AVKey.BYTE_ORDER, AVKey.PIXEL_FORMAT, AVKey.ELEVATION_UNIT
+            Keys.DATA_TYPE, Keys.MISSING_DATA_SIGNAL, Keys.BYTE_ORDER, Keys.PIXEL_FORMAT, Keys.ELEVATION_UNIT
         };
         WWUtil.copyValues(this, params, keysToCopy, false);
 
         return this.doGetSubRaster(roiWidth, roiHeight, roiSector, params);
     }
 
-    abstract DataRaster doGetSubRaster(int roiWidth, int roiHeight, Sector roiSector, AVList roiParams);
+    abstract DataRaster doGetSubRaster(int roiWidth, int roiHeight, Sector roiSector, KV roiParams);
 }

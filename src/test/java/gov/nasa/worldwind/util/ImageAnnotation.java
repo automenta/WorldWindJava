@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.util;
 
 import com.jogamp.opengl.*;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
 
@@ -238,7 +238,7 @@ public class ImageAnnotation extends ScreenAnnotation {
         Color transparentBlack = new Color(0, 0, 0, 0);
 
         AnnotationAttributes defaultAttribs = new AnnotationAttributes();
-        defaultAttribs.setAdjustWidthToText(AVKey.SIZE_FIXED);
+        defaultAttribs.setAdjustWidthToText(Keys.SIZE_FIXED);
         defaultAttribs.setBackgroundColor(transparentBlack);
         defaultAttribs.setBorderColor(transparentBlack);
         defaultAttribs.setBorderWidth(0);
@@ -249,8 +249,8 @@ public class ImageAnnotation extends ScreenAnnotation {
         defaultAttribs.setImageScale(1);
         defaultAttribs.setImageOffset(new Point(0, 0));
         defaultAttribs.setImageOpacity(1);
-        defaultAttribs.setImageRepeat(AVKey.REPEAT_NONE);
-        defaultAttribs.setLeader(AVKey.SHAPE_NONE);
+        defaultAttribs.setImageRepeat(Keys.REPEAT_NONE);
+        defaultAttribs.setLeader(Keys.SHAPE_NONE);
         defaultAttribs.setSize(new Dimension(0, 0));
 
         annotation.setPickEnabled(false);

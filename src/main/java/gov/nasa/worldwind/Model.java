@@ -6,7 +6,6 @@
 
 package gov.nasa.worldwind;
 
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Extent;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.Layer;
@@ -33,7 +32,7 @@ public interface Model extends WWObject {
         if (layers != null) {
             for (Object layer1 : layers) {
                 Layer layer = (Layer) layer1;
-                Extent e = (Extent) layer.get(AVKey.EXTENT);
+                Extent e = (Extent) layer.get(Keys.EXTENT);
                 if (e != null)
                     return e;
             }

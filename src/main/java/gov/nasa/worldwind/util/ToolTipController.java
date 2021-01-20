@@ -7,14 +7,14 @@
 package gov.nasa.worldwind.util;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.layers.*;
 
 import static gov.nasa.worldwind.WorldWindow.insertBeforeCompass;
 
 /**
- * Controls display of tool tips on picked objects. Any shape implementing {@link AVList} can participate. Shapes
+ * Controls display of tool tips on picked objects. Any shape implementing {@link KV} can participate. Shapes
  * provide tool tip text in their AVList for either or both of hover and rollover events. The keys associated with the
  * text are specified to the constructor.
  *
@@ -23,8 +23,8 @@ import static gov.nasa.worldwind.WorldWindow.insertBeforeCompass;
  */
 public class ToolTipController implements SelectListener, Disposable {
     protected final WorldWindow wwd;
-    protected String hoverKey = AVKey.HOVER_TEXT;
-    protected String rolloverKey = AVKey.ROLLOVER_TEXT;
+    protected String hoverKey = Keys.HOVER_TEXT;
+    protected String rolloverKey = Keys.ROLLOVER_TEXT;
     protected Object lastRolloverObject;
     protected Object lastHoverObject;
     protected AnnotationLayer layer;
@@ -54,7 +54,7 @@ public class ToolTipController implements SelectListener, Disposable {
      */
     public ToolTipController(WorldWindow wwd) {
         this.wwd = wwd;
-        this.rolloverKey = AVKey.DISPLAY_NAME;
+        this.rolloverKey = Keys.DISPLAY_NAME;
 
         this.wwd.addSelectListener(this);
     }
@@ -64,13 +64,13 @@ public class ToolTipController implements SelectListener, Disposable {
     }
 
     protected String getHoverText(SelectEvent event) {
-        return event.getTopObject() != null && event.getTopObject() instanceof AVList ?
-            ((AVList) event.getTopObject()).getStringValue(this.hoverKey) : null;
+        return event.getTopObject() != null && event.getTopObject() instanceof KV ?
+            ((KV) event.getTopObject()).getStringValue(this.hoverKey) : null;
     }
 
     protected String getRolloverText(SelectEvent event) {
-        return event.getTopObject() != null && event.getTopObject() instanceof AVList ?
-            ((AVList) event.getTopObject()).getStringValue(this.rolloverKey) : null;
+        return event.getTopObject() != null && event.getTopObject() instanceof KV ?
+            ((KV) event.getTopObject()).getStringValue(this.rolloverKey) : null;
     }
 
     public void accept(SelectEvent event) {
@@ -131,7 +131,7 @@ public class ToolTipController implements SelectListener, Disposable {
         if (layer == null) {
             layer = new AnnotationLayer();
             layer.setPickEnabled(false);
-            layer.set(AVKey.IGNORE, true);
+            layer.set(Keys.IGNORE, true);
         }
 
         layer.removeAllAnnotations();

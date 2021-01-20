@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.geom.coords;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.util.Logging;
@@ -29,7 +29,7 @@ public class UPSCoord {
      *
      * @param latitude   the latitude <code>Angle</code>.
      * @param longitude  the longitude <code>Angle</code>.
-     * @param hemisphere the hemisphere, either {@link AVKey#NORTH} or {@link AVKey#SOUTH}.
+     * @param hemisphere the hemisphere, either {@link Keys#NORTH} or {@link Keys#SOUTH}.
      * @param easting    the easting distance in meters
      * @param northing   the northing distance in meters.
      * @throws IllegalArgumentException if <code>latitude</code>, <code>longitude</code>, or <code>hemisphere</code> is
@@ -95,7 +95,7 @@ public class UPSCoord {
     /**
      * Create a set of UPS coordinates for a WGS84 globe.
      *
-     * @param hemisphere the hemisphere, either {@link AVKey#NORTH} or {@link AVKey#SOUTH}.
+     * @param hemisphere the hemisphere, either {@link Keys#NORTH} or {@link Keys#SOUTH}.
      * @param easting    the easting distance in meters
      * @param northing   the northing distance in meters.
      * @return the corresponding <code>UPSCoord</code>.
@@ -108,7 +108,7 @@ public class UPSCoord {
     /**
      * Create a set of UPS coordinates for the given <code>Globe</code>.
      *
-     * @param hemisphere the hemisphere, either {@link AVKey#NORTH} or {@link AVKey#SOUTH}.
+     * @param hemisphere the hemisphere, either {@link Keys#NORTH} or {@link Keys#SOUTH}.
      * @param easting    the easting distance in meters
      * @param northing   the northing distance in meters.
      * @param globe      the <code>Globe</code> - can be null (will use WGS84).
@@ -152,7 +152,7 @@ public class UPSCoord {
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(AVKey.NORTH.equals(hemisphere) ? "N" : "S");
+        sb.append(Keys.NORTH.equals(hemisphere) ? "N" : "S");
         sb.append(' ').append(easting).append('E');
         sb.append(' ').append(northing).append('N');
         return sb.toString();

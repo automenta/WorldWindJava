@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.examples.worldwindow.util.Util;
 import gov.nasa.worldwind.geom.Position;
@@ -82,9 +82,9 @@ public class ContextMenusOnShapes extends ApplicationTemplate {
 
             // See if the top picked object has context-menu info defined. Show the menu if it does.
             Object o = event.getTopObject();
-            if (o instanceof AVList) // Uses an AVList in order to be applicable to all shapes.
+            if (o instanceof KV) // Uses an AVList in order to be applicable to all shapes.
             {
-                AVList params = (AVList) o;
+                KV params = (KV) o;
                 ContextMenuInfo menuInfo = (ContextMenuInfo) params.get(ContextMenu.CONTEXT_MENU_INFO);
                 if (menuInfo == null) {
                     return;
@@ -203,7 +203,7 @@ public class ContextMenusOnShapes extends ApplicationTemplate {
             attrs.setLineWidth(2.0d);
             attrs.setImageAddress("images/pushpins/push-pin-yellow.png");
             attrs.setScale(0.6);
-            attrs.setImageOffset(new Offset(19.0d, 11.0d, AVKey.PIXELS, AVKey.PIXELS));
+            attrs.setImageOffset(new Offset(19.0d, 11.0d, Keys.PIXELS, Keys.PIXELS));
 
             PointPlacemarkAttributes highlightAttrs = new PointPlacemarkAttributes(attrs);
             highlightAttrs.setScale(0.7);

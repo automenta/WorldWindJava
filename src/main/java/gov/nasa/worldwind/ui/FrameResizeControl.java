@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.ui;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.render.*;
 
 import java.awt.*;
@@ -62,7 +62,7 @@ public class FrameResizeControl extends AbstractResizeHotSpot {
      */
     @Override
     protected void setScreenPoint(Point newPoint) {
-        this.frame.setScreenLocation(new Offset(newPoint.getX(), newPoint.getY(), AVKey.PIXELS, AVKey.INSET_PIXELS));
+        this.frame.setScreenLocation(new Offset(newPoint.getX(), newPoint.getY(), Keys.PIXELS, Keys.INSET_PIXELS));
     }
 
     /**

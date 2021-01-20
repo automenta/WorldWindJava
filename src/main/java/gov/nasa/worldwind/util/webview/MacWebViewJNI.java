@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.util.webview;
 
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.util.Logging;
 
 import java.awt.*;
@@ -52,7 +52,7 @@ public class MacWebViewJNI {
 
     public static native URL getContentURL(long webViewWindowPtr);
 
-    public static native AVList[] getLinks(long webViewWindowPtr);
+    public static native KV[] getLinks(long webViewWindowPtr);
 
     public static native void goBack(long webViewWindowPtr);
 

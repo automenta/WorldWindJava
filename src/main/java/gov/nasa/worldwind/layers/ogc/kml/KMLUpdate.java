@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.layers.ogc.kml;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.util.WWUtil;
 import gov.nasa.worldwind.util.xml.XMLEventParserContext;
 
@@ -94,6 +94,6 @@ public class KMLUpdate extends KMLAbstractObject {
         for (KMLUpdateOperation operation : this.operations) {
             operation.applyOperation(targetRoot);
         }
-        targetRoot.firePropertyChange(AVKey.UPDATED, null, this);
+        targetRoot.firePropertyChange(Keys.UPDATED, null, this);
     }
 }

@@ -7,7 +7,6 @@ package gov.nasa.worldwind.view.orbit;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.animation.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.*;
 import gov.nasa.worldwind.util.*;
@@ -133,7 +132,7 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
                 view.getEyePosition(), focalPosition, smoothing,
                 OrbitViewPropertyAccessor.createCenterPositionAccessor((OrbitView) view), true);
             this.gotoAnimControl.put(OrbitViewInputHandler.VIEW_ANIM_CENTER, centerAnimator);
-            view.firePropertyChange(AVKey.VIEW, null, view);
+            view.firePropertyChange(Keys.VIEW, null, view);
         }
     }
 
@@ -154,7 +153,7 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
         double smoothing = actionAttribs.isEnableSmoothing() ? this.getScaleValueZoom(actionAttribs) : 0;
         this.gotoAnimControl.put(
             OrbitViewInputHandler.VIEW_ANIM_EYE, new OrbitViewEyePointAnimator(globe, orbitView, eyePoint, smoothing));
-        view.firePropertyChange(AVKey.VIEW, null, view);
+        view.firePropertyChange(Keys.VIEW, null, view);
     }
 
     protected void onHorizontalTranslateAbs(Angle latitudeChange, Angle longitudeChange,
@@ -478,13 +477,13 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
         }
 
         if (this.gotoAnimControl.stepAnimators()) {
-            view.firePropertyChange(AVKey.VIEW, null, view);
+            view.firePropertyChange(Keys.VIEW, null, view);
         } else {
             this.gotoAnimControl.clear();
         }
 
         if (this.uiAnimControl.stepAnimators()) {
-            view.firePropertyChange(AVKey.VIEW, null, view);
+            view.firePropertyChange(Keys.VIEW, null, view);
         } else {
             this.uiAnimControl.clear();
         }
@@ -565,7 +564,7 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
             this.uiAnimControl.put(
                 OrbitViewInputHandler.VIEW_ANIM_EYE, new OrbitViewEyePointAnimator(globe, view, eyePoint, smoothing));
         }
-        this.getView().firePropertyChange(AVKey.VIEW, null, this.getView());
+        this.getView().firePropertyChange(Keys.VIEW, null, this.getView());
     }
 
     protected void setCenterPosition(BasicOrbitView view,
@@ -606,7 +605,7 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
 
             centerAnimator.start();
         }
-        view.firePropertyChange(AVKey.VIEW, null, view);
+        view.firePropertyChange(Keys.VIEW, null, view);
     }
 
     protected void changeHeading(BasicOrbitView view,
@@ -641,7 +640,7 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
             angleAnimator.start();
         }
 
-        view.firePropertyChange(AVKey.VIEW, null, view);
+        view.firePropertyChange(Keys.VIEW, null, view);
     }
 
     protected void changePitch(BasicOrbitView view,
@@ -681,7 +680,7 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
             angleAnimator.start();
         }
 
-        view.firePropertyChange(AVKey.VIEW, null, view);
+        view.firePropertyChange(Keys.VIEW, null, view);
     }
 
     protected void changeZoom(BasicOrbitView view,
@@ -714,7 +713,7 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
 
             zoomAnimator.start();
         }
-        view.firePropertyChange(AVKey.VIEW, null, view);
+        view.firePropertyChange(Keys.VIEW, null, view);
     }
 
     protected double getScaleValueHorizTransRel(
@@ -789,7 +788,7 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
             beginZoom, endZoom, timeToMove, altitudeMode);
 
         this.gotoAnimControl.put(OrbitViewInputHandler.VIEW_ANIM_PAN, panAnimator);
-        this.getView().firePropertyChange(AVKey.VIEW, null, this.getView());
+        this.getView().firePropertyChange(Keys.VIEW, null, this.getView());
     }
 
     public void addPanToAnimator(Position beginCenterPos, Position endCenterPos,
@@ -809,7 +808,7 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
             beginZoom, endZoom, timeToMove, altitudeMode);
 
         this.gotoAnimControl.put(OrbitViewInputHandler.VIEW_ANIM_PAN, panAnimator);
-        orbitView.firePropertyChange(AVKey.VIEW, null, orbitView);
+        orbitView.firePropertyChange(Keys.VIEW, null, orbitView);
     }
 
     public void addPanToAnimator(Position centerPos, Angle heading, Angle pitch, double zoom,
@@ -818,7 +817,7 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
         addPanToAnimator(view.getCenterPosition(), centerPos,
             view.getHeading(), heading,
             view.getPitch(), pitch, view.getZoom(), zoom, timeToMove, endCenterOnSurface);
-        this.getView().firePropertyChange(AVKey.VIEW, null, this.getView());
+        this.getView().firePropertyChange(Keys.VIEW, null, this.getView());
     }
 
     public void addPanToAnimator(Position centerPos, Angle heading, Angle pitch, double zoom,
@@ -830,7 +829,7 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
             1000,
             2000
         );
-        this.getView().firePropertyChange(AVKey.VIEW, null, this.getView());
+        this.getView().firePropertyChange(Keys.VIEW, null, this.getView());
     }
 
     public void addPanToAnimator(Position centerPos, Angle heading, Angle pitch, double zoom) {
@@ -841,21 +840,21 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
         PositionAnimator eyePosAnimator = ViewUtil.createEyePositionAnimator(this.getView(),
             timeToIterate, beginPosition, endPosition);
         this.gotoAnimControl.put(OrbitViewInputHandler.VIEW_ANIM_POSITION, eyePosAnimator);
-        this.getView().firePropertyChange(AVKey.VIEW, null, this.getView());
+        this.getView().firePropertyChange(Keys.VIEW, null, this.getView());
     }
 
     public void addHeadingAnimator(Angle begin, Angle end) {
         this.gotoAnimControl.remove(OrbitViewInputHandler.VIEW_ANIM_HEADING_PITCH);
         AngleAnimator headingAnimator = ViewUtil.createHeadingAnimator(this.getView(), begin, end);
         this.gotoAnimControl.put(OrbitViewInputHandler.VIEW_ANIM_HEADING, headingAnimator);
-        this.getView().firePropertyChange(AVKey.VIEW, null, this.getView());
+        this.getView().firePropertyChange(Keys.VIEW, null, this.getView());
     }
 
     public void addPitchAnimator(Angle begin, Angle end) {
         this.gotoAnimControl.remove(OrbitViewInputHandler.VIEW_ANIM_HEADING_PITCH);
         AngleAnimator pitchAnimator = ViewUtil.createPitchAnimator(this.getView(), begin, end);
         this.gotoAnimControl.put(OrbitViewInputHandler.VIEW_ANIM_PITCH, pitchAnimator);
-        this.getView().firePropertyChange(AVKey.VIEW, null, this.getView());
+        this.getView().firePropertyChange(Keys.VIEW, null, this.getView());
     }
 
     /**
@@ -868,7 +867,7 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
         this.gotoAnimControl.remove(OrbitViewInputHandler.VIEW_ANIM_ROLL);
         AngleAnimator rollAnimator = ViewUtil.createRollAnimator(this.getView(), begin, end);
         this.gotoAnimControl.put(OrbitViewInputHandler.VIEW_ANIM_ROLL, rollAnimator);
-        this.getView().firePropertyChange(AVKey.VIEW, null, this.getView());
+        this.getView().firePropertyChange(Keys.VIEW, null, this.getView());
     }
 
     /**
@@ -888,7 +887,7 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
         CompoundAnimator headingPitchAnimator = ViewUtil.createHeadingPitchRollAnimator(this.getView(),
             beginHeading, endHeading, beginPitch, endPitch, beginRoll, endRoll);
         this.gotoAnimControl.put(OrbitViewInputHandler.VIEW_ANIM_HEADING_PITCH, headingPitchAnimator);
-        this.getView().firePropertyChange(AVKey.VIEW, null, this.getView());
+        this.getView().firePropertyChange(Keys.VIEW, null, this.getView());
     }
 
     public void addZoomAnimator(double zoomStart, double zoomEnd) {
@@ -896,7 +895,7 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
         Animator zoomAnimator = new DoubleAnimator(new ScheduledInterpolator(DEFAULT_LENGTH_MILLIS),
             zoomStart, zoomEnd, OrbitViewPropertyAccessor.createZoomAccessor(((OrbitView) this.getView())));
         this.gotoAnimControl.put(OrbitViewInputHandler.VIEW_ANIM_ZOOM, zoomAnimator);
-        this.getView().firePropertyChange(AVKey.VIEW, null, this.getView());
+        this.getView().firePropertyChange(Keys.VIEW, null, this.getView());
     }
 
     public void addFlyToZoomAnimator(Angle heading, Angle pitch, double zoom) {
@@ -927,7 +926,7 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
             this.gotoAnimControl.put(OrbitViewInputHandler.VIEW_ANIM_ZOOM, zoomAnimator);
             this.gotoAnimControl.put(OrbitViewInputHandler.VIEW_ANIM_HEADING, headingAnimator);
             this.gotoAnimControl.put(OrbitViewInputHandler.VIEW_ANIM_PITCH, pitchAnimator);
-            orbitView.firePropertyChange(AVKey.VIEW, null, orbitView);
+            orbitView.firePropertyChange(Keys.VIEW, null, orbitView);
         }
     }
 
@@ -955,7 +954,7 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
             Animator centerAnimator = new PositionAnimator(interpolator,
                 begin, end, OrbitViewPropertyAccessor.createCenterPositionAccessor(orbitView));
             this.gotoAnimControl.put(OrbitViewInputHandler.VIEW_ANIM_CENTER, centerAnimator);
-            orbitView.firePropertyChange(AVKey.VIEW, null, view);
+            orbitView.firePropertyChange(Keys.VIEW, null, view);
         }
     }
 
@@ -963,7 +962,7 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
         View view = this.getView();
         stopAnimators();
         addPanToAnimator(lookAtPos, view.getHeading(), view.getPitch(), distance, true);
-        this.getView().firePropertyChange(AVKey.VIEW, null, this.getView());
+        this.getView().firePropertyChange(Keys.VIEW, null, this.getView());
     }
 
     public void stopAnimators() {

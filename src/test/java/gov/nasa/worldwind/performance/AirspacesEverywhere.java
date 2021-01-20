@@ -6,8 +6,7 @@
 
 package gov.nasa.worldwind.performance;
 
-import gov.nasa.worldwind.WorldWindow;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.examples.ApplicationTemplate;
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -71,7 +70,7 @@ public class AirspacesEverywhere extends ApplicationTemplate {
 
                     Airspace pgon = new Polygon(positions);
                     pgon.setAltitudes(1.0e3, 1.0e4);
-                    pgon.setAltitudeDatum(AVKey.ABOVE_MEAN_SEA_LEVEL, AVKey.ABOVE_MEAN_SEA_LEVEL);
+                    pgon.setAltitudeDatum(Keys.ABOVE_MEAN_SEA_LEVEL, Keys.ABOVE_MEAN_SEA_LEVEL);
                     layer.add(pgon);
                     ++count;
                 }

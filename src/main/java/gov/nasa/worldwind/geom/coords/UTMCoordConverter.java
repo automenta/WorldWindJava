@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.geom.coords;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 
@@ -205,9 +205,9 @@ class UTMCoordConverter {
                 Zone = (int) temp_zone;
                 if (Latitude < 0) {
                     False_Northing = 10000000;
-                    Hemisphere = AVKey.SOUTH;
+                    Hemisphere = Keys.SOUTH;
                 } else
-                    Hemisphere = AVKey.NORTH;
+                    Hemisphere = Keys.NORTH;
 
                 try {
                     TMCoord TM = TMCoord.fromLatLon(Angle.fromRadians(Latitude), Angle.fromRadians(Longitude),
@@ -244,7 +244,7 @@ class UTMCoordConverter {
     }
 
     /**
-     * @return The coordinate hemisphere, either {@link AVKey#NORTH} or {@link AVKey#SOUTH}.
+     * @return The coordinate hemisphere, either {@link Keys#NORTH} or {@link Keys#SOUTH}.
      */
     public String getHemisphere() {
         return Hemisphere;
@@ -263,7 +263,7 @@ class UTMCoordConverter {
      * occur, the error code(s) are returned by the function, otherwise UTM_NO_ERROR is returned.
      *
      * @param Zone       UTM zone.
-     * @param Hemisphere The coordinate hemisphere, either {@link AVKey#NORTH} or {@link AVKey#SOUTH}.
+     * @param Hemisphere The coordinate hemisphere, either {@link Keys#NORTH} or {@link Keys#SOUTH}.
      * @param Easting    Easting (X) in meters.
      * @param Northing   Northing (Y) in meters.
      * @return error code.
@@ -278,7 +278,7 @@ class UTMCoordConverter {
 
         if ((Zone < 1) || (Zone > 60))
             Error_Code |= UTMCoordConverter.UTM_ZONE_ERROR;
-        if (!Hemisphere.equals(AVKey.SOUTH) && !Hemisphere.equals(AVKey.NORTH))
+        if (!Hemisphere.equals(Keys.SOUTH) && !Hemisphere.equals(Keys.NORTH))
             Error_Code |= UTMCoordConverter.UTM_HEMISPHERE_ERROR;
         if ((Northing < UTMCoordConverter.MIN_NORTHING) || (Northing > UTMCoordConverter.MAX_NORTHING))
             Error_Code |= UTMCoordConverter.UTM_NORTHING_ERROR;
@@ -288,7 +288,7 @@ class UTMCoordConverter {
                 Central_Meridian = ((6 * Zone - 183) * UTMCoordConverter.PI / 180.0 /*+ 0.00000005*/);
             else
                 Central_Meridian = ((6 * Zone + 177) * UTMCoordConverter.PI / 180.0 /*+ 0.00000005*/);
-            if (Hemisphere.equals(AVKey.SOUTH))
+            if (Hemisphere.equals(Keys.SOUTH))
                 False_Northing = 10000000;
             try {
                 TMCoord TM = TMCoord.fromTM(Easting, Northing,

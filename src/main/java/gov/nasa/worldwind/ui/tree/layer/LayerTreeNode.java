@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.ui.tree.layer;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.ui.tree.BasicTreeNode;
 import gov.nasa.worldwind.util.Logging;
@@ -58,7 +58,7 @@ public class LayerTreeNode extends BasicTreeNode {
      * Initializes this node's image source.
      */
     protected void initialize() {
-        Object imageSource = this.layer.get(AVKey.IMAGE);
+        Object imageSource = this.layer.get(Keys.IMAGE);
         if (imageSource == null)
             imageSource = LayerTreeNode.DEFAULT_IMAGE;
         this.setImageSource(imageSource);

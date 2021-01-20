@@ -7,7 +7,7 @@ package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.animation.BasicAnimator;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
@@ -50,7 +50,7 @@ public class KeepingObjectsInView extends ApplicationTemplate {
             WWIcon icon = new UserFacingIcon("gov/nasa/worldwind/examples/images/antenna.png",
                 new Position(randLocation1, 0));
             icon.setSize(new Dimension(64, 64));
-            icon.set(AVKey.FEEDBACK_ENABLED, Boolean.TRUE);
+            icon.set(Keys.FEEDBACK_ENABLED, Boolean.TRUE);
             objects.add(icon);
 
             // Add a SphereAirspace.
@@ -101,14 +101,14 @@ public class KeepingObjectsInView extends ApplicationTemplate {
         Point screenPoint = new Point(viewport.width / 2, viewport.height / 3);
 
         AnnotationAttributes attr = new AnnotationAttributes();
-        attr.setAdjustWidthToText(AVKey.SIZE_FIT_TEXT);
+        attr.setAdjustWidthToText(Keys.SIZE_FIT_TEXT);
         attr.setFont(Font.decode("Arial-Bold-16"));
-        attr.setTextAlign(AVKey.CENTER);
+        attr.setTextAlign(Keys.CENTER);
         attr.setTextColor(Color.WHITE);
-        attr.setEffect(AVKey.TEXT_EFFECT_OUTLINE);
+        attr.setEffect(Keys.TEXT_EFFECT_OUTLINE);
         attr.setBackgroundColor(new Color(0, 0, 0, 127)); // 50% transparent black
         attr.setBorderColor(Color.LIGHT_GRAY);
-        attr.setLeader(AVKey.SHAPE_NONE);
+        attr.setLeader(Keys.SHAPE_NONE);
         attr.setCornerRadius(0);
         attr.setSize(new Dimension(350, 0));
 
@@ -312,7 +312,7 @@ public class KeepingObjectsInView extends ApplicationTemplate {
                 this.animator.start();
                 view.stopAnimations();
                 view.addAnimator(this.animator);
-                view.firePropertyChange(AVKey.VIEW, null, view);
+                view.firePropertyChange(Keys.VIEW, null, view);
             }
         }
 
@@ -335,18 +335,18 @@ public class KeepingObjectsInView extends ApplicationTemplate {
                 if (o instanceof ExtentHolder) {
                     extentHolders.add((ExtentHolder) o);
                 }
-                else if (o instanceof AVList) {
-                    AVList avl = (AVList) o;
+                else if (o instanceof KV) {
+                    KV avl = (KV) o;
 
-                    Object b = avl.get(AVKey.FEEDBACK_ENABLED);
+                    Object b = avl.get(Keys.FEEDBACK_ENABLED);
                     if (b == null || !Boolean.TRUE.equals(b)) {
                         continue;
                     }
 
-                    if (avl.get(AVKey.FEEDBACK_REFERENCE_POINT) != null) {
+                    if (avl.get(Keys.FEEDBACK_REFERENCE_POINT) != null) {
                         screenExtents.add(new ExtentVisibilitySupport.ScreenExtent(
-                            (Vec4) avl.get(AVKey.FEEDBACK_REFERENCE_POINT),
-                            (Rectangle) avl.get(AVKey.FEEDBACK_SCREEN_BOUNDS)));
+                            (Vec4) avl.get(Keys.FEEDBACK_REFERENCE_POINT),
+                            (Rectangle) avl.get(Keys.FEEDBACK_SCREEN_BOUNDS)));
                     }
                 }
             }
@@ -413,7 +413,7 @@ public class KeepingObjectsInView extends ApplicationTemplate {
                 this.view.setZoom(newZoom);
             }
 
-            this.view.firePropertyChange(AVKey.VIEW, null, this);
+            this.view.firePropertyChange(Keys.VIEW, null, this);
         }
 
         protected void updateTargetValues() {

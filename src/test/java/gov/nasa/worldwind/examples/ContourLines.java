@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.*;
@@ -27,10 +26,10 @@ import java.util.*;
 public class ContourLines extends ApplicationTemplate {
 
     public static void main(String[] args) {
-        Configuration.setValue(AVKey.INITIAL_LATITUDE, 44.23);
-        Configuration.setValue(AVKey.INITIAL_LONGITUDE, 6.92);
-        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 30000);
-        Configuration.setValue(AVKey.INITIAL_PITCH, 45);
+        Configuration.setValue(Keys.INITIAL_LATITUDE, 44.23);
+        Configuration.setValue(Keys.INITIAL_LONGITUDE, 6.92);
+        Configuration.setValue(Keys.INITIAL_ALTITUDE, 30000);
+        Configuration.setValue(Keys.INITIAL_PITCH, 45);
 
         ApplicationTemplate.start("WorldWind Contour Lines", AppFrame.class);
     }

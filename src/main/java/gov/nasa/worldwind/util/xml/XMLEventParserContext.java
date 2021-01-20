@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.util.xml;
 
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.layers.ogc.kml.KMLRoot;
 
 import javax.xml.namespace.QName;
@@ -20,7 +20,7 @@ import java.util.Map;
  * @author tag
  * @version $Id: XMLEventParserContext.java 1981 2014-05-08 03:59:04Z tgaskins $
  */
-public interface XMLEventParserContext extends AVList {
+public interface XMLEventParserContext extends KV {
     /**
      * Identifies the name of the parser handling unrecognized elements. Can be used to explicitly specify the context's
      * parser-table entry for unrecognized elements.

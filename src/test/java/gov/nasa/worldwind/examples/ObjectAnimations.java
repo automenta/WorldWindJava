@@ -7,7 +7,7 @@ package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.animation.*;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.event.RenderingEvent;
 import gov.nasa.worldwind.formats.geojson.*;
 import gov.nasa.worldwind.geom.*;
@@ -35,7 +35,7 @@ import java.util.*;
 public class ObjectAnimations extends ApplicationTemplate {
 
     private static void printFields(String indent, AbstractXMLEventParser node) {
-        AVList fields = node.getFields();
+        KV fields = node.getFields();
         if (fields != null) {
             Set<Map.Entry<String, Object>> fieldSet = fields.getEntries();
             for (Map.Entry<String, Object> e : fieldSet) {
@@ -149,15 +149,15 @@ public class ObjectAnimations extends ApplicationTemplate {
                     GeoJSONPositionArray[] positions = geo.getCoordinates();
                     poly.setLocations(positions[0]);
                     poly.setAltitudes(ov.getMin_altitude().getAltitudeValue(), ov.getMax_altitude().getAltitudeValue());
-                    poly.setAltitudeDatum(AVKey.ABOVE_GROUND_LEVEL, AVKey.ABOVE_GROUND_REFERENCE);
-                    poly.set(AVKey.DISPLAY_NAME, p.getCallSign());
+                    poly.setAltitudeDatum(Keys.ABOVE_GROUND_LEVEL, Keys.ABOVE_GROUND_REFERENCE);
+                    poly.set(Keys.DISPLAY_NAME, p.getCallSign());
                     layer.add(poly);
                 }
             }
             ArrayList<AOLPosition> positions = messageParser.getPositions();
             positions.forEach((p) -> {
                 PointPlacemark pp = new PointPlacemark(p.getLLA());
-                pp.set(AVKey.DISPLAY_NAME, callSigns.get(p.getGufi()));
+                pp.set(Keys.DISPLAY_NAME, callSigns.get(p.getGufi()));
                 pp.setLineEnabled(false);
                 pp.setAltitudeMode(WorldWind.ABSOLUTE);
                 pp.setEnableLabelPicking(true); // enable label picking for this placemark
@@ -166,7 +166,7 @@ public class ObjectAnimations extends ApplicationTemplate {
                 Color c = colors.get(p.getGufi());
                 c = (c == null) ? Color.MAGENTA : c;
                 attrs.setImageColor(c);
-                attrs.setLabelOffset(new Offset(0.9d, 0.6d, AVKey.FRACTION, AVKey.FRACTION));
+                attrs.setLabelOffset(new Offset(0.9d, 0.6d, Keys.FRACTION, Keys.FRACTION));
                 pp.setAttributes(attrs);
                 layer.add(pp);
             });
@@ -244,7 +244,7 @@ public class ObjectAnimations extends ApplicationTemplate {
             fpsAttrs.setLeaderGapWidth(14);
             fpsAttrs.setCornerRadius(0);
             fpsAttrs.setSize(new Dimension(300, 0));
-            fpsAttrs.setAdjustWidthToText(AVKey.SIZE_FIT_TEXT); // use strict dimension width - 200
+            fpsAttrs.setAdjustWidthToText(Keys.SIZE_FIT_TEXT); // use strict dimension width - 200
             fpsAttrs.setFont(Font.decode("Arial-BOLD-24"));
             fpsAttrs.setBorderWidth(0);
             fpsAttrs.setHighlightScale(1);             // No highlighting either

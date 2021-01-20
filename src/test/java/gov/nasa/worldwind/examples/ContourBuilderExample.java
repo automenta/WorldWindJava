@@ -6,8 +6,7 @@
 
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.WorldWind;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.examples.analytics.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -92,7 +91,7 @@ public class ContourBuilderExample extends ApplicationTemplate {
                 Path path = new Path(positions);
                 path.setAttributes(attrs);
                 path.setSurfacePath(true);
-                path.set(AVKey.DISPLAY_NAME, text);
+                path.set(Keys.DISPLAY_NAME, text);
                 layer.add(path);
             }
         }

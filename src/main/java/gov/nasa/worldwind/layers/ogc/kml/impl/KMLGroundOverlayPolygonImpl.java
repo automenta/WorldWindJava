@@ -6,8 +6,7 @@
 
 package gov.nasa.worldwind.layers.ogc.kml.impl;
 
-import gov.nasa.worldwind.WorldWind;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.ogc.kml.*;
 import gov.nasa.worldwind.render.Polygon;
@@ -71,13 +70,13 @@ public class KMLGroundOverlayPolygonImpl extends Polygon implements KMLRenderabl
         }
 
         if (overlay.getName() != null)
-            this.set(AVKey.DISPLAY_NAME, overlay.getName());
+            this.set(Keys.DISPLAY_NAME, overlay.getName());
 
         if (overlay.getDescription() != null)
-            this.set(AVKey.BALLOON_TEXT, overlay.getDescription());
+            this.set(Keys.BALLOON_TEXT, overlay.getDescription());
 
         if (overlay.getSnippetText() != null)
-            this.set(AVKey.SHORT_DESCRIPTION, overlay.getSnippetText());
+            this.set(Keys.SHORT_DESCRIPTION, overlay.getSnippetText());
 
         // If no image is specified, draw a filled rectangle
         if (this.parent.getIcon() == null || this.parent.getIcon().getHref() == null) {

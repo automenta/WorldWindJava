@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.examples.shapebuilder;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.examples.ApplicationTemplate;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -109,11 +108,11 @@ public class ExtrudedPolygonBuilder extends ApplicationTemplate {
         }
 
         public String getName() {
-            return this.getStringValue(AVKey.DISPLAY_NAME);
+            return this.getStringValue(Keys.DISPLAY_NAME);
         }
 
         public void setName(String name) {
-            this.set(AVKey.DISPLAY_NAME, name);
+            this.set(Keys.DISPLAY_NAME, name);
         }
 
         public ExtrudedPolygon getPolygon() {
@@ -138,7 +137,7 @@ public class ExtrudedPolygonBuilder extends ApplicationTemplate {
 
         public Object set(String key, Object value) {
             //noinspection StringEquality
-            if (key == AVKey.DISPLAY_NAME) {
+            if (key == Keys.DISPLAY_NAME) {
                 return this.polygon.set(key, value);
             }
             else {
@@ -159,7 +158,7 @@ public class ExtrudedPolygonBuilder extends ApplicationTemplate {
     protected static class PolygonBuilderModel extends AbstractTableModel {
         protected static final String[] columnName = {"Name"};
         protected static final Class[] columnClass = {String.class};
-        protected static final String[] columnAttribute = {AVKey.DISPLAY_NAME};
+        protected static final String[] columnAttribute = {Keys.DISPLAY_NAME};
 
         protected final ArrayList<PolygonEntry> entryList = new ArrayList<>();
 
@@ -255,7 +254,7 @@ public class ExtrudedPolygonBuilder extends ApplicationTemplate {
         public ExtrudedPolygon createPolygon(WorldWindow wwd, boolean fitShapeToViewport) {
             ExtrudedPolygon poly = new ExtrudedPolygon();
             poly.setAttributes(getDefaultAttributes());
-            poly.set(AVKey.DISPLAY_NAME, getNextName(toString()));
+            poly.set(Keys.DISPLAY_NAME, getNextName(toString()));
             ExtrudedPolygonFactory.initializePolygon(wwd, poly, fitShapeToViewport);
 
             return poly;

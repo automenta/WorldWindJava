@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.util;
 
-import gov.nasa.worldwind.Configuration;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
@@ -1940,7 +1940,7 @@ public class WWXML {
      * @throws IllegalArgumentException if either the context, parameter list, parameter key or parameter name are
      *                                  null.
      */
-    public static void checkAndSetStringParam(Element context, AVList params, String paramKey, String paramName,
+    public static void checkAndSetStringParam(Element context, KV params, String paramKey, String paramName,
         XPath xpath) {
         if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
@@ -1987,7 +1987,7 @@ public class WWXML {
      * @throws IllegalArgumentException if either the context, parameter list, parameter key or parameter name are
      *                                  null.
      */
-    public static void checkAndSetStringArrayParam(Element context, AVList params, String paramKey, String paramName,
+    public static void checkAndSetStringArrayParam(Element context, KV params, String paramKey, String paramName,
         XPath xpath) {
         if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
@@ -2034,7 +2034,7 @@ public class WWXML {
      * @throws IllegalArgumentException if either the context, parameter list, parameter key or parameter name are
      *                                  null.
      */
-    public static void checkAndSetUniqueStringsParam(Element context, AVList params, String paramKey, String paramName,
+    public static void checkAndSetUniqueStringsParam(Element context, KV params, String paramKey, String paramName,
         XPath xpath) {
         if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
@@ -2081,7 +2081,7 @@ public class WWXML {
      * @throws IllegalArgumentException if either the context, parameter list, parameter key or parameter name are
      *                                  null.
      */
-    public static void checkAndSetDoubleParam(Element context, AVList params, String paramKey, String paramName,
+    public static void checkAndSetDoubleParam(Element context, KV params, String paramKey, String paramName,
         XPath xpath) {
         if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
@@ -2128,7 +2128,7 @@ public class WWXML {
      * @throws IllegalArgumentException if either the context, parameter list, parameter key or parameter name are
      *                                  null.
      */
-    public static void checkAndSetIntegerParam(Element context, AVList params, String paramKey, String paramName,
+    public static void checkAndSetIntegerParam(Element context, KV params, String paramKey, String paramName,
         XPath xpath) {
         if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
@@ -2175,7 +2175,7 @@ public class WWXML {
      * @throws IllegalArgumentException if either the context, parameter list, parameter key or parameter name are
      *                                  null.
      */
-    public static void checkAndSetLongParam(Element context, AVList params, String paramKey, String paramName,
+    public static void checkAndSetLongParam(Element context, KV params, String paramKey, String paramName,
         XPath xpath) {
         if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
@@ -2222,7 +2222,7 @@ public class WWXML {
      * @throws IllegalArgumentException if either the context, parameter list, parameter key or parameter name are
      *                                  null.
      */
-    public static void checkAndSetBooleanParam(Element context, AVList params, String paramKey, String paramName,
+    public static void checkAndSetBooleanParam(Element context, KV params, String paramKey, String paramName,
         XPath xpath) {
         if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
@@ -2269,7 +2269,7 @@ public class WWXML {
      * @throws IllegalArgumentException if either the context, parameter list, parameter key or parameter name are
      *                                  null.
      */
-    public static void checkAndSetLatLonParam(Element context, AVList params, String paramKey, String paramName,
+    public static void checkAndSetLatLonParam(Element context, KV params, String paramKey, String paramName,
         XPath xpath) {
         if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
@@ -2316,7 +2316,7 @@ public class WWXML {
      * @throws IllegalArgumentException if either the context, parameter list, parameter key or parameter name are
      *                                  null.
      */
-    public static void checkAndSetColorParam(Element context, AVList params, String paramKey, String paramName,
+    public static void checkAndSetColorParam(Element context, KV params, String paramKey, String paramName,
         XPath xpath) {
         if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
@@ -2350,7 +2350,7 @@ public class WWXML {
         }
     }
 
-    public static void checkAndSetColorArrayParam(Element context, AVList params, String paramKey, String paramName,
+    public static void checkAndSetColorArrayParam(Element context, KV params, String paramKey, String paramName,
         XPath xpath) {
         if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
@@ -2407,7 +2407,7 @@ public class WWXML {
      * @throws IllegalArgumentException if either the context, parameter list, parameter key or parameter name are
      *                                  null.
      */
-    public static void checkAndSetSectorParam(Element context, AVList params, String paramKey, String paramName,
+    public static void checkAndSetSectorParam(Element context, KV params, String paramKey, String paramName,
         XPath xpath) {
         if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
@@ -2454,7 +2454,7 @@ public class WWXML {
      * @throws IllegalArgumentException if either the context, parameter list, parameter key or parameter name are
      *                                  null.
      */
-    public static void checkAndSetSectorResolutionParam(Element context, AVList params, String paramKey,
+    public static void checkAndSetSectorResolutionParam(Element context, KV params, String paramKey,
         String paramName, XPath xpath) {
         if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
@@ -2511,7 +2511,7 @@ public class WWXML {
      * @throws IllegalArgumentException if either the context, parameter list, parameter key or parameter name are
      *                                  null.
      */
-    public static void checkAndSetTimeParam(Element context, AVList params, String paramKey, String paramName,
+    public static void checkAndSetTimeParam(Element context, KV params, String paramKey, String paramName,
         XPath xpath) {
         if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
@@ -2558,7 +2558,7 @@ public class WWXML {
      * @throws IllegalArgumentException if either the context, parameter list, parameter key or parameter name are
      *                                  null.
      */
-    public static void checkAndSetTimeParamAsInteger(Element context, AVList params, String paramKey, String paramName,
+    public static void checkAndSetTimeParamAsInteger(Element context, KV params, String paramKey, String paramName,
         XPath xpath) {
         if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
@@ -2607,7 +2607,7 @@ public class WWXML {
      * @throws IllegalArgumentException if either the context, parameter list, parameter key, pattern or parameter name
      *                                  are null.
      */
-    public static void checkAndSetDateTimeParam(Element context, AVList params, String paramKey, String paramName,
+    public static void checkAndSetDateTimeParam(Element context, KV params, String paramKey, String paramName,
         String pattern, XPath xpath) {
         if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
@@ -2660,7 +2660,7 @@ public class WWXML {
      * @throws IllegalArgumentException if either the context, parameter list, parameter key or parameter name are
      *                                  null.
      */
-    public static void checkAndSetScreenCreditParam(Element context, AVList params, String paramKey, String paramName,
+    public static void checkAndSetScreenCreditParam(Element context, KV params, String paramKey, String paramName,
         XPath xpath) {
         if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
@@ -2704,7 +2704,7 @@ public class WWXML {
      * @param path     the element path to append.
      * @throws IllegalArgumentException if either the parameter list  parameter key, or context are null.
      */
-    public static void checkAndAppendTextElement(AVList params, String paramKey, Element context, String path) {
+    public static void checkAndAppendTextElement(KV params, String paramKey, Element context, String path) {
         if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
@@ -2739,7 +2739,7 @@ public class WWXML {
      * @param path     the element path to append.
      * @throws IllegalArgumentException if either the parameter list  parameter key, or context are null.
      */
-    public static void checkAndAppendTextArrayElement(AVList params, String paramKey, Element context, String path) {
+    public static void checkAndAppendTextArrayElement(KV params, String paramKey, Element context, String path) {
         if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
@@ -2777,7 +2777,7 @@ public class WWXML {
      * @param path     the element path to append.
      * @throws IllegalArgumentException if either the parameter list  parameter key, or context are null.
      */
-    public static void checkAndAppendDoubleElement(AVList params, String paramKey, Element context, String path) {
+    public static void checkAndAppendDoubleElement(KV params, String paramKey, Element context, String path) {
         if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
@@ -2796,7 +2796,7 @@ public class WWXML {
             throw new IllegalArgumentException(message);
         }
 
-        Double d = AVListImpl.getDoubleValue(params, paramKey);
+        Double d = KVMap.getDoubleValue(params, paramKey);
         if (d != null) {
             WWXML.appendDouble(context, path, d);
         }
@@ -2812,7 +2812,7 @@ public class WWXML {
      * @param path     the element path to append.
      * @throws IllegalArgumentException if either the parameter list  parameter key, or context are null.
      */
-    public static void checkAndAppendIntegerlement(AVList params, String paramKey, Element context, String path) {
+    public static void checkAndAppendIntegerlement(KV params, String paramKey, Element context, String path) {
         if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
@@ -2831,7 +2831,7 @@ public class WWXML {
             throw new IllegalArgumentException(message);
         }
 
-        Integer i = AVListImpl.getIntegerValue(params, paramKey);
+        Integer i = KVMap.getIntegerValue(params, paramKey);
         if (i != null) {
             WWXML.appendInteger(context, path, i);
         }
@@ -2847,7 +2847,7 @@ public class WWXML {
      * @param path     the element path to append.
      * @throws IllegalArgumentException if either the parameter list  parameter key, or context are null.
      */
-    public static void checkAndAppendLongElement(AVList params, String paramKey, Element context, String path) {
+    public static void checkAndAppendLongElement(KV params, String paramKey, Element context, String path) {
         if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
@@ -2866,7 +2866,7 @@ public class WWXML {
             throw new IllegalArgumentException(message);
         }
 
-        Long l = AVListImpl.getLongValue(params, paramKey);
+        Long l = KVMap.getLongValue(params, paramKey);
         if (l != null) {
             WWXML.appendLong(context, path, l);
         }
@@ -2882,7 +2882,7 @@ public class WWXML {
      * @param path     the element path to append.
      * @throws IllegalArgumentException if either the parameter list  parameter key, or context are null.
      */
-    public static void checkAndAppendBooleanElement(AVList params, String paramKey, Element context, String path) {
+    public static void checkAndAppendBooleanElement(KV params, String paramKey, Element context, String path) {
         if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
@@ -2917,7 +2917,7 @@ public class WWXML {
      * @param path     the element path to append.
      * @throws IllegalArgumentException if either the parameter list  parameter key, or context are null.
      */
-    public static void checkAndAppendLatLonElement(AVList params, String paramKey, Element context, String path) {
+    public static void checkAndAppendLatLonElement(KV params, String paramKey, Element context, String path) {
         if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
@@ -2952,7 +2952,7 @@ public class WWXML {
      * @param path     the element path to append.
      * @throws IllegalArgumentException if either the parameter list  parameter key, or context are null.
      */
-    public static void checkAndAppendSectorElement(AVList params, String paramKey, Element context, String path) {
+    public static void checkAndAppendSectorElement(KV params, String paramKey, Element context, String path) {
         if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
@@ -2987,7 +2987,7 @@ public class WWXML {
      * @param path     the element path to append.
      * @throws IllegalArgumentException if either the parameter list  parameter key, or context are null.
      */
-    public static void checkAndAppendSectorResolutionElement(AVList params, String paramKey, Element context,
+    public static void checkAndAppendSectorResolutionElement(KV params, String paramKey, Element context,
         String path) {
         if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
@@ -3029,7 +3029,7 @@ public class WWXML {
      * @param path     the element path to append.
      * @throws IllegalArgumentException if either the parameter list  parameter key, or context are null.
      */
-    public static void checkAndAppendTimeElement(AVList params, String paramKey, Element context,
+    public static void checkAndAppendTimeElement(KV params, String paramKey, Element context,
         String path) {
         if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
@@ -3066,7 +3066,7 @@ public class WWXML {
      * @param path     the element path to append.
      * @throws IllegalArgumentException if either the parameter list  parameter key, or context are null.
      */
-    public static void checkAndAppendScreenCreditElement(AVList params, String paramKey, Element context, String path) {
+    public static void checkAndAppendScreenCreditElement(KV params, String paramKey, Element context, String path) {
         if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
@@ -3112,8 +3112,8 @@ public class WWXML {
     /**
      * Returns the byte order constant for a specified string. This performs a mapping between text and an AVKey
      * constant: <table> <caption style="font-weight: bold;">Mapping</caption><tr><th>Text</th><th>Constant</th></tr>
-     * <tr><td>LittleEndian</td><td>{@link AVKey#LITTLE_ENDIAN}</td></tr> <tr><td>BigEndian</td><td>{@link
-     * AVKey#BIG_ENDIAN}</td></tr> </table>
+     * <tr><td>LittleEndian</td><td>{@link Keys#LITTLE_ENDIAN}</td></tr> <tr><td>BigEndian</td><td>{@link
+     * Keys#BIG_ENDIAN}</td></tr> </table>
      *
      * @param s the string to parse as a byte order.
      * @return a byte order constant, or null if the string text is not recognized.
@@ -3128,9 +3128,9 @@ public class WWXML {
 
         s = s.trim().toLowerCase();
         if (s.startsWith("little"))
-            return AVKey.LITTLE_ENDIAN;
+            return Keys.LITTLE_ENDIAN;
         else if (s.startsWith("big"))
-            return AVKey.BIG_ENDIAN;
+            return Keys.BIG_ENDIAN;
 
         // Warn that the byte order is unrecognized.
         String message = Logging.getMessage("generic.UnrecognizedByteOrder", s);
@@ -3142,8 +3142,8 @@ public class WWXML {
     /**
      * Returns the string text for a specified byte order constant. This performs a mapping between text and an AVKey
      * constant: <table> <caption style="font-weight: bold;">Mapping</caption><tr><th>Text</th><th>Constant</th></tr>
-     * <tr><td>LittleEndian</td><td>{@link AVKey#LITTLE_ENDIAN}</td></tr> <tr><td>BigEndian</td><td>{@link
-     * AVKey#BIG_ENDIAN}</td></tr> </table>
+     * <tr><td>LittleEndian</td><td>{@link Keys#LITTLE_ENDIAN}</td></tr> <tr><td>BigEndian</td><td>{@link
+     * Keys#BIG_ENDIAN}</td></tr> </table>
      *
      * @param byteOrder the byte order constant to encode as a string.
      * @return a string representing the byte order constant, or null if the byte order constant is not recognized.
@@ -3156,9 +3156,9 @@ public class WWXML {
             throw new IllegalArgumentException(message);
         }
 
-        if (byteOrder.equals(AVKey.LITTLE_ENDIAN))
+        if (byteOrder.equals(Keys.LITTLE_ENDIAN))
             return "LittleEndian";
-        else if (byteOrder.equals(AVKey.BIG_ENDIAN))
+        else if (byteOrder.equals(Keys.BIG_ENDIAN))
             return "BigEndian";
 
         // Warn that the byte order is unrecognized.
@@ -3171,9 +3171,9 @@ public class WWXML {
     /**
      * Returns the data type constant for a specified string. This performs a mapping between text and an AVKey
      * constant: <table> <caption style="font-weight: bold;">Mapping</caption><tr><th>Text</th><th>Constant</th></tr>
-     * <tr><td>Float32</td><td>{@link AVKey#FLOAT32}</td></tr>
-     * <tr><td>Int32</td><td>{@link AVKey#INT32}</td></tr> <tr><td>Int16</td><td>{@link AVKey#INT16}</td></tr>
-     * <tr><td>Int8</td><td>{@link AVKey#INT8}</td></tr> </table>
+     * <tr><td>Float32</td><td>{@link Keys#FLOAT32}</td></tr>
+     * <tr><td>Int32</td><td>{@link Keys#INT32}</td></tr> <tr><td>Int16</td><td>{@link Keys#INT16}</td></tr>
+     * <tr><td>Int8</td><td>{@link Keys#INT8}</td></tr> </table>
      *
      * @param s the string to parse as a data type.
      * @return a data type constant, or null if the string text is not recognized.
@@ -3188,13 +3188,13 @@ public class WWXML {
 
         switch (s) {
             case "Float32":
-                return AVKey.FLOAT32;
+                return Keys.FLOAT32;
             case "Int32":
-                return AVKey.INT32;
+                return Keys.INT32;
             case "Int16":
-                return AVKey.INT16;
+                return Keys.INT16;
             case "Int8":
-                return AVKey.INT8;
+                return Keys.INT8;
         }
 
         // Warn that the data type is unrecognized.
@@ -3207,9 +3207,9 @@ public class WWXML {
     /**
      * Returns the string text for a specified data type constant. This performs a mapping between text and an AVKey
      * constant: <table> <caption style="font-weight: bold;">Mapping</caption><tr><th>Text</th><th>Constant</th></tr>
-     * <tr><td>Float32</td><td>{@link AVKey#FLOAT32}</td></tr>
-     * <tr><td>Int32</td><td>{@link AVKey#INT32}</td></tr> <tr><td>Int16</td><td>{@link AVKey#INT16}</td></tr>
-     * <tr><td>Int8</td><td>{@link AVKey#INT8}</td></tr> </table>
+     * <tr><td>Float32</td><td>{@link Keys#FLOAT32}</td></tr>
+     * <tr><td>Int32</td><td>{@link Keys#INT32}</td></tr> <tr><td>Int16</td><td>{@link Keys#INT16}</td></tr>
+     * <tr><td>Int8</td><td>{@link Keys#INT8}</td></tr> </table>
      *
      * @param dataType the data type constant to encode as a string.
      * @return a string representing the data type constant, or null if the data type constant is not recognized.
@@ -3223,13 +3223,13 @@ public class WWXML {
         }
 
         switch (dataType) {
-            case AVKey.FLOAT32:
+            case Keys.FLOAT32:
                 return "Float32";
-            case AVKey.INT32:
+            case Keys.INT32:
                 return "Int32";
-            case AVKey.INT16:
+            case Keys.INT16:
                 return "Int16";
-            case AVKey.INT8:
+            case Keys.INT8:
                 return "Int8";
         }
 
@@ -3250,7 +3250,7 @@ public class WWXML {
      * attribute-value list containing those properties. Otherwise null is returned.
      * @throws IllegalArgumentException if the specified element is null.
      */
-    public static AVList copyProperties(Element element, AVList params) {
+    public static KV copyProperties(Element element, KV params) {
         if (element == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
             Logging.logger().severe(message);
@@ -3264,7 +3264,7 @@ public class WWXML {
                 return params;
 
             if (params == null)
-                params = new AVListImpl();
+                params = new KVMap();
 
             for (Element el : elements) {
                 String prop = xpath.evaluate("@name", el);
@@ -3323,8 +3323,8 @@ public class WWXML {
             }
             catch (NoSuchMethodException e) {
                 // No property method, so just add the property to the object's AVList if it has one.
-                if (parent instanceof AVList)
-                    ((AVList) parent).set(propertyName, propertyValue);
+                if (parent instanceof KV)
+                    ((KV) parent).set(propertyName, propertyValue);
                 // This is a benign exception; not all properties have set methods.
             }
             catch (InvocationTargetException | IllegalAccessException e) {

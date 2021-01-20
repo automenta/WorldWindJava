@@ -5,7 +5,8 @@
  */
 package gov.nasa.worldwind.formats.vpf;
 
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.Keys;
+import gov.nasa.worldwind.avlist.KVMap;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.util.*;
 
@@ -20,7 +21,7 @@ import java.util.*;
  * @author dcollins
  * @version $Id: VPFDatabase.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class VPFDatabase extends AVListImpl {
+public class VPFDatabase extends KVMap {
     private final String filePath;
     private final Map<String, VPFLibrary> libraryMap = new HashMap<>();
     private VPFBufferedRecordData databaseHeaderTable;
@@ -79,8 +80,8 @@ public class VPFDatabase extends AVListImpl {
         // Database metadata attributes.
         VPFRecord record = dht.getRecord(1);
         if (record != null) {
-            VPFUtils.checkAndSetValue(record, "database_name", AVKey.DISPLAY_NAME, database);
-            VPFUtils.checkAndSetValue(record, "database_desc", AVKey.DESCRIPTION, database);
+            VPFUtils.checkAndSetValue(record, "database_name", Keys.DISPLAY_NAME, database);
+            VPFUtils.checkAndSetValue(record, "database_desc", Keys.DESCRIPTION, database);
         }
 
         // Database Libraries.
@@ -142,7 +143,7 @@ public class VPFDatabase extends AVListImpl {
      * @return name of this Database.
      */
     public String getName() {
-        return this.getStringValue(AVKey.DISPLAY_NAME);
+        return this.getStringValue(Keys.DISPLAY_NAME);
     }
 
     /**
@@ -151,7 +152,7 @@ public class VPFDatabase extends AVListImpl {
      * @return description of this Database.
      */
     public String getDescription() {
-        return this.getStringValue(AVKey.DESCRIPTION);
+        return this.getStringValue(Keys.DESCRIPTION);
     }
 
     /**

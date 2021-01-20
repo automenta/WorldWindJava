@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.render;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.util.*;
 
 import java.awt.*;
@@ -89,11 +89,11 @@ public class BasicBalloonAttributes extends BasicShapeAttributes implements Ball
      * <tr><td>interiorImageScale</td><td>1.0</td></tr> <tr><td>size</td><td>350x350 pixels (width x height)</td></tr>
      * <tr><td>maximumSize</td><td><code>null</code></td></tr> <tr><td>offset</td><td><code>40,60 pixels (x,
      * y)</code></td></tr> <tr><td>insets</td><td>30,15,15,15 (top, left, bottom, right)</td></tr>
-     * <tr><td>balloonShape</td><td>{@link AVKey#SHAPE_RECTANGLE}</td></tr> <tr><td>leaderShape</td><td>{@link
-     * AVKey#SHAPE_TRIANGLE}</td></tr> <tr><td>leaderWidth</td><td>40.0</td></tr> <tr><td>cornerRadius</td><td>20.0</td></tr>
+     * <tr><td>balloonShape</td><td>{@link Keys#SHAPE_RECTANGLE}</td></tr> <tr><td>leaderShape</td><td>{@link
+     * Keys#SHAPE_TRIANGLE}</td></tr> <tr><td>leaderWidth</td><td>40.0</td></tr> <tr><td>cornerRadius</td><td>20.0</td></tr>
      * <tr><td>font</td><td>Arial Plain 12</td></tr> <tr><td>textColor</td><td>{@link Color#BLACK}</td></tr>
      * <tr><td>imageOffset</td><td><code>0,0 (x, y)</code></td></tr> <tr><td>imageOpacity</td><td>1</td></tr>
-     * <tr><td>imageRepeat</td><td>{@link AVKey#REPEAT_XY}</td></tr> </table>
+     * <tr><td>imageRepeat</td><td>{@link Keys#REPEAT_XY}</td></tr> </table>
      */
     public BasicBalloonAttributes() {
         // Note: update the above constructor comment if these defaults change.
@@ -103,17 +103,17 @@ public class BasicBalloonAttributes extends BasicShapeAttributes implements Ball
 
         // Balloon-specific attributes.
         this.setSize(Size.fromPixels(350, 350));
-        this.setOffset(new Offset(0.45, -60.0, AVKey.FRACTION, AVKey.PIXELS));
+        this.setOffset(new Offset(0.45, -60.0, Keys.FRACTION, Keys.PIXELS));
         this.setInsets(new Insets(30, 15, 15, 15));
-        this.setBalloonShape(AVKey.SHAPE_RECTANGLE);
-        this.setLeaderShape(AVKey.SHAPE_TRIANGLE);
+        this.setBalloonShape(Keys.SHAPE_RECTANGLE);
+        this.setLeaderShape(Keys.SHAPE_TRIANGLE);
         this.setLeaderWidth(40);
         this.setCornerRadius(20);
         this.setFont(Font.decode("Arial-PLAIN-12"));
         this.setTextColor(Color.BLACK);
         this.setImageOffset(new Point(0, 0));
         this.setImageOpacity(1);
-        this.setImageRepeat(AVKey.REPEAT_XY);
+        this.setImageRepeat(Keys.REPEAT_XY);
     }
 
     /**
@@ -503,11 +503,11 @@ public class BasicBalloonAttributes extends BasicShapeAttributes implements Ball
 
         // Map legacy restorable state values using FrameFactory constants to the new AVKey constants.
         Map<String, String> legacySupport = new HashMap<>();
-        legacySupport.put("Render.FrameFactory.ShapeRectangle", AVKey.SHAPE_RECTANGLE);
-        legacySupport.put("Render.FrameFactory.ShapeEllipse", AVKey.SHAPE_ELLIPSE);
-        legacySupport.put("Render.FrameFactory.ShapeNone", AVKey.SHAPE_NONE);
-        legacySupport.put("Render.FrameFactory.LeaderTriangle", AVKey.SHAPE_TRIANGLE);
-        legacySupport.put("Render.FrameFactory.LeaderNone", AVKey.SHAPE_NONE);
+        legacySupport.put("Render.FrameFactory.ShapeRectangle", Keys.SHAPE_RECTANGLE);
+        legacySupport.put("Render.FrameFactory.ShapeEllipse", Keys.SHAPE_ELLIPSE);
+        legacySupport.put("Render.FrameFactory.ShapeNone", Keys.SHAPE_NONE);
+        legacySupport.put("Render.FrameFactory.LeaderTriangle", Keys.SHAPE_TRIANGLE);
+        legacySupport.put("Render.FrameFactory.LeaderNone", Keys.SHAPE_NONE);
 
         RestorableSupport.StateObject so = restorableSupport.getStateObject(context, "size");
         if (so != null)

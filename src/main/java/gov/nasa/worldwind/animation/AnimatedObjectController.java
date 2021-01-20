@@ -1,7 +1,6 @@
 package gov.nasa.worldwind.animation;
 
-import gov.nasa.worldwind.WorldWindow;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -70,17 +69,17 @@ public class AnimatedObjectController implements RenderingListener, SelectListen
 
         if (o instanceof Animatable) {
             this.selectedObject = (Animatable) o;
-            Object prevNote = this.selectedObject.getField(AVKey.ANIMATION_ANNOTATION);
+            Object prevNote = this.selectedObject.getField(Keys.ANIMATION_ANNOTATION);
             if (prevNote != null) {
                 ((Annotation) prevNote).getAttributes().setVisible(true);
             } else {
-                String metadata = this.selectedObject.getField(AVKey.ANIMATION_META_DATA).toString();
+                String metadata = this.selectedObject.getField(Keys.ANIMATION_META_DATA).toString();
                 if (metadata != null) {
                     Annotation note = new GlobeAnnotation(metadata, this.selectedObject.getPosition(),
                         this.metaAttrs);
                     this.annotationLayer.add(note);
                     note.getAttributes().setVisible(true);
-                    this.selectedObject.setField(AVKey.ANIMATION_ANNOTATION, note);
+                    this.selectedObject.setField(Keys.ANIMATION_ANNOTATION, note);
                 }
             }
         }

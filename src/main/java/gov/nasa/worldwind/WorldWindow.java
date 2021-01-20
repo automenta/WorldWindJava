@@ -7,7 +7,7 @@
 package gov.nasa.worldwind;
 
 import com.jogamp.nativewindow.ScalableSurface;
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.cache.GpuResourceCache;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.geom.Position;
@@ -21,7 +21,7 @@ import gov.nasa.worldwind.video.*;
 import java.beans.*;
 import java.util.*;
 
-import static gov.nasa.worldwind.avlist.AVKey.*;
+import static gov.nasa.worldwind.Keys.*;
 
 /**
  * The top-level interface common to all toolkit-specific WorldWind windows.
@@ -29,7 +29,7 @@ import static gov.nasa.worldwind.avlist.AVKey.*;
  * @author Tom Gaskins
  * @version $Id: WorldWindow.java 2047 2014-06-06 22:48:33Z tgaskins $
  */
-public interface WorldWindow extends AVList, PropertyChangeListener {
+public interface WorldWindow extends KV, PropertyChangeListener {
 
     /**
      * Configures JOGL's surface pixel scaling on the specified
@@ -258,7 +258,7 @@ public interface WorldWindow extends AVList, PropertyChangeListener {
         return this.wwd().set(key, value);
     }
 
-    default AVList setValues(AVList avList) {
+    default KV setValues(KV avList) {
         return this.wwd().setValues(avList);
     }
 
@@ -290,11 +290,11 @@ public interface WorldWindow extends AVList, PropertyChangeListener {
         this.wwd().firePropertyChange(propertyChangeEvent);
     }
 
-    default AVList copy() {
+    default KV copy() {
         return this.wwd().copy();
     }
 
-    default AVList clearList() {
+    default KV clearList() {
         return this.wwd().clearList();
     }
 

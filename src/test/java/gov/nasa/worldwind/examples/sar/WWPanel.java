@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.examples.sar;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.layers.tool.ScalebarLayer;
 import gov.nasa.worldwind.util.StatusBar;
@@ -53,7 +52,7 @@ public class WWPanel extends JPanel {
         this.wwd.setPreferredSize(new Dimension(800, 800));
 
         // Create the default model as described in the current worldwind properties.
-        Model m = (Model) WorldWind.createConfigurationComponent(AVKey.MODEL_CLASS_NAME);
+        Model m = (Model) WorldWind.createConfigurationComponent(Keys.MODEL_CLASS_NAME);
         this.wwd.setModel(m);
 
         this.wwd.addPropertyChangeListener(this.propertyChangeListener);

@@ -88,12 +88,12 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
      * #setModifier(String, Object)}. Initialized to a new AVListImpl, and populated during construction from values in
      * the string identifier and the modifiers list.
      */
-    protected final AVList modifiers = new AVListImpl();
+    protected final KV modifiers = new KVMap();
     /**
      * Modifiers active this frame. This list is determined by copying {@link #modifiers}, and applying changings in
-     * {@link #applyImplicitModifiers(AVList)}.
+     * {@link #applyImplicitModifiers(KV)}.
      */
-    protected final AVList activeModifiers = new AVListImpl();
+    protected final KV activeModifiers = new KVMap();
     /**
      * Indicates this symbol's currently active attributes. Updated in {@link #determineActiveAttributes}. Initialized
      * to a new BasicTacticalSymbolAttributes.
@@ -857,14 +857,14 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     }
 
     protected void layout(DrawContext dc, OrderedSymbol osym) {
-        AVList modifierParams = new AVListImpl();
+        KV modifierParams = new KVMap();
         modifierParams.setValues(this.modifiers);
         this.applyImplicitModifiers(modifierParams);
 
         boolean mustDrawModifiers = this.mustDrawGraphicModifiers(dc) || this.mustDrawTextModifiers(dc);
 
         // If the icon retrieval parameters have changed then the icon needs to be updated, which may affect layout.
-        AVList retrieverParams = this.assembleIconRetrieverParameters(null);
+        KV retrieverParams = this.assembleIconRetrieverParameters(null);
         IconSource iconSource = new IconSource(this.getIconRetriever(), this.getIdentifier(), retrieverParams);
 
         // Compute layout of icon and static modifiers only when necessary.
@@ -907,7 +907,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
      * @param modifiers  Current modifiers.
      * @return true if the layout must be recomputed.
      */
-    protected boolean mustLayout(IconSource iconSource, AVList modifiers) {
+    protected boolean mustLayout(IconSource iconSource, KV modifiers) {
         // If one or more glyphs need to be resolved, then layout is not complete.
         if (this.unresolvedGlyph)
             return true;
@@ -983,13 +983,13 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         }
     }
 
-    protected AVList assembleIconRetrieverParameters(AVList params) {
+    protected KV assembleIconRetrieverParameters(KV params) {
         if (params == null)
-            params = new AVListImpl();
+            params = new KVMap();
 
         Material interiorMaterial = this.getActiveAttributes().getInteriorMaterial();
         if (interiorMaterial != null)
-            params.set(AVKey.COLOR, interiorMaterial.getDiffuse());
+            params.set(Keys.COLOR, interiorMaterial.getDiffuse());
 
         return params;
     }
@@ -997,17 +997,17 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     /**
      * Layout static modifiers around the symbol. Static modifiers are not expected to change due to changes in view.
      * Subclasses should not override this method. Instead, subclasses may override {@link
-     * #layoutGraphicModifiers(DrawContext, AVList, AbstractTacticalSymbol.OrderedSymbol) layoutGraphicModifiers} and
-     * {@link #layoutTextModifiers(DrawContext, AVList, AbstractTacticalSymbol.OrderedSymbol) layoutTextModifiers}.
+     * #layoutGraphicModifiers(DrawContext, KV, AbstractTacticalSymbol.OrderedSymbol) layoutGraphicModifiers} and
+     * {@link #layoutTextModifiers(DrawContext, KV, AbstractTacticalSymbol.OrderedSymbol) layoutTextModifiers}.
      *
      * @param dc        Current draw context.
      * @param modifiers Current modifiers.
      * @param osym      The OrderedSymbol to hold the per-frame data.
-     * @see #layoutDynamicModifiers(DrawContext, AVList, AbstractTacticalSymbol.OrderedSymbol)
-     * @see #layoutGraphicModifiers(DrawContext, AVList, AbstractTacticalSymbol.OrderedSymbol)
-     * @see #layoutTextModifiers(DrawContext, AVList, AbstractTacticalSymbol.OrderedSymbol)
+     * @see #layoutDynamicModifiers(DrawContext, KV, AbstractTacticalSymbol.OrderedSymbol)
+     * @see #layoutGraphicModifiers(DrawContext, KV, AbstractTacticalSymbol.OrderedSymbol)
+     * @see #layoutTextModifiers(DrawContext, KV, AbstractTacticalSymbol.OrderedSymbol)
      */
-    protected void layoutStaticModifiers(DrawContext dc, AVList modifiers, OrderedSymbol osym) {
+    protected void layoutStaticModifiers(DrawContext dc, KV modifiers, OrderedSymbol osym) {
         if (this.iconRect == null)
             return;
 
@@ -1032,9 +1032,9 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
      * @param dc        Current draw context.
      * @param modifiers Current modifiers.
      * @param osym      The OrderedSymbol to hold the per-frame data.
-     * @see #layoutDynamicModifiers(DrawContext, AVList, AbstractTacticalSymbol.OrderedSymbol)
+     * @see #layoutDynamicModifiers(DrawContext, KV, AbstractTacticalSymbol.OrderedSymbol)
      */
-    protected void layoutGraphicModifiers(DrawContext dc, AVList modifiers, OrderedSymbol osym) {
+    protected void layoutGraphicModifiers(DrawContext dc, KV modifiers, OrderedSymbol osym) {
         // Intentionally left blank. Subclasses can override this method in order to layout any modifiers associated
         // with this tactical symbol.
     }
@@ -1049,9 +1049,9 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
      * @param dc        Current draw context.
      * @param modifiers Current modifiers.
      * @param osym      The OrderedSymbol to hold the per-frame data.
-     * @see #layoutDynamicModifiers(DrawContext, AVList, AbstractTacticalSymbol.OrderedSymbol)
+     * @see #layoutDynamicModifiers(DrawContext, KV, AbstractTacticalSymbol.OrderedSymbol)
      */
-    protected void layoutTextModifiers(DrawContext dc, AVList modifiers, OrderedSymbol osym) {
+    protected void layoutTextModifiers(DrawContext dc, KV modifiers, OrderedSymbol osym) {
         // Intentionally left blank. Subclasses can override this method in order to layout any modifiers associated
         // with this tactical symbol.
     }
@@ -1064,9 +1064,9 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
      * @param dc        Current draw context.
      * @param modifiers Current modifiers.
      * @param osym      The OrderedSymbol to hold the per-frame data.
-     * @see #layoutStaticModifiers(DrawContext, AVList, AbstractTacticalSymbol.OrderedSymbol)
+     * @see #layoutStaticModifiers(DrawContext, KV, AbstractTacticalSymbol.OrderedSymbol)
      */
-    protected void layoutDynamicModifiers(DrawContext dc, AVList modifiers, OrderedSymbol osym) {
+    protected void layoutDynamicModifiers(DrawContext dc, KV modifiers, OrderedSymbol osym) {
         // Intentionally left blank. Subclasses can override this method in order to layout any modifiers associated
         // with this tactical symbol.
     }
@@ -1078,7 +1078,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
      *
      * @param modifiers List of modifiers. This method may modify this list by adding implicit modifiers.
      */
-    protected void applyImplicitModifiers(AVList modifiers) {
+    protected void applyImplicitModifiers(KV modifiers) {
         // Intentionally left blank. Subclasses can override this method in order to add modifiers that are implicitly
         // determined by the symbol state.
     }
@@ -1237,7 +1237,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     }
 
     protected void addGlyph(DrawContext dc, Offset offset, Offset hotspot, String modifierCode,
-        AVList retrieverParams, Object layoutMode, OrderedSymbol osym) {
+        KV retrieverParams, Object layoutMode, OrderedSymbol osym) {
         IconAtlasElement elem = this.getGlyph(modifierCode, retrieverParams);
 
         if (elem.load(dc)) {
@@ -1301,7 +1301,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         this.currentLines.add(new Line(points));
     }
 
-    protected IconAtlasElement getGlyph(String modifierCode, AVList retrieverParams) {
+    protected IconAtlasElement getGlyph(String modifierCode, KV retrieverParams) {
         if (this.getGlyphAtlas() == null || this.getModifierRetriever() == null)
             return null;
 
@@ -1369,7 +1369,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
      * @param modifiers Current modifiers.
      * @param osym      The OrderedSymbol to hold the per-frame data.
      */
-    protected void computeScaledBounds(DrawContext dc, AVList modifiers, OrderedSymbol osym) {
+    protected void computeScaledBounds(DrawContext dc, KV modifiers, OrderedSymbol osym) {
         Dimension maxDimension = this.computeMinTextLayout(dc, modifiers);
         osym.iconRectScaled = AbstractTacticalSymbol.computeScaledRect(this.iconRect, maxDimension, osym.sx, osym.sy);
         osym.layoutRectScaled = AbstractTacticalSymbol.computeScaledRect(osym.layoutRect, maxDimension, osym.sx,
@@ -1384,7 +1384,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
      * @param modifiers Modifiers to apply to the text.
      * @return Minimum dimension for the label layout rectangle.
      */
-    protected Dimension computeMinTextLayout(DrawContext dc, AVList modifiers) {
+    protected Dimension computeMinTextLayout(DrawContext dc, KV modifiers) {
         // Use either the currently specified text modifier font or compute a default if no font is specified.
         Font font = this.getActiveAttributes().getTextModifierFont();
         if (font == null)
@@ -1403,7 +1403,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     }
 
     @SuppressWarnings("UnusedParameters")
-    protected int getMaxLabelLines(AVList modifiers) {
+    protected int getMaxLabelLines(KV modifiers) {
         return AbstractTacticalSymbol.DEFAULT_LABEL_LINES;
     }
 
@@ -1814,9 +1814,9 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     protected static class IconSource {
         protected final IconRetriever retriever;
         protected final String symbolId;
-        protected AVList retrieverParams;
+        protected KV retrieverParams;
 
-        public IconSource(IconRetriever retriever, String symbolId, AVList retrieverParams) {
+        public IconSource(IconRetriever retriever, String symbolId, KV retrieverParams) {
             this.retriever = retriever;
             this.symbolId = symbolId;
 
@@ -1824,7 +1824,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
                 // If the specified parameters are non-null, then store a copy of the parameters in this key's params
                 // property to insulate it from changes made by the caller. This params list must not change after
                 // construction this key's properties must be immutable.
-                this.retrieverParams = new AVListImpl();
+                this.retrieverParams = new KVMap();
                 this.retrieverParams.setValues(retrieverParams);
             }
         }
@@ -1837,7 +1837,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             return this.symbolId;
         }
 
-        public AVList getRetrieverParams() {
+        public KV getRetrieverParams() {
             return this.retrieverParams;
         }
 

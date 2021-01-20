@@ -7,7 +7,6 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.drag.*;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.geom.*;
@@ -50,8 +49,8 @@ public class ShapeEditingExtension extends ApplicationTemplate {
             this.shaft.setDelegateOwner(this);
             this.head.setDelegateOwner(this);
 
-            this.shaft.setPathType(AVKey.GREAT_CIRCLE);
-            this.head.setPathType(AVKey.GREAT_CIRCLE);
+            this.shaft.setPathType(Keys.GREAT_CIRCLE);
+            this.head.setPathType(Keys.GREAT_CIRCLE);
         }
 
         public Arrow(Arrow source) {

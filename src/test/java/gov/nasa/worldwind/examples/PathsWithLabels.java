@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.*;
@@ -292,9 +291,9 @@ public class PathsWithLabels extends ApplicationTemplate {
         };
 
     public static void main(String[] args) {
-        Configuration.setValue(AVKey.INITIAL_LATITUDE, 48.6);
-        Configuration.setValue(AVKey.INITIAL_LONGITUDE, -122.95);
-        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 70000);
+        Configuration.setValue(Keys.INITIAL_LATITUDE, 48.6);
+        Configuration.setValue(Keys.INITIAL_LONGITUDE, -122.95);
+        Configuration.setValue(Keys.INITIAL_ALTITUDE, 70000);
 
         start("WorldWind Paths with Labels", AppFrame.class);
     }
@@ -355,8 +354,8 @@ public class PathsWithLabels extends ApplicationTemplate {
             ga.setPickEnabled(false);
 
             AnnotationAttributes attrs = new AnnotationAttributes();
-            attrs.setAdjustWidthToText(AVKey.SIZE_FIT_TEXT);
-            attrs.setFrameShape(AVKey.SHAPE_RECTANGLE);
+            attrs.setAdjustWidthToText(Keys.SIZE_FIT_TEXT);
+            attrs.setFrameShape(Keys.SHAPE_RECTANGLE);
             attrs.setDrawOffset(new Point(0, 10));
             attrs.setLeaderGapWidth(5);
             attrs.setTextColor(Color.BLACK);
@@ -364,7 +363,7 @@ public class PathsWithLabels extends ApplicationTemplate {
             attrs.setCornerRadius(5);
             attrs.setBorderColor(new Color(0xababab));
             attrs.setFont(Font.decode("Arial-PLAIN-12"));
-            attrs.setTextAlign(AVKey.CENTER);
+            attrs.setTextAlign(Keys.CENTER);
             attrs.setInsets(new Insets(5, 5, 5, 5));
 
             ga.setAttributes(attrs);

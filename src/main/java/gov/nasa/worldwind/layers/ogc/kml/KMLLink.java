@@ -7,7 +7,6 @@
 package gov.nasa.worldwind.layers.ogc.kml;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.Message;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.DrawContext;
@@ -285,8 +284,8 @@ public class KMLLink extends KMLAbstractObject {
      * is one of <code>onRequest</code>, <code>onStop</code> or <code>onRegion</code>, this automatically appends the
      * following information to the query string: <code>BBOX=[bboxWest],[bboxSouth],[bboxEast],[bboxNorth]</code>. The
      * <code>[clientName]</code> and <code>[clientVersion]</code> parameters of the <code>httpQuery</code> may be
-     * specified in the configuration file using the keys <code>{@link AVKey#NAME}</code> and
-     * <code>{@link AVKey#VERSION}</code>. If not specified, this uses default values of
+     * specified in the configuration file using the keys <code>{@link Keys#NAME}</code> and
+     * <code>{@link Keys#VERSION}</code>. If not specified, this uses default values of
      * <code>{@link Version#getVersionName()}</code> and <code>{@link
      * Version#getVersion()}</code> for <code>[clientName]</code> and <code>[clientVersion]</code>, respectively.
      *
@@ -436,8 +435,8 @@ public class KMLLink extends KMLAbstractObject {
             s = s.trim();
 
         if (!WWUtil.isEmpty(s)) {
-            String clientName = Configuration.getStringValue(AVKey.NAME, Version.getVersionName());
-            String clientVersion = Configuration.getStringValue(AVKey.VERSION, Version.getVersionNumber());
+            String clientName = Configuration.getStringValue(Keys.NAME, Version.getVersionName());
+            String clientVersion = Configuration.getStringValue(Keys.VERSION, Version.getVersionNumber());
 
             //noinspection ConstantConditions
             s = s.replaceAll("\\[clientVersion]", clientVersion);

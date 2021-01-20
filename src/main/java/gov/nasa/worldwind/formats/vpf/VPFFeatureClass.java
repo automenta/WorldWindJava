@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.formats.vpf;
 
-import gov.nasa.worldwind.avlist.AVListImpl;
+import gov.nasa.worldwind.avlist.KVMap;
 
 import java.util.*;
 
@@ -13,7 +13,7 @@ import java.util.*;
  * @author dcollins
  * @version $Id: VPFFeatureClass.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class VPFFeatureClass extends AVListImpl {
+public class VPFFeatureClass extends KVMap {
     protected final VPFCoverage coverage;
     protected final VPFFeatureClassSchema schema;
     protected final String joinTableName;

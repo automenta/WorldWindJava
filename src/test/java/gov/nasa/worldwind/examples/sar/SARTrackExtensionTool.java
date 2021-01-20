@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.examples.sar;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.examples.sar.segmentplane.*;
 import gov.nasa.worldwind.geom.*;
@@ -241,7 +240,7 @@ public class SARTrackExtensionTool implements MouseListener, PositionListener, P
 
             PickedObject po = this.getTopPickedObject();
             if (po != null) {
-                Object id = po.get(AVKey.PICKED_OBJECT_ID);
+                Object id = po.get(Keys.PICKED_OBJECT_ID);
                 if (id == SegmentPlane.PLANE_BACKGROUND ||
                     (this.segmentPlane.isSnapToGrid() && id == SegmentPlane.PLANE_GRID)) {
                     nextPosition = po.position();
@@ -429,7 +428,7 @@ public class SARTrackExtensionTool implements MouseListener, PositionListener, P
 
     protected static SegmentPlaneAttributes.LabelAttributes createPotentialNextPositionLabelAttributes() {
         SARSegmentPlane.MessageLabelAttributes labelAttributes = new SARSegmentPlane.MessageLabelAttributes(
-            Color.WHITE, Font.decode("Arial-18"), AVKey.LEFT, AVKey.CENTER, "Click to add");
+            Color.WHITE, Font.decode("Arial-18"), Keys.LEFT, Keys.CENTER, "Click to add");
         labelAttributes.setOffset(new Vec4(15, 0, 0));
 
         return labelAttributes;

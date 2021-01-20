@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.render;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.util.*;
 
 import java.awt.*;
@@ -22,8 +22,8 @@ import java.util.Objects;
  * not.</li> <li> {@link #EXPLICIT_DIMENSION} - Use an explicit dimension. This dimension may be either an absolute
  * pixel value, or a fraction of the container.</li></ul>
  * <p>
- * Recognized units are {@link AVKey#PIXELS}, which indicates pixel units relative to the lower left corner of the
- * image, or {@link AVKey#FRACTION}, which indicates the units are fractions of the image width and height.
+ * Recognized units are {@link Keys#PIXELS}, which indicates pixel units relative to the lower left corner of the
+ * image, or {@link Keys#FRACTION}, which indicates the units are fractions of the image width and height.
  * <p>
  * Examples:
  * <pre>
@@ -68,7 +68,7 @@ public class Size {
     /**
      * Units of width.
      */
-    protected String widthUnits = AVKey.PIXELS;
+    protected String widthUnits = Keys.PIXELS;
     /**
      * Width size parameter.
      */
@@ -82,7 +82,7 @@ public class Size {
     /**
      * Units of height.
      */
-    protected String heightUnits = AVKey.PIXELS;
+    protected String heightUnits = Keys.PIXELS;
     /**
      * Height size parameter.
      */
@@ -100,11 +100,11 @@ public class Size {
      * @param widthMode   Width mode, one of {@link #NATIVE_DIMENSION}, {@link #MAINTAIN_ASPECT_RATIO}, or {@link
      *                    #EXPLICIT_DIMENSION}.
      * @param widthParam  The width (applies only to {@link #EXPLICIT_DIMENSION} mode).
-     * @param widthUnits  Units of {@code width}. Either {@link AVKey#PIXELS} or {@link AVKey#PIXELS}.
+     * @param widthUnits  Units of {@code width}. Either {@link Keys#PIXELS} or {@link Keys#PIXELS}.
      * @param heightMode  height mode, one of {@link #NATIVE_DIMENSION}, {@link #MAINTAIN_ASPECT_RATIO}, or {@link
      *                    #EXPLICIT_DIMENSION}.
      * @param heightParam The height (applies only to {@link #EXPLICIT_DIMENSION} mode).
-     * @param heightUnits Units of {@code height}. Either {@link AVKey#PIXELS} or {@link AVKey#PIXELS}.
+     * @param heightUnits Units of {@code height}. Either {@link Keys#PIXELS} or {@link Keys#PIXELS}.
      * @see #setWidth(String, double, String)
      * @see #setHeight(String, double, String)
      */
@@ -122,8 +122,8 @@ public class Size {
      * @return New size object.
      */
     public static Size fromPixels(int widthInPixels, int heightInPixels) {
-        return new Size(Size.EXPLICIT_DIMENSION, widthInPixels, AVKey.PIXELS,
-            Size.EXPLICIT_DIMENSION, heightInPixels, AVKey.PIXELS);
+        return new Size(Size.EXPLICIT_DIMENSION, widthInPixels, Keys.PIXELS,
+            Size.EXPLICIT_DIMENSION, heightInPixels, Keys.PIXELS);
     }
 
     /**
@@ -134,21 +134,21 @@ public class Size {
      * @return a new size with the specified width and height.
      */
     public static Size fromFraction(double widthFraction, double heightFraction) {
-        return new Size(Size.EXPLICIT_DIMENSION, widthFraction, AVKey.FRACTION,
-            Size.EXPLICIT_DIMENSION, heightFraction, AVKey.FRACTION);
+        return new Size(Size.EXPLICIT_DIMENSION, widthFraction, Keys.FRACTION,
+            Size.EXPLICIT_DIMENSION, heightFraction, Keys.FRACTION);
     }
 
     /**
      * Compute a dimension taking into account the units of the dimension.
      *
      * @param size               The size parameter.
-     * @param units              One of {@link AVKey#PIXELS} or {@link AVKey#FRACTION}. If the {@code units} value is
-     *                           not one of the expected options, {@link AVKey#PIXELS} is used as the default.
+     * @param units              One of {@link Keys#PIXELS} or {@link Keys#FRACTION}. If the {@code units} value is
+     *                           not one of the expected options, {@link Keys#PIXELS} is used as the default.
      * @param containerDimension The viewport dimension.
      * @return Size in pixels
      */
     protected static double computeSize(double size, String units, double containerDimension) {
-        if (AVKey.FRACTION.equals(units))
+        if (Keys.FRACTION.equals(units))
             return size * containerDimension;
         else  // Default to pixel
             return size;
@@ -180,7 +180,7 @@ public class Size {
      * @param mode  Width mode, one of {@link #NATIVE_DIMENSION}, {@link #MAINTAIN_ASPECT_RATIO}, or {@link
      *              #EXPLICIT_DIMENSION}.
      * @param width The width (applies only to {@link #EXPLICIT_DIMENSION} mode).
-     * @param units Units of {@code width}. Either {@link AVKey#PIXELS} or {@link AVKey#PIXELS}.
+     * @param units Units of {@code width}. Either {@link Keys#PIXELS} or {@link Keys#PIXELS}.
      * @throws IllegalArgumentException if {@code mode} is null.
      */
     public void setWidth(String mode, double width, String units) {
@@ -201,7 +201,7 @@ public class Size {
      * @param mode   Width mode, one of {@link #NATIVE_DIMENSION}, {@link #MAINTAIN_ASPECT_RATIO}, or {@link
      *               #EXPLICIT_DIMENSION}.
      * @param height The width (applies only to {@link #EXPLICIT_DIMENSION} mode).
-     * @param units  Units of {@code width}. Either {@link AVKey#PIXELS} or {@link AVKey#FRACTION}.
+     * @param units  Units of {@code width}. Either {@link Keys#PIXELS} or {@link Keys#FRACTION}.
      * @throws IllegalArgumentException if {@code mode} is null.
      */
     public void setHeight(String mode, double height, String units) {

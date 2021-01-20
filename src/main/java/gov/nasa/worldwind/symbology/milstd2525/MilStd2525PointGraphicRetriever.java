@@ -6,7 +6,8 @@
 
 package gov.nasa.worldwind.symbology.milstd2525;
 
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.Keys;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 import gov.nasa.worldwind.util.Logging;
@@ -89,11 +90,11 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever {
      * @return The value of the AVKey.COLOR parameter, if such a parameter exists and is of type java.awt.Color. Returns
      * null if the parameter list is null, if there is no value for key AVKey.COLOR, or if the value is not a Color.
      */
-    protected static Color getColorFromParams(AVList params) {
+    protected static Color getColorFromParams(KV params) {
         if (params == null)
             return null;
 
-        Object o = params.get(AVKey.COLOR);
+        Object o = params.get(Keys.COLOR);
         return (o instanceof Color) ? (Color) o : null;
     }
 
@@ -244,7 +245,7 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever {
      *               identity.
      * @return An BufferedImage containing the icon for the requested graphic, or null if the icon cannot be retrieved.
      */
-    public BufferedImage createIcon(String sidc, AVList params) {
+    public BufferedImage createIcon(String sidc, KV params) {
         if (sidc == null) {
             String msg = Logging.getMessage("nullValue.SymbolCodeIsNull");
             Logging.logger().severe(msg);

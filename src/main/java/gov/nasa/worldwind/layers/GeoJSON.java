@@ -5,8 +5,8 @@
  */
 package gov.nasa.worldwind.layers;
 
-import gov.nasa.worldwind.WorldWind;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.formats.geojson.*;
 import gov.nasa.worldwind.geom.Position;
@@ -134,7 +134,7 @@ public class GeoJSON {
 
         @SuppressWarnings("UnusedDeclaration")
         protected static Renderable createPoint(GeoJSONGeometry owner, Position pos, PointPlacemarkAttributes attrs,
-            AVList properties) {
+            KV properties) {
             PointPlacemark p = new PointPlacemark(pos);
             p.setAttributes(attrs);
             if (pos.getAltitude() != 0) {
@@ -145,14 +145,14 @@ public class GeoJSON {
             }
 
             if (properties != null)
-                p.set(AVKey.PROPERTIES, properties);
+                p.set(Keys.PROPERTIES, properties);
 
             return p;
         }
 
         @SuppressWarnings("UnusedDeclaration")
         protected static Renderable createPolyline(GeoJSONGeometry owner, Iterable<? extends Position> positions,
-            ShapeAttributes attrs, AVList properties) {
+            ShapeAttributes attrs, KV properties) {
             if (GeoJSON.positionsHaveNonzeroAltitude(positions)) {
                 Path p = new Path();
                 p.setPositions(positions);
@@ -160,14 +160,14 @@ public class GeoJSON {
                 p.setAttributes(attrs);
 
                 if (properties != null)
-                    p.set(AVKey.PROPERTIES, properties);
+                    p.set(Keys.PROPERTIES, properties);
 
                 return p;
             } else {
                 SurfacePolyline sp = new SurfacePolyline(attrs, positions);
 
                 if (properties != null)
-                    sp.set(AVKey.PROPERTIES, properties);
+                    sp.set(Keys.PROPERTIES, properties);
 
                 return sp;
             }
@@ -175,7 +175,7 @@ public class GeoJSON {
 
         @SuppressWarnings("UnusedDeclaration")
         protected static Renderable createPolygon(GeoJSONGeometry owner, Iterable<? extends Position> outerBoundary,
-            Iterable<? extends Position>[] innerBoundaries, ShapeAttributes attrs, AVList properties) {
+            Iterable<? extends Position>[] innerBoundaries, ShapeAttributes attrs, KV properties) {
             if (GeoJSON.positionsHaveNonzeroAltitude(outerBoundary)) {
                 Polygon poly = new Polygon(outerBoundary);
                 poly.setAttributes(attrs);
@@ -187,7 +187,7 @@ public class GeoJSON {
                 }
 
                 if (properties != null)
-                    poly.set(AVKey.PROPERTIES, properties);
+                    poly.set(Keys.PROPERTIES, properties);
 
                 return poly;
             } else {
@@ -200,13 +200,13 @@ public class GeoJSON {
                 }
 
                 if (properties != null)
-                    poly.set(AVKey.PROPERTIES, properties);
+                    poly.set(Keys.PROPERTIES, properties);
 
                 return poly;
             }
         }
 
-        protected void addRenderableForGeometry(GeoJSONGeometry geom, RenderableLayer layer, AVList properties) {
+        protected void addRenderableForGeometry(GeoJSONGeometry geom, RenderableLayer layer, KV properties) {
             if (geom.isPoint())
                 addRenderableForPoint(geom.asPoint(), layer, properties);
 
@@ -233,7 +233,7 @@ public class GeoJSON {
         }
 
         protected void addRenderableForGeometryCollection(GeoJSONGeometryCollection c, RenderableLayer layer,
-            AVList properties) {
+            KV properties) {
             if (c.getGeometries() == null || c.getGeometries().length == 0)
                 return;
 
@@ -260,13 +260,13 @@ public class GeoJSON {
             }
         }
 
-        protected void addRenderableForPoint(GeoJSONPoint geom, RenderableLayer layer, AVList properties) {
+        protected void addRenderableForPoint(GeoJSONPoint geom, RenderableLayer layer, KV properties) {
             PointPlacemarkAttributes attrs = createPointAttributes(geom, layer);
 
             layer.add(GeoJSONRenderer.createPoint(geom, geom.getPosition(), attrs, properties));
         }
 
-        protected void addRenderableForMultiPoint(GeoJSONMultiPoint geom, RenderableLayer layer, AVList properties) {
+        protected void addRenderableForMultiPoint(GeoJSONMultiPoint geom, RenderableLayer layer, KV properties) {
             PointPlacemarkAttributes attrs = createPointAttributes(geom, layer);
 
             for (int i = 0; i < geom.getPointCount(); i++) {
@@ -274,14 +274,14 @@ public class GeoJSON {
             }
         }
 
-        protected void addRenderableForLineString(GeoJSONLineString geom, RenderableLayer layer, AVList properties) {
+        protected void addRenderableForLineString(GeoJSONLineString geom, RenderableLayer layer, KV properties) {
             ShapeAttributes attrs = createPolylineAttributes(geom, layer);
 
             layer.add(GeoJSONRenderer.createPolyline(geom, geom.getCoordinates(), attrs, properties));
         }
 
         protected void addRenderableForMutiLineString(GeoJSONMultiLineString geom, RenderableLayer layer,
-            AVList properties) {
+            KV properties) {
             ShapeAttributes attrs = createPolylineAttributes(geom, layer);
 
             for (GeoJSONPositionArray coords : geom.getCoordinates()) {
@@ -289,7 +289,7 @@ public class GeoJSON {
             }
         }
 
-        protected void addRenderableForPolygon(GeoJSONPolygon geom, RenderableLayer layer, AVList properties) {
+        protected void addRenderableForPolygon(GeoJSONPolygon geom, RenderableLayer layer, KV properties) {
             ShapeAttributes attrs = createPolygonAttributes(geom, layer);
 
             layer.add(GeoJSONRenderer.createPolygon(geom, geom.getExteriorRing(), geom.getInteriorRings(), attrs,
@@ -297,7 +297,7 @@ public class GeoJSON {
         }
 
         protected void addRenderableForMultiPolygon(GeoJSONMultiPolygon geom, RenderableLayer layer,
-            AVList properties) {
+            KV properties) {
             ShapeAttributes attrs = createPolygonAttributes(geom, layer);
 
             for (int i = 0; i < geom.getPolygonCount(); i++) {

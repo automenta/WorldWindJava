@@ -5,8 +5,7 @@
  */
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.WorldWind;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.formats.shapefile.ShapefileLayerFactory;
 import gov.nasa.worldwind.geom.LatLon;
@@ -56,7 +55,7 @@ public class ShapeClipping extends ApplicationTemplate {
 
         protected void createLandShape() {
             ShapefileLayerFactory factory = (ShapefileLayerFactory) WorldWind.createConfigurationComponent(
-                AVKey.SHAPEFILE_LAYER_FACTORY);
+                Keys.SHAPEFILE_LAYER_FACTORY);
 
             factory.createFromShapefileSource("shapefiles/ne_10m_land.shp",
                 new ShapefileLayerFactory.CompletionCallback() {

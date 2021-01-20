@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.exception.WWAbsentRequirementException;
 import gov.nasa.worldwind.layers.Layer;
@@ -75,7 +74,7 @@ public class ApplicationTemplate {
             ((Component) this.wwd).setPreferredSize(canvasSize);
 
             // Create the default model as described in the current worldwind properties.
-            Model m = (Model) WorldWind.createConfigurationComponent(AVKey.MODEL_CLASS_NAME);
+            Model m = (Model) WorldWind.createConfigurationComponent(Keys.MODEL_CLASS_NAME);
             this.wwd.setModel(m);
 
 
@@ -89,7 +88,7 @@ public class ApplicationTemplate {
             this.wwd.addSelectListener(new ClickAndGoSelectListener(this.wwd(), WorldMapLayer.class));
 
             // Add controllers to manage highlighting and tool tips.
-            this.toolTipController = new ToolTipController(this.wwd(), AVKey.DISPLAY_NAME, null);
+            this.toolTipController = new ToolTipController(this.wwd(), Keys.DISPLAY_NAME, null);
             this.highlightController = new HighlightController(this.wwd(), SelectEvent.ROLLOVER);
         }
 
@@ -177,7 +176,7 @@ public class ApplicationTemplate {
             this.pack();
 
             // Center the application on the screen.
-            WWUtil.alignComponent(null, this, AVKey.CENTER);
+            WWUtil.alignComponent(null, this, Keys.CENTER);
             this.setResizable(true);
         }
 

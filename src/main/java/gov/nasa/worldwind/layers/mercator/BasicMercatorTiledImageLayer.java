@@ -7,8 +7,8 @@
 package gov.nasa.worldwind.layers.mercator;
 
 import com.jogamp.opengl.util.texture.TextureData;
-import gov.nasa.worldwind.Configuration;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.util.*;
@@ -36,9 +36,9 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
         super(levelSet);
     }
 
-    public BasicMercatorTiledImageLayer(AVList params) {
+    public BasicMercatorTiledImageLayer(KV params) {
         this(new LevelSet(params));
-        this.set(AVKey.CONSTRUCTION_PARAMETERS, params);
+        this.set(Keys.CONSTRUCTION_PARAMETERS, params);
     }
 
     private static TextureData readTexture(InputStream s, boolean useMipMaps) throws IOException {
@@ -154,30 +154,22 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
         @Deprecated public void run() {
             // TODO: check to ensure load is still needed
 
-//            try {
             final String url;
             try {
                 url = tile.getResourceURL().toString();
-            }
-            catch (MalformedURLException e) {
+            } catch (MalformedURLException e) {
                 throw new RuntimeException(e);
             }
 
             WWIO.get(url, (response)->{
-                    if (layer.loadTexture(tile, response.byteStream())) {
-                        layer.getLevels().has(tile);
-                        layer.firePropertyChange(AVKey.LAYER, null, this);
-                    }
-                }, e->{
-                    layer.getLevels().miss(tile);
+                if (layer.loadTexture(tile, response.byteStream())) {
+                    layer.levels.has(tile);
+                    layer.firePropertyChange(Keys.LAYER, null, this);
+                }
+            }, e->{
+                layer.levels.miss(tile);
                 return false;
-                });
-//            }
-//            catch (MalformedURLException e) {
-//                e.printStackTrace();
-//                layer.getLevels().miss(tile);
-//                Logging.logger().info("http fail", e);
-//            }
+            });
 
 
         }

@@ -7,7 +7,6 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.*;
@@ -23,9 +22,9 @@ import java.util.ArrayList;
  */
 public class PathsWithDirection extends ApplicationTemplate {
     public static void main(String[] args) {
-        Configuration.setValue(AVKey.INITIAL_LATITUDE, 49.06);
-        Configuration.setValue(AVKey.INITIAL_LONGITUDE, -122.77);
-        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 22000);
+        Configuration.setValue(Keys.INITIAL_LATITUDE, 49.06);
+        Configuration.setValue(Keys.INITIAL_LONGITUDE, -122.77);
+        Configuration.setValue(Keys.INITIAL_ALTITUDE, 22000);
 
         ApplicationTemplate.start("WorldWind Paths With Direction", AppFrame.class);
     }
@@ -61,7 +60,7 @@ public class PathsWithDirection extends ApplicationTemplate {
             path.setAttributes(attrs);
             path.setVisible(true);
             path.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
-            path.setPathType(AVKey.GREAT_CIRCLE);
+            path.setPathType(Keys.GREAT_CIRCLE);
             layer.add(path);
 
             // Add the layer to the model.

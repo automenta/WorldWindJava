@@ -7,7 +7,6 @@ package gov.nasa.worldwind.layers;
 
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.pick.PickSupport;
@@ -56,8 +55,8 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
     protected Dimension size = new Dimension(250, 100);
     protected Color color = Color.white;
     protected int borderWidth = 20;
-    protected String position = AVKey.SOUTHWEST;
-    protected String resizeBehavior = AVKey.RESIZE_SHRINK_ONLY;
+    protected String position = Keys.SOUTHWEST;
+    protected String resizeBehavior = Keys.RESIZE_SHRINK_ONLY;
     protected String unit = TerrainProfileLayer.UNIT_METRIC;
     protected Font defaultFont = Font.decode("Arial-PLAIN-12");
     protected double toViewportScale = 1;
@@ -79,7 +78,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
     protected Position objectPosition;         // Object position if FOLLOW_OBJECT
     protected Angle objectHeading;             // Object heading if FOLLOW_OBJECT
     protected ArrayList<? extends LatLon> pathPositions;  // Path position list if FOLLOW_PATH
-    protected String pathType = AVKey.GREAT_CIRCLE;
+    protected String pathType = Keys.GREAT_CIRCLE;
     // Terrain profile data
     protected int samples = 250;              // Number of position samples
     protected double minElevation;            // Minimum elevation along the profile
@@ -241,8 +240,8 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
 
     /**
      * Sets the scale factor applied to the viewport size to determine the displayed size of the graphic. This scale
-     * factor is used only when the layer's resize behavior is {@link AVKey#RESIZE_STRETCH} or {@link
-     * AVKey#RESIZE_SHRINK_ONLY}. The graphic's width is adjusted to occupy the proportion of the viewport's width
+     * factor is used only when the layer's resize behavior is {@link Keys#RESIZE_STRETCH} or {@link
+     * Keys#RESIZE_SHRINK_ONLY}. The graphic's width is adjusted to occupy the proportion of the viewport's width
      * indicated by this factor. The graphic's height is adjusted to maintain the graphic's Dimension aspect ratio.
      *
      * @param toViewportScale the graphic to viewport scale factor.
@@ -257,8 +256,8 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
     }
 
     /**
-     * Sets the relative viewport location to display the graphic. Can be one of {@link AVKey#NORTHEAST}, {@link
-     * AVKey#NORTHWEST}, {@link AVKey#SOUTHEAST}, or {@link AVKey#SOUTHWEST} (the default). These indicate the corner of
+     * Sets the relative viewport location to display the graphic. Can be one of {@link Keys#NORTHEAST}, {@link
+     * Keys#NORTHWEST}, {@link Keys#SOUTHEAST}, or {@link Keys#SOUTHWEST} (the default). These indicate the corner of
      * the viewport.
      *
      * @param position the desired graphic position.
@@ -327,11 +326,11 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
 
     /**
      * Sets the behavior the layer uses to size the graphic when the viewport size changes, typically when the World
-     * Wind window is resized. If the value is {@link AVKey#RESIZE_KEEP_FIXED_SIZE}, the graphic size is kept to the
+     * Wind window is resized. If the value is {@link Keys#RESIZE_KEEP_FIXED_SIZE}, the graphic size is kept to the
      * size specified in its Dimension scaled by the layer's current icon scale. If the value is {@link
-     * AVKey#RESIZE_STRETCH}, the graphic is resized to have a constant size relative to the current viewport size. If
+     * Keys#RESIZE_STRETCH}, the graphic is resized to have a constant size relative to the current viewport size. If
      * the viewport shrinks the graphic size decreases; if it expands then the graphic enlarges. If the value is {@link
-     * AVKey#RESIZE_SHRINK_ONLY} (the default), graphic sizing behaves as for {@link AVKey#RESIZE_STRETCH} but it will
+     * Keys#RESIZE_SHRINK_ONLY} (the default), graphic sizing behaves as for {@link Keys#RESIZE_STRETCH} but it will
      * not grow larger than the size specified in its Dimension.
      *
      * @param resizeBehavior the desired resize behavior
@@ -622,11 +621,11 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
     @Deprecated
     public int getPathType() {
         switch (pathType) {
-            case AVKey.LINEAR:
+            case Keys.LINEAR:
                 return Polyline.LINEAR;
-            case AVKey.RHUMB_LINE:
+            case Keys.RHUMB_LINE:
                 return Polyline.RHUMB_LINE;
-            case AVKey.GREAT_CIRCLE:
+            case Keys.GREAT_CIRCLE:
                 return Polyline.GREAT_CIRCLE;
             default:
                 String message = Logging.getMessage("generic.ArgumentOutOfRange");
@@ -636,8 +635,8 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
     }
 
     /**
-     * Sets the type of path to follow, one of {@link AVKey#GREAT_CIRCLE}, which computes each segment of the path as a
-     * great circle, or {@link AVKey#RHUMB_LINE}, which computes each segment of the path as a line of constant
+     * Sets the type of path to follow, one of {@link Keys#GREAT_CIRCLE}, which computes each segment of the path as a
+     * great circle, or {@link Keys#RHUMB_LINE}, which computes each segment of the path as a line of constant
      * heading.
      *
      * @param pathType the type of path to follow.
@@ -645,9 +644,9 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
     @Deprecated
     public void setPathType(int pathType) {
         switch (pathType) {
-            case Polyline.LINEAR -> this.pathType = AVKey.LINEAR;
-            case Polyline.RHUMB_LINE -> this.pathType = AVKey.RHUMB_LINE;
-            case Polyline.GREAT_CIRCLE -> this.pathType = AVKey.GREAT_CIRCLE;
+            case Polyline.LINEAR -> this.pathType = Keys.LINEAR;
+            case Polyline.RHUMB_LINE -> this.pathType = Keys.RHUMB_LINE;
+            case Polyline.GREAT_CIRCLE -> this.pathType = Keys.GREAT_CIRCLE;
             default -> {
                 String message = Logging.getMessage("generic.ArgumentOutOfRange");
                 Logging.logger().severe(message);
@@ -657,8 +656,8 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
     }
 
     /**
-     * Sets the type of path to follow, one of {@link AVKey#GREAT_CIRCLE}, which computes each segment of the path as a
-     * great circle, or {@link AVKey#RHUMB_LINE}, which computes each segment of the path as a line of constant
+     * Sets the type of path to follow, one of {@link Keys#GREAT_CIRCLE}, which computes each segment of the path as a
+     * great circle, or {@link Keys#RHUMB_LINE}, which computes each segment of the path as a line of constant
      * heading.
      *
      * @param pathType the type of path to follow.
@@ -1151,9 +1150,9 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
     // ** Dimensions and positionning ************************************************************
     protected double computeScale(Rectangle viewport) {
         return switch (this.resizeBehavior) {
-            case AVKey.RESIZE_SHRINK_ONLY -> Math.min(1.0d,
+            case Keys.RESIZE_SHRINK_ONLY -> Math.min(1.0d,
                 (this.toViewportScale) * viewport.width / this.size.width);
-            case AVKey.RESIZE_STRETCH -> (this.toViewportScale) * viewport.width / this.size.width;
+            case Keys.RESIZE_STRETCH -> (this.toViewportScale) * viewport.width / this.size.width;
             default -> 1.0d;
         };
     }
@@ -1170,16 +1169,16 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
         if (this.locationCenter != null) {
             x = this.locationCenter.x - scaledWidth / 2;
             y = this.locationCenter.y - scaledHeight / 2;
-        } else if (this.position.equals(AVKey.NORTHEAST)) {
+        } else if (this.position.equals(Keys.NORTHEAST)) {
             x = viewport.getWidth() - scaledWidth - this.borderWidth;
             y = viewport.getHeight() - scaledHeight - this.borderWidth;
-        } else if (this.position.equals(AVKey.SOUTHEAST)) {
+        } else if (this.position.equals(Keys.SOUTHEAST)) {
             x = viewport.getWidth() - scaledWidth - this.borderWidth;
             y = 0.0d + this.borderWidth;
-        } else if (this.position.equals(AVKey.NORTHWEST)) {
+        } else if (this.position.equals(Keys.NORTHWEST)) {
             x = 0.0d + this.borderWidth;
             y = viewport.getHeight() - scaledHeight - this.borderWidth;
-        } else if (this.position.equals(AVKey.SOUTHWEST)) {
+        } else if (this.position.equals(Keys.SOUTHWEST)) {
             x = 0.0d + this.borderWidth;
             y = 0.0d + this.borderWidth;
         } else // use North East
@@ -1227,7 +1226,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
                         positions[sample].getElevation() + this.length / 10));
                     if (this.pickedShape == null) {
                         this.pickedShape = new Path(posList);
-                        this.pickedShape.setPathType(AVKey.LINEAR);
+                        this.pickedShape.setPathType(Keys.LINEAR);
                         ShapeAttributes attrs = new BasicShapeAttributes();
                         attrs.setOutlineWidth(2);
                         attrs.setOutlineMaterial(new Material(new Color(this.color.getRed(),
@@ -1473,14 +1472,14 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
         for (int i = 1; i < this.samples - 1; i++) {
             double stepToGo = step;
             while (stepToGo > 0) {
-                if (this.pathType.equals(AVKey.RHUMB_LINE)) {
+                if (this.pathType.equals(Keys.RHUMB_LINE)) {
                     distance = LatLon.rhumbDistance(latLon, this.pathPositions.get(segmentIndex + 1)).radians();
                 } else {
                     distance = LatLon.greatCircleDistance(latLon,
                         this.pathPositions.get(segmentIndex + 1)).radians();
                 }
                 if (distance >= stepToGo) {
-                    if (this.pathType.equals(AVKey.RHUMB_LINE)) {
+                    if (this.pathType.equals(Keys.RHUMB_LINE)) {
                         azimuth = LatLon.rhumbAzimuth(latLon, this.pathPositions.get(segmentIndex + 1)).radians();
                         latLon = LatLon.rhumbEndPosition(latLon, azimuth, stepToGo);
                     } else {

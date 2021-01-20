@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.util;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
 
@@ -94,11 +94,11 @@ public class AudioPlayerAnnotation extends DialogAnnotation {
 
     @SuppressWarnings("StringEquality")
     public void setPlayButtonState(String state) {
-        if (state == AVKey.PLAY) {
+        if (state == Keys.PLAY) {
             this.playButton.setImageSource(PLAY_IMAGE_PATH);
             this.playButton.setToolTipText(PLAY_TOOLTIP_TEXT);
         }
-        else if (state == AVKey.PAUSE) {
+        else if (state == Keys.PAUSE) {
             this.playButton.setImageSource(PAUSE_IMAGE_PATH);
             this.playButton.setToolTipText(PAUSE_TOOLTIP_TEXT);
         }
@@ -123,8 +123,8 @@ public class AudioPlayerAnnotation extends DialogAnnotation {
         this.setupTimeLabel(this.lengthLabel);
         this.setupProgressBar(this.progress);
 
-        this.playButton.setActionCommand(AVKey.PLAY);
-        this.backButton.setActionCommand(AVKey.STOP);
+        this.playButton.setActionCommand(Keys.PLAY);
+        this.backButton.setActionCommand(Keys.STOP);
 
         this.playButton.addActionListener(this);
         this.backButton.addActionListener(this);
@@ -139,7 +139,7 @@ public class AudioPlayerAnnotation extends DialogAnnotation {
         Annotation controlsContainer = new ScreenAnnotation("", new Point());
         {
             this.setupContainer(controlsContainer);
-            controlsContainer.setLayout(new AnnotationFlowLayout(AVKey.HORIZONTAL, AVKey.CENTER, 4, 0)); // hgap, vgap
+            controlsContainer.setLayout(new AnnotationFlowLayout(Keys.HORIZONTAL, Keys.CENTER, 4, 0)); // hgap, vgap
             controlsContainer.addChild(this.playButton);
             controlsContainer.addChild(this.backButton);
             controlsContainer.addChild(this.positionLabel);
@@ -154,7 +154,7 @@ public class AudioPlayerAnnotation extends DialogAnnotation {
         Annotation contentContainer = new ScreenAnnotation("", new Point());
         {
             this.setupContainer(contentContainer);
-            contentContainer.setLayout(new AnnotationFlowLayout(AVKey.VERTICAL, AVKey.CENTER, 0, 16)); // hgap, vgap
+            contentContainer.setLayout(new AnnotationFlowLayout(Keys.VERTICAL, Keys.CENTER, 0, 16)); // hgap, vgap
             contentContainer.addChild(this.titleLabel);
             contentContainer.addChild(controlsContainer);
         }
@@ -168,7 +168,7 @@ public class AudioPlayerAnnotation extends DialogAnnotation {
         AnnotationAttributes attribs = annotation.getAttributes();
         attribs.setFont(Font.decode("Arial-BOLD-14"));
         attribs.setSize(new Dimension(260, 0));
-        attribs.setTextAlign(AVKey.CENTER);
+        attribs.setTextAlign(Keys.CENTER);
     }
 
     protected void setupTimeLabel(Annotation annotation) {

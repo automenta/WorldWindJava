@@ -7,7 +7,6 @@
 package gov.nasa.worldwind;
 
 import com.jogamp.opengl.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.cache.FileStore;
 import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.globes.*;
@@ -126,7 +125,7 @@ public class Configuration // Singleton
                 System.getProperty(Configuration.CONFIG_WW_DOCUMENT_KEY));
         }
 
-        data = (FileStore) WorldWind.createConfigurationComponent(AVKey.DATA_FILE_STORE_CLASS_NAME);
+        data = (FileStore) WorldWind.createConfigurationComponent(Keys.DATA_FILE_STORE_CLASS_NAME);
         http = new OkHttpClient.Builder()
             .dispatcher(new Dispatcher(ForkJoinPool.commonPool()))
             .cache(new Cache(
@@ -532,7 +531,7 @@ public class Configuration // Singleton
         caps.setDoubleBuffered(true);
 
         // Determine whether we should request a stereo canvas
-        String stereo = System.getProperty(AVKey.STEREO_MODE);
+        String stereo = System.getProperty(Keys.STEREO_MODE);
         if ("device".equals(stereo))
             caps.setStereo(true);
 
@@ -567,7 +566,7 @@ public class Configuration // Singleton
         Properties defaults = new Properties();
         TimeZone tz = Calendar.getInstance().getTimeZone();
         if (tz != null)
-            defaults.setProperty(AVKey.INITIAL_LONGITUDE,
+            defaults.setProperty(Keys.INITIAL_LONGITUDE,
                 Double.toString(
                     new Angle(180.0 * tz.getOffset(System.currentTimeMillis()) / (12.0 * 3.6e6)).degrees));
         return defaults;

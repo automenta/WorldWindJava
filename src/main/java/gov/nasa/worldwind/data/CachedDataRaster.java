@@ -6,6 +6,7 @@
 
 package gov.nasa.worldwind.data;
 
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.cache.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
@@ -25,10 +26,10 @@ import java.util.logging.Level;
  * @author Lado Garakanidze
  * @version $Id: CachedDataRaster.java 3037 2015-04-17 23:08:47Z tgaskins $
  */
-public class CachedDataRaster extends AVListImpl implements DataRaster {
+public class CachedDataRaster extends KVMap implements DataRaster {
     protected final Object rasterUsageLock = new Object();
     protected final Object rasterRetrievalLock = new Object();
-    protected final String[] requiredKeys = {AVKey.SECTOR, AVKey.PIXEL_FORMAT};
+    protected final String[] requiredKeys = {Keys.SECTOR, Keys.PIXEL_FORMAT};
     protected Object dataSource;
     protected DataRasterReader dataReader;
     protected MemoryCache rasterCache;
@@ -48,10 +49,10 @@ public class CachedDataRaster extends AVListImpl implements DataRaster {
      * @throws IOException              thrown if there is an error to read metadata from the source
      * @throws IllegalArgumentException thrown when a source or a reader are null
      */
-    public CachedDataRaster(Object source, AVList params, DataRasterReader reader, MemoryCache cache)
+    public CachedDataRaster(Object source, KV params, DataRasterReader reader, MemoryCache cache)
         throws IOException, IllegalArgumentException {
 
-        params = (null == params) ? new AVListImpl() : params;
+        params = (null == params) ? new KVMap() : params;
         this.assembleMetadata(source, params, reader);
 
         this.dataSource = source;
@@ -91,7 +92,7 @@ public class CachedDataRaster extends AVListImpl implements DataRaster {
         return totalBytes;
     }
 
-    protected void assembleMetadata(Object source, AVList params, DataRasterReader reader)
+    protected void assembleMetadata(Object source, KV params, DataRasterReader reader)
         throws IOException, IllegalArgumentException {
         if (!this.hasRequiredMetadata(params, ErrorHandlerMode.DISABLE_EXCEPTIONS)) {
             if (!reader.canRead(source, params)) {
@@ -120,7 +121,7 @@ public class CachedDataRaster extends AVListImpl implements DataRaster {
      * otherwise returns FALSE (if throwException is false)
      * @throws IllegalArgumentException If a key/value is missing and throwException is set to TRUE
      */
-    protected boolean hasRequiredMetadata(AVList params, ErrorHandlerMode throwException)
+    protected boolean hasRequiredMetadata(KV params, ErrorHandlerMode throwException)
         throws IllegalArgumentException {
         String[] keys = this.getRequiredKeysList();
 
@@ -147,35 +148,35 @@ public class CachedDataRaster extends AVListImpl implements DataRaster {
     }
 
     public int getWidth() {
-        Object o = this.get(AVKey.WIDTH);
+        Object o = this.get(Keys.WIDTH);
         if (o instanceof Integer)
             return (Integer) o;
-        throw new WWRuntimeException(Logging.getMessage("generic.MissingRequiredParameter", AVKey.WIDTH));
+        throw new WWRuntimeException(Logging.getMessage("generic.MissingRequiredParameter", Keys.WIDTH));
     }
 
     public int getHeight() {
-        Object o = this.get(AVKey.HEIGHT);
+        Object o = this.get(Keys.HEIGHT);
         if (o instanceof Integer)
             return (Integer) o;
-        throw new WWRuntimeException(Logging.getMessage("generic.MissingRequiredParameter", AVKey.HEIGHT));
+        throw new WWRuntimeException(Logging.getMessage("generic.MissingRequiredParameter", Keys.HEIGHT));
     }
 
     public Sector getSector() {
-        Object o = this.get(AVKey.SECTOR);
+        Object o = this.get(Keys.SECTOR);
         if (o instanceof Sector)
             return (Sector) o;
-        throw new WWRuntimeException(Logging.getMessage("generic.MissingRequiredParameter", AVKey.SECTOR));
+        throw new WWRuntimeException(Logging.getMessage("generic.MissingRequiredParameter", Keys.SECTOR));
     }
 
     public Object getDataSource() {
         return this.dataSource;
     }
 
-    public AVList getParams() {
+    public KV getParams() {
         return this.getMetadata();
     }
 
-    public AVList getMetadata() {
+    public KV getMetadata() {
         return this.copy();
     }
 
@@ -202,7 +203,7 @@ public class CachedDataRaster extends AVListImpl implements DataRaster {
                 long memoryDelta = 0L;
 
                 try {
-                    AVList rasterParams = this.copy();
+                    KV rasterParams = this.copy();
 
                     try {
                         long before = CachedDataRaster.getTotalUsedMemory();
@@ -274,7 +275,7 @@ public class CachedDataRaster extends AVListImpl implements DataRaster {
         }
     }
 
-    public DataRaster getSubRaster(AVList params) {
+    public DataRaster getSubRaster(KV params) {
         synchronized (this.rasterUsageLock) {
             try {
                 DataRaster[] rasters;
@@ -302,13 +303,13 @@ public class CachedDataRaster extends AVListImpl implements DataRaster {
         }
     }
 
-    public DataRaster getSubRaster(int width, int height, Sector sector, AVList params) {
+    public DataRaster getSubRaster(int width, int height, Sector sector, KV params) {
         if (null == params)
-            params = new AVListImpl();
+            params = new KVMap();
 
-        params.set(AVKey.WIDTH, width);
-        params.set(AVKey.HEIGHT, height);
-        params.set(AVKey.SECTOR, sector);
+        params.set(Keys.WIDTH, width);
+        params.set(Keys.HEIGHT, height);
+        params.set(Keys.SECTOR, sector);
 
         return this.getSubRaster(params);
     }

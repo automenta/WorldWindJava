@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.formats.vpf;
 
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.util.WWUtil;
 
@@ -26,7 +26,7 @@ public class VPFSymbolSupport {
 
     @SuppressWarnings("UnusedDeclaration")
     protected static Iterable<? extends VPFSymbolKey> doGetSymbolKeys(VPFFeatureClass featureClass, String featureCode,
-        AVList featureAttributes) {
+        KV featureAttributes) {
         if (featureClass.getType() == VPFFeatureType.TEXT) {
             Integer i = VPFSymbolSupport.getSymbolId(featureAttributes);
             if (i != null) {
@@ -105,7 +105,7 @@ public class VPFSymbolSupport {
         return Collections.singletonList(attr);
     }
 
-    protected static Integer getSymbolId(AVList params) {
+    protected static Integer getSymbolId(KV params) {
         Object o = params.get("symbol_id");
         return (o instanceof Number) ? ((Number) o).intValue() : null;
     }
@@ -122,7 +122,7 @@ public class VPFSymbolSupport {
     }
 
     public Iterable<? extends VPFSymbolKey> getSymbolKeys(VPFFeatureClass featureClass, String featureCode,
-        AVList featureAttributes) {
+        KV featureAttributes) {
         if (featureCode != null) {
             Iterable<? extends VPFSymbolKey> keys = VPFSymbolSupport.doGetSymbolKeys(featureClass, featureCode,
                 featureAttributes);
@@ -158,7 +158,7 @@ public class VPFSymbolSupport {
     }
 
     public Iterable<? extends VPFSymbolAttributes> getSymbolAttributes(VPFFeatureClass featureClass, String featureCode,
-        AVList featureAttributes) {
+        KV featureAttributes) {
         Iterable<? extends VPFSymbolKey> keys = this.getSymbolKeys(featureClass, featureCode, featureAttributes);
         if (keys == null)
             return null;
@@ -181,7 +181,7 @@ public class VPFSymbolSupport {
     //********************  Generic Attribute Assembly  ************//
     //**************************************************************//
 
-    public String getSymbolLabelText(VPFSymbolAttributes.LabelAttributes attr, AVList featureAttributes) {
+    public String getSymbolLabelText(VPFSymbolAttributes.LabelAttributes attr, KV featureAttributes) {
         String text = null;
 
         // Look up label text.

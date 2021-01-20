@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.terrain;
 
 import com.jogamp.common.nio.Buffers;
-import gov.nasa.worldwind.WorldWind;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.cache.*;
 import gov.nasa.worldwind.data.*;
@@ -59,72 +59,72 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
     protected final double maxElevation;
     protected final Object fileLock = new Object();
 protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
-    protected String elevationDataType = AVKey.INT16;
-    protected String elevationDataByteOrder = AVKey.LITTLE_ENDIAN;
+    protected String elevationDataType = Keys.INT16;
+    protected String elevationDataByteOrder = Keys.LITTLE_ENDIAN;
     protected double detailHint;
     protected final MemoryCache memoryCache;
     protected int extremesLevel = -1;
     protected boolean extremesCachingEnabled = true;
     protected BufferWrapper extremes;
 
-    public BasicElevationModel(AVList params) {
+    public BasicElevationModel(KV params) {
 
-        String s = params.getStringValue(AVKey.BYTE_ORDER);
+        String s = params.getStringValue(Keys.BYTE_ORDER);
         if (s != null)
             this.setByteOrder(s);
 
-        Double d = (Double) params.get(AVKey.DETAIL_HINT);
+        Double d = (Double) params.get(Keys.DETAIL_HINT);
         if (d != null)
             this.setDetailHint(d);
 
-        s = params.getStringValue(AVKey.DISPLAY_NAME);
+        s = params.getStringValue(Keys.DISPLAY_NAME);
         if (s != null)
             this.setName(s);
 
-        d = (Double) params.get(AVKey.ELEVATION_MIN);
+        d = (Double) params.get(Keys.ELEVATION_MIN);
         this.minElevation = d != null ? d : 0;
 
-        d = (Double) params.get(AVKey.ELEVATION_MAX);
+        d = (Double) params.get(Keys.ELEVATION_MAX);
         this.maxElevation = d != null ? d : 0;
 
-        Long lo = (Long) params.get(AVKey.EXPIRY_TIME);
+        Long lo = (Long) params.get(Keys.EXPIRY_TIME);
         if (lo != null)
-            params.set(AVKey.EXPIRY_TIME, lo);
+            params.set(Keys.EXPIRY_TIME, lo);
 
-        d = (Double) params.get(AVKey.MISSING_DATA_SIGNAL);
+        d = (Double) params.get(Keys.MISSING_DATA_SIGNAL);
         if (d != null)
             this.setMissingDataSignal(d);
 
-        d = (Double) params.get(AVKey.MISSING_DATA_REPLACEMENT);
+        d = (Double) params.get(Keys.MISSING_DATA_REPLACEMENT);
         if (d != null)
             this.setMissingDataReplacement(d);
 
-        Boolean b = (Boolean) params.get(AVKey.NETWORK_RETRIEVAL_ENABLED);
+        Boolean b = (Boolean) params.get(Keys.NETWORK_RETRIEVAL_ENABLED);
         if (b != null)
             this.setNetworkRetrievalEnabled(b);
 
-        s = params.getStringValue(AVKey.DATA_TYPE);
+        s = params.getStringValue(Keys.DATA_TYPE);
         if (s != null)
             this.setElevationDataType(s);
 
-        s = params.getStringValue(AVKey.ELEVATION_EXTREMES_FILE);
+        s = params.getStringValue(Keys.ELEVATION_EXTREMES_FILE);
         if (s != null)
             this.loadExtremeElevations(s);
 
-        b = (Boolean) params.get(AVKey.DELETE_CACHE_ON_EXIT);
+        b = (Boolean) params.get(Keys.DELETE_CACHE_ON_EXIT);
         if (b != null)
-            this.set(AVKey.DELETE_CACHE_ON_EXIT, true);
+            this.set(Keys.DELETE_CACHE_ON_EXIT, true);
 
         // Set some fallback values if not already set.
         BasicElevationModel.setFallbacks(params);
 
         this.levels = new LevelSet(params);
-        if (this.levels.sector != null && this.get(AVKey.SECTOR) == null)
-            this.set(AVKey.SECTOR, this.levels.sector);
+        if (this.levels.sector != null && this.get(Keys.SECTOR) == null)
+            this.set(Keys.SECTOR, this.levels.sector);
 
         this.memoryCache = BasicElevationModel.createMemoryCache(ElevationTile.class.getName());
 
-        this.set(AVKey.CONSTRUCTION_PARAMETERS, params.copy());
+        this.set(Keys.CONSTRUCTION_PARAMETERS, params.copy());
 
         // If any resources should be retrieved for this ElevationModel, start a task to retrieve those resources, and
         // initialize this ElevationModel once those resources are retrieved.
@@ -133,11 +133,11 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
         }
     }
 
-    public BasicElevationModel(Document dom, AVList params) {
+    public BasicElevationModel(Document dom, KV params) {
         this(dom.getDocumentElement(), params);
     }
 
-    public BasicElevationModel(Element domElement, AVList params) {
+    public BasicElevationModel(Element domElement, KV params) {
         this(BasicElevationModel.getBasicElevationModelConfigParams(domElement, params));
     }
 
@@ -158,21 +158,21 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
         this.doRestoreState(rs, null);
     }
 
-    protected static void setFallbacks(AVList params) {
-        if (params.get(AVKey.TILE_WIDTH) == null)
-            params.set(AVKey.TILE_WIDTH, 150);
+    protected static void setFallbacks(KV params) {
+        if (params.get(Keys.TILE_WIDTH) == null)
+            params.set(Keys.TILE_WIDTH, 150);
 
-        if (params.get(AVKey.TILE_HEIGHT) == null)
-            params.set(AVKey.TILE_HEIGHT, 150);
+        if (params.get(Keys.TILE_HEIGHT) == null)
+            params.set(Keys.TILE_HEIGHT, 150);
 
-        if (params.get(AVKey.FORMAT_SUFFIX) == null)
-            params.set(AVKey.FORMAT_SUFFIX, ".bil");
+        if (params.get(Keys.FORMAT_SUFFIX) == null)
+            params.set(Keys.FORMAT_SUFFIX, ".bil");
 
-        if (params.get(AVKey.NUM_LEVELS) == null)
-            params.set(AVKey.NUM_LEVELS, 2);
+        if (params.get(Keys.NUM_LEVELS) == null)
+            params.set(Keys.NUM_LEVELS, 2);
 
-        if (params.get(AVKey.NUM_EMPTY_LEVELS) == null)
-            params.set(AVKey.NUM_EMPTY_LEVELS, 0);
+        if (params.get(Keys.NUM_EMPTY_LEVELS) == null)
+            params.set(Keys.NUM_EMPTY_LEVELS, 0);
     }
 
     protected static ByteBuffer convertImageToElevations(ByteBuffer buffer, String contentType) throws IOException {
@@ -205,7 +205,7 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
      * @param params parameters describing a BasicElevationModel.
      * @return a configuration document for the BasicElevationModel.
      */
-    public static Document createBasicElevationModelConfigDocument(AVList params) {
+    public static Document createBasicElevationModelConfigDocument(KV params) {
         Document doc = WWXML.createDocumentBuilder(true).newDocument();
 
         Element root = WWXML.setDocumentElement(doc, "ElevationModel");
@@ -221,23 +221,23 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
      * Appends BasicElevationModel configuration parameters as elements to the specified context. This appends elements
      * for the following parameters: <table> <caption style="font-weight: bold;">Parameters</caption>
      * <tr><th>Parameter</th><th>Element Path</th><th>Type</th></tr>
-     * <tr><td>{@link AVKey#SERVICE_NAME}</td><td>Service/@serviceName</td><td>String</td></tr> <tr><td>{@link
-     * AVKey#IMAGE_FORMAT}</td><td>ImageFormat</td><td>String</td></tr> <tr><td>{@link
-     * AVKey#AVAILABLE_IMAGE_FORMATS}</td><td>AvailableImageFormats/ImageFormat</td><td>String array</td></tr>
-     * <tr><td>{@link AVKey#DATA_TYPE}</td><td>DataType/@type</td><td>String</td></tr> <tr><td>{@link
-     * AVKey#BYTE_ORDER}</td><td>ByteOrder</td><td>DataType/@byteOrder</td></tr> <tr><td>{@link
-     * AVKey#ELEVATION_EXTREMES_FILE}</td><td>ExtremeElevations/FileName</td><td>String</td></tr> <tr><td>{@link
-     * AVKey#ELEVATION_MAX}</td><td>ExtremeElevations/@max</td><td>Double</td></tr> <tr><td>{@link
-     * AVKey#ELEVATION_MIN}</td><td>ExtremeElevations/@min</td><td>Double</td></tr> </table> This also writes common
-     * elevation model and LevelSet configuration parameters by invoking {@link AbstractElevationModel#createElevationModelConfigElements(AVList,
-     * Element)} and {@link DataConfigurationUtils#createLevelSetConfigElements(AVList, Element)}.
+     * <tr><td>{@link Keys#SERVICE_NAME}</td><td>Service/@serviceName</td><td>String</td></tr> <tr><td>{@link
+     * Keys#IMAGE_FORMAT}</td><td>ImageFormat</td><td>String</td></tr> <tr><td>{@link
+     * Keys#AVAILABLE_IMAGE_FORMATS}</td><td>AvailableImageFormats/ImageFormat</td><td>String array</td></tr>
+     * <tr><td>{@link Keys#DATA_TYPE}</td><td>DataType/@type</td><td>String</td></tr> <tr><td>{@link
+     * Keys#BYTE_ORDER}</td><td>ByteOrder</td><td>DataType/@byteOrder</td></tr> <tr><td>{@link
+     * Keys#ELEVATION_EXTREMES_FILE}</td><td>ExtremeElevations/FileName</td><td>String</td></tr> <tr><td>{@link
+     * Keys#ELEVATION_MAX}</td><td>ExtremeElevations/@max</td><td>Double</td></tr> <tr><td>{@link
+     * Keys#ELEVATION_MIN}</td><td>ExtremeElevations/@min</td><td>Double</td></tr> </table> This also writes common
+     * elevation model and LevelSet configuration parameters by invoking {@link AbstractElevationModel#createElevationModelConfigElements(KV,
+     * Element)} and {@link DataConfigurationUtils#createLevelSetConfigElements(KV, Element)}.
      *
      * @param params  the key-value pairs which define the BasicElevationModel configuration parameters.
      * @param context the XML document root on which to append BasicElevationModel configuration elements.
      * @return a reference to context.
      * @throws IllegalArgumentException if either the parameters or the context are null.
      */
-    public static Element createBasicElevationModelConfigElements(AVList params, Element context) {
+    public static Element createBasicElevationModelConfigElements(KV params, Element context) {
         if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
@@ -260,7 +260,7 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
 
         // Service properties.
         // Try to get the SERVICE_NAME property, but default to "WWTileService".
-        String s = AVListImpl.getStringValue(params, AVKey.SERVICE_NAME, "WWTileService");
+        String s = KVMap.getStringValue(params, Keys.SERVICE_NAME, "WWTileService");
         if (s != null && !s.isEmpty()) {
             // The service element may already exist, in which case we want to append to it.
             Element el = WWXML.getElement(context, "Service", xpath);
@@ -269,13 +269,13 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
             WWXML.setTextAttribute(el, "serviceName", s);
         }
 
-        WWXML.checkAndAppendBooleanElement(params, AVKey.RETRIEVE_PROPERTIES_FROM_SERVICE, context,
+        WWXML.checkAndAppendBooleanElement(params, Keys.RETRIEVE_PROPERTIES_FROM_SERVICE, context,
             "RetrievePropertiesFromService");
 
         // Image format properties.
-        WWXML.checkAndAppendTextElement(params, AVKey.IMAGE_FORMAT, context, "ImageFormat");
+        WWXML.checkAndAppendTextElement(params, Keys.IMAGE_FORMAT, context, "ImageFormat");
 
-        Object o = params.get(AVKey.AVAILABLE_IMAGE_FORMATS);
+        Object o = params.get(Keys.AVAILABLE_IMAGE_FORMATS);
         if (o instanceof String[]) {
             String[] strings = (String[]) o;
             if (strings.length > 0) {
@@ -289,19 +289,19 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
         }
 
         // Data type properties.
-        if (params.get(AVKey.DATA_TYPE) != null || params.get(AVKey.BYTE_ORDER) != null) {
+        if (params.get(Keys.DATA_TYPE) != null || params.get(Keys.BYTE_ORDER) != null) {
             Element el = WWXML.getElement(context, "DataType", null);
             if (el == null)
                 el = WWXML.appendElementPath(context, "DataType");
 
-            s = params.getStringValue(AVKey.DATA_TYPE);
+            s = params.getStringValue(Keys.DATA_TYPE);
             if (s != null && !s.isEmpty()) {
                 s = WWXML.dataTypeAsText(s);
                 if (s != null && !s.isEmpty())
                     WWXML.setTextAttribute(el, "type", s);
             }
 
-            s = params.getStringValue(AVKey.BYTE_ORDER);
+            s = params.getStringValue(Keys.BYTE_ORDER);
             if (s != null && !s.isEmpty()) {
                 s = WWXML.byteOrderAsText(s);
                 if (s != null && !s.isEmpty())
@@ -311,13 +311,13 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
 
         // Elevation data properties.
         Element el = WWXML.appendElementPath(context, "ExtremeElevations");
-        WWXML.checkAndAppendTextElement(params, AVKey.ELEVATION_EXTREMES_FILE, el, "FileName");
+        WWXML.checkAndAppendTextElement(params, Keys.ELEVATION_EXTREMES_FILE, el, "FileName");
 
-        Double d = AVListImpl.getDoubleValue(params, AVKey.ELEVATION_MAX);
+        Double d = KVMap.getDoubleValue(params, Keys.ELEVATION_MAX);
         if (d != null)
             WWXML.setDoubleAttribute(el, "max", d);
 
-        d = AVListImpl.getDoubleValue(params, AVKey.ELEVATION_MIN);
+        d = KVMap.getDoubleValue(params, Keys.ELEVATION_MIN);
         if (d != null)
             WWXML.setDoubleAttribute(el, "min", d);
 
@@ -330,16 +330,16 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
      * and parameter names are: <table> <caption style="font-weight: bold;">Parameters</caption>
      * <tr><th>Parameter</th><th>Element Path</th><th>Type</th></tr>
      * <tr><td>{@link
-     * AVKey#SERVICE_NAME}</td><td>Service/@serviceName</td><td>String</td></tr> <tr><td>{@link
-     * AVKey#IMAGE_FORMAT}</td><td>ImageFormat</td><td>String</td></tr> <tr><td>{@link
-     * AVKey#AVAILABLE_IMAGE_FORMATS}</td><td>AvailableImageFormats/ImageFormat</td><td>String array</td></tr>
-     * <tr><td>{@link AVKey#DATA_TYPE}</td><td>DataType/@type</td><td>String</td></tr> <tr><td>{@link
-     * AVKey#BYTE_ORDER}</td><td>DataType/@byteOrder</td><td>String</td></tr> <tr><td>{@link
-     * AVKey#ELEVATION_EXTREMES_FILE}</td><td>ExtremeElevations/FileName</td><td>String</td></tr> <tr><td>{@link
-     * AVKey#ELEVATION_MAX}</td><td>ExtremeElevations/@max</td><td>Double</td></tr> <tr><td>{@link
-     * AVKey#ELEVATION_MIN}</td><td>ExtremeElevations/@min</td><td>Double</td></tr> </table> This also parses common
+     * Keys#SERVICE_NAME}</td><td>Service/@serviceName</td><td>String</td></tr> <tr><td>{@link
+     * Keys#IMAGE_FORMAT}</td><td>ImageFormat</td><td>String</td></tr> <tr><td>{@link
+     * Keys#AVAILABLE_IMAGE_FORMATS}</td><td>AvailableImageFormats/ImageFormat</td><td>String array</td></tr>
+     * <tr><td>{@link Keys#DATA_TYPE}</td><td>DataType/@type</td><td>String</td></tr> <tr><td>{@link
+     * Keys#BYTE_ORDER}</td><td>DataType/@byteOrder</td><td>String</td></tr> <tr><td>{@link
+     * Keys#ELEVATION_EXTREMES_FILE}</td><td>ExtremeElevations/FileName</td><td>String</td></tr> <tr><td>{@link
+     * Keys#ELEVATION_MAX}</td><td>ExtremeElevations/@max</td><td>Double</td></tr> <tr><td>{@link
+     * Keys#ELEVATION_MIN}</td><td>ExtremeElevations/@min</td><td>Double</td></tr> </table> This also parses common
      * elevation model and LevelSet configuration parameters by invoking {@link AbstractElevationModel#getElevationModelConfigParams(Element,
-     * AVList)} and {@link DataConfigurationUtils#getLevelSetConfigParams(Element, AVList)}.
+     * KV)} and {@link DataConfigurationUtils#getLevelSetConfigParams(Element, KV)}.
      *
      * @param domElement the XML document root to parse for BasicElevationModel configuration parameters.
      * @param params     the output key-value pairs which recieve the BasicElevationModel configuration parameters. A
@@ -347,7 +347,7 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
      * @return a reference to params, or a new AVList if params is null.
      * @throws IllegalArgumentException if the document is null.
      */
-    public static AVList getBasicElevationModelConfigParams(Element domElement, AVList params) {
+    public static KV getBasicElevationModelConfigParams(Element domElement, KV params) {
         if (domElement == null) {
             String message = Logging.getMessage("nullValue.DocumentIsNull");
             Logging.logger().severe(message);
@@ -355,7 +355,7 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
         }
 
         if (params == null)
-            params = new AVListImpl();
+            params = new KVMap();
 
         XPath xpath = WWXML.makeXPath();
 
@@ -366,44 +366,44 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
         DataConfigurationUtils.getLevelSetConfigParams(domElement, params);
 
         // Service properties.
-        WWXML.checkAndSetStringParam(domElement, params, AVKey.SERVICE_NAME, "Service/@serviceName", xpath);
-        WWXML.checkAndSetBooleanParam(domElement, params, AVKey.RETRIEVE_PROPERTIES_FROM_SERVICE,
+        WWXML.checkAndSetStringParam(domElement, params, Keys.SERVICE_NAME, "Service/@serviceName", xpath);
+        WWXML.checkAndSetBooleanParam(domElement, params, Keys.RETRIEVE_PROPERTIES_FROM_SERVICE,
             "RetrievePropertiesFromService", xpath);
 
         // Image format properties.
-        WWXML.checkAndSetStringParam(domElement, params, AVKey.IMAGE_FORMAT, "ImageFormat", xpath);
-        WWXML.checkAndSetUniqueStringsParam(domElement, params, AVKey.AVAILABLE_IMAGE_FORMATS,
+        WWXML.checkAndSetStringParam(domElement, params, Keys.IMAGE_FORMAT, "ImageFormat", xpath);
+        WWXML.checkAndSetUniqueStringsParam(domElement, params, Keys.AVAILABLE_IMAGE_FORMATS,
             "AvailableImageFormats/ImageFormat", xpath);
 
         // Data type properties.
-        if (params.get(AVKey.DATA_TYPE) == null) {
+        if (params.get(Keys.DATA_TYPE) == null) {
             String s = WWXML.getText(domElement, "DataType/@type", xpath);
             if (s != null && !s.isEmpty()) {
                 s = WWXML.parseDataType(s);
                 if (s != null && !s.isEmpty())
-                    params.set(AVKey.DATA_TYPE, s);
+                    params.set(Keys.DATA_TYPE, s);
             }
         }
 
-        if (params.get(AVKey.BYTE_ORDER) == null) {
+        if (params.get(Keys.BYTE_ORDER) == null) {
             String s = WWXML.getText(domElement, "DataType/@byteOrder", xpath);
             if (s != null && !s.isEmpty()) {
                 s = WWXML.parseByteOrder(s);
                 if (s != null && !s.isEmpty())
-                    params.set(AVKey.BYTE_ORDER, s);
+                    params.set(Keys.BYTE_ORDER, s);
             }
         }
 
         // Elevation data properties.
-        WWXML.checkAndSetStringParam(domElement, params, AVKey.ELEVATION_EXTREMES_FILE, "ExtremeElevations/FileName",
+        WWXML.checkAndSetStringParam(domElement, params, Keys.ELEVATION_EXTREMES_FILE, "ExtremeElevations/FileName",
             xpath);
-        WWXML.checkAndSetDoubleParam(domElement, params, AVKey.ELEVATION_MAX, "ExtremeElevations/@max", xpath);
-        WWXML.checkAndSetDoubleParam(domElement, params, AVKey.ELEVATION_MIN, "ExtremeElevations/@min", xpath);
+        WWXML.checkAndSetDoubleParam(domElement, params, Keys.ELEVATION_MAX, "ExtremeElevations/@max", xpath);
+        WWXML.checkAndSetDoubleParam(domElement, params, Keys.ELEVATION_MIN, "ExtremeElevations/@min", xpath);
 
         return params;
     }
 
-    protected static AVList restorableStateToParams(String stateInXml) {
+    protected static KV restorableStateToParams(String stateInXml) {
         if (stateInXml == null) {
             String message = Logging.getMessage("nullValue.StringIsNull");
             Logging.logger().severe(message);
@@ -421,66 +421,66 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
             throw new IllegalArgumentException(message, e);
         }
 
-        AVList params = new AVListImpl();
+        KV params = new KVMap();
         BasicElevationModel.restoreStateForParams(rs, null, params);
         return params;
     }
 
     protected static void restoreStateForParams(RestorableSupport rs, RestorableSupport.StateObject context,
-        AVList params) {
+        KV params) {
         StringBuilder sb = new StringBuilder();
 
-        String s = rs.getStateValueAsString(context, AVKey.DATA_CACHE_NAME);
+        String s = rs.getStateValueAsString(context, Keys.DATA_CACHE_NAME);
         if (s != null)
-            params.set(AVKey.DATA_CACHE_NAME, s);
+            params.set(Keys.DATA_CACHE_NAME, s);
 
-        s = rs.getStateValueAsString(context, AVKey.SERVICE);
+        s = rs.getStateValueAsString(context, Keys.SERVICE);
         if (s != null)
-            params.set(AVKey.SERVICE, s);
+            params.set(Keys.SERVICE, s);
 
-        s = rs.getStateValueAsString(context, AVKey.DATASET_NAME);
+        s = rs.getStateValueAsString(context, Keys.DATASET_NAME);
         if (s != null)
-            params.set(AVKey.DATASET_NAME, s);
+            params.set(Keys.DATASET_NAME, s);
 
-        s = rs.getStateValueAsString(context, AVKey.FORMAT_SUFFIX);
+        s = rs.getStateValueAsString(context, Keys.FORMAT_SUFFIX);
         if (s != null)
-            params.set(AVKey.FORMAT_SUFFIX, s);
+            params.set(Keys.FORMAT_SUFFIX, s);
 
-        Integer i = rs.getStateValueAsInteger(context, AVKey.NUM_EMPTY_LEVELS);
+        Integer i = rs.getStateValueAsInteger(context, Keys.NUM_EMPTY_LEVELS);
         if (i != null)
-            params.set(AVKey.NUM_EMPTY_LEVELS, i);
+            params.set(Keys.NUM_EMPTY_LEVELS, i);
 
-        i = rs.getStateValueAsInteger(context, AVKey.NUM_LEVELS);
+        i = rs.getStateValueAsInteger(context, Keys.NUM_LEVELS);
         if (i != null)
-            params.set(AVKey.NUM_LEVELS, i);
+            params.set(Keys.NUM_LEVELS, i);
 
-        i = rs.getStateValueAsInteger(context, AVKey.TILE_WIDTH);
+        i = rs.getStateValueAsInteger(context, Keys.TILE_WIDTH);
         if (i != null)
-            params.set(AVKey.TILE_WIDTH, i);
+            params.set(Keys.TILE_WIDTH, i);
 
-        i = rs.getStateValueAsInteger(context, AVKey.TILE_HEIGHT);
+        i = rs.getStateValueAsInteger(context, Keys.TILE_HEIGHT);
         if (i != null)
-            params.set(AVKey.TILE_HEIGHT, i);
+            params.set(Keys.TILE_HEIGHT, i);
 
-        Long lo = rs.getStateValueAsLong(context, AVKey.EXPIRY_TIME);
+        Long lo = rs.getStateValueAsLong(context, Keys.EXPIRY_TIME);
         if (lo != null)
-            params.set(AVKey.EXPIRY_TIME, lo);
+            params.set(Keys.EXPIRY_TIME, lo);
 
-        LatLon ll = rs.getStateValueAsLatLon(context, AVKey.LEVEL_ZERO_TILE_DELTA);
+        LatLon ll = rs.getStateValueAsLatLon(context, Keys.LEVEL_ZERO_TILE_DELTA);
         if (ll != null)
-            params.set(AVKey.LEVEL_ZERO_TILE_DELTA, ll);
+            params.set(Keys.LEVEL_ZERO_TILE_DELTA, ll);
 
-        ll = rs.getStateValueAsLatLon(context, AVKey.TILE_ORIGIN);
+        ll = rs.getStateValueAsLatLon(context, Keys.TILE_ORIGIN);
         if (ll != null)
-            params.set(AVKey.TILE_ORIGIN, ll);
+            params.set(Keys.TILE_ORIGIN, ll);
 
-        Sector sector = rs.getStateValueAsSector(context, AVKey.SECTOR);
+        Sector sector = rs.getStateValueAsSector(context, Keys.SECTOR);
         if (sector != null)
-            params.set(AVKey.SECTOR, sector);
+            params.set(Keys.SECTOR, sector);
 
         Double d = rs.getStateValueAsDouble("ElevationModel.MinElevation");
         if (d != null) {
-            params.set(AVKey.ELEVATION_MIN, d);
+            params.set(Keys.ELEVATION_MIN, d);
         } else {
             if (!sb.isEmpty())
                 sb.append(", ");
@@ -489,7 +489,7 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
 
         d = rs.getStateValueAsDouble("ElevationModel.MaxElevation");
         if (d != null) {
-            params.set(AVKey.ELEVATION_MAX, d);
+            params.set(Keys.ELEVATION_MAX, d);
         } else {
             if (!sb.isEmpty())
                 sb.append(", ");
@@ -721,9 +721,9 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
 //        }
 
         // Setup parameters to instruct BufferWrapper on how to interpret the ByteBuffer.
-        AVList bufferParams = new AVListImpl();
-        bufferParams.set(AVKey.DATA_TYPE, this.elevationDataType);
-        bufferParams.set(AVKey.BYTE_ORDER, this.elevationDataByteOrder);
+        KV bufferParams = new KVMap();
+        bufferParams.set(Keys.DATA_TYPE, this.elevationDataType);
+        bufferParams.set(Keys.BYTE_ORDER, this.elevationDataByteOrder);
         return BufferWrapper.wrap(byteBuffer, bufferParams);
     }
 
@@ -736,7 +736,7 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
 
         // Create a raster reader for the file type.
         DataRasterReaderFactory readerFactory = (DataRasterReaderFactory) WorldWind.createConfigurationComponent(
-            AVKey.DATA_RASTER_READER_FACTORY_CLASS_NAME);
+            Keys.DATA_RASTER_READER_FACTORY_CLASS_NAME);
         DataRasterReader reader = readerFactory.findReaderFor(b, null);
 //        if (reader == null) {
 //            String msg = Logging.getMessage("generic.UnknownFileFormatOrMatchingReaderNotFound", file.getPath());
@@ -759,7 +759,7 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
 
         // Determine the sector covered by the elevations. This information is in the GeoTIFF file or auxiliary
         // files associated with the elevations file.
-        final Sector sector = (Sector) raster.get(AVKey.SECTOR);
+        final Sector sector = (Sector) raster.get(Keys.SECTOR);
 
         DataRaster subRaster = raster.getSubRaster(width, height, sector, raster);
 
@@ -770,12 +770,12 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
         subRaster.dispose();
 
         // Setup parameters to instruct BufferWrapper on how to interpret the ByteBuffer.
-        AVList bufferParams = new AVListImpl();
+        KV bufferParams = new KVMap();
         bufferParams.setValues(raster.copy()); // copies params from avlist
 
-        String dataType = bufferParams.getStringValue(AVKey.DATA_TYPE);
+        String dataType = bufferParams.getStringValue(Keys.DATA_TYPE);
         if (WWUtil.isEmpty(dataType)) {
-            String msg = Logging.getMessage("DataRaster.MissingMetadata", AVKey.DATA_TYPE);
+            String msg = Logging.getMessage("DataRaster.MissingMetadata", Keys.DATA_TYPE);
             Logging.logger().severe(msg);
             throw new IllegalStateException(msg);
         }
@@ -935,7 +935,7 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
             return Double.NEGATIVE_INFINITY;
 
         // Mark the model as used this frame.
-        this.set(AVKey.FRAME_TIMESTAMP, System.currentTimeMillis());
+        this.set(Keys.FRAME_TIMESTAMP, System.currentTimeMillis());
 
         for (int i = 0; i < n; i++) {
             LatLon ll = latlons.get(i);
@@ -1106,9 +1106,9 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
                 return;
             }
 
-            AVList bufferParams = new AVListImpl();
-            bufferParams.set(AVKey.DATA_TYPE, AVKey.INT16);
-            bufferParams.set(AVKey.BYTE_ORDER, AVKey.BIG_ENDIAN); // Extremes are always saved in JVM byte order
+            KV bufferParams = new KVMap();
+            bufferParams.set(Keys.DATA_TYPE, Keys.INT16);
+            bufferParams.set(Keys.BYTE_ORDER, Keys.BIG_ENDIAN); // Extremes are always saved in JVM byte order
             this.extremes = BufferWrapper.wrap(WWIO.readStreamToBuffer(is, true),
                 bufferParams); // Read extremes to a direct ByteBuffer.
         }
@@ -1329,18 +1329,18 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
     /**
      * Retrieves any non-tile resources associated with this ElevationModel, either online or in the local filesystem,
      * and initializes properties of this ElevationModel using those resources. This returns a key indicating the
-     * retrieval state: {@link AVKey#RETRIEVAL_STATE_SUCCESSFUL} indicates the retrieval succeeded, {@link
-     * AVKey#RETRIEVAL_STATE_ERROR} indicates the retrieval failed with errors, and <code>null</code> indicates the
+     * retrieval state: {@link Keys#RETRIEVAL_STATE_SUCCESSFUL} indicates the retrieval succeeded, {@link
+     * Keys#RETRIEVAL_STATE_ERROR} indicates the retrieval failed with errors, and <code>null</code> indicates the
      * retrieval state is unknown. This method may invoke blocking I/O operations, and therefore should not be executed
      * from the rendering thread.
      *
-     * @return {@link AVKey#RETRIEVAL_STATE_SUCCESSFUL} if the retrieval succeeded, {@link AVKey#RETRIEVAL_STATE_ERROR}
+     * @return {@link Keys#RETRIEVAL_STATE_SUCCESSFUL} if the retrieval succeeded, {@link Keys#RETRIEVAL_STATE_ERROR}
      * if the retrieval failed with errors, and <code>null</code> if the retrieval state is unknown.
      */
     protected String retrieveResources() {
         // This ElevationModel has no construction parameters, so there is no description of what to retrieve. Return a
         // key indicating the resources have been successfully retrieved, though there is nothing to retrieve.
-        AVList params = (AVList) this.get(AVKey.CONSTRUCTION_PARAMETERS);
+        KV params = (KV) this.get(Keys.CONSTRUCTION_PARAMETERS);
 //        if (params == null) {
 //            String message = Logging.getMessage("nullValue.ConstructionParametersIsNull");
 //            Logging.logger().warning(message);
@@ -1382,7 +1382,7 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
         // using the Capabilities document, and return a key indicating the retrieval has succeeded.
         this.initFromOGCCapabilitiesResource(caps, params);
 
-        return AVKey.RETRIEVAL_STATE_SUCCESSFUL;
+        return Keys.RETRIEVAL_STATE_SUCCESSFUL;
     }
 
     /**
@@ -1395,7 +1395,7 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
      * @param params the parameter list describing the WMS layer names associated with this ElevationModel.
      * @throws IllegalArgumentException if either the Capabilities or the parameter list is null.
      */
-    protected void initFromOGCCapabilitiesResource(WMSCapabilities caps, AVList params) {
+    protected void initFromOGCCapabilitiesResource(WMSCapabilities caps, KV params) {
 
         String[] names = DataConfigurationUtils.getOGCLayerNames(params);
         if (names == null || names.length == 0)
@@ -1408,7 +1408,7 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
         // Synchronize changes to this ElevationModel with the Event Dispatch Thread.
 //        SwingUtilities.invokeLater(() -> {
         BasicElevationModel.this.setExpiryTime(expiryTime);
-        BasicElevationModel.this.firePropertyChange(AVKey.ELEVATION_MODEL, null, BasicElevationModel.this);
+        BasicElevationModel.this.firePropertyChange(Keys.ELEVATION_MODEL, null, BasicElevationModel.this);
 //        });
     }
 
@@ -1420,11 +1420,11 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
      * otherwise.
      */
     protected boolean isRetrieveResources() {
-        AVList params = (AVList) this.get(AVKey.CONSTRUCTION_PARAMETERS);
+        KV params = (KV) this.get(Keys.CONSTRUCTION_PARAMETERS);
         if (params == null)
             return false;
 
-        Boolean b = (Boolean) params.get(AVKey.RETRIEVE_PROPERTIES_FROM_SERVICE);
+        Boolean b = (Boolean) params.get(Keys.RETRIEVE_PROPERTIES_FROM_SERVICE);
         return b != null && b;
     }
 
@@ -1441,13 +1441,13 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
         t.start();
     }
 
-    protected Document createConfigurationDocument(AVList params) {
+    protected Document createConfigurationDocument(KV params) {
         return BasicElevationModel.createBasicElevationModelConfigDocument(params);
     }
 
     public String getRestorableState() {
         // We only create a restorable state XML if this elevation model was constructed with an AVList.
-        AVList constructionParams = (AVList) this.get(AVKey.CONSTRUCTION_PARAMETERS);
+        KV constructionParams = (KV) this.get(Keys.CONSTRUCTION_PARAMETERS);
         if (constructionParams == null)
             return null;
 
@@ -1469,7 +1469,7 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
     //**************************************************************//
 
     protected void doGetRestorableState(RestorableSupport rs, RestorableSupport.StateObject context) {
-        AVList constructionParams = (AVList) this.get(AVKey.CONSTRUCTION_PARAMETERS);
+        KV constructionParams = (KV) this.get(Keys.CONSTRUCTION_PARAMETERS);
         if (constructionParams != null) {
             for (Map.Entry<String, Object> avp : constructionParams.getEntries()) {
                 this.getRestorableStateForAVPair(avp.getKey(), avp.getValue(), rs, context);
@@ -1500,7 +1500,7 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
         if (value == null)
             return;
 
-        if (key.equals(AVKey.CONSTRUCTION_PARAMETERS))
+        if (key.equals(Keys.CONSTRUCTION_PARAMETERS))
             return;
 
         if (value instanceof LatLon) {
@@ -1567,7 +1567,7 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
 
         // Map the old PIXEL_TYPE AVKey constant to the new DATA_TYPE constant.
         if ("gov.nasa.worldwind.avkey.PixelType".equals(so.getName()))
-            this.set(AVKey.DATA_TYPE, so.getValue());
+            this.set(Keys.DATA_TYPE, so.getValue());
         else
             this.set(so.getName(), so.getValue());
     }
@@ -1690,7 +1690,7 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
 
         public DownloadPostProcessor(ElevationTile tile, BasicElevationModel em) {
             //noinspection RedundantCast
-            super((AVList) em);
+            super((KV) em);
 
             this.tile = tile;
             this.elevationModel = em;
@@ -1722,7 +1722,7 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
 //                this.elevationModel.writeConfigurationFile(this.getFileStore());
 
                 // Fire a property change to denote that the model's backing data has changed.
-                this.elevationModel.firePropertyChange(AVKey.ELEVATION_MODEL, null, this);
+                this.elevationModel.firePropertyChange(Keys.ELEVATION_MODEL, null, this);
 
             }
 

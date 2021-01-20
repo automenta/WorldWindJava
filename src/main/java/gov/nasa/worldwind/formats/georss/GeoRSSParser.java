@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.formats.georss;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
@@ -288,7 +288,7 @@ public class GeoRSSParser {
             Path path = new Path(positions, elevation);
             path.setAttributes(new BasicShapeAttributes());
             path.getAttributes().setOutlineMaterial(Material.WHITE);
-            path.setPathType(AVKey.GREAT_CIRCLE);
+            path.setPathType(Keys.GREAT_CIRCLE);
             return path;
         } else {
             return new SurfacePolygon(positions);
@@ -394,7 +394,7 @@ public class GeoRSSParser {
         }
         path.setAttributes(new BasicShapeAttributes());
         path.getAttributes().setOutlineMaterial(Material.WHITE);
-        path.setPathType(AVKey.GREAT_CIRCLE);
+        path.setPathType(Keys.GREAT_CIRCLE);
         return path;
     }
 

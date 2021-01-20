@@ -10,8 +10,8 @@ import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.texture.*;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.cache.*;
+import gov.nasa.worldwind.avlist.KVMap;
+import gov.nasa.worldwind.cache.FileStore;
 import gov.nasa.worldwind.util.*;
 
 import java.awt.image.*;
@@ -36,7 +36,7 @@ import java.util.logging.Level;
  * @author tag
  * @version $Id: LazilyLoadedTexture.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class LazilyLoadedTexture extends AVListImpl implements WWTexture {
+public class LazilyLoadedTexture extends KVMap implements WWTexture {
     /**
      * Identifies the {@link FileStore} of the supporting file cache for this model.
      */
@@ -480,7 +480,7 @@ public class LazilyLoadedTexture extends AVListImpl implements WWTexture {
 
     protected void notifyTextureLoaded() {
         if (this.listener != null) {
-            this.listener.propertyChange(new PropertyChangeEvent(this, AVKey.TEXTURE, null, this));
+            this.listener.propertyChange(new PropertyChangeEvent(this, Keys.TEXTURE, null, this));
             this.listener = null; // forget the listener to avoid dangling references
         }
     }

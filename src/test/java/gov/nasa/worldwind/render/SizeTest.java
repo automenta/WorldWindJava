@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.render;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.util.RestorableSupport;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,12 +23,12 @@ public class SizeTest
     public void testSize()
     {
         // Test with native width and fractional height
-        Size size = new Size(Size.NATIVE_DIMENSION, 0, AVKey.PIXELS, Size.EXPLICIT_DIMENSION, 0.5, AVKey.FRACTION);
+        Size size = new Size(Size.NATIVE_DIMENSION, 0, Keys.PIXELS, Size.EXPLICIT_DIMENSION, 0.5, Keys.FRACTION);
         Dimension dim = size.compute(70, 10, 100, 100);
         assertEquals("Dimension should be 70 x 50", dim, new Dimension(70, 50));
 
         // Test with maintain aspect ratio
-        size = new Size(Size.MAINTAIN_ASPECT_RATIO, 0, AVKey.PIXELS, Size.EXPLICIT_DIMENSION, 50, AVKey.PIXELS);
+        size = new Size(Size.MAINTAIN_ASPECT_RATIO, 0, Keys.PIXELS, Size.EXPLICIT_DIMENSION, 50, Keys.PIXELS);
         dim = size.compute(20, 10, 100, 100);
         assertEquals("Dimension should be 100 x 50", dim, new Dimension(100, 50));
     }
@@ -36,8 +36,8 @@ public class SizeTest
     @Test
     public void testZeroSizeContainer()
     {
-        Size size = new Size(Size.EXPLICIT_DIMENSION, 0.5, AVKey.FRACTION,
-            Size.EXPLICIT_DIMENSION, 0.5, AVKey.FRACTION);
+        Size size = new Size(Size.EXPLICIT_DIMENSION, 0.5, Keys.FRACTION,
+            Size.EXPLICIT_DIMENSION, 0.5, Keys.FRACTION);
 
         Dimension dim = size.compute(100, 100, 0, 0);
 
@@ -49,23 +49,23 @@ public class SizeTest
     public void testZeroSizeRect()
     {
         // Test with fractional dimensions
-        Size size = new Size(Size.EXPLICIT_DIMENSION, 0.5, AVKey.FRACTION, Size.EXPLICIT_DIMENSION, 0.5,
-            AVKey.FRACTION);
+        Size size = new Size(Size.EXPLICIT_DIMENSION, 0.5, Keys.FRACTION, Size.EXPLICIT_DIMENSION, 0.5,
+            Keys.FRACTION);
         Dimension dim = size.compute(0, 0, 100, 100);
         assertEquals("Dimension should be 50 x 50", dim, new Dimension(50, 50));
 
         // Test with pixel dimensions
-        size = new Size(Size.EXPLICIT_DIMENSION, 50, AVKey.PIXELS, Size.EXPLICIT_DIMENSION, 50, AVKey.PIXELS);
+        size = new Size(Size.EXPLICIT_DIMENSION, 50, Keys.PIXELS, Size.EXPLICIT_DIMENSION, 50, Keys.PIXELS);
         dim = size.compute(0, 0, 100, 100);
         assertEquals("Dimension should be 50 x 50", dim, new Dimension(50, 50));
 
         // Test with maintain aspect radio 
-        size = new Size(Size.MAINTAIN_ASPECT_RATIO, 0, AVKey.PIXELS, Size.MAINTAIN_ASPECT_RATIO, 0, AVKey.PIXELS);
+        size = new Size(Size.MAINTAIN_ASPECT_RATIO, 0, Keys.PIXELS, Size.MAINTAIN_ASPECT_RATIO, 0, Keys.PIXELS);
         dim = size.compute(0, 0, 100, 100);
         assertEquals("Dimension should be 0 x 0", dim, new Dimension(0, 0));
 
         // Test with native dimension
-        size = new Size(Size.NATIVE_DIMENSION, 0, AVKey.PIXELS, Size.NATIVE_DIMENSION, 0, AVKey.PIXELS);
+        size = new Size(Size.NATIVE_DIMENSION, 0, Keys.PIXELS, Size.NATIVE_DIMENSION, 0, Keys.PIXELS);
         dim = size.compute(0, 0, 100, 100);
         assertEquals("Dimension should be 0 x 0", dim, new Dimension(0, 0));
     }
@@ -74,8 +74,8 @@ public class SizeTest
     public void testRestorableStateExplicit()
     {
         // Test with fractional dimensions
-        Size expected = new Size(Size.EXPLICIT_DIMENSION, 0.5, AVKey.FRACTION, Size.EXPLICIT_DIMENSION, 0.5,
-            AVKey.FRACTION);
+        Size expected = new Size(Size.EXPLICIT_DIMENSION, 0.5, Keys.FRACTION, Size.EXPLICIT_DIMENSION, 0.5,
+            Keys.FRACTION);
 
         RestorableSupport rs = RestorableSupport.newRestorableSupport();
         expected.getRestorableState(rs, null);
@@ -120,8 +120,8 @@ public class SizeTest
     public void testRestorableStateLegacy()
     {
         // Test with fractional dimensions
-        Size input = new Size("MaintainAspectRatio", 0, null, "ExplicitDimension", 100, AVKey.PIXELS);
-        Size expected = new Size(Size.MAINTAIN_ASPECT_RATIO, 0, null, Size.EXPLICIT_DIMENSION, 100, AVKey.PIXELS);
+        Size input = new Size("MaintainAspectRatio", 0, null, "ExplicitDimension", 100, Keys.PIXELS);
+        Size expected = new Size(Size.MAINTAIN_ASPECT_RATIO, 0, null, Size.EXPLICIT_DIMENSION, 100, Keys.PIXELS);
 
         RestorableSupport rs = RestorableSupport.newRestorableSupport();
         input.getRestorableState(rs, null);

@@ -5,7 +5,8 @@
  */
 package gov.nasa.worldwind.formats.vpf;
 
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.Keys;
+import gov.nasa.worldwind.avlist.KVMap;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.util.*;
 
@@ -20,7 +21,7 @@ import java.util.*;
  * @author dcollins
  * @version $Id: VPFCoverage.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class VPFCoverage extends AVListImpl {
+public class VPFCoverage extends KVMap {
     private final VPFLibrary library;
     private boolean tiled;
     private VPFBufferedRecordData featureClassSchemaTable;
@@ -95,8 +96,8 @@ public class VPFCoverage extends AVListImpl {
         // Coverage metadata attributes.
         VPFRecord record = library.getCoverageAttributeTable().getRecord("coverage_name", name);
         if (record != null) {
-            VPFUtils.checkAndSetValue(record, "coverage_name", AVKey.DISPLAY_NAME, coverage);
-            VPFUtils.checkAndSetValue(record, "description", AVKey.DESCRIPTION, coverage);
+            VPFUtils.checkAndSetValue(record, "coverage_name", Keys.DISPLAY_NAME, coverage);
+            VPFUtils.checkAndSetValue(record, "description", Keys.DESCRIPTION, coverage);
         }
 
         return coverage;
@@ -112,7 +113,7 @@ public class VPFCoverage extends AVListImpl {
      * @return name of this Coverage.
      */
     public String getName() {
-        return this.getStringValue(AVKey.DISPLAY_NAME);
+        return this.getStringValue(Keys.DISPLAY_NAME);
     }
 
     /**
@@ -121,7 +122,7 @@ public class VPFCoverage extends AVListImpl {
      * @return description of this Coverager.
      */
     public String getDescription() {
-        return this.getStringValue(AVKey.DESCRIPTION);
+        return this.getStringValue(Keys.DESCRIPTION);
     }
 
     public String getFilePath() {

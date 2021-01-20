@@ -6,8 +6,7 @@
 package gov.nasa.worldwind.render;
 
 import com.jogamp.opengl.*;
-import gov.nasa.worldwind.Configuration;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.util.*;
 
 /**
@@ -60,7 +59,7 @@ public class GLRuntimeCapabilities {
     public GLRuntimeCapabilities() {
         this.isAnisotropicTextureFilterEnabled = true;
         this.isFramebufferObjectEnabled = true;
-        this.isVertexBufferObjectEnabled = Configuration.getBooleanValue(AVKey.VBO_USAGE, true);
+        this.isVertexBufferObjectEnabled = Configuration.getBooleanValue(Keys.VBO_USAGE, true);
         this.maxTextureAnisotropy = -1.0d;
     }
 

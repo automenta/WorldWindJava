@@ -7,7 +7,6 @@
 package gov.nasa.worldwind;
 
 import com.jogamp.opengl.GL;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.cache.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.formats.tiff.GeotiffImageReaderSpi;
@@ -57,14 +56,14 @@ public final class WorldWind {
     {
         this.wwo = new WWObjectImpl();
         this.remoteRetrievalService =
-            (RetrievalService) WorldWind.createConfigurationComponent(AVKey.RETRIEVAL_SERVICE_CLASS_NAME);
+            (RetrievalService) WorldWind.createConfigurationComponent(Keys.RETRIEVAL_SERVICE_CLASS_NAME);
         this.localRetrievalService =
-            (RetrievalService) WorldWind.createConfigurationComponent(AVKey.RETRIEVAL_SERVICE_CLASS_NAME);
-        this.taskService = (TaskService) WorldWind.createConfigurationComponent(AVKey.TASK_SERVICE_CLASS_NAME);
+            (RetrievalService) WorldWind.createConfigurationComponent(Keys.RETRIEVAL_SERVICE_CLASS_NAME);
+        this.taskService = (TaskService) WorldWind.createConfigurationComponent(Keys.TASK_SERVICE_CLASS_NAME);
 
-        this.memoryCacheSet = (MemoryCacheSet) WorldWind.createConfigurationComponent(AVKey.MEMORY_CACHE_SET_CLASS_NAME);
-        this.networkStatus = (NetworkStatus) WorldWind.createConfigurationComponent(AVKey.NETWORK_STATUS_CLASS_NAME);
-        this.sessionCache = (SessionCache) WorldWind.createConfigurationComponent(AVKey.SESSION_CACHE_CLASS_NAME);
+        this.memoryCacheSet = (MemoryCacheSet) WorldWind.createConfigurationComponent(Keys.MEMORY_CACHE_SET_CLASS_NAME);
+        this.networkStatus = (NetworkStatus) WorldWind.createConfigurationComponent(Keys.NETWORK_STATUS_CLASS_NAME);
+        this.sessionCache = (SessionCache) WorldWind.createConfigurationComponent(Keys.SESSION_CACHE_CLASS_NAME);
         this.scheduledTaskService = new ScheduledTaskService();
 
         // Seems like an unlikely place to load the tiff reader, but do it here nonetheless.

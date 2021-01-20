@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.symbology.milstd2525.graphics.areas;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
@@ -175,7 +175,7 @@ public class BasicArea extends AbstractMilStd2525TacticalGraphic implements PreR
      * @return Alignment for the main label. One of AVKey.CENTER, AVKey.LEFT, or AVKey.RIGHT.
      */
     protected String getLabelAlignment() {
-        return AVKey.CENTER;
+        return Keys.CENTER;
     }
 
     @Override

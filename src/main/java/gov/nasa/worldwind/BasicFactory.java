@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind;
 
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.exception.*;
 import gov.nasa.worldwind.layers.ogc.OGCCapabilities;
 import gov.nasa.worldwind.layers.ogc.wcs.wcs100.WCS100Capabilities;
@@ -28,7 +28,7 @@ public class BasicFactory implements Factory {
      *
      * @param factoryKey   the key identifying the factory in {@link Configuration}.
      * @param configSource the configuration source. May be any of the types listed for {@link
-     *                     #createFromConfigSource(Object, AVList)}
+     *                     #createFromConfigSource(Object, KV)}
      * @return a new instance of the requested object.
      * @throws IllegalArgumentException if the factory key is null, or if the configuration source is null or an empty
      *                                  string.
@@ -50,14 +50,14 @@ public class BasicFactory implements Factory {
      *
      * @param factoryKey   the key identifying the factory in {@link Configuration}.
      * @param configSource the configuration source. May be any of the types listed for {@link
-     *                     #createFromConfigSource(Object, AVList)}
+     *                     #createFromConfigSource(Object, KV)}
      * @param params       key-value parameters to override or supplement the information provided in the specified
      *                     configuration source. May be null.
      * @return a new instance of the requested object.
      * @throws IllegalArgumentException if the factory key is null, or if the configuration source is null or an empty
      *                                  string.
      */
-    public static Object create(String factoryKey, Object configSource, AVList params) {
+    public static Object create(String factoryKey, Object configSource, KV params) {
         if (factoryKey == null) {
             String message = Logging.getMessage("generic.FactoryKeyIsNull");
             throw new IllegalArgumentException(message);
@@ -90,7 +90,7 @@ public class BasicFactory implements Factory {
      * @throws WWRuntimeException       if object creation fails. The exception indicating the source of the failure is
      *                                  included as the {@link Exception#initCause(Throwable)}.
      */
-    public Object createFromConfigSource(Object configSource, AVList params) {
+    public Object createFromConfigSource(Object configSource, KV params) {
         if (WWUtil.isEmpty(configSource)) {
             String message = Logging.getMessage("generic.ConfigurationSourceIsInvalid", configSource);
             Logging.logger().severe(message);
@@ -128,7 +128,7 @@ public class BasicFactory implements Factory {
      *                     path available on the classpath. The file contents must be a valid OGC capabilities
      *                     document.
      * @param params       a list of configuration properties. These properties override any specified in the
-     *                     capabilities document. The list should contain the {@link AVKey#LAYER_NAMES} property for
+     *                     capabilities document. The list should contain the {@link Keys#LAYER_NAMES} property for
      *                     services that define layer, indicating which named layers described in the capabilities
      *                     document to create. If this argumet is null or contains no layers, the first named layer is
      *                     used.
@@ -139,7 +139,7 @@ public class BasicFactory implements Factory {
      *                                  The exception indicating the source of the failure is included as the {@link
      *                                  Exception#initCause(Throwable)}.
      */
-    public Object createFromCapabilities(String capsFileName, AVList params) {
+    public Object createFromCapabilities(String capsFileName, KV params) {
         if (WWUtil.isEmpty(capsFileName)) {
             String message = Logging.getMessage("nullValue.FilePathIsNull");
             Logging.logger().severe(message);
@@ -166,12 +166,12 @@ public class BasicFactory implements Factory {
      *
      * @param caps   the capabilities document.
      * @param params a list of configuration properties. These properties override any specified in the capabilities
-     *               document. The list should contain the {@link AVKey#LAYER_NAMES} property for services that define
+     *               document. The list should contain the {@link Keys#LAYER_NAMES} property for services that define
      *               layers, indicating which named layers described in the capabilities document to create. If this
      *               argumet is null or contains no layers, the first named layer is used.
      * @return the requested object.
      */
-    protected Object doCreateFromCapabilities(OGCCapabilities caps, AVList params) {
+    protected Object doCreateFromCapabilities(OGCCapabilities caps, KV params) {
         return null;
     }
 
@@ -184,11 +184,11 @@ public class BasicFactory implements Factory {
      *               document.
      * @return the requested object.
      */
-    protected Object doCreateFromCapabilities(WCS100Capabilities caps, AVList params) {
+    protected Object doCreateFromCapabilities(WCS100Capabilities caps, KV params) {
         return null;
     }
 
-    protected Object doCreateFromElement(Element domElement, AVList params) {
+    protected Object doCreateFromElement(Element domElement, KV params) {
         return null;
     }
 }

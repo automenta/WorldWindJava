@@ -33,7 +33,7 @@ import static java.lang.Math.toRadians;
 public abstract class MercatorTiledImageLayer extends AbstractLayer {
     // Infrastructure
     private static final Comparator<MercatorTextureTile> levelComparer = new LevelComparer();
-    private final LevelSet levels;
+    public final LevelSet levels;
     @SuppressWarnings("FieldCanBeLocal")
     private final double splitScale = 0.9; // TODO: Make configurable
     private final ArrayList<String> supportedImageFormats = new ArrayList<>();
@@ -181,7 +181,7 @@ private boolean levelZeroLoaded;
     }
 
     public boolean isMultiResolution() {
-        return this.getLevels() != null && this.getLevels().getNumLevels() > 1;
+        return levels != null && levels.getNumLevels() > 1;
     }
 
     public boolean isAtMaxResolution() {
@@ -395,7 +395,7 @@ private boolean levelZeroLoaded;
     }
 
     private boolean atMaxLevel(DrawContext dc) {
-        final LevelSet levels = this.getLevels();
+        final LevelSet levels = this.levels;
         if (levels == null || dc.getView() == null)
             return false;
 
@@ -525,7 +525,7 @@ private boolean levelZeroLoaded;
 
         Level targetLevel = this.levels.getLastLevel();
         if (levelNumber >= 0) {
-            for (int i = levelNumber; i < this.getLevels().getLastLevel()
+            for (int i = levelNumber; i < levels.getLastLevel()
                 .getLevelNumber(); i++) {
                 if (this.levels.isLevelEmpty(i))
                     continue;
@@ -564,7 +564,7 @@ private boolean levelZeroLoaded;
 
         Level targetLevel = this.levels.getLastLevel();
         if (levelNumber >= 0) {
-            for (int i = levelNumber; i < this.getLevels().getLastLevel()
+            for (int i = levelNumber; i < levels.getLastLevel()
                 .getLevelNumber(); i++) {
                 if (this.levels.isLevelEmpty(i))
                     continue;

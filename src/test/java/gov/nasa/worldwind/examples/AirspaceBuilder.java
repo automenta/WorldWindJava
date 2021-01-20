@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -206,11 +205,11 @@ public class AirspaceBuilder extends ApplicationTemplate {
         }
 
         public String getName() {
-            return this.getStringValue(AVKey.DISPLAY_NAME);
+            return this.getStringValue(Keys.DISPLAY_NAME);
         }
 
         public void setName(String name) {
-            this.set(AVKey.DISPLAY_NAME, name);
+            this.set(Keys.DISPLAY_NAME, name);
         }
 
         public Airspace getAirspace() {
@@ -241,7 +240,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
 
         @Override
         public Object set(String key, Object value) {
-            if (AVKey.DISPLAY_NAME.equals(key)) {
+            if (Keys.DISPLAY_NAME.equals(key)) {
                 return this.airspace.set(key, value);
             }
             else {
@@ -269,7 +268,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
 
         protected static final String[] columnName = {"Name"};
         protected static final Class[] columnClass = {String.class};
-        protected static final String[] columnAttribute = {AVKey.DISPLAY_NAME};
+        protected static final String[] columnAttribute = {Keys.DISPLAY_NAME};
 
         protected final ArrayList<AirspaceEntry> entryList = new ArrayList<>();
 
@@ -370,7 +369,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
         public Airspace createAirspace(WorldWindow wwd, boolean fitShapeToViewport) {
             Polygon poly = new Polygon();
             poly.setAttributes(getDefaultAttributes());
-            poly.set(AVKey.DISPLAY_NAME, getNextName(toString()));
+            poly.set(Keys.DISPLAY_NAME, getNextName(toString()));
             poly.setAltitudes(0.0, 0.0);
             poly.setTerrainConforming(true, false);
             PolygonAirspaceFactory.initializePolygon(wwd, poly, fitShapeToViewport);
@@ -426,7 +425,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
         public Airspace createAirspace(WorldWindow wwd, boolean fitShapeToViewport) {
             SphereAirspace sphere = new SphereAirspace();
             sphere.setAttributes(getDefaultAttributes());
-            sphere.set(AVKey.DISPLAY_NAME, getNextName(toString()));
+            sphere.set(Keys.DISPLAY_NAME, getNextName(toString()));
             sphere.setAltitude(0.0);
             sphere.setTerrainConforming(true);
             SphereAirspaceFactory.initializeSphere(wwd, sphere, fitShapeToViewport);
@@ -1125,7 +1124,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
                         airspaces.add(airspace);
 
                         if (tokens.length >= 2) {
-                            airspace.set(AVKey.DISPLAY_NAME, tokens[1]);
+                            airspace.set(Keys.DISPLAY_NAME, tokens[1]);
                         }
                     }
                     catch (Exception ex) {
@@ -1175,7 +1174,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
                             airspaces.add(airspace);
 
                             if (name.length >= 2) {
-                                airspace.set(AVKey.DISPLAY_NAME, name[1]);
+                                airspace.set(Keys.DISPLAY_NAME, name[1]);
                             }
                         }
                         catch (Exception e) {

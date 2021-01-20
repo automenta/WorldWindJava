@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.*;
@@ -51,10 +50,10 @@ public class Balloons extends ApplicationTemplate {
 
     public static void main(String[] args) {
         // Configure the initial view parameters so that the browser balloon is centered in the viewport.
-        Configuration.setValue(AVKey.INITIAL_LATITUDE, 60);
-        Configuration.setValue(AVKey.INITIAL_LONGITUDE, -85);
-        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 9500000);
-        Configuration.setValue(AVKey.INITIAL_PITCH, 45);
+        Configuration.setValue(Keys.INITIAL_LATITUDE, 60);
+        Configuration.setValue(Keys.INITIAL_LONGITUDE, -85);
+        Configuration.setValue(Keys.INITIAL_ALTITUDE, 9500000);
+        Configuration.setValue(Keys.INITIAL_PITCH, 45);
 
         ApplicationTemplate.start("WorldWind Balloons", AppFrame.class);
     }
@@ -87,7 +86,7 @@ public class Balloons extends ApplicationTemplate {
             Dimension size = new Dimension(1200, 800);
             this.setPreferredSize(size);
             this.pack();
-            WWUtil.alignComponent(null, this, AVKey.CENTER);
+            WWUtil.alignComponent(null, this, Keys.CENTER);
         }
 
         protected void makeAnnotationBalloon() {
@@ -98,9 +97,9 @@ public class Balloons extends ApplicationTemplate {
             // Size the balloon to fit its text, place its lower-left corner at the point, put event padding between the
             // balloon's text and its sides, and disable the balloon's leader.
             attrs.setSize(Size.fromPixels(300, 50));
-            attrs.setOffset(new Offset(0.0d, 0.0d, AVKey.PIXELS, AVKey.PIXELS));
+            attrs.setOffset(new Offset(0.0d, 0.0d, Keys.PIXELS, Keys.PIXELS));
             attrs.setInsets(new Insets(10, 10, 10, 10)); // .
-            attrs.setLeaderShape(AVKey.SHAPE_NONE);
+            attrs.setLeaderShape(Keys.SHAPE_NONE);
             // Configure the balloon's colors to display white text over a semi-transparent black background.
             attrs.setTextColor(Color.WHITE);
             attrs.setInteriorMaterial(Material.BLACK);
@@ -146,7 +145,7 @@ public class Balloons extends ApplicationTemplate {
             placemark.setLabelText("Click to open balloon");
             // Associate the balloon with the placemark by setting AVKey.BALLOON. The BalloonController looks for this
             // value when an object is clicked.
-            placemark.set(AVKey.BALLOON, balloon);
+            placemark.set(Keys.BALLOON, balloon);
 
             this.layer.add(balloon);
             this.layer.add(placemark);

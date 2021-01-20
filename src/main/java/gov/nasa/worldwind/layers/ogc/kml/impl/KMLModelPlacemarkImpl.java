@@ -288,7 +288,7 @@ public class KMLModelPlacemarkImpl extends WWObjectImpl implements KMLRenderable
      * Initiates a retrieval of the model referenced by this placemark.Once the resource is retrieved and loaded, this
      * calls <code>{@link #setColladaRoot(ColladaRoot)}</code> to specify this link's new network resource, and sends
      * an
-     * <code>{@link gov.nasa.worldwind.avlist.AVKey#RETRIEVAL_STATE_SUCCESSFUL}</code> property change event to this
+     * <code>{@link Keys#RETRIEVAL_STATE_SUCCESSFUL}</code> property change event to this
      * link's property change listeners.<p> This does nothing if this <code>KMLNetworkLink</code> has no
      * <code>KMLLink</code>.
      *

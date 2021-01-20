@@ -6,8 +6,7 @@
 
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.Configuration;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.formats.shapefile.ShapefileLayerFactory;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.util.*;
@@ -20,10 +19,10 @@ import java.util.logging.Level;
  */
 public class ExtrudedPolygonsFromShapefile extends ApplicationTemplate {
     public static void main(String[] args) {
-        Configuration.setValue(AVKey.INITIAL_LATITUDE, 37.419833280894515);
-        Configuration.setValue(AVKey.INITIAL_LONGITUDE, -122.08426559929343);
-        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 1000.0);
-        Configuration.setValue(AVKey.INITIAL_PITCH, 60.0);
+        Configuration.setValue(Keys.INITIAL_LATITUDE, 37.419833280894515);
+        Configuration.setValue(Keys.INITIAL_LONGITUDE, -122.08426559929343);
+        Configuration.setValue(Keys.INITIAL_ALTITUDE, 1000.0);
+        Configuration.setValue(Keys.INITIAL_PITCH, 60.0);
 
         ApplicationTemplate.start("Extruded Polygons from Shapefile", AppFrame.class);
     }

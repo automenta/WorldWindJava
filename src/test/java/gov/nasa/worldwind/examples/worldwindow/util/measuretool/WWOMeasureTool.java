@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.examples.worldwindow.util.measuretool;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.avlist.KVMap;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
@@ -24,7 +24,7 @@ import java.util.ArrayList;
  * @author tag
  * @version $Id: WWOMeasureTool.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class WWOMeasureTool extends AVListImpl
+public class WWOMeasureTool extends KVMap
     implements Disposable, MouseListener, MouseMotionListener, SelectListener, PositionListener, RenderingListener {
 
     public static final String EVENT_POSITION_ADD = "MeasureTool.AddPosition";
@@ -238,8 +238,8 @@ public class WWOMeasureTool extends AVListImpl
             addControlPoint(pos, "PositionIndex", i++);
         }
         // Set proper measure shape type
-        this.measureShapeType = (shapeType != null && shapeType.equals(AVKey.SHAPE_PATH))
-            ? AVKey.SHAPE_PATH : AVKey.SHAPE_LINE;
+        this.measureShapeType = (shapeType != null && shapeType.equals(Keys.SHAPE_PATH))
+            ? Keys.SHAPE_PATH : Keys.SHAPE_LINE;
         this.firePropertyChange(EVENT_POSITION_REPLACE, null, null);
         this.getWwd().redraw();
     }
@@ -257,7 +257,7 @@ public class WWOMeasureTool extends AVListImpl
         if (newShape instanceof SurfaceQuad) {
             this.shape = newShape;
             this.regularShape = true;
-            this.measureShapeType = newShape instanceof SurfaceSquare ? AVKey.SHAPE_SQUARE : AVKey.SHAPE_QUAD;
+            this.measureShapeType = newShape instanceof SurfaceSquare ? Keys.SHAPE_SQUARE : Keys.SHAPE_QUAD;
             // Set regular shape properties
             SurfaceQuad shape = ((SurfaceQuad) newShape);
             this.shapeCenterPosition = new Position(shape.getCenter(), 0);
@@ -272,7 +272,7 @@ public class WWOMeasureTool extends AVListImpl
             // Set measure shape type
             this.shape = newShape;
             this.regularShape = true;
-            this.measureShapeType = newShape instanceof SurfaceCircle ? AVKey.SHAPE_CIRCLE : AVKey.SHAPE_ELLIPSE;
+            this.measureShapeType = newShape instanceof SurfaceCircle ? Keys.SHAPE_CIRCLE : Keys.SHAPE_ELLIPSE;
             // Set regular shape properties
             SurfaceEllipse shape = ((SurfaceEllipse) newShape);
             this.shapeCenterPosition = new Position(shape.getCenter(), 0);
@@ -288,7 +288,7 @@ public class WWOMeasureTool extends AVListImpl
         {
             // Set measure shape type
             this.shape = newShape;
-            this.measureShapeType = AVKey.SHAPE_POLYGON;
+            this.measureShapeType = Keys.SHAPE_POLYGON;
             // Extract positions from shape
             updatePositionsFromShape();
             // Create control points for each position except the last that is the same as the first
@@ -363,17 +363,17 @@ public class WWOMeasureTool extends AVListImpl
             }
         }
         else {
-            if (!this.measureShapeType.equals(AVKey.SHAPE_POLYGON) || this.positions.size() <= 1) {
+            if (!this.measureShapeType.equals(Keys.SHAPE_POLYGON) || this.positions.size() <= 1) {
                 // Line, path or polygons with less then two points
                 this.positions.add(curPos);
                 addControlPoint(this.positions.get(this.positions.size() - 1), "PositionIndex",
                     this.positions.size() - 1);
-                if (this.measureShapeType.equals(AVKey.SHAPE_POLYGON) && this.positions.size() == 2) {
+                if (this.measureShapeType.equals(Keys.SHAPE_POLYGON) && this.positions.size() == 2) {
                     // Once we have two points of a polygon, add an extra position
                     // to loop back to the first position and have a closed shape
                     this.positions.add(this.positions.get(0));
                 }
-                if (this.measureShapeType.equals(AVKey.SHAPE_LINE) && this.positions.size() > 1) {
+                if (this.measureShapeType.equals(Keys.SHAPE_LINE) && this.positions.size() > 1) {
                     // Two points on a line, update line heading info
                     this.shapeOrientation = LatLon.greatCircleAzimuth(this.positions.get(0), this.positions.get(1));
                 }
@@ -416,7 +416,7 @@ public class WWOMeasureTool extends AVListImpl
                 return;
             }
 
-            if (!this.measureShapeType.equals(AVKey.SHAPE_POLYGON) || this.positions.size() == 1) {
+            if (!this.measureShapeType.equals(Keys.SHAPE_POLYGON) || this.positions.size() == 1) {
                 currentLastPosition = this.positions.get(this.positions.size() - 1);
                 this.positions.remove(this.positions.size() - 1);
             }
@@ -465,11 +465,11 @@ public class WWOMeasureTool extends AVListImpl
             Position surfacePosition = computeSurfacePosition(point.getPosition());
             positions.set(positionIndex, surfacePosition);
             // Update last pos too if polygon and first pos changed
-            if (measureShapeType.equals(AVKey.SHAPE_POLYGON) && positions.size() > 2 && positionIndex == 0) {
+            if (measureShapeType.equals(Keys.SHAPE_POLYGON) && positions.size() > 2 && positionIndex == 0) {
                 positions.set(positions.size() - 1, surfacePosition);
             }
             // Update heading for simple line
-            if (measureShapeType.equals(AVKey.SHAPE_LINE) && positions.size() > 1) {
+            if (measureShapeType.equals(Keys.SHAPE_LINE) && positions.size() > 1) {
                 shapeOrientation = LatLon.greatCircleAzimuth(positions.get(0), positions.get(1));
             }
         }
@@ -513,12 +513,12 @@ public class WWOMeasureTool extends AVListImpl
                 Position newPos = computeSurfacePosition(
                     LatLon.greatCircleEndPosition(positions.get(i), azimuth, distance));
                 positions.set(i, newPos);
-                if (!this.measureShapeType.equals(AVKey.SHAPE_POLYGON) || i < positions.size() - 1) {
+                if (!this.measureShapeType.equals(Keys.SHAPE_POLYGON) || i < positions.size() - 1) {
                     getControlPoints().get(i).setPosition(new Position(newPos, 0));
                 }
             }
             // Update heading for simple line
-            if (measureShapeType.equals(AVKey.SHAPE_LINE) && positions.size() > 1) {
+            if (measureShapeType.equals(Keys.SHAPE_LINE) && positions.size() > 1) {
                 shapeOrientation = LatLon.greatCircleAzimuth(positions.get(0), positions.get(1));
             }
             // Update rendered shapes
@@ -558,8 +558,8 @@ public class WWOMeasureTool extends AVListImpl
             if (control.equals("East") || control.equals("West")) {
                 width = distance * 2;
                 height = this.shapeRectangle != null ? this.shapeRectangle.height : width;
-                if (this.measureShapeType.equals(AVKey.SHAPE_CIRCLE) || this.measureShapeType.equals(
-                    AVKey.SHAPE_SQUARE)) //noinspection SuspiciousNameCombination
+                if (this.measureShapeType.equals(Keys.SHAPE_CIRCLE) || this.measureShapeType.equals(
+                    Keys.SHAPE_SQUARE)) //noinspection SuspiciousNameCombination
                 {
                     height = width;
                 }
@@ -570,8 +570,8 @@ public class WWOMeasureTool extends AVListImpl
             else {
                 height = distance * 2;
                 width = this.shapeRectangle != null ? this.shapeRectangle.width : height;
-                if (this.measureShapeType.equals(AVKey.SHAPE_CIRCLE) || this.measureShapeType.equals(
-                    AVKey.SHAPE_SQUARE)) //noinspection SuspiciousNameCombination
+                if (this.measureShapeType.equals(Keys.SHAPE_CIRCLE) || this.measureShapeType.equals(
+                    Keys.SHAPE_SQUARE)) //noinspection SuspiciousNameCombination
                 {
                     width = height;
                 }
@@ -630,13 +630,13 @@ public class WWOMeasureTool extends AVListImpl
 
     protected void updateMeasureShape() {
         // Update line
-        if (this.measureShapeType.equals(AVKey.SHAPE_LINE) || this.measureShapeType.equals(AVKey.SHAPE_PATH)) {
+        if (this.measureShapeType.equals(Keys.SHAPE_LINE) || this.measureShapeType.equals(Keys.SHAPE_PATH)) {
             // Update current line
             if (this.positions.size() > 1 && this.shape != null) {
                 ((Path) this.shape).setPositions(this.positions);
             }
         } // Update polygon
-        else if (this.measureShapeType.equals(AVKey.SHAPE_POLYGON)) {
+        else if (this.measureShapeType.equals(Keys.SHAPE_POLYGON)) {
             if (this.shape != null) {
                 // Update current shape
                 ((SurfacePolygon) this.shape).setLocations(this.positions);
@@ -645,14 +645,14 @@ public class WWOMeasureTool extends AVListImpl
         else if (this.isRegularShape()) {
             if (this.shape != null && this.shapeRectangle != null) {
                 // Update current shape
-                if (this.measureShapeType.equals(AVKey.SHAPE_QUAD) || this.measureShapeType.equals(
-                    AVKey.SHAPE_SQUARE)) {
+                if (this.measureShapeType.equals(Keys.SHAPE_QUAD) || this.measureShapeType.equals(
+                    Keys.SHAPE_SQUARE)) {
                     ((SurfaceQuad) this.shape).setCenter(this.shapeCenterPosition);
                     ((SurfaceQuad) this.shape).setSize(this.shapeRectangle.width, this.shapeRectangle.height);
                     ((SurfaceQuad) this.shape).setHeading(this.shapeOrientation);
                 }
-                if (this.measureShapeType.equals(AVKey.SHAPE_ELLIPSE) || this.measureShapeType.equals(
-                    AVKey.SHAPE_CIRCLE)) {
+                if (this.measureShapeType.equals(Keys.SHAPE_ELLIPSE) || this.measureShapeType.equals(
+                    Keys.SHAPE_CIRCLE)) {
                     ((SurfaceEllipse) this.shape).setCenter(this.shapeCenterPosition);
                     ((SurfaceEllipse) this.shape).setRadii(this.shapeRectangle.width / 2,
                         this.shapeRectangle.height / 2);
@@ -828,8 +828,8 @@ public class WWOMeasureTool extends AVListImpl
 
     protected void doMoved() {
         if (this.active && rubberBandTarget != null && this.getWwd().position() != null) {
-            if (!this.freeHand || (!this.getMeasureShapeType().equals(AVKey.SHAPE_PATH)
-                && !this.getMeasureShapeType().equals(AVKey.SHAPE_POLYGON))) {
+            if (!this.freeHand || (!this.getMeasureShapeType().equals(Keys.SHAPE_PATH)
+                && !this.getMeasureShapeType().equals(Keys.SHAPE_POLYGON))) {
                 // Rubber band - Move control point and update shape
                 Position lastPosition = rubberBandTarget.getPosition();
                 rubberBandTarget.setPosition(new Position(this.getWwd().position(), 0));
@@ -980,7 +980,7 @@ public class WWOMeasureTool extends AVListImpl
 
     protected void autoDisarm() {
         // Disarm after second control point of a line or regular shape
-        if (this.isRegularShape() || this.getMeasureShapeType().equals(AVKey.SHAPE_LINE)) {
+        if (this.isRegularShape() || this.getMeasureShapeType().equals(Keys.SHAPE_LINE)) {
             if (this.getControlPoints().size() > 1) {
                 this.setArmed(false);
             }

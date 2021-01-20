@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.formats.vpf;
 
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.util.Logging;
 
 import java.io.File;
@@ -93,7 +93,7 @@ public class VPFBasicFeatureFactory implements VPFFeatureFactory {
         return keys;
     }
 
-    protected static void setFeatureAttributes(VPFRecord row, Iterable<String> attributeKeys, AVList params) {
+    protected static void setFeatureAttributes(VPFRecord row, Iterable<String> attributeKeys, KV params) {
         for (String key : attributeKeys) {
             VPFUtils.checkAndSetValue(row, key, key, params);
         }

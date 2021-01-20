@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.util;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -44,10 +43,10 @@ public class ScheduledTaskService extends WWObjectImpl implements Thread.Uncaugh
 
     /**
      * Create a new scheduled task service. The thread pool size is from the WorldWind configuration file property
-     * {@link AVKey#TASK_POOL_SIZE}.
+     * {@link Keys#TASK_POOL_SIZE}.
      */
     public ScheduledTaskService() {
-        Integer poolSize = Configuration.getIntegerValue(AVKey.TASK_POOL_SIZE, ScheduledTaskService.DEFAULT_POOL_SIZE);
+        Integer poolSize = Configuration.getIntegerValue(Keys.TASK_POOL_SIZE, ScheduledTaskService.DEFAULT_POOL_SIZE);
 
         // this.executor runs the tasks, each in their own thread
         this.executor = new ScheduledTaskExecutor(poolSize);

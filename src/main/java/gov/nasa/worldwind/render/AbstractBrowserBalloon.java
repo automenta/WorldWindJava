@@ -136,7 +136,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
     /**
      * Action that will occur when the balloon is made invisible.
      */
-    protected String visibilityAction = AVKey.VISIBILITY_ACTION_RELEASE;
+    protected String visibilityAction = Keys.VISIBILITY_ACTION_RELEASE;
     protected boolean drawTitleBar = true;
     protected boolean drawBrowserControls = true;
     protected boolean drawResizeControl = true;
@@ -210,11 +210,11 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
      */
     protected static List<BrowserControl> createDefaultBrowserControls() {
         return Arrays.asList(
-            new BrowserControl(AVKey.CLOSE, new Offset(30.0, 25.0, AVKey.INSET_PIXELS, AVKey.INSET_PIXELS),
+            new BrowserControl(Keys.CLOSE, new Offset(30.0, 25.0, Keys.INSET_PIXELS, Keys.INSET_PIXELS),
                 "images/browser-close-16x16.gif"),
-            new BrowserControl(AVKey.BACK, new Offset(15.0, 25.0, AVKey.PIXELS, AVKey.INSET_PIXELS),
+            new BrowserControl(Keys.BACK, new Offset(15.0, 25.0, Keys.PIXELS, Keys.INSET_PIXELS),
                 "images/browser-back-16x16.gif"),
-            new BrowserControl(AVKey.FORWARD, new Offset(35.0, 25.0, AVKey.PIXELS, AVKey.INSET_PIXELS),
+            new BrowserControl(Keys.FORWARD, new Offset(35.0, 25.0, Keys.PIXELS, Keys.INSET_PIXELS),
                 "images/browser-forward-16x16.gif")
         );
     }
@@ -303,7 +303,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
 
         // If the balloon is not visible and the visibility action indicates to release the browser, dispose of the web
         // view to release native resources.
-        if (!this.isVisible() && AVKey.VISIBILITY_ACTION_RELEASE.equals(this.getVisibilityAction())) {
+        if (!this.isVisible() && Keys.VISIBILITY_ACTION_RELEASE.equals(this.getVisibilityAction())) {
             this.disposeWebView();
         }
     }
@@ -488,7 +488,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
      * invisible, but the browser will continue to consume system resources while is is invisible. Dynamic content on
      * the page (for example, Flash video) will continue to play.</li></ul>
      *
-     * @param visibilityAction Either {@link AVKey#VISIBILITY_ACTION_RELEASE} or {@link AVKey#VISIBILITY_ACTION_RETAIN}.
+     * @param visibilityAction Either {@link Keys#VISIBILITY_ACTION_RELEASE} or {@link Keys#VISIBILITY_ACTION_RETAIN}.
      */
     public void setVisibilityAction(String visibilityAction) {
         if (visibilityAction == null) {
@@ -526,7 +526,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
     @Override
     public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
         if (!this.isVisible() && propertyChangeEvent != null
-            && AVKey.REPAINT.equals(propertyChangeEvent.getPropertyName())) {
+            && Keys.REPAINT.equals(propertyChangeEvent.getPropertyName())) {
             return;
         }
 
@@ -778,10 +778,10 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
     protected FloatBuffer createFrameVertices(OrderedBrowserBalloon obb) {
         BalloonAttributes activeAttrs = this.getActiveAttributes();
 
-        if (AVKey.SHAPE_NONE.equals(activeAttrs.getBalloonShape()))
+        if (Keys.SHAPE_NONE.equals(activeAttrs.getBalloonShape()))
             return this.makeDefaultFrameVertices(obb);
 
-        else if (AVKey.SHAPE_ELLIPSE.equals(activeAttrs.getBalloonShape()))
+        else if (Keys.SHAPE_ELLIPSE.equals(activeAttrs.getBalloonShape()))
             return this.makeEllipseFrameVertices(obb);
 
         else // Default to AVKey.SHAPE_RECTANGLE
@@ -796,7 +796,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         int y = obb.webViewRect.y - obb.screenRect.y;
 
         // Return a rectangle that represents the WebView's screen rectangle.
-        if (AVKey.SHAPE_TRIANGLE.equals(activeAttrs.getLeaderShape())) {
+        if (Keys.SHAPE_TRIANGLE.equals(activeAttrs.getLeaderShape())) {
             // The balloon's leader location is equivalent to its screen offset because the screen offset specifies the
             // location of the screen reference point relative to the frame, and the leader points from the frame to the
             // screen reference point.
@@ -820,7 +820,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         // Return an ellipse centered at the balloon's center and with major and minor axes equal to the balloon's
         // width and height, respectively. We use integer coordinates for the center and the radii to ensure that
         // these vertices align image texels exactly with screen pixels when used as texture coordinates.
-        if (AVKey.SHAPE_TRIANGLE.equals(activeAttrs.getLeaderShape())) {
+        if (Keys.SHAPE_TRIANGLE.equals(activeAttrs.getLeaderShape())) {
             // The balloon's leader location is equivalent to its screen offset because the screen offset specifies the
             // location of the screen reference point relative to the frame, and the leader points from the frame to the
             // screen reference point.
@@ -839,7 +839,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         GeometryBuilder gb = new GeometryBuilder();
 
         // Return a rectangle that represents the balloon's screen rectangle, with optional rounded corners.
-        if (AVKey.SHAPE_TRIANGLE.equals(activeAttrs.getLeaderShape())) {
+        if (Keys.SHAPE_TRIANGLE.equals(activeAttrs.getLeaderShape())) {
             // The balloon's leader location is equivalent to its screen offset because the screen offset specifies the
             // location of the screen reference point relative to the frame, and the leader points from the frame to the
             // screen reference point.
@@ -960,13 +960,13 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         // the balloon is a HotSpot by looking in the picked object's AVList. This is critical when the delegate owner
         // is not null because the balloon is no longer the picked object. This would otherwise prevent the application
         // from interacting with the balloon via the HotSpot interface.
-        po.set(AVKey.HOT_SPOT, this);
+        po.set(Keys.HOT_SPOT, this);
 
         return po;
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    protected PickedObject createLinkPickedObject(DrawContext dc, Color pickColor, AVList linkParams) {
+    protected PickedObject createLinkPickedObject(DrawContext dc, Color pickColor, KV linkParams) {
         PickedObject po = new PickedObject(pickColor.getRGB(), this);
 
         // Apply all of the link parameters to the picked object. This provides the application with the link's URL,
@@ -975,7 +975,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
 
         // Attach the balloon's context to the picked object to provide context for link clicked events. This supports
         // KML features that specify links with relative paths or fragments to the parent KML root.
-        po.set(AVKey.CONTEXT, this.get(AVKey.CONTEXT));
+        po.set(Keys.CONTEXT, this.get(Keys.CONTEXT));
 
         return po;
     }
@@ -1220,7 +1220,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         try {
             // Attempt to get the WebViewFactory class name from configuration. Fall back on the BrowserBalloon's
             // default factory if the configuration does not specify a one.
-            String className = Configuration.getStringValue(AVKey.WEB_VIEW_FACTORY,
+            String className = Configuration.getStringValue(Keys.WEB_VIEW_FACTORY,
                 AbstractBrowserBalloon.DEFAULT_WEB_VIEW_FACTORY);
             WebViewFactory factory = (WebViewFactory) WorldWind.create(className);
             this.webView = factory.createWebView(frameSize);
@@ -1303,21 +1303,21 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         if (this.webView == null)
             return;
 
-        Iterable<AVList> links = this.webView.getLinks();
+        Iterable<KV> links = this.webView.getLinks();
         if (links == null)
             return;
 
-        for (AVList linkParams : links) {
+        for (KV linkParams : links) {
             // This should never happen, but we check anyway.
             if (linkParams == null)
                 continue;
 
             // Ignore any links that have no bounds or no rectangles; they cannot be drawn.
-            if (linkParams.get(AVKey.BOUNDS) == null || linkParams.get(AVKey.RECTANGLES) == null)
+            if (linkParams.get(Keys.BOUNDS) == null || linkParams.get(Keys.RECTANGLES) == null)
                 continue;
 
             // Translate the bounds from WebView coordinates to WorldWindow screen coordinates.
-            Rectangle bounds = new Rectangle((Rectangle) linkParams.get(AVKey.BOUNDS));
+            Rectangle bounds = new Rectangle((Rectangle) linkParams.get(Keys.BOUNDS));
             bounds.translate(obb.webViewRect.x, obb.webViewRect.y);
 
             // Ignore link rectangles that do not intersect any of the current pick rectangles.
@@ -1333,7 +1333,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
 
             gl.glBegin(GL2.GL_QUADS);
             try {
-                for (Rectangle rect : (Rectangle[]) linkParams.get(AVKey.RECTANGLES)) {
+                for (Rectangle rect : (Rectangle[]) linkParams.get(Keys.RECTANGLES)) {
                     // This should never happen, but we check anyway.
                     if (rect == null)
                         continue;
@@ -1373,8 +1373,8 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         // Set ACTION of PickedObject to RESIZE. Attach current bounds to the picked object so that the resize
         // controller will have enough information to interpret mouse drag events.
         PickedObject po = new PickedObject(color.getRGB(), this);
-        po.set(AVKey.ACTION, AVKey.RESIZE);
-        po.set(AVKey.BOUNDS, awtScreenRect);
+        po.set(Keys.ACTION, Keys.RESIZE);
+        po.set(Keys.BOUNDS, awtScreenRect);
         this.pickSupport.addPickableObject(po);
 
         gl.glLineWidth((float) this.computeOutlinePickWidth());
@@ -1826,7 +1826,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         return new Point(x, y);
     }
 
-    public static class BrowserControl extends AVListImpl {
+    public static class BrowserControl extends KVMap {
         protected static final Color DEFAULT_COLOR = new Color(255, 255, 255, 153);
         protected static final Color DEFAULT_HIGHLIGHT_COLOR = new Color(255, 255, 255, 255);
 
@@ -1876,7 +1876,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
                 throw new IllegalArgumentException(message);
             }
 
-            this.set(AVKey.ACTION, action);
+            this.set(Keys.ACTION, action);
             this.offset = offset;
             this.size = size;
             this.imageSource = imageSource;
@@ -1891,11 +1891,11 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         }
 
         public String getAction() {
-            return this.getStringValue(AVKey.ACTION);
+            return this.getStringValue(Keys.ACTION);
         }
 
         public void setAction(String action) {
-            this.set(AVKey.ACTION, action);
+            this.set(Keys.ACTION, action);
         }
 
         public Offset getOffset() {

@@ -5,6 +5,7 @@
  */
 package gov.nasa.worldwind.data;
 
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.formats.worldfile.WorldFile;
 import gov.nasa.worldwind.geom.Sector;
@@ -52,7 +53,7 @@ public class BILRasterReader extends AbstractDataRasterReader {
         this.largeFileThreshold = largeFileThreshold;
     }
 
-    protected boolean doCanRead(Object source, AVList params) {
+    protected boolean doCanRead(Object source, KV params) {
         if (!(source instanceof File) && !(source instanceof URL)) {
             return false;
         }
@@ -68,32 +69,32 @@ public class BILRasterReader extends AbstractDataRasterReader {
         }
 
         if (null != params) {
-            if (!params.hasKey(AVKey.PIXEL_FORMAT)) {
-                params.set(AVKey.PIXEL_FORMAT, AVKey.ELEVATION);
+            if (!params.hasKey(Keys.PIXEL_FORMAT)) {
+                params.set(Keys.PIXEL_FORMAT, Keys.ELEVATION);
             }
         }
 
         return true;
     }
 
-    protected DataRaster[] doRead(Object source, AVList params) throws IOException {
+    protected DataRaster[] doRead(Object source, KV params) throws IOException {
         ByteBuffer byteBuffer = this.readElevations(source);
 
         // If the parameter list is null, or doesn't already have all the necessary metadata, then we copy the parameter
         // list and attempt to populate the copy with any missing metadata.        
         if (this.validateMetadata(source, params) != null) {
             // Copy the parameter list to insulate changes from the caller.
-            params = (params != null) ? params.copy() : new AVListImpl();
-            params.set(AVKey.FILE_SIZE, byteBuffer.capacity());
+            params = (params != null) ? params.copy() : new KVMap();
+            params.set(Keys.FILE_SIZE, byteBuffer.capacity());
             WorldFile.readWorldFiles(source, params);
         }
 
-        int width = (Integer) params.get(AVKey.WIDTH);
-        int height = (Integer) params.get(AVKey.HEIGHT);
-        Sector sector = (Sector) params.get(AVKey.SECTOR);
+        int width = (Integer) params.get(Keys.WIDTH);
+        int height = (Integer) params.get(Keys.HEIGHT);
+        Sector sector = (Sector) params.get(Keys.SECTOR);
 
-        if (!params.hasKey(AVKey.PIXEL_FORMAT)) {
-            params.set(AVKey.PIXEL_FORMAT, AVKey.ELEVATION);
+        if (!params.hasKey(Keys.PIXEL_FORMAT)) {
+            params.set(Keys.PIXEL_FORMAT, Keys.ELEVATION);
         }
 
         ByteBufferRaster raster = new ByteBufferRaster(width, height, sector, byteBuffer, params);
@@ -101,13 +102,13 @@ public class BILRasterReader extends AbstractDataRasterReader {
         return new DataRaster[] {raster};
     }
 
-    protected void doReadMetadata(Object source, AVList params) throws IOException {
+    protected void doReadMetadata(Object source, KV params) throws IOException {
         if (this.validateMetadata(source, params) != null) {
             WorldFile.readWorldFiles(source, params);
         }
     }
 
-    protected String validateMetadata(Object source, AVList params) {
+    protected String validateMetadata(Object source, KV params) {
         StringBuilder sb = new StringBuilder();
 
         String message = super.validateMetadata(source, params);
@@ -115,20 +116,20 @@ public class BILRasterReader extends AbstractDataRasterReader {
             sb.append(message);
         }
 
-        Object o = (params != null) ? params.get(AVKey.BYTE_ORDER) : null;
+        Object o = (params != null) ? params.get(Keys.BYTE_ORDER) : null;
         if (!(o instanceof String)) {
             sb.append(sb.isEmpty() ? "" : ", ").append(Logging.getMessage("WorldFile.NoByteOrderSpecified", source));
         }
 
-        o = (params != null) ? params.get(AVKey.PIXEL_FORMAT) : null;
+        o = (params != null) ? params.get(Keys.PIXEL_FORMAT) : null;
         if (o == null) {
             sb.append(sb.isEmpty() ? "" : ", ").append(
                 Logging.getMessage("WorldFile.NoPixelFormatSpecified", source));
-        } else if (!AVKey.ELEVATION.equals(o)) {
+        } else if (!Keys.ELEVATION.equals(o)) {
             sb.append(sb.isEmpty() ? "" : ", ").append(Logging.getMessage("WorldFile.InvalidPixelFormat", source));
         }
 
-        o = (params != null) ? params.get(AVKey.DATA_TYPE) : null;
+        o = (params != null) ? params.get(Keys.DATA_TYPE) : null;
         if (o == null) {
             sb.append(sb.isEmpty() ? "" : ", ").append(Logging.getMessage("WorldFile.NoDataTypeSpecified", source));
         }

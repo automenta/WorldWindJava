@@ -8,7 +8,7 @@ package gov.nasa.worldwind.util.webview;
 
 import com.jogamp.opengl.util.texture.Texture;
 import gov.nasa.worldwind.Configuration;
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
@@ -379,9 +379,9 @@ public class WindowsWebView extends AbstractWebView {
     /**
      * {@inheritDoc}
      */
-    public Iterable<AVList> getLinks() {
+    public Iterable<KV> getLinks() {
         if (this.webViewWindowPtr != 0) {
-            AVList[] links = WindowsWebViewJNI.getLinks(this.webViewWindowPtr);
+            KV[] links = WindowsWebViewJNI.getLinks(this.webViewWindowPtr);
             if (links != null)
                 return Arrays.asList(links);
         }

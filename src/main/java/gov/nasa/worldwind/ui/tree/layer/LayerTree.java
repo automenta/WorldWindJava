@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.ui.tree.layer;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.render.Offset;
 import gov.nasa.worldwind.ui.FrameAttributes;
 import gov.nasa.worldwind.ui.tree.*;
@@ -26,7 +26,7 @@ public class LayerTree extends BasicTree {
     /**
      * The default screen location: 20x140 pixels from the upper left screen corner.
      */
-    protected static final Offset DEFAULT_OFFSET = new Offset(20.0d, 140.0d, AVKey.PIXELS, AVKey.INSET_PIXELS);
+    protected static final Offset DEFAULT_OFFSET = new Offset(20.0d, 140.0d, Keys.PIXELS, Keys.INSET_PIXELS);
     /**
      * The default frame image. Appears to the left of the frame title.
      */

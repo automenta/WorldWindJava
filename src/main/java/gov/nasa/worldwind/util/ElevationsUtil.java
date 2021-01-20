@@ -6,7 +6,8 @@
 
 package gov.nasa.worldwind.util;
 
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.Keys;
+import gov.nasa.worldwind.avlist.KVMap;
 import gov.nasa.worldwind.data.ByteBufferRaster;
 
 /**
@@ -72,7 +73,7 @@ public class ElevationsUtil {
         double minValue = minmax[0];
         double maxValue = minmax[1];
 
-        Double missingDataSignal = AVListImpl.getDoubleValue(raster, AVKey.MISSING_DATA_SIGNAL, null);
+        Double missingDataSignal = KVMap.getDoubleValue(raster, Keys.MISSING_DATA_SIGNAL, null);
 
         // check if the minimum value is one of the well known NODATA values
         if (ElevationsUtil.isKnownMissingSignal(minValue)
@@ -95,16 +96,16 @@ public class ElevationsUtil {
         boolean needsConversion = false;
         double conversionValue = 1.0d;
 
-        if (raster.hasKey(AVKey.ELEVATION_UNIT)) {
-            String unit = raster.getStringValue(AVKey.ELEVATION_UNIT);
-            if (AVKey.UNIT_METER.equalsIgnoreCase(unit)) {
+        if (raster.hasKey(Keys.ELEVATION_UNIT)) {
+            String unit = raster.getStringValue(Keys.ELEVATION_UNIT);
+            if (Keys.UNIT_METER.equalsIgnoreCase(unit)) {
                 needsConversion = false;
-            } else if (AVKey.UNIT_FOOT.equalsIgnoreCase(unit)) {
+            } else if (Keys.UNIT_FOOT.equalsIgnoreCase(unit)) {
                 needsConversion = true;
                 conversionValue = WWMath.convertFeetToMeters(1);
                 minValue = WWMath.convertFeetToMeters(minValue);
                 maxValue = WWMath.convertFeetToMeters(maxValue);
-                raster.set(AVKey.ELEVATION_UNIT, AVKey.UNIT_METER);
+                raster.set(Keys.ELEVATION_UNIT, Keys.UNIT_METER);
             } else {
                 needsConversion = false;
                 String msg = Logging.getMessage("generic.UnrecognizedElevationUnit", unit);
@@ -147,12 +148,12 @@ public class ElevationsUtil {
 
         if (rasterHasVoids) {
             if (missingDataSignal != null)
-                raster.set(AVKey.MISSING_DATA_SIGNAL, missingDataSignal);
+                raster.set(Keys.MISSING_DATA_SIGNAL, missingDataSignal);
         } else {
-            raster.removeKey(AVKey.MISSING_DATA_SIGNAL);
+            raster.removeKey(Keys.MISSING_DATA_SIGNAL);
         }
 
-        raster.set(AVKey.ELEVATION_MIN, minValue);
-        raster.set(AVKey.ELEVATION_MAX, maxValue);
+        raster.set(Keys.ELEVATION_MIN, minValue);
+        raster.set(Keys.ELEVATION_MAX, maxValue);
     }
 }

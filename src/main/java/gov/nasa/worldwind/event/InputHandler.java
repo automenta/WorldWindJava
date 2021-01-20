@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.event;
 
 import gov.nasa.worldwind.WorldWindow;
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.KV;
 
 import java.awt.event.*;
 import java.beans.*;
@@ -17,7 +17,7 @@ import java.util.*;
  * @version $Id: InputHandler.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 public interface InputHandler
-    extends AVList, PropertyChangeListener, com.jogamp.newt.event.KeyListener, com.jogamp.newt.event.MouseListener, com.jogamp.newt.event.WindowListener {
+    extends KV, PropertyChangeListener, com.jogamp.newt.event.KeyListener, com.jogamp.newt.event.MouseListener, com.jogamp.newt.event.WindowListener {
     WorldWindow getEventSource();
 
     void setEventSource(WorldWindow newWorldWindow);
@@ -102,7 +102,7 @@ public interface InputHandler
     Iterable<Object> getValues();
 
     @Override
-    AVList setValues(AVList avList);
+    KV setValues(KV avList);
 
     @Override
     String getStringValue(String key);
@@ -135,10 +135,10 @@ public interface InputHandler
     void firePropertyChange(PropertyChangeEvent propertyChangeEvent);
 
     @Override
-    AVList copy();
+    KV copy();
 
     @Override
-    AVList clearList();
+    KV clearList();
 
     @Override
     void propertyChange(PropertyChangeEvent evt);

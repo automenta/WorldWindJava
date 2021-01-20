@@ -7,7 +7,7 @@ package gov.nasa.worldwind.layers;
 
 import com.jogamp.opengl.GL2;
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.pick.PickSupport;
 import gov.nasa.worldwind.render.*;
@@ -58,7 +58,7 @@ public class RenderableLayer extends AbstractLayer {
      * Adds the specified <code>renderable</code> to the end of this layer's internal collection. If this layer's
      * internal collection has been overridden with a call to {@link #set(Iterable)}, this will throw an exception.
      * <p>
-     * If the <code>renderable</code> implements {@link AVList}, the layer forwards its property change events to the
+     * If the <code>renderable</code> implements {@link KV}, the layer forwards its property change events to the
      * layer's property change listeners. Any property change listeners the layer attaches to the
      * <code>renderable</code> are removed in {@link #remove(Renderable)}, {@link #clear()}, or {@link #dispose()}.
      *
@@ -80,7 +80,7 @@ public class RenderableLayer extends AbstractLayer {
      * collection. If this layer's internal collection has been overridden with a call to {@link #set(Iterable)}, this
      * will throw an exception.
      * <p>
-     * If the <code>renderable</code> implements {@link AVList}, the layer forwards its property change events to the
+     * If the <code>renderable</code> implements {@link KV}, the layer forwards its property change events to the
      * layer's property change listeners. Any property change listeners the layer attaches to the
      * <code>renderable</code> are removed in {@link #remove(Renderable)}, {@link #clear()}, or {@link #dispose()}.
      *
@@ -110,7 +110,7 @@ public class RenderableLayer extends AbstractLayer {
      * Adds the contents of the specified <code>renderables</code> to this layer's internal collection. If this layer's
      * internal collection has been overriden with a call to {@link #set(Iterable)}, this will throw an exception.
      * <p>
-     * If any of the <code>renderables</code> implement {@link AVList}, the layer forwards their property change events
+     * If any of the <code>renderables</code> implement {@link KV}, the layer forwards their property change events
      * to the layer's property change listeners. Any property change listeners the layer attaches to the
      * <code>renderable</code> are removed in {@link #remove(Renderable)}, {@link #clear()}, or {@link #dispose()}.
      *
@@ -130,8 +130,8 @@ public class RenderableLayer extends AbstractLayer {
     private void _added(Renderable renderable) {
         // Attach the layer as a property change listener of the renderable. This forwards property change events
         // from the renderable to the SceneController.
-        if (renderable instanceof AVList)
-            ((AVList) renderable).addPropertyChangeListener(this);
+        if (renderable instanceof KV)
+            ((KV) renderable).addPropertyChangeListener(this);
     }
 
     /**
@@ -139,7 +139,7 @@ public class RenderableLayer extends AbstractLayer {
      * layer's internal collection has been overridden with a call to {@link #set(Iterable)}, this will throw an
      * exception.
      * <p>
-     * If the <code>renderable</code> implements {@link AVList}, this stops forwarding the its property change events to
+     * If the <code>renderable</code> implements {@link KV}, this stops forwarding the its property change events to
      * the layer's property change listeners. Any property change listeners the layer attached to the
      * <code>renderable</code> in {@link #add(Renderable)} or {@link #addAll(Iterable)} are removed.
      *
@@ -157,15 +157,15 @@ public class RenderableLayer extends AbstractLayer {
     private void _removed(Renderable renderable) {
         // Remove the layer as a property change listener of the renderable. This prevents the renderable from keeping a
         // dangling reference to the layer.
-        if (renderable instanceof AVList)
-            ((AVList) renderable).removePropertyChangeListener(this);
+        if (renderable instanceof KV)
+            ((KV) renderable).removePropertyChangeListener(this);
     }
 
     /**
      * Clears the contents of this layer's internal Renderable collection. If this layer's internal collection has been
      * overriden with a call to {@link #set(Iterable)}, this will throw an exception.
      * <p>
-     * If any of the <code>renderables</code> implement {@link AVList}, this stops forwarding their property change
+     * If any of the <code>renderables</code> implement {@link KV}, this stops forwarding their property change
      * events to the layer's property change listeners. Any property change listeners the layer attached to the
      * <code>renderables</code> in {@link #add(Renderable)} or {@link #addAll(Iterable)} are removed.
      *
@@ -216,7 +216,7 @@ public class RenderableLayer extends AbstractLayer {
      * Disposes the contents of this layer's internal Renderable collection, but does not remove any elements from that
      * collection.
      * <p>
-     * If any of layer's internal Renderables implement {@link AVList}, this stops forwarding their property change
+     * If any of layer's internal Renderables implement {@link KV}, this stops forwarding their property change
      * events to the layer's property change listeners. Any property change listeners the layer attached to the
      * <code>renderables</code> in {@link #add(Renderable)} or {@link #addAll(Iterable)} are removed.
      *

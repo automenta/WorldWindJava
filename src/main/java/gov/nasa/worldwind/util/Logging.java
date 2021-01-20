@@ -5,8 +5,7 @@
  */
 package gov.nasa.worldwind.util;
 
-import gov.nasa.worldwind.Configuration;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 
 import java.text.MessageFormat;
 import java.util.*;
@@ -25,7 +24,7 @@ import java.util.logging.*;
  */
 public class Logging {
     protected static final String MESSAGE_BUNDLE_NAME = Logging.class.getPackage().getName() + ".MessageStrings";
-    protected static final int MAX_MESSAGE_REPEAT = Configuration.getIntegerValue(AVKey.MAX_MESSAGE_REPEAT, 10);
+    protected static final int MAX_MESSAGE_REPEAT = Configuration.getIntegerValue(Keys.MAX_MESSAGE_REPEAT, 10);
     static final Locale LOCALE = Locale.getDefault();
 
     private Logging() {
@@ -40,7 +39,7 @@ public class Logging {
         try {
             // The Configuration singleton may not be established yet, so catch the exception that occurs if it's not
             // and use the default logger name.
-            String loggerName = Configuration.getStringValue(AVKey.LOGGER_NAME, Configuration.DEFAULT_LOGGER_NAME);
+            String loggerName = Configuration.getStringValue(Keys.LOGGER_NAME, Configuration.DEFAULT_LOGGER_NAME);
             return Logging.logger(loggerName);
         }
         catch (RuntimeException e) {

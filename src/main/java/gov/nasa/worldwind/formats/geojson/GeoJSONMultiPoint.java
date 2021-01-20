@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.formats.geojson;
 
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.geom.Position;
 
 /**
@@ -13,7 +13,7 @@ import gov.nasa.worldwind.geom.Position;
  * @version $Id: GeoJSONMultiPoint.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 public class GeoJSONMultiPoint extends GeoJSONGeometry {
-    public GeoJSONMultiPoint(AVList fields) {
+    public GeoJSONMultiPoint(KV fields) {
         super(fields);
     }
 

@@ -6,8 +6,8 @@
 
 package gov.nasa.worldwind.examples.kml;
 
-import gov.nasa.worldwind.WorldWindow;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.layers.ogc.kml.*;
 import gov.nasa.worldwind.ui.tree.TreeNode;
@@ -92,7 +92,7 @@ public class KMLApplicationController implements SelectListener, PropertyChangeL
             Object topObject = event.getTopObject();
             if (topObject instanceof TreeNode) {
                 // The KML feature should be attached to the node as the CONTEXT
-                Object context = ((AVList) topObject).get(AVKey.CONTEXT);
+                Object context = ((KV) topObject).get(Keys.CONTEXT);
                 if (context instanceof KMLAbstractFeature) {
                     this.onFeatureSelected((KMLAbstractFeature) context);
                 }
@@ -115,7 +115,7 @@ public class KMLApplicationController implements SelectListener, PropertyChangeL
                 // The KML feature should be attached to the node as the CONTEXT
                 TreeNode treeNode = (TreeNode) topObject;
 
-                Object context = treeNode.get(AVKey.CONTEXT);
+                Object context = treeNode.get(Keys.CONTEXT);
                 if (context instanceof KMLAbstractFeature && this.canSelect((KMLAbstractFeature) context)) {
                     this.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                     this.highlightedNode = treeNode;
@@ -126,7 +126,7 @@ public class KMLApplicationController implements SelectListener, PropertyChangeL
 
     /**
      * Handles property change events sent from <code>KMLNetworkLink</code> objects to the <code>SceneController</code>.
-     * Upon receiving a <code>{@link AVKey#RETRIEVAL_STATE_SUCCESSFUL}</code> event from a
+     * Upon receiving a <code>{@link Keys#RETRIEVAL_STATE_SUCCESSFUL}</code> event from a
      * <code>KMLNetworkLink</code>, this attempts to fly to a <code>KMLAbstractView</code> associated with the link's
      * KML resource.
      * <p>
@@ -141,7 +141,7 @@ public class KMLApplicationController implements SelectListener, PropertyChangeL
      */
     public void propertyChange(PropertyChangeEvent event) {
         try {
-            if (AVKey.RETRIEVAL_STATE_SUCCESSFUL.equals(event.getPropertyName())
+            if (Keys.RETRIEVAL_STATE_SUCCESSFUL.equals(event.getPropertyName())
                 && event.getNewValue() instanceof KMLNetworkLink) {
                 this.onNetworkLinkRefreshed((KMLNetworkLink) event.getNewValue());
             }
@@ -154,7 +154,7 @@ public class KMLApplicationController implements SelectListener, PropertyChangeL
 
     /**
      * Called from <code>propertyChange</code> when a <code>KMLNetworkLink</code> sends a <code>{@link
-     * AVKey#RETRIEVAL_STATE_SUCCESSFUL}</code> property change event. This attempts to fly to
+     * Keys#RETRIEVAL_STATE_SUCCESSFUL}</code> property change event. This attempts to fly to
      * a view associated with the link's KML resource.
      * <p>
      * This does nothing if the <code>networkLink</code> is <code>null</code>.

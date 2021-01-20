@@ -56,19 +56,19 @@ public class WCSCoveragePanel extends JPanel {
     }
 
     protected static Object createComponent(WCS100Capabilities caps, CoverageInfo coverageInfo) {
-        AVList configParams = coverageInfo.params.copy(); // Copy to insulate changes from the caller.
+        KV configParams = coverageInfo.params.copy(); // Copy to insulate changes from the caller.
 
         // Some wcs servers are slow, so increase the timeouts and limits used by WorldWind's retrievers.
-        configParams.set(AVKey.URL_CONNECT_TIMEOUT, 30000);
-        configParams.set(AVKey.URL_READ_TIMEOUT, 30000);
-        configParams.set(AVKey.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT, 60000);
+        configParams.set(Keys.URL_CONNECT_TIMEOUT, 30000);
+        configParams.set(Keys.URL_READ_TIMEOUT, 30000);
+        configParams.set(Keys.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT, 60000);
 
         try {
             String describeCoverageUrlString = caps.getCapability().getGetOperationAddress("DescribeCoverage");
             URI uri = new URI(describeCoverageUrlString);
             WCS100DescribeCoverage coverageDescription = WCS100DescribeCoverage.retrieve(uri, coverageInfo.getName());
             coverageDescription.parse();
-            configParams.set(AVKey.DOCUMENT, coverageDescription);
+            configParams.set(Keys.DOCUMENT, coverageDescription);
         }
         catch (URISyntaxException | XMLStreamException e) {
             e.printStackTrace();
@@ -76,7 +76,7 @@ public class WCSCoveragePanel extends JPanel {
         }
 
         try {
-            Factory factory = (Factory) WorldWind.createConfigurationComponent(AVKey.ELEVATION_MODEL_FACTORY);
+            Factory factory = (Factory) WorldWind.createConfigurationComponent(Keys.ELEVATION_MODEL_FACTORY);
             return factory.createFromConfigSource(caps, configParams);
         }
         catch (Exception e) {
@@ -182,9 +182,9 @@ public class WCSCoveragePanel extends JPanel {
 
         CoverageInfo info = new CoverageInfo();
         info.caps = caps;
-        info.params = new AVListImpl();
-        info.params.set(AVKey.COVERAGE_IDENTIFIERS, coverage.getName());
-        info.params.set(AVKey.DISPLAY_NAME, coverage.getLabel());
+        info.params = new KVMap();
+        info.params.set(Keys.COVERAGE_IDENTIFIERS, coverage.getName());
+        info.params.set(Keys.DISPLAY_NAME, coverage.getLabel());
 
         return info;
     }
@@ -202,7 +202,7 @@ public class WCSCoveragePanel extends JPanel {
             compoundModel.removeElevationModel(model);
         }
 
-        wwd.firePropertyChange(new PropertyChangeEvent(wwd, AVKey.ELEVATION_MODEL, null, compoundModel));
+        wwd.firePropertyChange(new PropertyChangeEvent(wwd, Keys.ELEVATION_MODEL, null, compoundModel));
     }
 
     protected void makeProgressPanel() {
@@ -237,14 +237,14 @@ public class WCSCoveragePanel extends JPanel {
 
     protected static class CoverageInfo {
         protected WCS100Capabilities caps;
-        protected AVList params = new AVListImpl();
+        protected KV params = new KVMap();
 
         protected String getTitle() {
-            return params.getStringValue(AVKey.DISPLAY_NAME);
+            return params.getStringValue(Keys.DISPLAY_NAME);
         }
 
         protected String getName() {
-            return params.getStringValue(AVKey.COVERAGE_IDENTIFIERS);
+            return params.getStringValue(Keys.COVERAGE_IDENTIFIERS);
         }
     }
 

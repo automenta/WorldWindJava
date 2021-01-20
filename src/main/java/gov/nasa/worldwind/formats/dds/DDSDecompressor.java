@@ -6,7 +6,8 @@
 
 package gov.nasa.worldwind.formats.dds;
 
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.Keys;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.data.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.Sector;
@@ -38,13 +39,13 @@ public class DDSDecompressor {
      * @return MipMappedBufferedImageRaster if the DDS source contains mipmaps, otherwise returns a BufferedImageRaster
      * @throws Exception when source or params is null
      */
-    public static DataRaster decompress(Object source, AVList params) throws Exception {
+    public static DataRaster decompress(Object source, KV params) throws Exception {
         return DDSDecompressor.doDecompress(source, params);
     }
 
-    protected static DataRaster doDecompress(Object source, AVList params) throws Exception {
-        if (null == params || !params.hasKey(AVKey.SECTOR)) {
-            String message = Logging.getMessage("generic.MissingRequiredParameter", AVKey.SECTOR);
+    protected static DataRaster doDecompress(Object source, KV params) throws Exception {
+        if (null == params || !params.hasKey(Keys.SECTOR)) {
+            String message = Logging.getMessage("generic.MissingRequiredParameter", Keys.SECTOR);
             Logging.logger().severe(message);
             throw new WWRuntimeException(message);
         }
@@ -115,8 +116,8 @@ public class DDSDecompressor {
                 throw new WWRuntimeException(message);
             }
 
-            Sector sector = (Sector) params.get(AVKey.SECTOR);
-            params.set(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
+            Sector sector = (Sector) params.get(Keys.SECTOR);
+            params.set(Keys.PIXEL_FORMAT, Keys.IMAGE);
 
             if (mipMapCount == 0) {
                 // read max resolution raster

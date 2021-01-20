@@ -3,13 +3,13 @@
  * National Aeronautics and Space Administration.
  * All Rights Reserved.
  */
-package gov.nasa.worldwind.avlist;
+package gov.nasa.worldwind;
 
 /**
  * @author Tom Gaskins
  * @version $Id: AVKey.java 2375 2014-10-10 23:35:05Z tgaskins $
  */
-public interface AVKey // TODO: Eliminate unused constants, if any
+public interface Keys // TODO: Eliminate unused constants, if any
 {
     // NOTE: Keep all keys in alphabetical order except where noted
 
@@ -303,7 +303,7 @@ public interface AVKey // TODO: Eliminate unused constants, if any
      * @deprecated Use <code>{@link #DATA_TYPE} instead.</code>.
      */
     @Deprecated
-    String PIXEL_TYPE = AVKey.DATA_TYPE;
+    String PIXEL_TYPE = Keys.DATA_TYPE;
 
     String PLACENAME_LAYER_CACHE_SIZE = "gov.nasa.worldwind.avkey.PlacenameLayerCacheSize";
     String PLAY = "gov.nasa.worldwind.avkey.Play";

@@ -5,6 +5,7 @@
  */
 package gov.nasa.worldwind.formats.shapefile;
 
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
@@ -111,8 +112,8 @@ public class ShapefileTest
     @Test
     public void testUnsupportedCoordinates() throws Exception
     {
-        AVList params = new AVListImpl();
-        params.set(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_UNKNOWN);
+        KV params = new KVMap();
+        params.set(Keys.COORDINATE_SYSTEM, Keys.COORDINATE_SYSTEM_UNKNOWN);
 
         try
         {

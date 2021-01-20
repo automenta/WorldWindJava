@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.globes;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 
 /**
  * Defines a model of the Earth, using the <a href="http://en.wikipedia.org/wiki/World_Geodetic_System"
@@ -25,7 +25,7 @@ public class Earth extends EllipsoidalGlobe {
 
     public Earth() {
         super(Earth.WGS84_EQUATORIAL_RADIUS, Earth.WGS84_POLAR_RADIUS, Earth.WGS84_ES,
-            EllipsoidalGlobe.makeElevationModel(AVKey.EARTH_ELEVATION_MODEL_CONFIG_FILE,
+            EllipsoidalGlobe.makeElevationModel(Keys.EARTH_ELEVATION_MODEL_CONFIG_FILE,
                 "config/Earth/EarthElevations2.xml"));
     }
 

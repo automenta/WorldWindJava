@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.render.airspaces;
 
-import gov.nasa.worldwind.avlist.AVListImpl;
+import gov.nasa.worldwind.avlist.KVMap;
 import gov.nasa.worldwind.geom.Extent;
 import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.util.Logging;
@@ -14,7 +14,7 @@ import gov.nasa.worldwind.util.Logging;
  * @author dcollins
  * @version $Id: ScreenSizeDetailLevel.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class ScreenSizeDetailLevel extends AVListImpl implements DetailLevel {
+public class ScreenSizeDetailLevel extends KVMap implements DetailLevel {
     private static final double DEFAULT_MIN_SIZE = 40.0;
     private static final double DEFAULT_MAX_SIZE = 700.0;
 

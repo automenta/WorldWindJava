@@ -7,8 +7,7 @@
 package gov.nasa.worldwind.util;
 
 import com.jogamp.common.nio.Buffers;
-import gov.nasa.worldwind.View;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.DrawContext;
@@ -661,7 +660,7 @@ public class WWMath {
      * perpendicular to the (lat, lon) coordinates, and pointing in the direction of "positive elevation".
      *
      * @param locations the locations defining the geographic polygon.
-     * @return {@link AVKey#CLOCKWISE} if the polygon has clockwise winding order, and {@link AVKey#COUNTER_CLOCKWISE}
+     * @return {@link Keys#CLOCKWISE} if the polygon has clockwise winding order, and {@link Keys#COUNTER_CLOCKWISE}
      * otherwise.
      */
     public static String computeWindingOrderOfLocations(Iterable<? extends LatLon> locations) {
@@ -673,7 +672,7 @@ public class WWMath {
 
         Iterator<? extends LatLon> iter = locations.iterator();
         if (!iter.hasNext())
-            return AVKey.COUNTER_CLOCKWISE;
+            return Keys.COUNTER_CLOCKWISE;
 
         if (LatLon.locationsCrossDateLine(locations))
             iter = LatLon.makeDatelineCrossingLocationsPositive(locations).iterator();
@@ -697,7 +696,7 @@ public class WWMath {
             area -= firstLocation.getLongitude().degrees * location.getLatitude().degrees;
         }
 
-        return (area < 0) ? AVKey.CLOCKWISE : AVKey.COUNTER_CLOCKWISE;
+        return (area < 0) ? Keys.CLOCKWISE : Keys.COUNTER_CLOCKWISE;
     }
 
     /**
@@ -717,7 +716,7 @@ public class WWMath {
 
         double area = WWMath.computePolygonAreaFromVertices(points);
 
-        return (area < 0) ? AVKey.CLOCKWISE : AVKey.COUNTER_CLOCKWISE;
+        return (area < 0) ? Keys.CLOCKWISE : Keys.COUNTER_CLOCKWISE;
     }
 
     /**

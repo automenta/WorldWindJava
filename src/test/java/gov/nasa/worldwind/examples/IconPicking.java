@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.EarthFlat;
@@ -27,10 +26,10 @@ import java.awt.*;
 public class IconPicking extends ApplicationTemplate {
     public static void main(String[] args) {
         // Adjust configuration values before instantiation
-        Configuration.setValue(AVKey.GLOBE_CLASS_NAME, EarthFlat.class.getName());
-        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 27.0e6);
-        Configuration.setValue(AVKey.INITIAL_LATITUDE, 0);
-        Configuration.setValue(AVKey.INITIAL_LONGITUDE, 88);
+        Configuration.setValue(Keys.GLOBE_CLASS_NAME, EarthFlat.class.getName());
+        Configuration.setValue(Keys.INITIAL_ALTITUDE, 27.0e6);
+        Configuration.setValue(Keys.INITIAL_LATITUDE, 0);
+        Configuration.setValue(Keys.INITIAL_LONGITUDE, 88);
         ApplicationTemplate.start("WorldWind Icon Picking", AppFrame.class);
     }
 

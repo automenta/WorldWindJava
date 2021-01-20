@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.symbology.milstd1477;
 
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.symbology.AbstractIconRetriever;
 import gov.nasa.worldwind.util.Logging;
 
@@ -28,7 +28,7 @@ public class MilStd1477IconRetriever extends AbstractIconRetriever {
         return code.toLowerCase() + ".png";
     }
 
-    public BufferedImage createIcon(String symbolId, AVList params) {
+    public BufferedImage createIcon(String symbolId, KV params) {
         if (symbolId == null) {
             String msg = Logging.getMessage("nullValue.SymbolCodeIsNull");
             Logging.logger().severe(msg);

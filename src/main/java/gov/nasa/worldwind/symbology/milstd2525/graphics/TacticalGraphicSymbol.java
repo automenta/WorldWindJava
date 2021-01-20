@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.symbology.milstd2525.graphics;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
@@ -180,7 +180,7 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol {
 
         // Configure this tactical point graphic's icon retriever and modifier retriever with either the
         // configuration value or the default value (in that order of precedence).
-        String iconRetrieverPath = Configuration.getStringValue(AVKey.MIL_STD_2525_ICON_RETRIEVER_PATH,
+        String iconRetrieverPath = Configuration.getStringValue(Keys.MIL_STD_2525_ICON_RETRIEVER_PATH,
             MilStd2525Constants.DEFAULT_ICON_RETRIEVER_PATH);
         this.setIconRetriever(new MilStd2525PointGraphicRetriever(iconRetrieverPath));
 
@@ -207,12 +207,12 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol {
     }
 
     @Override
-    protected int getMaxLabelLines(AVList modifiers) {
+    protected int getMaxLabelLines(KV modifiers) {
         return TacticalGraphicSymbol.DEFAULT_LABEL_LINES;
     }
 
     @Override
-    protected void applyImplicitModifiers(AVList modifiers) {
+    protected void applyImplicitModifiers(KV modifiers) {
         String si = this.symbolCode.getStandardIdentity();
 
         // If this symbol represents a hostile entity, and the "hostile/enemy" indicator is enabled, then set the
@@ -264,7 +264,7 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol {
      * @param modifiers Modifiers applied to this graphic.
      */
     @Override
-    protected void layoutTextModifiers(DrawContext dc, AVList modifiers, OrderedSymbol osym) {
+    protected void layoutTextModifiers(DrawContext dc, KV modifiers, OrderedSymbol osym) {
         this.currentLabels.clear();
 
         Font font = this.getActiveAttributes().getTextModifierFont();
@@ -298,7 +298,7 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol {
     }
 
     @Override
-    protected void layoutDynamicModifiers(DrawContext dc, AVList modifiers, OrderedSymbol osym) {
+    protected void layoutDynamicModifiers(DrawContext dc, KV modifiers, OrderedSymbol osym) {
         this.currentLines.clear();
 
         if (!this.isShowGraphicModifiers())

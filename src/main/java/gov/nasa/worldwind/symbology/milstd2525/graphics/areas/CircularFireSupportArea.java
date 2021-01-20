@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.symbology.milstd2525.graphics.areas;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.TacticalGraphicLabel;
@@ -34,7 +34,7 @@ public class CircularFireSupportArea extends AbstractCircularGraphic {
     /**
      * Center text block on label position when the text is left aligned.
      */
-    protected final static Offset LEFT_ALIGN_OFFSET = new Offset(-0.5d, -0.5d, AVKey.FRACTION, AVKey.FRACTION);
+    protected final static Offset LEFT_ALIGN_OFFSET = new Offset(-0.5d, -0.5d, Keys.FRACTION, Keys.FRACTION);
 
     /**
      * Create a new circular area.
@@ -107,7 +107,7 @@ public class CircularFireSupportArea extends AbstractCircularGraphic {
             mainLabel.setTextAlign(this.getMainLabelTextAlign());
 
             if (this.isFilled()) {
-                mainLabel.setEffect(AVKey.TEXT_EFFECT_NONE);
+                mainLabel.setEffect(Keys.TEXT_EFFECT_NONE);
                 mainLabel.setDrawInterior(true);
             }
         }
@@ -117,7 +117,7 @@ public class CircularFireSupportArea extends AbstractCircularGraphic {
 
             if (!WWUtil.isEmpty(timeText)) {
                 TacticalGraphicLabel timeLabel = this.addLabel(timeText);
-                timeLabel.setTextAlign(AVKey.RIGHT);
+                timeLabel.setTextAlign(Keys.RIGHT);
             }
         }
     }
@@ -131,7 +131,7 @@ public class CircularFireSupportArea extends AbstractCircularGraphic {
         boolean isACA = TacGrpSidc.FSUPP_ARS_C2ARS_ACA_CIRCLR.equalsIgnoreCase(this.maskedSymbolCode);
 
         // Airspace Coordination Area labels are left aligned. All others are center aligned.
-        return isACA ? AVKey.LEFT : AVKey.CENTER;
+        return isACA ? Keys.LEFT : Keys.CENTER;
     }
 
     /**

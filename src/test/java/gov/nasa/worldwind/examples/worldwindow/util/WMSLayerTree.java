@@ -6,6 +6,7 @@
 
 package gov.nasa.worldwind.examples.worldwindow.util;
 
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.examples.worldwindow.core.Controller;
 import gov.nasa.worldwind.layers.TiledImageLayer;
@@ -24,7 +25,7 @@ public class WMSLayerTree extends LayerTree {
         super(controller);
     }
 
-    public void createLayers(Object infoItem, AVList commonLayerParams) {
+    public void createLayers(Object infoItem, KV commonLayerParams) {
         if (infoItem instanceof WMSCapabilities) {
             WMSCapabilities capsDoc = (WMSCapabilities) infoItem;
 
@@ -44,7 +45,7 @@ public class WMSLayerTree extends LayerTree {
         }
     }
 
-    public LayerTree createSubTree(WMSCapabilities capsDoc, WMSLayerCapabilities layerCaps, AVList commonLayerParams) {
+    public LayerTree createSubTree(WMSCapabilities capsDoc, WMSLayerCapabilities layerCaps, KV commonLayerParams) {
         WMSLayerTree tree = new WMSLayerTree(this.controller);
 
         // Determine the tree's display name.
@@ -84,11 +85,11 @@ public class WMSLayerTree extends LayerTree {
     }
 
     protected static TiledImageLayer createImageLayer(WMSCapabilities capsDoc, WMSLayerCapabilities layerCaps,
-        AVList commonLayerParams) {
-        AVList layerParams = new AVListImpl();
+        KV commonLayerParams) {
+        KV layerParams = new KVMap();
         if (commonLayerParams != null)
             layerParams.setValues(commonLayerParams);
-        layerParams.set(AVKey.LAYER_NAMES, layerCaps.getName());
+        layerParams.set(Keys.LAYER_NAMES, layerCaps.getName());
 
         return new WMSTiledImageLayer(capsDoc, layerParams);
     }

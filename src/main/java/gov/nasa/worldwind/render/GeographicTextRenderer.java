@@ -8,8 +8,7 @@ package gov.nasa.worldwind.render;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.gl2.GLUgl2;
-import gov.nasa.worldwind.View;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe2D;
 import gov.nasa.worldwind.terrain.SectorGeometryList;
@@ -33,7 +32,7 @@ public class GeographicTextRenderer {
     private TextRenderer lastTextRenderer;
     private boolean cullText;
     private int cullTextMargin;
-    private String effect = AVKey.TEXT_EFFECT_SHADOW;
+    private String effect = Keys.TEXT_EFFECT_SHADOW;
 
     // Distance scaling and fading
     private double distanceMinScale = 1.0d;
@@ -146,8 +145,8 @@ public class GeographicTextRenderer {
     }
 
     /**
-     * Get the effect used to decorate the text. Can be one of {@link AVKey#TEXT_EFFECT_SHADOW} (default), {@link
-     * AVKey#TEXT_EFFECT_OUTLINE} or {@link AVKey#TEXT_EFFECT_NONE}.
+     * Get the effect used to decorate the text. Can be one of {@link Keys#TEXT_EFFECT_SHADOW} (default), {@link
+     * Keys#TEXT_EFFECT_OUTLINE} or {@link Keys#TEXT_EFFECT_NONE}.
      *
      * @return the effect used for text rendering.
      */
@@ -156,8 +155,8 @@ public class GeographicTextRenderer {
     }
 
     /**
-     * Set the effect used to decorate the text. Can be one of {@link AVKey#TEXT_EFFECT_SHADOW} (default), {@link
-     * AVKey#TEXT_EFFECT_OUTLINE} or {@link AVKey#TEXT_EFFECT_NONE}.
+     * Set the effect used to decorate the text. Can be one of {@link Keys#TEXT_EFFECT_SHADOW} (default), {@link
+     * Keys#TEXT_EFFECT_OUTLINE} or {@link Keys#TEXT_EFFECT_NONE}.
      *
      * @param effect the effect to use for text rendering.
      */
@@ -538,9 +537,9 @@ public class GeographicTextRenderer {
             if (background != null) {
                 background = GeographicTextRenderer.applyOpacity(background, opacity);
                 textRenderer.setColor(background);
-                if (this.effect.equals(AVKey.TEXT_EFFECT_SHADOW)) {
+                if (this.effect.equals(Keys.TEXT_EFFECT_SHADOW)) {
                     textRenderer.draw3D(charSequence, drawPoint.x + 1, drawPoint.y - 1, 0, 1);
-                } else if (this.effect.equals(AVKey.TEXT_EFFECT_OUTLINE)) {
+                } else if (this.effect.equals(Keys.TEXT_EFFECT_OUTLINE)) {
                     textRenderer.draw3D(charSequence, drawPoint.x + 1, drawPoint.y - 1, 0, 1);
                     textRenderer.draw3D(charSequence, drawPoint.x + 1, drawPoint.y + 1, 0, 1);
                     textRenderer.draw3D(charSequence, drawPoint.x - 1, drawPoint.y - 1, 0, 1);

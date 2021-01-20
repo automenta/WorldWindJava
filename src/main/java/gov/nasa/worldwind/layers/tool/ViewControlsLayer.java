@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.layers.tool;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
@@ -61,8 +61,8 @@ public class ViewControlsLayer extends RenderableLayer {
     protected ScreenAnnotation controlVeDown;
     protected ScreenAnnotation currentControl;
 
-    protected String position = AVKey.SOUTHWEST;
-    protected String layout = AVKey.HORIZONTAL;
+    protected String position = Keys.SOUTHWEST;
+    protected String layout = Keys.HORIZONTAL;
     protected Vec4 locationCenter;
     protected Vec4 locationOffset;
     protected double scale = 1;
@@ -83,26 +83,26 @@ public class ViewControlsLayer extends RenderableLayer {
     /**
      * Get a control image source.
      *
-     * @param control the control type. Can be one of {@link AVKey#VIEW_PAN}, {@link AVKey#VIEW_LOOK}, {@link
-     *                AVKey#VIEW_HEADING_LEFT}, {@link AVKey#VIEW_HEADING_RIGHT}, {@link AVKey#VIEW_ZOOM_IN}, {@link
-     *                AVKey#VIEW_ZOOM_OUT}, {@link AVKey#VIEW_PITCH_UP}, {@link AVKey#VIEW_PITCH_DOWN}, {@link
-     *                AVKey#VIEW_FOV_NARROW} or {@link AVKey#VIEW_FOV_WIDE}.
+     * @param control the control type. Can be one of {@link Keys#VIEW_PAN}, {@link Keys#VIEW_LOOK}, {@link
+     *                Keys#VIEW_HEADING_LEFT}, {@link Keys#VIEW_HEADING_RIGHT}, {@link Keys#VIEW_ZOOM_IN}, {@link
+     *                Keys#VIEW_ZOOM_OUT}, {@link Keys#VIEW_PITCH_UP}, {@link Keys#VIEW_PITCH_DOWN}, {@link
+     *                Keys#VIEW_FOV_NARROW} or {@link Keys#VIEW_FOV_WIDE}.
      * @return the image source associated with the given control type.
      */
     protected static Object getImageSource(String control) {
         return switch (control) {
-            case AVKey.VIEW_PAN -> ViewControlsLayer.IMAGE_PAN;
-            case AVKey.VIEW_LOOK -> ViewControlsLayer.IMAGE_LOOK;
-            case AVKey.VIEW_HEADING_LEFT -> ViewControlsLayer.IMAGE_HEADING_LEFT;
-            case AVKey.VIEW_HEADING_RIGHT -> ViewControlsLayer.IMAGE_HEADING_RIGHT;
-            case AVKey.VIEW_ZOOM_IN -> ViewControlsLayer.IMAGE_ZOOM_IN;
-            case AVKey.VIEW_ZOOM_OUT -> ViewControlsLayer.IMAGE_ZOOM_OUT;
-            case AVKey.VIEW_PITCH_UP -> ViewControlsLayer.IMAGE_PITCH_UP;
-            case AVKey.VIEW_PITCH_DOWN -> ViewControlsLayer.IMAGE_PITCH_DOWN;
-            case AVKey.VIEW_FOV_WIDE -> ViewControlsLayer.IMAGE_FOV_WIDE;
-            case AVKey.VIEW_FOV_NARROW -> ViewControlsLayer.IMAGE_FOV_NARROW;
-            case AVKey.VERTICAL_EXAGGERATION_UP -> ViewControlsLayer.IMAGE_VE_UP;
-            case AVKey.VERTICAL_EXAGGERATION_DOWN -> ViewControlsLayer.IMAGE_VE_DOWN;
+            case Keys.VIEW_PAN -> ViewControlsLayer.IMAGE_PAN;
+            case Keys.VIEW_LOOK -> ViewControlsLayer.IMAGE_LOOK;
+            case Keys.VIEW_HEADING_LEFT -> ViewControlsLayer.IMAGE_HEADING_LEFT;
+            case Keys.VIEW_HEADING_RIGHT -> ViewControlsLayer.IMAGE_HEADING_RIGHT;
+            case Keys.VIEW_ZOOM_IN -> ViewControlsLayer.IMAGE_ZOOM_IN;
+            case Keys.VIEW_ZOOM_OUT -> ViewControlsLayer.IMAGE_ZOOM_OUT;
+            case Keys.VIEW_PITCH_UP -> ViewControlsLayer.IMAGE_PITCH_UP;
+            case Keys.VIEW_PITCH_DOWN -> ViewControlsLayer.IMAGE_PITCH_DOWN;
+            case Keys.VIEW_FOV_WIDE -> ViewControlsLayer.IMAGE_FOV_WIDE;
+            case Keys.VIEW_FOV_NARROW -> ViewControlsLayer.IMAGE_FOV_NARROW;
+            case Keys.VERTICAL_EXAGGERATION_UP -> ViewControlsLayer.IMAGE_VE_UP;
+            case Keys.VERTICAL_EXAGGERATION_DOWN -> ViewControlsLayer.IMAGE_VE_DOWN;
             default -> null;
         };
     }
@@ -169,8 +169,8 @@ public class ViewControlsLayer extends RenderableLayer {
     }
 
     /**
-     * Sets the relative viewport location to display the view controls. Can be one of {@link AVKey#NORTHEAST}, {@link
-     * AVKey#NORTHWEST}, {@link AVKey#SOUTHEAST}, or {@link AVKey#SOUTHWEST} (the default). These indicate the corner of
+     * Sets the relative viewport location to display the view controls. Can be one of {@link Keys#NORTHEAST}, {@link
+     * Keys#NORTHWEST}, {@link Keys#SOUTHEAST}, or {@link Keys#SOUTHWEST} (the default). These indicate the corner of
      * the viewport to place view controls.
      *
      * @param position the desired view controls position, in screen coordinates.
@@ -186,7 +186,7 @@ public class ViewControlsLayer extends RenderableLayer {
     }
 
     /**
-     * Returns the current layout. Can be one of {@link AVKey#HORIZONTAL} or {@link AVKey#VERTICAL}.
+     * Returns the current layout. Can be one of {@link Keys#HORIZONTAL} or {@link Keys#VERTICAL}.
      *
      * @return the current layout.
      */
@@ -195,7 +195,7 @@ public class ViewControlsLayer extends RenderableLayer {
     }
 
     /**
-     * Sets the desired layout. Can be one of {@link AVKey#HORIZONTAL} or {@link AVKey#VERTICAL}.
+     * Sets the desired layout. Can be one of {@link Keys#HORIZONTAL} or {@link Keys#VERTICAL}.
      *
      * @param layout the desired layout.
      */
@@ -340,10 +340,10 @@ public class ViewControlsLayer extends RenderableLayer {
      * Get the control type associated with the given object or null if unknown.
      *
      * @param control the control object
-     * @return the control type. Can be one of {@link AVKey#VIEW_PAN}, {@link AVKey#VIEW_LOOK}, {@link
-     * AVKey#VIEW_HEADING_LEFT}, {@link AVKey#VIEW_HEADING_RIGHT}, {@link AVKey#VIEW_ZOOM_IN}, {@link
-     * AVKey#VIEW_ZOOM_OUT}, {@link AVKey#VIEW_PITCH_UP}, {@link AVKey#VIEW_PITCH_DOWN}, {@link AVKey#VIEW_FOV_NARROW}
-     * or {@link AVKey#VIEW_FOV_WIDE}. <p> Returns null if the object is not a view control associated with this layer.
+     * @return the control type. Can be one of {@link Keys#VIEW_PAN}, {@link Keys#VIEW_LOOK}, {@link
+     * Keys#VIEW_HEADING_LEFT}, {@link Keys#VIEW_HEADING_RIGHT}, {@link Keys#VIEW_ZOOM_IN}, {@link
+     * Keys#VIEW_ZOOM_OUT}, {@link Keys#VIEW_PITCH_UP}, {@link Keys#VIEW_PITCH_DOWN}, {@link Keys#VIEW_FOV_NARROW}
+     * or {@link Keys#VIEW_FOV_WIDE}. <p> Returns null if the object is not a view control associated with this layer.
      * </p>
      */
     public String getControlType(Object control) {
@@ -351,29 +351,29 @@ public class ViewControlsLayer extends RenderableLayer {
             return null;
 
         if (showPanControls && controlPan.equals(control))
-            return AVKey.VIEW_PAN;
+            return Keys.VIEW_PAN;
         else if (showLookControls && controlLook.equals(control))
-            return AVKey.VIEW_LOOK;
+            return Keys.VIEW_LOOK;
         else if (showHeadingControls && controlHeadingLeft.equals(control))
-            return AVKey.VIEW_HEADING_LEFT;
+            return Keys.VIEW_HEADING_LEFT;
         else if (showHeadingControls && controlHeadingRight.equals(control))
-            return AVKey.VIEW_HEADING_RIGHT;
+            return Keys.VIEW_HEADING_RIGHT;
         else if (showZoomControls && controlZoomIn.equals(control))
-            return AVKey.VIEW_ZOOM_IN;
+            return Keys.VIEW_ZOOM_IN;
         else if (showZoomControls && controlZoomOut.equals(control))
-            return AVKey.VIEW_ZOOM_OUT;
+            return Keys.VIEW_ZOOM_OUT;
         else if (showPitchControls && controlPitchUp.equals(control))
-            return AVKey.VIEW_PITCH_UP;
+            return Keys.VIEW_PITCH_UP;
         else if (showPitchControls && controlPitchDown.equals(control))
-            return AVKey.VIEW_PITCH_DOWN;
+            return Keys.VIEW_PITCH_DOWN;
         else if (showFovControls && controlFovNarrow.equals(control))
-            return AVKey.VIEW_FOV_NARROW;
+            return Keys.VIEW_FOV_NARROW;
         else if (showFovControls && controlFovWide.equals(control))
-            return AVKey.VIEW_FOV_WIDE;
+            return Keys.VIEW_FOV_WIDE;
         else if (showVeControls && controlVeUp.equals(control))
-            return AVKey.VERTICAL_EXAGGERATION_UP;
+            return Keys.VERTICAL_EXAGGERATION_UP;
         else if (showVeControls && controlVeDown.equals(control))
-            return AVKey.VERTICAL_EXAGGERATION_DOWN;
+            return Keys.VERTICAL_EXAGGERATION_DOWN;
 
         return null;
     }
@@ -431,7 +431,7 @@ public class ViewControlsLayer extends RenderableLayer {
 
         // Setup user interface - common default attributes
         AnnotationAttributes ca = new AnnotationAttributes();
-        ca.setAdjustWidthToText(AVKey.SIZE_FIXED);
+        ca.setAdjustWidthToText(Keys.SIZE_FIXED);
         ca.setInsets(new Insets(0, 0, 0, 0));
         ca.setBorderWidth(0);
         ca.setCornerRadius(0);
@@ -445,72 +445,72 @@ public class ViewControlsLayer extends RenderableLayer {
         if (this.showPanControls) {
             // Pan
             controlPan = new ScreenAnnotation(NOTEXT, ORIGIN, ca);
-            controlPan.set(AVKey.VIEW_OPERATION, AVKey.VIEW_PAN);
-            controlPan.getAttributes().setImageSource(ViewControlsLayer.getImageSource(AVKey.VIEW_PAN));
+            controlPan.set(Keys.VIEW_OPERATION, Keys.VIEW_PAN);
+            controlPan.getAttributes().setImageSource(ViewControlsLayer.getImageSource(Keys.VIEW_PAN));
             controlPan.getAttributes().setSize(new Dimension(panSize, panSize));
             this.add(controlPan);
         }
         if (this.showLookControls) {
             // Look
             controlLook = new ScreenAnnotation(NOTEXT, ORIGIN, ca);
-            controlLook.set(AVKey.VIEW_OPERATION, AVKey.VIEW_LOOK);
-            controlLook.getAttributes().setImageSource(ViewControlsLayer.getImageSource(AVKey.VIEW_LOOK));
+            controlLook.set(Keys.VIEW_OPERATION, Keys.VIEW_LOOK);
+            controlLook.getAttributes().setImageSource(ViewControlsLayer.getImageSource(Keys.VIEW_LOOK));
             controlLook.getAttributes().setSize(new Dimension(panSize, panSize));
             this.add(controlLook);
         }
         if (this.showZoomControls) {
             // Zoom
             controlZoomIn = new ScreenAnnotation(NOTEXT, ORIGIN, ca);
-            controlZoomIn.set(AVKey.VIEW_OPERATION, AVKey.VIEW_ZOOM_IN);
-            controlZoomIn.getAttributes().setImageSource(ViewControlsLayer.getImageSource(AVKey.VIEW_ZOOM_IN));
+            controlZoomIn.set(Keys.VIEW_OPERATION, Keys.VIEW_ZOOM_IN);
+            controlZoomIn.getAttributes().setImageSource(ViewControlsLayer.getImageSource(Keys.VIEW_ZOOM_IN));
             this.add(controlZoomIn);
             controlZoomOut = new ScreenAnnotation(NOTEXT, ORIGIN, ca);
-            controlZoomOut.set(AVKey.VIEW_OPERATION, AVKey.VIEW_ZOOM_OUT);
-            controlZoomOut.getAttributes().setImageSource(ViewControlsLayer.getImageSource(AVKey.VIEW_ZOOM_OUT));
+            controlZoomOut.set(Keys.VIEW_OPERATION, Keys.VIEW_ZOOM_OUT);
+            controlZoomOut.getAttributes().setImageSource(ViewControlsLayer.getImageSource(Keys.VIEW_ZOOM_OUT));
             this.add(controlZoomOut);
         }
         if (this.showHeadingControls) {
             // Heading
             controlHeadingLeft = new ScreenAnnotation(NOTEXT, ORIGIN, ca);
-            controlHeadingLeft.set(AVKey.VIEW_OPERATION, AVKey.VIEW_HEADING_LEFT);
-            controlHeadingLeft.getAttributes().setImageSource(ViewControlsLayer.getImageSource(AVKey.VIEW_HEADING_LEFT));
+            controlHeadingLeft.set(Keys.VIEW_OPERATION, Keys.VIEW_HEADING_LEFT);
+            controlHeadingLeft.getAttributes().setImageSource(ViewControlsLayer.getImageSource(Keys.VIEW_HEADING_LEFT));
             this.add(controlHeadingLeft);
             controlHeadingRight = new ScreenAnnotation(NOTEXT, ORIGIN, ca);
-            controlHeadingRight.set(AVKey.VIEW_OPERATION, AVKey.VIEW_HEADING_RIGHT);
-            controlHeadingRight.getAttributes().setImageSource(ViewControlsLayer.getImageSource(AVKey.VIEW_HEADING_RIGHT));
+            controlHeadingRight.set(Keys.VIEW_OPERATION, Keys.VIEW_HEADING_RIGHT);
+            controlHeadingRight.getAttributes().setImageSource(ViewControlsLayer.getImageSource(Keys.VIEW_HEADING_RIGHT));
             this.add(controlHeadingRight);
         }
         if (this.showPitchControls) {
             // Pitch
             controlPitchUp = new ScreenAnnotation(NOTEXT, ORIGIN, ca);
-            controlPitchUp.set(AVKey.VIEW_OPERATION, AVKey.VIEW_PITCH_UP);
-            controlPitchUp.getAttributes().setImageSource(ViewControlsLayer.getImageSource(AVKey.VIEW_PITCH_UP));
+            controlPitchUp.set(Keys.VIEW_OPERATION, Keys.VIEW_PITCH_UP);
+            controlPitchUp.getAttributes().setImageSource(ViewControlsLayer.getImageSource(Keys.VIEW_PITCH_UP));
             this.add(controlPitchUp);
             controlPitchDown = new ScreenAnnotation(NOTEXT, ORIGIN, ca);
-            controlPitchDown.set(AVKey.VIEW_OPERATION, AVKey.VIEW_PITCH_DOWN);
-            controlPitchDown.getAttributes().setImageSource(ViewControlsLayer.getImageSource(AVKey.VIEW_PITCH_DOWN));
+            controlPitchDown.set(Keys.VIEW_OPERATION, Keys.VIEW_PITCH_DOWN);
+            controlPitchDown.getAttributes().setImageSource(ViewControlsLayer.getImageSource(Keys.VIEW_PITCH_DOWN));
             this.add(controlPitchDown);
         }
         if (this.showFovControls) {
             // Field of view FOV
             controlFovNarrow = new ScreenAnnotation(NOTEXT, ORIGIN, ca);
-            controlFovNarrow.set(AVKey.VIEW_OPERATION, AVKey.VIEW_FOV_NARROW);
-            controlFovNarrow.getAttributes().setImageSource(ViewControlsLayer.getImageSource(AVKey.VIEW_FOV_NARROW));
+            controlFovNarrow.set(Keys.VIEW_OPERATION, Keys.VIEW_FOV_NARROW);
+            controlFovNarrow.getAttributes().setImageSource(ViewControlsLayer.getImageSource(Keys.VIEW_FOV_NARROW));
             this.add(controlFovNarrow);
             controlFovWide = new ScreenAnnotation(NOTEXT, ORIGIN, ca);
-            controlFovWide.set(AVKey.VIEW_OPERATION, AVKey.VIEW_FOV_WIDE);
-            controlFovWide.getAttributes().setImageSource(ViewControlsLayer.getImageSource(AVKey.VIEW_FOV_WIDE));
+            controlFovWide.set(Keys.VIEW_OPERATION, Keys.VIEW_FOV_WIDE);
+            controlFovWide.getAttributes().setImageSource(ViewControlsLayer.getImageSource(Keys.VIEW_FOV_WIDE));
             this.add(controlFovWide);
         }
         if (this.showVeControls) {
             // Vertical Exaggeration
             controlVeUp = new ScreenAnnotation(NOTEXT, ORIGIN, ca);
-            controlVeUp.set(AVKey.VIEW_OPERATION, AVKey.VERTICAL_EXAGGERATION_UP);
-            controlVeUp.getAttributes().setImageSource(ViewControlsLayer.getImageSource(AVKey.VERTICAL_EXAGGERATION_UP));
+            controlVeUp.set(Keys.VIEW_OPERATION, Keys.VERTICAL_EXAGGERATION_UP);
+            controlVeUp.getAttributes().setImageSource(ViewControlsLayer.getImageSource(Keys.VERTICAL_EXAGGERATION_UP));
             this.add(controlVeUp);
             controlVeDown = new ScreenAnnotation(NOTEXT, ORIGIN, ca);
-            controlVeDown.set(AVKey.VIEW_OPERATION, AVKey.VERTICAL_EXAGGERATION_DOWN);
-            controlVeDown.getAttributes().setImageSource(ViewControlsLayer.getImageSource(AVKey.VERTICAL_EXAGGERATION_DOWN));
+            controlVeDown.set(Keys.VIEW_OPERATION, Keys.VERTICAL_EXAGGERATION_DOWN);
+            controlVeDown.getAttributes().setImageSource(ViewControlsLayer.getImageSource(Keys.VERTICAL_EXAGGERATION_DOWN));
             this.add(controlVeDown);
         }
 
@@ -522,7 +522,7 @@ public class ViewControlsLayer extends RenderableLayer {
 
     // Set controls positions according to layout and viewport dimension
     protected void updatePositions(DrawContext dc) {
-        boolean horizontalLayout = this.layout.equals(AVKey.HORIZONTAL);
+        boolean horizontalLayout = this.layout.equals(Keys.HORIZONTAL);
 
         // horizontal layout: pan button + look button beside 2 rows of 4 buttons
         int width = (showPanControls ? panSize : 0) +
@@ -631,16 +631,16 @@ public class ViewControlsLayer extends RenderableLayer {
         if (this.locationCenter != null) {
             x = this.locationCenter.x - controls.width / 2.0;
             y = this.locationCenter.y - controls.height / 2.0;
-        } else if (this.position.equals(AVKey.NORTHEAST)) {
+        } else if (this.position.equals(Keys.NORTHEAST)) {
             x = viewport.getWidth() - controls.width - this.borderWidth;
             y = viewport.getHeight() - controls.height - this.borderWidth;
-        } else if (this.position.equals(AVKey.SOUTHEAST)) {
+        } else if (this.position.equals(Keys.SOUTHEAST)) {
             x = viewport.getWidth() - controls.width - this.borderWidth;
             y = 0.0d + this.borderWidth;
-        } else if (this.position.equals(AVKey.NORTHWEST)) {
+        } else if (this.position.equals(Keys.NORTHWEST)) {
             x = 0.0d + this.borderWidth;
             y = viewport.getHeight() - controls.height - this.borderWidth;
-        } else if (this.position.equals(AVKey.SOUTHWEST)) {
+        } else if (this.position.equals(Keys.SOUTHWEST)) {
             x = 0.0d + this.borderWidth;
             y = 0.0d + this.borderWidth;
         } else // use North East as default
@@ -928,10 +928,10 @@ public class ViewControlsLayer extends RenderableLayer {
                 return;
 
             if (event.getTopObject() == null || event.getTopPickedObject().getParentLayer() != this.getParentLayer()
-                || !(event.getTopObject() instanceof AVList))
+                || !(event.getTopObject() instanceof KV))
                 return;
 
-            String controlType = ((AVList) event.getTopObject()).getStringValue(AVKey.VIEW_OPERATION);
+            String controlType = ((KV) event.getTopObject()).getStringValue(Keys.VIEW_OPERATION);
             if (controlType == null)
                 return;
 
@@ -951,8 +951,8 @@ public class ViewControlsLayer extends RenderableLayer {
                 this.viewControlsLayer.highlight(selectedObject);
                 this.wwd.redraw();
             } else if (event.getEventAction().equals(SelectEvent.LEFT_PRESS) ||
-                (event.getEventAction().equals(SelectEvent.DRAG) && controlType.equals(AVKey.VIEW_PAN)) ||
-                (event.getEventAction().equals(SelectEvent.DRAG) && controlType.equals(AVKey.VIEW_LOOK))) {
+                (event.getEventAction().equals(SelectEvent.DRAG) && controlType.equals(Keys.VIEW_PAN)) ||
+                (event.getEventAction().equals(SelectEvent.DRAG) && controlType.equals(Keys.VIEW_LOOK))) {
                 // Handle left press on controls
                 this.pressedControl = selectedObject;
                 this.pressedControlType = controlType;
@@ -971,7 +971,7 @@ public class ViewControlsLayer extends RenderableLayer {
 
                 this.pressedControl = null;
                 resetOrbitView(view);
-                view.firePropertyChange(AVKey.VIEW, null, view);
+                view.firePropertyChange(Keys.VIEW, null, view);
             }
 
             // Keep pressed control highlighted - overrides rollover non currently pressed controls
@@ -1002,7 +1002,7 @@ public class ViewControlsLayer extends RenderableLayer {
             view.stopMovement();
 
             switch (controlType) {
-                case AVKey.VIEW_PAN: {
+                case Keys.VIEW_PAN: {
                     resetOrbitView(view);
                     // Go some distance in the control mouse direction
                     Angle heading = computePanHeading(view, control);
@@ -1016,7 +1016,7 @@ public class ViewControlsLayer extends RenderableLayer {
                     view.setCenterPosition(new Position(newViewCenter, view.getCenterPosition().getElevation()));
                     break;
                 }
-                case AVKey.VIEW_LOOK: {
+                case Keys.VIEW_LOOK: {
                     setupFirstPersonView(view);
                     Angle heading = computeLookHeading(view, control, headingStep);
                     Angle pitch = computeLookPitch(view, control, pitchStep);
@@ -1032,52 +1032,52 @@ public class ViewControlsLayer extends RenderableLayer {
                     }
                     break;
                 }
-                case AVKey.VIEW_ZOOM_IN:
+                case Keys.VIEW_ZOOM_IN:
                     resetOrbitView(view);
                     view.setZoom(ViewControlsSelectListener.computeNewZoom(view, -zoomStep));
                     break;
-                case AVKey.VIEW_ZOOM_OUT:
+                case Keys.VIEW_ZOOM_OUT:
                     resetOrbitView(view);
                     view.setZoom(ViewControlsSelectListener.computeNewZoom(view, zoomStep));
                     break;
-                case AVKey.VIEW_HEADING_LEFT:
+                case Keys.VIEW_HEADING_LEFT:
                     resetOrbitView(view);
                     view.setHeading(view.getHeading().addDegrees(headingStep));
                     break;
-                case AVKey.VIEW_HEADING_RIGHT:
+                case Keys.VIEW_HEADING_RIGHT:
                     resetOrbitView(view);
                     view.setHeading(view.getHeading().addDegrees(-headingStep));
                     break;
-                case AVKey.VIEW_PITCH_UP:
+                case Keys.VIEW_PITCH_UP:
                     resetOrbitView(view);
                     if (view.getPitch().degrees >= pitchStep)
                         view.setPitch(view.getPitch().addDegrees(-pitchStep));
                     break;
-                case AVKey.VIEW_PITCH_DOWN:
+                case Keys.VIEW_PITCH_DOWN:
                     resetOrbitView(view);
                     if (view.getPitch().degrees <= 90 - pitchStep)
                         view.setPitch(view.getPitch().addDegrees(pitchStep));
                     break;
-                case AVKey.VIEW_FOV_NARROW:
+                case Keys.VIEW_FOV_NARROW:
                     if (view.getFieldOfView().degrees / fovStep >= 4)
                         view.setFieldOfView(view.getFieldOfView().divide(fovStep));
                     break;
-                case AVKey.VIEW_FOV_WIDE:
+                case Keys.VIEW_FOV_WIDE:
                     if (view.getFieldOfView().degrees * fovStep < 120)
                         view.setFieldOfView(view.getFieldOfView().multiply(fovStep));
                     break;
-                case AVKey.VERTICAL_EXAGGERATION_UP: {
+                case Keys.VERTICAL_EXAGGERATION_UP: {
                     SceneController sc = this.wwd.sceneControl();
                     sc.setVerticalExaggeration(sc.getVerticalExaggeration() + this.veStep);
                     break;
                 }
-                case AVKey.VERTICAL_EXAGGERATION_DOWN: {
+                case Keys.VERTICAL_EXAGGERATION_DOWN: {
                     SceneController sc = this.wwd.sceneControl();
                     sc.setVerticalExaggeration(Math.max(1.0d, sc.getVerticalExaggeration() - this.veStep));
                     break;
                 }
             }
-            view.firePropertyChange(AVKey.VIEW, null, view);
+            view.firePropertyChange(Keys.VIEW, null, view);
         }
 
         protected Angle computePanHeading(View view, ScreenAnnotation control) {

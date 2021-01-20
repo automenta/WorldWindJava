@@ -38,7 +38,7 @@ class RPFGenerator {
     private final int smallImageSize;
     private final int preloadRes;
 
-    public RPFGenerator(AVList params) {
+    public RPFGenerator(KV params) {
         if (params == null) {
             String message = Logging.getMessage("nullValue.AVListIsNull");
             Logging.logger().severe(message);
@@ -56,7 +56,7 @@ class RPFGenerator {
         this.preloadRes = (Integer) params.get(RPFGenerator.WAVELET_PRELOAD_SIZE);
     }
 
-    private static AVList initParams(AVList params) {
+    private static KV initParams(KV params) {
         if (params == null) {
             String message = Logging.getMessage("nullValue.AVListIsNull");
             Logging.logger().severe(message);
@@ -187,7 +187,7 @@ class RPFGenerator {
         public RPFServiceInstance() {
         }
 
-        public BufferedImage serviceRequest(AVList params) throws IOException {
+        public BufferedImage serviceRequest(KV params) throws IOException {
             if (params == null) {
                 String message = Logging.getMessage("nullValue.AVListIsNull");
                 Logging.logger().severe(message);
@@ -302,7 +302,7 @@ class RPFGenerator {
                 throw new IllegalArgumentException(message);
             }
 
-            AVList params = new AVListImpl();
+            KV params = new KVMap();
             // Extract query parameters from the URL, placing them in the AVList.
             String query = url.getQuery();
             if (query != null) {
@@ -325,7 +325,7 @@ class RPFGenerator {
          * @param params the list of parameters to validate.
          * @return null if valid, otherwise a <code>String</code> containing a description of why it's invalid.
          */
-        private String validate(AVList params) {
+        private String validate(KV params) {
             StringBuilder sb = new StringBuilder();
 
             Object o = params.get(RPFServiceInstance.BBOX);
@@ -346,7 +346,7 @@ class RPFGenerator {
             return "Inavlid RPFGenerator service request fields: " + sb;
         }
 
-        private AVList initParams(AVList params) {
+        private KV initParams(KV params) {
             String s = params.getStringValue(RPFServiceInstance.BBOX);
             if (s != null) {
                 String[] values = s.split(",");

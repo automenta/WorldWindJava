@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.render;
 
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.util.TextDecoder;
 
 import java.awt.*;
@@ -18,7 +18,7 @@ import java.awt.*;
  * @version $Id: Balloon.java 1171 2013-02-11 21:45:02Z dcollins $
  * @see BalloonAttributes
  */
-public interface Balloon extends Renderable, Highlightable, AVList {
+public interface Balloon extends Renderable, Highlightable, KV {
     /**
      * Is the balloon always on top?
      *

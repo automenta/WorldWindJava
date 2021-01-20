@@ -7,7 +7,6 @@
 package gov.nasa.worldwind.examples.sar;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.examples.sar.render.*;
 import gov.nasa.worldwind.geom.*;
@@ -71,7 +70,7 @@ public class AnalysisPanel extends JPanel implements Restorable {
                 if (getTrackController().isExtending() && trackViewPanel.isFreeViewMode())
                     gotoTrackEnd();
             }
-            else if (propertyChangeEvent.getPropertyName() == AVKey.ELEVATION_MODEL
+            else if (propertyChangeEvent.getPropertyName() == Keys.ELEVATION_MODEL
                 && trackViewPanel.isExamineViewMode() && !wwd.view().isAnimating()) {
                 // When the elevation model changes, and the view is examining the terrain beneath the track
                 // (but has not active state iterators), update the view parameters immediately.
@@ -103,8 +102,8 @@ public class AnalysisPanel extends JPanel implements Restorable {
                 updateShowTrackInformation();
             }
 
-            if ((propertyChangeEvent.getPropertyName() == AVKey.VIEW
-                || propertyChangeEvent.getPropertyName() == AVKey.VIEW_QUIET)
+            if ((propertyChangeEvent.getPropertyName() == Keys.VIEW
+                || propertyChangeEvent.getPropertyName() == Keys.VIEW_QUIET)
                 && trackViewPanel.isFollowViewMode()) {
                 doUpdateCrosshair();
             }

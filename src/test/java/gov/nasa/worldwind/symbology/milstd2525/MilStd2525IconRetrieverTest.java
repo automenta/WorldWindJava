@@ -180,7 +180,7 @@ public class MilStd2525IconRetrieverTest
     public void testWarfighting_UnknownFunctionIDRetrieval()
     {
         MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(LOCAL_SYMBOLS_ZIP);
-        AVList params = new AVListImpl();
+        KV params = new KVMap();
         BufferedImage img;
 
         for (String s : WarfightingUnknownFunctionIDs)
@@ -203,7 +203,7 @@ public class MilStd2525IconRetrieverTest
     public void testWarfighting_SpaceFunctionIDRetrieval()
     {
         MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(LOCAL_SYMBOLS_ZIP);
-        AVList params = new AVListImpl();
+        KV params = new KVMap();
         BufferedImage img;
 
         for (String s : WarfightingSpaceFunctionIDs)
@@ -226,7 +226,7 @@ public class MilStd2525IconRetrieverTest
     public void testWarfighting_AirFunctionIDRetrieval()
     {
         MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(LOCAL_SYMBOLS_ZIP);
-        AVList params = new AVListImpl();
+        KV params = new KVMap();
         BufferedImage img;
 
         for (String s : WarfightingAirFunctionIDs)
@@ -249,7 +249,7 @@ public class MilStd2525IconRetrieverTest
     public void testWarfighting_GroundFunctionIDRetrieval()
     {
         MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(LOCAL_SYMBOLS_ZIP);
-        AVList params = new AVListImpl();
+        KV params = new KVMap();
         BufferedImage img;
 
         for (String s : WarfightingGroundFunctionIDs)
@@ -276,7 +276,7 @@ public class MilStd2525IconRetrieverTest
     public void testWarfighting_SeaSurfaceFunctionIDRetrieval()
     {
         MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(LOCAL_SYMBOLS_ZIP);
-        AVList params = new AVListImpl();
+        KV params = new KVMap();
         BufferedImage img;
 
         for (String s : WarfightingSeaSurfaceFunctionIDs)
@@ -299,7 +299,7 @@ public class MilStd2525IconRetrieverTest
     public void testWarfighting_SubsurfaceFunctionIDRetrieval()
     {
         MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(LOCAL_SYMBOLS_ZIP);
-        AVList params = new AVListImpl();
+        KV params = new KVMap();
         BufferedImage img;
 
         for (String s : WarfightingSubsurfaceFunctionIDs)
@@ -322,7 +322,7 @@ public class MilStd2525IconRetrieverTest
     public void testWarfighting_SpecialOpsFunctionIDRetrieval()
     {
         MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(LOCAL_SYMBOLS_ZIP);
-        AVList params = new AVListImpl();
+        KV params = new KVMap();
         BufferedImage img;
 
         for (String s : WarfightingSOFFunctionIDs)
@@ -351,7 +351,7 @@ public class MilStd2525IconRetrieverTest
     public void testSigInt_SpaceFunctionIDRetrieval()
     {
         MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(LOCAL_SYMBOLS_ZIP);
-        AVList params = new AVListImpl();
+        KV params = new KVMap();
         BufferedImage img;
 
         for (String s : SignalsIntelligenceSpaceFunctionIDs)
@@ -374,7 +374,7 @@ public class MilStd2525IconRetrieverTest
     public void testSigInt_AirFunctionIDRetrieval()
     {
         MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(LOCAL_SYMBOLS_ZIP);
-        AVList params = new AVListImpl();
+        KV params = new KVMap();
         BufferedImage img;
 
         for (String s : SignalsIntelligenceAirFunctionIDs)
@@ -397,7 +397,7 @@ public class MilStd2525IconRetrieverTest
     public void testSigInt_GroundFunctionIDRetrieval()
     {
         MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(LOCAL_SYMBOLS_ZIP);
-        AVList params = new AVListImpl();
+        KV params = new KVMap();
         BufferedImage img;
 
         for (String s : SignalsIntelligenceGroundFunctionIDs)
@@ -420,7 +420,7 @@ public class MilStd2525IconRetrieverTest
     public void testSigInt_SeaSurfaceFunctionIDRetrieval()
     {
         MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(LOCAL_SYMBOLS_ZIP);
-        AVList params = new AVListImpl();
+        KV params = new KVMap();
         BufferedImage img;
 
         for (String s : SignalsIntelligenceSeaSurfaceFunctionIDs)
@@ -443,7 +443,7 @@ public class MilStd2525IconRetrieverTest
     public void testSigInt_SubsurfaceFunctionIDRetrieval()
     {
         MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(LOCAL_SYMBOLS_ZIP);
-        AVList params = new AVListImpl();
+        KV params = new KVMap();
         BufferedImage img;
 
         for (String s : SignalsIntelligenceSubsurfaceFunctionIDs)
@@ -472,7 +472,7 @@ public class MilStd2525IconRetrieverTest
     public void testStabilityOps_ViolentActivitiesFunctionIDRetrieval()
     {
         MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(LOCAL_SYMBOLS_ZIP);
-        AVList params = new AVListImpl();
+        KV params = new KVMap();
         BufferedImage img;
 
         for (String s : StabilityOperationsViolentActivitiesFunctionIDs)
@@ -495,7 +495,7 @@ public class MilStd2525IconRetrieverTest
     public void testStabilityOps_LocationsFunctionIDRetrieval()
     {
         MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(LOCAL_SYMBOLS_ZIP);
-        AVList params = new AVListImpl();
+        KV params = new KVMap();
         BufferedImage img;
 
         for (String s : StabilityOperationsLocationsFunctionIDs)
@@ -518,7 +518,7 @@ public class MilStd2525IconRetrieverTest
     public void testStabilityOps_OperationsFunctionIDRetrieval()
     {
         MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(LOCAL_SYMBOLS_ZIP);
-        AVList params = new AVListImpl();
+        KV params = new KVMap();
         BufferedImage img;
 
         for (String s : StabilityOperationsOperationsFunctionIDs)
@@ -541,7 +541,7 @@ public class MilStd2525IconRetrieverTest
     public void testStabilityOps_ItemsFunctionIDRetrieval()
     {
         MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(LOCAL_SYMBOLS_ZIP);
-        AVList params = new AVListImpl();
+        KV params = new KVMap();
         BufferedImage img;
 
         for (String s : StabilityOperationsItemsFunctionIDs)
@@ -564,7 +564,7 @@ public class MilStd2525IconRetrieverTest
     public void testStabilityOps_IndividualFunctionIDRetrieval()
     {
         MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(LOCAL_SYMBOLS_ZIP);
-        AVList params = new AVListImpl();
+        KV params = new KVMap();
         BufferedImage img;
 
         for (String s : StabilityOperationsIndividualFunctionIDs)
@@ -587,7 +587,7 @@ public class MilStd2525IconRetrieverTest
     public void testStabilityOps_NonmilitaryFunctionIDRetrieval()
     {
         MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(LOCAL_SYMBOLS_ZIP);
-        AVList params = new AVListImpl();
+        KV params = new KVMap();
         BufferedImage img;
 
         for (String s : StabilityOperationsNonmilitaryFunctionIDs)
@@ -610,7 +610,7 @@ public class MilStd2525IconRetrieverTest
     public void testStabilityOps_RapeFunctionIDRetrieval()
     {
         MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(LOCAL_SYMBOLS_ZIP);
-        AVList params = new AVListImpl();
+        KV params = new KVMap();
         BufferedImage img;
 
         for (String s : StabilityOperationsRapeFunctionIDs)
@@ -639,7 +639,7 @@ public class MilStd2525IconRetrieverTest
     public void testEmergencyManagement_IncidentFunctionIDRetrieval()
     {
         MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(LOCAL_SYMBOLS_ZIP);
-        AVList params = new AVListImpl();
+        KV params = new KVMap();
         BufferedImage img;
 
         for (String s : EmergencyManagementIncidentsFunctionIDs)
@@ -662,7 +662,7 @@ public class MilStd2525IconRetrieverTest
     public void testEmergencyManagement_OperationFunctionIDRetrieval()
     {
         MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(LOCAL_SYMBOLS_ZIP);
-        AVList params = new AVListImpl();
+        KV params = new KVMap();
         BufferedImage img;
 
         for (String s : EmergencyManagementOperationsFunctionIDs)
@@ -685,7 +685,7 @@ public class MilStd2525IconRetrieverTest
     public void testEmergencyManagement_InfrastructureFunctionIDRetrieval()
     {
         MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(LOCAL_SYMBOLS_ZIP);
-        AVList params = new AVListImpl();
+        KV params = new KVMap();
         BufferedImage img;
 
         for (String s : EmergencyManagementInfrastructureFunctionIDs)
@@ -1988,4 +1988,3 @@ public class MilStd2525IconRetrieverTest
         "MH----H----",
         "MI----H----"};
 }
-

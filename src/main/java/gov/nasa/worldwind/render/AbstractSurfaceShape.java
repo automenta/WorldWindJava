@@ -9,7 +9,6 @@ import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.glu.*;
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.drag.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
@@ -62,7 +61,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject
     /**
      * The default path type.
      */
-    protected static final String DEFAULT_PATH_TYPE = AVKey.GREAT_CIRCLE;
+    protected static final String DEFAULT_PATH_TYPE = Keys.GREAT_CIRCLE;
     /**
      * The default number of texels per shape edge interval.
      */
@@ -307,10 +306,10 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject
             return null;
 
         return switch (s) {
-            case AVKey.GREAT_CIRCLE -> AVKey.GREAT_CIRCLE;
-            case AVKey.LINEAR -> AVKey.LINEAR;
-            case AVKey.LOXODROME -> AVKey.LOXODROME;
-            case AVKey.RHUMB_LINE -> AVKey.RHUMB_LINE;
+            case Keys.GREAT_CIRCLE -> Keys.GREAT_CIRCLE;
+            case Keys.LINEAR -> Keys.LINEAR;
+            case Keys.LOXODROME -> Keys.LOXODROME;
+            case Keys.RHUMB_LINE -> Keys.RHUMB_LINE;
             default -> null;
         };
     }
@@ -456,7 +455,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject
             // If the shape contains a pole, then the bounding sector is defined by the shape's extreme latitude, the
             // latitude of the pole, and the full range of longitude.
             Sector s = Sector.boundingSector(locations);
-            s = AVKey.NORTH.equals(pole) ?
+            s = Keys.NORTH.equals(pole) ?
                 new Sector(s.latMin, Angle.POS90degrees, Angle.NEG180degrees, Angle.POS180degrees)
                 :
                     new Sector(Angle.NEG90degrees, s.latMax, Angle.NEG180degrees, Angle.POS180degrees);
@@ -478,7 +477,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject
 
         // Great circle paths between two latitudes may result in a latitude which is greater or smaller than either of
         // the two latitudes. All other path types are bounded by the defining locations.
-        if (AVKey.GREAT_CIRCLE.equals(this.getPathType())) {
+        if (Keys.GREAT_CIRCLE.equals(this.getPathType())) {
             LatLon[] extremes = LatLon.greatCircleArcExtremeLocations(locations);
             final double e0Lat = extremes[0].latitude;
             final double e1Lat = extremes[1].latitude;
@@ -1051,7 +1050,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject
     @SuppressWarnings("StringEquality")
     protected void addIntermediateLocations(LatLon a, LatLon b, double edgeIntervalsPerDegree,
         Collection<LatLon> locations) {
-        if (this.pathType != null && this.pathType == AVKey.GREAT_CIRCLE) {
+        if (this.pathType != null && this.pathType == Keys.GREAT_CIRCLE) {
             Angle pathLength = LatLon.greatCircleDistance(a, b);
 
             double edgeIntervals = WWMath.clamp(edgeIntervalsPerDegree * pathLength.degrees,
@@ -1066,7 +1065,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject
                     locations.add(LatLon.greatCircleEndPosition(a, headingRadians, i * stepSizeRadians));
                 }
             }
-        } else if (this.pathType != null && (this.pathType == AVKey.RHUMB_LINE || this.pathType == AVKey.LOXODROME)) {
+        } else if (this.pathType != null && (this.pathType == Keys.RHUMB_LINE || this.pathType == Keys.LOXODROME)) {
             Angle pathLength = LatLon.rhumbDistance(a, b);
 
             double edgeIntervals = WWMath.clamp(edgeIntervalsPerDegree * pathLength.degrees,

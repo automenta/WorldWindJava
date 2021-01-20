@@ -7,7 +7,6 @@
 package gov.nasa.worldwind.examples.sar;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
@@ -47,11 +46,11 @@ public class SARAnnotationSupport {
         this.annotationLayer = new AnnotationLayer();
 
         this.helpMessageAnnotation = new ScreenAnnotation("", new Point(0, 0));
-        this.helpMessageAnnotation.getAttributes().setFrameShape(AVKey.SHAPE_NONE);
+        this.helpMessageAnnotation.getAttributes().setFrameShape(Keys.SHAPE_NONE);
         this.helpMessageAnnotation.getAttributes().setInsets(new Insets(0, 0, 0, 0));
         this.helpMessageAnnotation.getAttributes().setDrawOffset(new Point(0, -20));
-        this.helpMessageAnnotation.getAttributes().setTextAlign(AVKey.CENTER);
-        this.helpMessageAnnotation.getAttributes().setEffect(AVKey.TEXT_EFFECT_OUTLINE);
+        this.helpMessageAnnotation.getAttributes().setTextAlign(Keys.CENTER);
+        this.helpMessageAnnotation.getAttributes().setEffect(Keys.TEXT_EFFECT_OUTLINE);
         this.helpMessageAnnotation.getAttributes().setFont(Font.decode("Arial-Bold-14"));
         this.helpMessageAnnotation.getAttributes().setTextColor(Color.YELLOW);
         this.helpMessageAnnotation.getAttributes().setBackgroundColor(Color.BLACK);
@@ -87,7 +86,7 @@ public class SARAnnotationSupport {
                         if (event.getTopObject() instanceof Annotation) {
                             // Check for text or url
                             PickedObject po = event.getTopPickedObject();
-                            if (po.get(AVKey.TEXT) != null) {
+                            if (po.get(Keys.TEXT) != null) {
                             }
                             // Left click on an annotation - select
                             select(event.getTopObject());

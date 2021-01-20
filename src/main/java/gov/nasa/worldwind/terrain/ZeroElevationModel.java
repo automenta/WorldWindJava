@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.terrain;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.geom.*;
 
 import java.util.List;
@@ -41,7 +41,7 @@ public class ZeroElevationModel extends AbstractElevationModel {
         }
 
         // Mark the model as used this frame.
-        this.set(AVKey.FRAME_TIMESTAMP, System.currentTimeMillis());
+        this.set(Keys.FRAME_TIMESTAMP, System.currentTimeMillis());
 
         return 0;
     }

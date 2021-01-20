@@ -6,8 +6,8 @@
 package gov.nasa.worldwind.render;
 
 import com.jogamp.opengl.*;
-import gov.nasa.worldwind.WorldWindow;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.avlist.KVMap;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.pick.PickSupport;
 import gov.nasa.worldwind.util.*;
@@ -125,7 +125,7 @@ import java.util.*;
  * @see AnnotationAttributes
  * @see AnnotationRenderer
  */
-public abstract class AbstractAnnotation extends AVListImpl implements Annotation {
+public abstract class AbstractAnnotation extends KVMap implements Annotation {
     // Properties used or computed in each rendering pass.
     protected static DoubleBuffer vertexBuffer;
     // Child annotation properties.
@@ -707,9 +707,9 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
 
         // Apply texture wrap state.
         String imageRepeat = this.getAttributes().getImageRepeat();
-        int sWrap = (imageRepeat.equals(AVKey.REPEAT_X) || imageRepeat.equals(AVKey.REPEAT_XY)) ?
+        int sWrap = (imageRepeat.equals(Keys.REPEAT_X) || imageRepeat.equals(Keys.REPEAT_XY)) ?
             GL.GL_REPEAT : GL2.GL_CLAMP_TO_BORDER;
-        int tWrap = (imageRepeat.equals(AVKey.REPEAT_Y) || imageRepeat.equals(AVKey.REPEAT_XY)) ?
+        int tWrap = (imageRepeat.equals(Keys.REPEAT_Y) || imageRepeat.equals(Keys.REPEAT_XY)) ?
             GL.GL_REPEAT : GL2.GL_CLAMP_TO_BORDER;
         gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, sWrap);
         gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, tWrap);
@@ -827,9 +827,9 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
         int y = insetBounds.y + baselineOffset + 2; // TODO: why does this y-coordinate have an additional +2?
 
         // Adjust the text x-coordinate according to the text alignment property.
-        if (attribs.getTextAlign().equals(AVKey.CENTER)) {
+        if (attribs.getTextAlign().equals(Keys.CENTER)) {
             x = (int) insetBounds.getCenterX();
-        } else if (attribs.getTextAlign().equals(AVKey.RIGHT)) {
+        } else if (attribs.getTextAlign().equals(Keys.RIGHT)) {
             x = (int) insetBounds.getMaxX();
         }
 
@@ -954,7 +954,7 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
         int cornerRadius = this.getAttributes().getCornerRadius();
 
         DoubleBuffer buffer = AbstractAnnotation.vertexBuffer;
-        if (this.getAttributes().getLeader().equals(AVKey.SHAPE_TRIANGLE)) {
+        if (this.getAttributes().getLeader().equals(Keys.SHAPE_TRIANGLE)) {
             buffer = FrameFactory.createShapeWithLeaderBuffer(shape, width, height, leaderOffset, leaderGapWidth,
                 cornerRadius, buffer);
         } else {
@@ -1045,7 +1045,7 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
 
         // If the attributes specify to fit the annotation to the wrapped text width, then set the inset width to
         // the wrapped text width.
-        if (attribs.getAdjustWidthToText().equals(AVKey.SIZE_FIT_TEXT) && !text.isEmpty()) {
+        if (attribs.getAdjustWidthToText().equals(Keys.SIZE_FIT_TEXT) && !text.isEmpty()) {
             width = textBounds.width;
         }
 

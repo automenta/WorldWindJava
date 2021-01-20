@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.symbology.milstd2525.graphics.areas;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.render.Offset;
 import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
@@ -27,7 +27,7 @@ public class AviationZone extends BasicArea {
     /**
      * Center text block on label position.
      */
-    protected final static Offset LABEL_OFFSET = new Offset(-0.5d, -0.5d, AVKey.FRACTION, AVKey.FRACTION);
+    protected final static Offset LABEL_OFFSET = new Offset(-0.5d, -0.5d, Keys.FRACTION, Keys.FRACTION);
 
     /**
      * Create a new aviation area.
@@ -62,7 +62,7 @@ public class AviationZone extends BasicArea {
 
     @Override
     protected String getLabelAlignment() {
-        return AVKey.LEFT;
+        return Keys.LEFT;
     }
 
     @Override

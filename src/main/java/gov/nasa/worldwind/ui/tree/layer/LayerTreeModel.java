@@ -5,7 +5,8 @@
  */
 package gov.nasa.worldwind.ui.tree.layer;
 
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.Keys;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.ui.tree.*;
 import gov.nasa.worldwind.video.LayerList;
@@ -196,7 +197,7 @@ public class LayerTreeModel extends BasicTreeModel {
      * @return <code>true</code> if the layer must be included in the tree, <code>false</code> if the layer must not be
      * included.
      */
-    protected boolean mustIncludeLayer(AVList layer) {
-        return this.isIncludeHiddenLayers() || layer.get(AVKey.HIDDEN) != Boolean.TRUE;
+    protected boolean mustIncludeLayer(KV layer) {
+        return this.isIncludeHiddenLayers() || layer.get(Keys.HIDDEN) != Boolean.TRUE;
     }
 }

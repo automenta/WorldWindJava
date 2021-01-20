@@ -87,25 +87,25 @@ public class GeoSymTableReader {
     }
 
     protected static void readRecords(Scanner scanner, GeoSymTable table) {
-        Collection<AVList> list = new ArrayList<>();
+        Collection<KV> list = new ArrayList<>();
 
         while (scanner.hasNextLine()) {
             String s = scanner.nextLine().trim();
             if (s.isEmpty())
                 continue;
 
-            AVList record = new AVListImpl();
+            KV record = new KVMap();
             GeoSymTableReader.readRecord(s, table, record);
             list.add(record);
         }
 
-        AVList[] array = new AVList[list.size()];
+        KV[] array = new KV[list.size()];
         list.toArray(array);
 
         table.setRecords(array);
     }
 
-    protected static void readRecord(String string, GeoSymTable table, AVList record) {
+    protected static void readRecord(String string, GeoSymTable table, KV record) {
         Collection<? extends GeoSymColumn> columns = table.getHeader().getColumns();
         String[] tokens = string.split("[|]");
 

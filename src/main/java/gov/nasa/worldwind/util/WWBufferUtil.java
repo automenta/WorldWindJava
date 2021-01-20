@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.util;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.geom.Vec4;
 
 import java.nio.*;
@@ -457,8 +457,8 @@ public class WWBufferUtil {
 
     /**
      * Returns the size in bytes of the specified primitive data type, or -1 if the specified type is unrecognized.
-     * Recognized primitive types are as follows: <ul> <li>{@link AVKey#INT8} <li>{@link AVKey#INT16} <li>{@link
-     * AVKey#INT32} <li>{@link AVKey#FLOAT32} <li>{@link AVKey#FLOAT64} </ul>
+     * Recognized primitive types are as follows: <ul> <li>{@link Keys#INT8} <li>{@link Keys#INT16} <li>{@link
+     * Keys#INT32} <li>{@link Keys#FLOAT32} <li>{@link Keys#FLOAT64} </ul>
      *
      * @param dataType the primitive data type.
      * @return the size of the primitive data type, in bytes.
@@ -471,15 +471,15 @@ public class WWBufferUtil {
             throw new IllegalArgumentException(message);
         }
 
-        if (AVKey.INT8.equals(dataType))
+        if (Keys.INT8.equals(dataType))
             return 1;
-        else if (AVKey.INT16.equals(dataType))
+        else if (Keys.INT16.equals(dataType))
             return WWBufferUtil.SIZEOF_SHORT;
-        else if (AVKey.INT32.equals(dataType))
+        else if (Keys.INT32.equals(dataType))
             return WWBufferUtil.SIZEOF_INT;
-        else if (AVKey.FLOAT32.equals(dataType))
+        else if (Keys.FLOAT32.equals(dataType))
             return WWBufferUtil.SIZEOF_FLOAT;
-        else if (AVKey.FLOAT64.equals(dataType))
+        else if (Keys.FLOAT64.equals(dataType))
             return WWBufferUtil.SIZEOF_DOUBLE;
 
         return -1;

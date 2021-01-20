@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.poi;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.exception.*;
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.util.Logging;
@@ -86,7 +86,7 @@ public class YahooGazetteer implements Gazetteer {
                 if (lat != null && lon != null) {
                     LatLon latlon = LatLon.fromDegrees(Double.parseDouble(lat), Double.parseDouble(lon));
                     PointOfInterest loc = new BasicPointOfInterest(latlon);
-                    loc.set(AVKey.DISPLAY_NAME, displayName.toString());
+                    loc.set(Keys.DISPLAY_NAME, displayName.toString());
                     positions.add(loc);
                 }
             }

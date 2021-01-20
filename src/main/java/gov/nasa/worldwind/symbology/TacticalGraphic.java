@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.symbology;
 
 import gov.nasa.worldwind.Movable;
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.milstd2525.MilStd2525GraphicFactory;
@@ -133,7 +133,7 @@ import gov.nasa.worldwind.util.UnitsFormat;
  * @version $Id: TacticalGraphic.java 1171 2013-02-11 21:45:02Z dcollins $
  * @see TacticalGraphicFactory
  */
-public interface TacticalGraphic extends Renderable, Highlightable, Movable, AVList {
+public interface TacticalGraphic extends Renderable, Highlightable, Movable, KV {
     /**
      * Indicates whether this graphic is drawn when in view.
      *

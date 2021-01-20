@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.geom;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.cache.Cacheable;
 import gov.nasa.worldwind.geom.coords.UTMCoord;
 import gov.nasa.worldwind.globes.Globe;
@@ -169,15 +169,15 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
      * UTM zone and hemisphere.
      *
      * @param zone        the UTM zone.
-     * @param hemisphere  the UTM hemisphere, either {@link AVKey#NORTH} or {@link AVKey#SOUTH}.
+     * @param hemisphere  the UTM hemisphere, either {@link Keys#NORTH} or {@link Keys#SOUTH}.
      * @param minEasting  the minimum UTM easting, in meters.
      * @param maxEasting  the maximum UTM easting, in meters.
      * @param minNorthing the minimum UTM northing, in meters.
      * @param maxNorthing the maximum UTM northing, in meters.
      * @return a Sector that bounds the specified UTM rectangle.
      * @throws IllegalArgumentException if <code>zone</code> is outside the range 1-60, if <code>hemisphere</code> is
-     *                                  null, or if <code>hemisphere</code> is not one of {@link AVKey#NORTH} or {@link
-     *                                  AVKey#SOUTH}.
+     *                                  null, or if <code>hemisphere</code> is not one of {@link Keys#NORTH} or {@link
+     *                                  Keys#SOUTH}.
      */
     public static Sector fromUTMRectangle(int zone, String hemisphere, double minEasting, double maxEasting,
         double minNorthing, double maxNorthing) {
@@ -187,7 +187,7 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
             throw new IllegalArgumentException(message);
         }
 
-        if (!AVKey.NORTH.equals(hemisphere) && !AVKey.SOUTH.equals(hemisphere)) {
+        if (!Keys.NORTH.equals(hemisphere) && !Keys.SOUTH.equals(hemisphere)) {
             String message = Logging.getMessage("generic.HemisphereIsInvalid", hemisphere);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);

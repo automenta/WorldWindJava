@@ -7,7 +7,7 @@ package gov.nasa.worldwind.util;
 
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.*;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 
@@ -283,7 +283,7 @@ public class DirectedSurfacePolyline extends SurfacePolyline {
         LatLon mid = LatLon.interpolate(this.getPathType(), 0.5, begin, end);
 
         // Handle anti-meridian spanning segments when the path type indicates linear interpolation.
-        if ((this.getPathType() == null || this.getPathType().equals(AVKey.LINEAR)) &&
+        if ((this.getPathType() == null || this.getPathType().equals(Keys.LINEAR)) &&
             LatLon.locationsCrossDateline(begin, end)) {
             double datelineOffset = begin.longitude < 0 ? -360 : 360;
             LatLon falseEnd = LatLon.fromDegrees(end.latitude, end.longitude + datelineOffset);

@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.util.webview;
 
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.util.Logging;
 
 import java.awt.*;
@@ -141,7 +141,7 @@ public class WindowsWebViewJNI {
      */
     public static native void setActive(long webViewWindowPtr, boolean active);
 
-    public static native AVList[] getLinks(long webViewWindowPtr);
+    public static native KV[] getLinks(long webViewWindowPtr);
 
     /**
      * Create a new notification adapter to bridge changes in the native WebView to PropertyChangeEvents.

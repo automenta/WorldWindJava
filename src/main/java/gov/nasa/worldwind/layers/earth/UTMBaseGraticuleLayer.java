@@ -5,8 +5,7 @@
  */
 package gov.nasa.worldwind.layers.earth;
 
-import gov.nasa.worldwind.View;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.geom.coords.*;
 import gov.nasa.worldwind.globes.Globe;
@@ -302,7 +301,7 @@ public class UTMBaseGraticuleLayer extends GraticuleLayer {
                 }
             }
             positions.add(new Position(new Angle(maxLat), longitude, 10.0e3));
-            Object polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), AVKey.GREAT_CIRCLE);
+            Object polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), Keys.GREAT_CIRCLE);
             Sector sector = Sector.fromDegrees(-80, maxLat, lon, lon);
             this.gridElements.add(new GraticuleLayer.GridElement(sector, polyline, GraticuleLayer.GridElement.TYPE_LINE));
 
@@ -323,7 +322,7 @@ public class UTMBaseGraticuleLayer extends GraticuleLayer {
             lon = UTMBaseGraticuleLayer.specialMeridians[i][0];
             positions.add(new Position(new Angle(UTMBaseGraticuleLayer.specialMeridians[i][1]), new Angle(lon), 10.0e3));
             positions.add(new Position(new Angle(UTMBaseGraticuleLayer.specialMeridians[i][2]), new Angle(lon), 10.0e3));
-            Object polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), AVKey.GREAT_CIRCLE);
+            Object polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), Keys.GREAT_CIRCLE);
             Sector sector = Sector.fromDegrees(UTMBaseGraticuleLayer.specialMeridians[i][1], UTMBaseGraticuleLayer.specialMeridians[i][2], lon, lon);
             this.gridElements.add(new GraticuleLayer.GridElement(sector, polyline, GraticuleLayer.GridElement.TYPE_LINE));
         }
@@ -340,7 +339,7 @@ public class UTMBaseGraticuleLayer extends GraticuleLayer {
                 positions.add(new Position(latitude, new Angle(lon + 30), 10.0e3));
                 positions.add(new Position(latitude, new Angle(lon + 60), 10.0e3));
                 positions.add(new Position(latitude, new Angle(lon + 90), 10.0e3));
-                Object polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), AVKey.LINEAR);
+                Object polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), Keys.LINEAR);
                 Sector sector = Sector.fromDegrees(lat, lat, lon, lon + 90);
                 this.gridElements.add(new GraticuleLayer.GridElement(sector, polyline, GraticuleLayer.GridElement.TYPE_LINE));
             }
@@ -495,13 +494,13 @@ public class UTMBaseGraticuleLayer extends GraticuleLayer {
                 || ge.type.equals(GraticuleLayer.GridElement.TYPE_LINE_NORTH)) {
                 if (hemisphere.equals(levelExtremes.minYHemisphere))
                     levelExtremes.minY = Math.min(ge.value, levelExtremes.minY);
-                else if (hemisphere.equals(AVKey.SOUTH)) {
+                else if (hemisphere.equals(Keys.SOUTH)) {
                     levelExtremes.minY = ge.value;
                     levelExtremes.minYHemisphere = hemisphere;
                 }
                 if (hemisphere.equals(levelExtremes.maxYHemisphere))
                     levelExtremes.maxY = Math.max(ge.value, levelExtremes.maxY);
-                else if (hemisphere.equals(AVKey.NORTH)) {
+                else if (hemisphere.equals(Keys.NORTH)) {
                     levelExtremes.maxY = ge.value;
                     levelExtremes.maxYHemisphere = hemisphere;
                 }
@@ -528,7 +527,7 @@ public class UTMBaseGraticuleLayer extends GraticuleLayer {
                     labelHemisphere = UTM.getHemisphere();
                     if (labelNorthing < 0) {
                         labelNorthing = 10.0e6 + labelNorthing;
-                        labelHemisphere = AVKey.SOUTH;
+                        labelHemisphere = Keys.SOUTH;
                     }
                 } else {
                     UPSCoord UPS = UPSCoord.fromLatLon(centerPos.getLatitude(), centerPos.getLongitude(),
@@ -570,7 +569,7 @@ public class UTMBaseGraticuleLayer extends GraticuleLayer {
                             }
                         }
                     }
-                    if (!(levelExtremes.maxYHemisphere.equals(AVKey.SOUTH) && levelExtremes.maxY == 0)) {
+                    if (!(levelExtremes.maxYHemisphere.equals(Keys.SOUTH) && levelExtremes.maxY == 0)) {
                         // Process northing scale labels for this level
                         String currentHemisphere = levelExtremes.minYHemisphere;
                         for (double northing = levelExtremes.minY; (northing <= levelExtremes.maxY)
@@ -623,16 +622,16 @@ public class UTMBaseGraticuleLayer extends GraticuleLayer {
                 sb.append(" : ");
                 UTMExtremes levelExtremes = this.extremes[i];
                 if (levelExtremes.minX < levelExtremes.maxX ||
-                    !(levelExtremes.maxYHemisphere.equals(AVKey.SOUTH) && levelExtremes.maxY == 0)) {
+                    !(levelExtremes.maxYHemisphere.equals(Keys.SOUTH) && levelExtremes.maxY == 0)) {
                     sb.append(levelExtremes.minX);
                     sb.append(", ");
                     sb.append(levelExtremes.maxX);
                     sb.append(" - ");
                     sb.append(levelExtremes.minY);
-                    sb.append(AVKey.NORTH.equals(levelExtremes.minYHemisphere) ? "N" : "S");
+                    sb.append(Keys.NORTH.equals(levelExtremes.minYHemisphere) ? "N" : "S");
                     sb.append(", ");
                     sb.append(levelExtremes.maxY);
-                    sb.append(AVKey.NORTH.equals(levelExtremes.maxYHemisphere) ? "N" : "S");
+                    sb.append(Keys.NORTH.equals(levelExtremes.maxYHemisphere) ? "N" : "S");
                 } else {
                     sb.append("empty");
                 }
@@ -653,9 +652,9 @@ public class UTMBaseGraticuleLayer extends GraticuleLayer {
                 minX = 1.0e6;
                 maxX = 0;
                 minY = 10.0e6;
-                minYHemisphere = AVKey.NORTH;
+                minYHemisphere = Keys.NORTH;
                 maxY = 0;
-                maxYHemisphere = AVKey.SOUTH;
+                maxYHemisphere = Keys.SOUTH;
             }
         }
     }
@@ -896,7 +895,7 @@ public class UTMBaseGraticuleLayer extends GraticuleLayer {
             if (!positions.isEmpty()) {
                 p1 = positions.get(0);
                 p2 = positions.get(1);
-                polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), AVKey.GREAT_CIRCLE);
+                polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), Keys.GREAT_CIRCLE);
                 lineSector = Sector.boundingSector(p1, p2);
                 GraticuleLayer.GridElement ge = new GraticuleLayer.GridElement(lineSector, polyline, GraticuleLayer.GridElement.TYPE_LINE_WEST);
                 ge.setValue(this.SWEasting);
@@ -914,7 +913,7 @@ public class UTMBaseGraticuleLayer extends GraticuleLayer {
             if (!positions.isEmpty()) {
                 p1 = positions.get(0);
                 p2 = positions.get(1);
-                polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), AVKey.GREAT_CIRCLE);
+                polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), Keys.GREAT_CIRCLE);
                 lineSector = Sector.boundingSector(p1, p2);
                 GraticuleLayer.GridElement ge = new GraticuleLayer.GridElement(lineSector, polyline, GraticuleLayer.GridElement.TYPE_LINE_EAST);
                 ge.setValue(this.SWEasting + this.size);
@@ -932,7 +931,7 @@ public class UTMBaseGraticuleLayer extends GraticuleLayer {
             if (!positions.isEmpty()) {
                 p1 = positions.get(0);
                 p2 = positions.get(1);
-                polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), AVKey.GREAT_CIRCLE);
+                polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), Keys.GREAT_CIRCLE);
                 lineSector = Sector.boundingSector(p1, p2);
                 GraticuleLayer.GridElement ge = new GraticuleLayer.GridElement(lineSector, polyline, GraticuleLayer.GridElement.TYPE_LINE_SOUTH);
                 ge.setValue(this.SWNorthing);
@@ -950,7 +949,7 @@ public class UTMBaseGraticuleLayer extends GraticuleLayer {
             if (!positions.isEmpty()) {
                 p1 = positions.get(0);
                 p2 = positions.get(1);
-                polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), AVKey.GREAT_CIRCLE);
+                polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), Keys.GREAT_CIRCLE);
                 lineSector = Sector.boundingSector(p1, p2);
                 GraticuleLayer.GridElement ge = new GraticuleLayer.GridElement(lineSector, polyline, GraticuleLayer.GridElement.TYPE_LINE_NORTH);
                 ge.setValue(this.SWNorthing + this.size);
@@ -1090,7 +1089,7 @@ public class UTMBaseGraticuleLayer extends GraticuleLayer {
                 if (!positions.isEmpty()) {
                     p1 = positions.get(0);
                     p2 = positions.get(1);
-                    Object polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), AVKey.GREAT_CIRCLE);
+                    Object polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), Keys.GREAT_CIRCLE);
                     Sector lineSector = Sector.boundingSector(p1, p2);
                     GraticuleLayer.GridElement ge = new GraticuleLayer.GridElement(lineSector, polyline, GraticuleLayer.GridElement.TYPE_LINE_EASTING);
                     ge.setValue(easting);
@@ -1112,7 +1111,7 @@ public class UTMBaseGraticuleLayer extends GraticuleLayer {
                 if (!positions.isEmpty()) {
                     p1 = positions.get(0);
                     p2 = positions.get(1);
-                    Object polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), AVKey.GREAT_CIRCLE);
+                    Object polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), Keys.GREAT_CIRCLE);
                     Sector lineSector = Sector.boundingSector(p1, p2);
                     GraticuleLayer.GridElement ge = new GraticuleLayer.GridElement(lineSector, polyline, GraticuleLayer.GridElement.TYPE_LINE_NORTHING);
                     ge.setValue(northing);

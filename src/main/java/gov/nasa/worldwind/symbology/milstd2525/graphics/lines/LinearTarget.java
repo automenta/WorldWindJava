@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.symbology.milstd2525.graphics.lines;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.*;
@@ -34,12 +34,12 @@ public class LinearTarget extends AbstractMilStd2525TacticalGraphic {
      * Offset applied to the graphic's upper label. This offset aligns the bottom edge of the label with the geographic
      * position, in order to keep the label above the graphic as the zoom changes.
      */
-    protected final static Offset TOP_LABEL_OFFSET = new Offset(0.0, -1.0, AVKey.FRACTION, AVKey.FRACTION);
+    protected final static Offset TOP_LABEL_OFFSET = new Offset(0.0, -1.0, Keys.FRACTION, Keys.FRACTION);
     /**
      * Offset applied to the graphic's lower label. This offset aligns the top edge of the label with the geographic
      * position, in order to keep the label above the graphic as the zoom changes.
      */
-    protected final static Offset BOTTOM_LABEL_OFFSET = new Offset(0.0, 0.0, AVKey.FRACTION, AVKey.FRACTION);
+    protected final static Offset BOTTOM_LABEL_OFFSET = new Offset(0.0, 0.0, Keys.FRACTION, Keys.FRACTION);
     /**
      * Length of the vertical segments, as a fraction of the horizontal segment.
      */
@@ -399,7 +399,7 @@ public class LinearTarget extends AbstractMilStd2525TacticalGraphic {
     protected Path createPath(List<Position> positions) {
         Path path = new Path(positions);
         path.setSurfacePath(true);
-        path.setPathType(AVKey.GREAT_CIRCLE);
+        path.setPathType(Keys.GREAT_CIRCLE);
         path.setDelegateOwner(this.getActiveDelegateOwner());
         path.setAttributes(this.getActiveShapeAttributes());
         return path;

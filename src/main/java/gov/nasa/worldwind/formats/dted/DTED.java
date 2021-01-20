@@ -6,6 +6,7 @@
 
 package gov.nasa.worldwind.formats.dted;
 
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.data.*;
 import gov.nasa.worldwind.formats.tiff.GeoTiff;
@@ -74,8 +75,8 @@ public class DTED {
         }
     }
 
-    public static AVList readMetadata(File file) throws IOException {
-        AVList metadata = null;
+    public static KV readMetadata(File file) throws IOException {
+        KV metadata = null;
         RandomAccessFile sourceFile = null;
 
         try {
@@ -83,7 +84,7 @@ public class DTED {
 
             FileChannel channel = sourceFile.getChannel();
 
-            metadata = new AVListImpl();
+            metadata = new KVMap();
 
             DTED.readUHL(channel, DTED.DTED_UHL_OFFSET, metadata);
             DTED.readDSI(channel, DTED.DTED_DSI_OFFSET, metadata);
@@ -96,7 +97,7 @@ public class DTED {
         return metadata;
     }
 
-    public static DataRaster read(File file, AVList metadata) throws IOException {
+    public static DataRaster read(File file, KV metadata) throws IOException {
         DataRaster raster = null;
         RandomAccessFile sourceFile = null;
 
@@ -118,7 +119,7 @@ public class DTED {
         return raster;
     }
 
-    protected static DataRaster readElevations(SeekableByteChannel theChannel, long offset, AVList metadata)
+    protected static DataRaster readElevations(SeekableByteChannel theChannel, long offset, KV metadata)
         throws IOException {
         if (null == theChannel)
             return null;
@@ -127,8 +128,8 @@ public class DTED {
 
         theChannel.position(offset);
 
-        int width = (Integer) metadata.get(AVKey.WIDTH);
-        int height = (Integer) metadata.get(AVKey.HEIGHT);
+        int width = (Integer) metadata.get(Keys.WIDTH);
+        int height = (Integer) metadata.get(Keys.HEIGHT);
 
         int recordSize = DTED.REC_HEADER_SIZE + height * Short.SIZE / Byte.SIZE + DTED.REC_CHKSUM_SIZE;
 
@@ -175,8 +176,8 @@ public class DTED {
             }
         }
 
-        raster.set(AVKey.ELEVATION_MIN, min);
-        raster.set(AVKey.ELEVATION_MAX, max);
+        raster.set(Keys.ELEVATION_MIN, min);
+        raster.set(Keys.ELEVATION_MAX, max);
 
         return raster;
     }
@@ -238,18 +239,18 @@ public class DTED {
         if (null != code) {
             code = code.trim();
             if ("U".equalsIgnoreCase(code))
-                return AVKey.CLASS_LEVEL_UNCLASSIFIED;
+                return Keys.CLASS_LEVEL_UNCLASSIFIED;
             else if ("R".equalsIgnoreCase(code))
-                return AVKey.CLASS_LEVEL_RESTRICTED;
+                return Keys.CLASS_LEVEL_RESTRICTED;
             else if ("C".equalsIgnoreCase(code))
-                return AVKey.CLASS_LEVEL_CONFIDENTIAL;
+                return Keys.CLASS_LEVEL_CONFIDENTIAL;
             else if ("S".equalsIgnoreCase(code))
-                return AVKey.CLASS_LEVEL_SECRET;
+                return Keys.CLASS_LEVEL_SECRET;
         }
         return null;
     }
 
-    protected static void readACC(SeekableByteChannel theChannel, long offset, AVList metadata) throws IOException {
+    protected static void readACC(SeekableByteChannel theChannel, long offset, KV metadata) throws IOException {
         if (null == theChannel)
             return;
 
@@ -269,7 +270,7 @@ public class DTED {
         }
     }
 
-    protected static void readUHL(SeekableByteChannel theChannel, long offset, AVList metadata) throws IOException {
+    protected static void readUHL(SeekableByteChannel theChannel, long offset, KV metadata) throws IOException {
         if (null == theChannel)
             return;
 
@@ -288,32 +289,32 @@ public class DTED {
             throw new IOException(message);
         }
 
-        metadata.set(AVKey.BYTE_ORDER, AVKey.BIG_ENDIAN);
+        metadata.set(Keys.BYTE_ORDER, Keys.BIG_ENDIAN);
 
         // DTED is always WGS84
-        metadata.set(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_GEOGRAPHIC);
-        metadata.set(AVKey.PROJECTION_EPSG_CODE, GeoTiff.GCS.WGS_84);
+        metadata.set(Keys.COORDINATE_SYSTEM, Keys.COORDINATE_SYSTEM_GEOGRAPHIC);
+        metadata.set(Keys.PROJECTION_EPSG_CODE, GeoTiff.GCS.WGS_84);
 
         // DTED is elevation and always Int16
-        metadata.set(AVKey.PIXEL_FORMAT, AVKey.ELEVATION);
-        metadata.set(AVKey.DATA_TYPE, AVKey.INT16);
-        metadata.set(AVKey.ELEVATION_UNIT, AVKey.UNIT_METER);
-        metadata.set(AVKey.MISSING_DATA_SIGNAL, (double) DTED.DTED_NODATA_VALUE);
+        metadata.set(Keys.PIXEL_FORMAT, Keys.ELEVATION);
+        metadata.set(Keys.DATA_TYPE, Keys.INT16);
+        metadata.set(Keys.ELEVATION_UNIT, Keys.UNIT_METER);
+        metadata.set(Keys.MISSING_DATA_SIGNAL, (double) DTED.DTED_NODATA_VALUE);
 
-        metadata.set(AVKey.RASTER_PIXEL, AVKey.RASTER_PIXEL_IS_POINT);
+        metadata.set(Keys.RASTER_PIXEL, Keys.RASTER_PIXEL_IS_POINT);
 
         //  Number of longitude lines
         int width = Integer.parseInt(new String(uhl, 47, 4));
-        metadata.set(AVKey.WIDTH, width);
+        metadata.set(Keys.WIDTH, width);
         // Number of latitude points
         int height = Integer.parseInt(new String(uhl, 51, 4));
-        metadata.set(AVKey.HEIGHT, height);
+        metadata.set(Keys.HEIGHT, height);
 
         double pixelWidth = 1.0d / (width - 1);
-        metadata.set(AVKey.PIXEL_WIDTH, pixelWidth);
+        metadata.set(Keys.PIXEL_WIDTH, pixelWidth);
 
         double pixelHeight = 1.0d / (height - 1);
-        metadata.set(AVKey.PIXEL_HEIGHT, pixelHeight);
+        metadata.set(Keys.PIXEL_HEIGHT, pixelHeight);
 
         // Longitude of origin (lower left corner) as DDDMMSSH
         Angle lon = DTED.readAngle(new String(uhl, 4, 8));
@@ -326,18 +327,18 @@ public class DTED {
         // also, we should account 1 pixel overlap and half pixel shift
 
         Sector sector = Sector.fromDegrees(lat.degrees, lat.degrees + 1.0d, lon.degrees, lon.degrees + 1.0d);
-        metadata.set(AVKey.SECTOR, sector);
+        metadata.set(Keys.SECTOR, sector);
 
         // WW uses Upper Left corner as an Origin, let's calculate a new origin
         LatLon wwOrigin = LatLon.fromDegrees(sector.latMax, sector.lonMin);
-        metadata.set(AVKey.ORIGIN, wwOrigin);
+        metadata.set(Keys.ORIGIN, wwOrigin);
 
         String classLevel = DTED.readClassLevel(new String(uhl, 32, 3));
         if (null != classLevel)
-            metadata.set(AVKey.CLASS_LEVEL, classLevel);
+            metadata.set(Keys.CLASS_LEVEL, classLevel);
     }
 
-    protected static void readDSI(SeekableByteChannel theChannel, long offset, AVList metadata) throws IOException {
+    protected static void readDSI(SeekableByteChannel theChannel, long offset, KV metadata) throws IOException {
         if (null == theChannel)
             return;
 
@@ -357,15 +358,15 @@ public class DTED {
             throw new IOException(message);
         }
 
-        if (!metadata.hasKey(AVKey.CLASS_LEVEL)) {
+        if (!metadata.hasKey(Keys.CLASS_LEVEL)) {
             String classLevel = DTED.readClassLevel(new String(dsi, 3, 1));
             if (null != classLevel)
-                metadata.set(AVKey.CLASS_LEVEL, classLevel);
+                metadata.set(Keys.CLASS_LEVEL, classLevel);
         }
 
         Integer level = DTED.readLevel(new String(dsi, 59, 5));
         if (null != level)
-            metadata.set(AVKey.DTED_LEVEL, level);
+            metadata.set(Keys.DTED_LEVEL, level);
 
         // Technically, there is no need to read next parameters because:
         // they are redundant (same data we get from UHL), and WW has no use for them 

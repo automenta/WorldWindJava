@@ -5,6 +5,7 @@
  */
 package gov.nasa.worldwind.layers.earth;
 
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.mercator.*;
@@ -21,22 +22,22 @@ public class OSMMapnikLayer extends BasicMercatorTiledImageLayer {
     }
 
     private static LevelSet makeLevels() {
-        AVList params = new AVListImpl();
+        KV params = new KVMap();
 
-        params.set(AVKey.TILE_WIDTH, 256);
-        params.set(AVKey.TILE_HEIGHT, 256);
-        params.set(AVKey.DATA_CACHE_NAME, "Earth/OSM-Mercator/OpenStreetMap Mapnik");
-        params.set(AVKey.SERVICE,
+        params.set(Keys.TILE_WIDTH, 256);
+        params.set(Keys.TILE_HEIGHT, 256);
+        params.set(Keys.DATA_CACHE_NAME, "Earth/OSM-Mercator/OpenStreetMap Mapnik");
+        params.set(Keys.SERVICE,
             "http://a.tile.openstreetmap.org"
 //            "http://c.tile.stamen.com"
         );
-        params.set(AVKey.DATASET_NAME, "h");
-        params.set(AVKey.FORMAT_SUFFIX, ".png");
-        params.set(AVKey.NUM_LEVELS, 16);
-        params.set(AVKey.NUM_EMPTY_LEVELS, 0);
-        params.set(AVKey.LEVEL_ZERO_TILE_DELTA, new LatLon(new Angle(22.5d), new Angle(45.0d)));
-        params.set(AVKey.SECTOR, new MercatorSector(-1.0, 1.0, Angle.NEG180, Angle.POS180));
-        params.set(AVKey.TILE_URL_BUILDER, new URLBuilder());
+        params.set(Keys.DATASET_NAME, "h");
+        params.set(Keys.FORMAT_SUFFIX, ".png");
+        params.set(Keys.NUM_LEVELS, 16);
+        params.set(Keys.NUM_EMPTY_LEVELS, 0);
+        params.set(Keys.LEVEL_ZERO_TILE_DELTA, new LatLon(new Angle(22.5d), new Angle(45.0d)));
+        params.set(Keys.SECTOR, new MercatorSector(-1.0, 1.0, Angle.NEG180, Angle.POS180));
+        params.set(Keys.TILE_URL_BUILDER, new URLBuilder());
 
         return new LevelSet(params);
     }

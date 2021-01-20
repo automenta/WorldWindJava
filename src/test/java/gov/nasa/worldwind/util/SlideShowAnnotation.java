@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.util;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
 
@@ -92,11 +92,11 @@ public class SlideShowAnnotation extends DialogAnnotation {
 
     @SuppressWarnings("StringEquality")
     public void setPlayButtonState(String state) {
-        if (state == AVKey.PLAY) {
+        if (state == Keys.PLAY) {
             this.playButton.setImageSource(PLAY_IMAGE_PATH);
             this.playButton.setToolTipText(PLAY_TOOLTIP_TEXT);
         }
-        else if (state == AVKey.PAUSE) {
+        else if (state == Keys.PAUSE) {
             this.playButton.setImageSource(PAUSE_IMAGE_PATH);
             this.playButton.setToolTipText(PAUSE_TOOLTIP_TEXT);
         }
@@ -136,12 +136,12 @@ public class SlideShowAnnotation extends DialogAnnotation {
         this.setupPositionLabel(this.positionLabel);
         SlideShowAnnotation.setupImage(this.imageAnnotation);
 
-        this.playButton.setActionCommand(AVKey.PLAY);
-        this.previousButton.setActionCommand(AVKey.PREVIOUS);
-        this.nextButton.setActionCommand(AVKey.NEXT);
-        this.beginButton.setActionCommand(AVKey.BEGIN);
-        this.endButton.setActionCommand(AVKey.END);
-        this.sizeButton.setActionCommand(AVKey.RESIZE);
+        this.playButton.setActionCommand(Keys.PLAY);
+        this.previousButton.setActionCommand(Keys.PREVIOUS);
+        this.nextButton.setActionCommand(Keys.NEXT);
+        this.beginButton.setActionCommand(Keys.BEGIN);
+        this.endButton.setActionCommand(Keys.END);
+        this.sizeButton.setActionCommand(Keys.RESIZE);
 
         this.playButton.addActionListener(this);
         this.previousButton.addActionListener(this);
@@ -164,7 +164,7 @@ public class SlideShowAnnotation extends DialogAnnotation {
         Annotation controlsContainer = new ScreenAnnotation("", new Point());
         {
             this.setupContainer(controlsContainer);
-            controlsContainer.setLayout(new AnnotationFlowLayout(AVKey.HORIZONTAL, AVKey.CENTER, 6, 0)); // hgap, vgap
+            controlsContainer.setLayout(new AnnotationFlowLayout(Keys.HORIZONTAL, Keys.CENTER, 6, 0)); // hgap, vgap
             controlsContainer.addChild(this.beginButton);
             controlsContainer.addChild(this.previousButton);
             controlsContainer.addChild(this.playButton);
@@ -175,7 +175,7 @@ public class SlideShowAnnotation extends DialogAnnotation {
         Annotation contentContainer = new ScreenAnnotation("", new Point());
         {
             this.setupContainer(contentContainer);
-            contentContainer.setLayout(new AnnotationFlowLayout(AVKey.VERTICAL, AVKey.CENTER, 0, 16)); // hgap, vgap
+            contentContainer.setLayout(new AnnotationFlowLayout(Keys.VERTICAL, Keys.CENTER, 0, 16)); // hgap, vgap
             contentContainer.addChild(this.titleLabel);
             contentContainer.addChild(this.imageAnnotation);
             contentContainer.addChild(controlsContainer);
@@ -188,9 +188,9 @@ public class SlideShowAnnotation extends DialogAnnotation {
         // Force the busy image to draw on top of its siblings.
         this.removeChild(this.getBusyImage());
         this.addChild(this.getBusyImage());
-        layout.setConstraint(this.positionLabel, AVKey.SOUTHWEST);
-        layout.setConstraint(this.sizeButton, AVKey.SOUTHEAST);
-        layout.setConstraint(this.getBusyImage(), AVKey.CENTER);
+        layout.setConstraint(this.positionLabel, Keys.SOUTHWEST);
+        layout.setConstraint(this.sizeButton, Keys.SOUTHEAST);
+        layout.setConstraint(this.getBusyImage(), Keys.CENTER);
     }
 
     protected void setupTitle(Annotation annotation) {
@@ -199,7 +199,7 @@ public class SlideShowAnnotation extends DialogAnnotation {
         AnnotationAttributes attribs = annotation.getAttributes();
         attribs.setFont(Font.decode("Arial-BOLD-14"));
         attribs.setSize(new Dimension(260, 0));
-        attribs.setTextAlign(AVKey.CENTER);
+        attribs.setTextAlign(Keys.CENTER);
     }
 
     protected void setupPositionLabel(Annotation annotation) {

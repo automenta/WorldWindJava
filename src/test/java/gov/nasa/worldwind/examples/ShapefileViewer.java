@@ -5,8 +5,7 @@
  */
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.WorldWind;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.formats.shapefile.ShapefileLayerFactory;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.Layer;
@@ -90,7 +89,7 @@ public class ShapefileViewer extends ApplicationTemplate {
             this.randomAttrs.nextAttributes(); // display each shapefile in different attributes
 
             ShapefileLayerFactory factory = (ShapefileLayerFactory) WorldWind.createConfigurationComponent(
-                AVKey.SHAPEFILE_LAYER_FACTORY);
+                Keys.SHAPEFILE_LAYER_FACTORY);
             factory.setNormalPointAttributes(this.randomAttrs.asPointAttributes());
             factory.setNormalShapeAttributes(this.randomAttrs.asShapeAttributes());
             factory.createFromShapefileSource(source, this); // add the layer in the completion callback
@@ -109,7 +108,7 @@ public class ShapefileViewer extends ApplicationTemplate {
             layer.setName(WWIO.getFilename(layer.name())); // convert the layer name to the source's filename
             this.wwd().model().getLayers().add(layer);
 
-            Sector sector = (Sector) layer.get(AVKey.SECTOR);
+            Sector sector = (Sector) layer.get(Keys.SECTOR);
             if (sector != null) {
                 ExampleUtil.goTo(this.wwd(), sector);
             }

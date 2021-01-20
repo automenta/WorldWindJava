@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.*;
@@ -36,10 +35,10 @@ public class WebBrowserBalloons extends ApplicationTemplate {
 
     public static void main(String[] args) {
         // Configure the initial view parameters so that the browser balloon is centered in the viewport.
-        Configuration.setValue(AVKey.INITIAL_LATITUDE, 62);
-        Configuration.setValue(AVKey.INITIAL_LONGITUDE, -77);
-        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 9500000);
-        Configuration.setValue(AVKey.INITIAL_PITCH, 45);
+        Configuration.setValue(Keys.INITIAL_LATITUDE, 62);
+        Configuration.setValue(Keys.INITIAL_LONGITUDE, -77);
+        Configuration.setValue(Keys.INITIAL_ALTITUDE, 9500000);
+        Configuration.setValue(Keys.INITIAL_PITCH, 45);
 
         start("WorldWind Web Browser Balloons", AppFrame.class);
     }
@@ -61,7 +60,7 @@ public class WebBrowserBalloons extends ApplicationTemplate {
             Dimension size = new Dimension(1200, 800);
             this.setPreferredSize(size);
             this.pack();
-            WWUtil.alignComponent(null, this, AVKey.CENTER);
+            WWUtil.alignComponent(null, this, Keys.CENTER);
         }
 
         protected void makeBrowserBalloon() {
@@ -98,7 +97,7 @@ public class WebBrowserBalloons extends ApplicationTemplate {
             placemark.setLabelText("Click to open balloon");
             // Associate the balloon with the placemark by setting AVKey.BALLOON. The BalloonController looks for this
             // value when an object is clicked.
-            placemark.set(AVKey.BALLOON, balloon);
+            placemark.set(Keys.BALLOON, balloon);
 
             // Create a layer to display the balloons.
             RenderableLayer layer = new RenderableLayer();

@@ -72,7 +72,7 @@ public class EchelonSymbol extends AbstractTacticalSymbol {
 
         // Configure this tactical point graphic's icon retriever and modifier retriever with either the
         // configuration value or the default value (in that order of precedence).
-        String iconRetrieverPath = Configuration.getStringValue(AVKey.MIL_STD_2525_ICON_RETRIEVER_PATH,
+        String iconRetrieverPath = Configuration.getStringValue(Keys.MIL_STD_2525_ICON_RETRIEVER_PATH,
             MilStd2525Constants.DEFAULT_ICON_RETRIEVER_PATH);
         this.setIconRetriever(new MilStd2525ModifierRetriever(iconRetrieverPath));
     }
@@ -128,15 +128,15 @@ public class EchelonSymbol extends AbstractTacticalSymbol {
     }
 
     @Override
-    protected AVList assembleIconRetrieverParameters(AVList params) {
+    protected KV assembleIconRetrieverParameters(KV params) {
         params = super.assembleIconRetrieverParameters(params);
 
         if (params == null)
-            params = new AVListImpl();
+            params = new KVMap();
 
         Material material = this.getActiveAttributes().getTextModifierMaterial();
         if (material != null)
-            params.set(AVKey.COLOR, material.getDiffuse());
+            params.set(Keys.COLOR, material.getDiffuse());
 
         return params;
     }

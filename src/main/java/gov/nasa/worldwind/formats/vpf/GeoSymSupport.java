@@ -73,7 +73,7 @@ public class GeoSymSupport {
         HashMap<Integer, VPFSymbolAttributes.LabelAttributes> attributes =
             new HashMap<>();
 
-        for (AVList row : textCharTable.getRecords()) {
+        for (KV row : textCharTable.getRecords()) {
             Integer id = (Integer) row.get("id");
             VPFSymbolAttributes.LabelAttributes attr = GeoSymSupport.getTextLabelCharacteristics(row, colorTable);
 
@@ -83,7 +83,7 @@ public class GeoSymSupport {
         return attributes;
     }
 
-    protected static VPFSymbolAttributes.LabelAttributes getTextLabelCharacteristics(AVList row,
+    protected static VPFSymbolAttributes.LabelAttributes getTextLabelCharacteristics(KV row,
         GeoSymTable colorTable) {
         VPFSymbolAttributes.LabelAttributes attr = new VPFSymbolAttributes.LabelAttributes();
 
@@ -131,7 +131,7 @@ public class GeoSymSupport {
         HashMap<Integer, VPFSymbolAttributes.LabelAttributes> attributes =
             new HashMap<>();
 
-        for (AVList row : textLocTable.getRecords()) {
+        for (KV row : textLocTable.getRecords()) {
             Integer id = (Integer) row.get("id");
             VPFSymbolAttributes.LabelAttributes attr = GeoSymSupport.getTextLabelLocation(row);
 
@@ -141,7 +141,7 @@ public class GeoSymSupport {
         return attributes;
     }
 
-    protected static VPFSymbolAttributes.LabelAttributes getTextLabelLocation(AVList row) {
+    protected static VPFSymbolAttributes.LabelAttributes getTextLabelLocation(KV row) {
         VPFSymbolAttributes.LabelAttributes attr = new VPFSymbolAttributes.LabelAttributes();
 
         // From MIL-HDBK-857A, section 6.8.3: The tjust field contain a numeric code whose possible values for the
@@ -172,9 +172,9 @@ public class GeoSymSupport {
         return attr;
     }
 
-    protected static Collection<AVList> selectSymbolAssignments(GeoSymTable table, int pid, String fcode, int delin,
+    protected static Collection<KV> selectSymbolAssignments(GeoSymTable table, int pid, String fcode, int delin,
         String cov) {
-        Collection<AVList> rows = new ArrayList<>(Arrays.asList(table.getRecords()));
+        Collection<KV> rows = new ArrayList<>(Arrays.asList(table.getRecords()));
 
         // The fcode field contains the 5-character feature code as defined in the applicable VPF product specification.
         GeoSymTable.selectMatchingStringRows("fcode", fcode, false, rows);
@@ -212,12 +212,12 @@ public class GeoSymSupport {
     }
 
     protected static void selectMatchingCoverages(String columnName, String value, boolean acceptNullValue,
-        Iterable<AVList> outRows) {
-        Iterator<AVList> iter = outRows.iterator();
+        Iterable<KV> outRows) {
+        Iterator<KV> iter = outRows.iterator();
         if (!iter.hasNext())
             return;
 
-        AVList record;
+        KV record;
         while (iter.hasNext()) {
             record = iter.next();
             if (record == null)
@@ -244,7 +244,7 @@ public class GeoSymSupport {
 
     protected static int selectCodeValue(GeoSymTable codeTable, String fileName, String attributeName,
         String description) {
-        List<AVList> rows = new ArrayList<>(Arrays.asList(codeTable.getRecords()));
+        List<KV> rows = new ArrayList<>(Arrays.asList(codeTable.getRecords()));
         GeoSymTable.selectMatchingStringRows("file", fileName, false, rows);
         GeoSymTable.selectMatchingStringRows("attribute", attributeName, false, rows);
         GeoSymTable.selectMatchingStringRows("description", description, false, rows);
@@ -257,7 +257,7 @@ public class GeoSymSupport {
 
     protected static String selectCodeDescription(GeoSymTable codeTable, String fileName, String attributeName,
         int value) {
-        List<AVList> rows = new ArrayList<>(Arrays.asList(codeTable.getRecords()));
+        List<KV> rows = new ArrayList<>(Arrays.asList(codeTable.getRecords()));
         GeoSymTable.selectMatchingStringRows("file", fileName, false, rows);
         GeoSymTable.selectMatchingStringRows("attribute", attributeName, false, rows);
         GeoSymTable.selectMatchingRows("value", value, false, rows);
@@ -272,20 +272,20 @@ public class GeoSymSupport {
     //**************************************************************//
 
     protected static Color selectColor(GeoSymTable colorTable, int colorIndex) {
-        ArrayList<AVList> rows = new ArrayList<>(Arrays.asList(colorTable.getRecords()));
+        ArrayList<KV> rows = new ArrayList<>(Arrays.asList(colorTable.getRecords()));
         GeoSymTable.selectMatchingRows("index", colorIndex, false, rows);
         if (rows.isEmpty())
             return null;
 
-        AVList row = rows.get(0);
+        KV row = rows.get(0);
         Integer r = (Integer) row.get("red");
         Integer g = (Integer) row.get("green");
         Integer b = (Integer) row.get("blue");
         return (r != null && g != null && b != null) ? new Color(r, g, b) : null;
     }
 
-    protected static AVList selectTextLabelCharacteristics(GeoSymTable textCharTable, int txtRowId) {
-        ArrayList<AVList> rows = new ArrayList<>(Arrays.asList(textCharTable.getRecords()));
+    protected static KV selectTextLabelCharacteristics(GeoSymTable textCharTable, int txtRowId) {
+        ArrayList<KV> rows = new ArrayList<>(Arrays.asList(textCharTable.getRecords()));
         GeoSymTable.selectMatchingRows("id", txtRowId, false, rows);
         return (rows.isEmpty()) ? null : rows.get(0);
     }
@@ -338,16 +338,16 @@ public class GeoSymSupport {
         return s;
     }
 
-    protected static void assembleCommonSymbolAttributes(AVList symbolRow, VPFSymbolAttributes attr) {
-        Integer i = AVListImpl.getIntegerValue(symbolRow, "dispri");
+    protected static void assembleCommonSymbolAttributes(KV symbolRow, VPFSymbolAttributes attr) {
+        Integer i = KVMap.getIntegerValue(symbolRow, "dispri");
         if (i != null)
             attr.setDisplayPriority(i);
 
-        String s = AVListImpl.getStringValue(symbolRow, "orient");
+        String s = KVMap.getStringValue(symbolRow, "orient");
         if (s != null)
             attr.setOrientationAttributeName(s);
 
-        s = AVListImpl.getStringValue(symbolRow, "feadesc");
+        s = KVMap.getStringValue(symbolRow, "feadesc");
         if (s != null)
             attr.setDescription(s);
     }
@@ -365,7 +365,7 @@ public class GeoSymSupport {
     }
 
     public Iterable<? extends VPFSymbolKey> getSymbolKeys(VPFFeatureClass featureClass, String featureCode,
-        AVList featureAttributes) {
+        KV featureAttributes) {
         if (featureClass == null) {
             String message = Logging.getMessage("nullValue.FeatureClassIsNull");
             Logging.logger().severe(message);
@@ -530,7 +530,7 @@ public class GeoSymSupport {
         // Map text join to label attributes
         this.textJoinAttributes = new HashMap<>();
         GeoSymTable joinTable = this.getAssignment().getTable(GeoSymConstants.TEXT_LABEL_JOIN_FILE);
-        for (AVList row : joinTable.getRecords()) {
+        for (KV row : joinTable.getRecords()) {
             int id = (Integer) row.get("id");
             int textCharId = (Integer) row.get("textcharid");
             int textLocId = (Integer) row.get("textlocid");
@@ -558,12 +558,12 @@ public class GeoSymSupport {
 
     protected void loadProductTypes() {
         GeoSymTable codeTable = this.getAssignment().getTable(GeoSymConstants.CODE_VALUE_DESCRIPTION_FILE);
-        Iterable<AVList> rows = new ArrayList<>(Arrays.asList(codeTable.getRecords()));
+        Iterable<KV> rows = new ArrayList<>(Arrays.asList(codeTable.getRecords()));
         GeoSymTable.selectMatchingRows("file", GeoSymConstants.FULL_SYMBOL_ASSIGNMENT_FILE, false, rows);
         GeoSymTable.selectMatchingRows("attribute", "pid", false, rows);
 
         this.productTypes = new HashMap<>();
-        for (AVList row : rows) {
+        for (KV row : rows) {
             Integer value = (Integer) row.get("value");
             String description = (String) row.get("description");
             if (value != null && description != null)
@@ -573,12 +573,12 @@ public class GeoSymSupport {
 
     protected void loadFeatureTypes() {
         GeoSymTable codeTable = this.getAssignment().getTable(GeoSymConstants.CODE_VALUE_DESCRIPTION_FILE);
-        Iterable<AVList> rows = new ArrayList<>(Arrays.asList(codeTable.getRecords()));
+        Iterable<KV> rows = new ArrayList<>(Arrays.asList(codeTable.getRecords()));
         GeoSymTable.selectMatchingRows("file", GeoSymConstants.FULL_SYMBOL_ASSIGNMENT_FILE, false, rows);
         GeoSymTable.selectMatchingRows("attribute", "delin", false, rows);
 
         this.deliniations = new HashMap<>();
-        for (AVList row : rows) {
+        for (KV row : rows) {
             Integer value = (Integer) row.get("value");
             String description = (String) row.get("description");
             if (value != null && description != null)
@@ -593,7 +593,7 @@ public class GeoSymSupport {
 
     protected List<? extends VPFSymbolKey> doGetSymbolKeys(VPFFeatureClass featureClass, String featureCode) {
         // Select the symbol rows associated with this feature class and feature code combination.
-        Collection<AVList> symbolRows = this.selectSymbolRows(featureClass, featureCode);
+        Collection<KV> symbolRows = this.selectSymbolRows(featureClass, featureCode);
         if (symbolRows == null || symbolRows.isEmpty()) {
             return Collections.emptyList();
         }
@@ -601,9 +601,9 @@ public class GeoSymSupport {
         // Create symbol keys for each symbol row.
         List<VPFSymbolKey> keyList = new ArrayList<>();
 
-        for (AVList symbolRow : symbolRows) {
+        for (KV symbolRow : symbolRows) {
             if (symbolRow != null) {
-                Integer id = AVListImpl.getIntegerValue(symbolRow, "id");
+                Integer id = KVMap.getIntegerValue(symbolRow, "id");
                 if (id != null) {
                     keyList.add(new VPFSymbolKey(id));
                 }
@@ -617,7 +617,7 @@ public class GeoSymSupport {
     }
 
     protected List<VPFSymbolKey> doEvaluateSymbolKeys(Iterable<? extends VPFSymbolKey> iterable,
-        AVList featureAttributes) {
+        KV featureAttributes) {
         List<VPFSymbolKey> filteredKeys = new ArrayList<>();
 
         for (VPFSymbolKey key : iterable) {
@@ -636,7 +636,7 @@ public class GeoSymSupport {
         return filteredKeys;
     }
 
-    protected Collection<AVList> selectSymbolRows(VPFFeatureClass featureClass, String featureCode) {
+    protected Collection<KV> selectSymbolRows(VPFFeatureClass featureClass, String featureCode) {
         // Get the product id associated with the feature class. A value of -1 indicates that no id is available.
         int pid = -1;
         String productName = GeoSymSupport.getProductName(featureClass);
@@ -675,7 +675,7 @@ public class GeoSymSupport {
         VPFSymbolKey key) {
         // Get the symbology assignment table.
         GeoSymTable symbolTable = this.getAssignment().getTable(GeoSymConstants.FULL_SYMBOL_ASSIGNMENT_FILE);
-        AVList symbolRow = symbolTable.getRecord(key.getSymbolCode());
+        KV symbolRow = symbolTable.getRecord(key.getSymbolCode());
         if (symbolRow == null) {
             return null;
         }
@@ -755,7 +755,7 @@ public class GeoSymSupport {
         }
     }
 
-    protected void assembleTextLabelAttributes(AVList labelRow, VPFSymbolAttributes attr) {
+    protected void assembleTextLabelAttributes(KV labelRow, VPFSymbolAttributes attr) {
         String[] attributeNames = null;
         String[] txtRowIds = null;
 

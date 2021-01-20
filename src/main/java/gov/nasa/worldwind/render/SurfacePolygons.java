@@ -7,7 +7,7 @@ package gov.nasa.worldwind.render;
 
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.*;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.cache.GpuResourceCache;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
@@ -30,7 +30,7 @@ public class SurfacePolygons extends SurfacePolylines // TODO: Review
 {
     protected final Object interiorDisplayListCacheKey = new Object();
     protected int[] polygonRingGroups;
-    protected String windingRule = AVKey.CLOCKWISE;
+    protected String windingRule = Keys.CLOCKWISE;
     protected boolean needsInteriorTessellation = true;
     protected WWTexture texture;
 
@@ -132,12 +132,12 @@ public class SurfacePolygons extends SurfacePolylines // TODO: Review
     }
 
     /**
-     * Get the winding rule used when tessellating polygons. Can be one of {@link AVKey#CLOCKWISE} (default) or {@link
-     * AVKey#COUNTER_CLOCKWISE}.
+     * Get the winding rule used when tessellating polygons. Can be one of {@link Keys#CLOCKWISE} (default) or {@link
+     * Keys#COUNTER_CLOCKWISE}.
      * <p>
-     * When set to {@link AVKey#CLOCKWISE} polygons which run clockwise will be filled and those which run counter
+     * When set to {@link Keys#CLOCKWISE} polygons which run clockwise will be filled and those which run counter
      * clockwise will produce 'holes'. The interpretation is reversed when the winding rule is set to {@link
-     * AVKey#COUNTER_CLOCKWISE}.
+     * Keys#COUNTER_CLOCKWISE}.
      *
      * @return the winding rule used when tessellating polygons.
      */
@@ -150,12 +150,12 @@ public class SurfacePolygons extends SurfacePolylines // TODO: Review
     //**************************************************************//
 
     /**
-     * Set the winding rule used when tessellating polygons. Can be one of {@link AVKey#CLOCKWISE} (default) or {@link
-     * AVKey#COUNTER_CLOCKWISE}.
+     * Set the winding rule used when tessellating polygons. Can be one of {@link Keys#CLOCKWISE} (default) or {@link
+     * Keys#COUNTER_CLOCKWISE}.
      * <p>
-     * When set to {@link AVKey#CLOCKWISE} polygons which run clockwise will be filled and those which run counter
+     * When set to {@link Keys#CLOCKWISE} polygons which run clockwise will be filled and those which run counter
      * clockwise will produce 'holes'. The interpretation is reversed when the winding rule is set to {@link
-     * AVKey#COUNTER_CLOCKWISE}.
+     * Keys#COUNTER_CLOCKWISE}.
      *
      * @param windingRule the winding rule to use when tessellating polygons.
      */
@@ -296,7 +296,7 @@ public class SurfacePolygons extends SurfacePolylines // TODO: Review
 
     protected int tessellateInteriorVertices(GLUtessellator tess, LatLon referenceLocation) {
         // Setup the winding order to correctly tessellate the outer and inner rings.
-        GLU.gluTessProperty(tess, GLU.GLU_TESS_WINDING_RULE, this.windingRule.equals(AVKey.CLOCKWISE) ?
+        GLU.gluTessProperty(tess, GLU.GLU_TESS_WINDING_RULE, this.windingRule.equals(Keys.CLOCKWISE) ?
             GLU.GLU_TESS_WINDING_NEGATIVE : GLU.GLU_TESS_WINDING_POSITIVE);
 
         this.crossesDateLine = false;
@@ -414,6 +414,6 @@ public class SurfacePolygons extends SurfacePolylines // TODO: Review
 
         // If we cross the date line going west (from a negative longitude) with a clockwise polygon,
         // then the north pole (positive) is included.
-        return this.getWindingRule().equals(AVKey.CLOCKWISE) && sign < 0 ? 1 : -1;
+        return this.getWindingRule().equals(Keys.CLOCKWISE) && sign < 0 ? 1 : -1;
     }
 }

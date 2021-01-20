@@ -6,8 +6,7 @@
 
 package gov.nasa.worldwind.ui;
 
-import gov.nasa.worldwind.WorldWindow;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.pick.*;
 import gov.nasa.worldwind.util.Logging;
@@ -22,7 +21,7 @@ import java.awt.event.*;
  * <p>
  * The active HotSpot is updated during non-drag rollover select events as follows: <ul> <li>The select event's top
  * picked object, if the top picked object implements {@link HotSpot}.</li> <li>The value for {@code
- * SelectEvent.getTopPickedObject().getValue(AVKey.HOT_SPOT)},if the value for key {@link AVKey#HOT_SPOT} implements
+ * SelectEvent.getTopPickedObject().getValue(AVKey.HOT_SPOT)},if the value for key {@link Keys#HOT_SPOT} implements
  * HotSpot.</li> <li>{@code null} if neither of the above conditions are true, or if the event is {@code null}.</li>
  * </ul>
  *
@@ -231,15 +230,15 @@ public class HotSpotController implements SelectListener, MouseMotionListener {
     /**
      * Updates the active {@link HotSpot} and the currently displayed cursor according to the picked objects in the
      * specified event. The active HotSpot is assigned as follows: <ul> <li>The value for {@code
-     * event.getTopPickedObject().getValue(AVKey.HOT_SPOT)}, if the value for the key {@link AVKey#HOT_SPOT} implements
+     * event.getTopPickedObject().getValue(AVKey.HOT_SPOT)}, if the value for the key {@link Keys#HOT_SPOT} implements
      * HotSpot.</li> <li>The event's top picked object, if the top picked object implements HotSpot.</li> <li>{@code
      * null} if neither of the above conditions are true, or if the event is {@code null}.</li> </ul>
      *
      * @param po Top picked object, which will provide the active HotSpot.
      */
     protected void updateActiveHotSpot(PickedObject po) {
-        if (po != null && po.get(AVKey.HOT_SPOT) instanceof HotSpot) {
-            this.setActiveHotSpot((HotSpot) po.get(AVKey.HOT_SPOT));
+        if (po != null && po.get(Keys.HOT_SPOT) instanceof HotSpot) {
+            this.setActiveHotSpot((HotSpot) po.get(Keys.HOT_SPOT));
         } else if (po != null && po.get() instanceof HotSpot) {
             this.setActiveHotSpot((HotSpot) po.get());
         } else {

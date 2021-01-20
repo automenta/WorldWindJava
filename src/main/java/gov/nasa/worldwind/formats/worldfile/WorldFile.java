@@ -5,6 +5,7 @@
  */
 package gov.nasa.worldwind.formats.worldfile;
 
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.geom.coords.UTMCoord;
@@ -98,7 +99,7 @@ public class WorldFile {
      * @throws FileNotFoundException    if the file does not exist.
      * @throws IllegalStateException    if the file cannot be parsed as a world file.
      */
-    public static AVList decodeWorldFiles(File[] worldFiles, AVList values) throws FileNotFoundException {
+    public static KV decodeWorldFiles(File[] worldFiles, KV values) throws FileNotFoundException {
         if (worldFiles == null) {
             String message = Logging.getMessage("nullValue.FileIsNull");
             Logging.logger().severe(message);
@@ -106,7 +107,7 @@ public class WorldFile {
         }
 
         if (values == null)
-            values = new AVListImpl();
+            values = new KVMap();
 
         for (File file : worldFiles) {
             if (!file.exists()) {
@@ -140,48 +141,48 @@ public class WorldFile {
 
         o = WorldFile.parseByteOrder(values);
         if (o != null)
-            values.set(AVKey.BYTE_ORDER, o);
+            values.set(Keys.BYTE_ORDER, o);
 
         o = WorldFile.parsePixelFormat(values);
         if (o != null)
-            values.set(AVKey.PIXEL_FORMAT, o);
+            values.set(Keys.PIXEL_FORMAT, o);
 
         o = WorldFile.parseDataType(values);
         if (o != null)
-            values.set(AVKey.DATA_TYPE, o);
+            values.set(Keys.DATA_TYPE, o);
 
         // Consumers of this property are expecting the string "gov.nasa.worldwind.avkey.MissingDataValue", which now
         // corresponds to the key MISSING_DATA_REPLACEMENT.
         o = WorldFile.parseMissingDataValue(values);
         if (o != null)
-            values.set(AVKey.MISSING_DATA_REPLACEMENT, o);
+            values.set(Keys.MISSING_DATA_REPLACEMENT, o);
 
         Sector sector = null;
         if (WorldFile.worldFileValuesAppearGeographic(values)) {
             if (size != null) {
                 sector = WorldFile.parseDegrees(values, size[0], size[1]);
             } else {
-                RenderedImage image = (RenderedImage) values.get(AVKey.IMAGE);
+                RenderedImage image = (RenderedImage) values.get(Keys.IMAGE);
                 if (image != null) {
                     sector = WorldFile.parseDegrees(values, image.getWidth(), image.getHeight());
                 }
             }
 
             if (sector != null) {
-                values.set(AVKey.SECTOR, sector);
+                values.set(Keys.SECTOR, sector);
             }
         }
 
         if (null == sector) {
             sector = WorldFile.extractSectorFromHeader(values); // TODO: not checking for non-geographic proj
             if (sector != null)
-                values.set(AVKey.SECTOR, sector);
+                values.set(Keys.SECTOR, sector);
         }
 
         return values;
     }
 
-    protected static void scanWorldFile(File file, AVList values) throws FileNotFoundException {
+    protected static void scanWorldFile(File file, KV values) throws FileNotFoundException {
         Scanner scanner = new Scanner(file);
 
         try (scanner) {
@@ -205,7 +206,7 @@ public class WorldFile {
         }
     }
 
-    protected static void scanHdrFile(File file, AVList values) throws FileNotFoundException {
+    protected static void scanHdrFile(File file, KV values) throws FileNotFoundException {
         Scanner scanner = new Scanner(file);
 
         try (scanner) {
@@ -277,10 +278,10 @@ public class WorldFile {
 
             // USGS NED 10m HDR files do not contain NBANDS, NBITS, and PIXELTYPE properties
             if (!values.hasKey("NBANDS") || !values.hasKey("NBITS")) {
-                if (values.hasKey(AVKey.FILE_SIZE) && values.hasKey("NCOLS") && values.hasKey("NROWS")) {
+                if (values.hasKey(Keys.FILE_SIZE) && values.hasKey("NCOLS") && values.hasKey("NROWS")) {
                     Integer nCols = (Integer) values.get("NCOLS");
                     Integer nRows = (Integer) values.get("NROWS");
-                    Integer fileSize = (Integer) values.get(AVKey.FILE_SIZE);
+                    Integer fileSize = (Integer) values.get(Keys.FILE_SIZE);
 
                     double bits = (((double) fileSize) / ((double) nCols) / ((double) nRows)) * 8.0d;
 
@@ -347,7 +348,7 @@ public class WorldFile {
      * @return true if the values are between the normal limits of latitude, [-90, 90], and longitude, [-180, 180],
      * othewise false.
      */
-    public static boolean worldFileValuesAppearGeographic(AVList values) {
+    public static boolean worldFileValuesAppearGeographic(KV values) {
         double xLocation;
         double yLocation;
         double xPixelSize;
@@ -381,7 +382,7 @@ public class WorldFile {
             && Angle.isValidLongitude(xLocation) && Angle.isValidLatitude(yLocation));
     }
 
-    public static Sector extractSectorFromHeader(AVList values) // TODO: assumes degrees
+    public static Sector extractSectorFromHeader(KV values) // TODO: assumes degrees
     {
         if (null != values
             && values.hasKey("NROWS") && values.hasKey("NCOLS")
@@ -438,7 +439,7 @@ public class WorldFile {
         return null;
     }
 
-    public static int[] parseSize(AVList values) {
+    public static int[] parseSize(KV values) {
         if (values == null)
             return null;
 
@@ -448,7 +449,7 @@ public class WorldFile {
         return new int[] {(Integer) values.get("NCOLS"), (Integer) values.get("NROWS")};
     }
 
-    public static Object parseByteOrder(AVList values) {
+    public static Object parseByteOrder(KV values) {
         if (values == null)
             return null;
 
@@ -456,10 +457,10 @@ public class WorldFile {
             return null;
 
         String s = values.get("BYTEORDER").toString();
-        return (s.equalsIgnoreCase("I") || s.equalsIgnoreCase("LSBFIRST")) ? AVKey.LITTLE_ENDIAN : AVKey.BIG_ENDIAN;
+        return (s.equalsIgnoreCase("I") || s.equalsIgnoreCase("LSBFIRST")) ? Keys.LITTLE_ENDIAN : Keys.BIG_ENDIAN;
     }
 
-    public static Object parsePixelFormat(AVList values) {
+    public static Object parsePixelFormat(KV values) {
         if (values == null)
             return null;
 
@@ -468,17 +469,17 @@ public class WorldFile {
             Integer nBits = (Integer) values.get("NBITS");
 
             if (nBands == 1 && (nBits == 16 || nBits == 32))
-                return AVKey.ELEVATION;
+                return Keys.ELEVATION;
             if (nBands == 1 && nBits == 8)
-                return AVKey.IMAGE;
+                return Keys.IMAGE;
             if (nBands == 3 && nBits == 8)
-                return AVKey.IMAGE;
+                return Keys.IMAGE;
         }
 
         return null;
     }
 
-    public static Object parseDataType(AVList values) {
+    public static Object parseDataType(KV values) {
         if (values == null)
             return null;
 
@@ -487,22 +488,22 @@ public class WorldFile {
 
             switch (nBits) {
                 case 8:
-                    return AVKey.INT8;
+                    return Keys.INT8;
                 case 16:
-                    return AVKey.INT16;
+                    return Keys.INT16;
                 case 32:
-                    return AVKey.FLOAT32;
+                    return Keys.FLOAT32;
             }
         } else if (values.hasKey("PIXELTYPE")) {
             String pixelType = (String) values.get("PIXELTYPE");
             if ("FLOAT".equalsIgnoreCase(pixelType))
-                return AVKey.FLOAT32;
+                return Keys.FLOAT32;
         }
 
         return null;
     }
 
-    public static Object parseMissingDataValue(AVList values) {
+    public static Object parseMissingDataValue(KV values) {
         if (values == null)
             return null;
 
@@ -524,9 +525,9 @@ public class WorldFile {
      *                                  and height are less than zero.
      * @throws IllegalStateException    if the decoded values are not within the normal range of latituded and
      *                                  longitude.
-     * @see #worldFileValuesAppearGeographic(AVList)
+     * @see #worldFileValuesAppearGeographic(KV)
      */
-    public static Sector parseDegrees(AVList values, int imageWidth, int imageHeight) {
+    public static Sector parseDegrees(KV values, int imageWidth, int imageHeight) {
         if (values == null) {
             String message = Logging.getMessage("nullValue.ArrayIsNull");
             Logging.logger().severe(message);
@@ -584,14 +585,14 @@ public class WorldFile {
      * @param imageWidth  the width of the image associated with the world file.
      * @param imageHeight the height of the image associated with the world file.
      * @param zone        the UTM zone number (1 to 60), can be zero if expected units are in decimal degrees.
-     * @param hemisphere  the UTM hemisphere, either {@link AVKey#NORTH} or {@link AVKey#SOUTH}.
+     * @param hemisphere  the UTM hemisphere, either {@link Keys#NORTH} or {@link Keys#SOUTH}.
      * @return the corresponding <code>Sector</code> or <code>null</code> if the sector could not be computed.
      * @throws IllegalArgumentException if the values array is null or has a length less than six, , the image width and
      *                                  height are less than zero, or the hemisphere indicator is not {@link
-     *                                  AVKey#NORTH} or {@link AVKey#SOUTH}
+     *                                  Keys#NORTH} or {@link Keys#SOUTH}
      * @throws IllegalStateException    if the decoded values are not within the normal range of latituded and
      *                                  longitude.
-     * @see #worldFileValuesAppearGeographic(AVList)
+     * @see #worldFileValuesAppearGeographic(KV)
      */
     @SuppressWarnings("UnnecessaryLocalVariable")
     public static Sector parseUTM(double[] values, int imageWidth, int imageHeight, int zone, String hemisphere) {
@@ -614,7 +615,7 @@ public class WorldFile {
             throw new IllegalArgumentException(message);
         }
 
-        if (!AVKey.NORTH.equals(hemisphere) && !AVKey.SOUTH.equals(hemisphere)) {
+        if (!Keys.NORTH.equals(hemisphere) && !Keys.SOUTH.equals(hemisphere)) {
             String msg = Logging.getMessage("generic.HemisphereIsInvalid", hemisphere);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -652,15 +653,15 @@ public class WorldFile {
      * details, see to the OGC Coordinate Transform Service (CT) specification at <a
      * href="http://www.opengeospatial.org/standards/ct">http://www.opengeospatial.org/standards/ct</a>. This recognizes
      * Geographic and UTM coordinate systems. This configures the parameter list according to the coordinate system as
-     * follows: <ul> <li>Geographic - {@link AVKey#COORDINATE_SYSTEM} set to {@link
-     * AVKey#COORDINATE_SYSTEM_GEOGRAPHIC}.</li> <li>Projected coordinate system: Universal Transverse Mercator (UTM) -
-     * {@link AVKey#COORDINATE_SYSTEM} set to {@link AVKey#COORDINATE_SYSTEM_PROJECTED} and {@link
-     * AVKey#PROJECTION_NAME} set to {@link AVKey#PROJECTION_UTM}. {@link AVKey#PROJECTION_HEMISPHERE} set to either
-     * {@link AVKey#NORTH} or {@link AVKey#SOUTH}. {@link AVKey#PROJECTION_ZONE} set to an integer in the range
-     * 1-60</li> <li>Projected coordinate system: unknown projection - {@link AVKey#COORDINATE_SYSTEM} set to {@link
-     * AVKey#COORDINATE_SYSTEM_PROJECTED} and {@link AVKey#PROJECTION_NAME} set to {@link
-     * AVKey#PROJECTION_UNKNOWN}.</li> <li>Unknown coordinate system - {@link AVKey#COORDINATE_SYSTEM} set to {@link
-     * AVKey#COORDINATE_SYSTEM_UNKNOWN}.
+     * follows: <ul> <li>Geographic - {@link Keys#COORDINATE_SYSTEM} set to {@link
+     * Keys#COORDINATE_SYSTEM_GEOGRAPHIC}.</li> <li>Projected coordinate system: Universal Transverse Mercator (UTM) -
+     * {@link Keys#COORDINATE_SYSTEM} set to {@link Keys#COORDINATE_SYSTEM_PROJECTED} and {@link
+     * Keys#PROJECTION_NAME} set to {@link Keys#PROJECTION_UTM}. {@link Keys#PROJECTION_HEMISPHERE} set to either
+     * {@link Keys#NORTH} or {@link Keys#SOUTH}. {@link Keys#PROJECTION_ZONE} set to an integer in the range
+     * 1-60</li> <li>Projected coordinate system: unknown projection - {@link Keys#COORDINATE_SYSTEM} set to {@link
+     * Keys#COORDINATE_SYSTEM_PROJECTED} and {@link Keys#PROJECTION_NAME} set to {@link
+     * Keys#PROJECTION_UNKNOWN}.</li> <li>Unknown coordinate system - {@link Keys#COORDINATE_SYSTEM} set to {@link
+     * Keys#COORDINATE_SYSTEM_UNKNOWN}.
      * </ul> If an exception occurs while parsing the coordinate system text, the parameter list is left unchanged.
      *
      * @param text   a String containing an OGC coordinate system in well-known text format.
@@ -668,7 +669,7 @@ public class WorldFile {
      * @return the coordinate system parameter list.
      * @throws IllegalArgumentException if <code>text</code> is null.
      */
-    public static AVList decodeOGCCoordinateSystemWKT(String text, AVList params) {
+    public static KV decodeOGCCoordinateSystemWKT(String text, KV params) {
         if (text == null) {
             String message = Logging.getMessage("nullValue.StringIsNull");
             Logging.logger().severe(message);
@@ -676,7 +677,7 @@ public class WorldFile {
         }
 
         if (params == null)
-            params = new AVListImpl();
+            params = new KVMap();
 
         // Convert the coordinate system text to upper case. The coordinate system regular expressions match against
         // upper case characters.
@@ -685,24 +686,24 @@ public class WorldFile {
         try {
             Matcher csMatcher = WorldFile.GEOGCS_WKT_PATTERN.matcher(text);
             if (csMatcher.matches()) {
-                params.set(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_GEOGRAPHIC);
+                params.set(Keys.COORDINATE_SYSTEM, Keys.COORDINATE_SYSTEM_GEOGRAPHIC);
             } else if ((csMatcher = WorldFile.PROJCS_WKT_PATTERN.matcher(text)).matches()) {
-                params.set(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_PROJECTED);
+                params.set(Keys.COORDINATE_SYSTEM, Keys.COORDINATE_SYSTEM_PROJECTED);
 
                 String csText = csMatcher.group(1);
                 Matcher projMatcher = WorldFile.UTM_NAME_WKT_PATTERN.matcher(csText);
                 if (projMatcher.matches()) {
-                    params.set(AVKey.PROJECTION_NAME, AVKey.PROJECTION_UTM);
+                    params.set(Keys.PROJECTION_NAME, Keys.PROJECTION_UTM);
 
                     // Parse the UTM zone from the coordinate system name.
                     String s = projMatcher.group(1);
                     if (s != null) {
                         Integer i = WWUtil.makeInteger(s.trim());
                         if (i != null && i >= 1 && i <= 60)
-                            params.set(AVKey.PROJECTION_ZONE, i);
+                            params.set(Keys.PROJECTION_ZONE, i);
                     }
 
-                    if (params.get(AVKey.PROJECTION_ZONE) == null)
+                    if (params.get(Keys.PROJECTION_ZONE) == null)
                         Logging.logger().warning(Logging.getMessage("generic.ZoneIsInvalid", s));
 
                     // Parse the UTM hemisphere form the coordinate system name.
@@ -710,18 +711,18 @@ public class WorldFile {
                     if (s != null) {
                         s = s.trim();
                         if (!s.isEmpty() && s.charAt(0) == 'N' || !s.isEmpty() && s.charAt(0) == 'n')
-                            params.set(AVKey.PROJECTION_HEMISPHERE, AVKey.NORTH);
+                            params.set(Keys.PROJECTION_HEMISPHERE, Keys.NORTH);
                         else if (!s.isEmpty() && s.charAt(0) == 'S' || !s.isEmpty() && s.charAt(0) == 's')
-                            params.set(AVKey.PROJECTION_HEMISPHERE, AVKey.SOUTH);
+                            params.set(Keys.PROJECTION_HEMISPHERE, Keys.SOUTH);
                     }
 
-                    if (params.get(AVKey.PROJECTION_HEMISPHERE) == null)
+                    if (params.get(Keys.PROJECTION_HEMISPHERE) == null)
                         Logging.logger().warning(Logging.getMessage("generic.HemisphereIsInvalid", s));
                 } else {
-                    params.set(AVKey.PROJECTION_NAME, AVKey.PROJECTION_UNKNOWN);
+                    params.set(Keys.PROJECTION_NAME, Keys.PROJECTION_UNKNOWN);
                 }
             } else {
-                params.set(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_UNKNOWN);
+                params.set(Keys.COORDINATE_SYSTEM, Keys.COORDINATE_SYSTEM_UNKNOWN);
             }
         }
         catch (RuntimeException e) {
@@ -772,7 +773,7 @@ public class WorldFile {
      * @param params AVList for storing parameters
      * @throws IOException if the world file could not be read
      */
-    public static void readWorldFiles(Object source, AVList params) throws IOException {
+    public static void readWorldFiles(Object source, KV params) throws IOException {
         File file = WWIO.getFileForLocalAddress(source);
         if (null == file) {
             String message = Logging.getMessage("generic.UnrecognizedSourceType", source);
@@ -794,11 +795,11 @@ public class WorldFile {
         if (o instanceof int[]) {
             int[] size = (int[]) o;
 
-            if (!params.hasKey(AVKey.WIDTH))
-                params.set(AVKey.WIDTH, size[0]);
+            if (!params.hasKey(Keys.WIDTH))
+                params.set(Keys.WIDTH, size[0]);
 
-            if (!params.hasKey(AVKey.HEIGHT))
-                params.set(AVKey.HEIGHT, size[1]);
+            if (!params.hasKey(Keys.HEIGHT))
+                params.set(Keys.HEIGHT, size[1]);
         }
     }
 }

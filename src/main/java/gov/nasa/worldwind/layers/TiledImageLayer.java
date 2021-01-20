@@ -68,7 +68,7 @@ protected boolean retainLevelZeroTiles;
     public TiledImageLayer(LevelSet levelSet) {
 
         this.levels = new LevelSet(levelSet); // the caller's levelSet may change internally, so we copy it.
-        this.set(AVKey.SECTOR, this.levels.sector);
+        this.set(Keys.SECTOR, this.levels.sector);
 
         this.setPickEnabled(false); // textures are assumed to be terrain unless specifically indicated otherwise.
         this.tileCountName = this.name() + " Tiles";
@@ -81,7 +81,7 @@ protected boolean retainLevelZeroTiles;
      * @param params parameters describing the TiledImageLayer.
      * @return a configuration document for the TiledImageLayer.
      */
-    public static Document createTiledImageLayerConfigDocument(AVList params) {
+    public static Document createTiledImageLayerConfigDocument(KV params) {
         Document doc = WWXML.createDocumentBuilder(true).newDocument();
 
         Element root = WWXML.setDocumentElement(doc, "Layer");
@@ -97,28 +97,28 @@ protected boolean retainLevelZeroTiles;
      * Appends TiledImageLayer configuration parameters as elements to the specified context. This appends elements for
      * the following parameters: <table> <caption style="font-weight: bold;">Parameters</caption>
      * <tr><th>Parameter</th><th>Element Path</th><th>Type</th></tr> <tr><td>{@link
-     * AVKey#SERVICE_NAME}</td><td>Service/@serviceName</td><td>String</td></tr> <tr><td>{@link
-     * AVKey#IMAGE_FORMAT}</td><td>ImageFormat</td><td>String</td></tr> <tr><td>{@link
-     * AVKey#AVAILABLE_IMAGE_FORMATS}</td><td>AvailableImageFormats/ImageFormat</td><td>String array</td></tr>
-     * <tr><td>{@link AVKey#FORCE_LEVEL_ZERO_LOADS}</td><td>ForceLevelZeroLoads</td><td>Boolean</td></tr>
+     * Keys#SERVICE_NAME}</td><td>Service/@serviceName</td><td>String</td></tr> <tr><td>{@link
+     * Keys#IMAGE_FORMAT}</td><td>ImageFormat</td><td>String</td></tr> <tr><td>{@link
+     * Keys#AVAILABLE_IMAGE_FORMATS}</td><td>AvailableImageFormats/ImageFormat</td><td>String array</td></tr>
+     * <tr><td>{@link Keys#FORCE_LEVEL_ZERO_LOADS}</td><td>ForceLevelZeroLoads</td><td>Boolean</td></tr>
      * <tr><td>{@link
-     * AVKey#RETAIN_LEVEL_ZERO_TILES}</td><td>RetainLevelZeroTiles</td><td>Boolean</td></tr> <tr><td>{@link
-     * AVKey#TEXTURE_FORMAT}</td><td>TextureFormat</td><td>String</td></tr> <tr><td>{@link
-     * AVKey#USE_MIP_MAPS}</td><td>UseMipMaps</td><td>Boolean</td></tr> <tr><td>{@link
-     * AVKey#USE_TRANSPARENT_TEXTURES}</td><td>UseTransparentTextures</td><td>Boolean</td></tr> <tr><td>{@link
-     * AVKey#URL_CONNECT_TIMEOUT}</td><td>RetrievalTimeouts/ConnectTimeout/Time</td><td>Integer milliseconds</td></tr>
-     * <tr><td>{@link AVKey#URL_READ_TIMEOUT}</td><td>RetrievalTimeouts/ReadTimeout/Time</td><td>Integer
-     * milliseconds</td></tr> <tr><td>{@link AVKey#RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT}</td>
+     * Keys#RETAIN_LEVEL_ZERO_TILES}</td><td>RetainLevelZeroTiles</td><td>Boolean</td></tr> <tr><td>{@link
+     * Keys#TEXTURE_FORMAT}</td><td>TextureFormat</td><td>String</td></tr> <tr><td>{@link
+     * Keys#USE_MIP_MAPS}</td><td>UseMipMaps</td><td>Boolean</td></tr> <tr><td>{@link
+     * Keys#USE_TRANSPARENT_TEXTURES}</td><td>UseTransparentTextures</td><td>Boolean</td></tr> <tr><td>{@link
+     * Keys#URL_CONNECT_TIMEOUT}</td><td>RetrievalTimeouts/ConnectTimeout/Time</td><td>Integer milliseconds</td></tr>
+     * <tr><td>{@link Keys#URL_READ_TIMEOUT}</td><td>RetrievalTimeouts/ReadTimeout/Time</td><td>Integer
+     * milliseconds</td></tr> <tr><td>{@link Keys#RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT}</td>
      * <td>RetrievalTimeouts/StaleRequestLimit/Time</td><td>Integer milliseconds</td></tr> </table> This also writes
-     * common layer and LevelSet configuration parameters by invoking {@link AbstractLayer#createLayerConfigElements(AVList,
-     * Element)} and {@link DataConfigurationUtils#createLevelSetConfigElements(AVList, Element)}.
+     * common layer and LevelSet configuration parameters by invoking {@link AbstractLayer#createLayerConfigElements(KV,
+     * Element)} and {@link DataConfigurationUtils#createLevelSetConfigElements(KV, Element)}.
      *
      * @param params  the key-value pairs which define the TiledImageLayer configuration parameters.
      * @param context the XML document root on which to append TiledImageLayer configuration elements.
      * @return a reference to context.
      * @throws IllegalArgumentException if either the parameters or the context are null.
      */
-    public static Element createTiledImageLayerConfigElements(AVList params, Element context) {
+    public static Element createTiledImageLayerConfigElements(KV params, Element context) {
 
         XPath xpath = WWXML.makeXPath();
 
@@ -130,7 +130,7 @@ protected boolean retainLevelZeroTiles;
 
         // Service properties.
         // Try to get the SERVICE_NAME property, but default to "WWTileService".
-        String s = AVListImpl.getStringValue(params, AVKey.SERVICE_NAME, "WWTileService");
+        String s = KVMap.getStringValue(params, Keys.SERVICE_NAME, "WWTileService");
         if (s != null && !s.isEmpty()) {
             // The service element may already exist, in which case we want to append to it.
             Element el = WWXML.getElement(context, "Service", xpath);
@@ -139,14 +139,14 @@ protected boolean retainLevelZeroTiles;
             WWXML.setTextAttribute(el, "serviceName", s);
         }
 
-        WWXML.checkAndAppendBooleanElement(params, AVKey.RETRIEVE_PROPERTIES_FROM_SERVICE, context,
+        WWXML.checkAndAppendBooleanElement(params, Keys.RETRIEVE_PROPERTIES_FROM_SERVICE, context,
             "RetrievePropertiesFromService");
 
         // Image format properties.
-        WWXML.checkAndAppendTextElement(params, AVKey.IMAGE_FORMAT, context, "ImageFormat");
-        WWXML.checkAndAppendTextElement(params, AVKey.TEXTURE_FORMAT, context, "TextureFormat");
+        WWXML.checkAndAppendTextElement(params, Keys.IMAGE_FORMAT, context, "ImageFormat");
+        WWXML.checkAndAppendTextElement(params, Keys.TEXTURE_FORMAT, context, "TextureFormat");
 
-        Object o = params.get(AVKey.AVAILABLE_IMAGE_FORMATS);
+        Object o = params.get(Keys.AVAILABLE_IMAGE_FORMATS);
         if (o instanceof String[]) {
             String[] strings = (String[]) o;
             if (strings.length > 0) {
@@ -160,23 +160,23 @@ protected boolean retainLevelZeroTiles;
         }
 
         // Optional behavior properties.
-        WWXML.checkAndAppendBooleanElement(params, AVKey.FORCE_LEVEL_ZERO_LOADS, context, "ForceLevelZeroLoads");
-        WWXML.checkAndAppendBooleanElement(params, AVKey.RETAIN_LEVEL_ZERO_TILES, context, "RetainLevelZeroTiles");
-        WWXML.checkAndAppendBooleanElement(params, AVKey.USE_MIP_MAPS, context, "UseMipMaps");
-        WWXML.checkAndAppendBooleanElement(params, AVKey.USE_TRANSPARENT_TEXTURES, context, "UseTransparentTextures");
-        WWXML.checkAndAppendDoubleElement(params, AVKey.DETAIL_HINT, context, "DetailHint");
+        WWXML.checkAndAppendBooleanElement(params, Keys.FORCE_LEVEL_ZERO_LOADS, context, "ForceLevelZeroLoads");
+        WWXML.checkAndAppendBooleanElement(params, Keys.RETAIN_LEVEL_ZERO_TILES, context, "RetainLevelZeroTiles");
+        WWXML.checkAndAppendBooleanElement(params, Keys.USE_MIP_MAPS, context, "UseMipMaps");
+        WWXML.checkAndAppendBooleanElement(params, Keys.USE_TRANSPARENT_TEXTURES, context, "UseTransparentTextures");
+        WWXML.checkAndAppendDoubleElement(params, Keys.DETAIL_HINT, context, "DetailHint");
 
         // Retrieval properties.
-        if (params.get(AVKey.URL_CONNECT_TIMEOUT) != null ||
-            params.get(AVKey.URL_READ_TIMEOUT) != null ||
-            params.get(AVKey.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT) != null) {
+        if (params.get(Keys.URL_CONNECT_TIMEOUT) != null ||
+            params.get(Keys.URL_READ_TIMEOUT) != null ||
+            params.get(Keys.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT) != null) {
             Element el = WWXML.getElement(context, "RetrievalTimeouts", xpath);
             if (el == null)
                 el = WWXML.appendElementPath(context, "RetrievalTimeouts");
 
-            WWXML.checkAndAppendTimeElement(params, AVKey.URL_CONNECT_TIMEOUT, el, "ConnectTimeout/Time");
-            WWXML.checkAndAppendTimeElement(params, AVKey.URL_READ_TIMEOUT, el, "ReadTimeout/Time");
-            WWXML.checkAndAppendTimeElement(params, AVKey.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT, el,
+            WWXML.checkAndAppendTimeElement(params, Keys.URL_CONNECT_TIMEOUT, el, "ConnectTimeout/Time");
+            WWXML.checkAndAppendTimeElement(params, Keys.URL_READ_TIMEOUT, el, "ReadTimeout/Time");
+            WWXML.checkAndAppendTimeElement(params, Keys.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT, el,
                 "StaleRequestLimit/Time");
         }
 
@@ -188,21 +188,21 @@ protected boolean retainLevelZeroTiles;
      * pairs to params. If a parameter from the XML document already exists in params, that parameter is ignored.
      * Supported key and parameter names are: <table> <caption style="font-weight: bold;">Supported Names</caption>
      * <tr><th>Parameter</th><th>Element Path</th><th>Type</th></tr>
-     * <tr><td>{@link AVKey#SERVICE_NAME}</td><td>Service/@serviceName</td><td>String</td></tr> <tr><td>{@link
-     * AVKey#IMAGE_FORMAT}</td><td>ImageFormat</td><td>String</td></tr> <tr><td>{@link
-     * AVKey#AVAILABLE_IMAGE_FORMATS}</td><td>AvailableImageFormats/ImageFormat</td><td>String array</td></tr>
-     * <tr><td>{@link AVKey#FORCE_LEVEL_ZERO_LOADS}</td><td>ForceLevelZeroLoads</td><td>Boolean</td></tr>
+     * <tr><td>{@link Keys#SERVICE_NAME}</td><td>Service/@serviceName</td><td>String</td></tr> <tr><td>{@link
+     * Keys#IMAGE_FORMAT}</td><td>ImageFormat</td><td>String</td></tr> <tr><td>{@link
+     * Keys#AVAILABLE_IMAGE_FORMATS}</td><td>AvailableImageFormats/ImageFormat</td><td>String array</td></tr>
+     * <tr><td>{@link Keys#FORCE_LEVEL_ZERO_LOADS}</td><td>ForceLevelZeroLoads</td><td>Boolean</td></tr>
      * <tr><td>{@link
-     * AVKey#RETAIN_LEVEL_ZERO_TILES}</td><td>RetainLevelZeroTiles</td><td>Boolean</td></tr> <tr><td>{@link
-     * AVKey#TEXTURE_FORMAT}</td><td>TextureFormat</td><td>Boolean</td></tr> <tr><td>{@link
-     * AVKey#USE_MIP_MAPS}</td><td>UseMipMaps</td><td>Boolean</td></tr> <tr><td>{@link
-     * AVKey#USE_TRANSPARENT_TEXTURES}</td><td>UseTransparentTextures</td><td>Boolean</td></tr> <tr><td>{@link
-     * AVKey#URL_CONNECT_TIMEOUT}</td><td>RetrievalTimeouts/ConnectTimeout/Time</td><td>Integer milliseconds</td></tr>
-     * <tr><td>{@link AVKey#URL_READ_TIMEOUT}</td><td>RetrievalTimeouts/ReadTimeout/Time</td><td>Integer
-     * milliseconds</td></tr> <tr><td>{@link AVKey#RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT}</td>
+     * Keys#RETAIN_LEVEL_ZERO_TILES}</td><td>RetainLevelZeroTiles</td><td>Boolean</td></tr> <tr><td>{@link
+     * Keys#TEXTURE_FORMAT}</td><td>TextureFormat</td><td>Boolean</td></tr> <tr><td>{@link
+     * Keys#USE_MIP_MAPS}</td><td>UseMipMaps</td><td>Boolean</td></tr> <tr><td>{@link
+     * Keys#USE_TRANSPARENT_TEXTURES}</td><td>UseTransparentTextures</td><td>Boolean</td></tr> <tr><td>{@link
+     * Keys#URL_CONNECT_TIMEOUT}</td><td>RetrievalTimeouts/ConnectTimeout/Time</td><td>Integer milliseconds</td></tr>
+     * <tr><td>{@link Keys#URL_READ_TIMEOUT}</td><td>RetrievalTimeouts/ReadTimeout/Time</td><td>Integer
+     * milliseconds</td></tr> <tr><td>{@link Keys#RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT}</td>
      * <td>RetrievalTimeouts/StaleRequestLimit/Time</td><td>Integer milliseconds</td></tr> </table> This also parses
      * common layer and LevelSet configuration parameters by invoking {@link AbstractLayer#getLayerConfigParams(Element,
-     * AVList)} and {@link DataConfigurationUtils#getLevelSetConfigParams(Element, AVList)}.
+     * KV)} and {@link DataConfigurationUtils#getLevelSetConfigParams(Element, KV)}.
      *
      * @param domElement the XML document root to parse for TiledImageLayer configuration parameters.
      * @param params     the output key-value pairs which recieve the TiledImageLayer configuration parameters. A null
@@ -210,10 +210,10 @@ protected boolean retainLevelZeroTiles;
      * @return a reference to params, or a new AVList if params is null.
      * @throws IllegalArgumentException if the document is null.
      */
-    public static AVList getTiledImageLayerConfigParams(Element domElement, AVList params) {
+    public static KV getTiledImageLayerConfigParams(Element domElement, KV params) {
 
         if (params == null)
-            params = new AVListImpl();
+            params = new KVMap();
 
         XPath xpath = WWXML.makeXPath();
 
@@ -224,33 +224,33 @@ protected boolean retainLevelZeroTiles;
         DataConfigurationUtils.getLevelSetConfigParams(domElement, params);
 
         // Service properties.
-        WWXML.checkAndSetStringParam(domElement, params, AVKey.SERVICE_NAME, "Service/@serviceName", xpath);
-        WWXML.checkAndSetBooleanParam(domElement, params, AVKey.RETRIEVE_PROPERTIES_FROM_SERVICE,
+        WWXML.checkAndSetStringParam(domElement, params, Keys.SERVICE_NAME, "Service/@serviceName", xpath);
+        WWXML.checkAndSetBooleanParam(domElement, params, Keys.RETRIEVE_PROPERTIES_FROM_SERVICE,
             "RetrievePropertiesFromService", xpath);
 
         // Image format properties.
-        WWXML.checkAndSetStringParam(domElement, params, AVKey.IMAGE_FORMAT, "ImageFormat", xpath);
-        WWXML.checkAndSetStringParam(domElement, params, AVKey.TEXTURE_FORMAT, "TextureFormat", xpath);
-        WWXML.checkAndSetUniqueStringsParam(domElement, params, AVKey.AVAILABLE_IMAGE_FORMATS,
+        WWXML.checkAndSetStringParam(domElement, params, Keys.IMAGE_FORMAT, "ImageFormat", xpath);
+        WWXML.checkAndSetStringParam(domElement, params, Keys.TEXTURE_FORMAT, "TextureFormat", xpath);
+        WWXML.checkAndSetUniqueStringsParam(domElement, params, Keys.AVAILABLE_IMAGE_FORMATS,
             "AvailableImageFormats/ImageFormat", xpath);
 
         // Optional behavior properties.
-        WWXML.checkAndSetBooleanParam(domElement, params, AVKey.FORCE_LEVEL_ZERO_LOADS, "ForceLevelZeroLoads", xpath);
-        WWXML.checkAndSetBooleanParam(domElement, params, AVKey.RETAIN_LEVEL_ZERO_TILES, "RetainLevelZeroTiles", xpath);
-        WWXML.checkAndSetBooleanParam(domElement, params, AVKey.USE_MIP_MAPS, "UseMipMaps", xpath);
-        WWXML.checkAndSetBooleanParam(domElement, params, AVKey.USE_TRANSPARENT_TEXTURES, "UseTransparentTextures",
+        WWXML.checkAndSetBooleanParam(domElement, params, Keys.FORCE_LEVEL_ZERO_LOADS, "ForceLevelZeroLoads", xpath);
+        WWXML.checkAndSetBooleanParam(domElement, params, Keys.RETAIN_LEVEL_ZERO_TILES, "RetainLevelZeroTiles", xpath);
+        WWXML.checkAndSetBooleanParam(domElement, params, Keys.USE_MIP_MAPS, "UseMipMaps", xpath);
+        WWXML.checkAndSetBooleanParam(domElement, params, Keys.USE_TRANSPARENT_TEXTURES, "UseTransparentTextures",
             xpath);
-        WWXML.checkAndSetDoubleParam(domElement, params, AVKey.DETAIL_HINT, "DetailHint", xpath);
-        WWXML.checkAndSetColorArrayParam(domElement, params, AVKey.TRANSPARENCY_COLORS, "TransparencyColors/Color",
+        WWXML.checkAndSetDoubleParam(domElement, params, Keys.DETAIL_HINT, "DetailHint", xpath);
+        WWXML.checkAndSetColorArrayParam(domElement, params, Keys.TRANSPARENCY_COLORS, "TransparencyColors/Color",
             xpath);
 
         // Retrieval properties. Convert the Long time values to Integers, because BasicTiledImageLayer is expecting
         // Integer values.
-        WWXML.checkAndSetTimeParamAsInteger(domElement, params, AVKey.URL_CONNECT_TIMEOUT,
+        WWXML.checkAndSetTimeParamAsInteger(domElement, params, Keys.URL_CONNECT_TIMEOUT,
             "RetrievalTimeouts/ConnectTimeout/Time", xpath);
-        WWXML.checkAndSetTimeParamAsInteger(domElement, params, AVKey.URL_READ_TIMEOUT,
+        WWXML.checkAndSetTimeParamAsInteger(domElement, params, Keys.URL_READ_TIMEOUT,
             "RetrievalTimeouts/ReadTimeout/Time", xpath);
-        WWXML.checkAndSetTimeParamAsInteger(domElement, params, AVKey.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT,
+        WWXML.checkAndSetTimeParamAsInteger(domElement, params, Keys.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT,
             "RetrievalTimeouts/StaleRequestLimit/Time", xpath);
 
         // Parse the legacy configuration parameters. This enables TiledImageLayer to recognize elements from previous
@@ -266,7 +266,7 @@ protected boolean retainLevelZeroTiles;
      * parameter is ignored. Supported key and parameter names are: <table> <caption style="font-weight:
      * bold;">Supported Names</caption>
      * <tr><th>Parameter</th><th>Element
-     * Path</th><th>Type</th></tr> <tr><td>{@link AVKey#TEXTURE_FORMAT}</td><td>CompressTextures</td><td>"image/dds" if
+     * Path</th><th>Type</th></tr> <tr><td>{@link Keys#TEXTURE_FORMAT}</td><td>CompressTextures</td><td>"image/dds" if
      * CompressTextures is "true"; null otherwise</td></tr> </table>
      *
      * @param domElement the XML document root to parse for legacy TiledImageLayer configuration parameters.
@@ -275,18 +275,18 @@ protected boolean retainLevelZeroTiles;
      * @return a reference to params, or a new AVList if params is null.
      * @throws IllegalArgumentException if the document is null.
      */
-    protected static AVList getLegacyTiledImageLayerConfigParams(Element domElement, AVList params) {
+    protected static KV getLegacyTiledImageLayerConfigParams(Element domElement, KV params) {
 
         if (params == null)
-            params = new AVListImpl();
+            params = new KVMap();
 
         XPath xpath = WWXML.makeXPath();
 
-        Object o = params.get(AVKey.TEXTURE_FORMAT);
+        Object o = params.get(Keys.TEXTURE_FORMAT);
         if (o == null) {
             Boolean b = WWXML.getBoolean(domElement, "CompressTextures", xpath);
             if (b != null && b)
-                params.set(AVKey.TEXTURE_FORMAT, "image/dds");
+                params.set(Keys.TEXTURE_FORMAT, "image/dds");
         }
 
         return params;
@@ -768,7 +768,7 @@ protected boolean retainLevelZeroTiles;
 
         if (this.currentTiles.size() >= 1) {
             // Indicate that this layer rendered something this frame.
-            this.set(AVKey.FRAME_TIMESTAMP, dc.getFrameTimeStamp());
+            this.set(Keys.FRAME_TIMESTAMP, dc.getFrameTimeStamp());
 
             if (this.getScreenCredit() != null) {
                 dc.addScreenCredit(this.getScreenCredit());

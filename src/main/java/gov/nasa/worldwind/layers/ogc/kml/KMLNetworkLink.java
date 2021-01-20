@@ -6,8 +6,7 @@
 
 package gov.nasa.worldwind.layers.ogc.kml;
 
-import gov.nasa.worldwind.WorldWind;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.event.Message;
 import gov.nasa.worldwind.layers.ogc.kml.impl.KMLTraversalContext;
 import gov.nasa.worldwind.render.DrawContext;
@@ -242,7 +241,7 @@ public class KMLNetworkLink extends KMLAbstractContainer implements PropertyChan
      * Pre-renders the network resource referenced by this <code>KMLNetworkLink</code>. If this link must retrieve its
      * network resource, this initiates a retrieval and does nothing until the resource is retrieved and loaded. Once
      * the network resource is retrieved and loaded, this calls <code>{@link #setNetworkResource(KMLRoot)}</code> to
-     * specify this link's new network resource, and sends an <code>{@link AVKey#RETRIEVAL_STATE_SUCCESSFUL}</code>
+     * specify this link's new network resource, and sends an <code>{@link Keys#RETRIEVAL_STATE_SUCCESSFUL}</code>
      * property change event to this link's property change listeners.
      *
      * @param tc the current KML traversal context.
@@ -342,7 +341,7 @@ public class KMLNetworkLink extends KMLAbstractContainer implements PropertyChan
     /**
      * Initiates a retrieval of the network resource referenced by this <code>KMLNetworkLink</code>. Once the network
      * resource is retrieved and loaded, this calls <code>{@link #setNetworkResource(KMLRoot)}</code> to specify this
-     * link's new network resource, and sends an <code>{@link AVKey#RETRIEVAL_STATE_SUCCESSFUL}</code> property change
+     * link's new network resource, and sends an <code>{@link Keys#RETRIEVAL_STATE_SUCCESSFUL}</code> property change
      * event to this link's property change listeners.
      * <p>
      * This does nothing if this <code>KMLNetworkLink</code> has no <code>KMLLink</code>.
@@ -375,7 +374,7 @@ public class KMLNetworkLink extends KMLAbstractContainer implements PropertyChan
             long expiration = this.computeExpiryRefreshTime(newRoot, address);
             this.getLinkOrUrl().setExpirationTime(expiration);
 
-            this.getRoot().firePropertyChange(AVKey.RETRIEVAL_STATE_SUCCESSFUL, null, KMLNetworkLink.this);
+            this.getRoot().firePropertyChange(Keys.RETRIEVAL_STATE_SUCCESSFUL, null, KMLNetworkLink.this);
         }
         // Anything other than a KMLRoot is not a valid link target
         else if (o != null) {

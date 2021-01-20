@@ -51,14 +51,14 @@ public class IconRetrieverUsage {
             this.getContentPane().setLayout(new FlowLayout());
 
             // Create an icon retriever using the path specified in the config file, or the default path.
-            String iconRetrieverPath = Configuration.getStringValue(AVKey.MIL_STD_2525_ICON_RETRIEVER_PATH,
+            String iconRetrieverPath = Configuration.getStringValue(Keys.MIL_STD_2525_ICON_RETRIEVER_PATH,
                 MilStd2525Constants.DEFAULT_ICON_RETRIEVER_PATH);
             this.iconRetriever = new MilStd2525IconRetriever(iconRetrieverPath);
 
             // Retrieve icons on a background thread. Icons may be retrieved from the network or a local disk.
             // This operation should not run on the UI thread.
             WorldWind.tasks().addTask(() -> {
-                AVList params = new AVListImpl();
+                KV params = new KVMap();
 
                 // Create an icon with the default parameters.
                 BufferedImage image = iconRetriever.createIcon("SFAPMFQM--GIUSA", params);
@@ -76,7 +76,7 @@ public class IconRetrieverUsage {
                 addLater(image, "No fill");
 
                 // Create an icon with a custom color.
-                params.set(AVKey.COLOR, Color.GREEN);
+                params.set(Keys.COLOR, Color.GREEN);
                 params.set(SymbologyConstants.SHOW_FRAME, true);
                 params.set(SymbologyConstants.SHOW_FILL, true);
                 image = iconRetriever.createIcon("SFAPMFQM--GIUSA", params);

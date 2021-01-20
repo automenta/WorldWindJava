@@ -16,7 +16,7 @@ import java.util.*;
  * @version $Id: BasicJSONEventParser.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 public class BasicJSONEventParser implements JSONEventParser {
-    protected AVList fields;
+    protected KV fields;
     protected List<Object> array;
 
     public BasicJSONEventParser() {
@@ -142,7 +142,7 @@ public class BasicJSONEventParser implements JSONEventParser {
 
     protected void addFieldContent(JSONEventParserContext ctx, Object value) {
         if (this.fields == null)
-            this.fields = new AVListImpl();
+            this.fields = new KVMap();
 
         this.fields.set(ctx.getCurrentFieldName(), value);
     }

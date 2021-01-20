@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.symbology.milstd2525.graphics.lines;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.*;
@@ -406,7 +406,7 @@ public class Route extends AbstractMilStd2525TacticalGraphic implements Tactical
         }
 
         TacticalGraphicLabel label = this.addLabel(labelText);
-        label.setTextAlign(AVKey.LEFT);
+        label.setTextAlign(Keys.LEFT);
         label.setOffset(Route.DEFAULT_OFFSET);
 
         Iterator<? extends Position> iterator = this.getPositions().iterator();
@@ -551,7 +551,7 @@ public class Route extends AbstractMilStd2525TacticalGraphic implements Tactical
     protected Path createPath(Position start, Position end) {
         Path path = new Path(start, end);
         path.setSurfacePath(true);
-        path.setPathType(AVKey.GREAT_CIRCLE);
+        path.setPathType(Keys.GREAT_CIRCLE);
         path.setDelegateOwner(this.getActiveDelegateOwner());
         path.setAttributes(this.getActiveShapeAttributes());
         return path;

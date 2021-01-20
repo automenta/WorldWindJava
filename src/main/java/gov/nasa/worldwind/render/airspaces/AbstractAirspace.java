@@ -7,7 +7,7 @@ package gov.nasa.worldwind.render.airspaces;
 
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.cache.*;
 import gov.nasa.worldwind.drag.*;
 import gov.nasa.worldwind.geom.*;
@@ -90,8 +90,8 @@ public abstract class AbstractAirspace extends WWObjectImpl
     protected double upperAltitude = 1.0;
     protected boolean lowerTerrainConforming;
     protected boolean upperTerrainConforming;
-    protected String lowerAltitudeDatum = AVKey.ABOVE_MEAN_SEA_LEVEL;
-    protected String upperAltitudeDatum = AVKey.ABOVE_MEAN_SEA_LEVEL;
+    protected String lowerAltitudeDatum = Keys.ABOVE_MEAN_SEA_LEVEL;
+    protected String upperAltitudeDatum = Keys.ABOVE_MEAN_SEA_LEVEL;
     protected LatLon groundReference;
     protected boolean enableLevelOfDetail = true;
     // Rendering properties.
@@ -223,7 +223,7 @@ public abstract class AbstractAirspace extends WWObjectImpl
         return WorldWind.cache(AbstractAirspace.GEOMETRY_CACHE_KEY);
     }
 
-    protected static boolean isExpired(DrawContext dc, AVList geom) {
+    protected static boolean isExpired(DrawContext dc, KV geom) {
         if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
@@ -353,8 +353,8 @@ public abstract class AbstractAirspace extends WWObjectImpl
         this.lowerTerrainConforming = lowerTerrainConformant;
         this.upperTerrainConforming = upperTerrainConformant;
 
-        this.lowerAltitudeDatum = this.lowerTerrainConforming ? AVKey.ABOVE_GROUND_LEVEL : AVKey.ABOVE_MEAN_SEA_LEVEL;
-        this.upperAltitudeDatum = this.upperTerrainConforming ? AVKey.ABOVE_GROUND_LEVEL : AVKey.ABOVE_MEAN_SEA_LEVEL;
+        this.lowerAltitudeDatum = this.lowerTerrainConforming ? Keys.ABOVE_GROUND_LEVEL : Keys.ABOVE_MEAN_SEA_LEVEL;
+        this.upperAltitudeDatum = this.upperTerrainConforming ? Keys.ABOVE_GROUND_LEVEL : Keys.ABOVE_MEAN_SEA_LEVEL;
 
         this.invalidateAirspaceData();
     }
@@ -373,12 +373,12 @@ public abstract class AbstractAirspace extends WWObjectImpl
         this.lowerAltitudeDatum = lowerAltitudeDatum;
         this.upperAltitudeDatum = upperAltitudeDatum;
 
-        if (lowerAltitudeDatum.equals(AVKey.ABOVE_GROUND_LEVEL) || lowerAltitudeDatum.equals(
-            AVKey.ABOVE_GROUND_REFERENCE))
+        if (lowerAltitudeDatum.equals(Keys.ABOVE_GROUND_LEVEL) || lowerAltitudeDatum.equals(
+            Keys.ABOVE_GROUND_REFERENCE))
             this.lowerTerrainConforming = true;
 
-        if (upperAltitudeDatum.equals(AVKey.ABOVE_GROUND_LEVEL) || upperAltitudeDatum.equals(
-            AVKey.ABOVE_GROUND_REFERENCE))
+        if (upperAltitudeDatum.equals(Keys.ABOVE_GROUND_LEVEL) || upperAltitudeDatum.equals(
+            Keys.ABOVE_GROUND_REFERENCE))
             this.upperTerrainConforming = true;
 
         this.invalidateAirspaceData();
@@ -498,7 +498,7 @@ public abstract class AbstractAirspace extends WWObjectImpl
             return; // Can't apply the datum without a reference point.
 
         for (int i = 0; i < 2; i++) {
-            if (this.getAltitudeDatum()[i].equals(AVKey.ABOVE_GROUND_REFERENCE)) {
+            if (this.getAltitudeDatum()[i].equals(Keys.ABOVE_GROUND_REFERENCE)) {
                 altitudes[i] += this.computeElevationAt(dc, groundRef.getLatitude(), groundRef.getLongitude());
                 terrainConformant[i] = false;
             }
@@ -1156,7 +1156,7 @@ public abstract class AbstractAirspace extends WWObjectImpl
         return level;
     }
 
-    protected void updateExpiryCriteria(DrawContext dc, AVList geom) {
+    protected void updateExpiryCriteria(DrawContext dc, KV geom) {
         if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);

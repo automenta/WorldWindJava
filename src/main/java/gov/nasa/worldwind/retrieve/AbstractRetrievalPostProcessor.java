@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.retrieve;
 
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.util.*;
 
 import java.io.IOException;
@@ -27,7 +27,7 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
     /**
      * Holds miscellaneous parameters examined by this and subclasses.
      */
-    protected AVList avList;
+    protected KV avList;
     /**
      * The retriever associated with the post-processor. Only non-null after {@link #apply(Retriever)} is called.
      */
@@ -44,7 +44,7 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
      *
      * @param avList an attribute-value list with values that might be used during post-processing.
      */
-    public AbstractRetrievalPostProcessor(AVList avList) {
+    public AbstractRetrievalPostProcessor(KV avList) {
         this.avList = avList;
     }
 

@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.examples.sar.render;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.Logging;
@@ -132,7 +132,7 @@ public class PlaneModel implements Renderable {
     private void createRenderables(DrawContext dc) {
         ArrayList<LatLon> positions = computePlaneShape(dc, this.width, this.length);
         this.planeModel = new Path(positions, this.position.getElevation());
-        this.planeModel.setPathType(AVKey.LINEAR);
+        this.planeModel.setPathType(Keys.LINEAR);
         this.planeModel.setFollowTerrain(false);
         this.planeModel.setNumSubsegments(1);
         var attrs = new BasicShapeAttributes();
@@ -141,7 +141,7 @@ public class PlaneModel implements Renderable {
 
         positions = computePlaneShape(dc, this.shadowScale * this.width, this.shadowScale * this.length);
         this.shadowModel = new Path(positions, this.position.getElevation());
-        this.shadowModel.setPathType(AVKey.LINEAR);
+        this.shadowModel.setPathType(Keys.LINEAR);
         this.shadowModel.setSurfacePath(true);
         attrs = new BasicShapeAttributes();
         attrs.setOutlineMaterial(new Material(this.shadowColor));

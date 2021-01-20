@@ -39,13 +39,13 @@ import java.util.logging.Level;
  * attribute names in the DBase file to keys assigned to the created shapes. The mapping is specified as key/value
  * pairs, the key is the attribute name in the shapefile's DBase attributes file, the value is the key name to attach to
  * the created shape to hold the value of the specified attribute. Thus, for example, the value of per-record "NAME"
- * fields in the DBase attributes may be mapped to a {@link AVKey#DISPLAY_NAME} key in the
+ * fields in the DBase attributes may be mapped to a {@link Keys#DISPLAY_NAME} key in the
  * av-list of the created shapes corresponding to each record. The mapping's key/value pairs are specified using {@link
- * #setDBaseMappings(AVList)}.
+ * #setDBaseMappings(KV)}.
  * <p>
  * The rendering attributes applied to the created shapes may be specified to this class, either via the attribute
  * accessors of this class or a configuration file passed to {@link #createFromConfigSource(Object,
- * AVList)}.
+ * KV)}.
  * <p>
  * The key-value attributes and the rendering attributes of certain created shapes may be specified programmatically
  * using a ShapefileRenderable.AttributeDelegate. The delegate is called for each shapefile record encountered during
@@ -60,7 +60,7 @@ import java.util.logging.Level;
 public class ShapefileLayerFactory implements Factory, ShapefileRenderable.AttributeDelegate {
     private static final int[] showRenderables = {1};
     private final int renderableIndex = 0;
-    protected AVList dBaseMappings;
+    protected KV dBaseMappings;
     protected ShapeAttributes normalShapeAttributes;
     protected ShapeAttributes highlightShapeAttributes;
     protected PointPlacemarkAttributes normalPointAttributes;
@@ -71,13 +71,13 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
         return (shapefileSource instanceof Shapefile) ? (Shapefile) shapefileSource : new Shapefile(shapefileSource);
     }
 
-    protected static AVList collectDBaseMappings(Element domElement, XPath xpath) {
+    protected static KV collectDBaseMappings(Element domElement, XPath xpath) {
         try {
             Element[] elements = WWXML.getElements(domElement, "AttributeMapping", xpath);
             if (elements == null || elements.length == 0)
                 return null;
 
-            AVList attrMappings = new AVListImpl();
+            KV attrMappings = new KVMap();
 
             for (Element el : elements) {
                 String prop = xpath.evaluate("@attributeName", el);
@@ -176,11 +176,11 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
         return shapeAttributes;
     }
 
-    protected static AVList applyMappings(AVList attrRecord, AVList attrMappings) {
+    protected static KV applyMappings(KV attrRecord, KV attrMappings) {
         if (attrRecord == null || attrMappings == null)
             return null;
 
-        AVList mappings = new AVListImpl();
+        KV mappings = new KVMap();
         for (Map.Entry<String, Object> mapping : attrMappings.getEntries()) {
             Object attrValue = attrRecord.get(mapping.getKey());
             if (attrValue != null)
@@ -190,14 +190,14 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
         return mappings.getEntries().isEmpty() ? null : mappings;
     }
 
-    protected static void addPropertiesForShapefile(Shapefile shp, AVList layer) {
-        if (layer.get(AVKey.DISPLAY_NAME) == null) // use the shapefile's display name when the layer is unnamed
+    protected static void addPropertiesForShapefile(Shapefile shp, KV layer) {
+        if (layer.get(Keys.DISPLAY_NAME) == null) // use the shapefile's display name when the layer is unnamed
         {
-            layer.set(AVKey.DISPLAY_NAME, shp.get(AVKey.DISPLAY_NAME));
+            layer.set(Keys.DISPLAY_NAME, shp.get(Keys.DISPLAY_NAME));
         }
 
         if (shp.getBoundingRectangle() != null) {
-            layer.set(AVKey.SECTOR, Sector.fromDegrees(shp.getBoundingRectangle()));
+            layer.set(Keys.SECTOR, Sector.fromDegrees(shp.getBoundingRectangle()));
         }
     }
 
@@ -206,7 +206,7 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
      *
      * @return The mappings.
      */
-    public AVList getDBaseMappings() {
+    public KV getDBaseMappings() {
         return dBaseMappings;
     }
 
@@ -218,7 +218,7 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
      *
      * @param dBaseMappings The mappings. May be null, in which case no mapping occurs.
      */
-    public void setDBaseMappings(AVList dBaseMappings) {
+    public void setDBaseMappings(KV dBaseMappings) {
         this.dBaseMappings = dBaseMappings;
     }
 
@@ -327,7 +327,7 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
     @Override
     public void assignAttributes(ShapefileRecord shapefileRecord, ShapefileRenderable.Record renderableRecord) {
         if (this.dBaseMappings != null) {
-            AVList mappings = ShapefileLayerFactory.applyMappings(shapefileRecord.getAttributes(), this.dBaseMappings);
+            KV mappings = ShapefileLayerFactory.applyMappings(shapefileRecord.getAttributes(), this.dBaseMappings);
             if (mappings != null)
                 renderableRecord.setValues(mappings);
         }
@@ -349,7 +349,7 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
      * This returns with the new layer immediately, but executes shapefile parsing and shapefile geometry conversion on
      * a separate thread. Shapefile geometry is added to the returned layer as it becomes available. In order to receive
      * notifications when execution completes or if an exception occurs, use {@link #createFromConfigSource(Object,
-     * AVList, ShapefileLayerFactory.CompletionCallback)} and specify a completion callback.
+     * KV, ShapefileLayerFactory.CompletionCallback)} and specify a completion callback.
      *
      * @param configSource the configuration source. See above for supported types.
      * @param params       Key/value pairs to associate with the created layer. Values specified here override
@@ -360,7 +360,7 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
      *                                  included as the {@link Exception#initCause(Throwable)}.
      */
     @Override
-    public Object createFromConfigSource(Object configSource, AVList params) {
+    public Object createFromConfigSource(Object configSource, KV params) {
         if (WWUtil.isEmpty(configSource)) {
             String message = Logging.getMessage("generic.ConfigurationSourceIsInvalid", configSource);
             Logging.logger().severe(message);
@@ -397,7 +397,7 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
      * @throws WWRuntimeException       if object creation fails. The exception indicating the source of the failure is
      *                                  included as the {@link Exception#initCause(Throwable)}.
      */
-    public Object createFromConfigSource(Object configSource, AVList params, CompletionCallback callback) {
+    public Object createFromConfigSource(Object configSource, KV params, CompletionCallback callback) {
         if (WWUtil.isEmpty(configSource)) {
             String message = Logging.getMessage("generic.ConfigurationSourceIsInvalid", configSource);
             Logging.logger().severe(message);
@@ -432,7 +432,7 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
      * This returns with the new layer immediately, but executes shapefile parsing and shapefile geometry conversion on
      * a separate thread. Shapefile geometry is added to the returned layer as it becomes available. In order to receive
      * notifications when execution completes or if an exception occurs, use {@link #createFromConfigSource(Object,
-     * AVList, ShapefileLayerFactory.CompletionCallback)} and specify a completion callback.
+     * KV, ShapefileLayerFactory.CompletionCallback)} and specify a completion callback.
      * <p>
      * If the source is a Shapefile instance, it is the responsibility of the caller to close the shapefile after this
      * factory completes execution.
@@ -508,7 +508,7 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
      * @param callback   A callback to notify when shapefile parsing completes or encounters an exception. May be null.
      * @return a Layer, as described by the specified description.
      */
-    protected Object doCreateFromElement(Element domElement, AVList params, CompletionCallback callback) {
+    protected Object doCreateFromElement(Element domElement, KV params, CompletionCallback callback) {
         String shapefileLocation = WWXML.getText(domElement, "ShapefileLocation");
         if (WWUtil.isEmpty(shapefileLocation)) {
             String msg = Logging.getMessage("SHP.ShapefileLocationUnspecified");
@@ -518,7 +518,7 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
         RenderableLayer layer = new RenderableLayer();
 
         if (params == null)
-            params = new AVListImpl();
+            params = new KVMap();
 
         // Common layer properties.
         AbstractLayer.getLayerConfigParams(domElement, params);
@@ -543,19 +543,19 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
         this.setHighlightPointAttributes(
             element != null ? ShapefileLayerFactory.collectPointAttributes(element) : null);
 
-        Double d = (Double) params.get(AVKey.OPACITY);
+        Double d = (Double) params.get(Keys.OPACITY);
         if (d != null)
             layer.setOpacity(d);
 
-        d = (Double) params.get(AVKey.MAX_ACTIVE_ALTITUDE);
+        d = (Double) params.get(Keys.MAX_ACTIVE_ALTITUDE);
         if (d != null)
             layer.setMaxActiveAltitude(d);
 
-        d = (Double) params.get(AVKey.MIN_ACTIVE_ALTITUDE);
+        d = (Double) params.get(Keys.MIN_ACTIVE_ALTITUDE);
         if (d != null)
             layer.setMinActiveAltitude(d);
 
-        Boolean b = (Boolean) params.get(AVKey.PICK_ENABLED);
+        Boolean b = (Boolean) params.get(Keys.PICK_ENABLED);
         if (b != null)
             layer.setPickEnabled(b);
 
@@ -634,7 +634,7 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
             if (!Shapefile.isPointType(record.getShapeType()))
                 continue;
 
-            AVList mappings = ShapefileLayerFactory.applyMappings(record.getAttributes(), this.dBaseMappings);
+            KV mappings = ShapefileLayerFactory.applyMappings(record.getAttributes(), this.dBaseMappings);
 
             double[] point = ((ShapefileRecordPoint) record).getPoint();
             layer.add(this.createPoint(record, point[1], point[0], mappings));
@@ -648,7 +648,7 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
             if (!Shapefile.isMultiPointType(record.getShapeType()))
                 continue;
 
-            AVList mappings = ShapefileLayerFactory.applyMappings(record.getAttributes(), this.dBaseMappings);
+            KV mappings = ShapefileLayerFactory.applyMappings(record.getAttributes(), this.dBaseMappings);
 
             Iterable<double[]> iterable = ((ShapefileRecordMultiPoint) record).getPoints(0);
 
@@ -665,7 +665,7 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
         layer.addAll(shape.getRenderables());
     }
 
-    protected Renderable createPoint(ShapefileRecord record, double latDegrees, double lonDegrees, AVList mappings) {
+    protected Renderable createPoint(ShapefileRecord record, double latDegrees, double lonDegrees, KV mappings) {
         PointPlacemark placemark = new PointPlacemark(Position.fromDegrees(latDegrees, lonDegrees, 0));
         placemark.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
 

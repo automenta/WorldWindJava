@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.retrieve;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.util.Logging;
 
 import javax.net.ssl.SSLHandshakeException;
@@ -39,9 +38,9 @@ import java.util.logging.Level;
 //    protected SSLExceptionListener sslExceptionListener;
 
     public BasicRetrievalService() {
-        int poolSize = Configuration.getIntegerValue(AVKey.RETRIEVAL_POOL_SIZE,
+        int poolSize = Configuration.getIntegerValue(Keys.RETRIEVAL_POOL_SIZE,
             BasicRetrievalService.DEFAULT_POOL_SIZE);
-        this.queueSize = Configuration.getIntegerValue(AVKey.RETRIEVAL_QUEUE_SIZE,
+        this.queueSize = Configuration.getIntegerValue(Keys.RETRIEVAL_QUEUE_SIZE,
             BasicRetrievalService.DEFAULT_QUEUE_SIZE);
 
         // this.executor runs the retrievers, each in their own thread

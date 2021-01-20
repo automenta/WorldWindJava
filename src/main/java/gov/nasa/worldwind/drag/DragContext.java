@@ -7,7 +7,6 @@
 package gov.nasa.worldwind.drag;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.util.Logging;
 
@@ -44,8 +43,8 @@ public class DragContext {
      */
     protected View view;
     /**
-     * The current drag state, which can be one of the three following values: {@link AVKey#DRAG_BEGIN}, {@link
-     * AVKey#DRAG_CHANGE}, {@link AVKey#DRAG_ENDED}.
+     * The current drag state, which can be one of the three following values: {@link Keys#DRAG_BEGIN}, {@link
+     * Keys#DRAG_CHANGE}, {@link Keys#DRAG_ENDED}.
      */
     protected String dragState;
 
@@ -216,8 +215,8 @@ public class DragContext {
     }
 
     /**
-     * Set the {@link DragContext} drag state, which must be one of the following three states: {@link AVKey#DRAG_BEGIN}
-     * , {@link AVKey#DRAG_CHANGE}, or {@link AVKey#DRAG_ENDED}.
+     * Set the {@link DragContext} drag state, which must be one of the following three states: {@link Keys#DRAG_BEGIN}
+     * , {@link Keys#DRAG_CHANGE}, or {@link Keys#DRAG_ENDED}.
      *
      * @param dragState the drag state to assign to the {@link DragContext}.
      * @throws IllegalArgumentException if the drag state is null or not one of the three states defined for dragging.
@@ -229,8 +228,8 @@ public class DragContext {
             throw new IllegalArgumentException(msg);
         }
 
-        if (!dragState.equals(AVKey.DRAG_BEGIN) && !dragState.equals(AVKey.DRAG_CHANGE)
-            && !dragState.equals(AVKey.DRAG_ENDED)) {
+        if (!dragState.equals(Keys.DRAG_BEGIN) && !dragState.equals(Keys.DRAG_CHANGE)
+            && !dragState.equals(Keys.DRAG_ENDED)) {
             String msg = Logging.getMessage("generic.UnknownDragState", dragState);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);

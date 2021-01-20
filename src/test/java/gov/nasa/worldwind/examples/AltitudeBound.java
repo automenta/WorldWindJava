@@ -1,6 +1,6 @@
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.KV;
 
 public class AltitudeBound {
 
@@ -9,7 +9,7 @@ public class AltitudeBound {
     private String units_of_measure;
     private String source;
 
-    public AltitudeBound(AVList attrs) {
+    public AltitudeBound(KV attrs) {
         attrs.getEntries().forEach((e) -> {
             switch (e.getKey()) {
                 case "altitude_value" -> this.altitude_value = (double) e.getValue();

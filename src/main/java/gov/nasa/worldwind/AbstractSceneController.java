@@ -7,7 +7,6 @@
 package gov.nasa.worldwind;
 
 import com.jogamp.opengl.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.cache.GpuResourceCache;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.Layer;
@@ -87,7 +86,7 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
     protected boolean deferOrderedRendering;
 
     public AbstractSceneController() {
-        this.setVerticalExaggeration(Configuration.getDoubleValue(AVKey.VERTICAL_EXAGGERATION, 1.00d));
+        this.setVerticalExaggeration(Configuration.getDoubleValue(Keys.VERTICAL_EXAGGERATION, 1.00d));
     }
 
     protected static Point getViewportCenter(DrawContext dc) {
@@ -313,7 +312,7 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
 
         Model oldModel = this.model;
         this.model = model;
-        this.firePropertyChange(AVKey.MODEL, oldModel, model);
+        this.firePropertyChange(Keys.MODEL, oldModel, model);
     }
 
     public View getView() {
@@ -329,7 +328,7 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
         View oldView = this.view;
         this.view = view;
 
-        this.firePropertyChange(AVKey.VIEW, oldView, view);
+        this.firePropertyChange(Keys.VIEW, oldView, view);
     }
 
     public double getVerticalExaggeration() {
@@ -339,7 +338,7 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
     public void setVerticalExaggeration(double verticalExaggeration) {
         Double oldVE = this.verticalExaggeration;
         this.verticalExaggeration = verticalExaggeration;
-        this.firePropertyChange(AVKey.VERTICAL_EXAGGERATION, oldVE, verticalExaggeration);
+        this.firePropertyChange(Keys.VERTICAL_EXAGGERATION, oldVE, verticalExaggeration);
     }
 
     /**
@@ -550,7 +549,7 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
         }
         dc.setFrameTimeStamp(frameTimeStamp);
         // Indicate the frame time stamp to apps.
-        this.set(AVKey.FRAME_TIMESTAMP, frameTimeStamp);
+        this.set(Keys.FRAME_TIMESTAMP, frameTimeStamp);
     }
 
     protected void preRender(DrawContext dc) {

@@ -7,8 +7,7 @@
 package gov.nasa.worldwind.symbology;
 
 import com.jogamp.opengl.*;
-import gov.nasa.worldwind.View;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.pick.*;
@@ -37,7 +36,7 @@ public class TacticalGraphicLabel {
      * label vertically. For example, if the text alignment is <code>AVKey.LEFT</code>, then the left edge of the text
      * will be aligned with the geographic position, and the label will be centered vertically.
      */
-    public static final Offset DEFAULT_OFFSET = new Offset(0.0d, -0.5d, AVKey.FRACTION, AVKey.FRACTION);
+    public static final Offset DEFAULT_OFFSET = new Offset(0.0d, -0.5d, Keys.FRACTION, Keys.FRACTION);
     /**
      * Default insets around the label.
      */
@@ -49,7 +48,7 @@ public class TacticalGraphicLabel {
     /**
      * Default text effect (shadow).
      */
-    public static final String DEFAULT_TEXT_EFFECT = AVKey.TEXT_EFFECT_SHADOW;
+    public static final String DEFAULT_TEXT_EFFECT = Keys.TEXT_EFFECT_SHADOW;
     /**
      * Stack handler used for beginDrawing/endDrawing state.
      */
@@ -73,7 +72,7 @@ public class TacticalGraphicLabel {
     /**
      * Text alignment for multi-line labels.
      */
-    protected String textAlign = AVKey.LEFT;
+    protected String textAlign = Keys.LEFT;
     /**
      * The label is drawn along a line from the label position to the orientation position.
      */
@@ -96,7 +95,7 @@ public class TacticalGraphicLabel {
      */
     protected int lineSpacing = 5; // TODO compute default based on font size
     /**
-     * Effect applied to the text. May be {@link AVKey#TEXT_EFFECT_SHADOW} or {@link AVKey#TEXT_EFFECT_NONE}.
+     * Effect applied to the text. May be {@link Keys#TEXT_EFFECT_SHADOW} or {@link Keys#TEXT_EFFECT_NONE}.
      */
     protected String effect = TacticalGraphicLabel.DEFAULT_TEXT_EFFECT;
     /**
@@ -307,8 +306,8 @@ public class TacticalGraphicLabel {
     }
 
     /**
-     * Indicates the current text alignment. Can be one of {@link AVKey#LEFT} (default), {@link AVKey#CENTER} or {@link
-     * AVKey#RIGHT}.
+     * Indicates the current text alignment. Can be one of {@link Keys#LEFT} (default), {@link Keys#CENTER} or {@link
+     * Keys#RIGHT}.
      *
      * @return the current text alignment.
      */
@@ -317,8 +316,8 @@ public class TacticalGraphicLabel {
     }
 
     /**
-     * Specifies the text alignment. Can be one of {@link AVKey#LEFT} (default), {@link AVKey#CENTER}, or {@link
-     * AVKey#RIGHT}.
+     * Specifies the text alignment. Can be one of {@link Keys#LEFT} (default), {@link Keys#CENTER}, or {@link
+     * Keys#RIGHT}.
      *
      * @param textAlign New text alignment.
      */
@@ -564,8 +563,8 @@ public class TacticalGraphicLabel {
     }
 
     /**
-     * Indicates an effect used to decorate the text. Can be one of {@link AVKey#TEXT_EFFECT_SHADOW} (default), or
-     * {@link AVKey#TEXT_EFFECT_NONE}.
+     * Indicates an effect used to decorate the text. Can be one of {@link Keys#TEXT_EFFECT_SHADOW} (default), or
+     * {@link Keys#TEXT_EFFECT_NONE}.
      *
      * @return the effect used for text rendering
      */
@@ -574,8 +573,8 @@ public class TacticalGraphicLabel {
     }
 
     /**
-     * Specifies an effect used to decorate the text. Can be one of {@link AVKey#TEXT_EFFECT_SHADOW} (default), or
-     * {@link AVKey#TEXT_EFFECT_NONE}.
+     * Specifies an effect used to decorate the text. Can be one of {@link Keys#TEXT_EFFECT_SHADOW} (default), or
+     * {@link Keys#TEXT_EFFECT_NONE}.
      *
      * @param effect the effect to use for text rendering
      */
@@ -995,9 +994,9 @@ public class TacticalGraphicLabel {
                 double height = bounds.getHeight();
 
                 x = olbl.screenPoint.x;
-                if (this.textAlign.equals(AVKey.CENTER))
+                if (this.textAlign.equals(Keys.CENTER))
                     x = x - (int) (width / 2.0);
-                else if (this.textAlign.equals(AVKey.RIGHT))
+                else if (this.textAlign.equals(Keys.RIGHT))
                     x = x - (int) width;
                 y -= this.lineHeight;
 
@@ -1103,9 +1102,9 @@ public class TacticalGraphicLabel {
 
         // Adjust x to account for text alignment
         int xAligned = x;
-        if (AVKey.CENTER.equals(textAlign))
+        if (Keys.CENTER.equals(textAlign))
             xAligned = x - (int) (width / 2);
-        else if (AVKey.RIGHT.equals(textAlign))
+        else if (Keys.RIGHT.equals(textAlign))
             xAligned = x - (int) width;
 
         // We draw text top-down, so adjust y to compensate.
@@ -1152,7 +1151,7 @@ public class TacticalGraphicLabel {
         int y = olbl.screenPoint.y;
 
         float[] compArray = new float[3];
-        if (AVKey.TEXT_EFFECT_SHADOW.equals(this.effect)) {
+        if (Keys.TEXT_EFFECT_SHADOW.equals(this.effect)) {
             backgroundColor.getRGBColorComponents(compArray);
 
             textRenderer.setColor(compArray[0], compArray[1], compArray[2], opacity);
@@ -1176,9 +1175,9 @@ public class TacticalGraphicLabel {
             Rectangle2D bounds = this.lineBounds[i];
 
             int xAligned = x;
-            if (this.textAlign.equals(AVKey.CENTER))
+            if (this.textAlign.equals(Keys.CENTER))
                 xAligned = x - (int) (bounds.getWidth() / 2);
-            else if (this.textAlign.equals(AVKey.RIGHT))
+            else if (this.textAlign.equals(Keys.RIGHT))
                 xAligned = x - (int) (bounds.getWidth());
 
             y -= this.lineHeight;
@@ -1298,9 +1297,9 @@ public class TacticalGraphicLabel {
         String textAlign = this.getTextAlign();
 
         int xAligned = x;
-        if (AVKey.CENTER.equals(textAlign))
+        if (Keys.CENTER.equals(textAlign))
             xAligned = x - (int) (width / 2);
-        else if (AVKey.RIGHT.equals(textAlign))
+        else if (Keys.RIGHT.equals(textAlign))
             xAligned = x - (int) width;
 
         int yAligned = (int) (y - height);

@@ -1,7 +1,7 @@
 package netvr;
 
 import gov.nasa.worldwind.BasicModel;
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.event.SelectListener;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -317,8 +317,8 @@ public class NetVR extends Thing<NetVR,String> {
     private static String describe(PickedObject x) {
 
         Object y = x.get();
-        if (y instanceof AVList) {
-            Object z = ((AVList) y).get(AdaptiveOSMLayer.DESCRIPTION);
+        if (y instanceof KV) {
+            Object z = ((KV) y).get(AdaptiveOSMLayer.DESCRIPTION);
             if (z != null)
                 return z.toString();
         }

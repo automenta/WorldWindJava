@@ -7,7 +7,6 @@
 package gov.nasa.worldwind;
 
 import com.jogamp.opengl.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.video.awt.WorldWindowGLCanvas;
@@ -37,12 +36,12 @@ public class StereoOptionSceneController extends BasicSceneController implements
      * <code>gov.nasa.worldwind.StereoFocusAngle</code> property. The default if not specified in the configuration is
      * 1.6 degrees.
      */
-    protected static final double DEFAULT_FOCUS_ANGLE = Configuration.getDoubleValue(AVKey.STEREO_FOCUS_ANGLE, 1.6);
+    protected static final double DEFAULT_FOCUS_ANGLE = Configuration.getDoubleValue(Keys.STEREO_FOCUS_ANGLE, 1.6);
 
     /**
-     * The current stereo mode. May not be set to null; use {@link AVKey#STEREO_MODE_NONE} instead.
+     * The current stereo mode. May not be set to null; use {@link Keys#STEREO_MODE_NONE} instead.
      */
-    protected String stereoMode = AVKey.STEREO_MODE_NONE;
+    protected String stereoMode = Keys.STEREO_MODE_NONE;
     /**
      * The angle between eyes. Larger angles give increased 3D effect.
      */
@@ -70,12 +69,12 @@ public class StereoOptionSceneController extends BasicSceneController implements
      * Constructs an instance and initializes its stereo mode to
      */
     public StereoOptionSceneController() {
-        String stereo = System.getProperty(AVKey.STEREO_MODE);
+        String stereo = System.getProperty(Keys.STEREO_MODE);
 
         if ("redblue".equalsIgnoreCase(stereo))
-            this.setStereoMode(AVKey.STEREO_MODE_RED_BLUE);
+            this.setStereoMode(Keys.STEREO_MODE_RED_BLUE);
         else if ("device".equalsIgnoreCase(stereo))
-            this.setStereoMode(AVKey.STEREO_MODE_DEVICE);
+            this.setStereoMode(Keys.STEREO_MODE_DEVICE);
     }
 
     public String getStereoMode() {
@@ -83,10 +82,10 @@ public class StereoOptionSceneController extends BasicSceneController implements
     }
 
     public void setStereoMode(String mode) {
-        this.stereoMode = mode != null ? mode : AVKey.STEREO_MODE_NONE;
+        this.stereoMode = mode != null ? mode : Keys.STEREO_MODE_NONE;
 
         // If device-implemented stereo is used, stereo is considered always in effect no matter what the stereo mode.
-        this.inStereo = this.isHardwareStereo() || AVKey.STEREO_MODE_RED_BLUE.equals(this.stereoMode);
+        this.inStereo = this.isHardwareStereo() || Keys.STEREO_MODE_RED_BLUE.equals(this.stereoMode);
     }
 
     public Angle getFocusAngle() {
@@ -118,7 +117,7 @@ public class StereoOptionSceneController extends BasicSceneController implements
      * {@inheritDoc}
      * <p>
      * If the display device is providing stereo -- {@link #isHardwareStereo()} is <code>true</code> -- this method
-     * returns true even if the stereo mode is {@link AVKey#STEREO_MODE_NONE}. In this case, individual stereo images
+     * returns true even if the stereo mode is {@link Keys#STEREO_MODE_NONE}. In this case, individual stereo images
      * are drawn for left and right eyes in order to prevent a blurred scene.
      */
     public boolean isInStereo() {
@@ -146,9 +145,9 @@ public class StereoOptionSceneController extends BasicSceneController implements
         boolean pitchInRange = (dcView.getPitch().compareTo(new Angle(50)) > 0
             && dcView.getPitch().compareTo(Angle.POS90) < 0);
 
-        if (AVKey.STEREO_MODE_DEVICE.equals(this.stereoMode) && this.isHardwareStereo() && pitchInRange)
+        if (Keys.STEREO_MODE_DEVICE.equals(this.stereoMode) && this.isHardwareStereo() && pitchInRange)
             this.doDrawToStereoDevice(dc);
-        else if (AVKey.STEREO_MODE_RED_BLUE.equals(this.stereoMode) && pitchInRange)
+        else if (Keys.STEREO_MODE_RED_BLUE.equals(this.stereoMode) && pitchInRange)
             this.doDrawStereoRedBlue(dc);
         else // AVKey.STEREO_MODE_NONE
             this.doDrawStereoNone(dc);

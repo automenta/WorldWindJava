@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.examples.worldwindow.features.swinglayermanager;
 
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.examples.worldwindow.core.Constants;
 import gov.nasa.worldwind.examples.worldwindow.core.layermanager.LayerPath;
 import gov.nasa.worldwind.examples.worldwindow.util.Util;
@@ -33,7 +33,7 @@ public class LayerTreeModel extends DefaultTreeModel {
         this.getRootNode().add(this.makeGroup(layerList));
     }
 
-    public static boolean isInternalLayer(AVList layer) {
+    public static boolean isInternalLayer(KV layer) {
         return layer.get(Constants.INTERNAL_LAYER) != null;
     }
 

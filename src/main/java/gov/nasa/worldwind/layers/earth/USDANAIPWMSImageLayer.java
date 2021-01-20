@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.layers.earth;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.layers.wms.WMSTiledImageLayer;
 import gov.nasa.worldwind.util.WWXML;
 import org.w3c.dom.Document;
@@ -25,8 +25,7 @@ public class USDANAIPWMSImageLayer extends WMSTiledImageLayer {
     }
 
     public String toString() {
-        String o = this.getStringValue(AVKey.DISPLAY_NAME);
+        String o = this.getStringValue(Keys.DISPLAY_NAME);
         return o != null ? o : "USDA FSA Imagery";
     }
 }
-

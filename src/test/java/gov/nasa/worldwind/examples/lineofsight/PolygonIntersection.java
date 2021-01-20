@@ -7,7 +7,6 @@
 package gov.nasa.worldwind.examples.lineofsight;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.examples.ApplicationTemplate;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -26,11 +25,11 @@ import java.util.*;
 public class PolygonIntersection extends ApplicationTemplate {
     public static void main(String[] args) {
         // Configure the initial view parameters so that the balloons are immediately visible.
-        Configuration.setValue(AVKey.INITIAL_LATITUDE, 40.5);
-        Configuration.setValue(AVKey.INITIAL_LONGITUDE, -120.4);
-        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 125.0e3);
-        Configuration.setValue(AVKey.INITIAL_HEADING, 27);
-        Configuration.setValue(AVKey.INITIAL_PITCH, 30);
+        Configuration.setValue(Keys.INITIAL_LATITUDE, 40.5);
+        Configuration.setValue(Keys.INITIAL_LONGITUDE, -120.4);
+        Configuration.setValue(Keys.INITIAL_ALTITUDE, 125.0e3);
+        Configuration.setValue(Keys.INITIAL_HEADING, 27);
+        Configuration.setValue(Keys.INITIAL_PITCH, 30);
 
         ApplicationTemplate.start("WorldWind Polygon Intersection", AppFrame.class);
     }

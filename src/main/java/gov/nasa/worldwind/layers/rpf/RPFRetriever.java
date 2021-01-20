@@ -5,8 +5,7 @@
  */
 package gov.nasa.worldwind.layers.rpf;
 
-import gov.nasa.worldwind.WWObjectImpl;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.formats.dds.DDSCompressor;
 import gov.nasa.worldwind.retrieve.Retriever;
 import gov.nasa.worldwind.util.Logging;
@@ -75,7 +74,7 @@ class RPFRetriever extends WWObjectImpl implements Retriever {
     private void setState(String state) {
         String oldState = this.state;
         this.state = state;
-        this.firePropertyChange(AVKey.RETRIEVER_STATE, oldState, this.state);
+        this.firePropertyChange(Keys.RETRIEVER_STATE, oldState, this.state);
     }
 
     public final String getContentType() {

@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.cache;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.retrieve.*;
 import gov.nasa.worldwind.util.*;
 
@@ -79,7 +78,7 @@ public class BasicDataFileStore extends AbstractFileStore {
      *                               the configuration file cannot be found.
      */
     public BasicDataFileStore() {
-        String configPath = Configuration.getStringValue(AVKey.DATA_FILE_STORE_CONFIGURATION_FILE_NAME);
+        String configPath = Configuration.getStringValue(Keys.DATA_FILE_STORE_CONFIGURATION_FILE_NAME);
         if (configPath == null) {
             String message = Logging.getMessage("FileStore.NoConfiguration");
             Logging.logger().severe(message);
@@ -332,7 +331,7 @@ public class BasicDataFileStore extends AbstractFileStore {
     protected void initialize(InputStream xmlConfigStream) {
         super.initialize(xmlConfigStream);
 
-        String s = Configuration.getStringValue(AVKey.CACHE_CONTENT_TYPES);
+        String s = Configuration.getStringValue(Keys.CACHE_CONTENT_TYPES);
         if (s != null) {
             this.cacheContentTypes.clear();
 
@@ -630,7 +629,7 @@ public class BasicDataFileStore extends AbstractFileStore {
             ByteBuffer buffer = super.handleSuccessfulRetrieval();
 
             firePropertyChange(
-                new PropertyChangeEvent(BasicDataFileStore.this, AVKey.RETRIEVAL_STATE_SUCCESSFUL, this.retrievalUrl,
+                new PropertyChangeEvent(BasicDataFileStore.this, Keys.RETRIEVAL_STATE_SUCCESSFUL, this.retrievalUrl,
                     this.localFileUrl));
 
             return buffer;

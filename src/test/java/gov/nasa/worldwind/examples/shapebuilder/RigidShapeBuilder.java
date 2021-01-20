@@ -7,7 +7,6 @@
 package gov.nasa.worldwind.examples.shapebuilder;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.examples.ApplicationTemplate;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -212,11 +211,11 @@ public class RigidShapeBuilder extends ApplicationTemplate {
         }
 
         public String getName() {
-            return this.getStringValue(AVKey.DISPLAY_NAME);
+            return this.getStringValue(Keys.DISPLAY_NAME);
         }
 
         public void setName(String name) {
-            this.set(AVKey.DISPLAY_NAME, name);
+            this.set(Keys.DISPLAY_NAME, name);
         }
 
         public AbstractShape getShape() {
@@ -245,7 +244,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
 
         public Object set(String key, Object value) {
             //noinspection StringEquality
-            if (key == AVKey.DISPLAY_NAME) {
+            if (key == Keys.DISPLAY_NAME) {
                 return this.shape.set(key, value);
             }
             else {
@@ -266,7 +265,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
     protected static class AbstractShapeBuilderModel extends AbstractTableModel {
         protected static final String[] columnName = {"Name"};
         protected static final Class[] columnClass = {String.class};
-        protected static final String[] columnAttribute = {AVKey.DISPLAY_NAME};
+        protected static final String[] columnAttribute = {Keys.DISPLAY_NAME};
 
         protected final ArrayList<AbstractShapeEntry> entryList = new ArrayList<>();
 
@@ -376,7 +375,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
         public RigidShape createShape(WorldWindow wwd, boolean fitShapeToViewport) {
             RigidShape shape = new Ellipsoid();
             shape.setAttributes(getDefaultAttributes());
-            shape.set(AVKey.DISPLAY_NAME, getNextName(toString()));
+            shape.set(Keys.DISPLAY_NAME, getNextName(toString()));
             EllipsoidFactory.initializeShape(wwd, shape, fitShapeToViewport);
 
             return shape;
@@ -423,7 +422,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
         public RigidShape createShape(WorldWindow wwd, boolean fitShapeToViewport) {
             RigidShape shape = new Box();
             shape.setAttributes(getDefaultAttributes());
-            shape.set(AVKey.DISPLAY_NAME, getNextName(toString()));
+            shape.set(Keys.DISPLAY_NAME, getNextName(toString()));
             BoxFactory.initializeShape(wwd, shape, fitShapeToViewport);
 
             return shape;
@@ -470,7 +469,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
         public RigidShape createShape(WorldWindow wwd, boolean fitShapeToViewport) {
             RigidShape shape = new Cylinder();
             shape.setAttributes(getDefaultAttributes());
-            shape.set(AVKey.DISPLAY_NAME, getNextName(toString()));
+            shape.set(Keys.DISPLAY_NAME, getNextName(toString()));
             CylinderFactory.initializeShape(wwd, shape, fitShapeToViewport);
 
             return shape;
@@ -517,7 +516,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
         public RigidShape createShape(WorldWindow wwd, boolean fitShapeToViewport) {
             RigidShape shape = new Pyramid();
             shape.setAttributes(getDefaultAttributes());
-            shape.set(AVKey.DISPLAY_NAME, getNextName(toString()));
+            shape.set(Keys.DISPLAY_NAME, getNextName(toString()));
             PyramidFactory.initializeShape(wwd, shape, fitShapeToViewport);
 
             return shape;
@@ -566,7 +565,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
         public RigidShape createShape(WorldWindow wwd, boolean fitShapeToViewport) {
             RigidShape shape = new Cone();
             shape.setAttributes(getDefaultAttributes());
-            shape.set(AVKey.DISPLAY_NAME, getNextName(toString()));
+            shape.set(Keys.DISPLAY_NAME, getNextName(toString()));
             ConeFactory.initializeShape(wwd, shape, fitShapeToViewport);
 
             return shape;
@@ -613,7 +612,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
         public RigidShape createShape(WorldWindow wwd, boolean fitShapeToViewport) {
             RigidShape shape = new Wedge();
             shape.setAttributes(getDefaultAttributes());
-            shape.set(AVKey.DISPLAY_NAME, getNextName(toString()));
+            shape.set(Keys.DISPLAY_NAME, getNextName(toString()));
             WedgeFactory.initializeShape(wwd, shape, fitShapeToViewport);
 
             return shape;
@@ -669,7 +668,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
         public AbstractShape createShape(WorldWindow wwd, boolean fitShapeToViewport) {
             ExtrudedPolygon poly = new ExtrudedPolygon();
             poly.setAttributes(getDefaultAttributes());
-            poly.set(AVKey.DISPLAY_NAME, getNextName(toString()));
+            poly.set(Keys.DISPLAY_NAME, getNextName(toString()));
             ExtrudedPolygonFactory.initializePolygon(wwd, poly, fitShapeToViewport);
 
             return poly;
@@ -1427,7 +1426,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
                             shapes.add(newShape);
 
                             if (name.length >= 2) {
-                                newShape.set(AVKey.DISPLAY_NAME, name[1]);
+                                newShape.set(Keys.DISPLAY_NAME, name[1]);
                             }
                         }
                         catch (Exception e) {

@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.layers.ogc.kml.impl;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.event.Message;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.ogc.kml.*;
@@ -59,7 +59,7 @@ public class KMLSurfacePolygonImpl extends SurfacePolygon implements KMLRenderab
 
         // KMLPolygon's use linear interpolation between corners by definition. Configure the WorldWind SurfacePolygon
         // to use the appropriate path type for linear interpolation in geographic coordinates.
-        this.setPathType(AVKey.LINEAR);
+        this.setPathType(Keys.LINEAR);
 
         // Note: SurfacePolygon implies altitude mode "clampToGround", therefore KMLSurfacePolygonImpl ignores the
         // KMLPolygon's altitude mode property.
@@ -81,15 +81,15 @@ public class KMLSurfacePolygonImpl extends SurfacePolygon implements KMLRenderab
         }
 
         if (placemark.getName() != null)
-            this.set(AVKey.DISPLAY_NAME, placemark.getName());
+            this.set(Keys.DISPLAY_NAME, placemark.getName());
 
         if (placemark.getDescription() != null)
-            this.set(AVKey.DESCRIPTION, placemark.getDescription());
+            this.set(Keys.DESCRIPTION, placemark.getDescription());
 
         if (placemark.getSnippetText() != null)
-            this.set(AVKey.SHORT_DESCRIPTION, placemark.getSnippetText());
+            this.set(Keys.SHORT_DESCRIPTION, placemark.getSnippetText());
 
-        this.set(AVKey.CONTEXT, this.parent);
+        this.set(Keys.CONTEXT, this.parent);
     }
 
     /**
@@ -127,13 +127,13 @@ public class KMLSurfacePolygonImpl extends SurfacePolygon implements KMLRenderab
         }
 
         if (overlay.getName() != null)
-            this.set(AVKey.DISPLAY_NAME, overlay.getName());
+            this.set(Keys.DISPLAY_NAME, overlay.getName());
 
         if (overlay.getDescription() != null)
-            this.set(AVKey.BALLOON_TEXT, overlay.getDescription());
+            this.set(Keys.BALLOON_TEXT, overlay.getDescription());
 
         if (overlay.getSnippetText() != null)
-            this.set(AVKey.SHORT_DESCRIPTION, overlay.getSnippetText());
+            this.set(Keys.SHORT_DESCRIPTION, overlay.getSnippetText());
 
         String colorStr = overlay.getColor();
         if (!WWUtil.isEmpty(colorStr)) {
@@ -214,7 +214,7 @@ public class KMLSurfacePolygonImpl extends SurfacePolygon implements KMLRenderab
         PickedObject po = super.createPickedObject(dc, pickColor);
 
         // Add the KMLPlacemark to the picked object as the context of the picked object.
-        po.set(AVKey.CONTEXT, this.parent);
+        po.set(Keys.CONTEXT, this.parent);
         return po;
     }
 
@@ -233,7 +233,7 @@ public class KMLSurfacePolygonImpl extends SurfacePolygon implements KMLRenderab
         KMLAbstractSubStyle lineSubStyle = this.parent.getSubStyle(new KMLLineStyle(null), attrType);
         if (!this.isHighlighted() || KMLUtil.isHighlightStyleState(lineSubStyle)) {
             KMLUtil.assembleLineAttributes(attrs, (KMLLineStyle) lineSubStyle);
-            if (lineSubStyle.hasField(AVKey.UNRESOLVED))
+            if (lineSubStyle.hasField(Keys.UNRESOLVED))
                 attrs.setUnresolved(true);
         }
 
@@ -242,7 +242,7 @@ public class KMLSurfacePolygonImpl extends SurfacePolygon implements KMLRenderab
         KMLAbstractSubStyle fillSubStyle = this.parent.getSubStyle(new KMLPolyStyle(null), attrType);
         if (!this.isHighlighted() || KMLUtil.isHighlightStyleState(lineSubStyle)) {
             KMLUtil.assembleInteriorAttributes(attrs, (KMLPolyStyle) fillSubStyle);
-            if (fillSubStyle.hasField(AVKey.UNRESOLVED))
+            if (fillSubStyle.hasField(Keys.UNRESOLVED))
                 attrs.setUnresolved(true);
         }
 

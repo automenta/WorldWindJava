@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.examples.sar.render;
 
 import com.jogamp.opengl.GL2;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.examples.sar.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
@@ -236,14 +236,14 @@ public class TrackSegmentInfo implements Renderable {
             stackHandler.pushAttrib(gl, GL2.GL_CURRENT_BIT); // For current color.
             try {
                 MultiLineTextRenderer tr = OrderedText.getTextRendererFor(dc, font);
-                tr.setTextAlign(AVKey.CENTER);
+                tr.setTextAlign(Keys.CENTER);
                 tr.getTextRenderer().beginRendering(viewport.width, viewport.height);
                 try {
                     tr.setTextColor(color);
                     tr.setBackColor(Color.BLACK);
 
                     Rectangle bounds = tr.getBounds(text);
-                    tr.draw(text, x, y + (3 * bounds.height / 2), AVKey.TEXT_EFFECT_OUTLINE);
+                    tr.draw(text, x, y + (3 * bounds.height / 2), Keys.TEXT_EFFECT_OUTLINE);
                 }
                 finally {
                     tr.getTextRenderer().endRendering();

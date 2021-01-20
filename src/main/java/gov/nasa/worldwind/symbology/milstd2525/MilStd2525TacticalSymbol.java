@@ -109,13 +109,13 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol {
      * @throws IllegalArgumentException if either the symbolId or the position are <code>null</code>, or if the symbolId
      *                                  is not a valid 15-character alphanumeric symbol identification code (SIDC).
      */
-    public MilStd2525TacticalSymbol(String symbolId, Position position, AVList modifiers) {
+    public MilStd2525TacticalSymbol(String symbolId, Position position, KV modifiers) {
         super(position);
 
         this.init(symbolId, modifiers);
     }
 
-    protected static String getReinforcedReducedModifier(AVList modifiers, String modifierKey) {
+    protected static String getReinforcedReducedModifier(KV modifiers, String modifierKey) {
         Object o = modifiers.get(modifierKey);
         if (o != null && o.toString().equalsIgnoreCase(SymbologyConstants.REINFORCED))
             return "+";
@@ -127,7 +127,7 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol {
             return null;
     }
 
-    protected static void appendTextModifier(StringBuilder sb, AVList modifiers, String modifierKey,
+    protected static void appendTextModifier(StringBuilder sb, KV modifiers, String modifierKey,
         Integer maxLength) {
         Object modifierValue = modifiers.get(modifierKey);
         if (WWUtil.isEmpty(modifierValue))
@@ -142,7 +142,7 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol {
         sb.append(modifierText, 0, len);
     }
 
-    protected void init(String symbolId, AVList modifiers) {
+    protected void init(String symbolId, KV modifiers) {
         // Initialize the symbol code from the symbol identifier specified at construction.
         this.symbolCode = new SymbolCode(symbolId);
         // Parse the symbol code's 2-character modifier code and store the resulting pairs in the modifiers list.
@@ -154,7 +154,7 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol {
 
         // Configure this tactical symbol's icon retriever and modifier retriever with either the configuration value or
         // the default value (in that order of precedence).
-        String iconRetrieverPath = Configuration.getStringValue(AVKey.MIL_STD_2525_ICON_RETRIEVER_PATH,
+        String iconRetrieverPath = Configuration.getStringValue(Keys.MIL_STD_2525_ICON_RETRIEVER_PATH,
             MilStd2525Constants.DEFAULT_ICON_RETRIEVER_PATH);
         this.setIconRetriever(new MilStd2525IconRetriever(iconRetrieverPath));
         this.setModifierRetriever(new MilStd2525ModifierRetriever(iconRetrieverPath));
@@ -318,9 +318,9 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol {
     }
 
     @Override
-    protected AVList assembleIconRetrieverParameters(AVList params) {
+    protected KV assembleIconRetrieverParameters(KV params) {
         if (params == null)
-            params = new AVListImpl();
+            params = new KVMap();
 
         super.assembleIconRetrieverParameters(params);
 
@@ -340,7 +340,7 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol {
     }
 
     @Override
-    protected void applyImplicitModifiers(AVList modifiers) {
+    protected void applyImplicitModifiers(KV modifiers) {
         String maskedCode = symbolCode.toMaskedString().toLowerCase();
         String si = symbolCode.getStandardIdentity();
 
@@ -405,12 +405,12 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol {
         }
     }
 
-    protected void layoutGraphicModifiers(DrawContext dc, AVList modifiers, OrderedSymbol osym) {
+    protected void layoutGraphicModifiers(DrawContext dc, KV modifiers, OrderedSymbol osym) {
         this.currentGlyphs.clear();
         this.currentLines.clear();
 
-        AVList retrieverParams = new AVListImpl();
-        retrieverParams.set(AVKey.WIDTH, this.iconRect.width);
+        KV retrieverParams = new KVMap();
+        retrieverParams.set(Keys.WIDTH, this.iconRect.width);
 
         // Feint/Dummy Indicator modifier. Placed above the icon.
         String modifierCode = this.getModifierCode(modifiers, SymbologyConstants.FEINT_DUMMY);
@@ -479,13 +479,13 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol {
      * @param modifiers Symbol modifiers.
      * @return True if the symbol must use the alternate operational condition indicator.
      */
-    protected boolean mustUseAlternateOperationalCondition(AVList modifiers) {
+    protected boolean mustUseAlternateOperationalCondition(KV modifiers) {
         return SymbologyConstants.SCHEME_EMERGENCY_MANAGEMENT.equalsIgnoreCase(this.symbolCode.getScheme())
             || modifiers.hasKey(SymbologyConstants.OPERATIONAL_CONDITION_ALTERNATE);
     }
 
     @Override
-    protected void layoutDynamicModifiers(DrawContext dc, AVList modifiers, OrderedSymbol osym) {
+    protected void layoutDynamicModifiers(DrawContext dc, KV modifiers, OrderedSymbol osym) {
         this.currentLines.clear();
 
         if (!this.isShowGraphicModifiers())
@@ -514,7 +514,7 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol {
         }
     }
 
-    protected void layoutTextModifiers(DrawContext dc, AVList modifiers, OrderedSymbol osym) {
+    protected void layoutTextModifiers(DrawContext dc, KV modifiers, OrderedSymbol osym) {
         this.currentLabels.clear();
 
         StringBuilder sb = new StringBuilder();
@@ -633,7 +633,7 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol {
     }
 
     @Override
-    protected int getMaxLabelLines(AVList modifiers) {
+    protected int getMaxLabelLines(KV modifiers) {
         // Determine how many lines of text are on the left side of the symbol.
         int leftLines = 0;
         if (modifiers.hasKey(SymbologyConstants.DATE_TIME_GROUP))
@@ -667,7 +667,7 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol {
         return Math.max(leftLines, rightLines);
     }
 
-    protected String getModifierCode(AVList modifiers, String modifierKey) {
+    protected String getModifierCode(KV modifiers, String modifierKey) {
         return SymbolCode.composeSymbolModifierCode(this.symbolCode, modifiers, modifierKey);
     }
 

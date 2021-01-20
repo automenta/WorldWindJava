@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.formats.tiff;
 
-import gov.nasa.worldwind.Disposable;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.data.*;
 import gov.nasa.worldwind.formats.worldfile.WorldFile;
@@ -34,7 +34,7 @@ public class GeotiffReader implements Disposable {
     private final GeoCodec gc = new GeoCodec();
     private final TIFFReader tiffReader;
     private ArrayList<TiffIFDEntry[]> tiffIFDs;
-    private ArrayList<AVList> metadata;
+    private ArrayList<KV> metadata;
 
     public GeotiffReader(String sourceFilename) throws IOException {
         this.sourceFilename = sourceFilename;
@@ -63,14 +63,14 @@ public class GeotiffReader implements Disposable {
         return null;
     }
 
-    protected AVList getMetadata(int imageIndex) {
+    protected KV getMetadata(int imageIndex) {
         this.checkImageIndex(imageIndex);
-        AVList values = this.metadata.get(imageIndex);
+        KV values = this.metadata.get(imageIndex);
         return (null != values) ? values.copy() : null;
     }
 
-    public AVList copyMetadataTo(int imageIndex, AVList values) {
-        AVList list = this.getMetadata(imageIndex);
+    public KV copyMetadataTo(int imageIndex, KV values) {
+        KV list = this.getMetadata(imageIndex);
         if (null != values) {
             values.setValues(list);
         } else {
@@ -79,7 +79,7 @@ public class GeotiffReader implements Disposable {
         return values;
     }
 
-    public AVList copyMetadataTo(AVList list) {
+    public KV copyMetadataTo(KV list) {
         return this.copyMetadataTo(0, list);
     }
 
@@ -93,14 +93,14 @@ public class GeotiffReader implements Disposable {
 
     public int getWidth(int imageIndex) {
         checkImageIndex(imageIndex);
-        AVList values = this.metadata.get(imageIndex);
-        return (values.hasKey(AVKey.WIDTH)) ? (Integer) values.get(AVKey.WIDTH) : 0;
+        KV values = this.metadata.get(imageIndex);
+        return (values.hasKey(Keys.WIDTH)) ? (Integer) values.get(Keys.WIDTH) : 0;
     }
 
     public int getHeight(int imageIndex) {
         checkImageIndex(imageIndex);
-        AVList values = this.metadata.get(imageIndex);
-        return (values.hasKey(AVKey.HEIGHT)) ? (Integer) values.get(AVKey.HEIGHT) : 0;
+        KV values = this.metadata.get(imageIndex);
+        return (values.hasKey(Keys.HEIGHT)) ? (Integer) values.get(Keys.HEIGHT) : 0;
     }
 
     public DataRaster[] readDataRaster() throws IOException {
@@ -143,13 +143,13 @@ public class GeotiffReader implements Disposable {
     }
 
     public boolean isGeotiff(int imageIndex) {
-        AVList values = this.metadata.get(imageIndex);
-        return (null != values && values.hasKey(AVKey.COORDINATE_SYSTEM));
+        KV values = this.metadata.get(imageIndex);
+        return (null != values && values.hasKey(Keys.COORDINATE_SYSTEM));
     }
 
     public DataRaster doRead(int imageIndex) throws IOException {
         checkImageIndex(imageIndex);
-        AVList values = this.metadata.get(imageIndex);
+        KV values = this.metadata.get(imageIndex);
 
         // Extract the various IFD tags we need to read this image. We want to loop over the tag set once, instead
         // multiple times if we simply used our general getByTag() method.
@@ -260,11 +260,11 @@ public class GeotiffReader implements Disposable {
 
         long offset = stripOffsets[0];
 
-        if (values.get(AVKey.PIXEL_FORMAT) == AVKey.ELEVATION) {
+        if (values.get(Keys.PIXEL_FORMAT) == Keys.ELEVATION) {
             ByteBufferRaster raster = new ByteBufferRaster(tiff.width, tiff.height,
-                (Sector) values.get(AVKey.SECTOR), values);
+                (Sector) values.get(Keys.SECTOR), values);
 
-            if (raster.get(AVKey.DATA_TYPE) == AVKey.INT8) {
+            if (raster.get(Keys.DATA_TYPE) == Keys.INT8) {
                 byte[][] data = this.tiffReader.readPlanar8(tiff.width, tiff.height, tiff.samplesPerPixel,
                     stripOffsets, stripCounts, tiff.rowsPerStrip);
 
@@ -274,7 +274,7 @@ public class GeotiffReader implements Disposable {
                         raster.setDoubleAtPosition(y, x, data[0][next++]);
                     }
                 }
-            } else if (raster.get(AVKey.DATA_TYPE) == AVKey.INT16) {
+            } else if (raster.get(Keys.DATA_TYPE) == Keys.INT16) {
                 short[][] data = this.tiffReader.readPlanar16(tiff.width, tiff.height, tiff.samplesPerPixel,
                     stripOffsets, stripCounts, tiff.rowsPerStrip);
 
@@ -284,7 +284,7 @@ public class GeotiffReader implements Disposable {
                         raster.setDoubleAtPosition(y, x, data[0][next++]);
                     }
                 }
-            } else if (raster.get(AVKey.DATA_TYPE) == AVKey.FLOAT32) {
+            } else if (raster.get(Keys.DATA_TYPE) == Keys.FLOAT32) {
                 float[][] data = this.tiffReader.readPlanarFloat32(tiff.width, tiff.height, tiff.samplesPerPixel,
                     stripOffsets, stripCounts, tiff.rowsPerStrip);
 
@@ -303,11 +303,11 @@ public class GeotiffReader implements Disposable {
             ElevationsUtil.rectify(raster);
 
             return raster;
-        } else if (values.get(AVKey.PIXEL_FORMAT) == AVKey.IMAGE
-            && values.get(AVKey.IMAGE_COLOR_FORMAT) == AVKey.GRAYSCALE) {
+        } else if (values.get(Keys.PIXEL_FORMAT) == Keys.IMAGE
+            && values.get(Keys.IMAGE_COLOR_FORMAT) == Keys.GRAYSCALE) {
             BufferedImage grayImage = null;
 
-            if (values.get(AVKey.DATA_TYPE) == AVKey.INT8) {
+            if (values.get(Keys.DATA_TYPE) == Keys.INT8) {
                 byte[][] image = this.tiffReader.readPlanar8(tiff.width, tiff.height, tiff.samplesPerPixel,
                     stripOffsets, stripCounts, tiff.rowsPerStrip);
 
@@ -320,7 +320,7 @@ public class GeotiffReader implements Disposable {
                         wrRaster.setSample(x, y, 0, 0xFF & (image[0][next++]));
                     }
                 }
-            } else if (values.get(AVKey.DATA_TYPE) == AVKey.INT16 && tiff.samplesPerPixel == 1) {
+            } else if (values.get(Keys.DATA_TYPE) == Keys.INT16 && tiff.samplesPerPixel == 1) {
                 short[][] image = this.tiffReader.readPlanar16(tiff.width, tiff.height, tiff.samplesPerPixel,
                     stripOffsets, stripCounts, tiff.rowsPerStrip);
 
@@ -333,7 +333,7 @@ public class GeotiffReader implements Disposable {
                         wrRaster.setSample(x, y, 0, 0xFFFF & (image[0][next++]));
                     }
                 }
-            } else if (values.get(AVKey.DATA_TYPE) == AVKey.INT16 && tiff.samplesPerPixel > 1) {
+            } else if (values.get(Keys.DATA_TYPE) == Keys.INT16 && tiff.samplesPerPixel > 1) {
                 short[] image = this.tiffReader.read16bitPixelInterleavedImage(imageIndex, tiff.width, tiff.height,
                     tiff.samplesPerPixel, stripOffsets, stripCounts, tiff.rowsPerStrip);
 
@@ -356,8 +356,8 @@ public class GeotiffReader implements Disposable {
 
             grayImage = ImageUtil.toCompatibleImage(grayImage);
             return BufferedImageRaster.wrap(grayImage, values);
-        } else if (values.get(AVKey.PIXEL_FORMAT) == AVKey.IMAGE
-            && values.get(AVKey.IMAGE_COLOR_FORMAT) == AVKey.COLOR) {
+        } else if (values.get(Keys.PIXEL_FORMAT) == Keys.IMAGE
+            && values.get(Keys.IMAGE_COLOR_FORMAT) == Keys.COLOR) {
 
             ColorModel colorModel = null;
             WritableRaster raster;
@@ -451,11 +451,11 @@ public class GeotiffReader implements Disposable {
     private void repackageGeoReferencingTags() throws IOException {
         for (int i = 0; i < this.getNumImages(); i++) {
             TiffIFDEntry[] ifd = tiffIFDs.get(i);
-            AVList values = this.metadata.get(i);
+            KV values = this.metadata.get(i);
 
-            values.set(AVKey.FILE_NAME, this.sourceFilename);
+            values.set(Keys.FILE_NAME, this.sourceFilename);
             // after we read all data, we have evrything as BIG_ENDIAN
-            values.set(AVKey.BYTE_ORDER, AVKey.BIG_ENDIAN);
+            values.set(Keys.BYTE_ORDER, Keys.BIG_ENDIAN);
 
             BaselineTiff tiff = BaselineTiff.extract(ifd, this.tiffReader);
 
@@ -470,76 +470,76 @@ public class GeotiffReader implements Disposable {
                 Logging.logger().severe(message);
                 throw new IOException(message);
             }
-            values.set(AVKey.WIDTH, tiff.width);
+            values.set(Keys.WIDTH, tiff.width);
 
             if (tiff.height == Tiff.Undefined) {
                 String message = Logging.getMessage("generic.InvalidHeight", tiff.height);
                 Logging.logger().severe(message);
                 throw new IOException(message);
             }
-            values.set(AVKey.HEIGHT, tiff.height);
+            values.set(Keys.HEIGHT, tiff.height);
 
             int sampleFormat = (null != tiff.sampleFormat) ? tiff.sampleFormat[0] : Tiff.Undefined;
             int bitsPerSample = (null != tiff.bitsPerSample) ? tiff.bitsPerSample[0] : Tiff.Undefined;
 
             if (null != tiff.displayName) {
-                values.set(AVKey.DISPLAY_NAME, tiff.displayName);
+                values.set(Keys.DISPLAY_NAME, tiff.displayName);
             }
 
             if (null != tiff.imageDescription) {
-                values.set(AVKey.DESCRIPTION, tiff.imageDescription);
+                values.set(Keys.DESCRIPTION, tiff.imageDescription);
             }
 
             if (null != tiff.softwareVersion) {
-                values.set(AVKey.VERSION, tiff.softwareVersion);
+                values.set(Keys.VERSION, tiff.softwareVersion);
             }
 
             if (null != tiff.dateTime) {
-                values.set(AVKey.DATE_TIME, tiff.dateTime);
+                values.set(Keys.DATE_TIME, tiff.dateTime);
             }
 
             if (tiff.photometric == Tiff.Photometric.Color_RGB) {
-                values.set(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
-                values.set(AVKey.IMAGE_COLOR_FORMAT, AVKey.COLOR);
-                values.set(AVKey.DATA_TYPE, AVKey.INT8);
+                values.set(Keys.PIXEL_FORMAT, Keys.IMAGE);
+                values.set(Keys.IMAGE_COLOR_FORMAT, Keys.COLOR);
+                values.set(Keys.DATA_TYPE, Keys.INT8);
             } else if (tiff.photometric == Tiff.Photometric.CMYK) {
-                values.set(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
-                values.set(AVKey.IMAGE_COLOR_FORMAT, AVKey.COLOR);
-                values.set(AVKey.DATA_TYPE, AVKey.INT8);
+                values.set(Keys.PIXEL_FORMAT, Keys.IMAGE);
+                values.set(Keys.IMAGE_COLOR_FORMAT, Keys.COLOR);
+                values.set(Keys.DATA_TYPE, Keys.INT8);
             } else if (tiff.photometric == Tiff.Photometric.Color_Palette) {
-                values.set(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
-                values.set(AVKey.IMAGE_COLOR_FORMAT, AVKey.COLOR);
-                values.set(AVKey.DATA_TYPE, AVKey.INT8);
+                values.set(Keys.PIXEL_FORMAT, Keys.IMAGE);
+                values.set(Keys.IMAGE_COLOR_FORMAT, Keys.COLOR);
+                values.set(Keys.DATA_TYPE, Keys.INT8);
             } else if (tiff.samplesPerPixel
                 == Tiff.SamplesPerPixel.MONOCHROME) {   // Tiff.Photometric.Grayscale_BlackIsZero or Tiff.Photometric.Grayscale_WhiteIsZero
                 if (sampleFormat == Tiff.SampleFormat.SIGNED) {
-                    values.set(AVKey.PIXEL_FORMAT, AVKey.ELEVATION);
+                    values.set(Keys.PIXEL_FORMAT, Keys.ELEVATION);
                     if (bitsPerSample == Short.SIZE) {
-                        values.set(AVKey.DATA_TYPE, AVKey.INT16);
+                        values.set(Keys.DATA_TYPE, Keys.INT16);
                     } else if (bitsPerSample == Byte.SIZE) {
-                        values.set(AVKey.DATA_TYPE, AVKey.INT8);
+                        values.set(Keys.DATA_TYPE, Keys.INT8);
                     } else if (bitsPerSample == Integer.SIZE) {
-                        values.set(AVKey.DATA_TYPE, AVKey.INT32);
+                        values.set(Keys.DATA_TYPE, Keys.INT32);
                     }
                 } else if (sampleFormat == Tiff.SampleFormat.IEEEFLOAT) {
-                    values.set(AVKey.PIXEL_FORMAT, AVKey.ELEVATION);
+                    values.set(Keys.PIXEL_FORMAT, Keys.ELEVATION);
                     if (bitsPerSample == Float.SIZE) {
-                        values.set(AVKey.DATA_TYPE, AVKey.FLOAT32);
+                        values.set(Keys.DATA_TYPE, Keys.FLOAT32);
                     }
                 } else if (sampleFormat == Tiff.SampleFormat.UNSIGNED) {
-                    values.set(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
-                    values.set(AVKey.IMAGE_COLOR_FORMAT, AVKey.GRAYSCALE);
+                    values.set(Keys.PIXEL_FORMAT, Keys.IMAGE);
+                    values.set(Keys.IMAGE_COLOR_FORMAT, Keys.GRAYSCALE);
                     if (bitsPerSample == Short.SIZE) {
-                        values.set(AVKey.DATA_TYPE, AVKey.INT16);
+                        values.set(Keys.DATA_TYPE, Keys.INT16);
                     } else if (bitsPerSample == Byte.SIZE) {
-                        values.set(AVKey.DATA_TYPE, AVKey.INT8);
+                        values.set(Keys.DATA_TYPE, Keys.INT8);
                     } else if (bitsPerSample == Integer.SIZE) {
-                        values.set(AVKey.DATA_TYPE, AVKey.INT32);
+                        values.set(Keys.DATA_TYPE, Keys.INT32);
                     }
                 }
             }
 
-            if (!values.hasKey(AVKey.PIXEL_FORMAT) || !values.hasKey(AVKey.DATA_TYPE)) {
+            if (!values.hasKey(Keys.PIXEL_FORMAT) || !values.hasKey(Keys.DATA_TYPE)) {
                 String message = Logging.getMessage("Geotiff.UnsupportedDataTypeRaster", tiff.toString());
                 Logging.logger().severe(message);
             }
@@ -550,10 +550,10 @@ public class GeotiffReader implements Disposable {
                     switch (entry.tag) {
                         case GeoTiff.Tag.GDAL_NODATA -> {
                             Double d = Double.parseDouble(this.tiffReader.readString(entry));
-                            values.set(AVKey.MISSING_DATA_SIGNAL, d);
+                            values.set(Keys.MISSING_DATA_SIGNAL, d);
                         }
-                        case Tiff.Tag.MIN_SAMPLE_VALUE -> values.set(AVKey.ELEVATION_MIN, entry.getAsDouble());
-                        case Tiff.Tag.MAX_SAMPLE_VALUE -> values.set(AVKey.ELEVATION_MAX, entry.getAsDouble());
+                        case Tiff.Tag.MIN_SAMPLE_VALUE -> values.set(Keys.ELEVATION_MIN, entry.getAsDouble());
+                        case Tiff.Tag.MAX_SAMPLE_VALUE -> values.set(Keys.ELEVATION_MAX, entry.getAsDouble());
                         case GeoTiff.Tag.MODEL_PIXELSCALE -> this.gc.setModelPixelScale(entry.getDoubles());
                         case GeoTiff.Tag.MODEL_TIEPOINT -> this.gc.addModelTiePoints(entry.getDoubles());
                         case GeoTiff.Tag.MODEL_TRANSFORMATION -> this.gc.setModelTransformation(entry.getDoubles());
@@ -624,19 +624,19 @@ public class GeotiffReader implements Disposable {
     private void processGeoKeys(int imageIndex) throws IOException {
         this.checkImageIndex(imageIndex);
 
-        AVList values = this.metadata.get(imageIndex);
+        KV values = this.metadata.get(imageIndex);
 
-        if (null == values || !this.gc.hasGeoKey(GeoTiff.GeoKey.ModelType) || !values.hasKey(AVKey.WIDTH)
-            || !values.hasKey(AVKey.HEIGHT)) {
+        if (null == values || !this.gc.hasGeoKey(GeoTiff.GeoKey.ModelType) || !values.hasKey(Keys.WIDTH)
+            || !values.hasKey(Keys.HEIGHT)) {
             return;
         }
 
-        int width = (Integer) values.get(AVKey.WIDTH);
-        int height = (Integer) values.get(AVKey.HEIGHT);
+        int width = (Integer) values.get(Keys.WIDTH);
+        int height = (Integer) values.get(Keys.HEIGHT);
 
         // geo-tiff spec requires the VerticalCSType to be present for elevations (but ignores its value)
         if (this.gc.hasGeoKey(GeoTiff.GeoKey.VerticalCSType)) {
-            values.set(AVKey.PIXEL_FORMAT, AVKey.ELEVATION);
+            values.set(Keys.PIXEL_FORMAT, Keys.ELEVATION);
         }
 
         if (this.gc.hasGeoKey(GeoTiff.GeoKey.VerticalUnits)) {
@@ -644,9 +644,9 @@ public class GeotiffReader implements Disposable {
             int units = (null != v && v.length > 0) ? v[0] : GeoTiff.Undefined;
 
             if (units == GeoTiff.Unit.Linear.Meter) {
-                values.set(AVKey.ELEVATION_UNIT, AVKey.UNIT_METER);
+                values.set(Keys.ELEVATION_UNIT, Keys.UNIT_METER);
             } else if (units == GeoTiff.Unit.Linear.Foot) {
-                values.set(AVKey.ELEVATION_UNIT, AVKey.UNIT_FOOT);
+                values.set(Keys.ELEVATION_UNIT, Keys.UNIT_FOOT);
             }
         }
 
@@ -655,9 +655,9 @@ public class GeotiffReader implements Disposable {
             int rasterType = (null != v && v.length > 0) ? v[0] : GeoTiff.Undefined;
 
             if (rasterType == GeoTiff.RasterType.RasterPixelIsArea) {
-                values.set(AVKey.RASTER_PIXEL, AVKey.RASTER_PIXEL_IS_AREA);
+                values.set(Keys.RASTER_PIXEL, Keys.RASTER_PIXEL_IS_AREA);
             } else if (rasterType == GeoTiff.RasterType.RasterPixelIsPoint) {
-                values.set(AVKey.RASTER_PIXEL, AVKey.RASTER_PIXEL_IS_POINT);
+                values.set(Keys.RASTER_PIXEL, Keys.RASTER_PIXEL_IS_POINT);
             }
         }
 
@@ -671,7 +671,7 @@ public class GeotiffReader implements Disposable {
         }
 
         if (gtModelTypeGeoKey == GeoTiff.ModelType.Geographic) {
-            values.set(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_GEOGRAPHIC);
+            values.set(Keys.COORDINATE_SYSTEM, Keys.COORDINATE_SYSTEM_GEOGRAPHIC);
 
             int epsg = GeoTiff.GCS.Undefined;
 
@@ -683,15 +683,15 @@ public class GeotiffReader implements Disposable {
             }
 
             if (epsg != GeoTiff.GCS.Undefined) {
-                values.set(AVKey.PROJECTION_EPSG_CODE, epsg);
+                values.set(Keys.PROJECTION_EPSG_CODE, epsg);
             }
 
             // TODO Assumes WGS84(4326)- should we check for this ?
             double[] bbox = this.gc.getBoundingBox(width, height);
-            values.set(AVKey.SECTOR, Sector.fromDegrees(bbox[3], bbox[1], bbox[0], bbox[2]));
-            values.set(AVKey.ORIGIN, LatLon.fromDegrees(bbox[1], bbox[0]));
+            values.set(Keys.SECTOR, Sector.fromDegrees(bbox[3], bbox[1], bbox[0], bbox[2]));
+            values.set(Keys.ORIGIN, LatLon.fromDegrees(bbox[1], bbox[0]));
         } else if (gtModelTypeGeoKey == GeoTiff.ModelType.Projected) {
-            values.set(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_PROJECTED);
+            values.set(Keys.COORDINATE_SYSTEM, Keys.COORDINATE_SYSTEM_PROJECTED);
 
             int projection = GeoTiff.PCS.Undefined;
             String hemi;
@@ -709,7 +709,7 @@ public class GeotiffReader implements Disposable {
             }
 
             if (projection != GeoTiff.PCS.Undefined) {
-                values.set(AVKey.PROJECTION_EPSG_CODE, projection);
+                values.set(Keys.PROJECTION_EPSG_CODE, projection);
             }
 
             // TODO read more GeoKeys and GeoKeyDirectoryTag values
@@ -721,39 +721,39 @@ public class GeotiffReader implements Disposable {
              */
             if ((projection >= 16100) && (projection <= 16199)) //UTM Zone South
             {
-                hemi = AVKey.SOUTH;
+                hemi = Keys.SOUTH;
                 zone = projection - 16100;
             } else if ((projection >= 16000) && (projection <= 16099)) //UTM Zone North
             {
-                hemi = AVKey.NORTH;
+                hemi = Keys.NORTH;
                 zone = projection - 16000;
             } else if ((projection >= 26900) && (projection <= 26999)) //UTM : NAD83
             {
-                hemi = AVKey.NORTH;
+                hemi = Keys.NORTH;
                 zone = projection - 26900;
             } else if ((projection >= 32201) && (projection <= 32260)) //UTM : WGS72 N
             {
-                hemi = AVKey.NORTH;
+                hemi = Keys.NORTH;
                 zone = projection - 32200;
             } else if ((projection >= 32301) && (projection <= 32360)) //UTM : WGS72 S
             {
-                hemi = AVKey.SOUTH;
+                hemi = Keys.SOUTH;
                 zone = projection - 32300;
             } else if ((projection >= 32401) && (projection <= 32460)) //UTM : WGS72BE N
             {
-                hemi = AVKey.NORTH;
+                hemi = Keys.NORTH;
                 zone = projection - 32400;
             } else if ((projection >= 32501) && (projection <= 32560)) //UTM : WGS72BE S
             {
-                hemi = AVKey.SOUTH;
+                hemi = Keys.SOUTH;
                 zone = projection - 32500;
             } else if ((projection >= 32601) && (projection <= 32660)) //UTM : WGS84 N
             {
-                hemi = AVKey.NORTH;
+                hemi = Keys.NORTH;
                 zone = projection - 32600;
             } else if ((projection >= 32701) && (projection <= 32760)) //UTM : WGS84 S
             {
-                hemi = AVKey.SOUTH;
+                hemi = Keys.SOUTH;
                 zone = projection - 32700;
             } else {
                 String message = Logging.getMessage("generic.UnknownProjection", projection);
@@ -765,8 +765,8 @@ public class GeotiffReader implements Disposable {
             double pixelScaleY = Math.abs(this.gc.getModelPixelScaleY());
 
             //dump "world file" values into values
-            values.set(AVKey.PROJECTION_HEMISPHERE, hemi);
-            values.set(AVKey.PROJECTION_ZONE, zone);
+            values.set(Keys.PROJECTION_HEMISPHERE, hemi);
+            values.set(Keys.PROJECTION_ZONE, zone);
             values.set(WorldFile.WORLD_FILE_X_PIXEL_SIZE, pixelScaleX);
             values.set(WorldFile.WORLD_FILE_Y_PIXEL_SIZE, -pixelScaleY);
 
@@ -782,7 +782,7 @@ public class GeotiffReader implements Disposable {
                 values.set(WorldFile.WORLD_FILE_Y_LOCATION, yD);
             }
 
-            values.set(AVKey.SECTOR, ImageUtil.calcBoundingBoxForUTM(values));
+            values.set(Keys.SECTOR, ImageUtil.calcBoundingBoxForUTM(values));
         } else {
             String msg = Logging.getMessage("Geotiff.UnknownGeoKeyValue", gtModelTypeGeoKey, GeoTiff.GeoKey.ModelType);
             Logging.logger().severe(msg);
@@ -814,7 +814,7 @@ public class GeotiffReader implements Disposable {
             if (null == this.metadata) {
                 this.metadata = new ArrayList<>();
             }
-            this.metadata.add(new AVListImpl());
+            this.metadata.add(new KVMap());
 
             ByteBuffer bb = ByteBuffer.allocate(4).order(this.tiffReader.getByteOrder());
             this.theChannel.read(bb);

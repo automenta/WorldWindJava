@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.util;
 
 import com.jogamp.opengl.GL2;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 
@@ -93,7 +93,7 @@ public abstract class DialogAnnotation extends GlobeAnnotation implements Action
 
     protected void initComponents() {
         this.closeButton = new ButtonAnnotation(CLOSE_IMAGE_PATH, DEPRESSED_MASK_PATH);
-        this.closeButton.setActionCommand(AVKey.CLOSE);
+        this.closeButton.setActionCommand(Keys.CLOSE);
         this.closeButton.addActionListener(this);
         this.closeButton.setToolTipText(CLOSE_TOOLTIP_TEXT);
 
@@ -105,14 +105,14 @@ public abstract class DialogAnnotation extends GlobeAnnotation implements Action
         this.setLayout(layout);
         this.addChild(this.busyImage);
         this.addChild(this.closeButton);
-        layout.setConstraint(this.busyImage, AVKey.NORTHWEST);
-        layout.setConstraint(this.closeButton, AVKey.NORTHEAST);
+        layout.setConstraint(this.busyImage, Keys.NORTHWEST);
+        layout.setConstraint(this.closeButton, Keys.NORTHEAST);
     }
 
     protected void setupContainer(Annotation annotation) {
         AnnotationAttributes defaultAttribs = new AnnotationAttributes();
         DialogAnnotation.setupDefaultAttributes(defaultAttribs);
-        defaultAttribs.setAdjustWidthToText(AVKey.SIZE_FIXED);
+        defaultAttribs.setAdjustWidthToText(Keys.SIZE_FIXED);
         defaultAttribs.setSize(new Dimension(0, 0));
 
         annotation.setPickEnabled(false);
@@ -122,7 +122,7 @@ public abstract class DialogAnnotation extends GlobeAnnotation implements Action
     protected void setupLabel(Annotation annotation) {
         AnnotationAttributes defaultAttribs = new AnnotationAttributes();
         DialogAnnotation.setupDefaultAttributes(defaultAttribs);
-        defaultAttribs.setAdjustWidthToText(AVKey.SIZE_FIT_TEXT);
+        defaultAttribs.setAdjustWidthToText(Keys.SIZE_FIT_TEXT);
 
         annotation.setPickEnabled(false);
         annotation.getAttributes().setDefaults(defaultAttribs);
@@ -138,7 +138,7 @@ public abstract class DialogAnnotation extends GlobeAnnotation implements Action
         attributes.setDrawOffset(new Point(0, 0));
         attributes.setHighlightScale(1);
         attributes.setInsets(new Insets(0, 0, 0, 0));
-        attributes.setLeader(AVKey.SHAPE_NONE);
+        attributes.setLeader(Keys.SHAPE_NONE);
     }
 
     //**************************************************************//
@@ -214,7 +214,7 @@ public abstract class DialogAnnotation extends GlobeAnnotation implements Action
             this.setAngle(this.getAngle().add(increment));
 
             // Fire a property change to force a repaint.
-            dc.getView().firePropertyChange(AVKey.VIEW, null, dc.getView());
+            dc.getView().firePropertyChange(Keys.VIEW, null, dc.getView());
 
             // Update the frame time stamp.
             this.lastFrameTime = dc.getFrameTimeStamp();

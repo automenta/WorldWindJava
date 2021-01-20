@@ -5,8 +5,8 @@
  */
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.WorldWindow;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.*;
@@ -86,14 +86,14 @@ public class AnnotationControls extends ApplicationTemplate {
 
         UserFacingIcon icon = new UserFacingIcon(iconPath, position);
         icon.setSize(new Dimension(64, 64));
-        icon.set(AVKey.DATA_TYPE, type);
-        icon.set(AVKey.TITLE, title);
-        icon.set(AVKey.URL, data);
+        icon.set(Keys.DATA_TYPE, type);
+        icon.set(Keys.TITLE, title);
+        icon.set(Keys.URL, data);
         return icon;
     }
 
     @SuppressWarnings("StringEquality")
-    public static ContentAnnotation createContentAnnotation(AppFrame appFrame, Position position, AVList params) {
+    public static ContentAnnotation createContentAnnotation(AppFrame appFrame, Position position, KV params) {
         if (appFrame == null) {
             String message = "AppFrameIsNull";
             Logging.logger().severe(message);
@@ -112,9 +112,9 @@ public class AnnotationControls extends ApplicationTemplate {
             throw new IllegalArgumentException(message);
         }
 
-        String type = params.getStringValue(AVKey.DATA_TYPE);
-        String title = params.getStringValue(AVKey.TITLE);
-        Object source = params.get(AVKey.URL);
+        String type = params.getStringValue(Keys.DATA_TYPE);
+        String title = params.getStringValue(Keys.TITLE);
+        Object source = params.get(Keys.URL);
 
         if (type == AUDIO) {
             return createAudioAnnotation(appFrame, position, title, source);
@@ -377,7 +377,7 @@ public class AnnotationControls extends ApplicationTemplate {
             }
         }
 
-        protected ContentAnnotation createContent(Position position, AVList params) {
+        protected ContentAnnotation createContent(Position position, KV params) {
             return createContentAnnotation(this, position, params);
         }
     }
@@ -412,7 +412,7 @@ public class AnnotationControls extends ApplicationTemplate {
             if (e == null)
                 return;
 
-            if (e.getActionCommand() == AVKey.CLOSE) {
+            if (e.getActionCommand() == Keys.CLOSE) {
                 AppFrame.closeResource(this);
             }
         }
@@ -465,7 +465,7 @@ public class AnnotationControls extends ApplicationTemplate {
         @SuppressWarnings("StringEquality")
         protected static void stopController(AudioPlayerAnnotationController controller) {
             String status = controller.getClipStatus();
-            if (status == AVKey.PLAY) {
+            if (status == Keys.PLAY) {
                 controller.stopClip();
             }
         }
@@ -551,7 +551,7 @@ public class AnnotationControls extends ApplicationTemplate {
         @SuppressWarnings("StringEquality")
         protected static void stopController(SlideShowAnnotationController controller) {
             String state = controller.getState();
-            if (state == AVKey.PLAY) {
+            if (state == Keys.PLAY) {
                 controller.stopSlideShow();
             }
 

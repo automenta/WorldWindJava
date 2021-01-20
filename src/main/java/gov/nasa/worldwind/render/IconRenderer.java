@@ -7,8 +7,8 @@ package gov.nasa.worldwind.render;
 
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.texture.TextureCoords;
-import gov.nasa.worldwind.Locatable;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.Layer;
@@ -25,13 +25,13 @@ import java.util.logging.Level;
  * processing techniques to improve the runtime performance of picking and rendering large collections of icons.
  * <p>
  * During the draw pass, IconRenderer records feedback information for each WWIcon which has the property key {@link
- * AVKey#FEEDBACK_ENABLED} set to <code>true</code>. IconRenderer does not record any feedback information during the
+ * Keys#FEEDBACK_ENABLED} set to <code>true</code>. IconRenderer does not record any feedback information during the
  * pick pass. When feedback is enabled, IconRenderer puts properties which describe how each WWIcon has been processed
  * in key-value pairs attached to the WWIcon. Any of these properties may be null, indicating that processing of the
  * WWIcon was terminated before this information became available. The feedback properties for WWIcon are as follows:
  * <table> <caption>WWIcon Feedback Properties</caption><tr><th>Key</th><th>Description</th></tr>
- * <tr><td>{@link AVKey#FEEDBACK_REFERENCE_POINT}</td><td>The icon's reference point in model
- * coordinates.</td></tr> <tr><td>{@link AVKey#FEEDBACK_SCREEN_BOUNDS}</td><td>The icon's bounding rectangle in screen
+ * <tr><td>{@link Keys#FEEDBACK_REFERENCE_POINT}</td><td>The icon's reference point in model
+ * coordinates.</td></tr> <tr><td>{@link Keys#FEEDBACK_SCREEN_BOUNDS}</td><td>The icon's bounding rectangle in screen
  * coordinates.</td></tr> </table>
  *
  * @author tag
@@ -119,7 +119,7 @@ public class IconRenderer {
         if (dc.isPickingMode())
             return false;
 
-        Boolean b = (Boolean) icon.get(AVKey.FEEDBACK_ENABLED);
+        Boolean b = (Boolean) icon.get(Keys.FEEDBACK_ENABLED);
         return (b != null && b);
     }
 
@@ -148,9 +148,9 @@ public class IconRenderer {
      * @param screenRect the icon's bounding rectangle in screen coordinates.
      */
     @SuppressWarnings("UnusedDeclaration")
-    protected static void doRecordFeedback(DrawContext dc, AVList icon, Vec4 modelPoint, Rectangle screenRect) {
-        icon.set(AVKey.FEEDBACK_REFERENCE_POINT, modelPoint);
-        icon.set(AVKey.FEEDBACK_SCREEN_BOUNDS, screenRect);
+    protected static void doRecordFeedback(DrawContext dc, KV icon, Vec4 modelPoint, Rectangle screenRect) {
+        icon.set(Keys.FEEDBACK_REFERENCE_POINT, modelPoint);
+        icon.set(Keys.FEEDBACK_SCREEN_BOUNDS, screenRect);
     }
 
     public Pedestal getPedestal() {

@@ -5,8 +5,8 @@
  */
 package gov.nasa.worldwind.data;
 
-import gov.nasa.worldwind.Disposable;
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.geom.Sector;
 
 // TODO: Document the conditions determining when the sub-raster methods would fail and its response when the input
@@ -19,7 +19,7 @@ import gov.nasa.worldwind.geom.Sector;
  * @author dcollins
  * @version $Id: DataRaster.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface DataRaster extends AVList, Disposable {
+public interface DataRaster extends KV, Disposable {
     /**
      * Returns the raster's width in raster units.
      *
@@ -54,13 +54,13 @@ public interface DataRaster extends AVList, Disposable {
      * even if this raster does not.
      *
      * @param params a list of parameters that specify the width, height and sector of the region to return. Specify
-     *               these values using {@link gov.nasa.worldwind.avlist.AVKey#WIDTH}, {@link
-     *               gov.nasa.worldwind.avlist.AVKey#HEIGHT} and {@link gov.nasa.worldwind.avlist.AVKey#SECTOR}.
+     *               these values using {@link Keys#WIDTH}, {@link
+     *               Keys#HEIGHT} and {@link Keys#SECTOR}.
      * @return the requested raster, or null if the raster could not be created.
      * @throws IllegalArgumentException if the specified parameter list is missing the width, height or sector keys or
      *                                  any of those values are invalid.
      */
-    DataRaster getSubRaster(AVList params);
+    DataRaster getSubRaster(KV params);
 
     /**
      * Returns a portion of this raster as another raster. The returned raster conforms to EPSG:4326 even if this raster
@@ -70,10 +70,10 @@ public interface DataRaster extends AVList, Disposable {
      * @param height the height to make the returned sub-raster.
      * @param sector the sector to copy.
      * @param params a list of parameters that specify the width, height and sector of the region to return. Specify
-     *               these values using {@link gov.nasa.worldwind.avlist.AVKey#WIDTH}, {@link
-     *               gov.nasa.worldwind.avlist.AVKey#HEIGHT} and {@link gov.nasa.worldwind.avlist.AVKey#SECTOR}.
+     *               these values using {@link Keys#WIDTH}, {@link
+     *               Keys#HEIGHT} and {@link Keys#SECTOR}.
      * @return the requested raster, or null if the raster could not be created.
      * @throws IllegalArgumentException if the sector is null or the width, height or sector are invalid.
      */
-    DataRaster getSubRaster(int width, int height, Sector sector, AVList params);
+    DataRaster getSubRaster(int width, int height, Sector sector, KV params);
 }

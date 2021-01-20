@@ -6,8 +6,7 @@
 
 package gov.nasa.worldwind.layers.ogc.kml.impl;
 
-import gov.nasa.worldwind.WorldWind;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.ogc.kml.*;
@@ -85,35 +84,35 @@ public class KMLUtil {
 
     /**
      * Translate a KML units string ("pixels", "insetPixels", or "fraction") into the corresponding WW unit constant
-     * ({@link AVKey#PIXELS}, {@link AVKey#INSET_PIXELS}, or {@link AVKey#FRACTION}.
+     * ({@link Keys#PIXELS}, {@link Keys#INSET_PIXELS}, or {@link Keys#FRACTION}.
      *
      * @param units KML units to translate.
      * @return WW units, or null if the argument is not a valid KML unit.
      */
     public static String kmlUnitsToWWUnits(String units) {
         if (KMLUtil.KML_PIXELS.equals(units))
-            return AVKey.PIXELS;
+            return Keys.PIXELS;
         else if (KMLUtil.KML_FRACTION.equals(units))
-            return AVKey.FRACTION;
+            return Keys.FRACTION;
         else if (KMLUtil.KML_INSET_PIXELS.equals(units))
-            return AVKey.INSET_PIXELS;
+            return Keys.INSET_PIXELS;
         else
             return null;
     }
 
     /**
-     * Translate a WorldWind units constant ({@link AVKey#PIXELS}, {@link AVKey#INSET_PIXELS}, or {@link AVKey#FRACTION}
+     * Translate a WorldWind units constant ({@link Keys#PIXELS}, {@link Keys#INSET_PIXELS}, or {@link Keys#FRACTION}
      * to the corresponding KML unit string ("pixels", "insetPixels", or "fraction").
      *
      * @param units WorldWind units to translate.
      * @return KML units, or null if the argument is not a valid WW unit.
      */
     public static String wwUnitsToKMLUnits(String units) {
-        if (AVKey.PIXELS.equals(units))
+        if (Keys.PIXELS.equals(units))
             return KMLUtil.KML_PIXELS;
-        else if (AVKey.FRACTION.equals(units))
+        else if (Keys.FRACTION.equals(units))
             return KMLUtil.KML_FRACTION;
-        else if (AVKey.INSET_PIXELS.equals(units))
+        else if (Keys.INSET_PIXELS.equals(units))
             return KMLUtil.KML_INSET_PIXELS;
         else
             return null;

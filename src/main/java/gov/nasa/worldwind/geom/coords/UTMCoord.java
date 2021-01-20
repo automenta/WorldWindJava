@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.geom.coords;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.util.*;
@@ -32,7 +32,7 @@ public class UTMCoord {
      * @param latitude   the latitude <code>Angle</code>.
      * @param longitude  the longitude <code>Angle</code>.
      * @param zone       the UTM zone - 1 to 60.
-     * @param hemisphere the hemisphere, either {@link AVKey#NORTH} or {@link AVKey#SOUTH}.
+     * @param hemisphere the hemisphere, either {@link Keys#NORTH} or {@link Keys#SOUTH}.
      * @param easting    the easting distance in meters
      * @param northing   the northing distance in meters.
      * @throws IllegalArgumentException if <code>latitude</code> or <code>longitude</code> is null.
@@ -47,7 +47,7 @@ public class UTMCoord {
      * @param latitude        the latitude <code>Angle</code>.
      * @param longitude       the longitude <code>Angle</code>.
      * @param zone            the UTM zone - 1 to 60.
-     * @param hemisphere      the hemisphere, either {@link AVKey#NORTH} or {@link AVKey#SOUTH}.
+     * @param hemisphere      the hemisphere, either {@link Keys#NORTH} or {@link Keys#SOUTH}.
      * @param easting         the easting distance in meters
      * @param northing        the northing distance in meters.
      * @param centralMeridian the cntral meridian <code>Angle</code>.
@@ -146,7 +146,7 @@ public class UTMCoord {
      * Create a set of UTM coordinates for a WGS84 globe.
      *
      * @param zone       the UTM zone - 1 to 60.
-     * @param hemisphere the hemisphere, either {@link AVKey#NORTH} or {@link AVKey#SOUTH}.
+     * @param hemisphere the hemisphere, either {@link Keys#NORTH} or {@link Keys#SOUTH}.
      * @param easting    the easting distance in meters
      * @param northing   the northing distance in meters.
      * @return the corresponding <code>UTMCoord</code>.
@@ -160,7 +160,7 @@ public class UTMCoord {
      * Create a set of UTM coordinates for the given <code>Globe</code>.
      *
      * @param zone       the UTM zone - 1 to 60.
-     * @param hemisphere the hemisphere, either {@link AVKey#NORTH} or {@link AVKey#SOUTH}.
+     * @param hemisphere the hemisphere, either {@link Keys#NORTH} or {@link Keys#SOUTH}.
      * @param easting    the easting distance in meters
      * @param northing   the northing distance in meters.
      * @param globe      the <code>Globe</code> - can be null (will use WGS84).
@@ -186,7 +186,7 @@ public class UTMCoord {
      * Convenience method for converting a UTM coordinate to a geographic location.
      *
      * @param zone       the UTM zone: 1 to 60.
-     * @param hemisphere the hemisphere, either {@link AVKey#NORTH} or {@link AVKey#SOUTH}.
+     * @param hemisphere the hemisphere, either {@link Keys#NORTH} or {@link Keys#SOUTH}.
      * @param easting    the easting distance in meters
      * @param northing   the northing distance in meters.
      * @param globe      the <code>Globe</code>. Can be null (will use WGS84).
@@ -229,7 +229,7 @@ public class UTMCoord {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(zone);
-        sb.append(' ').append(AVKey.NORTH.equals(hemisphere) ? "N" : "S");
+        sb.append(' ').append(Keys.NORTH.equals(hemisphere) ? "N" : "S");
         sb.append(' ').append(easting).append('E');
         sb.append(' ').append(northing).append('N');
         return sb.toString();

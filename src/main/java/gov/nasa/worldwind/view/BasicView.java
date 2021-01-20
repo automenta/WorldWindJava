@@ -8,7 +8,6 @@ package gov.nasa.worldwind.view;
 import com.jogamp.opengl.GL2;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.animation.Animator;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.DrawContext;
@@ -39,7 +38,7 @@ public class BasicView extends WWObjectImpl implements View {
      * as the <code>gov.nasa.worldwind.avkey.DepthResolution</code> property. The default if not specified in the
      * configuration is 3.0 meters.
      */
-    protected static final double DEFAULT_DEPTH_RESOLUTION = Configuration.getDoubleValue(AVKey.DEPTH_RESOLUTION, 3.0);
+    protected static final double DEFAULT_DEPTH_RESOLUTION = Configuration.getDoubleValue(Keys.DEPTH_RESOLUTION, 3.0);
     protected static final double COLLISION_THRESHOLD = 10;
     protected static final int COLLISION_NUM_ITERATIONS = 4;
     /**

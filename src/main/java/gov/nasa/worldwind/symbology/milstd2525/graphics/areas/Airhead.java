@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.symbology.milstd2525.graphics.areas;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
@@ -25,7 +25,7 @@ public class Airhead extends BasicArea {
      * Default offset to apply to the label. The default aligns the top center of the label with the label's geographic
      * position, in order to keep the text South of the area.
      */
-    public final static Offset DEFAULT_OFFSET = new Offset(0.0d, 0.0d, AVKey.FRACTION, AVKey.FRACTION);
+    public final static Offset DEFAULT_OFFSET = new Offset(0.0d, 0.0d, Keys.FRACTION, Keys.FRACTION);
 
     /**
      * Create a new area graphic.

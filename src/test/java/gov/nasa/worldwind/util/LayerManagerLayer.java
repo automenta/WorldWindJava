@@ -5,8 +5,7 @@
  */
 package gov.nasa.worldwind.util;
 
-import gov.nasa.worldwind.WorldWindow;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.geom.Vec4;
 import gov.nasa.worldwind.layers.*;
@@ -44,7 +43,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
     private Font font = new Font("SansSerif", Font.PLAIN, 14);
     private boolean minimized = false;
     private int borderWidth = 20; // TODO: make configurable
-    private String position = AVKey.SOUTHWEST; // TODO: make configurable
+    private String position = Keys.SOUTHWEST; // TODO: make configurable
     private Vec4 locationCenter = null;
     private Vec4 locationOffset = null;
     // Dragging
@@ -74,7 +73,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
         // Set annotation so that it will not force text to wrap (large width) and will adjust it's width to
         // that of the text. A height of zero will have the annotation height follow that of the text too.
         this.annotation.getAttributes().setSize(new Dimension(Integer.MAX_VALUE, 0));
-        this.annotation.getAttributes().setAdjustWidthToText(AVKey.SIZE_FIT_TEXT);
+        this.annotation.getAttributes().setAdjustWidthToText(Keys.SIZE_FIT_TEXT);
 
         // Set appearance attributes
         this.annotation.getAttributes().setCornerRadius(0);
@@ -292,8 +291,8 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
     }
 
     /**
-     * Sets the relative viewport location to display the layer manager. Can be one of {@link AVKey#NORTHEAST} (the
-     * default), {@link AVKey#NORTHWEST}, {@link AVKey#SOUTHEAST}, or {@link AVKey#SOUTHWEST}. These indicate the corner
+     * Sets the relative viewport location to display the layer manager. Can be one of {@link Keys#NORTHEAST} (the
+     * default), {@link Keys#NORTHWEST}, {@link Keys#SOUTHEAST}, or {@link Keys#SOUTHWEST}. These indicate the corner
      * of the viewport to place the frame.
      *
      * @param position the desired layer manager position
@@ -488,10 +487,10 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
                 }
                 // Check for text or url
                 PickedObject po = event.getTopPickedObject();
-                if (po.get(AVKey.URL) != null) {
+                if (po.get(Keys.URL) != null) {
                     // Set cursor hand on hyperlinks
                     ((Component) this.wwd).setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                    int i = Integer.parseInt((String) po.get(AVKey.URL));
+                    int i = Integer.parseInt((String) po.get(Keys.URL));
                     // Select current hyperlink
                     if (this.selectedIndex != i) {
                         this.selectedIndex = i;
@@ -621,9 +620,9 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
         // Find closest corner position
         String newPos;
         if (centerPoint.x > viewport.width / 2)
-            newPos = (centerPoint.y > viewport.height / 2) ? AVKey.NORTHEAST : AVKey.SOUTHEAST;
+            newPos = (centerPoint.y > viewport.height / 2) ? Keys.NORTHEAST : Keys.SOUTHEAST;
         else
-            newPos = (centerPoint.y > viewport.height / 2) ? AVKey.NORTHWEST : AVKey.SOUTHWEST;
+            newPos = (centerPoint.y > viewport.height / 2) ? Keys.NORTHWEST : Keys.SOUTHWEST;
 
         // Adjust offset if position changed
         int x = 0, y = 0;
@@ -632,19 +631,19 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
             y = (int) this.locationOffset.y;
         }
         else {
-            if (newPos.equals(AVKey.NORTHEAST)) {
+            if (newPos.equals(Keys.NORTHEAST)) {
                 x = refPoint.x - (viewport.width - width - this.borderWidth);
                 y = refPoint.y - (viewport.height - height - this.borderWidth);
             }
-            else if (newPos.equals(AVKey.SOUTHEAST)) {
+            else if (newPos.equals(Keys.SOUTHEAST)) {
                 x = refPoint.x - (viewport.width - width - this.borderWidth);
                 y = refPoint.y - this.borderWidth;
             }
-            if (newPos.equals(AVKey.NORTHWEST)) {
+            if (newPos.equals(Keys.NORTHWEST)) {
                 x = refPoint.x - this.borderWidth;
                 y = refPoint.y - (viewport.height - height - this.borderWidth);
             }
-            else if (newPos.equals(AVKey.SOUTHWEST)) {
+            else if (newPos.equals(Keys.SOUTHWEST)) {
                 x = refPoint.x - this.borderWidth;
                 y = refPoint.y - this.borderWidth;
             }
@@ -770,20 +769,20 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
             x = (int) this.locationCenter.x - width / 2;
             y = (int) this.locationCenter.y - height / 2;
         }
-        else if (this.position.equals(AVKey.NORTHEAST)) {
+        else if (this.position.equals(Keys.NORTHEAST)) {
             x = (int) viewport.getWidth() - width - this.borderWidth;
             y = (int) viewport.getHeight() - height - this.borderWidth;
         }
-        else if (this.position.equals(AVKey.SOUTHEAST)) {
+        else if (this.position.equals(Keys.SOUTHEAST)) {
             x = (int) viewport.getWidth() - width - this.borderWidth;
             //noinspection SuspiciousNameCombination
             y = this.borderWidth;
         }
-        else if (this.position.equals(AVKey.NORTHWEST)) {
+        else if (this.position.equals(Keys.NORTHWEST)) {
             x = this.borderWidth;
             y = (int) viewport.getHeight() - height - this.borderWidth;
         }
-        else if (this.position.equals(AVKey.SOUTHWEST)) {
+        else if (this.position.equals(Keys.SOUTHWEST)) {
             x = this.borderWidth;
             //noinspection SuspiciousNameCombination
             y = this.borderWidth;

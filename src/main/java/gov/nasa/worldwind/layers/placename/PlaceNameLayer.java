@@ -91,7 +91,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
         }
 
         if (!WorldWind.getMemoryCacheSet().containsCache(Tile.class.getName())) {
-            long size = Configuration.getLongValue(AVKey.PLACENAME_LAYER_CACHE_SIZE, 2000000L);
+            long size = Configuration.getLongValue(Keys.PLACENAME_LAYER_CACHE_SIZE, 2000000L);
             MemoryCache cache = new BasicMemoryCache((long) (0.85 * size), size);
             cache.setName("Placename Tiles");
             WorldWind.getMemoryCacheSet().addCache(Tile.class.getName(), cache);
@@ -439,13 +439,13 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
         }
 
         // Apply any overridden timeouts.
-        Integer cto = AVListImpl.getIntegerValue(this, AVKey.URL_CONNECT_TIMEOUT);
+        Integer cto = KVMap.getIntegerValue(this, Keys.URL_CONNECT_TIMEOUT);
         if (cto != null && cto > 0)
             retriever.setConnectTimeout(cto);
-        Integer cro = AVListImpl.getIntegerValue(this, AVKey.URL_READ_TIMEOUT);
+        Integer cro = KVMap.getIntegerValue(this, Keys.URL_READ_TIMEOUT);
         if (cro != null && cro > 0)
             retriever.setReadTimeout(cro);
-        Integer srl = AVListImpl.getIntegerValue(this, AVKey.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT);
+        Integer srl = KVMap.getIntegerValue(this, Keys.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT);
         if (srl != null && srl > 0)
             retriever.setStaleRequestLimit(srl);
 
@@ -821,7 +821,7 @@ protected double priority = Double.MAX_VALUE; // Default is minimum priority
         public DownloadPostProcessor(PlaceNameLayer layer, Tile tile) {
 
             //noinspection RedundantCast
-            super((AVList) layer);
+            super((KV) layer);
 
             this.layer = layer;
             this.tile = tile;
@@ -839,7 +839,7 @@ protected double priority = Double.MAX_VALUE; // Default is minimum priority
 
             if (buffer != null) {
                 // Fire a property change to denote that the layer's backing data has changed.
-                this.layer.firePropertyChange(AVKey.LAYER, null, this);
+                this.layer.firePropertyChange(Keys.LAYER, null, this);
             }
 
             return buffer;

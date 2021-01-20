@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.examples.glider;
 
-import gov.nasa.worldwind.avlist.AVListImpl;
+import gov.nasa.worldwind.avlist.KVMap;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.util.*;
 
@@ -19,7 +19,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
  * @author tag
  * @version $Id: GliderImage.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class GliderImage extends AVListImpl {
+public class GliderImage extends KVMap {
     public static final String GLIDER_REGIONS_OF_INTEREST = "gov.nasa.worldwind.glider.RegionsOfInterest";
     public static final String GLIDER_IMAGE_SOURCE = "gov.nasa.worldwind.glider.ImageSource";
     public static final String GLIDER_IMAGE_OPACITY = "gov.nasa.worldwind.glider.ImageOpacity";

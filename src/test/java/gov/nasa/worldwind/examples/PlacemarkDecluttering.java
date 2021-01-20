@@ -7,7 +7,6 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -46,14 +45,14 @@ public class PlacemarkDecluttering extends ApplicationTemplate {
             pp.setEnableDecluttering(true); // enable the placemark for decluttering
             pp.setEnableLabelPicking(true); // enable the placemark for label picking
             pp.setLabelText("Placemark A");
-            pp.set(AVKey.DISPLAY_NAME, "Clamp to ground, Label, Semi-transparent, Audio icon");
+            pp.set(Keys.DISPLAY_NAME, "Clamp to ground, Label, Semi-transparent, Audio icon");
             pp.setLineEnabled(false);
             pp.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
             PointPlacemarkAttributes attrs = new PointPlacemarkAttributes();
             attrs.setImageAddress("gov/nasa/worldwind/examples/images/audioicon-64.png");
             attrs.setImageColor(new Color(1.0f, 1.0f, 1.0f, 0.6f));
             attrs.setScale(0.6);
-            attrs.setLabelOffset(new Offset(0.9d, 0.6d, AVKey.FRACTION, AVKey.FRACTION));
+            attrs.setLabelOffset(new Offset(0.9d, 0.6d, Keys.FRACTION, Keys.FRACTION));
             pp.setAttributes(attrs);
             AppFrame.setHighlightAttributes(pp);
             layer.add(pp);
@@ -61,12 +60,12 @@ public class PlacemarkDecluttering extends ApplicationTemplate {
             // Place a default pin placemark at the same location over the previous one.
             pp = new PointPlacemark(pp.getPosition());
             pp.setEnableDecluttering(true);
-            pp.set(AVKey.DISPLAY_NAME, "Clamp to ground, Default icon over audio icon");
+            pp.set(Keys.DISPLAY_NAME, "Clamp to ground, Default icon over audio icon");
             pp.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
             layer.add(pp);
 
             pp = new PointPlacemark(Position.fromDegrees(28, -104, 1.0e4));
-            pp.set(AVKey.DISPLAY_NAME, "Clamp to ground, Audio icon, Heading 90, Screen relative");
+            pp.set(Keys.DISPLAY_NAME, "Clamp to ground, Audio icon, Heading 90, Screen relative");
             pp.setLabelText("Placemark B");
             pp.setEnableDecluttering(true);
             pp.setEnableLabelPicking(true);
@@ -74,10 +73,10 @@ public class PlacemarkDecluttering extends ApplicationTemplate {
             pp.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
             attrs = new PointPlacemarkAttributes(attrs);
             attrs.setHeading(90.0d);
-            attrs.setHeadingReference(AVKey.RELATIVE_TO_SCREEN);
+            attrs.setHeadingReference(Keys.RELATIVE_TO_SCREEN);
             attrs.setScale(0.6);
-            attrs.setImageOffset(new Offset(19.0d, 8.0d, AVKey.PIXELS, AVKey.PIXELS));
-            attrs.setLabelOffset(new Offset(0.9d, 0.6d, AVKey.FRACTION, AVKey.FRACTION));
+            attrs.setImageOffset(new Offset(19.0d, 8.0d, Keys.PIXELS, Keys.PIXELS));
+            attrs.setLabelOffset(new Offset(0.9d, 0.6d, Keys.FRACTION, Keys.FRACTION));
             pp.setAttributes(attrs);
             AppFrame.setHighlightAttributes(pp);
             layer.add(pp);
@@ -85,7 +84,7 @@ public class PlacemarkDecluttering extends ApplicationTemplate {
             // Place a pin placemark at the same location over the previous one.
             pp = new PointPlacemark(pp.getPosition());
             pp.setEnableDecluttering(true);
-            pp.set(AVKey.DISPLAY_NAME, "Clamp to ground, Default icon over rotated audio icon");
+            pp.set(Keys.DISPLAY_NAME, "Clamp to ground, Default icon over rotated audio icon");
             pp.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
             AppFrame.setHighlightAttributes(pp);
             layer.add(pp);
@@ -97,13 +96,13 @@ public class PlacemarkDecluttering extends ApplicationTemplate {
             pp.setEnableDecluttering(true);
             pp.setEnableLabelPicking(true);
             pp.setLabelText("Placemark C");
-            pp.set(AVKey.DISPLAY_NAME, "Absolute, Label, Red pin icon, Line in random color and 2 wide");
+            pp.set(Keys.DISPLAY_NAME, "Absolute, Label, Red pin icon, Line in random color and 2 wide");
             pp.setLineEnabled(true);
             pp.setAltitudeMode(WorldWind.ABSOLUTE);
             attrs = new PointPlacemarkAttributes();
             attrs.setScale(0.6);
-            attrs.setImageOffset(new Offset(19.0d, 8.0d, AVKey.PIXELS, AVKey.PIXELS));
-            attrs.setLabelOffset(new Offset(0.9d, 0.6d, AVKey.FRACTION, AVKey.FRACTION));
+            attrs.setImageOffset(new Offset(19.0d, 8.0d, Keys.PIXELS, Keys.PIXELS));
+            attrs.setLabelOffset(new Offset(0.9d, 0.6d, Keys.FRACTION, Keys.FRACTION));
             attrs.setLineMaterial(new Material(WWUtil.makeRandomColor(null)));
             attrs.setLineWidth(2.0d);
             attrs.setImageAddress("images/pushpins/plain-red.png");
@@ -116,7 +115,7 @@ public class PlacemarkDecluttering extends ApplicationTemplate {
             pp.setEnableDecluttering(true);
             pp.setEnableLabelPicking(true);
             pp.setLabelText("Placemark D");
-            pp.set(AVKey.DISPLAY_NAME, "Relative to ground, Label, Teal pin icon, No line");
+            pp.set(Keys.DISPLAY_NAME, "Relative to ground, Label, Teal pin icon, No line");
             pp.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             attrs = new PointPlacemarkAttributes(attrs);
             attrs.setImageAddress("images/pushpins/plain-teal.png");
@@ -129,7 +128,7 @@ public class PlacemarkDecluttering extends ApplicationTemplate {
             pp.setEnableDecluttering(true);
             pp.setEnableLabelPicking(true);
             pp.setLabelText("Placemark E");
-            pp.set(AVKey.DISPLAY_NAME, "Clamp to ground, Blue label, White pin icon");
+            pp.set(Keys.DISPLAY_NAME, "Clamp to ground, Blue label, White pin icon");
             pp.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
             attrs = new PointPlacemarkAttributes(attrs);
             attrs.setLabelColor("ffff0000");
@@ -143,7 +142,7 @@ public class PlacemarkDecluttering extends ApplicationTemplate {
             pp.setEnableDecluttering(true);
             pp.setEnableLabelPicking(true);
             pp.setLabelText("Placemark F");
-            pp.set(AVKey.DISPLAY_NAME, "All defaults");
+            pp.set(Keys.DISPLAY_NAME, "All defaults");
             AppFrame.setHighlightAttributes(pp);
             layer.add(pp);
 
@@ -152,7 +151,7 @@ public class PlacemarkDecluttering extends ApplicationTemplate {
             pp.setEnableDecluttering(true);
             pp.setEnableLabelPicking(true);
             pp.setLabelText("Placemark G");
-            pp.set(AVKey.DISPLAY_NAME, "Clamp to ground, White label, Red point, Scale 5");
+            pp.set(Keys.DISPLAY_NAME, "Clamp to ground, White label, Red point, Scale 5");
             pp.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
             attrs = new PointPlacemarkAttributes();
             attrs.setLabelColor("ffffffff");
@@ -168,7 +167,7 @@ public class PlacemarkDecluttering extends ApplicationTemplate {
             pp.setEnableDecluttering(true);
             pp.setEnableLabelPicking(true);
             pp.setLabelText("Placemark H");
-            pp.set(AVKey.DISPLAY_NAME, "Relative to ground, Blue label, Magenta point and line, Scale 10");
+            pp.set(Keys.DISPLAY_NAME, "Relative to ground, Blue label, Magenta point and line, Scale 10");
             pp.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             pp.setLineEnabled(true);
             attrs = new PointPlacemarkAttributes();
@@ -184,18 +183,18 @@ public class PlacemarkDecluttering extends ApplicationTemplate {
             pp = new PointPlacemark(Position.fromDegrees(28, -103, 1.0e4));
             pp.setEnableDecluttering(true);
             pp.setEnableLabelPicking(true);
-            pp.set(AVKey.DISPLAY_NAME, "Clamp to ground, Audio icon, Heading -45, Globe relative");
+            pp.set(Keys.DISPLAY_NAME, "Clamp to ground, Audio icon, Heading -45, Globe relative");
             pp.setLabelText("Placemark I");
             pp.setLineEnabled(false);
             pp.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
             attrs = new PointPlacemarkAttributes(attrs);
             attrs.setImageAddress("gov/nasa/worldwind/examples/images/audioicon-64.png");
             attrs.setHeading(-45.0d);
-            attrs.setHeadingReference(AVKey.RELATIVE_TO_GLOBE);
+            attrs.setHeadingReference(Keys.RELATIVE_TO_GLOBE);
             attrs.setScale(0.6);
-            attrs.setImageOffset(new Offset(19.0d, 8.0d, AVKey.PIXELS, AVKey.PIXELS));
+            attrs.setImageOffset(new Offset(19.0d, 8.0d, Keys.PIXELS, Keys.PIXELS));
             attrs.setLabelColor("ffffffff");
-            attrs.setLabelOffset(new Offset(0.9d, 0.6d, AVKey.FRACTION, AVKey.FRACTION));
+            attrs.setLabelOffset(new Offset(0.9d, 0.6d, Keys.FRACTION, Keys.FRACTION));
             pp.setAttributes(attrs);
             AppFrame.setHighlightAttributes(pp);
             layer.add(pp);
@@ -210,8 +209,8 @@ public class PlacemarkDecluttering extends ApplicationTemplate {
                     if (event.getEventAction().equals(SelectEvent.LEFT_CLICK)) {
                         // See if it was the label that was picked. If so, raise an input dialog prompting
                         // for new label text.
-                        Object placemarkPiece = po.get(AVKey.PICKED_OBJECT_ID);
-                        if (placemarkPiece != null && placemarkPiece.equals(AVKey.LABEL)) {
+                        Object placemarkPiece = po.get(Keys.PICKED_OBJECT_ID);
+                        if (placemarkPiece != null && placemarkPiece.equals(Keys.LABEL)) {
                             PointPlacemark placemark = (PointPlacemark) po.get();
                             String labelText = placemark.getLabelText();
                             System.out.println(labelText);

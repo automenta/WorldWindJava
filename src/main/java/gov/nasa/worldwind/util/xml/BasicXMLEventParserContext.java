@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.util.xml;
 
-import gov.nasa.worldwind.avlist.AVListImpl;
+import gov.nasa.worldwind.avlist.KVMap;
 import gov.nasa.worldwind.util.Logging;
 
 import javax.xml.XMLConstants;
@@ -24,7 +24,7 @@ import java.util.logging.Level;
  * @author tag
  * @version $Id: BasicXMLEventParserContext.java 1981 2014-05-08 03:59:04Z tgaskins $
  */
-public class BasicXMLEventParserContext extends AVListImpl implements XMLEventParserContext {
+public class BasicXMLEventParserContext extends KVMap implements XMLEventParserContext {
     /**
      * The parser name of the default double parser.
      */

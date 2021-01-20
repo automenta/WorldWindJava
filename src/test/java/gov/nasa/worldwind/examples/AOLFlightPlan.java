@@ -1,6 +1,6 @@
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.formats.geojson.GeoJSONPoint;
 import gov.nasa.worldwind.geom.Position;
 
@@ -18,7 +18,7 @@ public class AOLFlightPlan {
     private GeoJSONPoint controller_location;
     private ArrayList<Registration> registrations;
 
-    public AOLFlightPlan(AVList attrs) {
+    public AOLFlightPlan(KV attrs) {
         attrs.getEntries().forEach((e) -> {
             switch (e.getKey()) {
                 case "gcs_location":
@@ -38,7 +38,7 @@ public class AOLFlightPlan {
                     Object[] volumes = (Object[]) e.getValue();
                     this.opVolumes = new ArrayList<>();
                     for (Object o : volumes) {
-                        this.opVolumes.add(new OperationVolume((AVList) o));
+                        this.opVolumes.add(new OperationVolume((KV) o));
                     }
                     break;
                 case "flight_comments":
@@ -65,7 +65,7 @@ public class AOLFlightPlan {
                     Object[] regList = (Object[]) e.getValue();
                     this.registrations = new ArrayList<>();
                     for (Object o : regList) {
-                        this.registrations.add(new Registration((AVList) o));
+                        this.registrations.add(new Registration((KV) o));
                     }
                     break;
                 default:
@@ -92,7 +92,7 @@ public class AOLFlightPlan {
         private String registration_id;
         private String registration_location;
 
-        public Registration(AVList attrs) {
+        public Registration(KV attrs) {
             attrs.getEntries().forEach((e) -> {
                 switch (e.getKey()) {
                     case "registration_id" -> this.registration_id = e.getValue().toString();

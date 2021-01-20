@@ -1,6 +1,6 @@
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.formats.geojson.GeoJSONDoc;
 
 import java.io.*;
@@ -32,13 +32,13 @@ public class TestParser {
             if (root instanceof Object[]) {
                 Object[] rootArray = (Object[]) root;
                 for (Object o : rootArray) {
-                    if (o instanceof AVList) {
-                        AVList avl = (AVList) o;
+                    if (o instanceof KV) {
+                        KV avl = (KV) o;
                         Set<Map.Entry<String, Object>> entries = avl.getEntries();
                         entries.forEach((e) -> {
                             switch (e.getKey()) {
-                                case "MessageAolFlightPlan" -> plans.add(new AOLFlightPlan((AVList) e.getValue()));
-                                case "MessageAolPosition" -> positions.add(new AOLPosition((AVList) e.getValue()));
+                                case "MessageAolFlightPlan" -> plans.add(new AOLFlightPlan((KV) e.getValue()));
+                                case "MessageAolPosition" -> positions.add(new AOLPosition((KV) e.getValue()));
                                 default -> System.out.println("Unknown key:" + e.getKey());
                             }
                         });

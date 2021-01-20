@@ -5,8 +5,7 @@
  */
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.WorldWindow;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.*;
@@ -153,7 +152,7 @@ public class ShapeClippingPanel extends JPanel implements ActionListener {
         attrs.setOutlineWidth(2);
 
         SurfaceShape shape = new SurfaceMultiPolygon(attrs, contours);
-        shape.setPathType(AVKey.LINEAR);
+        shape.setPathType(Keys.LINEAR);
 
         RenderableLayer layer = new RenderableLayer();
         layer.setName(this.getClipMode() == ClipMode.LAND ? "Clipped Shape (Land)" : "Clipped Shape (Water)");

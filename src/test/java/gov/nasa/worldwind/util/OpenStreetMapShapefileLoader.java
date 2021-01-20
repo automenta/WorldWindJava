@@ -5,7 +5,8 @@
  */
 package gov.nasa.worldwind.util;
 
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.Keys;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.formats.shapefile.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
@@ -140,7 +141,7 @@ public class OpenStreetMapShapefileLoader {
 
             String name = null;
 
-            AVList attr = record.getAttributes();
+            KV attr = record.getAttributes();
             if (attr.getEntries() != null) {
                 for (Map.Entry<String, Object> entry : attr.getEntries()) {
                     if (entry.getKey().equalsIgnoreCase("name")) {
@@ -221,7 +222,7 @@ public class OpenStreetMapShapefileLoader {
             this.textRenderer.setDistanceMaxScale(2);
             this.textRenderer.setDistanceMinScale(0.5);
             this.textRenderer.setDistanceMinOpacity(0.5);
-            this.textRenderer.setEffect(AVKey.TEXT_EFFECT_OUTLINE);
+            this.textRenderer.setEffect(Keys.TEXT_EFFECT_OUTLINE);
         }
 
         public void addLabel(GeographicText label) {

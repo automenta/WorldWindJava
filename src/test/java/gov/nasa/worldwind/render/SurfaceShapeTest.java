@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.render;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.geom.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -231,7 +231,7 @@ public class SurfaceShapeTest
     private static void assignExampleValues(AbstractSurfaceShape shape)
     {
         shape.setVisible(true);
-        shape.setPathType(AVKey.RHUMB_LINE);
+        shape.setPathType(Keys.RHUMB_LINE);
         shape.setTexelsPerEdgeInterval(5);
         ShapeAttributes attr = new BasicShapeAttributes();
         attr.setDrawInterior(true);

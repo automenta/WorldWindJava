@@ -29,7 +29,7 @@ import java.util.*;
 public class RPFTiledImageLayer extends TiledImageLayer {
     public static final String RPF_ROOT_PATH = "rpf.RootPath";
     public static final String RPF_DATA_SERIES_ID = "rpf.DataSeriesId";
-    private final AVList creationParams;
+    private final KV creationParams;
     private final RPFGenerator rpfGenerator;
     private final Object fileLock = new Object();
 
@@ -87,19 +87,19 @@ public class RPFTiledImageLayer extends TiledImageLayer {
         }
     }
 
-    public RPFTiledImageLayer(AVList params) {
+    public RPFTiledImageLayer(KV params) {
         super(new LevelSet(RPFTiledImageLayer.initParams(params)));
 
         this.initRPFFileIndex(params);
         this.creationParams = params.copy();
         this.rpfGenerator = new RPFGenerator(params);
 
-        this.set(AVKey.CONSTRUCTION_PARAMETERS, params);
+        this.set(Keys.CONSTRUCTION_PARAMETERS, params);
         this.setUseTransparentTextures(true);
         this.setName(RPFTiledImageLayer.makeTitle(params));
     }
 
-    static Collection<Tile> createTopLevelTiles(AVList params) {
+    static Collection<Tile> createTopLevelTiles(KV params) {
         if (params == null) {
             String message = Logging.getMessage("nullValue.LayerConfigParams");
             Logging.logger().severe(message);
@@ -166,7 +166,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
         return new RPFTiledImageLayer(stateInXml);
     }
 
-    private static AVList initParams(AVList params) {
+    private static KV initParams(KV params) {
         if (params == null) {
             String message = Logging.getMessage("nullValue.LayerConfigParams");
             Logging.logger().severe(message);
@@ -188,35 +188,35 @@ public class RPFTiledImageLayer extends TiledImageLayer {
         }
 
         // Use a dummy value for service.
-        if (params.get(AVKey.SERVICE) == null)
-            params.set(AVKey.SERVICE, "file://" + RPFGenerator.class.getName() + '?');
+        if (params.get(Keys.SERVICE) == null)
+            params.set(Keys.SERVICE, "file://" + RPFGenerator.class.getName() + '?');
 
         // Use a dummy value for dataset-name.
-        if (params.get(AVKey.DATASET_NAME) == null)
-            params.set(AVKey.DATASET_NAME, dataSeriesId);
+        if (params.get(Keys.DATASET_NAME) == null)
+            params.set(Keys.DATASET_NAME, dataSeriesId);
 
-        if (params.get(AVKey.LEVEL_ZERO_TILE_DELTA) == null) {
+        if (params.get(Keys.LEVEL_ZERO_TILE_DELTA) == null) {
             Angle delta = new Angle(36);
-            params.set(AVKey.LEVEL_ZERO_TILE_DELTA, new LatLon(delta, delta));
+            params.set(Keys.LEVEL_ZERO_TILE_DELTA, new LatLon(delta, delta));
         }
 
-        if (params.get(AVKey.TILE_WIDTH) == null)
-            params.set(AVKey.TILE_WIDTH, 512);
-        if (params.get(AVKey.TILE_HEIGHT) == null)
-            params.set(AVKey.TILE_HEIGHT, 512);
-        if (params.get(AVKey.FORMAT_SUFFIX) == null)
-            params.set(AVKey.FORMAT_SUFFIX, ".dds");
-        if (params.get(AVKey.NUM_LEVELS) == null)
-            params.set(AVKey.NUM_LEVELS, 14); // approximately 0.5 meters per pixel
-        if (params.get(AVKey.NUM_EMPTY_LEVELS) == null)
-            params.set(AVKey.NUM_EMPTY_LEVELS, 0);
+        if (params.get(Keys.TILE_WIDTH) == null)
+            params.set(Keys.TILE_WIDTH, 512);
+        if (params.get(Keys.TILE_HEIGHT) == null)
+            params.set(Keys.TILE_HEIGHT, 512);
+        if (params.get(Keys.FORMAT_SUFFIX) == null)
+            params.set(Keys.FORMAT_SUFFIX, ".dds");
+        if (params.get(Keys.NUM_LEVELS) == null)
+            params.set(Keys.NUM_LEVELS, 14); // approximately 0.5 meters per pixel
+        if (params.get(Keys.NUM_EMPTY_LEVELS) == null)
+            params.set(Keys.NUM_EMPTY_LEVELS, 0);
 
-        params.set(AVKey.TILE_URL_BUILDER, new URLBuilder());
+        params.set(Keys.TILE_URL_BUILDER, new URLBuilder());
 
         // RPFTiledImageLayer is typically constructed either by the {@link RPFTiledImageProcessor}, or from restorable
         // state XML. In the first case, either the sector parameter or the RPFFileIndex parameter are specified by the
         // processor. In the latter case, the sector is restored as part of the state xml.
-        Sector sector = (Sector) params.get(AVKey.SECTOR);
+        Sector sector = (Sector) params.get(Keys.SECTOR);
         if (sector == null) {
             RPFFileIndex fileIndex = (RPFFileIndex) params.get(RPFGenerator.RPF_FILE_INDEX);
             if (fileIndex != null && fileIndex.getIndexProperties() != null)
@@ -228,12 +228,12 @@ public class RPFTiledImageLayer extends TiledImageLayer {
                 throw new IllegalArgumentException(message);
             }
 
-            params.set(AVKey.SECTOR, sector);
+            params.set(Keys.SECTOR, sector);
         }
 
-        if (params.get(AVKey.DATA_CACHE_NAME) == null) {
+        if (params.get(Keys.DATA_CACHE_NAME) == null) {
             String cacheName = WWIO.formPath(rootPath, dataSeriesId);
-            params.set(AVKey.DATA_CACHE_NAME, cacheName);
+            params.set(Keys.DATA_CACHE_NAME, cacheName);
         }
 
         return params;
@@ -266,7 +266,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
         return fileIndex;
     }
 
-    private static String makeTitle(AVList params) {
+    private static String makeTitle(KV params) {
         StringBuilder sb = new StringBuilder();
 
         Object o = params.get(RPFGenerator.RPF_FILE_INDEX);
@@ -291,7 +291,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
         return sb.toString();
     }
 
-    public static AVList xmlStateToParams(String stateInXml) {
+    public static KV xmlStateToParams(String stateInXml) {
         if (stateInXml == null) {
             String message = Logging.getMessage("nullValue.StringIsNull");
             Logging.logger().severe(message);
@@ -309,7 +309,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
             throw new IllegalArgumentException(message, e);
         }
 
-        AVList params = new AVListImpl();
+        KV params = new KVMap();
 
         String s = rs.getStateValueAsString(RPFTiledImageLayer.RPF_ROOT_PATH);
         if (s != null)
@@ -319,73 +319,73 @@ public class RPFTiledImageLayer extends TiledImageLayer {
         if (s != null)
             params.set(RPFTiledImageLayer.RPF_DATA_SERIES_ID, s);
 
-        s = rs.getStateValueAsString(AVKey.IMAGE_FORMAT);
+        s = rs.getStateValueAsString(Keys.IMAGE_FORMAT);
         if (s != null)
-            params.set(AVKey.IMAGE_FORMAT, s);
+            params.set(Keys.IMAGE_FORMAT, s);
 
-        s = rs.getStateValueAsString(AVKey.DATA_CACHE_NAME);
+        s = rs.getStateValueAsString(Keys.DATA_CACHE_NAME);
         if (s != null)
-            params.set(AVKey.DATA_CACHE_NAME, s);
+            params.set(Keys.DATA_CACHE_NAME, s);
 
-        s = rs.getStateValueAsString(AVKey.SERVICE);
+        s = rs.getStateValueAsString(Keys.SERVICE);
         if (s != null)
-            params.set(AVKey.SERVICE, s);
+            params.set(Keys.SERVICE, s);
 
-        s = rs.getStateValueAsString(AVKey.TITLE);
+        s = rs.getStateValueAsString(Keys.TITLE);
         if (s != null)
-            params.set(AVKey.TITLE, s);
+            params.set(Keys.TITLE, s);
 
-        s = rs.getStateValueAsString(AVKey.DISPLAY_NAME);
+        s = rs.getStateValueAsString(Keys.DISPLAY_NAME);
         if (s != null)
-            params.set(AVKey.DISPLAY_NAME, s);
+            params.set(Keys.DISPLAY_NAME, s);
 
         RestorableSupport.adjustTitleAndDisplayName(params);
 
-        s = rs.getStateValueAsString(AVKey.DATASET_NAME);
+        s = rs.getStateValueAsString(Keys.DATASET_NAME);
         if (s != null)
-            params.set(AVKey.DATASET_NAME, s);
+            params.set(Keys.DATASET_NAME, s);
 
-        s = rs.getStateValueAsString(AVKey.FORMAT_SUFFIX);
+        s = rs.getStateValueAsString(Keys.FORMAT_SUFFIX);
         if (s != null)
-            params.set(AVKey.FORMAT_SUFFIX, s);
+            params.set(Keys.FORMAT_SUFFIX, s);
 
-        s = rs.getStateValueAsString(AVKey.LAYER_NAMES);
+        s = rs.getStateValueAsString(Keys.LAYER_NAMES);
         if (s != null)
-            params.set(AVKey.LAYER_NAMES, s);
+            params.set(Keys.LAYER_NAMES, s);
 
-        s = rs.getStateValueAsString(AVKey.STYLE_NAMES);
+        s = rs.getStateValueAsString(Keys.STYLE_NAMES);
         if (s != null)
-            params.set(AVKey.STYLE_NAMES, s);
+            params.set(Keys.STYLE_NAMES, s);
 
-        Integer i = rs.getStateValueAsInteger(AVKey.NUM_EMPTY_LEVELS);
+        Integer i = rs.getStateValueAsInteger(Keys.NUM_EMPTY_LEVELS);
         if (i != null)
-            params.set(AVKey.NUM_EMPTY_LEVELS, i);
+            params.set(Keys.NUM_EMPTY_LEVELS, i);
 
-        i = rs.getStateValueAsInteger(AVKey.NUM_LEVELS);
+        i = rs.getStateValueAsInteger(Keys.NUM_LEVELS);
         if (i != null)
-            params.set(AVKey.NUM_LEVELS, i);
+            params.set(Keys.NUM_LEVELS, i);
 
-        i = rs.getStateValueAsInteger(AVKey.TILE_WIDTH);
+        i = rs.getStateValueAsInteger(Keys.TILE_WIDTH);
         if (i != null)
-            params.set(AVKey.TILE_WIDTH, i);
+            params.set(Keys.TILE_WIDTH, i);
 
-        i = rs.getStateValueAsInteger(AVKey.TILE_HEIGHT);
+        i = rs.getStateValueAsInteger(Keys.TILE_HEIGHT);
         if (i != null)
-            params.set(AVKey.TILE_HEIGHT, i);
+            params.set(Keys.TILE_HEIGHT, i);
 
-        Double lat = rs.getStateValueAsDouble(AVKey.LEVEL_ZERO_TILE_DELTA + ".Latitude");
-        Double lon = rs.getStateValueAsDouble(AVKey.LEVEL_ZERO_TILE_DELTA + ".Longitude");
+        Double lat = rs.getStateValueAsDouble(Keys.LEVEL_ZERO_TILE_DELTA + ".Latitude");
+        Double lon = rs.getStateValueAsDouble(Keys.LEVEL_ZERO_TILE_DELTA + ".Longitude");
         if (lat != null && lon != null)
-            params.set(AVKey.LEVEL_ZERO_TILE_DELTA, LatLon.fromDegrees(lat, lon));
+            params.set(Keys.LEVEL_ZERO_TILE_DELTA, LatLon.fromDegrees(lat, lon));
 
-        Double minLat = rs.getStateValueAsDouble(AVKey.SECTOR + ".MinLatitude");
-        Double minLon = rs.getStateValueAsDouble(AVKey.SECTOR + ".MinLongitude");
-        Double maxLat = rs.getStateValueAsDouble(AVKey.SECTOR + ".MaxLatitude");
-        Double maxLon = rs.getStateValueAsDouble(AVKey.SECTOR + ".MaxLongitude");
+        Double minLat = rs.getStateValueAsDouble(Keys.SECTOR + ".MinLatitude");
+        Double minLon = rs.getStateValueAsDouble(Keys.SECTOR + ".MinLongitude");
+        Double maxLat = rs.getStateValueAsDouble(Keys.SECTOR + ".MaxLatitude");
+        Double maxLon = rs.getStateValueAsDouble(Keys.SECTOR + ".MaxLongitude");
         if (minLat != null && minLon != null && maxLat != null && maxLon != null)
-            params.set(AVKey.SECTOR, Sector.fromDegrees(minLat, maxLat, minLon, maxLon));
+            params.set(Keys.SECTOR, Sector.fromDegrees(minLat, maxLat, minLon, maxLon));
 
-        params.set(AVKey.TILE_URL_BUILDER, new URLBuilder());
+        params.set(Keys.TILE_URL_BUILDER, new URLBuilder());
 
         return params;
     }
@@ -416,7 +416,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
         TextureTile.getMemoryCache().add(tile.key, tile);
     }
 
-    protected void initRPFFileIndex(AVList params) {
+    protected void initRPFFileIndex(KV params) {
         // Load the RPFFileIndex associated with this RPFTiledImageLayer, and update the layer's expiry time according
         // to the last modified time on the RPFFileIndex.
 
@@ -454,7 +454,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
         // Intentionally left blank.
     }
 
-    private RestorableSupport makeRestorableState(AVList params) {
+    private RestorableSupport makeRestorableState(KV params) {
         RestorableSupport rs = RestorableSupport.newRestorableSupport();
         // Creating a new RestorableSupport failed. RestorableSupport logged the problem, so just return null.
 
@@ -488,7 +488,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
 
         RestorableSupport.StateObject so = rs.addStateObject("avlist");
         for (Map.Entry<String, Object> p : this.getEntries()) {
-            if (p.getKey().equals(AVKey.CONSTRUCTION_PARAMETERS))
+            if (p.getKey().equals(Keys.CONSTRUCTION_PARAMETERS))
                 continue;
 
             super.getRestorableStateForAVPair(p.getKey(), p.getValue(), rs, so);
@@ -559,7 +559,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
         if (WorldWind.retrieveRemote().isAvailable()) {
             Retriever retriever = new RPFRetriever(service, url, new DownloadPostProcessor(tile, this));
             // Apply any overridden timeouts.
-            Integer srl = AVListImpl.getIntegerValue(this, AVKey.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT);
+            Integer srl = KVMap.getIntegerValue(this, Keys.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT);
             if (srl != null && srl > 0)
                 retriever.setStaleRequestLimit(srl);
             WorldWind.retrieveRemote().run(retriever, tile.getPriority());
@@ -629,7 +629,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
             if (textureURL != null) {
                 if (this.layer.loadTexture(tile, textureURL)) {
                     layer.levels.has(tile);
-                    this.layer.firePropertyChange(AVKey.LAYER, null, this);
+                    this.layer.firePropertyChange(Keys.LAYER, null, this);
                     return;
                 } else {
                     // Assume that something's wrong with the file and delete it.
@@ -664,7 +664,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
 
             if (buffer != null) {
                 // Fire a property change to denote that the layer's backing data has changed.
-                this.layer.firePropertyChange(AVKey.LAYER, null, this);
+                this.layer.firePropertyChange(Keys.LAYER, null, this);
             }
 
             return buffer;

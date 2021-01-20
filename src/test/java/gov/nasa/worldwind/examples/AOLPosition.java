@@ -1,6 +1,6 @@
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.geom.Position;
 
 public class AOLPosition {
@@ -16,7 +16,7 @@ public class AOLPosition {
     private String time_sent;
     private String uss_name;
 
-    public AOLPosition(AVList attrs) {
+    public AOLPosition(KV attrs) {
         attrs.getEntries().forEach((e) -> {
             switch (e.getKey()) {
                 case "callsign" -> this.callsign = e.getValue().toString();

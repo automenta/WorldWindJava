@@ -9,7 +9,7 @@ package gov.nasa.worldwind.util;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.*;
 import gov.nasa.worldwind.terrain.HighResolutionTerrain;
-import org.junit.*;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
@@ -102,4 +102,3 @@ public class HighResolutionTerrainTest2
         return Math.round(value * scale) / scale;
     }
 }
-

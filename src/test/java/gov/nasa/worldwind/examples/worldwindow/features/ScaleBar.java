@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.examples.worldwindow.features;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.examples.worldwindow.core.*;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.tool.ScalebarLayer;
@@ -27,7 +27,7 @@ public class ScaleBar extends AbstractFeatureLayer {
     protected Layer doAddLayer() {
         ScalebarLayer layer = new ScalebarLayer();
 
-        layer.setPosition(AVKey.SOUTHEAST);
+        layer.setPosition(Keys.SOUTHEAST);
         layer.set(Constants.SCREEN_LAYER, true);
 
         this.controller.addInternalLayer(layer);

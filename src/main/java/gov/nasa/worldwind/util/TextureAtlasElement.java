@@ -8,7 +8,6 @@ package gov.nasa.worldwind.util;
 
 import com.jogamp.opengl.util.texture.TextureCoords;
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.render.DrawContext;
 
 import javax.imageio.ImageIO;
@@ -364,7 +363,7 @@ public class TextureAtlasElement implements Disposable {
      */
     protected void notifyImageLoaded() {
         if (this.listener != null) {
-            this.listener.propertyChange(new PropertyChangeEvent(this, AVKey.IMAGE, null, this));
+            this.listener.propertyChange(new PropertyChangeEvent(this, Keys.IMAGE, null, this));
             this.listener = null; // Forget the listener to avoid dangling references.
         }
     }

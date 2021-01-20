@@ -9,7 +9,6 @@ package gov.nasa.worldwind.render;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.texture.TextureCoords;
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.ogc.kml.KMLConstants;
 import gov.nasa.worldwind.layers.ogc.kml.impl.KMLExportUtil;
@@ -96,8 +95,8 @@ public class ScreenImage extends WWObjectImpl implements Renderable, Exportable 
         // OpenGL coordinates with the origin in the lower-left corner, but the Point is in AWT coordinates with the
         // origin in the upper-left corner. This offset translates the origin from the lower-left to the upper-left
         // corner.
-        this.screenOffset = new Offset(screenLocation.getX(), screenLocation.getY(), AVKey.PIXELS, AVKey.INSET_PIXELS);
-        this.imageOffset = new Offset(0.5, 0.5, AVKey.FRACTION, AVKey.FRACTION);
+        this.screenOffset = new Offset(screenLocation.getX(), screenLocation.getY(), Keys.PIXELS, Keys.INSET_PIXELS);
+        this.imageOffset = new Offset(0.5, 0.5, Keys.FRACTION, Keys.FRACTION);
 
         // Set cached screen location to the initial screen location so that it can be retrieved if getScreenLocation()
         // is called before the image is rendered. This maintains backward compatibility with the previous behavior of

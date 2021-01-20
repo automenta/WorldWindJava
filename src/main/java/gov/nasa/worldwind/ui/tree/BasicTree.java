@@ -6,8 +6,7 @@
 
 package gov.nasa.worldwind.ui.tree;
 
-import gov.nasa.worldwind.WWObjectImpl;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.render.*;
 
 import java.awt.*;
@@ -44,7 +43,7 @@ public class BasicTree extends WWObjectImpl implements Tree, PreRenderable {
      */
     public void expandPath(TreePath path) {
         this.expandedNodes.add(path);
-        this.firePropertyChange(AVKey.TREE, null, this);
+        this.firePropertyChange(Keys.TREE, null, this);
     }
 
     /**
@@ -52,7 +51,7 @@ public class BasicTree extends WWObjectImpl implements Tree, PreRenderable {
      */
     public void collapsePath(TreePath path) {
         this.expandedNodes.remove(path);
-        this.firePropertyChange(AVKey.TREE, null, this);
+        this.firePropertyChange(Keys.TREE, null, this);
     }
 
     /**

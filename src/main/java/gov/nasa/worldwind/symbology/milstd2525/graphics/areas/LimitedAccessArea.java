@@ -6,8 +6,7 @@
 
 package gov.nasa.worldwind.symbology.milstd2525.graphics.areas;
 
-import gov.nasa.worldwind.WorldWind;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
@@ -251,7 +250,7 @@ public class LimitedAccessArea extends AbstractMilStd2525TacticalGraphic {
     protected Path createPath() {
         Path path = new Path();
         path.setFollowTerrain(true);
-        path.setPathType(AVKey.LINEAR);
+        path.setPathType(Keys.LINEAR);
         path.setAltitudeMode(this.getAltitudeMode());
         path.setDelegateOwner(this.getActiveDelegateOwner());
         path.setAttributes(this.getActiveShapeAttributes());

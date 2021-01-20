@@ -5,8 +5,8 @@
  */
 package gov.nasa.worldwind.util;
 
-import gov.nasa.worldwind.Configuration;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.avlist.KVMap;
 
 import java.io.IOException;
 import java.net.*;
@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.*;
  * @author tag
  * @version $Id: BasicNetworkStatus.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class BasicNetworkStatus extends AVListImpl implements NetworkStatus {
+public class BasicNetworkStatus extends KVMap implements NetworkStatus {
     protected static final long DEFAULT_TRY_AGAIN_INTERVAL_MS = 2 * 60_000L;
     protected static final int DEFAULT_ATTEMPT_LIMIT = 8; // number of unavailable events to declare host unavailable
     protected static final long NETWORK_STATUS_REPORT_INTERVAL_MS = (long) 120.000e3;
@@ -42,7 +42,7 @@ public class BasicNetworkStatus extends AVListImpl implements NetworkStatus {
     private boolean offlineMode;
 
     public BasicNetworkStatus() {
-        String oms = Configuration.getStringValue(AVKey.OFFLINE_MODE, "false");
+        String oms = Configuration.getStringValue(Keys.OFFLINE_MODE, "false");
         this.offlineMode = !oms.isEmpty() && oms.charAt(0) == 't' || !oms.isEmpty() && oms.charAt(0) == 'T';
 
         this.establishNetworkTestSites();
@@ -104,17 +104,17 @@ public class BasicNetworkStatus extends AVListImpl implements NetworkStatus {
 
     /**
      * Determines and stores the network sites to test for public network connectivity. The sites are drawn from the
-     * JVM's gov.nasa.worldwind.avkey.NetworkStatusTestSites property ({@link AVKey#NETWORK_STATUS_TEST_SITES}). If that
+     * JVM's gov.nasa.worldwind.avkey.NetworkStatusTestSites property ({@link Keys#NETWORK_STATUS_TEST_SITES}). If that
      * property is not defined, the sites are drawn from the same property in the WorldWind or application configuration
      * file. If the sites are not specified there, the set of sites specified in {@link #DEFAULT_NETWORK_TEST_SITES} are
      * used. To indicate an empty list in the JVM property or configuration file property, specify an empty site list,
      * "".
      */
     protected void establishNetworkTestSites() {
-        String testSites = System.getProperty(AVKey.NETWORK_STATUS_TEST_SITES);
+        String testSites = System.getProperty(Keys.NETWORK_STATUS_TEST_SITES);
 
         if (testSites == null)
-            testSites = Configuration.getStringValue(AVKey.NETWORK_STATUS_TEST_SITES);
+            testSites = Configuration.getStringValue(Keys.NETWORK_STATUS_TEST_SITES);
 
         if (testSites == null) {
             this.networkTestSites.addAll(Arrays.asList(BasicNetworkStatus.DEFAULT_NETWORK_TEST_SITES));

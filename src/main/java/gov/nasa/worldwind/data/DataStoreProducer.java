@@ -6,26 +6,26 @@
 package gov.nasa.worldwind.data;
 
 import gov.nasa.worldwind.WWObject;
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.KV;
 
 /**
  * @author dcollins
  * @version $Id: DataStoreProducer.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 public interface DataStoreProducer extends WWObject {
-    AVList getStoreParameters();
+    KV getStoreParameters();
 
-    void setStoreParameters(AVList parameters);
+    void setStoreParameters(KV parameters);
 
     String getDataSourceDescription();
 
     Iterable<Object> getDataSources();
 
-    boolean acceptsDataSource(Object source, AVList params);
+    boolean acceptsDataSource(Object source, KV params);
 
     boolean containsDataSource(Object source);
 
-    void offerDataSource(Object source, AVList params);
+    void offerDataSource(Object source, KV params);
 
     void offerAllDataSources(Iterable<?> sources);
 
@@ -39,7 +39,7 @@ public interface DataStoreProducer extends WWObject {
 
     Iterable<?> getProductionResults();
 
-    AVList getProductionParameters();
+    KV getProductionParameters();
 
     void removeProductionState();
 }

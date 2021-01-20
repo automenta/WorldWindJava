@@ -6,8 +6,7 @@
 
 package gov.nasa.worldwind.examples.worldwindow.features;
 
-import gov.nasa.worldwind.View;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.examples.worldwindow.core.*;
 import gov.nasa.worldwind.examples.worldwindow.core.layermanager.LayerPath;
 import gov.nasa.worldwind.examples.worldwindow.util.WWOUnitsFormat;
@@ -69,10 +68,10 @@ public class CoordinatesDisplay extends AbstractOnDemandLayerFeature {
         AnnotationAttributes attrs = anno.getAttributes();
         attrs.setTextColor(Color.WHITE);
         attrs.setFont(Font.decode("Consolas-Bold-15"));
-        attrs.setEffect(AVKey.TEXT_EFFECT_OUTLINE);
+        attrs.setEffect(Keys.TEXT_EFFECT_OUTLINE);
 
-        attrs.setFrameShape(AVKey.SHAPE_NONE);
-        attrs.setLeader(AVKey.SHAPE_NONE);
+        attrs.setFrameShape(Keys.SHAPE_NONE);
+        attrs.setLeader(Keys.SHAPE_NONE);
         attrs.setBackgroundColor(Color.BLACK);
         attrs.setBorderColor(new Color(0.1f, 0.1f, 0.1f, 0.0f));
         attrs.setBorderWidth(0.0d);
@@ -81,8 +80,8 @@ public class CoordinatesDisplay extends AbstractOnDemandLayerFeature {
 
         int width = 340, height = 200;
         attrs.setSize(new Dimension(width, height));
-        attrs.setTextAlign(AVKey.RIGHT);
-        attrs.setAdjustWidthToText(AVKey.SIZE_FIXED);
+        attrs.setTextAlign(Keys.RIGHT);
+        attrs.setAdjustWidthToText(Keys.SIZE_FIXED);
         attrs.setDrawOffset(new Point(-width / 2, -height));
 
         CoordAnnotationLayer layer = new CoordAnnotationLayer();

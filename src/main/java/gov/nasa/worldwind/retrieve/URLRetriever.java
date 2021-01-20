@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.retrieve;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.util.*;
 import jcog.*;
 import okhttp3.ResponseBody;
@@ -42,8 +41,8 @@ public class URLRetriever extends WWObjectImpl implements Retriever {
     protected volatile String contentType;
     protected volatile ByteBuffer byteBuffer;
     @Deprecated protected volatile URLConnection connection;
-    protected int connectTimeout = Configuration.getIntegerValue(AVKey.URL_CONNECT_TIMEOUT, 15000);
-    protected int readTimeout = Configuration.getIntegerValue(AVKey.URL_READ_TIMEOUT, 5000);
+    protected int connectTimeout = Configuration.getIntegerValue(Keys.URL_CONNECT_TIMEOUT, 15000);
+    protected int readTimeout = Configuration.getIntegerValue(Keys.URL_READ_TIMEOUT, 5000);
     protected int staleRequestLimit = -1;
     protected long submitEpoch;
 
@@ -75,7 +74,7 @@ public class URLRetriever extends WWObjectImpl implements Retriever {
     }
 
     protected static void configureSSLContext(HttpsURLConnection connection) {
-        SSLContext sslContext = (SSLContext) WorldWind.getValue(AVKey.HTTP_SSL_CONTEXT);
+        SSLContext sslContext = (SSLContext) WorldWind.getValue(Keys.HTTP_SSL_CONTEXT);
 
         if (sslContext != null)
             connection.setSSLSocketFactory(sslContext.getSocketFactory());
@@ -191,7 +190,7 @@ public class URLRetriever extends WWObjectImpl implements Retriever {
 
     protected void setState(String state) {
         String oldState = this.state;
-        firePropertyChange(AVKey.RETRIEVER_STATE, oldState, this.state = state);
+        firePropertyChange(Keys.RETRIEVER_STATE, oldState, this.state = state);
     }
 
     public final Function<Retriever, ByteBuffer> getPostProcessor() {

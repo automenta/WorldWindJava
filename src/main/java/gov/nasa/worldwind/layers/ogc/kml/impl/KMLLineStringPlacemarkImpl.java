@@ -5,8 +5,7 @@
  */
 package gov.nasa.worldwind.layers.ogc.kml.impl;
 
-import gov.nasa.worldwind.WorldWind;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.event.Message;
 import gov.nasa.worldwind.layers.ogc.kml.*;
 import gov.nasa.worldwind.pick.PickedObject;
@@ -68,20 +67,20 @@ public class KMLLineStringPlacemarkImpl extends Path implements KMLRenderable {
         // If the path is clamped to the ground and terrain conforming, draw as a great circle. Otherwise draw
         // as linear segments.
         if (this.getAltitudeMode() == WorldWind.CLAMP_TO_GROUND && this.isFollowTerrain())
-            this.setPathType(AVKey.GREAT_CIRCLE);
+            this.setPathType(Keys.GREAT_CIRCLE);
         else
-            this.setPathType(AVKey.LINEAR);
+            this.setPathType(Keys.LINEAR);
 
         if (placemark.getName() != null)
-            this.set(AVKey.DISPLAY_NAME, placemark.getName());
+            this.set(Keys.DISPLAY_NAME, placemark.getName());
 
         if (placemark.getDescription() != null)
-            this.set(AVKey.DESCRIPTION, placemark.getDescription());
+            this.set(Keys.DESCRIPTION, placemark.getDescription());
 
         if (placemark.getSnippetText() != null)
-            this.set(AVKey.SHORT_DESCRIPTION, placemark.getSnippetText());
+            this.set(Keys.SHORT_DESCRIPTION, placemark.getSnippetText());
 
-        this.set(AVKey.CONTEXT, this.parent);
+        this.set(Keys.CONTEXT, this.parent);
     }
 
     protected static ShapeAttributes getInitialAttributes(String attrType) {
@@ -143,7 +142,7 @@ public class KMLLineStringPlacemarkImpl extends Path implements KMLRenderable {
         PickedObject po = super.createPickedObject(colorCode);
 
         // Add the KMLPlacemark to the picked object as the context of the picked object.
-        po.set(AVKey.CONTEXT, this.parent);
+        po.set(Keys.CONTEXT, this.parent);
         return po;
     }
 
@@ -162,7 +161,7 @@ public class KMLLineStringPlacemarkImpl extends Path implements KMLRenderable {
         KMLAbstractSubStyle lineSubStyle = this.parent.getSubStyle(new KMLLineStyle(null), attrType);
         if (!this.isHighlighted() || KMLUtil.isHighlightStyleState(lineSubStyle)) {
             KMLUtil.assembleLineAttributes(attrs, (KMLLineStyle) lineSubStyle);
-            if (lineSubStyle.hasField(AVKey.UNRESOLVED))
+            if (lineSubStyle.hasField(Keys.UNRESOLVED))
                 attrs.setUnresolved(true);
         }
 
@@ -171,7 +170,7 @@ public class KMLLineStringPlacemarkImpl extends Path implements KMLRenderable {
         KMLAbstractSubStyle fillSubStyle = this.parent.getSubStyle(new KMLPolyStyle(null), attrType);
         if (!this.isHighlighted() || KMLUtil.isHighlightStyleState(lineSubStyle)) {
             KMLUtil.assembleInteriorAttributes(attrs, (KMLPolyStyle) fillSubStyle);
-            if (fillSubStyle.hasField(AVKey.UNRESOLVED))
+            if (fillSubStyle.hasField(Keys.UNRESOLVED))
                 attrs.setUnresolved(true);
 
             attrs.setDrawInterior(((KMLPolyStyle) fillSubStyle).isFill());

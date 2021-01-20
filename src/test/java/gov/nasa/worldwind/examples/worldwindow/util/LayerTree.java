@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.examples.worldwindow.util;
 
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.examples.worldwindow.core.Controller;
 import gov.nasa.worldwind.examples.worldwindow.core.layermanager.LayerPath;
 import gov.nasa.worldwind.layers.Layer;
@@ -32,7 +32,7 @@ public abstract class LayerTree implements Iterable<Layer> {
         this.layers = root;
     }
 
-    abstract public void createLayers(Object infoItem, AVList params);
+    abstract public void createLayers(Object infoItem, KV params);
 
     public String getDisplayName() {
         return name;

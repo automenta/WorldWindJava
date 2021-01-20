@@ -38,7 +38,7 @@ abstract public class AbstractXMLEventParser implements XMLEventParser {
 
     protected String namespaceURI;
 
-    protected AVList fields;
+    protected KV fields;
     protected XMLEventParser parent;
 
     /**
@@ -107,7 +107,7 @@ abstract public class AbstractXMLEventParser implements XMLEventParser {
 
     public void setField(String keyName, Object value) {
         if (this.fields == null)
-            this.fields = new AVListImpl();
+            this.fields = new KVMap();
 
         this.fields.set(keyName, value);
     }
@@ -137,13 +137,13 @@ abstract public class AbstractXMLEventParser implements XMLEventParser {
         return this.fields != null;
     }
 
-    public AVList getFields() {
+    public KV getFields() {
         return this.fields;
     }
 
     public void setFields(Map<String, Object> newFields) {
         if (this.fields == null)
-            this.fields = new AVListImpl();
+            this.fields = new KVMap();
 
         for (Map.Entry<String, Object> nf : newFields.entrySet()) {
             this.setField(nf.getKey(), nf.getValue());

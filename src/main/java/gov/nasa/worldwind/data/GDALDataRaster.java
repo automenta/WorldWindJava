@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.data;
 
-import gov.nasa.worldwind.Configuration;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.cache.Cacheable;
 import gov.nasa.worldwind.exception.WWRuntimeException;
@@ -82,9 +82,9 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
         this.srcFile = file;
         String name = this.srcFile.getName();
         if (!name.isEmpty()) {
-            this.set(AVKey.DATASET_NAME, name);
-            this.set(AVKey.DISPLAY_NAME, name);
-            this.set(AVKey.FILE, this.srcFile);
+            this.set(Keys.DATASET_NAME, name);
+            this.set(Keys.DISPLAY_NAME, name);
+            this.set(Keys.FILE, this.srcFile);
         }
 
         Dataset ds = GDALUtils.open(file, quickReadingMode);
@@ -132,7 +132,7 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
         return null;
     }
 
-    protected static String convertAVListToString(AVList list) {
+    protected static String convertAVListToString(KV list) {
         if (null == list) {
             return "";
         }
@@ -204,27 +204,27 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
             throw new IllegalArgumentException(message);
         }
 
-        if (!this.hasKey(AVKey.COORDINATE_SYSTEM)
-            || AVKey.COORDINATE_SYSTEM_UNKNOWN.equals(this.get(AVKey.COORDINATE_SYSTEM))
+        if (!this.hasKey(Keys.COORDINATE_SYSTEM)
+            || Keys.COORDINATE_SYSTEM_UNKNOWN.equals(this.get(Keys.COORDINATE_SYSTEM))
         ) {
-            this.set(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_GEOGRAPHIC);
+            this.set(Keys.COORDINATE_SYSTEM, Keys.COORDINATE_SYSTEM_GEOGRAPHIC);
         }
 
         this.srs = GDALUtils.createGeographicSRS();
 
-        this.set(AVKey.SECTOR, sector);
+        this.set(Keys.SECTOR, sector);
 
         this.area = new GDAL.Area(this.srs, sector);
-        this.set(AVKey.GDAL_AREA, this.area);
+        this.set(Keys.GDAL_AREA, this.area);
 
         if (this.width > 0) {
             double dx = sector.lonDelta / this.width;
-            this.set(AVKey.PIXEL_WIDTH, dx);
+            this.set(Keys.PIXEL_WIDTH, dx);
         }
 
         if (this.height > 0) {
             double dy = sector.latDelta / this.height;
-            this.set(AVKey.PIXEL_WIDTH, dy);
+            this.set(Keys.PIXEL_WIDTH, dy);
         }
 
         if (this.dsVRT != null) {
@@ -297,8 +297,8 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
             srs = new SpatialReference(proj);
         }
 
-        if ((null == srs || srs.IsLocal() == 1) && this.hasKey(AVKey.SPATIAL_REFERENCE_WKT)) {
-            proj = this.getStringValue(AVKey.SPATIAL_REFERENCE_WKT);
+        if ((null == srs || srs.IsLocal() == 1) && this.hasKey(Keys.SPATIAL_REFERENCE_WKT)) {
+            proj = this.getStringValue(Keys.SPATIAL_REFERENCE_WKT);
             srs = new SpatialReference(proj);
         }
 
@@ -325,25 +325,25 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
     protected void init(Dataset ds, boolean quickReadingMode) {
         String srcWKT = null;
 
-        AVList extParams = new AVListImpl();
-        AVList params = new AVListImpl();
+        KV extParams = new KVMap();
+        KV params = new KVMap();
         GDALMetadata.extractExtendedAndFormatSpecificMetadata(ds, extParams, params);
         this.setValues(params);
 
         this.srs = this.readSpatialReference(ds);
         if (null != this.srs) {
             srcWKT = this.srs.ExportToWkt();
-            this.set(AVKey.SPATIAL_REFERENCE_WKT, this.srs.ExportToWkt());
+            this.set(Keys.SPATIAL_REFERENCE_WKT, this.srs.ExportToWkt());
         }
 
         GDALUtils.extractRasterParameters(ds, this, quickReadingMode);
 
         this.dsVRT = ds;
 
-        this.width = (Integer) this.get(AVKey.WIDTH);
-        this.height = (Integer) this.get(AVKey.HEIGHT);
+        this.width = (Integer) this.get(Keys.WIDTH);
+        this.height = (Integer) this.get(Keys.HEIGHT);
 
-        Object o = this.get(AVKey.GDAL_AREA);
+        Object o = this.get(Keys.GDAL_AREA);
         this.area = (o instanceof GDAL.Area) ? (GDAL.Area) o : null;
 
         String proj = ds.GetProjectionRef();
@@ -351,11 +351,11 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
 
         if ((null == proj || proj.isEmpty())
             && (srcWKT == null || srcWKT.isEmpty())
-            && AVKey.COORDINATE_SYSTEM_GEOGRAPHIC.equals(this.get(AVKey.COORDINATE_SYSTEM))
+            && Keys.COORDINATE_SYSTEM_GEOGRAPHIC.equals(this.get(Keys.COORDINATE_SYSTEM))
         ) {   // this is a case where file has GEODETIC GeoTranform matrix but does not have CS or PROJECTION data
             this.srs = GDALUtils.createGeographicSRS();
             srcWKT = this.srs.ExportToWkt();
-            this.set(AVKey.SPATIAL_REFERENCE_WKT, this.srs.ExportToWkt());
+            this.set(Keys.SPATIAL_REFERENCE_WKT, this.srs.ExportToWkt());
         }
 
         // if the original dataset does NOT have projection information
@@ -383,7 +383,7 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
         }
     }
 
-    public AVList getMetadata() {
+    public KV getMetadata() {
         return this.copy();
     }
 
@@ -419,12 +419,12 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
                 return;
             }
 
-            AVList params = canvas.copy();
+            KV params = canvas.copy();
 
             // copy parent raster keys/values; only those key/value will be copied that do exist in the parent raster
             // AND does NOT exist in the requested raster
             String[] keysToCopy = {
-                AVKey.DATA_TYPE, AVKey.MISSING_DATA_SIGNAL, AVKey.BYTE_ORDER, AVKey.PIXEL_FORMAT, AVKey.ELEVATION_UNIT
+                Keys.DATA_TYPE, Keys.MISSING_DATA_SIGNAL, Keys.BYTE_ORDER, Keys.PIXEL_FORMAT, Keys.ELEVATION_UNIT
             };
             WWUtil.copyValues(this, params, keysToCopy, false);
 
@@ -516,9 +516,9 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
             throw new WWRuntimeException(msg);
         }
 
-        Object cs = this.get(AVKey.COORDINATE_SYSTEM);
+        Object cs = this.get(Keys.COORDINATE_SYSTEM);
         if (null == cs
-            || (!AVKey.COORDINATE_SYSTEM_GEOGRAPHIC.equals(cs) && !AVKey.COORDINATE_SYSTEM_PROJECTED.equals(cs))) {
+            || (!Keys.COORDINATE_SYSTEM_GEOGRAPHIC.equals(cs) && !Keys.COORDINATE_SYSTEM_PROJECTED.equals(cs))) {
             String msg = (null == cs) ? "generic.UnspecifiedCoordinateSystem" : "generic.UnsupportedCoordinateSystem";
             String reason = Logging.getMessage(msg, cs);
             Logging.logger().finest(Logging.getMessage("generic.CannotCreateRaster", reason));
@@ -685,7 +685,7 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
         ByteBuffer data = ByteBuffer.allocateDirect(size);
         data.order(ByteOrder.nativeOrder());
 
-        Double nodata = this.hasKey(AVKey.MISSING_DATA_SIGNAL) ? (Double) this.get(AVKey.MISSING_DATA_SIGNAL)
+        Double nodata = this.hasKey(Keys.MISSING_DATA_SIGNAL) ? (Double) this.get(Keys.MISSING_DATA_SIGNAL)
             : null;
 
         for (int i = 0; i < bandCount; i++) {
@@ -742,7 +742,7 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
         ByteBuffer data = ByteBuffer.allocateDirect(size);
         data.order(ByteOrder.nativeOrder());
 
-        Double nodata = this.hasKey(AVKey.MISSING_DATA_SIGNAL) ? (Double) this.get(AVKey.MISSING_DATA_SIGNAL)
+        Double nodata = this.hasKey(Keys.MISSING_DATA_SIGNAL) ? (Double) this.get(Keys.MISSING_DATA_SIGNAL)
             : null;
 
         Dataset ds = drv.Create("overview", destWidth, destHeight, bandCount, destDataType);
@@ -795,7 +795,7 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
         return ds;
     }
 
-    protected Dataset createCompatibleDataset(int width, int height, Sector sector, AVList destParams) {
+    protected Dataset createCompatibleDataset(int width, int height, Sector sector, KV destParams) {
         if (width <= 0) {
             String message = Logging.getMessage("generic.InvalidWidth", width);
             Logging.logger().severe(message);
@@ -817,19 +817,19 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
             gdalconst.GCI_BlueBand, gdalconst.GCI_AlphaBand};
 
         int destNumOfBands = 4; // RGBA by default
-        String pixelFormat = this.getStringValue(AVKey.PIXEL_FORMAT);
-        String colorFormat = this.getStringValue(AVKey.IMAGE_COLOR_FORMAT);
-        if (AVKey.ELEVATION.equals(pixelFormat)) {
+        String pixelFormat = this.getStringValue(Keys.PIXEL_FORMAT);
+        String colorFormat = this.getStringValue(Keys.IMAGE_COLOR_FORMAT);
+        if (Keys.ELEVATION.equals(pixelFormat)) {
             destNumOfBands = 1;
             bandColorInt = new int[] {gdalconst.GCI_GrayIndex};
-        } else if (AVKey.IMAGE.equals(pixelFormat) && AVKey.GRAYSCALE.equals(colorFormat)) {
+        } else if (Keys.IMAGE.equals(pixelFormat) && Keys.GRAYSCALE.equals(colorFormat)) {
             bandColorInt = new int[] {gdalconst.GCI_GrayIndex, gdalconst.GCI_AlphaBand};
             destNumOfBands = 2; // Y + alpha
-        } else if (AVKey.IMAGE.equals(pixelFormat) && AVKey.COLOR.equals(colorFormat)) {
+        } else if (Keys.IMAGE.equals(pixelFormat) && Keys.COLOR.equals(colorFormat)) {
             bandColorInt = new int[] {
                 gdalconst.GCI_RedBand, gdalconst.GCI_GreenBand, gdalconst.GCI_BlueBand, gdalconst.GCI_AlphaBand};
 
-            if (AVKey.INT16.equals(this.get(AVKey.DATA_TYPE)) && srcNumOfBands > 3) {
+            if (Keys.INT16.equals(this.get(Keys.DATA_TYPE)) && srcNumOfBands > 3) {
                 destNumOfBands = 3; // ignore 4th band which is some kind of infra-red
             } else if (srcNumOfBands >= 3) {
                 destNumOfBands = 4; // RGBA
@@ -841,11 +841,11 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
 
         Dataset ds = drvMem.Create("roi", width, height, destNumOfBands, bandDataType);
 
-        Double missingDataSignal = AVListImpl.getDoubleValue(this, AVKey.MISSING_DATA_SIGNAL, null);
-        Double minValue = AVListImpl.getDoubleValue(this, AVKey.ELEVATION_MIN, null);
-        Double maxValue = AVListImpl.getDoubleValue(this, AVKey.ELEVATION_MAX, null);
+        Double missingDataSignal = KVMap.getDoubleValue(this, Keys.MISSING_DATA_SIGNAL, null);
+        Double minValue = KVMap.getDoubleValue(this, Keys.ELEVATION_MIN, null);
+        Double maxValue = KVMap.getDoubleValue(this, Keys.ELEVATION_MAX, null);
 
-        missingDataSignal = AVListImpl.getDoubleValue(destParams, AVKey.MISSING_DATA_REPLACEMENT, missingDataSignal);
+        missingDataSignal = KVMap.getDoubleValue(destParams, Keys.MISSING_DATA_REPLACEMENT, missingDataSignal);
 
         for (int i = 0; i < destNumOfBands; i++) {
             Band band = ds.GetRasterBand(i + 1);
@@ -895,8 +895,8 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
         }
 
         String[] keysToCopy = {
-            AVKey.RASTER_BAND_ACTUAL_BITS_PER_PIXEL,
-            AVKey.RASTER_BAND_MAX_PIXEL_VALUE
+            Keys.RASTER_BAND_ACTUAL_BITS_PER_PIXEL,
+            Keys.RASTER_BAND_MAX_PIXEL_VALUE
         };
 
         WWUtil.copyValues(this, destParams, keysToCopy, true);
@@ -920,22 +920,22 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
      * the source dataset is elevations)
      */
     @Override
-    public DataRaster getSubRaster(AVList params) {
-        if (params.hasKey(AVKey.BANDS_ORDER)) {
+    public DataRaster getSubRaster(KV params) {
+        if (params.hasKey(Keys.BANDS_ORDER)) {
             GDALUtils.extractBandOrder(this.dsVRT, params);
         }
 
         // copy parent raster keys/values; only those key/value will be copied that do exist in the parent raster
         // AND does NOT exist in the requested raster
         String[] keysToCopy = {
-            AVKey.DATA_TYPE, AVKey.MISSING_DATA_SIGNAL, AVKey.BYTE_ORDER, AVKey.PIXEL_FORMAT, AVKey.ELEVATION_UNIT
+            Keys.DATA_TYPE, Keys.MISSING_DATA_SIGNAL, Keys.BYTE_ORDER, Keys.PIXEL_FORMAT, Keys.ELEVATION_UNIT
         };
         WWUtil.copyValues(this, params, keysToCopy, false);
 
         return super.getSubRaster(params);
     }
 
-    protected DataRaster doGetSubRaster(int roiWidth, int roiHeight, Sector roiSector, AVList roiParams) {
+    protected DataRaster doGetSubRaster(int roiWidth, int roiHeight, Sector roiSector, KV roiParams) {
         synchronized (this.usageLock) {
             Dataset destDS = null;
             Dataset maskDS = null;
@@ -945,19 +945,19 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
             try {
                 gdal.PushErrorHandler("CPLQuietErrorHandler");
 
-                roiParams = (null == roiParams) ? new AVListImpl() : roiParams;
+                roiParams = (null == roiParams) ? new KVMap() : roiParams;
 
                 if (null != roiSector) {
-                    roiParams.set(AVKey.SECTOR, roiSector);
+                    roiParams.set(Keys.SECTOR, roiSector);
                 }
 
-                roiParams.set(AVKey.WIDTH, roiWidth);
-                roiParams.set(AVKey.HEIGHT, roiHeight);
+                roiParams.set(Keys.WIDTH, roiWidth);
+                roiParams.set(Keys.HEIGHT, roiHeight);
 
                 if (null == roiSector
                     || Sector.EMPTY_SECTOR.equals(roiSector)
-                    || !this.hasKey(AVKey.COORDINATE_SYSTEM)
-                    || AVKey.COORDINATE_SYSTEM_UNKNOWN.equals(this.get(AVKey.COORDINATE_SYSTEM))
+                    || !this.hasKey(Keys.COORDINATE_SYSTEM)
+                    || Keys.COORDINATE_SYSTEM_UNKNOWN.equals(this.get(Keys.COORDINATE_SYSTEM))
                 ) {
                     // return the entire data raster
                     return GDALUtils.composeDataRaster(this.dsVRT, roiParams);
@@ -1013,7 +1013,7 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
                     Logging.logger().severe(message);
                 }
 
-                roiParams.set(AVKey.GDAL_MASK_DATASET, maskDS);
+                roiParams.set(Keys.GDAL_MASK_DATASET, maskDS);
 
                 start = System.currentTimeMillis();
                 raster = GDALUtils.composeDataRaster(destDS, roiParams);

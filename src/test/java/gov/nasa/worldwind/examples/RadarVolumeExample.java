@@ -9,7 +9,6 @@ package gov.nasa.worldwind.examples;
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.*;
@@ -34,9 +33,9 @@ import java.util.*;
  */
 public class RadarVolumeExample extends ApplicationTemplate {
     public static void main(String[] args) {
-        Configuration.setValue(AVKey.INITIAL_LATITUDE, 36.8378);
-        Configuration.setValue(AVKey.INITIAL_LONGITUDE, -118.8743);
-        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 2000.0e3);
+        Configuration.setValue(Keys.INITIAL_LATITUDE, 36.8378);
+        Configuration.setValue(Keys.INITIAL_LONGITUDE, -118.8743);
+        Configuration.setValue(Keys.INITIAL_ALTITUDE, 2000.0e3);
         ApplicationTemplate.start("Terrain Shadow Prototype", AppFrame.class);
     }
 
@@ -494,7 +493,7 @@ public class RadarVolumeExample extends ApplicationTemplate {
                     String msg = obstructionFlag == RadarVolume.NO_OBSTRUCTION ? "None"
                         : obstructionFlag == RadarVolume.EXTERNAL_OBSTRUCTION ? "External"
                             : obstructionFlag == RadarVolume.INTERNAL_OBSTRUCTION ? "Internal" : "UNKNOWN";
-                    path.set(AVKey.DISPLAY_NAME, msg);
+                    path.set(Keys.DISPLAY_NAME, msg);
                 }
                 lineLayer.add(path);
             }

@@ -6,8 +6,8 @@
 
 package gov.nasa.worldwind.formats.vpf;
 
-import gov.nasa.worldwind.WorldWindow;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.geom.*;
 
 import javax.swing.Box;
@@ -47,8 +47,8 @@ public class VPFCoveragePanel extends JPanel {
         this.makePanel(db, size);
     }
 
-    protected static void sortPropertyLists(java.util.List<? extends AVList> propertyList, final String propertyName) {
-        propertyList.sort((Comparator<AVList>) (a, b) -> {
+    protected static void sortPropertyLists(java.util.List<? extends KV> propertyList, final String propertyName) {
+        propertyList.sort((Comparator<KV>) (a, b) -> {
             String aValue = (a.get(propertyName) != null) ? a.get(propertyName).toString() : "";
             String bValue = (b.get(propertyName) != null) ? b.get(propertyName).toString() : "";
             return String.CASE_INSENSITIVE_ORDER.compare(aValue, bValue);
@@ -118,7 +118,7 @@ public class VPFCoveragePanel extends JPanel {
     public void addDatabase(VPFDatabase db) {
         // Sort the library list alphabetically.
         List<VPFLibrary> sortedList = new ArrayList<>(db.getLibraries());
-        VPFCoveragePanel.sortPropertyLists(sortedList, AVKey.DISPLAY_NAME);
+        VPFCoveragePanel.sortPropertyLists(sortedList, Keys.DISPLAY_NAME);
 
         for (VPFLibrary lib : sortedList) {
             this.addLibrary(db, lib);
@@ -175,7 +175,7 @@ public class VPFCoveragePanel extends JPanel {
 
         // Sort the coverage list alphabetically.
         List<VPFCoverage> sortedList = new ArrayList<>(lib.getCoverages());
-        VPFCoveragePanel.sortPropertyLists(sortedList, AVKey.DESCRIPTION);
+        VPFCoveragePanel.sortPropertyLists(sortedList, Keys.DESCRIPTION);
 
         for (VPFCoverage cov : sortedList) {
             if (cov.isReferenceCoverage())

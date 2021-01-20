@@ -7,7 +7,6 @@
 package gov.nasa.worldwind.ui.tree;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.render.BasicWWTexture;
 import gov.nasa.worldwind.util.*;
 
@@ -128,7 +127,7 @@ public class BasicTreeNode extends WWObjectImpl implements TreeNode {
         this.treeSelected = null; // Need to recompute tree selected field
 
         if (prevSelected != selected)
-            this.firePropertyChange(AVKey.TREE_NODE, null, this);
+            this.firePropertyChange(Keys.TREE_NODE, null, this);
     }
 
     /**
@@ -258,7 +257,7 @@ public class BasicTreeNode extends WWObjectImpl implements TreeNode {
         this.treeSelected = null;  // Need to recompute tree selected field
         child.setParent(this);
         child.addPropertyChangeListener(this);
-        this.firePropertyChange(AVKey.TREE_NODE, null, this);
+        this.firePropertyChange(Keys.TREE_NODE, null, this);
     }
 
     /**
@@ -272,7 +271,7 @@ public class BasicTreeNode extends WWObjectImpl implements TreeNode {
             this.treeSelected = null;  // Need to recompute tree selected field
             child.setParent(null);
             child.removePropertyChangeListener(this);
-            this.firePropertyChange(AVKey.TREE_NODE, null, this);
+            this.firePropertyChange(Keys.TREE_NODE, null, this);
         }
     }
 
@@ -296,7 +295,7 @@ public class BasicTreeNode extends WWObjectImpl implements TreeNode {
         }
 
         this.treeSelected = null;  // Need to recompute tree selected field
-        this.firePropertyChange(AVKey.TREE_NODE, null, this);
+        this.firePropertyChange(Keys.TREE_NODE, null, this);
     }
 
     /**

@@ -39,7 +39,7 @@ import gov.nasa.worldwind.util.Logging;
  * @author pabercrombie
  * @version $Id: SymbolCode.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class SymbolCode extends AVListImpl {
+public class SymbolCode extends KVMap {
     /**
      * Indicates the character for an unused position in a MIL-STD-2525 symbol identification code
      */
@@ -113,12 +113,12 @@ public class SymbolCode extends AVListImpl {
      *               and return a new parameter list.
      * @return a parameter list containing the modifier key-value pairs.
      */
-    public static AVList parseSymbolModifierCode(String code, AVList params) {
+    public static KV parseSymbolModifierCode(String code, KV params) {
         if (code == null || code.length() != 2 || code.equals("--"))
             return params;
 
         if (params == null)
-            params = new AVListImpl();
+            params = new KVMap();
 
         String firstChar = code.substring(0, 1);
         String secondChar = code.substring(1, 2);
@@ -170,7 +170,7 @@ public class SymbolCode extends AVListImpl {
         return params;
     }
 
-    public static String composeSymbolModifierCode(SymbolCode symbolCode, AVList modifiers, String modifierKey) {
+    public static String composeSymbolModifierCode(SymbolCode symbolCode, KV modifiers, String modifierKey) {
         if (symbolCode == null)
             return null;
 

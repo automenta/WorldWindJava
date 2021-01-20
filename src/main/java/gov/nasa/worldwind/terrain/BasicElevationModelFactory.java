@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.terrain;
 
-import gov.nasa.worldwind.BasicFactory;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.exception.*;
 import gov.nasa.worldwind.globes.ElevationModel;
@@ -35,7 +35,7 @@ public class BasicElevationModelFactory extends BasicFactory {
      * @return a new elevation model
      * @throws WWUnrecognizedException if the service type given in the describing element is unrecognized.
      */
-    protected static ElevationModel createNonCompoundModel(Element domElement, AVList params) {
+    protected static ElevationModel createNonCompoundModel(Element domElement, KV params) {
         ElevationModel em;
 
         String serviceName = WWXML.getText(domElement, "Service/@serviceName");
@@ -44,7 +44,7 @@ public class BasicElevationModelFactory extends BasicFactory {
             case "Offline", "WWTileService" -> em = new BasicElevationModel(domElement, params);
             case OGCConstants.WMS_SERVICE_NAME -> em = new WMSBasicElevationModel(domElement, params);
             case OGCConstants.WCS_SERVICE_NAME -> em = new WCSElevationModel(domElement, params);
-            case AVKey.SERVICE_NAME_LOCAL_RASTER_SERVER ->
+            case Keys.SERVICE_NAME_LOCAL_RASTER_SERVER ->
                 throw new UnsupportedOperationException();
             default -> throw new WWUnrecognizedException(Logging.getMessage("generic.UnrecognizedServiceName", serviceName));
         }
@@ -74,7 +74,7 @@ public class BasicElevationModelFactory extends BasicFactory {
      *                                  of the failure is included as the {@link Exception#initCause(Throwable)}.
      */
     @Override
-    public Object createFromConfigSource(Object configSource, AVList params) {
+    public Object createFromConfigSource(Object configSource, KV params) {
         ElevationModel model = (ElevationModel) super.createFromConfigSource(configSource, params);
         if (model == null) {
             String msg = Logging.getMessage("generic.UnrecognizedDocument", configSource);
@@ -85,7 +85,7 @@ public class BasicElevationModelFactory extends BasicFactory {
     }
 
     @Override
-    protected ElevationModel doCreateFromCapabilities(OGCCapabilities caps, AVList params) {
+    protected ElevationModel doCreateFromCapabilities(OGCCapabilities caps, KV params) {
         String serviceName = caps.getServiceInformation().getServiceName();
         if (serviceName == null || !(serviceName.equalsIgnoreCase(OGCConstants.WMS_SERVICE_NAME)
             || serviceName.equalsIgnoreCase("WMS"))) {
@@ -95,9 +95,9 @@ public class BasicElevationModelFactory extends BasicFactory {
         }
 
         if (params == null)
-            params = new AVListImpl();
+            params = new KVMap();
 
-        if (params.getStringValue(AVKey.LAYER_NAMES) == null) {
+        if (params.getStringValue(Keys.LAYER_NAMES) == null) {
             // Use the first named layer since no other guidance given
             List<WMSLayerCapabilities> namedLayers = ((WMSCapabilities) caps).getNamedLayers();
 
@@ -107,13 +107,13 @@ public class BasicElevationModelFactory extends BasicFactory {
                 throw new IllegalStateException(message);
             }
 
-            params.set(AVKey.LAYER_NAMES, namedLayers.get(0).getName());
+            params.set(Keys.LAYER_NAMES, namedLayers.get(0).getName());
         }
 
         return new WMSBasicElevationModel((WMSCapabilities) caps, params);
     }
 
-    protected Object doCreateFromCapabilities(WCS100Capabilities caps, AVList params) {
+    protected Object doCreateFromCapabilities(WCS100Capabilities caps, KV params) {
         return new WCSElevationModel(caps, params);
     }
 
@@ -124,10 +124,10 @@ public class BasicElevationModelFactory extends BasicFactory {
      * @param domElement an XML element containing the elevation model description.
      * @param params     any parameters to apply when creating the elevation models.
      * @return the requested elevation model, or null if the specified element does not describe an elevation model.
-     * @see #createNonCompoundModel(Element, AVList)
+     * @see #createNonCompoundModel(Element, KV)
      */
     @Override
-    protected ElevationModel doCreateFromElement(Element domElement, AVList params) {
+    protected ElevationModel doCreateFromElement(Element domElement, KV params) {
         Element element = WWXML.getElement(domElement, ".", null);
         if (element == null)
             return null;
@@ -161,9 +161,9 @@ public class BasicElevationModelFactory extends BasicFactory {
      * @param params   any parameters to apply when creating the elevation models.
      * @return a compound elevation model populated with the specified elevation models. The compound model will contain
      * no elevation models if none were specified or exceptions occurred for all that were specified.
-     * @see #createNonCompoundModel(Element, AVList)
+     * @see #createNonCompoundModel(Element, KV)
      */
-    protected CompoundElevationModel createCompoundModel(Element[] elements, AVList params) {
+    protected CompoundElevationModel createCompoundModel(Element[] elements, KV params) {
         CompoundElevationModel compoundModel = new CompoundElevationModel();
 
         if (elements == null || elements.length == 0)

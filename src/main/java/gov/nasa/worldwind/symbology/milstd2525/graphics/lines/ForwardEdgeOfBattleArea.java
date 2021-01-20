@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.symbology.milstd2525.graphics.lines;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
@@ -186,11 +186,11 @@ public class ForwardEdgeOfBattleArea extends AbstractMilStd2525TacticalGraphic {
 
         // Set text alignment on the end points so that the text will always point away from the line.
         if (orientationNormal) {
-            this.symbol1.setTextAlign(AVKey.RIGHT);
-            this.symbol2.setTextAlign(AVKey.LEFT);
+            this.symbol1.setTextAlign(Keys.RIGHT);
+            this.symbol2.setTextAlign(Keys.LEFT);
         } else {
-            this.symbol1.setTextAlign(AVKey.LEFT);
-            this.symbol2.setTextAlign(AVKey.RIGHT);
+            this.symbol1.setTextAlign(Keys.LEFT);
+            this.symbol2.setTextAlign(Keys.RIGHT);
         }
     }
 
@@ -257,7 +257,7 @@ public class ForwardEdgeOfBattleArea extends AbstractMilStd2525TacticalGraphic {
 
             // Configure this tactical point graphic's icon retriever and modifier retriever with either the
             // configuration value or the default value (in that order of precedence).
-            String iconRetrieverPath = Configuration.getStringValue(AVKey.MIL_STD_2525_ICON_RETRIEVER_PATH,
+            String iconRetrieverPath = Configuration.getStringValue(Keys.MIL_STD_2525_ICON_RETRIEVER_PATH,
                 MilStd2525Constants.DEFAULT_ICON_RETRIEVER_PATH);
             this.setIconRetriever(new MilStd2525PointGraphicRetriever(iconRetrieverPath));
         }
@@ -288,14 +288,14 @@ public class ForwardEdgeOfBattleArea extends AbstractMilStd2525TacticalGraphic {
         public void setTextAlign(String align) {
             // We only handle left and right alignment. If the alignment string is anything other than left we treat it
             // as right align.
-            this.leftAlign = AVKey.LEFT.equals(align);
+            this.leftAlign = Keys.LEFT.equals(align);
         }
 
         /**
          * {@inheritDoc}
          */
         @Override
-        protected void layoutTextModifiers(DrawContext dc, AVList modifiers, OrderedSymbol osym) {
+        protected void layoutTextModifiers(DrawContext dc, KV modifiers, OrderedSymbol osym) {
             this.currentLabels.clear();
 
             Font font = this.getActiveAttributes().getTextModifierFont();
@@ -334,7 +334,7 @@ public class ForwardEdgeOfBattleArea extends AbstractMilStd2525TacticalGraphic {
         }
 
         @Override
-        protected int getMaxLabelLines(AVList modifiers) {
+        protected int getMaxLabelLines(KV modifiers) {
             return 1; // Only one line of text.
         }
     }

@@ -5,8 +5,7 @@
  */
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.Configuration;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 
 /**
  * Illustrates how to configure WorldWind with a custom <code>{@link gov.nasa.worldwind.globes.ElevationModel}</code>
@@ -18,7 +17,7 @@ import gov.nasa.worldwind.avlist.AVKey;
 public class CustomElevationModel extends ApplicationTemplate {
     public static void main(String[] args) {
         // Specify the configuration file for the elevation model prior to starting WorldWind:
-        Configuration.setValue(AVKey.EARTH_ELEVATION_MODEL_CONFIG_FILE,
+        Configuration.setValue(Keys.EARTH_ELEVATION_MODEL_CONFIG_FILE,
             "gov/nasa/worldwind/examples/data/CustomElevationModel.xml");
 
         ApplicationTemplate.start("WorldWind Custom Elevation Model", AppFrame.class);

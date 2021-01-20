@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.ui;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.event.SelectEvent;
 
 import java.awt.*;
@@ -14,7 +14,7 @@ import java.awt.event.*;
 
 /**
  * A HotSpot for resizing a frame or window. This class handles the resize input events, but does does not actually draw
- * the resize controls. The HotSpot is defined by a direction, for example, {@link AVKey#NORTH} indicates that the
+ * the resize controls. The HotSpot is defined by a direction, for example, {@link Keys#NORTH} indicates that the
  * HotSpot resizes the frame vertically from the north edge (the user clicks the top edge of the frame and drags
  * vertically).
  * <p>
@@ -62,21 +62,21 @@ public abstract class AbstractResizeHotSpot extends AbstractHotSpot {
 
     protected void setDirection(String direction) {
         int dir = 0;
-        if (AVKey.NORTH.equals(direction))
+        if (Keys.NORTH.equals(direction))
             dir = AbstractResizeHotSpot.NORTH;
-        else if (AVKey.SOUTH.equals(direction))
+        else if (Keys.SOUTH.equals(direction))
             dir = AbstractResizeHotSpot.SOUTH;
-        else if (AVKey.EAST.equals(direction))
+        else if (Keys.EAST.equals(direction))
             dir = AbstractResizeHotSpot.EAST;
-        else if (AVKey.WEST.equals(direction))
+        else if (Keys.WEST.equals(direction))
             dir = AbstractResizeHotSpot.WEST;
-        else if (AVKey.NORTHEAST.equals(direction))
+        else if (Keys.NORTHEAST.equals(direction))
             dir = AbstractResizeHotSpot.NORTHEAST;
-        else if (AVKey.NORTHWEST.equals(direction))
+        else if (Keys.NORTHWEST.equals(direction))
             dir = AbstractResizeHotSpot.NORTHWEST;
-        else if (AVKey.SOUTHEAST.equals(direction))
+        else if (Keys.SOUTHEAST.equals(direction))
             dir = AbstractResizeHotSpot.SOUTHEAST;
-        else if (AVKey.SOUTHWEST.equals(direction))
+        else if (Keys.SOUTHWEST.equals(direction))
             dir = AbstractResizeHotSpot.SOUTHWEST;
 
         this.setDirection(dir);

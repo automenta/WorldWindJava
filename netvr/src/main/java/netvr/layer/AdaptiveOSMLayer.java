@@ -2,7 +2,7 @@ package netvr.layer;
 
 import com.carrotsearch.hppc.LongArrayList;
 import com.graphhopper.reader.*;
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -152,7 +152,7 @@ public class AdaptiveOSMLayer extends RenderableLayer {
             p = readPath(z, m, latlon);
 
         if (p != null) {
-            ((AVList) p).set(AdaptiveOSMLayer.DESCRIPTION, m);
+            ((KV) p).set(AdaptiveOSMLayer.DESCRIPTION, m);
             add(p);
         }
     }

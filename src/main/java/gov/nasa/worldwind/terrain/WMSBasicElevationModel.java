@@ -6,6 +6,7 @@
 
 package gov.nasa.worldwind.terrain;
 
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
@@ -28,33 +29,33 @@ public class WMSBasicElevationModel extends BasicElevationModel {
         "application/bil32", "application/bil16", "application/bil", "image/bil", "image/png", "image/tiff"
     };
 
-    public WMSBasicElevationModel(AVList params) {
+    public WMSBasicElevationModel(KV params) {
         super(params);
     }
 
-    public WMSBasicElevationModel(Element domElement, AVList params) {
+    public WMSBasicElevationModel(Element domElement, KV params) {
         this(WMSBasicElevationModel.wmsGetParamsFromDocument(domElement, params));
     }
 
-    public WMSBasicElevationModel(WMSCapabilities caps, AVList params) {
+    public WMSBasicElevationModel(WMSCapabilities caps, KV params) {
         this(WMSBasicElevationModel.wmsGetParamsFromCapsDoc(caps, params));
     }
 
-    protected static AVList wmsGetParamsFromDocument(Element domElement, AVList params) {
+    protected static KV wmsGetParamsFromDocument(Element domElement, KV params) {
 
         if (params == null)
-            params = new AVListImpl();
+            params = new KVMap();
 
         DataConfigurationUtils.getWMSLayerConfigParams(domElement, params);
         BasicElevationModel.getBasicElevationModelConfigParams(domElement, params);
         WMSBasicElevationModel.wmsSetFallbacks(params);
 
-        params.set(AVKey.TILE_URL_BUILDER, new URLBuilder(params.getStringValue(AVKey.WMS_VERSION), params));
+        params.set(Keys.TILE_URL_BUILDER, new URLBuilder(params.getStringValue(Keys.WMS_VERSION), params));
 
         return params;
     }
 
-    protected static AVList wmsGetParamsFromCapsDoc(WMSCapabilities caps, AVList params) {
+    protected static KV wmsGetParamsFromCapsDoc(WMSCapabilities caps, KV params) {
 
         String wmsVersion;
         try {
@@ -74,34 +75,34 @@ public class WMSBasicElevationModel extends BasicElevationModel {
 
         WMSBasicElevationModel.wmsSetFallbacks(params);
 
-        params.set(AVKey.TILE_URL_BUILDER, new URLBuilder(wmsVersion, params));
+        params.set(Keys.TILE_URL_BUILDER, new URLBuilder(wmsVersion, params));
 
         return params;
     }
 
-    protected static void wmsSetFallbacks(AVList params) {
-        if (params.get(AVKey.LEVEL_ZERO_TILE_DELTA) == null) {
+    protected static void wmsSetFallbacks(KV params) {
+        if (params.get(Keys.LEVEL_ZERO_TILE_DELTA) == null) {
             Angle delta = new Angle(20);
-            params.set(AVKey.LEVEL_ZERO_TILE_DELTA, new LatLon(delta, delta));
+            params.set(Keys.LEVEL_ZERO_TILE_DELTA, new LatLon(delta, delta));
         }
 
-        if (params.get(AVKey.TILE_WIDTH) == null)
-            params.set(AVKey.TILE_WIDTH, 150);
+        if (params.get(Keys.TILE_WIDTH) == null)
+            params.set(Keys.TILE_WIDTH, 150);
 
-        if (params.get(AVKey.TILE_HEIGHT) == null)
-            params.set(AVKey.TILE_HEIGHT, 150);
+        if (params.get(Keys.TILE_HEIGHT) == null)
+            params.set(Keys.TILE_HEIGHT, 150);
 
-        if (params.get(AVKey.FORMAT_SUFFIX) == null)
-            params.set(AVKey.FORMAT_SUFFIX, ".bil");
+        if (params.get(Keys.FORMAT_SUFFIX) == null)
+            params.set(Keys.FORMAT_SUFFIX, ".bil");
 
-        if (params.get(AVKey.MISSING_DATA_SIGNAL) == null)
-            params.set(AVKey.MISSING_DATA_SIGNAL, Double.NEGATIVE_INFINITY);
+        if (params.get(Keys.MISSING_DATA_SIGNAL) == null)
+            params.set(Keys.MISSING_DATA_SIGNAL, Double.NEGATIVE_INFINITY);
 
-        if (params.get(AVKey.NUM_LEVELS) == null)
-            params.set(AVKey.NUM_LEVELS, 18); // approximately 20 cm per pixel
+        if (params.get(Keys.NUM_LEVELS) == null)
+            params.set(Keys.NUM_LEVELS, 18); // approximately 20 cm per pixel
 
-        if (params.get(AVKey.NUM_EMPTY_LEVELS) == null)
-            params.set(AVKey.NUM_EMPTY_LEVELS, 0);
+        if (params.get(Keys.NUM_EMPTY_LEVELS) == null)
+            params.set(Keys.NUM_EMPTY_LEVELS, 0);
     }
 
     /**
@@ -109,12 +110,12 @@ public class WMSBasicElevationModel extends BasicElevationModel {
      * output as key-value pairs to params. Supported key and parameter names are: <table><caption style="font-weight:
      * bold;">Parameters</caption>
      * <tr><th>Parameter</th><th>Value</th><th>Type</th></tr>
-     * <tr><td>{@link AVKey#ELEVATION_MAX}</td><td>WMS layer's
-     * maximum extreme elevation</td><td>Double</td></tr> <tr><td>{@link AVKey#ELEVATION_MIN}</td><td>WMS layer's
-     * minimum extreme elevation</td><td>Double</td></tr> <tr><td>{@link AVKey#DATA_TYPE}</td><td>Translate WMS layer's
+     * <tr><td>{@link Keys#ELEVATION_MAX}</td><td>WMS layer's
+     * maximum extreme elevation</td><td>Double</td></tr> <tr><td>{@link Keys#ELEVATION_MIN}</td><td>WMS layer's
+     * minimum extreme elevation</td><td>Double</td></tr> <tr><td>{@link Keys#DATA_TYPE}</td><td>Translate WMS layer's
      * image format to a matching data type</td><td>String</td></tr> </table> This also parses common WMS layer
      * parameters by invoking {@link DataConfigurationUtils#getWMSLayerConfigParams(WMSCapabilities, String[],
-     * AVList)}.
+     * KV)}.
      *
      * @param caps                  the WMS Capabilities source to parse for WMSBasicElevationModel configuration
      *                              parameters.
@@ -126,8 +127,8 @@ public class WMSBasicElevationModel extends BasicElevationModel {
      *                                  required key-value pairs.
      * @throws WWRuntimeException       if the Capabilities document does not contain any of the required information.
      */
-    public static AVList getWMSElevationModelConfigParams(WMSCapabilities caps, String[] formatOrderPreference,
-        AVList params) {
+    public static KV getWMSElevationModelConfigParams(WMSCapabilities caps, String[] formatOrderPreference,
+        KV params) {
 //        if (caps == null) {
 //            String message = Logging.getMessage("nullValue.WMSCapabilities");
 //            Logging.logger().severe(message);
@@ -144,7 +145,7 @@ public class WMSBasicElevationModel extends BasicElevationModel {
         DataConfigurationUtils.getWMSLayerConfigParams(caps, formatOrderPreference, params);
 
         // Attempt to extract the WMS layer names from the specified parameters.
-        String layerNames = params.getStringValue(AVKey.LAYER_NAMES);
+        String layerNames = params.getStringValue(Keys.LAYER_NAMES);
         if (layerNames == null || layerNames.isEmpty()) {
             String message = Logging.getMessage("nullValue.WMSLayerNames");
             Logging.logger().severe(message);
@@ -161,28 +162,28 @@ public class WMSBasicElevationModel extends BasicElevationModel {
         // Get the layer's extreme elevations.
         Double[] extremes = caps.getLayerExtremeElevations(names);
 
-        Double d = (Double) params.get(AVKey.ELEVATION_MIN);
+        Double d = (Double) params.get(Keys.ELEVATION_MIN);
         if (d == null && extremes != null && extremes[0] != null)
-            params.set(AVKey.ELEVATION_MIN, extremes[0]);
+            params.set(Keys.ELEVATION_MIN, extremes[0]);
 
-        d = (Double) params.get(AVKey.ELEVATION_MAX);
+        d = (Double) params.get(Keys.ELEVATION_MAX);
         if (d == null && extremes != null && extremes[1] != null)
-            params.set(AVKey.ELEVATION_MAX, extremes[1]);
+            params.set(Keys.ELEVATION_MAX, extremes[1]);
 
         // Compute the internal pixel type from the image format.
-        if (params.get(AVKey.DATA_TYPE) == null && params.get(AVKey.IMAGE_FORMAT) != null) {
-            String s = WWIO.makeDataTypeForMimeType(params.get(AVKey.IMAGE_FORMAT).toString());
+        if (params.get(Keys.DATA_TYPE) == null && params.get(Keys.IMAGE_FORMAT) != null) {
+            String s = WWIO.makeDataTypeForMimeType(params.get(Keys.IMAGE_FORMAT).toString());
             if (s != null)
-                params.set(AVKey.DATA_TYPE, s);
+                params.set(Keys.DATA_TYPE, s);
         }
 
         // Use the default data type.
-        if (params.get(AVKey.DATA_TYPE) == null)
-            params.set(AVKey.DATA_TYPE, AVKey.INT16);
+        if (params.get(Keys.DATA_TYPE) == null)
+            params.set(Keys.DATA_TYPE, Keys.INT16);
 
         // Use the default byte order.
-        if (params.get(AVKey.BYTE_ORDER) == null)
-            params.set(AVKey.BYTE_ORDER, AVKey.LITTLE_ENDIAN);
+        if (params.get(Keys.BYTE_ORDER) == null)
+            params.set(Keys.BYTE_ORDER, Keys.LITTLE_ENDIAN);
 
         return params;
     }
@@ -191,7 +192,7 @@ public class WMSBasicElevationModel extends BasicElevationModel {
     //********************  Configuration  *************************//
     //**************************************************************//
 
-    protected static AVList wmsRestorableStateToParams(String stateInXml) {
+    protected static KV wmsRestorableStateToParams(String stateInXml) {
 
         RestorableSupport rs;
         try {
@@ -204,40 +205,40 @@ public class WMSBasicElevationModel extends BasicElevationModel {
             throw new IllegalArgumentException(message, e);
         }
 
-        AVList params = new AVListImpl();
+        KV params = new KVMap();
         WMSBasicElevationModel.wmsRestoreStateForParams(rs, null, params);
         return params;
     }
 
     protected static void wmsRestoreStateForParams(RestorableSupport rs, RestorableSupport.StateObject context,
-        AVList params) {
+        KV params) {
         // Invoke the BasicElevationModel functionality.
         BasicElevationModel.restoreStateForParams(rs, null, params);
 
-        String s = rs.getStateValueAsString(context, AVKey.IMAGE_FORMAT);
+        String s = rs.getStateValueAsString(context, Keys.IMAGE_FORMAT);
         if (s != null)
-            params.set(AVKey.IMAGE_FORMAT, s);
+            params.set(Keys.IMAGE_FORMAT, s);
 
-        s = rs.getStateValueAsString(context, AVKey.TITLE);
+        s = rs.getStateValueAsString(context, Keys.TITLE);
         if (s != null)
-            params.set(AVKey.TITLE, s);
+            params.set(Keys.TITLE, s);
 
-        s = rs.getStateValueAsString(context, AVKey.DISPLAY_NAME);
+        s = rs.getStateValueAsString(context, Keys.DISPLAY_NAME);
         if (s != null)
-            params.set(AVKey.DISPLAY_NAME, s);
+            params.set(Keys.DISPLAY_NAME, s);
 
         RestorableSupport.adjustTitleAndDisplayName(params);
 
-        s = rs.getStateValueAsString(context, AVKey.LAYER_NAMES);
+        s = rs.getStateValueAsString(context, Keys.LAYER_NAMES);
         if (s != null)
-            params.set(AVKey.LAYER_NAMES, s);
+            params.set(Keys.LAYER_NAMES, s);
 
-        s = rs.getStateValueAsString(context, AVKey.STYLE_NAMES);
+        s = rs.getStateValueAsString(context, Keys.STYLE_NAMES);
         if (s != null)
-            params.set(AVKey.STYLE_NAMES, s);
+            params.set(Keys.STYLE_NAMES, s);
 
         s = rs.getStateValueAsString(context, "wms.Version");
-        params.set(AVKey.TILE_URL_BUILDER, new URLBuilder(s, params));
+        params.set(Keys.TILE_URL_BUILDER, new URLBuilder(s, params));
     }
 
     //**************************************************************//
@@ -258,7 +259,7 @@ public class WMSBasicElevationModel extends BasicElevationModel {
      * @param params configuration parameters describing this WMS basic elevation model.
      * @return a WMS basic elevation model configuration document.
      */
-    protected Document createConfigurationDocument(AVList params) {
+    protected Document createConfigurationDocument(KV params) {
         Document doc = super.createConfigurationDocument(params);
         if (doc == null || doc.getDocumentElement() == null)
             return doc;
@@ -283,7 +284,7 @@ public class WMSBasicElevationModel extends BasicElevationModel {
 
         ByteBuffer b = WMSBasicElevationModel.downloadElevations(tile).getBuffer();
         if (b!=null)
-            tile.setElevations(BufferWrapper.ByteBufferWrapper.wrap(b, AVKey.INT8), this);
+            tile.setElevations(BufferWrapper.ByteBufferWrapper.wrap(b, Keys.INT8), this);
         else
             return;
 
@@ -327,11 +328,11 @@ public class WMSBasicElevationModel extends BasicElevationModel {
         private final String crs;
         protected String URLTemplate;
 
-        protected URLBuilder(String version, AVList params) {
+        protected URLBuilder(String version, KV params) {
 
-            this.layerNames = params.getStringValue(AVKey.LAYER_NAMES);
-            this.styleNames = params.getStringValue(AVKey.STYLE_NAMES);
-            this.imageFormat = params.getStringValue(AVKey.IMAGE_FORMAT);
+            this.layerNames = params.getStringValue(Keys.LAYER_NAMES);
+            this.styleNames = params.getStringValue(Keys.STYLE_NAMES);
+            this.imageFormat = params.getStringValue(Keys.IMAGE_FORMAT);
 
             String coordSystemKey;
             String defaultCS;
@@ -347,7 +348,7 @@ public class WMSBasicElevationModel extends BasicElevationModel {
                 defaultCS = "EPSG:4326";
             }
 
-            String coordinateSystem = params.getStringValue(AVKey.COORDINATE_SYSTEM);
+            String coordinateSystem = params.getStringValue(Keys.COORDINATE_SYSTEM);
             this.crs = coordSystemKey + (coordinateSystem != null ? coordinateSystem : defaultCS);
         }
 

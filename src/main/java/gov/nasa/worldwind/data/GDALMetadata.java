@@ -6,6 +6,7 @@
 
 package gov.nasa.worldwind.data;
 
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.util.*;
@@ -31,7 +32,7 @@ public class GDALMetadata {
     protected GDALMetadata() {
     }
 
-    public static AVList extractExtendedAndFormatSpecificMetadata(Dataset ds, AVList extParams, AVList params)
+    public static KV extractExtendedAndFormatSpecificMetadata(Dataset ds, KV extParams, KV params)
         throws IllegalArgumentException, WWRuntimeException {
         if (null == ds) {
             String message = Logging.getMessage("nullValue.DataSetIsNull");
@@ -40,7 +41,7 @@ public class GDALMetadata {
         }
 
         if (null == extParams) {
-            extParams = new AVListImpl();
+            extParams = new KVMap();
         }
 
         try {
@@ -64,8 +65,8 @@ public class GDALMetadata {
         return GDALMetadata.mapExtendedMetadata(ds, extParams, params);
     }
 
-    static protected AVList mapExtendedMetadata(Dataset ds, AVList extParams, AVList params) {
-        params = (null == params) ? new AVListImpl() : params;
+    static protected KV mapExtendedMetadata(Dataset ds, KV extParams, KV params) {
+        params = (null == params) ? new KVMap() : params;
 
         if (null == extParams) {
             return params;
@@ -82,7 +83,7 @@ public class GDALMetadata {
         return params;
     }
 
-    protected static void mapNITFMetadata(AVList extParams, AVList params) {
+    protected static void mapNITFMetadata(KV extParams, KV params) {
         if (extParams.hasKey(GDALMetadata.NITF_ONAME)) {
             // values: GeoEye, DigitalGlobe
         }
@@ -101,7 +102,7 @@ public class GDALMetadata {
             if (!WWUtil.isEmpty(o) && o instanceof String) {
                 Integer abpp = WWUtil.convertStringToInteger((String) o);
                 if (null != abpp)
-                    params.set(AVKey.RASTER_BAND_ACTUAL_BITS_PER_PIXEL, abpp);
+                    params.set(Keys.RASTER_BAND_ACTUAL_BITS_PER_PIXEL, abpp);
             }
         }
 
@@ -110,7 +111,7 @@ public class GDALMetadata {
             if (!WWUtil.isEmpty(o) && o instanceof String) {
                 Double maxPixelValue = WWUtil.convertStringToDouble((String) o);
                 if (null != maxPixelValue)
-                    params.set(AVKey.RASTER_BAND_MAX_PIXEL_VALUE, maxPixelValue);
+                    params.set(Keys.RASTER_BAND_MAX_PIXEL_VALUE, maxPixelValue);
             }
         }
 
@@ -128,9 +129,9 @@ public class GDALMetadata {
         }
     }
 
-    public static AVList convertToWorldWind(AVList extParams, AVList destParams) {
+    public static KV convertToWorldWind(KV extParams, KV destParams) {
         if (null == destParams) {
-            destParams = new AVListImpl();
+            destParams = new KVMap();
         }
 
         if (null == extParams) {
@@ -162,21 +163,21 @@ public class GDALMetadata {
         }
 
         if (null != proj && proj.contains("UTM")) {
-            destParams.set(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_PROJECTED);
-            destParams.set(AVKey.PROJECTION_NAME, AVKey.PROJECTION_UTM);
+            destParams.set(Keys.COORDINATE_SYSTEM, Keys.COORDINATE_SYSTEM_PROJECTED);
+            destParams.set(Keys.PROJECTION_NAME, Keys.PROJECTION_UTM);
 
             if (null != zone) {
                 if (!zone.isEmpty() && zone.charAt(zone.length() - 1) == 'N') {
-                    destParams.set(AVKey.PROJECTION_HEMISPHERE, AVKey.NORTH);
+                    destParams.set(Keys.PROJECTION_HEMISPHERE, Keys.NORTH);
                     zone = zone.substring(0, zone.length() - 1);
                 } else if (!zone.isEmpty() && zone.charAt(zone.length() - 1) == 'S') {
-                    destParams.set(AVKey.PROJECTION_HEMISPHERE, AVKey.SOUTH);
+                    destParams.set(Keys.PROJECTION_HEMISPHERE, Keys.SOUTH);
                     zone = zone.substring(0, zone.length() - 1);
                 }
 
                 Integer i = WWUtil.makeInteger(zone.trim());
                 if (i != null && i >= 1 && i <= 60) {
-                    destParams.set(AVKey.PROJECTION_ZONE, i);
+                    destParams.set(Keys.PROJECTION_ZONE, i);
                 }
             }
         }
@@ -187,7 +188,7 @@ public class GDALMetadata {
                 s = s.toUpperCase();
                 if (s.contains("WGS") && s.contains("84")) {
                     ellps = datum = "WGS84";
-                    destParams.set(AVKey.PROJECTION_DATUM, datum);
+                    destParams.set(Keys.PROJECTION_DATUM, datum);
                 }
             }
         }
@@ -197,14 +198,14 @@ public class GDALMetadata {
             if (s != null) {
                 s = s.toLowerCase();
                 if (s.contains("meter") || s.contains("metre")) {
-                    units = AVKey.UNIT_METER;
+                    units = Keys.UNIT_METER;
                 }
                 if (s.contains("feet") || s.contains("foot")) {
-                    units = AVKey.UNIT_FOOT;
+                    units = Keys.UNIT_FOOT;
                 }
 
                 if (null != units) {
-                    destParams.set(AVKey.PROJECTION_UNITS, units);
+                    destParams.set(Keys.PROJECTION_UNITS, units);
                 }
             }
         }
@@ -224,37 +225,37 @@ public class GDALMetadata {
         }
 
         if (null != epsg) {
-            destParams.set(AVKey.PROJECTION_EPSG_CODE, epsg);
+            destParams.set(Keys.PROJECTION_EPSG_CODE, epsg);
         }
 
         StringBuilder proj4 = new StringBuilder();
 
-        if (AVKey.COORDINATE_SYSTEM_PROJECTED.equals(destParams.get(AVKey.COORDINATE_SYSTEM))) {
+        if (Keys.COORDINATE_SYSTEM_PROJECTED.equals(destParams.get(Keys.COORDINATE_SYSTEM))) {
             //        +proj=utm +zone=38 +ellps=WGS84 +datum=WGS84 +units=m
 
-            if (AVKey.PROJECTION_UTM.equals(destParams.get(AVKey.PROJECTION_NAME))) {
+            if (Keys.PROJECTION_UTM.equals(destParams.get(Keys.PROJECTION_NAME))) {
                 proj4.append("+proj=utm");
             }
 
-            if (destParams.hasKey(AVKey.PROJECTION_ZONE)) {
-                proj4.append(" +zone=").append(destParams.get(AVKey.PROJECTION_ZONE));
+            if (destParams.hasKey(Keys.PROJECTION_ZONE)) {
+                proj4.append(" +zone=").append(destParams.get(Keys.PROJECTION_ZONE));
             }
 
-            if (destParams.hasKey(AVKey.PROJECTION_DATUM)) {
-                proj4.append(" +ellps=").append(destParams.get(AVKey.PROJECTION_DATUM));
-                proj4.append(" +datum=").append(destParams.get(AVKey.PROJECTION_DATUM));
+            if (destParams.hasKey(Keys.PROJECTION_DATUM)) {
+                proj4.append(" +ellps=").append(destParams.get(Keys.PROJECTION_DATUM));
+                proj4.append(" +datum=").append(destParams.get(Keys.PROJECTION_DATUM));
             }
 
-            if (destParams.hasKey(AVKey.PROJECTION_UNITS)) {
+            if (destParams.hasKey(Keys.PROJECTION_UNITS)) {
                 proj4.append(" +units=").append(
-                    AVKey.UNIT_METER.equals(destParams.get(AVKey.PROJECTION_UNITS)) ? "m" : "f"
+                    Keys.UNIT_METER.equals(destParams.get(Keys.PROJECTION_UNITS)) ? "m" : "f"
                 );
             }
 
             try {
                 SpatialReference srs = new SpatialReference();
                 srs.ImportFromProj4(proj4.toString());
-                destParams.set(AVKey.SPATIAL_REFERENCE_WKT, srs.ExportToWkt());
+                destParams.set(Keys.SPATIAL_REFERENCE_WKT, srs.ExportToWkt());
             }
             catch (Throwable t) {
                 Logging.logger().log(Level.FINEST, t.getMessage(), t);

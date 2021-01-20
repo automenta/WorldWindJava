@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.render;
 
 import com.jogamp.opengl.GL2;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.pick.*;
 import gov.nasa.worldwind.util.*;
@@ -76,7 +76,7 @@ public class MultiLineTextRenderer {
     protected TextRenderer textRenderer;
     protected int lineSpacing;            // Inter line spacing in pixels
     protected int lineHeight = 14;            // Will be set by getBounds() or by application
-    protected String textAlign = AVKey.LEFT;  // Text alignment
+    protected String textAlign = Keys.LEFT;  // Text alignment
     protected String continuationString = "...";
     protected Color textColor = Color.DARK_GRAY;
     protected Color backColor = Color.LIGHT_GRAY;
@@ -235,9 +235,9 @@ public class MultiLineTextRenderer {
         Color color = dc.getUniquePickColor();
         int colorCode = color.getRGB();
         PickedObject po = new PickedObject(colorCode, refObject, refPosition, false);
-        po.set(AVKey.TEXT, MultiLineTextRenderer.removeTagsHTML(word.trim()));
+        po.set(Keys.TEXT, MultiLineTextRenderer.removeTagsHTML(word.trim()));
         if (hyperlink != null)
-            po.set(AVKey.URL, hyperlink);
+            po.set(Keys.URL, hyperlink);
         pickSupport.addPickableObject(po);
         // Draw word rectangle
         gl.glColor3ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
@@ -306,8 +306,8 @@ public class MultiLineTextRenderer {
     //****************************************************************************
 
     /**
-     * Get the current text alignment. Can be one of {@link AVKey#LEFT} the default, {@link AVKey#CENTER} or {@link
-     * AVKey#RIGHT}.
+     * Get the current text alignment. Can be one of {@link Keys#LEFT} the default, {@link Keys#CENTER} or {@link
+     * Keys#RIGHT}.
      *
      * @return the current text alignment.
      */
@@ -316,13 +316,13 @@ public class MultiLineTextRenderer {
     }
 
     /**
-     * Set the current text alignment. Can be one of {@link AVKey#LEFT} the default, {@link AVKey#CENTER} or {@link
-     * AVKey#RIGHT}.
+     * Set the current text alignment. Can be one of {@link Keys#LEFT} the default, {@link Keys#CENTER} or {@link
+     * Keys#RIGHT}.
      *
      * @param align the current text alignment.
      */
     public void setTextAlign(String align) {
-        if (!align.equals(AVKey.LEFT) && !align.equals(AVKey.CENTER) && !align.equals(AVKey.RIGHT)) {
+        if (!align.equals(Keys.LEFT) && !align.equals(Keys.CENTER) && !align.equals(Keys.RIGHT)) {
             String msg = Logging.getMessage("generic.ArgumentOutOfRange", align);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -501,11 +501,11 @@ public class MultiLineTextRenderer {
             throw new IllegalArgumentException(msg);
         }
 
-        if (effect.equals(AVKey.TEXT_EFFECT_SHADOW)) {
+        if (effect.equals(Keys.TEXT_EFFECT_SHADOW)) {
             this.textRenderer.setColor(backColor);
             this.draw(text, x + 1, y - 1, textLineHeight);
             this.textRenderer.setColor(textColor);
-        } else if (effect.equals(AVKey.TEXT_EFFECT_OUTLINE)) {
+        } else if (effect.equals(Keys.TEXT_EFFECT_OUTLINE)) {
             this.textRenderer.setColor(backColor);
             this.draw(text, x, y + 1, textLineHeight);
             this.draw(text, x + 1, y, textLineHeight);
@@ -538,9 +538,9 @@ public class MultiLineTextRenderer {
         String[] lines = text.split("\n");
         for (String line : lines) {
             int xAligned = x;
-            if (this.textAlign.equals(AVKey.CENTER))
+            if (this.textAlign.equals(Keys.CENTER))
                 xAligned = x - (int) (this.textRenderer.getBounds(line).getWidth() / 2);
-            else if (this.textAlign.equals(AVKey.RIGHT))
+            else if (this.textAlign.equals(Keys.RIGHT))
                 xAligned = x - (int) (this.textRenderer.getBounds(line).getWidth());
             y -= textLineHeight;
             this.textRenderer.draw3D(line, xAligned, y, 0, 1);
@@ -582,9 +582,9 @@ public class MultiLineTextRenderer {
         String[] lines = text.split("\n");
         for (String line : lines) {
             int xAligned = x;
-            if (this.textAlign.equals(AVKey.CENTER))
+            if (this.textAlign.equals(Keys.CENTER))
                 xAligned = x - (int) (this.textRenderer.getBounds(line).getWidth() / 2);
-            else if (this.textAlign.equals(AVKey.RIGHT))
+            else if (this.textAlign.equals(Keys.RIGHT))
                 xAligned = x - (int) (this.textRenderer.getBounds(line).getWidth());
             y -= textLineHeight;
             drawLineWithUniqueColors(line, xAligned, y, dc, pickSupport, refObject, refPosition);
@@ -615,7 +615,7 @@ public class MultiLineTextRenderer {
             Color color = dc.getUniquePickColor();
             int colorCode = color.getRGB();
             PickedObject po = new PickedObject(colorCode, refObject, refPosition, false);
-            po.set(AVKey.TEXT, word.trim());
+            po.set(Keys.TEXT, word.trim());
             pickSupport.addPickableObject(po);
             // Draw word rectangle
             gl.glColor3ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
@@ -971,9 +971,9 @@ public class MultiLineTextRenderer {
                 // Set line start x
                 drawX = x;
                 lineBounds = getTextBoundsHTML(line, new DrawState(ds));
-                if (this.textAlign.equals(AVKey.CENTER))
+                if (this.textAlign.equals(Keys.CENTER))
                     drawX = x - lineBounds.getWidth() / 2;
-                else if (this.textAlign.equals(AVKey.RIGHT))
+                else if (this.textAlign.equals(Keys.RIGHT))
                     drawX = x - lineBounds.getWidth();
 
                 // Skip line height

@@ -6,6 +6,8 @@
 
 package gov.nasa.worldwind.symbology;
 
+import gov.nasa.worldwind.avlist.KV;
+
 /**
  * An interface for tactical graphics that depict routes: a series of point graphics connected by lines. For example,
  * the MIL-STD-2525 symbology set defines an Air Control Route that is composed of Air Control Points. The route is
@@ -14,7 +16,7 @@ package gov.nasa.worldwind.symbology;
  *
  * @author pabercrombie
  * @version $Id: TacticalRoute.java 1171 2013-02-11 21:45:02Z dcollins $
- * @see TacticalGraphicFactory#createRoute(String, Iterable, gov.nasa.worldwind.avlist.AVList)
+ * @see TacticalGraphicFactory#createRoute(String, Iterable, KV)
  */
 public interface TacticalRoute extends TacticalGraphic {
     /**

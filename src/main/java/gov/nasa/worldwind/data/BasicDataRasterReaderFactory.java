@@ -6,7 +6,8 @@
 
 package gov.nasa.worldwind.data;
 
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.Keys;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.util.Logging;
 
 /**
@@ -22,9 +23,9 @@ import gov.nasa.worldwind.util.Logging;
  *
  * </pre>
  * <p>
- * To specify a different factory, set the {@link gov.nasa.worldwind.avlist.AVKey#DATA_RASTER_READER_FACTORY_CLASS_NAME}
+ * To specify a different factory, set the {@link Keys#DATA_RASTER_READER_FACTORY_CLASS_NAME}
  * value in {@link gov.nasa.worldwind.Configuration}, either directly or via the WorldWind configuration file. To add
- * readers to the default set, create a subclass of this class, override {@link #findReaderFor(Object, AVList)}, and
+ * readers to the default set, create a subclass of this class, override {@link #findReaderFor(Object, KV)}, and
  * specify the new class to the configuration.
  *
  * @author tag
@@ -54,7 +55,7 @@ public class BasicDataRasterReaderFactory implements DataRasterReaderFactory {
     /**
      * {@inheritDoc}
      */
-    public DataRasterReader findReaderFor(Object source, AVList params) {
+    public DataRasterReader findReaderFor(Object source, KV params) {
         if (source == null) {
             String message = Logging.getMessage("nullValue.SourceIsNull");
             Logging.logger().severe(message);
@@ -67,7 +68,7 @@ public class BasicDataRasterReaderFactory implements DataRasterReaderFactory {
     /**
      * {@inheritDoc}
      */
-    public DataRasterReader findReaderFor(Object source, AVList params, DataRasterReader[] readers) {
+    public DataRasterReader findReaderFor(Object source, KV params, DataRasterReader[] readers) {
         if (source == null) {
             String message = Logging.getMessage("nullValue.SourceIsNull");
             Logging.logger().severe(message);

@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.data;
 
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.KV;
 
 import java.io.IOException;
 
@@ -15,7 +15,7 @@ import java.io.IOException;
  * @author dcollins
  * @version $Id: DataRasterReader.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface DataRasterReader extends AVList {
+public interface DataRasterReader extends KV {
     String getDescription(); // TODO: remove
 
     String[] getSuffixes(); // TODO: remove
@@ -33,7 +33,7 @@ public interface DataRasterReader extends AVList {
      * @param params parameters required by certain reader implementations. May be null for most readers.
      * @return true if this reader can read the data source, otherwise false.
      */
-    boolean canRead(Object source, AVList params);
+    boolean canRead(Object source, KV params);
 
     /**
      * Reads and returns the DataRaster instances from a data source. The source may be one of the following: The source
@@ -51,7 +51,7 @@ public interface DataRasterReader extends AVList {
      * @return the list of metadata read from the data source. The list is empty if the data source has no metadata.
      * @throws IOException if an IO error occurs.
      */
-    DataRaster[] read(Object source, AVList params) throws IOException;
+    DataRaster[] read(Object source, KV params) throws IOException;
 
     /**
      * Reads and returns the metadata from a data source. The source may be one of the following:
@@ -70,7 +70,7 @@ public interface DataRasterReader extends AVList {
      * @return the list of metadata read from the data source. The list is empty if the data source has no metadata.
      * @throws IOException if an IO error occurs.
      */
-    AVList readMetadata(Object source, AVList params) throws IOException;
+    KV readMetadata(Object source, KV params) throws IOException;
 
     /**
      * Indicates whether a data source is imagery. TODO: Identify when parameters must be passed. The source may be one
@@ -86,7 +86,7 @@ public interface DataRasterReader extends AVList {
      * @param params parameters required by certain reader implementations. May be null for most readers.
      * @return true if the source is imagery, otherwise false.
      */
-    boolean isImageryRaster(Object source, AVList params);
+    boolean isImageryRaster(Object source, KV params);
 
     /**
      * Indicates whether a data source is elevation data. TODO: Identify when parameters must be passed.
@@ -104,5 +104,5 @@ public interface DataRasterReader extends AVList {
      *               when parameters must be passed.
      * @return true if the source is elevation data, otherwise false.
      */
-    boolean isElevationsRaster(Object source, AVList params);
+    boolean isElevationsRaster(Object source, KV params);
 }

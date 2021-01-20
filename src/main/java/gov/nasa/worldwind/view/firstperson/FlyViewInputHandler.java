@@ -7,7 +7,6 @@ package gov.nasa.worldwind.view.firstperson;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.animation.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.video.awt.*;
@@ -223,7 +222,7 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
                 view.getEyePosition(), newPosition, smoothing,
                 ViewPropertyAccessor.createEyePositionAccessor(view)));
 
-        view.firePropertyChange(AVKey.VIEW, null, view);
+        view.firePropertyChange(Keys.VIEW, null, view);
     }
 
     protected void onHorizontalTranslateRel(double forwardInput, double sideInput,
@@ -273,7 +272,7 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
             Position newPosition = view.getGlobe().computePositionFromPoint(eyePoint);
 
             this.setEyePosition(this.uiAnimControl, view, newPosition, actionAttribs);
-            view.firePropertyChange(AVKey.VIEW, null, view);
+            view.firePropertyChange(Keys.VIEW, null, view);
         }
     }
 
@@ -291,7 +290,7 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
             new RotateToAngleAnimator(
                 view.getHeading(), Angle.ZERO, smoothing,
                 ViewPropertyAccessor.createHeadingAccessor(view)));
-        view.firePropertyChange(AVKey.VIEW, null, view);
+        view.firePropertyChange(Keys.VIEW, null, view);
     }
 
     protected void onResetPitch(ViewInputAttributes.ActionAttributes actionAttribs) {
@@ -308,7 +307,7 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
             new RotateToAngleAnimator(
                 view.getPitch(), Angle.POS90, smoothing,
                 ViewPropertyAccessor.createPitchAccessor(view)));
-        view.firePropertyChange(AVKey.VIEW, null, view);
+        view.firePropertyChange(Keys.VIEW, null, view);
     }
 
     protected void onResetHeadingPitchRoll(ViewInputAttributes.ActionAttributes actionAttribs) {
@@ -330,7 +329,7 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
             new RotateToAngleAnimator(
                 view.getPitch(), Angle.ZERO, smoothing,
                 ViewPropertyAccessor.createRollAccessor(view)));
-        view.firePropertyChange(AVKey.VIEW, null, view);
+        view.firePropertyChange(Keys.VIEW, null, view);
     }
 
     protected void onRotateView(double headingInput, double pitchInput,
@@ -360,7 +359,7 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
                 actionAttribs);
             this.setHeading(view, this.uiAnimControl, view.getHeading().add(headingChange),
                 actionAttribs);
-            view.firePropertyChange(AVKey.VIEW, null, view);
+            view.firePropertyChange(Keys.VIEW, null, view);
         }
     }
 
@@ -397,7 +396,7 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
         if (view instanceof BasicFlyView) {
             this.setRoll(view, this.uiAnimControl, view.getRoll().add(rollChange), actionAttribs);
 
-            view.firePropertyChange(AVKey.VIEW, null, view);
+            view.firePropertyChange(Keys.VIEW, null, view);
         }
     }
 
@@ -411,7 +410,7 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
         Position newPos = new Position(position, position.getElevation() + (elevChange));
         this.setEyePosition(uiAnimControl, view, newPos, actionAttribs);
 
-        view.firePropertyChange(AVKey.VIEW, null, view);
+        view.firePropertyChange(Keys.VIEW, null, view);
     }
 
     public void apply() {
@@ -422,10 +421,10 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
             return;
         }
         if (this.gotoAnimControl.stepAnimators()) {
-            view.firePropertyChange(AVKey.VIEW, null, view);
+            view.firePropertyChange(Keys.VIEW, null, view);
         }
         if (this.uiAnimControl.stepAnimators()) {
-            view.firePropertyChange(AVKey.VIEW, null, view);
+            view.firePropertyChange(Keys.VIEW, null, view);
         }
     }
 
@@ -508,7 +507,7 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
                 posAnimator.start();
             }
         }
-        view.firePropertyChange(AVKey.VIEW, null, view);
+        view.firePropertyChange(Keys.VIEW, null, view);
     }
 
     public void goTo(Position lookAtPos, double distance) {
@@ -534,7 +533,7 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
 
         this.gotoAnimControl.put(FlyViewInputHandler.VIEW_ANIM_PAN, panAnimator);
 
-        this.getView().firePropertyChange(AVKey.VIEW, null, this.getView());
+        this.getView().firePropertyChange(Keys.VIEW, null, this.getView());
     }
 
     public void lookAt(Position lookAtPos, long timeToMove) {
@@ -567,9 +566,9 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
             timeToMove, WorldWind.ABSOLUTE);
 
         this.gotoAnimControl.put(FlyViewInputHandler.VIEW_ANIM_PAN, panAnimator);
-        this.getView().firePropertyChange(AVKey.VIEW, null, this.getView());
+        this.getView().firePropertyChange(Keys.VIEW, null, this.getView());
 
-        view.firePropertyChange(AVKey.VIEW, null, view);
+        view.firePropertyChange(Keys.VIEW, null, view);
     }
 
     public void stopAnimators() {

@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.formats.shapefile;
 
 import com.jogamp.common.nio.Buffers;
-import gov.nasa.worldwind.Exportable;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.exception.*;
 import gov.nasa.worldwind.formats.worldfile.WorldFile;
@@ -63,21 +63,21 @@ import java.util.logging.Level;
  * Shapefile throws a {@link WWRuntimeException} during construction.</ul>
  * <p>
  * The Shapefile's coordinate system can be specified in either an accompanying projection file, or by specifying the
- * coordinate system parameters in an {@link AVList} during Shapefile's construction. The Shapefile gives priority to
+ * coordinate system parameters in an {@link KV} during Shapefile's construction. The Shapefile gives priority to
  * the AVList if an accompanying projection file is available and AVList projection parameters are specified. If an
  * accompanying projection file is available, the Shapefile attempts to parse the projection file as an OGC coordinate
  * system encoded in well-known text format. For details, see the OGC Coordinate Transform Service (CT) specification at
  * <a href="http://www.opengeospatial.org/standards/ct">http://www.opengeospatial.org/standards/ct</a>. The Shapefile
  * expects the AVList specifying its coordinate system parameters to contain the following properties:
- * <ul> <li>{@link AVKey#COORDINATE_SYSTEM} - either {@link
- * AVKey#COORDINATE_SYSTEM_GEOGRAPHIC} or {@link AVKey#COORDINATE_SYSTEM_PROJECTED}.</li>
- * <li>{@link AVKey#PROJECTION_ZONE} - the UTM zone (if coordinate system projection is UTM);
- * an integer in the range 1-60.</li> <li>{@link AVKey#PROJECTION_HEMISPHERE} - the UTM
- * hemisphere (if coordinate system is UTM); either {@link AVKey#NORTH} or {@link
- * AVKey#SOUTH}.</li> </ul>
+ * <ul> <li>{@link Keys#COORDINATE_SYSTEM} - either {@link
+ * Keys#COORDINATE_SYSTEM_GEOGRAPHIC} or {@link Keys#COORDINATE_SYSTEM_PROJECTED}.</li>
+ * <li>{@link Keys#PROJECTION_ZONE} - the UTM zone (if coordinate system projection is UTM);
+ * an integer in the range 1-60.</li> <li>{@link Keys#PROJECTION_HEMISPHERE} - the UTM
+ * hemisphere (if coordinate system is UTM); either {@link Keys#NORTH} or {@link
+ * Keys#SOUTH}.</li> </ul>
  * <p>
  * Subclasses can override how the Shapefile reads and interprets its coordinate system. Override {@link
- * #readCoordinateSystem()} and {@link #validateCoordinateSystem(AVList)} to change how the
+ * #readCoordinateSystem()} and {@link #validateCoordinateSystem(KV)} to change how the
  * Shapefile parses an accompanying projection file and validates the coordinate system parameters. Override
  * {@link #readBoundingRectangle(ByteBuffer)}
  * and {@link #readPoints(ShapefileRecord, ByteBuffer)} to change how the
@@ -86,7 +86,7 @@ import java.util.logging.Level;
  * @author Patrick Murris
  * @version $Id: Shapefile.java 3426 2015-09-30 23:19:16Z dcollins $
  */
-public class Shapefile extends AVListImpl implements Closeable, Exportable {
+public class Shapefile extends KVMap implements Closeable, Exportable {
     public static final String SHAPE_NULL = "gov.nasa.worldwind.formats.shapefile.Shapefile.ShapeNull";
     public static final String SHAPE_POINT = "gov.nasa.worldwind.formats.shapefile.Shapefile.ShapePoint";
     public static final String SHAPE_MULTI_POINT = "gov.nasa.worldwind.formats.shapefile.Shapefile.ShapeMultiPoint";
@@ -178,7 +178,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
      * @throws WWRuntimeException       if the shapefile cannot be opened for any reason, or if the shapefile's
      *                                  coordinate system is unsupported.
      */
-    public Shapefile(Object source, AVList params) {
+    public Shapefile(Object source, KV params) {
         if (source == null || WWUtil.isEmpty(source)) {
             String message = Logging.getMessage("nullValue.SourceIsNull");
             Logging.logger().severe(message);
@@ -186,7 +186,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
         }
 
         try {
-            this.set(AVKey.DISPLAY_NAME, source.toString());
+            this.set(Keys.DISPLAY_NAME, source.toString());
 
             if (source instanceof File)
                 this.initializeFromFile((File) source, params);
@@ -204,7 +204,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
         }
         catch (Exception e) {
             String message = Logging.getMessage("SHP.ExceptionAttemptingToReadShapefile",
-                this.get(AVKey.DISPLAY_NAME));
+                this.get(Keys.DISPLAY_NAME));
             Logging.logger().log(Level.SEVERE, message, e);
             throw new WWRuntimeException(message, e);
         }
@@ -250,7 +250,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
      *                                  coordinate system is unsupported.
      */
     public Shapefile(InputStream shpStream, InputStream shxStream, InputStream dbfStream, InputStream prjStream,
-        AVList params) {
+        KV params) {
         if (shpStream == null) {
             String message = Logging.getMessage("nullValue.InputStreamIsNull");
             Logging.logger().severe(message);
@@ -258,7 +258,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
         }
 
         try {
-            this.set(AVKey.DISPLAY_NAME, shpStream.toString());
+            this.set(Keys.DISPLAY_NAME, shpStream.toString());
             this.initializeFromStreams(shpStream, shxStream, dbfStream, prjStream, params);
         }
         catch (Exception e) {
@@ -306,7 +306,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
      * @throws WWRuntimeException       if the shapefile cannot be opened for any reason, or if the shapefile's
      *                                  coordinate system is unsupported.
      */
-    public Shapefile(InputStream shpStream, InputStream shxStream, InputStream dbfStream, AVList params) {
+    public Shapefile(InputStream shpStream, InputStream shxStream, InputStream dbfStream, KV params) {
         this(shpStream, shxStream, dbfStream, null, params);
     }
 
@@ -530,24 +530,24 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
      * @param params the Shapefile's projection parameters.
      * @return a non-empty string if the projection parameters are invalid; null otherwise.
      */
-    protected static String validateProjection(AVList params) {
-        Object proj = params.get(AVKey.PROJECTION_NAME);
+    protected static String validateProjection(KV params) {
+        Object proj = params.get(Keys.PROJECTION_NAME);
 
-        if (AVKey.PROJECTION_UTM.equals(proj)) {
+        if (Keys.PROJECTION_UTM.equals(proj)) {
             StringBuilder sb = new StringBuilder();
 
             // Validate the UTM zone.
-            Object o = params.get(AVKey.PROJECTION_ZONE);
+            Object o = params.get(Keys.PROJECTION_ZONE);
             if (o == null)
                 sb.append(Logging.getMessage("generic.ZoneIsMissing"));
             else if (!(o instanceof Integer) || ((Integer) o) < 1 || ((Integer) o) > 60)
                 sb.append(Logging.getMessage("generic.ZoneIsInvalid", o));
 
             // Validate the UTM hemisphere.
-            o = params.get(AVKey.PROJECTION_HEMISPHERE);
+            o = params.get(Keys.PROJECTION_HEMISPHERE);
             if (o == null)
                 sb.append(sb.isEmpty() ? "" : ", ").append(Logging.getMessage("generic.HemisphereIsMissing"));
-            else if (!o.equals(AVKey.NORTH) && !o.equals(AVKey.SOUTH))
+            else if (!o.equals(Keys.NORTH) && !o.equals(Keys.SOUTH))
                 sb.append(sb.isEmpty() ? "" : ", ").append(Logging.getMessage("generic.HemisphereIsInvalid", o));
 
             return sb.isEmpty() ? null : sb.toString();
@@ -863,21 +863,21 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
      */
     public ShapefileRecord nextRecord() {
         if (!this.open) {
-            String message = Logging.getMessage("SHP.ShapefileClosed", this.getStringValue(AVKey.DISPLAY_NAME));
+            String message = Logging.getMessage("SHP.ShapefileClosed", this.getStringValue(Keys.DISPLAY_NAME));
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
         }
 
         if (this.header == null) // This should never happen, but we check anyway.
         {
-            String message = Logging.getMessage("SHP.HeaderIsNull", this.getStringValue(AVKey.DISPLAY_NAME));
+            String message = Logging.getMessage("SHP.HeaderIsNull", this.getStringValue(Keys.DISPLAY_NAME));
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
         }
 
         int contentLength = this.header.fileLength - Shapefile.HEADER_LENGTH;
         if (contentLength <= 0 || this.numBytesRead >= contentLength) {
-            String message = Logging.getMessage("SHP.NoRecords", this.getStringValue(AVKey.DISPLAY_NAME));
+            String message = Logging.getMessage("SHP.NoRecords", this.getStringValue(Keys.DISPLAY_NAME));
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
         }
@@ -888,7 +888,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
         }
         catch (Exception e) {
             String message = Logging.getMessage("SHP.ExceptionAttemptingToReadShapefileRecord",
-                this.getStringValue(AVKey.DISPLAY_NAME));
+                this.getStringValue(Keys.DISPLAY_NAME));
             Logging.logger().log(Level.SEVERE, message, e);
             throw new WWRuntimeException(message, e);
         }
@@ -953,7 +953,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
         this.normalizePoints = normalizePoints;
     }
 
-    protected void initializeFromFile(File file, AVList params) throws IOException {
+    protected void initializeFromFile(File file, KV params) throws IOException {
         if (!file.exists()) {
             String message = Logging.getMessage("generic.FileNotFound", file.getPath());
             Logging.logger().severe(message);
@@ -997,7 +997,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
 
         // Initialize the Shapefile before opening its associated attributes file. This avoids opening the attributes
         // file if an exception is thrown while opening the Shapefile.
-        this.set(AVKey.DISPLAY_NAME, file.getPath());
+        this.set(Keys.DISPLAY_NAME, file.getPath());
         this.initialize(params);
 
         // Open the shapefile attribute source as a DBaseFile. We let the DBaseFile determine how to handle source File.
@@ -1012,7 +1012,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
         }
     }
 
-    protected void initializeFromURL(URL url, AVList params) throws IOException {
+    protected void initializeFromURL(URL url, KV params) throws IOException {
         // Opening the Shapefile URL as a URL connection. Throw an IOException if the URL connection cannot be opened,
         // or if it's an invalid Shapefile connection.
         URLConnection connection = url.openConnection();
@@ -1056,7 +1056,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
 
         // Initialize the Shapefile before opening its associated attributes file. This avoids opening the attributes
         // file if an exception is thrown while opening the Shapefile.
-        this.set(AVKey.DISPLAY_NAME, url.toString());
+        this.set(Keys.DISPLAY_NAME, url.toString());
         this.initialize(params);
 
         // Open the shapefile attribute source as a DBaseFile. We let the DBaseFile determine how to handle source URL.
@@ -1072,7 +1072,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
     }
 
     protected void initializeFromStreams(InputStream shpStream, InputStream shxStream, InputStream dbfStream,
-        InputStream prjStream, AVList params) throws IOException {
+        InputStream prjStream, KV params) throws IOException {
         // Create Channels for the collection of resources used by the Shapefile reader. We wrap each source InputStream
         // in a BufferedInputStream because this increases read performance, even when the stream is wrapped in an NIO
         // Channel.
@@ -1102,7 +1102,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
         }
     }
 
-    protected void initializeFromPath(String path, AVList params) throws IOException {
+    protected void initializeFromPath(String path, KV params) throws IOException {
         File file = new File(path);
         if (file.exists()) {
             this.initializeFromFile(file, params);
@@ -1139,17 +1139,17 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
      *               specify no additional parameters.
      * @throws IOException if an error occurs while reading the Shapefile's header.
      */
-    protected void initialize(AVList params) throws IOException {
+    protected void initialize(KV params) throws IOException {
         // Attempt to read this Shapefile's projection resource, and set any projection parameters parsed from that
         // resource. If reading the projection resource fails, log the exception and continue.
         try {
-            AVList csParams = this.readCoordinateSystem();
+            KV csParams = this.readCoordinateSystem();
             if (csParams != null)
                 this.setValues(csParams);
         }
         catch (IOException e) {
             Logging.logger().log(Level.WARNING,
-                Logging.getMessage("SHP.ExceptionAttemptingToReadProjection", this.getStringValue(AVKey.DISPLAY_NAME)),
+                Logging.getMessage("SHP.ExceptionAttemptingToReadProjection", this.getStringValue(Keys.DISPLAY_NAME)),
                 e);
         }
 
@@ -1177,7 +1177,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
         }
         catch (IOException e) {
             Logging.logger().log(Level.WARNING,
-                Logging.getMessage("SHP.ExceptionAttemptingToReadIndex", this.getStringValue(AVKey.DISPLAY_NAME)), e);
+                Logging.getMessage("SHP.ExceptionAttemptingToReadIndex", this.getStringValue(Keys.DISPLAY_NAME)), e);
         }
 
         // Read this Shapefile's header and flag the Shapefile as open. We read the header after reading any projection
@@ -1314,7 +1314,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
             // Log a warning that we could not allocate enough memory to hold the Shapefile index. Shapefile parsing
             // can continue without the optional index, so we catch the exception and return immediately.
             Logging.logger().log(Level.WARNING,
-                Logging.getMessage("SHP.OutOfMemoryAllocatingIndex", this.getStringValue(AVKey.DISPLAY_NAME)), e);
+                Logging.getMessage("SHP.OutOfMemoryAllocatingIndex", this.getStringValue(Keys.DISPLAY_NAME)), e);
             return null;
         }
 
@@ -1340,7 +1340,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
      * no accompanying projection file or the projection file is empty.
      * @throws IOException if an exception occurs during reading.
      */
-    protected AVList readCoordinateSystem() throws IOException {
+    protected KV readCoordinateSystem() throws IOException {
         // The Shapefile projection resource is optional. Return the parameter list unchanged if we don't have a stream
         // to a projection resource.
         if (this.prjChannel == null)
@@ -1364,16 +1364,16 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
      * @param params the Shapefile's coordinate system parameters.
      * @return a non-empty string if the coordinate system parameters are invalid; null otherwise.
      */
-    protected String validateCoordinateSystem(AVList params) {
-        Object o = params.get(AVKey.COORDINATE_SYSTEM);
+    protected String validateCoordinateSystem(KV params) {
+        Object o = params.get(Keys.COORDINATE_SYSTEM);
 
-        if (!this.hasKey(AVKey.COORDINATE_SYSTEM)) {
+        if (!this.hasKey(Keys.COORDINATE_SYSTEM)) {
             Logging.logger().warning(
-                Logging.getMessage("generic.UnspecifiedCoordinateSystem", this.getStringValue(AVKey.DISPLAY_NAME)));
+                Logging.getMessage("generic.UnspecifiedCoordinateSystem", this.getStringValue(Keys.DISPLAY_NAME)));
             return null;
-        } else if (AVKey.COORDINATE_SYSTEM_GEOGRAPHIC.equals(o)) {
+        } else if (Keys.COORDINATE_SYSTEM_GEOGRAPHIC.equals(o)) {
             return null;
-        } else if (AVKey.COORDINATE_SYSTEM_PROJECTED.equals(o)) {
+        } else if (Keys.COORDINATE_SYSTEM_PROJECTED.equals(o)) {
             return Shapefile.validateProjection(params);
         } else {
             return Logging.getMessage("generic.UnsupportedCoordinateSystem", o);
@@ -1634,7 +1634,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
                 ByteBuffer buf = this.mappedShpBuffer.duplicate();
                 buf.order(ByteOrder.LITTLE_ENDIAN);
                 buf.clear();
-                this.pointBuffer = new VecBufferBlocks(2, AVKey.FLOAT64, buf);
+                this.pointBuffer = new VecBufferBlocks(2, Keys.FLOAT64, buf);
             }
 
             // Add the point's byte range to the VecBufferBlocks.
@@ -1652,7 +1652,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
                     // Let the caller catch and log the exception. If we cannot allocate enough memory to hold the
                     // point buffer, we throw an exception indicating that the read operation should be terminated.
                     throw new WWRuntimeException(Logging.getMessage("SHP.OutOfMemoryAllocatingPointBuffer",
-                        this.getStringValue(AVKey.DISPLAY_NAME)), e);
+                        this.getStringValue(Keys.DISPLAY_NAME)), e);
                 }
 
                 this.pointBuffer = new VecBufferSequence(
@@ -1734,15 +1734,15 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
         if (buffer == null || !buffer.hasRemaining())
             return null;
 
-        Object o = this.get(AVKey.COORDINATE_SYSTEM);
+        Object o = this.get(Keys.COORDINATE_SYSTEM);
 
-        if (!this.hasKey(AVKey.COORDINATE_SYSTEM))
+        if (!this.hasKey(Keys.COORDINATE_SYSTEM))
             return Shapefile.readUnspecifiedPoints(record, buffer);
 
-        else if (AVKey.COORDINATE_SYSTEM_GEOGRAPHIC.equals(o))
+        else if (Keys.COORDINATE_SYSTEM_GEOGRAPHIC.equals(o))
             return Shapefile.readGeographicPoints(record, buffer);
 
-        else if (AVKey.COORDINATE_SYSTEM_PROJECTED.equals(o))
+        else if (Keys.COORDINATE_SYSTEM_PROJECTED.equals(o))
             return this.readProjectedPoints(record, buffer);
 
         else {
@@ -1764,13 +1764,13 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
      */
     @SuppressWarnings("UnusedDeclaration")
     protected DoubleBuffer readProjectedPoints(ShapefileRecord record, ByteBuffer buffer) {
-        Object o = this.get(AVKey.PROJECTION_NAME);
+        Object o = this.get(Keys.PROJECTION_NAME);
 
-        if (AVKey.PROJECTION_UTM.equals(o)) {
+        if (Keys.PROJECTION_UTM.equals(o)) {
             // The Shapefile's coordinate system is UTM. Convert the UTM coordinates to geographic. The zone and hemisphere
             // parameters have already been validated in validateBounds.
-            Integer zone = (Integer) this.get(AVKey.PROJECTION_ZONE);
-            String hemisphere = (String) this.get(AVKey.PROJECTION_HEMISPHERE);
+            Integer zone = (Integer) this.get(Keys.PROJECTION_ZONE);
+            String hemisphere = (String) this.get(Keys.PROJECTION_HEMISPHERE);
 
             // Create a view of the buffer as a doubles, and convert those coordinates from UTM to geographic.
             DoubleBuffer doubleBuffer = buffer.asDoubleBuffer();
@@ -1796,15 +1796,15 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
      * @return a bounding rectangle with coordinates from the specified buffer.
      */
     protected BoundingRectangle readBoundingRectangle(ByteBuffer buffer) {
-        Object o = this.get(AVKey.COORDINATE_SYSTEM);
+        Object o = this.get(Keys.COORDINATE_SYSTEM);
 
-        if (!this.hasKey(AVKey.COORDINATE_SYSTEM))
+        if (!this.hasKey(Keys.COORDINATE_SYSTEM))
             return Shapefile.readUnspecifiedBoundingRectangle(buffer);
 
-        else if (AVKey.COORDINATE_SYSTEM_GEOGRAPHIC.equals(o))
+        else if (Keys.COORDINATE_SYSTEM_GEOGRAPHIC.equals(o))
             return Shapefile.readGeographicBoundingRectangle(buffer);
 
-        else if (AVKey.COORDINATE_SYSTEM_PROJECTED.equals(o))
+        else if (Keys.COORDINATE_SYSTEM_PROJECTED.equals(o))
             return this.readProjectedBoundingRectangle(buffer);
 
         else {
@@ -1827,15 +1827,15 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
      * @throws WWRuntimeException if the Shapefile's projection is unsupported.
      */
     protected BoundingRectangle readProjectedBoundingRectangle(ByteBuffer buffer) {
-        Object o = this.get(AVKey.PROJECTION_NAME);
+        Object o = this.get(Keys.PROJECTION_NAME);
 
-        if (AVKey.PROJECTION_UTM.equals(o)) {
+        if (Keys.PROJECTION_UTM.equals(o)) {
             // Read the bounding rectangle coordinates in the following order: minEast, minNorth, maxEast, maxNorth.
             double[] coords = ShapefileUtils.readDoubleArray(buffer, 4);
             // Convert the UTM bounding rectangle to a geographic bounding rectangle. The zone and hemisphere parameters
             // have already been validated in validateBounds.
-            Integer zone = (Integer) this.get(AVKey.PROJECTION_ZONE);
-            String hemisphere = (String) this.get(AVKey.PROJECTION_HEMISPHERE);
+            Integer zone = (Integer) this.get(Keys.PROJECTION_ZONE);
+            String hemisphere = (String) this.get(Keys.PROJECTION_HEMISPHERE);
             Sector sector = Sector.fromUTMRectangle(zone, hemisphere, coords[0], coords[2], coords[1], coords[3]);
             // Return an array with bounding rectangle coordinates in the following order: minLon, maxLon, minLat, maxLat.
             BoundingRectangle rect = new BoundingRectangle();

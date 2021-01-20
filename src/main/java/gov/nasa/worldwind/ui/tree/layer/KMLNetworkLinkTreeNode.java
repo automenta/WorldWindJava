@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.ui.tree.layer;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.layers.ogc.kml.*;
 
 import javax.swing.*;
@@ -59,17 +59,17 @@ public class KMLNetworkLinkTreeNode extends KMLContainerTreeNode {
         // RETRIEVAL_STATE_SUCCESSFUL to this nodes listeners.
         this.getFeature().getRoot().addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-                if (AVKey.RETRIEVAL_STATE_SUCCESSFUL.equals(propertyChangeEvent.getPropertyName())
+                if (Keys.RETRIEVAL_STATE_SUCCESSFUL.equals(propertyChangeEvent.getPropertyName())
                     && KMLNetworkLinkTreeNode.this.getFeature() == propertyChangeEvent.getNewValue()) {
                     // Ensure that the node list is manipulated on the EDT
                     if (SwingUtilities.isEventDispatchThread()) {
                         refresh();
-                        KMLNetworkLinkTreeNode.this.firePropertyChange(AVKey.RETRIEVAL_STATE_SUCCESSFUL, null, this);
+                        KMLNetworkLinkTreeNode.this.firePropertyChange(Keys.RETRIEVAL_STATE_SUCCESSFUL, null, this);
                     } else {
                         SwingUtilities.invokeLater(new Runnable() {
                             public void run() {
                                 refresh();
-                                KMLNetworkLinkTreeNode.this.firePropertyChange(AVKey.RETRIEVAL_STATE_SUCCESSFUL, null,
+                                KMLNetworkLinkTreeNode.this.firePropertyChange(Keys.RETRIEVAL_STATE_SUCCESSFUL, null,
                                     this);
                             }
                         });

@@ -10,7 +10,6 @@ import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.glu.GLU;
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.cache.GpuResourceCache;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.Box;
@@ -48,7 +47,7 @@ public class Polygon extends AbstractShape {
     /**
      * Indicates the number of vertices that must be present in order for VBOs to be used to render this shape.
      */
-    protected static final int VBO_THRESHOLD = Configuration.getIntegerValue(AVKey.VBO_THRESHOLD, 30);
+    protected static final int VBO_THRESHOLD = Configuration.getIntegerValue(Keys.VBO_THRESHOLD, 30);
     /**
      * This static hash map holds the vertex indices that define the shape's visual outline. The contents depend only on
      * the number of locations in the source polygon, so they can be reused by all shapes with the same location count.
@@ -392,7 +391,7 @@ public class Polygon extends AbstractShape {
                 continue;
 
             //noinspection StringEquality
-            if (WWMath.computeWindingOrderOfLocations(boundary) != AVKey.COUNTER_CLOCKWISE)
+            if (WWMath.computeWindingOrderOfLocations(boundary) != Keys.COUNTER_CLOCKWISE)
                 Collections.reverse(boundary);
         }
 

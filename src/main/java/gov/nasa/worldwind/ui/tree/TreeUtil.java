@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.ui.tree;
 
 import com.jogamp.opengl.GL2;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.pick.PickSupport;
 import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.util.OGLUtil;
@@ -58,7 +58,7 @@ public class TreeUtil {
 
         gl.glBegin(GL2.GL_QUADS);
 
-        if (AVKey.HORIZONTAL.equals(gradientDirection)) {
+        if (Keys.HORIZONTAL.equals(gradientDirection)) {
             OGLUtil.applyColor(gl, color1, opacity, false);
             gl.glVertex2d(bounds.getMinX(), bounds.getMaxY());
             gl.glVertex2d(bounds.getMinX(), bounds.getMinY());

@@ -5,6 +5,7 @@
  */
 package gov.nasa.worldwind.layers;
 
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.data.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
@@ -40,11 +41,11 @@ public class SurfaceImageLayer extends RenderableLayer {
             return null;
 
         if (raster instanceof GDALDataRaster) {
-            AVList params = new AVListImpl();
+            KV params = new KVMap();
 
-            params.set(AVKey.WIDTH, raster.getWidth());
-            params.set(AVKey.HEIGHT, raster.getHeight());
-            params.set(AVKey.SECTOR, raster.getSector());
+            params.set(Keys.WIDTH, raster.getWidth());
+            params.set(Keys.HEIGHT, raster.getHeight());
+            params.set(Keys.SECTOR, raster.getSector());
 
             raster = raster.getSubRaster(params);
         }
@@ -96,7 +97,7 @@ public class SurfaceImageLayer extends RenderableLayer {
         }
     }
 
-    protected DataRaster openDataRaster(Object src, AVList params)
+    protected DataRaster openDataRaster(Object src, KV params)
         throws IllegalArgumentException, WWRuntimeException {
         if (src == null) {
             String message = Logging.getMessage("nullValue.ImageSource");
@@ -112,7 +113,7 @@ public class SurfaceImageLayer extends RenderableLayer {
         }
 
         if (null == params)
-            params = new AVListImpl();
+            params = new KVMap();
 
         DataRaster raster;
 
@@ -127,15 +128,15 @@ public class SurfaceImageLayer extends RenderableLayer {
 
             raster = rasters[0];
 
-            if (raster.getSector() == null && params.hasKey(AVKey.SECTOR)) {
-                Object o = params.get(AVKey.SECTOR);
+            if (raster.getSector() == null && params.hasKey(Keys.SECTOR)) {
+                Object o = params.get(Keys.SECTOR);
                 if (o instanceof Sector) {
                     Sector sector = (Sector) o;
 
                     if (raster instanceof GDALDataRaster)
                         ((GDALDataRaster) raster).setSector(sector);
                     else
-                        raster.set(AVKey.SECTOR, sector);
+                        raster.set(Keys.SECTOR, sector);
                 }
             }
 
@@ -170,10 +171,10 @@ public class SurfaceImageLayer extends RenderableLayer {
      */
     @SuppressWarnings("UnusedDeclaration")
     public void addImage(String imagePath, Sector sector) throws WWRuntimeException {
-        AVList params = new AVListImpl();
+        KV params = new KVMap();
 
         if (null != sector)
-            params.set(AVKey.SECTOR, sector);
+            params.set(Keys.SECTOR, sector);
 
         DataRaster raster = this.openDataRaster(imagePath, params);
         final BufferedImage image = SurfaceImageLayer.getBufferedImage(raster);
@@ -257,11 +258,11 @@ public class SurfaceImageLayer extends RenderableLayer {
      * @throws WWRuntimeException       if the image type is unsupported.
      */
     public void addImage(String imagePath, List<? extends LatLon> corners) throws WWRuntimeException {
-        AVList params = new AVListImpl();
+        KV params = new KVMap();
 
         if (null != corners) {
             Sector sector = Sector.boundingSector(corners);
-            params.set(AVKey.SECTOR, sector);
+            params.set(Keys.SECTOR, sector);
         }
 
         DataRaster raster = this.openDataRaster(imagePath, params);

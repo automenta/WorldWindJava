@@ -7,6 +7,7 @@ package gov.nasa.worldwind.render;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.util.texture.*;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.cache.*;
 import gov.nasa.worldwind.geom.*;
@@ -187,18 +188,18 @@ public class SurfaceObjectTileBuilder {
      * @return a new LevelSet configured to with
      */
     protected static LevelSet createLevelSet(int tileWidth, int tileHeight) {
-        AVList params = new AVListImpl();
-        params.set(AVKey.LEVEL_ZERO_TILE_DELTA, SurfaceObjectTileBuilder.DEFAULT_LEVEL_ZERO_TILE_DELTA);
-        params.set(AVKey.SECTOR, Sector.FULL_SPHERE);
-        params.set(AVKey.NUM_LEVELS, SurfaceObjectTileBuilder.DEFAULT_NUM_LEVELS);
-        params.set(AVKey.NUM_EMPTY_LEVELS, 0);
-        params.set(AVKey.TILE_WIDTH, tileWidth);
-        params.set(AVKey.TILE_HEIGHT, tileHeight);
+        KV params = new KVMap();
+        params.set(Keys.LEVEL_ZERO_TILE_DELTA, SurfaceObjectTileBuilder.DEFAULT_LEVEL_ZERO_TILE_DELTA);
+        params.set(Keys.SECTOR, Sector.FULL_SPHERE);
+        params.set(Keys.NUM_LEVELS, SurfaceObjectTileBuilder.DEFAULT_NUM_LEVELS);
+        params.set(Keys.NUM_EMPTY_LEVELS, 0);
+        params.set(Keys.TILE_WIDTH, tileWidth);
+        params.set(Keys.TILE_HEIGHT, tileHeight);
         // This is a shared LevelSet, so just supply a dummy cache name and dataset name.
-        params.set(AVKey.DATA_CACHE_NAME, SurfaceObjectTileBuilder.class.getName());
-        params.set(AVKey.DATASET_NAME, SurfaceObjectTileBuilder.class.getName());
+        params.set(Keys.DATA_CACHE_NAME, SurfaceObjectTileBuilder.class.getName());
+        params.set(Keys.DATASET_NAME, SurfaceObjectTileBuilder.class.getName());
         // We won't use any tile resource paths, so just supply a dummy format suffix.
-        params.set(AVKey.FORMAT_SUFFIX, SurfaceObjectTileBuilder.class.getName());
+        params.set(Keys.FORMAT_SUFFIX, SurfaceObjectTileBuilder.class.getName());
 
         return new LevelSet(params);
     }
@@ -766,7 +767,7 @@ public class SurfaceObjectTileBuilder {
             // Surface renderables expect the SurfaceTileDrawContext to be attached to the draw context's AVList. Create
             // a SurfaceTileDrawContext with the tile's Sector and viewport. The Sector defines the context's geographic
             // extent, and the viewport defines the context's corresponding viewport in pixels.
-            dc.set(AVKey.SURFACE_TILE_DRAW_CONTEXT, this.createSurfaceTileDrawContext(tile));
+            dc.set(Keys.SURFACE_TILE_DRAW_CONTEXT, this.createSurfaceTileDrawContext(tile));
 
             this.rttSupport.setColorTarget(dc, texture);
             this.rttSupport.clear(dc, new Color(0, 0, 0, 0)); // Set all texture pixels to transparent black.
@@ -780,7 +781,7 @@ public class SurfaceObjectTileBuilder {
         finally {
             this.rttSupport.setColorTarget(dc, null);
 
-            dc.removeKey(AVKey.SURFACE_TILE_DRAW_CONTEXT);
+            dc.removeKey(Keys.SURFACE_TILE_DRAW_CONTEXT);
         }
     }
 

@@ -91,7 +91,7 @@ import java.util.*;
  * @version $Id: MeasureTool.java 3297 2015-07-03 16:21:05Z dcollins $
  * @see MeasureToolController
  */
-public class MeasureTool extends AVListImpl implements Disposable {
+public class MeasureTool extends KVMap implements Disposable {
 
     public static final String SHAPE_LINE = "MeasureTool.ShapeLine";
     public static final String SHAPE_PATH = "MeasureTool.ShapePath";
@@ -157,7 +157,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
     protected Color lineColor = Color.YELLOW;
     protected Color fillColor = new Color(0.6f, 0.6f, 0.4f, 0.5f);
     protected double lineWidth = 2;
-    protected String pathType = AVKey.GREAT_CIRCLE;
+    protected String pathType = Keys.GREAT_CIRCLE;
     protected AnnotationAttributes controlPointsAttributes;
     protected AnnotationAttributes controlPointWithLeaderAttributes;
     protected ShapeAttributes leaderAttributes;
@@ -220,9 +220,9 @@ public class MeasureTool extends AVListImpl implements Disposable {
         // Init control points rendering attributes
         this.controlPointsAttributes = new AnnotationAttributes();
         // Define an 8x8 square centered on the screen point
-        this.controlPointsAttributes.setFrameShape(AVKey.SHAPE_RECTANGLE);
-        this.controlPointsAttributes.setLeader(AVKey.SHAPE_NONE);
-        this.controlPointsAttributes.setAdjustWidthToText(AVKey.SIZE_FIXED);
+        this.controlPointsAttributes.setFrameShape(Keys.SHAPE_RECTANGLE);
+        this.controlPointsAttributes.setLeader(Keys.SHAPE_NONE);
+        this.controlPointsAttributes.setAdjustWidthToText(Keys.SIZE_FIXED);
         this.controlPointsAttributes.setSize(new Dimension(8, 8));
         this.controlPointsAttributes.setDrawOffset(new Point(0, -4));
         this.controlPointsAttributes.setInsets(new Insets(0, 0, 0, 0));
@@ -238,7 +238,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
         // Init control point with leader rendering attributes.
         this.controlPointWithLeaderAttributes = new AnnotationAttributes();
         this.controlPointWithLeaderAttributes.setDefaults(this.controlPointsAttributes);
-        this.controlPointWithLeaderAttributes.setFrameShape(AVKey.SHAPE_ELLIPSE);
+        this.controlPointWithLeaderAttributes.setFrameShape(Keys.SHAPE_ELLIPSE);
         this.controlPointWithLeaderAttributes.setSize(new Dimension(10, 10));
         this.controlPointWithLeaderAttributes.setDrawOffset(new Point(0, -5));
         this.controlPointWithLeaderAttributes.setBackgroundColor(Color.LIGHT_GRAY);
@@ -251,11 +251,11 @@ public class MeasureTool extends AVListImpl implements Disposable {
         // Annotation attributes
         this.setInitialLabels();
         this.annotationAttributes = new AnnotationAttributes();
-        this.annotationAttributes.setFrameShape(AVKey.SHAPE_NONE);
+        this.annotationAttributes.setFrameShape(Keys.SHAPE_NONE);
         this.annotationAttributes.setInsets(new Insets(0, 0, 0, 0));
         this.annotationAttributes.setDrawOffset(new Point(0, 10));
-        this.annotationAttributes.setTextAlign(AVKey.CENTER);
-        this.annotationAttributes.setEffect(AVKey.TEXT_EFFECT_OUTLINE);
+        this.annotationAttributes.setTextAlign(Keys.CENTER);
+        this.annotationAttributes.setEffect(Keys.TEXT_EFFECT_OUTLINE);
         this.annotationAttributes.setFont(Font.decode("Arial-Bold-14"));
         this.annotationAttributes.setTextColor(Color.WHITE);
         this.annotationAttributes.setBackgroundColor(Color.BLACK);
@@ -283,18 +283,18 @@ public class MeasureTool extends AVListImpl implements Disposable {
             || shape.equals(MeasureTool.SHAPE_SQUARE));
     }
 
-    public static boolean isCenterControl(AVList controlPoint) {
+    public static boolean isCenterControl(KV controlPoint) {
         String control = controlPoint.getStringValue(MeasureTool.CONTROL_TYPE_REGULAR_SHAPE);
         return control != null && control.equals(MeasureTool.CENTER);
     }
 
-    public static boolean isSideControl(AVList controlPoint) {
+    public static boolean isSideControl(KV controlPoint) {
         String control = controlPoint.getStringValue(MeasureTool.CONTROL_TYPE_REGULAR_SHAPE);
         return control != null && (control.equals(MeasureTool.NORTH) || control.equals(MeasureTool.EAST)
             || control.equals(MeasureTool.SOUTH) || control.equals(MeasureTool.WEST));
     }
 
-    public static boolean isCornerControl(AVList controlPoint) {
+    public static boolean isCornerControl(KV controlPoint) {
         String control = controlPoint.getStringValue(MeasureTool.CONTROL_TYPE_REGULAR_SHAPE);
         return control != null && (control.equals(MeasureTool.NORTHEAST) || control.equals(MeasureTool.SOUTHEAST)
             || control.equals(MeasureTool.SOUTHWEST) || control.equals(MeasureTool.NORTHWEST));
@@ -1445,7 +1445,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
 
     public ControlPoint getControlPoint(String control) {
         for (Renderable cp : this.controlPoints) {
-            String value = ((AVList) cp).getStringValue(MeasureTool.CONTROL_TYPE_REGULAR_SHAPE);
+            String value = ((KV) cp).getStringValue(MeasureTool.CONTROL_TYPE_REGULAR_SHAPE);
             if (value != null && value.equals(control)) {
                 return (ControlPoint) cp;
             }
@@ -1512,7 +1512,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
         if ((control.equals(MeasureTool.NORTH) && azimuth.degrees < 270 && azimuth.degrees > 90)
             || (control.equals(MeasureTool.SOUTH) && (azimuth.degrees > 270 || azimuth.degrees < 90))) {
             for (Renderable r : this.controlPoints) {
-                AVList cp = (AVList) r;
+                KV cp = (KV) r;
                 String c = cp.getStringValue(MeasureTool.CONTROL_TYPE_REGULAR_SHAPE);
                 if (c == null) {
                     continue;
@@ -1529,7 +1529,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
         if ((control.equals(MeasureTool.EAST) && (azimuth.degrees < 360 && azimuth.degrees > 180))
             || (control.equals(MeasureTool.WEST) && (azimuth.degrees < 180 && azimuth.degrees > 0))) {
             for (Renderable r : this.controlPoints) {
-                AVList cp = (AVList) r;
+                KV cp = (KV) r;
                 String c = cp.getStringValue(MeasureTool.CONTROL_TYPE_REGULAR_SHAPE);
                 if (c == null) {
                     continue;
@@ -1560,7 +1560,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
 
         if (control.charAt(0) != newControl.charAt(0)) {
             for (Renderable r : this.controlPoints) {
-                AVList cp = (AVList) r;
+                KV cp = (KV) r;
                 String c = cp.getStringValue(MeasureTool.CONTROL_TYPE_REGULAR_SHAPE);
                 if (c == null) {
                     continue;
@@ -1576,7 +1576,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
         }
         if (control.charAt(1) != newControl.charAt(1)) {
             for (Renderable r : this.controlPoints) {
-                AVList cp = (AVList) r;
+                KV cp = (KV) r;
                 String c = cp.getStringValue(MeasureTool.CONTROL_TYPE_REGULAR_SHAPE);
                 if (c == null) {
                     continue;

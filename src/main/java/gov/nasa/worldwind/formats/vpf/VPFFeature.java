@@ -5,14 +5,14 @@
  */
 package gov.nasa.worldwind.formats.vpf;
 
-import gov.nasa.worldwind.avlist.AVListImpl;
+import gov.nasa.worldwind.avlist.KVMap;
 import gov.nasa.worldwind.util.Logging;
 
 /**
  * @author dcollins
  * @version $Id: VPFFeature.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class VPFFeature extends AVListImpl {
+public class VPFFeature extends KVMap {
     private final int[] primitiveIds;
     protected VPFFeatureClass featureClass;
     protected int id;

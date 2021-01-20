@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.util;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.cache.*;
 
 import javax.imageio.ImageIO;
@@ -44,7 +43,7 @@ public class SlideShowAnnotationController extends DialogAnnotationController {
         Iterable<?> imageSources) {
         super(worldWindow, annotation);
 
-        this.state = AVKey.STOP;
+        this.state = Keys.STOP;
         this.index = -1;
         this.imageSources = new ArrayList<>();
 
@@ -116,7 +115,7 @@ public class SlideShowAnnotationController extends DialogAnnotationController {
         if (this.getAnnotation() == null)
             return;
 
-        if (this.getState() == AVKey.PLAY) {
+        if (this.getState() == Keys.PLAY) {
             this.stopSlideShow();
         }
 
@@ -128,10 +127,10 @@ public class SlideShowAnnotationController extends DialogAnnotationController {
         if (this.getAnnotation() == null)
             return;
 
-        if (SlideShowAnnotationController.hasNextIndex() && this.getState() == AVKey.STOP) {
-            this.state = AVKey.PLAY;
+        if (SlideShowAnnotationController.hasNextIndex() && this.getState() == Keys.STOP) {
+            this.state = Keys.PLAY;
             SlideShowAnnotation slideShowAnnotation = (SlideShowAnnotation) this.getAnnotation();
-            slideShowAnnotation.setPlayButtonState(AVKey.PAUSE);
+            slideShowAnnotation.setPlayButtonState(Keys.PAUSE);
             this.startSlideShowUpdate();
         }
     }
@@ -141,10 +140,10 @@ public class SlideShowAnnotationController extends DialogAnnotationController {
         if (this.getAnnotation() == null)
             return;
 
-        if (this.getState() == AVKey.PLAY) {
-            this.state = AVKey.STOP;
+        if (this.getState() == Keys.PLAY) {
+            this.state = Keys.STOP;
             SlideShowAnnotation slideShowAnnotation = (SlideShowAnnotation) this.getAnnotation();
-            slideShowAnnotation.setPlayButtonState(AVKey.PLAY);
+            slideShowAnnotation.setPlayButtonState(Keys.PLAY);
             this.stopSlideShowUpdate();
         }
     }
@@ -230,22 +229,22 @@ public class SlideShowAnnotationController extends DialogAnnotationController {
     public void onActionPerformed(ActionEvent e) {
         super.onActionPerformed(e);
 
-        if (e.getActionCommand() == AVKey.PLAY) {
+        if (e.getActionCommand() == Keys.PLAY) {
             this.playPressed(e);
         }
-        else if (e.getActionCommand() == AVKey.PREVIOUS) {
+        else if (e.getActionCommand() == Keys.PREVIOUS) {
             this.previousPressed(e);
         }
-        else if (e.getActionCommand() == AVKey.NEXT) {
+        else if (e.getActionCommand() == Keys.NEXT) {
             this.nextPressed(e);
         }
-        else if (e.getActionCommand() == AVKey.BEGIN) {
+        else if (e.getActionCommand() == Keys.BEGIN) {
             this.beginPressed(e);
         }
-        else if (e.getActionCommand() == AVKey.END) {
+        else if (e.getActionCommand() == Keys.END) {
             this.endPressed(e);
         }
-        else if (e.getActionCommand() == AVKey.RESIZE) {
+        else if (e.getActionCommand() == Keys.RESIZE) {
             this.resizePressed(e);
         }
     }
@@ -316,10 +315,10 @@ public class SlideShowAnnotationController extends DialogAnnotationController {
         if (state == null)
             return;
 
-        if (state == AVKey.PLAY) {
+        if (state == Keys.PLAY) {
             this.stopSlideShow();
         }
-        else if (state == AVKey.STOP) {
+        else if (state == Keys.STOP) {
             this.startSlideShow();
         }
     }

@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.render;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVListImpl;
+import gov.nasa.worldwind.avlist.KVMap;
 import gov.nasa.worldwind.drag.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.util.*;
@@ -18,7 +18,7 @@ import java.util.Map;
  * @author tag
  * @version $Id: UserFacingIcon.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class UserFacingIcon extends AVListImpl implements WWIcon, Movable, Draggable {
+public class UserFacingIcon extends KVMap implements WWIcon, Movable, Draggable {
     protected BasicWWTexture imageTexture;
     protected BasicWWTexture backgroundTexture;
     protected boolean dragEnabled = true;

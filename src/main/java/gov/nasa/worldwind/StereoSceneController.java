@@ -24,15 +24,15 @@ public interface StereoSceneController extends SceneController {
      *
      * @return the current stereo mode. See this class' description for the possible modes. This method does not return
      * null. If a null mode was passed to {@link #setStereoMode(String)}, this instance's mode was set to {@link
-     * gov.nasa.worldwind.avlist.AVKey#STEREO_MODE_NONE}.
+     * Keys#STEREO_MODE_NONE}.
      */
     String getStereoMode();
 
     /**
      * Specifies the technique used to provide a stereo effect. Defined options are {@link
-     * gov.nasa.worldwind.avlist.AVKey#STEREO_MODE_DEVICE} to request device supported stereo, {@link
-     * gov.nasa.worldwind.avlist.AVKey#STEREO_MODE_RED_BLUE} to request red-blue anaglyph stereo implemented in
-     * software, or {@link gov.nasa.worldwind.avlist.AVKey#STEREO_MODE_NONE} (the default) to request no stereo effect.
+     * Keys#STEREO_MODE_DEVICE} to request device supported stereo, {@link
+     * Keys#STEREO_MODE_RED_BLUE} to request red-blue anaglyph stereo implemented in
+     * software, or {@link Keys#STEREO_MODE_NONE} (the default) to request no stereo effect.
      * <p>
      * If <code>STEREO_MODE_DEVICE</code> is requested but the display device does not support stereo, stereo is not
      * applied.
@@ -40,7 +40,7 @@ public interface StereoSceneController extends SceneController {
      * See the implementing class to determine how it detects the initial stereo mode.
      *
      * @param mode the technique used to provide the stereo effect. If null, the mode is set to {@link
-     *             gov.nasa.worldwind.avlist.AVKey#STEREO_MODE_NONE}.
+     *             Keys#STEREO_MODE_NONE}.
      */
     void setStereoMode(String mode);
 

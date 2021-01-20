@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.globes.projections;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.util.WWMath;
@@ -27,16 +27,16 @@ public class ProjectionUPS extends AbstractGeographicProjection {
     protected int pole = ProjectionUPS.NORTH;
 
     /**
-     * Creates a projection centered on the specified pole, which can be either {@link AVKey#NORTH} or {@link
-     * AVKey#SOUTH}.
+     * Creates a projection centered on the specified pole, which can be either {@link Keys#NORTH} or {@link
+     * Keys#SOUTH}.
      *
-     * @param pole The pole to center on, either {@link AVKey#NORTH} or {@link AVKey#SOUTH}.
+     * @param pole The pole to center on, either {@link Keys#NORTH} or {@link Keys#SOUTH}.
      * @throws IllegalArgumentException if the specified pole is null.
      */
     public ProjectionUPS(String pole) {
-        super(pole != null && pole.equals(AVKey.SOUTH) ? ProjectionUPS.SOUTH_LIMITS : ProjectionUPS.NORTH_LIMITS);
+        super(pole != null && pole.equals(Keys.SOUTH) ? ProjectionUPS.SOUTH_LIMITS : ProjectionUPS.NORTH_LIMITS);
 
-        this.pole = pole.equals(AVKey.SOUTH) ? ProjectionUPS.SOUTH : ProjectionUPS.NORTH;
+        this.pole = pole.equals(Keys.SOUTH) ? ProjectionUPS.SOUTH : ProjectionUPS.NORTH;
     }
 
     @Override

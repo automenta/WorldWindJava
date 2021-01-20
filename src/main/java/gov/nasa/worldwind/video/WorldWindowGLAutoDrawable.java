@@ -11,7 +11,6 @@ import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.AWTGLAutoDrawable;
 import com.jogamp.opengl.util.texture.TextureIO;
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.cache.*;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.exception.WWAbsentRequirementException;
@@ -72,7 +71,7 @@ public class WorldWindowGLAutoDrawable extends WWObjectImpl implements WorldWind
      */
     public WorldWindowGLAutoDrawable() {
         this.sceneController = (SceneController) WorldWind.createConfigurationComponent(
-            AVKey.SCENE_CONTROLLER_CLASS_NAME);
+            Keys.SCENE_CONTROLLER_CLASS_NAME);
         this.sceneController.setGpuResourceCache(this.gpuResourceCache);
 
         // Set up to initiate a repaint whenever a file is retrieved and added to the local file store.

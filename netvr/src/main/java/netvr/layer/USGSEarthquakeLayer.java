@@ -1,7 +1,8 @@
 package netvr.layer;
 
 import com.jogamp.opengl.*;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.formats.geojson.GeoJSONPoint;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.*;
@@ -41,15 +42,15 @@ public class USGSEarthquakeLayer extends GeoJSONLayer {
         final long updateTime = System.currentTimeMillis();
 
         @Override
-        protected void addRenderableForPoint(GeoJSONPoint geom, RenderableLayer l, AVList properties) {
+        protected void addRenderableForPoint(GeoJSONPoint geom, RenderableLayer l, KV properties) {
             addEarthquake(geom, l, properties);
         }
 
-        private void addEarthquake(GeoJSONPoint geom, RenderableLayer layer, AVList p) {
+        private void addEarthquake(GeoJSONPoint geom, RenderableLayer layer, KV p) {
             if (eqAttributes == null) {
                 // Init default attributes for all eq
                 eqAttributes = new AnnotationAttributes();
-                eqAttributes.setLeader(AVKey.SHAPE_NONE);
+                eqAttributes.setLeader(Keys.SHAPE_NONE);
                 eqAttributes.setDrawOffset(new Point(0, -16));
                 eqAttributes.setSize(new Dimension(32, 32));
                 eqAttributes.setBorderWidth(0);
@@ -136,7 +137,7 @@ public class USGSEarthquakeLayer extends GeoJSONLayer {
                 // Draw 32x32 shape from its bottom left corner
                 int size = 32;
                 if (this.shapeBuffer == null)
-                    this.shapeBuffer = FrameFactory.createShapeBuffer(AVKey.SHAPE_ELLIPSE, size, size, 0, null);
+                    this.shapeBuffer = FrameFactory.createShapeBuffer(Keys.SHAPE_ELLIPSE, size, size, 0, null);
                 GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
                 gl.glTranslatef(-size / 2.0f, -size / 2.0f, 0);
                 FrameFactory.drawBuffer(dc, GL.GL_TRIANGLE_FAN, this.shapeBuffer);

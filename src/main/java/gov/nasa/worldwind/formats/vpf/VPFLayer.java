@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.formats.vpf;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.AbstractLayer;
 import gov.nasa.worldwind.render.*;
@@ -55,7 +54,7 @@ public class VPFLayer extends AbstractLayer {
             this.setVPFDatabase(db);
 
         this.textRenderer.setCullTextEnabled(true);
-        this.textRenderer.setEffect(AVKey.TEXT_EFFECT_OUTLINE);
+        this.textRenderer.setEffect(Keys.TEXT_EFFECT_OUTLINE);
     }
 
     protected static void sortSymbols(List<VPFSymbol> list) {
@@ -159,7 +158,7 @@ public class VPFLayer extends AbstractLayer {
         if (lr != null)
             lr.enabled = enabled;
 
-        this.firePropertyChange(AVKey.LAYER, null, this);
+        this.firePropertyChange(Keys.LAYER, null, this);
     }
 
     public VPFLibraryRenderable getLibraryRenderable(VPFLibrary library) {
@@ -265,7 +264,7 @@ public class VPFLayer extends AbstractLayer {
             if (cr != null)
                 cr.enabled = enabled;
 
-            this.layer.firePropertyChange(AVKey.LAYER, null, this.layer);
+            this.layer.firePropertyChange(Keys.LAYER, null, this.layer);
         }
 
         public VPFCoverageRenderable getCoverageRenderable(VPFCoverage coverage) {
@@ -400,7 +399,7 @@ public class VPFLayer extends AbstractLayer {
                 this.coverageRenderable.coverage, (this.tile == VPFLayer.NULL_TILE) ? null : this.tile);
 
             this.coverageRenderable.tileCache.put(this.tile, symbols);
-            this.coverageRenderable.layer.firePropertyChange(AVKey.LAYER, null, this.coverageRenderable.layer);
+            this.coverageRenderable.layer.firePropertyChange(Keys.LAYER, null, this.coverageRenderable.layer);
         }
 
         /**

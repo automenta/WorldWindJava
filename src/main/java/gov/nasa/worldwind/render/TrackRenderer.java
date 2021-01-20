@@ -8,8 +8,7 @@ package gov.nasa.worldwind.render;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.glu.*;
 import com.jogamp.opengl.glu.gl2.GLUgl2;
-import gov.nasa.worldwind.Disposable;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.pick.*;
@@ -192,7 +191,7 @@ public class TrackRenderer implements Disposable {
                     int colorCode = color.getRGB();
                     PickedObject po = new PickedObject(colorCode,
                         this.getClient() != null ? this.getClient() : tp.getPosition(), tp.getPosition(), false);
-                    po.set(AVKey.PICKED_OBJECT_ID, index);
+                    po.set(Keys.PICKED_OBJECT_ID, index);
                     this.pickSupport.addPickableObject(po);
                     gl.glColor3ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
                 }

@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -64,7 +63,7 @@ public class ExtrudedShapes extends ApplicationTemplate {
                     airspaces.add(airspace);
 
                     if (tokens.length >= 2) {
-                        airspace.set(AVKey.DISPLAY_NAME, tokens[1]);
+                        airspace.set(Keys.DISPLAY_NAME, tokens[1]);
                     }
                 }
                 catch (Exception ex) {

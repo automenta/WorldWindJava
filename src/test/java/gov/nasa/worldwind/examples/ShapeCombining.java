@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -40,8 +40,8 @@ public class ShapeCombining extends ApplicationTemplate {
             // Create two surface circles that partially overlap, and add them to a layer named "Original".
             SurfaceCircle shape1 = new SurfaceCircle(attrs, LatLon.fromDegrees(50, -105), 500000);
             SurfaceCircle shape2 = new SurfaceCircle(attrs, LatLon.fromDegrees(50, -100), 500000);
-            shape1.set(AVKey.DISPLAY_NAME, "Original");
-            shape2.set(AVKey.DISPLAY_NAME, "Original");
+            shape1.set(Keys.DISPLAY_NAME, "Original");
+            shape2.set(Keys.DISPLAY_NAME, "Original");
 
             RenderableLayer originalLayer = new RenderableLayer();
             originalLayer.setName("Original");
@@ -76,8 +76,8 @@ public class ShapeCombining extends ApplicationTemplate {
             attrs.setOutlineWidth(2);
 
             SurfaceMultiPolygon shape = new SurfaceMultiPolygon(attrs, contours);
-            shape.set(AVKey.DISPLAY_NAME, displayName);
-            shape.setPathType(AVKey.LINEAR);
+            shape.set(Keys.DISPLAY_NAME, displayName);
+            shape.setPathType(Keys.LINEAR);
             shape.move(offset);
 
             RenderableLayer layer = new RenderableLayer();

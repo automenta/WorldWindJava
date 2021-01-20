@@ -8,7 +8,6 @@ package gov.nasa.worldwind.layers.tool;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.texture.*;
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.AbstractLayer;
@@ -42,8 +41,8 @@ public class WorldMapLayer extends AbstractLayer {
     protected double toViewportScale = 0.2;
     protected double iconScale = 0.5;
     protected int borderWidth = 20;
-    protected String position = AVKey.NORTHWEST;
-    protected String resizeBehavior = AVKey.RESIZE_SHRINK_ONLY;
+    protected String position = Keys.NORTHWEST;
+    protected String resizeBehavior = Keys.RESIZE_SHRINK_ONLY;
     protected int iconWidth;
     protected int iconHeight;
     protected Vec4 locationCenter;
@@ -59,7 +58,7 @@ public class WorldMapLayer extends AbstractLayer {
      */
     public WorldMapLayer() {
         this.setOpacity(0.6);
-        this.setIconFilePath(Configuration.getStringValue(AVKey.WORLD_MAP_IMAGE_PATH));
+        this.setIconFilePath(Configuration.getStringValue(Keys.WORLD_MAP_IMAGE_PATH));
     }
 
     /**
@@ -527,9 +526,9 @@ public class WorldMapLayer extends AbstractLayer {
 
     protected double computeScale(Rectangle viewport) {
         return switch (this.resizeBehavior) {
-            case AVKey.RESIZE_SHRINK_ONLY -> Math.min(1.0d,
+            case Keys.RESIZE_SHRINK_ONLY -> Math.min(1.0d,
                 (this.toViewportScale) * viewport.width / this.getScaledIconWidth());
-            case AVKey.RESIZE_STRETCH -> (this.toViewportScale) * viewport.width / this.getScaledIconWidth();
+            case Keys.RESIZE_STRETCH -> (this.toViewportScale) * viewport.width / this.getScaledIconWidth();
             default -> 1.0d;
         };
     }
@@ -555,16 +554,16 @@ public class WorldMapLayer extends AbstractLayer {
         if (this.locationCenter != null) {
             x = this.locationCenter.x - scaledWidth / 2;
             y = this.locationCenter.y - scaledHeight / 2;
-        } else if (this.position.equals(AVKey.NORTHEAST)) {
+        } else if (this.position.equals(Keys.NORTHEAST)) {
             x = viewport.getWidth() - scaledWidth - this.borderWidth;
             y = viewport.getHeight() - scaledHeight - this.borderWidth;
-        } else if (this.position.equals(AVKey.SOUTHEAST)) {
+        } else if (this.position.equals(Keys.SOUTHEAST)) {
             x = viewport.getWidth() - scaledWidth - this.borderWidth;
             y = 0.0d + this.borderWidth;
-        } else if (this.position.equals(AVKey.NORTHWEST)) {
+        } else if (this.position.equals(Keys.NORTHWEST)) {
             x = 0.0d + this.borderWidth;
             y = viewport.getHeight() - scaledHeight - this.borderWidth;
-        } else if (this.position.equals(AVKey.SOUTHWEST)) {
+        } else if (this.position.equals(Keys.SOUTHWEST)) {
             x = 0.0d + this.borderWidth;
             y = 0.0d + this.borderWidth;
         } else // use North East

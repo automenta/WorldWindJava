@@ -34,7 +34,7 @@ public class HTTPFileUpload {
     protected static final String BOUNDARY = "*********NASA_World_Wind_HTTP_File_Upload_Separator**********";
     protected final URL url;
     protected final Collection<FileInfo> filesToUpload = new ArrayList<>();
-    protected final AVList requestProperties = new AVListImpl();
+    protected final KV requestProperties = new KVMap();
     private final PropertyChangeSupport propertyChangeSupport;
     protected int maxBufferSize = 1024 * 1024; // default is 1M
     protected String requestMethod = "POST";
@@ -85,11 +85,11 @@ public class HTTPFileUpload {
         }
     }
 
-    protected static void writeProperties(DataOutput dos, AVList params) throws IOException {
+    protected static void writeProperties(DataOutput dos, KV params) throws IOException {
         if (null != dos && null != params) {
             for (Map.Entry<String, Object> param : params.getEntries()) {
                 String name = param.getKey();
-                String value = AVListImpl.getStringValue(params, name, "");
+                String value = KVMap.getStringValue(params, name, "");
                 HTTPFileUpload.writeContentDisposition(dos, name, value);
             }
         }
@@ -183,7 +183,7 @@ public class HTTPFileUpload {
         this.requestProperties.set(name, value);
     }
 
-    public void add(ByteBuffer bufferToUpload, String name, AVList params) {
+    public void add(ByteBuffer bufferToUpload, String name, KV params) {
         if (bufferToUpload == null) {
             String message = Logging.getMessage("nullValue.ByteBufferIsNull");
             Logging.logger().severe(message);
@@ -214,7 +214,7 @@ public class HTTPFileUpload {
      * @param params AVList of parameters
      * @throws FileNotFoundException if the file was not found or does not exist
      */
-    public void add(File file, String name, AVList params) throws FileNotFoundException {
+    public void add(File file, String name, KV params) throws FileNotFoundException {
         if (null != file && file.exists()) {
             this.totalBytesToUpload += file.length();
             this.filesToUpload.add(new FileInfo(name, file, params));
@@ -251,7 +251,7 @@ public class HTTPFileUpload {
         }
     }
 
-    protected void send(File fileToUpload, String uploadName, AVList params)
+    protected void send(File fileToUpload, String uploadName, KV params)
         throws IOException, NullPointerException {
         if (null == fileToUpload || !fileToUpload.exists()) {
             throw new FileNotFoundException();
@@ -314,7 +314,7 @@ public class HTTPFileUpload {
         }
     }
 
-    protected void send(ByteBuffer bufferToUpload, String fileName, AVList params) throws IOException {
+    protected void send(ByteBuffer bufferToUpload, String fileName, KV params) throws IOException {
         if (null == bufferToUpload) {
             String message = Logging.getMessage("nullValue.ByteBufferIsNull");
             Logging.logger().severe(message);
@@ -382,7 +382,7 @@ public class HTTPFileUpload {
         }
     }
 
-    protected void send(String stringToUpload, String fileName, AVList params) throws IOException {
+    protected void send(String stringToUpload, String fileName, KV params) throws IOException {
         if (WWUtil.isEmpty(stringToUpload)) {
             String message = Logging.getMessage("nullValue.StringIsNull");
             Logging.logger().severe(message);
@@ -469,9 +469,9 @@ public class HTTPFileUpload {
 
         protected final String uploadName;
         protected final Object uploadItem;
-        protected final AVList properties;
+        protected final KV properties;
 
-        public FileInfo(String name, Object item, AVList properties) {
+        public FileInfo(String name, Object item, KV properties) {
             this.uploadName = name;
             this.uploadItem = item;
             this.properties = properties;

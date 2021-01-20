@@ -5,8 +5,9 @@
  */
 package gov.nasa.worldwind.view.orbit;
 
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.animation.Animator;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.util.Logging;
@@ -78,12 +79,12 @@ public class OrbitViewEyePointAnimator implements Animator {
         Vec4 centerPoint = eyePoint.add3(forward.multiply3(view.getZoom()));
 
         // Set the view's properties from the new modelview matrix.
-        AVList params = modelview.extractViewingParameters(centerPoint, view.getRoll(), globe);
-        view.setCenterPosition((Position) params.get(AVKey.ORIGIN));
-        view.setHeading((Angle) params.get(AVKey.HEADING));
-        view.setPitch((Angle) params.get(AVKey.TILT));
-        view.setRoll((Angle) params.get(AVKey.ROLL));
-        view.setZoom((Double) params.get(AVKey.RANGE));
+        KV params = modelview.extractViewingParameters(centerPoint, view.getRoll(), globe);
+        view.setCenterPosition((Position) params.get(Keys.ORIGIN));
+        view.setHeading((Angle) params.get(Keys.HEADING));
+        view.setPitch((Angle) params.get(Keys.TILT));
+        view.setRoll((Angle) params.get(Keys.ROLL));
+        view.setZoom((Double) params.get(Keys.RANGE));
         view.setViewOutOfFocus(true);
     }
 

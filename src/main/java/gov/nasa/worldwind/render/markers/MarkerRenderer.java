@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.render.markers;
 
 import com.jogamp.opengl.*;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.pick.*;
@@ -208,9 +208,9 @@ public class MarkerRenderer {
             Color color = dc.getUniquePickColor();
             int colorCode = color.getRGB();
             PickedObject po = new PickedObject(colorCode, marker, marker.getPosition(), false);
-            po.set(AVKey.PICKED_OBJECT_ID, index);
+            po.set(Keys.PICKED_OBJECT_ID, index);
             if (this.enablePickSizeReturn)
-                po.set(AVKey.PICKED_OBJECT_SIZE, 2 * radius);
+                po.set(Keys.PICKED_OBJECT_SIZE, 2 * radius);
             this.pickSupport.addPickableObject(po);
             GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
             gl.glColor3ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());

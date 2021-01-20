@@ -5,6 +5,7 @@
  */
 package gov.nasa.worldwind.data;
 
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.formats.worldfile.WorldFile;
 import gov.nasa.worldwind.geom.Sector;
@@ -61,8 +62,8 @@ public class ImageIORasterWriter extends AbstractDataRasterWriter {
         ImageIO.write(image, formatSuffix, file);
     }
 
-    protected static void writeImageMetadata(File file, AVList values) throws FileNotFoundException {
-        Sector sector = (Sector) values.get(AVKey.SECTOR);
+    protected static void writeImageMetadata(File file, KV values) throws FileNotFoundException {
+        Sector sector = (Sector) values.get(Keys.SECTOR);
         int[] size = (int[]) values.get(WorldFile.WORLD_FILE_IMAGE_SIZE);
 
         double xPixelSize = sector.lonDelta / size[0];
@@ -98,14 +99,14 @@ public class ImageIORasterWriter extends AbstractDataRasterWriter {
         return sb.toString();
     }
 
-    protected static void initWorldFileParams(DataRaster raster, AVList worldFileParams) {
+    protected static void initWorldFileParams(DataRaster raster, KV worldFileParams) {
         int[] size = new int[2];
         size[0] = raster.getWidth();
         size[1] = raster.getHeight();
         worldFileParams.set(WorldFile.WORLD_FILE_IMAGE_SIZE, size);
 
         Sector sector = raster.getSector();
-        worldFileParams.set(AVKey.SECTOR, sector);
+        worldFileParams.set(Keys.SECTOR, sector);
     }
 
     public boolean isWriteGeoreferenceFiles() {
@@ -124,7 +125,7 @@ public class ImageIORasterWriter extends AbstractDataRasterWriter {
         ImageIORasterWriter.writeImage(raster, formatSuffix, file);
 
         if (this.isWriteGeoreferenceFiles()) {
-            AVList worldFileParams = new AVListImpl();
+            KV worldFileParams = new KVMap();
             ImageIORasterWriter.initWorldFileParams(raster, worldFileParams);
 
             File dir = file.getParentFile();

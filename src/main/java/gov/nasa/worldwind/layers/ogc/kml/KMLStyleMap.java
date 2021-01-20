@@ -6,6 +6,7 @@
 
 package gov.nasa.worldwind.layers.ogc.kml;
 
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.event.Message;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.util.xml.XMLEventParserContext;
@@ -93,7 +94,7 @@ public class KMLStyleMap extends KMLAbstractStyleSelector {
      * selectors and style URL for the indicated sub-style type, with precedence given to style selectors.
      * <p>
      * Remote <i>styleUrls</i> that have not yet been resolved are not included in the result. In this case the returned
-     * sub-style is marked with the value {@link gov.nasa.worldwind.avlist.AVKey#UNRESOLVED}.
+     * sub-style is marked with the value {@link Keys#UNRESOLVED}.
      *
      * @param styleState the style mode, either \"normal\" or \"highlight\".
      * @param subStyle   an instance of the {@link KMLAbstractSubStyle} class desired, such as {@link KMLIconStyle}. The

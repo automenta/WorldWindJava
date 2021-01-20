@@ -6,6 +6,8 @@
 
 package gov.nasa.worldwind.symbology;
 
+import gov.nasa.worldwind.avlist.KV;
+
 /**
  * An interface for circular tactical graphics. This interface provides methods to access the radius of the circle. The
  * radius can also be set using the SymbologyConstants.DISTANCE modifier.
@@ -13,7 +15,7 @@ package gov.nasa.worldwind.symbology;
  * @author pabercrombie
  * @version $Id: TacticalCircle.java 1171 2013-02-11 21:45:02Z dcollins $
  * @see TacticalGraphicFactory#createCircle(String, gov.nasa.worldwind.geom.Position, double,
- * gov.nasa.worldwind.avlist.AVList)
+ * KV)
  */
 public interface TacticalCircle extends TacticalPoint {
     /**

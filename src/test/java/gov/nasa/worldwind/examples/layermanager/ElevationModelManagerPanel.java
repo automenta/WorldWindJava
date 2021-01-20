@@ -6,8 +6,7 @@
 
 package gov.nasa.worldwind.examples.layermanager;
 
-import gov.nasa.worldwind.WorldWindow;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.globes.ElevationModel;
 import gov.nasa.worldwind.terrain.CompoundElevationModel;
 
@@ -46,7 +45,7 @@ public class ElevationModelManagerPanel extends JPanel {
         // Add a property change listener that causes this panel to be updated whenever the elevation model list
         // changes.
         wwd.addPropertyChangeListener(propertyChangeEvent -> {
-            if (propertyChangeEvent.getPropertyName().equals(AVKey.ELEVATION_MODEL))
+            if (propertyChangeEvent.getPropertyName().equals(Keys.ELEVATION_MODEL))
                 if (!SwingUtilities.isEventDispatchThread())
                     SwingUtilities.invokeLater(() -> SwingUtilities.invokeLater(() -> update(wwd)));
                 else
@@ -84,7 +83,7 @@ public class ElevationModelManagerPanel extends JPanel {
             CompoundElevationModel cem = (CompoundElevationModel) wwd.model().getGlobe().getElevationModel();
 
             for (ElevationModel elevationModel : cem.getElevationModels()) {
-                if (elevationModel.get(AVKey.IGNORE) != null)
+                if (elevationModel.get(Keys.IGNORE) != null)
                     continue;
 
                 ElevationModelPanel elevationModelPanel = new ElevationModelPanel(wwd, this, elevationModel);

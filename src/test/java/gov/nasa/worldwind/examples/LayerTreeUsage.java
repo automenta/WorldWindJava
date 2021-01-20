@@ -6,8 +6,7 @@
 
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.BasicModel;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.ui.HotSpotController;
 import gov.nasa.worldwind.ui.tree.BasicTree;
@@ -38,7 +37,7 @@ public class LayerTreeUsage extends ApplicationTemplate {
 
             // Set up a layer to display the on-screen layer tree in the WorldWindow.
             RenderableLayer ui = new RenderableLayer();
-            ui.set(AVKey.HIDDEN, true);
+            ui.set(Keys.HIDDEN, true);
             ui.add(layerTree);
 
             // Add a controller to handle input events on the layer tree.

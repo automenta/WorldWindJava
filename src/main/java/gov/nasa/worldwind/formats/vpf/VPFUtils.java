@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.formats.vpf;
 
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.util.*;
 
@@ -147,7 +147,7 @@ public class VPFUtils {
         return (i < remain) ? sb.toString().trim() : null;
     }
 
-    public static void checkAndSetValue(VPFRecord record, String paramName, String paramKey, AVList params) {
+    public static void checkAndSetValue(VPFRecord record, String paramName, String paramKey, KV params) {
         if (record == null) {
             String message = Logging.getMessage("nullValue.RecordIsNull");
             Logging.logger().severe(message);

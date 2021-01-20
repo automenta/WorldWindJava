@@ -8,8 +8,7 @@ package gov.nasa.worldwind.ui.tree;
 
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.texture.TextureCoords;
-import gov.nasa.worldwind.WWObjectImpl;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.pick.*;
 import gov.nasa.worldwind.render.*;
@@ -170,7 +169,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      * @param y    Y coordinate of the upper left corner of the tree frame, measured from the top of the screen.
      */
     public BasicTreeLayout(Tree tree, int x, int y) {
-        this(tree, new Offset((double) x, (double) y, AVKey.PIXELS, AVKey.INSET_PIXELS));
+        this(tree, new Offset((double) x, (double) y, Keys.PIXELS, Keys.INSET_PIXELS));
     }
 
     /**
@@ -197,7 +196,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
             // Ignore events originated by this TreeLayout, and repaint events. There is no need to recompute the
             // tree layout just because a repaint was triggered.
             if (propertyChangeEvent.getSource() != BasicTreeLayout.this
-                && !AVKey.REPAINT.equals(propertyChangeEvent.getPropertyName())) {
+                && !Keys.REPAINT.equals(propertyChangeEvent.getPropertyName())) {
                 BasicTreeLayout.this.invalidate();
             }
         });
@@ -526,7 +525,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
             // Calculate a scroll position that will bring the node to the top of the visible area. Subtract the row spacing
             // to avoid clipping off the top of the node.
             int scroll = (int) Math.abs(bounds.getMaxY()) - this.getActiveAttributes().getRowSpacing();
-            this.frame.getScrollBar(AVKey.VERTICAL).setValue(scroll);
+            this.frame.getScrollBar(Keys.VERTICAL).setValue(scroll);
 
             this.scrollToNode = null;
         }
@@ -698,7 +697,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
             for (NodeLayout layout : nodes) {
                 Color color = dc.getUniquePickColor();
                 PickedObject pickedObject = new PickedObject(color.getRGB(), layout.node);
-                pickedObject.set(AVKey.HOT_SPOT, this.getFrame());
+                pickedObject.set(Keys.HOT_SPOT, this.getFrame());
                 this.pickSupport.addPickableObject(pickedObject);
                 gl.glColor3ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
 

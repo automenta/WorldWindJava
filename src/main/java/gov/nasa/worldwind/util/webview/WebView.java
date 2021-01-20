@@ -5,8 +5,8 @@
  */
 package gov.nasa.worldwind.util.webview;
 
-import gov.nasa.worldwind.Disposable;
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.render.*;
 
 import java.awt.*;
@@ -35,13 +35,13 @@ import java.net.URL;
  * two-dimensional OpenGL texture that may be mapped onto any OpenGL primitive using texture coordinates.
  * <p>
  * When the WebView's texture representation changes as a result of an internal event it fires a property change event
- * with the key {@link gov.nasa.worldwind.avlist.AVKey#REPAINT}. This can happen from web content loading, user
+ * with the key {@link Keys#REPAINT}. This can happen from web content loading, user
  * interaction, or from a programmatic change such as JavaScript.
  *
  * @author dcollins
  * @version $Id: WebView.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface WebView extends AVList, Disposable {
+public interface WebView extends KV, Disposable {
     /**
      * Specifies this <code>WebView's</code> HTML content as a string. The specified <code>htmlString</code> may be one
      * of the following:
@@ -187,7 +187,7 @@ public interface WebView extends AVList, Disposable {
      * @return an <code>Iterable</code> of <code>AVList</code> parameters describing this <code>WebView's</code> visible
      * links.
      */
-    Iterable<AVList> getLinks();
+    Iterable<KV> getLinks();
 
     /**
      * Returns a layed out and rendered representation of the WebView's content as a {@link WWTexture}. The texture's

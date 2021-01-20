@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.formats.shapefile;
 
-import gov.nasa.worldwind.avlist.AVListImpl;
+import gov.nasa.worldwind.avlist.KVMap;
 import gov.nasa.worldwind.util.Logging;
 
 import java.nio.*;
@@ -16,7 +16,7 @@ import java.util.logging.Level;
  * @author Patrick Murris
  * @version $Id: DBaseRecord.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class DBaseRecord extends AVListImpl {
+public class DBaseRecord extends KVMap {
     private static final DateFormat dateformat = new SimpleDateFormat("yyyyMMdd");
     private boolean deleted;
     private int recordNumber;

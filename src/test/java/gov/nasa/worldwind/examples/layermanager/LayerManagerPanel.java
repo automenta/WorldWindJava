@@ -6,8 +6,7 @@
 
 package gov.nasa.worldwind.examples.layermanager;
 
-import gov.nasa.worldwind.WorldWindow;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.video.LayerList;
 
@@ -65,7 +64,7 @@ public class LayerManagerPanel extends JPanel {
 
         // Add a property change listener that causes this layer panel to be updated whenever the layer list changes.
         wwd.model().getLayers().addPropertyChangeListener(propertyChangeEvent -> {
-            if (propertyChangeEvent.getPropertyName().equals(AVKey.LAYERS))
+            if (propertyChangeEvent.getPropertyName().equals(Keys.LAYERS))
                 SwingUtilities.invokeLater(() -> update(wwd));
         });
     }
@@ -88,7 +87,7 @@ public class LayerManagerPanel extends JPanel {
 
         // Fill the layers panel with the titles of all layers in the WorldWindow's current model.
         for (Layer layer : wwd.model().getLayers()) {
-            if (layer.get(AVKey.IGNORE) != null)
+            if (layer.get(Keys.IGNORE) != null)
                 continue;
 
             LayerPanel layerPanel = new LayerPanel(wwd, layer);
@@ -130,8 +129,8 @@ public class LayerManagerPanel extends JPanel {
             // for TiledImageLayer and its subclasses. Applications could, however, implement it for the layers
             // they design.
 
-            Long layerTimeStamp = (Long) layerPanel.getLayer().get(AVKey.FRAME_TIMESTAMP);
-            Long frameTimeStamp = (Long) wwd.sceneControl().get(AVKey.FRAME_TIMESTAMP);
+            Long layerTimeStamp = (Long) layerPanel.getLayer().get(Keys.FRAME_TIMESTAMP);
+            Long frameTimeStamp = (Long) wwd.sceneControl().get(Keys.FRAME_TIMESTAMP);
 
             if (layerTimeStamp != null && frameTimeStamp != null
                 && layerTimeStamp.longValue() == frameTimeStamp.longValue()) {

@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.examples.worldwindow.features;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.examples.worldwindow.core.*;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.tool.ViewControlsLayer;
@@ -49,7 +49,7 @@ public class Navigation extends AbstractFeatureLayer {
 
         layer.set(Constants.SCREEN_LAYER, true);
         layer.set(Constants.INTERNAL_LAYER, true);
-        layer.setLayout(AVKey.VERTICAL);
+        layer.setLayout(Keys.VERTICAL);
 
         controller.addInternalLayer(layer);
 

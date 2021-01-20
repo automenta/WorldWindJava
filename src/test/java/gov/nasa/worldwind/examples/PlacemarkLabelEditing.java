@@ -7,7 +7,6 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.pick.PickedObject;
@@ -54,8 +53,8 @@ public class PlacemarkLabelEditing extends ApplicationTemplate {
                     if (event.getEventAction().equals(SelectEvent.LEFT_CLICK)) {
                         // See if it was the label that was picked. If so, raise an input dialog prompting
                         // for new label text.
-                        Object placemarkPiece = po.get(AVKey.PICKED_OBJECT_ID);
-                        if (placemarkPiece != null && placemarkPiece.equals(AVKey.LABEL)) {
+                        Object placemarkPiece = po.get(Keys.PICKED_OBJECT_ID);
+                        if (placemarkPiece != null && placemarkPiece.equals(Keys.LABEL)) {
                             PointPlacemark placemark = (PointPlacemark) po.get();
                             String labelText = placemark.getLabelText();
                             labelText = JOptionPane.showInputDialog(null, "Enter label text", labelText);

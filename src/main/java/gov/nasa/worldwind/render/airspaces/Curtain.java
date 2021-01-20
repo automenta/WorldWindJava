@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.render.airspaces;
 
 import com.jogamp.opengl.*;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.cache.Cacheable;
 import gov.nasa.worldwind.geom.Box;
 import gov.nasa.worldwind.geom.*;
@@ -27,7 +27,7 @@ import java.util.*;
  */
 public class Curtain extends AbstractAirspace {
     protected final List<LatLon> locations = new ArrayList<>();
-    protected String pathType = AVKey.GREAT_CIRCLE;
+    protected String pathType = Keys.GREAT_CIRCLE;
     protected double splitThreshold = 2000.0; // 2 km
     protected boolean applyPositionAltitude;
 
@@ -84,7 +84,7 @@ public class Curtain extends AbstractAirspace {
 
         globe = dc.getGlobe();
 
-        if (AVKey.RHUMB_LINE.equalsIgnoreCase(pathType) || AVKey.LOXODROME.equalsIgnoreCase(pathType)) {
+        if (Keys.RHUMB_LINE.equalsIgnoreCase(pathType) || Keys.LOXODROME.equalsIgnoreCase(pathType)) {
             arcLength = LatLon.rhumbDistance(begin, end).radians();
         } else // (AVKey.GREAT_CIRCLE.equalsIgnoreCase(pathType)
         {
@@ -505,7 +505,7 @@ public class Curtain extends AbstractAirspace {
         Globe globe = dc.getGlobe();
         double arcLength, azimuth;
 
-        if (AVKey.RHUMB_LINE.equalsIgnoreCase(pathType) || AVKey.LOXODROME.equalsIgnoreCase(pathType)) {
+        if (Keys.RHUMB_LINE.equalsIgnoreCase(pathType) || Keys.LOXODROME.equalsIgnoreCase(pathType)) {
             arcLength = LatLon.rhumbDistance(begin, end).radians();
             azimuth = LatLon.rhumbAzimuth(begin, end).radians();
         } else // (AVKey.GREAT_CIRCLE.equalsIgnoreCase(pathType)
@@ -528,7 +528,7 @@ public class Curtain extends AbstractAirspace {
             double length = p * dlength;
 
             LatLon ll;
-            if (AVKey.RHUMB_LINE.equalsIgnoreCase(pathType) || AVKey.LOXODROME.equalsIgnoreCase(pathType))
+            if (Keys.RHUMB_LINE.equalsIgnoreCase(pathType) || Keys.LOXODROME.equalsIgnoreCase(pathType))
                 ll = LatLon.rhumbEndPosition(begin, azimuth, length);
             else // (AVKey.GREAT_CIRCLE.equalsIgnoreCase(pathType)
                 ll = LatLon.greatCircleEndPosition(begin, azimuth, length);
@@ -571,8 +571,8 @@ public class Curtain extends AbstractAirspace {
     protected void makeSegment(Extent globe, LatLon locA, LatLon locB, Collection<LatLon> tessellatedLocations) {
         Angle segmentAzimuth;
         Angle segmentDistance;
-        boolean isRhumbSegment = AVKey.RHUMB_LINE.equalsIgnoreCase(this.getPathType())
-            || AVKey.LOXODROME.equalsIgnoreCase(this.getPathType());
+        boolean isRhumbSegment = Keys.RHUMB_LINE.equalsIgnoreCase(this.getPathType())
+            || Keys.LOXODROME.equalsIgnoreCase(this.getPathType());
 
         if (isRhumbSegment) {
             segmentAzimuth = LatLon.rhumbAzimuth(locA, locB);

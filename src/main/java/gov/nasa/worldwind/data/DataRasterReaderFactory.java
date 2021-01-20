@@ -6,7 +6,8 @@
 
 package gov.nasa.worldwind.data;
 
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.Keys;
+import gov.nasa.worldwind.avlist.KV;
 
 /**
  * @author Lado Garakanidze
@@ -19,7 +20,7 @@ public interface DataRasterReaderFactory {
      * of the corresponding type but not as, for example, an InputStream or a URL.
      * <p>
      * The list of readers searched is determined by the DataRasterReaderFactory associated with the current {@link
-     * gov.nasa.worldwind.Configuration}, as specified by the {@link gov.nasa.worldwind.avlist.AVKey#DATA_RASTER_READER_FACTORY_CLASS_NAME}.
+     * gov.nasa.worldwind.Configuration}, as specified by the {@link Keys#DATA_RASTER_READER_FACTORY_CLASS_NAME}.
      * If no factory is specified in the configuration, {@link BasicDataRasterReaderFactory} is used.
      *
      * @param source the source to read. May by a {@link java.io.File}, a file path, a URL or an {@link
@@ -29,7 +30,7 @@ public interface DataRasterReaderFactory {
      * @return a data reader for the specified source, or null if no reader can be found.
      * @throws IllegalArgumentException if the source is null.
      */
-    DataRasterReader findReaderFor(Object source, AVList params);
+    DataRasterReader findReaderFor(Object source, KV params);
 
     /**
      * Search a specified list of data raster readers for one that will read a specified data source. The determination
@@ -44,7 +45,7 @@ public interface DataRasterReaderFactory {
      * @return a data reader for the specified source, or null if no reader can be found.
      * @throws IllegalArgumentException if either the source or the reader list is null.
      */
-    DataRasterReader findReaderFor(Object source, AVList params, DataRasterReader[] readers);
+    DataRasterReader findReaderFor(Object source, KV params, DataRasterReader[] readers);
 
     /**
      * Returns this class' list of readers.

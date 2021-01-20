@@ -39,7 +39,7 @@ public class SAR2 extends JFrame {
     protected static final String ONLINE_HELP_URL
         = "https://worldwind.arc.nasa.gov/java/apps/SARApp/help/v6/SARHelp.html";
     // Preferences
-    protected static final AVList userPreferences = new AVListImpl();
+    protected static final KV userPreferences = new KVMap();
     protected static final long MIN_AUTO_SAVE_INTERVAL = 1000L;
     private static final int REDRAW_TIMER_DELAY = 1000;  // 1 sec
     private static final int OK = 0;
@@ -178,7 +178,7 @@ public class SAR2 extends JFrame {
         return url;
     }
 
-    public static AVList getUserPreferences() {
+    public static KV getUserPreferences() {
         return userPreferences;
     }
 
@@ -1281,7 +1281,7 @@ public class SAR2 extends JFrame {
         this.autoSaveTimer.stop();
 
         if (UserPreferenceUtils.getBooleanValue(getUserPreferences(), SARKey.AUTO_SAVE_TRACKS)) {
-            long delayMillis = AVListImpl.getLongValue(getUserPreferences(), SARKey.AUTO_SAVE_TRACKS_INTERVAL,
+            long delayMillis = KVMap.getLongValue(getUserPreferences(), SARKey.AUTO_SAVE_TRACKS_INTERVAL,
                 minInterval);
             if (delayMillis < minInterval)
                 delayMillis = minInterval;

@@ -6,7 +6,8 @@
 
 package gov.nasa.worldwind.symbology.milstd2525;
 
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.Keys;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.util.Logging;
@@ -37,8 +38,8 @@ public class MilStd2525ModifierRetriever extends AbstractIconRetriever {
         super(retrieverPath);
     }
 
-    protected static String composePath(String symbolModifierCode, AVList params) {
-        AVList modifierParams = SymbolCode.parseSymbolModifierCode(symbolModifierCode, null);
+    protected static String composePath(String symbolModifierCode, KV params) {
+        KV modifierParams = SymbolCode.parseSymbolModifierCode(symbolModifierCode, null);
         if (modifierParams == null)
             return null;
 
@@ -59,7 +60,7 @@ public class MilStd2525ModifierRetriever extends AbstractIconRetriever {
         return sb.toString();
     }
 
-    protected static boolean isVariableWidth(AVList params) {
+    protected static boolean isVariableWidth(KV params) {
         return params.hasKey(SymbologyConstants.FEINT_DUMMY)
             || params.hasKey(SymbologyConstants.OPERATIONAL_CONDITION_ALTERNATE);
     }
@@ -75,8 +76,8 @@ public class MilStd2525ModifierRetriever extends AbstractIconRetriever {
         return !SymbologyConstants.OPERATIONAL_CONDITION_ALTERNATE_ALL.contains(symbolId.toUpperCase());
     }
 
-    protected static Integer chooseBestFittingWidth(AVList params) {
-        Object o = params.get(AVKey.WIDTH);
+    protected static Integer chooseBestFittingWidth(KV params) {
+        Object o = params.get(Keys.WIDTH);
         if (!(o instanceof Number))
             return null;
 
@@ -102,11 +103,11 @@ public class MilStd2525ModifierRetriever extends AbstractIconRetriever {
      * @return The value of the AVKey.COLOR parameter, if such a parameter exists and is of type java.awt.Color. Returns
      * null if the parameter list is null, if there is no value for key AVKey.COLOR, or if the value is not a Color.
      */
-    protected static Color getColorFromParams(AVList params) {
+    protected static Color getColorFromParams(KV params) {
         if (params == null)
             return null;
 
-        Object o = params.get(AVKey.COLOR);
+        Object o = params.get(Keys.COLOR);
         return (o instanceof Color) ? (Color) o : null;
     }
 
@@ -119,7 +120,7 @@ public class MilStd2525ModifierRetriever extends AbstractIconRetriever {
      *                 which determines the color of the modifier (default is black).
      * @return BufferedImage containing the requested modifier, or null if the modifier cannot be retrieved.
      */
-    public BufferedImage createIcon(String symbolId, AVList params) {
+    public BufferedImage createIcon(String symbolId, KV params) {
         if (symbolId == null) {
             String msg = Logging.getMessage("nullValue.SymbolCodeIsNull");
             Logging.logger().severe(msg);

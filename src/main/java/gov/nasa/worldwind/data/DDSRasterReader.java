@@ -6,7 +6,8 @@
 
 package gov.nasa.worldwind.data;
 
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.Keys;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.formats.dds.*;
 import gov.nasa.worldwind.util.*;
@@ -28,12 +29,12 @@ public class DDSRasterReader extends AbstractDataRasterReader {
     }
 
     @Override
-    protected boolean doCanRead(Object source, AVList params) {
+    protected boolean doCanRead(Object source, KV params) {
         try {
             DDSHeader header = DDSHeader.readFrom(source);
             if (header.getWidth() > 0 && header.getHeight() > 0) {
-                if (null != params && !params.hasKey(AVKey.PIXEL_FORMAT)) {
-                    params.set(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
+                if (null != params && !params.hasKey(Keys.PIXEL_FORMAT)) {
+                    params.set(Keys.PIXEL_FORMAT, Keys.IMAGE);
                 }
 
                 return true;
@@ -48,9 +49,9 @@ public class DDSRasterReader extends AbstractDataRasterReader {
     }
 
     @Override
-    protected DataRaster[] doRead(Object source, AVList params) throws IOException {
-        if (null == params || !params.hasKey(AVKey.SECTOR)) {
-            String message = Logging.getMessage("generic.MissingRequiredParameter", AVKey.SECTOR);
+    protected DataRaster[] doRead(Object source, KV params) throws IOException {
+        if (null == params || !params.hasKey(Keys.SECTOR)) {
+            String message = Logging.getMessage("generic.MissingRequiredParameter", Keys.SECTOR);
             Logging.logger().severe(message);
             throw new WWRuntimeException(message);
         }
@@ -60,7 +61,7 @@ public class DDSRasterReader extends AbstractDataRasterReader {
         try {
             raster = DDSDecompressor.decompress(source, params);
             if (null != raster) {
-                raster.set(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
+                raster.set(Keys.PIXEL_FORMAT, Keys.IMAGE);
             }
         }
         catch (WWRuntimeException wwe) {
@@ -77,13 +78,13 @@ public class DDSRasterReader extends AbstractDataRasterReader {
     }
 
     @Override
-    protected void doReadMetadata(Object source, AVList params) throws IOException {
+    protected void doReadMetadata(Object source, KV params) throws IOException {
         try {
             DDSHeader header = DDSHeader.readFrom(source);
             if (null != params) {
-                params.set(AVKey.WIDTH, header.getWidth());
-                params.set(AVKey.HEIGHT, header.getHeight());
-                params.set(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
+                params.set(Keys.WIDTH, header.getWidth());
+                params.set(Keys.HEIGHT, header.getHeight());
+                params.set(Keys.PIXEL_FORMAT, Keys.IMAGE);
             }
         }
         catch (Exception e) {

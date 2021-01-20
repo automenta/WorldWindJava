@@ -8,7 +8,6 @@ package gov.nasa.worldwind.render;
 
 import com.jogamp.opengl.GL;
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.layers.ogc.kml.KMLConstants;
 import gov.nasa.worldwind.layers.ogc.kml.impl.KMLExportUtil;
 import gov.nasa.worldwind.util.*;
@@ -32,7 +31,7 @@ public class PointPlacemarkAttributes implements Exportable {
     /**
      * The image offset to use if none specified. This value is that required by the default image.
      */
-    public static final Offset DEFAULT_IMAGE_OFFSET = new Offset(19.0d, 8.0d, AVKey.PIXELS, AVKey.PIXELS);
+    public static final Offset DEFAULT_IMAGE_OFFSET = new Offset(19.0d, 8.0d, Keys.PIXELS, Keys.PIXELS);
     /**
      * The image scale to use if none specified. This value is appropriate for the default image.
      */
@@ -44,7 +43,7 @@ public class PointPlacemarkAttributes implements Exportable {
     /**
      * The default label offset. This value is appropriate for the default image.
      */
-    public static final Offset DEFAULT_LABEL_OFFSET = new Offset(0.9d, 0.6d, AVKey.FRACTION, AVKey.FRACTION);
+    public static final Offset DEFAULT_LABEL_OFFSET = new Offset(0.9d, 0.6d, Keys.FRACTION, Keys.FRACTION);
     /**
      * The default font to use for the placemark's label.
      */
@@ -319,13 +318,13 @@ public class PointPlacemarkAttributes implements Exportable {
     }
 
     /**
-     * Specifies the heading reference. If {@link AVKey#RELATIVE_TO_SCREEN}, the heading is interpreted as relative to
+     * Specifies the heading reference. If {@link Keys#RELATIVE_TO_SCREEN}, the heading is interpreted as relative to
      * the screen and the placemark icon maintains the heading relative to the screen's vertical edges. If {@link
-     * AVKey#RELATIVE_TO_GLOBE}, the heading is interpreted relative to the globe and the placemark icon maintains the
+     * Keys#RELATIVE_TO_GLOBE}, the heading is interpreted relative to the globe and the placemark icon maintains the
      * heading relative to the globe's north direction.
      * <p>
      * The default heading reference is null, which {@link PointPlacemark} interprets as {@link
-     * AVKey#RELATIVE_TO_SCREEN}.
+     * Keys#RELATIVE_TO_SCREEN}.
      *
      * @param headingReference the heading reference. See the description for possible values.
      */

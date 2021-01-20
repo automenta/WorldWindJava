@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.util;
 
-import gov.nasa.worldwind.avlist.AVListImpl;
+import gov.nasa.worldwind.avlist.KVMap;
 import gov.nasa.worldwind.geom.*;
 
 /**
@@ -18,7 +18,7 @@ import gov.nasa.worldwind.geom.*;
  * @author tag
  * @version $Id: UnitsFormat.java 2301 2014-09-06 00:34:45Z tgaskins $
  */
-public class UnitsFormat extends AVListImpl {
+public class UnitsFormat extends KVMap {
     // Keys identifying unit systems and units
     public static final String IMPERIAL_SYSTEM = "gov.nasa.worldwind.units.ImperialSystem";
     public static final String METRIC_SYSTEM = "gov.nasa.worldwind.units.MetricSystem";

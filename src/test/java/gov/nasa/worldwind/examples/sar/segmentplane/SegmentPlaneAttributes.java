@@ -6,7 +6,8 @@
 package gov.nasa.worldwind.examples.sar.segmentplane;
 
 import com.jogamp.opengl.*;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.Keys;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.Logging;
@@ -372,7 +373,7 @@ public class SegmentPlaneAttributes {
         }
 
         public LabelAttributes() {
-            this(Color.WHITE, Font.decode("Arial-12"), AVKey.LEFT, AVKey.BOTTOM);
+            this(Color.WHITE, Font.decode("Arial-12"), Keys.LEFT, Keys.BOTTOM);
         }
 
         public LabelAttributes copy() {
@@ -486,7 +487,7 @@ public class SegmentPlaneAttributes {
             this.offset = vec4;
         }
 
-        public String getText(SegmentPlane segmentPlane, Position position, AVList values) {
+        public String getText(SegmentPlane segmentPlane, Position position, KV values) {
             if (segmentPlane == null) {
                 String message = Logging.getMessage("nullValue.SegmentPlaneIsNull");
                 Logging.logger().severe(message);

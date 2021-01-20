@@ -5,6 +5,7 @@
  */
 package gov.nasa.worldwind.util;
 
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.*;
 
@@ -15,10 +16,10 @@ import java.util.Objects;
  * @author tag
  * @version $Id: Level.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class Level extends AVListImpl implements Comparable<Level> {
+public class Level extends KVMap implements Comparable<Level> {
     static final int DEFAULT_MAX_ABSENT_TILE_ATTEMPTS = 2;
     static final int DEFAULT_MIN_ABSENT_TILE_CHECK_INTERVAL = 10000; // milliseconds
-    protected AVList params;
+    protected KV params;
     protected int levelNumber;
     protected String levelName; // null or empty level name signifies no data resources associated with this level
     protected LatLon tileDelta;
@@ -38,12 +39,12 @@ public class Level extends AVListImpl implements Comparable<Level> {
     // within this interval, the tile is still deemed to be absent until the interval expires.
     protected AbsentResourceList absentTiles;
 
-    public Level(AVList params) {
-        if (params == null) {
-            String message = Logging.getMessage("nullValue.LevelConfigParams");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+    public Level(KV params) {
+//        if (params == null) {
+//            String message = Logging.getMessage("nullValue.LevelConfigParams");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         this.params = params.copy(); // Private copy to insulate from subsequent changes by the app
         String message = Level.validate(params);
@@ -52,29 +53,29 @@ public class Level extends AVListImpl implements Comparable<Level> {
             throw new IllegalArgumentException(message);
         }
 
-        String ln = this.params.getStringValue(AVKey.LEVEL_NAME);
+        String ln = this.params.getStringValue(Keys.LEVEL_NAME);
         this.levelName = ln != null ? ln : "";
 
-        this.levelNumber = (Integer) this.params.get(AVKey.LEVEL_NUMBER);
-        this.tileDelta = (LatLon) this.params.get(AVKey.TILE_DELTA);
-        this.tileWidth = (Integer) this.params.get(AVKey.TILE_WIDTH);
-        this.tileHeight = (Integer) this.params.get(AVKey.TILE_HEIGHT);
-        this.cacheName = this.params.getStringValue(AVKey.DATA_CACHE_NAME);
-        this.service = this.params.getStringValue(AVKey.SERVICE);
-        this.dataset = this.params.getStringValue(AVKey.DATASET_NAME);
-        this.formatSuffix = this.params.getStringValue(AVKey.FORMAT_SUFFIX);
-        this.urlBuilder = (TileUrlBuilder) this.params.get(AVKey.TILE_URL_BUILDER);
-        this.expiryTime = AVListImpl.getLongValue(params, AVKey.EXPIRY_TIME, 0L);
+        this.levelNumber = (Integer) this.params.get(Keys.LEVEL_NUMBER);
+        this.tileDelta = (LatLon) this.params.get(Keys.TILE_DELTA);
+        this.tileWidth = (Integer) this.params.get(Keys.TILE_WIDTH);
+        this.tileHeight = (Integer) this.params.get(Keys.TILE_HEIGHT);
+        this.cacheName = this.params.getStringValue(Keys.DATA_CACHE_NAME);
+        this.service = this.params.getStringValue(Keys.SERVICE);
+        this.dataset = this.params.getStringValue(Keys.DATASET_NAME);
+        this.formatSuffix = this.params.getStringValue(Keys.FORMAT_SUFFIX);
+        this.urlBuilder = (TileUrlBuilder) this.params.get(Keys.TILE_URL_BUILDER);
+        this.expiryTime = KVMap.getLongValue(params, Keys.EXPIRY_TIME, 0L);
 
         this.texelSize = this.tileDelta.getLatitude().radians() / this.tileHeight;
 
         this.path = this.cacheName + '/' + this.levelName;
 
-        Integer maxAbsentTileAttempts = (Integer) this.params.get(AVKey.MAX_ABSENT_TILE_ATTEMPTS);
+        Integer maxAbsentTileAttempts = (Integer) this.params.get(Keys.MAX_ABSENT_TILE_ATTEMPTS);
         if (maxAbsentTileAttempts == null)
             maxAbsentTileAttempts = Level.DEFAULT_MAX_ABSENT_TILE_ATTEMPTS;
 
-        Integer minAbsentTileCheckInterval = (Integer) this.params.get(AVKey.MIN_ABSENT_TILE_CHECK_INTERVAL);
+        Integer minAbsentTileCheckInterval = (Integer) this.params.get(Keys.MIN_ABSENT_TILE_CHECK_INTERVAL);
         if (minAbsentTileCheckInterval == null)
             minAbsentTileCheckInterval = Level.DEFAULT_MIN_ABSENT_TILE_CHECK_INTERVAL;
 
@@ -87,47 +88,47 @@ public class Level extends AVListImpl implements Comparable<Level> {
      * @param params the list of parameters to validate.
      * @return null if valid, otherwise a <code>String</code> containing a description of why it's invalid.
      */
-    protected static String validate(AVList params) {
+    protected static String validate(KV params) {
         StringBuilder sb = new StringBuilder();
 
-        Object o = params.get(AVKey.LEVEL_NUMBER);
+        Object o = params.get(Keys.LEVEL_NUMBER);
         if (!(o instanceof Integer) || ((Integer) o) < 0)
             sb.append(Logging.getMessage("term.levelNumber")).append(' ');
 
-        o = params.get(AVKey.LEVEL_NAME);
+        o = params.get(Keys.LEVEL_NAME);
         if (!(o instanceof String))
             sb.append(Logging.getMessage("term.levelName")).append(' ');
 
-        o = params.get(AVKey.TILE_WIDTH);
+        o = params.get(Keys.TILE_WIDTH);
         if (!(o instanceof Integer) || ((Integer) o) < 0)
             sb.append(Logging.getMessage("term.tileWidth")).append(' ');
 
-        o = params.get(AVKey.TILE_HEIGHT);
+        o = params.get(Keys.TILE_HEIGHT);
         if (!(o instanceof Integer) || ((Integer) o) < 0)
             sb.append(Logging.getMessage("term.tileHeight")).append(' ');
 
-        o = params.get(AVKey.TILE_DELTA);
+        o = params.get(Keys.TILE_DELTA);
         if (!(o instanceof LatLon))
             sb.append(Logging.getMessage("term.tileDelta")).append(' ');
 
-        o = params.get(AVKey.DATA_CACHE_NAME);
+        o = params.get(Keys.DATA_CACHE_NAME);
         if (!(o instanceof String) || ((CharSequence) o).length() < 1)
             sb.append(Logging.getMessage("term.fileStoreFolder")).append(' ');
 
-        o = params.get(AVKey.TILE_URL_BUILDER);
+        o = params.get(Keys.TILE_URL_BUILDER);
         if (!(o instanceof TileUrlBuilder))
             sb.append(Logging.getMessage("term.tileURLBuilder")).append(' ');
 
-        o = params.get(AVKey.EXPIRY_TIME);
+        o = params.get(Keys.EXPIRY_TIME);
         if (o != null && (!(o instanceof Long) || ((Long) o) < 1))
             sb.append(Logging.getMessage("term.expiryTime")).append(' ');
 
-        if (!params.getStringValue(AVKey.LEVEL_NAME).isEmpty()) {
-            o = params.get(AVKey.DATASET_NAME);
+        if (!params.getStringValue(Keys.LEVEL_NAME).isEmpty()) {
+            o = params.get(Keys.DATASET_NAME);
             if (!(o instanceof String) || ((CharSequence) o).length() < 1)
                 sb.append(Logging.getMessage("term.datasetName")).append(' ');
 
-            o = params.get(AVKey.FORMAT_SUFFIX);
+            o = params.get(Keys.FORMAT_SUFFIX);
             if (!(o instanceof String) || ((CharSequence) o).length() < 1)
                 sb.append(Logging.getMessage("term.formatSuffix")).append(' ');
         }
@@ -218,9 +219,9 @@ public class Level extends AVListImpl implements Comparable<Level> {
 
     @Override
     public Object set(String key, Object value) {
-        if (key != null && key.equals(AVKey.MAX_ABSENT_TILE_ATTEMPTS) && value instanceof Integer)
+        if (key != null && key.equals(Keys.MAX_ABSENT_TILE_ATTEMPTS) && value instanceof Integer)
             this.absentTiles.setMaxTries((Integer) value);
-        else if (key != null && key.equals(AVKey.MIN_ABSENT_TILE_CHECK_INTERVAL) && value instanceof Integer)
+        else if (key != null && key.equals(Keys.MIN_ABSENT_TILE_CHECK_INTERVAL) && value instanceof Integer)
             this.absentTiles.setMinCheckInterval((Integer) value);
 
         return super.set(key, value);
@@ -228,9 +229,9 @@ public class Level extends AVListImpl implements Comparable<Level> {
 
     @Override
     public Object get(String key) {
-        if (key != null && key.equals(AVKey.MAX_ABSENT_TILE_ATTEMPTS))
+        if (key != null && key.equals(Keys.MAX_ABSENT_TILE_ATTEMPTS))
             return this.absentTiles.getMaxTries();
-        else if (key != null && key.equals(AVKey.MIN_ABSENT_TILE_CHECK_INTERVAL))
+        else if (key != null && key.equals(Keys.MIN_ABSENT_TILE_CHECK_INTERVAL))
             return this.absentTiles.getMinCheckInterval();
 
         return super.get(key);

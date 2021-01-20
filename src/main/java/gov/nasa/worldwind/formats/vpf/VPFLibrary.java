@@ -5,7 +5,8 @@
  */
 package gov.nasa.worldwind.formats.vpf;
 
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.Keys;
+import gov.nasa.worldwind.avlist.KVMap;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.util.*;
@@ -20,7 +21,7 @@ import java.util.regex.*;
  * @author dcollins
  * @version $Id: VPFLibrary.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class VPFLibrary extends AVListImpl {
+public class VPFLibrary extends KVMap {
     private final VPFDatabase database;
     private final Map<String, VPFCoverage> coverageMap = new HashMap<>();
     private final Map<Integer, VPFTile> tileMap = new HashMap<>();
@@ -100,8 +101,8 @@ public class VPFLibrary extends AVListImpl {
 
         record = lht.getRecord(1);
         if (record != null) {
-            VPFUtils.checkAndSetValue(record, "library_name", AVKey.DISPLAY_NAME, library);
-            VPFUtils.checkAndSetValue(record, "description", AVKey.DESCRIPTION, library);
+            VPFUtils.checkAndSetValue(record, "library_name", Keys.DISPLAY_NAME, library);
+            VPFUtils.checkAndSetValue(record, "description", Keys.DESCRIPTION, library);
         }
 
         // Library Coverages.
@@ -261,7 +262,7 @@ public class VPFLibrary extends AVListImpl {
      * @return name of this Library.
      */
     public String getName() {
-        return this.getStringValue(AVKey.DISPLAY_NAME);
+        return this.getStringValue(Keys.DISPLAY_NAME);
     }
 
     /**
@@ -270,7 +271,7 @@ public class VPFLibrary extends AVListImpl {
      * @return description of this Library.
      */
     public String getDescription() {
-        return this.getStringValue(AVKey.DESCRIPTION);
+        return this.getStringValue(Keys.DESCRIPTION);
     }
 
     public String getFilePath() {

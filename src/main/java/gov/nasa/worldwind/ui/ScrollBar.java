@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.ui;
 
 import com.jogamp.opengl.GL2;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.pick.PickSupport;
 import gov.nasa.worldwind.render.*;
@@ -134,7 +134,7 @@ public class ScrollBar implements Renderable {
      */
     protected Rectangle scrollBounds = new Rectangle();
     /**
-     * Scroll bar orientation, either {@link AVKey#HORIZONTAL} or {@link AVKey#VERTICAL}.
+     * Scroll bar orientation, either {@link Keys#HORIZONTAL} or {@link Keys#VERTICAL}.
      */
     protected String orientation;
 
@@ -232,14 +232,14 @@ public class ScrollBar implements Renderable {
      *               scroll bar will be passed to this component. May be null.
      */
     public ScrollBar(HotSpot parent) {
-        this.setOrientation(AVKey.VERTICAL);
+        this.setOrientation(Keys.VERTICAL);
         this.initializeUIControls(parent);
     }
 
     /**
      * Create a scroll bar with an orientation.
      *
-     * @param orientation Either {@link AVKey#VERTICAL} or {@link AVKey#HORIZONTAL}.
+     * @param orientation Either {@link Keys#VERTICAL} or {@link Keys#HORIZONTAL}.
      * @param parent      The screen component that contains the scroll bar. Input events that cannot be handled by the
      *                    scroll bar will be passed to this component. May be null.
      */
@@ -353,7 +353,7 @@ public class ScrollBar implements Renderable {
     public void setBounds(Rectangle bounds) {
         this.bounds = bounds;
 
-        if (AVKey.VERTICAL.equals(this.getOrientation()))
+        if (Keys.VERTICAL.equals(this.getOrientation()))
             this.scrollArrowSize = bounds.width;
         else
             this.scrollArrowSize = bounds.height;
@@ -475,7 +475,7 @@ public class ScrollBar implements Renderable {
     /**
      * Get the scroll bar orientation.
      *
-     * @return The scroll bar orientation, either {@link AVKey#VERTICAL} or {@link AVKey#HORIZONTAL}.
+     * @return The scroll bar orientation, either {@link Keys#VERTICAL} or {@link Keys#HORIZONTAL}.
      */
     public String getOrientation() {
         return this.orientation;
@@ -484,7 +484,7 @@ public class ScrollBar implements Renderable {
     /**
      * Set the scroll bar orientation.
      *
-     * @param orientation The scroll bar orientation, either {@link AVKey#VERTICAL} or {@link AVKey#HORIZONTAL}.
+     * @param orientation The scroll bar orientation, either {@link Keys#VERTICAL} or {@link Keys#HORIZONTAL}.
      */
     public void setOrientation(String orientation) {
         if (orientation == null) {
@@ -791,7 +791,7 @@ public class ScrollBar implements Renderable {
         int arrowSize = this.getScrollArrowSize();
         String orientation = this.getOrientation();
 
-        if (AVKey.VERTICAL.equals(orientation))
+        if (Keys.VERTICAL.equals(orientation))
             return this.bounds.height >= (arrowSize * 2 + this.getMinScrollKnobSize())
                 && this.bounds.width >= arrowSize;
         else
@@ -811,7 +811,7 @@ public class ScrollBar implements Renderable {
 
         int scrollControlSize = this.getScrollArrowSize();
 
-        if (AVKey.VERTICAL.equals(this.getOrientation())) {
+        if (Keys.VERTICAL.equals(this.getOrientation())) {
             this.scrollDownControlBounds = new Rectangle(x1, y1, scrollControlSize, scrollControlSize);
             this.scrollUpControlBounds = new Rectangle(x1, y2 - scrollControlSize, scrollControlSize,
                 scrollControlSize);
@@ -894,10 +894,10 @@ public class ScrollBar implements Renderable {
 
             // Draw background gradient
             String gradientDirection;
-            if (AVKey.VERTICAL.equals(this.getOrientation()))
-                gradientDirection = AVKey.HORIZONTAL;
+            if (Keys.VERTICAL.equals(this.getOrientation()))
+                gradientDirection = Keys.HORIZONTAL;
             else
-                gradientDirection = AVKey.VERTICAL;
+                gradientDirection = Keys.VERTICAL;
             TreeUtil.drawRectWithGradient(gl, this.scrollKnobBounds, this.knobColor2, this.knobColor1,
                 this.getOpacity(), gradientDirection);
 
@@ -909,7 +909,7 @@ public class ScrollBar implements Renderable {
             gl.glEnd();
 
             gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);
-            if (AVKey.VERTICAL.equals(this.getOrientation())) {
+            if (Keys.VERTICAL.equals(this.getOrientation())) {
                 ScrollBar.drawTriangle(dc, 90, this.scrollUpControlBounds, arrowInsets);
                 ScrollBar.drawTriangle(dc, -90, this.scrollDownControlBounds, arrowInsets);
             } else {
@@ -1069,7 +1069,7 @@ public class ScrollBar implements Renderable {
             int adjustment;
             int screenDimension;
 
-            if (AVKey.VERTICAL.equals(scrollBar.getOrientation())) {
+            if (Keys.VERTICAL.equals(scrollBar.getOrientation())) {
                 delta = point.y - this.dragRefPoint.y;
                 screenDimension = this.scrollBar.scrollBounds.height - this.scrollBar.getMinScrollKnobSize();
             } else {

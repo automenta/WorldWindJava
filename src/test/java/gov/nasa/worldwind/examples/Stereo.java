@@ -5,8 +5,7 @@
  */
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.Configuration;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 
 /**
  * Shows how to turn on stereo, which is requested via a Java VM property. This example sets the property directly, but
@@ -23,11 +22,11 @@ public class Stereo extends ApplicationTemplate {
         System.setProperty("gov.nasa.worldwind.stereo.mode", "redblue");
 
         // Configure the initial view parameters so that the balloons are immediately visible.
-        Configuration.setValue(AVKey.INITIAL_LATITUDE, 46.7045);
-        Configuration.setValue(AVKey.INITIAL_LONGITUDE, -121.6242);
-        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 10.0e3);
-        Configuration.setValue(AVKey.INITIAL_HEADING, 342);
-        Configuration.setValue(AVKey.INITIAL_PITCH, 80);
+        Configuration.setValue(Keys.INITIAL_LATITUDE, 46.7045);
+        Configuration.setValue(Keys.INITIAL_LONGITUDE, -121.6242);
+        Configuration.setValue(Keys.INITIAL_ALTITUDE, 10.0e3);
+        Configuration.setValue(Keys.INITIAL_HEADING, 342);
+        Configuration.setValue(Keys.INITIAL_PITCH, 80);
 
         ApplicationTemplate.start("WorldWind Anaglyph Stereo", AppFrame.class);
     }

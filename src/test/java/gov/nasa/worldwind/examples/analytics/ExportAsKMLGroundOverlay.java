@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.examples.analytics;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.data.*;
 import gov.nasa.worldwind.examples.kml.KMLDocumentBuilder;
 import gov.nasa.worldwind.exception.WWRuntimeException;
@@ -55,13 +55,13 @@ public class ExportAsKMLGroundOverlay {
 
         // Create a raster reader for the file type.
         DataRasterReaderFactory readerFactory = (DataRasterReaderFactory) WorldWind.createConfigurationComponent(
-            AVKey.DATA_RASTER_READER_FACTORY_CLASS_NAME);
+            Keys.DATA_RASTER_READER_FACTORY_CLASS_NAME);
         DataRasterReader reader = readerFactory.findReaderFor(file, null);
 
         try {
             // Before reading the raster, verify that the file contains elevations.
-            AVList metadata = reader.readMetadata(file, null);
-            if (metadata == null || !AVKey.ELEVATION.equals(metadata.getStringValue(AVKey.PIXEL_FORMAT))) {
+            KV metadata = reader.readMetadata(file, null);
+            if (metadata == null || !Keys.ELEVATION.equals(metadata.getStringValue(Keys.PIXEL_FORMAT))) {
                 String msg = Logging.getMessage("ElevationModel.SourceNotElevations", file.getAbsolutePath());
                 Logging.logger().severe(msg);
                 throw new IllegalArgumentException(msg);
@@ -77,9 +77,9 @@ public class ExportAsKMLGroundOverlay {
 
             // Determine the sector covered by the elevations. This information is in the GeoTIFF file or auxiliary
             // files associated with the elevations file.
-            Sector sector = (Sector) rasters[0].get(AVKey.SECTOR);
+            Sector sector = (Sector) rasters[0].get(Keys.SECTOR);
             if (sector == null) {
-                String msg = Logging.getMessage("DataRaster.MissingMetadata", AVKey.SECTOR);
+                String msg = Logging.getMessage("DataRaster.MissingMetadata", Keys.SECTOR);
                 Logging.logger().severe(msg);
                 throw new IllegalArgumentException(msg);
             }

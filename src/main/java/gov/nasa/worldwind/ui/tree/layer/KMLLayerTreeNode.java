@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.ui.tree.layer;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.ogc.kml.*;
 import gov.nasa.worldwind.ui.tree.*;
@@ -56,8 +56,8 @@ public class KMLLayerTreeNode extends LayerTreeNode {
 
             // Update the document if an update is received, or if this node represents a network link that has been
             // resolved.
-            if (AVKey.UPDATED.equals(name)
-                || (AVKey.RETRIEVAL_STATE_SUCCESSFUL.equals(name) && rootFeature == newValue)) {
+            if (Keys.UPDATED.equals(name)
+                || (Keys.RETRIEVAL_STATE_SUCCESSFUL.equals(name) && rootFeature == newValue)) {
                 // Ensure that the node list is manipulated on the EDT
                 if (SwingUtilities.isEventDispatchThread()) {
                     KMLLayerTreeNode.this.refresh();
@@ -68,7 +68,7 @@ public class KMLLayerTreeNode extends LayerTreeNode {
         });
 
         // Set the context of the KML document node to the root feature in the document.
-        this.set(AVKey.CONTEXT, kmlRoot.getFeature());
+        this.set(Keys.CONTEXT, kmlRoot.getFeature());
     }
 
     /**

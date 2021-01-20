@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.util.measure;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.Polyline;
@@ -43,7 +43,7 @@ public class LengthMeasurer implements MeasurableLength {
     private List<? extends Position> positions;
     private List<? extends Position> subdividedPositions;
     private boolean followTerrain;
-    private String pathType = AVKey.GREAT_CIRCLE;
+    private String pathType = Keys.GREAT_CIRCLE;
     private double maxSegmentLength = LengthMeasurer.DEFAULT_MAX_SEGMENT_LENGTH;
     private Sector sector;
     private double lengthTerrainSamplingSteps = LengthMeasurer.DEFAULT_TERRAIN_SAMPLING_STEPS;
@@ -123,8 +123,8 @@ public class LengthMeasurer implements MeasurableLength {
                     float s = (float) j / steps;
                     LatLon destLatLon;
                     switch (pathType) {
-                        case AVKey.LINEAR -> destLatLon = LatLon.interpolate(s, pos1, pos2);
-                        case AVKey.RHUMB_LINE -> {
+                        case Keys.LINEAR -> destLatLon = LatLon.interpolate(s, pos1, pos2);
+                        case Keys.RHUMB_LINE -> {
                             if (segmentAzimuth == null) {
                                 segmentAzimuth = LatLon.rhumbAzimuth(pos1, pos2);
                                 segmentDistance = LatLon.rhumbDistance(pos1, pos2);
@@ -132,7 +132,7 @@ public class LengthMeasurer implements MeasurableLength {
                             destLatLon = LatLon.rhumbEndPosition(pos1, segmentAzimuth.radians(),
                                 s * segmentDistance.radians());
                         }
-                        case AVKey.GREAT_CIRCLE -> {
+                        case Keys.GREAT_CIRCLE -> {
                             if (segmentAzimuth == null) {
                                 segmentAzimuth = LatLon.greatCircleAzimuth(pos1, pos2);
                                 segmentDistance = LatLon.greatCircleDistance(pos1, pos2);
@@ -243,11 +243,11 @@ public class LengthMeasurer implements MeasurableLength {
     @Deprecated
     public int getPathType() {
         switch (pathType) {
-            case AVKey.LINEAR:
+            case Keys.LINEAR:
                 return Polyline.LINEAR;
-            case AVKey.RHUMB_LINE:
+            case Keys.RHUMB_LINE:
                 return Polyline.RHUMB_LINE;
-            case AVKey.GREAT_CIRCLE:
+            case Keys.GREAT_CIRCLE:
                 return Polyline.GREAT_CIRCLE;
             default:
                 String message = Logging.getMessage("generic.ArgumentOutOfRange");
@@ -268,9 +268,9 @@ public class LengthMeasurer implements MeasurableLength {
     public void setPathType(int pathType) {
         String mappedPathType = this.pathType;
         switch (pathType) {
-            case Polyline.LINEAR -> mappedPathType = AVKey.LINEAR;
-            case Polyline.RHUMB_LINE -> mappedPathType = AVKey.RHUMB_LINE;
-            case Polyline.GREAT_CIRCLE -> mappedPathType = AVKey.GREAT_CIRCLE;
+            case Polyline.LINEAR -> mappedPathType = Keys.LINEAR;
+            case Polyline.RHUMB_LINE -> mappedPathType = Keys.RHUMB_LINE;
+            case Polyline.GREAT_CIRCLE -> mappedPathType = Keys.GREAT_CIRCLE;
             default -> {
                 String message = Logging.getMessage("generic.ArgumentOutOfRange");
                 Logging.logger().severe(message);

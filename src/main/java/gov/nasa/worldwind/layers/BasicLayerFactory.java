@@ -41,7 +41,7 @@ public class BasicLayerFactory extends BasicFactory {
      * @return a new layer
      * @throws WWUnrecognizedException if the service type given in the describing element is unrecognized.
      */
-    protected static Layer createTiledImageLayer(Element domElement, AVList params) {
+    protected static Layer createTiledImageLayer(Element domElement, KV params) {
         Layer layer;
 
         String serviceName = WWXML.getText(domElement, "Service/@serviceName");
@@ -52,7 +52,7 @@ public class BasicLayerFactory extends BasicFactory {
             layer = new BasicTiledImageLayer(domElement, params);
         } else if (OGCConstants.WMS_SERVICE_NAME.equals(serviceName)) {
             layer = new WMSTiledImageLayer(domElement, params);
-        } else if (AVKey.SERVICE_NAME_LOCAL_RASTER_SERVER.equals(serviceName)) {
+        } else if (Keys.SERVICE_NAME_LOCAL_RASTER_SERVER.equals(serviceName)) {
             throw new UnsupportedOperationException();
         } else {
             String msg = Logging.getMessage("generic.UnrecognizedServiceName", serviceName);
@@ -75,8 +75,8 @@ public class BasicLayerFactory extends BasicFactory {
      * @param params     any parameters to apply when creating the layer.
      * @return a new layer
      */
-    protected static Layer createShapefileLayer(Element domElement, AVList params) {
-        return (Layer) BasicFactory.create(AVKey.SHAPEFILE_LAYER_FACTORY, domElement, params);
+    protected static Layer createShapefileLayer(Element domElement, KV params) {
+        return (Layer) BasicFactory.create(Keys.SHAPEFILE_LAYER_FACTORY, domElement, params);
     }
 
     /**
@@ -99,7 +99,7 @@ public class BasicLayerFactory extends BasicFactory {
      * @throws WWRuntimeException       if object creation fails. The exception indicating the source of the failure is
      *                                  included as the {@link Exception#initCause(Throwable)}.
      */
-    public Object createFromConfigSource(Object configSource, AVList params) {
+    public Object createFromConfigSource(Object configSource, KV params) {
         Object layerOrLists = super.createFromConfigSource(configSource, params);
 
         if (layerOrLists == null) {
@@ -111,7 +111,7 @@ public class BasicLayerFactory extends BasicFactory {
     }
 
     @Override
-    protected Layer doCreateFromCapabilities(OGCCapabilities caps, AVList params) {
+    protected Layer doCreateFromCapabilities(OGCCapabilities caps, KV params) {
         String serviceName = caps.getServiceInformation().getServiceName();
         if (serviceName == null || !(serviceName.equalsIgnoreCase(OGCConstants.WMS_SERVICE_NAME)
             || serviceName.contains("WMS"))) {
@@ -121,9 +121,9 @@ public class BasicLayerFactory extends BasicFactory {
         }
 
         if (params == null)
-            params = new AVListImpl();
+            params = new KVMap();
 
-        if (params.getStringValue(AVKey.LAYER_NAMES) == null) {
+        if (params.getStringValue(Keys.LAYER_NAMES) == null) {
             // Use the first named layer since no other guidance given
             List<WMSLayerCapabilities> namedLayers = ((WMSCapabilities) caps).getNamedLayers();
 
@@ -133,7 +133,7 @@ public class BasicLayerFactory extends BasicFactory {
                 throw new IllegalStateException(message);
             }
 
-            params.set(AVKey.LAYER_NAMES, namedLayers.get(0).getName());
+            params.set(Keys.LAYER_NAMES, namedLayers.get(0).getName());
         }
 
         return new WMSTiledImageLayer((WMSCapabilities) caps, params);
@@ -149,7 +149,7 @@ public class BasicLayerFactory extends BasicFactory {
      * specified description.
      */
     @Override
-    protected Object doCreateFromElement(Element domElement, AVList params) {
+    protected Object doCreateFromElement(Element domElement, KV params) {
         Element[] elements = WWXML.getElements(domElement, "//LayerList", null);
         if (elements != null && elements.length > 0)
             return createLayerLists(elements, params);
@@ -179,7 +179,7 @@ public class BasicLayerFactory extends BasicFactory {
      * @param params   any parameters to apply when creating the included layers.
      * @return an array containing the specified layer lists.
      */
-    protected LayerList[] createLayerLists(Element[] elements, AVList params) {
+    protected LayerList[] createLayerLists(Element[] elements, KV params) {
         ArrayList<LayerList> layerLists = new ArrayList<>();
 
         for (Element element : elements) {
@@ -219,7 +219,7 @@ public class BasicLayerFactory extends BasicFactory {
                     if (list != null && !list.isEmpty()) {
                         layerLists.add(list);
                         if (title != null && !title.isEmpty())
-                            list.set(AVKey.DISPLAY_NAME, title);
+                            list.set(Keys.DISPLAY_NAME, title);
                     }
                 }
             }
@@ -242,7 +242,7 @@ public class BasicLayerFactory extends BasicFactory {
      * @param params        any parameters to apply when creating the layers.
      * @return a layer list containing the specified layers.
      */
-    protected LayerList createLayerList(Element[] layerElements, AVList params) {
+    protected LayerList createLayerList(Element[] layerElements, KV params) {
         LayerList layerList = new LayerList();
 
         for (Element element : layerElements) {
@@ -266,9 +266,9 @@ public class BasicLayerFactory extends BasicFactory {
      * @return a new layer
      * @throws WWUnrecognizedException if the layer type or service type given in the describing element is
      *                                 unrecognized.
-     * @see #createTiledImageLayer(Element, AVList)
+     * @see #createTiledImageLayer(Element, KV)
      */
-    protected Layer createFromLayerDocument(Element domElement, AVList params) {
+    protected Layer createFromLayerDocument(Element domElement, KV params) {
         String className = WWXML.getText(domElement, "@className");
         if (className != null && !className.isEmpty()) {
             Layer layer = (Layer) WorldWind.create(className);
@@ -278,7 +278,7 @@ public class BasicLayerFactory extends BasicFactory {
             return layer;
         }
 
-        AVList props = WWXML.copyProperties(domElement, null);
+        KV props = WWXML.copyProperties(domElement, null);
         if (props != null) {   // Copy params and add any properties for this layer to the copy
             if (params != null)
                 props.setValues(params);

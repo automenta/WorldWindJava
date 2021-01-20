@@ -5,7 +5,8 @@
  */
 package gov.nasa.worldwind.pick;
 
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.Keys;
+import gov.nasa.worldwind.avlist.KVMap;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.Layer;
 
@@ -16,7 +17,7 @@ import java.util.Objects;
  * @author lado
  * @version $Id: PickedObject.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class PickedObject extends AVListImpl {
+public class PickedObject extends KVMap {
     private final Point pickPoint;
     private final int colorCode;
     private final Object userObject;
@@ -81,23 +82,23 @@ public class PickedObject extends AVListImpl {
     }
 
     public Layer getParentLayer() {
-        return (Layer) this.get(AVKey.PICKED_OBJECT_PARENT_LAYER);
+        return (Layer) this.get(Keys.PICKED_OBJECT_PARENT_LAYER);
     }
 
     public void setParentLayer(Layer layer) {
-        this.set(AVKey.PICKED_OBJECT_PARENT_LAYER, layer);
+        this.set(Keys.PICKED_OBJECT_PARENT_LAYER, layer);
     }
 
     public Position position() {
-        return (Position) this.get(AVKey.POSITION);
+        return (Position) this.get(Keys.POSITION);
     }
 
     public void setPosition(Position position) {
-        this.set(AVKey.POSITION, position);
+        this.set(Keys.POSITION, position);
     }
 
     public boolean hasPosition() {
-        return this.hasKey(AVKey.POSITION);
+        return this.hasKey(Keys.POSITION);
     }
 
     public boolean equals(Object o) {

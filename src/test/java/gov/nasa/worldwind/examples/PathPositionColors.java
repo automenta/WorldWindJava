@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -29,9 +29,9 @@ import java.util.ArrayList;
  */
 public class PathPositionColors extends ApplicationTemplate {
     public static void main(String[] args) {
-        Configuration.setValue(AVKey.INITIAL_LATITUDE, 47.5890);
-        Configuration.setValue(AVKey.INITIAL_LONGITUDE, -122.3137);
-        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 3000);
+        Configuration.setValue(Keys.INITIAL_LATITUDE, 47.5890);
+        Configuration.setValue(Keys.INITIAL_LONGITUDE, -122.3137);
+        Configuration.setValue(Keys.INITIAL_ALTITUDE, 3000);
 
         ApplicationTemplate.start("WorldWind Path Position Colors", AppFrame.class);
     }
@@ -97,9 +97,9 @@ public class PathPositionColors extends ApplicationTemplate {
                     // ordinal.
                     PickedObject po = event.getTopPickedObject();
                     if (po != null && po.get() instanceof Path) {
-                        String name = (po.get(AVKey.ORDINAL) != null) ? "Position " + po.get(AVKey.ORDINAL)
+                        String name = (po.get(Keys.ORDINAL) != null) ? "Position " + po.get(Keys.ORDINAL)
                             : null;
-                        ((AVList) po.get()).set(AVKey.DISPLAY_NAME, name);
+                        ((KV) po.get()).set(Keys.DISPLAY_NAME, name);
                     }
 
                     super.accept(event);

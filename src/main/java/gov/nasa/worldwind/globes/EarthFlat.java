@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.globes;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 
 /**
  * Defines a model of the Earth projected onto a plane. The Earth's radius as defined by the <a
@@ -22,7 +22,7 @@ public class EarthFlat extends FlatGlobe {
 
     public EarthFlat() {
         super(EarthFlat.WGS84_EQUATORIAL_RADIUS, EarthFlat.WGS84_POLAR_RADIUS, EarthFlat.WGS84_ES,
-            EllipsoidalGlobe.makeElevationModel(AVKey.EARTH_ELEVATION_MODEL_CONFIG_FILE,
+            EllipsoidalGlobe.makeElevationModel(Keys.EARTH_ELEVATION_MODEL_CONFIG_FILE,
                 "config/Earth/EarthElevations2.xml"));
     }
 

@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.symbology.milstd2525.graphics.lines;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.*;
@@ -192,8 +192,8 @@ public class FireSupportLine extends AbstractMilStd2525TacticalGraphic {
     protected void createLabels() {
         // First two labels are the start and end labels.
         String text = this.getEndOfLineText();
-        this.addLabel(text).setTextAlign(AVKey.RIGHT); // Start label
-        this.addLabel(text).setTextAlign(AVKey.LEFT); // End label
+        this.addLabel(text).setTextAlign(Keys.RIGHT); // Start label
+        this.addLabel(text).setTextAlign(Keys.LEFT); // End label
 
         String topText = this.getTopLabelText();
         String bottomText = this.getBottomLabelText();
@@ -314,11 +314,11 @@ public class FireSupportLine extends AbstractMilStd2525TacticalGraphic {
 
         // Set the West-most label to right alignment, and the East-most label to left alignment.
         if (startPosition.longitude < endPosition.longitude) {
-            startLabel.setTextAlign(AVKey.RIGHT);
-            endLabel.setTextAlign(AVKey.LEFT);
+            startLabel.setTextAlign(Keys.RIGHT);
+            endLabel.setTextAlign(Keys.LEFT);
         } else {
-            startLabel.setTextAlign(AVKey.LEFT);
-            endLabel.setTextAlign(AVKey.RIGHT);
+            startLabel.setTextAlign(Keys.LEFT);
+            endLabel.setTextAlign(Keys.RIGHT);
         }
 
         // Next two are top and bottom labels.
@@ -404,7 +404,7 @@ public class FireSupportLine extends AbstractMilStd2525TacticalGraphic {
     protected Path createPath() {
         Path path = new Path();
         path.setSurfacePath(true);
-        path.setPathType(AVKey.GREAT_CIRCLE);
+        path.setPathType(Keys.GREAT_CIRCLE);
         path.setDelegateOwner(this.getActiveDelegateOwner());
         path.setAttributes(this.getActiveShapeAttributes());
         return path;

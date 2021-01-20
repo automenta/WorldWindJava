@@ -7,7 +7,6 @@
 package gov.nasa.worldwind.util;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
@@ -247,7 +246,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         // Create a layer to hold the control points.
         this.controlPointLayer = new MarkerLayer();
         this.controlPointLayer.setKeepSeparated(false);
-        this.controlPointLayer.set(AVKey.IGNORE, true); // means "Don't show this layer in the layer manager."
+        this.controlPointLayer.set(Keys.IGNORE, true); // means "Don't show this layer in the layer manager."
         if (this.shape instanceof SurfaceShape
             || (this.shape instanceof Airspace && ((Airspace) this.shape).isDrawSurfaceShape())) {
             // This ensures that control points are always placed on the terrain for surface shapes.
@@ -258,7 +257,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         // Create a layer to hold the rotation line and any other affordances.
         this.accessoryLayer = new RenderableLayer();
         this.accessoryLayer.setPickEnabled(false);
-        this.accessoryLayer.set(AVKey.IGNORE, true);
+        this.accessoryLayer.set(Keys.IGNORE, true);
 
         // Set up the Path for the rotation line.
         ShapeAttributes lineAttrs = new BasicShapeAttributes();
@@ -269,7 +268,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         lineLocations.add(Position.ZERO);
         Path rotationLine = new Path(lineLocations);
         rotationLine.setFollowTerrain(true);
-        rotationLine.setPathType(AVKey.GREAT_CIRCLE);
+        rotationLine.setPathType(Keys.GREAT_CIRCLE);
         rotationLine.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
         rotationLine.setAttributes(lineAttrs);
         this.accessoryLayer.add(rotationLine);
@@ -277,7 +276,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         // Create a layer to hold the editing annotations.
         this.annotationLayer = new RenderableLayer();
         this.annotationLayer.setPickEnabled(false);
-        this.annotationLayer.set(AVKey.IGNORE, true);
+        this.annotationLayer.set(Keys.IGNORE, true);
 
         // Create the annotation.
         this.annotation = new EditorAnnotation("");
@@ -286,7 +285,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         // Create a layer to hold the shadow shape, the shape that shows the state before an editing operation.
         this.shadowLayer = new RenderableLayer();
         this.shadowLayer.setPickEnabled(false);
-        this.shadowLayer.set(AVKey.IGNORE, true);
+        this.shadowLayer.set(Keys.IGNORE, true);
 
         // Create a units formatter for the annotations.
         this.unitsFormat = new UnitsFormat();
@@ -799,7 +798,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
             throw new IllegalArgumentException(msg);
         }
 
-        if (event.getPropertyName().equals(AVKey.VERTICAL_EXAGGERATION)) {
+        if (event.getPropertyName().equals(Keys.VERTICAL_EXAGGERATION)) {
             // The orientation line altitudes depend on the vertical exaggeration.
             this.updateControlPoints();
         }
@@ -1196,7 +1195,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
 
             altitude = airspace.getAltitudes()[1];
 
-            if (airspace.getAltitudeDatum()[1].equals(AVKey.ABOVE_GROUND_LEVEL)) {
+            if (airspace.getAltitudeDatum()[1].equals(Keys.ABOVE_GROUND_LEVEL)) {
                 LatLon refPos = airspace.getGroundReference();
                 if (refPos == null)
                     refPos = location;
@@ -1239,7 +1238,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         if (this.getShape() instanceof Airspace && ((Airspace) this.getShape()).isDrawSurfaceShape()) {
             altitudeMode = WorldWind.CLAMP_TO_GROUND;
         } else if (this.getShape() instanceof Airspace) {
-            if (((Airspace) this.getShape()).getAltitudeDatum()[1].equals(AVKey.ABOVE_GROUND_LEVEL))
+            if (((Airspace) this.getShape()).getAltitudeDatum()[1].equals(Keys.ABOVE_GROUND_LEVEL))
                 altitudeMode = WorldWind.RELATIVE_TO_GROUND;
         } else if (this.getShape() instanceof SurfaceShape) {
             altitudeMode = WorldWind.CLAMP_TO_GROUND;

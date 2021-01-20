@@ -5,6 +5,7 @@
  */
 package gov.nasa.worldwind.data;
 
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.formats.nitfs.*;
 import gov.nasa.worldwind.formats.rpf.*;
@@ -24,7 +25,7 @@ public class RPFRasterReader extends AbstractDataRasterReader {
         super("RPF Imagery");
     }
 
-    private static DataRaster[] readNonPolarImage(Object source, AVList params) throws IOException {
+    private static DataRaster[] readNonPolarImage(Object source, KV params) throws IOException {
         // TODO: break the raster along the international dateline, if necessary
         // Nonpolar images need no special processing. We convert it to a compatible image type to improve performance.
 
@@ -35,11 +36,11 @@ public class RPFRasterReader extends AbstractDataRasterReader {
         image = ImageUtil.toCompatibleImage(image);
 
         // If the data source doesn't already have all the necessary metadata, then we attempt to read the metadata.
-        Object o = (params != null) ? params.get(AVKey.SECTOR) : null;
+        Object o = (params != null) ? params.get(Keys.SECTOR) : null;
         if (!(o instanceof Sector)) {
-            AVList values = new AVListImpl();
+            KV values = new KVMap();
             RPFRasterReader.readFileSector(file, rpfFile, values);
-            o = values.get(AVKey.SECTOR);
+            o = values.get(Keys.SECTOR);
         }
 
         DataRaster raster = new BufferedImageRaster((Sector) o, image);
@@ -66,14 +67,14 @@ public class RPFRasterReader extends AbstractDataRasterReader {
         return rasters;
     }
 
-    private static void readFileSize(RPFImageFile rpfFile, AVList values) {
+    private static void readFileSize(RPFImageFile rpfFile, KV values) {
         int width = rpfFile.getImageSegment().numSignificantCols;
         int height = rpfFile.getImageSegment().numSignificantRows;
-        values.set(AVKey.WIDTH, width);
-        values.set(AVKey.HEIGHT, height);
+        values.set(Keys.WIDTH, width);
+        values.set(Keys.HEIGHT, height);
     }
 
-    private static void readFileSector(File file, RPFImageFile rpfFile, AVList values) {
+    private static void readFileSector(File file, RPFImageFile rpfFile, KV values) {
         // We'll first attempt to compute the Sector, if possible, from the filename (if it exists) by using
         // the conventions for CADRG and CIB filenames. It has been observed that for polar frame files in
         // particular that coverage information in the file itself is sometimes unreliable.
@@ -82,7 +83,7 @@ public class RPFRasterReader extends AbstractDataRasterReader {
         if (sector == null)
             sector = RPFRasterReader.sectorFromHeader(file, rpfFile);
 
-        values.set(AVKey.SECTOR, sector);
+        values.set(Keys.SECTOR, sector);
     }
 
     private static Sector sectorFromFilename(File file) {
@@ -145,7 +146,7 @@ public class RPFRasterReader extends AbstractDataRasterReader {
         return sector;
     }
 
-    public boolean canRead(Object source, AVList params) {
+    public boolean canRead(Object source, KV params) {
         if (source == null)
             return false;
 
@@ -155,7 +156,7 @@ public class RPFRasterReader extends AbstractDataRasterReader {
         return this.doCanRead(source, params);
     }
 
-    protected boolean doCanRead(Object source, AVList params) {
+    protected boolean doCanRead(Object source, KV params) {
         if (!(source instanceof File))
             return false;
 
@@ -164,13 +165,13 @@ public class RPFRasterReader extends AbstractDataRasterReader {
 
         boolean canRead = RPFFrameFilename.isFilename(filename);
 
-        if (canRead && null != params && !params.hasKey(AVKey.PIXEL_FORMAT))
-            params.set(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
+        if (canRead && null != params && !params.hasKey(Keys.PIXEL_FORMAT))
+            params.set(Keys.PIXEL_FORMAT, Keys.IMAGE);
 
         return canRead;
     }
 
-    protected DataRaster[] doRead(Object source, AVList params) throws IOException {
+    protected DataRaster[] doRead(Object source, KV params) throws IOException {
         if (!(source instanceof File)) {
             String message = Logging.getMessage("DataRaster.CannotRead", source);
             Logging.logger().severe(message);
@@ -186,7 +187,7 @@ public class RPFRasterReader extends AbstractDataRasterReader {
         }
     }
 
-    protected void doReadMetadata(Object source, AVList params) throws IOException {
+    protected void doReadMetadata(Object source, KV params) throws IOException {
         if (!(source instanceof File)) {
             String message = Logging.getMessage("DataRaster.CannotRead", source);
             Logging.logger().severe(message);
@@ -196,18 +197,18 @@ public class RPFRasterReader extends AbstractDataRasterReader {
         File file = (File) source;
         RPFImageFile rpfFile = null;
 
-        Object width = params.get(AVKey.WIDTH);
-        Object height = params.get(AVKey.HEIGHT);
+        Object width = params.get(Keys.WIDTH);
+        Object height = params.get(Keys.HEIGHT);
         if (!(width instanceof Integer) || !(height instanceof Integer)) {
             rpfFile = RPFImageFile.load(file);
             RPFRasterReader.readFileSize(rpfFile, params);
         }
 
-        Object sector = params.get(AVKey.SECTOR);
+        Object sector = params.get(Keys.SECTOR);
         if (!(sector instanceof Sector))
             RPFRasterReader.readFileSector(file, rpfFile, params);
 
-        if (!params.hasKey(AVKey.PIXEL_FORMAT))
-            params.set(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
+        if (!params.hasKey(Keys.PIXEL_FORMAT))
+            params.set(Keys.PIXEL_FORMAT, Keys.IMAGE);
     }
 }

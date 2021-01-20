@@ -6,8 +6,7 @@
 package gov.nasa.worldwind.view.firstperson;
 
 import com.jogamp.opengl.GL;
-import gov.nasa.worldwind.Configuration;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.util.Logging;
@@ -46,12 +45,12 @@ public class BasicFlyView extends BasicView {
     }
 
     protected void loadConfigurationValues() {
-        Double initLat = Configuration.getDoubleValue(AVKey.INITIAL_LATITUDE);
-        Double initLon = Configuration.getDoubleValue(AVKey.INITIAL_LONGITUDE);
+        Double initLat = Configuration.getDoubleValue(Keys.INITIAL_LATITUDE);
+        Double initLon = Configuration.getDoubleValue(Keys.INITIAL_LONGITUDE);
         double initElev = 50000.0;
 
         // Set center latitude and longitude. Do not change center elevation.
-        Double initAltitude = Configuration.getDoubleValue(AVKey.INITIAL_ALTITUDE);
+        Double initAltitude = Configuration.getDoubleValue(Keys.INITIAL_ALTITUDE);
         if (initAltitude != null) {
             initElev = initAltitude;
         }
@@ -67,17 +66,17 @@ public class BasicFlyView extends BasicView {
             setEyePosition(Position.fromDegrees(this.eyePosition.getLatitude().degrees, initLon, initElev));
         }
 
-        Double initHeading = Configuration.getDoubleValue(AVKey.INITIAL_HEADING);
+        Double initHeading = Configuration.getDoubleValue(Keys.INITIAL_HEADING);
         if (initHeading != null) {
             setHeading(new Angle(initHeading));
         }
 
-        Double initPitch = Configuration.getDoubleValue(AVKey.INITIAL_PITCH);
+        Double initPitch = Configuration.getDoubleValue(Keys.INITIAL_PITCH);
         if (initPitch != null) {
             setPitch(new Angle(initPitch));
         }
 
-        Double initFov = Configuration.getDoubleValue(AVKey.FOV);
+        Double initFov = Configuration.getDoubleValue(Keys.FOV);
         if (initFov != null) {
             setFieldOfView(new Angle(initFov));
         }

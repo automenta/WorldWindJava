@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.formats.shapefile.*;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.render.*;
@@ -28,8 +27,8 @@ import java.util.*;
  */
 public class ShapefileAttributeGroups extends ApplicationTemplate {
     public static void main(String[] args) {
-        Configuration.setValue(AVKey.INITIAL_LATITUDE, 30);
-        Configuration.setValue(AVKey.INITIAL_LONGITUDE, 30);
+        Configuration.setValue(Keys.INITIAL_LATITUDE, 30);
+        Configuration.setValue(Keys.INITIAL_LONGITUDE, 30);
         start("WorldWind Shapefile Attribute Groups", AppFrame.class);
     }
 
@@ -85,7 +84,7 @@ public class ShapefileAttributeGroups extends ApplicationTemplate {
 
         protected void loadShapefile() {
             ShapefileLayerFactory factory = (ShapefileLayerFactory) WorldWind.createConfigurationComponent(
-                AVKey.SHAPEFILE_LAYER_FACTORY);
+                Keys.SHAPEFILE_LAYER_FACTORY);
             factory.setAttributeDelegate(this); // call assignAttributes for each shapefile record
 
             Layer layer = (Layer) factory.createFromConfigSource(SHAPEFILE_PATH, null);

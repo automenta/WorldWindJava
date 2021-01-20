@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.examples.analytics;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
 
@@ -231,14 +231,14 @@ public class AnalyticSurfaceLegend implements Renderable {
 
         Rectangle2D bounds = tr.getBounds(text);
         if (bounds != null) {
-            if (AVKey.CENTER.equals(halign))
+            if (Keys.CENTER.equals(halign))
                 x -= (bounds.getWidth() / 2.0d);
-            if (AVKey.RIGHT.equals(halign))
+            if (Keys.RIGHT.equals(halign))
                 x -= bounds.getWidth();
 
-            if (AVKey.CENTER.equals(valign))
+            if (Keys.CENTER.equals(valign))
                 y += (bounds.getHeight() + bounds.getY());
-            if (AVKey.TOP.equals(valign))
+            if (Keys.TOP.equals(valign))
                 y += bounds.getHeight();
         }
 
@@ -301,12 +301,12 @@ public class AnalyticSurfaceLegend implements Renderable {
 
                 double factor = WWMath.computeInterpolationFactor(attr.getValue(), minValue, maxValue);
                 double y = (1.0d - factor) * (height - 1);
-                list.add(new LabelRenderable(this, attr, width, y, AVKey.LEFT, AVKey.CENTER));
+                list.add(new LabelRenderable(this, attr, width, y, Keys.LEFT, Keys.CENTER));
             }
         }
 
         if (titleLabel != null) {
-            list.add(new LabelRenderable(this, titleLabel, width / 2.0d, 0.0d, AVKey.CENTER, AVKey.BOTTOM));
+            list.add(new LabelRenderable(this, titleLabel, width / 2.0d, 0.0d, Keys.CENTER, Keys.BOTTOM));
         }
 
         return list;

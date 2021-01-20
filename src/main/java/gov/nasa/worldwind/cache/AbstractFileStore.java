@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.cache;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.avlist.KVMap;
 import gov.nasa.worldwind.util.*;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
@@ -591,12 +591,12 @@ public abstract class AbstractFileStore extends WWObjectImpl implements FileStor
         return true;
     }
 
-    protected static class StoreLocation extends AVListImpl {
+    protected static class StoreLocation extends KVMap {
         protected boolean markWhenUsed;
 
         public StoreLocation(File file, boolean isInstall) {
-            this.set(AVKey.FILE_STORE_LOCATION, file);
-            this.set(AVKey.INSTALLED, isInstall);
+            this.set(Keys.FILE_STORE_LOCATION, file);
+            this.set(Keys.INSTALLED, isInstall);
         }
 
         public StoreLocation(File file) {
@@ -604,21 +604,21 @@ public abstract class AbstractFileStore extends WWObjectImpl implements FileStor
         }
 
         public File getFile() {
-            Object o = this.get(AVKey.FILE_STORE_LOCATION);
+            Object o = this.get(Keys.FILE_STORE_LOCATION);
             return (o instanceof File) ? (File) o : null;
         }
 
         public void setFile(File file) {
-            this.set(AVKey.FILE_STORE_LOCATION, file);
+            this.set(Keys.FILE_STORE_LOCATION, file);
         }
 
         public boolean isInstall() {
-            Object o = this.get(AVKey.INSTALLED);
+            Object o = this.get(Keys.INSTALLED);
             return (o instanceof Boolean) ? (Boolean) o : false;
         }
 
         public void setInstall(boolean isInstall) {
-            this.set(AVKey.INSTALLED, isInstall);
+            this.set(Keys.INSTALLED, isInstall);
         }
 
         public boolean isMarkWhenUsed() {

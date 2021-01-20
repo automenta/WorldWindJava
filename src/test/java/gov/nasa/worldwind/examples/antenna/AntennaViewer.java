@@ -7,7 +7,6 @@
 package gov.nasa.worldwind.examples.antenna;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.examples.ApplicationTemplate;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -40,9 +39,9 @@ public class AntennaViewer extends ApplicationTemplate {
     }
 
     public static void main(String[] args) {
-        Configuration.setValue(AVKey.INITIAL_LATITUDE, ANTENNA_POSITION.getLatitude().degrees);
-        Configuration.setValue(AVKey.INITIAL_LONGITUDE, ANTENNA_POSITION.getLongitude().degrees);
-        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 30.0e3);
+        Configuration.setValue(Keys.INITIAL_LATITUDE, ANTENNA_POSITION.getLatitude().degrees);
+        Configuration.setValue(Keys.INITIAL_LONGITUDE, ANTENNA_POSITION.getLongitude().degrees);
+        Configuration.setValue(Keys.INITIAL_ALTITUDE, 30.0e3);
 
         ApplicationTemplate.start("WorldWind Antenna Gain Visualization", AppFrame.class);
     }

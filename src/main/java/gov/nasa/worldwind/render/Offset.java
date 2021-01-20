@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.render;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.util.*;
 
 import java.awt.*;
@@ -17,9 +17,9 @@ import java.util.Objects;
  * offset contains an X coordinate, a Y coordinate, and for each of these a separate "units" string indicating the
  * coordinate units.
  * <p>
- * Recognized "units" values are {@link AVKey#PIXELS}, which indicates pixel units relative to the lower left corner of
- * the screen-space item, {@link AVKey#FRACTION}, which indicates that the units are fractions of the screen-space
- * item's width and height, relative to its lower left corner, and {@link AVKey#INSET_PIXELS}, which indicates units of
+ * Recognized "units" values are {@link Keys#PIXELS}, which indicates pixel units relative to the lower left corner of
+ * the screen-space item, {@link Keys#FRACTION}, which indicates that the units are fractions of the screen-space
+ * item's width and height, relative to its lower left corner, and {@link Keys#INSET_PIXELS}, which indicates units of
  * pixels but with origin at the screen-space item's upper right.
  * <p>
  * This class implements the functionality of a KML <i>Offset</i>.
@@ -54,7 +54,7 @@ public class Offset {
      * @return a new offset with the specified X and Y coordinates.
      */
     public static Offset fromFraction(double xFraction, double yFraction) {
-        return new Offset(xFraction, yFraction, AVKey.FRACTION, AVKey.FRACTION);
+        return new Offset(xFraction, yFraction, Keys.FRACTION, Keys.FRACTION);
     }
 
     /**
@@ -104,12 +104,12 @@ public class Offset {
     }
 
     /**
-     * Specifies the units of the offset X value. Recognized values are {@link AVKey#PIXELS}, which indicates pixel
-     * units relative to the lower left corner of the placemark image, {@link AVKey#FRACTION}, which indicates the units
-     * are fractions of the placemark image width and height, and {@link AVKey#INSET_PIXELS}, which indicates units of
+     * Specifies the units of the offset X value. Recognized values are {@link Keys#PIXELS}, which indicates pixel
+     * units relative to the lower left corner of the placemark image, {@link Keys#FRACTION}, which indicates the units
+     * are fractions of the placemark image width and height, and {@link Keys#INSET_PIXELS}, which indicates units of
      * pixels but with origin in the upper left.
      *
-     * @param units the units of the offset X value. If null, {@link AVKey#PIXELS} is used during rendering.
+     * @param units the units of the offset X value. If null, {@link Keys#PIXELS} is used during rendering.
      */
     public void setXUnits(String units) {
         this.xUnits = units;
@@ -126,12 +126,12 @@ public class Offset {
     }
 
     /**
-     * Specifies the units of the offset Y value. Recognized values are {@link AVKey#PIXELS}, which indicates pixel
-     * units relative to the lower left corner of the placemark image, {@link AVKey#FRACTION}, which indicates the units
-     * are fractions of the placemark image width and height, and {@link AVKey#INSET_PIXELS}, which indicates units of
+     * Specifies the units of the offset Y value. Recognized values are {@link Keys#PIXELS}, which indicates pixel
+     * units relative to the lower left corner of the placemark image, {@link Keys#FRACTION}, which indicates the units
+     * are fractions of the placemark image width and height, and {@link Keys#INSET_PIXELS}, which indicates units of
      * pixels but with origin in the upper left.
      *
-     * @param units the units of the offset Y value. If null, {@link AVKey#PIXELS} is used during rendering.
+     * @param units the units of the offset Y value. If null, {@link Keys#PIXELS} is used during rendering.
      */
     public void setYUnits(String units) {
         this.yUnits = units;
@@ -152,11 +152,11 @@ public class Offset {
 
         if (this.getX() != null) {
             String units = this.getXUnits();
-            if (AVKey.PIXELS.equals(units))
+            if (Keys.PIXELS.equals(units))
                 dx = this.getX();
-            else if (AVKey.INSET_PIXELS.equals(units))
+            else if (Keys.INSET_PIXELS.equals(units))
                 dx = width - this.getX();
-            else if (AVKey.FRACTION.equals(units))
+            else if (Keys.FRACTION.equals(units))
                 dx = (width * this.getX());
             else
                 dx = this.getX(); // treat as pixels
@@ -164,11 +164,11 @@ public class Offset {
 
         if (this.getY() != null) {
             String units = this.getYUnits();
-            if (AVKey.PIXELS.equals(units))
+            if (Keys.PIXELS.equals(units))
                 dy = this.getY();
-            else if (AVKey.INSET_PIXELS.equals(units))
+            else if (Keys.INSET_PIXELS.equals(units))
                 dy = height - this.getY();
-            else if (AVKey.FRACTION.equals(units))
+            else if (Keys.FRACTION.equals(units))
                 dy = (height * this.getY());
             else
                 dy = this.getY(); // treat as pixels

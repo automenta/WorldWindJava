@@ -7,7 +7,6 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -48,9 +47,9 @@ public class VideoOnTerrain extends ApplicationTemplate {
     );
 
     public static void main(String[] args) {
-        Configuration.setValue(AVKey.INITIAL_LATITUDE, 37.8432);
-        Configuration.setValue(AVKey.INITIAL_LONGITUDE, -105.0527);
-        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 7000);
+        Configuration.setValue(Keys.INITIAL_LATITUDE, 37.8432);
+        Configuration.setValue(Keys.INITIAL_LONGITUDE, -105.0527);
+        Configuration.setValue(Keys.INITIAL_ALTITUDE, 7000);
         ApplicationTemplate.start("WorldWind Video on Terrain", AppFrame.class);
     }
 

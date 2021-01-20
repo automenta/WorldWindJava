@@ -6,8 +6,7 @@
 package gov.nasa.worldwind.render;
 
 import com.jogamp.opengl.*;
-import gov.nasa.worldwind.WWObjectImpl;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.cache.Cacheable;
 import gov.nasa.worldwind.geom.Box;
 import gov.nasa.worldwind.geom.*;
@@ -554,7 +553,7 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
     /**
      * Causes the SurfaceObject to render itself. SurfaceObjects are drawn in geographic coordinates into offscreen
      * surface tiles. This attempts to get a {@link SurfaceTileDrawContext} from the DrawContext's AVList by querying
-     * the key {@link AVKey#SURFACE_TILE_DRAW_CONTEXT}. If the DrawContext has a SurfaceTileDrawContext attached under
+     * the key {@link Keys#SURFACE_TILE_DRAW_CONTEXT}. If the DrawContext has a SurfaceTileDrawContext attached under
      * that key, this calls {@link #drawGeographic(DrawContext, SurfaceTileDrawContext)} with the
      * SurfaceTileDrawContext. Otherwise this logs a warning and returns.
      *
@@ -567,7 +566,7 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
         // rendering. Note that this method is not invoked during ordered picking; pickOrderedRenderable is called
         // instead.
 
-        SurfaceTileDrawContext sdc = (SurfaceTileDrawContext) dc.get(AVKey.SURFACE_TILE_DRAW_CONTEXT);
+        SurfaceTileDrawContext sdc = (SurfaceTileDrawContext) dc.get(Keys.SURFACE_TILE_DRAW_CONTEXT);
 
         this.drawGeographic(dc, sdc);
 

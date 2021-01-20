@@ -6,6 +6,7 @@
 
 package gov.nasa.worldwind.examples.worldwindow.util.measuretool;
 
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
@@ -24,18 +25,18 @@ public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay {
     protected final WWOMeasureTool measureTool;
     protected final ScreenAnnotation annotation;
     protected final AnnotationAttributes annotationAttributes;
-    protected final AVList avList = new AVListImpl();
+    protected final KV avList = new KVMap();
     protected UnitsFormat unitsFormat = new UnitsFormat();
 
     public WWOMeasureDisplay(WWOMeasureTool measureTool) {
         this.measureTool = measureTool;
 
         this.annotationAttributes = new AnnotationAttributes();
-        this.annotationAttributes.setFrameShape(AVKey.SHAPE_RECTANGLE);
+        this.annotationAttributes.setFrameShape(Keys.SHAPE_RECTANGLE);
         this.annotationAttributes.setInsets(new Insets(10, 10, 10, 10));
         this.annotationAttributes.setDrawOffset(new Point(0, 10));
-        this.annotationAttributes.setTextAlign(AVKey.CENTER);
-        this.annotationAttributes.setEffect(AVKey.TEXT_EFFECT_OUTLINE);
+        this.annotationAttributes.setTextAlign(Keys.CENTER);
+        this.annotationAttributes.setEffect(Keys.TEXT_EFFECT_OUTLINE);
         this.annotationAttributes.setFont(Font.decode("Arial-Bold-14"));
         this.annotationAttributes.setTextColor(Color.WHITE);
         this.annotationAttributes.setBackgroundColor(new Color(0, 0, 0, 180));
@@ -123,22 +124,22 @@ public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay {
         Rectangle2D.Double shapeRectangle = this.measureTool.getShapeRectangle();
 
         if (pos != null) {
-            if (shapeType.equals(AVKey.SHAPE_CIRCLE) && shapeRectangle != null) {
+            if (shapeType.equals(Keys.SHAPE_CIRCLE) && shapeRectangle != null) {
                 displayString = this.formatCircleMeasurements(pos, mt);
             }
-            else if (shapeType.equals(AVKey.SHAPE_SQUARE) && shapeRectangle != null) {
+            else if (shapeType.equals(Keys.SHAPE_SQUARE) && shapeRectangle != null) {
                 displayString = this.formatSquareMeasurements(pos, mt);
             }
-            else if (shapeType.equals(AVKey.SHAPE_QUAD) && shapeRectangle != null) {
+            else if (shapeType.equals(Keys.SHAPE_QUAD) && shapeRectangle != null) {
                 displayString = this.formatQuadMeasurements(pos, mt);
             }
-            else if (shapeType.equals(AVKey.SHAPE_ELLIPSE) && shapeRectangle != null) {
+            else if (shapeType.equals(Keys.SHAPE_ELLIPSE) && shapeRectangle != null) {
                 displayString = this.formatEllipseMeasurements(pos, mt);
             }
-            else if (shapeType.equals(AVKey.SHAPE_LINE) || shapeType.equals(AVKey.SHAPE_PATH)) {
+            else if (shapeType.equals(Keys.SHAPE_LINE) || shapeType.equals(Keys.SHAPE_PATH)) {
                 displayString = this.formatLineMeasurements(pos, mt);
             }
-            else if (shapeType.equals(AVKey.SHAPE_POLYGON)) {
+            else if (shapeType.equals(Keys.SHAPE_POLYGON)) {
                 displayString = this.formatPolygonMeasurements(pos, mt);
             }
         }

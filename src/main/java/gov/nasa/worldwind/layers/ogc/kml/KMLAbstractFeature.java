@@ -6,6 +6,7 @@
 
 package gov.nasa.worldwind.layers.ogc.kml;
 
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.event.Message;
 import gov.nasa.worldwind.layers.ogc.kml.impl.*;
 import gov.nasa.worldwind.render.*;
@@ -333,7 +334,7 @@ public abstract class KMLAbstractFeature extends KMLAbstractObject implements KM
      * instance's style selectors and its styleUrl, if any, with precedence given to style selectors.
      * <p>
      * A remote <i>styleUrl</i> that has not yet been resolved is not included in the result. In this case the returned
-     * sub-style is marked with the value {@link gov.nasa.worldwind.avlist.AVKey#UNRESOLVED}. The same is true when a
+     * sub-style is marked with the value {@link Keys#UNRESOLVED}. The same is true when a
      * StyleMap style selector contains a reference to an external Style and that reference has not been resolved.
      *
      * @param styleState the style mode, either \"normal\" or \"highlight\".

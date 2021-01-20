@@ -6,6 +6,7 @@
 
 package gov.nasa.worldwind.terrain;
 
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
@@ -23,11 +24,11 @@ import java.util.List;
  * @version $Id: WCSElevationModel.java 2154 2014-07-17 21:32:34Z pabercrombie $
  */
 public class WCSElevationModel extends BasicElevationModel {
-    public WCSElevationModel(Element domElement, AVList params) {
+    public WCSElevationModel(Element domElement, KV params) {
         super(WCSElevationModel.wcsGetParamsFromDocument(domElement, params));
     }
 
-    public WCSElevationModel(WCS100Capabilities caps, AVList params) {
+    public WCSElevationModel(WCS100Capabilities caps, KV params) {
         super(WCSElevationModel.wcsGetParamsFromCapsDoc(caps, params));
     }
 
@@ -54,78 +55,78 @@ public class WCSElevationModel extends BasicElevationModel {
         this.doRestoreState(rs, null);
     }
 
-    protected static AVList wcsGetParamsFromDocument(Element domElement, AVList params) {
+    protected static KV wcsGetParamsFromDocument(Element domElement, KV params) {
 
         if (params == null)
-            params = new AVListImpl();
+            params = new KVMap();
 
         DataConfigurationUtils.getWCSConfigParams(domElement, params);
         BasicElevationModel.getBasicElevationModelConfigParams(domElement, params);
         WCSElevationModel.wcsSetFallbacks(params);
 
-        params.set(AVKey.TILE_URL_BUILDER, new URLBuilder(params.getStringValue(AVKey.WCS_VERSION), params));
+        params.set(Keys.TILE_URL_BUILDER, new URLBuilder(params.getStringValue(Keys.WCS_VERSION), params));
 
         return params;
     }
 
-    protected static AVList wcsGetParamsFromCapsDoc(WCS100Capabilities caps, AVList params) {
+    protected static KV wcsGetParamsFromCapsDoc(WCS100Capabilities caps, KV params) {
 
-        WCS100DescribeCoverage coverage = (WCS100DescribeCoverage) params.get(AVKey.DOCUMENT);
+        WCS100DescribeCoverage coverage = (WCS100DescribeCoverage) params.get(Keys.DOCUMENT);
 
         WCSElevationModel.getWCSElevationModelConfigParams(caps, coverage, params);
 
         WCSElevationModel.wcsSetFallbacks(params);
         WCSElevationModel.determineNumLevels(coverage, params);
 
-        params.set(AVKey.TILE_URL_BUILDER, new URLBuilder(caps.getVersion(), params));
+        params.set(Keys.TILE_URL_BUILDER, new URLBuilder(caps.getVersion(), params));
 
-        if (params.get(AVKey.ELEVATION_EXTREMES_FILE) == null) {
+        if (params.get(Keys.ELEVATION_EXTREMES_FILE) == null) {
             // Use the default extremes file if there are at least as many levels in this new elevation model as the
             // level of the extremes file, which is level 5.
-            int numLevels = (Integer) params.get(AVKey.NUM_LEVELS);
+            int numLevels = (Integer) params.get(Keys.NUM_LEVELS);
             if (numLevels >= 6)
-                params.set(AVKey.ELEVATION_EXTREMES_FILE, "config/SRTM30Plus_ExtremeElevations_5.bil");
+                params.set(Keys.ELEVATION_EXTREMES_FILE, "config/SRTM30Plus_ExtremeElevations_5.bil");
         }
 
         return params;
     }
 
-    protected static void wcsSetFallbacks(AVList params) {
-        if (params.get(AVKey.LEVEL_ZERO_TILE_DELTA) == null) {
+    protected static void wcsSetFallbacks(KV params) {
+        if (params.get(Keys.LEVEL_ZERO_TILE_DELTA) == null) {
             Angle delta = new Angle(20);
-            params.set(AVKey.LEVEL_ZERO_TILE_DELTA, new LatLon(delta, delta));
+            params.set(Keys.LEVEL_ZERO_TILE_DELTA, new LatLon(delta, delta));
         }
 
-        if (params.get(AVKey.TILE_WIDTH) == null)
-            params.set(AVKey.TILE_WIDTH, 150);
+        if (params.get(Keys.TILE_WIDTH) == null)
+            params.set(Keys.TILE_WIDTH, 150);
 
-        if (params.get(AVKey.TILE_HEIGHT) == null)
-            params.set(AVKey.TILE_HEIGHT, 150);
+        if (params.get(Keys.TILE_HEIGHT) == null)
+            params.set(Keys.TILE_HEIGHT, 150);
 
-        if (params.get(AVKey.FORMAT_SUFFIX) == null)
-            params.set(AVKey.FORMAT_SUFFIX, ".tif");
+        if (params.get(Keys.FORMAT_SUFFIX) == null)
+            params.set(Keys.FORMAT_SUFFIX, ".tif");
 
-        if (params.get(AVKey.MISSING_DATA_SIGNAL) == null)
-            params.set(AVKey.MISSING_DATA_SIGNAL, Double.NEGATIVE_INFINITY);
+        if (params.get(Keys.MISSING_DATA_SIGNAL) == null)
+            params.set(Keys.MISSING_DATA_SIGNAL, Double.NEGATIVE_INFINITY);
 
-        if (params.get(AVKey.NUM_LEVELS) == null)
-            params.set(AVKey.NUM_LEVELS, 18); // approximately 20 cm per pixel
+        if (params.get(Keys.NUM_LEVELS) == null)
+            params.set(Keys.NUM_LEVELS, 18); // approximately 20 cm per pixel
 
-        if (params.get(AVKey.NUM_EMPTY_LEVELS) == null)
-            params.set(AVKey.NUM_EMPTY_LEVELS, 0);
+        if (params.get(Keys.NUM_EMPTY_LEVELS) == null)
+            params.set(Keys.NUM_EMPTY_LEVELS, 0);
 
-        if (params.get(AVKey.ELEVATION_MIN) == null)
-            params.set(AVKey.ELEVATION_MIN, -11000.0);
+        if (params.get(Keys.ELEVATION_MIN) == null)
+            params.set(Keys.ELEVATION_MIN, -11000.0);
 
-        if (params.get(AVKey.ELEVATION_MAX) == null)
-            params.set(AVKey.ELEVATION_MAX, 8850.0);
+        if (params.get(Keys.ELEVATION_MAX) == null)
+            params.set(Keys.ELEVATION_MAX, 8850.0);
     }
 
-    protected static void determineNumLevels(WCS100DescribeCoverage coverage, AVList params) {
+    protected static void determineNumLevels(WCS100DescribeCoverage coverage, KV params) {
         List<GMLRectifiedGrid> grids =
             coverage.getCoverageOfferings().get(0).getDomainSet().getSpatialDomain().getRectifiedGrids();
         if (grids.size() < 1 || grids.get(0).getOffsetVectors().size() < 2) {
-            params.set(AVKey.NUM_LEVELS, 18);
+            params.set(Keys.NUM_LEVELS, 18);
             return;
         }
 
@@ -133,44 +134,44 @@ public class WCSElevationModel extends BasicElevationModel {
         double yRes = Math.abs(grids.get(0).getOffsetVectors().get(1).y);
         double dataResolution = Math.min(xRes, yRes);
 
-        int tileSize = (Integer) params.get(AVKey.TILE_WIDTH);
-        LatLon level0Delta = (LatLon) params.get(AVKey.LEVEL_ZERO_TILE_DELTA);
+        int tileSize = (Integer) params.get(Keys.TILE_WIDTH);
+        LatLon level0Delta = (LatLon) params.get(Keys.LEVEL_ZERO_TILE_DELTA);
 
         double n = Math.log(level0Delta.getLatitude().degrees / (dataResolution * tileSize)) / Math.log(2);
-        params.set(AVKey.NUM_LEVELS, (int) (Math.ceil(n) + 1));
+        params.set(Keys.NUM_LEVELS, (int) (Math.ceil(n) + 1));
     }
 
-    public static AVList getWCSElevationModelConfigParams(WCS100Capabilities caps, WCS100DescribeCoverage coverage,
-        AVList params) {
+    public static KV getWCSElevationModelConfigParams(WCS100Capabilities caps, WCS100DescribeCoverage coverage,
+        KV params) {
         DataConfigurationUtils.getWCSConfigParameters(caps, coverage, params); // checks for null args
 
         // Ensure that we found all the necessary information.
-        if (params.getStringValue(AVKey.DATASET_NAME) == null) {
+        if (params.getStringValue(Keys.DATASET_NAME) == null) {
             Logging.logger().warning(Logging.getMessage("WCS.NoCoverageName"));
             throw new WWRuntimeException(Logging.getMessage("WCS.NoCoverageName"));
         }
 
-        if (params.getStringValue(AVKey.SERVICE) == null) {
+        if (params.getStringValue(Keys.SERVICE) == null) {
             Logging.logger().warning(Logging.getMessage("WCS.NoGetCoverageURL"));
             throw new WWRuntimeException(Logging.getMessage("WCS.NoGetCoverageURL"));
         }
 
-        if (params.getStringValue(AVKey.DATA_CACHE_NAME) == null) {
+        if (params.getStringValue(Keys.DATA_CACHE_NAME) == null) {
             Logging.logger().warning(Logging.getMessage("nullValue.DataCacheIsNull"));
             throw new WWRuntimeException(Logging.getMessage("nullValue.DataCacheIsNull"));
         }
 
-        if (params.getStringValue(AVKey.IMAGE_FORMAT) == null) {
+        if (params.getStringValue(Keys.IMAGE_FORMAT) == null) {
             Logging.logger().severe("WCS.NoImageFormats");
             throw new WWRuntimeException(Logging.getMessage("WCS.NoImageFormats"));
         }
 
-        if (params.get(AVKey.SECTOR) == null) {
+        if (params.get(Keys.SECTOR) == null) {
             Logging.logger().severe("WCS.NoLonLatEnvelope");
             throw new WWRuntimeException(Logging.getMessage("WCS.NoLonLatEnvelope"));
         }
 
-        if (params.getStringValue(AVKey.COORDINATE_SYSTEM) == null) {
+        if (params.getStringValue(Keys.COORDINATE_SYSTEM) == null) {
             String msg = Logging.getMessage("WCS.RequiredCRSNotSupported", "EPSG:4326");
             Logging.logger().severe(msg);
             throw new WWRuntimeException(msg);
@@ -179,7 +180,7 @@ public class WCSElevationModel extends BasicElevationModel {
         return params;
     }
 
-    protected static AVList wcsRestorableStateToParams(String stateInXml) {
+    protected static KV wcsRestorableStateToParams(String stateInXml) {
 
         RestorableSupport rs;
         try {
@@ -192,37 +193,37 @@ public class WCSElevationModel extends BasicElevationModel {
             throw new IllegalArgumentException(message, e);
         }
 
-        AVList params = new AVListImpl();
+        KV params = new KVMap();
         WCSElevationModel.wcsRestoreStateForParams(rs, null, params);
         return params;
     }
 
     protected static void wcsRestoreStateForParams(RestorableSupport rs, RestorableSupport.StateObject context,
-        AVList params) {
+        KV params) {
         // Invoke the BasicElevationModel functionality.
         BasicElevationModel.restoreStateForParams(rs, null, params);
 
-        String s = rs.getStateValueAsString(context, AVKey.IMAGE_FORMAT);
+        String s = rs.getStateValueAsString(context, Keys.IMAGE_FORMAT);
         if (s != null)
-            params.set(AVKey.IMAGE_FORMAT, s);
+            params.set(Keys.IMAGE_FORMAT, s);
 
-        s = rs.getStateValueAsString(context, AVKey.TITLE);
+        s = rs.getStateValueAsString(context, Keys.TITLE);
         if (s != null)
-            params.set(AVKey.TITLE, s);
+            params.set(Keys.TITLE, s);
 
-        s = rs.getStateValueAsString(context, AVKey.DISPLAY_NAME);
+        s = rs.getStateValueAsString(context, Keys.DISPLAY_NAME);
         if (s != null)
-            params.set(AVKey.DISPLAY_NAME, s);
+            params.set(Keys.DISPLAY_NAME, s);
 
         RestorableSupport.adjustTitleAndDisplayName(params);
 
-        s = rs.getStateValueAsString(context, AVKey.COVERAGE_IDENTIFIERS);
+        s = rs.getStateValueAsString(context, Keys.COVERAGE_IDENTIFIERS);
         if (s != null)
-            params.set(AVKey.COVERAGE_IDENTIFIERS, s);
+            params.set(Keys.COVERAGE_IDENTIFIERS, s);
 
-        s = rs.getStateValueAsString(context, AVKey.WCS_VERSION);
+        s = rs.getStateValueAsString(context, Keys.WCS_VERSION);
         if (s != null)
-            params.set(AVKey.TILE_URL_BUILDER, new URLBuilder(s, params));
+            params.set(Keys.TILE_URL_BUILDER, new URLBuilder(s, params));
     }
 
     protected static Retriever downloadElevations(WMSBasicElevationModel.ElevationCompositionTile tile) throws Exception {
@@ -242,7 +243,7 @@ public class WCSElevationModel extends BasicElevationModel {
      * @param params configuration parameters describing this WCS basic elevation model.
      * @return a WCS basic elevation model configuration document.
      */
-    protected Document createConfigurationDocument(AVList params) {
+    protected Document createConfigurationDocument(KV params) {
         Document doc = super.createConfigurationDocument(params);
         if (doc == null || doc.getDocumentElement() == null)
             return doc;
@@ -291,7 +292,7 @@ public class WCSElevationModel extends BasicElevationModel {
     public void getRestorableStateForAVPair(String key, Object value,
         RestorableSupport rs, RestorableSupport.StateObject context) {
         if (value instanceof URLBuilder) {
-            rs.addStateValueAsString(context, AVKey.WCS_VERSION, ((URLBuilder) value).serviceVersion);
+            rs.addStateValueAsString(context, Keys.WCS_VERSION, ((URLBuilder) value).serviceVersion);
         } else if (!(value instanceof WCS100DescribeCoverage)) {
             // Don't pass DescribeCoverage to superclass. The DescribeCoverage parameters will already be present in the
             // parameter list, so do nothing here.
@@ -305,10 +306,10 @@ public class WCSElevationModel extends BasicElevationModel {
         private final String imageFormat;
         protected String URLTemplate;
 
-        protected URLBuilder(String version, AVList params) {
+        protected URLBuilder(String version, KV params) {
             this.serviceVersion = version;
-            this.layerNames = params.getStringValue(AVKey.COVERAGE_IDENTIFIERS);
-            this.imageFormat = params.getStringValue(AVKey.IMAGE_FORMAT);
+            this.layerNames = params.getStringValue(Keys.COVERAGE_IDENTIFIERS);
+            this.imageFormat = params.getStringValue(Keys.IMAGE_FORMAT);
         }
 
         public URL getURL(Tile tile, String altImageFormat) throws MalformedURLException {

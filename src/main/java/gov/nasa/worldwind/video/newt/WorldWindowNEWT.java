@@ -2,7 +2,7 @@ package gov.nasa.worldwind.video.newt;
 
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.event.InputHandler;
 import gov.nasa.worldwind.geom.ExtentHolder;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -24,7 +24,7 @@ public class WorldWindowNEWT extends AbstractLayer implements WorldWindow, GLEve
     public WorldWindowNEWT(Model model) {
         super();
 
-        this.wwd = ((WorldWindowGLAutoDrawable) WorldWind.createConfigurationComponent(AVKey.WORLD_WINDOW_CLASS_NAME));
+        this.wwd = ((WorldWindowGLAutoDrawable) WorldWind.createConfigurationComponent(Keys.WORLD_WINDOW_CLASS_NAME));
         setModel(model);
     }
 
@@ -133,10 +133,10 @@ public class WorldWindowNEWT extends AbstractLayer implements WorldWindow, GLEve
                 if (l.isEnabled()) {
                     var L = (RenderableLayer) l;
                     for (Renderable r : L.all()) {
-                        if (r instanceof AVList) {
+                        if (r instanceof KV) {
                             if (r instanceof ExtentHolder) {
                                 if (intersectsFrustrum.test(((ExtentHolder) r))) {
-                                    Object m = ((AVList) r).get("_"/*DESCRIPTION*/);
+                                    Object m = ((KV) r).get("_"/*DESCRIPTION*/);
                                     for (Map.Entry<String, String> entry : ((Map<String, String>) m).entrySet()) {
                                         String k = entry.getKey();
                                         if (tag(k))

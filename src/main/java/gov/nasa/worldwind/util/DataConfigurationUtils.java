@@ -5,6 +5,7 @@
  */
 package gov.nasa.worldwind.util;
 
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
@@ -390,20 +391,20 @@ public class DataConfigurationUtils {
     /**
      * Appends WMS layer parameters as elements to a specified context. This appends elements for the following
      * parameters: <table> <caption style="font-weight: bold;">Mapping</caption><tr><th>Parameter</th><th>Element
-     * Path</th><th>Type</th></tr> <tr><td>{@link AVKey#WMS_VERSION}</td><td>Service/@version</td><td>String</td></tr>
-     * <tr><td>{@link AVKey#LAYER_NAMES}</td><td>Service/LayerNames</td><td>String</td></tr> <tr><td>{@link
-     * AVKey#STYLE_NAMES}</td><td>Service/StyleNames</td><td>String</td></tr> <tr><td>{@link
-     * AVKey#GET_MAP_URL}</td><td>Service/GetMapURL</td><td>String</td></tr> <tr><td>{@link
-     * AVKey#GET_CAPABILITIES_URL}</td><td>Service/GetCapabilitiesURL</td><td>String</td></tr> <tr><td>{@link
-     * AVKey#SERVICE}</td><td>AVKey#GET_MAP_URL</td><td>String</td></tr> <tr><td>{@link
-     * AVKey#DATASET_NAME}</td><td>AVKey.LAYER_NAMES</td><td>String</td></tr> </table>
+     * Path</th><th>Type</th></tr> <tr><td>{@link Keys#WMS_VERSION}</td><td>Service/@version</td><td>String</td></tr>
+     * <tr><td>{@link Keys#LAYER_NAMES}</td><td>Service/LayerNames</td><td>String</td></tr> <tr><td>{@link
+     * Keys#STYLE_NAMES}</td><td>Service/StyleNames</td><td>String</td></tr> <tr><td>{@link
+     * Keys#GET_MAP_URL}</td><td>Service/GetMapURL</td><td>String</td></tr> <tr><td>{@link
+     * Keys#GET_CAPABILITIES_URL}</td><td>Service/GetCapabilitiesURL</td><td>String</td></tr> <tr><td>{@link
+     * Keys#SERVICE}</td><td>AVKey#GET_MAP_URL</td><td>String</td></tr> <tr><td>{@link
+     * Keys#DATASET_NAME}</td><td>AVKey.LAYER_NAMES</td><td>String</td></tr> </table>
      *
      * @param params  the key-value pairs which define the WMS layer configuration parameters.
      * @param context the XML document root on which to append WMS layer configuration elements.
      * @return a reference to context.
      * @throws IllegalArgumentException if either the parameters or the context are null.
      */
-    public static Element createWMSLayerConfigElements(AVList params, Element context) {
+    public static Element createWMSLayerConfigElements(KV params, Element context) {
 
         XPath xpath = WWXML.makeXPath();
 
@@ -415,24 +416,24 @@ public class DataConfigurationUtils {
         }
 
         // Try to get the SERVICE_NAME property, but default to "OGC:WMS".
-        String s = AVListImpl.getStringValue(params, AVKey.SERVICE_NAME, OGCConstants.WMS_SERVICE_NAME);
+        String s = KVMap.getStringValue(params, Keys.SERVICE_NAME, OGCConstants.WMS_SERVICE_NAME);
         if (s != null && !s.isEmpty()) {
             WWXML.setTextAttribute(el, "serviceName", s);
         }
 
-        s = params.getStringValue(AVKey.WMS_VERSION);
+        s = params.getStringValue(Keys.WMS_VERSION);
         if (s != null && !s.isEmpty()) {
             WWXML.setTextAttribute(el, "version", s);
         }
 
-        WWXML.checkAndAppendTextElement(params, AVKey.LAYER_NAMES, el, "LayerNames");
-        WWXML.checkAndAppendTextElement(params, AVKey.STYLE_NAMES, el, "StyleNames");
-        WWXML.checkAndAppendTextElement(params, AVKey.GET_MAP_URL, el, "GetMapURL");
-        WWXML.checkAndAppendTextElement(params, AVKey.GET_CAPABILITIES_URL, el, "GetCapabilitiesURL");
+        WWXML.checkAndAppendTextElement(params, Keys.LAYER_NAMES, el, "LayerNames");
+        WWXML.checkAndAppendTextElement(params, Keys.STYLE_NAMES, el, "StyleNames");
+        WWXML.checkAndAppendTextElement(params, Keys.GET_MAP_URL, el, "GetMapURL");
+        WWXML.checkAndAppendTextElement(params, Keys.GET_CAPABILITIES_URL, el, "GetCapabilitiesURL");
 
         // Since this is a WMS tiled image layer, we want to express the service URL as a GetMap URL. If we have a
         // GET_MAP_URL property, then remove any existing SERVICE property from the DOM document.
-        s = params.getStringValue(AVKey.GET_MAP_URL);
+        s = params.getStringValue(Keys.GET_MAP_URL);
         if (s != null && !s.isEmpty()) {
             Element urlElement = WWXML.getElement(el, "URL", xpath);
             if (urlElement != null) {
@@ -446,19 +447,19 @@ public class DataConfigurationUtils {
     /**
      * Appends WCS layer parameters as elements to a specified context. This appends elements for the following
      * parameters: <table><caption style="font-weight: bold;">Mapping</caption> <tr><th>Parameter</th><th>Element
-     * Path</th><th>Type</th></tr> <tr><td>{@link AVKey#WCS_VERSION}</td><td>Service/@version</td><td>String</td></tr>
-     * <tr><td>{@link AVKey#COVERAGE_IDENTIFIERS}</td><td>Service/coverageIdentifiers</td><td>String</td></tr>
-     * <tr><td>{@link AVKey#GET_COVERAGE_URL}</td><td>Service/GetCoverageURL</td><td>String</td></tr> <tr><td>{@link
-     * AVKey#GET_CAPABILITIES_URL}</td><td>Service/GetCapabilitiesURL</td><td>String</td></tr> <tr><td>{@link
-     * AVKey#SERVICE}</td><td>AVKey#GET_COVERAGE_URL</td><td>String</td></tr> <tr><td>{@link
-     * AVKey#DATASET_NAME}</td><td>AVKey.COVERAGE_IDENTIFIERS</td><td>String</td></tr> </table>
+     * Path</th><th>Type</th></tr> <tr><td>{@link Keys#WCS_VERSION}</td><td>Service/@version</td><td>String</td></tr>
+     * <tr><td>{@link Keys#COVERAGE_IDENTIFIERS}</td><td>Service/coverageIdentifiers</td><td>String</td></tr>
+     * <tr><td>{@link Keys#GET_COVERAGE_URL}</td><td>Service/GetCoverageURL</td><td>String</td></tr> <tr><td>{@link
+     * Keys#GET_CAPABILITIES_URL}</td><td>Service/GetCapabilitiesURL</td><td>String</td></tr> <tr><td>{@link
+     * Keys#SERVICE}</td><td>AVKey#GET_COVERAGE_URL</td><td>String</td></tr> <tr><td>{@link
+     * Keys#DATASET_NAME}</td><td>AVKey.COVERAGE_IDENTIFIERS</td><td>String</td></tr> </table>
      *
      * @param params  the key-value pairs which define the WMS layer configuration parameters.
      * @param context the XML document root on which to append WMS layer configuration elements.
      * @return a reference to context.
      * @throws IllegalArgumentException if either the parameters or the context are null.
      */
-    public static Element createWCSLayerConfigElements(AVList params, Element context) {
+    public static Element createWCSLayerConfigElements(KV params, Element context) {
 
         XPath xpath = WWXML.makeXPath();
 
@@ -470,23 +471,23 @@ public class DataConfigurationUtils {
         }
 
         // Try to get the SERVICE_NAME property, but default to "OGC:WCS".
-        String s = AVListImpl.getStringValue(params, AVKey.SERVICE_NAME, OGCConstants.WCS_SERVICE_NAME);
+        String s = KVMap.getStringValue(params, Keys.SERVICE_NAME, OGCConstants.WCS_SERVICE_NAME);
         if (s != null && !s.isEmpty()) {
             WWXML.setTextAttribute(el, "serviceName", s);
         }
 
-        s = params.getStringValue(AVKey.WCS_VERSION);
+        s = params.getStringValue(Keys.WCS_VERSION);
         if (s != null && !s.isEmpty()) {
             WWXML.setTextAttribute(el, "version", s);
         }
 
-        WWXML.checkAndAppendTextElement(params, AVKey.COVERAGE_IDENTIFIERS, el, "CoverageIdentifiers");
-        WWXML.checkAndAppendTextElement(params, AVKey.GET_COVERAGE_URL, el, "GetCoverageURL");
-        WWXML.checkAndAppendTextElement(params, AVKey.GET_CAPABILITIES_URL, el, "GetCapabilitiesURL");
+        WWXML.checkAndAppendTextElement(params, Keys.COVERAGE_IDENTIFIERS, el, "CoverageIdentifiers");
+        WWXML.checkAndAppendTextElement(params, Keys.GET_COVERAGE_URL, el, "GetCoverageURL");
+        WWXML.checkAndAppendTextElement(params, Keys.GET_CAPABILITIES_URL, el, "GetCapabilitiesURL");
 
         // Since this is a WCS tiled coverage, we want to express the service URL as a GetCoverage URL. If we have a
         // GET_COVERAGE_URL property, then remove any existing SERVICE property from the DOM document.
-        s = params.getStringValue(AVKey.GET_COVERAGE_URL);
+        s = params.getStringValue(Keys.GET_COVERAGE_URL);
         if (s != null && !s.isEmpty()) {
             Element urlElement = WWXML.getElement(el, "URL", xpath);
             if (urlElement != null) {
@@ -502,13 +503,13 @@ public class DataConfigurationUtils {
      * key-value pairs to params. If a parameter from the XML document already exists in params, that parameter is
      * ignored. Supported key and parameter names are: <table> <caption style="font-weight:
      * bold;">Mapping</caption><tr><th>Parameter</th><th>Element Path</th><th>Type</th></tr> <tr><td>{@link
-     * AVKey#WMS_VERSION}</td><td>Service/@version</td><td>String</td></tr>
-     * <tr><td>{@link AVKey#LAYER_NAMES}</td><td>Service/LayerNames</td><td>String</td></tr> <tr><td>{@link
-     * AVKey#STYLE_NAMES}</td><td>Service/StyleNames</td><td>String</td></tr> <tr><td>{@link
-     * AVKey#GET_MAP_URL}</td><td>Service/GetMapURL</td><td>String</td></tr> <tr><td>{@link
-     * AVKey#GET_CAPABILITIES_URL}</td><td>Service/GetCapabilitiesURL</td><td>String</td></tr> <tr><td>{@link
-     * AVKey#SERVICE}</td><td>AVKey#GET_MAP_URL</td><td>String</td></tr> <tr><td>{@link
-     * AVKey#DATASET_NAME}</td><td>AVKey.LAYER_NAMES</td><td>String</td></tr> </table>
+     * Keys#WMS_VERSION}</td><td>Service/@version</td><td>String</td></tr>
+     * <tr><td>{@link Keys#LAYER_NAMES}</td><td>Service/LayerNames</td><td>String</td></tr> <tr><td>{@link
+     * Keys#STYLE_NAMES}</td><td>Service/StyleNames</td><td>String</td></tr> <tr><td>{@link
+     * Keys#GET_MAP_URL}</td><td>Service/GetMapURL</td><td>String</td></tr> <tr><td>{@link
+     * Keys#GET_CAPABILITIES_URL}</td><td>Service/GetCapabilitiesURL</td><td>String</td></tr> <tr><td>{@link
+     * Keys#SERVICE}</td><td>AVKey#GET_MAP_URL</td><td>String</td></tr> <tr><td>{@link
+     * Keys#DATASET_NAME}</td><td>AVKey.LAYER_NAMES</td><td>String</td></tr> </table>
      *
      * @param domElement the XML document root to parse for WMS layer parameters.
      * @param params     the output key-value pairs which receive the WMS layer parameters. A null reference is
@@ -516,72 +517,72 @@ public class DataConfigurationUtils {
      * @return a reference to params, or a new AVList if params is null.
      * @throws IllegalArgumentException if the document is null.
      */
-    public static AVList getWMSLayerConfigParams(Element domElement, AVList params) {
+    public static KV getWMSLayerConfigParams(Element domElement, KV params) {
 
         if (params == null) {
-            params = new AVListImpl();
+            params = new KVMap();
         }
 
         XPath xpath = WWXML.makeXPath();
 
         // Need to determine these for URLBuilder construction.
-        WWXML.checkAndSetStringParam(domElement, params, AVKey.WMS_VERSION, "Service/@version", xpath);
-        WWXML.checkAndSetStringParam(domElement, params, AVKey.LAYER_NAMES, "Service/LayerNames", xpath);
-        WWXML.checkAndSetStringParam(domElement, params, AVKey.STYLE_NAMES, "Service/StyleNames", xpath);
-        WWXML.checkAndSetStringParam(domElement, params, AVKey.GET_MAP_URL, "Service/GetMapURL", xpath);
-        WWXML.checkAndSetStringParam(domElement, params, AVKey.GET_CAPABILITIES_URL, "Service/GetCapabilitiesURL",
+        WWXML.checkAndSetStringParam(domElement, params, Keys.WMS_VERSION, "Service/@version", xpath);
+        WWXML.checkAndSetStringParam(domElement, params, Keys.LAYER_NAMES, "Service/LayerNames", xpath);
+        WWXML.checkAndSetStringParam(domElement, params, Keys.STYLE_NAMES, "Service/StyleNames", xpath);
+        WWXML.checkAndSetStringParam(domElement, params, Keys.GET_MAP_URL, "Service/GetMapURL", xpath);
+        WWXML.checkAndSetStringParam(domElement, params, Keys.GET_CAPABILITIES_URL, "Service/GetCapabilitiesURL",
             xpath);
 
-        params.set(AVKey.SERVICE, params.get(AVKey.GET_MAP_URL));
-        String serviceURL = params.getStringValue(AVKey.SERVICE);
+        params.set(Keys.SERVICE, params.get(Keys.GET_MAP_URL));
+        String serviceURL = params.getStringValue(Keys.SERVICE);
         if (serviceURL != null) {
-            params.set(AVKey.SERVICE, WWXML.fixGetMapString(serviceURL));
+            params.set(Keys.SERVICE, WWXML.fixGetMapString(serviceURL));
         }
 
         // The dataset name is the layer-names string for WMS elevation models
-        String layerNames = params.getStringValue(AVKey.LAYER_NAMES);
+        String layerNames = params.getStringValue(Keys.LAYER_NAMES);
         if (layerNames != null) {
-            params.set(AVKey.DATASET_NAME, layerNames);
+            params.set(Keys.DATASET_NAME, layerNames);
         }
 
         return params;
     }
 
-    public static AVList getWCSConfigParams(Element domElement, AVList params) {
+    public static KV getWCSConfigParams(Element domElement, KV params) {
 
         if (params == null) {
-            params = new AVListImpl();
+            params = new KVMap();
         }
 
         XPath xpath = WWXML.makeXPath();
 
         // Need to determine these for URLBuilder construction.
-        WWXML.checkAndSetStringParam(domElement, params, AVKey.WCS_VERSION, "Service/@version", xpath);
-        WWXML.checkAndSetStringParam(domElement, params, AVKey.COVERAGE_IDENTIFIERS, "Service/CoverageIdentifiers",
+        WWXML.checkAndSetStringParam(domElement, params, Keys.WCS_VERSION, "Service/@version", xpath);
+        WWXML.checkAndSetStringParam(domElement, params, Keys.COVERAGE_IDENTIFIERS, "Service/CoverageIdentifiers",
             xpath);
-        WWXML.checkAndSetStringParam(domElement, params, AVKey.GET_COVERAGE_URL, "Service/GetCoverageURL", xpath);
-        WWXML.checkAndSetStringParam(domElement, params, AVKey.GET_CAPABILITIES_URL, "Service/GetCapabilitiesURL",
+        WWXML.checkAndSetStringParam(domElement, params, Keys.GET_COVERAGE_URL, "Service/GetCoverageURL", xpath);
+        WWXML.checkAndSetStringParam(domElement, params, Keys.GET_CAPABILITIES_URL, "Service/GetCapabilitiesURL",
             xpath);
 
-        params.set(AVKey.SERVICE, params.get(AVKey.GET_COVERAGE_URL));
-        String serviceURL = params.getStringValue(AVKey.SERVICE);
+        params.set(Keys.SERVICE, params.get(Keys.GET_COVERAGE_URL));
+        String serviceURL = params.getStringValue(Keys.SERVICE);
         if (serviceURL != null) {
-            params.set(AVKey.SERVICE, WWXML.fixGetMapString(serviceURL));
+            params.set(Keys.SERVICE, WWXML.fixGetMapString(serviceURL));
         }
 
         // The dataset name is the layer-names string for WMS elevation models
-        String coverages = params.getStringValue(AVKey.COVERAGE_IDENTIFIERS);
+        String coverages = params.getStringValue(Keys.COVERAGE_IDENTIFIERS);
         if (coverages != null) {
-            params.set(AVKey.DATASET_NAME, coverages);
+            params.set(Keys.DATASET_NAME, coverages);
         }
 
         return params;
     }
 
-    public static AVList getWMSLayerConfigParams(WMSCapabilities caps, String[] formatOrderPreference, AVList params) {
+    public static KV getWMSLayerConfigParams(WMSCapabilities caps, String[] formatOrderPreference, KV params) {
 
-        String layerNames = params.getStringValue(AVKey.LAYER_NAMES);
-        String styleNames = params.getStringValue(AVKey.STYLE_NAMES);
+        String layerNames = params.getStringValue(Keys.LAYER_NAMES);
+        String styleNames = params.getStringValue(Keys.STYLE_NAMES);
         if (layerNames == null || layerNames.isEmpty()) {
             String message = Logging.getMessage("nullValue.WMSLayerNames");
             Logging.logger().severe(message);
@@ -595,7 +596,7 @@ public class DataConfigurationUtils {
             throw new IllegalArgumentException(message);
         }
 
-        String coordinateSystem = params.getStringValue(AVKey.COORDINATE_SYSTEM);
+        String coordinateSystem = params.getStringValue(Keys.COORDINATE_SYSTEM);
         if (WWUtil.isEmpty(coordinateSystem)) {
             for (String name : names) {
                 WMSLayerCapabilities layerCaps = caps.getLayerByName(name);
@@ -614,25 +615,25 @@ public class DataConfigurationUtils {
             }
 
             if (!WWUtil.isEmpty(coordinateSystem))
-                params.set(AVKey.COORDINATE_SYSTEM, coordinateSystem);
+                params.set(Keys.COORDINATE_SYSTEM, coordinateSystem);
         }
 
         // Define the DISPLAY_NAME and DATASET_NAME from the WMS layer names and styles.
-        params.set(AVKey.DISPLAY_NAME, DataConfigurationUtils.makeTitle(caps, layerNames, styleNames));
-        params.set(AVKey.DATASET_NAME, layerNames);
+        params.set(Keys.DISPLAY_NAME, DataConfigurationUtils.makeTitle(caps, layerNames, styleNames));
+        params.set(Keys.DATASET_NAME, layerNames);
 
         // Get the EXPIRY_TIME from the WMS layer last update time.
         Long lastUpdate = caps.getLayerLatestLastUpdateTime(names);
         if (lastUpdate != null) {
-            params.set(AVKey.EXPIRY_TIME, lastUpdate);
+            params.set(Keys.EXPIRY_TIME, lastUpdate);
         }
 
         // Get the GET_MAP_URL from the WMS getMapRequest URL.
         String mapRequestURIString = caps.getRequestURL("GetMap", "http", "get");
-        if (params.get(AVKey.GET_MAP_URL) == null) {
-            params.set(AVKey.GET_MAP_URL, mapRequestURIString);
+        if (params.get(Keys.GET_MAP_URL) == null) {
+            params.set(Keys.GET_MAP_URL, mapRequestURIString);
         }
-        mapRequestURIString = params.getStringValue(AVKey.GET_MAP_URL);
+        mapRequestURIString = params.getStringValue(Keys.GET_MAP_URL);
         // Throw an exception if there's no GET_MAP_URL property, or no getMapRequest URL in the WMS Capabilities.
         if (mapRequestURIString == null || mapRequestURIString.isEmpty()) {
             Logging.logger().severe("WMS.RequestMapURLMissing");
@@ -641,35 +642,35 @@ public class DataConfigurationUtils {
 
         // Get the GET_CAPABILITIES_URL from the WMS getCapabilitiesRequest URL.
         String capsRequestURIString = caps.getRequestURL("GetCapabilities", "http", "get");
-        if (params.get(AVKey.GET_CAPABILITIES_URL) == null) {
-            params.set(AVKey.GET_CAPABILITIES_URL, capsRequestURIString);
+        if (params.get(Keys.GET_CAPABILITIES_URL) == null) {
+            params.set(Keys.GET_CAPABILITIES_URL, capsRequestURIString);
         }
 
         // Define the SERVICE from the GET_MAP_URL property.
-        params.set(AVKey.SERVICE, params.get(AVKey.GET_MAP_URL));
-        String serviceURL = params.getStringValue(AVKey.SERVICE);
+        params.set(Keys.SERVICE, params.get(Keys.GET_MAP_URL));
+        String serviceURL = params.getStringValue(Keys.SERVICE);
         if (serviceURL != null) {
-            params.set(AVKey.SERVICE, WWXML.fixGetMapString(serviceURL));
+            params.set(Keys.SERVICE, WWXML.fixGetMapString(serviceURL));
         }
 
         // Define the SERVICE_NAME as the standard OGC WMS service string.
-        if (params.get(AVKey.SERVICE_NAME) == null) {
-            params.set(AVKey.SERVICE_NAME, OGCConstants.WMS_SERVICE_NAME);
+        if (params.get(Keys.SERVICE_NAME) == null) {
+            params.set(Keys.SERVICE_NAME, OGCConstants.WMS_SERVICE_NAME);
         }
 
         // Define the WMS VERSION as the version fetched from the Capabilities document.
         String versionString = caps.getVersion();
-        if (params.get(AVKey.WMS_VERSION) == null) {
-            params.set(AVKey.WMS_VERSION, versionString);
+        if (params.get(Keys.WMS_VERSION) == null) {
+            params.set(Keys.WMS_VERSION, versionString);
         }
 
         // Form the cache path DATA_CACHE_NAME from a set of unique WMS parameters.
-        if (params.get(AVKey.DATA_CACHE_NAME) == null) {
+        if (params.get(Keys.DATA_CACHE_NAME) == null) {
             try {
                 URI mapRequestURI = new URI(mapRequestURIString);
                 String cacheName = WWIO.formPath(mapRequestURI.getAuthority(), mapRequestURI.getPath(), layerNames,
                     styleNames);
-                params.set(AVKey.DATA_CACHE_NAME, cacheName);
+                params.set(Keys.DATA_CACHE_NAME, cacheName);
             }
             catch (URISyntaxException e) {
                 String message = Logging.getMessage("WMS.RequestMapURLBad", mapRequestURIString);
@@ -679,19 +680,19 @@ public class DataConfigurationUtils {
         }
 
         // Determine image format to request.
-        if (params.getStringValue(AVKey.IMAGE_FORMAT) == null) {
+        if (params.getStringValue(Keys.IMAGE_FORMAT) == null) {
             String imageFormat = DataConfigurationUtils.chooseImageFormat(caps.getImageFormats().toArray(), formatOrderPreference);
-            params.set(AVKey.IMAGE_FORMAT, imageFormat);
+            params.set(Keys.IMAGE_FORMAT, imageFormat);
         }
 
         // Throw an exception if we cannot determine an image format to request.
-        if (params.getStringValue(AVKey.IMAGE_FORMAT) == null) {
+        if (params.getStringValue(Keys.IMAGE_FORMAT) == null) {
             Logging.logger().severe("WMS.NoImageFormats");
             throw new WWRuntimeException(Logging.getMessage("WMS.NoImageFormats"));
         }
 
         // Determine bounding sector.
-        Sector sector = (Sector) params.get(AVKey.SECTOR);
+        Sector sector = (Sector) params.get(Keys.SECTOR);
         if (sector == null) {
             for (String name : names) {
                 Sector layerSector = caps.getLayerByName(name).getGeographicBoundingBox();
@@ -707,7 +708,7 @@ public class DataConfigurationUtils {
                 Logging.logger().severe("WMS.NoGeographicBoundingBox");
                 throw new WWRuntimeException(Logging.getMessage("WMS.NoGeographicBoundingBox"));
             }
-            params.set(AVKey.SECTOR, sector);
+            params.set(Keys.SECTOR, sector);
         }
 
         // TODO: adjust for subsetable, fixedimage, etc.
@@ -715,40 +716,40 @@ public class DataConfigurationUtils {
         return params;
     }
 
-    public static AVList getWCSConfigParameters(WCS100Capabilities caps, WCS100DescribeCoverage coverage,
-        AVList params) {
+    public static KV getWCSConfigParameters(WCS100Capabilities caps, WCS100DescribeCoverage coverage,
+        KV params) {
 
         WCS100CoverageOffering offering = coverage.getCoverageOfferings().get(0);
 
-        params.set(AVKey.SERVICE_NAME, OGCConstants.WCS_SERVICE_NAME);
-        params.set(AVKey.WCS_VERSION, caps.getVersion() != null ? caps.getVersion() : "1.0.0");
-        params.set(AVKey.DISPLAY_NAME, offering.getLabel());
-        params.set(AVKey.COVERAGE_IDENTIFIERS, offering.getName());
-        params.set(AVKey.GET_COVERAGE_URL, caps.getCapability().getGetOperationAddress("GetCoverage"));
-        params.set(AVKey.GET_CAPABILITIES_URL, caps.getCapability().getGetOperationAddress("GetCapabilities"));
+        params.set(Keys.SERVICE_NAME, OGCConstants.WCS_SERVICE_NAME);
+        params.set(Keys.WCS_VERSION, caps.getVersion() != null ? caps.getVersion() : "1.0.0");
+        params.set(Keys.DISPLAY_NAME, offering.getLabel());
+        params.set(Keys.COVERAGE_IDENTIFIERS, offering.getName());
+        params.set(Keys.GET_COVERAGE_URL, caps.getCapability().getGetOperationAddress("GetCoverage"));
+        params.set(Keys.GET_CAPABILITIES_URL, caps.getCapability().getGetOperationAddress("GetCapabilities"));
 
-        params.set(AVKey.SERVICE, params.get(AVKey.GET_COVERAGE_URL));
-        String serviceURL = params.getStringValue(AVKey.SERVICE);
+        params.set(Keys.SERVICE, params.get(Keys.GET_COVERAGE_URL));
+        String serviceURL = params.getStringValue(Keys.SERVICE);
         if (serviceURL != null) {
-            params.set(AVKey.SERVICE, WWXML.fixGetMapString(serviceURL));
+            params.set(Keys.SERVICE, WWXML.fixGetMapString(serviceURL));
         }
 
-        String coverages = params.getStringValue(AVKey.COVERAGE_IDENTIFIERS);
+        String coverages = params.getStringValue(Keys.COVERAGE_IDENTIFIERS);
         if (coverages != null) {
-            params.set(AVKey.DATASET_NAME, coverages);
+            params.set(Keys.DATASET_NAME, coverages);
         }
 
         // Form the cache path DATA_CACHE_NAME from a set of unique WMS parameters.
-        if (params.get(AVKey.DATA_CACHE_NAME) == null) {
+        if (params.get(Keys.DATA_CACHE_NAME) == null) {
             try {
-                URI mapRequestURI = new URI(params.getStringValue(AVKey.GET_COVERAGE_URL));
+                URI mapRequestURI = new URI(params.getStringValue(Keys.GET_COVERAGE_URL));
                 String cacheName = WWIO.formPath(mapRequestURI.getAuthority(), mapRequestURI.getPath(),
-                    params.getStringValue(AVKey.COVERAGE_IDENTIFIERS));
-                params.set(AVKey.DATA_CACHE_NAME, cacheName);
+                    params.getStringValue(Keys.COVERAGE_IDENTIFIERS));
+                params.set(Keys.DATA_CACHE_NAME, cacheName);
             }
             catch (URISyntaxException e) {
                 String message = Logging.getMessage("WCS.RequestMapURLBad",
-                    params.getStringValue(AVKey.GET_COVERAGE_URL));
+                    params.getStringValue(Keys.GET_COVERAGE_URL));
                 Logging.logger().log(java.util.logging.Level.SEVERE, message, e);
                 throw new WWRuntimeException(message);
             }
@@ -756,11 +757,11 @@ public class DataConfigurationUtils {
 
         for (String format : offering.getSupportedFormats().getStrings()) {
             if (format.toLowerCase().contains("image/tiff")) {
-                params.set(AVKey.IMAGE_FORMAT, format);
+                params.set(Keys.IMAGE_FORMAT, format);
                 break;
             } else if (format.toLowerCase().contains("tiff")) // lots of variants in use, so find one
             {
-                params.set(AVKey.IMAGE_FORMAT, format);
+                params.set(Keys.IMAGE_FORMAT, format);
                 break;
             }
         }
@@ -772,7 +773,7 @@ public class DataConfigurationUtils {
             double[] ne = envelope.getPositions().get(1).getPos2();
 
             if (sw != null && ne != null) {
-                params.set(AVKey.SECTOR, Sector.fromDegreesAndClamp(sw[1], ne[1], sw[0], ne[0]));
+                params.set(Keys.SECTOR, Sector.fromDegreesAndClamp(sw[1], ne[1], sw[0], ne[0]));
             }
         }
 
@@ -788,14 +789,14 @@ public class DataConfigurationUtils {
         }
 
         if (crs != null) {
-            params.set(AVKey.COORDINATE_SYSTEM, crs);
+            params.set(Keys.COORDINATE_SYSTEM, crs);
         }
 
         WCS100Values nullValues = offering.getRangeSet().getRangeSet().getNullValues();
         if (nullValues != null && nullValues.getSingleValues() != null && !nullValues.getSingleValues().isEmpty()) {
             Double nullValue = nullValues.getSingleValues().get(0).getSingleValue();
             if (nullValue != null) {
-                params.set(AVKey.MISSING_DATA_SIGNAL, nullValue);
+                params.set(Keys.MISSING_DATA_SIGNAL, nullValue);
             }
         }
 
@@ -810,14 +811,14 @@ public class DataConfigurationUtils {
      * @return a OGC GetCapabilities URL, or null if the necessary parameters are not available.
      * @throws IllegalArgumentException if the parameter list is null.
      */
-    public static URL getOGCGetCapabilitiesURL(AVList params) {
+    public static URL getOGCGetCapabilitiesURL(KV params) {
 
-        String uri = params.getStringValue(AVKey.GET_CAPABILITIES_URL);
+        String uri = params.getStringValue(Keys.GET_CAPABILITIES_URL);
         if (uri == null || uri.isEmpty()) {
             return null;
         }
 
-        String service = params.getStringValue(AVKey.SERVICE_NAME);
+        String service = params.getStringValue(Keys.SERVICE_NAME);
         if (service == null || service.isEmpty()) {
             return null;
         }
@@ -838,7 +839,7 @@ public class DataConfigurationUtils {
     }
 
     /**
-     * Convenience method to get the OGC {@link AVKey#LAYER_NAMES} parameter from a specified parameter list. If the
+     * Convenience method to get the OGC {@link Keys#LAYER_NAMES} parameter from a specified parameter list. If the
      * parameter is available as a String, this returns all the OGC layer names found in that String. Otherwise this
      * returns null.
      *
@@ -846,9 +847,9 @@ public class DataConfigurationUtils {
      * @return an array of layer names, or null if none exist.
      * @throws IllegalArgumentException if the parameter list is null.
      */
-    public static String[] getOGCLayerNames(AVList params) {
+    public static String[] getOGCLayerNames(KV params) {
 
-        String s = params.getStringValue(AVKey.LAYER_NAMES);
+        String s = params.getStringValue(Keys.LAYER_NAMES);
         if (s == null || s.isEmpty()) {
             return null;
         }
@@ -971,23 +972,23 @@ public class DataConfigurationUtils {
     /**
      * Appends LevelSet configuration parameters as elements to the specified context. This appends elements for the
      * following parameters: <table> <caption style="font-weight: bold;">Mapping</caption><tr><th>Key</th><th>Name</th><td>Path</td></tr>
-     * <tr><td>{@link AVKey#DATASET_NAME}</td><td>DatasetName</td><td>String</td></tr>
-     * <tr><td>{@link AVKey#DATA_CACHE_NAME}</td><td>DataCacheName</td><td>String</td></tr>
-     * <tr><td>{@link AVKey#SERVICE}</td><td>Service/URL</td><td>String</td></tr>
-     * <tr><td>{@link AVKey#EXPIRY_TIME}</td><td>ExpiryTime</td><td>Long</td></tr>
-     * <tr><td>{@link AVKey#EXPIRY_TIME}</td><td>LastUpdate</td><td>Long</td></tr>
-     * <tr><td>{@link AVKey#FORMAT_SUFFIX}</td><td>FormatSuffix</td><td>String</td></tr>
-     * <tr><td>{@link AVKey#NUM_LEVELS}</td><td>NumLevels/@count</td><td>Integer</td></tr>
-     * <tr><td>{@link AVKey#NUM_EMPTY_LEVELS}</td><td>NumLevels/@numEmpty</td><td>Integer</td></tr>
-     * <tr><td>{@link AVKey#INACTIVE_LEVELS}</td><td>NumLevels/@inactive</td><td>String</td></tr>
-     * <tr><td>{@link AVKey#SECTOR}</td><td>Sector</td><td>{@link
-     * Sector}</td></tr> <tr><td>{@link AVKey#SECTOR_RESOLUTION_LIMITS}</td><td>SectorResolutionLimit</td>
-     * <td>{@link LevelSet.SectorResolution}</td></tr> <tr><td>{@link AVKey#TILE_ORIGIN}</td><td>TileOrigin/LatLon</td><td>{@link
-     * LatLon}</td></tr> <tr><td>{@link AVKey#TILE_WIDTH}</td><td>TileSize/Dimension/@width</td><td>Integer</td></tr>
-     * <tr><td>{@link AVKey#TILE_HEIGHT}</td><td>TileSize/Dimension/@height</td><td>Integer</td></tr>
-     * <tr><td>{@link AVKey#LEVEL_ZERO_TILE_DELTA}</td><td>LastUpdate</td><td>LatLon</td></tr>
-     * <tr><td>{@link AVKey#MAX_ABSENT_TILE_ATTEMPTS}</td><td>MaxAbsentTileAttempts</td><td>Integer</td></tr>
-     * <tr><td>{@link AVKey#MIN_ABSENT_TILE_CHECK_INTERVAL}</td><td>MinAbsentTileCheckInterval</td><td>Integer</td></tr>
+     * <tr><td>{@link Keys#DATASET_NAME}</td><td>DatasetName</td><td>String</td></tr>
+     * <tr><td>{@link Keys#DATA_CACHE_NAME}</td><td>DataCacheName</td><td>String</td></tr>
+     * <tr><td>{@link Keys#SERVICE}</td><td>Service/URL</td><td>String</td></tr>
+     * <tr><td>{@link Keys#EXPIRY_TIME}</td><td>ExpiryTime</td><td>Long</td></tr>
+     * <tr><td>{@link Keys#EXPIRY_TIME}</td><td>LastUpdate</td><td>Long</td></tr>
+     * <tr><td>{@link Keys#FORMAT_SUFFIX}</td><td>FormatSuffix</td><td>String</td></tr>
+     * <tr><td>{@link Keys#NUM_LEVELS}</td><td>NumLevels/@count</td><td>Integer</td></tr>
+     * <tr><td>{@link Keys#NUM_EMPTY_LEVELS}</td><td>NumLevels/@numEmpty</td><td>Integer</td></tr>
+     * <tr><td>{@link Keys#INACTIVE_LEVELS}</td><td>NumLevels/@inactive</td><td>String</td></tr>
+     * <tr><td>{@link Keys#SECTOR}</td><td>Sector</td><td>{@link
+     * Sector}</td></tr> <tr><td>{@link Keys#SECTOR_RESOLUTION_LIMITS}</td><td>SectorResolutionLimit</td>
+     * <td>{@link LevelSet.SectorResolution}</td></tr> <tr><td>{@link Keys#TILE_ORIGIN}</td><td>TileOrigin/LatLon</td><td>{@link
+     * LatLon}</td></tr> <tr><td>{@link Keys#TILE_WIDTH}</td><td>TileSize/Dimension/@width</td><td>Integer</td></tr>
+     * <tr><td>{@link Keys#TILE_HEIGHT}</td><td>TileSize/Dimension/@height</td><td>Integer</td></tr>
+     * <tr><td>{@link Keys#LEVEL_ZERO_TILE_DELTA}</td><td>LastUpdate</td><td>LatLon</td></tr>
+     * <tr><td>{@link Keys#MAX_ABSENT_TILE_ATTEMPTS}</td><td>MaxAbsentTileAttempts</td><td>Integer</td></tr>
+     * <tr><td>{@link Keys#MIN_ABSENT_TILE_CHECK_INTERVAL}</td><td>MinAbsentTileCheckInterval</td><td>Integer</td></tr>
      * </table>
      *
      * @param params  the key-value pairs which define the LevelSet configuration parameters.
@@ -995,7 +996,7 @@ public class DataConfigurationUtils {
      * @return a reference to context.
      * @throws IllegalArgumentException if either the parameters or the context are null.
      */
-    public static Element createLevelSetConfigElements(AVList params, Element context) {
+    public static Element createLevelSetConfigElements(KV params, Element context) {
         if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
@@ -1009,11 +1010,11 @@ public class DataConfigurationUtils {
         }
 
         // Title and cache name properties.
-        WWXML.checkAndAppendTextElement(params, AVKey.DATASET_NAME, context, "DatasetName");
-        WWXML.checkAndAppendTextElement(params, AVKey.DATA_CACHE_NAME, context, "DataCacheName");
+        WWXML.checkAndAppendTextElement(params, Keys.DATASET_NAME, context, "DatasetName");
+        WWXML.checkAndAppendTextElement(params, Keys.DATA_CACHE_NAME, context, "DataCacheName");
 
         // Service properties.
-        String s = params.getStringValue(AVKey.SERVICE);
+        String s = params.getStringValue(Keys.SERVICE);
         if (s != null && !s.isEmpty()) {
             // The service element may already exist, in which case we want to append the "URL" element to the existing
             // service element.
@@ -1025,51 +1026,51 @@ public class DataConfigurationUtils {
         }
 
         // Expiry time properties.
-        WWXML.checkAndAppendLongElement(params, AVKey.EXPIRY_TIME, context, "LastUpdate");
+        WWXML.checkAndAppendLongElement(params, Keys.EXPIRY_TIME, context, "LastUpdate");
 
         // Image format properties.
-        WWXML.checkAndAppendTextElement(params, AVKey.FORMAT_SUFFIX, context, "FormatSuffix");
+        WWXML.checkAndAppendTextElement(params, Keys.FORMAT_SUFFIX, context, "FormatSuffix");
 
         // Tile structure properties.
-        Integer numLevels = AVListImpl.getIntegerValue(params, AVKey.NUM_LEVELS);
+        Integer numLevels = KVMap.getIntegerValue(params, Keys.NUM_LEVELS);
         if (numLevels != null) {
             Element el = WWXML.appendElementPath(context, "NumLevels");
             WWXML.setIntegerAttribute(el, "count", numLevels);
 
-            Integer i = AVListImpl.getIntegerValue(params, AVKey.NUM_EMPTY_LEVELS, 0);
+            Integer i = KVMap.getIntegerValue(params, Keys.NUM_EMPTY_LEVELS, 0);
             WWXML.setIntegerAttribute(el, "numEmpty", i);
 
-            s = params.getStringValue(AVKey.INACTIVE_LEVELS);
+            s = params.getStringValue(Keys.INACTIVE_LEVELS);
             if (s != null && !s.isEmpty()) {
                 WWXML.setTextAttribute(el, "inactive", s);
             }
         }
 
-        WWXML.checkAndAppendSectorElement(params, AVKey.SECTOR, context, "Sector");
-        WWXML.checkAndAppendSectorResolutionElement(params, AVKey.SECTOR_RESOLUTION_LIMITS, context,
+        WWXML.checkAndAppendSectorElement(params, Keys.SECTOR, context, "Sector");
+        WWXML.checkAndAppendSectorResolutionElement(params, Keys.SECTOR_RESOLUTION_LIMITS, context,
             "SectorResolutionLimit");
-        WWXML.checkAndAppendLatLonElement(params, AVKey.TILE_ORIGIN, context, "TileOrigin/LatLon");
+        WWXML.checkAndAppendLatLonElement(params, Keys.TILE_ORIGIN, context, "TileOrigin/LatLon");
 
-        Integer tileWidth = AVListImpl.getIntegerValue(params, AVKey.TILE_WIDTH);
-        Integer tileHeight = AVListImpl.getIntegerValue(params, AVKey.TILE_HEIGHT);
+        Integer tileWidth = KVMap.getIntegerValue(params, Keys.TILE_WIDTH);
+        Integer tileHeight = KVMap.getIntegerValue(params, Keys.TILE_HEIGHT);
         if (tileWidth != null && tileHeight != null) {
             Element el = WWXML.appendElementPath(context, "TileSize/Dimension");
             WWXML.setIntegerAttribute(el, "width", tileWidth);
             WWXML.setIntegerAttribute(el, "height", tileHeight);
         }
 
-        WWXML.checkAndAppendLatLonElement(params, AVKey.LEVEL_ZERO_TILE_DELTA, context, "LevelZeroTileDelta/LatLon");
+        WWXML.checkAndAppendLatLonElement(params, Keys.LEVEL_ZERO_TILE_DELTA, context, "LevelZeroTileDelta/LatLon");
 
         // Retrieval properties.
-        if (params.get(AVKey.MAX_ABSENT_TILE_ATTEMPTS) != null ||
-            params.get(AVKey.MIN_ABSENT_TILE_CHECK_INTERVAL) != null) {
+        if (params.get(Keys.MAX_ABSENT_TILE_ATTEMPTS) != null ||
+            params.get(Keys.MIN_ABSENT_TILE_CHECK_INTERVAL) != null) {
             Element el = WWXML.getElement(context, "AbsentTiles", null);
             if (el == null) {
                 el = WWXML.appendElementPath(context, "AbsentTiles");
             }
 
-            WWXML.checkAndAppendIntegerlement(params, AVKey.MAX_ABSENT_TILE_ATTEMPTS, el, "MaxAttempts");
-            WWXML.checkAndAppendTimeElement(params, AVKey.MIN_ABSENT_TILE_CHECK_INTERVAL, el, "MinCheckInterval/Time");
+            WWXML.checkAndAppendIntegerlement(params, Keys.MAX_ABSENT_TILE_ATTEMPTS, el, "MaxAttempts");
+            WWXML.checkAndAppendTimeElement(params, Keys.MIN_ABSENT_TILE_CHECK_INTERVAL, el, "MinCheckInterval/Time");
         }
 
         return context;
@@ -1080,22 +1081,22 @@ public class DataConfigurationUtils {
      * to params. If a parameter from the XML document already exists in params, that parameter is ignored. Supported
      * key and parameter names are: <table> <caption style="font-weight: bold;">Mapping</caption>
      * <tr><th>Parameter</th><th>Element path</th><th>Type</th></tr> <tr><td>{@link
-     * AVKey#DATASET_NAME}</td><td>DatasetName</td><td>String</td></tr> <tr><td>{@link
-     * AVKey#DATA_CACHE_NAME}</td><td>DataCacheName</td><td>String</td></tr> <tr><td>{@link
-     * AVKey#SERVICE}</td><td>Service/URL</td><td>String</td></tr> <tr><td>{@link AVKey#EXPIRY_TIME}</td><td>ExpiryTime</td><td>Long</td></tr>
-     * <tr><td>{@link AVKey#EXPIRY_TIME}</td><td>LastUpdate</td><td>Long</td></tr> <tr><td>{@link
-     * AVKey#FORMAT_SUFFIX}</td><td>FormatSuffix</td><td>String</td></tr> <tr><td>{@link
-     * AVKey#NUM_LEVELS}</td><td>NumLevels/@count</td><td>Integer</td></tr> <tr><td>{@link
-     * AVKey#NUM_EMPTY_LEVELS}</td><td>NumLevels/@numEmpty</td><td>Integer</td></tr>
-     * <tr><td>{@link AVKey#INACTIVE_LEVELS}</td><td>NumLevels/@inactive</td><td>String</td></tr>
-     * <tr><td>{@link AVKey#SECTOR}</td><td>Sector</td><td>{@link
-     * Sector}</td></tr> <tr><td>{@link AVKey#SECTOR_RESOLUTION_LIMITS}</td><td>SectorResolutionLimit</td>
-     * <td>{@link LevelSet.SectorResolution}</td></tr> <tr><td>{@link AVKey#TILE_ORIGIN}</td><td>TileOrigin/LatLon</td><td>{@link
-     * LatLon}</td></tr> <tr><td>{@link AVKey#TILE_WIDTH}</td><td>TileSize/Dimension/@width</td><td>Integer</td></tr>
-     * <tr><td>{@link AVKey#TILE_HEIGHT}</td><td>TileSize/Dimension/@height</td><td>Integer</td></tr>
-     * <tr><td>{@link AVKey#LEVEL_ZERO_TILE_DELTA}</td><td>LastUpdate</td><td>LatLon</td></tr>
-     * <tr><td>{@link AVKey#MAX_ABSENT_TILE_ATTEMPTS}</td><td>AbsentTiles/MaxAttempts</td><td>Integer</td></tr>
-     * <tr><td>{@link AVKey#MIN_ABSENT_TILE_CHECK_INTERVAL}</td><td>AbsentTiles/MinCheckInterval/Time</td><td>Integer
+     * Keys#DATASET_NAME}</td><td>DatasetName</td><td>String</td></tr> <tr><td>{@link
+     * Keys#DATA_CACHE_NAME}</td><td>DataCacheName</td><td>String</td></tr> <tr><td>{@link
+     * Keys#SERVICE}</td><td>Service/URL</td><td>String</td></tr> <tr><td>{@link Keys#EXPIRY_TIME}</td><td>ExpiryTime</td><td>Long</td></tr>
+     * <tr><td>{@link Keys#EXPIRY_TIME}</td><td>LastUpdate</td><td>Long</td></tr> <tr><td>{@link
+     * Keys#FORMAT_SUFFIX}</td><td>FormatSuffix</td><td>String</td></tr> <tr><td>{@link
+     * Keys#NUM_LEVELS}</td><td>NumLevels/@count</td><td>Integer</td></tr> <tr><td>{@link
+     * Keys#NUM_EMPTY_LEVELS}</td><td>NumLevels/@numEmpty</td><td>Integer</td></tr>
+     * <tr><td>{@link Keys#INACTIVE_LEVELS}</td><td>NumLevels/@inactive</td><td>String</td></tr>
+     * <tr><td>{@link Keys#SECTOR}</td><td>Sector</td><td>{@link
+     * Sector}</td></tr> <tr><td>{@link Keys#SECTOR_RESOLUTION_LIMITS}</td><td>SectorResolutionLimit</td>
+     * <td>{@link LevelSet.SectorResolution}</td></tr> <tr><td>{@link Keys#TILE_ORIGIN}</td><td>TileOrigin/LatLon</td><td>{@link
+     * LatLon}</td></tr> <tr><td>{@link Keys#TILE_WIDTH}</td><td>TileSize/Dimension/@width</td><td>Integer</td></tr>
+     * <tr><td>{@link Keys#TILE_HEIGHT}</td><td>TileSize/Dimension/@height</td><td>Integer</td></tr>
+     * <tr><td>{@link Keys#LEVEL_ZERO_TILE_DELTA}</td><td>LastUpdate</td><td>LatLon</td></tr>
+     * <tr><td>{@link Keys#MAX_ABSENT_TILE_ATTEMPTS}</td><td>AbsentTiles/MaxAttempts</td><td>Integer</td></tr>
+     * <tr><td>{@link Keys#MIN_ABSENT_TILE_CHECK_INTERVAL}</td><td>AbsentTiles/MinCheckInterval/Time</td><td>Integer
      * milliseconds</td></tr> </table>
      *
      * @param domElement the XML document root to parse for LevelSet configuration parameters.
@@ -1104,7 +1105,7 @@ public class DataConfigurationUtils {
      * @return a reference to params, or a new AVList if params is null.
      * @throws IllegalArgumentException if the document is null.
      */
-    public static AVList getLevelSetConfigParams(Element domElement, AVList params) {
+    public static KV getLevelSetConfigParams(Element domElement, KV params) {
         if (domElement == null) {
             String message = Logging.getMessage("nullValue.DocumentIsNull");
             Logging.logger().severe(message);
@@ -1112,43 +1113,43 @@ public class DataConfigurationUtils {
         }
 
         if (params == null) {
-            params = new AVListImpl();
+            params = new KVMap();
         }
 
         XPath xpath = WWXML.makeXPath();
 
         // Title and cache name properties.
-        WWXML.checkAndSetStringParam(domElement, params, AVKey.DATASET_NAME, "DatasetName", xpath);
-        WWXML.checkAndSetStringParam(domElement, params, AVKey.DATA_CACHE_NAME, "DataCacheName", xpath);
+        WWXML.checkAndSetStringParam(domElement, params, Keys.DATASET_NAME, "DatasetName", xpath);
+        WWXML.checkAndSetStringParam(domElement, params, Keys.DATA_CACHE_NAME, "DataCacheName", xpath);
 
         // Service properties.
-        WWXML.checkAndSetStringParam(domElement, params, AVKey.SERVICE, "Service/URL", xpath);
-        WWXML.checkAndSetStringParam(domElement, params, AVKey.SERVICE_NAME, "Service/@serviceName", xpath);
+        WWXML.checkAndSetStringParam(domElement, params, Keys.SERVICE, "Service/URL", xpath);
+        WWXML.checkAndSetStringParam(domElement, params, Keys.SERVICE_NAME, "Service/@serviceName", xpath);
 
-        WWXML.checkAndSetLongParam(domElement, params, AVKey.EXPIRY_TIME, "ExpiryTime", xpath);
-        WWXML.checkAndSetDateTimeParam(domElement, params, AVKey.EXPIRY_TIME, "LastUpdate",
+        WWXML.checkAndSetLongParam(domElement, params, Keys.EXPIRY_TIME, "ExpiryTime", xpath);
+        WWXML.checkAndSetDateTimeParam(domElement, params, Keys.EXPIRY_TIME, "LastUpdate",
             DataConfigurationUtils.DATE_TIME_PATTERN, xpath);
 
         // Image format properties.
-        WWXML.checkAndSetStringParam(domElement, params, AVKey.FORMAT_SUFFIX, "FormatSuffix", xpath);
+        WWXML.checkAndSetStringParam(domElement, params, Keys.FORMAT_SUFFIX, "FormatSuffix", xpath);
 
         // Tile structure properties.
-        WWXML.checkAndSetIntegerParam(domElement, params, AVKey.NUM_LEVELS, "NumLevels/@count", xpath);
-        WWXML.checkAndSetIntegerParam(domElement, params, AVKey.NUM_EMPTY_LEVELS, "NumLevels/@numEmpty", xpath);
-        WWXML.checkAndSetStringParam(domElement, params, AVKey.INACTIVE_LEVELS, "NumLevels/@inactive", xpath);
-        WWXML.checkAndSetSectorParam(domElement, params, AVKey.SECTOR, "Sector", xpath);
-        WWXML.checkAndSetSectorResolutionParam(domElement, params, AVKey.SECTOR_RESOLUTION_LIMITS,
+        WWXML.checkAndSetIntegerParam(domElement, params, Keys.NUM_LEVELS, "NumLevels/@count", xpath);
+        WWXML.checkAndSetIntegerParam(domElement, params, Keys.NUM_EMPTY_LEVELS, "NumLevels/@numEmpty", xpath);
+        WWXML.checkAndSetStringParam(domElement, params, Keys.INACTIVE_LEVELS, "NumLevels/@inactive", xpath);
+        WWXML.checkAndSetSectorParam(domElement, params, Keys.SECTOR, "Sector", xpath);
+        WWXML.checkAndSetSectorResolutionParam(domElement, params, Keys.SECTOR_RESOLUTION_LIMITS,
             "SectorResolutionLimit", xpath);
-        WWXML.checkAndSetLatLonParam(domElement, params, AVKey.TILE_ORIGIN, "TileOrigin/LatLon", xpath);
-        WWXML.checkAndSetIntegerParam(domElement, params, AVKey.TILE_WIDTH, "TileSize/Dimension/@width", xpath);
-        WWXML.checkAndSetIntegerParam(domElement, params, AVKey.TILE_HEIGHT, "TileSize/Dimension/@height", xpath);
-        WWXML.checkAndSetLatLonParam(domElement, params, AVKey.LEVEL_ZERO_TILE_DELTA, "LevelZeroTileDelta/LatLon",
+        WWXML.checkAndSetLatLonParam(domElement, params, Keys.TILE_ORIGIN, "TileOrigin/LatLon", xpath);
+        WWXML.checkAndSetIntegerParam(domElement, params, Keys.TILE_WIDTH, "TileSize/Dimension/@width", xpath);
+        WWXML.checkAndSetIntegerParam(domElement, params, Keys.TILE_HEIGHT, "TileSize/Dimension/@height", xpath);
+        WWXML.checkAndSetLatLonParam(domElement, params, Keys.LEVEL_ZERO_TILE_DELTA, "LevelZeroTileDelta/LatLon",
             xpath);
 
         // Retrieval properties.
-        WWXML.checkAndSetIntegerParam(domElement, params, AVKey.MAX_ABSENT_TILE_ATTEMPTS,
+        WWXML.checkAndSetIntegerParam(domElement, params, Keys.MAX_ABSENT_TILE_ATTEMPTS,
             "AbsentTiles/MaxAttempts", xpath);
-        WWXML.checkAndSetTimeParamAsInteger(domElement, params, AVKey.MIN_ABSENT_TILE_CHECK_INTERVAL,
+        WWXML.checkAndSetTimeParamAsInteger(domElement, params, Keys.MIN_ABSENT_TILE_CHECK_INTERVAL,
             "AbsentTiles/MinCheckInterval/Time", xpath);
 
         return params;
@@ -1160,20 +1161,20 @@ public class DataConfigurationUtils {
      * key and parameter names are: <table> <caption style="font-weight: bold;">Mapping</caption>
      * <tr><th>Parameter</th><th>Element Path</th><th>Type</th></tr>
      * <tr><td>{@link
-     * AVKey#DATASET_NAME}</td><td>First Level's dataset</td><td>String</td></tr>
-     * <tr><td>{@link AVKey#DATA_CACHE_NAME}</td><td>First Level's
-     * cacheName</td><td>String</td></tr> <tr><td>{@link AVKey#SERVICE}</td><td>First Level's
-     * service</td><td>String</td></tr> <tr><td>{@link AVKey#EXPIRY_TIME}</td><td>First Level's
-     * expiryTime</td><td>Long</td></tr> <tr><td>{@link AVKey#FORMAT_SUFFIX}</td><td>FirstLevel's
-     * formatSuffix</td><td>String</td></tr> <tr><td>{@link AVKey#NUM_LEVELS}</td><td>numLevels</td><td>Integer</td></tr>
-     * <tr><td>{@link AVKey#NUM_EMPTY_LEVELS}</td><td>1 + index of first non-empty
-     * Level</td><td>Integer</td></tr> <tr><td>{@link AVKey#INACTIVE_LEVELS}</td><td>Comma delimited string of Level
-     * numbers</td><td>String</td></tr> <tr><td>{@link AVKey#SECTOR}</td><td>sector</td><td>{@link Sector}</td></tr>
-     * <tr><td>{@link AVKey#SECTOR_RESOLUTION_LIMITS}</td><td>sectorLevelLimits</td>
-     * <td>{@link LevelSet.SectorResolution}</td></tr> <tr><td>{@link AVKey#TILE_ORIGIN}</td><td>tileOrigin</td><td>{@link
-     * LatLon}</td></tr> <tr><td>{@link AVKey#TILE_WIDTH}</td><td>First Level's tileWidth<td><td>Integer</td></tr>
-     * <tr><td>{@link AVKey#TILE_HEIGHT}</td><td>First Level's tileHeight</td><td>Integer</td></tr> <tr><td>{@link
-     * AVKey#LEVEL_ZERO_TILE_DELTA}</td><td>levelZeroTileDelta</td><td>LatLon</td></tr>
+     * Keys#DATASET_NAME}</td><td>First Level's dataset</td><td>String</td></tr>
+     * <tr><td>{@link Keys#DATA_CACHE_NAME}</td><td>First Level's
+     * cacheName</td><td>String</td></tr> <tr><td>{@link Keys#SERVICE}</td><td>First Level's
+     * service</td><td>String</td></tr> <tr><td>{@link Keys#EXPIRY_TIME}</td><td>First Level's
+     * expiryTime</td><td>Long</td></tr> <tr><td>{@link Keys#FORMAT_SUFFIX}</td><td>FirstLevel's
+     * formatSuffix</td><td>String</td></tr> <tr><td>{@link Keys#NUM_LEVELS}</td><td>numLevels</td><td>Integer</td></tr>
+     * <tr><td>{@link Keys#NUM_EMPTY_LEVELS}</td><td>1 + index of first non-empty
+     * Level</td><td>Integer</td></tr> <tr><td>{@link Keys#INACTIVE_LEVELS}</td><td>Comma delimited string of Level
+     * numbers</td><td>String</td></tr> <tr><td>{@link Keys#SECTOR}</td><td>sector</td><td>{@link Sector}</td></tr>
+     * <tr><td>{@link Keys#SECTOR_RESOLUTION_LIMITS}</td><td>sectorLevelLimits</td>
+     * <td>{@link LevelSet.SectorResolution}</td></tr> <tr><td>{@link Keys#TILE_ORIGIN}</td><td>tileOrigin</td><td>{@link
+     * LatLon}</td></tr> <tr><td>{@link Keys#TILE_WIDTH}</td><td>First Level's tileWidth<td><td>Integer</td></tr>
+     * <tr><td>{@link Keys#TILE_HEIGHT}</td><td>First Level's tileHeight</td><td>Integer</td></tr> <tr><td>{@link
+     * Keys#LEVEL_ZERO_TILE_DELTA}</td><td>levelZeroTileDelta</td><td>LatLon</td></tr>
      * </table>
      *
      * @param levelSet the LevelSet reference to gather configuration parameters from.
@@ -1182,7 +1183,7 @@ public class DataConfigurationUtils {
      * @return a reference to params, or a new AVList if params is null.
      * @throws IllegalArgumentException if the document is null.
      */
-    public static AVList getLevelSetConfigParams(LevelSet levelSet, AVList params) {
+    public static KV getLevelSetConfigParams(LevelSet levelSet, KV params) {
         if (levelSet == null) {
             String message = Logging.getMessage("nullValue.LevelSetIsNull");
             Logging.logger().severe(message);
@@ -1190,113 +1191,113 @@ public class DataConfigurationUtils {
         }
 
         if (params == null) {
-            params = new AVListImpl();
+            params = new KVMap();
         }
 
         Level firstLevel = levelSet.getFirstLevel();
 
         // Title and cache name properties.
-        String s = params.getStringValue(AVKey.DATASET_NAME);
+        String s = params.getStringValue(Keys.DATASET_NAME);
         if (s == null || s.isEmpty()) {
             s = firstLevel.getDataset();
             if (s != null && !s.isEmpty()) {
-                params.set(AVKey.DATASET_NAME, s);
+                params.set(Keys.DATASET_NAME, s);
             }
         }
 
-        s = params.getStringValue(AVKey.DATA_CACHE_NAME);
+        s = params.getStringValue(Keys.DATA_CACHE_NAME);
         if (s == null || s.isEmpty()) {
             s = firstLevel.getCacheName();
             if (s != null && !s.isEmpty()) {
-                params.set(AVKey.DATA_CACHE_NAME, s);
+                params.set(Keys.DATA_CACHE_NAME, s);
             }
         }
 
         // Service properties.
-        s = params.getStringValue(AVKey.SERVICE);
+        s = params.getStringValue(Keys.SERVICE);
         if (s == null || s.isEmpty()) {
             s = firstLevel.getService();
             if (s != null && !s.isEmpty()) {
-                params.set(AVKey.SERVICE, s);
+                params.set(Keys.SERVICE, s);
             }
         }
 
-        Object o = params.get(AVKey.EXPIRY_TIME);
+        Object o = params.get(Keys.EXPIRY_TIME);
         if (o == null) {
             // If the expiry time is zero or negative, then treat it as an uninitialized value.
             long l = firstLevel.getExpiryTime();
             if (l > 0) {
-                params.set(AVKey.EXPIRY_TIME, l);
+                params.set(Keys.EXPIRY_TIME, l);
             }
         }
 
         // Image format properties.
-        s = params.getStringValue(AVKey.FORMAT_SUFFIX);
+        s = params.getStringValue(Keys.FORMAT_SUFFIX);
         if (s == null || s.isEmpty()) {
             s = firstLevel.getFormatSuffix();
             if (s != null && !s.isEmpty()) {
-                params.set(AVKey.FORMAT_SUFFIX, s);
+                params.set(Keys.FORMAT_SUFFIX, s);
             }
         }
 
         // Tile structure properties.
-        o = params.get(AVKey.NUM_LEVELS);
+        o = params.get(Keys.NUM_LEVELS);
         if (o == null) {
-            params.set(AVKey.NUM_LEVELS, levelSet.getNumLevels());
+            params.set(Keys.NUM_LEVELS, levelSet.getNumLevels());
         }
 
-        o = params.get(AVKey.NUM_EMPTY_LEVELS);
+        o = params.get(Keys.NUM_EMPTY_LEVELS);
         if (o == null) {
-            params.set(AVKey.NUM_EMPTY_LEVELS, DataConfigurationUtils.getNumEmptyLevels(levelSet));
+            params.set(Keys.NUM_EMPTY_LEVELS, DataConfigurationUtils.getNumEmptyLevels(levelSet));
         }
 
-        s = params.getStringValue(AVKey.INACTIVE_LEVELS);
+        s = params.getStringValue(Keys.INACTIVE_LEVELS);
         if (s == null || s.isEmpty()) {
             s = DataConfigurationUtils.getInactiveLevels(levelSet);
             if (s != null && !s.isEmpty()) {
-                params.set(AVKey.INACTIVE_LEVELS, s);
+                params.set(Keys.INACTIVE_LEVELS, s);
             }
         }
 
-        o = params.get(AVKey.SECTOR);
+        o = params.get(Keys.SECTOR);
         if (o == null) {
             Sector sector = levelSet.sector;
             if (sector != null) {
-                params.set(AVKey.SECTOR, sector);
+                params.set(Keys.SECTOR, sector);
             }
         }
 
-        o = params.get(AVKey.SECTOR_RESOLUTION_LIMITS);
+        o = params.get(Keys.SECTOR_RESOLUTION_LIMITS);
         if (o == null) {
             LevelSet.SectorResolution[] srs = levelSet.getSectorLevelLimits();
             if (srs != null && srs.length > 0) {
-                params.set(AVKey.SECTOR_RESOLUTION_LIMITS, srs);
+                params.set(Keys.SECTOR_RESOLUTION_LIMITS, srs);
             }
         }
 
-        o = params.get(AVKey.TILE_ORIGIN);
+        o = params.get(Keys.TILE_ORIGIN);
         if (o == null) {
             LatLon ll = levelSet.tileOrigin;
             if (ll != null) {
-                params.set(AVKey.TILE_ORIGIN, ll);
+                params.set(Keys.TILE_ORIGIN, ll);
             }
         }
 
-        o = params.get(AVKey.TILE_WIDTH);
+        o = params.get(Keys.TILE_WIDTH);
         if (o == null) {
-            params.set(AVKey.TILE_WIDTH, firstLevel.getTileWidth());
+            params.set(Keys.TILE_WIDTH, firstLevel.getTileWidth());
         }
 
-        o = params.get(AVKey.TILE_HEIGHT);
+        o = params.get(Keys.TILE_HEIGHT);
         if (o == null) {
-            params.set(AVKey.TILE_HEIGHT, firstLevel.getTileHeight());
+            params.set(Keys.TILE_HEIGHT, firstLevel.getTileHeight());
         }
 
-        o = params.get(AVKey.LEVEL_ZERO_TILE_DELTA);
+        o = params.get(Keys.LEVEL_ZERO_TILE_DELTA);
         if (o == null) {
             LatLon ll = levelSet.levelZeroTileDelta;
             if (ll != null) {
-                params.set(AVKey.LEVEL_ZERO_TILE_DELTA, ll);
+                params.set(Keys.LEVEL_ZERO_TILE_DELTA, ll);
             }
         }
 
@@ -1601,24 +1602,24 @@ public class DataConfigurationUtils {
      * key-value pairs to params. If a parameter from the LayerSet document already exists in params, that parameter is
      * ignored. Supported key and parameter names are: <table> <caption style="font-weight: bold;">Mapping</caption>
      * <tr><th>Parameter</th><th>Element
-     * Path</th><th>Type</th></tr> <tr><td>{@link AVKey#DISPLAY_NAME}</td><td>QuadTileSet/Name<td></td><td>String</td></tr>
-     * <tr><td>{@link AVKey#DATASET_NAME}</td><td>QuadTileSet/Name<td></td><td>String</td></tr>
-     * <tr><td>{@link AVKey#OPACITY}</td><td>QuadTileSet/Opacity<td></td><td>Double</td></tr>
-     * <tr><td>{@link AVKey#SERVICE_NAME}</td><td>"Offline" (string
-     * constant)<td></td><td>String</td></tr> <tr><td>{@link AVKey#FORMAT_SUFFIX}</td><td>QuadTileSet/ImageAccessor/ImageFileExtension<td></td><td>String</td></tr>
-     * <tr><td>{@link AVKey#IMAGE_FORMAT}</td><td>QuadTileSet/ImageAccessor/ImageFileExtension
-     * (converted to mime type)<td></td><td>String</td></tr> <tr><td>{@link AVKey#AVAILABLE_IMAGE_FORMATS}</td><td>QuadTileSet/ImageAccessor/ImageFileExtension
-     * (converted to mime type)<td></td><td>String array</td></tr> <tr><td>{@link AVKey#NUM_LEVELS}</td><td>QuadTileSet/ImageAccessor/NumberLevels<td></td><td>Integer</td></tr>
-     * <tr><td>{@link AVKey#NUM_EMPTY_LEVELS}</td><td>0 (integer
-     * constant)<td></td><td>Integer</td></tr> <tr><td>{@link AVKey#SECTOR}</td><td>QuadTileSet/BoundingBox<td></td><td>Sector</td></tr>
-     * <tr><td>{@link AVKey#TILE_ORIGIN}</td><td>(-90, -180) (geographic location
-     * constant)<td></td><td>LatLon</td></tr> <tr><td>{@link AVKey#LEVEL_ZERO_TILE_DELTA}</td><td>QuadTileSet/ImageAccessor/LevelZeroTileSizeDegrees<td></td><td>LatLon</td></tr>
-     * <tr><td>{@link AVKey#TILE_WIDTH}</td><td>QuadTileSet/ImageAccessor/TextureSizePixels<td></td><td>Integer</td></tr>
-     * <tr><td>{@link AVKey#TILE_HEIGHT}</td><td>QuadTileSet/ImageAccessor/TextureSizePixels<td></td><td>Integer</td></tr>
-     * <tr><td>{@link AVKey#NETWORK_RETRIEVAL_ENABLED}</td><td>false (boolean
-     * constant)<td></td><td>Boolean</td></tr> <tr><td>{@link AVKey#TEXTURE_FORMAT}</td><td>"image/dds"<td></td><td>String</td></tr>
-     * <tr><td>{@link AVKey#USE_MIP_MAPS}</td><td>true (boolean
-     * constant)<td></td><td>Boolean</td></tr> <tr><td>{@link AVKey#USE_TRANSPARENT_TEXTURES}</td><td>true (boolean
+     * Path</th><th>Type</th></tr> <tr><td>{@link Keys#DISPLAY_NAME}</td><td>QuadTileSet/Name<td></td><td>String</td></tr>
+     * <tr><td>{@link Keys#DATASET_NAME}</td><td>QuadTileSet/Name<td></td><td>String</td></tr>
+     * <tr><td>{@link Keys#OPACITY}</td><td>QuadTileSet/Opacity<td></td><td>Double</td></tr>
+     * <tr><td>{@link Keys#SERVICE_NAME}</td><td>"Offline" (string
+     * constant)<td></td><td>String</td></tr> <tr><td>{@link Keys#FORMAT_SUFFIX}</td><td>QuadTileSet/ImageAccessor/ImageFileExtension<td></td><td>String</td></tr>
+     * <tr><td>{@link Keys#IMAGE_FORMAT}</td><td>QuadTileSet/ImageAccessor/ImageFileExtension
+     * (converted to mime type)<td></td><td>String</td></tr> <tr><td>{@link Keys#AVAILABLE_IMAGE_FORMATS}</td><td>QuadTileSet/ImageAccessor/ImageFileExtension
+     * (converted to mime type)<td></td><td>String array</td></tr> <tr><td>{@link Keys#NUM_LEVELS}</td><td>QuadTileSet/ImageAccessor/NumberLevels<td></td><td>Integer</td></tr>
+     * <tr><td>{@link Keys#NUM_EMPTY_LEVELS}</td><td>0 (integer
+     * constant)<td></td><td>Integer</td></tr> <tr><td>{@link Keys#SECTOR}</td><td>QuadTileSet/BoundingBox<td></td><td>Sector</td></tr>
+     * <tr><td>{@link Keys#TILE_ORIGIN}</td><td>(-90, -180) (geographic location
+     * constant)<td></td><td>LatLon</td></tr> <tr><td>{@link Keys#LEVEL_ZERO_TILE_DELTA}</td><td>QuadTileSet/ImageAccessor/LevelZeroTileSizeDegrees<td></td><td>LatLon</td></tr>
+     * <tr><td>{@link Keys#TILE_WIDTH}</td><td>QuadTileSet/ImageAccessor/TextureSizePixels<td></td><td>Integer</td></tr>
+     * <tr><td>{@link Keys#TILE_HEIGHT}</td><td>QuadTileSet/ImageAccessor/TextureSizePixels<td></td><td>Integer</td></tr>
+     * <tr><td>{@link Keys#NETWORK_RETRIEVAL_ENABLED}</td><td>false (boolean
+     * constant)<td></td><td>Boolean</td></tr> <tr><td>{@link Keys#TEXTURE_FORMAT}</td><td>"image/dds"<td></td><td>String</td></tr>
+     * <tr><td>{@link Keys#USE_MIP_MAPS}</td><td>true (boolean
+     * constant)<td></td><td>Boolean</td></tr> <tr><td>{@link Keys#USE_TRANSPARENT_TEXTURES}</td><td>true (boolean
      * constant)<td></td><td>Boolean</td></tr> </table>
      *
      * @param domElement the XML document root to parse for LayerSet configuration parameters.
@@ -1627,7 +1628,7 @@ public class DataConfigurationUtils {
      * @return a reference to params, or a new AVList if params is null.
      * @throws IllegalArgumentException if the document is null.
      */
-    public static AVList getWWDotNetLayerSetConfigParams(Element domElement, AVList params) {
+    public static KV getWWDotNetLayerSetConfigParams(Element domElement, KV params) {
         if (domElement == null) {
             String message = Logging.getMessage("nullValue.DocumentIsNull");
             Logging.logger().severe(message);
@@ -1643,104 +1644,104 @@ public class DataConfigurationUtils {
         }
 
         if (params == null) {
-            params = new AVListImpl();
+            params = new KVMap();
         }
 
         // Title and cache name properties.
-        WWXML.checkAndSetStringParam(el, params, AVKey.DISPLAY_NAME, "Name", xpath);
-        WWXML.checkAndSetStringParam(el, params, AVKey.DATASET_NAME, "Name", xpath);
+        WWXML.checkAndSetStringParam(el, params, Keys.DISPLAY_NAME, "Name", xpath);
+        WWXML.checkAndSetStringParam(el, params, Keys.DATASET_NAME, "Name", xpath);
 
         // Display properties.
-        if (params.get(AVKey.OPACITY) == null) {
+        if (params.get(Keys.OPACITY) == null) {
             Double d = WWXML.getDouble(el, "Opacity", xpath);
             if (d != null) {
-                params.set(AVKey.OPACITY, d / 255.0d);
+                params.set(Keys.OPACITY, d / 255.0d);
             }
         }
 
         // Service properties.
         // LayerSet documents always describe an offline pyramid of tiled imagery in the file store, Therefore we define
         // the service as "Offline".
-        if (params.get(AVKey.SERVICE_NAME) == null) {
-            params.set(AVKey.SERVICE_NAME, "Offline");
+        if (params.get(Keys.SERVICE_NAME) == null) {
+            params.set(Keys.SERVICE_NAME, "Offline");
         }
 
         // Image format properties.
-        if (params.get(AVKey.FORMAT_SUFFIX) == null) {
+        if (params.get(Keys.FORMAT_SUFFIX) == null) {
             String s = WWXML.getText(el, "ImageAccessor/ImageFileExtension", xpath);
             if (s != null && !s.isEmpty()) {
                 if (!(s.charAt(0) == '.')) {
                     s = '.' + s;
                 }
-                params.set(AVKey.FORMAT_SUFFIX, s);
+                params.set(Keys.FORMAT_SUFFIX, s);
             }
         }
 
         // LayerSet documents contain a format suffix, but not image format type. Convert the format suffix to a
         // mime type, then use it to populate the IMAGE_FORMAT and AVAILABLE_IMAGE_FORMAT properties.
-        if (params.get(AVKey.FORMAT_SUFFIX) != null) {
-            String s = WWIO.makeMimeTypeForSuffix(params.get(AVKey.FORMAT_SUFFIX).toString());
+        if (params.get(Keys.FORMAT_SUFFIX) != null) {
+            String s = WWIO.makeMimeTypeForSuffix(params.get(Keys.FORMAT_SUFFIX).toString());
             if (s != null) {
-                if (params.get(AVKey.IMAGE_FORMAT) == null) {
-                    params.set(AVKey.IMAGE_FORMAT, s);
+                if (params.get(Keys.IMAGE_FORMAT) == null) {
+                    params.set(Keys.IMAGE_FORMAT, s);
                 }
-                if (params.get(AVKey.AVAILABLE_IMAGE_FORMATS) == null) {
-                    params.set(AVKey.AVAILABLE_IMAGE_FORMATS, new String[] {s});
+                if (params.get(Keys.AVAILABLE_IMAGE_FORMATS) == null) {
+                    params.set(Keys.AVAILABLE_IMAGE_FORMATS, new String[] {s});
                 }
             }
         }
 
         // Set the texture format to DDS. If the texture data is already in DDS format, this parameter is benign.
-        if (params.get(AVKey.TEXTURE_FORMAT) == null) {
-            params.set(AVKey.TEXTURE_FORMAT, DataConfigurationUtils.DEFAULT_TEXTURE_FORMAT);
+        if (params.get(Keys.TEXTURE_FORMAT) == null) {
+            params.set(Keys.TEXTURE_FORMAT, DataConfigurationUtils.DEFAULT_TEXTURE_FORMAT);
         }
 
         // Tile structure properties.
-        WWXML.checkAndSetIntegerParam(el, params, AVKey.NUM_LEVELS, "ImageAccessor/NumberLevels", xpath);
+        WWXML.checkAndSetIntegerParam(el, params, Keys.NUM_LEVELS, "ImageAccessor/NumberLevels", xpath);
 
-        if (params.get(AVKey.NUM_EMPTY_LEVELS) == null) {
-            params.set(AVKey.NUM_EMPTY_LEVELS, 0);
+        if (params.get(Keys.NUM_EMPTY_LEVELS) == null) {
+            params.set(Keys.NUM_EMPTY_LEVELS, 0);
         }
 
-        if (params.get(AVKey.SECTOR) == null) {
+        if (params.get(Keys.SECTOR) == null) {
             Sector s = DataConfigurationUtils.getWWDotNetLayerSetSector(el, "BoundingBox", xpath);
             if (s != null) {
-                params.set(AVKey.SECTOR, s);
+                params.set(Keys.SECTOR, s);
             }
         }
 
-        if (params.get(AVKey.TILE_ORIGIN) == null) {
-            params.set(AVKey.TILE_ORIGIN, new LatLon(Angle.NEG90, Angle.NEG180));
+        if (params.get(Keys.TILE_ORIGIN) == null) {
+            params.set(Keys.TILE_ORIGIN, new LatLon(Angle.NEG90, Angle.NEG180));
         }
 
-        if (params.get(AVKey.LEVEL_ZERO_TILE_DELTA) == null) {
+        if (params.get(Keys.LEVEL_ZERO_TILE_DELTA) == null) {
             LatLon ll = DataConfigurationUtils.getWWDotNetLayerSetLatLon(el, "ImageAccessor/LevelZeroTileSizeDegrees", xpath);
             if (ll != null) {
-                params.set(AVKey.LEVEL_ZERO_TILE_DELTA, ll);
+                params.set(Keys.LEVEL_ZERO_TILE_DELTA, ll);
             }
         }
 
         Integer tileDimension = WWXML.getInteger(el, "ImageAccessor/TextureSizePixels", xpath);
         if (tileDimension != null) {
-            if (params.get(AVKey.TILE_WIDTH) == null) {
-                params.set(AVKey.TILE_WIDTH, tileDimension);
+            if (params.get(Keys.TILE_WIDTH) == null) {
+                params.set(Keys.TILE_WIDTH, tileDimension);
             }
-            if (params.get(AVKey.TILE_HEIGHT) == null) {
-                params.set(AVKey.TILE_HEIGHT, tileDimension);
+            if (params.get(Keys.TILE_HEIGHT) == null) {
+                params.set(Keys.TILE_HEIGHT, tileDimension);
             }
         }
 
         // LayerSet documents always describe an offline pyramid of tiled imagery in the file store. Therefore we can
         // safely assume that network retrieval should be disabled. Because we know nothing about the nature of the
         // imagery, it's best to enable mipmapping and transparent textures by default.
-        if (params.get(AVKey.NETWORK_RETRIEVAL_ENABLED) == null) {
-            params.set(AVKey.NETWORK_RETRIEVAL_ENABLED, false);
+        if (params.get(Keys.NETWORK_RETRIEVAL_ENABLED) == null) {
+            params.set(Keys.NETWORK_RETRIEVAL_ENABLED, false);
         }
-        if (params.get(AVKey.USE_MIP_MAPS) == null) {
-            params.set(AVKey.USE_MIP_MAPS, true);
+        if (params.get(Keys.USE_MIP_MAPS) == null) {
+            params.set(Keys.USE_MIP_MAPS, true);
         }
-        if (params.get(AVKey.USE_TRANSPARENT_TEXTURES) == null) {
-            params.set(AVKey.USE_TRANSPARENT_TEXTURES, true);
+        if (params.get(Keys.USE_TRANSPARENT_TEXTURES) == null) {
+            params.set(Keys.USE_TRANSPARENT_TEXTURES, true);
         }
 
         return params;

@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.layers;
 
-import gov.nasa.worldwind.WWObjectImpl;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
@@ -49,11 +49,11 @@ public abstract class AbstractLayer extends WWObjectImpl implements Layer {
      * Appends layer configuration parameters as elements to the specified context. This appends elements for the
      * following parameters: <table> <caption style="font-weight: bold;">Append Elements</caption>
      * <tr><th>Parameter</th><th>Element Path</th><th>Type</th></tr> <tr><td>{@link
-     * AVKey#DISPLAY_NAME}</td><td>DisplayName</td><td>String</td></tr> <tr><td>{@link
-     * AVKey#OPACITY}</td><td>Opacity</td><td>Double</td></tr> <tr><td>{@link AVKey#MAX_ACTIVE_ALTITUDE}</td><td>ActiveAltitudes/@max</td><td>Double</td></tr>
-     * <tr><td>{@link AVKey#MIN_ACTIVE_ALTITUDE}</td><td>ActiveAltitudes/@min</td><td>Double</td></tr> <tr><td>{@link
-     * AVKey#NETWORK_RETRIEVAL_ENABLED}</td><td>NetworkRetrievalEnabled</td><td>Boolean</td></tr> <tr><td>{@link
-     * AVKey#MAP_SCALE}</td><td>MapScale</td><td>Double</td></tr> <tr><td>{@link AVKey#SCREEN_CREDIT}</td><td>ScreenCredit</td><td>ScreenCredit</td></tr>
+     * Keys#DISPLAY_NAME}</td><td>DisplayName</td><td>String</td></tr> <tr><td>{@link
+     * Keys#OPACITY}</td><td>Opacity</td><td>Double</td></tr> <tr><td>{@link Keys#MAX_ACTIVE_ALTITUDE}</td><td>ActiveAltitudes/@max</td><td>Double</td></tr>
+     * <tr><td>{@link Keys#MIN_ACTIVE_ALTITUDE}</td><td>ActiveAltitudes/@min</td><td>Double</td></tr> <tr><td>{@link
+     * Keys#NETWORK_RETRIEVAL_ENABLED}</td><td>NetworkRetrievalEnabled</td><td>Boolean</td></tr> <tr><td>{@link
+     * Keys#MAP_SCALE}</td><td>MapScale</td><td>Double</td></tr> <tr><td>{@link Keys#SCREEN_CREDIT}</td><td>ScreenCredit</td><td>ScreenCredit</td></tr>
      * </table>
      *
      * @param params  the key-value pairs which define the layer configuration parameters.
@@ -61,13 +61,13 @@ public abstract class AbstractLayer extends WWObjectImpl implements Layer {
      * @return a reference to context.
      * @throws IllegalArgumentException if either the parameters or the context are null.
      */
-    public static Element createLayerConfigElements(AVList params, Element context) {
+    public static Element createLayerConfigElements(KV params, Element context) {
 
-        WWXML.checkAndAppendTextElement(params, AVKey.DISPLAY_NAME, context, "DisplayName");
-        WWXML.checkAndAppendDoubleElement(params, AVKey.OPACITY, context, "Opacity");
+        WWXML.checkAndAppendTextElement(params, Keys.DISPLAY_NAME, context, "DisplayName");
+        WWXML.checkAndAppendDoubleElement(params, Keys.OPACITY, context, "Opacity");
 
-        Double maxAlt = AVListImpl.getDoubleValue(params, AVKey.MAX_ACTIVE_ALTITUDE);
-        Double minAlt = AVListImpl.getDoubleValue(params, AVKey.MIN_ACTIVE_ALTITUDE);
+        Double maxAlt = KVMap.getDoubleValue(params, Keys.MAX_ACTIVE_ALTITUDE);
+        Double minAlt = KVMap.getDoubleValue(params, Keys.MIN_ACTIVE_ALTITUDE);
         if (maxAlt != null || minAlt != null) {
             Element el = WWXML.appendElementPath(context, "ActiveAltitudes");
             if (maxAlt != null)
@@ -76,10 +76,10 @@ public abstract class AbstractLayer extends WWObjectImpl implements Layer {
                 WWXML.setDoubleAttribute(el, "min", minAlt);
         }
 
-        WWXML.checkAndAppendBooleanElement(params, AVKey.NETWORK_RETRIEVAL_ENABLED, context, "NetworkRetrievalEnabled");
-        WWXML.checkAndAppendDoubleElement(params, AVKey.MAP_SCALE, context, "MapScale");
-        WWXML.checkAndAppendScreenCreditElement(params, AVKey.SCREEN_CREDIT, context, "ScreenCredit");
-        WWXML.checkAndAppendBooleanElement(params, AVKey.PICK_ENABLED, context, "PickEnabled");
+        WWXML.checkAndAppendBooleanElement(params, Keys.NETWORK_RETRIEVAL_ENABLED, context, "NetworkRetrievalEnabled");
+        WWXML.checkAndAppendDoubleElement(params, Keys.MAP_SCALE, context, "MapScale");
+        WWXML.checkAndAppendScreenCreditElement(params, Keys.SCREEN_CREDIT, context, "ScreenCredit");
+        WWXML.checkAndAppendBooleanElement(params, Keys.PICK_ENABLED, context, "PickEnabled");
 
         return context;
     }
@@ -89,11 +89,11 @@ public abstract class AbstractLayer extends WWObjectImpl implements Layer {
      * params. If a parameter from the XML document already exists in params, that parameter is ignored. Supported key
      * and parameter names are: <table> <caption style="font-weight: bold;">Supported Names</caption>
      * <tr><th>Parameter</th><th>Element Path</th><th>Type</th></tr> <tr><td>{@link
-     * AVKey#DISPLAY_NAME}</td><td>DisplayName</td><td>String</td></tr> <tr><td>{@link
-     * AVKey#OPACITY}</td><td>Opacity</td><td>Double</td></tr> <tr><td>{@link AVKey#MAX_ACTIVE_ALTITUDE}</td><td>ActiveAltitudes/@max</td><td>Double</td></tr>
-     * <tr><td>{@link AVKey#MIN_ACTIVE_ALTITUDE}</td><td>ActiveAltitudes/@min</td><td>Double</td></tr> <tr><td>{@link
-     * AVKey#NETWORK_RETRIEVAL_ENABLED}</td><td>NetworkRetrievalEnabled</td><td>Boolean</td></tr> <tr><td>{@link
-     * AVKey#MAP_SCALE}</td><td>MapScale</td><td>Double</td></tr> <tr><td>{@link AVKey#SCREEN_CREDIT}</td><td>ScreenCredit</td><td>{@link
+     * Keys#DISPLAY_NAME}</td><td>DisplayName</td><td>String</td></tr> <tr><td>{@link
+     * Keys#OPACITY}</td><td>Opacity</td><td>Double</td></tr> <tr><td>{@link Keys#MAX_ACTIVE_ALTITUDE}</td><td>ActiveAltitudes/@max</td><td>Double</td></tr>
+     * <tr><td>{@link Keys#MIN_ACTIVE_ALTITUDE}</td><td>ActiveAltitudes/@min</td><td>Double</td></tr> <tr><td>{@link
+     * Keys#NETWORK_RETRIEVAL_ENABLED}</td><td>NetworkRetrievalEnabled</td><td>Boolean</td></tr> <tr><td>{@link
+     * Keys#MAP_SCALE}</td><td>MapScale</td><td>Double</td></tr> <tr><td>{@link Keys#SCREEN_CREDIT}</td><td>ScreenCredit</td><td>{@link
      * ScreenCredit}</td></tr> </table>
      *
      * @param domElement the XML document root to parse for layer configuration elements.
@@ -102,26 +102,26 @@ public abstract class AbstractLayer extends WWObjectImpl implements Layer {
      * @return a reference to params, or a new AVList if params is null.
      * @throws IllegalArgumentException if the document is null.
      */
-    public static AVList getLayerConfigParams(Element domElement, AVList params) {
+    public static KV getLayerConfigParams(Element domElement, KV params) {
 
         if (params == null)
-            params = new AVListImpl();
+            params = new KVMap();
 
         XPath xpath = WWXML.makeXPath();
 
-        WWXML.checkAndSetStringParam(domElement, params, AVKey.DISPLAY_NAME, "DisplayName", xpath);
-        WWXML.checkAndSetDoubleParam(domElement, params, AVKey.OPACITY, "Opacity", xpath);
-        WWXML.checkAndSetDoubleParam(domElement, params, AVKey.MAX_ACTIVE_ALTITUDE, "ActiveAltitudes/@max", xpath);
-        WWXML.checkAndSetDoubleParam(domElement, params, AVKey.MIN_ACTIVE_ALTITUDE, "ActiveAltitudes/@min", xpath);
-        WWXML.checkAndSetBooleanParam(domElement, params, AVKey.NETWORK_RETRIEVAL_ENABLED, "NetworkRetrievalEnabled",
+        WWXML.checkAndSetStringParam(domElement, params, Keys.DISPLAY_NAME, "DisplayName", xpath);
+        WWXML.checkAndSetDoubleParam(domElement, params, Keys.OPACITY, "Opacity", xpath);
+        WWXML.checkAndSetDoubleParam(domElement, params, Keys.MAX_ACTIVE_ALTITUDE, "ActiveAltitudes/@max", xpath);
+        WWXML.checkAndSetDoubleParam(domElement, params, Keys.MIN_ACTIVE_ALTITUDE, "ActiveAltitudes/@min", xpath);
+        WWXML.checkAndSetBooleanParam(domElement, params, Keys.NETWORK_RETRIEVAL_ENABLED, "NetworkRetrievalEnabled",
             xpath);
-        WWXML.checkAndSetDoubleParam(domElement, params, AVKey.MAP_SCALE, "MapScale", xpath);
-        WWXML.checkAndSetScreenCreditParam(domElement, params, AVKey.SCREEN_CREDIT, "ScreenCredit", xpath);
-        WWXML.checkAndSetIntegerParam(domElement, params, AVKey.MAX_ABSENT_TILE_ATTEMPTS, "MaxAbsentTileAttempts",
+        WWXML.checkAndSetDoubleParam(domElement, params, Keys.MAP_SCALE, "MapScale", xpath);
+        WWXML.checkAndSetScreenCreditParam(domElement, params, Keys.SCREEN_CREDIT, "ScreenCredit", xpath);
+        WWXML.checkAndSetIntegerParam(domElement, params, Keys.MAX_ABSENT_TILE_ATTEMPTS, "MaxAbsentTileAttempts",
             xpath);
-        WWXML.checkAndSetIntegerParam(domElement, params, AVKey.MIN_ABSENT_TILE_CHECK_INTERVAL,
+        WWXML.checkAndSetIntegerParam(domElement, params, Keys.MIN_ABSENT_TILE_CHECK_INTERVAL,
             "MinAbsentTileCheckInterval", xpath);
-        WWXML.checkAndSetBooleanParam(domElement, params, AVKey.PICK_ENABLED, "PickEnabled", xpath);
+        WWXML.checkAndSetBooleanParam(domElement, params, Keys.PICK_ENABLED, "PickEnabled", xpath);
 
         return params;
     }
@@ -148,17 +148,17 @@ public abstract class AbstractLayer extends WWObjectImpl implements Layer {
     }
 
     public String name() {
-        Object n = this.get(AVKey.DISPLAY_NAME);
+        Object n = this.get(Keys.DISPLAY_NAME);
 
         return n != null ? n.toString() : this.toString();
     }
 
     public void setName(String name) {
-        this.set(AVKey.DISPLAY_NAME, name);
+        this.set(Keys.DISPLAY_NAME, name);
     }
 
     public String toString() {
-        Object n = this.get(AVKey.DISPLAY_NAME);
+        Object n = this.get(Keys.DISPLAY_NAME);
 
         return n != null ? n.toString() : super.toString();
     }
@@ -196,7 +196,7 @@ public abstract class AbstractLayer extends WWObjectImpl implements Layer {
     }
 
     public double getScale() {
-        Object o = this.get(AVKey.MAP_SCALE);
+        Object o = this.get(Keys.MAP_SCALE);
         return o instanceof Double ? (Double) o : 1;
     }
 

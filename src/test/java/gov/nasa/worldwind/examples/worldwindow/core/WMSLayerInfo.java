@@ -6,6 +6,7 @@
 
 package gov.nasa.worldwind.examples.worldwindow.core;
 
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.layers.ogc.OGCCapabilities;
 import gov.nasa.worldwind.layers.ogc.wms.*;
@@ -18,17 +19,17 @@ import java.util.*;
  */
 public class WMSLayerInfo {
     private final OGCCapabilities caps;
-    private AVList params = new AVListImpl();
+    private KV params = new KVMap();
 
     public WMSLayerInfo(OGCCapabilities caps, WMSLayerCapabilities layerCaps, WMSLayerStyle style) {
         this.caps = caps;
-        this.params = new AVListImpl();
-        this.params.set(AVKey.LAYER_NAMES, layerCaps.getName());
+        this.params = new KVMap();
+        this.params.set(Keys.LAYER_NAMES, layerCaps.getName());
         if (style != null)
-            this.params.set(AVKey.STYLE_NAMES, style.getName());
+            this.params.set(Keys.STYLE_NAMES, style.getName());
 
         String layerTitle = layerCaps.getTitle();
-        this.params.set(AVKey.DISPLAY_NAME, layerTitle);
+        this.params.set(Keys.DISPLAY_NAME, layerTitle);
     }
 
     public static List<WMSLayerInfo> createLayerInfos(OGCCapabilities caps, WMSLayerCapabilities layerCaps) {
@@ -52,14 +53,14 @@ public class WMSLayerInfo {
     }
 
     public String getTitle() {
-        return params.getStringValue(AVKey.DISPLAY_NAME);
+        return params.getStringValue(Keys.DISPLAY_NAME);
     }
 
     public OGCCapabilities getCaps() {
         return caps;
     }
 
-    public AVList getParams() {
+    public KV getParams() {
         return params;
     }
 }

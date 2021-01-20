@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.formats.shapefile;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.layers.ogc.kml.impl.KMLExportUtil;
 import gov.nasa.worldwind.util.*;
@@ -74,7 +74,7 @@ public class ShapefileRecordPolygon extends ShapefileRecordPolyline {
             // polygon is started.
 
             VecBuffer buffer = this.getCompoundPointBuffer().subBuffer(i);
-            if (WWMath.computeWindingOrderOfLocations(buffer.getLocations()).equals(AVKey.CLOCKWISE)) {
+            if (WWMath.computeWindingOrderOfLocations(buffer.getLocations()).equals(Keys.CLOCKWISE)) {
                 if (outerBoundary == null) {
                     outerBoundary = buffer.getLocations();
                 } else {

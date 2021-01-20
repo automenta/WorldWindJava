@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.formats.vpf.*;
 import gov.nasa.worldwind.util.*;
 
@@ -53,7 +52,7 @@ public class VPFLayerDemo extends ApplicationTemplate {
             frame.setAlwaysOnTop(true);
             frame.add(panel);
             frame.pack();
-            WWUtil.alignComponent(this, frame, AVKey.CENTER);
+            WWUtil.alignComponent(this, frame, Keys.CENTER);
             frame.setVisible(true);
         }
 

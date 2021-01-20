@@ -170,7 +170,7 @@ public class MilStd2525PointGraphicRetrieverTest
     public void testMeteorologicalSymbolRetrieval()
     {
         IconRetriever symGen = new MilStd2525PointGraphicRetriever(LOCAL_SYMBOLS_ZIP);
-        AVList params = new AVListImpl();
+        KV params = new KVMap();
         BufferedImage img;
 
         for (String s : MilStd2525PointGraphic.getMetocGraphics())

@@ -8,7 +8,6 @@ package gov.nasa.worldwind.render;
 
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.drag.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe2D;
@@ -42,7 +41,7 @@ import static gov.nasa.worldwind.layers.ogc.kml.impl.KMLExportUtil.kmlBoolean;
  * decluttering, only the point placemark's label is considered when determining interference with other text.
  * <p>
  * When the label of a point placemark is picked, the associated {@link PickedObject} contains the key {@link
- * AVKey#LABEL}
+ * Keys#LABEL}
  *
  * @author tag
  * @version $Id: PointPlacemark.java 3028 2015-04-17 00:10:19Z tgaskins $
@@ -56,8 +55,8 @@ public class PointPlacemark extends WWObjectImpl
     /**
      * The label offset to use if none is specified but an image has been specified.
      */
-    protected static final Offset DEFAULT_LABEL_OFFSET_IF_UNSPECIFIED = new Offset(1.0d, 0.6d, AVKey.FRACTION,
-        AVKey.FRACTION);
+    protected static final Offset DEFAULT_LABEL_OFFSET_IF_UNSPECIFIED = new Offset(1.0d, 0.6d, Keys.FRACTION,
+        Keys.FRACTION);
     /**
      * The point size to use when none is specified.
      */
@@ -848,7 +847,7 @@ public class PointPlacemark extends WWObjectImpl
 
             // Adjust heading to be relative to globe or screen
             if (heading != null) {
-                if (AVKey.RELATIVE_TO_GLOBE.equals(this.getActiveAttributes().getHeadingReference()))
+                if (Keys.RELATIVE_TO_GLOBE.equals(this.getActiveAttributes().getHeadingReference()))
                     heading = dc.getView().getHeading().degrees - heading;
                 else
                     heading = -heading;
@@ -999,7 +998,7 @@ public class PointPlacemark extends WWObjectImpl
 
             Color pickColor = dc.getUniquePickColor();
             PickedObject po = this.createPickedObject(dc, pickColor);
-            po.set(AVKey.PICKED_OBJECT_ID, AVKey.LABEL);
+            po.set(Keys.PICKED_OBJECT_ID, Keys.LABEL);
             pickCandidates.addPickableObject(po);
             gl.glColor3ub((byte) pickColor.getRed(), (byte) pickColor.getGreen(), (byte) pickColor.getBlue());
 
@@ -1598,14 +1597,14 @@ public class PointPlacemark extends WWObjectImpl
         xmlWriter.writeCharacters(kmlBoolean(this.isVisible()));
         xmlWriter.writeEndElement();
 
-        String shortDescription = (String) get(AVKey.SHORT_DESCRIPTION);
+        String shortDescription = (String) get(Keys.SHORT_DESCRIPTION);
         if (shortDescription != null) {
             xmlWriter.writeStartElement("Snippet");
             xmlWriter.writeCharacters(shortDescription);
             xmlWriter.writeEndElement();
         }
 
-        String description = (String) get(AVKey.BALLOON_TEXT);
+        String description = (String) get(Keys.BALLOON_TEXT);
         if (description != null) {
             xmlWriter.writeStartElement("description");
             xmlWriter.writeCharacters(description);

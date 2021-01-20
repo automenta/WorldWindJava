@@ -9,8 +9,7 @@ package gov.nasa.worldwind.ui;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.texture.*;
-import gov.nasa.worldwind.Configuration;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.pick.PickSupport;
 import gov.nasa.worldwind.render.*;
@@ -335,7 +334,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
      *          of the screen).
      */
     public ScrollFrame(int x, int y) {
-        this(new Offset((double) x, (double) y, AVKey.PIXELS, AVKey.INSET_PIXELS));
+        this(new Offset((double) x, (double) y, Keys.PIXELS, Keys.INSET_PIXELS));
     }
 
     /**
@@ -1131,8 +1130,8 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
             }
         };
 
-        this.verticalScrollBar = new ScrollBar(this, AVKey.VERTICAL);
-        this.horizontalScrollBar = new ScrollBar(this, AVKey.HORIZONTAL);
+        this.verticalScrollBar = new ScrollBar(this, Keys.VERTICAL);
+        this.horizontalScrollBar = new ScrollBar(this, Keys.HORIZONTAL);
     }
 
     /**
@@ -1402,7 +1401,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
 
         FrameAttributes attributes = this.getActiveAttributes();
 
-        this.vertexBuffer = FrameFactory.createShapeBuffer(AVKey.SHAPE_RECTANGLE, this.frameBounds.width,
+        this.vertexBuffer = FrameFactory.createShapeBuffer(Keys.SHAPE_RECTANGLE, this.frameBounds.width,
             this.frameBounds.height, attributes.getCornerRadius(), this.vertexBuffer);
     }
 
@@ -1578,7 +1577,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
                 gl.glTranslated(this.innerBounds.x, this.innerBounds.y, 0.0); // Translate back inner frame
 
                 TreeUtil.drawRectWithGradient(gl, new Rectangle(0, 0, this.innerBounds.width, this.innerBounds.height),
-                    color[0], color[1], attributes.getBackgroundOpacity(), AVKey.VERTICAL);
+                    color[0], color[1], attributes.getBackgroundOpacity(), Keys.VERTICAL);
             } else {
                 int frameHeight = this.frameBounds.height;
                 int frameWidth = this.frameBounds.width;
@@ -1698,7 +1697,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
             // Draw title bar as a rectangle with gradient
             Color[] color = attributes.getTitleBarColor();
             TreeUtil.drawRectWithGradient(gl, new Rectangle(0, 0, this.innerBounds.width, this.getTitleBarHeight()),
-                color[0], color[1], attributes.getBackgroundOpacity(), AVKey.VERTICAL);
+                color[0], color[1], attributes.getBackgroundOpacity(), Keys.VERTICAL);
 
             OGLUtil.applyColor(gl, attributes.getForegroundColor(), 1.0f, false);
 
@@ -2100,11 +2099,11 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
     /**
      * Get a reference to one of the frame's scroll bars.
      *
-     * @param direction Determines which scroll bar to get. Either {@link AVKey#VERTICAL} or {@link AVKey#HORIZONTAL}.
+     * @param direction Determines which scroll bar to get. Either {@link Keys#VERTICAL} or {@link Keys#HORIZONTAL}.
      * @return The horizontal or vertical scroll bar.
      */
     public ScrollBar getScrollBar(String direction) {
-        return AVKey.VERTICAL.equals(direction) ? this.verticalScrollBar : this.horizontalScrollBar;
+        return Keys.VERTICAL.equals(direction) ? this.verticalScrollBar : this.horizontalScrollBar;
     }
 
     @Override
@@ -2119,7 +2118,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
         if (this.isEnableMove()) {
             double x = point.x + this.dragRefPoint.x;
             double y = point.y + this.dragRefPoint.y;
-            this.setScreenLocation(new Offset(x, y, AVKey.PIXELS, AVKey.INSET_PIXELS));
+            this.setScreenLocation(new Offset(x, y, Keys.PIXELS, Keys.INSET_PIXELS));
         }
     }
 
@@ -2159,7 +2158,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
         e.consume();
 
         // Fire a property change to trigger a repaint
-        this.firePropertyChange(AVKey.REPAINT, null, this);
+        this.firePropertyChange(Keys.REPAINT, null, this);
     }
 
     /**
@@ -2172,9 +2171,9 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
         // vertically if only both scroll bars are active or only the vertical scroll bar is active. Scroll horizontally
         // if only the horizontal scroll bar is active.
         if (this.showVerticalScrollbar) {
-            this.verticalScrollBar.scroll(e.getUnitsToScroll() * this.getMouseWheelScrollUnit(AVKey.VERTICAL));
+            this.verticalScrollBar.scroll(e.getUnitsToScroll() * this.getMouseWheelScrollUnit(Keys.VERTICAL));
         } else if (this.showHorizontalScrollbar) {
-            this.horizontalScrollBar.scroll(e.getUnitsToScroll() * this.getMouseWheelScrollUnit(AVKey.HORIZONTAL));
+            this.horizontalScrollBar.scroll(e.getUnitsToScroll() * this.getMouseWheelScrollUnit(Keys.HORIZONTAL));
         }
     }
 
@@ -2191,7 +2190,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
         // Radar #4631846 in
         // http://developer.apple.com/library/mac/#releasenotes/Java/JavaLeopardRN/ResolvedIssues/ResolvedIssues.html.
         if (e.isShiftDown()) {
-            this.horizontalScrollBar.scroll(e.getUnitsToScroll() * this.getMouseWheelScrollUnit(AVKey.HORIZONTAL));
+            this.horizontalScrollBar.scroll(e.getUnitsToScroll() * this.getMouseWheelScrollUnit(Keys.HORIZONTAL));
         }
         // If the Shift key is not down, Java Mac OS X implements the standard scrolling policy used by Java on other 
         // operating systems.

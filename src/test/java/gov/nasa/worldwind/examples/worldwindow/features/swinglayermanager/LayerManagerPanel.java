@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.examples.worldwindow.features.swinglayermanager;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.examples.worldwindow.core.*;
 import gov.nasa.worldwind.examples.worldwindow.core.layermanager.*;
 import gov.nasa.worldwind.examples.worldwindow.features.AbstractFeaturePanel;
@@ -461,14 +461,14 @@ public class LayerManagerPanel extends AbstractFeaturePanel implements LayerMana
 
         if (layerNode.getWmsLayerInfo() != null) {
             WMSLayerInfo wmsInfo = layerNode.getWmsLayerInfo();
-            AVList configParams = wmsInfo.getParams().copy(); // Copy to insulate changes from the caller.
+            KV configParams = wmsInfo.getParams().copy(); // Copy to insulate changes from the caller.
 
             // Some wms servers are slow, so increase the timeouts and limits used by WorldWind's retrievers.
-            configParams.set(AVKey.URL_CONNECT_TIMEOUT, 30000);
-            configParams.set(AVKey.URL_READ_TIMEOUT, 30000);
-            configParams.set(AVKey.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT, 60000);
+            configParams.set(Keys.URL_CONNECT_TIMEOUT, 30000);
+            configParams.set(Keys.URL_READ_TIMEOUT, 30000);
+            configParams.set(Keys.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT, 60000);
 
-            Factory factory = (Factory) WorldWind.createConfigurationComponent(AVKey.LAYER_FACTORY);
+            Factory factory = (Factory) WorldWind.createConfigurationComponent(Keys.LAYER_FACTORY);
             Layer layer = (Layer) factory.createFromConfigSource(wmsInfo.getCaps(), configParams);
             layerNode.setLayer(layer);
         }

@@ -5,8 +5,7 @@
  */
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.WorldWindow;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.globes.*;
 import gov.nasa.worldwind.globes.projections.*;
 import gov.nasa.worldwind.terrain.ZeroElevationModel;
@@ -108,10 +107,10 @@ public class FlatWorldPanel extends JPanel {
             case "Modified Sin." -> new ProjectionModifiedSinusoidal();
             case "Transverse Mercator" -> new ProjectionTransverseMercator(
                 wwd.view().getCurrentEyePosition().getLongitude());
-            case "North Polar" -> new ProjectionPolarEquidistant(AVKey.NORTH);
-            case "South Polar" -> new ProjectionPolarEquidistant(AVKey.SOUTH);
-            case "UPS North" -> new ProjectionUPS(AVKey.NORTH);
-            case "UPS South" -> new ProjectionUPS(AVKey.SOUTH);
+            case "North Polar" -> new ProjectionPolarEquidistant(Keys.NORTH);
+            case "South Polar" -> new ProjectionPolarEquidistant(Keys.SOUTH);
+            case "UPS North" -> new ProjectionUPS(Keys.NORTH);
+            case "UPS South" -> new ProjectionUPS(Keys.SOUTH);
             default -> new ProjectionEquirectangular();
         };
         // Default to lat-lon

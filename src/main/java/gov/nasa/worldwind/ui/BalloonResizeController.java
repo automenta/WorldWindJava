@@ -6,8 +6,8 @@
 
 package gov.nasa.worldwind.ui;
 
-import gov.nasa.worldwind.WorldWindow;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.pick.PickedObjectList;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.Logging;
@@ -62,9 +62,9 @@ public class BalloonResizeController extends AbstractResizeHotSpot {
      *                     AVKey.BOUNDS.
      * @return Bounds or {@code null} if no bounds are found in the top PickedObject.
      */
-    protected static Rectangle getBounds(AVList pickedObject) {
+    protected static Rectangle getBounds(KV pickedObject) {
         if (pickedObject != null) {
-            Object bounds = pickedObject.get(AVKey.BOUNDS);
+            Object bounds = pickedObject.get(Keys.BOUNDS);
             if (bounds instanceof Rectangle) {
                 return (Rectangle) bounds;
             }

@@ -7,7 +7,6 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.formats.gpx.GpxReader;
 import gov.nasa.worldwind.geom.Position;
@@ -41,9 +40,9 @@ public class MarkersOrder extends ApplicationTemplate {
     protected static final double TRACK_LONGITUDE = -119.52;
 
     public static void main(String[] args) {
-        Configuration.setValue(AVKey.INITIAL_LATITUDE, TRACK_LATITUDE);
-        Configuration.setValue(AVKey.INITIAL_LONGITUDE, TRACK_LONGITUDE);
-        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 40.0e3);
+        Configuration.setValue(Keys.INITIAL_LATITUDE, TRACK_LATITUDE);
+        Configuration.setValue(Keys.INITIAL_LONGITUDE, TRACK_LONGITUDE);
+        Configuration.setValue(Keys.INITIAL_ALTITUDE, 40.0e3);
         ApplicationTemplate.start("WorldWind Markers Order", AppFrame.class);
     }
 
@@ -388,7 +387,7 @@ public class MarkersOrder extends ApplicationTemplate {
                 this.screenAnnotation.getAttributes().setSize(
                     new Dimension(image.getOriginalWidth(), image.getOriginalHeight()));
                 this.screenAnnotation.getAttributes().setDrawOffset(new Point(image.getOriginalWidth() / 2, 0));
-                this.screenAnnotation.getAttributes().setAdjustWidthToText(AVKey.SIZE_FIXED);
+                this.screenAnnotation.getAttributes().setAdjustWidthToText(Keys.SIZE_FIXED);
                 this.screenAnnotation.getAttributes().setBorderWidth(0);
                 this.screenAnnotation.getAttributes().setCornerRadius(0);
                 this.screenAnnotation.getAttributes().setBackgroundColor(new Color(0.0f, 0.0f, 0.0f, 0.0f));

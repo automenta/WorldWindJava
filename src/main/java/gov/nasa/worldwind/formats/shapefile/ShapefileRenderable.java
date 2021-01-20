@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.formats.shapefile;
 
 import gov.nasa.worldwind.WWObjectImpl;
-import gov.nasa.worldwind.avlist.AVListImpl;
+import gov.nasa.worldwind.avlist.KVMap;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
@@ -179,7 +179,7 @@ public abstract class ShapefileRenderable extends WWObjectImpl
         void assignAttributes(ShapefileRecord shapefileRecord, ShapefileRenderable.Record renderableRecord);
     }
 
-    public static class Record extends AVListImpl implements Highlightable {
+    public static class Record extends KVMap implements Highlightable {
         // Data structures supporting record tessellation and display.
         protected final CompoundVecBuffer pointBuffer;
         // Record properties.

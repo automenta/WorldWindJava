@@ -5,8 +5,7 @@
  */
 package gov.nasa.worldwind.layers.tool;
 
-import gov.nasa.worldwind.View;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.*;
@@ -435,7 +434,7 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
                 positions.add(new Position(this.sector.latMin(), longitude, 0));
                 positions.add(new Position(this.sector.latMax(), longitude, 0));
 
-                Object line = GraticuleLayer.createLineRenderable(positions, AVKey.LINEAR);
+                Object line = GraticuleLayer.createLineRenderable(positions, Keys.LINEAR);
                 Sector sector = Sector.fromDegrees(
                     this.sector.latMin, this.sector.latMax, lon, lon);
                 String lineType = lon == this.sector.lonMin ?
@@ -456,7 +455,7 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
                 positions.add(new Position(latitude, this.sector.lonMin(), 0));
                 positions.add(new Position(latitude, this.sector.lonMax(), 0));
 
-                Object line = GraticuleLayer.createLineRenderable(positions, AVKey.LINEAR);
+                Object line = GraticuleLayer.createLineRenderable(positions, Keys.LINEAR);
                 Sector sector = Sector.fromDegrees(
                     lat, lat, this.sector.lonMin, this.sector.lonMax);
                 String lineType = lat == this.sector.latMin ?
@@ -475,7 +474,7 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
                 positions.add(new Position(Angle.POS90, this.sector.lonMin(), 0));
                 positions.add(new Position(Angle.POS90, this.sector.lonMax(), 0));
 
-                Object line = GraticuleLayer.createLineRenderable(positions, AVKey.LINEAR);
+                Object line = GraticuleLayer.createLineRenderable(positions, Keys.LINEAR);
                 Sector sector = Sector.fromDegrees(
                     90, 90, this.sector.lonMin, this.sector.lonMax);
                 GraticuleLayer.GridElement ge = new GraticuleLayer.GridElement(sector, line, GraticuleLayer.GridElement.TYPE_LINE_NORTH);

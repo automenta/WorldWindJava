@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.render;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 
 import java.awt.*;
 import java.awt.geom.*;
@@ -113,7 +113,7 @@ public abstract class AbstractAnnotationBalloon extends AbstractBalloon {
             // Configure the annotation to use the fixed size we compute and specify in computeOffsets(). Otherwise the
             // annotation adjusts its width and height to fit the text, and therefore won't always be the size we've
             // configured it to be.
-            annotationAttrs.setAdjustWidthToText(AVKey.SIZE_FIXED);
+            annotationAttrs.setAdjustWidthToText(Keys.SIZE_FIXED);
 
             // Annotation attributes does not have an antialiasing enable/disable flag. Map the antialiasing flag to the
             // annotation attributes' antialias hint.

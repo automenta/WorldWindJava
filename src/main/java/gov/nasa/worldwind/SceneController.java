@@ -28,7 +28,7 @@ public interface SceneController extends WWObject, Disposable {
     Model getModel();
 
     /**
-     * Specifies the scene controller's model. This method fires an {@link gov.nasa.worldwind.avlist.AVKey#MODEL}
+     * Specifies the scene controller's model. This method fires an {@link Keys#MODEL}
      * property change event.
      *
      * @param model the scene controller's model.
@@ -36,7 +36,7 @@ public interface SceneController extends WWObject, Disposable {
     void setModel(Model model);
 
     /**
-     * Returns the current view. This method fires an {@link gov.nasa.worldwind.avlist.AVKey#VIEW} property change
+     * Returns the current view. This method fires an {@link Keys#VIEW} property change
      * event.
      *
      * @return the current view.

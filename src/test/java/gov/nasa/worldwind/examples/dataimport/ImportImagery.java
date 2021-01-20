@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.examples.dataimport;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.data.*;
 import gov.nasa.worldwind.examples.ApplicationTemplate;
 import gov.nasa.worldwind.geom.Sector;
@@ -61,12 +61,12 @@ public class ImportImagery extends ApplicationTemplate {
                 // specified there.
                 DataRasterReaderFactory readerFactory
                     = (DataRasterReaderFactory) WorldWind.createConfigurationComponent(
-                    AVKey.DATA_RASTER_READER_FACTORY_CLASS_NAME);
+                    Keys.DATA_RASTER_READER_FACTORY_CLASS_NAME);
                 DataRasterReader reader = readerFactory.findReaderFor(sourceFile, null);
 
                 // Before reading the raster, verify that the file contains imagery.
-                AVList metadata = reader.readMetadata(sourceFile, null);
-                if (metadata == null || !AVKey.IMAGE.equals(metadata.getStringValue(AVKey.PIXEL_FORMAT)))
+                KV metadata = reader.readMetadata(sourceFile, null);
+                if (metadata == null || !Keys.IMAGE.equals(metadata.getStringValue(Keys.PIXEL_FORMAT)))
                     throw new Exception("Not an image file.");
 
                 // Read the file into the raster. read() returns potentially several rasters if there are multiple
@@ -79,7 +79,7 @@ public class ImportImagery extends ApplicationTemplate {
 
                 // Determine the sector covered by the image. This information is in the GeoTIFF file or auxiliary
                 // files associated with the image file.
-                final Sector sector = (Sector) raster.get(AVKey.SECTOR);
+                final Sector sector = (Sector) raster.get(Keys.SECTOR);
                 if (sector == null)
                     throw new Exception("No location specified with image.");
 

@@ -5,6 +5,7 @@
  */
 package gov.nasa.worldwind.data;
 
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.formats.tiff.GeotiffImageReaderSpi;
 import gov.nasa.worldwind.formats.worldfile.WorldFile;
@@ -120,7 +121,7 @@ public class ImageIORasterReader extends AbstractDataRasterReader {
         return true;
     }
 
-    private static void readImageDimension(Object source, AVList params) throws IOException {
+    private static void readImageDimension(Object source, KV params) throws IOException {
         ImageInputStream iis = ImageIORasterReader.createInputStream(source);
         ImageReader reader = null;
         try (iis) {
@@ -134,8 +135,8 @@ public class ImageIORasterReader extends AbstractDataRasterReader {
             reader.setInput(iis, true, true);
             int width = reader.getWidth(0);
             int height = reader.getHeight(0);
-            params.set(AVKey.WIDTH, width);
-            params.set(AVKey.HEIGHT, height);
+            params.set(Keys.WIDTH, width);
+            params.set(Keys.HEIGHT, height);
         }
         finally {
             if (reader != null) {
@@ -144,7 +145,7 @@ public class ImageIORasterReader extends AbstractDataRasterReader {
         }
     }
 
-    private static void readWorldFiles(Object source, AVList params) throws IOException {
+    private static void readWorldFiles(Object source, KV params) throws IOException {
         if (!(source instanceof File)) {
             String message = Logging.getMessage("DataRaster.CannotRead", source);
             Logging.logger().severe(message);
@@ -153,14 +154,14 @@ public class ImageIORasterReader extends AbstractDataRasterReader {
 
         // If an image is not specified in the metadata values, then attempt to construct the image size from other
         // parameters.
-        Object o = params.get(AVKey.IMAGE);
+        Object o = params.get(Keys.IMAGE);
         if (!(o instanceof BufferedImage)) {
             o = params.get(WorldFile.WORLD_FILE_IMAGE_SIZE);
             if (!(o instanceof int[])) {
                 // If the image size is specified in the parameters WIDTH and HEIGHT, then translate them to the
                 // WORLD_FILE_IMAGE_SIZE parameter.
-                Object width = params.get(AVKey.WIDTH);
-                Object height = params.get(AVKey.HEIGHT);
+                Object width = params.get(Keys.WIDTH);
+                Object height = params.get(Keys.HEIGHT);
                 if (width instanceof Integer && height instanceof Integer) {
                     int[] size = {(Integer) width, (Integer) height};
                     params.set(WorldFile.WORLD_FILE_IMAGE_SIZE, size);
@@ -180,58 +181,58 @@ public class ImageIORasterReader extends AbstractDataRasterReader {
         this.generateMipMaps = generateMipMaps;
     }
 
-    protected boolean doCanRead(Object source, AVList params) {
+    protected boolean doCanRead(Object source, KV params) {
         // Determine whether or not the data source can be read.
         //if (!this.canReadImage(source))
         //    return false;
 
         // If the data source doesn't already have all the necessary metadata, then we determine whether or not
         // the missing metadata can be read.
-        Object o = (params != null) ? params.get(AVKey.SECTOR) : null;
+        Object o = (params != null) ? params.get(Keys.SECTOR) : null;
         if (!(o instanceof Sector)) {
             if (!ImageIORasterReader.canReadWorldFiles(source)) {
                 return false;
             }
         }
 
-        if (null != params && !params.hasKey(AVKey.PIXEL_FORMAT)) {
-            params.set(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
+        if (null != params && !params.hasKey(Keys.PIXEL_FORMAT)) {
+            params.set(Keys.PIXEL_FORMAT, Keys.IMAGE);
         }
 
         return true;
     }
 
-    protected DataRaster[] doRead(Object source, AVList params) throws IOException {
+    protected DataRaster[] doRead(Object source, KV params) throws IOException {
         ImageInputStream iis = ImageIORasterReader.createInputStream(source);
         BufferedImage image = ImageIO.read(iis);
         image = ImageUtil.toCompatibleImage(image);
 
         // If the data source doesn't already have all the necessary metadata, then we attempt to read the metadata.
-        Object o = (params != null) ? params.get(AVKey.SECTOR) : null;
+        Object o = (params != null) ? params.get(Keys.SECTOR) : null;
         if (!(o instanceof Sector)) {
-            AVList values = new AVListImpl();
-            values.set(AVKey.IMAGE, image);
+            KV values = new KVMap();
+            values.set(Keys.IMAGE, image);
             ImageIORasterReader.readWorldFiles(source, values);
-            o = values.get(AVKey.SECTOR);
+            o = values.get(Keys.SECTOR);
         }
 
         return new DataRaster[] {this.createRaster((Sector) o, image)};
     }
 
-    protected void doReadMetadata(Object source, AVList params) throws IOException {
-        Object width = params.get(AVKey.WIDTH);
-        Object height = params.get(AVKey.HEIGHT);
+    protected void doReadMetadata(Object source, KV params) throws IOException {
+        Object width = params.get(Keys.WIDTH);
+        Object height = params.get(Keys.HEIGHT);
         if (!(width instanceof Integer) || !(height instanceof Integer)) {
             ImageIORasterReader.readImageDimension(source, params);
         }
 
-        Object sector = params.get(AVKey.SECTOR);
+        Object sector = params.get(Keys.SECTOR);
         if (!(sector instanceof Sector)) {
             ImageIORasterReader.readWorldFiles(source, params);
         }
 
-        if (!params.hasKey(AVKey.PIXEL_FORMAT)) {
-            params.set(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
+        if (!params.hasKey(Keys.PIXEL_FORMAT)) {
+            params.set(Keys.PIXEL_FORMAT, Keys.IMAGE);
         }
     }
 

@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.render.*;
@@ -69,7 +68,7 @@ public class TabbedPaneUsage {
 
             mainFrame.getContentPane().add(tabbedPane, BorderLayout.CENTER);
             mainFrame.pack();
-            WWUtil.alignComponent(null, mainFrame, AVKey.CENTER);
+            WWUtil.alignComponent(null, mainFrame, Keys.CENTER);
             mainFrame.setVisible(true);
         }
         catch (Exception e) {
@@ -88,7 +87,7 @@ public class TabbedPaneUsage {
             ((Component) this.wwd).setPreferredSize(canvasSize);
 
             // Create the default model as described in the current worldwind properties.
-            Model m = (Model) WorldWind.createConfigurationComponent(AVKey.MODEL_CLASS_NAME);
+            Model m = (Model) WorldWind.createConfigurationComponent(Keys.MODEL_CLASS_NAME);
             this.wwd.setModel(m);
             this.addMarkers();
             this.addShapes();
@@ -135,7 +134,7 @@ public class TabbedPaneUsage {
             cone3.setAltitudeMode(WorldWind.ABSOLUTE);
             cone3.setAttributes(attrs);
             cone3.setVisible(true);
-            cone3.set(AVKey.DISPLAY_NAME, "Cone with equal axes, ABSOLUTE altitude mode");
+            cone3.set(Keys.DISPLAY_NAME, "Cone with equal axes, ABSOLUTE altitude mode");
             layer.add(cone3);
 
             // Cone with equal axes, RELATIVE_TO_GROUND
@@ -143,7 +142,7 @@ public class TabbedPaneUsage {
             cone4.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             cone4.setAttributes(attrs);
             cone4.setVisible(true);
-            cone4.set(AVKey.DISPLAY_NAME, "Cone with equal axes, RELATIVE_TO_GROUND altitude mode");
+            cone4.set(Keys.DISPLAY_NAME, "Cone with equal axes, RELATIVE_TO_GROUND altitude mode");
             layer.add(cone4);
 
             WorldWindow.insertBeforePlacenames(this.wwd, layer);

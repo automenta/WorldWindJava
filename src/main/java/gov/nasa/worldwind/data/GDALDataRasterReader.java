@@ -6,7 +6,8 @@
 
 package gov.nasa.worldwind.data;
 
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.Keys;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.util.gdal.GDALUtils;
@@ -70,14 +71,14 @@ public class GDALDataRasterReader extends AbstractDataRasterReader {
     }
 
     @Override
-    public boolean canRead(Object source, AVList params) {
+    public boolean canRead(Object source, KV params) {
         // RPF imagery cannot be identified by a small set of suffixes or mime types, so we override the standard
         // suffix comparison behavior here.
         return this.doCanRead(source, params);
     }
 
     @Override
-    protected boolean doCanRead(Object source, AVList params) {
+    protected boolean doCanRead(Object source, KV params) {
         if (WWUtil.isEmpty(source)) {
             return false;
         }
@@ -113,22 +114,22 @@ public class GDALDataRasterReader extends AbstractDataRasterReader {
     }
 
     @Override
-    protected DataRaster[] doRead(Object source, AVList params) {
+    protected DataRaster[] doRead(Object source, KV params) {
         GDALDataRaster raster = GDALDataRasterReader.readDataRaster(source, false);
         if (null != params) {
             params.setValues(raster.getMetadata());
-            WWUtil.copyValues(params, raster, new String[] {AVKey.SECTOR}, false);
+            WWUtil.copyValues(params, raster, new String[] {Keys.SECTOR}, false);
         }
 
         return new DataRaster[] {raster};
     }
 
     @Override
-    protected void doReadMetadata(Object source, AVList params) {
+    protected void doReadMetadata(Object source, KV params) {
         GDALDataRaster raster = GDALDataRasterReader.readDataRaster(source, true);
         if (null != params) {
             params.setValues(raster.getMetadata());
-            WWUtil.copyValues(params, raster, new String[] {AVKey.SECTOR}, false);
+            WWUtil.copyValues(params, raster, new String[] {Keys.SECTOR}, false);
             raster.dispose();
         }
     }

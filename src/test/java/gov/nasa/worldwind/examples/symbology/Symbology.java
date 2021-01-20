@@ -6,8 +6,7 @@
 
 package gov.nasa.worldwind.examples.symbology;
 
-import gov.nasa.worldwind.Configuration;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.examples.ApplicationTemplate;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -34,9 +33,9 @@ import java.util.*;
  */
 public class Symbology extends ApplicationTemplate {
     public static void main(String[] args) {
-        Configuration.setValue(AVKey.INITIAL_LATITUDE, 34.4780);
-        Configuration.setValue(AVKey.INITIAL_LONGITUDE, -117.5250);
-        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 40000);
+        Configuration.setValue(Keys.INITIAL_LATITUDE, 34.4780);
+        Configuration.setValue(Keys.INITIAL_LONGITUDE, -117.5250);
+        Configuration.setValue(Keys.INITIAL_ALTITUDE, 40000);
 
         ApplicationTemplate.start("WorldWind Symbology", AppFrame.class);
     }
@@ -56,7 +55,7 @@ public class Symbology extends ApplicationTemplate {
             Dimension size = new Dimension(1800, 1000);
             this.setPreferredSize(size);
             this.pack();
-            WWUtil.alignComponent(null, this, AVKey.CENTER);
+            WWUtil.alignComponent(null, this, Keys.CENTER);
         }
 
         protected void addTacticalSymbols() {
@@ -70,7 +69,7 @@ public class Symbology extends ApplicationTemplate {
             // at 3km above mean sea level.
             TacticalSymbol symbol = new MilStd2525TacticalSymbol("SFAPMFQM------A",
                 Position.fromDegrees(34.4934, -117.6003, 3000));
-            symbol.set(AVKey.DISPLAY_NAME, "MIL-STD-2525 Tactical Symbol"); // Tool tip text.
+            symbol.set(Keys.DISPLAY_NAME, "MIL-STD-2525 Tactical Symbol"); // Tool tip text.
             symbol.setShowLocation(false);
             layer.add(symbol);
 
@@ -96,7 +95,7 @@ public class Symbology extends ApplicationTemplate {
             // friendly Supporting Attack.
             TacticalGraphicFactory factory = new MilStd2525GraphicFactory();
             TacticalGraphic graphic = factory.createGraphic("GFGPOLAGS-----X", positions, null);
-            graphic.set(AVKey.DISPLAY_NAME, "MIL-STD-2525 Tactical Graphic"); // Tool tip text.
+            graphic.set(Keys.DISPLAY_NAME, "MIL-STD-2525 Tactical Graphic"); // Tool tip text.
             layer.add(graphic);
 
             // Create point placemarks to mark each of the control points used to define the tactical graphic. This
@@ -120,7 +119,7 @@ public class Symbology extends ApplicationTemplate {
             int i = 1;
             for (Position p : positions) {
                 PointPlacemark placemark = new PointPlacemark(p);
-                placemark.set(AVKey.DISPLAY_NAME, "Tactical Graphic Position " + i);
+                placemark.set(Keys.DISPLAY_NAME, "Tactical Graphic Position " + i);
                 placemark.setAttributes(attrs);
                 placemark.setHighlightAttributes(attrs);
                 layer.add(placemark);

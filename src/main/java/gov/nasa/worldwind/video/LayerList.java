@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.video;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.event.Message;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.util.Logging;
@@ -94,11 +94,11 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject {
     }
 
     public String getDisplayName() {
-        return this.getStringValue(AVKey.DISPLAY_NAME);
+        return this.getStringValue(Keys.DISPLAY_NAME);
     }
 
     public void setDisplayName(String displayName) {
-        this.set(AVKey.DISPLAY_NAME, displayName);
+        this.set(Keys.DISPLAY_NAME, displayName);
     }
 
     public boolean add(Layer layer) {
@@ -111,7 +111,7 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject {
         LayerList copy = LayerList.makeShallowCopy(this);
         super.add(layer);
         layer.addPropertyChangeListener(this);
-        this.firePropertyChange(AVKey.LAYERS, copy, this);
+        this.firePropertyChange(Keys.LAYERS, copy, this);
 
         return true;
     }
@@ -126,7 +126,7 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject {
         LayerList copy = LayerList.makeShallowCopy(this);
         super.add(index, layer);
         layer.addPropertyChangeListener(this);
-        this.firePropertyChange(AVKey.LAYERS, copy, this);
+        this.firePropertyChange(Keys.LAYERS, copy, this);
     }
 
     public void remove(Layer layer) {
@@ -142,7 +142,7 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject {
         LayerList copy = LayerList.makeShallowCopy(this);
         layer.removePropertyChangeListener(this);
         super.remove(layer);
-        this.firePropertyChange(AVKey.LAYERS, copy, this);
+        this.firePropertyChange(Keys.LAYERS, copy, this);
     }
 
     public Layer remove(int index) {
@@ -153,7 +153,7 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject {
         LayerList copy = LayerList.makeShallowCopy(this);
         layer.removePropertyChangeListener(this);
         super.remove(index);
-        this.firePropertyChange(AVKey.LAYERS, copy, this);
+        this.firePropertyChange(Keys.LAYERS, copy, this);
 
         return layer;
     }
@@ -194,7 +194,7 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject {
         LayerList copy = LayerList.makeShallowCopy(this);
         super.set(index, layer);
         layer.addPropertyChangeListener(this);
-        this.firePropertyChange(AVKey.LAYERS, copy, this);
+        this.firePropertyChange(Keys.LAYERS, copy, this);
 
         return oldLayer;
     }
@@ -208,7 +208,7 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject {
         LayerList copy = LayerList.makeShallowCopy(this);
         boolean removed = super.remove(o);
         if (removed)
-            this.firePropertyChange(AVKey.LAYERS, copy, this);
+            this.firePropertyChange(Keys.LAYERS, copy, this);
 
         return removed;
     }
@@ -224,7 +224,7 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject {
         LayerList copy = LayerList.makeShallowCopy(this);
         boolean added = super.addIfAbsent(layer);
         if (added)
-            this.firePropertyChange(AVKey.LAYERS, copy, this);
+            this.firePropertyChange(Keys.LAYERS, copy, this);
 
         return added;
     }
@@ -237,7 +237,7 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject {
         LayerList copy = LayerList.makeShallowCopy(this);
         boolean removed = super.removeAll(objects);
         if (removed)
-            this.firePropertyChange(AVKey.LAYERS, copy, this);
+            this.firePropertyChange(Keys.LAYERS, copy, this);
 
         for (Layer layer : this) {
             layer.addPropertyChangeListener(this);
@@ -254,7 +254,7 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject {
         LayerList copy = LayerList.makeShallowCopy(this);
         boolean removed = super.retainAll(new ArrayList<Layer>()); // retain no layers
         if (removed)
-            this.firePropertyChange(AVKey.LAYERS, copy, this);
+            this.firePropertyChange(Keys.LAYERS, copy, this);
 
         return removed;
     }
@@ -268,7 +268,7 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject {
         LayerList copy = LayerList.makeShallowCopy(this);
         int numAdded = super.addAllAbsent(layers);
         if (numAdded > 0)
-            this.firePropertyChange(AVKey.LAYERS, copy, this);
+            this.firePropertyChange(Keys.LAYERS, copy, this);
 
         return numAdded;
     }
@@ -281,7 +281,7 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject {
         LayerList copy = LayerList.makeShallowCopy(this);
         boolean added = super.addAll(layers);
         if (added)
-            this.firePropertyChange(AVKey.LAYERS, copy, this);
+            this.firePropertyChange(Keys.LAYERS, copy, this);
 
         return added;
     }
@@ -294,7 +294,7 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject {
         LayerList copy = LayerList.makeShallowCopy(this);
         boolean added = super.addAll(i, layers);
         if (added)
-            this.firePropertyChange(AVKey.LAYERS, copy, this);
+            this.firePropertyChange(Keys.LAYERS, copy, this);
 
         return added;
     }
@@ -309,7 +309,7 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject {
         LayerList copy = LayerList.makeShallowCopy(this);
         boolean added = super.retainAll(objects);
         if (added)
-            this.firePropertyChange(AVKey.LAYERS, copy, this);
+            this.firePropertyChange(Keys.LAYERS, copy, this);
 
         return added;
     }
@@ -391,7 +391,7 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject {
         return wwo.set(key, value);
     }
 
-    public AVList setValues(AVList avList) {
+    public KV setValues(KV avList) {
         return wwo.setValues(avList);
     }
 
@@ -403,11 +403,11 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject {
         return wwo.removeKey(key);
     }
 
-    public AVList copy() {
+    public KV copy() {
         return wwo.copy();
     }
 
-    public AVList clearList() {
+    public KV clearList() {
         return this.wwo.clearList();
     }
 

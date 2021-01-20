@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.symbology.milstd2525;
 
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.symbology.*;
@@ -37,7 +37,7 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory {
         this.populateClassMap();
     }
 
-    protected static void setModifiers(TacticalGraphic graphic, AVList props) {
+    protected static void setModifiers(TacticalGraphic graphic, KV props) {
         for (Map.Entry<String, Object> entry : props.getEntries()) {
             graphic.setModifier(entry.getKey(), entry.getValue());
         }
@@ -145,7 +145,7 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory {
      */
     @SuppressWarnings("unchecked")
     public MilStd2525TacticalGraphic createGraphic(String sidc, Iterable<? extends Position> positions,
-        AVList modifiers) {
+        KV modifiers) {
         SymbolCode symbolCode = new SymbolCode(sidc);
 
         Class clazz = this.getClassForCode(symbolCode);
@@ -186,7 +186,7 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory {
      *
      * @param sidc MIL-STD-2525 symbol identification code (SIDC).
      */
-    public TacticalPoint createPoint(String sidc, Position position, AVList params) {
+    public TacticalPoint createPoint(String sidc, Position position, KV params) {
         TacticalGraphic graphic = this.createGraphic(sidc, Collections.singletonList(position), params);
         if (graphic instanceof TacticalPoint) {
             return (TacticalPoint) graphic;
@@ -203,7 +203,7 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory {
     /**
      * {@inheritDoc}
      */
-    public TacticalCircle createCircle(String sidc, Position center, double radius, AVList modifiers) {
+    public TacticalCircle createCircle(String sidc, Position center, double radius, KV modifiers) {
         TacticalGraphic graphic = this.createPoint(sidc, center, modifiers);
         if (graphic instanceof TacticalCircle) {
             TacticalCircle circle = (TacticalCircle) graphic;
@@ -222,7 +222,7 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory {
     /**
      * {@inheritDoc}
      */
-    public TacticalQuad createQuad(String sidc, Iterable<? extends Position> positions, AVList modifiers) {
+    public TacticalQuad createQuad(String sidc, Iterable<? extends Position> positions, KV modifiers) {
         TacticalGraphic graphic = this.createGraphic(sidc, positions, modifiers);
         if (graphic instanceof TacticalQuad) {
             return (TacticalQuad) graphic;
@@ -240,7 +240,7 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory {
      * {@inheritDoc}
      */
     public TacticalRoute createRoute(String sidc, Iterable<? extends TacticalPoint> controlPoints,
-        AVList modifiers) {
+        KV modifiers) {
         TacticalGraphic graphic = this.createGraphic(sidc, null, modifiers);
         if (graphic instanceof TacticalRoute) {
             TacticalRoute route = (TacticalRoute) graphic;

@@ -63,20 +63,20 @@ public class GeoSymAttributeExpressionProvider {
         // expressions associated with each symbol ID. Sort expression rows within each group according to the
         // expression sequence number for each row.
 
-        HashMap<Integer, Set<AVList>> map = new HashMap<>();
+        HashMap<Integer, Set<KV>> map = new HashMap<>();
 
-        for (AVList row : table.getRecords()) {
-            Integer symbolId = AVListImpl.getIntegerValue(row, "cond_index");
-            Integer sequenceNumber = AVListImpl.getIntegerValue(row, "seq");
+        for (KV row : table.getRecords()) {
+            Integer symbolId = KVMap.getIntegerValue(row, "cond_index");
+            Integer sequenceNumber = KVMap.getIntegerValue(row, "seq");
             if (symbolId == null || sequenceNumber == null) {
                 String message = Logging.getMessage("VPF.GeoSymInvalidAttributeExpression", row);
                 Logging.logger().warning(message);
                 continue;
             }
 
-            Set<AVList> list = map.computeIfAbsent(symbolId, k -> new TreeSet<>((a, b) -> {
-                Integer ia = AVListImpl.getIntegerValue(a, "seq");
-                Integer ib = AVListImpl.getIntegerValue(b, "seq");
+            Set<KV> list = map.computeIfAbsent(symbolId, k -> new TreeSet<>((a, b) -> {
+                Integer ia = KVMap.getIntegerValue(a, "seq");
+                Integer ib = KVMap.getIntegerValue(b, "seq");
 
                 return ia.compareTo(ib);
             }));
@@ -88,12 +88,12 @@ public class GeoSymAttributeExpressionProvider {
         // later time (given a set of feature attributes). Place each expression in a map, keying by the symbol ID
         // associated with that expression.
 
-        for (Map.Entry<Integer, Set<AVList>> entry : map.entrySet()) {
+        for (Map.Entry<Integer, Set<KV>> entry : map.entrySet()) {
             Queue<Object> queue = new LinkedList<>();
 
-            for (AVList row : entry.getValue()) {
+            for (KV row : entry.getValue()) {
                 // If no connector is specified, then assume the terminal connector '0'.
-                int connector = AVListImpl.getIntegerValue(row, "connector", 0);
+                int connector = KVMap.getIntegerValue(row, "connector", 0);
                 queue.add(new Comparison(row));
                 queue.add(LogicalOperator.values()[connector]);
             }
@@ -107,42 +107,42 @@ public class GeoSymAttributeExpressionProvider {
 
     protected enum ComparisonOperator {
         NONE {
-            public boolean evaluate(AVList params, String paramName, String value) {
+            public boolean evaluate(KV params, String paramName, String value) {
                 return false;
             }
         },
         EQUAL {
-            public boolean evaluate(AVList params, String paramName, String value) {
+            public boolean evaluate(KV params, String paramName, String value) {
                 return ComparisonOperator.compare(params, paramName, value) == 0;
             }
         },
         NOT_EQUAL {
-            public boolean evaluate(AVList params, String paramName, String value) {
+            public boolean evaluate(KV params, String paramName, String value) {
                 return !ComparisonOperator.EQUAL.evaluate(params, paramName, value);
             }
         },
         LESS_THAN {
-            public boolean evaluate(AVList params, String paramName, String value) {
+            public boolean evaluate(KV params, String paramName, String value) {
                 return ComparisonOperator.compare(params, paramName, value) < 0;
             }
         },
         GREATER_THAN {
-            public boolean evaluate(AVList params, String paramName, String value) {
+            public boolean evaluate(KV params, String paramName, String value) {
                 return ComparisonOperator.compare(params, paramName, value) > 0;
             }
         },
         LESS_THAN_OR_EQUAL_TO {
-            public boolean evaluate(AVList params, String paramName, String value) {
+            public boolean evaluate(KV params, String paramName, String value) {
                 return ComparisonOperator.compare(params, paramName, value) <= 0;
             }
         },
         GREATER_THAN_OR_EQUAL_TO {
-            public boolean evaluate(AVList params, String paramName, String value) {
+            public boolean evaluate(KV params, String paramName, String value) {
                 return ComparisonOperator.compare(params, paramName, value) >= 0;
             }
         };
 
-        private static int compare(AVList params, String paramName, String value) {
+        private static int compare(KV params, String paramName, String value) {
             Object o = params.get(paramName);
             boolean valueIsNull = value.equalsIgnoreCase("NULL");
 
@@ -160,17 +160,17 @@ public class GeoSymAttributeExpressionProvider {
             }
         }
 
-        public abstract boolean evaluate(AVList params, String paramName, String value);
+        public abstract boolean evaluate(KV params, String paramName, String value);
     }
 
     protected enum LogicalOperator {
         NONE {
-            public boolean evaluate(AVList params, Iterable<? extends Expression> iterable) {
+            public boolean evaluate(KV params, Iterable<? extends Expression> iterable) {
                 return false;
             }
         },
         OR_LEVEL1 {
-            public boolean evaluate(AVList params, Iterable<? extends Expression> iterable) {
+            public boolean evaluate(KV params, Iterable<? extends Expression> iterable) {
                 for (Expression term : iterable) {
                     if (term.evaluate(params)) {
                         return true;
@@ -181,12 +181,12 @@ public class GeoSymAttributeExpressionProvider {
             }
         },
         AND_LEVEL2 {
-            public boolean evaluate(AVList params, Iterable<? extends Expression> iterable) {
+            public boolean evaluate(KV params, Iterable<? extends Expression> iterable) {
                 return LogicalOperator.AND_LEVEL1.evaluate(params, iterable);
             }
         },
         AND_LEVEL1 {
-            public boolean evaluate(AVList params, Iterable<? extends Expression> iterable) {
+            public boolean evaluate(KV params, Iterable<? extends Expression> iterable) {
                 for (Expression term : iterable) {
                     if (!term.evaluate(params)) {
                         return false;
@@ -197,12 +197,12 @@ public class GeoSymAttributeExpressionProvider {
             }
         },
         OR_LEVEL2 {
-            public boolean evaluate(AVList params, Iterable<? extends Expression> iterable) {
+            public boolean evaluate(KV params, Iterable<? extends Expression> iterable) {
                 return LogicalOperator.OR_LEVEL1.evaluate(params, iterable);
             }
         };
 
-        public abstract boolean evaluate(AVList params, Iterable<? extends Expression> iterable);
+        public abstract boolean evaluate(KV params, Iterable<? extends Expression> iterable);
     }
 
     protected interface ExpressionParser {
@@ -214,7 +214,7 @@ public class GeoSymAttributeExpressionProvider {
     //**************************************************************//
 
     protected interface Expression extends GeoSymAttributeExpression {
-        boolean evaluate(AVList params);
+        boolean evaluate(KV params);
     }
 
     protected static class ComparisonParser implements ExpressionParser {
@@ -280,16 +280,16 @@ public class GeoSymAttributeExpressionProvider {
             this.value = value;
         }
 
-        public Comparison(AVList params) {
+        public Comparison(KV params) {
             this.attributeName = params.getStringValue("att");
             this.value = params.getStringValue("value");
 
-            Integer i = AVListImpl.getIntegerValue(params, "oper");
+            Integer i = KVMap.getIntegerValue(params, "oper");
             if (i != null)
                 this.operator = ComparisonOperator.values()[i];
         }
 
-        public boolean evaluate(AVList featureAttributes) {
+        public boolean evaluate(KV featureAttributes) {
             return this.operator.evaluate(featureAttributes, this.attributeName, this.value);
         }
     }
@@ -301,7 +301,7 @@ public class GeoSymAttributeExpressionProvider {
             this.logicalOperator = op;
         }
 
-        public boolean evaluate(AVList featureAttributes) {
+        public boolean evaluate(KV featureAttributes) {
             return this.logicalOperator.evaluate(featureAttributes, this);
         }
     }

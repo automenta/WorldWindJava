@@ -7,7 +7,6 @@
 package gov.nasa.worldwind.layers.ogc.kml;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.Message;
 import gov.nasa.worldwind.exception.*;
 import gov.nasa.worldwind.geom.*;
@@ -1067,7 +1066,7 @@ public class KMLRoot extends KMLAbstractObject implements KMLRenderable, XMLRoot
      * Request any scene containing this KML document be repainted.
      */
     public void requestRedraw() {
-        this.firePropertyChange(AVKey.REPAINT, null, null);
+        this.firePropertyChange(Keys.REPAINT, null, null);
     }
 
     //**********************************************************************

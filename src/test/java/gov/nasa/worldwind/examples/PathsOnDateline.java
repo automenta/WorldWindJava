@@ -7,7 +7,6 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.*;
@@ -52,7 +51,7 @@ public class PathsOnDateline extends ApplicationTemplate {
             path.setHighlightAttributes(highlightAttrs);
             path.setVisible(true);
             path.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
-            path.setPathType(AVKey.GREAT_CIRCLE);
+            path.setPathType(Keys.GREAT_CIRCLE);
             path.setShowPositions(true);
             path.setShowPositionsThreshold(1.0e12);
             //path.setExtrude(true);

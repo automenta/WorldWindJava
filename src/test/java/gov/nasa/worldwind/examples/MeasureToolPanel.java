@@ -5,8 +5,7 @@
  */
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.WorldWindow;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.UnitsFormat;
@@ -162,13 +161,13 @@ public class MeasureToolPanel extends JPanel {
             String item = (String) ((JComboBox) event.getSource()).getSelectedItem();
             switch (item) {
                 case "Linear":
-                    measureTool.setPathType(AVKey.LINEAR);
+                    measureTool.setPathType(Keys.LINEAR);
                     break;
                 case "Rhumb":
-                    measureTool.setPathType(AVKey.RHUMB_LINE);
+                    measureTool.setPathType(Keys.RHUMB_LINE);
                     break;
                 case "Great circle":
-                    measureTool.setPathType(AVKey.GREAT_CIRCLE);
+                    measureTool.setPathType(Keys.GREAT_CIRCLE);
                     break;
                 default:
                     break;

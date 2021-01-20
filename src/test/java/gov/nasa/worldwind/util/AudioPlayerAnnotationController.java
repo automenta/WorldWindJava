@@ -5,8 +5,7 @@
  */
 package gov.nasa.worldwind.util;
 
-import gov.nasa.worldwind.WorldWindow;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 
 import javax.sound.sampled.*;
 import javax.swing.*;
@@ -124,10 +123,10 @@ public class AudioPlayerAnnotationController extends DialogAnnotationController 
     public void onActionPerformed(ActionEvent e) {
         super.onActionPerformed(e);
 
-        if (e.getActionCommand() == AVKey.PLAY) {
+        if (e.getActionCommand() == Keys.PLAY) {
             this.playPressed(e);
         }
-        else if (e.getActionCommand() == AVKey.STOP) {
+        else if (e.getActionCommand() == Keys.STOP) {
             this.stopPressed(e);
         }
     }
@@ -158,10 +157,10 @@ public class AudioPlayerAnnotationController extends DialogAnnotationController 
         if (status == null)
             return;
 
-        if (status == AVKey.PLAY) {
+        if (status == Keys.PLAY) {
             this.pauseClip();
         }
-        else if (status == AVKey.STOP || status == AVKey.PAUSE) {
+        else if (status == Keys.STOP || status == Keys.PAUSE) {
             this.startClip();
         }
     }
@@ -193,7 +192,7 @@ public class AudioPlayerAnnotationController extends DialogAnnotationController 
     @SuppressWarnings("UnusedDeclaration")
     protected void onClipStart(LineEvent e) {
         AudioPlayerAnnotation audioAnnotation = (AudioPlayerAnnotation) this.getAnnotation();
-        audioAnnotation.setPlayButtonState(AVKey.PAUSE);
+        audioAnnotation.setPlayButtonState(Keys.PAUSE);
         this.startPlayerUpdate();
         this.updateAudioAnnotation();
     }
@@ -201,7 +200,7 @@ public class AudioPlayerAnnotationController extends DialogAnnotationController 
     @SuppressWarnings("UnusedDeclaration")
     protected void onClipStop(LineEvent e) {
         AudioPlayerAnnotation audioAnnotation = (AudioPlayerAnnotation) this.getAnnotation();
-        audioAnnotation.setPlayButtonState(AVKey.PLAY);
+        audioAnnotation.setPlayButtonState(Keys.PLAY);
         this.stopPlayerUpdate();
         this.updateAudioAnnotation();
     }

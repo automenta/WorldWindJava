@@ -8,7 +8,6 @@ package gov.nasa.worldwind.render;
 
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.cache.ShapeDataCache;
 import gov.nasa.worldwind.drag.*;
 import gov.nasa.worldwind.geom.*;
@@ -66,7 +65,7 @@ public abstract class AbstractShape extends WWObjectImpl
     /**
      * Indicates the number of vertices that must be present in order for VBOs to be used to render this shape.
      */
-    protected static final int VBO_THRESHOLD = Configuration.getIntegerValue(AVKey.VBO_THRESHOLD, 30);
+    protected static final int VBO_THRESHOLD = Configuration.getIntegerValue(Keys.VBO_THRESHOLD, 30);
 
     /**
      * The attributes used if attributes are not specified.
@@ -1462,7 +1461,7 @@ public abstract class AbstractShape extends WWObjectImpl
 
         xmlWriter.writeStartElement("Placemark");
 
-        String property = getStringValue(AVKey.DISPLAY_NAME);
+        String property = getStringValue(Keys.DISPLAY_NAME);
         if (property != null) {
             xmlWriter.writeStartElement("name");
             xmlWriter.writeCharacters(property);
@@ -1473,14 +1472,14 @@ public abstract class AbstractShape extends WWObjectImpl
         xmlWriter.writeCharacters(KMLExportUtil.kmlBoolean(this.isVisible()));
         xmlWriter.writeEndElement();
 
-        String shortDescription = (String) get(AVKey.SHORT_DESCRIPTION);
+        String shortDescription = (String) get(Keys.SHORT_DESCRIPTION);
         if (shortDescription != null) {
             xmlWriter.writeStartElement("Snippet");
             xmlWriter.writeCharacters(shortDescription);
             xmlWriter.writeEndElement();
         }
 
-        String description = (String) get(AVKey.BALLOON_TEXT);
+        String description = (String) get(Keys.BALLOON_TEXT);
         if (description != null) {
             xmlWriter.writeStartElement("description");
             xmlWriter.writeCharacters(description);

@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.symbology;
 
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.geom.Position;
 
 /**
@@ -14,14 +14,14 @@ import gov.nasa.worldwind.geom.Position;
  * specific symbol set. Each graphic within that set is identified by a string identifier.
  * <p>
  * The factory exposes creation several methods:
- * <ul><li>{@link #createGraphic(String, Iterable, AVList) createGraphic} - Creates a graphic
+ * <ul><li>{@link #createGraphic(String, Iterable, KV) createGraphic} - Creates a graphic
  * from a list of positions and modifiers. This method is the most general, and can create any type of graphic. The
  * other creation methods are provided for convenience.</li> <li>{@link #createPoint(String,
- * Position, AVList) createPoint} - Create a graphic positioned by a
+ * Position, KV) createPoint} - Create a graphic positioned by a
  * single control point.</li> <li>{@link #createCircle(String, Position, double,
- * AVList) createCircle} - Create a graphic positioned by a center point and a radius.</li>
- * <li>{@link #createQuad(String, Iterable, AVList) createQuad} - Create a graphic that has
- * length and width properties.</li> <li>{@link #createRoute(String, Iterable, AVList)
+ * KV) createCircle} - Create a graphic positioned by a center point and a radius.</li>
+ * <li>{@link #createQuad(String, Iterable, KV) createQuad} - Create a graphic that has
+ * length and width properties.</li> <li>{@link #createRoute(String, Iterable, KV)
  * createRoute} - Create a graphic composed of point graphics connected by lines.</li> </ul>
  *
  * @author pabercrombie
@@ -32,7 +32,7 @@ public interface TacticalGraphicFactory {
     /**
      * Create a tactical graphic positioned by more than one control point. This method is general purpose, and may be
      * used to create any type of graphic. The other creation methods in the factory (for example, {@link
-     * #createCircle(String, Position, double, AVList) createCircle}) are provided for convenience, and may be used to
+     * #createCircle(String, Position, double, KV) createCircle}) are provided for convenience, and may be used to
      * specific categories of graphics.
      *
      * @param symbolIdentifier Identifier for the symbol within its symbol set.
@@ -42,7 +42,7 @@ public interface TacticalGraphicFactory {
      * @return A new TacticalGraphic configured to render at the position indicated, or {@code null} if no graphic can
      * be created for the given symbol identifier.
      */
-    TacticalGraphic createGraphic(String symbolIdentifier, Iterable<? extends Position> positions, AVList modifiers);
+    TacticalGraphic createGraphic(String symbolIdentifier, Iterable<? extends Position> positions, KV modifiers);
 
     /**
      * Create a tactical graphic positioned by a single control point.
@@ -53,7 +53,7 @@ public interface TacticalGraphicFactory {
      * @return A new TacticalGraphic configured to render at the position indicated, or {@code null} if no graphic can
      * be created for the given symbol identifier.
      */
-    TacticalPoint createPoint(String symbolIdentifier, Position position, AVList modifiers);
+    TacticalPoint createPoint(String symbolIdentifier, Position position, KV modifiers);
 
     /**
      * Create a circular graphic.
@@ -66,7 +66,7 @@ public interface TacticalGraphicFactory {
      * created for the given symbol identifier.
      * @throws IllegalArgumentException if {@code symbolIdentifier} does not describe a circular graphic.
      */
-    TacticalCircle createCircle(String symbolIdentifier, Position center, double radius, AVList modifiers);
+    TacticalCircle createCircle(String symbolIdentifier, Position center, double radius, KV modifiers);
 
     /**
      * Create a graphic with four sides.
@@ -79,7 +79,7 @@ public interface TacticalGraphicFactory {
      * created for the given symbol identifier.
      * @throws IllegalArgumentException if {@code symbolIdentifier} does not describe a quad graphic.
      */
-    TacticalQuad createQuad(String symbolIdentifier, Iterable<? extends Position> positions, AVList modifiers);
+    TacticalQuad createQuad(String symbolIdentifier, Iterable<? extends Position> positions, KV modifiers);
 
     /**
      * Create a route graphic. A route is composed of point graphics connected by lines.
@@ -92,7 +92,7 @@ public interface TacticalGraphicFactory {
      * @throws IllegalArgumentException if {@code symbolIdentifier} does not describe a route graphic.
      */
     TacticalRoute createRoute(String symbolIdentifier, Iterable<? extends TacticalPoint> controlPoints,
-        AVList modifiers);
+        KV modifiers);
 
     /**
      * Determines if this factory can create a graphic for a given symbol identifier.

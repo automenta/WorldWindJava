@@ -6,6 +6,7 @@
 
 package gov.nasa.worldwind.layers.ogc.wcs;
 
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.ogc.wcs.wcs100.*;
@@ -93,8 +94,8 @@ public class WCSElevationModelCreationTest
             e.printStackTrace();
         }
 
-        AVList params = new AVListImpl();
-        params.set(AVKey.DOCUMENT, coverage);
+        KV params = new KVMap();
+        params.set(Keys.DOCUMENT, coverage);
         return new WCSElevationModel(caps, params);
     }
 }

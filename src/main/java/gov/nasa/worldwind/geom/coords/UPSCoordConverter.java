@@ -85,7 +85,7 @@
 
 package gov.nasa.worldwind.geom.coords;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.globes.Globe;
 
 /**
@@ -128,7 +128,7 @@ public class UPSCoordConverter {
     private double UPS_Northing;
     private double Easting;
     private double Northing;
-    private String Hemisphere = AVKey.NORTH;
+    private String Hemisphere = Keys.NORTH;
     private double Latitude;
     private double Longitude;
 
@@ -189,10 +189,10 @@ public class UPSCoordConverter {
 
         if (latitude < 0) {
             UPS_Origin_Latitude = -UPSCoordConverter.MAX_ORIGIN_LAT;
-            Hemisphere = AVKey.SOUTH;
+            Hemisphere = Keys.SOUTH;
         } else {
             UPS_Origin_Latitude = UPSCoordConverter.MAX_ORIGIN_LAT;
-            Hemisphere = AVKey.NORTH;
+            Hemisphere = Keys.NORTH;
         }
 
         polarConverter.setPolarStereographicParameters(UPS_a, UPS_f,
@@ -203,7 +203,7 @@ public class UPSCoordConverter {
 
         UPS_Easting = UPS_False_Easting + polarConverter.getEasting();
         UPS_Northing = UPS_False_Northing + polarConverter.getNorthing();
-        if (AVKey.SOUTH.equals(Hemisphere))
+        if (Keys.SOUTH.equals(Hemisphere))
             UPS_Northing = UPS_False_Northing - polarConverter.getNorthing();
 
         Easting = UPS_Easting;
@@ -227,7 +227,7 @@ public class UPSCoordConverter {
     }
 
     /**
-     * @return Hemisphere, either {@link AVKey#NORTH} or {@link AVKey#SOUTH}.
+     * @return Hemisphere, either {@link Keys#NORTH} or {@link Keys#SOUTH}.
      */
     public String getHemisphere() {
         return Hemisphere;
@@ -238,7 +238,7 @@ public class UPSCoordConverter {
      * (latitude and longitude) coordinates according to the current ellipsoid parameters.  If any errors occur, the
      * error code(s) are returned by the function, otherwise UPS_NO_ERROR is returned.
      *
-     * @param Hemisphere Hemisphere, either {@link AVKey#NORTH} or {@link AVKey#SOUTH}.
+     * @param Hemisphere Hemisphere, either {@link Keys#NORTH} or {@link Keys#SOUTH}.
      * @param Easting    Easting/X in meters
      * @param Northing   Northing/Y in meters
      * @return error code
@@ -246,16 +246,16 @@ public class UPSCoordConverter {
     public long convertUPSToGeodetic(String Hemisphere, double Easting, double Northing) {
         long Error_Code = UPSCoordConverter.UPS_NO_ERROR;
 
-        if (!AVKey.NORTH.equals(Hemisphere) && !AVKey.SOUTH.equals(Hemisphere))
+        if (!Keys.NORTH.equals(Hemisphere) && !Keys.SOUTH.equals(Hemisphere))
             Error_Code |= UPSCoordConverter.UPS_HEMISPHERE_ERROR;
         if ((Easting < UPSCoordConverter.MIN_EAST_NORTH) || (Easting > UPSCoordConverter.MAX_EAST_NORTH))
             Error_Code |= UPSCoordConverter.UPS_EASTING_ERROR;
         if ((Northing < UPSCoordConverter.MIN_EAST_NORTH) || (Northing > UPSCoordConverter.MAX_EAST_NORTH))
             Error_Code |= UPSCoordConverter.UPS_NORTHING_ERROR;
 
-        if (AVKey.NORTH.equals(Hemisphere))
+        if (Keys.NORTH.equals(Hemisphere))
             UPS_Origin_Latitude = UPSCoordConverter.MAX_ORIGIN_LAT;
-        if (AVKey.SOUTH.equals(Hemisphere))
+        if (Keys.SOUTH.equals(Hemisphere))
             UPS_Origin_Latitude = -UPSCoordConverter.MAX_ORIGIN_LAT;
 
         if (Error_Code == UPSCoordConverter.UPS_NO_ERROR) {   /*  no errors   */
@@ -292,5 +292,3 @@ public class UPSCoordConverter {
         return Longitude;
     }
 }
-
-

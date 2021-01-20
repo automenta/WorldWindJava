@@ -5,6 +5,7 @@
  */
 package gov.nasa.worldwind.layers.wms;
 
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
@@ -24,19 +25,19 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer {
         "image/dds", "image/png", "image/jpeg"
     };
 
-    public WMSTiledImageLayer(AVList params) {
+    public WMSTiledImageLayer(KV params) {
         super(params);
     }
 
-    public WMSTiledImageLayer(Document dom, AVList params) {
+    public WMSTiledImageLayer(Document dom, KV params) {
         this(dom.getDocumentElement(), params);
     }
 
-    public WMSTiledImageLayer(Element domElement, AVList params) {
+    public WMSTiledImageLayer(Element domElement, KV params) {
         this(WMSTiledImageLayer.wmsGetParamsFromDocument(domElement, params));
     }
 
-    public WMSTiledImageLayer(WMSCapabilities caps, AVList params) {
+    public WMSTiledImageLayer(WMSCapabilities caps, KV params) {
         this(WMSTiledImageLayer.wmsGetParamsFromCapsDoc(caps, params));
     }
 
@@ -67,15 +68,15 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer {
      * null.
      * @throws IllegalArgumentException if the DOM element is null.
      */
-    protected static AVList wmsGetParamsFromDocument(Element domElement, AVList params) {
+    protected static KV wmsGetParamsFromDocument(Element domElement, KV params) {
 
         if (params == null)
-            params = new AVListImpl();
+            params = new KVMap();
 
         DataConfigurationUtils.getWMSLayerConfigParams(domElement, params);
         BasicTiledImageLayer.getParamsFromDocument(domElement, params);
 
-        params.set(AVKey.TILE_URL_BUILDER, new URLBuilder(params));
+        params.set(Keys.TILE_URL_BUILDER, new URLBuilder(params));
 
         return params;
     }
@@ -90,10 +91,10 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer {
      * null.
      * @throws IllegalArgumentException if the capabilities document reference is null.
      */
-    public static AVList wmsGetParamsFromCapsDoc(WMSCapabilities caps, AVList params) {
+    public static KV wmsGetParamsFromCapsDoc(WMSCapabilities caps, KV params) {
 
         if (params == null)
-            params = new AVListImpl();
+            params = new KVMap();
 
         try {
             DataConfigurationUtils.getWMSLayerConfigParams(caps, WMSTiledImageLayer.formatOrderPreference, params);
@@ -112,9 +113,9 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer {
         BasicTiledImageLayer.setFallbacks(params);
 
         // Setup WMS URL builder.
-        params.set(AVKey.TILE_URL_BUILDER, new URLBuilder(params));
+        params.set(Keys.TILE_URL_BUILDER, new URLBuilder(params));
         // Setup default WMS tiled image layer behaviors.
-        params.set(AVKey.USE_TRANSPARENT_TEXTURES, true);
+        params.set(Keys.USE_TRANSPARENT_TEXTURES, true);
 
         return params;
     }
@@ -126,7 +127,7 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer {
      * @return an attribute-value list containing the parameters in the specified restorable state.
      * @throws IllegalArgumentException if the state reference is null.
      */
-    public static AVList wmsRestorableStateToParams(String stateInXml) {
+    public static KV wmsRestorableStateToParams(String stateInXml) {
 
         RestorableSupport rs;
         try {
@@ -139,62 +140,62 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer {
             throw new IllegalArgumentException(message, e);
         }
 
-        AVList params = new AVListImpl();
+        KV params = new KVMap();
         WMSTiledImageLayer.wmsRestoreStateToParams(rs, null, params);
         return params;
     }
 
     protected static void wmsRestoreStateToParams(RestorableSupport rs, RestorableSupport.StateObject context,
-        AVList params) {
+        KV params) {
         // Invoke the BasicTiledImageLayer functionality.
         BasicTiledImageLayer.restoreStateForParams(rs, context, params);
         // Parse any legacy WMSTiledImageLayer state values.
         WMSTiledImageLayer.legacyWmsRestoreStateToParams(rs, context, params);
 
-        String s = rs.getStateValueAsString(context, AVKey.IMAGE_FORMAT);
+        String s = rs.getStateValueAsString(context, Keys.IMAGE_FORMAT);
         if (s != null)
-            params.set(AVKey.IMAGE_FORMAT, s);
+            params.set(Keys.IMAGE_FORMAT, s);
 
-        s = rs.getStateValueAsString(context, AVKey.TITLE);
+        s = rs.getStateValueAsString(context, Keys.TITLE);
         if (s != null)
-            params.set(AVKey.TITLE, s);
+            params.set(Keys.TITLE, s);
 
-        s = rs.getStateValueAsString(context, AVKey.DISPLAY_NAME);
+        s = rs.getStateValueAsString(context, Keys.DISPLAY_NAME);
         if (s != null)
-            params.set(AVKey.DISPLAY_NAME, s);
+            params.set(Keys.DISPLAY_NAME, s);
 
         RestorableSupport.adjustTitleAndDisplayName(params);
 
-        s = rs.getStateValueAsString(context, AVKey.LAYER_NAMES);
+        s = rs.getStateValueAsString(context, Keys.LAYER_NAMES);
         if (s != null)
-            params.set(AVKey.LAYER_NAMES, s);
+            params.set(Keys.LAYER_NAMES, s);
 
-        s = rs.getStateValueAsString(context, AVKey.STYLE_NAMES);
+        s = rs.getStateValueAsString(context, Keys.STYLE_NAMES);
         if (s != null)
-            params.set(AVKey.STYLE_NAMES, s);
+            params.set(Keys.STYLE_NAMES, s);
 
         s = rs.getStateValueAsString(context, "wms.Version");
         if (s != null)
-            params.set(AVKey.WMS_VERSION, s);
-        params.set(AVKey.TILE_URL_BUILDER, new URLBuilder(params));
+            params.set(Keys.WMS_VERSION, s);
+        params.set(Keys.TILE_URL_BUILDER, new URLBuilder(params));
     }
 
     protected static void legacyWmsRestoreStateToParams(RestorableSupport rs, RestorableSupport.StateObject context,
-        AVList params) {
+        KV params) {
         // WMSTiledImageLayer has historically used a different format for storing LatLon and Sector properties
         // in the restorable state XML documents. Although WMSTiledImageLayer no longer writes these properties,
         // we must provide support for reading them here.
-        Double lat = rs.getStateValueAsDouble(context, AVKey.LEVEL_ZERO_TILE_DELTA + ".Latitude");
-        Double lon = rs.getStateValueAsDouble(context, AVKey.LEVEL_ZERO_TILE_DELTA + ".Longitude");
+        Double lat = rs.getStateValueAsDouble(context, Keys.LEVEL_ZERO_TILE_DELTA + ".Latitude");
+        Double lon = rs.getStateValueAsDouble(context, Keys.LEVEL_ZERO_TILE_DELTA + ".Longitude");
         if (lat != null && lon != null)
-            params.set(AVKey.LEVEL_ZERO_TILE_DELTA, LatLon.fromDegrees(lat, lon));
+            params.set(Keys.LEVEL_ZERO_TILE_DELTA, LatLon.fromDegrees(lat, lon));
 
-        Double minLat = rs.getStateValueAsDouble(context, AVKey.SECTOR + ".MinLatitude");
-        Double minLon = rs.getStateValueAsDouble(context, AVKey.SECTOR + ".MinLongitude");
-        Double maxLat = rs.getStateValueAsDouble(context, AVKey.SECTOR + ".MaxLatitude");
-        Double maxLon = rs.getStateValueAsDouble(context, AVKey.SECTOR + ".MaxLongitude");
+        Double minLat = rs.getStateValueAsDouble(context, Keys.SECTOR + ".MinLatitude");
+        Double minLon = rs.getStateValueAsDouble(context, Keys.SECTOR + ".MinLongitude");
+        Double maxLat = rs.getStateValueAsDouble(context, Keys.SECTOR + ".MaxLatitude");
+        Double maxLon = rs.getStateValueAsDouble(context, Keys.SECTOR + ".MaxLongitude");
         if (minLat != null && minLon != null && maxLat != null && maxLon != null)
-            params.set(AVKey.SECTOR, Sector.fromDegrees(minLat, maxLat, minLon, maxLon));
+            params.set(Keys.SECTOR, Sector.fromDegrees(minLat, maxLat, minLon, maxLon));
     }
 
     //**************************************************************//
@@ -252,7 +253,7 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer {
      * @param params configuration parameters describing this WMS tiled image layer.
      * @return a WMS tiled image layer configuration document.
      */
-    protected Document createConfigurationDocument(AVList params) {
+    protected Document createConfigurationDocument(KV params) {
         Document doc = super.createConfigurationDocument(params);
         if (doc == null || doc.getDocumentElement() == null)
             return doc;
@@ -284,12 +285,12 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer {
         private final String backgroundColor;
         public String URLTemplate;
 
-        public URLBuilder(AVList params) {
-            this.layerNames = params.getStringValue(AVKey.LAYER_NAMES);
-            this.styleNames = params.getStringValue(AVKey.STYLE_NAMES);
-            this.imageFormat = params.getStringValue(AVKey.IMAGE_FORMAT);
-            this.backgroundColor = params.getStringValue(AVKey.WMS_BACKGROUND_COLOR);
-            String version = params.getStringValue(AVKey.WMS_VERSION);
+        public URLBuilder(KV params) {
+            this.layerNames = params.getStringValue(Keys.LAYER_NAMES);
+            this.styleNames = params.getStringValue(Keys.STYLE_NAMES);
+            this.imageFormat = params.getStringValue(Keys.IMAGE_FORMAT);
+            this.backgroundColor = params.getStringValue(Keys.WMS_BACKGROUND_COLOR);
+            String version = params.getStringValue(Keys.WMS_VERSION);
 
             String coordSystemKey;
             String defaultCS;
@@ -303,7 +304,7 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer {
                 defaultCS = "EPSG:4326";
             }
 
-            String coordinateSystem = params.getStringValue(AVKey.COORDINATE_SYSTEM);
+            String coordinateSystem = params.getStringValue(Keys.COORDINATE_SYSTEM);
             this.crs = coordSystemKey + (coordinateSystem != null ? coordinateSystem : defaultCS);
         }
 

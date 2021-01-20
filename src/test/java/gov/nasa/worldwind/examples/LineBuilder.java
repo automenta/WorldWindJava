@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.WorldWindow;
-import gov.nasa.worldwind.avlist.AVListImpl;
+import gov.nasa.worldwind.avlist.KVMap;
 import gov.nasa.worldwind.event.PositionEvent;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -47,7 +47,7 @@ import java.util.ArrayList;
  * @author tag
  * @version $Id: LineBuilder.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class LineBuilder extends AVListImpl {
+public class LineBuilder extends KVMap {
 
     private final WorldWindow wwd;
     private final ArrayList<Position> positions = new ArrayList<>();

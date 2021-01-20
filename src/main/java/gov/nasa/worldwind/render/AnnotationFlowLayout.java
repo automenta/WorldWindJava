@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.render;
 
 import com.jogamp.opengl.GL2;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.util.*;
 
@@ -48,7 +48,7 @@ public class AnnotationFlowLayout extends AbstractAnnotationLayout {
     }
 
     public AnnotationFlowLayout() {
-        this(AVKey.HORIZONTAL);
+        this(Keys.HORIZONTAL);
     }
 
     @SuppressWarnings("StringEquality")
@@ -59,10 +59,10 @@ public class AnnotationFlowLayout extends AbstractAnnotationLayout {
             throw new IllegalArgumentException(message);
         }
 
-        if (orientation == AVKey.HORIZONTAL) {
-            return AVKey.BOTTOM;
-        } else if (orientation == AVKey.VERTICAL) {
-            return AVKey.LEFT;
+        if (orientation == Keys.HORIZONTAL) {
+            return Keys.BOTTOM;
+        } else if (orientation == Keys.VERTICAL) {
+            return Keys.LEFT;
         }
 
         return null;
@@ -72,12 +72,12 @@ public class AnnotationFlowLayout extends AbstractAnnotationLayout {
     protected static void alignHorizontal(DrawContext dc, Rectangle bounds, Dimension size, String align) {
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
-        if (align == AVKey.BOTTOM) {
+        if (align == Keys.BOTTOM) {
             // This is the default.
-        } else if (align == AVKey.TOP) {
+        } else if (align == Keys.TOP) {
             int dy = bounds.height - size.height;
             gl.glTranslated(0, dy, 0);
-        } else if (align == AVKey.CENTER) {
+        } else if (align == Keys.CENTER) {
             int dy = (bounds.height / 2) - (size.height / 2);
             gl.glTranslated(0, dy, 0);
         }
@@ -87,13 +87,13 @@ public class AnnotationFlowLayout extends AbstractAnnotationLayout {
     protected static void alignVertical(DrawContext dc, Rectangle bounds, Dimension size, String align) {
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
-        if (align == AVKey.LEFT) {
+        if (align == Keys.LEFT) {
             // This is the default.
         }
-        if (align == AVKey.RIGHT) {
+        if (align == Keys.RIGHT) {
             int dx = bounds.width - size.width;
             gl.glTranslated(dx, 0, 0);
-        } else if (align == AVKey.CENTER) {
+        } else if (align == Keys.CENTER) {
             int dx = (bounds.width / 2) - (size.width / 2);
             gl.glTranslated(dx, 0, 0);
         }
@@ -163,9 +163,9 @@ public class AnnotationFlowLayout extends AbstractAnnotationLayout {
             throw new IllegalArgumentException(message);
         }
 
-        if (this.orientation == AVKey.HORIZONTAL) {
+        if (this.orientation == Keys.HORIZONTAL) {
             return this.horizontalPreferredSize(dc, annotations);
-        } else if (this.orientation == AVKey.VERTICAL) {
+        } else if (this.orientation == Keys.VERTICAL) {
             return this.verticalPerferredSize(dc, annotations);
         }
 
@@ -193,9 +193,9 @@ public class AnnotationFlowLayout extends AbstractAnnotationLayout {
             throw new IllegalArgumentException(message);
         }
 
-        if (this.orientation == AVKey.HORIZONTAL) {
+        if (this.orientation == Keys.HORIZONTAL) {
             this.drawHorizontal(dc, bounds, annotations, opacity, pickPosition);
-        } else if (this.orientation == AVKey.VERTICAL) {
+        } else if (this.orientation == Keys.VERTICAL) {
             this.drawVertical(dc, bounds, annotations, opacity, pickPosition);
         }
     }
@@ -216,9 +216,9 @@ public class AnnotationFlowLayout extends AbstractAnnotationLayout {
 
         super.beginDrawAnnotations(dc, bounds);
 
-        if (this.orientation == AVKey.HORIZONTAL) {
+        if (this.orientation == Keys.HORIZONTAL) {
             AnnotationFlowLayout.beginHorizontal(dc, bounds);
-        } else if (this.orientation == AVKey.VERTICAL) {
+        } else if (this.orientation == Keys.VERTICAL) {
             AnnotationFlowLayout.beginVertical(dc, bounds);
         }
     }
@@ -277,7 +277,7 @@ public class AnnotationFlowLayout extends AbstractAnnotationLayout {
         Iterable<? extends Annotation> annotations, double opacity, Position pickPosition) {
         String align = this.getAlignment();
         if (align == null) {
-            align = AnnotationFlowLayout.getDefaultAlignment(AVKey.HORIZONTAL);
+            align = AnnotationFlowLayout.getDefaultAlignment(Keys.HORIZONTAL);
         }
 
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
@@ -300,7 +300,7 @@ public class AnnotationFlowLayout extends AbstractAnnotationLayout {
         Iterable<? extends Annotation> annotations, double opacity, Position pickPosition) {
         String align = this.getAlignment();
         if (align == null) {
-            align = AnnotationFlowLayout.getDefaultAlignment(AVKey.VERTICAL);
+            align = AnnotationFlowLayout.getDefaultAlignment(Keys.VERTICAL);
         }
 
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.

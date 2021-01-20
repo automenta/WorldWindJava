@@ -10,7 +10,6 @@ import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.glu.GLU;
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.cache.ShapeDataCache;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.Box;
@@ -93,7 +92,7 @@ public class ExtrudedPolygon extends AbstractShape {
     /**
      * Indicates the number of vertices that must be present in order for VBOs to be used to render this shape.
      */
-    protected static final int VBO_THRESHOLD = Configuration.getIntegerValue(AVKey.VBO_THRESHOLD, 30);
+    protected static final int VBO_THRESHOLD = Configuration.getIntegerValue(Keys.VBO_THRESHOLD, 30);
 
     static {
         defaultSideAttributes = new BasicShapeAttributes();
@@ -749,7 +748,7 @@ public class ExtrudedPolygon extends AbstractShape {
             if (locations == null || locations.size() < 3)
                 continue;
 
-            if (!WWMath.computeWindingOrderOfLocations(locations).equals(AVKey.COUNTER_CLOCKWISE))
+            if (!WWMath.computeWindingOrderOfLocations(locations).equals(Keys.COUNTER_CLOCKWISE))
                 Collections.reverse(locations);
         }
 

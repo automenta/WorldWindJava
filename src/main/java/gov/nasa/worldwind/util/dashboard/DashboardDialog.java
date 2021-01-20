@@ -6,8 +6,7 @@
 
 package gov.nasa.worldwind.util.dashboard;
 
-import gov.nasa.worldwind.WorldWindow;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.event.RenderingEvent;
 import gov.nasa.worldwind.util.*;
 
@@ -53,7 +52,7 @@ public class DashboardDialog extends JDialog {
 
     public void raiseDialog() {
         makeCurrent();
-        WWUtil.alignComponent(this.getParent(), this, AVKey.RIGHT);
+        WWUtil.alignComponent(this.getParent(), this, Keys.RIGHT);
         this.setVisible(true);
     }
 

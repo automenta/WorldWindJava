@@ -7,8 +7,7 @@
 package gov.nasa.worldwind.util;
 
 import com.jogamp.common.nio.*;
-import gov.nasa.worldwind.Configuration;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import jcog.Log;
 import okhttp3.*;
@@ -990,15 +989,15 @@ public class WWIO {
     }
 
     public static Proxy configureProxy() {
-        String proxyHost = Configuration.getStringValue(AVKey.URL_PROXY_HOST);
+        String proxyHost = Configuration.getStringValue(Keys.URL_PROXY_HOST);
         if (proxyHost == null)
             return null;
 
         Proxy proxy = null;
 
         try {
-            int proxyPort = Configuration.getIntegerValue(AVKey.URL_PROXY_PORT);
-            String proxyType = Configuration.getStringValue(AVKey.URL_PROXY_TYPE);
+            int proxyPort = Configuration.getIntegerValue(Keys.URL_PROXY_PORT);
+            String proxyType = Configuration.getStringValue(Keys.URL_PROXY_TYPE);
 
             SocketAddress addr = new InetSocketAddress(proxyHost, proxyPort);
             if (Objects.equals(proxyType, "Proxy.Type.Http"))
@@ -1106,10 +1105,10 @@ public class WWIO {
      * Returns the data type constant corresponding to the specified mime type string. Supported mime types are as
      * mapped to data types as follows: <table> <caption style="font-weight: bold;">Mapping</caption>
      * <tr><th>Mime Type</th><th>Data Type</th></tr>
-     * <tr><td>application/bil32</td><td>{@link AVKey#FLOAT32}</td></tr>
-     * <tr><td>application/bil16</td><td>{@link AVKey#INT16}</td></tr>
-     * <tr><td>application/bil</td><td>{@link AVKey#INT16}</td></tr>
-     * <tr><td>image/bil</td><td>{@link AVKey#INT16}</td></tr> </table>
+     * <tr><td>application/bil32</td><td>{@link Keys#FLOAT32}</td></tr>
+     * <tr><td>application/bil16</td><td>{@link Keys#INT16}</td></tr>
+     * <tr><td>application/bil</td><td>{@link Keys#INT16}</td></tr>
+     * <tr><td>image/bil</td><td>{@link Keys#INT16}</td></tr> </table>
      *
      * @param mimeType the mime type who's data type is returned.
      * @return the data type for the specified mime type.
@@ -1124,8 +1123,8 @@ public class WWIO {
         }
 
         return switch (mimeType) {
-            case "application/bil32" -> AVKey.FLOAT32;
-            case "application/bil16", "image/bil", "application/bil" -> AVKey.INT16;
+            case "application/bil32" -> Keys.FLOAT32;
+            case "application/bil16", "image/bil", "application/bil" -> Keys.INT16;
             default -> null;
         };
     }

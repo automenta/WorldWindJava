@@ -284,7 +284,7 @@ public class RPFTiledImageProcessor {
             RPFTiledImageProcessor.saveFileIndex(fileIndex, indexFile);
 
             // Create tiled imagery.
-            AVList params = new AVListImpl();
+            KV params = new KVMap();
             params.set(RPFTiledImageLayer.RPF_ROOT_PATH, rootPath);
             params.set(RPFTiledImageLayer.RPF_DATA_SERIES_ID, dataSeriesId);
             params.set(RPFGenerator.RPF_FILE_INDEX, fileIndex);

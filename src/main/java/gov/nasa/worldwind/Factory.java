@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind;
 
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.KV;
 
 /**
  * General factory interface.
@@ -29,5 +29,5 @@ public interface Factory {
      *                                                              the source of the failure is included as the {@link
      *                                                              Exception#initCause(Throwable)}.
      */
-    Object createFromConfigSource(Object configSource, AVList params);
+    Object createFromConfigSource(Object configSource, KV params);
 }

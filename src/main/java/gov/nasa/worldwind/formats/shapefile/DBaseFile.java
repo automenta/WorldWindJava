@@ -5,7 +5,8 @@
  */
 package gov.nasa.worldwind.formats.shapefile;
 
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.Keys;
+import gov.nasa.worldwind.avlist.KVMap;
 import gov.nasa.worldwind.exception.*;
 import gov.nasa.worldwind.util.*;
 
@@ -21,7 +22,7 @@ import java.util.logging.Level;
  * @author Patrick Murris
  * @version $Id: DBaseFile.java 2257 2014-08-22 18:02:19Z tgaskins $
  */
-public class DBaseFile extends AVListImpl {
+public class DBaseFile extends KVMap {
     protected static final int FIXED_HEADER_LENGTH = 32;
     protected static final int FIELD_DESCRIPTOR_LENGTH = 32;
     protected static final String[] DBASE_CONTENT_TYPES =
@@ -47,7 +48,7 @@ public class DBaseFile extends AVListImpl {
         }
 
         try {
-            this.set(AVKey.DISPLAY_NAME, source.toString());
+            this.set(Keys.DISPLAY_NAME, source.toString());
 
             if (source instanceof File)
                 this.initializeFromFile((File) source);
@@ -65,7 +66,7 @@ public class DBaseFile extends AVListImpl {
         }
         catch (Exception e) {
             String message = Logging.getMessage("SHP.ExceptionAttemptingToReadDBase",
-                this.getStringValue(AVKey.DISPLAY_NAME));
+                this.getStringValue(Keys.DISPLAY_NAME));
             Logging.logger().log(Level.SEVERE, message, e);
             throw new WWRuntimeException(message, e);
         }
@@ -79,12 +80,12 @@ public class DBaseFile extends AVListImpl {
         }
 
         try {
-            this.set(AVKey.DISPLAY_NAME, is.toString());
+            this.set(Keys.DISPLAY_NAME, is.toString());
             this.initializeFromStream(is);
         }
         catch (Exception e) {
             String message = Logging.getMessage("SHP.ExceptionAttemptingToReadDBase",
-                this.getStringValue(AVKey.DISPLAY_NAME));
+                this.getStringValue(Keys.DISPLAY_NAME));
             Logging.logger().log(Level.SEVERE, message, e);
             throw new WWRuntimeException(message, e);
         }
@@ -237,13 +238,13 @@ public class DBaseFile extends AVListImpl {
 
     public DBaseRecord nextRecord() {
         if (!this.open) {
-            String message = Logging.getMessage("SHP.DBaseFileClosed", this.getStringValue(AVKey.DISPLAY_NAME));
+            String message = Logging.getMessage("SHP.DBaseFileClosed", this.getStringValue(Keys.DISPLAY_NAME));
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
         }
 
         if (this.getNumberOfRecords() <= 0 || this.numRecordsRead >= this.getNumberOfRecords()) {
-            String message = Logging.getMessage("SHP.NoRecords", this.getStringValue(AVKey.DISPLAY_NAME));
+            String message = Logging.getMessage("SHP.NoRecords", this.getStringValue(Keys.DISPLAY_NAME));
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
         }
@@ -253,7 +254,7 @@ public class DBaseFile extends AVListImpl {
         }
         catch (IOException e) {
             String message = Logging.getMessage("SHP.ExceptionAttemptingToReadDBaseRecord",
-                this.getStringValue(AVKey.DISPLAY_NAME));
+                this.getStringValue(Keys.DISPLAY_NAME));
             Logging.logger().log(Level.SEVERE, message, e);
             throw new WWRuntimeException(message, e);
         }

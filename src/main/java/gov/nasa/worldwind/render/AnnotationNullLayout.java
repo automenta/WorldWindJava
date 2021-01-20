@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.render;
 
 import com.jogamp.opengl.GL2;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.util.*;
 
@@ -127,24 +127,24 @@ public class AnnotationNullLayout extends AbstractAnnotationLayout {
 
         Object constraint = this.getConstraint(annotation);
 
-        if (constraint == AVKey.WEST) {
+        if (constraint == Keys.WEST) {
             y += parentBounds.height / 2 - bounds.height / 2;
-        } else if (constraint == AVKey.NORTHWEST) {
+        } else if (constraint == Keys.NORTHWEST) {
             y += parentBounds.height - bounds.height;
-        } else if (constraint == AVKey.NORTH) {
+        } else if (constraint == Keys.NORTH) {
             x += parentBounds.width / 2 - bounds.width / 2;
             y += parentBounds.height - bounds.height;
-        } else if (constraint == AVKey.NORTHEAST) {
+        } else if (constraint == Keys.NORTHEAST) {
             x += parentBounds.width - bounds.width;
             y += parentBounds.height - bounds.height;
-        } else if (constraint == AVKey.EAST) {
+        } else if (constraint == Keys.EAST) {
             x += parentBounds.width - bounds.width;
             y += parentBounds.height / 2 - bounds.height / 2;
-        } else if (constraint == AVKey.SOUTHEAST) {
+        } else if (constraint == Keys.SOUTHEAST) {
             x += parentBounds.width - bounds.width;
-        } else if (constraint == AVKey.SOUTH) {
+        } else if (constraint == Keys.SOUTH) {
             x += parentBounds.width / 2 - bounds.width / 2;
-        } else if (constraint == AVKey.CENTER) {
+        } else if (constraint == Keys.CENTER) {
             x += parentBounds.width / 2 - bounds.width / 2;
             y += parentBounds.height / 2 - bounds.height / 2;
         } else // Default to anchoring in the south west corner.

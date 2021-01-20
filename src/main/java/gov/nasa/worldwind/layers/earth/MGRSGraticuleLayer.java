@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.layers.earth;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.geom.coords.*;
 import gov.nasa.worldwind.globes.Globe;
@@ -650,7 +650,7 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer {
                     sector.getCentroid().getLongitude(), globe);
                 if (this.isUPS) {
                     this.name = MGRS.toString().substring(2, 3);
-                    this.hemisphere = sector.latMin > 0 ? AVKey.NORTH : AVKey.SOUTH;
+                    this.hemisphere = sector.latMin > 0 ? Keys.NORTH : Keys.SOUTH;
                 } else {
                     this.name = MGRS.toString().substring(0, 3);
                     UTMCoord UTM = UTMCoord.fromLatLon(sector.getCentroid().getLatitude(),
@@ -759,7 +759,7 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer {
             this.squares = new ArrayList<>();
             double minEasting, maxEasting, minNorthing, maxNorthing;
 
-            if (AVKey.NORTH.equals(this.hemisphere)) {
+            if (Keys.NORTH.equals(this.hemisphere)) {
                 minNorthing = GridZone.TWOMIL - GridZone.ONEHT * 7;
                 maxNorthing = GridZone.TWOMIL + GridZone.ONEHT * 7;
                 minEasting = this.name.equals("Y") ? GridZone.TWOMIL - GridZone.ONEHT * 7 : GridZone.TWOMIL;
@@ -824,7 +824,7 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer {
             final Sector s = this.sector;
             positions.add(new Position(s.latMin, s.lonMin, 10.0e3));
             positions.add(new Position(s.latMax, s.lonMin, 10.0e3));
-            Object polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), AVKey.LINEAR);
+            Object polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), Keys.LINEAR);
             Sector lineSector = new Sector(s.latMin, s.latMax,
                 s.lonMin, s.lonMin);
             this.gridElements.add(new GraticuleLayer.GridElement(lineSector, polyline, GraticuleLayer.GridElement.TYPE_LINE_WEST));
@@ -834,7 +834,7 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer {
                 positions.clear();
                 positions.add(new Position(s.latMin, s.lonMax, 10.0e3));
                 positions.add(new Position(s.latMax, s.lonMax, 10.0e3));
-                polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), AVKey.LINEAR);
+                polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), Keys.LINEAR);
                 lineSector = new Sector(s.latMin, s.latMax, s.lonMax, s.lonMax);
                 this.gridElements.add(new GraticuleLayer.GridElement(lineSector, polyline, GraticuleLayer.GridElement.TYPE_LINE_EAST));
 
@@ -842,7 +842,7 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer {
                 positions.clear();
                 positions.add(new Position(s.latMin, s.lonMin, 10.0e3));
                 positions.add(new Position(s.latMin, s.lonMax, 10.0e3));
-                polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), AVKey.LINEAR);
+                polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), Keys.LINEAR);
                 lineSector = new Sector(s.latMin, s.latMin, s.lonMin, s.lonMax);
                 this.gridElements.add(new GraticuleLayer.GridElement(lineSector, polyline, GraticuleLayer.GridElement.TYPE_LINE_SOUTH));
 
@@ -850,7 +850,7 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer {
                 positions.clear();
                 positions.add(new Position(s.latMax, s.lonMin, 10.0e3));
                 positions.add(new Position(s.latMax, s.lonMax, 10.0e3));
-                polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), AVKey.LINEAR);
+                polyline = GraticuleLayer.createLineRenderable(new ArrayList<>(positions), Keys.LINEAR);
                 lineSector = new Sector(s.latMax, s.latMax, s.lonMin, s.lonMax);
                 this.gridElements.add(new GraticuleLayer.GridElement(lineSector, polyline, GraticuleLayer.GridElement.TYPE_LINE_NORTH));
             }

@@ -5,8 +5,7 @@
  */
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.WorldWindow;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.formats.gpx.GpxReader;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.MarkerLayer;
@@ -48,8 +47,8 @@ public class GPSTracks extends ApplicationTemplate {
                         PickedObject po = event.getTopPickedObject();
                         //noinspection RedundantCast
                         System.out.printf("Track position %s, %s, size = %f\n",
-                            po.get(AVKey.PICKED_OBJECT_ID).toString(),
-                            po.position(), (Double) po.get(AVKey.PICKED_OBJECT_SIZE));
+                            po.get(Keys.PICKED_OBJECT_ID).toString(),
+                            po.position(), (Double) po.get(Keys.PICKED_OBJECT_SIZE));
                     }
                 }
             });

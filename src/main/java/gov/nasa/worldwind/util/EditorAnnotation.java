@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.util;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.render.*;
 
 import java.awt.*;
@@ -30,14 +30,14 @@ public class EditorAnnotation extends ScreenAnnotation {
     }
 
     protected void initializeAttributes() {
-        this.attributes.setAdjustWidthToText(AVKey.SIZE_FIT_TEXT);
-        this.attributes.setFrameShape(AVKey.SHAPE_RECTANGLE);
+        this.attributes.setAdjustWidthToText(Keys.SIZE_FIT_TEXT);
+        this.attributes.setFrameShape(Keys.SHAPE_RECTANGLE);
         this.attributes.setTextColor(Color.BLACK);
         this.attributes.setBackgroundColor(new Color(1.0f, 1.0f, 1.0f, 0.8f));
         this.attributes.setCornerRadius(5);
         this.attributes.setBorderColor(new Color(0xababab));
         this.attributes.setFont(Font.decode("Arial-PLAIN-12"));
-        this.attributes.setTextAlign(AVKey.CENTER);
+        this.attributes.setTextAlign(Keys.CENTER);
         this.attributes.setInsets(new Insets(5, 5, 5, 5));
     }
 

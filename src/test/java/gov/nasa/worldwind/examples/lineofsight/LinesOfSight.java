@@ -7,7 +7,6 @@
 package gov.nasa.worldwind.examples.lineofsight;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.examples.*;
 import gov.nasa.worldwind.formats.shapefile.*;
 import gov.nasa.worldwind.geom.*;
@@ -390,7 +389,7 @@ public class LinesOfSight extends ApplicationTemplate {
             PointPlacemark pm = new PointPlacemark(losi.getIntersectionPosition());
             pm.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             pm.setAttributes(this.intersectionPointAttributes);
-            pm.set(AVKey.DISPLAY_NAME, losi.getIntersectionPosition().toString());
+            pm.set(Keys.DISPLAY_NAME, losi.getIntersectionPosition().toString());
             this.intersectionsLayer.add(pm);
         }
 
@@ -399,7 +398,7 @@ public class LinesOfSight extends ApplicationTemplate {
                 PointPlacemark pm = new PointPlacemark(losi.getIntersectionPosition());
                 pm.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
                 pm.setAttributes(this.intersectionPointAttributes);
-                pm.set(AVKey.DISPLAY_NAME, losi.getIntersectionPosition().toString());
+                pm.set(Keys.DISPLAY_NAME, losi.getIntersectionPosition().toString());
                 this.intersectionsLayer.add(pm);
             }
         }
@@ -435,7 +434,7 @@ public class LinesOfSight extends ApplicationTemplate {
                 pm.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
                 pm.setAttributes(this.gridPointAttributes);
                 pm.setLineEnabled(true);
-                pm.set(AVKey.DISPLAY_NAME, p.toString());
+                pm.set(Keys.DISPLAY_NAME, p.toString());
                 this.gridLayer.add(pm);
             }
 
@@ -453,7 +452,7 @@ public class LinesOfSight extends ApplicationTemplate {
             PointPlacemark pm = new PointPlacemark(cPos);
             pm.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             pm.setAttributes(this.selectedLocationAttributes);
-            pm.set(AVKey.DISPLAY_NAME, cPos.toString());
+            pm.set(Keys.DISPLAY_NAME, cPos.toString());
             pm.setLineEnabled(true);
             this.gridLayer.add(pm);
         }

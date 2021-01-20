@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind;
 
-import gov.nasa.worldwind.avlist.AVListImpl;
+import gov.nasa.worldwind.avlist.KVMap;
 import gov.nasa.worldwind.event.Message;
 
 import java.beans.PropertyChangeEvent;
@@ -18,7 +18,7 @@ import java.beans.PropertyChangeEvent;
  * @author Tom Gaskins
  * @version $Id: WWObjectImpl.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class WWObjectImpl extends AVListImpl implements WWObject {
+public class WWObjectImpl extends KVMap implements WWObject {
     /**
      * Constructs a new <code>WWObjectImpl</code>.
      */

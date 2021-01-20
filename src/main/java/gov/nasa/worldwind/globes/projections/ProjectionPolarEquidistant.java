@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.globes.projections;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.util.Logging;
@@ -31,10 +31,10 @@ public class ProjectionPolarEquidistant extends AbstractGeographicProjection {
     }
 
     /**
-     * Creates a projection centered on the specified pole, which can be either {@link AVKey#NORTH} or {@link
-     * AVKey#SOUTH}.
+     * Creates a projection centered on the specified pole, which can be either {@link Keys#NORTH} or {@link
+     * Keys#SOUTH}.
      *
-     * @param pole The pole to center on, either {@link AVKey#NORTH} or {@link AVKey#SOUTH}.
+     * @param pole The pole to center on, either {@link Keys#NORTH} or {@link Keys#SOUTH}.
      * @throws IllegalArgumentException if the specified pole is null.
      */
     public ProjectionPolarEquidistant(String pole) {
@@ -46,7 +46,7 @@ public class ProjectionPolarEquidistant extends AbstractGeographicProjection {
             throw new IllegalArgumentException(message);
         }
 
-        this.pole = pole.equals(AVKey.SOUTH) ? ProjectionPolarEquidistant.SOUTH : ProjectionPolarEquidistant.NORTH;
+        this.pole = pole.equals(Keys.SOUTH) ? ProjectionPolarEquidistant.SOUTH : ProjectionPolarEquidistant.NORTH;
     }
 
     public String getName() {
@@ -61,10 +61,10 @@ public class ProjectionPolarEquidistant extends AbstractGeographicProjection {
     /**
      * Indicates the pole on which this projection is centered.
      *
-     * @return The pole on which this projection is centered, either {@link AVKey#NORTH} or {@link AVKey#SOUTH}.
+     * @return The pole on which this projection is centered, either {@link Keys#NORTH} or {@link Keys#SOUTH}.
      */
     public String getPole() {
-        return this.pole == ProjectionPolarEquidistant.SOUTH ? AVKey.SOUTH : AVKey.NORTH;
+        return this.pole == ProjectionPolarEquidistant.SOUTH ? Keys.SOUTH : Keys.NORTH;
     }
 
     @Override

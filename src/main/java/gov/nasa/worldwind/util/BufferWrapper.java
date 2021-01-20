@@ -7,7 +7,8 @@
 package gov.nasa.worldwind.util;
 
 import com.jogamp.opengl.*;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.Keys;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.geom.LatLon;
 
 import java.nio.*;
@@ -45,18 +46,18 @@ public abstract class BufferWrapper {
     public static BufferWrapper wrap(ByteBuffer byteBuffer, Object dataType, Object byteOrder) {
 
         if (byteOrder != null) {
-            byteBuffer.order(AVKey.LITTLE_ENDIAN.equals(byteOrder) ? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN);
+            byteBuffer.order(Keys.LITTLE_ENDIAN.equals(byteOrder) ? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN);
         }
 
-        if (AVKey.INT8.equals(dataType))
+        if (Keys.INT8.equals(dataType))
             return new ByteBufferWrapper(byteBuffer.slice());
-        else if (AVKey.INT16.equals(dataType))
+        else if (Keys.INT16.equals(dataType))
             return new ShortBufferWrapper(byteBuffer.asShortBuffer());
-        else if (AVKey.INT32.equals(dataType))
+        else if (Keys.INT32.equals(dataType))
             return new IntBufferWrapper(byteBuffer.asIntBuffer());
-        else if (AVKey.FLOAT32.equals(dataType))
+        else if (Keys.FLOAT32.equals(dataType))
             return new FloatBufferWrapper(byteBuffer.asFloatBuffer());
-        else if (AVKey.FLOAT64.equals(dataType))
+        else if (Keys.FLOAT64.equals(dataType))
             return new DoubleBufferWrapper(byteBuffer.asDoubleBuffer());
 
         return null;
@@ -79,8 +80,8 @@ public abstract class BufferWrapper {
 
     /**
      * Wraps the specified {@link ByteBuffer} with a BufferWrapper according to the specified parameters. The {@link
-     * AVKey#DATA_TYPE} parameter is required, and describes the primitive data type stored in the ByteBuffer: shorts,
-     * ints, floats, or doubles. The {@link AVKey#BYTE_ORDER} parameter is optional, and describes the ByteBuffer's byte
+     * Keys#DATA_TYPE} parameter is required, and describes the primitive data type stored in the ByteBuffer: shorts,
+     * ints, floats, or doubles. The {@link Keys#BYTE_ORDER} parameter is optional, and describes the ByteBuffer's byte
      * ordering.
      *
      * @param byteBuffer the buffer to wrap.
@@ -89,10 +90,10 @@ public abstract class BufferWrapper {
      * @throws IllegalArgumentException if either the byteBuffer or the parameters are null, or if AVKey.DATA_TYPE
      *                                  parameter is missing.
      */
-    public static BufferWrapper wrap(ByteBuffer byteBuffer, AVList params) {
+    public static BufferWrapper wrap(ByteBuffer byteBuffer, KV params) {
 
         byteBuffer.rewind();
-        return BufferWrapper.wrap(byteBuffer, params.get(AVKey.DATA_TYPE), params.get(AVKey.BYTE_ORDER));
+        return BufferWrapper.wrap(byteBuffer, params.get(Keys.DATA_TYPE), params.get(Keys.BYTE_ORDER));
     }
 
 

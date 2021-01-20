@@ -8,7 +8,6 @@ package gov.nasa.worldwind.render;
 
 import com.jogamp.opengl.GL2;
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.drag.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
@@ -46,7 +45,7 @@ public class SurfaceText extends AbstractSurfaceObject implements GeographicText
     /**
      * Default offset. The default offset centers the text on its geographic position both horizontally and vertically.
      */
-    public static final Offset DEFAULT_OFFSET = new Offset(-0.5d, -0.5d, AVKey.FRACTION, AVKey.FRACTION);
+    public static final Offset DEFAULT_OFFSET = new Offset(-0.5d, -0.5d, Keys.FRACTION, Keys.FRACTION);
 
     /**
      * The text to draw.

@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.*;
@@ -315,7 +314,7 @@ public class ViewLimits extends ApplicationTemplate {
             this.appFrame = appFrame;
 
             this.surfaceSector = new SurfaceSector();
-            this.surfaceSector.setPathType(AVKey.LINEAR);
+            this.surfaceSector.setPathType(Keys.LINEAR);
             ShapeAttributes attr = new BasicShapeAttributes();
             attr.setInteriorMaterial(Material.WHITE);
             attr.setOutlineMaterial(Material.GREEN);

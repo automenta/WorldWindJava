@@ -7,7 +7,6 @@
 package gov.nasa.worldwind.examples.layermanager;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.video.awt.WorldWindowGLCanvas;
 
@@ -71,7 +70,7 @@ public class LayerManagerApp {
             ((Component) this.wwd).setPreferredSize(new Dimension(1000, 600));
 
             // Create the default model as described in the current worldwind properties.
-            Model m = (Model) WorldWind.createConfigurationComponent(AVKey.MODEL_CLASS_NAME);
+            Model m = (Model) WorldWind.createConfigurationComponent(Keys.MODEL_CLASS_NAME);
             this.wwd.setModel(m);
 
             this.add((Component) this.wwd, BorderLayout.CENTER);
@@ -88,7 +87,7 @@ public class LayerManagerApp {
         public AppFrame() {
             initialize();
 
-            WWUtil.alignComponent(null, this, AVKey.CENTER);
+            WWUtil.alignComponent(null, this, Keys.CENTER);
         }
 
         protected void initialize() {
@@ -106,7 +105,7 @@ public class LayerManagerApp {
             this.pack();
 
             // Center the application on the screen.
-            WWUtil.alignComponent(null, this, AVKey.CENTER);
+            WWUtil.alignComponent(null, this, Keys.CENTER);
             this.setResizable(true);
         }
 

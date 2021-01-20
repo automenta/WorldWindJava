@@ -7,7 +7,6 @@
 package gov.nasa.worldwind.util;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.drag.*;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.geom.*;
@@ -34,7 +33,7 @@ public class BasicDragger implements SelectListener {
      */
     protected boolean dragging;
     /**
-     * The {@link DragContext} for dragging operations. Initialized on {@link AVKey#DRAG_BEGIN}.
+     * The {@link DragContext} for dragging operations. Initialized on {@link Keys#DRAG_BEGIN}.
      */
     protected DragContext dragContext;
     //////////////////////////////////////////////////////////
@@ -98,7 +97,7 @@ public class BasicDragger implements SelectListener {
     public void accept(SelectEvent event) {
 
         if (event.getEventAction().equals(SelectEvent.DRAG_END)) {
-            this.dragContext.setDragState(AVKey.DRAG_ENDED);
+            this.dragContext.setDragState(Keys.DRAG_ENDED);
             this.fireDrag((DragSelectEvent) event);
             this.dragContext = null;
             this.dragging = false;
@@ -114,9 +113,9 @@ public class BasicDragger implements SelectListener {
             this.dragContext.setSceneController(this.wwd.sceneControl());
 
             if (this.dragging) {
-                this.dragContext.setDragState(AVKey.DRAG_CHANGE);
+                this.dragContext.setDragState(Keys.DRAG_CHANGE);
             } else {
-                this.dragContext.setDragState(AVKey.DRAG_BEGIN);
+                this.dragContext.setDragState(Keys.DRAG_BEGIN);
                 this.dragContext.setInitialPoint(((DragSelectEvent) event).getPreviousPickPoint());
                 this.dragging = true;
             }
@@ -173,7 +172,7 @@ public class BasicDragger implements SelectListener {
 
         Vec4 refPoint = globe.computePointFromPosition(refPos);
 
-        if (this.dragContext.getDragState().equals(AVKey.DRAG_BEGIN))   // Dragging started
+        if (this.dragContext.getDragState().equals(Keys.DRAG_BEGIN))   // Dragging started
         {
             // Save initial reference points for object and cursor in screen coordinates
             // Note: y is inverted for the object point.

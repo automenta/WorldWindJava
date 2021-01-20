@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.util;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -24,8 +23,8 @@ public class TaskService extends WWObjectImpl implements Thread.UncaughtExceptio
     private final TaskExecutor executor; // thread pool for running retrievers
 
     public TaskService() {
-        Integer poolSize = Configuration.getIntegerValue(AVKey.TASK_POOL_SIZE, TaskService.DEFAULT_CORE_POOL_SIZE);
-        Integer queueSize = Configuration.getIntegerValue(AVKey.TASK_QUEUE_SIZE, TaskService.DEFAULT_QUEUE_SIZE);
+        Integer poolSize = Configuration.getIntegerValue(Keys.TASK_POOL_SIZE, TaskService.DEFAULT_CORE_POOL_SIZE);
+        Integer queueSize = Configuration.getIntegerValue(Keys.TASK_QUEUE_SIZE, TaskService.DEFAULT_QUEUE_SIZE);
 
         // this.executor runs the tasks, each in their own thread
         this.executor = new TaskExecutor(poolSize, queueSize);

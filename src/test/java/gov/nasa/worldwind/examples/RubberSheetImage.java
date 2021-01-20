@@ -363,7 +363,7 @@ public class RubberSheetImage extends ApplicationTemplate {
 
         protected static SurfaceImage createSurfaceImageFromWorldFiles(BufferedImage image, File[] worldFiles)
             throws IOException {
-            AVList worldFileParams = new AVListImpl();
+            KV worldFileParams = new KVMap();
             WorldFile.decodeWorldFiles(worldFiles, worldFileParams);
 
             BufferedImage alignedImage = createPowerOfTwoImage(image.getWidth(), image.getHeight());

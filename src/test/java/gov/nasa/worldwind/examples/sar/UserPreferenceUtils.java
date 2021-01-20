@@ -21,12 +21,12 @@ import java.util.logging.Level;
  * @version $Id: UserPreferenceUtils.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 public class UserPreferenceUtils {
-    public static Document createUserPreferencesDocument(AVList params) {
-        if (params == null) {
-            String message = Logging.getMessage("nullValue.ParametersIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+    public static Document createUserPreferencesDocument(KV params) {
+//        if (params == null) {
+//            String message = Logging.getMessage("nullValue.ParametersIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         Document doc = WWXML.createDocumentBuilder(true).newDocument();
 
@@ -39,18 +39,18 @@ public class UserPreferenceUtils {
         return doc;
     }
 
-    public static void getUserPreferences(Element domElement, AVList params) {
-        if (domElement == null) {
-            String message = Logging.getMessage("nullValue.DocumentIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (params == null) {
-            String message = Logging.getMessage("nullValue.ParametersIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+    public static void getUserPreferences(Element domElement, KV params) {
+//        if (domElement == null) {
+//            String message = Logging.getMessage("nullValue.DocumentIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//
+//        if (params == null) {
+//            String message = Logging.getMessage("nullValue.ParametersIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         XPath xpath = WWXML.makeXPath();
 
@@ -59,7 +59,7 @@ public class UserPreferenceUtils {
             getPropertyList(el, params, xpath);
     }
 
-    public static void createUserPreferenceElements(AVList params, Element domElement) {
+    public static void createUserPreferenceElements(KV params, Element domElement) {
         if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
@@ -83,12 +83,12 @@ public class UserPreferenceUtils {
         return path + File.separator + name;
     }
 
-    public static void getDefaultUserPreferences(AVList params) {
-        if (params == null) {
-            String message = Logging.getMessage("nullValue.ParametersIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+    public static void getDefaultUserPreferences(KV params) {
+//        if (params == null) {
+//            String message = Logging.getMessage("nullValue.ParametersIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         // By default, automatically save tracks every minute.
         params.set(SARKey.ANGLE_FORMAT, Angle.ANGLE_FORMAT_DD);
@@ -97,7 +97,7 @@ public class UserPreferenceUtils {
         params.set(SARKey.ELEVATION_UNIT, SAR2.UNIT_IMPERIAL);
     }
 
-    public static boolean getBooleanValue(AVList avList, String key) {
+    public static boolean getBooleanValue(KV avList, String key) {
         Object o = avList.get(key);
         if (o == null)
             return false;
@@ -105,7 +105,7 @@ public class UserPreferenceUtils {
         if (o instanceof Boolean)
             return (Boolean) o;
 
-        String v = AVListImpl.getStringValue(avList, key);
+        String v = KVMap.getStringValue(avList, key);
         if (v == null)
             return false;
 
@@ -118,7 +118,7 @@ public class UserPreferenceUtils {
         }
     }
 
-    protected static void getPropertyList(Element domElement, AVList params, XPath xpath) {
+    protected static void getPropertyList(Element domElement, KV params, XPath xpath) {
         Element[] els = WWXML.getElements(domElement, "Property", xpath);
         if (els == null || els.length == 0)
             return;
@@ -131,7 +131,7 @@ public class UserPreferenceUtils {
         }
     }
 
-    protected static void getProperty(Element domElement, AVList params, XPath xpath) {
+    protected static void getProperty(Element domElement, KV params, XPath xpath) {
         String key = WWXML.getText(domElement, "@key", xpath);
         String value = WWXML.getText(domElement, "@value", xpath);
         if (key == null || value == null)
@@ -140,7 +140,7 @@ public class UserPreferenceUtils {
         params.set(key, value);
     }
 
-    protected static void createPropertyList(AVList params, Element domElement) {
+    protected static void createPropertyList(KV params, Element domElement) {
         for (Map.Entry<String, Object> entry : params.getEntries()) {
             if (entry == null || entry.getKey() == null || entry.getValue() == null)
                 continue;

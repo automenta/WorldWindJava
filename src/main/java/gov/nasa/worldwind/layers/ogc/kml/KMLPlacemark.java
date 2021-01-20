@@ -6,8 +6,7 @@
 
 package gov.nasa.worldwind.layers.ogc.kml;
 
-import gov.nasa.worldwind.WorldWind;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.event.Message;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.ogc.kml.impl.*;
@@ -189,7 +188,7 @@ public class KMLPlacemark extends KMLAbstractFeature implements KMLMutable {
 
         KMLLineStringPlacemarkImpl impl = new KMLLineStringPlacemarkImpl(tc, this, geom);
         if (impl.getAltitudeMode() == WorldWind.CLAMP_TO_GROUND) // See note in google's version of KML spec
-            impl.setPathType(AVKey.GREAT_CIRCLE);
+            impl.setPathType(Keys.GREAT_CIRCLE);
 
         return impl;
     }

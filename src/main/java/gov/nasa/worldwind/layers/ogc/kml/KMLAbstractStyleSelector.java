@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.layers.ogc.kml;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.util.Logging;
 
 /**
@@ -31,7 +31,7 @@ public abstract class KMLAbstractStyleSelector extends KMLAbstractObject {
      * style selectors and style URL, with precedence given to style selectors.
      * <p>
      * Remote <i>styleUrls</i> that have not yet been resolved are not included in the result. In this case the returned
-     * sub-style is marked with a field named {@link AVKey#UNRESOLVED}. The same is true when a StyleMap refers to a
+     * sub-style is marked with a field named {@link Keys#UNRESOLVED}. The same is true when a StyleMap refers to a
      * Style other than one internal to the KML document.
      *
      * @param styleUrl       an applicable style URL. May be null.
@@ -78,7 +78,7 @@ public abstract class KMLAbstractStyleSelector extends KMLAbstractObject {
      * style selector and style URL, with precedence given to style selector.
      * <p>
      * Remote <i>styleUrls</i> that have not yet been resolved are not included in the result. In this case the returned
-     * sub-style is marked with the value {@link AVKey#UNRESOLVED}.
+     * sub-style is marked with the value {@link Keys#UNRESOLVED}.
      *
      * @param styleUrl      an applicable style URL. May be null.
      * @param styleSelector the {@link KMLAbstractStyleSelector} to consider when determining the effective attributes.
@@ -128,8 +128,8 @@ public abstract class KMLAbstractStyleSelector extends KMLAbstractObject {
      */
     protected static void markUnresolved(boolean tf, KMLAbstractSubStyle subStyle) {
         if (!tf)
-            subStyle.removeField(AVKey.UNRESOLVED);
+            subStyle.removeField(Keys.UNRESOLVED);
         else
-            subStyle.setField(AVKey.UNRESOLVED, System.currentTimeMillis());
+            subStyle.setField(Keys.UNRESOLVED, System.currentTimeMillis());
     }
 }

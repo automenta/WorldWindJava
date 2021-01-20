@@ -15,7 +15,7 @@ import java.util.logging.Level;
 import static java.util.Collections.*;
 
 /**
- * An implementation class for the {@link AVList} interface. Classes implementing <code>AVList</code> can subclass or
+ * An implementation class for the {@link KV} interface. Classes implementing <code>AVList</code> can subclass or
  * aggregate this class to provide default <code>AVList</code> functionality. This class maintains a hash table of
  * attribute-value pairs.
  * <p>
@@ -26,17 +26,18 @@ import static java.util.Collections.*;
  * @author Tom Gaskins
  * @version $Id: AVListImpl.java 2255 2014-08-22 17:36:32Z tgaskins $
  */
-public class AVListImpl implements AVList {
+public class KVMap implements KV {
     // Identifies the property change support instance in the avlist
     private static final String PROPERTY_CHANGE_SUPPORT = "avlist.PropertyChangeSupport";
     private static final Object NULLL = new Object();
+
     // To avoid unnecessary overhead, this object's hash map is created only if needed.
     private volatile Map<String, Object> avList;
 
     /**
      * Creates an empty attribute-value list.
      */
-    public AVListImpl() {
+    public KVMap() {
     }
 
     /**
@@ -44,18 +45,18 @@ public class AVListImpl implements AVList {
      *
      * @param sourceBean The bean to be given as the source for any events.
      */
-    public AVListImpl(Object sourceBean) {
+    public KVMap(Object sourceBean) {
         if (sourceBean != null)
-            this.set(AVListImpl.PROPERTY_CHANGE_SUPPORT, new PropertyChangeSupport(sourceBean));
+            this.set(KVMap.PROPERTY_CHANGE_SUPPORT, new PropertyChangeSupport(sourceBean));
     }
 
     // Static AVList utilities.
-    public static String getStringValue(AVList avList, String key, String defaultValue) {
-        String v = AVListImpl.getStringValue(avList, key);
+    public static String getStringValue(KV avList, String key, String defaultValue) {
+        String v = KVMap.getStringValue(avList, key);
         return v != null ? v : defaultValue;
     }
 
-    public static String getStringValue(AVList avList, String key) {
+    public static String getStringValue(KV avList, String key) {
         try {
             return avList.getStringValue(key);
         }
@@ -64,12 +65,12 @@ public class AVListImpl implements AVList {
         }
     }
 
-    public static Integer getIntegerValue(AVList avList, String key, Integer defaultValue) {
-        Integer v = AVListImpl.getIntegerValue(avList, key);
+    public static Integer getIntegerValue(KV avList, String key, Integer defaultValue) {
+        Integer v = KVMap.getIntegerValue(avList, key);
         return v != null ? v : defaultValue;
     }
 
-    public static Integer getIntegerValue(AVList avList, String key) {
+    public static Integer getIntegerValue(KV avList, String key) {
         Object o = avList.get(key);
         if (o == null)
             return null;
@@ -77,7 +78,7 @@ public class AVListImpl implements AVList {
         if (o instanceof Integer)
             return (Integer) o;
 
-        String v = AVListImpl.getStringValue(avList, key);
+        String v = KVMap.getStringValue(avList, key);
         if (v == null)
             return null;
 
@@ -90,12 +91,12 @@ public class AVListImpl implements AVList {
         }
     }
 
-    public static Long getLongValue(AVList avList, String key, Long defaultValue) {
-        Long v = AVListImpl.getLongValue(avList, key);
+    public static Long getLongValue(KV avList, String key, Long defaultValue) {
+        Long v = KVMap.getLongValue(avList, key);
         return v != null ? v : defaultValue;
     }
 
-    public static Long getLongValue(AVList avList, String key) {
+    public static Long getLongValue(KV avList, String key) {
         Object o = avList.get(key);
         if (o == null)
             return null;
@@ -103,7 +104,7 @@ public class AVListImpl implements AVList {
         if (o instanceof Long)
             return (Long) o;
 
-        String v = AVListImpl.getStringValue(avList, key);
+        String v = KVMap.getStringValue(avList, key);
         if (v == null)
             return null;
 
@@ -116,12 +117,12 @@ public class AVListImpl implements AVList {
         }
     }
 
-    public static Double getDoubleValue(AVList avList, String key, Double defaultValue) {
-        Double v = AVListImpl.getDoubleValue(avList, key);
+    public static Double getDoubleValue(KV avList, String key, Double defaultValue) {
+        Double v = KVMap.getDoubleValue(avList, key);
         return v != null ? v : defaultValue;
     }
 
-    public static Double getDoubleValue(AVList avList, String key) {
+    public static Double getDoubleValue(KV avList, String key) {
         Object o = avList.get(key);
         if (o == null)
             return null;
@@ -129,7 +130,7 @@ public class AVListImpl implements AVList {
         if (o instanceof Double)
             return (Double) o;
 
-        String v = AVListImpl.getStringValue(avList, key);
+        String v = KVMap.getStringValue(avList, key);
         if (v == null)
             return null;
 
@@ -142,12 +143,12 @@ public class AVListImpl implements AVList {
         }
     }
 
-    public static Boolean getBooleanValue(AVList avList, String key, Boolean defaultValue) {
-        Boolean v = AVListImpl.getBooleanValue(avList, key);
+    public static Boolean getBooleanValue(KV avList, String key, Boolean defaultValue) {
+        Boolean v = KVMap.getBooleanValue(avList, key);
         return v != null ? v : defaultValue;
     }
 
-    public static Boolean getBooleanValue(AVList avList, String key) {
+    public static Boolean getBooleanValue(KV avList, String key) {
         Object o = avList.get(key);
         if (o == null)
             return null;
@@ -155,7 +156,7 @@ public class AVListImpl implements AVList {
         if (o instanceof Boolean)
             return (Boolean) o;
 
-        String v = AVListImpl.getStringValue(avList, key);
+        String v = KVMap.getStringValue(avList, key);
         if (v == null)
             return null;
 
@@ -173,11 +174,11 @@ public class AVListImpl implements AVList {
     }
 
     private static Object i(Object value) {
-        return value == null ? AVListImpl.NULLL : value;
+        return value == null ? KVMap.NULLL : value;
     }
 
     private static Object o(Object value) {
-        return value == AVListImpl.NULLL ? null : value;
+        return value == KVMap.NULLL ? null : value;
     }
 
     @Override
@@ -189,14 +190,14 @@ public class AVListImpl implements AVList {
     private Map<String, Object> avList(boolean createIfNone) {
         Map<String, Object> l = avList;
         if (createIfNone && l == null)
-            l = (this.avList = AVListImpl.newAvList());
+            l = (this.avList = KVMap.newAvList());
 
         return l;
     }
 
     public Object get(String key) {
         Map<String, Object> l = this.avList;
-        return l != null ? AVListImpl.o(l.get(key)) : null;
+        return l != null ? KVMap.o(l.get(key)) : null;
     }
 
     public Iterable<Object> getValues() {
@@ -217,10 +218,10 @@ public class AVListImpl implements AVList {
 
     public Object set(String key, Object value) {
 
-        return this.avList(true).put(key, AVListImpl.i(value));
+        return this.avList(true).put(key, KVMap.i(value));
     }
 
-    public AVList setValues(AVList list) {
+    public KV setValues(KV list) {
 //        if (list == null) {
 //            String message = Logging.getMessage("nullValue.AttributesIsNull");
 //            Logging.logger().severe(message);
@@ -230,7 +231,7 @@ public class AVListImpl implements AVList {
         //synchronized(avList) {
         Set<Map.Entry<String, Object>> entries = list.getEntries();
         for (Map.Entry<String, Object> entry : entries) {
-            this.set(entry.getKey(), AVListImpl.o(entry.getValue()));
+            this.set(entry.getKey(), KVMap.o(entry.getValue()));
         }
         //}
 
@@ -249,26 +250,30 @@ public class AVListImpl implements AVList {
         return l != null ? l.remove(key) : null;
     }
 
-    public AVList copy() {
-        AVListImpl clone = new AVListImpl();
-
+    public KV copy() {
         final Map<String, Object> v = this.avList;
-        if (v != null)
+
+        KVMap clone = new KVMap();
+        if (v != null && !v.isEmpty())
             clone.avList(true).putAll(v);
 
         return clone;
     }
 
-    public AVList clearList() {
+    public KV clearList() {
         Map<String, Object> v = this.avList;
         if (v != null)
             v.clear();
         return this;
     }
 
-    protected PropertyChangeSupport getChangeSupport() {
-        return (PropertyChangeSupport) avList(true).computeIfAbsent(AVListImpl.PROPERTY_CHANGE_SUPPORT,
-            p -> new PropertyChangeSupport(AVListImpl.this));
+    protected PropertyChangeSupport getCreatedChangeSupport() {
+        final Map<String, Object> h = avList(false);
+        return h!=null ? (PropertyChangeSupport) h.get(KVMap.PROPERTY_CHANGE_SUPPORT) : null;
+    }
+    private PropertyChangeSupport getChangeSupport() {
+        return (PropertyChangeSupport) avList(true).computeIfAbsent(KVMap.PROPERTY_CHANGE_SUPPORT,
+            p -> new PropertyChangeSupport(KVMap.this));
     }
 
     public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
@@ -288,21 +293,19 @@ public class AVListImpl implements AVList {
     }
 
     public void firePropertyChange(PropertyChangeEvent propertyChangeEvent) {
-        this.getChangeSupport().firePropertyChange(propertyChangeEvent);
+        final PropertyChangeSupport p = this.getCreatedChangeSupport();
+        if (p!=null) p.firePropertyChange(propertyChangeEvent);
     }
 
     public void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
-        this.getChangeSupport().firePropertyChange(propertyName, oldValue, newValue);
+        final PropertyChangeSupport p = this.getCreatedChangeSupport();
+        if (p!=null) p.firePropertyChange(propertyName, oldValue, newValue);
     }
 
     public void getRestorableStateForAVPair(String key, Object value, RestorableSupport rs,
         RestorableSupport.StateObject context) {
-        if (value == null)
-            return;
+        if (value!=null && !key.equals(KVMap.PROPERTY_CHANGE_SUPPORT))
+            rs.addStateValueAsString(context, key, value.toString());
 
-        if (key.equals(AVListImpl.PROPERTY_CHANGE_SUPPORT))
-            return;
-
-        rs.addStateValueAsString(context, key, value.toString());
     }
 }

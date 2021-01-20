@@ -7,7 +7,6 @@
 package gov.nasa.worldwind.drag;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.*;
 import gov.nasa.worldwind.render.PointPlacemark;
@@ -118,7 +117,7 @@ public class DraggableSupport {
         if (referencePosition == null)
             return;
 
-        if (dragContext.getDragState().equals(AVKey.DRAG_BEGIN)) {
+        if (dragContext.getDragState().equals(Keys.DRAG_BEGIN)) {
             this.initialScreenPointOffset = this.computeScreenOffsetFromReferencePosition(
                 referencePosition,
                 dragContext);
@@ -179,7 +178,7 @@ public class DraggableSupport {
         if (referencePosition == null)
             return;
 
-        if (dragContext.getDragState().equals(AVKey.DRAG_BEGIN)) {
+        if (dragContext.getDragState().equals(Keys.DRAG_BEGIN)) {
             this.initialEllipsoidalReferencePoint = dragContext.getGlobe()
                 .computeEllipsoidalPointFromPosition(referencePosition);
             this.initialEllipsoidalScreenPoint = this.computeEllipsoidalPointFromScreen(

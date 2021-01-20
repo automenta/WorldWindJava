@@ -5,8 +5,8 @@
  */
 package gov.nasa.worldwind.util;
 
-import gov.nasa.worldwind.WWObjectImpl;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.geom.*;
 
 import java.net.URL;
@@ -24,36 +24,36 @@ public class LevelSet extends WWObjectImpl {
     private final ArrayList<Level> levels = new ArrayList<>();
     private final SectorResolution[] sectorLevelLimits;
 
-    public LevelSet(AVList params) {
+    public LevelSet(KV params) {
         StringBuilder sb = new StringBuilder();
 
-        Object o = params.get(AVKey.LEVEL_ZERO_TILE_DELTA);
+        Object o = params.get(Keys.LEVEL_ZERO_TILE_DELTA);
         if (!(o instanceof LatLon))
             sb.append(Logging.getMessage("term.tileDelta")).append(' ');
 
-        o = params.get(AVKey.SECTOR);
+        o = params.get(Keys.SECTOR);
         if (!(o instanceof Sector))
             sb.append(Logging.getMessage("term.sector")).append(' ');
 
         int numLevels = 0;
-        o = params.get(AVKey.NUM_LEVELS);
+        o = params.get(Keys.NUM_LEVELS);
         if (!(o instanceof Integer) || (numLevels = (Integer) o) < 1)
             sb.append(Logging.getMessage("term.numLevels")).append(' ');
 
         int numEmptyLevels = 0;
-        o = params.get(AVKey.NUM_EMPTY_LEVELS);
+        o = params.get(Keys.NUM_EMPTY_LEVELS);
         if (o instanceof Integer && (Integer) o > 0)
             numEmptyLevels = (Integer) o;
 
         String[] inactiveLevels = null;
-        o = params.get(AVKey.INACTIVE_LEVELS);
+        o = params.get(Keys.INACTIVE_LEVELS);
         if (o != null && !(o instanceof String))
             sb.append(Logging.getMessage("term.inactiveLevels")).append(' ');
         else if (o != null)
             inactiveLevels = ((String) o).split(",");
 
         SectorResolution[] sectorLimits = null;
-        o = params.get(AVKey.SECTOR_RESOLUTION_LIMITS);
+        o = params.get(Keys.SECTOR_RESOLUTION_LIMITS);
         if (o != null && !(o instanceof SectorResolution[])) {
             sb.append(Logging.getMessage("term.sectorResolutionLimits")).append(' ');
         } else if (o != null) {
@@ -75,10 +75,10 @@ public class LevelSet extends WWObjectImpl {
             throw new IllegalArgumentException(message);
         }
 
-        this.sector = (Sector) params.get(AVKey.SECTOR);
-        this.levelZeroTileDelta = (LatLon) params.get(AVKey.LEVEL_ZERO_TILE_DELTA);
+        this.sector = (Sector) params.get(Keys.SECTOR);
+        this.levelZeroTileDelta = (LatLon) params.get(Keys.LEVEL_ZERO_TILE_DELTA);
 
-        o = params.get(AVKey.TILE_ORIGIN);
+        o = params.get(Keys.TILE_ORIGIN);
         if (o instanceof LatLon)
             this.tileOrigin = (LatLon) o;
         else
@@ -86,9 +86,9 @@ public class LevelSet extends WWObjectImpl {
 
         params = params.copy(); // copy so as not to modify the user's params
 
-        TileUrlBuilder tub = (TileUrlBuilder) params.get(AVKey.TILE_URL_BUILDER);
+        TileUrlBuilder tub = (TileUrlBuilder) params.get(Keys.TILE_URL_BUILDER);
         if (tub == null) {
-            params.set(AVKey.TILE_URL_BUILDER, (TileUrlBuilder) (tile, altImageFormat) -> {
+            params.set(Keys.TILE_URL_BUILDER, (TileUrlBuilder) (tile, altImageFormat) -> {
                 String service = tile.level.getService();
                 if (service == null || service.length() < 1)
                     return null;
@@ -126,12 +126,12 @@ public class LevelSet extends WWObjectImpl {
         this.numLevelZeroColumns = Math.max(1, lastLevelZeroCol - firstLevelZeroCol + 1);
 
         for (int i = 0; i < numLevels; i++) {
-            params.set(AVKey.LEVEL_NAME, i < numEmptyLevels ? "" : Integer.toString(i - numEmptyLevels));
-            params.set(AVKey.LEVEL_NUMBER, i);
+            params.set(Keys.LEVEL_NAME, i < numEmptyLevels ? "" : Integer.toString(i - numEmptyLevels));
+            params.set(Keys.LEVEL_NUMBER, i);
 
             Angle latDelta = this.levelZeroTileDelta.getLatitude().divide(Math.pow(2, i));
             Angle lonDelta = this.levelZeroTileDelta.getLongitude().divide(Math.pow(2, i));
-            params.set(AVKey.TILE_DELTA, new LatLon(latDelta, lonDelta));
+            params.set(Keys.TILE_DELTA, new LatLon(latDelta, lonDelta));
 
             this.levels.add(new Level(params));
         }

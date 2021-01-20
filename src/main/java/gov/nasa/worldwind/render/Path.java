@@ -7,8 +7,7 @@ package gov.nasa.worldwind.render;
 
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.*;
-import gov.nasa.worldwind.WorldWind;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.cache.*;
 import gov.nasa.worldwind.geom.Box;
 import gov.nasa.worldwind.geom.Cylinder;
@@ -34,7 +33,7 @@ import static gov.nasa.worldwind.util.WWUtil.sizeEstimate;
 
 /**
  * Displays a line or curve between positions. The path is drawn between input positions to achieve a specified path
- * type, e.g., {@link AVKey#GREAT_CIRCLE}. It can also conform to the underlying terrain. A curtain may be formed by
+ * type, e.g., {@link Keys#GREAT_CIRCLE}. It can also conform to the underlying terrain. A curtain may be formed by
  * extruding the path to the ground.
  * <p>
  * Altitudes within the path's positions are interpreted according to the path's altitude mode. If the altitude mode is
@@ -43,7 +42,7 @@ import static gov.nasa.worldwind.util.WWUtil.sizeEstimate;
  * altitude mode is {@link WorldWind#CLAMP_TO_GROUND} the altitudes are ignored.
  * <p>
  * Between the specified positions the path is drawn along a curve specified by the path's path type, either {@link
- * AVKey#GREAT_CIRCLE}, {@link AVKey#RHUMB_LINE} or {@link AVKey#LINEAR}. (See {@link #setPathType(String)}.)
+ * Keys#GREAT_CIRCLE}, {@link Keys#RHUMB_LINE} or {@link Keys#LINEAR}. (See {@link #setPathType(String)}.)
  * <p>
  * Paths have separate attributes for normal display and highlighted display. If no attributes are specified, default
  * attributes are used. See {@link #DEFAULT_PATH_INTERIOR_MATERIAL}, {@link #DEFAULT_PATH_OUTLINE_MATERIAL}, and {@link
@@ -85,7 +84,7 @@ public class Path extends AbstractShape {
     /**
      * The default path type.
      */
-    protected static final String DEFAULT_PATH_TYPE = AVKey.LINEAR;
+    protected static final String DEFAULT_PATH_TYPE = Keys.LINEAR;
     /**
      * The offset applied to a terrain following Path's depth values to to ensure it shows over the terrain: 0.99.
      * Values less than 1.0 pull the path in front of the terrain, values greater than 1.0 push the path behind the
@@ -576,7 +575,7 @@ public class Path extends AbstractShape {
      * cause the path to conform more closely to the path type but decrease performance.
      * <p>
      * Note: The sub-segments number is ignored when the path follows terrain or when the path type is {@link
-     * AVKey#LINEAR}.
+     * Keys#LINEAR}.
      *
      * @return the number of sub-segments.
      * @see #setNumSubsegments(int)
@@ -590,7 +589,7 @@ public class Path extends AbstractShape {
      * cause the path to conform more closely to the path type but decrease performance.
      * <p>
      * Note: The sub-segments number is ignored when the path follows terrain or when the path type is {@link
-     * AVKey#LINEAR}.
+     * Keys#LINEAR}.
      *
      * @param numSubsegments the number of sub-segments. The default is 10.
      */
@@ -658,10 +657,10 @@ public class Path extends AbstractShape {
     }
 
     /**
-     * Specifies this path's path type. Recognized values are {@link AVKey#GREAT_CIRCLE}, {@link AVKey#RHUMB_LINE} and
-     * {@link AVKey#LINEAR}.
+     * Specifies this path's path type. Recognized values are {@link Keys#GREAT_CIRCLE}, {@link Keys#RHUMB_LINE} and
+     * {@link Keys#LINEAR}.
      *
-     * @param pathType the current path type. The default value is {@link AVKey#LINEAR}.
+     * @param pathType the current path type. The default value is {@link Keys#LINEAR}.
      * @see <a href="{@docRoot}/overview-summary.html#path-types">Path Types</a>
      */
     public void setPathType(String pathType) {
@@ -1440,7 +1439,7 @@ public class Path extends AbstractShape {
 
         Integer ordinal = this.getOrdinal(positionIndex);
         if (ordinal != null) {
-            po.set(AVKey.ORDINAL, ordinal);
+            po.set(Keys.ORDINAL, ordinal);
         }
 
         return po;
@@ -1713,7 +1712,7 @@ public class Path extends AbstractShape {
         // This method does not add the first position of the segment to the position list. It adds only the
         // subsequent positions, including the segment's last position.
 
-        boolean straightLine = this.getPathType() == AVKey.LINEAR && !this.isSurfacePath(dc);
+        boolean straightLine = this.getPathType() == Keys.LINEAR && !this.isSurfacePath(dc);
 
         double arcLength;
         if (straightLine) {
@@ -1748,7 +1747,7 @@ public class Path extends AbstractShape {
             Color color;
             s = p / arcLength;
 
-            if (this.pathType == AVKey.LINEAR) {
+            if (this.pathType == Keys.LINEAR) {
                 if (segmentAzimuth == null) {
                     segmentAzimuth = LatLon.linearAzimuth(posA, posB);
                     segmentDistance = LatLon.linearDistance(posA, posB);
@@ -1757,7 +1756,7 @@ public class Path extends AbstractShape {
                 LatLon latLon = LatLon.linearEndPosition(posA, segmentAzimuth, distance);
                 pos = new Position(latLon, (1 - s) * posA.getElevation() + s * posB.getElevation());
                 color = (colorA != null && colorB != null) ? WWUtil.interpolateColor(s, colorA, colorB) : null;
-            } else if (this.pathType == AVKey.RHUMB_LINE || this.pathType == AVKey.LOXODROME) {
+            } else if (this.pathType == Keys.RHUMB_LINE || this.pathType == Keys.LOXODROME) {
                 if (segmentAzimuth == null) {
                     segmentAzimuth = LatLon.rhumbAzimuth(posA, posB);
                     segmentDistance = LatLon.rhumbDistance(posA, posB);
@@ -1802,9 +1801,9 @@ public class Path extends AbstractShape {
 
         Angle ang;
         String pathType = this.getPathType();
-        if (pathType == AVKey.LINEAR) {
+        if (pathType == Keys.LINEAR) {
             ang = LatLon.linearDistance(llA, llB);
-        } else if (pathType == AVKey.RHUMB_LINE || pathType == AVKey.LOXODROME) {
+        } else if (pathType == Keys.RHUMB_LINE || pathType == Keys.LOXODROME) {
             ang = LatLon.rhumbDistance(llA, llB);
         } else // Great circle
         {
@@ -2510,9 +2509,9 @@ public class Path extends AbstractShape {
                             int ordinal = path.getOrdinal(colorCode - positions.minColorCode);
 
                             // Add the ordinal to the list of picked ordinals on the path's picked object.
-                            Collection ordinalList = (Collection) po.get(AVKey.ORDINAL_LIST);
+                            Collection ordinalList = (Collection) po.get(Keys.ORDINAL_LIST);
                             if (ordinalList == null) {
-                                po.set(AVKey.ORDINAL_LIST, ordinalList = new ArrayList<Integer>());
+                                po.set(Keys.ORDINAL_LIST, ordinalList = new ArrayList<Integer>());
                             }
                             ordinalList.add(ordinal);
 

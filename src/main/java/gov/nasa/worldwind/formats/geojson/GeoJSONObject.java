@@ -11,8 +11,8 @@ import gov.nasa.worldwind.avlist.*;
  * @author dcollins
  * @version $Id: GeoJSONObject.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class GeoJSONObject extends AVListImpl {
-    public GeoJSONObject(AVList fields) {
+public class GeoJSONObject extends KVMap {
+    public GeoJSONObject(KV fields) {
         if (fields != null)
             this.setValues(fields);
     }
@@ -21,8 +21,8 @@ public class GeoJSONObject extends AVListImpl {
         return (String) this.get(GeoJSONConstants.FIELD_TYPE);
     }
 
-    public AVList getCRS() {
-        return (AVList) this.get(GeoJSONConstants.FIELD_CRS);
+    public KV getCRS() {
+        return (KV) this.get(GeoJSONConstants.FIELD_CRS);
     }
 
     public Object[] getBoundingBox() {

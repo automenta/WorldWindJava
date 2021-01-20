@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.render;
 
 import com.jogamp.opengl.GL;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.util.*;
@@ -73,7 +73,7 @@ public class ScreenAnnotation extends AbstractAnnotation {
         this.setText(text);
         this.screenPoint = position;
         this.getAttributes().setDefaults(defaults);
-        this.getAttributes().setLeader(AVKey.SHAPE_NONE);
+        this.getAttributes().setLeader(Keys.SHAPE_NONE);
         this.getAttributes().setDrawOffset(new Point(0, 0));
     }
 
@@ -107,7 +107,7 @@ public class ScreenAnnotation extends AbstractAnnotation {
         this.screenPoint = position;
         this.getAttributes().setFont(font);
         this.getAttributes().setTextColor(textColor);
-        this.getAttributes().setLeader(AVKey.SHAPE_NONE);
+        this.getAttributes().setLeader(Keys.SHAPE_NONE);
         this.getAttributes().setDrawOffset(new Point(0, 0));
     }
 

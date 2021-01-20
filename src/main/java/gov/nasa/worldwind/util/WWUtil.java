@@ -6,7 +6,8 @@
 
 package gov.nasa.worldwind.util;
 
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.Keys;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.geom.coords.UTMCoord;
 
@@ -290,16 +291,16 @@ public class WWUtil {
         int x = parentLocation.x;
         int y = parentLocation.y;
 
-        if (alignment != null && alignment.equals(AVKey.RIGHT)) {
+        if (alignment != null && alignment.equals(Keys.RIGHT)) {
             x += parentSize.width - 50;
             y += parentSize.height - prefSize.height;
-        } else if (alignment != null && alignment.equals(AVKey.CENTER)) {
+        } else if (alignment != null && alignment.equals(Keys.CENTER)) {
             x += (parentSize.width - prefSize.width) / 2;
             y += (parentSize.height - prefSize.height) / 2;
-        } else if (alignment != null && alignment.equals(AVKey.LEFT_OF_CENTER)) {
+        } else if (alignment != null && alignment.equals(Keys.LEFT_OF_CENTER)) {
             x += parentSize.width / 2 - 1.05 * prefSize.width;
             y += (parentSize.height - prefSize.height) / 2;
-        } else if (alignment != null && alignment.equals(AVKey.RIGHT_OF_CENTER)) {
+        } else if (alignment != null && alignment.equals(Keys.RIGHT_OF_CENTER)) {
             x += parentSize.width / 2 + 0.05 * prefSize.width;
             y += (parentSize.height - prefSize.height) / 2;
         }
@@ -637,11 +638,11 @@ public class WWUtil {
      * at the buffer's position and ending at its limit.
      *
      * @param zone       the UTM zone.
-     * @param hemisphere the UTM hemisphere, either {@link AVKey#NORTH} or {@link AVKey#SOUTH}.
+     * @param hemisphere the UTM hemisphere, either {@link Keys#NORTH} or {@link Keys#SOUTH}.
      * @param buffer     the buffer of UTM tuples to convert.
      * @throws IllegalArgumentException if <code>zone</code> is outside the range 1-60, if <code>hemisphere</code> is
-     *                                  null, if <code>hemisphere</code> is not one of {@link AVKey#NORTH} or {@link
-     *                                  AVKey#SOUTH}, if <code>buffer</code> is null, or if the number of remaining
+     *                                  null, if <code>hemisphere</code> is not one of {@link Keys#NORTH} or {@link
+     *                                  Keys#SOUTH}, if <code>buffer</code> is null, or if the number of remaining
      *                                  elements in <code>buffer</code> is not a multiple of two.
      */
     public static void convertUTMCoordinatesToGeographic(int zone, String hemisphere, DoubleBuffer buffer) {
@@ -651,7 +652,7 @@ public class WWUtil {
             throw new IllegalArgumentException(message);
         }
 
-        if (!AVKey.NORTH.equals(hemisphere) && !AVKey.SOUTH.equals(hemisphere)) {
+        if (!Keys.NORTH.equals(hemisphere) && !Keys.SOUTH.equals(hemisphere)) {
             String message = Logging.getMessage("generic.HemisphereIsInvalid", hemisphere);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -797,7 +798,7 @@ public class WWUtil {
      * @param forceOverwrite Allow overwrite existing values in the destination list
      * @param keys           Array of <code>keys</code >
      */
-    public static void copyValues(AVList srcList, AVList destList, String[] keys, boolean forceOverwrite) {
+    public static void copyValues(KV srcList, KV destList, String[] keys, boolean forceOverwrite) {
         if (WWUtil.isEmpty(srcList) || WWUtil.isEmpty(destList) || WWUtil.isEmpty(keys) || keys.length == 0) {
             return;
         }

@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.geom.coords;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.globes.Globe;
 
@@ -432,7 +432,7 @@ class MGRSCoordConverter {
         double divisor = 1.0;
         long error_code = MGRSCoordConverter.MGRS_NO_ERROR;
 
-        String hemisphere = AVKey.NORTH;
+        String hemisphere = Keys.NORTH;
         double easting = 0;
         double northing = 0;
         UTMCoord UTM = null;
@@ -445,9 +445,9 @@ class MGRSCoordConverter {
                 error_code |= MGRSCoordConverter.MGRS_STRING_ERROR;
             else {
                 if (MGRS.latitudeBand < MGRSCoordConverter.LETTER_N)
-                    hemisphere = AVKey.SOUTH;
+                    hemisphere = Keys.SOUTH;
                 else
-                    hemisphere = AVKey.NORTH;
+                    hemisphere = Keys.NORTH;
 
                 getGridValues(MGRS.zone);
 
@@ -529,7 +529,7 @@ class MGRSCoordConverter {
      * @return error code
      */
     public long convertGeodeticToMGRS(double latitude, double longitude, int precision) {
-        String Hemisphere = AVKey.NORTH;
+        String Hemisphere = Keys.NORTH;
         double Easting = 0.0;
         double Northing = 0.0;
 
@@ -587,7 +587,7 @@ class MGRSCoordConverter {
      * coordinate string according to the current ellipsoid parameters.  If any errors occur, the error code(s) are
      * returned by the function, otherwise MGRS_NO_ERROR is returned.
      *
-     * @param Hemisphere Hemisphere either, {@link AVKey#NORTH} or {@link AVKey#SOUTH}.
+     * @param Hemisphere Hemisphere either, {@link Keys#NORTH} or {@link Keys#SOUTH}.
      * @param Easting    Easting/X in meters
      * @param Northing   Northing/Y in meters
      * @param Precision  Precision level of MGRS string
@@ -604,7 +604,7 @@ class MGRSCoordConverter {
         int index;
         long error_code = MGRSCoordConverter.MGRS_NO_ERROR;
 
-        if (!AVKey.NORTH.equals(Hemisphere) && !AVKey.SOUTH.equals(Hemisphere))
+        if (!Keys.NORTH.equals(Hemisphere) && !Keys.SOUTH.equals(Hemisphere))
             error_code |= MGRSCoordConverter.MGRS_HEMISPHERE_ERROR;
         if ((Easting < MGRSCoordConverter.MIN_EAST_NORTH) || (Easting > MGRSCoordConverter.MAX_EAST_NORTH))
             error_code |= MGRSCoordConverter.MGRS_EASTING_ERROR;
@@ -618,7 +618,7 @@ class MGRSCoordConverter {
             Easting = MGRSCoordConverter.roundMGRS(Easting / divisor) * divisor;
             Northing = MGRSCoordConverter.roundMGRS(Northing / divisor) * divisor;
 
-            if (AVKey.NORTH.equals(Hemisphere)) {
+            if (Keys.NORTH.equals(Hemisphere)) {
                 if (Easting >= MGRSCoordConverter.TWOMIL)
                     letters[0] = MGRSCoordConverter.LETTER_Z;
                 else
@@ -922,7 +922,7 @@ class MGRSCoordConverter {
             northing = mgrs.northing;
 
             if (mgrs.latitudeBand >= MGRSCoordConverter.LETTER_Y) {
-                hemisphere = AVKey.NORTH;
+                hemisphere = Keys.NORTH;
 
                 index = mgrs.latitudeBand - 22;
                 ltr2_low_value = MGRSCoordConverter.upsConstants[index][1]; //.ltr2_low_value;
@@ -931,7 +931,7 @@ class MGRSCoordConverter {
                 false_easting = MGRSCoordConverter.upsConstants[index][4]; //.false_easting;
                 false_northing = MGRSCoordConverter.upsConstants[index][5]; //.false_northing;
             } else {
-                hemisphere = AVKey.SOUTH;
+                hemisphere = Keys.SOUTH;
 
                 ltr2_low_value = MGRSCoordConverter.upsConstants[mgrs.latitudeBand][12]; //.ltr2_low_value;
                 ltr2_high_value = MGRSCoordConverter.upsConstants[mgrs.latitudeBand][2]; //.ltr2_high_value;

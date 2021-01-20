@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.examples.sar;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
@@ -166,14 +165,14 @@ public class TrackController {
     private void createPathTrackRepresentation(SARTrack track) {
         Path airPath = new Path(track);
         airPath.setOffset(track.getOffset());
-        airPath.setPathType(AVKey.RHUMB_LINE);
+        airPath.setPathType(Keys.RHUMB_LINE);
         var attrs = new BasicShapeAttributes();
         attrs.setOutlineMaterial(new Material(track.getColor()));
         airPath.setAttributes(attrs);
 
         Path groundPath = new Path(track);
         groundPath.setSurfacePath(true);
-        groundPath.setPathType(AVKey.RHUMB_LINE);
+        groundPath.setPathType(Keys.RHUMB_LINE);
         attrs = new BasicShapeAttributes();
         attrs.setOutlineMaterial(new Material(track.getColor()));
         attrs.setOutlineStippleFactor(5);

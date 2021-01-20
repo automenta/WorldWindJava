@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.examples.glider;
 
-import gov.nasa.worldwind.avlist.AVListImpl;
+import gov.nasa.worldwind.avlist.KVMap;
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.util.Logging;
 
@@ -21,7 +21,7 @@ import java.util.*;
  * @author tag
  * @version $Id: GliderRegionOfInterest.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class GliderRegionOfInterest extends AVListImpl {
+public class GliderRegionOfInterest extends KVMap {
     public static final String GLIDER_REGION_OF_INTEREST = "gov.nasa.worldwind.glider.RegionOfInterest";
 
     private List<LatLon> locations;

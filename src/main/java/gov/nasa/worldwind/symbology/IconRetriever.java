@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.symbology;
 
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.symbology.milstd2525.MilStd2525IconRetriever;
 
 import java.awt.image.*;
@@ -28,5 +28,5 @@ public interface IconRetriever {
      * @param params   Parameters that affect icon retrieval.
      * @return A BufferedImage containing the requested icon, or null if the icon cannot be retrieved.
      */
-    BufferedImage createIcon(String symbolId, AVList params);
+    BufferedImage createIcon(String symbolId, KV params);
 }

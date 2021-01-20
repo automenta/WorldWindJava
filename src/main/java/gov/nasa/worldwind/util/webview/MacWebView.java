@@ -7,7 +7,7 @@ package gov.nasa.worldwind.util.webview;
 
 import com.jogamp.opengl.util.texture.Texture;
 import gov.nasa.worldwind.Configuration;
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.Logging;
 
@@ -132,9 +132,9 @@ public class MacWebView extends AbstractWebView {
     /**
      * {@inheritDoc}
      */
-    public Iterable<AVList> getLinks() {
+    public Iterable<KV> getLinks() {
         if (this.webViewWindowPtr != 0) {
-            AVList[] linkParams = MacWebViewJNI.getLinks(this.webViewWindowPtr);
+            KV[] linkParams = MacWebViewJNI.getLinks(this.webViewWindowPtr);
             if (linkParams != null)
                 return Arrays.asList(linkParams);
         }

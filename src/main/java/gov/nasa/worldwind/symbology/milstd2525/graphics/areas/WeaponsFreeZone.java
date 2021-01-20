@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.symbology.milstd2525.graphics.areas;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.render.ShapeAttributes;
 import gov.nasa.worldwind.symbology.TacticalGraphicLabel;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
@@ -58,8 +58,8 @@ public class WeaponsFreeZone extends AviationZone {
     @Override
     protected void createLabels() {
         TacticalGraphicLabel label = this.addLabel(this.createLabelText());
-        label.setTextAlign(AVKey.LEFT);
-        label.setEffect(AVKey.TEXT_EFFECT_NONE);
+        label.setTextAlign(Keys.LEFT);
+        label.setEffect(Keys.TEXT_EFFECT_NONE);
         label.setDrawInterior(true);
     }
 

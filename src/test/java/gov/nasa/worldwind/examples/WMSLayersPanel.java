@@ -55,13 +55,13 @@ public class WMSLayersPanel extends JPanel {
         this.loadingThread.start();
     }
 
-    protected static Object createComponent(WMSCapabilities caps, AVList params) {
-        AVList configParams = params.copy(); // Copy to insulate changes from the caller.
+    protected static Object createComponent(WMSCapabilities caps, KV params) {
+        KV configParams = params.copy(); // Copy to insulate changes from the caller.
 
         // Some wms servers are slow, so increase the timeouts and limits used by WorldWind's retrievers.
-        configParams.set(AVKey.URL_CONNECT_TIMEOUT, 30000);
-        configParams.set(AVKey.URL_READ_TIMEOUT, 30000);
-        configParams.set(AVKey.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT, 60000);
+        configParams.set(Keys.URL_CONNECT_TIMEOUT, 30000);
+        configParams.set(Keys.URL_READ_TIMEOUT, 30000);
+        configParams.set(Keys.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT, 60000);
 
         try {
             String factoryKey = getFactoryKeyForCapabilities(caps);
@@ -86,12 +86,12 @@ public class WMSLayersPanel extends JPanel {
             }
         }
 
-        return hasApplicationBilFormat ? AVKey.ELEVATION_MODEL_FACTORY : AVKey.LAYER_FACTORY;
+        return hasApplicationBilFormat ? Keys.ELEVATION_MODEL_FACTORY : Keys.LAYER_FACTORY;
     }
 
     protected static String makeTitle(WMSCapabilities caps, LayerInfo layerInfo) {
-        String layerNames = layerInfo.params.getStringValue(AVKey.LAYER_NAMES);
-        String styleNames = layerInfo.params.getStringValue(AVKey.STYLE_NAMES);
+        String layerNames = layerInfo.params.getStringValue(Keys.LAYER_NAMES);
+        String styleNames = layerInfo.params.getStringValue(Keys.STYLE_NAMES);
         String[] lNames = layerNames.split(",");
         String[] sNames = styleNames != null ? styleNames.split(",") : null;
 
@@ -175,15 +175,15 @@ public class WMSLayersPanel extends JPanel {
 
         LayerInfo linfo = new LayerInfo();
         linfo.caps = caps;
-        linfo.params = new AVListImpl();
-        linfo.params.set(AVKey.LAYER_NAMES, layerCaps.getName());
+        linfo.params = new KVMap();
+        linfo.params.set(Keys.LAYER_NAMES, layerCaps.getName());
         if (style != null)
-            linfo.params.set(AVKey.STYLE_NAMES, style.getName());
+            linfo.params.set(Keys.STYLE_NAMES, style.getName());
         String abs = layerCaps.getLayerAbstract();
         if (!WWUtil.isEmpty(abs))
-            linfo.params.set(AVKey.LAYER_ABSTRACT, abs);
+            linfo.params.set(Keys.LAYER_ABSTRACT, abs);
 
-        linfo.params.set(AVKey.DISPLAY_NAME, makeTitle(caps, linfo));
+        linfo.params.set(Keys.DISPLAY_NAME, makeTitle(caps, linfo));
 
         return linfo;
     }
@@ -286,18 +286,18 @@ public class WMSLayersPanel extends JPanel {
 
     protected static class LayerInfo {
         protected WMSCapabilities caps;
-        protected AVList params = new AVListImpl();
+        protected KV params = new KVMap();
 
         protected String getTitle() {
-            return params.getStringValue(AVKey.DISPLAY_NAME);
+            return params.getStringValue(Keys.DISPLAY_NAME);
         }
 
         protected String getName() {
-            return params.getStringValue(AVKey.LAYER_NAMES);
+            return params.getStringValue(Keys.LAYER_NAMES);
         }
 
         protected String getAbstract() {
-            return params.getStringValue(AVKey.LAYER_ABSTRACT);
+            return params.getStringValue(Keys.LAYER_ABSTRACT);
         }
     }
 

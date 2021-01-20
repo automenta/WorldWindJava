@@ -6,8 +6,7 @@
 
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.Configuration;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.*;
@@ -20,9 +19,9 @@ import gov.nasa.worldwind.render.*;
  */
 public class SurfaceTextUsage extends ApplicationTemplate {
     public static void main(String[] args) {
-        Configuration.setValue(AVKey.INITIAL_LATITUDE, 38.9345);
-        Configuration.setValue(AVKey.INITIAL_LONGITUDE, -120.1670);
-        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 50000);
+        Configuration.setValue(Keys.INITIAL_LATITUDE, 38.9345);
+        Configuration.setValue(Keys.INITIAL_LONGITUDE, -120.1670);
+        Configuration.setValue(Keys.INITIAL_ALTITUDE, 50000);
 
         ApplicationTemplate.start("WorldWind Surface Text", AppFrame.class);
     }

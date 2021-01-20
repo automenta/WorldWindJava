@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.tool.*;
 
@@ -63,14 +63,14 @@ public class ViewControls extends ApplicationTemplate {
             JRadioButton button = new JRadioButton("Horizontal", true);
             group.add(button);
             button.addActionListener((ActionEvent actionEvent) -> {
-                viewControlsLayer.setLayout(AVKey.HORIZONTAL);
+                viewControlsLayer.setLayout(Keys.HORIZONTAL);
                 wwd().redraw();
             });
             layoutPanel.add(button);
             button = new JRadioButton("Vertical", false);
             group.add(button);
             button.addActionListener((ActionEvent actionEvent) -> {
-                viewControlsLayer.setLayout(AVKey.VERTICAL);
+                viewControlsLayer.setLayout(Keys.VERTICAL);
                 wwd().redraw();
             });
             layoutPanel.add(button);

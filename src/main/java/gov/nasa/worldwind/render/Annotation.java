@@ -7,7 +7,6 @@ package gov.nasa.worldwind.render;
 
 import com.jogamp.opengl.GL;
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.pick.PickSupport;
 
@@ -22,40 +21,40 @@ import java.util.List;
  */
 public interface Annotation extends Renderable, Disposable, Restorable {
     /**
-     * @deprecated Use {@link AVKey#REPEAT_NONE} instead.
+     * @deprecated Use {@link Keys#REPEAT_NONE} instead.
      */
     @Deprecated
-    String IMAGE_REPEAT_NONE = AVKey.REPEAT_NONE;
+    String IMAGE_REPEAT_NONE = Keys.REPEAT_NONE;
     /**
-     * @deprecated Use {@link AVKey#REPEAT_X} instead.
+     * @deprecated Use {@link Keys#REPEAT_X} instead.
      */
     @Deprecated
-    String IMAGE_REPEAT_X = AVKey.REPEAT_X;
+    String IMAGE_REPEAT_X = Keys.REPEAT_X;
     /**
-     * @deprecated Use {@link AVKey#REPEAT_Y} instead.
+     * @deprecated Use {@link Keys#REPEAT_Y} instead.
      */
     @Deprecated
-    String IMAGE_REPEAT_Y = AVKey.REPEAT_Y;
+    String IMAGE_REPEAT_Y = Keys.REPEAT_Y;
     /**
-     * @deprecated Use {@link AVKey#REPEAT_XY} instead.
+     * @deprecated Use {@link Keys#REPEAT_XY} instead.
      */
     @Deprecated
-    String IMAGE_REPEAT_XY = AVKey.REPEAT_XY;
+    String IMAGE_REPEAT_XY = Keys.REPEAT_XY;
 
     int ANTIALIAS_DONT_CARE = GL.GL_DONT_CARE;
     int ANTIALIAS_FASTEST = GL.GL_FASTEST;
     int ANTIALIAS_NICEST = GL.GL_NICEST;
 
     /**
-     * @deprecated Use {@link AVKey#SIZE_FIXED} instead.
+     * @deprecated Use {@link Keys#SIZE_FIXED} instead.
      */
     @Deprecated
-    String SIZE_FIXED = AVKey.SIZE_FIXED;
+    String SIZE_FIXED = Keys.SIZE_FIXED;
     /**
-     * @deprecated Use {@link AVKey#SIZE_FIT_TEXT} instead.
+     * @deprecated Use {@link Keys#SIZE_FIT_TEXT} instead.
      */
     @Deprecated
-    String SIZE_FIT_TEXT = AVKey.SIZE_FIT_TEXT;
+    String SIZE_FIT_TEXT = Keys.SIZE_FIT_TEXT;
 
     boolean isAlwaysOnTop();
 

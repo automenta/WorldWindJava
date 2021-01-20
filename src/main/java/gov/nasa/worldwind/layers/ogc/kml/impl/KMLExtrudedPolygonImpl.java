@@ -6,8 +6,7 @@
 
 package gov.nasa.worldwind.layers.ogc.kml.impl;
 
-import gov.nasa.worldwind.WorldWind;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.event.Message;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.ogc.kml.*;
@@ -78,15 +77,15 @@ public class KMLExtrudedPolygonImpl extends ExtrudedPolygon implements KMLRender
         }
 
         if (placemark.getName() != null)
-            this.set(AVKey.DISPLAY_NAME, placemark.getName());
+            this.set(Keys.DISPLAY_NAME, placemark.getName());
 
         if (placemark.getDescription() != null)
-            this.set(AVKey.DESCRIPTION, placemark.getDescription());
+            this.set(Keys.DESCRIPTION, placemark.getDescription());
 
         if (placemark.getSnippetText() != null)
-            this.set(AVKey.SHORT_DESCRIPTION, placemark.getSnippetText());
+            this.set(Keys.SHORT_DESCRIPTION, placemark.getSnippetText());
 
-        this.set(AVKey.CONTEXT, this.parent);
+        this.set(Keys.CONTEXT, this.parent);
     }
 
     protected static ShapeAttributes getInitialAttributes(String attrType) {
@@ -150,7 +149,7 @@ public class KMLExtrudedPolygonImpl extends ExtrudedPolygon implements KMLRender
         PickedObject po = super.createPickedObject(colorCode);
 
         // Add the KMLPlacemark to the picked object as the context of the picked object.
-        po.set(AVKey.CONTEXT, this.parent);
+        po.set(Keys.CONTEXT, this.parent);
         return po;
     }
 
@@ -169,7 +168,7 @@ public class KMLExtrudedPolygonImpl extends ExtrudedPolygon implements KMLRender
         KMLAbstractSubStyle lineSubStyle = this.parent.getSubStyle(new KMLLineStyle(null), attrType);
         if (!this.isHighlighted() || KMLUtil.isHighlightStyleState(lineSubStyle)) {
             KMLUtil.assembleLineAttributes(attrs, (KMLLineStyle) lineSubStyle);
-            if (lineSubStyle.hasField(AVKey.UNRESOLVED))
+            if (lineSubStyle.hasField(Keys.UNRESOLVED))
                 attrs.setUnresolved(true);
         }
 
@@ -178,7 +177,7 @@ public class KMLExtrudedPolygonImpl extends ExtrudedPolygon implements KMLRender
         KMLAbstractSubStyle fillSubStyle = this.parent.getSubStyle(new KMLPolyStyle(null), attrType);
         if (!this.isHighlighted() || KMLUtil.isHighlightStyleState(lineSubStyle)) {
             KMLUtil.assembleInteriorAttributes(attrs, (KMLPolyStyle) fillSubStyle);
-            if (fillSubStyle.hasField(AVKey.UNRESOLVED))
+            if (fillSubStyle.hasField(Keys.UNRESOLVED))
                 attrs.setUnresolved(true);
 
             attrs.setDrawInterior(((KMLPolyStyle) fillSubStyle).isFill());

@@ -5,8 +5,7 @@
  */
 package gov.nasa.worldwind.render;
 
-import gov.nasa.worldwind.Exportable;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.ogc.kml.KMLConstants;
@@ -258,7 +257,7 @@ public class SurfacePolyline extends AbstractSurfaceShape implements Exportable 
 
         xmlWriter.writeStartElement("Placemark");
 
-        String property = getStringValue(AVKey.DISPLAY_NAME);
+        String property = getStringValue(Keys.DISPLAY_NAME);
         if (property != null) {
             xmlWriter.writeStartElement("name");
             xmlWriter.writeCharacters(property);
@@ -269,14 +268,14 @@ public class SurfacePolyline extends AbstractSurfaceShape implements Exportable 
         xmlWriter.writeCharacters(kmlBoolean(this.isVisible()));
         xmlWriter.writeEndElement();
 
-        String shortDescription = (String) get(AVKey.SHORT_DESCRIPTION);
+        String shortDescription = (String) get(Keys.SHORT_DESCRIPTION);
         if (shortDescription != null) {
             xmlWriter.writeStartElement("Snippet");
             xmlWriter.writeCharacters(shortDescription);
             xmlWriter.writeEndElement();
         }
 
-        String description = (String) get(AVKey.BALLOON_TEXT);
+        String description = (String) get(Keys.BALLOON_TEXT);
         if (description != null) {
             xmlWriter.writeStartElement("description");
             xmlWriter.writeCharacters(description);

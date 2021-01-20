@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.symbology.milstd2525.graphics.lines;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.*;
@@ -40,7 +40,7 @@ public class DirectionOfAttackForFeint extends DirectionOfAttack {
      * Offset applied to the label. This offset aligns the bottom edge of the label with the geographic position, in
      * order to keep the label above the graphic as the zoom changes.
      */
-    protected final static Offset LABEL_OFFSET = new Offset(0.0, -1.0, AVKey.FRACTION, AVKey.FRACTION);
+    protected final static Offset LABEL_OFFSET = new Offset(0.0, -1.0, Keys.FRACTION, Keys.FRACTION);
     /**
      * Factor used to compute the distance between the solid and dashed lines in the arrow head. A larger value will
      * move the dashed line farther from the solid line.

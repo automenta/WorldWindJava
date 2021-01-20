@@ -5,7 +5,8 @@
  */
 package gov.nasa.worldwind.data;
 
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.Keys;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.cache.Cacheable;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.util.*;
@@ -21,7 +22,7 @@ import java.util.Arrays;
 public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable {
     protected BufferWrapper buffer;
 
-    public BufferWrapperRaster(int width, int height, Sector sector, BufferWrapper buffer, AVList list) {
+    public BufferWrapperRaster(int width, int height, Sector sector, BufferWrapper buffer, KV list) {
         super(width, height, sector, list);
 
         if (buffer == null) {
@@ -77,7 +78,7 @@ public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable
      * @return a new sub-raster initialized with the specified <code>width</code>, <code>height</code>,
      * <code>sector</code> and <code>params</code>.
      */
-    protected static BufferWrapperRaster createSubRaster(int width, int height, Sector sector, AVList params) {
+    protected static BufferWrapperRaster createSubRaster(int width, int height, Sector sector, KV params) {
         return new ByteBufferRaster(width, height, sector, params);
     }
 
@@ -167,8 +168,8 @@ public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable
     }
 
     public double getTransparentValue() {
-        if (this.hasKey(AVKey.MISSING_DATA_SIGNAL)) {
-            Object o = this.get(AVKey.MISSING_DATA_SIGNAL);
+        if (this.hasKey(Keys.MISSING_DATA_SIGNAL)) {
+            Object o = this.get(Keys.MISSING_DATA_SIGNAL);
             if (o instanceof Double)
                 return (Double) o;
         }
@@ -176,7 +177,7 @@ public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable
     }
 
     public void setTransparentValue(double transparentValue) {
-        this.set(AVKey.MISSING_DATA_SIGNAL, transparentValue);
+        this.set(Keys.MISSING_DATA_SIGNAL, transparentValue);
     }
 
     /**
@@ -250,7 +251,7 @@ public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable
     }
 
     @Override
-    DataRaster doGetSubRaster(int width, int height, Sector sector, AVList params) {
+    public DataRaster doGetSubRaster(int width, int height, Sector sector, KV params) {
         DataRaster canvas = BufferWrapperRaster.createSubRaster(width, height, sector, params);
         this.drawOnTo(canvas);
         return canvas;

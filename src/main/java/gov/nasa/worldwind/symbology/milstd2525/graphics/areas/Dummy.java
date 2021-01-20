@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.symbology.milstd2525.graphics.areas;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.milstd2525.AbstractMilStd2525TacticalGraphic;
@@ -108,7 +108,7 @@ public class Dummy extends AbstractMilStd2525TacticalGraphic {
     protected Path createPath() {
         Path path = new Path();
         path.setSurfacePath(true);
-        path.setPathType(AVKey.GREAT_CIRCLE);
+        path.setPathType(Keys.GREAT_CIRCLE);
         path.setDelegateOwner(this.getActiveDelegateOwner());
         return path;
     }

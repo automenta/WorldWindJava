@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.formats.vpf;
 
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
@@ -84,7 +84,7 @@ public class VPFBasicSymbolFactory implements VPFSymbolFactory {
         icon.setMaxSize(VPFBasicSymbolFactory.DEFAULT_ICON_MAX_SIZE);
     }
 
-    protected static Angle getPointSymbolHeading(VPFSymbolAttributes attr, AVList featureAttributes) {
+    protected static Angle getPointSymbolHeading(VPFSymbolAttributes attr, KV featureAttributes) {
         if (attr.getOrientationAttributeName() == null) {
             return null;
         }

@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.symbology;
 
-import gov.nasa.worldwind.WorldWind;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.drag.*;
 import gov.nasa.worldwind.geom.Position;
@@ -28,7 +28,7 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id: AbstractTacticalGraphic.java 560 2012-04-26 16:28:24Z pabercrombie $
  */
-public abstract class AbstractTacticalGraphic extends AVListImpl implements TacticalGraphic, Draggable {
+public abstract class AbstractTacticalGraphic extends KVMap implements TacticalGraphic, Draggable {
     /**
      * The default highlight color.
      */
@@ -121,7 +121,7 @@ public abstract class AbstractTacticalGraphic extends AVListImpl implements Tact
      * Map of modifiers applied to this graphic. Note that implementations may not store all modifiers in this map. Some
      * modifiers may be handled specially.
      */
-    protected AVList modifiers;
+    protected KV modifiers;
     /**
      * Current frame timestamp.
      */
@@ -207,7 +207,7 @@ public abstract class AbstractTacticalGraphic extends AVListImpl implements Tact
      */
     public void setModifier(String modifier, Object value) {
         if (this.modifiers == null)
-            this.modifiers = new AVListImpl();
+            this.modifiers = new KVMap();
 
         this.modifiers.set(modifier, value);
         this.onModifierChanged();
@@ -564,7 +564,7 @@ public abstract class AbstractTacticalGraphic extends AVListImpl implements Tact
         TacticalGraphicLabel label = new TacticalGraphicLabel();
         label.setText(text);
         label.setDelegateOwner(this.getActiveDelegateOwner());
-        label.setTextAlign(AVKey.CENTER);
+        label.setTextAlign(Keys.CENTER);
         this.labels.add(label);
 
         return label;

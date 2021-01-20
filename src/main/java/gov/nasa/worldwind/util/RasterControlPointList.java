@@ -16,8 +16,8 @@ import java.util.*;
  * @author dcollins
  * @version $Id: RasterControlPointList.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class RasterControlPointList extends ArrayList<RasterControlPointList.ControlPoint> implements AVList {
-    private final AVList avList = new AVListImpl();
+public class RasterControlPointList extends ArrayList<RasterControlPointList.ControlPoint> implements KV {
+    private final KV avList = new KVMap();
 
     public RasterControlPointList(Collection<? extends ControlPoint> c) {
         super(c);
@@ -30,7 +30,7 @@ public class RasterControlPointList extends ArrayList<RasterControlPointList.Con
         return this.avList.set(key, value);
     }
 
-    public AVList setValues(AVList avList) {
+    public KV setValues(KV avList) {
         return this.avList.setValues(avList);
     }
 
@@ -82,15 +82,15 @@ public class RasterControlPointList extends ArrayList<RasterControlPointList.Con
         this.avList.firePropertyChange(propertyChangeEvent);
     }
 
-    public AVList copy() {
+    public KV copy() {
         return this.avList.copy();
     }
 
-    public AVList clearList() {
+    public KV clearList() {
         return this.avList.clearList();
     }
 
-    public static class ControlPoint extends AVListImpl {
+    public static class ControlPoint extends KVMap {
         private final double wx;
         private final double wy;
         private final double rx;

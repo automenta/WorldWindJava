@@ -6,7 +6,8 @@
 
 package gov.nasa.worldwind.data;
 
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.Keys;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.formats.dted.DTED;
 import gov.nasa.worldwind.util.*;
 
@@ -45,7 +46,7 @@ public class DTEDRasterReader extends AbstractDataRasterReader {
     }
 
     @Override
-    protected boolean doCanRead(Object source, AVList params) {
+    protected boolean doCanRead(Object source, KV params) {
         File file = DTEDRasterReader.getFile(source);
         if (null == file) {
             return false;
@@ -56,7 +57,7 @@ public class DTEDRasterReader extends AbstractDataRasterReader {
         // times to be excessive.
         if (this.canReadSuffix(source)) {
             if (null != params) {
-                params.set(AVKey.PIXEL_FORMAT, AVKey.ELEVATION); // we know that DTED is elevation data
+                params.set(Keys.PIXEL_FORMAT, Keys.ELEVATION); // we know that DTED is elevation data
             }
 
             return true;
@@ -64,13 +65,13 @@ public class DTEDRasterReader extends AbstractDataRasterReader {
 
         boolean canRead = false;
         try {
-            AVList metadata = DTED.readMetadata(file);
+            KV metadata = DTED.readMetadata(file);
             if (null != metadata) {
                 if (null != params) {
                     params.setValues(metadata);
                 }
 
-                canRead = AVKey.ELEVATION.equals(metadata.get(AVKey.PIXEL_FORMAT));
+                canRead = Keys.ELEVATION.equals(metadata.get(Keys.PIXEL_FORMAT));
             }
         }
         catch (Throwable t) {
@@ -82,7 +83,7 @@ public class DTEDRasterReader extends AbstractDataRasterReader {
     }
 
     @Override
-    protected DataRaster[] doRead(Object source, AVList params) throws IOException {
+    protected DataRaster[] doRead(Object source, KV params) throws IOException {
         File file = DTEDRasterReader.getFile(source);
         if (null == file) {
             String message = Logging.getMessage("generic.UnrecognizedSourceTypeOrUnavailableSource", source);
@@ -100,7 +101,7 @@ public class DTEDRasterReader extends AbstractDataRasterReader {
     }
 
     @Override
-    protected void doReadMetadata(Object source, AVList params) throws IOException {
+    protected void doReadMetadata(Object source, KV params) throws IOException {
         File file = DTEDRasterReader.getFile(source);
         if (null == file) {
             String message = Logging.getMessage("generic.UnrecognizedSourceTypeOrUnavailableSource", source);
@@ -108,13 +109,13 @@ public class DTEDRasterReader extends AbstractDataRasterReader {
             throw new IOException(message);
         }
 
-        AVList metadata = DTED.readMetadata(file);
+        KV metadata = DTED.readMetadata(file);
         if (null != metadata && null != params) {
             params.setValues(metadata);
         }
     }
 
-    protected String validateMetadata(Object source, AVList params) {
+    protected String validateMetadata(Object source, KV params) {
         // Don't validate anything so we can avoid reading the metadata at start-up. Assume that the
         // sector will come from the config file and that the pixel type is specified in doCanRead above.
         return null;

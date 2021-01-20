@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.render;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -125,9 +125,9 @@ public class AnnotationAttributesTest
 
         AnnotationAttributes expected = new AnnotationAttributes();
         assignExampleValues(expected);
-        expected.setTextAlign(AVKey.RIGHT); // The integer 2 corresponds to RIGHT text alignment.
-        expected.setImageRepeat(AVKey.REPEAT_XY); // render.Annotation.RepeatXY corresponds to AVKey.REPEAT_XY
-        expected.setAdjustWidthToText(AVKey.SIZE_FIT_TEXT);
+        expected.setTextAlign(Keys.RIGHT); // The integer 2 corresponds to RIGHT text alignment.
+        expected.setImageRepeat(Keys.REPEAT_XY); // render.Annotation.RepeatXY corresponds to AVKey.REPEAT_XY
+        expected.setAdjustWidthToText(Keys.SIZE_FIT_TEXT);
 
         assertAnnotationAttributesEquals(expected, attrib);
     }
@@ -177,16 +177,16 @@ public class AnnotationAttributesTest
     @SuppressWarnings("JavaDoc")
     private static void assignExampleValues(AnnotationAttributes attrib)
     {
-        attrib.setFrameShape(AVKey.SHAPE_ELLIPSE);
+        attrib.setFrameShape(Keys.SHAPE_ELLIPSE);
         attrib.setHighlighted(true);
         attrib.setHighlightScale(2.5);
         attrib.setSize(new java.awt.Dimension(255, 255));
         attrib.setScale(3.5);
         attrib.setOpacity(0.5);
-        attrib.setLeader(AVKey.SHAPE_NONE);
+        attrib.setLeader(Keys.SHAPE_NONE);
         attrib.setLeaderGapWidth(100);
         attrib.setCornerRadius(4);
-        attrib.setAdjustWidthToText(AVKey.SIZE_FIXED);
+        attrib.setAdjustWidthToText(Keys.SIZE_FIXED);
         attrib.setDrawOffset(new java.awt.Point(-3, -3));
         attrib.setInsets(new java.awt.Insets(11, 11, 11, 11));
         attrib.setBorderWidth(5.5);
@@ -195,7 +195,7 @@ public class AnnotationAttributesTest
         attrib.setAntiAliasHint(Annotation.ANTIALIAS_NICEST);
         attrib.setVisible(false);
         attrib.setFont(java.awt.Font.decode("Arial-ITALIC-24"));
-        attrib.setTextAlign(AVKey.CENTER);
+        attrib.setTextAlign(Keys.CENTER);
         attrib.setTextColor(java.awt.Color.PINK);
         attrib.setBackgroundColor(java.awt.Color.MAGENTA);
         attrib.setBorderColor(java.awt.Color.CYAN);
@@ -203,10 +203,10 @@ public class AnnotationAttributesTest
         attrib.setImageScale(7.5);
         attrib.setImageOffset(new java.awt.Point(-4, -4));
         attrib.setImageOpacity(0.4);
-        attrib.setImageRepeat(AVKey.REPEAT_Y);
+        attrib.setImageRepeat(Keys.REPEAT_Y);
         attrib.setDistanceMaxScale(0.1);
         attrib.setDistanceMaxScale(8.5);
-        attrib.setEffect(AVKey.TEXT_EFFECT_OUTLINE);
+        attrib.setEffect(Keys.TEXT_EFFECT_OUTLINE);
     }
 
     private static void assignNullValues(AnnotationAttributes attrib)
@@ -245,13 +245,13 @@ public class AnnotationAttributesTest
 
     private static void assignPartialExampleValues(AnnotationAttributes attrib)
     {
-        attrib.setFrameShape(AVKey.SHAPE_ELLIPSE);
+        attrib.setFrameShape(Keys.SHAPE_ELLIPSE);
         attrib.setHighlighted(true);
         attrib.setHighlightScale(2.5);
         attrib.setSize(new java.awt.Dimension(255, 255));
         attrib.setScale(3.5);
         attrib.setOpacity(0.5);
-        attrib.setLeader(AVKey.SHAPE_NONE);
+        attrib.setLeader(Keys.SHAPE_NONE);
     }
 
     private static void assertAnnotationAttributesEquals(AnnotationAttributes expected, AnnotationAttributes actual)

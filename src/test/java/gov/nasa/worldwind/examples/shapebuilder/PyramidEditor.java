@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.examples.shapebuilder;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.ShapeUtils;
@@ -45,7 +45,7 @@ public class PyramidEditor extends RigidShapeEditor {
             RigidShape controlPoint = new Ellipsoid(vertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.scaleControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.set(AVKey.ACTION, SCALE_EAST_ACTION);
+            controlPoint.set(Keys.ACTION, SCALE_EAST_ACTION);
             this.controlPoints.add(controlPoint);
 
             Path rod = new Path(refPos, vertexPosition);
@@ -58,7 +58,7 @@ public class PyramidEditor extends RigidShapeEditor {
             controlPoint = new Ellipsoid(vertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.scaleControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.set(AVKey.ACTION, SCALE_NORTH_ACTION);
+            controlPoint.set(Keys.ACTION, SCALE_NORTH_ACTION);
             this.controlPoints.add(controlPoint);
 
             rod = new Path(refPos, vertexPosition);
@@ -71,7 +71,7 @@ public class PyramidEditor extends RigidShapeEditor {
             controlPoint = new Ellipsoid(vertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.scaleControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.set(AVKey.ACTION, SCALE_UP_ACTION);
+            controlPoint.set(Keys.ACTION, SCALE_UP_ACTION);
             this.controlPoints.add(controlPoint);
 
             rod = new Path(refPos, vertexPosition);
@@ -84,7 +84,7 @@ public class PyramidEditor extends RigidShapeEditor {
             controlPoint = new Ellipsoid(vertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.scaleControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.set(AVKey.ACTION, SCALE_WEST_ACTION);
+            controlPoint.set(Keys.ACTION, SCALE_WEST_ACTION);
             this.controlPoints.add(controlPoint);
 
             rod = new Path(refPos, vertexPosition);
@@ -97,7 +97,7 @@ public class PyramidEditor extends RigidShapeEditor {
             controlPoint = new Ellipsoid(vertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.scaleControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.set(AVKey.ACTION, SCALE_SOUTH_ACTION);
+            controlPoint.set(Keys.ACTION, SCALE_SOUTH_ACTION);
             this.controlPoints.add(controlPoint);
 
             rod = new Path(refPos, vertexPosition);
@@ -110,7 +110,7 @@ public class PyramidEditor extends RigidShapeEditor {
             controlPoint = new Ellipsoid(vertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.scaleControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.set(AVKey.ACTION, SCALE_DOWN_ACTION);
+            controlPoint.set(Keys.ACTION, SCALE_DOWN_ACTION);
             this.controlPoints.add(controlPoint);
 
             rod = new Path(refPos, vertexPosition);
@@ -123,7 +123,7 @@ public class PyramidEditor extends RigidShapeEditor {
             controlPoint = new Ellipsoid(vertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.radiusControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.set(AVKey.ACTION, SCALE_RADIUS_ACTION);
+            controlPoint.set(Keys.ACTION, SCALE_RADIUS_ACTION);
             this.controlPoints.add(controlPoint);
 
             rod = new Path(refPos, vertexPosition);
@@ -204,7 +204,7 @@ public class PyramidEditor extends RigidShapeEditor {
             RigidShape controlPoint = new Ellipsoid(ULvertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.textureControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.set(AVKey.ACTION, TEXTURE_UPPER_LEFT_ACTION);
+            controlPoint.set(Keys.ACTION, TEXTURE_UPPER_LEFT_ACTION);
             this.controlPoints.add(controlPoint);                                   // upper left
 
             vert = Matrix.transformBy3(matrix, URight.x, URight.y, URight.z).add3(refPt);
@@ -212,7 +212,7 @@ public class PyramidEditor extends RigidShapeEditor {
             controlPoint = new Ellipsoid(URvertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.textureControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.set(AVKey.ACTION, TEXTURE_UPPER_RIGHT_ACTION);
+            controlPoint.set(Keys.ACTION, TEXTURE_UPPER_RIGHT_ACTION);
             this.controlPoints.add(controlPoint);                                   // upper right
 
             vert = Matrix.transformBy3(matrix, LLeft.x, LLeft.y, LLeft.z).add3(refPt);
@@ -220,7 +220,7 @@ public class PyramidEditor extends RigidShapeEditor {
             controlPoint = new Ellipsoid(LLvertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.textureControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.set(AVKey.ACTION, TEXTURE_LOWER_LEFT_ACTION);
+            controlPoint.set(Keys.ACTION, TEXTURE_LOWER_LEFT_ACTION);
             this.controlPoints.add(controlPoint);                                   // lower left
 
             vert = Matrix.transformBy3(matrix, LRight.x, LRight.y, LRight.z).add3(refPt);
@@ -228,7 +228,7 @@ public class PyramidEditor extends RigidShapeEditor {
             controlPoint = new Ellipsoid(LRvertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.textureControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.set(AVKey.ACTION, TEXTURE_LOWER_RIGHT_ACTION);
+            controlPoint.set(Keys.ACTION, TEXTURE_LOWER_RIGHT_ACTION);
             this.controlPoints.add(controlPoint);                                   // lower right
 
             // side scaling control points
@@ -237,7 +237,7 @@ public class PyramidEditor extends RigidShapeEditor {
             controlPoint = new Ellipsoid(pos, radius, radius, radius);
             controlPoint.setAttributes(this.radiusControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.set(AVKey.ACTION, TEXTURE_SCALE_RIGHT_ACTION);
+            controlPoint.set(Keys.ACTION, TEXTURE_SCALE_RIGHT_ACTION);
             this.controlPoints.add(controlPoint);                                   // right
 
             vert = Matrix.transformBy3(matrix, left.x, left.y, left.z).add3(refPt);
@@ -245,7 +245,7 @@ public class PyramidEditor extends RigidShapeEditor {
             controlPoint = new Ellipsoid(pos, radius, radius, radius);
             controlPoint.setAttributes(this.radiusControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.set(AVKey.ACTION, TEXTURE_SCALE_LEFT_ACTION);
+            controlPoint.set(Keys.ACTION, TEXTURE_SCALE_LEFT_ACTION);
             this.controlPoints.add(controlPoint);                                   // left
 
             vert = Matrix.transformBy3(matrix, top.x, top.y, top.z).add3(refPt);
@@ -253,7 +253,7 @@ public class PyramidEditor extends RigidShapeEditor {
             controlPoint = new Ellipsoid(pos, radius, radius, radius);
             controlPoint.setAttributes(this.radiusControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.set(AVKey.ACTION, TEXTURE_SCALE_UP_ACTION);
+            controlPoint.set(Keys.ACTION, TEXTURE_SCALE_UP_ACTION);
             this.controlPoints.add(controlPoint);                                   // top
 
             vert = Matrix.transformBy3(matrix, bottom.x, bottom.y, bottom.z).add3(refPt);
@@ -261,7 +261,7 @@ public class PyramidEditor extends RigidShapeEditor {
             controlPoint = new Ellipsoid(pos, radius, radius, radius);
             controlPoint.setAttributes(this.radiusControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.set(AVKey.ACTION, TEXTURE_SCALE_DOWN_ACTION);
+            controlPoint.set(Keys.ACTION, TEXTURE_SCALE_DOWN_ACTION);
             this.controlPoints.add(controlPoint);                                   // bottom
 
             vert = Matrix.transformBy3(matrix, center.x, center.y, center.z).add3(refPt);
@@ -269,7 +269,7 @@ public class PyramidEditor extends RigidShapeEditor {
             controlPoint = new Ellipsoid(pos, radius, radius, radius);
             controlPoint.setAttributes(this.radiusControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.set(AVKey.ACTION, TEXTURE_MOVE_ACTION);
+            controlPoint.set(Keys.ACTION, TEXTURE_MOVE_ACTION);
 
             Path rod = new Path(ULvertexPosition, URvertexPosition);
             rod.setAltitudeMode(this.getAltitudeMode());

@@ -5,6 +5,7 @@
  */
 package gov.nasa.worldwind.data;
 
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.formats.tiff.GeotiffReader;
 import gov.nasa.worldwind.formats.worldfile.WorldFile;
@@ -25,7 +26,7 @@ public class GeotiffRasterReader extends AbstractDataRasterReader {
         super(GeotiffRasterReader.geotiffMimeTypes, GeotiffRasterReader.geotiffSuffixes);
     }
 
-    protected boolean doCanRead(Object source, AVList params) {
+    protected boolean doCanRead(Object source, KV params) {
         String path = WWIO.getSourcePath(source);
         if (path == null) {
             return false;
@@ -51,7 +52,7 @@ public class GeotiffRasterReader extends AbstractDataRasterReader {
         }
     }
 
-    protected DataRaster[] doRead(Object source, AVList params) throws IOException {
+    protected DataRaster[] doRead(Object source, KV params) throws IOException {
         String path = WWIO.getSourcePath(source);
         if (path == null) {
             String message = Logging.getMessage("DataRaster.CannotRead", source);
@@ -59,7 +60,7 @@ public class GeotiffRasterReader extends AbstractDataRasterReader {
             throw new IOException(message);
         }
 
-        AVList metadata = new AVListImpl();
+        KV metadata = new KVMap();
         if (null != params)
             metadata.setValues(params);
 
@@ -74,7 +75,7 @@ public class GeotiffRasterReader extends AbstractDataRasterReader {
             rasters = reader.readDataRaster();
 
             if (null != rasters) {
-                String[] keysToCopy = {AVKey.SECTOR};
+                String[] keysToCopy = {Keys.SECTOR};
                 for (DataRaster raster : rasters) {
                     WWUtil.copyValues(metadata, raster, keysToCopy, false);
                 }
@@ -88,7 +89,7 @@ public class GeotiffRasterReader extends AbstractDataRasterReader {
         return rasters;
     }
 
-    protected void doReadMetadata(Object source, AVList params) throws IOException {
+    protected void doReadMetadata(Object source, KV params) throws IOException {
         String path = WWIO.getSourcePath(source);
         if (path == null) {
             String message = Logging.getMessage("nullValue.PathIsNull", source);
@@ -102,17 +103,17 @@ public class GeotiffRasterReader extends AbstractDataRasterReader {
             reader.copyMetadataTo(params);
 
             boolean isGeoTiff = reader.isGeotiff(0);
-            if (!isGeoTiff && params.hasKey(AVKey.WIDTH) && params.hasKey(AVKey.HEIGHT)) {
+            if (!isGeoTiff && params.hasKey(Keys.WIDTH) && params.hasKey(Keys.HEIGHT)) {
                 int[] size = new int[2];
 
-                size[0] = (Integer) params.get(AVKey.WIDTH);
-                size[1] = (Integer) params.get(AVKey.HEIGHT);
+                size[0] = (Integer) params.get(Keys.WIDTH);
+                size[1] = (Integer) params.get(Keys.HEIGHT);
 
                 params.set(WorldFile.WORLD_FILE_IMAGE_SIZE, size);
 
                 WorldFile.readWorldFiles(source, params);
 
-                Object o = params.get(AVKey.SECTOR);
+                Object o = params.get(Keys.SECTOR);
                 if (!(o instanceof Sector)) {
                     ImageUtil.calcBoundingBoxForUTM(params);
                 }

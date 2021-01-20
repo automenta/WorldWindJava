@@ -5,6 +5,7 @@
  */
 package gov.nasa.worldwind.data;
 
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.util.*;
@@ -18,7 +19,7 @@ import java.util.Arrays;
  * @author dcollins
  * @version $Id: AbstractDataRasterReader.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public abstract class AbstractDataRasterReader extends AVListImpl implements DataRasterReader {
+public abstract class AbstractDataRasterReader extends KVMap implements DataRasterReader {
     protected final String description;
     protected final String[] mimeTypes;
     protected final String[] suffixes;
@@ -28,7 +29,7 @@ public abstract class AbstractDataRasterReader extends AVListImpl implements Dat
         this.mimeTypes = Arrays.copyOf(mimeTypes, mimeTypes.length);
         this.suffixes = Arrays.copyOf(suffixes, suffixes.length);
 
-        this.set(AVKey.SERVICE_NAME, AVKey.SERVICE_NAME_OFFLINE);
+        this.set(Keys.SERVICE_NAME, Keys.SERVICE_NAME_OFFLINE);
     }
 
     public AbstractDataRasterReader(String[] mimeTypes, String[] suffixes) {
@@ -49,11 +50,11 @@ public abstract class AbstractDataRasterReader extends AVListImpl implements Dat
         return sb.toString();
     }
 
-    protected abstract boolean doCanRead(Object source, AVList params);
+    protected abstract boolean doCanRead(Object source, KV params);
 
-    protected abstract DataRaster[] doRead(Object source, AVList params) throws IOException;
+    protected abstract DataRaster[] doRead(Object source, KV params) throws IOException;
 
-    protected abstract void doReadMetadata(Object source, AVList params) throws IOException;
+    protected abstract void doReadMetadata(Object source, KV params) throws IOException;
 
     /**
      * {@inheritDoc}
@@ -80,7 +81,7 @@ public abstract class AbstractDataRasterReader extends AVListImpl implements Dat
     /**
      * {@inheritDoc}
      */
-    public boolean canRead(Object source, AVList params) {
+    public boolean canRead(Object source, KV params) {
         if (source == null)
             return false;
 
@@ -112,7 +113,7 @@ public abstract class AbstractDataRasterReader extends AVListImpl implements Dat
     /**
      * {@inheritDoc}
      */
-    public DataRaster[] read(Object source, AVList params) throws IOException {
+    public DataRaster[] read(Object source, KV params) throws IOException {
         if (!this.canRead(source, params)) {
             String message = Logging.getMessage("DataRaster.CannotRead", source);
             Logging.logger().severe(message);
@@ -125,14 +126,14 @@ public abstract class AbstractDataRasterReader extends AVListImpl implements Dat
     /**
      * {@inheritDoc}
      */
-    public AVList readMetadata(Object source, AVList params) throws IOException {
+    public KV readMetadata(Object source, KV params) throws IOException {
         if (!this.canRead(source, params)) {
             String message = Logging.getMessage("DataRaster.CannotRead", source);
             throw new IllegalArgumentException(message);
         }
 
         if (params == null)
-            params = new AVListImpl();
+            params = new KVMap();
 
         this.doReadMetadata(source, params);
 
@@ -143,18 +144,18 @@ public abstract class AbstractDataRasterReader extends AVListImpl implements Dat
         return params;
     }
 
-    protected String validateMetadata(Object source, AVList params) {
+    protected String validateMetadata(Object source, KV params) {
         StringBuilder sb = new StringBuilder();
 
-        Object o = (params != null) ? params.get(AVKey.WIDTH) : null;
+        Object o = (params != null) ? params.get(Keys.WIDTH) : null;
         if (!(o instanceof Integer))
             sb.append(sb.isEmpty() ? "" : ", ").append(Logging.getMessage("WorldFile.NoSizeSpecified", source));
 
-        o = (params != null) ? params.get(AVKey.HEIGHT) : null;
+        o = (params != null) ? params.get(Keys.HEIGHT) : null;
         if (!(o instanceof Integer))
             sb.append(sb.isEmpty() ? "" : ", ").append(Logging.getMessage("WorldFile.NoSizeSpecified", source));
 
-        o = (params != null) ? params.get(AVKey.SECTOR) : null;
+        o = (params != null) ? params.get(Keys.SECTOR) : null;
         if (!(o instanceof Sector))
             sb.append(sb.isEmpty() ? "" : ", ").append(Logging.getMessage("WorldFile.NoSectorSpecified", source));
 
@@ -167,13 +168,13 @@ public abstract class AbstractDataRasterReader extends AVListImpl implements Dat
     /**
      * {@inheritDoc}
      */
-    public boolean isImageryRaster(Object source, AVList params) {
-        if (params != null && AVKey.IMAGE.equals(params.getStringValue(AVKey.PIXEL_FORMAT)))
+    public boolean isImageryRaster(Object source, KV params) {
+        if (params != null && Keys.IMAGE.equals(params.getStringValue(Keys.PIXEL_FORMAT)))
             return true;
 
         try {
-            AVList metadata = this.readMetadata(source, params);
-            return metadata != null && AVKey.IMAGE.equals(metadata.getStringValue(AVKey.PIXEL_FORMAT));
+            KV metadata = this.readMetadata(source, params);
+            return metadata != null && Keys.IMAGE.equals(metadata.getStringValue(Keys.PIXEL_FORMAT));
         }
         catch (IOException e) {
             return false;
@@ -187,13 +188,13 @@ public abstract class AbstractDataRasterReader extends AVListImpl implements Dat
     /**
      * {@inheritDoc}
      */
-    public boolean isElevationsRaster(Object source, AVList params) {
-        if (params != null && AVKey.ELEVATION.equals(params.getStringValue(AVKey.PIXEL_FORMAT)))
+    public boolean isElevationsRaster(Object source, KV params) {
+        if (params != null && Keys.ELEVATION.equals(params.getStringValue(Keys.PIXEL_FORMAT)))
             return true;
 
         try {
-            AVList metadata = this.readMetadata(source, params);
-            return metadata != null && AVKey.ELEVATION.equals(metadata.getStringValue(AVKey.PIXEL_FORMAT));
+            KV metadata = this.readMetadata(source, params);
+            return metadata != null && Keys.ELEVATION.equals(metadata.getStringValue(Keys.PIXEL_FORMAT));
         }
         catch (IOException e) {
             return false;

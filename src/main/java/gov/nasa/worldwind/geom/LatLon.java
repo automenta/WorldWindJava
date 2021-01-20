@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.geom;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.globes.*;
 import gov.nasa.worldwind.util.*;
 
@@ -84,9 +84,9 @@ public class LatLon {
 
     /**
      * Returns an interpolated location between <code>value1</code> and <code>value2</code>, according to the specified
-     * path type. If the path type is {@link AVKey#GREAT_CIRCLE} this returns an interpolated value on the great arc
+     * path type. If the path type is {@link Keys#GREAT_CIRCLE} this returns an interpolated value on the great arc
      * that spans the two locations (see {@link #interpolateGreatCircle(double, LatLon, LatLon)}). If the path type is
-     * {@link AVKey#RHUMB_LINE} or {@link AVKey#LOXODROME} this returns an interpolated value on the rhumb line that
+     * {@link Keys#RHUMB_LINE} or {@link Keys#LOXODROME} this returns an interpolated value on the rhumb line that
      * spans the two locations (see {@link #interpolateRhumb(double, LatLon, LatLon)}. Otherwise, this returns the
      * linear interpolation of the two locations (see {@link #interpolate(double, LatLon, LatLon)}.
      *
@@ -100,9 +100,9 @@ public class LatLon {
      */
     public static LatLon interpolate(String pathType, double amount, LatLon value1, LatLon value2) {
 
-        if (pathType.equals(AVKey.GREAT_CIRCLE))
+        if (pathType.equals(Keys.GREAT_CIRCLE))
             return LatLon.interpolateGreatCircle(amount, value1, value2);
-        else if (pathType.equals(AVKey.RHUMB_LINE) || pathType.equals(AVKey.LOXODROME))
+        else if (pathType.equals(Keys.RHUMB_LINE) || pathType.equals(Keys.LOXODROME))
             return LatLon.interpolateRhumb(amount, value1, value2);
         else // Default to linear interpolation.
             return LatLon.interpolate(amount, value1, value2);
@@ -195,9 +195,9 @@ public class LatLon {
 
     /**
      * Returns the length of the path between <code>value1</code> and <code>value2</code>, according to the specified
-     * path type. If the path type is {@link AVKey#GREAT_CIRCLE} this returns the length of the great arc that spans the
-     * two locations (see {@link #greatCircleDistance(LatLon, LatLon)}). If the path type is {@link AVKey#RHUMB_LINE} or
-     * {@link AVKey#LOXODROME} this returns the length of the rhumb line that spans the two locations (see {@link
+     * path type. If the path type is {@link Keys#GREAT_CIRCLE} this returns the length of the great arc that spans the
+     * two locations (see {@link #greatCircleDistance(LatLon, LatLon)}). If the path type is {@link Keys#RHUMB_LINE} or
+     * {@link Keys#LOXODROME} this returns the length of the rhumb line that spans the two locations (see {@link
      * #rhumbDistance(LatLon, LatLon)}). Otherwise, this returns the linear distance between the two locations (see
      * {@link #linearDistance(LatLon, LatLon)}).
      *
@@ -210,9 +210,9 @@ public class LatLon {
      */
     public static Angle pathDistance(String pathType, LatLon value1, LatLon value2) {
 
-        if (pathType.equals(AVKey.GREAT_CIRCLE)) {
+        if (pathType.equals(Keys.GREAT_CIRCLE)) {
             return LatLon.greatCircleDistance(value1, value2);
-        } else if (pathType.equals(AVKey.RHUMB_LINE) || pathType.equals(AVKey.LOXODROME)) {
+        } else if (pathType.equals(Keys.RHUMB_LINE) || pathType.equals(Keys.LOXODROME)) {
             return LatLon.rhumbDistance(value1, value2);
         } else // Default to linear interpolation.
         {
@@ -929,13 +929,13 @@ public class LatLon {
         // the pole in that hemisphere. Otherwise, assume that it encloses the pole that is closest to the shape's
         // extreme latitude.
         if (minLatitude > 0)
-            return AVKey.NORTH; // Entirely in Northern Hemisphere
+            return Keys.NORTH; // Entirely in Northern Hemisphere
         else if (maxLatitude < 0)
-            return AVKey.SOUTH; // Entirely in Southern Hemisphere
+            return Keys.SOUTH; // Entirely in Southern Hemisphere
         else if (Math.abs(maxLatitude) >= Math.abs(minLatitude))
-            return AVKey.NORTH; // Spans equator, but more north than south
+            return Keys.NORTH; // Spans equator, but more north than south
         else
-            return AVKey.SOUTH;
+            return Keys.SOUTH;
     }
 
     /**
@@ -1010,7 +1010,7 @@ public class LatLon {
 
         List<LatLon> newLocations = new ArrayList<>();
 
-        Angle poleLat = AVKey.NORTH.equals(pole) ? Angle.POS90 : Angle.NEG90;
+        Angle poleLat = Keys.NORTH.equals(pole) ? Angle.POS90 : Angle.NEG90;
 
         LatLon pos = null;
         for (LatLon posNext : locations) {

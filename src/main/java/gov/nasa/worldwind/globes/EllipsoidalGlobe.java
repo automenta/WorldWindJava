@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.globes;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.terrain.*;
@@ -41,7 +40,7 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
 
     /**
      * Create a new globe. The globe's center point will be (0, 0, 0). The globe will be tessellated using tessellator
-     * defined by the {@link AVKey#TESSELLATOR_CLASS_NAME} configuration parameter.
+     * defined by the {@link Keys#TESSELLATOR_CLASS_NAME} configuration parameter.
      *
      * @param equatorialRadius Radius of the globe at the equator.
      * @param polarRadius      Radius of the globe at the poles.
@@ -54,7 +53,7 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
         this.es = es; // assume it's consistent with the two radii
         this.center = Vec4.ZERO;
         setElevationModel(em);
-        this.tessellator = (Tessellator) WorldWind.createConfigurationComponent(AVKey.TESSELLATOR_CLASS_NAME);
+        this.tessellator = (Tessellator) WorldWind.createConfigurationComponent(Keys.TESSELLATOR_CLASS_NAME);
     }
 
     static private double discriminant(double a, double b, double c) {
@@ -70,7 +69,7 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
      */
     public static ElevationModel makeElevationModel(String key, String defaultValue) {
 
-        return (ElevationModel) BasicFactory.create(AVKey.ELEVATION_MODEL_FACTORY,
+        return (ElevationModel) BasicFactory.create(Keys.ELEVATION_MODEL_FACTORY,
             Configuration.getStringValue(key, defaultValue));
     }
 

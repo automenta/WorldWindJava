@@ -5,8 +5,7 @@
  */
 package gov.nasa.worldwind.util.webview;
 
-import gov.nasa.worldwind.WWObjectImpl;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.Logging;
 
@@ -107,7 +106,7 @@ public abstract class AbstractWebView extends WWObjectImpl implements WebView {
         if (!SwingUtilities.isEventDispatchThread()) {
             SwingUtilities.invokeLater(() -> propertyChange(event));
         } else {
-            this.firePropertyChange(AVKey.REPAINT, null, this);
+            this.firePropertyChange(Keys.REPAINT, null, this);
         }
     }
 }

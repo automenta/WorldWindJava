@@ -7,7 +7,7 @@ package gov.nasa.worldwind.render;
 
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.avlist.KVMap;
 import gov.nasa.worldwind.drag.*;
 import gov.nasa.worldwind.geom.Cylinder;
 import gov.nasa.worldwind.geom.*;
@@ -32,7 +32,7 @@ import static gov.nasa.worldwind.util.WWUtil.sizeEstimate;
  * itself.
  */
 @Deprecated
-public class Polyline extends AVListImpl implements OrderedRenderable, Movable, Restorable,
+public class Polyline extends KVMap implements OrderedRenderable, Movable, Restorable,
     MeasurableLength, ExtentHolder, PreRenderable, Highlightable, Draggable {
     public final static int GREAT_CIRCLE = WorldWind.GREAT_CIRCLE;
     public final static int LINEAR = WorldWind.LINEAR;
@@ -179,14 +179,14 @@ public class Polyline extends AVListImpl implements OrderedRenderable, Movable, 
         this.pathType = pathType;
         this.measurer.setPathType(pathType);
         if (this.surfaceShape != null)
-            this.surfaceShape.setPathType(this.pathType == Polyline.GREAT_CIRCLE ? AVKey.GREAT_CIRCLE
-                : pathType == Polyline.RHUMB_LINE ? AVKey.RHUMB_LINE : AVKey.LINEAR);
+            this.surfaceShape.setPathType(this.pathType == Polyline.GREAT_CIRCLE ? Keys.GREAT_CIRCLE
+                : pathType == Polyline.RHUMB_LINE ? Keys.RHUMB_LINE : Keys.LINEAR);
     }
 
     /**
-     * Sets the type of path to draw, one of {@link AVKey#GREAT_CIRCLE}, which draws each segment of the path as a great
-     * circle, {@link AVKey#LINEAR}, which determines the intermediate positions between segments by interpolating the
-     * segment endpoints, or {@link AVKey#RHUMB_LINE}, which draws each segment of the path as a line of constant
+     * Sets the type of path to draw, one of {@link Keys#GREAT_CIRCLE}, which draws each segment of the path as a great
+     * circle, {@link Keys#LINEAR}, which determines the intermediate positions between segments by interpolating the
+     * segment endpoints, or {@link Keys#RHUMB_LINE}, which draws each segment of the path as a line of constant
      * heading.
      *
      * @param pathType the type of path to draw.
@@ -199,13 +199,13 @@ public class Polyline extends AVListImpl implements OrderedRenderable, Movable, 
             throw new IllegalArgumentException(msg);
         }
 
-        this.setPathType(pathType.equals(AVKey.GREAT_CIRCLE) ? Polyline.GREAT_CIRCLE
-            : pathType.equals(AVKey.RHUMB_LINE) || pathType.equals(AVKey.LOXODROME) ? Polyline.RHUMB_LINE : Polyline.LINEAR);
+        this.setPathType(pathType.equals(Keys.GREAT_CIRCLE) ? Polyline.GREAT_CIRCLE
+            : pathType.equals(Keys.RHUMB_LINE) || pathType.equals(Keys.LOXODROME) ? Polyline.RHUMB_LINE : Polyline.LINEAR);
     }
 
     public String getPathTypeString() {
-        return this.getPathType() == Polyline.GREAT_CIRCLE ? AVKey.GREAT_CIRCLE
-            : this.getPathType() == Polyline.RHUMB_LINE ? AVKey.RHUMB_LINE : AVKey.LINEAR;
+        return this.getPathType() == Polyline.GREAT_CIRCLE ? Keys.GREAT_CIRCLE
+            : this.getPathType() == Polyline.RHUMB_LINE ? Keys.RHUMB_LINE : Keys.LINEAR;
     }
 
     public boolean isFollowTerrain() {
@@ -583,8 +583,8 @@ public class Polyline extends AVListImpl implements OrderedRenderable, Movable, 
 
                 this.setSurfaceShapeLocations();
                 this.setSurfaceShapeAttributes();
-                this.surfaceShape.setPathType(this.pathType == Polyline.GREAT_CIRCLE ? AVKey.GREAT_CIRCLE
-                    : pathType == Polyline.RHUMB_LINE ? AVKey.RHUMB_LINE : AVKey.LINEAR);
+                this.surfaceShape.setPathType(this.pathType == Polyline.GREAT_CIRCLE ? Keys.GREAT_CIRCLE
+                    : pathType == Polyline.RHUMB_LINE ? Keys.RHUMB_LINE : Keys.LINEAR);
             }
 
             this.surfaceShape.setHighlighted(this.isHighlighted());

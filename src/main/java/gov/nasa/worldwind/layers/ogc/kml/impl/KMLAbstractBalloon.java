@@ -6,7 +6,8 @@
 
 package gov.nasa.worldwind.layers.ogc.kml.impl;
 
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.Keys;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.layers.ogc.kml.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
@@ -199,7 +200,7 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
      */
     protected void initialize(Balloon balloon) {
         balloon.setTextDecoder(KMLAbstractBalloon.createTextDecoder(this.parent));
-        balloon.set(AVKey.CONTEXT, this.parent);
+        balloon.set(Keys.CONTEXT, this.parent);
 
         // Configure this balloon to resolve relative paths in the KML balloon HTML via its resolve() method.
         if (balloon instanceof AbstractBrowserBalloon) {
@@ -275,7 +276,7 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
             this.setDisplayMode(displayMode);
 
         KMLAbstractBalloon.assembleBalloonAttributes(balloonStyle, attrs);
-        attrs.setUnresolved(balloonStyle.hasField(AVKey.UNRESOLVED));
+        attrs.setUnresolved(balloonStyle.hasField(Keys.UNRESOLVED));
 
         if (KMLConstants.NORMAL.equals(attrType)) {
             this.getBalloon().setAttributes(attrs);
@@ -654,7 +655,7 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
     /**
      * {@inheritDoc}. This method passes through to the contained balloon.
      */
-    public AVList setValues(AVList avList) {
+    public KV setValues(KV avList) {
         return this.getBalloon().setValues(avList);
     }
 
@@ -747,14 +748,14 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
     /**
      * {@inheritDoc}. This method passes through to the contained balloon.
      */
-    public AVList copy() {
+    public KV copy() {
         return this.getBalloon().copy();
     }
 
     /**
      * {@inheritDoc}. This method passes through to the contained balloon.
      */
-    public AVList clearList() {
+    public KV clearList() {
         return this.getBalloon().clearList();
     }
 }

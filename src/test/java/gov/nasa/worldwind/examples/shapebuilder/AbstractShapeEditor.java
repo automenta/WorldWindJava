@@ -7,7 +7,6 @@
 package gov.nasa.worldwind.examples.shapebuilder;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.AbstractLayer;
 import gov.nasa.worldwind.render.*;
@@ -171,11 +170,11 @@ public abstract class AbstractShapeEditor extends AbstractLayer implements Mouse
         this.setInitialLabels();
 
         this.annotationAttributes = new AnnotationAttributes();
-        this.annotationAttributes.setFrameShape(AVKey.SHAPE_NONE);
+        this.annotationAttributes.setFrameShape(Keys.SHAPE_NONE);
         this.annotationAttributes.setInsets(new Insets(0, 0, 0, 0));
         this.annotationAttributes.setDrawOffset(new Point(0, 10));
-        this.annotationAttributes.setTextAlign(AVKey.CENTER);
-        this.annotationAttributes.setEffect(AVKey.TEXT_EFFECT_OUTLINE);
+        this.annotationAttributes.setTextAlign(Keys.CENTER);
+        this.annotationAttributes.setEffect(Keys.TEXT_EFFECT_OUTLINE);
         this.annotationAttributes.setFont(Font.decode("Arial-Bold-14"));
         this.annotationAttributes.setTextColor(Color.WHITE);
         this.annotationAttributes.setBackgroundColor(Color.BLACK);

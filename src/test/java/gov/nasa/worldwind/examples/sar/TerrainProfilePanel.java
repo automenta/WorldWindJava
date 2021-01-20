@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.examples.sar;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.layers.tool.ScalebarLayer;
@@ -507,7 +506,7 @@ public class TerrainProfilePanel extends JPanel implements Restorable {
             this.tpl.setZeroBased(true);
             this.tpl2 = new TerrainProfileLayer();
             this.tpl2.setZeroBased(true);
-            this.tpl2.setPosition(AVKey.SOUTHEAST);
+            this.tpl2.setPosition(Keys.SOUTHEAST);
         }
 
         public static String[] getSizeKeys() {
@@ -529,11 +528,11 @@ public class TerrainProfilePanel extends JPanel implements Restorable {
                 this.tpl.setEventSource(wwd);
                 WorldWindow.insertBeforeCompass(wwd, tpl2);
                 this.tpl2.setEventSource(wwd);
-                this.tpl2.setPathType(AVKey.RHUMB_LINE);
+                this.tpl2.setPathType(Keys.RHUMB_LINE);
                 // Move scalebar to north west
                 for (Layer layer : wwd.model().getLayers()) {
                     if (layer instanceof ScalebarLayer) {
-                        ((ScalebarLayer) layer).setPosition(AVKey.NORTHWEST);
+                        ((ScalebarLayer) layer).setPosition(Keys.NORTHWEST);
                     }
                 }
                 update();

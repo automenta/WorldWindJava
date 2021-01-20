@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.formats.geojson;
 
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.KV;
 
 import java.util.Arrays;
 
@@ -14,7 +14,7 @@ import java.util.Arrays;
  * @version $Id: GeoJSONMultiPolygon.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 public class GeoJSONMultiPolygon extends GeoJSONGeometry {
-    public GeoJSONMultiPolygon(AVList fields) {
+    public GeoJSONMultiPolygon(KV fields) {
         super(fields);
     }
 

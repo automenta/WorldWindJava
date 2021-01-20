@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.layers.tool;
 
-import gov.nasa.worldwind.View;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.*;
@@ -81,7 +81,7 @@ public class GraticuleLayer extends AbstractLayer {
         }
     }
 
-    private static void restorableStateToParams(AVList params, RestorableSupport rs,
+    private static void restorableStateToParams(KV params, RestorableSupport rs,
         RestorableSupport.StateObject context) {
         if (params != null && rs != null) {
             Boolean b = rs.getStateValueAsBoolean(context, GraticuleRenderingParams.KEY_DRAW_LINES);
@@ -854,10 +854,10 @@ public class GraticuleLayer extends AbstractLayer {
         private final Map<String, GraticuleRenderingParams> namedParams = new HashMap<>();
         private final Map<String, ShapeAttributes> namedShapeAttributes = new HashMap<>();
         private final GeographicTextRenderer textRenderer = new GeographicTextRenderer();
-        private AVList defaultParams;
+        private KV defaultParams;
 
         public GraticuleSupport() {
-            this.textRenderer.setEffect(AVKey.TEXT_EFFECT_SHADOW);
+            this.textRenderer.setEffect(Keys.TEXT_EFFECT_SHADOW);
             // Keep labels separated by at least two pixels
             this.textRenderer.setCullTextEnabled(true);
             this.textRenderer.setCullTextMargin(1);
@@ -866,7 +866,7 @@ public class GraticuleLayer extends AbstractLayer {
             this.textRenderer.setDistanceMinOpacity(0.5);
         }
 
-        private static AVList initRenderingParams(AVList params) {
+        private static KV initRenderingParams(KV params) {
             if (params == null) {
                 String message = Logging.getMessage("nullValue.AVListIsNull");
                 Logging.logger().severe(message);
@@ -898,7 +898,7 @@ public class GraticuleLayer extends AbstractLayer {
             return params;
         }
 
-        private static void applyRenderingParams(AVList params, GeographicText text, double opacity) {
+        private static void applyRenderingParams(KV params, GeographicText text, double opacity) {
             if (params != null && text != null) {
                 // Apply "label" properties to the GeographicText.
                 Object o = params.get(GraticuleRenderingParams.KEY_LABEL_COLOR);
@@ -918,7 +918,7 @@ public class GraticuleLayer extends AbstractLayer {
             }
         }
 
-        private static ShapeAttributes createLineShapeAttributes(AVList params, double opacity) {
+        private static ShapeAttributes createLineShapeAttributes(KV params, double opacity) {
             ShapeAttributes attrs = new BasicShapeAttributes();
             attrs.setDrawInterior(false);
             attrs.setDrawOutline(true);
@@ -930,7 +930,7 @@ public class GraticuleLayer extends AbstractLayer {
                     attrs.setOutlineOpacity(opacity);
                 }
 
-                Double lineWidth = AVListImpl.getDoubleValue(params, GraticuleRenderingParams.KEY_LINE_WIDTH);
+                Double lineWidth = KVMap.getDoubleValue(params, GraticuleRenderingParams.KEY_LINE_WIDTH);
                 if (lineWidth != null) {
                     attrs.setOutlineWidth(lineWidth);
                 }
@@ -1051,21 +1051,21 @@ public class GraticuleLayer extends AbstractLayer {
             this.namedParams.put(key, renderingParams);
         }
 
-        public AVList getDefaultParams() {
+        public KV getDefaultParams() {
             return this.defaultParams;
         }
 
-        public void setDefaultParams(AVList defaultParams) {
+        public void setDefaultParams(KV defaultParams) {
             this.defaultParams = defaultParams;
         }
 
-        private void applyRenderingParams(String key, AVList params, Attributable path, double opacity) {
+        private void applyRenderingParams(String key, KV params, Attributable path, double opacity) {
             if (key != null && params != null && path != null) {
                 path.setAttributes(this.getLineShapeAttributes(key, params, opacity));
             }
         }
 
-        private ShapeAttributes getLineShapeAttributes(String key, AVList params, double opacity) {
+        private ShapeAttributes getLineShapeAttributes(String key, KV params, double opacity) {
             ShapeAttributes attrs = this.namedShapeAttributes.get(key);
             if (attrs == null) {
                 attrs = GraticuleSupport.createLineShapeAttributes(params, opacity);
@@ -1110,7 +1110,7 @@ public class GraticuleLayer extends AbstractLayer {
      * @author dcollins
      * @version $Id: GraticuleRenderingParams.java 1171 2013-02-11 21:45:02Z dcollins $
      */
-    public static class GraticuleRenderingParams extends AVListImpl {
+    public static class GraticuleRenderingParams extends KVMap {
         public static final String KEY_DRAW_LINES = "DrawGraticule";
         public static final String KEY_LINE_COLOR = "GraticuleLineColor";
         public static final String KEY_LINE_WIDTH = "GraticuleLineWidth";

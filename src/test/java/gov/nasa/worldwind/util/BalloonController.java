@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.util;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.examples.kml.KMLViewController;
 import gov.nasa.worldwind.exception.WWTimeoutException;
@@ -137,7 +137,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
 
     /**
      * Handle a mouse click. If the top picked object has a balloon attached to it the balloon will be made visible. A
-     * balloon may be attached to a KML feature, or to any picked object though {@link AVKey#BALLOON}.
+     * balloon may be attached to a KML feature, or to any picked object though {@link Keys#BALLOON}.
      *
      * @param e Mouse event
      */
@@ -241,8 +241,8 @@ public class BalloonController extends MouseAdapter implements SelectListener {
                 if (url != null) {
                     this.onLinkActivated(event, url);
                 }
-                else if (pickedObject.hasKey(AVKey.ACTION) && topObject instanceof AbstractBrowserBalloon) {
-                    this.onBalloonAction((AbstractBrowserBalloon) topObject, pickedObject.getStringValue(AVKey.ACTION));
+                else if (pickedObject.hasKey(Keys.ACTION) && topObject instanceof AbstractBrowserBalloon) {
+                    this.onBalloonAction((AbstractBrowserBalloon) topObject, pickedObject.getStringValue(Keys.ACTION));
                 }
             }
             else if (event.isLeftDoubleClick()) {
@@ -266,24 +266,24 @@ public class BalloonController extends MouseAdapter implements SelectListener {
 
     protected static boolean isResizeControl(PickedObject po) {
         return po != null
-            && AVKey.RESIZE.equals(po.getStringValue(AVKey.ACTION))
+            && Keys.RESIZE.equals(po.getStringValue(Keys.ACTION))
             && po.get() instanceof Balloon;
     }
 
     /**
      * Get the URL attached to a PickedObject. This method looks for a URL attached to the PickedObject under {@link
-     * AVKey#URL}.
+     * Keys#URL}.
      *
      * @param pickedObject PickedObject to inspect. May not be null.
      * @return The URL attached to the PickedObject, or null if there is no URL.
      */
-    protected static String getUrl(AVList pickedObject) {
-        return pickedObject.getStringValue(AVKey.URL);
+    protected static String getUrl(KV pickedObject) {
+        return pickedObject.getStringValue(Keys.URL);
     }
 
     /**
      * Get the KML feature that is the context of a picked object. The context is associated with either the
-     * PickedObject or the user object under the key {@link AVKey#CONTEXT}.
+     * PickedObject or the user object under the key {@link Keys#CONTEXT}.
      *
      * @param pickedObject PickedObject to inspect for context. May not be null.
      * @return The KML feature associated with the picked object, or null if no KML feature is found.
@@ -291,11 +291,11 @@ public class BalloonController extends MouseAdapter implements SelectListener {
     protected static KMLAbstractFeature getContext(PickedObject pickedObject) {
         Object topObject = pickedObject.get();
 
-        Object context = pickedObject.get(AVKey.CONTEXT);
+        Object context = pickedObject.get(Keys.CONTEXT);
 
         // If there was no context in the PickedObject, look for it in the top user object.
-        if (context == null && topObject instanceof AVList) {
-            context = ((AVList) topObject).get(AVKey.CONTEXT);
+        if (context == null && topObject instanceof KV) {
+            context = ((KV) topObject).get(Keys.CONTEXT);
         }
 
         if (context instanceof KMLAbstractFeature)
@@ -312,7 +312,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
      * @param action         Identifier for the action that occurred.
      */
     protected void onBalloonAction(AbstractBrowserBalloon browserBalloon, String action) {
-        if (AVKey.CLOSE.equals(action)) {
+        if (Keys.CLOSE.equals(action)) {
             // If the balloon closing is the balloon we manage, call hideBalloon to clean up state.
             // Otherwise just make the balloon invisible.
             if (browserBalloon == this.balloon)
@@ -320,10 +320,10 @@ public class BalloonController extends MouseAdapter implements SelectListener {
             else
                 browserBalloon.setVisible(false);
         }
-        else if (AVKey.BACK.equals(action))
+        else if (Keys.BACK.equals(action))
             browserBalloon.goBack();
 
-        else if (AVKey.FORWARD.equals(action))
+        else if (Keys.FORWARD.equals(action))
             browserBalloon.goForward();
     }
 
@@ -405,7 +405,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
      */
     protected void onLinkActivated(SelectEvent event, String url) {
         PickedObject pickedObject = event.getTopPickedObject();
-        String type = pickedObject.getStringValue(AVKey.MIME_TYPE);
+        String type = pickedObject.getStringValue(Keys.MIME_TYPE);
 
         // Break URL into base and reference
         String linkBase;
@@ -463,7 +463,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
         // If the link is not to a KML file or feature, and the link targets a new browser window, launch the system web
         // browser. BrowserBalloon ignores link events that target new windows, so we need to handle them here.
         if (!isKmlUrl && !foundLocalFeature) {
-            String target = pickedObject.getStringValue(AVKey.TARGET);
+            String target = pickedObject.getStringValue(Keys.TARGET);
             if ("_blank".equalsIgnoreCase(target)) {
                 // Invoke the system browser to open the link if the event is link activation trigger.
                 if (BalloonController.isLinkActivationTrigger(event))
@@ -642,7 +642,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
         boolean isBalloonHidden = "hide".equals(style.getDisplayMode());
 
         // Determine if the balloon style actually has fields.
-        boolean hasBalloonStyle = style.hasStyleFields() && !style.hasField(AVKey.UNRESOLVED);
+        boolean hasBalloonStyle = style.hasStyleFields() && !style.hasField(Keys.UNRESOLVED);
 
         // Do not create a balloon if there is no balloon style and the feature has no description.
         return (hasBalloonStyle || !WWUtil.isEmpty(feature.getDescription()) || feature.getExtendedData() != null)
@@ -680,8 +680,8 @@ public class BalloonController extends MouseAdapter implements SelectListener {
 
         // Look for a KMLAbstractFeature context. If the top picked object is part of a KML feature, the
         // feature will determine the balloon.
-        if (pickedObject.hasKey(AVKey.CONTEXT)) {
-            Object contextObj = pickedObject.get(AVKey.CONTEXT);
+        if (pickedObject.hasKey(Keys.CONTEXT)) {
+            Object contextObj = pickedObject.get(Keys.CONTEXT);
             if (contextObj instanceof KMLAbstractFeature) {
                 KMLAbstractFeature feature = (KMLAbstractFeature) contextObj;
                 balloonObj = feature.getBalloon();
@@ -693,9 +693,9 @@ public class BalloonController extends MouseAdapter implements SelectListener {
         }
 
         // If we didn't find a balloon on the KML feature, look for a balloon in the AVList
-        if (balloonObj == null && topObject instanceof AVList) {
-            AVList avList = (AVList) topObject;
-            balloonObj = avList.get(AVKey.BALLOON);
+        if (balloonObj == null && topObject instanceof KV) {
+            KV avList = (KV) topObject;
+            balloonObj = avList.get(Keys.BALLOON);
         }
 
         if (balloonObj instanceof Balloon)
@@ -725,7 +725,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
         // Create the balloon based on the features attachment mode and the browser balloon settings. Wrap the balloon
         // in a KMLBalloonImpl to handle balloon style resolution.  
         KMLAbstractBalloon kmlBalloon;
-        if (AVKey.GLOBE.equals(BalloonController.getAttachmentMode(feature))) {
+        if (Keys.GLOBE.equals(BalloonController.getAttachmentMode(feature))) {
             GlobeBalloon balloon;
             if (BalloonController.isUseBrowserBalloon())
                 balloon = new GlobeBrowserBalloon(text, Position.ZERO); // 0 is dummy position
@@ -772,13 +772,13 @@ public class BalloonController extends MouseAdapter implements SelectListener {
 
             // Do not allow the balloon to be auto-sized larger than 80% of the viewport. The user may resize the balloon
             // larger than this size.
-            Size maxSize = new Size(Size.EXPLICIT_DIMENSION, 0.8, AVKey.FRACTION,
-                Size.EXPLICIT_DIMENSION, 0.8, AVKey.FRACTION);
+            Size maxSize = new Size(Size.EXPLICIT_DIMENSION, 0.8, Keys.FRACTION,
+                Size.EXPLICIT_DIMENSION, 0.8, Keys.FRACTION);
 
             attrs.setSize(size);
             attrs.setMaximumSize(maxSize);
-            attrs.setOffset(new Offset(0.5, 0.5, AVKey.FRACTION, AVKey.FRACTION));
-            attrs.setLeaderShape(AVKey.SHAPE_NONE);
+            attrs.setOffset(new Offset(0.5, 0.5, Keys.FRACTION, Keys.FRACTION));
+            attrs.setLeaderShape(Keys.SHAPE_NONE);
             balloon.setAttributes(attrs);
         }
         else {
@@ -789,8 +789,8 @@ public class BalloonController extends MouseAdapter implements SelectListener {
 
             // Do not allow the balloon to be auto-sized larger than 50% of the viewport width, and 40% of the height.
             // The user may resize the balloon larger than this size.
-            Size maxSize = new Size(Size.EXPLICIT_DIMENSION, 0.5, AVKey.FRACTION,
-                Size.EXPLICIT_DIMENSION, 0.4, AVKey.FRACTION);
+            Size maxSize = new Size(Size.EXPLICIT_DIMENSION, 0.5, Keys.FRACTION,
+                Size.EXPLICIT_DIMENSION, 0.4, Keys.FRACTION);
 
             attrs.setSize(size);
             attrs.setMaximumSize(maxSize);
@@ -799,18 +799,18 @@ public class BalloonController extends MouseAdapter implements SelectListener {
     }
 
     /**
-     * Get the attachment mode of a KML feature: {@link AVKey#GLOBE} or {@link AVKey#SCREEN}. Some features, such as a
+     * Get the attachment mode of a KML feature: {@link Keys#GLOBE} or {@link Keys#SCREEN}. Some features, such as a
      * PointPlacemark, are attached to a point on the globe. Others, such as a ScreenImage, are attached to the screen.
      *
      * @param feature KML feature to test.
-     * @return {@link AVKey#GLOBE} if the feature is attached to a geographic location. Otherwise {@link AVKey#SCREEN}.
+     * @return {@link Keys#GLOBE} if the feature is attached to a geographic location. Otherwise {@link Keys#SCREEN}.
      * Container features (Document and Folder) are considered screen features.
      */
     protected static String getAttachmentMode(KMLAbstractFeature feature) {
         if (feature instanceof KMLPlacemark || feature instanceof KMLGroundOverlay)
-            return AVKey.GLOBE;
+            return Keys.GLOBE;
         else
-            return AVKey.SCREEN;
+            return Keys.SCREEN;
     }
 
     /**
@@ -892,7 +892,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
         // Look at the balloon leader shape. If there is no leader shape, assume that the balloon itself is positioned
         // over the point of interest, and cannot be moved. Otherwise, assume that the balloon must be adjusted.
         BalloonAttributes attrs = balloon.getAttributes();
-        return !(AVKey.SHAPE_NONE.equals(attrs.getLeaderShape()));
+        return !(Keys.SHAPE_NONE.equals(attrs.getLeaderShape()));
     }
 
     /**
@@ -912,7 +912,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
         String xUnits, yUnits;
 
         // If the balloon point is in the right 25% of the viewport, place the balloon to the left.
-        xUnits = AVKey.FRACTION;
+        xUnits = Keys.FRACTION;
         if (screenPoint.x > viewport.width * 0.75) {
             x = 1.0;
         }
@@ -930,11 +930,11 @@ public class BalloonController extends MouseAdapter implements SelectListener {
 
         // If the point is in the top half of the viewport, place the balloon below the point.
         if (screenPoint.y < viewport.height * 0.5) {
-            yUnits = AVKey.INSET_PIXELS;
+            yUnits = Keys.INSET_PIXELS;
         }
         // Otherwise, place the balloon above the point.
         else {
-            yUnits = AVKey.PIXELS;
+            yUnits = Keys.PIXELS;
         }
 
         Offset offset = new Offset(x, y, xUnits, yUnits);
@@ -1234,7 +1234,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
     protected void onDocumentLoaded(String url, KMLRoot document, String featureRef) {
         // Use the URL as the document's DISPLAY_NAME. This field is used by addDocumentLayer to determine the layer's
         // name.
-        document.setField(AVKey.DISPLAY_NAME, url);
+        document.setField(Keys.DISPLAY_NAME, url);
         this.addDocumentLayer(document);
 
         if (featureRef != null)
@@ -1267,7 +1267,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
 
         // Load the document into a new layer.
         RenderableLayer kmlLayer = new RenderableLayer();
-        kmlLayer.setName((String) document.getField(AVKey.DISPLAY_NAME));
+        kmlLayer.setName((String) document.getField(Keys.DISPLAY_NAME));
         kmlLayer.add(controller);
 
         this.wwd.model().getLayers().add(kmlLayer);

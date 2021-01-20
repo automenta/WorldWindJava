@@ -7,7 +7,6 @@ package gov.nasa.worldwind.video.awt;
 
 import com.jogamp.opengl.awt.GLCanvas;
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.cache.GpuResourceCache;
 import gov.nasa.worldwind.event.InputHandler;
 import gov.nasa.worldwind.render.DrawContext;
@@ -53,7 +52,7 @@ import java.beans.PropertyChangeListener;
 public class WorldWindowGLCanvas extends GLCanvas implements WorldWindow {
 
     private final WorldWindowGLDrawable wwd
-        = ((WorldWindowGLDrawable) WorldWind.createConfigurationComponent(AVKey.WORLD_WINDOW_CLASS_NAME));
+        = ((WorldWindowGLDrawable) WorldWind.createConfigurationComponent(Keys.WORLD_WINDOW_CLASS_NAME));
 
     private final DashboardController dashboard;
 

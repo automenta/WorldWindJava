@@ -7,7 +7,6 @@
 package gov.nasa.worldwind.examples.worldwindow.core;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.examples.worldwindow.features.AbstractFeature;
 import gov.nasa.worldwind.examples.worldwindow.util.Util;
 import gov.nasa.worldwind.exception.WWAbsentRequirementException;
@@ -42,7 +41,7 @@ public class WWPanelImpl extends AbstractFeature implements WWPanel {
         });
 
         // Create the default model as described in the current worldwind properties.
-        Model m = (Model) WorldWind.createConfigurationComponent(AVKey.MODEL_CLASS_NAME);
+        Model m = (Model) WorldWind.createConfigurationComponent(Keys.MODEL_CLASS_NAME);
         this.wwd.setModel(m);
 
         // Disable screen credits.

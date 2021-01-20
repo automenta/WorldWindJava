@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.ui;
 
-import gov.nasa.worldwind.avlist.AVListImpl;
+import gov.nasa.worldwind.avlist.KVMap;
 import gov.nasa.worldwind.event.SelectEvent;
 
 import java.awt.*;
@@ -19,7 +19,7 @@ import java.awt.event.*;
  * @author dcollins
  * @version $Id: AbstractHotSpot.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public abstract class AbstractHotSpot extends AVListImpl implements HotSpot {
+public abstract class AbstractHotSpot extends KVMap implements HotSpot {
     /**
      * Indicates whether or not this HotSpot is active.
      */

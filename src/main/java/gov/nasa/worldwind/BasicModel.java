@@ -5,7 +5,6 @@
  */
 package gov.nasa.worldwind;
 
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.Message;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.globes.Globe;
@@ -38,7 +37,7 @@ public class BasicModel extends WWObjectImpl implements Model {
         // Look for the old-style, property-based layer configuration first. If not found then use the new-style
         // configuration.
         LayerList layers = null;
-        String layerNames = Configuration.getStringValue(AVKey.LAYERS_CLASS_NAMES);
+        String layerNames = Configuration.getStringValue(Keys.LAYERS_CLASS_NAMES);
         if (layerNames != null) {
             // Usage of this deprecated method is intentional. It provides backwards compatibility for deprecated
             // functionality.
@@ -74,7 +73,7 @@ public class BasicModel extends WWObjectImpl implements Model {
      * @return a new layer list matching the specified description.
      */
     protected static LayerList createLayersFromElement(Element element) {
-        Object o = BasicFactory.create(AVKey.LAYER_FACTORY, element);
+        Object o = BasicFactory.create(Keys.LAYER_FACTORY, element);
 
         if (o instanceof LayerList)
             return (LayerList) o;
@@ -149,7 +148,7 @@ public class BasicModel extends WWObjectImpl implements Model {
 
         Globe old = this.globe;
         this.globe = globe;
-        this.firePropertyChange(AVKey.GLOBE, old, this.globe);
+        this.firePropertyChange(Keys.GLOBE, old, this.globe);
     }
 
     /**
@@ -172,7 +171,7 @@ public class BasicModel extends WWObjectImpl implements Model {
 
         LayerList old = this.layers;
         this.layers = layers;
-        this.firePropertyChange(AVKey.LAYERS, old, this.layers);
+        this.firePropertyChange(Keys.LAYERS, old, this.layers);
     }
 
     /**

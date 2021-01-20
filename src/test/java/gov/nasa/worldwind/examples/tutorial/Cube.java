@@ -7,8 +7,7 @@
 package gov.nasa.worldwind.examples.tutorial;
 
 import com.jogamp.opengl.*;
-import gov.nasa.worldwind.Configuration;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.examples.ApplicationTemplate;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -51,11 +50,11 @@ public class Cube extends ApplicationTemplate implements Renderable {
     }
 
     public static void main(String[] args) {
-        Configuration.setValue(AVKey.INITIAL_LATITUDE, 35.0);
-        Configuration.setValue(AVKey.INITIAL_LONGITUDE, -120.0);
-        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 15500);
-        Configuration.setValue(AVKey.INITIAL_PITCH, 45);
-        Configuration.setValue(AVKey.INITIAL_HEADING, 45);
+        Configuration.setValue(Keys.INITIAL_LATITUDE, 35.0);
+        Configuration.setValue(Keys.INITIAL_LONGITUDE, -120.0);
+        Configuration.setValue(Keys.INITIAL_ALTITUDE, 15500);
+        Configuration.setValue(Keys.INITIAL_PITCH, 45);
+        Configuration.setValue(Keys.INITIAL_HEADING, 45);
 
         ApplicationTemplate.start("WorldWind Custom Renderable Tutorial", AppFrame.class);
     }

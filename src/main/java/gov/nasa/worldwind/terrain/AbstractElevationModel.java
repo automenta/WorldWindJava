@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.terrain;
 
-import gov.nasa.worldwind.WWObjectImpl;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.ElevationModel;
@@ -49,38 +49,38 @@ abstract public class AbstractElevationModel extends WWObjectImpl implements Ele
      * the following parameters: <table> <caption style="font-weight: bold;">Parameters</caption>
      * <tr><th>Parameter</th><th>Element Path</th><th>Type</th></tr>
      * <tr><td>{@link
-     * AVKey#DISPLAY_NAME}</td><td>DisplayName</td><td>String</td></tr> <tr><td>{@link
-     * AVKey#NETWORK_RETRIEVAL_ENABLED}</td><td>NetworkRetrievalEnabled</td><td>Boolean</td></tr> <tr><td>{@link
-     * AVKey#MISSING_DATA_SIGNAL}</td><td>MissingData/@signal</td><td>Double</td></tr> <tr><td>{@link
-     * AVKey#MISSING_DATA_REPLACEMENT}</td><td>MissingData/@replacement</td><td>Double</td></tr> <tr><td>{@link
-     * AVKey#DETAIL_HINT}</td><td>DataDetailHint</td><td>Double</td></tr> </table>
+     * Keys#DISPLAY_NAME}</td><td>DisplayName</td><td>String</td></tr> <tr><td>{@link
+     * Keys#NETWORK_RETRIEVAL_ENABLED}</td><td>NetworkRetrievalEnabled</td><td>Boolean</td></tr> <tr><td>{@link
+     * Keys#MISSING_DATA_SIGNAL}</td><td>MissingData/@signal</td><td>Double</td></tr> <tr><td>{@link
+     * Keys#MISSING_DATA_REPLACEMENT}</td><td>MissingData/@replacement</td><td>Double</td></tr> <tr><td>{@link
+     * Keys#DETAIL_HINT}</td><td>DataDetailHint</td><td>Double</td></tr> </table>
      *
      * @param params  the key-value pairs which define the elevation model configuration parameters.
      * @param context the XML document root on which to append elevation model configuration elements.
      * @return a reference to context.
      * @throws IllegalArgumentException if either the parameters or the context are null.
      */
-    public static Element createElevationModelConfigElements(AVList params, Element context) {
+    public static Element createElevationModelConfigElements(KV params, Element context) {
 
-        WWXML.checkAndAppendTextElement(params, AVKey.DISPLAY_NAME, context, "DisplayName");
-        WWXML.checkAndAppendBooleanElement(params, AVKey.NETWORK_RETRIEVAL_ENABLED, context, "NetworkRetrievalEnabled");
+        WWXML.checkAndAppendTextElement(params, Keys.DISPLAY_NAME, context, "DisplayName");
+        WWXML.checkAndAppendBooleanElement(params, Keys.NETWORK_RETRIEVAL_ENABLED, context, "NetworkRetrievalEnabled");
 
-        if (params.get(AVKey.MISSING_DATA_SIGNAL) != null ||
-            params.get(AVKey.MISSING_DATA_REPLACEMENT) != null) {
+        if (params.get(Keys.MISSING_DATA_SIGNAL) != null ||
+            params.get(Keys.MISSING_DATA_REPLACEMENT) != null) {
             Element el = WWXML.getElement(context, "MissingData", null);
             if (el == null)
                 el = WWXML.appendElementPath(context, "MissingData");
 
-            Double d = AVListImpl.getDoubleValue(params, AVKey.MISSING_DATA_SIGNAL);
+            Double d = KVMap.getDoubleValue(params, Keys.MISSING_DATA_SIGNAL);
             if (d != null)
                 WWXML.setDoubleAttribute(el, "signal", d);
 
-            d = AVListImpl.getDoubleValue(params, AVKey.MISSING_DATA_REPLACEMENT);
+            d = KVMap.getDoubleValue(params, Keys.MISSING_DATA_REPLACEMENT);
             if (d != null)
                 WWXML.setDoubleAttribute(el, "replacement", d);
         }
 
-        WWXML.checkAndAppendDoubleElement(params, AVKey.DETAIL_HINT, context, "DataDetailHint");
+        WWXML.checkAndAppendDoubleElement(params, Keys.DETAIL_HINT, context, "DataDetailHint");
 
         return context;
     }
@@ -91,11 +91,11 @@ abstract public class AbstractElevationModel extends WWObjectImpl implements Ele
      * Supported parameters are: <table> <caption style="font-weight: bold;">Parameters</caption>
      * <tr><th>Parameter</th><th>Element Path</th><th>Type</th></tr>
      * <tr><td>{@link
-     * AVKey#DISPLAY_NAME}</td><td>DisplayName</td><td>String</td></tr> <tr><td>{@link
-     * AVKey#NETWORK_RETRIEVAL_ENABLED}</td><td>NetworkRetrievalEnabled</td><td>Boolean</td></tr>
-     * <tr><td>{@link AVKey#MISSING_DATA_SIGNAL}</td><td>MissingData/@signal</td><td>Double</td></tr>
-     * <tr><td>{@link AVKey#MISSING_DATA_REPLACEMENT}</td><td>MissingData/@replacement</td><td>Double</td></tr>
-     * <tr><td>{@link AVKey#DETAIL_HINT}</td><td>DataDetailHint</td><td>Double</td></tr>
+     * Keys#DISPLAY_NAME}</td><td>DisplayName</td><td>String</td></tr> <tr><td>{@link
+     * Keys#NETWORK_RETRIEVAL_ENABLED}</td><td>NetworkRetrievalEnabled</td><td>Boolean</td></tr>
+     * <tr><td>{@link Keys#MISSING_DATA_SIGNAL}</td><td>MissingData/@signal</td><td>Double</td></tr>
+     * <tr><td>{@link Keys#MISSING_DATA_REPLACEMENT}</td><td>MissingData/@replacement</td><td>Double</td></tr>
+     * <tr><td>{@link Keys#DETAIL_HINT}</td><td>DataDetailHint</td><td>Double</td></tr>
      * </table>
      *
      * @param domElement the XML document root to parse for elevation model configuration elements.
@@ -104,23 +104,23 @@ abstract public class AbstractElevationModel extends WWObjectImpl implements Ele
      * @return a reference to params, or a new AVList if params is null.
      * @throws IllegalArgumentException if the document is null.
      */
-    public static AVList getElevationModelConfigParams(Element domElement, AVList params) {
+    public static KV getElevationModelConfigParams(Element domElement, KV params) {
 
         if (params == null)
-            params = new AVListImpl();
+            params = new KVMap();
 
         XPath xpath = WWXML.makeXPath();
 
-        WWXML.checkAndSetStringParam(domElement, params, AVKey.DISPLAY_NAME, "DisplayName", xpath);
-        WWXML.checkAndSetBooleanParam(domElement, params, AVKey.NETWORK_RETRIEVAL_ENABLED, "NetworkRetrievalEnabled",
+        WWXML.checkAndSetStringParam(domElement, params, Keys.DISPLAY_NAME, "DisplayName", xpath);
+        WWXML.checkAndSetBooleanParam(domElement, params, Keys.NETWORK_RETRIEVAL_ENABLED, "NetworkRetrievalEnabled",
             xpath);
-        WWXML.checkAndSetDoubleParam(domElement, params, AVKey.MISSING_DATA_SIGNAL, "MissingData/@signal", xpath);
-        WWXML.checkAndSetDoubleParam(domElement, params, AVKey.MISSING_DATA_REPLACEMENT, "MissingData/@replacement",
+        WWXML.checkAndSetDoubleParam(domElement, params, Keys.MISSING_DATA_SIGNAL, "MissingData/@signal", xpath);
+        WWXML.checkAndSetDoubleParam(domElement, params, Keys.MISSING_DATA_REPLACEMENT, "MissingData/@replacement",
             xpath);
-        WWXML.checkAndSetDoubleParam(domElement, params, AVKey.DETAIL_HINT, "DataDetailHint", xpath);
-        WWXML.checkAndSetIntegerParam(domElement, params, AVKey.MAX_ABSENT_TILE_ATTEMPTS, "MaxAbsentTileAttempts",
+        WWXML.checkAndSetDoubleParam(domElement, params, Keys.DETAIL_HINT, "DataDetailHint", xpath);
+        WWXML.checkAndSetIntegerParam(domElement, params, Keys.MAX_ABSENT_TILE_ATTEMPTS, "MaxAbsentTileAttempts",
             xpath);
-        WWXML.checkAndSetIntegerParam(domElement, params, AVKey.MIN_ABSENT_TILE_CHECK_INTERVAL,
+        WWXML.checkAndSetIntegerParam(domElement, params, Keys.MIN_ABSENT_TILE_CHECK_INTERVAL,
             "MinAbsentTileCheckInterval", xpath);
 
         return params;
@@ -130,17 +130,17 @@ abstract public class AbstractElevationModel extends WWObjectImpl implements Ele
     }
 
     public String name() {
-        Object n = this.get(AVKey.DISPLAY_NAME);
+        Object n = this.get(Keys.DISPLAY_NAME);
 
         return n != null ? n.toString() : this.toString();
     }
 
     public void setName(String name) {
-        this.set(AVKey.DISPLAY_NAME, name);
+        this.set(Keys.DISPLAY_NAME, name);
     }
 
     public String toString() {
-        Object n = this.get(AVKey.DISPLAY_NAME);
+        Object n = this.get(Keys.DISPLAY_NAME);
 
         return n != null ? n.toString() : super.toString();
     }

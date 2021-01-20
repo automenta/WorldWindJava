@@ -5,14 +5,14 @@
  */
 package gov.nasa.worldwind.formats.geojson;
 
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.KV;
 
 /**
  * @author dcollins
  * @version $Id: GeoJSONGeometry.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 public abstract class GeoJSONGeometry extends GeoJSONObject {
-    protected GeoJSONGeometry(AVList fields) {
+    protected GeoJSONGeometry(KV fields) {
         super(fields);
     }
 

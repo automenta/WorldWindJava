@@ -8,8 +8,7 @@ package gov.nasa.worldwind.render;
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.glu.*;
-import gov.nasa.worldwind.Exportable;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.ogc.kml.KMLConstants;
@@ -386,7 +385,7 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
     protected List<Vertex> clipWithPole(List<Vertex> contour, String pole, Angle maxEdgeLength) {
         List<Vertex> newVertices = new ArrayList<>();
 
-        Angle poleLat = AVKey.NORTH.equals(pole) ? Angle.POS90 : Angle.NEG90;
+        Angle poleLat = Keys.NORTH.equals(pole) ? Angle.POS90 : Angle.NEG90;
 
         Vertex vertex = null;
         for (Vertex nextVertex : contour) {
@@ -556,7 +555,7 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
             // these contours is configured to recognize interior holes when all contours have counter clockwise winding
             // order.
             //noinspection StringEquality
-            if (WWMath.computeWindingOrderOfLocations(drawLocations) != AVKey.COUNTER_CLOCKWISE)
+            if (WWMath.computeWindingOrderOfLocations(drawLocations) != Keys.COUNTER_CLOCKWISE)
                 Collections.reverse(drawLocations);
 
             geom.add(drawLocations);
@@ -704,7 +703,7 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
 
         xmlWriter.writeStartElement("Placemark");
 
-        String property = getStringValue(AVKey.DISPLAY_NAME);
+        String property = getStringValue(Keys.DISPLAY_NAME);
         if (property != null) {
             xmlWriter.writeStartElement("name");
             xmlWriter.writeCharacters(property);
@@ -715,14 +714,14 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
         xmlWriter.writeCharacters(KMLExportUtil.kmlBoolean(this.isVisible()));
         xmlWriter.writeEndElement();
 
-        String shortDescription = (String) get(AVKey.SHORT_DESCRIPTION);
+        String shortDescription = (String) get(Keys.SHORT_DESCRIPTION);
         if (shortDescription != null) {
             xmlWriter.writeStartElement("Snippet");
             xmlWriter.writeCharacters(shortDescription);
             xmlWriter.writeEndElement();
         }
 
-        String description = (String) get(AVKey.BALLOON_TEXT);
+        String description = (String) get(Keys.BALLOON_TEXT);
         if (description != null) {
             xmlWriter.writeStartElement("description");
             xmlWriter.writeCharacters(description);

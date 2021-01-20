@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.render.airspaces;
 
 import com.jogamp.opengl.*;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.cache.Cacheable;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.Box;
@@ -150,7 +150,7 @@ public class Polygon extends AbstractAirspace {
         }
 
         //noinspection StringEquality
-        if (WWMath.computeWindingOrderOfLocations(locations) != AVKey.COUNTER_CLOCKWISE)
+        if (WWMath.computeWindingOrderOfLocations(locations) != Keys.COUNTER_CLOCKWISE)
             Collections.reverse(locations);
 
         Vec4 centerPoint = Vec4.computeAveragePoint(points);
@@ -410,8 +410,8 @@ public class Polygon extends AbstractAirspace {
         boolean enableCaps = this.isEnableCaps();
         int subdivisions = this.subdivisions;
 
-        if (this.getAltitudeDatum()[0].equals(AVKey.ABOVE_GROUND_REFERENCE)
-            || this.getAltitudeDatum()[1].equals(AVKey.ABOVE_GROUND_REFERENCE)) {
+        if (this.getAltitudeDatum()[0].equals(Keys.ABOVE_GROUND_REFERENCE)
+            || this.getAltitudeDatum()[1].equals(Keys.ABOVE_GROUND_REFERENCE)) {
             this.adjustForGroundReference(dc, terrainConformant, altitudes);
         }
 

@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.formats.geojson;
 
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.geom.Position;
 
 /**
@@ -13,7 +13,7 @@ import gov.nasa.worldwind.geom.Position;
  * @version $Id: GeoJSONPoint.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 public class GeoJSONPoint extends GeoJSONGeometry {
-    public GeoJSONPoint(AVList fields) {
+    public GeoJSONPoint(KV fields) {
         super(fields);
     }
 

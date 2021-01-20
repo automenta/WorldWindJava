@@ -6,8 +6,8 @@
 
 package gov.nasa.worldwind.symbology.milstd2525.graphics.areas;
 
-import gov.nasa.worldwind.Configuration;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.Offset;
 import gov.nasa.worldwind.symbology.AbstractTacticalSymbol;
@@ -40,7 +40,7 @@ public class LimitedAccessSymbol extends AbstractTacticalSymbol {
 
         // Configure this tactical symbol's icon retriever and modifier retriever with either the configuration value or
         // the default value (in that order of precedence).
-        String iconRetrieverPath = Configuration.getStringValue(AVKey.MIL_STD_2525_ICON_RETRIEVER_PATH,
+        String iconRetrieverPath = Configuration.getStringValue(Keys.MIL_STD_2525_ICON_RETRIEVER_PATH,
             MilStd2525Constants.DEFAULT_ICON_RETRIEVER_PATH);
         this.setIconRetriever(new IconRetriever(iconRetrieverPath));
         this.setModifierRetriever(new MilStd2525ModifierRetriever(iconRetrieverPath));
@@ -74,7 +74,7 @@ public class LimitedAccessSymbol extends AbstractTacticalSymbol {
         }
 
         @Override
-        public BufferedImage createIcon(String symbolId, AVList params) {
+        public BufferedImage createIcon(String symbolId, KV params) {
             if (symbolId == null) {
                 String msg = Logging.getMessage("nullValue.SymbolCodeIsNull");
                 Logging.logger().severe(msg);

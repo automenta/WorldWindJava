@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.util;
 
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.KV;
 
 import java.net.URL;
 import java.util.List;
@@ -31,7 +31,7 @@ import java.util.List;
  * @author tag
  * @version $Id: NetworkStatus.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface NetworkStatus extends AVList {
+public interface NetworkStatus extends KV {
 
     /**
      * Log a host as unavailable. Each invocation increments the host's attempt count. When the count equals or exceeds

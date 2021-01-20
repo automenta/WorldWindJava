@@ -6,7 +6,8 @@
 
 package gov.nasa.worldwind.symbology.milstd2525;
 
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.Keys;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.util.*;
 
@@ -29,7 +30,7 @@ import java.util.*;
  * retriever will return an image that contains a circle, either black or filled with the icon fill color (depending on
  * the state of SHOW_FILL).
  * <p>
- * {@link #createIcon(String, AVList) createIcon} accepts the following parameters:
+ * {@link #createIcon(String, KV) createIcon} accepts the following parameters:
  * <table><caption style="font-weight: bold;">createIcon Parameters</caption> <tr><th>Key</th><th>Type</th><td><th>Description</th></tr> <tr><td>SymbologyConstants.SHOW_ICON</td><td>Boolean</td><td>Determines
  * if the symbol will be created with an icon.</td></tr> <tr><td>SymbologyConstants.SHOW_FRAME</td><td>Boolean</td><td>Determines
  * if the symbol will be created with a frame.</td></tr> <tr><td>SymbologyConstants.SHOW_FILL</td><td>Boolean</td><td>Determines
@@ -446,7 +447,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
         super(retrieverPath);
     }
 
-    protected static boolean mustDrawFill(SymbolCode symbolCode, AVList params) {
+    protected static boolean mustDrawFill(SymbolCode symbolCode, KV params) {
         String maskedCode = symbolCode.toMaskedString().toLowerCase();
         if (MilStd2525IconRetriever.unfilledIconMap.contains(maskedCode))
             return false;
@@ -455,7 +456,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
         return o == null || o.equals(Boolean.TRUE);
     }
 
-    protected static boolean mustDrawFrame(SymbolCode symbolCode, AVList params) {
+    protected static boolean mustDrawFrame(SymbolCode symbolCode, KV params) {
         String maskedCode = symbolCode.toMaskedString().toLowerCase();
         if (MilStd2525IconRetriever.unframedIconMap.contains(maskedCode))
             return false;
@@ -465,7 +466,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
     }
 
     @SuppressWarnings("UnusedParameters")
-    protected static boolean mustDrawIcon(SymbolCode symbolCode, AVList params) {
+    protected static boolean mustDrawIcon(SymbolCode symbolCode, KV params) {
         Object o = params != null ? params.get(SymbologyConstants.SHOW_ICON) : null;
         return o == null || o.equals(Boolean.TRUE);
     }
@@ -494,7 +495,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
         return sb.toString();
     }
 
-    protected static String composeIconPath(SymbolCode symbolCode, AVList params) {
+    protected static String composeIconPath(SymbolCode symbolCode, KV params) {
         String scheme = symbolCode.getScheme();
         String bd = symbolCode.getBattleDimension();
 
@@ -602,7 +603,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
         }
     }
 
-    protected static String getMaskedIconCode(SymbolCode symbolCode, AVList params) {
+    protected static String getMaskedIconCode(SymbolCode symbolCode, KV params) {
         String si = MilStd2525IconRetriever.getSimpleStandardIdentity(
             symbolCode); // Either Unknown, Friend, Neutral, or Hostile.
         String status = MilStd2525IconRetriever.getSimpleStatus(symbolCode); // Either Present or Anticipated.
@@ -620,7 +621,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
         return maskedCode.toString();
     }
 
-    protected static String getMaskedUnknownIconCode(SymbolCode symbolCode, AVList params) {
+    protected static String getMaskedUnknownIconCode(SymbolCode symbolCode, KV params) {
         String si = MilStd2525IconRetriever.getSimpleStandardIdentity(
             symbolCode); // Either Unknown, Friend, Neutral, or Hostile.
         String bd = symbolCode.getBattleDimension();
@@ -713,7 +714,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
      *               documentation.
      * @return An BufferedImage containing the icon for the requested symbol, or null if the icon cannot be retrieved.
      */
-    public BufferedImage createIcon(String sidc, AVList params) {
+    public BufferedImage createIcon(String sidc, KV params) {
         if (sidc == null) {
             String msg = Logging.getMessage("nullValue.SymbolCodeIsNull");
             Logging.logger().severe(msg);
@@ -745,28 +746,28 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
         return image;
     }
 
-    protected BufferedImage drawFill(SymbolCode symbolCode, AVList params, BufferedImage dest) {
+    protected BufferedImage drawFill(SymbolCode symbolCode, KV params, BufferedImage dest) {
         String path = MilStd2525IconRetriever.composeFillPath(symbolCode);
         Color color = MilStd2525IconRetriever.getFillColor(symbolCode, params);
 
         return path != null ? this.drawIconComponent(path, color, dest) : dest;
     }
 
-    protected BufferedImage drawFrame(SymbolCode symbolCode, AVList params, BufferedImage dest) {
+    protected BufferedImage drawFrame(SymbolCode symbolCode, KV params, BufferedImage dest) {
         String path = MilStd2525IconRetriever.composeFramePath(symbolCode);
         Color color = MilStd2525IconRetriever.getFrameColor(symbolCode, params);
 
         return path != null ? this.drawIconComponent(path, color, dest) : dest;
     }
 
-    protected BufferedImage drawIcon(SymbolCode symbolCode, AVList params, BufferedImage dest) {
+    protected BufferedImage drawIcon(SymbolCode symbolCode, KV params, BufferedImage dest) {
         String path = MilStd2525IconRetriever.composeIconPath(symbolCode, params);
         Color color = MilStd2525IconRetriever.getIconColor(symbolCode, params);
 
         return path != null ? this.drawIconComponent(path, color, dest) : dest;
     }
 
-    protected static BufferedImage drawCircle(SymbolCode symbolCode, AVList params, BufferedImage dest) {
+    protected static BufferedImage drawCircle(SymbolCode symbolCode, KV params, BufferedImage dest) {
         Color fillColor = MilStd2525IconRetriever.mustDrawFill(symbolCode, params) ? MilStd2525IconRetriever.getFillColor(symbolCode,
             params)
             : MilStd2525IconRetriever.DEFAULT_ICON_COLOR;
@@ -822,12 +823,12 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
         return image;
     }
 
-    protected static Color getFillColor(SymbolCode symbolCode, AVList params) {
+    protected static Color getFillColor(SymbolCode symbolCode, KV params) {
         Color color = MilStd2525IconRetriever.getColorFromParams(params);
         return color != null ? color : MilStd2525IconRetriever.fillColorMap.get(symbolCode.getStandardIdentity().toLowerCase());
     }
 
-    protected static Color getFrameColor(SymbolCode symbolCode, AVList params) {
+    protected static Color getFrameColor(SymbolCode symbolCode, KV params) {
         if (MilStd2525IconRetriever.isDashedFrame(symbolCode))
             return null; // Dashed pending or exercise frames are not colored.
 
@@ -838,7 +839,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
         return color != null ? color : MilStd2525IconRetriever.frameColorMap.get(symbolCode.getStandardIdentity().toLowerCase());
     }
 
-    protected static Color getIconColor(SymbolCode symbolCode, AVList params) {
+    protected static Color getIconColor(SymbolCode symbolCode, KV params) {
         String maskedCode = symbolCode.toMaskedString().toLowerCase();
 
         if (MilStd2525IconRetriever.mustDrawFrame(symbolCode, params)) {
@@ -864,12 +865,11 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
      * @return The value of the AVKey.COLOR parameter, if such a parameter exists and is of type java.awt.Color. Returns
      * null if the parameter list is null, if there is no value for key AVKey.COLOR, or if the value is not a Color.
      */
-    protected static Color getColorFromParams(AVList params) {
+    protected static Color getColorFromParams(KV params) {
         if (params == null)
             return null;
 
-        Object o = params.get(AVKey.COLOR);
+        Object o = params.get(Keys.COLOR);
         return (o instanceof Color) ? (Color) o : null;
     }
 }
-

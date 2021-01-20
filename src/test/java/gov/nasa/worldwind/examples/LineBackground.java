@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.*;
@@ -69,13 +68,13 @@ public class LineBackground extends ApplicationTemplate {
                 }
                 Path path1 = new Path(plPoints, 0); // the primary Path
                 path1.setSurfacePath(true);
-                path1.setPathType(AVKey.RHUMB_LINE);
+                path1.setPathType(Keys.RHUMB_LINE);
                 path1.setAttributes(foregroundAttrs);
                 path1.makeClosed();
 
                 Path path2 = new Path(plPoints, 0); // the background Path
                 path2.setSurfacePath(true);
-                path2.setPathType(AVKey.RHUMB_LINE);
+                path2.setPathType(Keys.RHUMB_LINE);
                 float[] c = backgroundAttrs.getOutlineMaterial().getDiffuse().getColorComponents(new float[3]);
                 ShapeAttributes attrs = new BasicShapeAttributes(backgroundAttrs);
                 attrs.setOutlineMaterial(

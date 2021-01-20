@@ -5,8 +5,7 @@
  */
 package gov.nasa.worldwind.examples.worldwindow.features;
 
-import gov.nasa.worldwind.Disposable;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.examples.worldwindow.core.*;
 import gov.nasa.worldwind.examples.worldwindow.util.*;
 import gov.nasa.worldwind.examples.worldwindow.util.measuretool.WWOMeasureTool;
@@ -50,7 +49,7 @@ public class MeasurementPanel extends AbstractFeaturePanel {
     private JComboBox shapeCombo;
     private Color lineColor = Color.WHITE;
     private Color fillColor = Color.WHITE;
-    private String pathType = AVKey.GREAT_CIRCLE;
+    private String pathType = Keys.GREAT_CIRCLE;
 
     public MeasurementPanel(Registry registry) {
         super(NAME + " Panel", Constants.FEATURE_MEASUREMENT_PANEL, new ShadedPanel(new BorderLayout()), registry);
@@ -163,7 +162,7 @@ public class MeasurementPanel extends AbstractFeaturePanel {
     protected void installNewMeasureTool(String shapeType) {
         Renderable shape = MeasurementPanel.makeMeasureShape(shapeType);
         this.measureTool = new WWOMeasureTool(this.controller.getWWd(), shape,
-            shapeType.equals(PATH) || shapeType.equals(FREEHAND) ? AVKey.SHAPE_PATH : null, this.controlPointsLayer);
+            shapeType.equals(PATH) || shapeType.equals(FREEHAND) ? Keys.SHAPE_PATH : null, this.controlPointsLayer);
         if (shapeType.equals(FREEHAND)) {
             this.measureTool.setFreeHand(true);
         }
@@ -262,13 +261,13 @@ public class MeasurementPanel extends AbstractFeaturePanel {
 
     protected void updatePanelValues() {
         switch (this.pathType) {
-            case AVKey.LINEAR:
+            case Keys.LINEAR:
                 this.pathTypeCombo.setSelectedIndex(0);
                 break;
-            case AVKey.RHUMB_LINE:
+            case Keys.RHUMB_LINE:
                 this.pathTypeCombo.setSelectedIndex(1);
                 break;
-            case AVKey.GREAT_CIRCLE:
+            case Keys.GREAT_CIRCLE:
                 this.pathTypeCombo.setSelectedIndex(2);
                 break;
             default:
@@ -308,13 +307,13 @@ public class MeasurementPanel extends AbstractFeaturePanel {
             String item = (String) ((JComboBox) event.getSource()).getSelectedItem();
             switch (item) {
                 case LINEAR:
-                    setPathType(AVKey.LINEAR);
+                    setPathType(Keys.LINEAR);
                     break;
                 case RHUMB:
-                    setPathType(AVKey.RHUMB_LINE);
+                    setPathType(Keys.RHUMB_LINE);
                     break;
                 case GREAT_CIRCLE:
-                    setPathType(AVKey.GREAT_CIRCLE);
+                    setPathType(Keys.GREAT_CIRCLE);
                     break;
                 default:
                     break;

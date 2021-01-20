@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.layers.tool;
 
 import com.jogamp.opengl.*;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.AbstractLayer;
 import gov.nasa.worldwind.pick.PickSupport;
@@ -33,8 +33,8 @@ public class ScalebarLayer extends AbstractLayer {
     protected Dimension size = new Dimension(150, 10);
     protected Color color = Color.white;
     protected int borderWidth = 20;
-    protected String position = AVKey.SOUTHEAST;
-    protected String resizeBehavior = AVKey.RESIZE_SHRINK_ONLY;
+    protected String position = Keys.SOUTHEAST;
+    protected String resizeBehavior = Keys.RESIZE_SHRINK_ONLY;
     protected String unit = ScalebarLayer.UNIT_METRIC;
     protected Font defaultFont = Font.decode("Arial-PLAIN-12");
     protected double toViewportScale = 0.2;
@@ -482,9 +482,9 @@ public class ScalebarLayer extends AbstractLayer {
 
     private double computeScale(Rectangle viewport) {
         return switch (this.resizeBehavior) {
-            case AVKey.RESIZE_SHRINK_ONLY -> Math.min(1.0d,
+            case Keys.RESIZE_SHRINK_ONLY -> Math.min(1.0d,
                 (this.toViewportScale) * viewport.width / this.size.width);
-            case AVKey.RESIZE_STRETCH -> (this.toViewportScale) * viewport.width / this.size.width;
+            case Keys.RESIZE_STRETCH -> (this.toViewportScale) * viewport.width / this.size.width;
             default -> 1.0d;
         };
     }
@@ -499,16 +499,16 @@ public class ScalebarLayer extends AbstractLayer {
         if (this.locationCenter != null) {
             x = this.locationCenter.x - scaledWidth / 2;
             y = this.locationCenter.y - scaledHeight / 2;
-        } else if (this.position.equals(AVKey.NORTHEAST)) {
+        } else if (this.position.equals(Keys.NORTHEAST)) {
             x = viewport.getWidth() - scaledWidth - this.borderWidth;
             y = viewport.getHeight() - scaledHeight - this.borderWidth;
-        } else if (this.position.equals(AVKey.SOUTHEAST)) {
+        } else if (this.position.equals(Keys.SOUTHEAST)) {
             x = viewport.getWidth() - scaledWidth - this.borderWidth;
             y = 0.0d + this.borderWidth;
-        } else if (this.position.equals(AVKey.NORTHWEST)) {
+        } else if (this.position.equals(Keys.NORTHWEST)) {
             x = 0.0d + this.borderWidth;
             y = viewport.getHeight() - scaledHeight - this.borderWidth;
-        } else if (this.position.equals(AVKey.SOUTHWEST)) {
+        } else if (this.position.equals(Keys.SOUTHWEST)) {
             x = 0.0d + this.borderWidth;
             y = 0.0d + this.borderWidth;
         } else // use North East

@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.*;
@@ -61,9 +60,9 @@ public class TerrainIntersections extends ApplicationTemplate {
 
     public static void main(String[] args) {
         // zoom to San Francisco downtown
-        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 34.0e3);
-        Configuration.setValue(AVKey.INITIAL_LATITUDE, 37.9521d);
-        Configuration.setValue(AVKey.INITIAL_LONGITUDE, -119.7761d);
+        Configuration.setValue(Keys.INITIAL_ALTITUDE, 34.0e3);
+        Configuration.setValue(Keys.INITIAL_LATITUDE, 37.9521d);
+        Configuration.setValue(Keys.INITIAL_LONGITUDE, -119.7761d);
 
         // Adjust configuration values before instantiation
         ApplicationTemplate.start("WorldWind Terrain Intersections", AppFrame.class);
@@ -373,7 +372,7 @@ public class TerrainIntersections extends ApplicationTemplate {
                 PointPlacemark pm = new PointPlacemark(p);
                 pm.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
                 pm.setAttributes(intersectionPointAttributes);
-                pm.set(AVKey.DISPLAY_NAME, p.toString());
+                pm.set(Keys.DISPLAY_NAME, p.toString());
                 this.intersectionsLayer.add(pm);
             }
         }
@@ -439,7 +438,7 @@ public class TerrainIntersections extends ApplicationTemplate {
                 pm.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
                 pm.setAttributes(gridPointAttributes);
                 pm.setLineEnabled(true);
-                pm.set(AVKey.DISPLAY_NAME, p.toString());
+                pm.set(Keys.DISPLAY_NAME, p.toString());
                 this.gridLayer.add(pm);
             }
 
@@ -457,7 +456,7 @@ public class TerrainIntersections extends ApplicationTemplate {
             PointPlacemark pm = new PointPlacemark(cPos);
             pm.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             pm.setAttributes(selectedLocationAttributes);
-            pm.set(AVKey.DISPLAY_NAME, cPos.toString());
+            pm.set(Keys.DISPLAY_NAME, cPos.toString());
             pm.setLineEnabled(true);
             this.gridLayer.add(pm);
         }

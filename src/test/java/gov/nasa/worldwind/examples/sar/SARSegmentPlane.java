@@ -459,7 +459,7 @@ public class SARSegmentPlane extends WWObjectImpl {
         SegmentPlaneAttributes.GeometryAttributes altimeterGeometry = new SegmentPlaneAttributes.GeometryAttributes(
             new Material(segmentPointColor), 1.0);
         AxisLabelAttributes altimeterLabel = new AxisLabelAttributes(
-            vAxisLabelColor, Font.decode("Arial-12"), AVKey.LEFT, AVKey.CENTER, this);
+            vAxisLabelColor, Font.decode("Arial-12"), Keys.LEFT, Keys.CENTER, this);
         altimeterGeometry.setSize(1);
         altimeterLabel.setVisible(false);
         altimeterLabel.setMaxActiveDistance(maxAxisLabelActiveDistance);
@@ -476,9 +476,9 @@ public class SARSegmentPlane extends WWObjectImpl {
         SegmentPlaneAttributes.GeometryAttributes segmentEndPointGeom = new SegmentPlaneAttributes.GeometryAttributes(
             new Material(segmentPointColor), 1.0);
         ControlPointLabelAttributes segmentBeginPointLabel = new ControlPointLabelAttributes(
-            segmentPointColor, Font.decode("Arial-12"), AVKey.RIGHT, AVKey.CENTER, this);
+            segmentPointColor, Font.decode("Arial-12"), Keys.RIGHT, Keys.CENTER, this);
         ControlPointLabelAttributes segmentEndPointLabel = new ControlPointLabelAttributes(
-            segmentPointColor, Font.decode("Arial-12"), AVKey.RIGHT, AVKey.CENTER, this);
+            segmentPointColor, Font.decode("Arial-12"), Keys.RIGHT, Keys.CENTER, this);
         segmentBeginPointGeom.setEnablePicking(false);
         segmentBeginPointGeom.setSize(8);
         segmentBeginPointGeom.setPickSize(10);
@@ -504,9 +504,9 @@ public class SARSegmentPlane extends WWObjectImpl {
         //**************************************************************//
 
         AxisLabelAttributes horizontalAxisLabels = new AxisLabelAttributes(
-            hAxisLabelColor, Font.decode("Arial-10"), AVKey.CENTER, AVKey.BOTTOM, this);
+            hAxisLabelColor, Font.decode("Arial-10"), Keys.CENTER, Keys.BOTTOM, this);
         AltitudeLabelAttributes verticalAxisLabels = new AltitudeLabelAttributes(
-            vAxisLabelColor, Font.decode("Arial-10"), AVKey.RIGHT, AVKey.BOTTOM, this);
+            vAxisLabelColor, Font.decode("Arial-10"), Keys.RIGHT, Keys.BOTTOM, this);
         horizontalAxisLabels.setMaxActiveDistance(maxAxisLabelActiveDistance);
         verticalAxisLabels.setMaxActiveDistance(maxAxisLabelActiveDistance);
 
@@ -522,9 +522,9 @@ public class SARSegmentPlane extends WWObjectImpl {
         SegmentPlaneAttributes.GeometryAttributes moveControlPointURGeom =
             new SegmentPlaneAttributes.GeometryAttributes(new Material(moveControlPointColor), 1.0);
         ControlPointLabelAttributes moveControlPointLRLabel = new ControlPointLabelAttributes(
-            moveControlPointColor, Font.decode("Arial-12"), AVKey.LEFT, AVKey.CENTER, this);
+            moveControlPointColor, Font.decode("Arial-12"), Keys.LEFT, Keys.CENTER, this);
         ControlPointLabelAttributes moveControlPointURLabel = new ControlPointLabelAttributes(
-            moveControlPointColor, Font.decode("Arial-12"), AVKey.LEFT, AVKey.CENTER, this);
+            moveControlPointColor, Font.decode("Arial-12"), Keys.LEFT, Keys.CENTER, this);
         moveControlPointLRGeom.setSize(7);
         moveControlPointLRGeom.setPickSize(10);
         moveControlPointLRGeom.setOffset(new Vec4(0, 0, 7));
@@ -550,7 +550,7 @@ public class SARSegmentPlane extends WWObjectImpl {
             = new SegmentPlaneAttributes.GeometryAttributes(
             new Material(resizeControlPointColor), 1.0);
         ControlPointLabelAttributes resizeControlPointLabel = new ControlPointLabelAttributes(
-            resizeControlPointColor, Font.decode("Arial-10"), AVKey.LEFT, AVKey.CENTER, this);
+            resizeControlPointColor, Font.decode("Arial-10"), Keys.LEFT, Keys.CENTER, this);
         resizeControlPointGeom.setSize(7);
         resizeControlPointGeom.setPickSize(10);
         resizeControlPointLabel.setVisible(false);
@@ -682,7 +682,7 @@ public class SARSegmentPlane extends WWObjectImpl {
             return copy;
         }
 
-        public String getText(SegmentPlane segmentPlane, Position position, AVList values) {
+        public String getText(SegmentPlane segmentPlane, Position position, KV values) {
             StringBuilder sb = new StringBuilder();
 
             if (this.getPrefix() != null) {
@@ -718,7 +718,7 @@ public class SARSegmentPlane extends WWObjectImpl {
 
             if (this.isShowHeightAboveSurface()) {
                 if (values != null) {
-                    Double height = AVListImpl.getDoubleValue(values, AVKey.HEIGHT);
+                    Double height = KVMap.getDoubleValue(values, Keys.HEIGHT);
                     if (height != null) {
                         if (!sb.isEmpty())
                             sb.append("\n");
@@ -744,7 +744,7 @@ public class SARSegmentPlane extends WWObjectImpl {
             return this.copyTo(new AltitudeLabelAttributes());
         }
 
-        public String getText(SegmentPlane segmentPlane, Position position, AVList values) {
+        public String getText(SegmentPlane segmentPlane, Position position, KV values) {
             StringBuilder sb = new StringBuilder();
             sb.append(this.formatElevation(position.getElevation()));
 
@@ -765,12 +765,12 @@ public class SARSegmentPlane extends WWObjectImpl {
             return this.copyTo(new AxisLabelAttributes());
         }
 
-        public String getText(SegmentPlane segmentPlane, Position position, AVList values) {
+        public String getText(SegmentPlane segmentPlane, Position position, KV values) {
             StringBuilder sb = new StringBuilder();
 
             if (values != null) {
-                Double width = AVListImpl.getDoubleValue(values, AVKey.WIDTH);
-                Double height = AVListImpl.getDoubleValue(values, AVKey.HEIGHT);
+                Double width = KVMap.getDoubleValue(values, Keys.WIDTH);
+                Double height = KVMap.getDoubleValue(values, Keys.HEIGHT);
                 boolean haveTuple = (width != null && height != null);
 
                 if (haveTuple)
@@ -830,7 +830,7 @@ public class SARSegmentPlane extends WWObjectImpl {
             return copy;
         }
 
-        public String getText(SegmentPlane segmentPlane, Position position, AVList values) {
+        public String getText(SegmentPlane segmentPlane, Position position, KV values) {
             return this.getMessage();
         }
     }

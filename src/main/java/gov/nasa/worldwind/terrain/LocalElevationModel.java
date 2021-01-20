@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.terrain;
 
-import gov.nasa.worldwind.WorldWind;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.data.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
@@ -223,7 +223,7 @@ public class LocalElevationModel extends AbstractElevationModel {
             return Double.MAX_VALUE; // as stated in the javadoc above, this is the sentinel for "not in my domain"
 
         // Mark the model as used this frame.
-        this.set(AVKey.FRAME_TIMESTAMP, System.currentTimeMillis());
+        this.set(Keys.FRAME_TIMESTAMP, System.currentTimeMillis());
 
         for (int i = 0; i < latlons.size(); i++) {
             LatLon ll = latlons.get(i);
@@ -295,12 +295,12 @@ public class LocalElevationModel extends AbstractElevationModel {
 
         // Create a raster reader for the file type.
         DataRasterReaderFactory readerFactory = (DataRasterReaderFactory) WorldWind.createConfigurationComponent(
-            AVKey.DATA_RASTER_READER_FACTORY_CLASS_NAME);
+            Keys.DATA_RASTER_READER_FACTORY_CLASS_NAME);
         DataRasterReader reader = readerFactory.findReaderFor(file, null);
 
         // Before reading the raster, verify that the file contains elevations.
-        AVList metadata = reader.readMetadata(file, null);
-        if (metadata == null || !AVKey.ELEVATION.equals(metadata.getStringValue(AVKey.PIXEL_FORMAT))) {
+        KV metadata = reader.readMetadata(file, null);
+        if (metadata == null || !Keys.ELEVATION.equals(metadata.getStringValue(Keys.PIXEL_FORMAT))) {
             String msg = Logging.getMessage("ElevationModel.SourceNotElevations", file.getAbsolutePath());
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -330,9 +330,9 @@ public class LocalElevationModel extends AbstractElevationModel {
     protected void addRaster(DataRaster raster, String filename) {
         // Determine the sector covered by the elevations. This information is in the GeoTIFF file or auxiliary
         // files associated with the elevations file.
-        final Sector sector = (Sector) raster.get(AVKey.SECTOR);
+        final Sector sector = (Sector) raster.get(Keys.SECTOR);
         if (sector == null) {
-            String msg = Logging.getMessage("DataRaster.MissingMetadata", AVKey.SECTOR);
+            String msg = Logging.getMessage("DataRaster.MissingMetadata", Keys.SECTOR);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
@@ -378,7 +378,7 @@ public class LocalElevationModel extends AbstractElevationModel {
      * @throws IllegalArgumentException if either the buffer, sector or parameters list is null, or if a key-value pair
      *                                  for {@code AVKey.DATA_TYPE} is not specified in the parameters.
      */
-    public void addElevations(ByteBuffer byteBuffer, Sector sector, int width, int height, AVList parameters) {
+    public void addElevations(ByteBuffer byteBuffer, Sector sector, int width, int height, KV parameters) {
         if (byteBuffer == null) {
             String message = Logging.getMessage("nullValue.BufferIsNull");
             Logging.logger().severe(message);
@@ -398,26 +398,26 @@ public class LocalElevationModel extends AbstractElevationModel {
         }
 
         // Setup parameters to instruct BufferWrapper on how to interpret the ByteBuffer.
-        AVList bufferParams = new AVListImpl();
+        KV bufferParams = new KVMap();
         bufferParams.setValues(parameters.copy());
 
-        Double tileMissingDataFlag = AVListImpl.getDoubleValue(bufferParams, AVKey.MISSING_DATA_SIGNAL);
+        Double tileMissingDataFlag = KVMap.getDoubleValue(bufferParams, Keys.MISSING_DATA_SIGNAL);
         if (tileMissingDataFlag == null)
             tileMissingDataFlag = this.getMissingDataSignal();
 
         // Check params for ELEVATION_MIN and ELEVATION_MAX and don't have the tile compute them if present.
         Double minElevation = null;
         Double maxElevation = null;
-        Object o = bufferParams.get(AVKey.ELEVATION_MIN);
+        Object o = bufferParams.get(Keys.ELEVATION_MIN);
         if (o instanceof Double)
             minElevation = (Double) o;
-        o = bufferParams.get(AVKey.ELEVATION_MAX);
+        o = bufferParams.get(Keys.ELEVATION_MAX);
         if (o instanceof Double)
             maxElevation = (Double) o;
 
-        String dataType = bufferParams.getStringValue(AVKey.DATA_TYPE);
+        String dataType = bufferParams.getStringValue(Keys.DATA_TYPE);
         if (WWUtil.isEmpty(dataType)) {
-            String msg = Logging.getMessage("DataRaster.MissingMetadata", AVKey.DATA_TYPE);
+            String msg = Logging.getMessage("DataRaster.MissingMetadata", Keys.DATA_TYPE);
             Logging.logger().severe(msg);
             throw new IllegalStateException(msg);
         }

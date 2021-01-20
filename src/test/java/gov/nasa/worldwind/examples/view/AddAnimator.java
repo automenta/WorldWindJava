@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.examples.view;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.examples.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.poi.PointOfInterest;
@@ -96,7 +95,7 @@ public class AddAnimator extends ApplicationTemplate {
                             10000, WorldWind.ABSOLUTE);
                     view.addAnimator(animator);
                     animator.start();
-                    view.firePropertyChange(AVKey.VIEW, null, view);
+                    view.firePropertyChange(Keys.VIEW, null, view);
                 }
             }
         }

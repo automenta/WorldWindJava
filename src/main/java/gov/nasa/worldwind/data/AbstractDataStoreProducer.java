@@ -19,22 +19,22 @@ public abstract class AbstractDataStoreProducer extends WWObjectImpl implements 
     private final List<SourceInfo> dataSourceList =
         Collections.synchronizedList(new ArrayList<>());
     private final List<Object> productionResults = new ArrayList<>();
-    protected AVList productionParams;
-    private AVList params;
+    protected KV productionParams;
+    private KV params;
     private boolean isStopped;
 
     public AbstractDataStoreProducer() {
     }
 
-    public AVList getProductionParameters() {
+    public KV getProductionParameters() {
         return this.productionParams;
     }
 
-    public AVList getStoreParameters() {
+    public KV getStoreParameters() {
         return this.params;
     }
 
-    public void setStoreParameters(AVList parameters) {
+    public void setStoreParameters(KV parameters) {
         if (parameters == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
@@ -60,7 +60,7 @@ public abstract class AbstractDataStoreProducer extends WWObjectImpl implements 
         return list;
     }
 
-    public boolean acceptsDataSource(Object source, AVList params) {
+    public boolean acceptsDataSource(Object source, KV params) {
         if (source == null || this.isStopped())
             return false;
 
@@ -83,14 +83,14 @@ public abstract class AbstractDataStoreProducer extends WWObjectImpl implements 
         return false;
     }
 
-    public void offerDataSource(Object source, AVList params) {
+    public void offerDataSource(Object source, KV params) {
         if (source == null) {
             String message = Logging.getMessage("nullValue.SourceIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        params = (null == params) ? new AVListImpl() : params.copy();
+        params = (null == params) ? new KVMap() : params.copy();
         String message = this.validateDataSource(source, params);
         if (message != null) {
             Logging.logger().severe(message);
@@ -173,16 +173,16 @@ public abstract class AbstractDataStoreProducer extends WWObjectImpl implements 
         return this.productionResults;
     }
 
-    protected abstract void doStartProduction(AVList parameters);
+    protected abstract void doStartProduction(KV parameters);
 
-    protected abstract String validateProductionParameters(AVList parameters);
+    protected abstract String validateProductionParameters(KV parameters);
 
-    protected abstract String validateDataSource(Object source, AVList params);
+    protected abstract String validateDataSource(Object source, KV params);
 
-    public static class SourceInfo extends AVListImpl {
+    public static class SourceInfo extends KVMap {
         public final Object source;
 
-        public SourceInfo(Object source, AVList params) {
+        public SourceInfo(Object source, KV params) {
             this.source = source;
             if (null != params)
                 this.setValues(params);

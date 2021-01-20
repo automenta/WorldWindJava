@@ -5,8 +5,7 @@
  */
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.WorldWindow;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.formats.tiff.GeotiffImageReaderSpi;
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -57,7 +56,7 @@ public class SurfaceImages extends ApplicationTemplate {
                 )));
                 Path boundary = new Path(si1.getCorners(), 0);
                 boundary.setSurfacePath(true);
-                boundary.setPathType(AVKey.RHUMB_LINE);
+                boundary.setPathType(Keys.RHUMB_LINE);
                 var attrs = new BasicShapeAttributes();
                 attrs.setOutlineMaterial(new Material(new Color(0, 255, 0)));
                 boundary.setAttributes(attrs);
@@ -65,7 +64,7 @@ public class SurfaceImages extends ApplicationTemplate {
 
                 Path boundary2 = new Path(si2.getCorners(), 0);
                 boundary2.setSurfacePath(true);
-                boundary2.setPathType(AVKey.RHUMB_LINE);
+                boundary2.setPathType(Keys.RHUMB_LINE);
                 attrs = new BasicShapeAttributes();
                 attrs.setOutlineMaterial(new Material(new Color(0, 255, 0)));
                 boundary2.setAttributes(attrs);

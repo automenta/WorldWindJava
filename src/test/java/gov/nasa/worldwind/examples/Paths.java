@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.render.*;
@@ -52,7 +51,7 @@ public class Paths extends ApplicationTemplate {
             path.setAttributes(attrs);
             path.setVisible(true);
             path.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
-            path.setPathType(AVKey.GREAT_CIRCLE);
+            path.setPathType(Keys.GREAT_CIRCLE);
             layer.add(path);
 
             // Create a path that follows the terrain
@@ -78,7 +77,7 @@ public class Paths extends ApplicationTemplate {
             path = new Path(pathPositions);
             path.setAltitudeMode(WorldWind.ABSOLUTE);
             path.setExtrude(true);
-            path.setPathType(AVKey.LINEAR);
+            path.setPathType(Keys.LINEAR);
 
             attrs = new BasicShapeAttributes();
             attrs.setOutlineMaterial(new Material(Color.BLUE));

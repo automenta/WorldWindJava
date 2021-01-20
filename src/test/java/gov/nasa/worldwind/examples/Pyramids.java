@@ -7,7 +7,6 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.*;
@@ -56,7 +55,7 @@ public class Pyramids extends ApplicationTemplate {
             pyramid3.setAltitudeMode(WorldWind.ABSOLUTE);
             pyramid3.setAttributes(attrs);
             pyramid3.setVisible(true);
-            pyramid3.set(AVKey.DISPLAY_NAME, "Pyramid with equal axes, ABSOLUTE altitude mode");
+            pyramid3.set(Keys.DISPLAY_NAME, "Pyramid with equal axes, ABSOLUTE altitude mode");
             layer.add(pyramid3);
 
             // Pyramid with equal axes, RELATIVE_TO_GROUND
@@ -64,7 +63,7 @@ public class Pyramids extends ApplicationTemplate {
             pyramid4.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             pyramid4.setAttributes(attrs);
             pyramid4.setVisible(true);
-            pyramid4.set(AVKey.DISPLAY_NAME, "Pyramid with equal axes, RELATIVE_TO_GROUND altitude mode");
+            pyramid4.set(Keys.DISPLAY_NAME, "Pyramid with equal axes, RELATIVE_TO_GROUND altitude mode");
             layer.add(pyramid4);
 
             // Pyramid with equal axes, CLAMP_TO_GROUND
@@ -72,7 +71,7 @@ public class Pyramids extends ApplicationTemplate {
             pyramid5.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
             pyramid5.setAttributes(attrs);
             pyramid5.setVisible(true);
-            pyramid5.set(AVKey.DISPLAY_NAME, "Pyramid with equal axes, CLAMP_TO_GROUND altitude mode");
+            pyramid5.set(Keys.DISPLAY_NAME, "Pyramid with equal axes, CLAMP_TO_GROUND altitude mode");
             layer.add(pyramid5);
 
             // Pyramid with a texture, using Pyramid(position, height, width) constructor
@@ -81,7 +80,7 @@ public class Pyramids extends ApplicationTemplate {
             pyramid9.setImageSources("gov/nasa/worldwind/examples/images/500px-Checkerboard_pattern.png");
             pyramid9.setAttributes(attrs);
             pyramid9.setVisible(true);
-            pyramid9.set(AVKey.DISPLAY_NAME, "Pyramid with a texture");
+            pyramid9.set(Keys.DISPLAY_NAME, "Pyramid with a texture");
             layer.add(pyramid9);
 
             // Scaled Pyramid with default orientation
@@ -89,7 +88,7 @@ public class Pyramids extends ApplicationTemplate {
             pyramid.setAltitudeMode(WorldWind.ABSOLUTE);
             pyramid.setAttributes(attrs);
             pyramid.setVisible(true);
-            pyramid.set(AVKey.DISPLAY_NAME, "Scaled Pyramid with default orientation");
+            pyramid.set(Keys.DISPLAY_NAME, "Scaled Pyramid with default orientation");
             layer.add(pyramid);
 
             // Scaled Pyramid with a pre-set orientation
@@ -98,7 +97,7 @@ public class Pyramids extends ApplicationTemplate {
             pyramid2.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             pyramid2.setAttributes(attrs2);
             pyramid2.setVisible(true);
-            pyramid2.set(AVKey.DISPLAY_NAME, "Scaled Pyramid with a pre-set orientation");
+            pyramid2.set(Keys.DISPLAY_NAME, "Scaled Pyramid with a pre-set orientation");
             layer.add(pyramid2);
 
             // Scaled Pyramid with a pre-set orientation
@@ -108,7 +107,7 @@ public class Pyramids extends ApplicationTemplate {
             pyramid6.setImageSources("gov/nasa/worldwind/examples/images/500px-Checkerboard_pattern.png");
             pyramid6.setAttributes(attrs2);
             pyramid6.setVisible(true);
-            pyramid6.set(AVKey.DISPLAY_NAME, "Scaled Pyramid with a pre-set orientation");
+            pyramid6.set(Keys.DISPLAY_NAME, "Scaled Pyramid with a pre-set orientation");
             layer.add(pyramid6);
 
             // Scaled Pyramid with a pre-set orientation
@@ -117,7 +116,7 @@ public class Pyramids extends ApplicationTemplate {
             pyramid7.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             pyramid7.setAttributes(attrs2);
             pyramid7.setVisible(true);
-            pyramid7.set(AVKey.DISPLAY_NAME, "Scaled Pyramid with a pre-set orientation");
+            pyramid7.set(Keys.DISPLAY_NAME, "Scaled Pyramid with a pre-set orientation");
             layer.add(pyramid7);
 
             // Scaled, oriented pyramid in 3rd "quadrant" (-X, -Y, -Z)
@@ -126,7 +125,7 @@ public class Pyramids extends ApplicationTemplate {
             pyramid8.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             pyramid8.setAttributes(attrs2);
             pyramid8.setVisible(true);
-            pyramid8.set(AVKey.DISPLAY_NAME, "Scaled, oriented Pyramid in the 3rd 'quadrant' (-X, -Y, -Z)");
+            pyramid8.set(Keys.DISPLAY_NAME, "Scaled, oriented Pyramid in the 3rd 'quadrant' (-X, -Y, -Z)");
             layer.add(pyramid8);
 
             // Add the layer to the model.

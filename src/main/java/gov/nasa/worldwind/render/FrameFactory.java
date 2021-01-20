@@ -8,7 +8,7 @@ package gov.nasa.worldwind.render;
 
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL2;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.util.Logging;
 
 import java.awt.*;
@@ -25,30 +25,30 @@ import java.nio.DoubleBuffer;
  */
 public class FrameFactory {
     /**
-     * @deprecated Use {@link AVKey#SHAPE_RECTANGLE} instead.
+     * @deprecated Use {@link Keys#SHAPE_RECTANGLE} instead.
      */
     @Deprecated
-    public static final String SHAPE_RECTANGLE = AVKey.SHAPE_RECTANGLE;
+    public static final String SHAPE_RECTANGLE = Keys.SHAPE_RECTANGLE;
     /**
-     * @deprecated Use {@link AVKey#SHAPE_ELLIPSE} instead.
+     * @deprecated Use {@link Keys#SHAPE_ELLIPSE} instead.
      */
     @Deprecated
-    public static final String SHAPE_ELLIPSE = AVKey.SHAPE_ELLIPSE;
+    public static final String SHAPE_ELLIPSE = Keys.SHAPE_ELLIPSE;
     /**
-     * @deprecated Use {@link AVKey#SHAPE_NONE} instead.
+     * @deprecated Use {@link Keys#SHAPE_NONE} instead.
      */
     @Deprecated
-    public static final String SHAPE_NONE = AVKey.SHAPE_NONE;
+    public static final String SHAPE_NONE = Keys.SHAPE_NONE;
     /**
-     * @deprecated Use {@link AVKey#SHAPE_TRIANGLE} instead.
+     * @deprecated Use {@link Keys#SHAPE_TRIANGLE} instead.
      */
     @Deprecated
-    public static final String LEADER_TRIANGLE = AVKey.SHAPE_TRIANGLE;
+    public static final String LEADER_TRIANGLE = Keys.SHAPE_TRIANGLE;
     /**
-     * @deprecated Use {@link AVKey#SHAPE_NONE} instead.
+     * @deprecated Use {@link Keys#SHAPE_NONE} instead.
      */
     @Deprecated
-    public static final String LEADER_NONE = AVKey.SHAPE_NONE;
+    public static final String LEADER_NONE = Keys.SHAPE_NONE;
 
     private static final int cornerSteps = 16;
     private static final int circleSteps = 64;
@@ -67,7 +67,7 @@ public class FrameFactory {
      */
     public static void drawShape(DrawContext dc, String shape, double width, double height, int glMode,
         int cornerRadius) {
-        if (!shape.equals(AVKey.SHAPE_NONE))
+        if (!shape.equals(Keys.SHAPE_NONE))
             FrameFactory.drawBuffer(dc, glMode, FrameFactory.createShapeBuffer(shape, width, height, cornerRadius, null));
     }
 
@@ -89,7 +89,7 @@ public class FrameFactory {
      */
     public static void drawShapeWithLeader(DrawContext dc, String shape, double width, double height,
         Point leaderOffset, double leaderGapWidth, int glMode, int cornerRadius) {
-        if (!shape.equals(AVKey.SHAPE_NONE))
+        if (!shape.equals(Keys.SHAPE_NONE))
             FrameFactory.drawBuffer(dc, glMode,
                 FrameFactory.createShapeWithLeaderBuffer(shape, width, height, leaderOffset, leaderGapWidth, cornerRadius, null));
     }
@@ -109,8 +109,8 @@ public class FrameFactory {
         DoubleBuffer buffer) {
         // default to rectangle if shape unknown
         return switch (shape) {
-            case AVKey.SHAPE_ELLIPSE -> FrameFactory.createEllipseBuffer(width, height, FrameFactory.circleSteps, buffer);
-            case AVKey.SHAPE_NONE -> null;
+            case Keys.SHAPE_ELLIPSE -> FrameFactory.createEllipseBuffer(width, height, FrameFactory.circleSteps, buffer);
+            case Keys.SHAPE_NONE -> null;
             default -> FrameFactory.createRoundedRectangleBuffer(width, height, cornerRadius, buffer);
         };
     }
@@ -133,9 +133,9 @@ public class FrameFactory {
         Point leaderOffset, double leaderGapWidth, int cornerRadius, DoubleBuffer buffer) {
         // default to rectangle if shape unknown
         return switch (shape) {
-            case AVKey.SHAPE_ELLIPSE -> FrameFactory.createEllipseWithLeaderBuffer(width, height, leaderOffset, leaderGapWidth,
+            case Keys.SHAPE_ELLIPSE -> FrameFactory.createEllipseWithLeaderBuffer(width, height, leaderOffset, leaderGapWidth,
                 FrameFactory.circleSteps, buffer);
-            case AVKey.SHAPE_NONE -> null;
+            case Keys.SHAPE_NONE -> null;
             default -> FrameFactory.createRoundedRectangleWithLeaderBuffer(width, height, leaderOffset, leaderGapWidth,
                 cornerRadius,
                 buffer);

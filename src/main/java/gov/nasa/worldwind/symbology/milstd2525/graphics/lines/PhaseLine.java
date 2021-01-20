@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.symbology.milstd2525.graphics.lines;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.TacticalGraphicLabel;
@@ -126,7 +126,7 @@ public class PhaseLine extends AbstractMilStd2525TacticalGraphic {
     protected Path createPath() {
         Path path = new Path();
         path.setSurfacePath(true);
-        path.setPathType(AVKey.GREAT_CIRCLE);
+        path.setPathType(Keys.GREAT_CIRCLE);
         path.setDelegateOwner(this.getActiveDelegateOwner());
         path.setAttributes(this.getActiveShapeAttributes());
         return path;
@@ -200,11 +200,11 @@ public class PhaseLine extends AbstractMilStd2525TacticalGraphic {
 
         // Set the West-most label to right alignment, and the East-most label to left alignment.
         if (first.longitude < last.longitude) {
-            startLabel.setTextAlign(AVKey.RIGHT);
-            endLabel.setTextAlign(AVKey.LEFT);
+            startLabel.setTextAlign(Keys.RIGHT);
+            endLabel.setTextAlign(Keys.LEFT);
         } else {
-            startLabel.setTextAlign(AVKey.LEFT);
-            endLabel.setTextAlign(AVKey.RIGHT);
+            startLabel.setTextAlign(Keys.LEFT);
+            endLabel.setTextAlign(Keys.RIGHT);
         }
     }
 

@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.examples.worldwindow.util.measuretool;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.*;
@@ -28,9 +28,9 @@ public class WWOMeasureToolControlPoints implements WWOMeasureTool.ControlPointL
 
         this.controlPointAttributes = new AnnotationAttributes();
         // Define an 8x8 square centered on the screen point
-        this.controlPointAttributes.setFrameShape(AVKey.SHAPE_RECTANGLE);
-        this.controlPointAttributes.setLeader(AVKey.SHAPE_NONE);
-        this.controlPointAttributes.setAdjustWidthToText(AVKey.SIZE_FIXED);
+        this.controlPointAttributes.setFrameShape(Keys.SHAPE_RECTANGLE);
+        this.controlPointAttributes.setLeader(Keys.SHAPE_NONE);
+        this.controlPointAttributes.setAdjustWidthToText(Keys.SIZE_FIXED);
         this.controlPointAttributes.setSize(new Dimension(8, 8));
         this.controlPointAttributes.setDrawOffset(new Point(0, -4));
         this.controlPointAttributes.setInsets(new Insets(0, 0, 0, 0));

@@ -7,7 +7,6 @@ package gov.nasa.worldwind.examples;
 
 import com.jogamp.opengl.util.awt.TextRenderer;
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -251,13 +250,13 @@ public class Shapes {
                     path.setNumSubsegments(currentNumSubsegments);
 
                     if (currentPathType.equalsIgnoreCase("linear")) {
-                        path.setPathType(AVKey.LINEAR);
+                        path.setPathType(Keys.LINEAR);
                     }
                     else if (currentPathType.equalsIgnoreCase("rhumb line")) {
-                        path.setPathType(AVKey.RHUMB_LINE);
+                        path.setPathType(Keys.RHUMB_LINE);
                     }
                     else {
-                        path.setPathType(AVKey.GREAT_CIRCLE);
+                        path.setPathType(Keys.GREAT_CIRCLE);
                     }
 
                     path.setOffset(currentOffset);

@@ -138,7 +138,7 @@ public class DFWDemo {
 
         private final WMSCapabilities caps;
         private final WMSLayerCapabilities layerCaps;
-        private final AVList params;
+        private final KV params;
         private final String serverUrl;
         private WMSTiledImageLayer imageLayer;
         private WMSBasicElevationModel elevationModel;
@@ -147,15 +147,15 @@ public class DFWDemo {
             serverUrl = pServerUrl;
             imageLayer = null;
             caps = pCaps;
-            params = new AVListImpl();
+            params = new KVMap();
             layerCaps = pLayerCaps;
-            params.set(AVKey.LAYER_NAMES, layerCaps.getName());
+            params.set(Keys.LAYER_NAMES, layerCaps.getName());
             String abs = layerCaps.getLayerAbstract();
             if (!WWUtil.isEmpty(abs)) {
-                params.set(AVKey.LAYER_ABSTRACT, abs);
+                params.set(Keys.LAYER_ABSTRACT, abs);
             }
 
-            params.set(AVKey.DISPLAY_NAME, makeTitle(caps));
+            params.set(Keys.DISPLAY_NAME, makeTitle(caps));
         }
 
         public Sector getSector() {
@@ -183,8 +183,8 @@ public class DFWDemo {
         }
 
         private String makeTitle(WMSCapabilities caps) {
-            String layerNames = params.getStringValue(AVKey.LAYER_NAMES);
-            String styleNames = params.getStringValue(AVKey.STYLE_NAMES);
+            String layerNames = params.getStringValue(Keys.LAYER_NAMES);
+            String styleNames = params.getStringValue(Keys.STYLE_NAMES);
             String[] lNames = layerNames.split(",");
             String[] sNames = styleNames != null ? styleNames.split(",") : null;
 
@@ -221,7 +221,7 @@ public class DFWDemo {
             return caps;
         }
 
-        public AVList getParams() {
+        public KV getParams() {
             return params;
         }
     }
@@ -240,7 +240,7 @@ public class DFWDemo {
             ((Component) this.wwd).setPreferredSize(canvasSize);
 
             // Create the default model as described in the current worldwind properties.
-            Model m = (Model) WorldWind.createConfigurationComponent(AVKey.MODEL_CLASS_NAME);
+            Model m = (Model) WorldWind.createConfigurationComponent(Keys.MODEL_CLASS_NAME);
             this.wwd.setModel(m);
 
             // Setup a select listener for the worldmap click-and-go feature
@@ -254,7 +254,7 @@ public class DFWDemo {
             }
 
             // Add controllers to manage highlighting and tool tips.
-            this.toolTipController = new ToolTipController(this.getWwd(), AVKey.DISPLAY_NAME, null);
+            this.toolTipController = new ToolTipController(this.getWwd(), Keys.DISPLAY_NAME, null);
             this.highlightController = new HighlightController(this.getWwd(), SelectEvent.ROLLOVER);
         }
 
@@ -313,12 +313,12 @@ public class DFWDemo {
             }
 
             if (dynamicLayer != null) {
-                AVList configParams = dynamicLayer.getParams().copy(); // Copy to insulate changes from the caller.
+                KV configParams = dynamicLayer.getParams().copy(); // Copy to insulate changes from the caller.
 
                 // Some wms servers are slow, so increase the timeouts and limits used by world wind's retrievers.
-                configParams.set(AVKey.URL_CONNECT_TIMEOUT, 30000);
-                configParams.set(AVKey.URL_READ_TIMEOUT, 30000);
-                configParams.set(AVKey.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT, 60000);
+                configParams.set(Keys.URL_CONNECT_TIMEOUT, 30000);
+                configParams.set(Keys.URL_READ_TIMEOUT, 30000);
+                configParams.set(Keys.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT, 60000);
                 long fiveDayMillis = 5L * 24L * 60L * 60L * 1000L;
                 if (imagery) {
                     WMSTiledImageLayer wmsLayer = new WMSTiledImageLayer(dynamicLayer.getCaps(), configParams);
@@ -327,11 +327,11 @@ public class DFWDemo {
                     dynamicLayer.setImageLayer(wmsLayer);
                 }
                 else {
-                    configParams.set(AVKey.TILE_WIDTH, 1024);
-                    configParams.set(AVKey.TILE_HEIGHT, 1024);
-                    configParams.set(AVKey.NUM_LEVELS, 9);
+                    configParams.set(Keys.TILE_WIDTH, 1024);
+                    configParams.set(Keys.TILE_HEIGHT, 1024);
+                    configParams.set(Keys.NUM_LEVELS, 9);
                     Angle delta = new Angle(0.01);
-                    configParams.set(AVKey.LEVEL_ZERO_TILE_DELTA, new LatLon(delta, delta));
+                    configParams.set(Keys.LEVEL_ZERO_TILE_DELTA, new LatLon(delta, delta));
                     WMSBasicElevationModel wmsElevations = new WMSBasicElevationModel(dynamicLayer.getCaps(),
                         configParams);
                     wmsElevations.setExpiryTime(System.currentTimeMillis() - fiveDayMillis);
@@ -392,7 +392,7 @@ public class DFWDemo {
             this.pack();
 
             // Center the application on the screen.
-            WWUtil.alignComponent(null, this, AVKey.CENTER);
+            WWUtil.alignComponent(null, this, Keys.CENTER);
             this.setResizable(true);
             Position eyePos = new Position(Angle.fromDegreesLatitude(32.897), Angle.fromDegreesLongitude(-97.04),
                 500.0); // DFW

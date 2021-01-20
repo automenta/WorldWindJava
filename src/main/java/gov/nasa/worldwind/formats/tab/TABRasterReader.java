@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.formats.tab;
 
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.util.*;
 
 import java.io.*;
@@ -92,7 +92,7 @@ public class TABRasterReader {
         return s;
     }
 
-    private static void setProperty(String line, String key, AVList values) {
+    private static void setProperty(String line, String key, KV values) {
         String[] tokens = line.split(" ", 2);
         if (tokens.length < 2)
             return;
@@ -109,7 +109,7 @@ public class TABRasterReader {
             return false;
 
         try (FileReader fileReader = new FileReader(file)) {
-            AVList controlPoints = new RasterControlPointList();
+            KV controlPoints = new RasterControlPointList();
             return TABRasterReader.doCanRead(fileReader, controlPoints);
         }
         catch (Exception ignored) {
@@ -147,7 +147,7 @@ public class TABRasterReader {
         }
     }
 
-    protected static boolean doCanRead(Reader reader, AVList controlPoints) {
+    protected static boolean doCanRead(Reader reader, KV controlPoints) {
         if (reader == null) {
             String message = Logging.getMessage("nullValue.ReaderIsNull");
             Logging.logger().severe(message);
@@ -203,7 +203,7 @@ public class TABRasterReader {
         }
     }
 
-    protected static void readHeader(BufferedReader reader, AVList controlPoints)
+    protected static void readHeader(BufferedReader reader, KV controlPoints)
         throws IOException {
         if (reader == null) {
             String message = Logging.getMessage("nullValue.ReaderIsNull");
@@ -369,7 +369,7 @@ public class TABRasterReader {
         return (line != null) ? line.trim() : null;
     }
 
-    protected static String validateHeaderValues(AVList values) {
+    protected static String validateHeaderValues(KV values) {
         StringBuilder sb = new StringBuilder();
 
         String s = values.getStringValue(TABRasterReader.VERSION);
@@ -425,7 +425,7 @@ public class TABRasterReader {
         InputStream stream = (InputStream) streamOrException;
         try {
             InputStreamReader streamReader = new InputStreamReader(stream);
-            AVList controlPoints = new RasterControlPointList();
+            KV controlPoints = new RasterControlPointList();
             return TABRasterReader.doCanRead(streamReader, controlPoints);
         }
         catch (RuntimeException ignored) {

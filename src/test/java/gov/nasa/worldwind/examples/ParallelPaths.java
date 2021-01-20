@@ -7,7 +7,6 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -27,9 +26,9 @@ import java.util.*;
  */
 public class ParallelPaths extends ApplicationTemplate {
     public static void main(String[] args) {
-        Configuration.setValue(AVKey.INITIAL_LATITUDE, 49.05);
-        Configuration.setValue(AVKey.INITIAL_LONGITUDE, -122.78);
-        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 8000);
+        Configuration.setValue(Keys.INITIAL_LATITUDE, 49.05);
+        Configuration.setValue(Keys.INITIAL_LONGITUDE, -122.78);
+        Configuration.setValue(Keys.INITIAL_ALTITUDE, 8000);
 
         ApplicationTemplate.start("WorldWind Multi Path", AppFrame.class);
     }
@@ -81,10 +80,10 @@ public class ParallelPaths extends ApplicationTemplate {
             attrs.setOutlineWidth(5);
 
             Path path = new Path(positions);
-            path.setPathType(AVKey.LINEAR);
+            path.setPathType(Keys.LINEAR);
             path.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             path.setAttributes(attrs);
-            path.set(AVKey.DISPLAY_NAME, displayName);
+            path.set(Keys.DISPLAY_NAME, displayName);
             layer.add(path);
 
             // Show how to make the colors vary along the paths.

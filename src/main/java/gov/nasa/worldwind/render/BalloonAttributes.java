@@ -6,6 +6,8 @@
 
 package gov.nasa.worldwind.render;
 
+import gov.nasa.worldwind.Keys;
+
 import java.awt.*;
 
 /**
@@ -127,16 +129,16 @@ public interface BalloonAttributes extends ShapeAttributes {
     /**
      * Indicates the shape of the balloon's frame.
      *
-     * @return the balloon frame's shape, either {@link gov.nasa.worldwind.avlist.AVKey#SHAPE_NONE}, {@link
-     * gov.nasa.worldwind.avlist.AVKey#SHAPE_RECTANGLE}, or {@link gov.nasa.worldwind.avlist.AVKey#SHAPE_ELLIPSE}.
+     * @return the balloon frame's shape, either {@link Keys#SHAPE_NONE}, {@link
+     * Keys#SHAPE_RECTANGLE}, or {@link Keys#SHAPE_ELLIPSE}.
      * @see #setBalloonShape(String)
      */
     String getBalloonShape();
 
     /**
      * Specifies the shape of the balloon's frame. The <code>shape</code> may be one of the following: <ul> <li>{@link
-     * gov.nasa.worldwind.avlist.AVKey#SHAPE_NONE}</li> <li>{@link gov.nasa.worldwind.avlist.AVKey#SHAPE_RECTANGLE}</li>
-     * <li>{@link gov.nasa.worldwind.avlist.AVKey#SHAPE_ELLIPSE}</li> </ul>
+     * Keys#SHAPE_NONE}</li> <li>{@link Keys#SHAPE_RECTANGLE}</li>
+     * <li>{@link Keys#SHAPE_ELLIPSE}</li> </ul>
      * <p>
      * If the <code>shape</code> is <code>AVKey.SHAPE_NONE</code>, the balloon's content is displayed in a rectangle in
      * the viewport without any decoration. The rectangle's dimension in the viewport are specified by calling {@link
@@ -161,15 +163,15 @@ public interface BalloonAttributes extends ShapeAttributes {
     /**
      * Indicates the shape of the balloon's leader.
      *
-     * @return the balloon leader's shape, either {@link gov.nasa.worldwind.avlist.AVKey#SHAPE_NONE} or {@link
-     * gov.nasa.worldwind.avlist.AVKey#SHAPE_TRIANGLE}.
+     * @return the balloon leader's shape, either {@link Keys#SHAPE_NONE} or {@link
+     * Keys#SHAPE_TRIANGLE}.
      * @see #setLeaderShape(String)
      */
     String getLeaderShape();
 
     /**
      * Specifies the shape of the balloon's leader. The <code>shape</code> may be one of the following: <ul> <li>{@link
-     * gov.nasa.worldwind.avlist.AVKey#SHAPE_NONE}</li> <li>{@link gov.nasa.worldwind.avlist.AVKey#SHAPE_TRIANGLE}</li>
+     * Keys#SHAPE_NONE}</li> <li>{@link Keys#SHAPE_TRIANGLE}</li>
      * </ul>
      * <p>
      * If the <code>shape</code> is <code>AVKey.SHAPE_NONE</code>, the leader is disabled and does not display.
@@ -309,18 +311,18 @@ public interface BalloonAttributes extends ShapeAttributes {
     /**
      * Indicates the balloon texture's horizontal and vertical repeat mode.
      *
-     * @return the balloon texture's repeat mode, one of {@link gov.nasa.worldwind.avlist.AVKey#REPEAT_NONE}, {@link
-     * gov.nasa.worldwind.avlist.AVKey#REPEAT_X}, {@link gov.nasa.worldwind.avlist.AVKey#REPEAT_Y}, or {@link
-     * gov.nasa.worldwind.avlist.AVKey#REPEAT_XY}
+     * @return the balloon texture's repeat mode, one of {@link Keys#REPEAT_NONE}, {@link
+     * Keys#REPEAT_X}, {@link Keys#REPEAT_Y}, or {@link
+     * Keys#REPEAT_XY}
      * @see #setImageRepeat(String)
      */
     String getImageRepeat();
 
     /**
      * Specifies the balloon texture's horizontal and vertical repeat mode. The <code>repeat</code> may be one of the
-     * following: <ul> <li>{@link gov.nasa.worldwind.avlist.AVKey#REPEAT_NONE}</li> <li>{@link
-     * gov.nasa.worldwind.avlist.AVKey#REPEAT_X}</li> <li>{@link gov.nasa.worldwind.avlist.AVKey#REPEAT_Y}</li>
-     * <li>{@link gov.nasa.worldwind.avlist.AVKey#REPEAT_XY}</li> </ul>
+     * following: <ul> <li>{@link Keys#REPEAT_NONE}</li> <li>{@link
+     * Keys#REPEAT_X}</li> <li>{@link Keys#REPEAT_Y}</li>
+     * <li>{@link Keys#REPEAT_XY}</li> </ul>
      * <p>
      * If <code>repeat</code> is <code>AVKey.REPEAT_NONE</code>, the balloon's texture is displayed according to its
      * offset and scale without any repeating pattern.

@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.layers.ogc.kml;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.examples.kml.KMLDocumentBuilder;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
@@ -143,8 +142,8 @@ public class KMLExportTest
         PointPlacemark placemark = new PointPlacemark(Position.fromDegrees(37.824713, -122.370028, 0.0));
 
         placemark.setLabelText("Treasure Island");
-        placemark.set(AVKey.SHORT_DESCRIPTION, "Sample placemark");
-        placemark.set(AVKey.BALLOON_TEXT, "This is a <b>Point Placemark</b>");
+        placemark.set(Keys.SHORT_DESCRIPTION, "Sample placemark");
+        placemark.set(Keys.BALLOON_TEXT, "This is a <b>Point Placemark</b>");
 
         placemark.setLineEnabled(false);
         placemark.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
@@ -167,8 +166,8 @@ public class KMLExportTest
         path.setAttributes(normalShapeAttributes);
         path.setHighlightAttributes(highlightShapeAttributes);
 
-        path.set(AVKey.SHORT_DESCRIPTION, "Short description of Path");
-        path.set(AVKey.BALLOON_TEXT, "This is a Path.");
+        path.set(Keys.SHORT_DESCRIPTION, "Short description of Path");
+        path.set(Keys.BALLOON_TEXT, "This is a Path.");
 
         return path;
     }
@@ -219,8 +218,8 @@ public class KMLExportTest
         poly.setAttributes(normalShapeAttributes);
         poly.setHighlightAttributes(highlightShapeAttributes);
 
-        poly.set(AVKey.SHORT_DESCRIPTION, "Short description of Polygon");
-        poly.set(AVKey.BALLOON_TEXT, "This is a Polygon.");
+        poly.set(Keys.SHORT_DESCRIPTION, "Short description of Polygon");
+        poly.set(Keys.BALLOON_TEXT, "This is a Polygon.");
 
         return poly;
     }
@@ -274,8 +273,8 @@ public class KMLExportTest
         poly.setCapHighlightAttributes(highlightShapeAttributes);
         poly.setSideHighlightAttributes(highlightShapeAttributes);
 
-        poly.set(AVKey.SHORT_DESCRIPTION, "Short description of Extruded Polygon");
-        poly.set(AVKey.BALLOON_TEXT, "This is an Extruded Polygon.");
+        poly.set(Keys.SHORT_DESCRIPTION, "Short description of Extruded Polygon");
+        poly.set(Keys.BALLOON_TEXT, "This is an Extruded Polygon.");
 
         return poly;
     }
@@ -294,8 +293,8 @@ public class KMLExportTest
         poly.setAttributes(normalShapeAttributes);
         poly.setHighlightAttributes(highlightShapeAttributes);
 
-        poly.set(AVKey.SHORT_DESCRIPTION, "Short description of Surface Polygon");
-        poly.set(AVKey.BALLOON_TEXT, "This is a Surface Polygon.");
+        poly.set(Keys.SHORT_DESCRIPTION, "Short description of Surface Polygon");
+        poly.set(Keys.BALLOON_TEXT, "This is a Surface Polygon.");
 
         return poly;
     }
@@ -306,11 +305,11 @@ public class KMLExportTest
 
         sc.setImageSource("images/pushpins/plain-yellow.png");
 
-        sc.setScreenOffset(new Offset(0.0, 0.0, AVKey.FRACTION, AVKey.FRACTION));
-        sc.setImageOffset(new Offset(0.0, 0.0, AVKey.FRACTION, AVKey.FRACTION));
+        sc.setScreenOffset(new Offset(0.0, 0.0, Keys.FRACTION, Keys.FRACTION));
+        sc.setImageOffset(new Offset(0.0, 0.0, Keys.FRACTION, Keys.FRACTION));
 
         Size size = new Size();
-        size.setWidth(Size.EXPLICIT_DIMENSION, 100.0, AVKey.PIXELS);
+        size.setWidth(Size.EXPLICIT_DIMENSION, 100.0, Keys.PIXELS);
         size.setHeight(Size.MAINTAIN_ASPECT_RATIO, 0.0, null);
         sc.setSize(size);
 
@@ -343,9 +342,9 @@ public class KMLExportTest
         SurfaceSector sector = new SurfaceSector(Sector.fromDegrees(60, 80, -90, -70));
         sector.setAttributes(normalShapeAttributes);
         sector.setHighlightAttributes(highlightShapeAttributes);
-        sector.set(AVKey.DISPLAY_NAME, "Surface Sector");
-        sector.set(AVKey.SHORT_DESCRIPTION, "Short description of Surface Sector");
-        sector.set(AVKey.BALLOON_TEXT, "This is a Surface Sector.");
+        sector.set(Keys.DISPLAY_NAME, "Surface Sector");
+        sector.set(Keys.SHORT_DESCRIPTION, "Short description of Surface Sector");
+        sector.set(Keys.BALLOON_TEXT, "This is a Surface Sector.");
         return sector;
     }
 
@@ -363,9 +362,9 @@ public class KMLExportTest
         polyline.setAttributes(normalShapeAttributes);
         polyline.setHighlightAttributes(highlightShapeAttributes);
 
-        polyline.set(AVKey.DISPLAY_NAME, "Surface Polyline");
-        polyline.set(AVKey.SHORT_DESCRIPTION, "Short description of Surface Polyline");
-        polyline.set(AVKey.BALLOON_TEXT, "This is a Surface Polyline.");
+        polyline.set(Keys.DISPLAY_NAME, "Surface Polyline");
+        polyline.set(Keys.SHORT_DESCRIPTION, "Short description of Surface Polyline");
+        polyline.set(Keys.BALLOON_TEXT, "This is a Surface Polyline.");
 
         return polyline;
     }

@@ -5,6 +5,7 @@
  */
 package gov.nasa.worldwind.util;
 
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.data.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
@@ -279,7 +280,7 @@ public class ImageUtil {
      * @throws IllegalArgumentException if any of <code>sourceImage</code>, <code>destImage</code> or
      *                                  <code>worldFileParams</code> is null.
      */
-    public static Sector warpImageWithWorldFile(BufferedImage sourceImage, AVList worldFileParams,
+    public static Sector warpImageWithWorldFile(BufferedImage sourceImage, KV worldFileParams,
         BufferedImage destImage) {
         if (sourceImage == null) {
             String message = Logging.getMessage("nullValue.SourceImageIsNull");
@@ -885,8 +886,8 @@ public class ImageUtil {
      * @throws IOException        if there is a problem opening the file.
      * @throws WWRuntimeException if the image type is unsupported.
      */
-    public static AVList openSpatialImage(File imageFile, int interpolation_mode) throws IOException {
-        AVList values = new AVListImpl();
+    public static KV openSpatialImage(File imageFile, int interpolation_mode) throws IOException {
+        KV values = new KVMap();
         BufferedImage image;
         Sector sector;
 
@@ -916,20 +917,20 @@ public class ImageUtil {
             throw new FileNotFoundException(message);
         }
 
-        values.set(AVKey.IMAGE, image);
+        values.set(Keys.IMAGE, image);
         WorldFile.decodeWorldFiles(worldFiles, values);
 
-        sector = (Sector) values.get(AVKey.SECTOR);
+        sector = (Sector) values.get(Keys.SECTOR);
         if (sector == null)
             ImageUtil.reprojectUtmToGeographic(values, interpolation_mode);
 
-        sector = (Sector) values.get(AVKey.SECTOR);
+        sector = (Sector) values.get(Keys.SECTOR);
         if (sector == null) {
             String message = "Problem generating bounding sector for the image";
             throw new WWRuntimeException(message);
         }
 
-        values.set(AVKey.SECTOR, sector);
+        values.set(Keys.SECTOR, sector);
 
         return values;
     }
@@ -941,7 +942,7 @@ public class ImageUtil {
      * @return AVList
      * @throws IOException if there is a problem opening the file.
      */
-    public static AVList openSpatialImage(File imageFile) throws IOException {
+    public static KV openSpatialImage(File imageFile) throws IOException {
         return ImageUtil.openSpatialImage(imageFile, ImageUtil.NEAREST_NEIGHBOR_INTERPOLATION);
     }
 
@@ -953,9 +954,9 @@ public class ImageUtil {
      * @param values     AVList
      * @return values            AVList
      */
-    public static AVList readGeoKeys(GeotiffReader reader, int imageIndex, AVList values) {
+    public static KV readGeoKeys(GeotiffReader reader, int imageIndex, KV values) {
         if (null == values)
-            values = new AVListImpl();
+            values = new KVMap();
 
         if (null == reader)
             return values;
@@ -972,38 +973,38 @@ public class ImageUtil {
      * @param interpolation_mode the interpolation mode if the image is reprojected.
      * @return AVList
      */
-    private static AVList handleGeotiff(BufferedImage image, GeotiffReader reader, int imageIndex,
+    private static KV handleGeotiff(BufferedImage image, GeotiffReader reader, int imageIndex,
         int interpolation_mode) {
 
-        AVList values = new AVListImpl();
+        KV values = new KVMap();
         if (null != image) {
-            values.set(AVKey.IMAGE, image);
-            values.set(AVKey.WIDTH, image.getWidth());
-            values.set(AVKey.HEIGHT, image.getHeight());
+            values.set(Keys.IMAGE, image);
+            values.set(Keys.WIDTH, image.getWidth());
+            values.set(Keys.HEIGHT, image.getHeight());
         }
 
         ImageUtil.readGeoKeys(reader, imageIndex, values);
 
-        if (AVKey.COORDINATE_SYSTEM_PROJECTED.equals(values.get(AVKey.COORDINATE_SYSTEM)))
+        if (Keys.COORDINATE_SYSTEM_PROJECTED.equals(values.get(Keys.COORDINATE_SYSTEM)))
             ImageUtil.reprojectUtmToGeographic(values, interpolation_mode);
 
         return values;
     }
 
-    public static Sector calcBoundingBoxForUTM(AVList params) throws IOException {
-        if (null == params) {
-            String message = Logging.getMessage("nullValue.ParamsIsNull");
-            Logging.logger().severe(message);
-            throw new IOException(message);
-        }
+    public static Sector calcBoundingBoxForUTM(KV params) throws IOException {
+//        if (null == params) {
+//            String message = Logging.getMessage("nullValue.ParamsIsNull");
+//            Logging.logger().severe(message);
+//            throw new IOException(message);
+//        }
 
-        if (!params.hasKey(AVKey.WIDTH)) {
+        if (!params.hasKey(Keys.WIDTH)) {
             String message = Logging.getMessage("Geom.WidthInvalid");
             Logging.logger().severe(message);
             throw new IOException(message);
         }
 
-        if (!params.hasKey(AVKey.HEIGHT)) {
+        if (!params.hasKey(Keys.HEIGHT)) {
             String message = Logging.getMessage("Geom.HeightInvalid");
             Logging.logger().severe(message);
             throw new IOException(message);
@@ -1033,20 +1034,20 @@ public class ImageUtil {
             throw new IOException(message);
         }
 
-        if (!params.hasKey(AVKey.PROJECTION_ZONE)) {
+        if (!params.hasKey(Keys.PROJECTION_ZONE)) {
             String message = Logging.getMessage("generic.ZoneIsMissing");
             Logging.logger().severe(message);
             throw new IOException(message);
         }
 
-        if (!params.hasKey(AVKey.PROJECTION_HEMISPHERE)) {
+        if (!params.hasKey(Keys.PROJECTION_HEMISPHERE)) {
             String message = Logging.getMessage("generic.HemisphereIsMissing");
             Logging.logger().severe(message);
             throw new IOException(message);
         }
 
-        int width = (Integer) params.get(AVKey.WIDTH);
-        int height = (Integer) params.get(AVKey.HEIGHT);
+        int width = (Integer) params.get(Keys.WIDTH);
+        int height = (Integer) params.get(Keys.HEIGHT);
 
         double xPixelSize = (Double) params.get(WorldFile.WORLD_FILE_X_PIXEL_SIZE);
         double yPixelSize = (Double) params.get(WorldFile.WORLD_FILE_Y_PIXEL_SIZE);
@@ -1054,8 +1055,8 @@ public class ImageUtil {
         double xLocation = (Double) params.get(WorldFile.WORLD_FILE_X_LOCATION);
         double yLocation = (Double) params.get(WorldFile.WORLD_FILE_Y_LOCATION);
 
-        Integer zone = (Integer) params.get(AVKey.PROJECTION_ZONE);
-        String hemisphere = (String) params.get(AVKey.PROJECTION_HEMISPHERE);
+        Integer zone = (Integer) params.get(Keys.PROJECTION_ZONE);
+        String hemisphere = (String) params.get(Keys.PROJECTION_HEMISPHERE);
 
         UTMCoord upperLeft = UTMCoord.fromUTM(zone, hemisphere, xLocation, yLocation);
 
@@ -1077,8 +1078,8 @@ public class ImageUtil {
         Angle bottomExtent = Angle.min(utmLowerRight.getLatitude(), utmLowerLeft.getLatitude());
 
         Sector sector = new Sector(bottomExtent, topExtent, leftExtent, rightExtent);
-        params.set(AVKey.SECTOR, sector);
-        params.set(AVKey.ORIGIN, new LatLon(upperLeft.getLatitude(), upperLeft.getLongitude()));
+        params.set(Keys.SECTOR, sector);
+        params.set(Keys.ORIGIN, new LatLon(upperLeft.getLatitude(), upperLeft.getLongitude()));
 
         return sector;
     }
@@ -1090,14 +1091,14 @@ public class ImageUtil {
      *               values
      * @param mode   the interpolation mode if the image is reprojected.
      */
-    public static void reprojectUtmToGeographic(AVList values, int mode) {
+    public static void reprojectUtmToGeographic(KV values, int mode) {
         //TODO pull these const from TMCoord?
         double False_Easting = 500000;
         double False_Northing = 0;
         double Scale = 0.9996;
         Globe earth = new Earth(); //need globe for TM
 
-        BufferedImage image = (BufferedImage) values.get(AVKey.IMAGE);
+        BufferedImage image = (BufferedImage) values.get(Keys.IMAGE);
         int width = image.getWidth();
         int height = image.getHeight();
 
@@ -1124,8 +1125,8 @@ public class ImageUtil {
         // TODO: validate that all these values exist and are valid
         double xLocation = (Double) values.get(WorldFile.WORLD_FILE_X_LOCATION);
         double yLocation = (Double) values.get(WorldFile.WORLD_FILE_Y_LOCATION);
-        Integer zone = (Integer) values.get(AVKey.PROJECTION_ZONE);
-        String hemisphere = (String) values.get(AVKey.PROJECTION_HEMISPHERE);
+        Integer zone = (Integer) values.get(Keys.PROJECTION_ZONE);
+        String hemisphere = (String) values.get(Keys.PROJECTION_HEMISPHERE);
 
         UTMCoord upperLeft = UTMCoord.fromUTM(zone, hemisphere, xLocation, yLocation);
         UTMCoord utmUpperLeft = UTMCoord.fromUTM(zone, hemisphere, upperLeft.getEasting() - xPixelSize * 0.5,
@@ -1145,7 +1146,7 @@ public class ImageUtil {
         Angle topExtent = Angle.max(utmUpperRight.getLatitude(), utmUpperLeft.getLatitude());
         Angle bottomExtent = Angle.min(utmLowerRight.getLatitude(), utmLowerLeft.getLatitude());
         Sector sector = new Sector(bottomExtent, topExtent, leftExtent, rightExtent);
-        values.set(AVKey.SECTOR, sector);
+        values.set(Keys.SECTOR, sector);
 
         //moving to center of pixel
         double yPixel = (bottomExtent.degrees - topExtent.degrees) / height;
@@ -1203,7 +1204,7 @@ public class ImageUtil {
             }
         }
 
-        values.set(AVKey.IMAGE, biOut);
+        values.set(Keys.IMAGE, biOut);
     }
 
     /**
@@ -1770,12 +1771,12 @@ public class ImageUtil {
         }
 
         // we are building UINT DataBuffer, cannot use negative values as -32768 or -9999, so we will use 0
-        double missingDataSignal = AVListImpl.getDoubleValue(raster, AVKey.MISSING_DATA_SIGNAL,
+        double missingDataSignal = KVMap.getDoubleValue(raster, Keys.MISSING_DATA_SIGNAL,
             (double) Short.MIN_VALUE);
         int missingDataReplacement = 0;
 
-        Double minElevation = (Double) raster.get(AVKey.ELEVATION_MIN);
-        Double maxElevation = (Double) raster.get(AVKey.ELEVATION_MAX);
+        Double minElevation = (Double) raster.get(Keys.ELEVATION_MIN);
+        Double maxElevation = (Double) raster.get(Keys.ELEVATION_MAX);
 
         double min = (null != minElevation && minElevation >= Earth.ELEVATION_MIN) ? minElevation : 0.0d;
         double max = (null != maxElevation && minElevation <= Earth.ELEVATION_MAX) ? maxElevation : Earth.ELEVATION_MAX;

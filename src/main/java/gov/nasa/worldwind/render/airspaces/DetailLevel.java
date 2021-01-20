@@ -5,14 +5,14 @@
  */
 package gov.nasa.worldwind.render.airspaces;
 
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.render.DrawContext;
 
 /**
  * @author dcollins
  * @version $Id: DetailLevel.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface DetailLevel extends Comparable<DetailLevel>, AVList {
+public interface DetailLevel extends Comparable<DetailLevel>, KV {
     boolean meetsCriteria(DrawContext dc, Airspace airspace);
 
     int compareTo(DetailLevel level);

@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.render;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.util.RestorableSupport;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,12 +53,12 @@ public class ShapeAttributesTest
         exampleBalloonAttrs.setOutlineWidth(10.0);
         exampleBalloonAttrs.setOutlineStippleFactor(256);
         exampleBalloonAttrs.setOutlineStipplePattern((short) 0xABAB);
-        exampleBalloonAttrs.setSize(new Size(Size.EXPLICIT_DIMENSION, 0.5, AVKey.FRACTION,
-            Size.EXPLICIT_DIMENSION, 100.0, AVKey.PIXELS));
-        exampleBalloonAttrs.setOffset(new Offset(0.5, 0.0, AVKey.FRACTION, AVKey.PIXELS));
+        exampleBalloonAttrs.setSize(new Size(Size.EXPLICIT_DIMENSION, 0.5, Keys.FRACTION,
+            Size.EXPLICIT_DIMENSION, 100.0, Keys.PIXELS));
+        exampleBalloonAttrs.setOffset(new Offset(0.5, 0.0, Keys.FRACTION, Keys.PIXELS));
         exampleBalloonAttrs.setInsets(new Insets(5, 10, 15, 20));
-        exampleBalloonAttrs.setBalloonShape(AVKey.SHAPE_ELLIPSE);
-        exampleBalloonAttrs.setLeaderShape(AVKey.SHAPE_NONE);
+        exampleBalloonAttrs.setBalloonShape(Keys.SHAPE_ELLIPSE);
+        exampleBalloonAttrs.setLeaderShape(Keys.SHAPE_NONE);
         exampleBalloonAttrs.setLeaderWidth(100);
         exampleBalloonAttrs.setCornerRadius(5);
         exampleBalloonAttrs.setFont(Font.decode("Arial-BOLD-24"));
@@ -67,7 +67,7 @@ public class ShapeAttributesTest
         exampleBalloonAttrs.setImageScale(2.0);
         exampleBalloonAttrs.setImageOffset(new Point(5, 10));
         exampleBalloonAttrs.setImageOpacity(0.5);
-        exampleBalloonAttrs.setImageRepeat(AVKey.REPEAT_NONE);
+        exampleBalloonAttrs.setImageRepeat(Keys.REPEAT_NONE);
 
         return Arrays.asList(new Object[][] {
             {defaultBasicAttrs, exampleBasicAttrs},

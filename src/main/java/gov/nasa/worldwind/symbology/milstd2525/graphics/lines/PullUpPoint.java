@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.symbology.milstd2525.graphics.lines;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.TacticalGraphicLabel;
@@ -123,7 +123,7 @@ public class PullUpPoint extends AbstractCircularGraphic {
     @Override
     protected void createLabels() {
         TacticalGraphicLabel label = this.addLabel("PUP");
-        label.setTextAlign(AVKey.LEFT);
+        label.setTextAlign(Keys.LEFT);
     }
 
     /**
@@ -150,7 +150,7 @@ public class PullUpPoint extends AbstractCircularGraphic {
     protected Path createPath() {
         Path path = new Path();
         path.setSurfacePath(true);
-        path.setPathType(AVKey.GREAT_CIRCLE);
+        path.setPathType(Keys.GREAT_CIRCLE);
         path.setDelegateOwner(this);
         path.setAttributes(this.getActiveShapeAttributes());
         return path;

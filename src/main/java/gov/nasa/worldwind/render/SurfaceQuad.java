@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.render;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.ogc.kml.KMLConstants;
@@ -414,7 +413,7 @@ public class SurfaceQuad extends AbstractSurfaceShape implements Exportable {
 
         xmlWriter.writeStartElement("Placemark");
 
-        String property = getStringValue(AVKey.DISPLAY_NAME);
+        String property = getStringValue(Keys.DISPLAY_NAME);
         if (property != null) {
             xmlWriter.writeStartElement("name");
             xmlWriter.writeCharacters(property);
@@ -425,14 +424,14 @@ public class SurfaceQuad extends AbstractSurfaceShape implements Exportable {
         xmlWriter.writeCharacters(KMLExportUtil.kmlBoolean(this.isVisible()));
         xmlWriter.writeEndElement();
 
-        String shortDescription = (String) get(AVKey.SHORT_DESCRIPTION);
+        String shortDescription = (String) get(Keys.SHORT_DESCRIPTION);
         if (shortDescription != null) {
             xmlWriter.writeStartElement("Snippet");
             xmlWriter.writeCharacters(shortDescription);
             xmlWriter.writeEndElement();
         }
 
-        String description = (String) get(AVKey.BALLOON_TEXT);
+        String description = (String) get(Keys.BALLOON_TEXT);
         if (description != null) {
             xmlWriter.writeStartElement("description");
             xmlWriter.writeCharacters(description);
@@ -462,7 +461,7 @@ public class SurfaceQuad extends AbstractSurfaceShape implements Exportable {
         xmlWriter.writeCharacters("clampToGround");
         xmlWriter.writeEndElement();
 
-        String globeName = Configuration.getStringValue(AVKey.GLOBE_CLASS_NAME, "gov.nasa.worldwind.globes.Earth");
+        String globeName = Configuration.getStringValue(Keys.GLOBE_CLASS_NAME, "gov.nasa.worldwind.globes.Earth");
         Globe globe = (Globe) WorldWind.create(globeName);
 
         // Outer boundary

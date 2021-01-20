@@ -16,7 +16,7 @@ import java.util.*;
 public class GeoSymTable {
     private final GeoSymTableHeader header;
     private final Map<Integer, Integer> indexOnId;
-    private AVList[] records;
+    private KV[] records;
 
     public GeoSymTable(GeoSymTableHeader header) {
         this.header = header;
@@ -24,12 +24,12 @@ public class GeoSymTable {
     }
 
     public static void selectMatchingRows(String columnName, Object value, boolean acceptNullValue,
-        Iterable<AVList> outRows) {
-        Iterator<AVList> iter = outRows.iterator();
+        Iterable<KV> outRows) {
+        Iterator<KV> iter = outRows.iterator();
         if (!iter.hasNext())
             return;
 
-        AVList record;
+        KV record;
         while (iter.hasNext()) {
             record = iter.next();
             if (record == null)
@@ -43,12 +43,12 @@ public class GeoSymTable {
     }
 
     public static void selectMatchingStringRows(String columnName, String value, boolean acceptNullValue,
-        Iterable<AVList> outRows) {
-        Iterator<AVList> iter = outRows.iterator();
+        Iterable<KV> outRows) {
+        Iterator<KV> iter = outRows.iterator();
         if (!iter.hasNext())
             return;
 
-        AVList record;
+        KV record;
         while (iter.hasNext()) {
             record = iter.next();
             if (record == null)
@@ -72,16 +72,16 @@ public class GeoSymTable {
         return header;
     }
 
-    public AVList[] getRecords() {
+    public KV[] getRecords() {
         return this.records;
     }
 
-    public void setRecords(AVList[] records) {
+    public void setRecords(KV[] records) {
         this.records = records;
         this.buildRecordIndices();
     }
 
-    public AVList getRecord(int id) {
+    public KV getRecord(int id) {
         Integer index = this.indexOnId.get(id);
         return (index != null && index >= 0 && index < this.records.length) ? this.records[index] : null;
     }
@@ -90,7 +90,7 @@ public class GeoSymTable {
         // Build index on record ids.
         this.indexOnId.clear();
         for (int i = 0; i < this.records.length; i++) {
-            Integer id = AVListImpl.getIntegerValue(this.records[i], "id");
+            Integer id = KVMap.getIntegerValue(this.records[i], "id");
             if (id != null) {
                 this.indexOnId.put(id, i);
             }

@@ -1,6 +1,6 @@
 package gov.nasa.worldwind.animation;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.Path;
@@ -85,11 +85,11 @@ public class AnimatedObject {
     }
 
     public String getMetadata() {
-        return this.object.getField(AVKey.ANIMATION_META_DATA).toString();
+        return this.object.getField(Keys.ANIMATION_META_DATA).toString();
     }
 
     public void setMetadata(String data) {
-        this.object.setField(AVKey.ANIMATION_META_DATA, data);
+        this.object.setField(Keys.ANIMATION_META_DATA, data);
     }
 
     private class ObjectPropertyAccessor implements PropertyAccessor.PositionAccessor, PropertyAccessor.AngleAccessor {

@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.video.awt;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.pick.PickedObjectList;
 import gov.nasa.worldwind.util.Logging;
@@ -409,7 +408,7 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
         if (this.handlePerFrameKeyState(this.keyEventState, AbstractViewInputHandler.QUERY_EVENTS)) {
             View view = this.getView();
             if (view != null) {
-                view.firePropertyChange(AVKey.VIEW, null, view);
+                view.firePropertyChange(Keys.VIEW, null, view);
             }
         }
     }
@@ -509,7 +508,7 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
         if (this.handlePerFrameMouseState(this.keyEventState, AbstractViewInputHandler.QUERY_EVENTS)) {
             View view = this.getView();
             if (view != null) {
-                view.firePropertyChange(AVKey.VIEW, null, view);
+                view.firePropertyChange(Keys.VIEW, null, view);
             }
         }
     }

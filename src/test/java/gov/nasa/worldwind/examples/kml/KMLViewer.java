@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.examples.kml;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.examples.ApplicationTemplate;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.layers.ogc.kml.*;
@@ -117,7 +117,7 @@ public class KMLViewer extends ApplicationTemplate {
             // Add the on-screen layer tree, refreshing model with the WorldWindow's current layer list. We
             // intentionally refresh the tree's model before adding the layer that contains the tree itself. This
             // prevents the tree's layer from being displayed in the tree itself.
-            this.layerTree = new LayerTree(new Offset(20.0d, 160.0d, AVKey.PIXELS, AVKey.INSET_PIXELS));
+            this.layerTree = new LayerTree(new Offset(20.0d, 160.0d, Keys.PIXELS, Keys.INSET_PIXELS));
             this.layerTree.getModel().refresh(this.wwd().model().getLayers());
 
             // Set up a layer to display the on-screen layer tree in the WorldWindow. This layer is not displayed in
@@ -151,7 +151,7 @@ public class KMLViewer extends ApplicationTemplate {
             Dimension size = new Dimension(1400, 800);
             this.setPreferredSize(size);
             this.pack();
-            WWUtil.alignComponent(null, this, AVKey.CENTER);
+            WWUtil.alignComponent(null, this, Keys.CENTER);
 
             makeMenu(this);
 
@@ -179,7 +179,7 @@ public class KMLViewer extends ApplicationTemplate {
             // Adds a new layer containing the KMLRoot to the end of the WorldWindow's layer list. This
             // retrieves the layer name from the KMLRoot's DISPLAY_NAME field.
             RenderableLayer layer = new RenderableLayer();
-            layer.setName((String) kmlRoot.getField(AVKey.DISPLAY_NAME));
+            layer.setName((String) kmlRoot.getField(Keys.DISPLAY_NAME));
             layer.add(kmlController);
             this.wwd().model().getLayers().add(layer);
 
@@ -196,7 +196,7 @@ public class KMLViewer extends ApplicationTemplate {
             // node replaces its children with new nodes created from the refreshed content, then sends a refresh
             // property change event through the layer tree. By expanding open containers after a network link refresh,
             // we ensure that the network link tree view appearance is consistent with the KML specification.
-            layerNode.addPropertyChangeListener(AVKey.RETRIEVAL_STATE_SUCCESSFUL, event -> {
+            layerNode.addPropertyChangeListener(Keys.RETRIEVAL_STATE_SUCCESSFUL, event -> {
                 if (event.getSource() instanceof KMLNetworkLinkTreeNode) {
                     // Manipulate the tree on the EDT.
                     SwingUtilities.invokeLater(() -> {
@@ -247,7 +247,7 @@ public class KMLViewer extends ApplicationTemplate {
                 KMLRoot kmlRoot = this.parse();
 
                 // Set the document's display name
-                kmlRoot.setField(AVKey.DISPLAY_NAME, formName(this.kmlSource, kmlRoot));
+                kmlRoot.setField(Keys.DISPLAY_NAME, formName(this.kmlSource, kmlRoot));
 
                 // Schedule a task on the EDT to add the parsed document to a layer
                 final KMLRoot finalKMLRoot = kmlRoot;

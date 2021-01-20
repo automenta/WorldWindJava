@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.geom.coords;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.globes.*;
 import gov.nasa.worldwind.util.Logging;
@@ -25,7 +25,7 @@ public class DatumTransformation {
     public static final Globe CLARKE1866_GLOBE = new EllipsoidalGlobe(DatumTransformation.Clarke1866_EQUATORIAL_RADIUS,
         DatumTransformation.Clarke1866_POLAR_RADIUS,
         DatumTransformation.Clarke1866_ES,
-        EllipsoidalGlobe.makeElevationModel(AVKey.EARTH_ELEVATION_MODEL_CONFIG_FILE,
+        EllipsoidalGlobe.makeElevationModel(Keys.EARTH_ELEVATION_MODEL_CONFIG_FILE,
             "config/Earth/EarthElevations2.xml"));
 
     /**
@@ -109,4 +109,3 @@ public class DatumTransformation {
             source.getLongitude().radians() + dLon, source.getElevation() + dh);
     }
 }
-

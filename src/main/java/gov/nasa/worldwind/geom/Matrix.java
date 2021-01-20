@@ -5,6 +5,7 @@
  */
 package gov.nasa.worldwind.geom;
 
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.formats.worldfile.WorldFile;
 import gov.nasa.worldwind.globes.Globe;
@@ -796,7 +797,7 @@ public class Matrix {
             0.0, 0.0, 0.0, 0.0);
     }
 
-    public static Matrix fromImageToGeographic(AVList worldFileParams) {
+    public static Matrix fromImageToGeographic(KV worldFileParams) {
         if (worldFileParams == null) {
             String message = Logging.getMessage("nullValue.ParamsIsNull");
             Logging.logger().severe(message);
@@ -811,12 +812,12 @@ public class Matrix {
         // | d e f | * | y | = | lat |
         // | 0 0 1 |   | 1 |   | 1   |
 
-        Double a = AVListImpl.getDoubleValue(worldFileParams, WorldFile.WORLD_FILE_X_PIXEL_SIZE);
-        Double d = AVListImpl.getDoubleValue(worldFileParams, WorldFile.WORLD_FILE_Y_COEFFICIENT);
-        Double b = AVListImpl.getDoubleValue(worldFileParams, WorldFile.WORLD_FILE_X_COEFFICIENT);
-        Double e = AVListImpl.getDoubleValue(worldFileParams, WorldFile.WORLD_FILE_Y_PIXEL_SIZE);
-        Double c = AVListImpl.getDoubleValue(worldFileParams, WorldFile.WORLD_FILE_X_LOCATION);
-        Double f = AVListImpl.getDoubleValue(worldFileParams, WorldFile.WORLD_FILE_Y_LOCATION);
+        Double a = KVMap.getDoubleValue(worldFileParams, WorldFile.WORLD_FILE_X_PIXEL_SIZE);
+        Double d = KVMap.getDoubleValue(worldFileParams, WorldFile.WORLD_FILE_Y_COEFFICIENT);
+        Double b = KVMap.getDoubleValue(worldFileParams, WorldFile.WORLD_FILE_X_COEFFICIENT);
+        Double e = KVMap.getDoubleValue(worldFileParams, WorldFile.WORLD_FILE_Y_PIXEL_SIZE);
+        Double c = KVMap.getDoubleValue(worldFileParams, WorldFile.WORLD_FILE_X_LOCATION);
+        Double f = KVMap.getDoubleValue(worldFileParams, WorldFile.WORLD_FILE_Y_LOCATION);
 
         if (a == null || b == null || c == null || d == null || e == null || f == null) {
             return null;
@@ -829,7 +830,7 @@ public class Matrix {
             0.0, 0.0, 0.0, 0.0);
     }
 
-    public static Matrix fromGeographicToImage(AVList worldFileParams) {
+    public static Matrix fromGeographicToImage(KV worldFileParams) {
         if (worldFileParams == null) {
             String message = Logging.getMessage("nullValue.ParamsIsNull");
             Logging.logger().severe(message);
@@ -880,12 +881,12 @@ public class Matrix {
         // e' = 1/e
         // f' = -f/e
 
-        Double a = AVListImpl.getDoubleValue(worldFileParams, WorldFile.WORLD_FILE_X_PIXEL_SIZE);
-        Double d = AVListImpl.getDoubleValue(worldFileParams, WorldFile.WORLD_FILE_Y_COEFFICIENT);
-        Double b = AVListImpl.getDoubleValue(worldFileParams, WorldFile.WORLD_FILE_X_COEFFICIENT);
-        Double e = AVListImpl.getDoubleValue(worldFileParams, WorldFile.WORLD_FILE_Y_PIXEL_SIZE);
-        Double c = AVListImpl.getDoubleValue(worldFileParams, WorldFile.WORLD_FILE_X_LOCATION);
-        Double f = AVListImpl.getDoubleValue(worldFileParams, WorldFile.WORLD_FILE_Y_LOCATION);
+        Double a = KVMap.getDoubleValue(worldFileParams, WorldFile.WORLD_FILE_X_PIXEL_SIZE);
+        Double d = KVMap.getDoubleValue(worldFileParams, WorldFile.WORLD_FILE_Y_COEFFICIENT);
+        Double b = KVMap.getDoubleValue(worldFileParams, WorldFile.WORLD_FILE_X_COEFFICIENT);
+        Double e = KVMap.getDoubleValue(worldFileParams, WorldFile.WORLD_FILE_Y_PIXEL_SIZE);
+        Double c = KVMap.getDoubleValue(worldFileParams, WorldFile.WORLD_FILE_X_LOCATION);
+        Double f = KVMap.getDoubleValue(worldFileParams, WorldFile.WORLD_FILE_Y_LOCATION);
 
         if (a == null || b == null || c == null || d == null || e == null || f == null) {
             return null;
@@ -2089,7 +2090,7 @@ public class Matrix {
      * @return a parameterization of this viewing matrix as a list of key-value pairs.
      * @throws IllegalArgumentException if any argument is null.
      */
-    public AVList extractViewingParameters(Vec4 origin, Angle roll, Globe globe) {
+    public KV extractViewingParameters(Vec4 origin, Angle roll, Globe globe) {
 //        if (origin == null) {
 //            String msg = Logging.getMessage("nullValue.OriginIsNull");
 //            Logging.logger().severe(msg);
@@ -2133,12 +2134,12 @@ public class Matrix {
             oo).m12;
         double heading = Math.atan2(sh, ch);
 
-        AVList params = new AVListImpl();
-        params.set(AVKey.ORIGIN, originPos);
-        params.set(AVKey.RANGE, range);
-        params.set(AVKey.HEADING, Angle.fromRadians(heading));
-        params.set(AVKey.TILT, Angle.fromRadians(tilt));
-        params.set(AVKey.ROLL, roll);
+        KV params = new KVMap();
+        params.set(Keys.ORIGIN, originPos);
+        params.set(Keys.RANGE, range);
+        params.set(Keys.HEADING, Angle.fromRadians(heading));
+        params.set(Keys.TILT, Angle.fromRadians(tilt));
+        params.set(Keys.ROLL, roll);
 
         return params;
     }

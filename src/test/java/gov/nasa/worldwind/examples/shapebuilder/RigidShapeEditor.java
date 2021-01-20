@@ -6,8 +6,8 @@
 
 package gov.nasa.worldwind.examples.shapebuilder;
 
-import gov.nasa.worldwind.View;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.pick.PickedObjectList;
@@ -210,7 +210,7 @@ public class RigidShapeEditor extends AbstractShapeEditor {
             controlPoint.setRoll(Angle.NEG90);
             controlPoint.setAttributes(this.translationControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.set(AVKey.ACTION, CHANGE_LONGITUDE_ACTION);
+            controlPoint.set(Keys.ACTION, CHANGE_LONGITUDE_ACTION);
             this.controlPoints.add(controlPoint);
 
             Path rod = new Path(refPos, vertexPosition);
@@ -230,7 +230,7 @@ public class RigidShapeEditor extends AbstractShapeEditor {
             controlPoint.setTilt(Angle.POS90);
             controlPoint.setAttributes(this.translationControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.set(AVKey.ACTION, CHANGE_LATITUDE_ACTION);
+            controlPoint.set(Keys.ACTION, CHANGE_LATITUDE_ACTION);
             this.controlPoints.add(controlPoint);
 
             rod = new Path(refPos, vertexPosition);
@@ -243,7 +243,7 @@ public class RigidShapeEditor extends AbstractShapeEditor {
             controlPoint = new Pyramid(vertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.translationControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.set(AVKey.ACTION, CHANGE_HEIGHT_ACTION);
+            controlPoint.set(Keys.ACTION, CHANGE_HEIGHT_ACTION);
             controlPoint.setVisible(!dc.is2DGlobe());
             this.controlPoints.add(controlPoint);
 
@@ -279,7 +279,7 @@ public class RigidShapeEditor extends AbstractShapeEditor {
             RigidShape controlPoint = new Ellipsoid(vertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.scaleControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.set(AVKey.ACTION, SCALE_EAST_WEST_ACTION);
+            controlPoint.set(Keys.ACTION, SCALE_EAST_WEST_ACTION);
             this.controlPoints.add(controlPoint);
 
             Path rod = new Path(refPos, vertexPosition);
@@ -292,7 +292,7 @@ public class RigidShapeEditor extends AbstractShapeEditor {
             controlPoint = new Ellipsoid(vertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.scaleControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.set(AVKey.ACTION, SCALE_NORTH_SOUTH_ACTION);
+            controlPoint.set(Keys.ACTION, SCALE_NORTH_SOUTH_ACTION);
             this.controlPoints.add(controlPoint);
 
             rod = new Path(refPos, vertexPosition);
@@ -305,7 +305,7 @@ public class RigidShapeEditor extends AbstractShapeEditor {
             controlPoint = new Ellipsoid(vertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.scaleControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.set(AVKey.ACTION, SCALE_VERTICAL_ACTION);
+            controlPoint.set(Keys.ACTION, SCALE_VERTICAL_ACTION);
             controlPoint.setVisible(!dc.is2DGlobe());
             this.controlPoints.add(controlPoint);
 
@@ -341,7 +341,7 @@ public class RigidShapeEditor extends AbstractShapeEditor {
             RigidShape controlPoint = new Ellipsoid(vertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.rollGuideAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.set(AVKey.ACTION, CHANGE_ROLL_ACTION);
+            controlPoint.set(Keys.ACTION, CHANGE_ROLL_ACTION);
             controlPoint.setVisible(false);
             this.controlPoints.add(controlPoint);
 
@@ -356,7 +356,7 @@ public class RigidShapeEditor extends AbstractShapeEditor {
             controlPoint = new Ellipsoid(vertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.headingGuideAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.set(AVKey.ACTION, CHANGE_HEADING_ACTION);
+            controlPoint.set(Keys.ACTION, CHANGE_HEADING_ACTION);
             controlPoint.setVisible(false);
             this.controlPoints.add(controlPoint);
 
@@ -371,7 +371,7 @@ public class RigidShapeEditor extends AbstractShapeEditor {
             controlPoint = new Ellipsoid(vertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.tiltGuideAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.set(AVKey.ACTION, CHANGE_TILT_ACTION);
+            controlPoint.set(Keys.ACTION, CHANGE_TILT_ACTION);
             controlPoint.setVisible(false);
             this.controlPoints.add(controlPoint);
 
@@ -389,7 +389,7 @@ public class RigidShapeEditor extends AbstractShapeEditor {
             rollGuide.setRoll(this.shape.getRoll());
             rollGuide.setAttributes(this.rollGuideAttributes);
             rollGuide.setAltitudeMode(this.getAltitudeMode());
-            rollGuide.set(AVKey.ACTION, CHANGE_ROLL_ACTION);
+            rollGuide.set(Keys.ACTION, CHANGE_ROLL_ACTION);
             rollGuide.setVisible(!dc.is2DGlobe());
             this.controlPoints.add(rollGuide);
 
@@ -400,7 +400,7 @@ public class RigidShapeEditor extends AbstractShapeEditor {
             headingGuide.setRoll(this.shape.getRoll());
             headingGuide.setAttributes(this.headingGuideAttributes);
             headingGuide.setAltitudeMode(this.getAltitudeMode());
-            headingGuide.set(AVKey.ACTION, CHANGE_HEADING_ACTION);
+            headingGuide.set(Keys.ACTION, CHANGE_HEADING_ACTION);
             headingGuide.setVisible(true);
             this.controlPoints.add(headingGuide);
 
@@ -411,7 +411,7 @@ public class RigidShapeEditor extends AbstractShapeEditor {
             tiltGuide.setRoll(this.shape.getRoll());
             tiltGuide.setAttributes(this.tiltGuideAttributes);
             tiltGuide.setAltitudeMode(this.getAltitudeMode());
-            tiltGuide.set(AVKey.ACTION, CHANGE_TILT_ACTION);
+            tiltGuide.set(Keys.ACTION, CHANGE_TILT_ACTION);
             tiltGuide.setVisible(!dc.is2DGlobe());
             this.controlPoints.add(tiltGuide);
         }
@@ -445,7 +445,7 @@ public class RigidShapeEditor extends AbstractShapeEditor {
             RigidShape controlPoint = new Ellipsoid(vertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.radiusControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.set(AVKey.ACTION, SKEW_EAST_WEST_ACTION);
+            controlPoint.set(Keys.ACTION, SKEW_EAST_WEST_ACTION);
             controlPoint.setVisible(true);
             this.controlPoints.add(controlPoint);
 
@@ -459,7 +459,7 @@ public class RigidShapeEditor extends AbstractShapeEditor {
             controlPoint = new Ellipsoid(vertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.radiusControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.set(AVKey.ACTION, SKEW_NORTH_SOUTH_ACTION);
+            controlPoint.set(Keys.ACTION, SKEW_NORTH_SOUTH_ACTION);
             controlPoint.setVisible(true);
             this.controlPoints.add(controlPoint);
 
@@ -840,9 +840,9 @@ public class RigidShapeEditor extends AbstractShapeEditor {
             }
             e.consume();
         }
-        else if (topObject instanceof RigidShape && ((AVList) topObject).get(AVKey.ACTION) != null) {
+        else if (topObject instanceof RigidShape && ((KV) topObject).get(Keys.ACTION) != null) {
             this.activeControlPoint = (RigidShape) topObject;
-            this.activeAction = (String) this.activeControlPoint.get(AVKey.ACTION);
+            this.activeAction = (String) this.activeControlPoint.get(Keys.ACTION);
 
             if (!this.editMode.equalsIgnoreCase(TEXTURE_MODE)) {
                 setShowAnnotation(true);
@@ -1764,4 +1764,3 @@ public class RigidShapeEditor extends AbstractShapeEditor {
         }
     }
 }
-

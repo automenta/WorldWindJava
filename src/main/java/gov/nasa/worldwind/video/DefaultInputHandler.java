@@ -8,7 +8,6 @@ package gov.nasa.worldwind.video;
 import com.jogamp.newt.event.WindowUpdateEvent;
 import com.jogamp.opengl.awt.GLJPanel;
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.pick.*;
 
@@ -45,7 +44,7 @@ public class DefaultInputHandler extends WWObjectImpl
     private PickedObjectList objectsAtButtonPress;
     private boolean isHovering;
     private boolean isDragging;
-    private boolean forceRedrawOnMousePressed = Configuration.getBooleanValue(AVKey.REDRAW_ON_MOUSE_PRESSED, false);
+    private boolean forceRedrawOnMousePressed = Configuration.getBooleanValue(Keys.REDRAW_ON_MOUSE_PRESSED, false);
     private Timer hoverTimer = new Timer(600, actionEvent -> {
         if (DefaultInputHandler.this.pickMatches(DefaultInputHandler.this.hoverObjects)) {
             DefaultInputHandler.this.isHovering = true;
@@ -131,7 +130,7 @@ public class DefaultInputHandler extends WWObjectImpl
                 this.wwd.removeSelectListener(this.selectListener);
 
             if (this.wwd.sceneControl() != null)
-                this.wwd.sceneControl().removePropertyChangeListener(AVKey.VIEW, this);
+                this.wwd.sceneControl().removePropertyChangeListener(Keys.VIEW, this);
         }
 
         this.wwd = newWorldWindow;
@@ -151,7 +150,7 @@ public class DefaultInputHandler extends WWObjectImpl
         this.wwd.addSelectListener(this.selectListener);
 
         if (this.wwd.sceneControl() != null)
-            this.wwd.sceneControl().addPropertyChangeListener(AVKey.VIEW, this);
+            this.wwd.sceneControl().addPropertyChangeListener(Keys.VIEW, this);
     }
 
     public int getHoverDelay() {
@@ -337,7 +336,7 @@ public class DefaultInputHandler extends WWObjectImpl
                     e, pickedObjects));
             }
 
-            this.wwd.view().firePropertyChange(AVKey.VIEW, null, this.wwd.view());
+            this.wwd.view().firePropertyChange(Keys.VIEW, null, this.wwd.view());
         } else {
             if (!e.isConsumed()) {
                 this.wwd.view().getViewInputHandler().mouseClicked(e);
@@ -383,7 +382,7 @@ public class DefaultInputHandler extends WWObjectImpl
             }
 
             // Initiate a repaint.
-            this.wwd.view().firePropertyChange(AVKey.VIEW, null, this.wwd.view());
+            this.wwd.view().firePropertyChange(Keys.VIEW, null, this.wwd.view());
         }
 
         if (!e.isConsumed()) {
@@ -724,7 +723,7 @@ public class DefaultInputHandler extends WWObjectImpl
         }
 
         if ((event.getSource() == this.getWorldWindow().sceneControl())
-            && event.getPropertyName().equals(AVKey.VIEW)) {
+            && event.getPropertyName().equals(Keys.VIEW)) {
             this.wwd.view().getViewInputHandler().setWorldWindow(this.wwd);
         }
     }

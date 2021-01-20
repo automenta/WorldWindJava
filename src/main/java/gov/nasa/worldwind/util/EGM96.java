@@ -6,6 +6,7 @@
 
 package gov.nasa.worldwind.util;
 
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.Angle;
@@ -74,9 +75,9 @@ public class EGM96 {
         }
 
         try {
-            AVList bufferParams = new AVListImpl();
-            bufferParams.set(AVKey.DATA_TYPE, AVKey.INT16);
-            bufferParams.set(AVKey.BYTE_ORDER, AVKey.BIG_ENDIAN);
+            KV bufferParams = new KVMap();
+            bufferParams.set(Keys.DATA_TYPE, Keys.INT16);
+            bufferParams.set(Keys.BYTE_ORDER, Keys.BIG_ENDIAN);
             this.deltas = BufferWrapper.wrap(WWIO.readStreamToBuffer(is, true), bufferParams);
         }
         catch (IOException e) {

@@ -7,7 +7,7 @@ package gov.nasa.worldwind.examples.sar.segmentplane;
 
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.*;
-import gov.nasa.worldwind.View;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
@@ -486,7 +486,7 @@ public class SegmentPlaneRenderer {
         gl.glColor3ub((byte) pickColor.getRed(), (byte) pickColor.getGreen(), (byte) pickColor.getBlue());
 
         PickedObject po = new PickedObject(colorCode, userObject);
-        po.set(AVKey.PICKED_OBJECT_ID, objectId);
+        po.set(Keys.PICKED_OBJECT_ID, objectId);
         this.pickSupport.addPickableObject(po);
 
         return po;
@@ -498,7 +498,7 @@ public class SegmentPlaneRenderer {
             return null;
         }
 
-        Object id = topObject.get(AVKey.PICKED_OBJECT_ID);
+        Object id = topObject.get(Keys.PICKED_OBJECT_ID);
         if (id != pickedObjectId) {
             return null;
         }
@@ -949,8 +949,8 @@ public class SegmentPlaneRenderer {
         Position centerPos = new Position(position,
             surfaceElevation + (height / 2.0));
 
-        AVList values = new AVListImpl();
-        values.set(AVKey.HEIGHT, height);
+        KV values = new KVMap();
+        values.set(Keys.HEIGHT, height);
 
         this.drawLabel(dc, segmentPlane, centerPos, values, SegmentPlane.ALTIMETER);
     }
@@ -1059,8 +1059,8 @@ public class SegmentPlaneRenderer {
             position.getLatitude(), position.getLongitude());
         double height = position.getElevation() - surfaceElevation;
 
-        AVList values = new AVListImpl();
-        values.set(AVKey.HEIGHT, height);
+        KV values = new KVMap();
+        values.set(Keys.HEIGHT, height);
 
         this.drawLabel(dc, segmentPlane, position, values, controlPoint.getKey());
     }
@@ -1133,8 +1133,8 @@ public class SegmentPlaneRenderer {
             double u = clamp(ui * uStep, 0, 1);
             double width = ui * gridCellSizes[0];
 
-            AVList values = new AVListImpl();
-            values.set(AVKey.WIDTH, width);
+            KV values = new KVMap();
+            values.set(Keys.WIDTH, width);
 
             Position pos = this.computePositionOnPlane(sgl, globe, segmentPlane, u, 0, true);
             double surfaceElevation = SegmentPlaneRenderer.computeSurfaceElevation(sgl, globe, pos.getLatitude(), pos.getLongitude());
@@ -1173,8 +1173,8 @@ public class SegmentPlaneRenderer {
             double v = clamp(vi * vStep, 0, 1);
             double height = vi * gridCellSizes[1];
 
-            AVList values = new AVListImpl();
-            values.set(AVKey.HEIGHT, height);
+            KV values = new KVMap();
+            values.set(Keys.HEIGHT, height);
 
             Position pos = this.computePositionOnPlane(sgl, globe, segmentPlane, 1, v, false);
             double surfaceElevation = SegmentPlaneRenderer.computeSurfaceElevation(sgl, globe, pos.getLatitude(), pos.getLongitude());
@@ -1203,7 +1203,7 @@ public class SegmentPlaneRenderer {
         }
     }
 
-    protected void drawLabel(DrawContext dc, SegmentPlane segmentPlane, Position position, AVList values, Object key) {
+    protected void drawLabel(DrawContext dc, SegmentPlane segmentPlane, Position position, KV values, Object key) {
         OrderedText orderedText = this.createLabel(dc, segmentPlane, position, values, key);
         if (orderedText == null)
             return;
@@ -1211,7 +1211,7 @@ public class SegmentPlaneRenderer {
         dc.addOrderedRenderable(orderedText);
     }
 
-    protected OrderedText createLabel(DrawContext dc, SegmentPlane segmentPlane, Position position, AVList values,
+    protected OrderedText createLabel(DrawContext dc, SegmentPlane segmentPlane, Position position, KV values,
         Object key) {
         SegmentPlaneAttributes.LabelAttributes attributes = segmentPlane.getAttributes().getLabelAttributes(key);
         if (attributes == null)
@@ -1637,11 +1637,11 @@ public class SegmentPlaneRenderer {
         protected final SegmentPlane segmentPlane;
         protected final Position position;
         protected final double distanceFromEye;
-        protected final AVList values;
+        protected final KV values;
         protected final SegmentPlaneAttributes.LabelAttributes attributes;
         protected final MultiLineTextRenderer textRenderer;
 
-        public OrderedText(SegmentPlane segmentPlane, Position position, double distanceFromEye, AVList values,
+        public OrderedText(SegmentPlane segmentPlane, Position position, double distanceFromEye, KV values,
             SegmentPlaneAttributes.LabelAttributes attributes, MultiLineTextRenderer textRenderer) {
             this.segmentPlane = segmentPlane;
             this.position = position;
@@ -1749,33 +1749,33 @@ public class SegmentPlaneRenderer {
                 double hh = textBounds.getHeight() / 2.0;
 
                 //noinspection StringEquality
-                if (horizontal == AVKey.LEFT) {
+                if (horizontal == Keys.LEFT) {
                     // MultiLineTextRenderer anchors text to the upper left corner by default.
                 }
                 else //noinspection StringEquality
-                    if (horizontal == AVKey.CENTER) {
+                    if (horizontal == Keys.CENTER) {
                         x -= hw;
                     }
                     else //noinspection StringEquality
-                        if (horizontal == AVKey.RIGHT) {
+                        if (horizontal == Keys.RIGHT) {
                             x -= w;
                         }
 
                 //noinspection StringEquality
-                if (vertical == AVKey.TOP) {
+                if (vertical == Keys.TOP) {
                     // MultiLineTextRenderer anchors text to the upper left corner by default.
                 }
                 else //noinspection StringEquality
-                    if (vertical == AVKey.CENTER) {
+                    if (vertical == Keys.CENTER) {
                         y += hh;
                     }
                     else //noinspection StringEquality
-                        if (vertical == AVKey.BOTTOM) {
+                        if (vertical == Keys.BOTTOM) {
                             y += h;
                         }
             }
 
-            mltr.draw(text, (int) x, (int) y, AVKey.TEXT_EFFECT_OUTLINE);
+            mltr.draw(text, (int) x, (int) y, Keys.TEXT_EFFECT_OUTLINE);
         }
     }
 }

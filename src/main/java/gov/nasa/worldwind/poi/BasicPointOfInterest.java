@@ -6,8 +6,7 @@
 
 package gov.nasa.worldwind.poi;
 
-import gov.nasa.worldwind.WWObjectImpl;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.geom.LatLon;
 
 /**
@@ -26,7 +25,7 @@ public class BasicPointOfInterest extends WWObjectImpl implements PointOfInteres
     }
 
     public String toString() {
-        String str = this.getStringValue(AVKey.DISPLAY_NAME);
+        String str = this.getStringValue(Keys.DISPLAY_NAME);
         if (str != null)
             return str;
         else

@@ -5,8 +5,8 @@
  */
 package gov.nasa.worldwind.data;
 
-import gov.nasa.worldwind.Version;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.cache.Cacheable;
 import gov.nasa.worldwind.formats.tiff.GeoTiff;
 import gov.nasa.worldwind.geom.*;
@@ -30,7 +30,7 @@ public class BufferedImageRaster extends AbstractDataRaster implements Cacheable
         this(sector, bufferedImage, null);
     }
 
-    public BufferedImageRaster(Sector sector, BufferedImage bufferedImage, AVList list) {
+    public BufferedImageRaster(Sector sector, BufferedImage bufferedImage, KV list) {
         super((null != bufferedImage) ? bufferedImage.getWidth() : 0,
             (null != bufferedImage) ? bufferedImage.getHeight() : 0,
             sector, list);
@@ -84,44 +84,44 @@ public class BufferedImageRaster extends AbstractDataRaster implements Cacheable
         return 0L;
     }
 
-    public static DataRaster wrap(BufferedImage image, AVList params) {
-        if (null == image) {
-            String message = Logging.getMessage("nullValue.ImageIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+    public static DataRaster wrap(BufferedImage image, KV params) {
+//        if (null == image) {
+//            String message = Logging.getMessage("nullValue.ImageIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//
+//        if (null == params) {
+//            String msg = Logging.getMessage("nullValue.AVListIsNull");
+//            Logging.logger().finest(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
-        if (null == params) {
-            String msg = Logging.getMessage("nullValue.AVListIsNull");
-            Logging.logger().finest(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        if (params.hasKey(AVKey.WIDTH)) {
-            int width = (Integer) params.get(AVKey.WIDTH);
+        if (params.hasKey(Keys.WIDTH)) {
+            int width = (Integer) params.get(Keys.WIDTH);
             if (width != image.getWidth()) {
                 String msg = Logging.getMessage("generic.InvalidWidth", width + "!=" + image.getWidth());
                 Logging.logger().finest(msg);
                 throw new IllegalArgumentException(msg);
             }
         } else {
-            params.set(AVKey.WIDTH, image.getWidth());
+            params.set(Keys.WIDTH, image.getWidth());
         }
 
-        if (params.hasKey(AVKey.HEIGHT)) {
-            int height = (Integer) params.get(AVKey.HEIGHT);
+        if (params.hasKey(Keys.HEIGHT)) {
+            int height = (Integer) params.get(Keys.HEIGHT);
             if (height != image.getHeight()) {
                 String msg = Logging.getMessage("generic.InvalidHeight", height + "!=" + image.getHeight());
                 Logging.logger().finest(msg);
                 throw new IllegalArgumentException(msg);
             }
         } else {
-            params.set(AVKey.HEIGHT, image.getHeight());
+            params.set(Keys.HEIGHT, image.getHeight());
         }
 
         Sector sector = null;
-        if (params.hasKey(AVKey.SECTOR)) {
-            Object o = params.get(AVKey.SECTOR);
+        if (params.hasKey(Keys.SECTOR)) {
+            Object o = params.get(Keys.SECTOR);
             if (o instanceof Sector) {
                 sector = (Sector) o;
             }
@@ -130,7 +130,7 @@ public class BufferedImageRaster extends AbstractDataRaster implements Cacheable
         return new BufferedImageRaster(sector, image, params);
     }
 
-    public static DataRaster wrapAsGeoreferencedRaster(BufferedImage image, AVList params) {
+    public static DataRaster wrapAsGeoreferencedRaster(BufferedImage image, KV params) {
         if (null == image) {
             String message = Logging.getMessage("nullValue.ImageIsNull");
             Logging.logger().severe(message);
@@ -143,8 +143,8 @@ public class BufferedImageRaster extends AbstractDataRaster implements Cacheable
             throw new IllegalArgumentException(msg);
         }
 
-        if (params.hasKey(AVKey.WIDTH)) {
-            int width = (Integer) params.get(AVKey.WIDTH);
+        if (params.hasKey(Keys.WIDTH)) {
+            int width = (Integer) params.get(Keys.WIDTH);
             if (width != image.getWidth()) {
                 String msg = Logging.getMessage("generic.InvalidWidth", width + "!=" + image.getWidth());
                 Logging.logger().finest(msg);
@@ -152,8 +152,8 @@ public class BufferedImageRaster extends AbstractDataRaster implements Cacheable
             }
         }
 
-        if (params.hasKey(AVKey.HEIGHT)) {
-            int height = (Integer) params.get(AVKey.HEIGHT);
+        if (params.hasKey(Keys.HEIGHT)) {
+            int height = (Integer) params.get(Keys.HEIGHT);
             if (height != image.getHeight()) {
                 String msg = Logging.getMessage("generic.InvalidHeight", height + "!=" + image.getHeight());
                 Logging.logger().finest(msg);
@@ -161,31 +161,31 @@ public class BufferedImageRaster extends AbstractDataRaster implements Cacheable
             }
         }
 
-        if (!params.hasKey(AVKey.SECTOR)) {
-            String msg = Logging.getMessage("generic.MissingRequiredParameter", AVKey.SECTOR);
+        if (!params.hasKey(Keys.SECTOR)) {
+            String msg = Logging.getMessage("generic.MissingRequiredParameter", Keys.SECTOR);
             Logging.logger().finest(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        Sector sector = (Sector) params.get(AVKey.SECTOR);
+        Sector sector = (Sector) params.get(Keys.SECTOR);
         if (null == sector) {
             String msg = Logging.getMessage("nullValue.SectorIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (!params.hasKey(AVKey.COORDINATE_SYSTEM)) {
+        if (!params.hasKey(Keys.COORDINATE_SYSTEM)) {
             // assume Geodetic Coordinate System
-            params.set(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_GEOGRAPHIC);
+            params.set(Keys.COORDINATE_SYSTEM, Keys.COORDINATE_SYSTEM_GEOGRAPHIC);
         }
 
-        String cs = params.getStringValue(AVKey.COORDINATE_SYSTEM);
-        if (!params.hasKey(AVKey.PROJECTION_EPSG_CODE)) {
-            if (AVKey.COORDINATE_SYSTEM_GEOGRAPHIC.equals(cs)) {
+        String cs = params.getStringValue(Keys.COORDINATE_SYSTEM);
+        if (!params.hasKey(Keys.PROJECTION_EPSG_CODE)) {
+            if (Keys.COORDINATE_SYSTEM_GEOGRAPHIC.equals(cs)) {
                 // assume WGS84
-                params.set(AVKey.PROJECTION_EPSG_CODE, GeoTiff.GCS.WGS_84);
+                params.set(Keys.PROJECTION_EPSG_CODE, GeoTiff.GCS.WGS_84);
             } else {
-                String msg = Logging.getMessage("generic.MissingRequiredParameter", AVKey.PROJECTION_EPSG_CODE);
+                String msg = Logging.getMessage("generic.MissingRequiredParameter", Keys.PROJECTION_EPSG_CODE);
                 Logging.logger().finest(msg);
                 throw new IllegalArgumentException(msg);
             }
@@ -193,12 +193,12 @@ public class BufferedImageRaster extends AbstractDataRaster implements Cacheable
 
         // if PIXEL_WIDTH is specified, we are not overriding it because UTM images
         // will have different pixel size
-        if (!params.hasKey(AVKey.PIXEL_WIDTH)) {
-            if (AVKey.COORDINATE_SYSTEM_GEOGRAPHIC.equals(cs)) {
+        if (!params.hasKey(Keys.PIXEL_WIDTH)) {
+            if (Keys.COORDINATE_SYSTEM_GEOGRAPHIC.equals(cs)) {
                 double pixelWidth = sector.lonDelta / image.getWidth();
-                params.set(AVKey.PIXEL_WIDTH, pixelWidth);
+                params.set(Keys.PIXEL_WIDTH, pixelWidth);
             } else {
-                String msg = Logging.getMessage("generic.MissingRequiredParameter", AVKey.PIXEL_WIDTH);
+                String msg = Logging.getMessage("generic.MissingRequiredParameter", Keys.PIXEL_WIDTH);
                 Logging.logger().finest(msg);
                 throw new IllegalArgumentException(msg);
             }
@@ -206,44 +206,44 @@ public class BufferedImageRaster extends AbstractDataRaster implements Cacheable
 
         // if PIXEL_HEIGHT is specified, we are not overriding it
         // because UTM images will have different pixel size
-        if (!params.hasKey(AVKey.PIXEL_HEIGHT)) {
-            if (AVKey.COORDINATE_SYSTEM_GEOGRAPHIC.equals(cs)) {
+        if (!params.hasKey(Keys.PIXEL_HEIGHT)) {
+            if (Keys.COORDINATE_SYSTEM_GEOGRAPHIC.equals(cs)) {
                 double pixelHeight = sector.latDelta / image.getHeight();
-                params.set(AVKey.PIXEL_HEIGHT, pixelHeight);
+                params.set(Keys.PIXEL_HEIGHT, pixelHeight);
             } else {
-                String msg = Logging.getMessage("generic.MissingRequiredParameter", AVKey.PIXEL_HEIGHT);
+                String msg = Logging.getMessage("generic.MissingRequiredParameter", Keys.PIXEL_HEIGHT);
                 Logging.logger().finest(msg);
                 throw new IllegalArgumentException(msg);
             }
         }
 
-        if (!params.hasKey(AVKey.PIXEL_FORMAT)) {
-            params.set(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
-        } else if (!AVKey.IMAGE.equals(params.getStringValue(AVKey.PIXEL_FORMAT))) {
+        if (!params.hasKey(Keys.PIXEL_FORMAT)) {
+            params.set(Keys.PIXEL_FORMAT, Keys.IMAGE);
+        } else if (!Keys.IMAGE.equals(params.getStringValue(Keys.PIXEL_FORMAT))) {
             String msg = Logging.getMessage("generic.UnknownValueForKey",
-                params.getStringValue(AVKey.PIXEL_FORMAT), AVKey.PIXEL_FORMAT);
+                params.getStringValue(Keys.PIXEL_FORMAT), Keys.PIXEL_FORMAT);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (!params.hasKey(AVKey.ORIGIN) && AVKey.COORDINATE_SYSTEM_GEOGRAPHIC.equals(cs)) {
+        if (!params.hasKey(Keys.ORIGIN) && Keys.COORDINATE_SYSTEM_GEOGRAPHIC.equals(cs)) {
             // set UpperLeft corner as the origin, if not specified
             LatLon origin = new LatLon(sector.latMax(), sector.lonMin());
-            params.set(AVKey.ORIGIN, origin);
+            params.set(Keys.ORIGIN, origin);
         }
 
-        if (!params.hasKey(AVKey.DATE_TIME)) {
+        if (!params.hasKey(Keys.DATE_TIME)) {
             // add NUL (\0) termination as required by TIFF v6 spec (20 bytes length)
             String timestamp = String.format("%1$tY:%1$tm:%1$td %tT\0", Calendar.getInstance());
-            params.set(AVKey.DATE_TIME, timestamp);
+            params.set(Keys.DATE_TIME, timestamp);
         }
 
-        if (!params.hasKey(AVKey.VERSION)) {
-            params.set(AVKey.VERSION, Version.getVersion());
+        if (!params.hasKey(Keys.VERSION)) {
+            params.set(Keys.VERSION, Version.getVersion());
         }
 
         boolean hasAlpha = (null != image.getColorModel() && image.getColorModel().hasAlpha());
-        params.set(AVKey.RASTER_HAS_ALPHA, hasAlpha);
+        params.set(Keys.RASTER_HAS_ALPHA, hasAlpha);
 
         return new BufferedImageRaster(sector, image, params);
     }
@@ -407,7 +407,7 @@ public class BufferedImageRaster extends AbstractDataRaster implements Cacheable
     }
 
     @Override
-    DataRaster doGetSubRaster(int roiWidth, int roiHeight, Sector roiSector, AVList roiParams) {
+    public DataRaster doGetSubRaster(int roiWidth, int roiHeight, Sector roiSector, KV roiParams) {
         int transparency = BufferedImage.TRANSLUCENT; // TODO: make configurable
         DataRaster canvas = new BufferedImageRaster(roiWidth, roiHeight, transparency, roiSector);
         this.drawOnTo(canvas);

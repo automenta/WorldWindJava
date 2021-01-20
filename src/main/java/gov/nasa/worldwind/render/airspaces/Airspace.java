@@ -5,8 +5,8 @@
  */
 package gov.nasa.worldwind.render.airspaces;
 
-import gov.nasa.worldwind.Restorable;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.*;
@@ -17,7 +17,7 @@ import java.util.Collection;
  * @author dcollins
  * @version $Id: Airspace.java 2394 2014-10-22 01:16:43Z tgaskins $
  */
-public interface Airspace extends Renderable, Restorable, AVList, ExtentHolder, Highlightable, Attributable {
+public interface Airspace extends Renderable, Restorable, KV, ExtentHolder, Highlightable, Attributable {
     String DRAW_STYLE_FILL = "Airspace.DrawStyleFill";
     String DRAW_STYLE_OUTLINE = "Airspace.DrawStyleOutline";
 
@@ -94,11 +94,11 @@ public interface Airspace extends Renderable, Restorable, AVList, ExtentHolder, 
      * argument descriptions below for the mapping of the boolean values of this method to the altitude-datum values.
      *
      * @param lowerTerrainConformant the lower altitude datum. A value of true indicates a lower altitude datum of
-     *                               {@link AVKey#ABOVE_GROUND_LEVEL} (terrain conforming), a value of false indicates a
+     *                               {@link Keys#ABOVE_GROUND_LEVEL} (terrain conforming), a value of false indicates a
      *                               lower altitude datum of {link AVKey#ABOVE_MEAN_SEA_LEVEL} (not terrain conforming).
      *                               the terrain-conforming, a value of false indicates that it's not.
      * @param upperTerrainConformant the upper altitude datum. A value of true indicates an upper altitude datum of
-     *                               {@link AVKey#ABOVE_GROUND_LEVEL} (terrain conforming), a value of false indicates
+     *                               {@link Keys#ABOVE_GROUND_LEVEL} (terrain conforming), a value of false indicates
      *                               an upper altitude datum of {link AVKey#ABOVE_MEAN_SEA_LEVEL} (not terrain
      *                               conforming. the terrain-conforming, a value of false indicates that it's not.
      * @see #setAltitudeDatum(String, String)
@@ -195,24 +195,24 @@ public interface Airspace extends Renderable, Restorable, AVList, ExtentHolder, 
      * Sets the altitude datum, which indicates whether airspace altitudes are relative to mean sea level, ground level
      * or a single ground reference location.
      * <p>
-     * A value of {@link AVKey#ABOVE_MEAN_SEA_LEVEL}, the default for both lower and upper datums, indicates a datum of
+     * A value of {@link Keys#ABOVE_MEAN_SEA_LEVEL}, the default for both lower and upper datums, indicates a datum of
      * mean sea level. The respective lower or upper surface of the airspace is drawn at the constant altitude specified
      * by {@link #setAltitude(double)}.
      * <p>
-     * A datum of {@link AVKey#ABOVE_GROUND_LEVEL} indicates that each position of the respective airspace surface is
+     * A datum of {@link Keys#ABOVE_GROUND_LEVEL} indicates that each position of the respective airspace surface is
      * offset vertically from the altitude specified to {@link #setAltitude(double)} by an amount equal to the terrain
      * elevation at that position. For example, if the specified lower altitude is zero, the lower surface lies on and
      * conforms to the terrain. If non-zero, the surface undulates in tandem with the terrain but relative to the
      * specified altitude.
      * <p>
-     * A datum of {@link AVKey#ABOVE_GROUND_REFERENCE} combines both of the above datums. It indicates that the
+     * A datum of {@link Keys#ABOVE_GROUND_REFERENCE} combines both of the above datums. It indicates that the
      * respective surface is drawn at the altitude specified to {@link #setAltitude(double)} but offset vertically by an
      * amount equal to the elevation at a single reference location on the ground. This is useful for displaying
      * surfaces that are "flat" but are positioned relative to the ground. An example is the roof of a building, which
      * maintains a constant altitude even as the base of its building may conform to varying terrain. One method of
      * representing buildings is to specify a lower altitude of 0, a lower altitude datum of {@link
-     * AVKey#ABOVE_GROUND_LEVEL}, an upper altitude that's the building's height, and an upper altitude datum of {@link
-     * AVKey#ABOVE_GROUND_REFERENCE}, where the ground reference is a location at the building's base. The reference
+     * Keys#ABOVE_GROUND_LEVEL}, an upper altitude that's the building's height, and an upper altitude datum of {@link
+     * Keys#ABOVE_GROUND_REFERENCE}, where the ground reference is a location at the building's base. The reference
      * position is specifed by {@link #setGroundReference(LatLon)}.
      *
      * @param lowerAltitudeDatum the lower altitude datum.
@@ -241,7 +241,7 @@ public interface Airspace extends Renderable, Restorable, AVList, ExtentHolder, 
 
     /**
      * Sets the reference location used to determine the elevation offset for airspace surfaces whose altitude datum is
-     * {@link AVKey#ABOVE_GROUND_REFERENCE}. The reference location is unused if the altitude datum is a value other
+     * {@link Keys#ABOVE_GROUND_REFERENCE}. The reference location is unused if the altitude datum is a value other
      * than this.
      *
      * @param groundReference the location at which to compute the terrain elevation used to offset an upper or lower

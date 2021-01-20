@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.examples.lineofsight;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.examples.ApplicationTemplate;
 import gov.nasa.worldwind.geom.Position;
@@ -29,11 +29,11 @@ public class GridOfPoints extends ApplicationTemplate {
 
     public static void main(String[] args) {
         // Configure the initial view parameters so that the balloons are immediately visible.
-        Configuration.setValue(AVKey.INITIAL_LATITUDE, 40.5);
-        Configuration.setValue(AVKey.INITIAL_LONGITUDE, -120.4);
-        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 2000.0e3);
-        Configuration.setValue(AVKey.INITIAL_HEADING, 27);
-        Configuration.setValue(AVKey.INITIAL_PITCH, 30);
+        Configuration.setValue(Keys.INITIAL_LATITUDE, 40.5);
+        Configuration.setValue(Keys.INITIAL_LONGITUDE, -120.4);
+        Configuration.setValue(Keys.INITIAL_ALTITUDE, 2000.0e3);
+        Configuration.setValue(Keys.INITIAL_HEADING, 27);
+        Configuration.setValue(Keys.INITIAL_PITCH, 30);
 
         ApplicationTemplate.start("WorldWind Point Grid", AppFrame.class);
     }
@@ -85,7 +85,7 @@ public class GridOfPoints extends ApplicationTemplate {
                 public void accept(SelectEvent event) {
                     // Intercept the selected position and assign its display name the position's data value.
                     if (event.getTopObject() instanceof PointGrid)
-                        ((AVList) event.getTopObject()).set(AVKey.DISPLAY_NAME,
+                        ((KV) event.getTopObject()).set(Keys.DISPLAY_NAME,
                             positionInfo.get(event.getTopPickedObject().position()).toString());
 
                     super.accept(event);

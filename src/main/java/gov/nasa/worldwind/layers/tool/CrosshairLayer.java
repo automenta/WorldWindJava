@@ -7,7 +7,7 @@ package gov.nasa.worldwind.layers.tool;
 
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.texture.*;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.Vec4;
 import gov.nasa.worldwind.layers.AbstractLayer;
@@ -29,7 +29,7 @@ public class CrosshairLayer extends AbstractLayer {
     private String iconFilePath = "images/32x32-crosshair-simple.png"; // TODO: make configurable
     private double toViewportScale = 1.0d; // TODO: make configurable
     private double iconScale = 1.0d;
-    private String resizeBehavior = AVKey.RESIZE_SHRINK_ONLY;
+    private String resizeBehavior = Keys.RESIZE_SHRINK_ONLY;
     private int iconWidth;
     private int iconHeight;
     private Vec4 locationCenter;
@@ -248,9 +248,9 @@ public class CrosshairLayer extends AbstractLayer {
 
     private double computeScale(Rectangle viewport) {
         return switch (this.resizeBehavior) {
-            case AVKey.RESIZE_SHRINK_ONLY -> Math.min(1.0d,
+            case Keys.RESIZE_SHRINK_ONLY -> Math.min(1.0d,
                 (this.toViewportScale) * viewport.width / this.getScaledIconWidth());
-            case AVKey.RESIZE_STRETCH -> (this.toViewportScale) * viewport.width / this.getScaledIconWidth();
+            case Keys.RESIZE_STRETCH -> (this.toViewportScale) * viewport.width / this.getScaledIconWidth();
             default -> 1.0d;
         };
     }

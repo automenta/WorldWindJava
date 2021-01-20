@@ -7,7 +7,7 @@ package gov.nasa.worldwind.render.airspaces;
 
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.*;
-import gov.nasa.worldwind.avlist.AVListImpl;
+import gov.nasa.worldwind.avlist.KVMap;
 import gov.nasa.worldwind.cache.Cacheable;
 import gov.nasa.worldwind.globes.*;
 
@@ -18,7 +18,7 @@ import java.util.*;
  * @author dcollins
  * @version $Id: Geometry.java 2210 2014-08-08 22:06:02Z tgaskins $
  */
-public class Geometry extends AVListImpl implements Cacheable {
+public class Geometry extends KVMap implements Cacheable {
     public static final int TEXTURE = 0;
     public static final int ELEMENT = 1;
     public static final int VERTEX = 2;

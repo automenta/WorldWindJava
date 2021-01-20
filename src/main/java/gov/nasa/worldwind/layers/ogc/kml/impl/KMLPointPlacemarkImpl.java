@@ -6,8 +6,7 @@
 
 package gov.nasa.worldwind.layers.ogc.kml.impl;
 
-import gov.nasa.worldwind.WorldWind;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.event.Message;
 import gov.nasa.worldwind.layers.ogc.kml.*;
 import gov.nasa.worldwind.pick.PickedObject;
@@ -90,17 +89,17 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
 
         if (placemark.getName() != null) {
             this.setLabelText(placemark.getName());
-            this.set(AVKey.DISPLAY_NAME, placemark.getName());
+            this.set(Keys.DISPLAY_NAME, placemark.getName());
         }
 
         String description = placemark.getDescription();
         if (description != null)
-            this.set(AVKey.DESCRIPTION, description);
+            this.set(Keys.DESCRIPTION, description);
 
         if (placemark.getSnippetText() != null)
-            this.set(AVKey.SHORT_DESCRIPTION, placemark.getSnippetText());
+            this.set(Keys.SHORT_DESCRIPTION, placemark.getSnippetText());
 
-        this.set(AVKey.CONTEXT, this.parent);
+        this.set(Keys.CONTEXT, this.parent);
     }
 
     protected static PointPlacemarkAttributes assembleLineAttributes(PointPlacemarkAttributes attrs,
@@ -264,7 +263,7 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
         PickedObject po = super.createPickedObject(dc, pickColor);
 
         // Add the KMLPlacemark to the picked object as the context of the picked object.        
-        po.set(AVKey.CONTEXT, this.parent);
+        po.set(Keys.CONTEXT, this.parent);
         return po;
     }
 
@@ -305,7 +304,7 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
         if (subStyle.hasFields() && (!this.isHighlighted() || KMLUtil.isHighlightStyleState(subStyle))) {
             hasLineStyle = true;
             KMLPointPlacemarkImpl.assembleLineAttributes(attrs, (KMLLineStyle) subStyle);
-            if (subStyle.hasField(AVKey.UNRESOLVED))
+            if (subStyle.hasField(Keys.UNRESOLVED))
                 attrs.setUnresolved(true);
         }
 
@@ -313,7 +312,7 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
         if (subStyle.hasFields() && (!this.isHighlighted() || KMLUtil.isHighlightStyleState(subStyle))) {
             hasIconStyle = true;
             this.assemblePointAttributes(attrs, (KMLIconStyle) subStyle);
-            if (subStyle.hasField(AVKey.UNRESOLVED))
+            if (subStyle.hasField(Keys.UNRESOLVED))
                 attrs.setUnresolved(true);
         }
 
@@ -321,7 +320,7 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
         if (subStyle.hasFields() && (!this.isHighlighted() || KMLUtil.isHighlightStyleState(subStyle))) {
             hasLabelStyle = true;
             KMLPointPlacemarkImpl.assembleLabelAttributes(attrs, (KMLLabelStyle) subStyle);
-            if (subStyle.hasField(AVKey.UNRESOLVED))
+            if (subStyle.hasField(Keys.UNRESOLVED))
                 attrs.setUnresolved(true);
         }
 
@@ -371,7 +370,7 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
 
         if (style.getHeading() != null) {
             attrs.setHeading(style.getHeading());
-            attrs.setHeadingReference(AVKey.RELATIVE_TO_GLOBE); // KML spec is not clear about this
+            attrs.setHeadingReference(Keys.RELATIVE_TO_GLOBE); // KML spec is not clear about this
         }
 
         if (style.getHotSpot() != null) {
@@ -380,7 +379,7 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
                 KMLUtil.kmlUnitsToWWUnits(hs.getYunits())));
         } else {
             // By default, use the center of the image as the offset.
-            attrs.setImageOffset(new Offset(0.5, 0.5, AVKey.FRACTION, AVKey.FRACTION));
+            attrs.setImageOffset(new Offset(0.5, 0.5, Keys.FRACTION, Keys.FRACTION));
         }
 
         return attrs;

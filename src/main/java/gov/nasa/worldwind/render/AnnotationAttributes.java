@@ -5,8 +5,7 @@
  */
 package gov.nasa.worldwind.render;
 
-import gov.nasa.worldwind.Restorable;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.util.*;
 
 import java.awt.*;
@@ -31,19 +30,19 @@ public class AnnotationAttributes implements Restorable {
     private static final AnnotationAttributes defaults = new AnnotationAttributes();
 
     static {
-        AnnotationAttributes.defaults.setFrameShape(AVKey.SHAPE_RECTANGLE);
+        AnnotationAttributes.defaults.setFrameShape(Keys.SHAPE_RECTANGLE);
         AnnotationAttributes.defaults.setSize(new Dimension(160, 0));
         AnnotationAttributes.defaults.setScale(1);
         AnnotationAttributes.defaults.setOpacity(1);
-        AnnotationAttributes.defaults.setLeader(AVKey.SHAPE_TRIANGLE);
+        AnnotationAttributes.defaults.setLeader(Keys.SHAPE_TRIANGLE);
         AnnotationAttributes.defaults.setLeaderGapWidth(40);
         AnnotationAttributes.defaults.setCornerRadius(20);
-        AnnotationAttributes.defaults.setAdjustWidthToText(AVKey.SIZE_FIT_TEXT);
+        AnnotationAttributes.defaults.setAdjustWidthToText(Keys.SIZE_FIT_TEXT);
         AnnotationAttributes.defaults.setDrawOffset(new Point(40, 60));
         AnnotationAttributes.defaults.setHighlightScale(1.2);
         AnnotationAttributes.defaults.setInsets(new Insets(20, 15, 15, 15));
         AnnotationAttributes.defaults.setFont(Font.decode("Arial-PLAIN-12"));
-        AnnotationAttributes.defaults.setTextAlign(AVKey.LEFT);
+        AnnotationAttributes.defaults.setTextAlign(Keys.LEFT);
         AnnotationAttributes.defaults.setTextColor(Color.BLACK);
         AnnotationAttributes.defaults.setBackgroundColor(Color.WHITE);
         AnnotationAttributes.defaults.setBorderColor(new Color(171, 171, 171));
@@ -54,11 +53,11 @@ public class AnnotationAttributes implements Restorable {
         AnnotationAttributes.defaults.setImageScale(1);
         AnnotationAttributes.defaults.setImageOffset(new Point(0, 0));
         AnnotationAttributes.defaults.setImageOpacity(1);
-        AnnotationAttributes.defaults.setImageRepeat(AVKey.REPEAT_XY);
+        AnnotationAttributes.defaults.setImageRepeat(Keys.REPEAT_XY);
         AnnotationAttributes.defaults.setDistanceMinScale(1);
         AnnotationAttributes.defaults.setDistanceMaxScale(1);
         AnnotationAttributes.defaults.setDistanceMinOpacity(0.3);
-        AnnotationAttributes.defaults.setEffect(AVKey.TEXT_EFFECT_NONE);
+        AnnotationAttributes.defaults.setEffect(Keys.TEXT_EFFECT_NONE);
     }
 
     protected boolean unresolved;
@@ -265,17 +264,17 @@ public class AnnotationAttributes implements Restorable {
         AnnotationAttributes dest) {
         // Map legacy versions of the Annotation constants and FrameFactory constants to the new AVKey constants.
         Map<String, String> legacySupport = new HashMap<>();
-        legacySupport.put("render.Annotation.RepeatNone", AVKey.REPEAT_NONE);
-        legacySupport.put("render.Annotation.RepeatX", AVKey.REPEAT_X);
-        legacySupport.put("render.Annotation.RepeatY", AVKey.REPEAT_Y);
-        legacySupport.put("render.Annotation.RepeatXY", AVKey.REPEAT_XY);
-        legacySupport.put("render.Annotation.SizeFixed", AVKey.SIZE_FIXED);
-        legacySupport.put("render.Annotation.SizeFitText", AVKey.SIZE_FIT_TEXT);
-        legacySupport.put("Render.FrameFactory.ShapeRectangle", AVKey.SHAPE_RECTANGLE);
-        legacySupport.put("Render.FrameFactory.ShapeEllipse", AVKey.SHAPE_ELLIPSE);
-        legacySupport.put("Render.FrameFactory.ShapeNone", AVKey.SHAPE_NONE);
-        legacySupport.put("Render.FrameFactory.LeaderTriangle", AVKey.SHAPE_TRIANGLE);
-        legacySupport.put("Render.FrameFactory.LeaderNone", AVKey.SHAPE_NONE);
+        legacySupport.put("render.Annotation.RepeatNone", Keys.REPEAT_NONE);
+        legacySupport.put("render.Annotation.RepeatX", Keys.REPEAT_X);
+        legacySupport.put("render.Annotation.RepeatY", Keys.REPEAT_Y);
+        legacySupport.put("render.Annotation.RepeatXY", Keys.REPEAT_XY);
+        legacySupport.put("render.Annotation.SizeFixed", Keys.SIZE_FIXED);
+        legacySupport.put("render.Annotation.SizeFitText", Keys.SIZE_FIT_TEXT);
+        legacySupport.put("Render.FrameFactory.ShapeRectangle", Keys.SHAPE_RECTANGLE);
+        legacySupport.put("Render.FrameFactory.ShapeEllipse", Keys.SHAPE_ELLIPSE);
+        legacySupport.put("Render.FrameFactory.ShapeNone", Keys.SHAPE_NONE);
+        legacySupport.put("Render.FrameFactory.LeaderTriangle", Keys.SHAPE_TRIANGLE);
+        legacySupport.put("Render.FrameFactory.LeaderNone", Keys.SHAPE_NONE);
 
         if (restorableSupport == null || dest == null)
             throw new IllegalArgumentException();
@@ -406,7 +405,7 @@ public class AnnotationAttributes implements Restorable {
             // WWUtil.makeInteger returns null without logging a message if the string cannot be converted to an int.
             Integer textAlignInt = WWUtil.makeInteger(textAlignState);
             if (textAlignInt != null) {
-                dest.setTextAlign(textAlignInt == 0 ? AVKey.LEFT : (textAlignInt == 1 ? AVKey.CENTER : AVKey.RIGHT));
+                dest.setTextAlign(textAlignInt == 0 ? Keys.LEFT : (textAlignInt == 1 ? Keys.CENTER : Keys.RIGHT));
             } else {
                 dest.setTextAlign(textAlignState);
             }
@@ -683,8 +682,8 @@ public class AnnotationAttributes implements Restorable {
 
     /**
      * Get whether the callout width should adjust to follow the wrapped text bounding rectangle width, which may be
-     * smaller or larger then the preferred size depending on the text. Can be one of {@link AVKey#SIZE_FIXED} or {@link
-     * AVKey#SIZE_FIT_TEXT}.
+     * smaller or larger then the preferred size depending on the text. Can be one of {@link Keys#SIZE_FIXED} or {@link
+     * Keys#SIZE_FIT_TEXT}.
      *
      * @return whether the callout width is adjusted to follow the text bounding rectangle width.
      */
@@ -694,8 +693,8 @@ public class AnnotationAttributes implements Restorable {
 
     /**
      * Set whether the callout width should adjust to follow the wrapped text bounding rectangle width which may be
-     * smaller or larger then the preferred size depending on the text. Can be one of {@link AVKey#SIZE_FIXED} (default)
-     * or {@link AVKey#SIZE_FIT_TEXT}. Setting this attribute to <code>SIZE_FIT_TEXT</code> would have the callout drawn
+     * smaller or larger then the preferred size depending on the text. Can be one of {@link Keys#SIZE_FIXED} (default)
+     * or {@link Keys#SIZE_FIT_TEXT}. Setting this attribute to <code>SIZE_FIT_TEXT</code> would have the callout drawn
      * at its exact width (see setSize()).
      *
      * @param state whether the callout width should adjust to follow the text bounding rectangle width.
@@ -866,8 +865,8 @@ public class AnnotationAttributes implements Restorable {
     }
 
     /**
-     * Get the text alignement. Can be one of {@link AVKey#LEFT} (default), {@link AVKey#CENTER} or {@link
-     * AVKey#RIGHT}.
+     * Get the text alignement. Can be one of {@link Keys#LEFT} (default), {@link Keys#CENTER} or {@link
+     * Keys#RIGHT}.
      *
      * @return align the text alignement. Can be one of MultiLineTextRenderer.ALIGN_LEFT, ALIGN_CENTER or ALIGN_RIGHT.
      */
@@ -876,7 +875,7 @@ public class AnnotationAttributes implements Restorable {
     }
 
     /**
-     * Set the text alignement. Can be one of {@link AVKey#LEFT} (default), {@link AVKey#CENTER} or {@link AVKey#RIGHT}.
+     * Set the text alignement. Can be one of {@link Keys#LEFT} (default), {@link Keys#CENTER} or {@link Keys#RIGHT}.
      * Set to <code>null</code> to use the default value.
      *
      * @param align the text alignement.
@@ -1126,8 +1125,8 @@ public class AnnotationAttributes implements Restorable {
     }
 
     /**
-     * Get the effect used to decorate the text. Can be one of {@link AVKey#TEXT_EFFECT_SHADOW}, {@link
-     * AVKey#TEXT_EFFECT_OUTLINE} or {@link AVKey#TEXT_EFFECT_NONE} (default).
+     * Get the effect used to decorate the text. Can be one of {@link Keys#TEXT_EFFECT_SHADOW}, {@link
+     * Keys#TEXT_EFFECT_OUTLINE} or {@link Keys#TEXT_EFFECT_NONE} (default).
      *
      * @return the effect used for text rendering
      */
@@ -1136,8 +1135,8 @@ public class AnnotationAttributes implements Restorable {
     }
 
     /**
-     * Set the effect used to decorate the text. Can be one of {@link AVKey#TEXT_EFFECT_SHADOW}, {@link
-     * AVKey#TEXT_EFFECT_OUTLINE} or {@link AVKey#TEXT_EFFECT_NONE} (default). Set to <code>null</code> to use the
+     * Set the effect used to decorate the text. Can be one of {@link Keys#TEXT_EFFECT_SHADOW}, {@link
+     * Keys#TEXT_EFFECT_OUTLINE} or {@link Keys#TEXT_EFFECT_NONE} (default). Set to <code>null</code> to use the
      * default value.
      *
      * @param effect the effect to use for text rendering

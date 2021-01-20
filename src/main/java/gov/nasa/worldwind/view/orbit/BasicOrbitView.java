@@ -7,7 +7,6 @@ package gov.nasa.worldwind.view.orbit;
 
 import com.jogamp.opengl.GL;
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.util.*;
@@ -32,7 +31,7 @@ public class BasicOrbitView extends BasicView implements OrbitView {
     public BasicOrbitView() {
 
         this.viewInputHandler = (ViewInputHandler) WorldWind.createConfigurationComponent(
-            AVKey.VIEW_INPUT_HANDLER_CLASS_NAME);
+            Keys.VIEW_INPUT_HANDLER_CLASS_NAME);
         this.viewLimits = new BasicOrbitViewLimits();
         if (this.viewInputHandler == null)
             this.viewInputHandler = new OrbitViewInputHandler();
@@ -97,8 +96,8 @@ public class BasicOrbitView extends BasicView implements OrbitView {
     }
 
     protected void loadConfigurationValues() {
-        Double initLat = Configuration.getDoubleValue(AVKey.INITIAL_LATITUDE);
-        Double initLon = Configuration.getDoubleValue(AVKey.INITIAL_LONGITUDE);
+        Double initLat = Configuration.getDoubleValue(Keys.INITIAL_LATITUDE);
+        Double initLon = Configuration.getDoubleValue(Keys.INITIAL_LONGITUDE);
         double initElev = this.center.getElevation();
         // Set center latitude and longitude. Do not change center elevation.
         if (initLat != null && initLon != null)
@@ -110,19 +109,19 @@ public class BasicOrbitView extends BasicView implements OrbitView {
         else if (initLon != null)
             setCenterPosition(Position.fromDegrees(this.center.getLatitude().degrees, initLon, initElev));
 
-        Double initHeading = Configuration.getDoubleValue(AVKey.INITIAL_HEADING);
+        Double initHeading = Configuration.getDoubleValue(Keys.INITIAL_HEADING);
         if (initHeading != null)
             setHeading(new Angle(initHeading));
 
-        Double initPitch = Configuration.getDoubleValue(AVKey.INITIAL_PITCH);
+        Double initPitch = Configuration.getDoubleValue(Keys.INITIAL_PITCH);
         if (initPitch != null)
             setPitch(new Angle(initPitch));
 
-        Double initAltitude = Configuration.getDoubleValue(AVKey.INITIAL_ALTITUDE);
+        Double initAltitude = Configuration.getDoubleValue(Keys.INITIAL_ALTITUDE);
         if (initAltitude != null)
             setZoom(initAltitude);
 
-        Double initFov = Configuration.getDoubleValue(AVKey.FOV);
+        Double initFov = Configuration.getDoubleValue(Keys.FOV);
         if (initFov != null)
             setFieldOfView(new Angle(initFov));
 

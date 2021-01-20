@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.Box;
@@ -54,7 +53,7 @@ public class Boxes extends ApplicationTemplate {
             box3.setAltitudeMode(WorldWind.ABSOLUTE);
             box3.setAttributes(attrs);
             box3.setVisible(true);
-            box3.set(AVKey.DISPLAY_NAME, "Box with equal axes, ABSOLUTE altitude mode");
+            box3.set(Keys.DISPLAY_NAME, "Box with equal axes, ABSOLUTE altitude mode");
             layer.add(box3);
 
             // Box with equal axes, RELATIVE_TO_GROUND
@@ -62,7 +61,7 @@ public class Boxes extends ApplicationTemplate {
             box4.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             box4.setAttributes(attrs);
             box4.setVisible(true);
-            box4.set(AVKey.DISPLAY_NAME, "Box with equal axes, RELATIVE_TO_GROUND altitude mode");
+            box4.set(Keys.DISPLAY_NAME, "Box with equal axes, RELATIVE_TO_GROUND altitude mode");
             layer.add(box4);
 
             // Box with equal axes, CLAMP_TO_GROUND
@@ -70,7 +69,7 @@ public class Boxes extends ApplicationTemplate {
             box5.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
             box5.setAttributes(attrs);
             box5.setVisible(true);
-            box5.set(AVKey.DISPLAY_NAME, "Box with equal axes, CLAMP_TO_GROUND altitude mode");
+            box5.set(Keys.DISPLAY_NAME, "Box with equal axes, CLAMP_TO_GROUND altitude mode");
             layer.add(box5);
 
             // Box with a texture
@@ -79,7 +78,7 @@ public class Boxes extends ApplicationTemplate {
             box9.setImageSources("gov/nasa/worldwind/examples/images/500px-Checkerboard_pattern.png");
             box9.setAttributes(attrs);
             box9.setVisible(true);
-            box9.set(AVKey.DISPLAY_NAME, "Box with a texture");
+            box9.set(Keys.DISPLAY_NAME, "Box with a texture");
             layer.add(box9);
 
             // Scaled Box with default orientation
@@ -87,7 +86,7 @@ public class Boxes extends ApplicationTemplate {
             box.setAltitudeMode(WorldWind.ABSOLUTE);
             box.setAttributes(attrs);
             box.setVisible(true);
-            box.set(AVKey.DISPLAY_NAME, "Scaled Box with default orientation");
+            box.set(Keys.DISPLAY_NAME, "Scaled Box with default orientation");
             layer.add(box);
 
             // Scaled Box with a pre-set orientation
@@ -96,7 +95,7 @@ public class Boxes extends ApplicationTemplate {
             box2.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             box2.setAttributes(attrs2);
             box2.setVisible(true);
-            box2.set(AVKey.DISPLAY_NAME, "Scaled Box with a pre-set orientation");
+            box2.set(Keys.DISPLAY_NAME, "Scaled Box with a pre-set orientation");
             layer.add(box2);
 
             // Scaled Box with a pre-set orientation
@@ -106,7 +105,7 @@ public class Boxes extends ApplicationTemplate {
             box6.setImageSources("gov/nasa/worldwind/examples/images/500px-Checkerboard_pattern.png");
             box6.setAttributes(attrs2);
             box6.setVisible(true);
-            box6.set(AVKey.DISPLAY_NAME, "Scaled Box with a pre-set orientation");
+            box6.set(Keys.DISPLAY_NAME, "Scaled Box with a pre-set orientation");
             layer.add(box6);
 
             // Scaled Box with a pre-set orientation
@@ -115,7 +114,7 @@ public class Boxes extends ApplicationTemplate {
             box7.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             box7.setAttributes(attrs2);
             box7.setVisible(true);
-            box7.set(AVKey.DISPLAY_NAME, "Scaled Box with a pre-set orientation");
+            box7.set(Keys.DISPLAY_NAME, "Scaled Box with a pre-set orientation");
             layer.add(box7);
 
             // Scaled, oriented Box in 3rd "quadrant" (-X, -Y, -Z)
@@ -124,7 +123,7 @@ public class Boxes extends ApplicationTemplate {
             box8.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             box8.setAttributes(attrs2);
             box8.setVisible(true);
-            box8.set(AVKey.DISPLAY_NAME, "Scaled, oriented Box in the 3rd 'quadrant' (-X, -Y, -Z)");
+            box8.set(Keys.DISPLAY_NAME, "Scaled, oriented Box in the 3rd 'quadrant' (-X, -Y, -Z)");
             layer.add(box8);
 
             // Add the layer to the model.

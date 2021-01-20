@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.EarthFlat;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -31,7 +30,7 @@ public class FlatWorld extends ApplicationTemplate {
 
     public static void main(String[] args) {
         // Adjust configuration values before instantiation
-        Configuration.setValue(AVKey.GLOBE_CLASS_NAME, EarthFlat.class.getName());
+        Configuration.setValue(Keys.GLOBE_CLASS_NAME, EarthFlat.class.getName());
         start("WorldWind Flat World", AppFrame.class);
     }
 
