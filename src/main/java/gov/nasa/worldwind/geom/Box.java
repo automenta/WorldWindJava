@@ -306,11 +306,6 @@ public class Box implements Extent, Renderable {
         }
 
         Vec4[] axes = WWMath.computePrincipalAxes(coordinates, stride);
-//        if (axes == null) {
-//            String msg = Logging.getMessage("generic.ListIsEmpty");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         Vec4 r = axes[0];
         Vec4 s = axes[1];

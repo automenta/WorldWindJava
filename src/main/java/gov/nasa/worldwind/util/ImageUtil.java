@@ -992,11 +992,6 @@ public class ImageUtil {
     }
 
     public static Sector calcBoundingBoxForUTM(KV params) throws IOException {
-//        if (null == params) {
-//            String message = Logging.getMessage("nullValue.ParamsIsNull");
-//            Logging.logger().severe(message);
-//            throw new IOException(message);
-//        }
 
         if (!params.hasKey(Keys.WIDTH)) {
             String message = Logging.getMessage("Geom.WidthInvalid");

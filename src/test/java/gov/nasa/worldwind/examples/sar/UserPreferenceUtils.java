@@ -22,11 +22,6 @@ import java.util.logging.Level;
  */
 public class UserPreferenceUtils {
     public static Document createUserPreferencesDocument(KV params) {
-//        if (params == null) {
-//            String message = Logging.getMessage("nullValue.ParametersIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         Document doc = WWXML.createDocumentBuilder(true).newDocument();
 
@@ -40,17 +35,6 @@ public class UserPreferenceUtils {
     }
 
     public static void getUserPreferences(Element domElement, KV params) {
-//        if (domElement == null) {
-//            String message = Logging.getMessage("nullValue.DocumentIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//
-//        if (params == null) {
-//            String message = Logging.getMessage("nullValue.ParametersIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         XPath xpath = WWXML.makeXPath();
 

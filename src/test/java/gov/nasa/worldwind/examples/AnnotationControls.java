@@ -94,23 +94,6 @@ public class AnnotationControls extends ApplicationTemplate {
 
     @SuppressWarnings("StringEquality")
     public static ContentAnnotation createContentAnnotation(AppFrame appFrame, Position position, KV params) {
-        if (appFrame == null) {
-            String message = "AppFrameIsNull";
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (position == null) {
-            String message = Logging.getMessage("nullValue.PositionIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (params == null) {
-            String message = Logging.getMessage("nullValue.ParamsIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         String type = params.getStringValue(Keys.DATA_TYPE);
         String title = params.getStringValue(Keys.TITLE);
@@ -128,29 +111,6 @@ public class AnnotationControls extends ApplicationTemplate {
 
     public static ContentAnnotation createAudioAnnotation(AppFrame appFrame, Position position, String title,
         Object source) {
-        if (appFrame == null) {
-            String message = "AppFrameIsNull";
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (position == null) {
-            String message = Logging.getMessage("nullValue.PositionIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (title == null) {
-            String message = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (source == null) {
-            String message = Logging.getMessage("nullValue.SourceIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         AudioPlayerAnnotation annotation = new AudioPlayerAnnotation(position);
         annotation.setAlwaysOnTop(true);

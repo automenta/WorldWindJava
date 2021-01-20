@@ -50,9 +50,11 @@ public abstract class TiledImageLayer extends AbstractLayer {
     protected final ArrayList<String> supportedImageFormats = new ArrayList<>();
     // Stuff computed each frame
     private final List<TextureTile> currentTiles = new Lst<>();
-    protected final PriorityBlockingQueue<Runnable> requestQ = new PriorityBlockingQueue<>(TiledImageLayer.QUEUE_SIZE);
+
+    @Deprecated protected final PriorityBlockingQueue<Runnable> requestQ = new PriorityBlockingQueue<>(TiledImageLayer.QUEUE_SIZE);
+
     protected ArrayList<TextureTile> topLevels;
-protected boolean retainLevelZeroTiles;
+    protected boolean retainLevelZeroTiles;
     protected String tileCountName;
     protected double detailHint;
     protected boolean useMipMaps = true;
@@ -756,7 +758,62 @@ protected boolean retainLevelZeroTiles;
     }
 
     protected void draw(DrawContext dc) {
-        // Determine the tiles to draw.
+        drawPlan(dc);
+
+        if (this.currentTiles.size() > 0)
+            drawExecute(dc);
+
+        WorldWind.tasks().drain(requestQ);
+    }
+
+    private void drawExecute(DrawContext dc) {
+        // Indicate that this layer rendered something this frame.
+        this.set(Keys.FRAME_TIMESTAMP, dc.getFrameTimeStamp());
+
+        if (this.getScreenCredit() != null) {
+            dc.addScreenCredit(this.getScreenCredit());
+        }
+
+        TextureTile[] sortedTiles = new TextureTile[this.currentTiles.size()];
+        sortedTiles = this.currentTiles.toArray(sortedTiles);
+        Arrays.sort(sortedTiles, TiledImageLayer.levelComparator);
+
+        GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
+
+        if (this.isUseTransparentTextures() || this.getOpacity() < 1) {
+            gl.glPushAttrib(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_POLYGON_BIT | GL2.GL_CURRENT_BIT);
+            this.setBlendingFunction(dc);
+        } else {
+            gl.glPushAttrib(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_POLYGON_BIT);
+        }
+
+        gl.glPolygonMode(GL2.GL_FRONT, GL2.GL_FILL);
+        gl.glEnable(GL.GL_CULL_FACE);
+        gl.glCullFace(GL.GL_BACK);
+
+        dc.setPerFrameStatistic(PerformanceStatistic.IMAGE_TILE_COUNT, this.tileCountName,
+            this.currentTiles.size());
+        dc.getGeographicSurfaceTileRenderer().renderTiles(dc, this.currentTiles);
+
+        gl.glPopAttrib();
+
+        if (this.drawTileIDs)
+            TiledImageLayer.drawTileIDs(dc, this.currentTiles);
+
+        if (this.drawBoundingVolumes)
+            this.drawBoundingVolumes(dc, this.currentTiles);
+
+        // Check texture expiration. Memory-cached textures are checked for expiration only when an explicit,
+        // non-zero expiry time has been set for the layer. If none has been set, the expiry times of the layer's
+        // individual levels are used, but only for images in the local file cache, not textures in memory. This is
+        // to avoid incurring the overhead of checking expiration of in-memory textures, a very rarely used feature.
+        if (this.getExpiryTime() > 0 && this.getExpiryTime() <= System.currentTimeMillis())
+            this.checkTextureExpiration(dc, this.currentTiles);
+
+        this.currentTiles.clear();
+    }
+
+    private void drawPlan(DrawContext dc) {
         this.currentTiles.clear();
         final Frustum f = dc.getView().getFrustumInModelCoordinates();
         for (TextureTile tile : this.getTopLevels()) {
@@ -765,55 +822,6 @@ protected boolean retainLevelZeroTiles;
                 this.addTileOrDescendants(dc, f, tile);
             }
         }
-
-        if (this.currentTiles.size() >= 1) {
-            // Indicate that this layer rendered something this frame.
-            this.set(Keys.FRAME_TIMESTAMP, dc.getFrameTimeStamp());
-
-            if (this.getScreenCredit() != null) {
-                dc.addScreenCredit(this.getScreenCredit());
-            }
-
-            TextureTile[] sortedTiles = new TextureTile[this.currentTiles.size()];
-            sortedTiles = this.currentTiles.toArray(sortedTiles);
-            Arrays.sort(sortedTiles, TiledImageLayer.levelComparator);
-
-            GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-
-            if (this.isUseTransparentTextures() || this.getOpacity() < 1) {
-                gl.glPushAttrib(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_POLYGON_BIT | GL2.GL_CURRENT_BIT);
-                this.setBlendingFunction(dc);
-            } else {
-                gl.glPushAttrib(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_POLYGON_BIT);
-            }
-
-            gl.glPolygonMode(GL2.GL_FRONT, GL2.GL_FILL);
-            gl.glEnable(GL.GL_CULL_FACE);
-            gl.glCullFace(GL.GL_BACK);
-
-            dc.setPerFrameStatistic(PerformanceStatistic.IMAGE_TILE_COUNT, this.tileCountName,
-                this.currentTiles.size());
-            dc.getGeographicSurfaceTileRenderer().renderTiles(dc, this.currentTiles);
-
-            gl.glPopAttrib();
-
-            if (this.drawTileIDs)
-                TiledImageLayer.drawTileIDs(dc, this.currentTiles);
-
-            if (this.drawBoundingVolumes)
-                this.drawBoundingVolumes(dc, this.currentTiles);
-
-            // Check texture expiration. Memory-cached textures are checked for expiration only when an explicit,
-            // non-zero expiry time has been set for the layer. If none has been set, the expiry times of the layer's
-            // individual levels are used, but only for images in the local file cache, not textures in memory. This is
-            // to avoid incurring the overhead of checking expiration of in-memory textures, a very rarely used feature.
-            if (this.getExpiryTime() > 0 && this.getExpiryTime() <= System.currentTimeMillis())
-                this.checkTextureExpiration(dc, this.currentTiles);
-
-            this.currentTiles.clear();
-        }
-
-        WorldWind.tasks().drain(requestQ);
     }
 
     //**************************************************************//

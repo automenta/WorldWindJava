@@ -40,11 +40,6 @@ public class Level extends KVMap implements Comparable<Level> {
     protected AbsentResourceList absentTiles;
 
     public Level(KV params) {
-//        if (params == null) {
-//            String message = Logging.getMessage("nullValue.LevelConfigParams");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         this.params = params.copy(); // Private copy to insulate from subsequent changes by the app
         String message = Level.validate(params);

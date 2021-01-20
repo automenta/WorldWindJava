@@ -451,7 +451,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
      * @throws InterruptedException if the operation is interrupted.
      */
     public void intersect(List<Position> positions, final IntersectionCallback callback) throws InterruptedException {
-        ExecutorService service = Executors.newFixedThreadPool(10);
+        ExecutorService service = ForkJoinPool.commonPool();
 
         for (int i = 0; i < positions.size(); i += 2) {
             final Position pA = positions.get(i);

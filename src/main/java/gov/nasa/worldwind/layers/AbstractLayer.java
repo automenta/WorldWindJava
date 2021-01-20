@@ -245,18 +245,12 @@ public abstract class AbstractLayer extends WWObjectImpl implements Layer {
      *                                  <code>View</code> is null
      */
     public void render(DrawContext dc) {
-        if (!this.enabled)
-            return; // Don't check for arg errors if we're disabled
-
-        if (this.isLayerActive(dc) && this.isLayerInView(dc))
+        if (enabled && this.isLayerActive(dc) && this.isLayerInView(dc))
             this.doRender(dc);
     }
 
     public void pick(DrawContext dc, Point point) {
-        if (!this.enabled)
-            return; // Don't check for arg errors if we're disabled
-
-        if (this.isLayerActive(dc) && this.isLayerInView(dc))
+        if (enabled && this.isLayerActive(dc) && this.isLayerInView(dc))
             this.doPick(dc, point);
     }
 

@@ -33,10 +33,6 @@ import java.util.zip.*;
 public class WWIO {
     public static final String DELETE_ON_EXIT_PREFIX = "WWJDeleteOnExit";
     public static final String ILLEGAL_FILE_PATH_PART_CHARACTERS = '[' + "?/\\\\=+<>:;,\"|^\\[\\]" + ']';
-//    /**
-//     * The maximum number of characters allowed in a file path. Covers Windows, Linux and OS X.
-//     */
-//    public static final int MAX_FILE_PATH_LENGTH = 255;
     /**
      * The default character encoding used if none is specified.
      */
@@ -182,14 +178,6 @@ public class WWIO {
                     }
                 }
             });
-//            try (Response r = call.execute()) {
-//                if (!r.isSuccessful())
-//                    throw new IOException(r.toString());
-//
-//                success.accept(r.body());
-//                WWIO.logger.info("{} {}", r.cacheResponse()!=null ? "GOT" : "GET", url);
-//
-//            }
         } catch (Throwable e) {
             if (fail.test(e)) {
                 WWIO.logger.warn("{} {}", e.getMessage(), url);

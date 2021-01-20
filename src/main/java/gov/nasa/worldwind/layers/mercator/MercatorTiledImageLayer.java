@@ -39,10 +39,11 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
     private final ArrayList<String> supportedImageFormats = new ArrayList<>();
     // Stuff computed each frame
     private final ArrayList<MercatorTextureTile> currentTiles = new ArrayList<>();
-    final PriorityBlockingQueue<Runnable> requestQ = new PriorityBlockingQueue<>(
-        200);
+
+    final PriorityBlockingQueue<Runnable> requestQ = new PriorityBlockingQueue<>(200);
+
     private ArrayList<MercatorTextureTile> topLevels;
-private boolean levelZeroLoaded;
+    //private boolean levelZeroLoaded;
     private boolean retainLevelZeroTiles;
     private String tileCountName;
     private boolean useMipMaps;

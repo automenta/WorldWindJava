@@ -85,17 +85,6 @@ public class BufferedImageRaster extends AbstractDataRaster implements Cacheable
     }
 
     public static DataRaster wrap(BufferedImage image, KV params) {
-//        if (null == image) {
-//            String message = Logging.getMessage("nullValue.ImageIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//
-//        if (null == params) {
-//            String msg = Logging.getMessage("nullValue.AVListIsNull");
-//            Logging.logger().finest(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         if (params.hasKey(Keys.WIDTH)) {
             int width = (Integer) params.get(Keys.WIDTH);

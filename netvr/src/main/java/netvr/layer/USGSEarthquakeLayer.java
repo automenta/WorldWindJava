@@ -1,7 +1,7 @@
 package netvr.layer;
 
 import com.jogamp.opengl.*;
-import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.formats.geojson.GeoJSONPoint;
 import gov.nasa.worldwind.geom.Position;
@@ -23,19 +23,19 @@ public class USGSEarthquakeLayer extends GeoJSONLayer {
         protected static final long MILLISECONDS_PER_HOUR = 60 * MILLISECONDS_PER_MINUTE;
         protected static final long MILLISECONDS_PER_DAY = 24 * MILLISECONDS_PER_HOUR;
         protected static final String USGS_EARTHQUAKE_MAGNITUDE = "mag";
-        protected static final String USGS_EARTHQUAKE_PLACE = "place";
+//        protected static final String USGS_EARTHQUAKE_PLACE = "place";
         protected static final String USGS_EARTHQUAKE_TIME = "time";
 
-        private final Color[] eqColors =
-            {
-                Color.RED,
-                Color.ORANGE,
-                Color.YELLOW,
-                Color.GREEN,
-                Color.BLUE,
-                Color.GRAY,
-                Color.BLACK,
-            };
+//        private final Color[] eqColors =
+//            {
+//                Color.RED,
+//                Color.ORANGE,
+//                Color.YELLOW,
+//                Color.GREEN,
+//                Color.BLUE,
+//                Color.GRAY,
+//                Color.BLACK,
+//            };
 
         private AnnotationAttributes eqAttributes;
 

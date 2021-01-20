@@ -47,14 +47,6 @@ import java.util.logging.Level;
         this.executor = new RetrievalExecutor(poolSize, this.queueSize);
     }
 
-//    public SSLExceptionListener getSSLExceptionListener() {
-//        return sslExceptionListener;
-//    }
-//
-//    public void setSSLExceptionListener(SSLExceptionListener sslExceptionListener) {
-//        this.sslExceptionListener = sslExceptionListener;
-//    }
-
     public void uncaughtException(Thread thread, Throwable throwable) {
         Logging.logger().fine(Logging.getMessage("BasicRetrievalService.UncaughtExceptionDuringRetrieval",
             thread.getName()));
@@ -223,9 +215,6 @@ import java.util.logging.Level;
                         super.rejectedExecution(runnable, threadPoolExecutor);
                     }
                 });
-
-//            this.staleRequestLimit = Configuration.getLongValue(AVKey.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT,
-//                BasicRetrievalService.DEFAULT_STALE_REQUEST_LIMIT);
         }
 
         /**

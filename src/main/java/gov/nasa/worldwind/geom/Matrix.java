@@ -1633,11 +1633,6 @@ public class Matrix {
     }
 
     public static Vec4 transformBy3(Matrix matrix, double x, double y, double z) {
-//        if (matrix == null) {
-//            String msg = Logging.getMessage("nullValue.MatrixIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         return new Vec4(
             (matrix.m11 * x) + (matrix.m12 * y) + (matrix.m13 * z),
@@ -1774,11 +1769,6 @@ public class Matrix {
     // ============== Matrix Arithmetic Functions ======================= //
 
     public final Matrix add(Matrix m) {
-//        if (matrix == null) {
-//            String msg = Logging.getMessage("nullValue.MatrixIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         return new Matrix(
             this.m11 + m.m11, this.m12 + m.m12, this.m13 + m.m13, this.m14 + m.m14,
@@ -1788,11 +1778,6 @@ public class Matrix {
     }
 
     public final Matrix subtract(Matrix m) {
-//        if (matrix == null) {
-//            String msg = Logging.getMessage("nullValue.MatrixIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         return new Matrix(
             this.m11 - m.m11, this.m12 - m.m12, this.m13 - m.m13, this.m14 - m.m14,
@@ -1810,11 +1795,6 @@ public class Matrix {
     }
 
     public final Matrix multiply(Matrix matrix) {
-//        if (matrix == null) {
-//            String msg = Logging.getMessage("nullValue.MatrixIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         return new Matrix(
             // Row 1
@@ -1856,11 +1836,6 @@ public class Matrix {
     }
 
     public final Matrix divideComponents(Matrix matrix) {
-//        if (matrix == null) {
-//            String msg = Logging.getMessage("nullValue.MatrixIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         return new Matrix(
             this.m11 / matrix.m11, this.m12 / matrix.m12, this.m13 / matrix.m13, this.m14 / matrix.m14,
