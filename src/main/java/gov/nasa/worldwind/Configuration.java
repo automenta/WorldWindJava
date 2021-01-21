@@ -12,13 +12,15 @@ import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.globes.*;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.video.awt.WorldWindowGLCanvas;
-import okhttp3.*;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.cache.*;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.impl.client.cache.*;
 import org.w3c.dom.*;
 
 import javax.xml.xpath.*;
 import java.io.*;
 import java.util.*;
-import java.util.concurrent.*;
 import java.util.logging.Level;
 
 /**
@@ -85,14 +87,15 @@ public class Configuration // Singleton
 
     public static final Globe globe;
 
-    public static final OkHttpClient http;
-    public static final CacheControl cacheControl;
+    public static final HttpClient http;
+
 
     public static final String userAgent = "Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0";
 
     static private final int CACHE_STALE_DAYS = 365;
     static private final long DISK_CACHE_MB = 1024;
 
+    public static final HttpCacheContext httpCache;
 
     /**
      * Private constructor invoked only internally.
@@ -126,18 +129,60 @@ public class Configuration // Singleton
         }
 
         data = (FileStore) WorldWind.createConfigurationComponent(Keys.DATA_FILE_STORE_CLASS_NAME);
-        http = new OkHttpClient.Builder()
-            .dispatcher(new Dispatcher(ForkJoinPool.commonPool()))
-            .cache(new Cache(
-                data.newFile(""),
-                DISK_CACHE_MB * 1024L * 1024L))
-            .connectTimeout(1, TimeUnit.MINUTES)
-            .readTimeout(1, TimeUnit.MINUTES)
-            .callTimeout(1, TimeUnit.MINUTES)
+
+        CacheConfig cacheConfig = CacheConfig.custom()
+            .setMaxCacheEntries(32 * 1024)
+            .setMaxObjectSize(64 * 1024 * 1024)
+            .setSharedCache(true)
             .build();
-        cacheControl = new CacheControl.Builder()
-            .maxStale(CACHE_STALE_DAYS, TimeUnit.DAYS)
+        RequestConfig requestConfig = RequestConfig.custom()
+            .setConnectTimeout(60000)
+            .setSocketTimeout(60000)
             .build();
+        http = CachingHttpClients.custom()
+
+//            .setHttpCacheStorage(new HttpCacheStorage() {
+//                @Override
+//                public void putEntry(String key, HttpCacheEntry entry) throws IOException {
+//
+//                }
+//
+//                @Override
+//                public HttpCacheEntry getEntry(String key) throws IOException {
+//                    return null;
+//                }
+//
+//                @Override
+//                public void removeEntry(String key) throws IOException {
+//
+//                }
+//
+//                @Override
+//                public void updateEntry(String key, HttpCacheUpdateCallback callback)
+//                    throws IOException, HttpCacheUpdateException {
+//
+//                }
+//            })
+            .setCacheConfig(cacheConfig)
+            .setCacheDir(data.newFile(""))
+            .setConnectionManagerShared(true)
+            .setUserAgent(Configuration.userAgent)
+            .setDefaultRequestConfig(requestConfig)
+            .build();
+        httpCache = HttpCacheContext.create();
+
+//        Configuration.http = new OkHttpClient.Builder()
+//            .dispatcher(new Dispatcher(ForkJoinPool.commonPool()))
+//            .cache(new Cache(
+//                data.newFile(""),
+//                DISK_CACHE_MB * 1024L * 1024L))
+//            .connectTimeout(1, TimeUnit.MINUTES)
+//            .readTimeout(1, TimeUnit.MINUTES)
+//            .callTimeout(1, TimeUnit.MINUTES)
+//            .build();
+//        cacheControl = new CacheControl.Builder()
+//            .maxStale(CACHE_STALE_DAYS, TimeUnit.DAYS)
+//            .build();
 
         // To support old-style configuration, read an existing config properties file and give the properties
         // specified there precedence.

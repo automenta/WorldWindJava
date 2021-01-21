@@ -8,7 +8,7 @@ package gov.nasa.worldwind.retrieve;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.util.*;
 import jcog.*;
-import okhttp3.ResponseBody;
+import org.apache.http.HttpEntity;
 import org.slf4j.Logger;
 
 import javax.net.ssl.*;
@@ -308,11 +308,11 @@ public class URLRetriever extends WWObjectImpl implements Retriever {
      * @throws Exception                if <code>connection</code> is null or an exception occurs during reading.
      * @throws IllegalArgumentException if <code>connection</code> is null
      */
-    public ByteBuffer read(URL url, ResponseBody connection) throws Exception {
+    public ByteBuffer read(URL url, HttpEntity connection) throws Exception {
 
         assert(this.connection == null);
 
-        try (InputStream inputStream = connection.byteStream()) {
+        try (InputStream inputStream = connection.getContent()) {
 //        if (inputStream == null) {
 //            Logging.logger().log(Level.SEVERE, "URLRetriever.InputStreamFromConnectionNull", connection.getURL());
 //            return null;
@@ -324,7 +324,7 @@ public class URLRetriever extends WWObjectImpl implements Retriever {
             // The legacy WW servers send data with application/zip as the content type, and the retrieval initiator is
             // expected to know what type the unzipped content is. This is a kludge, but we have to deal with it. So
             // automatically unzip the content if the content type is application/zip.
-            this.contentType = connection.contentType().type();
+            this.contentType = connection.getContentType().getValue();
             if (this.contentType != null && this.contentType.equalsIgnoreCase("application/zip")
                 && !WWUtil.isEmpty(this.get(URLRetriever.EXTRACT_ZIP_ENTRY)))
                 // Assume single file in zip and decompress it

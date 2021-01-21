@@ -10,8 +10,11 @@ import com.jogamp.common.nio.*;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import jcog.Log;
-import okhttp3.*;
+import jcog.exe.Exe;
 import org.apache.commons.io.IOUtils;
+import org.apache.http.*;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.*;
 import org.junit.jupiter.api.function.ThrowingConsumer;
 import org.slf4j.Logger;
 
@@ -25,6 +28,8 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.zip.*;
+
+import static java.net.HttpURLConnection.HTTP_OK;
 
 /**
  * @author Tom Gaskins
@@ -144,49 +149,104 @@ public class WWIO {
         WWIO.suffixToMimeTypeMap.put("zip", "application/zip");
     }
 
-    public static void get(String url, ThrowingConsumer<ResponseBody> success) {
+    public static void get(String url, ThrowingConsumer<HttpEntity> success) {
         WWIO.get(url, success, z -> true);
     }
 
     /**
      * fail predicate returns true to bubble up the exception
      */
-    public static void get(String url, ThrowingConsumer<ResponseBody> success, Predicate<Throwable> fail) {
+    public static void get(String url, ThrowingConsumer<HttpEntity> success, Predicate<Throwable> fail) {
 
-        try {
-            Request.Builder requestBuilder = new Request.Builder()
-                .cacheControl(Configuration.cacheControl)
-                .header("User-Agent", Configuration.userAgent);
+//        Exe.run(()->{
+//        try {
+            Throwable e = null;
+            HttpGet httpget = new HttpGet(url);
 
-            final Call call = Configuration.http.newCall(requestBuilder.url(url).build());
-
-
-            call.enqueue(new Callback() {
-
-                @Override
-                public void onFailure(Call call, IOException e) {
-                    throw new RuntimeException(e);
-                }
-
-                @Override
-                public void onResponse(Call call, Response r) {
+            try (CloseableHttpResponse response = (CloseableHttpResponse) Configuration.http.execute(httpget, Configuration.httpCache)) {
+                final StatusLine status = response.getStatusLine();
+                final int code = status.getStatusCode();
+                if (code==HTTP_OK) {
                     try {
-                        success.accept(r.body());
-                        WWIO.logger.info("{} {}", r.cacheResponse()!=null ? "GOT" : "GET", url);
+                        success.accept(response.getEntity());
+                        WWIO.logger.info("{} {}", code, url);
                     } catch (Throwable throwable) {
-                        throw new RuntimeException(throwable);
+                        e = throwable;
                     }
-                }
-            });
-        } catch (Throwable e) {
-            if (fail.test(e)) {
-                WWIO.logger.warn("{} {}", e.getMessage(), url);
-                if (e instanceof RuntimeException)
-                    throw (RuntimeException) e;
-                else
-                    throw new RuntimeException(e);
+                } else
+                    e = new IOException(status.getReasonPhrase());
+
+                    //r.cacheResponse() != null ? "GOT" : "GET"
+
+//                CacheResponseStatus responseStatus = Configuration.httpCache.getCacheResponseStatus();
+//                switch (responseStatus) {
+//                    case CACHE_HIT:
+//                        System.out.println("A response was generated from the cache with " +
+//                            "no requests sent upstream");
+//                        break;
+//                    case CACHE_MODULE_RESPONSE:
+//                        System.out.println("The response was generated directly by the " +
+//                            "caching module");
+//                        break;
+//                    case CACHE_MISS:
+//                        System.out.println("The response came from an upstream server");
+//                        break;
+//                    case VALIDATED:
+//                        System.out.println("The response was generated from the cache " +
+//                            "after validating the entry with the origin server");
+//                        break;
+//                }
+            } catch (IOException i) {
+                //assert(e==null);
+                e = i;
             }
-        }
+
+            if (e!=null) {
+                if (fail.test(e)) {
+                    WWIO.logger.warn("{} {}", e.getMessage(), url);
+                    if (e instanceof RuntimeException)
+                        throw (RuntimeException) e;
+                    else
+                        throw new RuntimeException(e);
+                }
+                throw new RuntimeException(e);
+            }
+
+//            Request.Builder requestBuilder = new Request.Builder()
+//                .cacheControl(Configuration.cacheControl)
+//                .header("User-Agent", Configuration.userAgent);
+//
+//            final Call call = Configuration.http.newCall(requestBuilder.url(url).build());
+//
+//            call.enqueue(new Callback() {
+//
+//                @Override
+//                public void onFailure(Call call, IOException e) {
+//                    throw new RuntimeException(e);
+//                }
+//
+//                @Override
+//                public void onResponse(Call call, Response r) {
+//                    try {
+//                        success.accept(r.body());
+//                        WWIO.logger.info("{} {}", r.cacheResponse() != null ? "GOT" : "GET", url);
+//                    }
+//                    catch (Throwable throwable) {
+//                        throw new RuntimeException(throwable);
+//                    }
+//                }
+//            });
+//        }
+//        catch (Throwable e) {
+//            if (fail.test(e)) {
+//                WWIO.logger.warn("{} {}", e.getMessage(), url);
+//                if (e instanceof RuntimeException)
+//                    throw (RuntimeException) e;
+//                else
+//                    throw new RuntimeException(e);
+//            }
+//        }
+//        });
     }
 
     public static String formPath(String... pathParts) {
@@ -788,7 +848,8 @@ public class WWIO {
      * @throws IllegalArgumentException if the channel or the buffer is null.
      * @throws IOException              if an I/O error occurs.
      */
-    public static ByteBuffer readInputStreamToBuffer(ReadableByteChannel channel, ByteBuffer buffer) throws IOException {
+    public static ByteBuffer readInputStreamToBuffer(ReadableByteChannel channel, ByteBuffer buffer)
+        throws IOException {
 
         int count = 0;
         while (count >= 0 && buffer.hasRemaining()) {

@@ -162,7 +162,7 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
             }
 
             WWIO.get(url, (response)->{
-                if (layer.loadTexture(tile, response.byteStream())) {
+                if (layer.loadTexture(tile, response.getContent())) {
                     layer.levels.has(tile);
                     layer.firePropertyChange(Keys.LAYER, null, this);
                 }

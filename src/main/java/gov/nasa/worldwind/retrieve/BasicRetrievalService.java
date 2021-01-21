@@ -25,7 +25,7 @@ import java.util.logging.Level;
     static final int DEFAULT_TIME_PRIORITY_GRANULARITY = 1000; // milliseconds
     // These constants are last-ditch values in case Configuration lacks defaults
     private static final int DEFAULT_QUEUE_SIZE = 2048;
-    private static final int DEFAULT_POOL_SIZE = 1;
+    private static final int DEFAULT_POOL_SIZE = Runtime.getRuntime().availableProcessors() /*estimate*/;
 //    private static final long DEFAULT_STALE_REQUEST_LIMIT = 30000; // milliseconds
     private static final String IDLE_THREAD_NAME_PREFIX = Logging.getMessage(
         "BasicRetrievalService.IdleThreadNamePrefix");

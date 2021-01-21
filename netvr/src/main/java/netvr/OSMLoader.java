@@ -39,7 +39,7 @@ public class OSMLoader {
         final String uu = "https://" + host + "/api/map?" + request;
 
 
-        WWIO.get(uu, (b)->OSMLoader.read(b.byteStream(), each));
+        WWIO.get(uu, (b)->OSMLoader.read(b.getContent(), each));
 //        try {
 //            final Response r = WWIO.http.newCall(new Request.Builder()
 //                .cacheControl(OSMLoader.cacheControl)
