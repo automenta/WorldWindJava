@@ -260,7 +260,7 @@ public class URLRetriever extends WWObjectImpl implements Retriever {
         return this;
     }
 
-    private static final Logger logger = Log.log(URLRetriever.class);
+//    private static final Logger logger = Log.log(URLRetriever.class);
 
     protected boolean interrupted() {
         if (Thread.currentThread().isInterrupted()) {

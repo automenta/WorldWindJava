@@ -12,15 +12,19 @@ import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.globes.*;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.video.awt.WorldWindowGLCanvas;
+import jcog.*;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.cache.*;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.cache.*;
+import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.*;
 
 import javax.xml.xpath.*;
 import java.io.*;
+import java.nio.ByteBuffer;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 /**
@@ -93,9 +97,11 @@ public class Configuration // Singleton
     public static final String userAgent = "Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0";
 
     static private final int CACHE_STALE_DAYS = 365;
-    static private final long DISK_CACHE_MB = 1024;
+//    static private final long DISK_CACHE_MB = 1024;
 
     public static final HttpCacheContext httpCache;
+
+    public static final File httpCacheDir;
 
     /**
      * Private constructor invoked only internally.
@@ -130,44 +136,137 @@ public class Configuration // Singleton
 
         data = (FileStore) WorldWind.createConfigurationComponent(Keys.DATA_FILE_STORE_CLASS_NAME);
 
+        httpCacheDir = data.newFile("");
+
         CacheConfig cacheConfig = CacheConfig.custom()
             .setMaxCacheEntries(32 * 1024)
             .setMaxObjectSize(64 * 1024 * 1024)
+            .setHeuristicCachingEnabled(true)
+            .setHeuristicDefaultLifetime(TimeUnit.DAYS.toMillis(CACHE_STALE_DAYS))
+            .setHeuristicCoefficient(1)
+            .setAllow303Caching(true)
+//            .setAsynchronousWorkersCore(2)
+//            .setAsynchronousWorkersMax(2)
             .setSharedCache(true)
+            .setWeakETagOnPutDeleteAllowed(true)
             .build();
         RequestConfig requestConfig = RequestConfig.custom()
             .setConnectTimeout(60000)
             .setSocketTimeout(60000)
             .build();
         http = CachingHttpClients.custom()
-
-//            .setHttpCacheStorage(new HttpCacheStorage() {
-//                @Override
-//                public void putEntry(String key, HttpCacheEntry entry) throws IOException {
+            .setResourceFactory(new HeapResourceFactory())
+//            .setResourceFactory(new ResourceFactory() {
 //
+//                private final File cacheDir = httpCacheDir;
+//
+//
+//                private File generateUniqueCacheFile(final String requestId) {
+////                    final StringBuilder buffer = new StringBuilder();
+////                    this.idgen.generate(buffer);
+////                    buffer.append('.');
+////                    final int len = Math.min(requestId.length(), 100);
+////                    for (int i = 0; i < len; i++) {
+////                        final char ch = requestId.charAt(i);
+////                        if (Character.isLetterOrDigit(ch) || ch == '.') {
+////                            buffer.append(ch);
+////                        } else {
+////                            buffer.append('-');
+////                        }
+////                    }
+//                    byte[] r = CompressionUtil.gzipCompress(requestId.getBytes());
+//                    String R = Base122.encode(r);
+//                    if (R.length() < requestId.length()) {
+//                        Util.nop();
+//                    } else
+//                        R = requestId;
+//                    //R = FilenameUtils.normalize(R);
+//                    R = URLEncoder.encode(R);
+//
+////                    String[] rr = requestId.split("/");
+//
+//                    return new File(this.cacheDir, R);
 //                }
 //
 //                @Override
-//                public HttpCacheEntry getEntry(String key) throws IOException {
-//                    return null;
+//                public Resource generate(
+//                    final String requestId,
+//                    final InputStream inStream,
+//                    final InputLimit limit) throws IOException {
+//
+//                    final File file = generateUniqueCacheFile(requestId);
+//
+//                    IOUtil.copyStream2File(inStream, file, inStream.available());
+//                    //IOUtil.copyStream2File(inStream, file, Util.longToInt(limit.getValue()));
+//
+//                    return new FileResource(file);
 //                }
 //
 //                @Override
-//                public void removeEntry(String key) throws IOException {
+//                public Resource copy(final String requestId, final Resource resource) throws IOException {
 //
-//                }
+//                    final File f = generateUniqueCacheFile(requestId);
 //
-//                @Override
-//                public void updateEntry(String key, HttpCacheUpdateCallback callback)
-//                    throws IOException, HttpCacheUpdateException {
+//                    try (InputStream i = resource.getInputStream()) {
+//                        Files.copy(i, f.toPath());
+//                    }
 //
+//                    return new FileResource(f);
 //                }
 //            })
+            .setHttpCacheStorage(new HttpCacheStorage() {
+                final DefaultHttpCacheEntrySerializer io
+                    = new DefaultHttpCacheEntrySerializer();
+
+                @Override
+                public void putEntry(String key, HttpCacheEntry entry) throws IOException {
+
+                    final long size = entry.getResource().length();
+                    byte[] y;
+                    try (ByteArrayOutputStream o = new ByteArrayOutputStream(Util.longToInt(size + 4096))) {
+                        io.writeTo(entry, o);
+                        y = o.toByteArray();
+                    }
+
+                    User.the().put(key, y /* BAD HACK */);
+                }
+
+                @Override
+                public HttpCacheEntry getEntry(String key) throws IOException {
+                    //final @Nullable byte[] b = User.the().blob(key);
+                    byte[][] b = new byte[1][];
+                    User.the().get(key, (x)->{
+                        b[0] = (byte[]) x;
+                    });
+                    if (b[0]!=null) {
+                        //v[0] = x.doc().getBinaryValue("blob").bytes;
+                        return io.readFrom(new ByteArrayInputStream(b[0]));
+                    } else
+                        return null;
+                }
+
+                @Override
+                public void removeEntry(String key) throws IOException {
+                    //TODO
+                }
+
+                @Override
+                public void updateEntry(String key, HttpCacheUpdateCallback callback)
+                    throws IOException, HttpCacheUpdateException {
+                    HttpCacheEntry e = getEntry(key);
+                    HttpCacheEntry f = callback.update(e);
+                    if (f==e)
+                        Util.nop();
+                    else if (f!=null/* && !e.toString().equals(f)*/) //HACK
+                        putEntry(key, f);
+                }
+            })
             .setCacheConfig(cacheConfig)
-            .setCacheDir(data.newFile(""))
+            .setCacheDir(httpCacheDir)
             .setConnectionManagerShared(true)
             .setUserAgent(Configuration.userAgent)
             .setDefaultRequestConfig(requestConfig)
+//            .disableAuthCaching()
             .build();
         httpCache = HttpCacheContext.create();
 

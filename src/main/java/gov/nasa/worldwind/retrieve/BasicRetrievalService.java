@@ -97,24 +97,24 @@ import java.util.logging.Level;
         return X;
     }
 
-    public int getRetrieverPoolSize() {
-        return this.executor.getCorePoolSize();
-    }
-
-    /**
-     * @param poolSize the number of threads in the thread pool
-     * @throws IllegalArgumentException if <code>poolSize</code> is non-positive
-     */
-    public void setRetrieverPoolSize(int poolSize) {
-        if (poolSize < 1) {
-            String message = Logging.getMessage("BasicRetrievalService.RetrieverPoolSizeIsLessThanOne");
-            Logging.logger().fine(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        this.executor.setCorePoolSize(poolSize);
-        this.executor.setMaximumPoolSize(poolSize);
-    }
+//    public int getRetrieverPoolSize() {
+//        return this.executor.getCorePoolSize();
+//    }
+//
+//    /**
+//     * @param poolSize the number of threads in the thread pool
+//     * @throws IllegalArgumentException if <code>poolSize</code> is non-positive
+//     */
+//    public void setRetrieverPoolSize(int poolSize) {
+//        if (poolSize < 1) {
+//            String message = Logging.getMessage("BasicRetrievalService.RetrieverPoolSizeIsLessThanOne");
+//            Logging.logger().fine(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//
+//        this.executor.setCorePoolSize(poolSize);
+//        this.executor.setMaximumPoolSize(poolSize);
+//    }
 
     public boolean hasActiveTasks() {
         return executor.getActiveCount() > 0;
@@ -122,8 +122,6 @@ import java.util.logging.Level;
 
     public boolean isAvailable() {
         return true;
-        //return this.executor.getQueue().size() < this.queueSize;
-//            && !WorldWind.getNetworkStatus().isNetworkUnavailable();
     }
 
     /**

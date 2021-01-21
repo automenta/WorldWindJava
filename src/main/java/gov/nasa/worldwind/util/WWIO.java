@@ -8,6 +8,7 @@ package gov.nasa.worldwind.util;
 
 import com.jogamp.common.nio.*;
 import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.cache.BasicGpuResourceCache;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import jcog.Log;
 import jcog.exe.Exe;
@@ -169,7 +170,9 @@ public class WWIO {
                 if (code==HTTP_OK) {
                     try {
                         success.accept(response.getEntity());
-                        WWIO.logger.info("{} {}", code, url);
+//                        String state = response.getEntity() instanceof CacheEntity ? "GOT" : "GET";
+                        String state = "";
+                        WWIO.logger.info("{} {} {}", code, state, url);
                     } catch (Throwable throwable) {
                         e = throwable;
                     }
