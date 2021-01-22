@@ -53,7 +53,7 @@ public interface WorldWindow extends KV, PropertyChangeListener {
     static void insertBeforeCompass(WorldWindow wwd, Layer layer) {
         // Insert the layer into the layer list just before the compass.
         int compassPosition = 0;
-        LayerList layers = wwd.model().getLayers();
+        LayerList layers = wwd.model().layers();
         for (Layer l : layers) {
             if (l instanceof CompassLayer) {
                 compassPosition = layers.indexOf(l);
@@ -65,7 +65,7 @@ public interface WorldWindow extends KV, PropertyChangeListener {
     static void insertBeforePlacenames(WorldWindow wwd, Layer layer) {
         // Insert the layer into the layer list just before the placenames.
         int compassPosition = 0;
-        LayerList layers = wwd.model().getLayers();
+        LayerList layers = wwd.model().layers();
         for (Layer l : layers) {
             if (l instanceof PlaceNameLayer) {
                 compassPosition = layers.indexOf(l);
@@ -77,7 +77,7 @@ public interface WorldWindow extends KV, PropertyChangeListener {
     static void insertAfterPlacenames(WorldWindow wwd, Layer layer) {
         // Insert the layer into the layer list just after the placenames.
         int compassPosition = 0;
-        LayerList layers = wwd.model().getLayers();
+        LayerList layers = wwd.model().layers();
         for (Layer l : layers) {
             if (l instanceof PlaceNameLayer) {
                 compassPosition = layers.indexOf(l);

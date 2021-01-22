@@ -214,7 +214,6 @@ public class WWIO {
                     else
                         throw new RuntimeException(e);
                 }
-                throw new RuntimeException(e);
             }
 
 //            Request.Builder requestBuilder = new Request.Builder()

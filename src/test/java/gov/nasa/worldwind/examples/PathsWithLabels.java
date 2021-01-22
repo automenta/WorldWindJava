@@ -333,7 +333,7 @@ public class PathsWithLabels extends ApplicationTemplate {
             layer.add(path);
             layer.add(label);
 
-            this.wwd().model().getLayers().add(layer);
+            this.wwd().model().layers().add(layer);
         }
 
         protected static List<Position> makePositionList(double[] src) {

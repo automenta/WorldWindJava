@@ -203,7 +203,7 @@ public class StatusBar extends JPanel implements PositionListener, RenderingList
             String las = makeAngleDescription("Lat", newPos.getLatitude());
             String los = makeAngleDescription("Lon", newPos.getLongitude());
             String els = makeCursorElevationDescription(
-                eventSource.model().getGlobe().elevation(newPos.getLatitude(), newPos.getLongitude()));
+                eventSource.model().globe().elevation(newPos.getLatitude(), newPos.getLongitude()));
             latDisplay.setText(las);
             lonDisplay.setText(los);
             eleDisplay.setText(els);

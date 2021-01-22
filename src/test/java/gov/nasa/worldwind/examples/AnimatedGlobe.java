@@ -30,7 +30,7 @@ public class AnimatedGlobe extends ApplicationTemplate {
 
         public AppFrame() {
             // Reduce the frequency at which terrain is regenerated.
-            wwd().model().getGlobe().getTessellator().setUpdateFrequency(5000);
+            wwd().model().globe().getTessellator().setUpdateFrequency(5000);
 
             // Add a rendering listener to update the eye position each frame. It's implementation is the
             // stageChanged method below.

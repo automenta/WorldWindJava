@@ -153,7 +153,7 @@ public class SessionState {
     protected void saveLayerListState(WorldWindow worldWindow) {
         // There's nothing to save if the Model or the LayerList is null. We treat this as an exceptional condition
         // rather than a supported case and leave the existing state files, if any exist.
-        if (worldWindow.model() == null || worldWindow.model().getLayers() == null)
+        if (worldWindow.model() == null || worldWindow.model().layers() == null)
             return;
 
         // Delete the contents of the layer state path directory, but not the directory itself.
@@ -166,7 +166,7 @@ public class SessionState {
                 stateFile.mkdirs();
 
             int index = 0;
-            for (Layer layer : worldWindow.model().getLayers()) {
+            for (Layer layer : worldWindow.model().layers()) {
                 if (layer == null)
                     continue; // There's nothing to save if the Layer is null.
 
@@ -183,7 +183,7 @@ public class SessionState {
     protected void restoreLayerListState(WorldWindow worldWindow) {
         // There's nothing to save if the Model or the LayerList is null. We treat this as an exceptional condition
         // rather than a supported case and leave the existing state files, if any exist.
-        if (worldWindow.model() == null || worldWindow.model().getLayers() == null)
+        if (worldWindow.model() == null || worldWindow.model().layers() == null)
             return;
 
         File stateFile = new File(this.getLayerStatePath());
@@ -194,7 +194,7 @@ public class SessionState {
 
         try {
             Arrays.sort(filenames, LAYER_STATE_FILENAME_COMPARATOR);
-            LayerList layers = worldWindow.model().getLayers();
+            LayerList layers = worldWindow.model().layers();
 
             for (String filename : filenames) {
                 Layer layer = SessionState.restoreLayerState(new File(stateFile, filename));

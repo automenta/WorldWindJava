@@ -182,7 +182,7 @@ public class TrackController {
         RenderableLayer layer = new RenderableLayer();
         layer.add(airPath);
         layer.add(groundPath);
-        this.wwd.model().getLayers().add(layer);
+        this.wwd.model().layers().add(layer);
         if (this.wwd != null) {
             this.wwd.redraw();
         }
@@ -196,7 +196,7 @@ public class TrackController {
         }
 
         this.trackLayers.remove(track);
-        this.wwd.model().getLayers().remove(layer);
+        this.wwd.model().layers().remove(layer);
         if (this.wwd != null) {
             this.wwd.redraw();
         }

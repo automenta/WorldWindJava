@@ -254,7 +254,7 @@ public class Cube extends ApplicationTemplate implements Renderable {
             Renderable cube = new Cube(Position.fromDegrees(35.0, -120.0, 3000), 1000);
             layer.add(cube);
 
-            wwd().model().getLayers().add(layer);
+            wwd().model().layers().add(layer);
         }
     }
 

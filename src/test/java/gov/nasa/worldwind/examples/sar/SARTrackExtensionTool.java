@@ -383,7 +383,7 @@ public class SARTrackExtensionTool implements MouseListener, PositionListener, P
             return null;
         }
 
-        Globe globe = this.wwd.model().getGlobe();
+        Globe globe = this.wwd.model().globe();
         double[] gridDimensions = this.segmentPlane.getGridCellDimensions();
 
         int lastIndex = this.track.size() - 1;

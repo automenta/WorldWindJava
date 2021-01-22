@@ -137,7 +137,7 @@ public class ApplicationTemplate {
                 this.controlPanel = new JPanel(new BorderLayout(10, 10));
                 this.layerPanel = new LayerPanel(this.wwd());
                 this.controlPanel.add(this.layerPanel, BorderLayout.CENTER);
-                this.controlPanel.add(new FlatWorldPanel(this.wwd()), BorderLayout.NORTH);
+//                this.controlPanel.add(new FlatWorldPanel(this.wwd()), BorderLayout.NORTH);
                 this.getContentPane().add(this.controlPanel, BorderLayout.WEST);
             }
 
@@ -167,7 +167,7 @@ public class ApplicationTemplate {
 
             // Search the layer list for layers that are also select listeners and register them with the World
             // Window. This enables interactive layers to be included without specific knowledge of them here.
-            for (Layer layer : this.wwjPanel.wwd().model().getLayers()) {
+            for (Layer layer : this.wwjPanel.wwd().model().layers()) {
                 if (layer instanceof SelectListener) {
                     this.wwd().addSelectListener((SelectListener) layer);
                 }

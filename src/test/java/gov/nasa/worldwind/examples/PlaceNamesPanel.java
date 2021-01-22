@@ -28,7 +28,7 @@ public class PlaceNamesPanel extends JPanel implements ItemListener {
     public PlaceNamesPanel(WorldWindow wwd) {
         super(new BorderLayout());
         this.wwd = wwd;
-        LayerList layers = this.wwd.model().getLayers();
+        LayerList layers = this.wwd.model().layers();
         for (Object layer : layers) {
             if (layer instanceof PlaceNameLayer) {
                 nameLayer = (PlaceNameLayer) layer;

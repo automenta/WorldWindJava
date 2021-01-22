@@ -185,7 +185,7 @@ public abstract class KMLViewController {
         List<? extends Position> corners = overlay.getPositions().list;
 
         String altitudeMode = overlay.getAltitudeMode() != null ? overlay.getAltitudeMode() : "clampToGround";
-        corners = KMLUtil.computeAltitude(this.wwd.model().getGlobe(), corners, altitudeMode);
+        corners = KMLUtil.computeAltitude(this.wwd.model().globe(), corners, altitudeMode);
 
         this.goToDefaultView(corners);
     }

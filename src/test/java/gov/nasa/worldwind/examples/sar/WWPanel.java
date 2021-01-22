@@ -78,7 +78,7 @@ public class WWPanel extends JPanel {
     }
 
     private void updateElevationUnit(Object newValue) {
-        for (Layer layer : this.wwd.model().getLayers()) {
+        for (Layer layer : this.wwd.model().layers()) {
             if (layer instanceof ScalebarLayer) {
                 // Default to metric units.
                 ((ScalebarLayer) layer).setUnit(

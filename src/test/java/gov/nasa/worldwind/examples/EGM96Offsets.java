@@ -26,7 +26,7 @@ public class EGM96Offsets extends ApplicationTemplate {
         public AppFrame() {
             Model m = this.wwjPanel.wwd().model();
             try {
-                ((EllipsoidalGlobe) m.getGlobe()).applyEGMA96Offsets("config/EGM96.dat");
+                ((EllipsoidalGlobe) m.globe()).applyEGMA96Offsets("config/EGM96.dat");
             }
             catch (IOException e) {
                 e.printStackTrace();

@@ -60,7 +60,7 @@ public class BostonBuildings extends ApplicationTemplate {
                         layer.setName(WWIO.getFilename(layer.name()));
 
                         // Add the layer to the WorldWindow's layer list on the Event Dispatch Thread.
-                        SwingUtilities.invokeLater(() -> AppFrame.this.wwd().model().getLayers().add(layer));
+                        SwingUtilities.invokeLater(() -> AppFrame.this.wwd().model().layers().add(layer));
                     }
 
                     @Override

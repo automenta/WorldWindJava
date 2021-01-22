@@ -63,7 +63,7 @@ public class RadarVolumeExample extends ApplicationTemplate {
             Angle coneAzimuth = new Angle(205);
 
             // Initialize the high-resolution terrain class. Construct it to use 50 meter resolution elevations.
-            this.terrain = new HighResolutionTerrain(this.wwd().model().getGlobe(), 50.0d);
+            this.terrain = new HighResolutionTerrain(this.wwd().model().globe(), 50.0d);
 
             // Compute a near and far grid of positions that will serve as ray endpoints for computing terrain
             // intersections.
@@ -294,7 +294,7 @@ public class RadarVolumeExample extends ApplicationTemplate {
             List<Vec4> transformedVertices = new ArrayList<>(vertices.size());
 
             // Create the transformation matrix that performs the transform.
-            Matrix transform = this.wwd().model().getGlobe().computeEllipsoidalOrientationAtPosition(
+            Matrix transform = this.wwd().model().globe().computeEllipsoidalOrientationAtPosition(
                 position.getLatitude(), position.getLongitude(),
                 this.terrain.getElevation(position) + position.getAltitude());
 
@@ -408,7 +408,7 @@ public class RadarVolumeExample extends ApplicationTemplate {
         }
 
         protected boolean isBelowMinimumElevation(Position position, Vec4 cartesianOrigin) {
-            Globe globe = this.wwd().model().getGlobe();
+            Globe globe = this.wwd().model().globe();
 
             Vec4 cartesianPosition = globe.computeEllipsoidalPointFromPosition(position);
             Angle angle = cartesianOrigin.angleBetween3(cartesianPosition.subtract3(cartesianOrigin));
@@ -421,7 +421,7 @@ public class RadarVolumeExample extends ApplicationTemplate {
 
             List<Position> positions = new ArrayList<>(vertices.size());
 
-            Globe globe = this.wwd().model().getGlobe();
+            Globe globe = this.wwd().model().globe();
 
             for (Vec4 vertex : vertices) {
                 positions.add(globe.computePositionFromEllipsoidalPoint(vertex));

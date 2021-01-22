@@ -41,7 +41,7 @@ public class BoxEditor extends RigidShapeEditor {
             // render matrix to get their final positions for use as control points
 
             Vec4 vert = Matrix.transformBy3(matrix, 1, 0, 0).add3(refPt);   // right
-            Position vertexPosition = this.wwd.model().getGlobe().computePositionFromPoint(vert);
+            Position vertexPosition = this.wwd.model().globe().computePositionFromPoint(vert);
             RigidShape controlPoint = new Ellipsoid(vertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.scaleControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
@@ -54,7 +54,7 @@ public class BoxEditor extends RigidShapeEditor {
             this.controlPointRods.add(rod);
 
             vert = Matrix.transformBy3(matrix, 0, 1, 0).add3(refPt);   // top
-            vertexPosition = this.wwd.model().getGlobe().computePositionFromPoint(vert);
+            vertexPosition = this.wwd.model().globe().computePositionFromPoint(vert);
             controlPoint = new Ellipsoid(vertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.scaleControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
@@ -67,7 +67,7 @@ public class BoxEditor extends RigidShapeEditor {
             this.controlPointRods.add(rod);
 
             vert = Matrix.transformBy3(matrix, 0, 0, 1).add3(refPt);   // front
-            vertexPosition = this.wwd.model().getGlobe().computePositionFromPoint(vert);
+            vertexPosition = this.wwd.model().globe().computePositionFromPoint(vert);
             controlPoint = new Ellipsoid(vertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.scaleControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
@@ -80,7 +80,7 @@ public class BoxEditor extends RigidShapeEditor {
             this.controlPointRods.add(rod);
 
             vert = Matrix.transformBy3(matrix, -1, 0, 0).add3(refPt);   // left
-            vertexPosition = this.wwd.model().getGlobe().computePositionFromPoint(vert);
+            vertexPosition = this.wwd.model().globe().computePositionFromPoint(vert);
             controlPoint = new Ellipsoid(vertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.scaleControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
@@ -93,7 +93,7 @@ public class BoxEditor extends RigidShapeEditor {
             this.controlPointRods.add(rod);
 
             vert = Matrix.transformBy3(matrix, 0, -1, 0).add3(refPt);   // bottom
-            vertexPosition = this.wwd.model().getGlobe().computePositionFromPoint(vert);
+            vertexPosition = this.wwd.model().globe().computePositionFromPoint(vert);
             controlPoint = new Ellipsoid(vertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.scaleControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
@@ -106,7 +106,7 @@ public class BoxEditor extends RigidShapeEditor {
             this.controlPointRods.add(rod);
 
             vert = Matrix.transformBy3(matrix, 0, 0, -1).add3(refPt);   // back
-            vertexPosition = this.wwd.model().getGlobe().computePositionFromPoint(vert);
+            vertexPosition = this.wwd.model().globe().computePositionFromPoint(vert);
             controlPoint = new Ellipsoid(vertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.scaleControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
@@ -194,7 +194,7 @@ public class BoxEditor extends RigidShapeEditor {
             // create vertices at the extrema of the current shape piece, and transform them by the
             // render matrix to get their final positions for use as control points
             Vec4 vert = Matrix.transformBy3(matrix, ULeft.x, ULeft.y, ULeft.z).add3(refPt);
-            Position ULvertexPosition = this.wwd.model().getGlobe().computePositionFromPoint(vert);
+            Position ULvertexPosition = this.wwd.model().globe().computePositionFromPoint(vert);
             RigidShape controlPoint = new Ellipsoid(ULvertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.textureControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
@@ -202,7 +202,7 @@ public class BoxEditor extends RigidShapeEditor {
             this.controlPoints.add(controlPoint);                                   // upper left
 
             vert = Matrix.transformBy3(matrix, URight.x, URight.y, URight.z).add3(refPt);
-            Position URvertexPosition = this.wwd.model().getGlobe().computePositionFromPoint(vert);
+            Position URvertexPosition = this.wwd.model().globe().computePositionFromPoint(vert);
             controlPoint = new Ellipsoid(URvertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.textureControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
@@ -210,7 +210,7 @@ public class BoxEditor extends RigidShapeEditor {
             this.controlPoints.add(controlPoint);                                   // upper right
 
             vert = Matrix.transformBy3(matrix, LLeft.x, LLeft.y, LLeft.z).add3(refPt);
-            Position LLvertexPosition = this.wwd.model().getGlobe().computePositionFromPoint(vert);
+            Position LLvertexPosition = this.wwd.model().globe().computePositionFromPoint(vert);
             controlPoint = new Ellipsoid(LLvertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.textureControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
@@ -218,7 +218,7 @@ public class BoxEditor extends RigidShapeEditor {
             this.controlPoints.add(controlPoint);                                   // lower left
 
             vert = Matrix.transformBy3(matrix, LRight.x, LRight.y, LRight.z).add3(refPt);
-            Position LRvertexPosition = this.wwd.model().getGlobe().computePositionFromPoint(vert);
+            Position LRvertexPosition = this.wwd.model().globe().computePositionFromPoint(vert);
             controlPoint = new Ellipsoid(LRvertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.textureControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
@@ -227,7 +227,7 @@ public class BoxEditor extends RigidShapeEditor {
 
             // side scaling control points
             vert = Matrix.transformBy3(matrix, right.x, right.y, right.z).add3(refPt);
-            Position pos = this.wwd.model().getGlobe().computePositionFromPoint(vert);
+            Position pos = this.wwd.model().globe().computePositionFromPoint(vert);
             controlPoint = new Ellipsoid(pos, radius, radius, radius);
             controlPoint.setAttributes(this.radiusControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
@@ -235,7 +235,7 @@ public class BoxEditor extends RigidShapeEditor {
             this.controlPoints.add(controlPoint);                                   // right
 
             vert = Matrix.transformBy3(matrix, left.x, left.y, left.z).add3(refPt);
-            pos = this.wwd.model().getGlobe().computePositionFromPoint(vert);
+            pos = this.wwd.model().globe().computePositionFromPoint(vert);
             controlPoint = new Ellipsoid(pos, radius, radius, radius);
             controlPoint.setAttributes(this.radiusControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
@@ -243,7 +243,7 @@ public class BoxEditor extends RigidShapeEditor {
             this.controlPoints.add(controlPoint);                                   // left
 
             vert = Matrix.transformBy3(matrix, top.x, top.y, top.z).add3(refPt);
-            pos = this.wwd.model().getGlobe().computePositionFromPoint(vert);
+            pos = this.wwd.model().globe().computePositionFromPoint(vert);
             controlPoint = new Ellipsoid(pos, radius, radius, radius);
             controlPoint.setAttributes(this.radiusControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
@@ -251,7 +251,7 @@ public class BoxEditor extends RigidShapeEditor {
             this.controlPoints.add(controlPoint);                                   // top
 
             vert = Matrix.transformBy3(matrix, bottom.x, bottom.y, bottom.z).add3(refPt);
-            pos = this.wwd.model().getGlobe().computePositionFromPoint(vert);
+            pos = this.wwd.model().globe().computePositionFromPoint(vert);
             controlPoint = new Ellipsoid(pos, radius, radius, radius);
             controlPoint.setAttributes(this.radiusControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
@@ -259,7 +259,7 @@ public class BoxEditor extends RigidShapeEditor {
             this.controlPoints.add(controlPoint);                                   // bottom
 
             vert = Matrix.transformBy3(matrix, center.x, center.y, center.z).add3(refPt);
-            pos = this.wwd.model().getGlobe().computePositionFromPoint(vert);
+            pos = this.wwd.model().globe().computePositionFromPoint(vert);
             controlPoint = new Ellipsoid(pos, radius, radius, radius);
             controlPoint.setAttributes(this.radiusControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
@@ -306,7 +306,7 @@ public class BoxEditor extends RigidShapeEditor {
         if (referencePos == null)
             return;
 
-        Vec4 referencePoint = this.wwd.model().getGlobe().computePointFromPosition(referencePos);
+        Vec4 referencePoint = this.wwd.model().globe().computePointFromPosition(referencePos);
 
         Line screenRay = this.wwd.view().computeRayFromScreenPoint(mousePoint.getX(), mousePoint.getY());
         Line previousScreenRay = this.wwd.view().computeRayFromScreenPoint(previousMousePoint.getX(),
@@ -316,7 +316,7 @@ public class BoxEditor extends RigidShapeEditor {
         Vec4 previousNearestPointOnLine = previousScreenRay.nearestPointTo(referencePoint);
 
         Position controlPosition = this.controlPoints.get(1).getCenterPosition();
-        Vec4 controlPoint = this.wwd.model().getGlobe().computePointFromPosition(controlPosition);
+        Vec4 controlPoint = this.wwd.model().globe().computePointFromPosition(controlPosition);
 
         Vec4 scaleVector = controlPoint.subtract3(referencePoint).normalize3();
         if (scaleDirection.equals(SCALE_SOUTH_ACTION))
@@ -332,7 +332,7 @@ public class BoxEditor extends RigidShapeEditor {
         if (radius + radiusChange > 0) {
             this.shape.setNorthSouthRadius(radius + radiusChange / 2);
             Vec4 newCenterPt = referencePoint.add3(scaleVector.multiply3(radiusChange / 2));
-            Position newCenterPos = this.wwd.model().getGlobe().computePositionFromPoint(newCenterPt);
+            Position newCenterPos = this.wwd.model().globe().computePositionFromPoint(newCenterPt);
             this.shape.setCenterPosition(newCenterPos);
         }
     }
@@ -352,7 +352,7 @@ public class BoxEditor extends RigidShapeEditor {
         if (referencePos == null)
             return;
 
-        Vec4 referencePoint = this.wwd.model().getGlobe().computePointFromPosition(referencePos);
+        Vec4 referencePoint = this.wwd.model().globe().computePointFromPosition(referencePos);
 
         Line screenRay = this.wwd.view().computeRayFromScreenPoint(mousePoint.getX(), mousePoint.getY());
         Line previousScreenRay = this.wwd.view().computeRayFromScreenPoint(previousMousePoint.getX(),
@@ -362,7 +362,7 @@ public class BoxEditor extends RigidShapeEditor {
         Vec4 previousNearestPointOnLine = previousScreenRay.nearestPointTo(referencePoint);
 
         Position controlPosition = this.controlPoints.get(0).getCenterPosition();
-        Vec4 controlPoint = this.wwd.model().getGlobe().computePointFromPosition(controlPosition);
+        Vec4 controlPoint = this.wwd.model().globe().computePointFromPosition(controlPosition);
 
         Vec4 scaleVector = controlPoint.subtract3(referencePoint).normalize3();
         if (scaleDirection.equals(SCALE_WEST_ACTION))
@@ -378,7 +378,7 @@ public class BoxEditor extends RigidShapeEditor {
         if (radius + radiusChange > 0) {
             this.shape.setEastWestRadius(radius + radiusChange / 2);
             Vec4 newCenterPt = referencePoint.add3(scaleVector.multiply3(radiusChange / 2));
-            Position newCenterPos = this.wwd.model().getGlobe().computePositionFromPoint(newCenterPt);
+            Position newCenterPos = this.wwd.model().globe().computePositionFromPoint(newCenterPt);
             this.shape.setCenterPosition(newCenterPos);
         }
     }
@@ -398,7 +398,7 @@ public class BoxEditor extends RigidShapeEditor {
         if (referencePos == null)
             return;
 
-        Vec4 referencePoint = this.wwd.model().getGlobe().computePointFromPosition(referencePos);
+        Vec4 referencePoint = this.wwd.model().globe().computePointFromPosition(referencePos);
 
         Line screenRay = this.wwd.view().computeRayFromScreenPoint(mousePoint.getX(), mousePoint.getY());
         Line previousScreenRay = this.wwd.view().computeRayFromScreenPoint(previousMousePoint.getX(),
@@ -408,7 +408,7 @@ public class BoxEditor extends RigidShapeEditor {
         Vec4 previousNearestPointOnLine = previousScreenRay.nearestPointTo(referencePoint);
 
         Position controlPosition = this.controlPoints.get(2).getCenterPosition();
-        Vec4 controlPoint = this.wwd.model().getGlobe().computePointFromPosition(controlPosition);
+        Vec4 controlPoint = this.wwd.model().globe().computePointFromPosition(controlPosition);
 
         Vec4 scaleVector = controlPoint.subtract3(referencePoint).normalize3();
         if (scaleDirection.equals(SCALE_DOWN_ACTION))
@@ -424,7 +424,7 @@ public class BoxEditor extends RigidShapeEditor {
         if (radius + radiusChange > 0) {
             this.shape.setVerticalRadius(radius + radiusChange / 2);
             Vec4 newCenterPt = referencePoint.add3(scaleVector.multiply3(radiusChange / 2));
-            Position newCenterPos = this.wwd.model().getGlobe().computePositionFromPoint(newCenterPt);
+            Position newCenterPos = this.wwd.model().globe().computePositionFromPoint(newCenterPt);
             this.shape.setCenterPosition(newCenterPos);
         }
     }
@@ -435,7 +435,7 @@ public class BoxEditor extends RigidShapeEditor {
         if (referencePos == null)
             return;
 
-        Vec4 referencePoint = this.wwd.model().getGlobe().computePointFromPosition(referencePos);
+        Vec4 referencePoint = this.wwd.model().globe().computePointFromPosition(referencePos);
 
         Line screenRay = this.wwd.view().computeRayFromScreenPoint(mousePoint.getX(), mousePoint.getY());
         Line previousScreenRay = this.wwd.view().computeRayFromScreenPoint(previousMousePoint.getX(),
@@ -445,7 +445,7 @@ public class BoxEditor extends RigidShapeEditor {
         Vec4 previousNearestPointOnLine = previousScreenRay.nearestPointTo(referencePoint);
 
         Position controlPosition = this.controlPoints.get(2).getCenterPosition();
-        Vec4 controlPoint = this.wwd.model().getGlobe().computePointFromPosition(controlPosition);
+        Vec4 controlPoint = this.wwd.model().globe().computePointFromPosition(controlPosition);
         Vec4 scaleVector = controlPoint.subtract3(referencePoint).normalize3();
 
         double distance = nearestPointOnLine.distanceTo3(referencePoint);
@@ -466,7 +466,7 @@ public class BoxEditor extends RigidShapeEditor {
             this.shape.setVerticalRadius(verticalRadius * scalingRatio);
             scaleVector = scaleVector.multiply3(this.shape.getVerticalRadius() - verticalRadius);
             Vec4 newCenterPt = referencePoint.add3(scaleVector);
-            Position newCenterPos = this.wwd.model().getGlobe().computePositionFromPoint(newCenterPt);
+            Position newCenterPos = this.wwd.model().globe().computePositionFromPoint(newCenterPt);
             this.shape.setCenterPosition(newCenterPos);
         }
     }
@@ -477,28 +477,28 @@ public class BoxEditor extends RigidShapeEditor {
         double skew = shape.getSkewEastWest().degrees;
         double scale = ShapeUtils.getViewportScaleFactor(wwd);
 
-        Matrix renderMatrix = this.shape.computeRenderMatrix(this.wwd.model().getGlobe(),
+        Matrix renderMatrix = this.shape.computeRenderMatrix(this.wwd.model().globe(),
             this.wwd.sceneControl().getVerticalExaggeration());
 
         Position referencePos = this.shape.getReferencePosition();
         if (referencePos == null)
             return;
 
-        Vec4 referencePoint = this.wwd.model().getGlobe().computePointFromPosition(referencePos);
+        Vec4 referencePoint = this.wwd.model().globe().computePointFromPosition(referencePos);
 
         // get location of the control point
         Position controlPosition = this.controlPoints.get(2).getCenterPosition();
-        Vec4 controlPoint = this.wwd.model().getGlobe().computePointFromPosition(controlPosition);
+        Vec4 controlPoint = this.wwd.model().globe().computePointFromPosition(controlPosition);
         Vec4 controlVector = controlPoint.subtract3(referencePoint).normalize3();
 
         // create north vector
         Position northPosition = this.controlPoints.get(3).getCenterPosition();
-        Vec4 northPoint = this.wwd.model().getGlobe().computePointFromPosition(northPosition);
+        Vec4 northPoint = this.wwd.model().globe().computePointFromPosition(northPosition);
         Vec4 northVector = northPoint.subtract3(referencePoint).normalize3();
 
         // create front vector
         Position frontPosition = this.controlPoints.get(4).getCenterPosition();
-        Vec4 frontPoint = this.wwd.model().getGlobe().computePointFromPosition(frontPosition);
+        Vec4 frontPoint = this.wwd.model().globe().computePointFromPosition(frontPosition);
         Vec4 frontVector = frontPoint.subtract3(referencePoint).normalize3();
 
         // get locations of 3 coplanar points
@@ -535,14 +535,14 @@ public class BoxEditor extends RigidShapeEditor {
         // compute change in position of a point on the base using old and new render matrices
         Vec4 bottomPoint = Matrix.transformBy3(renderMatrix, 0, 0, -1);
 
-        Matrix newRenderMatrix = this.shape.computeRenderMatrix(this.wwd.model().getGlobe(),
+        Matrix newRenderMatrix = this.shape.computeRenderMatrix(this.wwd.model().globe(),
             this.wwd.sceneControl().getVerticalExaggeration());
         Vec4 newBottomPoint = Matrix.transformBy3(newRenderMatrix, 0, 0, -1);
 
         // compute the points change in location and subtract from the previous referencePoint
         Vec4 delta = newBottomPoint.subtract3(bottomPoint);
         referencePoint = referencePoint.subtract3(delta);
-        Position newReferencePosition = this.wwd.model().getGlobe().computePositionFromPoint(referencePoint);
+        Position newReferencePosition = this.wwd.model().globe().computePositionFromPoint(referencePoint);
 
         this.shape.setCenterPosition(newReferencePosition);
     }
@@ -553,28 +553,28 @@ public class BoxEditor extends RigidShapeEditor {
         double skew = shape.getSkewNorthSouth().degrees;
         double scale = ShapeUtils.getViewportScaleFactor(wwd);
 
-        Matrix renderMatrix = this.shape.computeRenderMatrix(this.wwd.model().getGlobe(),
+        Matrix renderMatrix = this.shape.computeRenderMatrix(this.wwd.model().globe(),
             this.wwd.sceneControl().getVerticalExaggeration());
 
         Position referencePos = this.shape.getReferencePosition();
         if (referencePos == null)
             return;
 
-        Vec4 referencePoint = this.wwd.model().getGlobe().computePointFromPosition(referencePos);
+        Vec4 referencePoint = this.wwd.model().globe().computePointFromPosition(referencePos);
 
         // get location of the control point
         Position controlPosition = this.controlPoints.get(3).getCenterPosition();
-        Vec4 controlPoint = this.wwd.model().getGlobe().computePointFromPosition(controlPosition);
+        Vec4 controlPoint = this.wwd.model().globe().computePointFromPosition(controlPosition);
         Vec4 controlVector = controlPoint.subtract3(referencePoint).normalize3();
 
         // create east vector
         Position eastPosition = this.controlPoints.get(2).getCenterPosition();
-        Vec4 eastPoint = this.wwd.model().getGlobe().computePointFromPosition(eastPosition);
+        Vec4 eastPoint = this.wwd.model().globe().computePointFromPosition(eastPosition);
         Vec4 eastVector = eastPoint.subtract3(referencePoint).normalize3();
 
         // create front vector
         Position frontPosition = this.controlPoints.get(4).getCenterPosition();
-        Vec4 frontPoint = this.wwd.model().getGlobe().computePointFromPosition(frontPosition);
+        Vec4 frontPoint = this.wwd.model().globe().computePointFromPosition(frontPosition);
         Vec4 frontVector = frontPoint.subtract3(referencePoint).normalize3();
 
         // get locations of 3 coplanar points
@@ -611,14 +611,14 @@ public class BoxEditor extends RigidShapeEditor {
         // compute change in position of a point on the base using old and new render matrices
         Vec4 bottomPoint = Matrix.transformBy3(renderMatrix, 0, 0, -1);
 
-        Matrix newRenderMatrix = this.shape.computeRenderMatrix(this.wwd.model().getGlobe(),
+        Matrix newRenderMatrix = this.shape.computeRenderMatrix(this.wwd.model().globe(),
             this.wwd.sceneControl().getVerticalExaggeration());
         Vec4 newBottomPoint = Matrix.transformBy3(newRenderMatrix, 0, 0, -1);
 
         // compute the points change in location and subtract from the previous referencePoint
         Vec4 delta = newBottomPoint.subtract3(bottomPoint);
         referencePoint = referencePoint.subtract3(delta);
-        Position newReferencePosition = this.wwd.model().getGlobe().computePositionFromPoint(referencePoint);
+        Position newReferencePosition = this.wwd.model().globe().computePositionFromPoint(referencePoint);
 
         this.shape.setCenterPosition(newReferencePosition);
     }
@@ -659,7 +659,7 @@ public class BoxEditor extends RigidShapeEditor {
             upRay = new Vec4(0, 0, 1);
         }
 
-        Matrix inverseRenderMatrix = this.shape.computeRenderMatrixInverse(this.wwd.model().getGlobe(),
+        Matrix inverseRenderMatrix = this.shape.computeRenderMatrixInverse(this.wwd.model().globe(),
             this.wwd.sceneControl().getVerticalExaggeration());
 
         // create rays from mouse position (current and previous)
@@ -669,15 +669,15 @@ public class BoxEditor extends RigidShapeEditor {
 
         // get location of control point 0
         Position controlPosition = this.controlPoints.get(0).getCenterPosition();
-        Vec4 controlPoint = this.wwd.model().getGlobe().computePointFromPosition(controlPosition);
+        Vec4 controlPoint = this.wwd.model().globe().computePointFromPosition(controlPosition);
 
         // get location of a coplanar control point
         Position coplanarPosition = this.controlPoints.get(1).getCenterPosition();
-        Vec4 coplanarPoint = this.wwd.model().getGlobe().computePointFromPosition(coplanarPosition);
+        Vec4 coplanarPoint = this.wwd.model().globe().computePointFromPosition(coplanarPosition);
 
         // get location of a coplanar control point
         Position coplanarPosition2 = this.controlPoints.get(2).getCenterPosition();
-        Vec4 coplanarPoint2 = this.wwd.model().getGlobe().computePointFromPosition(coplanarPosition2);
+        Vec4 coplanarPoint2 = this.wwd.model().globe().computePointFromPosition(coplanarPosition2);
 
         // create control plane
         Plane controlPlane = Plane.fromPoints(controlPoint, coplanarPoint, coplanarPoint2);
@@ -740,7 +740,7 @@ public class BoxEditor extends RigidShapeEditor {
             upRay = new Vec4(0, 0, 1);
         }
 
-        Matrix inverseRenderMatrix = this.shape.computeRenderMatrixInverse(this.wwd.model().getGlobe(),
+        Matrix inverseRenderMatrix = this.shape.computeRenderMatrixInverse(this.wwd.model().globe(),
             this.wwd.sceneControl().getVerticalExaggeration());
 
         // create rays from mouse position (current and previous)
@@ -750,15 +750,15 @@ public class BoxEditor extends RigidShapeEditor {
 
         // get location of control point 0
         Position controlPosition = this.controlPoints.get(0).getCenterPosition();
-        Vec4 controlPoint = this.wwd.model().getGlobe().computePointFromPosition(controlPosition);
+        Vec4 controlPoint = this.wwd.model().globe().computePointFromPosition(controlPosition);
 
         // get location of a coplanar control point
         Position coplanarPosition = this.controlPoints.get(1).getCenterPosition();
-        Vec4 coplanarPoint = this.wwd.model().getGlobe().computePointFromPosition(coplanarPosition);
+        Vec4 coplanarPoint = this.wwd.model().globe().computePointFromPosition(coplanarPosition);
 
         // get location of a coplanar control point
         Position coplanarPosition2 = this.controlPoints.get(2).getCenterPosition();
-        Vec4 coplanarPoint2 = this.wwd.model().getGlobe().computePointFromPosition(coplanarPosition2);
+        Vec4 coplanarPoint2 = this.wwd.model().globe().computePointFromPosition(coplanarPosition2);
 
         // create control plane
         Plane controlPlane = Plane.fromPoints(controlPoint, coplanarPoint, coplanarPoint2);
@@ -855,7 +855,7 @@ public class BoxEditor extends RigidShapeEditor {
             }
         }
 
-        Matrix inverseRenderMatrix = this.shape.computeRenderMatrixInverse(this.wwd.model().getGlobe(),
+        Matrix inverseRenderMatrix = this.shape.computeRenderMatrixInverse(this.wwd.model().globe(),
             this.wwd.sceneControl().getVerticalExaggeration());
 
         // create rays from mouse position (current and previous)
@@ -865,15 +865,15 @@ public class BoxEditor extends RigidShapeEditor {
 
         // get location of control point 0
         Position controlPosition = this.controlPoints.get(0).getCenterPosition();
-        Vec4 controlPoint = this.wwd.model().getGlobe().computePointFromPosition(controlPosition);
+        Vec4 controlPoint = this.wwd.model().globe().computePointFromPosition(controlPosition);
 
         // get location of a coplanar control point
         Position coplanarPosition = this.controlPoints.get(1).getCenterPosition();
-        Vec4 coplanarPoint = this.wwd.model().getGlobe().computePointFromPosition(coplanarPosition);
+        Vec4 coplanarPoint = this.wwd.model().globe().computePointFromPosition(coplanarPosition);
 
         // get location of a coplanar control point
         Position coplanarPosition2 = this.controlPoints.get(2).getCenterPosition();
-        Vec4 coplanarPoint2 = this.wwd.model().getGlobe().computePointFromPosition(coplanarPosition2);
+        Vec4 coplanarPoint2 = this.wwd.model().globe().computePointFromPosition(coplanarPosition2);
 
         // create control plane
         Plane controlPlane = Plane.fromPoints(controlPoint, coplanarPoint, coplanarPoint2);

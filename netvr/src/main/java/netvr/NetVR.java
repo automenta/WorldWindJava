@@ -17,7 +17,7 @@ import jcog.exe.Exe;
 import jcog.thing.*;
 import netvr.layer.*;
 import org.eclipse.collections.impl.map.mutable.primitive.ObjectFloatHashMap;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.*;
 import spacegraph.layer.OrthoSurfaceGraph;
 import spacegraph.space2d.Surface;
 import spacegraph.space2d.container.*;
@@ -159,7 +159,7 @@ public class NetVR extends Thing<NetVR,String> {
         @Override
         protected void start(NetVR n) {
 
-            n.world.getLayers().add(grat);
+            n.world.layers.add(grat);
 
             w = n.window;
             w.input().addMouseListener(l1);
@@ -168,7 +168,7 @@ public class NetVR extends Thing<NetVR,String> {
 
         @Override
         protected void stop(NetVR n) {
-            n.world.getLayers().remove(grat);
+            n.world.layers.remove(grat);
             w.input().removeMouseListener(l1);
             w.removeSelectListener(l2);
             w = null;
@@ -236,14 +236,8 @@ public class NetVR extends Thing<NetVR,String> {
                         ObjectFloatHashMap<String> t = w.tagsInView();
                         return new TagCloud(t); //HACK TODO
                     }),
-                    z.togglerIcon("cogs", ()-> new Gridding(
-                        world.getLayers().stream().map(ll ->
-                            Splitting.column(
-                                new FloatSlider((float) ll.getOpacity(), 0, 1).on(ll::setOpacity),
-                                0.75f,
-                                new CheckBox(ll.name(), ll::setEnabled).on(ll.isEnabled())
-                            )
-                        )
+                    z.togglerIcon("cogs", () -> new Gridding(
+                        world.layers.stream().map(NetVR::layerWidget)
                     ))
                     //, new Widget(out), scan
                 ));
@@ -293,6 +287,15 @@ public class NetVR extends Thing<NetVR,String> {
 
     }
 
+    @NotNull
+    private static Splitting<?, ?> layerWidget(gov.nasa.worldwind.layers.Layer ll) {
+        return Splitting.column(
+            new FloatSlider((float) ll.getOpacity(), 0, 1).on(ll::setOpacity),
+            0.75f,
+            new CheckBox(ll.name(), ll::setEnabled).on(ll.isEnabled())
+        );
+    }
+
     public NetVR() {
         super();
         j = new JoglWindow(1024, 800);
@@ -334,7 +337,7 @@ public class NetVR extends Thing<NetVR,String> {
 
         public NetVRModel() {
             super(new LayerList());
-            LayerList l = getLayers();
+            LayerList l = this.layers;
             l.add(new StarsLayer());
             l.add(new SkyGradientLayer());
 
@@ -362,7 +365,6 @@ public class NetVR extends Thing<NetVR,String> {
     /tmp/shp1/buildings.shp  /tmp/shp1/places.shp    /tmp/shp1/roads.shp
     /tmp/shp1/landuse.shp    /tmp/shp1/points.shp    /tmp/shp1/waterways.shp
     /tmp/shp1/natural.shp    /tmp/shp1/railways.shp */
-            setLayers(l);
         }
 
 

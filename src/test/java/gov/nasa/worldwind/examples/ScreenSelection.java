@@ -76,7 +76,7 @@ public class ScreenSelection extends ApplicationTemplate {
                 }
             }
 
-            this.wwd().model().getLayers().add(layer);
+            this.wwd().model().layers().add(layer);
         }
 
         protected class EnableSelectorAction extends AbstractAction {

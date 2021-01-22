@@ -118,14 +118,14 @@ public class KMLViewer extends ApplicationTemplate {
             // intentionally refresh the tree's model before adding the layer that contains the tree itself. This
             // prevents the tree's layer from being displayed in the tree itself.
             this.layerTree = new LayerTree(new Offset(20.0d, 160.0d, Keys.PIXELS, Keys.INSET_PIXELS));
-            this.layerTree.getModel().refresh(this.wwd().model().getLayers());
+            this.layerTree.getModel().refresh(this.wwd().model().layers());
 
             // Set up a layer to display the on-screen layer tree in the WorldWindow. This layer is not displayed in
             // the layer tree's model. Doing so would enable the user to hide the layer tree display with no way of
             // bringing it back.
             this.hiddenLayer = new RenderableLayer();
             this.hiddenLayer.add(this.layerTree);
-            this.wwd().model().getLayers().add(this.hiddenLayer);
+            this.wwd().model().layers().add(this.hiddenLayer);
 
             // Add a controller to handle input events on the layer selector and on browser balloons.
             this.hotSpotController = new HotSpotController(this.wwd());
@@ -175,7 +175,7 @@ public class KMLViewer extends ApplicationTemplate {
             RenderableLayer layer = new RenderableLayer();
             layer.setName((String) kmlRoot.getField(Keys.DISPLAY_NAME));
             layer.add(kmlController);
-            this.wwd().model().getLayers().add(layer);
+            this.wwd().model().layers().add(layer);
 
             // Adds a new layer tree node for the KMLRoot to the on-screen layer tree, and makes the new node visible
             // in the tree. This also expands any tree paths that represent open KML containers or open KML network

@@ -30,7 +30,7 @@ public class ViewMenu extends JMenu {
         this.wwd = wwdInstance;
 
         // Layers
-        for (Layer layer : wwd.model().getLayers()) {
+        for (Layer layer : wwd.model().layers()) {
             if (isAbstractLayerMenuItem(layer)) {
                 JCheckBoxMenuItem mi = new JCheckBoxMenuItem(new LayerVisibilityAction(wwd, layer));
                 mi.setState(layer.isEnabled());

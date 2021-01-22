@@ -268,13 +268,13 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
         if (this.model == null)
             return;
 
-        Globe g = this.model.getGlobe();
+        Globe g = this.model.globe();
         if (g != null)
             this.globe = g;
     }
 
     public final LayerList getLayers() {
-        return this.model.getLayers();
+        return this.model.layers();
     }
 
     public final Sector getVisibleSector() {
@@ -295,7 +295,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public final Globe getGlobe() {
-        return this.globe != null ? this.globe : this.model.getGlobe();
+        return this.globe != null ? this.globe : this.model.globe();
     }
 
     public final View getView() {

@@ -196,7 +196,7 @@ public class KMLOrbitViewController extends KMLViewController {
         double height;
         Angle latitude = eyePosition.getLatitude();
         Angle longitude = eyePosition.getLongitude();
-        Globe globe = this.wwd.model().getGlobe();
+        Globe globe = this.wwd.model().globe();
 
         if (altitudeMode == WorldWind.CLAMP_TO_GROUND)
             height = globe.elevation(latitude, longitude);

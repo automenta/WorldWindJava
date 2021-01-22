@@ -160,7 +160,7 @@ public class KeepingObjectsInView extends ApplicationTemplate {
                 return;
             }
 
-            this.wwd().model().getLayers().remove(this.helpLayer);
+            this.wwd().model().layers().remove(this.helpLayer);
             this.helpLayer.clear();
             this.helpLayer = null;
         }
@@ -270,7 +270,7 @@ public class KeepingObjectsInView extends ApplicationTemplate {
         }
 
         public Vec4[] computeViewLookAtForScene(View view) {
-            Globe globe = this.wwd.model().getGlobe();
+            Globe globe = this.wwd.model().globe();
             double ve = this.wwd.sceneControl().getVerticalExaggeration();
 
             ExtentVisibilitySupport vs = new ExtentVisibilitySupport();
@@ -280,7 +280,7 @@ public class KeepingObjectsInView extends ApplicationTemplate {
         }
 
         public Position computePositionFromPoint(Vec4 point) {
-            return this.wwd.model().getGlobe().computePositionFromPoint(point);
+            return this.wwd.model().globe().computePositionFromPoint(point);
         }
 
         public void gotoScene() {
@@ -289,7 +289,7 @@ public class KeepingObjectsInView extends ApplicationTemplate {
                 return;
             }
 
-            Position centerPos = this.wwd.model().getGlobe().computePositionFromPoint(lookAtPoints[1]);
+            Position centerPos = this.wwd.model().globe().computePositionFromPoint(lookAtPoints[1]);
             double zoom = lookAtPoints[0].distanceTo3(lookAtPoints[1]);
 
             this.wwd.view().stopAnimations();
@@ -352,7 +352,7 @@ public class KeepingObjectsInView extends ApplicationTemplate {
             }
 
             if (!extentHolders.isEmpty()) {
-                Globe globe = this.wwd.model().getGlobe();
+                Globe globe = this.wwd.model().globe();
                 double ve = this.wwd.sceneControl().getVerticalExaggeration();
                 vs.setExtents(ExtentVisibilitySupport.extentsFromExtentHolders(extentHolders, globe, ve));
             }

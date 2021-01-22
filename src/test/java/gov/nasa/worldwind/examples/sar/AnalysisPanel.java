@@ -420,8 +420,8 @@ public class AnalysisPanel extends JPanel implements Restorable {
     }
 
     public double getSegmentLength(int startPositionNumber) {
-        Vec4 start = wwd.model().getGlobe().computePointFromPosition(getSegmentStartPosition(startPositionNumber));
-        Vec4 end = wwd.model().getGlobe().computePointFromPosition(getSegmentEndPosition(startPositionNumber));
+        Vec4 start = wwd.model().globe().computePointFromPosition(getSegmentStartPosition(startPositionNumber));
+        Vec4 end = wwd.model().globe().computePointFromPosition(getSegmentEndPosition(startPositionNumber));
         return start.distanceTo3(end);
     }
 
@@ -498,7 +498,7 @@ public class AnalysisPanel extends JPanel implements Restorable {
     }
 
     private Position getGroundPosition(LatLon location) {
-        double elevation = this.wwd.model().getGlobe().elevation(location.getLatitude(), location.getLongitude());
+        double elevation = this.wwd.model().globe().elevation(location.getLatitude(), location.getLongitude());
         return new Position(location, elevation);
     }
 
@@ -512,7 +512,7 @@ public class AnalysisPanel extends JPanel implements Restorable {
         if (start == null || end == null)
             return null;
 
-        Globe globe = this.wwd.model().getGlobe();
+        Globe globe = this.wwd.model().globe();
         if (globe == null)
             return null;
 
@@ -663,7 +663,7 @@ public class AnalysisPanel extends JPanel implements Restorable {
         posB = new Position(latLon, posB.getElevation() + deltaElevation / numSubsegments);
         segmentDistance = LatLon.rhumbDistance(posA, posB);
         // Iterate through segments to find intersection
-        Globe globe = this.wwd.model().getGlobe();
+        Globe globe = this.wwd.model().globe();
         Plane near = this.wwd.view().getFrustumInModelCoordinates().near;
         Position p1 = null, p2;
         for (double s = 0; s <= 1; s += step) {

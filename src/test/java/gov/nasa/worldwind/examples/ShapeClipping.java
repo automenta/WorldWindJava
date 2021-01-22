@@ -96,7 +96,7 @@ public class ShapeClipping extends ApplicationTemplate {
             RenderableLayer shapeLayer = new RenderableLayer();
             shapeLayer.setName("Clipping Shape");
             shapeLayer.add(circle);
-            this.wwd().model().getLayers().add(shapeLayer);
+            this.wwd().model().layers().add(shapeLayer);
             this.wwd().addSelectListener(this);
         }
 

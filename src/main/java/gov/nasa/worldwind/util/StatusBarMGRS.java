@@ -21,11 +21,11 @@ public class StatusBarMGRS extends StatusBar {
             String las = String.format("%7.4f\u00B0 %7.4f\u00B0", newPos.getLatitude().degrees,
                 newPos.getLongitude().degrees);
             String els = makeCursorElevationDescription(
-                getEventSource().model().getGlobe().elevation(newPos.getLatitude(), newPos.getLongitude()));
+                getEventSource().model().globe().elevation(newPos.getLatitude(), newPos.getLongitude()));
             String los = "";
             try {
                 MGRSCoord MGRS = MGRSCoord.fromLatLon(newPos.getLatitude(), newPos.getLongitude(),
-                    getEventSource().model().getGlobe());
+                    getEventSource().model().globe());
                 los = MGRS.toString();
             }
             catch (RuntimeException e) {

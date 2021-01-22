@@ -215,7 +215,7 @@ public class MeasureTool extends KVMap implements Disposable {
         if (this.applicationLayer != null) {
             this.applicationLayer.add(this.layer);    // add render layer to the application provided layer
         } else {
-            this.wwd.model().getLayers().add(this.layer);    // add render layer to the globe model
+            this.wwd.model().layers().add(this.layer);    // add render layer to the globe model
         }
         // Init control points rendering attributes
         this.controlPointsAttributes = new AnnotationAttributes();
@@ -1032,7 +1032,7 @@ public class MeasureTool extends KVMap implements Disposable {
 
     // *** Metric accessors ***
     public double getLength() {
-        Globe globe = this.wwd.model().getGlobe();
+        Globe globe = this.wwd.model().globe();
 
         if (this.line != null) {
             return this.line.getLength(globe);
@@ -1046,7 +1046,7 @@ public class MeasureTool extends KVMap implements Disposable {
     }
 
     public double getArea() {
-        Globe globe = this.wwd.model().getGlobe();
+        Globe globe = this.wwd.model().globe();
 
         if (this.surfaceShape != null) {
             return this.surfaceShape.getArea(globe, this.followTerrain);
@@ -1268,9 +1268,9 @@ public class MeasureTool extends KVMap implements Disposable {
         Vec4 surfacePoint = wwd.sceneControl().getTerrain().getSurfacePoint(latLon.getLatitude(),
             latLon.getLongitude());
         if (surfacePoint != null) {
-            return wwd.model().getGlobe().computePositionFromPoint(surfacePoint);
+            return wwd.model().globe().computePositionFromPoint(surfacePoint);
         } else {
-            return new Position(latLon, wwd.model().getGlobe().elevation(latLon.getLatitude(),
+            return new Position(latLon, wwd.model().globe().elevation(latLon.getLatitude(),
                 latLon.getLongitude()));
         }
     }
@@ -1328,7 +1328,7 @@ public class MeasureTool extends KVMap implements Disposable {
             // Compute the arc length in meters of the great arc between the shape's center position and the control
             // point's position.
             Angle diffAngle = refAzimiuth.angularDistanceTo(controlAzimuth);
-            double globeRadius = this.wwd.model().getGlobe().getRadiusAt(this.shapeCenterPosition);
+            double globeRadius = this.wwd.model().globe().getRadiusAt(this.shapeCenterPosition);
             double arcLengthMeters = Math.abs(diffAngle.cos()) * Math.abs(controlArcLength.radians()) * globeRadius;
 
             double widthMeters;
@@ -1392,7 +1392,7 @@ public class MeasureTool extends KVMap implements Disposable {
             Angle controlArcLength = LatLon.greatCircleDistance(newCenterLocation, newPosition);
             // Compute the arc length in meters of the great arc between the new center position and the new
             // corner position.
-            double globeRadius = this.wwd.model().getGlobe().getRadiusAt(newCenterLocation);
+            double globeRadius = this.wwd.model().globe().getRadiusAt(newCenterLocation);
             double arcLengthMeters = controlArcLength.radians() * globeRadius;
 
             // Compute shape's the width and height in meters from the diagonal between the shape's new center
@@ -1423,7 +1423,7 @@ public class MeasureTool extends KVMap implements Disposable {
                 // Forcing the square to have equivalent width and height causes the opposite control point to move
                 // from its current location. Move the square's opposite control point back to its original location
                 // so that the square drags from a fixed corner out to the current control point.
-                LatLon location = MeasureTool.moveShapeByControlPoint(oppositeControlPoint, this.wwd.model().getGlobe(),
+                LatLon location = MeasureTool.moveShapeByControlPoint(oppositeControlPoint, this.wwd.model().globe(),
                     this.shapeOrientation, newCenterLocation, widthMeters, heightMeters);
                 if (location != null) {
                     newCenterLocation = location;
@@ -1666,7 +1666,7 @@ public class MeasureTool extends KVMap implements Disposable {
                     MeasureTool.CONTROL_TYPE_LEADER_ORIGIN, MeasureTool.NORTH);
             }
 
-            Globe globe = this.getWwd().model().getGlobe();
+            Globe globe = this.getWwd().model().globe();
 
             // Update control points positions
             for (Renderable r : this.controlPoints) {
@@ -1693,7 +1693,7 @@ public class MeasureTool extends KVMap implements Disposable {
     }
 
     protected void updateControlPointWithLeader(ControlPointWithLeader cp, LatLon controlLocation) {
-        Globe globe = this.getWwd().model().getGlobe();
+        Globe globe = this.getWwd().model().globe();
 
         String leaderControl = cp.getStringValue(MeasureTool.CONTROL_TYPE_LEADER_ORIGIN);
         if (leaderControl == null) {
@@ -1843,7 +1843,7 @@ public class MeasureTool extends KVMap implements Disposable {
     }
 
     protected void updatePositionsFromShape() {
-        Globe globe = this.wwd.model().getGlobe();
+        Globe globe = this.wwd.model().globe();
 
         this.positions.clear();
 
@@ -1861,7 +1861,7 @@ public class MeasureTool extends KVMap implements Disposable {
         if (this.applicationLayer != null) {
             this.applicationLayer.remove(this.layer);
         } else {
-            this.wwd.model().getLayers().remove(this.layer);
+            this.wwd.model().layers().remove(this.layer);
         }
         this.layer.clear();
         this.shapeLayer.clear();
@@ -2089,7 +2089,7 @@ public class MeasureTool extends KVMap implements Disposable {
             return null;
         }
 
-        double radius = this.wwd.model().getGlobe().getRadius();
+        double radius = this.wwd.model().globe().getRadius();
         double distanceFromStart = 0;
         int segmentIndex = 0;
         LatLon pos1 = this.positions.get(segmentIndex);
@@ -2126,7 +2126,7 @@ public class MeasureTool extends KVMap implements Disposable {
             pos1 = pos2;
         }
 
-        return pathLengthRadians * this.wwd.model().getGlobe().getRadius();
+        return pathLengthRadians * this.wwd.model().globe().getRadius();
     }
 
     protected boolean areLocationsRedundant(LatLon locA, LatLon locB) {

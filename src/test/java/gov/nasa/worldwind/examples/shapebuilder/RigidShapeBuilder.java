@@ -398,7 +398,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             // adjust position height so shape sits on terrain surface
             Vec4 centerPoint = wwd.sceneControl().getTerrain().getSurfacePoint(position.getLatitude(),
                 position.getLongitude(), radius);
-            Position centerPosition = wwd.model().getGlobe().computePositionFromPoint(centerPoint);
+            Position centerPosition = wwd.model().globe().computePositionFromPoint(centerPoint);
 
             shape.setCenterPosition(centerPosition);
             shape.setEastWestRadius(radius);
@@ -445,7 +445,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             // adjust position height so shape sits on terrain surface
             Vec4 centerPoint = wwd.sceneControl().getTerrain().getSurfacePoint(position.getLatitude(),
                 position.getLongitude(), radius);
-            Position centerPosition = wwd.model().getGlobe().computePositionFromPoint(centerPoint);
+            Position centerPosition = wwd.model().globe().computePositionFromPoint(centerPoint);
 
             shape.setCenterPosition(centerPosition);
             shape.setEastWestRadius(radius);
@@ -492,7 +492,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             // adjust position height so shape sits on terrain surface
             Vec4 centerPoint = wwd.sceneControl().getTerrain().getSurfacePoint(position.getLatitude(),
                 position.getLongitude(), radius);
-            Position centerPosition = wwd.model().getGlobe().computePositionFromPoint(centerPoint);
+            Position centerPosition = wwd.model().globe().computePositionFromPoint(centerPoint);
 
             shape.setCenterPosition(centerPosition);
             shape.setEastWestRadius(radius);
@@ -539,7 +539,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             // adjust position height so shape sits on terrain surface
             Vec4 centerPoint = wwd.sceneControl().getTerrain().getSurfacePoint(position.getLatitude(),
                 position.getLongitude(), radius);
-            Position centerPosition = wwd.model().getGlobe().computePositionFromPoint(centerPoint);
+            Position centerPosition = wwd.model().globe().computePositionFromPoint(centerPoint);
 
             shape.setCenterPosition(centerPosition);
             shape.setEastWestRadius(radius);
@@ -588,7 +588,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             // adjust position height so shape sits on terrain surface
             Vec4 centerPoint = wwd.sceneControl().getTerrain().getSurfacePoint(position.getLatitude(),
                 position.getLongitude(), radius);
-            Position centerPosition = wwd.model().getGlobe().computePositionFromPoint(centerPoint);
+            Position centerPosition = wwd.model().globe().computePositionFromPoint(centerPoint);
 
             shape.setCenterPosition(centerPosition);
             shape.setEastWestRadius(radius);
@@ -635,7 +635,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             // adjust position height so shape sits on terrain surface
             Vec4 centerPoint = wwd.sceneControl().getTerrain().getSurfacePoint(position.getLatitude(),
                 position.getLongitude(), radius);
-            Position centerPosition = wwd.model().getGlobe().computePositionFromPoint(centerPoint);
+            Position centerPosition = wwd.model().globe().computePositionFromPoint(centerPoint);
 
             shape.setCenterPosition(centerPosition);
             shape.setEastWestRadius(radius);
@@ -1282,7 +1282,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             else {
                 activeEditor.setWorldWindow(null);
                 this.setActiveEditor(null);
-                this.getApp().wwd().model().getLayers().remove(activeEditor);
+                this.getApp().wwd().model().layers().remove(activeEditor);
             }
 
             int index = this.getModel().getIndexForEntry(this.selectedEntry);

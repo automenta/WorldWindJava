@@ -112,15 +112,15 @@ public class DashboardDialog extends JDialog {
 
             if (tris && e.getSource() == triangleButton) {
                 wwd.model().setShowWireframeInterior(true);
-                wwd.model().getGlobe().getTessellator().setMakeTileSkirts(false);
+                wwd.model().globe().getTessellator().setMakeTileSkirts(false);
                 skirtsButton.setSelected(false);
             } else if (skirts && e.getSource() == skirtsButton) {
                 wwd.model().setShowWireframeInterior(true);
-                wwd.model().getGlobe().getTessellator().setMakeTileSkirts(true);
+                wwd.model().globe().getTessellator().setMakeTileSkirts(true);
                 triangleButton.setSelected(false);
             } else {
                 wwd.model().setShowWireframeInterior(false);
-                wwd.model().getGlobe().getTessellator().setMakeTileSkirts(true);
+                wwd.model().globe().getTessellator().setMakeTileSkirts(true);
             }
 
             wwd.redraw();

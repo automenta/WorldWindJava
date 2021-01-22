@@ -25,107 +25,98 @@ import java.util.logging.Level;
  */
 public class BasicModel extends WWObjectImpl implements Model {
     private Globe globe;
-    private LayerList layers;
+    public final LayerList layers;
     private boolean showWireframeInterior;
     private boolean showWireframeExterior;
     private boolean showTessellationBoundingVolumes;
 
-    @Deprecated
     public BasicModel() {
-        this.setGlobe(BasicModel.globeDefault());
-
-        // Look for the old-style, property-based layer configuration first. If not found then use the new-style
-        // configuration.
-        LayerList layers = null;
-        String layerNames = Configuration.getStringValue(Keys.LAYERS_CLASS_NAMES);
-        if (layerNames != null) {
-            // Usage of this deprecated method is intentional. It provides backwards compatibility for deprecated
-            // functionality.
-            //noinspection deprecation
-            layers = BasicModel.createLayersFromProperties(layerNames);
-        } else {
-            Element el = Configuration.getElement("./LayerList");
-            if (el != null)
-                layers = BasicModel.createLayersFromElement(el);
-        }
-
-        this.setLayers(layers != null ? layers : new LayerList(/*empty list*/)); // an empty list is ok
+        this(new LayerList());
     }
 
-    @Deprecated
     public BasicModel(LayerList layers) {
-        this(BasicModel.globeDefault(), layers);
+        this(Configuration.globe, layers);
     }
 
     public BasicModel(Globe globe, LayerList layers) {
+        this.layers = layers;
         this.setGlobe(globe);
-        this.setLayers(layers != null ? layers : new LayerList(/*empty list*/)); // an empty list is ok
+
+//        // Look for the old-style, property-based layer configuration first. If not found then use the new-style
+//        // configuration.
+//        String layerNames = Configuration.getStringValue(Keys.LAYERS_CLASS_NAMES);
+//        if (layerNames != null) {
+//            // Usage of this deprecated method is intentional. It provides backwards compatibility for deprecated
+//            // functionality.
+//            //noinspection deprecation
+//            layers = BasicModel.createLayersFromProperties(layerNames);
+//        } else {
+//            Element el = Configuration.getElement("./LayerList");
+//            if (el != null)
+//                layers = BasicModel.createLayersFromElement(el);
+//        }
+
     }
 
-    static private Globe globeDefault() {
-        return Configuration.globe;
-    }
+//    /**
+//     * Create the layer list from an XML configuration element.
+//     *
+//     * @param element the configuration description.
+//     * @return a new layer list matching the specified description.
+//     */
+//    protected static LayerList createLayersFromElement(Element element) {
+//        Object o = BasicFactory.create(Keys.LAYER_FACTORY, element);
+//
+//        if (o instanceof LayerList)
+//            return (LayerList) o;
+//
+//        if (o instanceof Layer)
+//            return new LayerList(new Layer[] {(Layer) o});
+//
+//        if (o instanceof LayerList[]) {
+//            LayerList[] lists = (LayerList[]) o;
+//            if (lists.length > 0)
+//                return LayerList.collapseLists((LayerList[]) o);
+//        }
+//
+//        return null;
+//    }
 
-    /**
-     * Create the layer list from an XML configuration element.
-     *
-     * @param element the configuration description.
-     * @return a new layer list matching the specified description.
-     */
-    protected static LayerList createLayersFromElement(Element element) {
-        Object o = BasicFactory.create(Keys.LAYER_FACTORY, element);
-
-        if (o instanceof LayerList)
-            return (LayerList) o;
-
-        if (o instanceof Layer)
-            return new LayerList(new Layer[] {(Layer) o});
-
-        if (o instanceof LayerList[]) {
-            LayerList[] lists = (LayerList[]) o;
-            if (lists.length > 0)
-                return LayerList.collapseLists((LayerList[]) o);
-        }
-
-        return null;
-    }
-
-    /**
-     * Create the layer list from the old-style properties list of layer class names.
-     *
-     * @param layerNames a comma separated list of layer class names.
-     * @return a new layer list containing the specified layers.
-     * @deprecated Use {@link #createLayersFromElement(Element)} instead.
-     */
-    @Deprecated
-    protected static LayerList createLayersFromProperties(String layerNames) {
-        LayerList layers = new LayerList();
-        if (layerNames == null)
-            return null;
-
-        String[] names = layerNames.split(",");
-        for (String name : names) {
-            try {
-                if (!name.isEmpty()) {
-                    Layer l = (Layer) WorldWind.create(name);
-                    layers.add(l);
-                }
-            }
-            catch (WWRuntimeException e) {
-                e.printStackTrace();
-            }
-            catch (Exception e) {
-                Logging.logger().log(Level.WARNING, Logging.getMessage("BasicModel.LayerNotFound", name), e);
-            }
-        }
-
-        return layers;
-    }
+//    /**
+//     * Create the layer list from the old-style properties list of layer class names.
+//     *
+//     * @param layerNames a comma separated list of layer class names.
+//     * @return a new layer list containing the specified layers.
+//     * @deprecated Use {@link #createLayersFromElement(Element)} instead.
+//     */
+//    @Deprecated
+//    protected static LayerList createLayersFromProperties(String layerNames) {
+//        LayerList layers = new LayerList();
+//        if (layerNames == null)
+//            return null;
+//
+//        String[] names = layerNames.split(",");
+//        for (String name : names) {
+//            try {
+//                if (!name.isEmpty()) {
+//                    layers.add((Layer) WorldWind.create(name));
+//                }
+//            }
+//            catch (WWRuntimeException e) {
+//                e.printStackTrace();
+//            }
+//            catch (Exception e) {
+//                Logging.logger().log(Level.WARNING, Logging.getMessage("BasicModel.LayerNotFound", name), e);
+//            }
+//        }
+//
+//        return layers;
+//    }
 
     /**
      * {@inheritDoc}
      */
-    public Globe getGlobe() {
+    public final Globe globe() {
         return this.globe;
     }
 
@@ -135,7 +126,7 @@ public class BasicModel extends WWObjectImpl implements Model {
      * @param globe the model's new globe. May be null, in which case the current globe will be detached from the
      *              model.
      */
-    public void setGlobe(Globe globe) {
+    public synchronized final void setGlobe(Globe globe) {
         // don't raise an exception if globe == null. In that case, we are disassociating the model from any globe
 
         //remove property change listener "this" from the current globe.
@@ -154,25 +145,25 @@ public class BasicModel extends WWObjectImpl implements Model {
     /**
      * {@inheritDoc}
      */
-    public LayerList getLayers() {
+    @Override public final LayerList layers() {
         return this.layers;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public void setLayers(LayerList layers) {
-        // don't raise an exception if layers == null. In that case, we are disassociating the model from any layer set
-
-        if (this.layers != null)
-            this.layers.removePropertyChangeListener(this);
-        if (layers != null)
-            layers.addPropertyChangeListener(this);
-
-        LayerList old = this.layers;
-        this.layers = layers;
-        this.firePropertyChange(Keys.LAYERS, old, this.layers);
-    }
+//    /**
+//     * {@inheritDoc}
+//     */
+//    public void setLayers(LayerList layers) {
+//        // don't raise an exception if layers == null. In that case, we are disassociating the model from any layer set
+//
+//        if (this.layers != null)
+//            this.layers.removePropertyChangeListener(this);
+//        if (layers != null)
+//            layers.addPropertyChangeListener(this);
+//
+//        LayerList old = this.layers;
+//        this.layers = layers;
+//        this.firePropertyChange(Keys.LAYERS, old, this.layers);
+//    }
 
     /**
      * {@inheritDoc}
@@ -225,19 +216,17 @@ public class BasicModel extends WWObjectImpl implements Model {
      */
     @Override
     public void onMessage(Message msg) {
-        if (this.getLayers() != null) {
-            for (Layer layer : this.getLayers()) {
+        for (Layer layer : this.layers) {
 //                try {
-                if (layer != null) {
-                    layer.onMessage(msg);
-                }
+            //if (layer != null)
+            layer.onMessage(msg);
 //                }
 //                catch (Exception e) {
 //                    String message = Logging.getMessage("generic.ExceptionInvokingMessageListener");
 //                    Logging.logger().log(Level.SEVERE, message, e);
 //                    // Don't abort; continue on to the next layer.
 //                }
-            }
         }
+
     }
 }

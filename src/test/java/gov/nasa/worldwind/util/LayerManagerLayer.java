@@ -498,7 +498,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
                     }
                     // Enable/disable layer on left click
                     if (event.getEventAction().equals(SelectEvent.LEFT_CLICK)) {
-                        LayerList layers = wwd.model().getLayers();
+                        LayerList layers = wwd.model().layers();
                         if (i >= 0 && i < layers.size()) {
                             layers.get(i).setEnabled(!layers.get(i).isEnabled());
                             update = true;
@@ -570,7 +570,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
                 }
                 if (this.selectedIndex != -1 && this.dragRefIndex != -1 && this.dragRefIndex != this.selectedIndex) {
                     // Move dragged layer
-                    LayerList layers = this.wwd.model().getLayers();
+                    LayerList layers = this.wwd.model().layers();
                     int insertIndex = this.dragRefIndex > this.selectedIndex ?
                         this.selectedIndex : this.selectedIndex + 1;
                     int removeIndex = this.dragRefIndex > this.selectedIndex ?
@@ -680,7 +680,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
         this.highlight(this.annotation.getAttributes().isHighlighted());
 
         // Compose html text
-        String text = this.makeAnnotationText(this.wwd.model().getLayers());
+        String text = this.makeAnnotationText(this.wwd.model().layers());
         this.annotation.setText(text);
 
         // Update current size and adjust annotation draw offset according to it's width

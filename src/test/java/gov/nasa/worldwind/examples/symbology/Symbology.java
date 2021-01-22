@@ -74,7 +74,7 @@ public class Symbology extends ApplicationTemplate {
             layer.add(symbol);
 
             // Add the symbol layer to the WorldWind model.
-            this.wwd().model().getLayers().add(layer);
+            this.wwd().model().layers().add(layer);
         }
 
         protected void addTacticalGraphics() {
@@ -103,7 +103,7 @@ public class Symbology extends ApplicationTemplate {
             AppFrame.addControlPoints(positions, layer);
 
             // Add the graphic layer to the WorldWind model.
-            this.wwd().model().getLayers().add(layer);
+            this.wwd().model().layers().add(layer);
         }
 
         /**

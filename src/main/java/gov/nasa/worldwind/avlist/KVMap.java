@@ -292,7 +292,7 @@ public class KVMap implements KV {
         this.getChangeSupport().removePropertyChangeListener(listener);
     }
 
-    public void firePropertyChange(PropertyChangeEvent propertyChangeEvent) {
+    public final void firePropertyChange(PropertyChangeEvent propertyChangeEvent) {
         final PropertyChangeSupport p = this.getCreatedChangeSupport();
         if (p!=null) p.firePropertyChange(propertyChangeEvent);
     }

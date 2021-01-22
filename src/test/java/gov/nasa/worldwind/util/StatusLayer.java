@@ -346,7 +346,7 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
             latDisplay = makeAngleDescription("Lat", newPos.getLatitude(), coordDecimalPlaces);
             lonDisplay = makeAngleDescription("Lon", newPos.getLongitude(), coordDecimalPlaces);
             elevDisplay = makeCursorElevationDescription(
-                eventSource.model().getGlobe().elevation(newPos.getLatitude(), newPos.getLongitude()));
+                eventSource.model().globe().elevation(newPos.getLatitude(), newPos.getLongitude()));
 
             //Need to force an extra draw.  without this the displayed value lags the actual when just moving cursor
             if ((previousPos != null) && (previousPos.getLatitude().compareTo(newPos.getLatitude()) != 0)
@@ -435,11 +435,11 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
                 String las = makeAngleDescription("Lat", newPos.getLatitude(), coordDecimalPlaces) + " "
                     + makeAngleDescription("Lon", newPos.getLongitude(), coordDecimalPlaces);
                 String els = makeCursorElevationDescription(
-                    getEventSource().model().getGlobe().elevation(newPos.getLatitude(), newPos.getLongitude()));
+                    getEventSource().model().globe().elevation(newPos.getLatitude(), newPos.getLongitude()));
                 String los;
                 try {
                     UTMCoord UTM = UTMCoord.fromLatLon(newPos.getLatitude(), newPos.getLongitude(),
-                        getEventSource().model().getGlobe());
+                        getEventSource().model().globe());
                     los = UTM.toString();
                 }
                 catch (Exception e) {
@@ -473,11 +473,11 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
                 String las = makeAngleDescription("Lat", newPos.getLatitude(), coordDecimalPlaces) + " "
                     + makeAngleDescription("Lon", newPos.getLongitude(), coordDecimalPlaces);
                 String els = makeCursorElevationDescription(
-                    getEventSource().model().getGlobe().elevation(newPos.getLatitude(), newPos.getLongitude()));
+                    getEventSource().model().globe().elevation(newPos.getLatitude(), newPos.getLongitude()));
                 String los;
                 try {
                     MGRSCoord MGRS = MGRSCoord.fromLatLon(newPos.getLatitude(), newPos.getLongitude(),
-                        getEventSource().model().getGlobe());
+                        getEventSource().model().globe());
                     los = MGRS.toString();
                 }
                 catch (Exception e) {

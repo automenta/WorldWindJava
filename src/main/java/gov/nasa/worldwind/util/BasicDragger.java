@@ -109,7 +109,7 @@ public class BasicDragger implements SelectListener {
             this.dragContext.setPoint(event.pickPoint);
             this.dragContext.setPreviousPoint(((DragSelectEvent) event).getPreviousPickPoint());
             this.dragContext.setView(this.wwd.view());
-            this.dragContext.setGlobe(this.wwd.model().getGlobe());
+            this.dragContext.setGlobe(this.wwd.model().globe());
             this.dragContext.setSceneController(this.wwd.sceneControl());
 
             if (this.dragging) {
@@ -158,7 +158,7 @@ public class BasicDragger implements SelectListener {
             return;
 
         View view = wwd.view();
-        Globe globe = wwd.model().getGlobe();
+        Globe globe = wwd.model().globe();
 
         // Compute dragged object ref-point in model coordinates.
         // Use the Icon and Annotation logic of elevation as offset above ground when below max elevation.

@@ -28,7 +28,7 @@ public interface Model extends WWObject {
     default Extent getExtent() {
         // See if the layers have it.
         //TODO union(extents...)
-        LayerList layers = getLayers();
+        LayerList layers = layers();
         if (layers != null) {
             for (Object layer1 : layers) {
                 Layer layer = (Layer) layer1;
@@ -39,7 +39,7 @@ public interface Model extends WWObject {
         }
 
         // See if the Globe has it.
-        Globe globe = this.getGlobe();
+        Globe globe = this.globe();
         return globe != null ? globe.getExtent() : null;
     }
 
@@ -48,7 +48,7 @@ public interface Model extends WWObject {
      *
      * @return The globe associated with this model.
      */
-    Globe getGlobe();
+    Globe globe();
 
     /**
      * Specifies the model's globe.
@@ -63,15 +63,15 @@ public interface Model extends WWObject {
      *
      * @return List of layers in this model.
      */
-    LayerList getLayers();
+    LayerList layers();
 
-    /**
-     * Specifies the model's layers.
-     *
-     * @param layers the model's new layers. May be null, in which case the current layers will be detached from the
-     *               model.
-     */
-    void setLayers(LayerList layers);
+//    /**
+//     * Specifies the model's layers.
+//     *
+//     * @param layers the model's new layers. May be null, in which case the current layers will be detached from the
+//     *               model.
+//     */
+//    void setLayers(LayerList layers);
 
     /**
      * Indicates whether the globe surface's interior geometry is to be drawn.

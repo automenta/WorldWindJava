@@ -1252,7 +1252,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
             return -1;
         }
 
-        double radius = this.wwd.model().getGlobe().getRadius();
+        double radius = this.wwd.model().globe().getRadius();
         double maxDistanceFromPath = 1000; // meters
         double distanceFromStart = 0;
         int segmentIndex = 0;
@@ -1421,19 +1421,19 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
         // Compute profile length
         if (view instanceof OrbitView) {
             this.length = Math.min(((OrbitView) view).getZoom() * 0.8 * this.profileLengthFactor,
-                this.wwd.model().getGlobe().getRadius() * Math.PI);
+                this.wwd.model().globe().getRadius() * Math.PI);
         } else {
             this.length = Math.min(Math.abs(view.getEyePosition().getElevation()) * 0.8 * this.profileLengthFactor,
-                this.wwd.model().getGlobe().getRadius() * Math.PI);
+                this.wwd.model().globe().getRadius() * Math.PI);
         }
         if (this.follow.equals(TerrainProfileLayer.FOLLOW_NONE)) {
             this.length = LatLon.greatCircleDistance(this.startLatLon, this.endLatLon).radians()
-                * this.wwd.model().getGlobe().getRadius();
+                * this.wwd.model().globe().getRadius();
         } else if (this.follow.equals(TerrainProfileLayer.FOLLOW_OBJECT)) {
             this.length = Math.min(Math.abs(this.objectPosition.getElevation()) * 0.8 * this.profileLengthFactor,
-                this.wwd.model().getGlobe().getRadius() * Math.PI);
+                this.wwd.model().globe().getRadius() * Math.PI);
         }
-        double lengthRadian = this.length / this.wwd.model().getGlobe().getRadius();
+        double lengthRadian = this.length / this.wwd.model().globe().getRadius();
 
         // Iterate on both sides of the center point
         int i;
@@ -1461,7 +1461,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
 
     protected void computePathPositions() {
         this.length = computePathLength();
-        double lengthRadians = this.length / this.wwd.model().getGlobe().getRadius();
+        double lengthRadians = this.length / this.wwd.model().globe().getRadius();
         double step = lengthRadians / (this.samples - 1);
         int segmentIndex = 0;
         LatLon latLon = this.pathPositions.get(segmentIndex);
@@ -1510,12 +1510,12 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
             }
             pos1 = pos2;
         }
-        return pathLengthRadians * this.wwd.model().getGlobe().getRadius();
+        return pathLengthRadians * this.wwd.model().globe().getRadius();
     }
 
     protected void setPosition(int index, LatLon latLon) {
         double elevation
-            = this.wwd.model().getGlobe().elevation(latLon.getLatitude(), latLon.getLongitude());
+            = this.wwd.model().globe().elevation(latLon.getLatitude(), latLon.getLongitude());
         this.minElevation = Math.min(elevation, this.minElevation);
         this.maxElevation = Math.max(elevation, this.maxElevation);
         // Add position to the list

@@ -36,7 +36,7 @@ public class SurfaceTextUsage extends ApplicationTemplate {
                 Position.fromDegrees(38.9345, -120.1670, 0));
             layer.add(surfaceText);
 
-            this.wwd().model().getLayers().add(layer);
+            this.wwd().model().layers().add(layer);
         }
     }
 }

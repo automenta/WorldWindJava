@@ -61,7 +61,7 @@ public class SimpleShapeDragging extends JFrame {
     public static void insertBeforePlacenames(WorldWindow wwd, Layer layer) {
         // Insert the layer into the layer list just before the placenames.
         int compassPosition = 0;
-        LayerList layers = wwd.model().getLayers();
+        LayerList layers = wwd.model().layers();
         for (Layer l : layers) {
             if (l instanceof PlaceNameLayer)
                 compassPosition = layers.indexOf(l);

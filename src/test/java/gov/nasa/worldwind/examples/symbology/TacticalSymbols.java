@@ -131,7 +131,7 @@ public class TacticalSymbols extends ApplicationTemplate {
             this.symbolLayer.add(machineGunSymbolAtDateline);
 
             // Add the symbol layer to the WorldWind model.
-            this.wwd().model().getLayers().add(symbolLayer);
+            this.wwd().model().layers().add(symbolLayer);
 
             // Add a dragging controller to enable user click-and-drag control over tactical symbols.
             this.dragger = new BasicDragger(this.wwd());

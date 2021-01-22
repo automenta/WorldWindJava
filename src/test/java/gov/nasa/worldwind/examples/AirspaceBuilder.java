@@ -396,7 +396,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
             java.util.List<LatLon> locations = ShapeUtils.createSquareInViewport(wwd, position, heading, sizeInMeters);
 
             double maxElevation = -Double.MAX_VALUE;
-            Globe globe = wwd.model().getGlobe();
+            Globe globe = wwd.model().globe();
 
             for (LatLon ll : locations) {
                 double e = globe.elevation(ll.getLatitude(), ll.getLongitude());
@@ -867,7 +867,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
             Vec4 point = null;
 
             SceneController sc = this.getApp().wwd().sceneControl();
-            Globe globe = this.getApp().wwd().model().getGlobe();
+            Globe globe = this.getApp().wwd().model().globe();
 
             if (sc.getTerrain() != null) {
                 point = sc.getTerrain().getSurfacePoint(
@@ -885,7 +885,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
 
         protected Vec4 getPoint(LatLon latlon, double elevation) {
             SceneController sc = this.getApp().wwd().sceneControl();
-            Globe globe = this.getApp().wwd().model().getGlobe();
+            Globe globe = this.getApp().wwd().model().globe();
             double e = globe.elevation(latlon.getLatitude(), latlon.getLongitude());
             return globe.computePointFromPosition(
                 latlon.getLatitude(), latlon.getLongitude(), (e + elevation) * sc.getVerticalExaggeration());
@@ -999,7 +999,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
             }
             else {
                 this.editorController.setEditor(null);
-                this.getApp().wwd().model().getLayers().remove(editor);
+                this.getApp().wwd().model().layers().remove(editor);
             }
 
             int index = this.getModel().getIndexForEntry(this.selectedEntry);

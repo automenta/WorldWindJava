@@ -127,7 +127,7 @@ public class WorldWindowNEWT extends AbstractLayer implements WorldWindow, GLEve
 
         DrawContext dc = sceneControl().getDrawContext();
         Predicate<ExtentHolder> intersectsFrustrum = dc.intersectsFrustrum();
-        for (gov.nasa.worldwind.layers.Layer l : this.model().getLayers()) {
+        for (gov.nasa.worldwind.layers.Layer l : this.model().layers()) {
             //if (l.isLayerInView(dc)
             if (l instanceof RenderableLayer) {
                 if (l.isEnabled()) {

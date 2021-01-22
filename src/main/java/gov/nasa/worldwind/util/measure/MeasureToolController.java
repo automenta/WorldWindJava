@@ -350,7 +350,7 @@ public class MeasureToolController extends MouseAdapter
                 Position lastPosition = rubberBandTarget.getPosition();
                 Position newPosition = measureTool.getWwd().position();
                 double distance = LatLon.greatCircleDistance(lastPosition, newPosition).radians()
-                    * measureTool.getWwd().model().getGlobe().getRadius();
+                    * measureTool.getWwd().model().globe().getRadius();
                 if (distance >= freeHandMinSpacing) {
                     // Add new control point
                     if (measureTool.addControlPoint() != null) // null when the cursor is off the globe

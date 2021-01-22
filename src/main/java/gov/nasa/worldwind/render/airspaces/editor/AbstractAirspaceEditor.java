@@ -302,7 +302,7 @@ public abstract class AbstractAirspaceEditor extends AbstractLayer implements Ai
 
         Movable movable = (Movable) airspace;
         View view = wwd.view();
-        Globe globe = wwd.model().getGlobe();
+        Globe globe = wwd.model().globe();
 
         Position refPos = movable.getReferencePosition();
         if (refPos == null)
@@ -356,9 +356,9 @@ public abstract class AbstractAirspaceEditor extends AbstractLayer implements Ai
         if (referencePos == null)
             return;
 
-        Vec4 referencePoint = wwd.model().getGlobe().computePointFromPosition(referencePos);
+        Vec4 referencePoint = wwd.model().globe().computePointFromPosition(referencePos);
 
-        Vec4 surfaceNormal = wwd.model().getGlobe().computeSurfaceNormalAtLocation(referencePos.getLatitude(),
+        Vec4 surfaceNormal = wwd.model().globe().computeSurfaceNormalAtLocation(referencePos.getLatitude(),
             referencePos.getLongitude());
         Line verticalRay = new Line(referencePoint, surfaceNormal);
         Line screenRay = wwd.view().computeRayFromScreenPoint(previousMousePoint.getX(), previousMousePoint.getY());
@@ -367,8 +367,8 @@ public abstract class AbstractAirspaceEditor extends AbstractLayer implements Ai
         Vec4 pointOnLine = AirspaceEditorUtil.nearestPointOnLine(verticalRay, screenRay);
         Vec4 previousPointOnLine = AirspaceEditorUtil.nearestPointOnLine(verticalRay, previousScreenRay);
 
-        Position pos = wwd.model().getGlobe().computePositionFromPoint(pointOnLine);
-        Position previousPos = wwd.model().getGlobe().computePositionFromPoint(previousPointOnLine);
+        Position pos = wwd.model().globe().computePositionFromPoint(pointOnLine);
+        Position previousPos = wwd.model().globe().computePositionFromPoint(previousPointOnLine);
         double elevationChange = previousPos.getElevation() - pos.getElevation();
 
         double[] altitudes = this.getAirspace().getAltitudes();

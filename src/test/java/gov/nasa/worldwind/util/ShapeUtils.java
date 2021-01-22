@@ -26,7 +26,7 @@ public class ShapeUtils {
         Intersection[] intersection = wwd.sceneControl().getTerrain().intersect(ray);
 
         if (intersection != null && intersection.length != 0) {
-            return wwd.model().getGlobe().computePositionFromPoint(intersection[0].getIntersectionPoint());
+            return wwd.model().globe().computePositionFromPoint(intersection[0].getIntersectionPoint());
         }
         else if (wwd.view() instanceof OrbitView) {
             return ((OrbitView) wwd.view()).getCenterPosition();
@@ -47,7 +47,7 @@ public class ShapeUtils {
 
     public static List<LatLon> createSquareInViewport(WorldWindow wwd, Position position, Angle heading,
         double sizeInMeters) {
-        Globe globe = wwd.model().getGlobe();
+        Globe globe = wwd.model().globe();
         Matrix transform = Matrix.IDENTITY;
         transform = transform.multiply(globe.computeSurfaceOrientationAtPosition(position));
         transform = transform.multiply(Matrix.fromRotationZ(heading.multiply(-1)));
@@ -72,7 +72,7 @@ public class ShapeUtils {
 
     public static List<Position> createPositionSquareInViewport(WorldWindow wwd, Position position, Angle heading,
         double sizeInMeters) {
-        Globe globe = wwd.model().getGlobe();
+        Globe globe = wwd.model().globe();
         Matrix transform = Matrix.IDENTITY;
         transform = transform.multiply(globe.computeSurfaceOrientationAtPosition(position));
         transform = transform.multiply(Matrix.fromRotationZ(heading.multiply(-1)));

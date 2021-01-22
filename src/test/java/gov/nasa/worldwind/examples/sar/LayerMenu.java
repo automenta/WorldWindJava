@@ -30,7 +30,7 @@ public class LayerMenu extends JMenu {
 
     public void setWwd(WorldWindow wwd) {
         this.wwd = wwd;
-        for (Layer layer : this.wwd.model().getLayers()) {
+        for (Layer layer : this.wwd.model().layers()) {
             if (isLayerMenuItem(layer)) {
                 JCheckBoxMenuItem mi = new JCheckBoxMenuItem(new LayerVisibilityAction(this.wwd, layer, this));
                 mi.setState(layer.isEnabled());
@@ -72,7 +72,7 @@ public class LayerMenu extends JMenu {
             layer.setEnabled(((JCheckBoxMenuItem) actionEvent.getSource()).getState());
             if (layer instanceof BMNGOneImage) //toggle other BMNG layers
             {
-                for (Layer lyr : this.wwd.model().getLayers()) {
+                for (Layer lyr : this.wwd.model().layers()) {
                     if (lyr instanceof BMNGWMSLayer)
                         lyr.setEnabled(((JCheckBoxMenuItem) actionEvent.getSource()).getState());
                 }

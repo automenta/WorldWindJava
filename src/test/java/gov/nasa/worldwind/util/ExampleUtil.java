@@ -115,7 +115,7 @@ public class ExampleUtil {
         }
 
         // Create a bounding box for the specified sector in order to estimate its size in model coordinates.
-        Box extent = Sector.computeBoundingBox(wwd.model().getGlobe(),
+        Box extent = Sector.computeBoundingBox(wwd.model().globe(),
             wwd.sceneControl().getVerticalExaggeration(), sector);
 
         // Estimate the distance between the center position and the eye position that is necessary to cause the sector to

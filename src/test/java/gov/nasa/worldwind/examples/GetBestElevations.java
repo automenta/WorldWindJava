@@ -111,7 +111,7 @@ public class GetBestElevations extends ApplicationTemplate {
          * @return the resolution actually achieved.
          */
         public double[] getBestElevations(List<LatLon> locations) {
-            Globe globe = this.wwd().model().getGlobe();
+            Globe globe = this.wwd().model().globe();
             Sector sector = Sector.boundingSector(locations);
             double[] elevations = new double[locations.size()];
 

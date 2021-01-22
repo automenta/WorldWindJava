@@ -37,7 +37,7 @@ public class ScreenImageDragging extends ApplicationTemplate {
             layer.setName("Screen Image");
             layer.add(screenImage);
 
-            this.wwd().model().getLayers().add(layer);
+            this.wwd().model().layers().add(layer);
 
             // Tell the input handler to pass mouse events here
             this.wwd().input().addMouseMotionListener(new MouseMotionAdapter() {

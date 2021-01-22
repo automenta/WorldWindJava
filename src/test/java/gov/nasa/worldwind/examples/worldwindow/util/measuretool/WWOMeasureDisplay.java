@@ -151,7 +151,7 @@ public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay {
         Vec4 surfacePoint = mt.getWwd().sceneControl().getTerrain().getSurfacePoint(
             pos.getLatitude(), pos.getLongitude());
         if (surfacePoint == null) {
-            Globe globe = mt.getWwd().model().getGlobe();
+            Globe globe = mt.getWwd().model().globe();
             surfacePoint = globe.computePointFromPosition(pos.getLatitude(), pos.getLongitude(),
                 globe.elevation(pos.getLatitude(), pos.getLongitude()));
         }
@@ -278,7 +278,7 @@ public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay {
         if (mt.getPositions().size() < 2)
             return null;
 
-        double radius = mt.getWwd().model().getGlobe().getRadius();
+        double radius = mt.getWwd().model().globe().getRadius();
         double distanceFromStart = 0;
         int segmentIndex = 0;
         LatLon pos1 = mt.getPositions().get(segmentIndex);
@@ -314,7 +314,7 @@ public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay {
             pos1 = pos2;
         }
 
-        return pathLengthRadians * mt.getWwd().model().getGlobe().getRadius();
+        return pathLengthRadians * mt.getWwd().model().globe().getRadius();
     }
 
     protected static Angle computeAngleBetween(LatLon a, LatLon b, LatLon c) {

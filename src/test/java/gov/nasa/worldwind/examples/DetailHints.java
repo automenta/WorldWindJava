@@ -34,7 +34,7 @@ public class DetailHints extends ApplicationTemplate {
         }
 
         protected void setElevationModelDetailHint(double detailHint) {
-            this.setElevationModelDetailHint(wwd().model().getGlobe().getElevationModel(), detailHint);
+            this.setElevationModelDetailHint(wwd().model().globe().getElevationModel(), detailHint);
             System.out.println("Terrain detail hint set to " + detailHint);
         }
 
@@ -50,7 +50,7 @@ public class DetailHints extends ApplicationTemplate {
         }
 
         protected void setTiledImageLayerDetailHint(double detailHint) {
-            for (Layer layer : wwd().model().getLayers()) {
+            for (Layer layer : wwd().model().layers()) {
                 if (layer instanceof TiledImageLayer) {
                     ((TiledImageLayer) layer).setDetailHint(detailHint);
                 }
@@ -69,7 +69,7 @@ public class DetailHints extends ApplicationTemplate {
             labelTable.put(10, new JLabel("1.0"));
 
             JSlider elevationDetailSlider = new JSlider(-10, 10,
-                (int) (this.wwd().model().getGlobe().getElevationModel().getDetailHint(Sector.FULL_SPHERE) * 10));
+                (int) (this.wwd().model().globe().getElevationModel().getDetailHint(Sector.FULL_SPHERE) * 10));
             elevationDetailSlider.setMajorTickSpacing(5);
             elevationDetailSlider.setMinorTickSpacing(1);
             elevationDetailSlider.setPaintTicks(true);

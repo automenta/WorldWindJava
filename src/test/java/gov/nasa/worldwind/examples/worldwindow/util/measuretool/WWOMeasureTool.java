@@ -315,13 +315,13 @@ public class WWOMeasureTool extends KVMap
             return ((Path) this.shape).getLength();
         }
         else {
-            return ((MeasurableArea) this.shape).getPerimeter(this.getWwd().model().getGlobe());
+            return ((MeasurableArea) this.shape).getPerimeter(this.getWwd().model().globe());
         }
     }
 
     public double getArea() {
         return this.shape != null && this.shape instanceof SurfaceShape
-            ? ((SurfaceShape) this.shape).getArea(this.getWwd().model().getGlobe(), true) : -1;
+            ? ((SurfaceShape) this.shape).getArea(this.getWwd().model().globe(), true) : -1;
     }
 
     public double getWidth() {
@@ -530,10 +530,10 @@ public class WWOMeasureTool extends KVMap
         Vec4 surfacePoint = getWwd().sceneControl().getTerrain().getSurfacePoint(latLon.getLatitude(),
             latLon.getLongitude());
         if (surfacePoint != null) {
-            return getWwd().model().getGlobe().computePositionFromPoint(surfacePoint);
+            return getWwd().model().globe().computePositionFromPoint(surfacePoint);
         }
         else {
-            return new Position(latLon, getWwd().model().getGlobe().elevation(latLon.getLatitude(),
+            return new Position(latLon, getWwd().model().globe().elevation(latLon.getLatitude(),
                 latLon.getLongitude()));
         }
     }
@@ -553,7 +553,7 @@ public class WWOMeasureTool extends KVMap
                 .subtractDegrees(headingOffset);
             // Compute distance - have a minimal distance to avoid zero sized shape
             Angle distanceAngle = LatLon.greatCircleDistance(this.shapeCenterPosition, newPosition);
-            double distance = Math.max(distanceAngle.radians() * getWwd().model().getGlobe().getRadius(), 0.1);
+            double distance = Math.max(distanceAngle.radians() * getWwd().model().globe().getRadius(), 0.1);
             double width, height;
             if (control.equals("East") || control.equals("West")) {
                 width = distance * 2;
@@ -604,9 +604,9 @@ public class WWOMeasureTool extends KVMap
 
         if (this.shapeRectangle != null) {
             Angle halfWidthAngle = Angle.fromRadians(this.shapeRectangle.width / 2
-                / getWwd().model().getGlobe().getRadius());
+                / getWwd().model().globe().getRadius());
             Angle halfHeightAngle = Angle.fromRadians(this.shapeRectangle.height / 2
-                / getWwd().model().getGlobe().getRadius());
+                / getWwd().model().globe().getRadius());
             // Update control points positions in four directions
             Position controlPos;
             // North
@@ -665,7 +665,7 @@ public class WWOMeasureTool extends KVMap
     }
 
     protected void updatePositionsFromShape() {
-        Globe globe = this.getWwd().model().getGlobe();
+        Globe globe = this.getWwd().model().globe();
 
         this.positions.clear();
 
@@ -843,7 +843,7 @@ public class WWOMeasureTool extends KVMap
                 Position lastPosition = rubberBandTarget.getPosition();
                 Position newPosition = this.getWwd().position();
                 double distance = LatLon.greatCircleDistance(lastPosition, newPosition).radians()
-                    * this.getWwd().model().getGlobe().getRadius();
+                    * this.getWwd().model().globe().getRadius();
                 if (distance >= freeHandMinSpacing) {
                     // Add new control point
                     this.addControlPoint();

@@ -77,7 +77,7 @@ public class ObjectAnimations extends ApplicationTemplate {
             // Add view control panel to the layer panel
             this.vcp = new ViewControlPanel(wwd);
             this.getControlPanel().add(this.vcp, BorderLayout.SOUTH);
-            for (Layer layer : wwd.model().getLayers()) {
+            for (Layer layer : wwd.model().layers()) {
                 if (layer.name().toLowerCase().contains("bing")) {
                     layer.setEnabled(true);
                 }
@@ -96,7 +96,7 @@ public class ObjectAnimations extends ApplicationTemplate {
             Position eyePos = new Position(Angle.fromDegreesLatitude(32.897), Angle.fromDegreesLongitude(-97.04),
                 25000.0); // DFW
             RenderableLayer layer = new RenderableLayer();
-            wwd.model().getLayers().add(layer);
+            wwd.model().layers().add(layer);
             wwd.view().setEyePosition(eyePos);
             KMLRoot model1 = openKML("/home/mpeterson/d/temp/aol-data/airbus-popup/Airbus_Popup.kmz");
             model1.setPosition(
@@ -118,7 +118,7 @@ public class ObjectAnimations extends ApplicationTemplate {
             Map<String, String> callSigns = new HashMap<>();
             int colorIdx = 0;
             RenderableLayer layer = new RenderableLayer();
-            wwd.model().getLayers().add(layer);
+            wwd.model().layers().add(layer);
             for (AOLFlightPlan p : plans) {
                 String key = p.getGufi();
                 if (!colors.containsKey(key)) {
@@ -178,9 +178,9 @@ public class ObjectAnimations extends ApplicationTemplate {
                 25000.0); // DFW
             wwd.view().setEyePosition(eyePos);
             RenderableLayer layer = new RenderableLayer();
-            wwd.model().getLayers().add(layer);
+            wwd.model().layers().add(layer);
             RenderableLayer infoLayer = new RenderableLayer();
-            wwd.model().getLayers().add(infoLayer);
+            wwd.model().layers().add(infoLayer);
             AnimatedObjectController controller = new AnimatedObjectController(wwd, layer, infoLayer);
             ShapeAttributes attrs = new BasicShapeAttributes();
             attrs.setOutlineMaterial(new Material(Color.RED));

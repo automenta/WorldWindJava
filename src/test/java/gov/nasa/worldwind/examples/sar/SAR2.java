@@ -85,7 +85,7 @@ public class SAR2 extends JFrame {
         this.setTitle(SARApp.APP_NAME_AND_VERSION);
 
         this.wwd = this.wwPanel.getWwd();
-        for (Layer layer : this.wwd.model().getLayers()) {
+        for (Layer layer : this.wwd.model().layers()) {
             if (layer instanceof USGSDigitalOrtho) {
                 layer.setOpacity(0.5);
                 layer.setEnabled(false);

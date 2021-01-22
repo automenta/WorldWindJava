@@ -18,5 +18,7 @@ public interface MessageListener {
      *
      * @param msg The message that was received.
      */
-    void onMessage(Message msg);
+    default void onMessage(Message msg) {
+
+    }
 }

@@ -39,7 +39,7 @@ public class ViewControls extends ApplicationTemplate {
             super(true, true, false);
 
             // Find ViewControls layer and keep reference to it
-            for (Layer layer : this.wwd().model().getLayers()) {
+            for (Layer layer : this.wwd().model().layers()) {
                 if (layer instanceof ViewControlsLayer) {
                     viewControlsLayer = (ViewControlsLayer) layer;
                 }

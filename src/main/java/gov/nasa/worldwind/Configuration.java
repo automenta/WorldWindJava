@@ -142,13 +142,13 @@ public class Configuration // Singleton
             .setMaxCacheEntries(32 * 1024)
             .setMaxObjectSize(64 * 1024 * 1024)
             .setHeuristicCachingEnabled(true)
-            .setHeuristicDefaultLifetime(TimeUnit.DAYS.toMillis(CACHE_STALE_DAYS))
+            .setHeuristicDefaultLifetime(TimeUnit.DAYS.toSeconds(CACHE_STALE_DAYS))
             .setHeuristicCoefficient(1)
             .setAllow303Caching(true)
-//            .setAsynchronousWorkersCore(2)
-//            .setAsynchronousWorkersMax(2)
-            .setSharedCache(true)
-            .setWeakETagOnPutDeleteAllowed(true)
+            .setAsynchronousWorkersCore(2)
+            .setAsynchronousWorkersMax(2)
+//            .setSharedCache(true)
+//            .setWeakETagOnPutDeleteAllowed(true)
             .build();
         RequestConfig requestConfig = RequestConfig.custom()
             .setConnectTimeout(60000)
@@ -249,12 +249,15 @@ public class Configuration // Singleton
                 public void updateEntry(String key, HttpCacheUpdateCallback callback) throws IOException {
                     HttpCacheEntry e = getEntry(key);
                     HttpCacheEntry f = callback.update(e);
+                    if (e==f)
+                        return;
                     if (f!=null) {
                         if (e!=null && equals(e, f))
                             return;
 
                         putEntry(key, f);
-                    }
+                    } else
+                        removeEntry(key);
                 }
 
                 private boolean equals(HttpCacheEntry x, HttpCacheEntry y) {

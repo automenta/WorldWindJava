@@ -135,7 +135,7 @@ public class DeclutterTacticalSymbols extends ApplicationTemplate {
             this.symbolLayer.add(machineGunSymbol);
 
             // Add the symbol layer to the WorldWind model.
-            this.wwd().model().getLayers().add(symbolLayer);
+            this.wwd().model().layers().add(symbolLayer);
 
             // Size the WorldWindow to provide enough screen space for the symbols and center the WorldWindow on the
             // screen.

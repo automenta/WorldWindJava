@@ -38,7 +38,7 @@ public class RotatedSector extends ApplicationTemplate {
 
             try {
                 // Create the Quad from a Sector
-                Globe globe = this.wwd().model().getGlobe();
+                Globe globe = this.wwd().model().globe();
                 double radius = globe.getRadiusAt(sector.getCentroid());
                 double quadWidth = toRadians(sector.lonDelta) * radius;
                 double quadHeight = toRadians(sector.latDelta) * radius;

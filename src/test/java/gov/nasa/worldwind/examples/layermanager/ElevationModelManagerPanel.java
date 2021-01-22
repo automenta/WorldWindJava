@@ -73,14 +73,14 @@ public class ElevationModelManagerPanel extends JPanel {
 
         // Fill the panel with the titles of all elevation models in the WorldWindow.
 
-        if (!(wwd.model().getGlobe().getElevationModel() instanceof CompoundElevationModel)) {
+        if (!(wwd.model().globe().getElevationModel() instanceof CompoundElevationModel)) {
             ElevationModelPanel elevationModelPanel = new ElevationModelPanel(wwd, this,
-                wwd.model().getGlobe().getElevationModel());
+                wwd.model().globe().getElevationModel());
             this.modelPanels.add(elevationModelPanel);
             this.modelNamesPanel.add(elevationModelPanel);
         }
         else {
-            CompoundElevationModel cem = (CompoundElevationModel) wwd.model().getGlobe().getElevationModel();
+            CompoundElevationModel cem = (CompoundElevationModel) wwd.model().globe().getElevationModel();
 
             for (ElevationModel elevationModel : cem.getElevationModels()) {
                 if (elevationModel.get(Keys.IGNORE) != null)
@@ -97,11 +97,11 @@ public class ElevationModelManagerPanel extends JPanel {
         // Determines whether this manager's elevation model list is consistent with the specified WorldWindow's.
         // Knowing this prevents redundant updates.
 
-        if (!(wwd.model().getGlobe().getElevationModel() instanceof CompoundElevationModel)) {
-            return this.modelPanels.get(0).getElevationModel() == wwd.model().getGlobe().getElevationModel();
+        if (!(wwd.model().globe().getElevationModel() instanceof CompoundElevationModel)) {
+            return this.modelPanels.get(0).getElevationModel() == wwd.model().globe().getElevationModel();
         }
 
-        CompoundElevationModel cem = (CompoundElevationModel) wwd.model().getGlobe().getElevationModel();
+        CompoundElevationModel cem = (CompoundElevationModel) wwd.model().globe().getElevationModel();
 
         if (this.modelPanels.size() != cem.getElevationModels().size())
             return false;

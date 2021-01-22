@@ -32,7 +32,7 @@ public class LayerTreeUsage extends ApplicationTemplate {
         W.runLater(()->{
             //HACK
             LayerTree layerTree = new LayerTree();
-            layerTree.getModel().refresh(m.getLayers());
+            layerTree.getModel().refresh(m.layers);
 
 
             // Set up a layer to display the on-screen layer tree in the WorldWindow.
@@ -43,7 +43,7 @@ public class LayerTreeUsage extends ApplicationTemplate {
             // Add a controller to handle input events on the layer tree.
             HotSpotController controller = new HotSpotController(w.wwd());
 
-            m.getLayers().add(ui);
+            m.layers.add(ui);
         });
     }
 

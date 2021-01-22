@@ -861,7 +861,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
      */
     protected void showBalloon(Balloon balloon, Position position) {
         Vec4 screenVec4 = this.wwd.view().project(
-            this.wwd.model().getGlobe().computePointFromPosition(position));
+            this.wwd.model().globe().computePointFromPosition(position));
 
         Point screenPoint = new Point((int) screenVec4.x,
             (int) (this.wwd.view().getViewport().height - screenVec4.y));
@@ -1014,7 +1014,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
             Line ray = this.wwd.view().computeRayFromScreenPoint(pickPoint.x, pickPoint.y);
             Intersection[] inter = this.wwd.sceneControl().getDrawContext().getSurfaceGeometry().intersect(ray);
             if (inter != null && inter.length > 0) {
-                position = this.wwd.model().getGlobe().computePositionFromPoint(inter[0].getIntersectionPoint());
+                position = this.wwd.model().globe().computePositionFromPoint(inter[0].getIntersectionPoint());
             }
 
             // We still don't have a position, fall back to intersection with the ellipsoid.
@@ -1086,7 +1086,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
         List<Position> positions = new ArrayList<>();
 
         KMLAbstractGeometry geometry = placemark.getGeometry();
-        KMLUtil.getPositions(this.wwd.model().getGlobe(), geometry, positions);
+        KMLUtil.getPositions(this.wwd.model().globe(), geometry, positions);
 
         return this.getBalloonPosition(positions);
     }
@@ -1270,7 +1270,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
         kmlLayer.setName((String) document.getField(Keys.DISPLAY_NAME));
         kmlLayer.add(controller);
 
-        this.wwd.model().getLayers().add(kmlLayer);
+        this.wwd.model().layers().add(kmlLayer);
     }
 
     /**

@@ -76,7 +76,7 @@ public class GliderWorldWindow extends WorldWindowGLCanvas {
         if (layer != null) {
             image.removeKey(Keys.LAYER);
             layer.removePropertyChangeListener(this.layerListener);
-            this.model().getLayers().remove(layer);
+            this.model().layers().remove(layer);
             layer.dispose();
         }
 

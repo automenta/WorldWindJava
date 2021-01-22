@@ -227,7 +227,7 @@ public class WMSLayersPanel extends JPanel {
     protected void updateComponent(Object component, boolean enable) {
         if (component instanceof Layer) {
             Layer layer = (Layer) component;
-            LayerList layers = this.wwd.model().getLayers();
+            LayerList layers = this.wwd.model().layers();
 
             layer.setEnabled(enable);
 
@@ -245,7 +245,7 @@ public class WMSLayersPanel extends JPanel {
         else if (component instanceof ElevationModel) {
             ElevationModel model = (ElevationModel) component;
             CompoundElevationModel compoundModel =
-                (CompoundElevationModel) this.wwd.model().getGlobe().getElevationModel();
+                (CompoundElevationModel) this.wwd.model().globe().getElevationModel();
 
             if (enable) {
                 if (!compoundModel.getElevationModels().contains(model))

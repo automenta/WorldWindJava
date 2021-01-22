@@ -169,7 +169,7 @@ public class RetrieveElevations extends ApplicationTemplate {
             // request resolution of DTED2 (1degree / 3600 )
             double targetResolution = new Angle(1.0d).radians() / 3600;
 
-            double resolutionAchieved = this.wwd.model().getGlobe().getElevationModel().getElevations(
+            double resolutionAchieved = this.wwd.model().globe().getElevationModel().getElevations(
                 sector, latlons, targetResolution, elevations);
 
             StringBuilder sb = new StringBuilder();
@@ -192,7 +192,7 @@ public class RetrieveElevations extends ApplicationTemplate {
             latlons.add(LatLon.fromDegrees(45.58d, -123.3d));
             latlons.add(LatLon.fromDegrees(45.60d, -123.3d));
 
-            ElevationModel model = this.wwd.model().getGlobe().getElevationModel();
+            ElevationModel model = this.wwd.model().globe().getElevationModel();
 
             StringBuilder sb = new StringBuilder();
             for (LatLon ll : latlons) {

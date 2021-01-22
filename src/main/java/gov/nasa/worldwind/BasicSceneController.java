@@ -79,7 +79,7 @@ public class BasicSceneController extends AbstractSceneController {
         this.visibleSectorC = null;
         ((Globe2D) dc.getGlobe()).setOffset(0);
         if (dc.getGlobe().intersects(dc.getView().getFrustumInModelCoordinates())) {
-            this.sglC = dc.getModel().getGlobe().tessellate(dc);
+            this.sglC = dc.getModel().globe().tessellate(dc);
             this.visibleSectorC = this.sglC.getSector();
         }
 
@@ -87,7 +87,7 @@ public class BasicSceneController extends AbstractSceneController {
         this.visibleSectorR = null;
         ((Globe2D) dc.getGlobe()).setOffset(1);
         if (dc.getGlobe().intersects(dc.getView().getFrustumInModelCoordinates())) {
-            this.sglR = dc.getModel().getGlobe().tessellate(dc);
+            this.sglR = dc.getModel().globe().tessellate(dc);
             this.visibleSectorR = this.sglR.getSector();
         }
 
@@ -95,7 +95,7 @@ public class BasicSceneController extends AbstractSceneController {
         this.visibleSectorL = null;
         ((Globe2D) dc.getGlobe()).setOffset(-1);
         if (dc.getGlobe().intersects(dc.getView().getFrustumInModelCoordinates())) {
-            this.sglL = dc.getModel().getGlobe().tessellate(dc);
+            this.sglL = dc.getModel().globe().tessellate(dc);
             this.visibleSectorL = this.sglL.getSector();
         }
     }

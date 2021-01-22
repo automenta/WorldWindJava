@@ -73,7 +73,7 @@ public class SARAnnotationSupport {
     public void setWwd(WorldWindow wwd) {
         this.wwd = wwd;
         // Add annotation layer
-        this.wwd.model().getLayers().add(this.annotationLayer);
+        this.wwd.model().layers().add(this.annotationLayer);
 
         // Add a select listener to select or highlight annotations on rollover
         this.wwd.addSelectListener(new SelectListener() {
@@ -209,7 +209,7 @@ public class SARAnnotationSupport {
             Vec4 surfacePoint = this.getWwd().sceneControl().getTerrain().getSurfacePoint(
                 pos.getLatitude(), pos.getLongitude());
             if (surfacePoint == null) {
-                Globe globe = this.getWwd().model().getGlobe();
+                Globe globe = this.getWwd().model().globe();
                 surfacePoint = globe.computePointFromPosition(pos.getLatitude(), pos.getLongitude(),
                     globe.elevation(pos.getLatitude(), pos.getLongitude()));
             }

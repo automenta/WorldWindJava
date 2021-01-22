@@ -41,9 +41,9 @@ public class AirspaceEditorUtil {
     }
 
     public static double computeHeightAboveSurface(WorldWindow wwd, Vec4 point) {
-        Position pos = wwd.model().getGlobe().computePositionFromPoint(point);
+        Position pos = wwd.model().globe().computePositionFromPoint(point);
         Vec4 surfacePoint = AirspaceEditorUtil.computeSurfacePoint(wwd, pos.getLatitude(), pos.getLongitude());
-        Vec4 surfaceNormal = wwd.model().getGlobe().computeSurfaceNormalAtPoint(point);
+        Vec4 surfaceNormal = wwd.model().globe().computeSurfaceNormalAtPoint(point);
         return point.subtract3(surfacePoint).dot3(surfaceNormal);
     }
 
@@ -180,7 +180,7 @@ public class AirspaceEditorUtil {
             if (intersections != null) {
                 Vec4 point = AirspaceEditorUtil.nearestIntersectionPoint(ray, intersections);
                 if (point != null) {
-                    Position pos = wwd.model().getGlobe().computePositionFromPoint(point);
+                    Position pos = wwd.model().globe().computePositionFromPoint(point);
                     elevation += pos.getElevation();
                 }
             }
@@ -194,7 +194,7 @@ public class AirspaceEditorUtil {
     //**************************************************************//
 
     public static Vec4 intersectGlobeAt(WorldWindow wwd, double elevation, Line ray) {
-        Intersection[] intersections = wwd.model().getGlobe().intersect(ray, elevation);
+        Intersection[] intersections = wwd.model().globe().intersect(ray, elevation);
         if (intersections == null || intersections.length == 0) {
             return null;
         }
@@ -212,7 +212,7 @@ public class AirspaceEditorUtil {
             if (intersections != null) {
                 Vec4 point = AirspaceEditorUtil.nearestIntersectionPoint(ray, intersections);
                 if (point != null) {
-                    Position pos = wwd.model().getGlobe().computePositionFromPoint(point);
+                    Position pos = wwd.model().globe().computePositionFromPoint(point);
                     surfaceElevation = pos.getElevation();
                 }
             }
@@ -226,7 +226,7 @@ public class AirspaceEditorUtil {
         if (point != null)
             return point;
 
-        return wwd.model().getGlobe().computePointFromPosition(latitude, longitude, 0.0);
+        return wwd.model().globe().computePointFromPosition(latitude, longitude, 0.0);
     }
 
     public static boolean isPointBehindLineOrigin(Line line, Vec4 point) {

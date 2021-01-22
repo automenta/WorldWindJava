@@ -36,7 +36,7 @@ public class WWObjectImpl extends KVMap implements WWObject {
      * @param propertyChangeEvent the event
      * @throws IllegalArgumentException if <code>propertyChangeEvent</code> is null
      */
-    public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+    @Override public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
 //        if (propertyChangeEvent == null) {
 //            String msg = Logging.getMessage("nullValue.PropertyChangeEventIsNull");
 //            Logging.logger().severe(msg);
@@ -47,10 +47,5 @@ public class WWObjectImpl extends KVMap implements WWObject {
         super.firePropertyChange(propertyChangeEvent);
     }
 
-    /**
-     * Empty implementation of MessageListener.
-     */
-    public void onMessage(Message message) {
-        // Empty implementation
-    }
+
 }

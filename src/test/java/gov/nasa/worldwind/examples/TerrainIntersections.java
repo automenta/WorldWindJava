@@ -107,19 +107,19 @@ public class TerrainIntersections extends ApplicationTemplate {
             this.layerPanel.add(this.progressBar, BorderLayout.SOUTH);
 
             // Be sure to re-use the Terrain object to take advantage of its caching.
-            this.terrain = new HighResolutionTerrain(wwd().model().getGlobe(), TARGET_RESOLUTION);
+            this.terrain = new HighResolutionTerrain(wwd().model().globe(), TARGET_RESOLUTION);
 
             this.gridLayer = new RenderableLayer();
             this.gridLayer.setName("Grid");
-            this.wwd().model().getLayers().add(this.gridLayer);
+            this.wwd().model().layers().add(this.gridLayer);
 
             this.intersectionsLayer = new RenderableLayer();
             this.intersectionsLayer.setName("Intersections");
-            this.wwd().model().getLayers().add(this.intersectionsLayer);
+            this.wwd().model().layers().add(this.intersectionsLayer);
 
             this.sightLinesLayer = new RenderableLayer();
             this.sightLinesLayer.setName("Sight Lines");
-            this.wwd().model().getLayers().add(this.sightLinesLayer);
+            this.wwd().model().layers().add(this.sightLinesLayer);
 
             // Set up a mouse handler to generate a grid and start intersection calculations when the user shift-clicks.
             this.wwd().input().addMouseListener(new MouseAdapter() {

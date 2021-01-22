@@ -78,7 +78,7 @@ public class ElevationModelPanel extends JPanel {
         if (index < 0)
             return; // model not found or not a globe isn't using a CompoundElevationModel
 
-        CompoundElevationModel cem = (CompoundElevationModel) wwd.model().getGlobe().getElevationModel();
+        CompoundElevationModel cem = (CompoundElevationModel) wwd.model().globe().getElevationModel();
 
         if (direction < 0 && index == 0) // can't move lowest layer any lower
             return;
@@ -102,10 +102,10 @@ public class ElevationModelPanel extends JPanel {
     protected static int findElevationModelPosition(WorldWindow wwd, ElevationModel elevationModel) {
         // Determines the ordinal location of an elevation model in the globe's elevation models.
 
-        if (!(wwd.model().getGlobe().getElevationModel() instanceof CompoundElevationModel))
+        if (!(wwd.model().globe().getElevationModel() instanceof CompoundElevationModel))
             return -1;
 
-        CompoundElevationModel cem = (CompoundElevationModel) wwd.model().getGlobe().getElevationModel();
+        CompoundElevationModel cem = (CompoundElevationModel) wwd.model().globe().getElevationModel();
 
         for (int i = 0; i < cem.getElevationModels().size(); i++) {
             if (elevationModel == cem.getElevationModels().get(i))
@@ -118,10 +118,10 @@ public class ElevationModelPanel extends JPanel {
     protected static int getNumElevationModels(WorldWindow wwd) {
         // Determines the ordinal location of an elevation model in the globe's elevation models.
 
-        if (!(wwd.model().getGlobe().getElevationModel() instanceof CompoundElevationModel))
+        if (!(wwd.model().globe().getElevationModel() instanceof CompoundElevationModel))
             return 1;
 
-        CompoundElevationModel cem = (CompoundElevationModel) wwd.model().getGlobe().getElevationModel();
+        CompoundElevationModel cem = (CompoundElevationModel) wwd.model().globe().getElevationModel();
         return cem.getElevationModels().size();
     }
 

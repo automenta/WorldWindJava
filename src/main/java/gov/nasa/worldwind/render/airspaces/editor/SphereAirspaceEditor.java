@@ -64,13 +64,13 @@ public class SphereAirspaceEditor extends AbstractAirspaceEditor {
                 point = wwd.sceneControl().getTerrain().getSurfacePoint(
                     location.getLatitude(), location.getLongitude(), altitude);
             } else {
-                double elevation = wwd.model().getGlobe().elevation(
+                double elevation = wwd.model().globe().elevation(
                     location.getLatitude(), location.getLongitude());
-                point = wwd.model().getGlobe().computePointFromPosition(
+                point = wwd.model().globe().computePointFromPosition(
                     location.getLatitude(), location.getLongitude(), elevation + altitude);
             }
         } else {
-            point = wwd.model().getGlobe().computePointFromPosition(
+            point = wwd.model().globe().computePointFromPosition(
                 location.getLatitude(), location.getLongitude(), altitude);
         }
 
@@ -195,7 +195,7 @@ public class SphereAirspaceEditor extends AbstractAirspaceEditor {
         boolean terrainConforming = this.getAirspace().isTerrainConforming()[AbstractAirspaceEditor.LOWER_ALTITUDE];
         Vec4 centerPoint = SphereAirspaceEditor.getCenterPoint(wwd, airspace);
 
-        Vec4 surfaceNormal = wwd.model().getGlobe().computeSurfaceNormalAtPoint(centerPoint);
+        Vec4 surfaceNormal = wwd.model().globe().computeSurfaceNormalAtPoint(centerPoint);
         Line verticalRay = new Line(centerPoint, surfaceNormal);
         Line screenRay = wwd.view().computeRayFromScreenPoint(previousMousePoint.getX(), previousMousePoint.getY());
         Line previousScreenRay = wwd.view().computeRayFromScreenPoint(mousePoint.getX(), mousePoint.getY());
@@ -203,8 +203,8 @@ public class SphereAirspaceEditor extends AbstractAirspaceEditor {
         Vec4 pointOnLine = AirspaceEditorUtil.nearestPointOnLine(verticalRay, screenRay);
         Vec4 previousPointOnLine = AirspaceEditorUtil.nearestPointOnLine(verticalRay, previousScreenRay);
 
-        Position pos = wwd.model().getGlobe().computePositionFromPoint(pointOnLine);
-        Position previousPos = wwd.model().getGlobe().computePositionFromPoint(previousPointOnLine);
+        Position pos = wwd.model().globe().computePositionFromPoint(pointOnLine);
+        Position previousPos = wwd.model().globe().computePositionFromPoint(previousPointOnLine);
         double elevationChange = previousPos.getElevation() - pos.getElevation();
 
         if (this.isKeepControlPointsAboveTerrain()) {

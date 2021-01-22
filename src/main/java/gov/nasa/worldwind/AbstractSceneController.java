@@ -148,8 +148,8 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
 
     protected static void createTerrain(DrawContext dc) {
         if (dc.getSurfaceGeometry() == null) {
-            if (dc.getModel() != null && dc.getModel().getGlobe() != null) {
-                SectorGeometryList sgl = dc.getModel().getGlobe().tessellate(dc);
+            if (dc.getModel() != null && dc.getModel().globe() != null) {
+                SectorGeometryList sgl = dc.getModel().globe().tessellate(dc);
                 dc.setSurfaceGeometry(sgl);
                 dc.setVisibleSector(sgl.getSector());
             }

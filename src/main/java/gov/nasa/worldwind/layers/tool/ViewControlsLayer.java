@@ -1006,7 +1006,7 @@ public class ViewControlsLayer extends RenderableLayer {
                     resetOrbitView(view);
                     // Go some distance in the control mouse direction
                     Angle heading = computePanHeading(view, control);
-                    Angle distance = computePanAmount(this.wwd.model().getGlobe(), view, control, panStep);
+                    Angle distance = computePanAmount(this.wwd.model().globe(), view, control, panStep);
                     LatLon newViewCenter = LatLon.greatCircleEndPosition(view.getCenterPosition(),
                         heading, distance);
                     // Turn around if passing by a pole - TODO: better handling of the pole crossing situation
@@ -1157,11 +1157,11 @@ public class ViewControlsLayer extends RenderableLayer {
             if (centerPoint != null) {
                 Vec4 eyePoint = view.getEyePoint();
                 // Center pos on terrain surface
-                Position centerPosition = wwd.model().getGlobe().computePositionFromPoint(centerPoint);
+                Position centerPosition = wwd.model().globe().computePositionFromPoint(centerPoint);
                 // Compute pitch and heading relative to center position
-                Vec4 normal = wwd.model().getGlobe().computeSurfaceNormalAtLocation(centerPosition.getLatitude(),
+                Vec4 normal = wwd.model().globe().computeSurfaceNormalAtLocation(centerPosition.getLatitude(),
                     centerPosition.getLongitude());
-                Vec4 north = wwd.model().getGlobe().computeNorthPointingTangentAtLocation(centerPosition.getLatitude(),
+                Vec4 north = wwd.model().globe().computeNorthPointingTangentAtLocation(centerPosition.getLatitude(),
                     centerPosition.getLongitude());
                 // Pitch
                 view.setPitch(Angle.POS180.sub(view.getForwardVector().angleBetween3(normal)));
@@ -1188,11 +1188,11 @@ public class ViewControlsLayer extends RenderableLayer {
 
             Vec4 eyePoint = view.getEyePoint();
             // Center pos at eye pos
-            Position centerPosition = wwd.model().getGlobe().computePositionFromPoint(eyePoint);
+            Position centerPosition = wwd.model().globe().computePositionFromPoint(eyePoint);
             // Compute pitch and heading relative to center position
-            Vec4 normal = wwd.model().getGlobe().computeSurfaceNormalAtLocation(centerPosition.getLatitude(),
+            Vec4 normal = wwd.model().globe().computeSurfaceNormalAtLocation(centerPosition.getLatitude(),
                 centerPosition.getLongitude());
-            Vec4 north = wwd.model().getGlobe().computeNorthPointingTangentAtLocation(centerPosition.getLatitude(),
+            Vec4 north = wwd.model().globe().computeNorthPointingTangentAtLocation(centerPosition.getLatitude(),
                 centerPosition.getLongitude());
             // Pitch
             view.setPitch(Angle.POS180.sub(view.getForwardVector().angleBetween3(normal)));
@@ -1216,7 +1216,7 @@ public class ViewControlsLayer extends RenderableLayer {
          * @return the terrain surface point the view would be looking at in the viewport center.
          */
         protected Vec4 computeSurfacePoint(OrbitView view, Angle heading, Angle pitch) {
-            Globe globe = wwd.model().getGlobe();
+            Globe globe = wwd.model().globe();
             // Compute transform to be applied to north pointing Y so that it would point in the view direction
             // Move coordinate system to view center point
             Matrix transform = globe.computeSurfaceOrientationAtPosition(view.getCenterPosition());

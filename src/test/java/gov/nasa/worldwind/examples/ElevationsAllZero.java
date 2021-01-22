@@ -31,7 +31,7 @@ public class ElevationsAllZero {
 
             // Eliminate elevations by simply setting the globe's elevation model to ZeroElevationModel.
 
-            this.wwd().model().getGlobe().setElevationModel(new ZeroElevationModel());
+            this.wwd().model().globe().setElevationModel(new ZeroElevationModel());
         }
     }
 }

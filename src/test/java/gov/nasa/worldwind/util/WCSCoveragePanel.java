@@ -192,7 +192,7 @@ public class WCSCoveragePanel extends JPanel {
     protected void updateComponent(Object component, boolean enable) {
         ElevationModel model = (ElevationModel) component;
         CompoundElevationModel compoundModel =
-            (CompoundElevationModel) this.wwd.model().getGlobe().getElevationModel();
+            (CompoundElevationModel) this.wwd.model().globe().getElevationModel();
 
         if (enable) {
             if (!compoundModel.getElevationModels().contains(model))

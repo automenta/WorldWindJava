@@ -65,11 +65,11 @@ public class WWPanelImpl extends AbstractFeature implements WWPanel {
 
     public void addLayer(Layer layer) {
         if (layer != null)
-            this.wwd.model().getLayers().add(layer);
+            this.wwd.model().layers().add(layer);
     }
 
     public void removeLayer(Layer layer) {
-        this.wwd.model().getLayers().remove(layer);
+        this.wwd.model().layers().remove(layer);
     }
 
     public void insertBeforeNamedLayer(Layer layer, String targetLayerName) {
@@ -77,13 +77,13 @@ public class WWPanelImpl extends AbstractFeature implements WWPanel {
             return;
 
         if (targetLayerName == null) {
-            this.wwd.model().getLayers().add(layer);
+            this.wwd.model().layers().add(layer);
             return;
         }
 
         // Insert the layer into the layer list just before the target layer.
         int targetPosition = 0;
-        LayerList layers = this.wwd.model().getLayers();
+        LayerList layers = this.wwd.model().layers();
         for (Layer l : layers) {
             if (l.name().contains(targetLayerName)) {
                 targetPosition = layers.indexOf(l);
@@ -98,13 +98,13 @@ public class WWPanelImpl extends AbstractFeature implements WWPanel {
             return;
 
         if (targetLayerName == null) {
-            this.wwd.model().getLayers().add(layer);
+            this.wwd.model().layers().add(layer);
             return;
         }
 
         // Insert the layer into the layer list just after the target layer.
         int targetPosition = 0;
-        LayerList layers = this.wwd.model().getLayers();
+        LayerList layers = this.wwd.model().layers();
         for (Layer l : layers) {
             if (l.name().contains(targetLayerName))
                 targetPosition = layers.indexOf(l);

@@ -151,7 +151,7 @@ public class SegmentPlaneEditor extends AbstractLayer {
     protected void doMoveSegmentPlane(WorldWindow wwd, PickedObject pickedObject,
         Point mousePoint, Point previousMousePoint) {
         View view = wwd.view();
-        Globe globe = wwd.model().getGlobe();
+        Globe globe = wwd.model().globe();
         LatLon[] locations = this.getSegmentPlane().getPlaneLocations();
 
         Position pickedPos = pickedObject.position();
@@ -245,7 +245,7 @@ public class SegmentPlaneEditor extends AbstractLayer {
 
     protected Position computeNewPositionFromPlaneIntersection(WorldWindow wwd, Point mousePoint) {
         View view = wwd.view();
-        Globe globe = wwd.model().getGlobe();
+        Globe globe = wwd.model().globe();
 
         Line ray = view.computeRayFromScreenPoint(mousePoint.getX(), mousePoint.getY());
         Plane plane = this.getSegmentPlane().computeInfinitePlane(globe);
@@ -262,7 +262,7 @@ public class SegmentPlaneEditor extends AbstractLayer {
     }
 
     protected Position resizeSegmentPlaneToFitPosition(WorldWindow wwd, Position position) {
-        Globe globe = wwd.model().getGlobe();
+        Globe globe = wwd.model().globe();
         double[] altitudes = this.getSegmentPlane().getPlaneAltitudes();
         double[] gridSizes = this.getSegmentPlane().getGridCellDimensions();
         LatLon[] locations = this.getSegmentPlane().getPlaneLocations();
@@ -310,7 +310,7 @@ public class SegmentPlaneEditor extends AbstractLayer {
     protected void doMoveLateralControlPoint(WorldWindow wwd, PickedObject pickedObject,
         Point mousePoint, Point previousMousePoint) {
         View view = wwd.view();
-        Globe globe = wwd.model().getGlobe();
+        Globe globe = wwd.model().globe();
         double[] altitudes = this.getSegmentPlane().getPlaneAltitudes();
         LatLon[] locations = this.getSegmentPlane().getPlaneLocations();
 
@@ -341,7 +341,7 @@ public class SegmentPlaneEditor extends AbstractLayer {
     protected void doMoveVerticalControlPoint(WorldWindow wwd, PickedObject pickedObject,
         Point mousePoint, Point previousMousePoint) {
         View view = wwd.view();
-        Globe globe = wwd.model().getGlobe();
+        Globe globe = wwd.model().globe();
         double[] altitudes = this.getSegmentPlane().getPlaneAltitudes();
         Position[] segmentPositions = this.getSegmentPlane().getSegmentPositions();
 
@@ -376,7 +376,7 @@ public class SegmentPlaneEditor extends AbstractLayer {
     protected void doMoveHorizontalControlPoint(WorldWindow wwd, PickedObject pickedObject,
         Point mousePoint, Point previousMousePoint) {
         View view = wwd.view();
-        Globe globe = wwd.model().getGlobe();
+        Globe globe = wwd.model().globe();
         LatLon[] locations = this.getSegmentPlane().getPlaneLocations();
         Position[] segmentPositions = this.getSegmentPlane().getSegmentPositions();
 
@@ -464,14 +464,14 @@ public class SegmentPlaneEditor extends AbstractLayer {
             Vec4 point = wwd.sceneControl().getTerrain().getSurfacePoint(
                 position.getLatitude(), position.getLongitude());
             if (point != null) {
-                Position pos = wwd.model().getGlobe().computePositionFromPoint(point);
+                Position pos = wwd.model().globe().computePositionFromPoint(point);
                 if (position.getElevation() < pos.getElevation())
                     return new Position(position, pos.getElevation());
                 return position;
             }
         }
 
-        double elev = wwd.model().getGlobe().elevation(position.getLatitude(), position.getLongitude());
+        double elev = wwd.model().globe().elevation(position.getLatitude(), position.getLongitude());
         if (position.getElevation() < elev)
             return new Position(position, elev);
 

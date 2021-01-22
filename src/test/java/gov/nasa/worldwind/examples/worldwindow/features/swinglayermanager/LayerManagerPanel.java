@@ -44,7 +44,7 @@ public class LayerManagerPanel extends AbstractFeaturePanel implements LayerMana
     public void initialize(final Controller controller) {
         super.initialize(controller);
 
-        LayerList layerList = controller.getWWd().model().getLayers();
+        LayerList layerList = controller.getWWd().model().layers();
         layerList.setDisplayName("Base Layers");
         layerTree = new LayerTree(new LayerTreeModel(layerList));
         layerTree.setOpaque(false);
@@ -147,7 +147,7 @@ public class LayerManagerPanel extends AbstractFeaturePanel implements LayerMana
     public void treeNodesChanged(TreeModelEvent event) {
         Object[] changedNodes = event.getChildren();
         if (changedNodes != null && changedNodes.length > 0) {
-            LayerList layerList = this.controller.getWWd().model().getLayers();
+            LayerList layerList = this.controller.getWWd().model().layers();
             if (layerList == null)
                 return;
 
@@ -412,7 +412,7 @@ public class LayerManagerPanel extends AbstractFeaturePanel implements LayerMana
 
         // Remove layer from the WWJ layer list, which causes it to be removed from the active-layers panel.
         if (layerNode.getLayer() != null) {
-            LayerList layerList = this.controller.getWWd().model().getLayers();
+            LayerList layerList = this.controller.getWWd().model().layers();
             if (layerList != null)
                 layerList.remove(layerNode.getLayer());
 

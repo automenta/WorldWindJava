@@ -158,6 +158,7 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
             try {
                 url = tile.getResourceURL().toString();
             } catch (MalformedURLException e) {
+                layer.levels.miss(tile);
                 throw new RuntimeException(e);
             }
 

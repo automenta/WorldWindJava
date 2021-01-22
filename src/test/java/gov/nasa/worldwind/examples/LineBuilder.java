@@ -76,7 +76,7 @@ public class LineBuilder extends KVMap {
         }
         this.layer = lineLayer != null ? lineLayer : new RenderableLayer();
         this.layer.add(this.line);
-        this.wwd.model().getLayers().add(this.layer);
+        this.wwd.model().layers().add(this.layer);
 
         this.wwd.input().addMouseListener(new MouseAdapter() {
             @Override

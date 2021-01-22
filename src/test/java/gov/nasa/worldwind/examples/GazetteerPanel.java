@@ -253,7 +253,7 @@ public class GazetteerPanel extends JPanel {
     public void moveToLocation(Sector sector, Double altitude) {
         OrbitView view = (OrbitView) this.wwd.view();
 
-        Globe globe = this.wwd.model().getGlobe();
+        Globe globe = this.wwd.model().globe();
 
         if (altitude == null || altitude == 0) {
             double t = Math.min(toRadians(sector.lonDelta), toRadians(sector.lonDelta));

@@ -43,7 +43,7 @@ public class DFWDemo {
     public static void insertBeforeCompass(WorldWindow wwd, Layer layer) {
         // Insert the layer into the layer list just before the compass.
         int compassPosition = 0;
-        LayerList layers = wwd.model().getLayers();
+        LayerList layers = wwd.model().layers();
         for (Layer l : layers) {
             if (l instanceof CompassLayer) {
                 compassPosition = layers.indexOf(l);
@@ -55,7 +55,7 @@ public class DFWDemo {
     public static void insertBeforePlacenames(WorldWindow wwd, Layer layer) {
         // Insert the layer into the layer list just before the placenames.
         int compassPosition = 0;
-        LayerList layers = wwd.model().getLayers();
+        LayerList layers = wwd.model().layers();
         for (Layer l : layers) {
             if (l instanceof PlaceNameLayer) {
                 compassPosition = layers.indexOf(l);
@@ -67,7 +67,7 @@ public class DFWDemo {
     public static void insertAfterPlacenames(WorldWindow wwd, Layer layer) {
         // Insert the layer into the layer list just after the placenames.
         int compassPosition = 0;
-        LayerList layers = wwd.model().getLayers();
+        LayerList layers = wwd.model().layers();
         for (Layer l : layers) {
             if (l instanceof PlaceNameLayer) {
                 compassPosition = layers.indexOf(l);
@@ -79,7 +79,7 @@ public class DFWDemo {
     public static void insertBeforeLayerName(WorldWindow wwd, Layer layer, CharSequence targetName) {
         // Insert the layer into the layer list just before the target layer.
         int targetPosition = 0;
-        LayerList layers = wwd.model().getLayers();
+        LayerList layers = wwd.model().layers();
         for (Layer l : layers) {
             if (l.name().contains(targetName)) {
                 targetPosition = layers.indexOf(l);
@@ -353,7 +353,7 @@ public class DFWDemo {
                 this.controlPanel = new JPanel(new BorderLayout(10, 10));
                 this.layerPanel = new LayerPanel(this.getWwd());
                 this.controlPanel.add(this.layerPanel, BorderLayout.CENTER);
-                this.controlPanel.add(new FlatWorldPanel(this.getWwd()), BorderLayout.NORTH);
+//                this.controlPanel.add(new FlatWorldPanel(this.getWwd()), BorderLayout.NORTH);
                 this.getContentPane().add(this.controlPanel, BorderLayout.WEST);
             }
 
@@ -383,7 +383,7 @@ public class DFWDemo {
 
             // Search the layer list for layers that are also select listeners and register them with the World
             // Window. This enables interactive layers to be included without specific knowledge of them here.
-            for (Layer layer : this.wwjPanel.getWwd().model().getLayers()) {
+            for (Layer layer : this.wwjPanel.getWwd().model().layers()) {
                 if (layer instanceof SelectListener) {
                     this.getWwd().addSelectListener((SelectListener) layer);
                 }

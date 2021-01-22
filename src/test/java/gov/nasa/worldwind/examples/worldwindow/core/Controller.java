@@ -160,7 +160,7 @@ public class Controller {
     }
 
     public LayerList getActiveLayers() {
-        return getWWd().model().getLayers();
+        return getWWd().model().layers();
     }
 
     public Layer addInternalLayer(Layer layer) {
@@ -200,7 +200,7 @@ public class Controller {
 
     public void moveToLocation(Position position) {
         OrbitView view = (OrbitView) this.getWWd().view();
-        Globe globe = this.getWWd().model().getGlobe();
+        Globe globe = this.getWWd().model().globe();
 
         if (globe != null && view != null) {
             ((OrbitViewInputHandler) view.getViewInputHandler()).addPanToAnimator(position,

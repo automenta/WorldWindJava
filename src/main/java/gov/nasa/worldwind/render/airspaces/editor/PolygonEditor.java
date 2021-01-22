@@ -113,7 +113,7 @@ public class PolygonEditor extends AbstractAirspaceEditor {
             return null;
         }
 
-        Position newPosition = wwd.model().getGlobe().computePositionFromPoint(newPoint);
+        Position newPosition = wwd.model().globe().computePositionFromPoint(newPoint);
 
         boolean[] terrainConformance = this.getPolygon().isTerrainConforming();
         double[] altitudes = new double[2];
@@ -172,7 +172,7 @@ public class PolygonEditor extends AbstractAirspaceEditor {
             wwd, ray, this, this.getAirspace(), bestMatch);
 
         Vec4 newPoint = controlPoint.getPoint();
-        LatLon newLocation = new LatLon(wwd.model().getGlobe().computePositionFromPoint(newPoint));
+        LatLon newLocation = new LatLon(wwd.model().globe().computePositionFromPoint(newPoint));
 
         List<LatLon> locationList = new ArrayList<>(this.getPolygon().getLocations());
         locationList.add(controlPoint.getLocationIndex(), newLocation);
@@ -199,7 +199,7 @@ public class PolygonEditor extends AbstractAirspaceEditor {
         // If either ray fails to intersect the geoid, then ignore this event. Use the difference between the two
         // intersected positions to move the control point's location.
 
-        Position controlPointPos = wwd.model().getGlobe().computePositionFromPoint(controlPoint.getPoint());
+        Position controlPointPos = wwd.model().globe().computePositionFromPoint(controlPoint.getPoint());
 
         Line ray = wwd.view().computeRayFromScreenPoint(mousePoint.getX(), mousePoint.getY());
         Line previousRay = wwd.view().computeRayFromScreenPoint(previousMousePoint.getX(),
@@ -212,8 +212,8 @@ public class PolygonEditor extends AbstractAirspaceEditor {
             return;
         }
 
-        Position pos = wwd.model().getGlobe().computePositionFromPoint(vec);
-        Position previousPos = wwd.model().getGlobe().computePositionFromPoint(previousVec);
+        Position pos = wwd.model().globe().computePositionFromPoint(vec);
+        Position previousPos = wwd.model().globe().computePositionFromPoint(previousVec);
         LatLon change = pos.subtract(previousPos);
 
         int index = controlPoint.getLocationIndex();
@@ -238,7 +238,7 @@ public class PolygonEditor extends AbstractAirspaceEditor {
         // If the state keepControlPointsAboveTerrain is set, we prevent the control point from passing any lower than
         // the terrain elevation beneath it.
 
-        Vec4 surfaceNormal = wwd.model().getGlobe().computeSurfaceNormalAtPoint(controlPoint.getPoint());
+        Vec4 surfaceNormal = wwd.model().globe().computeSurfaceNormalAtPoint(controlPoint.getPoint());
         Line verticalRay = new Line(controlPoint.getPoint(), surfaceNormal);
         Line screenRay = wwd.view().computeRayFromScreenPoint(previousMousePoint.getX(), previousMousePoint.getY());
         Line previousScreenRay = wwd.view().computeRayFromScreenPoint(mousePoint.getX(), mousePoint.getY());
@@ -246,8 +246,8 @@ public class PolygonEditor extends AbstractAirspaceEditor {
         Vec4 pointOnLine = AirspaceEditorUtil.nearestPointOnLine(verticalRay, screenRay);
         Vec4 previousPointOnLine = AirspaceEditorUtil.nearestPointOnLine(verticalRay, previousScreenRay);
 
-        Position pos = wwd.model().getGlobe().computePositionFromPoint(pointOnLine);
-        Position previousPos = wwd.model().getGlobe().computePositionFromPoint(previousPointOnLine);
+        Position pos = wwd.model().globe().computePositionFromPoint(pointOnLine);
+        Position previousPos = wwd.model().globe().computePositionFromPoint(previousPointOnLine);
         double elevationChange = previousPos.getElevation() - pos.getElevation();
 
         int index;
