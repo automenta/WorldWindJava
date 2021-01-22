@@ -204,6 +204,8 @@ public class WWIO {
                 e = i;
             }
 
+            //httpget.releaseConnection();
+
             if (e!=null) {
                 if (fail.test(e)) {
                     WWIO.logger.warn("{} {}", e.getMessage(), url);

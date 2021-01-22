@@ -233,32 +233,33 @@ public class Configuration // Singleton
 
                 @Override
                 public HttpCacheEntry getEntry(String key) throws IOException {
-                    //final @Nullable byte[] b = User.the().blob(key);
-                    byte[][] b = new byte[1][];
-                    User.the().get(key, (x)->{
-                        b[0] = (byte[]) x;
-                    });
-                    if (b[0]!=null) {
-                        //v[0] = x.doc().getBinaryValue("blob").bytes;
-                        return io.readFrom(new ByteArrayInputStream(b[0]));
-                    } else
-                        return null;
+                    byte[] b = User.the().get(key);
+
+                    if (b == null) return null;
+
+                    return io.readFrom(new ByteArrayInputStream(b));
                 }
 
                 @Override
-                public void removeEntry(String key) throws IOException {
+                public void removeEntry(String key) {
                     //TODO
                 }
 
                 @Override
-                public void updateEntry(String key, HttpCacheUpdateCallback callback)
-                    throws IOException, HttpCacheUpdateException {
+                public void updateEntry(String key, HttpCacheUpdateCallback callback) throws IOException {
                     HttpCacheEntry e = getEntry(key);
                     HttpCacheEntry f = callback.update(e);
-                    if (f==e)
-                        Util.nop();
-                    else if (f!=null/* && !e.toString().equals(f)*/) //HACK
+                    if (f!=null) {
+                        if (e!=null && equals(e, f))
+                            return;
+
                         putEntry(key, f);
+                    }
+                }
+
+                private boolean equals(HttpCacheEntry x, HttpCacheEntry y) {
+                    //return x.toString().equals(y.toString());
+                    return Arrays.equals(x.getAllHeaders(), y.getAllHeaders());
                 }
             })
             .setCacheConfig(cacheConfig)
