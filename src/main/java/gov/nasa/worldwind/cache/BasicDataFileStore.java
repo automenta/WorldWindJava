@@ -628,7 +628,7 @@ public class BasicDataFileStore extends AbstractFileStore {
         protected ByteBuffer handleSuccessfulRetrieval() {
             ByteBuffer buffer = super.handleSuccessfulRetrieval();
 
-            firePropertyChange(
+            emit(
                 new PropertyChangeEvent(BasicDataFileStore.this, Keys.RETRIEVAL_STATE_SUCCESSFUL, this.retrievalUrl,
                     this.localFileUrl));
 

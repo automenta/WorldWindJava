@@ -207,7 +207,7 @@ public class CrosshairLayer extends AbstractLayer {
 
             // Load a parallel projection with xy dimensions (viewportWidth, viewportHeight)
             // into the GL projection matrix.
-            Rectangle viewport = dc.getView().getViewport();
+            Rectangle viewport = dc.view().getViewport();
             gl.glMatrixMode(GL2.GL_PROJECTION);
             gl.glPushMatrix();
             projectionPushed = true;

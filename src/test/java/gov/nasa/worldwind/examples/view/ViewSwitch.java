@@ -142,7 +142,7 @@ public class ViewSwitch extends ApplicationTemplate {
                 if (vc.view == null) {
                     vc.view = (View) WorldWind.create(vc.viewClassName);
                     vc.viewInputHandler =
-                        vc.view.getViewInputHandler();
+                        vc.view.input();
                 }
                 if (copyValues) {
                     View viewToCopy = wwd().view();
@@ -212,8 +212,8 @@ public class ViewSwitch extends ApplicationTemplate {
                         Position newPos = eventSource.view().getEyePosition();
 
                         if (newPos != null) {
-                            String las = makeAngleDescription("Lat", newPos.getLatitude());
-                            String los = makeAngleDescription("Lon", newPos.getLongitude());
+                            String las = makeAngleDescription("Lat", newPos.getLat());
+                            String los = makeAngleDescription("Lon", newPos.getLon());
                             String heading = makeAngleDescription("Heading", eventSource.view().getHeading());
                             String pitch = makeAngleDescription("Pitch", eventSource.view().getPitch());
 

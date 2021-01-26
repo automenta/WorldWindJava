@@ -230,14 +230,14 @@ public class LocalElevationModel extends AbstractElevationModel {
             if (ll == null)
                 continue;
 
-            if (!this.contains(ll.getLatitude(), ll.getLongitude()))
+            if (!this.contains(ll.getLat(), ll.getLon()))
                 continue;
 
             // If an elevation at the given location is available, write that elevation to the destination buffer.
             // If an elevation is not available but the location is within the elevation model's coverage, write the
             // elevation models extreme elevation at the location. Do nothing if the location is not within the
             // elevation model's coverage.
-            Double e = this.lookupElevation(ll.getLatitude().radians(), ll.getLongitude().radians());
+            Double e = this.lookupElevation(ll.getLat().radians(), ll.getLon().radians());
             if (e != null && e != ElevationModel.MISSING)
                 buffer[i] = e;
             if (e == null)

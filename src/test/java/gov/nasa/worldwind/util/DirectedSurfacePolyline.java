@@ -285,8 +285,8 @@ public class DirectedSurfacePolyline extends SurfacePolyline {
         // Handle anti-meridian spanning segments when the path type indicates linear interpolation.
         if ((this.getPathType() == null || this.getPathType().equals(Keys.LINEAR)) &&
             LatLon.locationsCrossDateline(begin, end)) {
-            double datelineOffset = begin.longitude < 0 ? -360 : 360;
-            LatLon falseEnd = LatLon.fromDegrees(end.latitude, end.longitude + datelineOffset);
+            double datelineOffset = begin.lon < 0 ? -360 : 360;
+            LatLon falseEnd = LatLon.fromDegrees(end.lat, end.lon + datelineOffset);
             mid = LatLon.interpolate(this.getPathType(), 0.5, begin, falseEnd);
         }
 
@@ -320,8 +320,8 @@ public class DirectedSurfacePolyline extends SurfacePolyline {
             }
 
             for (LatLon location : list) {
-                vertexBuffer.put((float) (location.longitude - referenceLocation.longitude));
-                vertexBuffer.put((float) (location.latitude - referenceLocation.latitude));
+                vertexBuffer.put((float) (location.lon - referenceLocation.lon));
+                vertexBuffer.put((float) (location.lat - referenceLocation.lat));
             }
         }
     }

@@ -240,7 +240,7 @@ public class WWOMeasureTool extends KVMap
         // Set proper measure shape type
         this.measureShapeType = (shapeType != null && shapeType.equals(Keys.SHAPE_PATH))
             ? Keys.SHAPE_PATH : Keys.SHAPE_LINE;
-        this.firePropertyChange(EVENT_POSITION_REPLACE, null, null);
+        this.emit(EVENT_POSITION_REPLACE, null, null);
         this.getWwd().redraw();
     }
 
@@ -297,7 +297,7 @@ public class WWOMeasureTool extends KVMap
             }
         }
 
-        this.firePropertyChange(EVENT_POSITION_REPLACE, null, null);
+        this.emit(EVENT_POSITION_REPLACE, null, null);
         this.getWwd().redraw();
     }
 
@@ -387,7 +387,7 @@ public class WWOMeasureTool extends KVMap
         }
         // Update screen shapes
         updateMeasureShape();
-        firePropertyChange(EVENT_POSITION_ADD, null, curPos);
+        emit(EVENT_POSITION_ADD, null, curPos);
         this.getWwd().redraw();
     }
 
@@ -435,7 +435,7 @@ public class WWOMeasureTool extends KVMap
 
         // Update screen shapes
         updateMeasureShape();
-        this.firePropertyChange(EVENT_POSITION_REMOVE, currentLastPosition, null);
+        this.emit(EVENT_POSITION_REMOVE, currentLastPosition, null);
         this.getWwd().redraw();
     }
 
@@ -527,14 +527,14 @@ public class WWOMeasureTool extends KVMap
     }
 
     protected Position computeSurfacePosition(LatLon latLon) {
-        Vec4 surfacePoint = getWwd().sceneControl().getTerrain().getSurfacePoint(latLon.getLatitude(),
-            latLon.getLongitude());
+        Vec4 surfacePoint = getWwd().sceneControl().getTerrain().getSurfacePoint(latLon.getLat(),
+            latLon.getLon());
         if (surfacePoint != null) {
             return getWwd().model().globe().computePositionFromPoint(surfacePoint);
         }
         else {
-            return new Position(latLon, getWwd().model().globe().elevation(latLon.getLatitude(),
-                latLon.getLongitude()));
+            return new Position(latLon, getWwd().model().globe().elevation(latLon.getLat(),
+                latLon.getLon()));
         }
     }
 
@@ -713,7 +713,7 @@ public class WWOMeasureTool extends KVMap
     public void setArmed(boolean armed) {
         if (this.armed != armed) {
             this.armed = armed;
-            this.firePropertyChange(WWOMeasureTool.EVENT_ARMED, !armed, armed);
+            this.emit(WWOMeasureTool.EVENT_ARMED, !armed, armed);
         }
     }
 
@@ -730,7 +730,7 @@ public class WWOMeasureTool extends KVMap
                     // Set the rubber band target to the last control point or the east one for regular shapes.
                     rubberBandTarget = this.getControlPoints().get(
                         this.isRegularShape() ? 2 : this.getControlPoints().size() - 1);
-                    this.firePropertyChange(WWOMeasureTool.EVENT_RUBBERBAND_START, null, null);
+                    this.emit(WWOMeasureTool.EVENT_RUBBERBAND_START, null, null);
                 }
             }
             mouseEvent.consume();
@@ -752,7 +752,7 @@ public class WWOMeasureTool extends KVMap
             // Disarm after second control point of a line or regular shape
             autoDisarm();
             mouseEvent.consume();
-            this.firePropertyChange(WWOMeasureTool.EVENT_RUBBERBAND_STOP, null, null);
+            this.emit(WWOMeasureTool.EVENT_RUBBERBAND_STOP, null, null);
         }
         else if (this.isMoving() && mouseEvent.getButton() == MouseEvent.BUTTON1) {
             this.setMoving(false);
@@ -834,7 +834,7 @@ public class WWOMeasureTool extends KVMap
                 Position lastPosition = rubberBandTarget.getPosition();
                 rubberBandTarget.setPosition(new Position(this.getWwd().position(), 0));
                 this.moveControlPoint(rubberBandTarget);
-                this.firePropertyChange(WWOMeasureTool.EVENT_POSITION_REPLACE,
+                this.emit(WWOMeasureTool.EVENT_POSITION_REPLACE,
                     lastPosition, rubberBandTarget.getPosition());
                 this.getWwd().redraw();
             }
@@ -865,7 +865,7 @@ public class WWOMeasureTool extends KVMap
         Angle distanceAngle = LatLon.greatCircleDistance(oldPosition, newPosition);
         Angle azimuthAngle = LatLon.greatCircleAzimuth(oldPosition, newPosition);
         this.moveMeasureShape(azimuthAngle, distanceAngle);
-        this.firePropertyChange(WWOMeasureTool.EVENT_POSITION_REPLACE, oldPosition, newPosition);
+        this.emit(WWOMeasureTool.EVENT_POSITION_REPLACE, oldPosition, newPosition);
     }
 
     public void addSelectListener(SelectListener listener) {
@@ -945,7 +945,7 @@ public class WWOMeasureTool extends KVMap
         if (this.isShowAnnotation()) {
             this.measureDisplay.updateMeasureDisplay(point.getPosition());
         }
-        this.firePropertyChange(WWOMeasureTool.EVENT_POSITION_REPLACE,
+        this.emit(WWOMeasureTool.EVENT_POSITION_REPLACE,
             lastPosition, point.getPosition());
         this.getWwd().redraw();
     }

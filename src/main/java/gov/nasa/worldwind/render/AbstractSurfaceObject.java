@@ -372,7 +372,7 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
             return dc.getPickFrustums().intersectsAny(extent);
 
         // Test this object's extent against the viewing frustum.
-        return dc.getView().getFrustumInModelCoordinates().intersects(extent);
+        return dc.view().getFrustumInModelCoordinates().intersects(extent);
     }
 
 
@@ -698,10 +698,10 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
             for (Sector s : sectors) {
                 LatLon[] corners = s.getCorners();
                 gl.glBegin(GL2.GL_LINE_LOOP);
-                gl.glVertex2f((float) corners[0].getLongitude().degrees, (float) corners[0].getLatitude().degrees);
-                gl.glVertex2f((float) corners[1].getLongitude().degrees, (float) corners[1].getLatitude().degrees);
-                gl.glVertex2f((float) corners[2].getLongitude().degrees, (float) corners[2].getLatitude().degrees);
-                gl.glVertex2f((float) corners[3].getLongitude().degrees, (float) corners[3].getLatitude().degrees);
+                gl.glVertex2f((float) corners[0].getLon().degrees, (float) corners[0].getLat().degrees);
+                gl.glVertex2f((float) corners[1].getLon().degrees, (float) corners[1].getLat().degrees);
+                gl.glVertex2f((float) corners[2].getLon().degrees, (float) corners[2].getLat().degrees);
+                gl.glVertex2f((float) corners[3].getLon().degrees, (float) corners[3].getLat().degrees);
                 gl.glEnd();
             }
         }

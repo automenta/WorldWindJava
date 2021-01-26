@@ -221,8 +221,8 @@ public class KMLUtil {
      */
     public static Position computeAltitude(Globe globe, Position position, String altitudeMode) {
         double height;
-        Angle latitude = position.getLatitude();
-        Angle longitude = position.getLongitude();
+        Angle latitude = position.getLat();
+        Angle longitude = position.getLon();
 
         int altMode = KMLUtil.convertAltitudeMode(altitudeMode, WorldWind.CLAMP_TO_GROUND); // KML default
         if (altMode == WorldWind.CLAMP_TO_GROUND)

@@ -552,7 +552,7 @@ public class ColladaMeshShape extends AbstractGeneralShape {
             throw new IllegalStateException(message);
         }
 
-        Matrix matrix = dc.getView().getModelviewMatrix();
+        Matrix matrix = dc.view().getModelviewMatrix();
         matrix = matrix.multiply(this.computeRenderMatrix(dc));
 
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
@@ -811,7 +811,7 @@ public class ColladaMeshShape extends AbstractGeneralShape {
      * @return the minimum distance from the shape to the eye point.
      */
     protected double computeEyeDistance(DrawContext dc) {
-        Vec4 eyePoint = dc.getView().getEyePoint();
+        Vec4 eyePoint = dc.view().getEyePoint();
 
         Vec4 refPt = this.computePoint(dc.getTerrain(), this.getModelPosition());
         if (refPt != null)

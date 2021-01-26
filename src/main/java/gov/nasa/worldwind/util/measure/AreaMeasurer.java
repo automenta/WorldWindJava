@@ -168,7 +168,7 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
         Sector sector = getBoundingSector();
         if (sector != null) {
             return globe.getRadiusAt(sector.getCentroid()) * sector.lonDelta().radians()
-                * Math.cos(sector.getCentroid().getLatitude().radians());
+                * Math.cos(sector.getCentroid().getLat().radians());
         }
 
         return -1;
@@ -203,8 +203,8 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
             for (int i = 0; i < verticesCount; i++) {
                 // Vertices coordinates are x=lon y=lat in radians, z = elevation zero
                 final Position I = this.subdividedPositions.get(i);
-                verts[idx++] = (float) I.getLongitude().radians();
-                verts[idx++] = (float) I.getLatitude().radians();
+                verts[idx++] = (float) I.getLon().radians();
+                verts[idx++] = (float) I.getLat().radians();
                 verts[idx++] = 0;
             }
             // Tessellate
@@ -241,7 +241,7 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
             int latSteps = (int) Math.round(toRadians(sector.latDelta) / stepRadians);
             final LatLon sectorCentroid = sector.getCentroid();
             int lonSteps = (int) Math.round(toRadians(sector.lonDelta) / stepRadians
-                * Math.cos(sectorCentroid.getLatitude().radians()));
+                * Math.cos(sectorCentroid.getLat().radians()));
             double latStepRadians = toRadians(sector.latDelta) / latSteps;
             double lonStepRadians = toRadians(sector.lonDelta) / lonSteps;
 
@@ -254,7 +254,7 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
 
             final double sectorLatMinRadians = sector.latMin().radians();
             final double sectorLonMinRadians = sector.lonMin().radians();
-            final Angle sectorCentroidLon = sectorCentroid.getLongitude();
+            final Angle sectorCentroidLon = sectorCentroid.getLon();
 
             double area = 0;
             for (int i = 0; i < latSteps; i++) {

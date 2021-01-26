@@ -15,7 +15,7 @@ import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.pick.PickedObject;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.render.airspaces.BasicAirspaceAttributes;
-import gov.nasa.worldwind.render.markers.Marker;
+import gov.nasa.worldwind.render.markers.*;
 import gov.nasa.worldwind.util.ShapeEditor;
 
 import java.awt.event.*;
@@ -139,8 +139,8 @@ public class ShapeEditingExtension extends ApplicationTemplate {
             Vec4 point1 = globe.computeEllipsoidalPointFromLocation(position1);
             Vec4 shaftVec = point1.subtract3(point0).multiply3(0.9);
 
-            Vec4 surfaceNormal = globe.computeEllipsoidalNormalAtLocation(position1.getLatitude(),
-                position1.getLongitude());
+            Vec4 surfaceNormal = globe.computeEllipsoidalNormalAtLocation(position1.getLat(),
+                position1.getLon());
 
             Vec4 perpendicularVec = surfaceNormal.cross3(shaftVec).normalize3().multiply3(headWidth);
             Vec4 leftHeadPoint = point0.add3(shaftVec).add3(perpendicularVec);
@@ -173,7 +173,6 @@ public class ShapeEditingExtension extends ApplicationTemplate {
             return this.dragEnabled;
         }
 
-        @Override
         public void setDragEnabled(boolean enabled) {
             this.dragEnabled = enabled;
         }
@@ -301,7 +300,7 @@ public class ShapeEditingExtension extends ApplicationTemplate {
                 double altitude = this.getControlPointAltitude(locations[1]);
                 Position cpPosition = new Position(locations[1], altitude);
                 markerList.add(
-                    ShapeEditor.makeControlPoint(cpPosition, this.getAngleControlPointAttributes(), 0, ROTATION));
+                    new ControlPointMarker(cpPosition, this.getAngleControlPointAttributes(), 0, ROTATION));
 
                 this.getControlPointLayer().setMarkers(markerList);
             }

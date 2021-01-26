@@ -385,8 +385,8 @@ public class ScreenImage extends WWObjectImpl implements Renderable, Exportable 
         if (dc.getFrameTimeStamp() != this.frameNumber) {
             final BasicWWTexture texture = this.getTexture();
 
-            final int viewportWidth = dc.getView().getViewport().width;
-            final int viewportHeight = dc.getView().getViewport().height;
+            final int viewportWidth = dc.view().getViewport().width;
+            final int viewportHeight = dc.view().getViewport().height;
 
             // Compute image size
             if (texture != null) {
@@ -512,7 +512,7 @@ public class ScreenImage extends WWObjectImpl implements Renderable, Exportable 
             gl.glEnable(GL2.GL_ALPHA_TEST);
             gl.glAlphaFunc(GL2.GL_GREATER, 0.001f);
 
-            Rectangle viewport = dc.getView().getViewport();
+            Rectangle viewport = dc.view().getViewport();
             gl.glMatrixMode(GL2.GL_PROJECTION);
             gl.glPushMatrix();
             projectionPushed = true;

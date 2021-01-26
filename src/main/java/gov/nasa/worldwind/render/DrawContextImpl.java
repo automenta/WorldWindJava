@@ -83,7 +83,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
             Vec4 pt = sectorGeometry.getSurfacePoint(position);
             if (pt == null) {
                 final Globe g = this.getGlobe();
-                double elevation = g.elevation(position.getLatitude(), position.getLongitude());
+                double elevation = g.elevation(position.getLat(), position.getLon());
                 pt = g.computePointFromPosition(position,
                     position.getAltitude() + elevation * this.getVerticalExaggeration());
             }
@@ -143,11 +143,11 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
         }
 
         public Double getElevation(LatLon location) {
-            Vec4 pt = this.getSurfacePoint(location.getLatitude(), location.getLongitude(), 0);
+            Vec4 pt = this.getSurfacePoint(location.getLat(), location.getLon(), 0);
             if (pt == null)
                 return null;
             else {
-                return this.getGlobe().computePointFromPosition(location.getLatitude(), location.getLongitude(), 0)
+                return this.getGlobe().computePointFromPosition(location.getLat(), location.getLon(), 0)
                     .distanceTo3(pt);
             }
         }
@@ -298,7 +298,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
         return this.globe != null ? this.globe : this.model.globe();
     }
 
-    public final View getView() {
+    public final View view() {
         return this.view;
     }
 
@@ -456,7 +456,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
 
         // Translate the point from AWT screen coordinates to OpenGL screen coordinates.
         if (this.pickChanged.getAndSet(false)) {
-            Rectangle viewport = this.getView().getViewport();
+            Rectangle viewport = this.view().getViewport();
             int x = point.x;
             int y = viewport.height - point.y - 1;
 
@@ -479,7 +479,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
      */
     public int[] getPickColorsInRectangle(Rectangle rectangle, int[] minAndMaxColorCodes) {
 
-        Rectangle viewport = this.getView().getViewport();
+        Rectangle viewport = this.view().getViewport();
 
         // Transform the rectangle from AWT screen coordinates to OpenGL screen coordinates and compute its intersection
         // with the viewport. Transformation to GL coordinates must be done prior to computing the intersection, because
@@ -879,7 +879,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     public void addPickPointFrustum() {
         //Compute the current picking frustum
         if (getPickPoint() != null) {
-            Rectangle viewport = getView().getViewport();
+            Rectangle viewport = view().getViewport();
 
             double viewportWidth = viewport.getWidth() <= 0.0 ? 1.0 : viewport.getWidth();
             double viewportHeight = viewport.getHeight() <= 0.0 ? 1.0 : viewport.getHeight();
@@ -898,9 +898,9 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
                 return;
 
             //Compute the distance to the near plane in screen coordinates
-            double width = getView().getFieldOfView().tanHalfAngle() * getView().getNearClipDistance();
+            double width = view().getFieldOfView().tanHalfAngle() * view().getNearClipDistance();
             double x = width / (viewportWidth / 2.0);
-            double screenDist = getView().getNearClipDistance() / x;
+            double screenDist = view().getNearClipDistance() / x;
 
             //Create the four vectors that define the top-left, top-right, bottom-left, and bottom-right vectors
             Vec4 vTL = new Vec4(ptCenter.x - offsetX, ptCenter.y + offsetY, -screenDist);
@@ -910,7 +910,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
 
             //Compute the frustum from these four vectors
             Frustum frustum = Frustum.fromPerspectiveVecs(vTL, vTR, vBL, vBR,
-                getView().getNearClipDistance(), getView().getFarClipDistance());
+                view().getNearClipDistance(), view().getFarClipDistance());
 
             //Create the screen rectangle associated with this frustum
             Rectangle rectScreen = new Rectangle(getPickPoint().x - offsetX,
@@ -919,7 +919,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
                 pickPointFrustumDimension.height);
 
             //Transform the frustum to Model Coordinates
-            Matrix modelviewTranspose = getView().getModelviewMatrix().getTranspose();
+            Matrix modelviewTranspose = view().getModelviewMatrix().getTranspose();
             frustum = frustum.transformBy(modelviewTranspose);
 
             this.pickFrustumList.add(new PickPointFrustum(frustum, rectScreen));
@@ -931,7 +931,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
         if (this.getPickRectangle() == null || this.getPickRectangle().isEmpty())
             return;
 
-        View view = this.getView();
+        View view = this.view();
 
         Rectangle viewport = view.getViewport();
         double viewportWidth = viewport.getWidth() <= 0.0 ? 1.0 : viewport.getWidth();
@@ -1120,9 +1120,9 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public boolean isSmall(Extent extent, int numPixels) {
-        return extent != null && extent.getDiameter() <= numPixels * this.getView().computePixelSizeAtDistance(
+        return extent != null && extent.getDiameter() <= numPixels * this.view().computePixelSizeAtDistance(
             // burkey couldnt we make this minimum dimension
-            this.getView().getEyePoint().distanceTo3(
+            this.view().getEyePoint().distanceTo3(
                 extent.getCenter()));                                                    // -- so box could return small when one dim is narrow?
     }                                                                                                                           // i see really skinny telephone poles that dont need to be rendered at distance but  are tall
 
@@ -1155,8 +1155,8 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
 
         Vec4 point;
 
-        final Angle lat = position.getLatitude();
-        final Angle lon = position.getLongitude();
+        final Angle lat = position.getLat();
+        final Angle lon = position.getLon();
         if (altitudeMode == WorldWind.CLAMP_TO_GROUND) {
             point = this.computeTerrainPoint(lat, lon, 0);
         } else if (altitudeMode == WorldWind.RELATIVE_TO_GROUND) {

@@ -129,7 +129,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
     }
 
     protected static Position computeViewCenterPosition(DrawContext dc) {
-        View view = dc.getView();
+        View view = dc.view();
         Line ray = view.computeRayFromScreenPoint(view.getViewport().getWidth() / 2,
             view.getViewport().getHeight() / 2);
         Intersection[] inters = dc.getSurfaceGeometry().intersect(ray);
@@ -799,7 +799,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
             gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
             gl.glDisable(GL.GL_DEPTH_TEST);
 
-            Rectangle viewport = dc.getView().getViewport();
+            Rectangle viewport = dc.view().getViewport();
             Dimension drawSize = isMinimized ? new Dimension(TerrainProfileLayer.MINIMIZED_SIZE, TerrainProfileLayer.MINIMIZED_SIZE)
                 : isMaximized ? new Dimension(viewport.width - this.borderWidth * 2,
                     viewport.height * 2 / 3 - this.borderWidth * 2) : this.size;
@@ -924,7 +924,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
         double min = this.minElevation;
         double max = this.maxElevation;
         if (this.showEyePosition && this.follow.equals(TerrainProfileLayer.FOLLOW_EYE)) {
-            max = Math.max(max, dc.getView().getEyePosition().getElevation());
+            max = Math.max(max, dc.view().getEyePosition().getElevation());
         }
         if (this.showEyePosition && (this.follow.equals(TerrainProfileLayer.FOLLOW_OBJECT) || this.follow.equals(
             TerrainProfileLayer.FOLLOW_PATH))
@@ -982,7 +982,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
             || (this.follow.equals(TerrainProfileLayer.FOLLOW_PATH) && this.objectPosition != null))
             && this.showEyePosition) {
             eyeX = x / 2;
-            eyeY = (dc.getView().getEyePosition().getElevation() - min) * stepY;
+            eyeY = (dc.view().getEyePosition().getElevation() - min) * stepY;
             if (this.follow.equals(TerrainProfileLayer.FOLLOW_PATH)) {
                 eyeX = computeObjectSample(this.objectPosition) * lengthStep * stepX;
             }
@@ -1010,7 +1010,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
                 // Line
                 TerrainProfileLayer.drawLine(dc, pickedX, pickedY, eyeX, eyeY);
                 // Distance label
-                double distance = dc.getView().getEyePoint().distanceTo3(
+                double distance = dc.view().getEyePoint().distanceTo3(
                     dc.getGlobe().computePointFromPosition(positions[this.pickedSample]));
                 if (this.follow.equals(TerrainProfileLayer.FOLLOW_OBJECT) || this.follow.equals(TerrainProfileLayer.FOLLOW_PATH)) {
                     distance = dc.getGlobe().computePointFromPosition(this.objectPosition).distanceTo3(
@@ -1208,7 +1208,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
         this.pickedSample = -1;
         Point pickPoint = dc.getPickPoint();
         if (pickPoint != null && this.positions != null && !this.follow.equals(TerrainProfileLayer.FOLLOW_CURSOR)) {
-            Rectangle viewport = dc.getView().getViewport();
+            Rectangle viewport = dc.view().getViewport();
             // Check if pickpoint is inside the graph
             if (pickPoint.getX() >= locationSW.x
                 && pickPoint.getX() < locationSW.x + mapSize.width
@@ -1222,7 +1222,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
                     // Update path indicator
                     ArrayList<Position> posList = new ArrayList<>();
                     posList.add(positions[sample]);
-                    posList.add(new Position(positions[sample].getLatitude(), positions[sample].getLongitude(),
+                    posList.add(new Position(positions[sample].getLat(), positions[sample].getLon(),
                         positions[sample].getElevation() + this.length / 10));
                     if (this.pickedShape == null) {
                         this.pickedShape = new Path(posList);
@@ -1261,9 +1261,9 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
             LatLon pos2 = this.pathPositions.get(i);
             double segmentLength = LatLon.greatCircleDistance(pos1, pos2).radians() * radius;
             // Check wether the position is close to the segment line
-            Vec4 v0 = new Vec4(pos.getLatitude().radians(), pos.getLongitude().radians(), 0, 0);
-            Vec4 v1 = new Vec4(pos1.getLatitude().radians(), pos1.getLongitude().radians(), 0, 0);
-            Vec4 v2 = new Vec4(pos2.getLatitude().radians(), pos2.getLongitude().radians(), 0, 0);
+            Vec4 v0 = new Vec4(pos.getLat().radians(), pos.getLon().radians(), 0, 0);
+            Vec4 v1 = new Vec4(pos1.getLat().radians(), pos1.getLon().radians(), 0, 0);
+            Vec4 v2 = new Vec4(pos2.getLat().radians(), pos2.getLon().radians(), 0, 0);
             Line line = new Line(v1, v2.subtract3(v1));
             if (line.distanceTo(v0) * radius <= maxDistanceFromPath) {
                 // Check whether the position is inside the segment
@@ -1515,7 +1515,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
 
     protected void setPosition(int index, LatLon latLon) {
         double elevation
-            = this.wwd.model().globe().elevation(latLon.getLatitude(), latLon.getLongitude());
+            = this.wwd.model().globe().elevation(latLon.getLat(), latLon.getLon());
         this.minElevation = Math.min(elevation, this.minElevation);
         this.maxElevation = Math.max(elevation, this.maxElevation);
         // Add position to the list
@@ -1526,7 +1526,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
         Position pos = this.wwd.position();
         if (pos == null && dc.getPickPoint() != null) {
             // Current pos is null, try intersection with terrain geometry
-            Line ray = dc.getView().computeRayFromScreenPoint(dc.getPickPoint().x, dc.getPickPoint().y);
+            Line ray = dc.view().computeRayFromScreenPoint(dc.getPickPoint().x, dc.getPickPoint().y);
             Intersection[] inter = dc.getSurfaceGeometry().intersect(ray);
             if (inter != null && inter.length > 0) {
                 pos = dc.getGlobe().computePositionFromPoint(inter[0].getIntersectionPoint());
@@ -1534,7 +1534,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
         }
         if (pos == null && dc.getPickPoint() != null) {
             // Position is still null, fallback on intersection with ellipsoid.
-            pos = dc.getView().computePositionFromScreenPoint(dc.getPickPoint().x, dc.getPickPoint().y);
+            pos = dc.view().computePositionFromScreenPoint(dc.getPickPoint().x, dc.getPickPoint().y);
         }
         return pos;
     }

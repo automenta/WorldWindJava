@@ -110,10 +110,10 @@ public class RPFTiledImageLayer extends TiledImageLayer {
         Sector sector = levels.sector;
 
         Level level = levels.getFirstLevel();
-        Angle dLat = level.getTileDelta().getLatitude();
-        Angle dLon = level.getTileDelta().getLongitude();
-        Angle latOrigin = levels.tileOrigin.getLatitude();
-        Angle lonOrigin = levels.tileOrigin.getLongitude();
+        Angle dLat = level.getTileDelta().getLat();
+        Angle dLon = level.getTileDelta().getLon();
+        Angle latOrigin = levels.tileOrigin.getLat();
+        Angle lonOrigin = levels.tileOrigin.getLon();
 
         // Determine the row and column offset from the common WorldWind global tiling origin.
         int firstRow = Tile.computeRow(dLat, sector.latMin(), latOrigin);
@@ -460,8 +460,8 @@ public class RPFTiledImageLayer extends TiledImageLayer {
 
         for (Map.Entry<String, Object> p : params.getEntries()) {
             if (p.getValue() instanceof LatLon) {
-                rs.addStateValueAsDouble(p.getKey() + ".Latitude", ((LatLon) p.getValue()).getLatitude().degrees);
-                rs.addStateValueAsDouble(p.getKey() + ".Longitude", ((LatLon) p.getValue()).getLongitude().degrees);
+                rs.addStateValueAsDouble(p.getKey() + ".Latitude", ((LatLon) p.getValue()).getLat().degrees);
+                rs.addStateValueAsDouble(p.getKey() + ".Longitude", ((LatLon) p.getValue()).getLon().degrees);
             } else if (p.getValue() instanceof Sector) {
                 rs.addStateValueAsDouble(p.getKey() + ".MinLatitude", ((Sector) p.getValue()).latMin);
                 rs.addStateValueAsDouble(p.getKey() + ".MaxLatitude", ((Sector) p.getValue()).latMax);
@@ -629,7 +629,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
             if (textureURL != null) {
                 if (this.layer.loadTexture(tile, textureURL)) {
                     layer.levels.has(tile);
-                    this.layer.firePropertyChange(Keys.LAYER, null, this);
+                    this.layer.emit(Keys.LAYER, null, this);
                     return;
                 } else {
                     // Assume that something's wrong with the file and delete it.
@@ -664,7 +664,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
 
             if (buffer != null) {
                 // Fire a property change to denote that the layer's backing data has changed.
-                this.layer.firePropertyChange(Keys.LAYER, null, this);
+                this.layer.emit(Keys.LAYER, null, this);
             }
 
             return buffer;

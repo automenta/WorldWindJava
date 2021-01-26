@@ -441,7 +441,6 @@ public abstract class AbstractTacticalGraphic extends KVMap implements TacticalG
         return this.dragEnabled;
     }
 
-    @Override
     public void setDragEnabled(boolean enabled) {
         this.dragEnabled = enabled;
     }

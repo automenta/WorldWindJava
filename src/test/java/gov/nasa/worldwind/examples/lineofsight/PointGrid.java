@@ -286,7 +286,7 @@ public class PointGrid extends WWObjectImpl implements OrderedRenderable, Highli
 
             cornerPoints.add(pt);
 
-            double d = pt.distanceTo3(dc.getView().getEyePoint());
+            double d = pt.distanceTo3(dc.view().getEyePoint());
             if (d < this.eyeDistance)
                 this.eyeDistance = d;
         }
@@ -454,7 +454,7 @@ public class PointGrid extends WWObjectImpl implements OrderedRenderable, Highli
 
             // The point is drawn using a parallel projection.
             osh.pushProjectionIdentity(gl);
-            gl.glOrtho(0.0d, dc.getView().getViewport().width, 0.0d, dc.getView().getViewport().height, -1.0d, 1.0d);
+            gl.glOrtho(0.0d, dc.view().getViewport().width, 0.0d, dc.view().getViewport().height, -1.0d, 1.0d);
 
             osh.pushModelviewIdentity(gl);
 
@@ -474,10 +474,10 @@ public class PointGrid extends WWObjectImpl implements OrderedRenderable, Highli
                     Position position = posIter.next();
                     Vec4 pt = new Vec4(points.get(), points.get(), points.get());
 
-                    if (!dc.getView().getFrustumInModelCoordinates().contains(pt))
+                    if (!dc.view().getFrustumInModelCoordinates().contains(pt))
                         continue;
 
-                    Vec4 sp = dc.getView().project(pt);
+                    Vec4 sp = dc.view().project(pt);
 
                     if (!dc.getPickFrustums().containsInAny(sp.x, sp.y))
                         continue;
@@ -558,7 +558,7 @@ public class PointGrid extends WWObjectImpl implements OrderedRenderable, Highli
         if (size == null)
             size = DEFAULT_POINT_SIZE;
 
-        double altitude = dc.getView().getEyePosition().getAltitude();
+        double altitude = dc.view().getEyePosition().getAltitude();
         if (dc.isPickingMode()) {
             size *= 2; // makes points easier to pick
         }
@@ -599,7 +599,7 @@ public class PointGrid extends WWObjectImpl implements OrderedRenderable, Highli
         if (dc.isPickingMode())
             return dc.getPickFrustums().intersectsAny(this.getExtent());
         else
-            return dc.getView().getFrustumInModelCoordinates().intersects(this.getExtent());
+            return dc.view().getFrustumInModelCoordinates().intersects(this.getExtent());
     }
 
     protected FloatBuffer computeGridPoints(DrawContext dc, FloatBuffer coords) {
@@ -624,7 +624,7 @@ public class PointGrid extends WWObjectImpl implements OrderedRenderable, Highli
 
     protected Vec4 computePoint(DrawContext dc, Position pos) {
         if (this.getAltitudeMode() == WorldWind.CLAMP_TO_GROUND)
-            return dc.getTerrain().getSurfacePoint(pos.getLatitude(), pos.getLongitude(), 0);
+            return dc.getTerrain().getSurfacePoint(pos.getLat(), pos.getLon(), 0);
 
         if (this.getAltitudeMode() == WorldWind.RELATIVE_TO_GROUND)
             return dc.getTerrain().getSurfacePoint(pos);

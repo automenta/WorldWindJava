@@ -80,7 +80,7 @@ public class DeclutteringTextRenderer {
     protected static void setDepthFunc(DrawContext dc, Vec4 screenPoint) {
         GL gl = dc.getGL();
 
-        Position eyePos = dc.getView().getEyePosition();
+        Position eyePos = dc.view().getEyePosition();
         if (eyePos == null) {
             gl.glDepthFunc(GL.GL_ALWAYS);
             return;
@@ -147,8 +147,8 @@ public class DeclutteringTextRenderer {
         if (!iterator.hasNext())
             return;
 
-        Frustum frustumInModelCoords = dc.getView().getFrustumInModelCoordinates();
-        double horizon = dc.getView().getHorizonDistance();
+        Frustum frustumInModelCoords = dc.view().getFrustumInModelCoordinates();
+        double horizon = dc.view().getHorizonDistance();
 
         while (iterator.hasNext()) {
             GeographicText text = iterator.next();
@@ -165,8 +165,8 @@ public class DeclutteringTextRenderer {
                     continue;
             }
 
-            Angle lat = text.getPosition().getLatitude();
-            Angle lon = text.getPosition().getLongitude();
+            Angle lat = text.getPosition().getLat();
+            Angle lon = text.getPosition().getLon();
 
             if (!dc.getVisibleSector().contains(lat, lon))
                 continue;
@@ -176,7 +176,7 @@ public class DeclutteringTextRenderer {
             if (textPoint == null)
                 continue;
 
-            double eyeDistance = dc.getView().getEyePoint().distanceTo3(textPoint);
+            double eyeDistance = dc.view().getEyePoint().distanceTo3(textPoint);
             if (!dc.is2DGlobe() && eyeDistance > horizon)
                 continue;
 
@@ -207,7 +207,7 @@ public class DeclutteringTextRenderer {
         gl.glMatrixMode(GL2.GL_PROJECTION);
         gl.glPushMatrix();
         gl.glLoadIdentity();
-        glu.gluOrtho2D(0, dc.getView().getViewport().width, 0, dc.getView().getViewport().height);
+        glu.gluOrtho2D(0, dc.view().getViewport().width, 0, dc.view().getViewport().height);
 
         gl.glMatrixMode(GL2.GL_TEXTURE);
         gl.glPushMatrix();
@@ -243,7 +243,7 @@ public class DeclutteringTextRenderer {
         if (charSequence == null)
             return null;
 
-        final Vec4 screenPoint = dc.getView().project(uText.getPoint());
+        final Vec4 screenPoint = dc.view().project(uText.getPoint());
         if (screenPoint == null)
             return null;
 
@@ -310,7 +310,7 @@ public class DeclutteringTextRenderer {
         if (charSequence == null)
             return null;
 
-        final Vec4 screenPoint = dc.getView().project(text.getPoint());
+        final Vec4 screenPoint = dc.view().project(text.getPoint());
         if (screenPoint == null)
             return null;
 

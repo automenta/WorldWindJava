@@ -97,7 +97,7 @@ public class SurfaceTileDrawContext {
         }
 
         return this.modelview.multiply(
-            Matrix.fromTranslation(referenceLocation.getLongitude().degrees, referenceLocation.getLatitude().degrees,
+            Matrix.fromTranslation(referenceLocation.getLon().degrees, referenceLocation.getLat().degrees,
                 0));
     }
 

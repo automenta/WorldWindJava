@@ -979,12 +979,12 @@ public class Matrix {
         // e = (lat2-lat1)/(y2-y1) - d*(x2-x1)/(y2-y1)
         // f = lat1 - d*x1 - e*y1
 
-        double lat1 = geoPoints[0].getLatitude().degrees;
-        double lat2 = geoPoints[1].getLatitude().degrees;
-        double lat3 = geoPoints[2].getLatitude().degrees;
-        double lon1 = geoPoints[0].getLongitude().degrees;
-        double lon2 = geoPoints[1].getLongitude().degrees;
-        double lon3 = geoPoints[2].getLongitude().degrees;
+        double lat1 = geoPoints[0].getLat().degrees;
+        double lat2 = geoPoints[1].getLat().degrees;
+        double lat3 = geoPoints[2].getLat().degrees;
+        double lon1 = geoPoints[0].getLon().degrees;
+        double lon2 = geoPoints[1].getLon().degrees;
+        double lon3 = geoPoints[2].getLon().degrees;
 
         double x1 = imagePoints[0].getX();
         double x2 = imagePoints[1].getX();
@@ -1060,12 +1060,12 @@ public class Matrix {
         // e = (y2-y1)/(lat2-lat1) - d*(lon2-lon1)/(lat2-lat1)
         // f = y1 - d*lon1 - e*lat1
 
-        double lat1 = geoPoints[0].getLatitude().degrees;
-        double lat2 = geoPoints[1].getLatitude().degrees;
-        double lat3 = geoPoints[2].getLatitude().degrees;
-        double lon1 = geoPoints[0].getLongitude().degrees;
-        double lon2 = geoPoints[1].getLongitude().degrees;
-        double lon3 = geoPoints[2].getLongitude().degrees;
+        double lat1 = geoPoints[0].getLat().degrees;
+        double lat2 = geoPoints[1].getLat().degrees;
+        double lat3 = geoPoints[2].getLat().degrees;
+        double lon1 = geoPoints[0].getLon().degrees;
+        double lon2 = geoPoints[1].getLon().degrees;
+        double lon3 = geoPoints[2].getLon().degrees;
 
         double x1 = imagePoints[0].getX();
         double x2 = imagePoints[1].getX();
@@ -2117,5 +2117,11 @@ public class Matrix {
         params.set(Keys.ROLL, roll);
 
         return params;
+    }
+
+    public double[] toGLUArray() {
+        double[] a = new double[16];
+        toArray(a, 0, false);
+        return a;
     }
 }

@@ -734,15 +734,15 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
     /**
      * {@inheritDoc}. This method passes through to the contained balloon.
      */
-    public void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
-        this.getBalloon().firePropertyChange(propertyName, oldValue, newValue);
+    public void emit(String propertyName, Object oldValue, Object newValue) {
+        this.getBalloon().emit(propertyName, oldValue, newValue);
     }
 
     /**
      * {@inheritDoc}. This method passes through to the contained balloon.
      */
-    public void firePropertyChange(PropertyChangeEvent propertyChangeEvent) {
-        this.getBalloon().firePropertyChange(propertyChangeEvent);
+    public void emit(PropertyChangeEvent propertyChangeEvent) {
+        this.getBalloon().emit(propertyChangeEvent);
     }
 
     /**

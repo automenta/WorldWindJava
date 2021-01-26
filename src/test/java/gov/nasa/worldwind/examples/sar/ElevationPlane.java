@@ -156,8 +156,8 @@ public class ElevationPlane extends Polygon {
         if (center == null)
             return null;
 
-        Vec4 north = dc.getGlobe().computeNorthPointingTangentAtLocation(center.getLatitude(), center.getLongitude());
-        Vec4 normal = dc.getGlobe().computeSurfaceNormalAtLocation(center.getLatitude(), center.getLongitude());
+        Vec4 north = dc.getGlobe().computeNorthPointingTangentAtLocation(center.getLat(), center.getLon());
+        Vec4 normal = dc.getGlobe().computeSurfaceNormalAtLocation(center.getLat(), center.getLon());
         Vec4 east = north.cross3(normal);
         north.toArray4(planes[0], 0); // texture coordinate s
         east.toArray4(planes[1], 0);  // texture coordinate t

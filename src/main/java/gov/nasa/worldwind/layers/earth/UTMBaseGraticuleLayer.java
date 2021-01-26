@@ -229,32 +229,32 @@ public class UTMBaseGraticuleLayer extends GraticuleLayer {
             throw new IllegalArgumentException(message);
         }
         Sector vs = dc.getVisibleSector();
-        OrbitView view = (OrbitView) dc.getView();
+        OrbitView view = (OrbitView) dc.view();
         // Compute labels offset from view center
         Position centerPos = view.getCenterPosition();
         double pixelSizeDegrees = Angle.fromRadians(view.computePixelSizeAtDistance(view.getZoom())
             / dc.getGlobe().getEquatorialRadius()).degrees;
         double labelOffsetDegrees = pixelSizeDegrees * view.getViewport().getWidth() / 4;
-        Position labelPos = Position.fromDegrees(centerPos.getLatitude().degrees - labelOffsetDegrees,
-            centerPos.getLongitude().degrees - labelOffsetDegrees, 0);
-        double labelLatDegrees = labelPos.getLatitude().latNorm().degrees;
+        Position labelPos = Position.fromDegrees(centerPos.getLat().degrees - labelOffsetDegrees,
+            centerPos.getLon().degrees - labelOffsetDegrees, 0);
+        double labelLatDegrees = labelPos.getLat().latNorm().degrees;
         labelLatDegrees = Math.min(Math.max(labelLatDegrees, -76), 78);
-        labelPos = new Position(new Angle(labelLatDegrees), labelPos.getLongitude().lonNorm(), 0);
+        labelPos = new Position(new Angle(labelLatDegrees), labelPos.getLon().lonNorm(), 0);
 
         if (vs != null) {
             for (GraticuleLayer.GridElement ge : this.gridElements) {
                 if (ge.isInView(dc)) {
                     if (ge.renderable instanceof GeographicText) {
                         GeographicText gt = (GeographicText) ge.renderable;
-                        if (labelPos.getLatitude().degrees < 72 || !"*32*34*36*".contains("*" + gt.getText() + '*')) {
+                        if (labelPos.getLat().degrees < 72 || !"*32*34*36*".contains("*" + gt.getText() + '*')) {
                             // Adjust label position according to eye position
                             Position pos = gt.getPosition();
                             if (ge.type.equals(GraticuleLayer.GridElement.TYPE_LATITUDE_LABEL))
-                                pos = Position.fromDegrees(pos.getLatitude().degrees,
-                                    labelPos.getLongitude().degrees, pos.getElevation());
+                                pos = Position.fromDegrees(pos.getLat().degrees,
+                                    labelPos.getLon().degrees, pos.getElevation());
                             else if (ge.type.equals(GraticuleLayer.GridElement.TYPE_LONGITUDE_LABEL))
-                                pos = Position.fromDegrees(labelPos.getLatitude().degrees,
-                                    pos.getLongitude().degrees, pos.getElevation());
+                                pos = Position.fromDegrees(labelPos.getLat().degrees,
+                                    pos.getLon().degrees, pos.getElevation());
 
                             gt.setPosition(pos);
                         }
@@ -452,11 +452,11 @@ public class UTMBaseGraticuleLayer extends GraticuleLayer {
 
         public void computeZone(DrawContext dc) {
 //            try {
-            Position centerPos = ((OrbitView) dc.getView()).getCenterPosition();
+            Position centerPos = ((OrbitView) dc.view()).getCenterPosition();
             if (centerPos != null) {
-                if (centerPos.latitude <= UTMBaseGraticuleLayer.UTM_MAX_LATITUDE
-                    && centerPos.latitude >= UTMBaseGraticuleLayer.UTM_MIN_LATITUDE) {
-                    this.zone = UTMCoord.fromLatLon(centerPos.getLatitude(), centerPos.getLongitude(),
+                if (centerPos.lat <= UTMBaseGraticuleLayer.UTM_MAX_LATITUDE
+                    && centerPos.lat >= UTMBaseGraticuleLayer.UTM_MIN_LATITUDE) {
+                    this.zone = UTMCoord.fromLatLon(centerPos.getLat(), centerPos.getLon(),
                         dc.getGlobe()).getZone();
                 } else
                     this.zone = 0;
@@ -509,7 +509,7 @@ public class UTMBaseGraticuleLayer extends GraticuleLayer {
 
         public void selectRenderables(DrawContext dc) {
             try {
-                OrbitView view = (OrbitView) dc.getView();
+                OrbitView view = (OrbitView) dc.view();
                 // Compute easting and northing label offsets
                 double pixelSize = view.computePixelSizeAtDistance(view.getZoom());
                 double eastingOffset = view.getViewport().width * pixelSize * offsetFactorX / 2;
@@ -520,7 +520,7 @@ public class UTMBaseGraticuleLayer extends GraticuleLayer {
                 double labelNorthing;
                 String labelHemisphere;
                 if (this.zone > 0) {
-                    UTMCoord UTM = UTMCoord.fromLatLon(centerPos.getLatitude(), centerPos.getLongitude(),
+                    UTMCoord UTM = UTMCoord.fromLatLon(centerPos.getLat(), centerPos.getLon(),
                         dc.getGlobe());
                     labelEasting = UTM.getEasting() + eastingOffset;
                     labelNorthing = UTM.getNorthing() + northingOffset;
@@ -530,14 +530,14 @@ public class UTMBaseGraticuleLayer extends GraticuleLayer {
                         labelHemisphere = Keys.SOUTH;
                     }
                 } else {
-                    UPSCoord UPS = UPSCoord.fromLatLon(centerPos.getLatitude(), centerPos.getLongitude(),
+                    UPSCoord UPS = UPSCoord.fromLatLon(centerPos.getLat(), centerPos.getLon(),
                         dc.getGlobe());
                     labelEasting = UPS.getEasting() + eastingOffset;
                     labelNorthing = UPS.getNorthing() + northingOffset;
                     labelHemisphere = UPS.getHemisphere();
                 }
 
-                Frustum viewFrustum = dc.getView().getFrustumInModelCoordinates();
+                Frustum viewFrustum = dc.view().getFrustumInModelCoordinates();
 
                 Position labelPos;
                 for (int i = 0; i < this.extremes.length; i++) {
@@ -554,8 +554,8 @@ public class UTMBaseGraticuleLayer extends GraticuleLayer {
                                     labelPos = computePosition(this.zone, labelHemisphere, easting, labelNorthing);
                                     if (labelPos == null)
                                         continue;
-                                    Angle lat = labelPos.getLatitude();
-                                    Angle lon = labelPos.getLongitude();
+                                    Angle lat = labelPos.getLat();
+                                    Angle lon = labelPos.getLon();
                                     Vec4 surfacePoint = GraticuleLayer.getSurfacePoint(dc, lat, lon);
                                     if (viewFrustum.contains(surfacePoint) && isPointInRange(dc, surfacePoint)) {
                                         String text = String.valueOf((int) (easting % this.scaleModulo));
@@ -580,8 +580,8 @@ public class UTMBaseGraticuleLayer extends GraticuleLayer {
                                     labelPos = computePosition(this.zone, currentHemisphere, labelEasting, northing);
                                     if (labelPos == null)
                                         continue;
-                                    Angle lat = labelPos.getLatitude();
-                                    Angle lon = labelPos.getLongitude();
+                                    Angle lat = labelPos.getLat();
+                                    Angle lon = labelPos.getLon();
                                     Vec4 surfacePoint = GraticuleLayer.getSurfacePoint(dc, lat, lon);
                                     if (viewFrustum.contains(surfacePoint) && isPointInRange(dc, surfacePoint)) {
                                         String text = String.valueOf((int) (northing % this.scaleModulo));
@@ -610,7 +610,7 @@ public class UTMBaseGraticuleLayer extends GraticuleLayer {
 
         private boolean isPointInRange(DrawContext dc, Vec4 point) {
             double altitudeAboveGround = GraticuleLayer.computeAltitudeAboveGround(dc);
-            return dc.getView().getEyePoint().distanceTo3(point)
+            return dc.view().getEyePoint().distanceTo3(point)
                 < altitudeAboveGround * this.visibleDistanceFactor;
         }
 
@@ -715,21 +715,21 @@ public class UTMBaseGraticuleLayer extends GraticuleLayer {
 
             double lonSign = 0;
             for (LatLon corner : corners) {
-                if (Math.abs(corner.getLongitude().degrees) != 180)
-                    lonSign = Math.signum(corner.getLongitude().degrees);
+                if (Math.abs(corner.getLon().degrees) != 180)
+                    lonSign = Math.signum(corner.getLon().degrees);
             }
 
             if (lonSign == 0)
                 return;
 
-            if (Math.abs(sw.getLongitude().degrees) == 180 && Math.signum(sw.getLongitude().degrees) != lonSign)
-                sw = new Position(sw.getLatitude(), sw.getLongitude().multiply(-1), sw.getElevation());
-            if (Math.abs(se.getLongitude().degrees) == 180 && Math.signum(se.getLongitude().degrees) != lonSign)
-                se = new Position(se.getLatitude(), se.getLongitude().multiply(-1), se.getElevation());
-            if (Math.abs(nw.getLongitude().degrees) == 180 && Math.signum(nw.getLongitude().degrees) != lonSign)
-                nw = new Position(nw.getLatitude(), nw.getLongitude().multiply(-1), nw.getElevation());
-            if (Math.abs(ne.getLongitude().degrees) == 180 && Math.signum(ne.getLongitude().degrees) != lonSign)
-                ne = new Position(ne.getLatitude(), ne.getLongitude().multiply(-1), ne.getElevation());
+            if (Math.abs(sw.getLon().degrees) == 180 && Math.signum(sw.getLon().degrees) != lonSign)
+                sw = new Position(sw.getLat(), sw.getLon().multiply(-1), sw.getElevation());
+            if (Math.abs(se.getLon().degrees) == 180 && Math.signum(se.getLon().degrees) != lonSign)
+                se = new Position(se.getLat(), se.getLon().multiply(-1), se.getElevation());
+            if (Math.abs(nw.getLon().degrees) == 180 && Math.signum(nw.getLon().degrees) != lonSign)
+                nw = new Position(nw.getLat(), nw.getLon().multiply(-1), nw.getElevation());
+            if (Math.abs(ne.getLon().degrees) == 180 && Math.signum(ne.getLon().degrees) != lonSign)
+                ne = new Position(ne.getLat(), ne.getLon().multiply(-1), ne.getElevation());
         }
 
         public Extent getExtent(Globe globe, double ve) {
@@ -738,7 +738,7 @@ public class UTMBaseGraticuleLayer extends GraticuleLayer {
 
         @SuppressWarnings("RedundantIfStatement")
         public boolean isInView(DrawContext dc) {
-            if (!dc.getView().getFrustumInModelCoordinates().intersects(
+            if (!dc.view().getFrustumInModelCoordinates().intersects(
                 this.getExtent(dc.getGlobe(), dc.getVerticalExaggeration())))
                 return false;
 
@@ -790,8 +790,8 @@ public class UTMBaseGraticuleLayer extends GraticuleLayer {
         }
 
         public double getSizeInPixels(DrawContext dc) {
-            View view = dc.getView();
-            Vec4 centerPoint = GraticuleLayer.getSurfacePoint(dc, this.centroid.getLatitude(), this.centroid.getLongitude());
+            View view = dc.view();
+            Vec4 centerPoint = GraticuleLayer.getSurfacePoint(dc, this.centroid.getLat(), this.centroid.getLon());
             double distance = view.getEyePoint().distanceTo3(centerPoint);
             return this.size / view.computePixelSizeAtDistance(distance);
         }
@@ -959,7 +959,7 @@ public class UTMBaseGraticuleLayer extends GraticuleLayer {
             // Label
             if (this.name != null) {
                 // Only add a label to squares above some dimension
-                if (this.boundingSector.lonDelta().degrees * Math.cos(this.centroid.getLatitude().radians()) > 0.2
+                if (this.boundingSector.lonDelta().degrees * Math.cos(this.centroid.getLat().radians()) > 0.2
                     && this.boundingSector.latDelta().degrees > 0.2) {
                     LatLon labelPos = null;
                     if (this.UTMZone != 0) // Not at poles
@@ -967,8 +967,8 @@ public class UTMBaseGraticuleLayer extends GraticuleLayer {
                         labelPos = this.centroid;
                     } else if (this.isPositionInside(new Position(this.squareCenter, 0))) {
                         labelPos = this.squareCenter;
-                    } else if (this.squareCenter.getLatitude().degrees <= this.UTMZoneSector.latMax
-                        && this.squareCenter.getLatitude().degrees >= this.UTMZoneSector.latMin) {
+                    } else if (this.squareCenter.getLat().degrees <= this.UTMZoneSector.latMax
+                        && this.squareCenter.getLat().degrees >= this.UTMZoneSector.latMin) {
                         labelPos = this.centroid;
                     }
                     if (labelPos != null) {
@@ -996,7 +996,7 @@ public class UTMBaseGraticuleLayer extends GraticuleLayer {
 
         @SuppressWarnings("RedundantIfStatement")
         public boolean isInView(DrawContext dc) {
-            if (!dc.getView().getFrustumInModelCoordinates().intersects(
+            if (!dc.view().getFrustumInModelCoordinates().intersects(
                 this.getExtent(dc.getGlobe(), dc.getVerticalExaggeration())))
                 return false;
 

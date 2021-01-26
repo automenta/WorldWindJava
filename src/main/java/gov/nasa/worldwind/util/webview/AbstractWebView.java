@@ -106,7 +106,7 @@ public abstract class AbstractWebView extends WWObjectImpl implements WebView {
         if (!SwingUtilities.isEventDispatchThread()) {
             SwingUtilities.invokeLater(() -> propertyChange(event));
         } else {
-            this.firePropertyChange(Keys.REPAINT, null, this);
+            this.emit(Keys.REPAINT, null, this);
         }
     }
 }

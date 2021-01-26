@@ -81,7 +81,7 @@ public class BasicOrbitViewLimits extends BasicViewPropertyLimits implements Orb
         }
 
         return new Position(
-            BasicOrbitViewLimits.limitCenterLocation(position.getLatitude(), position.getLongitude(), viewLimits),
+            BasicOrbitViewLimits.limitCenterLocation(position.getLat(), position.getLon(), viewLimits),
             BasicOrbitViewLimits.limitCenterElevation(position.getElevation(), viewLimits));
     }
 
@@ -262,8 +262,8 @@ public class BasicOrbitViewLimits extends BasicViewPropertyLimits implements Orb
     public Position limitCenterPosition(View view, Position position) {
 
         Sector sector = this.centerLocationLimits;
-        double lat = Angle.clamp(position.latitude, sector.latMin, sector.latMax);
-        double lon = Angle.clamp(position.longitude, sector.lonMin, sector.lonMax);
+        double lat = Angle.clamp(position.lat, sector.latMin, sector.latMax);
+        double lon = Angle.clamp(position.lon, sector.lonMin, sector.lonMax);
         double alt = WWMath.clamp(position.elevation, this.minCenterElevation, this.maxCenterElevation);
 
         return new Position(lat, lon, alt);

@@ -53,8 +53,8 @@ public class GliderTestApp extends ApplicationTemplate {
         double sinAngle = angle.sin();
 
         LatLon c = sector.getCentroid();
-        float cx = (float) c.getLongitude().degrees;
-        float cy = (float) c.getLatitude().degrees;
+        float cx = (float) c.getLon().degrees;
+        float cy = (float) c.getLat().degrees;
 
         for (int j = 0; j < height; j++) {
             for (int i = 0; i < width; i++) {

@@ -257,7 +257,7 @@ public class GDAL {
 
             double minX = Double.MAX_VALUE, maxX = -Double.MAX_VALUE, minY = Double.MAX_VALUE, maxY = -Double.MAX_VALUE;
             for (LatLon ll : sector.getCorners()) {
-                double[] point = ct.TransformPoint(ll.getLongitude().degrees, ll.getLatitude().degrees);
+                double[] point = ct.TransformPoint(ll.getLon().degrees, ll.getLat().degrees);
                 if (null != point) {
                     minX = Math.min(point[0], minX);
                     maxX = Math.max(point[0], maxX);

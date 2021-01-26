@@ -267,8 +267,8 @@ public class GeographicTextRenderer {
         if (!iterator.hasNext())
             return;
 
-        Frustum frustumInModelCoords = dc.getView().getFrustumInModelCoordinates();
-        double horizon = dc.getView().getHorizonDistance();
+        Frustum frustumInModelCoords = dc.view().getFrustumInModelCoordinates();
+        double horizon = dc.view().getHorizonDistance();
 
         while (iterator.hasNext()) {
             GeographicText text = iterator.next();
@@ -284,8 +284,8 @@ public class GeographicTextRenderer {
                     continue;
             }
 
-            Angle lat = text.getPosition().getLatitude();
-            Angle lon = text.getPosition().getLongitude();
+            Angle lat = text.getPosition().getLat();
+            Angle lon = text.getPosition().getLon();
 
             if (!dc.getVisibleSector().contains(lat, lon))
                 continue;
@@ -295,7 +295,7 @@ public class GeographicTextRenderer {
             if (textPoint == null)
                 continue;
 
-            double eyeDistance = dc.getView().getEyePoint().distanceTo3(textPoint);
+            double eyeDistance = dc.view().getEyePoint().distanceTo3(textPoint);
             if (!dc.is2DGlobe() && eyeDistance > horizon)
                 continue;
 
@@ -312,7 +312,7 @@ public class GeographicTextRenderer {
             Logging.logger().fine(msg);
             throw new IllegalArgumentException(msg);
         }
-        if (dc.getView() == null) {
+        if (dc.view() == null) {
             String msg = Logging.getMessage("nullValue.ViewIsNull");
             Logging.logger().fine(msg);
             throw new IllegalArgumentException(msg);
@@ -332,8 +332,8 @@ public class GeographicTextRenderer {
             if (text.getPosition() == null)
                 return;
 
-            Angle lat = text.getPosition().getLatitude();
-            Angle lon = text.getPosition().getLongitude();
+            Angle lat = text.getPosition().getLat();
+            Angle lon = text.getPosition().getLon();
 
             if (!dc.getVisibleSector().contains(lat, lon))
                 return;
@@ -344,12 +344,12 @@ public class GeographicTextRenderer {
                 return;
         }
 
-        double horizon = dc.getView().getHorizonDistance();
-        double eyeDistance = dc.getView().getEyePoint().distanceTo3(textPoint);
+        double horizon = dc.view().getHorizonDistance();
+        double eyeDistance = dc.view().getEyePoint().distanceTo3(textPoint);
         if (!dc.is2DGlobe() && eyeDistance > horizon)
             return;
 
-        if (!dc.getView().getFrustumInModelCoordinates().contains(textPoint))
+        if (!dc.view().getFrustumInModelCoordinates().contains(textPoint))
             return;
 
         dc.addOrderedRenderable(new OrderedText(text, textPoint, eyeDistance));
@@ -362,7 +362,7 @@ public class GeographicTextRenderer {
         if (charSequence == null)
             return null;
 
-        final Vec4 screenPoint = dc.getView().project(uText.point);
+        final Vec4 screenPoint = dc.view().project(uText.point);
         if (screenPoint == null)
             return null;
 
@@ -410,7 +410,7 @@ public class GeographicTextRenderer {
     }
 
     protected double computeLookAtDistance(DrawContext dc) {
-        View view = dc.getView();
+        View view = dc.view();
 
         // Get point in the middle of the screen
         // TODO: Get a point on the surface rather then the geoid
@@ -440,7 +440,7 @@ public class GeographicTextRenderer {
         gl.glMatrixMode(GL2.GL_PROJECTION);
         gl.glPushMatrix();
         gl.glLoadIdentity();
-        glu.gluOrtho2D(0, dc.getView().getViewport().width, 0, dc.getView().getViewport().height);
+        glu.gluOrtho2D(0, dc.view().getViewport().width, 0, dc.view().getViewport().height);
         gl.glMatrixMode(GL2.GL_MODELVIEW);
         gl.glPushMatrix();
         gl.glLoadIdentity();
@@ -499,7 +499,7 @@ public class GeographicTextRenderer {
         if (charSequence == null)
             return null;
 
-        final Vec4 screenPoint = dc.getView().project(uText.point);
+        final Vec4 screenPoint = dc.view().project(uText.point);
         if (screenPoint == null)
             return null;
 
@@ -578,7 +578,7 @@ public class GeographicTextRenderer {
     protected void setDepthFunc(DrawContext dc, OrderedText uText, Vec4 screenPoint) {
         GL gl = dc.getGL();
 
-        Position eyePos = dc.getView().getEyePosition();
+        Position eyePos = dc.view().getEyePosition();
         if (eyePos == null) {
             gl.glDepthFunc(GL.GL_ALWAYS);
             return;

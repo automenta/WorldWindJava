@@ -935,7 +935,7 @@ public abstract class AbstractShape extends WWObjectImpl
         if (refPt == null)
             return;
 
-        double newRefDistance = dc.getView().getEyePoint().distanceTo3(refPt);
+        double newRefDistance = dc.view().getEyePoint().distanceTo3(refPt);
         Double oldRefDistance = this.currentData.getReferenceDistance();
         if (oldRefDistance == null || Math.abs(newRefDistance - oldRefDistance) / oldRefDistance > 0.10) {
             this.currentData.setExpired(true);
@@ -959,7 +959,7 @@ public abstract class AbstractShape extends WWObjectImpl
         if (dc.isPickingMode())
             return dc.getPickFrustums().intersectsAny(this.getExtent());
 
-        return dc.getView().getFrustumInModelCoordinates().intersects(this.getExtent());
+        return dc.view().getFrustumInModelCoordinates().intersects(this.getExtent());
     }
 
     /**
@@ -1038,7 +1038,7 @@ public abstract class AbstractShape extends WWObjectImpl
 
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
-        dc.getView().setReferenceCenter(dc, this.getCurrentData().getReferencePoint());
+        dc.view().setReferenceCenter(dc, this.getCurrentData().getReferencePoint());
 
         if (dc.isPickingMode()) {
             Color pickColor = dc.getUniquePickColor();
@@ -1103,7 +1103,7 @@ public abstract class AbstractShape extends WWObjectImpl
         this.BEogsh.pushClientAttrib(gl, GL2.GL_CLIENT_VERTEX_ARRAY_BIT);
         gl.glEnableClientState(GL2.GL_VERTEX_ARRAY); // all drawing uses vertex arrays
 
-        dc.getView().pushReferenceCenter(dc, this.getCurrentData().getReferencePoint());
+        dc.view().pushReferenceCenter(dc, this.getCurrentData().getReferencePoint());
 
         return this.BEogsh;
     }
@@ -1118,7 +1118,7 @@ public abstract class AbstractShape extends WWObjectImpl
     protected void endDrawing(DrawContext dc) {
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
-        dc.getView().popReferenceCenter(dc);
+        dc.view().popReferenceCenter(dc);
 
         gl.glDisableClientState(GL2.GL_NORMAL_ARRAY); // explicitly disable normal array client state; fixes WWJ-450
 
@@ -1260,7 +1260,7 @@ public abstract class AbstractShape extends WWObjectImpl
     protected Vec4 computePoint(Terrain terrain, Position position) {
         final int altMode = this.getAltitudeMode();
         if (altMode == WorldWind.CLAMP_TO_GROUND)
-            return terrain.getSurfacePoint(position.getLatitude(), position.getLongitude(), 0.0d);
+            return terrain.getSurfacePoint(position.getLat(), position.getLon(), 0.0d);
         else if (altMode == WorldWind.RELATIVE_TO_GROUND)
             return terrain.getSurfacePoint(position);
 
@@ -1282,7 +1282,7 @@ public abstract class AbstractShape extends WWObjectImpl
     protected Vec4 computePoint(DrawContext dc, Terrain terrain, Position position) {
         final int altMode = this.getAltitudeMode();
         if (altMode == WorldWind.CLAMP_TO_GROUND || dc.is2DGlobe())
-            return terrain.getSurfacePoint(position.getLatitude(), position.getLongitude(), 0.0d);
+            return terrain.getSurfacePoint(position.getLat(), position.getLon(), 0.0d);
         else if (altMode == WorldWind.RELATIVE_TO_GROUND)
             return terrain.getSurfacePoint(position);
 
@@ -1379,7 +1379,6 @@ public abstract class AbstractShape extends WWObjectImpl
         return this.dragEnabled;
     }
 
-    @Override
     public void setDragEnabled(boolean enabled) {
         this.dragEnabled = enabled;
     }

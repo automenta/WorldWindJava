@@ -62,7 +62,7 @@ public class Level extends KVMap implements Comparable<Level> {
         this.urlBuilder = (TileUrlBuilder) this.params.get(Keys.TILE_URL_BUILDER);
         this.expiryTime = KVMap.getLongValue(params, Keys.EXPIRY_TIME, 0L);
 
-        this.texelSize = this.tileDelta.getLatitude().radians() / this.tileHeight;
+        this.texelSize = this.tileDelta.getLat().radians() / this.tileHeight;
 
         this.path = this.cacheName + '/' + this.levelName;
 
@@ -259,10 +259,10 @@ public class Level extends KVMap implements Comparable<Level> {
 //        }
 
         // Compute the tile's SW lat/lon based on its row/col in the level's data set.
-        Angle dLat = this.getTileDelta().getLatitude();
-        Angle dLon = this.getTileDelta().getLongitude();
-        Angle latOrigin = tileOrigin.getLatitude();
-        Angle lonOrigin = tileOrigin.getLongitude();
+        Angle dLat = this.getTileDelta().getLat();
+        Angle dLon = this.getTileDelta().getLon();
+        Angle latOrigin = tileOrigin.getLat();
+        Angle lonOrigin = tileOrigin.getLon();
 
         int row = Tile.computeRow(dLat, latitude, latOrigin);
         int col = Tile.computeColumn(dLon, longitude, lonOrigin);

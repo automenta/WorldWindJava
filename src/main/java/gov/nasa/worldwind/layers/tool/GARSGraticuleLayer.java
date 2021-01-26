@@ -118,8 +118,8 @@ public class GARSGraticuleLayer extends GraticuleLayer {
 
     protected static String makeLabel(Sector sector, String graticuleType) {
         if (graticuleType.equals(GARSGraticuleLayer.GRATICULE_GARS_LEVEL_1)) {
-            int iLat = (int) ((90 + sector.getCentroid().getLatitude().degrees) * 60 / 30);
-            int iLon = (int) ((180 + sector.getCentroid().getLongitude().degrees) * 60 / 30);
+            int iLat = (int) ((90 + sector.getCentroid().getLat().degrees) * 60 / 30);
+            int iLon = (int) ((180 + sector.getCentroid().getLon().degrees) * 60 / 30);
 
             return GARSGraticuleLayer.lonLabels.get(iLon) + GARSGraticuleLayer.latLabels.get(iLat);
         } else if (graticuleType.equals(GARSGraticuleLayer.GRATICULE_GARS_LEVEL_2)) {
@@ -360,7 +360,7 @@ public class GARSGraticuleLayer extends GraticuleLayer {
                 this.latitudeLabels.add(value);
                 String label = makeAngleLabel(new Angle(value), resolution);
                 GeographicText text = new UserFacingText(label,
-                    Position.fromDegrees(value, labelOffset.getLongitude().degrees, 0));
+                    Position.fromDegrees(value, labelOffset.getLon().degrees, 0));
                 text.setPriority(resolution * 1.0e6);
                 this.addRenderable(text, graticuleType);
             }
@@ -369,7 +369,7 @@ public class GARSGraticuleLayer extends GraticuleLayer {
                 this.longitudeLabels.add(value);
                 String label = makeAngleLabel(new Angle(value), resolution);
                 GeographicText text = new UserFacingText(label,
-                    Position.fromDegrees(labelOffset.getLatitude().degrees, value, 0));
+                    Position.fromDegrees(labelOffset.getLat().degrees, value, 0));
                 text.setPriority(resolution * 1.0e6);
                 this.addRenderable(text, graticuleType);
             }
@@ -398,12 +398,12 @@ public class GARSGraticuleLayer extends GraticuleLayer {
 
         @SuppressWarnings("RedundantIfStatement")
         public boolean isInView(DrawContext dc) {
-            if (!dc.getView().getFrustumInModelCoordinates().intersects(
+            if (!dc.view().getFrustumInModelCoordinates().intersects(
                 this.getExtent(dc.getGlobe(), dc.getVerticalExaggeration())))
                 return false;
 
             if (this.level != 0) {
-                if (dc.getView().getEyePosition().getAltitude() > thresholds[this.level - 1])
+                if (dc.view().getEyePosition().getAltitude() > thresholds[this.level - 1])
                     return false;
             }
 
@@ -411,9 +411,9 @@ public class GARSGraticuleLayer extends GraticuleLayer {
         }
 
         public double getSizeInPixels(DrawContext dc) {
-            View view = dc.getView();
-            Vec4 centerPoint = GraticuleLayer.getSurfacePoint(dc, this.sector.getCentroid().getLatitude(),
-                this.sector.getCentroid().getLongitude());
+            View view = dc.view();
+            Vec4 centerPoint = GraticuleLayer.getSurfacePoint(dc, this.sector.getCentroid().getLat(),
+                this.sector.getCentroid().getLon());
             double distance = view.getEyePoint().distanceTo3(centerPoint);
             double tileSizeMeter = toRadians(this.sector.latDelta) * dc.getGlobe().getRadius();
             return tileSizeMeter / view.computePixelSizeAtDistance(distance);
@@ -424,7 +424,7 @@ public class GARSGraticuleLayer extends GraticuleLayer {
                 this.createRenderables();
 
             String graticuleType = GARSGraticuleLayer.getTypeFor(this.sector.latDelta);
-            if (this.level == 0 && dc.getView().getEyePosition().getAltitude() > thresholds[0]) {
+            if (this.level == 0 && dc.view().getEyePosition().getAltitude() > thresholds[0]) {
                 LatLon labelOffset = GraticuleLayer.computeLabelOffset(dc);
 
                 for (GraticuleLayer.GridElement ge : this.gridElements) {
@@ -442,12 +442,12 @@ public class GARSGraticuleLayer extends GraticuleLayer {
                     }
                 }
 
-                if (dc.getView().getEyePosition().getAltitude() > thresholds[0])
+                if (dc.view().getEyePosition().getAltitude() > thresholds[0])
                     return;
             }
 
             // Select tile grid elements
-            double eyeDistance = dc.getView().getEyePosition().getAltitude();
+            double eyeDistance = dc.view().getEyePosition().getAltitude();
 
             if (this.level == 0 && eyeDistance <= thresholds[0]
                 || this.level == 1 && eyeDistance <= thresholds[1]

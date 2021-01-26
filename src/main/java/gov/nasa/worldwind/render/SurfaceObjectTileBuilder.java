@@ -246,7 +246,7 @@ public class SurfaceObjectTileBuilder {
      * @return true if the DrawContext's has a non-zero viewport; false otherwise.
      */
     protected static boolean canAssembleTiles(DrawContext dc) {
-        Rectangle viewport = dc.getView().getViewport();
+        Rectangle viewport = dc.view().getViewport();
         return viewport.getWidth() > 0 && viewport.getHeight() > 0;
     }
 
@@ -320,7 +320,7 @@ public class SurfaceObjectTileBuilder {
         if (dc.isPickingMode())
             return dc.getPickFrustums().intersectsAny(extent);
 
-        return dc.getView().getFrustumInModelCoordinates().intersects(extent);
+        return dc.view().getFrustumInModelCoordinates().intersects(extent);
     }
 
     /**
@@ -908,10 +908,10 @@ public class SurfaceObjectTileBuilder {
         String tileCacheName = this.currentInfo.cacheName;
 
         Level level = levelSet.getFirstLevel();
-        Angle dLat = level.getTileDelta().getLatitude();
-        Angle dLon = level.getTileDelta().getLongitude();
-        Angle latOrigin = levelSet.tileOrigin.getLatitude();
-        Angle lonOrigin = levelSet.tileOrigin.getLongitude();
+        Angle dLat = level.getTileDelta().getLat();
+        Angle dLon = level.getTileDelta().getLon();
+        Angle latOrigin = levelSet.tileOrigin.getLat();
+        Angle lonOrigin = levelSet.tileOrigin.getLon();
 
         // Store the top level tiles in a set to ensure that each top level tile is added only once. Store the tiles
         // that intersect each surface renderable in a set to ensure that each object is added to a tile at most once.
@@ -1085,12 +1085,12 @@ public class SurfaceObjectTileBuilder {
         if (tile.sector.latMin >= 75 || tile.sector.latMax <= -75)
             s *= 0.85;
         double detailScale = Math.pow(10, -s);
-        double fieldOfViewScale = dc.getView().getFieldOfView().tanHalfAngle() / new Angle(45).tanHalfAngle();
+        double fieldOfViewScale = dc.view().getFieldOfView().tanHalfAngle() / new Angle(45).tanHalfAngle();
         fieldOfViewScale = WWMath.clamp(fieldOfViewScale, 0, 1);
 
         // Compute the distance between the eye point and the sector in meters, and compute a fraction of that distance
         // by multiplying the actual distance by the level of detail scale and the field of view scale.
-        double eyeDistanceMeters = tile.sector.distanceTo(dc, dc.getView().getEyePoint());
+        double eyeDistanceMeters = tile.sector.distanceTo(dc, dc.view().getEyePoint());
         double scaledEyeDistanceMeters = eyeDistanceMeters * detailScale * fieldOfViewScale;
 
         // Split when the texel size in meters becomes greater than the specified fraction of the eye distance, also in
@@ -1148,7 +1148,7 @@ public class SurfaceObjectTileBuilder {
 
         // The viewport may be smaller than the desired dimension. For that reason, we constrain the desired tile
         // dimension by the viewport width and height.
-        Rectangle viewport = dc.getView().getViewport();
+        Rectangle viewport = dc.view().getViewport();
         if (maxSize > viewport.width)
             maxSize = viewport.width;
         if (maxSize > viewport.height)

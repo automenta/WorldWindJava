@@ -104,7 +104,7 @@ public class CoordinatesDisplay extends AbstractOnDemandLayerFeature {
     private String formatText(DrawContext dc) {
         StringBuilder sb = new StringBuilder();
 
-        Position eyePosition = dc.getView().getEyePosition();
+        Position eyePosition = dc.view().getEyePosition();
         if (eyePosition != null) {
             WWOUnitsFormat units = this.controller.getUnits();
             String origFormat = units.getFormat(UnitsFormat.FORMAT_EYE_ALTITUDE);
@@ -126,8 +126,8 @@ public class CoordinatesDisplay extends AbstractOnDemandLayerFeature {
 
         Position currentPosition = getCurrentPosition(dc);
         if (currentPosition != null) {
-            sb.append(this.controller.getUnits().latitudeNL(currentPosition.getLatitude()));
-            sb.append(this.controller.getUnits().longitudeNL(currentPosition.getLongitude()));
+            sb.append(this.controller.getUnits().latitudeNL(currentPosition.getLat()));
+            sb.append(this.controller.getUnits().longitudeNL(currentPosition.getLon()));
             sb.append(this.controller.getUnits().terrainHeightNL(currentPosition.getElevation(),
                 this.controller.getWWd().sceneControl().getVerticalExaggeration()));
         }
@@ -137,8 +137,8 @@ public class CoordinatesDisplay extends AbstractOnDemandLayerFeature {
             sb.append(this.controller.getUnits().getStringValue(UnitsFormat.LABEL_TERRAIN_HEIGHT)).append("\n");
         }
 
-        sb.append(this.controller.getUnits().pitchNL(computePitch(dc.getView())));
-        sb.append(this.controller.getUnits().headingNL(computeHeading(dc.getView())));
+        sb.append(this.controller.getUnits().pitchNL(computePitch(dc.view())));
+        sb.append(this.controller.getUnits().headingNL(computeHeading(dc.view())));
 
         String datum = this.controller.getUnits().datumNL();
 
@@ -146,7 +146,7 @@ public class CoordinatesDisplay extends AbstractOnDemandLayerFeature {
             sb.append(datum);
             if (currentPosition != null) {
                 try {
-                    UTMCoord utm = UTMCoord.fromLatLon(currentPosition.getLatitude(), currentPosition.getLongitude(),
+                    UTMCoord utm = UTMCoord.fromLatLon(currentPosition.getLat(), currentPosition.getLon(),
                         this.controller.getUnits().isShowWGS84() ? null : "NAD27");
 
                     sb.append(this.controller.getUnits().utmZoneNL(utm.getZone()));

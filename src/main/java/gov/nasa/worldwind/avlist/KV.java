@@ -129,7 +129,7 @@ public interface KV {
      * @throws IllegalArgumentException if <code>propertyName</code> is null
      * @see java.beans.PropertyChangeSupport
      */
-    void firePropertyChange(String propertyName, Object oldValue, Object newValue);
+    void emit(String propertyName, Object oldValue, Object newValue);
 
     /**
      * Calls all registered property change listeners with the specified property change event.
@@ -138,7 +138,7 @@ public interface KV {
      * @throws IllegalArgumentException if <code>propertyChangeEvent</code> is null
      * @see java.beans.PropertyChangeSupport
      */
-    void firePropertyChange(PropertyChangeEvent propertyChangeEvent);
+    void emit(PropertyChangeEvent propertyChangeEvent);
 
     /**
      * Returns a shallow copy of this <code>AVList</code> instance: the keys and values themselves are not cloned.

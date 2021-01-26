@@ -304,10 +304,10 @@ public class AntennaModel extends AbstractShape {
         gl.glPushMatrix();
 
         // Rotate to align with longitude.
-        gl.glRotated(this.getPosition().getLongitude().degrees, 0, 1, 0);
+        gl.glRotated(this.getPosition().getLon().degrees, 0, 1, 0);
 
         // Rotate to align with latitude.
-        gl.glRotated(Math.abs(90 - this.getPosition().getLatitude().degrees), 1, 0, 0);
+        gl.glRotated(Math.abs(90 - this.getPosition().getLat().degrees), 1, 0, 0);
 
         // Apply the azimuth.
         if (this.getAzimuth() != null)

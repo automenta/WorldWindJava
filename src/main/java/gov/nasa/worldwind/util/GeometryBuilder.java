@@ -4183,8 +4183,8 @@ public class GeometryBuilder {
     private static void append(Terrain terrain, LatLon ll, double altitude, boolean terrainConformant, Vec4 refPoint,
         FloatBuffer dest) {
         Vec4 point = terrainConformant ?
-            terrain.getSurfacePoint(ll.latitude, ll.longitude, altitude) :
-            terrain.getGlobe().computePointFromPosition(ll.latitude, ll.longitude, altitude);
+            terrain.getSurfacePoint(ll.lat, ll.lon, altitude) :
+            terrain.getGlobe().computePointFromPosition(ll.lat, ll.lon, altitude);
 
         GeometryBuilder.coord[0] = (float) (point.x - refPoint.x);
         GeometryBuilder.coord[1] = (float) (point.y - refPoint.y);

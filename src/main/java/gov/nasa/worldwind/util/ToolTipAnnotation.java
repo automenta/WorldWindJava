@@ -78,7 +78,7 @@ public class ToolTipAnnotation extends ScreenAnnotation {
         this.getAttributes().setDrawOffset(
             new Point(this.getBounds(dc).width / 2 + this.getOffsetX(), this.getOffsetY()));
         this.setScreenPoint(this.adjustDrawPointToViewport(dc.getPickPoint(), this.getBounds(dc),
-            dc.getView().getViewport()));
+            dc.view().getViewport()));
 
         super.doRenderNow(dc);
     }

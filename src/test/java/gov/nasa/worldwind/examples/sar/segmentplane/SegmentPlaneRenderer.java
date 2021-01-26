@@ -528,7 +528,7 @@ public class SegmentPlaneRenderer {
 
         if (relativeToSurface) {
             double surfaceElevation = SegmentPlaneRenderer.computeSurfaceElevation(sgl, globe,
-                location.getLatitude(), location.getLongitude());
+                location.getLat(), location.getLon());
             altitude = surfaceElevation + v * (altitudes[1] - surfaceElevation);
         }
         else {
@@ -598,10 +598,10 @@ public class SegmentPlaneRenderer {
         LatLon[] locations = segmentPlane.getPlaneLocations();
 
         Vec4[] corners = new Vec4[] {
-            globe.computePointFromPosition(locations[0].getLatitude(), locations[0].getLongitude(), altitudes[0]),
-            globe.computePointFromPosition(locations[1].getLatitude(), locations[1].getLongitude(), altitudes[0]),
-            globe.computePointFromPosition(locations[1].getLatitude(), locations[1].getLongitude(), altitudes[1]),
-            globe.computePointFromPosition(locations[0].getLatitude(), locations[0].getLongitude(), altitudes[1])};
+            globe.computePointFromPosition(locations[0].getLat(), locations[0].getLon(), altitudes[0]),
+            globe.computePointFromPosition(locations[1].getLat(), locations[1].getLon(), altitudes[0]),
+            globe.computePointFromPosition(locations[1].getLat(), locations[1].getLon(), altitudes[1]),
+            globe.computePointFromPosition(locations[0].getLat(), locations[0].getLon(), altitudes[1])};
 
         double distance = Vec4.getAverageDistance(Arrays.asList(corners));
         return distance * this.getMaxObjectSizeCoefficient();
@@ -609,7 +609,7 @@ public class SegmentPlaneRenderer {
 
     protected void drawPlaneGeometry(DrawContext dc, SegmentPlane segmentPlane, RenderInfo renderInfo,
         Point pickPoint, Layer layer) {
-        dc.getView().pushReferenceCenter(dc, renderInfo.planeReferenceCenter);
+        dc.view().pushReferenceCenter(dc, renderInfo.planeReferenceCenter);
         try {
             SegmentPlaneRenderer.bindPlaneVertexGeometry(dc, renderInfo);
             this.drawPlaneBackground(dc, segmentPlane, renderInfo, pickPoint, layer);
@@ -617,7 +617,7 @@ public class SegmentPlaneRenderer {
             this.drawPlaneOutline(dc, segmentPlane, renderInfo, pickPoint, layer);
         }
         finally {
-            dc.getView().popReferenceCenter(dc);
+            dc.view().popReferenceCenter(dc);
         }
     }
 
@@ -716,7 +716,7 @@ public class SegmentPlaneRenderer {
         if (topObject == null)
             return;
 
-        Line ray = dc.getView().computeRayFromScreenPoint(pickPoint.getX(), pickPoint.getY());
+        Line ray = dc.view().computeRayFromScreenPoint(pickPoint.getX(), pickPoint.getY());
         Vec4 point = this.intersectRayWithFill(ray, renderInfo);
         if (point == null)
             return;
@@ -737,7 +737,7 @@ public class SegmentPlaneRenderer {
         if (topObject == null)
             return;
 
-        Line ray = dc.getView().computeRayFromScreenPoint(pickPoint.getX(), pickPoint.getY());
+        Line ray = dc.view().computeRayFromScreenPoint(pickPoint.getX(), pickPoint.getY());
         Plane plane = segmentPlane.computeInfinitePlane(dc.getGlobe());
         if (plane == null)
             return;
@@ -767,7 +767,7 @@ public class SegmentPlaneRenderer {
         if (topObject == null)
             return;
 
-        Line ray = dc.getView().computeRayFromScreenPoint(pickPoint.getX(), pickPoint.getY());
+        Line ray = dc.view().computeRayFromScreenPoint(pickPoint.getX(), pickPoint.getY());
         Plane plane = segmentPlane.computeInfinitePlane(dc.getGlobe());
         if (plane == null)
             return;
@@ -795,15 +795,15 @@ public class SegmentPlaneRenderer {
         SegmentPlaneAttributes.GeometryAttributes attributes = segmentPlane.getAttributes().getGeometryAttributes(
             SegmentPlane.PLANE_BORDER);
 
-        View view = dc.getView();
+        View view = dc.view();
         Globe globe = dc.getGlobe();
         double[] altitudes = segmentPlane.getPlaneAltitudes();
         LatLon[] locations = segmentPlane.getPlaneLocations();
         int mask = segmentPlane.getBorderMask();
 
-        Vec4 p1 = globe.computePointFromPosition(locations[0].getLatitude(), locations[0].getLongitude(),
+        Vec4 p1 = globe.computePointFromPosition(locations[0].getLat(), locations[0].getLon(),
             altitudes[0]);
-        Vec4 p2 = globe.computePointFromPosition(locations[0].getLatitude(), locations[0].getLongitude(),
+        Vec4 p2 = globe.computePointFromPosition(locations[0].getLat(), locations[0].getLon(),
             altitudes[1]);
         Vec4 referencePoint = p1.add3(p2).divide3(2.0);
 
@@ -818,7 +818,7 @@ public class SegmentPlaneRenderer {
             if ((mask & SegmentPlane.LEFT) != 0) {
                 Matrix modelview = view.getModelviewMatrix();
                 modelview = modelview.multiply(globe.computeSurfaceOrientationAtPosition(
-                    locations[0].getLatitude(), locations[0].getLongitude(), altitudes[0]));
+                    locations[0].getLat(), locations[0].getLon(), altitudes[0]));
 
                 this.drawBorder(dc, renderInfo, modelview, size, height);
             }
@@ -890,11 +890,11 @@ public class SegmentPlaneRenderer {
         Globe globe = dc.getGlobe();
         Position position = segmentPlane.getSegmentPositions()[1];
         double surfaceElevation = SegmentPlaneRenderer.computeSurfaceElevation(dc.getSurfaceGeometry(), globe,
-            position.getLatitude(), position.getLongitude());
+            position.getLat(), position.getLon());
 
-        Vec4 v1 = globe.computePointFromPosition(position.getLatitude(), position.getLongitude(),
+        Vec4 v1 = globe.computePointFromPosition(position.getLat(), position.getLon(),
             position.getElevation());
-        Vec4 v2 = globe.computePointFromPosition(position.getLatitude(), position.getLongitude(),
+        Vec4 v2 = globe.computePointFromPosition(position.getLat(), position.getLon(),
             surfaceElevation);
         Vec4 referenceCenter = v1;
         v1 = v1.subtract3(referenceCenter);
@@ -915,7 +915,7 @@ public class SegmentPlaneRenderer {
         oglsh.pushProjectionIdentity(gl);
         gl.glLoadMatrixd(pm, 0);
 
-        dc.getView().pushReferenceCenter(dc, referenceCenter);
+        dc.view().pushReferenceCenter(dc, referenceCenter);
         gl.glBegin(GL2.GL_LINES);
 
         try {
@@ -924,7 +924,7 @@ public class SegmentPlaneRenderer {
         }
         finally {
             gl.glEnd();
-            dc.getView().popReferenceCenter(dc);
+            dc.view().popReferenceCenter(dc);
             oglsh.pop(gl);
         }
 
@@ -943,7 +943,7 @@ public class SegmentPlaneRenderer {
         Globe globe = dc.getGlobe();
         Position position = segmentPlane.getSegmentPositions()[1];
         double surfaceElevation = SegmentPlaneRenderer.computeSurfaceElevation(sgl, globe,
-            position.getLatitude(), position.getLongitude());
+            position.getLat(), position.getLon());
         double height = position.getElevation() - surfaceElevation;
 
         Position centerPos = new Position(position,
@@ -1010,7 +1010,7 @@ public class SegmentPlaneRenderer {
             return;
 
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-        View view = dc.getView();
+        View view = dc.view();
         Globe globe = dc.getGlobe();
 
         Vec4 point = globe.computePointFromPosition(controlPointInfo.position);
@@ -1056,7 +1056,7 @@ public class SegmentPlaneRenderer {
             return;
 
         double surfaceElevation = SegmentPlaneRenderer.computeSurfaceElevation(dc.getSurfaceGeometry(), dc.getGlobe(),
-            position.getLatitude(), position.getLongitude());
+            position.getLat(), position.getLon());
         double height = position.getElevation() - surfaceElevation;
 
         KV values = new KVMap();
@@ -1137,7 +1137,7 @@ public class SegmentPlaneRenderer {
             values.set(Keys.WIDTH, width);
 
             Position pos = this.computePositionOnPlane(sgl, globe, segmentPlane, u, 0, true);
-            double surfaceElevation = SegmentPlaneRenderer.computeSurfaceElevation(sgl, globe, pos.getLatitude(), pos.getLongitude());
+            double surfaceElevation = SegmentPlaneRenderer.computeSurfaceElevation(sgl, globe, pos.getLat(), pos.getLon());
             if (pos.getElevation() < surfaceElevation)
                 pos = new Position(pos, surfaceElevation);
 
@@ -1177,7 +1177,7 @@ public class SegmentPlaneRenderer {
             values.set(Keys.HEIGHT, height);
 
             Position pos = this.computePositionOnPlane(sgl, globe, segmentPlane, 1, v, false);
-            double surfaceElevation = SegmentPlaneRenderer.computeSurfaceElevation(sgl, globe, pos.getLatitude(), pos.getLongitude());
+            double surfaceElevation = SegmentPlaneRenderer.computeSurfaceElevation(sgl, globe, pos.getLat(), pos.getLon());
             if (pos.getElevation() < surfaceElevation)
                 continue;
 
@@ -1218,7 +1218,7 @@ public class SegmentPlaneRenderer {
             return null;
 
         Vec4 point = dc.getGlobe().computePointFromPosition(position);
-        double distanceFromEye = dc.getView().getEyePoint().distanceTo3(point);
+        double distanceFromEye = dc.view().getEyePoint().distanceTo3(point);
         if (distanceFromEye < attributes.getMinActiveDistance()
             || distanceFromEye > attributes.getMaxActiveDistance()) {
             return null;
@@ -1282,7 +1282,7 @@ public class SegmentPlaneRenderer {
         int mask = segmentPlane.getPlaneOutlineMask();
 
         renderInfo.planeReferenceCenter = globe.computePointFromPosition(
-            locations[0].getLatitude(), locations[0].getLongitude(), altitudes[0]);
+            locations[0].getLat(), locations[0].getLon(), altitudes[0]);
 
         int[] gridCellCounts = new int[2];
         double[] gridCellParams = new double[2];
@@ -1363,9 +1363,9 @@ public class SegmentPlaneRenderer {
         double[] altitudes = segmentPlane.getPlaneAltitudes();
         LatLon[] locations = segmentPlane.getPlaneLocations();
 
-        Vec4 p1 = globe.computePointFromPosition(locations[0].getLatitude(), locations[0].getLongitude(), altitudes[0]);
-        Vec4 p2 = globe.computePointFromPosition(locations[1].getLatitude(), locations[1].getLongitude(), altitudes[0]);
-        Vec4 p3 = globe.computePointFromPosition(locations[0].getLatitude(), locations[0].getLongitude(), altitudes[1]);
+        Vec4 p1 = globe.computePointFromPosition(locations[0].getLat(), locations[0].getLon(), altitudes[0]);
+        Vec4 p2 = globe.computePointFromPosition(locations[1].getLat(), locations[1].getLon(), altitudes[0]);
+        Vec4 p3 = globe.computePointFromPosition(locations[0].getLat(), locations[0].getLon(), altitudes[1]);
 
         Vec4 e1 = p2.subtract3(p1);
         Vec4 e2 = p3.subtract3(p1);
@@ -1660,27 +1660,27 @@ public class SegmentPlaneRenderer {
         }
 
         public Vec4 getScreenPoint(DrawContext dc) {
-            if (dc.getGlobe() == null || dc.getView() == null)
+            if (dc.getGlobe() == null || dc.view() == null)
                 return null;
 
-            Vec4 modelPoint = dc.getGlobe().computePointFromPosition(this.position.getLatitude(),
-                this.position.getLongitude(), this.position.getElevation());
+            Vec4 modelPoint = dc.getGlobe().computePointFromPosition(this.position.getLat(),
+                this.position.getLon(), this.position.getElevation());
             if (modelPoint == null)
                 return null;
 
-            return dc.getView().project(modelPoint).add3(attributes.getOffset());
+            return dc.view().project(modelPoint).add3(attributes.getOffset());
         }
 
         protected static Vec4 getScreenPoint(DrawContext dc, Position position) {
-            if (dc.getGlobe() == null || dc.getView() == null)
+            if (dc.getGlobe() == null || dc.view() == null)
                 return null;
 
-            Vec4 modelPoint = dc.getGlobe().computePointFromPosition(position.getLatitude(), position.getLongitude(),
+            Vec4 modelPoint = dc.getGlobe().computePointFromPosition(position.getLat(), position.getLon(),
                 position.getElevation());
             if (modelPoint == null)
                 return null;
 
-            return dc.getView().project(modelPoint);
+            return dc.view().project(modelPoint);
         }
 
         public void render(DrawContext dc) {
@@ -1708,7 +1708,7 @@ public class SegmentPlaneRenderer {
             if (point == null)
                 return;
 
-            Rectangle viewport = dc.getView().getViewport();
+            Rectangle viewport = dc.view().getViewport();
             Color color = attributes.getColor();
 
             this.textRenderer.getTextRenderer().beginRendering(viewport.width, viewport.height);

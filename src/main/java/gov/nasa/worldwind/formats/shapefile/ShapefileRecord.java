@@ -452,8 +452,8 @@ public abstract class ShapefileRecord {
             VecBuffer vb = this.getPointBuffer(0);
             for (LatLon ll : vb.getLocations()) {
                 xmlWriter.writeStartElement("Point");
-                xmlWriter.writeAttribute("x", Double.toString(ll.getLatitude().degrees));
-                xmlWriter.writeAttribute("y", Double.toString(ll.getLongitude().degrees));
+                xmlWriter.writeAttribute("x", Double.toString(ll.getLat().degrees));
+                xmlWriter.writeAttribute("y", Double.toString(ll.getLon().degrees));
                 xmlWriter.writeEndElement(); // Point
                 xmlWriter.writeCharacters("\n");
             }
@@ -496,7 +496,7 @@ public abstract class ShapefileRecord {
 
         VecBuffer vb = this.getPointBuffer(0);
         for (LatLon ll : vb.getLocations()) {
-            System.out.printf("\t%f, %f\n", ll.getLatitude().degrees, ll.getLongitude().degrees);
+            System.out.printf("\t%f, %f\n", ll.getLat().degrees, ll.getLon().degrees);
         }
     }
 }

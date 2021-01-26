@@ -441,7 +441,7 @@ public class Ambush extends AbstractMilStd2525TacticalGraphic {
         arcData.arcAngle = new Angle(diffDegrees);
 
         // Find the midpoint of the arc
-        double globeRadius = globe.getRadiusAt(arcData.center.getLatitude(), arcData.center.getLongitude());
+        double globeRadius = globe.getRadiusAt(arcData.center.getLat(), arcData.center.getLon());
         LatLon ll = LatLon.greatCircleEndPosition(arcData.center,
             arcData.arcAngle.divide(2.0).radians() + arcData.startAngle.radians(), arcData.radius / globeRadius);
         arcData.midpoint = new Position(ll, 0);
@@ -460,7 +460,7 @@ public class Ambush extends AbstractMilStd2525TacticalGraphic {
         Globe globe = dc.getGlobe();
 
         Angle da = arcData.arcAngle.divide(this.intervals);
-        double globeRadius = globe.getRadiusAt(arcData.center.getLatitude(), arcData.center.getLongitude());
+        double globeRadius = globe.getRadiusAt(arcData.center.getLat(), arcData.center.getLon());
         double radiusRadians = arcData.radius / globeRadius;
 
         // Compute the arc positions
@@ -508,7 +508,7 @@ public class Ambush extends AbstractMilStd2525TacticalGraphic {
         vOffset = vOffset.normalize3().multiply3(vOffset.getLength3() * this.getLegLength());
 
         Angle da = arcData.arcAngle.divide(pathCount);
-        double globeRadius = globe.getRadiusAt(arcData.center.getLatitude(), arcData.center.getLongitude());
+        double globeRadius = globe.getRadiusAt(arcData.center.getLat(), arcData.center.getLon());
         double radiusRadians = arcData.radius / globeRadius;
 
         for (int i = 0; i < pathCount; i++) {

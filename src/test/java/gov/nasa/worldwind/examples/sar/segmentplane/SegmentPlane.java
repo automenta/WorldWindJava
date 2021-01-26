@@ -132,7 +132,7 @@ public class SegmentPlane extends WWObjectImpl {
         this.planeUpperAltitude = upperAltitude;
         this.setStateExpired();
 
-        this.firePropertyChange(PLANE_ALTITUDES, oldAltitudes, this.getPlaneAltitudes());
+        this.emit(PLANE_ALTITUDES, oldAltitudes, this.getPlaneAltitudes());
     }
 
     public LatLon[] getPlaneLocations() {
@@ -157,7 +157,7 @@ public class SegmentPlane extends WWObjectImpl {
         this.planeLocation2 = location2;
         this.setStateExpired();
 
-        this.firePropertyChange(PLANE_LOCATIONS, oldLocations, this.getPlaneLocations());
+        this.emit(PLANE_LOCATIONS, oldLocations, this.getPlaneLocations());
     }
 
     public double[] getGridCellDimensions() {
@@ -182,7 +182,7 @@ public class SegmentPlane extends WWObjectImpl {
         this.gridCellHeight = height;
         this.setStateExpired();
 
-        this.firePropertyChange(PLANE_GRID_DIMENSIONS, oldGridDimensions, this.getGridCellDimensions());
+        this.emit(PLANE_GRID_DIMENSIONS, oldGridDimensions, this.getGridCellDimensions());
     }
 
     public int getPlaneOutlineMask() {
@@ -233,7 +233,7 @@ public class SegmentPlane extends WWObjectImpl {
         Position oldPosition = this.segmentBeginPosition;
         this.segmentBeginPosition = position;
 
-        this.firePropertyChange(SEGMENT_BEGIN, oldPosition, this.segmentBeginPosition);
+        this.emit(SEGMENT_BEGIN, oldPosition, this.segmentBeginPosition);
     }
 
     public void setSegmentEndPosition(Position position) {
@@ -246,7 +246,7 @@ public class SegmentPlane extends WWObjectImpl {
         Position oldPosition = this.segmentEndPosition;
         this.segmentEndPosition = position;
 
-        this.firePropertyChange(SEGMENT_END, oldPosition, this.segmentEndPosition);
+        this.emit(SEGMENT_END, oldPosition, this.segmentEndPosition);
     }
 
     public List<ControlPoint> getControlPoints() {
@@ -313,10 +313,10 @@ public class SegmentPlane extends WWObjectImpl {
         double[] altitudes = this.getPlaneAltitudes();
         LatLon[] locations = this.getPlaneLocations();
 
-        Vec4 ll = globe.computePointFromPosition(locations[0].getLatitude(), locations[0].getLongitude(), altitudes[0]);
-        Vec4 lr = globe.computePointFromPosition(locations[1].getLatitude(), locations[1].getLongitude(), altitudes[0]);
-        Vec4 ur = globe.computePointFromPosition(locations[1].getLatitude(), locations[1].getLongitude(), altitudes[1]);
-        Vec4 ul = globe.computePointFromPosition(locations[0].getLatitude(), locations[0].getLongitude(), altitudes[1]);
+        Vec4 ll = globe.computePointFromPosition(locations[0].getLat(), locations[0].getLon(), altitudes[0]);
+        Vec4 lr = globe.computePointFromPosition(locations[1].getLat(), locations[1].getLon(), altitudes[0]);
+        Vec4 ur = globe.computePointFromPosition(locations[1].getLat(), locations[1].getLon(), altitudes[1]);
+        Vec4 ul = globe.computePointFromPosition(locations[0].getLat(), locations[0].getLon(), altitudes[1]);
 
         return new BilinearInterpolator(ll, lr, ur, ul);
     }

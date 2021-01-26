@@ -1,5 +1,6 @@
 package netvr;
 
+import com.jogamp.opengl.GL2;
 import gov.nasa.worldwind.BasicModel;
 import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.event.SelectListener;
@@ -10,7 +11,7 @@ import gov.nasa.worldwind.layers.sky.*;
 import gov.nasa.worldwind.layers.tool.LatLonGraticuleLayer;
 import gov.nasa.worldwind.pick.PickedObject;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.util.WWUtil;
+import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.video.LayerList;
 import gov.nasa.worldwind.video.newt.WorldWindowNEWT;
 import jcog.exe.Exe;
@@ -302,10 +303,21 @@ public class NetVR extends Thing<NetVR,String> {
 
         world = new NetVRModel();
 
-        window = new WorldWindowNEWT(world);
+        window = new WorldWindowNEWT(world) {
+            @Override
+            public void init(GL2 g) {
+                super.init(g);
+                SelectListener selector = new BasicDragger(this);
+                addSelectListener(selector);
+            }
+        };
         window.setWindow(j);
 
         o = new OrthoSurfaceGraph(z, j);
+
+
+
+
     }
 
     private static void focus(NetVRModel world, WorldWindowNEWT w, double lon, double lat, float rad) {
@@ -348,6 +360,9 @@ public class NetVR extends Thing<NetVR,String> {
             osm = new AdaptiveOSMLayer();
             l.add(osm);
 
+            Focus f = new Focus(new Position(35, -80, 0));
+            l.add(new FocusLayer(f));
+
 //            markers = new MarkerLayer();
 //            l.add(markers);
 //
@@ -356,9 +371,8 @@ public class NetVR extends Thing<NetVR,String> {
 //
 //            l.add(renderables);
 
-            String earthquakeFeedUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson";
-
-            l.add(new USGSEarthquakeLayer("Earthquakes", earthquakeFeedUrl));
+            l.add(new USGSEarthquakeLayer("Earthquakes",
+                "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson"));
 
 
 /* //SHAPEFILE
@@ -370,75 +384,4 @@ public class NetVR extends Thing<NetVR,String> {
 
     }
 
-    protected static class OSMShapes {
-        public final Collection<LatLon> locations = new ArrayList();
-        public final Collection<Label> labels = new ArrayList();
-        public final Color foreground;
-        public final Color background;
-        public final Font font;
-        public final double scale;
-        public final double labelMaxAltitude;
-
-        public OSMShapes(Color color, double scale, double labelMaxAltitude) {
-            this.foreground = color;
-            this.background = WWUtil.computeContrastingColor(color);
-            this.font = new Font("Arial", 1, 10 + (int) (3.0D * scale));
-            this.scale = scale;
-            this.labelMaxAltitude = labelMaxAltitude;
-        }
-    }
-
-    protected static class Label extends UserFacingText {
-        protected double minActiveAltitude = -1.7976931348623157E308D;
-        protected double maxActiveAltitude = 1.7976931348623157E308D;
-
-        public Label(CharSequence text, Position position) {
-            super(text, position);
-        }
-
-        public void setMinActiveAltitude(double altitude) {
-            this.minActiveAltitude = altitude;
-        }
-
-        public void setMaxActiveAltitude(double altitude) {
-            this.maxActiveAltitude = altitude;
-        }
-
-        public boolean isActive(DrawContext dc) {
-            double eyeElevation = dc.getView().getEyePosition().getElevation();
-            return this.minActiveAltitude <= eyeElevation && eyeElevation <= this.maxActiveAltitude;
-        }
-    }
-
-    protected static class TextAndShapesLayer extends RenderableLayer {
-        protected final Collection<GeographicText> labels = new ArrayList();
-        protected final GeographicTextRenderer textRenderer = new GeographicTextRenderer();
-
-        public TextAndShapesLayer() {
-            this.textRenderer.setCullTextEnabled(true);
-            this.textRenderer.setCullTextMargin(2);
-            this.textRenderer.setDistanceMaxScale(2.0D);
-            this.textRenderer.setDistanceMinScale(0.5D);
-            this.textRenderer.setDistanceMinOpacity(0.5D);
-            this.textRenderer.setEffect("gov.nasa.worldwind.avkey.TextEffectOutline");
-        }
-
-        public void addLabel(GeographicText label) {
-            this.labels.add(label);
-        }
-
-        public void doRender(DrawContext dc) {
-            super.doRender(dc);
-            this.setActiveLabels(dc);
-            this.textRenderer.render(dc, this.labels);
-        }
-
-        protected void setActiveLabels(DrawContext dc) {
-
-            for (GeographicText text : this.labels) {
-                if (text instanceof Label)
-                    text.setVisible(((Label) text).isActive(dc));
-            }
-        }
-    }
 }

@@ -187,7 +187,7 @@ public class Polygon extends AbstractShape {
      */
     protected static double computeEyeDistance(DrawContext dc, ShapeData shapeData) {
         double minDistance = Double.MAX_VALUE;
-        Vec4 eyePoint = dc.getView().getEyePoint();
+        Vec4 eyePoint = dc.view().getEyePoint();
 
         for (Vec4 point : shapeData.getOuterBoundaryInfo().vertices) {
             double d = point.add3(shapeData.getReferencePoint()).distanceTo3(eyePoint);
@@ -349,13 +349,13 @@ public class Polygon extends AbstractShape {
         for (LatLon location : boundary) {
             if (location instanceof Position) {
                 xmlWriter.writeCharacters(String.format(Locale.US, "%f,%f,%f ",
-                    location.getLongitude().degrees,
-                    location.getLatitude().degrees,
+                    location.getLon().degrees,
+                    location.getLat().degrees,
                     ((Position) location).getAltitude()));
             } else {
                 xmlWriter.writeCharacters(String.format(Locale.US, "%f,%f ",
-                    location.getLongitude().degrees,
-                    location.getLatitude().degrees));
+                    location.getLon().degrees,
+                    location.getLat().degrees));
             }
         }
         xmlWriter.writeEndElement(); // coordinates
@@ -900,7 +900,7 @@ public class Polygon extends AbstractShape {
         if (refPos == null)
             return null;
 
-        Vec4 refPt = terrain.getSurfacePoint(refPos.getLatitude(), refPos.getLongitude(), 0);
+        Vec4 refPt = terrain.getSurfacePoint(refPos.getLat(), refPos.getLon(), 0);
         if (refPt == null)
             return null;
 
@@ -1097,7 +1097,7 @@ public class Polygon extends AbstractShape {
         // the degenerate polygon without generating an exception.
         if (normal == null)
             normal = dc.getGlobe().computeSurfaceNormalAtLocation(
-                this.getReferencePosition().getLatitude(), this.getReferencePosition().getLongitude());
+                this.getReferencePosition().getLat(), this.getReferencePosition().getLon());
 
         return normal;
     }
@@ -1171,7 +1171,7 @@ public class Polygon extends AbstractShape {
 
             // Compute intersection position relative to ground.
             Position pos = terrain.getGlobe().computePositionFromPoint(pt);
-            Vec4 gp = terrain.getSurfacePoint(pos.getLatitude(), pos.getLongitude(), 0);
+            Vec4 gp = terrain.getSurfacePoint(pos.getLat(), pos.getLon(), 0);
             double dist = Math.sqrt(pt.dotSelf3()) - Math.sqrt(gp.dotSelf3());
             intersection.setIntersectionPosition(new Position(pos, dist));
 

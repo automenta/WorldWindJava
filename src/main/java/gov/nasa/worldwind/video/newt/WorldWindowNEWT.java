@@ -97,7 +97,7 @@ public class WorldWindowNEWT extends AbstractLayer implements WorldWindow, GLEve
     }
 
     @Override
-    public void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
+    public void emit(String propertyName, Object oldValue, Object newValue) {
 
     }
 

@@ -137,7 +137,7 @@ public class WCSElevationModel extends BasicElevationModel {
         int tileSize = (Integer) params.get(Keys.TILE_WIDTH);
         LatLon level0Delta = (LatLon) params.get(Keys.LEVEL_ZERO_TILE_DELTA);
 
-        double n = Math.log(level0Delta.getLatitude().degrees / (dataResolution * tileSize)) / Math.log(2);
+        double n = Math.log(level0Delta.getLat().degrees / (dataResolution * tileSize)) / Math.log(2);
         params.set(Keys.NUM_LEVELS, (int) (Math.ceil(n) + 1));
     }
 
@@ -279,7 +279,7 @@ public class WCSElevationModel extends BasicElevationModel {
             if (ll == null)
                 continue;
 
-            double value = this.lookupElevation(ll.getLatitude(), ll.getLongitude(), tile);
+            double value = this.lookupElevation(ll.getLat(), ll.getLon(), tile);
 
             // If an elevation at the given location is available, then write that elevation to the destination buffer.
             // Otherwise do nothing.

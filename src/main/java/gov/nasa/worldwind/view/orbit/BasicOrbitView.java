@@ -44,8 +44,8 @@ public class BasicOrbitView extends BasicView implements OrbitView {
     public static Position normalizedCenterPosition(Position unnormalizedPosition) {
 
         return new Position(
-            Angle.latNorm(unnormalizedPosition.getLatitude()),
-            Angle.lonNorm(unnormalizedPosition.getLongitude()),
+            Angle.latNorm(unnormalizedPosition.getLat()),
+            Angle.lonNorm(unnormalizedPosition.getLon()),
             unnormalizedPosition.getElevation());
     }
 
@@ -86,8 +86,8 @@ public class BasicOrbitView extends BasicView implements OrbitView {
     protected static boolean validateModelCoordinates(OrbitViewInputSupport.OrbitViewState c) {
         return (c != null
             && c.getCenterPosition() != null
-            && c.getCenterPosition().latitude >= -90
-            && c.getCenterPosition().latitude <= 90
+            && c.getCenterPosition().lat >= -90
+            && c.getCenterPosition().lat <= 90
             && c.getHeading() != null
             && c.getPitch() != null
             && c.getPitch().degrees >= 0
@@ -104,10 +104,10 @@ public class BasicOrbitView extends BasicView implements OrbitView {
             setCenterPosition(Position.fromDegrees(initLat, initLon, initElev));
             // Set only center latitude. Do not change center longitude or center elevation.
         else if (initLat != null)
-            setCenterPosition(Position.fromDegrees(initLat, this.center.getLongitude().degrees, initElev));
+            setCenterPosition(Position.fromDegrees(initLat, this.center.getLon().degrees, initElev));
             // Set only center longitude. Do not center latitude or center elevation.
         else if (initLon != null)
-            setCenterPosition(Position.fromDegrees(this.center.getLatitude().degrees, initLon, initElev));
+            setCenterPosition(Position.fromDegrees(this.center.getLat().degrees, initLon, initElev));
 
         Double initHeading = Configuration.getDoubleValue(Keys.INITIAL_HEADING);
         if (initHeading != null)
@@ -133,7 +133,7 @@ public class BasicOrbitView extends BasicView implements OrbitView {
     }
 
     public void stopMovementOnCenter() {
-        firePropertyChange(OrbitView.CENTER_STOPPED, null, null);
+        emit(OrbitView.CENTER_STOPPED, null, null);
     }
 
     public void copyViewState(View view) {
@@ -157,8 +157,8 @@ public class BasicOrbitView extends BasicView implements OrbitView {
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (center.getLatitude().degrees < -90 || center.getLatitude().degrees > 90) {
-            String message = Logging.getMessage("generic.LatitudeOutOfRange", center.getLatitude());
+        if (center.getLat().degrees < -90 || center.getLat().degrees > 90) {
+            String message = Logging.getMessage("generic.LatitudeOutOfRange", center.getLat());
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
@@ -261,7 +261,7 @@ public class BasicOrbitView extends BasicView implements OrbitView {
         // that will resolve the collision.
         double nearDistance = this.computeNearDistance(this.getCurrentEyePosition());
         Position newCenter = this.collisionSupport.computeCenterPositionToResolveCollision(this, nearDistance, this.dc);
-        if (newCenter != null && newCenter.getLatitude().degrees >= -90 && newCenter.getLongitude().degrees <= 90) {
+        if (newCenter != null && newCenter.getLat().degrees >= -90 && newCenter.getLon().degrees <= 90) {
             this.center = newCenter;
             flagHadCollisions();
         }
@@ -350,8 +350,8 @@ public class BasicOrbitView extends BasicView implements OrbitView {
 
         // We want the actual "geometric point" here, which must be adjusted for vertical exaggeration.
         Vec4 viewportCenterPoint = this.globe.computePointFromPosition(
-            viewportCenterPos.getLatitude(), viewportCenterPos.getLongitude(),
-            this.globe.elevation(viewportCenterPos.getLatitude(), viewportCenterPos.getLongitude())
+            viewportCenterPos.getLat(), viewportCenterPos.getLon(),
+            this.globe.elevation(viewportCenterPos.getLat(), viewportCenterPos.getLon())
                 * dc.getVerticalExaggeration());
 
         if (viewportCenterPoint != null) {
@@ -640,8 +640,8 @@ public class BasicOrbitView extends BasicView implements OrbitView {
         if (this.getCenterPosition() != null) {
             RestorableSupport.StateObject so = rs.addStateObject(context, "center");
             if (so != null) {
-                rs.addStateValueAsDouble(so, "latitude", this.getCenterPosition().getLatitude().degrees);
-                rs.addStateValueAsDouble(so, "longitude", this.getCenterPosition().getLongitude().degrees);
+                rs.addStateValueAsDouble(so, "latitude", this.getCenterPosition().getLat().degrees);
+                rs.addStateValueAsDouble(so, "longitude", this.getCenterPosition().getLon().degrees);
                 rs.addStateValueAsDouble(so, "elevation", this.getCenterPosition().getElevation());
             }
         }

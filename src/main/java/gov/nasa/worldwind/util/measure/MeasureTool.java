@@ -425,12 +425,12 @@ public class MeasureTool extends KVMap implements Disposable {
 
     protected static Angle computeAngleBetween(LatLon a, LatLon b, LatLon c) {
         Vec4 v0 = new Vec4(
-            b.getLatitude().radians() - a.getLatitude().radians(),
-            b.getLongitude().radians() - a.getLongitude().radians(), 0);
+            b.getLat().radians() - a.getLat().radians(),
+            b.getLon().radians() - a.getLon().radians(), 0);
 
         Vec4 v1 = new Vec4(
-            c.getLatitude().radians() - b.getLatitude().radians(),
-            c.getLongitude().radians() - b.getLongitude().radians(), 0);
+            c.getLat().radians() - b.getLat().radians(),
+            c.getLon().radians() - b.getLon().radians(), 0);
 
         return v0.angleBetween3(v1);
     }
@@ -649,7 +649,7 @@ public class MeasureTool extends KVMap implements Disposable {
 
         // Update screen shapes
         updateMeasureShape();
-        this.firePropertyChange(MeasureTool.EVENT_POSITION_REPLACE, null, null);
+        this.emit(MeasureTool.EVENT_POSITION_REPLACE, null, null);
         this.wwd.redraw();
     }
 
@@ -895,7 +895,7 @@ public class MeasureTool extends KVMap implements Disposable {
             updateShapeControlPoints();
             // Update screen shapes
             updateMeasureShape();
-            this.firePropertyChange(MeasureTool.EVENT_POSITION_REPLACE, null, null);
+            this.emit(MeasureTool.EVENT_POSITION_REPLACE, null, null);
             this.wwd.redraw();
         }
     }
@@ -935,7 +935,7 @@ public class MeasureTool extends KVMap implements Disposable {
         }
         // Set proper measure shape type
         this.measureShapeType = MeasureTool.getPathType(this.positions);
-        this.firePropertyChange(MeasureTool.EVENT_POSITION_REPLACE, null, null);
+        this.emit(MeasureTool.EVENT_POSITION_REPLACE, null, null);
         this.wwd.redraw();
     }
 
@@ -1004,7 +1004,7 @@ public class MeasureTool extends KVMap implements Disposable {
             }
         }
 
-        this.firePropertyChange(MeasureTool.EVENT_POSITION_REPLACE, null, null);
+        this.emit(MeasureTool.EVENT_POSITION_REPLACE, null, null);
         this.wwd.redraw();
     }
 
@@ -1125,7 +1125,7 @@ public class MeasureTool extends KVMap implements Disposable {
         }
         // Update screen shapes
         updateMeasureShape();
-        this.firePropertyChange(MeasureTool.EVENT_POSITION_ADD, null, curPos);
+        this.emit(MeasureTool.EVENT_POSITION_ADD, null, curPos);
         this.wwd.redraw();
 
         return curPos;
@@ -1172,7 +1172,7 @@ public class MeasureTool extends KVMap implements Disposable {
 //        this.controlPointsLayer.set(this.controlPoints);
         // Update screen shapes
         updateMeasureShape();
-        this.firePropertyChange(MeasureTool.EVENT_POSITION_REMOVE, currentLastPosition, null);
+        this.emit(MeasureTool.EVENT_POSITION_REMOVE, currentLastPosition, null);
         this.wwd.redraw();
     }
 
@@ -1265,13 +1265,13 @@ public class MeasureTool extends KVMap implements Disposable {
     }
 
     protected Position computeSurfacePosition(LatLon latLon) {
-        Vec4 surfacePoint = wwd.sceneControl().getTerrain().getSurfacePoint(latLon.getLatitude(),
-            latLon.getLongitude());
+        Vec4 surfacePoint = wwd.sceneControl().getTerrain().getSurfacePoint(latLon.getLat(),
+            latLon.getLon());
         if (surfacePoint != null) {
             return wwd.model().globe().computePositionFromPoint(surfacePoint);
         } else {
-            return new Position(latLon, wwd.model().globe().elevation(latLon.getLatitude(),
-                latLon.getLongitude()));
+            return new Position(latLon, wwd.model().globe().elevation(latLon.getLat(),
+                latLon.getLon()));
         }
     }
 
@@ -1940,14 +1940,14 @@ public class MeasureTool extends KVMap implements Disposable {
 
         if (this.getCenterPosition() != null && areLocationsRedundant(this.getCenterPosition(), pos)) {
             sb.append(
-                this.unitsFormat.angleNL(this.getLabel(MeasureTool.CENTER_LATITUDE_LABEL), this.getCenterPosition().getLatitude()));
+                this.unitsFormat.angleNL(this.getLabel(MeasureTool.CENTER_LATITUDE_LABEL), this.getCenterPosition().getLat()));
             sb.append(this.unitsFormat.angleNL(this.getLabel(MeasureTool.CENTER_LONGITUDE_LABEL),
-                this.getCenterPosition().getLongitude()));
+                this.getCenterPosition().getLon()));
         }
 
         if (!this.areLocationsRedundant(pos, this.getCenterPosition())) {
-            sb.append(this.unitsFormat.angleNL(this.getLabel(MeasureTool.LATITUDE_LABEL), pos.getLatitude()));
-            sb.append(this.unitsFormat.angleNL(this.getLabel(MeasureTool.LONGITUDE_LABEL), pos.getLongitude()));
+            sb.append(this.unitsFormat.angleNL(this.getLabel(MeasureTool.LATITUDE_LABEL), pos.getLat()));
+            sb.append(this.unitsFormat.angleNL(this.getLabel(MeasureTool.LONGITUDE_LABEL), pos.getLon()));
         }
 
         return sb.toString();
@@ -1970,14 +1970,14 @@ public class MeasureTool extends KVMap implements Disposable {
 
         if (this.getCenterPosition() != null && areLocationsRedundant(this.getCenterPosition(), pos)) {
             sb.append(
-                this.unitsFormat.angleNL(this.getLabel(MeasureTool.CENTER_LATITUDE_LABEL), this.getCenterPosition().getLatitude()));
+                this.unitsFormat.angleNL(this.getLabel(MeasureTool.CENTER_LATITUDE_LABEL), this.getCenterPosition().getLat()));
             sb.append(this.unitsFormat.angleNL(this.getLabel(MeasureTool.CENTER_LONGITUDE_LABEL),
-                this.getCenterPosition().getLongitude()));
+                this.getCenterPosition().getLon()));
         }
 
         if (!this.areLocationsRedundant(pos, this.getCenterPosition())) {
-            sb.append(this.unitsFormat.angleNL(this.getLabel(MeasureTool.LATITUDE_LABEL), pos.getLatitude()));
-            sb.append(this.unitsFormat.angleNL(this.getLabel(MeasureTool.LONGITUDE_LABEL), pos.getLongitude()));
+            sb.append(this.unitsFormat.angleNL(this.getLabel(MeasureTool.LATITUDE_LABEL), pos.getLat()));
+            sb.append(this.unitsFormat.angleNL(this.getLabel(MeasureTool.LONGITUDE_LABEL), pos.getLon()));
         }
 
         return sb.toString();
@@ -1999,14 +1999,14 @@ public class MeasureTool extends KVMap implements Disposable {
 
         if (this.getCenterPosition() != null && areLocationsRedundant(this.getCenterPosition(), pos)) {
             sb.append(
-                this.unitsFormat.angleNL(this.getLabel(MeasureTool.CENTER_LATITUDE_LABEL), this.getCenterPosition().getLatitude()));
+                this.unitsFormat.angleNL(this.getLabel(MeasureTool.CENTER_LATITUDE_LABEL), this.getCenterPosition().getLat()));
             sb.append(this.unitsFormat.angleNL(this.getLabel(MeasureTool.CENTER_LONGITUDE_LABEL),
-                this.getCenterPosition().getLongitude()));
+                this.getCenterPosition().getLon()));
         }
 
         if (!this.areLocationsRedundant(pos, this.getCenterPosition())) {
-            sb.append(this.unitsFormat.angleNL(this.getLabel(MeasureTool.LATITUDE_LABEL), pos.getLatitude()));
-            sb.append(this.unitsFormat.angleNL(this.getLabel(MeasureTool.LONGITUDE_LABEL), pos.getLongitude()));
+            sb.append(this.unitsFormat.angleNL(this.getLabel(MeasureTool.LATITUDE_LABEL), pos.getLat()));
+            sb.append(this.unitsFormat.angleNL(this.getLabel(MeasureTool.LONGITUDE_LABEL), pos.getLon()));
         }
 
         return sb.toString();
@@ -2029,14 +2029,14 @@ public class MeasureTool extends KVMap implements Disposable {
 
         if (this.getCenterPosition() != null && areLocationsRedundant(this.getCenterPosition(), pos)) {
             sb.append(
-                this.unitsFormat.angleNL(this.getLabel(MeasureTool.CENTER_LATITUDE_LABEL), this.getCenterPosition().getLatitude()));
+                this.unitsFormat.angleNL(this.getLabel(MeasureTool.CENTER_LATITUDE_LABEL), this.getCenterPosition().getLat()));
             sb.append(this.unitsFormat.angleNL(this.getLabel(MeasureTool.CENTER_LONGITUDE_LABEL),
-                this.getCenterPosition().getLongitude()));
+                this.getCenterPosition().getLon()));
         }
 
         if (!this.areLocationsRedundant(pos, this.getCenterPosition())) {
-            sb.append(this.unitsFormat.angleNL(this.getLabel(MeasureTool.LATITUDE_LABEL), pos.getLatitude()));
-            sb.append(this.unitsFormat.angleNL(this.getLabel(MeasureTool.LONGITUDE_LABEL), pos.getLongitude()));
+            sb.append(this.unitsFormat.angleNL(this.getLabel(MeasureTool.LATITUDE_LABEL), pos.getLat()));
+            sb.append(this.unitsFormat.angleNL(this.getLabel(MeasureTool.LONGITUDE_LABEL), pos.getLon()));
         }
 
         return sb.toString();
@@ -2050,14 +2050,14 @@ public class MeasureTool extends KVMap implements Disposable {
 
         if (this.getCenterPosition() != null && areLocationsRedundant(this.getCenterPosition(), pos)) {
             sb.append(
-                this.unitsFormat.angleNL(this.getLabel(MeasureTool.CENTER_LATITUDE_LABEL), this.getCenterPosition().getLatitude()));
+                this.unitsFormat.angleNL(this.getLabel(MeasureTool.CENTER_LATITUDE_LABEL), this.getCenterPosition().getLat()));
             sb.append(this.unitsFormat.angleNL(this.getLabel(MeasureTool.CENTER_LONGITUDE_LABEL),
-                this.getCenterPosition().getLongitude()));
+                this.getCenterPosition().getLon()));
         }
 
         if (!this.areLocationsRedundant(pos, this.getCenterPosition())) {
-            sb.append(this.unitsFormat.angleNL(this.getLabel(MeasureTool.LATITUDE_LABEL), pos.getLatitude()));
-            sb.append(this.unitsFormat.angleNL(this.getLabel(MeasureTool.LONGITUDE_LABEL), pos.getLongitude()));
+            sb.append(this.unitsFormat.angleNL(this.getLabel(MeasureTool.LATITUDE_LABEL), pos.getLat()));
+            sb.append(this.unitsFormat.angleNL(this.getLabel(MeasureTool.LONGITUDE_LABEL), pos.getLon()));
         }
 
         return sb.toString();
@@ -2078,8 +2078,8 @@ public class MeasureTool extends KVMap implements Disposable {
             sb.append(this.unitsFormat.angleNL(this.getLabel(MeasureTool.HEADING_LABEL), this.getOrientation()));
         }
 
-        sb.append(this.unitsFormat.angleNL(this.getLabel(MeasureTool.LATITUDE_LABEL), pos.getLatitude()));
-        sb.append(this.unitsFormat.angleNL(this.getLabel(MeasureTool.LONGITUDE_LABEL), pos.getLongitude()));
+        sb.append(this.unitsFormat.angleNL(this.getLabel(MeasureTool.LATITUDE_LABEL), pos.getLat()));
+        sb.append(this.unitsFormat.angleNL(this.getLabel(MeasureTool.LONGITUDE_LABEL), pos.getLon()));
 
         return sb.toString();
     }
@@ -2134,15 +2134,15 @@ public class MeasureTool extends KVMap implements Disposable {
             return false;
         }
 
-        String aLat = this.unitsFormat.angleNL("", locA.getLatitude());
-        String bLat = this.unitsFormat.angleNL("", locB.getLatitude());
+        String aLat = this.unitsFormat.angleNL("", locA.getLat());
+        String bLat = this.unitsFormat.angleNL("", locB.getLat());
 
         if (!aLat.equals(bLat)) {
             return false;
         }
 
-        String aLon = this.unitsFormat.angleNL("", locA.getLongitude());
-        String bLon = this.unitsFormat.angleNL("", locB.getLongitude());
+        String aLon = this.unitsFormat.angleNL("", locA.getLon());
+        String bLon = this.unitsFormat.angleNL("", locB.getLon());
 
         return aLon.equals(bLon);
     }

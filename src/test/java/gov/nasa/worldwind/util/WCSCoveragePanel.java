@@ -202,7 +202,7 @@ public class WCSCoveragePanel extends JPanel {
             compoundModel.removeElevationModel(model);
         }
 
-        wwd.firePropertyChange(new PropertyChangeEvent(wwd, Keys.ELEVATION_MODEL, null, compoundModel));
+        wwd.emit(new PropertyChangeEvent(wwd, Keys.ELEVATION_MODEL, null, compoundModel));
     }
 
     protected void makeProgressPanel() {

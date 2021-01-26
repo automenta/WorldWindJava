@@ -567,7 +567,7 @@ public class Angle implements Comparable<Angle> {
      * @return the trigonometric tangent of half of this angle.
      */
     public final double tanHalfAngle() {
-        return tan(0.5 * this.radians());
+        return tan(this.radians()/2);
     }
 
     /**
@@ -579,7 +579,6 @@ public class Angle implements Comparable<Angle> {
      * @throws IllegalArgumentException if angle is null.
      */
     public final int compareTo(Angle angle) {
-
         return Double.compare(this.degrees, angle.degrees);
     }
 

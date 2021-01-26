@@ -42,8 +42,8 @@ public class SurfacePolylines extends AbstractSurfaceShape {
         Iterable<double[]> iterable = vecBuffer.getCoords(3);
         boolean dateLineCrossed = false;
 
-        final Angle rLon = referenceLocation.getLongitude();
-        final Angle rLat = referenceLocation.getLatitude();
+        final Angle rLon = referenceLocation.getLon();
+        final Angle rLat = referenceLocation.getLat();
 
         gl.glBegin(GL2.GL_LINE_STRIP);
         try {
@@ -189,7 +189,7 @@ public class SurfacePolylines extends AbstractSurfaceShape {
         if (referencePos == null)
             return;
 
-        int hemisphereSign = (int) Math.signum(sdc.getSector().getCentroid().getLongitude().degrees);
+        int hemisphereSign = (int) Math.signum(sdc.getSector().getCentroid().getLon().degrees);
 
         // Attempt to tessellate the Polyline's outline if the Polyline's outline display list is uninitialized, or if
         // the Polyline is marked as needing tessellation.

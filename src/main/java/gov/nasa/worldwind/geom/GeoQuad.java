@@ -41,17 +41,17 @@ public class GeoQuad {
         this.nw = iter.next();
 
         this.northEdge = Line.fromSegment(
-            new Vec4(this.nw.getLongitude().degrees, this.nw.getLatitude().degrees, 0),
-            new Vec4(this.ne.getLongitude().degrees, this.ne.getLatitude().degrees, 0));
+            new Vec4(this.nw.getLon().degrees, this.nw.getLat().degrees, 0),
+            new Vec4(this.ne.getLon().degrees, this.ne.getLat().degrees, 0));
         this.southEdge = Line.fromSegment(
-            new Vec4(this.sw.getLongitude().degrees, this.sw.getLatitude().degrees, 0),
-            new Vec4(this.se.getLongitude().degrees, this.se.getLatitude().degrees, 0));
+            new Vec4(this.sw.getLon().degrees, this.sw.getLat().degrees, 0),
+            new Vec4(this.se.getLon().degrees, this.se.getLat().degrees, 0));
         this.eastEdge = Line.fromSegment(
-            new Vec4(this.se.getLongitude().degrees, this.se.getLatitude().degrees, 0),
-            new Vec4(this.ne.getLongitude().degrees, this.ne.getLatitude().degrees, 0));
+            new Vec4(this.se.getLon().degrees, this.se.getLat().degrees, 0),
+            new Vec4(this.ne.getLon().degrees, this.ne.getLat().degrees, 0));
         this.westEdge = Line.fromSegment(
-            new Vec4(this.sw.getLongitude().degrees, this.sw.getLatitude().degrees, 0),
-            new Vec4(this.nw.getLongitude().degrees, this.nw.getLatitude().degrees, 0));
+            new Vec4(this.sw.getLon().degrees, this.sw.getLat().degrees, 0),
+            new Vec4(this.nw.getLon().degrees, this.nw.getLat().degrees, 0));
     }
 
     public LatLon getSw() {
@@ -87,19 +87,19 @@ public class GeoQuad {
     }
 
     public Angle distanceToNorthEdge(LatLon p) {
-        return new Angle(this.northEdge.distanceTo(new Vec4(p.getLongitude().degrees, p.getLatitude().degrees, 0)));
+        return new Angle(this.northEdge.distanceTo(new Vec4(p.getLon().degrees, p.getLat().degrees, 0)));
     }
 
     public Angle distanceToSouthEdge(LatLon p) {
-        return new Angle(this.southEdge.distanceTo(new Vec4(p.getLongitude().degrees, p.getLatitude().degrees, 0)));
+        return new Angle(this.southEdge.distanceTo(new Vec4(p.getLon().degrees, p.getLat().degrees, 0)));
     }
 
     public Angle distanceToEastEdge(LatLon p) {
-        return new Angle(this.eastEdge.distanceTo(new Vec4(p.getLongitude().degrees, p.getLatitude().degrees, 0)));
+        return new Angle(this.eastEdge.distanceTo(new Vec4(p.getLon().degrees, p.getLat().degrees, 0)));
     }
 
     public Angle distanceToWestEdge(LatLon p) {
-        return new Angle(this.westEdge.distanceTo(new Vec4(p.getLongitude().degrees, p.getLatitude().degrees, 0)));
+        return new Angle(this.westEdge.distanceTo(new Vec4(p.getLon().degrees, p.getLat().degrees, 0)));
     }
 
     public LatLon interpolate(double t, double s) {

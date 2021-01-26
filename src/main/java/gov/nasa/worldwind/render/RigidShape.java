@@ -636,7 +636,7 @@ public abstract class RigidShape extends AbstractShape {
             return false;
         shapeData.setReferencePoint(refPt);
 
-        shapeData.setEyeDistance(dc.getView().getEyePoint().distanceTo3(refPt));
+        shapeData.setEyeDistance(dc.view().getEyePoint().distanceTo3(refPt));
         shapeData.setGlobeStateKey(dc.getGlobe().getGlobeStateKey(dc));
         shapeData.setVerticalExaggeration(dc.getVerticalExaggeration());
 
@@ -1035,7 +1035,7 @@ public abstract class RigidShape extends AbstractShape {
             throw new IllegalStateException(message);
         }
 
-        Matrix matrix = dc.getView().getModelviewMatrix();
+        Matrix matrix = dc.view().getModelviewMatrix();
         matrix = matrix.multiply(computeRenderMatrix(dc));
 
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
@@ -1328,7 +1328,7 @@ public abstract class RigidShape extends AbstractShape {
 
                 // Compute intersection position relative to ground.
                 Position pos = terrain.getGlobe().computePositionFromPoint(pt);
-                Vec4 gp = terrain.getSurfacePoint(pos.getLatitude(), pos.getLongitude(), 0);
+                Vec4 gp = terrain.getSurfacePoint(pos.getLat(), pos.getLon(), 0);
                 double dist = Math.sqrt(pt.dotSelf3()) - Math.sqrt(gp.dotSelf3());
                 intersection.setIntersectionPosition(new Position(pos, dist));
 

@@ -327,7 +327,7 @@ public class DirectedPath extends Path {
         if (!this.isArrowheadSmall(dc, midPoint, 1)) {
             // Compute the size of the arrowhead in pixels to ensure that the arrow does not exceed the maximum
             // screen size.
-            View view = dc.getView();
+            View view = dc.view();
             double midpointDistance = view.getEyePoint().distanceTo3(midPoint);
             double pixelSize = view.computePixelSizeAtDistance(midpointDistance);
             if (arrowLength / pixelSize > this.maxScreenSize) {
@@ -375,8 +375,8 @@ public class DirectedPath extends Path {
      * @return {@code true} if an arrow drawn at {@code arrowPt} would occupy less than or equal to {@code numPixels}.
      */
     protected boolean isArrowheadSmall(DrawContext dc, Vec4 arrowPt, int numPixels) {
-        return this.getArrowLength() <= numPixels * dc.getView().computePixelSizeAtDistance(
-            dc.getView().getEyePoint().distanceTo3(arrowPt));
+        return this.getArrowLength() <= numPixels * dc.view().computePixelSizeAtDistance(
+            dc.view().getEyePoint().distanceTo3(arrowPt));
     }
 
     /**

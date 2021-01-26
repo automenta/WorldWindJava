@@ -202,7 +202,7 @@ public class StarsLayer extends RenderableLayer {
             return;
 
         // Exit if the viewport is not visible, in which case rendering results in exceptions.
-        View view = dc.getView();
+        View view = dc.view();
         if (view.getViewport().getWidth() == 0 || view.getViewport().getHeight() == 0)
             return;
 

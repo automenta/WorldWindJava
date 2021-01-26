@@ -74,12 +74,12 @@ public class RasterControlPointList extends ArrayList<RasterControlPointList.Con
         this.avList.removePropertyChangeListener(listener);
     }
 
-    public void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
-        this.avList.firePropertyChange(propertyName, oldValue, newValue);
+    public void emit(String propertyName, Object oldValue, Object newValue) {
+        this.avList.emit(propertyName, oldValue, newValue);
     }
 
-    public void firePropertyChange(PropertyChangeEvent propertyChangeEvent) {
-        this.avList.firePropertyChange(propertyChangeEvent);
+    public void emit(PropertyChangeEvent propertyChangeEvent) {
+        this.avList.emit(propertyChangeEvent);
     }
 
     public KV copy() {

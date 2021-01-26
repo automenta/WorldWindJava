@@ -33,11 +33,11 @@ public class Position extends LatLon {
     }
 
     public Position(LatLon latLon, double elevation) {
-        this(latLon.latitude, latLon.longitude, elevation);
+        this(latLon.lat, latLon.lon, elevation);
     }
 
     public Position(Position that) {
-        this(that.latitude, that.longitude, that.elevation);
+        this(that.lat, that.lon, that.elevation);
     }
 
     public static Position fromRadians(double latitude, double longitude, double elevation) {
@@ -138,8 +138,8 @@ public class Position extends LatLon {
             if (pos != null) {
                 // A segment cross the line if end pos have different longitude signs
                 // and are more than 180 degress longitude apart
-                if (Math.signum(pos.getLongitude().degrees) != Math.signum(posNext.getLongitude().degrees)) {
-                    double delta = Math.abs(pos.getLongitude().degrees - posNext.getLongitude().degrees);
+                if (Math.signum(pos.getLon().degrees) != Math.signum(posNext.getLon().degrees)) {
+                    double delta = Math.abs(pos.getLon().degrees - posNext.getLon().degrees);
                     if (delta > 180 && delta < 360) {
                         return true;
                     }
@@ -215,15 +215,15 @@ public class Position extends LatLon {
     }
 
     public Position add(Position that) {
-        Angle lat = Angle.latNorm(this.getLatitude().add(that.getLatitude()));
-        Angle lon = Angle.lonNorm(this.getLongitude().add(that.getLongitude()));
+        Angle lat = Angle.latNorm(this.getLat().add(that.getLat()));
+        Angle lon = Angle.lonNorm(this.getLon().add(that.getLon()));
 
         return new Position(lat, lon, this.elevation + that.elevation);
     }
 
     public Position subtract(Position that) {
-        Angle lat = Angle.latNorm(this.getLatitude().sub(that.getLatitude()));
-        Angle lon = Angle.lonNorm(this.getLongitude().sub(that.getLongitude()));
+        Angle lat = Angle.latNorm(this.getLat().sub(that.getLat()));
+        Angle lon = Angle.lonNorm(this.getLon().sub(that.getLon()));
 
         return new Position(lat, lon, this.elevation - that.elevation);
     }
@@ -246,7 +246,7 @@ public class Position extends LatLon {
 
     public String toString() {
         return '('
-            + this.getLatitude().toString() + ", " + this.getLongitude().toString() + ", " + this.elevation + ')';
+            + this.getLat().toString() + ", " + this.getLon().toString() + ", " + this.elevation + ')';
     }
 
     // A class that makes it easier to pass around position lists.

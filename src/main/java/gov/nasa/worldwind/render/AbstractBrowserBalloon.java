@@ -706,11 +706,11 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         }
 
         Dimension size = activeAttrs.getSize().compute(nativeSize.width, nativeSize.height,
-            dc.getView().getViewport().width, dc.getView().getViewport().height);
+            dc.view().getViewport().width, dc.view().getViewport().height);
 
         if (activeAttrs.getMaximumSize() != null) {
             Dimension maxSize = activeAttrs.getMaximumSize().compute(nativeSize.width, nativeSize.height,
-                dc.getView().getViewport().width, dc.getView().getViewport().height);
+                dc.view().getViewport().width, dc.view().getViewport().height);
 
             if (size.width > maxSize.width)
                 size.width = maxSize.width;
@@ -867,7 +867,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         if (dc.isPickingMode())
             return dc.getPickFrustums().intersectsAny(obb.screenPickExtent);
 
-        return dc.getView().getViewport().intersects(obb.screenExtent);
+        return dc.view().getViewport().intersects(obb.screenExtent);
     }
 
     protected void drawOrderedRenderable(DrawContext dc, OrderedBrowserBalloon obb) {
@@ -897,7 +897,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         this.osh.pushClientAttrib(gl, GL2.GL_CLIENT_VERTEX_ARRAY_BIT); // For vertex array enable, pointers.
         this.osh.pushProjectionIdentity(gl);
         // The browser balloon is drawn using a parallel projection sized to fit the viewport.
-        gl.glOrtho(0.0d, dc.getView().getViewport().width, 0.0d, dc.getView().getViewport().height, -1.0d, 1.0d);
+        gl.glOrtho(0.0d, dc.view().getViewport().width, 0.0d, dc.view().getViewport().height, -1.0d, 1.0d);
         this.osh.pushTextureIdentity(gl);
         this.osh.pushModelviewIdentity(gl);
 
@@ -1364,7 +1364,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
 
         // Compute the screen rectangle in AWT coordinates (origin top left).
         Rectangle awtScreenRect = new Rectangle(obb.screenRect.x,
-            dc.getView().getViewport().height - obb.screenRect.y - obb.screenRect.height,
+            dc.view().getViewport().height - obb.screenRect.y - obb.screenRect.height,
             obb.screenRect.width, obb.screenRect.height);
 
         Color color = dc.getUniquePickColor();

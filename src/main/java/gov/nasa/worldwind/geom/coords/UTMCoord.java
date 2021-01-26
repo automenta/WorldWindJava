@@ -124,8 +124,8 @@ public class UTMCoord {
         if (!WWUtil.isEmpty(datum) && datum.equals("NAD27")) {
             converter = new UTMCoordConverter(UTMCoordConverter.CLARKE_A, UTMCoordConverter.CLARKE_F);
             LatLon llNAD27 = UTMCoordConverter.convertWGS84ToNAD27(latitude, longitude);
-            latitude = llNAD27.getLatitude();
-            longitude = llNAD27.getLongitude();
+            latitude = llNAD27.getLat();
+            longitude = llNAD27.getLon();
         } else {
             converter = new UTMCoordConverter(UTMCoordConverter.WGS84_A, UTMCoordConverter.WGS84_F);
         }

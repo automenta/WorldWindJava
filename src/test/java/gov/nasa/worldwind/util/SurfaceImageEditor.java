@@ -40,16 +40,16 @@ public class SurfaceImageEditor implements SelectListener {
     protected Position previousPosition = null;
 
     public SurfaceImageEditor(WorldWindow wwd, SurfaceImage shape) {
-        if (wwd == null) {
-            String msg = Logging.getMessage("nullValue.WorldWindow");
-            Logging.logger().log(Level.FINE, msg);
-            throw new IllegalArgumentException(msg);
-        }
-        if (shape == null) {
-            String msg = Logging.getMessage("nullValue.Shape");
-            Logging.logger().log(Level.FINE, msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (wwd == null) {
+//            String msg = Logging.getMessage("nullValue.WorldWindow");
+//            Logging.logger().log(Level.FINE, msg);
+//            throw new IllegalArgumentException(msg);
+//        }
+//        if (shape == null) {
+//            String msg = Logging.getMessage("nullValue.Shape");
+//            Logging.logger().log(Level.FINE, msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         this.wwd = wwd;
         this.shape = shape;
@@ -216,8 +216,8 @@ public class SurfaceImageEditor implements SelectListener {
 
         Position p = terrainObject.position();
 
-        Angle dLat = p.getLatitude().sub(this.previousPosition.getLatitude());
-        Angle dLon = p.getLongitude().sub(this.previousPosition.getLongitude());
+        Angle dLat = p.getLat().sub(this.previousPosition.getLat());
+        Angle dLon = p.getLon().sub(this.previousPosition.getLon());
         LatLon delta = new LatLon(dLat, dLon);
 
         this.previousPosition = p;
@@ -253,14 +253,14 @@ public class SurfaceImageEditor implements SelectListener {
     protected static double computeSurfaceElevation(WorldWindow wwd, LatLon latLon) {
         SectorGeometryList sgl = wwd.sceneControl().getTerrain();
         if (sgl != null) {
-            Vec4 point = sgl.getSurfacePoint(latLon.getLatitude(), latLon.getLongitude(), 0.0);
+            Vec4 point = sgl.getSurfacePoint(latLon.getLat(), latLon.getLon(), 0.0);
             if (point != null) {
                 Position pos = wwd.model().globe().computePositionFromPoint(point);
                 return pos.getElevation();
             }
         }
 
-        return wwd.model().globe().elevation(latLon.getLatitude(), latLon.getLongitude());
+        return wwd.model().globe().elevation(latLon.getLat(), latLon.getLon());
     }
 
     protected static class ControlPointMarker extends BasicMarker {

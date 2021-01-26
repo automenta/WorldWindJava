@@ -167,9 +167,9 @@ public class KMLExportUtil {
         xmlWriter.writeStartElement("LinearRing");
         xmlWriter.writeStartElement("coordinates");
         for (LatLon location : boundary) {
-            xmlWriter.writeCharacters(Double.toString(location.getLongitude().degrees));
+            xmlWriter.writeCharacters(Double.toString(location.getLon().degrees));
             xmlWriter.writeCharacters(",");
-            xmlWriter.writeCharacters(Double.toString(location.getLatitude().degrees));
+            xmlWriter.writeCharacters(Double.toString(location.getLat().degrees));
 
             if (altitudeString != null) {
                 xmlWriter.writeCharacters(",");

@@ -137,18 +137,18 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
         for (Vertex cur : contour) {
             if (prev != null && LatLon.locationsCrossDateline(prev, cur)) {
                 if (offset == null)
-                    offset = (prev.longitude < 0 ? Angle.NEG360 : Angle.POS360);
+                    offset = (prev.lon < 0 ? Angle.NEG360 : Angle.POS360);
                 applyOffset = !applyOffset;
             }
 
-            result.add(applyOffset ? new Vertex(cur.getLatitude(), cur.getLongitude().add(offset), cur.u, cur.v) : cur);
+            result.add(applyOffset ? new Vertex(cur.getLat(), cur.getLon().add(offset), cur.u, cur.v) : cur);
 
             prev = cur;
         }
 
         List<Vertex> mirror = new ArrayList<>(result.size());
         for (Vertex cur : result) {
-            mirror.add(new Vertex(cur.getLatitude(), cur.getLongitude().sub(offset), cur.u, cur.v));
+            mirror.add(new Vertex(cur.getLat(), cur.getLon().sub(offset), cur.u, cur.v));
         }
 
         return Arrays.asList(result, mirror);
@@ -394,9 +394,9 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
                 if (LatLon.locationsCrossDateline(vertex, nextVertex)) {
                     // Determine where the segment crosses the dateline.
                     LatLon separation = LatLon.intersectionWithMeridian(vertex, nextVertex, Angle.POS180);
-                    double sign = Math.signum(vertex.longitude);
+                    double sign = Math.signum(vertex.lon);
 
-                    Angle lat = separation.getLatitude();
+                    Angle lat = separation.getLat();
                     Angle thisSideLon = Angle.POS180.multiply(sign);
                     Angle otherSideLon = thisSideLon.multiply(-1);
 
@@ -483,8 +483,8 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
                 GLU.gluTessBeginContour(SurfacePolygon.tess);
 
                 for (Vertex vertex : contour) {
-                    coords[0] = vertex.longitude;
-                    coords[1] = vertex.latitude;
+                    coords[0] = vertex.lon;
+                    coords[1] = vertex.lat;
                     int index = polygonData.size();
                     polygonData.add(vertex);
                     Object vertexData = new GLUTessellatorSupport.VertexData(index, vertex.edgeFlag);
@@ -514,11 +514,11 @@ public class SurfacePolygon extends AbstractSurfaceShape implements GeographicEx
         shapeData.vertexStride = shapeData.hasTexCoords ? 16 : 0;
         shapeData.vertices = Buffers.newDirectFloatBuffer(polygonData.size() * (shapeData.hasTexCoords ? 4 : 2));
         final Position refPos = this.getReferencePosition();
-        double lonOffset = refPos.longitude;
-        double latOffset = refPos.latitude;
+        double lonOffset = refPos.lon;
+        double latOffset = refPos.lat;
         for (Vertex vertex : polygonData) {
-            shapeData.vertices.put((float) (vertex.longitude - lonOffset));
-            shapeData.vertices.put((float) (vertex.latitude - latOffset));
+            shapeData.vertices.put((float) (vertex.lon - lonOffset));
+            shapeData.vertices.put((float) (vertex.lat - latOffset));
 
             if (shapeData.hasTexCoords) {
                 shapeData.vertices.put((float) vertex.u);

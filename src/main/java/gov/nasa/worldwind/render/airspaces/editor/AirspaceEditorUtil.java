@@ -42,7 +42,7 @@ public class AirspaceEditorUtil {
 
     public static double computeHeightAboveSurface(WorldWindow wwd, Vec4 point) {
         Position pos = wwd.model().globe().computePositionFromPoint(point);
-        Vec4 surfacePoint = AirspaceEditorUtil.computeSurfacePoint(wwd, pos.getLatitude(), pos.getLongitude());
+        Vec4 surfacePoint = AirspaceEditorUtil.computeSurfacePoint(wwd, pos.getLat(), pos.getLon());
         Vec4 surfaceNormal = wwd.model().globe().computeSurfaceNormalAtPoint(point);
         return point.subtract3(surfacePoint).dot3(surfaceNormal);
     }

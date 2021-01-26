@@ -43,7 +43,7 @@ public class BasicTree extends WWObjectImpl implements Tree, PreRenderable {
      */
     public void expandPath(TreePath path) {
         this.expandedNodes.add(path);
-        this.firePropertyChange(Keys.TREE, null, this);
+        this.emit(Keys.TREE, null, this);
     }
 
     /**
@@ -51,7 +51,7 @@ public class BasicTree extends WWObjectImpl implements Tree, PreRenderable {
      */
     public void collapsePath(TreePath path) {
         this.expandedNodes.remove(path);
-        this.firePropertyChange(Keys.TREE, null, this);
+        this.emit(Keys.TREE, null, this);
     }
 
     /**

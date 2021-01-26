@@ -672,8 +672,8 @@ public class WWUtil {
             LatLon location = UTMCoord.locationFromUTMCoord(zone, hemisphere, easting, northing, null);
 
             buffer.reset();
-            buffer.put(location.getLongitude().degrees);
-            buffer.put(location.getLatitude().degrees);
+            buffer.put(location.getLon().degrees);
+            buffer.put(location.getLat().degrees);
         }
     }
 

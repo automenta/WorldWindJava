@@ -211,7 +211,6 @@ public class KVMap implements KV {
     }
 
     public String getStringValue(String key) {
-
         Object y = get(key);
         return y != null ? y.toString() : null;
     }
@@ -229,8 +228,7 @@ public class KVMap implements KV {
 //        }
 
         //synchronized(avList) {
-        Set<Map.Entry<String, Object>> entries = list.getEntries();
-        for (Map.Entry<String, Object> entry : entries) {
+        for (Map.Entry<String, Object> entry : list.getEntries()) {
             this.set(entry.getKey(), KVMap.o(entry.getValue()));
         }
         //}
@@ -253,7 +251,7 @@ public class KVMap implements KV {
     public KV copy() {
         final Map<String, Object> v = this.avList;
 
-        KVMap clone = new KVMap();
+        KVMap clone = new KVMap(v!=null ? v.size() : 0);
         if (v != null && !v.isEmpty())
             clone.avList(true).putAll(v);
 
@@ -292,12 +290,12 @@ public class KVMap implements KV {
         this.getChangeSupport().removePropertyChangeListener(listener);
     }
 
-    public final void firePropertyChange(PropertyChangeEvent propertyChangeEvent) {
+    public final void emit(PropertyChangeEvent propertyChangeEvent) {
         final PropertyChangeSupport p = this.getCreatedChangeSupport();
         if (p!=null) p.firePropertyChange(propertyChangeEvent);
     }
 
-    public void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
+    public void emit(String propertyName, Object oldValue, Object newValue) {
         final PropertyChangeSupport p = this.getCreatedChangeSupport();
         if (p!=null) p.firePropertyChange(propertyName, oldValue, newValue);
     }
@@ -306,6 +304,5 @@ public class KVMap implements KV {
         RestorableSupport.StateObject context) {
         if (value!=null && !key.equals(KVMap.PROPERTY_CHANGE_SUPPORT))
             rs.addStateValueAsString(context, key, value.toString());
-
     }
 }

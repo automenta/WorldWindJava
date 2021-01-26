@@ -252,8 +252,8 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
 
         public GraticuleTile(Sector sector) {
             this.sector = sector;
-            this.zone = UTMGraticuleLayer.getGridColumn(this.sector.getCentroid().getLongitude().degrees) + 1;
-            this.hemisphere = this.sector.getCentroid().latitude > 0 ? Keys.NORTH : Keys.SOUTH;
+            this.zone = UTMGraticuleLayer.getGridColumn(this.sector.getCentroid().getLon().degrees) + 1;
+            this.hemisphere = this.sector.getCentroid().lat > 0 ? Keys.NORTH : Keys.SOUTH;
         }
 
         public Extent getExtent(Globe globe, double ve) {
@@ -262,7 +262,7 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
 
         @SuppressWarnings("RedundantIfStatement")
         public boolean isInView(DrawContext dc) {
-            if (!dc.getView().getFrustumInModelCoordinates().intersects(
+            if (!dc.view().getFrustumInModelCoordinates().intersects(
                 this.getExtent(dc.getGlobe(), dc.getVerticalExaggeration())))
                 return false;
 
@@ -270,9 +270,9 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
         }
 
         public double getSizeInPixels(DrawContext dc) {
-            View view = dc.getView();
-            Vec4 centerPoint = GraticuleLayer.getSurfacePoint(dc, this.sector.getCentroid().getLatitude(),
-                this.sector.getCentroid().getLongitude());
+            View view = dc.view();
+            Vec4 centerPoint = GraticuleLayer.getSurfacePoint(dc, this.sector.getCentroid().getLat(),
+                this.sector.getCentroid().getLon());
             double distance = view.getEyePoint().distanceTo3(centerPoint);
             double tileSizeMeter = toRadians(this.sector.latDelta) * dc.getGlobe().getRadius();
             return tileSizeMeter / view.computePixelSizeAtDistance(distance);
@@ -322,10 +322,10 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
             try {
                 // Find grid zone easting and northing boundaries
                 UTMCoord UTM;
-                UTM = UTMCoord.fromLatLon(this.sector.latMin(), this.sector.getCentroid().getLongitude(),
+                UTM = UTMCoord.fromLatLon(this.sector.latMin(), this.sector.getCentroid().getLon(),
                     globe);
                 double minNorthing = UTM.getNorthing();
-                UTM = UTMCoord.fromLatLon(this.sector.latMax(), this.sector.getCentroid().getLongitude(),
+                UTM = UTMCoord.fromLatLon(this.sector.latMax(), this.sector.getCentroid().getLon(),
                     globe);
                 double maxNorthing = UTM.getNorthing();
                 maxNorthing = maxNorthing == 0 ? 10.0e6 : maxNorthing;

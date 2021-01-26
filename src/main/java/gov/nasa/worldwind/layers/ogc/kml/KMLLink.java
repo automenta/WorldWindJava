@@ -232,7 +232,7 @@ public class KMLLink extends KMLAbstractObject {
     @Override
     public void onMessage(Message msg) {
         String viewRefreshMode = this.getViewRefreshMode();
-        if (View.VIEW_STOPPED.equals(msg.getName()) && KMLConstants.ON_STOP.equals(viewRefreshMode)) {
+        if (View.VIEW_STOPPED.equals(msg.name) && KMLConstants.ON_STOP.equals(viewRefreshMode)) {
             Double refreshTime = this.getViewRefreshTime();
             if (refreshTime != null) {
                 KMLLink.scheduleDelayedTask(new RefreshTask(), refreshTime.longValue(), TimeUnit.SECONDS);
@@ -388,14 +388,14 @@ public class KMLLink extends KMLAbstractObject {
                 s = s.replaceAll("\\[bboxEast]", Double.toString(viewBounds.lonMax));
                 s = s.replaceAll("\\[bboxNorth]", Double.toString(viewBounds.latMax));
 
-                View view = dc.getView();
+                View view = dc.view();
 
                 Vec4 centerPoint = view.getCenterPoint();
                 if (centerPoint != null) {
                     // Use the view's center position as the "look at" position.
                     Position centerPosition = view.getGlobe().computePositionFromPoint(centerPoint);
-                    s = s.replaceAll("\\[lookatLat]", Double.toString(centerPosition.getLatitude().degrees));
-                    s = s.replaceAll("\\[lookatLon]", Double.toString(centerPosition.getLongitude().degrees));
+                    s = s.replaceAll("\\[lookatLat]", Double.toString(centerPosition.getLat().degrees));
+                    s = s.replaceAll("\\[lookatLon]", Double.toString(centerPosition.getLon().degrees));
                     s = s.replaceAll("\\[lookatAlt]", Double.toString(centerPosition.getAltitude()));
 
                     double range = centerPoint.distanceTo3(view.getEyePoint());
@@ -405,14 +405,14 @@ public class KMLLink extends KMLAbstractObject {
                     s = s.replaceAll("\\[lookatTilt]", Double.toString(view.getPitch().degrees));
 
                     // TODO make sure that these terrain fields really should be treated the same as the fields above
-                    s = s.replaceAll("\\[lookatTerrainLat]", Double.toString(centerPosition.getLatitude().degrees));
-                    s = s.replaceAll("\\[lookatTerrainLon]", Double.toString(centerPosition.getLongitude().degrees));
+                    s = s.replaceAll("\\[lookatTerrainLat]", Double.toString(centerPosition.getLat().degrees));
+                    s = s.replaceAll("\\[lookatTerrainLon]", Double.toString(centerPosition.getLon().degrees));
                     s = s.replaceAll("\\[lookatTerrainAlt]", Double.toString(centerPosition.getAltitude()));
                 }
 
                 Position eyePosition = view.getCurrentEyePosition();
-                s = s.replaceAll("\\[cameraLat]", Double.toString(eyePosition.getLatitude().degrees));
-                s = s.replaceAll("\\[cameraLon]", Double.toString(eyePosition.getLongitude().degrees));
+                s = s.replaceAll("\\[cameraLat]", Double.toString(eyePosition.getLat().degrees));
+                s = s.replaceAll("\\[cameraLon]", Double.toString(eyePosition.getLon().degrees));
                 s = s.replaceAll("\\[cameraAlt]", Double.toString(eyePosition.getAltitude()));
 
                 s = s.replaceAll("\\[horizFOV]", Double.toString(view.getFieldOfView().degrees));
@@ -469,8 +469,8 @@ public class KMLLink extends KMLAbstractObject {
             // If the DrawContext has a visible sector and a viewBoundScale is specified, compute the view bounding box
             // by scaling the DrawContext's visible sector from its centroid, based on the scale factor specified by
             // viewBoundScale.
-            double centerLat = dc.getVisibleSector().getCentroid().getLatitude().degrees;
-            double centerLon = dc.getVisibleSector().getCentroid().getLongitude().degrees;
+            double centerLat = dc.getVisibleSector().getCentroid().getLat().degrees;
+            double centerLon = dc.getVisibleSector().getCentroid().getLon().degrees;
             double latDelta = dc.getVisibleSector().latDelta;
             double lonDelta = dc.getVisibleSector().lonDelta;
 

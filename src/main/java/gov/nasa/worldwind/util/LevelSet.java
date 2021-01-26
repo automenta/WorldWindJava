@@ -119,18 +119,18 @@ public class LevelSet extends WWObjectImpl {
 
         // Compute the number of level zero columns. This value is guaranteed to be a nonzero number, since there is
         // generally at least one level zero tile.
-        int firstLevelZeroCol = Tile.computeColumn(this.levelZeroTileDelta.getLongitude(),
-            this.sector.lonMin(), this.tileOrigin.getLongitude());
-        int lastLevelZeroCol = Tile.computeColumn(this.levelZeroTileDelta.getLongitude(), this.sector.lonMax(),
-            this.tileOrigin.getLongitude());
+        int firstLevelZeroCol = Tile.computeColumn(this.levelZeroTileDelta.getLon(),
+            this.sector.lonMin(), this.tileOrigin.getLon());
+        int lastLevelZeroCol = Tile.computeColumn(this.levelZeroTileDelta.getLon(), this.sector.lonMax(),
+            this.tileOrigin.getLon());
         this.numLevelZeroColumns = Math.max(1, lastLevelZeroCol - firstLevelZeroCol + 1);
 
         for (int i = 0; i < numLevels; i++) {
             params.set(Keys.LEVEL_NAME, i < numEmptyLevels ? "" : Integer.toString(i - numEmptyLevels));
             params.set(Keys.LEVEL_NUMBER, i);
 
-            Angle latDelta = this.levelZeroTileDelta.getLatitude().divide(Math.pow(2, i));
-            Angle lonDelta = this.levelZeroTileDelta.getLongitude().divide(Math.pow(2, i));
+            Angle latDelta = this.levelZeroTileDelta.getLat().divide(Math.pow(2, i));
+            Angle lonDelta = this.levelZeroTileDelta.getLon().divide(Math.pow(2, i));
             params.set(Keys.TILE_DELTA, new LatLon(latDelta, lonDelta));
 
             this.levels.add(new Level(params));
@@ -337,10 +337,10 @@ public class LevelSet extends WWObjectImpl {
         Level level = this.getLevel(key.level);
 
         // Compute the tile's SW lat/lon based on its row/col in the level's data set.
-        Angle dLat = level.getTileDelta().getLatitude();
-        Angle dLon = level.getTileDelta().getLongitude();
-        Angle latOrigin = this.tileOrigin.getLatitude();
-        Angle lonOrigin = this.tileOrigin.getLongitude();
+        Angle dLat = level.getTileDelta().getLat();
+        Angle dLon = level.getTileDelta().getLon();
+        Angle latOrigin = this.tileOrigin.getLat();
+        Angle lonOrigin = this.tileOrigin.getLon();
 
         Angle minLatitude = Tile.rowLat(key.row, dLat, latOrigin);
         Angle minLongitude = Tile.columnLon(key.col, dLon, lonOrigin);

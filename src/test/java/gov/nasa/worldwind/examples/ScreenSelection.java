@@ -130,8 +130,8 @@ public class ScreenSelection extends ApplicationTemplate {
                 // Update the list of highlighted objects whenever the ScreenSelector's selection changes. We capture
                 // both the selection started and selection changed events to ensure that we clear the list of selected
                 // objects when the selection begins or re-starts, as well as update the list when it changes.
-                if (msg.getName().equals(ScreenSelector.SELECTION_STARTED)
-                    || msg.getName().equals(ScreenSelector.SELECTION_CHANGED)) {
+                if (msg.name.equals(ScreenSelector.SELECTION_STARTED)
+                    || msg.name.equals(ScreenSelector.SELECTION_CHANGED)) {
                     this.highlightSelectedObjects(this.screenSelector.getSelectedObjects());
                 }
             }

@@ -62,7 +62,7 @@ public class BasicAnnotationRenderer implements AnnotationRenderer {
         if (annotation instanceof Locatable) {
             Position pos = ((Locatable) annotation).getPosition();
             if (pos.getElevation() < dc.getGlobe().getMaxElevation())
-                drawPoint = dc.getSurfaceGeometry().getSurfacePoint(pos.getLatitude(), pos.getLongitude(),
+                drawPoint = dc.getSurfaceGeometry().getSurfacePoint(pos.getLat(), pos.getLon(),
                     pos.getElevation());
             if (drawPoint == null)
                 drawPoint = dc.getGlobe().computePointFromPosition(pos);
@@ -85,7 +85,7 @@ public class BasicAnnotationRenderer implements AnnotationRenderer {
 
         // Load a parallel projection with dimensions (viewportWidth, viewportHeight)
         stackHandler.pushProjectionIdentity(gl);
-        gl.glOrtho(0.0d, dc.getView().getViewport().width, 0.0d, dc.getView().getViewport().height, -1.0d, 1.0d);
+        gl.glOrtho(0.0d, dc.view().getViewport().width, 0.0d, dc.view().getViewport().height, -1.0d, 1.0d);
 
         // Push identity matrices on the texture and modelview matrix stacks. Leave the matrix mode as modelview.
         stackHandler.pushTextureIdentity(gl);
@@ -180,7 +180,7 @@ public class BasicAnnotationRenderer implements AnnotationRenderer {
         if (!iterator.hasNext())
             return;
 
-        double altitude = dc.getView().getEyePosition().getElevation();
+        double altitude = dc.view().getEyePosition().getElevation();
 
         while (iterator.hasNext()) {
             Annotation annotation = iterator.next();
@@ -213,12 +213,12 @@ public class BasicAnnotationRenderer implements AnnotationRenderer {
                 Vec4 annotationPoint = BasicAnnotationRenderer.getAnnotationDrawPoint(dc, annotation);
                 if (annotationPoint == null)
                     continue;
-                eyeDistance = annotation.isAlwaysOnTop() ? 0 : dc.getView().getEyePoint().distanceTo3(annotationPoint);
+                eyeDistance = annotation.isAlwaysOnTop() ? 0 : dc.view().getEyePoint().distanceTo3(annotationPoint);
             }
 
             if (annotation instanceof ScreenAnnotation) {
                 Rectangle screenBounds = annotation.getBounds(dc);
-                if (screenBounds != null && !dc.getView().getViewport().intersects(screenBounds))
+                if (screenBounds != null && !dc.view().getViewport().intersects(screenBounds))
                     return;
             }
 
@@ -273,7 +273,7 @@ public class BasicAnnotationRenderer implements AnnotationRenderer {
                 return;
         }
 
-        double altitude = dc.getView().getEyePosition().getElevation();
+        double altitude = dc.view().getEyePosition().getElevation();
         if (altitude < annotation.getMinActiveAltitude() || altitude > annotation.getMaxActiveAltitude())
             return;
 
@@ -282,7 +282,7 @@ public class BasicAnnotationRenderer implements AnnotationRenderer {
             if (annotationPoint == null) {
                 Position pos = ((Locatable) annotation).getPosition();
 
-                if (!dc.getVisibleSector().contains(pos.getLatitude(), pos.getLongitude()))
+                if (!dc.getVisibleSector().contains(pos.getLat(), pos.getLon()))
                     return;
 
                 // Determine Cartesian position from the surface geometry if the annotation is near the surface,
@@ -292,12 +292,12 @@ public class BasicAnnotationRenderer implements AnnotationRenderer {
                     return;
             }
 
-            if (!dc.getView().getFrustumInModelCoordinates().contains(annotationPoint))
+            if (!dc.view().getFrustumInModelCoordinates().contains(annotationPoint))
                 return;
 
             if (!dc.isContinuous2DGlobe()) {
-                double horizon = dc.getView().getHorizonDistance();
-                eyeDistance = annotation.isAlwaysOnTop() ? 0 : dc.getView().getEyePoint().distanceTo3(annotationPoint);
+                double horizon = dc.view().getHorizonDistance();
+                eyeDistance = annotation.isAlwaysOnTop() ? 0 : dc.view().getEyePoint().distanceTo3(annotationPoint);
                 if (eyeDistance > horizon)
                     return;
             }
@@ -305,7 +305,7 @@ public class BasicAnnotationRenderer implements AnnotationRenderer {
 
         if (annotation instanceof ScreenAnnotation) {
             Rectangle screenBounds = annotation.getBounds(dc);
-            if (screenBounds != null && !dc.getView().getViewport().intersects(screenBounds))
+            if (screenBounds != null && !dc.view().getViewport().intersects(screenBounds))
                 return;
         }
 

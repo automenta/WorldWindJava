@@ -226,11 +226,11 @@ public final class Sphere implements Extent, Renderable {
             throw new IllegalArgumentException(msg);
         }
 
-        double sinLat = location.getLatitude().sin();
+        double sinLat = location.getLat().sin();
 
-        double x = this.center.x + this.getRadius() * sinLat * location.getLongitude().cos();
-        double y = this.center.y + this.getRadius() * sinLat * location.getLongitude().sin();
-        double z = this.center.z + this.getRadius() * location.getLatitude().cos();
+        double x = this.center.x + this.getRadius() * sinLat * location.getLon().cos();
+        double y = this.center.y + this.getRadius() * sinLat * location.getLon().sin();
+        double z = this.center.z + this.getRadius() * location.getLat().cos();
 
         return new Vec4(x, y, z);
     }

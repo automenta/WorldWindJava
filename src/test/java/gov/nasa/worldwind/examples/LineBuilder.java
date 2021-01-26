@@ -201,7 +201,7 @@ public class LineBuilder extends KVMap {
 
         this.positions.add(curPos);
         this.line.setPositions(this.positions);
-        this.firePropertyChange("LineBuilder.AddPosition", null, curPos);
+        this.emit("LineBuilder.AddPosition", null, curPos);
         this.wwd.redraw();
     }
 
@@ -219,7 +219,7 @@ public class LineBuilder extends KVMap {
         Position currentLastPosition = this.positions.get(index);
         this.positions.set(index, curPos);
         this.line.setPositions(this.positions);
-        this.firePropertyChange("LineBuilder.ReplacePosition", currentLastPosition, curPos);
+        this.emit("LineBuilder.ReplacePosition", currentLastPosition, curPos);
         this.wwd.redraw();
     }
 
@@ -231,7 +231,7 @@ public class LineBuilder extends KVMap {
         Position currentLastPosition = this.positions.get(this.positions.size() - 1);
         this.positions.remove(this.positions.size() - 1);
         this.line.setPositions(this.positions);
-        this.firePropertyChange("LineBuilder.RemovePosition", currentLastPosition, null);
+        this.emit("LineBuilder.RemovePosition", currentLastPosition, null);
         this.wwd.redraw();
     }
 
@@ -328,8 +328,8 @@ public class LineBuilder extends KVMap {
                     break;
                 }
 
-                String las = String.format("Lat %7.4f\u00B0", pos.getLatitude().degrees);
-                String los = String.format("Lon %7.4f\u00B0", pos.getLongitude().degrees);
+                String las = String.format("Lat %7.4f\u00B0", pos.getLat().degrees);
+                String los = String.format("Lon %7.4f\u00B0", pos.getLon().degrees);
                 pointLabels[i++].setText(las + "  " + los);
             }
             for (; i < this.pointLabels.length; i++) {

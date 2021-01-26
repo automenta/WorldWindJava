@@ -255,7 +255,7 @@ public class MGRSAttributesPanel extends JPanel {
         try {
             String stateInXml = loadString(file);
             this.layer.restoreState(stateInXml);
-            this.layer.firePropertyChange(Keys.LAYER, null, this.layer);
+            this.layer.emit(Keys.LAYER, null, this.layer);
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -306,7 +306,7 @@ public class MGRSAttributesPanel extends JPanel {
             this.layer.setDrawLabels(attributesPanel.isLabelEnableSelected(), graticuleType);
             this.layer.setLabelColor(attributesPanel.getSelectedLabelColor(), graticuleType);
             this.layer.setLabelFont(attributesPanel.getSelectedLabelFont(), graticuleType);
-            this.layer.firePropertyChange(Keys.LAYER, null, this.layer);
+            this.layer.emit(Keys.LAYER, null, this.layer);
         }
     }
 

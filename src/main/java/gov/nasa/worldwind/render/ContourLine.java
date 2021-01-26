@@ -68,7 +68,7 @@ public class ContourLine implements Renderable {
      */
     protected static ArrayList<Intersection> filterIntersectionsOnViewFrustum(DrawContext dc,
         ArrayList<Intersection> list) {
-        Frustum vf = dc.getView().getFrustumInModelCoordinates();
+        Frustum vf = dc.view().getFrustumInModelCoordinates();
         int i = 0;
         while (i < list.size()) {
             if (vf.contains(list.get(i).getIntersectionPoint())

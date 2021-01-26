@@ -53,36 +53,7 @@ public class BasicDragger implements SelectListener {
         this.wwd = wwd;
     }
 
-    /**
-     * Ignores the useTerrain argument as it has been deprecated and utilizes the single parameter constructor.
-     *
-     * @param wwd        The world window.
-     * @param useTerrain Unused.
-     * @deprecated the useTerrain property has been deprecated in favor of the {@link Draggable} interface which allows
-     * the object to define the drag behavior.
-     */
-    @Deprecated
-    public BasicDragger(WorldWindow wwd, boolean useTerrain) {
-        this(wwd);
-    }
 
-    /**
-     * @return <code>false</code> as this functionality has been deprecated.
-     * @deprecated the {@link Draggable} provides the object being dragged complete control over the dragging behavior.
-     */
-    @Deprecated
-    public static boolean isUseTerrain() {
-        return false;
-    }
-
-    /**
-     * @param useTerrain Unused.
-     * @deprecated definition of dragging behavior now defined by the object in the {@link Draggable} interface.
-     */
-    @Deprecated
-    public void setUseTerrain(boolean useTerrain) {
-        // ignored - functionality deprecated
-    }
 
     /**
      * Returns if the dragger is currently executing a dragging operation.
@@ -138,7 +109,9 @@ public class BasicDragger implements SelectListener {
 
         if (dragObject instanceof Draggable) {
             ((Draggable) dragObject).drag(this.dragContext);
-        } else if ((dragObject instanceof Movable2) || (dragObject instanceof Movable)) {
+        }
+
+        if ((dragObject instanceof Movable2) || (dragObject instanceof Movable)) {
             // Utilize the existing behavior
             this.dragLegacy(dragEvent);
         }

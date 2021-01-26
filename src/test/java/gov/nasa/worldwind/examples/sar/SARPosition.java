@@ -23,7 +23,7 @@ public class SARPosition extends Position {
     }
 
     public SARPosition(Position pos) {
-        super(pos.getLatitude(), pos.getLongitude(), pos.getElevation());
+        super(pos.getLat(), pos.getLon(), pos.getElevation());
     }
 
     public static class Info {

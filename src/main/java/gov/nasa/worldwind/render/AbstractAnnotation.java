@@ -224,10 +224,10 @@ public abstract class AbstractAnnotation extends KVMap implements Annotation {
     }
 
     protected static Point glPointFromAWTPoint(DrawContext dc, Point awtPoint) {
-        if (dc.getView() == null || dc.getView().getViewport() == null)
+        if (dc.view() == null || dc.view().getViewport() == null)
             return null;
 
-        Rectangle viewport = dc.getView().getViewport();
+        Rectangle viewport = dc.view().getViewport();
         return new Point(awtPoint.x, viewport.height - awtPoint.y - 1);
     }
 
@@ -599,7 +599,7 @@ public abstract class AbstractAnnotation extends KVMap implements Annotation {
      */
     public Rectangle getBounds(DrawContext dc) {
 
-        if (dc.getView().getViewport() == null)
+        if (dc.view().getViewport() == null)
             return null;
 
         return this.computeBounds(dc);

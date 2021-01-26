@@ -182,8 +182,8 @@ public class PolylineTest
         while (expectedPositions.hasNext() && actualPositions.hasNext())
         {
             Position expectedPos = expectedPositions.next(), actualPos = actualPositions.next();
-            assertEquals("positions.i.latitude", expectedPos.getLatitude(), actualPos.getLatitude());
-            assertEquals("positions.i.longitude", expectedPos.getLongitude(), actualPos.getLongitude());
+            assertEquals("positions.i.latitude", expectedPos.getLat(), actualPos.getLat());
+            assertEquals("positions.i.longitude", expectedPos.getLon(), actualPos.getLon());
             assertEquals("positions.i.elevation", expectedPos.getElevation(), actualPos.getElevation(), 0.0);
         }
         // If either iterator has more elements, then their lengths are different.

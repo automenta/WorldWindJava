@@ -215,7 +215,7 @@ public class SAR2 extends JFrame {
         // Components that need to know the current unit will listen on this WorldWindow
         // for a change with the name ELEVATION_UNIT.
         this.wwd.set(SARKey.ELEVATION_UNIT, newValue);
-        this.wwd.firePropertyChange(SARKey.ELEVATION_UNIT, oldValue, newValue);
+        this.wwd.emit(SARKey.ELEVATION_UNIT, oldValue, newValue);
         this.wwd.redraw();
     }
 
@@ -243,7 +243,7 @@ public class SAR2 extends JFrame {
         // Components that need to know the current angle format will listen on this WorldWindow
         // for a change with the name ANGLE_FORMAT.
         this.wwd.set(SARKey.ANGLE_FORMAT, newValue);
-        this.wwd.firePropertyChange(SARKey.ANGLE_FORMAT, oldValue, newValue);
+        this.wwd.emit(SARKey.ANGLE_FORMAT, oldValue, newValue);
         this.wwd.redraw();
     }
 
@@ -447,7 +447,7 @@ public class SAR2 extends JFrame {
             return status;
 
         try {
-            track.firePropertyChange(TrackController.TRACK_REMOVE, null, track);
+            track.emit(TrackController.TRACK_REMOVE, null, track);
             this.trackController.refreshCurrentTrack();
             this.annotationSupport.removeAnnotationsForTrack(track);
             this.wwd.redraw();
@@ -613,9 +613,9 @@ public class SAR2 extends JFrame {
             return;
 
         if (this.trackController.isExtending())
-            track.firePropertyChange(TrackController.END_TRACK_POINT_ENTRY, null, extensionMode);
+            track.emit(TrackController.END_TRACK_POINT_ENTRY, null, extensionMode);
         else
-            track.firePropertyChange(TrackController.BEGIN_TRACK_POINT_ENTRY, null, extensionMode);
+            track.emit(TrackController.BEGIN_TRACK_POINT_ENTRY, null, extensionMode);
     }
 
     public static void showHelp() {
@@ -1000,19 +1000,19 @@ public class SAR2 extends JFrame {
             // == View Mode Examine  ==
             this.viewExamineButton = makeToolBarButton("24x24-view-examine.gif", "View examine", "Examine");
             this.viewExamineButton.addActionListener(
-                e -> wwd.firePropertyChange(TrackViewPanel.VIEW_MODE_CHANGE, null, TrackViewPanel.VIEW_MODE_EXAMINE));
+                e -> wwd.emit(TrackViewPanel.VIEW_MODE_CHANGE, null, TrackViewPanel.VIEW_MODE_EXAMINE));
             toolBar.add(this.viewExamineButton);
 
             // == View Mode Fly-it  ==
             this.viewFollowButton = makeToolBarButton("24x24-view-follow.gif", "View fly-it", "Fly-it");
             this.viewFollowButton.addActionListener(
-                e -> wwd.firePropertyChange(TrackViewPanel.VIEW_MODE_CHANGE, null, TrackViewPanel.VIEW_MODE_FOLLOW));
+                e -> wwd.emit(TrackViewPanel.VIEW_MODE_CHANGE, null, TrackViewPanel.VIEW_MODE_FOLLOW));
 
             toolBar.add(this.viewFollowButton);
             // == View Mode Free  ==
             this.viewFreeButton = makeToolBarButton("24x24-view-free.gif", "View free", "Free");
             this.viewFreeButton.addActionListener(
-                e -> wwd.firePropertyChange(TrackViewPanel.VIEW_MODE_CHANGE, null, TrackViewPanel.VIEW_MODE_FREE));
+                e -> wwd.emit(TrackViewPanel.VIEW_MODE_CHANGE, null, TrackViewPanel.VIEW_MODE_FREE));
             toolBar.add(this.viewFreeButton);
 
             toolBar.addSeparator();
@@ -1027,7 +1027,7 @@ public class SAR2 extends JFrame {
                 // Toggle between enabling and disabling the SHOW_TRACK_INFORMATION state.
                 showTrackInfoButton.setBorderPainted(!showTrackInfoButton.isBorderPainted());
                 String state = showTrackInfoButton.isBorderPainted() ? TrackViewPanel.CURRENT_SEGMENT : null;
-                wwd.firePropertyChange(TrackViewPanel.SHOW_TRACK_INFORMATION, null, state);
+                wwd.emit(TrackViewPanel.SHOW_TRACK_INFORMATION, null, state);
             });
             toolBar.add(this.showTrackInfoButton);
 
@@ -1059,7 +1059,7 @@ public class SAR2 extends JFrame {
                 "Remove last");
             this.removeLastPointButton.addActionListener(e -> {
                 if (getCurrentTrack() != null)
-                    getCurrentTrack().firePropertyChange(TrackController.REMOVE_LAST_POINT, null, null);
+                    getCurrentTrack().emit(TrackController.REMOVE_LAST_POINT, null, null);
             });
             toolBar.add(this.removeLastPointButton);
 
@@ -1067,7 +1067,7 @@ public class SAR2 extends JFrame {
             this.nextPointButton = makeToolBarButton("24x24-forward.gif", "Move to next point", "Next point");
             this.nextPointButton.addActionListener(e -> {
                 if (getCurrentTrack() != null)
-                    getCurrentTrack().firePropertyChange(TrackController.MOVE_TO_NEXT_POINT, null, null);
+                    getCurrentTrack().emit(TrackController.MOVE_TO_NEXT_POINT, null, null);
             });
             toolBar.add(this.nextPointButton);
 
@@ -1075,12 +1075,12 @@ public class SAR2 extends JFrame {
 
             // == Terrain Profile ==
             button = makeToolBarButton("24x24-profile.gif", "Terrain profile", "Profile");
-            button.addActionListener(e -> wwd.firePropertyChange(TerrainProfilePanel.TERRAIN_PROFILE_OPEN, null, null));
+            button.addActionListener(e -> wwd.emit(TerrainProfilePanel.TERRAIN_PROFILE_OPEN, null, null));
             toolBar.add(button);
 
             // == Cloud ceiling ==
             button = makeToolBarButton("24x24-clouds.gif", "Cloud ceiling", "Clouds");
-            button.addActionListener(e -> wwd.firePropertyChange(CloudCeilingPanel.CLOUD_CEILING_OPEN, null, null));
+            button.addActionListener(e -> wwd.emit(CloudCeilingPanel.CLOUD_CEILING_OPEN, null, null));
             toolBar.add(button);
 
             toolBar.addSeparator();

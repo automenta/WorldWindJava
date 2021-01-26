@@ -454,16 +454,16 @@ public class SurfaceIcon extends AbstractSurfaceRenderable implements Movable, D
             rect.setRect(rect.x, rect.y, rect.width * 2, rect.height * 2);
         }
         // Compute bounding sector and apply location offset to it
-        double cosLat = Math.max(this.location.getLatitude().cos(), 0.01); // avoids division by zero at the poles
+        double cosLat = Math.max(this.location.getLat().cos(), 0.01); // avoids division by zero at the poles
         double dLatRadians = rect.height / globe.getRadius();
         double dLonRadians = rect.width / globe.getRadius() / cosLat;
         double offsetLatRadians = locationOffset != null ? locationOffset.y * dLatRadians / this.imageHeight : 0;
         double offsetLonRadians = locationOffset != null ? locationOffset.x * dLonRadians / this.imageWidth : 0;
         Sector sector = new Sector(
-            this.location.getLatitude().subtractRadians(dLatRadians / 2).addRadians(offsetLatRadians),
-            this.location.getLatitude().addRadians(dLatRadians / 2).addRadians(offsetLatRadians),
-            this.location.getLongitude().subtractRadians(dLonRadians / 2).addRadians(offsetLonRadians),
-            this.location.getLongitude().addRadians(dLonRadians / 2).addRadians(offsetLonRadians)
+            this.location.getLat().subtractRadians(dLatRadians / 2).addRadians(offsetLatRadians),
+            this.location.getLat().addRadians(dLatRadians / 2).addRadians(offsetLatRadians),
+            this.location.getLon().subtractRadians(dLonRadians / 2).addRadians(offsetLonRadians),
+            this.location.getLon().addRadians(dLonRadians / 2).addRadians(offsetLonRadians)
         );
         // Rotate sector around location 
         sector = AbstractSurfaceRenderable.computeRotatedSectorBounds(sector, this.location, computeDrawHeading(dc));
@@ -500,14 +500,14 @@ public class SurfaceIcon extends AbstractSurfaceRenderable implements Movable, D
         // Compute icon viewport point
         // Apply hemisphere offset if needed - for icons that may cross the date line
         double offset = AbstractSurfaceRenderable.computeHemisphereOffset(sdc.getSector(), location);
-        Vec4 point = new Vec4(location.getLongitude().degrees + offset, location.getLatitude().degrees, 1);
+        Vec4 point = new Vec4(location.getLon().degrees + offset, location.getLat().degrees, 1);
         point = point.transformBy4(sdc.getModelviewMatrix());
 
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         // Translate to location point
         gl.glTranslated(point.x, point.y, point.z);
         // Add x scaling transform to maintain icon width and aspect ratio at any latitude
-        gl.glScaled(drawScale / location.getLatitude().cos(), drawScale, 1);
+        gl.glScaled(drawScale / location.getLat().cos(), drawScale, 1);
         // Add rotation to account for icon heading
         gl.glRotated(this.computeDrawHeading(dc).degrees, 0, 0, -1);
         // Translate to lower left corner
@@ -560,11 +560,11 @@ public class SurfaceIcon extends AbstractSurfaceRenderable implements Movable, D
     }
 
     public void move(Position delta) {
-        if (delta == null) {
-            String msg = Logging.getMessage("nullValue.PositionIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (delta == null) {
+//            String msg = Logging.getMessage("nullValue.PositionIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         Position referencePos = this.getReferencePosition();
         if (referencePos == null)
@@ -574,11 +574,11 @@ public class SurfaceIcon extends AbstractSurfaceRenderable implements Movable, D
     }
 
     public void moveTo(Position position) {
-        if (position == null) {
-            String msg = Logging.getMessage("nullValue.PositionIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (position == null) {
+//            String msg = Logging.getMessage("nullValue.PositionIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         this.setLocation(position);
     }
@@ -588,7 +588,6 @@ public class SurfaceIcon extends AbstractSurfaceRenderable implements Movable, D
         return this.dragEnabled;
     }
 
-    @Override
     public void setDragEnabled(boolean enabled) {
         this.dragEnabled = enabled;
     }
@@ -608,22 +607,22 @@ public class SurfaceIcon extends AbstractSurfaceRenderable implements Movable, D
         this.draggableSupport.dragGlobeSizeConstant(dragContext);
     }
 
-    //**************************************************************//
-    //********************  Sector Cache Info  *********************//
-    //**************************************************************//
-
-    protected static class SectorInfo {
-        protected final List<Sector> sectors;
-        protected final Object globeStateKey;
-
-        public SectorInfo(List<Sector> sectors, DrawContext dc) {
-            // Surface icon sectors depend on the state of the globe used to compute it.
-            this.sectors = sectors;
-            this.globeStateKey = dc.getGlobe().getStateKey(dc);
-        }
-
-        public boolean isValid(DrawContext dc) {
-            return this.globeStateKey.equals(dc.getGlobe().getStateKey(dc));
-        }
-    }
+//    //**************************************************************//
+//    //********************  Sector Cache Info  *********************//
+//    //**************************************************************//
+//
+//    protected static class SectorInfo {
+//        protected final List<Sector> sectors;
+//        protected final Object globeStateKey;
+//
+//        public SectorInfo(List<Sector> sectors, DrawContext dc) {
+//            // Surface icon sectors depend on the state of the globe used to compute it.
+//            this.sectors = sectors;
+//            this.globeStateKey = dc.getGlobe().getStateKey(dc);
+//        }
+//
+//        public boolean isValid(DrawContext dc) {
+//            return this.globeStateKey.equals(dc.getGlobe().getStateKey(dc));
+//        }
+//    }
 }

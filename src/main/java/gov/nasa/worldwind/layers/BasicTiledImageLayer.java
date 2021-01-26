@@ -485,7 +485,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
         // Synchronize changes to this Layer with the Event Dispatch Thread.
         //SwingUtilities.invokeLater(() -> {
         BasicTiledImageLayer.this.setExpiryTime(expiryTime);
-        BasicTiledImageLayer.this.firePropertyChange(Keys.LAYER, null, BasicTiledImageLayer.this);
+        BasicTiledImageLayer.this.emit(Keys.LAYER, null, BasicTiledImageLayer.this);
         //});
     }
 
@@ -722,7 +722,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
 //                writeConfigurationFile(this.getFileStore());
 
                 // Fire a property change to denote that the layer's backing data has changed.
-                firePropertyChange(Keys.LAYER, null, this);
+                emit(Keys.LAYER, null, this);
 
                 loadTexture(buffer.array());
             }
@@ -747,7 +747,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
                     TextureTile.cache.add(tile.key, tile);
 
                 levels.has(tile);
-                firePropertyChange(Keys.LAYER, null, this);
+                emit(Keys.LAYER, null, this);
                 return true;
             } else {
                 // Assume that something is wrong with the file and delete it.

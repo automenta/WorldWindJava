@@ -55,11 +55,11 @@ public class Box extends RigidShape {
      * @throws IllegalArgumentException if the center position is null or any of the radii are not greater than 0.
      */
     public Box(Position centerPosition, double northSouthRadius, double verticalRadius, double eastWestRadius) {
-        if (centerPosition == null) {
-            String message = Logging.getMessage("nullValue.PositionIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (centerPosition == null) {
+//            String message = Logging.getMessage("nullValue.PositionIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         if (northSouthRadius <= 0 || eastWestRadius <= 0 || verticalRadius <= 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "radius <= 0");
@@ -88,11 +88,11 @@ public class Box extends RigidShape {
      */
     public Box(Position centerPosition, double northSouthRadius, double verticalRadius, double eastWestRadius,
         Angle heading, Angle tilt, Angle roll) {
-        if (centerPosition == null) {
-            String message = Logging.getMessage("nullValue.PositionIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (centerPosition == null) {
+//            String message = Logging.getMessage("nullValue.PositionIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         if (northSouthRadius <= 0 || eastWestRadius <= 0 || verticalRadius <= 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "radius <= 0");
@@ -344,4 +344,3 @@ public class Box extends RigidShape {
         throw new UnsupportedOperationException(message);
     }
 }
-

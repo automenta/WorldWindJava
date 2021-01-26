@@ -50,13 +50,13 @@ public class OrbitViewCollisionSupport {
             Position position = globe.computePositionFromPoint(point);
             Position surfacePosition = null;
             // Look for the surface geometry point at 'position'.
-            Vec4 pointOnGlobe = dc.getPointOnTerrain(position.getLatitude(), position.getLongitude());
+            Vec4 pointOnGlobe = dc.getPointOnTerrain(position.getLat(), position.getLon());
             if (pointOnGlobe != null)
                 surfacePosition = globe.computePositionFromPoint(pointOnGlobe);
             // Fallback to using globe elevation values.
             if (surfacePosition == null)
                 surfacePosition = new Position(position,
-                    globe.elevation(position.getLatitude(), position.getLongitude()) * dc.getVerticalExaggeration());
+                    globe.elevation(position.getLat(), position.getLon()) * dc.getVerticalExaggeration());
             height = position.getElevation() - surfacePosition.getElevation();
         }
         return height;
@@ -243,7 +243,7 @@ public class OrbitViewCollisionSupport {
                     if (centerPoint != null) {
                         Position eyePos = globe.computePositionFromPoint(eyePoint);
                         // Compute the eye point required to resolve the collision.
-                        Vec4 newEyePoint = globe.computePointFromPosition(eyePos.getLatitude(), eyePos.getLongitude(),
+                        Vec4 newEyePoint = globe.computePointFromPosition(eyePos.getLat(), eyePos.getLon(),
                             eyePos.getElevation() - adjustedHeight);
                         // Compute the pitch that corresponds with the elevation of the eye point
                         // (but not necessarily the latitude and longitude).

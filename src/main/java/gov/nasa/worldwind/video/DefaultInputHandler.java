@@ -138,7 +138,7 @@ public class DefaultInputHandler extends WWObjectImpl
         if (this.wwd == null)
             return;
 
-        this.wwd.view().getViewInputHandler().setWorldWindow(this.wwd);
+        this.wwd.view().input().setWorldWindow(this.wwd);
 
         wwd.startEvents(this);
 
@@ -162,27 +162,27 @@ public class DefaultInputHandler extends WWObjectImpl
     }
 
     public boolean isSmoothViewChanges() {
-        return this.wwd.view().getViewInputHandler().isEnableSmoothing();
+        return this.wwd.view().input().isEnableSmoothing();
     }
 
     public void setSmoothViewChanges(boolean smoothViewChanges) {
-        this.wwd.view().getViewInputHandler().setEnableSmoothing(smoothViewChanges);
+        this.wwd.view().input().setEnableSmoothing(smoothViewChanges);
     }
 
     public boolean isLockViewHeading() {
-        return this.wwd.view().getViewInputHandler().isLockHeading();
+        return this.wwd.view().input().isLockHeading();
     }
 
     public void setLockViewHeading(boolean lockHeading) {
-        this.wwd.view().getViewInputHandler().setLockHeading(lockHeading);
+        this.wwd.view().input().setLockHeading(lockHeading);
     }
 
     public boolean isStopViewOnFocusLost() {
-        return this.wwd.view().getViewInputHandler().isStopOnFocusLost();
+        return this.wwd.view().input().isStopOnFocusLost();
     }
 
     public void setStopViewOnFocusLost(boolean stopView) {
-        this.wwd.view().getViewInputHandler().setStopOnFocusLost(stopView);
+        this.wwd.view().input().setStopOnFocusLost(stopView);
     }
 
     private WorldWindow getWorldWindow() {
@@ -276,7 +276,7 @@ public class DefaultInputHandler extends WWObjectImpl
         this.callKeyTypedListeners(keyEvent);
 
         if (!keyEvent.isConsumed()) {
-            this.wwd.view().getViewInputHandler().keyTyped(keyEvent);
+            this.wwd.view().input().keyTyped(keyEvent);
         }
     }
 
@@ -292,7 +292,7 @@ public class DefaultInputHandler extends WWObjectImpl
         this.callKeyPressedListeners(keyEvent);
 
         if (!keyEvent.isConsumed()) {
-            this.wwd.view().getViewInputHandler().keyPressed(keyEvent);
+            this.wwd.view().input().keyPressed(keyEvent);
         }
     }
 
@@ -308,7 +308,7 @@ public class DefaultInputHandler extends WWObjectImpl
         this.callKeyReleasedListeners(keyEvent);
 
         if (!keyEvent.isConsumed()) {
-            this.wwd.view().getViewInputHandler().keyReleased(keyEvent);
+            this.wwd.view().input().keyReleased(keyEvent);
         }
     }
 
@@ -336,10 +336,10 @@ public class DefaultInputHandler extends WWObjectImpl
                     e, pickedObjects));
             }
 
-            this.wwd.view().firePropertyChange(Keys.VIEW, null, this.wwd.view());
+            this.wwd.view().emit(Keys.VIEW, null, this.wwd.view());
         } else {
             if (!e.isConsumed()) {
-                this.wwd.view().getViewInputHandler().mouseClicked(e);
+                this.wwd.view().input().mouseClicked(e);
             }
         }
     }
@@ -382,11 +382,11 @@ public class DefaultInputHandler extends WWObjectImpl
             }
 
             // Initiate a repaint.
-            this.wwd.view().firePropertyChange(Keys.VIEW, null, this.wwd.view());
+            this.wwd.view().emit(Keys.VIEW, null, this.wwd.view());
         }
 
         if (!e.isConsumed()) {
-            this.wwd.view().getViewInputHandler().mousePressed(e);
+            this.wwd.view().input().mousePressed(e);
         }
 
         // GLJPanel does not take keyboard focus when the user clicks on it, thereby suppressing key events normally
@@ -411,7 +411,7 @@ public class DefaultInputHandler extends WWObjectImpl
         this.mousePoint = mouseEvent.getPoint();
         this.callMouseReleasedListeners(mouseEvent);
         if (!mouseEvent.isConsumed()) {
-            this.wwd.view().getViewInputHandler().mouseReleased(mouseEvent);
+            this.wwd.view().input().mouseReleased(mouseEvent);
         }
         this.doHover(true);
         this.cancelDrag();
@@ -423,7 +423,7 @@ public class DefaultInputHandler extends WWObjectImpl
         }
 
         this.callMouseEnteredListeners(mouseEvent);
-        this.wwd.view().getViewInputHandler().mouseEntered(mouseEvent);
+        this.wwd.view().input().mouseEntered(mouseEvent);
         this.cancelHover();
         this.cancelDrag();
     }
@@ -434,7 +434,7 @@ public class DefaultInputHandler extends WWObjectImpl
         }
 
         this.callMouseExitedListeners(mouseEvent);
-        this.wwd.view().getViewInputHandler().mouseExited(mouseEvent);
+        this.wwd.view().input().mouseExited(mouseEvent);
 
         // Enqueue a redraw to update the current position and selection.
         if (this.wwd.sceneControl() != null) {
@@ -471,7 +471,7 @@ public class DefaultInputHandler extends WWObjectImpl
         }
 
         if (!this.isDragging && !mouseEvent.isConsumed())
-            this.wwd.view().getViewInputHandler().mouseDragged(mouseEvent);
+            this.wwd.view().input().mouseDragged(mouseEvent);
 
         // Redraw to update the current position and selection.
         if (this.wwd.sceneControl() != null) {
@@ -494,7 +494,7 @@ public class DefaultInputHandler extends WWObjectImpl
         this.callMouseMovedListeners(mouseEvent);
 
         if (!mouseEvent.isConsumed()) {
-            this.wwd.view().getViewInputHandler().mouseMoved(mouseEvent);
+            this.wwd.view().input().mouseMoved(mouseEvent);
         }
 
         // Redraw to update the current position and selection.
@@ -512,7 +512,7 @@ public class DefaultInputHandler extends WWObjectImpl
         this.callMouseWheelMovedListeners(mouseWheelEvent);
 
         if (!mouseWheelEvent.isConsumed())
-            this.wwd.view().getViewInputHandler().mouseWheelMoved(mouseWheelEvent);
+            this.wwd.view().input().mouseWheelMoved(mouseWheelEvent);
     }
 
     public void focusGained(FocusEvent focusEvent) {
@@ -520,7 +520,7 @@ public class DefaultInputHandler extends WWObjectImpl
             return;
         }
 
-        this.wwd.view().getViewInputHandler().focusGained(focusEvent);
+        this.wwd.view().input().focusGained(focusEvent);
     }
 
     public void focusLost(FocusEvent focusEvent) {
@@ -528,7 +528,7 @@ public class DefaultInputHandler extends WWObjectImpl
             return;
         }
 
-        this.wwd.view().getViewInputHandler().focusLost(focusEvent);
+        this.wwd.view().input().focusLost(focusEvent);
     }
 
     private void doHover(boolean reset) {
@@ -724,7 +724,7 @@ public class DefaultInputHandler extends WWObjectImpl
 
         if ((event.getSource() == this.getWorldWindow().sceneControl())
             && event.getPropertyName().equals(Keys.VIEW)) {
-            this.wwd.view().getViewInputHandler().setWorldWindow(this.wwd);
+            this.wwd.view().input().setWorldWindow(this.wwd);
         }
     }
 

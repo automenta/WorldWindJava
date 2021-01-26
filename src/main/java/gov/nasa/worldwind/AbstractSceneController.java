@@ -90,7 +90,7 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
     }
 
     protected static Point getViewportCenter(DrawContext dc) {
-        View view = dc.getView();
+        View view = dc.view();
         if (view == null)
             return null;
 
@@ -137,8 +137,8 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
     }
 
     protected static void applyView(DrawContext dc) {
-        if (dc.getView() != null)
-            dc.getView().apply(dc);
+        if (dc.view() != null)
+            dc.view().apply(dc);
     }
 
     protected static void createPickFrustum(DrawContext dc) {
@@ -312,7 +312,7 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
 
         Model oldModel = this.model;
         this.model = model;
-        this.firePropertyChange(Keys.MODEL, oldModel, model);
+        this.emit(Keys.MODEL, oldModel, model);
     }
 
     public View getView() {
@@ -328,7 +328,7 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
         View oldView = this.view;
         this.view = view;
 
-        this.firePropertyChange(Keys.VIEW, oldView, view);
+        this.emit(Keys.VIEW, oldView, view);
     }
 
     public double getVerticalExaggeration() {
@@ -338,7 +338,7 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
     public void setVerticalExaggeration(double verticalExaggeration) {
         Double oldVE = this.verticalExaggeration;
         this.verticalExaggeration = verticalExaggeration;
-        this.firePropertyChange(Keys.VERTICAL_EXAGGERATION, oldVE, verticalExaggeration);
+        this.emit(Keys.VERTICAL_EXAGGERATION, oldVE, verticalExaggeration);
     }
 
     /**

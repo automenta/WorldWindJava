@@ -158,6 +158,6 @@ public class TracksPanel extends JPanel {
         if (track == null)
             return;
 
-        track.firePropertyChange(TrackController.TRACK_CURRENT, null, track);
+        track.emit(TrackController.TRACK_CURRENT, null, track);
     }
 }

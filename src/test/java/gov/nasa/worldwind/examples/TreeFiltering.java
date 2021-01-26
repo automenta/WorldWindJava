@@ -100,8 +100,8 @@ public class TreeFiltering extends ApplicationTemplate {
 
         private Sector computeSector() {
             double size = 5;
-            double lat = this.position.getLatitude().degrees;
-            double lon = this.position.getLongitude().degrees;
+            double lat = this.position.getLat().degrees;
+            double lon = this.position.getLon().degrees;
             double minLat = Math.max(lat - size, -90);
             double maxLat = Math.min(lat + size, 90);
             double minLon = Math.max(lon - size, -180);

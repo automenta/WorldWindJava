@@ -134,7 +134,7 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
 
     public double getRadiusAt(LatLon location) {
 
-        return this.getRadiusAt(new Angle(location.latitude), new Angle(location.longitude));
+        return this.getRadiusAt(new Angle(location.lat), new Angle(location.lon));
     }
 
     public double getEccentricitySquared() {
@@ -302,7 +302,7 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
             final int n = elevations.length;
             for (int i = 0; i < n; i++) {
                 LatLon latLon = latlons.get(i);
-                elevations[i] = elevations[i] + this.egm96.getOffset(latLon.getLatitude(), latLon.getLongitude());
+                elevations[i] = elevations[i] + this.egm96.getOffset(latLon.getLat(), latLon.getLon());
             }
         }
 
@@ -321,7 +321,7 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
             for (int i = 0; i < n; i++) {
                 if (Double.isFinite(elevations[i])) {
                     final LatLon ii = latLons.get(i);
-                    elevations[i] += this.egm96.getOffset(ii.getLatitude(), ii.getLongitude());
+                    elevations[i] += this.egm96.getOffset(ii.getLat(), ii.getLon());
                 }
             }
         }
@@ -346,17 +346,17 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
 
     public Vec4 computePointFromPosition(Position position) {
 
-        return this.geodeticToCartesian(position.getLatitude(), position.getLongitude(), position.getElevation());
+        return this.geodeticToCartesian(position.getLat(), position.getLon(), position.getElevation());
     }
 
     public Vec4 computePointFromLocation(LatLon location) {
 
-        return this.geodeticToCartesian(location.getLatitude(), location.getLongitude(), 0);
+        return this.geodeticToCartesian(location.getLat(), location.getLon(), 0);
     }
 
     public Vec4 computePointFromPosition(LatLon latLon, double metersElevation) {
 
-        return this.geodeticToCartesian(latLon.getLatitude(), latLon.getLongitude(), metersElevation);
+        return this.geodeticToCartesian(latLon.getLat(), latLon.getLon(), metersElevation);
     }
 
     public Vec4 computePointFromPosition(Angle latitude, Angle longitude, double metersElevation) {
@@ -469,7 +469,7 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
      */
     public Matrix computeSurfaceOrientationAtPosition(Position position) {
 
-        return this.computeSurfaceOrientationAtPosition(position.getLatitude(), position.getLongitude(),
+        return this.computeSurfaceOrientationAtPosition(position.getLat(), position.getLon(),
             position.getElevation());
     }
 
@@ -488,7 +488,7 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
     @Override
     public Vec4 computeEllipsoidalPointFromPosition(Position position) {
 
-        return this.computeEllipsoidalPointFromPosition(position.getLatitude(), position.getLongitude(),
+        return this.computeEllipsoidalPointFromPosition(position.getLat(), position.getLon(),
             position.getAltitude());
     }
 
@@ -498,7 +498,7 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
     @Override
     public Vec4 computeEllipsoidalPointFromLocation(LatLon location) {
 
-        return this.geodeticToEllipsoidal(location.getLatitude(), location.getLongitude(), 0);
+        return this.geodeticToEllipsoidal(location.getLat(), location.getLon(), 0);
     }
 
     /**

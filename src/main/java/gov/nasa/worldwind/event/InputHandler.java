@@ -129,10 +129,10 @@ public interface InputHandler
     void removePropertyChangeListener(PropertyChangeListener listener);
 
     @Override
-    void firePropertyChange(String propertyName, Object oldValue, Object newValue);
+    void emit(String propertyName, Object oldValue, Object newValue);
 
     @Override
-    void firePropertyChange(PropertyChangeEvent propertyChangeEvent);
+    void emit(PropertyChangeEvent propertyChangeEvent);
 
     @Override
     KV copy();

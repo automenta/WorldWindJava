@@ -522,8 +522,8 @@ public class Route extends AbstractMilStd2525TacticalGraphic implements Tactical
 
         Vec4 vMB = pB.subtract3(pMid);
 
-        Vec4 eyePoint = dc.getView().getEyePoint();
-        double pixelSize = dc.getView().computePixelSizeAtDistance(eyePoint.distanceTo3(pMid));
+        Vec4 eyePoint = dc.view().getEyePoint();
+        double pixelSize = dc.view().computePixelSizeAtDistance(eyePoint.distanceTo3(pMid));
 
         // Position the label a constant pixel distance from the route. Compute the pixel distance as half of the
         // label's diagonal dimension.

@@ -82,7 +82,7 @@ public class KMLFlyViewController extends KMLViewController {
             new Angle(heading), new Angle(tilt), range,
             timeToMove, KMLUtil.convertAltitudeMode(altitudeMode, WorldWind.CLAMP_TO_GROUND)); // KML default
 
-        ViewInputHandler inputHandler = this.flyView.getViewInputHandler();
+        ViewInputHandler inputHandler = this.flyView.input();
         inputHandler.stopAnimators();
         inputHandler.addAnimator(animator);
     }
@@ -119,7 +119,7 @@ public class KMLFlyViewController extends KMLViewController {
             timeToMove, KMLUtil.convertAltitudeMode(altitudeMode,
                 WorldWind.RELATIVE_TO_GROUND)); // Camera default, differs from KML default
 
-        ViewInputHandler inputHandler = this.flyView.getViewInputHandler();
+        ViewInputHandler inputHandler = this.flyView.input();
         inputHandler.stopAnimators();
         inputHandler.addAnimator(animator);
     }
@@ -236,14 +236,14 @@ public class KMLFlyViewController extends KMLViewController {
 
             if (this.altitudeMode == WorldWind.CLAMP_TO_GROUND) {
                 overrideEndElevation = true;
-                lookAtElevation = this.targetView.getGlobe().elevation(this.lookAtPosition.getLatitude(),
-                    this.lookAtPosition.getLongitude());
+                lookAtElevation = this.targetView.getGlobe().elevation(this.lookAtPosition.getLat(),
+                    this.lookAtPosition.getLon());
             }
             else if (this.altitudeMode == WorldWind.RELATIVE_TO_GROUND) {
                 overrideEndElevation = true;
                 lookAtElevation =
-                    this.targetView.getGlobe().elevation(this.lookAtPosition.getLatitude(),
-                        this.lookAtPosition.getLongitude()) + this.lookAtPosition.getAltitude();
+                    this.targetView.getGlobe().elevation(this.lookAtPosition.getLat(),
+                        this.lookAtPosition.getLon()) + this.lookAtPosition.getAltitude();
             }
 
             if (overrideEndElevation) {

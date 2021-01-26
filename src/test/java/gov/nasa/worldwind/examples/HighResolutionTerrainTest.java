@@ -43,7 +43,7 @@ public class HighResolutionTerrainTest {
         PrintStream os = new PrintStream(filePath);
 
         for (Position pos : positions) {
-            os.format("%.5f %.5f %.4f\n", pos.getLatitude().degrees, pos.getLongitude().degrees, pos.getElevation());
+            os.format("%.5f %.5f %.4f\n", pos.getLat().degrees, pos.getLon().degrees, pos.getElevation());
         }
 
         os.flush();

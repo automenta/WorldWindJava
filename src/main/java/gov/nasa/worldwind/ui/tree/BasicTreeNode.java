@@ -127,7 +127,7 @@ public class BasicTreeNode extends WWObjectImpl implements TreeNode {
         this.treeSelected = null; // Need to recompute tree selected field
 
         if (prevSelected != selected)
-            this.firePropertyChange(Keys.TREE_NODE, null, this);
+            this.emit(Keys.TREE_NODE, null, this);
     }
 
     /**
@@ -257,7 +257,7 @@ public class BasicTreeNode extends WWObjectImpl implements TreeNode {
         this.treeSelected = null;  // Need to recompute tree selected field
         child.setParent(this);
         child.addPropertyChangeListener(this);
-        this.firePropertyChange(Keys.TREE_NODE, null, this);
+        this.emit(Keys.TREE_NODE, null, this);
     }
 
     /**
@@ -271,7 +271,7 @@ public class BasicTreeNode extends WWObjectImpl implements TreeNode {
             this.treeSelected = null;  // Need to recompute tree selected field
             child.setParent(null);
             child.removePropertyChangeListener(this);
-            this.firePropertyChange(Keys.TREE_NODE, null, this);
+            this.emit(Keys.TREE_NODE, null, this);
         }
     }
 
@@ -295,7 +295,7 @@ public class BasicTreeNode extends WWObjectImpl implements TreeNode {
         }
 
         this.treeSelected = null;  // Need to recompute tree selected field
-        this.firePropertyChange(Keys.TREE_NODE, null, this);
+        this.emit(Keys.TREE_NODE, null, this);
     }
 
     /**

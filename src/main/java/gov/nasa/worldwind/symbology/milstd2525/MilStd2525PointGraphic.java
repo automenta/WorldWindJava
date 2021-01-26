@@ -916,7 +916,6 @@ public class MilStd2525PointGraphic extends KVMap implements MilStd2525TacticalG
     // Rendering
     /////////////////////////////
 
-    @Override
     public void setDragEnabled(boolean enabled) {
         this.dragEnabled = enabled;
     }

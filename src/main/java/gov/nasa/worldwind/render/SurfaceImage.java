@@ -408,7 +408,6 @@ public class SurfaceImage extends WWObjectImpl
         return this.dragEnabled;
     }
 
-    @Override
     public void setDragEnabled(boolean enabled) {
         this.dragEnabled = enabled;
     }
@@ -601,9 +600,9 @@ public class SurfaceImage extends WWObjectImpl
         xmlWriter.writeStartElement("coordinates");
 
         for (LatLon ll : this.corners) {
-            xmlWriter.writeCharacters(Double.toString(ll.getLongitude().degrees));
+            xmlWriter.writeCharacters(Double.toString(ll.getLon().degrees));
             xmlWriter.writeCharacters(",");
-            xmlWriter.writeCharacters(Double.toString(ll.getLatitude().degrees));
+            xmlWriter.writeCharacters(Double.toString(ll.getLat().degrees));
             xmlWriter.writeCharacters(" ");
         }
 

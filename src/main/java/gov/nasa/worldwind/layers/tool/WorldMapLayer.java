@@ -87,10 +87,10 @@ public class WorldMapLayer extends AbstractLayer {
         if (groundPos == null)
             return null;
 
-        double elevation = dc.getGlobe().elevation(groundPos.getLatitude(), groundPos.getLongitude());
+        double elevation = dc.getGlobe().elevation(groundPos.getLat(), groundPos.getLon());
         return new Position(
-            groundPos.getLatitude(),
-            groundPos.getLongitude(),
+            groundPos.getLat(),
+            groundPos.getLon(),
             elevation * dc.getVerticalExaggeration());
     }
 
@@ -108,7 +108,7 @@ public class WorldMapLayer extends AbstractLayer {
         Position pickPosition = null;
         Point pickPoint = dc.getPickPoint();
         if (pickPoint != null) {
-            Rectangle viewport = dc.getView().getViewport();
+            Rectangle viewport = dc.view().getViewport();
             // Check if pickpoint is inside the map
             if (pickPoint.getX() >= locationSW.x
                 && pickPoint.getX() < locationSW.x + mapSize.width
@@ -132,9 +132,9 @@ public class WorldMapLayer extends AbstractLayer {
      */
     protected static ArrayList<LatLon> computeViewFootPrint(DrawContext dc, int steps) {
         ArrayList<LatLon> positions = new ArrayList<>();
-        Position eyePos = dc.getView().getEyePosition();
+        Position eyePos = dc.view().getEyePosition();
         Angle distance = Angle.fromRadians(
-            Math.asin(dc.getView().getFarClipDistance() / (dc.getGlobe().getRadius() + eyePos.getElevation())));
+            Math.asin(dc.view().getFarClipDistance() / (dc.getGlobe().getRadius() + eyePos.getElevation())));
         if (distance.degrees > 10) {
             double headStep = 360.0d / steps;
             Angle heading = Angle.ZERO;
@@ -409,7 +409,7 @@ public class WorldMapLayer extends AbstractLayer {
 
             // Load a parallel projection with xy dimensions (viewportWidth, viewportHeight)
             // into the GL projection matrix.
-            Rectangle viewport = dc.getView().getViewport();
+            Rectangle viewport = dc.view().getViewport();
             ogsh.pushProjectionIdentity(gl);
             double maxwh = Math.max(width, height);
             gl.glOrtho(0.0d, viewport.width, 0.0d, viewport.height, -0.6 * maxwh, 0.6 * maxwh);
@@ -452,10 +452,10 @@ public class WorldMapLayer extends AbstractLayer {
                 gl.glColor4d(colorRGB[0], colorRGB[1], colorRGB[2], this.getOpacity());
 
                 // Draw crosshair
-                Position groundPos = WorldMapLayer.computeGroundPosition(dc, dc.getView());
+                Position groundPos = WorldMapLayer.computeGroundPosition(dc, dc.view());
                 if (groundPos != null) {
-                    int x = (int) (width * (groundPos.getLongitude().degrees + 180) / 360);
-                    int y = (int) (height * (groundPos.getLatitude().degrees + 90) / 180);
+                    int x = (int) (width * (groundPos.getLon().degrees + 180) / 360);
+                    int y = (int) (height * (groundPos.getLat().degrees + 90) / 180);
                     int w = 10; // cross branch length
                     // Draw
                     gl.glBegin(GL2.GL_LINE_STRIP);
@@ -475,11 +475,11 @@ public class WorldMapLayer extends AbstractLayer {
                         gl.glBegin(GL2.GL_LINE_STRIP);
                         LatLon p1 = this.footPrintPositions.get(0);
                         for (LatLon p2 : this.footPrintPositions) {
-                            int x = (int) (width * (p2.getLongitude().degrees + 180) / 360);
-                            int y = (int) (height * (p2.getLatitude().degrees + 90) / 180);
+                            int x = (int) (width * (p2.getLon().degrees + 180) / 360);
+                            int y = (int) (height * (p2.getLat().degrees + 90) / 180);
                             // Draw
                             if (LatLon.locationsCrossDateline(p1, p2)) {
-                                int y1 = (int) (height * (p1.getLatitude().degrees + 90) / 180);
+                                int y1 = (int) (height * (p1.getLat().degrees + 90) / 180);
                                 gl.glVertex3d(x < width / 2 ? width : 0, (y1 + y) / 2.0, 0);
                                 gl.glEnd();
                                 gl.glBegin(GL2.GL_LINE_STRIP);

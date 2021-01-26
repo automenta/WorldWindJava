@@ -159,7 +159,7 @@ public class ScreenRelativeAnnotation extends ScreenAnnotation {
      */
     @Override
     protected Point getScreenPoint(DrawContext dc) {
-        Rectangle vp = dc.getView().getViewport();
+        Rectangle vp = dc.view().getViewport();
 
         double x = vp.getX() + this.xFraction * vp.getWidth();
         double y = vp.getY() + this.yFraction * vp.getHeight();

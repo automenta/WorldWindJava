@@ -366,7 +366,7 @@ public class CappedCylinder extends AbstractAirspace {
     protected Vec4 computeReferenceCenter(DrawContext dc) {
 
         double[] altitudes = this.getAltitudes(dc.getVerticalExaggeration());
-        return dc.getGlobe().computePointFromPosition(this.center.getLatitude(), this.center.getLongitude(),
+        return dc.getGlobe().computePointFromPosition(this.center.getLat(), this.center.getLon(),
             altitudes[0]); // model-coordinate reference center
     }
 
@@ -374,7 +374,7 @@ public class CappedCylinder extends AbstractAirspace {
 
         double[] altitudes = this.getAltitudes(verticalExaggeration);
         return globe.computeEllipsoidalOrientationAtPosition(
-            new Angle(this.center.latitude), new Angle(this.center.longitude), altitudes[0]);
+            new Angle(this.center.lat), new Angle(this.center.lon), altitudes[0]);
     }
 
     protected void doRenderGeometry(DrawContext dc, String drawStyle) {
@@ -414,7 +414,7 @@ public class CappedCylinder extends AbstractAirspace {
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         OGLStackHandler ogsh = new OGLStackHandler();
         try {
-            dc.getView().pushReferenceCenter(dc, refCenter);
+            dc.view().pushReferenceCenter(dc, refCenter);
 
             if (Airspace.DRAW_STYLE_OUTLINE.equals(drawStyle)) {
                 // Outer cylinder isn't rendered if outer radius is zero.
@@ -463,7 +463,7 @@ public class CappedCylinder extends AbstractAirspace {
             }
         }
         finally {
-            dc.getView().popReferenceCenter(dc);
+            dc.view().popReferenceCenter(dc);
             ogsh.pop(gl);
         }
     }

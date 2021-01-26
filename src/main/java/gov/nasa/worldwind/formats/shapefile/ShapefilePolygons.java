@@ -112,7 +112,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
             return dc.getPickFrustums().intersectsAny(extent);
         }
 
-        return dc.getView().getFrustumInModelCoordinates().intersects(extent);
+        return dc.view().getFrustumInModelCoordinates().intersects(extent);
     }
 
     protected static void computeRecordMetrics(Record record, PolylineGeneralizer generalizer) {
@@ -277,7 +277,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
             {
                 callback.beginBoundary();
                 for (LatLon location : LatLon.cutLocationsAlongDateLine(locations, pole, null)) {
-                    callback.vertex(location.latitude, location.longitude);
+                    callback.vertex(location.lat, location.lon);
                 }
 
                 callback.endBoundary();
@@ -285,7 +285,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
                 for (List<LatLon> antimeridianLocations : LatLon.repeatLocationsAroundDateline(locations)) {
                     callback.beginBoundary();
                     for (LatLon location : antimeridianLocations) {
-                        callback.vertex(location.latitude, location.longitude);
+                        callback.vertex(location.lat, location.lon);
                     }
 
                     callback.endBoundary();
@@ -406,7 +406,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
 
         Extent extent = Sector.computeBoundingBox(dc.getGlobe(), dc.getVerticalExaggeration(), this.sector);
 
-        if (!dc.getView().getFrustumInModelCoordinates().intersects(extent))
+        if (!dc.view().getFrustumInModelCoordinates().intersects(extent))
             return;
 
         if (dc.isSmall(extent, 1))
@@ -631,12 +631,12 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
         // field of view and a the default field of view. In a perspective projection, decreasing the field of view by
         // 50% has the same effect on object size as decreasing the distance between the eye and the object by 50%.
         double detailScale = Math.pow(10, -this.getDetailFactor());
-        double fieldOfViewScale = dc.getView().getFieldOfView().tanHalfAngle() / new Angle(45).tanHalfAngle();
+        double fieldOfViewScale = dc.view().getFieldOfView().tanHalfAngle() / new Angle(45).tanHalfAngle();
         fieldOfViewScale = WWMath.clamp(fieldOfViewScale, 0, 1);
 
         // Compute the distance between the eye point and the sector in meters, and compute a fraction of that distance
         // by multiplying the actual distance by the level of detail scale and the field of view scale.
-        double eyeDistanceMeters = tile.sector.distanceTo(dc, dc.getView().getEyePoint());
+        double eyeDistanceMeters = tile.sector.distanceTo(dc, dc.view().getEyePoint());
         double scaledEyeDistanceMeters = eyeDistanceMeters * detailScale * fieldOfViewScale;
 
         // Split when the resolution in meters becomes greater than the specified fraction of the eye distance, also in
@@ -653,7 +653,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
     }
 
     protected void requestGeometry(DrawContext dc, ShapefileTile tile) {
-        Vec4 eyePoint = dc.getView().getEyePoint();
+        Vec4 eyePoint = dc.view().getEyePoint();
         Vec4 centroid = tile.sector.computeCenterPoint(dc.getGlobe(), dc.getVerticalExaggeration());
 
         ShapefileGeometry geom = new ShapefileGeometry(tile.shape, tile.sector, tile.resolution);
@@ -676,8 +676,8 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
         // records that degenerate to one or two points.
         double minEffectiveArea = 4 * geom.resolution * geom.resolution;
         final LatLon centroid = geom.sector.getCentroid();
-        double xOffset = centroid.longitude;
-        double yOffset = centroid.latitude;
+        double xOffset = centroid.lon;
+        double yOffset = centroid.lat;
 
         // Setup the polyline generalizer and the polygon tessellator that will be used to generalize and tessellate
         // each record intersecting the geometry's sector.

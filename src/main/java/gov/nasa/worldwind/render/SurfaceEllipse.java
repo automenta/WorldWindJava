@@ -361,7 +361,7 @@ public class SurfaceEllipse extends AbstractSurfaceShape {
 
         int numLocations = 1 + Math.max(SurfaceEllipse.MIN_NUM_INTERVALS, intervals);
         double da = (2 * Math.PI) / (numLocations - 1);
-        double globeRadius = globe.getRadiusAt(this.center.getLatitude(), this.center.getLongitude());
+        double globeRadius = globe.getRadiusAt(this.center.getLat(), this.center.getLon());
 
         LatLon[] locations = new LatLon[numLocations];
 
@@ -471,4 +471,3 @@ public class SurfaceEllipse extends AbstractSurfaceShape {
             this.setHeading(new Angle(od));
     }
 }
-

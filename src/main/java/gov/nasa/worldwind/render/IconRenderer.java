@@ -65,7 +65,7 @@ public class IconRenderer {
         if (icon.getToolTipFont() == null && icon.getToolTipText() == null)
             return;
 
-        Vec4 screenPoint = dc.getView().project(iconPoint);
+        Vec4 screenPoint = dc.view().project(iconPoint);
         if (screenPoint == null)
             return;
 
@@ -309,7 +309,7 @@ public class IconRenderer {
         if (!iterator.hasNext())
             return;
 
-        double horizon = dc.getView().getHorizonDistance();
+        double horizon = dc.view().getHorizonDistance();
 
         while (iterator.hasNext()) {
             WWIcon icon = iterator.next();
@@ -339,15 +339,15 @@ public class IconRenderer {
             }
 
             if (iconPoint == null) {
-                Angle lat = pos.getLatitude();
-                Angle lon = pos.getLongitude();
+                Angle lat = pos.getLat();
+                Angle lon = pos.getLon();
                 double elevation = pos.getElevation();
                 if (!this.isAlwaysUseAbsoluteElevation())
                     elevation += dc.getGlobe().elevation(lat, lon);
                 iconPoint = dc.getGlobe().computePointFromPosition(lat, lon, elevation);
             }
 
-            double eyeDistance = icon.isAlwaysOnTop() ? 0 : dc.getView().getEyePoint().distanceTo3(iconPoint);
+            double eyeDistance = icon.isAlwaysOnTop() ? 0 : dc.view().getEyePoint().distanceTo3(iconPoint);
 
             if (this.isHorizonClippingEnabled() && !dc.is2DGlobe() && eyeDistance > horizon) {
                 // Record feedback data for this WWIcon if feedback is enabled.
@@ -358,7 +358,7 @@ public class IconRenderer {
 
             // If enabled, eliminate icons outside the view volume. Primarily used to control icon visibility beyond
             // the view volume's far clipping plane.
-            if (this.isViewClippingEnabled() && !dc.getView().getFrustumInModelCoordinates().contains(iconPoint)) {
+            if (this.isViewClippingEnabled() && !dc.view().getFrustumInModelCoordinates().contains(iconPoint)) {
                 // Record feedback data for this WWIcon if feedback is enabled.
                 IconRenderer.recordFeedback(dc, icon, iconPoint, null);
 
@@ -399,7 +399,7 @@ public class IconRenderer {
 
         // Load a parallel projection with dimensions (viewportWidth, viewportHeight)
         this.oglStackHandler.pushProjectionIdentity(gl);
-        gl.glOrtho(0.0d, dc.getView().getViewport().width, 0.0d, dc.getView().getViewport().height, -1.0d, 1.0d);
+        gl.glOrtho(0.0d, dc.view().getViewport().width, 0.0d, dc.view().getViewport().height, -1.0d, 1.0d);
 
         this.oglStackHandler.pushModelview(gl);
         this.oglStackHandler.pushTexture(gl);
@@ -487,14 +487,14 @@ public class IconRenderer {
         }
 
         WWIcon icon = uIcon.icon;
-        if (dc.getView().getFrustumInModelCoordinates().near.distanceTo(uIcon.point) < 0) {
+        if (dc.view().getFrustumInModelCoordinates().near.distanceTo(uIcon.point) < 0) {
             // Record feedback data for this WWIcon if feedback is enabled.
             IconRenderer.recordFeedback(dc, icon, uIcon.point, null);
 
             return null;
         }
 
-        final Vec4 screenPoint = dc.getView().project(uIcon.point);
+        final Vec4 screenPoint = dc.view().project(uIcon.point);
         if (screenPoint == null) {
             // Record feedback data for this WWIcon if feedback is enabled.
             IconRenderer.recordFeedback(dc, icon, uIcon.point, null);
@@ -583,7 +583,7 @@ public class IconRenderer {
             return;
         }
 
-        Position eyePos = dc.getView().getEyePosition();
+        Position eyePos = dc.view().getEyePosition();
         if (eyePos == null) {
             gl.glDepthFunc(GL.GL_ALWAYS);
             return;

@@ -7,7 +7,6 @@
 package gov.nasa.worldwind;
 
 import gov.nasa.worldwind.avlist.KVMap;
-import gov.nasa.worldwind.event.Message;
 
 import java.beans.PropertyChangeEvent;
 
@@ -44,7 +43,7 @@ public class WWObjectImpl extends KVMap implements WWObject {
 //        }
 
         // Notify all *my* listeners of the change that I caught
-        super.firePropertyChange(propertyChangeEvent);
+        super.emit(propertyChangeEvent);
     }
 
 

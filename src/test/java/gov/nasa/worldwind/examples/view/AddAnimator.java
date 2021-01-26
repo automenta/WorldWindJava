@@ -84,7 +84,7 @@ public class AddAnimator extends ApplicationTemplate {
                         return;
                     }
                     double elevation = view.getGlobe().elevation(
-                        location.getLatlon().getLatitude(), location.getLatlon().getLongitude());
+                        location.getLatlon().getLat(), location.getLatlon().getLon());
                     FlyToFlyViewAnimator animator =
                         FlyToFlyViewAnimator.createFlyToFlyViewAnimator(view,
                             view.getEyePosition(),
@@ -95,7 +95,7 @@ public class AddAnimator extends ApplicationTemplate {
                             10000, WorldWind.ABSOLUTE);
                     view.addAnimator(animator);
                     animator.start();
-                    view.firePropertyChange(Keys.VIEW, null, view);
+                    view.emit(Keys.VIEW, null, view);
                 }
             }
         }

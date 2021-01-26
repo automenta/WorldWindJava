@@ -11,6 +11,9 @@ import gov.nasa.worldwind.render.*;
 import java.awt.*;
 import java.nio.DoubleBuffer;
 
+/**
+ * ex: "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson"
+ */
 public class USGSEarthquakeLayer extends GeoJSONLayer {
 
     public USGSEarthquakeLayer(String name, Object src) {

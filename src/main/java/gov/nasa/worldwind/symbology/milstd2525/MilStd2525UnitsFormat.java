@@ -112,7 +112,7 @@ public class MilStd2525UnitsFormat extends UnitsFormat {
             throw new IllegalArgumentException(msg);
         }
 
-        return this.latitude(latlon.getLatitude()) + this.longitude(latlon.getLongitude());
+        return this.latitude(latlon.getLat()) + this.longitude(latlon.getLon());
     }
 
     /**

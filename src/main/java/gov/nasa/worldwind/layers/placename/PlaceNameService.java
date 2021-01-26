@@ -112,9 +112,9 @@ public class PlaceNameService {
     }
 
     private int numColumnsInLevel() {
-        int firstCol = Tile.computeColumn(this.tileDelta.getLongitude(), PlaceNameService.TILING_SECTOR.lonMin(), Angle.NEG180);
-        int lastCol = Tile.computeColumn(this.tileDelta.getLongitude(),
-            PlaceNameService.TILING_SECTOR.lonMax().sub(this.tileDelta.getLongitude()), Angle.NEG180);
+        int firstCol = Tile.computeColumn(this.tileDelta.getLon(), PlaceNameService.TILING_SECTOR.lonMin(), Angle.NEG180);
+        int lastCol = Tile.computeColumn(this.tileDelta.getLon(),
+            PlaceNameService.TILING_SECTOR.lonMax().sub(this.tileDelta.getLon()), Angle.NEG180);
 
         return lastCol - firstCol + 1;
     }

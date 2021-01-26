@@ -295,7 +295,7 @@ public class RadarVolumeExample extends ApplicationTemplate {
 
             // Create the transformation matrix that performs the transform.
             Matrix transform = this.wwd().model().globe().computeEllipsoidalOrientationAtPosition(
-                position.getLatitude(), position.getLongitude(),
+                position.getLat(), position.getLon(),
                 this.terrain.getElevation(position) + position.getAltitude());
 
             for (Vec4 vertex : vertices) {
@@ -692,7 +692,7 @@ public class RadarVolumeExample extends ApplicationTemplate {
                 shapeData.gridNormals = null;
             }
 
-            shapeData.setEyeDistance(dc.getView().getEyePoint().distanceTo3(shapeData.centerPoint));
+            shapeData.setEyeDistance(dc.view().getEyePoint().distanceTo3(shapeData.centerPoint));
 
             return true;
         }

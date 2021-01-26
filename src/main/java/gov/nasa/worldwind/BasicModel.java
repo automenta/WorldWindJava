@@ -6,14 +6,9 @@
 package gov.nasa.worldwind;
 
 import gov.nasa.worldwind.event.Message;
-import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.Layer;
-import gov.nasa.worldwind.util.Logging;
 import gov.nasa.worldwind.video.LayerList;
-import org.w3c.dom.Element;
-
-import java.util.logging.Level;
 
 /**
  * This class aggregates the objects making up a model: the globe and layers. Through the globe it also indirectly
@@ -139,7 +134,7 @@ public class BasicModel extends WWObjectImpl implements Model {
 
         Globe old = this.globe;
         this.globe = globe;
-        this.firePropertyChange(Keys.GLOBE, old, this.globe);
+        this.emit(Keys.GLOBE, old, this.globe);
     }
 
     /**

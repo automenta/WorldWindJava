@@ -356,7 +356,7 @@ public class ExtrudedPolygon extends AbstractShape {
      */
     protected static double computeEyeDistance(DrawContext dc, ShapeData shapeData) {
         double minDistance = Double.MAX_VALUE;
-        Vec4 eyePoint = dc.getView().getEyePoint();
+        Vec4 eyePoint = dc.view().getEyePoint();
 
         for (Vec4 point : shapeData.getOuterBoundaryInfo().capVertices) {
             double d = point.add3(shapeData.getReferencePoint()).distanceTo3(eyePoint);
@@ -709,13 +709,13 @@ public class ExtrudedPolygon extends AbstractShape {
         for (LatLon location : boundary) {
             if (location instanceof Position) {
                 xmlWriter.writeCharacters(String.format(Locale.US, "%f,%f,%f ",
-                    location.getLongitude().degrees,
-                    location.getLatitude().degrees,
+                    location.getLon().degrees,
+                    location.getLat().degrees,
                     ((Position) location).getAltitude()));
             } else {
                 xmlWriter.writeCharacters(String.format(Locale.US, "%f,%f ",
-                    location.getLongitude().degrees,
-                    location.getLatitude().degrees));
+                    location.getLon().degrees,
+                    location.getLat().degrees));
             }
         }
         xmlWriter.writeEndElement(); // coordinates
@@ -1665,7 +1665,7 @@ public class ExtrudedPolygon extends AbstractShape {
         if (refPos == null)
             return;
 
-        shapeData.setReferencePoint(terrain.getSurfacePoint(refPos.getLatitude(), refPos.getLongitude(), 0));
+        shapeData.setReferencePoint(terrain.getSurfacePoint(refPos.getLat(), refPos.getLon(), 0));
     }
 
     /**
@@ -1750,7 +1750,7 @@ public class ExtrudedPolygon extends AbstractShape {
             LatLon location = boundary.locations.get(i);
 
             // Compute the bottom point, which is on the terrain.
-            Vec4 vert = terrain.getSurfacePoint(location.getLatitude(), location.getLongitude(), 0);
+            Vec4 vert = terrain.getSurfacePoint(location.getLat(), location.getLon(), 0);
 
             if (this.getBaseDepth() == 0) {
                 // Place the base vertex on the terrain.
@@ -1771,7 +1771,7 @@ public class ExtrudedPolygon extends AbstractShape {
                 // vertex at all the other boundary positions.
                 if (vaa == null) {
                     Position refPos = this.getReferencePosition();
-                    N = terrain.getGlobe().computeSurfaceNormalAtLocation(refPos.getLatitude(), refPos.getLongitude());
+                    N = terrain.getGlobe().computeSurfaceNormalAtLocation(refPos.getLat(), refPos.getLon());
                     vaa = N.multiply3(this.getHeight());
                     vaaLength = vaa.getLength3();
                     vaLength = refPoint.dot3(N);
@@ -1780,11 +1780,11 @@ public class ExtrudedPolygon extends AbstractShape {
                 double delta = vert.dot3(N) - vaLength;
                 vert = vert.add3(vaa.multiply3(1.0d - delta / vaaLength));
             } else if (this.getAltitudeMode() == WorldWind.RELATIVE_TO_GROUND) {
-                vert = terrain.getSurfacePoint(location.getLatitude(), location.getLongitude(),
+                vert = terrain.getSurfacePoint(location.getLat(), location.getLon(),
                     ((Position) location).getAltitude());
             } else // WorldWind.ABSOLUTE
             {
-                vert = terrain.getGlobe().computePointFromPosition(location.getLatitude(), location.getLongitude(),
+                vert = terrain.getGlobe().computePointFromPosition(location.getLat(), location.getLon(),
                     ((Position) location).getAltitude() * terrain.getVerticalExaggeration());
             }
 
@@ -1960,7 +1960,7 @@ public class ExtrudedPolygon extends AbstractShape {
             Globe globe = shapeData.getGlobeStateKey().getGlobe();
             if (globe != null)
                 normal = globe.computeSurfaceNormalAtLocation(
-                    this.getReferencePosition().getLatitude(), this.getReferencePosition().getLongitude());
+                    this.getReferencePosition().getLat(), this.getReferencePosition().getLon());
         }
 
         return normal;
@@ -2041,7 +2041,7 @@ public class ExtrudedPolygon extends AbstractShape {
 
             // Compute intersection position relative to ground.
             Position pos = terrain.getGlobe().computePositionFromPoint(pt);
-            Vec4 gp = terrain.getSurfacePoint(pos.getLatitude(), pos.getLongitude(), 0);
+            Vec4 gp = terrain.getSurfacePoint(pos.getLat(), pos.getLon(), 0);
             double dist = Math.sqrt(pt.dotSelf3()) - Math.sqrt(gp.dotSelf3());
             intersection.setIntersectionPosition(new Position(pos, dist));
 

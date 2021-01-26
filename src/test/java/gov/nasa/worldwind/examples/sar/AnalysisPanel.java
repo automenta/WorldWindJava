@@ -398,7 +398,7 @@ public class AnalysisPanel extends JPanel implements Restorable {
         else
             pos = this.currentTrack.get(startPositionNumber);
 
-        return new Position(pos.getLatitude(), pos.getLongitude(), pos.getElevation() + this.currentTrack.getOffset());
+        return new Position(pos.getLat(), pos.getLon(), pos.getElevation() + this.currentTrack.getOffset());
     }
 
     public Position getCurrentSegmentEndPosition() {
@@ -416,7 +416,7 @@ public class AnalysisPanel extends JPanel implements Restorable {
         else
             pos = this.currentTrack.get(startPositionNumber + 1);
 
-        return new Position(pos.getLatitude(), pos.getLongitude(), pos.getElevation() + this.currentTrack.getOffset());
+        return new Position(pos.getLat(), pos.getLon(), pos.getElevation() + this.currentTrack.getOffset());
     }
 
     public double getSegmentLength(int startPositionNumber) {
@@ -498,7 +498,7 @@ public class AnalysisPanel extends JPanel implements Restorable {
     }
 
     private Position getGroundPosition(LatLon location) {
-        double elevation = this.wwd.model().globe().elevation(location.getLatitude(), location.getLongitude());
+        double elevation = this.wwd.model().globe().elevation(location.getLat(), location.getLon());
         return new Position(location, elevation);
     }
 
@@ -540,7 +540,7 @@ public class AnalysisPanel extends JPanel implements Restorable {
             else if (tt < 0 && n > 0) // Position is in the previous track segment.
                 pos = interpolateTrackPosition(tt + 1, this.currentTrack.get(n - 1), start);
             if (pos != null) {
-                double e = globe.elevation(pos.getLatitude(), pos.getLongitude());
+                double e = globe.elevation(pos.getLat(), pos.getLon());
                 elev += (numWeights - i) * e;
                 sumOfWeights += (numWeights - i);
             }
@@ -555,7 +555,7 @@ public class AnalysisPanel extends JPanel implements Restorable {
                 else if (tt > 1 && !isLastPosition(n + 1)) // Position is in the next track segment.
                     pos = interpolateTrackPosition(tt - 1, end, this.currentTrack.get(n + 2));
                 if (pos != null) {
-                    double e = globe.elevation(pos.getLatitude(), pos.getLongitude());
+                    double e = globe.elevation(pos.getLat(), pos.getLon());
                     elev += (numWeights - i) * e;
                     sumOfWeights += (numWeights - i);
                 }

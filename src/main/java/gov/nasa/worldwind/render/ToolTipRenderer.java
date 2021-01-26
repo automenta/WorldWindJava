@@ -78,7 +78,7 @@ public class ToolTipRenderer {
 
         stackHandler.pushTextureIdentity(gl);
         stackHandler.pushProjectionIdentity(gl);
-        Rectangle viewport = dc.getView().getViewport();
+        Rectangle viewport = dc.view().getViewport();
         gl.glOrtho(viewport.x, viewport.x + viewport.width, viewport.y, viewport.y + viewport.height, -1, 1);
         stackHandler.pushModelviewIdentity(gl);
 
@@ -394,7 +394,7 @@ public class ToolTipRenderer {
 
         ToolTipRenderer.beginRendering(dc, stackHandler);
         try {
-            this.draw(dc, dc.getView().getViewport(), text, x, y);
+            this.draw(dc, dc.view().getViewport(), text, x, y);
         }
         finally {
             ToolTipRenderer.endRendering(dc, stackHandler);

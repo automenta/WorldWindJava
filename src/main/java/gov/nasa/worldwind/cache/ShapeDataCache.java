@@ -214,8 +214,8 @@ public class ShapeDataCache implements Iterable<ShapeDataCache.ShapeDataCacheEnt
             if (this.timer.isExpired(dc)) // do nothing, the timer has already expired
                 return;
 
-            double oldPixelSize = dc.getView().computePixelSizeAtDistance(this.timerAdjustedEyeDistance);
-            double newPixelSize = dc.getView().computePixelSizeAtDistance(newEyeDistance);
+            double oldPixelSize = dc.view().computePixelSizeAtDistance(this.timerAdjustedEyeDistance);
+            double newPixelSize = dc.view().computePixelSizeAtDistance(newEyeDistance);
             if (newPixelSize < oldPixelSize / 2) {
                 long remainingTime = this.timer.getExpiryTime() - dc.getFrameTimeStamp();
                 this.timer.setExpiryTime(dc.getFrameTimeStamp() + remainingTime / 2);

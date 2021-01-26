@@ -198,10 +198,10 @@ public class LabeledPath implements Renderable {
         // placed there. Otherwise we find a new location that maximizes the label's visible area and is closest to the
         // current location.
         Vec4 lastPoint = this.getLabelPoint(dc);
-        if (lastPoint != null && dc.getView().getFrustumInModelCoordinates().contains(lastPoint)) {
+        if (lastPoint != null && dc.view().getFrustumInModelCoordinates().contains(lastPoint)) {
             // Project the current location's model point into screen coordinates, and place the label at the
             // projected point. We do this to measure the label's visible area when placed at that point.
-            Vec4 screenPoint = dc.getView().project(lastPoint);
+            Vec4 screenPoint = dc.view().project(lastPoint);
             this.setLabelLocation(dc, screenPoint);
 
             // If the label is completely visible, just reuse its current location.
@@ -227,12 +227,12 @@ public class LabeledPath implements Renderable {
             // Compute the specified location's point in model coordinates. Ignore locations who's model coordinate
             // point cannot be computed for any reason, or are outside the view frustum.
             Vec4 point = this.computePoint(dc, ll);
-            if (point == null || !dc.getView().getFrustumInModelCoordinates().contains(point))
+            if (point == null || !dc.view().getFrustumInModelCoordinates().contains(point))
                 continue;
 
             // Project the specified location's model point into screen coordinates, and place the label at the
             // projected point. We do this to measure the label's visible area when placed at that point.
-            Vec4 screenPoint = dc.getView().project(point);
+            Vec4 screenPoint = dc.view().project(point);
             this.setLabelLocation(dc, screenPoint);
 
             // Find the location that maximizes the label's visible area.
@@ -272,7 +272,7 @@ public class LabeledPath implements Renderable {
 
         // Project the label's model point into screen coordinates, place the annotation at the projected point then
         // draw the annotation.
-        Vec4 screenPoint = dc.getView().project(point);
+        Vec4 screenPoint = dc.view().project(point);
         this.setLabelLocation(dc, screenPoint);
         this.getAnnotation().render(dc);
     }
@@ -304,7 +304,7 @@ public class LabeledPath implements Renderable {
         if (bounds == null)
             return 0;
 
-        Rectangle intersection = dc.getView().getViewport().intersection(bounds);
+        Rectangle intersection = dc.view().getViewport().intersection(bounds);
         return intersection.width * intersection.height;
     }
 
@@ -319,7 +319,7 @@ public class LabeledPath implements Renderable {
             return false;
 
         Rectangle bounds = this.getAnnotation().getBounds(dc);
-        return bounds == null || dc.getView().getViewport().contains(bounds);
+        return bounds == null || dc.view().getViewport().contains(bounds);
     }
 
     /**
@@ -363,11 +363,11 @@ public class LabeledPath implements Renderable {
         double elevation = (location instanceof Position) ? ((Position) location).getElevation() : 0;
 
         if (this.getAltitudeMode() == WorldWind.CLAMP_TO_GROUND)
-            return dc.computeTerrainPoint(location.getLatitude(), location.getLongitude(), 0.0d);
+            return dc.computeTerrainPoint(location.getLat(), location.getLon(), 0.0d);
         else if (this.getAltitudeMode() == WorldWind.RELATIVE_TO_GROUND)
-            return dc.computeTerrainPoint(location.getLatitude(), location.getLongitude(), elevation);
+            return dc.computeTerrainPoint(location.getLat(), location.getLon(), elevation);
 
         double height = elevation * dc.getVerticalExaggeration();
-        return dc.getGlobe().computePointFromPosition(location.getLatitude(), location.getLongitude(), height);
+        return dc.getGlobe().computePointFromPosition(location.getLat(), location.getLon(), height);
     }
 }

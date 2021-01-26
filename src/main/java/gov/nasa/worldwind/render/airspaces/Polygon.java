@@ -97,7 +97,7 @@ public class Polygon extends AbstractAirspace {
         // Compute the cartesian points for each location.
         for (int i = 0; i < locationCount; i++) {
             LatLon ll = locations.get(i);
-            points[i] = globe.computeEllipsoidalPointFromPosition(ll.getLatitude(), ll.getLongitude(), 0.0);
+            points[i] = globe.computeEllipsoidalPointFromPosition(ll.getLat(), ll.getLon(), 0.0);
 
             if (edgeFlagArray != null)
                 edgeFlagArray[i] = (edgeFlags != null) ? edgeFlags.get(i) : true;
@@ -119,7 +119,7 @@ public class Polygon extends AbstractAirspace {
         // of the points and oriented with the globe surface.
         Position centerPos = globe.computePositionFromEllipsoidalPoint(centerPoint);
         Matrix tx = globe.computeEllipsoidalOrientationAtPosition(
-            new Angle(centerPos.latitude), new Angle(centerPos.longitude),
+            new Angle(centerPos.lat), new Angle(centerPos.lon),
             centerPos.elevation);
         Matrix txInv = tx.getInverse();
         // Map the cartesian points to a local coordinate space.
@@ -145,8 +145,8 @@ public class Polygon extends AbstractAirspace {
         Collection<LatLon> tessellatedLocations) {
         List<Vec4> points = new ArrayList<>(locations.size());
         for (LatLon ll : locations) {
-            points.add(globe.computeEllipsoidalPointFromPosition(new Angle(ll.latitude),
-                new Angle(ll.longitude), 0));
+            points.add(globe.computeEllipsoidalPointFromPosition(new Angle(ll.lat),
+                new Angle(ll.lon), 0));
         }
 
         //noinspection StringEquality
@@ -155,8 +155,8 @@ public class Polygon extends AbstractAirspace {
 
         Vec4 centerPoint = Vec4.computeAveragePoint(points);
         Position centerPos = globe.computePositionFromEllipsoidalPoint(centerPoint);
-        Vec4 surfaceNormal = globe.computeEllipsoidalNormalAtLocation(new Angle(centerPos.latitude),
-            new Angle(centerPos.longitude));
+        Vec4 surfaceNormal = globe.computeEllipsoidalNormalAtLocation(new Angle(centerPos.lat),
+            new Angle(centerPos.lon));
 
         int numPoints = points.size();
         float[] coords = new float[3 * numPoints];
@@ -434,7 +434,7 @@ public class Polygon extends AbstractAirspace {
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         OGLStackHandler ogsh = new OGLStackHandler();
         try {
-            dc.getView().pushReferenceCenter(dc, referenceCenter);
+            dc.view().pushReferenceCenter(dc, referenceCenter);
 
             if (Airspace.DRAW_STYLE_FILL.equals(drawStyle)) {
                 if (enableCaps && !this.isAirspaceCollapsed()) {
@@ -451,7 +451,7 @@ public class Polygon extends AbstractAirspace {
             }
         }
         finally {
-            dc.getView().popReferenceCenter(dc);
+            dc.view().popReferenceCenter(dc);
             ogsh.pop(gl);
         }
     }
@@ -774,7 +774,7 @@ public class Polygon extends AbstractAirspace {
             Position pos = globe.computePositionFromEllipsoidalPoint(vec); // ellipsoidal-coordinate point and transform
 
             for (int j = 0; j < 2; j++) {
-                vec = this.computePointFromPosition(dc, pos.getLatitude(), pos.getLongitude(), altitude[j],
+                vec = this.computePointFromPosition(dc, pos.getLat(), pos.getLon(), altitude[j],
                     terrainConformant[j]); // final model-coordinate point
 
                 index = 2 * i + j;
@@ -814,7 +814,7 @@ public class Polygon extends AbstractAirspace {
             vec = vec.transformBy4(locationTransform);
 
             Position pos = globe.computePositionFromEllipsoidalPoint(vec); // ellipsoidal-coordinate point and transform
-            vec = this.computePointFromPosition(dc, pos.getLatitude(), pos.getLongitude(), altitude,
+            vec = this.computePointFromPosition(dc, pos.getLat(), pos.getLon(), altitude,
                 terrainConformant); // final model-coordinate point
 
             index = 3 * (vertexPos + i);

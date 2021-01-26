@@ -143,7 +143,7 @@ public class SARSegmentPlane extends WWObjectImpl {
         double maxHeightAboveSurface = -Double.MAX_VALUE;
         for (Position pos : positions) {
             double heightAboveSurface = pos.getElevation() - getSurfaceElevationAt(wwd,
-                pos.getLatitude(), pos.getLongitude());
+                pos.getLat(), pos.getLon());
             if (heightAboveSurface > maxHeightAboveSurface) {
                 maxHeightAboveSurface = heightAboveSurface;
             }
@@ -695,9 +695,9 @@ public class SARSegmentPlane extends WWObjectImpl {
                 if (!sb.isEmpty())
                     sb.append("\n");
                 sb.append("(");
-                sb.append(this.formatAngle(position.getLatitude()));
+                sb.append(this.formatAngle(position.getLat()));
                 sb.append(", ");
-                sb.append(this.formatAngle(position.getLongitude()));
+                sb.append(this.formatAngle(position.getLon()));
                 sb.append(")");
             }
 

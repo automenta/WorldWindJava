@@ -88,7 +88,7 @@ public class BathymetryFilterElevationModel extends AbstractElevationModel {
 
         for (int i = 0; i < latlons.size(); i++) {
             LatLon ll = latlons.get(i);
-            if (this.sourceModel.contains(ll.getLatitude(), ll.getLongitude()) && buffer[i] < this.threshold)
+            if (this.sourceModel.contains(ll.getLat(), ll.getLon()) && buffer[i] < this.threshold)
                 buffer[i] = this.threshold;
         }
 
@@ -101,7 +101,7 @@ public class BathymetryFilterElevationModel extends AbstractElevationModel {
 
         for (int i = 0; i < latlons.size(); i++) {
             LatLon ll = latlons.get(i);
-            if (this.sourceModel.contains(ll.getLatitude(), ll.getLongitude())
+            if (this.sourceModel.contains(ll.getLat(), ll.getLon())
                 && buffer[i] != this.sourceModel.getMissingDataSignal() && buffer[i] < this.threshold)
                 buffer[i] = this.threshold;
         }

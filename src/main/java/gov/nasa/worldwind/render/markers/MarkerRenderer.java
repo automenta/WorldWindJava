@@ -7,17 +7,15 @@
 package gov.nasa.worldwind.render.markers;
 
 import com.jogamp.opengl.*;
-import gov.nasa.worldwind.Keys;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.pick.*;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.util.Logging;
 
 import java.awt.*;
 import java.util.List;
 import java.util.*;
-import java.util.logging.Level;
 
 /**
  * @author tag
@@ -57,16 +55,18 @@ public class MarkerRenderer {
             return dc.getPickFrustums().intersectsAny(new Sphere(point, radius));
 
         // TODO: determine if culling markers against center point is intentional.
-        return dc.getView().getFrustumInModelCoordinates().contains(point);
+        return dc.view().getFrustumInModelCoordinates().contains(point);
     }
 
     protected static double computeMarkerRadius(DrawContext dc, Vec4 point, Marker marker) {
-        double d = point.distanceTo3(dc.getView().getEyePoint());
-        double radius = marker.getAttributes().getMarkerPixels() * dc.getView().computePixelSizeAtDistance(d);
-        if (radius < marker.getAttributes().getMinMarkerSize() && marker.getAttributes().getMinMarkerSize() > 0)
-            radius = marker.getAttributes().getMinMarkerSize();
-        else if (radius > marker.getAttributes().getMaxMarkerSize())
-            radius = marker.getAttributes().getMaxMarkerSize();
+        final View v = dc.view();
+        double d = point.distanceTo3(v.getEyePoint());
+        final MarkerAttributes a = marker.getAttributes();
+        double radius = a.getMarkerPixels() * v.computePixelSizeAtDistance(d);
+        if (radius < a.getMinMarkerSize() && a.getMinMarkerSize() > 0)
+            radius = a.getMinMarkerSize();
+        else if (radius > a.getMaxMarkerSize())
+            radius = a.getMaxMarkerSize();
 
         return radius;
     }
@@ -108,19 +108,22 @@ public class MarkerRenderer {
     }
 
     public void render(DrawContext dc, Iterable<Marker> markers) {
-        if (dc == null) {
-            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalStateException(message);
-        }
+//        if (dc == null) {
+//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalStateException(message);
+//        }
+//
+//        if (markers == null) {
+//            String message = Logging.getMessage("nullValue.MarkerListIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalStateException(message);
+//        }
 
-        if (markers == null) {
-            String message = Logging.getMessage("nullValue.MarkerListIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalStateException(message);
-        }
-
-        this.draw(dc, markers);
+        if (this.isKeepSeparated())
+            this.drawSeparated(dc, markers);
+        else
+            this.drawAll(dc, markers);
     }
 
     protected void draw(DrawContext dc, Iterable<Marker> markers) {
@@ -145,7 +148,7 @@ public class MarkerRenderer {
             return;
 
         Layer parentLayer = dc.getCurrentLayer();
-        Vec4 eyePoint = dc.getView().getEyePoint();
+        Vec4 eyePoint = dc.view().getEyePoint();
 
         Marker m1 = markerList.get(0);
         Vec4 p1 = this.computeSurfacePoint(dc, m1.getPosition());
@@ -241,7 +244,7 @@ public class MarkerRenderer {
             // Check to see that the point is within the frustum.  If it is not, place a null reference in the
             // surfacePoints array.  This will let the drawAll method know not to render it on the 2nd pass. We always
             // cull against the view frustum here, because these points are used during both picking and rendering.
-            if (!dc.getView().getFrustumInModelCoordinates().contains(point)) {
+            if (!dc.view().getFrustumInModelCoordinates().contains(point)) {
                 surfacePoints.add(null);
                 continue;
             }
@@ -256,7 +259,7 @@ public class MarkerRenderer {
 
     protected void drawAll(DrawContext dc, Iterable<Marker> markers) {
         Layer parentLayer = dc.getCurrentLayer();
-        Vec4 eyePoint = dc.getView().getEyePoint();
+        Vec4 eyePoint = dc.view().getEyePoint();
 
         // If this is a new frame, recompute surface points.
         if (dc.getFrameTimeStamp() != this.frameTimeStamp || dc.isContinuous2DGlobe()) {
@@ -287,7 +290,7 @@ public class MarkerRenderer {
 
     protected void begin(DrawContext dc) {
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-        Vec4 cameraPosition = dc.getView().getEyePoint();
+        Vec4 cameraPosition = dc.view().getEyePoint();
 
         if (dc.isPickingMode()) {
             PickSupport.beginPicking(dc);
@@ -348,13 +351,13 @@ public class MarkerRenderer {
 
         // Compute points that are at the renderer-specified elevation
         double effectiveElevation = dc.is2DGlobe() ? 0 : this.elevation;
-        Vec4 point = dc.getSurfaceGeometry().getSurfacePoint(pos.getLatitude(), pos.getLongitude(),
+        Vec4 point = dc.getSurfaceGeometry().getSurfacePoint(pos.getLat(), pos.getLon(),
             effectiveElevation * ve);
         if (point != null)
             return point;
 
         // Point is outside the current sector geometry, so compute it from the globe.
-        return dc.getGlobe().computePointFromPosition(pos.getLatitude(), pos.getLongitude(), effectiveElevation * ve);
+        return dc.getGlobe().computePointFromPosition(pos.getLat(), pos.getLon(), effectiveElevation * ve);
     }
 
     //**************************************************************//
@@ -419,31 +422,18 @@ public class MarkerRenderer {
 
         public void pick(DrawContext dc, Point pickPoint) {
             MarkerRenderer.this.begin(dc); // Calls pickSupport.beginPicking when in picking mode.
-            try {
-                MarkerRenderer.this.pickOrderedMarkers(dc, this);
-            }
-            catch (RuntimeException e) {
-                Logging.logger().log(Level.SEVERE, Logging.getMessage("generic.ExceptionWhilePickingMarker", this),
-                    e);
-            }
-            finally {
-                MarkerRenderer.end(dc); // Calls pickSupport.endPicking when in picking mode.
-                MarkerRenderer.this.pickSupport.resolvePick(dc, pickPoint, this.layer); // Also clears the pick list.
-            }
+
+            MarkerRenderer.this.pickOrderedMarkers(dc, this);
+
+            MarkerRenderer.end(dc); // Calls pickSupport.endPicking when in picking mode.
+            MarkerRenderer.this.pickSupport.resolvePick(dc, pickPoint, this.layer); // Also clears the pick list.
+
         }
 
         public void render(DrawContext dc) {
             MarkerRenderer.this.begin(dc);
-            try {
-                MarkerRenderer.this.drawOrderedMarkers(dc, this);
-            }
-            catch (RuntimeException e) {
-                Logging.logger().log(Level.SEVERE, Logging.getMessage("generic.ExceptionWhileRenderingMarker", this),
-                    e);
-            }
-            finally {
-                MarkerRenderer.end(dc);
-            }
+            MarkerRenderer.this.drawOrderedMarkers(dc, this);
+            MarkerRenderer.end(dc);
         }
     }
 }

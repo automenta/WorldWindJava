@@ -470,7 +470,7 @@ public class ExtrudedPolygonBuilder extends ApplicationTemplate {
         public void setEnableEdit(boolean enable) {
             this.enableEdit = enable;
             this.handleEnableEdit(enable);
-            this.firePropertyChange(ENABLE_EDIT, null, enable);
+            this.emit(ENABLE_EDIT, null, enable);
         }
 
         public boolean isResizeNewShapesToViewport() {
@@ -479,7 +479,7 @@ public class ExtrudedPolygonBuilder extends ApplicationTemplate {
 
         public void setResizeNewShapesToViewport(boolean resize) {
             this.resizeNewShapes = resize;
-            this.firePropertyChange(SIZE_NEW_SHAPES_TO_VIEWPORT, null, resize);
+            this.emit(SIZE_NEW_SHAPES_TO_VIEWPORT, null, resize);
         }
 
         public void actionPerformed(ActionEvent e) {

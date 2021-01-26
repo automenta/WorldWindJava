@@ -137,7 +137,7 @@ public class RectangularFireSupportArea extends AbstractRectangularGraphic {
         if (this.labels.size() > 1) {
             double hw = this.quad.getWidth() / 2.0;
             double hh = this.quad.getHeight() / 2.0;
-            double globeRadius = dc.getGlobe().getRadiusAt(center.getLatitude(), center.getLongitude());
+            double globeRadius = dc.getGlobe().getRadiusAt(center.getLat(), center.getLon());
             double distance = Math.sqrt(hw * hw + hh * hh);
             double pathLength = distance / globeRadius;
 

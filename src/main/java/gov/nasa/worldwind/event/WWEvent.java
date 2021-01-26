@@ -29,7 +29,7 @@ public class WWEvent extends EventObject {
      * @param source the object that originated the event.
      * @throws IllegalArgumentException if the source is {@code null}.
      */
-    public WWEvent(Object source) {
+    protected WWEvent(Object source) {
         super(source);
     }
 

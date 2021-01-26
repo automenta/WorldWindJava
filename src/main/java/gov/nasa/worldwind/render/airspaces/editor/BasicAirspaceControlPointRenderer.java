@@ -97,7 +97,7 @@ public class BasicAirspaceControlPointRenderer implements AirspaceControlPointRe
 
     protected static SortedSet<AirspaceControlPoint> sortControlPoints(DrawContext dc,
         Iterable<? extends AirspaceControlPoint> unsortedPoints) {
-        final Vec4 eyePoint = dc.getView().getEyePoint();
+        final Vec4 eyePoint = dc.view().getEyePoint();
 
         // Sort control points from lower altitude to upper altitude, then from back to front. This will give priority
         // to the upper altitude control points during picking. We give priority to the upper points, in case the
@@ -301,7 +301,7 @@ public class BasicAirspaceControlPointRenderer implements AirspaceControlPointRe
     }
 
     protected void drawMarker(DrawContext dc, AirspaceControlPoint controlPoint) {
-        if (!dc.getView().getFrustumInModelCoordinates().contains(controlPoint.getPoint()))
+        if (!dc.view().getFrustumInModelCoordinates().contains(controlPoint.getPoint()))
             return;
 
         if (dc.isPickingMode()) {
@@ -332,8 +332,8 @@ public class BasicAirspaceControlPointRenderer implements AirspaceControlPointRe
     //**************************************************************//
 
     protected double computeMarkerRadius(DrawContext dc, Marker marker, Vec4 point) {
-        double d = dc.getView().getEyePoint().distanceTo3(point);
-        double radius = marker.getAttributes().getMarkerPixels() * dc.getView().computePixelSizeAtDistance(d);
+        double d = dc.view().getEyePoint().distanceTo3(point);
+        double radius = marker.getAttributes().getMarkerPixels() * dc.view().computePixelSizeAtDistance(d);
 
         // Constrain the minimum marker size by the marker attributes.
         if (radius < marker.getAttributes().getMinMarkerSize()) {

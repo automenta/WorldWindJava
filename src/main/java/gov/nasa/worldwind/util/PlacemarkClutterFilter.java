@@ -223,7 +223,7 @@ public class PlacemarkClutterFilter implements ClutterFilter {
                 gl.glDepthMask(false);
 
                 // The label is drawn using a parallel projection.
-                gl.glOrtho(0.0d, dc.getView().getViewport().width, 0.0d, dc.getView().getViewport().height, -1.0d,
+                gl.glOrtho(0.0d, dc.view().getViewport().width, 0.0d, dc.view().getViewport().height, -1.0d,
                     1.0d);
 
                 // Compute the starting point of the line.

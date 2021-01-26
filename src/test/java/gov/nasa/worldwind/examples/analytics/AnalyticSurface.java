@@ -709,7 +709,7 @@ public class AnalyticSurface implements Renderable, PreRenderable {
             return dc.getPickFrustums().intersectsAny(extent);
 
         // Test this object's extent against the viewing frustum.
-        return dc.getView().getFrustumInModelCoordinates().intersects(extent);
+        return dc.view().getFrustumInModelCoordinates().intersects(extent);
     }
 
     protected void makeOrderedRenderable(DrawContext dc) {
@@ -719,7 +719,7 @@ public class AnalyticSurface implements Renderable, PreRenderable {
             return;
 
         Extent extent = this.getExtent(dc);
-        double eyeDistance = dc.getView().getEyePoint().distanceTo3(extent.getCenter()) - extent.getRadius();
+        double eyeDistance = dc.view().getEyePoint().distanceTo3(extent.getCenter()) - extent.getRadius();
         if (eyeDistance < 1)
             eyeDistance = 1;
 
@@ -866,13 +866,13 @@ public class AnalyticSurface implements Renderable, PreRenderable {
             OGLUtil.applyLightingDirectionalFromViewer(gl, GL2.GL_LIGHT1, new Vec4(1.0, 0.5, 1.0).normalize3());
         }
 
-        dc.getView().pushReferenceCenter(dc, this.referencePoint);
+        dc.view().pushReferenceCenter(dc, this.referencePoint);
     }
 
     protected static void endDrawing(DrawContext dc) {
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
-        dc.getView().popReferenceCenter(dc);
+        dc.view().popReferenceCenter(dc);
         gl.glPopAttrib();
 
         // Restore default GL client vertex array state.
@@ -982,8 +982,8 @@ public class AnalyticSurface implements Renderable, PreRenderable {
         // We need geographic vertices if the surface's altitude mode is clamp-to-ground, or if we're drawing the
         // surface's shadow.
         if (this.getAltitudeMode() == WorldWind.CLAMP_TO_GROUND || this.surfaceAttributes.isDrawShadow()) {
-            outRenderInfo.geographicVertexBuffer.put((float) (lon.degrees - this.referencePos.getLongitude().degrees));
-            outRenderInfo.geographicVertexBuffer.put((float) (lat.degrees - this.referencePos.getLatitude().degrees));
+            outRenderInfo.geographicVertexBuffer.put((float) (lon.degrees - this.referencePos.getLon().degrees));
+            outRenderInfo.geographicVertexBuffer.put((float) (lat.degrees - this.referencePos.getLat().degrees));
             outRenderInfo.geographicVertexBuffer.put(1);
         }
 

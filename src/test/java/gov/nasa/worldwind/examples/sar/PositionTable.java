@@ -423,8 +423,8 @@ public class PositionTable extends JTable {
 
             return switch (col) {
                 case ITEM_NUM_COLUMN -> row;
-                case LATITUDE_COLUMN -> sarTrack.get(row).getLatitude().degrees;
-                case LONGITUDE_COLUMN -> sarTrack.get(row).getLongitude().degrees;
+                case LATITUDE_COLUMN -> sarTrack.get(row).getLat().degrees;
+                case LONGITUDE_COLUMN -> sarTrack.get(row).getLon().degrees;
                 case ALTITUDE_COLUMN -> sarTrack.get(row).getElevation();
                 default -> null;
             };
@@ -445,14 +445,14 @@ public class PositionTable extends JTable {
                         return;
                     if ((newAngle = table.toAngle((String) object)) == null)
                         return;
-                    newPos = new SARPosition(newAngle, curPos.getLongitude(), curPos.getElevation());
+                    newPos = new SARPosition(newAngle, curPos.getLon(), curPos.getElevation());
                     break;
                 case LONGITUDE_COLUMN:
                     if (!(object instanceof String))
                         return;
                     if ((newAngle = table.toAngle((String) object)) == null)
                         return;
-                    newPos = new SARPosition(curPos.getLatitude(), newAngle, curPos.getElevation());
+                    newPos = new SARPosition(curPos.getLat(), newAngle, curPos.getElevation());
                     break;
                 case ALTITUDE_COLUMN:
                     // The value stored in a SARPosition's elevation will always be in meters.
@@ -464,7 +464,7 @@ public class PositionTable extends JTable {
                     double newVal = (Double) object;
                     if (SAR2.UNIT_IMPERIAL.equals(elevationUnit))
                         newVal = SAR2.feetToMeters(newVal);
-                    newPos = new SARPosition(curPos.getLatitude(), curPos.getLongitude(), newVal);
+                    newPos = new SARPosition(curPos.getLat(), curPos.getLon(), newVal);
                     break;
                 default:
                     return;

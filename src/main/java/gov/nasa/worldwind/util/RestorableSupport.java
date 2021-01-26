@@ -1560,8 +1560,8 @@ public class RestorableSupport {
 
         RestorableSupport.StateObject pStateObj = addStateObject(context, name);
         if (pStateObj != null) {
-            addStateValueAsDouble(pStateObj, "latitudeDegrees", location.getLatitude().degrees);
-            addStateValueAsDouble(pStateObj, "longitudeDegrees", location.getLongitude().degrees);
+            addStateValueAsDouble(pStateObj, "latitudeDegrees", location.getLat().degrees);
+            addStateValueAsDouble(pStateObj, "longitudeDegrees", location.getLon().degrees);
         }
     }
 
@@ -1588,8 +1588,8 @@ public class RestorableSupport {
 
         RestorableSupport.StateObject pStateObj = addStateObject(context, name);
         if (pStateObj != null) {
-            addStateValueAsDouble(pStateObj, "latitudeDegrees", position.getLatitude().degrees);
-            addStateValueAsDouble(pStateObj, "longitudeDegrees", position.getLongitude().degrees);
+            addStateValueAsDouble(pStateObj, "latitudeDegrees", position.getLat().degrees);
+            addStateValueAsDouble(pStateObj, "longitudeDegrees", position.getLon().degrees);
             addStateValueAsDouble(pStateObj, "elevation", position.getElevation());
         }
     }

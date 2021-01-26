@@ -805,7 +805,7 @@ public class SectorRangeFan extends AbstractMilStd2525TacticalGraphic implements
         int intervals = this.getIntervals();
 
         Position center = this.getPosition();
-        double globeRadius = globe.getRadiusAt(center.getLatitude(), center.getLongitude());
+        double globeRadius = globe.getRadiusAt(center.getLat(), center.getLon());
         double radiusRadians = radius / globeRadius;
 
         // If the left and right azimuths are equal then just add a single point and return.

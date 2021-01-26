@@ -415,7 +415,7 @@ public class ViewControlsLayer extends RenderableLayer {
         if (!this.initialized)
             initialize(dc);
 
-        if (!this.referenceViewport.equals(dc.getView().getViewport()))
+        if (!this.referenceViewport.equals(dc.view().getViewport()))
             updatePositions(dc);
 
         super.doRender(dc);
@@ -552,7 +552,7 @@ public class ViewControlsLayer extends RenderableLayer {
         int halfButtonSize = (int) (buttonSize * scale / 2);
 
         Rectangle controlsRectangle = new Rectangle(width, height);
-        Point locationSW = computeLocation(dc.getView().getViewport(), controlsRectangle);
+        Point locationSW = computeLocation(dc.view().getViewport(), controlsRectangle);
 
         // Layout start point
         int x = locationSW.x;
@@ -613,7 +613,7 @@ public class ViewControlsLayer extends RenderableLayer {
                 x += (int) (buttonSize * scale);
         }
 
-        this.referenceViewport = dc.getView().getViewport();
+        this.referenceViewport = dc.view().getViewport();
     }
 
     /**
@@ -740,8 +740,8 @@ public class ViewControlsLayer extends RenderableLayer {
         }
 
         protected static boolean isPathCrossingAPole(LatLon p1, LatLon p2) {
-            return Math.abs(p1.getLongitude().degrees - p2.getLongitude().degrees) > 20
-                && Math.abs(p1.getLatitude().degrees - 90 * Math.signum(p1.getLatitude().degrees)) < 10;
+            return Math.abs(p1.getLon().degrees - p2.getLon().degrees) > 20
+                && Math.abs(p1.getLat().degrees - 90 * Math.signum(p1.getLat().degrees)) < 10;
         }
 
         protected static double computeNewZoom(OrbitView view, double amount) {
@@ -971,7 +971,7 @@ public class ViewControlsLayer extends RenderableLayer {
 
                 this.pressedControl = null;
                 resetOrbitView(view);
-                view.firePropertyChange(Keys.VIEW, null, view);
+                view.emit(Keys.VIEW, null, view);
             }
 
             // Keep pressed control highlighted - overrides rollover non currently pressed controls
@@ -1077,7 +1077,7 @@ public class ViewControlsLayer extends RenderableLayer {
                     break;
                 }
             }
-            view.firePropertyChange(Keys.VIEW, null, view);
+            view.emit(Keys.VIEW, null, view);
         }
 
         protected Angle computePanHeading(View view, ScreenAnnotation control) {
@@ -1159,10 +1159,10 @@ public class ViewControlsLayer extends RenderableLayer {
                 // Center pos on terrain surface
                 Position centerPosition = wwd.model().globe().computePositionFromPoint(centerPoint);
                 // Compute pitch and heading relative to center position
-                Vec4 normal = wwd.model().globe().computeSurfaceNormalAtLocation(centerPosition.getLatitude(),
-                    centerPosition.getLongitude());
-                Vec4 north = wwd.model().globe().computeNorthPointingTangentAtLocation(centerPosition.getLatitude(),
-                    centerPosition.getLongitude());
+                Vec4 normal = wwd.model().globe().computeSurfaceNormalAtLocation(centerPosition.getLat(),
+                    centerPosition.getLon());
+                Vec4 north = wwd.model().globe().computeNorthPointingTangentAtLocation(centerPosition.getLat(),
+                    centerPosition.getLon());
                 // Pitch
                 view.setPitch(Angle.POS180.sub(view.getForwardVector().angleBetween3(normal)));
                 // Heading
@@ -1190,10 +1190,10 @@ public class ViewControlsLayer extends RenderableLayer {
             // Center pos at eye pos
             Position centerPosition = wwd.model().globe().computePositionFromPoint(eyePoint);
             // Compute pitch and heading relative to center position
-            Vec4 normal = wwd.model().globe().computeSurfaceNormalAtLocation(centerPosition.getLatitude(),
-                centerPosition.getLongitude());
-            Vec4 north = wwd.model().globe().computeNorthPointingTangentAtLocation(centerPosition.getLatitude(),
-                centerPosition.getLongitude());
+            Vec4 normal = wwd.model().globe().computeSurfaceNormalAtLocation(centerPosition.getLat(),
+                centerPosition.getLon());
+            Vec4 north = wwd.model().globe().computeNorthPointingTangentAtLocation(centerPosition.getLat(),
+                centerPosition.getLon());
             // Pitch
             view.setPitch(Angle.POS180.sub(view.getForwardVector().angleBetween3(normal)));
             // Heading

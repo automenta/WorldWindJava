@@ -379,12 +379,12 @@ public class Orbit extends AbstractAirspace {
         Globe globe = dc.getGlobe();
         double[] altitudes = this.getAltitudes(dc.getVerticalExaggeration());
         Vec4 point1 = globe.computeEllipsoidalPointFromPosition(
-            this.location1.getLatitude(), this.location1.getLongitude(), altitudes[0]);
+            this.location1.getLat(), this.location1.getLon(), altitudes[0]);
         Vec4 point2 = globe.computeEllipsoidalPointFromPosition(
-            this.location2.getLatitude(), this.location2.getLongitude(), altitudes[0]);
+            this.location2.getLat(), this.location2.getLon(), altitudes[0]);
         Vec4 centerPoint = Vec4.mix3(0.5, point1, point2);
         Position centerPos = globe.computePositionFromEllipsoidalPoint(centerPoint);
-        return globe.computePointFromPosition(centerPos.latitude, centerPos.longitude,
+        return globe.computePointFromPosition(centerPos.lat, centerPos.lon,
             altitudes[0]); // model-coordinate reference center
     }
 
@@ -398,12 +398,12 @@ public class Orbit extends AbstractAirspace {
         double radius = this.width / 2.0;
 
         Vec4 point1 = globe.computeEllipsoidalPointFromPosition(
-            this.location1.getLatitude(), this.location1.getLongitude(), altitudes[0]);
+            this.location1.getLat(), this.location1.getLon(), altitudes[0]);
         Vec4 point2 = globe.computeEllipsoidalPointFromPosition(
-            this.location2.getLatitude(), this.location2.getLongitude(), altitudes[0]);
+            this.location2.getLat(), this.location2.getLon(), altitudes[0]);
         Vec4 centerPoint = Vec4.mix3(0.5, point1, point2);
         Position centerPos = globe.computePositionFromEllipsoidalPoint(centerPoint);
-        Vec4 upVec = globe.computeEllipsoidalNormalAtLocation(centerPos.getLatitude(), centerPos.getLongitude());
+        Vec4 upVec = globe.computeEllipsoidalNormalAtLocation(centerPos.getLat(), centerPos.getLon());
         Vec4 axis = point2.subtract3(point1);
         axis = axis.normalize3();
 
@@ -458,7 +458,7 @@ public class Orbit extends AbstractAirspace {
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         OGLStackHandler ogsh = new OGLStackHandler();
         try {
-            dc.getView().pushReferenceCenter(dc, referenceCenter);
+            dc.view().pushReferenceCenter(dc, referenceCenter);
 
             if (Airspace.DRAW_STYLE_OUTLINE.equals(drawStyle)) {
                 this.drawLongCylinderOutline(dc, locations[0], locations[1], radii[1], altitudes, terrainConformant,
@@ -491,7 +491,7 @@ public class Orbit extends AbstractAirspace {
             }
         }
         finally {
-            dc.getView().popReferenceCenter(dc);
+            dc.view().popReferenceCenter(dc);
             ogsh.pop(gl);
         }
     }

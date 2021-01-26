@@ -198,10 +198,10 @@ public class ViewElevationAnimator extends DoubleAnimator {
 
         if (this.globe != null && this.altitudeMode == WorldWind.CLAMP_TO_GROUND) {
             overrideEndElevation = true;
-            endElevation = this.globe.elevation(endLatLon.getLatitude(), endLatLon.getLongitude());
+            endElevation = this.globe.elevation(endLatLon.getLat(), endLatLon.getLon());
         } else if (this.globe != null && this.altitudeMode == WorldWind.RELATIVE_TO_GROUND) {
             overrideEndElevation = true;
-            endElevation = this.globe.elevation(endLatLon.getLatitude(), endLatLon.getLongitude()) + end;
+            endElevation = this.globe.elevation(endLatLon.getLat(), endLatLon.getLon()) + end;
         }
 
         if (overrideEndElevation) {

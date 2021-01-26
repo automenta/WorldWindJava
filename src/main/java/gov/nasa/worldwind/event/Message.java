@@ -16,11 +16,11 @@ public class Message extends WWEvent {
     /**
      * Message name.
      */
-    protected final String name;
+    public final String name;
     /**
      * Time at which the message was sent.
      */
-    protected final long when;
+    public final long when;
 
     /**
      * Create a message. The message will be timestamped with the current system time.
@@ -43,23 +43,5 @@ public class Message extends WWEvent {
         super(source);
         this.name = name;
         this.when = when;
-    }
-
-    /**
-     * Indicates the message name.
-     *
-     * @return The message name.
-     */
-    public String getName() {
-        return this.name;
-    }
-
-    /**
-     * Indicates the time at which the message was sent.
-     *
-     * @return Time, in milliseconds since the Epoch, at which the message was sent.
-     */
-    public long getWhen() {
-        return this.when;
     }
 }

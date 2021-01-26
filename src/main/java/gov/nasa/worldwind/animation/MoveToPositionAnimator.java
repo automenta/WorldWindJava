@@ -43,8 +43,8 @@ public class MoveToPositionAnimator extends PositionAnimator {
         if (!stopMoving) {
             interpolant = 1 - this.smoothing;
             nextPosition = new Position(
-                Angle.mix(interpolant, curCenter.getLatitude(), this.end.getLatitude()),
-                Angle.mix(interpolant, curCenter.getLongitude(), this.end.getLongitude()),
+                Angle.mix(interpolant, curCenter.getLat(), this.end.getLat()),
+                Angle.mix(interpolant, curCenter.getLon(), this.end.getLon()),
                 (1 - interpolant) * curCenter.getElevation() + interpolant * this.end.getElevation());
         }
 

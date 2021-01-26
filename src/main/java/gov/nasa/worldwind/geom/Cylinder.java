@@ -359,7 +359,7 @@ public class Cylinder implements Extent, Renderable {
         // Compute the sector's highest projection along the cylinder axis. We only need to use the point at the
         // sector's centroid with maxHeight. This point is guaranteed to be the highest point in the sector.
         LatLon centroid = sector.getCentroid();
-        extremePoint = globe.computePointFromPosition(centroid.getLatitude(), centroid.getLongitude(), maxHeight);
+        extremePoint = globe.computePointFromPosition(centroid.getLat(), centroid.getLon(), maxHeight);
         double maxProj = extremePoint.subtract3(centerPoint).dot3(axis);
 
         Vec4 bottomCenterPoint = axis.multiply3(minProj).add3(centerPoint);
@@ -395,7 +395,7 @@ public class Cylinder implements Extent, Renderable {
 
         // Compute the top center point as the surface point with maxHeight at the sector's centroid.
         LatLon centroid = sector.getCentroid();
-        Vec4 topCenterPoint = globe.computePointFromPosition(centroid.getLatitude(), centroid.getLongitude(),
+        Vec4 topCenterPoint = globe.computePointFromPosition(centroid.getLat(), centroid.getLon(),
             maxHeight);
         // Compute the axis as the surface normal at the sector's centroid.
         Vec4 axis = globe.computeSurfaceNormalAtPoint(topCenterPoint);

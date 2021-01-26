@@ -200,10 +200,10 @@ public class StatusBar extends JPanel implements PositionListener, RenderingList
     protected void handleCursorPositionChange(PositionEvent event) {
         Position newPos = event.getPosition();
         if (newPos != null) {
-            String las = makeAngleDescription("Lat", newPos.getLatitude());
-            String los = makeAngleDescription("Lon", newPos.getLongitude());
+            String las = makeAngleDescription("Lat", newPos.getLat());
+            String los = makeAngleDescription("Lon", newPos.getLon());
             String els = makeCursorElevationDescription(
-                eventSource.model().globe().elevation(newPos.getLatitude(), newPos.getLongitude()));
+                eventSource.model().globe().elevation(newPos.getLat(), newPos.getLon()));
             latDisplay.setText(las);
             lonDisplay.setText(los);
             eleDisplay.setText(els);

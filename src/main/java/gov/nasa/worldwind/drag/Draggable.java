@@ -19,12 +19,7 @@ public interface Draggable {
      */
     boolean isDragEnabled();
 
-    /**
-     * Controls whether the object is enabled for dragging.
-     *
-     * @param enabled <code>true</code> if the object is enabled, else <code>false</code>.
-     */
-    void setDragEnabled(boolean enabled);
+
 
     /**
      * Drag the object given the provided {@link DragContext}.

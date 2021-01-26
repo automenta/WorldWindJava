@@ -483,12 +483,12 @@ public class Box extends AbstractAirspace {
         int widthSegments) {
         BoxGeometry geom = this.getBoxGeometry(dc, altitudes, terrainConformant, lengthSegments, widthSegments);
         try {
-            dc.getView().pushReferenceCenter(dc, geom.referencePoint);
+            dc.view().pushReferenceCenter(dc, geom.referencePoint);
             this.drawGeometry(dc, geom.sideGeometry, geom.sideGeometry);
             this.drawGeometry(dc, geom.capGeometry, geom.capGeometry);
         }
         finally {
-            dc.getView().popReferenceCenter(dc);
+            dc.view().popReferenceCenter(dc);
         }
     }
 
@@ -496,11 +496,11 @@ public class Box extends AbstractAirspace {
         int widthSegments) {
         BoxGeometry geom = this.getBoxGeometry(dc, altitudes, terrainConformant, lengthSegments, widthSegments);
         try {
-            dc.getView().pushReferenceCenter(dc, geom.referencePoint);
+            dc.view().pushReferenceCenter(dc, geom.referencePoint);
             this.drawGeometry(dc, geom.outlineIndices, geom.sideGeometry);
         }
         finally {
-            dc.getView().popReferenceCenter(dc);
+            dc.view().popReferenceCenter(dc);
         }
     }
 
@@ -508,14 +508,14 @@ public class Box extends AbstractAirspace {
         int widthSegments) {
         BoxGeometry geom = this.getBoxGeometry(dc, altitudes, terrainConformant, lengthSegments, widthSegments);
         try {
-            dc.getView().pushReferenceCenter(dc, geom.referencePoint);
+            dc.view().pushReferenceCenter(dc, geom.referencePoint);
             dc.pushProjectionOffest(Box.DEFAULT_CENTER_LINE_OFFSET); // move center line depth slightly in front of fill
             this.applyCenterLineState(dc);
             this.drawGeometry(dc, geom.centerLineIndices, geom.capGeometry);
         }
         finally {
             dc.popProjectionOffest();
-            dc.getView().popReferenceCenter(dc);
+            dc.view().popReferenceCenter(dc);
         }
     }
 
@@ -558,8 +558,8 @@ public class Box extends AbstractAirspace {
             for (int i = 1; i >= 0; i--) // upper altitude then lower altitude
             {
                 Vec4 p = terrainConformant[i] ?
-                    terrain.getSurfacePoint(ll.latitude, ll.longitude, altitudes[i]) :
-                    terrain.getGlobe().computePointFromPosition(ll.latitude, ll.longitude, altitudes[i]);
+                    terrain.getSurfacePoint(ll.lat, ll.lon, altitudes[i]) :
+                    terrain.getGlobe().computePointFromPosition(ll.lat, ll.lon, altitudes[i]);
                 pointBuffer.put((float) (p.x - geom.referencePoint.x));
                 pointBuffer.put((float) (p.y - geom.referencePoint.y));
                 pointBuffer.put((float) (p.z - geom.referencePoint.z));
@@ -625,8 +625,8 @@ public class Box extends AbstractAirspace {
             for (int i = 1; i >= 0; i--) // upper altitude then lower altitude
             {
                 Vec4 p = terrainConformant[i] ?
-                    terrain.getSurfacePoint(ll.latitude, ll.longitude, altitudes[i]) :
-                    terrain.getGlobe().computePointFromPosition(ll.latitude, ll.longitude, altitudes[i]);
+                    terrain.getSurfacePoint(ll.lat, ll.lon, altitudes[i]) :
+                    terrain.getGlobe().computePointFromPosition(ll.lat, ll.lon, altitudes[i]);
                 pointBuffer.put((float) (p.x - geom.referencePoint.x));
                 pointBuffer.put((float) (p.y - geom.referencePoint.y));
                 pointBuffer.put((float) (p.z - geom.referencePoint.z));

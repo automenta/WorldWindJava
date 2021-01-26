@@ -70,11 +70,11 @@ public class DragContext {
      * @throws IllegalArgumentException if the point is null.
      */
     public void setPoint(Point point) {
-        if (point == null) {
-            String msg = Logging.getMessage("nullValue.PointIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (point == null) {
+//            String msg = Logging.getMessage("nullValue.PointIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         this.point = point;
     }

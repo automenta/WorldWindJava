@@ -174,12 +174,12 @@ public class ForwardEdgeOfBattleArea extends AbstractMilStd2525TacticalGraphic {
             return;
 
         // Project the first control point onto the screen
-        Vec4 placePoint1 = dc.computeTerrainPoint(position1.getLatitude(), position1.getLongitude(), 0);
-        Vec4 screenPoint1 = dc.getView().project(placePoint1);
+        Vec4 placePoint1 = dc.computeTerrainPoint(position1.getLat(), position1.getLon(), 0);
+        Vec4 screenPoint1 = dc.view().project(placePoint1);
 
         // Project the second control point onto the screen
-        Vec4 placePoint2 = dc.computeTerrainPoint(position2.getLatitude(), position2.getLongitude(), 0);
-        Vec4 screenPoint2 = dc.getView().project(placePoint2);
+        Vec4 placePoint2 = dc.computeTerrainPoint(position2.getLat(), position2.getLon(), 0);
+        Vec4 screenPoint2 = dc.view().project(placePoint2);
 
         // The orientation is reversed if the first point falls to the right of the second point.
         boolean orientationNormal = (screenPoint1.x < screenPoint2.x);

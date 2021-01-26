@@ -171,11 +171,11 @@ public class ViewUtil {
 
         // The view forward direction will be colinear with the
         // geoid surface normal at the center position.
-        Vec4 normal = globe.computeSurfaceNormalAtLocation(center.getLatitude(), center.getLongitude());
+        Vec4 normal = globe.computeSurfaceNormalAtLocation(center.getLat(), center.getLon());
         Vec4 lookAtPoint = eyePoint.subtract3(normal);
 
         // The up direction will be pointing towards the north pole.
-        Vec4 north = globe.computeNorthPointingTangentAtLocation(center.getLatitude(), center.getLongitude());
+        Vec4 north = globe.computeNorthPointingTangentAtLocation(center.getLat(), center.getLon());
 
         // Creates a viewing matrix looking from eyePoint towards lookAtPoint,
         // with the given up direction. The forward, right, and up vectors
@@ -265,8 +265,8 @@ public class ViewUtil {
     public static boolean validateViewState(ViewState viewState) {
         return (viewState != null
             && viewState.position != null
-            && viewState.position.getLatitude().degrees >= -90
-            && viewState.position.getLatitude().degrees <= 90
+            && viewState.position.getLat().degrees >= -90
+            && viewState.position.getLat().degrees <= 90
             && viewState.heading != null
             && viewState.pitch != null
             && viewState.pitch.degrees >= 0
@@ -276,8 +276,8 @@ public class ViewUtil {
     public static Position normalizedEyePosition(Position unnormalizedPosition) {
 
         return new Position(
-            Angle.latNorm(unnormalizedPosition.getLatitude()),
-            Angle.lonNorm(unnormalizedPosition.getLongitude()),
+            Angle.latNorm(unnormalizedPosition.getLat()),
+            Angle.lonNorm(unnormalizedPosition.getLon()),
             unnormalizedPosition.getElevation());
     }
 
@@ -359,24 +359,22 @@ public class ViewUtil {
 //        }
 
         // If the viewport width is zero, than replace it with 1, which effectively ignores the viewport width.
-        double viewportWidth = viewport.getWidth();
-        double pixelSizeScale = 2 * fieldOfView.tanHalfAngle() / (viewportWidth <= 0 ? 1.00d : viewportWidth);
+        double vw = viewport.getWidth();
 
-        return Math.abs(distance) * pixelSizeScale;
+        return Math.abs(distance) * (2 * fieldOfView.tanHalfAngle() / (vw <= 0 ? 1 : vw));
     }
 
     public static double computeHorizonDistance(Globe globe, double elevation) {
-        if (globe == null) {
-            String message = Logging.getMessage("nullValue.GlobeIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (globe == null) {
+//            String message = Logging.getMessage("nullValue.GlobeIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         if (elevation <= 0)
             return 0;
 
-        double radius = globe.getMaximumRadius();
-        return Math.sqrt(elevation * (2 * radius + elevation));
+        return Math.sqrt(elevation * (2 * globe.getMaximumRadius() + elevation));
     }
 
     /**
@@ -389,23 +387,23 @@ public class ViewUtil {
      * @throws IllegalArgumentException if the horitontal-field-of-view is null, or if the viewport rectangle is null.
      */
     public static Angle computeVerticalFieldOfView(Angle horizontalFieldOfView, Rectangle viewport) {
-        if (horizontalFieldOfView == null) {
-            String message = Logging.getMessage("nullValue.FOVIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (viewport == null) {
-            String message = Logging.getMessage("nullValue.ViewportIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (horizontalFieldOfView == null) {
+//            String message = Logging.getMessage("nullValue.FOVIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//
+//        if (viewport == null) {
+//            String message = Logging.getMessage("nullValue.ViewportIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         // Taken form "Mathematics for 3D Game Programming and Computer Graphics", page 114.
 
         double aspectRatio = viewport.getHeight() / viewport.getWidth();
-        double distanceToNearPlane = 1.00d / horizontalFieldOfView.tanHalfAngle();
-        double verticalFieldOfViewRadians = 2.00d * Math.atan(aspectRatio / distanceToNearPlane);
+        double distanceToNearPlane = 1 / horizontalFieldOfView.tanHalfAngle();
+        double verticalFieldOfViewRadians = 2 * Math.atan(aspectRatio / distanceToNearPlane);
 
         return Angle.fromRadians(verticalFieldOfViewRadians);
     }
@@ -415,14 +413,14 @@ public class ViewUtil {
 
         Position surfacePosition = null;
         // Look for the surface geometry point at 'position'.
-        Vec4 pointOnGlobe = dc.getPointOnTerrain(position.getLatitude(), position.getLongitude());
+        Vec4 pointOnGlobe = dc.getPointOnTerrain(position.getLat(), position.getLon());
         if (pointOnGlobe != null)
             surfacePosition = globe.computePositionFromPoint(pointOnGlobe);
         // Fallback to using globe elevation values.
         if (surfacePosition == null)
             surfacePosition = new Position(
                 position,
-                globe.elevationOrZero(position.getLatitude(), position.getLongitude()) * dc.getVerticalExaggeration());
+                globe.elevationOrZero(position.getLat(), position.getLon()) * dc.getVerticalExaggeration());
 
         return position.getElevation() - surfacePosition.getElevation();
     }
@@ -438,11 +436,11 @@ public class ViewUtil {
      * @throws IllegalArgumentException if the field of view is null, or if the distance is negative.
      */
     public static double computePerspectiveNearDistance(Angle fieldOfView, double distanceToObject) {
-        if (fieldOfView == null) {
-            String msg = Logging.getMessage("nullValue.FOVIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (fieldOfView == null) {
+//            String msg = Logging.getMessage("nullValue.FOVIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         if (distanceToObject < 0) {
             String msg = Logging.getMessage("generic.DistanceLessThanZero");
@@ -509,45 +507,39 @@ public class ViewUtil {
      *                                  rectangle are null.
      */
     public static Vec4 project(Vec4 modelPoint, Matrix modelview, Matrix projection, Rectangle viewport) {
-        if (modelPoint == null) {
-            String message = Logging.getMessage("nullValue.PointIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (modelview == null) {
-            String message = Logging.getMessage("nullValue.ModelViewIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (projection == null) {
-            String message = Logging.getMessage("nullValue.ProjectionIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (viewport == null) {
-            String message = Logging.getMessage("nullValue.ViewportIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (modelPoint == null) {
+//            String message = Logging.getMessage("nullValue.PointIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//
+//        if (modelview == null) {
+//            String message = Logging.getMessage("nullValue.ModelViewIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//
+//        if (projection == null) {
+//            String message = Logging.getMessage("nullValue.ProjectionIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//
+//        if (viewport == null) {
+//            String message = Logging.getMessage("nullValue.ViewportIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         GLU glu = new GLUgl2();
 
-        // GLU expects matrices as column-major arrays.
-        double[] modelviewArray = new double[16];
-        double[] projectionArray = new double[16];
-        modelview.toArray(modelviewArray, 0, false);
-        projection.toArray(projectionArray, 0, false);
-        // GLU expects the viewport as a four-component array.
         int[] viewportArray = {viewport.x, viewport.y, viewport.width, viewport.height};
 
         double[] result = new double[3];
         if (!glu.gluProject(
             modelPoint.x, modelPoint.y, modelPoint.z,
-            modelviewArray, 0,
-            projectionArray, 0,
+            modelview.toGLUArray(), 0,
+            projection.toGLUArray(), 0,
             viewportArray, 0,
             result, 0)) {
             return null;
@@ -571,35 +563,35 @@ public class ViewUtil {
      *                                  rectangle are null.
      */
     public static Vec4 unProject(Vec4 windowPoint, Matrix modelview, Matrix projection, Rectangle viewport) {
-        if (windowPoint == null) {
-            String message = Logging.getMessage("nullValue.PointIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (modelview == null) {
-            String message = Logging.getMessage("nullValue.ModelViewIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (projection == null) {
-            String message = Logging.getMessage("nullValue.ProjectionIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (viewport == null) {
-            String message = Logging.getMessage("nullValue.ViewportIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (windowPoint == null) {
+//            String message = Logging.getMessage("nullValue.PointIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//
+//        if (modelview == null) {
+//            String message = Logging.getMessage("nullValue.ModelViewIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//
+//        if (projection == null) {
+//            String message = Logging.getMessage("nullValue.ProjectionIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//
+//        if (viewport == null) {
+//            String message = Logging.getMessage("nullValue.ViewportIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         GLU glu = new GLUgl2();
 
         // GLU expects matrices as column-major arrays.
-        double[] modelviewArray = modelview.toArray(new double[16], 0, false);
-        double[] projectionArray = projection.toArray(new double[16], 0, false);
+        double[] modelviewArray = modelview.toGLUArray();
+        double[] projectionArray = projection.toGLUArray();
         // GLU expects the viewport as a four-component array.
         int[] viewportArray = {viewport.x, viewport.y, viewport.width, viewport.height};
 
@@ -617,49 +609,17 @@ public class ViewUtil {
         return Vec4.fromArray3(result, 0);
     }
 
-    public static class ViewState {
-        protected Position position;
-        protected Angle heading;
-        protected Angle pitch;
-        protected Angle roll;
+    public static final class ViewState {
+        public final Position position;
+        public final Angle heading;
+        public final Angle pitch;
+        public final Angle roll;
 
         public ViewState(Position position, Angle heading, Angle pitch, Angle roll) {
             this.position = position;
             this.heading = heading;
             this.pitch = pitch;
             this.roll = roll;
-        }
-
-        public Position getPosition() {
-            return (position);
-        }
-
-        public void setPosition(Position position) {
-            this.position = position;
-        }
-
-        public Angle getRoll() {
-            return (roll);
-        }
-
-        public void setRoll(Angle roll) {
-            this.roll = roll;
-        }
-
-        public Angle getPitch() {
-            return (pitch);
-        }
-
-        public void setPitch(Angle pitch) {
-            this.pitch = pitch;
-        }
-
-        public Angle getHeading() {
-            return (heading);
-        }
-
-        public void setHeading(Angle heading) {
-            this.heading = heading;
         }
     }
 }

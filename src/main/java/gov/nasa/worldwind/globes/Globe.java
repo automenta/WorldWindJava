@@ -540,6 +540,6 @@ public interface Globe extends WWObject, Extent {
     boolean isPointAboveElevation(Vec4 point, double elevation);
 
     default double elevation(Position pos) {
-        return elevation(pos.getLatitude(), pos.getLongitude());
+        return elevation(pos.getLat(), pos.getLon());
     }
 }

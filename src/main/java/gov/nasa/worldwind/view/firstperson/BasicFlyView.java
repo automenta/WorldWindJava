@@ -60,10 +60,10 @@ public class BasicFlyView extends BasicView {
             setEyePosition(Position.fromDegrees(initLat, initLon, initElev));
         } // Set only center latitude. Do not change center longitude or center elevation.
         else if (initLat != null) {
-            setEyePosition(Position.fromDegrees(initLat, this.eyePosition.getLongitude().degrees, initElev));
+            setEyePosition(Position.fromDegrees(initLat, this.eyePosition.getLon().degrees, initElev));
         } // Set only center longitude. Do not center latitude or center elevation.
         else if (initLon != null) {
-            setEyePosition(Position.fromDegrees(this.eyePosition.getLatitude().degrees, initLon, initElev));
+            setEyePosition(Position.fromDegrees(this.eyePosition.getLat().degrees, initLon, initElev));
         }
 
         Double initHeading = Configuration.getDoubleValue(Keys.INITIAL_HEADING);
@@ -267,13 +267,13 @@ public class BasicFlyView extends BasicView {
             throw new IllegalArgumentException(message);
         }
 
-        if (viewState.getPosition() != null) {
+        if ((viewState.position) != null) {
             this.eyePosition = this.viewLimits.limitEyePosition(this, this.eyePosition);
         }
 
-        this.setHeading(viewState.getHeading());
-        this.setPitch(viewState.getPitch());
-        this.setRoll(viewState.getRoll());
+        this.setHeading((viewState.heading));
+        this.setPitch((viewState.pitch));
+        this.setRoll((viewState.roll));
     }
 
     @Override

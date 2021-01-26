@@ -658,7 +658,7 @@ public class Polyline extends KVMap implements OrderedRenderable, Movable, Resto
             || this.geomGenVE != dc.getVerticalExaggeration()) {
             // Reference center must be computed prior to computing vertices.
             this.computeReferenceCenter(dc);
-            this.eyeDistance = this.referenceCenterPoint.distanceTo3(dc.getView().getEyePoint());
+            this.eyeDistance = this.referenceCenterPoint.distanceTo3(dc.view().getEyePoint());
             this.makeVertices(dc);
             this.geomGenTimeStamp = dc.getFrameTimeStamp();
             this.geomGenVE = dc.getVerticalExaggeration();
@@ -685,7 +685,7 @@ public class Polyline extends KVMap implements OrderedRenderable, Movable, Resto
         }
 
         gl.glPushAttrib(attrBits);
-        dc.getView().pushReferenceCenter(dc, this.referenceCenterPoint);
+        dc.view().pushReferenceCenter(dc, this.referenceCenterPoint);
 
         boolean projectionOffsetPushed = false; // keep track for error recovery
 
@@ -777,7 +777,7 @@ public class Polyline extends KVMap implements OrderedRenderable, Movable, Resto
                 dc.popProjectionOffest();
 
             gl.glPopAttrib();
-            dc.getView().popReferenceCenter(dc);
+            dc.view().popReferenceCenter(dc);
         }
     }
 
@@ -795,7 +795,7 @@ public class Polyline extends KVMap implements OrderedRenderable, Movable, Resto
         if (dc.isPickingMode())
             return dc.getPickFrustums().intersectsAny(extent);
 
-        return dc.getView().getFrustumInModelCoordinates().intersects(extent);
+        return dc.view().getFrustumInModelCoordinates().intersects(extent);
     }
 
     protected void makeVertices(DrawContext dc) {
@@ -844,7 +844,7 @@ public class Polyline extends KVMap implements OrderedRenderable, Movable, Resto
     }
 
     protected boolean isSegmentVisible(DrawContext dc, Position posA, Position posB, Vec4 ptA, Vec4 ptB) {
-        Frustum f = dc.getView().getFrustumInModelCoordinates();
+        Frustum f = dc.view().getFrustumInModelCoordinates();
 
         if (f.contains(ptA))
             return true;
@@ -862,24 +862,24 @@ public class Polyline extends KVMap implements OrderedRenderable, Movable, Resto
 
         double r = Line.distanceToSegment(ptA, ptB, ptC);
         Extent cyl = new Cylinder(ptA, ptB, r == 0 ? 1 : r);
-        return cyl.intersects(dc.getView().getFrustumInModelCoordinates());
+        return cyl.intersects(dc.view().getFrustumInModelCoordinates());
     }
 
     protected Vec4 computePoint(DrawContext dc, Position pos, boolean applyOffset) {
         if (this.followTerrain) {
             double height = applyOffset ? this.offset : 0;
             // computeTerrainPoint will apply vertical exaggeration
-            return dc.computeTerrainPoint(pos.getLatitude(), pos.getLongitude(), height);
+            return dc.computeTerrainPoint(pos.getLat(), pos.getLon(), height);
         } else {
             double height = pos.getElevation() + (applyOffset ? this.offset : 0);
-            return dc.getGlobe().computePointFromPosition(pos.getLatitude(), pos.getLongitude(),
+            return dc.getGlobe().computePointFromPosition(pos.getLat(), pos.getLon(),
                 height * dc.getVerticalExaggeration());
         }
     }
 
     protected double computeSegmentLength(DrawContext dc, Position posA, Position posB) {
-        LatLon llA = new LatLon(posA.getLatitude(), posA.getLongitude());
-        LatLon llB = new LatLon(posB.getLatitude(), posB.getLongitude());
+        LatLon llA = new LatLon(posA.getLat(), posA.getLon());
+        LatLon llB = new LatLon(posB.getLat(), posB.getLon());
 
         Angle ang = LatLon.greatCircleDistance(llA, llB);
 
@@ -908,8 +908,8 @@ public class Polyline extends KVMap implements OrderedRenderable, Movable, Resto
 
         for (double s = 0, p = 0; s < 1; ) {
             if (this.followTerrain)
-                p += this.terrainConformance * dc.getView().computePixelSizeAtDistance(
-                    ptA.distanceTo3(dc.getView().getEyePoint()));
+                p += this.terrainConformance * dc.view().computePixelSizeAtDistance(
+                    ptA.distanceTo3(dc.view().getEyePoint()));
             else
                 p += arcLength / this.numSubsegments;
 
@@ -984,7 +984,7 @@ public class Polyline extends KVMap implements OrderedRenderable, Movable, Resto
         if (refPos == null)
             return;
 
-        this.referenceCenterPoint = dc.computeTerrainPoint(refPos.getLatitude(), refPos.getLongitude(),
+        this.referenceCenterPoint = dc.computeTerrainPoint(refPos.getLat(), refPos.getLon(),
             this.offset);
     }
 
@@ -1053,7 +1053,6 @@ public class Polyline extends KVMap implements OrderedRenderable, Movable, Resto
         return this.dragEnabled;
     }
 
-    @Override
     public void setDragEnabled(boolean enabled) {
         this.dragEnabled = enabled;
     }
@@ -1102,15 +1101,15 @@ public class Polyline extends KVMap implements OrderedRenderable, Movable, Resto
                 for (Position p : this.positions) {
                     // Save each position only if all parts (latitude, longitude, and elevation) can be
                     // saved. We will not save a partial iconPosition (for example, just the elevation).
-                    if (p != null && p.getLatitude() != null && p.getLongitude() != null) {
+                    if (p != null && p.getLat() != null && p.getLon() != null) {
                         // Create a nested "position" element underneath the base "positions".
                         RestorableSupport.StateObject pStateObj =
                             rs.addStateObject(positionsStateObj, "position");
                         if (pStateObj != null) {
                             rs.addStateValueAsDouble(pStateObj, "latitudeDegrees",
-                                p.getLatitude().degrees);
+                                p.getLat().degrees);
                             rs.addStateValueAsDouble(pStateObj, "longitudeDegrees",
-                                p.getLongitude().degrees);
+                                p.getLon().degrees);
                             rs.addStateValueAsDouble(pStateObj, "elevation",
                                 p.getElevation());
                         }

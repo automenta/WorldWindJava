@@ -233,15 +233,15 @@ public class TerrainIntersections extends ApplicationTemplate {
             // Form the grid.
             double gridRadius = GRID_RADIUS.degrees;
             Sector sector = Sector.fromDegrees(
-                curPos.getLatitude().degrees - gridRadius, curPos.getLatitude().degrees + gridRadius,
-                curPos.getLongitude().degrees - gridRadius, curPos.getLongitude().degrees + gridRadius);
+                curPos.getLat().degrees - gridRadius, curPos.getLat().degrees + gridRadius,
+                curPos.getLon().degrees - gridRadius, curPos.getLon().degrees + gridRadius);
 
             this.grid = buildGrid(sector, height, GRID_DIMENSION, GRID_DIMENSION);
             this.numGridPoints = grid.size();
 
             // Compute the position of the selected location (incorporate its height).
-            this.referencePosition = new Position(curPos.getLatitude(), curPos.getLongitude(), height);
-            this.referencePoint = terrain.getSurfacePoint(curPos.getLatitude(), curPos.getLongitude(), height);
+            this.referencePosition = new Position(curPos.getLat(), curPos.getLon(), height);
+            this.referencePoint = terrain.getSurfacePoint(curPos.getLat(), curPos.getLon(), height);
 
 //            // Pre-caching is unnecessary and is useful only when it occurs before the intersection
 //            // calculations. It will incur extra overhead otherwise. The normal intersection calculations
@@ -286,7 +286,7 @@ public class TerrainIntersections extends ApplicationTemplate {
 
             // Only the first intersection is shown.
             Vec4 iPoint = intersections[0].getIntersectionPoint();
-            Vec4 gPoint = terrain.getSurfacePoint(gridPosition.getLatitude(), gridPosition.getLongitude(),
+            Vec4 gPoint = terrain.getSurfacePoint(gridPosition.getLat(), gridPosition.getLon(),
                 gridPosition.getAltitude());
 
             // Check to see whether the intersection is beyond the grid point.
@@ -414,7 +414,7 @@ public class TerrainIntersections extends ApplicationTemplate {
             for (Position p : grid) {
                 List<Position> endPoints = new ArrayList<>();
                 endPoints.add(cPos);
-                endPoints.add(new Position(p.getLatitude(), p.getLongitude(), 0));
+                endPoints.add(new Position(p.getLat(), p.getLon(), 0));
 
                 Path path = new Path(endPoints);
                 path.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);

@@ -100,7 +100,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
         // If the new eye distance is significantly closer than cached data's the current eye distance, reduce the
         // timer's remaining time by 50%. This reduction is performed only once each time the timer is reset.
         if (tile.currentData.referencePoint != null) {
-            double newEyeDistance = dc.getView().getEyePoint().distanceTo3(tile.currentData.referencePoint);
+            double newEyeDistance = dc.view().getEyePoint().distanceTo3(tile.currentData.referencePoint);
             tile.currentData.adjustTimer(dc, newEyeDistance);
         }
     }
@@ -275,7 +275,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
 
                 // Compute intersection position relative to ground.
                 Position pos = terrain.getGlobe().computePositionFromPoint(pt);
-                Vec4 gp = terrain.getSurfacePoint(pos.getLatitude(), pos.getLongitude(), 0);
+                Vec4 gp = terrain.getSurfacePoint(pos.getLat(), pos.getLon(), 0);
                 double dist = Math.sqrt(pt.dotSelf3()) - Math.sqrt(gp.dotSelf3());
                 intersection.setIntersectionPosition(new Position(pos, dist));
 
@@ -500,7 +500,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
             return dc.getPickFrustums().intersectsAny(extent);
         }
 
-        return dc.getView().getFrustumInModelCoordinates().intersects(extent);
+        return dc.view().getFrustumInModelCoordinates().intersects(extent);
     }
 
     protected void invalidateAllTileGeometry() {
@@ -528,7 +528,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
             this.tessellateTile(terrain, tile, s);
         }
 
-        s.setEyeDistance(dc.getView().getEyePoint().distanceTo3(s.referencePoint));
+        s.setEyeDistance(dc.view().getEyePoint().distanceTo3(s.referencePoint));
         s.setGlobeStateKey(dc.getGlobe().getGlobeStateKey(dc));
         s.setVerticalExaggeration(dc.getVerticalExaggeration());
         s.restartTimer(dc);
@@ -704,7 +704,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
             gl.glVertexPointer(3, GL.GL_FLOAT, 0, shapeData.vertices);
         }
 
-        Matrix modelview = dc.getView().getModelviewMatrix().multiply(shapeData.transformMatrix);
+        Matrix modelview = dc.view().getModelviewMatrix().multiply(shapeData.transformMatrix);
         modelview.toArray(this.matrixArray, 0, false);
         gl.glLoadMatrixd(this.matrixArray, 0);
 

@@ -168,7 +168,7 @@ public class SphereAirspace extends AbstractAirspace {
         double radius = this.getRadius();
 
         if (terrainConformant) {
-            double[] extremes = globe.getMinAndMaxElevations(this.location.getLatitude(), this.location.getLongitude());
+            double[] extremes = globe.getMinAndMaxElevations(this.location.getLat(), this.location.getLon());
             double minAltitude = verticalExaggeration * extremes[0] + altitude - radius;
             double maxAltitude = verticalExaggeration * extremes[1] + altitude + radius;
             Vec4 bottomCenter = globe.computePointFromPosition(this.location, minAltitude);
@@ -219,7 +219,7 @@ public class SphereAirspace extends AbstractAirspace {
 
         this.clearElevationMap();
 
-        Vec4 centerPoint = this.computePointFromPosition(dc, this.location.getLatitude(), this.location.getLongitude(),
+        Vec4 centerPoint = this.computePointFromPosition(dc, this.location.getLat(), this.location.getLon(),
             altitude, terrainConformant);
         return new Sphere(centerPoint, radius);
     }
@@ -263,7 +263,7 @@ public class SphereAirspace extends AbstractAirspace {
 
     protected double computeEyeDistance(DrawContext dc) {
         Sphere sphere = this.computeExtent(dc);
-        Vec4 eyePoint = dc.getView().getEyePoint();
+        Vec4 eyePoint = dc.view().getEyePoint();
 
         // Return the distance to the sphere's edge. This provides a good distance for rendering order when the the eye
         // point is inside and outside of the sphere.
@@ -342,9 +342,9 @@ public class SphereAirspace extends AbstractAirspace {
         }
 
         Vec4 centerPoint = this.computePointFromPosition(dc,
-            this.location.getLatitude(), this.location.getLongitude(), altitudes[0], terrainConformant[0]);
+            this.location.getLat(), this.location.getLon(), altitudes[0], terrainConformant[0]);
 
-        Matrix modelview = dc.getView().getModelviewMatrix();
+        Matrix modelview = dc.view().getModelviewMatrix();
         modelview = modelview.multiply(Matrix.fromTranslation(centerPoint));
         modelview = modelview.multiply(Matrix.fromScale(this.getRadius()));
         double[] matrixArray = new double[16];

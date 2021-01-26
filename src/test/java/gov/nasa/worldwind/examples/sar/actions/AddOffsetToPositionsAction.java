@@ -41,7 +41,7 @@ public class AddOffsetToPositionsAction extends AbstractAction {
         double offset = st.getOffset();
         for (int index : this.table.getSelectedRows()) {
             SARPosition pos = st.get(index);
-            st.set(index, new SARPosition(pos.getLatitude(), pos.getLongitude(), pos.getElevation() + offset));
+            st.set(index, new SARPosition(pos.getLat(), pos.getLon(), pos.getElevation() + offset));
         }
     }
 }

@@ -60,9 +60,9 @@ public class TileKey implements Comparable<TileKey> {
         final LatLon tileDelta = l.getTileDelta();
         final LatLon tileOrigin = levelSet.tileOrigin;
         this.row = Tile.computeRow(
-            tileDelta.getLatitude(), latitude, tileOrigin.getLatitude());
+            tileDelta.getLat(), latitude, tileOrigin.getLat());
         this.col = Tile.computeColumn(
-            tileDelta.getLongitude(), longitude, tileOrigin.getLongitude());
+            tileDelta.getLon(), longitude, tileOrigin.getLon());
         this.cacheName = l.getCacheName();
         this.hash = this.computeHash();
     }

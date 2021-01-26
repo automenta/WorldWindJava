@@ -37,8 +37,8 @@ public class SurfaceIcons extends SurfaceIcon {
 
     protected static double computeLocationDistanceDegreesSquared(Sector drawSector, LatLon location) {
         double lonOffset = AbstractSurfaceRenderable.computeHemisphereOffset(drawSector, location);
-        double dLat = location.getLatitude().degrees - drawSector.getCentroid().getLatitude().degrees;
-        double dLon = location.getLongitude().degrees - drawSector.getCentroid().getLongitude().degrees + lonOffset;
+        double dLat = location.getLat().degrees - drawSector.getCentroid().getLat().degrees;
+        double dLon = location.getLon().degrees - drawSector.getCentroid().getLon().degrees + lonOffset;
         return dLat * dLat + dLon * dLon;
     }
 

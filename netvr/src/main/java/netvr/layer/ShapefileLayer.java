@@ -1,4 +1,4 @@
-package netvr;
+package netvr.layer;
 
 import gov.nasa.worldwind.formats.shapefile.*;
 import gov.nasa.worldwind.geom.*;
@@ -11,13 +11,13 @@ import java.util.*;
 
 import static gov.nasa.worldwind.WorldWind.RELATIVE_TO_GROUND;
 
-public class ShapefileLayer extends NetVR.TextAndShapesLayer {
-    static final NetVR.OSMShapes[] shapeArray = {
-        new NetVR.OSMShapes(Color.BLACK, 0.5D, 30000.0D),
-        new NetVR.OSMShapes(Color.GREEN, 0.5D, 100000.0D),
-        new NetVR.OSMShapes(Color.CYAN, 1.0D, 500000.0D),
-        new NetVR.OSMShapes(Color.YELLOW, 2.0D, 3000000.0D),
-        new NetVR.OSMShapes(Color.ORANGE, 0.25D, 10000.0D)
+public class ShapefileLayer extends TextAndShapesLayer {
+    static final OSMShapes[] shapeArray = {
+        new OSMShapes(Color.BLACK, 0.5D, 30000.0D),
+        new OSMShapes(Color.GREEN, 0.5D, 100000.0D),
+        new OSMShapes(Color.CYAN, 1.0D, 500000.0D),
+        new OSMShapes(Color.YELLOW, 2.0D, 3000000.0D),
+        new OSMShapes(Color.ORANGE, 0.25D, 10000.0D)
     };
     private final Shapefile shp;
 
@@ -31,7 +31,7 @@ public class ShapefileLayer extends NetVR.TextAndShapesLayer {
             accept(shp.nextRecord());
         }
 
-        for (NetVR.OSMShapes ss : ShapefileLayer.shapeArray) {
+        for (OSMShapes ss : ShapefileLayer.shapeArray) {
             if (!ss.locations.isEmpty()) {
                 SurfaceIcons l = ShapefileLayer.surfaceIcons(ss, ss.locations);
                 l.setUseMipMaps(false);
@@ -39,14 +39,14 @@ public class ShapefileLayer extends NetVR.TextAndShapesLayer {
             }
 
             if (!ss.labels.isEmpty()) {
-                for (NetVR.Label v : ss.labels) {
+                for (Label v : ss.labels) {
                     addLabel(v);
                 }
             }
         }
     }
 
-    private static SurfaceIcons surfaceIcons(NetVR.OSMShapes ss, Iterable<? extends LatLon> locations) {
+    private static SurfaceIcons surfaceIcons(OSMShapes ss, Iterable<? extends LatLon> locations) {
         SurfaceIcons l = new SurfaceIcons(
             PatternFactory.createPattern("PatternFactory.PatternCircle",
                 0.8F, ss.foreground), locations);
@@ -176,7 +176,7 @@ public class ShapefileLayer extends NetVR.TextAndShapesLayer {
 
             String type = (String) attr.get("type");
 
-            NetVR.OSMShapes shapes;
+            OSMShapes shapes;
             if (type.equalsIgnoreCase("hamlet")) {
                 shapes = ShapefileLayer.shapeArray[0];
             } else if (type.equalsIgnoreCase("village")) {
@@ -198,7 +198,7 @@ public class ShapefileLayer extends NetVR.TextAndShapesLayer {
                 }
             }
             if (!WWUtil.isEmpty(name)) {
-                NetVR.Label label = new NetVR.Label(name, new Position(location, 0.0D));
+                Label label = new Label(name, new Position(location, 0.0D));
                 label.setFont(shapes.font);
                 label.setColor(shapes.foreground);
                 label.setBackgroundColor(shapes.background);
@@ -210,6 +210,45 @@ public class ShapefileLayer extends NetVR.TextAndShapesLayer {
             }
         } else {
             System.out.println("unknown: " + r);
+        }
+    }
+    protected static class OSMShapes {
+        public final Collection<LatLon> locations = new ArrayList();
+        public final Collection<Label> labels = new ArrayList();
+        public final Color foreground;
+        public final Color background;
+        public final Font font;
+        public final double scale;
+        public final double labelMaxAltitude;
+
+        public OSMShapes(Color color, double scale, double labelMaxAltitude) {
+            this.foreground = color;
+            this.background = WWUtil.computeContrastingColor(color);
+            this.font = new Font("Arial", 1, 10 + (int) (3.0D * scale));
+            this.scale = scale;
+            this.labelMaxAltitude = labelMaxAltitude;
+        }
+    }
+
+    protected static class Label extends UserFacingText {
+        protected double minActiveAltitude = -1.7976931348623157E308D;
+        protected double maxActiveAltitude = 1.7976931348623157E308D;
+
+        public Label(CharSequence text, Position position) {
+            super(text, position);
+        }
+
+        public void setMinActiveAltitude(double altitude) {
+            this.minActiveAltitude = altitude;
+        }
+
+        public void setMaxActiveAltitude(double altitude) {
+            this.maxActiveAltitude = altitude;
+        }
+
+        public boolean isActive(DrawContext dc) {
+            double eyeElevation = dc.view().getEyePosition().getElevation();
+            return this.minActiveAltitude <= eyeElevation && eyeElevation <= this.maxActiveAltitude;
         }
     }
 }

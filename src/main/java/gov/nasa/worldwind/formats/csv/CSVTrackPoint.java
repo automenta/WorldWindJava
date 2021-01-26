@@ -116,8 +116,8 @@ public class CSVTrackPoint implements TrackPoint {
             throw new IllegalArgumentException(msg);
         }
 
-        this.latitude = position.getLatitude().degrees;
-        this.longitude = position.getLongitude().degrees;
+        this.latitude = position.getLat().degrees;
+        this.longitude = position.getLon().degrees;
         this.altitude = position.getElevation();
     }
 

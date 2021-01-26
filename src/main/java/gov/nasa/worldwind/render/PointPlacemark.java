@@ -627,7 +627,7 @@ public class PointPlacemark extends WWObjectImpl
                 return;
 
             if (this.getLODSelector() != null)
-                this.getLODSelector().selectLOD(dc, this, opm.placePoint.distanceTo3(dc.getView().getEyePoint()));
+                this.getLODSelector().selectLOD(dc, this, opm.placePoint.distanceTo3(dc.view().getEyePoint()));
 
             this.determineActiveAttributes();
             if (this.activeTexture == null && !this.getActiveAttributes().isUsePointAsDefaultImage())
@@ -645,7 +645,7 @@ public class PointPlacemark extends WWObjectImpl
 
         if (this.isClipToHorizon() && !dc.is2DGlobe()) {
             // Don't draw if beyond the horizon.
-            double horizon = dc.getView().getHorizonDistance();
+            double horizon = dc.view().getHorizonDistance();
             if (this.eyeDistance > horizon)
                 return;
         }
@@ -668,7 +668,7 @@ public class PointPlacemark extends WWObjectImpl
      * @return true if the image intersects the frustum, otherwise false.
      */
     protected boolean intersectsFrustum(DrawContext dc, OrderedPlacemark opm) {
-        View view = dc.getView();
+        View view = dc.view();
 
         // Test the placemark's model coordinate point against the near and far clipping planes.
         if (opm.placePoint != null
@@ -806,7 +806,7 @@ public class PointPlacemark extends WWObjectImpl
 
             // The image is drawn using a parallel projection.
             osh.pushProjectionIdentity(gl);
-            gl.glOrtho(0.0d, dc.getView().getViewport().width, 0.0d, dc.getView().getViewport().height, -1.0d, 1.0d);
+            gl.glOrtho(0.0d, dc.view().getViewport().width, 0.0d, dc.view().getViewport().height, -1.0d, 1.0d);
 
             // Apply the depth buffer but don't change it (for screen-space shapes).
             if ((!dc.isDeepPickingEnabled()))
@@ -848,7 +848,7 @@ public class PointPlacemark extends WWObjectImpl
             // Adjust heading to be relative to globe or screen
             if (heading != null) {
                 if (Keys.RELATIVE_TO_GLOBE.equals(this.getActiveAttributes().getHeadingReference()))
-                    heading = dc.getView().getHeading().degrees - heading;
+                    heading = dc.view().getHeading().degrees - heading;
                 else
                     heading = -heading;
             }
@@ -1037,7 +1037,7 @@ public class PointPlacemark extends WWObjectImpl
         gl.glDepthMask(true);
 
         try {
-            dc.getView().pushReferenceCenter(dc, opm.placePoint); // draw relative to the place point
+            dc.view().pushReferenceCenter(dc, opm.placePoint); // draw relative to the place point
 
             this.setLineWidth(dc);
             this.setLineColor(dc, pickCandidates);
@@ -1049,7 +1049,7 @@ public class PointPlacemark extends WWObjectImpl
             gl.glEnd();
         }
         finally {
-            dc.getView().popReferenceCenter(dc);
+            dc.view().popReferenceCenter(dc);
         }
     }
 
@@ -1072,7 +1072,7 @@ public class PointPlacemark extends WWObjectImpl
 
             // The point is drawn using a parallel projection.
             osh.pushProjectionIdentity(gl);
-            gl.glOrtho(0.0d, dc.getView().getViewport().width, 0.0d, dc.getView().getViewport().height, -1.0d, 1.0d);
+            gl.glOrtho(0.0d, dc.view().getViewport().width, 0.0d, dc.view().getViewport().height, -1.0d, 1.0d);
 
             osh.pushModelviewIdentity(gl);
 
@@ -1122,7 +1122,7 @@ public class PointPlacemark extends WWObjectImpl
         if (dc.isPickingMode())
             return dc.getPickFrustums().intersectsAny(opm.placePoint, opm.terrainPoint);
         else
-            return dc.getView().getFrustumInModelCoordinates().intersectsSegment(opm.placePoint, opm.terrainPoint);
+            return dc.view().getFrustumInModelCoordinates().intersectsSegment(opm.placePoint, opm.terrainPoint);
     }
 
     /**
@@ -1344,14 +1344,14 @@ public class PointPlacemark extends WWObjectImpl
             return;
 
         if (this.altitudeMode == WorldWind.CLAMP_TO_GROUND || dc.is2DGlobe()) {
-            opm.placePoint = dc.computeTerrainPoint(pos.getLatitude(), pos.getLongitude(), 0);
+            opm.placePoint = dc.computeTerrainPoint(pos.getLat(), pos.getLon(), 0);
         } else if (this.altitudeMode == WorldWind.RELATIVE_TO_GROUND) {
-            opm.placePoint = dc.computeTerrainPoint(pos.getLatitude(), pos.getLongitude(), pos.getAltitude());
+            opm.placePoint = dc.computeTerrainPoint(pos.getLat(), pos.getLon(), pos.getAltitude());
         } else  // ABSOLUTE
         {
             double height = pos.getElevation()
                 * (this.isApplyVerticalExaggeration() ? dc.getVerticalExaggeration() : 1);
-            opm.placePoint = dc.getGlobe().computePointFromPosition(pos.getLatitude(), pos.getLongitude(), height);
+            opm.placePoint = dc.getGlobe().computePointFromPosition(pos.getLat(), pos.getLon(), height);
         }
 
         if (opm.placePoint == null)
@@ -1359,11 +1359,11 @@ public class PointPlacemark extends WWObjectImpl
 
         // Compute a terrain point if needed.
         if (this.isLineEnabled() && this.altitudeMode != WorldWind.CLAMP_TO_GROUND && !dc.is2DGlobe())
-            opm.terrainPoint = dc.computeTerrainPoint(pos.getLatitude(), pos.getLongitude(), 0);
+            opm.terrainPoint = dc.computeTerrainPoint(pos.getLat(), pos.getLon(), 0);
 
         // Compute the placemark point's screen location.
-        opm.screenPoint = dc.getView().project(opm.placePoint);
-        opm.eyeDistance = this.isAlwaysOnTop() ? 0 : opm.placePoint.distanceTo3(dc.getView().getEyePoint());
+        opm.screenPoint = dc.view().project(opm.placePoint);
+        opm.eyeDistance = this.isAlwaysOnTop() ? 0 : opm.placePoint.distanceTo3(dc.view().getEyePoint());
 
         // Cache the computed values for subsequent use in this frame.
         this.placePoint = opm.placePoint;
@@ -1495,7 +1495,7 @@ public class PointPlacemark extends WWObjectImpl
         return this.dragEnabled;
     }
 
-    @Override
+
     public void setDragEnabled(boolean enabled) {
         this.dragEnabled = enabled;
     }
@@ -1635,8 +1635,8 @@ public class PointPlacemark extends WWObjectImpl
         xmlWriter.writeEndElement();
 
         final String coordString = String.format(Locale.US, "%f,%f,%f",
-            position.getLongitude().degrees,
-            position.getLatitude().degrees,
+            position.getLon().degrees,
+            position.getLat().degrees,
             position.getElevation());
         xmlWriter.writeStartElement("coordinates");
         xmlWriter.writeCharacters(coordString);

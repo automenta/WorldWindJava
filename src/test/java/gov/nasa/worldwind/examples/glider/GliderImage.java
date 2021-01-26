@@ -194,7 +194,7 @@ public class GliderImage extends KVMap {
 
         this.name = newName;
         this.imageSource = newSource;
-        this.firePropertyChange(GLIDER_IMAGE_SOURCE, null, this);
+        this.emit(GLIDER_IMAGE_SOURCE, null, this);
     }
 
     /**
@@ -228,7 +228,7 @@ public class GliderImage extends KVMap {
 
     public void setOpacity(double opacity) {
         this.opacity = opacity;
-        this.firePropertyChange(GLIDER_IMAGE_OPACITY, null, this);
+        this.emit(GLIDER_IMAGE_OPACITY, null, this);
     }
 
     /**
@@ -248,7 +248,7 @@ public class GliderImage extends KVMap {
         region.addPropertyChangeListener(this.regionListener);
 
         if (this.regionTable.add(region))
-            this.firePropertyChange(GLIDER_REGIONS_OF_INTEREST, null, this.getRegionsOfInterest());
+            this.emit(GLIDER_REGIONS_OF_INTEREST, null, this.getRegionsOfInterest());
     }
 
     /**
@@ -267,7 +267,7 @@ public class GliderImage extends KVMap {
         region.removePropertyChangeListener(this.regionListener);
 
         if (this.regionTable.remove(region))
-            this.firePropertyChange(GLIDER_REGIONS_OF_INTEREST, null, this.getRegionsOfInterest());
+            this.emit(GLIDER_REGIONS_OF_INTEREST, null, this.getRegionsOfInterest());
     }
 
     public GliderRegionOfInterest.RegionSet getRegionsOfInterest() {
@@ -310,7 +310,7 @@ public class GliderImage extends KVMap {
         public void propertyChange(PropertyChangeEvent evt) {
             //noinspection StringEquality
             if (evt.getPropertyName() == GliderRegionOfInterest.GLIDER_REGION_OF_INTEREST) {
-                GliderImage.this.firePropertyChange(GLIDER_REGIONS_OF_INTEREST, null,
+                GliderImage.this.emit(GLIDER_REGIONS_OF_INTEREST, null,
                     GliderImage.this.getRegionsOfInterest());
             }
         }

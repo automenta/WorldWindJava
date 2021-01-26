@@ -669,10 +669,10 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
         Level level = this.levels.getLevel(key.level);
 
         // Compute the tile's SW lat/lon based on its row/col in the level's data set.
-        Angle dLat = level.getTileDelta().getLatitude();
-        Angle dLon = level.getTileDelta().getLongitude();
-        Angle latOrigin = this.levels.tileOrigin.getLatitude();
-        Angle lonOrigin = this.levels.tileOrigin.getLongitude();
+        Angle dLat = level.getTileDelta().getLat();
+        Angle dLon = level.getTileDelta().getLon();
+        Angle latOrigin = this.levels.tileOrigin.getLat();
+        Angle lonOrigin = this.levels.tileOrigin.getLon();
 
         Angle minLatitude = ElevationTile.rowLat(key.row, dLat, latOrigin);
         Angle minLongitude = ElevationTile.columnLon(key.col, dLon, lonOrigin);
@@ -942,7 +942,7 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
             if (ll == null)
                 continue;
 
-            Double value = elevations.getElevation(ll.getLatitude(), ll.getLongitude());
+            Double value = elevations.getElevation(ll.getLat(), ll.getLon());
 
             if (this.isTransparentValue(value))
                 continue;
@@ -953,7 +953,7 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
             // elevation model's coverage.
             if (value != null && value != this.getMissingDataSignal())
                 buffer[i] = value;
-            else if (this.contains(ll.getLatitude(), ll.getLongitude())) {
+            else if (this.contains(ll.getLat(), ll.getLon())) {
                 if (value == null)
                     buffer[i] = this.getExtremeElevations(sector)[0];
                 else if (mapMissingData && value == this.getMissingDataSignal())
@@ -1039,10 +1039,10 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
 
         LatLon delta = this.levels.getLevel(this.extremesLevel).getTileDelta();
         LatLon origin = this.levels.tileOrigin;
-        final int row = ElevationTile.computeRow(delta.getLatitude(), latitude, origin.getLatitude());
-        final int col = ElevationTile.computeColumn(delta.getLongitude(), longitude, origin.getLongitude());
+        final int row = ElevationTile.computeRow(delta.getLat(), latitude, origin.getLat());
+        final int col = ElevationTile.computeColumn(delta.getLon(), longitude, origin.getLon());
 
-        final int nCols = ElevationTile.computeColumn(delta.getLongitude(), Angle.POS180, Angle.NEG180) + 1;
+        final int nCols = ElevationTile.computeColumn(delta.getLon(), Angle.POS180, Angle.NEG180) + 1;
 
         int index = 2 * (row * nCols + col);
 
@@ -1129,16 +1129,16 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
     protected double[] computeExtremeElevations(Sector sector) {
         LatLon delta = this.levels.getLevel(this.extremesLevel).getTileDelta();
         LatLon origin = this.levels.tileOrigin;
-        final int nwRow = ElevationTile.computeRow(delta.getLatitude(), sector.latMax(),
-            origin.getLatitude());
-        final int nwCol = ElevationTile.computeColumn(delta.getLongitude(), sector.lonMin(),
-            origin.getLongitude());
-        final int seRow = ElevationTile.computeRow(delta.getLatitude(), sector.latMin(),
-            origin.getLatitude());
-        final int seCol = ElevationTile.computeColumn(delta.getLongitude(), sector.lonMax(),
-            origin.getLongitude());
+        final int nwRow = ElevationTile.computeRow(delta.getLat(), sector.latMax(),
+            origin.getLat());
+        final int nwCol = ElevationTile.computeColumn(delta.getLon(), sector.lonMin(),
+            origin.getLon());
+        final int seRow = ElevationTile.computeRow(delta.getLat(), sector.latMin(),
+            origin.getLat());
+        final int seCol = ElevationTile.computeColumn(delta.getLon(), sector.lonMax(),
+            origin.getLon());
 
-        final int nCols = ElevationTile.computeColumn(delta.getLongitude(), Angle.POS180, Angle.NEG180) + 1;
+        final int nCols = ElevationTile.computeColumn(delta.getLon(), Angle.POS180, Angle.NEG180) + 1;
 
         double min = Double.MAX_VALUE;
         double max = -Double.MAX_VALUE;
@@ -1182,10 +1182,10 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
         Level targetLevel = levelSet.getLevel(targetLevelNumber);
         LatLon delta = targetLevel.getTileDelta();
         LatLon origin = levelSet.tileOrigin;
-        final int nwRow = Tile.computeRow(delta.latitude, sector.latMax, origin.latitude);
-        final int nwCol = Tile.computeColumn(delta.longitude, sector.lonMin, origin.longitude);
-        final int seRow = Tile.computeRow(delta.latitude, sector.latMin, origin.latitude);
-        final int seCol = Tile.computeColumn(delta.longitude, sector.lonMax, origin.longitude);
+        final int nwRow = Tile.computeRow(delta.lat, sector.latMax, origin.lat);
+        final int nwCol = Tile.computeColumn(delta.lon, sector.lonMin, origin.lon);
+        final int seRow = Tile.computeRow(delta.lat, sector.latMin, origin.lat);
+        final int seCol = Tile.computeColumn(delta.lon, sector.lonMax, origin.lon);
         TreeSet<ElevationTile> tiles = new TreeSet<>((t1, t2) -> {
             if (t1 == t2)
                 return 0;
@@ -1408,7 +1408,7 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
         // Synchronize changes to this ElevationModel with the Event Dispatch Thread.
 //        SwingUtilities.invokeLater(() -> {
         BasicElevationModel.this.setExpiryTime(expiryTime);
-        BasicElevationModel.this.firePropertyChange(Keys.ELEVATION_MODEL, null, BasicElevationModel.this);
+        BasicElevationModel.this.emit(Keys.ELEVATION_MODEL, null, BasicElevationModel.this);
 //        });
     }
 
@@ -1596,10 +1596,10 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
         long numMissingTiles = 0;
         LatLon delta = targetLevel.getTileDelta();
         LatLon origin = levelSet.tileOrigin;
-        final int nwRow = Tile.computeRow(delta.getLatitude(), sector.latMax(), origin.getLatitude());
-        final int nwCol = Tile.computeColumn(delta.getLongitude(), sector.lonMin(), origin.getLongitude());
-        final int seRow = Tile.computeRow(delta.getLatitude(), sector.latMin(), origin.getLatitude());
-        final int seCol = Tile.computeColumn(delta.getLongitude(), sector.lonMax(), origin.getLongitude());
+        final int nwRow = Tile.computeRow(delta.getLat(), sector.latMax(), origin.getLat());
+        final int nwCol = Tile.computeColumn(delta.getLon(), sector.lonMin(), origin.getLon());
+        final int seRow = Tile.computeRow(delta.getLat(), sector.latMin(), origin.getLat());
+        final int seCol = Tile.computeColumn(delta.getLon(), sector.lonMax(), origin.getLon());
 
         for (int row = nwRow; row >= seRow; row--) {
             for (int col = nwCol; col <= seCol; col++) {
@@ -1722,7 +1722,7 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
 //                this.elevationModel.writeConfigurationFile(this.getFileStore());
 
                 // Fire a property change to denote that the model's backing data has changed.
-                this.elevationModel.firePropertyChange(Keys.ELEVATION_MODEL, null, this);
+                this.elevationModel.emit(Keys.ELEVATION_MODEL, null, this);
 
             }
 
@@ -1899,8 +1899,8 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
             final double sectorDeltaLat = sector.latDelta().radians();
             final double sectorDeltaLon = sector.lonDelta().radians();
 
-            final double dLat = sector.latMax().radians() - location.getLatitude().radians();
-            final double dLon = location.getLongitude().radians() - sector.lonMin().radians();
+            final double dLat = sector.latMax().radians() - location.getLat().radians();
+            final double dLon = location.getLon().radians() - sector.lonMin().radians();
 
             final double sLat = dLat / sectorDeltaLat;
             final double sLon = dLon / sectorDeltaLon;

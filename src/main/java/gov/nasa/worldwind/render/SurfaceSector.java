@@ -135,8 +135,8 @@ public class SurfaceSector extends AbstractSurfaceShape implements Exportable {
         }
 
         this.setSector(new Sector(
-            newLocations[0].getLatitude(), newLocations[1].getLatitude(),
-            newLocations[0].getLongitude(), newLocations[1].getLongitude()));
+            newLocations[0].getLat(), newLocations[1].getLat(),
+            newLocations[0].getLon(), newLocations[1].getLon()));
     }
 
     @Override

@@ -83,7 +83,7 @@ public final class WorldWind {
      * WorldWind can continue to be used after calling this method.
      */
     public static synchronized void shutDown() {
-        WorldWind.the.wwo.firePropertyChange(WorldWind.SHUTDOWN_EVENT, null, -1);
+        WorldWind.the.wwo.emit(WorldWind.SHUTDOWN_EVENT, null, -1);
         WorldWind.the.dispose();
     }
 

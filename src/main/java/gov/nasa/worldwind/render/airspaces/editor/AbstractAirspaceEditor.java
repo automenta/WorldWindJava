@@ -333,7 +333,7 @@ public abstract class AbstractAirspaceEditor extends AbstractLayer implements Ai
         Position previousPos = globe.computePositionFromPoint(previousVec);
         LatLon change = pos.subtract(previousPos);
 
-        movable.move(new Position(change.getLatitude(), change.getLongitude(), 0.0));
+        movable.move(new Position(change.getLat(), change.getLon(), 0.0));
 
         this.fireAirspaceMoved(new AirspaceEditEvent(wwd, airspace, this));
     }
@@ -358,8 +358,8 @@ public abstract class AbstractAirspaceEditor extends AbstractLayer implements Ai
 
         Vec4 referencePoint = wwd.model().globe().computePointFromPosition(referencePos);
 
-        Vec4 surfaceNormal = wwd.model().globe().computeSurfaceNormalAtLocation(referencePos.getLatitude(),
-            referencePos.getLongitude());
+        Vec4 surfaceNormal = wwd.model().globe().computeSurfaceNormalAtLocation(referencePos.getLat(),
+            referencePos.getLon());
         Line verticalRay = new Line(referencePoint, surfaceNormal);
         Line screenRay = wwd.view().computeRayFromScreenPoint(previousMousePoint.getX(), previousMousePoint.getY());
         Line previousScreenRay = wwd.view().computeRayFromScreenPoint(mousePoint.getX(), mousePoint.getY());

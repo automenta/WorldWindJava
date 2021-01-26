@@ -399,7 +399,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
             Globe globe = wwd.model().globe();
 
             for (LatLon ll : locations) {
-                double e = globe.elevation(ll.getLatitude(), ll.getLongitude());
+                double e = globe.elevation(ll.getLat(), ll.getLon());
                 if (e > maxElevation) {
                     maxElevation = e;
                 }
@@ -662,7 +662,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
         public void setEnableEdit(boolean enable) {
             this.enableEdit = enable;
             this.handleEnableEdit(enable);
-            this.firePropertyChange(ENABLE_EDIT, null, enable);
+            this.emit(ENABLE_EDIT, null, enable);
         }
 
         public boolean isResizeNewShapesToViewport() {
@@ -671,7 +671,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
 
         public void setResizeNewShapesToViewport(boolean resize) {
             this.resizeNewShapes = resize;
-            this.firePropertyChange(SIZE_NEW_SHAPES_TO_VIEWPORT, null, resize);
+            this.emit(SIZE_NEW_SHAPES_TO_VIEWPORT, null, resize);
         }
 
         @Override
@@ -871,13 +871,13 @@ public class AirspaceBuilder extends ApplicationTemplate {
 
             if (sc.getTerrain() != null) {
                 point = sc.getTerrain().getSurfacePoint(
-                    latlon.getLatitude(), latlon.getLongitude(), elevation * sc.getVerticalExaggeration());
+                    latlon.getLat(), latlon.getLon(), elevation * sc.getVerticalExaggeration());
             }
 
             if (point == null) {
-                double e = globe.elevation(latlon.getLatitude(), latlon.getLongitude());
+                double e = globe.elevation(latlon.getLat(), latlon.getLon());
                 point = globe.computePointFromPosition(
-                    latlon.getLatitude(), latlon.getLongitude(), (e + elevation) * sc.getVerticalExaggeration());
+                    latlon.getLat(), latlon.getLon(), (e + elevation) * sc.getVerticalExaggeration());
             }
 
             return point;
@@ -886,9 +886,9 @@ public class AirspaceBuilder extends ApplicationTemplate {
         protected Vec4 getPoint(LatLon latlon, double elevation) {
             SceneController sc = this.getApp().wwd().sceneControl();
             Globe globe = this.getApp().wwd().model().globe();
-            double e = globe.elevation(latlon.getLatitude(), latlon.getLongitude());
+            double e = globe.elevation(latlon.getLat(), latlon.getLon());
             return globe.computePointFromPosition(
-                latlon.getLatitude(), latlon.getLongitude(), (e + elevation) * sc.getVerticalExaggeration());
+                latlon.getLat(), latlon.getLon(), (e + elevation) * sc.getVerticalExaggeration());
         }
 
         public void createNewEntry(AirspaceFactory factory) {

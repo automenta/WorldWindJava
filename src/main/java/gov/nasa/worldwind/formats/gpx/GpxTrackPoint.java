@@ -130,8 +130,8 @@ public class GpxTrackPoint extends ElementParser implements TrackPoint {
             throw new IllegalArgumentException(msg);
         }
 
-        this.latitude = position.getLatitude().degrees;
-        this.longitude = position.getLongitude().degrees;
+        this.latitude = position.getLat().degrees;
+        this.longitude = position.getLon().degrees;
         this.elevation = position.getElevation();
     }
 

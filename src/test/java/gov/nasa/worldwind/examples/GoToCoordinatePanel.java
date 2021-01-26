@@ -243,7 +243,7 @@ public class GoToCoordinatePanel extends JPanel {
         if (latLon != null) {
             coordInput.setText(coordInput.getText().toUpperCase());
             resultLabel.setText(String.format("Lat %7.4f\u00B0 Lon %7.4f\u00B0",
-                latLon.getLatitude().degrees, latLon.getLongitude().degrees));
+                latLon.getLat().degrees, latLon.getLon().degrees));
         }
         else
             resultLabel.setText("Invalid coordinates");

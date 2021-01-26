@@ -294,7 +294,7 @@ public class WMSBasicElevationModel extends BasicElevationModel {
             if (ll == null)
                 continue;
 
-            double value = this.lookupElevation(ll.getLatitude(), ll.getLongitude(), tile);
+            double value = this.lookupElevation(ll.getLat(), ll.getLon(), tile);
 
             // If an elevation at the given location is available, then write that elevation to the destination buffer.
             // Otherwise do nothing.

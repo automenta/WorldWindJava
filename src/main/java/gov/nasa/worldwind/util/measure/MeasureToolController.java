@@ -162,7 +162,7 @@ public class MeasureToolController extends MouseAdapter
     public void setArmed(boolean armed) {
         if (this.armed != armed) {
             this.armed = armed;
-            this.measureTool.firePropertyChange(MeasureTool.EVENT_ARMED, !armed, armed);
+            this.measureTool.emit(MeasureTool.EVENT_ARMED, !armed, armed);
         }
     }
 
@@ -213,7 +213,7 @@ public class MeasureToolController extends MouseAdapter
                             rubberBandTarget = (MeasureTool.ControlPoint) measureTool.getControlPoints().get(
                                 measureTool.getControlPoints().size() - 1);
                         }
-                        measureTool.firePropertyChange(MeasureTool.EVENT_RUBBERBAND_START, null, null);
+                        measureTool.emit(MeasureTool.EVENT_RUBBERBAND_START, null, null);
                     }
                 }
             }
@@ -236,7 +236,7 @@ public class MeasureToolController extends MouseAdapter
             // Disarm after second control point of a line or regular shape
             autoDisarm();
             mouseEvent.consume();
-            measureTool.firePropertyChange(MeasureTool.EVENT_RUBBERBAND_STOP, null, null);
+            measureTool.emit(MeasureTool.EVENT_RUBBERBAND_STOP, null, null);
         } else if (this.isMoving() && mouseEvent.getButton() == MouseEvent.BUTTON1) {
             this.setMoving(false);
             this.movingTarget = null;
@@ -326,7 +326,7 @@ public class MeasureToolController extends MouseAdapter
             return;
 
         if (event.getStage().equals(RenderingEvent.AFTER_BUFFER_SWAP)) {
-            measureTool.firePropertyChange(MeasureTool.EVENT_METRIC_CHANGED, null, null);
+            measureTool.emit(MeasureTool.EVENT_METRIC_CHANGED, null, null);
         }
     }
 
@@ -342,7 +342,7 @@ public class MeasureToolController extends MouseAdapter
                 PickedObject to = pol.getTerrainObject();
                 rubberBandTarget.setPosition(new Position(to.position(), 0));
                 measureTool.moveControlPoint(rubberBandTarget);
-                measureTool.firePropertyChange(MeasureTool.EVENT_POSITION_REPLACE,
+                measureTool.emit(MeasureTool.EVENT_POSITION_REPLACE,
                     lastPosition, rubberBandTarget.getPosition());
                 measureTool.getWwd().redraw();
             } else {
@@ -384,7 +384,7 @@ public class MeasureToolController extends MouseAdapter
         Angle distanceAngle = LatLon.greatCircleDistance(oldPosition, newPosition);
         Angle azimuthAngle = LatLon.greatCircleAzimuth(oldPosition, newPosition);
         measureTool.moveMeasureShape(azimuthAngle, distanceAngle);
-        measureTool.firePropertyChange(MeasureTool.EVENT_POSITION_REPLACE, oldPosition, newPosition);
+        measureTool.emit(MeasureTool.EVENT_POSITION_REPLACE, oldPosition, newPosition);
     }
 
     protected void doSelected(SelectEvent event) {
@@ -416,7 +416,7 @@ public class MeasureToolController extends MouseAdapter
         measureTool.moveControlPoint(point);
         if (measureTool.isShowAnnotation())
             measureTool.updateAnnotation(point.getPosition());
-        measureTool.firePropertyChange(MeasureTool.EVENT_POSITION_REPLACE,
+        measureTool.emit(MeasureTool.EVENT_POSITION_REPLACE,
             lastPosition, point.getPosition());
         measureTool.getWwd().redraw();
     }

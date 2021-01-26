@@ -307,13 +307,13 @@ public abstract class TiledImageLayer extends AbstractLayer {
         if (dc.getViewportCenterPosition() != null)
             return globe.computePointFromPosition(dc.getViewportCenterPosition());
 
-        final View view = dc.getView();
+        final View view = dc.view();
         Rectangle2D viewport = view.getViewport();
         int x = (int) viewport.getWidth() / 2;
         for (int y = (int) (0.5 * viewport.getHeight()); y >= 0; y--) {
             Position pos = view.computePositionFromScreenPoint(x, y);
             if (pos != null)
-                return globe.computePointFromPosition(pos.getLatitude(), pos.getLongitude(), 0.0d);
+                return globe.computePointFromPosition(pos.getLat(), pos.getLon(), 0.0d);
         }
 
         return null;
@@ -324,7 +324,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
     }
 
     protected static void drawTileIDs(DrawContext dc, Iterable<TextureTile> tiles) {
-        Rectangle viewport = dc.getView().getViewport();
+        Rectangle viewport = dc.view().getViewport();
         TextRenderer textRenderer = OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(),
             Font.decode("Arial-Plain-13"));
 
@@ -342,9 +342,9 @@ public abstract class TiledImageLayer extends AbstractLayer {
                 tileLabel += '/' + tile.getFallbackTile().getLabel();
 
             LatLon ll = tile.sector.getCentroid();
-            Vec4 pt = dc.getGlobe().computePointFromPosition(ll.getLatitude(), ll.getLongitude(),
-                dc.getGlobe().elevation(ll.getLatitude(), ll.getLongitude()));
-            pt = dc.getView().project(pt);
+            Vec4 pt = dc.getGlobe().computePointFromPosition(ll.getLat(), ll.getLon(),
+                dc.getGlobe().elevation(ll.getLat(), ll.getLon()));
+            pt = dc.view().project(pt);
             textRenderer.draw(tileLabel, (int) pt.x, (int) pt.y);
         }
         textRenderer.setColor(Color.WHITE);
@@ -521,10 +521,10 @@ public abstract class TiledImageLayer extends AbstractLayer {
         Sector sector = this.levels.sector;
 
         Level level = levels.getFirstLevel();
-        double dLat = level.getTileDelta().latitude;
-        double dLon = level.getTileDelta().longitude;
-        double latOrigin = this.levels.tileOrigin.latitude;
-        double lonOrigin = this.levels.tileOrigin.longitude;
+        double dLat = level.getTileDelta().lat;
+        double dLon = level.getTileDelta().lon;
+        double latOrigin = this.levels.tileOrigin.lat;
+        double lonOrigin = this.levels.tileOrigin.lon;
 
         // Determine the row and column offset from the common WorldWind global tiling origin.
         int firstRow = Tile.computeRow(dLat, sector.latMin, latOrigin);
@@ -673,12 +673,12 @@ public abstract class TiledImageLayer extends AbstractLayer {
         if (sector.latMin >= 75 || sector.latMax <= -75)
             s *= 0.9;
         double detailScale = Math.pow(10, -s);
-        double fieldOfViewScale = dc.getView().getFieldOfView().tanHalfAngle() / new Angle(45).tanHalfAngle();
+        double fieldOfViewScale = dc.view().getFieldOfView().tanHalfAngle() / new Angle(45).tanHalfAngle();
         fieldOfViewScale = WWMath.clamp(fieldOfViewScale, 0, 1);
 
         // Compute the distance between the eye point and the sector in meters, and compute a fraction of that distance
         // by multiplying the actual distance by the level of detail scale and the field of view scale.
-        double eyeDistanceMeters = sector.distanceTo(dc, dc.getView().getEyePoint());
+        double eyeDistanceMeters = sector.distanceTo(dc, dc.view().getEyePoint());
         double scaledEyeDistanceMeters = eyeDistanceMeters * detailScale * fieldOfViewScale;
 
         // Split when the texel size in meters becomes greater than the specified fraction of the eye distance, also in
@@ -725,7 +725,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
 
     protected boolean atMaxLevel(DrawContext dc) {
         Position vpc = dc.getViewportCenterPosition();
-        if (dc.getView() == null || levels == null || vpc == null)
+        if (dc.view() == null || levels == null || vpc == null)
             return false;
 
         if (!levels.sector.contains(vpc))
@@ -735,7 +735,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
         if (nextToLast == null)
             return true;
 
-        Sector centerSector = nextToLast.computeSectorForPosition(vpc.getLatitude(), vpc.getLongitude(),
+        Sector centerSector = nextToLast.computeSectorForPosition(vpc.getLat(), vpc.getLon(),
             this.levels.tileOrigin);
 
         return this.needToSplit(dc, centerSector, nextToLast);
@@ -815,7 +815,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
 
     private void drawPlan(DrawContext dc) {
         this.currentTiles.clear();
-        final Frustum f = dc.getView().getFrustumInModelCoordinates();
+        final Frustum f = dc.view().getFrustumInModelCoordinates();
         for (TextureTile tile : this.getTopLevels()) {
             if (TiledImageLayer.isTileVisible(tile, f, dc)) {
                 this.currentResourceTile = null;
@@ -914,10 +914,10 @@ public abstract class TiledImageLayer extends AbstractLayer {
         // Collect all the tiles intersecting the input sector.
         LatLon delta = targetLevel.getTileDelta();
         LatLon origin = this.levels.tileOrigin;
-        final int nwRow = Tile.computeRow(delta.getLatitude(), sector.latMax(), origin.getLatitude());
-        final int nwCol = Tile.computeColumn(delta.getLongitude(), sector.lonMin(), origin.getLongitude());
-        final int seRow = Tile.computeRow(delta.getLatitude(), sector.latMin(), origin.getLatitude());
-        final int seCol = Tile.computeColumn(delta.getLongitude(), sector.lonMax(), origin.getLongitude());
+        final int nwRow = Tile.computeRow(delta.getLat(), sector.latMax(), origin.getLat());
+        final int nwCol = Tile.computeColumn(delta.getLon(), sector.lonMin(), origin.getLon());
+        final int seRow = Tile.computeRow(delta.getLat(), sector.latMin(), origin.getLat());
+        final int seCol = Tile.computeColumn(delta.getLon(), sector.lonMax(), origin.getLon());
 
         long numRows = nwRow - seRow + 1;
         long numCols = seCol - nwCol + 1;

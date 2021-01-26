@@ -275,9 +275,9 @@ public class SegmentPlaneEditor extends AbstractLayer {
         }
 
         Vec4[] segment = new Vec4[2];
-        segment[0] = globe.computePointFromPosition(locations[0].getLatitude(), locations[0].getLongitude(),
+        segment[0] = globe.computePointFromPosition(locations[0].getLat(), locations[0].getLon(),
             altitudes[0]);
-        segment[1] = globe.computePointFromPosition(locations[1].getLatitude(), locations[1].getLongitude(),
+        segment[1] = globe.computePointFromPosition(locations[1].getLat(), locations[1].getLon(),
             altitudes[0]);
         Vec4 n = segment[1].subtract3(segment[0]).normalize3();
         double length = segment[0].distanceTo3(segment[1]);
@@ -462,7 +462,7 @@ public class SegmentPlaneEditor extends AbstractLayer {
     protected static Position computePositionOnOrAboveSurface(WorldWindow wwd, Position position) {
         if (wwd.sceneControl().getTerrain() != null) {
             Vec4 point = wwd.sceneControl().getTerrain().getSurfacePoint(
-                position.getLatitude(), position.getLongitude());
+                position.getLat(), position.getLon());
             if (point != null) {
                 Position pos = wwd.model().globe().computePositionFromPoint(point);
                 if (position.getElevation() < pos.getElevation())
@@ -471,7 +471,7 @@ public class SegmentPlaneEditor extends AbstractLayer {
             }
         }
 
-        double elev = wwd.model().globe().elevation(position.getLatitude(), position.getLongitude());
+        double elev = wwd.model().globe().elevation(position.getLat(), position.getLon());
         if (position.getElevation() < elev)
             return new Position(position, elev);
 

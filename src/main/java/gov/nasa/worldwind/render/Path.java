@@ -271,7 +271,7 @@ public class Path extends AbstractShape {
     protected static void appendTerrainPoint(DrawContext dc, Position position, float[] color, FloatBuffer path,
         PathData pathData) {
         Vec4 referencePoint = pathData.getReferencePoint();
-        Vec4 pt = dc.computeTerrainPoint(position.getLatitude(), position.getLongitude(), 0.0d);
+        Vec4 pt = dc.computeTerrainPoint(position.getLat(), position.getLon(), 0.0d);
         path.put((float) (pt.x - referencePoint.x));
         path.put((float) (pt.y - referencePoint.y));
         path.put((float) (pt.z - referencePoint.z));
@@ -295,7 +295,7 @@ public class Path extends AbstractShape {
     protected static double getDistanceMetric(DrawContext dc, PathData pathData) {
         return pathData.getExtent() != null
             ? WWMath.computeDistanceFromEye(dc, pathData.getExtent())
-            : dc.getView().getEyePosition().getElevation();
+            : dc.view().getEyePosition().getElevation();
     }
 
     protected static void makePath2DIndices(PathData pathData) {
@@ -333,7 +333,7 @@ public class Path extends AbstractShape {
      */
     protected static double computeEyeDistance(DrawContext dc, PathData pathData) {
         double minDistanceSquared = Double.MAX_VALUE;
-        Vec4 eyePoint = dc.getView().getEyePoint();
+        Vec4 eyePoint = dc.view().getEyePoint();
         Vec4 refPt = pathData.getReferencePoint();
 
         pathData.renderedPath.rewind();
@@ -379,8 +379,8 @@ public class Path extends AbstractShape {
     }
 
     protected static boolean isSmall(DrawContext dc, Vec4 ptA, Vec4 ptB, int numPixels) {
-        return ptA.distanceTo3(ptB) <= numPixels * dc.getView().computePixelSizeAtDistance(
-            dc.getView().getEyePoint().distanceTo3(ptA));
+        return ptA.distanceTo3(ptB) <= numPixels * dc.view().computePixelSizeAtDistance(
+            dc.view().getEyePoint().distanceTo3(ptA));
     }
 
     public LengthMeasurer measurer() {
@@ -1275,7 +1275,7 @@ public class Path extends AbstractShape {
         for (Position pos : positions) {
             double height = altitude != null ? altitude : pos.getAltitude();
             Vec4 referencePoint = pathData.getReferencePoint();
-            Vec4 pt = dc.computeTerrainPoint(pos.getLatitude(), pos.getLongitude(), height);
+            Vec4 pt = dc.computeTerrainPoint(pos.getLat(), pos.getLon(), height);
             path.put((float) (pt.x - referencePoint.x));
             path.put((float) (pt.y - referencePoint.y));
             path.put((float) (pt.z - referencePoint.z));
@@ -1327,7 +1327,7 @@ public class Path extends AbstractShape {
         if (dc.getVerticalExaggeration() != 1) {
             double ve = dc.getVerticalExaggeration();
             for (Position pos : positions) {
-                Vec4 pt = globe.computePointFromPosition(pos.getLatitude(), pos.getLongitude(),
+                Vec4 pt = globe.computePointFromPosition(pos.getLat(), pos.getLon(),
                     ve * (pos.getAltitude()));
                 path.put((float) (pt.x - referencePoint.x));
                 path.put((float) (pt.y - referencePoint.y));
@@ -1515,7 +1515,7 @@ public class Path extends AbstractShape {
             Vec4 ptB = this.computePoint(terrain, posB);
 
             if (this.positionsSpanDateline && dc.is2DGlobe()
-                && posA.longitude != posB.longitude
+                && posA.lon != posB.lon
                 && LatLon.locationsCrossDateline(posA, posB)) {
                 // Introduce two points at the dateline that cause the rendered path to break, with one side positive
                 // longitude and the other side negative longitude. This break causes the rendered path to break into
@@ -1523,8 +1523,8 @@ public class Path extends AbstractShape {
 
                 // Compute the split position on the dateline.
                 LatLon splitLocation = LatLon.intersectionWithMeridian(posA, posB, Angle.POS180, dc.getGlobe());
-                Position splitPosition = Position.fromDegrees(splitLocation.latitude,
-                    180 * Math.signum(posA.longitude), posA.elevation);
+                Position splitPosition = Position.fromDegrees(splitLocation.lat,
+                    180 * Math.signum(posA.lon), posA.elevation);
                 Vec4 splitPoint = this.computePoint(terrain, splitPosition);
 
                 // Compute the color at the split position.
@@ -1547,8 +1547,8 @@ public class Path extends AbstractShape {
 
                 // Make the corresponding split position on the dateline side with opposite sign of the first split
                 // position.
-                splitPosition = Position.fromDegrees(splitPosition.latitude,
-                    -1 * splitPosition.longitude, splitPosition.elevation);
+                splitPosition = Position.fromDegrees(splitPosition.lat,
+                    -1 * splitPosition.lon, splitPosition.elevation);
                 splitPoint = this.computePoint(terrain, splitPosition);
 
                 // Create the tessellated-positions segment from the split position to the end position.
@@ -1665,7 +1665,7 @@ public class Path extends AbstractShape {
      * @return true if the segment is visible relative to the current view frustum, otherwise false.
      */
     protected boolean isSegmentVisible(DrawContext dc, Position posA, Position posB, Vec4 ptA, Vec4 ptB) {
-        Frustum f = dc.getView().getFrustumInModelCoordinates();
+        Frustum f = dc.view().getFrustumInModelCoordinates();
 
         if (f.contains(ptA)) {
             return true;
@@ -1734,8 +1734,8 @@ public class Path extends AbstractShape {
 
         for (double s = 0, p = 0; s < 1; ) {
             if (this.isFollowTerrain() || dc.is2DGlobe()) {
-                p += this.terrainConformance * dc.getView().computePixelSizeAtDistance(
-                    ptA.distanceTo3(dc.getView().getEyePoint()));
+                p += this.terrainConformance * dc.view().computePixelSizeAtDistance(
+                    ptA.distanceTo3(dc.view().getEyePoint()));
             } else {
                 p += arcLength / this.numSubsegments;
             }
@@ -1796,8 +1796,8 @@ public class Path extends AbstractShape {
      */
     @SuppressWarnings("StringEquality")
     protected double computeSegmentLength(DrawContext dc, Position posA, Position posB) {
-        LatLon llA = new LatLon(posA.getLatitude(), posA.getLongitude());
-        LatLon llB = new LatLon(posB.getLatitude(), posB.getLongitude());
+        LatLon llA = new LatLon(posA.getLat(), posA.getLon());
+        LatLon llB = new LatLon(posB.getLat(), posB.getLon());
 
         Angle ang;
         String pathType = this.getPathType();
@@ -1834,7 +1834,7 @@ public class Path extends AbstractShape {
             return null;
         }
 
-        return dc.getGlobe().computePointFromPosition(pos.getLatitude(), pos.getLongitude(),
+        return dc.getGlobe().computePointFromPosition(pos.getLat(), pos.getLon(),
             dc.getVerticalExaggeration() * pos.getAltitude());
     }
 
@@ -2024,8 +2024,8 @@ public class Path extends AbstractShape {
         xmlWriter.writeStartElement("coordinates");
         for (Position position : this.positions) {
             xmlWriter.writeCharacters(String.format(Locale.US, "%f,%f,%f ",
-                position.getLongitude().degrees,
-                position.getLatitude().degrees,
+                position.getLon().degrees,
+                position.getLat().degrees,
                 position.getElevation()));
         }
         xmlWriter.writeEndElement();

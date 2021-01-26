@@ -158,7 +158,7 @@ public class VPFLayer extends AbstractLayer {
         if (lr != null)
             lr.enabled = enabled;
 
-        this.firePropertyChange(Keys.LAYER, null, this);
+        this.emit(Keys.LAYER, null, this);
     }
 
     public VPFLibraryRenderable getLibraryRenderable(VPFLibrary library) {
@@ -264,7 +264,7 @@ public class VPFLayer extends AbstractLayer {
             if (cr != null)
                 cr.enabled = enabled;
 
-            this.layer.firePropertyChange(Keys.LAYER, null, this.layer);
+            this.layer.emit(Keys.LAYER, null, this.layer);
         }
 
         public VPFCoverageRenderable getCoverageRenderable(VPFCoverage coverage) {
@@ -281,8 +281,8 @@ public class VPFLayer extends AbstractLayer {
             if (!this.library.hasTiledCoverages())
                 return;
 
-            Frustum frustum = dc.getView().getFrustumInModelCoordinates();
-            Vec4 eyePoint = dc.getView().getEyePoint();
+            Frustum frustum = dc.view().getFrustumInModelCoordinates();
+            Vec4 eyePoint = dc.view().getEyePoint();
 
             for (VPFTile tile : this.library.getTiles()) {
                 Extent extent = tile.getExtent(dc.getGlobe(), dc.getVerticalExaggeration());
@@ -298,7 +298,7 @@ public class VPFLayer extends AbstractLayer {
                 double maxDistance = 0;
                 for (int i = 0; i < this.currentTiles.size(); i++) {
                     Extent extent = this.currentTiles.get(i).getExtent(dc.getGlobe(), dc.getVerticalExaggeration());
-                    double distance = dc.getView().getEyePoint().distanceTo3(extent.getCenter());
+                    double distance = dc.view().getEyePoint().distanceTo3(extent.getCenter());
                     if (distance > maxDistance) {
                         maxDistance = distance;
                         idx = i;
@@ -399,7 +399,7 @@ public class VPFLayer extends AbstractLayer {
                 this.coverageRenderable.coverage, (this.tile == VPFLayer.NULL_TILE) ? null : this.tile);
 
             this.coverageRenderable.tileCache.put(this.tile, symbols);
-            this.coverageRenderable.layer.firePropertyChange(Keys.LAYER, null, this.coverageRenderable.layer);
+            this.coverageRenderable.layer.emit(Keys.LAYER, null, this.coverageRenderable.layer);
         }
 
         /**

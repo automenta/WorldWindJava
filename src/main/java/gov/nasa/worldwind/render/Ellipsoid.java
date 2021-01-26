@@ -162,7 +162,7 @@ public class Ellipsoid extends RigidShape {
 
         double thresholdDensity = this.computeDetailThreshold();
 
-        double d = dc.getView().getEyePoint().distanceTo3(extent.getCenter());
+        double d = dc.view().getEyePoint().distanceTo3(extent.getCenter());
         double shapeScreenSize = extent.getDiameter() / d;
 
         // formula for this object's current vertex density

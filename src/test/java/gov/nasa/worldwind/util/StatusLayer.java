@@ -212,7 +212,7 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
 
             // Load a parallel projection with xy dimensions (viewportWidth, viewportHeight)
             // into the GL projection matrix.
-            Rectangle viewport = dc.getView().getViewport();
+            Rectangle viewport = dc.view().getViewport();
             gl.glMatrixMode(GL2.GL_PROJECTION);
             gl.glPushMatrix();
             projectionPushed = true;
@@ -343,14 +343,14 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
     private void handleCursorPositionChange(PositionEvent event) {
         Position newPos = event.getPosition();
         if (newPos != null) {
-            latDisplay = makeAngleDescription("Lat", newPos.getLatitude(), coordDecimalPlaces);
-            lonDisplay = makeAngleDescription("Lon", newPos.getLongitude(), coordDecimalPlaces);
+            latDisplay = makeAngleDescription("Lat", newPos.getLat(), coordDecimalPlaces);
+            lonDisplay = makeAngleDescription("Lon", newPos.getLon(), coordDecimalPlaces);
             elevDisplay = makeCursorElevationDescription(
-                eventSource.model().globe().elevation(newPos.getLatitude(), newPos.getLongitude()));
+                eventSource.model().globe().elevation(newPos.getLat(), newPos.getLon()));
 
             //Need to force an extra draw.  without this the displayed value lags the actual when just moving cursor
-            if ((previousPos != null) && (previousPos.getLatitude().compareTo(newPos.getLatitude()) != 0)
-                && (previousPos.getLongitude().compareTo(newPos.getLongitude()) != 0))
+            if ((previousPos != null) && (previousPos.getLat().compareTo(newPos.getLat()) != 0)
+                && (previousPos.getLon().compareTo(newPos.getLon()) != 0))
                 this.eventSource.redraw();
         }
         else {
@@ -432,13 +432,13 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
             Position newPos = event.getPosition();
             if (newPos != null) {
                 //merge lat & lon into one field to display UMT coordinates in lon field
-                String las = makeAngleDescription("Lat", newPos.getLatitude(), coordDecimalPlaces) + " "
-                    + makeAngleDescription("Lon", newPos.getLongitude(), coordDecimalPlaces);
+                String las = makeAngleDescription("Lat", newPos.getLat(), coordDecimalPlaces) + " "
+                    + makeAngleDescription("Lon", newPos.getLon(), coordDecimalPlaces);
                 String els = makeCursorElevationDescription(
-                    getEventSource().model().globe().elevation(newPos.getLatitude(), newPos.getLongitude()));
+                    getEventSource().model().globe().elevation(newPos.getLat(), newPos.getLon()));
                 String los;
                 try {
-                    UTMCoord UTM = UTMCoord.fromLatLon(newPos.getLatitude(), newPos.getLongitude(),
+                    UTMCoord UTM = UTMCoord.fromLatLon(newPos.getLat(), newPos.getLon(),
                         getEventSource().model().globe());
                     los = UTM.toString();
                 }
@@ -449,8 +449,8 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
                 lonDisplay = los;
                 elevDisplay = els;
 
-                if ((previousPos != null) && (previousPos.getLatitude().compareTo(newPos.getLatitude()) != 0)
-                    && (previousPos.getLongitude().compareTo(newPos.getLongitude()) != 0))
+                if ((previousPos != null) && (previousPos.getLat().compareTo(newPos.getLat()) != 0)
+                    && (previousPos.getLon().compareTo(newPos.getLon()) != 0))
                     this.eventSource.redraw();
             }
             else {
@@ -470,13 +470,13 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
             Position newPos = event.getPosition();
             if (newPos != null) {
                 //merge lat & lon into one field to display MGRS in lon field
-                String las = makeAngleDescription("Lat", newPos.getLatitude(), coordDecimalPlaces) + " "
-                    + makeAngleDescription("Lon", newPos.getLongitude(), coordDecimalPlaces);
+                String las = makeAngleDescription("Lat", newPos.getLat(), coordDecimalPlaces) + " "
+                    + makeAngleDescription("Lon", newPos.getLon(), coordDecimalPlaces);
                 String els = makeCursorElevationDescription(
-                    getEventSource().model().globe().elevation(newPos.getLatitude(), newPos.getLongitude()));
+                    getEventSource().model().globe().elevation(newPos.getLat(), newPos.getLon()));
                 String los;
                 try {
-                    MGRSCoord MGRS = MGRSCoord.fromLatLon(newPos.getLatitude(), newPos.getLongitude(),
+                    MGRSCoord MGRS = MGRSCoord.fromLatLon(newPos.getLat(), newPos.getLon(),
                         getEventSource().model().globe());
                     los = MGRS.toString();
                 }
@@ -487,8 +487,8 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
                 lonDisplay = los;
                 elevDisplay = els;
 
-                if ((previousPos != null) && (previousPos.getLatitude().compareTo(newPos.getLatitude()) != 0)
-                    && (previousPos.getLongitude().compareTo(newPos.getLongitude()) != 0))
+                if ((previousPos != null) && (previousPos.getLat().compareTo(newPos.getLat()) != 0)
+                    && (previousPos.getLon().compareTo(newPos.getLon()) != 0))
                     this.eventSource.redraw();
             }
             else {

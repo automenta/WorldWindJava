@@ -80,11 +80,11 @@ public class DraggableSupport {
      * @throws IllegalArgumentException if the object is null.
      */
     public DraggableSupport(Object dragObject, int altitudeMode) {
-        if (dragObject == null) {
-            String msg = Logging.getMessage("nullValue.ObjectIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (dragObject == null) {
+//            String msg = Logging.getMessage("nullValue.ObjectIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         if (altitudeMode != WorldWind.ABSOLUTE && altitudeMode != WorldWind.CLAMP_TO_GROUND &&
             altitudeMode != WorldWind.RELATIVE_TO_GROUND && altitudeMode != WorldWind.CONSTANT) {
@@ -107,11 +107,11 @@ public class DraggableSupport {
      * @throws IllegalArgumentException if the {@link DragContext} is null.
      */
     public void dragScreenSizeConstant(DragContext dragContext) {
-        if (dragContext == null) {
-            String msg = Logging.getMessage("nullValue.DragContextIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (dragContext == null) {
+//            String msg = Logging.getMessage("nullValue.DragContextIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         Position referencePosition = this.getReferencePosition();
         if (referencePosition == null)
@@ -168,11 +168,11 @@ public class DraggableSupport {
      * @throws IllegalArgumentException if the {@link DragContext} is null.
      */
     public void dragGlobeSizeConstant(DragContext dragContext) {
-        if (dragContext == null) {
-            String msg = Logging.getMessage("nullValue.DragContextIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (dragContext == null) {
+//            String msg = Logging.getMessage("nullValue.DragContextIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         Position referencePosition = this.getReferencePosition();
         if (referencePosition == null)
@@ -527,7 +527,7 @@ public class DraggableSupport {
 
                 intersectionPoint = Vec4.mix3(mixPoint, surface, eye);
                 Position pointPos = globe.computePositionFromPoint(intersectionPoint);
-                pointAlt = globe.elevation(pointPos.getLatitude(), pointPos.getLongitude());
+                pointAlt = globe.elevation(pointPos.getLat(), pointPos.getLon());
                 pointAlt = pointPos.getElevation() - pointAlt;
 
                 if (Math.abs(pointAlt - altitude) < this.convergenceThreshold) {

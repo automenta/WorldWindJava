@@ -81,11 +81,11 @@ public class ScreenAnnotation extends AbstractAnnotation {
         Vec4 surfacePoint = dc.getTerrain().getSurfacePoint(pos);
         if (surfacePoint == null) {
             Globe globe = dc.getGlobe();
-            surfacePoint = globe.computePointFromPosition(pos.getLatitude(), pos.getLongitude(),
-                globe.elevation(pos.getLatitude(), pos.getLongitude()));
+            surfacePoint = globe.computePointFromPosition(pos.getLat(), pos.getLon(),
+                globe.elevation(pos.getLat(), pos.getLon()));
         }
 
-        Vec4 pt = dc.getView().project(surfacePoint);
+        Vec4 pt = dc.view().project(surfacePoint);
 
         return new Point((int) pt.x, (int) pt.y);
     }

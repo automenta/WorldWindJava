@@ -193,7 +193,7 @@ public class SARTrack extends WWObjectImpl implements Iterable<Position> {
 
     public void setName(String name) {
         this.name = name;
-        this.firePropertyChange(TrackController.TRACK_NAME, null, this);
+        this.emit(TrackController.TRACK_NAME, null, this);
     }
 
     public int getFormat() {
@@ -218,14 +218,14 @@ public class SARTrack extends WWObjectImpl implements Iterable<Position> {
 
     public void markDirty() {
         this.lastModifiedTime = System.currentTimeMillis();
-        this.firePropertyChange(TrackController.TRACK_DIRTY_BIT, null, this);
+        this.emit(TrackController.TRACK_DIRTY_BIT, null, this);
     }
 
     public void clearDirtyBit() {
         long time = System.currentTimeMillis();
         this.lastSaveTime = time;
         this.lastModifiedTime = time;
-        this.firePropertyChange(TrackController.TRACK_DIRTY_BIT, null, this);
+        this.emit(TrackController.TRACK_DIRTY_BIT, null, this);
     }
 
     public Color getColor() {
@@ -258,7 +258,7 @@ public class SARTrack extends WWObjectImpl implements Iterable<Position> {
             this.positions.set(index, position);
 
         this.markDirty();
-        this.firePropertyChange(TrackController.TRACK_MODIFY, null, index);
+        this.emit(TrackController.TRACK_MODIFY, null, index);
     }
 
     public void add(int index, SARPosition position) {
@@ -271,7 +271,7 @@ public class SARTrack extends WWObjectImpl implements Iterable<Position> {
             this.positions.add(index, position);
 
         this.markDirty();
-        this.firePropertyChange(TrackController.TRACK_MODIFY, null, this);
+        this.emit(TrackController.TRACK_MODIFY, null, this);
     }
 
     public double getOffset() {
@@ -282,7 +282,7 @@ public class SARTrack extends WWObjectImpl implements Iterable<Position> {
         double oldOffset = this.offset;
         this.offset = offset;
 
-        this.firePropertyChange(TrackController.TRACK_OFFSET, oldOffset, this.offset);
+        this.emit(TrackController.TRACK_OFFSET, oldOffset, this.offset);
     }
 
     public Iterator<Position> iterator() {
@@ -309,7 +309,7 @@ public class SARTrack extends WWObjectImpl implements Iterable<Position> {
 
         this.positions.remove(index);
         this.markDirty();
-        this.firePropertyChange(TrackController.TRACK_MODIFY, null, this);
+        this.emit(TrackController.TRACK_MODIFY, null, this);
     }
 
     public void removePositions(int[] positionNumbers) {
@@ -322,7 +322,7 @@ public class SARTrack extends WWObjectImpl implements Iterable<Position> {
         }
 
         this.markDirty();
-        this.firePropertyChange(TrackController.TRACK_MODIFY, null, this);
+        this.emit(TrackController.TRACK_MODIFY, null, this);
     }
 
     public void appendPosition(SARPosition position) {
@@ -331,7 +331,7 @@ public class SARTrack extends WWObjectImpl implements Iterable<Position> {
 
         this.positions.add(position);
         this.markDirty();
-        this.firePropertyChange(TrackController.TRACK_MODIFY, null, this);
+        this.emit(TrackController.TRACK_MODIFY, null, this);
     }
 
     public void insertPosition(int index, SARPosition position) {
@@ -340,7 +340,7 @@ public class SARTrack extends WWObjectImpl implements Iterable<Position> {
 
         this.positions.add(index, position);
         this.markDirty();
-        this.firePropertyChange(TrackController.TRACK_MODIFY, null, this);
+        this.emit(TrackController.TRACK_MODIFY, null, this);
     }
 
     public void setPosition(int index, SARPosition position) {
@@ -349,7 +349,7 @@ public class SARTrack extends WWObjectImpl implements Iterable<Position> {
 
         this.positions.set(index, position);
         this.markDirty();
-        this.firePropertyChange(TrackController.TRACK_MODIFY, null, index);
+        this.emit(TrackController.TRACK_MODIFY, null, index);
     }
 
     public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
@@ -364,7 +364,7 @@ public class SARTrack extends WWObjectImpl implements Iterable<Position> {
         this.propChangeSupport.removePropertyChangeListener(listener);
     }
 
-    public void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
+    public void emit(String propertyName, Object oldValue, Object newValue) {
         this.propChangeSupport.firePropertyChange(propertyName, oldValue, newValue);
     }
 
@@ -421,14 +421,14 @@ public class SARTrack extends WWObjectImpl implements Iterable<Position> {
         }
 
         public double getLatitude() {
-            return this.sarPosition.getLatitude().degrees;
+            return this.sarPosition.getLat().degrees;
         }
 
         public void setLatitude(double latitude) {
         }
 
         public double getLongitude() {
-            return this.sarPosition.getLongitude().degrees;
+            return this.sarPosition.getLon().degrees;
         }
 
         public void setLongitude(double longitude) {

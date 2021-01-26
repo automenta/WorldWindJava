@@ -381,7 +381,7 @@ public interface View extends WWObject, Restorable {
      *
      * @return the <code>ViewInputHandler</code> being used to map input events to <code>View</code> controls.
      */
-    ViewInputHandler getViewInputHandler();
+    ViewInputHandler input();
 
     /**
      * Stops any animations that are active in this <code>View</code>

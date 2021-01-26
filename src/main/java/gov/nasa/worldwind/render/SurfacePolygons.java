@@ -44,8 +44,8 @@ public class SurfacePolygons extends SurfacePolylines // TODO: Review
 
     private static void tessVertex(GLUtessellator tess, double[] coords, LatLon referenceLocation) {
         double[] vertex = new double[3];
-        vertex[0] = coords[0] - referenceLocation.getLongitude().degrees;
-        vertex[1] = coords[1] - referenceLocation.getLatitude().degrees;
+        vertex[0] = coords[0] - referenceLocation.getLon().degrees;
+        vertex[1] = coords[1] - referenceLocation.getLat().degrees;
         GLU.gluTessVertex(tess, vertex, 0, vertex);
     }
 
@@ -197,7 +197,7 @@ public class SurfacePolygons extends SurfacePolylines // TODO: Review
             gl.glPushMatrix();
             try {
                 // Apply hemisphere offset and draw again
-                double hemisphereSign = Math.signum(referencePos.getLongitude().degrees);
+                double hemisphereSign = Math.signum(referencePos.getLon().degrees);
                 gl.glTranslated(360 * hemisphereSign, 0, 0);
                 gl.glCallList(dlResource[0]);
             }

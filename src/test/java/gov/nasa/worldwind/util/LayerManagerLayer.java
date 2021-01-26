@@ -745,7 +745,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
         if (this.update)
             this.updateNow(dc);
 
-        this.annotation.setScreenPoint(computeLocation(dc.getView().getViewport()));
+        this.annotation.setScreenPoint(computeLocation(dc.view().getViewport()));
         super.render(dc);
     }
 

@@ -78,7 +78,7 @@ public class FramebufferTexture implements WWTexture {
     }
 
     protected static Vec4 transformToQuadCoordinates(Matrix geoToCartesian, LatLon latLon) {
-        return new Vec4(latLon.getLongitude().degrees, latLon.getLatitude().degrees, 0.0).transformBy4(geoToCartesian);
+        return new Vec4(latLon.getLon().degrees, latLon.getLat().degrees, 0.0).transformBy4(geoToCartesian);
     }
 
     protected static void drawQuad(DrawContext dc, BilinearInterpolator interp, int slices, int stacks) {
@@ -186,8 +186,8 @@ public class FramebufferTexture implements WWTexture {
         int potSourceWidth = WWMath.powerOfTwoCeiling(this.sourceTexture.getWidth(dc));
         int potSourceHeight = WWMath.powerOfTwoCeiling(this.sourceTexture.getHeight(dc));
 
-        this.width = Math.min(potSourceWidth, dc.getView().getViewport().width);
-        this.height = Math.min(potSourceHeight, dc.getView().getViewport().height);
+        this.width = Math.min(potSourceWidth, dc.view().getViewport().width);
+        this.height = Math.min(potSourceHeight, dc.view().getViewport().height);
 
         if (!this.generateTexture(dc, this.width, this.height))
             return null;

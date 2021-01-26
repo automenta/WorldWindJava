@@ -146,9 +146,9 @@ public class FlatGlobe extends EllipsoidalGlobe implements Globe2D {
         Position pos = this.computePositionFromPoint(p);
         if (pos == null)
             return null;
-        if (pos.getLatitude().degrees < -90 || pos.getLatitude().degrees > 90)
+        if (pos.getLat().degrees < -90 || pos.getLat().degrees > 90)
             return null;
-        if (!this.isContinuous() && (pos.getLongitude().degrees < -180 || pos.getLongitude().degrees > 180))
+        if (!this.isContinuous() && (pos.getLon().degrees < -180 || pos.getLon().degrees > 180))
             return null;
 
         return new Intersection[] {new Intersection(p, false)};
@@ -253,11 +253,11 @@ public class FlatGlobe extends EllipsoidalGlobe implements Globe2D {
         Position pos = this.projection.cartesianToGeographic(this, cart, this.offsetVector);
         if (this.isContinuous()) {
             // Wrap if the globe is continuous.
-            if (pos.getLongitude().degrees < -180)
-                pos = Position.fromDegrees(pos.getLatitude().degrees, pos.getLongitude().degrees + 360,
+            if (pos.getLon().degrees < -180)
+                pos = Position.fromDegrees(pos.getLat().degrees, pos.getLon().degrees + 360,
                     pos.getAltitude());
-            else if (pos.getLongitude().degrees > 180)
-                pos = Position.fromDegrees(pos.getLatitude().degrees, pos.getLongitude().degrees - 360,
+            else if (pos.getLon().degrees > 180)
+                pos = Position.fromDegrees(pos.getLat().degrees, pos.getLon().degrees - 360,
                     pos.getAltitude());
         }
 

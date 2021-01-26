@@ -75,7 +75,7 @@ public class SkyGradientLayer extends AbstractLayer {
 
     protected static void applyDrawTransform(DrawContext dc, OGLStackHandler ogsh) {
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-        View view = dc.getView();
+        View view = dc.view();
         ogsh.pushModelview(gl);
         // Place sky - TODO: find another ellipsoid friendlier way (the sky dome is not exactly normal...
         // to the ground at higher latitude)
@@ -88,7 +88,7 @@ public class SkyGradientLayer extends AbstractLayer {
 
     protected static void applyDrawProjection(DrawContext dc, OGLStackHandler ogsh) {
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-        View view = dc.getView();
+        View view = dc.view();
         double viewportWidth = view.getViewport().getWidth();
         double viewportHeight = view.getViewport().getHeight();
 
@@ -212,7 +212,7 @@ public class SkyGradientLayer extends AbstractLayer {
      * @param length the lenght of the axes lines
      */
     protected void updateSkyDome(DrawContext dc) {
-        View view = dc.getView();
+        View view = dc.view();
 
         double tangentialDistance = view.getHorizonDistance();
         double distToCenterOfPlanet = view.getEyePoint().getLength3();

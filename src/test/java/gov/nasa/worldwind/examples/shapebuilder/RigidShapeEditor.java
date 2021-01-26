@@ -193,10 +193,10 @@ public class RigidShapeEditor extends AbstractShapeEditor {
         }
         else {
             // get perpendicular vectors (relative to earth)
-            Vec4 upVec = this.wwd.model().globe().computeSurfaceNormalAtLocation(refPos.getLatitude(),
-                refPos.getLongitude()).normalize3();
-            Vec4 northVec = this.wwd.model().globe().computeNorthPointingTangentAtLocation(refPos.getLatitude(),
-                refPos.getLongitude()).normalize3();
+            Vec4 upVec = this.wwd.model().globe().computeSurfaceNormalAtLocation(refPos.getLat(),
+                refPos.getLon()).normalize3();
+            Vec4 northVec = this.wwd.model().globe().computeNorthPointingTangentAtLocation(refPos.getLat(),
+                refPos.getLon()).normalize3();
             Vec4 rightVec = northVec.cross3(upVec).normalize3();
 
             // compute width
@@ -901,7 +901,7 @@ public class RigidShapeEditor extends AbstractShapeEditor {
         Position previousPos = globe.computePositionFromPoint(previousVec);
         LatLon change = pos.subtract(previousPos);
 
-        this.shape.move(new Position(change.getLatitude(), change.getLongitude(), 0.0));
+        this.shape.move(new Position(change.getLat(), change.getLon(), 0.0));
     }
 
     //*************************************************************
@@ -934,7 +934,7 @@ public class RigidShapeEditor extends AbstractShapeEditor {
         Position previousPos = globe.computePositionFromPoint(previousVec);
         LatLon change = pos.subtract(previousPos);
 
-        this.shape.move(new Position(change.getLatitude(), Angle.ZERO, 0.0));
+        this.shape.move(new Position(change.getLat(), Angle.ZERO, 0.0));
     }
 
     protected void moveShapeLongitude(Point previousMousePoint, Point mousePoint) {
@@ -963,7 +963,7 @@ public class RigidShapeEditor extends AbstractShapeEditor {
         Position previousPos = globe.computePositionFromPoint(previousVec);
         LatLon change = pos.subtract(previousPos);
 
-        this.shape.move(new Position(Angle.ZERO, change.getLongitude(), 0.0));
+        this.shape.move(new Position(Angle.ZERO, change.getLon(), 0.0));
     }
 
     protected void setShapeHeight(Point previousMousePoint, Point mousePoint) {
@@ -977,8 +977,8 @@ public class RigidShapeEditor extends AbstractShapeEditor {
 
         Vec4 referencePoint = this.wwd.model().globe().computePointFromPosition(referencePos);
 
-        Vec4 surfaceNormal = this.wwd.model().globe().computeSurfaceNormalAtLocation(referencePos.getLatitude(),
-            referencePos.getLongitude());
+        Vec4 surfaceNormal = this.wwd.model().globe().computeSurfaceNormalAtLocation(referencePos.getLat(),
+            referencePos.getLon());
         Line verticalRay = new Line(referencePoint, surfaceNormal);
         Line screenRay = this.wwd.view().computeRayFromScreenPoint(mousePoint.getX(), mousePoint.getY());
         Line previousScreenRay = this.wwd.view().computeRayFromScreenPoint(previousMousePoint.getX(),
@@ -996,23 +996,23 @@ public class RigidShapeEditor extends AbstractShapeEditor {
 
         if (this.aboveGround) {
             // restrict height to stay above terrain surface
-            Vec4 lowestPoint = wwd.sceneControl().getTerrain().getSurfacePoint(referencePos.getLatitude(),
-                referencePos.getLongitude(), this.shape.getNorthSouthRadius());
+            Vec4 lowestPoint = wwd.sceneControl().getTerrain().getSurfacePoint(referencePos.getLat(),
+                referencePos.getLon(), this.shape.getNorthSouthRadius());
             Position lowestPosition = this.wwd.model().globe().computePositionFromPoint(lowestPoint);
             if (this.shape.getReferencePosition().getAltitude() < lowestPosition.getAltitude()) {
-                this.shape.setCenterPosition(new Position(referencePos.getLatitude(), referencePos.getLongitude(),
+                this.shape.setCenterPosition(new Position(referencePos.getLat(), referencePos.getLon(),
                     lowestPosition.getAltitude()));
                 return;
             }
             else if (this.shape.getReferencePosition().getAltitude() == lowestPosition.getAltitude()
                 && elevationChange <= 0) {
-                this.shape.setCenterPosition(new Position(referencePos.getLatitude(), referencePos.getLongitude(),
+                this.shape.setCenterPosition(new Position(referencePos.getLat(), referencePos.getLon(),
                     lowestPosition.getAltitude()));
                 return;
             }
         }
 
-        this.shape.setCenterPosition(new Position(referencePos.getLatitude(), referencePos.getLongitude(),
+        this.shape.setCenterPosition(new Position(referencePos.getLat(), referencePos.getLon(),
             height + elevationChange));
     }
 
@@ -1680,11 +1680,11 @@ public class RigidShapeEditor extends AbstractShapeEditor {
 
     protected Vec4 computeAnnotationPosition(Position pos) {
         Vec4 surfacePoint = this.wwd.sceneControl().getTerrain().getSurfacePoint(
-            pos.getLatitude(), pos.getLongitude());
+            pos.getLat(), pos.getLon());
         if (surfacePoint == null) {
             Globe globe = this.wwd.model().globe();
-            surfacePoint = globe.computePointFromPosition(pos.getLatitude(), pos.getLongitude(),
-                globe.elevation(pos.getLatitude(), pos.getLongitude()));
+            surfacePoint = globe.computePointFromPosition(pos.getLat(), pos.getLon(),
+                globe.elevation(pos.getLat(), pos.getLon()));
         }
 
         return this.wwd.view().project(surfacePoint);
@@ -1716,8 +1716,8 @@ public class RigidShapeEditor extends AbstractShapeEditor {
 
         // if "activeControlPoint" is in fact one of the control points
         if (!this.arePositionsRedundant(pos, this.shape.getCenterPosition())) {
-            sb.append(this.unitsFormat.angleNL(this.getLabel(LATITUDE_LABEL), pos.getLatitude()));
-            sb.append(this.unitsFormat.angleNL(this.getLabel(LONGITUDE_LABEL), pos.getLongitude()));
+            sb.append(this.unitsFormat.angleNL(this.getLabel(LATITUDE_LABEL), pos.getLat()));
+            sb.append(this.unitsFormat.angleNL(this.getLabel(LONGITUDE_LABEL), pos.getLon()));
             sb.append(this.unitsFormat.lengthNL(this.getLabel(ALTITUDE_LABEL), pos.getAltitude()));
         }
 
@@ -1725,9 +1725,9 @@ public class RigidShapeEditor extends AbstractShapeEditor {
         if (this.shape.getCenterPosition() != null) {
             sb.append(
                 this.unitsFormat.angleNL(this.getLabel(CENTER_LATITUDE_LABEL),
-                    this.shape.getCenterPosition().getLatitude()));
+                    this.shape.getCenterPosition().getLat()));
             sb.append(this.unitsFormat.angleNL(this.getLabel(CENTER_LONGITUDE_LABEL),
-                this.shape.getCenterPosition().getLongitude()));
+                this.shape.getCenterPosition().getLon()));
             sb.append(this.unitsFormat.lengthNL(this.getLabel(CENTER_ALTITUDE_LABEL),
                 this.shape.getCenterPosition().getAltitude()));
         }

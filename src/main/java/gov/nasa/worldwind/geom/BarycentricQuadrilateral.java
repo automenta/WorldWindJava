@@ -47,7 +47,7 @@ public class BarycentricQuadrilateral extends BarycentricTriangle {
     public BarycentricQuadrilateral(LatLon p00, LatLon p10, LatLon p11, LatLon p01) {
         super(p00, p10, p01);
 
-        this.p11 = new Vec4(p11.getLongitude().radians(), p11.getLatitude().radians(), 0);
+        this.p11 = new Vec4(p11.getLon().radians(), p11.getLat().radians(), 0);
         this.w11 = this.getBarycentricCoords(this.p11);
     }
 

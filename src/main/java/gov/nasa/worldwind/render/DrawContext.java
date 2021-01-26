@@ -135,7 +135,7 @@ public interface DrawContext extends WWObject, Disposable {
      * @return the current <code>View</code>, which may be null
      * @since 1.5
      */
-    View getView();
+    View view();
 
     /**
      * Assigns a new <code>View</code>. Some layers cannot function properly with a null <code>View</code>. It is
@@ -961,9 +961,11 @@ public interface DrawContext extends WWObject, Disposable {
     }
 
     default Predicate<ExtentHolder> intersectsFrustrum() {
-        final Frustum f = getView().getFrustumInModelCoordinates();
+        final Frustum f = view().getFrustumInModelCoordinates();
         final Globe g = getGlobe();
         final double v = getVerticalExaggeration();
         return r-> f.intersects(r.getExtent(g, v));
     }
+
+    default WorldWindow wwd() { return view().input().wwd(); }
 }

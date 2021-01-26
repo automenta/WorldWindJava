@@ -733,17 +733,17 @@ public class TacticalGraphicLabel {
         if (pos == null)
             return;
 
-        olbl.placePoint = dc.computeTerrainPoint(pos.getLatitude(), pos.getLongitude(), 0);
-        olbl.screenPlacePoint = dc.getView().project(olbl.placePoint);
+        olbl.placePoint = dc.computeTerrainPoint(pos.getLat(), pos.getLon(), 0);
+        olbl.screenPlacePoint = dc.view().project(olbl.placePoint);
 
-        olbl.eyeDistance = olbl.placePoint.distanceTo3(dc.getView().getEyePoint());
+        olbl.eyeDistance = olbl.placePoint.distanceTo3(dc.view().getEyePoint());
 
         boolean orientationReversed = false;
         if (this.orientationPosition != null) {
             // Project the orientation point onto the screen
-            Vec4 orientationPlacePoint = dc.computeTerrainPoint(this.orientationPosition.getLatitude(),
-                this.orientationPosition.getLongitude(), 0);
-            Vec4 orientationScreenPoint = dc.getView().project(orientationPlacePoint);
+            Vec4 orientationPlacePoint = dc.computeTerrainPoint(this.orientationPosition.getLat(),
+                this.orientationPosition.getLon(), 0);
+            Vec4 orientationScreenPoint = dc.view().project(orientationPlacePoint);
 
             olbl.rotation = TacticalGraphicLabel.computeRotation(olbl.screenPlacePoint, orientationScreenPoint);
 
@@ -795,7 +795,7 @@ public class TacticalGraphicLabel {
      * @return True if this label intersects the active frustum (view or pick). Otherwise false.
      */
     protected boolean intersectsFrustum(DrawContext dc, OrderedLabel olbl) {
-        View view = dc.getView();
+        View view = dc.view();
         Frustum frustum = view.getFrustumInModelCoordinates();
 
         // Test the label's model coordinate point against the near and far clipping planes.
@@ -864,7 +864,7 @@ public class TacticalGraphicLabel {
         this.computeGeometryIfNeeded(dc);
 
         // Don't draw if beyond the horizon.
-        double horizon = dc.getView().getHorizonDistance();
+        double horizon = dc.view().getHorizonDistance();
         if (!dc.is2DGlobe() && this.thisFramesOrderedLabel.eyeDistance > horizon)
             return;
 
@@ -940,7 +940,7 @@ public class TacticalGraphicLabel {
 
         // The image is drawn using a parallel projection.
         this.BEogsh.pushProjectionIdentity(gl);
-        gl.glOrtho(0.0d, dc.getView().getViewport().width, 0.0d, dc.getView().getViewport().height, -1.0d, 1.0d);
+        gl.glOrtho(0.0d, dc.view().getViewport().width, 0.0d, dc.view().getViewport().height, -1.0d, 1.0d);
 
         this.BEogsh.pushModelviewIdentity(gl);
     }

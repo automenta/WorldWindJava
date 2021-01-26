@@ -446,8 +446,8 @@ public class VecBuffer {
         }
 
         double[] compArray = new double[2];
-        compArray[1] = ll.getLatitude().degrees;
-        compArray[0] = ll.getLongitude().degrees;
+        compArray[1] = ll.getLat().degrees;
+        compArray[0] = ll.getLon().degrees;
 
         this.put(position, compArray);
     }
@@ -511,8 +511,8 @@ public class VecBuffer {
         }
 
         double[] compArray = new double[3];
-        compArray[1] = p.getLatitude().degrees;
-        compArray[0] = p.getLongitude().degrees;
+        compArray[1] = p.getLat().degrees;
+        compArray[0] = p.getLon().degrees;
         compArray[2] = p.getElevation();
 
         this.put(position, compArray);

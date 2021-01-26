@@ -54,8 +54,8 @@ public class AnimatedGlobe extends ApplicationTemplate {
                 double rotationDegrees = rotationDegreesPerSecond * elapsedSeconds;
                 lastTime = now;
 
-                double lat = eyePosition.getLatitude().degrees;
-                double lon = Angle.normalizedDegreesLongitude(eyePosition.getLongitude().degrees + rotationDegrees);
+                double lat = eyePosition.getLat().degrees;
+                double lon = Angle.normalizedDegreesLongitude(eyePosition.getLon().degrees + rotationDegrees);
                 double alt = eyePosition.getAltitude();
 
                 eyePosition = Position.fromDegrees(lat, lon, alt);

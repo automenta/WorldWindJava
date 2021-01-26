@@ -106,7 +106,7 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
             return dc.getPickFrustums().intersectsAny(extent);
         }
 
-        return dc.getView().getFrustumInModelCoordinates().intersects(extent);
+        return dc.view().getFrustumInModelCoordinates().intersects(extent);
     }
 
     protected static boolean mustRegenerateTileGeometry(Tile tile) {

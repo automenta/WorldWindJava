@@ -371,8 +371,8 @@ public class ImageUtil {
                 Vec4 vec = new Vec4(imagePoints[j].getX(), imagePoints[j].getY(), 1.0).transformBy3(m);
                 LatLon ll = LatLon.fromDegrees(vec.y, vec.x);
                 LatLon diff = geoPoints[j].subtract(ll);
-                double d = diff.getLatitude().degrees * diff.getLatitude().degrees
-                    + diff.getLongitude().degrees * diff.getLongitude().degrees;
+                double d = diff.getLat().degrees * diff.getLat().degrees
+                    + diff.getLon().degrees * diff.getLon().degrees;
                 error += d;
             }
 

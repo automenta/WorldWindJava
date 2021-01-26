@@ -279,7 +279,7 @@ public class SectorGeometryList extends ArrayList<SectorGeometry> {
      * geometry in this list for the specifed latitude and longitude.
      */
     public Vec4 getSurfacePoint(Position position) {
-        return this.getSurfacePoint(position.getLatitude(), position.getLongitude(), position.getElevation());
+        return this.getSurfacePoint(position.getLat(), position.getLon(), position.getElevation());
     }
 
     /**
@@ -290,7 +290,7 @@ public class SectorGeometryList extends ArrayList<SectorGeometry> {
      * geometry in this list for the specifed latitude and longitude.
      */
     public Vec4 getSurfacePoint(LatLon latLon) {
-        return this.getSurfacePoint(latLon.getLatitude(), latLon.getLongitude(), 0.0d);
+        return this.getSurfacePoint(latLon.getLat(), latLon.getLon(), 0.0d);
     }
 
     /**

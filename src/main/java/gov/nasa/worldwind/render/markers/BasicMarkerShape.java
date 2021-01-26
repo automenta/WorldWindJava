@@ -145,7 +145,7 @@ public class BasicMarkerShape {
             this.shapes.get(0).render(dc, marker, point, radius, false);
             if (this.offset != 0) {
                 Position pos = dc.getGlobe().computePositionFromPoint(point);
-                point = dc.getGlobe().computePointFromPosition(pos.getLatitude(), pos.getLongitude(),
+                point = dc.getGlobe().computePointFromPosition(pos.getLat(), pos.getLon(),
                     pos.getElevation() + radius * this.offset);
             }
             this.shapes.get(1).render(dc, marker, point, radius, false);
@@ -155,7 +155,7 @@ public class BasicMarkerShape {
             this.shapes.get(0).render(dc, marker, point, radius, isRelative);
             if (this.offset != 0) {
                 Position pos = dc.getGlobe().computePositionFromPoint(point);
-                point = dc.getGlobe().computePointFromPosition(pos.getLatitude(), pos.getLongitude(),
+                point = dc.getGlobe().computePointFromPosition(pos.getLat(), pos.getLon(),
                     pos.getElevation() + radius * this.offset);
             }
             this.shapes.get(1).render(dc, marker, point, radius, isRelative);
@@ -189,7 +189,7 @@ public class BasicMarkerShape {
             Globe globe = dc.getGlobe();
             Position pos = globe.computePositionFromPoint(point);
             LatLon p2ll = LatLon.greatCircleEndPosition(pos, heading, new Angle(0.1));
-            Vec4 p2 = globe.computePointFromPosition(p2ll.getLatitude(), p2ll.getLongitude(),
+            Vec4 p2 = globe.computePointFromPosition(p2ll.getLat(), p2ll.getLon(),
                 pos.getElevation());
 
             // Find vector in the direction of the heading
@@ -261,7 +261,7 @@ public class BasicMarkerShape {
             GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
             if (!isRelative) {
-                dc.getView().pushReferenceCenter(dc, point);
+                dc.view().pushReferenceCenter(dc, point);
             } else {
                 gl.glPushMatrix();
                 gl.glTranslated(point.x, point.y, point.z);
@@ -273,7 +273,7 @@ public class BasicMarkerShape {
 
             this.doRender(dc, marker, point, radius, dlResource);
             if (!isRelative) {
-                dc.getView().popReferenceCenter(dc);
+                dc.view().popReferenceCenter(dc);
             } else {
                 gl.glPopMatrix();
             }
@@ -389,8 +389,8 @@ public class BasicMarkerShape {
 
                 // Rotate the cube so that one of the faces points north
                 Position position = dc.getGlobe().computePositionFromPoint(point);
-                Vec4 north = dc.getGlobe().computeNorthPointingTangentAtLocation(position.getLatitude(),
-                    position.getLongitude());
+                Vec4 north = dc.getGlobe().computeNorthPointingTangentAtLocation(position.getLat(),
+                    position.getLon());
                 Vec4 rotatedY = Vec4.UNIT_NEGATIVE_Y.transformBy3(Matrix.fromAxisAngle(angle, A / L, B / L, 0));
                 Angle northAngle = rotatedY.angleBetween3(north);
 
@@ -568,14 +568,14 @@ public class BasicMarkerShape {
             // Orient the unit shape to lie parallel to the globe's surface at its position and oriented to the
             // specified heading.
             if (dc.is2DGlobe()) {
-                Vec4 npt = dc.getGlobe().computeNorthPointingTangentAtLocation(marker.getPosition().getLatitude(),
-                    marker.getPosition().getLongitude());
+                Vec4 npt = dc.getGlobe().computeNorthPointingTangentAtLocation(marker.getPosition().getLat(),
+                    marker.getPosition().getLon());
                 //noinspection SuspiciousNameCombination
                 double npta = Math.atan2(npt.x, npt.y);
                 gl.glRotated(-marker.getHeading().degrees - npta * 180 / Math.PI, 0, 0, 1);
             } else {
-                gl.glRotated(marker.getPosition().getLongitude().degrees, 0, 1, 0);
-                gl.glRotated(-marker.getPosition().getLatitude().degrees, 1, 0, 0);
+                gl.glRotated(marker.getPosition().getLon().degrees, 0, 1, 0);
+                gl.glRotated(-marker.getPosition().getLat().degrees, 1, 0, 0);
                 gl.glRotated(-marker.getHeading().degrees, 0, 0, 1);
             }
 
@@ -635,14 +635,14 @@ public class BasicMarkerShape {
             // Orient the unit shape to lie parallel to the globe's surface at its position and oriented to the
             // specified heading.
             if (dc.is2DGlobe()) {
-                Vec4 npt = dc.getGlobe().computeNorthPointingTangentAtLocation(marker.getPosition().getLatitude(),
-                    marker.getPosition().getLongitude());
+                Vec4 npt = dc.getGlobe().computeNorthPointingTangentAtLocation(marker.getPosition().getLat(),
+                    marker.getPosition().getLon());
                 //noinspection SuspiciousNameCombination
                 double npta = Math.atan2(npt.x, npt.y);
                 gl.glRotated(-marker.getHeading().degrees - npta * 180 / Math.PI, 0, 0, 1);
             } else {
-                gl.glRotated(marker.getPosition().getLongitude().degrees, 0, 1, 0);
-                gl.glRotated(-marker.getPosition().getLatitude().degrees, 1, 0, 0);
+                gl.glRotated(marker.getPosition().getLon().degrees, 0, 1, 0);
+                gl.glRotated(-marker.getPosition().getLat().degrees, 1, 0, 0);
                 gl.glRotated(-marker.getHeading().degrees, 0, 0, 1);
             }
 

@@ -1171,7 +1171,7 @@ public class WWXML {
         if (sw == null || ne == null)
             return null;
 
-        return new Sector(sw.latitude, ne.latitude, sw.longitude, ne.longitude);
+        return new Sector(sw.lat, ne.lat, sw.lon, ne.lon);
     }
 
     /**
@@ -1653,8 +1653,8 @@ public class WWXML {
 
         Element el = WWXML.appendElementPath(context, path);
         WWXML.setTextAttribute(el, "units", "degrees");
-        WWXML.setDoubleAttribute(el, "latitude", ll.getLatitude().degrees);
-        WWXML.setDoubleAttribute(el, "longitude", ll.getLongitude().degrees);
+        WWXML.setDoubleAttribute(el, "latitude", ll.getLat().degrees);
+        WWXML.setDoubleAttribute(el, "longitude", ll.getLon().degrees);
 
         return el;
     }

@@ -249,7 +249,7 @@ abstract public class AbstractXMLEventParser implements XMLEventParser {
                 ctx.addId(id, this);
         }
         catch (XMLStreamException e) {
-            ctx.firePropertyChange(new XMLParserNotification(ctx, XMLParserNotification.EXCEPTION, inputEvent,
+            ctx.emit(new XMLParserNotification(ctx, XMLParserNotification.EXCEPTION, inputEvent,
                 "XML.ExceptionParsingElement", null, e));
         }
 
@@ -278,7 +278,7 @@ abstract public class AbstractXMLEventParser implements XMLEventParser {
                 }
             }
             catch (XMLStreamException e) {
-                ctx.firePropertyChange(
+                ctx.emit(
                     new XMLParserNotification(ctx, XMLParserNotification.EXCEPTION, event,
                         "XML.ExceptionParsingElement",
                         null, e));
@@ -323,7 +323,7 @@ abstract public class AbstractXMLEventParser implements XMLEventParser {
                 XMLParserNotification notification = new XMLParserNotification(ctx, XMLParserNotification.UNRECOGNIZED,
                     event, "XML.UnrecognizedElement", null, event);
                 if (ctx.shouldWarnUnrecognized(this)) {
-                    ctx.firePropertyChange(notification);
+                    ctx.emit(notification);
                 }
                 parser = ctx.getUnrecognizedElementParser();
                 parser.setParent(this);

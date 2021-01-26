@@ -122,8 +122,8 @@ public abstract class LineIntersector implements Runnable {
 
 //        try
         {
-            this.referencePoint = terrain.getSurfacePoint(referencePosition.getLatitude(),
-                referencePosition.getLongitude(), referencePosition.getAltitude());
+            this.referencePoint = terrain.getSurfacePoint(referencePosition.getLat(),
+                referencePosition.getLon(), referencePosition.getAltitude());
 
             for (Position position : this.positions) {
                 if (this.numThreads > 1)

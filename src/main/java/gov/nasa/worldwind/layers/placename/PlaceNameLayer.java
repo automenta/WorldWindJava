@@ -83,7 +83,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
         for (int i = 0; i < this.placeNameServiceSet.getServiceCount(); i++) {
             //todo do this for long as well and pick min
             int calc1 = (int) (PlaceNameService.TILING_SECTOR.latDelta
-                / this.placeNameServiceSet.getService(i).getTileDelta().getLatitude().degrees);
+                / this.placeNameServiceSet.getService(i).getTileDelta().getLat().degrees);
             int numLevels = (int) Math.log(calc1);
             navTiles.add(
                 new NavigationTile(this.placeNameServiceSet.getService(i), PlaceNameService.TILING_SECTOR, numLevels,
@@ -109,7 +109,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
     protected static boolean isSectorVisible(DrawContext dc, Sector sector, double minDistanceSquared,
         double maxDistanceSquared) {
 
-        View view = dc.getView();
+        View view = dc.view();
         Position eyePos = view.getEyePosition();
         if (eyePos == null)
             return false;
@@ -119,12 +119,12 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
             // Just use the eye altitude since the majority of non-visible sectors are culled elsewhere.
             distSquared = eyePos.getAltitude() * eyePos.getAltitude();
         } else {
-            Angle lat = PlaceNameLayer.clampAngle(eyePos.getLatitude(), sector.latMin(),
+            Angle lat = PlaceNameLayer.clampAngle(eyePos.getLat(), sector.latMin(),
                 sector.latMax());
-            Angle lon = PlaceNameLayer.clampAngle(eyePos.getLongitude(), sector.lonMin(),
+            Angle lon = PlaceNameLayer.clampAngle(eyePos.getLon(), sector.lonMin(),
                 sector.lonMax());
             Vec4 p = dc.getGlobe().computePointFromPosition(lat, lon, 0.0d);
-            distSquared = dc.getView().getEyePoint().distanceToSquared3(p);
+            distSquared = dc.view().getEyePoint().distanceToSquared3(p);
         }
 
         //noinspection RedundantIfStatement
@@ -139,7 +139,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
         if (!tile.sector.intersects(dc.getVisibleSector()))
             return false;
 
-        View view = dc.getView();
+        View view = dc.view();
         Position eyePos = view.getEyePosition();
         if (eyePos == null)
             return false;
@@ -149,12 +149,12 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
             // Just use the eye altitude since the majority of non-visible sectors are culled elsewhere.
             distSquared = eyePos.getAltitude() * eyePos.getAltitude();
         } else {
-            Angle lat = PlaceNameLayer.clampAngle(eyePos.getLatitude(), tile.sector.latMin(),
+            Angle lat = PlaceNameLayer.clampAngle(eyePos.getLat(), tile.sector.latMin(),
                 tile.sector.latMax());
-            Angle lon = PlaceNameLayer.clampAngle(eyePos.getLongitude(), tile.sector.lonMin(),
+            Angle lon = PlaceNameLayer.clampAngle(eyePos.getLon(), tile.sector.lonMin(),
                 tile.sector.lonMax());
             Vec4 p = dc.getGlobe().computePointFromPosition(lat, lon, 0.0d);
-            distSquared = dc.getView().getEyePoint().distanceToSquared3(p);
+            distSquared = dc.view().getEyePoint().distanceToSquared3(p);
         }
 
         //noinspection RedundantIfStatement
@@ -170,9 +170,9 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
 
     protected static boolean isNameVisible(DrawContext dc, PlaceNameService service, Position namePosition) {
         double elevation = dc.getVerticalExaggeration() * namePosition.getElevation();
-        Vec4 namePoint = dc.getGlobe().computePointFromPosition(namePosition.getLatitude(),
-            namePosition.getLongitude(), elevation);
-        Vec4 eyeVec = dc.getView().getEyePoint();
+        Vec4 namePoint = dc.getGlobe().computePointFromPosition(namePosition.getLat(),
+            namePosition.getLon(), elevation);
+        Vec4 eyeVec = dc.view().getEyePoint();
 
         double dist = eyeVec.distanceTo3(namePoint);
         return dist >= service.getMinDisplayDistance() && dist <= service.getMaxDisplayDistance();
@@ -242,14 +242,14 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
         if (dc.getViewportCenterPosition() != null)
             return dc.getGlobe().computePointFromPosition(dc.getViewportCenterPosition());
 
-        Rectangle2D viewport = dc.getView().getViewport();
+        Rectangle2D viewport = dc.view().getViewport();
         int x = (int) viewport.getWidth() / 2;
         for (int y = (int) (0.5 * viewport.getHeight()); y >= 0; y--) {
-            Position pos = dc.getView().computePositionFromScreenPoint(x, y);
+            Position pos = dc.view().computePositionFromScreenPoint(x, y);
             if (pos == null)
                 continue;
 
-            return dc.getGlobe().computePointFromPosition(pos.getLatitude(), pos.getLongitude(), 0.0d);
+            return dc.getGlobe().computePointFromPosition(pos.getLat(), pos.getLon(), 0.0d);
         }
 
         return null;
@@ -282,8 +282,8 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
     }
 
     protected Tile[] buildTiles(PlaceNameService placeNameService, NavigationTile navTile) {
-        final Angle dLat = placeNameService.getTileDelta().getLatitude();
-        final Angle dLon = placeNameService.getTileDelta().getLongitude();
+        final Angle dLat = placeNameService.getTileDelta().getLat();
+        final Angle dLon = placeNameService.getTileDelta().getLon();
 
         // Determine the row and column offset from the global tiling origin for the southwest tile corner
         int firstRow = Tile.computeRow(dLat, navTile.navSector.latMin());
@@ -839,7 +839,7 @@ protected double priority = Double.MAX_VALUE; // Default is minimum priority
 
             if (buffer != null) {
                 // Fire a property change to denote that the layer's backing data has changed.
-                this.layer.firePropertyChange(Keys.LAYER, null, this);
+                this.layer.emit(Keys.LAYER, null, this);
             }
 
             return buffer;
@@ -923,13 +923,13 @@ protected double priority = Double.MAX_VALUE; // Default is minimum priority
                     return false;
             }
 
-            View view = dc.getView();
+            View view = dc.view();
             Position eyePos = view.getEyePosition();
             if (eyePos == null)
                 return false;
 
             //check for eyePos over globe
-            if (Double.isNaN(eyePos.getLatitude().degrees) || Double.isNaN(eyePos.getLongitude().degrees))
+            if (Double.isNaN(eyePos.getLat().degrees) || Double.isNaN(eyePos.getLon().degrees))
                 return false;
 
             double distSquared;
@@ -937,12 +937,12 @@ protected double priority = Double.MAX_VALUE; // Default is minimum priority
                 // Just use the eye altitude since the majority of non-visible sectors are culled elsewhere.
                 distSquared = eyePos.getAltitude() * eyePos.getAltitude();
             } else {
-                Angle lat = PlaceNameLayer.clampAngle(eyePos.getLatitude(), navSector.latMin(),
+                Angle lat = PlaceNameLayer.clampAngle(eyePos.getLat(), navSector.latMin(),
                     navSector.latMax());
-                Angle lon = PlaceNameLayer.clampAngle(eyePos.getLongitude(), navSector.lonMin(),
+                Angle lon = PlaceNameLayer.clampAngle(eyePos.getLon(), navSector.lonMin(),
                     navSector.lonMax());
                 Vec4 p = dc.getGlobe().computePointFromPosition(lat, lon, 0.0d);
-                distSquared = dc.getView().getEyePoint().distanceToSquared3(p);
+                distSquared = dc.view().getEyePoint().distanceToSquared3(p);
             }
 
             //noinspection RedundantIfStatement

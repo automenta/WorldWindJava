@@ -499,7 +499,7 @@ public abstract class AbstractAirspace extends WWObjectImpl
 
         for (int i = 0; i < 2; i++) {
             if (this.getAltitudeDatum()[i].equals(Keys.ABOVE_GROUND_REFERENCE)) {
-                altitudes[i] += this.computeElevationAt(dc, groundRef.getLatitude(), groundRef.getLongitude());
+                altitudes[i] += this.computeElevationAt(dc, groundRef.getLat(), groundRef.getLon());
                 terrainConformant[i] = false;
             }
         }
@@ -547,7 +547,7 @@ public abstract class AbstractAirspace extends WWObjectImpl
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (dc.getView() == null) {
+        if (dc.view() == null) {
             String message = "nullValue.DrawingContextViewIsNull";
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -563,7 +563,7 @@ public abstract class AbstractAirspace extends WWObjectImpl
             return dc.getPickFrustums().intersectsAny(extent);
 
         // Test this airspace's extent against the viewing frustum.
-        return dc.getView().getFrustumInModelCoordinates().intersects(extent);
+        return dc.view().getFrustumInModelCoordinates().intersects(extent);
     }
 
     public Extent getExtent(Globe globe, double verticalExaggeration) {
@@ -899,7 +899,6 @@ public abstract class AbstractAirspace extends WWObjectImpl
         return this.dragEnabled;
     }
 
-    @Override
     public void setDragEnabled(boolean enabled) {
         this.dragEnabled = true;
     }
@@ -967,7 +966,7 @@ public abstract class AbstractAirspace extends WWObjectImpl
             return 0.0;
 
         double minDistanceSquared = Double.MAX_VALUE;
-        Vec4 eyePoint = dc.getView().getEyePoint();
+        Vec4 eyePoint = dc.view().getEyePoint();
 
         for (Vec4 point : info.minimalGeometry) {
             double d = point.distanceToSquared3(eyePoint);
@@ -1328,9 +1327,9 @@ public abstract class AbstractAirspace extends WWObjectImpl
 
         // Get the points corresponding to the given locations at the lower and upper altitudes.
         for (LatLon ll : locations) {
-            extremePoints.add(globe.computePointFromPosition(ll.getLatitude(), ll.getLongitude(),
+            extremePoints.add(globe.computePointFromPosition(ll.getLat(), ll.getLon(),
                 verticalExaggeration * altitudes[0]));
-            extremePoints.add(globe.computePointFromPosition(ll.getLatitude(), ll.getLongitude(),
+            extremePoints.add(globe.computePointFromPosition(ll.getLat(), ll.getLon(),
                 verticalExaggeration * altitudes[1]));
         }
     }

@@ -122,10 +122,10 @@ public class RPFRasterReader extends AbstractDataRasterReader {
             NITFSImageSegment imageSegment = (NITFSImageSegment) rpfFile.getNITFSSegment(
                 NITFSSegmentType.IMAGE_SEGMENT);
             RPFFrameFileComponents comps = imageSegment.getUserDefinedImageSubheader().getRPFFrameFileComponents();
-            Angle minLat = comps.swLowerleft.getLatitude();
-            Angle maxLat = comps.neUpperRight.getLatitude();
-            Angle minLon = comps.swLowerleft.getLongitude();
-            Angle maxLon = comps.neUpperRight.getLongitude();
+            Angle minLat = comps.swLowerleft.getLat();
+            Angle maxLat = comps.neUpperRight.getLat();
+            Angle minLon = comps.swLowerleft.getLon();
+            Angle maxLon = comps.neUpperRight.getLon();
             // This sector spans the longitude boundary. In order to render this sector,
             // we must adjust the longitudes such that minLon<maxLon.
             if (Angle.crossesLongitudeBoundary(minLon, maxLon)) {

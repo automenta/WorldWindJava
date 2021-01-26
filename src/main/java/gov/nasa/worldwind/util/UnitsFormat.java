@@ -739,8 +739,8 @@ public class UnitsFormat extends KVMap {
             throw new IllegalArgumentException(msg);
         }
 
-        return String.format("%s %s", this.angle(this.getLabel(UnitsFormat.LABEL_LATLON_LAT), latlon.getLatitude()),
-            this.angle(this.getLabel(UnitsFormat.LABEL_LATLON_LON), latlon.getLongitude())).trim();
+        return String.format("%s %s", this.angle(this.getLabel(UnitsFormat.LABEL_LATLON_LAT), latlon.getLat()),
+            this.angle(this.getLabel(UnitsFormat.LABEL_LATLON_LON), latlon.getLon())).trim();
     }
 
     /**
@@ -775,11 +775,11 @@ public class UnitsFormat extends KVMap {
             throw new IllegalArgumentException(msg);
         }
 
-        String latAngle = this.angle("", new Angle(Math.abs(latlon.getLatitude().degrees)));
-        String latString = String.format("%s%s", latAngle, latlon.getLatitude().degrees >= 0 ? "N" : "S");
+        String latAngle = this.angle("", new Angle(Math.abs(latlon.getLat().degrees)));
+        String latString = String.format("%s%s", latAngle, latlon.getLat().degrees >= 0 ? "N" : "S");
 
-        String lonAngle = this.angle("", new Angle(Math.abs(latlon.getLongitude().degrees)));
-        String lonString = String.format("%s%s", lonAngle, latlon.getLongitude().degrees >= 0 ? "E" : "W");
+        String lonAngle = this.angle("", new Angle(Math.abs(latlon.getLon().degrees)));
+        String lonString = String.format("%s%s", lonAngle, latlon.getLon().degrees >= 0 ? "E" : "W");
 
         return String.format("%s %s", latString, lonString);
     }

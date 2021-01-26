@@ -57,8 +57,8 @@ public class ScalebarLayer extends AbstractLayer {
             return -1;
 
         Vec4 groundTarget = dc.getGlobe().computePointFromPosition(referencePosition);
-        double eyeDistance = dc.getView().getEyePoint().distanceTo3(groundTarget);
-        return dc.getView().computePixelSizeAtDistance(eyeDistance);
+        double eyeDistance = dc.view().getEyePoint().distanceTo3(groundTarget);
+        return dc.view().computePixelSizeAtDistance(eyeDistance);
     }
 
     // Draw scale rectangle
@@ -340,7 +340,7 @@ public class ScalebarLayer extends AbstractLayer {
 
             // Load a parallel projection with xy dimensions (viewportWidth, viewportHeight)
             // into the GL projection matrix.
-            Rectangle viewport = dc.getView().getViewport();
+            Rectangle viewport = dc.view().getViewport();
             ogsh.pushProjectionIdentity(gl);
             double maxwh = Math.max(width, height);
             gl.glOrtho(0.0d, viewport.width, 0.0d, viewport.height, -0.6 * maxwh, 0.6 * maxwh);

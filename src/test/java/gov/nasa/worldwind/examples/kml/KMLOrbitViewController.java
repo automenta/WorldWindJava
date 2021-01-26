@@ -76,7 +76,7 @@ public class KMLOrbitViewController extends KMLViewController {
             this.orbitView.getZoom(), range, timeToMove,
             KMLUtil.convertAltitudeMode(altitudeMode, WorldWind.CLAMP_TO_GROUND)); // KML default
 
-        ViewInputHandler inputHandler = this.orbitView.getViewInputHandler();
+        ViewInputHandler inputHandler = this.orbitView.input();
         inputHandler.stopAnimators();
         inputHandler.addAnimator(animator);
     }
@@ -109,7 +109,7 @@ public class KMLOrbitViewController extends KMLViewController {
             KMLUtil.convertAltitudeMode(altitudeMode,
                 WorldWind.RELATIVE_TO_GROUND)); // Camera default, differs from KML default
 
-        ViewInputHandler inputHandler = this.orbitView.getViewInputHandler();
+        ViewInputHandler inputHandler = this.orbitView.input();
         inputHandler.stopAnimators();
         inputHandler.addAnimator(panAnimator);
     }
@@ -194,8 +194,8 @@ public class KMLOrbitViewController extends KMLViewController {
      */
     protected Position computeCenterPosition(Position eyePosition, Vec4 forward, Angle pitch, int altitudeMode) {
         double height;
-        Angle latitude = eyePosition.getLatitude();
-        Angle longitude = eyePosition.getLongitude();
+        Angle latitude = eyePosition.getLat();
+        Angle longitude = eyePosition.getLon();
         Globe globe = this.wwd.model().globe();
 
         if (altitudeMode == WorldWind.CLAMP_TO_GROUND)

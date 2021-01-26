@@ -312,7 +312,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
      * {@inheritDoc}
      */
     public Vec4 getSurfacePoint(Position position) {
-        return this.getSurfacePoint(position.getLatitude(), position.getLongitude(), position.getAltitude());
+        return this.getSurfacePoint(position.getLat(), position.getLon(), position.getAltitude());
     }
 
     /**
@@ -350,11 +350,11 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
             throw new IllegalArgumentException(msg);
         }
 
-        Vec4 pt = this.getSurfacePoint(location.getLatitude(), location.getLongitude(), 0);
+        Vec4 pt = this.getSurfacePoint(location.getLat(), location.getLon(), 0);
         if (pt == null)
             return null;
 
-        Vec4 p = this.globe.computePointFromPosition(location.getLatitude(), location.getLongitude(), 0);
+        Vec4 p = this.globe.computePointFromPosition(location.getLat(), location.getLon(), 0);
 
         return p.distanceTo3(pt) * (pt.getLength3() >= p.getLength3() ? 1 : -1);
     }
@@ -673,17 +673,17 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
             throw new IllegalArgumentException(msg);
         }
 
-        RectTile tileA = this.getContainingTile(pA.getLatitude(), pA.getLongitude());
-        RectTile tileB = this.getContainingTile(pB.getLatitude(), pB.getLongitude());
+        RectTile tileA = this.getContainingTile(pA.getLat(), pA.getLon());
+        RectTile tileB = this.getContainingTile(pB.getLat(), pB.getLon());
         if (tileA == null || tileB == null)
             return null;
 
-        Vec4 ptA = this.getSurfacePoint(tileA, pA.getLatitude(), pA.getLongitude(), pA.getAltitude());
-        Vec4 ptB = this.getSurfacePoint(tileB, pB.getLatitude(), pB.getLongitude(), pB.getAltitude());
+        Vec4 ptA = this.getSurfacePoint(tileA, pA.getLat(), pA.getLon(), pA.getAltitude());
+        Vec4 ptB = this.getSurfacePoint(tileB, pB.getLat(), pB.getLon(), pB.getAltitude());
         if (ptA == null || ptB == null)
             return null;
 
-        if (pA.getLatitude().equals(pB.getLatitude()) && pA.getLongitude().equals(pB.getLongitude())
+        if (pA.getLat().equals(pB.getLat()) && pA.getLon().equals(pB.getLon())
             && pA.getAltitude() == pB.getAltitude())
             return null;
 
@@ -776,10 +776,10 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
         this.getGlobe().getElevationModel().setExtremesCachingEnabled(false);
 
         try {
-            int rowA = this.computeRow(this.sector, pA.getLatitude());
-            int colA = this.computeColumn(this.sector, pA.getLongitude());
-            int rowB = this.computeRow(this.sector, pB.getLatitude());
-            int colB = this.computeColumn(this.sector, pB.getLongitude());
+            int rowA = this.computeRow(this.sector, pA.getLat());
+            int colA = this.computeColumn(this.sector, pA.getLon());
+            int rowB = this.computeRow(this.sector, pB.getLat());
+            int colB = this.computeColumn(this.sector, pB.getLon());
 
             if (rowB < rowA) {
                 int temp = rowA;
@@ -890,7 +890,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
         this.getElevations(tile.sector, latlons, localTargetResolution, elevations);
 
         LatLon centroid = tile.sector.getCentroid();
-        Vec4 refCenter = globe.computePointFromPosition(centroid.getLatitude(), centroid.getLongitude(), 0.0d);
+        Vec4 refCenter = globe.computePointFromPosition(centroid.getLat(), centroid.getLon(), 0.0d);
 
         double minElevation = Double.MAX_VALUE;
         double maxElevation = -Double.MAX_VALUE;
@@ -914,7 +914,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
                     maxElevationLocation = latlon;
                 }
 
-                Vec4 p = this.globe.computePointFromPosition(latlon.getLatitude(), latlon.getLongitude(), elevation);
+                Vec4 p = this.globe.computePointFromPosition(latlon.getLat(), latlon.getLon(), elevation);
                 verts[iv++] = (float) (p.x - refCenter.x);
                 verts[iv++] = (float) (p.y - refCenter.y);
                 verts[iv++] = (float) (p.z - refCenter.z);
@@ -981,7 +981,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
         final int n = latlons.size();
         for (int i = 0; i < n; i++) {
             LatLon ll = latlons.get(i);
-            double elevation = em.getUnmappedLocalSourceElevation(ll.getLatitude(), ll.getLongitude());
+            double elevation = em.getUnmappedLocalSourceElevation(ll.getLat(), ll.getLon());
             if (elevation == em.getMissingDataSignal()) {
                 elevation = em.getMissingDataReplacement();
             }

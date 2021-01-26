@@ -85,7 +85,7 @@ public abstract class AbstractGeneralShape extends AbstractShape {
      * @return the minimum distance from the shape to the eye point.
      */
     protected static double computeEyeDistance(DrawContext dc, ShapeData shapeData) {
-        Vec4 eyePoint = dc.getView().getEyePoint();
+        Vec4 eyePoint = dc.view().getEyePoint();
 
         // TODO: compute distance using extent.getEffectiveRadius(Plane)
         Extent extent = shapeData.getExtent();
@@ -239,7 +239,7 @@ public abstract class AbstractGeneralShape extends AbstractShape {
         if (refPos == null)
             return null;
 
-        return terrain.getSurfacePoint(refPos.getLatitude(), refPos.getLongitude(), 0);
+        return terrain.getSurfacePoint(refPos.getLat(), refPos.getLon(), 0);
     }
 
     public void moveTo(Position position) {

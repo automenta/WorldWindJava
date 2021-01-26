@@ -37,8 +37,8 @@ public class AdaptiveOSMLayer extends RenderableLayer {
 
     public final AdaptiveOSMLayer focus(LatLon at, float radiusDegrees) {
         return focus(new Sector(
-            at.latitude - radiusDegrees, at.latitude + radiusDegrees,
-            at.longitude - radiusDegrees, at.longitude + radiusDegrees));
+            at.lat - radiusDegrees, at.lat + radiusDegrees,
+            at.lon - radiusDegrees, at.lon + radiusDegrees));
     }
 
     public synchronized AdaptiveOSMLayer focus(Sector sector) {

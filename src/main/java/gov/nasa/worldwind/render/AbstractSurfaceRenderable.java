@@ -28,17 +28,17 @@ public abstract class AbstractSurfaceRenderable extends AbstractSurfaceObject {
 
     protected static Angle getViewHeading(DrawContext dc) {
         Angle heading = Angle.ZERO;
-        if (dc.getView() instanceof OrbitView)
-            heading = dc.getView().getHeading();
+        if (dc.view() instanceof OrbitView)
+            heading = dc.view().getHeading();
         return heading;
     }
 
     protected static double computePixelSizeAtLocation(DrawContext dc, LatLon location) {
         Globe globe = dc.getGlobe();
-        Vec4 locationPoint = globe.computePointFromPosition(location.getLatitude(), location.getLongitude(),
-            globe.elevation(location.getLatitude(), location.getLongitude()));
-        double distance = dc.getView().getEyePoint().distanceTo3(locationPoint);
-        return dc.getView().computePixelSizeAtDistance(distance);
+        Vec4 locationPoint = globe.computePointFromPosition(location.getLat(), location.getLon(),
+            globe.elevation(location.getLat(), location.getLon()));
+        double distance = dc.view().getEyePoint().distanceTo3(locationPoint);
+        return dc.view().computePixelSizeAtDistance(distance);
     }
 
     // *** Utility methods
@@ -48,7 +48,7 @@ public abstract class AbstractSurfaceRenderable extends AbstractSurfaceObject {
     }
 
     protected static Vec4 computeDrawPoint(LatLon location, SurfaceTileDrawContext sdc) {
-        Vec4 point = new Vec4(location.getLongitude().degrees, location.getLatitude().degrees, 1);
+        Vec4 point = new Vec4(location.getLon().degrees, location.getLat().degrees, 1);
         return point.transformBy4(sdc.getModelviewMatrix());
     }
 
@@ -110,8 +110,8 @@ public abstract class AbstractSurfaceRenderable extends AbstractSurfaceObject {
     }
 
     protected static int computeHemisphereOffset(Sector sector, LatLon location) {
-        Angle sectorLon = sector.getCentroid().getLongitude();
-        Angle locationLon = location.getLongitude();
+        Angle sectorLon = sector.getCentroid().getLon();
+        Angle locationLon = location.getLon();
         if (Math.abs(locationLon.degrees - sectorLon.degrees) > 180
             && Math.signum(locationLon.degrees) != Math.signum(sectorLon.degrees)) {
             return (int) (360 * Math.signum(sectorLon.degrees));

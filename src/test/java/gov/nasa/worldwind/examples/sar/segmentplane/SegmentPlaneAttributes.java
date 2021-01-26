@@ -500,9 +500,9 @@ public class SegmentPlaneAttributes {
             }
 
             StringBuilder sb = new StringBuilder();
-            sb.append("Lat ").append(position.getLatitude().toString());
+            sb.append("Lat ").append(position.getLat().toString());
             sb.append("\n");
-            sb.append("Lon ").append(position.getLongitude());
+            sb.append("Lon ").append(position.getLon());
             sb.append("\n");
             sb.append("Alt ").append(position.getElevation()).append("m");
 

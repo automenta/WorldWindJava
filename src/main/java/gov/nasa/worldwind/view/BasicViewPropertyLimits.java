@@ -341,8 +341,8 @@ public class BasicViewPropertyLimits implements ViewPropertyLimits {
     public Position limitEyePosition(View view, Position position) {
 
         Sector sector = this.eyeLocationLimits;
-        double lat = Angle.clamp(position.latitude, sector.latMin, sector.latMax);
-        double lon = Angle.clamp(position.longitude, sector.lonMin, sector.lonMax);
+        double lat = Angle.clamp(position.lat, sector.latMin, sector.latMax);
+        double lon = Angle.clamp(position.lon, sector.lonMin, sector.lonMax);
         double alt = WWMath.clamp(position.elevation, this.minEyeElevation, this.maxEyeElevation);
 
         return new Position(lat, lon, alt);

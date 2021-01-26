@@ -104,7 +104,7 @@ public class ScreenElevationLine implements Renderable {
 
             // Load a parallel projection with xy dimensions (viewportWidth, viewportHeight)
             // into the GL projection matrix.
-            Rectangle viewport = dc.getView().getViewport();
+            Rectangle viewport = dc.view().getViewport();
             gl.glMatrixMode(GL2.GL_PROJECTION);
             gl.glPushMatrix();
             projectionPushed = true;
@@ -144,11 +144,11 @@ public class ScreenElevationLine implements Renderable {
 
     private Double computeLineY(DrawContext dc) {
         Vec4 point = dc.getGlobe().computePointFromPosition(
-            new Position(dc.getView().getEyePosition(), this.elevation));
-        Vec4 direction = dc.getView().getForwardVector().perpendicularTo3(point); // Round globe only
-        Vec4 intersection = dc.getView().getFrustumInModelCoordinates().near.intersect(new Line(point, direction));
+            new Position(dc.view().getEyePosition(), this.elevation));
+        Vec4 direction = dc.view().getForwardVector().perpendicularTo3(point); // Round globe only
+        Vec4 intersection = dc.view().getFrustumInModelCoordinates().near.intersect(new Line(point, direction));
         if (intersection != null) {
-            Vec4 screenPoint = dc.getView().project(intersection);
+            Vec4 screenPoint = dc.view().project(intersection);
             if (screenPoint != null)
                 return screenPoint.y;
         }

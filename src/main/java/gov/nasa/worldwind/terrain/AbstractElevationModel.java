@@ -242,7 +242,7 @@ abstract public class AbstractElevationModel extends WWObjectImpl implements Ele
 
         for (int i = 0; i < n; i++) {
             LatLon ll = latlons.get(i);
-            double e = this.getUnmappedElevation(ll.getLatitude(), ll.getLongitude());
+            double e = this.getUnmappedElevation(ll.getLat(), ll.getLon());
             if (e != this.getMissingDataSignal() && !this.isTransparentValue(e))
                 buffer[i] = e;
         }

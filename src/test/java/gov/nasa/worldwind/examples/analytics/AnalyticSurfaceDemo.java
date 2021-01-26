@@ -50,7 +50,7 @@ public class AnalyticSurfaceDemo extends ApplicationTemplate {
         final Renderable legend) {
         return dc -> {
             Extent extent = surface.getExtent(dc);
-            if (!extent.intersects(dc.getView().getFrustumInModelCoordinates()))
+            if (!extent.intersects(dc.view().getFrustumInModelCoordinates()))
                 return;
 
             if (WWMath.computeSizeInWindowCoordinates(dc, extent) < surfaceMinScreenSize)
@@ -144,7 +144,7 @@ public class AnalyticSurfaceDemo extends ApplicationTemplate {
                     a, firstBuffer, secondBuffer, minValue, maxValue, minHue, maxHue));
 
                 if (surface.getClientLayer() != null)
-                    surface.getClientLayer().firePropertyChange(Keys.LAYER, null, surface.getClientLayer());
+                    surface.getClientLayer().emit(Keys.LAYER, null, surface.getClientLayer());
             }
         });
         timer.start();

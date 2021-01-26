@@ -290,7 +290,7 @@ public class MilStd2525Util {
             throw new IllegalArgumentException(msg);
         }
 
-        View view = dc.getView();
+        View view = dc.view();
         Vec4 dir = MilStd2525Util.computeDirectionOfMovement(dc, symbolPoint, heading, length);
 
         // Project geographic points into screen space.
@@ -327,7 +327,7 @@ public class MilStd2525Util {
             throw new IllegalArgumentException(msg);
         }
 
-        View view = dc.getView();
+        View view = dc.view();
         Vec4 dir = MilStd2525Util.computeDirectionOfMovement(dc, symbolPoint, heading, length);
 
         // Project geographic points into screen space.
@@ -352,7 +352,7 @@ public class MilStd2525Util {
      * @return A vector that points in the direction of a symbol's movement.
      */
     protected static Vec4 computeDirectionOfMovement(DrawContext dc, Vec4 symbolPoint, Angle heading, double length) {
-        View view = dc.getView();
+        View view = dc.view();
         Globe globe = dc.getGlobe();
 
         double pixelSize = view.computePixelSizeAtDistance(view.getEyePoint().distanceTo3(symbolPoint));

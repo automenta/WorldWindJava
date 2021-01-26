@@ -75,7 +75,7 @@ public class ScreenCreditController implements Renderable, SelectListener, Dispo
 
         Set<Map.Entry<ScreenCredit, Long>> credits = dc.getScreenCredits().entrySet();
 
-        int y = dc.getView().getViewport().height - (bottomMargin + creditHeight / 2);
+        int y = dc.view().getViewport().height - (bottomMargin + creditHeight / 2);
         int x = leftMargin + creditWidth / 2;
 
         for (Map.Entry<ScreenCredit, Long> entry : credits) {
@@ -104,7 +104,7 @@ public class ScreenCreditController implements Renderable, SelectListener, Dispo
 
         Set<Map.Entry<ScreenCredit, Long>> credits = dc.getScreenCredits().entrySet();
 
-        int y = dc.getView().getViewport().height - (bottomMargin + creditHeight / 2);
+        int y = dc.view().getViewport().height - (bottomMargin + creditHeight / 2);
         int x = leftMargin + creditWidth / 2;
 
         for (Map.Entry<ScreenCredit, Long> entry : credits) {

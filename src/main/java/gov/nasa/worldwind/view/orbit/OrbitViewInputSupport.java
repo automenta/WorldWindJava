@@ -116,10 +116,10 @@ public class OrbitViewInputSupport {
         Vec4 eyePoint = globe.computePointFromPosition(center);
         // The view forward direction will be colinear with the
         // geoid surface normal at the center position.
-        Vec4 normal = globe.computeSurfaceNormalAtLocation(center.getLatitude(), center.getLongitude());
+        Vec4 normal = globe.computeSurfaceNormalAtLocation(center.getLat(), center.getLon());
         Vec4 lookAtPoint = eyePoint.subtract3(normal);
         // The up direction will be pointing towards the north pole.
-        Vec4 north = globe.computeNorthPointingTangentAtLocation(center.getLatitude(), center.getLongitude());
+        Vec4 north = globe.computeNorthPointingTangentAtLocation(center.getLat(), center.getLon());
         // Creates a viewing matrix looking from eyePoint towards lookAtPoint,
         // with the given up direction. The forward, right, and up vectors
         // contained in the matrix are guaranteed to be orthogonal. This means

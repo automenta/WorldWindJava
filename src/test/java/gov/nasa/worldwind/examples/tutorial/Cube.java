@@ -90,7 +90,7 @@ public class Cube extends ApplicationTemplate implements Renderable {
         if (dc.isPickingMode())
             return dc.getPickFrustums().intersectsAny(orderedCube.extent);
 
-        return dc.getView().getFrustumInModelCoordinates().intersects(orderedCube.extent);
+        return dc.view().getFrustumInModelCoordinates().intersects(orderedCube.extent);
     }
 
     /**
@@ -111,15 +111,15 @@ public class Cube extends ApplicationTemplate implements Renderable {
             // Convert the cube's geographic position to a position in Cartesian coordinates. If drawing to a 2D
             // globe ignore the shape's altitude.
             if (dc.is2DGlobe()) {
-                orderedCube.placePoint = dc.getGlobe().computePointFromPosition(this.position.getLatitude(),
-                    this.position.getLongitude(), 0);
+                orderedCube.placePoint = dc.getGlobe().computePointFromPosition(this.position.getLat(),
+                    this.position.getLon(), 0);
             }
             else {
                 orderedCube.placePoint = dc.getGlobe().computePointFromPosition(this.position);
             }
 
             // Compute the distance from the eye to the cube's position.
-            orderedCube.eyeDistance = dc.getView().getEyePoint().distanceTo3(orderedCube.placePoint);
+            orderedCube.eyeDistance = dc.view().getEyePoint().distanceTo3(orderedCube.placePoint);
 
             // Compute a sphere that encloses the cube. We'll use this sphere for intersection calculations to determine
             // if the cube is actually visible.
@@ -191,7 +191,7 @@ public class Cube extends ApplicationTemplate implements Renderable {
         gl.glMatrixMode(GL2.GL_MODELVIEW);
 
         Matrix matrix = dc.getGlobe().computeSurfaceOrientationAtPosition(this.position);
-        matrix = dc.getView().getModelviewMatrix().multiply(matrix);
+        matrix = dc.view().getModelviewMatrix().multiply(matrix);
 
         double[] matrixArray = new double[16];
         matrix.toArray(matrixArray, 0, false);

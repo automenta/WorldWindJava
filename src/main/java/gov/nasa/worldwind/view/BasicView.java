@@ -144,7 +144,7 @@ public class BasicView extends WWObjectImpl implements View {
         return (this.dc);
     }
 
-    public ViewInputHandler getViewInputHandler() {
+    public ViewInputHandler input() {
         return viewInputHandler;
     }
 
@@ -191,7 +191,7 @@ public class BasicView extends WWObjectImpl implements View {
     }
 
     public void stopMovement() {
-        this.firePropertyChange(View.VIEW_STOPPED, null, this);
+        this.emit(View.VIEW_STOPPED, null, this);
     }
 
     public Rectangle getViewport() {
@@ -382,17 +382,17 @@ public class BasicView extends WWObjectImpl implements View {
 
     protected void setViewState(ViewUtil.ViewState modelCoords) {
         if (modelCoords != null) {
-            if (modelCoords.getPosition() != null) {
-                this.eyePosition = ViewUtil.normalizedEyePosition(modelCoords.getPosition());
+            if ((modelCoords.position) != null) {
+                this.eyePosition = ViewUtil.normalizedEyePosition((modelCoords.position));
             }
-            if (modelCoords.getHeading() != null) {
-                this.heading = ViewUtil.normalizedHeading(modelCoords.getHeading());
+            if ((modelCoords.heading) != null) {
+                this.heading = ViewUtil.normalizedHeading((modelCoords.heading));
             }
-            if (modelCoords.getPitch() != null) {
-                this.pitch = ViewUtil.normalizedPitch(modelCoords.getPitch());
+            if ((modelCoords.pitch) != null) {
+                this.pitch = ViewUtil.normalizedPitch((modelCoords.pitch));
             }
-            if (modelCoords.getRoll() != null) {
-                this.roll = ViewUtil.normalizedRoll(modelCoords.getRoll());
+            if ((modelCoords.roll) != null) {
+                this.roll = ViewUtil.normalizedRoll((modelCoords.roll));
             }
         }
     }

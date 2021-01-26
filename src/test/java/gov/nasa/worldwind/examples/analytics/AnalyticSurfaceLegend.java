@@ -242,7 +242,7 @@ public class AnalyticSurfaceLegend implements Renderable {
                 y += bounds.getHeight();
         }
 
-        Rectangle viewport = dc.getView().getViewport();
+        Rectangle viewport = dc.view().getViewport();
         tr.beginRendering(viewport.width, viewport.height);
         try {
             double yInGLCoords = viewport.height - y - 1;

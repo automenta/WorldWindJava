@@ -264,10 +264,10 @@ public class AntennaAxes extends AbstractShape {
         gl.glPushMatrix();
 
         // Rotate to align with longitude.
-        gl.glRotated(this.getPosition().getLongitude().degrees, 0, 1, 0);
+        gl.glRotated(this.getPosition().getLon().degrees, 0, 1, 0);
 
         // Rotate to align with latitude.
-        gl.glRotated(Math.abs(90 - this.getPosition().getLatitude().degrees), 1, 0, 0);
+        gl.glRotated(Math.abs(90 - this.getPosition().getLat().degrees), 1, 0, 0);
 
         // Apply the azimuth.
         if (this.getAzimuth() != null)
@@ -343,8 +343,8 @@ public class AntennaAxes extends AbstractShape {
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
         // Compute the positioning transform.
-        Matrix lat = Matrix.fromAxisAngle(Angle.POS90.sub(this.position.getLatitude()), Vec4.UNIT_X);
-        Matrix lon = Matrix.fromAxisAngle(this.position.getLongitude(), Vec4.UNIT_Y);
+        Matrix lat = Matrix.fromAxisAngle(Angle.POS90.sub(this.position.getLat()), Vec4.UNIT_X);
+        Matrix lon = Matrix.fromAxisAngle(this.position.getLon(), Vec4.UNIT_Y);
         Matrix baseM = lon.multiply(lat);
         if (this.getAzimuth() != null)
             baseM = baseM.multiply(Matrix.fromAxisAngle(this.getAzimuth().multiply(-1), Vec4.UNIT_Y));
@@ -365,20 +365,20 @@ public class AntennaAxes extends AbstractShape {
         py = py.add3(rp);
         pz = pz.add3(rp);
 
-        Vec4 screenPointX = dc.getView().project(px); // project points to the viewport
-        Vec4 screenPointY = dc.getView().project(py);
-        Vec4 screenPointZ = dc.getView().project(pz);
+        Vec4 screenPointX = dc.view().project(px); // project points to the viewport
+        Vec4 screenPointY = dc.view().project(py);
+        Vec4 screenPointZ = dc.view().project(pz);
 
         // We don't want the current reference center to apply because we're going to draw the labels in 2D and the
         // translation to the reference point is already incorporated in the screen point calculations above. The
         // reference center is restored below after the labels are drawn.
-        dc.getView().popReferenceCenter(dc);
+        dc.view().popReferenceCenter(dc);
 
         OGLStackHandler osh = new OGLStackHandler();
 
         try {
             osh.pushProjectionIdentity(gl);
-            gl.glOrtho(0.0d, dc.getView().getViewport().width, 0.0d, dc.getView().getViewport().height, -1.0d, 1.0d);
+            gl.glOrtho(0.0d, dc.view().getViewport().width, 0.0d, dc.view().getViewport().height, -1.0d, 1.0d);
 
             osh.pushModelviewIdentity(gl);
 
@@ -409,7 +409,7 @@ public class AntennaAxes extends AbstractShape {
         }
         finally {
             osh.pop(gl);
-            dc.getView().pushReferenceCenter(dc, getCurrent().getReferencePoint());
+            dc.view().pushReferenceCenter(dc, getCurrent().getReferencePoint());
         }
     }
 

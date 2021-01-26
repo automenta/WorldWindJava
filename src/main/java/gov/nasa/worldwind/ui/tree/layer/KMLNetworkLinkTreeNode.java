@@ -64,12 +64,12 @@ public class KMLNetworkLinkTreeNode extends KMLContainerTreeNode {
                     // Ensure that the node list is manipulated on the EDT
                     if (SwingUtilities.isEventDispatchThread()) {
                         refresh();
-                        KMLNetworkLinkTreeNode.this.firePropertyChange(Keys.RETRIEVAL_STATE_SUCCESSFUL, null, this);
+                        KMLNetworkLinkTreeNode.this.emit(Keys.RETRIEVAL_STATE_SUCCESSFUL, null, this);
                     } else {
                         SwingUtilities.invokeLater(new Runnable() {
                             public void run() {
                                 refresh();
-                                KMLNetworkLinkTreeNode.this.firePropertyChange(Keys.RETRIEVAL_STATE_SUCCESSFUL, null,
+                                KMLNetworkLinkTreeNode.this.emit(Keys.RETRIEVAL_STATE_SUCCESSFUL, null,
                                     this);
                             }
                         });

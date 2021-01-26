@@ -71,18 +71,18 @@ public class TrackPanel extends JPanel {
     @SuppressWarnings("UnusedDeclaration")
     private void visibilityActionPerformed(ActionEvent e) {
         String vis = this.visibilityFlag.isSelected() ? TrackController.TRACK_ENABLE : TrackController.TRACK_DISABLE;
-        this.positionTable.getSarTrack().firePropertyChange(vis, null, this.positionTable.getSarTrack());
+        this.positionTable.getSarTrack().emit(vis, null, this.positionTable.getSarTrack());
     }
 
     @SuppressWarnings("UnusedDeclaration")
     private void nextTrackPositionActionPerformed(ActionEvent e) {
-        this.positionTable.getSarTrack().firePropertyChange(TrackController.MOVE_TO_NEXT_POINT, null,
+        this.positionTable.getSarTrack().emit(TrackController.MOVE_TO_NEXT_POINT, null,
             this.positionTable.getSarTrack());
     }
 
     @SuppressWarnings("UnusedDeclaration")
     private void removeTrackPositionActionPerformed(ActionEvent e) {
-        this.positionTable.getSarTrack().firePropertyChange(TrackController.REMOVE_LAST_POINT, null,
+        this.positionTable.getSarTrack().emit(TrackController.REMOVE_LAST_POINT, null,
             this.positionTable.getSarTrack());
     }
 
@@ -115,7 +115,7 @@ public class TrackPanel extends JPanel {
             trackOffset = offset;
 
         this.positionTable.getSarTrack().setOffset(trackOffset);
-        this.positionTable.getSarTrack().firePropertyChange(TrackController.TRACK_MODIFY, null,
+        this.positionTable.getSarTrack().emit(TrackController.TRACK_MODIFY, null,
             this.positionTable.getSarTrack());
     }
 

@@ -260,7 +260,7 @@ public class OpenStreetMapShapefileLoader {
         }
 
         public boolean isActive(DrawContext dc) {
-            double eyeElevation = dc.getView().getEyePosition().getElevation();
+            double eyeElevation = dc.view().getEyePosition().getElevation();
             return this.minActiveAltitude <= eyeElevation && eyeElevation <= this.maxActiveAltitude;
         }
     }

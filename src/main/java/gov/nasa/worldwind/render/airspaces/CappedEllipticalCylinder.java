@@ -442,7 +442,7 @@ public class CappedEllipticalCylinder extends AbstractAirspace {
         }
 
         double[] altitudes = this.getAltitudes(dc.getVerticalExaggeration());
-        return dc.getGlobe().computePointFromPosition(this.center.getLatitude(), this.center.getLongitude(),
+        return dc.getGlobe().computePointFromPosition(this.center.getLat(), this.center.getLon(),
             altitudes[0]); // model-coordinate reference center
     }
 
@@ -494,7 +494,7 @@ public class CappedEllipticalCylinder extends AbstractAirspace {
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         OGLStackHandler ogsh = new OGLStackHandler();
         try {
-            dc.getView().pushReferenceCenter(dc, refCenter);
+            dc.view().pushReferenceCenter(dc, refCenter);
 
             if (Airspace.DRAW_STYLE_OUTLINE.equals(drawStyle)) {
                 // Outer cylinder isn't rendered if outer radius is zero.
@@ -545,7 +545,7 @@ public class CappedEllipticalCylinder extends AbstractAirspace {
             }
         }
         finally {
-            dc.getView().popReferenceCenter(dc);
+            dc.view().popReferenceCenter(dc);
             ogsh.pop(gl);
         }
     }

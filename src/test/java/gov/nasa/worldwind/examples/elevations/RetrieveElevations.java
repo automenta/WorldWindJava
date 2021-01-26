@@ -196,7 +196,7 @@ public class RetrieveElevations extends ApplicationTemplate {
 
             StringBuilder sb = new StringBuilder();
             for (LatLon ll : latlons) {
-                double e = model.getElevation(ll.getLatitude(), ll.getLongitude());
+                double e = model.getElevation(ll.getLat(), ll.getLon());
                 sb.append("\n").append(e);
             }
 

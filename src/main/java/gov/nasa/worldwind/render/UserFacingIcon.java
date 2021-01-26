@@ -226,7 +226,7 @@ public class UserFacingIcon extends KVMap implements WWIcon, Movable, Draggable 
         return this.dragEnabled;
     }
 
-    @Override
+
     public void setDragEnabled(boolean enabled) {
         this.dragEnabled = enabled;
     }
@@ -268,14 +268,14 @@ public class UserFacingIcon extends KVMap implements WWIcon, Movable, Draggable 
         // Save the iconPosition property only if all parts (latitude, longitude, and elevation) can be saved.
         // We will not save a partial iconPosition (for example, just the elevation).
         if (this.iconPosition != null
-            && this.iconPosition.getLatitude() != null
-            && this.iconPosition.getLongitude() != null) {
+            && this.iconPosition.getLat() != null
+            && this.iconPosition.getLon() != null) {
             RestorableSupport.StateObject positionStateObj = rs.addStateObject("position");
             if (positionStateObj != null) {
                 rs.addStateValueAsDouble(positionStateObj, "latitude",
-                    this.iconPosition.getLatitude().degrees);
+                    this.iconPosition.getLat().degrees);
                 rs.addStateValueAsDouble(positionStateObj, "longitude",
-                    this.iconPosition.getLongitude().degrees);
+                    this.iconPosition.getLon().degrees);
                 rs.addStateValueAsDouble(positionStateObj, "elevation",
                     this.iconPosition.getElevation());
             }

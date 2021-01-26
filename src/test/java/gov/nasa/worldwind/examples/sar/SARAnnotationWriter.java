@@ -97,13 +97,13 @@ public class SARAnnotationWriter {
             if (sarAnnotation.getPosition() != null) {
                 Element lat = this.doc.createElement("latitude");
                 Text latText = this.doc.createTextNode(
-                    Double.toString(sarAnnotation.getPosition().getLatitude().degrees));
+                    Double.toString(sarAnnotation.getPosition().getLat().degrees));
                 lat.appendChild(latText);
                 anno.appendChild(lat);
 
                 Element lon = this.doc.createElement("longitude");
                 Text lonText = this.doc.createTextNode(
-                    Double.toString(sarAnnotation.getPosition().getLongitude().degrees));
+                    Double.toString(sarAnnotation.getPosition().getLon().degrees));
                 lon.appendChild(lonText);
                 anno.appendChild(lon);
             }

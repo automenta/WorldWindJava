@@ -405,7 +405,7 @@ public class Curtain extends AbstractAirspace {
         int[] lightModelTwoSide = new int[1];
         try {
             gl.glGetIntegerv(GL2.GL_LIGHT_MODEL_TWO_SIDE, lightModelTwoSide, 0);
-            dc.getView().pushReferenceCenter(dc, referenceCenter);
+            dc.view().pushReferenceCenter(dc, referenceCenter);
 
             if (Airspace.DRAW_STYLE_FILL.equals(drawStyle)) {
                 gl.glLightModeli(GL2.GL_LIGHT_MODEL_TWO_SIDE, GL2.GL_TRUE);
@@ -418,7 +418,7 @@ public class Curtain extends AbstractAirspace {
             }
         }
         finally {
-            dc.getView().popReferenceCenter(dc);
+            dc.view().popReferenceCenter(dc);
             gl.glLightModeli(GL2.GL_LIGHT_MODEL_TWO_SIDE, lightModelTwoSide[0]);
         }
     }
@@ -540,9 +540,9 @@ public class Curtain extends AbstractAirspace {
                 // For upper altitude, use the Position's if specified, otherwise the curtain's upper altitude.
                 double elevation = (dAlt != null && s == 1) ? alt0 + p * dAlt : altitude[s];
                 if (terrainConformant[s])
-                    elevation += this.computeElevationAt(dc, ll.getLatitude(), ll.getLongitude());
+                    elevation += this.computeElevationAt(dc, ll.getLat(), ll.getLon());
 
-                Vec4 vec = globe.computePointFromPosition(ll.getLatitude(), ll.getLongitude(), elevation);
+                Vec4 vec = globe.computePointFromPosition(ll.getLat(), ll.getLon(), elevation);
                 dest[index] = (float) (vec.x - referenceCenter.x);
                 dest[index + 1] = (float) (vec.y - referenceCenter.y);
                 dest[index + 2] = (float) (vec.z - referenceCenter.z);

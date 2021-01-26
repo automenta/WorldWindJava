@@ -18,13 +18,13 @@ public class StatusBarMGRS extends StatusBar {
     protected void handleCursorPositionChange(PositionEvent event) {
         Position newPos = event.getPosition();
         if (newPos != null) {
-            String las = String.format("%7.4f\u00B0 %7.4f\u00B0", newPos.getLatitude().degrees,
-                newPos.getLongitude().degrees);
+            String las = String.format("%7.4f\u00B0 %7.4f\u00B0", newPos.getLat().degrees,
+                newPos.getLon().degrees);
             String els = makeCursorElevationDescription(
-                getEventSource().model().globe().elevation(newPos.getLatitude(), newPos.getLongitude()));
+                getEventSource().model().globe().elevation(newPos.getLat(), newPos.getLon()));
             String los = "";
             try {
-                MGRSCoord MGRS = MGRSCoord.fromLatLon(newPos.getLatitude(), newPos.getLongitude(),
+                MGRSCoord MGRS = MGRSCoord.fromLatLon(newPos.getLat(), newPos.getLon(),
                     getEventSource().model().globe());
                 los = MGRS.toString();
             }

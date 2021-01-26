@@ -243,9 +243,9 @@ public class GlobeAnnotationTest
         assertEquals("text", expected.getText(), actual.getText());
         if (expected.getPosition() != null && actual.getPosition() != null)
         {
-            assertEquals("position.latitude", expected.getPosition().getLatitude(), actual.getPosition().getLatitude());
-            assertEquals("position.longitude", expected.getPosition().getLongitude(),
-                actual.getPosition().getLongitude());
+            assertEquals("position.latitude", expected.getPosition().getLat(), actual.getPosition().getLat());
+            assertEquals("position.longitude", expected.getPosition().getLon(),
+                actual.getPosition().getLon());
             assertEquals("position.elevation", expected.getPosition().getElevation(),
                 actual.getPosition().getElevation(), 0.0);
         }

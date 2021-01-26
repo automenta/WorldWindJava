@@ -24,23 +24,27 @@ public class BasicMarker implements Marker {
     // required to be specified at construction.
     protected MarkerAttributes attributes;
 
+    public BasicMarker(Position position) {
+        this(position, new BasicMarkerAttributes());
+    }
+
     public BasicMarker(Position position, MarkerAttributes attrs) {
-        if (attrs == null) {
-            String message = Logging.getMessage("nullValue.AttributesIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (attrs == null) {
+//            String message = Logging.getMessage("nullValue.AttributesIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         this.position = position;
         this.attributes = attrs;
     }
 
     public BasicMarker(Position position, MarkerAttributes attrs, Angle heading) {
-        if (attrs == null) {
-            String message = Logging.getMessage("nullValue.AttributesIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (attrs == null) {
+//            String message = Logging.getMessage("nullValue.AttributesIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         this.position = position;
         this.heading = heading;

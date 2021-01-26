@@ -394,9 +394,9 @@ public class Annotations extends ApplicationTemplate {
             ga = new GlobeAnnotation("DRAG ME!", Position.fromDegrees(42, -118, 0), Font.decode("Arial-BOLD-18")) {
                 public void doDraw(DrawContext dc, int width, int height, double opacity, Position pickPosition) {
                     // if annotation has moved, set its text
-                    if (getPosition().getLatitude().degrees != 42 || getPosition().getLongitude().degrees != -118)
-                        setText(String.format("Lat %7.4f\u00B0\nLon %7.4f\u00B0", getPosition().getLatitude().degrees,
-                            getPosition().getLongitude().degrees));
+                    if (getPosition().getLat().degrees != 42 || getPosition().getLon().degrees != -118)
+                        setText(String.format("Lat %7.4f\u00B0\nLon %7.4f\u00B0", getPosition().getLat().degrees,
+                            getPosition().getLon().degrees));
 
                     // Keep rendering
                     super.doDraw(dc, width, height, opacity, pickPosition);
@@ -1535,8 +1535,8 @@ public class Annotations extends ApplicationTemplate {
             public Vec4 getAnnotationDrawPoint(DrawContext dc) {
                 final Position pos = this.getPosition();
                 return dc.getGlobe().computePointFromPosition(
-                    pos.getLatitude(),
-                    pos.getLongitude(),
+                    pos.getLat(),
+                    pos.getLon(),
                     pos.getElevation() * dc.getVerticalExaggeration());
             }
         }

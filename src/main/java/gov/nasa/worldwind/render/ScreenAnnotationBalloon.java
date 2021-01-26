@@ -61,7 +61,7 @@ public class ScreenAnnotationBalloon extends AbstractAnnotationBalloon implement
      * {@inheritDoc}
      */
     protected void computePosition(DrawContext dc) {
-        Rectangle viewport = dc.getView().getViewport();
+        Rectangle viewport = dc.view().getViewport();
 
         int y = (int) viewport.getHeight() - this.screenPoint.y - 1;
         this.getAnnotation().setScreenPoint(new Point(this.screenPoint.x, y));

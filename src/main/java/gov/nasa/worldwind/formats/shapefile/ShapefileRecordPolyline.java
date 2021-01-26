@@ -211,8 +211,8 @@ public class ShapefileRecordPolyline extends ShapefileRecord {
                     z = zValues[index];
 
                 xmlWriter.writeCharacters(String.format(Locale.US, "%f,%f,%f ",
-                    latLon.getLongitude().degrees,
-                    latLon.getLatitude().degrees,
+                    latLon.getLon().degrees,
+                    latLon.getLat().degrees,
                     z));
 
                 index++;

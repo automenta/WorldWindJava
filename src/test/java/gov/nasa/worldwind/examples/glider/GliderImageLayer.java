@@ -77,7 +77,7 @@ public class GliderImageLayer extends AbstractLayer {
             this.regionLayer.addAll(makePaths(image.getRegionsOfInterest(), image.getAltitude()));
         }
 
-        this.firePropertyChange(GliderImageLayer.GLIDER_IMAGE, this.image, this.image = image);
+        this.emit(GliderImageLayer.GLIDER_IMAGE, this.image, this.image = image);
     }
 
     @Override
@@ -127,7 +127,7 @@ public class GliderImageLayer extends AbstractLayer {
                             GliderImageLayer.this.setImage((GliderImage) evt.getNewValue());
                         }   // Cause owner to repaint
                         evt.setPropagationId(GliderImageLayer.this);
-                        GliderImageLayer.this.firePropertyChange(evt);
+                        GliderImageLayer.this.emit(evt);
                         break;
                     case GliderImage.GLIDER_IMAGE_OPACITY:
                         if (evt.getNewValue() == null) {
@@ -136,7 +136,7 @@ public class GliderImageLayer extends AbstractLayer {
                         GliderImageLayer.this.imageLayer.setOpacity(((GliderImage) evt.getNewValue()).getOpacity());
                         // Cause owner to repaint
                         evt.setPropagationId(GliderImageLayer.this);
-                        GliderImageLayer.this.firePropertyChange(evt);
+                        GliderImageLayer.this.emit(evt);
                         break;
                     case GliderRegionOfInterest.GLIDER_REGION_OF_INTEREST:
                     case GliderImage.GLIDER_REGIONS_OF_INTEREST:
@@ -147,7 +147,7 @@ public class GliderImageLayer extends AbstractLayer {
                                 GliderImageLayer.this.image.getAltitude()));
                         }   // Cause owner to repaint
                         evt.setPropagationId(GliderImageLayer.this);
-                        GliderImageLayer.this.firePropertyChange(evt);
+                        GliderImageLayer.this.emit(evt);
                         break;
                     default:
                         break;

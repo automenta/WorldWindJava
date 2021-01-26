@@ -39,8 +39,8 @@ public class AntennaViewer extends ApplicationTemplate {
     }
 
     public static void main(String[] args) {
-        Configuration.setValue(Keys.INITIAL_LATITUDE, ANTENNA_POSITION.getLatitude().degrees);
-        Configuration.setValue(Keys.INITIAL_LONGITUDE, ANTENNA_POSITION.getLongitude().degrees);
+        Configuration.setValue(Keys.INITIAL_LATITUDE, ANTENNA_POSITION.getLat().degrees);
+        Configuration.setValue(Keys.INITIAL_LONGITUDE, ANTENNA_POSITION.getLon().degrees);
         Configuration.setValue(Keys.INITIAL_ALTITUDE, 30.0e3);
 
         ApplicationTemplate.start("WorldWind Antenna Gain Visualization", AppFrame.class);

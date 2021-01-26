@@ -329,7 +329,7 @@ public class VPFCoveragePanel extends JPanel {
         public void actionPerformed(ActionEvent actionEvent) {
             // Fire property change event on the database
             boolean newState = ((AbstractButton) actionEvent.getSource()).isSelected();
-            this.db.firePropertyChange(
+            this.db.emit(
                 new PropertyChangeEvent(this.library, VPFLayer.LIBRARY_CHANGED, this.selected, newState));
             this.selected = newState;
             wwd.redraw();
@@ -354,7 +354,7 @@ public class VPFCoveragePanel extends JPanel {
         public void actionPerformed(ActionEvent actionEvent) {
             // Fire property change event on the database
             boolean newState = ((AbstractButton) actionEvent.getSource()).isSelected();
-            this.db.firePropertyChange(
+            this.db.emit(
                 new PropertyChangeEvent(this.coverage, VPFLayer.COVERAGE_CHANGED, this.selected, newState));
             this.selected = newState;
             wwd.redraw();

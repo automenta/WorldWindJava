@@ -44,7 +44,7 @@ public class TrackRenderer implements Disposable {
 
     protected static void begin(DrawContext dc) {
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-        Vec4 cameraPosition = dc.getView().getEyePoint();
+        Vec4 cameraPosition = dc.view().getEyePoint();
 
         if (dc.isPickingMode()) {
             PickSupport.beginPicking(dc);
@@ -228,8 +228,8 @@ public class TrackRenderer implements Disposable {
     }
 
     private double computeMarkerRadius(DrawContext dc, Vec4 point) {
-        double d = point.distanceTo3(dc.getView().getEyePoint());
-        double radius = this.markerPixels * dc.getView().computePixelSizeAtDistance(d);
+        double d = point.distanceTo3(dc.view().getEyePoint());
+        double radius = this.markerPixels * dc.view().computePixelSizeAtDistance(d);
         if (radius < this.minMarkerSize)
             radius = this.minMarkerSize;
 
@@ -283,12 +283,12 @@ public class TrackRenderer implements Disposable {
             return dc.getGlobe().computePointFromPosition(pos);
 
         // Compute points that are at the track-specified elevation
-        Vec4 point = dc.getSurfaceGeometry().getSurfacePoint(pos.getLatitude(), pos.getLongitude(), this.elevation);
+        Vec4 point = dc.getSurfaceGeometry().getSurfacePoint(pos.getLat(), pos.getLon(), this.elevation);
         if (point != null)
             return point;
 
         // Point is outside the current sector geometry, so compute it from the globe.
-        return dc.getGlobe().computePointFromPosition(pos.getLatitude(), pos.getLongitude(), this.elevation);
+        return dc.getGlobe().computePointFromPosition(pos.getLat(), pos.getLon(), this.elevation);
     }
 
     public Vec4 pick(DrawContext dc, Iterator<TrackPoint> trackPositions, Point pickPoint, Layer layer) {
@@ -342,9 +342,9 @@ public class TrackRenderer implements Disposable {
         }
 
         protected void render(DrawContext dc, Vec4 point, double radius) {
-            dc.getView().pushReferenceCenter(dc, point);
+            dc.view().pushReferenceCenter(dc, point);
             this.doRender(dc, point, radius);
-            dc.getView().popReferenceCenter(dc);
+            dc.view().popReferenceCenter(dc);
         }
     }
 

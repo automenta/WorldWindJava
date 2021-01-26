@@ -493,7 +493,7 @@ public class ScreenSelector extends WWObjectImpl implements MouseListener, Mouse
                 | GL2.GL_CURRENT_BIT // For current color.
                 | GL2.GL_DEPTH_BUFFER_BIT; // For depth test disable.
 
-            Rectangle viewport = dc.getView().getViewport();
+            Rectangle viewport = dc.view().getViewport();
             Rectangle selection = this.getSelection();
 
             GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.

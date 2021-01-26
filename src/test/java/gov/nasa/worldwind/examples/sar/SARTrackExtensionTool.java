@@ -400,17 +400,17 @@ public class SARTrackExtensionTool implements MouseListener, PositionListener, P
         Angle angularDistance = Angle.fromRadians(distance / globe.getRadius());
         LatLon nextLocation = LatLon.rhumbEndPosition(lastPosition, heading, angularDistance);
 
-        return new SARPosition(nextLocation.getLatitude(), nextLocation.getLongitude(), lastPosition.getElevation());
+        return new SARPosition(nextLocation.getLat(), nextLocation.getLon(), lastPosition.getElevation());
     }
 
     protected SARPosition positionToTrackPosition(Position position) {
         double trackOffset = this.track.getOffset();
-        return new SARPosition(position.getLatitude(), position.getLongitude(), position.getElevation() - trackOffset);
+        return new SARPosition(position.getLat(), position.getLon(), position.getElevation() - trackOffset);
     }
 
     protected Position trackPositionToPosition(Position position) {
         double trackOffset = this.track.getOffset();
-        return new Position(position.getLatitude(), position.getLongitude(), position.getElevation() + trackOffset);
+        return new Position(position.getLat(), position.getLon(), position.getElevation() + trackOffset);
     }
 
     //**************************************************************//

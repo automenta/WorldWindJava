@@ -62,16 +62,16 @@ public class SphereAirspaceEditor extends AbstractAirspaceEditor {
         if (terrainConforming) {
             if (wwd.sceneControl().getTerrain() != null) {
                 point = wwd.sceneControl().getTerrain().getSurfacePoint(
-                    location.getLatitude(), location.getLongitude(), altitude);
+                    location.getLat(), location.getLon(), altitude);
             } else {
                 double elevation = wwd.model().globe().elevation(
-                    location.getLatitude(), location.getLongitude());
+                    location.getLat(), location.getLon());
                 point = wwd.model().globe().computePointFromPosition(
-                    location.getLatitude(), location.getLongitude(), elevation + altitude);
+                    location.getLat(), location.getLon(), elevation + altitude);
             }
         } else {
             point = wwd.model().globe().computePointFromPosition(
-                location.getLatitude(), location.getLongitude(), altitude);
+                location.getLat(), location.getLon(), altitude);
         }
 
         return point;
@@ -158,7 +158,7 @@ public class SphereAirspaceEditor extends AbstractAirspaceEditor {
         if (pickPoint == null)
             return;
 
-        Line pickRay = dc.getView().computeRayFromScreenPoint(pickPoint.getX(), pickPoint.getY());
+        Line pickRay = dc.view().computeRayFromScreenPoint(pickPoint.getX(), pickPoint.getY());
 
         Vec4 centerPoint = bounds.getCenter();
         double radius = bounds.getRadius();
@@ -167,8 +167,8 @@ public class SphereAirspaceEditor extends AbstractAirspaceEditor {
         Vec4 normalToNearest = nearestPointOnLine.subtract3(centerPoint).normalize3();
         Vec4 nearestPointOnSphere = normalToNearest.multiply3(radius).add3(centerPoint);
 
-        Vec4 nearestScreenPointOnLine = dc.getView().project(nearestPointOnLine);
-        Vec4 nearestScreenPointOnSphere = dc.getView().project(nearestPointOnSphere);
+        Vec4 nearestScreenPointOnLine = dc.view().project(nearestPointOnLine);
+        Vec4 nearestScreenPointOnSphere = dc.view().project(nearestPointOnSphere);
 
         double distance = nearestScreenPointOnLine.distanceTo3(nearestScreenPointOnSphere);
         if (this.isAlwaysShowRadiusControl() || distance < this.getRadiusControlDrawDistance()) {

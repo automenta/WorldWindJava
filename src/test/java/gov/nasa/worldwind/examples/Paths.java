@@ -91,7 +91,7 @@ public class Paths extends ApplicationTemplate {
             WorldWindow.insertBeforeCompass(wwd(), layer);
 
             Collection<Marker> markers = new ArrayList<>(1);
-            markers.add(new BasicMarker(Position.fromDegrees(90, 0), new BasicMarkerAttributes()));
+            markers.add(new BasicMarker(Position.fromDegrees(90, 0)));
             MarkerLayer markerLayer = new MarkerLayer();
             markerLayer.setMarkers(markers);
             WorldWindow.insertBeforeCompass(wwd(), markerLayer);

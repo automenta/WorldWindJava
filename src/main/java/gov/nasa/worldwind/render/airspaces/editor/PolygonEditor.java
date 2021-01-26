@@ -72,7 +72,7 @@ public class PolygonEditor extends AbstractAirspaceEditor {
         // Apply the vertical exaggeration to the polygon's altitude when computing the Cartesian point of the polygon's
         // vertex. We do this to match the logic in Polygon, which applies vertical exaggeration to the altitude of its
         // vertices.
-        Vec4 point = this.getPolygon().computePointFromPosition(dc, location.getLatitude(), location.getLongitude(),
+        Vec4 point = this.getPolygon().computePointFromPosition(dc, location.getLat(), location.getLon(),
             dc.getVerticalExaggeration() * altitude, terrainConforming);
 
         AirspaceControlPoint controlPoint =

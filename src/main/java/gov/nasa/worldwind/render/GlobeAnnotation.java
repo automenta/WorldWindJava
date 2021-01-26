@@ -29,6 +29,10 @@ public class GlobeAnnotation extends AbstractAnnotation implements Locatable, Mo
 
     protected Integer altitudeMode;
 
+    public GlobeAnnotation(Position position) {
+        this(null, position);
+    }
+
     /**
      * Creates a <code>GlobeAnnotation</code> with the given text, at the given globe <code>Position</code>.
      *
@@ -83,7 +87,7 @@ public class GlobeAnnotation extends AbstractAnnotation implements Locatable, Mo
 
     protected static Double computeLookAtDistance(DrawContext dc) {
         // TODO: Remove this method once the new mechanism for scaling and opacity is in place.
-        View view = dc.getView();
+        View view = dc.view();
 
         // Get point in the middle of the screen
         Position groundPos = view.computePositionFromScreenPoint(
@@ -109,7 +113,7 @@ public class GlobeAnnotation extends AbstractAnnotation implements Locatable, Mo
     protected static void setDepthFunc(DrawContext dc, Vec4 screenPoint) {
         GL gl = dc.getGL();
 
-        Position eyePos = dc.getView().getEyePosition();
+        Position eyePos = dc.view().getEyePosition();
         if (eyePos == null) {
             gl.glDepthFunc(GL.GL_ALWAYS);
             return;
@@ -220,7 +224,6 @@ public class GlobeAnnotation extends AbstractAnnotation implements Locatable, Mo
         return this.dragEnabled;
     }
 
-    @Override
     public void setDragEnabled(boolean enabled) {
         this.dragEnabled = enabled;
     }
@@ -263,7 +266,7 @@ public class GlobeAnnotation extends AbstractAnnotation implements Locatable, Mo
         if (point == null)
             return null;
 
-        Vec4 screenPoint = dc.getView().project(point);
+        Vec4 screenPoint = dc.view().project(point);
         if (screenPoint == null)
             return null;
 
@@ -293,10 +296,10 @@ public class GlobeAnnotation extends AbstractAnnotation implements Locatable, Mo
         if (point == null)
             return;
 
-        if (dc.getView().getFrustumInModelCoordinates().near.distanceTo(point) < 0)
+        if (dc.view().getFrustumInModelCoordinates().near.distanceTo(point) < 0)
             return;
 
-        Vec4 screenPoint = dc.getView().project(point);
+        Vec4 screenPoint = dc.view().project(point);
         if (screenPoint == null)
             return;
 
@@ -318,7 +321,7 @@ public class GlobeAnnotation extends AbstractAnnotation implements Locatable, Mo
             // Determine scale and opacity factors based on distance from eye vs the distance to the look at point.
             Double lookAtDistance = GlobeAnnotation.computeLookAtDistance(dc);
             if (lookAtDistance != null) {
-                double eyeDistance = dc.getView().getEyePoint().distanceTo3(point);
+                double eyeDistance = dc.view().getEyePoint().distanceTo3(point);
                 double distanceFactor = Math.sqrt(lookAtDistance / eyeDistance);
                 scale = WWMath.clamp(distanceFactor,
                     this.attributes.getDistanceMinScale(), this.attributes.getDistanceMaxScale());
@@ -327,8 +330,8 @@ public class GlobeAnnotation extends AbstractAnnotation implements Locatable, Mo
             }
         } else {
             // Determine scale and opacity so as to maintain real world dimension
-            double distance = dc.getView().getEyePoint().distanceTo3(point);
-            double pixelSize = dc.getView().computePixelSizeAtDistance(distance);
+            double distance = dc.view().getEyePoint().distanceTo3(point);
+            double pixelSize = dc.view().computePixelSizeAtDistance(distance);
             double scaledHeight = this.heightInMeter / pixelSize;
             scale = scaledHeight / size.height;
             opacity = WWMath.clamp(scale, this.attributes.getDistanceMinOpacity(), 1);
@@ -353,17 +356,17 @@ public class GlobeAnnotation extends AbstractAnnotation implements Locatable, Mo
         Integer altitudeMode = this.getAltitudeMode();
 
         if (dc.is2DGlobe()) {
-            drawPoint = dc.computeTerrainPoint(pos.getLatitude(), pos.getLongitude(), 0);
+            drawPoint = dc.computeTerrainPoint(pos.getLat(), pos.getLon(), 0);
         } else if (altitudeMode == null) {
             drawPoint = getAnnotationDrawPointLegacy(dc);
         } else if (altitudeMode == WorldWind.CLAMP_TO_GROUND) {
-            drawPoint = dc.computeTerrainPoint(pos.getLatitude(), pos.getLongitude(), 0);
+            drawPoint = dc.computeTerrainPoint(pos.getLat(), pos.getLon(), 0);
         } else if (altitudeMode == WorldWind.RELATIVE_TO_GROUND) {
-            drawPoint = dc.computeTerrainPoint(pos.getLatitude(), pos.getLongitude(), pos.getAltitude());
+            drawPoint = dc.computeTerrainPoint(pos.getLat(), pos.getLon(), pos.getAltitude());
         } else  // ABSOLUTE
         {
             double height = pos.getElevation() * dc.getVerticalExaggeration();
-            drawPoint = dc.getGlobe().computePointFromPosition(pos.getLatitude(), pos.getLongitude(), height);
+            drawPoint = dc.getGlobe().computePointFromPosition(pos.getLat(), pos.getLon(), height);
         }
 
         return drawPoint;
@@ -382,7 +385,7 @@ public class GlobeAnnotation extends AbstractAnnotation implements Locatable, Mo
 
         Position pos = this.getPosition();
         if (pos.getElevation() < dc.getGlobe().getMaxElevation())
-            drawPoint = dc.getSurfaceGeometry().getSurfacePoint(pos.getLatitude(), pos.getLongitude(),
+            drawPoint = dc.getSurfaceGeometry().getSurfacePoint(pos.getLat(), pos.getLon(),
                 pos.getElevation() * dc.getVerticalExaggeration());
 
         if (drawPoint == null)
@@ -426,14 +429,14 @@ public class GlobeAnnotation extends AbstractAnnotation implements Locatable, Mo
         // Save the position property only if all parts (latitude, longitude, and elevation) can be saved.
         // We will not save a partial position (for example, just the elevation).
         if (this.position != null
-            && this.position.getLatitude() != null
-            && this.position.getLongitude() != null) {
+            && this.position.getLat() != null
+            && this.position.getLon() != null) {
             RestorableSupport.StateObject positionStateObj = restorableSupport.addStateObject("position");
             if (positionStateObj != null) {
                 restorableSupport.addStateValueAsDouble(positionStateObj, "latitude",
-                    this.position.getLatitude().degrees);
+                    this.position.getLat().degrees);
                 restorableSupport.addStateValueAsDouble(positionStateObj, "longitude",
-                    this.position.getLongitude().degrees);
+                    this.position.getLon().degrees);
                 restorableSupport.addStateValueAsDouble(positionStateObj, "elevation",
                     this.position.getElevation());
             }

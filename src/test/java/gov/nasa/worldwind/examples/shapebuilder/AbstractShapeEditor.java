@@ -213,14 +213,14 @@ public abstract class AbstractShapeEditor extends AbstractLayer implements Mouse
         if (posA == null || posB == null)
             return false;
 
-        String aLat = this.unitsFormat.angleNL("", posA.getLatitude());
-        String bLat = this.unitsFormat.angleNL("", posB.getLatitude());
+        String aLat = this.unitsFormat.angleNL("", posA.getLat());
+        String bLat = this.unitsFormat.angleNL("", posB.getLat());
 
         if (!aLat.equals(bLat))
             return false;
 
-        String aLon = this.unitsFormat.angleNL("", posA.getLongitude());
-        String bLon = this.unitsFormat.angleNL("", posB.getLongitude());
+        String aLon = this.unitsFormat.angleNL("", posA.getLon());
+        String bLon = this.unitsFormat.angleNL("", posB.getLon());
 
         if (!aLon.equals(bLon))
             return false;

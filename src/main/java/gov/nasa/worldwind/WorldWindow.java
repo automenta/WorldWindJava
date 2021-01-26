@@ -114,7 +114,7 @@ public interface WorldWindow extends KV, PropertyChangeListener {
 
     default void propertyChange(PropertyChangeEvent evt) {
         if (this.wwd() == evt.getSource())
-            this.firePropertyChange(evt);
+            this.emit(evt);
 
         //noinspection StringEquality
         if (evt.getPropertyName() == WorldWind.SHUTDOWN_EVENT)
@@ -286,8 +286,8 @@ public interface WorldWindow extends KV, PropertyChangeListener {
         return this.wwd().removeKey(key);
     }
 
-    default void firePropertyChange(PropertyChangeEvent propertyChangeEvent) {
-        this.wwd().firePropertyChange(propertyChangeEvent);
+    default void emit(PropertyChangeEvent propertyChangeEvent) {
+        this.wwd().emit(propertyChangeEvent);
     }
 
     default KV copy() {

@@ -52,7 +52,7 @@ public class GliderWorldWindow extends WorldWindowGLCanvas {
 
         this.imageTable.add(image);
 
-        this.firePropertyChange(GliderImage.GLIDER_IMAGE_SOURCE, null, image);
+        this.emit(GliderImage.GLIDER_IMAGE_SOURCE, null, image);
 
         this.repaint();
     }
@@ -80,7 +80,7 @@ public class GliderWorldWindow extends WorldWindowGLCanvas {
             layer.dispose();
         }
 
-        this.firePropertyChange(GliderImage.GLIDER_IMAGE_SOURCE, null, image);
+        this.emit(GliderImage.GLIDER_IMAGE_SOURCE, null, image);
 
         this.repaint();
     }
@@ -108,7 +108,7 @@ public class GliderWorldWindow extends WorldWindowGLCanvas {
 
     protected class LayerListener implements PropertyChangeListener {
         public void propertyChange(PropertyChangeEvent evt) {
-            GliderWorldWindow.this.firePropertyChange(GliderImage.GLIDER_IMAGE_SOURCE, null, this);
+            GliderWorldWindow.this.emit(GliderImage.GLIDER_IMAGE_SOURCE, null, this);
             GliderWorldWindow.this.repaint();
         }
     }

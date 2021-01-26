@@ -396,8 +396,8 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             Position position = ShapeUtils.getNewShapePosition(wwd);
 
             // adjust position height so shape sits on terrain surface
-            Vec4 centerPoint = wwd.sceneControl().getTerrain().getSurfacePoint(position.getLatitude(),
-                position.getLongitude(), radius);
+            Vec4 centerPoint = wwd.sceneControl().getTerrain().getSurfacePoint(position.getLat(),
+                position.getLon(), radius);
             Position centerPosition = wwd.model().globe().computePositionFromPoint(centerPoint);
 
             shape.setCenterPosition(centerPosition);
@@ -443,8 +443,8 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             Position position = ShapeUtils.getNewShapePosition(wwd);
 
             // adjust position height so shape sits on terrain surface
-            Vec4 centerPoint = wwd.sceneControl().getTerrain().getSurfacePoint(position.getLatitude(),
-                position.getLongitude(), radius);
+            Vec4 centerPoint = wwd.sceneControl().getTerrain().getSurfacePoint(position.getLat(),
+                position.getLon(), radius);
             Position centerPosition = wwd.model().globe().computePositionFromPoint(centerPoint);
 
             shape.setCenterPosition(centerPosition);
@@ -490,8 +490,8 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             Position position = ShapeUtils.getNewShapePosition(wwd);
 
             // adjust position height so shape sits on terrain surface
-            Vec4 centerPoint = wwd.sceneControl().getTerrain().getSurfacePoint(position.getLatitude(),
-                position.getLongitude(), radius);
+            Vec4 centerPoint = wwd.sceneControl().getTerrain().getSurfacePoint(position.getLat(),
+                position.getLon(), radius);
             Position centerPosition = wwd.model().globe().computePositionFromPoint(centerPoint);
 
             shape.setCenterPosition(centerPosition);
@@ -537,8 +537,8 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             Position position = ShapeUtils.getNewShapePosition(wwd);
 
             // adjust position height so shape sits on terrain surface
-            Vec4 centerPoint = wwd.sceneControl().getTerrain().getSurfacePoint(position.getLatitude(),
-                position.getLongitude(), radius);
+            Vec4 centerPoint = wwd.sceneControl().getTerrain().getSurfacePoint(position.getLat(),
+                position.getLon(), radius);
             Position centerPosition = wwd.model().globe().computePositionFromPoint(centerPoint);
 
             shape.setCenterPosition(centerPosition);
@@ -586,8 +586,8 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             Position position = ShapeUtils.getNewShapePosition(wwd);
 
             // adjust position height so shape sits on terrain surface
-            Vec4 centerPoint = wwd.sceneControl().getTerrain().getSurfacePoint(position.getLatitude(),
-                position.getLongitude(), radius);
+            Vec4 centerPoint = wwd.sceneControl().getTerrain().getSurfacePoint(position.getLat(),
+                position.getLon(), radius);
             Position centerPosition = wwd.model().globe().computePositionFromPoint(centerPoint);
 
             shape.setCenterPosition(centerPosition);
@@ -633,8 +633,8 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             Position position = ShapeUtils.getNewShapePosition(wwd);
 
             // adjust position height so shape sits on terrain surface
-            Vec4 centerPoint = wwd.sceneControl().getTerrain().getSurfacePoint(position.getLatitude(),
-                position.getLongitude(), radius);
+            Vec4 centerPoint = wwd.sceneControl().getTerrain().getSurfacePoint(position.getLat(),
+                position.getLon(), radius);
             Position centerPosition = wwd.model().globe().computePositionFromPoint(centerPoint);
 
             shape.setCenterPosition(centerPosition);
@@ -967,7 +967,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
         public void setEnableEdit(boolean enable) {
             this.enableEdit = enable;
             this.handleEnableEdit(enable);
-            this.firePropertyChange(ENABLE_EDIT, null, enable);
+            this.emit(ENABLE_EDIT, null, enable);
         }
 
         public boolean isAboveGround() {
@@ -977,7 +977,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
         public void setAboveGround(boolean enable) {
             this.aboveGround = enable;
             this.handleAboveGround(enable);
-            this.firePropertyChange(KEEP_SHAPE_ABOVE_SURFACE, null, enable);
+            this.emit(KEEP_SHAPE_ABOVE_SURFACE, null, enable);
         }
 
         public boolean isResizeNewShapesToViewport() {
@@ -986,7 +986,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
 
         public void setResizeNewShapesToViewport(boolean resize) {
             this.resizeNewShapes = resize;
-            this.firePropertyChange(SIZE_NEW_SHAPES_TO_VIEWPORT, null, resize);
+            this.emit(SIZE_NEW_SHAPES_TO_VIEWPORT, null, resize);
         }
 
         public String getEditMode() {

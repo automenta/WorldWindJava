@@ -310,9 +310,9 @@ public class SurfacePolyline extends AbstractSurfaceShape implements Exportable 
 
         xmlWriter.writeStartElement("coordinates");
         for (LatLon position : this.getLocations()) {
-            xmlWriter.writeCharacters(Double.toString(position.getLongitude().degrees));
+            xmlWriter.writeCharacters(Double.toString(position.getLon().degrees));
             xmlWriter.writeCharacters(",");
-            xmlWriter.writeCharacters(Double.toString(position.getLatitude().degrees));
+            xmlWriter.writeCharacters(Double.toString(position.getLat().degrees));
             xmlWriter.writeCharacters(" ");
         }
         xmlWriter.writeEndElement(); // coordinates

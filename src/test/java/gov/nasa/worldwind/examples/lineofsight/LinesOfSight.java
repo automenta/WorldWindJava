@@ -220,7 +220,7 @@ public class LinesOfSight extends ApplicationTemplate {
 
         protected void performIntersectionTests(final Position curPos) {
             // Compute the position of the selected location (incorporate its height).
-            this.referencePosition = new Position(curPos.getLatitude(), curPos.getLongitude(),
+            this.referencePosition = new Position(curPos.getLat(), curPos.getLon(),
                 REFERENCE_POSITION_HEIGHT);
             this.referencePoint = this.terrain.getSurfacePoint(this.referencePosition);
 
@@ -281,8 +281,8 @@ public class LinesOfSight extends ApplicationTemplate {
 
         protected static Sector computeGridSector(Position curPos, double gridRadius) {
             return Sector.fromDegrees(
-                curPos.getLatitude().degrees - gridRadius, curPos.getLatitude().degrees + gridRadius,
-                curPos.getLongitude().degrees - gridRadius, curPos.getLongitude().degrees + gridRadius);
+                curPos.getLat().degrees - gridRadius, curPos.getLat().degrees + gridRadius,
+                curPos.getLon().degrees - gridRadius, curPos.getLon().degrees + gridRadius);
         }
 
         protected static List<Position> buildGrid(Sector sector, double height, int nRows, int nCols) {

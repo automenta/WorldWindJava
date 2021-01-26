@@ -423,8 +423,8 @@ public class RubberSheetImage extends ApplicationTemplate {
                     return;
 
                 Position position = ShapeUtils.getNewShapePosition(wwd);
-                double lat = position.getLatitude().radians();
-                double lon = position.getLongitude().radians();
+                double lat = position.getLat().radians();
+                double lon = position.getLon().radians();
                 double sizeInMeters = ShapeUtils.getViewportScaleFactor(wwd);
                 double arcLength = sizeInMeters / wwd.model().globe().getRadiusAt(position);
                 Sector sector = Sector.fromRadians(lat - arcLength, lat + arcLength, lon - arcLength, lon + arcLength);

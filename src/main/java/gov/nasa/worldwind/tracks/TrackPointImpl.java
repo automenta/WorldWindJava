@@ -21,7 +21,7 @@ public class TrackPointImpl implements TrackPoint {
     }
 
     public TrackPointImpl(LatLon latLon, double elevation, String time) {
-        this(new Position(latLon.getLatitude(), latLon.getLongitude(), elevation), time);
+        this(new Position(latLon.getLat(), latLon.getLon(), elevation), time);
     }
 
     public TrackPointImpl(Position position, String time) {
@@ -33,20 +33,20 @@ public class TrackPointImpl implements TrackPoint {
     }
 
     public double getLatitude() {
-        return this.position.getLatitude().degrees;
+        return this.position.getLat().degrees;
     }
 
     public void setLatitude(double latitude) {
-        this.position = new Position(new Angle(latitude), this.position.getLongitude(),
+        this.position = new Position(new Angle(latitude), this.position.getLon(),
             this.position.getElevation());
     }
 
     public double getLongitude() {
-        return this.position.getLongitude().degrees;
+        return this.position.getLon().degrees;
     }
 
     public void setLongitude(double longitude) {
-        this.position = new Position(this.position.getLatitude(), new Angle(longitude),
+        this.position = new Position(this.position.getLat(), new Angle(longitude),
             this.position.getElevation());
     }
 
@@ -55,7 +55,7 @@ public class TrackPointImpl implements TrackPoint {
     }
 
     public void setElevation(double elevation) {
-        this.position = new Position(this.position.getLatitude(), this.position.getLongitude(), elevation);
+        this.position = new Position(this.position.getLat(), this.position.getLon(), elevation);
     }
 
     public String getTime() {

@@ -232,8 +232,8 @@ public class TrackViewPanel extends JPanel {
     }
 
     public void updateReadout(Position pos) {
-        this.latReadout.setText(pos == null ? "" : SAR2.formatAngle(angleFormat, pos.getLatitude()));
-        this.lonReadout.setText(pos == null ? "" : SAR2.formatAngle(angleFormat, pos.getLongitude()));
+        this.latReadout.setText(pos == null ? "" : SAR2.formatAngle(angleFormat, pos.getLat()));
+        this.lonReadout.setText(pos == null ? "" : SAR2.formatAngle(angleFormat, pos.getLon()));
 
         if (SAR2.UNIT_IMPERIAL.equals(this.elevationUnit))
             this.altReadout.setText(
@@ -641,7 +641,7 @@ public class TrackViewPanel extends JPanel {
             // Update analysis panel
             this.firePropertyChange(VIEW_CHANGE, -1, 0);
             // Update tool bar
-            this.getWwd().firePropertyChange(TrackViewPanel.VIEW_MODE_CHANGE, null, viewModeState);
+            this.getWwd().emit(TrackViewPanel.VIEW_MODE_CHANGE, null, viewModeState);
         }
     }
 }

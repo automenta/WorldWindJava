@@ -43,7 +43,7 @@ public class ViewMenu extends JMenu {
         mi.setMnemonic('T');
         mi.setAccelerator(
             KeyStroke.getKeyStroke(KeyEvent.VK_T, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
-        mi.addActionListener(event -> wwd.firePropertyChange(TerrainProfilePanel.TERRAIN_PROFILE_OPEN, null, null));
+        mi.addActionListener(event -> wwd.emit(TerrainProfilePanel.TERRAIN_PROFILE_OPEN, null, null));
         this.add(mi);
 
         // Cloud ceiling contour
@@ -51,7 +51,7 @@ public class ViewMenu extends JMenu {
         mi.setMnemonic('C');
         mi.setAccelerator(
             KeyStroke.getKeyStroke(KeyEvent.VK_C, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
-        mi.addActionListener(event -> wwd.firePropertyChange(CloudCeilingPanel.CLOUD_CEILING_OPEN, null, null));
+        mi.addActionListener(event -> wwd.emit(CloudCeilingPanel.CLOUD_CEILING_OPEN, null, null));
         this.add(mi);
     }
 

@@ -92,7 +92,7 @@ public class GliderRegionOfInterest extends KVMap {
         for (LatLon ll : locations) {
             this.locations.add(ll);
         }
-        this.firePropertyChange(GLIDER_REGION_OF_INTEREST, oldRegion, this);
+        this.emit(GLIDER_REGION_OF_INTEREST, oldRegion, this);
     }
 
     /**
@@ -119,7 +119,7 @@ public class GliderRegionOfInterest extends KVMap {
 
         GliderRegionOfInterest oldRegion = new GliderRegionOfInterest(this);
         this.color = color;
-        this.firePropertyChange(GLIDER_REGION_OF_INTEREST, oldRegion, this);
+        this.emit(GLIDER_REGION_OF_INTEREST, oldRegion, this);
     }
 
     @SuppressWarnings("RedundantIfStatement")

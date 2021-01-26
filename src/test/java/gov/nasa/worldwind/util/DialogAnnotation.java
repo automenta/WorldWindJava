@@ -214,7 +214,7 @@ public abstract class DialogAnnotation extends GlobeAnnotation implements Action
             this.setAngle(this.getAngle().add(increment));
 
             // Fire a property change to force a repaint.
-            dc.getView().firePropertyChange(Keys.VIEW, null, dc.getView());
+            dc.view().emit(Keys.VIEW, null, dc.view());
 
             // Update the frame time stamp.
             this.lastFrameTime = dc.getFrameTimeStamp();

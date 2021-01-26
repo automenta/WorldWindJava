@@ -149,11 +149,11 @@ public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay {
 
     protected static Vec4 computeAnnotationPosition(Position pos, WWOMeasureTool mt) {
         Vec4 surfacePoint = mt.getWwd().sceneControl().getTerrain().getSurfacePoint(
-            pos.getLatitude(), pos.getLongitude());
+            pos.getLat(), pos.getLon());
         if (surfacePoint == null) {
             Globe globe = mt.getWwd().model().globe();
-            surfacePoint = globe.computePointFromPosition(pos.getLatitude(), pos.getLongitude(),
-                globe.elevation(pos.getLatitude(), pos.getLongitude()));
+            surfacePoint = globe.computePointFromPosition(pos.getLat(), pos.getLon(),
+                globe.elevation(pos.getLat(), pos.getLon()));
         }
 
         return mt.getWwd().view().project(surfacePoint);
@@ -260,15 +260,15 @@ public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay {
     protected void formatControlPoints(Position pos, WWOMeasureTool mt, StringBuilder sb) {
         if (mt.getCenterPosition() != null && areLocationsRedundant(mt.getCenterPosition(), pos, mt.getUnitsFormat())) {
             sb.append(
-                mt.getUnitsFormat().angleNL(mt.getLabel(CENTER_LATITUDE_LABEL), mt.getCenterPosition().getLatitude()));
+                mt.getUnitsFormat().angleNL(mt.getLabel(CENTER_LATITUDE_LABEL), mt.getCenterPosition().getLat()));
             sb.append(mt.getUnitsFormat().angleNL(mt.getLabel(CENTER_LONGITUDE_LABEL),
-                mt.getCenterPosition().getLongitude()));
+                mt.getCenterPosition().getLon()));
         }
         else {   // See if it's a control point and show it if it is
             for (int i = 0; i < mt.getControlPoints().size(); i++) {
                 if (WWOMeasureDisplay.areLocationsRedundant(pos, mt.getControlPoints().get(i).getPosition(), mt.getUnitsFormat())) {
-                    sb.append(mt.getUnitsFormat().angleNL(mt.getLabel(LATITUDE_LABEL), pos.getLatitude()));
-                    sb.append(mt.getUnitsFormat().angleNL(mt.getLabel(LONGITUDE_LABEL), pos.getLongitude()));
+                    sb.append(mt.getUnitsFormat().angleNL(mt.getLabel(LATITUDE_LABEL), pos.getLat()));
+                    sb.append(mt.getUnitsFormat().angleNL(mt.getLabel(LONGITUDE_LABEL), pos.getLon()));
                 }
             }
         }
@@ -319,12 +319,12 @@ public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay {
 
     protected static Angle computeAngleBetween(LatLon a, LatLon b, LatLon c) {
         Vec4 v0 = new Vec4(
-            b.getLatitude().radians() - a.getLatitude().radians(),
-            b.getLongitude().radians() - a.getLongitude().radians(), 0);
+            b.getLat().radians() - a.getLat().radians(),
+            b.getLon().radians() - a.getLon().radians(), 0);
 
         Vec4 v1 = new Vec4(
-            c.getLatitude().radians() - b.getLatitude().radians(),
-            c.getLongitude().radians() - b.getLongitude().radians(), 0);
+            c.getLat().radians() - b.getLat().radians(),
+            c.getLon().radians() - b.getLon().radians(), 0);
 
         return v0.angleBetween3(v1);
     }
@@ -337,14 +337,14 @@ public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay {
         if (locA == null || locB == null)
             return false;
 
-        String aLat = units.angleNL("", locA.getLatitude());
-        String bLat = units.angleNL("", locB.getLatitude());
+        String aLat = units.angleNL("", locA.getLat());
+        String bLat = units.angleNL("", locB.getLat());
 
         if (!aLat.equals(bLat))
             return false;
 
-        String aLon = units.angleNL("", locA.getLongitude());
-        String bLon = units.angleNL("", locB.getLongitude());
+        String aLon = units.angleNL("", locA.getLon());
+        String bLon = units.angleNL("", locB.getLon());
 
         return aLon.equals(bLon);
     }

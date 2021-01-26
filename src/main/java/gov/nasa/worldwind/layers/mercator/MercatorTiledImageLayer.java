@@ -69,7 +69,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
 
     private static boolean isTileVisible(DrawContext dc, MercatorTextureTile tile) {
         return tile.getExtent(dc).intersects(
-            dc.getView().getFrustumInModelCoordinates())
+            dc.view().getFrustumInModelCoordinates())
             && (dc.getVisibleSector() == null || dc.getVisibleSector()
             .intersects(tile.sector));
     }
@@ -80,14 +80,14 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
             return g.computePointFromPosition(
                 dc.getViewportCenterPosition());
 
-        final View view = dc.getView();
+        final View view = dc.view();
         Rectangle2D viewport = view.getViewport();
         int x = (int) viewport.getWidth() / 2;
         for (int y = (int) (0.5 * viewport.getHeight()); y >= 0; y--) {
             Position pos = view.computePositionFromScreenPoint(x, y);
             if (pos != null)
-                return g.computePointFromPosition(pos.getLatitude(),
-                    pos.getLongitude(), 0);
+                return g.computePointFromPosition(pos.getLat(),
+                    pos.getLon(), 0);
         }
 
         return null;
@@ -95,7 +95,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
 
     private static void drawTileIDs(DrawContext dc,
         Iterable<MercatorTextureTile> tiles) {
-        Rectangle viewport = dc.getView().getViewport();
+        Rectangle viewport = dc.view().getViewport();
         TextRenderer textRenderer = OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(),
             Font.decode("Arial-Plain-13"));
 
@@ -113,9 +113,9 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
                 tileLabel += '/' + tile.getFallbackTile().getLabel();
 
             LatLon ll = tile.sector.getCentroid();
-            Vec4 pt = g.computePointFromPosition(ll.latitude, ll.longitude,
-                g.elevation(ll.getLatitude(), ll.getLongitude()));
-            pt = dc.getView().project(pt);
+            Vec4 pt = g.computePointFromPosition(ll.lat, ll.lon,
+                g.elevation(ll.getLat(), ll.getLon()));
+            pt = dc.view().project(pt);
             textRenderer.draw(tileLabel, (int) pt.x, (int) pt.y);
         }
         textRenderer.endRendering();
@@ -201,11 +201,11 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
         MercatorSector sector = (MercatorSector) this.levels.sector;
 
         Level level = levels.getFirstLevel();
-        Angle dLat = level.getTileDelta().getLatitude();
-        Angle dLon = level.getTileDelta().getLongitude();
+        Angle dLat = level.getTileDelta().getLat();
+        Angle dLon = level.getTileDelta().getLon();
 
-        Angle latOrigin = this.levels.tileOrigin.getLatitude();
-        Angle lonOrigin = this.levels.tileOrigin.getLongitude();
+        Angle latOrigin = this.levels.tileOrigin.getLat();
+        Angle lonOrigin = this.levels.tileOrigin.getLon();
 
         // Determine the row and column offset from the common WorldWind global tiling origin.
         int firstRow = Tile.computeRow(dLat, sector.latMin(), latOrigin);
@@ -371,7 +371,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
         Vec4[] corners = sector.computeCornerPoints(dc.getGlobe(), dc.getVerticalExaggeration());
         Vec4 centerPoint = sector.computeCenterPoint(dc.getGlobe(), dc.getVerticalExaggeration());
 
-        View view = dc.getView();
+        View view = dc.view();
         final Vec4 eye = view.getEyePoint();
         double d1 = eye.distanceTo3(corners[0]);
         double d2 = eye.distanceTo3(corners[1]);
@@ -397,21 +397,21 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
 
     private boolean atMaxLevel(DrawContext dc) {
         final LevelSet levels = this.levels;
-        if (levels == null || dc.getView() == null)
+        if (levels == null || dc.view() == null)
             return false;
 
         Position vpc = dc.getViewportCenterPosition();
         if (vpc == null)
             return false;
 
-        if (!levels.sector.contains(vpc.getLatitude(), vpc.getLongitude()))
+        if (!levels.sector.contains(vpc.getLat(), vpc.getLon()))
             return true;
 
         Level nextToLast = levels.getNextToLastLevel();
         if (nextToLast == null)
             return true;
 
-        Sector centerSector = nextToLast.computeSectorForPosition(vpc.getLatitude(), vpc.getLongitude(),
+        Sector centerSector = nextToLast.computeSectorForPosition(vpc.getLat(), vpc.getLon(),
             levels.tileOrigin);
         return this.needToSplit(dc, centerSector);
     }
@@ -482,7 +482,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
 
     public boolean isLayerInView(DrawContext dc) {
 
-        if (dc.getView() == null) {
+        if (dc.view() == null) {
             String message = Logging
                 .getMessage("layers.AbstractLayer.NoViewSpecifiedInDrawingContext");
             Logging.logger().severe(message);
@@ -538,15 +538,15 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
 
         // Collect all the tiles intersecting the input sector.
         LatLon delta = targetLevel.getTileDelta();
-        Angle latOrigin = this.levels.tileOrigin.getLatitude();
-        Angle lonOrigin = this.levels.tileOrigin.getLongitude();
-        final int nwRow = Tile.computeRow(delta.getLatitude(), sector
+        Angle latOrigin = this.levels.tileOrigin.getLat();
+        Angle lonOrigin = this.levels.tileOrigin.getLon();
+        final int nwRow = Tile.computeRow(delta.getLat(), sector
             .latMax(), latOrigin);
-        final int nwCol = Tile.computeColumn(delta.getLongitude(), sector
+        final int nwCol = Tile.computeColumn(delta.getLon(), sector
             .lonMin(), lonOrigin);
-        final int seRow = Tile.computeRow(delta.getLatitude(), sector
+        final int seRow = Tile.computeRow(delta.getLat(), sector
             .latMin(), latOrigin);
-        final int seCol = Tile.computeColumn(delta.getLongitude(), sector
+        final int seCol = Tile.computeColumn(delta.getLon(), sector
             .lonMax(), lonOrigin);
 
         int numRows = nwRow - seRow + 1;
@@ -577,15 +577,15 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
 
         // Collect all the tiles intersecting the input sector.
         LatLon delta = targetLevel.getTileDelta();
-        Angle latOrigin = this.levels.tileOrigin.getLatitude();
-        Angle lonOrigin = this.levels.tileOrigin.getLongitude();
-        final int nwRow = Tile.computeRow(delta.getLatitude(), sector
+        Angle latOrigin = this.levels.tileOrigin.getLat();
+        Angle lonOrigin = this.levels.tileOrigin.getLon();
+        final int nwRow = Tile.computeRow(delta.getLat(), sector
             .latMax(), latOrigin);
-        final int nwCol = Tile.computeColumn(delta.getLongitude(), sector
+        final int nwCol = Tile.computeColumn(delta.getLon(), sector
             .lonMin(), lonOrigin);
-        final int seRow = Tile.computeRow(delta.getLatitude(), sector
+        final int seRow = Tile.computeRow(delta.getLat(), sector
             .latMin(), latOrigin);
-        final int seCol = Tile.computeColumn(delta.getLongitude(), sector
+        final int seCol = Tile.computeColumn(delta.getLon(), sector
             .lonMax(), lonOrigin);
 
         int numRows = nwRow - seRow + 1;

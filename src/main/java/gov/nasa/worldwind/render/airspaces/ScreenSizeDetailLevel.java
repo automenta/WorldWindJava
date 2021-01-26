@@ -85,7 +85,7 @@ public class ScreenSizeDetailLevel extends KVMap implements DetailLevel {
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (dc.getView() == null) {
+        if (dc.view() == null) {
             String message = "nullValue.DrawingContextViewIsNull";
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -95,8 +95,8 @@ public class ScreenSizeDetailLevel extends KVMap implements DetailLevel {
         if (extent == null)
             return false;
 
-        double d = dc.getView().getEyePoint().distanceTo3(extent.getCenter());
-        double pixelSize = dc.getView().computePixelSizeAtDistance(d);
+        double d = dc.view().getEyePoint().distanceTo3(extent.getCenter());
+        double pixelSize = dc.view().computePixelSizeAtDistance(d);
         double shapeScreenSize = extent.getDiameter() / pixelSize;
         return shapeScreenSize < this.screenSize;
     }

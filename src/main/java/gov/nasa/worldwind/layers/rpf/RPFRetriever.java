@@ -74,7 +74,7 @@ class RPFRetriever extends WWObjectImpl implements Retriever {
     private void setState(String state) {
         String oldState = this.state;
         this.state = state;
-        this.firePropertyChange(Keys.RETRIEVER_STATE, oldState, this.state);
+        this.emit(Keys.RETRIEVER_STATE, oldState, this.state);
     }
 
     public final String getContentType() {

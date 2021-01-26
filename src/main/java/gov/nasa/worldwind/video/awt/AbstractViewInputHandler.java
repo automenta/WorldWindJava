@@ -408,7 +408,7 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
         if (this.handlePerFrameKeyState(this.keyEventState, AbstractViewInputHandler.QUERY_EVENTS)) {
             View view = this.getView();
             if (view != null) {
-                view.firePropertyChange(Keys.VIEW, null, view);
+                view.emit(Keys.VIEW, null, view);
             }
         }
     }
@@ -508,7 +508,7 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
         if (this.handlePerFrameMouseState(this.keyEventState, AbstractViewInputHandler.QUERY_EVENTS)) {
             View view = this.getView();
             if (view != null) {
-                view.firePropertyChange(Keys.VIEW, null, view);
+                view.emit(Keys.VIEW, null, view);
             }
         }
     }
@@ -735,8 +735,8 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
 
         Position eyePos = view.getEyePosition();
         double radius = this.wwd.model().globe().getRadius();
-        double surfaceElevation = this.wwd.model().globe().elevation(eyePos.getLatitude(),
-            eyePos.getLongitude());
+        double surfaceElevation = this.wwd.model().globe().elevation(eyePos.getLat(),
+            eyePos.getLon());
         double t = (eyePos.getElevation() - surfaceElevation) / (3.0 * radius);
         return (t < 0 ? 0 : (t > 1 ? 1 : t));
     }
@@ -771,8 +771,8 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
 
         Position eyePos = view.getEyePosition();
         double radius = this.wwd.model().globe().getRadius();
-        double surfaceElevation = this.wwd.model().globe().elevation(eyePos.getLatitude(),
-            eyePos.getLongitude());
+        double surfaceElevation = this.wwd.model().globe().elevation(eyePos.getLat(),
+            eyePos.getLon());
         double t = AbstractViewInputHandler.getScaleValue(range[0], range[1],
             eyePos.getElevation() - surfaceElevation, 3.0 * radius, true);
         t *= deviceAttributes.getSensitivity();

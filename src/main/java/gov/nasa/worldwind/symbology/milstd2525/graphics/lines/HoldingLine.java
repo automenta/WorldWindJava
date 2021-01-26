@@ -172,7 +172,7 @@ public class HoldingLine extends AbstractMilStd2525TacticalGraphic {
         Angle sweep = endAzimuth.sub(startAzimuth).lonNorm();
 
         Angle da = sweep.divide(intervals);
-        double globeRadius = globe.getRadiusAt(center.getLatitude(), center.getLongitude());
+        double globeRadius = globe.getRadiusAt(center.getLat(), center.getLon());
         double radiusRadians = radius / globeRadius;
 
         // Compute the arc positions

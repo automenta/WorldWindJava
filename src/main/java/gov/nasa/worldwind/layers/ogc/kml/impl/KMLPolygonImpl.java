@@ -188,7 +188,7 @@ public class KMLPolygonImpl extends Polygon implements KMLRenderable {
     public void onMessage(Message message) {
         super.onMessage(message);
 
-        if (KMLAbstractObject.MSG_STYLE_CHANGED.equals(message.getName())) {
+        if (KMLAbstractObject.MSG_STYLE_CHANGED.equals(message.name)) {
             this.normalAttributesResolved = false;
             this.highlightAttributesResolved = false;
 

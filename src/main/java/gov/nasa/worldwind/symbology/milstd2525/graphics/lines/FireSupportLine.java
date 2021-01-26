@@ -313,7 +313,7 @@ public class FireSupportLine extends AbstractMilStd2525TacticalGraphic {
         endLabel.setPosition(endPosition);
 
         // Set the West-most label to right alignment, and the East-most label to left alignment.
-        if (startPosition.longitude < endPosition.longitude) {
+        if (startPosition.lon < endPosition.lon) {
             startLabel.setTextAlign(Keys.RIGHT);
             endLabel.setTextAlign(Keys.LEFT);
         } else {

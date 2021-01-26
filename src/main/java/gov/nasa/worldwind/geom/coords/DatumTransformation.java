@@ -77,10 +77,10 @@ public class DatumTransformation {
     private static Position threeParamMolodenski(Position source, Globe fromGlobe, Globe toGlobe,
         double dx, double dy, double dz) {
 
-        double sinLat = Math.sin(source.getLatitude().radians());
-        double cosLat = Math.cos(source.getLatitude().radians());
-        double sinLon = Math.sin(source.getLongitude().radians());
-        double cosLon = Math.cos(source.getLongitude().radians());
+        double sinLat = Math.sin(source.getLat().radians());
+        double cosLat = Math.cos(source.getLat().radians());
+        double sinLon = Math.sin(source.getLon().radians());
+        double cosLon = Math.cos(source.getLon().radians());
         double sinLatsquared = sinLat * sinLat;
         double fromF = (fromGlobe.getEquatorialRadius() - fromGlobe.getPolarRadius()) / fromGlobe.getEquatorialRadius();
         double toF = (toGlobe.getEquatorialRadius() - toGlobe.getPolarRadius()) / toGlobe.getEquatorialRadius();
@@ -105,7 +105,7 @@ public class DatumTransformation {
         double dh = (dx * cosLat * cosLon) + (dy * cosLat * sinLon) + (dz * sinLat)
             - (dEquatorialRadius * (fromGlobe.getEquatorialRadius() / rn)) + ((dF * rn * sinLatsquared) / adb);
 
-        return Position.fromRadians(source.getLatitude().radians() + dLat,
-            source.getLongitude().radians() + dLon, source.getElevation() + dh);
+        return Position.fromRadians(source.getLat().radians() + dLat,
+            source.getLon().radians() + dLon, source.getElevation() + dh);
     }
 }

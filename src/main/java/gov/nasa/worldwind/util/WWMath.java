@@ -381,7 +381,7 @@ public class WWMath {
             throw new IllegalArgumentException(message);
         }
 
-        double distance = dc.getView().getEyePoint().distanceTo3(extent.getCenter()) - extent.getRadius();
+        double distance = dc.view().getEyePoint().distanceTo3(extent.getCenter()) - extent.getRadius();
         return Math.max(distance, 0.0d);
     }
 
@@ -418,8 +418,8 @@ public class WWMath {
         //
         // W : 2R * 1/S = (2R meters / S meters) * 1 pixels = 2R/S pixels
 
-        double distance = dc.getView().getEyePoint().distanceTo3(extent.getCenter());
-        double pixelSize = dc.getView().computePixelSizeAtDistance(distance);
+        double distance = dc.view().getEyePoint().distanceTo3(extent.getCenter());
+        double pixelSize = dc.view().computePixelSizeAtDistance(distance);
         return 2.0d * extent.getRadius() / pixelSize;
     }
 
@@ -684,16 +684,16 @@ public class WWMath {
         while (iter.hasNext()) {
             LatLon nextLocation = iter.next();
 
-            area += location.getLongitude().degrees * nextLocation.getLatitude().degrees;
-            area -= nextLocation.getLongitude().degrees * location.getLatitude().degrees;
+            area += location.getLon().degrees * nextLocation.getLat().degrees;
+            area -= nextLocation.getLon().degrees * location.getLat().degrees;
 
             location = nextLocation;
         }
 
         // Include the area connecting the last point to the first point, if they're not already equal.
         if (!location.equals(firstLocation)) {
-            area += location.getLongitude().degrees * firstLocation.getLatitude().degrees;
-            area -= firstLocation.getLongitude().degrees * location.getLatitude().degrees;
+            area += location.getLon().degrees * firstLocation.getLat().degrees;
+            area -= firstLocation.getLon().degrees * location.getLat().degrees;
         }
 
         return (area < 0) ? Keys.CLOCKWISE : Keys.COUNTER_CLOCKWISE;
@@ -917,13 +917,13 @@ public class WWMath {
 
 // Developped for clarity
 
-            if (((p2.getLatitude().degrees <= location.getLatitude().degrees
-                && location.getLatitude().degrees < p1.getLatitude().degrees) ||
-                (p1.getLatitude().degrees <= location.getLatitude().degrees
-                    && location.getLatitude().degrees < p2.getLatitude().degrees))
-                && (location.getLongitude().degrees < (p1.getLongitude().degrees - p2.getLongitude().degrees)
-                * (location.getLatitude().degrees - p2.getLatitude().degrees)
-                / (p1.getLatitude().degrees - p2.getLatitude().degrees) + p2.getLongitude().degrees))
+            if (((p2.getLat().degrees <= location.getLat().degrees
+                && location.getLat().degrees < p1.getLat().degrees) ||
+                (p1.getLat().degrees <= location.getLat().degrees
+                    && location.getLat().degrees < p2.getLat().degrees))
+                && (location.getLon().degrees < (p1.getLon().degrees - p2.getLon().degrees)
+                * (location.getLat().degrees - p2.getLat().degrees)
+                / (p1.getLat().degrees - p2.getLat().degrees) + p2.getLon().degrees))
                 result = !result;
 
             p1 = p2;

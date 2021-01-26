@@ -101,7 +101,7 @@ public class ScreenBrowserBalloon extends AbstractBrowserBalloon implements Scre
         // bottom left). Note: The screen offset denotes how to place the screen reference point relative to the frame.
         // For example, an offset of (-10, -10) in pixels places the reference point below and to the left of the frame.
         // Since the screen reference point is fixed, the frame appears to move relative to the reference point.
-        int y = dc.getView().getViewport().height - this.screenLocation.y;
+        int y = dc.view().getViewport().height - this.screenLocation.y;
         obb.screenRect = new Rectangle(this.screenLocation.x - this.screenOffset.x, y - this.screenOffset.y,
             size.width, size.height);
         // Compute the screen extent as the rectangle containing the balloon's screen rectangle and its screen point.

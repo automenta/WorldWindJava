@@ -42,7 +42,7 @@ public class SectorVisibilityTree {
                 if (extent == null)
                     extent = Sector.computeBoundingBox(dc.getGlobe(), dc.getVerticalExaggeration(), s);
 
-                if (extent.intersects(dc.getView().getFrustumInModelCoordinates())) {
+                if (extent.intersects(dc.view().getFrustumInModelCoordinates())) {
                     newExtents.put(s, extent);
                     return true;
                 }

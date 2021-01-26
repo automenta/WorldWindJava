@@ -250,7 +250,7 @@ public class SectorSelector extends WWObjectImpl
     protected void notifySectorChanged() {
         if (this.getShape().hasSelection() && this.getSector() != null && !this.getSector().equals(
             this.previousSector)) {
-            this.firePropertyChange(SECTOR_PROPERTY, this.previousSector, this.getShape().getSector());
+            this.emit(SECTOR_PROPERTY, this.previousSector, this.getShape().getSector());
             this.previousSector = this.getSector();
         }
     }
@@ -280,7 +280,7 @@ public class SectorSelector extends WWObjectImpl
 
         mouseEvent.consume(); // prevent view operations
 
-        this.firePropertyChange(SECTOR_PROPERTY, this.previousSector, null);
+        this.emit(SECTOR_PROPERTY, this.previousSector, null);
     }
 
     public void mouseDragged(MouseEvent mouseEvent) {
@@ -385,10 +385,10 @@ public class SectorSelector extends WWObjectImpl
                 return NONE;
             }
 
-            double dN = abs(s.latMax().sub(p.getLatitude()).degrees);
-            double dS = abs(s.latMin().sub(p.getLatitude()).degrees);
-            double dW = abs(s.lonMin().sub(p.getLongitude()).degrees);
-            double dE = abs(s.lonMax().sub(p.getLongitude()).degrees);
+            double dN = abs(s.latMax().sub(p.getLat()).degrees);
+            double dS = abs(s.latMin().sub(p.getLat()).degrees);
+            double dW = abs(s.lonMin().sub(p.getLon()).degrees);
+            double dE = abs(s.lonMax().sub(p.getLon()).degrees);
 
             double sLat = factor * s.latDelta;
             double sLon = factor * s.lonDelta;
@@ -424,8 +424,8 @@ public class SectorSelector extends WWObjectImpl
                 return null;
             }
 
-            Angle dLat = p.getLatitude().sub(this.getPreviousPosition().getLatitude());
-            Angle dLon = p.getLongitude().sub(this.getPreviousPosition().getLongitude());
+            Angle dLat = p.getLat().sub(this.getPreviousPosition().getLat());
+            Angle dLon = p.getLon().sub(this.getPreviousPosition().getLon());
 
             Angle newMinLat = s.latMin();
             Angle newMinLon = s.lonMin();

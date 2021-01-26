@@ -145,7 +145,7 @@ public class RayCastingSupport {
         Vec4 lastSample = null;
         while (sampledDistance <= rayLength) {
             Position samplePos = globe.computePositionFromPoint(sample);
-            if (samplePos.getElevation() <= globe.elevation(samplePos.getLatitude(), samplePos.getLongitude())) {
+            if (samplePos.getElevation() <= globe.elevation(samplePos.getLat(), samplePos.getLon())) {
                 // Below ground, intersection found
                 point = sample;
                 break;

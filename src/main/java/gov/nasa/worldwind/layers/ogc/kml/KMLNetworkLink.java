@@ -443,7 +443,7 @@ public class KMLNetworkLink extends KMLAbstractContainer implements PropertyChan
 
     @Override
     public void onChange(Message msg) {
-        if (KMLAbstractObject.MSG_LINK_CHANGED.equals(msg.getName()))
+        if (KMLAbstractObject.MSG_LINK_CHANGED.equals(msg.name))
             this.reset();
 
         super.onChange(msg);

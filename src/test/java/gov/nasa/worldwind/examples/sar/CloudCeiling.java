@@ -446,15 +446,15 @@ public class CloudCeiling implements Restorable {
             if (positionsStateObj != null) {
                 for (LatLon p : this.centerPositions) {
                     // Save each position only if all parts (latitude, longitude) can be saved.
-                    if (p != null && p.getLatitude() != null && p.getLongitude() != null) {
+                    if (p != null && p.getLat() != null && p.getLon() != null) {
                         // Create a nested "position" element underneath the base "positions".
                         RestorableSupport.StateObject pStateObj =
                             restorableSupport.addStateObject(positionsStateObj, "position");
                         if (pStateObj != null) {
                             restorableSupport.addStateValueAsDouble(pStateObj, "latitudeDegrees",
-                                p.getLatitude().degrees);
+                                p.getLat().degrees);
                             restorableSupport.addStateValueAsDouble(pStateObj, "longitudeDegrees",
-                                p.getLongitude().degrees);
+                                p.getLon().degrees);
                         }
                     }
                 }

@@ -86,7 +86,7 @@ public class ExtrudedPolygonEditor extends AbstractShapeEditor {
         ExtrudedPolygon polygon = this.getPolygon();
 
         Position refPos = polygon.getReferencePosition();
-        Vec4 refPoint = terrain.getSurfacePoint(refPos.getLatitude(), refPos.getLongitude(), 0);
+        Vec4 refPoint = terrain.getSurfacePoint(refPos.getLat(), refPos.getLon(), 0);
 
         int altitudeMode = polygon.getAltitudeMode();
         double height = polygon.getHeight();
@@ -109,18 +109,18 @@ public class ExtrudedPolygonEditor extends AbstractShapeEditor {
                 }
 
                 // Compute the bottom point, which is on the terrain.
-                vert = terrain.getSurfacePoint(location.getLatitude(), location.getLongitude(), 0);
+                vert = terrain.getSurfacePoint(location.getLat(), location.getLon(), 0);
 
                 double delta = vaLength - vert.dot3(refPoint) / vaLength;
                 vert = vert.add3(vaa.multiply3(1.0d + delta / vaaLength));
             }
             else if (altitudeMode == WorldWind.RELATIVE_TO_GROUND) {
-                vert = terrain.getSurfacePoint(location.getLatitude(), location.getLongitude(),
+                vert = terrain.getSurfacePoint(location.getLat(), location.getLon(),
                     ((Position) location).getAltitude());
             }
             else // WorldWind.ABSOLUTE
             {
-                vert = terrain.getGlobe().computePointFromPosition(location.getLatitude(), location.getLongitude(),
+                vert = terrain.getGlobe().computePointFromPosition(location.getLat(), location.getLon(),
                     ((Position) location).getAltitude() * terrain.getVerticalExaggeration());
             }
 
@@ -310,7 +310,7 @@ public class ExtrudedPolygonEditor extends AbstractShapeEditor {
         Position previousPos = globe.computePositionFromPoint(previousVec);
         LatLon change = pos.subtract(previousPos);
 
-        this.polygon.move(new Position(change.getLatitude(), change.getLongitude(), 0.0));
+        this.polygon.move(new Position(change.getLat(), change.getLon(), 0.0));
     }
 
     protected void moveControlPoint(ControlPointMarker controlPoint, Point lastMousePoint, Point moveToPoint) {
@@ -360,8 +360,8 @@ public class ExtrudedPolygonEditor extends AbstractShapeEditor {
 
         Vec4 referencePoint = this.wwd.model().globe().computePointFromPosition(referencePos);
 
-        Vec4 surfaceNormal = this.wwd.model().globe().computeSurfaceNormalAtLocation(referencePos.getLatitude(),
-            referencePos.getLongitude());
+        Vec4 surfaceNormal = this.wwd.model().globe().computeSurfaceNormalAtLocation(referencePos.getLat(),
+            referencePos.getLon());
         Line verticalRay = new Line(referencePoint, surfaceNormal);
         Line screenRay = this.wwd.view().computeRayFromScreenPoint(mousePoint.getX(), mousePoint.getY());
         Line previousScreenRay = this.wwd.view().computeRayFromScreenPoint(previousMousePoint.getX(),
@@ -494,11 +494,11 @@ public class ExtrudedPolygonEditor extends AbstractShapeEditor {
 
     protected Vec4 computeAnnotationPosition(Position pos) {
         Vec4 surfacePoint = this.wwd.sceneControl().getTerrain().getSurfacePoint(
-            pos.getLatitude(), pos.getLongitude());
+            pos.getLat(), pos.getLon());
         if (surfacePoint == null) {
             Globe globe = this.wwd.model().globe();
-            surfacePoint = globe.computePointFromPosition(pos.getLatitude(), pos.getLongitude(),
-                globe.elevation(pos.getLatitude(), pos.getLongitude()));
+            surfacePoint = globe.computePointFromPosition(pos.getLat(), pos.getLon(),
+                globe.elevation(pos.getLat(), pos.getLon()));
         }
 
         return this.wwd.view().project(surfacePoint);
@@ -525,17 +525,17 @@ public class ExtrudedPolygonEditor extends AbstractShapeEditor {
 
         // if "activeControlPoint" is in fact one of the control points
         if (!this.arePositionsRedundant(pos, this.polygon.getReferencePosition())) {
-            sb.append(this.unitsFormat.angleNL(this.getLabel(LATITUDE_LABEL), pos.getLatitude()));
-            sb.append(this.unitsFormat.angleNL(this.getLabel(LONGITUDE_LABEL), pos.getLongitude()));
+            sb.append(this.unitsFormat.angleNL(this.getLabel(LATITUDE_LABEL), pos.getLat()));
+            sb.append(this.unitsFormat.angleNL(this.getLabel(LONGITUDE_LABEL), pos.getLon()));
             sb.append(this.unitsFormat.lengthNL(this.getLabel(ALTITUDE_LABEL), pos.getAltitude()));
         }
 
         // if "activeControlPoint" is the shape itself
         if (this.polygon.getReferencePosition() != null) {
             sb.append(this.unitsFormat.angleNL(this.getLabel(CENTER_LATITUDE_LABEL),
-                this.polygon.getReferencePosition().getLatitude()));
+                this.polygon.getReferencePosition().getLat()));
             sb.append(this.unitsFormat.angleNL(this.getLabel(CENTER_LONGITUDE_LABEL),
-                this.polygon.getReferencePosition().getLongitude()));
+                this.polygon.getReferencePosition().getLon()));
             sb.append(this.unitsFormat.lengthNL(this.getLabel(CENTER_ALTITUDE_LABEL),
                 this.polygon.getReferencePosition().getAltitude()));
         }

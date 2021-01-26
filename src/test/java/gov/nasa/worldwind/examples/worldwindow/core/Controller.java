@@ -203,7 +203,7 @@ public class Controller {
         Globe globe = this.getWWd().model().globe();
 
         if (globe != null && view != null) {
-            ((OrbitViewInputHandler) view.getViewInputHandler()).addPanToAnimator(position,
+            ((OrbitViewInputHandler) view.input()).addPanToAnimator(position,
                 Angle.ZERO, Angle.ZERO, position.elevation, true);
         }
     }

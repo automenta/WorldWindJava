@@ -466,7 +466,7 @@ public class KMLRegion extends KMLAbstractObject {
 
         // Test against the view frustum even in picking mode. We cannot cull against the pick frustums because visible
         // content (e.g. an open balloon) may extend beyond the region's bounding box.
-        return dc.getView().getFrustumInModelCoordinates().intersects(extent);
+        return dc.view().getFrustumInModelCoordinates().intersects(extent);
     }
 
     /**
@@ -531,7 +531,7 @@ public class KMLRegion extends KMLAbstractObject {
             return true; // Assume the criteria is met if we don't know this Region's sector or its surface points.
 
         // Get the eye distance for each of the sector's corners and its center.
-        View view = dc.getView();
+        View view = dc.view();
         double d1 = view.getEyePoint().distanceTo3(points.get(0));
         double d2 = view.getEyePoint().distanceTo3(points.get(1));
         double d3 = view.getEyePoint().distanceTo3(points.get(2));
@@ -643,7 +643,7 @@ public class KMLRegion extends KMLAbstractObject {
         // against minLodPixels and maxLodPixels. The projected area is positive infinity if the view's eye point is
         // inside the extent, or if part of the extent is behind the eye point. In either case we do not take the square
         // root, and leave the value as positive infinity.
-        double numPixels = extent.getProjectedArea(dc.getView());
+        double numPixels = extent.getProjectedArea(dc.view());
         if (numPixels != Double.POSITIVE_INFINITY)
             numPixels = Math.sqrt(numPixels);
 
@@ -686,7 +686,7 @@ public class KMLRegion extends KMLAbstractObject {
 
     @Override
     public void onChange(Message msg) {
-        if (KMLAbstractObject.MSG_BOX_CHANGED.equals(msg.getName()))
+        if (KMLAbstractObject.MSG_BOX_CHANGED.equals(msg.name))
             this.reset();
 
         super.onChange(msg);

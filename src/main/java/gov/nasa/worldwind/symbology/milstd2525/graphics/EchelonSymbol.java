@@ -149,9 +149,9 @@ public class EchelonSymbol extends AbstractTacticalSymbol {
         if (this.orientationPosition != null) {
             // TODO apply altitude mode to orientation position
             // Project the orientation point onto the screen
-            Vec4 orientationPlacePoint = dc.computeTerrainPoint(this.orientationPosition.getLatitude(),
-                this.orientationPosition.getLongitude(), 0);
-            Vec4 orientationScreenPoint = dc.getView().project(orientationPlacePoint);
+            Vec4 orientationPlacePoint = dc.computeTerrainPoint(this.orientationPosition.getLat(),
+                this.orientationPosition.getLon(), 0);
+            Vec4 orientationScreenPoint = dc.view().project(orientationPlacePoint);
 
             this.rotation = EchelonSymbol.computeRotation(osym.screenPoint, orientationScreenPoint);
 

@@ -865,7 +865,7 @@ public class Box implements Extent, Renderable {
         Vec4 f = d.add3(this.r);
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
 
-        dc.getView().pushReferenceCenter(dc, this.bottomCenter);
+        dc.view().pushReferenceCenter(dc, this.bottomCenter);
         OGLStackHandler ogsh = new OGLStackHandler();
         ogsh.pushModelview(gl);
         try {
@@ -893,7 +893,7 @@ public class Box implements Extent, Renderable {
         }
         finally {
             ogsh.pop(gl);
-            dc.getView().popReferenceCenter(dc);
+            dc.view().popReferenceCenter(dc);
         }
     }
 

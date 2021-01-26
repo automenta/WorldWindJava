@@ -444,8 +444,8 @@ public class MeasureToolPanel extends JPanel {
                     break;
                 }
 
-                String las = String.format("Lat %7.4f\u00B0", pos.getLatitude().degrees);
-                String los = String.format("Lon %7.4f\u00B0", pos.getLongitude().degrees);
+                String las = String.format("Lat %7.4f\u00B0", pos.getLat().degrees);
+                String los = String.format("Lon %7.4f\u00B0", pos.getLon().degrees);
                 pointLabels[i++].setText(las + "  " + los);
             }
         }
@@ -522,7 +522,7 @@ public class MeasureToolPanel extends JPanel {
         // Update center label
         Position center = measureTool.getCenterPosition();
         if (center != null) {
-            s = String.format("%,7.4f\u00B0 %,7.4f\u00B0", center.getLatitude().degrees, center.getLongitude().degrees);
+            s = String.format("%,7.4f\u00B0 %,7.4f\u00B0", center.getLat().degrees, center.getLon().degrees);
         }
         else {
             s = "na";

@@ -124,7 +124,7 @@ public class WorldWindowGLCanvas extends GLCanvas implements WorldWindow {
     }
 
     @Override
-    public void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
+    public void emit(String propertyName, Object oldValue, Object newValue) {
         super.firePropertyChange(propertyName, oldValue, newValue);
     }
 }

@@ -304,7 +304,7 @@ public class CompassLayer extends AbstractLayer {
 
             // Load a parallel projection with xy dimensions (viewportWidth, viewportHeight)
             // into the GL projection matrix.
-            Rectangle viewport = dc.getView().getViewport();
+            Rectangle viewport = dc.view().getViewport();
             ogsh.pushProjectionIdentity(gl);
             double maxwh = Math.max(width, height);
             if (maxwh == 0)
@@ -314,8 +314,8 @@ public class CompassLayer extends AbstractLayer {
             ogsh.pushModelviewIdentity(gl);
             double scale = this.computeScale(viewport);
             Vec4 locationSW = this.computeLocation(viewport, scale);
-            double heading = CompassLayer.computeHeading(dc.getView());
-            double pitch = CompassLayer.computePitch(dc.getView());
+            double heading = CompassLayer.computeHeading(dc.view());
+            double pitch = CompassLayer.computePitch(dc.view());
 
             gl.glTranslated(locationSW.x, locationSW.y, locationSW.z);
             gl.glScaled(scale, scale, 1);

@@ -18,7 +18,7 @@ public class FlyViewLimits extends BasicViewPropertyLimits {
     public double limitEyeElevation(Position position, Globe globe) {
 
         double newElevation = position.getElevation();
-        double terrainElevation = globe.elevation(position.getLatitude(), position.getLongitude());
+        double terrainElevation = globe.elevation(position.getLat(), position.getLon());
         double[] elevLimits = this.getEyeElevationLimits();
 
         if (position.getElevation() < (elevLimits[0] + terrainElevation)) {

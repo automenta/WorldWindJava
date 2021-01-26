@@ -163,13 +163,12 @@ public class KMLGroundOverlay extends KMLAbstractOverlay {
 
     @Override
     public void onChange(Message msg) {
-        if (KMLAbstractObject.MSG_LINK_CHANGED.equals(msg.getName()))
+        if (KMLAbstractObject.MSG_LINK_CHANGED.equals(msg.name))
             this.renderable = null;
 
-        if (KMLAbstractObject.MSG_BOX_CHANGED.equals(msg.getName()))
+        if (KMLAbstractObject.MSG_BOX_CHANGED.equals(msg.name))
             this.renderable = null;
 
         super.onChange(msg);
     }
 }
-

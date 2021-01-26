@@ -199,7 +199,7 @@ public class PhaseLine extends AbstractMilStd2525TacticalGraphic {
         endLabel.setPosition(last);
 
         // Set the West-most label to right alignment, and the East-most label to left alignment.
-        if (first.longitude < last.longitude) {
+        if (first.lon < last.lon) {
             startLabel.setTextAlign(Keys.RIGHT);
             endLabel.setTextAlign(Keys.LEFT);
         } else {

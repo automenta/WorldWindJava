@@ -189,8 +189,8 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject
 
             double[] vertex = new double[3];
             for (LatLon location : contour) {
-                vertex[0] = location.longitude;
-                vertex[1] = location.latitude;
+                vertex[0] = location.lon;
+                vertex[1] = location.lat;
                 GLU.gluTessVertex(tess, vertex, 0, vertex);
             }
         }
@@ -272,12 +272,12 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject
         Matrix transform = Matrix.IDENTITY;
         // Translate geographic coordinates to the reference location.
         if (refLocation != null) {
-            double refLatDegrees = refLocation.getLatitude().degrees;
-            double refLonDegrees = refLocation.getLongitude().degrees;
+            double refLatDegrees = refLocation.getLat().degrees;
+            double refLonDegrees = refLocation.getLon().degrees;
             transform = Matrix.fromTranslation(refLonDegrees, refLatDegrees, 0.0d).multiply(transform);
         }
         // Premultiply pattern scaling and cos latitude to compensate latitude distortion on x
-        double cosLat = refLocation != null ? refLocation.getLatitude().cos() : 1.0d;
+        double cosLat = refLocation != null ? refLocation.getLat().cos() : 1.0d;
         double scale = attributes.getImageScale();
         transform = Matrix.fromScale(cosLat / scale, 1.0d / scale, 1.0d).multiply(transform);
         // To maintain the pattern apparent size, we scale it so that one texture pixel match one draw tile pixel.
@@ -479,8 +479,8 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject
         // the two latitudes. All other path types are bounded by the defining locations.
         if (Keys.GREAT_CIRCLE.equals(this.getPathType())) {
             LatLon[] extremes = LatLon.greatCircleArcExtremeLocations(locations);
-            final double e0Lat = extremes[0].latitude;
-            final double e1Lat = extremes[1].latitude;
+            final double e0Lat = extremes[0].lat;
+            final double e1Lat = extremes[1].lat;
 
             final int n = sectors.length;
             for (int i = 0; i < n; i++) {
@@ -604,7 +604,6 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject
         return this.dragEnabled;
     }
 
-    @Override
     public void setDragEnabled(boolean enabled) {
         this.dragEnabled = enabled;
     }
@@ -752,7 +751,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject
         // origin at the reference position.
         Position refPos = this.getReferencePosition();
         if (refPos != null) {
-            Matrix refMatrix = Matrix.fromTranslation(refPos.getLongitude().degrees, refPos.getLatitude().degrees, 0);
+            Matrix refMatrix = Matrix.fromTranslation(refPos.getLon().degrees, refPos.getLat().degrees, 0);
             modelview = modelview.multiply(refMatrix);
         }
 
@@ -886,11 +885,11 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject
             AbstractSurfaceShape.vertexBuffer = Buffers.newDirectFloatBuffer(2 * locations.size());
         AbstractSurfaceShape.vertexBuffer.clear();
 
-        final double refLon = refPos.getLongitude().degrees;
-        final double refLat = refPos.getLatitude().degrees;
+        final double refLon = refPos.getLon().degrees;
+        final double refLat = refPos.getLat().degrees;
         for (LatLon ll : locations) {
-            AbstractSurfaceShape.vertexBuffer.put((float) (ll.getLongitude().degrees - refLon));
-            AbstractSurfaceShape.vertexBuffer.put((float) (ll.getLatitude().degrees - refLat));
+            AbstractSurfaceShape.vertexBuffer.put((float) (ll.getLon().degrees - refLon));
+            AbstractSurfaceShape.vertexBuffer.put((float) (ll.getLat().degrees - refLat));
         }
         AbstractSurfaceShape.vertexBuffer.flip();
 
@@ -1144,8 +1143,8 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject
             GLU.gluTessBeginContour(tess);
             for (LatLon ll : drawLocations) {
                 double[] vertex = new double[3];
-                vertex[0] = ll.getLongitude().degrees - referencePos.getLongitude().degrees;
-                vertex[1] = ll.getLatitude().degrees - referencePos.getLatitude().degrees;
+                vertex[0] = ll.getLon().degrees - referencePos.getLon().degrees;
+                vertex[1] = ll.getLat().degrees - referencePos.getLat().degrees;
                 GLU.gluTessVertex(tess, vertex, 0, vertex);
                 numBytes += 3 * 8; // 3 coords of 8 bytes each
             }

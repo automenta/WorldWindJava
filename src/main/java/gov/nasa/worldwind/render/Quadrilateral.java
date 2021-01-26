@@ -128,14 +128,14 @@ public class Quadrilateral implements Renderable, Movable,
 
         Vec4[] p = new Vec4[4];
 
-        p[0] = dc.getGlobe().computePointFromPosition(this.southwestCorner.getLatitude(),
-            this.southwestCorner.getLongitude(), this.elevation);
-        p[1] = dc.getGlobe().computePointFromPosition(this.southwestCorner.getLatitude(),
-            this.northeastCorner.getLongitude(), this.elevation);
-        p[2] = dc.getGlobe().computePointFromPosition(this.northeastCorner.getLatitude(),
-            this.northeastCorner.getLongitude(), this.elevation);
-        p[3] = dc.getGlobe().computePointFromPosition(this.northeastCorner.getLatitude(),
-            this.southwestCorner.getLongitude(), this.elevation);
+        p[0] = dc.getGlobe().computePointFromPosition(this.southwestCorner.getLat(),
+            this.southwestCorner.getLon(), this.elevation);
+        p[1] = dc.getGlobe().computePointFromPosition(this.southwestCorner.getLat(),
+            this.northeastCorner.getLon(), this.elevation);
+        p[2] = dc.getGlobe().computePointFromPosition(this.northeastCorner.getLat(),
+            this.northeastCorner.getLon(), this.elevation);
+        p[3] = dc.getGlobe().computePointFromPosition(this.northeastCorner.getLat(),
+            this.southwestCorner.getLon(), this.elevation);
 
         Vec4 refcenter = new Vec4(
             (p[0].x + p[2].x) / 2.0,
@@ -186,7 +186,7 @@ public class Quadrilateral implements Renderable, Movable,
 
         gl.glPushAttrib(attrBits);
         gl.glPushClientAttrib(GL2.GL_CLIENT_VERTEX_ARRAY_BIT);
-        dc.getView().pushReferenceCenter(dc, this.referenceCenter);
+        dc.view().pushReferenceCenter(dc, this.referenceCenter);
 
         try {
             if (!dc.isPickingMode()) {
@@ -232,7 +232,7 @@ public class Quadrilateral implements Renderable, Movable,
 
             gl.glPopClientAttrib();
             gl.glPopAttrib();
-            dc.getView().popReferenceCenter(dc);
+            dc.view().popReferenceCenter(dc);
         }
     }
 
@@ -272,7 +272,6 @@ public class Quadrilateral implements Renderable, Movable,
         return this.dragEnabled;
     }
 
-    @Override
     public void setDragEnabled(boolean enabled) {
         this.dragEnabled = enabled;
     }

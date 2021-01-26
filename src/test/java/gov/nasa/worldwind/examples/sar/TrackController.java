@@ -259,7 +259,7 @@ public class TrackController {
         }
         this.setTrackLayerLineWidth(track, 2);
 
-        this.wwd.firePropertyChange(TRACK_CURRENT, null, track); // broadcast track change via wwd
+        this.wwd.emit(TRACK_CURRENT, null, track); // broadcast track change via wwd
     }
 
     @SuppressWarnings("UnusedDeclaration")
@@ -290,7 +290,7 @@ public class TrackController {
         }
 
         // Broadcast event via wwd
-        this.wwd.firePropertyChange(event);
+        this.wwd.emit(event);
         // Goto track end
         this.analysisPanel.gotoTrackEnd();
     }
@@ -300,7 +300,7 @@ public class TrackController {
         this.trackExtensionTool.setArmed(false);
 
         // Broadcast event via wwd
-        this.wwd.firePropertyChange(event);
+        this.wwd.emit(event);
     }
 
     private void moveToNextTrackPoint() {

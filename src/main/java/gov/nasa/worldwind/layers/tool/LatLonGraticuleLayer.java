@@ -281,7 +281,7 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
                 this.latitudeLabels.add(value);
                 String label = makeAngleLabel(new Angle(value), resolution);
                 GeographicText text = new UserFacingText(label,
-                    Position.fromDegrees(value, labelOffset.getLongitude().degrees, 0));
+                    Position.fromDegrees(value, labelOffset.getLon().degrees, 0));
                 text.setPriority(resolution * 1.0e6);
                 this.addRenderable(text, graticuleType);
             }
@@ -290,7 +290,7 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
                 this.longitudeLabels.add(value);
                 String label = makeAngleLabel(new Angle(value), resolution);
                 GeographicText text = new UserFacingText(label,
-                    Position.fromDegrees(labelOffset.getLatitude().degrees, value, 0));
+                    Position.fromDegrees(labelOffset.getLat().degrees, value, 0));
                 text.setPriority(resolution * 1.0e6);
                 this.addRenderable(text, graticuleType);
             }
@@ -319,7 +319,7 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
 
         @SuppressWarnings("RedundantIfStatement")
         public boolean isInView(DrawContext dc) {
-            if (!dc.getView().getFrustumInModelCoordinates().intersects(
+            if (!dc.view().getFrustumInModelCoordinates().intersects(
                 this.getExtent(dc.getGlobe(), dc.getVerticalExaggeration())))
                 return false;
 
@@ -331,9 +331,9 @@ public class LatLonGraticuleLayer extends GraticuleLayer {
         }
 
         public double getSizeInPixels(DrawContext dc) {
-            View view = dc.getView();
-            Vec4 centerPoint = GraticuleLayer.getSurfacePoint(dc, this.sector.getCentroid().getLatitude(),
-                this.sector.getCentroid().getLongitude());
+            View view = dc.view();
+            Vec4 centerPoint = GraticuleLayer.getSurfacePoint(dc, this.sector.getCentroid().getLat(),
+                this.sector.getCentroid().getLon());
             double distance = view.getEyePoint().distanceTo3(centerPoint);
             double tileSizeMeter = toRadians(this.sector.latDelta) * dc.getGlobe().getRadius();
             return tileSizeMeter / view.computePixelSizeAtDistance(distance);

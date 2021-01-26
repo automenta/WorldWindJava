@@ -9,7 +9,6 @@ import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.util.*;
 import jcog.*;
 import org.apache.http.HttpEntity;
-import org.slf4j.Logger;
 
 import javax.net.ssl.*;
 import java.io.*;
@@ -190,7 +189,7 @@ public class URLRetriever extends WWObjectImpl implements Retriever {
 
     protected void setState(String state) {
         String oldState = this.state;
-        firePropertyChange(Keys.RETRIEVER_STATE, oldState, this.state = state);
+        emit(Keys.RETRIEVER_STATE, oldState, this.state = state);
     }
 
     public final Function<Retriever, ByteBuffer> getPostProcessor() {

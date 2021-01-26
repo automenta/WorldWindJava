@@ -273,7 +273,7 @@ public class Wedge extends RigidShape {
     }
 
     protected boolean sufficientDetail(DrawContext dc, int subdivisions, ShapeData shapeData) {
-        if (dc.getView() == null) {
+        if (dc.view() == null) {
             String message = "nullValue.DrawingContextViewIsNull";
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -293,7 +293,7 @@ public class Wedge extends RigidShape {
 
         double thresholdDensity = this.computeDetailThreshold();
 
-        double d = dc.getView().getEyePoint().distanceTo3(extent.getCenter());
+        double d = dc.view().getEyePoint().distanceTo3(extent.getCenter());
         double shapeScreenSize = extent.getDiameter() / d;
 
         // formula for this object's current vertex density

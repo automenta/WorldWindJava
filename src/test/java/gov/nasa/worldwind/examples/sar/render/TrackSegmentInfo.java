@@ -114,15 +114,15 @@ public class TrackSegmentInfo implements Renderable {
     }
 
     protected static Vec4 getScreenPoint(DrawContext dc, Position position) {
-        if (dc.getGlobe() == null || dc.getView() == null)
+        if (dc.getGlobe() == null || dc.view() == null)
             return null;
 
-        Vec4 modelPoint = dc.getGlobe().computePointFromPosition(position.getLatitude(), position.getLongitude(),
+        Vec4 modelPoint = dc.getGlobe().computePointFromPosition(position.getLat(), position.getLon(),
             position.getElevation());
         if (modelPoint == null)
             return null;
 
-        return dc.getView().project(modelPoint);
+        return dc.view().project(modelPoint);
     }
 
     protected void drawSegmentPositionLabel(DrawContext dc, SARTrack track, int index, Position pos) {
@@ -145,8 +145,8 @@ public class TrackSegmentInfo implements Renderable {
 
     protected void drawHeadingAltitudeLabel(DrawContext dc, int x, int y, Font font, Color color, Angle heading,
         Position pos) {
-        double surfaceElevation = TrackSegmentInfo.computeSurfaceElevation(dc, pos.getLatitude(), pos.getLongitude());
-        double distanceFromEye = dc.getView().getEyePoint().distanceTo3(dc.getGlobe().computePointFromPosition(pos));
+        double surfaceElevation = TrackSegmentInfo.computeSurfaceElevation(dc, pos.getLat(), pos.getLon());
+        double distanceFromEye = dc.view().getEyePoint().distanceTo3(dc.getGlobe().computePointFromPosition(pos));
 
         StringBuilder sb = new StringBuilder();
         if (heading != null) {
@@ -164,13 +164,13 @@ public class TrackSegmentInfo implements Renderable {
     }
 
     protected void drawLatLonLabel(DrawContext dc, int x, int y, Font font, Color color, Position pos) {
-        double distanceFromEye = dc.getView().getEyePoint().distanceTo3(dc.getGlobe().computePointFromPosition(pos));
+        double distanceFromEye = dc.view().getEyePoint().distanceTo3(dc.getGlobe().computePointFromPosition(pos));
 
         StringBuilder sb = new StringBuilder();
         sb.append("(");
-        sb.append(this.formatAngle(pos.getLatitude()));
+        sb.append(this.formatAngle(pos.getLat()));
         sb.append(", ");
-        sb.append(this.formatAngle(pos.getLongitude()));
+        sb.append(this.formatAngle(pos.getLon()));
         sb.append(")");
 
         TrackSegmentInfo.drawText(dc, sb.toString(), x, y, font, color, distanceFromEye);
@@ -230,7 +230,7 @@ public class TrackSegmentInfo implements Renderable {
 
         protected void drawText(DrawContext dc, String text, int x, int y, Font font, Color color) {
             GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-            Rectangle viewport = dc.getView().getViewport();
+            Rectangle viewport = dc.view().getViewport();
 
             OGLStackHandler stackHandler = new OGLStackHandler();
             stackHandler.pushAttrib(gl, GL2.GL_CURRENT_BIT); // For current color.

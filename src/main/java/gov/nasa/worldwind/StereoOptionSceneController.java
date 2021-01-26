@@ -141,7 +141,7 @@ public class StereoOptionSceneController extends BasicSceneController implements
 
         // Check if pitch is in correct range (50 - 90 degrees) for current stereo implementation to
         // work correctly (temporary hack)
-        View dcView = dc.getView();
+        View dcView = dc.view();
         boolean pitchInRange = (dcView.getPitch().compareTo(new Angle(50)) > 0
             && dcView.getPitch().compareTo(Angle.POS90) < 0);
 
@@ -183,7 +183,7 @@ public class StereoOptionSceneController extends BasicSceneController implements
      */
     protected void doDrawStereoRedBlue(DrawContext dc) {
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-        View dcView = dc.getView();
+        View dcView = dc.view();
 
         // Draw the left eye
         if (this.isSwapEyes()) {
@@ -239,7 +239,7 @@ public class StereoOptionSceneController extends BasicSceneController implements
      */
     protected void doDrawToStereoDevice(DrawContext dc) {
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
-        View dcView = dc.getView();
+        View dcView = dc.view();
 
         // Draw the left eye
         if (this.isSwapEyes())

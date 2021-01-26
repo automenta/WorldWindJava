@@ -226,7 +226,7 @@ public abstract class AbstractLayer extends WWObjectImpl implements Layer {
 //            throw new IllegalStateException(message);
 //        }
 
-        Position eyePos = dc.getView().getEyePosition();
+        Position eyePos = dc.view().getEyePosition();
         if (eyePos == null)
             return false;
 

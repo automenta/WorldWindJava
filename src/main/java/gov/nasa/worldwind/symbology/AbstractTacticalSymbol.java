@@ -580,7 +580,6 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         return this.dragEnabled;
     }
 
-    @Override
     public void setDragEnabled(boolean enabled) {
         this.dragEnabled = enabled;
     }
@@ -728,7 +727,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
                 return;
 
             // Don't draw if beyond the horizon.
-            double horizon = dc.getView().getHorizonDistance();
+            double horizon = dc.view().getHorizonDistance();
             if (!dc.is2DGlobe() && osym.eyeDistance > horizon)
                 return;
 
@@ -781,21 +780,21 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             return;
 
         if (this.altitudeMode == WorldWind.CLAMP_TO_GROUND || dc.is2DGlobe()) {
-            osym.placePoint = dc.computeTerrainPoint(pos.getLatitude(), pos.getLongitude(), 0);
+            osym.placePoint = dc.computeTerrainPoint(pos.getLat(), pos.getLon(), 0);
         } else if (this.altitudeMode == WorldWind.RELATIVE_TO_GROUND) {
-            osym.placePoint = dc.computeTerrainPoint(pos.getLatitude(), pos.getLongitude(), pos.getAltitude());
+            osym.placePoint = dc.computeTerrainPoint(pos.getLat(), pos.getLon(), pos.getAltitude());
         } else // Default to ABSOLUTE
         {
             double height = pos.getElevation() * dc.getVerticalExaggeration();
-            osym.placePoint = dc.getGlobe().computePointFromPosition(pos.getLatitude(), pos.getLongitude(), height);
+            osym.placePoint = dc.getGlobe().computePointFromPosition(pos.getLat(), pos.getLon(), height);
         }
 
         if (osym.placePoint == null)
             return;
 
         // Compute the symbol's screen location the distance between the eye point and the place point.
-        osym.screenPoint = dc.getView().project(osym.placePoint);
-        osym.eyeDistance = osym.placePoint.distanceTo3(dc.getView().getEyePoint());
+        osym.screenPoint = dc.view().project(osym.placePoint);
+        osym.eyeDistance = osym.placePoint.distanceTo3(dc.view().getEyePoint());
     }
 
     protected void determineActiveAttributes() {
@@ -1429,7 +1428,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     }
 
     protected boolean intersectsFrustum(DrawContext dc, OrderedSymbol osym) {
-        View view = dc.getView();
+        View view = dc.view();
 
         // Test the symbol's model coordinate point against the near and far clipping planes.
         if (osym.placePoint != null
@@ -1502,7 +1501,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             | GL2.GL_CURRENT_BIT // for current color
             | GL2.GL_LINE_BIT; // for line smooth enable and line width
 
-        Rectangle viewport = dc.getView().getViewport();
+        Rectangle viewport = dc.view().getViewport();
 
         this.BEogsh.clear(); // Reset the stack handler's internal state.
         this.BEogsh.pushAttrib(gl, attrMask);

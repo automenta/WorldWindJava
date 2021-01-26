@@ -312,7 +312,7 @@ public class KeepingObjectsInView extends ApplicationTemplate {
                 this.animator.start();
                 view.stopAnimations();
                 view.addAnimator(this.animator);
-                view.firePropertyChange(Keys.VIEW, null, view);
+                view.emit(Keys.VIEW, null, view);
             }
         }
 
@@ -413,7 +413,7 @@ public class KeepingObjectsInView extends ApplicationTemplate {
                 this.view.setZoom(newZoom);
             }
 
-            this.view.firePropertyChange(Keys.VIEW, null, this);
+            this.view.emit(Keys.VIEW, null, this);
         }
 
         protected void updateTargetValues() {

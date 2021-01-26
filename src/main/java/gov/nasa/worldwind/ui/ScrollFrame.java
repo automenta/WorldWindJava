@@ -1061,7 +1061,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
         // Highlight the frame if the pick point is within the frame's pickable bounds.
         Point pickPoint = dc.getPickPoint();
         if (pickPoint != null) {
-            int glY = dc.getView().getViewport().height - pickPoint.y;
+            int glY = dc.view().getViewport().height - pickPoint.y;
             this.setHighlighted(this.pickBounds.contains(new Point(pickPoint.x, glY)));
         }
 
@@ -1144,7 +1144,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
         if (dc.isPickingMode())
             return dc.getPickFrustums().intersectsAny(this.pickBounds);
         else
-            return dc.getView().getViewport().intersects(this.frameBounds);
+            return dc.view().getViewport().intersects(this.frameBounds);
     }
 
     /**
@@ -1192,7 +1192,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
 
         this.determineSize();
 
-        Rectangle viewport = dc.getView().getViewport();
+        Rectangle viewport = dc.view().getViewport();
 
         Dimension contentSize = null;
         Dimension previousFrameSize = this.frameSize;
@@ -1981,7 +1981,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
         // into the GL projection matrix.
         this.BEogsh.pushProjectionIdentity(gl);
 
-        Rectangle viewport = dc.getView().getViewport();
+        Rectangle viewport = dc.view().getViewport();
 
         glu.gluOrtho2D(0.0d, viewport.width, 0.0d, viewport.height);
         this.BEogsh.pushModelviewIdentity(gl);
@@ -2158,7 +2158,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
         e.consume();
 
         // Fire a property change to trigger a repaint
-        this.firePropertyChange(Keys.REPAINT, null, this);
+        this.emit(Keys.REPAINT, null, this);
     }
 
     /**

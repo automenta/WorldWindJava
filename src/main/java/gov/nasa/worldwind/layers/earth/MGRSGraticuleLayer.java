@@ -539,7 +539,7 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer {
     }
 
     protected void selectRenderables(DrawContext dc) {
-        if (dc.getView().getEyePosition().getElevation() <= this.zoneMaxAltitude) {
+        if (dc.view().getEyePosition().getElevation() <= this.zoneMaxAltitude) {
             this.selectMGRSRenderables(dc, MGRSGraticuleLayer.computeVisibleSector(dc));
             this.metricScaleSupport.selectRenderables(dc);
         } else {
@@ -607,8 +607,8 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer {
         if (gz.isUPS)
             return true;
 
-        int row = MGRSGraticuleLayer.getGridRow(gz.sector.getCentroid().getLatitude().degrees);
-        int col = MGRSGraticuleLayer.getGridColumn(gz.sector.getCentroid().getLongitude().degrees);
+        int row = MGRSGraticuleLayer.getGridRow(gz.sector.getCentroid().getLat().degrees);
+        int col = MGRSGraticuleLayer.getGridColumn(gz.sector.getCentroid().getLon().degrees);
         GridZone neighbor = row + 1 <= 19 ? this.gridZones[row + 1][col] : null;
         return neighbor != null && neighbor.isInView(dc);
     }
@@ -617,8 +617,8 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer {
         if (gz.isUPS)
             return true;
 
-        int row = MGRSGraticuleLayer.getGridRow(gz.sector.getCentroid().getLatitude().degrees);
-        int col = MGRSGraticuleLayer.getGridColumn(gz.sector.getCentroid().getLongitude().degrees);
+        int row = MGRSGraticuleLayer.getGridRow(gz.sector.getCentroid().getLat().degrees);
+        int col = MGRSGraticuleLayer.getGridColumn(gz.sector.getCentroid().getLon().degrees);
         GridZone neighbor = col + 1 <= 59 ? this.gridZones[row][col + 1] : null;
         return neighbor != null && neighbor.isInView(dc);
     }
@@ -646,15 +646,15 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer {
             this.isUPS = (sector.latMax > UTMBaseGraticuleLayer.UTM_MAX_LATITUDE
                 || sector.latMin < UTMBaseGraticuleLayer.UTM_MIN_LATITUDE);
             try {
-                MGRSCoord MGRS = MGRSCoord.fromLatLon(sector.getCentroid().getLatitude(),
-                    sector.getCentroid().getLongitude(), globe);
+                MGRSCoord MGRS = MGRSCoord.fromLatLon(sector.getCentroid().getLat(),
+                    sector.getCentroid().getLon(), globe);
                 if (this.isUPS) {
                     this.name = MGRS.toString().substring(2, 3);
                     this.hemisphere = sector.latMin > 0 ? Keys.NORTH : Keys.SOUTH;
                 } else {
                     this.name = MGRS.toString().substring(0, 3);
-                    UTMCoord UTM = UTMCoord.fromLatLon(sector.getCentroid().getLatitude(),
-                        sector.getCentroid().getLongitude(), globe);
+                    UTMCoord UTM = UTMCoord.fromLatLon(sector.getCentroid().getLat(),
+                        sector.getCentroid().getLon(), globe);
                     this.UTMZone = UTM.getZone();
                     this.hemisphere = UTM.getHemisphere();
                 }
@@ -668,7 +668,7 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer {
         }
 
         public boolean isInView(DrawContext dc) {
-            return dc.getView().getFrustumInModelCoordinates().intersects(
+            return dc.view().getFrustumInModelCoordinates().intersects(
                 this.getExtent(dc.getGlobe(), dc.getVerticalExaggeration()));
         }
 
@@ -688,7 +688,7 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer {
                 }
             }
 
-            if (dc.getView().getEyePosition().getElevation() > MGRSGraticuleLayer.this.squareMaxAltitude)
+            if (dc.view().getEyePosition().getElevation() > MGRSGraticuleLayer.this.squareMaxAltitude)
                 return;
 
             // Select 100km squares elements
@@ -727,10 +727,10 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer {
             try {
                 // Find grid zone easting and northing boundaries
                 UTMCoord UTM;
-                UTM = UTMCoord.fromLatLon(this.sector.latMin(), this.sector.getCentroid().getLongitude(),
+                UTM = UTMCoord.fromLatLon(this.sector.latMin(), this.sector.getCentroid().getLon(),
                     globe);
                 double minNorthing = UTM.getNorthing();
-                UTM = UTMCoord.fromLatLon(this.sector.latMax(), this.sector.getCentroid().getLongitude(),
+                UTM = UTMCoord.fromLatLon(this.sector.latMax(), this.sector.getCentroid().getLon(),
                     globe);
                 double maxNorthing = UTM.getNorthing();
                 maxNorthing = maxNorthing == 0 ? 10.0e6 : maxNorthing;
@@ -790,23 +790,23 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer {
             try {
                 MGRSCoord MGRS = null;
                 if (sz.centroid != null && sz.isPositionInside(new Position(sz.centroid, 0)))
-                    MGRS = MGRSCoord.fromLatLon(sz.centroid.latitude, sz.centroid.longitude, globe);
+                    MGRS = MGRSCoord.fromLatLon(sz.centroid.lat, sz.centroid.lon, globe);
                 else if (sz.isPositionInside(sz.sw))
                     MGRS = MGRSCoord.fromLatLon(
-                        Angle.fromRadiansLatitude(sz.sw.getLatitude().radians() + tenMeterRadian),
-                        Angle.fromRadiansLongitude(sz.sw.getLongitude().radians() + tenMeterRadian), globe);
+                        Angle.fromRadiansLatitude(sz.sw.getLat().radians() + tenMeterRadian),
+                        Angle.fromRadiansLongitude(sz.sw.getLon().radians() + tenMeterRadian), globe);
                 else if (sz.isPositionInside(sz.se))
                     MGRS = MGRSCoord.fromLatLon(
-                        Angle.fromRadiansLatitude(sz.se.getLatitude().radians() + tenMeterRadian),
-                        Angle.fromRadiansLongitude(sz.se.getLongitude().radians() - tenMeterRadian), globe);
+                        Angle.fromRadiansLatitude(sz.se.getLat().radians() + tenMeterRadian),
+                        Angle.fromRadiansLongitude(sz.se.getLon().radians() - tenMeterRadian), globe);
                 else if (sz.isPositionInside(sz.nw))
                     MGRS = MGRSCoord.fromLatLon(
-                        Angle.fromRadiansLatitude(sz.nw.getLatitude().radians() - tenMeterRadian),
-                        Angle.fromRadiansLongitude(sz.nw.getLongitude().radians() + tenMeterRadian), globe);
+                        Angle.fromRadiansLatitude(sz.nw.getLat().radians() - tenMeterRadian),
+                        Angle.fromRadiansLongitude(sz.nw.getLon().radians() + tenMeterRadian), globe);
                 else if (sz.isPositionInside(sz.ne))
                     MGRS = MGRSCoord.fromLatLon(
-                        Angle.fromRadiansLatitude(sz.ne.getLatitude().radians() - tenMeterRadian),
-                        Angle.fromRadiansLongitude(sz.ne.getLongitude().radians() - tenMeterRadian), globe);
+                        Angle.fromRadiansLatitude(sz.ne.getLat().radians() - tenMeterRadian),
+                        Angle.fromRadiansLongitude(sz.ne.getLon().radians() - tenMeterRadian), globe);
                 // Set square zone name
                 if (MGRS != null)
                     sz.setName(MGRS.toString().substring(3, 5));

@@ -296,7 +296,7 @@ public class SurfaceQuad extends AbstractSurfaceShape implements Exportable {
 
         double hw = this.width / 2.0;
         double hh = this.height / 2.0;
-        double globeRadius = globe.getRadiusAt(this.center.getLatitude(), this.center.getLongitude());
+        double globeRadius = globe.getRadiusAt(this.center.getLat(), this.center.getLon());
         double distance = Math.sqrt(hw * hw + hh * hh);
         double pathLength = distance / globeRadius;
 

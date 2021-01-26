@@ -239,9 +239,9 @@ public class KMLPlacemark extends KMLAbstractFeature implements KMLMutable {
 
     @Override
     public void onChange(Message msg) {
-        if (KMLAbstractObject.MSG_GEOMETRY_CHANGED.equals(msg.getName())) {
+        if (KMLAbstractObject.MSG_GEOMETRY_CHANGED.equals(msg.name)) {
             this.renderables = null;
-        } else if (KMLAbstractObject.MSG_STYLE_CHANGED.equals(msg.getName())) {
+        } else if (KMLAbstractObject.MSG_STYLE_CHANGED.equals(msg.name)) {
             for (KMLRenderable renderable : this.renderables) {
                 renderable.onMessage(msg);
             }

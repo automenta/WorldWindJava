@@ -240,7 +240,7 @@ public class PartialCappedCylinder extends CappedCylinder {
         GL2 gl = dc.getGL2(); // GL initialization checks for GL2 compatibility.
         OGLStackHandler ogsh = new OGLStackHandler();
         try {
-            dc.getView().pushReferenceCenter(dc, referenceCenter);
+            dc.view().pushReferenceCenter(dc, referenceCenter);
 
             if (Airspace.DRAW_STYLE_OUTLINE.equals(drawStyle)) {
                 this.drawRadialWallOutline(dc, center, radii, angles[0], altitudes, terrainConformant, loops, stacks,
@@ -299,7 +299,7 @@ public class PartialCappedCylinder extends CappedCylinder {
             }
         }
         finally {
-            dc.getView().popReferenceCenter(dc);
+            dc.view().popReferenceCenter(dc);
             ogsh.pop(gl);
         }
     }

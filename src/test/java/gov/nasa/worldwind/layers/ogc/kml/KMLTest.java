@@ -254,8 +254,8 @@ public class KMLTest
         sb.append("<kml:extrude>").append(extrude ? "1" : "0").append("</kml:extrude>");
         sb.append("<kml:altitudeMode>").append(altitudeMode).append("</kml:altitudeMode>");
         sb.append("<kml:coordinates>");
-        sb.append(coords.getLongitude().degrees).append(",");
-        sb.append(coords.getLatitude().degrees).append(",");
+        sb.append(coords.getLon().degrees).append(",");
+        sb.append(coords.getLat().degrees).append(",");
         sb.append(coords.getElevation());
         sb.append("</kml:coordinates>");
         sb.append("</kml:Point>");
@@ -292,8 +292,8 @@ public class KMLTest
         sb.append("<extrude>").append(extrude ? "1" : "0").append("</extrude>");
         sb.append("<altitudeMode>").append(altitudeMode).append("</altitudeMode>");
         sb.append("<coordinates>");
-        sb.append(coords.getLongitude().degrees).append(",");
-        sb.append(coords.getLatitude().degrees).append(",");
+        sb.append(coords.getLon().degrees).append(",");
+        sb.append(coords.getLat().degrees).append(",");
         sb.append(coords.getElevation());
         sb.append("</coordinates>");
         sb.append("</Point>");
@@ -329,8 +329,8 @@ public class KMLTest
         sb.append("<extrude>").append(extrude ? "1" : "0").append("</extrude>");
         sb.append("<altitudeMode>").append(altitudeMode).append("</altitudeMode>");
         sb.append("<coordinates>");
-        sb.append(coords.getLongitude().degrees).append(",");
-        sb.append(coords.getLatitude().degrees).append(",");
+        sb.append(coords.getLon().degrees).append(",");
+        sb.append(coords.getLat().degrees).append(",");
         sb.append(coords.getElevation());
         sb.append("</coordinates>");
         sb.append("</Point>");
@@ -374,8 +374,8 @@ public class KMLTest
         sb.append("<coordinates>");
         for (Position p : coords)
         {
-            sb.append(p.getLongitude().degrees).append(",");
-            sb.append(p.getLatitude().degrees).append(",");
+            sb.append(p.getLon().degrees).append(",");
+            sb.append(p.getLat().degrees).append(",");
             sb.append(p.getElevation()).append(" ");
         }
         sb.append("</coordinates>");
@@ -421,8 +421,8 @@ public class KMLTest
         sb.append("<coordinates>");
         for (Position p : coords)
         {
-            sb.append(p.getLongitude().degrees).append(",");
-            sb.append(p.getLatitude().degrees).append(",");
+            sb.append(p.getLon().degrees).append(",");
+            sb.append(p.getLat().degrees).append(",");
             sb.append(p.getElevation()).append(" ");
         }
         sb.append("</coordinates>");
@@ -487,8 +487,8 @@ public class KMLTest
         sb.append("<coordinates>");
         for (Position p : outerCoords)
         {
-            sb.append(p.getLongitude().degrees).append(",");
-            sb.append(p.getLatitude().degrees).append(",");
+            sb.append(p.getLon().degrees).append(",");
+            sb.append(p.getLat().degrees).append(",");
             sb.append(p.getElevation()).append(" ");
         }
         sb.append("</coordinates>");
@@ -503,8 +503,8 @@ public class KMLTest
         sb.append("<coordinates>");
         for (Position p : innerCoords)
         {
-            sb.append(p.getLongitude().degrees).append(",");
-            sb.append(p.getLatitude().degrees).append(",");
+            sb.append(p.getLon().degrees).append(",");
+            sb.append(p.getLat().degrees).append(",");
             sb.append(p.getElevation()).append(" ");
         }
         sb.append("</coordinates>");
@@ -632,8 +632,8 @@ public class KMLTest
         Iterator<String> separator = separators.iterator();
         for (Position p : coords)
         {
-            sb.append(p.getLongitude().degrees).append(",");
-            sb.append(p.getLatitude().degrees).append(",");
+            sb.append(p.getLon().degrees).append(",");
+            sb.append(p.getLat().degrees).append(",");
             sb.append(p.getElevation()).append(
                 separator.next());   // Separate coordinate tuple with newline instead of space
         }
@@ -746,8 +746,8 @@ public class KMLTest
         assertTrue("Geometry not a Point", geometry instanceof KMLPoint);
 
         Position coords = ((KMLPoint) geometry).getCoordinates();
-        assertEquals("Incorrect latitude", new Angle(37.42228990140251), coords.getLatitude());
-        assertEquals("Incorrect longitude", new Angle(-122.0822035425683), coords.getLongitude());
+        assertEquals("Incorrect latitude", new Angle(37.42228990140251), coords.getLat());
+        assertEquals("Incorrect longitude", new Angle(-122.0822035425683), coords.getLon());
         assertEquals("Incorrect altitude", 0d, coords.getAltitude(), 0.0);
     }
 
@@ -779,8 +779,8 @@ public class KMLTest
         assertTrue("Geometry not a Point", geometry instanceof KMLPoint);
 
         Position coords = ((KMLPoint) geometry).getCoordinates();
-        assertEquals("Incorrect latitude", new Angle(14.996729), coords.getLatitude());
-        assertEquals("Incorrect longitude", new Angle(102.595626), coords.getLongitude());
+        assertEquals("Incorrect latitude", new Angle(14.996729), coords.getLat());
+        assertEquals("Incorrect longitude", new Angle(102.595626), coords.getLon());
         assertEquals("Incorrect altitude", 0d, coords.getAltitude(), 0.0);
     }
 
@@ -808,8 +808,8 @@ public class KMLTest
         assertTrue("Geometry not a Point", geometry instanceof KMLPoint);
 
         Position coords = ((KMLPoint) geometry).getCoordinates();
-        assertEquals("Incorrect latitude", new Angle(14.998518), coords.getLatitude());
-        assertEquals("Incorrect longitude", new Angle(102.594411), coords.getLongitude());
+        assertEquals("Incorrect latitude", new Angle(14.998518), coords.getLat());
+        assertEquals("Incorrect longitude", new Angle(102.594411), coords.getLon());
         assertEquals("Incorrect altitude", 0d, coords.getAltitude(), 0.0);
     }
 

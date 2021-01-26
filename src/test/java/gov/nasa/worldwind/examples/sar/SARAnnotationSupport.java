@@ -203,15 +203,15 @@ public class SARAnnotationSupport {
             Position pos = annotation.getPosition();
             this.helpMessageAnnotation.getAttributes().setVisible(true);
             this.helpMessageAnnotation.setText(String.format("Lat %s Lon %s",
-                SAR2.formatAngle(angleFormat, pos.getLatitude()),
-                SAR2.formatAngle(angleFormat, pos.getLongitude())));
+                SAR2.formatAngle(angleFormat, pos.getLat()),
+                SAR2.formatAngle(angleFormat, pos.getLon())));
             // set help message screen position - follow annotation
             Vec4 surfacePoint = this.getWwd().sceneControl().getTerrain().getSurfacePoint(
-                pos.getLatitude(), pos.getLongitude());
+                pos.getLat(), pos.getLon());
             if (surfacePoint == null) {
                 Globe globe = this.getWwd().model().globe();
-                surfacePoint = globe.computePointFromPosition(pos.getLatitude(), pos.getLongitude(),
-                    globe.elevation(pos.getLatitude(), pos.getLongitude()));
+                surfacePoint = globe.computePointFromPosition(pos.getLat(), pos.getLon(),
+                    globe.elevation(pos.getLat(), pos.getLon()));
             }
             Vec4 screenPoint = this.getWwd().view().project(surfacePoint);
             if (screenPoint != null)

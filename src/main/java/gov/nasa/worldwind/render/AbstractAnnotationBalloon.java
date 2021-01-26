@@ -169,7 +169,7 @@ public abstract class AbstractAnnotationBalloon extends AbstractBalloon {
         if (balloonAttrs != null) {
             // Compute the balloon's preferred size and the current screen viewport size.
             Dimension prefSize = annotation.getPreferredSize(dc);
-            Rectangle viewport = dc.getView().getViewport();
+            Rectangle viewport = dc.view().getViewport();
 
             // Compute the balloon's current size on screen, and its offset in screen coordinates.
             Dimension screenSize = balloonAttrs.getSize().compute(prefSize.width, prefSize.height, viewport.width,
