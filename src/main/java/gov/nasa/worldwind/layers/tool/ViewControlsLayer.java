@@ -23,7 +23,7 @@ import java.awt.*;
  * and vertical exaggeration. Each of the controls can be enabled or disabled independently.
  * <p>
  * An instance of this class depends on an instance of {@link ViewControlsSelectListener} to control it. The select
- * listener must be registered as such via {@link gov.nasa.worldwind.WorldWindow#addSelectListener(gov.nasa.worldwind.event.SelectListener)}.
+ * listener must be registered as such via {@link WorldWindow#addSelectListener(SelectListener)}.
  * <p>
  * <code>ViewControlsLayer</code> instances are not sharable among <code>WorldWindow</code>s.
  *

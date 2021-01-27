@@ -87,7 +87,7 @@ public interface KV {
      * @param propertyName the key to associate the listener with.
      * @param listener     the listener to associate with the key.
      * @throws IllegalArgumentException if either <code>propertyName</code> or <code>listener</code> is null
-     * @see java.beans.PropertyChangeSupport
+     * @see PropertyChangeSupport
      */
     void addPropertyChangeListener(String propertyName, PropertyChangeListener listener);
 
@@ -97,7 +97,7 @@ public interface KV {
      * @param propertyName the key associated with the change listener.
      * @param listener     the listener to remove.
      * @throws IllegalArgumentException if either <code>propertyName</code> or <code>listener</code> is null
-     * @see java.beans.PropertyChangeSupport
+     * @see PropertyChangeSupport
      */
     void removePropertyChangeListener(String propertyName, PropertyChangeListener listener);
 
@@ -106,7 +106,7 @@ public interface KV {
      *
      * @param listener the listener to call.
      * @throws IllegalArgumentException if <code>listener</code> is null
-     * @see java.beans.PropertyChangeSupport
+     * @see PropertyChangeSupport
      */
     void addPropertyChangeListener(PropertyChangeListener listener);
 
@@ -115,7 +115,7 @@ public interface KV {
      *
      * @param listener the listener to remove.
      * @throws IllegalArgumentException if <code>listener</code> is null
-     * @see java.beans.PropertyChangeSupport
+     * @see PropertyChangeSupport
      */
     void removePropertyChangeListener(PropertyChangeListener listener);
 
@@ -127,7 +127,7 @@ public interface KV {
      * @param oldValue     the value associated with the key before the even causing the firing.
      * @param newValue     the new value associated with the key.
      * @throws IllegalArgumentException if <code>propertyName</code> is null
-     * @see java.beans.PropertyChangeSupport
+     * @see PropertyChangeSupport
      */
     void emit(String propertyName, Object oldValue, Object newValue);
 
@@ -136,7 +136,7 @@ public interface KV {
      *
      * @param propertyChangeEvent the event
      * @throws IllegalArgumentException if <code>propertyChangeEvent</code> is null
-     * @see java.beans.PropertyChangeSupport
+     * @see PropertyChangeSupport
      */
     void emit(PropertyChangeEvent propertyChangeEvent);
 

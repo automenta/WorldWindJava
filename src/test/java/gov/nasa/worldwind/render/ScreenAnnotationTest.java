@@ -11,6 +11,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Insets;
+import java.awt.Point;
+
 import static org.junit.Assert.*;
 
 @RunWith(JUnit4.class)
@@ -23,14 +29,14 @@ public class ScreenAnnotationTest
     @Test
     public void testRestore_NewInstance()
     {
-        ScreenAnnotation annotation = new ScreenAnnotation("", new java.awt.Point(0, 0));
+        ScreenAnnotation annotation = new ScreenAnnotation("", new Point(0, 0));
         assignExampleValues(annotation);
 
         String stateInXml = annotation.getRestorableState();
-        annotation = new ScreenAnnotation("", new java.awt.Point(0, 0));
+        annotation = new ScreenAnnotation("", new Point(0, 0));
         annotation.restoreState(stateInXml);
 
-        ScreenAnnotation expected = new ScreenAnnotation("", new java.awt.Point(0, 0));
+        ScreenAnnotation expected = new ScreenAnnotation("", new Point(0, 0));
         assignExampleValues(expected);
 
         assertScreenAnnotationEquals(expected, annotation);
@@ -39,14 +45,14 @@ public class ScreenAnnotationTest
     @Test
     public void testRestore_SameInstance()
     {
-        ScreenAnnotation annotation = new ScreenAnnotation("", new java.awt.Point(0, 0));
+        ScreenAnnotation annotation = new ScreenAnnotation("", new Point(0, 0));
         assignExampleValues(annotation);
 
         String stateInXml = annotation.getRestorableState();
         assignNullValues(annotation);
         annotation.restoreState(stateInXml);
 
-        ScreenAnnotation expected = new ScreenAnnotation("", new java.awt.Point(0, 0));
+        ScreenAnnotation expected = new ScreenAnnotation("", new Point(0, 0));
         assignExampleValues(expected);
 
         assertScreenAnnotationEquals(expected, annotation);
@@ -55,7 +61,7 @@ public class ScreenAnnotationTest
     @Test
     public void testRestore_EmptyStateDocument()
     {
-        ScreenAnnotation annotation = new ScreenAnnotation("", new java.awt.Point(0, 0));
+        ScreenAnnotation annotation = new ScreenAnnotation("", new Point(0, 0));
         assignExampleValues(annotation);
 
         String emptyStateInXml =
@@ -64,7 +70,7 @@ public class ScreenAnnotationTest
         annotation.restoreState(emptyStateInXml);
 
         // No attributes should have changed.
-        ScreenAnnotation expected = new ScreenAnnotation("", new java.awt.Point(0, 0));
+        ScreenAnnotation expected = new ScreenAnnotation("", new Point(0, 0));
         assignExampleValues(expected);
 
         assertScreenAnnotationEquals(expected, annotation);
@@ -76,7 +82,7 @@ public class ScreenAnnotationTest
         try
         {
             String badStateInXml = "!!invalid xml string!!";
-            ScreenAnnotation annotation = new ScreenAnnotation("", new java.awt.Point(0, 0));
+            ScreenAnnotation annotation = new ScreenAnnotation("", new Point(0, 0));
             annotation.restoreState(badStateInXml);
 
             fail("Expected an IllegalArgumentException");
@@ -90,7 +96,7 @@ public class ScreenAnnotationTest
     @Test
     public void testRestore_PartialStateDocument()
     {
-        ScreenAnnotation annotation = new ScreenAnnotation("", new java.awt.Point(0, 0));
+        ScreenAnnotation annotation = new ScreenAnnotation("", new Point(0, 0));
         assignExampleValues(annotation);
 
         String partialStateInXml =
@@ -101,7 +107,7 @@ public class ScreenAnnotationTest
                 "</restorableState>";
         annotation.restoreState(partialStateInXml);
 
-        ScreenAnnotation expected = new ScreenAnnotation("", new java.awt.Point(0, 0));
+        ScreenAnnotation expected = new ScreenAnnotation("", new Point(0, 0));
         assignExampleValues(expected);
         expected.setText("Hello, World!");
 
@@ -111,8 +117,8 @@ public class ScreenAnnotationTest
     @Test
     public void testRestore_AnnotationSharing()
     {
-        ScreenAnnotation annotation1 = new ScreenAnnotation("", new java.awt.Point(0, 0));
-        ScreenAnnotation annotation2 = new ScreenAnnotation("", new java.awt.Point(0, 0));
+        ScreenAnnotation annotation1 = new ScreenAnnotation("", new Point(0, 0));
+        ScreenAnnotation annotation2 = new ScreenAnnotation("", new Point(0, 0));
         AnnotationAttributes sharedAttributes = new AnnotationAttributes();
         annotation1.setAttributes(sharedAttributes);
         annotation2.setAttributes(sharedAttributes);
@@ -131,7 +137,7 @@ public class ScreenAnnotationTest
     @Test
     public void test_SaveScreenAnnotation_RestoreGlobeAnnotation()
     {
-        ScreenAnnotation screenAnnotation = new ScreenAnnotation("", new java.awt.Point(0, 0));
+        ScreenAnnotation screenAnnotation = new ScreenAnnotation("", new Point(0, 0));
         assignExampleValues(screenAnnotation);
 
         String stateInXml = screenAnnotation.getRestorableState();
@@ -152,14 +158,14 @@ public class ScreenAnnotationTest
     {
         annotation.setText(
             "<p>\n<b><font color=\"#664400\">LA CLAPI\u00c8RE</font></b><br />\n<i>Alt: 1100-1700m</i>\n</p>\n<p>\n<b>Glissement de terrain majeur</b> dans la haute Tin\u00e9e, sur un flanc du <a href=\"http://www.mercantour.eu\">Parc du Mercantour</a>, Alpes Maritimes.\n</p>\n<p>\nRisque aggrav\u00e9 d'<b>inondation</b> du village de <i>Saint \u00c9tienne de Tin\u00e9e</i> juste en amont.\n</p>");
-        annotation.setScreenPoint(new java.awt.Point(321, 105));
+        annotation.setScreenPoint(new Point(321, 105));
         assignExampleValues(annotation.getAttributes());
     }
 
     private static void assignNullValues(ScreenAnnotation annotation)
     {
         annotation.setText("");
-        annotation.setScreenPoint(new java.awt.Point(0, 0));
+        annotation.setScreenPoint(new Point(0, 0));
         assignNullValues(annotation.getAttributes());
     }
 
@@ -169,27 +175,27 @@ public class ScreenAnnotationTest
         attrib.setFrameShape(Keys.SHAPE_ELLIPSE);
         attrib.setHighlighted(true);
         attrib.setHighlightScale(2.5);
-        attrib.setSize(new java.awt.Dimension(255, 255));
+        attrib.setSize(new Dimension(255, 255));
         attrib.setScale(3.5);
         attrib.setOpacity(0.5);
         attrib.setLeader(Keys.SHAPE_NONE);
         attrib.setCornerRadius(4);
         attrib.setAdjustWidthToText(Keys.SIZE_FIXED);
-        attrib.setDrawOffset(new java.awt.Point(-3, -3));
-        attrib.setInsets(new java.awt.Insets(11, 11, 11, 11));
+        attrib.setDrawOffset(new Point(-3, -3));
+        attrib.setInsets(new Insets(11, 11, 11, 11));
         attrib.setBorderWidth(5.5);
         attrib.setBorderStippleFactor(6);
         attrib.setBorderStipplePattern((short) 0xFC0C);
         attrib.setAntiAliasHint(Annotation.ANTIALIAS_NICEST);
         attrib.setVisible(false);
-        attrib.setFont(java.awt.Font.decode("Arial-ITALIC-24"));
+        attrib.setFont(Font.decode("Arial-ITALIC-24"));
         attrib.setTextAlign(Keys.CENTER);
-        attrib.setTextColor(java.awt.Color.PINK);
-        attrib.setBackgroundColor(java.awt.Color.MAGENTA);
-        attrib.setBorderColor(java.awt.Color.CYAN);
+        attrib.setTextColor(Color.PINK);
+        attrib.setBackgroundColor(Color.MAGENTA);
+        attrib.setBorderColor(Color.CYAN);
         attrib.setImageSource("path/to/image.ext");
         attrib.setImageScale(7.5);
-        attrib.setImageOffset(new java.awt.Point(-4, -4));
+        attrib.setImageOffset(new Point(-4, -4));
         attrib.setImageOpacity(0.4);
         attrib.setImageRepeat(Keys.REPEAT_Y);
         attrib.setDistanceMaxScale(0.1);

@@ -5,6 +5,7 @@ import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.event.InputHandler;
 import gov.nasa.worldwind.geom.ExtentHolder;
+import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.video.WorldWindowGLAutoDrawable;
@@ -127,7 +128,7 @@ public class WorldWindowNEWT extends AbstractLayer implements WorldWindow, GLEve
 
         DrawContext dc = sceneControl().getDrawContext();
         Predicate<ExtentHolder> intersectsFrustrum = dc.intersectsFrustrum();
-        for (gov.nasa.worldwind.layers.Layer l : this.model().layers()) {
+        for (Layer l : this.model().layers()) {
             //if (l.isLayerInView(dc)
             if (l instanceof RenderableLayer) {
                 if (l.isEnabled()) {

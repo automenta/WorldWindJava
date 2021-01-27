@@ -15,6 +15,7 @@ import gov.nasa.worldwind.util.*;
 import org.w3c.dom.*;
 
 import java.net.*;
+import java.util.logging.Level;
 
 /**
  * @author tag
@@ -101,12 +102,12 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer {
         }
         catch (IllegalArgumentException e) {
             String message = Logging.getMessage("WMS.MissingLayerParameters");
-            Logging.logger().log(java.util.logging.Level.SEVERE, message, e);
+            Logging.logger().log(Level.SEVERE, message, e);
             throw new IllegalArgumentException(message, e);
         }
         catch (WWRuntimeException e) {
             String message = Logging.getMessage("WMS.MissingCapabilityValues");
-            Logging.logger().log(java.util.logging.Level.SEVERE, message, e);
+            Logging.logger().log(Level.SEVERE, message, e);
             throw new IllegalArgumentException(message, e);
         }
 

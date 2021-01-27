@@ -7,6 +7,8 @@ package gov.nasa.worldwind.util;
 
 import gov.nasa.worldwind.Configuration;
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 
@@ -38,13 +40,13 @@ public class BrowserOpener {
 
     private static void browseMacOS(String urlString)
         throws ClassNotFoundException, NoSuchMethodException, SecurityException, IllegalAccessException,
-        IllegalArgumentException, java.lang.reflect.InvocationTargetException {
+        IllegalArgumentException, InvocationTargetException {
         Class<?> fileManager = Class.forName("com.apple.eio.FileManager");
         Method openURL = fileManager.getDeclaredMethod("openURL", String.class);
         openURL.invoke(null, urlString);
     }
 
-    private static void browseWindows(String urlString) throws java.io.IOException {
+    private static void browseWindows(String urlString) throws IOException {
         Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + urlString);
     }
 

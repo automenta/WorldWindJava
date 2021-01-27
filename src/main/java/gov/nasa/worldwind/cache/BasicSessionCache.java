@@ -88,10 +88,10 @@ public class BasicSessionCache implements SessionCache {
     }
 
     /**
-     * Returns a {@link java.util.Set} view of the keys contained in the cache. The returned set is immutable: changes
+     * Returns a {@link Set} view of the keys contained in the cache. The returned set is immutable: changes
      * to the set are not reflected in the session cache.
      *
-     * @return a {@link java.util.Set} view of the keys contained in the cache.
+     * @return a {@link Set} view of the keys contained in the cache.
      */
     public synchronized Set<Object> getKeySet() {
         return Collections.unmodifiableSet(this.entries.keySet());

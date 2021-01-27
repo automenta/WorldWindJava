@@ -154,14 +154,14 @@ public class IconLayerTest
         // Test that the returned list cannot be modified.
         try
         {
-            if (layerIcons instanceof java.util.Collection)
+            if (layerIcons instanceof Collection)
             {
-                java.util.Collection<WWIcon> collection = (java.util.Collection<WWIcon>) layerIcons;
+                Collection<WWIcon> collection = (Collection<WWIcon>) layerIcons;
                 collection.clear();
             }
             else
             {
-                java.util.Iterator<WWIcon> iter = layerIcons.iterator();
+                Iterator<WWIcon> iter = layerIcons.iterator();
                 while (iter.hasNext())
                 {
                     iter.next();
@@ -182,7 +182,7 @@ public class IconLayerTest
     public void testMaliciousSetIcons()
     {
         // Create an Iterable with null elements.
-        java.util.List<WWIcon> list = new java.util.ArrayList<>();
+        List<WWIcon> list = new ArrayList<>();
         list.add(null);
 
         IconLayer layer = new IconLayer();
@@ -323,7 +323,7 @@ public class IconLayerTest
     private static Iterable<WWIcon> createExampleIterable()
     {
         //noinspection RedundantArrayCreation
-        return java.util.Arrays.asList(new WWIcon[] {
+        return Arrays.asList(new WWIcon[] {
             new UserFacingIcon("", Position.ZERO),
             new UserFacingIcon("", Position.ZERO),
             new UserFacingIcon("", Position.ZERO)});

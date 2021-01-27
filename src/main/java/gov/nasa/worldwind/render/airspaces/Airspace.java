@@ -170,7 +170,7 @@ public interface Airspace extends Renderable, Restorable, KV, ExtentHolder, High
 
     /**
      * Returns this Airspace's enclosing volume as an {@link Extent} in model coordinates, given a specified {@link
-     * Globe} and vertical exaggeration (see {@link gov.nasa.worldwind.SceneController#getVerticalExaggeration()}.
+     * Globe} and vertical exaggeration (see {@link SceneController#getVerticalExaggeration()}.
      *
      * @param globe                the Globe this Airspace is related to.
      * @param verticalExaggeration the vertical exaggeration of the scene containing this Airspace.

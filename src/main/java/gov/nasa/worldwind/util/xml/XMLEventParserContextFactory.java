@@ -11,6 +11,7 @@ import gov.nasa.worldwind.util.Logging;
 
 import javax.xml.XMLConstants;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
@@ -146,7 +147,7 @@ public class XMLEventParserContextFactory {
      */
     protected static XMLEventParserContext createInstanceFromPrototype(XMLEventParserContext prototype)
         throws NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException,
-        IllegalArgumentException, java.lang.reflect.InvocationTargetException {
+        IllegalArgumentException, InvocationTargetException {
         Constructor<? extends XMLEventParserContext> constructor;
         constructor = prototype.getClass().getConstructor(prototype.getClass());
 

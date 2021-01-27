@@ -5,6 +5,8 @@
  */
 package gov.nasa.worldwind.event;
 
+import com.jogamp.newt.event.MouseEvent;
+import com.jogamp.newt.event.WindowListener;
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.KV;
 
@@ -17,7 +19,7 @@ import java.util.*;
  * @version $Id: InputHandler.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 public interface InputHandler
-    extends KV, PropertyChangeListener, com.jogamp.newt.event.KeyListener, com.jogamp.newt.event.MouseListener, com.jogamp.newt.event.WindowListener {
+    extends KV, PropertyChangeListener, com.jogamp.newt.event.KeyListener, com.jogamp.newt.event.MouseListener, WindowListener {
     WorldWindow getEventSource();
 
     void setEventSource(WorldWindow newWorldWindow);
@@ -69,28 +71,28 @@ public interface InputHandler
     void setForceRedrawOnMousePressed(boolean forceRedrawOnMousePressed);
 
     @Override
-    void mouseClicked(com.jogamp.newt.event.MouseEvent e);
+    void mouseClicked(MouseEvent e);
 
     @Override
-    void mouseEntered(com.jogamp.newt.event.MouseEvent e);
+    void mouseEntered(MouseEvent e);
 
     @Override
-    void mouseExited(com.jogamp.newt.event.MouseEvent e);
+    void mouseExited(MouseEvent e);
 
     @Override
-    void mousePressed(com.jogamp.newt.event.MouseEvent e);
+    void mousePressed(MouseEvent e);
 
     @Override
-    void mouseReleased(com.jogamp.newt.event.MouseEvent e);
+    void mouseReleased(MouseEvent e);
 
     @Override
-    void mouseMoved(com.jogamp.newt.event.MouseEvent e);
+    void mouseMoved(MouseEvent e);
 
     @Override
-    void mouseDragged(com.jogamp.newt.event.MouseEvent e);
+    void mouseDragged(MouseEvent e);
 
     @Override
-    void mouseWheelMoved(com.jogamp.newt.event.MouseEvent e);
+    void mouseWheelMoved(MouseEvent e);
 
     @Override
     Object set(String key, Object value);

@@ -9,6 +9,7 @@ import gov.nasa.worldwind.cache.SessionCache;
 import gov.nasa.worldwind.layers.ogc.wms.WMSCapabilities;
 import gov.nasa.worldwind.retrieve.*;
 
+import javax.xml.stream.XMLStreamException;
 import java.beans.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedByInterruptException;
@@ -190,7 +191,7 @@ public class SessionCacheRetrievalPostProcessor implements RetrievalPostProcesso
         }
     }
 
-    protected void handleContent(Retriever retriever) throws javax.xml.stream.XMLStreamException {
+    protected void handleContent(Retriever retriever) throws XMLStreamException {
         String uppercaseName = retriever.getName().toUpperCase();
         if (uppercaseName.contains("SERVICE=WMS") && uppercaseName.contains("REQUEST=GETCAPABILITIES")) {
             this.handleWMSCapabilitiesContent(retriever);
@@ -199,7 +200,7 @@ public class SessionCacheRetrievalPostProcessor implements RetrievalPostProcesso
         }
     }
 
-    protected void handleWMSCapabilitiesContent(Retriever retriever) throws javax.xml.stream.XMLStreamException {
+    protected void handleWMSCapabilitiesContent(Retriever retriever) throws XMLStreamException {
         this.cache.put(this.cacheKey, new WMSCapabilities(retriever.getBuffer()).parse());
     }
 

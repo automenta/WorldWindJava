@@ -21,7 +21,7 @@ import java.util.Queue;
 import java.util.*;
 
 /**
- * Abstract implementation of SurfaceObject that participates in the {@link gov.nasa.worldwind.SceneController}'s bulk
+ * Abstract implementation of SurfaceObject that participates in the {@link SceneController}'s bulk
  * rendering of SurfaceObjects. The SceneControllers bulk renders all SurfaceObjects added to the {@link DrawContext}'s
  * ordered surface renderable queue during the preRendering pass. While building the composite representation the
  * SceneController invokes {@link #render(DrawContext)} in ordered rendering mode. To avoid overloading the purpose of
@@ -37,7 +37,7 @@ import java.util.*;
  * SceneController while building the composite representation because AbstractSurfaceObject adds itself to the ordered
  * surface renderable queue during preRendering.</li> <li>Override {@link #drawOrderedRenderable(DrawContext)}; draw the
  * custom representation. Unlike AbstractSurfaceObject subclasses should assume the modelview and projection matrices
- * are consistent with the current {@link gov.nasa.worldwind.View}.</li> </ol>
+ * are consistent with the current {@link View}.</li> </ol>
  *
  * @author dcollins
  * @version $Id: AbstractSurfaceObject.java 3240 2015-06-22 23:38:49Z tgaskins $
@@ -422,7 +422,7 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
      * containing layer is enabled for picking and the SurfaceObject intersects one of the DrawContext's picking
      * frustums.
      * <p>
-     * During ordered preRendering, the {@link gov.nasa.worldwind.SceneController} builds a composite representation of
+     * During ordered preRendering, the {@link SceneController} builds a composite representation of
      * this SurfaceObject and any other SurfaceObject on the DrawContext's ordered surface renderable list. The
      * SceneController causes each SurfaceObject's to draw itself into the composite representation by calling its
      * {@link #render(DrawContext)} method in ordered rendering mode.
@@ -459,7 +459,7 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
      * during ordered rendering mode. The SceneController already invokes render during ordered picking mode to build a
      * composite representation of the SurfaceObjects.
      * <p>
-     * During ordered picking, the {@link gov.nasa.worldwind.SceneController} invokes the SurfaceObject's {@link
+     * During ordered picking, the {@link SceneController} invokes the SurfaceObject's {@link
      * #pick(DrawContext, Point)} method.
      *
      * @param dc the DrawContext to add to.

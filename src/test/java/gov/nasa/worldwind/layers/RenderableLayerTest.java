@@ -183,14 +183,14 @@ public class RenderableLayerTest
         // Test that the returned list cannot be modified.
         try
         {
-            if (layerRenderables instanceof java.util.Collection)
+            if (layerRenderables instanceof Collection)
             {
-                java.util.Collection collection = (java.util.Collection) layerRenderables;
+                Collection collection = (Collection) layerRenderables;
                 collection.clear();
             }
             else
             {
-                java.util.Iterator<? extends Renderable> iter = layerRenderables.iterator();
+                Iterator<? extends Renderable> iter = layerRenderables.iterator();
                 while (iter.hasNext())
                 {
                     iter.next();
@@ -357,7 +357,7 @@ public class RenderableLayerTest
         }
         else
         {
-            java.util.Iterator<Renderable> expectedIter = expected.iterator(), actualIter = actual.iterator();
+            Iterator<Renderable> expectedIter = expected.iterator(), actualIter = actual.iterator();
             // Compare the elements in each iterator, as long as they both have elements.
             while (expectedIter.hasNext() && actualIter.hasNext())
             {
@@ -371,7 +371,7 @@ public class RenderableLayerTest
     private static Collection<Renderable> createExampleIterable()
     {
         //noinspection RedundantArrayCreation
-        return java.util.Arrays.asList(new Renderable[] {
+        return Arrays.asList(new Renderable[] {
             new Path(),
             new Path(),
             new Path()});

@@ -6,6 +6,9 @@
 
 package gov.nasa.worldwind.event;
 
+import com.jogamp.newt.event.KeyEvent;
+import com.jogamp.newt.event.MouseEvent;
+import com.jogamp.newt.event.WindowEvent;
 import com.jogamp.newt.event.WindowUpdateEvent;
 import gov.nasa.worldwind.*;
 
@@ -73,72 +76,72 @@ public class NoOpInputHandler extends WWObjectImpl implements InputHandler {
     }
 
     @Override
-    public void mouseClicked(com.jogamp.newt.event.MouseEvent e) {
+    public void mouseClicked(MouseEvent e) {
 
     }
 
     @Override
-    public void mouseEntered(com.jogamp.newt.event.MouseEvent e) {
+    public void mouseEntered(MouseEvent e) {
 
     }
 
     @Override
-    public void mouseExited(com.jogamp.newt.event.MouseEvent e) {
+    public void mouseExited(MouseEvent e) {
 
     }
 
     @Override
-    public void mousePressed(com.jogamp.newt.event.MouseEvent e) {
+    public void mousePressed(MouseEvent e) {
 
     }
 
     @Override
-    public void mouseReleased(com.jogamp.newt.event.MouseEvent e) {
+    public void mouseReleased(MouseEvent e) {
 
     }
 
     @Override
-    public void mouseMoved(com.jogamp.newt.event.MouseEvent e) {
+    public void mouseMoved(MouseEvent e) {
 
     }
 
     @Override
-    public void mouseDragged(com.jogamp.newt.event.MouseEvent e) {
+    public void mouseDragged(MouseEvent e) {
 
     }
 
     @Override
-    public void mouseWheelMoved(com.jogamp.newt.event.MouseEvent e) {
+    public void mouseWheelMoved(MouseEvent e) {
 
     }
 
     @Override
-    public void windowResized(com.jogamp.newt.event.WindowEvent e) {
+    public void windowResized(WindowEvent e) {
 
     }
 
     @Override
-    public void windowMoved(com.jogamp.newt.event.WindowEvent e) {
+    public void windowMoved(WindowEvent e) {
 
     }
 
     @Override
-    public void windowDestroyNotify(com.jogamp.newt.event.WindowEvent e) {
+    public void windowDestroyNotify(WindowEvent e) {
 
     }
 
     @Override
-    public void windowDestroyed(com.jogamp.newt.event.WindowEvent e) {
+    public void windowDestroyed(WindowEvent e) {
 
     }
 
     @Override
-    public void windowGainedFocus(com.jogamp.newt.event.WindowEvent e) {
+    public void windowGainedFocus(WindowEvent e) {
 
     }
 
     @Override
-    public void windowLostFocus(com.jogamp.newt.event.WindowEvent e) {
+    public void windowLostFocus(WindowEvent e) {
 
     }
 
@@ -148,12 +151,12 @@ public class NoOpInputHandler extends WWObjectImpl implements InputHandler {
     }
 
     @Override
-    public void keyPressed(com.jogamp.newt.event.KeyEvent e) {
+    public void keyPressed(KeyEvent e) {
 
     }
 
     @Override
-    public void keyReleased(com.jogamp.newt.event.KeyEvent e) {
+    public void keyReleased(KeyEvent e) {
 
     }
 }

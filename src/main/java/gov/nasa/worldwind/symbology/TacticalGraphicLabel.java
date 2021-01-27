@@ -654,7 +654,7 @@ public class TacticalGraphicLabel {
 
     /**
      * Get the label bounding {@link Rectangle} using OGL coordinates - bottom-left corner x and y relative to the
-     * {@link gov.nasa.worldwind.WorldWindow} bottom-left corner. If the label is rotated then the returned rectangle is
+     * {@link WorldWindow} bottom-left corner. If the label is rotated then the returned rectangle is
      * the bounding rectangle of the rotated label.
      *
      * @param dc the current DrawContext.

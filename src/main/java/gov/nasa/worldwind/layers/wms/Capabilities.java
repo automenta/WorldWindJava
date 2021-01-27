@@ -9,8 +9,10 @@ import gov.nasa.worldwind.exception.*;
 import gov.nasa.worldwind.retrieve.*;
 import gov.nasa.worldwind.util.*;
 import org.w3c.dom.*;
+import org.xml.sax.SAXException;
 
 import javax.xml.xpath.*;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.*;
 import java.util.*;
@@ -57,20 +59,20 @@ public abstract class Capabilities {
     }
 
     public static Capabilities retrieve(URI uri, String service)
-        throws IllegalArgumentException, WWRuntimeException, org.xml.sax.SAXException, java.io.IOException,
+        throws IllegalArgumentException, WWRuntimeException, SAXException, IOException,
         URISyntaxException {
         return Capabilities.retrieve(uri, service, null, null);
     }
 
     public static Capabilities retrieve(URI uri, Integer connectTimeout, Integer readTimeout)
-        throws IllegalArgumentException, WWRuntimeException, org.xml.sax.SAXException, java.io.IOException,
+        throws IllegalArgumentException, WWRuntimeException, SAXException, IOException,
         URISyntaxException {
         return Capabilities.retrieve(uri, null, connectTimeout, readTimeout);
     }
 
     public static Capabilities retrieve(URI uri, String service, Integer connectTimeout, Integer readTimeout)
-        throws IllegalArgumentException, WWRuntimeException, org.xml.sax.SAXException,
-        java.io.IOException, URISyntaxException {
+        throws IllegalArgumentException, WWRuntimeException, SAXException,
+        IOException, URISyntaxException {
 
         InputStream is = null;
 

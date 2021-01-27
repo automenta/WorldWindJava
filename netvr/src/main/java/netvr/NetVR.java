@@ -5,6 +5,7 @@ import gov.nasa.worldwind.BasicModel;
 import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.event.SelectListener;
 import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.layers.earth.*;
 import gov.nasa.worldwind.layers.sky.*;
@@ -289,7 +290,7 @@ public class NetVR extends Thing<NetVR,String> {
     }
 
     @NotNull
-    private static Splitting<?, ?> layerWidget(gov.nasa.worldwind.layers.Layer ll) {
+    private static Splitting<?, ?> layerWidget(Layer ll) {
         return Splitting.column(
             new FloatSlider((float) ll.getOpacity(), 0, 1).on(ll::setOpacity),
             0.75f,

@@ -11,6 +11,7 @@ import gov.nasa.worldwind.retrieve.Retriever;
 import gov.nasa.worldwind.util.Logging;
 
 import java.awt.image.*;
+import java.io.IOException;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -203,14 +204,14 @@ class RPFRetriever extends WWObjectImpl implements Retriever {
         }
     }
 
-    private ByteBuffer read() throws java.io.IOException {
+    private ByteBuffer read() throws IOException {
         ByteBuffer buffer = this.doRead(this.service, this.url);
         if (buffer == null)
             this.contentLength = 0;
         return buffer;
     }
 
-    protected ByteBuffer doRead(RPFGenerator.RPFServiceInstance service, URL url) throws java.io.IOException {
+    protected ByteBuffer doRead(RPFGenerator.RPFServiceInstance service, URL url) throws IOException {
         ByteBuffer buffer = null;
 
         BufferedImage bufferedImage = service.serviceRequest(url);

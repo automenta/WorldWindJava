@@ -7,6 +7,7 @@ import org.semanticweb.yars.nx.parser.*;
 import org.semanticweb.yars.turtle.TurtleParser;
 
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.URI;
 import java.util.*;
 import java.util.zip.GZIPInputStream;
@@ -22,7 +23,7 @@ public class Ontology {
     Map<String, Category> cat = new HashMap<>(64 * 1024);
 
     public Ontology(String categoriesFile)
-        throws ParseException, InterruptedException, java.io.IOException {
+        throws ParseException, InterruptedException, IOException {
         this(new TurtleParser(
             new GZIPInputStream(
                 new FileInputStream(categoriesFile),
@@ -103,7 +104,7 @@ public class Ontology {
         });
     }
 
-    public static void main(String[] args) throws ParseException, InterruptedException, java.io.IOException {
+    public static void main(String[] args) throws ParseException, InterruptedException, IOException {
         final String categoriesFile =
             //"/home/me/d/simplewiki-20201128-categories.ttl.gz"
             "/home/me/d/enwiktionary-20201205-categories.ttl.gz"
@@ -175,4 +176,3 @@ public class Ontology {
         }
     }
 }
-

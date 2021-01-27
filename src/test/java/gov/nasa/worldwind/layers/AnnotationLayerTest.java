@@ -13,7 +13,11 @@ import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -154,14 +158,14 @@ public class AnnotationLayerTest
         // Test that the returned list cannot be modified.
         try
         {
-            if (layerAnnotations instanceof java.util.Collection)
+            if (layerAnnotations instanceof Collection)
             {
-                java.util.Collection<Annotation> collection = (java.util.Collection<Annotation>) layerAnnotations;
+                Collection<Annotation> collection = (Collection<Annotation>) layerAnnotations;
                 collection.clear();
             }
             else
             {
-                java.util.Iterator<Annotation> iter = layerAnnotations.iterator();
+                Iterator<Annotation> iter = layerAnnotations.iterator();
                 while (iter.hasNext())
                 {
                     iter.next();
@@ -182,7 +186,7 @@ public class AnnotationLayerTest
     public void testMaliciousSetAnnotations()
     {
         // Create an Iterable with null elements.
-        java.util.List<Annotation> list = new java.util.ArrayList<>();
+        List<Annotation> list = new ArrayList<>();
         list.add(null);
 
         AnnotationLayer layer = new AnnotationLayer();
@@ -314,7 +318,7 @@ public class AnnotationLayerTest
     private static Iterable<Annotation> createExampleIterable()
     {
         //noinspection RedundantArrayCreation
-        return java.util.Arrays.asList(new Annotation[] {
+        return Arrays.asList(new Annotation[] {
             new GlobeAnnotation("", Position.ZERO),
             new GlobeAnnotation("", Position.ZERO),
             new GlobeAnnotation("", Position.ZERO)});

@@ -11,6 +11,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.text.MessageFormat;
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 @SuppressWarnings("deprecation")
@@ -24,7 +27,7 @@ public class GeoRSSParserTest {
     public void testSimple_Point() {
         String xmlString = createExampleGeoRSS(
                 "<georss:point>45.256 -71.92</georss:point>");
-        java.util.List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
+        List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
 
         // <georss:point> is not translated to any renderable shape.
         assertNull("", shapes);
@@ -35,7 +38,7 @@ public class GeoRSSParserTest {
         String xmlString = createExampleGeoRSS(
                 "<georss:point>45.256 -71.92</georss:point>"
                 + "<georss:elev>313</georss:elev>");
-        java.util.List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
+        List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
 
         // <georss:point> is not translated to any renderable shape.
         assertNull("", shapes);
@@ -45,7 +48,7 @@ public class GeoRSSParserTest {
     public void testSimple_Line() {
         String xmlString = createExampleGeoRSS(
                 "<georss:line>45.256 -110.45 46.46 -109.48 43.84 -109.86</georss:line>");
-        java.util.List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
+        List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
 
         // Parsed shapes list should have at least one non-null element.
         assertNotNull("", shapes);
@@ -55,7 +58,7 @@ public class GeoRSSParserTest {
         assertTrue("", shapes.get(0) instanceof Path);
 
         Path shape = (Path) shapes.get(0);
-        java.util.List<Position> positions = (java.util.List<Position>) shape.getPositions();
+        List<Position> positions = (List<Position>) shape.getPositions();
         assertNotNull("", positions);
         assertEquals("", 3, positions.size());
         assertEquals("", Position.fromDegrees(45.256, -110.45, 0.0), positions.get(0));
@@ -68,7 +71,7 @@ public class GeoRSSParserTest {
         String xmlString = createExampleGeoRSS(
                 "<georss:line>45.256 -110.45 46.46 -109.48 43.84 -109.86</georss:line>"
                 + "<georss:elev>313</georss:elev>");
-        java.util.List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
+        List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
 
         // Parsed shapes list should have at least one non-null element.
         assertNotNull("", shapes);
@@ -78,7 +81,7 @@ public class GeoRSSParserTest {
         assertTrue("", shapes.get(0) instanceof Path);
 
         Path shape = (Path) shapes.get(0);
-        java.util.List<Position> positions = (java.util.List<Position>) shape.getPositions();
+        List<Position> positions = (List<Position>) shape.getPositions();
         assertNotNull("", positions);
         assertEquals("", 3, positions.size());
         assertEquals("", Position.fromDegrees(45.256, -110.45, 313.0), positions.get(0));
@@ -90,7 +93,7 @@ public class GeoRSSParserTest {
     public void testSimple_Polygon() {
         String xmlString = createExampleGeoRSS(
                 "<georss:polygon>45.256 -110.45 46.46 -109.48 43.84 -109.86 45.256 -110.45</georss:polygon>");
-        java.util.List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
+        List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
 
         // Parsed shapes list should have at least one non-null element.
         assertNotNull("", shapes);
@@ -100,7 +103,7 @@ public class GeoRSSParserTest {
         assertTrue("", shapes.get(0) instanceof SurfacePolygon);
 
         SurfacePolygon shape = (SurfacePolygon) shapes.get(0);
-        java.util.List positions = (java.util.List) shape.getLocations();
+        List positions = (List) shape.getLocations();
         assertNotNull("", positions);
         assertEquals("", 4, positions.size());
         assertEquals("", LatLon.fromDegrees(45.256, -110.45), positions.get(0));
@@ -114,7 +117,7 @@ public class GeoRSSParserTest {
         String xmlString = createExampleGeoRSS(
                 "<georss:polygon>45.256 -110.45 46.46 -109.48 43.84 -109.86 45.256 -110.45</georss:polygon>"
                 + "<georss:elev>313</georss:elev>");
-        java.util.List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
+        List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
 
         // Parsed shapes list should have at least one non-null element.
         assertNotNull("", shapes);
@@ -124,7 +127,7 @@ public class GeoRSSParserTest {
         assertTrue("", shapes.get(0) instanceof Path);
 
         Path shape = (Path) shapes.get(0);
-        java.util.List<Position> positions = (java.util.List<Position>) shape.getPositions();
+        List<Position> positions = (List<Position>) shape.getPositions();
         assertNotNull("", positions);
         assertEquals("", 4, positions.size());
         assertEquals("", Position.fromDegrees(45.256, -110.45, 313.0), positions.get(0));
@@ -137,7 +140,7 @@ public class GeoRSSParserTest {
     public void testSimple_Box() {
         String xmlString = createExampleGeoRSS(
                 "<georss:box>42.943 -71.032 43.039 -69.856</georss:box>");
-        java.util.List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
+        List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
 
         // Parsed shapes list should have at least one non-null element.
         assertNotNull("", shapes);
@@ -147,7 +150,7 @@ public class GeoRSSParserTest {
         assertTrue("", shapes.get(0) instanceof SurfaceSector);
 
         SurfaceSector shape = (SurfaceSector) shapes.get(0);
-        java.util.List<LatLon> positions = shape.getSector().asList();
+        List<LatLon> positions = shape.getSector().asList();
         assertNotNull("", positions);
         assertEquals("", 4, positions.size());
         assertEquals("", LatLon.fromDegrees(42.943, -71.032), positions.get(0));
@@ -161,7 +164,7 @@ public class GeoRSSParserTest {
         String xmlString = createExampleGeoRSS(
                 "<georss:box>42.943 -71.032 43.039 -69.856</georss:box>"
                 + "<georss:elev>313</georss:elev>");
-        java.util.List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
+        List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
 
         // Parsed shapes list should have at least one non-null element.
         assertNotNull("", shapes);
@@ -190,7 +193,7 @@ public class GeoRSSParserTest {
                 + "    <gml:pos>45.256 -71.92</gml:pos>"
                 + "  </gml:Point>"
                 + "</georss:where>");
-        java.util.List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
+        List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
 
         // <gml:Point> is not translated to any renderable shape.
         assertNull("", shapes);
@@ -206,7 +209,7 @@ public class GeoRSSParserTest {
                 + "    </gml:posList>"
                 + "  </gml:LineString>"
                 + "</georss:where>");
-        java.util.List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
+        List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
 
         // Parsed shapes list should have at least one non-null element.
         assertNotNull("", shapes);
@@ -216,7 +219,7 @@ public class GeoRSSParserTest {
         assertTrue("", shapes.get(0) instanceof Path);
 
         Path shape = (Path) shapes.get(0);
-        java.util.List<Position> positions = (java.util.List<Position>) shape.getPositions();
+        List<Position> positions = (List<Position>) shape.getPositions();
         assertNotNull("", positions);
         assertEquals("", 3, positions.size());
         assertEquals("", Position.fromDegrees(45.256, -110.45, 0.0), positions.get(0));
@@ -238,7 +241,7 @@ public class GeoRSSParserTest {
                 + "    </gml:exterior>"
                 + "  </gml:Polygon>"
                 + "</georss:where>");
-        java.util.List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
+        List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
 
         // Parsed shapes list should have at least one non-null element.
         assertNotNull("", shapes);
@@ -248,7 +251,7 @@ public class GeoRSSParserTest {
         assertTrue("", shapes.get(0) instanceof SurfacePolygon);
 
         SurfacePolygon shape = (SurfacePolygon) shapes.get(0);
-        java.util.List positions = (java.util.List) shape.getLocations();
+        List positions = (List) shape.getLocations();
         assertNotNull("", positions);
         assertEquals("", 4, positions.size());
         assertEquals("", LatLon.fromDegrees(45.256, -110.45), positions.get(0));
@@ -266,7 +269,7 @@ public class GeoRSSParserTest {
                 + "    <gml:upperCorner>43.039 -69.856</gml:upperCorner>"
                 + "  </gml:Envelope>"
                 + "</georss:where>");
-        java.util.List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
+        List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
 
         // Parsed shapes list should have at least one non-null element.
         assertNotNull("", shapes);
@@ -276,7 +279,7 @@ public class GeoRSSParserTest {
         assertTrue("", shapes.get(0) instanceof SurfaceSector);
 
         SurfaceSector shape = (SurfaceSector) shapes.get(0);
-        java.util.List<LatLon> positions = shape.getSector().asList();
+        List<LatLon> positions = shape.getSector().asList();
         assertNotNull("", positions);
         assertEquals("", 4, positions.size());
         assertEquals("", LatLon.fromDegrees(42.943, -71.032), positions.get(0));
@@ -292,7 +295,7 @@ public class GeoRSSParserTest {
     public void testSimple_PointNotEnoughPairs() {
         String xmlString = createExampleGeoRSS(
                 "<georss:point></georss:point>");
-        java.util.List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
+        List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
 
         assertNull("", shapes);
     }
@@ -301,7 +304,7 @@ public class GeoRSSParserTest {
     public void testSimple_LineNotEnoughPairs() {
         String xmlString = createExampleGeoRSS(
                 "<georss:line>45.256 -110.45</georss:line>");
-        java.util.List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
+        List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
 
         assertNull("", shapes);
     }
@@ -310,7 +313,7 @@ public class GeoRSSParserTest {
     public void testSimple_PolygonNotEnoughPairs() {
         String xmlString = createExampleGeoRSS(
                 "<georss:polygon>45.256 -110.45 46.46 -109.48 43.84 -109.86</georss:polygon>");
-        java.util.List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
+        List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
 
         assertNull("", shapes);
     }
@@ -319,7 +322,7 @@ public class GeoRSSParserTest {
     public void testSimple_BoxNotEnoughPairs() {
         String xmlString = createExampleGeoRSS(
                 "<georss:box>42.943 -71.032</georss:box>");
-        java.util.List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
+        List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
 
         assertNull("", shapes);
     }
@@ -332,7 +335,7 @@ public class GeoRSSParserTest {
                 + "    <gml:pos></gml:pos>"
                 + "  </gml:Point>"
                 + "</georss:where>");
-        java.util.List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
+        List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
 
         assertNull("", shapes);
     }
@@ -347,7 +350,7 @@ public class GeoRSSParserTest {
                 + "    </gml:posList>"
                 + "  </gml:LineString>"
                 + "</georss:where>");
-        java.util.List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
+        List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
 
         assertNull("", shapes);
     }
@@ -366,7 +369,7 @@ public class GeoRSSParserTest {
                 + "    </gml:exterior>"
                 + "  </gml:Polygon>"
                 + "</georss:where>");
-        java.util.List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
+        List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
 
         assertNull("", shapes);
     }
@@ -381,7 +384,7 @@ public class GeoRSSParserTest {
                 // "    <gml:upperCorner>43.039 -69.856</gml:upperCorner>" +
                 "  </gml:Envelope>"
                 + "</georss:where>");
-        java.util.List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
+        List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
 
         assertNull("", shapes);
     }
@@ -389,7 +392,7 @@ public class GeoRSSParserTest {
     @Test
     public void test_NoShapes() {
         String xmlString = createExampleGeoRSS("");
-        java.util.List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
+        List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
 
         assertNull("", shapes);
     }
@@ -405,7 +408,7 @@ public class GeoRSSParserTest {
                 + "    </gml:posList>"
                 + "  </gml:LineString>"
                 + "</georss:where>");
-        java.util.List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
+        List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
 
         // Parsed shapes list should have at least one non-null element.
         assertNotNull("", shapes);
@@ -418,10 +421,10 @@ public class GeoRSSParserTest {
         assertTrue("", shapes.get(1) instanceof Path);
 
         Path shape;
-        java.util.List<Position> positions;
+        List<Position> positions;
 
         shape = (Path) shapes.get(0);
-        positions = (java.util.List<Position>) shape.getPositions();
+        positions = (List<Position>) shape.getPositions();
         assertNotNull("", positions);
         assertEquals("", 3, positions.size());
         assertEquals("", Position.fromDegrees(45.256, -110.45, 0.0), positions.get(0));
@@ -429,7 +432,7 @@ public class GeoRSSParserTest {
         assertEquals("", Position.fromDegrees(43.84, -109.86, 0.0), positions.get(2));
 
         shape = (Path) shapes.get(1);
-        positions = (java.util.List<Position>) shape.getPositions();
+        positions = (List<Position>) shape.getPositions();
         assertNotNull("", positions);
         assertEquals("", 3, positions.size());
         assertEquals("", Position.fromDegrees(45.256, -110.45, 0.0), positions.get(0));
@@ -441,7 +444,7 @@ public class GeoRSSParserTest {
     public void test_CommaDelimitedCoordinates() {
         String xmlString = createExampleGeoRSS(
                 "<georss:line>45.256, -110.45, 46.46, -109.48, 43.84, -109.86</georss:line>");
-        java.util.List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
+        List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
 
         // Parsed shapes list should have at least one non-null element.
         assertNotNull("", shapes);
@@ -451,7 +454,7 @@ public class GeoRSSParserTest {
         assertTrue("", shapes.get(0) instanceof Path);
 
         Path shape = (Path) shapes.get(0);
-        java.util.List<Position> positions = (java.util.List<Position>) shape.getPositions();
+        List<Position> positions = (List<Position>) shape.getPositions();
         assertNotNull("", positions);
         assertEquals("", 3, positions.size());
         assertEquals("", Position.fromDegrees(45.256, -110.45, 0.0), positions.get(0));
@@ -486,6 +489,6 @@ public class GeoRSSParserTest {
                 + "    {0}"
                 + "  </entry>"
                 + "</feed>";
-        return java.text.MessageFormat.format(xmlString, georssXml);
+        return MessageFormat.format(xmlString, georssXml);
     }
 }

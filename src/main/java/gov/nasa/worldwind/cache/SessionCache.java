@@ -41,9 +41,9 @@ public interface SessionCache {
     int getEntryCount();
 
     /**
-     * Returns a {@link java.util.Set} view of the keys contained in the cache.
+     * Returns a {@link Set} view of the keys contained in the cache.
      *
-     * @return a {@link java.util.Set} view of the keys contained in the cache.
+     * @return a {@link Set} view of the keys contained in the cache.
      */
     Set<Object> getKeySet();
 

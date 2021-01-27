@@ -121,7 +121,7 @@ public class UserFacingIconTest
         icon.setImageSource("path/to/image.ext");
         icon.setPosition(Position.fromDegrees(45.5, 55.5, 100.5));
         icon.setHighlighted(true);
-        icon.setSize(new java.awt.Dimension(255, 255));
+        icon.setSize(new Dimension(255, 255));
         icon.setVisible(false);
         icon.setHighlightScale(3.141592);
         icon.setToolTipText("Hello World!");

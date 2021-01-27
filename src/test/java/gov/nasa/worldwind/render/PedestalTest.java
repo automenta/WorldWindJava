@@ -125,7 +125,7 @@ public class PedestalTest
         pedestal.setImageSource("path/to/image.ext");
         pedestal.setPosition(Position.fromDegrees(45.5, 55.5, 100.5));
         pedestal.setHighlighted(true);
-        pedestal.setSize(new java.awt.Dimension(255, 255));
+        pedestal.setSize(new Dimension(255, 255));
         pedestal.setVisible(false);
         pedestal.setHighlightScale(3.141592);
         pedestal.setToolTipText("Hello World!");
