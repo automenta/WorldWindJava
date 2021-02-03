@@ -28,7 +28,7 @@ public class TagCloud<X> extends Graph2D<ObjectFloatPair<X>> {
             String s = x.id.getOne().toString();
 
             x.set(new PushButton(new VectorLabel(s), () -> {
-                SpaceGraph.window(new LabeledPane(
+                SpaceGraph.window(new Labelling(
                     new BitmapLabel(s),
                     new Bordering().center(new TabMenu(Map.of(
                         "summary", () -> new EmptySurface(),
@@ -49,8 +49,8 @@ public class TagCloud<X> extends Graph2D<ObjectFloatPair<X>> {
                         },
                         "..", () -> new EmptySurface())
                     )).south(new Gridding(
-                        PushButton.awesome("thumbs-down"),
-                        PushButton.awesome("thumbs-up")
+                        PushButton.iconAwesome("thumbs-down"),
+                        PushButton.iconAwesome("thumbs-up")
                     ))), 600, 500);
             }));
         });

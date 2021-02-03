@@ -6,18 +6,17 @@ import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.event.SelectListener;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.Layer;
-import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.layers.earth.*;
 import gov.nasa.worldwind.layers.sky.*;
 import gov.nasa.worldwind.layers.tool.LatLonGraticuleLayer;
 import gov.nasa.worldwind.pick.PickedObject;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.video.LayerList;
 import gov.nasa.worldwind.video.newt.WorldWindowNEWT;
-import jcog.exe.Exe;
+import jcog.exe.*;
 import jcog.thing.*;
 import netvr.layer.*;
+import netvr.mode.LayerMode;
 import org.eclipse.collections.impl.map.mutable.primitive.ObjectFloatHashMap;
 import org.jetbrains.annotations.*;
 import spacegraph.layer.OrthoSurfaceGraph;
@@ -26,17 +25,20 @@ import spacegraph.space2d.container.*;
 import spacegraph.space2d.container.grid.Gridding;
 import spacegraph.space2d.widget.Widget;
 import spacegraph.space2d.widget.button.*;
-import spacegraph.space2d.widget.meta.ObjectSurface;
+import spacegraph.space2d.widget.meta.*;
 import spacegraph.space2d.widget.slider.FloatSlider;
 import spacegraph.space2d.widget.text.*;
 import spacegraph.video.JoglWindow;
 
-import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
-import java.util.function.Consumer;
+import java.util.Map;
+import java.util.function.*;
 
-public class NetVR extends Thing<NetVR,String> {
+import static jcog.data.iterator.Concaterator.concat;
+import static spacegraph.space2d.container.grid.Containers.col;
+
+public class NetVR extends Thing<NetVR,NMode> {
+
 
     private final JoglWindow j;
     private final NetVRModel world;
@@ -44,16 +46,6 @@ public class NetVR extends Thing<NetVR,String> {
 
     final BorderingView z = new BorderingView();
     final OrthoSurfaceGraph o;
-
-    abstract static class NMode extends Part<NetVR> {
-        public abstract String name();
-        public abstract String icon();
-        public abstract Object menu();
-
-        @Nullable public abstract Extent extent();
-
-        //TODO serialize/deserialize to byte[]
-    }
 
     /** primary focus */
     NMode focus = null;
@@ -83,7 +75,14 @@ public class NetVR extends Thing<NetVR,String> {
     }
 
     public void add(NMode f) {
-        add(f.name(), f);
+        add(f, f);
+    }
+    public void add(NMode f, boolean started) {
+        add(f, f, started);
+    }
+
+    public LayerList layers() {
+        return world.layers;
     }
 
     public static class WhereIs extends NMode {
@@ -178,41 +177,142 @@ public class NetVR extends Thing<NetVR,String> {
     }
 
     public static void main(String[] args) {
-        var n = new NetVR();
-        n.add(new NMode() {
+        NetVR n = new NetVR();
+        new UI(n).start(n); //n.add(new UI(n));
 
+
+        n.add(new LayerMode(new OSMMapnikLayer()));
+        n.add(new LayerMode(new BMNGWMSLayer()), false);
+        n.add(new LayerMode(new LandsatI3WMSLayer()), false);
+        n.add(new LayerMode(new AdaptiveOSMLayer()), false);
+
+        Focus f = new Focus(new Position(35, -80, 0));
+        n.add(new LayerMode(new FocusLayer(f)));
+
+//            markers = new MarkerLayer();
+//            l.add(markers);
+//
+//            notes = new AnnotationLayer();
+//            l.add(notes);
+//
+//            l.add(renderables);
+
+        n.add(new LayerMode(new USGSEarthquakeLayer("Earthquakes",
+            "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson"))
+            ,false);
+
+/* //SHAPEFILE
+    /tmp/shp1/buildings.shp  /tmp/shp1/places.shp    /tmp/shp1/roads.shp
+    /tmp/shp1/landuse.shp    /tmp/shp1/points.shp    /tmp/shp1/waterways.shp
+    /tmp/shp1/natural.shp    /tmp/shp1/railways.shp */
+    }
+
+
+    public Surface modeWidget(NMode m) {
+        return
+            new CheckBox(m.name(), (x)->
+                set(m, m, x)).on(m.isOn());
+    }
+
+    private static Splitting<?, ?> layerWidget(Layer ll) {
+        return col(
+            new FloatSlider((float) ll.getOpacity(), 0, 1).on(ll::setOpacity),
+            0.75f,
+            new CheckBox(ll.name(), ll::setEnabled).on(ll.isEnabled())
+        );
+    }
+
+
+    public NetVR() {
+        super();
+        j = new JoglWindow(1024, 800);
+
+        world = new NetVRModel();
+
+        window = new WorldWindowNEWT(world) {
             @Override
-            public String name() {
-                return "ui"; /* base */
+            public void init(GL2 g) {
+                super.init(g);
+                SelectListener selector = new BasicDragger(this);
+                addSelectListener(selector);
             }
+        };
+        window.setWindow(j);
 
-            @Override
-            public String icon() {
-                return null;
-            }
+        o = new OrthoSurfaceGraph(z, j);
 
-            @Override
-            public Object menu() {
-                return null;
-            }
 
-            @Nullable
-            @Override
-            public Extent extent() {
-                return null;
-            }
 
-            @Override
-            protected void start(NetVR N) {
-                var world = N.world;
-                var w = N.window;
+
+    }
+
+
+
+    private static String describe(PickedObject x) {
+
+        Object y = x.get();
+        if (y instanceof KV) {
+            Object z = ((KV) y).get(AdaptiveOSMLayer.DESCRIPTION);
+            if (z != null)
+                return z.toString();
+        }
+        return x.toString();
+    }
+
+    static class NetVRModel extends BasicModel {
+
+        public NetVRModel() {
+            super(new LayerList());
+            layers.add(new StarsLayer());
+            layers.add(new SkyGradientLayer());
+        }
+
+    }
+
+    private static class UI extends NMode {
+
+        private final NetVR n;
+
+        public UI(NetVR n) {
+            this.n = n;
+        }
+
+        @Override
+        public String name() {
+            return "ui"; /* base */
+        }
+
+        @Override
+        public String icon() {
+            return null;
+        }
+
+        @Override
+        public Object menu() {
+            return null;
+        }
+
+        @Nullable
+        @Override
+        public Extent extent() {
+            return null;
+        }
+
+        @Override
+        protected void stop(NetVR netVR) {
+            n.setFocus(null);
+        }
+
+        @Override
+        protected void start(NetVR N) {
+            var w = N.window;
 
 //                final TextEdit out = new TextEdit(64, 24);
 //
 //                final PushButton scan = new PushButton("Scan", () -> {
 //                });
 
-                var z = N.z;
+            var z = N.z;
 //                Surface param = new Gridding(
 //                    new TextEdit(16),
 //                    new FloatSlider("A", 0.5f, 0, 1),
@@ -222,27 +322,53 @@ public class NetVR extends Thing<NetVR,String> {
 //                );
 
 //                z.north(param);
-                z.northwest(new Gridding(
-                    z.togglerIcon("home", ()->{
-                        return LabeledPane.the("Me", new Gridding(
-                            new PushButton("Name"),
-                            new PushButton("Where", ()-> {
-                                n.setFocus(new WhereIs("user", where -> {
-                                    n.setFocus(null);
-                                    System.out.println("user at " + where);
-                                }));
-                            })
-                        ));
-                    }),
-                    z.togglerIcon("bullseye", ()->{
-                        ObjectFloatHashMap<String> t = w.tagsInView();
-                        return new TagCloud(t); //HACK TODO
-                    }),
-                    z.togglerIcon("cogs", () -> new Gridding(
-                        world.layers.stream().map(NetVR::layerWidget)
-                    ))
-                    //, new Widget(out), scan
-                ));
+            z.northwest(new Gridding(
+                z.togglerIcon("home", ()->{
+                    return Labelling.the("Me", new Gridding(
+                        new PushButton("Name"),
+                        new PushButton("Where", ()-> {
+                            n.setFocus(new WhereIs("user", where -> {
+                                n.setFocus(null);
+                                System.out.println("user at " + where);
+                            }));
+                        })
+                    ));
+                }),
+                z.togglerIcon("bullseye", ()->{
+                    ObjectFloatHashMap<String> t = w.tagsInView();
+                    return new TagCloud(t); //HACK TODO
+                }),
+                z.togglerIcon("cogs", () -> {
+                        final ObjectGraphs o = new ObjectGraphs(
+                            () -> n.partStream().iterator(),
+                            Map.of(
+                                NMode.class, (NMode m, Object rel) -> {
+                                    return n.modeWidget(m);
+                                }
+                                //Object.class, (Object nn, Object rel) -> new VectorLabel(nn.toString())
+                            ),
+                            (s, g) -> {
+
+                            });
+                        o.update();
+                        new Loop() {
+
+                            @Override
+                            public boolean next() {
+                                if (o.exist()) {
+                                    o.update();
+                                    return true;
+                                }
+                                return false;
+                            }
+                        }.fps(1f);
+                        return o;
+                        //return new Triggering(o, )
+                    }
+                    //world.layers.stream().map(NetVR::layerWidget)
+                )
+                //, new Widget(out), scan
+            ));
 
 
 //                j.runLater(() -> {
@@ -279,110 +405,6 @@ public class NetVR extends Thing<NetVR,String> {
 //                    w.addSelectListener(l2);
 //                });
 
-            }
-
-            @Override
-            protected void stop(NetVR netVR) {
-
-            }
-        });
-
-    }
-
-    @NotNull
-    private static Splitting<?, ?> layerWidget(Layer ll) {
-        return Splitting.column(
-            new FloatSlider((float) ll.getOpacity(), 0, 1).on(ll::setOpacity),
-            0.75f,
-            new CheckBox(ll.name(), ll::setEnabled).on(ll.isEnabled())
-        );
-    }
-
-    public NetVR() {
-        super();
-        j = new JoglWindow(1024, 800);
-
-        world = new NetVRModel();
-
-        window = new WorldWindowNEWT(world) {
-            @Override
-            public void init(GL2 g) {
-                super.init(g);
-                SelectListener selector = new BasicDragger(this);
-                addSelectListener(selector);
-            }
-        };
-        window.setWindow(j);
-
-        o = new OrthoSurfaceGraph(z, j);
-
-
-
-
-    }
-
-    private static void focus(NetVRModel world, WorldWindowNEWT w, double lon, double lat, float rad) {
-        Exe.runLater(() -> {
-            world.osm.focus(
-                LatLon.fromDegrees(lat, lon), rad
-            );
-            w.view().goTo(new Position(LatLon.fromDegrees(lat, lon), 0), 400);
-        });
-    }
-
-    private static String describe(PickedObject x) {
-
-        Object y = x.get();
-        if (y instanceof KV) {
-            Object z = ((KV) y).get(AdaptiveOSMLayer.DESCRIPTION);
-            if (z != null)
-                return z.toString();
         }
-        return x.toString();
     }
-
-    static class NetVRModel extends BasicModel {
-
-//        public final RenderableLayer renderables = new RenderableLayer();
-//        public final AnnotationLayer notes;
-//        public final MarkerLayer markers;
-        private final AdaptiveOSMLayer osm;
-
-        public NetVRModel() {
-            super(new LayerList());
-            LayerList l = this.layers;
-            l.add(new StarsLayer());
-            l.add(new SkyGradientLayer());
-
-            l.add(new OSMMapnikLayer());
-            l.add(new BMNGWMSLayer().setEnabled(false));
-            l.add(new LandsatI3WMSLayer().setEnabled(false));
-
-            osm = new AdaptiveOSMLayer();
-            l.add(osm);
-
-            Focus f = new Focus(new Position(35, -80, 0));
-            l.add(new FocusLayer(f));
-
-//            markers = new MarkerLayer();
-//            l.add(markers);
-//
-//            notes = new AnnotationLayer();
-//            l.add(notes);
-//
-//            l.add(renderables);
-
-            l.add(new USGSEarthquakeLayer("Earthquakes",
-                "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson"));
-
-
-/* //SHAPEFILE
-    /tmp/shp1/buildings.shp  /tmp/shp1/places.shp    /tmp/shp1/roads.shp
-    /tmp/shp1/landuse.shp    /tmp/shp1/points.shp    /tmp/shp1/waterways.shp
-    /tmp/shp1/natural.shp    /tmp/shp1/railways.shp */
-        }
-
-
-    }
-
 }

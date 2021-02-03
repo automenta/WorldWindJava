@@ -8,8 +8,10 @@ import gov.nasa.worldwind.globes.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.measure.AreaMeasurer;
+import gov.nasa.worldwind.video.newt.WorldWindowNEWT;
 import jcog.Util;
-import netvr.OSMLoader;
+import jcog.exe.Exe;
+import netvr.*;
 import org.eclipse.collections.impl.map.mutable.primitive.LongObjectHashMap;
 
 import java.io.IOException;
@@ -34,6 +36,15 @@ public class AdaptiveOSMLayer extends RenderableLayer {
     public final LongObjectHashMap<Map<String, String>> meta = new LongObjectHashMap<>();
     private final LongObjectHashMap<ReaderNode> nodes = new LongObjectHashMap<>();
     private final LongObjectHashMap<ReaderRelation> relations = new LongObjectHashMap<>();
+
+    @Deprecated private void focus(WorldWindowNEWT w, double lon, double lat, float rad) {
+        Exe.runLater(() -> {
+            focus(
+                LatLon.fromDegrees(lat, lon), rad
+            );
+            w.view().goTo(new Position(LatLon.fromDegrees(lat, lon), 0), 400);
+        });
+    }
 
     public final AdaptiveOSMLayer focus(LatLon at, float radiusDegrees) {
         return focus(new Sector(
