@@ -184,7 +184,10 @@ public class NetVR extends Thing<NetVR,NMode> {
         n.add(new LayerMode(new OSMMapnikLayer()));
         n.add(new LayerMode(new BMNGWMSLayer()), false);
         n.add(new LayerMode(new LandsatI3WMSLayer()), false);
-        n.add(new LayerMode(new AdaptiveOSMLayer()), false);
+
+        final AdaptiveOSMLayer o = new AdaptiveOSMLayer();
+        n.add(new LayerMode(o), true);
+//        o.focus(LatLon.fromDegrees(), 0.005f);
 
         Focus f = new Focus(new Position(35, -80, 0));
         n.add(new LayerMode(new FocusLayer(f)));

@@ -157,6 +157,9 @@ public class BasicDragger implements SelectListener {
         }
 
         // Compute screen-coord delta since drag started.
+        if (dragEvent.pickPoint==null)
+            return;
+
         int dx = dragEvent.pickPoint.x - this.dragRefCursorPoint.x;
         int dy = dragEvent.pickPoint.y - this.dragRefCursorPoint.y;
 

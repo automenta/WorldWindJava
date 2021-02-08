@@ -420,11 +420,11 @@ public class Matrix {
     }
 
     public static Matrix fromTranslation(Vec4 translation) {
-        if (translation == null) {
-            String msg = Logging.getMessage("nullValue.Vec4IsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (translation == null) {
+//            String msg = Logging.getMessage("nullValue.Vec4IsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         return Matrix.fromTranslation(translation.x, translation.y, translation.z);
     }

@@ -13,7 +13,6 @@ import gov.nasa.worldwind.util.gdal.GDALUtils;
 import org.gdal.gdal.Dataset;
 import org.gdal.osr.*;
 
-import java.awt.*;
 import java.awt.geom.*;
 
 /**
@@ -257,7 +256,7 @@ public class GDAL {
 
             double minX = Double.MAX_VALUE, maxX = -Double.MAX_VALUE, minY = Double.MAX_VALUE, maxY = -Double.MAX_VALUE;
             for (LatLon ll : sector.getCorners()) {
-                double[] point = ct.TransformPoint(ll.getLon().degrees, ll.getLat().degrees);
+                double[] point = ct.TransformPoint(ll.lon, ll.lat);
                 if (null != point) {
                     minX = Math.min(point[0], minX);
                     maxX = Math.max(point[0], maxX);
@@ -291,7 +290,7 @@ public class GDAL {
                 throw new IllegalArgumentException(message);
             }
 
-            Sector bbox = null;
+            Sector bbox;
             try {
                 double minx = Double.MAX_VALUE, maxx = -Double.MAX_VALUE;
                 double miny = Double.MAX_VALUE, maxy = -Double.MAX_VALUE;
@@ -451,33 +450,33 @@ public class GDAL {
             return transform;
         }
 
-        public Rectangle computeClipRect(int rasterWidth, int rasterHeight, Area clipArea)
-            throws IllegalArgumentException {
-            if (null == clipArea) {
-                String message = Logging.getMessage("nullValue.AreaIsNull");
-                Logging.logger().severe(message);
-                throw new IllegalArgumentException(message);
-            }
-
-            AffineTransform geoToRaster =
-                this.computeGeoToRasterTransform(rasterWidth, rasterHeight);
-
-            Point2D geoPoint = new Point2D.Double();
-            Point2D ul = new Point2D.Double();
-            Point2D lr = new Point2D.Double();
-
-            geoPoint.setLocation(clipArea.getMinX(), clipArea.getMaxY());
-            geoToRaster.transform(geoPoint, ul);
-
-            geoPoint.setLocation(clipArea.getMaxX(), clipArea.getMinY());
-            geoToRaster.transform(geoPoint, lr);
-
-            int x = (int) Math.floor(ul.getX());
-            int y = (int) Math.floor(ul.getY());
-            int width = (int) Math.ceil(lr.getX() - ul.getX());
-            int height = (int) Math.ceil(lr.getY() - ul.getY());
-
-            return new Rectangle(x, y, width, height);
-        }
+//        public Rectangle computeClipRect(int rasterWidth, int rasterHeight, Area clipArea)
+//            throws IllegalArgumentException {
+//            if (null == clipArea) {
+//                String message = Logging.getMessage("nullValue.AreaIsNull");
+//                Logging.logger().severe(message);
+//                throw new IllegalArgumentException(message);
+//            }
+//
+//            AffineTransform geoToRaster =
+//                this.computeGeoToRasterTransform(rasterWidth, rasterHeight);
+//
+//            Point2D geoPoint = new Point2D.Double();
+//            Point2D ul = new Point2D.Double();
+//            Point2D lr = new Point2D.Double();
+//
+//            geoPoint.setLocation(clipArea.getMinX(), clipArea.getMaxY());
+//            geoToRaster.transform(geoPoint, ul);
+//
+//            geoPoint.setLocation(clipArea.getMaxX(), clipArea.getMinY());
+//            geoToRaster.transform(geoPoint, lr);
+//
+//            int x = (int) Math.floor(ul.getX());
+//            int y = (int) Math.floor(ul.getY());
+//            int width = (int) Math.ceil(lr.getX() - ul.getX());
+//            int height = (int) Math.ceil(lr.getY() - ul.getY());
+//
+//            return new Rectangle(x, y, width, height);
+//        }
     }
 }

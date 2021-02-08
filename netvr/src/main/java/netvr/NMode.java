@@ -4,15 +4,16 @@ import gov.nasa.worldwind.geom.Extent;
 import jcog.thing.Part;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class NMode extends Part<NetVR> {
+import java.io.Serializable;
+
+public abstract class NMode extends Part<NetVR> implements Serializable {
+
     public abstract String name();
 
     public abstract String icon();
 
     public abstract Object menu();
 
-    @Nullable
-    public abstract Extent extent();
-
-    //TODO serialize/deserialize to byte[]
+    @Nullable public abstract Extent extent();
+    
 }
