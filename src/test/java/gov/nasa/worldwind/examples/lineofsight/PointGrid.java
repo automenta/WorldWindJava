@@ -624,10 +624,10 @@ public class PointGrid extends WWObjectImpl implements OrderedRenderable, Highli
 
     protected Vec4 computePoint(DrawContext dc, Position pos) {
         if (this.getAltitudeMode() == WorldWind.CLAMP_TO_GROUND)
-            return dc.getTerrain().getSurfacePoint(pos.getLat(), pos.getLon(), 0);
+            return dc.getTerrain().surfacePoint(pos.getLat(), pos.getLon(), 0);
 
         if (this.getAltitudeMode() == WorldWind.RELATIVE_TO_GROUND)
-            return dc.getTerrain().getSurfacePoint(pos);
+            return dc.getTerrain().surfacePoint(pos);
 
         if (this.applyVerticalExaggeration)
             pos = new Position(pos, dc.getVerticalExaggeration() * pos.getAltitude());

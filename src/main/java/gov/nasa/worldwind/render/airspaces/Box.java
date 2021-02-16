@@ -547,7 +547,7 @@ public class Box extends AbstractAirspace {
 
     private void makeSideGeometry(Terrain terrain, double[] altitudes, boolean[] terrainConformant, int lengthSegments,
         int widthSegments, BoxGeometry geom) {
-        List<LatLon> locations = this.makeSideLocations(terrain.getGlobe(), lengthSegments, widthSegments);
+        List<LatLon> locations = this.makeSideLocations(terrain.globe(), lengthSegments, widthSegments);
 
         // Compute model coordinate vertex points.
         int vertexCount = 2 * locations.size(); // upper altitude and lower altitude vertices
@@ -558,8 +558,8 @@ public class Box extends AbstractAirspace {
             for (int i = 1; i >= 0; i--) // upper altitude then lower altitude
             {
                 Vec4 p = terrainConformant[i] ?
-                    terrain.getSurfacePoint(ll.lat, ll.lon, altitudes[i]) :
-                    terrain.getGlobe().computePointFromPosition(ll.lat, ll.lon, altitudes[i]);
+                    terrain.surfacePoint(ll.lat, ll.lon, altitudes[i]) :
+                    terrain.globe().computePointFromPosition(ll.lat, ll.lon, altitudes[i]);
                 pointBuffer.put((float) (p.x - geom.referencePoint.x));
                 pointBuffer.put((float) (p.y - geom.referencePoint.y));
                 pointBuffer.put((float) (p.z - geom.referencePoint.z));
@@ -614,7 +614,7 @@ public class Box extends AbstractAirspace {
 
     private void makeCapGeometry(Terrain terrain, double[] altitudes, boolean[] terrainConformant, int lengthSegments,
         int widthSegments, BoxGeometry geom) {
-        List<LatLon> locations = this.makeCapLocations(terrain.getGlobe(), lengthSegments, widthSegments);
+        List<LatLon> locations = this.makeCapLocations(terrain.globe(), lengthSegments, widthSegments);
 
         // Compute model coordinate vertex points.
         int vertexCount = 2 * locations.size(); // upper altitude and lower altitude vertices
@@ -625,8 +625,8 @@ public class Box extends AbstractAirspace {
             for (int i = 1; i >= 0; i--) // upper altitude then lower altitude
             {
                 Vec4 p = terrainConformant[i] ?
-                    terrain.getSurfacePoint(ll.lat, ll.lon, altitudes[i]) :
-                    terrain.getGlobe().computePointFromPosition(ll.lat, ll.lon, altitudes[i]);
+                    terrain.surfacePoint(ll.lat, ll.lon, altitudes[i]) :
+                    terrain.globe().computePointFromPosition(ll.lat, ll.lon, altitudes[i]);
                 pointBuffer.put((float) (p.x - geom.referencePoint.x));
                 pointBuffer.put((float) (p.y - geom.referencePoint.y));
                 pointBuffer.put((float) (p.z - geom.referencePoint.z));

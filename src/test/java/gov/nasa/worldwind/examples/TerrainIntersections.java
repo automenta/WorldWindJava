@@ -9,7 +9,7 @@ import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.terrain.HighResolutionTerrain;
+import gov.nasa.worldwind.terrain.HighResTerrain;
 
 import javax.swing.*;
 import javax.swing.border.*;
@@ -72,7 +72,7 @@ public class TerrainIntersections extends ApplicationTemplate {
 
         private static final Cursor WaitCursor = new Cursor(Cursor.WAIT_CURSOR);
 
-        protected final HighResolutionTerrain terrain;
+        protected final HighResTerrain terrain;
         protected final RenderableLayer gridLayer;
         protected final RenderableLayer intersectionsLayer;
         protected final RenderableLayer sightLinesLayer;
@@ -107,7 +107,7 @@ public class TerrainIntersections extends ApplicationTemplate {
             this.layerPanel.add(this.progressBar, BorderLayout.SOUTH);
 
             // Be sure to re-use the Terrain object to take advantage of its caching.
-            this.terrain = new HighResolutionTerrain(wwd().model().globe(), TARGET_RESOLUTION);
+            this.terrain = new HighResTerrain(wwd().model().globe(), TARGET_RESOLUTION);
 
             this.gridLayer = new RenderableLayer();
             this.gridLayer.setName("Grid");
@@ -241,7 +241,7 @@ public class TerrainIntersections extends ApplicationTemplate {
 
             // Compute the position of the selected location (incorporate its height).
             this.referencePosition = new Position(curPos.getLat(), curPos.getLon(), height);
-            this.referencePoint = terrain.getSurfacePoint(curPos.getLat(), curPos.getLon(), height);
+            this.referencePoint = terrain.surfacePoint(curPos.getLat(), curPos.getLon(), height);
 
 //            // Pre-caching is unnecessary and is useful only when it occurs before the intersection
 //            // calculations. It will incur extra overhead otherwise. The normal intersection calculations
@@ -286,7 +286,7 @@ public class TerrainIntersections extends ApplicationTemplate {
 
             // Only the first intersection is shown.
             Vec4 iPoint = intersections[0].getIntersectionPoint();
-            Vec4 gPoint = terrain.getSurfacePoint(gridPosition.getLat(), gridPosition.getLon(),
+            Vec4 gPoint = terrain.surfacePoint(gridPosition.getLat(), gridPosition.getLon(),
                 gridPosition.getAltitude());
 
             // Check to see whether the intersection is beyond the grid point.
@@ -297,7 +297,7 @@ public class TerrainIntersections extends ApplicationTemplate {
             else {
 
                 // Compute the position corresponding to the intersection.
-                Position iPosition = this.terrain.getGlobe().computePositionFromPoint(iPoint);
+                Position iPosition = this.terrain.globe().computePositionFromPoint(iPoint);
 
                 // The sight line goes from the user-selected position to the intersection position.
                 this.addSightLine(this.referencePosition, new Position(iPosition, 0));

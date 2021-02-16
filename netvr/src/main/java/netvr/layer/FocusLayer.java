@@ -1,18 +1,14 @@
 package netvr.layer;
 
-import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.drag.*;
-import gov.nasa.worldwind.event.SelectListener;
 import gov.nasa.worldwind.geom.Position;
-import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.MarkerLayer;
-import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.render.markers.*;
-import gov.nasa.worldwind.util.BasicDragger;
-import jcog.event.Off;
 import netvr.Focus;
 
-import java.util.*;
+import java.util.List;
 
 public class FocusLayer extends MarkerLayer {
 

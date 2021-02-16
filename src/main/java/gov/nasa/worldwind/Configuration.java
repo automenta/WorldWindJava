@@ -17,12 +17,10 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.cache.*;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.cache.*;
-import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.*;
 
 import javax.xml.xpath.*;
 import java.io.*;
-import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -99,7 +97,7 @@ public class Configuration // Singleton
     static private final int CACHE_STALE_DAYS = 365;
 //    static private final long DISK_CACHE_MB = 1024;
 
-    public static final HttpCacheContext httpCache;
+//    public static final HttpCacheContext httpCache;
 
     public static final File httpCacheDir;
 
@@ -220,6 +218,7 @@ public class Configuration // Singleton
 
                 @Override
                 public void putEntry(String key, HttpCacheEntry entry) throws IOException {
+                    key = key(key);
 
                     final long size = entry.getResource().length();
                     byte[] y;
@@ -231,13 +230,21 @@ public class Configuration // Singleton
                     User.the().put(key, y /* BAD HACK */);
                 }
 
+                @Deprecated private static String key(String key) {
+                    if (key.startsWith("{")) {
+                        //HACK remove the "Vary" stuff
+                        key = key.substring(key.indexOf('}')+1);
+                    }
+                    return key;
+                }
+
                 @Override
                 public HttpCacheEntry getEntry(String key) throws IOException {
-                    byte[] b = User.the().get(key);
+                    byte[] b = User.the().get(key(key));
 
-                    if (b == null) return null;
-
-                    return io.readFrom(new ByteArrayInputStream(b));
+                    return b == null ?
+                        null :
+                        io.readFrom(new ByteArrayInputStream(b));
                 }
 
                 @Override
@@ -272,7 +279,7 @@ public class Configuration // Singleton
             .setDefaultRequestConfig(requestConfig)
 //            .disableAuthCaching()
             .build();
-        httpCache = HttpCacheContext.create();
+//        httpCache = HttpCacheContext.create();
 
 //        Configuration.http = new OkHttpClient.Builder()
 //            .dispatcher(new Dispatcher(ForkJoinPool.commonPool()))

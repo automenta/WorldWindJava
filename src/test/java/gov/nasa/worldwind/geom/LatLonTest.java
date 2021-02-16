@@ -8,12 +8,9 @@ package gov.nasa.worldwind.geom;
 
 import gov.nasa.worldwind.globes.*;
 import org.junit.*;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 import static org.junit.Assert.assertEquals;
 
-@RunWith(JUnit4.class)
 public class LatLonTest
 {
     private final static double DISTANCE_THRESHOLD = 1e-10;

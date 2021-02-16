@@ -11,7 +11,7 @@ import gov.nasa.worldwind.util.measure.AreaMeasurer;
 import gov.nasa.worldwind.video.newt.WorldWindowNEWT;
 import jcog.Util;
 import jcog.exe.Exe;
-import netvr.*;
+import netvr.OSMLoader;
 import org.eclipse.collections.impl.map.mutable.primitive.LongObjectHashMap;
 
 import java.io.IOException;

@@ -43,7 +43,7 @@ public class RadarVolumeExample extends ApplicationTemplate {
         protected static final boolean CONE_VOLUME = true;
 
         // Use the HighResolutionTerrain class to get accurate terrain for computing the intersections.
-        protected final HighResolutionTerrain terrain;
+        protected final HighResTerrain terrain;
         protected final double innerRange = 100;
         protected final double outerRange = 30.0e3;
         protected final int numAz = 25; // number of azimuth samplings
@@ -63,7 +63,7 @@ public class RadarVolumeExample extends ApplicationTemplate {
             Angle coneAzimuth = new Angle(205);
 
             // Initialize the high-resolution terrain class. Construct it to use 50 meter resolution elevations.
-            this.terrain = new HighResolutionTerrain(this.wwd().model().globe(), 50.0d);
+            this.terrain = new HighResTerrain(this.wwd().model().globe(), 50.0d);
 
             // Compute a near and far grid of positions that will serve as ray endpoints for computing terrain
             // intersections.
@@ -296,7 +296,7 @@ public class RadarVolumeExample extends ApplicationTemplate {
             // Create the transformation matrix that performs the transform.
             Matrix transform = this.wwd().model().globe().computeEllipsoidalOrientationAtPosition(
                 position.getLat(), position.getLon(),
-                this.terrain.getElevation(position) + position.getAltitude());
+                this.terrain.elevation(position) + position.getAltitude());
 
             for (Vec4 vertex : vertices) {
                 transformedVertices.add(vertex.transformBy4(transform));
@@ -309,7 +309,7 @@ public class RadarVolumeExample extends ApplicationTemplate {
             int[] obstructionFlags = new int[positions.size() - 1];
 
             int gridSize = (positions.size() - 1) / 2;
-            Globe globe = this.terrain.getGlobe();
+            Globe globe = this.terrain.globe();
 
             // Perform the intersection tests with the terrain and keep track of which rays intersect.
 
@@ -374,7 +374,7 @@ public class RadarVolumeExample extends ApplicationTemplate {
                         // The obstruction occurs beyond the near grid.
                         obstructionFlags[i - 1] = RadarVolume.INTERNAL_OBSTRUCTION;
                         Position pos = globe.computePositionFromEllipsoidalPoint(intersectionPoint);
-                        double elevation = this.terrain.getElevation(pos);
+                        double elevation = this.terrain.elevation(pos);
                         positions.set(i, new Position(pos, elevation));
                         intersectionIndices.add(i);
                     }

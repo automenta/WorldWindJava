@@ -99,9 +99,9 @@ public class TileKey implements Comparable<TileKey> {
         if (this == key)
             return 0;
 
-        //TEMPORARY
-        if (cacheName.equals(key.cacheName))
-            throw new UnsupportedOperationException();
+//        //TEMPORARY
+//        if (cacheName.equals(key.cacheName))
+//            throw new UnsupportedOperationException();
 
         if (this.level < key.level) // Lower-res levels compare lower than higher-res
             return -1;

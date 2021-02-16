@@ -39,19 +39,19 @@ public class TerrainLineIntersector extends LineIntersector {
 
         // Check to see whether the first intersection is beyond the grid point.
         Vec4 iPoint = intersections[0].getIntersectionPoint();
-        Vec4 gPoint = terrain.getSurfacePoint(position.getLat(), position.getLon(), position.getAltitude());
+        Vec4 gPoint = terrain.surfacePoint(position.getLat(), position.getLon(), position.getAltitude());
 
         if (iPoint.distanceTo3(this.referencePoint) >= gPoint.distanceTo3(this.referencePoint))
             return; // Intersection is beyond the position.
 
-        Position iPosition = this.terrain.getGlobe().computePositionFromPoint(iPoint);
+        Position iPosition = this.terrain.globe().computePositionFromPoint(iPoint);
 
         List<Intersection> iList = new ArrayList<>();
         iList.add(new Intersection(iPoint, new Position(iPosition, 0), false, null));
 
         for (int i = 1; i < intersections.length; i++) {
             iPoint = intersections[i].getIntersectionPoint();
-            iPosition = this.terrain.getGlobe().computePositionFromPoint(iPoint);
+            iPosition = this.terrain.globe().computePositionFromPoint(iPoint);
             iList.add(new Intersection(iPoint, new Position(iPosition, 0), false, null));
         }
 

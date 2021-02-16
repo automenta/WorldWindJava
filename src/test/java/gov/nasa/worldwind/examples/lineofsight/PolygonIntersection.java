@@ -11,7 +11,7 @@ import gov.nasa.worldwind.examples.ApplicationTemplate;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.terrain.HighResolutionTerrain;
+import gov.nasa.worldwind.terrain.HighResTerrain;
 
 import javax.swing.Timer;
 import java.util.*;
@@ -35,7 +35,7 @@ public class PolygonIntersection extends ApplicationTemplate {
     }
 
     public static class AppFrame extends ApplicationTemplate.AppFrame {
-        protected final HighResolutionTerrain terrain; // Use this class to test against high-resolution terrain
+        protected final HighResTerrain terrain; // Use this class to test against high-resolution terrain
         protected final Polygon polygon; // the polygon to intersect
         protected final RenderableLayer layer; // layer to display the polygon and the intersection
 
@@ -64,7 +64,7 @@ public class PolygonIntersection extends ApplicationTemplate {
             WorldWindow.insertBeforeCompass(wwd(), this.layer);
 
             // Create high-resolution terrain for the intersection calculations
-            this.terrain = new HighResolutionTerrain(this.wwd().model().globe(), 20.0d);
+            this.terrain = new HighResTerrain(this.wwd().model().globe(), 20.0d);
 
             // Perform the intersection test within a timer callback. Intersection calculations would normally be done
             // on a separate, non-EDT thread, however.
@@ -81,10 +81,10 @@ public class PolygonIntersection extends ApplicationTemplate {
 
             // Create the line to intersect with the shape.
             Position referencePosition = Position.fromDegrees(40.5, -120.5, 0);
-            Vec4 referencePoint = terrain.getSurfacePoint(referencePosition);
+            Vec4 referencePoint = terrain.surfacePoint(referencePosition);
 
             Position targetPosition = new Position(referencePosition, 20.0e3);
-            Vec4 targetPoint = terrain.getSurfacePoint(targetPosition);
+            Vec4 targetPoint = terrain.surfacePoint(targetPosition);
             Line line = new Line(targetPoint, referencePoint.subtract3(targetPoint));
 
             // Perform the intersection.

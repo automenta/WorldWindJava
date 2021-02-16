@@ -86,7 +86,7 @@ public class ExtrudedPolygonEditor extends AbstractShapeEditor {
         ExtrudedPolygon polygon = this.getPolygon();
 
         Position refPos = polygon.getReferencePosition();
-        Vec4 refPoint = terrain.getSurfacePoint(refPos.getLat(), refPos.getLon(), 0);
+        Vec4 refPoint = terrain.surfacePoint(refPos.getLat(), refPos.getLon(), 0);
 
         int altitudeMode = polygon.getAltitudeMode();
         double height = polygon.getHeight();
@@ -109,19 +109,19 @@ public class ExtrudedPolygonEditor extends AbstractShapeEditor {
                 }
 
                 // Compute the bottom point, which is on the terrain.
-                vert = terrain.getSurfacePoint(location.getLat(), location.getLon(), 0);
+                vert = terrain.surfacePoint(location.getLat(), location.getLon(), 0);
 
                 double delta = vaLength - vert.dot3(refPoint) / vaLength;
                 vert = vert.add3(vaa.multiply3(1.0d + delta / vaaLength));
             }
             else if (altitudeMode == WorldWind.RELATIVE_TO_GROUND) {
-                vert = terrain.getSurfacePoint(location.getLat(), location.getLon(),
+                vert = terrain.surfacePoint(location.getLat(), location.getLon(),
                     ((Position) location).getAltitude());
             }
             else // WorldWind.ABSOLUTE
             {
-                vert = terrain.getGlobe().computePointFromPosition(location.getLat(), location.getLon(),
-                    ((Position) location).getAltitude() * terrain.getVerticalExaggeration());
+                vert = terrain.globe().computePointFromPosition(location.getLat(), location.getLon(),
+                    ((Position) location).getAltitude() * terrain.verticalExaggeration());
             }
 
             Position vertexPosition = this.wwd.model().globe().computePositionFromPoint(vert);

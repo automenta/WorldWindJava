@@ -677,7 +677,18 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
         Angle minLatitude = ElevationTile.rowLat(key.row, dLat, latOrigin);
         Angle minLongitude = ElevationTile.columnLon(key.col, dLon, lonOrigin);
 
-        Sector tileSector = new Sector(minLatitude, minLatitude.add(dLat), minLongitude, minLongitude.add(dLon));
+//        double resDegrees = Math.min(level.getTileDelta().lat,level.getTileDelta().lon)/2;
+        Sector tileSector = new Sector(
+            minLatitude,
+            minLatitude.add(dLat),
+            minLongitude,
+            minLongitude.add(dLon)
+//            Util.round(minLatitude.degrees, resDegrees),
+//            Util.round(minLatitude.add(dLat).degrees, resDegrees),
+//            Util.round(minLongitude.degrees, resDegrees),
+//            Util.round(minLongitude.add(dLon).degrees, resDegrees)
+
+        );
 
         return new ElevationTile(tileSector, level, key.row, key.col);
     }
@@ -801,10 +812,10 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
         URL url = null;
         try {
             url = tile.getResourceURL();
-            if (WorldWind.getNetworkStatus().isHostUnavailable(url)) {
-                this.getLevels().miss(tile);
-                return;
-            }
+//            if (WorldWind.getNetworkStatus().isHostUnavailable(url)) {
+//                this.getLevels().miss(tile);
+//                return;
+//            }
             final DownloadPostProcessor pp = postProcessor != null ? postProcessor
                 : new DownloadPostProcessor(tile, this);
             HTTPRetriever retriever = new HTTPRetriever(url, pp);
@@ -1712,17 +1723,19 @@ protected final MemoryCache extremesLookupCache = new SoftMemoryCache();
                     if (elevations != null /*&& elevations.length() != 0*/) {
                         tile.setElevations(elevations, elevationModel);
                         elevationModel.memoryCache.add(tile.key, tile, elevations.getSizeInBytes());
+
+                        // We've successfully cached data. Check whether there's a configuration file for this elevation model
+                        // in the cache and create one if there isn't.
+//                this.elevationModel.writeConfigurationFile(this.getFileStore());
+
+                        // Fire a property change to denote that the model's backing data has changed.
+                        this.elevationModel.emit(Keys.ELEVATION_MODEL, null, this);
+
                     }
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
 
-                // We've successfully cached data. Check whether there's a configuration file for this elevation model
-                // in the cache and create one if there isn't.
-//                this.elevationModel.writeConfigurationFile(this.getFileStore());
-
-                // Fire a property change to denote that the model's backing data has changed.
-                this.elevationModel.emit(Keys.ELEVATION_MODEL, null, this);
 
             }
 

@@ -62,96 +62,11 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     protected View view;
     protected Model model;
     protected Globe globe;
-    protected double verticalExaggeration = 1.0d;
+    protected double verticalExaggeration = 1;
     protected Sector visibleSector;
     protected SectorGeometryList surfaceGeometry;
-    protected final Terrain terrain = new Terrain() {
-        public Globe getGlobe() {
-            return DrawContextImpl.this.getGlobe();
-        }
+    protected Terrain terrain;
 
-        public double getVerticalExaggeration() {
-            return DrawContextImpl.this.getVerticalExaggeration();
-        }
-
-        public Vec4 getSurfacePoint(Position position) {
-
-            SectorGeometryList sectorGeometry = DrawContextImpl.this.getSurfaceGeometry();
-            if (sectorGeometry == null)
-                return null;
-
-            Vec4 pt = sectorGeometry.getSurfacePoint(position);
-            if (pt == null) {
-                final Globe g = this.getGlobe();
-                double elevation = g.elevation(position.getLat(), position.getLon());
-                pt = g.computePointFromPosition(position,
-                    position.getAltitude() + elevation * this.getVerticalExaggeration());
-            }
-
-            return pt;
-        }
-
-        public Vec4 getSurfacePoint(Angle latitude, Angle longitude, double metersOffset) {
-
-            SectorGeometryList sectorGeometry = DrawContextImpl.this.getSurfaceGeometry();
-            if (sectorGeometry == null)
-                return null;
-
-            Vec4 pt = sectorGeometry.getSurfacePoint(latitude, longitude, metersOffset);
-
-            if (pt == null) {
-                final Globe g = this.getGlobe();
-                double elevation = g.elevation(latitude, longitude);
-                pt = g.computePointFromPosition(latitude, longitude,
-                    metersOffset + elevation * this.getVerticalExaggeration());
-            }
-
-            return pt;
-        }
-
-        public Intersection[] intersect(Position pA, Position pB) {
-
-            Vec4 ptA = this.getSurfacePoint(pA);
-            if (ptA == null)
-                return null;
-            Vec4 ptB = this.getSurfacePoint(pB);
-            if (ptB == null)
-                return null;
-
-            return DrawContextImpl.this.getSurfaceGeometry().intersect(new Line(ptA, ptB.subtract3(ptA)));
-        }
-
-        public Intersection[] intersect(Position pA, Position pB, int altitudeMode) {
-//            if (pA == null || pB == null) {
-//                String msg = Logging.getMessage("nullValue.PositionIsNull");
-//                Logging.logger().severe(msg);
-//                throw new IllegalArgumentException(msg);
-//            }
-
-            // The intersect method expects altitudes to be relative to ground, so make them so if they aren't already.
-            double altitudeA = pA.elevation;
-            double altitudeB = pB.elevation;
-            if (altitudeMode == WorldWind.ABSOLUTE) {
-                altitudeA -= this.getElevation(pA);
-                altitudeB -= this.getElevation(pB);
-            } else if (altitudeMode == WorldWind.CLAMP_TO_GROUND) {
-                altitudeA = 0;
-                altitudeB = 0;
-            }
-
-            return this.intersect(new Position(pA, altitudeA), new Position(pB, altitudeB));
-        }
-
-        public Double getElevation(LatLon location) {
-            Vec4 pt = this.getSurfacePoint(location.getLat(), location.getLon(), 0);
-            if (pt == null)
-                return null;
-            else {
-                return this.getGlobe().computePointFromPosition(location.getLat(), location.getLon(), 0)
-                    .distanceTo3(pt);
-            }
-        }
-    };
     /**
      * The list of objects at the pick point during the most recent pick traversal. Initialized to an empty
      * PickedObjectList.
@@ -269,8 +184,11 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
             return;
 
         Globe g = this.model.globe();
-        if (g != null)
-            this.globe = g;
+
+        this.globe = g;
+        this.terrain =
+            new LowResTerrain(this);
+            //new HighResTerrain(g);
     }
 
     public final LayerList getLayers() {
@@ -295,7 +213,8 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public final Globe getGlobe() {
-        return this.globe != null ? this.globe : this.model.globe();
+        //return this.globe != null ? this.globe : this.model.globe();
+        return globe;
     }
 
     public final View view() {
@@ -1131,7 +1050,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public Vec4 computeTerrainPoint(Angle lat, Angle lon, double offset) {
-        return this.getTerrain().getSurfacePoint(lat, lon, offset);
+        return this.getTerrain().surfacePoint(lat, lon, offset);
     }
 
     public void restoreDefaultBlending() {

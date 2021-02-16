@@ -110,18 +110,18 @@ public class GeoJSON {
             GeoJSON.handleUnrecognizedObject(object);
     }
 
-
-    /**
-     * Create a layer from a GeoJSON object.
-     *
-     * @param object GeoJSON object to use to create a Renderable, which will be added to the new layer.
-     * @return the new layer.
-     */
-    public Layer layer(GeoJSONObject object) {
-        RenderableLayer layer = new RenderableLayer();
-        addGeoJSONGeometryToLayer(object, layer);
-        return layer;
-    }
+//
+//    /**
+//     * Create a layer from a GeoJSON object.
+//     *
+//     * @param object GeoJSON object to use to create a Renderable, which will be added to the new layer.
+//     * @return the new layer.
+//     */
+//    public Layer layer(GeoJSONObject object) {
+//        RenderableLayer layer = new RenderableLayer();
+//        addGeoJSONGeometryToLayer(object, layer);
+//        return layer;
+//    }
 
     //**************************************************************//
     //********************  Attribute Construction  ****************//

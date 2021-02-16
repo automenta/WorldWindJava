@@ -348,7 +348,7 @@ public class GeometryBuilder {
         }
 
         double da = 2.0 * Math.PI / slices;
-        double r = radius / terrain.getGlobe().getRadius();
+        double r = radius / terrain.globe().getRadius();
         FloatBuffer destBuffer = FloatBuffer.wrap(dest);
 
         for (int i = 0; i < slices; i++) {
@@ -399,7 +399,7 @@ public class GeometryBuilder {
         }
 
         double da = 2.0 * Math.PI / (slices - 1);
-        double globeRadius = terrain.getGlobe().getRadius();
+        double globeRadius = terrain.globe().getRadius();
         FloatBuffer destBuffer = FloatBuffer.wrap(dest);
 
         for (int i = 0; i < slices; i++) {
@@ -608,7 +608,7 @@ public class GeometryBuilder {
         }
 
         double da = sweep / slices;
-        double r = radius / terrain.getGlobe().getRadius();
+        double r = radius / terrain.globe().getRadius();
         FloatBuffer destBuffer = FloatBuffer.wrap(dest);
 
         for (int i = 0; i <= slices; i++) {
@@ -849,7 +849,7 @@ public class GeometryBuilder {
 
         double da = 2.0 * Math.PI / slices;
         double dr = (outerRadius - innerRadius) / loops;
-        double globeRadius = terrain.getGlobe().getRadius();
+        double globeRadius = terrain.globe().getRadius();
         FloatBuffer destBuffer = FloatBuffer.wrap(dest);
 
         for (int s = 0; s < slices; s++) {
@@ -906,7 +906,7 @@ public class GeometryBuilder {
         double da = 2.0 * Math.PI / (slices - 1);
         double dMinor = (outerMinorRadius - innerMinorRadius) / loops;
         double dMajor = (outerMajorRadius - innerMajorRadius) / loops;
-        double globeRadius = terrain.getGlobe().getRadius();
+        double globeRadius = terrain.globe().getRadius();
         FloatBuffer destBuffer = FloatBuffer.wrap(dest);
 
         for (int s = 0; s < slices; s++) {
@@ -1067,7 +1067,7 @@ public class GeometryBuilder {
 
         double da = sweep / slices;
         double dr = (outerRadius - innerRadius) / loops;
-        double globeRadius = terrain.getGlobe().getRadius();
+        double globeRadius = terrain.globe().getRadius();
         FloatBuffer destBuffer = FloatBuffer.wrap(dest);
 
         for (int s = 0; s <= slices; s++) {
@@ -1186,7 +1186,7 @@ public class GeometryBuilder {
         }
 
         double dr = (outerRadius - innerRadius) / pillars;
-        double globeRadius = terrain.getGlobe().getRadius();
+        double globeRadius = terrain.globe().getRadius();
         FloatBuffer destBuffer = FloatBuffer.wrap(dest);
 
         for (int s = 0; s <= stacks; s++) {
@@ -1424,7 +1424,7 @@ public class GeometryBuilder {
         double az1 = LatLon.greatCircleAzimuth(center1, center2).radians();
         double az2 = LatLon.greatCircleAzimuth(center2, center1).radians();
         double len = LatLon.greatCircleDistance(center1, center2).radians();
-        double r = radius / terrain.getGlobe().getRadius();
+        double r = radius / terrain.globe().getRadius();
         double da = Math.PI / arcSlices;
         double ds = len / lengthSlices;
         FloatBuffer destBuffer = FloatBuffer.wrap(dest);
@@ -1721,7 +1721,7 @@ public class GeometryBuilder {
         double da = Math.PI / arcSlices;
         double ds = len / lengthSlices;
         double dr = (outerRadius - innerRadius) / loops;
-        double globeRadius = terrain.getGlobe().getRadius();
+        double globeRadius = terrain.globe().getRadius();
         FloatBuffer destBuffer = FloatBuffer.wrap(dest);
 
         LatLon[] locations = new LatLon[lengthSlices];
@@ -4183,8 +4183,8 @@ public class GeometryBuilder {
     private static void append(Terrain terrain, LatLon ll, double altitude, boolean terrainConformant, Vec4 refPoint,
         FloatBuffer dest) {
         Vec4 point = terrainConformant ?
-            terrain.getSurfacePoint(ll.lat, ll.lon, altitude) :
-            terrain.getGlobe().computePointFromPosition(ll.lat, ll.lon, altitude);
+            terrain.surfacePoint(ll.lat, ll.lon, altitude) :
+            terrain.globe().computePointFromPosition(ll.lat, ll.lon, altitude);
 
         GeometryBuilder.coord[0] = (float) (point.x - refPoint.x);
         GeometryBuilder.coord[1] = (float) (point.y - refPoint.y);

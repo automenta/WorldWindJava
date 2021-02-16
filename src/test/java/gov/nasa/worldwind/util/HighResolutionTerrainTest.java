@@ -32,8 +32,9 @@ public class HighResolutionTerrainTest
 
         ArrayList<Position> referencePositions = generateReferenceLocations(sector, GRID_SIZE, GRID_SIZE);
 
-        final ConcurrentHashMap<Position, Intersection[]> currentIntersections
-            = new ConcurrentHashMap<>();
+        final Map<Position, Intersection[]> currentIntersections
+            = new HashMap<>();
+            //= new ConcurrentHashMap<>();
         final HashMap<Position, Intersection[]> previousIntersections = new HashMap<>();
 
         Globe globe = new Earth();
@@ -42,10 +43,10 @@ public class HighResolutionTerrainTest
 
         for (int i = 0; i < 5; i++)
         {
-            HighResolutionTerrain hrt = new HighResolutionTerrain(globe, sector, null, 1.0);
-            try
-            {
-                hrt.intersect(referencePositions, new HighResolutionTerrain.IntersectionCallback()
+            HighResTerrain hrt = new HighResTerrain(globe, sector, null, 1.0);
+//            try
+//            {
+                hrt.intersect(referencePositions, new HighResTerrain.IntersectionCallback()
                 {
                     @Override
                     public void intersection(Position pA, Position pB, Intersection[] intersections)
@@ -58,11 +59,11 @@ public class HighResolutionTerrainTest
                         e.printStackTrace();
                     }
                 });
-            }
-            catch (InterruptedException e)
-            {
-                e.printStackTrace();
-            }
+//            }
+//            catch (InterruptedException e)
+//            {
+//                e.printStackTrace();
+//            }
 
             if (!previousIntersections.isEmpty())
             {
@@ -134,7 +135,7 @@ public class HighResolutionTerrainTest
 
             try
             {
-                final HighResolutionTerrain hrt = new HighResolutionTerrain(globe, sector, null, 1.0);
+                final HighResTerrain hrt = new HighResTerrain(globe, sector, null, 1.0);
 
                 for (int j = 0; j < referencePositions.size(); j += 2)
                 {

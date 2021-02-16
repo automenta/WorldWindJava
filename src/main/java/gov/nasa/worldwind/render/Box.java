@@ -306,12 +306,12 @@ public class Box extends RigidShape {
         // TODO: add error checking
 
         ShapeData shapeData = new ShapeData(null, this);
-        shapeData.setGlobeStateKey(terrain.getGlobe().getGlobeStateKey());
+        shapeData.setGlobeStateKey(terrain.globe().getGlobeStateKey());
         Geometry mesh;
 
         makeUnitBox(0, shapeData.getMeshes());    // use maximum subdivisions for good intersection accuracy
 
-        Matrix matrix = computeRenderMatrix(terrain.getGlobe(), terrain.getVerticalExaggeration());
+        Matrix matrix = computeRenderMatrix(terrain.globe(), terrain.verticalExaggeration());
 
         for (int i = 0; i < getFaceCount(); i++) {
             mesh = shapeData.getMesh(i);
@@ -321,9 +321,9 @@ public class Box extends RigidShape {
             mesh.setVertexData(mesh.getCount(Geometry.VERTEX), newVertices);
         }
 
-        shapeData.setReferencePoint(this.computeReferencePoint(terrain.getGlobe(),
-            terrain.getVerticalExaggeration()));
-        shapeData.setExtent(getExtent(terrain.getGlobe(), terrain.getVerticalExaggeration()));
+        shapeData.setReferencePoint(this.computeReferencePoint(terrain.globe(),
+            terrain.verticalExaggeration()));
+        shapeData.setExtent(getExtent(terrain.globe(), terrain.verticalExaggeration()));
 
         return shapeData;
     }

@@ -15,7 +15,7 @@ import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.pick.PickedObject;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.render.airspaces.BasicAirspaceAttributes;
-import gov.nasa.worldwind.render.markers.*;
+import gov.nasa.worldwind.render.markers.Marker;
 import gov.nasa.worldwind.util.ShapeEditor;
 
 import java.awt.event.*;

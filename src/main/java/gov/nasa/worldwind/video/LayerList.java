@@ -10,7 +10,6 @@ import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.KV;
 import gov.nasa.worldwind.event.Message;
 import gov.nasa.worldwind.layers.Layer;
-import gov.nasa.worldwind.util.Logging;
 
 import java.beans.*;
 import java.util.*;

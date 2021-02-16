@@ -239,7 +239,7 @@ public abstract class AbstractGeneralShape extends AbstractShape {
         if (refPos == null)
             return null;
 
-        return terrain.getSurfacePoint(refPos.getLat(), refPos.getLon(), 0);
+        return terrain.surfacePoint(refPos.getLat(), refPos.getLon(), 0);
     }
 
     public void moveTo(Position position) {

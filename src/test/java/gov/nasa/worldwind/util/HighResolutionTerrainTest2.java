@@ -8,7 +8,7 @@ package gov.nasa.worldwind.util;
 
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.*;
-import gov.nasa.worldwind.terrain.HighResolutionTerrain;
+import gov.nasa.worldwind.terrain.HighResTerrain;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -46,11 +46,11 @@ public class HighResolutionTerrainTest2
             "config/Earth/EarthElevationModelAsBil16.xml",
             "config/Earth/EarthElevationModelAsBil16.xml"));
 
-        HighResolutionTerrain hrt = new HighResolutionTerrain(globe, SECTOR, null, 1.0);
+        HighResTerrain hrt = new HighResTerrain(globe, SECTOR, null, 1.0);
         hrt.setTimeout(20000L);
         try
         {
-            hrt.intersect(referencePositions, new HighResolutionTerrain.IntersectionCallback()
+            hrt.intersect(referencePositions, new HighResTerrain.IntersectionCallback()
             {
                 @Override
                 public void intersection(Position pA, Position pB, Intersection[] intersections)

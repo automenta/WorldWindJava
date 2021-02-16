@@ -78,7 +78,7 @@ public class ScreenAnnotation extends AbstractAnnotation {
     }
 
     protected static Point computeAnnotationPosition(DrawContext dc, Position pos) {
-        Vec4 surfacePoint = dc.getTerrain().getSurfacePoint(pos);
+        Vec4 surfacePoint = dc.getTerrain().surfacePoint(pos);
         if (surfacePoint == null) {
             Globe globe = dc.getGlobe();
             surfacePoint = globe.computePointFromPosition(pos.getLat(), pos.getLon(),

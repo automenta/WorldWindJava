@@ -1242,11 +1242,11 @@ public abstract class RigidShape extends AbstractShape {
             return false;
 
         //noinspection SimplifiableIfStatement
-        if (terrain.getVerticalExaggeration() != this.previousIntersectionTerrain.getVerticalExaggeration())
+        if (terrain.verticalExaggeration() != this.previousIntersectionTerrain.verticalExaggeration())
             return false;
 
         return this.previousIntersectionGlobeStateKey != null &&
-            terrain.getGlobe().getGlobeStateKey().equals(this.previousIntersectionGlobeStateKey);
+            terrain.globe().getGlobeStateKey().equals(this.previousIntersectionGlobeStateKey);
     }
 
     //*****************************************************************//
@@ -1304,7 +1304,7 @@ public abstract class RigidShape extends AbstractShape {
 
             this.previousIntersectionShapeData = highResShapeData;
             this.previousIntersectionTerrain = terrain;
-            this.previousIntersectionGlobeStateKey = terrain.getGlobe().getGlobeStateKey();
+            this.previousIntersectionGlobeStateKey = terrain.globe().getGlobeStateKey();
         }
 
         if (highResShapeData.getExtent() != null && highResShapeData.getExtent().intersect(line) == null)
@@ -1327,8 +1327,8 @@ public abstract class RigidShape extends AbstractShape {
                 intersection.setIntersectionPoint(pt);
 
                 // Compute intersection position relative to ground.
-                Position pos = terrain.getGlobe().computePositionFromPoint(pt);
-                Vec4 gp = terrain.getSurfacePoint(pos.getLat(), pos.getLon(), 0);
+                Position pos = terrain.globe().computePositionFromPoint(pt);
+                Vec4 gp = terrain.surfacePoint(pos.getLat(), pos.getLon(), 0);
                 double dist = Math.sqrt(pt.dotSelf3()) - Math.sqrt(gp.dotSelf3());
                 intersection.setIntersectionPosition(new Position(pos, dist));
 

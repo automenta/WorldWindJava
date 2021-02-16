@@ -8,15 +8,11 @@ package gov.nasa.worldwind.util;
 
 import com.jogamp.common.nio.*;
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.cache.BasicGpuResourceCache;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import jcog.Log;
-import jcog.exe.Exe;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.*;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.*;
-import org.junit.jupiter.api.function.ThrowingConsumer;
 import org.slf4j.Logger;
 
 import java.io.*;
@@ -150,21 +146,21 @@ public class WWIO {
         WWIO.suffixToMimeTypeMap.put("zip", "application/zip");
     }
 
-    public static void get(String url, ThrowingConsumer<HttpEntity> success) {
+    public static void get(String url, SafeConsumer<HttpEntity> success) {
         WWIO.get(url, success, z -> true);
     }
 
     /**
      * fail predicate returns true to bubble up the exception
      */
-    public static void get(String url, ThrowingConsumer<HttpEntity> success, Predicate<Throwable> fail) {
+    public static void get(String url, SafeConsumer<HttpEntity> success, Predicate<Throwable> fail) {
 
 //        Exe.run(()->{
 //        try {
             Throwable e = null;
             HttpGet httpget = new HttpGet(url);
 
-            try (CloseableHttpResponse response = (CloseableHttpResponse) Configuration.http.execute(httpget, Configuration.httpCache)) {
+            try (CloseableHttpResponse response = (CloseableHttpResponse) Configuration.http.execute(httpget/*, Configuration.httpCache*/)) {
                 final StatusLine status = response.getStatusLine();
                 final int code = status.getStatusCode();
                 if (code==HTTP_OK) {

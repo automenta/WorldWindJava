@@ -900,7 +900,7 @@ public class Polygon extends AbstractShape {
         if (refPos == null)
             return null;
 
-        Vec4 refPt = terrain.getSurfacePoint(refPos.getLat(), refPos.getLon(), 0);
+        Vec4 refPt = terrain.surfacePoint(refPos.getLat(), refPos.getLon(), 0);
         if (refPt == null)
             return null;
 
@@ -1106,11 +1106,11 @@ public class Polygon extends AbstractShape {
         if (terrain == null || this.previousIntersectionTerrain == null || terrain != this.previousIntersectionTerrain)
             return false;
 
-        if (terrain.getVerticalExaggeration() != this.previousIntersectionTerrain.getVerticalExaggeration())
+        if (terrain.verticalExaggeration() != this.previousIntersectionTerrain.verticalExaggeration())
             return false;
 
         return this.previousIntersectionGlobeStateKey != null &&
-            terrain.getGlobe().getGlobeStateKey().equals(this.previousIntersectionGlobeStateKey);
+            terrain.globe().getGlobeStateKey().equals(this.previousIntersectionGlobeStateKey);
     }
 
     public void clearIntersectionGeometry() {
@@ -1150,7 +1150,7 @@ public class Polygon extends AbstractShape {
 
             this.previousIntersectionShapeData = highResShapeData;
             this.previousIntersectionTerrain = terrain;
-            this.previousIntersectionGlobeStateKey = terrain.getGlobe().getGlobeStateKey();
+            this.previousIntersectionGlobeStateKey = terrain.globe().getGlobeStateKey();
         }
 
         if (highResShapeData.getExtent() != null && highResShapeData.getExtent().intersect(line) == null)
@@ -1170,8 +1170,8 @@ public class Polygon extends AbstractShape {
             intersection.setIntersectionPoint(pt);
 
             // Compute intersection position relative to ground.
-            Position pos = terrain.getGlobe().computePositionFromPoint(pt);
-            Vec4 gp = terrain.getSurfacePoint(pos.getLat(), pos.getLon(), 0);
+            Position pos = terrain.globe().computePositionFromPoint(pt);
+            Vec4 gp = terrain.surfacePoint(pos.getLat(), pos.getLon(), 0);
             double dist = Math.sqrt(pt.dotSelf3()) - Math.sqrt(gp.dotSelf3());
             intersection.setIntersectionPosition(new Position(pos, dist));
 
@@ -1184,7 +1184,7 @@ public class Polygon extends AbstractShape {
     protected ShapeData createIntersectionGeometry(Terrain terrain) {
         ShapeData shapeData = new ShapeData(null, this);
 
-        Matrix rotationMatrix = this.getRotation() != null ? this.computeRotationMatrix(terrain.getGlobe()) : null;
+        Matrix rotationMatrix = this.getRotation() != null ? this.computeRotationMatrix(terrain.globe()) : null;
 
         shapeData.setReferencePoint(this.computeReferencePoint(terrain, rotationMatrix));
         if (shapeData.getReferencePoint() == null)

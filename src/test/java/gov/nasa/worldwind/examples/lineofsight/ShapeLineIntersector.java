@@ -54,7 +54,7 @@ public class ShapeLineIntersector extends LineIntersector {
         if (this.renderables == null)
             return;
 
-        Vec4 point = this.terrain.getSurfacePoint(position);
+        Vec4 point = this.terrain.surfacePoint(position);
         Line line = new Line(this.referencePoint, point.subtract3(this.referencePoint));
         double length = point.distanceTo3(this.referencePoint);
 

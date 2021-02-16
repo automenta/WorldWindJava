@@ -77,7 +77,7 @@ public class LinesOfSight extends ApplicationTemplate {
     public static class AppFrame extends ApplicationTemplate.AppFrame {
         private static final Cursor WaitCursor = new Cursor(Cursor.WAIT_CURSOR);
 
-        protected final HighResolutionTerrain terrain;
+        protected final HighResTerrain terrain;
         protected final TerrainLineIntersector terrainIntersector;
         protected final ShapeLineIntersector shapeIntersector;
         protected final RenderableLayer gridLayer;
@@ -129,7 +129,7 @@ public class LinesOfSight extends ApplicationTemplate {
             this.wwd().model().layers().add(this.sightLinesLayer);
 
             // Create a Terrain object that uses high-resolution elevation data to compute intersections.
-            this.terrain = new HighResolutionTerrain(this.wwd().model().globe(), TARGET_RESOLUTION);
+            this.terrain = new HighResTerrain(this.wwd().model().globe(), TARGET_RESOLUTION);
             this.terrain.setCacheCapacity(CACHE_SIZE); // larger cache speeds up repeat calculations
 
             // Create the intersectors for terrain and shapes.
@@ -222,7 +222,7 @@ public class LinesOfSight extends ApplicationTemplate {
             // Compute the position of the selected location (incorporate its height).
             this.referencePosition = new Position(curPos.getLat(), curPos.getLon(),
                 REFERENCE_POSITION_HEIGHT);
-            this.referencePoint = this.terrain.getSurfacePoint(this.referencePosition);
+            this.referencePoint = this.terrain.surfacePoint(this.referencePosition);
 
             // Form the grid.
             Sector sector = AppFrame.computeGridSector(curPos, GRID_RADIUS.degrees);

@@ -10,8 +10,7 @@ import gov.nasa.worldwind.layers.ogc.kml.*;
 import gov.nasa.worldwind.util.Logging;
 
 import javax.xml.XMLConstants;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;

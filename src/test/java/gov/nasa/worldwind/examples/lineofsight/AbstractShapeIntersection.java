@@ -12,7 +12,7 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.Cylinder;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.terrain.HighResolutionTerrain;
+import gov.nasa.worldwind.terrain.HighResTerrain;
 
 import javax.swing.*;
 import java.util.List;
@@ -39,7 +39,7 @@ public class AbstractShapeIntersection extends ApplicationTemplate {
     }
 
     public static class AppFrame extends ApplicationTemplate.AppFrame {
-        protected final HighResolutionTerrain terrain; // Use this class to test against high-resolution terrain
+        protected final HighResTerrain terrain; // Use this class to test against high-resolution terrain
         protected final Cylinder shape; // the polygon to intersect
         protected final RenderableLayer resultsLayer; // holds the intersection geometry
         protected final RenderableLayer shapeLayer; // holds the shape
@@ -67,7 +67,7 @@ public class AbstractShapeIntersection extends ApplicationTemplate {
             WorldWindow.insertBeforeCompass(wwd(), this.resultsLayer);
 
             // Create high-resolution terrain for the intersection calculations
-            this.terrain = new HighResolutionTerrain(this.wwd().model().globe(), 20.0d);
+            this.terrain = new HighResTerrain(this.wwd().model().globe(), 20.0d);
 
             // Perform the intersection test within a timer callback. Intersection calculations would normally be done
             // on a separate, non-EDT thread, however.
@@ -93,8 +93,8 @@ public class AbstractShapeIntersection extends ApplicationTemplate {
 //            try
             {
                 // Create the line to intersect with the shape.
-                Vec4 refPoint = terrain.getSurfacePoint(pA);
-                Vec4 targetPoint = terrain.getSurfacePoint(pB);
+                Vec4 refPoint = terrain.surfacePoint(pA);
+                Vec4 targetPoint = terrain.surfacePoint(pB);
                 Line line = new Line(targetPoint, refPoint.subtract3(targetPoint));
 
                 // Perform the intersection.

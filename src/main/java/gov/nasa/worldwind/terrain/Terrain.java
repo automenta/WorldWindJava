@@ -25,9 +25,9 @@ public interface Terrain {
      *
      * @return the globe specified to the constructor.
      */
-    Globe getGlobe();
+    Globe globe();
 
-    double getVerticalExaggeration();
+    double verticalExaggeration();
 
     /**
      * Computes the Cartesian, model-coordinate point of a position on the terrain.
@@ -43,7 +43,7 @@ public interface Terrain {
      *                                                         terrain data.
      * @throws gov.nasa.worldwind.exception.WWRuntimeException if the operation is interrupted.
      */
-    Vec4 getSurfacePoint(Position position);
+    Vec4 surfacePoint(Position position);
 
     /**
      * Computes the Cartesian, model-coordinate point of a location on the terrain.
@@ -62,10 +62,10 @@ public interface Terrain {
      * @throws gov.nasa.worldwind.exception.WWRuntimeException if the operation is interrupted.
      */
     @Deprecated
-    Vec4 getSurfacePoint(Angle latitude, Angle longitude, double metersOffset);
+    Vec4 surfacePoint(Angle latitude, Angle longitude, double metersOffset);
 
-    default Vec4 getSurfacePoint(double latitude, double longitude, double metersOffset) {
-        return getSurfacePoint(new Angle(latitude), new Angle(longitude), metersOffset);
+    default Vec4 surfacePoint(double latitude, double longitude, double metersOffset) {
+        return surfacePoint(new Angle(latitude), new Angle(longitude), metersOffset);
     }
 
     /**
@@ -119,5 +119,5 @@ public interface Terrain {
      *                                                         terrain data.
      * @throws gov.nasa.worldwind.exception.WWRuntimeException if the operation is interrupted.
      */
-    Double getElevation(LatLon location);
+    Double elevation(LatLon location);
 }

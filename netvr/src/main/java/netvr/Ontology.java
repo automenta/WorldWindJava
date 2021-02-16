@@ -6,8 +6,7 @@ import org.semanticweb.yars.nx.*;
 import org.semanticweb.yars.nx.parser.*;
 import org.semanticweb.yars.turtle.TurtleParser;
 
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.URI;
 import java.util.*;
 import java.util.zip.GZIPInputStream;

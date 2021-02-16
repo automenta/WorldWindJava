@@ -65,11 +65,11 @@ public class HighResolutionTerrainTest {
 
     protected static ArrayList<Position> computeElevations(Iterable<Position> locations) {
         Sector sector = Sector.boundingSector(locations);
-        Terrain hrt = new HighResolutionTerrain(new Earth(), sector, null, 1.0);
+        Terrain hrt = new HighResTerrain(new Earth(), sector, null, 1.0);
 
         ArrayList<Position> computedPositions = new ArrayList<>();
         for (LatLon latLon : locations) {
-            Double elevation = hrt.getElevation(latLon);
+            Double elevation = hrt.elevation(latLon);
             computedPositions.add(new Position(latLon, Math.round(elevation * 10000.0) / 10000.0));
         }
 
@@ -92,7 +92,7 @@ public class HighResolutionTerrainTest {
     }
 
     protected static void generateReferenceValues(String filePath, Sector sector) throws FileNotFoundException {
-        HighResolutionTerrain hrt = new HighResolutionTerrain(new Earth(), sector, null, 1.0);
+        HighResTerrain hrt = new HighResTerrain(new Earth(), sector, null, 1.0);
 
         ArrayList<Position> referenceLocations = generateReferenceLocations(hrt.getSector(), 5, 5);
         ArrayList<Position> referencePositions = computeElevations(referenceLocations);

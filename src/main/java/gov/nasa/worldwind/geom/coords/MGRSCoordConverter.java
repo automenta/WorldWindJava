@@ -14,7 +14,7 @@ import gov.nasa.worldwind.globes.Globe;
  *
  * @author Patrick Murris
  * @version $Id: MGRSCoordConverter.java 1171 2013-02-11 21:45:02Z dcollins $
- * @see MGRSCoord
+ * @see gov.nasa.worldwind.geom.coords.MGRSCoord
  */
 
 /**

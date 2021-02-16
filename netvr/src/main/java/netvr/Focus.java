@@ -1,10 +1,7 @@
 package netvr;
 
 import gov.nasa.worldwind.geom.*;
-import jcog.thing.Part;
 import org.jetbrains.annotations.Nullable;
-
-import java.io.Serializable;
 
 /** defines a space[time] focus */
 public class Focus extends NMode {

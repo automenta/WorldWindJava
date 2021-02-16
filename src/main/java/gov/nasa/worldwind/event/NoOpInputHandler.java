@@ -9,9 +9,11 @@ package gov.nasa.worldwind.event;
 import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.event.WindowEvent;
-import com.jogamp.newt.event.WindowUpdateEvent;
+import com.jogamp.newt.event.*;
 import gov.nasa.worldwind.*;
 
+import java.awt.event.KeyListener;
+import java.awt.event.MouseListener;
 import java.awt.event.*;
 
 /**

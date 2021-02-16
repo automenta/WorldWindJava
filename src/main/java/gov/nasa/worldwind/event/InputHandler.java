@@ -10,6 +10,8 @@ import com.jogamp.newt.event.WindowListener;
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.KV;
 
+import java.awt.event.KeyListener;
+import java.awt.event.MouseListener;
 import java.awt.event.*;
 import java.beans.*;
 import java.util.*;

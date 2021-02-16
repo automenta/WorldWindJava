@@ -10,15 +10,15 @@ import gov.nasa.worldwind.layers.earth.*;
 import gov.nasa.worldwind.layers.sky.*;
 import gov.nasa.worldwind.layers.tool.LatLonGraticuleLayer;
 import gov.nasa.worldwind.pick.PickedObject;
-import gov.nasa.worldwind.util.*;
+import gov.nasa.worldwind.util.BasicDragger;
 import gov.nasa.worldwind.video.LayerList;
 import gov.nasa.worldwind.video.newt.WorldWindowNEWT;
-import jcog.exe.*;
-import jcog.thing.*;
+import jcog.exe.Loop;
+import jcog.thing.Thing;
 import netvr.layer.*;
 import netvr.mode.LayerMode;
 import org.eclipse.collections.impl.map.mutable.primitive.ObjectFloatHashMap;
-import org.jetbrains.annotations.*;
+import org.jetbrains.annotations.Nullable;
 import spacegraph.layer.OrthoSurfaceGraph;
 import spacegraph.space2d.Surface;
 import spacegraph.space2d.container.*;
@@ -32,9 +32,8 @@ import spacegraph.video.JoglWindow;
 
 import java.awt.event.*;
 import java.util.Map;
-import java.util.function.*;
+import java.util.function.Consumer;
 
-import static jcog.data.iterator.Concaterator.concat;
 import static spacegraph.space2d.container.grid.Containers.col;
 
 public class NetVR extends Thing<NetVR,NMode> {
@@ -214,14 +213,14 @@ public class NetVR extends Thing<NetVR,NMode> {
     public Surface modeWidget(NMode m) {
         return
             new CheckBox(m.name(), (x)->
-                set(m, m, x)).on(m.isOn());
+                set(m, m, x)).set(m.isOn());
     }
 
     private static Splitting<?, ?> layerWidget(Layer ll) {
         return col(
             new FloatSlider((float) ll.getOpacity(), 0, 1).on(ll::setOpacity),
             0.75f,
-            new CheckBox(ll.name(), ll::setEnabled).on(ll.isEnabled())
+            new CheckBox(ll.name(), ll::setEnabled).set(ll.isEnabled())
         );
     }
 

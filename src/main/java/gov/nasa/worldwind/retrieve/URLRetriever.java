@@ -7,7 +7,7 @@ package gov.nasa.worldwind.retrieve;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.util.*;
-import jcog.*;
+import jcog.WTF;
 import org.apache.http.HttpEntity;
 
 import javax.net.ssl.*;

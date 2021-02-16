@@ -14,7 +14,7 @@ import gov.nasa.worldwind.globes.Globe;
  *
  * @author Patrick Murris
  * @version $Id: UTMCoordConverter.java 1171 2013-02-11 21:45:02Z dcollins $
- * @see UTMCoord, TMCoordConverter
+ * @see gov.nasa.worldwind.geom.coords.UTMCoord , TMCoordConverter
  */
 
 /**

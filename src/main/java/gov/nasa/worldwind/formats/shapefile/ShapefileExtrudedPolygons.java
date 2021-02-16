@@ -274,8 +274,8 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
                 intersection.setIntersectionPoint(pt);
 
                 // Compute intersection position relative to ground.
-                Position pos = terrain.getGlobe().computePositionFromPoint(pt);
-                Vec4 gp = terrain.getSurfacePoint(pos.getLat(), pos.getLon(), 0);
+                Position pos = terrain.globe().computePositionFromPoint(pt);
+                Vec4 gp = terrain.surfacePoint(pos.getLat(), pos.getLon(), 0);
                 double dist = Math.sqrt(pt.dotSelf3()) - Math.sqrt(gp.dotSelf3());
                 intersection.setIntersectionPosition(new Position(pos, dist));
 
@@ -538,13 +538,13 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
         // Compute the tile's minimum and maximum height as height above and below the extreme elevations in the tile's
         // sector. We use the overall maximum height of all records in order to ensure that a tile's extent includes its
         // descendants when the parent tile's max height is less than its descendants.
-        double[] extremes = terrain.getGlobe().getMinAndMaxElevations(tile.sector);
+        double[] extremes = terrain.globe().getMinAndMaxElevations(tile.sector);
         double minHeight = extremes[0] - this.defaultBaseDepth;
         double maxHeight = extremes[1] + Math.max(this.maxHeight, this.defaultHeight);
 
         // Compute the tile's extent for the specified terrain. Associated the shape data's extent with the terrain in
         // order to determine when it becomes invalid.
-        return Sector.computeBoundingBox(terrain.getGlobe(), terrain.getVerticalExaggeration(), tile.sector,
+        return Sector.computeBoundingBox(terrain.globe(), terrain.verticalExaggeration(), tile.sector,
             minHeight, maxHeight);
     }
 
@@ -587,7 +587,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
                 VecBuffer points = record.getBoundaryPoints(i);
                 for (int j = 0; j < points.getSize(); j++) {
                     points.get(j, location);
-                    Vec4 p = terrain.getSurfacePoint(new Angle(location[1]), new Angle(location[0]), 0);
+                    Vec4 p = terrain.surfacePoint(new Angle(location[1]), new Angle(location[0]), 0);
 
                     // Tessellate indices in geographic coordinates. This produces an index tessellation that is
                     // independent of the record's model coordinates, since the count and organization of top and bottom
@@ -602,7 +602,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
 
                     if (N == null) // first vertex in the record
                     {
-                        N = terrain.getGlobe().computeSurfaceNormalAtPoint(p);
+                        N = terrain.globe().computeSurfaceNormalAtPoint(p);
                         NdotR = p.x * N.x + p.y * N.y + p.z * N.z;
                     }
 
@@ -930,8 +930,8 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
             shapeData.setExtent(this.makeTileExtent(terrain, tile)); // regenerate the intersection extent
             shapeData.setTessellationValid(false); // force regeneration of the intersection geometry
             shapeData.setTerrain(terrain);
-            shapeData.setGlobeStateKey(terrain.getGlobe().getGlobeStateKey());
-            shapeData.setVerticalExaggeration(terrain.getVerticalExaggeration());
+            shapeData.setGlobeStateKey(terrain.globe().getGlobeStateKey());
+            shapeData.setVerticalExaggeration(terrain.verticalExaggeration());
         }
 
         // Determine whether or not the tile's extent intersects the line. If the line does not intersect the tile's
@@ -1056,8 +1056,8 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
 
         public boolean isValid(Terrain terrain) {
             return this.terrain == terrain
-                && this.verticalExaggeration == terrain.getVerticalExaggeration()
-                && (this.globeStateKey != null && globeStateKey.equals(terrain.getGlobe().getGlobeStateKey()));
+                && this.verticalExaggeration == terrain.verticalExaggeration()
+                && (this.globeStateKey != null && globeStateKey.equals(terrain.globe().getGlobeStateKey()));
         }
 
         public void invalidate() {

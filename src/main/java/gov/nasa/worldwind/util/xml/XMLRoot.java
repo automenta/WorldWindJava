@@ -1,5 +1,7 @@
 package gov.nasa.worldwind.util.xml;
 
+import gov.nasa.worldwind.layers.ogc.kml.KMLRoot;
+
 import java.io.IOException;
 
 public interface XMLRoot {

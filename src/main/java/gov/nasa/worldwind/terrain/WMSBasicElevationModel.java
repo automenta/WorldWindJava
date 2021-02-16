@@ -353,9 +353,9 @@ public class WMSBasicElevationModel extends BasicElevationModel {
         }
 
         public URL getURL(Tile tile, String altImageFormat) throws MalformedURLException {
-            StringBuffer sb;
+            StringBuilder sb;
             if (this.URLTemplate == null) {
-                sb = new StringBuffer(tile.level.getService());
+                sb = new StringBuilder(tile.level.getService());
 
                 if (!sb.toString().toLowerCase().contains("service=wms"))
                     sb.append("service=WMS");
@@ -375,7 +375,7 @@ public class WMSBasicElevationModel extends BasicElevationModel {
 
                 this.URLTemplate = sb.toString();
             } else {
-                sb = new StringBuffer(this.URLTemplate);
+                sb = new StringBuilder(this.URLTemplate);
             }
 
             sb.append("&width=");
@@ -388,12 +388,9 @@ public class WMSBasicElevationModel extends BasicElevationModel {
             // The order of the coordinate specification matters, and it changed with WMS 1.3.0.
             if (WWUtil.compareVersion(this.wmsVersion, "1.1.1") <= 0 || this.crs.contains("CRS:84")) {
                 // 1.1.1 and earlier and CRS:84 use lon/lat order
-                sb.append(s.lonMin);
-                sb.append(',');
-                sb.append(s.latMin);
-                sb.append(',');
-                sb.append(s.lonMax);
-                sb.append(',');
+                sb.append(s.lonMin).append(',');
+                sb.append(s.latMin).append(',');
+                sb.append(s.lonMax).append(',');
                 sb.append(s.latMax);
             } else {
                 // 1.3.0 uses lat/lon ordering

@@ -10,6 +10,7 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.AnnotationLayer;
 import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.terrain.HighResTerrain;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,12 +22,12 @@ import java.util.*;
  * Retrieve the highest-resolution elevations available for the current elevation model, drawing them from the server if
  * necessary. Shift-click on the globe to retrieve the elevation of a location.
  * <p>
- * Note: The {@link gov.nasa.worldwind.terrain.HighResolutionTerrain} class may be more appropriate to your needs than
+ * Note: The {@link HighResTerrain} class may be more appropriate to your needs than
  * this example.
  *
  * @author tag
  * @version $Id: GetBestElevations.java 1171 2013-02-11 21:45:02Z dcollins $
- * @see gov.nasa.worldwind.terrain.HighResolutionTerrain
+ * @see HighResTerrain
  */
 public class GetBestElevations extends ApplicationTemplate {
 

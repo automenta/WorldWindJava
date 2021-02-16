@@ -1260,14 +1260,14 @@ public abstract class AbstractShape extends WWObjectImpl
     protected Vec4 computePoint(Terrain terrain, Position position) {
         final int altMode = this.getAltitudeMode();
         if (altMode == WorldWind.CLAMP_TO_GROUND)
-            return terrain.getSurfacePoint(position.getLat(), position.getLon(), 0.0d);
+            return terrain.surfacePoint(position.getLat(), position.getLon(), 0.0d);
         else if (altMode == WorldWind.RELATIVE_TO_GROUND)
-            return terrain.getSurfacePoint(position);
+            return terrain.surfacePoint(position);
 
         // Raise the shape to accommodate vertical exaggeration applied to the terrain.
-        double height = position.getElevation() * terrain.getVerticalExaggeration();
+        double height = position.getElevation() * terrain.verticalExaggeration();
 
-        return terrain.getGlobe().computePointFromPosition(position, height);
+        return terrain.globe().computePointFromPosition(position, height);
     }
 
     /**
@@ -1282,14 +1282,14 @@ public abstract class AbstractShape extends WWObjectImpl
     protected Vec4 computePoint(DrawContext dc, Terrain terrain, Position position) {
         final int altMode = this.getAltitudeMode();
         if (altMode == WorldWind.CLAMP_TO_GROUND || dc.is2DGlobe())
-            return terrain.getSurfacePoint(position.getLat(), position.getLon(), 0.0d);
+            return terrain.surfacePoint(position.getLat(), position.getLon(), 0.0d);
         else if (altMode == WorldWind.RELATIVE_TO_GROUND)
-            return terrain.getSurfacePoint(position);
+            return terrain.surfacePoint(position);
 
         // Raise the shape to accommodate vertical exaggeration applied to the terrain.
-        double height = position.getElevation() * terrain.getVerticalExaggeration();
+        double height = position.getElevation() * terrain.verticalExaggeration();
 
-        return terrain.getGlobe().computePointFromPosition(position, height);
+        return terrain.globe().computePointFromPosition(position, height);
     }
 
     /**

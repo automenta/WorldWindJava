@@ -362,21 +362,21 @@ public class Ellipsoid extends RigidShape {
 
     protected ShapeData createIntersectionGeometry(Terrain terrain) {
         ShapeData shapeData = new ShapeData(null, this);
-        shapeData.setGlobeStateKey(terrain.getGlobe().getGlobeStateKey());
+        shapeData.setGlobeStateKey(terrain.globe().getGlobeStateKey());
 
         Geometry geom = new Geometry();
         makeUnitSphere(6, geom);    // use maximum subdivisions for good intersection accuracy
 
         // transform the vertices from local to world coords
-        Matrix matrix = computeRenderMatrix(terrain.getGlobe(), terrain.getVerticalExaggeration());
+        Matrix matrix = computeRenderMatrix(terrain.globe(), terrain.verticalExaggeration());
         FloatBuffer newVertices = RigidShape.computeTransformedVertices((FloatBuffer) geom.getBuffer(Geometry.VERTEX),
             geom.getCount(Geometry.VERTEX), matrix);
         geom.setVertexData(geom.getCount(Geometry.VERTEX), newVertices);
 
         shapeData.addMesh(0, geom);
-        shapeData.setReferencePoint(this.computeReferencePoint(terrain.getGlobe(),
-            terrain.getVerticalExaggeration()));
-        shapeData.setExtent(getExtent(terrain.getGlobe(), terrain.getVerticalExaggeration()));
+        shapeData.setReferencePoint(this.computeReferencePoint(terrain.globe(),
+            terrain.verticalExaggeration()));
+        shapeData.setExtent(getExtent(terrain.globe(), terrain.verticalExaggeration()));
 
         return shapeData;
     }

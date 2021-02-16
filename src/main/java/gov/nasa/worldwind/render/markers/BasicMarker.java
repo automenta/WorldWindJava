@@ -8,7 +8,6 @@ package gov.nasa.worldwind.render.markers;
 
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.DrawContext;
-import gov.nasa.worldwind.util.Logging;
 
 /**
  * @author tag

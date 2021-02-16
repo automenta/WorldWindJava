@@ -10,7 +10,7 @@ package gov.nasa.worldwind.geom.coords;
  *
  * @author Patrick Murris
  * @version $Id: TMCoordConverter.java 1171 2013-02-11 21:45:02Z dcollins $
- * @see TMCoord, UTMCoordConverter, MGRSCoordConverter
+ * @see gov.nasa.worldwind.geom.coords.TMCoord , UTMCoordConverter, MGRSCoordConverter
  */
 
 /**

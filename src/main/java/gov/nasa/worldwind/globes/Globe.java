@@ -192,9 +192,9 @@ public interface Globe extends WWObject, Extent {
      * @param metersElevation Elevation, in meters, of the geographic position to convert to cartesian.
      * @return The cartesian point that corresponds to the specified geographic position.
      */
-    Vec4 computePointFromPosition(Angle latitude, Angle longitude, double metersElevation);
+    @Deprecated Vec4 computePointFromPosition(Angle latitude, Angle longitude, double metersElevation);
 
-    @Deprecated default Vec4 computePointFromPosition(double latitude, double longitude, double metersElevation) {
+    default Vec4 computePointFromPosition(double latitude, double longitude, double metersElevation) {
         return computePointFromPosition(new Angle(latitude), new Angle(longitude), metersElevation);
     }
 
