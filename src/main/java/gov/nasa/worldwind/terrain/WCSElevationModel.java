@@ -32,28 +32,28 @@ public class WCSElevationModel extends BasicElevationModel {
         super(WCSElevationModel.wcsGetParamsFromCapsDoc(caps, params));
     }
 
-    /**
-     * Create a new elevation model from a serialized restorable state string.
-     *
-     * @param restorableStateInXml XML string in WorldWind restorable state format.
-     * @see #getRestorableState()
-     */
-    public WCSElevationModel(String restorableStateInXml) {
-        super(WCSElevationModel.wcsRestorableStateToParams(restorableStateInXml));
-
-        RestorableSupport rs;
-//        try {
-            rs = RestorableSupport.parse(restorableStateInXml);
-//        }
-//        catch (RuntimeException e) {
-//            // Parsing the document specified by stateInXml failed.
-//            String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", restorableStateInXml);
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message, e);
-//        }
-
-        this.doRestoreState(rs, null);
-    }
+//    /**
+//     * Create a new elevation model from a serialized restorable state string.
+//     *
+//     * @param restorableStateInXml XML string in WorldWind restorable state format.
+//     * @see #getRestorableState()
+//     */
+//    public WCSElevationModel(String restorableStateInXml) {
+//        super(WCSElevationModel.wcsRestorableStateToParams(restorableStateInXml));
+//
+//        RestorableSupport rs;
+////        try {
+//            rs = RestorableSupport.parse(restorableStateInXml);
+////        }
+////        catch (RuntimeException e) {
+////            // Parsing the document specified by stateInXml failed.
+////            String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", restorableStateInXml);
+////            Logging.logger().severe(message);
+////            throw new IllegalArgumentException(message, e);
+////        }
+//
+//        this.doRestoreState(rs, null);
+//    }
 
     protected static KV wcsGetParamsFromDocument(Element domElement, KV params) {
 

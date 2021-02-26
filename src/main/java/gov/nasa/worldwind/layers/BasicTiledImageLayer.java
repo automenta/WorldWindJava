@@ -698,10 +698,10 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
         }
     }
 
-    protected final class DownloadPostProcessor extends AbstractRetrievalPostProcessor {
+    private final class DownloadPostProcessor extends AbstractRetrievalPostProcessor {
         protected final TextureTile tile;
 
-        public DownloadPostProcessor(TextureTile tile) {
+        DownloadPostProcessor(TextureTile tile) {
             //noinspection RedundantCast
             super((KV) BasicTiledImageLayer.this);
 

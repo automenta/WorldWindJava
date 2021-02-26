@@ -312,7 +312,7 @@ public abstract class AbstractShape extends WWObjectImpl
      *
      * @return the data cache entry for the current rendering.
      */
-    protected AbstractShapeData getCurrentData() {
+    protected final AbstractShapeData getCurrentData() {
         return this.currentData;
     }
 

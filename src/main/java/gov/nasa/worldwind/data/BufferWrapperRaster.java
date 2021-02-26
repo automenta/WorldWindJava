@@ -209,7 +209,7 @@ public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable
                     continue;
 
                 if (extremes == null)
-                    extremes = WWUtil.defaultMinMix();
+                    extremes = WWUtil.defaultMinMax();
 
                 if (extremes[0] > buffer[i])
                     extremes[0] = buffer[i];

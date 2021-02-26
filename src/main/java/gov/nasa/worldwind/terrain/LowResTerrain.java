@@ -6,23 +6,24 @@ import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.DrawContextImpl;
 
 public class LowResTerrain implements Terrain {
-    private final DrawContextImpl drawContext;
 
-    public LowResTerrain(DrawContextImpl drawContext) {
-        this.drawContext = drawContext;
+    private final DrawContextImpl draw;
+
+    public LowResTerrain(DrawContextImpl draw) {
+        this.draw = draw;
     }
 
     @Override public Globe globe() {
-        return drawContext.getGlobe();
+        return draw.getGlobe();
     }
 
     public double verticalExaggeration() {
-        return drawContext.getVerticalExaggeration();
+        return draw.getVerticalExaggeration();
     }
 
     public Vec4 surfacePoint(Position position) {
 
-        SectorGeometryList sectorGeometry = drawContext.getSurfaceGeometry();
+        SectorGeometryList sectorGeometry = draw.getSurfaceGeometry();
         if (sectorGeometry == null)
             return null;
 
@@ -37,19 +38,19 @@ public class LowResTerrain implements Terrain {
         return pt;
     }
 
-    public Vec4 surfacePoint(Angle latitude, Angle longitude, double metersOffset) {
+    public Vec4 surfacePoint(Angle lat, Angle lon, double metersOffset) {
 
-        SectorGeometryList sectorGeometry = drawContext.getSurfaceGeometry();
-        if (sectorGeometry == null)
+        SectorGeometryList s = draw.getSurfaceGeometry();
+        if (s == null)
             return null;
 
-        Vec4 pt = sectorGeometry.getSurfacePoint(latitude, longitude, metersOffset);
+        Vec4 pt = s.getSurfacePoint(lat, lon, metersOffset);
 
         if (pt == null) {
             Globe g = this.globe();
-            double elevation = g.elevation(latitude, longitude);
-            return g.computePointFromPosition(latitude, longitude,
-                metersOffset + elevation * this.verticalExaggeration());
+            return g.computePointFromPosition(lat, lon,
+    metersOffset + g.elevation(lat, lon) * this.verticalExaggeration()
+            );
         } else
             return pt;
     }
@@ -63,7 +64,7 @@ public class LowResTerrain implements Terrain {
         if (ptB == null)
             return null;
 
-        return drawContext.getSurfaceGeometry().intersect(new Line(ptA, ptB.subtract3(ptA)));
+        return draw.getSurfaceGeometry().intersect(new Line(ptA, ptB.subtract3(ptA)));
     }
 
     public Intersection[] intersect(Position pA, Position pB, int altitudeMode) {
@@ -87,13 +88,12 @@ public class LowResTerrain implements Terrain {
         return this.intersect(new Position(pA, altitudeA), new Position(pB, altitudeB));
     }
 
+    /** TODO NaN instead of null */
     public Double elevation(LatLon location) {
         Vec4 pt = this.surfacePoint(location.getLat(), location.getLon(), 0);
-        if (pt == null)
-            return null;
-        else {
-            return this.globe().computePointFromPosition(location.lat, location.lon, 0)
-                .distanceTo3(pt);
-        }
+        return pt == null ?
+            null
+            :
+            this.globe().computePointFromPosition(location.lat, location.lon, 0).distanceTo3(pt);
     }
 }

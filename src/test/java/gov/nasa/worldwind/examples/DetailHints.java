@@ -39,7 +39,7 @@ public class DetailHints extends ApplicationTemplate {
         }
 
         protected void setElevationModelDetailHint(ElevationModel em, double detailHint) {
-            if (em instanceof BasicElevationModel) {
+            if (em instanceof ElevationModel) {
                 ((BasicElevationModel) em).setDetailHint(detailHint);
             }
             else if (em instanceof CompoundElevationModel) {

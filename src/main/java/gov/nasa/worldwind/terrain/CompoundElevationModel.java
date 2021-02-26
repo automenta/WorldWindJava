@@ -436,23 +436,21 @@ public class CompoundElevationModel extends AbstractElevationModel {
     public void composeElevations(Sector sector, List<? extends LatLon> latlons, int tileWidth,
         double[] buffer) throws Exception {
 
-        if (buffer.length < latlons.size()) {
-            String msg = Logging.getMessage("ElevationModel.ElevationsBufferTooSmall", latlons.size());
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (buffer.length < latlons.size()) {
+//            String msg = Logging.getMessage("ElevationModel.ElevationsBufferTooSmall", latlons.size());
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         // Fill the buffer with ElevationModel contents from back to front, potentially overwriting values at each step.
         // ElevationModels are expected to leave the buffer untouched when data is missing at a location.
-        for (ElevationModel em : this.elevationModels) {
-            if (!em.isEnabled())
+        for (ElevationModel e : this.elevationModels) {
+            if (!e.isEnabled())
                 continue;
 
-            int c = em.intersects(sector);
-            if (c < 0) // no intersection
-                continue;
-
-            em.composeElevations(sector, latlons, tileWidth, buffer);
+            int c = e.intersects(sector);
+            if (c >= 0) //intersection
+                e.composeElevations(sector, latlons, tileWidth, buffer);
         }
     }
 
@@ -515,7 +513,7 @@ public class CompoundElevationModel extends AbstractElevationModel {
         // Traverse the elevation model list from highest resolution to lowest.
         for (int i = this.elevationModels.size() - 1; i >= 0; i--) {
             ElevationModel em = this.elevationModels.get(i);
-            if (em instanceof BasicElevationModel && em.isEnabled()) {
+            if (em.isEnabled()) {
                 double e = em.getUnmappedLocalSourceElevation(latitude, longitude);
                 if (e != em.getMissingDataSignal()) {
                     elevation = e;

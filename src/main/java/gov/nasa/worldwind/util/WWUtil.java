@@ -626,7 +626,7 @@ public class WWUtil {
      * @return a two-element array of extreme values. Entry 0 is the maximum double value; entry 1 is the negative of
      * the maximum double value;
      */
-    public static double[] defaultMinMix() {
+    public static double[] defaultMinMax() {
         return new double[] {Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY};
     }
 

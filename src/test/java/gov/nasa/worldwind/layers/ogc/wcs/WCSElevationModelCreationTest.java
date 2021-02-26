@@ -46,41 +46,41 @@ public class WCSElevationModelCreationTest
             elevationModel.getLevels().getFirstLevel().getCacheName());
     }
 
-    @Test
-    public void testRestoreState()
-    {
-        WCSElevationModel origElevationModel = WCSElevationModelCreationTest.createWCSElevationModel(
-            new WCS100Capabilities("WCS/WCSCapabilities003.xml"),
-            new WCS100DescribeCoverage("WCS/WCSDescribeCoverage001.xml"));
-
-        String restorableState = origElevationModel.getRestorableState();
-
-        WCSElevationModel newElevationModel = new WCSElevationModel(restorableState);
-
-        assertEquals("Incorrect number of levels",
-            origElevationModel.getLevels().getNumLevels(),
-            newElevationModel.getLevels().getNumLevels());
-
-        double epsilon = 0.0001;
-        double origBestResolution = origElevationModel.getBestResolution(Sector.FULL_SPHERE);
-        double newBestResolution = newElevationModel.getBestResolution(Sector.FULL_SPHERE);
-        assertTrue("Incorrect best resolution", Math.abs(origBestResolution - newBestResolution) < epsilon);
-
-        assertEquals("Min elevation incorrect", origElevationModel.getMinElevation(),
-            newElevationModel.getMinElevation(), 0.0);
-        assertEquals("Max elevation incorrect", origElevationModel.getMaxElevation(),
-            newElevationModel.getMaxElevation(), 0.0);
-
-        assertEquals("Incorrect dataset name",
-            origElevationModel.getLevels().getFirstLevel().getDataset(),
-            newElevationModel.getLevels().getFirstLevel().getDataset());
-        assertEquals("Incorrect format suffix",
-            origElevationModel.getLevels().getFirstLevel().getFormatSuffix(),
-            newElevationModel.getLevels().getFirstLevel().getFormatSuffix());
-        assertEquals("Incorrect cache name",
-            origElevationModel.getLevels().getFirstLevel().getCacheName(),
-            newElevationModel.getLevels().getFirstLevel().getCacheName());
-    }
+//    @Test
+//    public void testRestoreState()
+//    {
+//        WCSElevationModel origElevationModel = WCSElevationModelCreationTest.createWCSElevationModel(
+//            new WCS100Capabilities("WCS/WCSCapabilities003.xml"),
+//            new WCS100DescribeCoverage("WCS/WCSDescribeCoverage001.xml"));
+//
+//        String restorableState = origElevationModel.getRestorableState();
+//
+//        WCSElevationModel newElevationModel = new WCSElevationModel(restorableState);
+//
+//        assertEquals("Incorrect number of levels",
+//            origElevationModel.getLevels().getNumLevels(),
+//            newElevationModel.getLevels().getNumLevels());
+//
+//        double epsilon = 0.0001;
+//        double origBestResolution = origElevationModel.getBestResolution(Sector.FULL_SPHERE);
+//        double newBestResolution = newElevationModel.getBestResolution(Sector.FULL_SPHERE);
+//        assertTrue("Incorrect best resolution", Math.abs(origBestResolution - newBestResolution) < epsilon);
+//
+//        assertEquals("Min elevation incorrect", origElevationModel.getMinElevation(),
+//            newElevationModel.getMinElevation(), 0.0);
+//        assertEquals("Max elevation incorrect", origElevationModel.getMaxElevation(),
+//            newElevationModel.getMaxElevation(), 0.0);
+//
+//        assertEquals("Incorrect dataset name",
+//            origElevationModel.getLevels().getFirstLevel().getDataset(),
+//            newElevationModel.getLevels().getFirstLevel().getDataset());
+//        assertEquals("Incorrect format suffix",
+//            origElevationModel.getLevels().getFirstLevel().getFormatSuffix(),
+//            newElevationModel.getLevels().getFirstLevel().getFormatSuffix());
+//        assertEquals("Incorrect cache name",
+//            origElevationModel.getLevels().getFirstLevel().getCacheName(),
+//            newElevationModel.getLevels().getFirstLevel().getCacheName());
+//    }
 
     private static WCSElevationModel createWCSElevationModel(WCS100Capabilities caps, WCS100DescribeCoverage coverage)
     {

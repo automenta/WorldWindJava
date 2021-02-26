@@ -186,7 +186,7 @@ public class NetVR extends Thing<NetVR,NMode> {
 
         final AdaptiveOSMLayer o = new AdaptiveOSMLayer();
         n.add(new LayerMode(o), true);
-//        o.focus(LatLon.fromDegrees(), 0.005f);
+        //o.focus(LatLon.fromDegrees(), 0.005f);
 
         Focus f = new Focus(new Position(35, -80, 0));
         n.add(new LayerMode(new FocusLayer(f)));

@@ -111,14 +111,15 @@ public class HighResTerrain extends WWObjectImpl implements Terrain {
         int numVertsTimesThree = numVerticesPerEdge * 3;
 
         int i = bottomLeft;
-        Vec4 bL = new Vec4(ri.vertices[i++], ri.vertices[i++], ri.vertices[i++]);
-        Vec4 bR = new Vec4(ri.vertices[i++], ri.vertices[i++], ri.vertices[i]);
+        float[] riv = ri.vertices;
+        Vec4 bL = new Vec4(riv[i++], riv[i++], riv[i++]);
+        Vec4 bR = new Vec4(riv[i++], riv[i++], riv[i]);
 
         bottomLeft += numVertsTimesThree;
 
         i = bottomLeft;
-        Vec4 tL = new Vec4(ri.vertices[i++], ri.vertices[i++], ri.vertices[i++]);
-        Vec4 tR = new Vec4(ri.vertices[i++], ri.vertices[i++], ri.vertices[i]);
+        Vec4 tL = new Vec4(riv[i++], riv[i++], riv[i++]);
+        Vec4 tR = new Vec4(riv[i++], riv[i++], riv[i]);
 
         return HighResTerrain.interpolate(bL, bR, tR, tL, xDec, yDec);
     }
@@ -335,11 +336,11 @@ public class HighResTerrain extends WWObjectImpl implements Terrain {
      * {@inheritDoc}
      */
     public Double elevation(LatLon location) {
-        if (location == null) {
-            String msg = Logging.getMessage("nullValue.LatLonIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (location == null) {
+//            String msg = Logging.getMessage("nullValue.LatLonIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         Vec4 pt = this.surfacePoint(location.getLat(), location.getLon(), 0);
         if (pt == null)
@@ -578,13 +579,8 @@ public class HighResTerrain extends WWObjectImpl implements Terrain {
      * @return the tile containing the specified location.
      */
     protected RectTile getContainingTile(Angle latitude, Angle longitude) {
-        if (!this.sector.contains(latitude, longitude))
-            return null;
-
-        int row = this.computeRow(this.sector, latitude);
-        int col = this.computeColumn(this.sector, longitude);
-
-        return this.createTile(row, col);
+        return !this.sector.contains(latitude, longitude) ? null
+            : this.createTile(this.computeRow(this.sector, latitude), this.computeColumn(this.sector, longitude));
     }
 
     /**

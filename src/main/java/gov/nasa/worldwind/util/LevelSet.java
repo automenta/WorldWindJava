@@ -291,8 +291,10 @@ public class LevelSet extends WWObjectImpl {
      * @throws IllegalArgumentException if <code>tile</code> is null
      */
     public final void miss(Tile tile) {
-
         tile.level.markResourceAbsent(this.getTileNumber(tile));
+    }
+    public final void miss(TileKey tile) {
+        getLevel(tile.level).markResourceAbsent(this.getTileNumber(tile));
     }
 
     /**

@@ -188,58 +188,58 @@ public class WMSBasicElevationModel extends BasicElevationModel {
         return params;
     }
 
-    //**************************************************************//
-    //********************  Configuration  *************************//
-    //**************************************************************//
-
-    protected static KV wmsRestorableStateToParams(String stateInXml) {
-
-        RestorableSupport rs;
-        try {
-            rs = RestorableSupport.parse(stateInXml);
-        }
-        catch (RuntimeException e) {
-            // Parsing the document specified by stateInXml failed.
-            String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", stateInXml);
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message, e);
-        }
-
-        KV params = new KVMap();
-        WMSBasicElevationModel.wmsRestoreStateForParams(rs, null, params);
-        return params;
-    }
-
-    protected static void wmsRestoreStateForParams(RestorableSupport rs, RestorableSupport.StateObject context,
-        KV params) {
-        // Invoke the BasicElevationModel functionality.
-        BasicElevationModel.restoreStateForParams(rs, null, params);
-
-        String s = rs.getStateValueAsString(context, Keys.IMAGE_FORMAT);
-        if (s != null)
-            params.set(Keys.IMAGE_FORMAT, s);
-
-        s = rs.getStateValueAsString(context, Keys.TITLE);
-        if (s != null)
-            params.set(Keys.TITLE, s);
-
-        s = rs.getStateValueAsString(context, Keys.DISPLAY_NAME);
-        if (s != null)
-            params.set(Keys.DISPLAY_NAME, s);
-
-        RestorableSupport.adjustTitleAndDisplayName(params);
-
-        s = rs.getStateValueAsString(context, Keys.LAYER_NAMES);
-        if (s != null)
-            params.set(Keys.LAYER_NAMES, s);
-
-        s = rs.getStateValueAsString(context, Keys.STYLE_NAMES);
-        if (s != null)
-            params.set(Keys.STYLE_NAMES, s);
-
-        s = rs.getStateValueAsString(context, "wms.Version");
-        params.set(Keys.TILE_URL_BUILDER, new URLBuilder(s, params));
-    }
+//    //**************************************************************//
+//    //********************  Configuration  *************************//
+//    //**************************************************************//
+//
+//    protected static KV wmsRestorableStateToParams(String stateInXml) {
+//
+//        RestorableSupport rs;
+//        try {
+//            rs = RestorableSupport.parse(stateInXml);
+//        }
+//        catch (RuntimeException e) {
+//            // Parsing the document specified by stateInXml failed.
+//            String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", stateInXml);
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message, e);
+//        }
+//
+//        KV params = new KVMap();
+//        WMSBasicElevationModel.wmsRestoreStateForParams(rs, null, params);
+//        return params;
+//    }
+//
+//    protected static void wmsRestoreStateForParams(RestorableSupport rs, RestorableSupport.StateObject context,
+//        KV params) {
+//        // Invoke the BasicElevationModel functionality.
+//        BasicElevationModel.restoreStateForParams(rs, null, params);
+//
+//        String s = rs.getStateValueAsString(context, Keys.IMAGE_FORMAT);
+//        if (s != null)
+//            params.set(Keys.IMAGE_FORMAT, s);
+//
+//        s = rs.getStateValueAsString(context, Keys.TITLE);
+//        if (s != null)
+//            params.set(Keys.TITLE, s);
+//
+//        s = rs.getStateValueAsString(context, Keys.DISPLAY_NAME);
+//        if (s != null)
+//            params.set(Keys.DISPLAY_NAME, s);
+//
+//        RestorableSupport.adjustTitleAndDisplayName(params);
+//
+//        s = rs.getStateValueAsString(context, Keys.LAYER_NAMES);
+//        if (s != null)
+//            params.set(Keys.LAYER_NAMES, s);
+//
+//        s = rs.getStateValueAsString(context, Keys.STYLE_NAMES);
+//        if (s != null)
+//            params.set(Keys.STYLE_NAMES, s);
+//
+//        s = rs.getStateValueAsString(context, "wms.Version");
+//        params.set(Keys.TILE_URL_BUILDER, new URLBuilder(s, params));
+//    }
 
     //**************************************************************//
     //********************  Composition  ***************************//
@@ -283,10 +283,10 @@ public class WMSBasicElevationModel extends BasicElevationModel {
             tileWidth, n / tileWidth);
 
         ByteBuffer b = WMSBasicElevationModel.downloadElevations(tile).getBuffer();
-        if (b!=null)
-            tile.setElevations(BufferWrapper.ByteBufferWrapper.wrap(b, Keys.INT8), this);
-        else
+        if (b == null)
             return;
+
+        tile.setElevations(BufferWrapper.ByteBufferWrapper.wrap(b, Keys.INT8), this);
 
 
         for (int i = 0; i < n; i++) {
