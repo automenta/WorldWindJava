@@ -204,8 +204,8 @@ public class AnalyticSurface implements Renderable, PreRenderable {
             throw new IllegalArgumentException(message);
         }
 
-        double minValue = Double.MAX_VALUE;
-        double maxValue = -Double.MAX_VALUE;
+        double minValue = Double.POSITIVE_INFINITY;
+        double maxValue = -Double.POSITIVE_INFINITY;
 
         for (GridPointAttributes attr : iterable) {
             double value = attr.getValue();
@@ -218,7 +218,7 @@ public class AnalyticSurface implements Renderable, PreRenderable {
                 maxValue = value;
         }
 
-        if (minValue == Double.MAX_VALUE || minValue == -Double.MIN_VALUE)
+        if (minValue == Double.POSITIVE_INFINITY || minValue == -Double.NEGATIVE_INFINITY)
             return null;
 
         return new double[] {minValue, maxValue};

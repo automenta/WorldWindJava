@@ -249,10 +249,10 @@ public class BasicOrbitViewLimits extends BasicViewPropertyLimits implements Orb
         super.reset();
 
         this.centerLocationLimits = Sector.FULL_SPHERE;
-        this.minCenterElevation = -Double.MAX_VALUE;
-        this.maxCenterElevation = Double.MAX_VALUE;
+        this.minCenterElevation = -Double.POSITIVE_INFINITY;
+        this.maxCenterElevation = Double.POSITIVE_INFINITY;
         this.minZoom = 0;
-        this.maxZoom = Double.MAX_VALUE;
+        this.maxZoom = Double.POSITIVE_INFINITY;
     }
 
     /**

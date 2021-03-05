@@ -135,7 +135,7 @@ public class BILRasterWriter extends AbstractDataRasterWriter {
         worldFileParams.set(Keys.DATA_TYPE, BILRasterWriter.getDataType(byteBufferRaster.getBuffer()));
 
         double d = byteBufferRaster.getTransparentValue();
-        if (d != Double.MAX_VALUE)
+        if (d != Double.POSITIVE_INFINITY)
             worldFileParams.set(Keys.MISSING_DATA_REPLACEMENT, d);
     }
 

@@ -438,7 +438,7 @@ public class GDALUtils {
         int imgSize = width * height;
         int bandDataType = 0;
 
-        double maxValue = -Double.MAX_VALUE;
+        double maxValue = -Double.POSITIVE_INFINITY;
 
         for (int bandIdx = 0; bandIdx < bandCount; bandIdx++) {
             /* Bands are not 0-base indexed, so we must add 1 */

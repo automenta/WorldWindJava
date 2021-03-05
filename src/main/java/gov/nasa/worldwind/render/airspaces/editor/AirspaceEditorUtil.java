@@ -26,7 +26,7 @@ public class AirspaceEditorUtil {
 
     public static double computeLowestHeightAboveSurface(WorldWindow wwd,
         Iterable<? extends AirspaceControlPoint> controlPoints, int altitudeIndex) {
-        double minHeight = Double.MAX_VALUE;
+        double minHeight = Double.POSITIVE_INFINITY;
 
         for (AirspaceControlPoint controlPoint : controlPoints) {
             if (altitudeIndex == controlPoint.getAltitudeIndex()) {
@@ -53,7 +53,7 @@ public class AirspaceEditorUtil {
         // access them by location index and altitude index. To achieve this we place them in a map that will be
         // indexable by location and altitude.
 
-        double minDistance = Double.MAX_VALUE;
+        double minDistance = Double.POSITIVE_INFINITY;
 
         HashMap<Object, AirspaceControlPoint> map = new HashMap<>();
         for (AirspaceControlPoint p : controlPoints) {
@@ -75,7 +75,7 @@ public class AirspaceEditorUtil {
             }
         }
 
-        return (minDistance == Double.MAX_VALUE) ? 0.0 : minDistance;
+        return (minDistance == Double.POSITIVE_INFINITY) ? 0.0 : minDistance;
     }
 
     //**************************************************************//
@@ -153,7 +153,7 @@ public class AirspaceEditorUtil {
         pointOnLine[AirspaceEditorUtil.UPPER_ALTITUDE] = AirspaceEditorUtil.intersectAirspaceAltitudeAt(wwd, airspace, AirspaceEditorUtil.UPPER_ALTITUDE, ray);
 
         EdgeInfo bestEdge = null;
-        double nearestDistance = Double.MAX_VALUE;
+        double nearestDistance = Double.POSITIVE_INFINITY;
 
         for (EdgeInfo edge : edgeInfoList) {
             for (int index = 0; index < 2; index++) {
@@ -269,7 +269,7 @@ public class AirspaceEditorUtil {
         Vec4 intersectionPoint = null;
 
         // Find the nearest intersection that's in front of the ray origin.
-        double nearestDistance = Double.MAX_VALUE;
+        double nearestDistance = Double.POSITIVE_INFINITY;
         for (Intersection intersection : intersections) {
             // Ignore any intersections behind the line origin.
             if (!AirspaceEditorUtil.isPointBehindLineOrigin(line, intersection.getIntersectionPoint())) {

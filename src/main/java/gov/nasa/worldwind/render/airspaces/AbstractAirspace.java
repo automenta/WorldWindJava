@@ -965,7 +965,7 @@ public abstract class AbstractAirspace extends WWObjectImpl
         if (info == null || info.minimalGeometry == null || info.minimalGeometry.isEmpty())
             return 0.0;
 
-        double minDistanceSquared = Double.MAX_VALUE;
+        double minDistanceSquared = Double.POSITIVE_INFINITY;
         Vec4 eyePoint = dc.view().getEyePoint();
 
         for (Vec4 point : info.minimalGeometry) {

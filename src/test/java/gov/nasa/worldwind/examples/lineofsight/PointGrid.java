@@ -274,7 +274,7 @@ public class PointGrid extends WWObjectImpl implements OrderedRenderable, Highli
 
         Collection<Vec4> cornerPoints = new ArrayList<>(this.getCorners().size());
 
-        this.eyeDistance = Double.MAX_VALUE;
+        this.eyeDistance = Double.POSITIVE_INFINITY;
 
         for (Position pos : this.corners) {
             if (pos == null)

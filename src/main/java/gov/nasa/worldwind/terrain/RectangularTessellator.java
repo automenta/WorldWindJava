@@ -1323,8 +1323,8 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
         // Compute 'vertical' plane perpendicular to the ground, that contains the ray
         Plane verticalPlane = null;
         Plane horizontalPlane = null;
-        double effectiveRadiusVertical = Double.MAX_VALUE;
-        double effectiveRadiusHorizontal = Double.MAX_VALUE;
+        double effectiveRadiusVertical = Double.POSITIVE_INFINITY;
+        double effectiveRadiusHorizontal = Double.POSITIVE_INFINITY;
         Vec4 surfaceNormal = globe.computeSurfaceNormalAtPoint(line.origin);
         if (Math.abs(line.direction.normalize3().dot3(surfaceNormal)) < 1.0) // if not colinear
         {

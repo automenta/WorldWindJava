@@ -26,34 +26,34 @@ public class CompoundElevationModel extends AbstractElevationModel {
         }
     }
 
-    /**
-     * Returns true if this CompoundElevationModel contains the specified ElevationModel, and false otherwise.
-     *
-     * @param em the ElevationModel to test.
-     * @return true if the ElevationModel is in this CompoundElevationModel; false otherwise.
-     * @throws IllegalArgumentException if the ElevationModel is null.
-     */
-    public boolean containsElevationModel(ElevationModel em) {
-//        if (em == null) {
-//            String msg = Logging.getMessage("nullValue.ElevationModelIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
+//    /**
+//     * Returns true if this CompoundElevationModel contains the specified ElevationModel, and false otherwise.
+//     *
+//     * @param em the ElevationModel to test.
+//     * @return true if the ElevationModel is in this CompoundElevationModel; false otherwise.
+//     * @throws IllegalArgumentException if the ElevationModel is null.
+//     */
+//    public boolean containsElevationModel(ElevationModel em) {
+////        if (em == null) {
+////            String msg = Logging.getMessage("nullValue.ElevationModelIsNull");
+////            Logging.logger().severe(msg);
+////            throw new IllegalArgumentException(msg);
+////        }
+//
+//        // Check if the elevation model is one of the models in our list.
+//        if (this.elevationModels.contains(em))
+//            return true;
+//
+//        // Check if the elevation model is a child of any CompoundElevationModels in our list.
+//        for (ElevationModel child : this.elevationModels) {
+//            if (child instanceof CompoundElevationModel) {
+//                if (((CompoundElevationModel) child).containsElevationModel(em))
+//                    return true;
+//            }
 //        }
-
-        // Check if the elevation model is one of the models in our list.
-        if (this.elevationModels.contains(em))
-            return true;
-
-        // Check if the elevation model is a child of any CompoundElevationModels in our list.
-        for (ElevationModel child : this.elevationModels) {
-            if (child instanceof CompoundElevationModel) {
-                if (((CompoundElevationModel) child).containsElevationModel(em))
-                    return true;
-            }
-        }
-
-        return false;
-    }
+//
+//        return false;
+//    }
 
     protected void sortElevationModels() {
         if (this.elevationModels.size() == 1)
@@ -140,33 +140,31 @@ public class CompoundElevationModel extends AbstractElevationModel {
 
     public double getMaxElevation() // TODO: probably want to cache the min and max rather than always compute them
     {
-        double max = -Double.MAX_VALUE;
+        double max = -Double.POSITIVE_INFINITY;
 
         for (ElevationModel em : this.elevationModels) {
-            if (!em.isEnabled())
-                continue;
-
-            double m = em.getMaxElevation();
-            if (m > max)
-                max = m;
+            if (em.isEnabled()) {
+                double m = em.getMaxElevation();
+                if (m > max)
+                    max = m;
+            }
         }
 
-        return max == -Double.MAX_VALUE ? 0 : max;
+        return max == -Double.POSITIVE_INFINITY ? 0 : max;
     }
 
     public double getMinElevation() {
-        double min = Double.MAX_VALUE;
+        double min = Double.POSITIVE_INFINITY;
 
         for (ElevationModel em : this.elevationModels) {
-            if (!em.isEnabled())
-                continue;
-
-            double m = em.getMinElevation();
-            if (m < min)
-                min = m;
+            if (em.isEnabled()) {
+                double m = em.getMinElevation();
+                if (m < min)
+                    min = m;
+            }
         }
 
-        return min == Double.MAX_VALUE ? 0 : min;
+        return min == Double.POSITIVE_INFINITY ? 0 : min;
     }
 
     public double[] getExtremeElevations(Angle latitude, Angle longitude) {
@@ -174,17 +172,16 @@ public class CompoundElevationModel extends AbstractElevationModel {
         double[] retVal = null;
 
         for (ElevationModel em : this.elevationModels) {
-            if (!em.isEnabled())
-                continue;
-
-            double[] minmax = em.getExtremeElevations(latitude, longitude);
-            if (retVal == null) {
-                retVal = new double[] {minmax[0], minmax[1]};
-            } else {
-                if (minmax[0] < retVal[0])
-                    retVal[0] = minmax[0];
-                if (minmax[1] > retVal[1])
-                    retVal[1] = minmax[1];
+            if (em.isEnabled()) {
+                double[] minmax = em.getExtremeElevations(latitude, longitude);
+                if (retVal == null) {
+                    retVal = new double[] {minmax[0], minmax[1]};
+                } else {
+                    if (minmax[0] < retVal[0])
+                        retVal[0] = minmax[0];
+                    if (minmax[1] > retVal[1])
+                        retVal[1] = minmax[1];
+                }
             }
         }
 
@@ -196,21 +193,17 @@ public class CompoundElevationModel extends AbstractElevationModel {
         double[] retVal = null;
 
         for (ElevationModel em : this.elevationModels) {
-            if (!em.isEnabled())
-                continue;
+            if (em.isEnabled() && em.intersects(sector) >= 0) { // intersection?
 
-            int c = em.intersects(sector);
-            if (c < 0) // no intersection
-                continue;
-
-            double[] minmax = em.getExtremeElevations(sector);
-            if (retVal == null) {
-                retVal = new double[] {minmax[0], minmax[1]};
-            } else {
-                if (minmax[0] < retVal[0])
-                    retVal[0] = minmax[0];
-                if (minmax[1] > retVal[1])
-                    retVal[1] = minmax[1];
+                double[] minmax = em.getExtremeElevations(sector);
+                if (retVal == null) {
+                    retVal = new double[] {minmax[0], minmax[1]};
+                } else {
+                    if (minmax[0] < retVal[0])
+                        retVal[0] = minmax[0];
+                    if (minmax[1] > retVal[1])
+                        retVal[1] = minmax[1];
+                }
             }
         }
 
@@ -221,18 +214,15 @@ public class CompoundElevationModel extends AbstractElevationModel {
         double res = 0;
 
         for (ElevationModel em : this.elevationModels) {
-            if (!em.isEnabled())
-                continue;
-
-            if (sector != null && em.intersects(sector) < 0) // sector does not intersect elevation model
-                continue;
-
-            double r = em.getBestResolution(sector);
-            if (r < res || res == 0)
-                res = r;
+            // sector does not intersect elevation model
+            if (em.isEnabled() && (sector == null || em.intersects(sector) >= 0)) {
+                double r = em.getBestResolution(sector);
+                if (r < res || res == 0)
+                    res = r;
+            }
         }
 
-        return res != 0 ? res : Double.MAX_VALUE;
+        return res != 0 ? res : Double.POSITIVE_INFINITY;
     }
 
     @Override
@@ -259,16 +249,12 @@ public class CompoundElevationModel extends AbstractElevationModel {
         {
             ElevationModel em = this.elevationModels.get(i);
 
-            if (!em.isEnabled())
-                continue;
-
-            int c = em.intersects(sector);
-            if (c != -1)
+            if (em.isEnabled() && em.intersects(sector) != -1)
                 return em.getDetailHint(sector);
         }
 
         // No elevation model intersects the sector. Return a default detail hint.
-        return 0.0;
+        return 0;
     }
 
     public int intersects(Sector sector) {
@@ -276,15 +262,14 @@ public class CompoundElevationModel extends AbstractElevationModel {
         boolean intersects = false;
 
         for (ElevationModel em : this.elevationModels) {
-            if (!em.isEnabled())
-                continue;
+            if (em.isEnabled()) {
+                int c = em.intersects(sector);
+                if (c == 0) // sector fully contained in the elevation model. no need to test further
+                    return 0;
 
-            int c = em.intersects(sector);
-            if (c == 0) // sector fully contained in the elevation model. no need to test further
-                return 0;
-
-            if (c == 1)
-                intersects = true;
+                if (c == 1)
+                    intersects = true;
+            }
         }
 
         return intersects ? 1 : -1;
@@ -293,10 +278,7 @@ public class CompoundElevationModel extends AbstractElevationModel {
     public boolean contains(Angle latitude, Angle longitude) {
 
         for (ElevationModel em : this.elevationModels) {
-            if (!em.isEnabled())
-                continue;
-
-            if (em.contains(latitude, longitude))
+            if (em.isEnabled() && em.contains(latitude, longitude))
                 return true;
         }
 
@@ -316,17 +298,16 @@ public class CompoundElevationModel extends AbstractElevationModel {
         {
             ElevationModel em = this.elevationModels.get(i);
 
-            if (!em.isEnabled())
-                continue;
+            if (em.isEnabled()) {
+                double emValue = em.getUnmappedElevation(latitude, longitude);
 
-            double emValue = em.getUnmappedElevation(latitude, longitude);
-
-            // Since we're working from highest resolution to lowest, we return the first value that's not a missing
-            // data flag. Check this against the current ElevationModel's missing data flag, which might be different
-            // from our own.
-            if (emValue != em.getMissingDataSignal()) {
-                value = emValue;
-                break;
+                // Since we're working from highest resolution to lowest, we return the first value that's not a missing
+                // data flag. Check this against the current ElevationModel's missing data flag, which might be different
+                // from our own.
+                if (emValue != em.getMissingDataSignal()) {
+                    value = emValue;
+                    break;
+                }
             }
         }
 
@@ -419,11 +400,10 @@ public class CompoundElevationModel extends AbstractElevationModel {
 
             if (em.isEnabled() && em.intersects(sector) >= 0) {// no intersection
 
-                double r;
-                if (mapMissingData || n == 1)
-                    r = em.getElevations(sector, latlons, targetResolution[i], buffer);
-                else
-                    r = em.getUnmappedElevations(sector, latlons, targetResolution[i], buffer);
+                double r = mapMissingData || n == 1 ?
+                    em.getElevations(sector, latlons, targetResolution[i], buffer)
+                    :
+                    em.getUnmappedElevations(sector, latlons, targetResolution[i], buffer);
 
                 if (r < resolutionAchieved[i])
                     resolutionAchieved[i] = r;
@@ -445,11 +425,8 @@ public class CompoundElevationModel extends AbstractElevationModel {
         // Fill the buffer with ElevationModel contents from back to front, potentially overwriting values at each step.
         // ElevationModels are expected to leave the buffer untouched when data is missing at a location.
         for (ElevationModel e : this.elevationModels) {
-            if (!e.isEnabled())
-                continue;
-
-            int c = e.intersects(sector);
-            if (c >= 0) //intersection
+            //intersection
+            if (e.isEnabled() && e.intersects(sector) >= 0)
                 e.composeElevations(sector, latlons, tileWidth, buffer);
         }
     }
@@ -468,11 +445,9 @@ public class CompoundElevationModel extends AbstractElevationModel {
         double availability = 0;
 
         for (ElevationModel em : this.elevationModels) {
-            if (em.isEnabled()) {
-                if (em.intersects(sector) >= 0) {
-                    availability += em.getLocalDataAvailability(sector, targetResolution);
-                    models++;
-                }
+            if (em.isEnabled() && em.intersects(sector) >= 0) {
+                availability += em.getLocalDataAvailability(sector, targetResolution);
+                models++;
             }
         }
 

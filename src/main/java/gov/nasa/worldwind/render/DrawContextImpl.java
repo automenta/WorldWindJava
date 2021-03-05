@@ -525,10 +525,10 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
 //        }
 
         // If the caller has specified that the ordered renderable should be treated as behind other ordered
-        // renderables, then treat it as having an eye distance of Double.MAX_VALUE and ignore the actual eye distance.
+        // renderables, then treat it as having an eye distance of Double.POSITIVE_INFINITY and ignore the actual eye distance.
         // If multiple ordered renderables are added in this way, they are drawn according to the order in which they
         // are added.
-        double eyeDistance = isBehind ? Double.MAX_VALUE : orderedRenderable.getDistanceFromEye();
+        double eyeDistance = isBehind ? Double.POSITIVE_INFINITY : orderedRenderable.getDistanceFromEye();
         this.orderedRenderables.add(
             new OrderedRenderableEntry(orderedRenderable, eyeDistance, this));
     }

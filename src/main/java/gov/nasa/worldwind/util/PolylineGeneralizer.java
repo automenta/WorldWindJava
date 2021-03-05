@@ -68,7 +68,7 @@ public class PolylineGeneralizer {
     }
 
     protected void computeInitialArea() {
-        this.heap[0].area = Double.MAX_VALUE; // assign the start point the maximum area
+        this.heap[0].area = Double.POSITIVE_INFINITY; // assign the start point the maximum area
 
         for (int i = 1; i < this.heapSize - 1; i++) {
             this.heap[i].prev = this.heap[i - 1];
@@ -76,7 +76,7 @@ public class PolylineGeneralizer {
             this.heap[i].area = PolylineGeneralizer.computeEffectiveArea(this.heap[i]);
         }
 
-        this.heap[this.heapSize - 1].area = Double.MAX_VALUE; // assign the end point the maximum area
+        this.heap[this.heapSize - 1].area = Double.POSITIVE_INFINITY; // assign the end point the maximum area
     }
 
     protected void computeEliminationArea() {

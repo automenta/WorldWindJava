@@ -1191,7 +1191,7 @@ public class LatLon implements Serializable {
         double cLambda = Math.cos(lambda);
 
         // dummy value to ensure
-        double lambda_prev = Double.MAX_VALUE;
+        double lambda_prev = Double.POSITIVE_INFINITY;
         int count = 0;
         while (Math.abs(lambda - lambda_prev) > 1.0e-12 && count++ < 100) {
             // Store old lambda

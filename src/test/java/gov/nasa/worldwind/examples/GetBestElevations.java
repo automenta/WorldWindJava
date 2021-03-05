@@ -118,7 +118,7 @@ public class GetBestElevations extends ApplicationTemplate {
 
             // Iterate until the best resolution is achieved. Use the elevation model to determine the best elevation.
             double targetResolution = globe.getElevationModel().getBestResolution(sector);
-            double actualResolution = Double.MAX_VALUE;
+            double actualResolution = Double.POSITIVE_INFINITY;
             while (actualResolution > targetResolution) {
                 actualResolution = globe.getElevations(sector, locations, targetResolution, elevations);
                 // Uncomment the two lines below if you want to watch the resolution converge

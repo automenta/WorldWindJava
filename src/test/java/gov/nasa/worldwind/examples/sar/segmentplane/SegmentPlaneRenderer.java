@@ -1253,7 +1253,7 @@ public class SegmentPlaneRenderer {
     }
 
     protected static double computeMinDistanceBetweenLabels(DrawContext dc, OrderedText[] text, int textCount) {
-        double minDistance = Double.MAX_VALUE;
+        double minDistance = Double.POSITIVE_INFINITY;
 
         for (int i = 0; i < textCount - 1; i++) {
             if (text[i] != null) {
@@ -1504,7 +1504,7 @@ public class SegmentPlaneRenderer {
     protected static Vec4 computeNearestLineToPoint(Vec4 point, int count, IntBuffer indices, DoubleBuffer vertices,
         Vec4 referenceCenter) {
         Vec4 intersectionPoint = null;
-        double nearestDistance = Double.MAX_VALUE;
+        double nearestDistance = Double.POSITIVE_INFINITY;
 
         for (int i = 0; i < (count - 1); i += 2) {
             int position = indices.get(i);
@@ -1532,7 +1532,7 @@ public class SegmentPlaneRenderer {
     protected static Vec4 intersectRayWithTriangleStrip(Line ray, int count, IntBuffer indices, DoubleBuffer vertices,
         Vec4 referenceCenter) {
         Vec4 intersectionPoint = null;
-        double nearestDistance = Double.MAX_VALUE;
+        double nearestDistance = Double.POSITIVE_INFINITY;
 
         for (int i = 0; i < (count - 2); i++) {
             int position = indices.get(i);

@@ -324,8 +324,8 @@ public class BasicViewPropertyLimits implements ViewPropertyLimits {
      */
     public void reset() {
         this.eyeLocationLimits = Sector.FULL_SPHERE;
-        this.minEyeElevation = -Double.MAX_VALUE;
-        this.maxEyeElevation = Double.MAX_VALUE;
+        this.minEyeElevation = -Double.POSITIVE_INFINITY;
+        this.maxEyeElevation = Double.POSITIVE_INFINITY;
         this.minHeading = Angle.NEG180;
         this.maxHeading = Angle.POS180;
         this.minPitch = Angle.ZERO;

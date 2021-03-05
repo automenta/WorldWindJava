@@ -395,7 +395,7 @@ public class ExtrudedPolygonEditor extends AbstractShapeEditor {
         Line ray = this.wwd.view().computeRayFromScreenPoint(mousePoint.getX(), mousePoint.getY());
         Vec4 pickPoint = this.intersectPolygonAltitudeAt(ray);
 
-        double nearestDistance = Double.MAX_VALUE;
+        double nearestDistance = Double.POSITIVE_INFINITY;
         int newVertexIndex = 0;
 
         // Loop through the control points and determine which edge is closest to the pick point

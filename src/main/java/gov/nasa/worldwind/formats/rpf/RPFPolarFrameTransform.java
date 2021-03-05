@@ -477,8 +477,8 @@ class RPFPolarFrameTransform extends RPFFrameTransform {
         double minLon, minLat, maxLon, maxLat;
 
         public MinMaxLatLon() {
-            minLon = minLat = Double.MAX_VALUE;
-            maxLon = maxLat = -Double.MAX_VALUE;
+            minLon = minLat = Double.POSITIVE_INFINITY;
+            maxLon = maxLat = -Double.POSITIVE_INFINITY;
         }
 
         public void setMinMax(double lat, double lon) {

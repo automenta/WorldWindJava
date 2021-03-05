@@ -430,9 +430,9 @@ public class AntennaAxes extends AbstractShape {
         int nVertices = (this.nHeightIntervals + 1) * (this.nThetaIntervals + 1);
         shapeData.vertices = Buffers.newDirectFloatBuffer(3 * nVertices);
 
-        double xMax = -Double.MAX_VALUE;
-        double yMax = -Double.MAX_VALUE;
-        double zMax = -Double.MAX_VALUE;
+        double xMax = -Double.POSITIVE_INFINITY;
+        double yMax = -Double.POSITIVE_INFINITY;
+        double zMax = -Double.POSITIVE_INFINITY;
 
         double dHeight = this.getLength() / this.nHeightIntervals;
         double dTheta = 2.0d * Math.PI / this.nThetaIntervals;

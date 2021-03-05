@@ -1168,11 +1168,11 @@ public class BalloonController extends MouseAdapter implements SelectListener {
      * Get the maximum altitude in a list of positions.
      *
      * @param positions List of positions to search for max altitude.
-     * @return The maximum elevation in the list of positions. Returns {@code -Double.MAX_VALUE} if {@code positions} is
+     * @return The maximum elevation in the list of positions. Returns {@code -Double.POSITIVE_INFINITY} if {@code positions} is
      * empty.
      */
     protected static double findMaxAltitude(Iterable<? extends Position> positions) {
-        double maxAltitude = -Double.MAX_VALUE;
+        double maxAltitude = -Double.POSITIVE_INFINITY;
         for (Position p : positions) {
             double altitude = p.getAltitude();
             if (altitude > maxAltitude)

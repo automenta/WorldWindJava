@@ -368,7 +368,7 @@ public class SegmentPlaneAttributes {
             this.horizontalAlignment = horizontalAlignment;
             this.verticalAlignment = verticalAlignment;
             this.minActiveDistance = 0;
-            this.maxActiveDistance = Double.MAX_VALUE;
+            this.maxActiveDistance = Double.POSITIVE_INFINITY;
             this.offset = Vec4.ZERO;
         }
 

@@ -590,7 +590,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
             return this.levels.getLastLevel().getTexelSize();
 
         Level level = this.levels.getLastLevel(sector);
-        return level != null ? level.getTexelSize() : Double.MAX_VALUE;
+        return level != null ? level.getTexelSize() : Double.POSITIVE_INFINITY;
     }
 
     public double getDetailHint(Sector sector) {
@@ -1139,19 +1139,19 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
     protected double[] computeExtremeElevations(Sector sector) {
         LatLon delta = this.levels.getLevel(this.extremesLevel).getTileDelta();
         LatLon origin = this.levels.tileOrigin;
-        final int nwRow = ElevationTile.computeRow(delta.getLat(), sector.latMax(),
-            origin.getLat());
-        final int nwCol = ElevationTile.computeColumn(delta.getLon(), sector.lonMin(),
-            origin.getLon());
-        final int seRow = ElevationTile.computeRow(delta.getLat(), sector.latMin(),
-            origin.getLat());
-        final int seCol = ElevationTile.computeColumn(delta.getLon(), sector.lonMax(),
-            origin.getLon());
 
-        final int nCols = ElevationTile.computeColumn(delta.getLon(), Angle.POS180, Angle.NEG180) + 1;
+        int nwRow = ElevationTile.computeRow(delta.lat, sector.latMax, origin.lat);
+        int nwCol = ElevationTile.computeColumn(delta.lon, sector.lonMin, origin.lon);
+        int seRow = ElevationTile.computeRow(delta.lat, sector.latMin, origin.lat);
+        int seCol = ElevationTile.computeColumn(delta.lon, sector.lonMax, origin.lon);
 
-        double min = Double.MAX_VALUE;
-        double max = -Double.MAX_VALUE;
+        int nCols = ElevationTile.computeColumn(delta.lon, Angle.POS180degrees, Angle.NEG180degrees) + 1;
+
+        double min = Double.POSITIVE_INFINITY;
+        double max = Double.NEGATIVE_INFINITY;
+
+        double missing = this.getMissingDataSignal();
+        double missingReplacement = this.getMissingDataReplacement();
 
         for (int col = nwCol; col <= seCol; col++) {
             for (int row = seRow; row <= nwRow; row++) {
@@ -1159,10 +1159,10 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
                 double a = this.extremes.getDouble(index);
                 double b = this.extremes.getDouble(index + 1);
 
-                if (a == this.getMissingDataSignal())
-                    a = this.getMissingDataReplacement();
-                if (b == this.getMissingDataSignal())
-                    b = this.getMissingDataReplacement();
+                if (a == missing)
+                    a = missingReplacement;
+                if (b == missing)
+                    b = missingReplacement;
 
                 if (a > max)
                     max = a;
@@ -1176,9 +1176,9 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         }
 
         // Set to model's limits if for some reason a limit wasn't determined
-        if (min == Double.MAX_VALUE)
+        if (min == Double.POSITIVE_INFINITY)
             min = this.getMinElevation();
-        if (max == -Double.MAX_VALUE)
+        if (max == Double.NEGATIVE_INFINITY)
             max = this.getMaxElevation();
 
         return new double[] {min, max};
@@ -1266,7 +1266,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         Elevations elevations;
 
         if (missingLevelZeroTiles || tiles.isEmpty()) {
-            // Double.MAX_VALUE is a signal for no in-memory tile for a given region of the sector.
+            // Double.POSITIVE_INFINITY is a signal for no in-memory tile for a given region of the sector.
             elevations = new Elevations(this, Double.POSITIVE_INFINITY);
             elevations.tiles = tiles;
         } else if (missingTargetTiles) {

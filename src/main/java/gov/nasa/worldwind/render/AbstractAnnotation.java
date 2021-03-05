@@ -140,8 +140,8 @@ public abstract class AbstractAnnotation extends KVMap implements Annotation {
     // Picking components.
     protected PickSupport pickSupport;
     protected Object delegateOwner;
-    protected double minActiveAltitude = -Double.MAX_VALUE;
-    protected double maxActiveAltitude = Double.MAX_VALUE;
+    protected double minActiveAltitude = -Double.POSITIVE_INFINITY;
+    protected double maxActiveAltitude = Double.POSITIVE_INFINITY;
 
     protected AbstractAnnotation() {
         this.alwaysOnTop = false;

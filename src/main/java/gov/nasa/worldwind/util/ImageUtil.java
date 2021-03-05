@@ -354,7 +354,7 @@ public class ImageUtil {
 
         Point2D[] bestFitImagePoints = null;
         LatLon[] bestFitGeoPoints = null;
-        double minError = Double.MAX_VALUE;
+        double minError = Double.POSITIVE_INFINITY;
 
         for (int[] indices : new int[][] {
             {0, 1, 2},

@@ -77,7 +77,7 @@ public class LocalElevationModel extends AbstractElevationModel {
         if (this.tiles.isEmpty())
             return new double[] {this.getMinElevation(), this.getMaxElevation()};
 
-        double min = Double.MAX_VALUE;
+        double min = Double.POSITIVE_INFINITY;
         double max = -min;
 
         for (LocalTile tile : this.tiles) {
@@ -90,8 +90,8 @@ public class LocalElevationModel extends AbstractElevationModel {
         }
 
         return new double[] {
-            min == Double.MAX_VALUE ? this.getMinElevation() : min,
-            max == -Double.MAX_VALUE ? this.getMaxElevation() : max};
+            min == Double.POSITIVE_INFINITY ? this.getMinElevation() : min,
+            max == -Double.POSITIVE_INFINITY ? this.getMaxElevation() : max};
     }
 
     public double[] getExtremeElevations(Sector sector) {
@@ -104,7 +104,7 @@ public class LocalElevationModel extends AbstractElevationModel {
         if (this.tiles.isEmpty())
             return new double[] {this.getMinElevation(), this.getMaxElevation()};
 
-        double min = Double.MAX_VALUE;
+        double min = Double.POSITIVE_INFINITY;
         double max = -min;
 
         for (LocalTile tile : this.tiles) {
@@ -117,12 +117,12 @@ public class LocalElevationModel extends AbstractElevationModel {
         }
 
         return new double[] {
-            min == Double.MAX_VALUE ? this.getMinElevation() : min,
-            max == -Double.MAX_VALUE ? this.getMaxElevation() : max};
+            min == Double.POSITIVE_INFINITY ? this.getMinElevation() : min,
+            max == -Double.POSITIVE_INFINITY ? this.getMaxElevation() : max};
     }
 
     public double getBestResolution(Sector sector) {
-        double res = Double.MAX_VALUE;
+        double res = Double.POSITIVE_INFINITY;
 
         for (LocalTile tile : tiles) {
             if (sector != null && !sector.intersects(tile.sector))
@@ -220,7 +220,7 @@ public class LocalElevationModel extends AbstractElevationModel {
         }
 
         if (this.intersects(sector) == -1)
-            return Double.MAX_VALUE; // as stated in the javadoc above, this is the sentinel for "not in my domain"
+            return Double.POSITIVE_INFINITY; // as stated in the javadoc above, this is the sentinel for "not in my domain"
 
         // Mark the model as used this frame.
         this.set(Keys.FRAME_TIMESTAMP, System.currentTimeMillis());
@@ -468,7 +468,7 @@ public class LocalElevationModel extends AbstractElevationModel {
                 this.extremeElevations[1] = tile.maxElevation;
         } else // Find the min and max among all the tiles
         {
-            double min = Double.MAX_VALUE;
+            double min = Double.POSITIVE_INFINITY;
             double max = -min;
 
             for (LocalTile t : this.tiles) {
@@ -479,7 +479,7 @@ public class LocalElevationModel extends AbstractElevationModel {
             }
 
             this.extremeElevations =
-                new double[] {min == Double.MAX_VALUE ? 0 : min, max == -Double.MAX_VALUE ? 0 : max};
+                new double[] {min == Double.POSITIVE_INFINITY ? 0 : min, max == -Double.POSITIVE_INFINITY ? 0 : max};
         }
     }
 
@@ -625,7 +625,7 @@ public class LocalElevationModel extends AbstractElevationModel {
                 return;
             }
 
-            double min = Double.MAX_VALUE;
+            double min = Double.POSITIVE_INFINITY;
             double max = -min;
 
             for (int i = 0; i < len; i++) {

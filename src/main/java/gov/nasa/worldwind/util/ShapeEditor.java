@@ -1298,7 +1298,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
 
         Vec4 nearestPoint = null;
         int nearestSegmentIndex = 0;
-        double nearestDistance = Double.MAX_VALUE;
+        double nearestDistance = Double.POSITIVE_INFINITY;
         for (int i = 1; i <= locations.size(); i++) // <= is intentional, to handle the closing segment
         {
             // Skip the closing segment if the shape is not a polygon.

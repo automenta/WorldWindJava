@@ -600,7 +600,7 @@ public class BasicOrbitView extends BasicView implements OrbitView {
     @Override
     protected double computeHorizonDistance(Position eyePosition) {
         if (this.dc.is2DGlobe()) {
-            return Double.MAX_VALUE; // Horizon distance doesn't make sense for the 2D globe.
+            return Double.POSITIVE_INFINITY; // Horizon distance doesn't make sense for the 2D globe.
         } else {
             return super.computeHorizonDistance(eyePosition);
         }

@@ -1029,8 +1029,8 @@ public class WWMath {
         // the front side of the plane (dot product of line direction with plane normal is negative) and "back" if the
         // line intersects the back side of the plane (dot product of line direction with plane normal is positive).
 
-        double fMax = -Double.MAX_VALUE;
-        double bMin = Double.MAX_VALUE;
+        double fMax = -Double.POSITIVE_INFINITY;
+        double bMin = Double.POSITIVE_INFINITY;
         boolean isTangent = false;
 
         Vec4 u = line.direction;

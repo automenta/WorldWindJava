@@ -395,7 +395,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
 
             java.util.List<LatLon> locations = ShapeUtils.createSquareInViewport(wwd, position, heading, sizeInMeters);
 
-            double maxElevation = -Double.MAX_VALUE;
+            double maxElevation = -Double.POSITIVE_INFINITY;
             Globe globe = wwd.model().globe();
 
             for (LatLon ll : locations) {

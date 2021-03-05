@@ -92,7 +92,7 @@ public class Polyline extends KVMap implements OrderedRenderable, Movable, Resto
     }
 
     protected static double[] computeElevationExtremes(Iterable<? extends Position> positions) {
-        double[] extremes = {Double.MAX_VALUE, -Double.MAX_VALUE};
+        double[] extremes = {Double.POSITIVE_INFINITY, -Double.POSITIVE_INFINITY};
         for (Position pos : positions) {
             if (extremes[0] > pos.getElevation())
                 extremes[0] = pos.getElevation(); // min

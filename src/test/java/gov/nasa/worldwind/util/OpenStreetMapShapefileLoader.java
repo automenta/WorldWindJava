@@ -244,8 +244,8 @@ public class OpenStreetMapShapefileLoader {
     }
 
     protected static class Label extends UserFacingText {
-        protected double minActiveAltitude = -Double.MAX_VALUE;
-        protected double maxActiveAltitude = Double.MAX_VALUE;
+        protected double minActiveAltitude = -Double.POSITIVE_INFINITY;
+        protected double maxActiveAltitude = Double.POSITIVE_INFINITY;
 
         public Label(CharSequence text, Position position) {
             super(text, position);

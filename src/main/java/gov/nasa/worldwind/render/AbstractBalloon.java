@@ -35,8 +35,8 @@ public abstract class AbstractBalloon extends WWObjectImpl implements Balloon {
     protected TextDecoder textDecoder = new BasicTextDecoder();
     protected boolean visible = true;
     protected boolean highlighted;
-    protected double minActiveAltitude = -Double.MAX_VALUE;
-    protected double maxActiveAltitude = Double.MAX_VALUE;
+    protected double minActiveAltitude = -Double.POSITIVE_INFINITY;
+    protected double maxActiveAltitude = Double.POSITIVE_INFINITY;
 
     /**
      * Create a balloon.

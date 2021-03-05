@@ -502,7 +502,7 @@ public class ExtentVisibilitySupport {
         double vcos = verticalFieldOfView.cosHalfAngle();
         double vtan = verticalFieldOfView.tanHalfAngle();
 
-        double maxDistance = -Double.MAX_VALUE;
+        double maxDistance = -Double.POSITIVE_INFINITY;
         double d;
 
         // Compute the smallest distance from the center point needed to contain the model coordinate extents in the
@@ -522,7 +522,7 @@ public class ExtentVisibilitySupport {
                 maxDistance = d;
         }
 
-        if (maxDistance == -Double.MAX_VALUE)
+        if (maxDistance == -Double.POSITIVE_INFINITY)
             return null;
 
         return center.add3(f.multiply3(-maxDistance));
@@ -589,7 +589,7 @@ public class ExtentVisibilitySupport {
         double htan = fieldOfView.tanHalfAngle();
         double vtan = verticalFieldOfView.tanHalfAngle();
 
-        double maxDistance = -Double.MAX_VALUE;
+        double maxDistance = -Double.POSITIVE_INFINITY;
         double d;
 
         // Compute the smallest distance from the center point needed to contain the screen extent's model coordinate
@@ -611,7 +611,7 @@ public class ExtentVisibilitySupport {
                 maxDistance = d;
         }
 
-        if (maxDistance == -Double.MAX_VALUE)
+        if (maxDistance == -Double.POSITIVE_INFINITY)
             return null;
 
         return center.add3(f.multiply3(-maxDistance));
@@ -633,7 +633,7 @@ public class ExtentVisibilitySupport {
         Vec4 f = Vec4.UNIT_NEGATIVE_Z.transformBy4(modelview.getInverse());
         Vec4 c = center.transformBy4(modelview);
 
-        double maxDistance = -Double.MAX_VALUE;
+        double maxDistance = -Double.POSITIVE_INFINITY;
         double d;
 
         // If possible, estimate an eye distance which makes the entire screen bounds visible.
@@ -674,7 +674,7 @@ public class ExtentVisibilitySupport {
             }
         }
 
-        if (maxDistance == -Double.MAX_VALUE)
+        if (maxDistance == -Double.POSITIVE_INFINITY)
             return null;
 
         return center.add3(f.multiply3(-maxDistance));

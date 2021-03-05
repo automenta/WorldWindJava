@@ -347,9 +347,9 @@ public class AntennaModel extends AbstractShape {
 
         double rScale = 1 / (this.getMaxR() - this.getMinR()); // to keep texture coords in [0,1]. see comment below
 
-        double xMax = -Double.MAX_VALUE;
-        double yMax = -Double.MAX_VALUE;
-        double zMax = -Double.MAX_VALUE;
+        double xMax = -Double.POSITIVE_INFINITY;
+        double yMax = -Double.POSITIVE_INFINITY;
+        double zMax = -Double.POSITIVE_INFINITY;
 
         double dTheta = 180.0 / this.nThetaIntervals;
         double dPhi = 360.0 / this.nPhiIntervals;

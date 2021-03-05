@@ -871,8 +871,8 @@ public class HighResTerrain extends WWObjectImpl implements Terrain {
         LatLon centroid = tile.sector.getCentroid();
         Vec4 refCenter = globe.computePointFromPosition(centroid.getLat(), centroid.getLon(), 0.0d);
 
-        double minElevation = Double.MAX_VALUE;
-        double maxElevation = -Double.MAX_VALUE;
+        double minElevation = Double.POSITIVE_INFINITY;
+        double maxElevation = -Double.POSITIVE_INFINITY;
         LatLon minElevationLocation = centroid;
         LatLon maxElevationLocation = centroid;
 

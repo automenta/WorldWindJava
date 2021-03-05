@@ -218,9 +218,9 @@ public class CappedCylinder extends AbstractAirspace {
         Vec4 centerPoint = globe.computePointFromLocation(this.getCenter());
         Vec4 cylinderAxis = globe.computeSurfaceNormalAtPoint(centerPoint);
 
-        double minProj = Double.MAX_VALUE;
-        double maxProj = -Double.MAX_VALUE;
-        double maxPerp = -Double.MAX_VALUE;
+        double minProj = Double.POSITIVE_INFINITY;
+        double maxProj = -Double.POSITIVE_INFINITY;
+        double maxPerp = -Double.POSITIVE_INFINITY;
 
         for (Vec4 vec : points) {
             Vec4 v = vec.subtract3(centerPoint);

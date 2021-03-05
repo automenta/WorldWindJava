@@ -467,7 +467,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
         private final int hashInt;
         // Computed data.
         protected String fileCachePath;
-protected double priority = Double.MAX_VALUE; // Default is minimum priority
+protected double priority = Double.POSITIVE_INFINITY; // Default is minimum priority
         protected PlaceNameChunk dataChunk;
 
         Tile(PlaceNameService placeNameService, Sector sector, int row, int column) {

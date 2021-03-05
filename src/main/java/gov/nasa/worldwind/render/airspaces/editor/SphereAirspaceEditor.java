@@ -22,7 +22,7 @@ public class SphereAirspaceEditor extends AbstractAirspaceEditor {
     public static final int RADIUS_CONTROL_ID = 1024;
     private SphereAirspace sphere; // Can be null
     private double minRadius = 1.0;
-    private double maxRadius = Double.MAX_VALUE;
+    private double maxRadius = Double.POSITIVE_INFINITY;
     private boolean alwaysShowRadiusControl;
     private double radiusControlDrawDistance = 14;
 

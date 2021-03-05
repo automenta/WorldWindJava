@@ -1314,7 +1314,7 @@ public abstract class AbstractShape extends WWObjectImpl
         double[] minAndMaxElevations = globe.getMinAndMaxElevations(mySector);
         final int altMode = this.getAltitudeMode();
         if (altMode != WorldWind.CLAMP_TO_GROUND) {
-            extremes = new double[] {Double.MAX_VALUE, -Double.MAX_VALUE};
+            extremes = new double[] {Double.POSITIVE_INFINITY, -Double.POSITIVE_INFINITY};
             for (LatLon pos : positions) {
                 double elevation = pos instanceof Position ? ((Position) pos).getElevation() : 0;
                 if (altMode == WorldWind.RELATIVE_TO_GROUND)

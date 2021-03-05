@@ -225,7 +225,7 @@ public final class Line// Instances are immutable
         Vec4 intersectionPoint = null;
 
         // Find the nearest intersection that's in front of the ray origin.
-        double nearestDistance = Double.MAX_VALUE;
+        double nearestDistance = Double.POSITIVE_INFINITY;
         for (Intersection intersection : intersections) {
             // Ignore any intersections behind the line origin.
             if (!this.isPointBehindLineOrigin(intersection.getIntersectionPoint())) {

@@ -22,7 +22,7 @@ public class BasicMarkerAttributes implements MarkerAttributes {
     private double opacity = 1.0d;
     private double markerPixels = 8.0d;
     private double minMarkerSize = 3.0d;
-    private double maxMarkerSize = Double.MAX_VALUE;
+    private double maxMarkerSize = Double.POSITIVE_INFINITY;
 
     public BasicMarkerAttributes() {
     }

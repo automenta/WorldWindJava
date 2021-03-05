@@ -312,11 +312,11 @@ public class Box implements Extent, Renderable {
         Vec4 t = axes[2];
 
         // Find the extremes along each axis.
-        double minDotR = Double.MAX_VALUE;
+        double minDotR = Double.POSITIVE_INFINITY;
         double maxDotR = -minDotR;
-        double minDotS = Double.MAX_VALUE;
+        double minDotS = Double.POSITIVE_INFINITY;
         double maxDotS = -minDotS;
-        double minDotT = Double.MAX_VALUE;
+        double minDotT = Double.POSITIVE_INFINITY;
         double maxDotT = -minDotT;
 
         for (int i = 0; i <= coordinates.length() - stride; i += stride) {

@@ -38,10 +38,10 @@ public class VPFBoundingBox {
             throw new IllegalArgumentException(message);
         }
 
-        double xmin = Double.MAX_VALUE;
-        double ymin = Double.MAX_VALUE;
-        double xmax = -Double.MAX_VALUE;
-        double ymax = -Double.MAX_VALUE;
+        double xmin = Double.POSITIVE_INFINITY;
+        double ymin = Double.POSITIVE_INFINITY;
+        double xmax = -Double.POSITIVE_INFINITY;
+        double ymax = -Double.POSITIVE_INFINITY;
 
         int bufferSize = buffer.getSize();
         double[] compArray = new double[2];

@@ -1386,8 +1386,8 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
                 || (this.follow.equals(TerrainProfileLayer.FOLLOW_OBJECT) && this.objectPosition != null && this.objectHeading != null)
                 || (this.follow.equals(TerrainProfileLayer.FOLLOW_PATH) && this.pathPositions != null && this.pathPositions.size() >= 2)) {
                 this.positions = new Position[samples];
-                this.minElevation = Double.MAX_VALUE;
-                this.maxElevation = -Double.MAX_VALUE;
+                this.minElevation = Double.POSITIVE_INFINITY;
+                this.maxElevation = -Double.POSITIVE_INFINITY;
                 // Compute profile positions
                 if (this.follow.equals(TerrainProfileLayer.FOLLOW_PATH)) {
                     computePathPositions();

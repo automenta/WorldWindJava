@@ -504,8 +504,8 @@ public class WWBufferUtil {
             throw new IllegalArgumentException(message);
         }
 
-        double min = Double.MAX_VALUE;
-        double max = -Double.MAX_VALUE;
+        double min = Double.POSITIVE_INFINITY;
+        double max = -Double.POSITIVE_INFINITY;
 
         for (int i = 0; i < buffer.length(); i++) {
             double value = buffer.getDouble(i);
@@ -519,7 +519,7 @@ public class WWBufferUtil {
                 max = value;
         }
 
-        if (Double.compare(min, Double.MAX_VALUE) == 0 || Double.compare(max, -Double.MAX_VALUE) == 0)
+        if (Double.compare(min, Double.POSITIVE_INFINITY) == 0 || Double.compare(max, -Double.POSITIVE_INFINITY) == 0)
             return null;
 
         return new double[] {min, max};

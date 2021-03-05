@@ -67,8 +67,8 @@ public class PlaceNameService {
         this.font = font;
         this.enabled = true;
         this.color = Color.white;
-        this.minDisplayDistance = Double.MIN_VALUE;
-        this.maxDisplayDistance = Double.MAX_VALUE;
+        this.minDisplayDistance = Double.NEGATIVE_INFINITY;
+        this.maxDisplayDistance = Double.POSITIVE_INFINITY;
         this.addVersionTag = versionTag;
 
         String message = this.validate();

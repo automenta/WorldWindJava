@@ -22,7 +22,7 @@ public class PolygonTessellator2 {
     protected final Range polygonVertexRange = new Range(0, 0);
     protected final double[] coords = new double[6];
     protected final double[] offset = new double[3];
-    protected final double[] clip = {-Double.MAX_VALUE, Double.MAX_VALUE, -Double.MAX_VALUE, Double.MAX_VALUE};
+    protected final double[] clip = {-Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, -Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY};
     protected final float[] vertex = new float[3];
     protected FloatBuffer vertices = FloatBuffer.allocate(10);
     protected IntBuffer interiorIndices = IntBuffer.allocate(10);

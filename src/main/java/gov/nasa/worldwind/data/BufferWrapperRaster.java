@@ -173,7 +173,7 @@ public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable
             if (o instanceof Double)
                 return (Double) o;
         }
-        return Double.MAX_VALUE;
+        return Double.POSITIVE_INFINITY;
     }
 
     public void setTransparentValue(double transparentValue) {
@@ -414,8 +414,8 @@ public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable
         }
 
         protected static void computeInterpolantRange(double[] params, int size, double[] result) {
-            double min = Double.MAX_VALUE;
-            double max = -Double.MIN_VALUE;
+            double min = Double.POSITIVE_INFINITY;
+            double max = -Double.NEGATIVE_INFINITY;
             int index;
             for (int i = 0; i < size; i++) {
                 index = 3 * i;

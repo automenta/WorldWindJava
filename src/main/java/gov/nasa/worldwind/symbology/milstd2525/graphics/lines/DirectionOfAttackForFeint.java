@@ -213,7 +213,7 @@ public class DirectionOfAttackForFeint extends DirectionOfAttack {
         // We'll place the label at this point. We'll do this as we compute the curve.
         Line controlLine = Line.fromSegment(pt1, pt2);
         int furthestPoint = 0;
-        double maxDistance = -Double.MAX_VALUE;
+        double maxDistance = -Double.POSITIVE_INFINITY;
 
         List<Position> curvePositions = new ArrayList<>();
         int[] coefficients = new int[controlPoints.length]; // Array to hold binomial coefficients

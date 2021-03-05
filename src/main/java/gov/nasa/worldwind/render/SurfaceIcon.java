@@ -37,7 +37,7 @@ public class SurfaceIcon extends AbstractSurfaceRenderable implements Movable, D
     private Angle heading = Angle.ZERO;             // CW from north
     private Color color = Color.WHITE;
     private boolean maintainSize;
-    private double maxSize = Double.MAX_VALUE;      // Meter
+    private double maxSize = Double.POSITIVE_INFINITY;      // Meter
     private double minSize = 0.1;                    // Meter
 
     public SurfaceIcon(Object imageSource) {

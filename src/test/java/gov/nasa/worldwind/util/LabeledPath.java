@@ -215,7 +215,7 @@ public class LabeledPath implements Renderable {
             return;
 
         double maxArea = 0;
-        double minDistance = Double.MAX_VALUE;
+        double minDistance = Double.POSITIVE_INFINITY;
         int locationIndex = -1;
 
         for (LatLon ll : this.getLocations()) {

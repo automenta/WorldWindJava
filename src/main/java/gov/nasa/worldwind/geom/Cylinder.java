@@ -126,7 +126,7 @@ public class Cylinder implements Extent, Renderable {
         Vec4 s = axes[1];
 
         List<Vec4> sPlanePoints = new ArrayList<>();
-        double minDotR = Double.MAX_VALUE;
+        double minDotR = Double.POSITIVE_INFINITY;
         double maxDotR = -minDotR;
 
         for (Vec4 p : points) {
@@ -141,7 +141,7 @@ public class Cylinder implements Extent, Renderable {
 
         Vec4 minPoint = sPlanePoints.get(0);
         Vec4 maxPoint = minPoint;
-        double minDotS = Double.MAX_VALUE;
+        double minDotS = Double.POSITIVE_INFINITY;
         double maxDotS = -minDotS;
         for (Vec4 p : sPlanePoints) {
             double d = p.dot3(s);

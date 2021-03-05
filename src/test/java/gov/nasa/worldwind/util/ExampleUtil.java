@@ -221,8 +221,8 @@ public class ExampleUtil {
     }
 
     protected static void scaleValues(double[] values, int count, double minValue, double maxValue) {
-        double min = Double.MAX_VALUE;
-        double max = -Double.MAX_VALUE;
+        double min = Double.POSITIVE_INFINITY;
+        double max = -Double.POSITIVE_INFINITY;
         for (int i = 0; i < count; i++) {
             if (min > values[i])
                 min = values[i];

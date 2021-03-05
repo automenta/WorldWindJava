@@ -133,8 +133,8 @@ public class DTED {
 
         int recordSize = DTED.REC_HEADER_SIZE + height * Short.SIZE / Byte.SIZE + DTED.REC_CHKSUM_SIZE;
 
-        double min = +Double.MAX_VALUE;
-        double max = -Double.MAX_VALUE;
+        double min = +Double.POSITIVE_INFINITY;
+        double max = -Double.POSITIVE_INFINITY;
 
         ByteBuffer bb = ByteBuffer.allocate(recordSize).order(ByteOrder.BIG_ENDIAN);
         for (int x = 0; x < width; x++) {

@@ -200,8 +200,8 @@ public class ViewLimits extends ApplicationTemplate {
             this.minPitch = this.createAngleSpinner(PITCH_LIMITS_CHANGED, Angle.NEG180, Angle.NEG180, Angle.POS180);
             this.maxPitch = this.createAngleSpinner(PITCH_LIMITS_CHANGED, Angle.POS180, Angle.NEG180, Angle.POS180);
 
-            this.minZoom = this.createDoubleSpinner(ZOOM_LIMITS_CHANGED, 0, 0, Double.MAX_VALUE);
-            this.maxZoom = this.createDoubleSpinner(ZOOM_LIMITS_CHANGED, Double.MAX_VALUE, 0, Double.MAX_VALUE);
+            this.minZoom = this.createDoubleSpinner(ZOOM_LIMITS_CHANGED, 0, 0, Double.POSITIVE_INFINITY);
+            this.maxZoom = this.createDoubleSpinner(ZOOM_LIMITS_CHANGED, Double.POSITIVE_INFINITY, 0, Double.POSITIVE_INFINITY);
 
             JPanel controlPanel = new JPanel(new BorderLayout(0, 0)); // hgap, vgap
             {

@@ -332,7 +332,7 @@ public class Path extends AbstractShape {
      * @return the minimum distance from the shape to the eye point.
      */
     protected static double computeEyeDistance(DrawContext dc, PathData pathData) {
-        double minDistanceSquared = Double.MAX_VALUE;
+        double minDistanceSquared = Double.POSITIVE_INFINITY;
         Vec4 eyePoint = dc.view().getEyePoint();
         Vec4 refPt = pathData.getReferencePoint();
 

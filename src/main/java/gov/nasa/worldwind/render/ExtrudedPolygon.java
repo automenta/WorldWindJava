@@ -355,7 +355,7 @@ public class ExtrudedPolygon extends AbstractShape {
      * @return the minimum distance from the shape to the eye point.
      */
     protected static double computeEyeDistance(DrawContext dc, ShapeData shapeData) {
-        double minDistance = Double.MAX_VALUE;
+        double minDistance = Double.POSITIVE_INFINITY;
         Vec4 eyePoint = dc.view().getEyePoint();
 
         for (Vec4 point : shapeData.getOuterBoundaryInfo().capVertices) {

@@ -117,7 +117,7 @@ public class GDAL {
             throw new IllegalArgumentException(message);
         }
 
-        double min = Double.MAX_VALUE;
+        double min = Double.POSITIVE_INFINITY;
         for (Point2D point : points) {
             min = Math.min(point.getX(), min);
         }
@@ -132,7 +132,7 @@ public class GDAL {
             throw new IllegalArgumentException(message);
         }
 
-        double max = -Double.MAX_VALUE;
+        double max = -Double.POSITIVE_INFINITY;
         for (Point2D point : points) {
             max = Math.max(point.getX(), max);
         }
@@ -147,7 +147,7 @@ public class GDAL {
             throw new IllegalArgumentException(message);
         }
 
-        double min = Double.MAX_VALUE;
+        double min = Double.POSITIVE_INFINITY;
         for (Point2D point : points) {
             min = Math.min(point.getY(), min);
         }
@@ -162,7 +162,7 @@ public class GDAL {
             throw new IllegalArgumentException(message);
         }
 
-        double max = -Double.MAX_VALUE;
+        double max = -Double.POSITIVE_INFINITY;
         for (Point2D point : points) {
             max = Math.max(point.getY(), max);
         }
@@ -254,7 +254,7 @@ public class GDAL {
             SpatialReference geodetic = GDALUtils.createGeographicSRS();
             CoordinateTransformation ct = new CoordinateTransformation(geodetic, this.srs);
 
-            double minX = Double.MAX_VALUE, maxX = -Double.MAX_VALUE, minY = Double.MAX_VALUE, maxY = -Double.MAX_VALUE;
+            double minX = Double.POSITIVE_INFINITY, maxX = -Double.POSITIVE_INFINITY, minY = Double.POSITIVE_INFINITY, maxY = -Double.POSITIVE_INFINITY;
             for (LatLon ll : sector.getCorners()) {
                 double[] point = ct.TransformPoint(ll.lon, ll.lat);
                 if (null != point) {
@@ -292,8 +292,8 @@ public class GDAL {
 
             Sector bbox;
             try {
-                double minx = Double.MAX_VALUE, maxx = -Double.MAX_VALUE;
-                double miny = Double.MAX_VALUE, maxy = -Double.MAX_VALUE;
+                double minx = Double.POSITIVE_INFINITY, maxx = -Double.POSITIVE_INFINITY;
+                double miny = Double.POSITIVE_INFINITY, maxy = -Double.POSITIVE_INFINITY;
 
                 CoordinateTransformation ct = new CoordinateTransformation(srs, GDALUtils.createGeographicSRS());
 

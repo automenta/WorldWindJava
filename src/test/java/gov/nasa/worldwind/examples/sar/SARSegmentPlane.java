@@ -98,7 +98,7 @@ public class SARSegmentPlane extends WWObjectImpl {
         double oldMaxSegmentAltitude = Math.max(segmentPositions[0].getElevation(), segmentPositions[1].getElevation());
         double[] minAndMaxElevation = globe.getMinAndMaxElevations(Sector.boundingSector(positions));
 
-        double newMaxSegmentAltitude = -Double.MAX_VALUE;
+        double newMaxSegmentAltitude = -Double.POSITIVE_INFINITY;
         for (Position pos : positions) {
             if (newMaxSegmentAltitude < pos.getElevation())
                 newMaxSegmentAltitude = pos.getElevation();
@@ -140,7 +140,7 @@ public class SARSegmentPlane extends WWObjectImpl {
         Iterable<? extends Position> positions) {
         double[] gridCellDimensions = segmentPlane.getGridCellDimensions();
 
-        double maxHeightAboveSurface = -Double.MAX_VALUE;
+        double maxHeightAboveSurface = -Double.POSITIVE_INFINITY;
         for (Position pos : positions) {
             double heightAboveSurface = pos.getElevation() - getSurfaceElevationAt(wwd,
                 pos.getLat(), pos.getLon());
@@ -423,9 +423,9 @@ public class SARSegmentPlane extends WWObjectImpl {
         Color vAxisLabelColor = Color.YELLOW;
         Color moveControlPointColor = Color.GREEN;
         Color resizeControlPointColor = Color.MAGENTA;
-        double maxAxisLabelActiveDistance = Double.MAX_VALUE;
-        double maxSecondaryControlPointActiveDistance = Double.MAX_VALUE;
-        double maxPrimaryControlPointActiveDistance = Double.MAX_VALUE;
+        double maxAxisLabelActiveDistance = Double.POSITIVE_INFINITY;
+        double maxSecondaryControlPointActiveDistance = Double.POSITIVE_INFINITY;
+        double maxPrimaryControlPointActiveDistance = Double.POSITIVE_INFINITY;
 
         SegmentPlaneAttributes attributes = new SegmentPlaneAttributes();
         this.segmentPlane.setAttributes(attributes);
