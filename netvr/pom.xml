@@ -11,7 +11,7 @@
     <properties>
         <maven.compiler.source>16</maven.compiler.source>
         <maven.compiler.target>16</maven.compiler.target>
-        <graphhopper-core.version>3.0-SNAPSHOT</graphhopper-core.version>
+        <graphhopper-core.version>3.0-pre3</graphhopper-core.version>
     </properties>
     <dependencies>
         <dependency>

@@ -2,7 +2,7 @@ package gov.nasa.worldwind.cache;
 
 import com.github.benmanes.caffeine.cache.*;
 import com.google.common.util.concurrent.MoreExecutors;
-import org.checkerframework.checker.nullness.qual.*;
+import org.jetbrains.annotations.*;
 
 public class SoftMemoryCache extends AbstractMemoryCache
     implements RemovalListener<Object, AbstractMemoryCache.CacheEntry> {
@@ -58,7 +58,7 @@ public class SoftMemoryCache extends AbstractMemoryCache
     }
 
     @Override
-    public void onRemoval(@Nullable Object key, @Nullable CacheEntry value, @NonNull RemovalCause cause) {
+    public void onRemoval(@Nullable Object key, @Nullable CacheEntry value, RemovalCause cause) {
 
         if (!listeners.isEmpty()) {
             listeners.forEach(l -> l.entryRemoved(key, value));

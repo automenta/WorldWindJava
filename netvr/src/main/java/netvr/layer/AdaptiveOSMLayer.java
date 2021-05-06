@@ -149,9 +149,9 @@ public class AdaptiveOSMLayer extends RenderableLayer {
             final ReaderNode node = nodes.get(nodeId);
             //TODO ele
 
-            double e = node.getEle();
-            if (e != e)
-                e = landUse ? AdaptiveOSMLayer.DEFAULT_ELEVATION_USE : AdaptiveOSMLayer.DEFAULT_ELEVATION;
+//            double e = node.getEle();
+//            if (e != e)
+            var e = landUse ? AdaptiveOSMLayer.DEFAULT_ELEVATION_USE : AdaptiveOSMLayer.DEFAULT_ELEVATION;
 
             latlon.add(Position.fromDegrees(node.getLat(), node.getLon(), e));
         }

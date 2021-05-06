@@ -5,6 +5,7 @@ import com.graphhopper.reader.*;
 import com.graphhopper.reader.osm.*;
 import com.graphhopper.routing.util.EncodingManager;
 import com.graphhopper.storage.*;
+import tech.tablesaw.io.DataReader;
 
 import java.io.File;
 
@@ -21,7 +22,7 @@ abstract public class GraphOSM extends GraphHopperOSM {
     public boolean load(String graphHopperFolder) {
         boolean l = super.load(graphHopperFolder); //HACK
 
-        DataReader reader = new FullWayReader(
+        var reader = new FullWayReader(
             GraphOSM.ramGraph("x", getEncodingManager(), true, false));
 
         reader.setFile(new File(getOSMFile()));
