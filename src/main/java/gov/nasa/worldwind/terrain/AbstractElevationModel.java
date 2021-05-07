@@ -129,10 +129,11 @@ abstract public class AbstractElevationModel extends WWObjectImpl implements Ele
     public void dispose() {
     }
 
-    public String name() {
-        Object n = this.get(Keys.DISPLAY_NAME);
-
-        return n != null ? n.toString() : this.toString();
+    public final String name() {
+        return toString();
+//        Object n = this.get(Keys.DISPLAY_NAME);
+//
+//        return n != null ? n.toString() : this.toString();
     }
 
     public void setName(String name) {

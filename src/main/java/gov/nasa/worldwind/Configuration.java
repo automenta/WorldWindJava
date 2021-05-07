@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind;
 
-import com.jogamp.opengl.*;
+
 import gov.nasa.worldwind.cache.FileStore;
 import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.globes.*;
@@ -138,15 +138,15 @@ public class Configuration // Singleton
 
         CacheConfig cacheConfig = CacheConfig.custom()
             .setMaxCacheEntries(32 * 1024)
-            .setMaxObjectSize(64 * 1024 * 1024)
+            .setMaxObjectSize(128 * 1024 * 1024)
             .setHeuristicCachingEnabled(true)
             .setHeuristicDefaultLifetime(TimeUnit.DAYS.toSeconds(CACHE_STALE_DAYS))
             .setHeuristicCoefficient(1)
             .setAllow303Caching(true)
-            .setAsynchronousWorkersCore(2)
-            .setAsynchronousWorkersMax(2)
-//            .setSharedCache(true)
-//            .setWeakETagOnPutDeleteAllowed(true)
+            .setAsynchronousWorkersCore(Runtime.getRuntime().availableProcessors())
+            .setAsynchronousWorkersMax(Runtime.getRuntime().availableProcessors())
+            .setSharedCache(true)
+            .setWeakETagOnPutDeleteAllowed(true)
             .build();
         RequestConfig requestConfig = RequestConfig.custom()
             .setConnectTimeout(60000)
@@ -277,6 +277,7 @@ public class Configuration // Singleton
             .setConnectionManagerShared(true)
             .setUserAgent(Configuration.userAgent)
             .setDefaultRequestConfig(requestConfig)
+            //.disableCookieManagement()
 //            .disableAuthCaching()
             .build();
 //        httpCache = HttpCacheContext.create();
@@ -649,48 +650,6 @@ public class Configuration // Singleton
         catch (NumberFormatException ignore) {
         }
         return ver;
-    }
-
-    /**
-     * Returns the highest OpenGL profile available on the current graphics device that is compatible with WorldWind.
-     * The returned profile favors hardware acceleration over software acceleration. With JOGL version 2.0, this returns
-     * the highest available profile from the following list:
-     * <ul> <li>OpenGL compatibility profile 4.x</li> <li>OpenGL compatibility profile 3.x</li> <li>OpenGL profile 1.x
-     * up to 3.0</li> </ul>
-     *
-     * @return the highest compatible OpenGL profile.
-     */
-    private final static GLProfile maxCompatible = GLProfile.getMaxFixedFunc(true); // Favor a hardware rasterizer
-    public static GLProfile getMaxCompatibleGLProfile() {
-        return Configuration.maxCompatible;
-    }
-
-
-
-    /**
-     * Returns a {@link GLCapabilities} identifying graphics features required by WorldWind. The capabilities instance
-     * returned requests the maximum OpenGL profile supporting GL fixed function operations, a frame buffer with 8 bits
-     * each of red, green, blue and alpha, a 24-bit depth buffer, double buffering, and if the Java property
-     * "gov.nasa.worldwind.stereo.mode" is set to "device", device supported stereo.
-     *
-     * @return a new capabilities instance identifying required graphics features.
-     */
-    public static GLCapabilities getRequiredGLCapabilities() {
-        GLCapabilities caps = new GLCapabilities(Configuration.getMaxCompatibleGLProfile());
-
-        caps.setAlphaBits(8);
-        caps.setRedBits(8);
-        caps.setGreenBits(8);
-        caps.setBlueBits(8);
-        caps.setDepthBits(24);
-        caps.setDoubleBuffered(true);
-
-        // Determine whether we should request a stereo canvas
-        String stereo = System.getProperty(Keys.STEREO_MODE);
-        if ("device".equals(stereo))
-            caps.setStereo(true);
-
-        return caps;
     }
 
     /**

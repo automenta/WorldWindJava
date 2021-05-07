@@ -549,9 +549,9 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         return this.levels;
     }
 
-    protected int getExtremesLevel() {
-        return extremesLevel;
-    }
+//    protected int getExtremesLevel() {
+//        return extremesLevel;
+//    }
 
     protected BufferWrapper getExtremes() {
         return extremes;
@@ -800,7 +800,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         return bufferWrapper;
     }
 
-    protected void retrieveElevations(final ElevationTile tile, DownloadPostProcessor postProcessor) {
+    protected void retrieveElevations(final ElevationTile tile, DownloadPostProcessor pp) {
 //        if (this.get(AVKey.RETRIEVER_FACTORY_LOCAL) != null)
 //            this.retrieveLocalElevations(tile, postProcessor);
 //        else
@@ -817,8 +817,8 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
 //                this.getLevels().miss(tile);
 //                return;
 //            }
-            DownloadPostProcessor pp = postProcessor != null ? postProcessor
-                : new DownloadPostProcessor(tile, this);
+//            DownloadPostProcessor pp = postProcessor != null ? postProcessor
+//                : new DownloadPostProcessor(tile, this);
             HTTPRetriever retriever = new HTTPRetriever(url, pp);
             retriever.set(URLRetriever.EXTRACT_ZIP_ENTRY, "true"); // supports legacy elevation models
 
@@ -828,7 +828,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
 //        });
 
         } catch (Exception e) {
-            this.getLevels().miss(tile);
+//            this.getLevels().miss(tile);
             Logging.logger().log(java.util.logging.Level.SEVERE,
                 Logging.getMessage("TiledElevationModel.ExceptionCreatingElevationsUrl", url), e);
         }

@@ -733,7 +733,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
         private boolean loadTexture(byte[] textureBytes) {
             TextureData td;
             try {
-                td = OGLUtil.newTextureData(textureBytes, isUseMipMaps(), Configuration.getMaxCompatibleGLProfile());
+                td = OGLUtil.newTextureData(textureBytes, isUseMipMaps(), JOGLVersionInfo.getMaxCompatibleGLProfile());
             }
             catch (IOException e) {
                 e.printStackTrace();

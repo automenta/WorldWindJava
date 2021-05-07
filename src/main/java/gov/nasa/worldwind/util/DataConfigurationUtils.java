@@ -582,13 +582,13 @@ public class DataConfigurationUtils {
     public static KV getWMSLayerConfigParams(WMSCapabilities caps, String[] formatOrderPreference, KV params) {
 
         String layerNames = params.getStringValue(Keys.LAYER_NAMES);
-        String styleNames = params.getStringValue(Keys.STYLE_NAMES);
         if (layerNames == null || layerNames.isEmpty()) {
             String message = Logging.getMessage("nullValue.WMSLayerNames");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
+        String styleNames = params.getStringValue(Keys.STYLE_NAMES);
         String[] names = layerNames.split(",");
         if (names.length == 0) {
             String message = Logging.getMessage("nullValue.WMSLayerNames");

@@ -6,6 +6,7 @@
 
 package gov.nasa.worldwind.util;
 
+import com.jogamp.common.nio.ByteBufferInputStream;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
@@ -279,11 +280,11 @@ public class WWXML {
      *                                  is included in this exception's {@link Throwable#initCause(Throwable)}
      */
     public static XMLEventReader openEventReaderStream(InputStream inputStream, boolean isNamespaceAware) {
-        if (inputStream == null) {
-            String message = Logging.getMessage("nullValue.InputStreamIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (inputStream == null) {
+//            String message = Logging.getMessage("nullValue.InputStreamIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         XMLInputFactory inputFactory = XMLInputFactory.newInstance();
         inputFactory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, isNamespaceAware);
@@ -352,15 +353,18 @@ public class WWXML {
      *                                  exception is included in this exception's {@link Throwable#initCause(Throwable)}.
      */
     public static XMLEventReader openEventReaderURL(URL url, boolean isNamespaceAware) {
-        if (url == null) {
-            String message = Logging.getMessage("nullValue.URLIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (url == null) {
+//            String message = Logging.getMessage("nullValue.URLIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         try {
-            InputStream inputStream = url.openStream();
-            return WWXML.openEventReaderStream(inputStream, isNamespaceAware);
+            var bb = WWIO.readURLContentToBuffer(url);
+            return WWXML.openEventReaderStream(
+                //url.openStream()
+                new ByteBufferInputStream(bb)
+                , isNamespaceAware);
         }
         catch (IOException e) {
             String message = Logging.getMessage("generic.ExceptionAttemptingToParseXml", url.toString());

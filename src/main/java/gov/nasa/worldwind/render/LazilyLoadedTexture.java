@@ -393,7 +393,7 @@ public class LazilyLoadedTexture extends KVMap implements WWTexture {
         }
 
         try {
-            TextureData td = AWTTextureIO.newTextureData(Configuration.getMaxCompatibleGLProfile(),
+            TextureData td = AWTTextureIO.newTextureData(JOGLVersionInfo.getMaxCompatibleGLProfile(),
                 (BufferedImage) this.getImageSource(), this.isUseMipMaps());
 
             this.setTextureData(td);
@@ -513,7 +513,7 @@ public class LazilyLoadedTexture extends KVMap implements WWTexture {
      */
     protected TextureData readImage(URL fileUrl) {
         try {
-            return OGLUtil.newTextureData(fileUrl, this.isUseMipMaps(), Configuration.getMaxCompatibleGLProfile());
+            return OGLUtil.newTextureData(fileUrl, this.isUseMipMaps(), JOGLVersionInfo.getMaxCompatibleGLProfile());
         } catch (Exception e) {
             String msg = Logging.getMessage("layers.TextureLayer.ExceptionAttemptingToReadTextureFile",
                 this.getImageSource());

@@ -1911,7 +1911,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
                     return null;
                 }
 
-                return AWTTextureIO.newTextureData(Configuration.getMaxCompatibleGLProfile(), image,
+                return AWTTextureIO.newTextureData(JOGLVersionInfo.getMaxCompatibleGLProfile(), image,
                     this.isUseMipMaps());
             }
             catch (RuntimeException e) {

@@ -56,7 +56,7 @@ public final class WorldWind {
     {
         this.wwo = new WWObjectImpl();
         this.remoteRetrievalService =
-            (RetrievalService) WorldWind.createConfigurationComponent(Keys.RETRIEVAL_SERVICE_CLASS_NAME);
+//            (RetrievalService) WorldWind.createConfigurationComponent(Keys.RETRIEVAL_SERVICE_CLASS_NAME);
         this.localRetrievalService =
             (RetrievalService) WorldWind.createConfigurationComponent(Keys.RETRIEVAL_SERVICE_CLASS_NAME);
         this.taskService = (TaskService) WorldWind.createConfigurationComponent(Keys.TASK_SERVICE_CLASS_NAME);

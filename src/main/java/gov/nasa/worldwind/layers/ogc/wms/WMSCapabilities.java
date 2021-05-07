@@ -223,11 +223,11 @@ public class WMSCapabilities extends OGCCapabilities {
     }
 
     public Double[] getLayerExtremeElevations(String[] layerNames) {
-        if (layerNames == null) {
-            String message = Logging.getMessage("nullValue.WMSLayerNames");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (layerNames == null) {
+//            String message = Logging.getMessage("nullValue.WMSLayerNames");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         Double extremeMin = null;
         Double extremeMax = null;

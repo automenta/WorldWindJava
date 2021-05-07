@@ -559,7 +559,22 @@ public class WWIO {
      */
     public static ByteBuffer readURLContentToBuffer(URL url) throws IOException {
 
-        return WWIO.readURLContentToBuffer(url, false);
+        final ByteBuffer[] bb = new ByteBuffer[1];
+        WWIO.get(url.toString(), x -> {
+            final InputStream c = x.getContent();
+            var b = c.readAllBytes();
+            bb[0] = ByteBuffer.wrap(b);
+            c.close();
+        });
+        return bb[0];
+//        InputStream is = null;
+//        try {
+//            is = url.openStream();
+//            return WWIO.readStreamToBuffer(is, false);
+//        }
+//        finally {
+//            WWIO.closeStream(is, url.toString());
+//        }
     }
 
     /**
@@ -780,7 +795,27 @@ public class WWIO {
      */
     public static ByteBuffer readStreamToBuffer(InputStream inputStream, boolean allocateDirect) throws IOException {
 
-        return WWIO.readInputStreamToBuffer(inputStream, allocateDirect);
+        ReadableByteChannel channel = Channels.newChannel(inputStream);
+        final int PAGE_SIZE = (int) Math.round(Math.pow(2, 16));
+        final int initialSize = Math.max(inputStream.available(), PAGE_SIZE);
+        ByteBuffer buffer = WWBufferUtil.newByteBuffer(initialSize, allocateDirect);
+        int count = 0;
+        while (count >= 0) {
+            count = channel.read(buffer);
+
+            if (count > 0 && !buffer.hasRemaining()) {
+                int newCap = buffer.limit() + PAGE_SIZE;
+                ByteBuffer biggerBuffer = allocateDirect ? ByteBuffer.allocateDirect(newCap)
+                    : ByteBuffer.allocate(newCap);
+                biggerBuffer.put(buffer.rewind());
+                buffer = biggerBuffer;
+            }
+        }
+
+        if (buffer != null)
+            buffer.flip();
+
+        return buffer;
     }
 
     /**

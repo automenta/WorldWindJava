@@ -392,7 +392,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
 
     private static TextureData readTexture(URL url, boolean useMipMaps) {
         try {
-            return OGLUtil.newTextureData(url, useMipMaps, Configuration.getMaxCompatibleGLProfile());
+            return OGLUtil.newTextureData(url, useMipMaps, JOGLVersionInfo.getMaxCompatibleGLProfile());
         }
         catch (Exception e) {
             String msg = Logging.getMessage("layers.TextureLayer.ExceptionAttemptingToReadTextureFile", url.toString());

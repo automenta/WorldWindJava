@@ -37,7 +37,7 @@ public class AbsentResourceList {
     /**
      * The map of absent resources.
      */
-    protected final BasicSessionCache possiblyAbsent = new BasicSessionCache(1000);
+    protected final BasicSessionCache possiblyAbsent = new BasicSessionCache(16*1024);
     /**
      * The maximum number of times a resource is marked as absent before being marked as permanently absent.
      */

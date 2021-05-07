@@ -5,6 +5,9 @@
  */
 package gov.nasa.worldwind.util;
 
+import com.jogamp.opengl.*;
+import gov.nasa.worldwind.Keys;
+
 /**
  * This program returns the version and implementation information for the Java Bindings for OpenGL (R) implementation
  * found in the CLASSPATH. This information is also found in the manifest for jogl-all.jar, and this program uses the
@@ -15,6 +18,16 @@ package gov.nasa.worldwind.util;
 public class JOGLVersionInfo {
 
     private static final JOGLVersionInfo svi = new JOGLVersionInfo();
+    /**
+     * Returns the highest OpenGL profile available on the current graphics device that is compatible with WorldWind.
+     * The returned profile favors hardware acceleration over software acceleration. With JOGL version 2.0, this returns
+     * the highest available profile from the following list:
+     * <ul> <li>OpenGL compatibility profile 4.x</li> <li>OpenGL compatibility profile 3.x</li> <li>OpenGL profile 1.x
+     * up to 3.0</li> </ul>
+     *
+     * @return the highest compatible OpenGL profile.
+     */
+    public final static GLProfile maxCompatible = GLProfile.getMaxFixedFunc(true); // Favor a hardware rasterizer
     private final Package p;
 
     private JOGLVersionInfo() {
@@ -84,5 +97,35 @@ public class JOGLVersionInfo {
         System.out.println(
             JOGLVersionInfo.getImplementationVersion().compareToIgnoreCase("1.1.1-pre-20070512-02:12:11"));
         System.out.println(JOGLVersionInfo.getImplementationVersion().compareToIgnoreCase("1.1.1"));
+    }
+
+    public static GLProfile getMaxCompatibleGLProfile() {
+        return maxCompatible;
+    }
+
+    /**
+     * Returns a {@link GLCapabilities} identifying graphics features required by WorldWind. The capabilities instance
+     * returned requests the maximum OpenGL profile supporting GL fixed function operations, a frame buffer with 8 bits
+     * each of red, green, blue and alpha, a 24-bit depth buffer, double buffering, and if the Java property
+     * "gov.nasa.worldwind.stereo.mode" is set to "device", device supported stereo.
+     *
+     * @return a new capabilities instance identifying required graphics features.
+     */
+    public static GLCapabilities getRequiredGLCapabilities() {
+        GLCapabilities caps = new GLCapabilities(getMaxCompatibleGLProfile());
+
+        caps.setAlphaBits(8);
+        caps.setRedBits(8);
+        caps.setGreenBits(8);
+        caps.setBlueBits(8);
+        caps.setDepthBits(24);
+        caps.setDoubleBuffered(true);
+
+        // Determine whether we should request a stereo canvas
+        String stereo = System.getProperty(Keys.STEREO_MODE);
+        if ("device".equals(stereo))
+            caps.setStereo(true);
+
+        return caps;
     }
 }

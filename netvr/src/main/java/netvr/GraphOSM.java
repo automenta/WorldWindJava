@@ -5,7 +5,6 @@ import com.graphhopper.reader.*;
 import com.graphhopper.reader.osm.*;
 import com.graphhopper.routing.util.EncodingManager;
 import com.graphhopper.storage.*;
-import tech.tablesaw.io.DataReader;
 
 import java.io.File;
 

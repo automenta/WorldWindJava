@@ -8,6 +8,7 @@ package gov.nasa.worldwind.examples;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLCanvas;
 import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.util.JOGLVersionInfo;
 
 import javax.swing.*;
 import javax.swing.border.*;
@@ -54,7 +55,7 @@ public class WorldWindDiagnostics {
 
         GLFrame(JTextArea outputArea) {
             this.outputArea = outputArea;
-            GLCapabilities caps = new GLCapabilities(Configuration.getMaxCompatibleGLProfile());
+            GLCapabilities caps = new GLCapabilities(JOGLVersionInfo.getMaxCompatibleGLProfile());
             caps.setAlphaBits(8);
             caps.setRedBits(8);
             caps.setGreenBits(8);

@@ -10,7 +10,7 @@ import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.cache.GpuResourceCache;
 import gov.nasa.worldwind.event.InputHandler;
 import gov.nasa.worldwind.render.DrawContext;
-import gov.nasa.worldwind.util.BasicGLCapabilitiesChooser;
+import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.util.dashboard.DashboardController;
 import gov.nasa.worldwind.video.*;
 
@@ -60,7 +60,7 @@ public class WorldWindowGLCanvas extends GLCanvas implements WorldWindow {
      * Constructs a new <code>WorldWindowGLCanvas</code> on the default graphics device.
      */
     public WorldWindowGLCanvas() {
-        super(Configuration.getRequiredGLCapabilities(), new BasicGLCapabilitiesChooser(), null);
+        super(JOGLVersionInfo.getRequiredGLCapabilities(), new BasicGLCapabilitiesChooser(), null);
 
         this.wwd().initDrawable(this, this);
 

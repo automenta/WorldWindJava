@@ -7,8 +7,7 @@
 package gov.nasa.worldwind.layers.mercator;
 
 import com.jogamp.opengl.util.texture.TextureData;
-import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.KV;
+import gov.nasa.worldwind.Keys;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.util.*;
@@ -36,14 +35,14 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
         super(levelSet);
     }
 
-    public BasicMercatorTiledImageLayer(KV params) {
-        this(new LevelSet(params));
-        this.set(Keys.CONSTRUCTION_PARAMETERS, params);
-    }
+//    public BasicMercatorTiledImageLayer(KV params) {
+//        this(new LevelSet(params));
+//        this.set(Keys.CONSTRUCTION_PARAMETERS, params);
+//    }
 
     private static TextureData readTexture(InputStream s, boolean useMipMaps) throws IOException {
 //        try {
-            return OGLUtil.newTextureData(Configuration.getMaxCompatibleGLProfile(), s, useMipMaps);
+            return OGLUtil.newTextureData(JOGLVersionInfo.getMaxCompatibleGLProfile(), s, useMipMaps);
 //        }
 //        catch (Exception e) {
 //            String msg = Logging.getMessage("layers.TextureLayer.ExceptionAttemptingToReadTextureFile", url.toString());

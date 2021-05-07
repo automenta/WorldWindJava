@@ -70,10 +70,10 @@
     <Property name="gov.nasa.worldwind.avkey.WorldMapImagePath" value="images/earth-map-512x256.dds"/>
     <Property name="gov.nasa.worldwind.StarsLayer.StarsFileName" value="config/Hipparcos_Stars_Mag6x5044.dat"/>
     <!--The following are tuning parameters for various WorldWind internals-->
-    <Property name="gov.nasa.worldwind.avkey.RetrievalPoolSize" value="6"/>
+    <Property name="gov.nasa.worldwind.avkey.RetrievalPoolSize" value="32"/>
     <Property name="gov.nasa.worldwind.avkey.RetrievalQueueSize" value="2048"/>
-    <Property name="gov.nasa.worldwind.avkey.RetrievalStaleRequestLimit" value="9000"/>
-    <Property name="gov.nasa.worldwind.avkey.TaskPoolSize" value="6"/>
+    <Property name="gov.nasa.worldwind.avkey.RetrievalStaleRequestLimit" value="60000"/>
+    <Property name="gov.nasa.worldwind.avkey.TaskPoolSize" value="32"/>
     <Property name="gov.nasa.worldwind.avkey.TaskQueueSize" value="256"/>
     <Property name="gov.nasa.worldwind.avkey.ScheduledTaskPoolSize" value="1"/>
     <Property name="gov.nasa.worldwind.avkey.VerticalExaggeration" value="1"/>
